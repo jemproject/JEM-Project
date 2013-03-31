@@ -1,0 +1,174 @@
+<?php
+/**
+ * @version 1.1 $Id$
+ * @package Joomla
+ * @subpackage EventList
+ * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @license GNU/GPL, see LICENSE.php
+ * EventList is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License 2
+ * as published by the Free Software Foundation.
+
+ * EventList is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with EventList; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+defined('_JEXEC') or die; ?>
+
+<form action="index.php" method="post" name="adminForm">
+
+	<table class="adminform">
+		<tr>
+			<td width="100%">
+				<?php echo JText::_( 'COM_EVENTLIST_SEARCH' ).' '.$this->lists['filter']; ?>
+				<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onchange="document.adminForm.submit();" title="<?php echo JText::_( 'Filter by title or enter article ID' );?>"/>
+				<button onclick="this.form.submit();"><?php echo JText::_( 'COM_EVENTLIST_GO' ); ?></button>
+				<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_EVENTLIST_RESET' ); ?></button>
+			</td>
+		</tr>
+	</table>
+
+	<table class="adminlist" cellspacing="1">
+		<thead>
+			<tr>
+				<th width="5"><?php echo JText::_( 'COM_EVENTLIST_NUM' ); ?></th>
+				<th width="5"><input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $this->rows ); ?>);" /></th>
+				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_START', 'a.times', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_VENUE', 'loc.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="title"><?php echo JText::_( 'COM_EVENTLIST_CATEGORY' ); ?></th>
+				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="title"><?php echo JText::_( 'COM_EVENTLIST_CREATION' ); ?></th>
+			</tr>
+		</thead>
+
+		<tfoot>
+			<tr>
+				<td colspan="9">
+					<?php echo $this->pageNav->getListFooter(); ?>
+				</td>
+			</tr>
+		</tfoot>
+
+		<tbody>
+			<?php
+			$k = 0;
+			for($i=0, $n=count( $this->rows ); $i < $n; $i++) {
+				$row = &$this->rows[$i];
+				if (ELHelper::isValidDate($row->dates)) {
+					$date		= strftime( $this->elsettings->formatdate, strtotime( $row->dates ));
+				} 
+				else {
+					$date		= JText::_('COM_EVENTLIST_OPEN_DATE');
+				}
+
+				if (!ELHelper::isValidDate($row->enddates)) {
+					$displaydate = $date;
+				} else {
+					$enddate 	= strftime( $this->elsettings->formatdate, strtotime( $row->enddates ));
+					$displaydate = $date.' - <br />'.$enddate;
+				}
+
+				//Don't display 0 time
+				if (!$row->times) {
+					$time = '';
+				} else {
+					$time = strftime( $this->elsettings->formattime, strtotime( $row->times ));
+					$time = $time.' '.$this->elsettings->timename;
+				}
+   			?>
+			<tr class="<?php echo "row$k"; ?>">
+				<td><?php echo $this->pageNav->getRowOffset( $i ); ?></td>
+				<td><input type="checkbox" id="cb<?php echo $i;?>" name="cid[]" value="<?php echo $row->id; ?>" onclick="isChecked(this.checked);" /></td>
+				<td>
+					<?php echo $displaydate; ?>
+				</td>
+				<td><?php echo $time; ?></td>
+				<td><?php echo htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8'); ?></td>
+				<td><?php echo $row->venue ? htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+				<td>
+					<?php
+				$nr = count($row->categories);
+				$ix = 0;
+				foreach ($row->categories as $key => $category) :				
+					$catlink	= 'index.php?option=com_eventlist&amp;controller=categories&amp;task=edit&amp;cid[]='. $category->id;
+					$title = htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8');
+					if (JString::strlen($title) > 20) {
+						$title = JString::substr( $title , 0 , 20).'...';
+					}
+					
+					$path = '';
+					$pnr = count($category->parentcats);
+					$pix = 0;
+					foreach ($category->parentcats as $key => $parentcats) :
+					
+						$path .= $parentcats->catname;
+						
+						$pix++;
+						if ($pix != $pnr) :
+							$path .= ' » ';
+						endif;	
+					endforeach;
+					
+					if ( $category->cchecked_out && ( $category->cchecked_out != $this->user->get('id') ) ) {
+							echo $title;
+					} else { 
+					?>
+						<span class="editlinktip hasTip" title="<?php echo JText::_( 'EDIT CATEGORY' );?>::<?php echo $path; ?>">
+						<a href="<?php echo $catlink; ?>">
+							<?php echo $title; ?>
+						</a>
+						</span>
+					<?php
+					}
+					$ix++;
+					if ($ix != $nr) :
+						echo ', ';
+					endif;
+				endforeach;
+				?>				
+				</td>
+				<td><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+				<td>
+					<?php echo JText::_( 'COM_EVENTLIST_AUTHOR' ).': '; ?><a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>"><?php echo $row->author; ?></a><br />
+					<?php echo JText::_( 'COM_EVENTLIST_EMAIL' ).': '; ?><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a><br />
+					<?php
+					$created = JHTML::Date( $row->created, JText::_( 'DATE_FORMAT_LC2' ) );
+					$edited	 = JHTML::Date( $row->modified, JText::_( 'DATE_FORMAT_LC2' ) );
+					$image 			= JHTML::_('image', 'administrator/templates/'. $this->template .'/images/menu/icon-16-info.png', JText::_('COM_EVENTLIST_NOTES') );
+					$overlib 	= JText::_( 'COM_EVENTLIST_CREATED_AT' ).': '.$created.'<br />';
+					$overlib	.= JText::_( 'COM_EVENTLIST_WITH_IP' ).': '.$row->author_ip.'<br />';
+					if ($row->modified != '0000-00-00 00:00:00') {
+						$overlib 	.= JText::_( 'COM_EVENTLIST_EDITED_AT' ).': '.$edited.'<br />';
+						$overlib 	.= JText::_( 'COM_EVENTLIST_EDITED_FROM' ).': '.$row->editor.'<br />';
+					}
+					?>
+					<span class="editlinktip hasTip" title="<?php echo JText::_('COM_EVENTLIST_EVENT_STATS'); ?>::<?php echo $overlib; ?>">
+						<?php echo $image; ?>
+					</span>
+				</td>
+			</tr>
+			<?php $k = 1 - $k;  } ?>
+		</tbody>
+
+	</table>
+
+	<p class="copyright">
+		<?php echo ELAdmin::footer( ); ?>
+	</p>
+
+	<input type="hidden" name="boxchecked" value="0" />
+	<input type="hidden" name="option" value="com_eventlist" />
+	<input type="hidden" name="view" value="archive" />
+	<input type="hidden" name="task" value="" />
+	<input type="hidden" name="controller" value="archive" />
+	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+</form>

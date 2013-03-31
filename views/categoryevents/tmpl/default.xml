@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="Categoryevents Layout">
+		<message>
+			<![CDATA[CATEGORYEVENTS LAYOUT DESC]]>
+		</message>
+	</layout>
+	<state>
+		<name>CATEGORYEVENTS LAYOUT</name>
+		<description>CATEGORYEVENTS LAYOUT DESC</description>
+		<url addpath="/administrator/components/com_eventlist/elements">
+			<param name="id" type="categories" default="0" label="SELECT CATEGORY" description="SELECT CATEGORY DESC" />
+		</url>
+		<params>
+      <param name="displayChilds" type="radio" default="0" label="DISPLAYCHILDS" description="DISPLAYCHILDSDESC">
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+      </param>
+      <param name="show_empty" type="radio" default="0" label="SHOWEMPTYCHILD" description="SHOWEMPTYCHILDDESC">
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+      </param>
+      <param name="only_first" type="radio" default="0" label="DISPLAYFIRSTOCCURENCEONLY" description="DISPLAYFIRSTOCCURENCEONLYDESC">
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+      </param>
+    </params>
+	</state>
+</metadata>

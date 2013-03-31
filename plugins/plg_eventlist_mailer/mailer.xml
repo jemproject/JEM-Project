@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="2.5" type="plugin" group="eventlist" method="upgrade">
+  <name>Eventlist - Mailer plugin</name>
+  <creationDate>11 April 2011</creationDate>
+  <author>Christoph Lukes</author>
+  <authorEmail>info@schlu.net</authorEmail>
+  <authorUrl>http://www.schlu.net</authorUrl> 
+  <copyright>This extension is released under the GNU/GPL License</copyright>
+  <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+  <version>1.1beta3.2.3-6</version>
+  <description>EVENTLISTMAILER PLUGIN DESC</description>
+  
+	<files>
+		<filename plugin="mailer">mailer.php</filename>
+	</files>
+    
+	<languages>
+		<language tag="en-GB">languages/en-GB.plg_eventlist_mailer.ini</language>
+	</languages>
+  
+	<config>
+	<fields name="params">
+	<fieldset name="basic">
+    <field type="radio" name="reg_mail_user" label="MAIL USER REG" default="1" description="MAIL USER REG DESC">
+    	<option value="0">No</option>
+			<option value="1">Yes</option>
+		</field>
+		<param type="radio" name="reg_mail_admin" label="MAIL ADMIN REG" default="0" description="MAIL ADMIN REG DESC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+	    <param type="radio" name="reg_mail_user_onoff" label="PLG_EVENTLISTMAILER_SETTINGS_USER_REG_ONOFF" default="1" description="PLG_EVENTLISTMAILER_SETTINGS_USER_REG_ONOFF_DESC">
+	    	<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		<param type="radio" name="reg_mail_admin_onoff" label="PLG_EVENTLISTMAILER_SETTINGS_ADMIN_REG_ONOFF" default="0" description="PLG_EVENTLISTMAILER_SETTINGS_ADMIN_REG_ONOFF_DESC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		<param type="radio" name="unreg_mail_user" label="MAIL USER UNREG" default="1" description="MAIL USER UNREG DESC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		<param type="radio" name="unreg_mail_admin" label="MAIL ADMIN UNREG" default="0" description="MAIL ADMIN UNREG DESC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+    </param>
+	
+		<param type="radio" name="newevent_mail_user" label="MAIL USER NEW EVENT" default="0" description="MAIL USER NEW EVENT DESC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+	    </param>
+		<param type="radio" name="newevent_mail_admin" label="MAIL ADMIN NEW EVENT" default="0" description="MAIL ADMIN NEW EVENT DESC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+	    </param>
+			<param type="radio" name="editevent_mail_user" label="MAIL USER EDIT EVENT" default="0" description="MAIL USER EDIT EVENT DESC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+	    </param>
+		<param type="radio" name="editevent_mail_admin" label="MAIL ADMIN EDIT EVENT" default="0" description="MAIL ADMIN EDIT EVENT DESC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+	    </param>
+			<param type="radio" name="newvenue_mail_user" label="MAIL USER NEW VENUE" default="0" description="MAIL USER NEW VENUE DESC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+	    </param>
+		<param type="radio" name="newvenue_mail_admin" label="MAIL ADMIN NEW VENUE" default="0" description="MAIL ADMIN NEW VENUE DESC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+	    </param>
+			<param type="radio" name="editvenue_mail_user" label="MAIL USER EDIT VENUE" default="0" description="MAIL USER EDIT VENUE DESC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+	    </param>
+		<param type="radio" name="editvenue_mail_admin" label="MAIL ADMIN EDIT VENUE" default="0" description="MAIL ADMIN EDIT VENUE DESC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+	    </param>
+		
+		<param type="radio" name="fetch_admin_mails" label="MAIL ALL ADMINS" default="0" description="MAIL ALL ADMINS DESC">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+	    </param>
+		
+		<param type="text" name="receivers" label="ADDITIONAL MAIL RECEIVERS" default="" description="ADDITIONAL MAIL RECEIVERS DESC" />
+	</fieldset>
+	</fields>
+   </config>
+</extension>

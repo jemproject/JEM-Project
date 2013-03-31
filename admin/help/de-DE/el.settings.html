@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//DE" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en_GB" xml:lang="en_GB">
+
+<head>
+  <title>Konfiguration</title>
+  <link href="../css/help.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<h1>EventList Einstellungen</h1>
+
+<h3>Beschreibung</h3>
+<p><img src="../../assets/images/icon-48-settings.png" alt="description" width="48" height="48" align="left" />Die Einstellungen sind das Herz von EventList. Hier müssen Sie sich entscheiden, welche Funktionen Sie anbieten möchten und wie sich EventList verhalten soll. Die Einstellungen sind in vier Bereiche unterteilt. Diese können Sie weiter unten bequem über Links erreichen. </p>
+<br />
+
+<h3>Navigation</h3>
+<p>Folgendermaßen können Sie auf diese Ansicht zugreifen: <strong>Komponenten</strong> -&gt; <strong>EventList</strong> -&gt;<strong> Einstellungen </strong></p>
+
+<h3>Benutzer Zugriffslevel</h3>
+<p><img src="../images/super_administrator.gif" alt="Super Administrator" /> Super Administrator</p>
+
+<h3>Toolbar Icons</h3>
+<img src="toolbars/asch.png" alt="toolbar" width="233" height="51" />
+<p><strong>Hinzufügen:</strong> Speichert die Einstellungen, ohne diese Ansicht zu verlassen. </p>
+<p><strong>Speichern:</strong> Klicken Sie das "Speichern"-Icon, um Ihre Änderungen zu speichern und die Einstellungen zu verlassen. </p>
+<p><strong>Abbrechen:</strong> Klicken Sie den "Abbrechen"-Icon, um den Vorgang abzubrechen und die Einstellungen ohne speichern zu verlassen. </p>
+<p><strong>Hilfe:</strong> Klicken Sie das "Hilfe"-Icon, um eine relevante Hilfe zu öffnen.</p>
+<br />
+
+<h2><strong>Settings:</strong></h2>
+<ul>
+  <li><a href="#basicsettings">Grundeinstellungen</a></li>
+  <li><a href="#access">User Control</a></li>
+  <li><a href="#detailspage">Detailspage Tab</a></li>
+  <li><a href="#layout">Layout Tab</a></li>
+  <li><a href="#params">Globale Parameter</a></li>
+</ul>
+
+<h2>Grundeinstellungen:<a name="basicsettings" id="basicsettings"></a></h2>
+<h3>Anzeige</h3>
+<p><strong>Link zur Detailseite anzeigen :</strong></p>
+<p>Wählen Sie, ob Sie den Link zur Detailseite auf den Veranstaltungstitel legen möchten. Vorraussetzung ist, dass der Titel angezeigt wird.</p>
+
+<p><strong>Datumsformat:</strong></p>
+<p>Nutzen Sie die PHP-"strftime"-Syntax, um das Datumsformat Ihren Vorstellungen anzupassen. Beispiel: '%d.%m.%Y' erzeugt '25.05.2006'. Mehr Formatierungsmöglichkeiten erläutert das
+<a href="http://www.php.net/strftime" target="_blank">PHP-strftime-Manual</a>. Zu beachten ist, dass nicht alle möglichen Parameter auf jedem Server verfügbar und diese auch abhängig vom Betriebssystem des Servers sind (*nix/Windows).</p>
+
+<p><strong>Zeitformat:</strong></p>
+<p>Nutzen Sie die PHP-"strftime"-Syntax, um das Zeitformat Ihren Vorstellungen anzupassen. Beispiel: '%H:%M' erzeugt '16:00'. Mehr Formatierungsmöglichkeiten erläutert das <a href=
+"http://www.php.net/strftime" target="_blank">PHP-strftimeManual</a>.</p>
+
+<p><strong>Name:</strong></p>
+<p>Beispiel: "h" oder "Uhr". Diese Angabe wird hinter der Uhrzeit im Frontend angezeigt. Lassen Sie das Feld einfach leer, wenn Sie dies nicht benötigen.</p>
+
+<p><strong>IP speichern:</strong></p>
+<p>In manchen Ländern erlauben es Datenschutzgesetze nicht, die IP Adresse von Besuchern zu speichern. Hier können Sie die Speicherung deaktivieren.</p>
+
+<h3>Veranstaltungs Verhalten </h3>
+<p><strong>Alte Veranstaltungen :</strong></p>
+<p>Wählen Sie eine der drei Optionen. "Alte Veranstaltungen löschen" entfernt alle Veranstaltungen welche älter sind, als im Feld unten definiert wurde. Falls Sie "Alte Veranstaltungen archivieren" wählen, werden alle Veranstaltungen - die älter als der definierte Zeitraum sind - in das Archiv verschoben. Nur wenn diese Funktion aktiv ist, ist ein Zugriff vom Frontend auf das Archiv möglich.
+<br />Beachten sie dass EventList exakt einmal am Tag, mit dem ersten Besucher nach Mitternacht Serverzeit diese Aktionen ausführt. 
+Um die Aktualisierung zu erzwingen wird die Einrichtung eines Cronjobs empfohlen. Dieser sollte eine der EventList Ansichten aufrufen.</p>
+
+<h3>Bild Einstellungen </h3>
+<p><strong>Max. Bildgröße:</strong></p>
+<p>Geben Sie die maximale Bildgröße in kb an.</p>
+
+<p><strong>Max. Höhe des Vorschaubildes:</strong></p>
+<p>Geben Sie die maximale Höhe des Vorschaubildes an. Dieser Wert wird auch für das Frontend und die Kategoriebilder verwendet. </p>
+
+<p><strong>Max. Breite des Vorschaubildes:</strong></p>
+<p>Geben Sie die maximale Breite des Vorschaubildes an. Dieser Wert wird auch für das Frontend und die Kategoriebilder verwendet. </p>
+
+<p><strong>Vorschaubilder aktivieren :</strong><br />
+EventList erzeugt Verkleinerungen (Vorschaubilder sogenannte Thumbnails) der hochgeladenen Bilder falls die GD Bibliothek in Version 2 auf dem Server installiert ist.
+Sollte dies nicht zutreffen, wird diese Funktion automatisch deaktiviert.
+Ist dies der Fall werden obige Breiten- und Höhenangaben auf das Original angewandt wenn diese überschritten werden.
+Hier versucht EventList die Proportionen zu erhalten, dies hat aber weit schlechtere Ergebnisse zur Folge wie durch Nutzung der GD-Bibliothek.
+Außerdem wird wird die Dateigröße mit dieser Methode nicht reduziert.
+</p>
+
+<div class="attentionheader">Achtung</div>
+<div class="attention">Falls Sie eine Bildbreite definiert haben, die im Verhältnis mehr als 20% der Breite des Inhaltsbereiches beträgt, müssen Sie die eventlist.css dementspechend anpassen. </div>
+
+<h3>Meta Optionen</h3>
+<p><strong>Schlüßelwörter definieren:</strong></p>
+<p>Wählen Sie in der Auswahlbox mehrere Felder die Sie als Schlüßelwörter für die Meta Angaben nutzen möchten. EventList generiert automatisch die entsprechenden Metatags.</p>
+
+<p><strong>Beschreibung definieren :</strong></p>
+<p>Generieren Sie in diesem Textfeld Ihre eigene Meta-Beschreibung. Klicken Sie für ein Beispiel den Vorschlags-Button. Die Beschreibung wird anschließend automatisch beim Erstellen oder Bearbeiten einer Veranstaltung erstellt. Dabei spielt es keine Rolle, ob es sich um das Backend oder Frontend handelt.</p>
+
+<div class="attentionheader">Achtung</div>
+<div class="attention">Benutzen Sie keine Semikolons oder Anführungszeichen! </div>
+
+<h2><a name="access" id="access">Benutzer Kontrolle  :</a></h2>
+
+<h3>Bild uploads </h3>
+<p>Wählen Sie, ob bei der Veranstaltungseingabe ein Bild zwingend enthalten sein muss, optional ist, oder ob überhaupt ein Bild hochgeladen werden darf.</p>
+
+<h3>Beschreibungslänge</h3>
+<p>Maximale Länge der Veranstaltungs- und Veranstaltungsort-Beschreibung. Die Beschreibung wird im Falle einer Überschreitung des definierten Limits automatisch gekürzt und dies mit [stripped] dargestellt. Dies betrifft nur Benutzer, die einen Benutzerrang unter Editor haben. </p>
+
+<div class="hintheader">Tip</div>
+<div class="hint">Beschäftigen Sie sich mit dem Gruppensystem von EventList. Diese erlaubt eine große Flexibilität was Benutzereingaben betrifft. Lesen Sie dazu die entsprechende Hilfe. </div>
+
+<h3>Zugriffskontrolle - Veranstaltungen</h3>
+<p><strong>Neue Veranstaltungen von Benutzern:</strong></p>
+<p>Wählen Sie hier den minimalen benötigten Benutzerrang, um Veranstaltungen eingeben zu können.</p>
+<p><strong>Auomatisches Freigeben:</strong></p>
+<p>Wählen Sie hier den minimalen benötigten Benutzerrang damit Veranstaltungen automatisch freigegeben werden. Andernfalls müssen Sie im Backend manuell freigegeben werden.</p>
+
+<p><strong>Bearbeiten von Veranstaltungen im Frontend:</strong></p>
+<p>Wählen Sie hier den minimalen benötigten Benutzerrang um Veranstaltungen auf der Frontpage bearbeiten zu können.</p>
+
+<p><strong>Rekursiv:</strong></p>
+<p>Sollen Kindgruppen eingeschlossen werden? Falls nicht, hat nur die selektierte Gruppe Zugriff. Beachten Sie: Administratoren haben immer Zugriff.</p>
+
+<p><strong>Erlauben eingereichte Veranstaltungen zu bearbeiten:</strong></p>
+<p>Erlauben Sie Benutzern Ihre eingereichten Veranstaltungen bearbeiten zu dürfen obwohl Sie normalerweise keine ausreichenden Rechte für die "Bearbeiten"-Funktion haben?</p>
+
+<h3>Registrierung</h3>
+<p>Darf bei Frontend-Eingaben der Benutzer entscheiden, ob man sich an der Veranstaltung anmelden/abmelden können soll, oder soll ein standard Wert gesetzt werden?</p>
+
+<h3>Zugriffskontrolle - Veranstaltungsorte</h3>
+<p><strong>Neue Veranstaltungsorte von Benutzern:</strong></p>
+<p>Wählen Sie hier den minimalen benötigten Benutzerrang um Veranstaltungsorte eingeben zu können. </p>
+
+<p><strong>Auomatisches freischalten :</strong></p>
+<p>Wählen Sie hier den minimalen benötigten Benutzerrang damit Veranstaltungsorte automatisch freigeschalten werden. Andernfalls müssen Sie im Backend manuell freigeschalten werden.</p>
+
+<p><strong>Bearbeiten von Veranstaltungsorten im Frontend:</strong></p>
+<p>Wählen Sie hier den minimalen benötigten Benutzerrang um Veranstaltungsorte auf der Frontpage bearbeiten zu können.</p>
+
+<p><strong>Rekursiv:</strong></p>
+<p>Sollen Kindgruppen eingeschlossen werden? Falls nicht, hat nur die selektierte Gruppe Zugriff. Beachten Sie: Administratoren haben immer Zugriff.</p>
+
+<p><strong>Erlauben eingereichte Veranstaltungsorte zu bearbeiten:</strong></p>
+<p>Erlauben Sie Benutzern Ihre eingereichten Veranstaltungsorte bearbeiten zu dürfen obwohl Sie normalerweise keine ausreichenden Rechte für die bearbeiten Funktion haben? </p>
+
+<h2>Detailsseite:<a name="detailspage" id="detailspage"></a></h2>
+
+<h3>Veranstaltungsorte</h3>
+<p><strong>Veranstaltungsort Beschreibung anzeigen :</strong></p>
+<p>Soll die Beschreibung des Veranstaltungsortes angezeigt werden.</p>
+
+<p><strong>Adresse anzeigen :</strong></p>
+<p>Soll die Adresse des Veranstaltungsortes angezeigt werden?</p>
+
+<p><strong>Link zum Veranstaltungsort anzeigen:</strong></p>
+<p>Soll ein Link zum Veranstaltungsort angezeigt werden?</p>
+
+<p><strong>Kartenservice:</strong></p>
+<p>Wählen Sie "Map24" oder "Google" als Kartenserviceanbieter. Beachten Sie: Falls Sie "Map24" als Kartenservice wählen benötigen Sie Ihre "link2Map24-ID".<br />
+Melden Sie sich dazu bei "map24.com" an und erstellen sie ihren gewünschten "link2Map24"-Service.</p>
+<br />
+<br />
+"Google Maps" können Sie ohne oder mit API-Schlüssel nutzen. Falls Sie einen API-Schlüssel haben, stellt EventList die Karte alleinstehend in einem Lightbox-Fenster dar.
+Falls Sie ohne Schlüssel die "Google Maps"-Funktion nutzen, so wird auf die "Google Maps"-Seite verlinkt. Beachten Sie dass Googles "Geocoding"-Funktion nur für einige <a href="http://code.google.com/support/bin/answer.py?answer=62668&topic=10946" target="_blank">Länder</a> verfügbar ist. Darunter auch Deutschland, Österreich und die Schweiz. Allerdings kann es vorkommen dass Google - trotz korrekt eingegebenen Adressdaten - diese nicht eindeutig zuordnen kann und es zu Fehlern bei der Anzeige kommt.</p>
+
+<h3>Veranstaltungen</h3>
+<p><strong>Zeit anzeigen :</strong></p>
+<p>Soll die Zeit auf der Detailsseite angezeigt werden?</p>
+
+<p><strong>Veranstaltungsbeschreibung anzeigen:</strong></p>
+<p>Soll die Veranstaltungsbeschreibung angezeigt werden?</p>
+
+<p><strong>Veranstaltungstitel anzeigen:</strong></p>
+<p>Soll der Veranstaltungstitel angezeigt werden?</p>
+
+<h3>Andere Komponenten bei der Registrierung einbinden </h3>
+<p><strong>Community Lösung:</strong></p>
+<p>Soll der CB/CBE verwendet werden?</p>
+
+<p><strong>Form der Unterstützung:</strong></p>
+<p>Sie haben drei Optionen zur Wahl. Keine Integration, einen Link zum Profil des angemeldeten Benutzers, oder einen Link zum Profil mit Anzeige des Avatars. </p>
+
+<p><strong>Kommentarsystem auswählen</strong></p>
+<p>Wählen Sie - falls verfügbar - ihre gewünschte Kommentarkomponente aus, die Eventlist verwenden soll.</p>
+
+<h2>Layout:<a name="layout" id="layout"></a></h2>
+<h3>Generelle Layout Einstellungen </h3>
+
+<p><strong>Zeit anzeigen :</strong></p>
+<p>Soll Die Zeit auf der Frontpage angezeigt werden oder nicht?</p>
+
+<p><strong>Die Tabellenbreite in %:</strong></p>
+<p>Legen Sie hier die Breite der Tabelle im Frontend fest. Beachten Sie, dass alle Spalten zusammen addiert eine Summe von 100% ergeben müssen. </p>
+
+<h3>Spalten</h3>
+<p><strong>Titel Spalte:</strong></p>
+<p>Geben Sie an, ob Sie die Spalte nutzen möchten. Wenn "Ja", benennen Sie diese und geben die Breite an. Der Name wird im Tabellenkopf angezeigt. </p>
+
+<p><strong>Datum Spalte:</strong></p>
+<p>Geben Sie an, ob Sie die Spalte nutzen möchten. Wenn "Ja", benennen Sie diese und geben die Breite an. Der Name wird im Tabellenkopf angezeigt. Diese Spalte ist ein Pflichtfeld. </p>
+
+<p><strong>Veranstaltungsort Spalte:</strong></p>
+<p>Geben Sie an, ob Sie die Spalte nutzen möchten. Wenn "Ja", benennen Sie diese und geben die Breite an. Der Name wird im Tabellenkopf angezeigt. </p>
+
+<p><strong>Kategorien Spalte:</strong></p>
+<p>Geben Sie an, ob Sie die Spalte nutzen möchten. Wenn "Ja", benennen Sie diese und geben die Breite an. Der Name wird im Tabellenkopf angezeigt. </p>
+
+<p><strong>Stadt Spalte:</strong></p>
+<p>Geben Sie an, ob Sie die Spalte nutzen möchten. Wenn "Ja", benennen Sie diese und geben die Breite an. Der Name wird im Tabellenkopf angezeigt. </p>
+
+<h2>Grundeinstellungen:<a name="params" id="params"></a></h2>
+<p>Die Grundeinstellungen dienen dazu, bestimmten Ansichten Standardwerte zuzuweisen. Diese können individuell für bestimmte Ansichten beim Anlegen eines Menüpunktes geändert werden.</p>
+
+<p><strong>Anzahl an Veranstaltungen auf der Frontpage:</strong></p>
+<p>Anzahl an Veranstaltungen, die auf der Frontpage angezeigt werden.</p>
+
+<p><strong>Anzahl Kategorien einer Seite:</strong></p>
+<p>Anzahl Kategorien, die maximal auf einer Seite dargestellt werden sollen</p>
+
+<p><strong>Filter:</strong></p>
+<p>Anzeigen/Verstecken der Filterfunktion.</p>
+
+<p><strong>Datensatz Auswahl:</strong></p>
+<p>Anzeigen/verstecken des "Anzahl Datensatz"-DropDown-Feldes.</p>
+
+<p><strong>Icons anzeigen:</strong></p>
+<p>Icons oder Alternativtext anzeigen.</p>
+
+<p><strong>Druck Icon:</strong></p>
+<p>Anzeigen/Verstecken des Druck Icon.</p>
+
+<p><strong>Email Icon:</strong></p>
+<p>Anzeigen/Verstecken des Email-Icons.</p>
+
+<div align="center" style="margin-top: 30px; margin-bottom: 30px;"> <a href="#" onclick="javascript:window.close();"><span class="small">Fenster schließen</span></a></div>
+</body>
+</html>

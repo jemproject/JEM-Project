@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="2.5" type="plugin" group="eventlist" method="upgrade">
+  <name>Eventlist - Comments</name>
+  <creationDate>11 April 2011</creationDate>
+  <author>Christoph Lukes</author>
+  <authorEmail>info@schlu.net</authorEmail>
+  <authorUrl>http://www.schlu.net</authorUrl> 
+  <copyright>This extension is released under the GNU/GPL License</copyright>
+  <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+  <version>1.1beta3.2.3-6</version>
+  <description>EVENTLIST COMMENTS PLUGIN DESC</description>
+  
+	<files>
+		<filename plugin="comments">comments.php</filename>
+	</files>
+    
+	<languages>
+		<language tag="en-GB">languages/en-GB.plg_eventlist_comments.ini</language>
+	</languages>
+  <config>
+	<fields name="params">
+	<fieldset name="basic">
+    <field type="list" name="commentsystem" label="COMMENTSYSTEM" default="0" description="COMMENTSYSTEM DESC">
+    	<option value="0">NONE</option>
+		<option value="1">JOMCOMMENTS</option>
+		<option value="2">JCOMMENTS</option>
+		<option value="3">JXTENDED COMMENTS</option>
+	</field>
+		</fieldset>
+	</fields>
+   </config>
+</extension>

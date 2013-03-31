@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_EVENTLIST_DAY_LAYOUT">
+		<message>
+			<![CDATA[COM_EVENTLIST_DAY_LAYOUT_DESC]]>
+		</message>
+	</layout>
+	<state>
+		<name>COM_EVENTLIST_DAY_LAYOUT</name>
+		<description>COM_EVENTLIST_DAY_LAYOUT_DESC</description>
+		<config><fields name="params"><fieldset name="basic" label="basic">
+			<field name="days" type="text" size="2" default="0" label="COM_EVENTLIST_DAYS_FIELD" description="COM_EVENTLIST_DAYS_FIELD_TIP" />
+		</fieldset></fields></config>
+	</state>
+</metadata>

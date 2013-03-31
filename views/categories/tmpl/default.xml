@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_EVENTLIST_CATEGORIES_LAYOUT">
+		<message>
+			<![CDATA[COM_EVENTLIST_CATEGORIES_LAYOUT_DESC]]>
+		</message>
+	</layout>
+	<state>
+		<name>COM_EVENTLIST_CATEGORIES_LAYOUT</name>
+		<description>COM_EVENTLIST_CATEGORIES_LAYOUT_DESC</description>
+		<fields name="params"  addpath="/administrator/components/com_eventlist/elements">
+	  	<fieldset name="basic">	 
+		  <field name="catid" label="COM_EVENTLIST_SELECTTOPCAT" default="" type="categories" description="COM_EVENTLIST_SELECTTOPCATDESC" /> 
+      <field name="usecat" type="radio" default="1" label="COM_EVENTLIST_DISPLAYCHILDS" description="COM_EVENTLIST_DISPLAYCHILDSDESC">
+        <option value="0">COM_EVENTLIST_NO</option>
+        <option value="1">COM_EVENTLIST_YES</option>
+      </field> 
+      <field name="showemptychilds" type="radio" default="1" label="COM_EVENTLIST_SHOWEMPTYCHILD" description="COM_EVENTLIST_SHOWEMPTYCHILDDESC">
+        <option value="0">COM_EVENTLIST_NO</option>
+        <option value="1">COM_EVENTLIST_YES</option>
+      </field>
+		</fieldset>
+</fields>
+</state>
+</metadata>

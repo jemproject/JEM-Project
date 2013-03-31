@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="Venueevents Layout">
+		<message>
+			<![CDATA[VENUEEVENTS LAYOUT DESC]]>
+		</message>
+	</layout>
+	<state>
+		<name>VENUEEVENTS LAYOUT</name>
+		<description>VENUEEVENTS LAYOUT DESC</description>
+		<url addpath="/administrator/components/com_eventlist/elements">
+			<param name="id" type="venue" default="0" label="Select Venue" description="SELECTVENUE" />
+		</url>
+	</state>
+</metadata>

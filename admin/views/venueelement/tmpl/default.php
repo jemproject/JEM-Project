@@ -1,0 +1,95 @@
+<?php
+/**
+ * @version 1.1 $Id$
+ * @package Joomla
+ * @subpackage EventList
+ * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @license GNU/GPL, see LICENSE.php
+ * EventList is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License 2
+ * as published by the Free Software Foundation.
+
+ * EventList is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with EventList; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+defined('_JEXEC') or die;
+?>
+
+<form action="index.php?option=com_eventlist&amp;view=venueelement&amp;tmpl=component" method="post" name="adminForm">
+
+<table class="adminform">
+	<tr>
+		<td width="100%">
+			<?php echo JText::_( 'COM_EVENTLIST_SEARCH' ).' '.$this->lists['filter']; ?>
+			<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
+			<button onclick="this.form.submit();"><?php echo JText::_( 'COM_EVENTLIST_GO' ); ?></button>
+			<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_EVENTLIST_RESET' ); ?></button>
+		</td>
+		<td nowrap="nowrap">
+			 <?php echo $this->lists['state']; ?>
+		</td>
+	</tr>
+</table>
+
+<table class="adminlist" cellspacing="1">
+	<thead>
+		<tr>
+			<th width="7"><?php echo JText::_( 'COM_EVENTLIST_NUM' ); ?></th>
+			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'venueelement' ); ?></th>
+			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'venueelement' ); ?></th>
+			<th align="left" class="title"><?php echo JText::_( 'COM_EVENTLIST_COUNTRY' ); ?></th>
+			<th class="title"><?php echo JText::_( 'COM_EVENTLIST_PUBLISHED' ); ?></th>
+		</tr>
+	</thead>
+
+	<tfoot>
+		<tr>
+			<td colspan="6">
+				<?php echo $this->pageNav->getListFooter(); ?>
+			</td>
+		</tr>
+	</tfoot>
+
+	<tbody>
+		<?php
+		$k = 0;
+		for ($i=0, $n=count( $this->rows ); $i < $n; $i++) {
+			$row = &$this->rows[$i];
+   		?>
+		<tr class="<?php echo "row$k"; ?>">
+			<td><?php echo $this->pageNav->getRowOffset( $i ); ?></td>
+			<td align="left">
+				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_SELECT' );?>::<?php echo $row->venue; ?>">
+				<a style="cursor:pointer" onclick="window.parent.elSelectVenue('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->venue ); ?>');">
+				<?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>
+				</a></span>
+			</td>
+			<td align="left"><?php echo htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8'); ?></td>
+			<td align="left"><?php echo htmlspecialchars($row->country, ENT_QUOTES, 'UTF-8'); ?></td>
+			<td>
+				<?php $img = $row->published ? 'tick.png' : 'publish_x.png'; ?>
+				<img src="images/<?php echo $img;?>" width="16" height="16" border="0" alt="" />
+			</td>
+		</tr>
+
+		<?php $k = 1 - $k; } ?>
+
+	</tbody>
+
+</table>
+
+<p class="copyright">
+	<?php echo ELAdmin::footer( ); ?>
+</p>
+
+<input type="hidden" name="task" value="" />
+<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+</form>

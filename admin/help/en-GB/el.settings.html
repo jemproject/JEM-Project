@@ -1,0 +1,368 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en_GB" xml:lang=
+"en_GB">
+<head>
+<title>Settings</title>
+<link href="../css/help.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<h1>EventList Settings</h1>
+
+<h3>Description</h3>
+<p>
+<img src="../../assets/images/icon-48-settings.png" alt="description" width="48" height="48" align="left" />This is the heart of EventList. Here you have to decide which features you want to offer and how EventList should behave. The Settings are seperated in 4 different types. Select one of them to go directly to the regarding explanation. </p>
+
+<br />
+
+<h3>Navigation</h3>
+<p>
+To access this screen use: <strong>Components</strong> -> <strong>EventList</strong> -> <strong>Settings</strong></p>
+
+<h3>User Access Level</h3>
+
+<p><img src="../images/super_administrator.gif" alt="Super Administrator" /> Super Administrator</p>
+
+<h3>Toolbar Icons</h3>
+
+<img src="toolbars/asch.png" alt="toolbar" width="233" height="51" />
+<p><strong>Apply:</strong> Click the 'Apply' icon to save your changes and return to this screen. </p>
+<p><strong>Save:</strong> Click the 'Save' icon to save your changes and leave the screen. </p>
+<p><strong>Cancel:</strong> Click the 'Cancel' icon to leave the screen without saving any changes. </p>
+<p><strong>Help:</strong> Click the Help icon to access a relevant Help Screen.</p>
+
+<br />
+
+<h2><strong>Settings:</strong></h2>
+
+<ul>
+<li><a href="#basicsettings">Basic Settings</a></li>
+
+<li><a href="#access">User Control</a></li>
+
+<li><a href="#detailspage">Detailspage Tab</a></li>
+
+<li><a href="#layout">Layout Tab</a></li>
+
+<li><a href="#params">Global Parameters</a></li>
+</ul>
+
+<h2>Basic Settings:<a name="basicsettings" id="basicsettings"></a></h2>
+
+<h3>Display - Settings</h3>
+
+<p><strong>Show Link to detail page:</strong><br />
+Select if you wish to link to the detail page through icons or the
+title of the event. Link on title only works if showtitle is yes,
+icons only if you had set the width at the layout settings.</p>
+
+<p><strong>Format date:</strong><br />
+Use here the php strftime syntax to format the date. For example
+the following code '%d.%m.%Y' shows '25.05.2006'. More Information
+<a href="http://www.php.net/strftime" target="_blank">php strftime
+manual</a>.
+Keep in mind, that not all parameters might be available on your server.
+</p>
+
+<p><strong>Format time:</strong><br />
+ Use here the php strftime syntax to format the time. For example
+the following code '%H.%M' shows '16.00'. More Information <a href=
+"http://www.php.net/strftime" target="_blank">php strftime
+manual</a>.</p>
+
+<p><strong>Name:</strong><br />
+Fill in "h" or "Uhr" for example. This will be displayed behind the
+time on the frontend. Leave blank if you don't need it.</p>
+
+<p><strong>Store IP:</strong><br />
+In some countries it isn't permitted to store the IP address of your visitors. You can disable it here.</p>
+
+<h3>Event handling</h3>
+
+<p><strong>Handle old Events:</strong><br />
+Select one of the three options. 'Delete old Events' will delete
+all Events after the number of days typed in in the box below. If
+you select 'Archive old Events' the Events will moved after the
+typed in days in the Archive. You only have access to the archive
+if you have choosen this option.<br />Note that EventList triggers this cleanup action once a 
+day after midnight server time and only if an EventList view got a visit. If you want to make sure 
+that the cleanup happens, create a cronjob pointing to an EventList component view.
+</p>
+
+<br />
+
+<h3>Image handling:</h3>
+
+<p><strong>Max. imagefilesize:</strong><br />
+Type in the maximum size in kb for the imagefile.</p>
+
+<p><strong>Max. height of thumbnailimage:</strong><br />
+Type in the maximum height of the image. This value is also used on
+the Frontend.</p>
+
+<p><strong>Max. width of thumbnailimage:</strong><br />
+Type in the maximum width of the image. This value is also used on
+the Frontend.
+</p>
+
+<p><strong>Enable Thumbnails:</strong><br />
+EventList can create thumbnails if the GD library version 2 is
+installed on your server. If it isn't available this feature will be disabled.
+In this case the above typed in hight and width values will be used to resize the
+images if they are larger than these values. Keep in mind that this method results
+in a much lower quality than using the GD library. Also the filesize of the images aren't reduced.
+</p>
+
+<div class="attentionheader">Attention</div>
+<div class="attention">If you define an imagewidth of more than the width of 20% of the contentarea you have to modify the eventlist.css accordingly.</div>
+
+<br />
+
+<h3>Meta options</h3>
+
+<p><strong>Edit Keywords:</strong><br />
+Select in the box multiple keywords.
+</p>
+
+<p><strong>Edit Description:</strong><br />
+In the textbox you can create your own custom metadescription. Use the suggest button for a hint.
+The description is created in the Event edit screen and within the Event submission process from the Frontend
+automatically.</p>
+
+<div class="attentionheader">Attention</div>
+<div class="attention">Don't use inverted commas or quotation marks in the description, because this will cause HTML errors</div>
+
+<br />
+
+<h2><a name="access" id="access">User Control :</a></h2>
+
+
+<h3>Image uploads</h3>
+<p>
+Select if imageuploads for frontend submissions are optional,
+required or forbidden.</p>
+
+<h3>Description - Length</h3>
+
+<p>Max. length of the event- and locationdescription. If the length
+of the description is too long, the description will be stripped
+and the note [stripped] will be added. This affects only
+submissions from user with an Userrank lower than 'Editor'.</p>
+
+<div class="hintheader">Tip</div>
+<div class="hint">Have a look at the Group system of EventList. Grouping users will give you additional flexibility in access control</div>
+<br />
+
+<h3>AC - Events</h3>
+
+<p><strong>New Events from Users:</strong><br />
+Select here the required Access Level to submit new Events from the
+Frontpage.</p>
+
+<p><strong>Autopublish:</strong><br />
+Select here the required Access Level for Users when Events should
+be immediately published. Otherwise they have to be published in
+the backend after reviewing manually.</p>
+
+<p><strong>Frontend Events editing:</strong><br />
+Select here the required Access Level to edit Events from the
+Frontpage.</p>
+
+<p><strong>Inherit:</strong><br />
+Allow parent groups access as well? If No access is restricted to
+the selected group only. Note: Administrators always have
+access.</p>
+
+<p><strong>Allow to edit owned events:</strong><br />
+Allow user to edit his submitted events even if he hasn't the required access level for editing events.</p>
+
+<h3>Registration</h3>
+
+<p>
+Select here if Frontendusers are allowed to set during the
+submission process if an user can register or unregister to the
+submitted events.
+</p>
+
+<h3>AC - Venues</h3>
+
+<p><strong>New Venues from Users:</strong><br />
+Select here the required Access Level to submit new Venues from the
+Frontpage.</p>
+
+<p><strong>Autopublish:</strong><br />
+Select here the required Access Level for Users when Venues should
+be immediately published. Otherwise they have to be published in
+the backend after reviewing manually.</p>
+
+<p><strong>Frontend Venues editing:</strong><br />
+Select here the required Access Level to edit Venues from the
+Frontpage.</p>
+
+<p><strong>Inherit:</strong><br />
+Allow parent groups access as well? If No access is restricted to
+the selected group only. Note: Administrators always have
+access.</p>
+
+<p><strong>Allow to edit owned venues:</strong><br />
+Allow user to edit his submitted venues even if he hasn't the required access level for editing venues.</p>
+
+<br />
+
+<h2>Detailspage:<a name="detailspage" id="detailspage"></a></h2>
+
+<h3>Venues</h3>
+
+<p><strong>Display Venuedescription:</strong><br />
+Choose if you want to display the
+description.</p>
+
+<p>
+<strong>Display address of the Venue:</strong><br />
+Show the address of the Venue?</p>
+
+<p>
+<strong>Show link to the Venue:</strong><br />
+Display the Link to the Venue?</p>
+
+<p>
+<strong>Choose Mapservice:</strong><br />
+Select the google or map24 service. Note: You need to enter your link2Map24-ID if you choose this service.<br />
+<br />
+Google Maps can be used without API Key.
+If this is the case, EventList will redirect to Google Maps site. If you type in the Key, the Map will
+be displayed in a lightbox on your site. Note:
+The Geocoding is only available in the following <a href="http://code.google.com/support/bin/answer.py?answer=62668&topic=10946" target="_blank">countries</a>:
+France, Italy, Germany, Spain, Sweden, Luxembourg, Austria, Belgium, Switzerland, Japan, Australia, New Zealand, Canada, US, and the Netherlands.
+The accuracy of geocoded locations may vary per country and this can cause errors on the map.
+</p>
+
+<h3>Events</h3>
+
+<p>
+<strong>Show time:</strong><br />
+Show the time of the event on the
+detailspage.
+</p>
+
+<p>
+<strong>Display Eventdescription:</strong><br />
+Choose if you want to display the
+description.
+</p>
+
+<p>
+<strong>Display Eventtitle:</strong><br />
+Choose if you want to display the title
+of the event on the detailspage
+</p>
+
+<h3>Integrate other Components at the registration</h3>
+
+<p><strong>Select Community Solution:</strong><br />
+Currently its only the Community Builder and the Community Builder
+Enhanced available. If you use one of it select it if you wish to
+have one of the oprtunities mentioned below.</p>
+
+<p><strong>Select integration options:</strong><br />
+Three options. None for no integration, only per
+Link if you want to generate a link to the profile of the
+registered user or select the next option if you like to show
+additional the regarding avatar of the user.</p>
+
+<br />
+
+<h2>Layout:<a name="layout" id="layout"></a></h2>
+
+<h3>General Layout Settings:</h3>
+
+<p>
+<strong>Show time:</strong><br />
+Show the time on the Frontpage or not.
+</p>
+
+<p>
+<strong>Table width in %:</strong><br />
+Type in the maximum width in percent for the table
+layout on the Frontpage. Take care that the columns below have
+together at the end 100%.
+</p>
+
+<h3>Columns</h3>
+
+<p>
+<strong>Title column:</strong><br />
+Choose if you want to show the title column. If yes, type in the
+width of the column and the name of it. The name will be displayed
+at the head of the column.
+</p>
+
+<p>
+<strong>Date column:</strong><br />
+Type in the width of the column and the name of it. The name
+will be displayed at the head of the column. This column is
+required.
+</p>
+
+<p>
+<strong>Venue column:</strong><br />
+Choose if you want to show the Location column. If yes, type in
+the width of the column and the name of it. The name will be
+displayed at the head of the column.
+</p>
+
+<p>
+<strong>Category column:</strong><br />
+Choose if you want to show the Category column. If yes, type in
+the width of the column and the name of it. The name will be
+displayed at the head of the column.
+</p>
+
+<p>
+<strong>City column:</strong><br />
+Choose if you want to show the City column. If yes, type in the
+width of the column and the name of it. The name will be displayed
+at the head of the column.
+</p>
+
+<h2>Global Parameters:<a name="params" id="params"></a></h2>
+
+<p>
+The Global Parameters are used to assign basic settings to the views. These parameters can be changed for each few when creating a new menuitem.
+</p>
+
+<p><strong>Number of Events on the Frontpage:</strong><br />
+Number of events to display on the frontpage.
+</p>
+
+<p><strong>Categories displayed:</strong><br />
+Number of Categories displayed
+</p>
+
+<p><strong>Filter:</strong><br />
+Show/Hide the Filter ability
+</p>
+
+<p><strong>Display Select:</strong><br />
+Show/Hide the Display Select dropdown
+</p>
+
+<p><strong>Show Icons:</strong><br />
+Show the icons or use alternative text
+</p>
+
+<p><strong>Print Icon:</strong><br />
+Show/Hide the print icon
+</p>
+
+<p><strong>Email Icon:</strong><br />
+Show/Hide the email icon
+</p>
+
+<br />
+
+<div align="center" style="margin-top: 30px; margin-bottom: 30px;">
+<a href="#" onclick="javascript:window.close();"><span class="small">Close Window</span></a>
+</div>
+</body>
+</html>

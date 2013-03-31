@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="Details Layout">
+		<message>
+			<![CDATA[DETAILS LAYOUT DESC]]>
+		</message>
+	</layout>
+	<state>
+		<name>DETAILS LAYOUT</name>
+		<description>DETAILS LAYOUT DESC</description>
+		<url addpath="/administrator/components/com_eventlist/elements">
+			<param name="id" type="event" default="0" label="SELECT EVENT" description="SELECT EVENT DESC" />
+		</url>
+	</state>
+</metadata>

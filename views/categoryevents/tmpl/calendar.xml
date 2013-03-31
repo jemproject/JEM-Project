@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="Categoryevents calendar Layout">
+		<message>
+			<![CDATA[CATEGORYEVENTS CALENDAR LAYOUT DESC]]>
+		</message>
+	</layout>
+	<state>
+		<name>CATEGORYEVENTS CALENDAR LAYOUT</name>
+		<description>CATEGORYEVENTS CALENDAR LAYOUT DESC</description>
+		<fields name="params"  addpath="/administrator/components/com_eventlist/elements">
+		<fieldset name="request">
+			<field name="id" type="categories" default="0" label="COM_EVENTLIST_SELECT_CATEGORY" description="COM_EVENTLIST_SELECT_CATEGORY_DESC" />
+		</fieldset>
+		</fields>
+	
+	</state>
+</metadata>

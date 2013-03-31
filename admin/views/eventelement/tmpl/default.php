@@ -1,0 +1,128 @@
+<?php
+/**
+ * @version 1.1 $Id$
+ * @package Joomla
+ * @subpackage EventList
+ * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @license GNU/GPL, see LICENCE.php
+ * EventList is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License 2
+ * as published by the Free Software Foundation.
+
+ * EventList is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with EventList; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+defined('_JEXEC') or die;
+?>
+
+<form action="index.php?option=com_eventlist&amp;view=eventelement&amp;tmpl=component" method="post" name="adminForm">
+
+<table class="adminform">
+	<tr>
+		<td width="100%">
+			<?php echo JText::_( 'COM_EVENTLIST_SEARCH' ).' '.$this->lists['filter']; ?>
+			<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
+			<button onclick="this.form.submit();"><?php echo JText::_( 'COM_EVENTLIST_GO' ); ?></button>
+			<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_EVENTLIST_RESET' ); ?></button>
+		</td>
+		<td nowrap="nowrap">
+			<?php echo $this->lists['state'];	?>
+		</td>
+	</tr>
+</table>
+
+<table class="adminlist" cellspacing="1">
+	<thead>
+		<tr>
+			<th width="5"><?php echo JText::_( 'COM_EVENTLIST_NUM' ); ?></th>
+			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_EVENT TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
+			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
+			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_START', 'a.times', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
+			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_VENUE', 'loc.venue', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
+			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
+			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_CATEGORY', 'cat.catname', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
+		    <th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_EVENTLIST_PUBLISHED' ); ?></th>
+		</tr>
+	</thead>
+
+	<tfoot>
+		<tr>
+			<td colspan="8">
+				<?php echo $this->pageNav->getListFooter(); ?>
+			</td>
+		</tr>
+	</tfoot>
+
+	<tbody>
+		<?php
+			$k = 0;
+			for ($i=0, $n=count( $this->rows ); $i < $n; $i++) {
+				$row = &$this->rows[$i];
+		?>
+		<tr class="<?php echo "row$k"; ?>">
+			<td><?php echo $this->pageNav->getRowOffset( $i ); ?></td>
+			<td>
+				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_SELECT' );?>::<?php echo $row->title; ?>">
+				<a style="cursor:pointer" onclick="window.parent.elSelectEvent('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->title ); ?>');">
+					<?php echo htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8'); ?>
+				</a></span>
+			</td>
+			<td>
+				<?php
+					//Format date
+					if (ELHelper::isValidDate($row->dates)) {
+						$date = strftime( $this->elsettings->formatdate, strtotime( $row->dates ));
+					} 
+					else {
+						$date		= JText::_('COM_EVENTLIST_OPEN_DATE');
+					}
+					if ( !ELHelper::isValidDate($row->enddates) ) {
+						$displaydate = $date;
+					} else {
+						$enddate 	= strftime( $this->elsettings->formatdate, strtotime( $row->enddates ));
+						$displaydate = $date.' - '.$enddate;
+					}
+
+					echo $displaydate;
+				?>
+			</td>
+			<td>
+				<?php
+					//Prepare time
+					if (!$row->times) {
+						$displaytime = '-';
+					} else {
+						$time = strftime( $this->elsettings->formattime, strtotime( $row->times ));
+						$displaytime = $time.' '.$this->elsettings->timename;
+					}
+					echo $displaytime;
+				?>
+			</td>
+			<td><?php echo $row->venue ? htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+			<td><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+			<td><?php echo $row->catname ? htmlspecialchars($row->catname, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+			<td align="center">
+				<?php $img = $row->published ? 'tick.png' : 'publish_x.png'; ?>
+				<img src="images/<?php echo $img;?>" width="16" height="16" border="0" alt="" />
+			</td>
+		</tr>
+			<?php $k = 1 - $k; } ?>
+	</tbody>
+
+</table>
+
+<p class="copyright">
+	<?php echo ELAdmin::footer( ); ?>
+</p>
+
+<input type="hidden" name="task" value="" />
+<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+</form>

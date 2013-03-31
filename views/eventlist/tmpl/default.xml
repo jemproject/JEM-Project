@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="Simplelist Layout">
+		<message>
+			<![CDATA[SIMPLELIST LAYOUT DESC]]>
+		</message>
+	</layout>
+	<state>
+		<name>SIMPLELIST LAYOUT</name>
+		<description>SIMPLELIST LAYOUT DESC</description>
+		<params>
+			<param name="introtext" type="textarea" default="" label="INTROTEXT FIELD" rows="8" cols="30" description="INTROTEXT FIELD TIP"/>
+			<param name="showintrotext" type="radio" default="0" label="DISPLAY INTROTEXT" description="DISPLAY INTROTEXT TIP">
+				<option value="0">Hide</option>
+				<option value="1">Show</option>
+			</param>
+		</params>
+	</state>
+</metadata>

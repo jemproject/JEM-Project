@@ -1,0 +1,74 @@
+/**
+ * @version 1.1 $Id$
+ * @package Joomla
+ * @subpackage EventList
+ * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @license GNU/GPL, see LICENSE.php
+ * EventList is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License 2
+ * as published by the Free Software Foundation.
+
+ * EventList is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with EventList; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+ * This code is based on GMapsOverlay v1.0
+ * by André Fiedler (http://www.visualdrugs.net) - GNU license.
+ * modified for EventList by Christoph Lukes (http://www.schlu.net)
+ *
+ **/
+
+#gmOverlay {
+	position: absolute;
+	left: 0;
+	width: 100%;
+	background-color: #333;
+	cursor: pointer;
+	z-index: 11;
+}
+
+#gmCenter, #gmBottomContainer {
+	position: absolute;
+	left: 50%;
+	overflow: hidden;
+	background-color: #fff;
+	z-index: 12;
+}
+
+.gmLoading {
+	background: #fff url(../images/loading.gif) no-repeat center;
+}
+
+#gmMap {
+	width: 600px;
+	height: 400px;
+	border: 10px solid #fff;
+}
+
+#gmBottom {
+	font-family: Verdana, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #666;
+	line-height: 1.4em;
+	text-align: left;
+	border: 10px solid #fff;
+	border-top-style: none;
+}
+
+#gmCloseLink {
+	display: block;
+	float: right;
+	width: 80px;
+	height: 22px;
+	background: transparent url(../images/closelabel.gif) no-repeat center;
+	margin: 5px 0;
+}
+
+#gmCaption {
+	margin-right: 71px;
+}

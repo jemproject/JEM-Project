@@ -1,0 +1,130 @@
+<?php
+/**
+ * @version 1.1 $Id$
+ * @package Joomla
+ * @subpackage EventList
+ * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @license GNU/GPL, see LICENSE.php
+ * EventList is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License 2
+ * as published by the Free Software Foundation.
+
+ * EventList is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with EventList; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+defined('_JEXEC') or die;
+
+// Component Helper
+jimport('joomla.application.component.helper');
+
+/**
+ * EventList Component Route Helper
+ * based on Joomla ContentHelperRoute
+ *
+ * @static
+ * @package		Joomla
+ * @subpackage	EventList
+ * @since 0.9
+ */
+class EventListHelperRoute
+{
+	/**
+	 * Determines an EventList Link
+	 *
+	 * @param int The id of an EventList item
+	 * @param string The view
+	 * @since 0.9
+	 *
+	 * @return string determined Link
+	 */
+static	function getRoute($id, $view = 'details')
+	{
+		//Not needed currently but kept because of a possible hierarchic link structure in future
+		$needles = array(
+			$view  => (int) $id
+		);
+
+		//Create the link
+		$link = 'index.php?option=com_eventlist&view='.$view.'&id='. $id;
+
+		if($item = EventListHelperRoute::_findItem($needles)) {
+			$link .= '&Itemid='.$item->id;
+		};
+
+		return $link;
+	}
+
+	/**
+	 * Determines the Itemid
+	 *
+	 * searches if a menuitem for this item exists
+	 * if not the first match will be returned
+	 *
+	 * @param array The id and view
+	 * @since 0.9
+	 *
+	 * @return int Itemid
+	 */
+static	function _findItem($needles = null)
+	{
+		
+        $app		= JFactory::getApplication();
+		$menus		= $app->getMenu('site');
+
+		$component = JComponentHelper::getComponent('com_eventlist');
+		$items	= $menus->getItems('component_id', $component->id);
+		$user 	=  JFactory::getUser();
+		
+		
+		if (JFactory::getUser()->authorise('core.manage')) {
+           $gid = (int) 3;      //viewlevel Special
+           } else {
+               if($user->get('id')) {
+                   $gid = (int) 2;    //viewlevel Registered
+               } else {
+                   $gid = (int) 1;    //viewlevel Public
+               }
+           }
+		$access = (int)$gid;
+		
+		//$access = (int)$user->get('aid');
+		//$access = implode(',', $user->getAuthorisedViewLevels());
+
+		//false if there exists no Eventlist menu item at all
+		if (!$items)  {
+            return false;
+        }
+        else {
+		  //Not needed currently but kept because of a possible hierarchic link structure in future
+		  foreach($needles as $needle => $id)
+		  {
+		      	foreach($items as $item)
+			     {
+
+				    if ((@$item->query['view'] == $needle) && (@$item->query['id'] == $id) && ($item->published == 1) && ($item->access <= $access)) {
+					return $item;
+				    }
+			     }
+
+		      /*	//no menuitem exists -> return first possible match
+		      	foreach($items as $item)
+		      	{
+			     	if ($item->published == 1 && $item->access <= $access) {
+				        	return $item;
+			     	}
+		      	}  */
+
+		  }
+		}
+
+		return false;
+	}
+}
+?>

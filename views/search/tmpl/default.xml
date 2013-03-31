@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="SEARCH LAYOUT">
+		<message>
+			<![CDATA[SEARCH LAYOUT DESC]]>
+		</message>
+	</layout>
+	<state>
+		<name>SEARCH LAYOUT</name>
+		<description>SEARCH LAYOUT DESC</description>
+		<params addpath="/administrator/components/com_eventlist/elements">
+			<param name="introtext" type="textarea" default="" label="INTROTEXT FIELD" rows="8" cols="30" description="INTROTEXT FIELD TIP"/>
+			<param name="showintrotext" type="radio" default="0" label="DISPLAY INTROTEXT" description="DISPLAY INTROTEXT TIP">
+				<option value="0">Hide</option>
+				<option value="1">Show</option>
+			</param>
+			<param name="top_category" type="categories" default="0" label="SELECT TOP CATEGORY" description="SELECT TOP CATEGORY DESC" />
+			<param name="date_filter_type" type="radio" default="0" label="DATE FILTER TYPE" description="DATE FILTER TYPE TIP">
+				<option value="0">Event start date</option>
+				<option value="1">All event dates</option>
+			</param>
+			<param name="template_suffix" type="text" default="" label="SEARCH TABLE LAYOUT SUFFIX" description="SEARCH TABLE LAYOUT SUFFIX TIP"/>
+		</params>
+	</state>
+</metadata>

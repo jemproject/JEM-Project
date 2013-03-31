@@ -1,0 +1,164 @@
+/**
+ * @version 1.1 $Id$
+ * @package Joomla
+ * @subpackage EventList
+ * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @license GNU/GPL, see LICENSE.php
+ * EventList is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License 2
+ * as published by the Free Software Foundation.
+
+ * EventList is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with EventList; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ **/
+
+/** header icons **/
+.icon-48-archive			{ background-image: url(../images/icon-48-archive.png); }
+.icon-48-elcategories 		{ background-image: url(../images/icon-48-categories.png); }
+.icon-48-categoriesedit 	{ background-image: url(../images/icon-48-categoriesedit.png); }
+.icon-48-cssedit 			{ background-image: url(../images/icon-48-cssedit.png); }
+.icon-48-eventedit 			{ background-image: url(../images/icon-48-eventedit.png); }
+.icon-48-events 			{ background-image: url(../images/icon-48-events.png); }
+.icon-48-groups				{ background-image: url(../images/icon-48-groups.png); }
+.icon-48-groupedit			{ background-image: url(../images/icon-48-groupedit.png); }
+.icon-48-help 				{ background-image: url(../images/icon-48-help.png); }
+.icon-48-home 				{ background-image: url(../images/icon-48-home.png); }
+.icon-48-settings	 		{ background-image: url(../images/icon-48-settings.png); }
+.icon-48-update 			{ background-image: url(../images/icon-48-update.png); }
+.icon-48-users 				{ background-image: url(../images/icon-48-users.png); }
+.icon-48-venues 			{ background-image: url(../images/icon-48-venues.png); }
+.icon-48-venuesedit			{ background-image: url(../images/icon-48-venuesedit.png); }
+.icon-48-housekeeping		{ background-image: url(../images/icon-48-housekeeping.png); }
+.icon-48-plugins			{ background-image: url(../images/icon-48-plugins.png); }
+
+/** linkicons **/
+div.linkicon {
+	text-align: center;
+	margin-right: 5px;
+	margin-bottom: 5px;
+}
+
+div.linkicon a {
+	display: block;
+	border: 1px solid #f0f0f0;
+	height: 97px;
+	width: 108px;
+	color: #666;
+	vertical-align: middle;
+	text-decoration: none;
+}
+
+div.linkicon a:hover {
+	border-left: 1px solid #eee;
+	border-top: 1px solid #eee;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	background: #f9f9f9;
+	color: #0B55C4;
+}
+
+div.linkicon img  { padding: 10px 0; margin: 0 auto; }
+div.linkicon span { display: block; text-align: center; }
+
+/**
+ * imageselect
+ *
+ * based on com_media
+ */
+
+div.item {
+	float: left;
+	border: 1px solid #ccc;
+	margin: 3px;
+	position: relative;
+}
+
+div.imgBorder {
+	height: 72px;
+	vertical-align: middle;
+	width: 88px;
+	overflow: hidden;
+}
+
+div.imgBorder a {
+	height: 72px;
+	width: 88px;
+	display: block;
+	cursor: pointer;
+}
+
+div.imgBorder a:hover {
+	height: 72px;
+	width: 88px;
+	background-color: #f0f0f0;
+	color : #FF6600;
+}
+
+div.controls {
+	text-align: center;
+	height: 20px;
+	line-height: 20px;
+	background: #f9fcf9;
+	border-top: 1px solid #ddd;
+}
+
+div.controls img {
+	vertical-align: middle;
+}
+
+div.imageinfo {
+	background: #f9f9f9;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	width: 88px;
+	height: 15px;
+	vertical-align: middle;
+	text-align: center;
+	overflow: hidden;
+}
+
+div.image {
+/*	padding-top: 10px; removed because of the button icons */
+}
+div.pnav {
+	padding: 5px;
+	text-align: center;
+	background: #f3f3f3;
+	border: 1px solid #ccc;
+	overflow: hidden;
+}
+
+div.imghead {
+	padding: 3px;
+	border: 1px solid #ccc;
+}
+
+/* Form validation */
+.invalid { border-color: #ff0000; }
+label.invalid { color: #ff0000; }
+
+
+/* other */
+.copyright
+{ font-size: 0.85em; text-align: center; margin: 1em 0; color: #aaa; }
+
+div.clear
+{ border: 0; clear: both; float: none; height: 1px; line-height: 1px; }
+
+.el_centerimg {
+	text-align: center;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 0px;
+}
+
+div#page-parameters fieldset.adminform .el-spacer {
+  background-color:lightgrey;
+  padding:5px 0px;
+}
