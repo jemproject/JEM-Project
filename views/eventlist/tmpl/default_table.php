@@ -176,6 +176,7 @@ defined( '_JEXEC' ) or die;
   			
     			<td headers="el_date" align="left">
     				<strong>
+    				<?php if (ELHelper::isValidDate($row->dates)): ?>
     					<?php echo ELOutput::formatdate($row->dates, $row->times); ?>
     					
     					<?php
@@ -183,6 +184,9 @@ defined( '_JEXEC' ) or die;
     						echo ' - '.ELOutput::formatdate($row->enddates, $row->endtimes);
     					endif;
     					?>
+    					<?php else: ?>
+    						<?php echo JText::_('COM_EVENTLIST_OPEN_DATE'); ?>
+    					<?php endif; ?>
     				</strong>
     				
 					<?php

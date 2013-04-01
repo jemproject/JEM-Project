@@ -278,6 +278,19 @@ class EventListModelCategory extends JModelLegacy
 			return false;
 		}
 
+		
+		// Check if image was selected
+		jimport('joomla.filesystem.file');
+		$format 	= JFile::getExt(JPATH_SITE.'/images/eventlist/categories/'.$row->image);
+
+		$allowable 	= array ('gif', 'jpg', 'png');
+		if (in_array($format, $allowable)) {
+			$row->image = $row->image;
+		} else {
+			$row->image = '';
+		}
+		
+		
 		if (!$row->id) {
 			$row->ordering = $row->getNextOrder();
 		}
