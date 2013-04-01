@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-defined ( '_JEXEC' ) or die ( 'Restricted access' );
+defined ( '_JEXEC' ) or die;
 ?>
 &nbsp;<!-- this is a trick for IE7... otherwise the first table inside the tab is shifted right ! -->
 <table class="adminform" id="el-attachments">

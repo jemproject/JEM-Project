@@ -19,12 +19,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-defined('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die;
 
 JHTML::_('behavior.tooltip');
 ?>
 
-<form action="index.php?option=com_eventlist&controller=attendees&tmpl=component" method="post" name="adminForm">
+<form action="index.php?option=com_eventlist&controller=attendees&tmpl=component" method="post" id="adminForm" name="adminForm">
 
 <table class="adminform">
 	<tr>

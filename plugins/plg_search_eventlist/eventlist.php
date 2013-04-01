@@ -20,7 +20,7 @@
  */
 
 // no direct access
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die;
 
 $mainframe->registerEvent( 'onSearch', 'plgSearchEventlist' );
 $mainframe->registerEvent( 'onSearchAreas', 'plgSearchEventlistAreas' );

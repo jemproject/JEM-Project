@@ -20,18 +20,18 @@
  */
 
 // no direct access
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die;
 ?>
 
 <?php if (count((array)$this->venues)) : ?>
 
-<h2><?php echo JText::_('My Venues'); ?></h2>
+<h2><?php echo JText::_('COM_EVENTLIST_MY_VENUES'); ?></h2>
 
 <table class="eventtable" width="<?php echo $this->elsettings->tablewidth; ?>" border="0" cellspacing="0" cellpadding="0" summary="venues list">
 	<thead>
 		<tr>
-			<th id="el_title" class="sectiontableheader" align="left"><?php echo JText::_('VENUE'); ?></th>
-			<th id="el_city" class="sectiontableheader" align="left"><?php echo JText::_('CITY'); ?></th>
+			<th id="el_title" class="sectiontableheader" align="left"><?php echo JText::_('COM_EVENTLIST_VENUE'); ?></th>
+			<th id="el_city" class="sectiontableheader" align="left"><?php echo JText::_('COM_EVENTLIST_CITY'); ?></th>
 		</tr>
 	</thead>
 	<tbody>

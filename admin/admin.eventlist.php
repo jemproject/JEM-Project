@@ -20,7 +20,7 @@
  */
 
 // no direct access
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die;
 
 //Require classes
 require_once (JPATH_COMPONENT_SITE.DS.'helpers'.DS.'helper.php');

@@ -19,10 +19,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-defined('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die;
 ?>
 
-<form action="index.php" method="post" name="adminForm">
+<form action="index.php" method="post" name="adminForm" id="adminForm">
 
 		<?php if($this->ftp): ?>
 				<fieldset class="adminform">
