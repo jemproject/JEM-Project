@@ -210,10 +210,9 @@ class EventListModelEventList extends JModelLegacy
 		$filter_order		= $this->getState('filter_order');
 		$filter_order_dir	= $this->getState('filter_order_dir');
 		
-		$clean_filter = JFilterInput::getInstance(); 
 		
-		$filter_order		= $clean_filter->clean($filter_order, 'cmd');
-		$filter_order_dir	= $clean_filter->clean($filter_order_dir, 'word');
+		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_dir	= JFilterInput::getinstance()->clean($filter_order_dir, 'word');
 		
 		
 		

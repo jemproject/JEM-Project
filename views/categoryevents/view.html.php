@@ -46,7 +46,18 @@ class EventListViewCategoryevents extends JViewLegacy
 		$document 	=  JFactory::getDocument();
 		$menu		=  $app->getMenu();
 		$elsettings =  ELHelper::config();
-		$item    	= $menu->getActive();
+		//$item    	= $menu->getActive();
+		
+		//get menu information
+		$menu		= $app->getMenu();
+		if ($menu->getActive() == $menu->getDefault()) {
+        $item = $menu->getActive();
+         }else{
+	     $item =    $menu->getDefault();
+         }
+		
+		
+		
 		$params 	=  $app->getParams();
 		$uri 		=  JFactory::getURI();
 		$pathway 	=  $app->getPathWay();
@@ -137,7 +148,7 @@ class EventListViewCategoryevents extends JViewLegacy
 			$category->text	= $category->catdescription;
 			$category->title 	= $category->catname;
 			JPluginHelper::importPlugin('content');
-			$results = $app->triggerEvent( 'onPrepareContent', array( &$category, &$params, 0 ));
+			$results = $app->triggerEvent( 'onContentPrepare', array( &$category, &$params, 0 ));
 			$catdescription = $category->text;
 		}
 

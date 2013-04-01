@@ -133,7 +133,7 @@ defined( '_JEXEC' ) or die;
 	<?php
 	if ($this->noevents == 1) :
 		?>
-		<<tr align="center"><td colspan="0"><?php echo JText::_( 'COM_EVENTLIST_NO_EVENTS' ); ?></td></tr>
+		<tr align="center"><td colspan="0"><?php echo JText::_( 'COM_EVENTLIST_NO_EVENTS' ); ?></td></tr>
 		<?php
 	else :
 

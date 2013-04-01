@@ -27,11 +27,7 @@ JHTML::_('behavior.modal');
 	<p class="buttons">
 			<?php echo ELOutput::mailbutton( $this->row->slug, 'details', $this->params ); ?>
 			<?php echo ELOutput::printbutton( $this->print_link, $this->params ); ?>
-			<?php if ($this->params->get('event_ical', 1)): ?>
-				<?php $img = JHTML::image(JURI::base().'components/com_eventlist/assets/images/iCal2.0.png', JText::_('COM_EVENTLIST_EXPORT_ICS')); ?>
-				<?php echo JHTML::link( JRoute::_(EventlistHelperRoute::getRoute($this->row->slug).'&format=raw&layout=ics', false), 
-				                        $img ); ?>
-			<?php endif; ?>
+			<?php echo ELOutput::icalbutton($this->row->slug, 'details'); ?>
 	</p>
 
 <?php if ($this->params->def( 'show_page_title', 1 )) : ?>

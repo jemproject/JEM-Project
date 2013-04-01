@@ -46,7 +46,15 @@ class EventListViewVenueevents extends JViewLegacy
 		$document 	=  JFactory::getDocument();
 		$menu		=  $app->getMenu();
 		$elsettings =  ELHelper::config();
-		$item    	= $menu->getActive();
+		//$item    	= $menu->getActive();
+		//get menu information
+		$menu		= $app->getMenu();
+		if ($menu->getActive() == $menu->getDefault()) {
+        $item = $menu->getActive();
+         }else{
+	     $item =    $menu->getDefault();
+         }
+		
 		$params 	=  $app->getParams('com_eventlist');
 		$uri 		=  JFactory::getURI();
 
@@ -136,7 +144,7 @@ class EventListViewVenueevents extends JViewLegacy
 			$venue->text	= $venue->locdescription;
 			$venue->title 	= $venue->venue;
 			JPluginHelper::importPlugin('content');
-			$results = $app->triggerEvent( 'onPrepareContent', array( &$venue, &$params, 0 ));
+			$results = $app->triggerEvent( 'onContentPrepare', array( &$venue, &$params, 0 ));
 			$venuedescription = $venue->text;
 		}
     	$allowedtoeditvenue = ELUser::editaccess($elsettings->venueowner, $venue->created, $elsettings->venueeditrec, $elsettings->venueedit);
