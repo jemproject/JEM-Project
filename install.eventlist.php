@@ -100,7 +100,7 @@ if (is_a($modules, 'JXMLElement') && count($modules->children()))
         }
 
         // Copy language files
-        $element = & $module->getElementByPath('languages');
+        $element = & $module->getAttribute('languages');
         if ($this->parent->parseLanguages($element, $mclient->id) === false)
         {
             // Install failed, roll back changes
@@ -109,7 +109,7 @@ if (is_a($modules, 'JXMLElement') && count($modules->children()))
         }
 
         // Copy media files
-        $element = & $module->getElementByPath('media');
+        $element = & $module->getAttribute('media');
         if ($this->parent->parseMedia($element, $mclient->id) === false)
         {
             // Install failed, roll back changes
@@ -232,7 +232,7 @@ if (is_a($plugins, 'JXMLElement') && count($plugins->children()))
         }
 
         // Copy all necessary files
-        $element = & $plugin->getElementByPath('files');
+        $element = & $plugin->getAttribute('files');
         if ($this->parent->parseFiles($element, -1) === false)
         {
             // Install failed, roll back changes
@@ -241,7 +241,7 @@ if (is_a($plugins, 'JXMLElement') && count($plugins->children()))
         }
 
         // Copy all necessary files
-        $element = & $plugin->getElementByPath('languages');
+        $element = & $plugin->getAttribute('languages');
         if ($this->parent->parseLanguages($element, 1) === false)
         {
             // Install failed, roll back changes
@@ -250,7 +250,7 @@ if (is_a($plugins, 'JXMLElement') && count($plugins->children()))
         }
 
         // Copy media files
-        $element = & $plugin->getElementByPath('media');
+        $element = & $plugin->getAttribute('media');
         if ($this->parent->parseMedia($element, 1) === false)
         {
             // Install failed, roll back changes
@@ -622,6 +622,20 @@ if ($freshinstall)
         } else
         {
             $status->install[] = array ('message'=>'Try to create directory /images/eventlist/events/small', 'result'=>'failed');
+        }
+        if (JFolder::create(JPATH_SITE.'/images/eventlist/categories'))
+        {
+			$status->install[] = array ('message'=>'Try to create directory /images/eventlist/categories', 'result'=>'success');
+        } else
+        {
+           $status->install[] = array ('message'=>'Try to create directory /images/eventlist/categories', 'result'=>'failed');
+        }
+        if (JFolder::create(JPATH_SITE.'/images/eventlist/categories/small'))
+        {
+			$status->install[] = array ('message'=>'Try to create directory /images/eventlist/categories/small', 'result'=>'success');
+        } else
+        {
+            $status->install[] = array ('message'=>'Try to create directory /images/eventlist/categories/small', 'result'=>'failed');
         }
         if (JFolder::create(JPATH_SITE.'/images/eventlist/venues'))
         {

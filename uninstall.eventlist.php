@@ -38,7 +38,7 @@ $status->plugins = array();
  * ---------------------------------------------------------------------------------------------
  ***********************************************************************************************/
 
-$modules = &$this->manifest->getElementByPath('modules');
+$modules = &$this->manifest->getAttribute('modules');
 if (is_a($modules, 'JXMLElement') && count($modules->children())) {
 
 	foreach ($modules->children() as $module)
@@ -60,7 +60,7 @@ if (is_a($modules, 'JXMLElement') && count($modules->children())) {
 		 * Database Processing Section
 		 * ---------------------------------------------------------------------------------------------
 		 */
-		$db = &JFactory::getDBO();
+		$db = JFactory::getDBO();
 
 		// Lets delete all the module copies for the type we are uninstalling
 		$query = 'SELECT `id`' .
@@ -99,18 +99,18 @@ if (is_a($modules, 'JXMLElement') && count($modules->children())) {
 		 */
 
 		// Remove all necessary files
-		$element = &$module->getElementByPath('files');
+		$element = &$module->getAttribute('files');
 		if (is_a($element, 'JXMLElement') && count($element->children())) {
 			$this->parent->removeFiles($element, -1);
 		}
 
 		// Remove all necessary files
-		$element = &$module->getElementByPath('media');
+		$element = &$module->getAttribute('media');
 		if (is_a($element, 'JXMLElement') && count($element->children())) {
 			$this->parent->removeFiles($element, -1);
 		}
 
-		$element = &$module->getElementByPath('languages');
+		$element = &$module->getAttribute('languages');
 		if (is_a($element, 'JXMLElement') && count($element->children())) {
 			$this->parent->removeFiles($element, $mclient->id);
 		}
@@ -129,7 +129,7 @@ if (is_a($modules, 'JXMLElement') && count($modules->children())) {
  * ---------------------------------------------------------------------------------------------
  ***********************************************************************************************/
 
-$plugins = &$this->manifest->getElementByPath('plugins');
+$plugins = &$this->manifest->getAttribute('plugins');
 if (is_a($plugins, 'JXMLElement') && count($plugins->children())) {
 
 	foreach ($plugins->children() as $plugin)
@@ -167,12 +167,12 @@ if (is_a($plugins, 'JXMLElement') && count($plugins->children())) {
 		 */
 
 		// Remove all necessary files
-		$element = &$plugin->getElementByPath('files');
+		$element = &$plugin->getAttribute('files');
 		if (is_a($element, 'JXMLElement') && count($element->children())) {
 			$this->parent->removeFiles($element, -1);
 		}
 
-		$element = &$plugin->getElementByPath('languages');
+		$element = &$plugin->getAttribute('languages');
 		if (is_a($element, 'JXMLElement') && count($element->children())) {
 			$this->parent->removeFiles($element, 1);
 		}
