@@ -29,7 +29,7 @@ jimport('joomla.application.component.view');
  * @subpackage EventList
  * @since 1.0
  */
-class EventListViewMy extends JView
+class EventListViewMy extends JViewLegacy
 {
     /**
      * Creates the MyItems View

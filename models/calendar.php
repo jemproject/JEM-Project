@@ -18,7 +18,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die ('Restricted access');
+defined('_JEXEC') or die ;
 
 jimport('joomla.application.component.model');
 
@@ -29,7 +29,7 @@ jimport('joomla.application.component.model');
  * @subpackage EventList
  * @since		0.9
  */
-class EventListModelCalendar extends JModel
+class EventListModelCalendar extends JModelLegacy
 {
     /**
      * Events data array

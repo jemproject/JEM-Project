@@ -31,7 +31,7 @@ jimport('joomla.application.component.model');
  * @subpackage EventList
  * @since		0.9
  */
-class EventListModelGroups extends JModel
+class EventListModelGroups extends JModelLegacy
 {
 	/**
 	 * Events data array

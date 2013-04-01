@@ -30,7 +30,7 @@ jimport('joomla.html.pagination');
  * @subpackage EventList
  * @since		1.0
  */
-class EventListModelMy extends JModel
+class EventListModelMy extends JModelLegacy
 {
     /**
      * Events data array

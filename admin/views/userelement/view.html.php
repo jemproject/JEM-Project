@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die;
 
 jimport( 'joomla.application.component.view');
 
@@ -30,17 +30,17 @@ jimport( 'joomla.application.component.view');
  * @subpackage EventList
  * @since 1.1
  */
-class EventListViewUserElement extends JView {
+class EventListViewUserElement extends JViewLegacy {
 
 	function display($tpl = null)
 	{
-		$mainframe = &JFactory::getApplication();
+		$mainframe = JFactory::getApplication();
 		
 		//initialise variables
-		$document	= & JFactory::getDocument();
-		$user 		= & JFactory::getUser();
+		$document	=  JFactory::getDocument();
+		$user 		=  JFactory::getUser();
 		$elsettings = ELAdmin::config();
-		$db = &JFactory::getDBO();
+		$db = JFactory::getDBO();
 		
 		//get var
 		$filter_order		= $mainframe->getUserStateFromRequest( 'com_eventlist.users.filter_order', 'filter_order', 'u.name', 'cmd' );
@@ -51,7 +51,7 @@ class EventListViewUserElement extends JView {
 		//add css to document
 		$document->addStyleSheet('components/com_eventlist/assets/css/eventlistbackend.css');
 		
-		$modelusers = &JModel::getInstance('Users', 'EventlistModel');
+		$modelusers = JModel::getInstance('Users', 'EventlistModel');
 		
 		$users = $modelusers->getData();
 		$pagination = $modelusers->getPagination();

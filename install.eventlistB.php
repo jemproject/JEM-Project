@@ -27,6 +27,8 @@ defined('_JEXEC') or die;
 //load libraries
 $db =  JFactory::getDBO();
 jimport('joomla.filesystem.folder');
+jimport( 'joomla.utilities.xmlelement' );
+
 
 $status = new JObject();
 $status->modules = array ();
@@ -40,8 +42,8 @@ $status->install = array ();
  * ---------------------------------------------------------------------------------------------
  ***********************************************************************************************/
 
-$modules = & $this->manifest->getAttribute('modules');
-if (is_a($modules, 'JXMLElement') && count($modules->children()))
+$modules =  $this->manifest->getAttribute('modules');
+if (is_a($modules, 'JSimpleXMLElement') && count($modules->children()))
 {
 
     foreach ($modules->children() as $module)
@@ -91,7 +93,7 @@ if (is_a($modules, 'JXMLElement') && count($modules->children()))
         }
 
         // Copy all necessary files
-        $element = & $module->getElementByPath('files');
+        $element = & $module->getAttribute('files');
         if ($this->parent->parseFiles($element, -1) === false)
         {
             // Install failed, roll back changes
@@ -100,7 +102,7 @@ if (is_a($modules, 'JXMLElement') && count($modules->children()))
         }
 
         // Copy language files
-        $element = & $module->getElementByPath('languages');
+        $element = & $module->getAttribute('languages');
         if ($this->parent->parseLanguages($element, $mclient->id) === false)
         {
             // Install failed, roll back changes
@@ -109,7 +111,7 @@ if (is_a($modules, 'JXMLElement') && count($modules->children()))
         }
 
         // Copy media files
-        $element = & $module->getElementByPath('media');
+        $element = & $module->getAttribute('media');
         if ($this->parent->parseMedia($element, $mclient->id) === false)
         {
             // Install failed, roll back changes
@@ -155,7 +157,7 @@ if (is_a($modules, 'JXMLElement') && count($modules->children()))
                     return false;
                 }
 
-                // Make visible evertywhere if site module
+                // Make visible everywhere if site module
                 if ($mclient->id == 0)
                 {
                     $query = 'REPLACE INTO `#__modules_menu` (moduleid,menuid) values ('.$db->Quote($row->id).',0)';
@@ -184,8 +186,8 @@ if (is_a($modules, 'JXMLElement') && count($modules->children()))
  * ---------------------------------------------------------------------------------------------
  ***********************************************************************************************/
 
-$plugins = & $this->manifest->getAttribute('plugins');
-if (is_a($plugins, 'JXMLElement') && count($plugins->children()))
+$plugins =  $this->manifest->getAttribute('plugins');
+if (is_a($plugins, 'JSimpleXMLElement') && count($plugins->children()))
 {
 
     foreach ($plugins->children() as $plugin)
@@ -232,7 +234,7 @@ if (is_a($plugins, 'JXMLElement') && count($plugins->children()))
         }
 
         // Copy all necessary files
-        $element = & $plugin->getElementByPath('files');
+        $element = & $plugin->getAttribute('files');
         if ($this->parent->parseFiles($element, -1) === false)
         {
             // Install failed, roll back changes
@@ -241,7 +243,7 @@ if (is_a($plugins, 'JXMLElement') && count($plugins->children()))
         }
 
         // Copy all necessary files
-        $element = & $plugin->getElementByPath('languages');
+        $element = & $plugin->getAttribute('languages');
         if ($this->parent->parseLanguages($element, 1) === false)
         {
             // Install failed, roll back changes
@@ -250,7 +252,7 @@ if (is_a($plugins, 'JXMLElement') && count($plugins->children()))
         }
 
         // Copy media files
-        $element = & $plugin->getElementByPath('media');
+        $element = & $plugin->getAttribute('media');
         if ($this->parent->parseMedia($element, 1) === false)
         {
             // Install failed, roll back changes
@@ -290,7 +292,7 @@ if (is_a($plugins, 'JXMLElement') && count($plugins->children()))
 
         } else
         {
-            $row = & JTable::getInstance('plugin');
+            $row =  JTable::getInstance('plugin');
             $row->name = JText::_(ucfirst($pgroup)).' - '.JText::_(ucfirst($pname));
             $row->ordering = $porder;
             $row->folder = $pgroup;
@@ -623,6 +625,20 @@ if ($freshinstall)
         {
             $status->install[] = array ('message'=>'Try to create directory /images/eventlist/events/small', 'result'=>'failed');
         }
+        if (JFolder::create(JPATH_SITE.'/images/eventlist/categories'))
+        {
+			$status->install[] = array ('message'=>'Try to create directory /images/eventlist/categories', 'result'=>'success');
+        } else
+        {
+           $status->install[] = array ('message'=>'Try to create directory /images/eventlist/categories', 'result'=>'failed');
+        }
+        if (JFolder::create(JPATH_SITE.'/images/eventlist/categories/small'))
+        {
+			$status->install[] = array ('message'=>'Try to create directory /images/eventlist/categories/small', 'result'=>'success');
+        } else
+        {
+            $status->install[] = array ('message'=>'Try to create directory /images/eventlist/categories/small', 'result'=>'failed');
+        }
         if (JFolder::create(JPATH_SITE.'/images/eventlist/venues'))
         {
 			$status->install[] = array ('message'=>'Try to create directory /images/eventlist/venues', 'result'=>'success');
@@ -647,7 +663,8 @@ if ($freshinstall)
     if (!$settingsresult)
     {
         //Set the default setting values -> fresh install
-        $query = "INSERT INTO #__eventlist_settings VALUES (1, 0, 1, 0, 1, 1, 1, 0, '', '', '100%', '15%', '25%', '20%', '20%', 'Date', 'Title', 'Venue', 'City', '%d.%m.%Y', '%H.%M', 'h', 1, 0, 1, 1, 1, 1, 1, 2, -2, '1000', -2, -2, -2, 1, '20%', 'Type', 1, 1, 1, 1, 0, '100', '100', '100', 0, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 0, '[title], [a_name], [categories], [times]', 'The event titled [title] starts on [dates]!', 0, 'State', 0, '', 0, 1, '1174491851', '', '')";
+         $query = "";
+
         $db->setQuery($query);
         if (!$db->query())
         {

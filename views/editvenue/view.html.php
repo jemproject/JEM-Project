@@ -31,7 +31,7 @@ jimport( 'joomla.application.component.view');
  * @subpackage EventList
  * @since 0.9
  */
-class EventListViewEditvenue extends JView
+class EventListViewEditvenue extends JViewLegacy
 {
 	/**
 	 * Creates the output for venue submissions

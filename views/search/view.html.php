@@ -31,7 +31,7 @@ jimport( 'joomla.application.component.view');
  * @subpackage EventList
  * @since 0.9
  */
-class EventListViewSearch extends JView
+class EventListViewSearch extends JViewLegacy
 {
 	/**
 	 * Creates the Simple List View

@@ -20,7 +20,7 @@
  */
 
 // no direct access
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined( '_JEXEC' ) or die;
 
 jimport( 'joomla.application.component.view');
 
@@ -31,7 +31,7 @@ jimport( 'joomla.application.component.view');
  * @subpackage EventList
  * @since 1.1
  */
-class EventListViewVenueevents extends JView
+class EventListViewVenueevents extends JViewLegacy
 {
 	/**
 	 * Creates the output for the details view

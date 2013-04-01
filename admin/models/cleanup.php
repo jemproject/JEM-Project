@@ -20,7 +20,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
 jimport('joomla.filesystem.folder');
@@ -33,7 +33,7 @@ jimport('joomla.filesystem.file');
  * @subpackage EventList
  * @since		0.9
  */
-class EventListModelCleanup extends JModel
+class EventListModelCleanup extends JModelLegacy
 {
 	/**
 	 * target

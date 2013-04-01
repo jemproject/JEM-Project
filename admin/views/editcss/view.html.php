@@ -30,7 +30,7 @@ jimport( 'joomla.application.component.view');
  * @subpackage EventList
  * @since 0.9
  */
-class EventListViewEditcss extends JView {
+class EventListViewEditcss extends JViewLegacy {
 
 	function display($tpl = null) {
 

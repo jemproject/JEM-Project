@@ -20,7 +20,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
 
@@ -33,7 +33,7 @@ jimport('joomla.application.component.model');
  * @subpackage EventList
  * @since		0.9
  */
-class EventListModelSampledata extends JModel
+class EventListModelSampledata extends JModelLegacy
 {
 	/**
 	 * files data array

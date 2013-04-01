@@ -31,7 +31,7 @@ jimport('joomla.application.component.model');
  * @subpackage EventList
  * @since		0.9
  */
-class EventListModelCategories extends JModel
+class EventListModelCategories extends JModelLegacy
 {
 	/**
    	 * Top category id

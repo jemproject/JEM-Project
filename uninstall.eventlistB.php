@@ -23,10 +23,10 @@
  */
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die;
 
 jimport('joomla.application.helper');
-
+jimport( 'joomla.utilities.xmlelement' );
 //$nPaths = $this->_paths;
 $status = new JObject();
 $status->modules = array();
@@ -38,8 +38,8 @@ $status->plugins = array();
  * ---------------------------------------------------------------------------------------------
  ***********************************************************************************************/
 
-$modules = &$this->manifest->getElementByPath('modules');
-if (is_a($modules, 'JXMLElement') && count($modules->children())) {
+$modules = &$this->manifest->getAttribute('modules');
+if (is_a($modules, 'JSimpleXMLElement') && count($modules->children())) {
 
 	foreach ($modules->children() as $module)
 	{
@@ -99,19 +99,19 @@ if (is_a($modules, 'JXMLElement') && count($modules->children())) {
 		 */
 
 		// Remove all necessary files
-		$element = &$module->getElementByPath('files');
-		if (is_a($element, 'JXMLElement') && count($element->children())) {
+		$element = &$module->getAttribute('files');
+		if (is_a($element, 'JSimpleXMLElement') && count($element->children())) {
 			$this->parent->removeFiles($element, -1);
 		}
 
 		// Remove all necessary files
-		$element = &$module->getElementByPath('media');
-		if (is_a($element, 'JXMLElement') && count($element->children())) {
+		$element = &$module->getAttribute('media');
+		if (is_a($element, 'JSimpleXMLElement') && count($element->children())) {
 			$this->parent->removeFiles($element, -1);
 		}
 
-		$element = &$module->getElementByPath('languages');
-		if (is_a($element, 'JXMLElement') && count($element->children())) {
+		$element = &$module->getAttribute('languages');
+		if (is_a($element, 'JSimpleXMLElement') && count($element->children())) {
 			$this->parent->removeFiles($element, $mclient->id);
 		}
 
@@ -129,8 +129,8 @@ if (is_a($modules, 'JXMLElement') && count($modules->children())) {
  * ---------------------------------------------------------------------------------------------
  ***********************************************************************************************/
 
-$plugins = &$this->manifest->getElementByPath('plugins');
-if (is_a($plugins, 'JXMLElement') && count($plugins->children())) {
+$plugins = &$this->manifest->getAttribute('plugins');
+if (is_a($plugins, 'JSimpleXMLElement') && count($plugins->children())) {
 
 	foreach ($plugins->children() as $plugin)
 	{
@@ -167,13 +167,13 @@ if (is_a($plugins, 'JXMLElement') && count($plugins->children())) {
 		 */
 
 		// Remove all necessary files
-		$element = &$plugin->getElementByPath('files');
-		if (is_a($element, 'JXMLElement') && count($element->children())) {
+		$element = &$plugin->getAttribute('files');
+		if (is_a($element, 'JSimpleXMLElement') && count($element->children())) {
 			$this->parent->removeFiles($element, -1);
 		}
 
-		$element = &$plugin->getElementByPath('languages');
-		if (is_a($element, 'JXMLElement') && count($element->children())) {
+		$element = &$plugin->getAttribute('languages');
+		if (is_a($element, 'JSimpleXMLElement') && count($element->children())) {
 			$this->parent->removeFiles($element, 1);
 		}
 
