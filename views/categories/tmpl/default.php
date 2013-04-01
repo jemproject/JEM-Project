@@ -99,13 +99,15 @@ $i = 0;
 <?php endforeach; ?>
 
 <!--pagination-->
-<p class="pageslinks">
+<div class="pageslinks">
 	<?php echo $this->pageNav->getPagesLinks(); ?>
-</p>
+</div>
 
-<p class="pagescounter">
-	<?php echo $this->pageNav->getPagesCounter(); ?>
-</p>
+<div class="pagescounter">
+	<?php 
+	//echo $this->pageNav->getPagesCounter(); 
+	?>
+</div>
 
 <!--copyright-->
 

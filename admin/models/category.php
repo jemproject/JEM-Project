@@ -184,7 +184,7 @@ class EventListModelCategory extends JModelLegacy
 				$category->meta_description		= null;
 				$category->meta_keywords		= null;
 				$category->published			= 1;
-				$category->image				= JText::_('SELECTIMAGE');
+				$category->image				= JText::_('COM_EVENTLIST_SELECTIMAGE');
       			$category->color        		= '';
 				$category->access				= 0;
 				$category->attachments	= array();

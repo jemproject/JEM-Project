@@ -22,7 +22,7 @@
 defined('_JEXEC') or die;
 ?>
 
-<form action="index.php?option=com_eventlist&amp;view=venueelement&amp;tmpl=component" method="post" name="adminForm">
+<form action="index.php?option=com_eventlist&amp;view=venueelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
 
 <table class="adminform">
 	<tr>

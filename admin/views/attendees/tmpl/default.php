@@ -25,7 +25,7 @@ JHTML::_('behavior.tooltip');
 $colspan = ($this->event->waitinglist ? 10 : 9);
 ?>
 
-<form action="index.php" method="post" name="adminForm">
+<form action="index.php" method="post" name="adminForm" id="adminForm">
 
 	<table class="adminlist" cellspacing="1">
 		<tr>

@@ -117,9 +117,11 @@ endforeach;
 	<?php echo $this->pageNav->getPagesLinks(); ?>
 </div>
 
-<p class="pagescounter">
-	<?php echo $this->pageNav->getPagesCounter(); ?>
-</p>
+<div class="pagescounter">
+	<?php 
+	//echo $this->pageNav->getPagesCounter(); 
+	?>
+</div>
 
 <!--copyright-->
 

@@ -53,7 +53,7 @@ $this->document->addScript( $this->baseurl.'/components/com_eventlist/assets/js/
 	</div>
 <?php endif; ?>
 
-<form action="<?php echo $this->action; ?>" method="post" id="adminForm">
+<form action="<?php echo $this->action; ?>" method="post" name="adminForm" id="adminForm">
 
 <!--table-->
 <?php if ($this->params->get('template_suffix')):?>
@@ -74,9 +74,6 @@ $this->document->addScript( $this->baseurl.'/components/com_eventlist/assets/js/
 	<?php echo $this->pageNav->getPagesLinks(); ?>
 </div>
 
-<p class="pagescounter">
-	<?php echo $this->pageNav->getPagesCounter(); ?>
-</p>
 
 <p class="copyright">
 	<?php echo ELOutput::footer( ); ?>

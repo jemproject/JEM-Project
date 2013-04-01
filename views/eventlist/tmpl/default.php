@@ -50,7 +50,7 @@ defined( '_JEXEC' ) or die;
 
 <!--table-->
 
-<form action="<?php echo $this->action; ?>" method="post" id="adminForm">
+<form action="<?php echo $this->action; ?>" method="post" name="adminForm" id="adminForm">
 
 <?php echo $this->loadTemplate('table'); ?>
 
