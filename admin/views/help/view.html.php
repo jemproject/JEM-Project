@@ -41,7 +41,6 @@ class EventListViewHelp extends JViewLegacy {
 		//initialise variables
 		$document		=  JFactory::getDocument();
 		$lang 			=  JFactory::getLanguage();
-		$pane 			=  JPane::getInstance('sliders');
 		$user			=  JFactory::getUser();
 
 		//get vars
@@ -76,7 +75,6 @@ class EventListViewHelp extends JViewLegacy {
 		$toc 		= EventListViewHelp::getHelpToc( $helpsearch );
 
 		//assign data to template
-		$this->assignRef('pane'			, $pane);
 		$this->assignRef('langTag'		, $langTag);
 		$this->assignRef('helpsearch'	, $helpsearch);
 		$this->assignRef('toc'			, $toc);

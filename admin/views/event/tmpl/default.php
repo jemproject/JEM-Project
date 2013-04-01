@@ -20,6 +20,21 @@
  */
 
 defined ( '_JEXEC' ) or die;
+
+
+$options = array(
+    'onActive' => 'function(title, description){
+        description.setStyle("display", "block");
+        title.addClass("open").removeClass("closed");
+    }',
+    'onBackground' => 'function(title, description){
+        description.setStyle("display", "none");
+        title.addClass("closed").removeClass("open");
+    }',
+    'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
+    'useCookie' => true, // this must not be a string. Don't use quotes.
+);
+
 ?>
 
 <script type="text/javascript">
@@ -80,9 +95,8 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 <table cellspacing="0" cellpadding="0" border="0" width="100%">
 	<tr>
 	<td valign="top">
-		<?php echo $this->tabs->startPane("event-pane"); ?>
-		
-		<?php	echo $this->tabs->startPanel( JText::_('COM_EVENTLIST_EVENT_INFO_TAB'), 'event' ); ?>
+		<?php echo JHtml::_('tabs.start','event-pane',$options); ?>
+<?php	echo JHtml::_('tabs.panel',JText::_('COM_EVENTLIST_EVENT_INFO_TAB'), 'event' ); ?>
 		&nbsp;<!-- this is a trick for IE7... otherwise the first table inside the tab is shifted right ! -->
 		<table class="adminform">
 			<tr>
@@ -199,13 +213,11 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 				</td>
 			</tr>
 		</table>
-		<?php echo $this->tabs->endPanel(); ?>
+
 		
-		<?php	echo $this->tabs->startPanel( JText::_('COM_EVENTLIST_EVENT_ATTACHMENTS_TAB'), 'event' ); ?>
+		<?php echo JHtml::_('tabs.panel',JText::_('COM_EVENTLIST_EVENT_ATTACHMENTS_TAB'), 'event' ); ?>
 		<?php echo $this->loadTemplate('attachments'); ?>
-		<?php echo $this->tabs->endPanel(); ?>
-		
-		<?php echo $this->tabs->endPane(); ?>
+		<?php echo JHtml::_('tabs.end'); ?>
 	</td>
 
 	<td valign="top" width="320px" style="padding: 7px 0 0 5px">
@@ -217,6 +229,11 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			$visibility = '';
 		}
 		?>
+		<?php
+		$title = JText::_( 'COM_EVENTLIST_DETAILS' );
+			echo JHtml::_('sliders.start', 'det-pane', $options);
+			echo JHtml::_('sliders.panel', $title, 'date');
+			?>
 		<table width="100%"
 			style="border: 1px dashed silver; padding: 5px; margin-bottom: 10px;">
 			<?php if ($this->row->id) { ?>
@@ -313,9 +330,8 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 		</table>
 		
 		<?php
-		echo $this->pane->startPane ( "det-pane" );
-		$title = JText::_ ( 'COM_EVENTLIST_REGISTRATION' );
-		echo $this->pane->startPanel ( $title, 'registra' );
+		$title2 = JText::_( 'COM_EVENTLIST_REGISTRATION' );
+		echo JHtml::_('sliders.panel', $title2, 'registra');
 		?>
 		<table>
 			<tr>
@@ -377,9 +393,8 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 		</table>
 		
 		<?php
-		$title = JText::_ ( 'COM_EVENTLIST_IMAGE' );
-		echo $this->pane->endPanel ();
-		echo $this->pane->startPanel ( $title, 'image' );
+		$title2 = JText::_( 'COM_EVENTLIST_IMAGE' );
+		echo JHtml::_('sliders.panel', $title2, 'image');
 		?>
 		<table>
 			<tr>
@@ -407,10 +422,9 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 		</table>
 			
 		<?php
-		echo $this->pane->endPanel ();
 		
-		$title = JText::_ ( 'COM_EVENTLIST_RECURRING_EVENTS' );
-		echo $this->pane->startPanel ( $title, 'recurrence' );
+		$title4 = JText::_( 'COM_EVENTLIST_RECURRING_EVENTS' );
+		echo JHtml::_('sliders.panel', $title4, 'recurrence');
 		?>
 		<table width="100%" height="200px">
 			<tr>
@@ -481,9 +495,8 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			</script>
 			
 			<?php
-			$title = JText::_ ( 'COM_EVENTLIST_METADATA_INFORMATION' );
-			echo $this->pane->endPanel ();
-			echo $this->pane->startPanel ( $title, 'meta' );
+			$title5 = JText::_( 'COM_EVENTLIST_METADATA_INFORMATION' );
+			echo JHtml::_('sliders.panel', $title5, 'meta');
 			?>
 			<table>
 			<tr>
@@ -539,8 +552,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 		-->
 		</script>
 		<?php
-		echo $this->pane->endPanel ();
-		echo $this->pane->endPane ();
+		echo JHtml::_('sliders.end');
 		?>
 		</td>
 	</tr>

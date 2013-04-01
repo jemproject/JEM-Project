@@ -77,7 +77,7 @@ class EventListModelAttendees extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app = & JFactory::getApplication();;
+		$app =  JFactory::getApplication();;
 
 		$limit		= $app->getUserStateFromRequest( 'com_eventlist.limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest( 'com_eventlist.limitstart', 'limitstart', 0, 'int' );
@@ -199,13 +199,14 @@ class EventListModelAttendees extends JModelLegacy
 	 */
 	function _buildContentOrderBy()
 	{
-		$app = & JFactory::getApplication();
+		$app =  JFactory::getApplication();
 
 		$filter_order		= $app->getUserStateFromRequest( 'com_eventlist.attendees.filter_order', 		'filter_order', 	'u.username', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_eventlist.attendees.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
 		
-		$filter_order		= JFilterInput::clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::clean($filter_order_Dir, 'word');
+		
+		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
 		$orderby 	= ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', u.name';
 
@@ -221,7 +222,7 @@ class EventListModelAttendees extends JModelLegacy
 	 */
 	function _buildContentWhere()
 	{
-		$app = & JFactory::getApplication();
+		$app =  JFactory::getApplication();
 
 		$filter 			= $app->getUserStateFromRequest( 'com_eventlist.attendees.filter', 'filter', '', 'int' );
 		$search 			= $app->getUserStateFromRequest( 'com_eventlist.attendees.search', 'search', '', 'string' );

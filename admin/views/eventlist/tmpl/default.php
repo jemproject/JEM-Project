@@ -20,6 +20,20 @@
  */
 
 defined('_JEXEC') or die;
+
+$options = array(
+    'onActive' => 'function(title, description){
+        description.setStyle("display", "block");
+        title.addClass("open").removeClass("closed");
+    }',
+    'onBackground' => 'function(title, description){
+        description.setStyle("display", "none");
+        title.addClass("closed").removeClass("open");
+    }',
+    'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
+    'useCookie' => true, // this must not be a string. Don't use quotes.
+);
+
 ?>
 	<table cellspacing="0" cellpadding="0" border="0" width="100%">
 		<tr>
@@ -105,8 +119,8 @@ defined('_JEXEC') or die;
 			<td valign="top" width="320px" style="padding: 7px 0 0 5px">
 			<?php
 			$title = JText::_( 'COM_EVENTLIST_EVENT_STATS' );
-			echo $this->pane->startPane( 'stat-pane' );
-			echo $this->pane->startPanel( $title, 'events' );
+			echo JHtml::_('sliders.start','stat-pane',$options);
+			echo JHtml::_('sliders.panel',$title,'events');
 
 				?>
 				<table class="adminlist">
@@ -145,9 +159,9 @@ defined('_JEXEC') or die;
 				</table>
 				<?php
 
-				$title = JText::_( 'COM_EVENTLIST_VENUE_STATS' );
-				echo $this->pane->endPanel();
-				echo $this->pane->startPanel( $title, 'venues' );
+				$title2 = JText::_( 'COM_EVENTLIST_VENUE_STATS' );
+				
+				echo JHtml::_('sliders.panel', $title2, 'venues' );
 
 				?>
 				<table class="adminlist">
@@ -178,10 +192,8 @@ defined('_JEXEC') or die;
 				</table>
 				<?php
 
-				$title = JText::_( 'COM_EVENTLIST_CATEGORY_STATS' );
-				echo $this->pane->endPanel();
-				echo $this->pane->startPanel( $title, 'categories' );
-
+				$title3 = JText::_( 'COM_EVENTLIST_CATEGORY_STATS' );
+				echo JHtml::_('sliders.panel',$title3, 'categories' );
 				?>
 				<table class="adminlist">
 					<tr>
@@ -210,8 +222,7 @@ defined('_JEXEC') or die;
 					</tr>
 				</table>
 				<?php
-				echo $this->pane->endPanel();
-				echo $this->pane->endPane();
+				echo JHtml::_('tabs.end');
 				?>
 			</td>
 		</tr>

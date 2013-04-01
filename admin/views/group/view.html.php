@@ -44,7 +44,6 @@ class EventListViewGroup extends JViewLegacy {
 
 		//initialise variables
 		$document	=  JFactory::getDocument();
-		$pane 		=  JPane::getInstance('sliders');
 		$user 		=  JFactory::getUser();
 
 		//get vars
@@ -113,7 +112,6 @@ class EventListViewGroup extends JViewLegacy {
 
 		//assign data to template
 		$this->assignRef('row'      	, $row);
-		$this->assignRef('pane'      	, $pane);
 		$this->assignRef('template'		, $template);
 		$this->assignRef('lists'      	, $lists);
 

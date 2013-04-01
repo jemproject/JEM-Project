@@ -20,8 +20,23 @@
  */
 
 defined('_JEXEC') or die;
+
+$options = array(
+    'onActive' => 'function(title, description){
+        description.setStyle("display", "block");
+        title.addClass("open").removeClass("closed");
+    }',
+    'onBackground' => 'function(title, description){
+        description.setStyle("display", "none");
+        title.addClass("closed").removeClass("open");
+    }',
+    'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
+    'useCookie' => true, // this must not be a string. Don't use quotes.
+);
+
+
 ?>
-<form action="index.php" method="post" name="adminForm">
+<form action="index.php" method="post" name="adminForm" id="adminForm">
 <table border="1" class="adminform">
 	<tr>
 		<td colspan="2">
@@ -56,9 +71,10 @@ defined('_JEXEC') or die;
 		<td align="left">
 
 			<?php
-			echo $this->pane->startPane("det-pane");
-			$title = JText::_( 'COM_EVENTLIST_SCREEN_HELP' );
-			echo $this->pane->startPanel( $title, 'registra' );
+			echo JHtml::_('sliders.start', 'det-pane', $options);
+			
+			$title2 = JText::_( 'COM_EVENTLIST_SCREEN_HELP' );
+			echo JHtml::_('sliders.panel', $title2, 'registra');
 			?>
 			<table class="adminlist">
 				<?php
@@ -73,8 +89,7 @@ defined('_JEXEC') or die;
 			</table>
 
 			<?php
-			echo $this->pane->endPanel();
-			echo $this->pane->endPane();
+			echo JHtml::_('sliders.end');
 		  	?>
 		</td>
 		<td width="75%">

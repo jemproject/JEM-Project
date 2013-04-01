@@ -42,9 +42,7 @@ class EventListViewCategory extends JViewLegacy {
 		$document	=  JFactory::getDocument();
 		$user 		=  JFactory::getUser();
 		$app 		=  JFactory::getApplication();
-		$pane 		=  JPane::getInstance('sliders');
-		$tabs 		=  JPane::getInstance('tabs');
-		
+
 		// Load the form validation behavior
 		JHTML::_('behavior.formvalidation');
 
@@ -152,8 +150,6 @@ class EventListViewCategory extends JViewLegacy {
 		$this->assignRef('Lists'      	, $Lists);
 		$this->assignRef('row'      	, $row);
 		$this->assignRef('editor'		, $editor);
-		$this->assignRef('pane'			, $pane);
-		$this->assignRef('tabs'			, $tabs);
 		$access2 = ELHelper::getAccesslevelOptions();
 		$this->assignRef('access'	, $access2);
 

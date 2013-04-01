@@ -113,9 +113,9 @@ defined('_JEXEC') or die;
 		</td>
 		<td valign="top" width="320px" style="padding: 7px 0 0 5px">
 			<?php
+			echo JHtml::_('sliders.start'); 
 			$title = JText::_( 'COM_EVENTLIST_DESCRIPTION' );
-			echo $this->pane->startPane("det-pane");
-			echo $this->pane->startPanel( $title, 'desc' );
+			echo JHtml::_('sliders.panel', $title, 'desc' );
 			?>
 			<table>
 				<tr>
@@ -125,8 +125,7 @@ defined('_JEXEC') or die;
 				</tr>
 			</table>
 			<?php
-			echo $this->pane->endPanel();
-			echo $this->pane->endPane();
+			echo JHtml::_('sliders.end');
 			?>
 		</td>
 	</tr>

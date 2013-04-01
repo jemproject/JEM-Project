@@ -35,6 +35,10 @@
 			<option value="0">Hide</option>
 			<option value="1">Show</option>
 		</field>
+		<field name="copyright" type="radio" default="1" label="COM_EVENTLIST_SHOW_COPYRIGHT" description="COM_EVENTLIST_SHOW_COPYRIGHT_DESC">
+			<option value="0">Hide</option>
+			<option value="1">Show</option>
+		</field>
 		
     <field name="events_ical" type="radio" default="1" label="COM_EVENTLIST_SETTINGS_SHOW_EVENTS_ICAL" description="COM_EVENTLIST_SETTINGS_SHOW_EVENTS_ICAL_DESC">
       <option value="0">No</option>

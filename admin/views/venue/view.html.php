@@ -45,8 +45,6 @@ class EventListViewVenue extends JViewLegacy {
 		//initialise variables
 		$editor 	=  JFactory::getEditor();
 		$document	=  JFactory::getDocument();
-		$pane		=  JPane::getInstance('sliders');
-		$tabs 		=  JPane::getInstance('tabs');
 		$user 		=  JFactory::getUser();
 		$db 		=  JFactory::getDBO();
 		$settings	= ELAdmin::config();
@@ -133,8 +131,6 @@ class EventListViewVenue extends JViewLegacy {
 
 		//assign data to template
 		$this->assignRef('row'      	, $row);
-		$this->assignRef('pane'      	, $pane);
-		$this->assignRef('tabs'      	, $tabs);
 		$this->assignRef('editor'      	, $editor);
 		$this->assignRef('settings'     , $settings);
 		$this->assignRef('nullDate'		, $nullDate);

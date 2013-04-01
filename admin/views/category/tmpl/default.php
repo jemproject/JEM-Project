@@ -20,6 +20,22 @@
  */
 
 defined('_JEXEC') or die;
+
+$options = array(
+    'onActive' => 'function(title, description){
+        description.setStyle("display", "block");
+        title.addClass("open").removeClass("closed");
+    }',
+    'onBackground' => 'function(title, description){
+        description.setStyle("display", "none");
+        title.addClass("closed").removeClass("open");
+    }',
+    'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
+    'useCookie' => true, // this must not be a string. Don't use quotes.
+);
+
+
+
 ?>
 
 <script language="javascript" type="text/javascript">
@@ -52,9 +68,9 @@ defined('_JEXEC') or die;
 	<table cellspacing="0" cellpadding="0" border="0" width="100%">
 		<tr>
 			<td valign="top">
-			<?php echo $this->tabs->startPane("det-pane"); ?>
+			<?php echo JHtml::_('tabs.start','det-pane', $options); ?>
 			
-			<?php	echo $this->tabs->startPanel( JText::_('COM_EVENTLIST_EVENT_INFO_TAB'), 'info' ); ?>
+			<?php	echo JHtml::_('tabs.panel',JText::_('COM_EVENTLIST_EVENT_INFO_TAB'), 'info' ); ?>
 				&nbsp;<!-- this is a trick for IE7... otherwise the first table inside the tab is shifted right ! -->
 				<table  class="adminform">
 					<tr>
@@ -106,17 +122,15 @@ defined('_JEXEC') or die;
 						</td>
 					</tr>
 				</table>
-				<?php echo $this->tabs->endPanel(); ?>
-				<?php	echo $this->tabs->startPanel( JText::_('COM_EVENTLIST_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
+				<?php echo JHtml::_('tabs.panel',JText::_('COM_EVENTLIST_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
 				<?php echo $this->loadTemplate('attachments'); ?>
-				<?php echo $this->tabs->endPanel(); ?>
-				<?php echo $this->tabs->endPane(); ?>
+				<?php echo JHtml::_('tabs.end'); ?>
 			</td>
 			<td valign="top" width="320px" style="padding: 7px 0 0 5px">
 			<?php
-			$title = JText::_( 'COM_EVENTLIST_ACCESS' );
-			echo $this->pane->startPane( 'det-pane' );
-			echo $this->pane->startPanel( $title, 'access' );
+			$title2 = JText::_( 'COM_EVENTLIST_ACCESS' );
+			echo JHtml::_('sliders.start', 'det-pane', $options);
+			echo JHtml::_('sliders.panel', $title2, 'access');
 			?>
 			<table>
 				<tr>
@@ -133,9 +147,8 @@ defined('_JEXEC') or die;
 				</tr>
 			</table>
 			<?php
-			$title = JText::_( 'COM_EVENTLIST_GROUP' );
-			echo $this->pane->endPanel();
-			echo $this->pane->startPanel( $title, 'group' );
+			$title2 = JText::_( 'COM_EVENTLIST_GROUP' );
+			echo JHtml::_('sliders.panel', $title2, 'group');
 			?>
 			<table>
 				<tr>
@@ -150,9 +163,8 @@ defined('_JEXEC') or die;
 				</tr>
 			</table>
 			<?php
-			$title = JText::_( 'COM_EVENTLIST_IMAGE' );
-			echo $this->pane->endPanel();
-			echo $this->pane->startPanel( $title, 'catimage' );
+			$title2 = JText::_( 'COM_EVENTLIST_IMAGE' );
+			echo JHtml::_('sliders.panel', $title2, 'image');
 			?>
 			<table>
 				<tr>
@@ -195,9 +207,8 @@ defined('_JEXEC') or die;
         </tr>
 			</table>
 			<?php
-			$title = JText::_( 'COM_EVENTLIST_METADATA_INFORMATION' );
-			echo $this->pane->endPanel();
-			echo $this->pane->startPanel( $title, 'metadata' );
+			$title3 = JText::_( 'COM_EVENTLIST_METADATA_INFORMATION' );
+			echo JHtml::_('sliders.panel', $title3, 'metadata');
 			?>
 		<table>
 		<tr>
@@ -226,8 +237,8 @@ defined('_JEXEC') or die;
 		</table>
 
 		<?php
-		echo $this->pane->endPanel();
-		echo $this->pane->endPane();
+		echo JHtml::_('sliders.end');
+                
 		?>
 		</td>
 	</tr>

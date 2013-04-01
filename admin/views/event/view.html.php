@@ -49,8 +49,6 @@ class EventListViewEvent extends JViewLegacy {
 		$editor 	=  JFactory::getEditor();
 		$db 		=  JFactory::getDBO();
 		$document	=  JFactory::getDocument();
-		$pane 		=  JPane::getInstance('sliders');
-		$tabs 		=  JPane::getInstance('tabs');
 		$user 		=  JFactory::getUser();
 		$elsettings = ELAdmin::config();
 		$acl		=  JFactory::getACL();
@@ -179,8 +177,6 @@ class EventListViewEvent extends JViewLegacy {
 		$this->assignRef('imageselect'	, $imageselect);
 		$this->assignRef('venueselect'	, $venueselect);
 		$this->assignRef('editor'		, $editor);
-		$this->assignRef('tabs'			, $tabs);
-		$this->assignRef('pane'			, $pane);
 		$this->assignRef('task'			, $task);
 		$this->assignRef('nullDate'		, $nullDate);
 		$this->assignRef('elsettings'	, $elsettings);

@@ -43,7 +43,6 @@ class EventListViewImport extends JViewLegacy {
 
 		//initialise variables
 		$document	=  JFactory::getDocument();
-		$pane   	=  JPane::getInstance('sliders');
 		$user 		=  JFactory::getUser();
 
 		//build toolbar

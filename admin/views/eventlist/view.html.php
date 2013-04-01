@@ -39,7 +39,6 @@ class EventListViewEventList extends JViewLegacy {
 
 		//initialise variables
 		$document	=  JFactory::getDocument();
-		$pane   	=  JPane::getInstance('sliders');
 		$user 		=  JFactory::getUser();
 
 		//build toolbar
@@ -69,7 +68,6 @@ class EventListViewEventList extends JViewLegacy {
 		
 		
 		//assign vars to the template
-		$this->assignRef('pane'			, $pane);
 		$this->assignRef('events'		, $events);
 		$this->assignRef('venue'		, $venue);
 		$this->assignRef('category'		, $category);

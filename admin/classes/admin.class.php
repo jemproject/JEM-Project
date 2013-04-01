@@ -37,8 +37,13 @@ class ELAdmin {
 	*/
 static	function footer( )
 	{
-
-		echo 'EventList by <a href="http://www.schlu.net" target="_blank">schlu.net</a>';
+        $params =  JComponentHelper::getParams('com_eventlist');
+     
+        if ($params->get('copyright') == 1) {
+		echo '<font color="grey">Powered by <a href="http://www.schlu.net" target="_blank">Schlu.net</a> | <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
+        } else {
+	     echo '';   
+        }
 
 	}
 

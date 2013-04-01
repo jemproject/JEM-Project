@@ -291,8 +291,6 @@
 								<!-- <option value="[locid]" <?php if(in_array("[locid]",$meta_key)) { echo "selected=\"selected\""; } ?>>
 								<?php echo JText::_( 'COM_EVENTLIST_CITY
                                 ' ); ?></option> -->
-								<option value="[catsid]" <?php if(in_array("[catsid]",$meta_key)) { echo "selected=\"selected\""; } ?>>
-								<?php echo JText::_( 'COM_EVENTLIST_CATEGORY' ); ?></option>
 								<option value="[dates]" <?php if(in_array("[dates]",$meta_key)) { echo "selected=\"selected\""; } ?>>
 								<?php echo JText::_( 'COM_EVENTLIST_DATE' ); ?></option>
 								<option value="[times]" <?php if(in_array("[times]",$meta_key)) { echo "selected=\"selected\""; } ?>>
@@ -327,7 +325,6 @@
 
 							<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_( 'COM_EVENTLIST_EVENT_TITLE' ); ?>" />
 							<input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php echo JText::_( 'COM_EVENTLIST_VENUE' ); ?>" />
-							<input class="inputbox" type="button" onclick="insert_keyword('[catsid]')" value="<?php echo JText::_( 'COM_EVENTLIST_CATEGORY' ); ?>" />
 							<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_( 'COM_EVENTLIST_DATE' ); ?>" />
 							<p>
 								<input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo JText::_( 'COM_EVENTLIST_EVENT_TIME' ); ?>" />

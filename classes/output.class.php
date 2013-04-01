@@ -37,8 +37,17 @@ class ELOutput {
 	*/
 static function footer( )
 	{
+		
+		$app =  JFactory::getApplication();
+        $params 		=  $app->getParams();
+        
+        if ($params->get('copyright') == 1) {
 		echo '<font color="grey">Powered by <a href="http://www.schlu.net" target="_blank">Schlu.net</a> | <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
-	}
+        } else {
+	     echo '';   
+        }
+		
+		}
 
 	/**
 	* Writes Event submission button
