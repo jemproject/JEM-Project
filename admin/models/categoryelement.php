@@ -96,8 +96,8 @@ class EventListModelCategoryelement extends JModelLegacy
 		$search 			= $app->getUserStateFromRequest( 'com_eventlist.categoryelement.search', 'search', '', 'string' );
 		$search 			= $this->_db->getEscaped( trim(JString::strtolower( $search ) ) );
 		
-		$filter_order		= JFilterInput::clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::clean($filter_order_Dir, 'word');
+		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 		
 		$orderby 	= ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', c.ordering';
 		

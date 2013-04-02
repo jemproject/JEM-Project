@@ -176,9 +176,9 @@ class EventListModelGroups extends JModelLegacy
 		$filter_order		= $app->getUserStateFromRequest( 'com_eventlist.groups.filter_order', 'filter_order', 'name', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_eventlist.groups.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 
-		$clean_filter = JFilterInput::getInstance(); 
-		$filter_order		= $clean_filter->clean($filter_order, 'cmd');
-		$filter_order_Dir	= $clean_filter->clean($filter_order_Dir, 'word');
+		
+		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
 		$orderby 	= ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', name';
 
