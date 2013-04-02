@@ -154,7 +154,7 @@ $options = array(
 	<tr>
 		<td valign="top">
 		<?php echo JHtml::_('tabs.start', 'det-pane', $options); ?>
-		<?php echo JHtml::_('tabs.panel',JText::_('COM_EVENTLIST_EVENT_INFO_TAB'), 'info' ); ?>
+		<?php echo JHtml::_('tabs.panel',JText::_('COM_EVENTLIST_VENUE_INFO_TAB'), 'info' ); ?>
 		&nbsp;<!-- this is a trick for IE7... otherwise the first table inside the tab is shifted right ! -->
 
 	<table  class="adminform">

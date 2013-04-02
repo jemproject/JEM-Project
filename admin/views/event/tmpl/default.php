@@ -313,6 +313,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 					?>
 				</td>
 			</tr>
+		
 		</table>
 
 		<table width="100%"	style="border: 1px dashed silver; padding: 5px; margin-bottom: 10px;">

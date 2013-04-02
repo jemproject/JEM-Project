@@ -114,7 +114,7 @@ class EventListModelEditvenue extends JModelLegacy
 			}
 			
 			//sticky forms
-			$session = &JFactory::getSession();
+			$session = JFactory::getSession();
 			if ($session->has('venueform', 'com_eventlist')) {
 				
 				$venueform 		= $session->get('venueform', 0, 'com_eventlist');
@@ -126,6 +126,7 @@ class EventListModelEditvenue extends JModelLegacy
 				}
 			} else {
 				//prepare output
+				$this->_venue = new stdClass();
 				$this->_venue->id				= '';
 				$this->_venue->venue			= '';
 				$this->_venue->url				= '';

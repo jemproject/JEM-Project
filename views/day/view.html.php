@@ -40,14 +40,14 @@ class EventListViewDay extends JViewLegacy
 	 */
 	function display( $tpl = null )
 	{
-		$app = & JFactory::getApplication();
+		$app =  JFactory::getApplication();
 
 		//initialize variables
-		$document 	= & JFactory::getDocument();
-		$elsettings = & ELHelper::config();
-		$menu		= & JSite::getMenu();
+		$document 	= JFactory::getDocument();
+		$elsettings = ELHelper::config();
+		$menu		= $app->getMenu();
 		$item    	= $menu->getActive();
-		$params 	= & $app->getParams();
+		$params 	= $app->getParams();
 
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/components/com_eventlist/assets/css/eventlist.css');
@@ -58,12 +58,12 @@ class EventListViewDay extends JViewLegacy
 		$limit		= JRequest::getVar('limit', $params->get('display_num'), '', 'int');
 
 		$pop			= JRequest::getBool('pop');
-		$pathway 		= & $app->getPathWay();
+		$pathway 		= $app->getPathWay();
 
 		//get data from model
-		$rows 		= & $this->get('Data');
-		$total 		= & $this->get('Total');
-		$day		= & $this->get('Day');
+		$rows 		= $this->get('Data');
+		$total 		= $this->get('Total');
+		$day		= $this->get('Day');
 		
 		$daydate = strftime( $elsettings->formatdate, strtotime( $day ));
 
@@ -75,7 +75,7 @@ class EventListViewDay extends JViewLegacy
 		}
 
 		//params
-		$params->def( 'page_title', $item->name);
+		$params->def( 'page_title', $item->title);
 
 		if ( $pop ) {//If printpopup set true
 			$params->set( 'popup', 1 );
@@ -84,10 +84,10 @@ class EventListViewDay extends JViewLegacy
 		$print_link = JRoute::_('index.php?view=day&tmpl=component&pop=1');
 
 		//pathway
-		$pathway->setItemName( 1, $item->name );
+		$pathway->setItemName( 1, $item->title );
 
 		//Set Page title
-		if (!$item->name) {
+		if (!$item->title) {
 			$document->setTitle($params->get('page_title'));
 			$document->setMetadata( 'keywords' , $params->get('page_title') );
 		}

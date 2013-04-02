@@ -410,7 +410,7 @@ class EventListModelEvent extends JModelLegacy
 	 */
 	function resetHits($id)
 	{
-		$row  =& $this->getTable('eventlist_events', '');
+		$row  = $this->getTable('eventlist_events', '');
 		$row->load($id);
 		$row->hits = 0;
 		$row->store();

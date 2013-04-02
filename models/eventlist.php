@@ -183,7 +183,7 @@ class EventListModelEventList extends JModelLegacy
 		$orderby	= $this->_buildEventListOrderBy();
 
 		// Get Events from Database ...
-		$query = ' SELECT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription, a.maxplaces, a.waitinglist, '
+		$query = ' SELECT a.id, a.dates, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription, a.maxplaces, a.waitinglist, '
 		       . ' l.venue, l.city, l.state, l.url, l.street, ct.name AS countryname, '
 		       . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 		       . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'

@@ -70,10 +70,10 @@ class EventListModelDay extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app = & JFactory::getApplication();
+		$app =  JFactory::getApplication();
 
 		// Get the paramaters of the active menu item
-		$params 	= & $app->getParams('com_eventlist');
+		$params 	=  $app->getParams('com_eventlist');
 
 		//get the number of events from database
 		$limit       	= $app->getUserStateFromRequest('com_eventlist.eventlist.limit', 'limit', $params->def('display_num', 0), 'int');
@@ -98,10 +98,10 @@ class EventListModelDay extends JModelLegacy
 	 */
 	function setDate($date)
 	{
-		$app = & JFactory::getApplication();
+		$app =  JFactory::getApplication();
 
 		// Get the paramaters of the active menu item
-		$params 	= & $app->getParams('com_eventlist');
+		$params 	=  $app->getParams('com_eventlist');
 		
 		//0 means we have a direct request from a menuitem and without any parameters (eg: calendar module)
 		if ($date == 0) {
@@ -255,8 +255,8 @@ class EventListModelDay extends JModelLegacy
 		$filter_order		= $this->getState('filter_order');
 		$filter_order_dir	= $this->getState('filter_order_dir');
 		
-		$filter_order		= JFilterInput::clean($filter_order, 'cmd');
-		$filter_order_dir	= JFilterInput::clean($filter_order_dir, 'word');
+		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_dir	= JFilterInput::getinstance()->clean($filter_order_dir, 'word');
 
 		$orderby 	= ' ORDER BY '.$filter_order.' '.$filter_order_dir.', a.dates, a.times';
 
@@ -271,9 +271,9 @@ class EventListModelDay extends JModelLegacy
 	 */
 	function _buildEventListWhere()
 	{
-		$app = & JFactory::getApplication();
+		$app =  JFactory::getApplication();
 
-		$user		= & JFactory::getUser();
+		$user		=  JFactory::getUser();
 		if (JFactory::getUser()->authorise('core.manage')) {
            $gid = (int) 3;      //viewlevel Special
            } else {
@@ -286,7 +286,7 @@ class EventListModelDay extends JModelLegacy
 		$nulldate 	= '0000-00-00';
 
 		// Get the paramaters of the active menu item
-		$params 	= & $app->getParams();
+		$params 	=  $app->getParams();
 
 		// First thing we need to do is to select only published events
 		$where = ' WHERE a.published = 1';
@@ -349,7 +349,7 @@ class EventListModelDay extends JModelLegacy
    */
   function getCategories($id)
   {
-    $user   = & JFactory::getUser();
+    $user   =  JFactory::getUser();
     if (JFactory::getUser()->authorise('core.manage')) {
            $gid = (int) 3;      //viewlevel Special
            } else {

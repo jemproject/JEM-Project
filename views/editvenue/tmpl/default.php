@@ -24,7 +24,7 @@ defined( '_JEXEC' ) or die;
 ?>
 
 <script type="text/javascript">
-	Window.onDomReady(function(){
+	window.addEvent('domready', function() { 
 		var form = document.getElementById('adminForm');
 		var map = $('map1');
 		

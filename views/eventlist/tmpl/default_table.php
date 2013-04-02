@@ -294,7 +294,7 @@ defined( '_JEXEC' ) or die;
 				
 				if ($this->elsettings->showatte == 1) :
 				?>
-					<td headers="el_atte" align="center" valign="top"><?php echo $row->regCount; ?></td>
+					<td headers="el_atte" align="center" valign="top"><?php echo $row->attendees; ?></td>
 				<?php
 				endif;
 				?>

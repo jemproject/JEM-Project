@@ -236,7 +236,9 @@ class EventListViewEvent extends JViewLegacy {
 		$this->assignRef('editor'      	, $editor);
 		$this->assignRef('imageselect' 	, $imageselect);
 		$this->assignRef('published' 	, $published);
-		$this->assignRef('request_url'	, $uri->toString());
+		
+		$uri2 = $uri->toString();
+		$this->assignRef('request_url'	, $uri2);
 		$this->assignRef('elsettings'	, $elsettings);
 		$this->assignRef('lists'  		, $lists);
 
