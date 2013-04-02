@@ -8,11 +8,12 @@
 	<state>
 		<name>CATEGORYEVENTS CALENDAR LAYOUT</name>
 		<description>CATEGORYEVENTS CALENDAR LAYOUT DESC</description>
-		<fields name="params"  addpath="/administrator/components/com_eventlist/elements">
-		<fieldset name="request">
+		<url >
+		<fields name="request" addfieldpath="/administrator/components/com_eventlist/elements">
+        <fieldset name="request">
 			<field name="id" type="categories" default="0" label="COM_EVENTLIST_SELECT_CATEGORY" description="COM_EVENTLIST_SELECT_CATEGORY_DESC" />
 		</fieldset>
 		</fields>
-	
+		</url>
 	</state>
 </metadata>

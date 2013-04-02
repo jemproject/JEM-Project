@@ -80,7 +80,7 @@ class EventListModelCategoryelement extends JModelLegacy
 	 */
 	function getData()
 	{
-		$app =  JFactory::getApplication();
+		$app = & JFactory::getApplication();
 		
 		static $items;
 
@@ -126,10 +126,9 @@ class EventListModelCategoryelement extends JModelLegacy
 			$search_rows = $this->_db->loadResultArray();					
 		}
 		
-		$query = 'SELECT c.*, u.name AS editor, g.title AS groupname, gr.name AS catgroup'
+		$query = 'SELECT c.*, u.name AS editor, g.name AS groupname, gr.name AS catgroup'
 					. ' FROM #__eventlist_categories AS c'
-				//	. ' LEFT JOIN #__groups AS g ON g.id = c.access'
-				    . ' LEFT JOIN #__viewlevels AS g ON g.id = c.access'
+					. ' LEFT JOIN #__groups AS g ON g.id = c.access'
 					. ' LEFT JOIN #__users AS u ON u.id = c.checked_out'
 					. ' LEFT JOIN #__eventlist_groups AS gr ON gr.id = c.groupid'
 					. $where
@@ -137,10 +136,7 @@ class EventListModelCategoryelement extends JModelLegacy
 					;
 		$this->_db->setQuery( $query );
 		$rows = $this->_db->loadObjectList();
-		
-	// for debugging	
-	//	print_r($query);
-		
+				
 		//establish the hierarchy of the categories
 		$children = array();
 		

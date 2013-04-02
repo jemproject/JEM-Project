@@ -9,14 +9,12 @@
 		<name>COM_EVENTLIST_DETAILED_CATEGORIES_LAYOUTB</name>
 		<description>COM_EVENTLIST_DETAILED_CATEGORIES_LAYOUT_DESCB</description>
     
+		<!--<config addfieldpath="/administrator/components/com_eventlist/elements">-->
 		<config>
+		<fields name="params"><fieldset name="basic" label="basic">
 		
-		<fields name="params">
-		
-		<fieldset name="basic" label="basic">
-		<url addpath="/administrator/components/com_eventlist/elements">
       <field name="id" type="categories" default="0" label="COM_EVENTLIST_SELECT_CATEGORY" description="SELECT_CATEGORY_DESC" />
-    </url>
+   
 			<field name="detcat_nr" type="text" size="1" default="3" label="COM_EVENTLIST_DET_CATEGORIES_PREVIEW" description="COM_EVENTLIST_DET_CATEGORIES_PREVIEW_DESC" />
 			<field name="cat_num" type="text" size="2" default="4" label="COM_EVENTLIST_CAT_DISPLAY" description="COM_EVENTLIST_CAT_DISPLAY_DESC" />
 		</fieldset>

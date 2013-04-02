@@ -52,7 +52,7 @@ class EventListViewVenueevents extends JViewLegacy
 		$catid = JRequest::getInt('id');
 		
 		$vcal = ELHelper::getCalendarTool();                          // initiate new CALENDAR
-		$vcal->setProperty('unique_id', 'category'.$catid.'@'.$mainframe->getCfg('sitename'));
+		// $vcal->setProperty('unique_id', 'category'.$catid.'@'.$mainframe->getCfg('sitename'));
 		$vcal->setConfig( "filename", "category".$catid.".ics" );
 		
 		foreach ( $rows as $row )

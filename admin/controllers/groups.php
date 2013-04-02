@@ -94,7 +94,7 @@ class EventListControllerGroups extends EventListController
 
 		// Error if checkedout by another administrator
 		if ($model->isCheckedOut( $user->get('id') )) {
-			$this->setRedirect( 'index.php?option=com_eventlist&view=groups', JText::_( 'EDITED BY ANOTHER ADMIN' ) );
+			$this->setRedirect( 'index.php?option=com_eventlist&view=groups', JText::_( 'COM_EVENTLIST_EDITED_BY_ANOTHER_ADMIN' ) );
 		}
 
 		$model->checkout();
@@ -125,7 +125,7 @@ class EventListControllerGroups extends EventListController
 		if ($model->store($post)) {
 
 			$link 	= 'index.php?option=com_eventlist&view=groups';
-			$msg	= JText::_( 'GROUP SAVED');
+			$msg	= JText::_( 'COM_EVENTLIST_GROUP_SAVED');
 			
 			$session->clear('groupform', 'com_eventlist');
 			
@@ -164,7 +164,7 @@ class EventListControllerGroups extends EventListController
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
 
-		$msg = $total.' '.JText::_( 'GROUPS DELETED');
+		$msg = $total.' '.JText::_( 'COM_EVENTLIST_GROUPS_DELETED');
 
 		$this->setRedirect( 'index.php?option=com_eventlist&view=groups', $msg );
 	}

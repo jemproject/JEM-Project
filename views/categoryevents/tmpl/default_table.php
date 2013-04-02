@@ -143,6 +143,30 @@ defined( '_JEXEC' ) or die;
 		?>
   			<tr class="sectiontableentry<?php echo ($row->odd +1 ) . $this->params->get( 'pageclass_sfx' ); ?>" >
 
+  			<?php
+				if ($this->elsettings->showeventimage == 1) :
+				?>
+
+					<td headers="el_eventimage" align="left" valign="top">
+						<?php 
+						// echo $row->datimage; 
+						
+						if ($row->datimage) :
+  						$dimage = ELImage::flyercreator($row->datimage, 'event');
+  						echo ELOutput::flyer( $row, $dimage, 'event' );
+				else :
+ 						 echo JHTML::_('image', 'components/com_eventlist/assets/images/noimage.png', JText::_('COM_EVENTLIST_NO_IMAGE'), array('class' => ''));
+						 endif;
+						
+						?>
+					</td>
+
+				<?php
+				endif;
+				?>
+  			
+  			
+  			
     			<td headers="el_date" align="left">
     				<strong>
     			    <?php if (ELHelper::isValidDate($row->dates)): ?>

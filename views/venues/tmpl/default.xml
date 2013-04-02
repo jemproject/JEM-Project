@@ -8,8 +8,9 @@
 	<state>
 		<name>COM_EVENTLIST_VENUES_LAYOUT</name>
 		<description>COM_EVENTLIST_VENUES_LAYOUT_DESC</description>
-		<params>
-			<param name="display_venues_num" type="text" size="2" default="5" label="COM_EVENTLIST_VENUE_NUMBER" description="COM_EVENTLIST_VENUE_NUMBER_TIP" />
-		</params>
+		<config>
+			<fields name="params"><fieldset name="basic" label="basic">
+			<field name="display_venues_num" type="text" size="2" default="5" label="COM_EVENTLIST_VENUE_NUMBER" description="COM_EVENTLIST_VENUE_NUMBER_TIP" />
+		</fieldset></fields></config>
 	</state>
 </metadata>

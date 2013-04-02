@@ -22,9 +22,6 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die();
 
-
-jimport('joomla.form.formfield');
-jimport('joomla.html.parameter.element');
 /**
  * Renders an Category element
  *
@@ -33,68 +30,24 @@ jimport('joomla.html.parameter.element');
  * @since 0.9
  */
 
-class JFormFieldCategories extends JFormField
+class JElementCategories extends JElement
 {
-	
-	
-	
-        var $type = 'categories';
-
-        function getInput() {
-        return JElementCategories::fetchElement($this->name, $this->value, $this->element, $this->options['control']);
-        }
-
-}
-	
-	
-/*	 protected $type = 'Categories';
-	
-	
-         * Method to get a list of options for a list input.
-         *
-         * @return      array           An array of JHtml options.
-        
-        protected function getOptions() 
-        {
-                $db = JFactory::getDBO();
-                $query = $db->getQuery(true);
-                $query->select('id,catname');
-                $query->from('#__eventlist_categories');
-                $db->setQuery((string)$query);
-                $messages = $db->loadObjectList();
-                $options = array();
-                if ($messages)
-                {
-                        foreach($messages as $message) 
-                        {
-                                $options[] = JHtml::_('select.option', $message->id, $message->catname);
-                        }
-                }
-                $options = array_merge(parent::getOptions(), $options);
-                return $options;
-        }
-	*/
-	
-
-	
-	
-class JElementCategories extends JElement {	
-	/**
+   /**
 	* Element name
 	*
 	* @access	protected
 	* @var		string
 	*/
-	var	$_name = 'categories';
+	var	$_name = 'Categories';
 
 	function fetchElement($name, $value, &$node, $control_name)
 	{
-		$doc 		= JFactory::getDocument();
+		$doc 		=& JFactory::getDocument();
 		$fieldName	= $control_name.'['.$name.']';
 
 		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_eventlist'.DS.'tables');
 
-		$category = JTable::getInstance('eventlist_categories', '');
+		$category =& JTable::getInstance('eventlist_categories', '');
 
 		if ($value) {
 			$category->load($value);
@@ -127,9 +80,5 @@ class JElementCategories extends JElement {
 
 		return $html;
 	}
-	
-	
-	
-	
-}  // End of class
+}
 ?>

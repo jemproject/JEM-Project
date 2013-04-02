@@ -60,7 +60,7 @@ class EventListViewEventList extends JViewLegacy
 				
     // initiate new CALENDAR
 		$vcal = ELHelper::getCalendarTool();
-		$vcal->setProperty('unique_id', 'allevents@'.$mainframe->getCfg('sitename'));
+	//	$vcal->setProperty('unique_id', 'allevents@'.$mainframe->getCfg('sitename'));
 		$vcal->setConfig( "filename", "events.ics" );
 		
 		foreach ( $rows as $row )

@@ -8,8 +8,9 @@
 	<state>
 		<name>COM_EVENTLIST_CALENDAR_LAYOUT</name>
 		<description>CALENDAR_LAYOUT_DESC</description>
-		<fields name="params"  addpath="/administrator/components/com_eventlist/elements">
-<fieldset name="basic">
+		<!--<config addfieldpath="/administrator/components/com_eventlist/elements">-->
+		<config>
+		<fields name="params"  ><fieldset name="basic">
 	  	<field name="displayLegend" type="radio" default="1" label="COM_EVENTLIST_DISPLAY_LEGEND" description="COM_EVENTLIST_DISPLAY_LEGEND DESC">
         <option value="0">COM_EVENTLIST_NO</option>
         <option value="1">COM_EVENTLIST_YES</option>
@@ -26,6 +27,6 @@
 			<field name="daylimit" type="text" default="10" label="COM_EVENTLIST_MAX_EVENTS_PER_DAY" description="COM_EVENTLIST_MAX_EVENTS_PER_DAY_DESC" />
     </fieldset>
 </fields>
-
+</config>
 	</state>
 </metadata>

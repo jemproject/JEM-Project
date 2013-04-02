@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="Venue submission">
+	<layout title="COM_EVENTLIST_VENUE_SUBMISSION">
 		<message>
-			<![CDATA[VENUE SUBMISSION DESC]]>
+			<![CDATA[COM_EVENTLIST_VENUE_SUBMISSION_DESC]]>
 		</message>
 	</layout>
 	<state>
-		<name>VENUE SUBMISSION</name>
-		<description>VENUE SUBMISSION DESC</description>
-    <params>
-      <param name="introtext" type="textarea" default="" label="INTROTEXT FIELD" rows="8" cols="30" description="INTROTEXT FIELD TIP"/>
-      <param name="showintrotext" type="radio" default="0" label="DISPLAY INTROTEXT" description="DISPLAY INTROTEXT TIP">
-        <option value="0">Hide</option>
-        <option value="1">Show</option>
-      </param>
-    </params>
+		<name>COM_EVENTLIST_VENUE_SUBMISSION</name>
+		<description>COM_EVENTLIST_VENUE_SUBMISSION_DESC</description>
+   <config>
+			<fields name="params"><fieldset name="basic" label="basic">
+      <field name="introtext" type="textarea" default="" label="COM_EVENTLIST_INTROTEXT_FIELD" rows="8" cols="30" description="COM_EVENTLIST_INTROTEXT_FIELD_TIP"/>
+      <field name="showintrotext" type="radio" default="0" label="COM_EVENTLIST_DISPLAY_INTROTEXT" description="COM_EVENTLIST_DISPLAY_INTROTEXT_TIP">
+        <option value="0">COM_EVENTLIST_HIDE</option>
+        <option value="1">COM_EVENTLIST_SHOW</option>
+      </field>
+    </fieldset></fields></config>
 	</state>
 </metadata>

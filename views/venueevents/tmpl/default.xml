@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="Venueevents Layout">
+	<layout title="COM_EVENTLIST_VENUEVENTS_LAYOUT">
 		<message>
-			<![CDATA[VENUEEVENTS LAYOUT DESC]]>
+			<![CDATA[COM_EVENTLIST_VENUEEVENTS_LAYOUT_DESC]]>
 		</message>
 	</layout>
 	<state>
-		<name>VENUEEVENTS LAYOUT</name>
-		<description>VENUEEVENTS LAYOUT DESC</description>
-		<url addpath="/administrator/components/com_eventlist/elements">
-			<param name="id" type="venue" default="0" label="Select Venue" description="SELECTVENUE" />
-		</url>
+		<name>COM_EVENTLIST_VENUEEVENTS_LAYOUT</name>
+		<description>CO_EVENTLIST_VENUEEVENTS_LAYOUT_DESC</description>
+		<!-- <config addpath="/administrator/components/com_eventlist/elements">-->
+		<config>
+		<fields name="params"><fieldset name="basic" label="basic">
+			<field name="id" type="venue" default="0" label="Select Venue" description="SELECTVENUE" />
+		</fieldset></fields></config>
 	</state>
 </metadata>

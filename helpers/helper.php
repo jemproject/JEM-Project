@@ -694,7 +694,7 @@ static	function getCalendarTool()
 			JFolder::create(JPATH_SITE.DS.'cache'.DS.'com_eventlist');
 		}
 		$vcal->setConfig('directory', JPATH_SITE.DS.'cache'.DS.'com_eventlist');
-		$vcal->setProperty('unique_id', 'events@'.$mainframe->getCfg('sitename'));
+	//	$vcal->setProperty('unique_id', 'events@'.$mainframe->getCfg('sitename'));
 		$vcal->setProperty( "calscale", "GREGORIAN" ); 
     $vcal->setProperty( 'method', 'PUBLISH' );
     if ($timezone_name) {
