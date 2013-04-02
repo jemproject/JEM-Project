@@ -795,7 +795,16 @@ static	function icalAddEvent(&$calendartool, $event)
 		$description .= JText::_( 'CATEGORY' ).': '.implode(', ', $categories).'\\n';
 
 		// url link to event
-		$link = JURI::base().EventlistHelperRoute::getRoute($event->slug);
+		
+		//Original link 
+		//$link = JURI::base().EventlistHelperRoute::getRoute($event->slug);
+		
+		$app =  JFactory::getApplication();
+		$menuitem = $app->getMenu()->getActive()->id;
+		$link = JURI::base().EventlistHelperRoute::getRoute($event->slug).'&Itemid='.$menuitem;
+		
+		
+		
 		$link = JRoute::_( $link );
 		$description .= JText::_( 'COM_EVENTLIST_ICS_LINK' ).': '.$link.'\\n';
 		

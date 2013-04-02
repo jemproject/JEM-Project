@@ -157,7 +157,7 @@ class EventListViewEvent extends JViewLegacy {
 		$imageselect .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_EVENTLIST_UPLOAD')."\" href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_EVENTLIST_UPLOAD')."</a></div></div>\n";
 		$imageselect .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_EVENTLIST_SELECTIMAGE')."\" href=\"$link2\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_EVENTLIST_SELECTIMAGE')."</a></div></div>\n";
 
-		$imageselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectImage('', '".JText::_('COM_EVENTLIST_SELECTIMAGE')."' );\" value=\"".JText::_('Reset')."\" />";
+		$imageselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectImage('', '".JText::_('COM_EVENTLIST_SELECTIMAGE')."' );\" value=\"".JText::_('COM_EVENTLIST_RESET')."\" />";
 		$imageselect .= "\n<input type=\"hidden\" id=\"a_image\" name=\"datimage\" value=\"$row->datimage\" />";
 		
 		// recurrence type

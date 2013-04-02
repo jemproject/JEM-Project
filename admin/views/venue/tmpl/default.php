@@ -350,7 +350,7 @@ $options = array(
 			<td>
 				<input class="inputbox validate-url" name="url" id="url" value="<?php echo $this->row->url; ?>" size="30" maxlength="199" />&nbsp;
 
-				<span class="editlinktip hasTip" title="<?php echo JText::_( 'NOTES' ); ?>::<?php echo JText::_('WEBSITE HINT'); ?>">
+				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_WEBSITE_HINT'); ?>">
 					<?php echo $infoimage; ?>
 				</span>
 			</td>
@@ -369,7 +369,7 @@ $options = array(
               	<label for="map1"><?php echo JText::_( 'COM_EVENTLIST_YES' ); ?></label>
               	<input type="radio" name="map" id="map1" onchange="addrequired();" value="1" <?php echo $this->row->map == 1 ? 'checked="checked"' : ''; ?> class="inputbox" />
           		&nbsp;
-          		<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('ADDRESS NOTICE'); ?>">
+          		<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_ADDRESS_NOTICE'); ?>">
 					<?php echo $infoimage; ?>
 				</span>
 			</td>
@@ -395,7 +395,7 @@ $options = array(
       </td>
       <td>
         <input class="inputbox" name="longitude" id="longitude" onchange="removerequired();" value="<?php echo $this->row->longitude; ?>" size="14" maxlength="25" />
-              <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('LONGITUDE_HINT'); ?>">
+              <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_LONGITUDE_HINT'); ?>">
           <?php echo $infoimage; ?>
         </span>
       </td>

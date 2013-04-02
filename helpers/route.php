@@ -72,32 +72,27 @@ static	function getRoute($id, $view = 'details')
 	 *
 	 * @return int Itemid
 	 */
-static	function _findItem($needles = null)
+static	function _findItem($needles)
 	{
-		
-        $app		= JFactory::getApplication();
-		$menus		= $app->getMenu('site');
-
 		$component = JComponentHelper::getComponent('com_eventlist');
+
+		$app =  JFactory::getApplication();
+
+		$menus	= $app->getMenu();
 		$items	= $menus->getItems('component_id', $component->id);
-		$user 	=  JFactory::getUser();
+		$user 	= JFactory::getUser();
 		
 		
 		if (JFactory::getUser()->authorise('core.manage')) {
-           $gid = (int) 3;      //viewlevel Special
-           } else {
-               if($user->get('id')) {
-                   $gid = (int) 2;    //viewlevel Registered
-               } else {
-                   $gid = (int) 1;    //viewlevel Public
-               }
-           }
-		$access = (int)$gid;
-		
-		//$access = (int)$user->get('aid');
-		//$access = implode(',', $user->getAuthorisedViewLevels());
-
-		//false if there exists no Eventlist menu item at all
+              $access = (int) 3;  //viewlevel Special
+          } else {
+              if($user->get('id')) {
+                  $access = (int) 2;  //viewlevel Registered
+              } else {
+                 $access = (int) 1;   //viewlevel Public
+              }
+          }
+        //false if there exists no Eventlist menu item at all
 		if (!$items)  {
             return false;
         }

@@ -50,11 +50,8 @@ class EventListViewCategoryevents extends JViewLegacy
 		
 		//get menu information
 		$menu		= $app->getMenu();
-		if ($menu->getActive() == $menu->getDefault()) {
-        $item = $menu->getActive();
-         }else{
-	     $item =    $menu->getDefault();
-         }
+		$item = $menu->getActive();
+		
 		
 		
 		
@@ -148,7 +145,7 @@ class EventListViewCategoryevents extends JViewLegacy
 			$category->text	= $category->catdescription;
 			$category->title 	= $category->catname;
 			JPluginHelper::importPlugin('content');
-			$results = $app->triggerEvent( 'onContentPrepare', array( &$category, &$params, 0 ));
+			$results = $app->triggerEvent( 'onContentPrepare', array('com_eventlist.categoryevents', &$category, &$params, 0 ));
 			$catdescription = $category->text;
 		}
 

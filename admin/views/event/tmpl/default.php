@@ -547,7 +547,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 		<script type="text/javascript">
 		<!--
 			starter("<?php
-			echo JText::_ ( 'META ERROR' );
+			echo JText::_ ( 'COM_EVENTLIST_META_ERROR' );
 			?>");	// window.onload is already in use, call the function manualy instead
 		-->
 		</script>

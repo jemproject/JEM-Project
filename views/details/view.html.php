@@ -54,16 +54,9 @@ class EventListViewDetails extends JViewLegacy
 
 		//get menu information
 		$menu		= $app->getMenu();
-		if ($menu->getActive() == $menu->getDefault()) {
-        $item = $menu->getActive();
-         }else{
-	     $item =    $menu->getDefault();
-         }
-	         
+		$item = $menu->getActive();
 		
-		//$item    	= $menu->getActive();
-		//$item       = $menu->getDefault();
-		
+	//	print_r($item);
 		
 		$params 	= $app->getParams('com_eventlist');
 
@@ -152,7 +145,7 @@ class EventListViewDetails extends JViewLegacy
 			$row->text	= $row->datdescription;
 
 			JPluginHelper::importPlugin('content');
-			$results = $dispatcher->trigger('onContentPrepare', array (& $row, & $params, 0));
+			$results = $dispatcher->trigger('onContentPrepare', array ('com_eventlist.detail', & $row, & $params, 0));
 			$row->datdescription = $row->text;
 		}
 
@@ -162,7 +155,7 @@ class EventListViewDetails extends JViewLegacy
 			$row->text	=	$row->locdescription;
 
 			JPluginHelper::importPlugin('content');
-			$results = $dispatcher->trigger('onContentPrepare', array (& $row, & $params, 0));
+			$results = $dispatcher->trigger('onContentPrepare', array ('com_eventlist.detail', & $row, & $params, 0));
 			$row->locdescription = $row->text;
 		}
 

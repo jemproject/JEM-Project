@@ -128,8 +128,8 @@ defined('_JEXEC') or die;
 				$overlib 		= JText::_( 'COM_EVENTLIST_CREATED_AT' ).': '.$delivertime.'<br />';
 				$overlib		.= JText::_( 'COM_EVENTLIST_WITH_IP' ).': '.$ip.'<br />';
 				if ($row->modified != '0000-00-00 00:00:00') {
-					$overlib 	.= JText::_( 'EDITED AT' ).': '.$edittime.'<br />';
-					$overlib 	.= JText::_( 'EDITED FROM' ).': '.$row->editor.'<br />';
+					$overlib 	.= JText::_( 'COM_EVENTLIST_EDITED_AT' ).': '.$edittime.'<br />';
+					$overlib 	.= JText::_( 'COM_EVENTLIST_EDITED_FROM' ).': '.$row->editor.'<br />';
 				}
 				?>
 				<span class="editlinktip hasTip" title="<?php echo JText::_('COM_EVENTLIST_VENUE_STATS'); ?>::<?php echo $overlib; ?>">

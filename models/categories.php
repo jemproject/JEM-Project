@@ -150,7 +150,7 @@ class EventListModelCategories extends JModelLegacy
 					$category->text		= $category->catdescription;
 					$category->title 	= $category->catname;
 					JPluginHelper::importPlugin('content');
-					$results = $app->triggerEvent( 'onContentPrepare', array( &$category, &$params, 0 ));
+					$results = $app->triggerEvent( 'onContentPrepare', array( 'com_eventlist.categories', &$category, &$params, 0 ));
 					$category->catdescription = $category->text;
 				}
 				

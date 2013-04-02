@@ -114,7 +114,7 @@ class EventListModelVenues extends JModelLegacy
 					$venue->text	= $venue->locdescription;
 					$venue->title 	= $venue->venue;
 					JPluginHelper::importPlugin('content');
-					$results = $app->triggerEvent( 'onContentPrepare', array( &$venue, &$params, 0 ));
+					$results = $app->triggerEvent( 'onContentPrepare', array( 'com_eventlist.venues', &$venue, &$params, 0 ));
 					$venue->locdescription = $venue->text;
 				}
 
