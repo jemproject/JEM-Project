@@ -68,8 +68,8 @@ static	function postUpload($post_files, $object)
 			}
 			// check extension
 			
-			
-			if (!in_array(end(explode(".", strtolower($file))), $allowed)) {
+			$tmp = explode(".", strtolower($file));
+			if (!in_array(end($tmp), $allowed)) {
 				JError::raiseWarning(0, JText::_('COM_EVENTLIST_ERROR_ATTACHEMENT_EXTENSION_NOT_ALLOWED').': '.$file);
 				continue;
 			}
@@ -87,7 +87,8 @@ static	function postUpload($post_files, $object)
 					JError::raiseWarning(0, JText::_('COM_EVENTLIST_ERROR_COULD_NOT_CREATE_FOLDER').': '.$path);
 					return false;
 				}
-				JFile::write($path.DS.'index.html', '<html><body bgcolor="#FFFFFF"></body></html>');
+				$text = '<html><body bgcolor="#FFFFFF"></body></html>';
+				JFile::write($path.DS.'index.html', $text);
 			}
 			
 			JFile::copy($post_files['tmp_name'][$k], $path.DS.$file);
