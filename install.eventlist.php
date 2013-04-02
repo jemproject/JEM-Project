@@ -661,7 +661,7 @@ if ($freshinstall)
     if (!$settingsresult)
     {
         //Set the default setting values -> fresh install
-        $query = "INSERT INTO #__eventlist_settings VALUES (1, 0, 1, 0, 1, 1, 1, 0, '', '', '100%', '15%', '25%', '20%', '20%', 'Date', 'Title', 'Venue', 'City', '%d.%m.%Y', '%H.%M', 'h', 1, 0, 1, 1, 1, 1, 1, 2, -2, '1000', -2, -2, -2, 1, '20%', 'Type', 1, 1, 1, 1, 0, '100', '100', '100', 0, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 0, '[title], [a_name], [categories], [times]', 'The event titled [title] starts on [dates]!', 0, 'State', 0, '', 0, 1, '1174491851', '', '')";
+        $query = "INSERT INTO #__eventlist_settings VALUES (1, 2, 1, 1, 1, 1, 1, 1, '1', '1', '100%', '20%', '40%', '20%', '', 'Datum', 'Activiteit', 'Locatie', 'city', '%d.%m.%Y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, 0, 'example@example.com', 0, '1000', -2, -2, -2, 1, '', 'Type', 1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, '[title], [a_name], [catsid], [times]', 'The event titled [title] starts on [dates]!', 1, 0, 'State', '0', 0, 1, 0, '1364604520', '', '', 'NL', 'NL', '100', '10%', 0, 'evimage', '0', 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 'attendee', '10%', 1, 30, 1, 1, 'media/com_eventlist/attachments', '1000', 'txt,csv,htm,html,xml,css,doc,xls,zip,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,tar.gz', 0)";
         $db->setQuery($query);
         if (!$db->query())
         {
