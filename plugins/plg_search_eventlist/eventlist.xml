@@ -14,10 +14,10 @@
 		<filename plugin="eventlist">eventlist.php</filename>
 	</files>
 
-	<languages>
-		<language tag="en-GB">languages/en-GB.plg_search_eventlist.ini</language>
-		<language tag="de-DE">languages/de-DE.plg_search_eventlist.ini</language>
-    	<language tag="fr-FR">languages/fr-FR.plg_search_eventlist.ini</language>
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.plg_search_eventlist.ini</language>
+		<language tag="de-DE">de-DE/de-DE.plg_search_eventlist.ini</language>
+    	<language tag="fr-FR">fr-FR/fr-FR.plg_search_eventlist.ini</language>
 	</languages>
 
 	<config>

@@ -27,6 +27,8 @@ jimport('joomla.utilities.mail');
 
 //Load the Plugin language file out of the administration
 //JPlugin::loadLanguage( 'plg_eventlist_mailer', JPATH_ADMINISTRATOR);
+$lang = JFactory::getLanguage();
+$lang->load('plg_eventlist_mailer', JPATH_ADMINISTRATOR);
 
 include_once(JPATH_SITE.DS.'components'.DS.'com_eventlist'.DS.'helpers'.DS.'route.php');
 

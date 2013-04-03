@@ -14,8 +14,8 @@
 		<filename plugin="mailer">mailer.php</filename>
 	</files>
     
-	<languages>
-		<language tag="en-GB">languages/en-GB.plg_eventlist_mailer.ini</language>
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.plg_eventlist_mailer.ini</language>
 	</languages>
   
 	<config>
