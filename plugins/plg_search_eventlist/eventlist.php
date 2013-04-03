@@ -22,8 +22,17 @@
 // no direct access
 defined( '_JEXEC' ) or die;
 
-$mainframe->registerEvent( 'onSearch', 'plgSearchEventlist' );
-$mainframe->registerEvent( 'onSearchAreas', 'plgSearchEventlistAreas' );
+jimport('joomla.plugin.plugin');
+jimport('joomla.html.parameter');
+
+       
+
+
+class plgSearcheventlist extends JPlugin
+{
+	
+	
+       
 
 //Load the Plugin language file out of the administration
 // JPlugin::loadLanguage( 'plg_search_eventlist', JPATH_ADMINISTRATOR);
@@ -34,19 +43,20 @@ $mainframe->registerEvent( 'onSearchAreas', 'plgSearchEventlistAreas' );
 function __construct(& $subject, $config)
     {
             parent::__construct($subject, $config);
-            $this->loadLanguage();
+            JPlugin::loadLanguage( 'plg_search_eventlist', JPATH_ADMINISTRATOR);
     } 
 /**
  * @return array An array of search areas
  */
-function &plgSearchEventlistAreas() {
-	static $areas = array(
-	'elevents' => 'EVENTS',
-	'elvenues' => 'VENUES',
-	'elcategories' => 'EVENTLIST CATEGORIES'
-	);
-	return $areas;
-}
+function onContentSearchAreas()
+	{
+		static $areas = array(	'elevents' => 'PLG_EVENTLIST_SEARCHBOT_EVENTS',
+								'elvenues' => 'PLG_EVENTLIST_SEARCHBOT_VENUES',
+								'elcategories' => 'PLG_EVENTLIST_SEARCHBOT_EVENTLIST_CATEGORIES'
+							  );
+
+			return $areas;
+	}
 
 /**
  * Categories Search method
@@ -59,24 +69,24 @@ function &plgSearchEventlistAreas() {
  * @param string ordering option, newest|oldest|popular|alpha|category
  * @param mixed An array if restricted to areas, null if search all
  */
-function plgSearchEventlist( $text, $phrase='', $ordering='', $areas=null )
+function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 {
-	$db		=& JFactory::getDBO();
-	$user	=& JFactory::getUser();
+	$db		= JFactory::getDBO();
+	$user	= JFactory::getUser();
 
 	require_once(JPATH_SITE.DS.'components'.DS.'com_eventlist'.DS.'helpers'.DS.'route.php');
 
 	if (is_array( $areas )) {
-		if (!array_intersect( $areas, array_keys( plgSearchEventlistAreas() ) )) {
+		if (!array_intersect( $areas, array_keys( $this->onContentSearchAreas() ) )) {
 			return array();
 		}
 	} else {
-		$areas = array_keys( plgSearchEventlistAreas() );
+		$areas = array_keys( $this->onContentSearchAreas() );
 	}
 
 	// load plugin params info
-	$plugin =& JPluginHelper::getPlugin('search', 'eventlist');
-	$pluginParams = new JParameter( $plugin->params );
+	$plugin = JPluginHelper::getPlugin('search', 'eventlist');
+	$pluginParams = new JRegistry( $plugin->params );
 
 	$limit = $pluginParams->def( 'search_limit', 50 );
 
@@ -85,7 +95,7 @@ function plgSearchEventlist( $text, $phrase='', $ordering='', $areas=null )
 		return array();
 	}
 
-	$searchEventList = $db->Quote(JText::_( 'EVENTLIST' ));
+	$searchEventList = $db->Quote(JText::_( 'PLG_EVENTLIST_SEARCHBOT_EVENTLIST' ));
 
 	$rows = array();
 
@@ -138,6 +148,19 @@ function plgSearchEventlist( $text, $phrase='', $ordering='', $areas=null )
 				$order = 'a.dates, a.times DESC';
 		}
 
+		
+		
+		if (JFactory::getUser()->authorise('core.manage')) {
+           $gid = (int) 3;
+            } else {
+                if($user->get('id')) {
+                   $gid = (int) 2;
+                } else {
+                   $gid = (int) 1;
+                }
+            }
+		
+		
 		$query = 'SELECT a.id, a.title AS title,'
 		. ' a.datdescription AS text,'
 		. ' a.dates AS created,'
@@ -151,7 +174,7 @@ function plgSearchEventlist( $text, $phrase='', $ordering='', $areas=null )
 		. ' AND rel.itemid = a.id'
 		. ' AND a.published = 1'
 		. ' AND c.published = 1'
-		. ' AND c.access <= '.(int) $user->get('aid')
+		. ' AND c.access <= '.(int) $gid
 		. ' GROUP BY a.id '
 		. ' ORDER BY '. $order
 		;
@@ -309,5 +332,6 @@ function plgSearchEventlist( $text, $phrase='', $ordering='', $areas=null )
 	} else if ( $count == 1 ) {
 		return $rows[0];
 	}
+}
 }
 ?>

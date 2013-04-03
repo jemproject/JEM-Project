@@ -48,19 +48,24 @@ static	function postUpload($post_files, $object)
 		$app = JFactory::getApplication();
 		$user = JFactory::getUser();
 		$params = JComponentHelper::getParams('com_eventlist');
+		$elsettings =  ELHelper::config();
 
-		$path = JPATH_SITE.DS.$params->get('attachments_path', 'media'.DS.'com_eventlist'.DS.'attachments').DS.$object;
+		$path = JPATH_SITE.DS.$elsettings->attachments_path.DS.$object;
 		
 		if (!(is_array($post_files) && count($post_files))) {
 			return false;
 		}
 		
-		$allowed = explode(",", $params->get('attachments_types'));
+		$allowed = explode(",", $elsettings->attachments_types);
 		foreach ($allowed as $k => $v) {
 			$allowed[$k] = trim($v);
 		}
 		
-		$maxsize = $params->get('attachments_maxsize', 1000)*1000;
+		$maxsizeinput = $elsettings->attachments_maxsize;
+		$defaultsize = 1000;
+		
+		
+		$maxsize = $maxsizeinput * $defaultsize;
 		foreach ($post_files['name'] as $k => $file)
 		{
 			if (empty($file)) {
@@ -145,6 +150,7 @@ static	function getAttachments($object)
 		jimport('joomla.filesystem.folder');
 		$app = JFactory::getApplication();
 		$params = JComponentHelper::getParams('com_eventlist');
+		$elsettings =  ELHelper::config();
 		
 		$user	=  JFactory::getUser();
 			
@@ -159,7 +165,7 @@ static	function getAttachments($object)
                  }
 
 
-		$path = JPATH_SITE.DS.$params->get('attachments_path', 'media'.DS.'com_eventlist'.DS.'attachments').DS.$object;
+		$path = JPATH_SITE.DS.$elsettings->attachments_path.DS.$object;
 		
 		if (!file_exists($path)) {
 			return array();
@@ -200,7 +206,7 @@ static	function getAttachments($object)
     static	function getAttachmentPath($id) 
 	{		
 		$params = JComponentHelper::getParams('com_eventlist');
-		
+		$elsettings =  ELHelper::config();
 		
 		$user	=  JFactory::getUser();
 			
@@ -229,7 +235,7 @@ static	function getAttachments($object)
 			JError::raiseError(403, JText::_('COM_EVENTLIST_YOU_DONT_HAVE_ACCESS_TO_THIS_FILE'));			
 		}
 		
-		$path = JPATH_SITE.DS.$params->get('attachments_path', 'media'.DS.'com_eventlist'.DS.'attachments').DS.$res->object.DS.$res->file;		
+		$path = JPATH_SITE.DS.$elsettings->attachments_path.DS.$res->object.DS.$res->file;		
 		if (!file_exists($path)) {
 			JError::raiseError(404, JText::_('COM_EVENTLIST_FILE_NOT_FOUND'));
 		}
@@ -251,7 +257,7 @@ static	function getAttachments($object)
 		jimport('joomla.filesystem.folder');
 		$app = JFactory::getApplication();
 		$params = JComponentHelper::getParams('com_eventlist');
-
+		$elsettings =  ELHelper::config();
 		
 		// then get info for files from db
 		$db = JFactory::getDBO();
@@ -266,7 +272,7 @@ static	function getAttachments($object)
 			return false;
 		}
 				
-		$path = JPATH_SITE.DS.$params->get('attachments_path', 'media'.DS.'com_eventlist'.DS.'attachments').DS.$res->object.DS.$res->file;
+		$path = JPATH_SITE.DS.$elsettings->attachments_path.DS.$res->object.DS.$res->file;
 		if (file_exists($path)) {
 			JFile::delete($path);
 		}

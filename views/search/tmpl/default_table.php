@@ -110,54 +110,54 @@ defined( '_JEXEC' ) or die;
 </div>
 <?php endif; ?>
 
-<table class="eventtable" width="<?php echo $this->params->get('tablewidth'); ?>" border="0" cellspacing="0" cellpadding="0" summary="eventlist">
+<table class="eventtable" width="<?php echo $this->elsettings->tablewidth; ?>" border="0" cellspacing="0" cellpadding="0" summary="eventlist">
 
 	<colgroup>
-		<col width="<?php echo $this->params->get('datewidth'); ?>" class="el_col_date" />
-		<?php if ($this->params->get('showtitle') == 1) : ?>
-			<col width="<?php echo $this->params->get('titlewidth'); ?>" class="el_col_title" />
+		<col width="<?php echo $this->elsettings->datewidth; ?>" class="el_col_date" />
+		<?php if ($this->elsettings->showtitle == 1) : ?>
+			<col width="<?php echo $this->elsettings->titlewidth; ?>" class="el_col_title" />
 		<?php endif; ?>
-		<?php if ($this->params->get('showlocate') == 1) :	?>
-			<col width="<?php echo $this->params->get('locationwidth'); ?>" class="el_col_venue" />
+		<?php if ($this->elsettings->showlocate == 1) :	?>
+			<col width="<?php echo $this->elsettings->locationwidth; ?>" class="el_col_venue" />
 		<?php endif; ?>
-		<?php if ($this->params->get('showcity') == 1) :	?>
-			<col width="<?php echo $this->params->get('citywidth'); ?>" class="el_col_city" />
+		<?php if ($this->elsettings->showcity == 1) :	?>
+			<col width="<?php echo $this->elsettings->citywidth; ?>" class="el_col_city" />
 		<?php endif; ?>
-		<?php if ($this->params->get('showstate') == 1) :	?>
-			<col width="<?php echo $this->params->get('statewidth'); ?>" class="el_col_state" />
+		<?php if ($this->elsettings->showstate == 1) :	?>
+			<col width="<?php echo $this->elsettings->statewidth; ?>" class="el_col_state" />
 		<?php endif; ?>
-		<?php if ($this->params->get('showcat') == 1) :	?>
-			<col width="<?php echo $this->params->get('catfrowidth'); ?>" class="el_col_category" />
+		<?php if ($this->elsettings->showcat == 1) :	?>
+			<col width="<?php echo $this->elsettings->catfrowidth; ?>" class="el_col_category" />
 		<?php endif; ?>
 	</colgroup>
 
 	<thead>
 			<tr>
-				<th id="el_date" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->params->get('datename')), 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th id="el_date" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->elsettings->datename), 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php
-				if ($this->params->get('showtitle') == 1) :
+				if ($this->elsettings->showtitle == 1) :
 				?>
-				<th id="el_title" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->params->get('titlename')), 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				endif;
-				if ($this->params->get('showlocate') == 1) :
-				?>
-				<th id="el_location" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->params->get('locationname')), 'l.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th id="el_title" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->elsettings->titlename), 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php
 				endif;
-				if ($this->params->get('showcity') == 1) :
+				if ($this->elsettings->showlocate == 1) :
 				?>
-				<th id="el_city" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->params->get('cityname')), 'l.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th id="el_location" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->elsettings->locationname), 'l.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php
 				endif;
-				if ($this->params->get('showstate') == 1) :
+				if ($this->elsettings->showcity == 1) :
 				?>
-				<th id="el_state" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->params->get('statename')), 'l.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th id="el_city" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->elsettings->cityname), 'l.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php
 				endif;
-				if ($this->params->get('showcat') == 1) :
+				if ($this->elsettings->showstate == 1) :
 				?>
-				<th id="el_category" class="sectiontableheader" align="left"><?php echo $this->escape($this->params->get('catfroname')); ?></th>
+				<th id="el_state" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->elsettings->statename), 'l.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<?php
+				endif;
+				if ($this->elsettings->showcat == 1) :
+				?>
+				<th id="el_category" class="sectiontableheader" align="left"><?php echo $this->escape($this->elsettings->catfroname); ?></th>
 				<?php
 				endif;
 				?>
