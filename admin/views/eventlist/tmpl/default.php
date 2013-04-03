@@ -83,10 +83,10 @@ $options = array(
 
 						/*	$link = 'index.php?option=com_eventlist&amp;view=editcss';
 							EventListViewEventList::quickiconButton( $link, 'icon-48-cssedit.png', JText::_( 'COM_EVENTLIST_EDIT_CSS' ) );
-
+                         */
 							$link = 'index.php?option=com_eventlist&amp;view=cleanup';
 							EventListViewEventList::quickiconButton( $link, 'icon-48-housekeeping.png', JText::_( 'COM_EVENTLIST_CLEANUP' ) );
-							*/
+							
 							
 						}
 
