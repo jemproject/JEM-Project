@@ -360,7 +360,7 @@ defined('_JEXEC') or die;
 
         		var $before_last = "<?php echo JText::_( 'COM_EVENTLIST_BEFORE_LAST' ); ?>";
         		var $last = "<?php echo JText::_( 'COM_EVENTLIST_LAST' ); ?>";
-
+                start_recurrencescript();
         	-->
           </script>
 
