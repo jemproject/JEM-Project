@@ -62,19 +62,19 @@ defined( '_JEXEC' ) or die;
 	
 	<colgroup>
 		<col width="<?php echo $this->elsettings->datewidth; ?>" class="el_col_date" />
-		<?php if ($this->elsettings->showtitle') == 1) : ?>
+		<?php if ($this->elsettings->showtitle == 1) : ?>
 			<col width="<?php echo $this->elsettings->titlewidth; ?>" class="el_col_title" />
 		<?php endif; ?>
-		<?php if ($this->elsettings->showlocate') == 1) :	?>
+		<?php if ($this->elsettings->showlocate == 1) :	?>
 			<col width="<?php echo $this->elsettings->locationwidth; ?>" class="el_col_venue" />
 		<?php endif; ?>
-		<?php if ($this->elsettings->showcity') == 1) :	?>
+		<?php if ($this->elsettings->showcity == 1) :	?>
 			<col width="<?php echo $this->elsettings->citywidth; ?>" class="el_col_city" />
 		<?php endif; ?>
-		<?php if ($this->elsettings->showstate') == 1) :	?>
+		<?php if ($this->elsettings->showstate == 1) :	?>
 			<col width="<?php echo $this->elsettings->statewidth; ?>" class="el_col_state" />
 		<?php endif; ?>
-		<?php if ($this->elsettings->showcat') == 1) :	?>
+		<?php if ($this->elsettings->showcat == 1) :	?>
 			<col width="<?php echo $this->elsettings->catfrowidth; ?>" class="el_col_category" />
 		<?php endif; ?>
 	</colgroup>
