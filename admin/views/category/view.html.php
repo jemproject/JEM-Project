@@ -107,8 +107,10 @@ class EventListViewCategory extends JViewLegacy {
 		$javascript = "onchange=\"javascript:if (document.forms[0].image.options[selectedIndex].value!='') {document.imagelib.src='../images/stories/' + document.forms[0].image.options[selectedIndex].value} else {document.imagelib.src='../images/blank.png'}\"";
 	//	$Lists['imagelist'] 		= JHTML::_('list.images', 'image', $row->image, $javascript, '/images/stories/' );
 	//	$Lists['access'] 			= JHTML::_('list.accesslevel', $row );
-	 //   $Lists['access'] = JHTML::_('access.level', 'access', $row->access); 
-	 $Lists['access'] 			= JHTML::_('access.assetgrouplist', 'access', $row->access);
+	//  $Lists['access'] = JHTML::_('access.level', 'access', $row->access); 
+	$Lists['access'] 			= JHTML::_('access.assetgrouplist', 'access', $row->access);
+	
+	
 		$Lists['parent_id'] 		= eventlist_cats::buildcatselect($categories, 'parent_id', $row->parent_id, 1);
 
 

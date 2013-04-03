@@ -23,13 +23,14 @@ defined('_JEXEC') or die; ?>
 
 <form action="index.php" method="post" name="adminForm" id="adminForm">
 
+
 	<table class="adminform">
 		<tr>
 			<td width="100%">
 			  	<?php echo JText::_( 'COM_EVENTLIST_SEARCH' ); ?>
 				<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-				<button onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_EVENTLIST_GO' ); ?></button>
-				<button onclick="$('search').value='';document.adminForm.submit();"><?php echo JText::_( 'COM_EVENTLIST_RESET' ); ?></button>
+				<button type="submit"><?php echo JText::_( 'COM_EVENTLIST_GO' ); ?></button>
+				<button type="button" onclick="document.id('search').value='';this.form.submit();"><?php echo JText::_( 'COM_EVENTLIST_RESET' ); ?></button>
 			</td>
 			<td nowrap="nowrap">
 			  <?php
@@ -39,11 +40,14 @@ defined('_JEXEC') or die; ?>
 		</tr>
 	</table>
 
+			
+	
+	
 	<table class="adminlist" cellspacing="1">
 	<thead>
 		<tr>
 			<th width="5"><?php echo JText::_( 'COM_EVENTLIST_NUM' ); ?></th>
-			<th width="5"><input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $this->rows ); ?>);" /></th>
+			<th width="5"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="20%"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_ALIAS', 'c.alias', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
       <th width="10px" nowrap="nowrap"><?php echo JText::_( 'COM_EVENTLIST_COLOR' ); ?></th>

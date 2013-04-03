@@ -45,7 +45,7 @@ defined('_JEXEC') or die;
 		<thead>
 			<tr>
 				<th width="5"><?php echo JText::_( 'COM_EVENTLIST_NUM' ); ?></th>
-				<th width="5"><input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $this->rows ); ?>);" /></th>
+				<th width="5"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_EVENT_TIME', 'a.times', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>

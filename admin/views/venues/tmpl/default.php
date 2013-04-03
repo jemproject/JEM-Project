@@ -40,7 +40,7 @@ defined('_JEXEC') or die;
 	<thead>
 		<tr>
 			<th width="5"><?php echo JText::_( 'COM_EVENTLIST_NUM' ); ?></th>
-			<th width="5"><input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $this->rows ); ?>);" /></th>
+			<th width="5"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="20%"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_ALIAS', 'l.alias', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th><?php echo JText::_( 'COM_EVENTLIST_WEBSITE' ); ?></th>

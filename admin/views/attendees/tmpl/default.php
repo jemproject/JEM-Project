@@ -62,7 +62,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 		<thead>
 			<tr>
 				<th width="5"><?php echo JText::_( 'COM_EVENTLIST_NUM' ); ?></th>
-				<th width="5"><input type="checkbox" name="toggle" value="" onClick="checkAll(<?php echo count( $this->rows ); ?>);" /></th>
+				<th width="5"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_NAME', 'u.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_USERNAME', 'u.username', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th class="title"><?php echo JText::_( 'COM_EVENTLIST_EMAIL' ); ?></th>
