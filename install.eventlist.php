@@ -91,7 +91,7 @@ if (is_a($modules, 'JXMLElement') && count($modules->children()))
         }
 
         // Copy all necessary files
-        $element = & $module->getElementByPath('files');
+        $element = & $module->getAttribute('files');
         if ($this->parent->parseFiles($element, -1) === false)
         {
             // Install failed, roll back changes
