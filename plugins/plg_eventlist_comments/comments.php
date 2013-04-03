@@ -28,6 +28,15 @@ include_once(JPATH_SITE.DS.'components'.DS.'com_eventlist'.DS.'helpers'.DS.'rout
 
 class plgEventlistComments extends JPlugin {
 	
+	
+	public function __construct(& $subject, $config)
+    {
+            parent::__construct($subject, $config);
+            $this->loadLanguage();
+    }
+	
+	
+	
 	/**
 	 * Constructor
 	 *

@@ -26,8 +26,16 @@ $mainframe->registerEvent( 'onSearch', 'plgSearchEventlist' );
 $mainframe->registerEvent( 'onSearchAreas', 'plgSearchEventlistAreas' );
 
 //Load the Plugin language file out of the administration
-JPlugin::loadLanguage( 'plg_search_eventlist', JPATH_ADMINISTRATOR);
+// JPlugin::loadLanguage( 'plg_search_eventlist', JPATH_ADMINISTRATOR);
 
+
+
+
+function __construct(& $subject, $config)
+    {
+            parent::__construct($subject, $config);
+            $this->loadLanguage();
+    } 
 /**
  * @return array An array of search areas
  */

@@ -26,7 +26,7 @@ jimport('joomla.event.plugin');
 jimport('joomla.utilities.mail');
 
 //Load the Plugin language file out of the administration
-JPlugin::loadLanguage( 'plg_eventlist_mailer', JPATH_ADMINISTRATOR);
+//JPlugin::loadLanguage( 'plg_eventlist_mailer', JPATH_ADMINISTRATOR);
 
 include_once(JPATH_SITE.DS.'components'.DS.'com_eventlist'.DS.'helpers'.DS.'route.php');
 
@@ -39,6 +39,16 @@ class plgEventlistMailer extends JPlugin {
 	private $_FromName = '';
 	
 	private $_receivers = array();
+	
+	
+	
+	 public function __construct(& $subject, $config)
+    {
+            parent::__construct($subject, $config);
+            $this->loadLanguage();
+    }
+	
+	
 	
 	/**
 	 * Constructor
