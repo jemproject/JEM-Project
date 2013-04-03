@@ -76,8 +76,9 @@ defined('_JEXEC') or die; ?>
 			$link 		= 'index.php?option=com_eventlist&amp;controller=categories&amp;task=edit&amp;cid[]='. $row->id;
 			$grouplink 	= 'index.php?option=com_eventlist&amp;controller=groups&amp;task=edit&amp;cid[]='. $row->groupid;
 			$published 	= JHTML::_('grid.published', $row, $i );
-			$access 	= JHTML::_('grid.access', $row, $i );
+			//$access 	= JHTML::_('grid.access', $row, $i );
 			//$checked 	= JHTML::_('grid.checkedout', $row, $i );
+			$access = $row->groupname;
    		?>
 		<tr class="<?php echo "row$k"; ?>">
 			<td><?php echo $this->pageNav->getRowOffset( $i ); ?></td>
