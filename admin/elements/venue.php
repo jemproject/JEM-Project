@@ -20,6 +20,7 @@
  */
 
 // Check to ensure this file is included in Joomla!
+if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined('_JEXEC') or die();
 
 /**

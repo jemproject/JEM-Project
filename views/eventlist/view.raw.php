@@ -20,6 +20,8 @@
  */
 
 // no direct access
+
+if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined( '_JEXEC' ) or die;
 
 require_once JPATH_SITE.DS.'components'.DS.'com_eventlist'.DS.'classes'.DS.'iCalcreator.class.php';

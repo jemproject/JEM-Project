@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+ if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined( '_JEXEC' ) or die;
 
 jimport('joomla.application.component.controller');
@@ -30,7 +31,7 @@ jimport('joomla.application.component.controller');
  * @subpackage EventList
  * @since 0.9
  */
-class EventListController extends JController
+class EventListController extends JControllerLegacy
 {
 	function __construct()
 	{
