@@ -88,7 +88,7 @@ JHTML::_('behavior.modal');
 		    <dd class="where">
     		<?php if (($this->elsettings->showdetlinkvenue == 1) && (!empty($this->row->url))) : ?>
 
-			    <a href="<?php echo $this->row->url; ?>"><?php echo $this->escape($this->row->venue); ?></a> -
+			    <a target="_blank" href="<?php echo $this->row->url; ?>"><?php echo $this->escape($this->row->venue); ?></a> -
 
 			<?php elseif ($this->elsettings->showdetlinkvenue == 2) : ?>
 
@@ -175,7 +175,7 @@ JHTML::_('behavior.modal');
 
 				<?php if (!empty($this->row->url)) : ?>
 					&nbsp; - &nbsp;
-					<a href="<?php echo $this->row->url; ?>"> <?php echo JText::_( 'COM_EVENTLIST_WEBSITE' ); ?></a>
+					<a target="_blank" href="<?php echo $this->row->url; ?>"> <?php echo JText::_( 'COM_EVENTLIST_WEBSITE' ); ?></a>
 				<?php
 				endif;
 				?>

@@ -45,7 +45,24 @@ defined('_JEXEC') or die;
 		<td width="40%" valign="middle">
 			<?php echo JText::_( 'COM_EVENTLIST_CLEANUP_VENUE_IMG_DESC' ); ?>
 		</td>
-	<tr>
+		</tr>
+		<tr>
+		<td width="10%">
+			<div class="linkicon">
+				<a href="index.php?option=com_eventlist&amp;controller=cleanup&amp;task=cleancategoryimg">
+					<?php echo JHTML::_('image', 'administrator/components/com_eventlist/assets/images/icon-48-cleancategoryimg.png',  JText::_( 'COM_EVENTLIST_CLEANUP_CATEGORY_IMG' ) ); ?>
+					<span><?php echo JText::_( 'COM_EVENTLIST_CLEANUP_CATEGORY_IMG' ); ?></span>
+				</a>
+			</div>
+		</td>
+		<td width="40%" valign="middle">
+			<?php echo JText::_( 'COM_EVENTLIST_CLEANUP_CATEGORY_IMG_DESC' ); ?>
+		</td>
+		
+		
+		
+		
+	
     <td width="10%">
       <div class="linkicon">
         <a href="index.php?option=com_eventlist&amp;controller=cleanup&amp;task=triggerarchive">

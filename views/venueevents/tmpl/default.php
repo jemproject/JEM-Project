@@ -42,7 +42,6 @@ defined( '_JEXEC' ) or die;
 	<!--Venue-->
 	<?php //flyer
 	echo ELOutput::flyer( $this->venue, $this->limage, 'venue' );
-	echo ELOutput::mapicon( $this->venue );
 	?>
 
 	<dl class="location floattext">
@@ -94,6 +93,7 @@ defined( '_JEXEC' ) or die;
 		?>
 	</dl>
 
+	<?php echo ELOutput::mapicon( $this->venue ); ?>
 	<?php
   	if ($this->elsettings->showlocdescription == 1 && $this->venuedescription != '' && $this->venuedescription != '<br />') :
 	?>

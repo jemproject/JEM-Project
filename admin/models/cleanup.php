@@ -75,10 +75,20 @@ class EventListModelCleanup extends JModelLegacy
 
 		if (JRequest::getCmd('task') == 'cleaneventimg') {
 			$target = 'events';
-		} else {
-			$target = 'venues';
+			$this->settarget($target);
 		}
-		$this->settarget($target);
+			
+		if (JRequest::getCmd('task') == 'cleanvenueimg') {
+			$target = 'venues';	
+			$this->settarget($target);
+		}
+			
+		if (JRequest::getCmd('task') == 'cleancategoryimg') {
+			$target = 'categories';
+			$this->settarget($target);
+		}
+		
+		
 	}
 
 	/**
@@ -166,9 +176,13 @@ class EventListModelCleanup extends JModelLegacy
 	{
 		if ($this->_target == 'events') {
 			$field = 'datimage';
-		} else {
+	    }
+		if ($this->_target == 'venues') {
 			$field = 'locimage';
-		}
+	    }			
+		if ($this->_target == 'categories') {
+			$field = 'image';
+	    }			
 
 		$query = 'SELECT '.$field.' FROM #__eventlist_'.$this->_target;
 
