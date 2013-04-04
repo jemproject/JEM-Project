@@ -165,7 +165,7 @@ JHTML::_('behavior.modal');
 
 		<?php //flyer
 		echo ELOutput::flyer( $this->row, $this->limage, 'venue' );
-		echo ELOutput::mapicon( $this->row );
+		
 		?>
 
 		<dl class="location floattext">
@@ -223,7 +223,7 @@ JHTML::_('behavior.modal');
 			endif;
 			?>
 		</dl>
-
+		<?php echo ELOutput::mapicon( $this->row ); ?>
 		<?php if ($this->elsettings->showlocdescription == 1 && $this->row->locdescription != '' && $this->row->locdescription != '<br />') :	?>
 
 			<h2 class="location_desc"><?php echo JText::_( 'COM_EVENTLIST_DESCRIPTION' ); ?></h2>

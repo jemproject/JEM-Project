@@ -30,12 +30,12 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 	<table class="adminlist" cellspacing="1">
 		<tr>
 		  	<td width="80%">
-				<b><?php echo JText::_( 'DATE' ).':'; ?></b>&nbsp;<?php echo $this->event->dates; ?><br />
-				<b><?php echo JText::_( 'EVENT TITLE' ).':'; ?></b>&nbsp;<?php echo htmlspecialchars($this->event->title, ENT_QUOTES, 'UTF-8'); ?>
+				<b><?php echo JText::_( 'COM_EVENTLIST_DATE' ).':'; ?></b>&nbsp;<?php echo $this->event->dates; ?><br />
+				<b><?php echo JText::_( 'COM_EVENTLIST_EVENT_TITLE' ).':'; ?></b>&nbsp;<?php echo htmlspecialchars($this->event->title, ENT_QUOTES, 'UTF-8'); ?>
 			</td>
 			<td width="20%">
-				<div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_EVENTLIST_PRINT'); ?>" onclick="window.open('index.php?option=com_eventlist&amp;view=attendees&amp;layout=print&amp;task=print&amp;tmpl=component&amp;id=<?php echo $this->event->id; ?>', 'popup', 'width=750,height=400,scrollbars=yes,toolbar=no,status=no,resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><?php echo JText::_('PRINT'); ?></a></div></div>
-				<div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_EVENTLIST_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_eventlist&amp;task=export&amp;controller=attendees&amp;tmpl=raw&amp;id=<?php echo $this->event->id; ?>')"><?php echo JText::_('CSV EXPORT'); ?></a></div></div>
+				<div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_EVENTLIST_PRINT'); ?>" onclick="window.open('index.php?option=com_eventlist&amp;view=attendees&amp;layout=print&amp;task=print&amp;tmpl=component&amp;id=<?php echo $this->event->id; ?>', 'popup', 'width=750,height=400,scrollbars=yes,toolbar=no,status=no,resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><?php echo JText::_('COM_EVENTLIST_PRINT'); ?></a></div></div>
+				<div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_EVENTLIST_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_eventlist&amp;task=export&amp;controller=attendees&amp;tmpl=raw&amp;id=<?php echo $this->event->id; ?>')"><?php echo JText::_('COM_EVENTLIST_CSV_EXPORT'); ?></a></div></div>
 			</td>
 		  </tr>
 	</table>
@@ -52,7 +52,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 			</td>
 			<?php if ($this->event->waitinglist): ?>
 			 <td style="text-align:right; white-space:nowrap;">
-			 	<?php echo JText::_( 'State' ).' '.$this->lists['waiting']; ?>
+			 	<?php echo JText::_( 'COM_EVENTLIST_STATE' ).' '.$this->lists['waiting']; ?>
 			</td>
 			<?php endif; ?>
 		</tr>

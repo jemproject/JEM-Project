@@ -247,7 +247,8 @@ position:relative;
 div#eventlist .mapicon2 {
 float: right !important;
 position:relative;	
-top:40px;
+top:-60px;
+right:80px;
 }
 
 

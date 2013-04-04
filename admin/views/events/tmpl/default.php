@@ -244,7 +244,9 @@ defined('_JEXEC') or die;
 					<?php
 					}else {
 					?>
-						<img src="images/publish_x.png" width="16" height="16" border="0" alt="Registration disabled" />
+					<?php echo JHTML::_('image', 'administrator/components/com_eventlist/assets/images/publish_r.png',JText::_('COM_EVENTLIST_NOTES')); ?>
+					
+					
 					<?php
 					}
 					?>

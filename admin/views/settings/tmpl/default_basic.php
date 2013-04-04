@@ -110,59 +110,7 @@
 				</table>
 		  </fieldset>
 
-		  <fieldset class="adminform">
-			<legend><?php echo JText::_( 'COM_EVENTLIST_MAIL_HANDLING' ); ?></legend>
-				<table class="admintable" cellspacing="1">
-				<tbody>
-	  				<tr>
-	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_MAIL_NEW_SUBMISSION' ); ?>::<?php echo JText::_('COM_EVENTLIST_MAIL_NEW_SUBMISSION_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_MAIL_NEW_SUBMISSION' ); ?>
-							</span>
-						</td>
-       					<td valign="top">
-							<?php
-							$mode = 0;
-							if ($this->elsettings->mailinform >= 1) {
-							$mode = 1;
-							} // if
-							?>
-							<select name="mailinform" size="1" class="inputbox" onChange="changemailMode()">
-  								<option value="0"<?php if ($this->elsettings->mailinform == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_EVENTLIST_DISABLED' ); ?></option>
-  								<option value="1"<?php if ($this->elsettings->mailinform == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_EVENTLIST_ONLY_NEW_EVENT' ); ?></option>
-  								<option value="2"<?php if ($this->elsettings->mailinform == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_EVENTLIST_ONLY_NEW_VENUE' ); ?></option>
-		  						<option value="3"<?php if ($this->elsettings->mailinform == 3) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_EVENTLIST_BOTH' ); ?></option>
-							</select>
-       	 				</td>
-      				</tr>
-					<tr id="mail1"<?php if (!$mode) echo ' style="display:none"'; ?>>
-	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_MAIL_RECIPIENT' ); ?>::<?php echo JText::_('COM_EVENTLIST_MAIL_RECIPIENT_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_MAIL_RECIPIENT' ); ?>
-							</span>
-						</td>
-       					<td valign="top">
-							<input type="text" name="mailinformrec" value="<?php echo $this->elsettings->mailinformrec; ?>" size="40" maxlength="220" />
-       	 				</td>
-      				</tr>
-      				<tr>
-	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_MAIL_NEW_USER_SUBMISSION' ); ?>::<?php echo JText::_('COM_EVENTLIST_MAIL_NEW_USER_SUBMISSION_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_MAIL_NEW_USER_SUBMISSION' ); ?>
-							</span>
-						</td>
-       					<td valign="top">
-							<select name="mailinformuser" size="1" class="inputbox">
-  								<option value="0"<?php if ($this->elsettings->mailinformuser == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_EVENTLIST_DISABLED' ); ?></option>
-  								<option value="1"<?php if ($this->elsettings->mailinformuser == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_EVENTLIST_ONLY_NEW_EVENT' ); ?></option>
-  								<option value="2"<?php if ($this->elsettings->mailinformuser == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_EVENTLIST_ONLY_NEW_VENUE' ); ?></option>
-		  						<option value="3"<?php if ($this->elsettings->mailinformuser == 3) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_EVENTLIST_BOTH' ); ?></option>
-							</select>
-       	 				</td>
-      				</tr>
-				</tbody>
-			</table>
-		</fieldset>
+		  
 
 		</td>
         <td width="50%" valign="top">

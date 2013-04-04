@@ -30,6 +30,7 @@ defined( '_JEXEC' ) or die;
 		endif;
 
 		echo ELOutput::printbutton( $this->print_link, $this->params );
+		
 	?>
 </p>
 
@@ -66,19 +67,11 @@ defined( '_JEXEC' ) or die;
 	<?php echo $this->pageNav->getPagesLinks(); ?>
 </div>
 
-<p class="pagescounter">
-	<?php
-	// echo $this->pageNav->getPagesCounter(); 
-	?>
-</p>
+<?php
+echo ELOutput::icalbutton('', 'eventlist');
 
-<?php if ($this->params->get('events_ical', 1)): ?>
-<span class="events-ical">
-	<?php echo JHTML::link( JRoute::_('index.php?option=com_eventlist&view=eventlist&format=raw&layout=ics'),
-                          JHTML::image('components/com_eventlist/assets/images/iCal2.0.png', JText::_('COM_EVENTLIST_EXPORT_ICS'))
-	                        ); ?>
-</span>
-<?php endif; ?>
+?>
+
 
 <p class="copyright">
 	<?php echo ELOutput::footer( ); ?>

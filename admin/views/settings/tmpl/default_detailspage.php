@@ -199,60 +199,6 @@
 			</table>
 		</fieldset>
 		
-		<fieldset class="adminform">
-			<legend><?php echo JText::_( 'COM_EVENTLIST_COMMENTS' ); ?></legend>
-				<table class="admintable" cellspacing="1">
-				<tbody>
-					<tr>
-	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_SUPPORTED_COMMENT_SOLUTIONS' ); ?>::<?php echo JText::_('COM_EVENTLIST_SUPPORTED_COMMENT_SOLUTIONS_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_SUPPORTED_COMMENT_SOLUTIONS' ); ?>
-							</span>
-						</td>
-       					<td valign="top">
-       		 				<?php
-							$checkjcomment 	= file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_jcomments'.DIRECTORY_SEPARATOR.'jcomments.php');
-							$checkjomcomment= file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'jom_comment_bot.php');
-							
-							if ( $checkjcomment){
-								echo '<strong>'.JText::_( 'COM_EVENTLIST_JCOMMENTS' ).': </strong><font color="green">'.JText::_( 'COM_EVENTLIST_AVAILABLE' ).'</font><br />';
-							} else {
-								echo '<strong>'.JText::_( 'COM_EVENTLIST_JCOMMENTS' ).': </strong><font color="red">'.JText::_( 'COM_EVENTLIST_UNAVAILABLE' ).'</font><br />';
-							}
-							
-							if ( $checkjomcomment){
-								echo '<strong>'.JText::_( 'COM_EVENTLIST_JOMCOMMENT' ).': </strong><font color="green">'.JText::_( 'COM_EVENTLIST_AVAILABLE' ).'</font><br />';
-							} else {
-								echo '<strong>'.JText::_( 'COM_EVENTLIST_JOMCOMMENT' ).': </strong><font color="red">'.JText::_( 'COM_EVENTLIST_UNAVAILABLE' ).'</font><br />';
-							}
-							?>
-       	 				</td>
-      				</tr>
-					<tr>
-	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_SELECT_3PD_COMMENT_COMP' ); ?>::<?php echo JText::_('COM_EVENTLIST_SELECT_3PD_COMMENT_COMP_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_SELECT_3PD_COMMENT_COMP' ); ?>
-							</span>
-						</td>
-       					<td valign="top">
-       						<?php
-		   					$commentsystem = array();
-							$commentsystem[] = JHTML::_('select.option', '0', JText::_( 'COM_EVENTLIST_NO_COMMENTS' ) );
-							
-							if ( $checkjcomment ){
-								$commentsystem[] = JHTML::_('select.option', '1', JText::_( 'COM_EVENTLIST_JCOMMENTS' ) );
-							}
-							if ( $checkjomcomment ){
-								$commentsystem[] = JHTML::_('select.option', '2', JText::_( 'COM_EVENTLIST_JOMCOMMENT' ) );
-							}
-							$commentoptions = JHTML::_('select.genericlist', $commentsystem, 'commentsystem', 'size="1" class="inputbox"', 'value', 'text', $this->elsettings->commentsystem );
-							echo $commentoptions;
-        					?>
-       	 				</td>
-      				</tr>
-				</tbody>
-			</table>
-		</fieldset>
 
 	</td>
   </tr>
