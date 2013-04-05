@@ -23,6 +23,9 @@
 if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined('_JEXEC') or die();
 
+jimport('joomla.form.helper');
+JFormHelper::loadFieldClass('list');
+
 /**
  * Renders an venue element
  *
@@ -31,6 +34,24 @@ defined('_JEXEC') or die();
  * @since 1.5
  */
 
+ 
+ class JFormFieldVenue extends JFormFieldList
+{
+	
+	
+	
+        var $type = 'Venue';
+
+        function getInput() {
+        return JElementVenue::fetchElement($this->name, $this->value, $this->element, $this->options['control']);
+        }
+
+}
+ 
+ 
+ 
+ 
+ 
 class JElementVenue extends JElement
 {
    /**

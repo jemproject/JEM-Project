@@ -33,9 +33,14 @@ $cal->setFirstWeekDay(1);
 
 foreach ($this->rows as $row) 
 {
-  $year = JHTML::date( $row->dates, "%Y" );
-  $month = JHTML::date( $row->dates, "%m" );
-  $day = JHTML::date( $row->dates, "%d" );
+ $year = strftime('%Y', strtotime($row->dates));
+ $month = strftime('%m', strtotime($row->dates));
+ $day = strftime('%d', strtotime($row->dates));
+	
+	
+	//  $year = JHTML::date( $row->dates, "%Y" );
+//  $month = JHTML::date( $row->dates, "%m" );
+ // $day = JHTML::date( $row->dates, "%d" );
   if ($this->elsettings->showtime == 1)
   {
   	$time = $row->times;

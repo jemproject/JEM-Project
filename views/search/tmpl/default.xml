@@ -10,7 +10,7 @@
 		<description>COM_EVENTLIST_SEARCH_LAYOUT_DESC</description>
 		<!-- <config addfieldpath="/administrator/components/com_eventlist/elements"> -->
 		<config>
-			<fields name="params"><fieldset name="basic" label="basic">
+			<fields name="request" addfieldpath="/administrator/components/com_eventlist/models/fields"><fieldset name="request" label="basic">
 		
 		<field name="introtext" type="textarea" default="" label="COM_EVENTLIST_INTROTEXT_FIELD" rows="8" cols="30" description="COM_EVENTLIST_INTROTEXT_FIELD_TIP"/>
 			<field name="showintrotext" type="radio" default="0" label="COM_EVENTLIST_DISPLAY_INTROTEXT" description="COM_EVENTLIST_DISPLAY_INTROTEXT_TIP">

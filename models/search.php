@@ -198,7 +198,8 @@ class EventListModelSearch extends JModelLegacy
 
 		// Get the paramaters of the active menu item
 		$params 	=  $app->getParams();
-	  $top_category = $params->get('top_category', 0);
+	   
+		$top_category = $params->get('top_category', 0);
 
 		$task 		= JRequest::getWord('task');
 		

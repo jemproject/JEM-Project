@@ -61,13 +61,7 @@ defined('_JEXEC') or die;
 		$n = count($this->rows);
 		foreach ($this->rows as $row) {
 
-			if (!$row->access) {
-				$access = 'Public';
-			} else if ($row->access == 1) {
-				$access = 'Registered';
-			} else {
-				$access = 'Special';
-			}
+			$access = $row->groupname;
    		?>
 		<tr class="<?php echo "row$k"; ?>">
 			<td width="7"><?php echo $this->pageNav->getRowOffset( $i ); ?></td>

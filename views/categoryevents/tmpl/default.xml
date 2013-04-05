@@ -1,33 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="Categoryevents Layout">
+	<layout title="COM_EVENTLIST_CATEGORYEVENTS_LAYOUT">
 		<message>
-			<![CDATA[CATEGORYEVENTS LAYOUT DESC]]>
+			<![CDATA[COM_EVENTLIST_CATEGORYEVENTS_LAYOUT_DESC]]>
 		</message>
 	</layout>
 	<state>
-		<name>CATEGORYEVENTS LAYOUT</name>
-		<description>CATEGORYEVENTS LAYOUT DESC</description>
-		
-		
-		<!--<config addfieldpath="/administrator/components/com_eventlist/elements">-->
-		<config>
-		<fields name="params"><fieldset name="basic" label="basic">
-		
-			<field name="id" type="categories" default="0" label="SELECT CATEGORY" description="SELECT CATEGORY DESC" />
+		<name>COM_EVENTLIST_CATEGORYEVENTS_LAYOUT</name>
+		<description>COM_EVENTLIST_CATEGORYEVENTS_LAYOUT_DESC</description>
 	
+		<config>
+		<fields name="request" addfieldpath="/administrator/components/com_eventlist/models/fields"><fieldset name="request" label="basic">
+			<field name="id" type="categories" default="0" label="COM_EVENTLIST_SELECT_CATEGORY" description="COM_EVENTLIST_SELECT_CATEGORY_DESC" />
+	
+
 		
-      <field name="displayChilds" type="radio" default="0" label="DISPLAYCHILDS" description="DISPLAYCHILDSDESC">
-        <option value="0">No</option>
-        <option value="1">Yes</option>
+      <field name="displayChilds" type="radio" default="0" label="COM_EVENTLIST_DISPLAYCHILDS" description="COM_EVENTLIST_DISPLAYCHILDSDESC">
+        <option value="0">JNo</option>
+        <option value="1">JYes</option>
       </field>
-      <field name="show_empty" type="radio" default="0" label="SHOWEMPTYCHILD" description="SHOWEMPTYCHILDDESC">
-        <option value="0">No</option>
-        <option value="1">Yes</option>
+      <field name="show_empty" type="radio" default="0" label="COM_EVENTLIST_SHOWEMPTYCHILD" description="COM_EVENTLIST_SHOWEMPTYCHILDDESC">
+        <option value="0">JNo</option>
+        <option value="1">JYes</option>
       </field>
-      <field name="only_first" type="radio" default="0" label="DISPLAYFIRSTOCCURENCEONLY" description="DISPLAYFIRSTOCCURENCEONLYDESC">
-        <option value="0">No</option>
-        <option value="1">Yes</option>
+      <field name="only_first" type="radio" default="0" label="COM_EVENTLIST_DISPLAYFIRSTOCCURENCEONLY" description="COM_EVENTLIST_DISPLAYFIRSTOCCURENCEONLYDESC">
+        <option value="0">JNo</option>
+        <option value="1">JYes</option>
       </field>
     </fieldset></fields></config>
 	</state>

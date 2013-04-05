@@ -237,7 +237,7 @@ defined( '_JEXEC' ) or die;
             <div class="el_url floattext">
                 <label for="url"><?php echo JText::_( 'COM_EVENTLIST_WEBSITE' ).':'; ?></label>
                 <input class="inputbox validate-url" name="url" id="url" type="text" value="<?php echo $this->row->url; ?>" size="55" maxlength="199" />&nbsp;
-                <span class="editlinktip hasTip" title="<?php echo JText::_( 'NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_WEBSITE_HINT'); ?>">
+                <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_WEBSITE_HINT'); ?>">
                 		<?php echo $this->infoimage; ?>
                 </span>
             </div>
@@ -260,14 +260,14 @@ defined( '_JEXEC' ) or die;
             <div class="el_latitude floattext">
                 <label for="latitude"><?php echo JText::_( 'COM_EVENTLIST_LATITUDE' ).':'; ?></label>
                 <input class="inputbox" name="latitude" id="latitude" type="text" onchange="removerequired();" value="<?php echo $this->row->latitude; ?>" size="15" maxlength="25" />&nbsp;
-                <span class="editlinktip hasTip" title="<?php echo JText::_( 'NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_LATITUDE_HINT'); ?>">
+                <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_LATITUDE_HINT'); ?>">
                     <?php echo $this->infoimage; ?>
                 </span>
             </div>
             <div class="el_longitude floattext">
                 <label for="longitude"><?php echo JText::_( 'COM_EVENTLIST_LONGITUDE' ).':'; ?></label>
                 <input class="inputbox" name="longitude" id="longitude" type="text" onchange="removerequired();" value="<?php echo $this->row->longitude; ?>" size="15" maxlength="25" />&nbsp;
-                <span class="editlinktip hasTip" title="<?php echo JText::_( 'NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_LONGITUDE_HINT'); ?>">
+                <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_LONGITUDE_HINT'); ?>">
                     <?php echo $this->infoimage; ?>
                 </span>
             </div>
@@ -290,7 +290,7 @@ defined( '_JEXEC' ) or die;
 
             <label for="userfile"><?php echo JText::_('COM_EVENTLIST_IMAGE'); ?></label>
       			<input class="inputbox <?php echo $this->elsettings->imageenabled == 2 ? 'required' : ''; ?>" name="userfile" id="userfile" type="file" />
-      			<span class="editlinktip hasTip" title="<?php echo JText::_( 'NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_MAX_IMAGE_FILE_SIZE').' '.$this->elsettings->sizelimit.' kb'; ?>">
+      			<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_MAX_IMAGE_FILE_SIZE').' '.$this->elsettings->sizelimit.' kb'; ?>">
       				<?php echo $this->infoimage; ?>
       			</span>
 
