@@ -93,7 +93,7 @@ defined( '_JEXEC' ) or die;
 		?>
 	</dl>
 
-	<?php echo ELOutput::mapicon( $this->venue ); ?>
+	<p><?php echo ELOutput::mapicon( $this->venue ); ?></p>
 	<?php
   	if ($this->elsettings->showlocdescription == 1 && $this->venuedescription != '' && $this->venuedescription != '<br />') :
 	?>
