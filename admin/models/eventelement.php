@@ -63,7 +63,7 @@ class EventListModelEventelement extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app = & JFactory::getApplication();
+		$app =  JFactory::getApplication();
 
 		$limit		= $app->getUserStateFromRequest( 'com_eventlist.limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest( 'com_eventlist.limitstart', 'limitstart', 0, 'int' );
@@ -85,6 +85,19 @@ class EventListModelEventelement extends JModelLegacy
 		{
 			$query = $this->_buildQuery();
 			$this->_data = $this->_getList($query, $this->getState('limitstart'), $this->getState('limit'));
+			if ($this->_data)
+			{
+				
+				$k = 0;
+				$count = count($this->_data);
+				for($i = 0; $i < $count; $i++)
+				{
+					$item =& $this->_data[$i];
+					$item->categories = $this->getCategories($item->id);
+					
+					$k = 1 - $k;
+				}
+			}
 		}
 
 		return $this->_data;
@@ -103,6 +116,10 @@ class EventListModelEventelement extends JModelLegacy
 		{
 			$query = $this->_buildQuery();
 			$this->_total = $this->_getListCount($query);
+		
+		// for debugging query		
+		//	print_r($query);
+			
 		}
 
 		return $this->_total;
@@ -138,10 +155,10 @@ class EventListModelEventelement extends JModelLegacy
 		$where		= $this->_buildContentWhere();
 		$orderby	= $this->_buildContentOrderBy();
 
-		$query = 'SELECT a.*, loc.venue, loc.city, cat.catname'
+		$query = 'SELECT a.*, loc.venue, loc.city'
 					. ' FROM #__eventlist_events AS a'
 					. ' LEFT JOIN #__eventlist_venues AS loc ON loc.id = a.locid'
-					. ' LEFT JOIN #__eventlist_categories AS cat ON cat.id = a.catsid'
+				//	. ' LEFT JOIN #__eventlist_categories AS cat ON cat.id = a.catsid'
 					. $where
 					. $orderby
 					;
@@ -157,13 +174,13 @@ class EventListModelEventelement extends JModelLegacy
 	 */
 	function _buildContentOrderBy()
 	{
-		$app = & JFactory::getApplication();
+		$app =  JFactory::getApplication();
 
 		$filter_order		= $app->getUserStateFromRequest( 'com_eventlist.eventelement.filter_order', 'filter_order', 'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_eventlist.eventelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_eventlist.eventelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );	
 		
-		$filter_order		= JFilterInput::clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::clean($filter_order_Dir, 'word');
+		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
 		$orderby 	= ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', a.dates';
 
@@ -178,7 +195,7 @@ class EventListModelEventelement extends JModelLegacy
 	 */
 	function _buildContentWhere()
 	{
-		$app = & JFactory::getApplication();
+		$app =  JFactory::getApplication();
 
 		$filter_state 		= $app->getUserStateFromRequest( 'com_eventlist.eventelement.filter_state', 'filter_state', '', 'word' );
 		$filter 			= $app->getUserStateFromRequest( 'com_eventlist.eventelement.filter', 'filter', '', 'int' );
@@ -208,15 +225,53 @@ class EventListModelEventelement extends JModelLegacy
 		if ($search && $filter == 3) {
 			$where[] = ' LOWER(loc.city) LIKE \'%'.$search.'%\' ';
 		}
-
+/*
 		if ($search && $filter == 4) {
 			$where[] = ' LOWER(cat.catname) LIKE \'%'.$search.'%\' ';
 		}
-
+*/
 
 		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
 
 		return $where;
 	}
+	
+	
+	function getCategories($id)
+	{
+		$query = 'SELECT DISTINCT c.id, c.catname, c.checked_out AS cchecked_out'
+				. ' FROM #__eventlist_categories AS c'
+				. ' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.catid = c.id'
+				. ' WHERE rel.itemid = '.(int)$id
+				;
+	
+		$this->_db->setQuery( $query );
+
+		$this->_cats = $this->_db->loadObjectList();
+		
+		$k = 0;
+		$count = count($this->_cats);
+		for($i = 0; $i < $count; $i++)
+		{
+			$item =& $this->_cats[$i];
+			$cats = new eventlist_cats($item->id);
+			$item->parentcats = $cats->getParentlist();
+				
+			$k = 1 - $k;
+		}
+		
+		return $this->_cats;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
 ?>

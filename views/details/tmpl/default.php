@@ -23,6 +23,18 @@
 defined( '_JEXEC' ) or die;
 JHTML::_('behavior.modal');
 ?>
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/nl_NL/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
 <div id="eventlist" class="event_id<?php echo $this->row->did; ?> el_details">
 	<p class="buttons">
 			<?php echo ELOutput::mailbutton( $this->row->slug, 'details', $this->params ); ?>
@@ -223,7 +235,7 @@ JHTML::_('behavior.modal');
 			endif;
 			?>
 		</dl>
-		<?php echo ELOutput::mapicon( $this->row ); ?>
+		<p><?php echo ELOutput::mapicon( $this->row ); ?>&nbsp;</p>
 		<?php if ($this->elsettings->showlocdescription == 1 && $this->row->locdescription != '' && $this->row->locdescription != '<br />') :	?>
 
 			<h2 class="location_desc"><?php echo JText::_( 'COM_EVENTLIST_DESCRIPTION' ); ?></h2>
@@ -251,4 +263,11 @@ JHTML::_('behavior.modal');
 <p class="copyright">
 	<?php echo ELOutput::footer( ); ?>
 </p>
+
+<?php if ($this->params->get('facebook', 1) == 1) {  
+$currenturl = JURI::current(); ?>
+
+<div class="fb-like" data-href="<?php echo $currenturl ?>" data-send="true" data-layout="button_count" data-width="450" data-show-faces="true" data-font="segoe ui"></div>
+<?php   }   ?>
+
 </div>

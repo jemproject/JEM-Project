@@ -8,10 +8,9 @@
 	<state>
 		<name>COM_EVENTLIST_DETAILS_LAYOUT</name>
 		<description>COM_EVENTLIST_DETAILS_LAYOUT_DESC</description>
-		<!--<config addfieldpath="/administrator/components/com_eventlist/elements">-->
 		<config>
-		<fields name="params"><fieldset name="basic" label="basic">
-			<field name="id" type="event" default="0" label="COM_EVENTLIST_SELECT_EVENT" description="COM_EVENTLIST_SELECT_EVENT_DESC" />
+		<fields name="request" addfieldpath="/administrator/components/com_eventlist/models/fields"><fieldset name="request" label="basic">
+			<field name="id" type="event" label="COM_EVENTLIST_SELECT_EVENT" description="COM_EVENTLIST_SELECT_EVENT_DESC" />
 		</fieldset></fields></config>
 	</state>
 </metadata>

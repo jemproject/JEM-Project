@@ -34,12 +34,13 @@ class EventListViewEventelement extends JViewLegacy {
 
 	function display($tpl = null)
 	{
-		$app = & JFactory::getApplication();
+		$app =  JFactory::getApplication();
 
 		//initialise variables
-		$db			= & JFactory::getDBO();
+		$user 		=  JFactory::getUser();
+		$db			=  JFactory::getDBO();
 		$elsettings = ELAdmin::config();
-		$document	= & JFactory::getDocument();
+		$document	=  JFactory::getDocument();
 		
 		JHTML::_('behavior.tooltip');
 		JHTML::_('behavior.modal');
@@ -60,9 +61,9 @@ class EventListViewEventelement extends JViewLegacy {
 		$document->addStyleSheet('components/com_eventlist/assets/css/eventlistbackend.css');
 
 		//Get data from the model
-		$rows      	= & $this->get( 'Data');
+		$rows      	=  $this->get( 'Data');
 //		$total      = & $this->get( 'Total');
-		$pageNav 	= & $this->get( 'Pagination' );
+		$pageNav 	=  $this->get( 'Pagination' );
 
 		//publish unpublished filter
 		$lists['state']	= JHTML::_('grid.state', $filter_state );
@@ -76,7 +77,7 @@ class EventListViewEventelement extends JViewLegacy {
 		$filters[] = JHTML::_('select.option', '1', JText::_( 'EVENT TITLE' ) );
 		$filters[] = JHTML::_('select.option', '2', JText::_( 'VENUE' ) );
 		$filters[] = JHTML::_('select.option', '3', JText::_( 'CITY' ) );
-		$filters[] = JHTML::_('select.option', '4', JText::_( 'CATEGORY' ) );
+	//	$filters[] = JHTML::_('select.option', '4', JText::_( 'CATEGORY' ) );
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
 
 		// search filter
@@ -87,6 +88,7 @@ class EventListViewEventelement extends JViewLegacy {
 		$this->assignRef('rows'      	, $rows);
 		$this->assignRef('pageNav' 		, $pageNav);
 		$this->assignRef('elsettings'	, $elsettings);
+		$this->assignRef('user'			, $user);
 
 		parent::display($tpl);
 	}

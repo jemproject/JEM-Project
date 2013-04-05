@@ -50,7 +50,6 @@ defined( '_JEXEC' ) or die;
 
 			<?php
 				echo ELOutput::flyer( $row, $row->limage, 'venue' );
-				echo ELOutput::mapicon( $row );
 			?>
 
 			<dl class="location floattext">
@@ -109,7 +108,8 @@ defined( '_JEXEC' ) or die;
 			?>
 
 		</dl>
-
+<p><?php echo ELOutput::mapicon( $row ); ?></p>
+		
 	    <?php if ($this->elsettings->showlocdescription == 1) :	?>
 		<h2 class="description"><?php echo JText::_( 'COM_EVENTLIST_DESCRIPTION' ).':'; ?></h2>
 		<div class="description">

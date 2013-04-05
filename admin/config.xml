@@ -39,12 +39,11 @@
 			<option value="0">Hide</option>
 			<option value="1">Show</option>
 		</field>
-		
-    <field name="events_ical" type="radio" default="1" label="COM_EVENTLIST_SETTINGS_SHOW_EVENTS_ICAL" description="COM_EVENTLIST_SETTINGS_SHOW_EVENTS_ICAL_DESC">
-      <option value="0">No</option>
-      <option value="1">Yes</option>
-    </field>
-    <field name="ical_max_items" type="text" default="100" label="COM_EVENTLIST_SETTINGS_ICAL_MAX_ITEMS" description="COM_EVENTLIST_SETTINGS_ICAL_MAX_ITEMS_DESC" />
+		<field name="facebook" type="radio" default="1" label="facebook" description="facebook desc">
+			<option value="0">Hide</option>
+			<option value="1">Show</option>
+		</field>
+ 
 		
 		<!-- START Event table columns -->
 		<field type="elspacer" default="COM_EVENTLIST_SETTINGS_EVENT_TABLE_SPACER"/>
@@ -138,17 +137,24 @@
     <field name="recurrence_anticipation" type="text" default="60" label="COM_EVENTLIST_RECURRENCEANTICIPATION" description="COM_EVENTLIST_RECURRENCEANTICIPATIONDESC" />
  	</fieldset>
  	
+ 	<!--disabled moved to settings view
  	<fieldset name="COM_EVENTLIST_SETTINGS_ATTACHMENTS">
     <field name="attachments_path" type="text" size="100" default="media/com_eventlist/attachments" label="COM_EVENTLIST_SETTINGS_ATTACHEMENT_PATH" description="COM_EVENTLIST_SETTINGS_ATTACHEMENT_PATH_DESC" />
     <field name="attachments_maxsize" type="text" size="15" default="1000" label="COM_EVENTLIST_SETTINGS_ATTACHEMENT_MAXSIZE" description="COM_EVENTLIST_SETTINGS_ATTACHEMENT_MAXSIZE_DESC" />
     <field name="attachments_types" type="text" size="100" default="txt,csv,htm,html,xml,css,doc,xls,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,zip,tar.gz" label="COM_EVENTLIST_SETTINGS_ATTACHEMENT_TYPES" description="COM_EVENTLIST_SETTINGS_ATTACHEMENT_TYPES_DESC" />
  	</fieldset>
+ 	-->
  	
  	<fieldset name="COM_EVENTLIST_SETTINGS_ICAL">
     <field name="ical_tz" type="radio" default="1" label="COM_EVENTLIST_SETTINGS_ICAL_TIMEZONE" description="COM_EVENTLIST_SETTINGS_ICAL_TIMEZONE_DESC">
       <option value="0">COM_EVENTLIST_SETTINGS_ICAL_TIMEZONE_FLOAT</option>
       <option value="1">COM_EVENTLIST_SETTINGS_ICAL_TIMEZONE_JOOMLA</option>
     </field>
+       <field name="events_ical" type="radio" default="1" label="COM_EVENTLIST_SETTINGS_SHOW_EVENTS_ICAL" description="COM_EVENTLIST_SETTINGS_SHOW_EVENTS_ICAL_DESC">
+      <option value="0">No</option>
+      <option value="1">Yes</option>
+    </field>
+    <field name="ical_max_items" type="text" default="100" label="COM_EVENTLIST_SETTINGS_ICAL_MAX_ITEMS" description="COM_EVENTLIST_SETTINGS_ICAL_MAX_ITEMS_DESC" />
   </fieldset>
   
   <fieldset

@@ -46,6 +46,7 @@ class EventListViewDetails extends JViewLegacy
 		$user		=  JFactory::getUser();
 		$dispatcher =  JDispatcher::getInstance();
 		$elsettings =  ELHelper::config();
+		$params 	= $app->getParams('com_eventlist');
 
 		$row		=  $this->get('Details');
 		$categories	=  $this->get('Categories');
@@ -58,7 +59,7 @@ class EventListViewDetails extends JViewLegacy
 		
 	//	print_r($item);
 		
-		$params 	= $app->getParams('com_eventlist');
+		
 
 		//Check if the id exists
 		if ($row->did == 0)
