@@ -7,10 +7,10 @@
 	</layout>
 	<state>
 		<name>COM_EVENTLIST_VENUEEVENTS_LAYOUT</name>
-		<description>CO_EVENTLIST_VENUEEVENTS_LAYOUT_DESC</description>
+		<description>COM_EVENTLIST_VENUEEVENTS_LAYOUT_DESC</description>
 		<!-- <config addpath="/administrator/components/com_eventlist/elements">-->
 		<config>
-		<fields name="params"><fieldset name="basic" label="basic">
+		<fields name="request"><fieldset name="request" label="basic">
 			<field name="id" type="venue" default="0" label="Select Venue" description="SELECTVENUE" />
 		</fieldset></fields></config>
 	</state>
