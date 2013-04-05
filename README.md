@@ -2,7 +2,7 @@ JEM-11CONVERTVERSION
 ====================
 
 Converted version of v11
-Notice:: This version should be tested offline!
+Notice:: This version should be tested/used offline!
 
 It's a converted version of v1.1 but several things have to be sorted out.
 One of the things are the plugins.
