@@ -46,11 +46,11 @@ class EventListViewEventelement extends JViewLegacy {
 		JHTML::_('behavior.modal');
 
 		//get var
-		$filter_order		= $app->getUserStateFromRequest( 'com_eventlist.eventelement.filter_order', 'filter_order', 'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_eventlist.eventelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
-		$filter 			= $app->getUserStateFromRequest( 'com_eventlist.eventelement.filter', 'filter', '', 'int' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_eventlist.eventelement.filter_state', 'filter_state', '*', 'word' );
-		$search 			= $app->getUserStateFromRequest( 'com_eventlist.eventelement.search', 'search', '', 'string' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_order', 'filter_order', 'a.dates', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.eventelement.filter', 'filter', '', 'int' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_state', 'filter_state', '*', 'word' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.eventelement.search', 'search', '', 'string' );
 		$search 			= $db->getEscaped( trim(JString::strtolower( $search ) ) );
 		$template 			= $app->getTemplate();
 
@@ -58,7 +58,7 @@ class EventListViewEventelement extends JViewLegacy {
 		$document->setTitle(JText::_( 'SELECTEVENT' ));
 		$document->addStyleSheet('templates/'.$template.'/css/general.css');
 
-		$document->addStyleSheet('components/com_eventlist/assets/css/eventlistbackend.css');
+		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
 
 		//Get data from the model
 		$rows      	=  $this->get( 'Data');

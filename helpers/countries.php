@@ -1073,7 +1073,7 @@ class EventlistHelperCountries
 			$iso_code = self::convertIso3to2($iso_code);
 		}
 		if ($iso_code) {
-			$path = JURI::root().'components/com_eventlist/assets/images/flags/'.strtolower($iso_code).'.gif';
+			$path = JURI::root().'components/com_jem/assets/images/flags/'.strtolower($iso_code).'.gif';
 			return $path;
 		}
 		else

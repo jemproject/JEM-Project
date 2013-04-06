@@ -24,7 +24,7 @@ defined('_JEXEC') or die;
 JHTML::_('behavior.tooltip');
 ?>
 
-<form action="index.php?option=com_eventlist&controller=attendees&tmpl=component" method="post" id="adminForm" name="adminForm">
+<form action="index.php?option=com_jem&controller=attendees&tmpl=component" method="post" id="adminForm" name="adminForm">
 
 <table class="adminform">
 	<tr>

@@ -67,9 +67,9 @@ class EventListControllerEvents extends EventListController
 		}
 
 		$total = count( $cid );
-		$msg 	= $total.' '.JText::_('COM_EVENTLIST_EVENT_PUBLISHED');
+		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_PUBLISHED');
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=events', $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=events', $msg );
 	}
 
 	/**
@@ -93,9 +93,9 @@ class EventListControllerEvents extends EventListController
 		}
 
 		$total = count( $cid );
-		$msg 	= $total.' '.JText::_('COM_EVENTLIST_EVENT_UNPUBLISHED');
+		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_UNPUBLISHED');
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=events', $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=events', $msg );
 	}
 
 	/**
@@ -119,9 +119,9 @@ class EventListControllerEvents extends EventListController
 		}
 
 		$total = count( $cid );
-		$msg 	= $total.' '.JText::_('COM_EVENTLIST_EVENT_ARCHIVED');
+		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_ARCHIVED');
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=events', $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=events', $msg );
 	}
 
 	/**
@@ -136,11 +136,11 @@ class EventListControllerEvents extends EventListController
 		// Check for request forgeries
 		JRequest::checkToken() or die( 'Invalid Token' );
 		
-		$group = & JTable::getInstance('eventlist_events', '');
+		$group = & JTable::getInstance('jem_events', '');
 		$group->bind(JRequest::get('post'));
 		$group->checkin();
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=events' );
+		$this->setRedirect( 'index.php?option=com_jem&view=events' );
 	}
 
 	/**
@@ -152,7 +152,7 @@ class EventListControllerEvents extends EventListController
 	 */
 	function add( )
 	{
-		$this->setRedirect( 'index.php?option=com_eventlist&view=event' );
+		$this->setRedirect( 'index.php?option=com_jem&view=event' );
 	}
 
 	/**
@@ -177,7 +177,7 @@ class EventListControllerEvents extends EventListController
 			$user	= JFactory::getUser();
 			// Error if checkedout by another administrator
 			if ($model->isCheckedOut( $user->get('id') )) {
-				$this->setRedirect( 'index.php?option=com_eventlist&view=events', JText::_( 'COM_EVENTLIST_EDITED_BY_ANOTHER_ADMIN' ) );
+				$this->setRedirect( 'index.php?option=com_jem&view=events', JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ) );
 			}
 			$model->checkout();
 		}
@@ -209,22 +209,22 @@ class EventListControllerEvents extends EventListController
 			switch ($task)
 			{
 				case 'apply' :
-					$link = 'index.php?option=com_eventlist&controller=events&view=event&hidemainmenu=1&cid[]='.$returnid;
+					$link = 'index.php?option=com_jem&controller=events&view=event&hidemainmenu=1&cid[]='.$returnid;
 					break;
 
 				default :
-					$link = 'index.php?option=com_eventlist&view=events';
+					$link = 'index.php?option=com_jem&view=events';
 					break;
 			}
-			$msg	= JText::_( 'COM_EVENTLIST_EVENT_SAVED');
+			$msg	= JText::_( 'COM_JEM_EVENT_SAVED');
 
-			$cache = &JFactory::getCache('com_eventlist');
+			$cache = &JFactory::getCache('com_jem');
 			$cache->clean();
 
 		} else {
 
 			$msg 	= '';
-			$link = 'index.php?option=com_eventlist&view=events';
+			$link = 'index.php?option=com_jem&view=events';
 
 		}
 
@@ -255,12 +255,12 @@ class EventListControllerEvents extends EventListController
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
 
-		$msg = $total.' '.JText::_( 'COM_EVENTLIST_EVENTS_DELETED');
+		$msg = $total.' '.JText::_( 'COM_JEM_EVENTS_DELETED');
 
-		$cache = &JFactory::getCache('com_eventlist');
+		$cache = &JFactory::getCache('com_jem');
 		$cache->clean();
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=events', $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=events', $msg );
 	}
 	
 	/**

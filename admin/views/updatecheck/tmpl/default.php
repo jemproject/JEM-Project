@@ -43,11 +43,11 @@ if ($this->updatedata->failed == 0) {
 		  		<td>
 		  		<?php
 		  			if ($this->updatedata->current == 0) {
-		  				echo '<b><font color="green">'.JText::_( 'COM_EVENTLIST_LATEST_VERSION' ).'</font></b>';
+		  				echo '<b><font color="green">'.JText::_( 'COM_JEM_LATEST_VERSION' ).'</font></b>';
 		  			} elseif( $this->updatedata->current == -1 ) {
-		  				echo '<b><font color="red">'.JText::_( 'COM_EVENTLIST_OLD_VERSION' ).'</font></b>';
+		  				echo '<b><font color="red">'.JText::_( 'COM_JEM_OLD_VERSION' ).'</font></b>';
 		  			} else {
-		  				echo '<b><font color="orange">'.JText::_( 'COM_EVENTLIST_NEWER_VERSION' ).'</font></b>';
+		  				echo '<b><font color="orange">'.JText::_( 'COM_JEM_NEWER_VERSION' ).'</font></b>';
 		  			}
 		  		?>
 		  		</td>
@@ -58,21 +58,21 @@ if ($this->updatedata->failed == 0) {
 
 		<table  cellspacing="0" cellpadding="0" border="0" width="100%" class="adminlist">
 			<tr>
-		  		<td><b><?php echo JText::_( 'COM_EVENTLIST_VERSION' ).':'; ?></b></td>
+		  		<td><b><?php echo JText::_( 'COM_JEM_VERSION' ).':'; ?></b></td>
 		  		<td><?php
 					echo $this->updatedata->versiondetail;
 					?>
 		  		</td>
 			</tr>
 			<tr>
-		  		<td><b><?php echo JText::_( 'COM_EVENTLIST_RELEASE_DATE' ).':'; ?></b></td>
+		  		<td><b><?php echo JText::_( 'COM_JEM_RELEASE_DATE' ).':'; ?></b></td>
 		  		<td><?php
 					echo $this->updatedata->date;
 					?>
 		  		</td>
 			</tr>
 			<tr>
-		  		<td><b><?php echo JText::_( 'COM_EVENTLIST_CHANGES' ).':'; ?></b></td>
+		  		<td><b><?php echo JText::_( 'COM_JEM_CHANGES' ).':'; ?></b></td>
 		  		<td><ul>
 		  			<?php
 					foreach ($this->updatedata->changes as $change) {
@@ -83,19 +83,19 @@ if ($this->updatedata->failed == 0) {
 		  		</td>
 			</tr>
 			<tr>
-		  		<td><b><?php echo JText::_( 'COM_EVENTLIST_INFORMATION' ).':'; ?></b></td>
+		  		<td><b><?php echo JText::_( 'COM_JEM_INFORMATION' ).':'; ?></b></td>
 		  		<td>
 					<a href="<?php echo $this->updatedata->info; ?>" target="_blank">Click for more information</a>
 		  		</td>
 			</tr>
 			<tr>
-		  		<td><b><?php echo JText::_( 'COM_EVENTLIST_FILES' ).':'; ?></b></td>
+		  		<td><b><?php echo JText::_( 'COM_JEM_FILES' ).':'; ?></b></td>
 		  		<td>
 					<a href="<?php echo $this->updatedata->download; ?>" target="_blank">Download upgradepack</a>
 		  		</td>
 			</tr>
 			<tr>
-		  		<td><b><?php echo JText::_( 'COM_EVENTLIST_NOTES' ).':'; ?></b></td>
+		  		<td><b><?php echo JText::_( 'COM_JEM_NOTES' ).':'; ?></b></td>
 		  		<td><?php
 					echo $this->updatedata->notes;
 					?>
@@ -116,7 +116,7 @@ if ($this->updatedata->failed == 0) {
 		  		</td>
 		  		<td>
 		  		<?php
-		  			echo '<b><font color="red">'.JText::_( 'COM_EVENTLIST_CONNECTION_FAILED' ).'</font></b>';
+		  			echo '<b><font color="red">'.JText::_( 'COM_JEM_CONNECTION_FAILED' ).'</font></b>';
 		  		?>
 		  		</td>
 			</tr>

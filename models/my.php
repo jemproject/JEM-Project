@@ -80,10 +80,10 @@ class EventListModelMy extends JModelLegacy
         $app =  JFactory::getApplication();
 
         // Get the paramaters of the active menu item
-        $params =  $app->getParams('com_eventlist');
+        $params =  $app->getParams('com_jem');
 
         //get the number of events from database
-        $limit = $app->getUserStateFromRequest('com_eventlist.my.limit', 'limit', $params->def('display_num', 0), 'int');
+        $limit = $app->getUserStateFromRequest('com_jem.my.limit', 'limit', $params->def('display_num', 0), 'int');
         $limitstart_events = JRequest::getVar('limitstart_events', 0, '', 'int');
         $limitstart_venues = JRequest::getVar('limitstart_venues', 0, '', 'int');
         $limitstart_attending = JRequest::getVar('limitstart_attending', 0, '', 'int');
@@ -337,8 +337,8 @@ class EventListModelMy extends JModelLegacy
 				. ' l.venue, l.city, l.state, l.url,'
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-				. ' FROM #__eventlist_events AS a'
-				. ' LEFT JOIN #__eventlist_venues AS l ON l.id = a.locid'
+				. ' FROM #__jem_events AS a'
+				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 				. $where
 				. $orderby
 				;
@@ -363,9 +363,9 @@ class EventListModelMy extends JModelLegacy
         .' l.id, l.venue, l.city, l.state, l.url,'
         .' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
         .' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-        .' FROM #__eventlist_events AS a'
-        .' INNER JOIN #__eventlist_register AS r ON r.event = a.id'
-        .' LEFT JOIN #__eventlist_venues AS l ON l.id = a.locid'
+        .' FROM #__jem_events AS a'
+        .' INNER JOIN #__jem_register AS r ON r.event = a.id'
+        .' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
         .$where
         .$orderby
         ;
@@ -385,7 +385,7 @@ class EventListModelMy extends JModelLegacy
         //Get Events from Database
         $query = 'SELECT l.id, l.venue, l.city, l.state, l.url, l.published, '
         .' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug'
-        .' FROM #__eventlist_venues AS l '
+        .' FROM #__jem_venues AS l '
         .' WHERE l.created_by = '.$this->_db->Quote($user->id)
         .' ORDER BY l.venue ASC '
         ;
@@ -543,8 +543,8 @@ class EventListModelMy extends JModelLegacy
 		
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-				. ' FROM #__eventlist_categories AS c'
-				. ' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.catid = c.id'
+				. ' FROM #__jem_categories AS c'
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				. ' AND c.published = 1'
 				. ' AND c.access  <= '.$gid;
@@ -572,7 +572,7 @@ class MyEventsPagination extends JPagination
         // Initialize variables
         $data = new stdClass ();
 
-        $data->all = new JPaginationObject(JText::_('COM_EVENTLIST_VIEW_ALL'));
+        $data->all = new JPaginationObject(JText::_('COM_JEM_VIEW_ALL'));
         if (!$this->_viewall)
         {
             $data->all->base = '0';
@@ -580,8 +580,8 @@ class MyEventsPagination extends JPagination
         }
 
         // Set the start and previous data objects
-        $data->start = new JPaginationObject(JText::_('COM_EVENTLIST_START'));
-        $data->previous = new JPaginationObject(JText::_('COM_EVENTLIST_PREV'));
+        $data->start = new JPaginationObject(JText::_('COM_JEM_START'));
+        $data->previous = new JPaginationObject(JText::_('COM_JEM_PREV'));
 
         if ($this->get('pages.current') > 1)
         {
@@ -596,8 +596,8 @@ class MyEventsPagination extends JPagination
         }
 
         // Set the next and end data objects
-        $data->next = new JPaginationObject(JText::_('COM_EVENTLIST_NEXT'));
-        $data->end = new JPaginationObject(JText::_('COM_EVENTLIST_END'));
+        $data->next = new JPaginationObject(JText::_('COM_JEM_NEXT'));
+        $data->end = new JPaginationObject(JText::_('COM_JEM_END'));
 
         if ($this->get('pages.current') < $this->get('pages.total'))
         {
@@ -633,7 +633,7 @@ class MyEventsPagination extends JPagination
         // Initialize variables
         $html = "<div class=\"list-footer\">\n";
 
-        $html .= "\n<div class=\"limit\">".JText::_('COM_EVENTLIST_DISPLAY_NUM').$list['limitfield']."</div>";
+        $html .= "\n<div class=\"limit\">".JText::_('COM_JEM_DISPLAY_NUM').$list['limitfield']."</div>";
         $html .= $list['pageslinks'];
         $html .= "\n<div class=\"counter\">".$list['pagescounter']."</div>";
 
@@ -660,7 +660,7 @@ class MyAttendingPagination extends JPagination
         // Initialize variables
         $data = new stdClass ();
 
-        $data->all = new JPaginationObject(JText::_('COM_EVENTLIST_VIEW_ALL'));
+        $data->all = new JPaginationObject(JText::_('COM_JEM_VIEW_ALL'));
         if (!$this->_viewall)
         {
             $data->all->base = '0';
@@ -668,8 +668,8 @@ class MyAttendingPagination extends JPagination
         }
 
         // Set the start and previous data objects
-        $data->start = new JPaginationObject(JText::_('COM_EVENTLIST_START'));
-        $data->previous = new JPaginationObject(JText::_('COM_EVENTLIST_PREV'));
+        $data->start = new JPaginationObject(JText::_('COM_JEM_START'));
+        $data->previous = new JPaginationObject(JText::_('COM_JEM_PREV'));
 
         if ($this->get('pages.current') > 1)
         {
@@ -684,8 +684,8 @@ class MyAttendingPagination extends JPagination
         }
 
         // Set the next and end data objects
-        $data->next = new JPaginationObject(JText::_('COM_EVENTLIST_NEXT'));
-        $data->end = new JPaginationObject(JText::_('COM_EVENTLIST_END'));
+        $data->next = new JPaginationObject(JText::_('COM_JEM_NEXT'));
+        $data->end = new JPaginationObject(JText::_('COM_JEM_END'));
 
         if ($this->get('pages.current') < $this->get('pages.total'))
         {
@@ -747,7 +747,7 @@ class MyVenuesPagination extends JPagination
         // Initialize variables
         $data = new stdClass ();
 
-        $data->all = new JPaginationObject(JText::_('COM_EVENTLIST_VIEW_ALL'));
+        $data->all = new JPaginationObject(JText::_('COM_JEM_VIEW_ALL'));
         if (!$this->_viewall)
         {
             $data->all->base = '0';
@@ -755,8 +755,8 @@ class MyVenuesPagination extends JPagination
         }
 
         // Set the start and previous data objects
-        $data->start = new JPaginationObject(JText::_('COM_EVENTLIST_START'));
-        $data->previous = new JPaginationObject(JText::_('COM_EVENTLIST_PREV'));
+        $data->start = new JPaginationObject(JText::_('COM_JEM_START'));
+        $data->previous = new JPaginationObject(JText::_('COM_JEM_PREV'));
 
         if ($this->get('pages.current') > 1)
         {
@@ -771,8 +771,8 @@ class MyVenuesPagination extends JPagination
         }
 
         // Set the next and end data objects
-        $data->next = new JPaginationObject(JText::_('COM_EVENTLIST_NEXT'));
-        $data->end = new JPaginationObject(JText::_('COM_EVENTLIST_END'));
+        $data->next = new JPaginationObject(JText::_('COM_JEM_NEXT'));
+        $data->end = new JPaginationObject(JText::_('COM_JEM_END'));
 
         if ($this->get('pages.current') < $this->get('pages.total'))
         {
@@ -808,7 +808,7 @@ class MyVenuesPagination extends JPagination
         // Initialize variables
         $html = "<div class=\"list-footer\">\n";
 
-        $html .= "\n<div class=\"limit\">".JText::_('COM_EVENTLIST_DISPLAY_NUM').$list['limitfield']."</div>";
+        $html .= "\n<div class=\"limit\">".JText::_('COM_JEM_DISPLAY_NUM').$list['limitfield']."</div>";
         $html .= $list['pageslinks'];
         $html .= "\n<div class=\"counter\">".$list['pagescounter']."</div>";
 

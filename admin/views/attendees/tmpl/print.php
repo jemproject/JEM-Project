@@ -23,8 +23,8 @@ defined('_JEXEC') or die; ?>
 
 	<table cellpadding="4" cellspacing="0" border="0" width="100%" class="adminlist">
 		<tr>
-		  	<td class="sectionname" width="100%"><font style="color: #C24733; font-size : 18px; font-weight: bold;"><?php echo JText::_( 'COM_EVENTLIST_REGISTERED_USER' ); ?></font></td>
-		  	<td><div class="button2-left"><div class="blank"><a href="#" onclick="window.print();return false;"><?php echo JText::_('COM_EVENTLIST_PRINT'); ?></a></div></div></td>
+		  	<td class="sectionname" width="100%"><font style="color: #C24733; font-size : 18px; font-weight: bold;"><?php echo JText::_( 'COM_JEM_REGISTERED_USER' ); ?></font></td>
+		  	<td><div class="button2-left"><div class="blank"><a href="#" onclick="window.print();return false;"><?php echo JText::_('COM_JEM_PRINT'); ?></a></div></div></td>
 		</tr>
 	</table>
 
@@ -33,8 +33,8 @@ defined('_JEXEC') or die; ?>
 	<table class="adminlist" cellspacing="1">
 		<tr>
 		  	<td align="left">
-				<b><?php echo JText::_( 'COM_EVENTLIST_DATE' ).':'; ?></b>&nbsp;<?php echo $this->event->dates; ?><br />
-				<b><?php echo JText::_( 'COM_EVENTLIST_EVENT_TITLE' ).':'; ?></b>&nbsp;<?php echo htmlspecialchars($this->event->title, ENT_QUOTES, 'UTF-8'); ?>
+				<b><?php echo JText::_( 'COM_JEM_DATE' ).':'; ?></b>&nbsp;<?php echo $this->event->dates; ?><br />
+				<b><?php echo JText::_( 'COM_JEM_EVENT_TITLE' ).':'; ?></b>&nbsp;<?php echo htmlspecialchars($this->event->title, ENT_QUOTES, 'UTF-8'); ?>
 			</td>
 		  </tr>
 	</table>
@@ -44,12 +44,12 @@ defined('_JEXEC') or die; ?>
 	<table class="adminlist" cellspacing="1">
 		<thead>
 			<tr>
-				<th class="title"><?php echo JText::_( 'COM_EVENTLIST_NAME' ); ?></th>
-				<th class="title"><?php echo JText::_( 'COM_EVENTLIST_USERNAME' ); ?></th>
-				<th class="title"><?php echo JText::_( 'COM_EVENTLIST_EMAIL' ); ?></th>
-				<th class="title"><?php echo JText::_( 'COM_EVENTLIST_IP_ADDRESS' ); ?></th>
-				<th class="title"><?php echo JText::_( 'COM_EVENTLIST_REGDATE' ); ?></th>
-				<th class="title"><?php echo JText::_( 'COM_EVENTLIST_USER_ID'); ?></th>
+				<th class="title"><?php echo JText::_( 'COM_JEM_NAME' ); ?></th>
+				<th class="title"><?php echo JText::_( 'COM_JEM_USERNAME' ); ?></th>
+				<th class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
+				<th class="title"><?php echo JText::_( 'COM_JEM_IP_ADDRESS' ); ?></th>
+				<th class="title"><?php echo JText::_( 'COM_JEM_REGDATE' ); ?></th>
+				<th class="title"><?php echo JText::_( 'COM_JEM_USER_ID'); ?></th>
 			</tr>
 		</thead>
 

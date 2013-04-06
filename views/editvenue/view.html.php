@@ -45,7 +45,7 @@ class EventListViewEditvenue extends JViewLegacy
 		
     	$user   =  JFactory::getUser();
     	if (!$user->id) {
-      		$app->redirect(JRoute::_($_SERVER["HTTP_REFERER"]), JText::_('COM_EVENTLIST_PLEASE_LOGIN_TOBEABLETOSUBMITVENUES'), 'error' );
+      		$app->redirect(JRoute::_($_SERVER["HTTP_REFERER"]), JText::_('COM_JEM_PLEASE_LOGIN_TOBEABLETOSUBMITVENUES'), 'error' );
     	}
 
 		$editor 	=  JFactory::getEditor();
@@ -63,17 +63,17 @@ class EventListViewEditvenue extends JViewLegacy
 		JHTML::_('behavior.tooltip');
 
 		//add css file
-		$doc->addStyleSheet($this->baseurl.'/components/com_eventlist/assets/css/eventlist.css');
+		$doc->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
 		$doc->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
 
-		$doc->addScript('administrator/components/com_eventlist/assets/js/attachments.js' );
+		$doc->addScript('administrator/components/com_jem/assets/js/attachments.js' );
 		
 		// Get the menu object of the active menu item
 		$menu		=  $app->getMenu();
 		$item    	= $menu->getActive();
-		$params 	=  $app->getParams('com_eventlist');
+		$params 	=  $app->getParams('com_jem');
 
-		$id ? $title = JText::_( 'COM_EVENTLIST_EDIT_VENUE' ) : $title = JText::_( 'COM_EVENTLIST_ADD_VENUE' );
+		$id ? $title = JText::_( 'COM_JEM_EDIT_VENUE' ) : $title = JText::_( 'COM_JEM_ADD_VENUE' );
 
 		//pathway
 		$pathway 	=  $app->getPathWay();
@@ -95,11 +95,11 @@ class EventListViewEditvenue extends JViewLegacy
 		$limage = ELImage::flyercreator($row->locimage, 'venue');
 
 		//Set the info image
-		$infoimage = JHTML::_('image', 'components/com_eventlist/assets/images/icon-16-hint.png', JText::_( 'COM_EVENTLIST_NOTES' ) );
+		$infoimage = JHTML::_('image', 'components/com_jem/assets/images/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
 		
 		// country list
 		$countries = array();
-    	$countries[] = JHTML::_('select.option', '', JText::_('COM_EVENTLIST_SELECT_COUNTRY'));
+    	$countries[] = JHTML::_('select.option', '', JText::_('COM_JEM_SELECT_COUNTRY'));
     	$countries = array_merge($countries, ELHelper::getCountryOptions());
     	$lists['countries'] = JHTML::_('select.genericlist', $countries, 'country', 'class="inputbox"', 'value', 'text', $row->country );
     	unset($countries);

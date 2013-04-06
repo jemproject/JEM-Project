@@ -15,11 +15,11 @@ defined('_JEXEC') or die;
 		<div class="submenu-pad">
 		<ul id="submenu" class="configuration">
 	
-			<li><a id="basic" class="active"><?php echo JText::_( 'COM_EVENTLIST_BASIC_SETTINGS' ); ?></a></li>
-			<li><a id="usercontrol"><?php echo JText::_( 'COM_EVENTLIST_USER_CONTROL' ); ?></a></li>
-			<li><a id="details"><?php echo JText::_( 'COM_EVENTLIST_DETAILS_PAGE' ); ?></a></li>
-			<li><a id="layout"><?php echo JText::_( 'COM_EVENTLIST_LAYOUT' ); ?></a></li>
-			<li><a id="parameters"><?php echo JText::_( 'COM_EVENTLIST_GLOBAL_PARAMETERS' ); ?></a></li>
+			<li><a id="basic" class="active"><?php echo JText::_( 'COM_JEM_BASIC_SETTINGS' ); ?></a></li>
+			<li><a id="usercontrol"><?php echo JText::_( 'COM_JEM_USER_CONTROL' ); ?></a></li>
+			<li><a id="details"><?php echo JText::_( 'COM_JEM_DETAILS_PAGE' ); ?></a></li>
+			<li><a id="layout"><?php echo JText::_( 'COM_JEM_LAYOUT' ); ?></a></li>
+			<li><a id="parameters"><?php echo JText::_( 'COM_JEM_GLOBAL_PARAMETERS' ); ?></a></li>
 		
 		</ul>
 			<div class="clr"></div>

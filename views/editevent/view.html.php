@@ -65,8 +65,8 @@ class EventListViewEditevent extends JViewLegacy
 		$categories		= $this->get('Categories');
 		
 		//sticky form categorie data
-		if ($session->has('eventform', 'com_eventlist')) {
-			$eventform = $session->get('eventform', 0, 'com_eventlist');
+		if ($session->has('eventform', 'com_jem')) {
+			$eventform = $session->get('eventform', 0, 'com_jem');
 			$selectedcats = $eventform['cid'];
 		} else {
 			$selectedcats 	= $this->get( 'Catsselected' );
@@ -85,18 +85,18 @@ class EventListViewEditevent extends JViewLegacy
 		JHTML::_('behavior.modal', 'a.modal');
 
 		//add css file
-		$doc->addStyleSheet($this->baseurl.'/components/com_eventlist/assets/css/eventlist.css');
+		$doc->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
 		$doc->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
 
 		//Set page title
-		$id ? $title = JText::_( 'COM_EVENTLIST_EDIT_EVENT' ) : $title = JText::_( 'COM_EVENTLIST_ADD_EVENT' );
+		$id ? $title = JText::_( 'COM_JEM_EDIT_EVENT' ) : $title = JText::_( 'COM_JEM_ADD_EVENT' );
 
 		$doc->setTitle($title);
 
 		// Get the menu object of the active menu item
 		$menu		= $app->getMenu();
 		$item    	= $menu->getActive();
-		$params 	=  $app->getParams('com_eventlist');
+		$params 	=  $app->getParams('com_jem');
 
 		//pathway
 		$pathway 	=  $app->getPathWay();
@@ -116,7 +116,7 @@ class EventListViewEditevent extends JViewLegacy
 		$dimage = ELImage::flyercreator($row->datimage, 'event');
 
 		//Set the info image
-		$infoimage = JHTML::_('image', 'components/com_eventlist/assets/images/icon-16-hint.png', JText::_( 'COM_EVENTLIST_NOTES' ) );
+		$infoimage = JHTML::_('image', 'components/com_jem/assets/images/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
 
 		//Create the stuff required for the venueselect functionality
 		$url	= $app->isAdmin() ? $app->getSiteURL() : JURI::base();
@@ -135,21 +135,21 @@ class EventListViewEditevent extends JViewLegacy
 
 		$doc->addScriptDeclaration($js);
 		// include the recurrence script
-		$doc->addScript($url.'components/com_eventlist/assets/js/recurrence.js');
+		$doc->addScript($url.'components/com_jem/assets/js/recurrence.js');
 		// include the unlimited script
-		$doc->addScript($url.'components/com_eventlist/assets/js/unlimited.js');
+		$doc->addScript($url.'components/com_jem/assets/js/unlimited.js');
 		
-		$doc->addScript('administrator/components/com_eventlist/assets/js/attachments.js' );
+		$doc->addScript('administrator/components/com_jem/assets/js/attachments.js' );
 		
 		$lists = array();
 		
 		// recurrence type
     	$rec_type = array();
-    	$rec_type[] = JHTML::_('select.option', 0, JText::_ ( 'COM_EVENTLIST_NOTHING' ));
-    	$rec_type[] = JHTML::_('select.option', 1, JText::_ ( 'COM_EVENTLIST_DAYLY' ));
-    	$rec_type[] = JHTML::_('select.option', 2, JText::_ ( 'COM_EVENTLIST_WEEKLY' ));
-    	$rec_type[] = JHTML::_('select.option', 3, JText::_ ( 'COM_EVENTLIST_MONTHLY' ));
-    	$rec_type[] = JHTML::_('select.option', 4, JText::_ ( 'COM_EVENTLIST_WEEKDAY' ));
+    	$rec_type[] = JHTML::_('select.option', 0, JText::_ ( 'COM_JEM_NOTHING' ));
+    	$rec_type[] = JHTML::_('select.option', 1, JText::_ ( 'COM_JEM_DAYLY' ));
+    	$rec_type[] = JHTML::_('select.option', 2, JText::_ ( 'COM_JEM_WEEKLY' ));
+    	$rec_type[] = JHTML::_('select.option', 3, JText::_ ( 'COM_JEM_MONTHLY' ));
+    	$rec_type[] = JHTML::_('select.option', 4, JText::_ ( 'COM_JEM_WEEKDAY' ));
     	$lists['recurrence_type'] = JHTML::_('select.genericlist', $rec_type, 'recurrence_type', '', 'value', 'text', $row->recurrence_type);
 
     	//if only owned events are allowed
@@ -157,7 +157,7 @@ class EventListViewEditevent extends JViewLegacy
     		$venues     = & $this->get( 'UserVenues' );
 			//build list
 			$venuelist       = array();
-			$venuelist[]     = JHTML::_('select.option', '0', JText::_( 'COM_EVENTLIST_NO_VENUE' ) );
+			$venuelist[]     = JHTML::_('select.option', '0', JText::_( 'COM_JEM_NO_VENUE' ) );
 			$venuelist       = array_merge( $venuelist, $venues );
 
 			$lists['venueselect']    = JHTML::_('select.genericlist', $venuelist, 'locid', 'size="1" class="inputbox"', 'value', 'text', $row->locid );
@@ -196,7 +196,7 @@ class EventListViewEditevent extends JViewLegacy
 		$params 	=  $app->getParams();
 
 		$limitstart			= JRequest::getVar('limitstart', 0, '', 'int');
-		$limit				= $app->getUserStateFromRequest('com_eventlist.selectvenue.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit				= $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $params->def('display_num', 0), 'int');
 		$filter_order		= JRequest::getCmd('filter_order', 'l.venue');
 		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', 'ASC');;
 		$filter				= JRequest::getString('filter');
@@ -216,12 +216,12 @@ class EventListViewEditevent extends JViewLegacy
 		$lists['order_Dir'] 	= $filter_order_Dir;
 		$lists['order'] 		= $filter_order;
 
-		$document->setTitle(JText::_( 'COM_EVENTLIST_SELECTVENUE' ));
-		$document->addStyleSheet($this->baseurl.'/components/com_eventlist/assets/css/eventlist.css');
+		$document->setTitle(JText::_( 'COM_JEM_SELECTVENUE' ));
+		$document->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
 
 		$filters = array();
-		$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_EVENTLIST_VENUE' ) );
-		$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_EVENTLIST_CITY' ) );
+		$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_VENUE' ) );
+		$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_CITY' ) );
 		$searchfilter = JHTML::_('select.genericlist', $filters, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
 
 		$this->assignRef('rows' , 				$rows);

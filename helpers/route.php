@@ -52,7 +52,7 @@ static	function getRoute($id, $view = 'details')
 		);
 
 		//Create the link
-		$link = 'index.php?option=com_eventlist&view='.$view.'&id='. $id;
+		$link = 'index.php?option=com_jem&view='.$view.'&id='. $id;
 
 		if($item = EventListHelperRoute::_findItem($needles)) {
 			$link .= '&Itemid='.$item->id;
@@ -74,7 +74,7 @@ static	function getRoute($id, $view = 'details')
 	 */
 static	function _findItem($needles)
 	{
-		$component = JComponentHelper::getComponent('com_eventlist');
+		$component = JComponentHelper::getComponent('com_jem');
 
 		$app =  JFactory::getApplication();
 

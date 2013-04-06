@@ -22,7 +22,7 @@
 // no direct access
 defined( '_JEXEC' ) or die;
 ?>
-<h2 class="register"><?php echo JText::_( 'COM_EVENTLIST_REGISTERED_USERS' ).':'; ?></h2>
+<h2 class="register"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ).':'; ?></h2>
 
 <div class="register">
 <?php
@@ -84,11 +84,11 @@ endforeach;
 switch ($this->formhandler) {
 
 	case 1:
-		echo JText::_( 'COM_EVENTLIST_TOO_LATE_REGISTER' );
+		echo JText::_( 'COM_JEM_TOO_LATE_REGISTER' );
 	break;
 
 	case 2:
-		echo JText::_( 'COM_EVENTLIST_LOGIN_FOR_REGISTER' );
+		echo JText::_( 'COM_JEM_LOGIN_FOR_REGISTER' );
 	break;
 
 	case 3:

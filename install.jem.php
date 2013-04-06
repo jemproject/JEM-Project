@@ -315,11 +315,11 @@ if (is_a($plugins, 'JXMLElement') && count($plugins->children()))
 
 /***********************************************************************************************
  * ---------------------------------------------------------------------------------------------
- * EVENTLIST CHECK MODE UPDATE
+ * JEM CHECK MODE UPDATE
  * ---------------------------------------------------------------------------------------------
  ***********************************************************************************************/
 //detect if catsid field is available in events table. If yes, 1.0 is installed
-$query = 'DESCRIBE #__eventlist_events catsid';
+$query = 'DESCRIBE #__jem_events catsid';
 $db->setQuery($query);
 $update11 = $db->loadResult();
 
@@ -331,17 +331,17 @@ if ($update11)
 
     #############################################################################
     #																			#
-    #		Database Update Logic for EventList 1.0 to EventList 1.1 Beta		#
+    #		Database Update Logic for JEM 1.0 to JEM 1.1 Beta		#
     #																			#
     #############################################################################
     
     /* Get the current columns */
-		$q = "SHOW COLUMNS FROM #__eventlist_events";
+		$q = "SHOW COLUMNS FROM #__jem_events";
 		$db->setQuery($q);
 		$events_cols = $db->loadObjectList('Field');
 
     //update current settings
-    $query = 'ALTER TABLE #__eventlist_settings'
+    $query = 'ALTER TABLE #__jem_settings'
     .' CHANGE imagehight imageheight VARCHAR( 20 ) NOT NULL,'
     .' ADD reg_access tinyint(4) NOT NULL AFTER regname,'
     .' ADD ownedvenuesonly tinyint(4) NOT NULL AFTER locpubrec,'
@@ -359,7 +359,7 @@ if ($update11)
         $status->updates[$i][] = array ('message'=>'Updating settings table: Step 1', 'result'=>'success');
     }
 
-	$query = 'UPDATE #__eventlist_settings'
+	$query = 'UPDATE #__jem_settings'
     .' SET meta_keywords = REPLACE(meta_keywords, "[catsid]","[categories]"),'
 	.' meta_description = REPLACE(meta_description, "[catsid]","[categories]")'
     ;
@@ -374,7 +374,7 @@ if ($update11)
 
     //update events table
     //add new fields
-    $query = 'ALTER TABLE #__eventlist_events'
+    $query = 'ALTER TABLE #__jem_events'
     .( !array_key_exists('recurrence_limit', $events_cols) ? ' ADD recurrence_limit INT NOT NULL AFTER recurrence_counter,' : '')
     .( !array_key_exists('recurrence_limit_date', $events_cols) ? ' ADD recurrence_limit_date DATE NULL DEFAULT NULL AFTER recurrence_limit,' : '')
     .( !array_key_exists('recurrence_first_id', $events_cols) ? ' ADD recurrence_first_id int(11) NOT NULL default \'0\' AFTER meta_description,' : '')
@@ -391,7 +391,7 @@ if ($update11)
         $status->updates[$i][] = array ('message'=>'Adding new fields to event table', 'result'=>'success');
 
         //converting fields to new schema
-		    $query = 'UPDATE #__eventlist_events'
+		    $query = 'UPDATE #__jem_events'
 		    .' SET recurrence_limit_date = recurrence_counter,'
 			.' meta_keywords = REPLACE(meta_keywords, "[catsid]","[categories]"),'
 			.' meta_description = REPLACE(meta_description, "[catsid]","[categories]")'
@@ -404,7 +404,7 @@ if ($update11)
 		    {
 		        $status->updates[$i][] = array ('message'=>'Converting recurrence: Step 1', 'result'=>'success');
 		
-		        $query = 'ALTER TABLE #__eventlist_events'
+		        $query = 'ALTER TABLE #__jem_events'
 				    .' CHANGE recurrence_counter recurrence_counter INT NOT NULL DEFAULT \'0\''
 				    ;
 				    $db->setQuery($query);
@@ -418,7 +418,7 @@ if ($update11)
 		    }
 		    
 		    
-				$query = ' UPDATE #__eventlist_events '
+				$query = ' UPDATE #__jem_events '
 				       . ' SET recurrence_number = 0,'
 				       . ' recurrence_type = 0,'
 				       . ' recurrence_counter = 0,'
@@ -439,14 +439,14 @@ if ($update11)
 
 
     //convert category structure
-    $query = 'SELECT id, catsid FROM #__eventlist_events';
+    $query = 'SELECT id, catsid FROM #__jem_events';
     $db->setQuery($query);
     $categories = $db->loadObjectList();
 
     $err = 0;
     foreach ($categories AS $category)
     {
-        $query = 'INSERT INTO #__eventlist_cats_event_relations VALUES ('.$category->catsid.', '.$category->id.', \'\')';
+        $query = 'INSERT INTO #__jem_cats_event_relations VALUES ('.$category->catsid.', '.$category->id.', \'\')';
         $db->setQuery($query);
         if (!$db->query())
         {
@@ -462,7 +462,7 @@ if ($update11)
         $status->updates[$i][] = array ('message'=>'Converting to new category structure', 'result'=>'success');
 
         //remove catsid field from events table
-		    $query = 'ALTER TABLE #__eventlist_events DROP catsid';
+		    $query = 'ALTER TABLE #__jem_events DROP catsid';
 		    $db->setQuery($query);
 		    if (!$db->query())
 		    {
@@ -475,7 +475,7 @@ if ($update11)
 
 
     //update venues table
-    $query = 'ALTER TABLE #__eventlist_venues'
+    $query = 'ALTER TABLE #__jem_venues'
     .' ADD latitude float default NULL,'
     .' ADD longitude float default NULL,'
     .' ADD version int(11) unsigned NOT NULL default \'0\''
@@ -490,14 +490,14 @@ if ($update11)
     }
 
     /* Get the current columns */
-		$q = "SHOW COLUMNS FROM #__eventlist_categories";
+		$q = "SHOW COLUMNS FROM #__jem_categories";
 		$db->setQuery($q);
 		$events_cats = $db->loadObjectList('Field');
 		
 		if (!array_key_exists('color', $events_cats))
 		{
 	    //update categories table
-	    $query = 'ALTER IGNORE TABLE #__eventlist_categories'
+	    $query = 'ALTER IGNORE TABLE #__jem_categories'
 	    .' ADD color varchar(20) NOT NULL default \'\''
 	    ;
 	
@@ -516,18 +516,18 @@ if ($update11)
 
     #############################################################################
     #																			#
-    #	END: Database Update Logic for EventList 1.0 to EventList 1.1 Beta		#
+    #	END: Database Update Logic for JEM 1.0 to JEM 1.1 Beta		#
     #																			#
     #############################################################################
 }
 
 #############################################################################
 #																			#
-#	BEGIN: Database Update Logic for EventList 1.1 Beta to Current EventList development version
+#	BEGIN: Database Update Logic for JEM 1.1 Beta to Current JEM development version
 #																			#
 #############################################################################
 //is this a fresh install ? in that case, there should be no settings yet
-$query = 'SELECT id FROM #__eventlist_settings WHERE id = 1';
+$query = 'SELECT id FROM #__jem_settings WHERE id = 1';
 $db->setQuery($query);
 $freshinstall = !$db->loadResult();
 
@@ -536,18 +536,18 @@ if (!$freshinstall) // update only if not fresh install
   $status->updates[] = array ('oldversion'=>'1.1 Beta', 'newversion'=>'1.1 Beta development');
     
 	// first get tables to be checked for update
-	$tables = array( '#__eventlist_events',
-	                 '#__eventlist_register', 
+	$tables = array( '#__jem_events',
+	                 '#__jem_register', 
                );
 	$tables = $db->getTableFields($tables, false);
 	
 	// update events table
-	$cols = $tables['#__eventlist_events'];
+	$cols = $tables['#__jem_events'];
 	
 	if (!array_key_exists('maxplaces', $cols)) // remove the '&& 0'...
 	{
     //update table
-    $query = ' ALTER TABLE #__eventlist_events'
+    $query = ' ALTER TABLE #__jem_events'
            . ' ADD `maxplaces` INT( 11 ) NOT NULL DEFAULT "0", '
            . ' ADD `waitinglist` TINYINT( 1 ) NOT NULL DEFAULT "0" '
            ;
@@ -562,12 +562,12 @@ if (!$freshinstall) // update only if not fresh install
     }
 	}	
 	// update events table
-	$cols = $tables['#__eventlist_register'];
+	$cols = $tables['#__jem_register'];
 	
 	if (!array_key_exists('waiting', $cols)) // remove the '&& 0'...
 	{
     //update table
-    $query = ' ALTER TABLE #__eventlist_register'
+    $query = ' ALTER TABLE #__jem_register'
            . ' ADD `waiting` TINYINT( 1 ) NOT NULL DEFAULT "0" '
            ;
 
@@ -586,82 +586,82 @@ if (!$freshinstall) // update only if not fresh install
 }
 #############################################################################
 #																			#
-#	END: Database Update Logic for EventList 1.1 Beta to Current EventList development version
+#	END: Database Update Logic for JEM 1.1 Beta to Current JEM development version
 #																			#
 #############################################################################
 
 /***********************************************************************************************
  * ---------------------------------------------------------------------------------------------
- * EVENTLIST FRESH INSTALL
+ * JEM FRESH INSTALL
  * ---------------------------------------------------------------------------------------------
  ***********************************************************************************************/
 
 if ($freshinstall)
 {	
-    // Check for existing /images/eventlist directory
-    if (!$direxists = JFolder::exists(JPATH_SITE.'/images/eventlist'))
+    // Check for existing /images/jem directory
+    if (!$direxists = JFolder::exists(JPATH_SITE.'/images/jem'))
     {
         //Image folder creation
-        if ($makedir = JFolder::create(JPATH_SITE.'/images/eventlist'))
+        if ($makedir = JFolder::create(JPATH_SITE.'/images/jem'))
         {
-			$status->install[] = array ('message'=>'Try to create directory /images/eventlist', 'result'=>'success');
+			$status->install[] = array ('message'=>'Try to create directory /images/jem', 'result'=>'success');
         } else
         {
-            $status->install[] = array ('message'=>'Try to create directory /images/eventlist', 'result'=>'failed');
+            $status->install[] = array ('message'=>'Try to create directory /images/jem', 'result'=>'failed');
         }
-        if (JFolder::create(JPATH_SITE.'/images/eventlist/events'))
+        if (JFolder::create(JPATH_SITE.'/images/jem/events'))
         {
-			$status->install[] = array ('message'=>'Try to create directory /images/eventlist/events', 'result'=>'success');
+			$status->install[] = array ('message'=>'Try to create directory /images/jem/events', 'result'=>'success');
         } else
         {
-           $status->install[] = array ('message'=>'Try to create directory /images/eventlist/events', 'result'=>'failed');
+           $status->install[] = array ('message'=>'Try to create directory /images/jem/events', 'result'=>'failed');
         }
-        if (JFolder::create(JPATH_SITE.'/images/eventlist/events/small'))
+        if (JFolder::create(JPATH_SITE.'/images/jem/events/small'))
         {
-			$status->install[] = array ('message'=>'Try to create directory /images/eventlist/events/small', 'result'=>'success');
+			$status->install[] = array ('message'=>'Try to create directory /images/jem/events/small', 'result'=>'success');
         } else
         {
-            $status->install[] = array ('message'=>'Try to create directory /images/eventlist/events/small', 'result'=>'failed');
+            $status->install[] = array ('message'=>'Try to create directory /images/jem/events/small', 'result'=>'failed');
         }
-        if (JFolder::create(JPATH_SITE.'/images/eventlist/categories'))
+        if (JFolder::create(JPATH_SITE.'/images/jem/categories'))
         {
-			$status->install[] = array ('message'=>'Try to create directory /images/eventlist/categories', 'result'=>'success');
+			$status->install[] = array ('message'=>'Try to create directory /images/jem/categories', 'result'=>'success');
         } else
         {
-           $status->install[] = array ('message'=>'Try to create directory /images/eventlist/categories', 'result'=>'failed');
+           $status->install[] = array ('message'=>'Try to create directory /images/jem/categories', 'result'=>'failed');
         }
-        if (JFolder::create(JPATH_SITE.'/images/eventlist/categories/small'))
+        if (JFolder::create(JPATH_SITE.'/images/jem/categories/small'))
         {
-			$status->install[] = array ('message'=>'Try to create directory /images/eventlist/categories/small', 'result'=>'success');
+			$status->install[] = array ('message'=>'Try to create directory /images/jem/categories/small', 'result'=>'success');
         } else
         {
-            $status->install[] = array ('message'=>'Try to create directory /images/eventlist/categories/small', 'result'=>'failed');
+            $status->install[] = array ('message'=>'Try to create directory /images/jem/categories/small', 'result'=>'failed');
         }
-        if (JFolder::create(JPATH_SITE.'/images/eventlist/venues'))
+        if (JFolder::create(JPATH_SITE.'/images/jem/venues'))
         {
-			$status->install[] = array ('message'=>'Try to create directory /images/eventlist/venues', 'result'=>'success');
+			$status->install[] = array ('message'=>'Try to create directory /images/jem/venues', 'result'=>'success');
         } else
         {
-            $status->install[] = array ('message'=>'Try to create directory /images/eventlist/venues', 'result'=>'failed');
+            $status->install[] = array ('message'=>'Try to create directory /images/jem/venues', 'result'=>'failed');
         }
-        if (JFolder::create(JPATH_SITE.'/images/eventlist/venues/small'))
+        if (JFolder::create(JPATH_SITE.'/images/jem/venues/small'))
         {
-			$status->install[] = array ('message'=>'Try to create directory /images/eventlist/venues/small', 'result'=>'success');
+			$status->install[] = array ('message'=>'Try to create directory /images/jem/venues/small', 'result'=>'success');
         } else
         {
-			$status->install[] = array ('message'=>'Try to create directory /images/eventlist/venues', 'result'=>'failed');
+			$status->install[] = array ('message'=>'Try to create directory /images/jem/venues', 'result'=>'failed');
         }
     }
 
     //check if default values are available
-    $query = 'SELECT * FROM #__eventlist_settings WHERE id = 1';
+    $query = 'SELECT * FROM #__jem_settings WHERE id = 1';
     $db->setQuery($query);
     $settingsresult = $db->loadResult();
     
     if (!$settingsresult)
     {
         //Set the default setting values -> fresh install
-        $query = "INSERT INTO #__eventlist_settings VALUES (1, 2, 1, 1, 1, 1, 1, 1, '1', '1', '100%', '20%', '40%', '20%', '', 'Datum', 'Activiteit', 'Locatie', 'city', '%d.%m.%Y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, 0, 'example@example.com', 0, '1000', -2, -2, -2, 1, '', 'Type', 1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, '[title], [a_name], [catsid], [times]', 'The event titled [title] starts on [dates]!', 1, 0, 'State', '0', 0, 1, 0, '1364604520', '', '', 'NL', 'NL', '100', '10%', 0, 'evimage', '0', 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 'attendee', '10%', 1, 30, 1, 1, 'media/com_eventlist/attachments', '1000', 'txt,csv,htm,html,xml,css,doc,xls,zip,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,tar.gz', 0)";
+        $query = "INSERT INTO #__jem_settings VALUES (1, 2, 1, 1, 1, 1, 1, 1, '1', '1', '100%', '20%', '40%', '20%', '', 'Datum', 'Activiteit', 'Locatie', 'city', '%d.%m.%Y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, 0, 'example@example.com', 0, '1000', -2, -2, -2, 1, '', 'Type', 1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, '[title], [a_name], [catsid], [times]', 'The event titled [title] starts on [dates]!', 1, 0, 'State', '0', 0, 1, 0, '1364604520', '', '', 'NL', 'NL', '100', '10%', 0, 'evimage', '0', 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 'attendee', '10%', 1, 30, 1, 1, 'media/com_jem/attachments', '1000', 'txt,csv,htm,html,xml,css,doc,xls,zip,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,tar.gz', 0)";
         $db->setQuery($query);
         if (!$db->query())
         {
@@ -683,7 +683,7 @@ if ($freshinstall)
  ***********************************************************************************************/
 $rows = 0;
 ?>
-<img src="components/com_eventlist/assets/images/evlogo.png" width="250" height="108" alt="EventList Logo" align="right" /><h2>EventList installation</h2>
+<img src="components/com_jem/assets/images/jemlogo.png" alt="JEM Logo" align="right" /><h2>JEM installation</h2>
 <table class="adminlist">
     <thead>
         <tr>
@@ -709,7 +709,7 @@ $rows = 0;
         <tr class="row0">
             <td class="key" colspan="2">
                 <?php
-                echo 'EventList '.JText::_('Component');
+                echo 'JEM '.JText::_('Component');
                 ?>
             </td>
             <td>

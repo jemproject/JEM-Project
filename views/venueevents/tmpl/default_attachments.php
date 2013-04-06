@@ -24,15 +24,15 @@ defined( '_JEXEC' ) or die;
 
 <?php if ($this->venue->attachments && count($this->venue->attachments)):?>
 <div class="el-files">
-<div class="el-section-title"><?php echo JText::_( 'COM_EVENTLIST_FILES' ); ?></div>
+<div class="el-section-title"><?php echo JText::_( 'COM_JEM_FILES' ); ?></div>
 <table>
 	<tbody>
 	<?php foreach ($this->venue->attachments as $file): ?>
 		<tr>
 			<td><span class="el-file-dl-icon hasTip"	
-			          title="<?php echo JText::_('COM_EVENTLIST_DOWNLOAD').' '.$this->escape($file->file).'::'.$this->escape($file->description);?>"><?php 
-			          echo JHTML::link('index.php?option=com_eventlist&task=getfile&format=raw&file='.$file->id, 
-			                           JHTML::image('components/com_eventlist/assets/images/download_16.png', JText::_('COM_EVENTLIST_DOWNLOAD'))); ?></span>
+			          title="<?php echo JText::_('COM_JEM_DOWNLOAD').' '.$this->escape($file->file).'::'.$this->escape($file->description);?>"><?php 
+			          echo JHTML::link('index.php?option=com_jem&task=getfile&format=raw&file='.$file->id, 
+			                           JHTML::image('components/com_jem/assets/images/download_16.png', JText::_('COM_JEM_DOWNLOAD'))); ?></span>
 			</td>
 			<td class="el-file-name"><?php echo $this->escape($file->name ? $file->name : $file->file); ?></td>
 		</tr>

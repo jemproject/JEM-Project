@@ -22,15 +22,15 @@
 defined('_JEXEC') or die;
 ?>
 
-<form action="index.php?option=com_eventlist&amp;view=categoryelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
+<form action="index.php?option=com_jem&amp;view=categoryelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
 
 <table class="adminform">
 	<tr>
 		<td width="100%">
-			<?php echo JText::_( 'COM_EVENTLIST_SEARCH' ); ?>
+			<?php echo JText::_( 'COM_JEM_SEARCH' ); ?>
 			<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button onclick="this.form.submit();"><?php echo JText::_( 'COM_EVENTLIST_GO' ); ?></button>
-			<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_EVENTLIST_RESET' ); ?></button>
+			<button onclick="this.form.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+			<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 		</td>
 		<td nowrap="nowrap"><?php  echo $this->lists['state']; ?></td>
 	</tr>
@@ -39,10 +39,10 @@ defined('_JEXEC') or die;
 <table class="adminlist" cellspacing="1">
 	<thead>
 		<tr>
-			<th width="7"><?php echo JText::_( 'COM_EVENTLIST_NUM' ); ?></th>
-			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_CATEGORY', 'catname', $this->lists['order_Dir'], $this->lists['order'], 'categoryelement' ); ?></th>
-			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_EVENTLIST_ACCESS' ); ?></th>
-			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_EVENTLIST_PUBLISHED' ); ?></th>
+			<th width="7"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_CATEGORY', 'catname', $this->lists['order_Dir'], $this->lists['order'], 'categoryelement' ); ?></th>
+			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_ACCESS' ); ?></th>
+			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 		</tr>
 	</thead>
 
@@ -66,7 +66,7 @@ defined('_JEXEC') or die;
 		<tr class="<?php echo "row$k"; ?>">
 			<td width="7"><?php echo $this->pageNav->getRowOffset( $i ); ?></td>
 			<td align="left">
-				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_SELECT' );?>::<?php echo $row->catname; ?>">
+				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SELECT' );?>::<?php echo $row->catname; ?>">
 				<?php echo $row->treename; ?>
 				<a style="cursor:pointer" onclick="window.parent.elSelectCategory('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->catname ); ?>');">
 					<?php echo htmlspecialchars($row->catname, ENT_QUOTES, 'UTF-8'); ?>

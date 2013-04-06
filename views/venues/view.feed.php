@@ -56,7 +56,7 @@ class EventListViewVenues extends JViewLegacy
 
 			// url link to article
 			// & used instead of &amp; as this is converted by feed creator
-			$link = 'index.php?option=com_eventlist&view=venueevents&id='. $row->id;
+			$link = 'index.php?option=com_jem&view=venueevents&id='. $row->id;
 			$link = JRoute::_( $link );
 
 			// strip html from feed item description text

@@ -66,7 +66,7 @@ class EventListControllerArchive extends EventListController
 		$total = count( $cid );
 		$msg 	= $total.' '.JText::_('EVENT UNARCHIVED');
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=archive', $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=archive', $msg );
 	}
 
 	/**
@@ -93,7 +93,7 @@ class EventListControllerArchive extends EventListController
 
 		$msg = $total.' '.JText::_( 'EVENTS DELETED');
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=archive', $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=archive', $msg );
 	}
 }
 ?>

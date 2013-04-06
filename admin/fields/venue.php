@@ -45,9 +45,9 @@ class JElementVenue extends JElement
 		$doc 		=& JFactory::getDocument();
 		$fieldName	= $control_name.'['.$name.']';
 
-		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_eventlist'.DS.'tables');
+		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_jem'.DS.'tables');
 
-		$venue =& JTable::getInstance('eventlist_venues', '');
+		$venue =& JTable::getInstance('jem_venues', '');
 		if ($value) {
 			$venue->load($value);
 		} else {
@@ -61,7 +61,7 @@ class JElementVenue extends JElement
 			document.getElementById('sbox-window').close();
 		}";
 
-		$link = 'index.php?option=com_eventlist&amp;view=venueelement&amp;tmpl=component';
+		$link = 'index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component';
 		$doc->addScriptDeclaration($js);
 
 		JHTML::_('behavior.modal', 'a.modal');

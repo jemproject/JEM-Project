@@ -26,10 +26,10 @@ defined('_JEXEC') or die; ?>
 	<table class="adminform">
 		<tr>
 			<td width="100%">
-				<?php echo JText::_( 'COM_EVENTLIST_SEARCH' ).' '.$this->lists['filter']; ?>
+				<?php echo JText::_( 'COM_JEM_SEARCH' ).' '.$this->lists['filter']; ?>
 				<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onchange="document.adminForm.submit();" title="<?php echo JText::_( 'Filter by title or enter article ID' );?>"/>
-				<button onclick="this.form.submit();"><?php echo JText::_( 'COM_EVENTLIST_GO' ); ?></button>
-				<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_EVENTLIST_RESET' ); ?></button>
+				<button onclick="this.form.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+				<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 			</td>
 		</tr>
 	</table>
@@ -37,15 +37,15 @@ defined('_JEXEC') or die; ?>
 	<table class="adminlist" cellspacing="1">
 		<thead>
 			<tr>
-				<th width="5"><?php echo JText::_( 'COM_EVENTLIST_NUM' ); ?></th>
+				<th width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 				<th width="5"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_START', 'a.times', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_VENUE', 'loc.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<th class="title"><?php echo JText::_( 'COM_EVENTLIST_CATEGORY' ); ?></th>
-				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<th class="title"><?php echo JText::_( 'COM_EVENTLIST_CREATION' ); ?></th>
+				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_START', 'a.times', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="title"><?php echo JText::_( 'COM_JEM_CATEGORY' ); ?></th>
+				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="title"><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
 			</tr>
 		</thead>
 
@@ -66,7 +66,7 @@ defined('_JEXEC') or die; ?>
 					$date		= strftime( $this->elsettings->formatdate, strtotime( $row->dates ));
 				} 
 				else {
-					$date		= JText::_('COM_EVENTLIST_OPEN_DATE');
+					$date		= JText::_('COM_JEM_OPEN_DATE');
 				}
 
 				if (!ELHelper::isValidDate($row->enddates)) {
@@ -98,7 +98,7 @@ defined('_JEXEC') or die; ?>
 				$nr = count($row->categories);
 				$ix = 0;
 				foreach ($row->categories as $key => $category) :				
-					$catlink	= 'index.php?option=com_eventlist&amp;controller=categories&amp;task=edit&amp;cid[]='. $category->id;
+					$catlink	= 'index.php?option=com_jem&amp;controller=categories&amp;task=edit&amp;cid[]='. $category->id;
 					$title = htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8');
 					if (JString::strlen($title) > 20) {
 						$title = JString::substr( $title , 0 , 20).'...';
@@ -137,20 +137,20 @@ defined('_JEXEC') or die; ?>
 				</td>
 				<td><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
 				<td>
-					<?php echo JText::_( 'COM_EVENTLIST_AUTHOR' ).': '; ?><a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>"><?php echo $row->author; ?></a><br />
-					<?php echo JText::_( 'COM_EVENTLIST_EMAIL' ).': '; ?><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a><br />
+					<?php echo JText::_( 'COM_JEM_AUTHOR' ).': '; ?><a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>"><?php echo $row->author; ?></a><br />
+					<?php echo JText::_( 'COM_JEM_EMAIL' ).': '; ?><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a><br />
 					<?php
 					$created = JHTML::Date( $row->created, JText::_( 'DATE_FORMAT_LC2' ) );
 					$edited	 = JHTML::Date( $row->modified, JText::_( 'DATE_FORMAT_LC2' ) );
-					$image 			= JHTML::_('image', 'administrator/templates/'. $this->template .'/images/menu/icon-16-info.png', JText::_('COM_EVENTLIST_NOTES') );
-					$overlib 	= JText::_( 'COM_EVENTLIST_CREATED_AT' ).': '.$created.'<br />';
-					$overlib	.= JText::_( 'COM_EVENTLIST_WITH_IP' ).': '.$row->author_ip.'<br />';
+					$image 			= JHTML::_('image', 'administrator/templates/'. $this->template .'/images/menu/icon-16-info.png', JText::_('COM_JEM_NOTES') );
+					$overlib 	= JText::_( 'COM_JEM_CREATED_AT' ).': '.$created.'<br />';
+					$overlib	.= JText::_( 'COM_JEM_WITH_IP' ).': '.$row->author_ip.'<br />';
 					if ($row->modified != '0000-00-00 00:00:00') {
-						$overlib 	.= JText::_( 'COM_EVENTLIST_EDITED_AT' ).': '.$edited.'<br />';
-						$overlib 	.= JText::_( 'COM_EVENTLIST_EDITED_FROM' ).': '.$row->editor.'<br />';
+						$overlib 	.= JText::_( 'COM_JEM_EDITED_AT' ).': '.$edited.'<br />';
+						$overlib 	.= JText::_( 'COM_JEM_EDITED_FROM' ).': '.$row->editor.'<br />';
 					}
 					?>
-					<span class="editlinktip hasTip" title="<?php echo JText::_('COM_EVENTLIST_EVENT_STATS'); ?>::<?php echo $overlib; ?>">
+					<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_EVENT_STATS'); ?>::<?php echo $overlib; ?>">
 						<?php echo $image; ?>
 					</span>
 				</td>
@@ -165,7 +165,7 @@ defined('_JEXEC') or die; ?>
 	</p>
 
 	<input type="hidden" name="boxchecked" value="0" />
-	<input type="hidden" name="option" value="com_eventlist" />
+	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="view" value="archive" />
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="controller" value="archive" />

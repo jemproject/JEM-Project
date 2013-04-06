@@ -34,9 +34,9 @@ defined( '_JEXEC' ) or die;
 		
 				<?php if($this->ftp): ?>
 				<fieldset class="adminform">
-					<legend><?php echo JText::_('COM_EVENTLIST_FTP_TITLE'); ?></legend>
+					<legend><?php echo JText::_('COM_JEM_FTP_TITLE'); ?></legend>
 
-					<?php echo JText::_('COM_EVENTLIST_FTP_DESC'); ?>
+					<?php echo JText::_('COM_JEM_FTP_DESC'); ?>
 					
 					<?php if(JError::isError($this->ftp)): ?>
 						<p><?php echo JText::_($this->ftp->message); ?></p>
@@ -46,7 +46,7 @@ defined( '_JEXEC' ) or die;
 						<tbody>
 							<tr>
 								<td width="120">
-									<label for="username"><?php echo JText::_('COM_EVENTLIST_USERNAME'); ?>:</label>
+									<label for="username"><?php echo JText::_('COM_JEM_USERNAME'); ?>:</label>
 								</td>
 								<td>
 									<input type="text" id="username" name="username" class="input_box" size="70" value="" />
@@ -54,7 +54,7 @@ defined( '_JEXEC' ) or die;
 							</tr>
 							<tr>
 								<td width="120">
-									<label for="password"><?php echo JText::_('COM_EVENTLIST_PASSWORD'); ?>:</label>
+									<label for="password"><?php echo JText::_('COM_JEM_PASSWORD'); ?>:</label>
 								</td>
 								<td>
 									<input type="password" id="password" name="password" class="input_box" size="70" value="" />
@@ -66,14 +66,14 @@ defined( '_JEXEC' ) or die;
 			<?php endif; ?>
 
 			<fieldset class="adminform">
-			<legend><?php echo JText::_( 'COM_EVENTLIST_SELECT_IMAGE_UPLOAD' ); ?></legend>
+			<legend><?php echo JText::_( 'COM_JEM_SELECT_IMAGE_UPLOAD' ); ?></legend>
 			<table class="admintable" cellspacing="1">
 				<tbody>
 					<tr>
 	          			<td>
  							<input class="inputbox" name="userfile" id="userfile" type="file" />
 							<br /><br />
-							<input class="button" type="submit" value="<?php echo JText::_('COM_EVENTLIST_UPLOAD') ?>" name="adminForm" />
+							<input class="button" type="submit" value="<?php echo JText::_('COM_JEM_UPLOAD') ?>" name="adminForm" />
     			       	</td>
       				</tr>
 				</tbody>
@@ -84,13 +84,13 @@ defined( '_JEXEC' ) or die;
         <td width="50%" valign="top">
 
 			<fieldset class="adminform">
-			<legend><?php echo JText::_( 'COM_EVENTLIST_ATTENTION' ); ?></legend>
+			<legend><?php echo JText::_( 'COM_JEM_ATTENTION' ); ?></legend>
 			<table class="admintable" cellspacing="1">
 				<tbody>
 					<tr>
 	          			<td>
  							<b><?php
- 							echo JText::_( 'COM_EVENTLIST_TARGET_DIRECTORY' ).':'; ?></b>
+ 							echo JText::_( 'COM_JEM_TARGET_DIRECTORY' ).':'; ?></b>
 							<?php
 							if ($this->task == 'venueimg') {
 								echo "/images/eventlist/venues/";
@@ -110,30 +110,30 @@ defined( '_JEXEC' ) or die;
 							}
 
 							?><br />
-							<b><?php echo JText::_( 'COM_EVENTLIST_IMAGE_FILESIZE' ).':'; ?></b> <?php echo $this->elsettings->sizelimit; ?> kb<br />
+							<b><?php echo JText::_( 'COM_JEM_IMAGE_FILESIZE' ).':'; ?></b> <?php echo $this->elsettings->sizelimit; ?> kb<br />
 
 							<?php
 							if ( $this->elsettings->gddisabled ) {
 
 								if (imagetypes() & IMG_PNG) {
-									echo "<br /><font color='green'>".JText::_( 'COM_EVENTLIST_PNG_SUPPORT' )."</font>";
+									echo "<br /><font color='green'>".JText::_( 'COM_JEM_PNG_SUPPORT' )."</font>";
 								} else {
-									echo "<br /><font color='red'>".JText::_( 'COM_EVENTLIST_NO_PNG_SUPPORT' )."</font>";
+									echo "<br /><font color='red'>".JText::_( 'COM_JEM_NO_PNG_SUPPORT' )."</font>";
 								}
 								if (imagetypes() & IMG_JPEG) {
-									echo "<br /><font color='green'>".JText::_( 'COM_EVENTLIST_JPG_SUPPORT' )."</font>";
+									echo "<br /><font color='green'>".JText::_( 'COM_JEM_JPG_SUPPORT' )."</font>";
 								} else {
-									echo "<br /><font color='red'>".JText::_( 'COM_EVENTLIST_NO_JPG_SUPPORT' )."</font>";
+									echo "<br /><font color='red'>".JText::_( 'COM_JEM_NO_JPG_SUPPORT' )."</font>";
 								}
 								if (imagetypes() & IMG_GIF) {
-									echo "<br /><font color='green'>".JText::_( 'COM_EVENTLIST_GIF_SUPPORT' )."</font>";
+									echo "<br /><font color='green'>".JText::_( 'COM_JEM_GIF_SUPPORT' )."</font>";
 								} else {
-									echo "<br /><font color='red'>".JText::_( 'COM_EVENTLIST_NO_GIF_SUPPORT' )."</font>";
+									echo "<br /><font color='red'>".JText::_( 'COM_JEM_NO_GIF_SUPPORT' )."</font>";
 								}
 							} else {
-								echo "<br /><font color='green'>".JText::_( 'COM_EVENTLIST_PNG_SUPPORT' )."</font>";
-								echo "<br /><font color='green'>".JText::_( 'COM_EVENTLIST_JPG_SUPPORT' )."</font>";
-								echo "<br /><font color='green'>".JText::_( 'COM_EVENTLIST_GIF_SUPPORT' )."</font>";
+								echo "<br /><font color='green'>".JText::_( 'COM_JEM_PNG_SUPPORT' )."</font>";
+								echo "<br /><font color='green'>".JText::_( 'COM_JEM_JPG_SUPPORT' )."</font>";
+								echo "<br /><font color='green'>".JText::_( 'COM_JEM_GIF_SUPPORT' )."</font>";
 							}
 							?>
     			       	</td>
@@ -153,12 +153,12 @@ defined( '_JEXEC' ) or die;
 		<td>
 
 			<fieldset class="adminform">
-			<legend><?php echo JText::_( 'COM_EVENTLIST_ATTENTION' ); ?></legend>
+			<legend><?php echo JText::_( 'COM_JEM_ATTENTION' ); ?></legend>
 			<table class="admintable" cellspacing="1">
 				<tbody>
 					<tr>
 	          			<td align="center">
-							<?php echo JText::_( 'COM_EVENTLIST_GD_WARNING' ); ?>
+							<?php echo JText::_( 'COM_JEM_GD_WARNING' ); ?>
     			     	 </td>
       				</tr>
 				</tbody>
@@ -172,7 +172,7 @@ defined( '_JEXEC' ) or die;
 <?php } ?>
 
 <?php echo JHTML::_( 'form.token' ); ?>
-<input type="hidden" name="option" value="com_eventlist" />
+<input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="controller" value="imagehandler" />
 <input type="hidden" name="task" value="<?php echo $this->task;?>" />
 </form>

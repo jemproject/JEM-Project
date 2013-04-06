@@ -108,7 +108,7 @@ class EventListModelCategory extends JModelLegacy
 	function &getGroups()
 	{
 		$query = 'SELECT id AS value, name AS text'
-			. ' FROM #__eventlist_groups'
+			. ' FROM #__jem_groups'
 			. ' ORDER BY name'
 			;
 		$this->_db->setQuery( $query );
@@ -131,7 +131,7 @@ class EventListModelCategory extends JModelLegacy
 		if (empty($this->_data))
 		{
 			$query = 'SELECT *'
-					. ' FROM #__eventlist_categories'
+					. ' FROM #__jem_categories'
 					. ' WHERE id = '.$this->_id
 					;
 			$this->_db->setQuery($query);
@@ -161,10 +161,10 @@ class EventListModelCategory extends JModelLegacy
 		{
 			//sticky forms
 			$session = JFactory::getSession();
-			if ($session->has('categoryform', 'com_eventlist')) {
+			if ($session->has('categoryform', 'com_jem')) {
 				
-				$categoryform 	= $session->get('categoryform', 0, 'com_eventlist');
-				$category 		= & JTable::getInstance('eventlist_categories', '');
+				$categoryform 	= $session->get('categoryform', 0, 'com_jem');
+				$category 		= & JTable::getInstance('jem_categories', '');
 				
 				if (!$category->bind($categoryform)) {
 					JError::raiseError( 500, $this->_db->stderr() );
@@ -184,7 +184,7 @@ class EventListModelCategory extends JModelLegacy
 				$category->meta_description		= null;
 				$category->meta_keywords		= null;
 				$category->published			= 1;
-				$category->image				= JText::_('COM_EVENTLIST_SELECTIMAGE');
+				$category->image				= JText::_('COM_JEM_SELECTIMAGE');
       			$category->color        		= '';
 				$category->access				= 0;
 				$category->attachments	= array();
@@ -206,7 +206,7 @@ class EventListModelCategory extends JModelLegacy
 	{
 		if ($this->_id)
 		{
-			$category = & JTable::getInstance('eventlist_categories', '');
+			$category = & JTable::getInstance('jem_categories', '');
 			return $category->checkin($this->_id);
 		}
 		return false;
@@ -230,7 +230,7 @@ class EventListModelCategory extends JModelLegacy
 				$uid	= $user->get('id');
 			}
 			// Lets get to it and checkout the thing...
-			$category =  JTable::getInstance('eventlist_categories', '');
+			$category =  JTable::getInstance('jem_categories', '');
 			return $category->checkout($uid, $this->_id);
 		}
 		return false;
@@ -270,7 +270,7 @@ class EventListModelCategory extends JModelLegacy
 	 */
 	function store($data)
 	{
-		$row  = $this->getTable('eventlist_categories', '');
+		$row  = $this->getTable('jem_categories', '');
 
 		// bind it to the table
 		if (!$row->bind($data)) {

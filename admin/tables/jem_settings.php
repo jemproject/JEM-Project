@@ -32,7 +32,7 @@ defined('_JEXEC') or die;
  * @subpackage EventList
  * @since 0.9
  */
-class eventlist_settings extends JTable
+class jem_settings extends JTable
 {
 	/**
 	 * Unique Key
@@ -207,8 +207,8 @@ var $events_ical    = 0;
 	
 	
 
-	function eventlist_settings(& $db) {
-		parent::__construct('#__eventlist_settings', 'id', $db);
+	function jem_settings(& $db) {
+		parent::__construct('#__jem_settings', 'id', $db);
 	}
 }
 ?>

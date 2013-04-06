@@ -51,7 +51,7 @@ class EventListViewVenues extends JViewLegacy
 		$params 	=  $app->getParams();
 
 		//add css file
-		$document->addStyleSheet($this->baseurl.'/components/com_eventlist/assets/css/eventlist.css');
+		$document->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
 
 		// Request variables
@@ -69,7 +69,7 @@ class EventListViewVenues extends JViewLegacy
 		}
 
 		//add alternate feed link
-		$link    = 'index.php?option=com_eventlist&view=venues&format=feed';
+		$link    = 'index.php?option=com_jem&view=venues&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -80,8 +80,8 @@ class EventListViewVenues extends JViewLegacy
 		$pathway->setItemName(1, $item->title);
 		
 		if ( $task == 'archive' ) {
-			$pathway->addItem(JText::_( 'COM_EVENTLIST_ARCHIVE' ), JRoute::_('index.php?view=venues&task=archive') );
-			$pagetitle = $params->get('page_title').' - '.JText::_( 'COM_EVENTLIST_ARCHIVE' );
+			$pathway->addItem(JText::_( 'COM_JEM_ARCHIVE' ), JRoute::_('index.php?view=venues&task=archive') );
+			$pagetitle = $params->get('page_title').' - '.JText::_( 'COM_JEM_ARCHIVE' );
 			$print_link = JRoute::_('index.php?view=venues&task=archive&print=1&tmpl=component');
 		} else {
 			$pagetitle = $params->get('page_title');

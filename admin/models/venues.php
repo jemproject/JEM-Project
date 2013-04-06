@@ -72,8 +72,8 @@ class EventListModelVenues extends JModelLegacy
 
 		$app = JFactory::getApplication();
 
-		$limit		= $app->getUserStateFromRequest( 'com_eventlist.limit', 'limit', $app->getCfg('list_limit'), 'int');
-		$limitstart = $app->getUserStateFromRequest( 'com_eventlist.limitstart', 'limitstart', 0, 'int' );
+		$limit		= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -166,7 +166,7 @@ class EventListModelVenues extends JModelLegacy
 		$orderby	= $this->_buildContentOrderBy();
 
 		$query = 'SELECT l.*, u.email, u.name AS author'
-				. ' FROM #__eventlist_venues AS l'
+				. ' FROM #__jem_venues AS l'
 				. ' LEFT JOIN #__users AS u ON u.id = l.created_by'
 				. $where
 				. $orderby
@@ -186,8 +186,8 @@ class EventListModelVenues extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest( 'com_eventlist.venues.filter_order', 'filter_order', 'l.ordering', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_eventlist.venues.filter_order_Dir', 'filter_order_Dir', '', 'word' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.venues.filter_order', 'filter_order', 'l.ordering', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.venues.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
@@ -209,9 +209,9 @@ class EventListModelVenues extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_state 		= $app->getUserStateFromRequest( 'com_eventlist.filter_state', 'filter_state', '', 'word' );
-		$filter 			= $app->getUserStateFromRequest( 'com_eventlist.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_eventlist.search', 'search', '', 'string' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.filter_state', 'filter_state', '', 'word' );
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.filter', 'filter', '', 'int' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.search', 'search', '', 'string' );
 		$search 			= $this->_db->getEscaped( trim(JString::strtolower( $search ) ) );
 
 		$where = array();
@@ -274,7 +274,7 @@ class EventListModelVenues extends JModelLegacy
 			* Get nr of assigned events
 			*/
 			$query = 'SELECT COUNT( id )'
-				.' FROM #__eventlist_events'
+				.' FROM #__jem_events'
 				.' WHERE locid = ' . (int)$rows[$i]->id
 				;
 					
@@ -301,7 +301,7 @@ class EventListModelVenues extends JModelLegacy
 		{
 			$cids = implode( ',', $cid );
 
-			$query = 'UPDATE #__eventlist_venues'
+			$query = 'UPDATE #__jem_venues'
 					. ' SET published = '. (int) $publish
 					. ' WHERE id IN ('. $cids .')'
 					. ' AND ( checked_out = 0 OR ( checked_out = ' .$userid. ' ) )'
@@ -325,7 +325,7 @@ class EventListModelVenues extends JModelLegacy
 	 */
 	function move($direction)
 	{
-		$row =& JTable::getInstance('eventlist_venues', '');
+		$row =& JTable::getInstance('jem_venues', '');
 
 		if (!$row->load( $this->_id ) ) {
 			$this->setError($this->_db->getErrorMsg());
@@ -352,8 +352,8 @@ class EventListModelVenues extends JModelLegacy
 		$cids = implode( ',', $cid );
 
 		$query = 'SELECT v.id, v.venue, COUNT( e.locid ) AS numcat'
-				. ' FROM #__eventlist_venues AS v'
-				. ' LEFT JOIN #__eventlist_events AS e ON e.locid = v.id'
+				. ' FROM #__jem_venues AS v'
+				. ' LEFT JOIN #__jem_events AS e ON e.locid = v.id'
 				. ' WHERE v.id IN ('. $cids .')'
 				. ' GROUP BY v.id'
 				;
@@ -378,7 +378,7 @@ class EventListModelVenues extends JModelLegacy
 		{
 			$cids = implode( ',', $cid );
 
-			$query = 'DELETE FROM #__eventlist_venues'
+			$query = 'DELETE FROM #__jem_venues'
 					. ' WHERE id IN ('. $cids .')'
 					;
 

@@ -65,8 +65,8 @@ class EventListModelGroups extends JModelLegacy
 
 		$app =  JFactory::getApplication();
 
-		$limit		= $app->getUserStateFromRequest( 'com_eventlist.limit', 'limit', $app->getCfg('list_limit'), 'int');
-		$limitstart = $app->getUserStateFromRequest( 'com_eventlist.limitstart', 'limitstart', 0, 'int' );
+		$limit		= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -155,7 +155,7 @@ class EventListModelGroups extends JModelLegacy
 		$orderby	= $this->_buildContentOrderBy();
 
 		$query = 'SELECT *'
-					. ' FROM #__eventlist_groups'
+					. ' FROM #__jem_groups'
 					. $where
 					. $orderby
 					;
@@ -173,8 +173,8 @@ class EventListModelGroups extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest( 'com_eventlist.groups.filter_order', 'filter_order', 'name', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_eventlist.groups.filter_order_Dir', 'filter_order_Dir', '', 'word' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.groups.filter_order', 'filter_order', 'name', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.groups.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 
 		
 		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
@@ -195,7 +195,7 @@ class EventListModelGroups extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$search 			= $app->getUserStateFromRequest( 'com_eventlist.search', 'search', '', 'string' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.search', 'search', '', 'string' );
 		$search 			= $this->_db->getEscaped( trim(JString::strtolower( $search ) ) );
 
 		$where = array();
@@ -220,7 +220,7 @@ class EventListModelGroups extends JModelLegacy
 		{
 			$cids = implode( ',', $cid );
 
-			$query = 'DELETE FROM #__eventlist_groups'
+			$query = 'DELETE FROM #__jem_groups'
 					. ' WHERE id IN ('. $cids .')'
 					;
 
@@ -231,7 +231,7 @@ class EventListModelGroups extends JModelLegacy
 				return false;
 			}
 
-			$query = 'DELETE FROM #__eventlist_groupmembers'
+			$query = 'DELETE FROM #__jem_groupmembers'
 					. ' WHERE group_id IN ('. $cids .')'
 					;
 

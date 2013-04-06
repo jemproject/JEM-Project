@@ -50,7 +50,7 @@ $options = array(
 		}
 
 		if ( validator.validate(form.catname) === false ) {
-   			alert("<?php echo JText::_( 'COM_EVENTLIST_ADD_NAME_CATEGORY', true ); ?>");
+   			alert("<?php echo JText::_( 'COM_JEM_ADD_NAME_CATEGORY', true ); ?>");
    			validator.handleResponse(false,form.catname);
    			form.catname.focus();
    			return false;
@@ -70,13 +70,13 @@ $options = array(
 			<td valign="top">
 			<?php echo JHtml::_('tabs.start','det-pane', $options); ?>
 			
-			<?php	echo JHtml::_('tabs.panel',JText::_('COM_EVENTLIST_CATEGORY_INFO_TAB'), 'info' ); ?>
+			<?php	echo JHtml::_('tabs.panel',JText::_('COM_JEM_CATEGORY_INFO_TAB'), 'info' ); ?>
 				&nbsp;<!-- this is a trick for IE7... otherwise the first table inside the tab is shifted right ! -->
 				<table  class="adminform">
 					<tr>
 						<td>
 							<label for="catname">
-								<?php echo JText::_( 'COM_EVENTLIST_CATEGORY' ).':'; ?>
+								<?php echo JText::_( 'COM_JEM_CATEGORY' ).':'; ?>
 							</label>
 						</td>
 						<td>
@@ -84,7 +84,7 @@ $options = array(
 						</td>
 						<td>
 							<label for="published">
-								<?php echo JText::_( 'COM_EVENTLIST_PUBLISHED' ).':'; ?>
+								<?php echo JText::_( 'COM_JEM_PUBLISHED' ).':'; ?>
 							</label>
 						</td>
 						<td>
@@ -97,14 +97,14 @@ $options = array(
 					<tr>
 						<td>
 							<label for="alias">
-								<?php echo JText::_( 'COM_EVENTLIST_ALIAS' ).':'; ?>
+								<?php echo JText::_( 'COM_JEM_ALIAS' ).':'; ?>
 							</label>
 						</td>
 						<td>
 							<input class="inputbox" type="text" name="alias" id="alias" size="50" maxlength="100" value="<?php echo $this->row->alias; ?>" />
 						</td>
 						<td>
-							<?php echo JText::_( 'COM_EVENTLIST_PARENT_CATEGORY' ).':'; ?>
+							<?php echo JText::_( 'COM_JEM_PARENT_CATEGORY' ).':'; ?>
 						</td>
 						<td>
 							<?php echo $this->Lists['parent_id']; ?>
@@ -122,13 +122,13 @@ $options = array(
 						</td>
 					</tr>
 				</table>
-				<?php echo JHtml::_('tabs.panel',JText::_('COM_EVENTLIST_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
+				<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
 				<?php echo $this->loadTemplate('attachments'); ?>
 				<?php echo JHtml::_('tabs.end'); ?>
 			</td>
 			<td valign="top" width="320px" style="padding: 7px 0 0 5px">
 			<?php
-			$title2 = JText::_( 'COM_EVENTLIST_ACCESS' );
+			$title2 = JText::_( 'COM_JEM_ACCESS' );
 			echo JHtml::_('sliders.start', 'det-pane', $options);
 			echo JHtml::_('sliders.panel', $title2, 'access');
 			?>
@@ -136,7 +136,7 @@ $options = array(
 				<tr>
 					<td>
 						<label for="access">
-							<?php echo JText::_( 'COM_EVENTLIST_ACCESS' ).':'; ?>
+							<?php echo JText::_( 'COM_JEM_ACCESS' ).':'; ?>
 						</label>
 					</td>
 					<td>
@@ -147,14 +147,14 @@ $options = array(
 				</tr>
 			</table>
 			<?php
-			$title2 = JText::_( 'COM_EVENTLIST_GROUP' );
+			$title2 = JText::_( 'COM_JEM_GROUP' );
 			echo JHtml::_('sliders.panel', $title2, 'group');
 			?>
 			<table>
 				<tr>
 					<td>
 						<label for="groups">
-							<?php echo JText::_( 'COM_EVENTLIST_GROUP' ).':'; ?>
+							<?php echo JText::_( 'COM_JEM_GROUP' ).':'; ?>
 						</label>
 					</td>
 					<td>
@@ -163,14 +163,14 @@ $options = array(
 				</tr>
 			</table>
 			<?php
-			$title2 = JText::_( 'COM_EVENTLIST_IMAGE' );
+			$title2 = JText::_( 'COM_JEM_IMAGE' );
 			echo JHtml::_('sliders.panel', $title2, 'image');
 			?>
 			<table>
 				<tr>
 					<td>
 						<label for="catimage">
-							<?php echo JText::_( 'COM_EVENTLIST_CHOOSE_IMAGE' ).':'; ?>
+							<?php echo JText::_( 'COM_JEM_CHOOSE_IMAGE' ).':'; ?>
 						</label>
 					</td>
 					<td>
@@ -196,25 +196,25 @@ $options = array(
 				<tr>
           <td>
             <label for="color">
-              <?php echo JText::_( 'COM_EVENTLIST_CHOOSE_COLOR' ).':'; ?>
+              <?php echo JText::_( 'COM_JEM_CHOOSE_COLOR' ).':'; ?>
             </label>
           </td>
           <td>
             <input class="inputbox" type="text" style="background: <?php echo ( $this->row->color == '' )?"transparent":$this->row->color; ?>;"
                    name="color" id="color" size="10" maxlength="20" value="<?php echo $this->row->color; ?>" />                   
-            <input type="button" class="button" value="<?php echo JText::_( 'COM_EVENTLIST_PICK' ); ?>" onclick="openPicker('color', -200, 20);" /> 
+            <input type="button" class="button" value="<?php echo JText::_( 'COM_JEM_PICK' ); ?>" onclick="openPicker('color', -200, 20);" /> 
           </td>
         </tr>
 			</table>
 			<?php
-			$title3 = JText::_( 'COM_EVENTLIST_METADATA_INFORMATION' );
+			$title3 = JText::_( 'COM_JEM_METADATA_INFORMATION' );
 			echo JHtml::_('sliders.panel', $title3, 'metadata');
 			?>
 		<table>
 		<tr>
 			<td>
 				<label for="metadesc">
-					<?php echo JText::_( 'COM_EVENTLIST_META_DESCRIPTION' ); ?>:
+					<?php echo JText::_( 'COM_JEM_META_DESCRIPTION' ); ?>:
 				</label>
 				<br />
 				<textarea class="inputbox" cols="40" rows="5" name="meta_description" id="metadesc" style="width:300px;"><?php echo str_replace('&','&amp;',$this->row->meta_description); ?></textarea>
@@ -223,7 +223,7 @@ $options = array(
 		<tr>
 			<td>
 				<label for="metakey">
-					<?php echo JText::_( 'COM_EVENTLIST_META_KEYWORDS' ); ?>:
+					<?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?>:
 				</label>
 				<br />
 				<textarea class="inputbox" cols="40" rows="5" name="meta_keywords" id="metakey" style="width:300px;"><?php echo str_replace('&','&amp;',$this->row->meta_keywords); ?></textarea>
@@ -231,7 +231,7 @@ $options = array(
 		</tr>
 		<tr>
 			<td>
-				<input type="button" class="button" value="<?php echo JText::_( 'COM_EVENTLIST_ADD_CATNAME' ); ?>" onclick="f=document.adminForm;f.metakey.value=f.catname.value;" />
+				<input type="button" class="button" value="<?php echo JText::_( 'COM_JEM_ADD_CATNAME' ); ?>" onclick="f=document.adminForm;f.metakey.value=f.catname.value;" />
 			</td>
 		</tr>
 		</table>
@@ -245,7 +245,7 @@ $options = array(
 </table>
 
 <?php echo JHTML::_( 'form.token' ); ?>
-<input type="hidden" name="option" value="com_eventlist" />
+<input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
 <input type="hidden" name="controller" value="categories" />
 <input type="hidden" name="view" value="category" />

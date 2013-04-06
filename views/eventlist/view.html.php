@@ -52,12 +52,12 @@ class EventListViewEventList extends JViewLegacy
 		$pathway 	=  $app->getPathWay();
 
 		//add css file
-		$document->addStyleSheet($this->baseurl.'/components/com_eventlist/assets/css/eventlist.css');
+		$document->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
 
 		// get variables
 		$limitstart	= JRequest::getVar('limitstart', 0, '', 'int');
-		$limit		= $app->getUserStateFromRequest('com_eventlist.eventlist.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit		= $app->getUserStateFromRequest('com_jem.eventlist.limit', 'limit', $params->def('display_num', 0), 'int');
 		$task 		= JRequest::getWord('task');
 		$pop		= JRequest::getBool('pop');
 
@@ -83,9 +83,9 @@ class EventListViewEventList extends JViewLegacy
 		$pathway->setItemName( 1, $item->title );
 		
 		if ( $task == 'archive' ) {
-			$pathway->addItem(JText::_( 'COM_EVENTLIST_ARCHIVE' ), JRoute::_('index.php?view=eventlist&task=archive') );
+			$pathway->addItem(JText::_( 'COM_JEM_ARCHIVE' ), JRoute::_('index.php?view=eventlist&task=archive') );
 			$print_link = JRoute::_('index.php?view=eventlist&task=archive&tmpl=component&print=1');
-			$pagetitle = $params->get('page_title').' - '.JText::_( 'COM_EVENTLIST_ARCHIVE' );
+			$pagetitle = $params->get('page_title').' - '.JText::_( 'COM_JEM_ARCHIVE' );
 		} else {
 			$print_link = JRoute::_('index.php?view=eventlist&tmpl=component&print=1');
 			$pagetitle = $params->get('page_title');
@@ -104,7 +104,7 @@ class EventListViewEventList extends JViewLegacy
 		if ($maintainer || $genaccess ) $dellink = 1;
 
 		//add alternate feed link
-		$link    = 'index.php?option=com_eventlist&view=eventlist&format=feed';
+		$link    = 'index.php?option=com_jem&view=eventlist&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -115,7 +115,7 @@ class EventListViewEventList extends JViewLegacy
 /*		
 		if ($lists['filter']) {
 			//$uri->setVar('filter', JRequest::getString('filter'));
-			//$filter		= $app->getUserStateFromRequest('com_eventlist.eventlist.filter', 'filter', '', 'string');
+			//$filter		= $app->getUserStateFromRequest('com_jem.eventlist.filter', 'filter', '', 'string');
 			$uri->setVar('filter', $lists['filter']);
 			$uri->setVar('filter_type', JRequest::getString('filter_type'));
 		} else {

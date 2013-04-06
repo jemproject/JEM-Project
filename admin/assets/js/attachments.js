@@ -29,7 +29,7 @@ window.addEvent('domready', function() {
 		event = new Event(event); // for IE !
 		
 		id = event.target.id.substr(13);
-		var url = 'index.php?option=com_eventlist&task=ajaxattachremove&format=raw&id='+id;
+		var url = 'index.php?option=com_jem&task=ajaxattachremove&format=raw&id='+id;
 		var theAjax = new Request( {
 			url : url,
 			method: 'post',

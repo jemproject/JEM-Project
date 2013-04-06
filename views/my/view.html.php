@@ -52,16 +52,16 @@ class EventListViewMy extends JViewLegacy
         
         //redirect if not logged in
         if ( !$user->get('id') ) {
-        	$app->redirect( $_SERVER['HTTP_REFERER'], JText::_('COM_EVENTLIST_YOU_NEED_TO_BE_LOGGED_IN'), 'error' );
+        	$app->redirect( $_SERVER['HTTP_REFERER'], JText::_('COM_JEM_YOU_NEED_TO_BE_LOGGED_IN'), 'error' );
         }
 
         //add css file
-        $document->addStyleSheet($this->baseurl.'/components/com_eventlist/assets/css/eventlist.css');
+        $document->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
         $document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
 
         // get variables
         $limitstart = JRequest::getVar('limitstart', 0, '', 'int');
-        $limit 		= $app->getUserStateFromRequest('com_eventlist.my.limit', 'limit', $params->def('display_num', 5), 'int');
+        $limit 		= $app->getUserStateFromRequest('com_jem.my.limit', 'limit', $params->def('display_num', 5), 'int');
         $task 		= JRequest::getWord('task');
         $pop 		= JRequest::getBool('pop');
 
@@ -92,7 +92,7 @@ class EventListViewMy extends JViewLegacy
 
         //Set Page title
 
-        $pagetitle = $params->get('page_title', JText::_('COM_EVENTLIST_MY_ITEMS'));
+        $pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_ITEMS'));
         $document->setTitle($pagetitle);
         $document->setMetaData('title', $pagetitle);
 
@@ -102,7 +102,7 @@ class EventListViewMy extends JViewLegacy
         if ($lists['filter'])
         {
             //$uri->setVar('filter', JRequest::getString('filter'));
-            //$filter   = $mainframe->getUserStateFromRequest('com_eventlist.eventlist.filter', 'filter', '', 'string');
+            //$filter   = $mainframe->getUserStateFromRequest('com_jem.eventlist.filter', 'filter', '', 'string');
             $uri->setVar('filter', $lists['filter']);
             $uri->setVar('filter_type', JRequest::getString('filter_type'));
         } else

@@ -86,7 +86,7 @@ class EventListModelCategoryevents extends JModelLegacy
 		$params 	=  $app->getParams();
 
 		//get the number of events from database
-		$limit       	= $app->getUserStateFromRequest('com_eventlist.categoryevents.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit       	= $app->getUserStateFromRequest('com_jem.categoryevents.limit', 'limit', $params->def('display_num', 0), 'int');
 		$limitstart		= JRequest::getInt('limitstart');
 
 		$this->setState('limit', $limit);
@@ -232,10 +232,10 @@ class EventListModelCategoryevents extends JModelLegacy
 		    . ' l.venue, l.city, l.state, l.url, l.street, ct.name AS countryname, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-				. ' FROM #__eventlist_events AS a'
-				. ' INNER JOIN #__eventlist_cats_event_relations AS rel ON rel.itemid = a.id'
-				. ' INNER JOIN #__eventlist_categories AS c ON c.id = rel.catid'
-				. ' LEFT JOIN #__eventlist_venues AS l ON l.id = a.locid'
+				. ' FROM #__jem_events AS a'
+				. ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+				. ' INNER JOIN #__jem_categories AS c ON c.id = rel.catid'
+				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 				. ' LEFT JOIN #__eventlist_countries AS ct ON ct.iso2 = l.country '
 				. $where
 				. $orderby
@@ -397,12 +397,12 @@ class EventListModelCategoryevents extends JModelLegacy
 		$query = 'SELECT c.*,'
 				. ' CASE WHEN CHAR_LENGTH( c.alias ) THEN CONCAT_WS( \':\', c.id, c.alias ) ELSE c.id END AS slug,'
 				. ' ec.assignedevents'
-				. ' FROM #__eventlist_categories AS c'
+				. ' FROM #__jem_categories AS c'
 				. ' INNER JOIN ('
 	          			. ' SELECT COUNT( DISTINCT i.id ) AS assignedevents, cc.id'
-	         			. ' FROM #__eventlist_events AS i'
-	          			. ' INNER JOIN #__eventlist_cats_event_relations AS rel ON rel.itemid = i.id'
-	          			. ' INNER JOIN #__eventlist_categories AS cc ON cc.id = rel.catid'
+	         			. ' FROM #__jem_events AS i'
+	          			. ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = i.id'
+	          			. ' INNER JOIN #__jem_categories AS cc ON cc.id = rel.catid'
 	          			. $where
 	          			. ' GROUP BY cc.id'
 	          	. ')' 
@@ -437,7 +437,7 @@ class EventListModelCategoryevents extends JModelLegacy
 		
 		$query = 'SELECT *,'
 				.' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug'
-				.' FROM #__eventlist_categories'
+				.' FROM #__jem_categories'
 				.' WHERE id = '.$this->_id;
 
 		$this->_db->setQuery( $query );
@@ -489,8 +489,8 @@ class EventListModelCategoryevents extends JModelLegacy
 		
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-				. ' FROM #__eventlist_categories AS c'
-				. ' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.catid = c.id'
+				. ' FROM #__jem_categories AS c'
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				. ' AND c.published = 1'
 				. ' AND c.access  <= '.$gid;
@@ -516,7 +516,7 @@ class EventListModelCategoryevents extends JModelLegacy
 		$ids = implode(",", $ids);
 		
 		$query = ' SELECT COUNT(id) as total, SUM(waiting) as waitinglist, event ' 
-		       . ' FROM #__eventlist_register ' 
+		       . ' FROM #__jem_register ' 
 		       . ' WHERE event IN (' . $ids .')'
 		       . ' GROUP BY event '
 		       ;

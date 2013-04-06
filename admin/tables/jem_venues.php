@@ -28,7 +28,7 @@ defined('_JEXEC') or die;
  * @subpackage EventList
  * @since 0.9
  */
-class eventlist_venues extends JTable
+class jem_venues extends JTable
 {
 	/**
 	 * Primary Key
@@ -86,8 +86,8 @@ class eventlist_venues extends JTable
 	/** @var int */
 	var $ordering 			= null;
 
-	function eventlist_venues(& $db) {
-		parent::__construct('#__eventlist_venues', 'id', $db);
+	function jem_venues(& $db) {
+		parent::__construct('#__jem_venues', 'id', $db);
 	}
 
 	// overloaded check function
@@ -182,7 +182,7 @@ class eventlist_venues extends JTable
 		}
 		
 		/** check for existing name */
-		$query = 'SELECT id FROM #__eventlist_venues WHERE venue = '.$this->_db->Quote($this->venue);
+		$query = 'SELECT id FROM #__jem_venues WHERE venue = '.$this->_db->Quote($this->venue);
 		$this->_db->setQuery($query);
 
 		$xid = intval($this->_db->loadResult());

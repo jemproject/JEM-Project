@@ -60,7 +60,7 @@ $filter_end_date = $app->getUserStateFromRequest($this->context.'.filter.end_dat
 $this->setState('filter.end_date', $filter_end_date);
  
 // Load the parameters.
-$params = JComponentHelper::getParams('com_eventlist');
+$params = JComponentHelper::getParams('com_jem');
 $this->setState('params', $params);
  
 // List state information.
@@ -94,7 +94,7 @@ $query = $db->getQuery(true);
  
  // Select the required fields from the table.
 $query->select('a.*');
-$query->from('`#__eventlist_events` AS a');
+$query->from('`#__jem_events` AS a');
  
 // Filtering form_type
  $filter_form_type = $this->getState("filter.form_type");
@@ -130,7 +130,7 @@ $this->populateState();
 $csv = fopen('php://output', 'w');
 $db = $this->getDbo();
 $header = array();
-$header = array_keys($db->getTableColumns('#__eventlist_events'));
+$header = array_keys($db->getTableColumns('#__jem_events'));
 fputcsv($csv, $header, ';');
 
 
@@ -177,7 +177,7 @@ $query = $db->getQuery(true);
  
  // Select the required fields from the table.
 $query->select('a.*');
-$query->from('#__eventlist_categories AS a');
+$query->from('#__jem_categories AS a');
  
 // Filtering form_type
  $filter_form_type = $this->getState("filter.form_type");
@@ -213,7 +213,7 @@ $this->populateState();
 $csv = fopen('php://output', 'w');
 $db = $this->getDbo();
 $header = array();
-$header = array_keys($db->getTableColumns('#__eventlist_categories'));
+$header = array_keys($db->getTableColumns('#__jem_categories'));
 fputcsv($csv, $header, ';');
 
 
@@ -257,7 +257,7 @@ $query = $db->getQuery(true);
  
  // Select the required fields from the table.
 $query->select('a.*');
-$query->from('#__eventlist_venues AS a');
+$query->from('#__jem_venues AS a');
  
 // Filtering form_type
  $filter_form_type = $this->getState("filter.form_type");
@@ -293,7 +293,7 @@ $this->populateState();
 $csv = fopen('php://output', 'w');
 $db = $this->getDbo();
 $header = array();
-$header = array_keys($db->getTableColumns('#__eventlist_venues'));
+$header = array_keys($db->getTableColumns('#__jem_venues'));
 fputcsv($csv, $header, ';');
 
 

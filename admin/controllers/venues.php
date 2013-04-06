@@ -60,7 +60,7 @@ class EventListControllerVenues extends EventListController
 		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
 
 		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseError(500, JText::_( 'COM_EVENTLIST_SELECT_AN_ITEM_TO_PUBLISH' ) );
+			JError::raiseError(500, JText::_( 'COM_JEM_SELECT_AN_ITEM_TO_PUBLISH' ) );
 		}
 
 		$model = $this->getModel('venues');
@@ -69,9 +69,9 @@ class EventListControllerVenues extends EventListController
 		}
 
 		$total = count( $cid );
-		$msg 	= $total.' '.JText::_('COM_EVENTLIST_VENUE_PUBLISHED');
+		$msg 	= $total.' '.JText::_('COM_JEM_VENUE_PUBLISHED');
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=venues', $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=venues', $msg );
 	}
 
 	/**
@@ -86,7 +86,7 @@ class EventListControllerVenues extends EventListController
 		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
 
 		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseError(500, JText::_( 'COM_EVENTLIST_SELECT_AN_ITEM_TO_UNPUBLISH' ) );
+			JError::raiseError(500, JText::_( 'COM_JEM_SELECT_AN_ITEM_TO_UNPUBLISH' ) );
 		}
 
 		$model = $this->getModel('venues');
@@ -95,9 +95,9 @@ class EventListControllerVenues extends EventListController
 		}
 
 		$total = count( $cid );
-		$msg 	= $total.' '.JText::_('COM_EVENTLIST_VENUE_UNPUBLISHED');
+		$msg 	= $total.' '.JText::_('COM_JEM_VENUE_UNPUBLISHED');
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=venues', $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=venues', $msg );
 	}
 
 	/**
@@ -114,13 +114,13 @@ class EventListControllerVenues extends EventListController
 		
 		$session 	=  JFactory::getSession();
 		
-		$session->clear('venueform', 'com_eventlist');
+		$session->clear('venueform', 'com_jem');
 		
-		$venue = & JTable::getInstance('eventlist_venues', '');
+		$venue = & JTable::getInstance('jem_venues', '');
 		$venue->bind(JRequest::get('post'));
 		$venue->checkin();
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=venues' );
+		$this->setRedirect( 'index.php?option=com_jem&view=venues' );
 	}
 
 	/**
@@ -135,17 +135,17 @@ class EventListControllerVenues extends EventListController
 		$cid = JRequest::getVar( 'cid', array(0), 'post', 'array' );
 
 		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseError(500, JText::_( 'COM_EVENTLIST_SELECT_AN_ITEM_TO_DELETE' ) );
+			JError::raiseError(500, JText::_( 'COM_JEM_SELECT_AN_ITEM_TO_DELETE' ) );
 		}
 
 		$model = $this->getModel('venues');
 
 		$msg = $model->delete($cid);
 
-		$cache = &JFactory::getCache('com_eventlist');
+		$cache = &JFactory::getCache('com_jem');
 		$cache->clean();
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=venues', $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=venues', $msg );
 	}
 
 	/**
@@ -160,7 +160,7 @@ class EventListControllerVenues extends EventListController
 		$model = $this->getModel('venues');
 		$model->move(-1);
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=venues');
+		$this->setRedirect( 'index.php?option=com_jem&view=venues');
 	}
 
 	/**
@@ -175,7 +175,7 @@ class EventListControllerVenues extends EventListController
 		$model = $this->getModel('venues');
 		$model->move(1);
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=venues');
+		$this->setRedirect( 'index.php?option=com_jem&view=venues');
 	}
 
 	/**
@@ -195,7 +195,7 @@ class EventListControllerVenues extends EventListController
 
 		// Error if checkedout by another administrator
 		if ($model->isCheckedOut( $user->get('id') )) {
-			$this->setRedirect( 'index.php?option=com_eventlist&view=venues', JText::_( 'COM_EVENTLIST_EDITED_BY_ANOTHER_ADMIN' ) );
+			$this->setRedirect( 'index.php?option=com_jem&view=venues', JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ) );
 		}
 
 		$model->checkout();
@@ -232,7 +232,7 @@ class EventListControllerVenues extends EventListController
 
     	//sticky forms
 		$session = JFactory::getSession();
-		$session->set('venueform', $post, 'com_eventlist');
+		$session->set('venueform', $post, 'com_jem');
 
 		$model = $this->getModel('venue');
 
@@ -241,24 +241,24 @@ class EventListControllerVenues extends EventListController
 			switch ($task)
 			{
 				case 'apply':
-					$link = 'index.php?option=com_eventlist&view=venue&hidemainmenu=1&cid[]='.$returnid;
+					$link = 'index.php?option=com_jem&view=venue&hidemainmenu=1&cid[]='.$returnid;
 					break;
 
 				default:
-					$link = 'index.php?option=com_eventlist&view=venues';
+					$link = 'index.php?option=com_jem&view=venues';
 					break;
 			}
-			$msg	= JText::_( 'COM_EVENTLIST_VENUE_SAVED');
+			$msg	= JText::_( 'COM_JEM_VENUE_SAVED');
 
-			$cache = &JFactory::getCache('com_eventlist');
+			$cache = &JFactory::getCache('com_jem');
 			$cache->clean();
 			
-			$session->clear('venueform', 'com_eventlist');
+			$session->clear('venueform', 'com_jem');
 
 		} else {
 
 			$msg 	= '';
-			$link 	= 'index.php?option=com_eventlist&view=venue';
+			$link 	= 'index.php?option=com_jem&view=venue';
 
 		}
 
@@ -285,8 +285,8 @@ class EventListControllerVenues extends EventListController
 		$model->store($post);
 		$model->checkin();
 
-		$msg	= JText::_( 'COM_EVENTLIST_VENUE_SAVED');
-		$link 	= 'index.php?option=com_eventlist&view=event&layout=addvenue&tmpl=component';
+		$msg	= JText::_( 'COM_JEM_VENUE_SAVED');
+		$link 	= 'index.php?option=com_jem&view=event&layout=addvenue&tmpl=component';
 
 		$this->setRedirect( $link, $msg );
 	}

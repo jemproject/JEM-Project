@@ -52,16 +52,16 @@ class EventListViewVenueevents extends JViewLegacy
 		$item = $menu->getActive();
 	
 		
-		$params 	=  $app->getParams('com_eventlist');
+		$params 	=  $app->getParams('com_jem');
 		$uri 		=  JFactory::getURI();
 
 		//add css file
-		$document->addStyleSheet($this->baseurl.'/components/com_eventlist/assets/css/eventlist.css');
+		$document->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
 
 		// Request variables
 		$limitstart		= JRequest::getInt('limitstart');
-		$limit       	= $app->getUserStateFromRequest('com_eventlist.venueevents.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit       	= $app->getUserStateFromRequest('com_jem.venueevents.limit', 'limit', $params->def('display_num', 0), 'int');
 		$pop			= JRequest::getBool('pop');
 		$task 			= JRequest::getWord('task');
 
@@ -92,7 +92,7 @@ class EventListViewVenueevents extends JViewLegacy
 		$limage = ELImage::flyercreator($venue->locimage, 'venue');
 
 		//add alternate feed link
-		$link    = 'index.php?option=com_eventlist&view=venueevents&format=feed&id='.$venue->id;
+		$link    = 'index.php?option=com_jem&view=venueevents&format=feed&id='.$venue->id;
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -104,14 +104,14 @@ class EventListViewVenueevents extends JViewLegacy
 		
 		//create the pathway
 		if ($task == 'archive') {
-			$pathway->addItem( JText::_( 'COM_EVENTLIST_ARCHIVE' ).' - '.$venue->venue, JRoute::_('index.php?option=com_eventlist&view=venueevents&task=archive&id='.$venue->slug));
-			$link = JRoute::_( 'index.php?option=com_eventlist&view=venueevents&id='.$venue->slug.'&task=archive' );
-			$print_link = JRoute::_('index.php?option=com_eventlist&view=venueevents&id='. $venue->slug .'&task=archive&print=1&tmpl=component');
-			$pagetitle = $venue->venue.' - '.JText::_( 'COM_EVENTLIST_ARCHIVE' );
+			$pathway->addItem( JText::_( 'COM_JEM_ARCHIVE' ).' - '.$venue->venue, JRoute::_('index.php?option=com_jem&view=venueevents&task=archive&id='.$venue->slug));
+			$link = JRoute::_( 'index.php?option=com_jem&view=venueevents&id='.$venue->slug.'&task=archive' );
+			$print_link = JRoute::_('index.php?option=com_jem&view=venueevents&id='. $venue->slug .'&task=archive&print=1&tmpl=component');
+			$pagetitle = $venue->venue.' - '.JText::_( 'COM_JEM_ARCHIVE' );
 		} else {
-			$pathway->addItem( $venue->venue, JRoute::_('index.php?option=com_eventlist&view=venueevents&id='.$venue->slug));
-			$link = JRoute::_( 'index.php?option=com_eventlist&view=venueevents&id='.$venue->slug );
-			$print_link = JRoute::_('index.php?option=com_eventlist&view=venueevents&id='. $venue->slug .'&print=1&tmpl=component');
+			$pathway->addItem( $venue->venue, JRoute::_('index.php?option=com_jem&view=venueevents&id='.$venue->slug));
+			$link = JRoute::_( 'index.php?option=com_jem&view=venueevents&id='.$venue->slug );
+			$print_link = JRoute::_('index.php?option=com_jem&view=venueevents&id='. $venue->slug .'&print=1&tmpl=component');
 			$pagetitle = $venue->venue;
 		}
 		
@@ -141,7 +141,7 @@ class EventListViewVenueevents extends JViewLegacy
 			$venue->text	= $venue->locdescription;
 			$venue->title 	= $venue->venue;
 			JPluginHelper::importPlugin('content');
-			$results = $app->triggerEvent( 'onContentPrepare', array('com_eventlist.venueevents', &$venue, &$params, 0 ));
+			$results = $app->triggerEvent( 'onContentPrepare', array('com_jem.venueevents', &$venue, &$params, 0 ));
 			$venuedescription = $venue->text;
 		}
     	$allowedtoeditvenue = ELUser::editaccess($elsettings->venueowner, $venue->created, $elsettings->venueeditrec, $elsettings->venueedit);

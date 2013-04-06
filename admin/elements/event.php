@@ -46,13 +46,13 @@ class JElementEvent extends JElement
 		$doc 		=& JFactory::getDocument();
 		$fieldName	= $control_name.'['.$name.']';
 
-		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_eventlist'.DS.'tables');
+		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_jem'.DS.'tables');
 
-		$event =& JTable::getInstance('eventlist_events', '');
+		$event =& JTable::getInstance('jem_events', '');
 		if ($value) {
 			$event->load($value);
 		} else {
-			$event->title = JText::_('COM_EVENTLIST_SELECTEVENT');
+			$event->title = JText::_('COM_JEM_SELECTEVENT');
 		}
 
 		$js = "
@@ -62,13 +62,13 @@ class JElementEvent extends JElement
 			window.parent.SqueezeBox.close();
 		}";
 
-		$link = 'index.php?option=com_eventlist&amp;view=eventelement&amp;tmpl=component';
+		$link = 'index.php?option=com_jem&amp;view=eventelement&amp;tmpl=component';
 		$doc->addScriptDeclaration($js);
 
 		JHTML::_('behavior.modal', 'a.modal');
 
 		$html = "\n<div style=\"float: left;\"><input style=\"background: #ffffff;\" type=\"text\" id=\"a_name\" value=\"$event->title\" disabled=\"disabled\" /></div>";
-		$html .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_EVENTLIST_SELECT')."\"  href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_EVENTLIST_SELECT')."</a></div></div>\n";
+		$html .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_SELECT')."\"  href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_SELECT')."</a></div></div>\n";
 		$html .= "\n<input type=\"hidden\" id=\"a_id\" name=\"$fieldName\" value=\"$value\" />";
 
 		return $html;

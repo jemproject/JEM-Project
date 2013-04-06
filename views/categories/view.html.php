@@ -45,13 +45,13 @@ class EventListViewCategories extends JViewLegacy
 		$pageNav    =  $this->get('Pagination');
 
 		//add css file
-		$document->addStyleSheet($this->baseurl.'/components/com_eventlist/assets/css/eventlist.css');
+		$document->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
 
 		//get menu information
 		$menu		= $app->getMenu();
 		$item    	= $menu->getActive();
-		$params 	= $app->getParams('com_eventlist');
+		$params 	= $app->getParams('com_jem');
 
 		// Request variables
 		$limitstart		= JRequest::getInt('limitstart');
@@ -65,8 +65,8 @@ class EventListViewCategories extends JViewLegacy
 		$pathway->setItemName(1, $item->title);
 
 		if ( $task == 'archive' ) {
-			$pathway->addItem(JText::_( 'COM_EVENTLIST_ARCHIVE' ), JRoute::_('index.php?view=categories&task=archive') );
-			$pagetitle = $params->get('page_title').' - '.JText::_( 'COM_EVENTLIST_ARCHIVE' );
+			$pathway->addItem(JText::_( 'COM_JEM_ARCHIVE' ), JRoute::_('index.php?view=categories&task=archive') );
+			$pagetitle = $params->get('page_title').' - '.JText::_( 'COM_JEM_ARCHIVE' );
 		} else {
 			$pagetitle = $params->get('page_title');
 		}
@@ -79,7 +79,7 @@ class EventListViewCategories extends JViewLegacy
 		$params->def( 'icons', $app->getCfg( 'icons' ) );
 
 		//add alternate feed link
-		$link    = 'index.php?option=com_eventlist&view=eventlist&format=feed';
+		$link    = 'index.php?option=com_jem&view=eventlist&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');

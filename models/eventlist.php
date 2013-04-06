@@ -59,10 +59,10 @@ class EventListModelEventList extends JModelLegacy
 		$app =  JFactory::getApplication();
 
 		// Get the paramaters of the active menu item
-		$params 	=  $app->getParams('com_eventlist');
+		$params 	=  $app->getParams('com_jem');
 
 		//get the number of events from database
-		$limit       	= $app->getUserStateFromRequest('com_eventlist.eventlist.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit       	= $app->getUserStateFromRequest('com_jem.eventlist.limit', 'limit', $params->def('display_num', 0), 'int');
 		$limitstart		= JRequest::getVar('limitstart', 0, '', 'int');
 			
 		$this->setState('limit', $limit);
@@ -187,8 +187,8 @@ class EventListModelEventList extends JModelLegacy
 		       . ' l.venue, l.city, l.state, l.url, l.street, ct.name AS countryname, '
 		       . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 		       . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-		       . ' FROM #__eventlist_events AS a'
-		       . ' LEFT JOIN #__eventlist_venues AS l ON l.id = a.locid'
+		       . ' FROM #__jem_events AS a'
+		       . ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 		       . ' LEFT JOIN #__eventlist_countries AS ct ON ct.iso2 = l.country '
 		       . $where
 		       . ' GROUP BY a.id'
@@ -304,7 +304,7 @@ class EventListModelEventList extends JModelLegacy
 		$ids = implode(",", $ids);
 		
 		$query = ' SELECT COUNT(id) as total, SUM(waiting) as waitinglist, event ' 
-		       . ' FROM #__eventlist_register ' 
+		       . ' FROM #__jem_register ' 
 		       . ' WHERE event IN (' . $ids .')'
 		       . ' GROUP BY event '
 		       ;
@@ -347,8 +347,8 @@ class EventListModelEventList extends JModelLegacy
 		
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-				. ' FROM #__eventlist_categories AS c'
-				. ' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.catid = c.id'
+				. ' FROM #__jem_categories AS c'
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				. ' AND c.published = 1'
 				. ' AND c.access  <= '.$gid;

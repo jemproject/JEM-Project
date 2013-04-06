@@ -66,7 +66,7 @@ class EventListController extends JControllerLegacy
 		$filecontent	= JRequest::getVar('filecontent', '', '', '', JREQUEST_ALLOWRAW);
 
 		if (!$filecontent) {
-			$app->redirect('index.php?option=com_eventlist', JText::_('OPERATION FAILED').': '.JText::_('CONTENT EMPTY'));
+			$app->redirect('index.php?option=com_jem', JText::_('OPERATION FAILED').': '.JText::_('CONTENT EMPTY'));
 		}	
 		
 		// Set FTP credentials, if given
@@ -74,7 +74,7 @@ class EventListController extends JControllerLegacy
 		JClientHelper::setCredentialsFromRequest('ftp');
 		$ftp = JClientHelper::getCredentials('ftp');
 		
-		$file = JPATH_SITE.DS.'components'.DS.'com_eventlist'.DS.'assets'.DS.'css'.DS.$filename;
+		$file = JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'assets'.DS.'css'.DS.$filename;
 		
 		// Try to make the css file writeable
 		if (!$ftp['enabled'] && JPath::isOwner($file) && !JPath::setPermissions($file, '0755')) {
@@ -95,16 +95,16 @@ class EventListController extends JControllerLegacy
 			switch($task)
 			{
 				case 'applycss' :
-					$app->redirect('index.php?option=com_eventlist&view=editcss', JText::_('CSS FILE SUCCESSFULLY ALTERED'));
+					$app->redirect('index.php?option=com_jem&view=editcss', JText::_('CSS FILE SUCCESSFULLY ALTERED'));
 					break;
 
 				case 'savecss'  :
 				default         :
-					$app->redirect('index.php?option=com_eventlist', JText::_('CSS FILE SUCCESSFULLY ALTERED') );
+					$app->redirect('index.php?option=com_jem', JText::_('CSS FILE SUCCESSFULLY ALTERED') );
 					break;
 			}
 		} else {
-			$app->redirect('index.php?option=com_eventlist', JText::_('OPERATION FAILED').': '.JText::sprintf('FAILED TO OPEN FILE FOR WRITING', $file));
+			$app->redirect('index.php?option=com_jem', JText::_('OPERATION FAILED').': '.JText::sprintf('FAILED TO OPEN FILE FOR WRITING', $file));
 		}
 	}
 
@@ -126,7 +126,7 @@ class EventListController extends JControllerLegacy
 	{
 		$model = $this->getModel('events');
 		$model->clearrecurrences();
-		$this->setRedirect( 'index,php?option=com_eventlist', Jtext::_('Recurrences cleared') );
+		$this->setRedirect( 'index,php?option=com_jem', Jtext::_('Recurrences cleared') );
 	}
 
 	/**
@@ -146,7 +146,7 @@ class EventListController extends JControllerLegacy
 			exit();
 		}
 
-		$cache = &JFactory::getCache('com_eventlist');
+		$cache = &JFactory::getCache('com_jem');
 		$cache->clean();
 
 		echo 1;

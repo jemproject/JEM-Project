@@ -27,43 +27,43 @@ defined('_JEXEC') or die;
 ?>
 <form action="index.php" method="post" name="adminForm" enctype="multipart/form-data" id="adminForm">
   <fieldset>
-    <legend><?php echo JText::_('COM_EVENTLIST_IMPORT_EVENTS'); ?></legend>
+    <legend><?php echo JText::_('COM_JEM_IMPORT_EVENTS'); ?></legend>
     </br />
-	    <?php echo JText::_( 'COM_EVENTLIST_IMPORT_INSTRUCTIONS' ) ?>
+	    <?php echo JText::_( 'COM_JEM_IMPORT_INSTRUCTIONS' ) ?>
 			<ul>
 			<li>
-			<?php echo JText::_( "COM_EVENTLIST_IMPORT_COLUMNNAMESEVENTS" ); ?>
+			<?php echo JText::_( "COM_JEM_IMPORT_COLUMNNAMESEVENTS" ); ?>
 			</li>
 			<li>
-			<?php echo JText::_( "COM_EVENTLIST_IMPORT_FIRSTROW" ); ?>
+			<?php echo JText::_( "COM_JEM_IMPORT_FIRSTROW" ); ?>
 			</li>
 			<li>
-			<?php echo JText::_( "COM_EVENTLIST_IMPORT_CSVFORMAT" ); ?>
+			<?php echo JText::_( "COM_JEM_IMPORT_CSVFORMAT" ); ?>
 			</li>
       <li>
-      <?php echo JText::_( "COM_EVENTLIST_IMPORT_CATEGORIES_DESC" ); ?>
+      <?php echo JText::_( "COM_JEM_IMPORT_CATEGORIES_DESC" ); ?>
       </li>
 			<li>
-			<?php echo JText::_( "COM_EVENTLIST_IMPORT_POSSIBLECOLUMNS" ) . ': ' . implode(", ",$this->eventfields); ?>
+			<?php echo JText::_( "COM_JEM_IMPORT_POSSIBLECOLUMNS" ) . ': ' . implode(", ",$this->eventfields); ?>
 			</li>
 			</ul>
       <table>
         <tr>
           <td>    
             <label for="file">
-                <?php echo JText::_( 'COM_EVENTLIST_IMPORT_SELECTCSV' ).':'; ?>
+                <?php echo JText::_( 'COM_JEM_IMPORT_SELECTCSV' ).':'; ?>
             </label>
           </td>
           <td>
 			      <input type="file" id="event-file-upload" accept="text/*" name="Fileevents" />
-			      <input type="submit" id="event-file-upload-submit" value="<?php echo JText::_('COM_EVENTLIST_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='csveventimport';return true;"/>
+			      <input type="submit" id="event-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='csveventimport';return true;"/>
 			      <span id="upload-clear"></span>
           </td>
         </tr>
         <tr>
           <td>    
             <label for="replace_events">
-                <?php echo JText::_( 'COM_EVENTLIST_IMPORT_REPLACEIFEXISTS' ).':'; ?>
+                <?php echo JText::_( 'COM_JEM_IMPORT_REPLACEIFEXISTS' ).':'; ?>
             </label>
           </td>
           <td>
@@ -77,39 +77,39 @@ defined('_JEXEC') or die;
   </fieldset>
   
   <fieldset>
-    <legend><?php echo JText::_('COM_EVENTLIST_IMPORT_VENUES'); ?></legend>
-      <?php echo JText::_( 'COM_EVENTLIST_IMPORT_INSTRUCTIONS' ) ?>
+    <legend><?php echo JText::_('COM_JEM_IMPORT_VENUES'); ?></legend>
+      <?php echo JText::_( 'COM_JEM_IMPORT_INSTRUCTIONS' ) ?>
       <ul>
       <li>
-      <?php echo JText::_( "COM_EVENTLIST_IMPORT_COLUMNNAMESCATEGORIES" ); ?>
+      <?php echo JText::_( "COM_JEM_IMPORT_COLUMNNAMESCATEGORIES" ); ?>
       </li>
       <li>
-      <?php echo JText::_( "COM_EVENTLIST_IMPORT_FIRSTROW" ); ?>
+      <?php echo JText::_( "COM_JEM_IMPORT_FIRSTROW" ); ?>
       </li>
       <li>
-      <?php echo JText::_( "COM_EVENTLIST_IMPORT_CSVFORMAT" ); ?>
+      <?php echo JText::_( "COM_JEM_IMPORT_CSVFORMAT" ); ?>
       </li>
       <li>
-      <?php echo JText::_( "COM_EVENTLIST_IMPORT_POSSIBLECOLUMNS" ).implode(", ",$this->venuefields); ?>
+      <?php echo JText::_( "COM_JEM_IMPORT_POSSIBLECOLUMNS" ).implode(", ",$this->venuefields); ?>
       </li>
       </ul>
       <table>
         <tr>
           <td>    
             <label for="file">
-                <?php echo JText::_( 'COM_EVENTLIST_IMPORT_SELECTCSV' ).':'; ?>
+                <?php echo JText::_( 'COM_JEM_IMPORT_SELECTCSV' ).':'; ?>
             </label>
           </td>
           <td>
             <input type="file" id="venue-file-upload" accept="text/*" name="Filevenues" />
-            <input type="submit" id="venue-file-upload-submit" value="<?php echo JText::_('COM_EVENTLIST_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='csvvenuesimport';return true;"/>
+            <input type="submit" id="venue-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='csvvenuesimport';return true;"/>
             <span id="upload-clear"></span>
           </td>
         </tr>
         <tr>
           <td>    
             <label for="replace_venues">
-                <?php echo JText::_( 'COM_EVENTLIST_IMPORT_REPLACEIFEXISTS' ).':'; ?>
+                <?php echo JText::_( 'COM_JEM_IMPORT_REPLACEIFEXISTS' ).':'; ?>
             </label>
           </td>
           <td>
@@ -122,39 +122,39 @@ defined('_JEXEC') or die;
       </table>
   </fieldset>
   <fieldset>
-    <legend><?php echo JText::_('COM_EVENTLIST_IMPORT_CATEGORIES'); ?></legend>
-      <?php echo JText::_( 'COM_EVENTLIST_IMPORT_INSTRUCTIONS' ) ?>
+    <legend><?php echo JText::_('COM_JEM_IMPORT_CATEGORIES'); ?></legend>
+      <?php echo JText::_( 'COM_JEM_IMPORT_INSTRUCTIONS' ) ?>
       <ul>
       <li>
-      <?php echo JText::_( "COM_EVENTLIST_IMPORT_COLUMNNAMESCATEGORIES" ); ?>
+      <?php echo JText::_( "COM_JEM_IMPORT_COLUMNNAMESCATEGORIES" ); ?>
       </li>
       <li>
-      <?php echo JText::_( "COM_EVENTLIST_IMPORT_FIRSTROW" ); ?>
+      <?php echo JText::_( "COM_JEM_IMPORT_FIRSTROW" ); ?>
       </li>
       <li>
-      <?php echo JText::_( "COM_EVENTLIST_IMPORT_CSVFORMAT" ); ?>
+      <?php echo JText::_( "COM_JEM_IMPORT_CSVFORMAT" ); ?>
       </li>
       <li>
-      <?php echo JText::_( "COM_EVENTLIST_IMPORT_POSSIBLECOLUMNS" ).implode(", ",$this->catfields); ?>
+      <?php echo JText::_( "COM_JEM_IMPORT_POSSIBLECOLUMNS" ).implode(", ",$this->catfields); ?>
       </li>
       </ul>
       <table>
         <tr>
           <td>    
             <label for="file">
-                <?php echo JText::_( 'COM_EVENTLIST_IMPORT_SELECTCSV' ).':'; ?>
+                <?php echo JText::_( 'COM_JEM_IMPORT_SELECTCSV' ).':'; ?>
             </label>
           </td>
           <td>
             <input type="file" id="cat-file-upload" accept="text/*" name="Filecats" />
-            <input type="submit" id="cat-file-upload-submit" value="<?php echo JText::_('COM_EVENTLIST_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='csvcategoriesimport';return true;"/>
+            <input type="submit" id="cat-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='csvcategoriesimport';return true;"/>
             <span id="upload-clear"></span>
           </td>
         </tr>
         <tr>
           <td>    
             <label for="replace_cats">
-                <?php echo JText::_( 'COM_EVENTLIST_IMPORT_REPLACEIFEXISTS' ).':'; ?>
+                <?php echo JText::_( 'COM_JEM_IMPORT_REPLACEIFEXISTS' ).':'; ?>
             </label>
           </td>
           <td>
@@ -169,7 +169,7 @@ defined('_JEXEC') or die;
   
   
   
-	<input type="hidden" name="option" value="com_eventlist" />
+	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="view" value="import" />
 	<input type="hidden" name="controller" value="import" />
 	<input type="hidden" name="task" value="" />

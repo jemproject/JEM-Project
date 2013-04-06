@@ -51,7 +51,7 @@ JHTML::_('behavior.modal');
 <!-- Details EVENT -->
 	<h2 class="eventlist">
 		<?php
-    	echo JText::_( 'COM_EVENTLIST_EVENT' );
+    	echo JText::_( 'COM_JEM_EVENT' );
     	echo '&nbsp;'.ELOutput::editbutton($this->item->id, $this->row->did, $this->params, $this->allowedtoeditevent, 'editevent' );
     	?>
 	</h2>
@@ -63,12 +63,12 @@ JHTML::_('behavior.modal');
 	<dl class="event_info floattext">
 
 		<?php if ($this->elsettings->showdetailstitle == 1) : ?>
-			<dt class="title"><?php echo JText::_( 'COM_EVENTLIST_TITLE' ).':'; ?></dt>
+			<dt class="title"><?php echo JText::_( 'COM_JEM_TITLE' ).':'; ?></dt>
     		<dd class="title"><?php echo $this->escape($this->row->title); ?></dd>
 		<?php
   		endif;
   		?>
-  		<dt class="when"><?php echo JText::_( 'COM_EVENTLIST_WHEN' ).':'; ?></dt>
+  		<dt class="when"><?php echo JText::_( 'COM_JEM_WHEN' ).':'; ?></dt>
 		<dd class="when">
 			<?php
 			if (ELHelper::isValidDate($this->row->dates))
@@ -80,7 +80,7 @@ JHTML::_('behavior.modal');
     		endif;
 			}
 			else {
-				echo JText::_('COM_EVENTLIST_OPEN_DATE');
+				echo JText::_('COM_JEM_OPEN_DATE');
 			}
     		
     		if ($this->elsettings->showtimedetails == 1) :
@@ -96,7 +96,7 @@ JHTML::_('behavior.modal');
   		<?php
   		if ($this->row->locid != 0) :
   		?>
-		    <dt class="where"><?php echo JText::_( 'COM_EVENTLIST_WHERE' ).':'; ?></dt>
+		    <dt class="where"><?php echo JText::_( 'COM_JEM_WHERE' ).':'; ?></dt>
 		    <dd class="where">
     		<?php if (($this->elsettings->showdetlinkvenue == 1) && (!empty($this->row->url))) : ?>
 
@@ -120,7 +120,7 @@ JHTML::_('behavior.modal');
 		$n = count($this->categories);
 		?>
 
-		<dt class="category"><?php echo $n < 2 ? JText::_( 'COM_EVENTLIST_CATEGORY' ) : JText::_( 'COM_EVENTLIST_CATEGORIES' ); ?>:</dt>
+		<dt class="category"><?php echo $n < 2 ? JText::_( 'COM_JEM_CATEGORY' ) : JText::_( 'COM_JEM_CATEGORIES' ); ?>:</dt>
     		<dd class="category">
     			<?php
 				$i = 0;
@@ -139,7 +139,7 @@ JHTML::_('behavior.modal');
 
   	<?php if ($this->elsettings->showevdescription == 1 && $this->row->datdescription != '' && $this->row->datdescription != '<br />') : ?>
 
-  	    <h2 class="description"><?php echo JText::_( 'COM_EVENTLIST_DESCRIPTION' ); ?></h2>
+  	    <h2 class="description"><?php echo JText::_( 'COM_JEM_DESCRIPTION' ); ?></h2>
   		<div class="description event_desc">
   			<?php echo $this->row->datdescription; ?>
   		</div>
@@ -147,16 +147,16 @@ JHTML::_('behavior.modal');
   	<?php endif; ?>
   	
   	<?php if ($this->row->attachments && count($this->row->attachments)):?>
-  	    <h2 class="description"><?php echo JText::_( 'COM_EVENTLIST_EVENT_FILES' ); ?></h2>
+  	    <h2 class="description"><?php echo JText::_( 'COM_JEM_EVENT_FILES' ); ?></h2>
   		<div>
   			<table class="event-file">
   				<tbody>
   			<?php foreach ($this->row->attachments as $file): ?>
 	  				<tr>
 	  					<td>
-		  					<span class="event-file-dl-icon hasTip" title="<?php echo JText::_('COM_EVENTLIST_DOWNLOAD').' '.$this->escape($file->file).'::'.$this->escape($file->description);?>">
-		  					<?php echo JHTML::link('index.php?option=com_eventlist&task=getfile&format=raw&file='.$file->id, 
-		  					                       JHTML::image('components/com_eventlist/assets/images/download_16.png', JText::_('COM_EVENTLIST_DOWNLOAD'))); ?></span>  			
+		  					<span class="event-file-dl-icon hasTip" title="<?php echo JText::_('COM_JEM_DOWNLOAD').' '.$this->escape($file->file).'::'.$this->escape($file->description);?>">
+		  					<?php echo JHTML::link('index.php?option=com_jem&task=getfile&format=raw&file='.$file->id, 
+		  					                       JHTML::image('components/com_jem/assets/images/download_16.png', JText::_('COM_JEM_DOWNLOAD'))); ?></span>  			
 	  					</td>
 	  					<td class="event-file-name"><?php echo $this->escape($file->name ? $file->name : $file->file); ?></td>
 	  				</tr>
@@ -171,7 +171,7 @@ JHTML::_('behavior.modal');
 	<?php if ($this->row->locid != 0) : ?>
 
 		<h2 class="location">
-			<?php echo JText::_( 'COM_EVENTLIST_VENUE' ) ; ?>
+			<?php echo JText::_( 'COM_JEM_VENUE' ) ; ?>
   			<?php echo ELOutput::editbutton($this->item->id, $this->row->locid, $this->params, $this->allowedtoeditvenue, 'editvenue' ); ?>
 		</h2>
 
@@ -181,13 +181,13 @@ JHTML::_('behavior.modal');
 		?>
 
 		<dl class="location floattext">
-			 <dt class="venue"><?php echo JText::_( 'COM_EVENTLIST_LOCATION' ).':'; ?></dt>
+			 <dt class="venue"><?php echo JText::_( 'COM_JEM_LOCATION' ).':'; ?></dt>
 				<dd class="venue">
 				<?php echo "<a href='".JRoute::_( 'index.php?view=venueevents&id='.$this->row->venueslug )."'>".$this->escape($this->row->venue)."</a>"; ?>
 
 				<?php if (!empty($this->row->url)) : ?>
 					&nbsp; - &nbsp;
-					<a target="_blank" href="<?php echo $this->row->url; ?>"> <?php echo JText::_( 'COM_EVENTLIST_WEBSITE' ); ?></a>
+					<a target="_blank" href="<?php echo $this->row->url; ?>"> <?php echo JText::_( 'COM_JEM_WEBSITE' ); ?></a>
 				<?php
 				endif;
 				?>
@@ -198,35 +198,35 @@ JHTML::_('behavior.modal');
   			?>
 
   				<?php if ( $this->row->street ) : ?>
-  				<dt class="venue_street"><?php echo JText::_( 'COM_EVENTLIST_STREET' ).':'; ?></dt>
+  				<dt class="venue_street"><?php echo JText::_( 'COM_JEM_STREET' ).':'; ?></dt>
 				<dd class="venue_street">
     				<?php echo $this->escape($this->row->street); ?>
 				</dd>
 				<?php endif; ?>
 
 				<?php if ( $this->row->plz ) : ?>
-  				<dt class="venue_plz"><?php echo JText::_( 'COM_EVENTLIST_ZIP' ).':'; ?></dt>
+  				<dt class="venue_plz"><?php echo JText::_( 'COM_JEM_ZIP' ).':'; ?></dt>
 				<dd class="venue_plz">
     				<?php echo $this->escape($this->row->plz); ?>
 				</dd>
 				<?php endif; ?>
 
 				<?php if ( $this->row->city ) : ?>
-    			<dt class="venue_city"><?php echo JText::_( 'COM_EVENTLIST_CITY' ).':'; ?></dt>
+    			<dt class="venue_city"><?php echo JText::_( 'COM_JEM_CITY' ).':'; ?></dt>
     			<dd class="venue_city">
     				<?php echo $this->escape($this->row->city); ?>
     			</dd>
     			<?php endif; ?>
 
     			<?php if ( $this->row->state ) : ?>
-    			<dt class="venue_state"><?php echo JText::_( 'COM_EVENTLIST_STATE' ).':'; ?></dt>
+    			<dt class="venue_state"><?php echo JText::_( 'COM_JEM_STATE' ).':'; ?></dt>
     			<dd class="venue_state">
     				<?php echo $this->escape($this->row->state); ?>
     			</dd>
 				<?php endif; ?>
 
 				<?php if ( $this->row->country ) : ?>
-				<dt class="venue_country"><?php echo JText::_( 'COM_EVENTLIST_COUNTRY' ).':'; ?></dt>
+				<dt class="venue_country"><?php echo JText::_( 'COM_JEM_COUNTRY' ).':'; ?></dt>
     			<dd class="venue_country">
     				<?php echo $this->row->countryimg ? $this->row->countryimg : $this->row->country; ?>
     			</dd>
@@ -238,7 +238,7 @@ JHTML::_('behavior.modal');
 		<p><?php echo ELOutput::mapicon( $this->row ); ?>&nbsp;</p>
 		<?php if ($this->elsettings->showlocdescription == 1 && $this->row->locdescription != '' && $this->row->locdescription != '<br />') :	?>
 
-			<h2 class="location_desc"><?php echo JText::_( 'COM_EVENTLIST_DESCRIPTION' ); ?></h2>
+			<h2 class="location_desc"><?php echo JText::_( 'COM_JEM_DESCRIPTION' ); ?></h2>
   			<div class="description location_desc">
   				<?php echo $this->row->locdescription;	?>
   			</div>

@@ -54,13 +54,13 @@ class EventListViewSettings extends JViewLegacy {
 		//only admins have access to this view
 		if (!JFactory::getUser()->authorise('core.manage')) {
 			JError::raiseWarning( 'SOME_ERROR_CODE', JText::_( 'ALERTNOTAUTH'));
-			$app->redirect( 'index.php?option=com_eventlist&view=eventlist' );
+			$app->redirect( 'index.php?option=com_jem&view=eventlist' );
 		}
 
 		// fail if checked out not by 'me'
 		if ($model->isCheckedOut( $user->get('id') )) {
-			JError::raiseWarning( 'SOME_ERROR_CODE', JText::_( 'COM_EVENTLIST_EDITED_BY_ANOTHER_ADMIN' ));
-			$app->redirect( 'index.php?option=com_eventlist&view=eventlist' );
+			JError::raiseWarning( 'SOME_ERROR_CODE', JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ));
+			$app->redirect( 'index.php?option=com_jem&view=eventlist' );
 		}
 
 		JHTML::_('behavior.tooltip');
@@ -68,21 +68,21 @@ class EventListViewSettings extends JViewLegacy {
 		
 	
 		//add css, js and submenu to document
-		$document->addScript( JURI::base().'components/com_eventlist/assets/js/settings.js' );
-		$document->addStyleSheet('components/com_eventlist/assets/css/eventlistbackend.css');
+		$document->addScript( JURI::base().'components/com_jem/assets/js/settings.js' );
+		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
 
 		//Create Submenu
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_EVENTLIST' ), 'index.php?option=com_eventlist');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_EVENTS' ), 'index.php?option=com_eventlist&view=events');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_VENUES' ), 'index.php?option=com_eventlist&view=venues');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_CATEGORIES' ), 'index.php?option=com_eventlist&view=categories');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_ARCHIVESCREEN' ), 'index.php?option=com_eventlist&view=archive');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_GROUPS' ), 'index.php?option=com_eventlist&view=groups');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_HELP' ), 'index.php?option=com_eventlist&view=help');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_SETTINGS' ), 'index.php?option=com_eventlist&view=settings', true);
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTLIST' ), 'index.php?option=com_jem');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&view=settings', true);
 		
 		//create the toolbar
-		JToolBarHelper::title( JText::_( 'COM_EVENTLIST_SETTINGS' ), 'settings' );
+		JToolBarHelper::title( JText::_( 'COM_JEM_SETTINGS' ), 'settings' );
 		JToolBarHelper::apply();
 		JToolBarHelper::spacer();
 		JToolBarHelper::save('save');
@@ -114,13 +114,13 @@ class EventListViewSettings extends JViewLegacy {
  //       $db = $table->getDBO();
  //       $query = 'SELECT extension_id' .
  //                       ' FROM #__extensions' .
- //                       ' WHERE ' . $db->nameQuote( 'element' ) . '=' . $db->Quote( 'com_eventlist' ) ;
+ //                       ' WHERE ' . $db->nameQuote( 'element' ) . '=' . $db->Quote( 'com_jem' ) ;
  //       $db->setQuery( $query, 0, 1 );
  //       $id = $db->loadResult();
 //		if ($id == !null)
   //      {
 //		$table->load($id);
-//		$globalparams = new JRegistry( $table->params, JPATH_ADMINISTRATOR.DS.'components'.DS.'com_eventlist'.DS.'config.xml' );
+//		$globalparams = new JRegistry( $table->params, JPATH_ADMINISTRATOR.DS.'components'.DS.'com_jem'.DS.'config.xml' );
 //		} else
   //      {
     //    JError::raiseWarning( 'SOME_ERROR_CODE', JText::_( 'SETTINGS NOT LOADED' ));

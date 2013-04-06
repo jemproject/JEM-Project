@@ -54,7 +54,7 @@ defined( '_JEXEC' ) or die;
 
 			<dl class="location floattext">
 				<?php if (($this->elsettings->showdetlinkvenue == 1) && (!empty($row->url))) : ?>
-				<dt class="venue_website"><?php echo JText::_( 'COM_EVENTLIST_WEBSITE' ).':'; ?></dt>
+				<dt class="venue_website"><?php echo JText::_( 'COM_JEM_WEBSITE' ).':'; ?></dt>
 	   			<dd class="venue_website">
 					<a href="<?php echo $row->url; ?>" target="_blank"> <?php echo $row->urlclean; ?></a>
 				</dd>
@@ -65,41 +65,41 @@ defined( '_JEXEC' ) or die;
 	  			?>
 
 	  			<?php if ( $row->street ) : ?>
-	  			<dt class="venue_street"><?php echo JText::_( 'COM_EVENTLIST_STREET' ).':'; ?></dt>
+	  			<dt class="venue_street"><?php echo JText::_( 'COM_JEM_STREET' ).':'; ?></dt>
 				<dd class="venue_street">
 	    			<?php echo $this->escape($row->street); ?>
 				</dd>
 				<?php endif; ?>
 
 				<?php if ( $row->plz ) : ?>
-	  			<dt class="venue_plz"><?php echo JText::_( 'COM_EVENTLIST_ZIP' ).':'; ?></dt>
+	  			<dt class="venue_plz"><?php echo JText::_( 'COM_JEM_ZIP' ).':'; ?></dt>
 				<dd class="venue_plz">
 	    			<?php echo $this->escape($row->plz); ?>
 				</dd>
 				<?php endif; ?>
 
 				<?php if ( $row->city ) : ?>
-	    		<dt class="venue_city"><?php echo JText::_( 'COM_EVENTLIST_CITY' ).':'; ?></dt>
+	    		<dt class="venue_city"><?php echo JText::_( 'COM_JEM_CITY' ).':'; ?></dt>
 	    		<dd class="venue_city">
 	    			<?php echo $this->escape($row->city); ?>
 	    		</dd>
 	    		<?php endif; ?>
 
 	    		<?php if ( $row->state ) : ?>
-				<dt class="venue_state"><?php echo JText::_( 'COM_EVENTLIST_STATE' ).':'; ?></dt>
+				<dt class="venue_state"><?php echo JText::_( 'COM_JEM_STATE' ).':'; ?></dt>
 				<dd class="venue_state">
 	    			<?php echo $this->escape($row->state); ?>
 				</dd>
 				<?php endif; ?>
 
 				<?php if ( $row->country ) : ?>
-				<dt class="venue_country"><?php echo JText::_( 'COM_EVENTLIST_COUNTRY' ).':'; ?></dt>
+				<dt class="venue_country"><?php echo JText::_( 'COM_JEM_COUNTRY' ).':'; ?></dt>
 	    		<dd class="venue_country">
 	    			<?php echo $row->countryimg ? $row->countryimg : $row->country; ?>
 	    		</dd>
 	    		<?php endif; ?>
 
-	    		<dt class="venue_assignedevents"><?php echo JText::_( 'COM_EVENTLIST_EVENTS' ).':'; ?></dt>
+	    		<dt class="venue_assignedevents"><?php echo JText::_( 'COM_JEM_EVENTS' ).':'; ?></dt>
 	    		<dd class="venue_assignedevents">
 	    			<a href="<?php echo $row->targetlink; ?>"><?php echo $row->assignedevents; ?></a>
 	    		</dd>
@@ -111,7 +111,7 @@ defined( '_JEXEC' ) or die;
 <p><?php echo ELOutput::mapicon( $row ); ?></p>
 		
 	    <?php if ($this->elsettings->showlocdescription == 1) :	?>
-		<h2 class="description"><?php echo JText::_( 'COM_EVENTLIST_DESCRIPTION' ).':'; ?></h2>
+		<h2 class="description"><?php echo JText::_( 'COM_JEM_DESCRIPTION' ).':'; ?></h2>
 		<div class="description">
 	    	<?php echo $row->locdescription; ?>
 		</div>

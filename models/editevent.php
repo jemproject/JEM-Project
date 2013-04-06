@@ -103,7 +103,7 @@ class EventListModelEditevent extends JModelLegacy
 			* Error if allready checked out otherwise check event out
 			*/
 			if ($this->isCheckedOut( $user->get('id') )) {
-				$app->redirect( 'index.php?view='.$view, JText::_( 'COM_EVENTLIST_THE_EVENT' ).': '.$this->_event->title.' '.JText::_( 'COM_EVENTLIST_EDITED_BY_ANOTHER_ADMIN' ) );
+				$app->redirect( 'index.php?view='.$view, JText::_( 'COM_JEM_THE_EVENT' ).': '.$this->_event->title.' '.JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ) );
 			} else {
 				$this->checkout( $user->get('id') );
 			}
@@ -118,7 +118,7 @@ class EventListModelEditevent extends JModelLegacy
 
 			if ($allowedtoeditevent == 0) {
 
-				JError::raiseError( 403, JText::_( 'COM_EVENTLIST_NO_ACCESS' ) );
+				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
 
 			}
 
@@ -132,15 +132,15 @@ class EventListModelEditevent extends JModelLegacy
 			$genaccess 	= ELUser::validate_user( $elsettings->evdelrec, $elsettings->delivereventsyes );
 
 			if ( !($maintainer || $genaccess )) {
-				JError::raiseError( 403, JText::_( 'COM_EVENTLIST_NO_ACCESS' ) );
+				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
 			}
 			
 			//sticky forms
 			$session = JFactory::getSession();
-			if ($session->has('eventform', 'com_eventlist')) {
+			if ($session->has('eventform', 'com_jem')) {
 				
-				$eventform 		= $session->get('eventform', 0, 'com_eventlist');
-				$this->_event 	=  JTable::getInstance('eventlist_events', '');
+				$eventform 		= $session->get('eventform', 0, 'com_jem');
+				$this->_event 	=  JTable::getInstance('jem_events', '');
 								
 				if (!$this->_event->bind($eventform)) {
 					JError::raiseError( 500, $this->_db->stderr() );
@@ -148,7 +148,7 @@ class EventListModelEditevent extends JModelLegacy
 				}
 				
 				$query = 'SELECT venue'
-					. ' FROM #__eventlist_venues'
+					. ' FROM #__jem_venues'
 					. ' WHERE id = '.(int)$eventform['locid']
 					;
 				$this->_db->setQuery($query);
@@ -185,7 +185,7 @@ class EventListModelEditevent extends JModelLegacy
 				$this->_event->attachments		= array();
 				$this->_event->maxplaces		= 0;
 				$this->_event->waitinglist	= 0;
-				$this->_event->venue				= JText::_('COM_EVENTLIST_SELECTVENUE');
+				$this->_event->venue				= JText::_('COM_JEM_SELECTVENUE');
 			
 			}
 
@@ -207,8 +207,8 @@ class EventListModelEditevent extends JModelLegacy
 		if (empty($this->_event))
 		{
 			$query = 'SELECT e.*, v.venue'
-					. ' FROM #__eventlist_events AS e'
-					. ' LEFT JOIN #__eventlist_venues AS v ON v.id = e.locid'
+					. ' FROM #__jem_events AS e'
+					. ' LEFT JOIN #__jem_venues AS v ON v.id = e.locid'
 					. ' WHERE e.id = '.(int)$this->_id
 					;
 			$this->_db->setQuery($query);
@@ -253,7 +253,7 @@ class EventListModelEditevent extends JModelLegacy
 		if(!$this->_id) {
 			//get the ids of the categories the user maintaines
 			$query = 'SELECT g.group_id'
-					. ' FROM #__eventlist_groupmembers AS g'
+					. ' FROM #__jem_groupmembers AS g'
 					. ' WHERE g.member = '.$userid
 					;
 			$this->_db->setQuery( $query );
@@ -284,14 +284,14 @@ class EventListModelEditevent extends JModelLegacy
 		//get the maintained categories and the categories whithout any group
 		//or just get all if somebody have edit rights
 		$query = 'SELECT c.*'
-				. ' FROM #__eventlist_categories AS c'
+				. ' FROM #__jem_categories AS c'
 				. $where
 				. ' ORDER BY c.ordering'
 				;
 		$this->_db->setQuery( $query );
 
 	//	$this->_category = array();
-	//	$this->_category[] = JHTML::_('select.option', '0', JText::_( 'COM_EVENTLIST_SELECT_CATEGORY' ) );
+	//	$this->_category[] = JHTML::_('select.option', '0', JText::_( 'COM_JEM_SELECT_CATEGORY' ) );
 	//	$this->_categories = array_merge( $this->_category, $this->_db->loadObjectList() );
 	
 		$rows = $this->_db->loadObjectList();
@@ -322,7 +322,7 @@ class EventListModelEditevent extends JModelLegacy
 	 */
 	function getCatsselected()
 	{
-		$query = 'SELECT DISTINCT catid FROM #__eventlist_cats_event_relations WHERE itemid = ' . (int)$this->_id;
+		$query = 'SELECT DISTINCT catid FROM #__jem_cats_event_relations WHERE itemid = ' . (int)$this->_id;
 		$this->_db->setQuery($query);
 		$used = $this->_db->loadResultArray();
 		return $used;
@@ -343,11 +343,11 @@ class EventListModelEditevent extends JModelLegacy
 		$where		= $this->_buildVenuesWhere(  );
 		$orderby	= $this->_buildVenuesOrderBy(  );
 
-		$limit			= $app->getUserStateFromRequest('com_eventlist.selectvenue.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit			= $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $params->def('display_num', 0), 'int');
 		$limitstart		= JRequest::getInt('limitstart');
 
 		$query = 'SELECT l.id, l.venue, l.city, l.country, l.published'
-				.' FROM #__eventlist_venues AS l'
+				.' FROM #__jem_venues AS l'
 				. $where
 				. $orderby
 				;
@@ -370,7 +370,7 @@ class EventListModelEditevent extends JModelLegacy
         $userid = $user->get('id');
 
     	$query = 'SELECT id AS value, venue AS text'
-        		. ' FROM #__eventlist_venues'
+        		. ' FROM #__jem_venues'
                 . ' WHERE created_by = '. (int)$userid
                 . ' AND published = 1'
         		. ' ORDER BY venue'
@@ -457,7 +457,7 @@ class EventListModelEditevent extends JModelLegacy
 		$where		= $this->_buildVenuesWhere(  );
 
 		$query = 'SELECT count(*)'
-				. ' FROM #__eventlist_venues AS l'
+				. ' FROM #__jem_venues AS l'
 				. $where
 				;
 		$this->_db->SetQuery($query);
@@ -476,7 +476,7 @@ class EventListModelEditevent extends JModelLegacy
 	{
 		if ($this->_id)
 		{
-			$item = & $this->getTable('eventlist_events', '');
+			$item = & $this->getTable('jem_events', '');
 			if(! $item->checkin($this->_id)) {
 				$this->setError($this->_db->getErrorMsg());
 				return false;
@@ -503,7 +503,7 @@ class EventListModelEditevent extends JModelLegacy
 				$uid	= $user->get('id');
 			}
 			// Lets get to it and checkout the thing...
-			$item =  $this->getTable('eventlist_events', '');
+			$item =  $this->getTable('jem_events', '');
 			if(!$item->checkout($uid, $this->_id)) {
 				$this->setError($this->_db->getErrorMsg());
 				return false;
@@ -549,7 +549,7 @@ class EventListModelEditevent extends JModelLegacy
 		$elsettings =  ELHelper::config();
 	
 		$cats 		= JRequest::getVar( 'cid', array(), 'post', 'array');
-		$row 		=  JTable::getInstance('eventlist_events', '');
+		$row 		=  JTable::getInstance('jem_events', '');
 
 		//Sanitize
 		$data['datdescription'] = JRequest::getVar( 'datdescription', '', 'post','string', JREQUEST_ALLOWRAW );
@@ -603,7 +603,7 @@ class EventListModelEditevent extends JModelLegacy
 			if ($maintainer || $editaccess ) $allowedtoeditevent = 1;
 
 			if ($allowedtoeditevent == 0) {
-				JError::raiseError( 403, JText::_( 'COM_EVENTLIST_NO_ACCESS' ) );
+				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
 			}
 
 			$row->modified 		= gmdate('Y-m-d H:i:s');
@@ -627,7 +627,7 @@ class EventListModelEditevent extends JModelLegacy
 			$genaccess 	= ELUser::validate_user( $elsettings->evdelrec, $elsettings->delivereventsyes );
 
 			if ( !($maintainer || $genaccess) ){
-				JError::raiseError( 403, JText::_( 'COM_EVENTLIST_NO_ACCESS' ) );
+				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
 			}
 
 			//get IP, time and userid
@@ -656,7 +656,7 @@ class EventListModelEditevent extends JModelLegacy
 		//If image upload is required we will stop here if no file was attached
 		if ( empty($file['name']) && $elsettings->imageenabled == 2 ) {
 
-			$this->setError( JText::_( 'COM_EVENTLIST_IMAGE_EMPTY' ) );
+			$this->setError( JText::_( 'COM_JEM_IMAGE_EMPTY' ) );
 			return false;
 		}
 		
@@ -680,7 +680,7 @@ class EventListModelEditevent extends JModelLegacy
 			$filepath = $base_Dir . $filename;
 
 			if (!JFile::upload($file['tmp_name'], $filepath)) {
-				$this->setError( JText::_( 'COM_EVENTLIST_UPLOAD_FAILED' ) );
+				$this->setError( JText::_( 'COM_JEM_UPLOAD_FAILED' ) );
 				return false;
 			} else {
 				$row->datimage = $filename;
@@ -760,13 +760,13 @@ class EventListModelEditevent extends JModelLegacy
 		}
 		
 		//store cat relation
-		$query = 'DELETE FROM #__eventlist_cats_event_relations WHERE itemid = '.$row->id;
+		$query = 'DELETE FROM #__jem_cats_event_relations WHERE itemid = '.$row->id;
 		$this->_db->setQuery($query);
 		$this->_db->query();
 			
 		foreach($cats as $cat)
 		{
-			$query = 'INSERT INTO #__eventlist_cats_event_relations (`catid`, `itemid`) VALUES(' . $cat . ',' . $row->id . ')';
+			$query = 'INSERT INTO #__jem_cats_event_relations (`catid`, `itemid`) VALUES(' . $cat . ',' . $row->id . ')';
 			$this->_db->setQuery($query);
 			$this->_db->query();
 		}

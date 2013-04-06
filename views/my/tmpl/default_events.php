@@ -25,7 +25,7 @@ defined( '_JEXEC' ) or die;
 
 <?php if (count((array)$this->events)) : ?>
 
-<h2><?php echo JText::_('COM_EVENTLIST_MY_EVENTS'); ?></h2>
+<h2><?php echo JText::_('COM_JEM_MY_EVENTS'); ?></h2>
 
 <script type="text/javascript">
 
@@ -46,18 +46,18 @@ defined( '_JEXEC' ) or die;
     <?php if ($this->elsettings->filter) : ?>
     <div class="el_fleft">
       <?php
-      echo '<label for="filter_type">'.JText::_('COM_EVENTLIST_FILTER').'</label>&nbsp;';
+      echo '<label for="filter_type">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
       echo $this->lists['filter_types'].'&nbsp;';
       ?>
       <input type="text" name="filter" id="filter" value="<?php echo $this->lists['filter'];?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
-      <button onclick="document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_EVENTLIST_GO' ); ?></button>
-      <button onclick="document.getElementById('filter').value='';document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_EVENTLIST_RESET' ); ?></button>
+      <button onclick="document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+      <button onclick="document.getElementById('filter').value='';document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
     </div>
     <?php endif; ?>
     <?php if ($this->elsettings->display) : ?>
     <div class="el_fright">
       <?php
-      echo '<label for="limit">'.JText::_('COM_EVENTLIST_DISPLAY_NUM').'</label>&nbsp;';
+      echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
       echo $this->events_pageNav->getLimitBox();
       ?>
     </div>
@@ -122,7 +122,7 @@ defined( '_JEXEC' ) or die;
 	<?php
 	if (count((array)$this->events) == 0) :
 		?>
-		<tr align="center"><td colspan="0"><?php echo JText::_( 'COM_EVENTLIST_NO_EVENTS' ); ?></td></tr>
+		<tr align="center"><td colspan="0"><?php echo JText::_( 'COM_JEM_NO_EVENTS' ); ?></td></tr>
 		<?php
 	else :
 
@@ -142,7 +142,7 @@ defined( '_JEXEC' ) or die;
 	    					endif;
 	    					?>
     					<?php else: ?>
-    						<?php echo JText::_('COM_EVENTLIST_OPEN_DATE'); ?>
+    						<?php echo JText::_('COM_JEM_OPEN_DATE'); ?>
     					<?php endif; ?>
     				</strong>
     				

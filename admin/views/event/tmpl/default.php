@@ -11,7 +11,7 @@
 
  * EventList is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See theCOM_EVENTLIST_
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See theCOM_JEM_
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -66,16 +66,16 @@ $options = array(
 		if (task == 'cancel') {
 			submitform( task );
 		} else if (form.title.value == ""){
-			alert( "<?php echo JText::_ ( 'COM_EVENTLIST_ADD_TITLE' ); ?>" );
+			alert( "<?php echo JText::_ ( 'COM_JEM_ADD_TITLE' ); ?>" );
 			form.title.focus();
 		} else if (form.dates.value && !form.dates.value.match(/[0-9]{4}-[0-1][0-9]-[0-3][0-9]/gi)) {
-			alert("<?php echo JText::_ ( 'COM_EVENTLIST_DATE_WRONG' ); ?>");
+			alert("<?php echo JText::_ ( 'COM_JEM_DATE_WRONG' ); ?>");
 		} else if (form.enddates.value !="" && !form.enddates.value.match(/[0-9]{4}-[0-1][0-9]-[0-3][0-9]/gi)) {
-			alert("<?php echo JText::_ ( 'COM_EVENTLIST_ENDDATE_WRONG' );	?>");		
+			alert("<?php echo JText::_ ( 'COM_JEM_ENDDATE_WRONG' );	?>");		
 		} else if (form.cid.selectedIndex == -1) {
-			alert( "<?php echo JText::_ ( 'COM_EVENTLIST_CHOOSE_CATEGORY' );?>" );
+			alert( "<?php echo JText::_ ( 'COM_JEM_CHOOSE_CATEGORY' );?>" );
 		} else if (form.locid.value == ""){
-			alert( "<?php echo JText::_ ( 'COM_EVENTLIST_CHOOSE_VENUE' );	?>" );
+			alert( "<?php echo JText::_ ( 'COM_JEM_CHOOSE_VENUE' );	?>" );
 		} else {
 			<?php	echo $this->editor->save ( 'datdescription' ); ?>
 			$("meta_keywords").value = $keywords;
@@ -88,7 +88,7 @@ $options = array(
 </script>
 <?php
 //Set the info image
-$infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint.png', JText::_ ( 'COM_EVENTLIST_NOTES' ) );
+$infoimage = JHTML::image ( 'components/com_jem/assets/images/icon-16-hint.png', JText::_ ( 'COM_JEM_NOTES' ) );
 ?>
 
 <form action="index.php" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
@@ -96,18 +96,18 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 	<tr>
 	<td valign="top">
 		<?php echo JHtml::_('tabs.start','event-pane',$options); ?>
-<?php	echo JHtml::_('tabs.panel',JText::_('COM_EVENTLIST_EVENT_INFO_TAB'), 'event' ); ?>
+<?php	echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_INFO_TAB'), 'event' ); ?>
 		&nbsp;<!-- this is a trick for IE7... otherwise the first table inside the tab is shifted right ! -->
 		<table class="adminform">
 			<tr>
 				<td>
-					<label for="title"><?php echo JText::_ ( 'COM_EVENTLIST_EVENT_TITLE' ) . ':'; ?></label>
+					<label for="title"><?php echo JText::_ ( 'COM_JEM_EVENT_TITLE' ) . ':'; ?></label>
 				</td>
 				<td>
 					<input class="inputbox" name="title" value="<?php echo $this->row->title; ?>" size="50" maxlength="100" id="title" />
 				</td>
 				<td>
-					<label for="published"><?php echo JText::_ ( 'COM_EVENTLIST_PUBLISHED' ) . ':'; ?></label>
+					<label for="published"><?php echo JText::_ ( 'COM_JEM_PUBLISHED' ) . ':'; ?></label>
 				</td>
 				<td>
 					<?php
@@ -118,7 +118,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			</tr>
 			<tr>
 				<td>
-					<label for="alias"><?php echo JText::_ ( 'COM_EVENTLIST_ALIAS' ) . ':'; ?></label>
+					<label for="alias"><?php echo JText::_ ( 'COM_JEM_ALIAS' ) . ':'; ?></label>
 				</td>
 				<td colspan="3">
 					<input class="inputbox" type="text" name="alias" id="alias" size="50" maxlength="100" value="<?php echo $this->row->alias; ?>" />
@@ -126,7 +126,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			</tr>
 			<tr>
 				<td>
-					<label for="venueid"><?php echo JText::_ ( 'COM_EVENTLIST_VENUE' ) . ':'; ?></label>
+					<label for="venueid"><?php echo JText::_ ( 'COM_JEM_VENUE' ) . ':'; ?></label>
 				</td>
 				<td colspan="3">
 					<?php echo $this->venueselect; ?>
@@ -136,7 +136,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 				<td>
 					<label for="dates">
 							<?php
-							echo JText::_ ( 'COM_EVENTLIST_DATE' ) . ':';
+							echo JText::_ ( 'COM_JEM_DATE' ) . ':';
 							?>
 					</label>
 				</td>
@@ -144,7 +144,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 					<?php
 					echo JHTML::_ ( 'calendar', $this->row->dates, "dates", "dates" );
 					?>
-					<span class="editlinktip hasTip" title="<?php echo JText::_ ( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_ ( 'COM_EVENTLIST_FORMAT_DATE' );?>">
+					<span class="editlinktip hasTip" title="<?php echo JText::_ ( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_ ( 'COM_JEM_FORMAT_DATE' );?>">
 						<?php echo $infoimage; ?>
 					</span>
 				</td>
@@ -152,12 +152,12 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			<tr>
 				<td>
 					<label for="enddates">
-						<?php echo JText::_ ( 'COM_EVENTLIST_ENDDATE' ) . ':'; ?>
+						<?php echo JText::_ ( 'COM_JEM_ENDDATE' ) . ':'; ?>
 					</label>
 				</td>
 				<td colspan="3">
 					<?php echo JHTML::_ ( 'calendar', $this->row->enddates, "enddates", "enddates" );?>
-					<span class="editlinktip hasTip" title="<?php echo JText::_ ( 'COM_EVENTLIST_NOTES' );?>::<?php echo JText::_ ( 'COM_EVENTLIST_FORMAT_DATE' );?>">
+					<span class="editlinktip hasTip" title="<?php echo JText::_ ( 'COM_JEM_NOTES' );?>::<?php echo JText::_ ( 'COM_JEM_FORMAT_DATE' );?>">
 						<?php echo $infoimage; ?>
 					</span>
 				</td>
@@ -165,7 +165,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			<tr>
 				<td>
 					<label for="times">
-							<?php echo JText::_ ( 'COM_EVENTLIST_EVENT_TIME' ) . ':';	?>
+							<?php echo JText::_ ( 'COM_JEM_EVENT_TIME' ) . ':';	?>
 					</label>
 				</td>
 				<td colspan="3">
@@ -174,11 +174,11 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 					echo ELAdmin::buildtimeselect(59, 'startminutes', substr( $this->row->times, 3, 2 ));
 					?>
 			  		<?php if ($this->elsettings->showtime == 1) { ?>
-						<span class="editlinktip hasTip" title="<?php echo JText::_ ( 'COM_EVENTLIST_NOTES' );?>::<?php echo JText::_ ( 'COM_EVENTLIST_FORMAT_TIME' );?>">
+						<span class="editlinktip hasTip" title="<?php echo JText::_ ( 'COM_JEM_NOTES' );?>::<?php echo JText::_ ( 'COM_JEM_FORMAT_TIME' );?>">
 							<?php echo $infoimage;?>
 						</span>
 			  		<?php } else { ?>
-			  			<span class="editlinktip hasTip" title="<?php echo JText::_ ( 'COM_EVENTLIST_NOTES' );?>::<?php echo JText::_ ( 'COM_EVENTLIST_FORMAT_TIME_OPTIONAL' );?>">
+			  			<span class="editlinktip hasTip" title="<?php echo JText::_ ( 'COM_JEM_NOTES' );?>::<?php echo JText::_ ( 'COM_JEM_FORMAT_TIME_OPTIONAL' );?>">
 							<?php echo $infoimage;?>
 						</span>
 			  			<?php }	?>
@@ -187,7 +187,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			<tr>
 				<td>
 					<label for="endtimes">
-							<?php echo JText::_ ( 'COM_EVENTLIST_END_TIME' ) . ':';?>
+							<?php echo JText::_ ( 'COM_JEM_END_TIME' ) . ':';?>
 					</label>
 				</td>
 				<td colspan="3">
@@ -195,7 +195,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 					echo ELAdmin::buildtimeselect(23, 'endhours', substr( $this->row->endtimes, 0, 2 )).' : ';
 					echo ELAdmin::buildtimeselect(59, 'endminutes', substr( $this->row->endtimes, 3, 2 ));
 					?>
-					<span class="editlinktip hasTip" title="<?php echo JText::_ ( 'COM_EVENTLIST_NOTES' );?>::<?php echo JText::_ ( 'COM_EVENTLIST_FORMAT_TIME_OPTIONAL' );?>">
+					<span class="editlinktip hasTip" title="<?php echo JText::_ ( 'COM_JEM_NOTES' );?>::<?php echo JText::_ ( 'COM_JEM_FORMAT_TIME_OPTIONAL' );?>">
 						<?php echo $infoimage;?>
 					</span>
 				</td>
@@ -215,7 +215,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 		</table>
 
 		
-		<?php echo JHtml::_('tabs.panel',JText::_('COM_EVENTLIST_EVENT_ATTACHMENTS_TAB'), 'event' ); ?>
+		<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event' ); ?>
 		<?php echo $this->loadTemplate('attachments'); ?>
 		<?php echo JHtml::_('tabs.end'); ?>
 	</td>
@@ -230,7 +230,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 		}
 		?>
 		<?php
-		$title = JText::_( 'COM_EVENTLIST_DETAILS' );
+		$title = JText::_( 'COM_JEM_DETAILS' );
 			echo JHtml::_('sliders.start', 'det-pane', $options);
 			echo JHtml::_('sliders.panel', $title, 'date');
 			?>
@@ -239,7 +239,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			<?php if ($this->row->id) { ?>
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_EVENTLIST_ID' ); ?>:</strong>
+					<strong><?php echo JText::_ ( 'COM_JEM_ID' ); ?>:</strong>
 				</td>
 				<td>
 					<?php echo $this->row->id; ?>
@@ -248,41 +248,41 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			<?php } ?>
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_EVENTLIST_STATE' ); ?></strong>
+					<strong><?php echo JText::_ ( 'COM_JEM_STATE' ); ?></strong>
 				</td>
 				<td>
 					<?php
-					echo $this->row->published > 0 ? JText::_ ( 'COM_EVENTLIST_PUBLISHED' ) : ($this->row->published < 0 ? JText::_ ( 'COM_EVENTLIST_ARCHIVED' ) : JText::_ ( 'COM_EVENTLIST_DRAFT_UNPUBLISHED' ));
+					echo $this->row->published > 0 ? JText::_ ( 'COM_JEM_PUBLISHED' ) : ($this->row->published < 0 ? JText::_ ( 'COM_JEM_ARCHIVED' ) : JText::_ ( 'COM_JEM_DRAFT_UNPUBLISHED' ));
 					?>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_EVENTLIST_HITS' );	?></strong>
+					<strong><?php echo JText::_ ( 'COM_JEM_HITS' );	?></strong>
 				</td>
 				<td>
 					<div id="hits"></div>
 					<span <?php	echo $visibility; ?>>
-						<input name="reset_hits" type="button" class="button" value="<?php echo JText::_ ( 'COM_EVENTLIST_RESET' );?>" onclick="reseter('resethits', '<?php echo $this->row->id;?>', 'hits')" />
+						<input name="reset_hits" type="button" class="button" value="<?php echo JText::_ ( 'COM_JEM_RESET' );?>" onclick="reseter('resethits', '<?php echo $this->row->id;?>', 'hits')" />
 					</span>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_EVENTLIST_REVISED' ); ?></strong>
+					<strong><?php echo JText::_ ( 'COM_JEM_REVISED' ); ?></strong>
 				</td>
 				<td>
-					<?php echo $this->row->version . ' ' . JText::_ ( 'COM_EVENTLIST_TIMES' ); ?>
+					<?php echo $this->row->version . ' ' . JText::_ ( 'COM_JEM_TIMES' ); ?>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_EVENTLIST_CREATED_AT' );?></strong>
+					<strong><?php echo JText::_ ( 'COM_JEM_CREATED_AT' );?></strong>
 				</td>
 				<td>
 					<?php
 					if ($this->row->created == $this->nullDate) {
-						echo JText::_ ( 'COM_EVENTLIST_NEW_EVENT' );
+						echo JText::_ ( 'COM_JEM_NEW_EVENT' );
 					} else {
 						echo JHTML::_ ( 'date', $this->row->created, JText::_ ( 'DATE_FORMAT_LC2' ) );
 					}
@@ -291,7 +291,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			</tr>
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_EVENTLIST_OWNER' );?></strong>
+					<strong><?php echo JText::_ ( 'COM_JEM_OWNER' );?></strong>
 				</td>
 				<td>
 					<?php
@@ -301,12 +301,12 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			</tr>
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_EVENTLIST_EDITED_AT' ); ?></strong>
+					<strong><?php echo JText::_ ( 'COM_JEM_EDITED_AT' ); ?></strong>
 				</td>
 				<td>
 					<?php
 					if ($this->row->modified == $this->nullDate) {
-						echo JText::_ ( 'COM_EVENTLIST_NOT_MODIFIED' );
+						echo JText::_ ( 'COM_JEM_NOT_MODIFIED' );
 					} else {
 						echo JHTML::_ ( 'date', $this->row->modified, JText::_ ( 'DATE_FORMAT_LC2' ) );
 					}
@@ -319,8 +319,8 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 		<table width="100%"	style="border: 1px dashed silver; padding: 5px; margin-bottom: 10px;">
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_EVENTLIST_CATEGORIES' ); ?></strong>
-					<span class="editlinktip hasTip" title="<?php echo JText::_ ( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_ ( 'COM_EVENTLIST_CATEGORIES_NOTES' );?>">
+					<strong><?php echo JText::_ ( 'COM_JEM_CATEGORIES' ); ?></strong>
+					<span class="editlinktip hasTip" title="<?php echo JText::_ ( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_ ( 'COM_JEM_CATEGORIES_NOTES' );?>">
 						<?php echo $infoimage; ?>
 					</span>
 				</td>
@@ -331,13 +331,13 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 		</table>
 		
 		<?php
-		$title2 = JText::_( 'COM_EVENTLIST_REGISTRATION' );
+		$title2 = JText::_( 'COM_JEM_REGISTRATION' );
 		echo JHtml::_('sliders.panel', $title2, 'registra');
 		?>
 		<table>
 			<tr>
 				<td>
-					<label for="registra"><?php	echo JText::_ ( 'COM_EVENTLIST_ENABLE_REGISTRATION' ) . ':';?></label>
+					<label for="registra"><?php	echo JText::_ ( 'COM_JEM_ENABLE_REGISTRATION' ) . ':';?></label>
 				</td>
 				<td>
 					<?php
@@ -348,7 +348,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			</tr>
 			<tr>
 				<td>
-					<label for="unregistra"><?php echo JText::_ ( 'COM_EVENTLIST_ENABLE_UNREGISTRATION' ) . ':';?></label>
+					<label for="unregistra"><?php echo JText::_ ( 'COM_JEM_ENABLE_UNREGISTRATION' ) . ':';?></label>
 				</td>
 				<td>
 					<?php
@@ -358,8 +358,8 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 				</td>
 			</tr>
 			<tr>
-				<td class="hasTip" title="<?php echo JText::_ ( 'COM_EVENTLIST_MAX_PLACES' ) . '::'.JText::_ ( 'COM_EVENTLIST_MAX_PLACES_TIP' );?>">
-					<label for="maxplaces"><?php echo JText::_ ( 'COM_EVENTLIST_MAX_PLACES' ) . ':';?></label>
+				<td class="hasTip" title="<?php echo JText::_ ( 'COM_JEM_MAX_PLACES' ) . '::'.JText::_ ( 'COM_JEM_MAX_PLACES_TIP' );?>">
+					<label for="maxplaces"><?php echo JText::_ ( 'COM_JEM_MAX_PLACES' ) . ':';?></label>
 				</td>
 				<td>
 					<input type="text" name="maxplaces" id="maxplaces" value="<?php echo $this->row->maxplaces; ?>" size="5"/>
@@ -367,7 +367,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			</tr>
 			<tr>
 				<td>
-					<label><?php echo JText::_ ( 'COM_EVENTLIST_BOOKED_PLACES' ) . ':';?></label>
+					<label><?php echo JText::_ ( 'COM_JEM_BOOKED_PLACES' ) . ':';?></label>
 				</td>
 				<td>
 					<span id="event-booked"><?php echo $this->row->booked; ?></span>
@@ -376,7 +376,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			<?php if ($this->row->maxplaces): ?>
 			<tr>
 				<td>
-					<label><?php echo JText::_ ( 'COM_EVENTLIST_AVAILABLE_PLACES' ) . ':';?></label>
+					<label><?php echo JText::_ ( 'COM_JEM_AVAILABLE_PLACES' ) . ':';?></label>
 				</td>
 				<td>
 					<span id="event-available"><?php echo ($this->row->maxplaces-$this->row->booked); ?></span>
@@ -384,8 +384,8 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			</tr>
 			<?php endif; ?>
 			<tr>
-				<td class="hasTip" title="<?php echo JText::_ ( 'COM_EVENTLIST_ENABLE_WAITINGLIST' ) . '::'.JText::_ ( 'COM_EVENTLIST_ENABLE_WAITINGLIST_TIP' );?>">
-					<label for="maxplaces"><?php echo JText::_ ( 'COM_EVENTLIST_ENABLE_WAITINGLIST' ) . ':';?></label>
+				<td class="hasTip" title="<?php echo JText::_ ( 'COM_JEM_ENABLE_WAITINGLIST' ) . '::'.JText::_ ( 'COM_JEM_ENABLE_WAITINGLIST_TIP' );?>">
+					<label for="maxplaces"><?php echo JText::_ ( 'COM_JEM_ENABLE_WAITINGLIST' ) . ':';?></label>
 				</td>
 				<td>
 					<?php echo JHTML::_ ( 'select.booleanlist', 'waitinglist', '', $this->row->waitinglist );	?>
@@ -394,13 +394,13 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 		</table>
 		
 		<?php
-		$title2 = JText::_( 'COM_EVENTLIST_IMAGE' );
+		$title2 = JText::_( 'COM_JEM_IMAGE' );
 		echo JHtml::_('sliders.panel', $title2, 'image');
 		?>
 		<table>
 			<tr>
 				<td>
-					<label for="image">	<?php echo JText::_ ( 'COM_EVENTLIST_CHOOSE_IMAGE' ) . ':'; ?></label>
+					<label for="image">	<?php echo JText::_ ( 'COM_JEM_CHOOSE_IMAGE' ) . ':'; ?></label>
 				</td>
 				<td>
 					<?php echo $this->imageselect;?>
@@ -424,13 +424,13 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			
 		<?php
 		
-		$title4 = JText::_( 'COM_EVENTLIST_RECURRING_EVENTS' );
+		$title4 = JText::_( 'COM_JEM_RECURRING_EVENTS' );
 		echo JHtml::_('sliders.panel', $title4, 'recurrence');
 		?>
 		<table width="100%" height="200px">
 			<tr>
 				<td width="40%">
-					<?php echo JText::_ ( 'COM_EVENTLIST_RECURRENCE' ); ?>:
+					<?php echo JText::_ ( 'COM_JEM_RECURRENCE' ); ?>:
 				</td>
 				<td width="60%">
 					<?php echo $this->Lists['recurrence_type']; ?>
@@ -441,12 +441,12 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			</tr>
 			<tr id="counter_row" style="display: none;">
 				<td>
-					<?php echo JText::_ ( 'COM_EVENTLIST_RECURRENCE_COUNTER' );?>:
+					<?php echo JText::_ ( 'COM_JEM_RECURRENCE_COUNTER' );?>:
 				</td>
 				<td>
-					<?php echo JHTML::_ ( 'calendar', ($this->row->recurrence_limit_date != '0000-00-00') ? $this->row->recurrence_limit_date : JText::_ ( 'COM_EVENTLIST_UNLIMITED' ), "recurrence_limit_date", "recurrence_limit_date" );?>
-					<a href="#" onclick="include_unlimited('<?php echo JText::_ ( 'COM_EVENTLIST_UNLIMITED' );?>'); return false;">
-						<img src="../components/com_eventlist/assets/images/unlimited.png" width="16" height="16" alt="<?php echo JText::_ ( 'COM_EVENTLIST_UNLIMITED' );	?>" />
+					<?php echo JHTML::_ ( 'calendar', ($this->row->recurrence_limit_date != '0000-00-00') ? $this->row->recurrence_limit_date : JText::_ ( 'COM_JEM_UNLIMITED' ), "recurrence_limit_date", "recurrence_limit_date" );?>
+					<a href="#" onclick="include_unlimited('<?php echo JText::_ ( 'COM_JEM_UNLIMITED' );?>'); return false;">
+						<img src="../components/com_jem/assets/images/unlimited.png" width="16" height="16" alt="<?php echo JText::_ ( 'COM_JEM_UNLIMITED' );	?>" />
 					</a>
 				</td>
 			</tr>
@@ -464,57 +464,57 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			<!--
 				var $select_output = new Array();
 				$select_output[1] = "<?php
-				echo JText::_ ( 'COM_EVENTLIST_OUTPUT_DAY' );
+				echo JText::_ ( 'COM_JEM_OUTPUT_DAY' );
 				?>";
 				$select_output[2] = "<?php
-				echo JText::_ ( 'COM_EVENTLIST_OUTPUT_WEEK' );
+				echo JText::_ ( 'COM_JEM_OUTPUT_WEEK' );
 				?>";
 				$select_output[3] = "<?php
-				echo JText::_ ( 'COM_EVENTLIST_OUTPUT_MONTH' );
+				echo JText::_ ( 'COM_JEM_OUTPUT_MONTH' );
 				?>";
 				$select_output[4] = "<?php
-				echo JText::_ ( 'COM_EVENTLIST_OUTPUT_WEEKDAY' );
+				echo JText::_ ( 'COM_JEM_OUTPUT_WEEKDAY' );
 				?>";
 
 				var $weekday = new Array();
-				$weekday[0] = new Array("MO", "<?php	echo JText::_ ( 'COM_EVENTLIST_MONDAY' );	?>");
-				$weekday[1] = new Array("TU", "<?php  echo JText::_ ( 'COM_EVENTLIST_TUESDAY' ); ?>");
-				$weekday[2] = new Array("WE", "<?php  echo JText::_ ( 'COM_EVENTLIST_WEDNESDAY' ); ?>");
-				$weekday[3] = new Array("TH", "<?php  echo JText::_ ( 'COM_EVENTLIST_THURSDAY' ); ?>");
-				$weekday[4] = new Array("FR", "<?php  echo JText::_ ( 'COM_EVENTLIST_FRIDAY' ); ?>");
-				$weekday[5] = new Array("SA", "<?php  echo JText::_ ( 'COM_EVENTLIST_SATURDAY' ); ?>");
-				$weekday[6] = new Array("SU", "<?php  echo JText::_ ( 'COM_EVENTLIST_SUNDAY' ); ?>");
+				$weekday[0] = new Array("MO", "<?php	echo JText::_ ( 'COM_JEM_MONDAY' );	?>");
+				$weekday[1] = new Array("TU", "<?php  echo JText::_ ( 'COM_JEM_TUESDAY' ); ?>");
+				$weekday[2] = new Array("WE", "<?php  echo JText::_ ( 'COM_JEM_WEDNESDAY' ); ?>");
+				$weekday[3] = new Array("TH", "<?php  echo JText::_ ( 'COM_JEM_THURSDAY' ); ?>");
+				$weekday[4] = new Array("FR", "<?php  echo JText::_ ( 'COM_JEM_FRIDAY' ); ?>");
+				$weekday[5] = new Array("SA", "<?php  echo JText::_ ( 'COM_JEM_SATURDAY' ); ?>");
+				$weekday[6] = new Array("SU", "<?php  echo JText::_ ( 'COM_JEM_SUNDAY' ); ?>");
 
 				var $before_last = "<?php
-				echo JText::_ ( 'COM_EVENTLIST_BEFORE_LAST' );
+				echo JText::_ ( 'COM_JEM_BEFORE_LAST' );
 				?>";
 				var $last = "<?php
-				echo JText::_ ( 'COM_EVENTLIST_LAST' );
+				echo JText::_ ( 'COM_JEM_LAST' );
 				?>";
 				start_recurrencescript();
 			-->
 			</script>
 			
 			<?php
-			$title5 = JText::_( 'COM_EVENTLIST_METADATA_INFORMATION' );
+			$title5 = JText::_( 'COM_JEM_METADATA_INFORMATION' );
 			echo JHtml::_('sliders.panel', $title5, 'meta');
 			?>
 			<table>
 			<tr>
 				<td>
-					<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_ ( 'COM_EVENTLIST_EVENT_TITLE' );	?>" />
-					<input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php	echo JText::_ ( 'COM_EVENTLIST_VENUE' );?>" />
-					<input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php	echo JText::_ ( 'COM_EVENTLIST_CATEGORIES' );?>" />
-					<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_ ( 'COM_EVENTLIST_DATE' );?>" />
+					<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_ ( 'COM_JEM_EVENT_TITLE' );	?>" />
+					<input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php	echo JText::_ ( 'COM_JEM_VENUE' );?>" />
+					<input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php	echo JText::_ ( 'COM_JEM_CATEGORIES' );?>" />
+					<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_ ( 'COM_JEM_DATE' );?>" />
 				
 					<p>
-						<input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo JText::_ ( 'COM_EVENTLIST_EVENT_TIME' );?>" />
-						<input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo JText::_ ( 'COM_EVENTLIST_ENDDATE' );?>" />
-						<input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo JText::_ ( 'COM_EVENTLIST_END_TIME' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo JText::_ ( 'COM_JEM_EVENT_TIME' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo JText::_ ( 'COM_JEM_ENDDATE' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo JText::_ ( 'COM_JEM_END_TIME' );?>" />
 					</p>
 					<br />
 					<label for="meta_keywords">
-						<?php echo JText::_ ( 'COM_EVENTLIST_META_KEYWORDS' ) . ':';?>
+						<?php echo JText::_ ( 'COM_JEM_META_KEYWORDS' ) . ':';?>
 					</label>
 					<br />
 						<?php
@@ -530,7 +530,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 			<tr>
 				<td>
 					<label for="meta_description">
-						<?php echo JText::_ ( 'COM_EVENTLIST_META_DESCRIPTION' ) . ':';?>
+						<?php echo JText::_ ( 'COM_JEM_META_DESCRIPTION' ) . ':';?>
 					</label>
 					<br />
 					<?php
@@ -548,7 +548,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 		<script type="text/javascript">
 		<!--
 			starter("<?php
-			echo JText::_ ( 'COM_EVENTLIST_META_ERROR' );
+			echo JText::_ ( 'COM_JEM_META_ERROR' );
 			?>");	// window.onload is already in use, call the function manualy instead
 		-->
 		</script>
@@ -562,7 +562,7 @@ $infoimage = JHTML::image ( 'components/com_eventlist/assets/images/icon-16-hint
 <?php
 echo JHTML::_ ( 'form.token' );
 ?>
-<input type="hidden" name="option" value="com_eventlist" />
+<input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="controller" value="events" />
 <input type="hidden" name="view" value="event" />
 <input type="hidden" name="task" value="" />

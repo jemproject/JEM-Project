@@ -39,27 +39,27 @@ defined('_JEXEC') or die;
 
 <h1 class='componentheading'>
 	<?php
-		echo JText::_('COM_EVENTLIST_SELECTVENUE');
+		echo JText::_('COM_JEM_SELECTVENUE');
 	?>
 </h1>
 
 <div class="clear"></div>
 
-<form action="index.php?option=com_eventlist&amp;view=editevent&amp;layout=choosevenue&amp;tmpl=component" method="post" id="adminForm">
+<form action="index.php?option=com_jem&amp;view=editevent&amp;layout=choosevenue&amp;tmpl=component" method="post" id="adminForm">
 
 <div id="el_filter" class="floattext">
 		<div class="el_fleft">
 			<?php
-			echo '<label for="filter_type">'.JText::_('COM_EVENTLIST_FILTER').'</label>&nbsp;';
+			echo '<label for="filter_type">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
 			echo $this->searchfilter.'&nbsp;';
 			?>
 			<input type="text" name="filter" id="filter" value="<?php echo $this->filter;?>" class="text_area" onchange="document.getElementById('adminForm').submit();" />
-			<button onclick="document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_EVENTLIST_GO' ); ?></button>
-			<button onclick="document.getElementById('filter').value='';document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_EVENTLIST_RESET' ); ?></button>
+			<button onclick="document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+			<button onclick="document.getElementById('filter').value='';document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 		</div>
 		<div class="el_fright">
 			<?php
-			echo '<label for="limit">'.JText::_('COM_EVENTLIST_DISPLAY_NUM').'</label>&nbsp;';
+			echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
 			echo $this->pageNav->getLimitBox();
 			?>
 		</div>
@@ -69,10 +69,10 @@ defined('_JEXEC') or die;
 <table class="eventtable" width="100%" border="0" cellspacing="0" cellpadding="0" summary="eventlist">
 	<thead>
 		<tr>
-			<th width="7" class="sectiontableheader" align="left"><?php echo JText::_( 'COM_EVENTLIST_NUM' ); ?></th>
-			<th align="left" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
-			<th align="left" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
-			<th align="left" class="sectiontableheader" align="left"><?php echo JText::_( 'COM_EVENTLIST_COUNTRY' ); ?></th>
+			<th width="7" class="sectiontableheader" align="left"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th align="left" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
+			<th align="left" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
+			<th align="left" class="sectiontableheader" align="left"><?php echo JText::_( 'COM_JEM_COUNTRY' ); ?></th>
 		</tr>
 	</thead>
 
@@ -98,7 +98,7 @@ defined('_JEXEC') or die;
 
 <p>
 <input type="hidden" name="task" value="selectvenue" />
-<input type="hidden" name="option" value="com_eventlist" />
+<input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="tmpl" value="component" />
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 <input type="hidden" name="filter_order_Dir" value="" />

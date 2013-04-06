@@ -72,8 +72,8 @@ class EventListModelVenueelement extends JModelLegacy
 
 		$app =  JFactory::getApplication();
 
-		$limit		= $app->getUserStateFromRequest( 'com_eventlist.limit', 'limit', $app->getCfg('list_limit'), 'int');
-		$limitstart = $app->getUserStateFromRequest( 'com_eventlist.limitstart', 'limitstart', 'int' );
+		$limit		= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 'int' );
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -148,7 +148,7 @@ class EventListModelVenueelement extends JModelLegacy
 		$orderby	= $this->_buildContentOrderBy();
 
 		$query = 'SELECT l.*'
-				. ' FROM #__eventlist_venues AS l'
+				. ' FROM #__jem_venues AS l'
 				. $where
 				. $orderby
 				;
@@ -167,8 +167,8 @@ class EventListModelVenueelement extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest( 'com_eventlist.venueelement.filter_order', 'filter_order', 'l.ordering', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_eventlist.venueelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_order', 'filter_order', 'l.ordering', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 
 		
 		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
@@ -190,9 +190,9 @@ class EventListModelVenueelement extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter 			= $app->getUserStateFromRequest( 'com_eventlist.venueelement.filter', 'filter', '', 'int' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_eventlist.venueelement.filter_state', 'filter_state', '', 'word' );
-		$search 			= $app->getUserStateFromRequest( 'com_eventlist.venueelement.search', 'search', '', 'string' );
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.venueelement.filter', 'filter', '', 'int' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_state', 'filter_state', '', 'word' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.venueelement.search', 'search', '', 'string' );
 		$search 			= $this->_db->getEscaped( trim(JString::strtolower( $search ) ) );
 
 		$where = array();

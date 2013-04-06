@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-	<fieldset name="COM_EVENTLIST_GLOBAL_SETTINGS" addpath="/administrator/components/com_eventlist/elements">
+	<fieldset name="COM_JEM_GLOBAL_SETTINGS" addpath="/administrator/components/com_jem/elements">
 		<field name="display_num" type="list" default="15" label="EVENT NUMBER" description="EVENT NUMBER TIP">
 			<option value="5">5</option>
 			<option value="10">10</option>
@@ -35,7 +35,7 @@
 			<option value="0">Hide</option>
 			<option value="1">Show</option>
 		</field>
-		<field name="copyright" type="radio" default="1" label="COM_EVENTLIST_SHOW_COPYRIGHT" description="COM_EVENTLIST_SHOW_COPYRIGHT_DESC">
+		<field name="copyright" type="radio" default="1" label="COM_JEM_SHOW_COPYRIGHT" description="COM_JEM_SHOW_COPYRIGHT_DESC">
 			<option value="0">Hide</option>
 			<option value="1">Show</option>
 		</field>
@@ -46,115 +46,115 @@
  
 		
 		<!-- START Event table columns -->
-		<field type="elspacer" default="COM_EVENTLIST_SETTINGS_EVENT_TABLE_SPACER"/>
+		<field type="elspacer" default="COM_JEM_SETTINGS_EVENT_TABLE_SPACER"/>
 		
-		<field name="showtime" type="radio" default="1" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_WIDTH_DISPLAY_TIME" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_WIDTH_DISPLAY_TIME_TIP">
+		<field name="showtime" type="radio" default="1" label="COM_JEM_SETTINGS_FRONT_TABLE_WIDTH_DISPLAY_TIME" description="COM_JEM_SETTINGS_FRONT_TABLE_WIDTH_DISPLAY_TIME_TIP">
 			<option value="0">Hide</option>
 			<option value="1">Show</option>
 		</field>
-		<field name="tablewidth" type="text" size="4" default="100%" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_WIDTH" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_WIDTH_TIP" />
+		<field name="tablewidth" type="text" size="4" default="100%" label="COM_JEM_SETTINGS_FRONT_TABLE_WIDTH" description="COM_JEM_SETTINGS_FRONT_TABLE_WIDTH_TIP" />
 		
 		<field type="spacer"/>
 		
-		<field name="datewidth" type="text" size="4" default="10%" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_DATE_COL_WIDTH" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_DATE_COL_WIDTH_TIP" />
-		<field name="datename" type="text" size="20" default="Date" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_DATE_COL_LABEL" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_DATE_COL_LABEL_TIP" />
+		<field name="datewidth" type="text" size="4" default="10%" label="COM_JEM_SETTINGS_FRONT_TABLE_DATE_COL_WIDTH" description="COM_JEM_SETTINGS_FRONT_TABLE_DATE_COL_WIDTH_TIP" />
+		<field name="datename" type="text" size="20" default="Date" label="COM_JEM_SETTINGS_FRONT_TABLE_DATE_COL_LABEL" description="COM_JEM_SETTINGS_FRONT_TABLE_DATE_COL_LABEL_TIP" />
 		
 		<field type="spacer"/>
 		
-		<field name="showcity" type="radio" default="1" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_SHOW_CITY" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_SHOW_CITY_TIP" >
+		<field name="showcity" type="radio" default="1" label="COM_JEM_SETTINGS_FRONT_TABLE_SHOW_CITY" description="COM_JEM_SETTINGS_FRONT_TABLE_SHOW_CITY_TIP" >
 			<option value="0">Hide</option>
 			<option value="1">Show</option>
 		</field>		
-		<field name="citywidth" type="text" size="4" default="10%" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_CITY_COL_WIDTH" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_CITY_COL_WIDTH_TIP" />		
-		<field name="cityname" type="text" size="20" default="City" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_CITY_COL_LABEL" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_CITY_COL_LABEL_TIP" />
+		<field name="citywidth" type="text" size="4" default="10%" label="COM_JEM_SETTINGS_FRONT_TABLE_CITY_COL_WIDTH" description="COM_JEM_SETTINGS_FRONT_TABLE_CITY_COL_WIDTH_TIP" />		
+		<field name="cityname" type="text" size="20" default="City" label="COM_JEM_SETTINGS_FRONT_TABLE_CITY_COL_LABEL" description="COM_JEM_SETTINGS_FRONT_TABLE_CITY_COL_LABEL_TIP" />
 		
 		<field type="spacer"/>
 		
-		<field name="showtitle" type="radio" default="1" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_SHOW_TITLE" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_SHOW_TITLE_TIP" >
+		<field name="showtitle" type="radio" default="1" label="COM_JEM_SETTINGS_FRONT_TABLE_SHOW_TITLE" description="COM_JEM_SETTINGS_FRONT_TABLE_SHOW_TITLE_TIP" >
 			<option value="0">Hide</option>
 			<option value="1">Show</option>
 		</field>		
-		<field name="showdetails" type="radio" default="1" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_LINK_TITLE" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_LINK_TITLE_TIP" >
+		<field name="showdetails" type="radio" default="1" label="COM_JEM_SETTINGS_FRONT_TABLE_LINK_TITLE" description="COM_JEM_SETTINGS_FRONT_TABLE_LINK_TITLE_TIP" >
 			<option value="0">No</option>
 			<option value="1">Yes</option>
 		</field>		
-		<field name="titlewidth" type="text" size="4" default="10%" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_TITLE_COL_WIDTH" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_TITLE_COL_WIDTH_TIP" />		
-		<field name="titlename" type="text" size="20" default="Title" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_TITLE_COL_LABEL" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_TITLE_COL_LABEL_TIP" />
+		<field name="titlewidth" type="text" size="4" default="10%" label="COM_JEM_SETTINGS_FRONT_TABLE_TITLE_COL_WIDTH" description="COM_JEM_SETTINGS_FRONT_TABLE_TITLE_COL_WIDTH_TIP" />		
+		<field name="titlename" type="text" size="20" default="Title" label="COM_JEM_SETTINGS_FRONT_TABLE_TITLE_COL_LABEL" description="COM_JEM_SETTINGS_FRONT_TABLE_TITLE_COL_LABEL_TIP" />
 		
 		<field type="spacer"/>
 		
-		<field name="showlocate" type="radio" default="1" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_SHOW_VENUE" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_SHOW_VENUE_TIP" >
+		<field name="showlocate" type="radio" default="1" label="COM_JEM_SETTINGS_FRONT_TABLE_SHOW_VENUE" description="COM_JEM_SETTINGS_FRONT_TABLE_SHOW_VENUE_TIP" >
 			<option value="0">Hide</option>
 			<option value="1">Show</option>
 		</field>		
-		<field name="locationwidth" type="text" size="4" default="10%" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_VENUE_COL_WIDTH" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_VENUE_COL_WIDTH_TIP" />		
-		<field name="locationname" type="text" size="20" default="Venue" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_VENUE_COL_LABEL" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_VENUE_COL_LABEL_TIP" />
-		<field name="showlinkvenue" type="radio" default="1" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_SHOW_VENUE_LINK" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_SHOW_VENUE_LINK_TIP" >
-			<option value="0">Hide</option>
-			<option value="1">Show</option>
-		</field>		
-		
-		<field type="spacer"/>
-		
-		<field name="showstate" type="radio" default="1" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_SHOW_STATE" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_SHOW_STATE_TIP" >
-			<option value="0">Hide</option>
-			<option value="1">Show</option>
-		</field>		
-		<field name="statewidth" type="text" size="4" default="10%" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_STATE_COL_WIDTH" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_STATE_COL_WIDTH_TIP" />		
-		<field name="statename" type="text" size="20" default="State" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_STATE_COL_LABEL" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_STATE_COL_LABEL_TIP" />
-		
-		<field type="spacer"/>
-		
-		<field name="showcat" type="radio" default="1" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_SHOW_CATEGORY" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_SHOW_CATEGORY_TIP" >
-			<option value="0">Hide</option>
-			<option value="1">Show</option>
-		</field>		
-		<field name="catfrowidth" type="text" size="4" default="10%" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_CATEGORY_COL_WIDTH" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_CATEGORY_COL_WIDTH_TIP" />		
-		<field name="catfroname" type="text" size="20" default="Category" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_CATEGORY_COL_LABEL" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_CATEGORY_COL_LABEL_TIP" />
-		<field name="catlinklist" type="radio" default="1" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_SHOW_CATEGORY_LINK" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_SHOW_CATEGORY_LINK_TIP" >
+		<field name="locationwidth" type="text" size="4" default="10%" label="COM_JEM_SETTINGS_FRONT_TABLE_VENUE_COL_WIDTH" description="COM_JEM_SETTINGS_FRONT_TABLE_VENUE_COL_WIDTH_TIP" />		
+		<field name="locationname" type="text" size="20" default="Venue" label="COM_JEM_SETTINGS_FRONT_TABLE_VENUE_COL_LABEL" description="COM_JEM_SETTINGS_FRONT_TABLE_VENUE_COL_LABEL_TIP" />
+		<field name="showlinkvenue" type="radio" default="1" label="COM_JEM_SETTINGS_FRONT_TABLE_SHOW_VENUE_LINK" description="COM_JEM_SETTINGS_FRONT_TABLE_SHOW_VENUE_LINK_TIP" >
 			<option value="0">Hide</option>
 			<option value="1">Show</option>
 		</field>		
 		
 		<field type="spacer"/>
 		
-		<field name="showatte" type="radio" default="1" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_SHOW_ATTENDEES" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_SHOW_ATTENDEES_TIP" >
+		<field name="showstate" type="radio" default="1" label="COM_JEM_SETTINGS_FRONT_TABLE_SHOW_STATE" description="COM_JEM_SETTINGS_FRONT_TABLE_SHOW_STATE_TIP" >
 			<option value="0">Hide</option>
 			<option value="1">Show</option>
 		</field>		
-		<field name="attewidth" type="text" size="4" default="10%" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_ATTENDEES_COL_WIDTH" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_ATTENDEES_COL_WIDTH_TIP" />		
-		<field name="attename" type="text" size="20" default="Attendees" label="COM_EVENTLIST_SETTINGS_FRONT_TABLE_ATTENDEES_COL_LABEL" description="COM_EVENTLIST_SETTINGS_FRONT_TABLE_ATTENDEES_COL_LABEL_TIP" />
+		<field name="statewidth" type="text" size="4" default="10%" label="COM_JEM_SETTINGS_FRONT_TABLE_STATE_COL_WIDTH" description="COM_JEM_SETTINGS_FRONT_TABLE_STATE_COL_WIDTH_TIP" />		
+		<field name="statename" type="text" size="20" default="State" label="COM_JEM_SETTINGS_FRONT_TABLE_STATE_COL_LABEL" description="COM_JEM_SETTINGS_FRONT_TABLE_STATE_COL_LABEL_TIP" />
+		
+		<field type="spacer"/>
+		
+		<field name="showcat" type="radio" default="1" label="COM_JEM_SETTINGS_FRONT_TABLE_SHOW_CATEGORY" description="COM_JEM_SETTINGS_FRONT_TABLE_SHOW_CATEGORY_TIP" >
+			<option value="0">Hide</option>
+			<option value="1">Show</option>
+		</field>		
+		<field name="catfrowidth" type="text" size="4" default="10%" label="COM_JEM_SETTINGS_FRONT_TABLE_CATEGORY_COL_WIDTH" description="COM_JEM_SETTINGS_FRONT_TABLE_CATEGORY_COL_WIDTH_TIP" />		
+		<field name="catfroname" type="text" size="20" default="Category" label="COM_JEM_SETTINGS_FRONT_TABLE_CATEGORY_COL_LABEL" description="COM_JEM_SETTINGS_FRONT_TABLE_CATEGORY_COL_LABEL_TIP" />
+		<field name="catlinklist" type="radio" default="1" label="COM_JEM_SETTINGS_FRONT_TABLE_SHOW_CATEGORY_LINK" description="COM_JEM_SETTINGS_FRONT_TABLE_SHOW_CATEGORY_LINK_TIP" >
+			<option value="0">Hide</option>
+			<option value="1">Show</option>
+		</field>		
+		
+		<field type="spacer"/>
+		
+		<field name="showatte" type="radio" default="1" label="COM_JEM_SETTINGS_FRONT_TABLE_SHOW_ATTENDEES" description="COM_JEM_SETTINGS_FRONT_TABLE_SHOW_ATTENDEES_TIP" >
+			<option value="0">Hide</option>
+			<option value="1">Show</option>
+		</field>		
+		<field name="attewidth" type="text" size="4" default="10%" label="COM_JEM_SETTINGS_FRONT_TABLE_ATTENDEES_COL_WIDTH" description="COM_JEM_SETTINGS_FRONT_TABLE_ATTENDEES_COL_WIDTH_TIP" />		
+		<field name="attename" type="text" size="20" default="Attendees" label="COM_JEM_SETTINGS_FRONT_TABLE_ATTENDEES_COL_LABEL" description="COM_JEM_SETTINGS_FRONT_TABLE_ATTENDEES_COL_LABEL_TIP" />
 		
 		<!-- END Event table columns -->
 		
  	</fieldset>
  	
- 	<fieldset name="COM_EVENTLIST_RECURRENCE">
-    <field name="weekdaystart" type="radio" default="1" label="COM_EVENTLIST_SELECTFIRSTWEEKDAY" description="COM_EVENTLIST_SELECTFIRSTWEEKDAYDESC">
-      <option value="0">COM_EVENTLIST_SUNDAY</option>
-      <option value="1">COM_EVENTLIST_MONDAY</option>
+ 	<fieldset name="COM_JEM_RECURRENCE">
+    <field name="weekdaystart" type="radio" default="1" label="COM_JEM_SELECTFIRSTWEEKDAY" description="COM_JEM_SELECTFIRSTWEEKDAYDESC">
+      <option value="0">COM_JEM_SUNDAY</option>
+      <option value="1">COM_JEM_MONDAY</option>
     </field>
-    <field name="recurrence_anticipation" type="text" default="60" label="COM_EVENTLIST_RECURRENCEANTICIPATION" description="COM_EVENTLIST_RECURRENCEANTICIPATIONDESC" />
+    <field name="recurrence_anticipation" type="text" default="60" label="COM_JEM_RECURRENCEANTICIPATION" description="COM_JEM_RECURRENCEANTICIPATIONDESC" />
  	</fieldset>
  	
  	<!--disabled moved to settings view
- 	<fieldset name="COM_EVENTLIST_SETTINGS_ATTACHMENTS">
-    <field name="attachments_path" type="text" size="100" default="media/com_eventlist/attachments" label="COM_EVENTLIST_SETTINGS_ATTACHEMENT_PATH" description="COM_EVENTLIST_SETTINGS_ATTACHEMENT_PATH_DESC" />
-    <field name="attachments_maxsize" type="text" size="15" default="1000" label="COM_EVENTLIST_SETTINGS_ATTACHEMENT_MAXSIZE" description="COM_EVENTLIST_SETTINGS_ATTACHEMENT_MAXSIZE_DESC" />
-    <field name="attachments_types" type="text" size="100" default="txt,csv,htm,html,xml,css,doc,xls,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,zip,tar.gz" label="COM_EVENTLIST_SETTINGS_ATTACHEMENT_TYPES" description="COM_EVENTLIST_SETTINGS_ATTACHEMENT_TYPES_DESC" />
+ 	<fieldset name="COM_JEM_SETTINGS_ATTACHMENTS">
+    <field name="attachments_path" type="text" size="100" default="media/com_jem/attachments" label="COM_JEM_SETTINGS_ATTACHEMENT_PATH" description="COM_JEM_SETTINGS_ATTACHEMENT_PATH_DESC" />
+    <field name="attachments_maxsize" type="text" size="15" default="1000" label="COM_JEM_SETTINGS_ATTACHEMENT_MAXSIZE" description="COM_JEM_SETTINGS_ATTACHEMENT_MAXSIZE_DESC" />
+    <field name="attachments_types" type="text" size="100" default="txt,csv,htm,html,xml,css,doc,xls,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,zip,tar.gz" label="COM_JEM_SETTINGS_ATTACHEMENT_TYPES" description="COM_JEM_SETTINGS_ATTACHEMENT_TYPES_DESC" />
  	</fieldset>
  	-->
  	
- 	<fieldset name="COM_EVENTLIST_SETTINGS_ICAL">
-    <field name="ical_tz" type="radio" default="1" label="COM_EVENTLIST_SETTINGS_ICAL_TIMEZONE" description="COM_EVENTLIST_SETTINGS_ICAL_TIMEZONE_DESC">
-      <option value="0">COM_EVENTLIST_SETTINGS_ICAL_TIMEZONE_FLOAT</option>
-      <option value="1">COM_EVENTLIST_SETTINGS_ICAL_TIMEZONE_JOOMLA</option>
+ 	<fieldset name="COM_JEM_SETTINGS_ICAL">
+    <field name="ical_tz" type="radio" default="1" label="COM_JEM_SETTINGS_ICAL_TIMEZONE" description="COM_JEM_SETTINGS_ICAL_TIMEZONE_DESC">
+      <option value="0">COM_JEM_SETTINGS_ICAL_TIMEZONE_FLOAT</option>
+      <option value="1">COM_JEM_SETTINGS_ICAL_TIMEZONE_JOOMLA</option>
     </field>
-       <field name="events_ical" type="radio" default="1" label="COM_EVENTLIST_SETTINGS_SHOW_EVENTS_ICAL" description="COM_EVENTLIST_SETTINGS_SHOW_EVENTS_ICAL_DESC">
+       <field name="events_ical" type="radio" default="1" label="COM_JEM_SETTINGS_SHOW_EVENTS_ICAL" description="COM_JEM_SETTINGS_SHOW_EVENTS_ICAL_DESC">
       <option value="0">No</option>
       <option value="1">Yes</option>
     </field>
-    <field name="ical_max_items" type="text" default="100" label="COM_EVENTLIST_SETTINGS_ICAL_MAX_ITEMS" description="COM_EVENTLIST_SETTINGS_ICAL_MAX_ITEMS_DESC" />
+    <field name="ical_max_items" type="text" default="100" label="COM_JEM_SETTINGS_ICAL_MAX_ITEMS" description="COM_JEM_SETTINGS_ICAL_MAX_ITEMS_DESC" />
   </fieldset>
   
   <fieldset

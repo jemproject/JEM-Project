@@ -159,9 +159,9 @@ class EventListModelCalendar extends JModelLegacy
         .' DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month,'
         .' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
         .' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-        .' FROM #__eventlist_events AS a'
-        .' LEFT JOIN #__eventlist_venues AS l ON l.id = a.locid'
-        .' LEFT JOIN #__eventlist_cats_event_relations AS r ON r.itemid = a.id '
+        .' FROM #__jem_events AS a'
+        .' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+        .' LEFT JOIN #__jem_cats_event_relations AS r ON r.itemid = a.id '
         .$where
         .' GROUP BY a.id '
         ;
@@ -236,8 +236,8 @@ class EventListModelCalendar extends JModelLegacy
         
         $query = 'SELECT c.id, c.catname, c.access, c.color, c.published, c.checked_out AS cchecked_out,'
         . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-        . ' FROM #__eventlist_categories AS c'
-        . ' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.catid = c.id'
+        . ' FROM #__jem_categories AS c'
+        . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
         . ' WHERE rel.itemid = '.(int)$id
 		. ' AND c.published = 1'
         . ' AND c.access  <= '.$gid;

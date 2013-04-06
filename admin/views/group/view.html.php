@@ -51,7 +51,7 @@ class EventListViewGroup extends JViewLegacy {
 		$cid 			= JRequest::getInt( 'cid' );
 
 		//add css
-		$document->addStyleSheet('components/com_eventlist/assets/css/eventlistbackend.css');
+		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
 
 		//Get data from the model
 		$model				=  $this->getModel();
@@ -59,8 +59,8 @@ class EventListViewGroup extends JViewLegacy {
 		
 		//sticky forms
 		/*$session = &JFactory::getSession();
-		if ($session->has('groupform', 'com_eventlist')) {
-			$groupform 	= $session->get('groupform', 0, 'com_eventlist');
+		if ($session->has('groupform', 'com_jem')) {
+			$groupform 	= $session->get('groupform', 0, 'com_jem');
 			$maintainers = $groupform['maintainers'];
 			//TODO: refactor model to make this work
 		} else {		*/
@@ -72,7 +72,7 @@ class EventListViewGroup extends JViewLegacy {
 		if ($row->id) {
 			if ($model->isCheckedOut( $user->get('id') )) {
 				JError::raiseWarning( 'SOME_ERROR_CODE', $row->name.' '.JText::_( 'EDITED BY ANOTHER ADMIN' ));
-				$app->redirect( 'index.php?option=com_eventlist&view=groups' );
+				$app->redirect( 'index.php?option=com_jem&view=groups' );
 			}
 		}
 
@@ -81,22 +81,22 @@ class EventListViewGroup extends JViewLegacy {
 
 		//build toolbar
 		if ( $cid ) {
-			JToolBarHelper::title( JText::_( 'COM_EVENTLIST_EDIT_GROUP' ), 'groupedit' );
+			JToolBarHelper::title( JText::_( 'COM_JEM_EDIT_GROUP' ), 'groupedit' );
 			JToolBarHelper::spacer();
 		} else {
-			JToolBarHelper::title( JText::_( 'COM_EVENTLIST_ADD_GROUP' ), 'groupedit' );
+			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_GROUP' ), 'groupedit' );
 			JToolBarHelper::spacer();
 
 			//Create Submenu
-			JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_EVENTLIST' ), 'index.php?option=com_eventlist');
-			JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_EVENTS' ), 'index.php?option=com_eventlist&view=events');
-			JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_VENUES' ), 'index.php?option=com_eventlist&view=venues');
-			JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_CATEGORIES' ), 'index.php?option=com_eventlist&view=categories');
-			JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_ARCHIVESCREEN' ), 'index.php?option=com_eventlist&view=archive');
-			JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_GROUPS' ), 'index.php?option=com_eventlist&view=groups');
-			JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_HELP' ), 'index.php?option=com_eventlist&view=help');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTLIST' ), 'index.php?option=com_jem');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
 			if ($user->get('gid') > 24) {
-				JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_SETTINGS' ), 'index.php?option=com_eventlist&controller=settings&task=edit');
+				JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
 			}
 		}
 		JToolBarHelper::save();

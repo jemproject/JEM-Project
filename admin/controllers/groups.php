@@ -56,13 +56,13 @@ class EventListControllerGroups extends EventListController
 		
 		$session 	= & JFactory::getSession();
 		
-		$session->clear('groupform', 'com_eventlist');
+		$session->clear('groupform', 'com_jem');
 		
-		$group = & JTable::getInstance('eventlist_groups', '');
+		$group = & JTable::getInstance('jem_groups', '');
 		$group->bind(JRequest::get('post'));
 		$group->checkin();
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=groups' );
+		$this->setRedirect( 'index.php?option=com_jem&view=groups' );
 	}
 
 	/**
@@ -74,7 +74,7 @@ class EventListControllerGroups extends EventListController
 	 */
 	function add( )
 	{
-		$this->setRedirect( 'index.php?option=com_eventlist&view=group' );
+		$this->setRedirect( 'index.php?option=com_jem&view=group' );
 	}
 
 	/**
@@ -94,7 +94,7 @@ class EventListControllerGroups extends EventListController
 
 		// Error if checkedout by another administrator
 		if ($model->isCheckedOut( $user->get('id') )) {
-			$this->setRedirect( 'index.php?option=com_eventlist&view=groups', JText::_( 'COM_EVENTLIST_EDITED_BY_ANOTHER_ADMIN' ) );
+			$this->setRedirect( 'index.php?option=com_jem&view=groups', JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ) );
 		}
 
 		$model->checkout();
@@ -118,20 +118,20 @@ class EventListControllerGroups extends EventListController
 		
 		//sticky forms
 		$session = JFactory::getSession();
-		$session->set('groupform', $post, 'com_eventlist');
+		$session->set('groupform', $post, 'com_jem');
 				
 		$model = $this->getModel('group');
 
 		if ($model->store($post)) {
 
-			$link 	= 'index.php?option=com_eventlist&view=groups';
-			$msg	= JText::_( 'COM_EVENTLIST_GROUP_SAVED');
+			$link 	= 'index.php?option=com_jem&view=groups';
+			$msg	= JText::_( 'COM_JEM_GROUP_SAVED');
 			
-			$session->clear('groupform', 'com_eventlist');
+			$session->clear('groupform', 'com_jem');
 			
 		} else {
 
-			$link 	= 'index.php?option=com_eventlist&view=group';
+			$link 	= 'index.php?option=com_jem&view=group';
 			$msg	= '';
 	
 		}
@@ -164,9 +164,9 @@ class EventListControllerGroups extends EventListController
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
 
-		$msg = $total.' '.JText::_( 'COM_EVENTLIST_GROUPS_DELETED');
+		$msg = $total.' '.JText::_( 'COM_JEM_GROUPS_DELETED');
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=groups', $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=groups', $msg );
 	}
 }
 ?>

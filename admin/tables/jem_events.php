@@ -28,7 +28,7 @@ defined('_JEXEC') or die;
  * @subpackage EventList
  * @since 0.9
  */
-class eventlist_events extends JTable
+class jem_events extends JTable
 {
 	/**
 	 * Primary Key
@@ -124,8 +124,8 @@ class eventlist_events extends JTable
 	/** @var date */
 	var $checked_out_time 	= 0;
 
-	function eventlist_events(& $db) {
-		parent::__construct('#__eventlist_events', 'id', $db);
+	function jem_events(& $db) {
+		parent::__construct('#__jem_events', 'id', $db);
 	}
 
 	// overloaded check function

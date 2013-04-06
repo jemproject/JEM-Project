@@ -24,7 +24,7 @@ defined( '_JEXEC' ) or die;
 ?>
 
 <?php if (count((array)$this->attending)) : ?>
-<h2><?php echo JText::_('COM_EVENTLIST_REGISTERED_TO'); ?></h2>
+<h2><?php echo JText::_('COM_JEM_REGISTERED_TO'); ?></h2>
 
 <script type="text/javascript">
 
@@ -111,7 +111,7 @@ defined( '_JEXEC' ) or die;
 	    					endif;
 	    					?>
     					<?php else: ?>
-    						<?php echo JText::_('COM_EVENTLIST_OPEN_DATE'); ?>
+    						<?php echo JText::_('COM_JEM_OPEN_DATE'); ?>
     					<?php endif; ?>
     				</strong>
     				

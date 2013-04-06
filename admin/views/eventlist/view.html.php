@@ -42,7 +42,7 @@ class EventListViewEventList extends JViewLegacy {
 		$user 		=  JFactory::getUser();
 
 		//build toolbar
-		JToolBarHelper::title( JText::_( 'COM_EVENTLIST_EVENTLIST' ), 'home' );
+		JToolBarHelper::title( JText::_( 'COM_JEM_EVENTLIST' ), 'home' );
 		JToolBarHelper::help( 'el.intro', true );
 
 		// Get data from the model
@@ -51,20 +51,20 @@ class EventListViewEventList extends JViewLegacy {
 		$category	 =  $this->get( 'Categoriesdata' );
 
 		//add css and submenu to document
-		$document->addStyleSheet('components/com_eventlist/assets/css/eventlistbackend.css');
+		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
 
 		//Create Submenu
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_EVENTLIST' ), 'index.php?option=com_eventlist', true);
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_EVENTS' ), 'index.php?option=com_eventlist&view=events');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_VENUES' ), 'index.php?option=com_eventlist&view=venues');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_CATEGORIES' ), 'index.php?option=com_eventlist&view=categories');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_ARCHIVESCREEN' ), 'index.php?option=com_eventlist&view=archive');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_GROUPS' ), 'index.php?option=com_eventlist&view=groups');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_HELP' ), 'index.php?option=com_eventlist&view=help');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTLIST' ), 'index.php?option=com_jem', true);
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
 		if ($user->get('gid') > 24) {
-			JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_SETTINGS' ), 'index.php?option=com_eventlist&controller=settings&task=edit');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
 		}
-        JToolBarhelper::preferences('com_eventlist');
+        JToolBarhelper::preferences('com_jem');
 		
 		
 		//assign vars to the template
@@ -105,7 +105,7 @@ class EventListViewEventList extends JViewLegacy {
 				<?php
 				}
 
-					echo JHTML::_('image', 'administrator/components/com_eventlist/assets/images/'.$image, $text );
+					echo JHTML::_('image', 'administrator/components/com_jem/assets/images/'.$image, $text );
 				?>
 					<span><?php echo $text; ?></span>
 				</a>

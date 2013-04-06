@@ -3,20 +3,20 @@
         <td width="50%">
 
 		<fieldset class="adminform">
-			<legend><?php echo JText::_( 'COM_EVENTLIST_IMAGE_UPLOAD_OPTIONS' ); ?></legend>
+			<legend><?php echo JText::_( 'COM_JEM_IMAGE_UPLOAD_OPTIONS' ); ?></legend>
 			<table class="admintable" cellspacing="1">
 				<tbody>
 	  				<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_IMAGE_UPLOAD_OPTIONS' ); ?>::<?php echo JText::_('COM_EVENTLIST_IMAGE_UPLOAD_OPTIONS_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_IMAGE_UPLOAD_OPTIONS' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_IMAGE_UPLOAD_OPTIONS' ); ?>::<?php echo JText::_('COM_JEM_IMAGE_UPLOAD_OPTIONS_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_IMAGE_UPLOAD_OPTIONS' ); ?>
 							</span>
 						</td>
        					<td valign="top">
 							<select name="imageenabled" size="1" class="inputbox">
-  								<option value="0"<?php if ($this->elsettings->imageenabled == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_EVENTLIST_DISABLED' ); ?></option>
-  								<option value="1"<?php if ($this->elsettings->imageenabled == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_EVENTLIST_OPTIONAL' ); ?></option>
-  								<option value="2"<?php if ($this->elsettings->imageenabled == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_EVENTLIST_REQUIRED' ); ?></option>
+  								<option value="0"<?php if ($this->elsettings->imageenabled == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_DISABLED' ); ?></option>
+  								<option value="1"<?php if ($this->elsettings->imageenabled == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_OPTIONAL' ); ?></option>
+  								<option value="2"<?php if ($this->elsettings->imageenabled == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_REQUIRED' ); ?></option>
 							</select>
        	 				</td>
       				</tr>
@@ -24,13 +24,13 @@
 		</fieldset>
 
 		<fieldset class="adminform">
-			<legend><?php echo JText::_( 'COM_EVENTLIST_DESCRIPTION' ); ?></legend>
+			<legend><?php echo JText::_( 'COM_JEM_DESCRIPTION' ); ?></legend>
 			<table class="admintable" cellspacing="1">
 				<tbody>
 	  				<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_DESCRIPTION_LIMIT' ); ?>::<?php echo JText::_('COM_EVENTLIST_DESCRIPTION_LIMIT_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_DESCRIPTION_LIMIT' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_DESCRIPTION_LIMIT' ); ?>::<?php echo JText::_('COM_JEM_DESCRIPTION_LIMIT_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_DESCRIPTION_LIMIT' ); ?>
 							</span>
 						</td>
        					<td valign="top">
@@ -42,13 +42,13 @@
 		</fieldset>
 
 		<fieldset class="adminform">
-			<legend><?php echo JText::_( 'COM_EVENTLIST_AC_EVENTS' ); ?></legend>
+			<legend><?php echo JText::_( 'COM_JEM_AC_EVENTS' ); ?></legend>
 				<table class="admintable" cellspacing="1">
 				<tbody>
 	  				<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_AC_EVENT_SUBMIT' ); ?>::<?php echo JText::_('COM_EVENTLIST_AC_EVENT_SUBMIT_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_AC_EVENT_SUBMIT' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_AC_EVENT_SUBMIT' ); ?>::<?php echo JText::_('COM_JEM_AC_EVENT_SUBMIT_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_AC_EVENT_SUBMIT' ); ?>
 							</span>
 						</td>
        					<td valign="top">
@@ -59,8 +59,8 @@
       				</tr>
 					<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_RECURSIV' ); ?>::<?php echo JText::_('COM_EVENTLIST_RECURSIV_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_RECURSIV' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>::<?php echo JText::_('COM_JEM_RECURSIV_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>
 							</span>
 						</td>
        					<td valign="top">
@@ -72,8 +72,8 @@
       				</tr>
 					<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_AUTOPUBLISH' ); ?>::<?php echo JText::_('COM_EVENTLIST_AUTOPUBLISH_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_AUTOPUBLISH' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_AUTOPUBLISH' ); ?>::<?php echo JText::_('COM_JEM_AUTOPUBLISH_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_AUTOPUBLISH' ); ?>
 							</span>
 						</td>
        					<td valign="top">
@@ -84,8 +84,8 @@
       				</tr>
 					<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_RECURSIV' ); ?>::<?php echo JText::_('COM_EVENTLIST_RECURSIV_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_RECURSIV' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>::<?php echo JText::_('COM_JEM_RECURSIV_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>
 							</span>
 						</td>
        					<td valign="top">
@@ -97,8 +97,8 @@
       				</tr>
 					<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_AC_EVENT_EDIT' ); ?>::<?php echo JText::_('COM_EVENTLIST_AC_EVENT_EDIT_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_AC_EVENT_EDIT' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_AC_EVENT_EDIT' ); ?>::<?php echo JText::_('COM_JEM_AC_EVENT_EDIT_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_AC_EVENT_EDIT' ); ?>
 							</span>
 						</td>
        					<td valign="top">
@@ -109,8 +109,8 @@
       				</tr>
 					<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_RECURSIV' ); ?>::<?php echo JText::_('COM_EVENTLIST_RECURSIV_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_RECURSIV' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>::<?php echo JText::_('COM_JEM_RECURSIV_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>
 							</span>
 						</td>
        					<td valign="top">
@@ -122,8 +122,8 @@
       				</tr>
 					<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_EDIT_EVENT_FRONTEND_USER' ); ?>::<?php echo JText::_('COM_EVENTLIST_EDIT_EVENT_FRONTEND_USER_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_EDIT_EVENT_FRONTEND_USER' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_EVENT_FRONTEND_USER' ); ?>::<?php echo JText::_('COM_JEM_EDIT_EVENT_FRONTEND_USER_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_EDIT_EVENT_FRONTEND_USER' ); ?>
 							</span>
 						</td>
        					<td valign="top">
@@ -141,13 +141,13 @@
         <td width="50%">
 
         <fieldset class="adminform">
-			<legend><?php echo JText::_( 'COM_EVENTLIST_REGISTRATION' ); ?></legend>
+			<legend><?php echo JText::_( 'COM_JEM_REGISTRATION' ); ?></legend>
 				<table class="admintable" cellspacing="1">
 				<tbody>
 	  				<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_SUBMIT_REGISTER' ); ?>::<?php echo JText::_('COM_EVENTLIST_SUBMIT_REGISTER_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_SUBMIT_REGISTER' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SUBMIT_REGISTER' ); ?>::<?php echo JText::_('COM_JEM_SUBMIT_REGISTER_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_SUBMIT_REGISTER' ); ?>
 							</span>
 						</td>
        					<td valign="top">
@@ -161,24 +161,24 @@
 							} // if
 							?>
 							<select name="showfroregistra" size="1" class="inputbox" onChange="changeregMode()">
-  								<option value="0"<?php if ($this->elsettings->showfroregistra == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_EVENTLIST_NO' ); ?></option>
-  								<option value="1"<?php if ($this->elsettings->showfroregistra == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_EVENTLIST_YES' ); ?></option>
-  								<option value="2"<?php if ($this->elsettings->showfroregistra == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_EVENTLIST_OPTIONAL' ); ?></option>
+  								<option value="0"<?php if ($this->elsettings->showfroregistra == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_NO' ); ?></option>
+  								<option value="1"<?php if ($this->elsettings->showfroregistra == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_YES' ); ?></option>
+  								<option value="2"<?php if ($this->elsettings->showfroregistra == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_OPTIONAL' ); ?></option>
 							</select>
        	 				</td>
       				</tr>
 					<tr id="froreg"<?php if (!$mode) echo ' style="display:none"'; ?>>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_SUBMIT_UNREGISTER' ); ?>::<?php echo JText::_('COM_EVENTLIST_SUBMIT_UNREGISTER_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_SUBMIT_UNREGISTER' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SUBMIT_UNREGISTER' ); ?>::<?php echo JText::_('COM_JEM_SUBMIT_UNREGISTER_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_SUBMIT_UNREGISTER' ); ?>
 							</span>
 						</td>
        					<td valign="top">
 							<?php
 		    				$showfrounreg = array();
-							$showfrounreg[] = JHTML::_('select.option', '0', JText::_( 'COM_EVENTLIST_NO' ) );
-							$showfrounreg[] = JHTML::_('select.option', '1', JText::_( 'COM_EVENTLIST_YES' ) );
-							$showfrounreg[] = JHTML::_('select.option', '2', JText::_( 'COM_EVENTLIST_OPTIONAL' ) );
+							$showfrounreg[] = JHTML::_('select.option', '0', JText::_( 'COM_JEM_NO' ) );
+							$showfrounreg[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_YES' ) );
+							$showfrounreg[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_OPTIONAL' ) );
 							$showfrounregist = JHTML::_('select.genericlist', $showfrounreg, 'showfrounregistra', 'size="1" class="inputbox"', 'value', 'text', $this->elsettings->showfrounregistra );
 							echo $showfrounregist;
         					?>
@@ -189,13 +189,13 @@
 		</fieldset>
 
 		<fieldset class="adminform">
-			<legend><?php echo JText::_( 'COM_EVENTLIST_AC_VENUES' ); ?></legend>
+			<legend><?php echo JText::_( 'COM_JEM_AC_VENUES' ); ?></legend>
 				<table class="admintable" cellspacing="1">
 				<tbody>
 	  					<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_AC_VENUE_SUBMIT' ); ?>::<?php echo JText::_('COM_EVENTLIST_AC_VENUE_SUBMIT_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_AC_VENUE_SUBMIT' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_AC_VENUE_SUBMIT' ); ?>::<?php echo JText::_('COM_JEM_AC_VENUE_SUBMIT_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_AC_VENUE_SUBMIT' ); ?>
 							</span>
 						</td>
        					<td valign="top">
@@ -206,8 +206,8 @@
       				</tr>
 					<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_RECURSIV' ); ?>::<?php echo JText::_('COM_EVENTLIST_RECURSIV_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_RECURSIV' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>::<?php echo JText::_('COM_JEM_RECURSIV_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>
 							</span>
 						</td>
        					<td valign="top">
@@ -219,8 +219,8 @@
       				</tr>
 					<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_AUTOPUBLISH' ); ?>::<?php echo JText::_('COM_EVENTLIST_AUTOPUBLISH_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_AUTOPUBLISH' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_AUTOPUBLISH' ); ?>::<?php echo JText::_('COM_JEM_AUTOPUBLISH_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_AUTOPUBLISH' ); ?>
 							</span>
 						</td>
        					<td valign="top">
@@ -231,8 +231,8 @@
       				</tr>
 					<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_RECURSIV' ); ?>::<?php echo JText::_('COM_EVENTLIST_RECURSIV_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_RECURSIV' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>::<?php echo JText::_('COM_JEM_RECURSIV_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>
 							</span>
 						</td>
        					<td valign="top">
@@ -244,8 +244,8 @@
       				</tr>
 					<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_AC_VENUE_EDIT' ); ?>::<?php echo JText::_('COM_EVENTLIST_AC_VENUE_EDIT_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_AC_VENUE_EDIT' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_AC_VENUE_EDIT' ); ?>::<?php echo JText::_('COM_JEM_AC_VENUE_EDIT_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_AC_VENUE_EDIT' ); ?>
 							</span>
 						</td>
        					<td valign="top">
@@ -256,8 +256,8 @@
       				</tr>
 					<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_RECURSIV' ); ?>::<?php echo JText::_('COM_EVENTLIST_RECURSIV_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_RECURSIV' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>::<?php echo JText::_('COM_JEM_RECURSIV_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>
 							</span>
 						</td>
        					<td valign="top">
@@ -269,8 +269,8 @@
       				</tr>
 					<tr>
 	          			<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_EDIT_VENUE_FRONTEND_USER' ); ?>::<?php echo JText::_('COM_EVENTLIST_EDIT_VENUE_FRONTEND_USER_TIP'); ?>">
-								<?php echo JText::_( 'COM_EVENTLIST_EDIT_VENUE_FRONTEND_USER' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_VENUE_FRONTEND_USER' ); ?>::<?php echo JText::_('COM_JEM_EDIT_VENUE_FRONTEND_USER_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_EDIT_VENUE_FRONTEND_USER' ); ?>
 							</span>
 						</td>
        					<td valign="top">

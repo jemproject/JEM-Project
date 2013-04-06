@@ -60,12 +60,12 @@ class EventListViewCategoryevents extends JViewLegacy
 		$pathway 	=  $app->getPathWay();
 
 		//add css file
-		$document->addStyleSheet($this->baseurl.'/components/com_eventlist/assets/css/eventlist.css');
+		$document->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
 
 		// Request variables
 	//	$limitstart		= JRequest::getInt('limitstart');
-	//	$limit       	= $app->getUserStateFromRequest('com_eventlist.categoryevents.limit', 'limit', $params->def('display_num', 0), 'int');
+	//	$limit       	= $app->getUserStateFromRequest('com_jem.categoryevents.limit', 'limit', $params->def('display_num', 0), 'int');
 		$task 			= JRequest::getWord('task');
 		$pop			= JRequest::getBool('pop');
 
@@ -101,7 +101,7 @@ class EventListViewCategoryevents extends JViewLegacy
 		}
 
 		//add alternate feed link
-		$link    = 'index.php?option=com_eventlist&view=categoryevents&format=feed&id='.$category->id;
+		$link    = 'index.php?option=com_jem&view=categoryevents&format=feed&id='.$category->id;
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -117,14 +117,14 @@ class EventListViewCategoryevents extends JViewLegacy
 
 		
 		if ($task == 'archive') {
-			$pathway->addItem( JText::_( 'COM_EVENTLIST_ARCHIVE' ).' - '.$category->catname, JRoute::_('index.php?option=com_eventlist&view=categoryevents&task=archive&id='.$category->slug));
-			$link = JRoute::_( 'index.php?option=com_eventlist&view=categoryevents&task=archive&id='.$category->slug );
-			$print_link = JRoute::_( 'index.php?option=com_eventlist&view=categoryevents&id='. $category->id .'&task=archive&print=1&tmpl=component');
-		        $pagetitle = $category->catname.' - '.JText::_( 'COM_EVENTLIST_ARCHIVE' );
+			$pathway->addItem( JText::_( 'COM_JEM_ARCHIVE' ).' - '.$category->catname, JRoute::_('index.php?option=com_jem&view=categoryevents&task=archive&id='.$category->slug));
+			$link = JRoute::_( 'index.php?option=com_jem&view=categoryevents&task=archive&id='.$category->slug );
+			$print_link = JRoute::_( 'index.php?option=com_jem&view=categoryevents&id='. $category->id .'&task=archive&print=1&tmpl=component');
+		        $pagetitle = $category->catname.' - '.JText::_( 'COM_JEM_ARCHIVE' );
                         } else {
-			$pathway->addItem( $category->catname, JRoute::_('index.php?option=com_eventlist&view=categoryevents&id='.$category->slug));
-			$link = JRoute::_( 'index.php?option=com_eventlist&view=categoryevents&id='.$category->slug );
-			$print_link = JRoute::_( 'index.php?option=com_eventlist&view=categoryevents&id='. $category->id .'&print=1&tmpl=component');
+			$pathway->addItem( $category->catname, JRoute::_('index.php?option=com_jem&view=categoryevents&id='.$category->slug));
+			$link = JRoute::_( 'index.php?option=com_jem&view=categoryevents&id='.$category->slug );
+			$print_link = JRoute::_( 'index.php?option=com_jem&view=categoryevents&id='. $category->id .'&print=1&tmpl=component');
 		        $pagetitle = $category->catname;
                         }
 		
@@ -139,13 +139,13 @@ class EventListViewCategoryevents extends JViewLegacy
 
 		//Generate Categorydescription
 		if (empty ($category->catdescription)) {
-			$catdescription = JText::_( 'COM_EVENTLIST_NO_DESCRIPTION' );
+			$catdescription = JText::_( 'COM_JEM_NO_DESCRIPTION' );
 		} else {
 			//execute plugins
 			$category->text	= $category->catdescription;
 			$category->title 	= $category->catname;
 			JPluginHelper::importPlugin('content');
-			$results = $app->triggerEvent( 'onContentPrepare', array('com_eventlist.categoryevents', &$category, &$params, 0 ));
+			$results = $app->triggerEvent( 'onContentPrepare', array('com_jem.categoryevents', &$category, &$params, 0 ));
 			$catdescription = $category->text;
 		}
 
@@ -161,7 +161,7 @@ class EventListViewCategoryevents extends JViewLegacy
 
 			$category->image = JHTML::image($mediaparams->get($path, 'images').'/eventlist/categories/'.$category->image, $category->catname, $imgattribs);
 		} else {
-			$category->image = JHTML::image('components/com_eventlist/assets/images/noimage.png', $category->catname);
+			$category->image = JHTML::image('components/com_jem/assets/images/noimage.png', $category->catname);
 		}
 		
 		
@@ -187,7 +187,7 @@ class EventListViewCategoryevents extends JViewLegacy
 	  	if($this->getLayout() == 'calendar') 
 	  	{	  	
 	    	//add css for calendar
-	    	$document->addStyleSheet('components/com_eventlist/assets/css/eventlistcalendar.css');
+	    	$document->addStyleSheet('components/com_jem/assets/css/eventlistcalendar.css');
 	    
 	  		$year  = intval( JRequest::getVar('yearID', strftime( "%Y" ) ));
       		$month = intval( JRequest::getVar('monthID', strftime( "%m" ) ));

@@ -78,7 +78,7 @@ class EventListModelEventList extends JModelLegacy
 		* Get nr of all published events
 		*/
 		$query = 'SELECT count(*)'
-					. ' FROM #__eventlist_events'
+					. ' FROM #__jem_events'
 					. ' WHERE published = 1'
 					;
 
@@ -89,7 +89,7 @@ class EventListModelEventList extends JModelLegacy
 		* Get nr of all unpublished events
 		*/
 		$query = 'SELECT count(*)'
-					. ' FROM #__eventlist_events'
+					. ' FROM #__jem_events'
 					. ' WHERE published = 0'
 					;
 
@@ -100,7 +100,7 @@ class EventListModelEventList extends JModelLegacy
 		* Get nr of all archived events
 		*/
 		$query = 'SELECT count(*)'
-					. ' FROM #__eventlist_events'
+					. ' FROM #__jem_events'
 					. ' WHERE published = -1'
 					;
 
@@ -129,7 +129,7 @@ class EventListModelEventList extends JModelLegacy
 		* Get nr of all published venues
 		*/
 		$query = 'SELECT count(*)'
-					. ' FROM #__eventlist_venues'
+					. ' FROM #__jem_venues'
 					. ' WHERE published = 1'
 					;
 
@@ -140,7 +140,7 @@ class EventListModelEventList extends JModelLegacy
 		* Get nr of all unpublished venues
 		*/
 		$query = 'SELECT count(*)'
-					. ' FROM #__eventlist_venues'
+					. ' FROM #__jem_venues'
 					. ' WHERE published = 0'
 					;
 
@@ -169,7 +169,7 @@ class EventListModelEventList extends JModelLegacy
 		* Get nr of all published categories
 		*/
 		$query = 'SELECT count(*)'
-					. ' FROM #__eventlist_categories'
+					. ' FROM #__jem_categories'
 					. ' WHERE published = 1'
 					;
 
@@ -180,7 +180,7 @@ class EventListModelEventList extends JModelLegacy
 		* Get nr of all unpublished categories
 		*/
 		$query = 'SELECT count(*)'
-					. ' FROM #__eventlist_categories'
+					. ' FROM #__jem_categories'
 					. ' WHERE published = 0'
 					;
 

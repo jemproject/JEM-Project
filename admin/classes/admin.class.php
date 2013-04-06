@@ -37,7 +37,7 @@ class ELAdmin {
 	*/
 static	function footer( )
 	{
-        $params =  JComponentHelper::getParams('com_eventlist');
+        $params =  JComponentHelper::getParams('com_jem');
      
         if ($params->get('copyright') == 1) {
 		echo '<font color="grey">Powered by <a href="http://www.schlu.net" target="_blank">Schlu.net</a> | <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
@@ -51,7 +51,7 @@ static	function config()
 	{
 		$db = JFactory::getDBO();
 
-		$sql = 'SELECT * FROM #__eventlist_settings WHERE id = 1';
+		$sql = 'SELECT * FROM #__jem_settings WHERE id = 1';
 		$db->setQuery($sql);
 		$config = $db->loadObject();
 

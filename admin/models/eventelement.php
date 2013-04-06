@@ -65,8 +65,8 @@ class EventListModelEventelement extends JModelLegacy
 
 		$app =  JFactory::getApplication();
 
-		$limit		= $app->getUserStateFromRequest( 'com_eventlist.limit', 'limit', $app->getCfg('list_limit'), 'int');
-		$limitstart = $app->getUserStateFromRequest( 'com_eventlist.limitstart', 'limitstart', 0, 'int' );
+		$limit		= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -156,9 +156,9 @@ class EventListModelEventelement extends JModelLegacy
 		$orderby	= $this->_buildContentOrderBy();
 
 		$query = 'SELECT a.*, loc.venue, loc.city'
-					. ' FROM #__eventlist_events AS a'
-					. ' LEFT JOIN #__eventlist_venues AS loc ON loc.id = a.locid'
-				//	. ' LEFT JOIN #__eventlist_categories AS cat ON cat.id = a.catsid'
+					. ' FROM #__jem_events AS a'
+					. ' LEFT JOIN #__jem_venues AS loc ON loc.id = a.locid'
+				//	. ' LEFT JOIN #__jem_categories AS cat ON cat.id = a.catsid'
 					. $where
 					. $orderby
 					;
@@ -176,8 +176,8 @@ class EventListModelEventelement extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest( 'com_eventlist.eventelement.filter_order', 'filter_order', 'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_eventlist.eventelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );	
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_order', 'filter_order', 'a.dates', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );	
 		
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
@@ -197,9 +197,9 @@ class EventListModelEventelement extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_state 		= $app->getUserStateFromRequest( 'com_eventlist.eventelement.filter_state', 'filter_state', '', 'word' );
-		$filter 			= $app->getUserStateFromRequest( 'com_eventlist.eventelement.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_eventlist.eventelement.search', 'search', '', 'string' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_state', 'filter_state', '', 'word' );
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.eventelement.filter', 'filter', '', 'int' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.eventelement.search', 'search', '', 'string' );
 		$search 			= $this->_db->getEscaped( trim(JString::strtolower( $search ) ) );
 
 		$where = array();
@@ -240,8 +240,8 @@ class EventListModelEventelement extends JModelLegacy
 	function getCategories($id)
 	{
 		$query = 'SELECT DISTINCT c.id, c.catname, c.checked_out AS cchecked_out'
-				. ' FROM #__eventlist_categories AS c'
-				. ' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.catid = c.id'
+				. ' FROM #__jem_categories AS c'
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				;
 	

@@ -27,10 +27,10 @@ defined('_JEXEC') or die;
 <table class="adminform">
 	<tr>
 		<td width="100%">
-			<?php echo JText::_( 'COM_EVENTLIST_SEARCH' );?>
+			<?php echo JText::_( 'COM_JEM_SEARCH' );?>
 			<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_EVENTLIST_GO' ); ?></button>
-			<button onclick="$('search').value='';document.adminForm.submit();"><?php echo JText::_( 'COM_EVENTLIST_RESET' ); ?></button>
+			<button onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+			<button onclick="$('search').value='';document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 		</td>
 	</tr>
 </table>
@@ -38,10 +38,10 @@ defined('_JEXEC') or die;
 <table class="adminlist" cellspacing="1">
 	<thead>
 		<tr>
-			<th width="5"><?php echo JText::_( 'COM_EVENTLIST_NUM' ); ?></th>
+			<th width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 			<th width="5"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-			<th width="30%" class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_GROUP_NAME', 'name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-			<th><?php echo JText::_( 'COM_EVENTLIST_DESCRIPTION' ); ?></th>
+			<th width="30%" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_GROUP_NAME', 'name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th><?php echo JText::_( 'COM_JEM_DESCRIPTION' ); ?></th>
 		</tr>
 	</thead>
 
@@ -59,7 +59,7 @@ defined('_JEXEC') or die;
 		for($i=0, $n=count( $this->rows ); $i < $n; $i++) {
 			$row = &$this->rows[$i];
 
-			$link 		= 'index.php?option=com_eventlist&amp;controller=groups&amp;task=edit&amp;cid[]='.$row->id;
+			$link 		= 'index.php?option=com_jem&amp;controller=groups&amp;task=edit&amp;cid[]='.$row->id;
 			//$checked 	= JHTML::_('grid.checkedout', $row, $i );
    		?>
 		<tr class="<?php echo "row$k"; ?>">
@@ -71,7 +71,7 @@ defined('_JEXEC') or die;
 						echo htmlspecialchars($row->name, ENT_QUOTES, 'UTF-8');
 					} else {
 				?>
-				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_EDIT_GROUP' );?>::<?php echo $row->name; ?>">
+				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_GROUP' );?>::<?php echo $row->name; ?>">
 				<a href="<?php echo $link; ?>">
 				<?php echo htmlspecialchars($row->name, ENT_QUOTES, 'UTF-8'); ?>
 				</a></span>
@@ -90,7 +90,7 @@ defined('_JEXEC') or die;
 </p>
 
 <input type="hidden" name="boxchecked" value="0" />
-<input type="hidden" name="option" value="com_eventlist" />
+<input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="controller" value="groups" />
 <input type="hidden" name="view" value="groups" />
 <input type="hidden" name="task" value="" />

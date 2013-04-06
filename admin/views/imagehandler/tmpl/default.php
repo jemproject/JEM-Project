@@ -28,10 +28,10 @@ defined('_JEXEC') or die;
 <form action="index.php" method="post" name="adminForm" id="adminForm">
 <div class="imghead">
 
-	<?php echo JText::_( 'COM_EVENTLIST_SEARCH' ).' '; ?>
+	<?php echo JText::_( 'COM_JEM_SEARCH' ).' '; ?>
 	<input type="text" name="search" id="search" value="<?php echo $this->search; ?>" class="text_area" onChange="document.adminForm.submit();" />
-	<button onclick="this.form.submit();"><?php echo JText::_( 'COM_EVENTLIST_GO' ); ?></button>
-	<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_EVENTLIST_RESET' ); ?></button>
+	<button onclick="this.form.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+	<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 
 </div>
 
@@ -49,7 +49,7 @@ defined('_JEXEC') or die;
 		
 <div class="pnav"><?php echo $this->pageNav->getListFooter(); ?></div>
 
-	<input type="hidden" name="option" value="com_eventlist" />
+	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="view" value="imagehandler" />
 	<input type="hidden" name="tmpl" value="component" />
 	<input type="hidden" name="task" value="<?php echo $this->task; ?>" />

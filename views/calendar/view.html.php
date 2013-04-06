@@ -57,12 +57,12 @@ class EventListViewCalendar extends JViewLegacy
         $pathway 	=  $app->getPathWay();
 
         //add css file
-        $document->addStyleSheet($this->baseurl.'/components/com_eventlist/assets/css/eventlist.css');
+        $document->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
         $document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
-        $document->addStyleSheet($this->baseurl.'/components/com_eventlist/assets/css/eventlistcalendar.css');
+        $document->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlistcalendar.css');
         
         // add javascript
-        $document->addScript($this->baseurl.'/components/com_eventlist/assets/js/calendar.js');
+        $document->addScript($this->baseurl.'/components/com_jem/assets/js/calendar.js');
 
         $year 	= (int)JRequest::getVar('yearID', strftime("%Y"));
         $month 	= (int)JRequest::getVar('monthID', strftime("%m"));

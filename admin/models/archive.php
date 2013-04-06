@@ -72,8 +72,8 @@ class EventListModelArchive extends JModelLegacy
 
 		$app =  JFactory::getApplication();
 
-		$limit		= $app->getUserStateFromRequest( 'com_eventlist.limit', 'limit', $app->getCfg('list_limit'), 'int');
-		$limitstart = $app->getUserStateFromRequest( 'com_eventlist.limitstart', 'limitstart', 0, 'int' );
+		$limit		= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -174,8 +174,8 @@ class EventListModelArchive extends JModelLegacy
 		$orderby	= $this->_buildContentOrderBy();
 
 		$query = 'SELECT a.*, loc.venue, loc.city, loc.checked_out AS vchecked_out, u.email, u.name AS author'
-					. ' FROM #__eventlist_events AS a'
-					. ' LEFT JOIN #__eventlist_venues AS loc ON loc.id = a.locid'
+					. ' FROM #__jem_events AS a'
+					. ' LEFT JOIN #__jem_venues AS loc ON loc.id = a.locid'
 					. ' LEFT JOIN #__users AS u ON u.id = a.created_by'
 					. $where
 					. $orderby
@@ -194,8 +194,8 @@ class EventListModelArchive extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest( 'com_eventlist.archive.filter_order', 		'filter_order', 	'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_eventlist.archive.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.archive.filter_order', 		'filter_order', 	'a.dates', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.archive.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
 		
 		 
 		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
@@ -216,8 +216,8 @@ class EventListModelArchive extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter 			= $app->getUserStateFromRequest( 'com_eventlist.archive.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_eventlist.archive.search', 'search', '', 'string' );
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.archive.filter', 'filter', '', 'int' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.archive.search', 'search', '', 'string' );
 		$search 			= $this->_db->getEscaped( trim(JString::strtolower( $search ) ) );
 
 		$where = array('a.published 	= -1',);
@@ -284,7 +284,7 @@ class EventListModelArchive extends JModelLegacy
 		{
 			$cids = implode( ',', $cid );
 
-			$query = 'UPDATE #__eventlist_events'
+			$query = 'UPDATE #__jem_events'
 					. ' SET published = '.(int) $publish
 					. ' WHERE id IN ('. $cids .')'
 					. ' AND ( checked_out = 0 OR ( checked_out = ' .$userid. ' ) )'
@@ -309,7 +309,7 @@ class EventListModelArchive extends JModelLegacy
 		if (count( $cid ))
 		{
 			$cids = implode( ',', $cid );
-			$query = 'DELETE FROM #__eventlist_events'
+			$query = 'DELETE FROM #__jem_events'
 					. ' WHERE id IN ( '.$cids.' )';
 
 			$this->_db->setQuery( $query );
@@ -326,8 +326,8 @@ class EventListModelArchive extends JModelLegacy
 	function getCategories($id)
 	{
 		$query = 'SELECT DISTINCT c.id, c.catname, c.checked_out AS cchecked_out'
-				. ' FROM #__eventlist_categories AS c'
-				. ' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.catid = c.id'
+				. ' FROM #__jem_categories AS c'
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				;
 	

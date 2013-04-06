@@ -66,10 +66,10 @@ class EventListModelSearch extends JModelLegacy
 		$app =  JFactory::getApplication();
 
 		// Get the paramaters of the active menu item
-		$params 	=  $app->getParams('com_eventlist');
+		$params 	=  $app->getParams('com_jem');
 
 		//get the number of events from database
-		$limit       	= $app->getUserStateFromRequest('com_eventlist.search.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit       	= $app->getUserStateFromRequest('com_jem.search.limit', 'limit', $params->def('display_num', 0), 'int');
 		$limitstart		= JRequest::getVar('limitstart', 0, '', 'int');
 			
 		$this->setState('limit', $limit);
@@ -158,9 +158,9 @@ class EventListModelSearch extends JModelLegacy
 					. ' l.venue, l.city, l.state, l.url,'
 					. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 					. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-					. ' FROM #__eventlist_events AS a'
-	        . ' INNER JOIN #__eventlist_cats_event_relations AS rel ON rel.itemid = a.id '
-					. ' LEFT JOIN #__eventlist_venues AS l ON l.id = a.locid'
+					. ' FROM #__jem_events AS a'
+	        . ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
+					. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
           . ' LEFT JOIN #__eventlist_countries AS c ON c.iso2 = l.country'
 					. $where
 					. ' GROUP BY a.id '
@@ -212,12 +212,12 @@ class EventListModelSearch extends JModelLegacy
 
 		$filter            = JRequest::getString('filter', '', 'request');
 		$filter_type       = JRequest::getWord('filter_type', '', 'request');
-		$filter_continent  = $app->getUserStateFromRequest('com_eventlist.search.filter_continent', 'filter_continent', '', 'string');
-		$filter_country    = $app->getUserStateFromRequest('com_eventlist.search.filter_country', 'filter_country', '', 'string');
-		$filter_city       = $app->getUserStateFromRequest('com_eventlist.search.filter_city', 'filter_city', '', 'string');
-		$filter_date_from  = $app->getUserStateFromRequest('com_eventlist.search.filter_date_from', 'filter_date_from', '', 'string');
-		$filter_date_to    = $app->getUserStateFromRequest('com_eventlist.search.filter_date_to', 'filter_date_to', '', 'string');
-		$filter_category   = $app->getUserStateFromRequest('com_eventlist.search.filter_category', 'filter_category', 0, 'int');
+		$filter_continent  = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
+		$filter_country    = $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
+		$filter_city       = $app->getUserStateFromRequest('com_jem.search.filter_city', 'filter_city', '', 'string');
+		$filter_date_from  = $app->getUserStateFromRequest('com_jem.search.filter_date_from', 'filter_date_from', '', 'string');
+		$filter_date_to    = $app->getUserStateFromRequest('com_jem.search.filter_date_to', 'filter_date_to', '', 'string');
+		$filter_category   = $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
 		$filter_category = ($filter_category ? $filter_category : $top_category);
 
 		// no result if no filter:
@@ -323,8 +323,8 @@ class EventListModelSearch extends JModelLegacy
 		
 		$query = 'SELECT c.id, c.catname, c.access, c.ordering, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-				. ' FROM #__eventlist_categories AS c'
-				. ' INNER JOIN #__eventlist_cats_event_relations AS rel ON rel.catid = c.id'
+				. ' FROM #__jem_categories AS c'
+				. ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				. ' AND c.published = 1'
 				. ' AND c.access  <= '.$gid;
@@ -341,11 +341,11 @@ class EventListModelSearch extends JModelLegacy
   	{
     	$app =  JFactory::getApplication();
 		
-  		$filter_continent = $app->getUserStateFromRequest('com_eventlist.search.filter_continent', 'filter_continent', '', 'string');
+  		$filter_continent = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
   	
 			$query = ' SELECT c.iso2 as value, c.name as text '
-         		  . ' FROM #__eventlist_events AS a'
-         		  . ' INNER JOIN #__eventlist_venues AS l ON l.id = a.locid'
+         		  . ' FROM #__jem_events AS a'
+         		  . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
          		  . ' INNER JOIN #__eventlist_countries as c ON c.iso2 = l.country '
           		;
 				 
@@ -365,8 +365,8 @@ class EventListModelSearch extends JModelLegacy
 			return array();
 		}
 		$query = ' SELECT DISTINCT l.city as value, l.city as text '
-		       . ' FROM #__eventlist_events AS a'
-           . ' INNER JOIN #__eventlist_venues AS l ON l.id = a.locid'
+		       . ' FROM #__jem_events AS a'
+           . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
            . ' INNER JOIN #__eventlist_countries as c ON c.iso2 = l.country '
            . ' WHERE l.country = ' . $this->_db->Quote($country)
            . ' ORDER BY l.city ';           
@@ -387,7 +387,7 @@ class EventListModelSearch extends JModelLegacy
 			$app =  JFactory::getApplication();
 	
 			// Get the paramaters of the active menu item
-			$params 	=  $app->getParams('com_eventlist');
+			$params 	=  $app->getParams('com_jem');
 			$top_id = $params->get('top_category', 0);
 			
    		$user   =  JFactory::getUser();
@@ -412,7 +412,7 @@ class EventListModelSearch extends JModelLegacy
     	//get the maintained categories and the categories whithout any group
     	//or just get all if somebody have edit rights
     	$query = 'SELECT c.*'
-    	    . ' FROM #__eventlist_categories AS c'
+    	    . ' FROM #__jem_categories AS c'
     	    . $where
         	. ' ORDER BY c.ordering'
         	;

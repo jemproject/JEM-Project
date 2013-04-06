@@ -44,70 +44,70 @@ $options = array(
 						<div id="cpanel">
 						<?php
 
-						$link = 'index.php?option=com_eventlist&amp;view=events';
-						EventListViewEventList::quickiconButton( $link, 'icon-48-events.png', JText::_( 'COM_EVENTLIST_EVENTS' ) );
+						$link = 'index.php?option=com_jem&amp;view=events';
+						EventListViewEventList::quickiconButton( $link, 'icon-48-events.png', JText::_( 'COM_JEM_EVENTS' ) );
 
-						$link = 'index.php?option=com_eventlist&amp;view=event';
-						EventListViewEventList::quickiconButton( $link, 'icon-48-eventedit.png', JText::_( 'COM_EVENTLIST_ADD_EVENT' ) );
+						$link = 'index.php?option=com_jem&amp;view=event';
+						EventListViewEventList::quickiconButton( $link, 'icon-48-eventedit.png', JText::_( 'COM_JEM_ADD_EVENT' ) );
 
-						$link = 'index.php?option=com_eventlist&amp;view=venues';
-						EventListViewEventList::quickiconButton( $link, 'icon-48-venues.png', JText::_( 'COM_EVENTLIST_VENUES' ) );
+						$link = 'index.php?option=com_jem&amp;view=venues';
+						EventListViewEventList::quickiconButton( $link, 'icon-48-venues.png', JText::_( 'COM_JEM_VENUES' ) );
 
-						$link = 'index.php?option=com_eventlist&amp;view=venue';
-						EventListViewEventList::quickiconButton( $link, 'icon-48-venuesedit.png', JText::_( 'COM_EVENTLIST_ADD_VENUE' ) );
+						$link = 'index.php?option=com_jem&amp;view=venue';
+						EventListViewEventList::quickiconButton( $link, 'icon-48-venuesedit.png', JText::_( 'COM_JEM_ADD_VENUE' ) );
 
-						$link = 'index.php?option=com_eventlist&amp;view=categories';
-						EventListViewEventList::quickiconButton( $link, 'icon-48-categories.png', JText::_( 'COM_EVENTLIST_CATEGORIES' ) );
+						$link = 'index.php?option=com_jem&amp;view=categories';
+						EventListViewEventList::quickiconButton( $link, 'icon-48-categories.png', JText::_( 'COM_JEM_CATEGORIES' ) );
 
-						$link = 'index.php?option=com_eventlist&amp;view=category';
-						EventListViewEventList::quickiconButton( $link, 'icon-48-categoriesedit.png', JText::_( 'COM_EVENTLIST_ADD_CATEGORY' ) );
+						$link = 'index.php?option=com_jem&amp;view=category';
+						EventListViewEventList::quickiconButton( $link, 'icon-48-categoriesedit.png', JText::_( 'COM_JEM_ADD_CATEGORY' ) );
 
-						$link = 'index.php?option=com_eventlist&amp;view=groups';
-						EventListViewEventList::quickiconButton( $link, 'icon-48-groups.png', JText::_( 'COM_EVENTLIST_GROUPS' ) );
+						$link = 'index.php?option=com_jem&amp;view=groups';
+						EventListViewEventList::quickiconButton( $link, 'icon-48-groups.png', JText::_( 'COM_JEM_GROUPS' ) );
 
-						$link = 'index.php?option=com_eventlist&amp;view=group';
-						EventListViewEventList::quickiconButton( $link, 'icon-48-groupedit.png', JText::_( 'COM_EVENTLIST_ADD_GROUP' ) );
+						$link = 'index.php?option=com_jem&amp;view=group';
+						EventListViewEventList::quickiconButton( $link, 'icon-48-groupedit.png', JText::_( 'COM_JEM_ADD_GROUP' ) );
 
-						$link = 'index.php?option=com_eventlist&amp;view=archive';
-						EventListViewEventList::quickiconButton( $link, 'icon-48-archive.png', JText::_( 'COM_EVENTLIST_ARCHIVESCREEN' ) );
+						$link = 'index.php?option=com_jem&amp;view=archive';
+						EventListViewEventList::quickiconButton( $link, 'icon-48-archive.png', JText::_( 'COM_JEM_ARCHIVESCREEN' ) );
 
-						/*$link = 'index.php?option=com_eventlist&amp;controller=plugins&amp;task=plugins';
-						EventListViewEventList::quickiconButton( $link, 'icon-48-plugins.png', JText::_( 'COM_EVENTLIST_MANAGE_PLUGINS' ) );
+						/*$link = 'index.php?option=com_jem&amp;controller=plugins&amp;task=plugins';
+						EventListViewEventList::quickiconButton( $link, 'icon-48-plugins.png', JText::_( 'COM_JEM_MANAGE_PLUGINS' ) );
 						*/
 						
 						
 						//only admins should be able to see this items
 						 if (JFactory::getUser()->authorise('core.manage')) {
-							$link = 'index.php?option=com_eventlist&amp;controller=settings&amp;task=edit';
-							EventListViewEventList::quickiconButton( $link, 'icon-48-settings.png', JText::_( 'COM_EVENTLIST_SETTINGS' ) );
+							$link = 'index.php?option=com_jem&amp;controller=settings&amp;task=edit';
+							EventListViewEventList::quickiconButton( $link, 'icon-48-settings.png', JText::_( 'COM_JEM_SETTINGS' ) );
 
-						/*	$link = 'index.php?option=com_eventlist&amp;view=editcss';
-							EventListViewEventList::quickiconButton( $link, 'icon-48-cssedit.png', JText::_( 'COM_EVENTLIST_EDIT_CSS' ) );
+						/*	$link = 'index.php?option=com_jem&amp;view=editcss';
+							EventListViewEventList::quickiconButton( $link, 'icon-48-cssedit.png', JText::_( 'COM_JEM_EDIT_CSS' ) );
                          */
-							$link = 'index.php?option=com_eventlist&amp;view=cleanup';
-							EventListViewEventList::quickiconButton( $link, 'icon-48-housekeeping.png', JText::_( 'COM_EVENTLIST_CLEANUP' ) );
+							$link = 'index.php?option=com_jem&amp;view=cleanup';
+							EventListViewEventList::quickiconButton( $link, 'icon-48-housekeeping.png', JText::_( 'COM_JEM_CLEANUP' ) );
 							
 							
 						}
 
-						$link = 'index.php?option=com_eventlist&amp;view=help';
-						EventListViewEventList::quickiconButton( $link, 'icon-48-help.png', JText::_( 'COM_EVENTLIST_HELP' ) );
+						$link = 'index.php?option=com_jem&amp;view=help';
+						EventListViewEventList::quickiconButton( $link, 'icon-48-help.png', JText::_( 'COM_JEM_HELP' ) );
 
 						/*
-						$link = 'index.php?option=com_eventlist&amp;view=updatecheck';
-						EventListViewEventList::quickiconButton( $link, 'icon-48-update.png', JText::_( 'COM_EVENTLIST_UPDATE_CHECK' ), 1 );
+						$link = 'index.php?option=com_jem&amp;view=updatecheck';
+						EventListViewEventList::quickiconButton( $link, 'icon-48-update.png', JText::_( 'COM_JEM_UPDATE_CHECK' ), 1 );
 						
 						
-						$link = 'index.php?option=com_eventlist&amp;controller=sampledata&amp;task=load';
-						EventListViewEventList::quickiconButton( $link, 'icon-48-sampledata.png', JText::_( 'COM_EVENTLIST_LOAD_SAMPLE_DATA' ) );
+						$link = 'index.php?option=com_jem&amp;controller=sampledata&amp;task=load';
+						EventListViewEventList::quickiconButton( $link, 'icon-48-sampledata.png', JText::_( 'COM_JEM_LOAD_SAMPLE_DATA' ) );
 						*/
 						
 						if (JFactory::getUser()->authorise('core.manage')) {
-						$link = 'index.php?option=com_eventlist&amp;view=import';
-						EventListViewEventList::quickiconButton( $link, 'icon-48-sampledata.png', JText::_( 'COM_EVENTLIST_IMPORT_DATA' ) );
+						$link = 'index.php?option=com_jem&amp;view=import';
+						EventListViewEventList::quickiconButton( $link, 'icon-48-sampledata.png', JText::_( 'COM_JEM_IMPORT_DATA' ) );
 						
-						$link = 'index.php?option=com_eventlist&amp;view=export';
-						EventListViewEventList::quickiconButton( $link, 'icon-48-sampledata.png', JText::_( 'COM_EVENTLIST_EXPORT_DATA' ) );
+						$link = 'index.php?option=com_jem&amp;view=export';
+						EventListViewEventList::quickiconButton( $link, 'icon-48-sampledata.png', JText::_( 'COM_JEM_EXPORT_DATA' ) );
 						}
 						
 						?>
@@ -118,7 +118,7 @@ $options = array(
 			</td>
 			<td valign="top" width="320px" style="padding: 7px 0 0 5px">
 			<?php
-			$title = JText::_( 'COM_EVENTLIST_EVENT_STATS' );
+			$title = JText::_( 'COM_JEM_EVENT_STATS' );
 			echo JHtml::_('sliders.start','stat-pane',$options);
 			echo JHtml::_('sliders.panel',$title,'events');
 
@@ -126,7 +126,7 @@ $options = array(
 				<table class="adminlist">
 					<tr>
 						<td>
-							<?php echo JText::_( 'COM_EVENTLIST_EVENTS_PUBLISHED' ).': '; ?>
+							<?php echo JText::_( 'COM_JEM_EVENTS_PUBLISHED' ).': '; ?>
 						</td>
 						<td>
 							<b><?php echo $this->events[0]; ?></b>
@@ -134,7 +134,7 @@ $options = array(
 					</tr>
 					<tr>
 						<td>
-							<?php echo JText::_( 'COM_EVENTLIST_EVENTS_UNPUBLISHED' ).': '; ?>
+							<?php echo JText::_( 'COM_JEM_EVENTS_UNPUBLISHED' ).': '; ?>
 						</td>
 						<td>
 							<b><?php echo $this->events[1]; ?></b>
@@ -142,7 +142,7 @@ $options = array(
 					</tr>
 					<tr>
 						<td>
-							<?php echo JText::_( 'COM_EVENTLIST_EVENTS_ARCHIVED' ).': '; ?>
+							<?php echo JText::_( 'COM_JEM_EVENTS_ARCHIVED' ).': '; ?>
 						</td>
 						<td>
 							<b><?php echo $this->events[2]; ?></b>
@@ -150,7 +150,7 @@ $options = array(
 					</tr>
 					<tr>
 						<td>
-							<?php echo JText::_( 'COM_EVENTLIST_EVENTS_TOTAL' ).': '; ?>
+							<?php echo JText::_( 'COM_JEM_EVENTS_TOTAL' ).': '; ?>
 						</td>
 						<td>
 							<b><?php echo $this->events[3]; ?></b>
@@ -159,7 +159,7 @@ $options = array(
 				</table>
 				<?php
 
-				$title2 = JText::_( 'COM_EVENTLIST_VENUE_STATS' );
+				$title2 = JText::_( 'COM_JEM_VENUE_STATS' );
 				
 				echo JHtml::_('sliders.panel', $title2, 'venues' );
 
@@ -167,7 +167,7 @@ $options = array(
 				<table class="adminlist">
 					<tr>
 						<td>
-							<?php echo JText::_( 'COM_EVENTLIST_VENUES_PUBLISHED' ).': '; ?>
+							<?php echo JText::_( 'COM_JEM_VENUES_PUBLISHED' ).': '; ?>
 						</td>
 						<td>
 							<b><?php echo $this->venue[0]; ?></b>
@@ -175,7 +175,7 @@ $options = array(
 					</tr>
 					<tr>
 						<td>
-							<?php echo JText::_( 'COM_EVENTLIST_VENUES_UNPUBLISHED' ).': '; ?>
+							<?php echo JText::_( 'COM_JEM_VENUES_UNPUBLISHED' ).': '; ?>
 						</td>
 						<td>
 							<b><?php echo $this->venue[1]; ?></b>
@@ -183,7 +183,7 @@ $options = array(
 					</tr>
 					<tr>
 						<td>
-							<?php echo JText::_( 'COM_EVENTLIST_VENUES_TOTAL' ).': '; ?>
+							<?php echo JText::_( 'COM_JEM_VENUES_TOTAL' ).': '; ?>
 						</td>
 						<td>
 							<b><?php echo $this->venue[2]; ?></b>
@@ -192,13 +192,13 @@ $options = array(
 				</table>
 				<?php
 
-				$title3 = JText::_( 'COM_EVENTLIST_CATEGORY_STATS' );
+				$title3 = JText::_( 'COM_JEM_CATEGORY_STATS' );
 				echo JHtml::_('sliders.panel',$title3, 'categories' );
 				?>
 				<table class="adminlist">
 					<tr>
 						<td>
-							<?php echo JText::_( 'COM_EVENTLIST_CATEGORIES_PUBLISHED' ).': '; ?>
+							<?php echo JText::_( 'COM_JEM_CATEGORIES_PUBLISHED' ).': '; ?>
 						</td>
 						<td>
 							<b><?php echo $this->category[0]; ?></b>
@@ -206,7 +206,7 @@ $options = array(
 					</tr>
 					<tr>
 						<td>
-							<?php echo JText::_( 'COM_EVENTLIST_CATEGORIES_UNPUBLISHED' ).': '; ?>
+							<?php echo JText::_( 'COM_JEM_CATEGORIES_UNPUBLISHED' ).': '; ?>
 						</td>
 						<td>
 							<b><?php echo $this->category[1]; ?></b>
@@ -214,7 +214,7 @@ $options = array(
 					</tr>
 					<tr>
 						<td>
-							<?php echo JText::_( 'COM_EVENTLIST_CATEGORIES_TOTAL' ).': '; ?>
+							<?php echo JText::_( 'COM_JEM_CATEGORIES_TOTAL' ).': '; ?>
 						</td>
 						<td>
 							<b><?php echo $this->category[2]; ?></b>

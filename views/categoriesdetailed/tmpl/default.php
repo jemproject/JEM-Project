@@ -56,7 +56,7 @@ foreach($this->categories as $category) :
 		?>
 		<p>
 			<?php
-				echo JText::_( 'COM_EVENTLIST_EVENTS' ).': ';
+				echo JText::_( 'COM_JEM_EVENTS' ).': ';
 				echo JHTML::_('link', JRoute::_($category->linktarget), $category->assignedevents ? $category->assignedevents : '0');
 			?>
 		</p>
@@ -81,7 +81,7 @@ if (count($category->subcats)) :
 ?>
 
 <div class="subcategories">
-<?php echo JText::_('COM_EVENTLIST_SUBCATEGORIES'); ?>
+<?php echo JText::_('COM_JEM_SUBCATEGORIES'); ?>
 </div>
 <?php
 $n = count($category->subcats);

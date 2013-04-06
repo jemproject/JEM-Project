@@ -3,8 +3,8 @@
  * @version 1.1 $Id$
  * @package Joomla
  * @subpackage EventList
- * @copyright (C) 2005 - 2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
+ * @copyright (C) 2008 Christoph Lukes
+ * @license GNU/GPL, see LICENCE.php
  * EventList is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -22,48 +22,39 @@
 defined('_JEXEC') or die;
 
 /**
- * EventList attachments table class
+ * EventList table class
  *
  * @package Joomla
  * @subpackage EventList
  * @since 1.1
  */
-class eventlist_attachments extends JTable
+class jem_cats_event_relations extends JTable
 {
 	/**
 	 * Primary Key
 	 * @var int
 	 */
-	var $id 				= null;
-	/** @var int */
-	var $file				= '';
-	/** @var int */
-	var $object				= '';
-	/** @var string */
-	var $name 		= null;
-	/** @var string */
-	var $description 		= null;
-	/** @var string */
-	var $icon 		= null;
-	/** @var int */
-	var $frontend		= 1;
-	/** @var int */
-	var $access 		= 0;
-	/** @var int */
-	var $ordering 		= 0;
-	/** @var string */
-	var $added 		= '';
-	/** @var int */
-	var $added_by 		= 0;
+	var $catid 				= null;
+	/**
+	 * Primary Key
+	 * @var int
+	 */
+	var $itemid				= null;
+	/**
+	 * Ordering
+	 * @var int
+	 * @todo implement
+	 */
+	var $ordering			= null;
 
-	function eventlist_attachments(& $db) {
-		parent::__construct('#__eventlist_attachments', 'id', $db);
+	function jem_cats_event_relations(& $db) {
+		parent::__construct('#__jem_cats_event_relations', 'catid', $db);
 	}
-
+	
 	// overloaded check function
 	function check()
 	{
-		return true;
+		return;
 	}
 }
 ?>

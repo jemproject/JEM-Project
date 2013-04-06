@@ -105,12 +105,12 @@ class EventListModelCategories extends JModelLegacy
 			return $items;
 		}
 		
-		$limit				= $app->getUserStateFromRequest( 'com_eventlist.limit', 'limit', $app->getCfg('list_limit'), 'int');
-		$limitstart 		= $app->getUserStateFromRequest( 'com_eventlist.limitstart', 'limitstart', 0, 'int' );
-		$filter_order		= $app->getUserStateFromRequest( 'com_eventlist.categories.filter_order', 		'filter_order', 	'c.ordering', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_eventlist.categories.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_eventlist.categories.filter_state', 'filter_state', '', 'word' );
-		$search 			= $app->getUserStateFromRequest( 'com_eventlist.categories.search', 'search', '', 'string' );
+		$limit				= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limitstart 		= $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.categories.filter_order', 		'filter_order', 	'c.ordering', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categories.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categories.filter_state', 'filter_state', '', 'word' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.categories.search', 'search', '', 'string' );
 		$search 			= $this->_db->getEscaped( trim(JString::strtolower( $search ) ) );
 		
 		 
@@ -136,7 +136,7 @@ class EventListModelCategories extends JModelLegacy
 			
 			
 			$query = 'SELECT c.id'
-					. ' FROM #__eventlist_categories AS c'
+					. ' FROM #__jem_categories AS c'
 					. ' WHERE LOWER(c.catname) LIKE '.$this->_db->Quote( '%'.$this->_db->getEscaped( $search, true ).'%', false )
 					. $where
 					;
@@ -145,10 +145,10 @@ class EventListModelCategories extends JModelLegacy
 		}
 		
 		$query = 'SELECT c.*, c.catname AS name, c.parent_id AS parent, u.name AS editor, g.title AS groupname, gr.name AS catgroup'
-					. ' FROM #__eventlist_categories AS c'
+					. ' FROM #__jem_categories AS c'
 					. ' LEFT JOIN #__viewlevels AS g ON g.id = c.access'
 					. ' LEFT JOIN #__users AS u ON u.id = c.checked_out'
-					. ' LEFT JOIN #__eventlist_groups AS gr ON gr.id = c.groupid'
+					. ' LEFT JOIN #__jem_groups AS gr ON gr.id = c.groupid'
 					. $where
 					. $orderby
 					;
@@ -244,7 +244,7 @@ class EventListModelCategories extends JModelLegacy
 			
 			$cids = implode( ',', $cid );
 
-			$query = 'UPDATE #__eventlist_categories'
+			$query = 'UPDATE #__jem_categories'
 				. ' SET published = ' . (int) $publish
 				. ' WHERE id IN ('. $cids .')'
 				. ' AND ( checked_out = 0 OR ( checked_out = ' . (int) $user->get('id'). ' ) )'
@@ -267,7 +267,7 @@ class EventListModelCategories extends JModelLegacy
 	 */
 	function move($direction)
 	{
-		$row =& JTable::getInstance('eventlist_categories', '');
+		$row =& JTable::getInstance('jem_categories', '');
 
 		if (!$row->load( $this->_id ) ) {
 			$this->setError($this->_db->getErrorMsg());
@@ -297,7 +297,7 @@ class EventListModelCategories extends JModelLegacy
 	 */
 	function saveorder($cid = array(), $order)
 	{
-		$row =& JTable::getInstance('eventlist_categories', '');
+		$row =& JTable::getInstance('jem_categories', '');
 		
 		$groupings = array();
 
@@ -338,9 +338,9 @@ class EventListModelCategories extends JModelLegacy
 	function _countcatevents($id)
 	{
 		$query = 'SELECT COUNT(DISTINCT e.id )'
-				.' FROM #__eventlist_events AS e'
-				.' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.itemid = e.id'
-				.' LEFT JOIN #__eventlist_categories AS c ON c.id = rel.catid'
+				.' FROM #__jem_events AS e'
+				.' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = e.id'
+				.' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
 				.' WHERE rel.catid = ' . (int)$id
 				;
 					
@@ -369,8 +369,8 @@ class EventListModelCategories extends JModelLegacy
 		$cids = implode( ',', $cids );
 
 		$query = 'SELECT c.id, c.catname, COUNT( e.catid ) AS numcat'
-				. ' FROM #__eventlist_categories AS c'
-				. ' LEFT JOIN #__eventlist_cats_event_relations AS e ON e.catid = c.id'
+				. ' FROM #__jem_categories AS c'
+				. ' LEFT JOIN #__jem_cats_event_relations AS e ON e.catid = c.id'
 				. ' WHERE c.id IN ('. $cids .')'
 				. ' GROUP BY c.id'
 				;
@@ -396,7 +396,7 @@ class EventListModelCategories extends JModelLegacy
 		if (count( $cid ) && count($err) == 0)
 		{
 			$cids = implode( ',', $cid );
-			$query = 'DELETE FROM #__eventlist_categories'
+			$query = 'DELETE FROM #__jem_categories'
 					. ' WHERE id IN ('. $cids .')';
 
 			$this->_db->setQuery( $query );
@@ -409,11 +409,11 @@ class EventListModelCategories extends JModelLegacy
 
 		if (count( $err )) {
 			$cids 	= implode( ', ', $err );
-    		$msg 	= JText::sprintf( 'COM_EVENTLIST_EVENT_ASSIGNED_CATEGORY', $cids );
+    		$msg 	= JText::sprintf( 'COM_JEM_EVENT_ASSIGNED_CATEGORY', $cids );
     		return $msg;
 		} else {
 			$total 	= count( $cid );
-			$msg 	= $total.' '.JText::_('COM_EVENTLIST_CATEGORIES_DELETED');
+			$msg 	= $total.' '.JText::_('COM_JEM_CATEGORIES_DELETED');
 			return $msg;
 		}
 	}
@@ -429,7 +429,7 @@ class EventListModelCategories extends JModelLegacy
 	 */
 	function access($id, $access)
 	{				
-		$category  =& $this->getTable('eventlist_categories', '');
+		$category  =& $this->getTable('jem_categories', '');
 		
 		//handle childs
 		$cids = array();
@@ -513,7 +513,7 @@ class EventListModelCategories extends JModelLegacy
 
 		// Get all rows with parent of $id
 		$query = 'SELECT '.$get.
-				' FROM #__eventlist_categories' .
+				' FROM #__jem_categories' .
 				' WHERE '.$source.' = '.(int) $id;
 		$this->_db->setQuery( $query );
 		$rows = $this->_db->loadObjectList();

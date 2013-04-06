@@ -308,7 +308,7 @@ static	function gdVersion($user_ver = 0)
 
 		//check if the upload is an image...getimagesize will return false if not
 		if (!getimagesize($file['tmp_name'])) {
-			JError::raiseWarning(100, JText::_('COM_EVENTLIST_UPLOAD_FAILED_NOT_AN_IMAGE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'));
+			JError::raiseWarning(100, JText::_('COM_JEM_UPLOAD_FAILED_NOT_AN_IMAGE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'));
 			return false;
 		}
 
@@ -317,13 +317,13 @@ static	function gdVersion($user_ver = 0)
 
 		$allowable 	= array ('gif', 'jpg', 'png');
 		if (!in_array($fileext, $allowable)) {
-			JError::raiseWarning(100, JText::_('COM_EVENTLIST_WRONG_IMAGE_FILE_TYPE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'));
+			JError::raiseWarning(100, JText::_('COM_JEM_WRONG_IMAGE_FILE_TYPE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'));
 			return false;
 		}
 
 		//Check filesize
 		if ($imagesize > $sizelimit) {
-			JError::raiseWarning(100, JText::_('COM_EVENTLIST_IMAGE_FILE_SIZE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'));
+			JError::raiseWarning(100, JText::_('COM_JEM_IMAGE_FILE_SIZE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'));
 			return false;
 		}
 
@@ -333,7 +333,7 @@ static	function gdVersion($user_ver = 0)
 		foreach($html_tags as $tag) {
 			// A tag is '<tagname ', so we need to add < and a space or '<tagname>'
 			if(stristr($xss_check, '<'.$tag.' ') || stristr($xss_check, '<'.$tag.'>')) {
-				JError::raiseWarning(100, JText::_('COM_EVENTLIST_WARN_IE_XSS'));
+				JError::raiseWarning(100, JText::_('COM_JEM_WARN_IE_XSS'));
 				return false;
 			}
 		}

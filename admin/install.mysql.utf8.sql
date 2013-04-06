@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `#__eventlist_events` (
+CREATE TABLE IF NOT EXISTS `#__jem_events` (
 `id` int(11) unsigned NOT NULL auto_increment,
 `locid` int(11) unsigned NOT NULL default '0',
 `dates` date NOT NULL default '0000-00-00',
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `#__eventlist_events` (
 PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
-CREATE TABLE IF NOT EXISTS `#__eventlist_venues` (
+CREATE TABLE IF NOT EXISTS `#__jem_venues` (
 `id` int(11) unsigned NOT NULL auto_increment,
 `venue` varchar(50) NOT NULL default '',
 `alias` varchar(100) NOT NULL default '',
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `#__eventlist_venues` (
 PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
-CREATE TABLE IF NOT EXISTS `#__eventlist_categories` (
+CREATE TABLE IF NOT EXISTS `#__jem_categories` (
 `id` int(11) unsigned NOT NULL auto_increment,
 `parent_id` int(11) unsigned NOT NULL default '0',
 `catname` varchar(100) NOT NULL default '',
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `#__eventlist_categories` (
 PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
-CREATE TABLE IF NOT EXISTS `#__eventlist_cats_event_relations` (
+CREATE TABLE IF NOT EXISTS `#__jem_cats_event_relations` (
 `catid` int(11) NOT NULL default '0',
 `itemid` int(11) NOT NULL default '0',
 `ordering` tinyint(11) NOT NULL,
@@ -93,7 +93,7 @@ KEY `catid` (`catid`),
 KEY `itemid` (`itemid`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
-CREATE TABLE IF NOT EXISTS `#__eventlist_register` (
+CREATE TABLE IF NOT EXISTS `#__jem_register` (
 `id` int(11) unsigned NOT NULL auto_increment,
 `event` int(11) NOT NULL default '0',
 `uid` int(11) NOT NULL default '0',
@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS `#__eventlist_register` (
 PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
-CREATE TABLE IF NOT EXISTS `#__eventlist_groups` (
+CREATE TABLE IF NOT EXISTS `#__jem_groups` (
 `id` int(11) unsigned NOT NULL auto_increment,
 `name` varchar(150) NOT NULL default '',
 `description` mediumtext NOT NULL,
@@ -112,12 +112,12 @@ CREATE TABLE IF NOT EXISTS `#__eventlist_groups` (
 PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
-CREATE TABLE IF NOT EXISTS `#__eventlist_groupmembers` (
+CREATE TABLE IF NOT EXISTS `#__jem_groupmembers` (
 `group_id` INT( 11 ) NOT NULL DEFAULT '0',
 `member` INT( 11 ) NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
 
-CREATE TABLE IF NOT EXISTS `#__eventlist_settings` (
+CREATE TABLE IF NOT EXISTS `#__jem_settings` (
    `id` int(11) NOT NULL,
   `oldevent` tinyint(4) NOT NULL,
   `minus` tinyint(4) NOT NULL,
@@ -215,7 +215,7 @@ CREATE TABLE IF NOT EXISTS `#__eventlist_settings` (
   `repeat_window` int(11) NOT NULL DEFAULT '30',
   `weekdaystart` int(11) NOT NULL DEFAULT '0',
   `ical_tz` int(11) NOT NULL,
-  `attachments_path` varchar(100) NOT NULL DEFAULT 'media/com_eventlist/attachments',
+  `attachments_path` varchar(100) NOT NULL DEFAULT 'media/com_jem/attachments',
   `attachments_maxsize` varchar(15) NOT NULL DEFAULT '1000',
   `attachments_types` varchar(100) NOT NULL DEFAULT 'txt,csv,htm,html,xml,css,doc,xls,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,zip,tar.gz',
   `ownedvenuesonly` int(11) NOT NULL,
@@ -225,7 +225,7 @@ CREATE TABLE IF NOT EXISTS `#__eventlist_settings` (
 
 
 
-CREATE TABLE IF NOT EXISTS `#__eventlist_attachments` (
+CREATE TABLE IF NOT EXISTS `#__jem_attachments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `object` varchar(255) NOT NULL,
   `file` varchar(255) NOT NULL,

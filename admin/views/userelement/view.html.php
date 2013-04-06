@@ -43,13 +43,13 @@ class EventListViewUserElement extends JViewLegacy {
 		$db = JFactory::getDBO();
 		
 		//get var
-		$filter_order		= $mainframe->getUserStateFromRequest( 'com_eventlist.users.filter_order', 'filter_order', 'u.name', 'cmd' );
-		$filter_order_Dir	= $mainframe->getUserStateFromRequest( 'com_eventlist.users.filter_order_Dir', 'filter_order_Dir', '', 'word' );
-		$search 			= $mainframe->getUserStateFromRequest( 'com_eventlist.users.search', 'search', '', 'string' );
+		$filter_order		= $mainframe->getUserStateFromRequest( 'com_jem.users.filter_order', 'filter_order', 'u.name', 'cmd' );
+		$filter_order_Dir	= $mainframe->getUserStateFromRequest( 'com_jem.users.filter_order_Dir', 'filter_order_Dir', '', 'word' );
+		$search 			= $mainframe->getUserStateFromRequest( 'com_jem.users.search', 'search', '', 'string' );
 		$search 			= $db->getEscaped( trim(JString::strtolower( $search ) ) );
 		
 		//add css to document
-		$document->addStyleSheet('components/com_eventlist/assets/css/eventlistbackend.css');
+		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
 		
 		$modelusers = JModel::getInstance('Users', 'EventlistModel');
 		

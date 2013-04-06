@@ -73,12 +73,12 @@ class JFormFieldVenue extends JFormFieldList
 
 		// Setup variables for display.
 		$html	= array();
-		$link	= 'index.php?option=com_eventlist&amp;view=venueelement&amp;tmpl=component&amp;object='.$this->id;
+		$link	= 'index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component&amp;object='.$this->id;
 
 		$db	= JFactory::getDBO();
 		$db->setQuery(
 			'SELECT venue' .
-			' FROM #__eventlist_venues' .
+			' FROM #__jem_venues' .
 			' WHERE id = '.(int) $this->value
 		);
 		$title = $db->loadResult();
@@ -88,7 +88,7 @@ class JFormFieldVenue extends JFormFieldList
 		}
 
 		if (empty($title)) {
-			$title = JText::_('COM_EVENTLIST_SELECT_VENUE');
+			$title = JText::_('COM_JEM_SELECT_VENUE');
 		}
 		$title = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
 
@@ -100,7 +100,7 @@ class JFormFieldVenue extends JFormFieldList
 		// The user select button.
 		$html[] = '<div class="button2-left">';
 		$html[] = '  <div class="blank">';
-		$html[] = '	<a class="modal" title="'.JText::_('COM_EVENTLIST_SELECT_VENUE').'"  href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}">'.JText::_('COM_EVENTLIST_SELECT_VENUE').'</a>';
+		$html[] = '	<a class="modal" title="'.JText::_('COM_JEM_SELECT_VENUE').'"  href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}">'.JText::_('COM_JEM_SELECT_VENUE').'</a>';
 		$html[] = '  </div>';
 		$html[] = '</div>';
 

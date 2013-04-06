@@ -46,7 +46,7 @@ defined( '_JEXEC' ) or die;
 
 	<dl class="location floattext">
 		<?php if (($this->elsettings->showdetlinkvenue == 1) && (!empty($this->venue->url))) : ?>
-		<dt class="venue"><?php echo JText::_( 'COM_EVENTLIST_WEBSITE' ).':'; ?></dt>
+		<dt class="venue"><?php echo JText::_( 'COM_JEM_WEBSITE' ).':'; ?></dt>
 			<dd class="venue">
 					<a href="<?php echo $this->venue->url; ?>" target="_blank"> <?php echo $this->venue->urlclean; ?></a>
 			</dd>
@@ -55,35 +55,35 @@ defined( '_JEXEC' ) or die;
 		<?php if ( $this->elsettings->showdetailsadress == 1 ) : ?>
 
   			<?php if ( $this->venue->street ) : ?>
-  			<dt class="venue_street"><?php echo JText::_( 'COM_EVENTLIST_STREET' ).':'; ?></dt>
+  			<dt class="venue_street"><?php echo JText::_( 'COM_JEM_STREET' ).':'; ?></dt>
 			<dd class="venue_street">
     			<?php echo $this->escape($this->venue->street); ?>
 			</dd>
 			<?php endif; ?>
 
 			<?php if ( $this->venue->plz ) : ?>
-  			<dt class="venue_plz"><?php echo JText::_( 'COM_EVENTLIST_ZIP' ).':'; ?></dt>
+  			<dt class="venue_plz"><?php echo JText::_( 'COM_JEM_ZIP' ).':'; ?></dt>
 			<dd class="venue_plz">
     			<?php echo $this->escape($this->venue->plz); ?>
 			</dd>
 			<?php endif; ?>
 
 			<?php if ( $this->venue->city ) : ?>
-    		<dt class="venue_city"><?php echo JText::_( 'COM_EVENTLIST_CITY' ).':'; ?></dt>
+    		<dt class="venue_city"><?php echo JText::_( 'COM_JEM_CITY' ).':'; ?></dt>
     		<dd class="venue_city">
     			<?php echo $this->escape($this->venue->city); ?>
     		</dd>
     		<?php endif; ?>
 
     		<?php if ( $this->venue->state ) : ?>
-			<dt class="venue_state"><?php echo JText::_( 'COM_EVENTLIST_STATE' ).':'; ?></dt>
+			<dt class="venue_state"><?php echo JText::_( 'COM_JEM_STATE' ).':'; ?></dt>
 			<dd class="venue_state">
     			<?php echo $this->escape($this->venue->state); ?>
 			</dd>
 			<?php endif; ?>
 
 			<?php if ( $this->venue->country ) : ?>
-			<dt class="venue_country"><?php echo JText::_( 'COM_EVENTLIST_COUNTRY' ).':'; ?></dt>
+			<dt class="venue_country"><?php echo JText::_( 'COM_JEM_COUNTRY' ).':'; ?></dt>
     		<dd class="venue_country">
     			<?php echo $this->venue->countryimg ? $this->venue->countryimg : $this->venue->country; ?>
     		</dd>
@@ -98,7 +98,7 @@ defined( '_JEXEC' ) or die;
   	if ($this->elsettings->showlocdescription == 1 && $this->venuedescription != '' && $this->venuedescription != '<br />') :
 	?>
 
-		<h2 class="description"><?php echo JText::_( 'COM_EVENTLIST_DESCRIPTION' ); ?></h2>
+		<h2 class="description"><?php echo JText::_( 'COM_JEM_DESCRIPTION' ); ?></h2>
 	  	<div class="description no_space floattext">
 	  		<?php echo $this->venuedescription;	?>
 		</div>
@@ -112,7 +112,7 @@ defined( '_JEXEC' ) or die;
 	<?php echo $this->loadTemplate('table'); ?>
 
 	<p>
-	<input type="hidden" name="option" value="com_eventlist" />
+	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="" />
 	<input type="hidden" name="view" value="venueevents" />
@@ -136,8 +136,8 @@ defined( '_JEXEC' ) or die;
 
 <?php if ($this->params->get('events_ical', 1)): ?>
 <span class="events-ical">
-	<?php echo JHTML::link( JRoute::_('index.php?option=com_eventlist&view=venueevents&id='. $this->venue->id.'&format=raw&layout=ics'),
-                          JHTML::image('components/com_eventlist/assets/images/iCal2.0.png', JText::_('COM_EVENTLIST_EXPORT_ICS'))
+	<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&view=venueevents&id='. $this->venue->id.'&format=raw&layout=ics'),
+                          JHTML::image('components/com_jem/assets/images/iCal2.0.png', JText::_('COM_JEM_EXPORT_ICS'))
 	                        ); ?>
 </span>
 <?php endif; ?>

@@ -109,7 +109,7 @@ class EventListModelDetails extends JModelLegacy
 			// Is the category published?
 			if (!$this->_details->published && $this->_details->catid)
 			{
-				JError::raiseError( 404, JText::_("COM_EVENTLIST_CATEGORY_NOT_PUBLISHED") );
+				JError::raiseError( 404, JText::_("COM_JEM_CATEGORY_NOT_PUBLISHED") );
 			}
 
 			// Do we have access to the category?
@@ -168,10 +168,10 @@ class EventListModelDetails extends JModelLegacy
 					. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 					. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 //					. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as categoryslug'
-					. ' FROM #__eventlist_events AS a'
-					. ' LEFT JOIN #__eventlist_venues AS l ON a.locid = l.id'
-					. ' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.itemid = a.id'
-					. ' LEFT JOIN #__eventlist_categories AS c ON c.id = rel.catid'
+					. ' FROM #__jem_events AS a'
+					. ' LEFT JOIN #__jem_venues AS l ON a.locid = l.id'
+					. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+					. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
 					. ' LEFT JOIN #__users AS u ON u.id = a.created_by'
 					. ' LEFT JOIN #__eventlist_countries AS ct ON ct.iso2 = l.country '
 					. $where
@@ -225,8 +225,8 @@ class EventListModelDetails extends JModelLegacy
 	{
 		$query = 'SELECT DISTINCT c.id, c.catname,'
 		. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as slug'
-		. ' FROM #__eventlist_categories AS c'
-		. ' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.catid = c.id'
+		. ' FROM #__jem_categories AS c'
+		. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 		. ' WHERE rel.itemid = '.$this->_id
 		;
 
@@ -248,7 +248,7 @@ class EventListModelDetails extends JModelLegacy
 	{
 		if ($this->_id)
 		{
-			$item =  JTable::getInstance('eventlist_events', '');
+			$item =  JTable::getInstance('jem_events', '');
 			$item->hit($this->_id);
 			return true;
 		}
@@ -272,7 +272,7 @@ class EventListModelDetails extends JModelLegacy
 
 		//usercheck
 		$query = 'SELECT waiting+1' // 1 if user is registered, 2 if on waiting list
-				. ' FROM #__eventlist_register'
+				. ' FROM #__jem_register'
 				. ' WHERE uid = '.$userid
 				. ' AND event = '.$this->_id
 				;
@@ -305,7 +305,7 @@ class EventListModelDetails extends JModelLegacy
 		//Get registered users
 		$query = 'SELECT '.$name.' AS name, r.uid'
 				. $avatar
-				. ' FROM #__eventlist_register AS r'
+				. ' FROM #__jem_register AS r'
 				. ' LEFT JOIN #__users AS u ON u.id = r.uid'
 				. $join
 				. ' WHERE event = '.$this->_id
@@ -339,7 +339,7 @@ class EventListModelDetails extends JModelLegacy
 	
 		// Must be logged in
 		if ($uid < 1) {
-			JError::raiseError( 403, JText::_('COM_EVENTLIST_ALERTNOTAUTH') );
+			JError::raiseError( 403, JText::_('COM_JEM_ALERTNOTAUTH') );
 			return;
 		}
 		
@@ -354,7 +354,7 @@ class EventListModelDetails extends JModelLegacy
 			if (count($attendees) >= $details->maxplaces) 
 			{
 				if (!$details->waitinglist) {
-					$this->setError(JText::_('COM_EVENTLIST_ERROR_REGISTER_EVENT_IS_FULL'));
+					$this->setError(JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'));
 					return false;
 				}
 				$onwaiting = 1;
@@ -370,7 +370,7 @@ class EventListModelDetails extends JModelLegacy
 		$obj->uid   	= (int)$uid;
 		$obj->uregdate 	= gmdate('Y-m-d H:i:s');
 		$obj->uip   	= $uip;
-		$this->_db->insertObject('#__eventlist_register', $obj);
+		$this->_db->insertObject('#__jem_register', $obj);
 
 		return $this->_db->insertid();
 	}
@@ -391,11 +391,11 @@ class EventListModelDetails extends JModelLegacy
 
 		// Must be logged in
 		if ($userid < 1) {
-			JError::raiseError( 403, JText::_('COM_EVENTLIST_ALERTNOTAUTH') );
+			JError::raiseError( 403, JText::_('COM_JEM_ALERTNOTAUTH') );
 			return;
 		}
 
-		$query = 'DELETE FROM #__eventlist_register WHERE event = '.$event.' AND uid= '.$userid;
+		$query = 'DELETE FROM #__jem_register WHERE event = '.$event.' AND uid= '.$userid;
 		$this->_db->SetQuery( $query );
 
 		if (!$this->_db->query()) {

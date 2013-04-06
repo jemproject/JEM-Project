@@ -30,7 +30,7 @@ jimport('joomla.utilities.mail');
 $lang = JFactory::getLanguage();
 $lang->load('plg_eventlist_mailer', JPATH_ADMINISTRATOR);
 
-include_once(JPATH_SITE.DS.'components'.DS.'com_eventlist'.DS.'helpers'.DS.'route.php');
+include_once(JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'helpers'.DS.'route.php');
 
 class plgEventlistMailer extends JPlugin {
 
@@ -111,8 +111,8 @@ class plgEventlistMailer extends JPlugin {
 		
 		$query = ' SELECT a.id, a.title, r.waiting, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug '
-				. ' FROM  #__eventlist_register AS r '
-				. ' INNER JOIN #__eventlist_events AS a ON r.event = a.id '
+				. ' FROM  #__jem_register AS r '
+				. ' INNER JOIN #__jem_events AS a ON r.event = a.id '
 				. ' WHERE r.id = ' . (int)$register_id;
 		$db->setQuery($query);
     
@@ -132,8 +132,8 @@ class plgEventlistMailer extends JPlugin {
 			if ($this->params->get('reg_mail_user', '1')) {
 				
 				$data 				= new stdClass();
-				$data->subject 		= JText::sprintf('COM_EVENTLIST_MAIL_USER_REG_WAITING_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('COM_EVENTLIST_MAIL_USER_REG_WAITING_BODY', $user->name, $user->username, $event->title, $link, $SiteName);
+				$data->subject 		= JText::sprintf('COM_JEM_MAIL_USER_REG_WAITING_SUBJECT', $this->_SiteName);
+				$data->body			= JText::sprintf('COM_JEM_MAIL_USER_REG_WAITING_BODY', $user->name, $user->username, $event->title, $link, $SiteName);
 				$data->receivers 	= $user->email;
 				
 				$this->_mailer($data);
@@ -143,8 +143,8 @@ class plgEventlistMailer extends JPlugin {
 			if ($this->params->get('reg_mail_admin', '0') && $this->params->get('receivers')) {
 				
 				$data 				= new stdClass();
-				$data->subject 		= JText::sprintf('COM_EVENTLIST_MAIL_ADMIN_REG_WAITING_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('COM_EVENTLIST_MAIL_ADMIN_REG_WAITING_BODY', $user->name, $user->username, $event->title, $link, $SiteName);
+				$data->subject 		= JText::sprintf('COM_JEM_MAIL_ADMIN_REG_WAITING_SUBJECT', $this->_SiteName);
+				$data->body			= JText::sprintf('COM_JEM_MAIL_ADMIN_REG_WAITING_BODY', $user->name, $user->username, $event->title, $link, $SiteName);
 				$data->receivers 	= $this->_receivers;
 				
 				$this->_mailer($data);
@@ -156,8 +156,8 @@ class plgEventlistMailer extends JPlugin {
 			if ($this->params->get('reg_mail_user', '1')) {
 				
 				$data 				= new stdClass();
-				$data->subject 		= JText::sprintf('COM_EVENTLIST_MAIL_USER_REG_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('COM_EVENTLIST_MAIL_USER_REG_BODY', $user->name, $user->username, $event->title, $link, $SiteName);
+				$data->subject 		= JText::sprintf('COM_JEM_MAIL_USER_REG_SUBJECT', $this->_SiteName);
+				$data->body			= JText::sprintf('COM_JEM_MAIL_USER_REG_BODY', $user->name, $user->username, $event->title, $link, $SiteName);
 				$data->receivers 	= $user->email;
 				
 				$this->_mailer($data);
@@ -167,8 +167,8 @@ class plgEventlistMailer extends JPlugin {
 			if ($this->params->get('reg_mail_admin', '0') && $this->params->get('receivers')) {
 				
 				$data 				= new stdClass();
-				$data->subject 		= JText::sprintf('COM_EVENTLIST_MAIL_ADMIN_REG_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('COM_EVENTLIST_MAIL_ADMIN_REG_BODY', $user->name, $user->username, $event->title, $link, $SiteName);
+				$data->subject 		= JText::sprintf('COM_JEM_MAIL_ADMIN_REG_SUBJECT', $this->_SiteName);
+				$data->body			= JText::sprintf('COM_JEM_MAIL_ADMIN_REG_BODY', $user->name, $user->username, $event->title, $link, $SiteName);
 				$data->receivers 	= $this->_receivers;
 				
 				$this->_mailer($data);
@@ -198,8 +198,8 @@ class plgEventlistMailer extends JPlugin {
 		
 		$query = ' SELECT a.id, a.title, waiting, uid, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug '
-				. ' FROM  #__eventlist_register AS r '
-				. ' INNER JOIN #__eventlist_events AS a ON r.event = a.id '
+				. ' FROM  #__jem_register AS r '
+				. ' INNER JOIN #__jem_events AS a ON r.event = a.id '
 				. ' WHERE r.id = ' . (int)$register_id;
 		$db->setQuery($query);
     
@@ -289,7 +289,7 @@ class plgEventlistMailer extends JPlugin {
 		
 		$query = ' SELECT a.id, a.title, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug '
-				. ' FROM #__eventlist_events AS a '
+				. ' FROM #__jem_events AS a '
 				. ' WHERE a.id = ' . (int)$event_id;
 		$db->setQuery($query);
     
@@ -307,8 +307,8 @@ class plgEventlistMailer extends JPlugin {
 		if ($this->params->get('unreg_mail_user', '1')) {
 			
 			$data 				= new stdClass();
-			$data->subject 		= JText::sprintf('COM_EVENTLIST_MAIL_USER_UNREG_SUBJECT', $this->_SiteName);
-			$data->body			= JText::sprintf('COM_EVENTLIST_MAIL_USER_UNREG_BODY', $user->name, $user->username, $event->title, $link, $SiteName);
+			$data->subject 		= JText::sprintf('COM_JEM_MAIL_USER_UNREG_SUBJECT', $this->_SiteName);
+			$data->body			= JText::sprintf('COM_JEM_MAIL_USER_UNREG_BODY', $user->name, $user->username, $event->title, $link, $SiteName);
 			$data->receivers 	= $user->email;
 			
 			$this->_mailer($data);
@@ -318,8 +318,8 @@ class plgEventlistMailer extends JPlugin {
 		if ($this->params->get('unreg_mail_admin', '0') && $this->params->get('receivers')) {
 			
 			$data 				= new stdClass();
-			$data->subject 		= JText::sprintf('COM_EVENTLIST_MAIL_ADMIN_UNREG_SUBJECT', $this->_SiteName);
-			$data->body			= JText::sprintf('COM_EVENTLIST_MAIL_ADMIN_UNREG_BODY', $user->name, $user->username, $event->title, $link, $SiteName);
+			$data->subject 		= JText::sprintf('COM_JEM_MAIL_ADMIN_UNREG_SUBJECT', $this->_SiteName);
+			$data->body			= JText::sprintf('COM_JEM_MAIL_ADMIN_UNREG_BODY', $user->name, $user->username, $event->title, $link, $SiteName);
 			$data->receivers 	= $this->_receivers;
 			
 			$this->_mailer($data);
@@ -351,8 +351,8 @@ class plgEventlistMailer extends JPlugin {
 		$query = ' SELECT a.id, a.title, a.dates, a.times, a.datdescription, a.locid, a.published, a.created, a.modified,'
 				. ' v.venue, v.city,'
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug'
-				. ' FROM #__eventlist_events AS a '
-				. ' LEFT JOIN #__eventlist_venues AS v ON v.id = a.locid'
+				. ' FROM #__jem_events AS a '
+				. ' LEFT JOIN #__jem_venues AS v ON v.id = a.locid'
 				. ' WHERE a.id = ' . (int)$event_id;
 		$db->setQuery($query);
     
@@ -372,7 +372,7 @@ class plgEventlistMailer extends JPlugin {
 		$modified_ip 	= getenv('REMOTE_ADDR');
 		$edited 		= JHTML::Date( $event->modified, JText::_( 'DATE_FORMAT_LC2' ) );
 		
-		$state 	= $event->published ? JText::sprintf('COM_EVENTLIST_MAIL_EVENT_PUBLISHED', $link) : JText::_('COM_EVENTLIST_MAIL_EVENT_UNPUBLISHED');
+		$state 	= $event->published ? JText::sprintf('COM_JEM_MAIL_EVENT_PUBLISHED', $link) : JText::_('COM_JEM_MAIL_EVENT_UNPUBLISHED');
 			
 		if (edited) {
 			
@@ -380,8 +380,8 @@ class plgEventlistMailer extends JPlugin {
 			
 				$data 				= new stdClass();
 				$edited 			= JHTML::Date( $event->modified, JText::_( 'DATE_FORMAT_LC2' ) );
-				$data->subject 		= JText::sprintf('COM_EVENTLIST_EDIT_EVENT_MAIL', $this->_SiteName);
-				$data->body			= JText::sprintf('COM_EVENTLIST_MAIL_EDIT_EVENT', $user->name, $user->username, $user->email, $modified_ip, $edited, $event->title, $event->dates, $event->times, $event>venue, $event->city, $text_description, $state);
+				$data->subject 		= JText::sprintf('COM_JEM_EDIT_EVENT_MAIL', $this->_SiteName);
+				$data->body			= JText::sprintf('COM_JEM_MAIL_EDIT_EVENT', $user->name, $user->username, $user->email, $modified_ip, $edited, $event->title, $event->dates, $event->times, $event>venue, $event->city, $text_description, $state);
 				$data->receivers 	= $this->_receivers;
 			
 				$this->_mailer($data);
@@ -393,8 +393,8 @@ class plgEventlistMailer extends JPlugin {
 
 				$data 				= new stdClass();
 				$created 			= JHTML::Date( $event->created, JText::_( 'DATE_FORMAT_LC2' ) );
-				$data->subject		= JText::sprintf('COM_EVENTLIST_NEW_EVENT_MAIL', $this->_SiteName);
-				$data->body 		= JText::sprintf('COM_EVENTLIST_MAIL_NEW_EVENT', $user->name, $user->username, $user->email, $event->author_ip, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $state);
+				$data->subject		= JText::sprintf('COM_JEM_NEW_EVENT_MAIL', $this->_SiteName);
+				$data->body 		= JText::sprintf('COM_JEM_MAIL_NEW_EVENT', $user->name, $user->username, $user->email, $event->author_ip, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $state);
 				$data->receivers 	= $this->_receivers;
 			
 				$this->_mailer($data);
@@ -402,7 +402,7 @@ class plgEventlistMailer extends JPlugin {
 		}
 
 		//overwrite $state with usermail text
-		$state 	= $event->published ? JText::sprintf('COM_EVENTLIST_USER_MAIL_EVENT_PUBLISHED', $link) : JText::_('COM_EVENTLIST_USER_MAIL_EVENT_UNPUBLISHED');
+		$state 	= $event->published ? JText::sprintf('COM_JEM_USER_MAIL_EVENT_PUBLISHED', $link) : JText::_('COM_JEM_USER_MAIL_EVENT_UNPUBLISHED');
 
 		if (edited) {
 				
@@ -410,8 +410,8 @@ class plgEventlistMailer extends JPlugin {
 				
 				$data 				= new stdClass();
 				$edited 			= JHTML::Date( $event->modified, JText::_( 'DATE_FORMAT_LC2' ) );
-				$data->body			= JText::sprintf('COM_EVENTLIST_USER_MAIL_EDIT_EVENT', $user->name, $user->username, $edited, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $state);
-				$data->subject		= JText::sprintf( 'COM_EVENTLIST_EDIT_USER_EVENT_MAIL', $this->_SiteName );
+				$data->body			= JText::sprintf('COM_JEM_USER_MAIL_EDIT_EVENT', $user->name, $user->username, $edited, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $state);
+				$data->subject		= JText::sprintf( 'COM_JEM_EDIT_USER_EVENT_MAIL', $this->_SiteName );
 				$data->receivers 	= $user->email;
 				
 				$this->_mailer($data);
@@ -421,8 +421,8 @@ class plgEventlistMailer extends JPlugin {
 			if ($this->params->get('newevent_mail_user', '1')) {
 				$data 				= new stdClass();
 				$created 			= JHTML::Date( $event->created, JText::_( 'DATE_FORMAT_LC2' ) );
-				$data->body 		= JText::sprintf('COM_EVENTLIST_USER_MAIL_NEW_EVENT', $user->name, $user->username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $state);
-				$data->subject		= JText::sprintf( 'COM_EVENTLIST_NEW_USER_EVENT_MAIL', $this->_SiteName );
+				$data->body 		= JText::sprintf('COM_JEM_USER_MAIL_NEW_EVENT', $user->name, $user->username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $state);
+				$data->subject		= JText::sprintf( 'COM_JEM_NEW_USER_EVENT_MAIL', $this->_SiteName );
 				$data->receivers 	= $user->email;
 			
 				$this->_mailer($data);
@@ -454,7 +454,7 @@ class plgEventlistMailer extends JPlugin {
 				
 		$query = ' SELECT v.id, v.published, v.venue, v.city, v.street, v.plz, v.url, v.country, v.locdescription, v.created, v.modified,'
 				. ' CASE WHEN CHAR_LENGTH(v.alias) THEN CONCAT_WS(\':\', v.id, v.alias) ELSE v.id END as slug'
-				. ' FROM #__eventlist_venues AS v'
+				. ' FROM #__jem_venues AS v'
 				. ' WHERE v.id = ' . (int)$venue_id;
 		$db->setQuery($query);
     
@@ -466,7 +466,7 @@ class plgEventlistMailer extends JPlugin {
 		}
 				
 		//link for event
-		$link   = JRoute::_(JURI::base().'index.php?option=com_eventlist&view=venueevents&id='.$venue->slug, false);
+		$link   = JRoute::_(JURI::base().'index.php?option=com_jem&view=venueevents&id='.$venue->slug, false);
 		
 		//strip description from tags / scripts, etc...
 		$text_description = JFilterOutput::cleanText($venue->locdescription);
@@ -474,7 +474,7 @@ class plgEventlistMailer extends JPlugin {
 		$modified_ip 	= getenv('REMOTE_ADDR');
 		$edited 		= JHTML::Date( $venue->modified, JText::_( 'DATE_FORMAT_LC2' ) );
 		
-		$state 	= $venue->published ? JText::sprintf('COM_EVENTLIST_MAIL_VENUE_PUBLISHED', $link) : JText::_('COM_EVENTLIST_MAIL_VENUE_UNPUBLISHED');
+		$state 	= $venue->published ? JText::sprintf('COM_JEM_MAIL_VENUE_PUBLISHED', $link) : JText::_('COM_JEM_MAIL_VENUE_UNPUBLISHED');
 			
 		if (edited) {
 			
@@ -482,8 +482,8 @@ class plgEventlistMailer extends JPlugin {
 			
 				$data 				= new stdClass();
 				$edited 			= JHTML::Date( $venue->modified, JText::_( 'DATE_FORMAT_LC2' ) );
-				$data->subject 		= JText::sprintf('COM_EVENTLIST_EDIT_VENUE_MAIL', $this->_SiteName);
-				$data->body			= JText::sprintf('COM_EVENTLIST_MAIL_EDIT_VENUE', $user->name, $user->username, $user->email, $modified_ip, $edited, $venue->venue, $venue->url, $venue->street, $venue->plz, $venue->city, $venue->country, $text_description, $state);
+				$data->subject 		= JText::sprintf('COM_JEM_EDIT_VENUE_MAIL', $this->_SiteName);
+				$data->body			= JText::sprintf('COM_JEM_MAIL_EDIT_VENUE', $user->name, $user->username, $user->email, $modified_ip, $edited, $venue->venue, $venue->url, $venue->street, $venue->plz, $venue->city, $venue->country, $text_description, $state);
 				$data->receivers 	= $this->_receivers;
 			
 				$this->_mailer($data);
@@ -495,8 +495,8 @@ class plgEventlistMailer extends JPlugin {
 
 				$data 				= new stdClass();
 				$created 			= JHTML::Date( $venue->created, JText::_( 'DATE_FORMAT_LC2' ) );
-				$data->subject		= JText::sprintf('COM_EVENTLIST_NEW_VENUE_MAIL', $this->_SiteName);
-				$data->body 		= JText::sprintf('COM_EVENTLIST_MAIL_NEW_VENUE', $user->name, $user->username, $user->email, $venue->author_ip, $created, $venue->venue, $venue->url, $venue->street, $venue->plz, $venue->city, $venue->country, $text_description, $state);
+				$data->subject		= JText::sprintf('COM_JEM_NEW_VENUE_MAIL', $this->_SiteName);
+				$data->body 		= JText::sprintf('COM_JEM_MAIL_NEW_VENUE', $user->name, $user->username, $user->email, $venue->author_ip, $created, $venue->venue, $venue->url, $venue->street, $venue->plz, $venue->city, $venue->country, $text_description, $state);
 				$data->receivers 	= $this->_receivers;
 			
 				$this->_mailer($data);
@@ -504,7 +504,7 @@ class plgEventlistMailer extends JPlugin {
 		}
 
 		//overwrite $state with usermail text
-		$state 	= $venue->published ? JText::sprintf('COM_EVENTLIST_USER_MAIL_VENUE_PUBLISHED', $link) : JText::_('COM_EVENTLIST_USER_MAIL_VENUE_UNPUBLISHED');
+		$state 	= $venue->published ? JText::sprintf('COM_JEM_USER_MAIL_VENUE_PUBLISHED', $link) : JText::_('COM_JEM_USER_MAIL_VENUE_UNPUBLISHED');
 
 		if (edited) {
 				
@@ -512,8 +512,8 @@ class plgEventlistMailer extends JPlugin {
 				
 				$data 				= new stdClass();
 				$edited 			= JHTML::Date( $venue->modified, JText::_( 'DATE_FORMAT_LC2' ) );
-				$data->body			= JText::sprintf('COM_EVENTLIST_USER_MAIL_EDIT_VENUE', $user->name, $user->username, $isNew, $venue->venue, $venue->url, $venue->street, $venue->plz, $venue->city, $venue->country, $text_description, $state);
-				$data->subject		= JText::sprintf( 'COM_EVENTLIST_EDIT_USER_VENUE_MAIL', $this->_SiteName );
+				$data->body			= JText::sprintf('COM_JEM_USER_MAIL_EDIT_VENUE', $user->name, $user->username, $isNew, $venue->venue, $venue->url, $venue->street, $venue->plz, $venue->city, $venue->country, $text_description, $state);
+				$data->subject		= JText::sprintf( 'COM_JEM_EDIT_USER_VENUE_MAIL', $this->_SiteName );
 				$data->receivers 	= $user->email;
 				
 				$this->_mailer($data);
@@ -523,8 +523,8 @@ class plgEventlistMailer extends JPlugin {
 			if ($this->params->get('newvenue_mail_user', '1')) {
 				$data 				= new stdClass();
 				$created 			= JHTML::Date( $venue->created, JText::_( 'DATE_FORMAT_LC2' ) );
-				$data->body 		= JText::sprintf('COM_EVENTLIST_USER_MAIL_NEW_VENUE', $user->name, $user->username, $created, $venue->venue, $venue->url, $venue->street, $venue->plz, $venue->city, $venue->country, $text_description, $state);
-				$data->subject		= JText::sprintf( 'COM_EVENTLIST_NEW_USER_VENUE_MAIL', $this->_SiteName );
+				$data->body 		= JText::sprintf('COM_JEM_USER_MAIL_NEW_VENUE', $user->name, $user->username, $created, $venue->venue, $venue->url, $venue->street, $venue->plz, $venue->city, $venue->country, $text_description, $state);
+				$data->subject		= JText::sprintf( 'COM_JEM_NEW_USER_VENUE_MAIL', $this->_SiteName );
 				$data->receivers 	= $user->email;
 			
 				$this->_mailer($data);

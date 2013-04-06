@@ -48,36 +48,36 @@ class EventListViewAttendees extends JViewLegacy {
 		$user		=  JFactory::getUser();
 
 		//get vars
-		$filter_order		= $app->getUserStateFromRequest( 'com_eventlist.attendees.filter_order', 'filter_order', 'u.username', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_eventlist.attendees.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
-		$filter_waiting	= $app->getUserStateFromRequest( 'com_eventlist.attendees.waiting',	'filter_waiting',	0, 'int' );
-		$filter 			= $app->getUserStateFromRequest( 'com_eventlist.attendees.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_eventlist.attendees.search', 'search', '', 'string' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.attendees.filter_order', 'filter_order', 'u.username', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.attendees.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
+		$filter_waiting	= $app->getUserStateFromRequest( 'com_jem.attendees.waiting',	'filter_waiting',	0, 'int' );
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.attendees.filter', 'filter', '', 'int' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.attendees.search', 'search', '', 'string' );
 		$search 			= $db->getEscaped( trim(JString::strtolower( $search ) ) );
 
 		//add css and submenu to document
-		$document->addStyleSheet('components/com_eventlist/assets/css/eventlistbackend.css');
+		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
 
 		//Create Submenu
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_EVENTLIST' ), 'index.php?option=com_eventlist');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_EVENTS' ), 'index.php?option=com_eventlist&view=events');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_VENUES' ), 'index.php?option=com_eventlist&view=venues');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_CATEGORIES' ), 'index.php?option=com_eventlist&view=categories');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_ARCHIVESCREEN' ), 'index.php?option=com_eventlist&view=archive');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_GROUPS' ), 'index.php?option=com_eventlist&view=groups');
-		JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_HELP' ), 'index.php?option=com_eventlist&view=help');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTLIST' ), 'index.php?option=com_jem');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
 		if ($user->get('gid') > 24) {
-			JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_SETTINGS' ), 'index.php?option=com_eventlist&controller=settings&task=edit');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
 		}
 
 		//add toolbar
-		JToolBarHelper::title( JText::_( 'COM_EVENTLIST_REGISTERED_USERS' ), 'users' );
+		JToolBarHelper::title( JText::_( 'COM_JEM_REGISTERED_USERS' ), 'users' );
 		JToolBarHelper::addNew();
 		JToolBarHelper::editList();
 		JToolBarHelper::spacer();
 		JToolBarHelper::deleteList();
 		JToolBarHelper::spacer();
-		JToolBarHelper::custom('back', 'back', 'back', JText::_('COM_EVENTLIST_BACK'), false);
+		JToolBarHelper::custom('back', 'back', 'back', JText::_('COM_JEM_BACK'), false);
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'el.registereduser', true );
 
@@ -90,13 +90,13 @@ class EventListViewAttendees extends JViewLegacy {
 			$event->dates = strftime($elsettings->formatdate, strtotime( $event->dates ));
 		} 
 		else {
-			$event->dates		= JText::_('COM_EVENTLIST_OPEN_DATE');
+			$event->dates		= JText::_('COM_JEM_OPEN_DATE');
 		}
 
 		//build filter selectlist
 		$filters = array();
-		$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_EVENTLIST_NAME' ) );
-		$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_EVENTLIST_USERNAME' ) );
+		$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_NAME' ) );
+		$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_USERNAME' ) );
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
 
 		// search filter
@@ -132,7 +132,7 @@ class EventListViewAttendees extends JViewLegacy {
 	{
 		$elsettings = ELAdmin::config();
 		$document	=  JFactory::getDocument();
-		$document->addStyleSheet('components/com_eventlist/assets/css/eventlistbackend.css');
+		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
 
 		$rows      	=  $this->get( 'Data');
 		$event 		=  $this->get( 'Event' );
@@ -143,7 +143,7 @@ class EventListViewAttendees extends JViewLegacy {
 //			$date		= strftime( $this->elsettings->formatdate, strtotime( $row->dates ));
 		} 
 		else {
-			$event->dates	= JText::_('COM_EVENTLIST_OPEN_DATE');
+			$event->dates	= JText::_('COM_JEM_OPEN_DATE');
 		}
 		
 		//assign data to template

@@ -59,15 +59,15 @@ class EventListControllerCleanup extends EventListController
 		$task = JRequest::getCmd('task');
 
 		if ($task == 'cleaneventimg') {
-			$type = JText::_('COM_EVENTLIST_EVENT');
+			$type = JText::_('COM_JEM_EVENT');
 		} 
 		
 		if ($task == 'cleanvenueimg') {
-			$type = JText::_('COM_EVENTLIST_VENUE');
+			$type = JText::_('COM_JEM_VENUE');
 		} 
 		
 		if ($task == 'cleancategoryimg') {
-			$type = JText::_('COM_EVENTLIST_CATEGORY');
+			$type = JText::_('COM_JEM_CATEGORY');
 		} 
 		
 
@@ -76,9 +76,9 @@ class EventListControllerCleanup extends EventListController
 
 		$total = $model->delete();
 
-		$link = 'index.php?option=com_eventlist&view=cleanup';
+		$link = 'index.php?option=com_jem&view=cleanup';
 
-		$msg = $total.' '.$type.' '.JText::_( 'COM_EVENTLIST_IMAGES_DELETED');
+		$msg = $total.' '.$type.' '.JText::_( 'COM_JEM_IMAGES_DELETED');
 
 		$this->setRedirect( $link, $msg );
  	}
@@ -94,9 +94,9 @@ class EventListControllerCleanup extends EventListController
   {
     ELHelper::cleanup(1);
 
-    $link = 'index.php?option=com_eventlist&view=cleanup';
+    $link = 'index.php?option=com_jem&view=cleanup';
 
-    $msg = JText::_( 'COM_EVENTLIST_AUTOARCHIVE_DONE');
+    $msg = JText::_( 'COM_JEM_AUTOARCHIVE_DONE');
 
     $this->setRedirect( $link, $msg );
   }

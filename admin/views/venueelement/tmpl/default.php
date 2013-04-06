@@ -22,15 +22,15 @@
 defined('_JEXEC') or die;
 ?>
 
-<form action="index.php?option=com_eventlist&amp;view=venueelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
+<form action="index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
 
 <table class="adminform">
 	<tr>
 		<td width="100%">
-			<?php echo JText::_( 'COM_EVENTLIST_SEARCH' ).' '.$this->lists['filter']; ?>
+			<?php echo JText::_( 'COM_JEM_SEARCH' ).' '.$this->lists['filter']; ?>
 			<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button onclick="this.form.submit();"><?php echo JText::_( 'COM_EVENTLIST_GO' ); ?></button>
-			<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_EVENTLIST_RESET' ); ?></button>
+			<button onclick="this.form.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+			<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 		</td>
 		<td nowrap="nowrap">
 			 <?php echo $this->lists['state']; ?>
@@ -41,11 +41,11 @@ defined('_JEXEC') or die;
 <table class="adminlist" cellspacing="1">
 	<thead>
 		<tr>
-			<th width="7"><?php echo JText::_( 'COM_EVENTLIST_NUM' ); ?></th>
-			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'venueelement' ); ?></th>
-			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'venueelement' ); ?></th>
-			<th align="left" class="title"><?php echo JText::_( 'COM_EVENTLIST_COUNTRY' ); ?></th>
-			<th class="title"><?php echo JText::_( 'COM_EVENTLIST_PUBLISHED' ); ?></th>
+			<th width="7"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'venueelement' ); ?></th>
+			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'venueelement' ); ?></th>
+			<th align="left" class="title"><?php echo JText::_( 'COM_JEM_COUNTRY' ); ?></th>
+			<th class="title"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 		</tr>
 	</thead>
 
@@ -66,7 +66,7 @@ defined('_JEXEC') or die;
 		<tr class="<?php echo "row$k"; ?>">
 			<td><?php echo $this->pageNav->getRowOffset( $i ); ?></td>
 			<td align="left">
-				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_SELECT' );?>::<?php echo $row->venue; ?>">
+				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SELECT' );?>::<?php echo $row->venue; ?>">
 				<a style="cursor:pointer" onclick="window.parent.elSelectVenue('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->venue ); ?>');">
 				<?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>
 				</a></span>

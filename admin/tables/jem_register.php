@@ -3,8 +3,8 @@
  * @version 1.1 $Id$
  * @package Joomla
  * @subpackage EventList
- * @copyright (C) 2008 Christoph Lukes
- * @license GNU/GPL, see LICENCE.php
+ * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @license GNU/GPL, see LICENSE.php
  * EventList is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -22,39 +22,32 @@
 defined('_JEXEC') or die;
 
 /**
- * EventList table class
+ * EventList registration Model class
  *
  * @package Joomla
  * @subpackage EventList
- * @since 1.1
+ * @since 0.9
  */
-class eventlist_cats_event_relations extends JTable
+class jem_register extends JTable
 {
 	/**
 	 * Primary Key
 	 * @var int
 	 */
-	var $catid 				= null;
-	/**
-	 * Primary Key
-	 * @var int
-	 */
-	var $itemid				= null;
-	/**
-	 * Ordering
-	 * @var int
-	 * @todo implement
-	 */
-	var $ordering			= null;
+	var $id 		= null;
+	/** @var int */
+	var $event 		= null;
+	/** @var int */
+	var $uid 		= null;
+	/** @var date */
+	var $uregdate 	= null;
+	/** @var string */
+	var $uip 		= null;
+	/** @var int */
+	var $waiting 		= 0;
 
-	function eventlist_cats_event_relations(& $db) {
-		parent::__construct('#__eventlist_cats_event_relations', 'catid', $db);
-	}
-	
-	// overloaded check function
-	function check()
-	{
-		return;
+	function jem_register(& $db) {
+		parent::__construct('#__jem_register', 'id', $db);
 	}
 }
 ?>

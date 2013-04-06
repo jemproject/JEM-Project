@@ -45,7 +45,7 @@ defined('_JEXEC') or die;
     
        @$countperday[$year.$month.$day]++;
        if ($countperday[$year.$month.$day] == $limit+1) {
-        $this->cal->setEventContent($year, $month, $day, JText::_('COM_EVENTLIST_AND_MORE'));
+        $this->cal->setEventContent($year, $month, $day, JText::_('COM_JEM_AND_MORE'));
        	continue;
        }
        else if ($countperday[$year.$month.$day] > $limit+1) {
@@ -61,7 +61,7 @@ defined('_JEXEC') or die;
             $end = ELOutput::formattime($row->dates, $row->endtimes);
             
 			if ($start != '') :
-                $timehtml = '<div class="time"><span class="label">'.JText::_('COM_EVENTLIST_TIME').': </span>';
+                $timehtml = '<div class="time"><span class="label">'.JText::_('COM_JEM_TIME').': </span>';
                 $timehtml .= $start;
                 if ($end != '') :
                     $timehtml .= ' - '.$end;
@@ -121,7 +121,7 @@ defined('_JEXEC') or die;
     
         //venue
         if ($this->elsettings->showlocate == 1) :
-            $venue = '<div class="location"><span class="label">'.JText::_('COM_EVENTLIST_VENUE').': </span>';
+            $venue = '<div class="location"><span class="label">'.JText::_('COM_JEM_VENUE').': </span>';
             
 			if ($this->elsettings->showlinkvenue == 1 && 0) :
                 $venue .= $row->locid != 0 ? "<a href='".JRoute::_('index.php?view=venueevents&id='.$row->venueslug)."'>".$this->escape($row->venue)."</a>" : '-';
@@ -150,11 +150,11 @@ defined('_JEXEC') or die;
 <div id="jlcalendarlegend">
 	
     <div id="buttonshowall">
-        <?php echo JText::_('COM_EVENTLIST_SHOWALL'); ?>
+        <?php echo JText::_('COM_JEM_SHOWALL'); ?>
     </div>
 	
     <div id="buttonhideall">
-        <?php echo JText::_('COM_EVENTLIST_HIDEALL'); ?>
+        <?php echo JText::_('COM_JEM_HIDEALL'); ?>
     </div>
 	
     <?php

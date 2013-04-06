@@ -50,29 +50,29 @@ class EventListViewCategory extends JViewLegacy {
 		$cid 		= JRequest::getVar( 'cid' );
 
 		//add css to document
-		$document->addStyleSheet('components/com_eventlist/assets/css/eventlistbackend.css');
-		$document->addScript('components/com_eventlist/assets/js/attachments.js' );
+		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
+		$document->addScript('components/com_jem/assets/js/attachments.js' );
 		// for color picker
-    	$document->addStyleSheet('components/com_eventlist/assets/css/picker.css');
-    	$document->addScript( JURI::base().'/components/com_eventlist/assets/js/picker.js' );
+    	$document->addStyleSheet('components/com_jem/assets/css/picker.css');
+    	$document->addScript( JURI::base().'/components/com_jem/assets/js/picker.js' );
 
 		//create the toolbar
 		if ( $cid ) {
-			JToolBarHelper::title( JText::_( 'COM_EVENTLIST_EDIT_CATEGORY' ), 'categoriesedit' );
+			JToolBarHelper::title( JText::_( 'COM_JEM_EDIT_CATEGORY' ), 'categoriesedit' );
 
 		} else {
-			JToolBarHelper::title( JText::_( 'COM_EVENTLIST_ADD_CATEGORY' ), 'categoriesedit' );
+			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_CATEGORY' ), 'categoriesedit' );
 
 			//set the submenu
-			JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_EVENTLIST' ), 'index.php?option=com_eventlist');
-			JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_EVENTS' ), 'index.php?option=com_eventlist&view=events');
-			JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_VENUES' ), 'index.php?option=com_eventlist&view=venues');
-			JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_CATEGORIES' ), 'index.php?option=com_eventlist&view=categories');
-			JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_ARCHIVESCREEN' ), 'index.php?option=com_eventlist&view=archive');
-			JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_GROUPS' ), 'index.php?option=com_eventlist&view=groups');
-			JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_HELP' ), 'index.php?option=com_eventlist&view=help');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTLIST' ), 'index.php?option=com_jem');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
 			if ($user->get('gid') > 24) {
-				JSubMenuHelper::addEntry( JText::_( 'COM_EVENTLIST_SETTINGS' ), 'index.php?option=com_eventlist&controller=settings&task=edit');
+				JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
 			}
 		}
 		JToolBarHelper::apply();
@@ -94,8 +94,8 @@ class EventListViewCategory extends JViewLegacy {
 		// fail if checked out not by 'me'
 		if ($row->id) {
 			if ($model->isCheckedOut( $user->get('id') )) {
-				JError::raiseWarning( 'SOME_ERROR_CODE', $row->catname.' '.JText::_( 'COM_EVENTLIST_EDITED_BY_ANOTHER_ADMIN' ));
-				$app->redirect( 'index.php?option=com_eventlist&view=categories' );
+				JError::raiseWarning( 'SOME_ERROR_CODE', $row->catname.' '.JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ));
+				$app->redirect( 'index.php?option=com_jem&view=categories' );
 			}
 		}
 
@@ -124,15 +124,15 @@ class EventListViewCategory extends JViewLegacy {
             btn.fireEvent('click');
 		}";
 		
-		$link = 'index.php?option=com_eventlist&amp;view=imagehandler&amp;layout=uploadimage&amp;task=categoriesimg&amp;tmpl=component';
-		$link2 = 'index.php?option=com_eventlist&amp;view=imagehandler&amp;task=selectcategoriesimg&amp;tmpl=component';
+		$link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task=categoriesimg&amp;tmpl=component';
+		$link2 = 'index.php?option=com_jem&amp;view=imagehandler&amp;task=selectcategoriesimg&amp;tmpl=component';
 		$document->addScriptDeclaration($js);
 		$imageselect = "\n<input style=\"background: #ffffff;\" type=\"text\" id=\"a_imagename\" value=\"$row->image\" disabled=\"disabled\" onchange=\"javascript:if (document.forms[0].a_imagename.value!='') {document.imagelib.src='../images/eventlist/categories/' + document.forms[0].a_imagename.value} else {document.imagelib.src='../images/blank.png'}\"; /><br />";
 
-		$imageselect .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_EVENTLIST_UPLOAD')."\" href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_EVENTLIST_UPLOAD')."</a></div></div>\n";
-		$imageselect .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_EVENTLIST_SELECTIMAGE')."\" href=\"$link2\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_EVENTLIST_SELECTIMAGE')."</a></div></div>\n";
+		$imageselect .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_UPLOAD')."\" href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_UPLOAD')."</a></div></div>\n";
+		$imageselect .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_SELECTIMAGE')."\" href=\"$link2\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_SELECTIMAGE')."</a></div></div>\n";
 
-		$imageselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectImage('', '".JText::_('COM_EVENTLIST_SELECTIMAGE')."' );\" value=\"".JText::_('COM_EVENTLIST_RESET')."\" />";
+		$imageselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectImage('', '".JText::_('COM_JEM_SELECTIMAGE')."' );\" value=\"".JText::_('COM_JEM_RESET')."\" />";
 		$imageselect .= "\n<input type=\"hidden\" id=\"a_image\" name=\"image\" value=\"$row->image\" />";
 		
 		$this->assignRef('imageselect'	, $imageselect);
@@ -145,7 +145,7 @@ class EventListViewCategory extends JViewLegacy {
 		
 		//build grouplist
 		$grouplist		= array();
-		$grouplist[] 	= JHTML::_('select.option', '0', JText::_( 'COM_EVENTLIST_NO_GROUP' ) );
+		$grouplist[] 	= JHTML::_('select.option', '0', JText::_( 'COM_JEM_NO_GROUP' ) );
 		$grouplist 		= array_merge( $grouplist, $groups );
 
 		$Lists['groups']	= JHTML::_('select.genericlist', $grouplist, 'groupid', 'size="1" class="inputbox"', 'value', 'text', $row->groupid );

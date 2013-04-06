@@ -74,7 +74,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 	$db		= JFactory::getDBO();
 	$user	= JFactory::getUser();
 
-	require_once(JPATH_SITE.DS.'components'.DS.'com_eventlist'.DS.'helpers'.DS.'route.php');
+	require_once(JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'helpers'.DS.'route.php');
 
 	if (is_array( $areas )) {
 		if (!array_intersect( $areas, array_keys( $this->onContentSearchAreas() ) )) {
@@ -167,9 +167,9 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		. ' "2" AS browsernav,'
 		. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
 		. ' CONCAT_WS( " / ", '. $searchEventList .', c.catname, a.title ) AS section'
-		. ' FROM #__eventlist_events AS a'
-		. ' INNER JOIN #__eventlist_categories AS c'
-		. ' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.catid = c.id'
+		. ' FROM #__jem_events AS a'
+		. ' INNER JOIN #__jem_categories AS c'
+		. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 		. ' WHERE ( '.$where.' )'
 		. ' AND rel.itemid = a.id'
 		. ' AND a.published = 1'
@@ -243,7 +243,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		. ' "2" AS browsernav,'
 		. ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug, '
 		. ' CONCAT_WS( " / ", '. $searchEventList .', venue )AS section'
-		. ' FROM #__eventlist_venues'
+		. ' FROM #__jem_venues'
 		. ' WHERE ( '.$where.')'
 		. ' AND published = 1'
 		. ' ORDER BY '. $order
@@ -295,7 +295,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		. ' "2" AS browsernav,'
 		. ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug, '
 		. ' CONCAT_WS( " / ", '. $searchEventList .', catname )AS section'
-		. ' FROM #__eventlist_categories'
+		. ' FROM #__jem_categories'
 		. ' WHERE ( '.$where.' )'
 		. ' AND published = 1'
 		. ' AND access <= '.(int) $user->get('aid')

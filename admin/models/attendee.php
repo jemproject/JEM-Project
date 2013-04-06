@@ -104,7 +104,7 @@ class EventListModelAttendee extends JModelLegacy
 		if (empty($this->_data))
 		{
 			$query = 'SELECT r.*, u.username '
-					. ' FROM #__eventlist_register AS r '
+					. ' FROM #__jem_register AS r '
 					. ' LEFT JOIN #__users AS u ON u.id = r.uid '
 					. ' WHERE r.id = '.$this->_id
 					;
@@ -128,7 +128,7 @@ class EventListModelAttendee extends JModelLegacy
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
 		{
-			$data = JTable::getInstance('eventlist_register', '');
+			$data = JTable::getInstance('jem_register', '');
 			$this->_data = $data;			
 		}
 		return true;
@@ -139,11 +139,11 @@ class EventListModelAttendee extends JModelLegacy
 		$attendee = $this->getData();
 		
 		if (!$attendee->id) {
-			$this->setError('COM_EVENTLIST_MISSING_ATTENDEE_ID');
+			$this->setError('COM_JEM_MISSING_ATTENDEE_ID');
 			return false;
 		}
 		
-		$row = JTable::getInstance('eventlist_register', '');
+		$row = JTable::getInstance('jem_register', '');
 		$row->bind($attendee);
 		$row->waiting = $attendee->waiting ? 0 : 1;
 		return $row->store();		
@@ -162,7 +162,7 @@ class EventListModelAttendee extends JModelLegacy
 		$config 	= & JFactory::getConfig();
 		$eventid = $data['event']; 
 
-		$row  =& $this->getTable('eventlist_register', '');
+		$row  =& $this->getTable('jem_register', '');
 
 		// bind it to the table
 		if (!$row->bind($data)) {
@@ -182,8 +182,8 @@ class EventListModelAttendee extends JModelLegacy
 			$row->uregdate 		= gmdate('Y-m-d H:i:s');
 			
 			$query = ' SELECT e.maxplaces, e.waitinglist, COUNT(r.id) as booked ' 
-			       . ' FROM #__eventlist_events AS e '
-			       . ' INNER JOIN #__eventlist_register AS r ON r.event = e.id ' 
+			       . ' FROM #__jem_events AS e '
+			       . ' INNER JOIN #__jem_register AS r ON r.event = e.id ' 
 			       . ' WHERE e.id = ' . $this->_db->Quote($eventid)
 			       . '   AND r.waiting = 0 '
 			       . ' GROUP BY e.id ';
@@ -197,7 +197,7 @@ class EventListModelAttendee extends JModelLegacy
 				if ($details->booked >= $details->maxplaces) 
 				{
 					if (!$details->waitinglist) {
-						JError::raiseWarning(0, JText::_('COM_EVENTLIST_ERROR_REGISTER_EVENT_IS_FULL'));
+						JError::raiseWarning(0, JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'));
 						return false;
 					}
 					$row->waiting = 1;

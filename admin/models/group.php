@@ -117,7 +117,7 @@ class EventListModelGroup extends JModelLegacy
 		if (empty($this->_data))
 		{
 			$query = 'SELECT *'
-					. ' FROM #__eventlist_groups'
+					. ' FROM #__jem_groups'
 					. ' WHERE id = '.$this->_id
 					;
 			$this->_db->setQuery($query);
@@ -215,7 +215,7 @@ class EventListModelGroup extends JModelLegacy
     	//get selected members
 		if ($this->_id){
 			$query = 'SELECT member'
-					. ' FROM #__eventlist_groupmembers'
+					. ' FROM #__jem_groupmembers'
 					. ' WHERE group_id = '.$this->_id;
 
 			$this->_db->setQuery ($query);
@@ -241,10 +241,10 @@ class EventListModelGroup extends JModelLegacy
 		{
 			//sticky forms
 			$session = JFactory::getSession();
-			if ($session->has('groupform', 'com_eventlist')) {
+			if ($session->has('groupform', 'com_jem')) {
 				
-				$groupform 	= $session->get('groupform', 0, 'com_eventlist');
-				$group 		=  JTable::getInstance('eventlist_groups', '');
+				$groupform 	= $session->get('groupform', 0, 'com_jem');
+				$group 		=  JTable::getInstance('jem_groups', '');
 								
 				if (!$group->bind($groupform)) {
 					JError::raiseError( 500, $this->_db->stderr() );
@@ -276,7 +276,7 @@ class EventListModelGroup extends JModelLegacy
 	{
 		if ($this->_id)
 		{
-			$group = & JTable::getInstance('eventlist_groups', '');
+			$group = & JTable::getInstance('jem_groups', '');
 			return $group->checkin($this->_id);
 		}
 		return false;
@@ -302,7 +302,7 @@ class EventListModelGroup extends JModelLegacy
 				$uid	= $user->get('id');
 			}
 			// Lets get to it and checkout the thing...
-			$group =  JTable::getInstance('eventlist_groups', '');
+			$group =  JTable::getInstance('jem_groups', '');
 			return $group->checkout($uid, $this->_id);
 		}
 		return false;
@@ -341,7 +341,7 @@ class EventListModelGroup extends JModelLegacy
 	 */
 	function store($data)
 	{
-		$row =& JTable::getInstance('eventlist_groups', '');
+		$row =& JTable::getInstance('jem_groups', '');
 
 		//Bind the form fields to the table
 		if (!$row->bind($data)) {
@@ -363,12 +363,12 @@ class EventListModelGroup extends JModelLegacy
 
 		$members =JRequest::getVar('maintainers',  '', 'post', 'array');
 
-		$this->_db->setQuery ('DELETE FROM #__eventlist_groupmembers WHERE group_id = '.$row->id);
+		$this->_db->setQuery ('DELETE FROM #__jem_groupmembers WHERE group_id = '.$row->id);
 		$this->_db->query();
 
 		foreach ($members as $member){
 			$member = intval($member);
-			$this->_db->setQuery ("INSERT INTO #__eventlist_groupmembers (group_id, member) VALUES ($row->id, $member)");
+			$this->_db->setQuery ("INSERT INTO #__jem_groupmembers (group_id, member) VALUES ($row->id, $member)");
 			$this->_db->query();
 		}
 

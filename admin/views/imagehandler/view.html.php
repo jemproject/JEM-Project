@@ -83,7 +83,7 @@ class EventListViewImagehandler extends JViewLegacy  {
 		JResponse::allowCache(false);
 
 		//add css
-		$document->addStyleSheet('components/com_eventlist/assets/css/eventlistbackend.css');
+		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
 
 		//get images
 		$images  = $this->get('images');
@@ -103,7 +103,7 @@ class EventListViewImagehandler extends JViewLegacy  {
 			parent::display($tpl);
 		} else {
 			//no images in the folder, redirect to uploadscreen and raise notice
-			JError::raiseNotice('SOME_ERROR_CODE', JText::_('COM_EVENTLIST_NO_IMAGES_AVAILABLE'));
+			JError::raiseNotice('SOME_ERROR_CODE', JText::_('COM_JEM_NO_IMAGES_AVAILABLE'));
 			$this->setLayout('uploadimage');
 			JRequest::setVar( 'task', $task );
 			$this->_displayuploadimage($tpl);
@@ -139,7 +139,7 @@ class EventListViewImagehandler extends JViewLegacy  {
 		$task 		= JRequest::getVar( 'task' );
 
 		//add css
-		$document->addStyleSheet('components/com_eventlist/assets/css/eventlistbackend.css');
+		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
 		
 		jimport('joomla.client.helper');
 		$ftp = JClientHelper::setCredentialsFromRequest('ftp');

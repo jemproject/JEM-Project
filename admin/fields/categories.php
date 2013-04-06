@@ -45,14 +45,14 @@ class JElementCategories extends JElement
 		$doc 		=& JFactory::getDocument();
 		$fieldName	= $control_name.'['.$name.']';
 
-		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_eventlist'.DS.'tables');
+		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_jem'.DS.'tables');
 
-		$category =& JTable::getInstance('eventlist_categories', '');
+		$category =& JTable::getInstance('jem_categories', '');
 
 		if ($value) {
 			$category->load($value);
 		} else {
-			$category->catname = JText::_('COM_EVENTLIST_SELECT_CATEGORY');
+			$category->catname = JText::_('COM_JEM_SELECT_CATEGORY');
 		}
 
 		$js = "
@@ -64,18 +64,18 @@ class JElementCategories extends JElement
 		
 		function elCatReset() {
 		  document.getElementById('a_id').value = 0;
-      document.getElementById('a_name').value = '".htmlspecialchars(JText::_('COM_EVENTLIST_SELECT_CATEGORY'))."';
+      document.getElementById('a_name').value = '".htmlspecialchars(JText::_('COM_JEM_SELECT_CATEGORY'))."';
 	  }
 		";
 
-		$link = 'index.php?option=com_eventlist&amp;view=categoryelement&amp;tmpl=component';
+		$link = 'index.php?option=com_jem&amp;view=categoryelement&amp;tmpl=component';
 		$doc->addScriptDeclaration($js);
 
 		JHTML::_('behavior.modal', 'a.modal');
 
 		$html = "\n<div style=\"float: left;\"><input style=\"background: #ffffff;\" type=\"text\" id=\"a_name\" value=\"$category->catname\" disabled=\"disabled\" /></div>";
-		$html .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_EVENTLIST_SELECT')."\"  href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_EVENTLIST_SELECT')."</a></div></div>\n";
-    $html .= "<div class=\"button2-left\"><div class=\"blank\"><a title=\"".JText::_('COM_EVENTLIST_RESET')."\" onClick=\"elCatReset();return false;\" >".JText::_('COM_EVENTLIST_RESET')."</a></div></div>\n";
+		$html .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_SELECT')."\"  href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_SELECT')."</a></div></div>\n";
+    $html .= "<div class=\"button2-left\"><div class=\"blank\"><a title=\"".JText::_('COM_JEM_RESET')."\" onClick=\"elCatReset();return false;\" >".JText::_('COM_JEM_RESET')."</a></div></div>\n";
 		$html .= "\n<input type=\"hidden\" id=\"a_id\" name=\"$fieldName\" value=\"$value\" />";
 
 		return $html;

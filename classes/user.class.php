@@ -142,7 +142,7 @@ static	 function ismaintainer()
 		$user	=  JFactory::getUser();
 
 		$query = 'SELECT g.group_id'
-				. ' FROM #__eventlist_groupmembers AS g'
+				. ' FROM #__jem_groupmembers AS g'
 				. ' WHERE g.member = '.(int) $user->get('id')
 				;
 		$db->setQuery( $query );
@@ -158,7 +158,7 @@ static	 function ismaintainer()
 
 		//count the maintained categories
 		$query = 'SELECT COUNT(id)'
-				. ' FROM #__eventlist_categories'
+				. ' FROM #__jem_categories'
 				. ' WHERE published = 1'
 				. ' AND groupid = '.$categories
 				;

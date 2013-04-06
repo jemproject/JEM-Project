@@ -76,7 +76,7 @@ class eventlist_cats
 			
 			$query = 'SELECT catname,'
 					.' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as categoryslug'
-					.' FROM #__eventlist_categories'
+					.' FROM #__jem_categories'
 					.' WHERE id ='. (int)$cid 
 					.' AND published = 1'
 					;
@@ -95,7 +95,7 @@ class eventlist_cats
 	{
 		$db = JFactory::getDBO();
 		
-		$query = 'SELECT parent_id FROM #__eventlist_categories WHERE id = '.(int)$cid;
+		$query = 'SELECT parent_id FROM #__jem_categories WHERE id = '.(int)$cid;
 		$db->setQuery( $query );
 
 		if($cid != 0) {
@@ -134,7 +134,7 @@ class eventlist_cats
 		}
 		
 		$query = 'SELECT *, id AS value, catname AS text'
-				.' FROM #__eventlist_categories'
+				.' FROM #__jem_categories'
 				.$where
 				.' ORDER BY parent_id, ordering'
 				;
@@ -220,7 +220,7 @@ class eventlist_cats
 		$catlist 	= array();
 		
 		if($top) {
-			$catlist[] 	= JHTML::_( 'select.option', '0', JText::_( 'COM_EVENTLIST_TOPLEVEL' ) );
+			$catlist[] 	= JHTML::_( 'select.option', '0', JText::_( 'COM_JEM_TOPLEVEL' ) );
 		}
 		
 		$catlist = array_merge($catlist, eventlist_cats::getcatselectoptions($list));
@@ -263,7 +263,7 @@ class eventlist_cats
     $db = JFactory::getDBO();
     
 		$query = ' SELECT id, parent_id '
-        . ' FROM #__eventlist_categories '
+        . ' FROM #__jem_categories '
         . ' WHERE published = 1 '
         ;
         

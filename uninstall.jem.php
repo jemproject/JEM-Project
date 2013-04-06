@@ -196,7 +196,7 @@ if (is_a($plugins, 'JXMLElement') && count($plugins->children())) {
  $rows = 0;
 ?>
 
-<h2>EventList Removal</h2>
+<h2>JEM Removal</h2>
 <table class="adminlist">
 	<thead>
 		<tr>
@@ -211,7 +211,7 @@ if (is_a($plugins, 'JXMLElement') && count($plugins->children())) {
 	</tfoot>
 	<tbody>
 		<tr class="row0">
-			<td class="key" colspan="2"><?php echo 'EventList '.JText::_('Component'); ?></td>
+			<td class="key" colspan="2"><?php echo 'JEM '.JText::_('Component'); ?></td>
 			<td><strong><?php echo JText::_('Removed'); ?></strong></td>
 		</tr>
 <?php if (count($status->modules)) : ?>

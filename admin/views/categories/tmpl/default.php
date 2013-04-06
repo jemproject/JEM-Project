@@ -27,10 +27,10 @@ defined('_JEXEC') or die; ?>
 	<table class="adminform">
 		<tr>
 			<td width="100%">
-			  	<?php echo JText::_( 'COM_EVENTLIST_SEARCH' ); ?>
+			  	<?php echo JText::_( 'COM_JEM_SEARCH' ); ?>
 				<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-				<button type="submit"><?php echo JText::_( 'COM_EVENTLIST_GO' ); ?></button>
-				<button type="button" onclick="document.id('search').value='';this.form.submit();"><?php echo JText::_( 'COM_EVENTLIST_RESET' ); ?></button>
+				<button type="submit"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+				<button type="button" onclick="document.id('search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 			</td>
 			<td nowrap="nowrap">
 			  <?php
@@ -46,18 +46,18 @@ defined('_JEXEC') or die; ?>
 	<table class="adminlist" cellspacing="1">
 	<thead>
 		<tr>
-			<th width="5"><?php echo JText::_( 'COM_EVENTLIST_NUM' ); ?></th>
+			<th width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 			<th width="5"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-			<th width="20%"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_ALIAS', 'c.alias', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-      <th width="10px" nowrap="nowrap"><?php echo JText::_( 'COM_EVENTLIST_COLOR' ); ?></th>
-			<th width="15%"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_GROUP', 'gr.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_EVENTLIST_EVENTS' ); ?></th>
-			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_EVENTLIST_PUBLISHED' ); ?></th>
-			<th width="7%"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_ACCESS', 'c.access', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-			<th width="80"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_REORDER', 'c.ordering', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th width="20%"><?php echo JHTML::_('grid.sort', 'COM_JEM_ALIAS', 'c.alias', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+      <th width="10px" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_COLOR' ); ?></th>
+			<th width="15%"><?php echo JHTML::_('grid.sort', 'COM_JEM_GROUP', 'gr.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_EVENTS' ); ?></th>
+			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
+			<th width="7%"><?php echo JHTML::_('grid.sort', 'COM_JEM_ACCESS', 'c.access', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th width="80"><?php echo JHTML::_('grid.sort', 'COM_JEM_REORDER', 'c.ordering', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="1%"><?php echo JHTML::_('grid.order', $this->rows, 'filesave.png', 'saveordercat' ); ?></th>
-			<th width="1%" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_EVENTLIST_ID', 'c.id', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th width="1%" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'c.id', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 		</tr>
 	</thead>
 
@@ -77,8 +77,8 @@ defined('_JEXEC') or die; ?>
 		$i = 0;
 		$n = count($this->rows);
 		foreach ($this->rows as $row) {
-			$link 		= 'index.php?option=com_eventlist&amp;controller=categories&amp;task=edit&amp;cid[]='. $row->id;
-			$grouplink 	= 'index.php?option=com_eventlist&amp;controller=groups&amp;task=edit&amp;cid[]='. $row->groupid;
+			$link 		= 'index.php?option=com_jem&amp;controller=categories&amp;task=edit&amp;cid[]='. $row->id;
+			$grouplink 	= 'index.php?option=com_jem&amp;controller=groups&amp;task=edit&amp;cid[]='. $row->groupid;
 			$published 	= JHTML::_('grid.published', $row, $i );
 			//$access 	= JHTML::_('grid.access', $row, $i );
 			//$checked 	= JHTML::_('grid.checkedout', $row, $i );
@@ -93,7 +93,7 @@ defined('_JEXEC') or die; ?>
 					echo $row->treename.' '.$this->escape($row->catname);
 				} else {
 				?>
-					<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_EDIT_CATEGORY' );?>::<?php echo $row->catname; ?>">
+					<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_CATEGORY' );?>::<?php echo $row->catname; ?>">
 					<?php echo $row->treename.' ';?>
 					<a href="<?php echo $link; ?>">
 					<?php echo $this->escape($row->catname); ?>
@@ -118,7 +118,7 @@ defined('_JEXEC') or die; ?>
       </td>
 			<td align="center">
 				<?php if ($row->catgroup) {	?>
-					<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_EDIT_GROUP' );?>::<?php echo $row->catgroup; ?>">
+					<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_GROUP' );?>::<?php echo $row->catgroup; ?>">
 					<a href="<?php echo $grouplink; ?>">
 						<?php echo htmlspecialchars($row->catgroup, ENT_QUOTES, 'UTF-8'); ?>
 					</a></span>
@@ -162,7 +162,7 @@ defined('_JEXEC') or die; ?>
 	</p>
 
 	<input type="hidden" name="boxchecked" value="0" />
-	<input type="hidden" name="option" value="com_eventlist" />
+	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="controller" value="categories" />
 	<input type="hidden" name="view" value="categories" />
 	<input type="hidden" name="task" value="" />

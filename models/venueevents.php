@@ -76,10 +76,10 @@ class EventListModelVenueevents extends JModelLegacy
 		$this->setId((int)$id);
 
 		// Get the paramaters of the active menu item
-		$params 	=  $app->getParams('com_eventlist');
+		$params 	=  $app->getParams('com_jem');
 
 		//get the number of events from database
-		$limit       	= $app->getUserStateFromRequest('com_eventlist.venueevents.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit       	= $app->getUserStateFromRequest('com_jem.venueevents.limit', 'limit', $params->def('display_num', 0), 'int');
 		$limitstart		= JRequest::getInt('limitstart');
 
 		$this->setState('limit', $limit);
@@ -214,10 +214,10 @@ class EventListModelVenueevents extends JModelLegacy
 		    . ' l.venue, l.city, l.state, l.url, l.street, ct.name AS countryname, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-				. ' FROM #__eventlist_events AS a'
-				. ' LEFT JOIN #__eventlist_venues AS l ON l.id = a.locid'
-				. ' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.itemid = a.id'
-				. ' LEFT JOIN #__eventlist_categories AS c ON c.id = rel.catid '
+				. ' FROM #__jem_events AS a'
+				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
 				. ' LEFT JOIN #__eventlist_countries AS ct ON ct.iso2 = l.country '
 				. $where
 				. $orderby
@@ -268,7 +268,7 @@ class EventListModelVenueevents extends JModelLegacy
            }
 
 		// Get the paramaters of the active menu item
-		$params 	=  $app->getParams('com_eventlist');
+		$params 	=  $app->getParams('com_jem');
 		
 		$task 		= JRequest::getWord('task');
 
@@ -339,7 +339,7 @@ class EventListModelVenueevents extends JModelLegacy
 		//Location holen
 		$query = 'SELECT *,'
 				.' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug'
-				.' FROM #__eventlist_venues'
+				.' FROM #__jem_venues'
 				.' WHERE id ='. $this->_id;
 
 		$this->_db->setQuery( $query );
@@ -365,8 +365,8 @@ class EventListModelVenueevents extends JModelLegacy
 		
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-				. ' FROM #__eventlist_categories AS c'
-				. ' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.catid = c.id'
+				. ' FROM #__jem_categories AS c'
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				. ' AND c.published = 1'
 				. ' AND c.access  <= '.$gid;

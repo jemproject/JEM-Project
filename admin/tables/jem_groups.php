@@ -22,32 +22,53 @@
 defined('_JEXEC') or die;
 
 /**
- * EventList registration Model class
+ * EventList groups Model class
  *
  * @package Joomla
  * @subpackage EventList
  * @since 0.9
  */
-class eventlist_register extends JTable
+class jem_groups extends JTable
 {
 	/**
 	 * Primary Key
 	 * @var int
 	 */
-	var $id 		= null;
+	var $id 				= null;
 	/** @var int */
-	var $event 		= null;
-	/** @var int */
-	var $uid 		= null;
-	/** @var date */
-	var $uregdate 	= null;
+	var $name				= '';
 	/** @var string */
-	var $uip 		= null;
+	var $description 		= '';
 	/** @var int */
-	var $waiting 		= 0;
+	var $checked_out 		= 0;
+	/** @var date */
+	var $checked_out_time	= 0;
 
-	function eventlist_register(& $db) {
-		parent::__construct('#__eventlist_register', 'id', $db);
+	function jem_groups(& $db) {
+		parent::__construct('#__jem_groups', 'id', $db);
+	}
+
+	// overloaded check function
+	function check()
+	{
+		// Not typed in a category name?
+		if (trim( $this->name ) == '') {
+			$this->_error = JText::_( 'ADD GROUP NAME' );
+			JError::raiseWarning('SOME_ERROR_CODE', $this->_error );
+			return false;
+		}
+
+		/** check for existing name */
+		$query = 'SELECT id FROM #__jem_groups WHERE name = '.$this->_db->Quote($this->name);
+		$this->_db->setQuery($query);
+
+		$xid = intval($this->_db->loadResult());
+		if ($xid && $xid != intval($this->id)) {
+			JError::raiseWarning('SOME_ERROR_CODE', JText::sprintf('GROUP NAME ALREADY EXIST', $this->name));
+			return false;
+		}
+
+		return true;
 	}
 }
 ?>

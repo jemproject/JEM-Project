@@ -103,27 +103,27 @@ defined( '_JEXEC' ) or die;
 		}
 
 		if ( venue.length==0 ) {
-   			alert("<?php echo JText::_( 'COM_EVENTLIST_ERROR_ADD_VENUE', true ); ?>");
+   			alert("<?php echo JText::_( 'COM_JEM_ERROR_ADD_VENUE', true ); ?>");
    			validator.handleResponse(false,form.venue);
    			form.venue.focus();
    			return false;
    		} else if ( validator.validate(form.street) === false) {
-   			alert("<?php echo JText::_( 'COM_EVENTLIST_ERROR_ADD_STREET', true ); ?>");
+   			alert("<?php echo JText::_( 'COM_JEM_ERROR_ADD_STREET', true ); ?>");
    			validator.handleResponse(false,form.street);
    			form.street.focus();
    			return false;
 		} else if ( validator.validate(form.city) === false) {
-  			alert("<?php echo JText::_( 'COM_EVENTLIST_ERROR_ADD_CITY', true ); ?>");
+  			alert("<?php echo JText::_( 'COM_JEM_ERROR_ADD_CITY', true ); ?>");
   			validator.handleResponse(false,form.city);
   			form.city.focus();
   			return false;
 		} else if ( validator.validate(form.country) === false) {
-   			alert("<?php echo JText::_( 'COM_EVENTLIST_ERROR_ADD_COUNTRY', true ); ?>");
+   			alert("<?php echo JText::_( 'COM_JEM_ERROR_ADD_COUNTRY', true ); ?>");
    			validator.handleResponse(false,form.country);
    			form.country.focus();
    			return false;
 		} else if ( validator.validate(form.url) === false) {
-   			alert("<?php echo JText::_( 'COM_EVENTLIST_WRONG_URL_FORMAT', true ); ?>");
+   			alert("<?php echo JText::_( 'COM_JEM_WRONG_URL_FORMAT', true ); ?>");
    			return false;
   		} else {
   			<?php if ($this->editoruser):
@@ -191,10 +191,10 @@ defined( '_JEXEC' ) or die;
 
         <div class="el_save_buttons floattext">
   			<button type="button" onclick="return submitbutton('savevenue')">
-  				<?php echo JText::_('COM_EVENTLIST_SAVE') ?>
+  				<?php echo JText::_('COM_JEM_SAVE') ?>
   			</button>
   			<button type="reset" onclick="return submitbutton('cancelvenue')">
-  				<?php echo JText::_('COM_EVENTLIST_CANCEL') ?>
+  				<?php echo JText::_('COM_JEM_CANCEL') ?>
   			</button>
 		</div>
 
@@ -202,42 +202,42 @@ defined( '_JEXEC' ) or die;
 
       	<fieldset class="el_fldst_address">
 
-            <legend><?php echo JText::_('COM_EVENTLIST_ADDRESS'); ?></legend>
+            <legend><?php echo JText::_('COM_JEM_ADDRESS'); ?></legend>
 
             <div class="el_venue floattext">
-                <label for="venue"><?php echo JText::_( 'COM_EVENTLIST_VENUE' ).':'; ?></label>
+                <label for="venue"><?php echo JText::_( 'COM_JEM_VENUE' ).':'; ?></label>
                 <input class="inputbox required" type="text" name="venue" id="venue" value="<?php echo $this->row->venue; ?>" size="55" maxlength="50" />
             </div>
 
             <div class="el_street floattext">
-                <label for="street"><?php echo JText::_( 'COM_EVENTLIST_STREET' ).':'; ?></label>
+                <label for="street"><?php echo JText::_( 'COM_JEM_STREET' ).':'; ?></label>
                 <input class="inputbox" type="text" name="street" id="street" value="<?php echo $this->row->street; ?>" size="55" maxlength="50" />
             </div>
 
             <div class="el_plz floattext">
-                <label for="plz"><?php echo JText::_( 'COM_EVENTLIST_ZIP' ).':'; ?></label>
+                <label for="plz"><?php echo JText::_( 'COM_JEM_ZIP' ).':'; ?></label>
                 <input class="inputbox" type="text" name="plz" id="plz" value="<?php echo $this->row->plz; ?>" size="15" maxlength="10" />
             </div>
 
             <div class="el_city floattext">
-                <label for="city"><?php echo JText::_( 'COM_EVENTLIST_CITY' ).':'; ?></label>
+                <label for="city"><?php echo JText::_( 'COM_JEM_CITY' ).':'; ?></label>
                 <input class="inputbox" type="text" name="city" id="city" value="<?php echo $this->row->city; ?>" size="55" maxlength="50" />
             </div>
 
             <div class="el_state floattext">
-                <label for="state"><?php echo JText::_( 'COM_EVENTLIST_STATE' ).':'; ?></label>
+                <label for="state"><?php echo JText::_( 'COM_JEM_STATE' ).':'; ?></label>
                 <input class="inputbox" type="text" name="state" id="state" value="<?php echo $this->row->state; ?>" size="55" maxlength="50" />
             </div>
 
             <div class="el_country floattext">
-                <label for="country"><?php echo JText::_( 'COM_EVENTLIST_COUNTRY' ).':'; ?></label>
+                <label for="country"><?php echo JText::_( 'COM_JEM_COUNTRY' ).':'; ?></label>
                 <?php echo $this->lists['countries']; ?>
             </div>
 
             <div class="el_url floattext">
-                <label for="url"><?php echo JText::_( 'COM_EVENTLIST_WEBSITE' ).':'; ?></label>
+                <label for="url"><?php echo JText::_( 'COM_JEM_WEBSITE' ).':'; ?></label>
                 <input class="inputbox validate-url" name="url" id="url" type="text" value="<?php echo $this->row->url; ?>" size="55" maxlength="199" />&nbsp;
-                <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_WEBSITE_HINT'); ?>">
+                <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_WEBSITE_HINT'); ?>">
                 		<?php echo $this->infoimage; ?>
                 </span>
             </div>
@@ -245,29 +245,29 @@ defined( '_JEXEC' ) or die;
             <?php if ( $this->elsettings->showmapserv != 0 ) : ?>
             <div class="el_map floattext">
                 <p>
-                    <br /><strong><?php echo JText::_( 'COM_EVENTLIST_ENABLE_MAP' ).':'; ?></strong>
-                    <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_ADDRESS_NOTICE'); ?>">
+                    <br /><strong><?php echo JText::_( 'COM_JEM_ENABLE_MAP' ).':'; ?></strong>
+                    <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_ADDRESS_NOTICE'); ?>">
                         <?php echo $this->infoimage; ?>
                     </span>
                 </p>
 
-                <label for="map0"><?php echo JText::_( 'COM_EVENTLIST_NO' ); ?></label>
+                <label for="map0"><?php echo JText::_( 'COM_JEM_NO' ); ?></label>
                 <input type="radio" name="map" id="map0" onchange="removerequired();" value="0" <?php echo $this->row->map == 0 ? 'checked="checked"' : ''; ?> class="inputbox" />
                 <br class="clear" />
-              	<label for="map1"><?php echo JText::_( 'COM_EVENTLIST_YES' ); ?></label>
+              	<label for="map1"><?php echo JText::_( 'COM_JEM_YES' ); ?></label>
               	<input type="radio" name="map" id="map1" onchange="addrequired();" value="1" <?php echo $this->row->map == 1 ? 'checked="checked"' : ''; ?> class="inputbox" />
             </div>
             <div class="el_latitude floattext">
-                <label for="latitude"><?php echo JText::_( 'COM_EVENTLIST_LATITUDE' ).':'; ?></label>
+                <label for="latitude"><?php echo JText::_( 'COM_JEM_LATITUDE' ).':'; ?></label>
                 <input class="inputbox" name="latitude" id="latitude" type="text" onchange="removerequired();" value="<?php echo $this->row->latitude; ?>" size="15" maxlength="25" />&nbsp;
-                <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_LATITUDE_HINT'); ?>">
+                <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_LATITUDE_HINT'); ?>">
                     <?php echo $this->infoimage; ?>
                 </span>
             </div>
             <div class="el_longitude floattext">
-                <label for="longitude"><?php echo JText::_( 'COM_EVENTLIST_LONGITUDE' ).':'; ?></label>
+                <label for="longitude"><?php echo JText::_( 'COM_JEM_LONGITUDE' ).':'; ?></label>
                 <input class="inputbox" name="longitude" id="longitude" type="text" onchange="removerequired();" value="<?php echo $this->row->longitude; ?>" size="15" maxlength="25" />&nbsp;
-                <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_LONGITUDE_HINT'); ?>">
+                <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_LONGITUDE_HINT'); ?>">
                     <?php echo $this->infoimage; ?>
                 </span>
             </div>
@@ -278,31 +278,31 @@ defined( '_JEXEC' ) or die;
       	<?php	if (( $this->elsettings->imageenabled == 2 ) || ($this->elsettings->imageenabled == 1)) :	?>
       	<fieldset class="el_fldst_image">
 
-            <legend><?php echo JText::_('COM_EVENTLIST_IMAGE'); ?></legend>
+            <legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
 
     		<?php
             if ($this->row->locimage) :
     				echo ELOutput::flyer( $this->row, $this->limage, 'venue' );
     		else :
-      		    echo JHTML::_('image', 'components/com_eventlist/assets/images/noimage.png', JText::_('COM_EVENTLIST_NO_IMAGE'), array('class' => 'modal'));
+      		    echo JHTML::_('image', 'components/com_jem/assets/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => 'modal'));
     		endif;
       		?>
 
-            <label for="userfile"><?php echo JText::_('COM_EVENTLIST_IMAGE'); ?></label>
+            <label for="userfile"><?php echo JText::_('COM_JEM_IMAGE'); ?></label>
       			<input class="inputbox <?php echo $this->elsettings->imageenabled == 2 ? 'required' : ''; ?>" name="userfile" id="userfile" type="file" />
-      			<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_MAX_IMAGE_FILE_SIZE').' '.$this->elsettings->sizelimit.' kb'; ?>">
+      			<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->elsettings->sizelimit.' kb'; ?>">
       				<?php echo $this->infoimage; ?>
       			</span>
 
-      			<!--<?php echo JText::_( 'COM_EVENTLIST_CURRENT_IMAGE' );	?>
-      			<?php echo JText::_( 'COM_EVENTLIST_SELECTED_IMAGE' ); ?>-->
+      			<!--<?php echo JText::_( 'COM_JEM_CURRENT_IMAGE' );	?>
+      			<?php echo JText::_( 'COM_JEM_SELECTED_IMAGE' ); ?>-->
 
       	</fieldset>
       	<?php endif; ?>
 
       	<fieldset class="el_fldst_description">
 
-          	<legend><?php echo JText::_('COM_EVENTLIST_DESCRIPTION'); ?></legend>
+          	<legend><?php echo JText::_('COM_JEM_DESCRIPTION'); ?></legend>
 
         		<?php
         		//wenn usertyp min editor wird editor ausgegeben ansonsten textfeld
@@ -311,9 +311,9 @@ defined( '_JEXEC' ) or die;
         		else :
         		?>
       			<textarea style="width:100%;" rows="10" name="locdescription" class="inputbox" wrap="virtual" onkeyup="berechne(this.form)"></textarea><br />
-      			<?php echo JText::_('COM_EVENTLIST_NO_HTML'); ?><br />
-      			<input disabled="disabled" value="<?php echo $this->elsettings->datdesclimit; ?>" size="4" name="zeige" /><?php echo JText::_('COM_EVENTLIST_AVAILABLE')." "; ?><br />
-      			<a href="javascript:rechne(document.adminForm);"><?php echo JText::_('COM_EVENTLIST_REFRESH'); ?></a>
+      			<?php echo JText::_('COM_JEM_NO_HTML'); ?><br />
+      			<input disabled="disabled" value="<?php echo $this->elsettings->datdesclimit; ?>" size="4" name="zeige" /><?php echo JText::_('COM_JEM_AVAILABLE')." "; ?><br />
+      			<a href="javascript:rechne(document.adminForm);"><?php echo JText::_('COM_JEM_REFRESH'); ?></a>
 
         		<?php	endif; ?>
 
@@ -321,21 +321,21 @@ defined( '_JEXEC' ) or die;
 
       	<fieldset class="el_fldst_meta">
 
-          	<legend><?php echo JText::_('COM_EVENTLIST_METADATA_INFORMATION'); ?></legend>
+          	<legend><?php echo JText::_('COM_JEM_METADATA_INFORMATION'); ?></legend>
 
             <div class="el_box_left">
-              	<label for="metadesc"><?php echo JText::_( 'COM_EVENTLIST_META_DESCRIPTION' ); ?></label>
+              	<label for="metadesc"><?php echo JText::_( 'COM_JEM_META_DESCRIPTION' ); ?></label>
           		<textarea class="inputbox" cols="40" rows="5" name="meta_description" id="metadesc" style="width:250px;"></textarea>
             </div>
 
             <div class="el_box_right">
-        		<label for="metakey"><?php echo JText::_( 'COM_EVENTLIST_META_KEYWORDS' ); ?></label>
+        		<label for="metakey"><?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?></label>
         		<textarea class="inputbox" cols="40" rows="5" name="meta_keywords" id="metakey" style="width:250px;"></textarea>
             </div>
 
             <br class="clear" />
             
-    		<input type="button" class="button el_fright" value="<?php echo JText::_( 'COM_EVENTLIST_ADD_VENUE_CITY' ); ?>" onclick="f=document.getElementById('adminForm');f.metakey.value=f.venue.value+', '+f.city.value+f.metakey.value;" />
+    		<input type="button" class="button el_fright" value="<?php echo JText::_( 'COM_JEM_ADD_VENUE_CITY' ); ?>" onclick="f=document.getElementById('adminForm');f.metakey.value=f.venue.value+', '+f.city.value+f.metakey.value;" />
 
       	</fieldset>
       	
@@ -344,15 +344,15 @@ defined( '_JEXEC' ) or die;
 <!--  removed to avoid double posts in ie7
       	<div class="el_save_buttons floattext">
     		<button type="button" onclick="return submitbutton('savevenue')">
-    			<?php echo JText::_('COM_EVENTLIST_SAVE') ?>
+    			<?php echo JText::_('COM_JEM_SAVE') ?>
     		</button>
     		<button type="reset" onclick="return submitbutton('cancelvenue')">
-    			<?php echo JText::_('COM_EVENTLIST_CANCEL') ?>
+    			<?php echo JText::_('COM_JEM_CANCEL') ?>
     		</button>
 		</div>
 -->		
 		<p class="clear">
-      	<input type="hidden" name="option" value="com_eventlist" />
+      	<input type="hidden" name="option" value="com_jem" />
       	<input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
       	<input type="hidden" name="referer" value="<?php echo @$_SERVER['HTTP_REFERER']; ?>" />
       	<input type="hidden" name="created" value="<?php echo $this->row->created; ?>" />

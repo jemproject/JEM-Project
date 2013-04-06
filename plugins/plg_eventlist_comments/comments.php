@@ -24,7 +24,7 @@ defined( '_JEXEC' ) or die;
 // Import library dependencies
 jimport( 'joomla.plugin.plugin' );
 
-include_once(JPATH_SITE.DS.'components'.DS.'com_eventlist'.DS.'helpers'.DS.'route.php');
+include_once(JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'helpers'.DS.'route.php');
 
 class plgEventlistComments extends JPlugin {
 	
@@ -72,7 +72,7 @@ class plgEventlistComments extends JPlugin {
 			if (file_exists(JPATH_SITE.DS.'plugins'.DS.'content'.DS.'jom_comment_bot.php')) {
     			require_once(JPATH_SITE.DS.'plugins'.DS.'content'.DS.'jom_comment_bot.php');
 				$res	.= '<div class="elcomments">';
-    			$res 	.= jomcomment($event_id, 'com_eventlist');
+    			$res 	.= jomcomment($event_id, 'com_jem');
 				$res 	.= '</div>';
   			}
 		}
@@ -82,7 +82,7 @@ class plgEventlistComments extends JPlugin {
 			if (file_exists(JPATH_SITE.DS.'components'.DS.'com_jcomments'.DS.'jcomments.php')) {
 				require_once(JPATH_SITE.DS.'components'.DS.'com_jcomments'.DS.'jcomments.php');
 				$res .= '<div class="elcomments">';
-				$res .= JComments::showComments($event_id, 'com_eventlist', $event_title);
+				$res .= JComments::showComments($event_id, 'com_jem', $event_title);
 				$res .= '</div>';
 			}
 		}

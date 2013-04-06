@@ -24,7 +24,7 @@
 if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined( '_JEXEC' ) or die;
 
-require_once JPATH_SITE.DS.'components'.DS.'com_eventlist'.DS.'classes'.DS.'iCalcreator.class.php';
+require_once JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'classes'.DS.'iCalcreator.class.php';
 
 jimport( 'joomla.application.component.view');
 

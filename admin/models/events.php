@@ -65,8 +65,8 @@ class EventListModelEvents extends JModelLegacy
 
 		$app =  JFactory::getApplication();
 
-		$limit		= $app->getUserStateFromRequest( 'com_eventlist.limit', 'limit', $app->getCfg('list_limit'), 'int');
-		$limitstart = $app->getUserStateFromRequest( 'com_eventlist.limitstart', 'limitstart', 0, 'int' );
+		$limit		= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -155,8 +155,8 @@ class EventListModelEvents extends JModelLegacy
 		$orderby	= $this->_buildContentOrderBy();
 
 		$query = 'SELECT a.*, loc.venue, loc.city, loc.checked_out AS vchecked_out, u.email, u.name AS author'
-					. ' FROM #__eventlist_events AS a'
-					. ' LEFT JOIN #__eventlist_venues AS loc ON loc.id = a.locid'
+					. ' FROM #__jem_events AS a'
+					. ' LEFT JOIN #__jem_venues AS loc ON loc.id = a.locid'
 					. ' LEFT JOIN #__users AS u ON u.id = a.created_by'
 					. $where
 					. $orderby
@@ -175,8 +175,8 @@ class EventListModelEvents extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest( 'com_eventlist.events.filter_order', 'filter_order', 'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_eventlist.events.filter_order_Dir', 'filter_order_Dir', '', 'word' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.events.filter_order', 'filter_order', 'a.dates', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.events.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 		
 		if ($filter_order != '')
 		{
@@ -200,9 +200,9 @@ class EventListModelEvents extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_state 		= $app->getUserStateFromRequest( 'com_eventlist.filter_state', 'filter_state', '', 'word' );
-		$filter 			= $app->getUserStateFromRequest( 'com_eventlist.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_eventlist.search', 'search', '', 'string' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.filter_state', 'filter_state', '', 'word' );
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.filter', 'filter', '', 'int' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.search', 'search', '', 'string' );
 		$search 			= $this->_db->getEscaped( trim(JString::strtolower( $search ) ) );
 
 		$where = array();
@@ -280,7 +280,7 @@ class EventListModelEvents extends JModelLegacy
 		{
 			$cids = implode( ',', $cid );
 
-			$query = 'UPDATE #__eventlist_events'
+			$query = 'UPDATE #__jem_events'
 				. ' SET published = '. (int) $publish
 				. ' WHERE id IN ('. $cids .')'
 				. ' AND ( checked_out = 0 OR ( checked_out = ' .$userid. ' ) )'
@@ -309,7 +309,7 @@ class EventListModelEvents extends JModelLegacy
 		if (count( $cid ))
 		{
 			$cids = implode( ',', $cid );
-			$query = 'DELETE FROM #__eventlist_events'
+			$query = 'DELETE FROM #__jem_events'
 					. ' WHERE id IN ('. $cids .')'
 					;
 
@@ -321,7 +321,7 @@ class EventListModelEvents extends JModelLegacy
 			}
 			
 			//remove assigned category references
-			$query = 'DELETE FROM #__eventlist_cats_event_relations'
+			$query = 'DELETE FROM #__jem_cats_event_relations'
 					.' WHERE itemid IN ('. $cids .')'
 					;
 			$this->_db->setQuery($query);
@@ -338,8 +338,8 @@ class EventListModelEvents extends JModelLegacy
 	function getCategories($id)
 	{
 		$query = 'SELECT DISTINCT c.id, c.catname, c.checked_out AS cchecked_out'
-				. ' FROM #__eventlist_categories AS c'
-				. ' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.catid = c.id'
+				. ' FROM #__jem_categories AS c'
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				;
 	
@@ -363,7 +363,7 @@ class EventListModelEvents extends JModelLegacy
 	
 	function clearrecurrences()
 	{
-		$query = ' UPDATE #__eventlist_events '
+		$query = ' UPDATE #__jem_events '
 		       . ' SET recurrence_number = 0,'
 		       . ' recurrence_type = 0,'
 		       . ' recurrence_counter = 0,'
@@ -394,7 +394,7 @@ class EventListModelEvents extends JModelLegacy
 		$ids = implode(",", $ids);
 		
 		$query = ' SELECT COUNT(id) as total, SUM(waiting) as waitinglist, event ' 
-		       . ' FROM #__eventlist_register ' 
+		       . ' FROM #__jem_register ' 
 		       . ' WHERE event IN (' . $ids .')'
 		       . ' GROUP BY event '
 		       ;

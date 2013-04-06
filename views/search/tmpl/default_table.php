@@ -40,18 +40,18 @@ defined( '_JEXEC' ) or die;
 		<table>
 		  <tr>
 		    <td>
-			    <label for="filter_type"><?php echo JText::_('COM_EVENTLIST_FILTER');  ?></label>
+			    <label for="filter_type"><?php echo JText::_('COM_JEM_FILTER');  ?></label>
 			  </td>
 			  <td>			
 				<?php echo  $this->lists['filter_types']; ?>
 	      <input type="text" name="filter" id="filter" value="<?php echo $this->lists['filter'];?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
-	      <button onclick="document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_EVENTLIST_GO' ); ?></button>
-	      <button onclick="document.getElementById('filter').value='';document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_EVENTLIST_RESET' ); ?></button>
+	      <button onclick="document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+	      <button onclick="document.getElementById('filter').value='';document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 				</td>
 			</tr>
 			<tr>
         <td>
-	        <?php echo '<label for="category">'.JText::_('COM_EVENTLIST_CATEGORY').'</label>&nbsp;'; ?>
+	        <?php echo '<label for="category">'.JText::_('COM_JEM_CATEGORY').'</label>&nbsp;'; ?>
 	      </td>
 	      <td>
 	        <?php echo $this->lists['categories']; ?>
@@ -59,15 +59,15 @@ defined( '_JEXEC' ) or die;
 	    </tr>
       <tr>
         <td>
-          <?php echo '<label for="date">'.JText::_('COM_EVENTLIST_DATE').'</label>&nbsp;'; ?>
+          <?php echo '<label for="date">'.JText::_('COM_JEM_DATE').'</label>&nbsp;'; ?>
         </td>
         <td>
-          <?php echo Jtext::_('COM_EVENTLIST_FROM'); ?><?php echo $this->lists['date_from'];?> <?php echo Jtext::_('COM_EVENTLIST_TO'); ?><?php echo $this->lists['date_to'];?> 
+          <?php echo Jtext::_('COM_JEM_FROM'); ?><?php echo $this->lists['date_from'];?> <?php echo Jtext::_('COM_JEM_TO'); ?><?php echo $this->lists['date_to'];?> 
         </td>
       </tr>
       <tr>
         <td>
-          <?php echo '<label for="continent">'.JText::_('COM_EVENTLIST_CONTINENT').'</label>&nbsp;'; ?>
+          <?php echo '<label for="continent">'.JText::_('COM_JEM_CONTINENT').'</label>&nbsp;'; ?>
         </td>
         <td>
           <?php echo $this->lists['continents'];?>
@@ -76,7 +76,7 @@ defined( '_JEXEC' ) or die;
       <?php if ($this->filter_continent): ?>
       <tr>
         <td>
-          <?php echo '<label for="country">'.JText::_('COM_EVENTLIST_COUNTRY').'</label>&nbsp;'; ?>
+          <?php echo '<label for="country">'.JText::_('COM_JEM_COUNTRY').'</label>&nbsp;'; ?>
         </td>
         <td>
           <?php echo $this->lists['countries'];?>
@@ -86,7 +86,7 @@ defined( '_JEXEC' ) or die;
       <?php if ($this->filter_continent && $this->filter_country): ?>
       <tr>
         <td>
-          <?php echo '<label for="city">'.JText::_('COM_EVENTLIST_CITY').'</label>&nbsp;';?>
+          <?php echo '<label for="city">'.JText::_('COM_JEM_CITY').'</label>&nbsp;';?>
         </td>
         <td>
           <?php echo $this->lists['cities'];?>
@@ -95,14 +95,14 @@ defined( '_JEXEC' ) or die;
     <?php endif; ?>
       <tr>
         <td colspan="2">
-          <input type="submit" value="<?php echo JText::_('COM_EVENTLIST_SUBMIT_SEARCH'); ?>"/>
+          <input type="submit" value="<?php echo JText::_('COM_JEM_SUBMIT_SEARCH'); ?>"/>
         </td>
       </tr>
     </table>	
   </div>
   <?php if ($this->elsettings->display) : ?>
 	<div class="el_fright">
-	<?php	echo '<label for="limit">'.JText::_('COM_EVENTLIST_DISPLAY_NUM').'</label>&nbsp;';
+	<?php	echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
 	echo $this->pageNav->getLimitBox();
 	?>
 	</div>
@@ -167,7 +167,7 @@ defined( '_JEXEC' ) or die;
 	<?php
 	if ($this->noevents == 1) :
 		?>
-		<tr align="center"><td colspan="0"><?php echo JText::_( 'COM_EVENTLIST_NO_EVENTS' ); ?></td></tr>
+		<tr align="center"><td colspan="0"><?php echo JText::_( 'COM_JEM_NO_EVENTS' ); ?></td></tr>
 		<?php
 	else :
 
@@ -188,7 +188,7 @@ defined( '_JEXEC' ) or die;
 	    					endif;
 	    					?>
     					<?php else: ?>
-    						<?php echo JText::_('COM_EVENTLIST_OPEN_DATE'); ?>
+    						<?php echo JText::_('COM_JEM_OPEN_DATE'); ?>
     					<?php endif; ?>
     				</strong>
     				

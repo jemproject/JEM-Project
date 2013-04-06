@@ -43,17 +43,17 @@ class EventListViewCategoryelement extends JViewLegacy {
 		JHTML::_('behavior.modal');
 
 		//get vars
-		$filter_order		= $app->getUserStateFromRequest( 'com_eventlist.categoryelement.filter_order', 'filter_order', 'c.ordering', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_eventlist.categoryelement.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_eventlist.categoryelement.filter_state', 'filter_state', '*', 'word' );
-		$search 			= $app->getUserStateFromRequest( 'com_eventlist.categoryelement.search', 'search', '', 'string' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.categoryelement.filter_order', 'filter_order', 'c.ordering', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categoryelement.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categoryelement.filter_state', 'filter_state', '*', 'word' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.categoryelement.search', 'search', '', 'string' );
 		$search 			= $db->getEscaped( trim(JString::strtolower( $search ) ) );
 		$template 			= $app->getTemplate();
 
 		//prepare document
-		$document->setTitle(JText::_( 'COM_EVENTLIST_SELECT_CATEGORY'));;
+		$document->setTitle(JText::_( 'COM_JEM_SELECT_CATEGORY'));;
 		$document->addStyleSheet('templates/'.$template.'/css/general.css');
-		$document->addStyleSheet('components/com_eventlist/assets/css/eventlistbackend.css');
+		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
 
 		// Get data from the model
 		$rows      	=  $this->get( 'Data');

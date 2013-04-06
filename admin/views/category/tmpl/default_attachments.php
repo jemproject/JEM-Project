@@ -25,10 +25,10 @@ defined ( '_JEXEC' ) or die;
 <table class="adminform" id="el-attachments">
 	<thead>
 		<tr>
-			<th style="width:25%"><?php echo JText::_('COM_EVENTLIST_ATTACHMENT_FILE'); ?></th>
-			<th style="width:15%"><?php echo JText::_('COM_EVENTLIST_ATTACHMENT_NAME'); ?></th>
-			<th style="width:40%"><?php echo JText::_('COM_EVENTLIST_ATTACHMENT_DESCRIPTION'); ?></th>
-			<th style="width:20px"><?php echo JText::_('COM_EVENTLIST_ATTACHMENT_ACCESS'); ?></th>
+			<th style="width:25%"><?php echo JText::_('COM_JEM_ATTACHMENT_FILE'); ?></th>
+			<th style="width:15%"><?php echo JText::_('COM_JEM_ATTACHMENT_NAME'); ?></th>
+			<th style="width:40%"><?php echo JText::_('COM_JEM_ATTACHMENT_DESCRIPTION'); ?></th>
+			<th style="width:20px"><?php echo JText::_('COM_JEM_ATTACHMENT_ACCESS'); ?></th>
 			<th style="width:5px">&nbsp;</th>
 		</tr>
 	</thead>
@@ -39,7 +39,7 @@ defined ( '_JEXEC' ) or die;
 			<td><input type="text" name="attached-name[]" style="width: 100%" value="<?php echo $file->name; ?>" /></td>
 			<td><input type="text" name="attached-desc[]" style="width: 100%" value="<?php echo $file->description; ?>" /></td>
 			<td><?php echo JHTML::_('select.genericlist', $this->access, 'attached-access[]', 'class="inputbox" size="3"', 'value', 'text', $file->access); ?></td>
-			<td><?php echo JHTML::image('administrator/images/publish_x.png', JText::_('COM_EVENTLIST_REMOVE_ATTACHEMENT')
+			<td><?php echo JHTML::image('administrator/images/publish_x.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT')
 			                         , array('id' => 'attach-remove'.$file->id,'class' => 'attach-remove')); ?></td>
 		</tr>
 		<?php endforeach; ?>

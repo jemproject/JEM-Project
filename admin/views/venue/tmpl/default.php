@@ -116,27 +116,27 @@ $options = array(
 		}
 
 		if ( validator.validate(form.venue) === false ) {
-	   		alert("<?php echo JText::_( 'COM_EVENTLIST_ADD_VENUE', true ); ?>");
+	   		alert("<?php echo JText::_( 'COM_JEM_ADD_VENUE', true ); ?>");
 	   		validator.handleResponse(false,form.venue);
 	   		form.venue.focus();
 	   		return false;
    		} else if ( validator.validate(form.street) === false) {
-   			alert("<?php echo JText::_( 'COM_EVENTLIST_ADD_STREET', true ); ?>");
+   			alert("<?php echo JText::_( 'COM_JEM_ADD_STREET', true ); ?>");
    			validator.handleResponse(false,form.street);
    			form.street.focus();
    			return false;
 		} else if ( validator.validate(form.city) === false) {
-  			alert("<?php echo JText::_( 'COM_EVENTLIST_ADD_CITY', true ); ?>");
+  			alert("<?php echo JText::_( 'COM_JEM_ADD_CITY', true ); ?>");
   			validator.handleResponse(false,form.city);
   			form.city.focus();
   			return false;
 		} else if ( validator.validate(form.country) === false) {
-   			alert("<?php echo JText::_( 'COM_EVENTLIST_ADD_COUNTRY', true ); ?>");
+   			alert("<?php echo JText::_( 'COM_JEM_ADD_COUNTRY', true ); ?>");
    			validator.handleResponse(false,form.country);
    			form.country.focus();
    			return false;
 		} else if ( validator.validate(form.url) === false) {
-   			alert("<?php echo JText::_( 'COM_EVENTLIST_WRONG_URL_FORMAT', true ); ?>");
+   			alert("<?php echo JText::_( 'COM_JEM_WRONG_URL_FORMAT', true ); ?>");
 //   			validator.handleResponse(false,form.url);
    			return false;
 		} else {
@@ -154,14 +154,14 @@ $options = array(
 	<tr>
 		<td valign="top">
 		<?php echo JHtml::_('tabs.start', 'det-pane', $options); ?>
-		<?php echo JHtml::_('tabs.panel',JText::_('COM_EVENTLIST_VENUE_INFO_TAB'), 'info' ); ?>
+		<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_VENUE_INFO_TAB'), 'info' ); ?>
 		&nbsp;<!-- this is a trick for IE7... otherwise the first table inside the tab is shifted right ! -->
 
 	<table  class="adminform">
 		<tr>
 			<td>
 				<label for="venue">
-					<?php echo JText::_( 'COM_EVENTLIST_VENUE' ).':'; ?>
+					<?php echo JText::_( 'COM_JEM_VENUE' ).':'; ?>
 				</label>
 			</td>
 			<td>
@@ -169,7 +169,7 @@ $options = array(
 			</td>
 			<td>
 				<label for="published">
-					<?php echo JText::_( 'COM_EVENTLIST_PUBLISHED' ).':'; ?>
+					<?php echo JText::_( 'COM_JEM_PUBLISHED' ).':'; ?>
 				</label>
 			</td>
 			<td>
@@ -182,7 +182,7 @@ $options = array(
 		<tr>
 			<td>
 				<label for="alias">
-					<?php echo JText::_( 'COM_EVENTLIST_ALIAS' ).':'; ?>
+					<?php echo JText::_( 'COM_JEM_ALIAS' ).':'; ?>
 				</label>
 			</td>
 			<td colspan="3">
@@ -200,7 +200,7 @@ $options = array(
 				</tr>
 				</table>
 				
-				<?php echo JHtml::_('tabs.panel',JText::_('COM_EVENTLIST_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
+				<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
 				<?php echo $this->loadTemplate('attachments'); ?>
 				<?php echo JHtml::_('tabs.end'); ?>
 				
@@ -208,7 +208,7 @@ $options = array(
 	
 	<td valign="top" width="320px" style="padding: 7px 0 0 5px">
 			<?php
-			$title = JText::_( 'COM_EVENTLIST_DETAILS' );
+			$title = JText::_( 'COM_JEM_DETAILS' );
 		echo JHtml::_('sliders.start', 'det-pane', $options);
 		echo JHtml::_('sliders.panel', $title, 'details');
 			?>
@@ -216,7 +216,7 @@ $options = array(
 			<?php if ($this->row->id) { ?>
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_EVENTLIST_ID' ); ?>:</strong>
+					<strong><?php echo JText::_ ( 'COM_JEM_ID' ); ?>:</strong>
 				</td>
 				<td>
 					<?php echo $this->row->id; ?>
@@ -225,30 +225,30 @@ $options = array(
 			<?php } ?>
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_EVENTLIST_STATE' ); ?></strong>
+					<strong><?php echo JText::_ ( 'COM_JEM_STATE' ); ?></strong>
 				</td>
 				<td>
 					<?php
-					echo $this->row->published > 0 ? JText::_ ( 'COM_EVENTLIST_PUBLISHED' ) : ($this->row->published < 0 ? JText::_ ( 'COM_EVENTLIST_ARCHIVED' ) : JText::_ ( 'COM_EVENTLIST_DRAFT_UNPUBLISHED' ));
+					echo $this->row->published > 0 ? JText::_ ( 'COM_JEM_PUBLISHED' ) : ($this->row->published < 0 ? JText::_ ( 'COM_JEM_ARCHIVED' ) : JText::_ ( 'COM_JEM_DRAFT_UNPUBLISHED' ));
 					?>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_EVENTLIST_REVISED' ); ?></strong>
+					<strong><?php echo JText::_ ( 'COM_JEM_REVISED' ); ?></strong>
 				</td>
 				<td>
-					<?php echo $this->row->version . ' ' . JText::_ ( 'COM_EVENTLIST_TIMES' ); ?>
+					<?php echo $this->row->version . ' ' . JText::_ ( 'COM_JEM_TIMES' ); ?>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_EVENTLIST_CREATED_AT' );?></strong>
+					<strong><?php echo JText::_ ( 'COM_JEM_CREATED_AT' );?></strong>
 				</td>
 				<td>
 					<?php
 					if ($this->row->created == $this->nullDate) {
-						echo JText::_ ( 'COM_EVENTLIST_NEW_EVENT' );
+						echo JText::_ ( 'COM_JEM_NEW_EVENT' );
 					} else {
 						echo JHTML::_ ( 'date', $this->row->created, JText::_ ( 'DATE_FORMAT_LC2' ) );
 					}
@@ -258,7 +258,7 @@ $options = array(
 			
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_EVENTLIST_OWNER' );?></strong>
+					<strong><?php echo JText::_ ( 'COM_JEM_OWNER' );?></strong>
 				</td>
 				<td>
 					<?php
@@ -269,12 +269,12 @@ $options = array(
 			
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_EVENTLIST_EDITED_AT' ); ?></strong>
+					<strong><?php echo JText::_ ( 'COM_JEM_EDITED_AT' ); ?></strong>
 				</td>
 				<td>
 					<?php
 					if ($this->row->modified == $this->nullDate) {
-						echo JText::_ ( 'COM_EVENTLIST_NOT_MODIFIED' );
+						echo JText::_ ( 'COM_JEM_NOT_MODIFIED' );
 					} else {
 						echo JHTML::_ ( 'date', $this->row->modified, JText::_ ( 'DATE_FORMAT_LC2' ) );
 					}
@@ -284,17 +284,17 @@ $options = array(
 		</table>
 		
 		<?php
-		$title = JText::_( 'COM_EVENTLIST_ADDRESS' );
+		$title = JText::_( 'COM_JEM_ADDRESS' );
 		echo JHtml::_('sliders.panel', $title, 'address');
 
 		//Set the info image
-		$infoimage = JHTML::image('components/com_eventlist/assets/images/icon-16-hint.png', JText::_( 'COM_EVENTLIST_NOTES' ) );
+		$infoimage = JHTML::image('components/com_jem/assets/images/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
 		?>
 	<table>
 		<tr>
 			<td>
 				<label for="street">
-					<?php echo JText::_( 'COM_EVENTLIST_STREET' ).':'; ?>
+					<?php echo JText::_( 'COM_JEM_STREET' ).':'; ?>
 				</label>
 			</td>
 			<td>
@@ -304,7 +304,7 @@ $options = array(
 		<tr>
 			<td>
 				<label for="plz">
-					<?php echo JText::_( 'COM_EVENTLIST_ZIP' ).':'; ?>
+					<?php echo JText::_( 'COM_JEM_ZIP' ).':'; ?>
 				</label>
 			</td>
 			<td>
@@ -314,7 +314,7 @@ $options = array(
 		<tr>
 			<td>
 				<label for="city">
-					<?php echo JText::_( 'COM_EVENTLIST_CITY' ).':'; ?>
+					<?php echo JText::_( 'COM_JEM_CITY' ).':'; ?>
 				</label>
 			</td>
 			<td>
@@ -324,7 +324,7 @@ $options = array(
 		<tr>
 			<td>
 				<label for="state">
-					<?php echo JText::_( 'COM_EVENTLIST_STATE' ).':'; ?>
+					<?php echo JText::_( 'COM_JEM_STATE' ).':'; ?>
 				</label>
 			</td>
 			<td>
@@ -334,7 +334,7 @@ $options = array(
 		<tr>
 			<td>
 				<label for="country">
-					<?php echo JText::_( 'COM_EVENTLIST_COUNTRY' ).':'; ?>
+					<?php echo JText::_( 'COM_JEM_COUNTRY' ).':'; ?>
 				</label>
 			</td>
 			<td>
@@ -344,13 +344,13 @@ $options = array(
 		<tr>
 			<td>
 				<label for="url">
-					<?php echo JText::_( 'COM_EVENTLIST_WEBSITE' ).':'; ?>
+					<?php echo JText::_( 'COM_JEM_WEBSITE' ).':'; ?>
 				</label>
 			</td>
 			<td>
 				<input class="inputbox validate-url" name="url" id="url" value="<?php echo $this->row->url; ?>" size="30" maxlength="199" />&nbsp;
 
-				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_WEBSITE_HINT'); ?>">
+				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_WEBSITE_HINT'); ?>">
 					<?php echo $infoimage; ?>
 				</span>
 			</td>
@@ -359,17 +359,17 @@ $options = array(
 		<tr>
 			<td>
 				<label for="map">
-					<?php echo JText::_( 'COM_EVENTLIST_ENABLE_MAP' ).':'; ?>
+					<?php echo JText::_( 'COM_JEM_ENABLE_MAP' ).':'; ?>
 				</label>
 			</td>
 			<td>
-				 <label for="map0"><?php echo JText::_( 'COM_EVENTLIST_NO' ); ?></label>
+				 <label for="map0"><?php echo JText::_( 'COM_JEM_NO' ); ?></label>
                 <input type="radio" name="map" id="map0" onchange="removerequired();" value="0" <?php echo $this->row->map == 0 ? 'checked="checked"' : ''; ?> class="inputbox" />
 
-              	<label for="map1"><?php echo JText::_( 'COM_EVENTLIST_YES' ); ?></label>
+              	<label for="map1"><?php echo JText::_( 'COM_JEM_YES' ); ?></label>
               	<input type="radio" name="map" id="map1" onchange="addrequired();" value="1" <?php echo $this->row->map == 1 ? 'checked="checked"' : ''; ?> class="inputbox" />
           		&nbsp;
-          		<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_ADDRESS_NOTICE'); ?>">
+          		<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_ADDRESS_NOTICE'); ?>">
 					<?php echo $infoimage; ?>
 				</span>
 			</td>
@@ -377,12 +377,12 @@ $options = array(
     <tr>
       <td>
         <label for="latitude">
-          <?php echo JText::_( 'COM_EVENTLIST_LATITUDE' ).':'; ?>
+          <?php echo JText::_( 'COM_JEM_LATITUDE' ).':'; ?>
         </label>
       </td>
       <td>
         <input class="inputbox" name="latitude" id="latitude" onchange="removerequired();" value="<?php echo $this->row->latitude; ?>" size="14" maxlength="25" />
-              <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_LATITUDE_HINT'); ?>">
+              <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_LATITUDE_HINT'); ?>">
           <?php echo $infoimage; ?>
         </span>
       </td>
@@ -390,12 +390,12 @@ $options = array(
     <tr>
       <td>
         <label for="longitude">
-          <?php echo JText::_( 'COM_EVENTLIST_LONGITUDE' ).':'; ?>
+          <?php echo JText::_( 'COM_JEM_LONGITUDE' ).':'; ?>
         </label>
       </td>
       <td>
         <input class="inputbox" name="longitude" id="longitude" onchange="removerequired();" value="<?php echo $this->row->longitude; ?>" size="14" maxlength="25" />
-              <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_EVENTLIST_NOTES' ); ?>::<?php echo JText::_('COM_EVENTLIST_LONGITUDE_HINT'); ?>">
+              <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_LONGITUDE_HINT'); ?>">
           <?php echo $infoimage; ?>
         </span>
       </td>
@@ -403,14 +403,14 @@ $options = array(
 		<?php } ?>
 	</table>
 	<?php
-	$title2 = JText::_( 'COM_EVENTLIST_IMAGE' );
+	$title2 = JText::_( 'COM_JEM_IMAGE' );
 	echo JHtml::_('sliders.panel', $title2, 'image');
 	?>
 	<table>
 		<tr>
 			<td>
 				<label for="locimage">
-					<?php echo JText::_( 'COM_EVENTLIST_CHOOSE_IMAGE' ).':'; ?>
+					<?php echo JText::_( 'COM_JEM_CHOOSE_IMAGE' ).':'; ?>
 				</label>
 			</td>
 			<td>
@@ -437,14 +437,14 @@ $options = array(
 		</tr>
 	</table>
 	<?php
-	$title3 = JText::_( 'COM_EVENTLIST_METADATA_INFORMATION' );
+	$title3 = JText::_( 'COM_JEM_METADATA_INFORMATION' );
 	echo JHtml::_('sliders.panel', $title3, 'metadata');
 	?>
 	<table>
 		<tr>
 			<td>
 				<label for="metadesc">
-					<?php echo JText::_( 'COM_EVENTLIST_META_DESCRIPTION' ); ?>:
+					<?php echo JText::_( 'COM_JEM_META_DESCRIPTION' ); ?>:
 				</label>
 				<br />
 				<textarea class="inputbox" cols="40" rows="5" name="meta_description" id="metadesc" style="width:300px;"><?php echo str_replace('&','&amp;',$this->row->meta_description); ?></textarea>
@@ -453,7 +453,7 @@ $options = array(
 		<tr>
 			<td>
 				<label for="metakey">
-					<?php echo JText::_( 'COM_EVENTLIST_META_KEYWORDS' ); ?>:
+					<?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?>:
 				</label>
 				<br />
 				<textarea class="inputbox" cols="40" rows="5" name="meta_keywords" id="metakey" style="width:300px;"><?php echo str_replace('&','&amp;',$this->row->meta_keywords); ?></textarea>
@@ -461,7 +461,7 @@ $options = array(
 		</tr>
 		<tr>
 			<td>
-				<input type="button" class="button" value="<?php echo JText::_( 'COM_EVENTLIST_ADD_VENUE_CITY' ); ?>" onclick="f=document.adminForm;f.metakey.value=f.venue.value+', '+f.city.value+f.metakey.value;" />
+				<input type="button" class="button" value="<?php echo JText::_( 'COM_JEM_ADD_VENUE_CITY' ); ?>" onclick="f=document.adminForm;f.metakey.value=f.venue.value+', '+f.city.value+f.metakey.value;" />
 			</td>
 		</tr>
 	</table>
@@ -480,7 +480,7 @@ if ( $this->settings->showmapserv == 0 ) { ?>
 }
 ?>
 	<?php echo JHTML::_( 'form.token' ); ?>
-	<input type="hidden" name="option" value="com_eventlist" />
+	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="controller" value="venues" />
 	<input type="hidden" name="view" value="venue" />
 	<input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />

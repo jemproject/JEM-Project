@@ -61,7 +61,7 @@ class EventListModelSettings extends JModelLegacy
 	 */
 	function &getData()
 	{
-		$query = 'SELECT * FROM #__eventlist_settings WHERE id = 1';
+		$query = 'SELECT * FROM #__jem_settings WHERE id = 1';
 
 		$this->_db->setQuery($query);
 		$this->_data = $this->_db->loadObject();
@@ -78,7 +78,7 @@ class EventListModelSettings extends JModelLegacy
 	 */
 	function checkin()
 	{
-		$item = & $this->getTable('eventlist_settings', '');
+		$item = & $this->getTable('jem_settings', '');
 		if(! $item->checkin(1)) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;
@@ -102,7 +102,7 @@ class EventListModelSettings extends JModelLegacy
 			$uid	= $user->get('id');
 		}
 		// Lets get to it and checkout the thing...
-		$item =  $this->getTable('eventlist_settings', '');
+		$item =  $this->getTable('jem_settings', '');
 		if(!$item->checkout($uid, 1)) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;
@@ -138,19 +138,19 @@ class EventListModelSettings extends JModelLegacy
 	function store($post)
 	{
 		$parampost['params'] = JRequest::getVar('globalparams');
-		$parampost['option'] = 'com_eventlist';
+		$parampost['option'] = 'com_jem';
 
 		$table = JTable::getInstance('extension');
 //        $db = $table->getDBO();
 //        $query = 'SELECT extension_id' .
 //                        ' FROM #__extensions' .
-//                        ' WHERE ' . $db->nameQuote( 'element' ) . '=' . $db->Quote( 'com_eventlist' ) ;
+//                        ' WHERE ' . $db->nameQuote( 'element' ) . '=' . $db->Quote( 'com_jem' ) ;
 //        $db->setQuery( $query, 0, 1 );
 //        $id = $db->loadResult();
 //		if ($id == !null)
 //        {
 //		$table->load($id);
-//		$globalparams = new JParameter( $table->params, JPATH_ADMINISTRATOR.DS.'components'.DS.'com_eventlist'.DS.'config.xml' );
+//		$globalparams = new JParameter( $table->params, JPATH_ADMINISTRATOR.DS.'components'.DS.'com_jem'.DS.'config.xml' );
 //		} else
 //        {
 //        JError::raiseWarning( 'SOME_ERROR_CODE', JText::_( 'SETTINGS NOT STORED' ));
@@ -164,7 +164,7 @@ class EventListModelSettings extends JModelLegacy
 			return false;
 		}
 
-		$settings 	= & JTable::getInstance('eventlist_settings', '');
+		$settings 	= & JTable::getInstance('jem_settings', '');
 
 		// Bind the form fields to the table
 		if (!$settings->bind($post)) {

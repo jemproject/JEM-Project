@@ -102,8 +102,8 @@ class EventListModelEvent extends JModelLegacy
 		if (empty($this->_data))
 		{
 			$query = 'SELECT e.*, v.venue'
-					. ' FROM #__eventlist_events AS e'
-					. ' LEFT JOIN #__eventlist_venues AS v ON v.id = e.locid'
+					. ' FROM #__jem_events AS e'
+					. ' LEFT JOIN #__jem_venues AS v ON v.id = e.locid'
 					. ' WHERE e.id = '.$this->_id
 					;
 			$this->_db->setQuery($query);
@@ -187,7 +187,7 @@ class EventListModelEvent extends JModelLegacy
 	function _getBooked()
 	{
 		$query = ' SELECT count(id) ' 
-		       . ' FROM #__eventlist_register ' 
+		       . ' FROM #__jem_register ' 
 		       . ' WHERE event = ' . $this->_db->Quote($this->_data->id)
 		       . '   AND waiting = 0 '
 		       ;
@@ -207,7 +207,7 @@ class EventListModelEvent extends JModelLegacy
 	{
 		if ($this->_id)
 		{
-			$event = & JTable::getInstance('eventlist_events', '');
+			$event = & JTable::getInstance('jem_events', '');
 			return $event->checkin($this->_id);
 		}
 		return false;
@@ -231,7 +231,7 @@ class EventListModelEvent extends JModelLegacy
 				$uid	= $user->get('id');
 			}
 			// Lets get to it and checkout the thing...
-			$event =  JTable::getInstance('eventlist_events', '');
+			$event =  JTable::getInstance('jem_events', '');
 			return $event->checkout($uid, $this->_id);
 		}
 		return false;
@@ -278,7 +278,7 @@ class EventListModelEvent extends JModelLegacy
 
 		$cats 		= JRequest::getVar( 'cid', array(), 'post', 'array');
 		
-		$row = JTable::getInstance('eventlist_events', '');
+		$row = JTable::getInstance('jem_events', '');
 
 		// Bind the form fields to the table
 		if (!$row->bind($data)) {
@@ -349,13 +349,13 @@ class EventListModelEvent extends JModelLegacy
 		}
 		
 		//store cat relation
-		$query = 'DELETE FROM #__eventlist_cats_event_relations WHERE itemid = '.$row->id;
+		$query = 'DELETE FROM #__jem_cats_event_relations WHERE itemid = '.$row->id;
 		$this->_db->setQuery($query);
 		$this->_db->query();
 			
 		foreach($cats as $cat)
 		{
-			$query = 'INSERT INTO #__eventlist_cats_event_relations (`catid`, `itemid`) VALUES(' . $cat . ',' . $row->id . ')';
+			$query = 'INSERT INTO #__jem_cats_event_relations (`catid`, `itemid`) VALUES(' . $cat . ',' . $row->id . ')';
 			$this->_db->setQuery($query);
 			$this->_db->query();
 		}
@@ -395,7 +395,7 @@ class EventListModelEvent extends JModelLegacy
 	 */
 	function gethits($id)
 	{
-		$query = 'SELECT hits FROM #__eventlist_events WHERE id = '.(int)$id;
+		$query = 'SELECT hits FROM #__jem_events WHERE id = '.(int)$id;
 		$this->_db->setQuery($query);
 		$hits = $this->_db->loadResult();
 		
@@ -410,7 +410,7 @@ class EventListModelEvent extends JModelLegacy
 	 */
 	function resetHits($id)
 	{
-		$row  = $this->getTable('eventlist_events', '');
+		$row  = $this->getTable('jem_events', '');
 		$row->load($id);
 		$row->hits = 0;
 		$row->store();
@@ -425,7 +425,7 @@ class EventListModelEvent extends JModelLegacy
 	 */
 	function getCatsselected()
 	{
-		$query = 'SELECT DISTINCT catid FROM #__eventlist_cats_event_relations WHERE itemid = ' . (int)$this->_id;
+		$query = 'SELECT DISTINCT catid FROM #__jem_cats_event_relations WHERE itemid = ' . (int)$this->_id;
 		$this->_db->setQuery($query);
 		$used = $this->_db->loadResultArray();
 		return $used;

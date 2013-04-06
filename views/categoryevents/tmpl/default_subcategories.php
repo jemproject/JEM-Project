@@ -23,7 +23,7 @@ defined( '_JEXEC' ) or die;
 ?>
 
 <div class="subcategories">
-<?php echo JText::_('COM_EVENTLIST_SUBCATEGORIES'); ?>
+<?php echo JText::_('COM_JEM_SUBCATEGORIES'); ?>
 </div>
 <?php
 $n = count($this->categories);

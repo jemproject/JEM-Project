@@ -25,38 +25,38 @@ defined('_JEXEC') or die;
 	<tr>
 		<td width="10%">
 			<div class="linkicon">
-				<a href="index.php?option=com_eventlist&amp;controller=cleanup&amp;task=cleaneventimg">
-					<?php echo JHTML::_('image', 'administrator/components/com_eventlist/assets/images/icon-48-cleaneventimg.png',  JText::_( 'COM_EVENTLIST_CLEANUP_EVENT_IMG' ) ); ?>
-					<span><?php echo JText::_( 'COM_EVENTLIST_CLEANUP_EVENT_IMG' ); ?></span>
+				<a href="index.php?option=com_jem&amp;controller=cleanup&amp;task=cleaneventimg">
+					<?php echo JHTML::_('image', 'administrator/components/com_jem/assets/images/icon-48-cleaneventimg.png',  JText::_( 'COM_JEM_CLEANUP_EVENT_IMG' ) ); ?>
+					<span><?php echo JText::_( 'COM_JEM_CLEANUP_EVENT_IMG' ); ?></span>
 				</a>
 			</div>
 		</td>
 		<td width="40%" valign="middle">
-			<?php echo JText::_( 'COM_EVENTLIST_CLEANUP_EVENT_IMG_DESC' ); ?>
+			<?php echo JText::_( 'COM_JEM_CLEANUP_EVENT_IMG_DESC' ); ?>
 		</td>
 		<td width="10%">
 			<div class="linkicon">
-				<a href="index.php?option=com_eventlist&amp;controller=cleanup&amp;task=cleanvenueimg">
-					<?php echo JHTML::_('image', 'administrator/components/com_eventlist/assets/images/icon-48-cleanvenueimg.png',  JText::_( 'COM_EVENTLIST_CLEANUP_VENUE_IMG' ) ); ?>
-					<span><?php echo JText::_( 'COM_EVENTLIST_CLEANUP_VENUE_IMG' ); ?></span>
+				<a href="index.php?option=com_jem&amp;controller=cleanup&amp;task=cleanvenueimg">
+					<?php echo JHTML::_('image', 'administrator/components/com_jem/assets/images/icon-48-cleanvenueimg.png',  JText::_( 'COM_JEM_CLEANUP_VENUE_IMG' ) ); ?>
+					<span><?php echo JText::_( 'COM_JEM_CLEANUP_VENUE_IMG' ); ?></span>
 				</a>
 			</div>
 		</td>
 		<td width="40%" valign="middle">
-			<?php echo JText::_( 'COM_EVENTLIST_CLEANUP_VENUE_IMG_DESC' ); ?>
+			<?php echo JText::_( 'COM_JEM_CLEANUP_VENUE_IMG_DESC' ); ?>
 		</td>
 		</tr>
 		<tr>
 		<td width="10%">
 			<div class="linkicon">
-				<a href="index.php?option=com_eventlist&amp;controller=cleanup&amp;task=cleancategoryimg">
-					<?php echo JHTML::_('image', 'administrator/components/com_eventlist/assets/images/icon-48-cleancategoryimg.png',  JText::_( 'COM_EVENTLIST_CLEANUP_CATEGORY_IMG' ) ); ?>
-					<span><?php echo JText::_( 'COM_EVENTLIST_CLEANUP_CATEGORY_IMG' ); ?></span>
+				<a href="index.php?option=com_jem&amp;controller=cleanup&amp;task=cleancategoryimg">
+					<?php echo JHTML::_('image', 'administrator/components/com_jem/assets/images/icon-48-cleancategoryimg.png',  JText::_( 'COM_JEM_CLEANUP_CATEGORY_IMG' ) ); ?>
+					<span><?php echo JText::_( 'COM_JEM_CLEANUP_CATEGORY_IMG' ); ?></span>
 				</a>
 			</div>
 		</td>
 		<td width="40%" valign="middle">
-			<?php echo JText::_( 'COM_EVENTLIST_CLEANUP_CATEGORY_IMG_DESC' ); ?>
+			<?php echo JText::_( 'COM_JEM_CLEANUP_CATEGORY_IMG_DESC' ); ?>
 		</td>
 		
 		
@@ -65,14 +65,14 @@ defined('_JEXEC') or die;
 	
     <td width="10%">
       <div class="linkicon">
-        <a href="index.php?option=com_eventlist&amp;controller=cleanup&amp;task=triggerarchive">
-          <?php echo JHTML::_('image', 'administrator/components/com_eventlist/assets/images/icon-48-archive.png',  JText::_( 'COM_EVENTLIST_CLEANUP_TRIGGER_AUTOARCHIVE' ) ); ?>
-          <span><?php echo JText::_( 'COM_EVENTLIST_CLEANUP_TRIGGER_AUTOARCHIVE' ); ?></span>
+        <a href="index.php?option=com_jem&amp;controller=cleanup&amp;task=triggerarchive">
+          <?php echo JHTML::_('image', 'administrator/components/com_jem/assets/images/icon-48-archive.png',  JText::_( 'COM_JEM_CLEANUP_TRIGGER_AUTOARCHIVE' ) ); ?>
+          <span><?php echo JText::_( 'COM_JEM_CLEANUP_TRIGGER_AUTOARCHIVE' ); ?></span>
         </a>
       </div>
     </td>
     <td width="40%" valign="middle">
-      <?php echo JText::_( 'COM_EVENTLIST_CLEANUP_TRIGGER_AUTOARCHIVE_DESC' ); ?>
+      <?php echo JText::_( 'COM_JEM_CLEANUP_TRIGGER_AUTOARCHIVE_DESC' ); ?>
     </td>
     <td width="10%"></td>
     <td width="40%"></td>

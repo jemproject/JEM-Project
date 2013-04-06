@@ -79,8 +79,8 @@ class EventListModelAttendees extends JModelLegacy
 
 		$app =  JFactory::getApplication();;
 
-		$limit		= $app->getUserStateFromRequest( 'com_eventlist.limit', 'limit', $app->getCfg('list_limit'), 'int');
-		$limitstart = $app->getUserStateFromRequest( 'com_eventlist.limitstart', 'limitstart', 0, 'int' );
+		$limit		= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -180,8 +180,8 @@ class EventListModelAttendees extends JModelLegacy
 		$where		= $this->_buildContentWhere();
 
 		$query = 'SELECT r.*, u.username, u.name, u.gid, u.email'
-		. ' FROM #__eventlist_register AS r'
-		. ' LEFT JOIN #__eventlist_events AS a ON r.event = a.id'
+		. ' FROM #__jem_register AS r'
+		. ' LEFT JOIN #__jem_events AS a ON r.event = a.id'
 		. ' LEFT JOIN #__users AS u ON r.uid = u.id'
 		. $where
 		. $orderby
@@ -201,8 +201,8 @@ class EventListModelAttendees extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest( 'com_eventlist.attendees.filter_order', 		'filter_order', 	'u.username', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_eventlist.attendees.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.attendees.filter_order', 		'filter_order', 	'u.username', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.attendees.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
 		
 		
 		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
@@ -224,10 +224,10 @@ class EventListModelAttendees extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter 			= $app->getUserStateFromRequest( 'com_eventlist.attendees.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_eventlist.attendees.search', 'search', '', 'string' );
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.attendees.filter', 'filter', '', 'int' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.attendees.search', 'search', '', 'string' );
 		$search 			= $this->_db->getEscaped( trim(JString::strtolower( $search ) ) );
-		$filter_waiting	= $app->getUserStateFromRequest( 'com_eventlist.attendees.waiting',	'filter_waiting',	0, 'int' );
+		$filter_waiting	= $app->getUserStateFromRequest( 'com_jem.attendees.waiting',	'filter_waiting',	0, 'int' );
 
 		$where = array();
 
@@ -264,7 +264,7 @@ class EventListModelAttendees extends JModelLegacy
 	 */
 	function getEvent()
 	{
-		$query = 'SELECT id, title, dates, maxplaces, waitinglist FROM #__eventlist_events WHERE id = '.$this->_id;
+		$query = 'SELECT id, title, dates, maxplaces, waitinglist FROM #__jem_events WHERE id = '.$this->_id;
 
 		$this->_db->setQuery( $query );
 
@@ -286,7 +286,7 @@ class EventListModelAttendees extends JModelLegacy
 		{
 			$user = implode(',', $cid);
 			
-			$query = 'DELETE FROM #__eventlist_register WHERE id IN ('. $user .') ';
+			$query = 'DELETE FROM #__jem_register WHERE id IN ('. $user .') ';
 
 			$this->_db->setQuery( $query );
 

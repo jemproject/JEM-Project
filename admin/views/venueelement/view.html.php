@@ -44,16 +44,16 @@ class EventListViewVenueelement extends JViewLegacy {
 		JHTML::_('behavior.modal');
 
 		//get vars
-		$filter_order		= $app->getUserStateFromRequest( 'com_eventlist.venueelement.filter_order', 'filter_order', 'l.ordering', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_eventlist.venueelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
-		$filter 			= $app->getUserStateFromRequest( 'com_eventlist.venueelement.filter', 'filter', '', 'int' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_eventlist.venueelement.filter_state', 'filter_state', '*', 'word' );
-		$search 			= $app->getUserStateFromRequest( 'com_eventlist.venueelement.search', 'search', '', 'string' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_order', 'filter_order', 'l.ordering', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.venueelement.filter', 'filter', '', 'int' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_state', 'filter_state', '*', 'word' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.venueelement.search', 'search', '', 'string' );
 		$search 			= $db->getEscaped( trim(JString::strtolower( $search ) ) );
 		$template 			= $app->getTemplate();
 
 		//prepare document
-		$document->setTitle(JText::_( 'COM_EVENTLIST_SELECTVENUE' ));
+		$document->setTitle(JText::_( 'COM_JEM_SELECTVENUE' ));
 		$document->addStyleSheet("templates/$template/css/general.css");
 
 		// Get data from the model
@@ -70,8 +70,8 @@ class EventListViewVenueelement extends JViewLegacy {
 
 		//Build search filter
 		$filters = array();
-		$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_EVENTLIST_VENUE' ) );
-		$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_EVENTLIST_CITY' ) );
+		$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_VENUE' ) );
+		$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_CITY' ) );
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
 
 		// search filter

@@ -60,7 +60,7 @@ class EventListControllerSettings extends EventListController
 
 		$model->checkin();
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=eventlist' );
+		$this->setRedirect( 'index.php?option=com_jem&view=eventlist' );
 	}
 
 	/**
@@ -109,11 +109,11 @@ class EventListControllerSettings extends EventListController
 		switch ($task)
 		{
 			case 'apply':
-				$link = 'index.php?option=com_eventlist&controller=settings&task=edit';
+				$link = 'index.php?option=com_jem&controller=settings&task=edit';
 				break;
 
 			default:
-				$link = 'index.php?option=com_eventlist&view=eventlist';
+				$link = 'index.php?option=com_jem&view=eventlist';
 				break;
 		}
 		$model->checkin();

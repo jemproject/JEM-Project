@@ -91,7 +91,7 @@ class EventListControllerImagehandler extends EventListController
 
 		//do we have an upload?
 		if (empty($file['name'])) {
-			echo "<script> alert('".JText::_( 'COM_EVENTLIST_IMAGE_EMPTY' )."'); window.history.go(-1); </script>\n";
+			echo "<script> alert('".JText::_( 'COM_JEM_IMAGE_EMPTY' )."'); window.history.go(-1); </script>\n";
 			$app->close();
 		}
 
@@ -108,11 +108,11 @@ class EventListControllerImagehandler extends EventListController
 
 		//upload the image
 		if (!JFile::upload($file['tmp_name'], $filepath)) {
-			echo "<script> alert('".JText::_( 'COM_EVENTLIST_UPLOAD_FAILED' )."'); window.history.go(-1); </script>\n";
+			echo "<script> alert('".JText::_( 'COM_JEM_UPLOAD_FAILED' )."'); window.history.go(-1); </script>\n";
 			$app->close();
 
 		} else {
-			echo "<script> alert('".JText::_( 'COM_EVENTLIST_UPLOAD_COMPLETE' )."'); window.history.go(-1); window.parent.elSelectImage('$filename', '$filename'); </script>\n";
+			echo "<script> alert('".JText::_( 'COM_JEM_UPLOAD_COMPLETE' )."'); window.history.go(-1); window.parent.elSelectImage('$filename', '$filename'); </script>\n";
 			$app->close();
 		}
 
@@ -141,7 +141,7 @@ class EventListControllerImagehandler extends EventListController
 			foreach ($images as $image)
 			{
 				if ($image !== JFilterInput::clean($image, 'path')) {
-					JError::raiseWarning(100, JText::_('COM_EVENTLIST_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'));
+					JError::raiseWarning(100, JText::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'));
 					continue;
 				}
 
@@ -168,7 +168,7 @@ class EventListControllerImagehandler extends EventListController
 			$task = 'selectcategoriesimg';
 		} 
 
-		$app->redirect('index.php?option=com_eventlist&view=imagehandler&task='.$task.'&tmpl=component');
+		$app->redirect('index.php?option=com_jem&view=imagehandler&task='.$task.'&tmpl=component');
 	}
 
 }

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_EVENTLIST_VENUE_SUBMISSION">
+	<layout title="COM_JEM_VENUE_SUBMISSION">
 		<message>
-			<![CDATA[COM_EVENTLIST_VENUE_SUBMISSION_DESC]]>
+			<![CDATA[COM_JEM_VENUE_SUBMISSION_DESC]]>
 		</message>
 	</layout>
 	<state>
-		<name>COM_EVENTLIST_VENUE_SUBMISSION</name>
-		<description>COM_EVENTLIST_VENUE_SUBMISSION_DESC</description>
+		<name>COM_JEM_VENUE_SUBMISSION</name>
+		<description>COM_JEM_VENUE_SUBMISSION_DESC</description>
    <config>
 			<fields name="params"><fieldset name="basic" label="basic">
-      <field name="introtext" type="textarea" default="" label="COM_EVENTLIST_INTROTEXT_FIELD" rows="8" cols="30" description="COM_EVENTLIST_INTROTEXT_FIELD_TIP"/>
-      <field name="showintrotext" type="radio" default="0" label="COM_EVENTLIST_DISPLAY_INTROTEXT" description="COM_EVENTLIST_DISPLAY_INTROTEXT_TIP">
-        <option value="0">COM_EVENTLIST_HIDE</option>
-        <option value="1">COM_EVENTLIST_SHOW</option>
+      <field name="introtext" type="textarea" default="" label="COM_JEM_INTROTEXT_FIELD" rows="8" cols="30" description="COM_JEM_INTROTEXT_FIELD_TIP"/>
+      <field name="showintrotext" type="radio" default="0" label="COM_JEM_DISPLAY_INTROTEXT" description="COM_JEM_DISPLAY_INTROTEXT_TIP">
+        <option value="0">COM_JEM_HIDE</option>
+        <option value="1">COM_JEM_SHOW</option>
       </field>
     </fieldset></fields></config>
 	</state>

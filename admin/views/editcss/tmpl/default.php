@@ -76,7 +76,7 @@ defined('_JEXEC') or die;
 
 		<?php echo JHTML::_( 'form.token' ); ?>
 		<input type="hidden" name="filename" value="<?php echo $this->filename; ?>" />
-		<input type="hidden" name="option" value="com_eventlist" />
+		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="task" value="" />
 </form>
 		

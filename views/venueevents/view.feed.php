@@ -71,7 +71,7 @@ class EventListViewVenueevents extends JViewLegacy
 				}
 			}
 			else {
-				$displaydate = JText::_('COM_EVENTLIST_OPEN_DATE');
+				$displaydate = JText::_('COM_JEM_OPEN_DATE');
 			}
 
 			//Format time
@@ -91,12 +91,12 @@ class EventListViewVenueevents extends JViewLegacy
 			$link = JRoute::_( EventListHelperRoute::getRoute($row->id) );
 
 			// feed item description text
-			$description = JText::_( 'COM_EVENTLIST_TITLE' ).': '.$title.'<br />';
-			$description .= JText::_( 'COM_EVENTLIST_VENUE' ).': '.$row->venue.' / '.$row->city.'<br />';
-			$description .= JText::_( 'COM_EVENTLIST_CATEGORY' ).': '.$category.'<br />';
-			$description .= JText::_( 'COM_EVENTLIST_DATE' ).': '.$displaydate.'<br />';
-			$description .= JText::_( 'COM_EVENTLIST_TIME' ).': '.$displaytime.'<br />';
-			$description .= JText::_( 'COM_EVENTLIST_DESCRIPTION' ).': '.$row->datdescription;
+			$description = JText::_( 'COM_JEM_TITLE' ).': '.$title.'<br />';
+			$description .= JText::_( 'COM_JEM_VENUE' ).': '.$row->venue.' / '.$row->city.'<br />';
+			$description .= JText::_( 'COM_JEM_CATEGORY' ).': '.$category.'<br />';
+			$description .= JText::_( 'COM_JEM_DATE' ).': '.$displaydate.'<br />';
+			$description .= JText::_( 'COM_JEM_TIME' ).': '.$displaytime.'<br />';
+			$description .= JText::_( 'COM_JEM_DESCRIPTION' ).': '.$row->datdescription;
 
 			@$created = ( $row->created ? date( 'r', strtotime($row->created) ) : '' );
 

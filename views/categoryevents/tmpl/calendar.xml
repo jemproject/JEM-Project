@@ -8,9 +8,9 @@
 	<state>
 		<name>CATEGORYEVENTS CALENDAR LAYOUT</name>
 		<description>CATEGORYEVENTS CALENDAR LAYOUT DESC</description>
-		<fields name="request" addfieldpath="/administrator/components/com_eventlist/models/fields">
+		<fields name="request" addfieldpath="/administrator/components/com_jem/models/fields">
         <fieldset name="request">
-			<field name="id" type="categories" default="0" label="COM_EVENTLIST_SELECT_CATEGORY" description="COM_EVENTLIST_SELECT_CATEGORY_DESC" />
+			<field name="id" type="categories" default="0" label="COM_JEM_SELECT_CATEGORY" description="COM_JEM_SELECT_CATEGORY_DESC" />
 		</fieldset>
 		</fields>
 	</state>

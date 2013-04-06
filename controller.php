@@ -67,17 +67,17 @@ class EventListController extends JControllerLegacy
 		$id			= JRequest::getInt( 'id');
 		$session 	=  JFactory::getSession();
 		
-		$session->clear('eventform', 'com_eventlist');
+		$session->clear('eventform', 'com_jem');
 
 		// Must be logged in
 		if ($user->get('id') < 1) {
-			JError::raiseError( 403, JText::_('COM_EVENTLIST_ALERTNOTAUTH') );
+			JError::raiseError( 403, JText::_('COM_JEM_ALERTNOTAUTH') );
 			return;
 		}
 
 		if ($id) {
 			// Create and load a events table
-			$row =& JTable::getInstance('eventlist_events', '');
+			$row =& JTable::getInstance('jem_events', '');
 
 			$row->load($id);
 			$row->checkin();
@@ -103,7 +103,7 @@ class EventListController extends JControllerLegacy
 		$post = JRequest::get( 'post' );
 		//sticky forms
 		$session = JFactory::getSession();
-		$session->set('eventform', $post, 'com_eventlist');
+		$session->set('eventform', $post, 'com_jem');
 
 		// Must be logged in
 		if ($user->get('id') < 1) {
@@ -113,7 +113,7 @@ class EventListController extends JControllerLegacy
 
 		if ($id) {
 			// Create and load a events table
-			$row = JTable::getInstance('eventlist_events', '');
+			$row = JTable::getInstance('jem_events', '');
 
 			$row->load($id);
 			$row->checkin();
@@ -136,17 +136,17 @@ class EventListController extends JControllerLegacy
 		
 		$session 	=  JFactory::getSession();
 		
-		$session->clear('venueform', 'com_eventlist');
+		$session->clear('venueform', 'com_jem');
 
 		// Must be logged in
 		if ($user->get('id') < 1) {
-			JError::raiseError( 403, JText::_('COM_EVENTLIST_ALERTNOTAUTH') );
+			JError::raiseError( 403, JText::_('COM_JEM_ALERTNOTAUTH') );
 			return;
 		}
 
 		if ($id) {
 			// Create and load a venues table
-			$row =& JTable::getInstance('eventlist_venues', '');
+			$row =& JTable::getInstance('jem_venues', '');
 
 			$row->load($id);
 			$row->checkin();
@@ -186,7 +186,7 @@ class EventListController extends JControllerLegacy
 		
 		//sticky forms
 		$session = JFactory::getSession();
-		$session->set('venueform', $post, 'com_eventlist');
+		$session->set('venueform', $post, 'com_jem');
     	
 		if (JRequest::getVar( 'latitude', '', 'post', 'string') == '') {
       		unset($post['latitude']);
@@ -205,10 +205,10 @@ class EventListController extends JControllerLegacy
     
 		if ($returnid = $model->store($post, $file)) {
 
-			$msg 	= JText::_( 'COM_EVENTLIST_VENUE_SAVED' );
+			$msg 	= JText::_( 'COM_JEM_VENUE_SAVED' );
 			
 			//check if we return from an addvenue form
-			if ($session->has('eventform', 'com_eventlist')) {
+			if ($session->has('eventform', 'com_jem')) {
 				$link = JRoute::_('index.php?view=editevent', false) ;
 				} else {
 				$link 	= JRoute::_('index.php?view=venueevents&id='.$returnid, false) ;
@@ -218,7 +218,7 @@ class EventListController extends JControllerLegacy
       		$dispatcher =& JDispatcher::getInstance();
       		$res = $dispatcher->trigger( 'onVenueEdited', array( $returnid, $isNew ) );
 
-			$cache = &JFactory::getCache('com_eventlist');
+			$cache = &JFactory::getCache('com_jem');
 			$cache->clean();
 
 		} else {
@@ -267,7 +267,7 @@ class EventListController extends JControllerLegacy
 		
 		//sticky forms
 		$session = JFactory::getSession();
-		$session->set('eventform', $post, 'com_eventlist');
+		$session->set('eventform', $post, 'com_jem');
 		
 		$isNew = ($post['id']) ? false : true;
 
@@ -275,17 +275,17 @@ class EventListController extends JControllerLegacy
 
 		if ($returnid = $model->store($post, $file)) {
 
-			$msg 	= JText::_( 'COM_EVENTLIST_EVENT_SAVED' );
+			$msg 	= JText::_( 'COM_JEM_EVENT_SAVED' );
 			$link 	= JRoute::_( EventListHelperRoute::getRoute($returnid), false) ;
 			
 			JPluginHelper::importPlugin( 'eventlist' );
 			$dispatcher =& JDispatcher::getInstance();
 			$res = $dispatcher->trigger( 'onEventEdited', array( $returnid, $isNew ) );			
 
-			$cache = &JFactory::getCache('com_eventlist');
+			$cache = &JFactory::getCache('com_jem');
 			$cache->clean();
 			
-			$session->clear('eventform', 'com_eventlist');
+			$session->clear('eventform', 'com_jem');
 
 		} else {
 
@@ -330,10 +330,10 @@ class EventListController extends JControllerLegacy
     $dispatcher = JDispatcher::getInstance();
    	$res = $dispatcher->trigger( 'onEventUserRegistered', array( $register_id ) );
 
-		$cache = JFactory::getCache('com_eventlist');
+		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
-		$msg = JText::_( 'COM_EVENTLIST_REGISTERED_SUCCESSFULL' );
+		$msg = JText::_( 'COM_JEM_REGISTERED_SUCCESSFULL' );
 
 		$this->setRedirect(JRoute::_( EventListHelperRoute::getRoute($id), false), $msg );
 	}
@@ -362,10 +362,10 @@ class EventListController extends JControllerLegacy
     $dispatcher = JDispatcher::getInstance();
     $res = $dispatcher->trigger( 'onEventUserUnregistered', array( $id ) ); 
 
-		$cache = JFactory::getCache('com_eventlist');
+		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
-		$msg = JText::_( 'COM_EVENTLIST_UNREGISTERED_SUCCESSFULL' );
+		$msg = JText::_( 'COM_JEM_UNREGISTERED_SUCCESSFULL' );
 		$this->setRedirect( JRoute::_( EventListHelperRoute::getRoute($id), false), $msg );
 	}
 
@@ -482,7 +482,7 @@ class EventListController extends JControllerLegacy
 			exit();
 		}
 
-		$cache = JFactory::getCache('com_eventlist');
+		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
 		echo 1;

@@ -66,7 +66,7 @@ class EventListModelVenues extends JModelLegacy
 		$app =  JFactory::getApplication();
 
 		// Get the paramaters of the active menu item
-		$params 	=  $app->getParams('com_eventlist');
+		$params 	=  $app->getParams('com_jem');
 
 		//get the number of events from database
 		$limit			= JRequest::getInt('limit', $params->get('display_venues_num'));
@@ -108,13 +108,13 @@ class EventListModelVenues extends JModelLegacy
 
 				//Generate Venuedescription
 				if (empty ($venue->locdescription)) {
-					$venue->locdescription = JText::_( 'COM_EVENTLIST_NO_DESCRIPTION' );
+					$venue->locdescription = JText::_( 'COM_JEM_NO_DESCRIPTION' );
 				} else {
 					//execute plugins
 					$venue->text	= $venue->locdescription;
 					$venue->title 	= $venue->venue;
 					JPluginHelper::importPlugin('content');
-					$results = $app->triggerEvent( 'onContentPrepare', array( 'com_eventlist.venues', &$venue, &$params, 0 ));
+					$results = $app->triggerEvent( 'onContentPrepare', array( 'com_jem.venues', &$venue, &$params, 0 ));
 					$venue->locdescription = $venue->text;
 				}
 
@@ -207,8 +207,8 @@ class EventListModelVenues extends JModelLegacy
 		//get categories
 		$query = 'SELECT v.*, COUNT( a.id ) AS assignedevents,'
 				. ' CASE WHEN CHAR_LENGTH(v.alias) THEN CONCAT_WS(\':\', v.id, v.alias) ELSE v.id END as slug'
-				. ' FROM #__eventlist_venues as v'
-				. ' LEFT JOIN #__eventlist_events AS a ON a.locid = v.id'
+				. ' FROM #__jem_venues as v'
+				. ' LEFT JOIN #__jem_events AS a ON a.locid = v.id'
 				. ' WHERE v.published = 1'
 				. $eventstate
 				. ' GROUP BY v.id'

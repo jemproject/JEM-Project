@@ -46,7 +46,7 @@ class EventListViewDetails extends JViewLegacy
 		$user		=  JFactory::getUser();
 		$dispatcher =  JDispatcher::getInstance();
 		$elsettings =  ELHelper::config();
-		$params 	= $app->getParams('com_eventlist');
+		$params 	= $app->getParams('com_jem');
 
 		$row		=  $this->get('Details');
 		$categories	=  $this->get('Categories');
@@ -69,19 +69,19 @@ class EventListViewDetails extends JViewLegacy
 
 		//Check if user has access to the details
 		if ($elsettings->showdetails == 0) {
-			return JError::raiseError( 403, JText::_( 'COM_EVENTLIST_NO_ACCESS' ) );
+			return JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
 		}
 		
 		$cid		= JRequest::getInt('cid', 0);
 
 		//add css file
-		$document->addStyleSheet($this->baseurl.'/components/com_eventlist/assets/css/eventlist.css');
+		$document->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
 
 		//Print
 		$pop	= JRequest::getBool('pop');
 
-		$params->def( 'page_title', JText::_( 'COM_EVENTLIST_DETAILS' ));
+		$params->def( 'page_title', JText::_( 'COM_JEM_DETAILS' ));
 
 		if ( $pop ) {
 			$params->set( 'popup', 1 );
@@ -146,7 +146,7 @@ class EventListViewDetails extends JViewLegacy
 			$row->text	= $row->datdescription;
 
 			JPluginHelper::importPlugin('content');
-			$results = $dispatcher->trigger('onContentPrepare', array ('com_eventlist.detail', & $row, & $params, 0));
+			$results = $dispatcher->trigger('onContentPrepare', array ('com_jem.detail', & $row, & $params, 0));
 			$row->datdescription = $row->text;
 		}
 
@@ -156,7 +156,7 @@ class EventListViewDetails extends JViewLegacy
 			$row->text	=	$row->locdescription;
 
 			JPluginHelper::importPlugin('content');
-			$results = $dispatcher->trigger('onContentPrepare', array ('com_eventlist.detail', & $row, & $params, 0));
+			$results = $dispatcher->trigger('onContentPrepare', array ('com_jem.detail', & $row, & $params, 0));
 			$row->locdescription = $row->text;
 		}
 

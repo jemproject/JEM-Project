@@ -22,13 +22,13 @@
 defined('_JEXEC') or die;
 
 /**
- * EventList groupmembers Model class
+ * EventList attachments table class
  *
  * @package Joomla
  * @subpackage EventList
- * @since 0.9
+ * @since 1.1
  */
-class eventlist_groupmembers extends JTable
+class jem_attachments extends JTable
 {
 	/**
 	 * Primary Key
@@ -36,10 +36,34 @@ class eventlist_groupmembers extends JTable
 	 */
 	var $id 				= null;
 	/** @var int */
-	var $member				= null;
+	var $file				= '';
+	/** @var int */
+	var $object				= '';
+	/** @var string */
+	var $name 		= null;
+	/** @var string */
+	var $description 		= null;
+	/** @var string */
+	var $icon 		= null;
+	/** @var int */
+	var $frontend		= 1;
+	/** @var int */
+	var $access 		= 0;
+	/** @var int */
+	var $ordering 		= 0;
+	/** @var string */
+	var $added 		= '';
+	/** @var int */
+	var $added_by 		= 0;
 
-	function eventlist_groupmembers(& $db) {
-		parent::__construct('#__eventlist_groupmembers', '', $db);
+	function jem_attachments(& $db) {
+		parent::__construct('#__jem_attachments', 'id', $db);
+	}
+
+	// overloaded check function
+	function check()
+	{
+		return true;
 	}
 }
 ?>

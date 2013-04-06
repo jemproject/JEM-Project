@@ -73,12 +73,12 @@ class JFormFieldEvent extends JFormFieldList
 
 		// Setup variables for display.
 		$html	= array();
-		$link	= 'index.php?option=com_eventlist&amp;view=eventelement&amp;tmpl=component&amp;object='.$this->id;
+		$link	= 'index.php?option=com_jem&amp;view=eventelement&amp;tmpl=component&amp;object='.$this->id;
 
 		$db	= JFactory::getDBO();
 		$db->setQuery(
 			'SELECT title' .
-			' FROM #__eventlist_events' .
+			' FROM #__jem_events' .
 			' WHERE id = '.(int) $this->value
 		);
 		$title = $db->loadResult();
@@ -88,7 +88,7 @@ class JFormFieldEvent extends JFormFieldList
 		}
 
 		if (empty($title)) {
-			$title = JText::_('COM_EVENTLIST_SELECT_EVENT');
+			$title = JText::_('COM_JEM_SELECT_EVENT');
 		}
 		$title = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
 
@@ -100,7 +100,7 @@ class JFormFieldEvent extends JFormFieldList
 		// The user select button.
 		$html[] = '<div class="button2-left">';
 		$html[] = '  <div class="blank">';
-		$html[] = '	<a class="modal" title="'.JText::_('COM_EVENTLIST_SELECT_EVENT').'"  href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}">'.JText::_('COM_EVENTLIST_SELECT_EVENT').'</a>';
+		$html[] = '	<a class="modal" title="'.JText::_('COM_JEM_SELECT_EVENT').'"  href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}">'.JText::_('COM_JEM_SELECT_EVENT').'</a>';
 		$html[] = '  </div>';
 		$html[] = '</div>';
 

@@ -50,11 +50,11 @@ static	function &config()
 		if (!is_object($config))
 		{
 			$db 	=  JFactory::getDBO();
-			$sql 	= 'SELECT * FROM #__eventlist_settings WHERE id = 1';
+			$sql 	= 'SELECT * FROM #__jem_settings WHERE id = 1';
 			$db->setQuery($sql);
 			$config = $db->loadObject();
 			
-			$config->params = JComponentHelper::getParams('com_eventlist');
+			$config->params = JComponentHelper::getParams('com_jem');
 		}
 
 		return $config;
@@ -71,7 +71,7 @@ static	function &config()
 static	function cleanup($forced = 0)
 	{
 		$elsettings =  ELHelper::config();
-    	$params = JComponentHelper::getParams('com_eventlist');   
+    	$params = JComponentHelper::getParams('com_jem');   
     	$weekstart = $params->get('weekdaystart',0);
     	$anticipation = $params->get('recurrence_anticipation', 30);
 
@@ -96,7 +96,7 @@ static	function cleanup($forced = 0)
 			$query = ' SELECT id, CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id, '
 			       . ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, '
 			       . ' MAX(dates) as dates, MAX(enddates) as enddates, MAX(recurrence_counter) as counter '
-			       . ' FROM #__eventlist_events '
+			       . ' FROM #__jem_events '
 			       . ' WHERE recurrence_type <> "0" '
 			       . ' AND CASE recurrence_limit_date WHEN '.$nulldate.' THEN 1 ELSE NOW() < recurrence_limit_date END '
 			       . ' AND recurrence_number <> "0" '
@@ -109,7 +109,7 @@ static	function cleanup($forced = 0)
 			foreach($recurrence_array as $recurrence_row) 
 			{
 				// get the info of reference event for the duplicates
-				$ref_event = & JTable::getInstance('eventlist_events', '');
+				$ref_event = & JTable::getInstance('jem_events', '');
 				$ref_event->load($recurrence_row['id']);
 								
 				// get the recurrence information
@@ -126,7 +126,7 @@ static	function cleanup($forced = 0)
 				while (($recurrence_row['recurrence_limit_date'] == $nulldate || strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date'])) 
 				     && strtotime($recurrence_row['dates']) <= time() + 86400*$anticipation) 
 				{
-					$new_event = & JTable::getInstance('eventlist_events', '');
+					$new_event = & JTable::getInstance('jem_events', '');
 					$new_event->bind($ref_event, array('id', 'hits', 'dates', 'enddates'));
 					$new_event->recurrence_first_id = $recurrence_row['first_id'];
           			$new_event->recurrence_counter = $recurrence_row['counter'] + 1;
@@ -137,8 +137,8 @@ static	function cleanup($forced = 0)
           			{
           				$recurrence_row['counter']++;
 	          			//duplicate categories event relationships
-	          			$query = ' INSERT INTO #__eventlist_cats_event_relations (itemid, catid) '
-	                 			. ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__eventlist_cats_event_relations WHERE itemid = ' . $db->Quote($ref_event->id);
+	          			$query = ' INSERT INTO #__jem_cats_event_relations (itemid, catid) '
+	                 			. ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__jem_cats_event_relations WHERE itemid = ' . $db->Quote($ref_event->id);
 	          			$db->setQuery($query);
 	          			if (!$db->query()) {
 	          				echo JText::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
@@ -151,20 +151,20 @@ static	function cleanup($forced = 0)
 
 			//delete outdated events
 			if ($elsettings->oldevent == 1) {
-				$query = 'DELETE FROM #__eventlist_events WHERE dates > 0  AND DATE_SUB(NOW(), INTERVAL '.$elsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates))';
+				$query = 'DELETE FROM #__jem_events WHERE dates > 0  AND DATE_SUB(NOW(), INTERVAL '.$elsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates))';
 				$db->SetQuery( $query );
 				$db->Query();
 			}
 
 			//Set state archived of outdated events
 			if ($elsettings->oldevent == 2) {
-				$query = 'UPDATE #__eventlist_events SET published = -1 WHERE dates > 0 AND DATE_SUB(NOW(), INTERVAL '.$elsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates)) AND published = 1';
+				$query = 'UPDATE #__jem_events SET published = -1 WHERE dates > 0 AND DATE_SUB(NOW(), INTERVAL '.$elsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates)) AND published = 1';
 				$db->SetQuery( $query );
 				$db->Query();
 			}
 			
 			//Set timestamp of last cleanup
-			$query = 'UPDATE #__eventlist_settings SET lastupdate = '.time().' WHERE id = 1';
+			$query = 'UPDATE #__jem_settings SET lastupdate = '.time().' WHERE id = 1';
 			$db->SetQuery( $query );
 			$db->Query();
 		}
@@ -403,7 +403,7 @@ static	function br2break($string)
 	}
 
 	/**
-	 * use only some importent keys of the eventlist_events - database table for the where query
+	 * use only some importent keys of the jem_events - database table for the where query
 	 *
 	 * @param string $key
 	 * @return boolean
@@ -570,13 +570,13 @@ static	function updateWaitingList($event)
     $db = &Jfactory::getDBO();
     
 		// get event details for registration
-    $query = ' SELECT maxplaces, waitinglist FROM #__eventlist_events WHERE id = ' . $db->Quote($event);
+    $query = ' SELECT maxplaces, waitinglist FROM #__jem_events WHERE id = ' . $db->Quote($event);
     $db->setQuery($query);
     $event_places = $db->loadObject();    
 			
 		// get attendees after deletion, and their status
 		$query = 'SELECT r.id, r.waiting '
-				. ' FROM #__eventlist_register AS r'
+				. ' FROM #__jem_register AS r'
 				. ' WHERE r.event = '.$db->Quote($event)
 				. ' ORDER BY r.uregdate ASC '
 				;
@@ -599,7 +599,7 @@ static	function updateWaitingList($event)
 		{
 			// need to bump users to attending status
 			$bumping = array_slice($waiting, 0, $event_places->maxplaces - $registered);
-			$query = ' UPDATE #__eventlist_register SET waiting = 0 WHERE id IN ('.implode(',', $bumping).')';
+			$query = ' UPDATE #__jem_register SET waiting = 0 WHERE id IN ('.implode(',', $bumping).')';
 			$db->setQuery($query);
 			if (!$db->query()) {
 				$this->setError(JText::_('Failed bumping users from waiting to confirmed list'));
@@ -683,18 +683,18 @@ static  function getTimeZone($offset)
 	 */
 static	function getCalendarTool()
 	{
-		require_once JPATH_SITE.DS.'components'.DS.'com_eventlist'.DS.'classes'.DS.'iCalcreator.class.php';
+		require_once JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'classes'.DS.'iCalcreator.class.php';
 		$mainframe = JFactory::getApplication();
     
 		$offset = (float) $mainframe->getCfg('offset');
 		$timezone_name = ELHelper::getTimeZone($offset);
 								
 		$vcal = new vcalendar();                          // initiate new CALENDAR
-		if (!file_exists(JPATH_SITE.DS.'cache'.DS.'com_eventlist')) {
+		if (!file_exists(JPATH_SITE.DS.'cache'.DS.'com_jem')) {
 			jimport('joomla.filesystem.folder');
-			JFolder::create(JPATH_SITE.DS.'cache'.DS.'com_eventlist');
+			JFolder::create(JPATH_SITE.DS.'cache'.DS.'com_jem');
 		}
-		$vcal->setConfig('directory', JPATH_SITE.DS.'cache'.DS.'com_eventlist');
+		$vcal->setConfig('directory', JPATH_SITE.DS.'cache'.DS.'com_jem');
 	//	$vcal->setProperty('unique_id', 'events@'.$mainframe->getCfg('sitename'));
 		$vcal->setProperty( "calscale", "GREGORIAN" ); 
     $vcal->setProperty( 'method', 'PUBLISH' );
@@ -706,9 +706,9 @@ static	function getCalendarTool()
 	
 static	function icalAddEvent(&$calendartool, $event)
 	{
-		require_once JPATH_SITE.DS.'components'.DS.'com_eventlist'.DS.'classes'.DS.'iCalcreator.class.php';
+		require_once JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'classes'.DS.'iCalcreator.class.php';
 		$mainframe = JFactory::getApplication();
-		$params = $mainframe->getParams('com_eventlist');
+		$params = $mainframe->getParams('com_jem');
 		
 		$offset = (float) $mainframe->getCfg('offset');
 		$timezone_name = ELHelper::getTimeZone($offset);
@@ -733,7 +733,7 @@ static	function icalAddEvent(&$calendartool, $event)
 		
 		// start
 		if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/',$event->dates, $start_date)) {
-			JError::raiseError(0, JText::_('COM_EVENTLIST_ICAL_EXPORT_WRONG_STARTDATE_FORMAT'));
+			JError::raiseError(0, JText::_('COM_JEM_ICAL_EXPORT_WRONG_STARTDATE_FORMAT'));
 		}
 		$date = array('year' => (int) $start_date[1], 'month' => (int) $start_date[2], 'day' => (int) $start_date[3]);
 			
@@ -746,7 +746,7 @@ static	function icalAddEvent(&$calendartool, $event)
 			$event->enddates = strftime('%Y-%m-%d', strtotime($event->enddates.' +1 day'));
 			
 			if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/',$event->enddates, $end_date)) {
-				JError::raiseError(0, JText::_('COM_EVENTLIST_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'));
+				JError::raiseError(0, JText::_('COM_JEM_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'));
 			}
 			$date_end = array('year' => $end_date[1], 'month' => $end_date[2], 'day' => $end_date[3]);
 			$dateendparam = array('VALUE' => 'DATE');			
@@ -754,7 +754,7 @@ static	function icalAddEvent(&$calendartool, $event)
 		else // not all day events, there is a start time
 		{		
 			if (!preg_match('/([0-9]{2}):([0-9]{2}):([0-9]{2})/',$event->times, $start_time)) {
-				JError::raiseError(0, JText::_('COM_EVENTLIST_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'));
+				JError::raiseError(0, JText::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'));
 			}
 			$date['hour'] = $start_time[1];
 			$date['min']  = $start_time[2];
@@ -775,12 +775,12 @@ static	function icalAddEvent(&$calendartool, $event)
 			}
 
 			if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/',$event->enddates, $end_date)) {
-				JError::raiseError(0, JText::_('COM_EVENTLIST_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'));
+				JError::raiseError(0, JText::_('COM_JEM_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'));
 			}
 			$date_end = array('year' => $end_date[1], 'month' => $end_date[2], 'day' => $end_date[3]);
 						
 			if (!preg_match('/([0-9]{2}):([0-9]{2}):([0-9]{2})/',$event->endtimes, $end_time)) {
-				JError::raiseError(0, JText::_('COM_EVENTLIST_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'));
+				JError::raiseError(0, JText::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'));
 			}
 			$date_end['hour'] = $end_time[1];
 			$date_end['min']  = $end_time[2];
@@ -807,7 +807,7 @@ static	function icalAddEvent(&$calendartool, $event)
 		
 		
 		$link = JRoute::_( $link );
-		$description .= JText::_( 'COM_EVENTLIST_ICS_LINK' ).': '.$link.'\\n';
+		$description .= JText::_( 'COM_JEM_ICS_LINK' ).': '.$link.'\\n';
 		
 		// location
 		$location = array($event->venue);

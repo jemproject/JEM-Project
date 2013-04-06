@@ -50,7 +50,7 @@ defined( '_JEXEC' ) or die;
 		?>
 		<p>
 			<?php
-			echo JText::_( 'COM_EVENTLIST_EVENTS' ).': ';
+			echo JText::_( 'COM_JEM_EVENTS' ).': ';
 			echo JHTML::_('link', JRoute::_($row->linktarget), $row->assignedevents ? $row->assignedevents : '0');
 			?>
 		</p>
@@ -75,7 +75,7 @@ if (count($row->subcats)) :
 ?>
 
 <div class="subcategories">
-<?php echo JText::_('COM_EVENTLIST_SUBCATEGORIES'); ?>
+<?php echo JText::_('COM_JEM_SUBCATEGORIES'); ?>
 </div>
 <?php
 $n = count($row->subcats);

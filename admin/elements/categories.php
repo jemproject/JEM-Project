@@ -60,7 +60,7 @@ class JFormFieldCategories extends JFormField
                 $db = JFactory::getDBO();
                 $query = $db->getQuery(true);
                 $query->select('id,catname');
-                $query->from('#__eventlist_categories');
+                $query->from('#__jem_categories');
                 $db->setQuery((string)$query);
                 $messages = $db->loadObjectList();
                 $options = array();
@@ -93,9 +93,9 @@ class JElementCategories extends JElement {
 		$doc 		= JFactory::getDocument();
 		$fieldName	= $control_name.'['.$name.']';
 
-		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_eventlist'.DS.'tables');
+		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_jem'.DS.'tables');
 
-		$category = JTable::getInstance('eventlist_categories', '');
+		$category = JTable::getInstance('jem_categories', '');
 
 		if ($value) {
 			$category->load($value);
@@ -116,7 +116,7 @@ class JElementCategories extends JElement {
 	  }
 		";
 
-		$link = 'index.php?option=com_eventlist&amp;view=categoryelement&amp;tmpl=component';
+		$link = 'index.php?option=com_jem&amp;view=categoryelement&amp;tmpl=component';
 		$doc->addScriptDeclaration($js);
 
 		JHTML::_('behavior.modal', 'a.modal');

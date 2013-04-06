@@ -78,7 +78,7 @@ class EventListModelCategoriesdetailed extends JModelLegacy
         $app =  JFactory::getApplication();
 
         // Get the paramaters of the active menu item
-        $params =  $app->getParams('com_eventlist');
+        $params =  $app->getParams('com_jem');
 
         $id = JRequest::getInt('id');
         $this->_id = $id;
@@ -125,22 +125,22 @@ class EventListModelCategoriesdetailed extends JModelLegacy
                 //Generate description
                 if ( empty($category->catdescription))
                 {
-                    $category->catdescription = JText::_('COM_EVENTLIST_NO_DESCRIPTION');
+                    $category->catdescription = JText::_('COM_JEM_NO_DESCRIPTION');
                 } else
                 {
                     //execute plugins
                     $category->text = $category->catdescription;
                     $category->title = $category->catname;
                     JPluginHelper::importPlugin('content');
-                    $results = $app->triggerEvent('onContentPrepare', array ('com_eventlist.categoriesdetailed', & $category, & $params, 0));
+                    $results = $app->triggerEvent('onContentPrepare', array ('com_jem.categoriesdetailed', & $category, & $params, 0));
                     $category->catdescription = $category->text;
                 }
 
                 //create target link
                 $task = JRequest::getWord('task');
 
-                $category->linktext = $task == 'archive'?JText::_('COM_EVENTLIST_SHOW_ARCHIVE'):
-                    JText::_('COM_EVENTLIST_SHOW_EVENTS');
+                $category->linktext = $task == 'archive'?JText::_('COM_JEM_SHOW_ARCHIVE'):
+                    JText::_('COM_JEM_SHOW_EVENTS');
 
                     if ($task == 'archive')
                     {
@@ -192,7 +192,7 @@ class EventListModelCategoriesdetailed extends JModelLegacy
         {
             $app = JFactory::getApplication();
 
-            $params =  $app->getParams('com_eventlist');
+            $params =  $app->getParams('com_jem');
 
             // Lets load the content
             $query = $this->_buildDataQuery($id);
@@ -257,10 +257,10 @@ class EventListModelCategoriesdetailed extends JModelLegacy
             $query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.datdescription, a.created, l.venue, l.city, l.state, l.url,'
             .' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
             .' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-            .' FROM #__eventlist_events AS a'
-            .' LEFT JOIN #__eventlist_venues AS l ON l.id = a.locid'
-            .' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.itemid = a.id'
-            .' LEFT JOIN #__eventlist_categories AS c ON c.id = '.$id
+            .' FROM #__jem_events AS a'
+            .' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+            .' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+            .' LEFT JOIN #__jem_categories AS c ON c.id = '.$id
             .$where
             .' ORDER BY a.dates, a.times'
             ;
@@ -284,8 +284,8 @@ class EventListModelCategoriesdetailed extends JModelLegacy
 
             $query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
             .' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-            .' FROM #__eventlist_categories AS c'
-            .' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.catid = c.id'
+            .' FROM #__jem_categories AS c'
+            .' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
             .' WHERE rel.itemid = '.(int)$id
             .' AND c.published = 1'
             .' AND c.access  <= '.$gid;
@@ -344,7 +344,7 @@ class EventListModelCategoriesdetailed extends JModelLegacy
             $where_sub .= ' AND c.id = cc.id';
 
             // Get the paramaters of the active menu item
-            $params =  $app->getParams('com_eventlist');
+            $params =  $app->getParams('com_jem');
 
             // show/hide empty categories
             $empty = null;
@@ -356,14 +356,14 @@ class EventListModelCategoriesdetailed extends JModelLegacy
             .' CASE WHEN CHAR_LENGTH( c.alias ) THEN CONCAT_WS( \':\', c.id, c.alias ) ELSE c.id END AS slug,'
             .' ('
             .' SELECT COUNT( DISTINCT i.id )'
-            .' FROM #__eventlist_events AS i'
-            .' LEFT JOIN #__eventlist_cats_event_relations AS rel ON rel.itemid = i.id'
-            .' LEFT JOIN #__eventlist_categories AS cc ON cc.id = rel.catid'
+            .' FROM #__jem_events AS i'
+            .' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = i.id'
+            .' LEFT JOIN #__jem_categories AS cc ON cc.id = rel.catid'
             .$where_sub
             .' GROUP BY cc.id'
             .')'
             .' AS assignedevents'
-            .' FROM #__eventlist_categories AS c'
+            .' FROM #__jem_categories AS c'
             .' WHERE c.published = 1'
             .' AND c.parent_id = '.$parent_id
             .' AND c.access <= '.$gid
@@ -386,7 +386,7 @@ class EventListModelCategoriesdetailed extends JModelLegacy
             $app =  JFactory::getApplication();
 			
             // Get the paramaters of the active menu item
-            $params =  $app->getParams('com_eventlist');
+            $params =  $app->getParams('com_jem');
 
             $user =  JFactory::getUser();
             
@@ -401,13 +401,13 @@ class EventListModelCategoriesdetailed extends JModelLegacy
            }
 
             $query = 'SELECT DISTINCT c.id'
-            .' FROM #__eventlist_categories AS c';
+            .' FROM #__jem_categories AS c';
 
             
             if (!$params->get('empty_cat', 1))
             {
-                $query .= ' INNER JOIN #__eventlist_cats_event_relations AS rel ON rel.catid = c.id '
-                .' INNER JOIN #__eventlist_events AS e ON e.id = rel.itemid ';
+                $query .= ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id '
+                .' INNER JOIN #__jem_events AS e ON e.id = rel.itemid ';
             }
             $query .= ' WHERE c.published = 1'
             .' AND c.parent_id = '.(int)$this->_id

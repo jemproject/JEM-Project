@@ -70,9 +70,9 @@ static function footer( )
 			JHTML::_('behavior.tooltip');
 
 			if ( $settings->icons ) {
-				$image = JHTML::image("components/com_eventlist/assets/images/submitevent.png",JText::_( 'COM_EVENTLIST_DELIVER_NEW_EVENT' ));
+				$image = JHTML::image("components/com_jem/assets/images/submitevent.png",JText::_( 'COM_JEM_DELIVER_NEW_EVENT' ));
 			} else {
-				$image = JText::_( 'COM_EVENTLIST_DELIVER_NEW_EVENT' );
+				$image = JText::_( 'COM_JEM_DELIVER_NEW_EVENT' );
 			}
 
                         if (JRequest::getInt('print')) {
@@ -81,8 +81,8 @@ static function footer( )
                           
 			}else {
 			$link 		= 'index.php?view=editevent';
-			$overlib 	= JText::_( 'COM_EVENTLIST_SUBMIT_EVENT_TIP' );
-			$output		= '<a href="'.JRoute::_($link).'" class="editlinktip hasTip" title="'.JText::_( 'COM_EVENTLIST_DELIVER_NEW_EVENT' ).'::'.$overlib.'">'.$image.'</a>';
+			$overlib 	= JText::_( 'COM_JEM_SUBMIT_EVENT_TIP' );
+			$output		= '<a href="'.JRoute::_($link).'" class="editlinktip hasTip" title="'.JText::_( 'COM_JEM_DELIVER_NEW_EVENT' ).'::'.$overlib.'">'.$image.'</a>';
 
                         }
 			return $output;
@@ -117,12 +117,12 @@ static function footer( )
 			if ($task == 'archive') {
 				
 				if ( $settings->icons ) {
-					$image = JHTML::image("components/com_eventlist/assets/images/eventlist.png",JText::_( 'COM_EVENTLIST_SHOW_EVENTS' ));
+					$image = JHTML::image("components/com_jem/assets/images/eventlist.png",JText::_( 'COM_JEM_SHOW_EVENTS' ));
 				} else {
-					$image = JText::_( 'COM_EVENTLIST_SHOW_EVENTS' );
+					$image = JText::_( 'COM_JEM_SHOW_EVENTS' );
 				}
-				$overlib 	= JText::_( 'COM_EVENTLIST_SHOW_EVENTS_TIP' );
-				$title 		= JText::_( 'COM_EVENTLIST_SHOW_EVENTS' );
+				$overlib 	= JText::_( 'COM_JEM_SHOW_EVENTS_TIP' );
+				$title 		= JText::_( 'COM_JEM_SHOW_EVENTS' );
 				
 				if ($id) {
 						$link 		= JRoute::_( 'index.php?view='.$view.'&id='.$id );
@@ -133,12 +133,12 @@ static function footer( )
 			} else {
 				
 				if ( $settings->icons ) {
-					$image = JHTML::image("components/com_eventlist/assets/images/archive_front.png",JText::_( 'COM_EVENTLIST_SHOW_ARCHIVE' ));
+					$image = JHTML::image("components/com_jem/assets/images/archive_front.png",JText::_( 'COM_JEM_SHOW_ARCHIVE' ));
 				} else {
-					$image = JText::_( 'COM_EVENTLIST_SHOW_ARCHIVE' );
+					$image = JText::_( 'COM_JEM_SHOW_ARCHIVE' );
 				}
-				$overlib 	= JText::_( 'COM_EVENTLIST_SHOW_ARCHIVE_TIP' );
-				$title 		= JText::_( 'COM_EVENTLIST_SHOW_ARCHIVE' );
+				$overlib 	= JText::_( 'COM_JEM_SHOW_ARCHIVE_TIP' );
+				$title 		= JText::_( 'COM_JEM_SHOW_ARCHIVE' );
 					
 				if ($id) {
 					$link 		= JRoute::_( 'index.php?view='.$view.'&id='.$id.'&task=archive' );
@@ -186,22 +186,22 @@ static function footer( )
 			{
 				case 'editevent':
 					if ( $settings->icons ) {
-						$image = JHTML::image("components/com_eventlist/assets/images/calendar_edit.png",JText::_( 'COM_EVENTLIST_EDIT_EVENT' ));
+						$image = JHTML::image("components/com_jem/assets/images/calendar_edit.png",JText::_( 'COM_JEM_EDIT_EVENT' ));
 					} else {
-						$image = JText::_( 'COM_EVENTLIST_EDIT_EVENT' );
+						$image = JText::_( 'COM_JEM_EDIT_EVENT' );
 					}
-					$overlib = JText::_( 'COM_EVENTLIST_EDIT_EVENT_TIP' );
-					$text = JText::_( 'COM_EVENTLIST_EDIT_EVENT' );
+					$overlib = JText::_( 'COM_JEM_EDIT_EVENT_TIP' );
+					$text = JText::_( 'COM_JEM_EDIT_EVENT' );
 					break;
 
 				case 'editvenue':
 					if ( $settings->icons ) {
-						$image = JHTML::image("components/com_eventlist/assets/images/calendar_edit.png",JText::_( 'COM_EVENTLIST_EDIT_EVENT' ));
+						$image = JHTML::image("components/com_jem/assets/images/calendar_edit.png",JText::_( 'COM_JEM_EDIT_EVENT' ));
 					} else {
-						$image = JText::_( 'COM_EVENTLIST_EDIT_VENUE' );
+						$image = JText::_( 'COM_JEM_EDIT_VENUE' );
 					}
-					$overlib = JText::_( 'COM_EVENTLIST_EDIT_VENUE_TIP' );
-					$text = JText::_( 'COM_EVENTLIST_EDIT_VENUE' );
+					$overlib = JText::_( 'COM_JEM_EDIT_VENUE_TIP' );
+					$text = JText::_( 'COM_JEM_EDIT_VENUE' );
 					break;
 			}
 
@@ -242,19 +242,19 @@ static function footer( )
 			if ( $settings->icons ) {
 				$image = JHTML::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), NULL, true);
 			} else {
-				$image = JText::_( 'COM_EVENTLIST_PRINT' );
+				$image = JText::_( 'COM_JEM_PRINT' );
 			}
 
 			if (JRequest::getInt('print')) {
 				//button in popup
-				$overlib = JText::_( 'COM_EVENTLIST_PRINT_TIP' );
-				$text = JText::_( 'COM_EVENTLIST_PRINT' );
+				$overlib = JText::_( 'COM_JEM_PRINT_TIP' );
+				$text = JText::_( 'COM_JEM_PRINT' );
 				$output = '<a href="#" onclick="window.print();return false;" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 				
 			} else {
 				//button in view
-				$overlib = JText::_( 'COM_EVENTLIST_PRINT_TIP' );
-				$text = JText::_( 'COM_EVENTLIST_PRINT' );
+				$overlib = JText::_( 'COM_JEM_PRINT_TIP' );
+				$text = JText::_( 'COM_JEM_PRINT' );
 
 				$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" onclick="window.open(this.href,\'win2\',\''.$status.'\'); return false;" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 			}
@@ -291,7 +291,7 @@ static function footer( )
 			if ($settings->icons) 	{
 				$image = JHTML::_('image','system/emailButton.png', JText::_('JGLOBAL_EMAIL'), NULL, true);
 			} else {
-				$image = JText::_( 'COM_EVENTLIST_EMAIL' );
+				$image = JText::_( 'COM_JEM_EMAIL' );
 			}
                         
                         if (JRequest::getInt('print')) {
@@ -299,8 +299,8 @@ static function footer( )
 				$output = '';
 			} else {
 				//button in view
-			$overlib = JText::_( 'COM_EVENTLIST_EMAIL_TIP' );
-			$text = JText::_( 'COM_EVENTLIST_EMAIL' );
+			$overlib = JText::_( 'COM_JEM_EMAIL_TIP' );
+			$text = JText::_( 'COM_JEM_EMAIL' );
 
 			$output	= '<a href="'. JRoute::_($url) .'" class="editlinktip hasTip" onclick="window.open(this.href,\'win2\',\''.$status.'\'); return false;" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 
@@ -330,9 +330,9 @@ static function footer( )
 
 			// checks template image directory for image, if non found default are loaded
 			if ( $settings->icons ) {
-				$image = JHTML::image("components/com_eventlist/assets/images/iCal2.0.png",JText::_( 'COM_EVENTLIST_EXPORT_ICS' ));
+				$image = JHTML::image("components/com_jem/assets/images/iCal2.0.png",JText::_( 'COM_JEM_EXPORT_ICS' ));
 			} else {
-				$image = JText::_( 'COM_EVENTLIST_EXPORT_ICS' );
+				$image = JText::_( 'COM_JEM_EXPORT_ICS' );
 			}
 
 			if (JRequest::getInt('print')) {
@@ -340,8 +340,8 @@ static function footer( )
 				$output = '';
 			} else {
 				//button in view
-				$overlib = JText::_( 'COM_EVENTLIST_ICAL_TIP' );
-				$text = JText::_( 'COM_EVENTLIST_ICAL' );
+				$overlib = JText::_( 'COM_JEM_ICAL_TIP' );
+				$text = JText::_( 'COM_JEM_ICAL' );
 
 				$print_link = 'index.php?view='.$view.'&id='.$slug.'&format=raw&layout=ics';
 				$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip"  title="'.$text.'::'.$overlib.'">'.$image.'</a>';
@@ -369,7 +369,7 @@ static function footer( )
 		$elsettings =  ELHelper::config();
 		
 		//Link to map
-        $mapimage = JHTML::image("components/com_eventlist/assets/images/icon-48-globe.png",JText::_( 'COM_EVENTLIST_MAP' ));
+        $mapimage = JHTML::image("components/com_jem/assets/images/icon-48-globe.png",JText::_( 'COM_JEM_MAP' ));
 		
         //set var
 		$output 	= null;
@@ -389,7 +389,7 @@ static function footer( )
 			{
 				$url = 'http://maps.google.'.$elsettings->tld.'/maps?hl='.$elsettings->lg.'&q='.str_replace(" ", "+", $data->street).', '.$data->plz.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.$data->venue.')&ie=UTF8&t=&z=15&iwloc=B&output=embed" ';
 				$attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
-				$output		= '<div class="mapicon2"><a class="modal" title="'.JText::_( 'COM_EVENTLIST_MAP' ).'" target="_blank" href="'.$url.'"'.$attributes.'><div class="mapicon" align="center">'.$mapimage.'</div></a></div>';
+				$output		= '<div class="mapicon2"><a class="modal" title="'.JText::_( 'COM_JEM_MAP' ).'" target="_blank" href="'.$url.'"'.$attributes.'><div class="mapicon" align="center">'.$mapimage.'</div></a></div>';
 				
 			
 				} break;
@@ -456,7 +456,7 @@ static function footer( )
 
 				}
 
-				$icon	= '<img src="'.JURI::base().'/'.$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_( 'COM_EVENTLIST_CLICK_TO_ENLARGE' ).'" />';
+				$icon	= '<img src="'.JURI::base().'/'.$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_( 'COM_JEM_CLICK_TO_ENLARGE' ).'" />';
 				$output	= '<a href="'.$url.'" '.$attributes.'>'.$icon.'</a>';
 
 			//No thumbnail? Then take the in the settings specified values for the original
@@ -484,7 +484,7 @@ static	function getFlag($country)
         jimport('joomla.filesystem.file');
 
         if (JFile::exists(JPATH_COMPONENT_SITE.DS.'assets'.DS.'images'.DS.'flags'.DS.$country.'.gif')) {
-        	$countryimg = '<img src="'.JURI::base(true).'/components/com_eventlist/assets/images/flags/'.$country.'.gif" alt="'.JText::_( 'COM_EVENTLIST_COUNTRY' ).': '.$country.'" width="16" height="11" />';
+        	$countryimg = '<img src="'.JURI::base(true).'/components/com_jem/assets/images/flags/'.$country.'.gif" alt="'.JText::_( 'COM_JEM_COUNTRY' ).': '.$country.'" width="16" height="11" />';
 
         	return $countryimg;
         }

@@ -59,7 +59,7 @@ class EventListControllerSampledata extends EventListController
 			$msg 	= JText::_( 'SAMPLEDATA SUCCESSFULL' );
 		}
 		
-		$link 	= 'index.php?option=com_eventlist&view=eventlist';
+		$link 	= 'index.php?option=com_jem&view=eventlist';
 		
 		$this->setRedirect($link, $msg);
  	}

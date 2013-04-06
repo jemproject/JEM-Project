@@ -48,7 +48,7 @@ static	function postUpload($post_files, $object)
 		jimport('joomla.filesystem.folder');
 		$app = JFactory::getApplication();
 		$user = JFactory::getUser();
-		$params = JComponentHelper::getParams('com_eventlist');
+		$params = JComponentHelper::getParams('com_jem');
 		$elsettings =  ELHelper::config();
 
 		$path = JPATH_SITE.DS.$elsettings->attachments_path.DS.$object;
@@ -76,12 +76,12 @@ static	function postUpload($post_files, $object)
 			
 			$tmp = explode(".", strtolower($file));
 			if (!in_array(end($tmp), $allowed)) {
-				JError::raiseWarning(0, JText::_('COM_EVENTLIST_ERROR_ATTACHEMENT_EXTENSION_NOT_ALLOWED').': '.$file);
+				JError::raiseWarning(0, JText::_('COM_JEM_ERROR_ATTACHEMENT_EXTENSION_NOT_ALLOWED').': '.$file);
 				continue;
 			}
 			// check size
 			if ($post_files['size'][$k] > $maxsize) {
-				JError::raiseWarning(0, JText::sprintf('COM_EVENTLIST_ERROR_ATTACHEMENT_FILE_TOO_BIG', $file, $post_files['size'][$k], $maxsize));
+				JError::raiseWarning(0, JText::sprintf('COM_JEM_ERROR_ATTACHEMENT_FILE_TOO_BIG', $file, $post_files['size'][$k], $maxsize));
 				continue;
 			}
 			
@@ -90,7 +90,7 @@ static	function postUpload($post_files, $object)
 				// try to create it
 				$res = JFolder::create($path);
 				if (!$res) {
-					JError::raiseWarning(0, JText::_('COM_EVENTLIST_ERROR_COULD_NOT_CREATE_FOLDER').': '.$path);
+					JError::raiseWarning(0, JText::_('COM_JEM_ERROR_COULD_NOT_CREATE_FOLDER').': '.$path);
 					return false;
 				}
 				$text = '<html><body bgcolor="#FFFFFF"></body></html>';
@@ -99,7 +99,7 @@ static	function postUpload($post_files, $object)
 			
 			JFile::copy($post_files['tmp_name'][$k], $path.DS.$file);
 			
-			$table = JTable::getInstance('eventlist_attachments', '');
+			$table = JTable::getInstance('jem_attachments', '');
 			$table->file = $file;
 			$table->object = $object;
 			if (isset($post_files['customname'][$k]) && !empty($post_files['customname'][$k])) {
@@ -115,7 +115,7 @@ static	function postUpload($post_files, $object)
 			$table->added_by = $user->get('id');
 			
 			if (!($table->check() && $table->store())) {
-				JError::raiseWarning(0, JText::_('COM_EVENTLIST_ATTACHMENT_ERROR_SAVING_TO_DB').': '.$table->getError());				
+				JError::raiseWarning(0, JText::_('COM_JEM_ATTACHMENT_ERROR_SAVING_TO_DB').': '.$table->getError());				
 			}
 		}
 		return true;
@@ -130,11 +130,11 @@ static	function update($attach)
 		if (!is_array($attach) || !isset($attach['id']) || !(intval($attach['id']))) {
 			return false;
 		}
-		$table = JTable::getInstance('eventlist_attachments', '');
+		$table = JTable::getInstance('jem_attachments', '');
 		$table->load($attach['id']);
 		$table->bind($attach);
 		if (!($table->check() && $table->store())) {
-			JError::raiseWarning(0, JText::_('COM_EVENTLIST_ATTACHMENT_ERROR_UPDATING_RECORD').': '.$table->getError());		
+			JError::raiseWarning(0, JText::_('COM_JEM_ATTACHMENT_ERROR_UPDATING_RECORD').': '.$table->getError());		
 			return false;		
 		}		
 		return true;
@@ -150,7 +150,7 @@ static	function getAttachments($object)
 		jimport('joomla.filesystem.file');
 		jimport('joomla.filesystem.folder');
 		$app = JFactory::getApplication();
-		$params = JComponentHelper::getParams('com_eventlist');
+		$params = JComponentHelper::getParams('com_jem');
 		$elsettings =  ELHelper::config();
 		
 		$user	=  JFactory::getUser();
@@ -185,7 +185,7 @@ static	function getAttachments($object)
 		}
 				
 		$query = ' SELECT * ' 
-		       . ' FROM #__eventlist_attachments ' 
+		       . ' FROM #__jem_attachments ' 
 		       . ' WHERE file IN ('. implode(',', $fnames) .')'
 		       . '   AND object = '. $db->Quote($object);
 		if (!is_null($gid)) {
@@ -206,7 +206,7 @@ static	function getAttachments($object)
 	 */
     static	function getAttachmentPath($id) 
 	{		
-		$params = JComponentHelper::getParams('com_eventlist');
+		$params = JComponentHelper::getParams('com_jem');
 		$elsettings =  ELHelper::config();
 		
 		$user	=  JFactory::getUser();
@@ -224,21 +224,21 @@ static	function getAttachments($object)
 		
 		$db = JFactory::getDBO();
 		$query = ' SELECT * ' 
-		       . ' FROM #__eventlist_attachments ' 
+		       . ' FROM #__jem_attachments ' 
 		       . ' WHERE id = '. $db->Quote(intval($id));
 		$db->setQuery($query);
 		$res = $db->loadObject();
 		if (!$res) {
-			JError::raiseError(404, JText::_('COM_EVENTLIST_FILE_UNKNOWN'));
+			JError::raiseError(404, JText::_('COM_JEM_FILE_UNKNOWN'));
 		}		
 		
 		if (!is_null($gid) && $res->access > $gid) {
-			JError::raiseError(403, JText::_('COM_EVENTLIST_YOU_DONT_HAVE_ACCESS_TO_THIS_FILE'));			
+			JError::raiseError(403, JText::_('COM_JEM_YOU_DONT_HAVE_ACCESS_TO_THIS_FILE'));			
 		}
 		
 		$path = JPATH_SITE.DS.$elsettings->attachments_path.DS.$res->object.DS.$res->file;		
 		if (!file_exists($path)) {
-			JError::raiseError(404, JText::_('COM_EVENTLIST_FILE_NOT_FOUND'));
+			JError::raiseError(404, JText::_('COM_JEM_FILE_NOT_FOUND'));
 		}
 		
 		return $path;
@@ -257,14 +257,14 @@ static	function getAttachments($object)
 		jimport('joomla.filesystem.file');
 		jimport('joomla.filesystem.folder');
 		$app = JFactory::getApplication();
-		$params = JComponentHelper::getParams('com_eventlist');
+		$params = JComponentHelper::getParams('com_jem');
 		$elsettings =  ELHelper::config();
 		
 		// then get info for files from db
 		$db = JFactory::getDBO();
 		
 		$query = ' SELECT file, object ' 
-		       . ' FROM #__eventlist_attachments ' 
+		       . ' FROM #__jem_attachments ' 
 		       . ' WHERE id = ' . $db->Quote($id);
 		$db->setQuery($query);
 		$res = $db->loadObject();
@@ -278,7 +278,7 @@ static	function getAttachments($object)
 			JFile::delete($path);
 		}
 				
-		$query = ' DELETE FROM #__eventlist_attachments ' 
+		$query = ' DELETE FROM #__jem_attachments ' 
 		       . ' WHERE id = '. $db->Quote($id);
 		$db->setQuery($query);
 		$res = $db->query();

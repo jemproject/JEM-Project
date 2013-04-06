@@ -26,20 +26,20 @@ defined( '_JEXEC' ) or die;
 ?>
 <?php if ($this->row->maxplaces && count($this->registers) >= $this->row->maxplaces && !$this->row->waitinglist): ?>
 	<p class="el-event-full">
-		<?php echo JText::_( 'COM_EVENTLIST_EVENT_FULL_NOTICE' ); ?>
+		<?php echo JText::_( 'COM_JEM_EVENT_FULL_NOTICE' ); ?>
 	</p>
 <?php else: ?>
 <form id="Eventlist" action="<?php echo JRoute::_('index.php'); ?>" method="post">
 	<p>
 		<?php if ($this->row->maxplaces && count($this->registers) >= $this->row->maxplaces): // full event ?>
-			<?php echo JText::_( 'COM_EVENTLIST_EVENT_FULL_REGISTER_TO_WAITING_LIST' ).': '; ?>
+			<?php echo JText::_( 'COM_JEM_EVENT_FULL_REGISTER_TO_WAITING_LIST' ).': '; ?>
 		<?php else: ?>
-			<?php echo JText::_( 'COM_EVENTLIST_I_WILL_GO' ).': '; ?>
+			<?php echo JText::_( 'COM_JEM_I_WILL_GO' ).': '; ?>
 		<?php endif; ?>
 		<input type="checkbox" name="reg_check" onclick="check(this, document.getElementById('el_send_attend'))" />
 	</p>
 <p>
-	<input type="submit" id="el_send_attend" name="el_send_attend" value="<?php echo JText::_( 'COM_EVENTLIST_REGISTER' ); ?>" disabled="disabled" />
+	<input type="submit" id="el_send_attend" name="el_send_attend" value="<?php echo JText::_( 'COM_JEM_REGISTER' ); ?>" disabled="disabled" />
 </p>
 <p>
 	<input type="hidden" name="rdid" value="<?php echo $this->row->did; ?>" />

@@ -34,7 +34,7 @@ defined('_JEXEC') or die;
 		}
 
 		if ( validator.validate(form.name) === false ) {
-   			alert("<?php echo JText::_( 'COM_EVENTLIST_ADD_GROUP_NAME', true ); ?>");
+   			alert("<?php echo JText::_( 'COM_JEM_ADD_GROUP_NAME', true ); ?>");
    			validator.handleResponse(false,form.name);
    			form.name.focus();
    			return false;
@@ -84,7 +84,7 @@ defined('_JEXEC') or die;
 				<tr>
 					<td>
 						<label for="name">
-							<?php echo JText::_( 'COM_EVENTLIST_GROUP_NAME' ).':'; ?>
+							<?php echo JText::_( 'COM_JEM_GROUP_NAME' ).':'; ?>
 						</label>
 					</td>
 					<td>
@@ -95,9 +95,9 @@ defined('_JEXEC') or die;
 
 			<table class="adminform">
 				<tr>
-					<td><b><?php echo JText::_( 'COM_EVENTLIST_AVAILABLE_USERS' ).':'; ?></b></td>
+					<td><b><?php echo JText::_( 'COM_JEM_AVAILABLE_USERS' ).':'; ?></b></td>
 					<td>&nbsp;</td>
-					<td><b><?php echo JText::_( 'COM_EVENTLIST_MAINTAINERS' ).':'; ?></b></td>
+					<td><b><?php echo JText::_( 'COM_JEM_MAINTAINERS' ).':'; ?></b></td>
 				</tr>
 				<tr>
 					<td width="260px"><?php echo $this->lists['available_users']; ?></td>
@@ -114,7 +114,7 @@ defined('_JEXEC') or die;
 		<td valign="top" width="320px" style="padding: 7px 0 0 5px">
 			<?php
 			echo JHtml::_('sliders.start'); 
-			$title = JText::_( 'COM_EVENTLIST_DESCRIPTION' );
+			$title = JText::_( 'COM_JEM_DESCRIPTION' );
 			echo JHtml::_('sliders.panel', $title, 'desc' );
 			?>
 			<table>
@@ -132,7 +132,7 @@ defined('_JEXEC') or die;
 </table>
 
 <?php echo JHTML::_( 'form.token' ); ?>
-<input type="hidden" name="option" value="com_eventlist" />
+<input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="controller" value="groups" />
 <input type="hidden" name="view" value="group" />
 <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />

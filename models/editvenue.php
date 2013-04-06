@@ -89,7 +89,7 @@ class EventListModelEditvenue extends JModelLegacy
 			* Error if allready checked out
 			*/
 			if ($this->_venue->isCheckedOut( $user->get('id') )) {
-				$app->redirect( 'index.php?option=&view='.$view, JText::_( 'COM_EVENTLIST_THE_VENUE' ).' '.$this->_venue->venue.' '.JText::_( 'COM_EVENTLIST_EDITED_BY_ANOTHER_ADMIN' ) );
+				$app->redirect( 'index.php?option=&view='.$view, JText::_( 'COM_JEM_THE_VENUE' ).' '.$this->_venue->venue.' '.JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ) );
 			} else {
 				$this->_venue->checkout( $user->get('id') );
 			}
@@ -99,7 +99,7 @@ class EventListModelEditvenue extends JModelLegacy
 
 			if ($allowedtoeditvenue == 0) {
 
-				JError::raiseError( 403, JText::_( 'COM_EVENTLIST_NO_ACCESS' ) );
+				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
 
 			}
 
@@ -110,15 +110,15 @@ class EventListModelEditvenue extends JModelLegacy
 			$delloclink = ELUser::validate_user( $elsettings->locdelrec, $elsettings->deliverlocsyes );
 
 			if ($delloclink == 0) {
-				JError::raiseError( 403, JText::_( 'COM_EVENTLIST_NO_ACCESS' ) );
+				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
 			}
 			
 			//sticky forms
 			$session = JFactory::getSession();
-			if ($session->has('venueform', 'com_eventlist')) {
+			if ($session->has('venueform', 'com_jem')) {
 				
-				$venueform 		= $session->get('venueform', 0, 'com_eventlist');
-				$this->_venue 	=  JTable::getInstance('eventlist_venues', '');
+				$venueform 		= $session->get('venueform', 0, 'com_jem');
+				$this->_venue 	=  JTable::getInstance('jem_venues', '');
 								
 				if (!$this->_venue->bind($venueform)) {
 					JError::raiseError( 500, $this->_db->stderr() );
@@ -166,7 +166,7 @@ class EventListModelEditvenue extends JModelLegacy
 	{
 		if (empty($this->_venue)) {
 
-			$this->_venue = JTable::getInstance('eventlist_venues', '');
+			$this->_venue = JTable::getInstance('jem_venues', '');
 			$this->_venue->load( $this->_id );
 			$this->_venue->attachments = ELAttach::getAttachments('venue'.$this->_venue->id);
 
@@ -186,7 +186,7 @@ class EventListModelEditvenue extends JModelLegacy
 	{
 		if ($this->_id)
 		{
-			$item = & $this->getTable('eventlist_venues', '');
+			$item = & $this->getTable('jem_venues', '');
 			if(! $item->checkin($this->_id)) {
 				$this->setError($this->_db->getErrorMsg());
 				return false;
@@ -211,7 +211,7 @@ class EventListModelEditvenue extends JModelLegacy
 
 		$tzoffset 		= $app->getCfg('offset');
 
-		$row 		=  JTable::getInstance('eventlist_venues', '');
+		$row 		=  JTable::getInstance('jem_venues', '');
 	
 		//bind it to the table
 		if (!$row->bind($data)) {
@@ -227,7 +227,7 @@ class EventListModelEditvenue extends JModelLegacy
 
 			if ($allowedtoeditvenue == 0) {
 				$row->checkin();
-				$app->enqueueMessage( JText::_( 'COM_EVENTLIST_NO_ACCESS' ) );
+				$app->enqueueMessage( JText::_( 'COM_JEM_NO_ACCESS' ) );
 				return false;
 			}
 
@@ -250,7 +250,7 @@ class EventListModelEditvenue extends JModelLegacy
 			$delloclink = ELUser::validate_user( $elsettings->locdelrec, $elsettings->deliverlocsyes );
 
 			if ($delloclink == 0){
-				$app->enqueueMessage( JText::_( 'COM_EVENTLIST_NO_ACCESS' ) );
+				$app->enqueueMessage( JText::_( 'COM_JEM_NO_ACCESS' ) );
 				return false;
 			}
 
@@ -268,7 +268,7 @@ class EventListModelEditvenue extends JModelLegacy
 
 		//If image upload is required we will stop here if no file was attached
 		if ( empty($file['name']) && $elsettings->imageenabled == 2 ) {
-			$this->setError( JText::_( 'COM_EVENTLIST_IMAGE_EMPTY' ) );
+			$this->setError( JText::_( 'COM_JEM_IMAGE_EMPTY' ) );
 			return false;
 		}
 
@@ -290,7 +290,7 @@ class EventListModelEditvenue extends JModelLegacy
 			$filepath = $base_Dir . $filename;
 
 			if (!JFile::upload( $file['tmp_name'], $filepath )) {
-				$this->setError( JText::_( 'COM_EVENTLIST_UPLOAD_FAILED' ) );
+				$this->setError( JText::_( 'COM_JEM_UPLOAD_FAILED' ) );
 				return false;
 			} else {
 				$row->locimage = $filename;

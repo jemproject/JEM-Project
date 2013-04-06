@@ -27,7 +27,7 @@ defined( '_JEXEC' ) or die;
 if ($this->row->unregistra == 0) :
 
 	//no he is not allowed to unregister
-	echo JText::_( 'COM_EVENTLIST_ALLREADY_REGISTERED' );
+	echo JText::_( 'COM_JEM_ALLREADY_REGISTERED' );
 
 else:
 
@@ -36,14 +36,14 @@ else:
 	<form id="Eventlist" action="<?php echo JRoute::_('index.php'); ?>" method="post">
 		<p>
 			<?php if ($this->isregistered == 2): ?>
-				<?php echo JText::_( 'COM_EVENTLIST_WAITINGLIST_UNREGISTER_BOX' ).': '; ?>
+				<?php echo JText::_( 'COM_JEM_WAITINGLIST_UNREGISTER_BOX' ).': '; ?>
 			<?php else: ?>
-				<?php echo JText::_( 'COM_EVENTLIST_UNREGISTER_BOX' ).': '; ?>
+				<?php echo JText::_( 'COM_JEM_UNREGISTER_BOX' ).': '; ?>
 			<?php endif;?>
 			<input type="checkbox" name="reg_check" onclick="check(this, document.getElementById('el_send_attend'))" />
 		</p>
 		<p>
-			<input type="submit" id="el_send_attend" name="el_send_attend" value="<?php echo JText::_( 'COM_EVENTLIST_UNREGISTER' ); ?>" disabled="disabled" />
+			<input type="submit" id="el_send_attend" name="el_send_attend" value="<?php echo JText::_( 'COM_JEM_UNREGISTER' ); ?>" disabled="disabled" />
 		</p>
 		<p>
 			<input type="hidden" name="rdid" value="<?php echo $this->row->did; ?>" />

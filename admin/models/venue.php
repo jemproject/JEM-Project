@@ -104,7 +104,7 @@ class EventListModelVenue extends JModelLegacy
 		if (empty($this->_data))
 		{
 			$query = 'SELECT *'
-					. ' FROM #__eventlist_venues'
+					. ' FROM #__jem_venues'
 					. ' WHERE id = '.$this->_id
 					;
 
@@ -135,10 +135,10 @@ class EventListModelVenue extends JModelLegacy
 		{
 			//sticky forms
 			$session = JFactory::getSession();
-			if ($session->has('venueform', 'com_eventlist')) {
+			if ($session->has('venueform', 'com_jem')) {
 				
-				$venueform 		= $session->get('venueform', 0, 'com_eventlist');
-				$venue 	=  JTable::getInstance('eventlist_venues', '');
+				$venueform 		= $session->get('venueform', 0, 'com_jem');
+				$venue 	=  JTable::getInstance('jem_venues', '');
 								
 				if (!$venue->bind($venueform)) {
 					JError::raiseError( 500, $this->_db->stderr() );
@@ -163,7 +163,7 @@ class EventListModelVenue extends JModelLegacy
 				$venue->country				= null;
       			$venue->latitude      		= null;
      			$venue->longitude     		= null;
-				$venue->locimage			= JText::_('COM_EVENTLIST_SELECTIMAGE');
+				$venue->locimage			= JText::_('COM_JEM_SELECTIMAGE');
 				$venue->map					= 1;
 				$venue->published			= 1;
 				$venue->locdescription		= null;
@@ -194,7 +194,7 @@ class EventListModelVenue extends JModelLegacy
 	{
 		if ($this->_id)
 		{
-			$venue =  JTable::getInstance('eventlist_venues', '');
+			$venue =  JTable::getInstance('jem_venues', '');
 			return $venue->checkin($this->_id);
 		}
 		return false;
@@ -218,7 +218,7 @@ class EventListModelVenue extends JModelLegacy
 				$uid	= $user->get('id');
 			}
 			// Lets get to it and checkout the thing...
-			$venue =  JTable::getInstance('eventlist_venues', '');
+			$venue =  JTable::getInstance('jem_venues', '');
 			return $venue->checkout($uid, $this->_id);
 		}
 		return false;
@@ -264,7 +264,7 @@ class EventListModelVenue extends JModelLegacy
 
 		$tzoffset 	= $config->getValue('config.offset');
 
-		$row  = $this->getTable('eventlist_venues', '');
+		$row  = $this->getTable('jem_venues', '');
 
 		// bind it to the table
 		if (!$row->bind($data)) {

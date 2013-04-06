@@ -40,7 +40,7 @@ defined('_JEXEC') or die;
 
 
 			<?php
-			$title = JText::_( 'COM_EVENTLIST_BASIC_SETTINGS' );
+			$title = JText::_( 'COM_JEM_BASIC_SETTINGS' );
 			echo JHtml::_('tabs.start', 'det-pane', array('useCookie'=>1));
 			
 			echo JHtml::_('tabs.panel', $title, 'basic');
@@ -53,7 +53,7 @@ defined('_JEXEC') or die;
 			</div></div></div>
 
 			<?php
-			$title = JText::_( 'COM_EVENTLIST_USER_CONTROL' );
+			$title = JText::_( 'COM_JEM_USER_CONTROL' );
 			echo JHtml::_('tabs.panel', $title, 'layout');
 			?>
 			<div id="page-usercontrol" class="tab">
@@ -64,7 +64,7 @@ defined('_JEXEC') or die;
 			</div></div>
 			
 			<?php
-			$title = JText::_( 'COM_EVENTLIST_DETAILS_PAGE' );
+			$title = JText::_( 'COM_JEM_DETAILS_PAGE' );
 			echo JHtml::_('tabs.panel', $title, 'details');
 			?>
 			<div id="page-details" class="tab">
@@ -75,7 +75,7 @@ defined('_JEXEC') or die;
 			</div></div>
 
 			<?php
-			$title = JText::_( 'COM_EVENTLIST_LAYOUT' );
+			$title = JText::_( 'COM_JEM_LAYOUT' );
 			echo JHtml::_('tabs.panel', $title, 'layout');
 			?>
             <div id="page-layout" class="tab">
@@ -86,7 +86,7 @@ defined('_JEXEC') or die;
 			</div></div>
 
 			<?php
-			$title = JText::_( 'COM_EVENTLIST_GLOBAL_PARAMETERS' );
+			$title = JText::_( 'COM_JEM_GLOBAL_PARAMETERS' );
 			echo JHtml::_('tabs.panel', $title, 'parameters');
 			?>
             <div id="page-parameters" class="tab">
@@ -108,7 +108,7 @@ defined('_JEXEC') or die;
 		<input type="hidden" name="task" value="">
 		<input type="hidden" name="id" value="1">
 		<input type="hidden" name="lastupdate" value="<?php echo $this->elsettings->lastupdate; ?>">
-		<input type="hidden" name="option" value="com_eventlist">
+		<input type="hidden" name="option" value="com_jem">
 		<input type="hidden" name="controller" value="settings">
 		</form>
 

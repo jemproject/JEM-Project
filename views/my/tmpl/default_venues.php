@@ -25,13 +25,13 @@ defined( '_JEXEC' ) or die;
 
 <?php if (count((array)$this->venues)) : ?>
 
-<h2><?php echo JText::_('COM_EVENTLIST_MY_VENUES'); ?></h2>
+<h2><?php echo JText::_('COM_JEM_MY_VENUES'); ?></h2>
 
 <table class="eventtable" width="<?php echo $this->elsettings->tablewidth; ?>" border="0" cellspacing="0" cellpadding="0" summary="venues list">
 	<thead>
 		<tr>
-			<th id="el_title" class="sectiontableheader" align="left"><?php echo JText::_('COM_EVENTLIST_VENUE'); ?></th>
-			<th id="el_city" class="sectiontableheader" align="left"><?php echo JText::_('COM_EVENTLIST_CITY'); ?></th>
+			<th id="el_title" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_VENUE'); ?></th>
+			<th id="el_city" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_CITY'); ?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -39,7 +39,7 @@ defined( '_JEXEC' ) or die;
   $i = 0;
   foreach ((array) $this->venues as $row) : 
   ?>
-  <?php $link = JRoute::_('index.php?option=com_eventlist&view=venueevents&id=' . $row->venueslug); ?>
+  <?php $link = JRoute::_('index.php?option=com_jem&view=venueevents&id=' . $row->venueslug); ?>
     <tr class="sectiontableentry<?php echo $i + 1 . $this->params->get( 'pageclass_sfx' ); ?>" >
       <td headers="el_title" align="left" valign="top"><?php echo JHTML::link($link, $row->venue); ?></td>
       <td headers="el_city" align="left" valign="top"><?php echo $row->city ? $row->city : '-'; ?></td>      

@@ -70,7 +70,7 @@ class EventListControllerCategories extends EventListController
 		
 		//sticky forms
 		$session = JFactory::getSession();
-		$session->set('categoryform', $post, 'com_eventlist');
+		$session->set('categoryform', $post, 'com_jem');
 
 		$model = $this->getModel('category');
 
@@ -79,24 +79,24 @@ class EventListControllerCategories extends EventListController
 			switch ($task)
 			{
 				case 'apply' :
-					$link = 'index.php?option=com_eventlist&view=category&cid[]='.$returnid;
+					$link = 'index.php?option=com_jem&view=category&cid[]='.$returnid;
 					break;
 
 				default :
-					$link = 'index.php?option=com_eventlist&view=categories';
+					$link = 'index.php?option=com_jem&view=categories';
 					break;
 			}
 			$msg = JText::_( 'CATEGORY SAVED' );
 
-			$cache = JFactory::getCache('com_eventlist');
+			$cache = JFactory::getCache('com_jem');
 			$cache->clean();
 			
-			$session->clear('categoryform', 'com_eventlist');
+			$session->clear('categoryform', 'com_jem');
 
 		} else {
 
 			$msg 	= '';
-			$link 	= 'index.php?option=com_eventlist&view=category';
+			$link 	= 'index.php?option=com_jem&view=category';
 		}
 
 		$model->checkin();
@@ -128,7 +128,7 @@ class EventListControllerCategories extends EventListController
 		$total = count( $cid );
 		$msg 	= $total.' '.JText::_( 'CATEGORY PUBLISHED');
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=categories', $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=categories', $msg );
 	}
 
 	/**
@@ -155,7 +155,7 @@ class EventListControllerCategories extends EventListController
 		$total = count( $cid );
 		$msg 	= $total.' '.JText::_( 'CATEGORY UNPUBLISHED');
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=categories', $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=categories', $msg );
 	}
 
 	/**
@@ -170,7 +170,7 @@ class EventListControllerCategories extends EventListController
 		$model = $this->getModel('categories');
 		$model->move(-1);
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=categories');
+		$this->setRedirect( 'index.php?option=com_jem&view=categories');
 	}
 
 	/**
@@ -185,7 +185,7 @@ class EventListControllerCategories extends EventListController
 		$model = $this->getModel('categories');
 		$model->move(1);
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=categories');
+		$this->setRedirect( 'index.php?option=com_jem&view=categories');
 	}
 
 	/**
@@ -205,7 +205,7 @@ class EventListControllerCategories extends EventListController
 		$model->saveorder($cid, $order);
 
 		$msg = 'New ordering saved';
-		$this->setRedirect( 'index.php?option=com_eventlist&view=categories', $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=categories', $msg );
 	}
 
 	/**
@@ -227,10 +227,10 @@ class EventListControllerCategories extends EventListController
 
 		$msg = $model->delete($cid);
 
-		$cache = &JFactory::getCache('com_eventlist');
+		$cache = &JFactory::getCache('com_jem');
 		$cache->clean();
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=categories', $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=categories', $msg );
 	}
 
 	/**
@@ -246,13 +246,13 @@ class EventListControllerCategories extends EventListController
 		JRequest::checkToken() or die( 'Invalid Token' );
 		
 		$session 	= & JFactory::getSession();
-		$session->clear('categoryform', 'com_eventlist');
+		$session->clear('categoryform', 'com_jem');
 		
-		$category = & JTable::getInstance('eventlist_categories', '');
+		$category = & JTable::getInstance('jem_categories', '');
 		$category->bind(JRequest::get('post'));
 		$category->checkin();
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=categories' );
+		$this->setRedirect( 'index.php?option=com_jem&view=categories' );
 	}
 
 	/**
@@ -282,7 +282,7 @@ class EventListControllerCategories extends EventListController
 		$model = $this->getModel('categories');
 		$model->access( $id, $access );
 
-		$this->setRedirect('index.php?option=com_eventlist&view=categories' );
+		$this->setRedirect('index.php?option=com_jem&view=categories' );
 	}
 
 	/**
@@ -302,7 +302,7 @@ class EventListControllerCategories extends EventListController
 
 		// Error if checkedout by another administrator
 		if ($model->isCheckedOut( $user->get('id') )) {
-			$this->setRedirect( 'index.php?option=com_eventlist&view=categories', JText::_( 'EDITED BY ANOTHER ADMIN' ) );
+			$this->setRedirect( 'index.php?option=com_jem&view=categories', JText::_( 'EDITED BY ANOTHER ADMIN' ) );
 		}
 
 		$model->checkout();

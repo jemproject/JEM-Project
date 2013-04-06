@@ -52,18 +52,18 @@ class EventListViewSearch extends JViewLegacy
 		$pathway 	=  $app->getPathWay();
 
 		//add css file
-		$document->addStyleSheet($this->baseurl.'/components/com_eventlist/assets/css/eventlist.css');
+		$document->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
     	
 		// get variables
 		$limitstart        = JRequest::getVar('limitstart', 0, '', 'int');
-		$limit             = $app->getUserStateFromRequest('com_eventlist.search.limit', 'limit', $params->def('display_num', 0), 'int');
-		$filter_continent  = $app->getUserStateFromRequest('com_eventlist.search.filter_continent', 'filter_continent', '', 'string');
-		$filter_country    = $app->getUserStateFromRequest('com_eventlist.search.filter_country', 'filter_country', '', 'string');
-		$filter_city       = $app->getUserStateFromRequest('com_eventlist.search.filter_city', 'filter_city', '', 'string');
-		$filter_date_from  = $app->getUserStateFromRequest('com_eventlist.search.filter_date_from', 'filter_date_from', '', 'string');
-		$filter_date_to    = $app->getUserStateFromRequest('com_eventlist.search.filter_date_to', 'filter_date_to', '', 'string');
-		$filter_category 	 = $app->getUserStateFromRequest('com_eventlist.search.filter_category', 'filter_category', 0, 'int');
+		$limit             = $app->getUserStateFromRequest('com_jem.search.limit', 'limit', $params->def('display_num', 0), 'int');
+		$filter_continent  = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
+		$filter_country    = $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
+		$filter_city       = $app->getUserStateFromRequest('com_jem.search.filter_city', 'filter_city', '', 'string');
+		$filter_date_from  = $app->getUserStateFromRequest('com_jem.search.filter_date_from', 'filter_date_from', '', 'string');
+		$filter_date_to    = $app->getUserStateFromRequest('com_jem.search.filter_date_to', 'filter_date_to', '', 'string');
+		$filter_category 	 = $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
 		$task              = JRequest::getWord('task');
 		$pop               = JRequest::getBool('pop');
 
@@ -89,9 +89,9 @@ class EventListViewSearch extends JViewLegacy
 		$pathway->setItemName( 1, $item->title );
 		
 		if ( $task == 'archive' ) {
-			$pathway->addItem(JText::_( 'COM_EVENTLIST_ARCHIVE' ), JRoute::_('index.php?view=eventlist&task=archive') );
+			$pathway->addItem(JText::_( 'COM_JEM_ARCHIVE' ), JRoute::_('index.php?view=eventlist&task=archive') );
 			$print_link = JRoute::_('index.php?view=eventlist&task=archive&tmpl=component&print=1');
-			$pagetitle = $params->get('page_title').' - '.JText::_( 'COM_EVENTLIST_ARCHIVE' );
+			$pagetitle = $params->get('page_title').' - '.JText::_( 'COM_JEM_ARCHIVE' );
 		} else {
 			$print_link = JRoute::_('index.php?view=eventlist&tmpl=component&print=1');
 			$pagetitle = $params->get('page_title');
@@ -108,7 +108,7 @@ class EventListViewSearch extends JViewLegacy
 		if ($maintainer || $genaccess ) $dellink = 1;
 
 		//add alternate feed link
-		$link    = 'index.php?option=com_eventlist&view=eventlist&format=feed';
+		$link    = 'index.php?option=com_jem&view=eventlist&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -119,7 +119,7 @@ class EventListViewSearch extends JViewLegacy
 		
 		if ($lists['filter']) {
 			//$uri->setVar('filter', JRequest::getString('filter'));
-			//$filter		= $app->getUserStateFromRequest('com_eventlist.eventlist.filter', 'filter', '', 'string');
+			//$filter		= $app->getUserStateFromRequest('com_jem.eventlist.filter', 'filter', '', 'string');
 			$uri->setVar('filter', $lists['filter']);
 			$uri->setVar('filter_type', JRequest::getString('filter_type'));
 		} else {
@@ -130,7 +130,7 @@ class EventListViewSearch extends JViewLegacy
 		//Cause of group limits we can't use class here to build the categories tree
 		$categories   = $this->get('CategoryTree');
 		$catoptions   = array();
-		$catoptions[] = JHTML::_('select.option', '0', JText::_('COM_EVENTLIST_SELECT_CATEGORY'));
+		$catoptions[] = JHTML::_('select.option', '0', JText::_('COM_JEM_SELECT_CATEGORY'));
 		$catoptions   = array_merge($catoptions, eventlist_cats::getcatselectoptions($categories));
 		$selectedcats = ($filter_category) ? array($filter_category) : array();
     
@@ -146,7 +146,7 @@ class EventListViewSearch extends JViewLegacy
 
 		// country filter
 		$continents = array();
-		$continents[] = JHTML::_('select.option', '', JText::_('COM_EVENTLIST_SELECT_CONTINENT'));
+		$continents[] = JHTML::_('select.option', '', JText::_('COM_JEM_SELECT_CONTINENT'));
 		$continents[] = JHTML::_('select.option', 'AF', JText::_('Africa'));
 		$continents[] = JHTML::_('select.option', 'AS', JText::_('Asia'));
 		$continents[] = JHTML::_('select.option', 'EU', JText::_('Europe'));
@@ -159,7 +159,7 @@ class EventListViewSearch extends JViewLegacy
     
 		// country filter
 		$countries = array();
-		$countries[] = JHTML::_('select.option', '', JText::_('COM_EVENTLIST_SELECT_COUNTRY'));
+		$countries[] = JHTML::_('select.option', '', JText::_('COM_JEM_SELECT_COUNTRY'));
 		$countries = array_merge($countries, $this->get('CountryOptions'));
 		$lists['countries'] = JHTML::_('select.genericlist', $countries, 'filter_country', 'class="inputbox"', 'value', 'text', $filter_country);
 		unset($countries);
@@ -168,7 +168,7 @@ class EventListViewSearch extends JViewLegacy
 		if ($filter_country) 
 		{
 			$cities = array();
-			$cities[] = JHTML::_('select.option', '', JText::_('COM_EVENTLIST_SELECT_CITY'));
+			$cities[] = JHTML::_('select.option', '', JText::_('COM_JEM_SELECT_CITY'));
 			$cities = array_merge($cities, $this->get('CityOptions'));
 			$lists['cities'] = JHTML::_('select.genericlist', $cities, 'filter_city', 'class="inputbox"', 'value', 'text', $filter_city);
 			unset($cities);

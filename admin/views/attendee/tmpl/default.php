@@ -23,7 +23,7 @@ defined('_JEXEC') or die;
 
 JHTML::_('behavior.modal', 'a.usermodal');
 
-$selectuser_link = JRoute::_('index.php?option=com_eventlist&controller=attendees&task=selectuser&tmpl=component');
+$selectuser_link = JRoute::_('index.php?option=com_jem&controller=attendees&task=selectuser&tmpl=component');
 ?>
 
 <script language="javascript" type="text/javascript">
@@ -47,7 +47,7 @@ $selectuser_link = JRoute::_('index.php?option=com_eventlist&controller=attendee
 		}
 
 		if ( validator.validate(form.uid) === false ) {
-   			alert("<?php echo JText::_( 'COM_EVENTLIST_SELECT_AN_USER', true ); ?>");
+   			alert("<?php echo JText::_( 'COM_JEM_SELECT_AN_USER', true ); ?>");
    			return false;
    		} else {
 			submitform( pressbutton );
@@ -58,18 +58,18 @@ $selectuser_link = JRoute::_('index.php?option=com_eventlist&controller=attendee
 
 
 <form action="index.php" method="post" name="adminForm" id="adminForm" class="form-validate">
-	<fieldset><legend><?php echo JText::_('COM_EVENTLIST_DETAILS'); ?></legend>
+	<fieldset><legend><?php echo JText::_('COM_JEM_DETAILS'); ?></legend>
 	<table  class="admintable">
 		<tr>
 			<td class="key" width="150">
 				<label for="uid">
-					<?php echo JText::_( 'COM_EVENTLIST_USER' ).':'; ?>
+					<?php echo JText::_( 'COM_JEM_USER' ).':'; ?>
 				</label>
 			</td>
 			<td>
 				<input type="text" name="username" id="username" readonly="readonly" value="<?php echo $this->row->username; ?>" />
 				<input type="hidden" name="uid" id="uid" value="<?php echo $this->row->uid; ?>" />
-				<a class="usermodal" title="<?php echo JText::_('COM_EVENTLIST_SELECT_USER'); ?>" href="<?php echo $selectuser_link; ?>" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
+				<a class="usermodal" title="<?php echo JText::_('COM_JEM_SELECT_USER'); ?>" href="<?php echo $selectuser_link; ?>" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
 					<span><?php echo JText::_('Select user')?></span>
         </a>
 			</td>
@@ -90,7 +90,7 @@ $selectuser_link = JRoute::_('index.php?option=com_eventlist&controller=attendee
 	</fieldset>
 
 <?php echo JHTML::_( 'form.token' ); ?>
-<input type="hidden" name="option" value="com_eventlist" />
+<input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
 <input type="hidden" name="event" value="<?php echo ($this->row->event ? $this->row->event : $this->event); ?>" />
 <input type="hidden" name="controller" value="attendees" />

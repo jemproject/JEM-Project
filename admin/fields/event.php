@@ -45,9 +45,9 @@ class JElementEvent extends JElement
 		$doc 		=& JFactory::getDocument();
 		$fieldName	= $control_name.'['.$name.']';
 
-		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_eventlist'.DS.'tables');
+		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_jem'.DS.'tables');
 
-		$event =& JTable::getInstance('eventlist_events', '');
+		$event =& JTable::getInstance('jem_events', '');
 		if ($value) {
 			$event->load($value);
 		} else {
@@ -61,7 +61,7 @@ class JElementEvent extends JElement
 			document.getElementById('sbox-window').close();
 		}";
 
-		$link = 'index.php?option=com_eventlist&amp;view=eventelement&amp;tmpl=component';
+		$link = 'index.php?option=com_jem&amp;view=eventelement&amp;tmpl=component';
 		$doc->addScriptDeclaration($js);
 
 		JHTML::_('behavior.modal', 'a.modal');

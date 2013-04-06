@@ -44,12 +44,12 @@ class EventListViewEditcss extends JViewLegacy {
 		//only admins have access to this view
 		if (!JFactory::getUser()->authorise('core.manage')) {
 			JError::raiseWarning( 'SOME_ERROR_CODE', JText::_( 'ALERTNOTAUTH'));
-			$app->redirect( 'index.php?option=com_eventlist&view=eventlist' );
+			$app->redirect( 'index.php?option=com_jem&view=eventlist' );
 		}
 
 		//get vars
 		$filename	= 'eventlist.css';
-		$path		= JPATH_SITE.DS.'components'.DS.'com_eventlist'.DS.'assets'.DS.'css';
+		$path		= JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'assets'.DS.'css';
 		$css_path	= $path.DS.$filename;
 
 		//create the toolbar
@@ -65,7 +65,7 @@ class EventListViewEditcss extends JViewLegacy {
 		JRequest::setVar( 'hidemainmenu', 1 );
 
 		//add css to document
-		$document->addStyleSheet('components/com_eventlist/assets/css/eventlistbackend.css');
+		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
 
 		//read the the stylesheet
 		jimport('joomla.filesystem.file');
@@ -81,7 +81,7 @@ class EventListViewEditcss extends JViewLegacy {
 		else
 		{
 			$msg = JText::sprintf('FAILED TO OPEN FILE FOR WRITING', $css_path);
-			$app->redirect('index.php?option=com_eventlist', $msg);
+			$app->redirect('index.php?option=com_jem', $msg);
 		}
 
 		//assign data to template

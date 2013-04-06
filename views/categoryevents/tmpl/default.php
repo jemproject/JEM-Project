@@ -37,7 +37,7 @@ defined( '_JEXEC' ) or die;
 <?php if ($this->params->def( 'show_page_title', 1 )) : ?>
 
     <h1 class='componentheading'>
-		<?php echo $this->task == 'archive' ? $this->escape($this->category->catname.' - '.JText::_('COM_EVENTLIST_ARCHIVE')) : $this->escape($this->category->catname); ?>
+		<?php echo $this->task == 'archive' ? $this->escape($this->category->catname.' - '.JText::_('COM_JEM_ARCHIVE')) : $this->escape($this->category->catname); ?>
 	</h1>
 
 <?php endif; ?>
@@ -68,7 +68,7 @@ if (count($this->categories) && $this->category->id > 0) :
 <!--table-->
 <?php echo $this->loadTemplate('table'); ?>
 <p>
-<input type="hidden" name="option" value="com_eventlist" />
+<input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 <input type="hidden" name="filter_order_Dir" value="" />
 <input type="hidden" name="view" value="categoryevents" />
@@ -94,8 +94,8 @@ if (count($this->categories) && $this->category->id > 0) :
 
 <?php if ($this->params->get('events_ical', 1)): ?>
 <span class="events-ical">
-	<?php echo JHTML::link( JRoute::_('index.php?option=com_eventlist&view=categoryevents&id='. $this->category->id.'&format=raw&layout=ics'),
-                          JHTML::image('components/com_eventlist/assets/images/iCal2.0.png', JText::_('COM_EVENTLIST_EXPORT_ICS'))
+	<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&view=categoryevents&id='. $this->category->id.'&format=raw&layout=ics'),
+                          JHTML::image('components/com_jem/assets/images/iCal2.0.png', JText::_('COM_JEM_EXPORT_ICS'))
 	                        ); ?>
 </span>
 <?php endif; ?>

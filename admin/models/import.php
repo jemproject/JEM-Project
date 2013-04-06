@@ -48,16 +48,16 @@ class EventListModelImport extends JModelLegacy
     }
 
     /**
-     * return __eventlist_events table fields name
+     * return __jem_events table fields name
      *
      * @return array
      */
     function getEventFields()
     {
-        $tables = array ('#__eventlist_events');
+        $tables = array ('#__jem_events');
         $tablesfields = $this->_db->getTableFields($tables);
 
-        return array_keys($tablesfields['#__eventlist_events']);
+        return array_keys($tablesfields['#__jem_events']);
     }
 
     /**
@@ -66,23 +66,23 @@ class EventListModelImport extends JModelLegacy
     */  
     function getVenueFields()
     {
-        $tables = array ('#__eventlist_venues');
+        $tables = array ('#__jem_venues');
         $tablesfields = $this->_db->getTableFields($tables);
 
-        return array_keys($tablesfields['#__eventlist_venues']);
+        return array_keys($tablesfields['#__jem_venues']);
     }
     
     /**
-     * return __eventlist_categories table fields name
+     * return __jem_categories table fields name
      *
      * @return array
      */
     function getCategoryFields()
     {
-        $tables = array ('#__eventlist_categories');
+        $tables = array ('#__jem_categories');
         $tablesfields = $this->_db->getTableFields($tables);
 
-        return array_keys($tablesfields['#__eventlist_categories']);
+        return array_keys($tablesfields['#__jem_categories']);
     }
 
     /**
@@ -111,7 +111,7 @@ class EventListModelImport extends JModelLegacy
                 $values[$field] = $row[$k];
             }
 
-            $object = & JTable::getInstance('eventlist_events', '');
+            $object = & JTable::getInstance('jem_events', '');
 
             //print_r($values);exit;
             $object->bind($values, $ignore);
@@ -162,7 +162,7 @@ class EventListModelImport extends JModelLegacy
             // print_r($object); exit;
             // we need to update the categories-events table too
             // store cat relation
-            $query = 'DELETE FROM #__eventlist_cats_event_relations WHERE itemid = '.$object->id;
+            $query = 'DELETE FROM #__jem_cats_event_relations WHERE itemid = '.$object->id;
             $this->_db->setQuery($query);
             $this->_db->query();
 
@@ -173,7 +173,7 @@ class EventListModelImport extends JModelLegacy
                 {
                     foreach ($cats as $cat)
                     {
-                        $query = 'INSERT INTO #__eventlist_cats_event_relations (`catid`, `itemid`) VALUES('.$cat.','.$object->id.')';
+                        $query = 'INSERT INTO #__jem_cats_event_relations (`catid`, `itemid`) VALUES('.$cat.','.$object->id.')';
                         $this->_db->setQuery($query);
                         $this->_db->query();
                     }
@@ -182,7 +182,7 @@ class EventListModelImport extends JModelLegacy
         }
 
         // force the cleanup to update the imported events status
-        $settings = & JTable::getInstance('eventlist_settings', '');
+        $settings = & JTable::getInstance('jem_settings', '');
         $settings->load(1);
         $settings->lastupdate = 0;
         $settings->store();
@@ -218,7 +218,7 @@ class EventListModelImport extends JModelLegacy
                 $values[$field] = $row[$k];
             }
 
-            $object = & JTable::getInstance('eventlist_categories', '');
+            $object = & JTable::getInstance('jem_categories', '');
 
             //print_r($values);exit;
             $object->bind($values, $ignore);
@@ -297,7 +297,7 @@ class EventListModelImport extends JModelLegacy
                 $values[$field] = $row[$k];
             }
 
-            $object = & JTable::getInstance('eventlist_venues', '');
+            $object = & JTable::getInstance('jem_venues', '');
 
             //print_r($values);exit;
             $object->bind($values, $ignore);

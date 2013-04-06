@@ -69,12 +69,12 @@ class EventListControllerAttendees extends EventListController
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
 
-		$cache = &JFactory::getCache('com_eventlist');
+		$cache = &JFactory::getCache('com_jem');
 		$cache->clean();
 
 		$msg = $total.' '.JText::_( 'REGISTERED USERS DELETED');
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=attendees&id='.$id, $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=attendees&id='.$id, $msg );
 	}
 
 	function export()
@@ -129,7 +129,7 @@ class EventListControllerAttendees extends EventListController
 	 */
   function back()
   {
-    $this->setRedirect( 'index.php?option=com_eventlist&view=events' );
+    $this->setRedirect( 'index.php?option=com_jem&view=events' );
   }
   
   function toggle()
@@ -152,19 +152,19 @@ class EventListControllerAttendees extends EventListController
 	   	
 			if ($attendee->waiting)
 			{
-				$msg = JText::_('COM_EVENTLIST_ADDED_TO_ATTENDING');
+				$msg = JText::_('COM_JEM_ADDED_TO_ATTENDING');
 			}
 			else
 			{			
-				$msg = JText::_('COM_EVENTLIST_ADDED_TO_WAITING');
+				$msg = JText::_('COM_JEM_ADDED_TO_WAITING');
 			}
 		}
 		else
 		{
-			$msg = JText::_('COM_EVENTLIST_WAITINGLIST_TOGGLE_ERROR').': '.$model->getError();
+			$msg = JText::_('COM_JEM_WAITINGLIST_TOGGLE_ERROR').': '.$model->getError();
 			$type = 'error';
 		}
-		$this->setRedirect('index.php?option=com_eventlist&view=attendees&id='.$attendee->event, $msg, $type);
+		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$attendee->event, $msg, $type);
 		$this->redirect();
   }
 
@@ -180,11 +180,11 @@ class EventListControllerAttendees extends EventListController
 		// Check for request forgeries
 		JRequest::checkToken() or die( 'Invalid Token' );
 		
-		$venue = & JTable::getInstance('eventlist_register', '');
+		$venue = & JTable::getInstance('jem_register', '');
 		$venue->bind(JRequest::get('post'));
 		$venue->checkin();
 
-		$this->setRedirect( 'index.php?option=com_eventlist&view=attendees&id='.JRequest::getInt('event') );
+		$this->setRedirect( 'index.php?option=com_jem&view=attendees&id='.JRequest::getInt('event') );
 	}
 
 	/**
@@ -204,7 +204,7 @@ class EventListControllerAttendees extends EventListController
 
 //		// Error if checkedout by another administrator
 //		if ($model->isCheckedOut( $user->get('id') )) {
-//			$this->setRedirect( 'index.php?option=com_eventlist&view=attendees', JText::_( 'EDITED BY ANOTHER ADMIN' ) );
+//			$this->setRedirect( 'index.php?option=com_jem&view=attendees', JText::_( 'EDITED BY ANOTHER ADMIN' ) );
 //		}
 //
 //		$model->checkout();
@@ -243,22 +243,22 @@ class EventListControllerAttendees extends EventListController
 			switch ($task)
 			{
 				case 'apply':
-					$link = 'index.php?option=com_eventlist&view=attendee&hidemainmenu=1&cid[]='.$row->id.'&event='.$row->event;
+					$link = 'index.php?option=com_jem&view=attendee&hidemainmenu=1&cid[]='.$row->id.'&event='.$row->event;
 					break;
 
 				default:
-					$link = 'index.php?option=com_eventlist&view=attendees&id='.$row->event;
+					$link = 'index.php?option=com_jem&view=attendees&id='.$row->event;
 					break;
 			}
 			$msg	= JText::_( 'ATTENDEE SAVED');
 
-			$cache = &JFactory::getCache('com_eventlist');
+			$cache = &JFactory::getCache('com_jem');
 			$cache->clean();			
 
 		} else {
 
 			$msg 	= '';
-			$link 	= 'index.php?option=com_eventlist&view=attendees&id='.JRequest::getInt('event');
+			$link 	= 'index.php?option=com_jem&view=attendees&id='.JRequest::getInt('event');
 
 		}
 		$this->setRedirect( $link, $msg );

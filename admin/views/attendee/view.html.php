@@ -48,7 +48,7 @@ class EventListViewAttendee extends JViewLegacy {
 		$event_id  = JRequest::getInt( 'id' );
 
 		//add css to document
-		$document->addStyleSheet('components/com_eventlist/assets/css/eventlistbackend.css');
+		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
 
 		//create the toolbar
 		if ( $cid ) {
@@ -72,7 +72,7 @@ class EventListViewAttendee extends JViewLegacy {
 		if ($row->id) {
 //			if ($model->isCheckedOut( $user->get('id') )) {
 //				JError::raiseWarning( 'SOME_ERROR_CODE', $row->catname.' '.JText::_( 'EDITED BY ANOTHER ADMIN' ));
-//				$app->redirect( 'index.php?option=com_eventlist&view=attendees&id='.$event_id );
+//				$app->redirect( 'index.php?option=com_jem&view=attendees&id='.$event_id );
 //			}
 		}
 

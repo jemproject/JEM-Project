@@ -28,7 +28,7 @@ defined('_JEXEC') or die;
  * @subpackage EventList
  * @since 0.9
  */
-class eventlist_categories extends JTable
+class jem_categories extends JTable
 {
 	/**
 	 * Primary Key
@@ -69,8 +69,8 @@ class eventlist_categories extends JTable
 	/**
 	* @param database A database connector object
 	*/
-	function eventlist_categories(& $db) {
-		parent::__construct('#__eventlist_categories', 'id', $db);
+	function jem_categories(& $db) {
+		parent::__construct('#__jem_categories', 'id', $db);
 	}
 
 	/**
@@ -97,7 +97,7 @@ class eventlist_categories extends JTable
 
 		/** check for existing name */
 		/* in fact, it can happen for subcategories
-		$query = 'SELECT id FROM #__eventlist_categories WHERE catname = '.$this->_db->Quote($this->catname);
+		$query = 'SELECT id FROM #__jem_categories WHERE catname = '.$this->_db->Quote($this->catname);
 		$this->_db->setQuery($query);
 
 		$xid = intval($this->_db->loadResult());

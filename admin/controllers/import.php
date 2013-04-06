@@ -50,7 +50,7 @@ class EventListControllerImport extends EventListController
   function csveventimport()
   { 
     $replace = JRequest::getVar('replace_events', 0, 'post', 'int');
-    $object = & JTable::getInstance('eventlist_events', '');
+    $object = & JTable::getInstance('jem_events', '');
     $object_fields = get_object_vars($object);
     // add additional fields
     $object_fields['categories'] = '';
@@ -63,7 +63,7 @@ class EventListControllerImport extends EventListController
 	    $handle = fopen($file['tmp_name'],'r');
       if(!$handle) {
         $msg = JText::_('Cannot open uploaded file.');  
-        $this->setRedirect( 'index.php?option=com_eventlist&view=import', $msg, 'error' ); 
+        $this->setRedirect( 'index.php?option=com_jem&view=import', $msg, 'error' ); 
         return;   
       }
            
@@ -72,7 +72,7 @@ class EventListControllerImport extends EventListController
       if ( ($data = fgetcsv($handle, 1000, ';')) !== FALSE ) {
         $numfields = count($data);
         for ($c=0; $c < $numfields; $c++) {
-          // here, we make sure that the field match one of the fields of eventlist_venues table or special fields,
+          // here, we make sure that the field match one of the fields of jem_venues table or special fields,
           // otherwise, we don't add it
           if ( array_key_exists($data[$c], $object_fields) ) {
             $fields[$c]=$data[$c];
@@ -82,7 +82,7 @@ class EventListControllerImport extends EventListController
       // If there is no validated fields, there is a problem...
       if ( !count($fields) ) {
         $msg .= "<p>Error parsing column names. Are you sure this is a proper csv export ?<br />try to export first to get an example of formatting</p>\n";
-        $this->setRedirect( 'index.php?option=com_eventlist&view=import', $msg, 'error' );
+        $this->setRedirect( 'index.php?option=com_jem&view=import', $msg, 'error' );
         return;
       }
       else {
@@ -118,7 +118,7 @@ class EventListControllerImport extends EventListController
         $msg .= "<p>total added records: ".$result['added']."<br /></p>\n";
         $msg .= "<p>total updated records: ".$result['updated']."<br /></p>\n";
       }
-      $this->setRedirect( 'index.php?option=com_eventlist&view=import', $msg ); 
+      $this->setRedirect( 'index.php?option=com_jem&view=import', $msg ); 
     }
     else {
       parent::display();
@@ -129,7 +129,7 @@ class EventListControllerImport extends EventListController
   function csvcategoriesimport()
   { 
     $replace = JRequest::getVar('replace_cats', 0, 'post', 'int');
-    $object =  JTable::getInstance('eventlist_categories', '');
+    $object =  JTable::getInstance('jem_categories', '');
     $object_fields = get_object_vars($object);
     
     $msg = '';
@@ -141,7 +141,7 @@ class EventListControllerImport extends EventListController
 	    $handle = fopen($file['tmp_name'],'r');
       if(!$handle) {
       	$msg = JText::_('Cannot open uploaded file.');  
-        $this->setRedirect( 'index.php?option=com_eventlist&view=import', $msg, 'error' );   
+        $this->setRedirect( 'index.php?option=com_jem&view=import', $msg, 'error' );   
         return; 
       }
       // get fields, on first row of the file
@@ -149,7 +149,7 @@ class EventListControllerImport extends EventListController
       if ( ($data = fgetcsv($handle, 1000, ';')) !== FALSE ) {
         $numfields = count($data);
         for ($c=0; $c < $numfields; $c++) {
-          // here, we make sure that the field match one of the fields of eventlist_venues table or special fields,
+          // here, we make sure that the field match one of the fields of jem_venues table or special fields,
           // otherwise, we don't add it
           if ( array_key_exists($data[$c], $object_fields) ) {
             $fields[$c]=$data[$c];
@@ -159,7 +159,7 @@ class EventListControllerImport extends EventListController
       // If there is no validated fields, there is a problem...
       if ( !count($fields) ) {
         $msg .= "<p>Error parsing column names. Are you sure this is a proper csv export ?<br />try to export first to get an example of formatting</p>\n";
-        $this->setRedirect( 'index.php?option=com_eventlist&view=import', $msg, 'error' );
+        $this->setRedirect( 'index.php?option=com_jem&view=import', $msg, 'error' );
         return;
       }
       else {
@@ -195,7 +195,7 @@ class EventListControllerImport extends EventListController
         $msg .= "<p>total added records: ".$result['added']."<br /></p>\n";
         $msg .= "<p>total updated records: ".$result['updated']."<br /></p>\n";
       }
-      $this->setRedirect( 'index.php?option=com_eventlist&view=import', $msg ); 
+      $this->setRedirect( 'index.php?option=com_jem&view=import', $msg ); 
     }
     else {
       parent::display();
@@ -205,7 +205,7 @@ class EventListControllerImport extends EventListController
   function csvvenuesimport()
   { 
     $replace = JRequest::getVar('replace_venues', 0, 'post', 'int');
-    $object =  JTable::getInstance('eventlist_venues', '');
+    $object =  JTable::getInstance('jem_venues', '');
     $object_fields = get_object_vars($object);
     
     $msg = '';
@@ -217,7 +217,7 @@ class EventListControllerImport extends EventListController
       $handle = fopen($file['tmp_name'],'r');
       if(!$handle) {
       	$msg = JText::_('Cannot open uploaded file.');  
-        $this->setRedirect( 'index.php?option=com_eventlist&view=import', $msg, 'error' );   
+        $this->setRedirect( 'index.php?option=com_jem&view=import', $msg, 'error' );   
         return; 
       }
       // get fields, on first row of the file
@@ -225,7 +225,7 @@ class EventListControllerImport extends EventListController
       if ( ($data = fgetcsv($handle, 1000, ';')) !== FALSE ) {
         $numfields = count($data);
         for ($c=0; $c < $numfields; $c++) {
-          // here, we make sure that the field match one of the fields of eventlist_venues table or special fields,
+          // here, we make sure that the field match one of the fields of jem_venues table or special fields,
           // otherwise, we don't add it
           if ( array_key_exists($data[$c], $object_fields) ) {
             $fields[$c]=$data[$c];
@@ -235,7 +235,7 @@ class EventListControllerImport extends EventListController
       // If there is no validated fields, there is a problem...
       if ( !count($fields) ) {
         $msg .= "<p>Error parsing column names. Are you sure this is a proper csv export ?<br />try to export first to get an example of formatting</p>\n";
-        $this->setRedirect( 'index.php?option=com_eventlist&view=import', $msg, 'error' );
+        $this->setRedirect( 'index.php?option=com_jem&view=import', $msg, 'error' );
         return;
       }
       else {
@@ -271,7 +271,7 @@ class EventListControllerImport extends EventListController
         $msg .= "<p>total added records: ".$result['added']."<br /></p>\n";
         $msg .= "<p>total updated records: ".$result['updated']."<br /></p>\n";
       }
-      $this->setRedirect( 'index.php?option=com_eventlist&view=import', $msg ); 
+      $this->setRedirect( 'index.php?option=com_jem&view=import', $msg ); 
     }
     else {
       parent::display();

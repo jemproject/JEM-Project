@@ -21,7 +21,7 @@ var eventscreen = new Class(
 {  
 	options:  {
 		id: "",
-		script_url: "index.php?option=com_eventlist&controller=events&format=raw",
+		script_url: "index.php?option=com_jem&controller=events&format=raw",
 		task: ""
 },
 
@@ -47,7 +47,7 @@ fetchscreen: function( name, options )
                         dooptions = options;
                 }
                
-                var loader_html = '<p class="el_centerimg"><img src="components/com_eventlist/assets/images/ajax-loader.gif" align="center"></p>';
+                var loader_html = '<p class="el_centerimg"><img src="components/com_jem/assets/images/ajax-loader.gif" align="center"></p>';
                 var url_to_load = this.options.script_url + "&task=" + this.options.task + "&id=" + this.options.id;
                
                 if (MooTools.version>='1.2.4') {
@@ -75,7 +75,7 @@ fetchscreen: function( name, options )
 
 reseter: function( task, id, div )
 {
-	var url = 'index.php?option=com_eventlist&controller=events&task=' + task + '&id=' + id + '&format=raw';
+	var url = 'index.php?option=com_jem&controller=events&task=' + task + '&id=' + id + '&format=raw';
 
 	new Request.HTML({
                                 url: url,

@@ -30,7 +30,7 @@ defined('_JEXEC') or die;
 
 <form action="index.php" method="post" name="adminForm" enctype="multipart/form-data" id="adminForm">
   <fieldset>
-    <legend><?php echo JText::_('COM_EVENTLIST_EXPORT_EVENTS'); ?></legend>
+    <legend><?php echo JText::_('COM_JEM_EXPORT_EVENTS'); ?></legend>
     </br />    
       <table>
         <tr>
@@ -54,14 +54,14 @@ defined('_JEXEC') or die;
             </label>
           </td>
           <td>
-                 <div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_EVENTLIST_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_eventlist&task=export&controller=export')"><?php echo JText::_('COM_EVENTLIST_EXPORT_EVENTS'); ?></a></div></div>
+                 <div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_JEM_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_jem&task=export&controller=export')"><?php echo JText::_('COM_JEM_EXPORT_EVENTS'); ?></a></div></div>
           </td>
         </tr>
       </table>
   </fieldset>
   
   <fieldset>
-    <legend><?php echo JText::_('COM_EVENTLIST_EXPORT_CATEGORIES'); ?></legend>
+    <legend><?php echo JText::_('COM_JEM_EXPORT_CATEGORIES'); ?></legend>
       
       <table>
         <tr>
@@ -81,14 +81,14 @@ defined('_JEXEC') or die;
             </label>
           </td>
           <td>
-            <div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_EVENTLIST_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_eventlist&task=exportcats&controller=export')"><?php echo JText::_('COM_EVENTLIST_EXPORT_CATEGORIES'); ?></a></div></div>  
+            <div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_JEM_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_jem&task=exportcats&controller=export')"><?php echo JText::_('COM_JEM_EXPORT_CATEGORIES'); ?></a></div></div>  
           </td>
         </tr>
       </table>
   </fieldset>
   
   <fieldset>
-    <legend><?php echo JText::_('COM_EVENTLIST_EXPORT_VENUES'); ?></legend>
+    <legend><?php echo JText::_('COM_JEM_EXPORT_VENUES'); ?></legend>
     </br />    
       <table>
         <tr>
@@ -112,7 +112,7 @@ defined('_JEXEC') or die;
             </label>
           </td>
           <td>
-                 <div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_EVENTLIST_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_eventlist&task=exportvenues&controller=export')"><?php echo JText::_('COM_EVENTLIST_EXPORT_VENUES'); ?></a></div></div>
+                 <div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_JEM_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_jem&task=exportvenues&controller=export')"><?php echo JText::_('COM_JEM_EXPORT_VENUES'); ?></a></div></div>
           </td>
         </tr>
       </table>
@@ -122,7 +122,7 @@ defined('_JEXEC') or die;
   
   
   
-	<input type="hidden" name="option" value="com_eventlist" />
+	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="view" value="export" />
 	<input type="hidden" name="controller" value="export" />
 	<input type="hidden" name="task" value="" />
