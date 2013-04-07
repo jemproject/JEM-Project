@@ -436,7 +436,7 @@ class EventListModelCategoriesdetailed extends JModelLegacy
             }
             
           //for debugging   
- print_r($query);
+          // print_r($query);
             return $query;
             
            
