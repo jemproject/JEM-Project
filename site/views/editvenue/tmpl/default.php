@@ -284,7 +284,7 @@ defined( '_JEXEC' ) or die;
             if ($this->row->locimage) :
     				echo ELOutput::flyer( $this->row, $this->limage, 'venue' );
     		else :
-      		    echo JHTML::_('image', 'components/com_jem/assets/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => 'modal'));
+      		    echo JHTML::_('image', 'media/com_jem/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => 'modal'));
     		endif;
       		?>
 

@@ -146,7 +146,7 @@ class EventListModelImagehandler extends JModelLegacy
 		$search = $this->getState('search');
 
 		// Initialize variables
-		$basePath = JPATH_SITE.DS.'images'.DS.'eventlist'.DS.$folder;
+		$basePath = JPATH_SITE.DS.'images'.DS.'jem'.DS.$folder;
 		
 		$images 	= array ();
 

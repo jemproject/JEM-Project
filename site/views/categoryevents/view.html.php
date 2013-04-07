@@ -60,7 +60,7 @@ class EventListViewCategoryevents extends JViewLegacy
 		$pathway 	=  $app->getPathWay();
 
 		//add css file
-		$document->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
+		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/eventlist.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
 
 		// Request variables
@@ -150,7 +150,7 @@ class EventListViewCategoryevents extends JViewLegacy
 		}
 
 		/*if ($category->image != '') {
-			$category->image = JHTML::image('eventlist/categories/'.$category->image, $category->catname);
+			$category->image = JHTML::image('jem/categories/'.$category->image, $category->catname);
 		}
 		*/
 		if ($category->image != '') {
@@ -159,9 +159,9 @@ class EventListViewCategoryevents extends JViewLegacy
             $imgattribs['width'] = $elsettings->imagewidth;
 			$imgattribs['height'] = $elsettings->imagehight;
 
-			$category->image = JHTML::image($mediaparams->get($path, 'images').'/eventlist/categories/'.$category->image, $category->catname, $imgattribs);
+			$category->image = JHTML::image($mediaparams->get($path, 'images').'/jem/categories/'.$category->image, $category->catname, $imgattribs);
 		} else {
-			$category->image = JHTML::image('components/com_jem/assets/images/noimage.png', $category->catname);
+			$category->image = JHTML::image('media/com_jem/images/noimage.png', $category->catname);
 		}
 		
 		
@@ -187,7 +187,7 @@ class EventListViewCategoryevents extends JViewLegacy
 	  	if($this->getLayout() == 'calendar') 
 	  	{	  	
 	    	//add css for calendar
-	    	$document->addStyleSheet('components/com_jem/assets/css/eventlistcalendar.css');
+	    	$document->addStyleSheet('media/com_jem/css/eventlistcalendar.css');
 	    
 	  		$year  = intval( JRequest::getVar('yearID', strftime( "%Y" ) ));
       		$month = intval( JRequest::getVar('monthID', strftime( "%m" ) ));

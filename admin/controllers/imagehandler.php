@@ -78,15 +78,15 @@ class EventListControllerImagehandler extends EventListController
 
 		//set the target directory
 		if ($task == 'venueimgup') {
-			$base_Dir = JPATH_SITE.DS.'images'.DS.'eventlist'.DS.'venues'.DS;
+			$base_Dir = JPATH_SITE.DS.'images'.DS.'jem'.DS.'venues'.DS;
 		} 
 		
 		if ($task == 'eventimgup') {
-			$base_Dir = JPATH_SITE.DS.'images'.DS.'eventlist'.DS.'events'.DS;
+			$base_Dir = JPATH_SITE.DS.'images'.DS.'jem'.DS.'events'.DS;
 		} 
 		
 		if ($task == 'categoriesimgup') {
-			$base_Dir = JPATH_SITE.DS.'images'.DS.'eventlist'.DS.'categories'.DS;
+			$base_Dir = JPATH_SITE.DS.'images'.DS.'jem'.DS.'categories'.DS;
 		} 
 
 		//do we have an upload?
@@ -145,8 +145,8 @@ class EventListControllerImagehandler extends EventListController
 					continue;
 				}
 
-				$fullPath = JPath::clean(JPATH_SITE.DS.'images'.DS.'eventlist'.DS.$folder.DS.$image);
-				$fullPaththumb = JPath::clean(JPATH_SITE.DS.'images'.DS.'eventlist'.DS.$folder.DS.'small'.DS.$image);
+				$fullPath = JPath::clean(JPATH_SITE.DS.'images'.DS.'jem'.DS.$folder.DS.$image);
+				$fullPaththumb = JPath::clean(JPATH_SITE.DS.'images'.DS.'jem'.DS.$folder.DS.'small'.DS.$image);
 				if (is_file($fullPath)) {
 					JFile::delete($fullPath);
 					if (JFile::exists($fullPaththumb)) {

@@ -333,7 +333,7 @@ defined('_JEXEC') or die;
               <div id="counter_row" style="display:none;">
                   <label for="recurrence_limit_date"><?php echo JText::_( 'COM_JEM_RECURRENCE_COUNTER' ); ?>:</label>
                   <div class="el_date>"><?php echo JHTML::_('calendar', ($this->row->recurrence_limit_date <> 0000-00-00) ? $this->row->recurrence_limit_date : JText::_( 'COM_JEM_UNLIMITED' ), "recurrence_limit_date", "recurrence_limit_date"); ?>
-              	    <a href="#" onclick="include_unlimited('<?php echo JText::_( 'COM_JEM_UNLIMITED' ); ?>'); return false;"><img src="components/com_jem/assets/images/unlimited.png" width="16" height="16" alt="<?php echo JText::_( 'COM_JEM_UNLIMITED' ); ?>" /></a>
+              	    <a href="#" onclick="include_unlimited('<?php echo JText::_( 'COM_JEM_UNLIMITED' ); ?>'); return false;"><img src="media/com_jem/images/unlimited.png" width="16" height="16" alt="<?php echo JText::_( 'COM_JEM_UNLIMITED' ); ?>" /></a>
               	</div>
               </div>
           </div>
@@ -373,7 +373,7 @@ defined('_JEXEC') or die;
           if ($this->row->datimage) :
       		    echo ELOutput::flyer( $this->row, $this->dimage, 'event' );
       		else :
-      		    echo JHTML::_('image', 'components/com_jem/assets/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => 'modal'));
+      		    echo JHTML::_('image', 'media/com_jem/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => 'modal'));
       		endif;
         	?>
           <label for="userfile"><?php echo JText::_('COM_JEM_IMAGE'); ?></label>

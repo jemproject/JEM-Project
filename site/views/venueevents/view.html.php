@@ -56,7 +56,7 @@ class EventListViewVenueevents extends JViewLegacy
 		$uri 		=  JFactory::getURI();
 
 		//add css file
-		$document->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
+		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/eventlist.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
 
 		// Request variables

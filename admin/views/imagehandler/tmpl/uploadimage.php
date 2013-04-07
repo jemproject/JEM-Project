@@ -93,19 +93,19 @@ defined( '_JEXEC' ) or die;
  							echo JText::_( 'COM_JEM_TARGET_DIRECTORY' ).':'; ?></b>
 							<?php
 							if ($this->task == 'venueimg') {
-								echo "/images/eventlist/venues/";
+								echo "/images/jem/venues/";
 								$this->task = 'venueimgup';
 							} 
 							
 							if ($this->task == 'eventimg')
 							 {
-								echo "/images/eventlist/events/";
+								echo "/images/jem/events/";
 								$this->task = 'eventimgup';
 							}
 							
 							if ($this->task == 'categoriesimg')
 							 {
-								echo "/images/eventlist/categories/";
+								echo "/images/jem/categories/";
 								$this->task = 'categoriesimgup';
 							}
 

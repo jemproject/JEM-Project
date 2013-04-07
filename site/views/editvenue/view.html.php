@@ -63,10 +63,10 @@ class EventListViewEditvenue extends JViewLegacy
 		JHTML::_('behavior.tooltip');
 
 		//add css file
-		$doc->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
+		$doc->addStyleSheet($this->baseurl.'/media/com_jem/css/eventlist.css');
 		$doc->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
 
-		$doc->addScript('administrator/components/com_jem/assets/js/attachments.js' );
+		$doc->addScript('media/com_jem/js/attachments.js' );
 		
 		// Get the menu object of the active menu item
 		$menu		=  $app->getMenu();
@@ -95,7 +95,7 @@ class EventListViewEditvenue extends JViewLegacy
 		$limage = ELImage::flyercreator($row->locimage, 'venue');
 
 		//Set the info image
-		$infoimage = JHTML::_('image', 'components/com_jem/assets/images/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
+		$infoimage = JHTML::_('image', 'media/com_jem/images/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
 		
 		// country list
 		$countries = array();

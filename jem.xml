@@ -21,6 +21,13 @@
 		<folder>models</folder>
 		<folder>views</folder>
 	</files>
+	
+	<media folder="media" destination="com_jem">
+                <folder>images</folder>
+                <folder>css</folder>
+                <folder>js</folder>
+        </media>
+	
 
 	<languages folder="site">
 		<language tag="en-GB">language/en-GB/en-GB.com_jem.ini</language>
@@ -103,7 +110,6 @@
 			<language tag="en-GB">en-GB.plg_jem_mailer.ini</language>
 		</languages>
 		
-		<media />
 	</plugin>
 	
 	<!-- Comments plugin for JEM -->
@@ -117,7 +123,7 @@
 			<language tag="en-GB">en-GB.plg_jem_comments.ini</language>
 		</languages>
 		
-		<media />
+		
 	</plugin>
 	
 	<!-- Search plugin from JEM for com_search -->
@@ -133,7 +139,7 @@
 			<language tag="fr-FR">fr-FR.plg_search_jem.ini</language>
 		</languages>
 		
-		<media />
+		
 	</plugin>
 	
 </plugins>

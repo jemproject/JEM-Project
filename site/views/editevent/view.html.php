@@ -85,7 +85,7 @@ class EventListViewEditevent extends JViewLegacy
 		JHTML::_('behavior.modal', 'a.modal');
 
 		//add css file
-		$doc->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
+		$doc->addStyleSheet($this->baseurl.'/media/com_jem/css/eventlist.css');
 		$doc->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
 
 		//Set page title
@@ -116,7 +116,7 @@ class EventListViewEditevent extends JViewLegacy
 		$dimage = ELImage::flyercreator($row->datimage, 'event');
 
 		//Set the info image
-		$infoimage = JHTML::_('image', 'components/com_jem/assets/images/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
+		$infoimage = JHTML::_('image', 'media/com_jem/images/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
 
 		//Create the stuff required for the venueselect functionality
 		$url	= $app->isAdmin() ? $app->getSiteURL() : JURI::base();
@@ -135,11 +135,11 @@ class EventListViewEditevent extends JViewLegacy
 
 		$doc->addScriptDeclaration($js);
 		// include the recurrence script
-		$doc->addScript($url.'components/com_jem/assets/js/recurrence.js');
+		$doc->addScript($url.'media/com_jem/js/recurrence.js');
 		// include the unlimited script
-		$doc->addScript($url.'components/com_jem/assets/js/unlimited.js');
+		$doc->addScript($url.'media/com_jem/js/unlimited.js');
 		
-		$doc->addScript('administrator/components/com_jem/assets/js/attachments.js' );
+		$doc->addScript('media/com_jem/js/attachments.js' );
 		
 		$lists = array();
 		
@@ -217,7 +217,7 @@ class EventListViewEditevent extends JViewLegacy
 		$lists['order'] 		= $filter_order;
 
 		$document->setTitle(JText::_( 'COM_JEM_SELECTVENUE' ));
-		$document->addStyleSheet($this->baseurl.'/components/com_jem/assets/css/eventlist.css');
+		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/eventlist.css');
 
 		$filters = array();
 		$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_VENUE' ) );

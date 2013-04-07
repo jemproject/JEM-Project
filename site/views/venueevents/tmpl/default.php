@@ -137,7 +137,7 @@ defined( '_JEXEC' ) or die;
 <?php if ($this->params->get('events_ical', 1)): ?>
 <span class="events-ical">
 	<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&view=venueevents&id='. $this->venue->id.'&format=raw&layout=ics'),
-                          JHTML::image('components/com_jem/assets/images/iCal2.0.png', JText::_('COM_JEM_EXPORT_ICS'))
+                          JHTML::image('media/com_jem/images/iCal2.0.png', JText::_('COM_JEM_EXPORT_ICS'))
 	                        ); ?>
 </span>
 <?php endif; ?>

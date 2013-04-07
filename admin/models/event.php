@@ -306,7 +306,7 @@ class EventListModelEvent extends JModelLegacy
 
 		//Check if image was selected
 		jimport('joomla.filesystem.file');
-		$format 	= JFile::getExt('JPATH_SITE/images/eventlist/events/'.$row->datimage);
+		$format 	= JFile::getExt('JPATH_SITE/images/jem/events/'.$row->datimage);
 
 		$allowable 	= array ('gif', 'jpg', 'png');
 		if (in_array($format, $allowable)) {

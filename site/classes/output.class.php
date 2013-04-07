@@ -70,7 +70,7 @@ static function footer( )
 			JHTML::_('behavior.tooltip');
 
 			if ( $settings->icons ) {
-				$image = JHTML::image("components/com_jem/assets/images/submitevent.png",JText::_( 'COM_JEM_DELIVER_NEW_EVENT' ));
+				$image = JHTML::image("media/com_jem/images/submitevent.png",JText::_( 'COM_JEM_DELIVER_NEW_EVENT' ));
 			} else {
 				$image = JText::_( 'COM_JEM_DELIVER_NEW_EVENT' );
 			}
@@ -117,7 +117,7 @@ static function footer( )
 			if ($task == 'archive') {
 				
 				if ( $settings->icons ) {
-					$image = JHTML::image("components/com_jem/assets/images/eventlist.png",JText::_( 'COM_JEM_SHOW_EVENTS' ));
+					$image = JHTML::image("media/com_jem/images/eventlist.png",JText::_( 'COM_JEM_SHOW_EVENTS' ));
 				} else {
 					$image = JText::_( 'COM_JEM_SHOW_EVENTS' );
 				}
@@ -133,7 +133,7 @@ static function footer( )
 			} else {
 				
 				if ( $settings->icons ) {
-					$image = JHTML::image("components/com_jem/assets/images/archive_front.png",JText::_( 'COM_JEM_SHOW_ARCHIVE' ));
+					$image = JHTML::image("media/com_jem/images/archive_front.png",JText::_( 'COM_JEM_SHOW_ARCHIVE' ));
 				} else {
 					$image = JText::_( 'COM_JEM_SHOW_ARCHIVE' );
 				}
@@ -186,7 +186,7 @@ static function footer( )
 			{
 				case 'editevent':
 					if ( $settings->icons ) {
-						$image = JHTML::image("components/com_jem/assets/images/calendar_edit.png",JText::_( 'COM_JEM_EDIT_EVENT' ));
+						$image = JHTML::image("media/com_jem/images/calendar_edit.png",JText::_( 'COM_JEM_EDIT_EVENT' ));
 					} else {
 						$image = JText::_( 'COM_JEM_EDIT_EVENT' );
 					}
@@ -196,7 +196,7 @@ static function footer( )
 
 				case 'editvenue':
 					if ( $settings->icons ) {
-						$image = JHTML::image("components/com_jem/assets/images/calendar_edit.png",JText::_( 'COM_JEM_EDIT_EVENT' ));
+						$image = JHTML::image("media/com_jem/images/calendar_edit.png",JText::_( 'COM_JEM_EDIT_EVENT' ));
 					} else {
 						$image = JText::_( 'COM_JEM_EDIT_VENUE' );
 					}
@@ -330,7 +330,7 @@ static function footer( )
 
 			// checks template image directory for image, if non found default are loaded
 			if ( $settings->icons ) {
-				$image = JHTML::image("components/com_jem/assets/images/iCal2.0.png",JText::_( 'COM_JEM_EXPORT_ICS' ));
+				$image = JHTML::image("media/com_jem/images/iCal2.0.png",JText::_( 'COM_JEM_EXPORT_ICS' ));
 			} else {
 				$image = JText::_( 'COM_JEM_EXPORT_ICS' );
 			}
@@ -369,7 +369,7 @@ static function footer( )
 		$elsettings =  ELHelper::config();
 		
 		//Link to map
-        $mapimage = JHTML::image("components/com_jem/assets/images/icon-48-globe.png",JText::_( 'COM_JEM_MAP' ));
+        $mapimage = JHTML::image("media/com_jem/images/icon-48-globe.png",JText::_( 'COM_JEM_MAP' ));
 		
         //set var
 		$output 	= null;
@@ -483,8 +483,8 @@ static	function getFlag($country)
 
         jimport('joomla.filesystem.file');
 
-        if (JFile::exists(JPATH_COMPONENT_SITE.DS.'assets'.DS.'images'.DS.'flags'.DS.$country.'.gif')) {
-        	$countryimg = '<img src="'.JURI::base(true).'/components/com_jem/assets/images/flags/'.$country.'.gif" alt="'.JText::_( 'COM_JEM_COUNTRY' ).': '.$country.'" width="16" height="11" />';
+        if (JFile::exists(JPATH_BASE.DS.'media/com_jem/images/flags'.DS.$country.'.gif')) {
+        	$countryimg = '<img src="'.JURI::base(true).'/media/com_jem/images/flags/'.$country.'.gif" alt="'.JText::_( 'COM_JEM_COUNTRY' ).': '.$country.'" width="16" height="11" />';
 
         	return $countryimg;
         }

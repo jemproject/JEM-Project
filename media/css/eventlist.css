@@ -1,0 +1,805 @@
+/**
+ * $Id$
+ * @package Joomla
+ * @subpackage Eventlist
+ * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @license GNU/GPL, see LICENSE.php
+ *
+ * Eventlist is maintained by the community located at
+ * http://www.joomlaeventmanager.net
+ *
+ * Eventlist is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License 2
+ * as published by the Free Software Foundation.
+ *
+ * Eventlist is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EventList; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+/**
+ * @section reset
+ *
+ * if you have problems with your layout, activate this 'reset command' for "debugging".
+ */
+
+/** reset all paddings/margins */
+/* div#eventlist * { margin: 0; padding: 0; } */
+
+/** border (red) around the eventlist component */
+/* div#eventlist { border: 1px solid red; } */
+
+/** border (blue) around all eventlist elements */
+/* div#eventlist * { border: 1px solid blue; } */
+
+
+/* focus */
+div#eventlist .inputbox:focus
+{
+border:1px solid grey;
+/*background:#EFF53D; */
+background:#DDE084;
+}
+
+div#eventlist .hr
+{
+	border:0;
+  border-top: 1px solid #E19832;
+  height: 0;
+  background: #E19832;
+}
+
+
+div#eventlist .inputbox:hover
+{
+border:1px solid grey;
+/*background:#EFF53D; */
+background:#DDE084;
+}
+
+div#eventlist .inputbox2
+{
+border:1px solid grey;
+background: #B3BABA;
+cursor:pointer;
+}
+
+div#eventlist .inputbox
+{
+border:1px solid grey;
+background: #B3BABA;
+cursor:pointer;
+
+}
+
+div#eventlist .input
+{
+border:1px solid grey;
+background: #B3BABA;
+cursor:pointer;
+
+}
+
+#main a
+
+
+
+
+div#eventlist h1 {
+
+}
+
+div#eventlist .eventlistcomponentheading {
+border-bottom: 0px !important;
+
+}
+
+div#eventlist .event-file-dl-icon img
+{
+padding: 5px;
+}
+
+div#jc h4 {
+
+}
+
+div#eventlist fieldset {
+    border: 1px dotted grey !important;
+}
+
+
+
+
+
+/**
+ * @section clear
+ *
+ * clearing the float containers
+ */
+div#eventlist {
+    overflow: hidden;
+    background: none repeat scroll 0% 0% rgb(237, 237, 235);
+    border: 1px solid black;
+    border-radius: 5px 5px 5px 5px;
+    padding: 10px;
+}
+
+
+
+div#eventlist .clear
+{ border: 0; clear: both; float: none; height: 1px; line-height: 1px; }
+
+div#eventlist .floattext:after /* ie fix in coditional comments (html source) */
+{content: "."; display: block; height: 0; clear: both; visibility: hidden;}
+
+div#eventlist .floattext
+{ display:block; /* safari */ }
+
+
+/**
+ * @section buttons
+ *
+ * print, pdf, ...
+ */
+div#eventlist .buttons
+{ float:right; }
+
+div#eventlist .buttons img
+{  }
+
+div#eventlist .buttons a
+{ 
+
+border:1px solid grey; 
+}
+
+
+/**
+ * @section headlines
+ *
+ */
+div#eventlist h2 {
+    font-size: normal !important;
+    font-weight:normal !important;
+    padding: 0.3em 0.3em;
+    margin: normal;
+    background: none repeat scroll 0% 0% rgb(212, 214, 178);
+    border: 1px solid grey;
+}
+
+
+div#eventlist h2 img {
+border: none;
+}
+
+
+/**
+ * @section definitionlist
+ *
+ * Event Details
+ */
+div#eventlist dl {
+margin: 0 5px;
+}
+
+div#eventlist dt { /* definition term */
+margin: 0; padding: 0.3em 0;
+float:left;
+font-size: 1em; font-weight: bold;
+width: 11em;
+background: transparent;
+border-bottom: 1px solid #ddd;
+}
+
+div#eventlist dd { /* definition description */
+display: block;
+margin: 0 0 5px 12em; padding: 0.3em 0;
+font-size: 1em;
+background: transparent;
+}
+
+* html .floattext dd /* ie6 fix against the 3px jog bug */
+{ height: 1%; }
+
+div#eventlist div.description {
+margin: 5px 0; padding: 0 5px;
+}
+
+div#eventlist div.no_space,
+div#eventlist .no_space {
+margin: 0; padding: 0;
+}
+
+div#eventlist .copyright {
+font-size: 0.9em; text-align: center;
+margin: 1em 0;
+color: #aaa;
+}
+
+
+/**
+ * @section images
+ *
+ * flyer, locations, maps, ...
+ */
+div#eventlist .modal {
+float:right !important;
+/* margin:0.3em; */
+/*position: static;*/
+border: 1px solid #000000 !important;
+width:auto;
+position: static !important;
+background:transparent;
+border:0px solid black;
+box-shadow:none;
+}
+
+div#eventlist .mapicon {
+float: right !important;
+position:relative;	
+}
+
+div#eventlist .mapicon2 {
+float: right !important;
+position:relative;	
+top:-60px;
+right:80px;
+}
+
+
+
+/**
+ * 
+ *
+ * maps, ...
+ */
+div#eventlist .map {
+margin:0.3em;
+position: relative;
+}
+
+div#googlemap .modal {
+border:none;
+}
+
+
+
+
+
+
+
+div#eventlist a.modal img,
+div#eventlist img.modal,
+div#eventlist .catimg img,
+div#eventlist .map {
+/* padding:1px;  */
+}
+
+
+
+/**
+ * @section registered user list
+ *
+ */
+ 
+div#eventlist div.register {
+margin: 5px 0; padding: 0 5px;
+}
+
+div#eventlist ul.user {
+margin:5px; padding:0;
+list-style:none;
+font-size:0.9em;
+}
+
+div#eventlist ul.user li {
+float:left;
+margin:5px;
+list-style:none;
+}
+
+div#eventlist ul.user li img {
+border: #ddd 1px solid;
+padding:3px;
+}
+
+div#eventlist ul.user li span.username {
+display:block;
+text-align:center; font-weight:bold;
+}
+
+
+/**
+ * @section pagination
+ *
+ */
+div#eventlist .pageslinks,
+div#eventlist .pagescounter {
+text-align: center;
+}
+
+
+/**
+ * @section Categoryview
+ *
+ */
+div#eventlist .catimg {
+margin: 0 0.5em 0.5em 0;
+float: left;
+position: relative;
+}
+
+div#eventlist .catimg p {
+font-size: 0.9em; line-height: 180%;
+margin: 0 0 0.5em 0;
+}
+
+div#eventlist .catdescription {
+margin: 0 0 0.5em 0;
+}
+
+/**
+ * @section Eventlist Table
+ *
+ */
+div#eventlist table.eventtable
+{ background: #DEDEDE; margin: 1em 1px; width: 100%; font-size: 1em; border-collapse:collapse; }
+
+div#eventlist table.eventtable th
+{ 
+background-color: #809EA8 !important; 
+color: #ffffff; 
+font-weight: bold; 
+padding: 0.4em; 
+text-align: left; 
+border:1px solid black; 
+}
+
+
+
+ div#eventlist table.eventtable th a
+ {
+color: white;
+background-color: transparent;	 
+ }
+ 
+ div#eventlist table.eventtable th a:hover
+ {
+background-color: transparent ;	 
+ }
+ 
+
+div#eventlist table.eventtable th img
+{ margin: 0 0 5px 5px; vertical-align: middle; border: none; }
+
+div#eventlist table.eventtable td
+{ background-color: #EAEBE1; padding: 0.4em; border:1px solid black; vertical-align: top; }
+
+div#eventlist table.eventtable tr.sectiontableentry2 td
+{ background: #EDEDED; }
+
+div#eventlist table.eventtable tr:hover td
+{ background: #BACFBA }
+
+
+
+/**
+ * @section Eventlist Table Filter Form
+ *
+ */
+div#eventlist #el_filter {
+margin: 1em 0 0.5em 0; padding: 0.5em;
+border: solid 1px grey;
+background: orange;
+}
+
+div#eventlist .el_fleft {
+float: left;
+}
+
+div#eventlist .el_fright {
+float: right;
+}
+
+
+/**
+ * @section Editevent Form
+ *
+ */
+
+div.el_editevent form fieldset,
+div.el_editvenue form fieldset {
+margin: 0 0 1em 0;
+padding: 1em;
+}
+
+    div.el_editevent form legend,
+    div.el_editvenue form legend {
+    padding: 0.3em;
+    font-weight: bold;
+    background: orange;
+    border-radius:5px;
+    border:1px solid black;
+    }
+
+    div.el_editevent form label,
+    div.el_editvenue form label {
+    width: 9em;
+    margin: 0; padding: 0;
+    float: left; display: block;
+    vertical-align: top;
+    }
+
+    div.el_editevent form input:hover, /* event */
+    div.el_editevent form button:hover,
+    div.el_editevent form select:hover,
+    div.el_editevent form textarea:hover,
+    
+    div.el_editvenue form input:hover, /* venue */
+    div.el_editvenue form button:hover,
+    div.el_editvenue form select:hover,
+    div.el_editvenue form textarea:hover {
+    margin: 0 0 0.5em 0; padding: 0.2em;
+    border: 1px solid grey;
+    cursor: pointer;
+    background-color: yellow;
+    }
+    div.el_editevent form input:active, /* event */
+    div.el_editevent form button:active,
+    div.el_editevent form select:active,
+    div.el_editevent form textarea:active,
+    
+    div.el_editvenue form input:active, /* venue */
+    div.el_editvenue form button:active,
+    div.el_editvenue form select:active,
+    div.el_editvenue form textarea:active {
+    margin: 0 0 0.5em 0; padding: 0.2em;
+    border: 1px solid grey;
+    cursor: pointer;
+    background-color: yellow;
+    }
+    div.el_editevent form input:visited, /* event */
+    div.el_editevent form button:visited,
+    div.el_editevent form select:visited,
+    div.el_editevent form textarea:visited,
+    
+    div.el_editvenue form input:visited, /* venue */
+    div.el_editvenue form button:visited,
+    div.el_editvenue form select:visited,
+    div.el_editvenue form textarea:visited {
+    margin: 0 0 0.5em 0; padding: 0.2em;
+    border: 1px solid grey;
+    cursor: pointer;
+    background-color: yellow;
+    }
+    div.el_editevent form input:active, /* event */
+    div.el_editevent form button:active,
+    div.el_editevent form select:active,
+    div.el_editevent form textarea:active,
+    
+    div.el_editvenue form input:active, /* venue */
+    div.el_editvenue form button:active,
+    div.el_editvenue form select:active,
+    div.el_editvenue form textarea:active {
+    margin: 0 0 0.5em 0; padding: 0.2em;
+    border: 1px solid grey;
+    cursor: pointer;
+    background-color: yellow;
+    }
+    
+    
+    
+    div.el_editevent form input, /* event */
+    div.el_editevent form button,
+    div.el_editevent form select,
+    div.el_editevent form textarea,
+    
+    div.el_editvenue form input, /* venue */
+    div.el_editvenue form button,
+    div.el_editvenue form select,
+    div.el_editvenue form textarea {
+    margin: 0 0 0.5em 0; padding: 0.2em;
+    border: 1px solid grey;
+    cursor: pointer;
+    background-color: #fff;
+    }
+
+    div.el_editevent form input#a_name {
+    float: left;
+    }
+
+    div.el_editevent form img,
+    div.el_editvenue form img {
+    border: 0;
+    margin: 0;
+    /*vertical-align: baseline;*/
+    cursor: pointer;
+    }
+
+/** venue select buttons */
+div.el_editevent div.el_buttons {
+float: left;  width: 45%;
+}
+
+    div.el_editevent div.el_buttons button {
+    float: right;
+    margin: 0 0 0 5px;
+    }
+
+    div.el_editevent div.el_buttons a.el_venue_select,
+    div.el_editevent div.el_buttons a.el_venue_select:hover,
+    div.el_editevent div.el_buttons a.el_venue_select:active,
+    div.el_editevent div.el_buttons a.el_venue_select:focus {
+    background: #fff url(../images/venue_select_btn_left.png) 0 0 no-repeat !important;
+    background-color: #fff;
+    margin: 0 5px 0 5px; padding: 0 0 0 28px;
+    font-size: 0.9em; line-height: 22px;
+    float: right;
+    color: #000;
+    border:1px solid black;
+    }
+
+    div.el_editevent div.el_buttons a.el_venue_select span,
+    div.el_editevent div.el_buttons a.el_venue_select:hover span,
+    div.el_editevent div.el_buttons a.el_venue_select:active span,
+    div.el_editevent div.el_buttons a.el_venue_select:focus span {
+    background: transparent url(../images/venue_select_btn_right.png) 100% 0 no-repeat !important;
+    text-decoration:underline !important;
+    background-color: transparent;
+    display: block;
+    height: 1%; width: auto;
+    padding: 0 6px 0 0;
+    color: #000;
+    }
+
+
+/** save buttons */
+div.el_save_buttons {
+margin: 0 0 1em 0;
+float: right;
+}
+
+    div.el_save_buttons button {
+    font-size: 1.5em;
+    cursor: pointer;
+line-height: 22px;
+text-align: center;
+vertical-align: middle;
+background-color: lightgrey;
+border-radius: 5px;
+border:1px solid black;
+    }
+
+div.el_save_buttons button.submit:hover {
+   
+background-color: lightgreen;
+    }
+
+div.el_save_buttons button.cancel:hover {
+background-color: red;
+    }
+
+
+
+/** recurrence */
+div.el_editevent form label#recurrence_output {
+width: auto; float: none;
+margin: 5px 0;
+}
+
+/** registration */
+div.el_editevent form div.el_unregister,
+div.el_editevent form div.el_register {
+width: 35%; float: left;
+margin: 0 1em 0 0;
+}
+
+
+div.el_box_left,
+div.el_box_right {
+width: 45%;
+float: left;
+}
+
+div.el_box_right {
+float: right;
+}
+
+div#eventlist .copyright {
+    font-size: 0.9em; text-align: center;
+    margin: 1em 0;
+    color: #aaa;
+}
+
+table#el-attachments td {
+  padding: 5px;
+  border:1px solid grey;
+}
+
+table#search td {
+  border: none !important;
+}
+
+table#search tr {
+  border: none !important;
+  padding: 20px !important;
+}
+
+table#el-attachments th {
+  background:rgb(54, 105, 153);
+  color: white;
+  line-height:22px;
+  border: 1px solid black;
+}
+
+
+/**
+ * googlemap
+ *
+ */
+#googlemap {
+margin-top: 20px;
+margin-left: 20px;
+margin-bottom: 20px;
+}
+
+
+/** page navigation **/
+.pageslinks li{
+display:inline;
+padding:2px 5px;
+text-align:left;
+border:solid 0px #eee;
+margin:0 2px}
+
+
+div.el_editevent div.el_buttons a.el_venue_reset {
+    background: url("../images/venue_reset_btn_left.png") no-repeat scroll 0px 0px rgb(255, 255, 255) !important;
+}
+
+    div.el_editevent div.el_buttons a.el_venue_reset,
+    div.el_editevent div.el_buttons a.el_venue_reset:hover,
+    div.el_editevent div.el_buttons a.el_venue_reset:active,
+    div.el_editevent div.el_buttons a.el_venue_reset:focus {
+    background: #fff url(../images/venue_reset_btn_left.png) 0 0 no-repeat !important;
+    background-color: #fff;
+    margin: 0 5px 0 5px; padding: 0 0 0 28px;
+    font-size: 0.9em; line-height: 22px;
+    border: 1px solid rgb(0, 0, 0);
+    float: right;
+    cursor:pointer;
+    color: #000000 !important;
+    }
+
+    div.el_editevent div.el_buttons a.el_venue_reset span,
+    div.el_editevent div.el_buttons a.el_venue_reset:hover span,
+    div.el_editevent div.el_buttons a.el_venue_reset:active span,
+    div.el_editevent div.el_buttons a.el_venue_reset:focus span {
+    background: transparent url(../images/venue_select_btn_right.png) 100% 0 no-repeat !important;
+    background-color: transparent;
+    display: block;
+    height: 1%; width: auto;
+    padding: 0 6px 0 0;
+    border: 1px solid rgb(0, 0, 0);
+    cursor:pointer;
+    color: #000;
+    }
+
+
+
+/* Thx to http://www.bloggerswatch.com/internet/css-trick-submit-button-should-look-same-everywhere/ */
+
+.buttons a, .buttons button{
+    display:block !important;
+    float:left !important;
+    margin:0 7px 0 0 !important;
+    background-color:#f5f5f5 !important;
+    border:1px solid grey !important;
+    border-top:1px solid grey !important;
+    border-left:1px solid grey !important;
+
+    font-family:"Lucida Grande", Tahoma, Arial, Verdana, sans-serif !important;
+    font-size:12px !important;
+    line-height:130% !important;
+    text-decoration:none !important;
+    font-weight:bold !important;
+    color:#565656 !important;
+    cursor:pointer !important;
+    padding:5px 10px 6px 7px !important; /* Links */
+}
+.buttons button{
+    width:auto !important;
+    overflow:visible !important;
+    padding:4px 10px 3px 7px !important; /* IE6 */
+}
+.buttons button[type]{
+    padding:5px 10px 5px 7px !important; /* Firefox */
+    line-height:17px !important; /* Safari */
+}
+*:first-child+html button[type]{
+    padding:4px 10px 3px 7px !important; /* IE7 */
+}
+.buttons button img, .buttons a img{
+    margin:0px !important;
+    padding:0 !important;
+    border:none !important;
+    /*width:16px !important;*/
+    /*height:16px !important;*/
+}
+
+/* STANDARD */
+
+button:hover, .buttons a:hover{
+    background-color:#dff4ff !important;
+    border:1px solid grey !important;
+    color:#336699 !important;
+}
+.buttons a:active{
+    background-color:#6299c5 !important;
+    border:1px solid #6299c5 !important;
+    color:#fff !important;
+}
+
+/* POSITIVE */
+
+button.positive, .buttons a.positive{
+    color:#529214 !important;
+     border:1px solid grey !important;
+     cursor: pointer;
+     line-height:22px;
+}
+.buttons a.positive:hover, button.positive:hover{
+    background-color:#E6EFC2 !important;
+     border:1px solid grey !important;
+    color:#529214 !important;
+}
+.buttons a.positive:active{
+    background-color:#529214 !important;
+     border:1px solid grey !important;
+    color:#fff !important;
+}
+
+/* NEGATIVE */
+
+.buttons a.negative, button.negative{
+    color:#d12f19 !important;
+    border:1px solid grey !important;
+    cursor:pointer;
+    line-height:22px;
+}
+.buttons a.negative:hover, button.negative:hover{
+    background:#fbe3e4 !important;
+    border:1px solid grey !important;
+    color:#d12f19 !important;
+}
+.buttons a.negative:active{
+    background-color:#d12f19 !important;
+    border:1px solid #d12f19 !important;
+    color:#fff !important;
+    border:1px solid grey !important;
+}
+
+/* REGULAR */
+
+button.regular, .buttons a.regular{
+    color:#336699 !important;
+     border:1px solid grey !important;
+     cursor:pointer;
+     line-height:22px;
+     
+}
+.buttons a.regular:hover, button.regular:hover{
+    background-color:#dff4ff !important;
+    border:1px solid grey !important;
+    color:#336699 !important;
+}
+.buttons a.regular:active{
+    background-color:#6299c5 !important;
+     border:1px solid grey !important;
+    color:#fff !important;
+}

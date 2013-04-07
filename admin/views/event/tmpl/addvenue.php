@@ -204,7 +204,7 @@ $infoimage = JHTML::image('components/com_jem/assets/images/icon-16-hint.png', J
 				<script language="javascript" type="text/javascript">
 				if (document.forms[0].a_imagename.value!=''){
 					var imname = document.forms[0].a_imagename.value;
-					jsimg='../images/eventlist/venues/' + imname;
+					jsimg='../images/jem/venues/' + imname;
 					document.getElementById('imagelib').src= jsimg;
 				}
 				</script>

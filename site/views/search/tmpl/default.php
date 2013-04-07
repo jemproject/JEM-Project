@@ -24,7 +24,7 @@ defined( '_JEXEC' ) or die;
 
 // add javascript
 JHTML::_('behavior.mootools');
-$this->document->addScript( $this->baseurl.'/components/com_jem/assets/js/search.js' );
+$this->document->addScript( $this->baseurl.'/media/com_jem/js/search.js' );
 ?>
 <div id="eventlist" class="el_eventlist">
 <p class="buttons">

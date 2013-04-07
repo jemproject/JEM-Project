@@ -123,9 +123,9 @@ class EventListModelCategories extends JModelLegacy
 					$attribs['width'] = $elsettings->imagewidth;
 					$attribs['height'] = $elsettings->imagehight;
 
-					$category->image = JHTML::image('images/eventlist/categories/'.$category->image, $category->catname, $attribs);
+					$category->image = JHTML::image('images/jem/categories/'.$category->image, $category->catname, $attribs);
 				} else {
-					$category->image = JHTML::image('components/com_jem/assets/images/noimage.png', $category->catname);
+					$category->image = JHTML::image('media/com_jem/images/noimage.png', $category->catname);
 				}
 				
 				

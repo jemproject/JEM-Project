@@ -119,7 +119,7 @@ class EventListViewCategory extends JViewLegacy {
 		function elSelectImage(image, imagename) {
 			document.getElementById('a_image').value = image;
 			document.getElementById('a_imagename').value = imagename;
-			document.getElementById('imagelib').src = '../images/eventlist/categories/' + image;
+			document.getElementById('imagelib').src = '../images/jem/categories/' + image;
 			var btn = window.parent.document.getElementById('sbox-btn-close');
             btn.fireEvent('click');
 		}";
@@ -127,7 +127,7 @@ class EventListViewCategory extends JViewLegacy {
 		$link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task=categoriesimg&amp;tmpl=component';
 		$link2 = 'index.php?option=com_jem&amp;view=imagehandler&amp;task=selectcategoriesimg&amp;tmpl=component';
 		$document->addScriptDeclaration($js);
-		$imageselect = "\n<input style=\"background: #ffffff;\" type=\"text\" id=\"a_imagename\" value=\"$row->image\" disabled=\"disabled\" onchange=\"javascript:if (document.forms[0].a_imagename.value!='') {document.imagelib.src='../images/eventlist/categories/' + document.forms[0].a_imagename.value} else {document.imagelib.src='../images/blank.png'}\"; /><br />";
+		$imageselect = "\n<input style=\"background: #ffffff;\" type=\"text\" id=\"a_imagename\" value=\"$row->image\" disabled=\"disabled\" onchange=\"javascript:if (document.forms[0].a_imagename.value!='') {document.imagelib.src='../images/jem/categories/' + document.forms[0].a_imagename.value} else {document.imagelib.src='../images/blank.png'}\"; /><br />";
 
 		$imageselect .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_UPLOAD')."\" href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_UPLOAD')."</a></div></div>\n";
 		$imageselect .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_SELECTIMAGE')."\" href=\"$link2\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_SELECTIMAGE')."</a></div></div>\n";

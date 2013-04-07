@@ -276,7 +276,7 @@ class EventListModelEditvenue extends JModelLegacy
 
 			jimport('joomla.filesystem.file');
 
-			$base_Dir 	= JPATH_SITE.'/images/eventlist/venues/';
+			$base_Dir 	= JPATH_SITE.'/images/jem/venues/';
 
 			//check the image
 			$check = ELImage::check($file, $elsettings);

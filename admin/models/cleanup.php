@@ -134,8 +134,8 @@ class EventListModelCleanup extends JModelLegacy
 					continue;
 				}
 
-				$fullPath = JPath::clean(JPATH_SITE.DS.'images'.DS.'eventlist'.DS.$folder.DS.$image);
-				$fullPaththumb = JPath::clean(JPATH_SITE.DS.'images'.DS.'eventlist'.DS.$folder.DS.'small'.DS.$image);
+				$fullPath = JPath::clean(JPATH_SITE.DS.'images'.DS.'jem'.DS.$folder.DS.$image);
+				$fullPaththumb = JPath::clean(JPATH_SITE.DS.'images'.DS.'jem'.DS.$folder.DS.'small'.DS.$image);
 
 				if (is_file($fullPath)) {
 					JFile::delete($fullPath);
@@ -184,7 +184,7 @@ class EventListModelCleanup extends JModelLegacy
 			$field = 'image';
 	    }			
 
-		$query = 'SELECT '.$field.' FROM #__eventlist_'.$this->_target;
+		$query = 'SELECT '.$field.' FROM #__jem_'.$this->_target;
 
 		$this->_db->setQuery($query);
 
@@ -203,7 +203,7 @@ class EventListModelCleanup extends JModelLegacy
 	function _getavailable()
 	{
 		// Initialize variables
-		$basePath = JPATH_SITE.DS.'images'.DS.'eventlist'.DS.$this->_target;
+		$basePath = JPATH_SITE.DS.'images'.DS.'jem'.DS.$this->_target;
 
 		$images 	= array ();
 

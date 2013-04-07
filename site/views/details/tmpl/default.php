@@ -156,7 +156,7 @@ JHTML::_('behavior.modal');
 	  					<td>
 		  					<span class="event-file-dl-icon hasTip" title="<?php echo JText::_('COM_JEM_DOWNLOAD').' '.$this->escape($file->file).'::'.$this->escape($file->description);?>">
 		  					<?php echo JHTML::link('index.php?option=com_jem&task=getfile&format=raw&file='.$file->id, 
-		  					                       JHTML::image('components/com_jem/assets/images/download_16.png', JText::_('COM_JEM_DOWNLOAD'))); ?></span>  			
+		  					                       JHTML::image('media/com_jem/images/download_16.png', JText::_('COM_JEM_DOWNLOAD'))); ?></span>  			
 	  					</td>
 	  					<td class="event-file-name"><?php echo $this->escape($file->name ? $file->name : $file->file); ?></td>
 	  				</tr>

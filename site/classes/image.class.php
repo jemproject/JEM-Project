@@ -218,30 +218,30 @@ static	function gdVersion($user_ver = 0)
 		if ( $image ) {
 
 			//Create thumbnail if enabled and it does not exist already
-			if ($settings->gddisabled == 1 && !file_exists(JPATH_SITE.'/images/eventlist/'.$folder.'/small/'.$image)) {
+			if ($settings->gddisabled == 1 && !file_exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image)) {
 
-				$filepath 	= JPATH_SITE.'/images/eventlist/'.$folder.'/'.$image;
-				$save 		= JPATH_SITE.'/images/eventlist/'.$folder.'/small/'.$image;
+				$filepath 	= JPATH_SITE.'/images/jem/'.$folder.'/'.$image;
+				$save 		= JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image;
 
 				ELImage::thumb($filepath, $save, $settings->imagewidth, $settings->imagehight);
 			}
 
 			//set paths
-			$dimage['original'] = 'images/eventlist/'.$folder.'/'.$image;
-			$dimage['thumb'] 	= 'images/eventlist/'.$folder.'/small/'.$image;
+			$dimage['original'] = 'images/jem/'.$folder.'/'.$image;
+			$dimage['thumb'] 	= 'images/jem/'.$folder.'/small/'.$image;
 
                         //set paths
-			$limage['original'] = 'images/eventlist/'.$folder.'/'.$image;
-			$limage['thumb'] 	= 'images/eventlist/'.$folder.'/small/'.$image;
+			$limage['original'] = 'images/jem/'.$folder.'/'.$image;
+			$limage['thumb'] 	= 'images/jem/'.$folder.'/small/'.$image;
 
                         //set paths
-			$cimage['original'] = 'images/eventlist/'.$folder.'/'.$image;
-			$cimage['thumb'] 	= 'images/eventlist/'.$folder.'/small/'.$image;
+			$cimage['original'] = 'images/jem/'.$folder.'/'.$image;
+			$cimage['thumb'] 	= 'images/jem/'.$folder.'/small/'.$image;
 
 
 
 			//get imagesize of the original
-			$iminfo = @getimagesize('images/eventlist/'.$folder.'/'.$image);
+			$iminfo = @getimagesize('images/jem/'.$folder.'/'.$image);
 
 			//if the width or height is too large this formula will resize them accordingly
 			if (($iminfo[0] > $settings->imagewidth) || ($iminfo[1] > $settings->imagehight)) {
@@ -278,10 +278,10 @@ static	function gdVersion($user_ver = 0)
 
 			}
 
-			if (JFile::exists(JPATH_SITE.'/images/eventlist/'.$folder.'/small/'.$image)) {
+			if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image)) {
 
 				//get imagesize of the thumbnail
-				$thumbiminfo = @getimagesize('images/eventlist/'.$folder.'/small/'.$image);
+				$thumbiminfo = @getimagesize('images/jem/'.$folder.'/small/'.$image);
 				$dimage['thumbwidth'] 	= $thumbiminfo[0];
 				$dimage['thumbheight'] 	= $thumbiminfo[1];
                                 $limage['thumbwidth'] 	= $thumbiminfo[0];

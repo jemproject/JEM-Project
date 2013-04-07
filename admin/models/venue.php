@@ -274,7 +274,7 @@ class EventListModelVenue extends JModelLegacy
 
 		// Check if image was selected
 		jimport('joomla.filesystem.file');
-		$format 	= JFile::getExt(JPATH_SITE.'/images/eventlist/venues/'.$row->locimage);
+		$format 	= JFile::getExt(JPATH_SITE.'/images/jem/venues/'.$row->locimage);
 
 		$allowable 	= array ('gif', 'jpg', 'png');
 		if (in_array($format, $allowable)) {

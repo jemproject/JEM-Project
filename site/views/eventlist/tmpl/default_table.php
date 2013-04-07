@@ -159,7 +159,7 @@ defined( '_JEXEC' ) or die;
   						$dimage = ELImage::flyercreator($row->datimage, 'event');
   						echo ELOutput::flyer( $row, $dimage, 'event' );
 				else :
- 						 echo JHTML::_('image', 'components/com_jem/assets/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => ''));
+ 						 echo JHTML::_('image', 'media/com_jem/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => ''));
 						 endif;
 						
 						?>
