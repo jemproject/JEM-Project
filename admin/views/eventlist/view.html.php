@@ -51,7 +51,7 @@ class EventListViewEventList extends JViewLegacy {
 		$category	 =  $this->get( 'Categoriesdata' );
 
 		//add css and submenu to document
-		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
+		$document->addStyleSheet(JURI::root(true).'/media/com_jem/css/eventlistbackend.css');
 
 		//Create Submenu
 		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTLIST' ), 'index.php?option=com_jem', true);
@@ -105,7 +105,7 @@ class EventListViewEventList extends JViewLegacy {
 				<?php
 				}
 
-					echo JHTML::_('image', 'administrator/components/com_jem/assets/images/'.$image, $text );
+					echo JHTML::_('image', 'media/com_jem/images/'.$image, $text );
 				?>
 					<span><?php echo $text; ?></span>
 				</a>

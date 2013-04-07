@@ -187,7 +187,7 @@ class EventListViewCategoryevents extends JViewLegacy
 	  	if($this->getLayout() == 'calendar') 
 	  	{	  	
 	    	//add css for calendar
-	    	$document->addStyleSheet('media/com_jem/css/eventlistcalendar.css');
+	    	$document->addStyleSheet($this->baseurl.'media/com_jem/css/eventlistcalendar.css');
 	    
 	  		$year  = intval( JRequest::getVar('yearID', strftime( "%Y" ) ));
       		$month = intval( JRequest::getVar('monthID', strftime( "%m" ) ));

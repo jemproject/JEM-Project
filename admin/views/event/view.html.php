@@ -63,13 +63,13 @@ class EventListViewEvent extends JViewLegacy {
 
 
 		//add the custom stylesheet and the javascript
-		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
-		$document->addScript($url.'administrator/components/com_jem/assets/js/eventscreen.js' );
-		$document->addScript($url.'administrator/components/com_jem/assets/js/attachments.js' );
-		$document->addScript($url.'administrator/components/com_jem/assets/js/seo.js');
-		$document->addScript($url.'components/com_jem/assets/js/recurrence.js');
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
+		$document->addScript($url.'media/com_jem/js/eventscreen.js' );
+		$document->addScript($url.'media/com_jem/js/attachments.js' );
+		$document->addScript($url.'media/com_jem/js/seo.js');
+		$document->addScript($url.'media/com_jem/js/recurrence.js');
 		// include the unlimited script
-		$document->addScript($url.'components/com_jem/assets/js/unlimited.js');
+		$document->addScript($url.'media/com_jem/js/unlimited.js');
 
 		//build toolbar
 		if ($task == 'copy') {
