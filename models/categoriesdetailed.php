@@ -80,7 +80,16 @@ class EventListModelCategoriesdetailed extends JModelLegacy
         // Get the paramaters of the active menu item
         $params =  $app->getParams('com_jem');
 
-        $id = JRequest::getInt('id');
+        
+       
+
+        
+         $id = $params->get('id');
+        
+       //  $jinput = JFactory::getApplication()->input;
+       // $id = $jinput->get('id' );
+        
+       // $id = JRequest::getInt('id');
         $this->_id = $id;
 
         //get the number of events from database
@@ -425,8 +434,14 @@ class EventListModelCategoriesdetailed extends JModelLegacy
                     $query .= ' AND e.published = 1';
                 }
             }
-
+            
+          //for debugging   
+ print_r($query);
             return $query;
+            
+           
+           
+            
         }
 
         /**
