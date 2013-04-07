@@ -50,7 +50,7 @@ function jemBuildRoute(&$query)
 	return $segments;
 }
 
-function EventListParseRoute($segments)
+function jemParseRoute($segments)
 {
 	$vars = array();
 
