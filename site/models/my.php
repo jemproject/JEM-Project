@@ -404,6 +404,10 @@ class EventListModelMy extends JModelLegacy
         $filter_order = $this->getState('filter_order');
         $filter_order_dir = $this->getState('filter_order_dir');
 
+        
+        $filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_dir	= JFilterInput::getinstance()->clean($filter_order_dir, 'word');
+        
         $orderby = ' ORDER BY '.$filter_order.' '.$filter_order_dir.', a.dates, a.times';
 
         return $orderby;
@@ -479,11 +483,11 @@ class EventListModelMy extends JModelLegacy
                     case 'city':
                         $where .= ' AND LOWER( l.city ) LIKE '.$filter;
                         break;
-/*
+
                     case 'type':
                         $where .= ' AND LOWER( c.catname ) LIKE '.$filter;
                         break;
-*/
+
                 }
             }
         }

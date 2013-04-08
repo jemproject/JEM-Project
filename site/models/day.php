@@ -76,7 +76,7 @@ class EventListModelDay extends JModelLegacy
 		$params 	=  $app->getParams('com_jem');
 
 		//get the number of events from database
-		$limit       	= $app->getUserStateFromRequest('com_jem.eventlist.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit       	= $app->getUserStateFromRequest('com_jem.day.limit', 'limit', $params->def('display_num', 0), 'int');
 		$limitstart		= JRequest::getInt('limitstart');
 
 		$this->setState('limit', $limit);

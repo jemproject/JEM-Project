@@ -65,7 +65,7 @@ class EventListViewEditcss extends JViewLegacy {
 		JRequest::setVar( 'hidemainmenu', 1 );
 
 		//add css to document
-		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
 
 		//read the the stylesheet
 		jimport('joomla.filesystem.file');

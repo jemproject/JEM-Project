@@ -46,6 +46,8 @@ defined( '_JEXEC' ) or die;
   <?php if ($this->category->image) : ?>
 	<div class="catimg">
 		<?php echo $this->category->image; ?>
+		
+		
 	</div>
   <?php endif; ?>
 	<div class="catdescription">

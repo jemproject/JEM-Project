@@ -49,7 +49,7 @@ class EventListViewUserElement extends JViewLegacy {
 		$search 			= $db->getEscaped( trim(JString::strtolower( $search ) ) );
 		
 		//add css to document
-		$document->addStyleSheet(JURI::root().'components/com_jem/css/eventlistbackend.css');
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
 		
 		$modelusers = JModel::getInstance('Users', 'EventlistModel');
 		

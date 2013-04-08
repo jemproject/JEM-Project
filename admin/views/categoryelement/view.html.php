@@ -53,7 +53,7 @@ class EventListViewCategoryelement extends JViewLegacy {
 		//prepare document
 		$document->setTitle(JText::_( 'COM_JEM_SELECT_CATEGORY'));;
 		$document->addStyleSheet('templates/'.$template.'/css/general.css');
-		$document->addStyleSheet(JURI::root().'components/com_jem/css/eventlistbackend.css');
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
 
 		// Get data from the model
 		$rows      	=  $this->get( 'Data');

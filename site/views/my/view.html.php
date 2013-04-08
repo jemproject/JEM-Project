@@ -69,6 +69,15 @@ class EventListViewMy extends JViewLegacy
 		if($params->get('showmyevents')) {
         	$events 	=  $this->get('Events');
 			$events_pageNav 	=  $this->get('EventsPagination');
+			
+			//are events available?
+		if (!$events) {
+			$noevents = 1;
+		} else {
+			$noevents = 0;
+		}
+
+			
 		}
 		if($params->get('showmyvenues')) {
        		$venues 	=  $this->get('Venues');
@@ -126,7 +135,9 @@ class EventListViewMy extends JViewLegacy
         $this->assignRef('elsettings', 			$elsettings);
         $this->assignRef('pagetitle', 			$pagetitle);
       //  $this->assignRef('user', 				$user);
+      
         $this->assignRef('lists', 				$lists);
+        $this->assignRef('noevents',    $noevents);
 
         parent::display($tpl);
 
@@ -162,12 +173,12 @@ class EventListViewMy extends JViewLegacy
         {
             $sortselects[] = JHTML::_('select.option', 'city', $elsettings->cityname);
         }
-		/*
+		
         if ($elsettings->showcat)
         {
             $sortselects[] = JHTML::_('select.option', 'type', $elsettings->catfroname);
         }
-		*/
+		
         $sortselect = JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
 
         $lists['order_Dir'] = $filter_order_Dir;
@@ -177,5 +188,36 @@ class EventListViewMy extends JViewLegacy
 
         return $lists;
     }
+    
+    /**
+	 * Manipulate Data
+	 *
+	 * @access public
+	 * @return object $rows
+	 * @since 0.9
+	 */
+	function &getRows()
+	{
+		$count = count($this->events);
+
+		if (!$count) {
+			return;
+		}
+				
+		$k = 0;
+		foreach($this->events as $key => $row)
+		{
+			$row->odd   = $k;
+			
+			$this->events[$key] = $row;
+			$k = 1 - $k;
+		}
+
+		return $this->events;
+	}
+    
+    
+    
+    
 }
 ?>

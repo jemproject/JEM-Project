@@ -414,20 +414,29 @@ static function footer( )
 	 *
 	 * @since 0.9
 	 */
- 	static function flyer( $data, $image, $type = 'venue' )
+ 	static function flyer( $data, $image, $type )
 	{
 		$settings =  ELHelper::config();
 
-		//define the environment based on the type
+		
 		if ($type == 'event') {
 			$folder		= 'events';
 			$imagefile	= $data->datimage;
 			$info		= $data->title;
-		} else {
+		} 
+                
+		if ($type == 'category') {
+			$folder		= 'categories';
+			$imagefile = $data->image;
+			$info = $data->catname;
+		} 
+
+        if ($type == 'venue') {
 			$folder 	= 'venues';
 			$imagefile	= $data->locimage;
 			$info		= $data->venue;
 		}
+		
 
 		//do we have an image?
 		if (empty($imagefile)) {
