@@ -48,7 +48,7 @@ class EventListViewAttendee extends JViewLegacy {
 		$event_id  = JRequest::getInt( 'id' );
 
 		//add css to document
-		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
 
 		//create the toolbar
 		if ( $cid ) {

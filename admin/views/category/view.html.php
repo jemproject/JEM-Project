@@ -50,11 +50,11 @@ class EventListViewCategory extends JViewLegacy {
 		$cid 		= JRequest::getVar( 'cid' );
 
 		//add css to document
-		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
-		$document->addScript('components/com_jem/assets/js/attachments.js' );
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
+		$document->addScript(JURI::root().'media/com_jem/js/attachments.js' );
 		// for color picker
-    	$document->addStyleSheet('components/com_jem/assets/css/picker.css');
-    	$document->addScript( JURI::base().'/components/com_jem/assets/js/picker.js' );
+    	$document->addStyleSheet(JURI::root().'media/com_jem/css/picker.css');
+    	$document->addScript( JURI::root().'media/com_jem/js/picker.js' );
 
 		//create the toolbar
 		if ( $cid ) {

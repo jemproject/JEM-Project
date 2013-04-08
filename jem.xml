@@ -62,14 +62,14 @@
 
 	<administration>
 
-	<menu img="../administrator/components/com_jem/assets/images/jem.png" link="option=com_jem">COM_JEM</menu>
+	<menu img="../media/com_jem/images/jem.png" link="option=com_jem">COM_JEM</menu>
 	
 		<submenu>
-		<menu img="../administrator/components/com_jem/assets/images/jem.png" link="option=com_jem&amp;view=eventlist">COM_JEM_MENU_MAINMENU</menu>
-		<menu img="../administrator/components/com_jem/assets/images/jem.png" link="option=com_jem&amp;view=events">COM_JEM_MENU_EVENTS</menu>
-		<menu img="../administrator/components/com_jem/assets/images/jem.png" link="option=com_jem&amp;view=categories">COM_JEM_MENU_CATEGORIES</menu>
-		<menu img="../administrator/components/com_jem/assets/images/jem.png" link="option=com_jem&amp;view=venues">COM_JEM_MENU_VENUES</menu>
-		<menu img="../administrator/components/com_jem/assets/images/jem.png" link="option=com_jem&amp;controller=settings&amp;task=edit">COM_JEM_MENU_SETTINGS</menu>
+		<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=eventlist">COM_JEM_MENU_MAINMENU</menu>
+		<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=events">COM_JEM_MENU_EVENTS</menu>
+		<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=categories">COM_JEM_MENU_CATEGORIES</menu>
+		<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=venues">COM_JEM_MENU_VENUES</menu>
+		<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;controller=settings&amp;task=edit">COM_JEM_MENU_SETTINGS</menu>
 		</submenu>
 
 	<files folder="admin">

@@ -244,7 +244,7 @@ defined('_JEXEC') or die;
 					<?php
 					}else {
 					?>
-					<?php echo JHTML::_('image', 'administrator/components/com_jem/assets/images/publish_r.png',JText::_('COM_JEM_NOTES')); ?>
+					<?php echo JHTML::_('image', 'media/com_jem/images/publish_r.png',JText::_('COM_JEM_NOTES')); ?>
 					
 					
 					<?php

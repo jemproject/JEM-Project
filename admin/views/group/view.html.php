@@ -51,7 +51,7 @@ class EventListViewGroup extends JViewLegacy {
 		$cid 			= JRequest::getInt( 'cid' );
 
 		//add css
-		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
 
 		//Get data from the model
 		$model				=  $this->getModel();

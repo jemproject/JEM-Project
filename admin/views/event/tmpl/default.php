@@ -88,7 +88,7 @@ $options = array(
 </script>
 <?php
 //Set the info image
-$infoimage = JHTML::image ( 'components/com_jem/assets/images/icon-16-hint.png', JText::_ ( 'COM_JEM_NOTES' ) );
+$infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png', JText::_ ( 'COM_JEM_NOTES' ) );
 ?>
 
 <form action="index.php" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
@@ -450,7 +450,7 @@ $infoimage = JHTML::image ( 'components/com_jem/assets/images/icon-16-hint.png',
 				<td>
 					<?php echo JHTML::_ ( 'calendar', ($this->row->recurrence_limit_date != '0000-00-00') ? $this->row->recurrence_limit_date : JText::_ ( 'COM_JEM_UNLIMITED' ), "recurrence_limit_date", "recurrence_limit_date" );?>
 					<a href="#" onclick="include_unlimited('<?php echo JText::_ ( 'COM_JEM_UNLIMITED' );?>'); return false;">
-						<img src="../components/com_jem/assets/images/unlimited.png" width="16" height="16" alt="<?php echo JText::_ ( 'COM_JEM_UNLIMITED' );	?>" />
+						<img src="../media/com_jem/images/unlimited.png" width="16" height="16" alt="<?php echo JText::_ ( 'COM_JEM_UNLIMITED' );	?>" />
 					</a>
 				</td>
 			</tr>

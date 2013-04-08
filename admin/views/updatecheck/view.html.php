@@ -48,7 +48,7 @@ class EventListViewUpdatecheck extends JViewLegacy {
 
 		//add css
 		$document->addStyleSheet('templates/'.$template.'/css/general.css');
-		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
 
 		//Get data from the model
 		$updatedata      = & $this->get( 'Updatedata');

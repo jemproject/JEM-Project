@@ -56,7 +56,7 @@ class EventListViewAttendees extends JViewLegacy {
 		$search 			= $db->getEscaped( trim(JString::strtolower( $search ) ) );
 
 		//add css and submenu to document
-		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
 
 		//Create Submenu
 		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTLIST' ), 'index.php?option=com_jem');
@@ -132,7 +132,7 @@ class EventListViewAttendees extends JViewLegacy {
 	{
 		$elsettings = ELAdmin::config();
 		$document	=  JFactory::getDocument();
-		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
 
 		$rows      	=  $this->get( 'Data');
 		$event 		=  $this->get( 'Event' );

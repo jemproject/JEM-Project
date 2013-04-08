@@ -440,7 +440,7 @@ static function footer( )
 			jimport('joomla.filesystem.file');
 
 			//does a thumbnail exist?
-			if (JFile::exists(JPATH_SITE.DS.'images'.DS.'eventlist'.DS.$folder.DS.'small'.DS.$imagefile)) {
+			if (JFile::exists(JPATH_SITE.DS.'images'.DS.'jem'.DS.$folder.DS.'small'.DS.$imagefile)) {
 
 				if ($settings->lightbox == 0) {
 

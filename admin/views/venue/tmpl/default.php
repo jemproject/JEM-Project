@@ -288,7 +288,7 @@ $options = array(
 		echo JHtml::_('sliders.panel', $title, 'address');
 
 		//Set the info image
-		$infoimage = JHTML::image('components/com_jem/assets/images/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
+		$infoimage = JHTML::image('media/com_jem/images/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
 		?>
 	<table>
 		<tr>

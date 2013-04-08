@@ -39,7 +39,7 @@ defined ( '_JEXEC' ) or die;
 			<td><input type="text" name="attached-name[]" style="width: 100%" value="<?php echo $file->name; ?>" /></td>
 			<td><input type="text" name="attached-desc[]" style="width: 100%" value="<?php echo $file->description; ?>" /></td>
 			<td><?php echo JHTML::_('select.genericlist', $this->access, 'attached-access[]', 'class="inputbox" size="3"', 'value', 'text', $file->access); ?></td>
-			<td><?php echo JHTML::image('administrator/components/com_jem/assets/images/publish_x.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT')
+			<td><?php echo JHTML::image('media/com_jem/images/publish_x.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT')
 			                         , array('id' => 'attach-remove'.$file->id,'class' => 'attach-remove')); ?></td>
 		</tr>
 		<?php endforeach; ?>

@@ -68,8 +68,8 @@ class EventListViewSettings extends JViewLegacy {
 		
 	
 		//add css, js and submenu to document
-		$document->addScript( JURI::base().'components/com_jem/assets/js/settings.js' );
-		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
+		$document->addScript( JURI::root().'media/com_jem/js/settings.js' );
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
 
 		//Create Submenu
 		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTLIST' ), 'index.php?option=com_jem');

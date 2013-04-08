@@ -54,7 +54,7 @@ defined('_JEXEC') or die;
 
 <?php
 //Set the info image
-$infoimage = JHTML::image('components/com_jem/assets/images/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
+$infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
 ?>
 
 <form action="<?php echo $this->request_url; ?>" method="post" name="adminForm" id="adminForm">
