@@ -56,9 +56,9 @@ class EventListViewVenue extends JViewLegacy {
 
 		//add css and js to document
 		$document->addScript('../includes/js/joomla/popup.js');
-		$document->addScript('components/com_jem/assets/js/attachments.js' );
+		$document->addScript(JURI::root().'media/com_jem/js/attachments.js' );
 		$document->addStyleSheet('../includes/js/joomla/popup.css');
-		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
 
 		// Get data from the model
 		$model		=  $this->getModel();

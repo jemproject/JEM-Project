@@ -83,7 +83,7 @@ class EventListViewImagehandler extends JViewLegacy  {
 		JResponse::allowCache(false);
 
 		//add css
-		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
 
 		//get images
 		$images  = $this->get('images');
@@ -139,7 +139,7 @@ class EventListViewImagehandler extends JViewLegacy  {
 		$task 		= JRequest::getVar( 'task' );
 
 		//add css
-		$document->addStyleSheet('components/com_jem/assets/css/eventlistbackend.css');
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
 		
 		jimport('joomla.client.helper');
 		$ftp = JClientHelper::setCredentialsFromRequest('ftp');

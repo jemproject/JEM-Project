@@ -315,7 +315,11 @@ $infoimage = JHTML::image ( 'components/com_jem/assets/images/icon-16-hint.png',
 			</tr>
 		
 		</table>
-
+		
+        <?php
+		$title = JText::_( 'COM_JEM_CATEGORIES' );
+		echo JHtml::_('sliders.panel', $title, 'category');
+		?>
 		<table width="100%"	style="border: 1px dashed silver; padding: 5px; margin-bottom: 10px;">
 			<tr>
 				<td>
