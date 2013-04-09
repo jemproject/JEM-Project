@@ -54,6 +54,7 @@ defined('_JEXEC') or die;
 				<th><?php echo JText::_( 'COM_JEM_CATEGORIES' ); ?></th>
 			    <th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 				<th class="title"><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
+				<th class="title"><?php echo JText::_( 'COM_JEM_HITS' ); ?></th>
 				<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ); ?></th>
 				<th width="1%" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'a.id', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			</tr>
@@ -225,6 +226,8 @@ defined('_JEXEC') or die;
 						<?php echo $image; ?>
 					</span>
 				</td>
+				<td align="center"><?php echo $row->hits; ?></td>
+				
 				<td align="center">
 					<?php
 					if ($row->registra == 1) {

@@ -533,9 +533,9 @@ $freshinstall = !$db->loadResult();
 
 if (!$freshinstall) // update only if not fresh install
 {	
-  $status->updates[] = array ('oldversion'=>'1.1 Beta', 'newversion'=>'1.1 Beta development');
+  $status->updates[] = array ('oldversion'=>'2.0.0.1', 'newversion'=>'2.0.0.1');
     
-	// first get tables to be checked for update
+/*	// first get tables to be checked for update
 	$tables = array( '#__jem_events',
 	                 '#__jem_register', 
                );
@@ -580,6 +580,8 @@ if (!$freshinstall) // update only if not fresh install
         $status->updates[$i][] = array ('message'=>'Adding new fields to register table', 'result'=>'success');
     }
 	}	
+	
+	*/
 	
 	//increase counter
 	$i++;
