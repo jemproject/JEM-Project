@@ -218,7 +218,7 @@ class EventListModelVenueevents extends JModelLegacy
 				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
 				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
-				. ' LEFT JOIN #__eventlist_countries AS ct ON ct.iso2 = l.country '
+				. ' LEFT JOIN #__jem_countries AS ct ON ct.iso2 = l.country '
 				. $where
 				. $orderby
 				;

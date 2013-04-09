@@ -445,7 +445,7 @@ static	function buildtimeselect($max, $name, $selected, $class = 'class="inputbo
 static	function getCountryOptions()
 	{
 		$db   =  JFactory::getDBO();
-    	$sql  = 'SELECT iso2 AS value, name AS text FROM #__eventlist_countries ORDER BY name';
+    	$sql  = 'SELECT iso2 AS value, name AS text FROM #__jem_countries ORDER BY name';
     	$db->setQuery($sql);
     	
 		return $db->loadObjectList();

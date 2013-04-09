@@ -236,7 +236,7 @@ class EventListModelDay extends JModelLegacy
 				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 				. ' FROM #__jem_events AS a'
 				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-				. ' LEFT JOIN #__eventlist_countries AS ct ON ct.iso2 = l.country '
+				. ' LEFT JOIN #__jem_countries AS ct ON ct.iso2 = l.country '
 				. $where
 				. $orderby
 				;

@@ -683,7 +683,7 @@ if ($freshinstall)
  ***********************************************************************************************/
 $rows = 0;
 ?>
-<img src="components/com_jem/assets/images/jemlogo.png" alt="JEM Logo" align="right" /><h2>JEM installation</h2>
+<img src="../media/com_jem/images/jemlogo.png" alt="JEM Logo" align="right" /><h2>JEM installation</h2>
 <table class="adminlist">
     <thead>
         <tr>

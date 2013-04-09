@@ -226,8 +226,8 @@ class EventListViewVenueevents extends JViewLegacy
 
 		if ($elsettings->showcat) {
 			$sortselects = array();
-			$sortselects[]	= JHTML::_('select.option', 'title', $elsettings->params->get('titlename') );
-			$sortselects[] 	= JHTML::_('select.option', 'type', $elsettings->params->get('catfroname') );
+			$sortselects[]	= JHTML::_('select.option', 'title', $elsettings->titlename );
+			$sortselects[] 	= JHTML::_('select.option', 'type', $elsettings->catfroname );
 			$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
 		} else {
 			$sortselect = '';

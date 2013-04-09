@@ -161,7 +161,7 @@ class EventListModelSearch extends JModelLegacy
 					. ' FROM #__jem_events AS a'
 	        . ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
 					. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-          . ' LEFT JOIN #__eventlist_countries AS c ON c.iso2 = l.country'
+          . ' LEFT JOIN #__jem_countries AS c ON c.iso2 = l.country'
 					. $where
 					. ' GROUP BY a.id '
 					. $orderby
@@ -346,7 +346,7 @@ class EventListModelSearch extends JModelLegacy
 			$query = ' SELECT c.iso2 as value, c.name as text '
          		  . ' FROM #__jem_events AS a'
          		  . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
-         		  . ' INNER JOIN #__eventlist_countries as c ON c.iso2 = l.country '
+         		  . ' INNER JOIN #__jem_countries as c ON c.iso2 = l.country '
           		;
 				 
     	if ($filter_continent) {
@@ -367,7 +367,7 @@ class EventListModelSearch extends JModelLegacy
 		$query = ' SELECT DISTINCT l.city as value, l.city as text '
 		       . ' FROM #__jem_events AS a'
            . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
-           . ' INNER JOIN #__eventlist_countries as c ON c.iso2 = l.country '
+           . ' INNER JOIN #__jem_countries as c ON c.iso2 = l.country '
            . ' WHERE l.country = ' . $this->_db->Quote($country)
            . ' ORDER BY l.city ';           
     		

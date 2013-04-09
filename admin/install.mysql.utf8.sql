@@ -240,7 +240,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_attachments` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-CREATE TABLE IF NOT EXISTS `#__eventlist_countries` (
+CREATE TABLE IF NOT EXISTS `#__jem_countries` (
   `id` int(11) NOT NULL auto_increment,
   `continent` varchar(2) NOT NULL,
   `iso2` varchar(2) NOT NULL,
@@ -251,7 +251,7 @@ CREATE TABLE IF NOT EXISTS `#__eventlist_countries` (
   KEY `iso2` (`iso2`)
 ) ENGINE=MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
 
-INSERT IGNORE INTO `#__eventlist_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, `name`) VALUES
+INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, `name`) VALUES
 (1, 'AS', 'AF', 'AFG', 4, 'Afghanistan, Islamic Republic '),
 (2, 'EU', 'AX', 'ALA', 248, 'Åland Islands'),
 (3, 'EU', 'AL', 'ALB', 8, 'Albania, Republic of'),
