@@ -255,7 +255,9 @@ class EventListModelVenueevents extends JModelLegacy
 	function _buildVenueWhere( )
 	{
 		$app =  JFactory::getApplication();
+		$elsettings =  ELHelper::config();
 
+		
 		$user		= JFactory::getUser();
 		if (JFactory::getUser()->authorise('core.manage')) {
            $gid = (int) 3;      //viewlevel Special
@@ -286,7 +288,7 @@ class EventListModelVenueevents extends JModelLegacy
 		 * If we have a filter, and this is enabled... lets tack the AND clause
 		 * for the filter onto the WHERE clause of the content item query.
 		 */
-		if ($params->get('filter'))
+		if ($elsettings->filter)
 		{
 			$filter 		= JRequest::getString('filter');
 			$filter_type 	= JRequest::getWord('filter_type', '', 'request');

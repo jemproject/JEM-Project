@@ -40,7 +40,7 @@ $status->install = array ();
  * ---------------------------------------------------------------------------------------------
  ***********************************************************************************************/
 
-$modules = & $this->manifest->getAttribute('modules');
+$modules =  $this->manifest->getAttribute('modules');
 if (is_a($modules, 'JXMLElement') && count($modules->children()))
 {
 
@@ -136,7 +136,7 @@ if (is_a($modules, 'JXMLElement') && count($modules->children()))
 
             if (!$id)
             {
-                $row = & JTable::getInstance('module');
+                $row =  JTable::getInstance('module');
                 $row->title = $mtitle;
                 $row->ordering = $morder;
                 $row->position = $mposition;
@@ -184,7 +184,7 @@ if (is_a($modules, 'JXMLElement') && count($modules->children()))
  * ---------------------------------------------------------------------------------------------
  ***********************************************************************************************/
 
-$plugins = & $this->manifest->getAttribute('plugins');
+$plugins =  $this->manifest->getAttribute('plugins');
 if (is_a($plugins, 'JXMLElement') && count($plugins->children()))
 {
 
@@ -290,7 +290,7 @@ if (is_a($plugins, 'JXMLElement') && count($plugins->children()))
 
         } else
         {
-            $row = & JTable::getInstance('plugin');
+            $row =  JTable::getInstance('plugin');
             $row->name = JText::_(ucfirst($pgroup)).' - '.JText::_(ucfirst($pname));
             $row->ordering = $porder;
             $row->folder = $pgroup;

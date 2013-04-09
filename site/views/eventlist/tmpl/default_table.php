@@ -121,7 +121,7 @@ defined( '_JEXEC' ) or die;
 				endif;
 				if ($this->elsettings->showcat == 1) :
 				?>
-				<th id="el_category" class="sectiontableheader" align="left"><?php echo $this->elsettings->catfroname ?></th>
+				<th id="el_category" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->elsettings->catfroname), 'c.catname', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php
 				endif;
 				if ($this->elsettings->showatte == 1) :

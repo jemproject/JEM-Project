@@ -76,6 +76,7 @@
 		<filename>index.html</filename>
 		<filename>admin.jem.php</filename>
 		<filename>controller.php</filename>
+		<filename>access.xml</filename>
 		<filename>config.xml</filename>
 		<filename>install.mysql.utf8.sql</filename>
 		<filename>uninstall.mysql.utf8.sql</filename>

@@ -272,7 +272,8 @@ class EventListModelDay extends JModelLegacy
 	function _buildEventListWhere()
 	{
 		$app =  JFactory::getApplication();
-
+        $elsettings =  ELHelper::config();
+		
 		$user		=  JFactory::getUser();
 		if (JFactory::getUser()->authorise('core.manage')) {
            $gid = (int) 3;      //viewlevel Special
@@ -298,7 +299,7 @@ class EventListModelDay extends JModelLegacy
 		 * If we have a filter, and this is enabled... lets tack the AND clause
 		 * for the filter onto the WHERE clause of the content item query.
 		 */
-		if ($params->get('filter'))
+		if ($elsettings->filter)
 		{
 			$filter 		= JRequest::getString('filter', '', 'request');
 			$filter_type 	= JRequest::getWord('filter_type', '', 'request');

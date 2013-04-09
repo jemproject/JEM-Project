@@ -286,6 +286,7 @@ class EventListModelCategoryevents extends JModelLegacy
 
 		// Get the paramaters of the active menu item
 		$params 	=  $app->getParams();
+		$elsettings =  ELHelper::config();
 
 		$task 		= JRequest::getWord('task');
 
@@ -315,7 +316,7 @@ class EventListModelCategoryevents extends JModelLegacy
 		 * If we have a filter, and this is enabled... lets tack the AND clause
 		 * for the filter onto the WHERE clause of the content item query.
 		 */
-		if ($params->get('filter'))
+		if ($elsettings->filter)
 		{
 			$filter 		= JRequest::getString('filter', '', 'request');
 			$filter_type 	= JRequest::getWord('filter_type', '', 'request');
