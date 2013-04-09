@@ -58,7 +58,15 @@ $this->getModel()->getCsvvenues();
 jexit();
 }
 
-
+public function exportcatevents()
+{
+header("Content-type: text/csv");
+header("Content-Disposition: attachment; filename=catevents.csv");
+header("Pragma: no-cache");
+header("Expires: 0");
+$this->getModel()->getCsvcatsevents();
+jexit();
+}
 
 
 

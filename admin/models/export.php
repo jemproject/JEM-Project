@@ -314,6 +314,98 @@ return fclose($csv);
 
 
 
+		/********
+		*
+		*
+		*   CATS_EVENTS
+		*
+		*
+		********/
+
+
+
+
+/**
+* Build an SQL query to load the list data.
+*
+* @return JDatabaseQuery
+* @since 1.6
+*/
+protected function getListQuerycatsevents()
+{
+ // Create a new query object.
+$db = $this->getDbo();
+$query = $db->getQuery(true);
+ 
+ // Select the required fields from the table.
+$query->select('a.*');
+$query->from('#__jem_cats_event_relations AS a');
+ 
+// Filtering form_type
+ $filter_form_type = $this->getState("filter.form_type");
+ 
+if ($filter_form_type)
+{
+$query->where("a.form_type = '{$filter_form_type}'");
+}
+ 
+$filter_start_date = (string) $this->getState("filter.start_date");
+$filter_end_date = (string) $this->getState("filter.end_date");
+ 
+// Filtering start_date
+if ($filter_start_date !== '')
+ { 
+ $query->where("a.created_time >= '{$filter_start_date} 00:00:00'");
+ }
+ 
+// Filtering end_date
+ if ($filter_end_date !== '')
+ {
+ $query->where("a.created_time <= '{$filter_end_date} 23:59:59'");
+ }
+ 
+ return $query;
+}
+
+
+public function getCsvcatsevents()
+{
+$this->populateState();
+ 
+$csv = fopen('php://output', 'w');
+$db = $this->getDbo();
+$header = array();
+$header = array_keys($db->getTableColumns('#__jem_cats_event_relations'));
+fputcsv($csv, $header, ';');
+
+
+$items = $db->setQuery($this->getListQuerycatsevents())->loadObjectList();
+
+
+foreach ($items as $lines) {
+    foreach ($lines as &$line) {
+        $line = mb_convert_encoding($line, 'Windows-1252', 'auto');
+    }
+    fputcsv($csv, (array) $lines, ';', '"');
+}
+
+ 
+return fclose($csv);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

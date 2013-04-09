@@ -53,6 +53,7 @@ class EventListViewImport extends JViewLegacy {
 		$eventfields =  $this->get( 'EventFields' );
     	$catfields   =  $this->get( 'CategoryFields' );
     	$venuefields =  $this->get( 'VenueFields' );
+    	$cateventsfields   =  $this->get( 'CateventsFields' );
 
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
@@ -73,6 +74,7 @@ class EventListViewImport extends JViewLegacy {
   	    $this->assignRef('eventfields', $eventfields);
  	    $this->assignRef('catfields', $catfields);
  	    $this->assignRef('venuefields', $venuefields);
+ 	    $this->assignRef('cateventsfields', $cateventsfields);
 
 		parent::display($tpl);
 

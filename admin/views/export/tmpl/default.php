@@ -119,6 +119,42 @@ defined('_JEXEC') or die;
   </fieldset>
   
   
+  <fieldset>
+    <legend><?php echo JText::_('COM_JEM_EXPORT_CAT_EVENTS'); ?></legend>
+      
+      <table>
+        <tr>
+          <td>    
+            <label for="file">
+                <?php echo JText::_( '' ).':'; ?>
+            </label>
+          </td>
+          <td>
+            
+          </td>
+        </tr>
+        <tr>
+          <td>    
+            <label for="replace_catevents">
+                <?php echo JText::_( '' ).':'; ?>
+            </label>
+          </td>
+          <td>
+            <div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_JEM_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_jem&task=exportcatevents&controller=export')"><?php echo JText::_('COM_JEM_EXPORT_CAT_EVENTS'); ?></a></div></div>  
+          </td>
+        </tr>
+      </table>
+  </fieldset>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   

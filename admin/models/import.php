@@ -84,6 +84,21 @@ class EventListModelImport extends JModelLegacy
 
         return array_keys($tablesfields['#__jem_categories']);
     }
+    
+    /**
+     * return __jem_categories table fields name
+     *
+     * @return array
+     */
+    function getCateventsFields()
+    {
+        $tables = array ('#__jem_cats_event_relations');
+        $tablesfields = $this->_db->getTableFields($tables);
+
+        return array_keys($tablesfields['#__jem_cats_event_relations']);
+    }
+    
+    
 
     /**
      * import data corresponding to fieldsname into events table
@@ -270,6 +285,88 @@ class EventListModelImport extends JModelLegacy
     }
     
     
+    /**
+     * import data corresponding to fieldsname into events table
+     *
+     * @param array $fieldsname
+     * @param array $data the records
+     * @param boolean $replace replace if id already exists
+     * @return int number of records inserted
+     */
+    function cateventsimport($fieldsname, & $data, $replace = true)
+    {
+
+        $ignore = array ();
+        if (!$replace)
+        {
+            $ignore[] = 'id';
+        }
+        $rec = array ('added'=>0, 'updated'=>0);
+        // parse each row
+        foreach ($data AS $row)
+        {
+            $values = array ();
+            // parse each specified field and retrieve corresponding value for the record
+            foreach ($fieldsname AS $k=>$field)
+            {
+                $values[$field] = $row[$k];
+            }
+
+            $object =  JTable::getInstance('jem_cats_event_relations', '');
+
+            //print_r($values);exit;
+            $object->bind($values, $ignore);
+
+            if (!$object->check())
+            {
+                $this->setError($object->getError());
+                echo JText::_('Error check: ').$object->getError()."\n";
+                continue ;
+            }
+
+            // Store it in the db
+            if ($replace)
+            {
+                // We want to keep id from database so first we try to insert into database. if it fails,
+                // it means the record already exists, we can use store().
+                if (!$object->insertIgnore())
+                {
+                    if (!$object->store())
+                    {
+                        echo JText::_('Error store: ').$this->_db->getErrorMsg()."\n";
+                        continue ;
+                    }
+                    else
+                    {
+                        $rec['updated']++;
+                    }
+                }
+                else
+                {
+                    $rec['added']++;
+                }
+            }
+            else
+            {
+                if (!$object->store())
+                {
+                    echo JText::_('Error store: ').$this->_db->getErrorMsg()."\n";
+                    continue ;
+                }
+                else
+                {
+                    $rec['added']++;
+                }
+            }
+        }
+
+        return $rec;
+    }
+    
+    
+    
+    
+ 
     /**
      * import data corresponding to fieldsname into events table
      *
