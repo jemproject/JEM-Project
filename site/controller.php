@@ -129,7 +129,7 @@ class EventListController extends JControllerLegacy
 	 */
 	function cancelvenue()
 	{
-		$user	= & JFactory::getUser();
+		$user	=  JFactory::getUser();
 		$id		= JRequest::getInt( 'id' );
 		
     $mode = JRequest::getVar('mode');
@@ -146,7 +146,7 @@ class EventListController extends JControllerLegacy
 
 		if ($id) {
 			// Create and load a venues table
-			$row =& JTable::getInstance('jem_venues', '');
+			$row = JTable::getInstance('jem_venues', '');
 
 			$row->load($id);
 			$row->checkin();
