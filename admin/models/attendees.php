@@ -79,8 +79,8 @@ class EventListModelAttendees extends JModelLegacy
 
 		$app =  JFactory::getApplication();;
 
-		$limit		= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
-		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
+		$limit		= $app->getUserStateFromRequest( 'com_jem.attendees.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limitstart = $app->getUserStateFromRequest( 'com_jem.attendees.limitstart', 'limitstart', 0, 'int' );
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -179,7 +179,7 @@ class EventListModelAttendees extends JModelLegacy
 		$orderby	= $this->_buildContentOrderBy();
 		$where		= $this->_buildContentWhere();
 
-		$query = 'SELECT r.*, u.username, u.name, u.gid, u.email'
+		$query = 'SELECT r.*, u.username, u.name, u.email'
 		. ' FROM #__jem_register AS r'
 		. ' LEFT JOIN #__jem_events AS a ON r.event = a.id'
 		. ' LEFT JOIN #__users AS u ON r.uid = u.id'

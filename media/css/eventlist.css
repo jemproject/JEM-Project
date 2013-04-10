@@ -239,6 +239,19 @@ border:0px solid black;
 box-shadow:none;
 }
 
+div#eventlist .notmodal {
+float:right !important;
+/* margin:0.3em; */
+/*position: static;*/
+border: 1px solid #000000 !important;
+width:auto;
+position: static !important;
+background:transparent;
+border:0px solid black;
+box-shadow:none;
+}
+
+
 div#eventlist .mapicon {
 float: right !important;
 position:relative;	

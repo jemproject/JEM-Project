@@ -329,8 +329,8 @@ class EventListModelDetails extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$user 		= & JFactory::getUser();
-		$elsettings = & ELHelper::config();
+		$user 		=  JFactory::getUser();
+		$elsettings =  ELHelper::config();
 		$tzoffset	= $app->getCfg('offset');
 
 		$event 		= (int) $this->_id;
@@ -384,7 +384,7 @@ class EventListModelDetails extends JModelLegacy
 	 */
 	function delreguser()
 	{
-		$user 	= & JFactory::getUser();
+		$user 	=  JFactory::getUser();
 
 		$event 	= (int) $this->_id;
 		$userid = $user->get('id');

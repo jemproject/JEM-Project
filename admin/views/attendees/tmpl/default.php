@@ -48,7 +48,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 			 	<?php echo JText::_( 'COM_JEM_SEARCH' ).' '.$this->lists['filter']; ?>
 				<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
 				<button onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-				<button onclick="$('search').value='';document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
+				<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 			</td>
 			<?php if ($this->event->waitinglist): ?>
 			 <td style="text-align:right; white-space:nowrap;">
@@ -103,14 +103,14 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 				<td class="hasTip" title="<?php echo ($row->waiting ? JText::_('COM_JEM_ON_WAITINGLIST') : JText::_('COM_JEM_ATTENDING')).'::'; ?>">
 					<?php if ($row->waiting):?>
 						<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&controller=attendees&task=toggle&id='.$row->id),
-						                        JHTML::image('administrator/images/publish_y.png', JText::_('COM_JEM_ON_WAITINGLIST'))); ?>
+						                        JHTML::image('media/com_jem/images/publish_y.png', JText::_('COM_JEM_ON_WAITINGLIST'))); ?>
 					<?php else: ?>
 						<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&controller=attendees&task=toggle&id='.$row->id),
-						                        JHTML::image('administrator/images/tick.png', JText::_('COM_JEM_ATTENDING'))); ?>
+						                        JHTML::image('media/com_jem/images/tick.png', JText::_('COM_JEM_ATTENDING'))); ?>
 					<?php endif;?>
 				</td>
 				<?php endif;?>
-				<td><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','remove')"><img src="images/publish_x.png" width="16" height="16" border="0" alt="Delete" /></a></td>
+				<td><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','remove')"><img src="../media/com_jem/images/publish_x.png" width="16" height="16" border="0" alt="Delete" /></a></td>
 			</tr>
 			<?php $k = 1 - $k;  } ?>
 		</tbody>

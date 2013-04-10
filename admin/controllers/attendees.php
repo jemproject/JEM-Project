@@ -79,7 +79,7 @@ class EventListControllerAttendees extends EventListController
 
 	function export()
 	{
-		$app			=& JFactory::getApplication();;
+		$app			= JFactory::getApplication();;
 
 		$model = $this->getModel('attendees');
 
@@ -147,7 +147,7 @@ class EventListControllerAttendees extends EventListController
 		if ($res) 
 		{						
 			JPluginHelper::importPlugin( 'eventlist' );
-	    $dispatcher =& JDispatcher::getInstance();
+	    $dispatcher = JDispatcher::getInstance();
 	   	$res = $dispatcher->trigger( 'onUserOnOffWaitinglist', array( $id ) );
 	   	
 			if ($attendee->waiting)
@@ -180,7 +180,7 @@ class EventListControllerAttendees extends EventListController
 		// Check for request forgeries
 		JRequest::checkToken() or die( 'Invalid Token' );
 		
-		$venue = & JTable::getInstance('jem_register', '');
+		$venue =  JTable::getInstance('jem_register', '');
 		$venue->bind(JRequest::get('post'));
 		$venue->checkin();
 
@@ -200,7 +200,7 @@ class EventListControllerAttendees extends EventListController
 		JRequest::setVar( 'hidemainmenu', 1 );
 
 		$model 	= $this->getModel('attendee');
-		$user	=& JFactory::getUser();
+		$user	= JFactory::getUser();
 
 //		// Error if checkedout by another administrator
 //		if ($model->isCheckedOut( $user->get('id') )) {

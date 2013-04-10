@@ -65,7 +65,7 @@ defined('_JEXEC') or die; ?>
 		<tr>
 			<td colspan="12">
 				<?php 
-				// echo $this->pageNav->getListFooter(); 
+				echo $this->pagination->getListFooter(); 
 				?>
 			</td>
 		</tr>
@@ -85,7 +85,7 @@ defined('_JEXEC') or die; ?>
 			$access = $row->groupname;
    		?>
 		<tr class="<?php echo "row$k"; ?>">
-			<td><?php echo $this->pageNav->getRowOffset( $i ); ?></td>
+			<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 			<td align="left">
 				<?php
@@ -138,9 +138,9 @@ defined('_JEXEC') or die; ?>
 				<?php echo $access; ?>
 			</td>
 			<td class="order" colspan="2">
-				<span><?php echo $this->pageNav->orderUpIcon( $i, true, 'orderup', 'Move Up', $this->ordering ); ?></span>
+				<span><?php echo $this->pagination->orderUpIcon( $i, true, 'orderup', 'Move Up', $this->ordering ); ?></span>
 
-				<span><?php echo $this->pageNav->orderDownIcon( $i, $n, true, 'orderdown', 'Move Down', $this->ordering );?></span>
+				<span><?php echo $this->pagination->orderDownIcon( $i, $n, true, 'orderdown', 'Move Down', $this->ordering );?></span>
 
 				<?php $disabled = $this->ordering ?  '' : '"disabled=disabled"'; ?>
 

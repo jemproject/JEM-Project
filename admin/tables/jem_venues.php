@@ -182,7 +182,7 @@ class jem_venues extends JTable
 		}
 		
 		/** check for existing name */
-		$query = 'SELECT id FROM #__jem_venues WHERE venue = '.$this->_db->Quote($this->venue);
+/*		$query = 'SELECT id FROM #__jem_venues WHERE venue = '.$this->_db->Quote($this->venue);
 		$this->_db->setQuery($query);
 
 		$xid = intval($this->_db->loadResult());
@@ -190,7 +190,8 @@ class jem_venues extends JTable
 			JError::raiseWarning('SOME_ERROR_CODE', JText::sprintf('VENUE NAME ALREADY EXIST', $this->venue));
 			return false;
 		}
-
+*/
+		
 		return true;
 	}
 	

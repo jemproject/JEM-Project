@@ -178,6 +178,10 @@ class EventListModelEvents extends JModelLegacy
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.events.filter_order', 'filter_order', 'a.dates', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.events.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 		
+		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		
+		
 		if ($filter_order != '')
 		{
 			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;

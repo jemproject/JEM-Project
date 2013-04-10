@@ -82,7 +82,7 @@ class EventListViewCategories extends JViewLegacy {
 		//Get data from the model
 		$rows      	=  $this->get( 'Data');
 		//$total      = & $this->get( 'Total');
-		$pageNav 	=  $this->get( 'Pagination' );
+		$pagination 	=  $this->get( 'Pagination' );
 		
 		//publish unpublished filter
 		$lists['state']	= JHTML::_('grid.state', $filter_state );
@@ -98,7 +98,7 @@ class EventListViewCategories extends JViewLegacy {
 		//assign data to template
 		$this->assignRef('lists'      	, $lists);
 		$this->assignRef('rows'      	, $rows);
-		$this->assignRef('pageNav' 		, $pageNav);
+		$this->assignRef('pagination' 	, $pagination);
 		$this->assignRef('ordering'		, $ordering);
 		$this->assignRef('user'			, $user);
 

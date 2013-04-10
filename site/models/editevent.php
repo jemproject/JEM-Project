@@ -566,14 +566,14 @@ class EventListModelEditevent extends JModelLegacy
 		
 		//include the metatags
 		//$data['meta_description'] = addslashes(htmlspecialchars(trim($elsettings->meta_description)));
-		if (strlen($data['meta_description']) > 255) {
+	/*	if (strlen($data['meta_description']) > 255) {
 			$data['meta_description'] = substr($data['meta_description'],0,254);
 		}
 		//$data['meta_keywords'] = addslashes(htmlspecialchars(trim($elsettings->meta_keywords)));
 		if (strlen($data['meta_keywords']) > 200) {
 			$data['meta_keywords'] = substr($data['meta_keywords'],0,199);
 		}
-		
+		*/
 		
 
 		$curimage = JRequest::getVar( 'curimage', '', 'post','string' );

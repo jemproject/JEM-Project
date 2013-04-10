@@ -72,8 +72,8 @@ class EventListViewAttendees extends JViewLegacy {
 
 		//add toolbar
 		JToolBarHelper::title( JText::_( 'COM_JEM_REGISTERED_USERS' ), 'users' );
-		JToolBarHelper::addNew();
-		JToolBarHelper::editList();
+		//JToolBarHelper::addNew();
+		//JToolBarHelper::editList();
 		JToolBarHelper::spacer();
 		JToolBarHelper::deleteList();
 		JToolBarHelper::spacer();
@@ -138,9 +138,9 @@ class EventListViewAttendees extends JViewLegacy {
 		$event 		=  $this->get( 'Event' );
 
 	
-		if (ELHelper::isValidDate($row->dates)) {
+		if (ELHelper::isValidDate($event->dates)) {
 			$event->dates = strftime($elsettings->formatdate, strtotime( $event->dates ));
-//			$date		= strftime( $this->elsettings->formatdate, strtotime( $row->dates ));
+		//	$date		= strftime( $this->elsettings->formatdate, strtotime( $event->dates ));
 		} 
 		else {
 			$event->dates	= JText::_('COM_JEM_OPEN_DATE');

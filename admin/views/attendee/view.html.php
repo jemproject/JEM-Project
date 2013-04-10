@@ -35,10 +35,10 @@ class EventListViewAttendee extends JViewLegacy {
 	function display($tpl = null)
 	{
 		//initialise variables
-		$editor 	= & JFactory::getEditor();
-		$document	= & JFactory::getDocument();
-		$user 		= & JFactory::getUser();
-		$app 		= & JFactory::getApplication();
+		$editor 	=  JFactory::getEditor();
+		$document	=  JFactory::getDocument();
+		$user 		=  JFactory::getUser();
+		$app 		=  JFactory::getApplication();
 		
 		// Load the form validation behavior
 		JHTML::_('behavior.formvalidation');
@@ -65,8 +65,8 @@ class EventListViewAttendee extends JViewLegacy {
 		JToolBarHelper::help( 'el.editattendee', true );
 
 		//Get data from the model
-		$model		= & $this->getModel();
-		$row     	= & $this->get( 'Data' );
+		$model		=  $this->getModel();
+		$row     	=  $this->get( 'Data' );
 
 		// fail if checked out not by 'me'
 		if ($row->id) {

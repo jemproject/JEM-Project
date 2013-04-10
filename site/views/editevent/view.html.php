@@ -154,7 +154,7 @@ class EventListViewEditevent extends JViewLegacy
 
     	//if only owned events are allowed
     	if ($elsettings->ownedvenuesonly) {
-    		$venues     = & $this->get( 'UserVenues' );
+    		$venues     =  $this->get( 'UserVenues' );
 			//build list
 			$venuelist       = array();
 			$venuelist[]     = JHTML::_('select.option', '0', JText::_( 'COM_JEM_NO_VENUE' ) );

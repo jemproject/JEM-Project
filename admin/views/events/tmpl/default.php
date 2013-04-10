@@ -54,7 +54,7 @@ defined('_JEXEC') or die;
 				<th><?php echo JText::_( 'COM_JEM_CATEGORIES' ); ?></th>
 			    <th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 				<th class="title"><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
-				<th class="title"><?php echo JText::_( 'COM_JEM_HITS' ); ?></th>
+				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ); ?></th>
 				<th width="1%" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'a.id', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			</tr>
@@ -62,8 +62,8 @@ defined('_JEXEC') or die;
 
 		<tfoot>
 			<tr>
-				<td colspan="12">
-					<?php echo $this->pageNav->getListFooter(); ?>
+				<td colspan="0">
+					<?php echo $this->pagination->getListFooter(); ?>
 				</td>
 			</tr>
 		</tfoot>
@@ -104,7 +104,7 @@ defined('_JEXEC') or die;
 				$published 	= JHTML::_('grid.published', $row, $i );
    			?>
 			<tr class="<?php echo "row$k"; ?>">
-				<td><?php echo $this->pageNav->getRowOffset( $i ); ?></td>
+				<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 				<td><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 				<td>
 					<?php

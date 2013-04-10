@@ -56,7 +56,7 @@ defined('_JEXEC') or die;
 	<tfoot>
 		<tr>
 			<td colspan="12">
-				<?php echo $this->pageNav->getListFooter(); ?>
+				<?php echo $this->pagination->getListFooter(); ?>
 			</td>
 		</tr>
 	</tfoot>
@@ -71,7 +71,7 @@ defined('_JEXEC') or die;
 			$published 	= JHTML::_('grid.published', $row, $i );
    		?>
 		<tr class="<?php echo "row$k"; ?>">
-			<td><?php echo $this->pageNav->getRowOffset( $i ); ?></td>
+			<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 			<td align="left">
 				<?php
@@ -139,12 +139,12 @@ defined('_JEXEC') or die;
 			<td align="center"><?php echo $row->assignedevents; ?></td>
 			<td align="right">
 				<?php
-				echo $this->pageNav->orderUpIcon( $i, true, 'orderup', 'Move Up', $this->ordering );
+				echo $this->pagination->orderUpIcon( $i, true, 'orderup', 'Move Up', $this->ordering );
 				?>
 			</td>
 			<td align="left">
 				<?php
-				echo $this->pageNav->orderDownIcon( $i, $n, true, 'orderdown', 'Move Down', $this->ordering );
+				echo $this->pagination->orderDownIcon( $i, $n, true, 'orderdown', 'Move Down', $this->ordering );
 				?>
 			</td>
 			<td align="center"><?php echo $row->id; ?></td>
