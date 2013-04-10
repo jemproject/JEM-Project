@@ -366,7 +366,7 @@ class EventListModelEditevent extends JModelLegacy
 	 */
 	function getUserVenues()
 	{
-        $user = & JFactory::getUser();
+        $user =  JFactory::getUser();
         $userid = $user->get('id');
 
     	$query = 'SELECT id AS value, venue AS text'
@@ -416,7 +416,7 @@ class EventListModelEditevent extends JModelLegacy
 	 */
 	function _buildVenuesWhere(  )
 	{
-		$elsettings = & ELHelper::config();
+		$elsettings =  ELHelper::config();
 		$filter_type		= JRequest::getInt('filter_type');
 		$filter 			= JRequest::getString('filter');
 		$filter 			= $this->_db->getEscaped( trim(JString::strtolower( $filter ) ) );
@@ -476,7 +476,7 @@ class EventListModelEditevent extends JModelLegacy
 	{
 		if ($this->_id)
 		{
-			$item = & $this->getTable('jem_events', '');
+			$item =  $this->getTable('jem_events', '');
 			if(! $item->checkin($this->_id)) {
 				$this->setError($this->_db->getErrorMsg());
 				return false;

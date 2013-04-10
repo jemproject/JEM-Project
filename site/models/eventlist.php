@@ -286,9 +286,15 @@ class EventListModelEventList extends JModelLegacy
 						$where .= ' AND LOWER( l.city ) LIKE '.$filter;
 						break;
 						
-					  case 'type':
+					case 'type':
                         $where .= ' AND LOWER( c.catname ) LIKE '.$filter;
                         break;
+                        
+                    case 'state':
+                        $where .= ' AND LOWER( l.state ) LIKE '.$filter;
+                        break;    
+                        
+                        
 				}
 			}
 		}

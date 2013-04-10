@@ -136,7 +136,7 @@ class EventListControllerEvents extends EventListController
 		// Check for request forgeries
 		JRequest::checkToken() or die( 'Invalid Token' );
 		
-		$group = & JTable::getInstance('jem_events', '');
+		$group =  JTable::getInstance('jem_events', '');
 		$group->bind(JRequest::get('post'));
 		$group->checkin();
 
@@ -218,7 +218,7 @@ class EventListControllerEvents extends EventListController
 			}
 			$msg	= JText::_( 'COM_JEM_EVENT_SAVED');
 
-			$cache = &JFactory::getCache('com_jem');
+			$cache = JFactory::getCache('com_jem');
 			$cache->clean();
 
 		} else {

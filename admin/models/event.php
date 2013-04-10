@@ -207,7 +207,7 @@ class EventListModelEvent extends JModelLegacy
 	{
 		if ($this->_id)
 		{
-			$event = & JTable::getInstance('jem_events', '');
+			$event =  JTable::getInstance('jem_events', '');
 			return $event->checkin($this->_id);
 		}
 		return false;
@@ -359,6 +359,8 @@ class EventListModelEvent extends JModelLegacy
 			$this->_db->setQuery($query);
 			$this->_db->query();
 		}
+		
+		
 		
 		// attachments
 		// new ones first

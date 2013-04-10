@@ -23,38 +23,38 @@ defined ( '_JEXEC' ) or die;
 ?>
 <fieldset class="el_fldst_attachments">
 <legend><?php echo JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'); ?></legend>
-<table width=100%" class="adminform" id="el-attachments">
+<table class="adminform" id="el-attachments">
 	<thead>
 		<tr>
-			<th width="40px"><?php echo JText::_('COM_JEM_ATTACHMENT_FILE'); ?></th>
-			<th width="40px"><?php echo JText::_('COM_JEM_ATTACHMENT_NAME'); ?></th>
-			<th><?php echo JText::_('COM_JEM_ATTACHMENT_DESCRIPTION'); ?></th>
-			<th><?php echo JText::_('COM_JEM_ATTACHMENT_ACCESS'); ?></th>
-			<th>&nbsp;</th>
+			<th style="width:25%"><?php echo JText::_('COM_JEM_ATTACHMENT_FILE'); ?></th>
+			<th style="width:15%"><?php echo JText::_('COM_JEM_ATTACHMENT_NAME'); ?></th>
+			<th style="width:40%"><?php echo JText::_('COM_JEM_ATTACHMENT_DESCRIPTION'); ?></th>
+			<th style="width:20px"><?php echo JText::_('COM_JEM_ATTACHMENT_ACCESS'); ?></th>
+			<th style="width:5px">&nbsp;</th>
 		</tr>
 	</thead>
 	<tbody>
 		<?php foreach ($this->row->attachments as $file): ?>
 		<tr>
-			<td width="40px"><?php echo $file->file; ?><input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/></td>
-			<td width="40px"><input type="text" name="attached-name[]"  value="<?php echo $file->name; ?>" /></td>
-			<td><input type="text" name="attached-desc[]" value="<?php echo $file->description; ?>" /></td>
+			<td ><?php echo $file->file; ?><input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/></td>
+			<td><input type="text" name="attached-name[]"  value="<?php echo $file->name; ?>" /></td>
+			<td ><input type="text" name="attached-desc[]" value="<?php echo $file->description; ?>" /></td>
 			<td><?php echo JHTML::_('select.genericlist', $this->access, 'attached-access[]', 'class="inputbox" size="3"', 'value', 'text', $file->access); ?></td>
-			<td><?php echo JHTML::image('media/com_jem/images/publish_x.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT')
+			<td ><?php echo JHTML::image('media/com_jem/images/publish_x.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT')
 			                         , array('id' => 'attach-remove'.$file->id,'class' => 'attach-remove')); ?></td>
 		</tr>
 		<?php endforeach; ?>
 		<tr>
-			<td width="40px">
+			<td>
 				<input type="file" name="attach[]" class="attach-field" size="10"></input>
 			</td>
-			<td width="40px">
+			<td >
 				<input type="text" name="attach-name[]" value="" />
 			</td>
-			<td>
+			<td >
 				<input type="text" name="attach-desc[]" value="" />
 			</td>
-			<td>
+			<td >
 				<?php echo JHTML::_('select.genericlist', $this->access, 'attach-access[]', 'class="inputbox" size="3"', 'value', 'text', 0); ?>
 			</td>
 			<td>&nbsp;</td>

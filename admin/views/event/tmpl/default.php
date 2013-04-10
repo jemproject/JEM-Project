@@ -221,14 +221,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 	</td>
 
 	<td valign="top" width="320px" style="padding: 7px 0 0 5px">
-		<?php
-		// used to hide "Reset Hits" when hits = 0
-		if (! $this->row->hits) {
-			$visibility = 'style="display: none; visibility: hidden;"';
-		} else {
-			$visibility = '';
-		}
-		?>
+		
 		<?php
 		$title = JText::_( 'COM_JEM_DETAILS' );
 			echo JHtml::_('sliders.start', 'det-pane', $options);
@@ -260,13 +253,15 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 				<td>
 					<strong><?php echo JText::_ ( 'COM_JEM_HITS' );	?></strong>
 				</td>
-				<td>
-					<div id="hits"></div>
-					<span <?php	echo $visibility; ?>>
-						<input name="reset_hits" type="button" class="button" value="<?php echo JText::_ ( 'COM_JEM_RESET' );?>" onclick="reseter('resethits', '<?php echo $this->row->id;?>', 'hits')" />
-					</span>
+			</tr>
+			<td>
+			
+				<input class="inputbox" name="hits" value="<?php echo $this->row->hits; ?>" size="10" maxlength="10" id="hits" />
 				</td>
 			</tr>
+			
+			
+			
 			<tr>
 				<td>
 					<strong><?php echo JText::_ ( 'COM_JEM_REVISED' ); ?></strong>
@@ -576,13 +571,11 @@ echo JHTML::_ ( 'form.token' );
 	<input type="hidden" name="author_ip" value="" />
 	<input type="hidden" name="created_by" value="" />
 	<input type="hidden" name="version" value="" />
-	<input type="hidden" name="hits" value="" />
 <?php } else {	?>
 	<input type="hidden" name="id" value="<?php	echo $this->row->id;?>" />
 	<input type="hidden" name="created" value="<?php echo $this->row->created; ?>" />
 	<input type="hidden" name="author_ip" value="<?php echo $this->row->author_ip;?>" />
 	<input type="hidden" name="version" value="<?php echo $this->row->version;?>" />
-	<input type="hidden" name="hits" value="<?php echo $this->row->hits; ?>" />
 <?php } ?>
 </form>
 

@@ -199,9 +199,13 @@ class EventListViewEventList extends JViewLegacy
 		if ($elsettings->showcity == 1) {
 			$sortselects[] 	= JHTML::_('select.option', 'city', $elsettings->cityname );
 		}
-		if ($elsettings->showcat) {
+		if ($elsettings->showcat == 1) {
 			$sortselects[] 	= JHTML::_('select.option', 'type', $elsettings->catfroname );
 		}
+		if ($elsettings->showstate == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'state', $elsettings->statename );
+		}
+
 		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
 
 		$lists['order_Dir'] 	= $filter_order_Dir;
