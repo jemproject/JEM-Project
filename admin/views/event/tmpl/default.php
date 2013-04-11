@@ -253,7 +253,6 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 				<td>
 					<strong><?php echo JText::_ ( 'COM_JEM_HITS' );	?></strong>
 				</td>
-			</tr>
 			<td>
 			
 				<input class="inputbox" name="hits" value="<?php echo $this->row->hits; ?>" size="10" maxlength="10" id="hits" />

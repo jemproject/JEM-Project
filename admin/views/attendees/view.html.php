@@ -83,7 +83,7 @@ class EventListViewAttendees extends JViewLegacy {
 
 		// Get data from the model
 		$rows      	=  $this->get( 'Data');
-		$pageNav 	=  $this->get( 'Pagination' );
+		$pagination =  $this->get( 'Pagination' );
 		$event 		=  $this->get( 'Event' );
 
  		if (ELHelper::isValidDate($event->dates)) {
@@ -115,7 +115,7 @@ class EventListViewAttendees extends JViewLegacy {
 		//assign to template
 		$this->assignRef('lists'      	, $lists);
 		$this->assignRef('rows'      	, $rows);
-		$this->assignRef('pageNav' 		, $pageNav);
+		$this->assignRef('pagination' 	, $pagination);
 		$this->assignRef('event'		, $event);
 
 		parent::display($tpl);

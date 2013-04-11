@@ -78,7 +78,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 
 		<tfoot>
 			<tr>
-				<td colspan="<?php echo $colspan; ?>"><?php echo $this->pageNav->getListFooter(); ?></td>
+				<td colspan="<?php echo $colspan; ?>"><?php echo $this->pagination->getListFooter(); ?></td>
 			</tr>
 		</tfoot>
 
@@ -89,7 +89,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 				$row = &$this->rows[$i];
    			?>
 			<tr class="<?php echo "row$k"; ?>">
-				<td><?php echo $this->pageNav->getRowOffset( $i ); ?></td>
+				<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 				<td><input type="checkbox" id="cb<?php echo $i;?>" name="cid[]" value="<?php echo $row->id; ?>" onclick="isChecked(this.checked);" /></td>
 				<td><a href="<?php echo JRoute::_( 'index.php?option=com_jem&controller=attendees&task=edit&cid[]='.$row->id ); ?>"><?php echo $row->name; ?></a></td>
 				<td>

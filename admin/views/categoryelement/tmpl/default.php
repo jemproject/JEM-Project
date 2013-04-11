@@ -49,7 +49,7 @@ defined('_JEXEC') or die;
 	<tfoot>
 		<tr>
 			<td colspan="4">
-				<?php echo $this->pageNav->getListFooter(); ?>
+				<?php echo $this->pagination->getListFooter(); ?>
 			</td>
 		</tr>
 	</tfoot>
@@ -64,7 +64,7 @@ defined('_JEXEC') or die;
 			$access = $row->groupname;
    		?>
 		<tr class="<?php echo "row$k"; ?>">
-			<td width="7"><?php echo $this->pageNav->getRowOffset( $i ); ?></td>
+			<td width="7"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td align="left">
 				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SELECT' );?>::<?php echo $row->catname; ?>">
 				<?php echo $row->treename; ?>

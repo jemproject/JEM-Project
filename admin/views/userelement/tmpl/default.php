@@ -39,7 +39,7 @@ JHTML::_('behavior.tooltip');
 <table class="adminlist" cellspacing="1">
 	<thead>
 		<tr>
-			<th width="5"><?php echo JText::_( 'Num' ); ?></th>
+			<th width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'Name', 'u.name', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'Username', 'u.username', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'Email', 'u.email', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
@@ -49,7 +49,7 @@ JHTML::_('behavior.tooltip');
 	<tfoot>
 		<tr>
 			<td colspan="4">
-				<?php echo $this->pageNav->getListFooter(); ?>
+				<?php echo $this->pagination->getListFooter(); ?>
 			</td>
 		</tr>
 	</tfoot>
@@ -61,7 +61,7 @@ JHTML::_('behavior.tooltip');
 				$row = &$this->rows[$i];
 		?>
 		<tr class="<?php echo "row$k"; ?>">
-			<td><?php echo $this->pageNav->getRowOffset( $i ); ?></td>
+			<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td>
 				<span class="editlinktip hasTip" title="<?php echo JText::_( 'SELECT' );?>::<?php echo $row->name; ?>">
 				<a style="cursor:pointer" onclick="window.parent.elSelectUser('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->username ); ?>');">

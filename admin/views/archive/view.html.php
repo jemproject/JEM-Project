@@ -79,7 +79,7 @@ class EventListViewArchive extends JViewLegacy {
 		// Get data from the model
 		$rows      	=  $this->get( 'Data');
 		//$total      = & $this->get( 'Total');
-		$pageNav 	=  $this->get( 'Pagination' );
+		$pagination 	=  $this->get( 'Pagination' );
 
 		//search filter
 		$filters = array();
@@ -99,7 +99,7 @@ class EventListViewArchive extends JViewLegacy {
 		//assign data to template
 		$this->assignRef('lists'      	, $lists);
 		$this->assignRef('rows'      	, $rows);
-		$this->assignRef('pageNav' 		, $pageNav);
+		$this->assignRef('pagination' 	, $pagination);
 		$this->assignRef('elsettings'	, $elsettings);
 		$this->assignRef('template'		, $template);
 		$this->assignRef('user'			, $user);

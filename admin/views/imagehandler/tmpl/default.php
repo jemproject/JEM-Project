@@ -47,7 +47,7 @@ defined('_JEXEC') or die;
 
 <div class="clear"></div>
 		
-<div class="pnav"><?php echo $this->pageNav->getListFooter(); ?></div>
+<div class="pnav"><?php echo $this->pagination->getListFooter(); ?></div>
 
 	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="view" value="imagehandler" />

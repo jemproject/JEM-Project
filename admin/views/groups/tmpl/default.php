@@ -48,7 +48,7 @@ defined('_JEXEC') or die;
 	<tfoot>
 		<tr>
 			<td colspan="4">
-				<?php echo $this->pageNav->getListFooter(); ?>
+				<?php echo $this->pagination->getListFooter(); ?>
 			</td>
 		</tr>
 	</tfoot>
@@ -63,7 +63,7 @@ defined('_JEXEC') or die;
 			//$checked 	= JHTML::_('grid.checkedout', $row, $i );
    		?>
 		<tr class="<?php echo "row$k"; ?>">
-			<td><?php echo $this->pageNav->getRowOffset( $i ); ?></td>
+			<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 			<td>
 				<?php

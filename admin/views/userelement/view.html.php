@@ -68,7 +68,7 @@ class EventListViewUserElement extends JViewLegacy {
 		$this->assignRef('lists'      , $lists);
 		$this->assignRef('rows'       , $users);
 		$this->assignRef('elsettings'	, $elsettings);
-		$this->assignRef('pageNav'	  , $pagination);
+		$this->assignRef('pagination'	  , $pagination);
 
 		parent::display($tpl);
 	}

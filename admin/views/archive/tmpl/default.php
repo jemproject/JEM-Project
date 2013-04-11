@@ -52,7 +52,7 @@ defined('_JEXEC') or die; ?>
 		<tfoot>
 			<tr>
 				<td colspan="9">
-					<?php echo $this->pageNav->getListFooter(); ?>
+					<?php echo $this->pagination->getListFooter(); ?>
 				</td>
 			</tr>
 		</tfoot>
@@ -85,7 +85,7 @@ defined('_JEXEC') or die; ?>
 				}
    			?>
 			<tr class="<?php echo "row$k"; ?>">
-				<td><?php echo $this->pageNav->getRowOffset( $i ); ?></td>
+				<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 				<td><input type="checkbox" id="cb<?php echo $i;?>" name="cid[]" value="<?php echo $row->id; ?>" onclick="isChecked(this.checked);" /></td>
 				<td>
 					<?php echo $displaydate; ?>

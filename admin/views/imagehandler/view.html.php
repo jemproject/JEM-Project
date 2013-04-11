@@ -87,7 +87,7 @@ class EventListViewImagehandler extends JViewLegacy  {
 
 		//get images
 		$images  = $this->get('images');
-		$pageNav =  $this->get( 'Pagination' );
+		$pagination =  $this->get( 'Pagination' );
 
 		$state2 =  $this->get('state');
 		
@@ -99,7 +99,7 @@ class EventListViewImagehandler extends JViewLegacy  {
 			$this->assignRef('search', 	$search);
 			// $this->assignRef('state', 	$this->get('state'));
 			$this->assignRef('state', 	$state2);
-			$this->assignRef('pageNav', $pageNav);
+			$this->assignRef('pagination', $pagination);
 			parent::display($tpl);
 		} else {
 			//no images in the folder, redirect to uploadscreen and raise notice
