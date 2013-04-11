@@ -135,7 +135,7 @@ class EventListViewCategoryevents extends JViewLegacy
 		if ($maintainer || $genaccess ) $dellink = 1;
 
 		// Create the pagination object		
-		$pageNav =  $this->get('Pagination');
+		$pagination =  $this->get('Pagination');
 
 		//Generate Categorydescription
 		if (empty ($category->catdescription)) {
@@ -179,7 +179,7 @@ class EventListViewCategoryevents extends JViewLegacy
 		$this->assignRef('dellink' , 				$dellink);
 		$this->assignRef('task' , 					$task);
 		$this->assignRef('catdescription' , 		$catdescription);
-		$this->assignRef('pageNav' , 				$pageNav);
+		$this->assignRef('pagination' , 				$pagination);
 		$this->assignRef('elsettings' , 			$elsettings);
 		$this->assignRef('item' , 					$item);
 		$this->assignRef('categories' , 			$categories);

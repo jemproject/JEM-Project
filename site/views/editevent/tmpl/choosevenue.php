@@ -60,7 +60,7 @@ defined('_JEXEC') or die;
 		<div class="el_fright">
 			<?php
 			echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
-			echo $this->pageNav->getLimitBox();
+			echo $this->pagination->getLimitBox();
 			?>
 		</div>
 
@@ -83,7 +83,7 @@ defined('_JEXEC') or die;
 			$row = &$this->rows[$i];
 		?>
 		<tr class="<?php echo "row$k"; ?>">
-			<td><?php echo $this->pageNav->getRowOffset( $i ); ?></td>
+			<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td align="left">
 				<a style="cursor:pointer" onclick="window.parent.elSelectVenue('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->venue); ?>');">
 						<?php echo $this->escape($row->venue); ?>
@@ -106,11 +106,11 @@ defined('_JEXEC') or die;
 </form>
 
 <p class="pageslinks">
-	<?php echo $this->pageNav->getPagesLinks(); ?>
+	<?php echo $this->pagination->getPagesLinks(); ?>
 </p>
 
 <p class="pagescounter">
-	<?php echo $this->pageNav->getPagesCounter(); ?>
+	<?php echo $this->pagination->getPagesCounter(); ?>
 </p>
 
 <p class="copyright">

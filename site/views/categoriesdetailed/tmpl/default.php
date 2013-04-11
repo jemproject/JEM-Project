@@ -114,12 +114,12 @@ endforeach;
 <!--pagination-->
 
 <div class="pageslinks">
-	<?php echo $this->pageNav->getPagesLinks(); ?>
+	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 
 <div class="pagescounter">
 	<?php 
-	//echo $this->pageNav->getPagesCounter(); 
+	//echo $this->pagination->getPagesCounter(); 
 	?>
 </div>
 

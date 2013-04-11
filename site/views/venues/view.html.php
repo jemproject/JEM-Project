@@ -110,13 +110,13 @@ class EventListViewVenues extends JViewLegacy
 
 		// Create the pagination object
 		jimport('joomla.html.pagination');
-		$pageNav = new JPagination($total, $limitstart, $limit);
+		$pagination = new JPagination($total, $limitstart, $limit);
 
 		$this->assignRef('rows' , 					$rows);
 		$this->assignRef('print_link' , 			$print_link);
 		$this->assignRef('params' , 				$params);
 		$this->assignRef('dellink' , 				$dellink);
-		$this->assignRef('pageNav' , 				$pageNav);
+		$this->assignRef('pagination' , 				$pagination);
 		$this->assignRef('limit' , 					$limit);
 		$this->assignRef('total' , 					$total);
 		$this->assignRef('item' , 					$item);

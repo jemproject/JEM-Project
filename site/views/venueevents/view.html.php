@@ -165,7 +165,7 @@ class EventListViewVenueevents extends JViewLegacy
 
 		// Create the pagination object
 		jimport('joomla.html.pagination');
-		$pageNav = new JPagination($total, $limitstart, $limit);
+		$pagination = new JPagination($total, $limitstart, $limit);
 
 		//create select lists
 		$lists	= $this->_buildSortLists($elsettings);
@@ -180,7 +180,7 @@ class EventListViewVenueevents extends JViewLegacy
 		$this->assignRef('dellink' , 				$dellink);
 		$this->assignRef('limage' , 				$limage);
 		$this->assignRef('venuedescription' , 		$venuedescription);
-		$this->assignRef('pageNav' , 				$pageNav);
+		$this->assignRef('pagination' , 				$pagination);
 		$this->assignRef('elsettings' , 			$elsettings);
 		$this->assignRef('item' , 					$item);
 		$this->assignRef('pagetitle' , 				$pagetitle);

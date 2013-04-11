@@ -47,11 +47,11 @@ defined( '_JEXEC' ) or die;
 
 <?php if (( $this->page > 0 ) && ( !$this->params->get( 'popup' ) )) : ?>
 <div class="pageslinks">
-	<?php echo $this->pageNav->getPagesLinks(); ?>
+	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 
 <p class="pagescounter">
-	<?php echo $this->pageNav->getPagesCounter(); ?>
+	<?php echo $this->pagination->getPagesCounter(); ?>
 </p>
 <?php endif; ?>
 

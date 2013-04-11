@@ -84,12 +84,12 @@ if (count($this->categories) && $this->category->id > 0) :
 
 <?php if (!$this->params->get( 'popup' ) ) : ?>
 <div class="pageslinks">
-	<?php echo $this->pageNav->getPagesLinks(); ?>
+	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 
 <p class="pagescounter">
 	<?php 
-	//echo $this->pageNav->getPagesCounter(); 
+	//echo $this->pagination->getPagesCounter(); 
 	?>
 </p>
 <?php endif; ?>

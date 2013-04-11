@@ -138,7 +138,7 @@ class EventListViewSearch extends JViewLegacy
 		$lists['categories'] =  JHTML::_('select.genericlist', $catoptions, 'filter_category', 'size="1" class="inputbox"', 'value', 'text', $selectedcats);
 
 		// Create the pagination object
-		$pageNav = $this->get('Pagination');
+		$pagination = $this->get('Pagination');
 		
 		// date filter
 		$lists['date_from'] = JHTML::_('calendar', $filter_date_from, 'filter_date_from', 'filter_date_from', '%Y-%m-%d', 'class="inputbox"');
@@ -184,7 +184,7 @@ class EventListViewSearch extends JViewLegacy
 		$this->assignRef('print_link' ,      $print_link);
 		$this->assignRef('params' ,          $params);
 		$this->assignRef('dellink' ,         $dellink);
-		$this->assignRef('pageNav' ,         $pageNav);
+		$this->assignRef('pagination' ,         $pagination);
 		$this->assignRef('elsettings' ,      $elsettings);
 		$this->assignRef('pagetitle' ,       $pagetitle);
     $this->assignRef('filter_continent', $filter_continent);

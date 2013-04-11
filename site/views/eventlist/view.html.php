@@ -124,7 +124,7 @@ class EventListViewEventList extends JViewLegacy
 		}
 */
 		// Create the pagination object
-		$pageNav =  $this->get('Pagination');
+		$pagination =  $this->get('Pagination');
 
 		$this->assign('lists' , 					$lists);
 		$this->assign('total',						$total);
@@ -136,7 +136,7 @@ class EventListViewEventList extends JViewLegacy
 		$this->assignRef('print_link' , 			$print_link);
 		$this->assignRef('params' , 				$params);
 		$this->assignRef('dellink' , 				$dellink);
-		$this->assignRef('pageNav' , 				$pageNav);
+		$this->assignRef('pagination' , 				$pagination);
 		$this->assignRef('elsettings' , 			$elsettings);
 		$this->assignRef('pagetitle' , 				$pagetitle);
 		

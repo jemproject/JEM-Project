@@ -109,7 +109,7 @@ class EventListViewDay extends JViewLegacy
 		$page = $total - $limit;
 
 		jimport('joomla.html.pagination');
-		$pageNav = new JPagination($total, $limitstart, $limit);
+		$pagination = new JPagination($total, $limitstart, $limit);
 
 		//create select lists
 		$lists	= $this->_buildSortLists();
@@ -121,7 +121,7 @@ class EventListViewDay extends JViewLegacy
 		$this->assignRef('print_link' , 			$print_link);
 		$this->assignRef('params' , 				$params);
 		$this->assignRef('dellink' , 				$dellink);
-		$this->assignRef('pageNav' , 				$pageNav);
+		$this->assignRef('pagination' , 				$pagination);
 		$this->assignRef('page' , 					$page);
 		$this->assignRef('elsettings' , 			$elsettings);
 		$this->assignRef('lists' , 					$lists);

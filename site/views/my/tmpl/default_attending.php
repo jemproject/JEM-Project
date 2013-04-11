@@ -227,10 +227,10 @@ defined( '_JEXEC' ) or die;
 </form>
 
 <div class="pageslinks">
-  <?php echo $this->attending_pageNav->getPagesLinks(); ?>
+  <?php echo $this->attending_pagination->getPagesLinks(); ?>
 </div>
 
 <p class="pagescounter">
-  <?php echo $this->attending_pageNav->getPagesCounter(); ?>
+  <?php echo $this->attending_pagination->getPagesCounter(); ?>
 </p>
 <?php endif; ?>

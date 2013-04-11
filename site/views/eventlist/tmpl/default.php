@@ -67,7 +67,7 @@ defined( '_JEXEC' ) or die;
 <!--footer-->
 
 <div class="pageslinks">
-	<?php echo $this->pageNav->getPagesLinks(); ?>
+	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 
 <?php

@@ -58,7 +58,7 @@ defined( '_JEXEC' ) or die;
     <div class="el_fright">
       <?php
       echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
-      echo $this->events_pageNav->getLimitBox();
+      echo $this->events_pagination->getLimitBox();
       ?>
     </div>
     <?php endif; ?>
@@ -259,10 +259,10 @@ defined( '_JEXEC' ) or die;
 </form>
 
 <div class="pageslinks">
-  <?php echo $this->events_pageNav->getPagesLinks(); ?>
+  <?php echo $this->events_pagination->getPagesLinks(); ?>
 </div>
 
 <p class="pagescounter">
-  <?php echo $this->events_pageNav->getPagesCounter(); ?>
+  <?php echo $this->events_pagination->getPagesCounter(); ?>
 </p>
 <?php endif; ?>

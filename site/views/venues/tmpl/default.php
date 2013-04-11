@@ -120,11 +120,11 @@ defined( '_JEXEC' ) or die;
 
 	<!--pagination-->
 	<p class="pageslinks">
-		<?php echo $this->pageNav->getPagesLinks(); ?>
+		<?php echo $this->pagination->getPagesLinks(); ?>
 	</p>
 
 	<p class="pagescounter">
-		<?php echo $this->pageNav->getPagesCounter(); ?>
+		<?php echo $this->pagination->getPagesCounter(); ?>
 	</p>
 
 	<!--copyright-->

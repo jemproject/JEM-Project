@@ -62,7 +62,7 @@ class EventListViewCategoriesdetailed extends JViewLegacy
 		$total 			=  $this->get('Total');
     	
 		// Create the pagination object   
-    	$pageNav =  $this->get('Pagination');
+    	$pagination =  $this->get('Pagination');
 
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/eventlist.css');
@@ -117,7 +117,7 @@ class EventListViewCategoriesdetailed extends JViewLegacy
 		$this->assignRef('dellink' , 				$dellink);
 		$this->assignRef('item' , 					$item);
 		$this->assignRef('model' , 					$model);
-		$this->assignRef('pageNav' , 				$pageNav);
+		$this->assignRef('pagination' , 				$pagination);
 		$this->assignRef('elsettings' , 			$elsettings);
 		$this->assignRef('task' , 					$task);
 		$this->assignRef('pagetitle' , 				$pagetitle);

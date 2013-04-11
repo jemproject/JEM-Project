@@ -52,10 +52,10 @@ defined( '_JEXEC' ) or die;
 </table>
 
 <div class="pageslinks">
-  <?php echo $this->venues_pageNav->getPagesLinks(); ?>
+  <?php echo $this->venues_pagination->getPagesLinks(); ?>
 </div>
 
 <p class="pagescounter">
-  <?php echo $this->venues_pageNav->getPagesCounter(); ?>
+  <?php echo $this->venues_pagination->getPagesCounter(); ?>
 </p>
 <?php endif; ?>

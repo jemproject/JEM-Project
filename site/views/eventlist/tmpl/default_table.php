@@ -54,7 +54,7 @@ defined( '_JEXEC' ) or die;
 		<div class="el_fright">
 			<?php
 			echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
-			echo $this->pageNav->getLimitBox();
+			echo $this->pagination->getLimitBox();
 			?>
 		</div>
 		<?php endif; ?>

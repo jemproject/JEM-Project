@@ -210,7 +210,7 @@ class EventListViewEditevent extends JViewLegacy
 
 		// Create the pagination object
 		jimport('joomla.html.pagination');
-		$pageNav = new JPagination($total, $limitstart, $limit);
+		$pagination = new JPagination($total, $limitstart, $limit);
 
 		// table ordering
 		$lists['order_Dir'] 	= $filter_order_Dir;
@@ -226,7 +226,7 @@ class EventListViewEditevent extends JViewLegacy
 
 		$this->assignRef('rows' , 				$rows);
 		$this->assignRef('searchfilter' , 		$searchfilter);
-		$this->assignRef('pageNav' , 			$pageNav);
+		$this->assignRef('pagination' , 			$pagination);
 		$this->assignRef('lists' , 				$lists);
 		$this->assignRef('filter' , 			$filter);
 

@@ -68,7 +68,7 @@ class EventListViewMy extends JViewLegacy
         //get data from model
 		if($params->get('showmyevents')) {
         	$events 	=  $this->get('Events');
-			$events_pageNav 	=  $this->get('EventsPagination');
+			$events_pagination 	=  $this->get('EventsPagination');
 			
 			//are events available?
 		if (!$events) {
@@ -81,11 +81,11 @@ class EventListViewMy extends JViewLegacy
 		}
 		if($params->get('showmyvenues')) {
        		$venues 	=  $this->get('Venues');
-			$venues_pageNav 	=  $this->get('VenuesPagination');
+			$venues_pagination 	=  $this->get('VenuesPagination');
 		}
 		if($params->get('showmyregistrations')) {
        		$attending 	=  $this->get('Attending');
-        	$attending_pageNav 	=  $this->get('AttendingPagination');
+        	$attending_pagination 	=  $this->get('AttendingPagination');
 		}
 		
         //params
@@ -129,9 +129,9 @@ class EventListViewMy extends JViewLegacy
         $this->assignRef('print_link', 			$print_link);
         $this->assignRef('params', 				$params);
         $this->assignRef('dellink', 			$dellink);
-        $this->assignRef('events_pageNav', 		$events_pageNav);
-        $this->assignRef('venues_pageNav', 		$venues_pageNav);
-        $this->assignRef('attending_pageNav', 	$attending_pageNav);
+        $this->assignRef('events_pagination', 		$events_pagination);
+        $this->assignRef('venues_pagination', 		$venues_pagination);
+        $this->assignRef('attending_pagination', 	$attending_pagination);
         $this->assignRef('elsettings', 			$elsettings);
         $this->assignRef('pagetitle', 			$pagetitle);
       //  $this->assignRef('user', 				$user);
