@@ -165,7 +165,7 @@
 								$mode = 1;
 							} // if
 
-							//is the gd library installed on the server running EventList?
+							//is the gd library installed on the server running JEM?
 							if ($gdv = ELImage::gdVersion()) {
 
 								//is it Version two or higher? If yes let the user the choice

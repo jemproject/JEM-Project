@@ -1,20 +1,23 @@
 <?php
 /**
  * @version 1.1 $Id$
- * @package Joomla
- * @subpackage EventList
- * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- * EventList is free software; you can redistribute it and/or
+ 
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
- * EventList is distributed in the hope that it will be useful,
+ *
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
+ *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 // no direct access
@@ -23,13 +26,12 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.view');
 
 /**
- * HTML View class for the EventList View
+ * HTML View class for the JEM View
  *
- * @package Joomla
- * @subpackage EventList
+ * @package JEM
  * @since 1.0
  */
-class EventListViewMy extends JViewLegacy
+class JEMViewMy extends JViewLegacy
 {
     /**
      * Creates the MyItems View
@@ -56,8 +58,8 @@ class EventListViewMy extends JViewLegacy
         }
 
         //add css file
-        $document->addStyleSheet($this->baseurl.'/media/com_jem/css/eventlist.css');
-        $document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
+        $document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+        $document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
         // get variables
         $limitstart = JRequest::getVar('limitstart', 0, '', 'int');
@@ -111,7 +113,7 @@ class EventListViewMy extends JViewLegacy
         if ($lists['filter'])
         {
             //$uri->setVar('filter', JRequest::getString('filter'));
-            //$filter   = $mainframe->getUserStateFromRequest('com_jem.eventlist.filter', 'filter', '', 'string');
+            //$filter   = $mainframe->getUserStateFromRequest('com_jem.jem.filter', 'filter', '', 'string');
             $uri->setVar('filter', $lists['filter']);
             $uri->setVar('filter_type', JRequest::getString('filter_type'));
         } else

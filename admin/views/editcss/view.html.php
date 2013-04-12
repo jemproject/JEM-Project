@@ -1,22 +1,23 @@
 <?php
 /**
  * @version 1.1 $Id$
- * @package Joomla
- * @subpackage EventList
- * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- * EventList is free software; you can redistribute it and/or
+ 
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
- * EventList is distributed in the hope that it will be useful,
+ *
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
  if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
@@ -25,13 +26,12 @@ defined( '_JEXEC' ) or die;
 jimport( 'joomla.application.component.view');
 
 /**
- * View class for the EventList CSS edit screen
+ * View class for the JEM CSS edit screen
  *
- * @package Joomla
- * @subpackage EventList
+ * @package JEM
  * @since 0.9
  */
-class EventListViewEditcss extends JViewLegacy {
+class JEMViewEditcss extends JViewLegacy {
 
 	function display($tpl = null) {
 
@@ -44,11 +44,11 @@ class EventListViewEditcss extends JViewLegacy {
 		//only admins have access to this view
 		if (!JFactory::getUser()->authorise('core.manage')) {
 			JError::raiseWarning( 'SOME_ERROR_CODE', JText::_( 'ALERTNOTAUTH'));
-			$app->redirect( 'index.php?option=com_jem&view=eventlist' );
+			$app->redirect( 'index.php?option=com_jem&view=jem' );
 		}
 
 		//get vars
-		$filename	= 'eventlist.css';
+		$filename	= 'jem.css';
 		$path		= JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'assets'.DS.'css';
 		$css_path	= $path.DS.$filename;
 
@@ -65,7 +65,7 @@ class EventListViewEditcss extends JViewLegacy {
 		JRequest::setVar( 'hidemainmenu', 1 );
 
 		//add css to document
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
 		//read the the stylesheet
 		jimport('joomla.filesystem.file');

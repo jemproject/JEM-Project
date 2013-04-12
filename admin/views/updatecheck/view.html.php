@@ -1,26 +1,23 @@
 <?php
 /**
- * $Id$
- * @package Joomla
- * @subpackage Eventlist
- * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @version $Id$
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- *
- * Eventlist is maintained by the community located at
- * http://www.joomlaeventmanager.net
- *
- * Eventlist is free software; you can redistribute it and/or
+ 
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
  *
- * Eventlist is distributed in the hope that it will be useful,
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 defined( '_JEXEC' ) or die;
@@ -28,13 +25,12 @@ defined( '_JEXEC' ) or die;
 jimport( 'joomla.application.component.view');
 
 /**
- * View class for the EventList Updatecheck screen
+ * View class for the JEM Updatecheck screen
  *
- * @package Joomla
- * @subpackage EventList
+ * @package JEM
  * @since 0.9
  */
-class EventListViewUpdatecheck extends JViewLegacy {
+class JEMViewUpdatecheck extends JViewLegacy {
 
 	function display($tpl = null) {
 
@@ -48,7 +44,7 @@ class EventListViewUpdatecheck extends JViewLegacy {
 
 		//add css
 		$document->addStyleSheet('templates/'.$template.'/css/general.css');
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
 		//Get data from the model
 		$updatedata      = & $this->get( 'Updatedata');

@@ -1,26 +1,29 @@
 /**
  * @version 1.1 $Id$
- * @package Joomla
- * @subpackage EventList
- * @copyright (C) 2005 - 2009 Christoph Lukes
- * @author Sascha Karnatz
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- * EventList is free software; you can redistribute it and/or
+ * @author Sascha Karnatz
+ 
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
- * EventList is distributed in the hope that it will be useful,
+ *
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
 
+/**
  * Comments in German
  * Function: dieses Javascript ermoeglicht es automatisch die Metatags zu befuellen
-**/
+ */
 
 // Variablen werden als global definiert, da sie ueber mehrere Funktion hinweg genutzt werden
 var $keyword;			// Array - aufgeschlitete Variablen, welche einem HTML-Tag zugeordnet werden kann
@@ -52,7 +55,7 @@ function switchstart() {	// Diese Funktion uebergibt alle relevanten Feldern ein
 			}
 		}
 	} catch(e) {
-		//alert("Error occurred! Eventlist SEO - Javascript stopped!");
+		//alert("Error occurred! JEM SEO - Javascript stopped!");
 	}
 }
 

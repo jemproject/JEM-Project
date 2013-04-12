@@ -1,28 +1,23 @@
 <?php
 /**
  * @version development 
- * @package Joomla
- * @subpackage JEM
- * @copyright JEM (C) 2013 Joomlaeventmanager.net / EventList (C) 2005 - 2008 Christoph Lukes
- *
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- * JEM is based on EventList made by Christoph Lukes from schlu.net
- *
- * JEM can be downloaded from www.joomlaeventmanager.net
- * You can visit the site for support & downloads
- * 
+ 
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
+ *
  * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with redEVENT; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 // no direct access
@@ -31,13 +26,12 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.model');
 
 /**
- * EventList Component Details Model
+ * JEM Component Details Model
  *
- * @package Joomla
- * @subpackage EventList
- * @since		0.9
+ * @package JEM
+ * @since 0.9
  */
-class EventListModelDetails extends JModelLegacy
+class JEMModelDetails extends JModelLegacy
 {
 	/**
 	 * Details data in details array
@@ -123,8 +117,8 @@ class EventListModelDetails extends JModelLegacy
 		//check session if uservisit already recorded
 		$session 	= JFactory::getSession();
 		$hitcheck = false;
-		if ($session->has('hit', 'eventlist')) {
-			$hitcheck 	= $session->get('hit', 0, 'eventlist');
+		if ($session->has('hit', 'jem')) {
+			$hitcheck 	= $session->get('hit', 0, 'jem');
 			$hitcheck 	= in_array($this->_details->did, $hitcheck);
 		}
 		if (!$hitcheck) {
@@ -133,7 +127,7 @@ class EventListModelDetails extends JModelLegacy
 
 			$stamp = array();
 			$stamp[] = $this->_details->did;
-			$session->set('hit', $stamp, 'eventlist');
+			$session->set('hit', $stamp, 'jem');
 		}
 
 		return $this->_details;

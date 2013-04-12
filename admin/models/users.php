@@ -1,22 +1,23 @@
 <?php
 /**
- * @version 1.0 $Id: venues.php 662 2008-05-09 22:28:53Z schlu $
- * @package Joomla
- * @subpackage EventList
- * @copyright (C) 2005 - 2008 Christoph Lukes
+ * @version 1.0 $Id$
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- * EventList is free software; you can redistribute it and/or
+ 
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
- * EventList is distributed in the hope that it will be useful,
+ *
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 // no direct access
@@ -25,13 +26,12 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.model');
 
 /**
- * EventList Component users Model
+ * JEM Component users Model
  *
- * @package Joomla
- * @subpackage EventList
- * @since		1.1
+ * @package JEM
+ * @since 1.1
  */
-class EventListModelUsers extends JModelLegacy
+class JEMModelUsers extends JModelLegacy
 {
 	/**
 	 * data array

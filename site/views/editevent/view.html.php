@@ -1,23 +1,25 @@
 <?php
 /**
  * @version 1.1 $Id$
- * @package Joomla
- * @subpackage EventList
- * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- * EventList is free software; you can redistribute it and/or
+ 
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
- * EventList is distributed in the hope that it will be useful,
+ *
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
+
 // no direct access
 defined( '_JEXEC' ) or die;
 
@@ -26,11 +28,10 @@ jimport( 'joomla.application.component.view');
 /**
  * HTML View class for the EditeventView
  *
- * @package Joomla
- * @subpackage EventList
+ * @package JEM
  * @since 0.9
  */
-class EventListViewEditevent extends JViewLegacy
+class JEMViewEditevent extends JViewLegacy
 {
 	/**
 	 * Creates the output for event submissions
@@ -73,7 +74,7 @@ class EventListViewEditevent extends JViewLegacy
 		}
 		
 		//build selectlists
-		$categories = eventlist_cats::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8 class="inputbox required validate-cid"');
+		$categories = JEMCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8 class="inputbox required validate-cid"');
 		//Get requests
 		$id					= JRequest::getInt('id');
 
@@ -85,8 +86,8 @@ class EventListViewEditevent extends JViewLegacy
 		JHTML::_('behavior.modal', 'a.modal');
 
 		//add css file
-		$doc->addStyleSheet($this->baseurl.'/media/com_jem/css/eventlist.css');
-		$doc->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
+		$doc->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		$doc->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		//Set page title
 		$id ? $title = JText::_( 'COM_JEM_EDIT_EVENT' ) : $title = JText::_( 'COM_JEM_ADD_EVENT' );
@@ -217,7 +218,7 @@ class EventListViewEditevent extends JViewLegacy
 		$lists['order'] 		= $filter_order;
 
 		$document->setTitle(JText::_( 'COM_JEM_SELECTVENUE' ));
-		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/eventlist.css');
+		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 
 		$filters = array();
 		$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_VENUE' ) );
