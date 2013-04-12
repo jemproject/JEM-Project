@@ -192,7 +192,7 @@
 
         <td width="50%">
 			<fieldset class="adminform">
-			<legend><?php echo JText::_( 'COM_JEM_WIDTH_VENUE_COLUMN' ); ?></legend>
+			<legend><?php echo JText::_( 'COM_JEM_VENUE_COLUMN' ); ?></legend>
 				<table class="admintable" cellspacing="1">
 				<tbody>
 	  				<tr>
@@ -249,7 +249,7 @@
 			</fieldset>
 
 			<fieldset class="adminform">
-			<legend><?php echo JText::_( 'COM_JEM_WIDTH_STATE_COLUMN' ); ?></legend>
+			<legend><?php echo JText::_( 'COM_JEM_STATE_COLUMN' ); ?></legend>
 				<table class="admintable" cellspacing="1">
 				<tbody>
 					<tr>
