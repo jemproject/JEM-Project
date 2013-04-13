@@ -1,28 +1,23 @@
 <?php
 /**
  * @version development 
- * @package Joomla
- * @subpackage JEM
- * @copyright JEM (C) 2013 Joomlaeventmanager.net / EventList (C) 2005 - 2008 Christoph Lukes
- *
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- * JEM is based on EventList made by Christoph Lukes from schlu.net
- *
- * JEM can be downloaded from www.joomlaeventmanager.net
- * You can visit the site for support & downloads
- * 
+ 
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
+ *
  * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with redEVENT; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR); 
@@ -31,8 +26,7 @@ defined('_JEXEC') or die;
 /**
  * Holds the logic for attachments manipulation
  *
- * @package Joomla
- * @subpackage EventList
+ * @package JEM
  */
 class ELAttach extends JObject {
 

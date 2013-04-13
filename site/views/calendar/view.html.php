@@ -1,20 +1,23 @@
 <?php
 /**
  * @version 1.1 $Id$
- * @package Joomla
- * @subpackage EventList
- * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- * EventList is free software; you can redistribute it and/or
+ 
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
- * EventList is distributed in the hope that it will be useful,
+ *
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
+ *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 // no direct access
@@ -29,11 +32,10 @@ require_once (JPATH_COMPONENT_SITE.DS.'classes'.DS.'calendar.class.php');
 /**
  * HTML View class for the Calendar View
  *
- * @package Joomla
- * @subpackage EventList
+ * @package JEM
  * @since 1.1
  */
-class EventListViewCalendar extends JViewLegacy
+class JEMViewCalendar extends JViewLegacy
 {
     /**
      * Creates the Calendar View
@@ -57,9 +59,9 @@ class EventListViewCalendar extends JViewLegacy
         $pathway 	=  $app->getPathWay();
 
         //add css file
-        $document->addStyleSheet($this->baseurl.'/media/com_jem/css/eventlist.css');
-        $document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
-        $document->addStyleSheet($this->baseurl.'/media/com_jem/css/eventlistcalendar.css');
+        $document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+        $document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+        $document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendar.css');
         
         // add javascript
         $document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');

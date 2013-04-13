@@ -1,22 +1,23 @@
 <?php
 /**
  * @version 1.1 $Id$
- * @package Joomla
- * @subpackage EventList
- * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- * EventList is free software; you can redistribute it and/or
+ 
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
- * EventList is distributed in the hope that it will be useful,
+ *
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 // no direct access
@@ -25,13 +26,12 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.model');
 
 /**
- * EventList Component search Model
+ * JEM Component search Model
  *
- * @package Joomla
- * @subpackage EventList
- * @since		0.9
+ * @package JEM
+ * @since 0.9
  */
-class EventListModelSearch extends JModelLegacy
+class JEMModelSearch extends JModelLegacy
 {
 	/**
 	 * Events data array
@@ -150,8 +150,8 @@ class EventListModelSearch extends JModelLegacy
 		if (empty($this->_query))
 		{
 			// Get the WHERE and ORDER BY clauses for the query
-			$where		= $this->_buildEventListWhere();
-			$orderby	= $this->_buildEventListOrderBy();
+			$where		= $this->_buildWhere();
+			$orderby	= $this->_buildOrderBy();
 	
 			//Get Events from Database
 			$this->_query = 'SELECT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription,'
@@ -176,7 +176,7 @@ class EventListModelSearch extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildEventListOrderBy()
+	function _buildOrderBy()
 	{
 		$filter_order		= $this->getState('filter_order');
 		$filter_order_dir	= $this->getState('filter_order_dir');
@@ -192,7 +192,7 @@ class EventListModelSearch extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildEventListWhere()
+	function _buildWhere()
 	{
 		$app =  JFactory::getApplication();
 
@@ -290,7 +290,7 @@ class EventListModelSearch extends JModelLegacy
 		}
 		// filter category
 		if ($filter_category) {
-			$cats = eventlist_cats::getChilds((int) $filter_category);
+			$cats = JEMCategories::getChilds((int) $filter_category);
 			$where .= ' AND rel.catid IN (' . implode(', ', $cats) .')';
 		}
 			
@@ -432,7 +432,7 @@ class EventListModelSearch extends JModelLegacy
     	}	
     
 		//get list of the items
-    	return eventlist_cats::treerecurse($top_id, '', array(), $children, true, max(0, $levellimit-1));
+    	return JEMCategories::treerecurse($top_id, '', array(), $children, true, max(0, $levellimit-1));
   	}
 }
 ?>

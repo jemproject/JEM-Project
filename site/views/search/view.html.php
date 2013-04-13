@@ -1,22 +1,23 @@
 <?php
 /**
  * @version 1.1 $Id$
- * @package Joomla
- * @subpackage EventList
- * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- * EventList is free software; you can redistribute it and/or
+ 
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
- * EventList is distributed in the hope that it will be useful,
+ *
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 // no direct access
@@ -25,13 +26,12 @@ defined( '_JEXEC' ) or die;
 jimport( 'joomla.application.component.view');
 
 /**
- * HTML View class for the EventList View
+ * HTML View class for the JEM View
  *
- * @package Joomla
- * @subpackage EventList
+ * @package JEM
  * @since 0.9
  */
-class EventListViewSearch extends JViewLegacy
+class JEMViewSearch extends JViewLegacy
 {
 	/**
 	 * Creates the Simple List View
@@ -52,8 +52,8 @@ class EventListViewSearch extends JViewLegacy
 		$pathway 	=  $app->getPathWay();
 
 		//add css file
-		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/eventlist.css');
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
+		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
     	
 		// get variables
 		$limitstart        = JRequest::getVar('limitstart', 0, '', 'int');
@@ -89,11 +89,11 @@ class EventListViewSearch extends JViewLegacy
 		$pathway->setItemName( 1, $item->title );
 		
 		if ( $task == 'archive' ) {
-			$pathway->addItem(JText::_( 'COM_JEM_ARCHIVE' ), JRoute::_('index.php?view=eventlist&task=archive') );
-			$print_link = JRoute::_('index.php?view=eventlist&task=archive&tmpl=component&print=1');
+			$pathway->addItem(JText::_( 'COM_JEM_ARCHIVE' ), JRoute::_('index.php?view=eventslist&task=archive') );
+			$print_link = JRoute::_('index.php?view=eventslist&task=archive&tmpl=component&print=1');
 			$pagetitle = $params->get('page_title').' - '.JText::_( 'COM_JEM_ARCHIVE' );
 		} else {
-			$print_link = JRoute::_('index.php?view=eventlist&tmpl=component&print=1');
+			$print_link = JRoute::_('index.php?view=eventslist&tmpl=component&print=1');
 			$pagetitle = $params->get('page_title');
 		}
 		
@@ -108,7 +108,7 @@ class EventListViewSearch extends JViewLegacy
 		if ($maintainer || $genaccess ) $dellink = 1;
 
 		//add alternate feed link
-		$link    = 'index.php?option=com_jem&view=eventlist&format=feed';
+		$link    = 'index.php?option=com_jem&view=eventslist&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -119,7 +119,7 @@ class EventListViewSearch extends JViewLegacy
 		
 		if ($lists['filter']) {
 			//$uri->setVar('filter', JRequest::getString('filter'));
-			//$filter		= $app->getUserStateFromRequest('com_jem.eventlist.filter', 'filter', '', 'string');
+			//$filter		= $app->getUserStateFromRequest('com_jem.jem.filter', 'filter', '', 'string');
 			$uri->setVar('filter', $lists['filter']);
 			$uri->setVar('filter_type', JRequest::getString('filter_type'));
 		} else {
@@ -131,7 +131,7 @@ class EventListViewSearch extends JViewLegacy
 		$categories   = $this->get('CategoryTree');
 		$catoptions   = array();
 		$catoptions[] = JHTML::_('select.option', '0', JText::_('COM_JEM_SELECT_CATEGORY'));
-		$catoptions   = array_merge($catoptions, eventlist_cats::getcatselectoptions($categories));
+		$catoptions   = array_merge($catoptions, JEMCategories::getcatselectoptions($categories));
 		$selectedcats = ($filter_category) ? array($filter_category) : array();
     
 		//build selectlists

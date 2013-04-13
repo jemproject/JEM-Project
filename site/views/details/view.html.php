@@ -1,22 +1,23 @@
 <?php
 /**
  * @version 1.1 $Id$
- * @package Joomla
- * @subpackage EventList
- * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- * EventList is free software; you can redistribute it and/or
+ 
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
- * EventList is distributed in the hope that it will be useful,
+ *
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 // no direct access
@@ -25,13 +26,12 @@ defined( '_JEXEC' ) or die;
 jimport( 'joomla.application.component.view');
 
 /**
- * HTML Details View class of the EventList component
+ * HTML Details View class of the JEM component
  *
- * @package Joomla
- * @subpackage EventList
+ * @package JEM
  * @since 0.9
  */
-class EventListViewDetails extends JViewLegacy
+class JEMViewDetails extends JViewLegacy
 {
 	/**
 	 * Creates the output for the details view
@@ -75,8 +75,8 @@ class EventListViewDetails extends JViewLegacy
 		$cid		= JRequest::getInt('cid', 0);
 
 		//add css file
-		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/eventlist.css');
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #eventlist dd { height: 1%; }</style><![endif]-->');
+		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		//Print
 		$pop	= JRequest::getBool('pop');
@@ -87,17 +87,17 @@ class EventListViewDetails extends JViewLegacy
 			$params->set( 'popup', 1 );
 		}
 
-		$print_link = JRoute::_( EventListHelperRoute::getRoute($row->slug).'&print=1&tmpl=component' );
+		$print_link = JRoute::_( JEMHelperRoute::getRoute($row->slug).'&print=1&tmpl=component' );
 
 		//pathway
-		$cats		= new eventlist_cats($cid);
+		$cats		= new JEMCategories($cid);
     $parents	= $cats->getParentlist();
 		$pathway 	=  $app->getPathWay();
 		$pathway->setItemName( 1, $item->title );
 		foreach($parents as $parent) {
 			$pathway->addItem( $this->escape($parent->catname), JRoute::_('index.php?view=categoryevents&id='.$parent->categoryslug));
 		}
-		$pathway->addItem( $this->escape($row->title), JRoute::_( EventListHelperRoute::getRoute($row->slug) ));
+		$pathway->addItem( $this->escape($row->title), JRoute::_( JEMHelperRoute::getRoute($row->slug) ));
 		
 		//Get images
 		$dimage = ELImage::flyercreator($row->datimage, 'event');
@@ -215,7 +215,7 @@ class EventListViewDetails extends JViewLegacy
     }
 		
 		// load dispatcher for plugins    
-		JPluginHelper::importPlugin( 'eventlist' );
+		JPluginHelper::importPlugin( 'jem' );
 		$row->pluginevent = new stdClass();
 		$results = $dispatcher->trigger('onEventDetailsEnd', array ($row->did, $this->escape($row->title)));
 		$row->pluginevent->onEventDetailsEnd = trim(implode("\n", $results));

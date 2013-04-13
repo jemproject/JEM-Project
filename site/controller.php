@@ -1,22 +1,23 @@
 <?php
 /**
  * @version 1.1 $Id$
- * @package Joomla
- * @subpackage EventList
- * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- * EventList is free software; you can redistribute it and/or
+ 
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
- * EventList is distributed in the hope that it will be useful,
+ *
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
  if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
@@ -25,13 +26,12 @@ defined( '_JEXEC' ) or die;
 jimport('joomla.application.component.controller');
 
 /**
- * EventList Component Controller
+ * JEM Component Controller
  *
- * @package Joomla
- * @subpackage EventList
+ * @package JEM
  * @since 0.9
  */
-class EventListController extends JControllerLegacy
+class JEMController extends JControllerLegacy
 {
 	/**
 	 * Constructor
@@ -82,7 +82,7 @@ class EventListController extends JControllerLegacy
 			$row->load($id);
 			$row->checkin();
 
-			$this->setRedirect( JRoute::_( EventListHelperRoute::getRoute($id), false) );
+			$this->setRedirect( JRoute::_( JEMHelperRoute::getRoute($id), false) );
 
 		} else {
 			$link = JRequest::getString('referer', JURI::base(), 'post');
@@ -214,7 +214,7 @@ class EventListController extends JControllerLegacy
 				$link 	= JRoute::_('index.php?view=venueevents&id='.$returnid, false) ;
 			}
 
-			JPluginHelper::importPlugin( 'eventlist' );
+			JPluginHelper::importPlugin( 'jem' );
       		$dispatcher =& JDispatcher::getInstance();
       		$res = $dispatcher->trigger( 'onVenueEdited', array( $returnid, $isNew ) );
 
@@ -276,9 +276,9 @@ class EventListController extends JControllerLegacy
 		if ($returnid = $model->store($post, $file)) {
 
 			$msg 	= JText::_( 'COM_JEM_EVENT_SAVED' );
-			$link 	= JRoute::_( EventListHelperRoute::getRoute($returnid), false) ;
+			$link 	= JRoute::_( JEMHelperRoute::getRoute($returnid), false) ;
 			
-			JPluginHelper::importPlugin( 'eventlist' );
+			JPluginHelper::importPlugin( 'jem' );
 			$dispatcher =& JDispatcher::getInstance();
 			$res = $dispatcher->trigger( 'onEventEdited', array( $returnid, $isNew ) );			
 
@@ -314,19 +314,19 @@ class EventListController extends JControllerLegacy
 		$id 	= JRequest::getInt( 'rdid', 0, 'post' );
 
 		// Get the model
-		$model = & $this->getModel('Details', 'EventListModel');
+		$model = & $this->getModel('Details', 'JEMModel');
 
 		$model->setId($id);
 		$register_id = $model->userregister();
 		if (!$register_id) 
 		{
 			$msg = $model->getError();
-			$this->setRedirect(JRoute::_( EventListHelperRoute::getRoute($id), false), $msg, 'error' );
+			$this->setRedirect(JRoute::_( JEMHelperRoute::getRoute($id), false), $msg, 'error' );
 			$this->redirect();
 			return;
 		}
 		
-		JPluginHelper::importPlugin( 'eventlist' );
+		JPluginHelper::importPlugin( 'jem' );
     $dispatcher = JDispatcher::getInstance();
    	$res = $dispatcher->trigger( 'onEventUserRegistered', array( $register_id ) );
 
@@ -335,7 +335,7 @@ class EventListController extends JControllerLegacy
 
 		$msg = JText::_( 'COM_JEM_REGISTERED_SUCCESSFULL' );
 
-		$this->setRedirect(JRoute::_( EventListHelperRoute::getRoute($id), false), $msg );
+		$this->setRedirect(JRoute::_( JEMHelperRoute::getRoute($id), false), $msg );
 	}
 
 	/**
@@ -351,14 +351,14 @@ class EventListController extends JControllerLegacy
 		$id 	= JRequest::getInt( 'rdid', 0, 'post' );
 
 		// Get/Create the model
-		$model =  $this->getModel('Details', 'EventListModel');
+		$model =  $this->getModel('Details', 'JEMModel');
 
 		$model->setId($id);
 		$model->delreguser();
 		
 		ELHelper::updateWaitingList($id);
 		
-		JPluginHelper::importPlugin( 'eventlist' );
+		JPluginHelper::importPlugin( 'jem' );
     $dispatcher = JDispatcher::getInstance();
     $res = $dispatcher->trigger( 'onEventUserUnregistered', array( $id ) ); 
 
@@ -366,7 +366,7 @@ class EventListController extends JControllerLegacy
 		$cache->clean();
 
 		$msg = JText::_( 'COM_JEM_UNREGISTERED_SUCCESSFULL' );
-		$this->setRedirect( JRoute::_( EventListHelperRoute::getRoute($id), false), $msg );
+		$this->setRedirect( JRoute::_( JEMHelperRoute::getRoute($id), false), $msg );
 	}
 
 	/**
@@ -386,7 +386,7 @@ class EventListController extends JControllerLegacy
 		$user_offset 	= $app->getCfg( 'offset_user' );
 
 		//get Data from model
-		$model =  $this->getModel('Details', 'EventListModel');
+		$model =  $this->getModel('Details', 'JEMModel');
 		$model->setId((int)$id);
 
 		$row = $model->getDetails();
