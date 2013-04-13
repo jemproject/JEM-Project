@@ -50,9 +50,22 @@ foreach($this->categories as $category) :
 
 <div class="cat<?php echo $category->id; ?> floattext">
 
-<?php if ($category->image) : ?>
+<?php if ($category->image) { ?>
 	<div class="catimg">
 	  	<?php
+	  		
+	  		$elsettings 	=  ELHelper::config();
+	  		if ($category->image != '') {
+            $path = "file_path";
+            $mediaparams = JComponentHelper::getParams('com_media');
+            $imgattribs['width'] = $elsettings->imagewidth;
+			$imgattribs['height'] = $elsettings->imagehight;
+
+			$category->image = JHTML::image($mediaparams->get($path, 'images').'/jem/categories/'.$category->image, $category->catname, $imgattribs);
+		} else {
+			$category->image = JHTML::image('media/com_jem/images/noimage.png', $category->catname);
+		}
+	  		//echo $category->image;
 	  		echo JHTML::_('link', JRoute::_($category->linktarget), $category->image);
 		?>
 		<p>
@@ -62,7 +75,18 @@ foreach($this->categories as $category) :
 			?>
 		</p>
 	</div>
-<?php endif; ?>
+<?php } else {; ?>
+
+<div class="catimg">
+<?php 
+$category->image = JHTML::image('media/com_jem/images/noimage.png', $category->catname);
+echo JHTML::_('link', JRoute::_($category->linktarget), $category->image);
+?>
+
+</div>
+<?php } ?>
+
+
 
 	<div class="catdescription"><?php echo $category->catdescription; ?>
 		<p>
@@ -114,7 +138,7 @@ endforeach;
 
 <!--pagination-->
 
-<div class="pageslinks">
+<div class="pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 
