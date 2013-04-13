@@ -57,7 +57,7 @@ class JEMViewEventslist extends JViewLegacy
 
 		// get variables
 		$limitstart	= JRequest::getVar('limitstart', 0, '', 'int');
-		$limit		= $app->getUserStateFromRequest('com_jem.jem.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit		= $app->getUserStateFromRequest('com_jem.eventslist.limit', 'limit', $params->def('display_num', 0), 'int');
 		$task 		= JRequest::getWord('task');
 		$pop		= JRequest::getBool('pop');
 

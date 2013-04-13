@@ -61,7 +61,7 @@ defined( '_JEXEC' ) or die;
 <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 
 <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
-<input type="hidden" name="view" value="jem" />
+<input type="hidden" name="view" value="eventslist" />
 </p>
 </form>
 
