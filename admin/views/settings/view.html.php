@@ -95,9 +95,9 @@ class EventListViewSettings extends JViewLegacy {
 
  	  	//Create custom group levels to include into the public group selectList
  	  	$access   = array();
- 	  	$access[] = JHTML::_('select.option', -2, '- disabled, only Admins -' );
- 	  	//$access[] = JHTML::_('select.option', 0 , '- Everybody -' );
- 	  	$access[] = JHTML::_('select.option', -1, '- All Registered Users -' );
+ 	  	$access[] = JHTML::_('select.option', -2, JText::_( 'COM_JEM_ONLYADMINS' ) );
+ 	  	//$access[] = JHTML::_('select.option', 0 , JText::_( 'COM_JEM_EVERYBODY' ) );
+ 	  	$access[] = JHTML::_('select.option', -1, JText::_( 'COM_JEM_ALLREGISTERED' ) );
  	  	//$pub_groups = array_merge( $pub_groups, $acl->get_group_children_tree( null, 'Registered', true ) );
 		//$access = array_merge( $access, $acl->get_group_children_tree( null, 'USERS', false ) );
 
