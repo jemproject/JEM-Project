@@ -72,7 +72,7 @@ defined( '_JEXEC' ) or die;
 </div>
 
 <?php
-echo ELOutput::icalbutton('', 'jem');
+echo ELOutput::icalbutton('', 'eventslist');
 
 ?>
 
