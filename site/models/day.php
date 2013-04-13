@@ -1,22 +1,23 @@
 <?php
 /**
  * @version 1.1 $Id$
- * @package Joomla
- * @subpackage EventList
- * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- * EventList is free software; you can redistribute it and/or
+ 
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
- * EventList is distributed in the hope that it will be useful,
+ *
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 // no direct access
@@ -25,13 +26,12 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.model');
 
 /**
- * EventList Component Day Model
+ * JEM Component Day Model
  *
- * @package Joomla
- * @subpackage EventList
- * @since		0.9
+ * @package JEM
+ * @since 0.9
  */
-class EventListModelDay extends JModelLegacy
+class JEMModelDay extends JModelLegacy
 {
 	/**
 	 * Events data array
@@ -226,8 +226,8 @@ class EventListModelDay extends JModelLegacy
 	function _buildQuery()
 	{
 		// Get the WHERE and ORDER BY clauses for the query
-		$where		= $this->_buildEventListWhere();
-		$orderby	= $this->_buildEventListOrderBy();
+		$where		= $this->_buildWhere();
+		$orderby	= $this->_buildOrderBy();
 
 		//Get Events from Database
 		$query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription,'
@@ -250,7 +250,7 @@ class EventListModelDay extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildEventListOrderBy()
+	function _buildOrderBy()
 	{
 		$filter_order		= $this->getState('filter_order');
 		$filter_order_dir	= $this->getState('filter_order_dir');
@@ -269,7 +269,7 @@ class EventListModelDay extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildEventListWhere()
+	function _buildWhere()
 	{
 		$app =  JFactory::getApplication();
         $elsettings =  ELHelper::config();

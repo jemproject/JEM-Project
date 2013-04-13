@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="1.6" type="plugin" group="search" method="upgrade">
+	<name>JEM - Search Plugin</name>
+	<author>JEM Community</author>
+	<authorEmail>info@joomlaeventmanager.net</authorEmail>
+	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
+	<creationDate>11 April 2011</creationDate>
+	<copyright>Copyright (C) 2013-2013 joomlaeventmanager.net</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<version>2.0.0.1</version>
+	<description>JEM Search Plugin. JEM is based on Eventlist by Christoph Lukes (http://www.schlu.net)</description>
+
+	<files>
+		<filename plugin="jem">jem.php</filename>
+	</files>
+
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.plg_search_jem.ini</language>
+		<language tag="de-DE">de-DE/de-DE.plg_search_jem.ini</language>
+    	<language tag="fr-FR">fr-FR/fr-FR.plg_search_jem.ini</language>
+	</languages>
+
+	<config>
+	<fields name="params">
+	<fieldset name="basic">
+		<field name="search_limit" type="text" size="5" default="50" label="SEARCH LIMIT" description="NUMBER ITEMS RETURN"/>
+	</fieldset>
+	</fields>
+   </config>
+</extension>

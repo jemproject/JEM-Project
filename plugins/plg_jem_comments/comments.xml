@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="2.5" type="plugin" group="jem" method="upgrade">
+  <name>JEM - Comments Plugin</name>
+  <creationDate>11 April 2011</creationDate>
+  <author>JEM Community</author>
+  <authorEmail>info@joomlaeventmanager.net</authorEmail>
+  <authorUrl>http://www.joomlaeventmanager.net</authorUrl>
+  <copyright>Copyright (C) 2013-2013 joomlaeventmanager.net</copyright>
+  <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+  <version>1.1beta3.2.3-6</version>
+  <description>JEM Comments Plugin. JEM is based on Eventlist by Christoph Lukes (http://www.schlu.net)</description>
+  
+	<files>
+		<filename plugin="comments">comments.php</filename>
+	</files>
+    
+	<languages>
+		<language tag="en-GB">languages/en-GB.plg_jem_comments.ini</language>
+	</languages>
+  <config>
+	<fields name="params">
+	<fieldset name="basic">
+    <field type="list" name="commentsystem" label="COMMENTSYSTEM" default="0" description="COMMENTSYSTEM DESC">
+    	<option value="0">NONE</option>
+		<option value="1">JOMCOMMENTS</option>
+		<option value="2">JCOMMENTS</option>
+		<option value="3">JXTENDED COMMENTS</option>
+	</field>
+		</fieldset>
+	</fields>
+   </config>
+</extension>

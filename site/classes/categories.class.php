@@ -1,33 +1,28 @@
 <?php
 /**
  * @version development 
- * @package Joomla
- * @subpackage JEM
- * @copyright JEM (C) 2013 Joomlaeventmanager.net / EventList (C) 2005 - 2008 Christoph Lukes
- *
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- * JEM is based on EventList made by Christoph Lukes from schlu.net
- *
- * JEM can be downloaded from www.joomlaeventmanager.net
- * You can visit the site for support & downloads
- * 
+ 
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
+ *
  * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with redEVENT; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 defined( '_JEXEC' ) or die;
 
-class eventlist_cats
+class JEMCategories
 {
 	/**
 	 * id
@@ -55,7 +50,7 @@ class eventlist_cats
 	 *
 	 * @param int category id
 	 */
-	function eventlist_cats($cid)
+	function JEMCategories($cid)
 	{
 		$this->id = $cid;
 		$this->buildParentCats($this->id);
@@ -155,7 +150,7 @@ class eventlist_cats
 			$children[$parent] = $list;
 		}
 		//get list of the items
-		$list = eventlist_cats::treerecurse(0, '', array(), $children, true, max(0, $levellimit-1));
+		$list = JEMCategories::treerecurse(0, '', array(), $children, true, max(0, $levellimit-1));
     	
 		return $list;
 	}
@@ -199,7 +194,7 @@ class eventlist_cats
 				$list[$id]->treename = "$indent$txt";
 				$list[$id]->children = count( @$children[$id] );
 
-				$list = eventlist_cats::treerecurse( $id, $indent . $spacer, $list, $children, $title, $maxlevel, $level+1, $type );
+				$list = JEMCategories::treerecurse( $id, $indent . $spacer, $list, $children, $title, $maxlevel, $level+1, $type );
 			}
 		}
 		return $list;
@@ -223,7 +218,7 @@ class eventlist_cats
 			$catlist[] 	= JHTML::_( 'select.option', '0', JText::_( 'COM_JEM_TOPLEVEL' ) );
 		}
 		
-		$catlist = array_merge($catlist, eventlist_cats::getcatselectoptions($list));
+		$catlist = array_merge($catlist, JEMCategories::getcatselectoptions($list));
 		
 		return JHTML::_('select.genericlist', $catlist, $name, $class, 'value', 'text', $selected );
 	}
@@ -279,7 +274,7 @@ class eventlist_cats
       array_push($list, $child);
       $children[$parent] = $list;
     }
-    return eventlist_cats::_getChildsRecurse($id, $children);    
+    return JEMCategories::_getChildsRecurse($id, $children);    
 	}
 	
 	/**
@@ -294,7 +289,7 @@ class eventlist_cats
 		$result = array($id);
 		if (@$childs[$id]) {
 			foreach ($childs[$id] AS $c) {
-				$result = array_merge($result, eventlist_cats::_getChildsRecurse($c->id, $childs));
+				$result = array_merge($result, JEMCategories::_getChildsRecurse($c->id, $childs));
 			}
 		}
     return $result;

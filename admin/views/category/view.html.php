@@ -1,22 +1,23 @@
 <?php
 /**
  * @version 1.1 $Id$
- * @package Joomla
- * @subpackage EventList
- * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- * EventList is free software; you can redistribute it and/or
+ 
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
- * EventList is distributed in the hope that it will be useful,
+ *
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 defined( '_JEXEC' ) or die;
@@ -24,13 +25,12 @@ defined( '_JEXEC' ) or die;
 jimport( 'joomla.application.component.view');
 
 /**
- * View class for the EventList category screen
+ * View class for the JEM category screen
  *
- * @package Joomla
- * @subpackage EventList
+ * @package JEM
  * @since 0.9
  */
-class EventListViewCategory extends JViewLegacy {
+class JEMViewCategory extends JViewLegacy {
 
 	function display($tpl = null)
 	{
@@ -50,7 +50,7 @@ class EventListViewCategory extends JViewLegacy {
 		$cid 		= JRequest::getVar( 'cid' );
 
 		//add css to document
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/eventlistbackend.css');
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 		$document->addScript(JURI::root().'media/com_jem/js/attachments.js' );
 		// for color picker
     	$document->addStyleSheet(JURI::root().'media/com_jem/css/picker.css');
@@ -64,7 +64,7 @@ class EventListViewCategory extends JViewLegacy {
 			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_CATEGORY' ), 'categoriesedit' );
 
 			//set the submenu
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTLIST' ), 'index.php?option=com_jem');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
 			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
 			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
 			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
@@ -89,7 +89,7 @@ class EventListViewCategory extends JViewLegacy {
 		$model		=  $this->getModel();
 		$row     	=  $this->get( 'Data' );
 		$groups 	=  $this->get( 'Groups' );
-		$categories = eventlist_cats::getCategoriesTree(0);
+		$categories = JEMCategories::getCategoriesTree(0);
 
 		// fail if checked out not by 'me'
 		if ($row->id) {
@@ -111,7 +111,7 @@ class EventListViewCategory extends JViewLegacy {
 	$Lists['access'] 			= JHTML::_('access.assetgrouplist', 'access', $row->access);
 	
 	
-		$Lists['parent_id'] 		= eventlist_cats::buildcatselect($categories, 'parent_id', $row->parent_id, 1);
+		$Lists['parent_id'] 		= JEMCategories::buildcatselect($categories, 'parent_id', $row->parent_id, 1);
 
 
 		//build image select js and load the view

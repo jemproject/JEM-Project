@@ -1,26 +1,23 @@
 <?php
 /**
- * $Id$
- * @package Joomla
- * @subpackage Eventlist
- * @copyright (C) 2005 - 2009 Christoph Lukes
+ * @version $Id$
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- *
- * Eventlist is maintained by the community located at
- * http://www.joomlaeventmanager.net
- *
- * Eventlist is free software; you can redistribute it and/or
+ 
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
  *
- * Eventlist is distributed in the hope that it will be useful,
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 // no direct access
@@ -30,13 +27,12 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.model');
 
 /**
- * EventList Component Settings Model
+ * JEM Component Settings Model
  *
- * @package Joomla
- * @subpackage EventList
- * @since		0.9
+ * @package JEM
+ * @since 0.9
  */
-class EventListModelSettings extends JModelLegacy
+class JEMModelSettings extends JModelLegacy
 {
 	/**
 	 * Settings data
