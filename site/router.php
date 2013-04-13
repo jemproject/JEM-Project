@@ -117,9 +117,9 @@ function jemParseRoute($segments)
 
 		} break;
 
-		case 'jem':
+		case 'eventslist':
 		{
-			$vars['view'] = 'jem';
+			$vars['view'] = 'eventslist';
 			
 			$count = count($segments);
 			if($count == 2) {
