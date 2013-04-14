@@ -106,9 +106,9 @@ defined('_JEXEC') or die;
 </p>
 </form>
 
-<p class="pageslinks">
+<div class="pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>
-</p>
+</div>
 
 <p class="pagescounter">
 	<?php echo $this->pagination->getPagesCounter(); ?>

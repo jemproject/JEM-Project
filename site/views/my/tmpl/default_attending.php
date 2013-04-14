@@ -227,7 +227,7 @@ defined( '_JEXEC' ) or die;
 </p>
 </form>
 
-<div class="pageslinks">
+<div class="pagination">
   <?php echo $this->attending_pagination->getPagesLinks(); ?>
 </div>
 

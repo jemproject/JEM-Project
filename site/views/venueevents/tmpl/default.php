@@ -124,7 +124,7 @@ defined( '_JEXEC' ) or die;
 
 <!--pagination-->
 <?php if (!$this->params->get( 'popup' ) ) : ?>
-<div class="pageslinks">
+<div class="pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 

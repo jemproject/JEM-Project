@@ -259,7 +259,7 @@ defined( '_JEXEC' ) or die;
 </p>
 </form>
 
-<div class="pageslinks">
+<div class="pagination">
   <?php echo $this->events_pagination->getPagesLinks(); ?>
 </div>
 
