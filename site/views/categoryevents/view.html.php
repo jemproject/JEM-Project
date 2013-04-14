@@ -132,7 +132,12 @@ class JEMViewCategoryevents extends JViewLegacy
 		$maintainer = ELUser::ismaintainer();
 		$genaccess 	= ELUser::validate_user( $elsettings->evdelrec, $elsettings->delivereventsyes );
 
-		if ($maintainer || $genaccess ) $dellink = 1;
+		if ($maintainer || $genaccess ) 
+		{ 
+		$dellink = 1;
+		} else {
+		$dellink = 0;	
+		}
 
 		// Create the pagination object		
 		$pagination =  $this->get('Pagination');

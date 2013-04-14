@@ -100,7 +100,7 @@ $i = 0;
 <?php endforeach; ?>
 
 <!--pagination-->
-<div class="pageslinks">
+<div class="pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 

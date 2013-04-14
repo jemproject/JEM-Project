@@ -56,8 +56,25 @@ class JEMViewDay extends JViewLegacy
 			$title = html_entity_decode( $title );
 
 			// strip html from feed item category
-			$category = $this->escape( $row->catname );
+	/*		$category = $this->escape( $row->catname );
 			$category = html_entity_decode( $category );
+	*/
+	if (!empty($row->categories)) 
+    		  {
+       		 $category = array();
+        	 foreach ($row->categories AS $category2) {
+         	 $category[] = $category2->catname;
+       		 }
+       		 
+       		 // ading the , to the list when there are multiple category's
+       		 $category = $this->escape( implode(', ', $category) );
+        	 $category = html_entity_decode( $category );        
+     	     }
+     		 else {
+       		 $category = '';
+     		 }		
+			
+			
 
 			//Format date
 			if (ELHelper::isValidDate($row->dates)) 

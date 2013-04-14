@@ -52,7 +52,7 @@ defined( '_JEXEC' ) or die;
 	</tbody>
 </table>
 
-<div class="pageslinks">
+<div class="pagination">
   <?php echo $this->venues_pagination->getPagesLinks(); ?>
 </div>
 

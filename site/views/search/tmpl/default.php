@@ -71,7 +71,7 @@ $this->document->addScript( $this->baseurl.'/media/com_jem/js/search.js' );
 
 <!--footer-->
 
-<div class="pageslinks">
+<div class="pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 

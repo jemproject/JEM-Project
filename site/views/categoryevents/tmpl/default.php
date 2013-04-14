@@ -84,7 +84,7 @@ if (count($this->categories) && $this->category->id > 0) :
 <!--pagination-->
 
 <?php if (!$this->params->get( 'popup' ) ) : ?>
-<div class="pageslinks">
+<div class="pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 

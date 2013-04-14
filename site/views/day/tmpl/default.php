@@ -47,7 +47,7 @@ defined( '_JEXEC' ) or die;
 <!--footer-->
 
 <?php if (( $this->page > 0 ) && ( !$this->params->get( 'popup' ) )) : ?>
-<div class="pageslinks">
+<div class="pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 
