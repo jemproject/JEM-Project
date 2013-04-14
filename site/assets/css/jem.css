@@ -329,7 +329,7 @@ text-align:center; font-weight:bold;
  * @section pagination
  *
  */
-div#jem .pageslinks,
+div#jem .pagination,
 div#jem .pagescounter {
 text-align: center;
 }
@@ -661,7 +661,7 @@ margin-bottom: 20px;
 
 
 /** page navigation **/
-.pageslinks li{
+.pagination li{
 display:inline;
 padding:2px 5px;
 text-align:left;

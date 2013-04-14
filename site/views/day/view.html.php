@@ -96,7 +96,12 @@ class JEMViewDay extends JViewLegacy
 		$maintainer = ELUser::ismaintainer();
 		$genaccess 	= ELUser::validate_user( $elsettings->evdelrec, $elsettings->delivereventsyes );
 
-		if ($maintainer || $genaccess ) $dellink = 1;
+		if ($maintainer || $genaccess ) 
+		{ 
+		$dellink = 1;
+		} else {
+		$dellink = 0;	
+		}
 
 		//add alternate feed link
 		$link    = 'index.php?option=com_jem&view=day&format=feed&id=' . date('Ymd', strtotime($this->get('Day')));

@@ -111,7 +111,8 @@ defined('_JEXEC') or die;
 </div>
 
 <p class="pagescounter">
-	<?php echo $this->pagination->getPagesCounter(); ?>
+	<?php
+	// echo $this->pagination->getPagesCounter(); ?>
 </p>
 
 <p class="copyright">

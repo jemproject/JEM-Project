@@ -40,13 +40,13 @@ class JEMViewVenues extends JViewLegacy
 	 */
 	function display( )
 	{
-		$app = & JFactory::getApplication();
+		$app =  JFactory::getApplication();
 
-		$doc 	= & JFactory::getDocument();
+		$doc 	=  JFactory::getDocument();
 
 		// Get some data from the model
 		JRequest::setVar('limit', $app->getCfg('feed_limit'));
-		$rows = & $this->get('Data');
+		$rows =  $this->get('Data');
 
 		foreach ( $rows as $row )
 		{
@@ -55,7 +55,7 @@ class JEMViewVenues extends JViewLegacy
 			$title = html_entity_decode( $title );
 
 			// url link to article
-			// & used instead of &amp; as this is converted by feed creator
+			//  used instead of &amp; as this is converted by feed creator
 			$link = 'index.php?option=com_jem&view=venueevents&id='. $row->id;
 			$link = JRoute::_( $link );
 
