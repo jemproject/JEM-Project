@@ -112,17 +112,17 @@ class JEMViewVenues extends JViewLegacy
 		jimport('joomla.html.pagination');
 		$pagination = new JPagination($total, $limitstart, $limit);
 
-		$this->assignRef('rows' , 					$rows);
-		$this->assignRef('print_link' , 			$print_link);
-		$this->assignRef('params' , 				$params);
-		$this->assignRef('dellink' , 				$dellink);
-		$this->assignRef('pagination' , 				$pagination);
-		$this->assignRef('limit' , 					$limit);
-		$this->assignRef('total' , 					$total);
-		$this->assignRef('item' , 					$item);
-		$this->assignRef('elsettings' , 			$elsettings);
-		$this->assignRef('task' , 					$task);
-		$this->assignRef('pagetitle' , 				$pagetitle);
+		$this->rows 		= $rows;
+		$this->print_link 	= $print_link;
+		$this->params 		= $params;
+		$this->dellink 		= $dellink;
+		$this->pagination 	= $pagination;
+		$this->limit 		= $limit;
+		$this->total 		= $total;
+		$this->item 		= $item;
+		$this->elsettings 	= $elsettings;
+		$this->task 		= $task;
+		$this->pagetitle 	= $pagetitle;
 
 		parent::display($tpl);
 	}

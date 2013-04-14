@@ -174,22 +174,22 @@ class JEMViewSearch extends JViewLegacy
 			unset($cities);
 		}
 
-		$this->assign('lists' , 					$lists);
-		$this->assign('total',						$total);
-		$this->assign('action', 					$uri->toString());
+		$this->lists 			= $lists;
+		$this->total 			= $total;
+		$this->action 			= $uri->toString();
 
-		$this->assignRef('rows' ,            $rows);
-		$this->assignRef('task' ,            $task);
-		$this->assignRef('noevents' ,        $noevents);
-		$this->assignRef('print_link' ,      $print_link);
-		$this->assignRef('params' ,          $params);
-		$this->assignRef('dellink' ,         $dellink);
-		$this->assignRef('pagination' ,         $pagination);
-		$this->assignRef('elsettings' ,      $elsettings);
-		$this->assignRef('pagetitle' ,       $pagetitle);
-    $this->assignRef('filter_continent', $filter_continent);
-    $this->assignRef('filter_country',   $filter_country);
-    $this->assignRef('document',         $document);
+		$this->rows 			= $rows;
+		$this->task 			= $task;
+		$this->noevents 		= $noevents;
+		$this->print_link 		= $print_link;
+		$this->params 			= $params;
+		$this->dellink 			= $dellink;
+		$this->pagination 		= $pagination;
+		$this->elsettings 		= $elsettings;
+		$this->pagetitle 		= $pagetitle;
+    	$this->filter_continent = $filter_continent;
+    	$this->filter_country 	= $filter_country;
+    	$this->document 		= $document;
 
 		parent::display($tpl);
 	}

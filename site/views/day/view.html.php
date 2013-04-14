@@ -114,18 +114,18 @@ class JEMViewDay extends JViewLegacy
 		//create select lists
 		$lists	= $this->_buildSortLists();
 
-		$this->assign('lists' , 					$lists);
+		$this->lists 				= $lists;
 
-		$this->assignRef('rows' , 					$rows);
-		$this->assignRef('noevents' , 				$noevents);
-		$this->assignRef('print_link' , 			$print_link);
-		$this->assignRef('params' , 				$params);
-		$this->assignRef('dellink' , 				$dellink);
-		$this->assignRef('pagination' , 				$pagination);
-		$this->assignRef('page' , 					$page);
-		$this->assignRef('elsettings' , 			$elsettings);
-		$this->assignRef('lists' , 					$lists);
-		$this->assignRef('daydate' , 				$daydate);
+		$this->rows 				= $rows;
+		$this->noevents 			= $noevents;
+		$this->print_link 			= $print_link;
+		$this->params 				= $params;
+		$this->dellink 				= $dellink;
+		$this->pagination 			= $pagination;
+		$this->page 				= $page;
+		$this->elsettings 			= $elsettings;
+		$this->lists 				= $lists;
+		$this->daydate 				= $daydate;
 
 		parent::display($tpl);
 

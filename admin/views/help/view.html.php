@@ -76,9 +76,9 @@ class JEMViewHelp extends JViewLegacy {
 		$toc 		= JEMViewHelp::getHelpToc( $helpsearch );
 
 		//assign data to template
-		$this->assignRef('langTag'		, $langTag);
-		$this->assignRef('helpsearch'	, $helpsearch);
-		$this->assignRef('toc'			, $toc);
+		$this->langTag 		= $langTag;
+		$this->helpsearch	= $helpsearch;
+		$this->toc			= $toc;
 
 		parent::display($tpl);
 	}

@@ -85,10 +85,10 @@ class JEMViewEditcss extends JViewLegacy {
 		}
 
 		//assign data to template
-		$this->assignRef('css_path'		, $css_path);
-		$this->assignRef('content'		, $content);
-		$this->assignRef('filename'		, $filename);
-		$this->assignRef('ftp'			, $ftp);
+		$this->css_path		= $css_path;
+		$this->content		= $content;
+		$this->filename		= $filename;
+		$this->ftp 			= $ftp;
 		
 
 		parent::display($tpl);

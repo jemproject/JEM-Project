@@ -70,9 +70,9 @@ class JEMViewCategoryelement extends JViewLegacy {
 		$lists['search']= $search;
 
 		//assign data to template
-		$this->assignRef('lists'      	, $lists);
-		$this->assignRef('rows'      	, $rows);
-		$this->assignRef('pagination' 	, $pagination);
+		$this->lists 		= $lists;
+		$this->rows 		= $rows;
+		$this->pagination 	= $pagination;
 
 		parent::display($tpl);
 	}

@@ -130,14 +130,14 @@ class JEMViewVenue extends JViewLegacy {
 		unset($countries);
 
 		//assign data to template
-		$this->assignRef('row'      	, $row);
-		$this->assignRef('editor'      	, $editor);
-		$this->assignRef('settings'     , $settings);
-		$this->assignRef('nullDate'		, $nullDate);
-		$this->assignRef('imageselect' 	, $imageselect);
-		$this->assignRef('lists'  		, $lists);
+		$this->row 			= $row;
+		$this->editor 		= $editor;
+		$this->settings     = $settings;
+		$this->nullDate		= $nullDate;
+		$this->imageselect 	= $imageselect;
+		$this->lists 		= $lists;
 		$access2 = ELHelper::getAccesslevelOptions();
-		$this->assignRef('access'	, $access2);
+		$this->access 		= $access2;
 
 		parent::display($tpl);
 	}

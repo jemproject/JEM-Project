@@ -88,13 +88,13 @@ class JEMViewImagehandler extends JViewLegacy  {
 		
 		
 		if (count($images) > 0 || $search) {
-			$this->assignRef('images', 	$images);
-			$this->assignRef('folder', 	$folder);
-			$this->assignRef('task', 	$redi);
-			$this->assignRef('search', 	$search);
-			// $this->assignRef('state', 	$this->get('state'));
-			$this->assignRef('state', 	$state2);
-			$this->assignRef('pagination', $pagination);
+			$this->images 		= $images;
+			$this->folder 		= $folder;
+			$this->task 		= $redi;
+			$this->search 		= $search;
+			// $this->state		= $this->get('state');
+			$this->state 		= $state2;
+			$this->pagination 	= $pagination;
 			parent::display($tpl);
 		} else {
 			//no images in the folder, redirect to uploadscreen and raise notice
@@ -140,10 +140,10 @@ class JEMViewImagehandler extends JViewLegacy  {
 		$ftp = JClientHelper::setCredentialsFromRequest('ftp');
 
 		//assign data to template
-		$this->assignRef('task'      	, $task);
-		$this->assignRef('elsettings'  	, $elsettings);
-		$this->assignRef('request_url'	, $uri2);
-		$this->assignRef('ftp'			, $ftp);
+		$this->task 		= $task;
+		$this->elsettings 	= $elsettings;
+		$this->request_url 	= $uri2;
+		$this->ftp 			= $ftp;
 
 		parent::display($tpl);
 	}

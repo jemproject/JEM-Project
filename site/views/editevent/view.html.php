@@ -164,20 +164,20 @@ class JEMViewEditevent extends JViewLegacy
 			$lists['venueselect']    = JHTML::_('select.genericlist', $venuelist, 'locid', 'size="1" class="inputbox"', 'value', 'text', $row->locid );
     	}
     	
-		$this->assignRef('row' , 					$row);
-		$this->assignRef('categories' , 			$categories);
-		$this->assignRef('editor' , 				$editor);
-		$this->assignRef('dimage' , 				$dimage);
-		$this->assignRef('infoimage' , 				$infoimage);
-		$this->assignRef('delloclink' , 			$delloclink);
-		$this->assignRef('editoruser' , 			$editoruser);
-		$this->assignRef('elsettings' , 			$elsettings);
-		$this->assignRef('item' , 					$item);
-		$this->assignRef('params' , 				$params);
-    $this->assignRef('lists' ,         			$lists);
+		$this->row 			= $row;
+		$this->categories 	= $categories;
+		$this->editor 		= $editor;
+		$this->dimage 		= $dimage;
+		$this->infoimage 	= $infoimage;
+		$this->delloclink 	= $delloclink;
+		$this->editoruser 	= $editoruser;
+		$this->elsettings 	= $elsettings;
+		$this->item 		= $item;
+		$this->params 		= $params;
+    	$this->lists 		= $lists;
     
         $access2 = ELHelper::getAccesslevelOptions();
-		$this->assignRef('access'	, $access2);
+		$this->access 		= $access2;
 		
 		parent::display($tpl);
 
@@ -225,11 +225,11 @@ class JEMViewEditevent extends JViewLegacy
 		$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_CITY' ) );
 		$searchfilter = JHTML::_('select.genericlist', $filters, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
 
-		$this->assignRef('rows' , 				$rows);
-		$this->assignRef('searchfilter' , 		$searchfilter);
-		$this->assignRef('pagination' , 			$pagination);
-		$this->assignRef('lists' , 				$lists);
-		$this->assignRef('filter' , 			$filter);
+		$this->rows 			= $rows;
+		$this->searchfilter 	= $searchfilter;
+		$this->pagination 		= $pagination;
+		$this->lists 			= $lists;
+		$this->filter 			= $filter;
 
 
 		parent::display($tpl);

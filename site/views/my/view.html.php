@@ -122,24 +122,24 @@ class JEMViewMy extends JViewLegacy
             $uri->delVar('filter_type');
         }
 
-        $this->assign('action', $uri->toString());
+        $this->action 				= $uri->toString();
 
-        $this->assignRef('events', 				$events);
-        $this->assignRef('venues', 				$venues);
-        $this->assignRef('attending', 			$attending);
-        $this->assignRef('task', 				$task);
-        $this->assignRef('print_link', 			$print_link);
-        $this->assignRef('params', 				$params);
-        $this->assignRef('dellink', 			$dellink);
-        $this->assignRef('events_pagination', 		$events_pagination);
-        $this->assignRef('venues_pagination', 		$venues_pagination);
-        $this->assignRef('attending_pagination', 	$attending_pagination);
-        $this->assignRef('elsettings', 			$elsettings);
-        $this->assignRef('pagetitle', 			$pagetitle);
-      //  $this->assignRef('user', 				$user);
+        $this->events 				= $events;
+        $this->venues 				= $venues;
+        $this->attending 			= $attending;
+        $this->task 				= $task;
+        $this->print_link 			= $print_link;
+        $this->params 				= $params;
+        $this->dellink 				= $dellink;
+        $this->events_pagination 	= $events_pagination;
+        $this->venues_pagination 	= $venues_pagination;
+        $this->attending_pagination	= $attending_pagination;
+        $this->elsettings 			= $elsettings;
+        $this->pagetitle 			= $pagetitle;
+        // $this->user 				= $user;
       
-        $this->assignRef('lists', 				$lists);
-        $this->assignRef('noevents',    $noevents);
+        $this->lists 				= $lists;
+        $this->noevents 			= $noevents;
 
         parent::display($tpl);
 

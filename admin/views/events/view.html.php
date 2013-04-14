@@ -110,12 +110,12 @@ class JEMViewEvents extends JViewLegacy {
 		$lists['search']= $search;
 
 		//assign data to template
-		$this->assignRef('lists'      	, $lists);
-		$this->assignRef('rows'      	, $rows);
-		$this->assignRef('pagination' 	, $pagination);
-		$this->assignRef('user'			, $user);
-		$this->assignRef('template'		, $template);
-		$this->assignRef('elsettings'	, $elsettings);
+		$this->lists 		= $lists;
+		$this->rows 		= $rows;
+		$this->pagination 	= $pagination;
+		$this->user 		= $user;
+		$this->template		= $template;
+		$this->elsettings	= $elsettings;
 
 		parent::display($tpl);
 	}

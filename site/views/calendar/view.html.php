@@ -84,15 +84,15 @@ class JEMViewCalendar extends JViewLegacy
         $document->setMetaData('title', $pagetitle);
 
         //init calendar
-				$cal = new ELCalendar($year, $month, 0, $app->getCfg('offset'));
-				$cal->enableMonthNav('index.php?view=calendar');
-				$cal->setFirstWeekDay($params->get('firstweekday', 1));
-				$cal->enableDayLinks(false);
+		$cal = new ELCalendar($year, $month, 0, $app->getCfg('offset'));
+		$cal->enableMonthNav('index.php?view=calendar');
+		$cal->setFirstWeekDay($params->get('firstweekday', 1));
+		$cal->enableDayLinks(false);
 				
-        $this->assignRef('rows', 		$rows);
-        $this->assignRef('params', 		$params);
-        $this->assignRef('elsettings', 	$elsettings);
-        $this->assignRef('cal', 		$cal);
+        $this->rows 		= $rows;
+        $this->params 		= $params;
+        $this->elsettings 	= $elsettings;
+        $this->cal 			= $cal;
 
         parent::display($tpl);
     }

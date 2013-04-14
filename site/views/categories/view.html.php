@@ -96,14 +96,14 @@ class JEMViewCategories extends JViewLegacy
 
 		$pagination = new JPagination($total, $limitstart, $limit);
 
-		$this->assignRef('rows' , 					$rows);
-		$this->assignRef('task' , 					$task);
-		$this->assignRef('params' , 				$params);
-		$this->assignRef('dellink' , 				$dellink);
-		$this->assignRef('pagination' , 				$pagination);
-		$this->assignRef('item' , 					$item);
-		$this->assignRef('elsettings' , 			$elsettings);
-		$this->assignRef('pagetitle' , 				$pagetitle);
+		$this->rows 		= $rows;
+		$this->task 		= $task;
+		$this->params 		= $params;
+		$this->dellink 		= $dellink;
+		$this->pagination 	= $pagination;
+		$this->item 		= $item;
+		$this->elsettings 	= $elsettings;
+		$this->pagetitle 	= $pagetitle;
 
 		parent::display($tpl);
 	}

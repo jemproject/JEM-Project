@@ -68,10 +68,10 @@ class JEMViewJEM extends JViewLegacy {
 		
 		
 		//assign vars to the template
-		$this->assignRef('events'		, $events);
-		$this->assignRef('venue'		, $venue);
-		$this->assignRef('category'		, $category);
-		$this->assignRef('user'			, $user);
+		$this->events		= $events;
+		$this->venue		= $venue;
+		$this->category		= $category;
+		$this->user			= $user;
 
 		parent::display($tpl);
 

@@ -111,16 +111,16 @@ class JEMViewCategoriesdetailed extends JViewLegacy
 		// Create the pagination object
 		jimport('joomla.html.pagination');
 
-		$this->assignRef('categories' , 			$categories);
-		$this->assignRef('print_link' , 			$print_link);
-		$this->assignRef('params' , 				$params);
-		$this->assignRef('dellink' , 				$dellink);
-		$this->assignRef('item' , 					$item);
-		$this->assignRef('model' , 					$model);
-		$this->assignRef('pagination' , 				$pagination);
-		$this->assignRef('elsettings' , 			$elsettings);
-		$this->assignRef('task' , 					$task);
-		$this->assignRef('pagetitle' , 				$pagetitle);
+		$this->categories 	= $categories;
+		$this->print_link 	= $print_link;
+		$this->params 		= $params;
+		$this->dellink 		= $dellink;
+		$this->item 		= $item;
+		$this->model 		= $model;
+		$this->pagination 	= $pagination;
+		$this->elsettings	= $elsettings;
+		$this->task 		= $task;
+		$this->pagetitle 	= $pagetitle;
 		
 
 		parent::display($tpl);

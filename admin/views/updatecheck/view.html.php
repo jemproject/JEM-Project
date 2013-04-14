@@ -50,8 +50,8 @@ class JEMViewUpdatecheck extends JViewLegacy {
 		$updatedata      = & $this->get( 'Updatedata');
 
 		//assign data to template
-		$this->assignRef('template'		, $template);
-		$this->assignRef('updatedata'	, $updatedata);
+		$this->template		= $template;
+		$this->updatedata	= $updatedata;
 
 		parent::display($tpl);
 	}

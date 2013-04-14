@@ -113,10 +113,10 @@ class JEMViewAttendees extends JViewLegacy {
 		$lists['order']		= $filter_order;
 
 		//assign to template
-		$this->assignRef('lists'      	, $lists);
-		$this->assignRef('rows'      	, $rows);
-		$this->assignRef('pagination' 	, $pagination);
-		$this->assignRef('event'		, $event);
+		$this->lists      	= $lists;
+		$this->rows      	= $rows;
+		$this->pagination 	= $pagination;
+		$this->event		= $event;
 
 		parent::display($tpl);
 	}
@@ -147,8 +147,8 @@ class JEMViewAttendees extends JViewLegacy {
 		}
 		
 		//assign data to template
-		$this->assignRef('rows'      	, $rows);
-		$this->assignRef('event'		, $event);
+		$this->rows 	= $rows;
+		$this->event 	= $event;
 
 		parent::display($tpl);
 	}
