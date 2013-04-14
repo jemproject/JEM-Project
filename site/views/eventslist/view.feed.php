@@ -38,7 +38,7 @@ class JEMViewEventslist extends JViewLegacy
 	 *
 	 * @since 0.9
 	 */
-	function display( )
+	function display($cachable = false, $urlparams = false )
 	{
 		$app =  JFactory::getApplication();
 
@@ -55,18 +55,21 @@ class JEMViewEventslist extends JViewLegacy
 			$title = $this->escape( $row->title );
 			$title = html_entity_decode( $title );
 
-			// strip html from feed item categories			
-			$nr = count($row->categories);
-			$ix = 0;
-			$category = '';
-			foreach ($row->categories as $key => $category) :
-
-				$category .= html_entity_decode($this->escape($category->catname));
-				$ix++;
-				if ($ix != $nr) :
-					$category .= ', ';
-				endif;
-			endforeach;
+			// categories (object of stdclass to array), when there is something to show
+			if (!empty($row->categories)) 
+    		  {
+       		 $category = array();
+        	 foreach ($row->categories AS $category2) {
+         	 $category[] = $category2->catname;
+       		 }
+       		 
+       		 // ading the , to the list when there are multiple category's
+       		 $category = $this->escape( implode(', ', $category) );
+        	 $category = html_entity_decode( $category );        
+     	     }
+     		 else {
+       		 $category = '';
+     		 }
 		
 			//Format date
 			if (ELHelper::isValidDate($row->dates)) 
