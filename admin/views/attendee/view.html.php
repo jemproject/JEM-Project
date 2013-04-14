@@ -81,9 +81,9 @@ class JEMViewAttendee extends JViewLegacy {
 		$lists['users'] = JHTML::_('list.users', 'uid', $row->uid, false, NULL, 'name', 0);
 
 		//assign data to template
-		$this->assignRef('lists'  , $lists);
-		$this->assignRef('row'    , $row);
-		$this->assignRef('event'  , $event_id);
+		$this->lists 	= $lists;
+		$this->row		= $row;
+		$this->event 	= $event_id;
 
 		parent::display($tpl);
 	}

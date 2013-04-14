@@ -169,23 +169,23 @@ class JEMViewVenueevents extends JViewLegacy
 
 		//create select lists
 		$lists	= $this->_buildSortLists($elsettings);
-		$this->assign('lists', 						$lists);
-		$this->assign('action', 					$uri->toString());
+		$this->lists				= $lists;
+		$this->action				= $uri->toString();
 
-		$this->assignRef('rows' , 					$rows);
-		$this->assignRef('noevents' , 				$noevents);
-		$this->assignRef('venue' , 					$venue);
-		$this->assignRef('print_link' , 			$print_link);
-		$this->assignRef('params' , 				$params);
-		$this->assignRef('dellink' , 				$dellink);
-		$this->assignRef('limage' , 				$limage);
-		$this->assignRef('venuedescription' , 		$venuedescription);
-		$this->assignRef('pagination' , 				$pagination);
-		$this->assignRef('elsettings' , 			$elsettings);
-		$this->assignRef('item' , 					$item);
-		$this->assignRef('pagetitle' , 				$pagetitle);
-		$this->assignRef('task' , 					$task);
-    	$this->assignRef('allowedtoeditvenue' ,     $allowedtoeditvenue);
+		$this->rows					= $rows;
+		$this->noevents				= $noevents;
+		$this->venue				= $venue;
+		$this->print_link			= $print_link;
+		$this->params				= $params;
+		$this->dellink				= $dellink;
+		$this->limage				= $limage;
+		$this->venuedescription		= $venuedescription;
+		$this->pagination			= $pagination;
+		$this->elsettings			= $elsettings;
+		$this->item					= $item;
+		$this->pagetitle			= $pagetitle;
+		$this->task					= $task;
+		$this->allowedtoeditvenue	= $allowedtoeditvenue;
 
 		parent::display($tpl);
 	}

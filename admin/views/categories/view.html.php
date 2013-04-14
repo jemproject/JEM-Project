@@ -96,11 +96,11 @@ class JEMViewCategories extends JViewLegacy {
 		$ordering = ($lists['order'] == 'c.ordering');
 
 		//assign data to template
-		$this->assignRef('lists'      	, $lists);
-		$this->assignRef('rows'      	, $rows);
-		$this->assignRef('pagination' 	, $pagination);
-		$this->assignRef('ordering'		, $ordering);
-		$this->assignRef('user'			, $user);
+		$this->lists 		= $lists;
+		$this->rows 		= $rows;
+		$this->pagination 	= $pagination;
+		$this->ordering 	= $ordering;
+		$this->user 		= $user;
 
 		parent::display($tpl);
 	}

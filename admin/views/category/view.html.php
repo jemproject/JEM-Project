@@ -135,12 +135,7 @@ class JEMViewCategory extends JViewLegacy {
 		$imageselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectImage('', '".JText::_('COM_JEM_SELECTIMAGE')."' );\" value=\"".JText::_('COM_JEM_RESET')."\" />";
 		$imageselect .= "\n<input type=\"hidden\" id=\"a_image\" name=\"image\" value=\"$row->image\" />";
 		
-		$this->assignRef('imageselect'	, $imageselect);
-		
-		
-		
-		
-		
+		$this->imageselect 	= $imageselect;
 		
 		
 		//build grouplist
@@ -151,11 +146,11 @@ class JEMViewCategory extends JViewLegacy {
 		$Lists['groups']	= JHTML::_('select.genericlist', $grouplist, 'groupid', 'size="1" class="inputbox"', 'value', 'text', $row->groupid );
 
 		//assign data to template
-		$this->assignRef('Lists'      	, $Lists);
-		$this->assignRef('row'      	, $row);
-		$this->assignRef('editor'		, $editor);
+		$this->Lists 		= $Lists;
+		$this->row 			= $row;
+		$this->editor 		= $editor;
 		$access2 = ELHelper::getAccesslevelOptions();
-		$this->assignRef('access'	, $access2);
+		$this->access 		= $access2;
 
 		parent::display($tpl);
 	}

@@ -65,10 +65,10 @@ class JEMViewUserElement extends JViewLegacy {
 		$lists['search']= $search;
 
 		//assign data to template
-		$this->assignRef('lists'      , $lists);
-		$this->assignRef('rows'       , $users);
-		$this->assignRef('elsettings'	, $elsettings);
-		$this->assignRef('pagination'	  , $pagination);
+		$this->lists		= $lists;
+		$this->rows			= $users;
+		$this->elsettings	= $elsettings;
+		$this->pagination	= $pagination;
 
 		parent::display($tpl);
 	}

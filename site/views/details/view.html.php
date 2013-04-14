@@ -221,21 +221,21 @@ class JEMViewDetails extends JViewLegacy
 		$row->pluginevent->onEventDetailsEnd = trim(implode("\n", $results));
 		
 		//assign vars to jview
-		$this->assignRef('row', 					$row);
-		$this->assignRef('categories' ,				$categories);
-		$this->assignRef('params' , 				$params);
-		$this->assignRef('allowedtoeditevent' , 	$allowedtoeditevent);
-		$this->assignRef('allowedtoeditvenue' , 	$allowedtoeditvenue);
-		$this->assignRef('dimage' , 				$dimage);
-		$this->assignRef('limage' , 				$limage);
-		$this->assignRef('print_link' , 			$print_link);
-		$this->assignRef('registers' , 				$registers);
-		$this->assignRef('isregistered' ,     $isregistered);
-		$this->assignRef('formhandler',				$formhandler);
-		$this->assignRef('elsettings' , 			$elsettings);
-		$this->assignRef('item' , 					$item);
-		$this->assignRef('user' , 					$user);
-		$this->assignRef('dispatcher' ,     		$dispatcher);
+		$this->row					= $row;
+		$this->categories			= $categories;
+		$this->params				= $params;
+		$this->allowedtoeditevent	= $allowedtoeditevent;
+		$this->allowedtoeditvenue	= $allowedtoeditvenue;
+		$this->dimage				= $dimage;
+		$this->limage				= $limage;
+		$this->print_link			= $print_link;
+		$this->registers			= $registers;
+		$this->isregistered			= $isregistered;
+		$this->formhandler			= $formhandler;
+		$this->elsettings			= $elsettings;
+		$this->item					= $item;
+		$this->user					= $user;
+		$this->dispatcher			= $dispatcher;
 
 		parent::display($tpl);
 	}

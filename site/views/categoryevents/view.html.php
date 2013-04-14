@@ -168,21 +168,21 @@ class JEMViewCategoryevents extends JViewLegacy
 
 		//create select lists
 		$lists	= $this->_buildSortLists($elsettings);
-		$this->assign('lists', 						$lists);
-		$this->assign('action', 					$uri->toString());
+		$this->lists			= $lists;
+		$this->action			= $uri->toString();
 
-		$this->assignRef('rows' , 					$rows);
-		$this->assignRef('noevents' , 				$noevents);
-		$this->assignRef('category' , 				$category);
-		$this->assignRef('print_link' , 			$print_link);
-		$this->assignRef('params' , 				$params);
-		$this->assignRef('dellink' , 				$dellink);
-		$this->assignRef('task' , 					$task);
-		$this->assignRef('catdescription' , 		$catdescription);
-		$this->assignRef('pagination' , 				$pagination);
-		$this->assignRef('elsettings' , 			$elsettings);
-		$this->assignRef('item' , 					$item);
-		$this->assignRef('categories' , 			$categories);
+		$this->rows				= $rows;
+		$this->noevents			= $noevents;
+		$this->category			= $category;
+		$this->print_link		= $print_link;
+		$this->params			= $params;
+		$this->dellink			= $dellink;
+		$this->task				= $task;
+		$this->catdescription	= $catdescription;
+		$this->pagination		= $pagination;
+		$this->elsettings		= $elsettings;
+		$this->item				= $item;
+		$this->categories		= $categories;
 
 	  	if($this->getLayout() == 'calendar') 
 	  	{	  	
@@ -192,9 +192,9 @@ class JEMViewCategoryevents extends JViewLegacy
 	  		$year  = intval( JRequest::getVar('yearID', strftime( "%Y" ) ));
       		$month = intval( JRequest::getVar('monthID', strftime( "%m" ) ));
       		$day   = intval( JRequest::getVar('dayID', strftime( "%d" ) ));
-      		$this->assignRef('year' ,		$year);
-      		$this->assignRef('month' ,		$month);
-      		$this->assignRef('day' ,		$day);
+      		$this->year			= $year;
+      		$this->month		= $month;
+      		$this->day			= $day;
     	}
 		
 		parent::display($tpl);

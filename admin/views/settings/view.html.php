@@ -129,10 +129,10 @@ class JEMViewSettings extends JViewLegacy {
 
         
 		//assign data to template
-		$this->assignRef('accessLists'	, $accessLists);
-		$this->assignRef('elsettings'	, $elsettings);
-		$this->assignRef('request_url'	, $uri2);
-		$this->assignRef('globalparams'	, $globalparams);
+		$this->accessLists	= $accessLists;
+		$this->elsettings	= $elsettings;
+		$this->request_url	= $uri2;
+		$this->globalparams	= $globalparams;
 		
 		$this->WarningIcon();
 		parent::display($tpl);

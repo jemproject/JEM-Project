@@ -67,10 +67,10 @@ class JEMViewImport extends JViewLegacy {
 		}
 
 		//assign vars to the template
-  	    $this->assignRef('eventfields', $eventfields);
- 	    $this->assignRef('catfields', $catfields);
- 	    $this->assignRef('venuefields', $venuefields);
- 	    $this->assignRef('cateventsfields', $cateventsfields);
+		$this->eventfields 		= $eventfields;
+		$this->catfields 		= $catfields;
+		$this->venuefields 		= $venuefields;
+		$this->cateventsfields 	= $cateventsfields;
 
 		parent::display($tpl);
 

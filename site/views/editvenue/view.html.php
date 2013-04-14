@@ -104,22 +104,22 @@ class JEMViewEditvenue extends JViewLegacy
     	$lists['countries'] = JHTML::_('select.genericlist', $countries, 'country', 'class="inputbox"', 'value', 'text', $row->country );
     	unset($countries);
 
-		$this->assignRef('row' , 					$row);
-		$this->assignRef('editor' , 				$editor);
-		$this->assignRef('editoruser' , 			$editoruser);
-		$this->assignRef('limage' , 				$limage);
-		$this->assignRef('infoimage' , 				$infoimage);
-		$this->assignRef('elsettings' , 			$elsettings);
-		$this->assignRef('item' , 					$item);
-		$this->assignRef('params' , 				$params);
-		$this->assignRef('lists' ,         			$lists);
-		$this->assignRef('title' ,         			$title);
-        
+		$this->row				= $row;
+		$this->editor			= $editor;
+		$this->editoruser		= $editoruser;
+		$this->limage			= $limage;
+		$this->infoimage		= $infoimage;
+		$this->elsettings		= $elsettings;
+		$this->item				= $item;
+		$this->params			= $params;
+		$this->lists			= $lists;
+		$this->title			= $title;
+		
 		$mode2 = JRequest::getVar('mode', '');
-		$this->assignRef('mode' ,     $mode2    );
+		$this->mode				= $mode2;
 		
 		$access2 = ELHelper::getAccesslevelOptions();
-		$this->assignRef('access'	,$access2 );
+		$this->access			= $access2;
 
 		parent::display($tpl);
 

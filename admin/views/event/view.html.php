@@ -172,16 +172,16 @@ class JEMViewEvent extends JViewLegacy {
     
     	
 		//assign vars to the template
-		$this->assignRef('Lists'      	, $Lists);
-		$this->assignRef('row'      	, $row);
-		$this->assignRef('imageselect'	, $imageselect);
-		$this->assignRef('venueselect'	, $venueselect);
-		$this->assignRef('editor'		, $editor);
-		$this->assignRef('task'			, $task);
-		$this->assignRef('nullDate'		, $nullDate);
-		$this->assignRef('elsettings'	, $elsettings);
+		$this->Lists 		= $Lists;
+		$this->row 			= $row;
+		$this->imageselect 	= $imageselect;
+		$this->venueselect 	= $venueselect;
+		$this->editor 		= $editor;
+		$this->task 		= $task;
+		$this->nullDate 	= $nullDate;
+		$this->elsettings 	= $elsettings;
 		$access2 = ELHelper::getAccesslevelOptions();
-		$this->assignRef('access'	, $access2);
+		$this->access 		= $access2;
 
 		parent::display($tpl);
 	}
@@ -233,14 +233,14 @@ class JEMViewEvent extends JViewLegacy {
 		$published = 1;
 
 		//assign to template
-		$this->assignRef('editor'      	, $editor);
-		$this->assignRef('imageselect' 	, $imageselect);
-		$this->assignRef('published' 	, $published);
+		$this->editor 		= $editor;
+		$this->imageselect 	= $imageselect;
+		$this->published 	= $published;
 		
 		$uri2 = $uri->toString();
-		$this->assignRef('request_url'	, $uri2);
-		$this->assignRef('elsettings'	, $elsettings);
-		$this->assignRef('lists'  		, $lists);
+		$this->request_url 	= $uri2;
+		$this->elsettings 	= $elsettings;
+		$this->lists 		= $lists;
 
 		parent::display($tpl);
 	}

@@ -104,12 +104,12 @@ class JEMViewVenues extends JViewLegacy {
 		$ordering = ($lists['order'] == 'l.ordering');
 
 		//assign data to template
-		$this->assignRef('lists'      	, $lists);
-		$this->assignRef('rows'      	, $rows);
-		$this->assignRef('pagination'   , $pagination);
-		$this->assignRef('ordering'		, $ordering);
-		$this->assignRef('user'			, $user);
-		$this->assignRef('template'		, $template);
+		$this->lists		= $lists;
+		$this->rows			= $rows;
+		$this->pagination	= $pagination;
+		$this->ordering		= $ordering;
+		$this->user			= $user;
+		$this->template		= $template;
 
 		parent::display($tpl);
 	}
