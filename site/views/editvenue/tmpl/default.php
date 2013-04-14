@@ -192,10 +192,10 @@ defined( '_JEXEC' ) or die;
 
         <div class="el_save_buttons floattext">
   			<button type="button" onclick="return submitbutton('savevenue')">
-  				<?php echo JText::_('COM_JEM_SAVE') ?>
+  				<?php echo JText::_('COM_JEM_SAVE'); ?>
   			</button>
   			<button type="reset" onclick="return submitbutton('cancelvenue')">
-  				<?php echo JText::_('COM_JEM_CANCEL') ?>
+  				<?php echo JText::_('COM_JEM_CANCEL'); ?>
   			</button>
 		</div>
 
@@ -345,10 +345,10 @@ defined( '_JEXEC' ) or die;
 <!--  removed to avoid double posts in ie7
       	<div class="el_save_buttons floattext">
     		<button type="button" onclick="return submitbutton('savevenue')">
-    			<?php echo JText::_('COM_JEM_SAVE') ?>
+    			<?php echo JText::_('COM_JEM_SAVE'); ?>
     		</button>
     		<button type="reset" onclick="return submitbutton('cancelvenue')">
-    			<?php echo JText::_('COM_JEM_CANCEL') ?>
+    			<?php echo JText::_('COM_JEM_CANCEL'); ?>
     		</button>
 		</div>
 -->		
