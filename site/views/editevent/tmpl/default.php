@@ -142,10 +142,10 @@ defined('_JEXEC') or die;
     <form enctype="multipart/form-data" id="adminForm" action="<?php echo JRoute::_('index.php') ?>" method="post" class="form-validate">
         <div class="el_save_buttons floattext">
             <button type="submit" class="submit" onclick="return submitbutton('saveevent')">
-        	    <?php echo JText::_('COM_JEM_SAVE') ?>
+        	    <?php echo JText::_('COM_JEM_SAVE'); ?>
         	</button>
         	<button type="reset" class="button cancel" onclick="submitbutton('cancelevent')">
-        	    <?php echo JText::_('COM_JEM_CANCEL') ?>
+        	    <?php echo JText::_('COM_JEM_CANCEL'); ?>
         	</button>
         </div>
 
@@ -409,10 +409,10 @@ defined('_JEXEC') or die;
 <!--  removed to avoid double posts in ie7
       <div class="el_save_buttons floattext">
           <button type="submit" class="submit" onclick="return submitbutton('saveevent')">
-        	    <?php echo JText::_('COM_JEM_SAVE') ?>
+        	    <?php echo JText::_('COM_JEM_SAVE'); ?>
         	</button>
         	<button type="reset" class="button cancel" onclick="submitbutton('cancelevent')">
-        	    <?php echo JText::_('COM_JEM_CANCEL') ?>
+        	    <?php echo JText::_('COM_JEM_CANCEL'); ?>
         	</button>
       </div>
 -->    

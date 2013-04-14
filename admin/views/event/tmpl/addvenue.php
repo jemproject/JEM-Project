@@ -74,10 +74,10 @@ $infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', 
 
 			<div style="float: right;">
 				<button type="button" onclick="submitbutton('addvenue')">
-					<?php echo JText::_('COM_JEM_SAVE') ?>
+					<?php echo JText::_( 'COM_JEM_SAVE' ); ?>
 				</button>
 				<button type="button" onclick="window.parent.close()" />
-					<?php echo JText::_('COM_JEM_CANCEL') ?>
+					<?php echo JText::_( 'COM_JEM_CANCEL' ); ?>
 				</button>
 			</div>
 		</td>
