@@ -324,14 +324,34 @@ text-align:center; font-weight:bold;
 }
 
 
-/**
- * @section pagination
- *
- */
-div#jem .pagination,
-div#jem .pagescounter {
-text-align: center;
+
+
+
+/* -------------------
+   General Pagination
+--------------------- */
+div.pagination {
+    clear: both;
+    text-align: center !important;
+    margin: 15px 0 0 0 !important;
 }
+ 
+div.pagination p.counter {
+    font-style: italic;
+}
+ 
+div.pagination ul {
+    list-style: none;
+    text-align: center !important;
+    padding: 0;
+}
+ 
+div.pagination ul li {
+    list-style: none;
+    display: inline;
+    padding: 0 5px 0 5px;
+}
+
 
 
 /**

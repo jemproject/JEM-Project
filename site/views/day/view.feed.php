@@ -73,8 +73,6 @@ class JEMViewDay extends JViewLegacy
      		 else {
        		 $category = '';
      		 }		
-			
-			
 
 			//Format date
 			if (ELHelper::isValidDate($row->dates)) 
