@@ -46,7 +46,7 @@ class JEMViewEditevent extends JViewLegacy
 		
 		$user   =  JFactory::getUser();
     	if (!$user->id) {
-      		$app->redirect(JRoute::_($_SERVER["HTTP_REFERER"]), JText::_('Please login to be able to submit events'), 'error' );
+      		$app->redirect(JRoute::_($_SERVER["HTTP_REFERER"]), JText::_('COM_JEM_PLEASE_LOGIN'), 'error' );
     	}
 
 		if($this->getLayout() == 'choosevenue') {
