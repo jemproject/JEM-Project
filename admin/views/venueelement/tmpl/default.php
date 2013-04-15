@@ -76,7 +76,7 @@ defined('_JEXEC') or die;
 			<td align="left"><?php echo htmlspecialchars($row->country, ENT_QUOTES, 'UTF-8'); ?></td>
 			<td>
 				<?php $img = $row->published ? 'tick.png' : 'publish_x.png'; ?>
-				<img src="images/<?php echo $img;?>" width="16" height="16" border="0" alt="" />
+				<img src="../media/com_jem/images/<?php echo $img;?>" width="16" height="16" border="0" alt="" />
 			</td>
 		</tr>
 

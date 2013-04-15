@@ -55,6 +55,7 @@ class JEMViewVenueelement extends JViewLegacy {
 		//prepare document
 		$document->setTitle(JText::_( 'COM_JEM_SELECTVENUE' ));
 		$document->addStyleSheet("templates/$template/css/general.css");
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
 		// Get data from the model
 		$rows      	=  $this->get( 'Data');
