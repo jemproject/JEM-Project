@@ -60,10 +60,10 @@ defined( '_JEXEC' ) or die;
 	    </tr>
       <tr>
         <td>
-          <?php echo '<label for="date">'.JText::_('COM_JEM_DATE').'</label>&nbsp;'; ?>
+          <?php echo '<label for="date">'.JText::_('COM_JEM_SEARCH_DATE').'</label>&nbsp;'; ?>
         </td>
         <td>
-          <?php echo Jtext::_('COM_JEM_FROM'); ?><?php echo $this->lists['date_from'];?> <?php echo Jtext::_('COM_JEM_TO'); ?><?php echo $this->lists['date_to'];?> 
+          <?php echo Jtext::_('COM_JEM_SEARCH_FROM'); ?><?php echo $this->lists['date_from'];?> <?php echo Jtext::_('COM_JEM_SEARCH_TO'); ?><?php echo $this->lists['date_to'];?> 
         </td>
       </tr>
       <tr>
@@ -96,7 +96,7 @@ defined( '_JEXEC' ) or die;
     <?php endif; ?>
       <tr>
         <td colspan="2">
-          <input type="submit" value="<?php echo JText::_('COM_JEM_SUBMIT_SEARCH'); ?>"/>
+          <input type="submit" value="<?php echo JText::_('COM_JEM_SEARCH_SUBMIT'); ?>"/>
         </td>
       </tr>
     </table>	
