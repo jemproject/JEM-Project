@@ -209,7 +209,7 @@ class JEMViewEvent extends JViewLegacy {
 		function elSelectImage(image, imagename) {
 			document.getElementById('a_image').value = image;
 			document.getElementById('a_imagename').value = imagename;
-			document.getElementById('sbox-window').close();
+			window.parent.SqueezeBox.close();
 		}";
 
 		$link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task=venueimg&amp;tmpl=component';
