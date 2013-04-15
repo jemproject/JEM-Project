@@ -128,9 +128,9 @@ class JEMViewMy extends JViewLegacy
         $this->venues					= $venues;
         $this->attending				= $attending;
         $this->task						= $task;
-        $this->print_link				= $print_link;
+        //$this->print_link				= $print_link;
         $this->params					= $params;
-        $this->dellink					= $dellink;
+        //$this->dellink					= $dellink;
         $this->events_pagination		= $events_pagination;
         $this->venues_pagination		= $venues_pagination;
         $this->attending_pagination		= $attending_pagination;
