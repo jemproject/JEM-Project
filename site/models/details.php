@@ -284,7 +284,7 @@ class JEMModelDetails extends JModelLegacy
 	function getRegisters()
 	{
 		//avatars should be displayed
-		$elsettings = & ELHelper::config();
+		$elsettings = ELHelper::config();
 
 		$avatar	= '';
 		$join	= '';

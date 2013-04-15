@@ -109,7 +109,7 @@ class JEMViewImagehandler extends JViewLegacy  {
 	function setImage($index = 0)
 	{
 		if (isset($this->images[$index])) {
-			$this->_tmp_img = &$this->images[$index];
+			$this->_tmp_img = $this->images[$index];
 		} else {
 			$this->_tmp_img = new JObject;
 		}

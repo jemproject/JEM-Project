@@ -128,7 +128,7 @@ $i = 0;
 <!--table-->
 <?php
 //TODO: move out of template
-$this->rows		= & $this->model->getEventdata( $category->id );
+$this->rows		= $this->model->getEventdata( $category->id );
 $this->categoryid = $category->id;
 
 echo $this->loadTemplate('table');

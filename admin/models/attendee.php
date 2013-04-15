@@ -162,7 +162,7 @@ class JEMModelAttendee extends JModelLegacy
 		$config 	= JFactory::getConfig();
 		$eventid = $data['event']; 
 
-		$row  =& $this->getTable('jem_register', '');
+		$row  = $this->getTable('jem_register', '');
 
 		// bind it to the table
 		if (!$row->bind($data)) {

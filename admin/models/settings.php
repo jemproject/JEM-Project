@@ -74,7 +74,7 @@ class JEMModelSettings extends JModelLegacy
 	 */
 	function checkin()
 	{
-		$item = & $this->getTable('jem_settings', '');
+		$item = $this->getTable('jem_settings', '');
 		if(! $item->checkin(1)) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;

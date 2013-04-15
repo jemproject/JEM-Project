@@ -155,8 +155,8 @@ class JEMModelGroup extends JModelLegacy
         	$users = $this->_db->loadObjectList();
 
 			$k = 0;
-			for($i=0, $n=count( $users ); $i < $n; $i++) {
-    			$item = &$users[$i];
+			for($i=0; $i < count( $users ); $i++) {
+    			$item = $users[$i];
 
 				$item->text = $item->name.' ('.$item->username.')';
 
@@ -193,7 +193,7 @@ class JEMModelGroup extends JModelLegacy
 
     	$k = 0;
 		for($i=0, $n=count( $this->_available ); $i < $n; $i++) {
-    		$item = &$this->_available[$i];
+    		$item = $this->_available[$i];
 
 			$item->text = $item->name.' ('.$item->username.')';
 

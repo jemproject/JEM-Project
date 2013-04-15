@@ -119,7 +119,7 @@ class JEMModelEventslist extends JModelLegacy
 			$count = count($this->_data);
 			for($i = 0; $i < $count; $i++)
 			{
-				$item =& $this->_data[$i];
+				$item = $this->_data[$i];
 				$item->categories = $this->getCategories($item->id);
 				
 				//remove events without categories (users have no access to them)

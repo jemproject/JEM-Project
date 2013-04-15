@@ -94,9 +94,9 @@ class JEMControllerAttendees extends JEMController
 		$export = '';
 		$col = array();
 
-		for($i=0, $n=count( $datas ); $i < $n; $i++)
+		for($i=0; $i < count($datas); $i++)
 		{
-			$data = &$datas[$i];
+			$data = $datas[$i];
 
     		$col[] = str_replace("\"", "\"\"", $data->name);
     		$col[] = str_replace("\"", "\"\"", $data->username);

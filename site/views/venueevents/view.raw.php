@@ -47,7 +47,7 @@ class JEMViewVenueevents extends JViewLegacy
 		$model = $this->getModel();
 		$model->setLimit($settings->params->get('ical_max_items', 100));
 		$model->setLimitstart(0);
-		$rows = & $model->getData();
+		$rows = $model->getData();
 		
 		$venueid = JRequest::getInt('id');
 		

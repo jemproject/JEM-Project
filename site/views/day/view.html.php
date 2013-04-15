@@ -172,7 +172,7 @@ class JEMViewDay extends JViewLegacy
 	 */
 	function _buildSortLists()
 	{
-		$elsettings = & ELHelper::config();
+		$elsettings = ELHelper::config();
 		
 		$filter_order		= JRequest::getCmd('filter_order', 'a.dates');
 		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', 'ASC');

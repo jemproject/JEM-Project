@@ -314,7 +314,7 @@ class JEMController extends JControllerLegacy
 		$id 	= JRequest::getInt( 'rdid', 0, 'post' );
 
 		// Get the model
-		$model = & $this->getModel('Details', 'JEMModel');
+		$model = $this->getModel('Details', 'JEMModel');
 
 		$model->setId($id);
 		$register_id = $model->userregister();

@@ -126,7 +126,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
             $count = count($this->_categories);
             for ($i = 0; $i < $count; $i++)
             {
-                $category = & $this->_categories[$i];
+                $category = $this->_categories[$i];
 
                 //child categories
                 $query = $this->_buildQuery($category->id);
@@ -213,7 +213,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
             $count = count($this->_data);
             for ($i = 0; $i < $count; $i++)
             {
-                $item = & $this->_data[$i];
+                $item = $this->_data[$i];
                 $item->categories = $this->getCategories($item->id);
 
                 //remove events without categories (users have no access to them)

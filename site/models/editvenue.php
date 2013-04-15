@@ -89,7 +89,7 @@ class JEMModelEditvenue extends JModelLegacy
 			* Error if allready checked out
 			*/
 			if ($this->_venue->isCheckedOut( $user->get('id') )) {
-				$app->redirect( 'index.php?option=&view='.$view, JText::_( 'COM_JEM_THE_VENUE' ).' '.$this->_venue->venue.' '.JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ) );
+				$app->redirect( 'index.php?view='.$view, JText::_( 'COM_JEM_THE_VENUE' ).' '.$this->_venue->venue.' '.JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ) );
 			} else {
 				$this->_venue->checkout( $user->get('id') );
 			}
@@ -186,7 +186,7 @@ class JEMModelEditvenue extends JModelLegacy
 	{
 		if ($this->_id)
 		{
-			$item = & $this->getTable('jem_venues', '');
+			$item = $this->getTable('jem_venues', '');
 			if(! $item->checkin($this->_id)) {
 				$this->setError($this->_db->getErrorMsg());
 				return false;

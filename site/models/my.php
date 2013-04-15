@@ -128,7 +128,7 @@ class JEMModelMy extends JModelLegacy
 			$count = count($this->_events);
 			for($i = 0; $i < $count; $i++)
 			{
-				$item =& $this->_events[$i];
+				$item = $this->_events[$i];
 				$item->categories = $this->getCategories($item->eventid);
 				
 				//remove events without categories (users have no access to them)
@@ -171,7 +171,7 @@ class JEMModelMy extends JModelLegacy
 			$count = count($this->_attending);
 			for($i = 0; $i < $count; $i++)
 			{
-				$item =& $this->_attending[$i];
+				$item = $this->_attending[$i];
 				$item->categories = $this->getCategories($item->eventid);
 				
 				//remove events without categories (users have no access to them)

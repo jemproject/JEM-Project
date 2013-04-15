@@ -101,7 +101,7 @@ class JEMModelVenues extends JModelLegacy
 			$k = 0;
 			for($i = 0; $i <  count($this->_data); $i++)
 			{
-				$venue =& $this->_data[$i];
+				$venue = $this->_data[$i];
 
 				//Create image information
 				$venue->limage = ELImage::flyercreator($venue->locimage, 'venue');

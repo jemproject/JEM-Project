@@ -429,7 +429,7 @@ class JEMModelCategories extends JModelLegacy
 	 */
 	function access($id, $access)
 	{				
-		$category  =& $this->getTable('jem_categories', '');
+		$category  = $this->getTable('jem_categories', '');
 		
 		//handle childs
 		$cids = array();

@@ -116,7 +116,7 @@ class JEMModelCategories extends JModelLegacy
 			$count = count($this->_categories);
 			for($i = 0; $i < $count; $i++)
 			{
-				$category =& $this->_categories[$i];
+				$category = $this->_categories[$i];
 				
 				if ($category->image != '') {
 

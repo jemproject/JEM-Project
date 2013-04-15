@@ -36,7 +36,7 @@ class ELHelper {
 	 * @return object
 	 * @since 0.9
 	 */
-static	function &config()
+	static function config()
 	{
 		static $config;
 
@@ -61,7 +61,7 @@ static	function &config()
    	*
  	* @since 0.9
    	*/
-static	function cleanup($forced = 0)
+	static function cleanup($forced = 0)
 	{
 		$elsettings =  ELHelper::config();
     	$params = JComponentHelper::getParams('com_jem');   
@@ -166,7 +166,7 @@ static	function cleanup($forced = 0)
 	/**
 	 * this methode calculate the next date
 	 */
-static	function calculate_recurrence($recurrence_row) 
+	static function calculate_recurrence($recurrence_row) 
 	{
 		// get the recurrence information
 		$recurrence_number = $recurrence_row['recurrence_number'];
@@ -295,7 +295,7 @@ static	function calculate_recurrence($recurrence_row)
 	 * @return array the date informations
 	 * @access public
 	 */
-static	function generate_date($startdate, $enddate) {
+	static function generate_date($startdate, $enddate) {
 		$startdate = explode("-",$startdate);
 		$date_array = array("year" => $startdate[0],
 							"month" => $startdate[1],
@@ -316,7 +316,7 @@ static	function generate_date($startdate, $enddate) {
 	 * @param array of 2 letters day
 	 * @return array of int
 	 */
-static	function convert2CharsDaysToInt($days, $firstday = 0)
+	static function convert2CharsDaysToInt($days, $firstday = 0)
 	{
 		$result = array();
 		foreach ($days as $day)
@@ -390,7 +390,7 @@ static	function convert2CharsDaysToInt($days, $firstday = 0)
 	 * @param string $string
 	 * @return string
 	 */
-static	function br2break($string)
+	static function br2break($string)
 	{
 		return preg_replace("=<br(>|([\s/][^>]*)>)\r?\n?=i", "\r\n", $string);
 	}
@@ -401,7 +401,7 @@ static	function br2break($string)
 	 * @param string $key
 	 * @return boolean
 	 */
-static	function where_table_rows($key) {
+	static function where_table_rows($key) {
 		if ($key == 'locid' ||
 			//$key == 'catsid' ||
 			$key == 'dates' ||
@@ -416,7 +416,7 @@ static	function where_table_rows($key) {
 		}
 	}
 	
-static	function buildtimeselect($max, $name, $selected, $class = 'class="inputbox"')
+	static function buildtimeselect($max, $name, $selected, $class = 'class="inputbox"')
 	{
 		$timelist 	= array();
 
@@ -435,7 +435,7 @@ static	function buildtimeselect($max, $name, $selected, $class = 'class="inputbo
 	 *
 	 * @return unknown
 	 */
-static	function getCountryOptions()
+	static function getCountryOptions()
 	{
 		$db   =  JFactory::getDBO();
     	$sql  = 'SELECT iso2 AS value, name AS text FROM #__jem_countries ORDER BY name';
@@ -448,7 +448,7 @@ static	function getCountryOptions()
 	/**
 	* Build the select list for access level
 	*/
-static	function getAccesslevelOptions()
+	static function getAccesslevelOptions()
 	{
 		$db = JFactory::getDBO();
 
@@ -468,14 +468,14 @@ static	function getAccesslevelOptions()
 	 * @param string file path
 	 * @return string mime type
 	 */
-static	function getMimeType($filename)
+	static function getMimeType($filename)
 	{
 		if (function_exists('finfo_open')) {
             $finfo = finfo_open(FILEINFO_MIME);
             $mimetype = finfo_file($finfo, $filename);
             finfo_close($finfo);
             return $mimetype;
-    }
+    	}
 		else if (function_exists('mime_content_type') && 0) 
 		{
 			return mime_content_type($filename);
@@ -558,7 +558,7 @@ static	function getMimeType($filename)
 	 * @param boolean bump users off/to waiting list
 	 * @return bool
 	 */
-static	function updateWaitingList($event)
+	static function updateWaitingList($event)
 	{
     $db = Jfactory::getDBO();
     
@@ -618,8 +618,8 @@ static	function updateWaitingList($event)
    * 
    * @return array
    */
-static  function getTimeZones()
-  {
+	static function getTimeZones()
+	{
   	$timezones = array(
         '-12'=>'Pacific/Kwajalein',
         '-11'=>'Pacific/Samoa',
@@ -660,21 +660,21 @@ static  function getTimeZones()
    * @param string $offset
    * @return string
    */
-static  function getTimeZone($offset)
-  {
+	static function getTimeZone($offset)
+	{
   	$tz = self::getTimeZones();
   	if (isset($tz[$offset])) {
   		return $tz[$offset];
   	}
   	return false;
-  }
+	}
 
 	/**
 	 * return initialized calendar tool class for ics export
 	 * 
 	 * @return object
 	 */
-static	function getCalendarTool()
+	static function getCalendarTool()
 	{
 		require_once JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'classes'.DS.'iCalcreator.class.php';
 		$mainframe = JFactory::getApplication();
@@ -697,7 +697,7 @@ static	function getCalendarTool()
     return $vcal;
 	}
 	
-static	function icalAddEvent(&$calendartool, $event)
+	static function icalAddEvent(&$calendartool, $event)
 	{
 		require_once JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'classes'.DS.'iCalcreator.class.php';
 		$mainframe = JFactory::getApplication();
@@ -837,7 +837,7 @@ static	function icalAddEvent(&$calendartool, $event)
 	 * @param string $date
 	 * @return boolean
 	 */
-static	function isValidDate($date)
+	static function isValidDate($date)
 	{
 		if (is_null($date)) {
 			return false;

@@ -172,7 +172,7 @@ defined( '_JEXEC' ) or die;
 		<?php
 	else :
 
-	$this->rows =& $this->getRows();
+	$this->rows = $this->getRows();
 
 	foreach ($this->rows as $row) :
 		?>

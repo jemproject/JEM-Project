@@ -105,7 +105,7 @@ class JEMModelCalendar extends JModelLegacy
             
 	        foreach($this->_data AS $item)
 					{
-						//$item =& $this->_data[$i];
+						//$item = $this->_data[$i];
 						
 						$item->categories = $this->getCategories($item->id);
 						
