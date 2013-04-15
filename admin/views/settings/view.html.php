@@ -105,24 +105,6 @@ class JEMViewSettings extends JViewLegacy {
 		$accessLists['locpub_access']	= JHTML::_('select.genericlist', $access, 'autopublocate', 'class="inputbox" size="4"', 'value', 'text', $elsettings->autopublocate );
 		$accessLists['ev_edit']			= JHTML::_('select.genericlist', $access, 'eventedit', 'class="inputbox" size="4"', 'value', 'text', $elsettings->eventedit );
 		$accessLists['venue_edit']		= JHTML::_('select.genericlist', $access, 'venueedit', 'class="inputbox" size="4"', 'value', 'text', $elsettings->venueedit );
-
-		//Get global parameters
-//		$table = JTable::getInstance('extension');
- //       $db = $table->getDBO();
- //       $query = 'SELECT extension_id' .
- //                       ' FROM #__extensions' .
- //                       ' WHERE ' . $db->nameQuote( 'element' ) . '=' . $db->Quote( 'com_jem' ) ;
- //       $db->setQuery( $query, 0, 1 );
- //       $id = $db->loadResult();
-//		if ($id == !null)
-  //      {
-//		$table->load($id);
-//		$globalparams = new JRegistry( $table->params, JPATH_ADMINISTRATOR.DS.'components'.DS.'com_jem'.DS.'config.xml' );
-//		} else
-  //      {
-    //    JError::raiseWarning( 'SOME_ERROR_CODE', JText::_( 'SETTINGS NOT LOADED' ));
-      //  }
-
         
         $uri 		=  JFactory::getURI();
 		$uri2 = $uri->toString();
@@ -132,7 +114,6 @@ class JEMViewSettings extends JViewLegacy {
 		$this->accessLists	= $accessLists;
 		$this->elsettings	= $elsettings;
 		$this->request_url	= $uri2;
-		$this->globalparams	= $globalparams;
 		
 		$this->WarningIcon();
 		parent::display($tpl);
