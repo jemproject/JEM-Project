@@ -129,7 +129,7 @@ defined('_JEXEC') or die;
 
     <?php if ($this->params->def( 'show_page_title', 1 )) : ?>
     <h1 class="componentheading">
-        <?php echo $this->params->get('page_title'); ?>
+        <?php echo $this->title; ?>
     </h1>
     <?php endif; ?>    
     

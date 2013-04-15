@@ -175,6 +175,7 @@ class JEMViewEditevent extends JViewLegacy
 		$this->item				= $item;
 		$this->params			= $params;
 		$this->lists			= $lists;
+		$this->title            = $title;
 
 		$access2 = ELHelper::getAccesslevelOptions();
 		$this->access			= $access2;
