@@ -133,34 +133,10 @@ class JEMModelSettings extends JModelLegacy
 	 */
 	function store($post)
 	{
-		$parampost['params'] = JRequest::getVar('globalparams');
-		$parampost['option'] = 'com_jem';
-
-		$table = JTable::getInstance('extension');
-//        $db = $table->getDBO();
-//        $query = 'SELECT extension_id' .
-//                        ' FROM #__extensions' .
-//                        ' WHERE ' . $db->nameQuote( 'element' ) . '=' . $db->Quote( 'com_jem' ) ;
-//        $db->setQuery( $query, 0, 1 );
-//        $id = $db->loadResult();
-//		if ($id == !null)
-//        {
-//		$table->load($id);
-//		$globalparams = new JParameter( $table->params, JPATH_ADMINISTRATOR.DS.'components'.DS.'com_jem'.DS.'config.xml' );
-//		} else
-//        {
-//        JError::raiseWarning( 'SOME_ERROR_CODE', JText::_( 'SETTINGS NOT STORED' ));
-//        }
-        
-		$table->bind( $parampost );
 		
-		// save the changes
-		if (!$table->store()) {
-			JError::raiseWarning( 500, $table->getError() );
-			return false;
-		}
+		
 
-		$settings 	= & JTable::getInstance('jem_settings', '');
+		$settings 	=  JTable::getInstance('jem_settings', '');
 
 		// Bind the form fields to the table
 		if (!$settings->bind($post)) {
