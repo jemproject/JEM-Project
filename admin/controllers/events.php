@@ -257,7 +257,7 @@ class JEMControllerEvents extends JEMController
 
 		$msg = $total.' '.JText::_( 'COM_JEM_EVENTS_DELETED');
 
-		$cache = &JFactory::getCache('com_jem');
+		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
 		$this->setRedirect( 'index.php?option=com_jem&view=events', $msg );

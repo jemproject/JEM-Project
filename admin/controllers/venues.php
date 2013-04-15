@@ -116,7 +116,7 @@ class JEMControllerVenues extends JEMController
 		
 		$session->clear('venueform', 'com_jem');
 		
-		$venue = & JTable::getInstance('jem_venues', '');
+		$venue = JTable::getInstance('jem_venues', '');
 		$venue->bind(JRequest::get('post'));
 		$venue->checkin();
 
@@ -142,7 +142,7 @@ class JEMControllerVenues extends JEMController
 
 		$msg = $model->delete($cid);
 
-		$cache = &JFactory::getCache('com_jem');
+		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
 		$this->setRedirect( 'index.php?option=com_jem&view=venues', $msg );
@@ -250,7 +250,7 @@ class JEMControllerVenues extends JEMController
 			}
 			$msg	= JText::_( 'COM_JEM_VENUE_SAVED');
 
-			$cache = &JFactory::getCache('com_jem');
+			$cache = JFactory::getCache('com_jem');
 			$cache->clean();
 			
 			$session->clear('venueform', 'com_jem');

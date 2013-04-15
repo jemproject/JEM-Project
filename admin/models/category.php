@@ -164,7 +164,7 @@ class JEMModelCategory extends JModelLegacy
 			if ($session->has('categoryform', 'com_jem')) {
 				
 				$categoryform 	= $session->get('categoryform', 0, 'com_jem');
-				$category 		= & JTable::getInstance('jem_categories', '');
+				$category 		= JTable::getInstance('jem_categories', '');
 				
 				if (!$category->bind($categoryform)) {
 					JError::raiseError( 500, $this->_db->stderr() );
@@ -206,7 +206,7 @@ class JEMModelCategory extends JModelLegacy
 	{
 		if ($this->_id)
 		{
-			$category = & JTable::getInstance('jem_categories', '');
+			$category = JTable::getInstance('jem_categories', '');
 			return $category->checkin($this->_id);
 		}
 		return false;

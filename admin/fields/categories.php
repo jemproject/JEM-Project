@@ -42,12 +42,12 @@ class JElementCategories extends JElement
 
 	function fetchElement($name, $value, &$node, $control_name)
 	{
-		$doc 		=& JFactory::getDocument();
+		$doc 		= JFactory::getDocument();
 		$fieldName	= $control_name.'['.$name.']';
 
 		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_jem'.DS.'tables');
 
-		$category =& JTable::getInstance('jem_categories', '');
+		$category = JTable::getInstance('jem_categories', '');
 
 		if ($value) {
 			$category->load($value);

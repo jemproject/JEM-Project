@@ -58,7 +58,7 @@ class JEMViewGroup extends JViewLegacy {
 		$row      			=  $this->get( 'Data');
 		
 		//sticky forms
-		/*$session = &JFactory::getSession();
+		/*$session = JFactory::getSession();
 		if ($session->has('groupform', 'com_jem')) {
 			$groupform 	= $session->get('groupform', 0, 'com_jem');
 			$maintainers = $groupform['maintainers'];

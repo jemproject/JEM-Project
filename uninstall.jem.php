@@ -153,7 +153,7 @@ if (is_a($plugins, 'JXMLElement') && count($plugins->children())) {
 		 * Database Processing Section
 		 * ---------------------------------------------------------------------------------------------
 		 */
-		$db = &JFactory::getDBO();
+		$db = JFactory::getDBO();
 
 		// Delete the plugins in the #__plugins table
 		$query = 'DELETE FROM #__extensions WHERE element = '.$db->Quote($pname).' AND folder = '.$db->Quote($pgroup);

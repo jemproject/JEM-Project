@@ -227,7 +227,7 @@ class JEMControllerCategories extends JEMController
 
 		$msg = $model->delete($cid);
 
-		$cache = &JFactory::getCache('com_jem');
+		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
 		$this->setRedirect( 'index.php?option=com_jem&view=categories', $msg );
@@ -245,10 +245,10 @@ class JEMControllerCategories extends JEMController
 		// Check for request forgeries
 		JRequest::checkToken() or die( 'Invalid Token' );
 		
-		$session 	= & JFactory::getSession();
+		$session 	= JFactory::getSession();
 		$session->clear('categoryform', 'com_jem');
 		
-		$category = & JTable::getInstance('jem_categories', '');
+		$category = JTable::getInstance('jem_categories', '');
 		$category->bind(JRequest::get('post'));
 		$category->checkin();
 

@@ -277,7 +277,7 @@ class JEMModelArchive extends JModelLegacy
 	 */
 	function publish($cid = array(), $publish = 1)
 	{
-		$user 	= & JFactory::getUser();
+		$user 	= JFactory::getUser();
 		$userid	= (int) $user->get('id');
 
 		if (count( $cid ))

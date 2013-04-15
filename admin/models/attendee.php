@@ -158,8 +158,8 @@ class JEMModelAttendee extends JModelLegacy
 	 */
 	function store($data)
 	{
-		$user		= & JFactory::getUser();
-		$config 	= & JFactory::getConfig();
+		$user		= JFactory::getUser();
+		$config 	= JFactory::getConfig();
 		$eventid = $data['event']; 
 
 		$row  =& $this->getTable('jem_register', '');

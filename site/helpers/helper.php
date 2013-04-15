@@ -102,7 +102,7 @@ static	function cleanup($forced = 0)
 			foreach($recurrence_array as $recurrence_row) 
 			{
 				// get the info of reference event for the duplicates
-				$ref_event = & JTable::getInstance('jem_events', '');
+				$ref_event = JTable::getInstance('jem_events', '');
 				$ref_event->load($recurrence_row['id']);
 								
 				// get the recurrence information
@@ -119,7 +119,7 @@ static	function cleanup($forced = 0)
 				while (($recurrence_row['recurrence_limit_date'] == $nulldate || strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date'])) 
 				     && strtotime($recurrence_row['dates']) <= time() + 86400*$anticipation) 
 				{
-					$new_event = & JTable::getInstance('jem_events', '');
+					$new_event = JTable::getInstance('jem_events', '');
 					$new_event->bind($ref_event, array('id', 'hits', 'dates', 'enddates'));
 					$new_event->recurrence_first_id = $recurrence_row['first_id'];
           			$new_event->recurrence_counter = $recurrence_row['counter'] + 1;
@@ -560,7 +560,7 @@ static	function getMimeType($filename)
 	 */
 static	function updateWaitingList($event)
 	{
-    $db = &Jfactory::getDBO();
+    $db = Jfactory::getDBO();
     
 		// get event details for registration
     $query = ' SELECT maxplaces, waitinglist FROM #__jem_events WHERE id = ' . $db->Quote($event);
@@ -604,7 +604,7 @@ static	function updateWaitingList($event)
 				foreach ($bumping AS $register_id)
 				{		
 					JPluginHelper::importPlugin( 'jem' );
-			    $dispatcher =& JDispatcher::getInstance();
+			    $dispatcher = JDispatcher::getInstance();
 			   	$res = $dispatcher->trigger( 'onUserOnOffWaitinglist', array( $register_id ) );
 				}
 			}

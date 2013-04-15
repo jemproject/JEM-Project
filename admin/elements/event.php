@@ -43,12 +43,12 @@ class JElementEvent extends JElement
 
 	function fetchElement($name, $value, &$node, $control_name)
 	{
-		$doc 		=& JFactory::getDocument();
+		$doc 		= JFactory::getDocument();
 		$fieldName	= $control_name.'['.$name.']';
 
 		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_jem'.DS.'tables');
 
-		$event =& JTable::getInstance('jem_events', '');
+		$event = JTable::getInstance('jem_events', '');
 		if ($value) {
 			$event->load($value);
 		} else {

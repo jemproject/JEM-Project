@@ -51,7 +51,7 @@ class JEMControllerPlugins extends JEMController
 	 */
 	function plugins()
 	{
-		$db =& JFactory::getDBO();
+		$db = JFactory::getDBO();
 		
 		$query = 'SELECT COUNT(*)'
 				. ' FROM #__plugins AS p'

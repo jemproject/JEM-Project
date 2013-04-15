@@ -37,7 +37,7 @@ class JEMViewUpdatecheck extends JViewLegacy {
 		$app 	   =  JFactory::getApplication();
 
 		//initialise variables
-		$document	= & JFactory::getDocument();
+		$document	= JFactory::getDocument();
 
 		//get vars
 		$template	= $app->getTemplate();

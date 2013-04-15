@@ -42,12 +42,12 @@ class JElementVenue extends JElement
 
 	function fetchElement($name, $value, &$node, $control_name)
 	{
-		$doc 		=& JFactory::getDocument();
+		$doc 		= JFactory::getDocument();
 		$fieldName	= $control_name.'['.$name.']';
 
 		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_jem'.DS.'tables');
 
-		$venue =& JTable::getInstance('jem_venues', '');
+		$venue = JTable::getInstance('jem_venues', '');
 		if ($value) {
 			$venue->load($value);
 		} else {

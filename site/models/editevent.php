@@ -435,7 +435,7 @@ class JEMModelEditevent extends JModelLegacy
 		
 		if ($elsettings->ownedvenuesonly) 
 		{
-			$user = & JFactory::getUser();
+			$user = JFactory::getUser();
 			$userid = $user->get('id');
 			$where[] = ' created_by = '. (int)$userid;			
 		}

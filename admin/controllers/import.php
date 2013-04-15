@@ -46,7 +46,7 @@ class JEMControllerImport extends JEMController
   function csveventimport()
   { 
     $replace = JRequest::getVar('replace_events', 0, 'post', 'int');
-    $object = & JTable::getInstance('jem_events', '');
+    $object = JTable::getInstance('jem_events', '');
     $object_fields = get_object_vars($object);
     // add additional fields
     $object_fields['categories'] = '';

@@ -122,7 +122,7 @@ class JEMModelImport extends JModelLegacy
                 $values[$field] = $row[$k];
             }
 
-            $object = & JTable::getInstance('jem_events', '');
+            $object = JTable::getInstance('jem_events', '');
 
             //print_r($values);exit;
             $object->bind($values, $ignore);
@@ -193,7 +193,7 @@ class JEMModelImport extends JModelLegacy
         }
 
         // force the cleanup to update the imported events status
-        $settings = & JTable::getInstance('jem_settings', '');
+        $settings = JTable::getInstance('jem_settings', '');
         $settings->load(1);
         $settings->lastupdate = 0;
         $settings->store();
@@ -229,7 +229,7 @@ class JEMModelImport extends JModelLegacy
                 $values[$field] = $row[$k];
             }
 
-            $object = & JTable::getInstance('jem_categories', '');
+            $object = JTable::getInstance('jem_categories', '');
 
             //print_r($values);exit;
             $object->bind($values, $ignore);
@@ -390,7 +390,7 @@ class JEMModelImport extends JModelLegacy
                 $values[$field] = $row[$k];
             }
 
-            $object = & JTable::getInstance('jem_venues', '');
+            $object = JTable::getInstance('jem_venues', '');
 
             //print_r($values);exit;
             $object->bind($values, $ignore);

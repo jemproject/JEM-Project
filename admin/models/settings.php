@@ -160,7 +160,7 @@ class JEMModelSettings extends JModelLegacy
 			return false;
 		}
 
-		$settings 	= & JTable::getInstance('jem_settings', '');
+		$settings 	= JTable::getInstance('jem_settings', '');
 
 		// Bind the form fields to the table
 		if (!$settings->bind($post)) {

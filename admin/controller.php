@@ -57,7 +57,7 @@ class JEMController extends JControllerLegacy
 	 */
 	function savecss()
 	{
-		$app = & JFactory::getApplication();
+		$app = JFactory::getApplication();
 		
 		JRequest::checkToken() or die( 'Invalid Token' );
 
@@ -146,7 +146,7 @@ class JEMController extends JControllerLegacy
 			exit();
 		}
 
-		$cache = &JFactory::getCache('com_jem');
+		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
 		echo 1;

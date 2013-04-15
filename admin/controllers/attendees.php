@@ -69,7 +69,7 @@ class JEMControllerAttendees extends JEMController
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
 
-		$cache = &JFactory::getCache('com_jem');
+		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
 		$msg = $total.' '.JText::_( 'REGISTERED USERS DELETED');
@@ -236,7 +236,7 @@ class JEMControllerAttendees extends JEMController
 			if (JRequest::getInt('sendemail', 0))
 			{
 				JPluginHelper::importPlugin( 'jem' );
-		    $dispatcher =& JDispatcher::getInstance();
+		    $dispatcher = JDispatcher::getInstance();
 		   	$res = $dispatcher->trigger( 'onEventUserRegistered', array( $row->id ) );
 			}
 			
@@ -252,7 +252,7 @@ class JEMControllerAttendees extends JEMController
 			}
 			$msg	= JText::_( 'ATTENDEE SAVED');
 
-			$cache = &JFactory::getCache('com_jem');
+			$cache = JFactory::getCache('com_jem');
 			$cache->clean();			
 
 		} else {

@@ -54,11 +54,11 @@ class JEMControllerGroups extends JEMController
 		// Check for request forgeries
 		JRequest::checkToken() or die( 'Invalid Token' );
 		
-		$session 	= & JFactory::getSession();
+		$session 	= JFactory::getSession();
 		
 		$session->clear('groupform', 'com_jem');
 		
-		$group = & JTable::getInstance('jem_groups', '');
+		$group = JTable::getInstance('jem_groups', '');
 		$group->bind(JRequest::get('post'));
 		$group->checkin();
 

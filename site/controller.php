@@ -77,7 +77,7 @@ class JEMController extends JControllerLegacy
 
 		if ($id) {
 			// Create and load a events table
-			$row =& JTable::getInstance('jem_events', '');
+			$row = JTable::getInstance('jem_events', '');
 
 			$row->load($id);
 			$row->checkin();
@@ -161,7 +161,7 @@ class JEMController extends JControllerLegacy
 		{
 		  // close the window.
 		  $js = "window.parent.closeAdd() ";
-		  $doc = & JFactory::getDocument();
+		  $doc = JFactory::getDocument();
 		  $doc->addScriptDeclaration($js);
 		  echo $msg;
 		  return;
@@ -215,10 +215,10 @@ class JEMController extends JControllerLegacy
 			}
 
 			JPluginHelper::importPlugin( 'jem' );
-      		$dispatcher =& JDispatcher::getInstance();
+      		$dispatcher = JDispatcher::getInstance();
       		$res = $dispatcher->trigger( 'onVenueEdited', array( $returnid, $isNew ) );
 
-			$cache = &JFactory::getCache('com_jem');
+			$cache = JFactory::getCache('com_jem');
 			$cache->clean();
 
 		} else {
@@ -239,7 +239,7 @@ class JEMController extends JControllerLegacy
       
       		// fill the event form venue field, and close.
       		$js = "window.parent.elSelectVenue('". $venue->id ."', '". str_replace( array("'", "\""), array("\\'", ""), $venue->venue)."')";
-      		$doc = & JFactory::getDocument();      
+      		$doc = JFactory::getDocument();      
       		$doc->addScriptDeclaration($js);
       		echo $msg;
       		
@@ -279,10 +279,10 @@ class JEMController extends JControllerLegacy
 			$link 	= JRoute::_( JEMHelperRoute::getRoute($returnid), false) ;
 			
 			JPluginHelper::importPlugin( 'jem' );
-			$dispatcher =& JDispatcher::getInstance();
+			$dispatcher = JDispatcher::getInstance();
 			$res = $dispatcher->trigger( 'onEventEdited', array( $returnid, $isNew ) );			
 
-			$cache = &JFactory::getCache('com_jem');
+			$cache = JFactory::getCache('com_jem');
 			$cache->clean();
 			
 			$session->clear('eventform', 'com_jem');

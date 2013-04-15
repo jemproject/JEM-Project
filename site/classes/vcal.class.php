@@ -129,7 +129,7 @@ class vCal {
 	*/
 	function generateHTMLvCal() {
 
-		$app = & JFactory::getApplication();
+		$app = JFactory::getApplication();
 		// header info for page
 //		header( 'Content-Type: text/x-vCalendar');
 		header( 'Content-Type: text/calendar');
@@ -160,7 +160,7 @@ END:VCALENDAR
 	*/
 	function generateHTMLiCal() {
 
-		$app = & JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		// header info for page
 		header( 'Content-Type: text/calendar');

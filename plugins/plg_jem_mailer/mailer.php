@@ -66,8 +66,8 @@ class plgJEMMailer extends JPlugin {
 	{
 		parent::__construct($subject, $config);
 		
-		$app = & JFactory::getApplication();
-		$db = & JFactory::getDBO();
+		$app = JFactory::getApplication();
+		$db = JFactory::getDBO();
 		
 		$this->_SiteName 	= $app->getCfg('sitename');
 		$this->_MailFrom	= $app->getCfg('mailfrom');
@@ -109,8 +109,8 @@ class plgJEMMailer extends JPlugin {
 			return true;
 		}
 				
-		$db 	= & JFactory::getDBO();
-		$user 	= & JFactory::getUser();
+		$db 	= JFactory::getDBO();
+		$user 	= JFactory::getUser();
 		
 		$query = ' SELECT a.id, a.title, r.waiting, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug '
@@ -197,7 +197,7 @@ class plgJEMMailer extends JPlugin {
 			return true;
 		}
 				
-		$db 	= & JFactory::getDBO();
+		$db 	= JFactory::getDBO();
 		
 		$query = ' SELECT a.id, a.title, waiting, uid, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug '
@@ -214,9 +214,9 @@ class plgJEMMailer extends JPlugin {
 			return false;
 		}
 		
-		$user 	= & JFactory::getUser($details->uid);
+		$user 	= JFactory::getUser($details->uid);
 		//create link to event
-		$app = &JFactory::getApplication();
+		$app = JFactory::getApplication();
 		$url 		= $app->isAdmin() ? $app->getSiteURL() : JURI::base();
 		$link =JRoute::_($url. JEMHelperRoute::getRoute($details->slug), false);
 		
@@ -287,8 +287,8 @@ class plgJEMMailer extends JPlugin {
 			return true;
 		}
 				
-		$db 	= & JFactory::getDBO();
-		$user 	= & JFactory::getUser();
+		$db 	= JFactory::getDBO();
+		$user 	= JFactory::getUser();
 		
 		$query = ' SELECT a.id, a.title, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug '
@@ -348,8 +348,8 @@ class plgJEMMailer extends JPlugin {
 			return true;
 		}
 				
-		$db 	= & JFactory::getDBO();
-		$user 	= & JFactory::getUser();
+		$db 	= JFactory::getDBO();
+		$user 	= JFactory::getUser();
 				
 		$query = ' SELECT a.id, a.title, a.dates, a.times, a.datdescription, a.locid, a.published, a.created, a.modified,'
 				. ' v.venue, v.city,'
@@ -452,8 +452,8 @@ class plgJEMMailer extends JPlugin {
 			return true;
 		}
 				
-		$db 	= & JFactory::getDBO();
-		$user 	= & JFactory::getUser();
+		$db 	= JFactory::getDBO();
+		$user 	= JFactory::getUser();
 				
 		$query = ' SELECT v.id, v.published, v.venue, v.city, v.street, v.plz, v.url, v.country, v.locdescription, v.created, v.modified,'
 				. ' CASE WHEN CHAR_LENGTH(v.alias) THEN CONCAT_WS(\':\', v.id, v.alias) ELSE v.id END as slug'

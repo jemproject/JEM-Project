@@ -224,7 +224,7 @@ class JEMModelCategories extends JModelLegacy
 	 */
 	function publish($cid = array(), $publish = 1)
 	{
-		$user 	=& JFactory::getUser();
+		$user 	= JFactory::getUser();
 
 		if (count( $cid ))
 		{
@@ -267,7 +267,7 @@ class JEMModelCategories extends JModelLegacy
 	 */
 	function move($direction)
 	{
-		$row =& JTable::getInstance('jem_categories', '');
+		$row = JTable::getInstance('jem_categories', '');
 
 		if (!$row->load( $this->_id ) ) {
 			$this->setError($this->_db->getErrorMsg());
@@ -297,7 +297,7 @@ class JEMModelCategories extends JModelLegacy
 	 */
 	function saveorder($cid = array(), $order)
 	{
-		$row =& JTable::getInstance('jem_categories', '');
+		$row = JTable::getInstance('jem_categories', '');
 		
 		$groupings = array();
 

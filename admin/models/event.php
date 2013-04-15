@@ -271,7 +271,7 @@ class JEMModelEvent extends JModelLegacy
 	 */
 	function store($data)
 	{
-		//$app = & JFactory::getApplication();
+		//$app = JFactory::getApplication();
 
 		$elsettings = ELAdmin::config();
 		$user		=  JFactory::getUser();

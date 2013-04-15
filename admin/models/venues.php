@@ -294,7 +294,7 @@ class JEMModelVenues extends JModelLegacy
 	 */
 	function publish($cid = array(), $publish = 1)
 	{
-		$user 	=& JFactory::getUser();
+		$user 	= JFactory::getUser();
 		$userid = $user->get('id');
 
 		if (count( $cid ))
@@ -325,7 +325,7 @@ class JEMModelVenues extends JModelLegacy
 	 */
 	function move($direction)
 	{
-		$row =& JTable::getInstance('jem_venues', '');
+		$row = JTable::getInstance('jem_venues', '');
 
 		if (!$row->load( $this->_id ) ) {
 			$this->setError($this->_db->getErrorMsg());

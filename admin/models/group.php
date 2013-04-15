@@ -276,7 +276,7 @@ class JEMModelGroup extends JModelLegacy
 	{
 		if ($this->_id)
 		{
-			$group = & JTable::getInstance('jem_groups', '');
+			$group = JTable::getInstance('jem_groups', '');
 			return $group->checkin($this->_id);
 		}
 		return false;
@@ -341,7 +341,7 @@ class JEMModelGroup extends JModelLegacy
 	 */
 	function store($data)
 	{
-		$row =& JTable::getInstance('jem_groups', '');
+		$row = JTable::getInstance('jem_groups', '');
 
 		//Bind the form fields to the table
 		if (!$row->bind($data)) {
