@@ -61,13 +61,14 @@ class JEMCategories
 	 * sets array of parent categories, with top category first
 	 *
 	 */
-	function getParentCats()
+static	function getParentCats()
 	{
 		$db	= JFactory::getDBO();
 		
-		$this->parentcats = array_reverse($this->parentcats);
+		$parentcats = array();
+		$parentcats = array_reverse($parentcats);
 				
-		foreach($this->parentcats as $cid) {
+		foreach($parentcats as $cid) {
 			
 			$query = 'SELECT catname,'
 					.' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as categoryslug'
@@ -86,20 +87,23 @@ class JEMCategories
 	 *
 	 * @param int category ids
 	 */
-	function buildParentCats($cid)
+static	function buildParentCats($cid)
 	{
 		$db = JFactory::getDBO();
 		
 		$query = 'SELECT parent_id FROM #__jem_categories WHERE id = '.(int)$cid;
 		$db->setQuery( $query );
 
+		
+	    $parentcats = array();
+		
 		if($cid != 0) {
-			array_push($this->parentcats, $cid);
+			array_push($parentcats, $cid);
 		}
 
 		//if we still have results
 		if(sizeof($db->loadResult()) != 0) {
-			$this->buildParentCats($db->loadResult());
+			$db->loadResult();
 		}
 	}
 	
@@ -108,9 +112,12 @@ class JEMCategories
 	 *
 	 * @return array
 	 */
-	function getParentlist()
+static	function getParentlist()
 	{
-		return $this->category;
+		
+		$category = array();
+		
+		return $category;
 	}
 	
 	/**
@@ -118,7 +125,7 @@ class JEMCategories
     *
     * @return array
     */
-	function getCategoriesTree($published)
+static	function getCategoriesTree($published)
 	{
 		$db	= JFactory::getDBO();
 		
@@ -162,7 +169,7 @@ class JEMCategories
     * @access public
     * @return array
     */
-	function treerecurse( $id, $indent, $list, &$children, $title, $maxlevel=9999, $level=0, $type=1 )
+static	function treerecurse( $id, $indent, $list, &$children, $title, $maxlevel=9999, $level=0, $type=1 )
 	{
 		if (@$children[$id] && $level <= $maxlevel) {
 			foreach ($children[$id] as $v) {
@@ -210,7 +217,7 @@ class JEMCategories
 	 * @param string $class
 	 * @return void
 	 */
-	function buildcatselect($list, $name, $selected, $top, $class = 'class="inputbox"')
+static	function buildcatselect($list, $name, $selected, $top, $class = 'class="inputbox"')
 	{
 		$catlist 	= array();
 		
@@ -233,7 +240,7 @@ class JEMCategories
    * @param string $class
    * @return void
    */
-   function getcatselectoptions($list)
+static   function getcatselectoptions($list)
   {
     $catlist  = array();  
     
@@ -253,7 +260,7 @@ class JEMCategories
 	 * @param int category id
 	 * @return array int categories id
 	 */
-	function getChilds($id)
+static	function getChilds($id)
 	{
     $db = JFactory::getDBO();
     
@@ -284,7 +291,7 @@ class JEMCategories
 	 * @param array children indexed by parent id
 	 * @return array of category descendants
 	 */
-	function _getChildsRecurse($id, $childs)
+static	function _getChildsRecurse($id, $childs)
 	{
 		$result = array($id);
 		if (@$childs[$id]) {
