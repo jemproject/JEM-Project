@@ -51,7 +51,7 @@ class JEMViewUserElement extends JViewLegacy {
 		//add css to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 		
-		$modelusers = JModel::getInstance('Users', 'JEMModel');
+		$modelusers = JModelLegacy::getInstance('Users', 'JEMModel');
 		
 		$users = $modelusers->getData();
 		$pagination = $modelusers->getPagination();
