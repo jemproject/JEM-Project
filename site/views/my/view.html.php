@@ -54,7 +54,7 @@ class JEMViewMy extends JViewLegacy
         
         //redirect if not logged in
         if ( !$user->get('id') ) {
-        	$app->redirect( $_SERVER['HTTP_REFERER'], JText::_('COM_JEM_YOU_NEED_TO_BE_LOGGED_IN'), 'error' );
+        	$app->redirect( $_SERVER['HTTP_REFERER'], JText::_('COM_JEM_NEED_LOGGED_IN'), 'error' );
         }
 
         //add css file
