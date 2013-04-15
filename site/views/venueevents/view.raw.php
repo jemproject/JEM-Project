@@ -49,11 +49,11 @@ class JEMViewVenueevents extends JViewLegacy
 		$model->setLimitstart(0);
 		$rows = & $model->getData();
 		
-		$catid = JRequest::getInt('id');
+		$venueid = JRequest::getInt('id');
 		
 		$vcal = ELHelper::getCalendarTool();                          // initiate new CALENDAR
 		// $vcal->setProperty('unique_id', 'category'.$catid.'@'.$mainframe->getCfg('sitename'));
-		$vcal->setConfig( "filename", "category".$catid.".ics" );
+		$vcal->setConfig( "filename", "venue".$venueid.".ics" );
 		
 		foreach ( $rows as $row )
 		{
