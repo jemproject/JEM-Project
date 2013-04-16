@@ -23,7 +23,7 @@
 defined('_JEXEC') or die;
 ?>
 
-<form action="index.php" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=venues'); ?>" method="post" name="adminForm" id="adminForm">
 
 <table class="adminform">
 	<tr>
@@ -40,8 +40,8 @@ defined('_JEXEC') or die;
 <table class="adminlist">
 	<thead>
 		<tr>
-			<th width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-			<th width="5"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+			<th width="5%"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th width="5%"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="20%"><?php echo JHTML::_('grid.sort', 'COM_JEM_ALIAS', 'l.alias', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th><?php echo JText::_( 'COM_JEM_WEBSITE' ); ?></th>
@@ -49,7 +49,7 @@ defined('_JEXEC') or die;
 			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 			<th><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
 			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_EVENTS' ); ?></th>
-		    <th width="80" colspan="2"><?php echo JHTML::_('grid.sort', 'COM_JEM_REORDER', 'l.ordering', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+		    <th width="5%" colspan="2"><?php echo JHTML::_('grid.sort', 'COM_JEM_REORDER', 'l.ordering', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 		    <th width="1%" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'l.id', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 		</tr>
 	</thead>
@@ -64,14 +64,17 @@ defined('_JEXEC') or die;
 
 	<tbody>
 		<?php
-		$k = 0;
-		for ($i=0, $n=count( $this->rows ); $i < $n; $i++) {
-			$row = $this->rows[$i];
+		//$k = 0;
+		//for ($i=0, $n=count( $this->rows ); $i < $n; $i++) {
+		//	$row = $this->rows[$i];
+		foreach ($this->rows as $i => $row) :
+			
+			
 			$link 		= 'index.php?option=com_jem&amp;controller=venues&amp;task=edit&amp;cid[]='. $row->id;
 			//$checked 	= JHTML::_('grid.checkedout', $row, $i );
 			$published 	= JHTML::_('grid.published', $row, $i );
    		?>
-		<tr class="<?php echo "row$k"; ?>">
+		<tr class="row<?php echo $i % 2; ?>">
 			<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 			<td align="left">
@@ -145,12 +148,12 @@ defined('_JEXEC') or die;
 			</td>
 			<td align="left">
 				<?php
-				echo $this->pagination->orderDownIcon( $i, $n, true, 'orderdown', 'Move Down', $this->ordering );
+				echo $this->pagination->orderDownIcon( $i,$this->pagination->total, true, 'orderdown', 'Move Down', $this->ordering );
 				?>
 			</td>
 			<td align="center"><?php echo $row->id; ?></td>
 		</tr>
-		<?php $k = 1 - $k; } ?>
+		<?php endforeach; ?>
 
 	</tbody>
 
@@ -162,7 +165,6 @@ defined('_JEXEC') or die;
 
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="option" value="com_jem" />
-	<input type="hidden" name="view" value="venues" />
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="controller" value="venues" />
 	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />

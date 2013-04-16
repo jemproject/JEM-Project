@@ -22,7 +22,7 @@
 
 defined('_JEXEC') or die; ?>
 
-<form action="index.php" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=categories'); ?>" method="post" name="adminForm" id="adminForm">
 
 
 	<table class="adminform">
@@ -47,8 +47,8 @@ defined('_JEXEC') or die; ?>
 	<table class="adminlist">
 	<thead>
 		<tr>
-			<th width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-			<th width="5"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+			<th width="5%"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th width="5%"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="20%"><?php echo JHTML::_('grid.sort', 'COM_JEM_ALIAS', 'c.alias', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
       <th width="10px" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_COLOR' ); ?></th>
@@ -56,7 +56,7 @@ defined('_JEXEC') or die; ?>
 			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_EVENTS' ); ?></th>
 			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 			<th width="7%"><?php echo JHTML::_('grid.sort', 'COM_JEM_ACCESS', 'c.access', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-			<th width="80"><?php echo JHTML::_('grid.sort', 'COM_JEM_REORDER', 'c.ordering', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th width="5%"><?php echo JHTML::_('grid.sort', 'COM_JEM_REORDER', 'c.ordering', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="1%"><?php echo JHTML::_('grid.order', $this->rows, 'filesave.png', 'saveordercat' ); ?></th>
 			<th width="1%" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'c.id', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 		</tr>
@@ -74,10 +74,13 @@ defined('_JEXEC') or die; ?>
 
 	<tbody>
 		<?php
-		$k = 0;
-		$i = 0;
-		$n = count($this->rows);
-		foreach ($this->rows as $row) {
+	//	$k = 0;
+	//	$i = 0;
+	//	$n = count($this->rows);
+	//	foreach ($this->rows as $row) 
+	
+	
+	foreach ($this->rows as $i => $row) :
 			$link 		= 'index.php?option=com_jem&amp;controller=categories&amp;task=edit&amp;cid[]='. $row->id;
 			$grouplink 	= 'index.php?option=com_jem&amp;controller=groups&amp;task=edit&amp;cid[]='. $row->groupid;
 			$published 	= JHTML::_('grid.published', $row, $i );
@@ -85,7 +88,7 @@ defined('_JEXEC') or die; ?>
 			//$checked 	= JHTML::_('grid.checkedout', $row, $i );
 			$access = $row->groupname;
    		?>
-		<tr class="<?php echo "row$k"; ?>">
+		<tr class="row<?php echo $i % 2; ?>">
 			<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 			<td align="left">
@@ -141,7 +144,7 @@ defined('_JEXEC') or die; ?>
 			<td class="order" colspan="2">
 				<span><?php echo $this->pagination->orderUpIcon( $i, true, 'orderup', 'Move Up', $this->ordering ); ?></span>
 
-				<span><?php echo $this->pagination->orderDownIcon( $i, $n, true, 'orderdown', 'Move Down', $this->ordering );?></span>
+				<span><?php echo $this->pagination->orderDownIcon( $i, $this->pagination->total, true, 'orderdown', 'Move Down', $this->ordering );?></span>
 
 				<?php $disabled = $this->ordering ?  '' : '"disabled=disabled"'; ?>
 
@@ -150,9 +153,12 @@ defined('_JEXEC') or die; ?>
 			<td align="center"><?php echo $row->id; ?></td>
 		</tr>
 		<?php 
-		$k = 1 - $k;
-        $i++;
-		}
+	
+	//	$k = 1 - $k;
+ endforeach; 
+	
+   //     $i++;
+	//	}
 		?>
 	</tbody>
 
@@ -165,7 +171,6 @@ defined('_JEXEC') or die; ?>
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="controller" value="categories" />
-	<input type="hidden" name="view" value="categories" />
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />

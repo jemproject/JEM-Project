@@ -23,7 +23,7 @@
 defined('_JEXEC') or die;
 ?>
 
-<form action="index.php" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=events'); ?>" method="post" name="adminForm" id="adminForm">
 
 	<table class="adminform">
 		<tr>
@@ -45,8 +45,8 @@ defined('_JEXEC') or die;
 	<table class="adminlist">
 		<thead>
 			<tr>
-				<th width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-				<th width="5"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+				<th width="1%"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+				<th width="1%"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TIME', 'a.times', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
@@ -71,9 +71,15 @@ defined('_JEXEC') or die;
 
 		<tbody>
 			<?php
-			$k = 0;
-			for($i=0, $n=count( $this->rows ); $i < $n; $i++) {
-				$row = $this->rows[$i];
+			foreach ($this->rows as $i => $row) :
+			
+			
+			
+			
+			
+		//	$k = 0;
+		//	for($i=0, $n=count( $this->rows ); $i < $n; $i++) {
+		//		$row = $this->rows[$i];
 
 				//Prepare date
 				if (ELHelper::isValidDate($row->dates)) {
@@ -104,7 +110,7 @@ defined('_JEXEC') or die;
 				//$checked 	= JHTML::_('grid.checkedout', $row, $i );
 				$published 	= JHTML::_('grid.published', $row, $i );
    			?>
-			<tr class="<?php echo "row$k"; ?>">
+			<tr class="row<?php echo $i % 2; ?>">
 				<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 				<td><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 				<td>
@@ -257,7 +263,7 @@ defined('_JEXEC') or die;
 				</td>
 				<td align="center"><?php echo $row->id; ?></td>
 			</tr>
-			<?php $k = 1 - $k;  } ?>
+			<?php endforeach; ?>
 
 		</tbody>
 	</table>
@@ -268,7 +274,6 @@ defined('_JEXEC') or die;
 
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="option" value="com_jem" />
-	<input type="hidden" name="view" value="events" />
 	<input type="hidden" name="controller" value="events" />
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
