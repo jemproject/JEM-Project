@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
 	<fieldset name="COM_JEM_GLOBAL_SETTINGS" addpath="/administrator/components/com_jem/elements">
-		<field name="display_num" type="list" default="15" label="EVENT NUMBER" description="EVENT NUMBER TIP">
+		<field name="display_num" type="list" default="15" label="COM_JEM_EVENT_NUMBER" description="COM_JEM_EVENT_NUMBER_TIP">
 			<option value="5">5</option>
 			<option value="10">10</option>
 			<option value="15">15</option>
@@ -10,43 +10,42 @@
 			<option value="30">30</option>
 			<option value="50">50</option>
 		</field>
-		<field name="cat_num" type="text" size="2" default="4" label="CAT DISPLAY" description="CAT DISPLAY DESC" />
-		<field name="empty_cat" type="radio" default="0" label="EMPTY CATEGORIES" description="EMPTY CATEGORIES DESC">
-			<option value="0">Hide</option>
-			<option value="1">Show</option>
+		<field name="cat_num" type="text" size="2" default="4" label="COM_JEM_CAT_DISPLAY" description="COM_JEM_CAT_DISPLAY_DESC" />
+		<field name="empty_cat" type="radio" default="0" label="COM_JEM_EMPTY_CATEGORIES" description="COM_JEM_EMPTY_CATEGORIES_DESC">
+			<option value="0">COM_JEM_HIDE</option>
+			<option value="1">COM_JEM_SHOW</option>
 		</field>
-  		<field name="filter" type="radio" default="1" label="FILTER" description="FILTER DESC">
-			<option value="0">Hide</option>
-			<option value="1">Show</option>
+  		<field name="filter" type="radio" default="1" label="COM_JEM_FILTER" description="COM_JEM_FILTER_DESC">
+			<option value="0">COM_JEM_HIDE</option>
+			<option value="1">COM_JEM_SHOW</option>
 		</field>
-		<field name="display" type="radio" default="1" label="DISPLAY SELECT" description="DISPLAY SELECT DESC">
-			<option value="0">Hide</option>
-			<option value="1">Show</option>
+		<field name="display" type="radio" default="1" label="COM_JEM_DISPLAY_SELECT" description="COM_JEM_DISPLAY_SELECT_DESC">
+			<option value="0">COM_JEM_HIDE</option>
+			<option value="1">COM_JEM_SHOW</option>
 		</field>
-		<field name="icons" type="radio" default="1" label="SHOW ICONS" description="SHOW ICONS DESC">
-			<option value="0">Hide</option>
-			<option value="1">Show</option>
+		<field name="icons" type="radio" default="1" label="COM_JEM_SHOW_ICONS" description="COM_JEM_SHOW_ICONS_DESC">
+			<option value="0">COM_JEM_HIDE</option>
+			<option value="1">COM_JEM_SHOW</option>
 		</field>
-		<field name="show_print_icon" type="radio" default="1" label="PRINT ICON" description="PRINT ICON DESC">
-			<option value="0">Hide</option>
-			<option value="1">Show</option>
+		<field name="show_print_icon" type="radio" default="1" label="COM_JEM_PRINT_ICON" description="COM_JEM_PRINT_ICON_DESC">
+			<option value="0">COM_JEM_HIDE</option>
+			<option value="1">COM_JEM_SHOW</option>
 		</field>
-		<field name="show_email_icon" type="radio" default="1" label="EMAIL ICON" description="EMAIL ICON DESC">
-			<option value="0">Hide</option>
-			<option value="1">Show</option>
+		<field name="show_email_icon" type="radio" default="1" label="COM_JEM_EMAIL_ICON" description="COM_JEM_EMAIL_ICON_DESC">
+			<option value="0">COM_JEM_HIDE</option>
+			<option value="1">COM_JEM_SHOW</option>
 		</field>
 		<field name="copyright" type="radio" default="1" label="COM_JEM_SHOW_COPYRIGHT" description="COM_JEM_SHOW_COPYRIGHT_DESC">
-			<option value="0">Hide</option>
-			<option value="1">Show</option>
+			<option value="0">COM_JEM_HIDE</option>
+			<option value="1">COM_JEM_SHOW</option>
 		</field>
-		<field name="facebook" type="radio" default="1" label="facebook" description="facebook desc">
-			<option value="0">Hide</option>
-			<option value="1">Show</option>
+		<field name="facebook" type="radio" default="1" label="COM_JEM_FACEBOOK" description="COM_JEM_FACEBOOK_DESC">
+			<option value="0">COM_JEM_HIDE</option>
+			<option value="1">COM_JEM_SHOW</option>
 		</field>
 
 		
- 	</fieldset>
- 	
+ 	</fieldset> 	
  	<fieldset name="COM_JEM_RECURRENCE">
     <field name="weekdaystart" type="radio" default="1" label="COM_JEM_SELECTFIRSTWEEKDAY" description="COM_JEM_SELECTFIRSTWEEKDAYDESC">
       <option value="0">COM_JEM_SUNDAY</option>
