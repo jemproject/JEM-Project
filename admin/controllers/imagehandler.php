@@ -137,7 +137,7 @@ class JEMControllerImagehandler extends JEMController
 		if (count($images)) {
 			foreach ($images as $image)
 			{
-				if ($image !== JFilterInput::clean($image, 'path')) {
+				if ($image !== JFilterInput::getInstance()->clean($image, 'path')) {
 					JError::raiseWarning(100, JText::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'));
 					continue;
 				}
