@@ -24,7 +24,7 @@ defined('_JEXEC') or die;
 
 if ($this->updatedata->failed == 0) {
 		?>
-		<table cellpadding="4" cellspacing="0" border="0" width="100%" class="adminlist">
+		<table border="0" width="100%" class="adminlist">
 			<tr>
 		  		<td>
 		  		<?php
@@ -53,7 +53,7 @@ if ($this->updatedata->failed == 0) {
 
 		<br />
 
-		<table  cellspacing="0" cellpadding="0" border="0" width="100%" class="adminlist">
+		<table border="0" width="100%" class="adminlist">
 			<tr>
 		  		<td><b><?php echo JText::_( 'COM_JEM_VERSION' ).':'; ?></b></td>
 		  		<td><?php
@@ -104,7 +104,7 @@ if ($this->updatedata->failed == 0) {
 } else {
 ?>
 
-		<table cellpadding="4" cellspacing="0" border="0" width="100%" class="adminlist">
+		<table border="0" width="100%" class="adminlist">
 			<tr>
 		  		<td>
 		  		<?php

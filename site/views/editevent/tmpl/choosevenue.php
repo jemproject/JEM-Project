@@ -67,7 +67,7 @@ defined('_JEXEC') or die;
 
 </div>
 
-<table class="eventtable" width="100%" border="0" cellspacing="0" cellpadding="0" summary="jem">
+<table class="eventtable" width="100%" summary="jem">
 	<thead>
 		<tr>
 			<th width="7" class="sectiontableheader" align="left"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>

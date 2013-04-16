@@ -23,7 +23,7 @@
 defined('_JEXEC') or die;
 ?>
 
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 	function submitbutton(task)
 	{
 		var form = document.adminForm;
@@ -202,7 +202,7 @@ $infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', 
 		</td>
 		<td>
 				<img src="../media/system/images/blank.png" name="imagelib" id="imagelib" width="80" height="80" border="2" alt="Preview" />
-				<script language="javascript" type="text/javascript">
+				<script type="text/javascript">
 				if (document.forms[0].a_imagename.value!=''){
 					var imname = document.forms[0].a_imagename.value;
 					jsimg='../images/jem/venues/' + imname;

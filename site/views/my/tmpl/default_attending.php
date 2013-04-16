@@ -41,7 +41,7 @@ defined( '_JEXEC' ) or die;
 
 <form action="<?php echo $this->action; ?>" method="post" id="attending-events">
 
-<table class="eventtable" width="<?php echo $this->elsettings->tablewidth; ?>" border="0" cellspacing="0" cellpadding="0" summary="Attending">
+<table class="eventtable" style="width:<?php echo $this->elsettings->tablewidth; ?>;" summary="Attending">
 
 	<colgroup>
 		<col width="<?php echo $this->elsettings->datewidth; ?>" class="el_col_date" />

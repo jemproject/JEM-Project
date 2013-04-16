@@ -36,7 +36,7 @@ $options = array(
 );
 
 ?>
-	<table cellspacing="0" cellpadding="0" border="0" width="100%">
+	<table border="0" width="100%">
 		<tr>
 			<td valign="top">
 			<table class="adminlist">

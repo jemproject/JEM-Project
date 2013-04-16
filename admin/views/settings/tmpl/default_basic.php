@@ -3,7 +3,7 @@
         <td width="50%" valign="top">
 		<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_DISPLAY_SETTINGS' ); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 	 				<tr>
 	          			<td width="300" class="key">
@@ -71,7 +71,7 @@
 
 		  <fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_EVENT_HANDLING' ); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 					<tr>
         				<td width="300" class="key">
@@ -117,7 +117,7 @@
 
        	<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_IMAGE_HANDLING' ); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 					<tr>
 	          			<td width="300" class="key">
@@ -219,7 +219,7 @@
 
 		<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_META_HANDLING' ); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 					<tr>
 	          			<td width="300" class="key">

@@ -27,7 +27,7 @@ JHTML::_('behavior.modal', 'a.usermodal');
 $selectuser_link = JRoute::_('index.php?option=com_jem&controller=attendees&task=selectuser&tmpl=component');
 ?>
 
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 
 	function elSelectUser(id, username)
 	{

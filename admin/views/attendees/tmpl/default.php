@@ -28,7 +28,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 
 <form action="index.php" method="post" name="adminForm" id="adminForm">
 
-	<table class="adminlist" cellspacing="1">
+	<table class="adminlist">
 		<tr>
 		  	<td width="80%">
 				<b><?php echo JText::_( 'COM_JEM_DATE' ).':'; ?></b>&nbsp;<?php echo $this->event->dates; ?><br />
@@ -59,7 +59,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 		</tr>
 	</table>
 
-	<table class="adminlist" cellspacing="1">
+	<table class="adminlist">
 		<thead>
 			<tr>
 				<th width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>

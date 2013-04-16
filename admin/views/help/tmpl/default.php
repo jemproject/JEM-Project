@@ -67,7 +67,7 @@ $options = array(
 	</tr>
 </table>
 
-<table cellpadding="4" cellspacing="0" border="0" width="100%" class="adminlist">
+<table border="0" width="100%" class="adminlist">
 	<tr valign="top">
 		<td align="left">
 
@@ -94,7 +94,7 @@ $options = array(
 		  	?>
 		</td>
 		<td width="75%">
-			<iframe name="helpFrame" src="<?php echo 'components/com_jem/help/'.$this->langTag.'/el.intro.html'; ?>" class="helpFrame" frameborder="0"></iframe>
+			<iframe name="helpFrame" src="<?php echo 'components/com_jem/help/'.$this->langTag.'/el.intro.html'; ?>" class="helpFrame"></iframe>
 		</td>
 	</tr>
 </table>

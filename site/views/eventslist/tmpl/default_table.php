@@ -62,7 +62,7 @@ defined( '_JEXEC' ) or die;
 </div>
 <?php endif; ?>
 
-<table class="eventtable" width="<?php echo $this->elsettings->tablewidth; ?>" border="0" cellspacing="0" cellpadding="0" summary="jem">
+<table class="eventtable" style="width:<?php echo $this->elsettings->tablewidth; ?>;" summary="jem">
 
 	<colgroup>
 		<?php if ($this->elsettings->showeventimage == 1) :	?>

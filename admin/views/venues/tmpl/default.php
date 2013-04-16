@@ -37,7 +37,7 @@ defined('_JEXEC') or die;
 	</tr>
 </table>
 
-<table class="adminlist" cellspacing="1">
+<table class="adminlist">
 	<thead>
 		<tr>
 			<th width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>

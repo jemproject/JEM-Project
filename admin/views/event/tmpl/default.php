@@ -93,7 +93,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 ?>
 
 <form action="index.php" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
-<table cellspacing="0" cellpadding="0" border="0" width="100%">
+<table border="0" width="100%">
 	<tr>
 	<td valign="top">
 		<?php echo JHtml::_('tabs.start','event-pane',$options); ?>
@@ -409,7 +409,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 				<td>&nbsp;</td>
 				<td>
 					<img src="../media/system/images/blank.png" name="imagelib"	id="imagelib" width="80" height="80" border="2" alt="Preview" />
-					<script	language="javascript" type="text/javascript">
+					<script type="text/javascript">
 						if (document.forms[0].a_imagename.value!=''){
 							var imname = document.forms[0].a_imagename.value;
 							jsimg='../images/jem/events/' + imname;
@@ -426,7 +426,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 		$title4 = JText::_( 'COM_JEM_RECURRING_EVENTS' );
 		echo JHtml::_('sliders.panel', $title4, 'recurrence');
 		?>
-		<table width="100%" height="200px">
+		<table width="100%" style="height:200px;">
 			<tr>
 				<td width="40%">
 					<?php echo JText::_ ( 'COM_JEM_RECURRENCE' ); ?>:

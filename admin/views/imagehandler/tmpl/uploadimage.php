@@ -64,7 +64,7 @@ defined( '_JEXEC' ) or die;
 
 			<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_SELECT_IMAGE_UPLOAD' ); ?></legend>
-			<table class="admintable" cellspacing="1">
+			<table class="admintable">
 				<tbody>
 					<tr>
 	          			<td>
@@ -82,7 +82,7 @@ defined( '_JEXEC' ) or die;
 
 			<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_ATTENTION' ); ?></legend>
-			<table class="admintable" cellspacing="1">
+			<table class="admintable">
 				<tbody>
 					<tr>
 	          			<td>
@@ -151,7 +151,7 @@ defined( '_JEXEC' ) or die;
 
 			<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_ATTENTION' ); ?></legend>
-			<table class="admintable" cellspacing="1">
+			<table class="admintable">
 				<tbody>
 					<tr>
 	          			<td align="center">

@@ -6,7 +6,7 @@
         			<td width="50%" valign="top">
 						<fieldset class="adminform">
 							<legend><?php echo JText::_( 'COM_JEM_GLOBAL_PARAMETERS' ); ?></legend>
-							<table class="admintable" cellspacing="1">
+							<table class="admintable">
 								<tbody>
       								<tr>
 	          							<td width="300" class="key">
@@ -235,26 +235,7 @@
        	 								</td>
       								</tr>
       								
-      								
-      								
-    <param name="attachments_path" type="text" size="100" default="media/com_jem/attachments" label="COM_JEM_SETTINGS_ATTACHEMENT_PATH" description="COM_JEM_SETTINGS_ATTACHEMENT_PATH_DESC" />
-    <param name="attachments_maxsize" type="text" size="15" default="1000" label="COM_JEM_SETTINGS_ATTACHEMENT_MAXSIZE" description="COM_JEM_SETTINGS_ATTACHEMENT_MAXSIZE_DESC" />
-    <param name="attachments_types" type="text" size="100" default="txt,csv,htm,html,xml,css,doc,xls,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,zip,tar.gz" label="COM_JEM_SETTINGS_ATTACHEMENT_TYPES" description="COM_JEM_SETTINGS_ATTACHEMENT_TYPES_DESC" />
- 	</params>
-      								
-      								
-      								
-      								
-      								
-      								
-      								
       								<!------  ------ ------- ------- ------- ------- --->
-      								
-      								
-      								
-      								
-      								
-      								
       							
 								</tbody>
 							</table>

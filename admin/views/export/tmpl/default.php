@@ -27,8 +27,7 @@ defined('_JEXEC') or die;
 
 <form action="index.php" method="post" name="adminForm" enctype="multipart/form-data" id="adminForm">
   <fieldset>
-    <legend><?php echo JText::_('COM_JEM_EXPORT_EVENTS'); ?></legend>
-    </br />    
+    <legend><?php echo JText::_('COM_JEM_EXPORT_EVENTS'); ?></legend>  
       <table>
         <tr>
           <td>    
@@ -86,7 +85,6 @@ defined('_JEXEC') or die;
   
   <fieldset>
     <legend><?php echo JText::_('COM_JEM_EXPORT_VENUES'); ?></legend>
-    </br />    
       <table>
         <tr>
           <td>    
@@ -144,17 +142,7 @@ defined('_JEXEC') or die;
   </fieldset>
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
 	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="view" value="export" />
 	<input type="hidden" name="controller" value="export" />

@@ -23,7 +23,7 @@
 defined('_JEXEC') or die;
 ?>
 
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 	function submitbutton(task)
 	{
 		var form = document.getElementById('adminForm');
@@ -77,7 +77,7 @@ defined('_JEXEC') or die;
 
 <form action="index.php" method="post" name="adminForm" id="adminForm" class="form-validate">
 
-<table cellspacing="0" cellpadding="0" border="0" width="100%">
+<table border="0" width="100%">
 	<tr>
 		<td valign="top">
 

@@ -3,7 +3,7 @@
         <td width="50%">
 			<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_GENERAL_LAYOUT_SETTINGS'); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 					<tr>
 	          			<td width="300" class="key">
@@ -32,7 +32,7 @@
 			  </fieldset>
 			  <fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_DATE_COLUMN'); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 					<tr>
 	          			<td width="300" class="key">
@@ -60,7 +60,7 @@
 
 			<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_CITY_COLUMN' ); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 					<tr>
 	          			<td width="300" class="key">
@@ -105,7 +105,7 @@
 			
 			<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_ATTENDEE_COLUMN' ); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 					<tr>
 	          			<td width="300" class="key">
@@ -145,7 +145,7 @@
 
 			<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_TITLE_COLUMN' ); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 	  				<tr>
 	          			<td width="300" class="key">
@@ -193,7 +193,7 @@
         <td width="50%">
 			<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_VENUE_COLUMN' ); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 	  				<tr>
 	          			<td width="300" class="key">
@@ -250,7 +250,7 @@
 
 			<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_STATE_COLUMN' ); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 					<tr>
 	          			<td width="300" class="key">
@@ -295,7 +295,7 @@
 
 			<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_CATEGORY_COLUMN'); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 	  				<tr>
 	          			<td width="300" class="key">
@@ -353,7 +353,7 @@
 			  
 			  <fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_LAYOUT_TABLE_EVENTIMAGE'); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 					<tr>
 	          			<td width="300" class="key">

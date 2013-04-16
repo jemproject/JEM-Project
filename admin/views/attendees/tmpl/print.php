@@ -22,7 +22,7 @@
 
 defined('_JEXEC') or die; ?>
 
-	<table cellpadding="4" cellspacing="0" border="0" width="100%" class="adminlist">
+	<table border="0" width="100%" class="adminlist">
 		<tr>
 		  	<td class="sectionname" width="100%"><font style="color: #C24733; font-size : 18px; font-weight: bold;"><?php echo JText::_( 'COM_JEM_REGISTERED_USER' ); ?></font></td>
 		  	<td><div class="button2-left"><div class="blank"><a href="#" onclick="window.print();return false;"><?php echo JText::_('COM_JEM_PRINT'); ?></a></div></div></td>
@@ -31,7 +31,7 @@ defined('_JEXEC') or die; ?>
 
 	<br />
 
-	<table class="adminlist" cellspacing="1">
+	<table class="adminlist">
 		<tr>
 		  	<td align="left">
 				<b><?php echo JText::_( 'COM_JEM_DATE' ).':'; ?></b>&nbsp;<?php echo $this->event->dates; ?><br />
@@ -42,7 +42,7 @@ defined('_JEXEC') or die; ?>
 
 	<br />
 
-	<table class="adminlist" cellspacing="1">
+	<table class="adminlist">
 		<thead>
 			<tr>
 				<th class="title"><?php echo JText::_( 'COM_JEM_NAME' ); ?></th>

@@ -25,7 +25,6 @@ defined('_JEXEC') or die;
 <form action="index.php" method="post" name="adminForm" enctype="multipart/form-data" id="adminForm">
   <fieldset>
     <legend><?php echo JText::_('COM_JEM_IMPORT_EVENTS'); ?></legend>
-    </br />
 	    <?php echo JText::_( 'COM_JEM_IMPORT_INSTRUCTIONS' ) ?>
 			<ul>
 			<li>

@@ -4,7 +4,7 @@
         
         	<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_EVENTS' ); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 	  				<tr>
 	          			<td width="300" class="key">
@@ -48,7 +48,7 @@
         
 			<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_VENUES' ); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 					<tr valign="top">
 	          			<td width="300" class="key">
@@ -142,7 +142,7 @@
 
 			<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_REGISTRATION' ); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 					<tr>
 	          			<td width="300" class="key">

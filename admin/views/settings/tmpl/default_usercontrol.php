@@ -4,7 +4,7 @@
 
 		<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_IMAGE_UPLOAD_OPTIONS' ); ?></legend>
-			<table class="admintable" cellspacing="1">
+			<table class="admintable">
 				<tbody>
 	  				<tr>
 	          			<td width="300" class="key">
@@ -25,7 +25,7 @@
 
 		<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_DESCRIPTION' ); ?></legend>
-			<table class="admintable" cellspacing="1">
+			<table class="admintable">
 				<tbody>
 	  				<tr>
 	          			<td width="300" class="key">
@@ -43,7 +43,7 @@
 
 		<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_AC_EVENTS' ); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 	  				<tr>
 	          			<td width="300" class="key">
@@ -142,7 +142,7 @@
 
         <fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_REGISTRATION' ); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 	  				<tr>
 	          			<td width="300" class="key">
@@ -190,7 +190,7 @@
 
 		<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_AC_VENUES' ); ?></legend>
-				<table class="admintable" cellspacing="1">
+				<table class="admintable">
 				<tbody>
 	  					<tr>
 	          			<td width="300" class="key">

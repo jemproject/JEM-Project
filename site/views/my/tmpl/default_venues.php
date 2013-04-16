@@ -28,7 +28,7 @@ defined( '_JEXEC' ) or die;
 
 <h2><?php echo JText::_('COM_JEM_MY_VENUES'); ?></h2>
 
-<table class="eventtable" width="<?php echo $this->elsettings->tablewidth; ?>" border="0" cellspacing="0" cellpadding="0" summary="venues list">
+<table class="eventtable" style="width:<?php echo $this->elsettings->tablewidth; ?>;" summary="venues list">
 	<thead>
 		<tr>
 			<th id="el_title" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_VENUE'); ?></th>

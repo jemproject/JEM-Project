@@ -22,7 +22,7 @@
 
 defined('_JEXEC') or die;
 ?>
-<table cellspacing="0" cellpadding="4" border="0" width="100%">
+<table border="0" width="100%">
 	<tr>
 		<td width="10%">
 			<div class="linkicon">

@@ -39,7 +39,7 @@ $options = array(
 
 ?>
 
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 	function submitbutton(pressbutton)
 	{
 		var form = document.getElementById('adminForm');
@@ -66,7 +66,7 @@ $options = array(
 
 <form action="index.php" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 
-	<table cellspacing="0" cellpadding="0" border="0" width="100%">
+	<table border="0" width="100%">
 		<tr>
 			<td valign="top">
 			<?php echo JHtml::_('tabs.start','det-pane', $options); ?>
@@ -183,7 +183,7 @@ $options = array(
 					</td>
 					<td>
 						<img src="../media/system/images/blank.png" name="imagelib" id="imagelib" width="80" height="80" border="2" alt="Preview" />
-						<script language="javascript" type="text/javascript">
+						<script type="text/javascript">
 						if (document.forms[0].a_imagename.value!=''){
 							var imname = document.forms[0].a_imagename.value;
 							jsimg='../images/jem/categories/' + imname;
