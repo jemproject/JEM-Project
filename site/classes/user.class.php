@@ -113,21 +113,27 @@ static	 function superuser()
 	 * 
 	 * @return boolean True on success
 	 */
-static	 function editoruser()
+	static	 function editoruser()
 	{
 		$user 		=  JFactory::getUser();
+		$userGroups = $user->getAuthorisedGroups();
 		
 		$group_ids = array(
-		//			18, //registered
-		//			19, //author
-					20, //editor
-					21, //publisher
-					23, //manager
-					24, //administrator
-					25 //super administrator
+ 				//	2, // registered
+				//	3, // author
+					4, // editor
+					5, // publisher
+					6, // manager
+					7, // administrator
+				   	8, // Super Users
 					);
 
-		return in_array($user->get('gid'), $group_ids);
+		foreach ($userGroups as $gid)	{
+				if (in_array($gid, $group_ids)) return true;
+		}
+		
+		return false;
+		
 	}
 
 	/**
