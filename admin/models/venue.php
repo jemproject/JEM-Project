@@ -163,7 +163,7 @@ class JEMModelVenue extends JModelLegacy
 				$venue->country				= null;
       			$venue->latitude      		= null;
      			$venue->longitude     		= null;
-				$venue->locimage			= JText::_('COM_JEM_SELECTIMAGE');
+				$venue->locimage			= '';
 				$venue->map					= 1;
 				$venue->published			= 1;
 				$venue->locdescription		= null;

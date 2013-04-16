@@ -162,7 +162,7 @@ class JEMModelEvent extends JModelLegacy
             $event->recurrence_limit 	= 0;
             $event->recurrence_counter 	= 0;
             $event->recurrence_byday 	= '';
-            $event->datimage			= JText::_('SELECTIMAGE');
+            $event->datimage			= '';
             $event->venue				= JText::_('SELECTVENUE');
             $event->hits				= 0;
             $event->version				= 0;

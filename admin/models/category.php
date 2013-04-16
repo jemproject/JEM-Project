@@ -184,7 +184,7 @@ class JEMModelCategory extends JModelLegacy
 				$category->meta_description		= null;
 				$category->meta_keywords		= null;
 				$category->published			= 1;
-				$category->image				= JText::_('COM_JEM_SELECTIMAGE');
+				$category->image				= '';
       			$category->color        		= '';
 				$category->access				= 0;
 				$category->attachments	= array();

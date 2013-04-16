@@ -55,9 +55,7 @@ class JEMViewVenue extends JViewLegacy {
 		$cid 			= JRequest::getInt( 'cid' );
 
 		//add css and js to document
-		$document->addScript('../includes/js/joomla/popup.js');
 		$document->addScript(JURI::root().'media/com_jem/js/attachments.js' );
-		$document->addStyleSheet('../includes/js/joomla/popup.css');
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
 		// Get data from the model
