@@ -39,7 +39,7 @@ class JEMViewEventelement extends JViewLegacy {
 		//initialise variables
 		$user 		=  JFactory::getUser();
 		$db			=  JFactory::getDBO();
-		$elsettings = ELAdmin::config();
+		$elsettings =  ELAdmin::config();
 		$document	=  JFactory::getDocument();
 		
 		JHTML::_('behavior.tooltip');
@@ -56,8 +56,6 @@ class JEMViewEventelement extends JViewLegacy {
 
 		//prepare the document
 		$document->setTitle(JText::_( 'SELECTEVENT' ));
-		$document->addStyleSheet('templates/'.$template.'/css/general.css');
-
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
 		//Get data from the model

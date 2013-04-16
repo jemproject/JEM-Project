@@ -79,7 +79,7 @@ defined('_JEXEC') or die;
 				$img = $row->published ? 'tick.png' : 'publish_x.png';
 				$alt = $row->published ? 'Published' : 'Unpublished';
 				?>
-				<img src="images/<?php echo $img;?>" width="16" height="16" border="0" alt="<?php echo $alt;?>" />
+				<img src="../media/com_jem/images/<?php echo $img;?>" width="16" height="16" border="0" alt="<?php echo $alt;?>" />
 			</td>
 		</tr>
 		<?php 

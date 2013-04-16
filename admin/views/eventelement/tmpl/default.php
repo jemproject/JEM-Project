@@ -150,7 +150,7 @@ defined('_JEXEC') or die;
 				?></td>
 			<td align="center">
 				<?php $img = $row->published ? 'tick.png' : 'publish_x.png'; ?>
-				<img src="images/<?php echo $img;?>" width="16" height="16" border="0" alt="" />
+				<img src="../media/com_jem/images/<?php echo $img;?>" width="16" height="16" border="0" alt="" />
 			</td>
 		</tr>
 			<?php $k = 1 - $k; } ?>

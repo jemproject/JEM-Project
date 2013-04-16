@@ -52,7 +52,6 @@ class JEMViewCategoryelement extends JViewLegacy {
 
 		//prepare document
 		$document->setTitle(JText::_( 'COM_JEM_SELECT_CATEGORY'));;
-		$document->addStyleSheet('templates/'.$template.'/css/general.css');
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
 		// Get data from the model
