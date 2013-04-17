@@ -85,12 +85,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 
 		<tbody>
 			<?php
-		//	$k = 0;
-		//	for($i=0, $n=count( $this->rows ); $i < $n; $i++) {
-		//		$row = $this->rows[$i];
    		foreach ($this->rows as $i => $row) :
-		
-		
 			?>
 			<tr class="row<?php echo $i % 2; ?>">
 				<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>

@@ -72,15 +72,6 @@ defined('_JEXEC') or die;
 		<tbody>
 			<?php
 			foreach ($this->rows as $i => $row) :
-			
-			
-			
-			
-			
-		//	$k = 0;
-		//	for($i=0, $n=count( $this->rows ); $i < $n; $i++) {
-		//		$row = $this->rows[$i];
-
 				//Prepare date
 				if (ELHelper::isValidDate($row->dates)) {
 					$date = strftime( $this->elsettings->formatdate, strtotime( $row->dates ));
@@ -106,8 +97,6 @@ defined('_JEXEC') or die;
 
 				$link 			= 'index.php?option=com_jem&amp;controller=events&amp;task=edit&amp;cid[]='.$row->id;
 				$venuelink 		= 'index.php?option=com_jem&amp;controller=venues&amp;task=edit&amp;cid[]='.$row->locid;
-
-				//$checked 	= JHTML::_('grid.checkedout', $row, $i );
 				$published 	= JHTML::_('grid.published', $row, $i );
    			?>
 			<tr class="row<?php echo $i % 2; ?>">

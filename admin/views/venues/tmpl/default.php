@@ -64,14 +64,8 @@ defined('_JEXEC') or die;
 
 	<tbody>
 		<?php
-		//$k = 0;
-		//for ($i=0, $n=count( $this->rows ); $i < $n; $i++) {
-		//	$row = $this->rows[$i];
 		foreach ($this->rows as $i => $row) :
-			
-			
 			$link 		= 'index.php?option=com_jem&amp;controller=venues&amp;task=edit&amp;cid[]='. $row->id;
-			//$checked 	= JHTML::_('grid.checkedout', $row, $i );
 			$published 	= JHTML::_('grid.published', $row, $i );
    		?>
 		<tr class="row<?php echo $i % 2; ?>">

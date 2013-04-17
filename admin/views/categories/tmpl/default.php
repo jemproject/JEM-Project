@@ -74,18 +74,10 @@ defined('_JEXEC') or die; ?>
 
 	<tbody>
 		<?php
-	//	$k = 0;
-	//	$i = 0;
-	//	$n = count($this->rows);
-	//	foreach ($this->rows as $row) 
-	
-	
-	foreach ($this->rows as $i => $row) :
+			foreach ($this->rows as $i => $row) :
 			$link 		= 'index.php?option=com_jem&amp;controller=categories&amp;task=edit&amp;cid[]='. $row->id;
 			$grouplink 	= 'index.php?option=com_jem&amp;controller=groups&amp;task=edit&amp;cid[]='. $row->groupid;
 			$published 	= JHTML::_('grid.published', $row, $i );
-			//$access 	= JHTML::_('grid.access', $row, $i );
-			//$checked 	= JHTML::_('grid.checkedout', $row, $i );
 			$access = $row->groupname;
    		?>
 		<tr class="row<?php echo $i % 2; ?>">
@@ -153,12 +145,7 @@ defined('_JEXEC') or die; ?>
 			<td align="center"><?php echo $row->id; ?></td>
 		</tr>
 		<?php 
-	
-	//	$k = 1 - $k;
  endforeach; 
-	
-   //     $i++;
-	//	}
 		?>
 	</tbody>
 
