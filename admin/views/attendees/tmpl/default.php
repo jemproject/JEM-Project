@@ -26,7 +26,7 @@ JHTML::_('behavior.tooltip');
 $colspan = ($this->event->waitinglist ? 10 : 9);
 ?>
 
-<form action="index.php" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=attendees'); ?>"  method="post" name="adminForm" id="adminForm">
 
 	<table class="adminlist">
 		<tr>
@@ -62,8 +62,8 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 	<table class="adminlist">
 		<thead>
 			<tr>
-				<th width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-				<th width="5"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+				<th width="5%"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+				<th width="5%"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_NAME', 'u.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_USERNAME', 'u.username', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
@@ -85,11 +85,14 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 
 		<tbody>
 			<?php
-			$k = 0;
-			for($i=0, $n=count( $this->rows ); $i < $n; $i++) {
-				$row = $this->rows[$i];
-   			?>
-			<tr class="<?php echo "row$k"; ?>">
+		//	$k = 0;
+		//	for($i=0, $n=count( $this->rows ); $i < $n; $i++) {
+		//		$row = $this->rows[$i];
+   		foreach ($this->rows as $i => $row) :
+		
+		
+			?>
+			<tr class="row<?php echo $i % 2; ?>">
 				<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 				<td><input type="checkbox" id="cb<?php echo $i;?>" name="cid[]" value="<?php echo $row->id; ?>" onclick="isChecked(this.checked);" /></td>
 				<td><a href="<?php echo JRoute::_( 'index.php?option=com_jem&controller=attendees&task=edit&cid[]='.$row->id ); ?>"><?php echo $row->name; ?></a></td>
@@ -113,7 +116,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 				<?php endif;?>
 				<td><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','remove')"><img src="../media/com_jem/images/publish_x.png" width="16" height="16" border="0" alt="Delete" /></a></td>
 			</tr>
-			<?php $k = 1 - $k;  } ?>
+			<?php endforeach; ?>
 		</tbody>
 
 	</table>
@@ -125,7 +128,6 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="controller" value="attendees" />
-		<input type="hidden" name="view" value="attendees" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="id" value="<?php echo $this->event->id; ?>" />
 		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />

@@ -23,7 +23,7 @@
 defined('_JEXEC') or die;
 ?>
 
-<form action="index.php" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=groups'); ?>"  method="post" name="adminForm" id="adminForm">
 
 <table class="adminform">
 	<tr>
@@ -56,14 +56,16 @@ defined('_JEXEC') or die;
 
 	<tbody>
 		<?php
-		$k = 0;
-		for($i=0, $n=count( $this->rows ); $i < $n; $i++) {
-			$row = $this->rows[$i];
+	//	$k = 0;
+	//	for($i=0, $n=count( $this->rows ); $i < $n; $i++) {
+	//		$row = $this->rows[$i];
 
+	foreach ($this->rows as $i => $row) :
+	
 			$link 		= 'index.php?option=com_jem&amp;controller=groups&amp;task=edit&amp;cid[]='.$row->id;
 			//$checked 	= JHTML::_('grid.checkedout', $row, $i );
    		?>
-		<tr class="<?php echo "row$k"; ?>">
+			<tr class="row<?php echo $i % 2; ?>">
 			<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 			<td>
@@ -80,7 +82,7 @@ defined('_JEXEC') or die;
 			</td>
 			<td><?php echo htmlspecialchars($row->description, ENT_QUOTES, 'UTF-8'); ?></td>
 		</tr>
-		<?php $k = 1 - $k;  } ?>
+		<?php endforeach; ?>
 
 	</tbody>
 
@@ -93,7 +95,6 @@ defined('_JEXEC') or die;
 <input type="hidden" name="boxchecked" value="0" />
 <input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="controller" value="groups" />
-<input type="hidden" name="view" value="groups" />
 <input type="hidden" name="task" value="" />
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
