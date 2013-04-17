@@ -64,7 +64,7 @@ $options = array(
 </script>
 
 
-<form action="index.php" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=category'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 
 	<table border="0" width="100%">
 		<tr>
@@ -246,10 +246,8 @@ $options = array(
 </table>
 
 <?php echo JHTML::_( 'form.token' ); ?>
-<input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
 <input type="hidden" name="controller" value="categories" />
-<input type="hidden" name="view" value="category" />
 <input type="hidden" name="task" value="" />
 </form>
 

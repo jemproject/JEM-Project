@@ -36,8 +36,6 @@ defined( '_JEXEC' ) or die;
 </script>
 
 
-<form action="<?php echo $this->action; ?>" method="post" name="adminForm" id="adminForm">
-
 <?php if ($this->elsettings->filter || $this->elsettings->display) : ?>
 <div id="el_filter" class="floattext">
 		<?php if ($this->elsettings->filter) : ?>

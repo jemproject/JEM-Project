@@ -121,7 +121,6 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 
 		<?php echo JHTML::_( 'form.token' ); ?>
 		<input type="hidden" name="boxchecked" value="0" />
-		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="controller" value="attendees" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="id" value="<?php echo $this->event->id; ?>" />

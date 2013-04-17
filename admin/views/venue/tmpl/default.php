@@ -149,7 +149,7 @@ $options = array(
 	}
 </script>
 
-<form action="index.php" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=venue'); ?>" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
 
 <table border="0" width="100%">
 	<tr>
@@ -481,9 +481,7 @@ if ( $this->settings->showmapserv == 0 ) { ?>
 }
 ?>
 	<?php echo JHTML::_( 'form.token' ); ?>
-	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="controller" value="venues" />
-	<input type="hidden" name="view" value="venue" />
 	<input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
 	<input type="hidden" name="created" value="<?php echo $this->row->created; ?>" />
 	<input type="hidden" name="author_ip" value="<?php echo $this->row->author_ip; ?>" />

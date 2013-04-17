@@ -58,7 +58,7 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&controller=attendees&task
 </script>
 
 
-<form action="index.php" method="post" name="adminForm" id="adminForm" class="form-validate">
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=attendee'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 	<fieldset><legend><?php echo JText::_('COM_JEM_DETAILS'); ?></legend>
 	<table  class="admintable">
 		<tr>
@@ -91,11 +91,9 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&controller=attendees&task
 	</fieldset>
 
 <?php echo JHTML::_( 'form.token' ); ?>
-<input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
 <input type="hidden" name="event" value="<?php echo ($this->row->event ? $this->row->event : $this->event); ?>" />
 <input type="hidden" name="controller" value="attendees" />
-<input type="hidden" name="view" value="attendee" />
 <input type="hidden" name="task" value="" />
 </form>
 

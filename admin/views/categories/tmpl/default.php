@@ -156,7 +156,6 @@ defined('_JEXEC') or die; ?>
 	</p>
 
 	<input type="hidden" name="boxchecked" value="0" />
-	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="controller" value="categories" />
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />

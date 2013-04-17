@@ -75,7 +75,7 @@ defined('_JEXEC') or die;
 	}
 </script>
 
-<form action="index.php" method="post" name="adminForm" id="adminForm" class="form-validate">
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=group'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 
 <table border="0" width="100%">
 	<tr>
@@ -133,9 +133,7 @@ defined('_JEXEC') or die;
 </table>
 
 <?php echo JHTML::_( 'form.token' ); ?>
-<input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="controller" value="groups" />
-<input type="hidden" name="view" value="group" />
 <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
 <input type="hidden" name="task" value="" />
 </form>

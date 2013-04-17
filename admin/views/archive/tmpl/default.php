@@ -22,7 +22,7 @@
 
 defined('_JEXEC') or die; ?>
 
-<form action="index.php" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=archive'); ?>" method="post" name="adminForm" id="adminForm">
 
 	<table class="adminform">
 		<tr>
@@ -60,9 +60,7 @@ defined('_JEXEC') or die; ?>
 
 		<tbody>
 			<?php
-			$k = 0;
-			for($i=0, $n=count( $this->rows ); $i < $n; $i++) {
-				$row = $this->rows[$i];
+			foreach ($this->rows as $i => $row) :
 				if (ELHelper::isValidDate($row->dates)) {
 					$date		= strftime( $this->elsettings->formatdate, strtotime( $row->dates ));
 				} 
@@ -85,7 +83,7 @@ defined('_JEXEC') or die; ?>
 					$time = $time.' '.$this->elsettings->timename;
 				}
    			?>
-			<tr class="<?php echo "row$k"; ?>">
+			<tr class="row<?php echo $i % 2; ?>">
 				<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 				<td><input type="checkbox" id="cb<?php echo $i;?>" name="cid[]" value="<?php echo $row->id; ?>" onclick="isChecked(this.checked);" /></td>
 				<td>
@@ -156,7 +154,7 @@ defined('_JEXEC') or die; ?>
 					</span>
 				</td>
 			</tr>
-			<?php $k = 1 - $k;  } ?>
+			<?php endforeach; ?>
 		</tbody>
 
 	</table>
@@ -166,8 +164,6 @@ defined('_JEXEC') or die; ?>
 	</p>
 
 	<input type="hidden" name="boxchecked" value="0" />
-	<input type="hidden" name="option" value="com_jem" />
-	<input type="hidden" name="view" value="archive" />
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="controller" value="archive" />
 	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
