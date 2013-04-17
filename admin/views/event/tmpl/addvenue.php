@@ -24,7 +24,7 @@ defined('_JEXEC') or die;
 ?>
 
 <script type="text/javascript">
-	function submitbutton(task)
+	Joomla.submitbutton = function(task)
 	{
 		var form = document.adminForm;
 

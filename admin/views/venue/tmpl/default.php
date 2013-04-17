@@ -79,7 +79,7 @@ $options = array(
 		$(form.country).removeClass('required');
 	}
 
-	function submitbutton(task)
+	Joomla.submitbutton = function(task)
 	{
 		var form = document.getElementById('adminForm');
 		var locdescription = <?php echo $this->editor->getContent( 'locdescription' ); ?>
@@ -130,6 +130,11 @@ $options = array(
   			alert("<?php echo JText::_( 'COM_JEM_ADD_CITY', true ); ?>");
   			validator.handleResponse(false,form.city);
   			form.city.focus();
+  			return false;
+  			} else if ( validator.validate(form.plz) === false) {
+  			alert("<?php echo JText::_( 'COM_JEM_ADD_ZIP', true ); ?>");
+  			validator.handleResponse(false,form.plz);
+  			form.plz.focus();
   			return false;
 		} else if ( validator.validate(form.country) === false) {
    			alert("<?php echo JText::_( 'COM_JEM_ADD_COUNTRY', true ); ?>");

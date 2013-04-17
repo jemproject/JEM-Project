@@ -59,7 +59,7 @@ $options = array(
     	res.reseter( task, id, div );
 	}
 
-	function submitbutton(task)
+	Joomla.submitbutton = function(task)
 	{
 
 		var form = document.adminForm;
