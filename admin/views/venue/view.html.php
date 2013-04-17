@@ -47,12 +47,12 @@ class JEMViewVenue extends JViewLegacy {
 		$document	=  JFactory::getDocument();
 		$user 		=  JFactory::getUser();
 		$db 		=  JFactory::getDBO();
-		$settings	= ELAdmin::config();
+		$settings	=  ELAdmin::config();
 		
 		$nullDate 		= $db->getNullDate();
 
 		//get vars
-		$cid 			= JRequest::getInt( 'cid' );
+		$cid 			= JRequest::getVar( 'cid' );
 
 		//add css and js to document
 		$document->addScript(JURI::root().'media/com_jem/js/attachments.js' );
