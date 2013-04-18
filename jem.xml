@@ -31,17 +31,6 @@
 		<folder>js</folder>
 	</media>
 
-	<params>
-		<param name="display_num" default="15" />
-		<param name="cat_num" default="4" />
-		<param name="empty_cat" default="0" />
-		<param name="filter" default="1" />
-		<param name="display" default="1" />
-		<param name="icons" default="1" />
-		<param name="show_print_icon" default="1" />
-		<param name="show_email_icon" default="1" />
-	</params>
-
 	<install>
 		<sql>
 			<file driver="mysql" charset="utf8">install.mysql.utf8.sql</file>
@@ -90,54 +79,6 @@
 		</files>
 	</administration>
 
-	<plugins>
-		<!-- Mailer plugin for JEM -->
-		<plugin plugin="mailer" group="jem">
-			<files folder="plugins/plg_jem_mailer">
-				<file>mailer.php</file>
-				<file>mailer.xml</file>
-			</files>
-	
-			<languages folder="plugins/plg_jem_mailer/languages">
-				<language tag="en-GB">en-GB.plg_jem_mailer.ini</language>
-			</languages>
-		</plugin>
-
-		<!-- Comments plugin for JEM -->
-		<plugin plugin="comments" group="jem">
-			<files folder="plugins/plg_jem_comments">
-				<file>comments.php</file>
-				<file>comments.xml</file>
-			</files>
-
-			<languages folder="plugins/plg_jem_comments/languages">
-				<language tag="en-GB">en-GB.plg_jem_comments.ini</language>
-			</languages>
-		</plugin>
-	
-		<!-- Search plugin from JEM for com_search -->
-		<plugin plugin="jem" group="search">
-			<files folder="plugins/plg_search_jem">
-				<file>jem.php</file>
-				<file>jem.xml</file>
-			</files>
-	
-			<languages folder="plugins/plg_search_jem/languages">
-				<language tag="en-GB">en-GB.plg_search_jem.ini</language>
-				<language tag="de-DE">de-DE.plg_search_jem.ini</language>
-				<language tag="fr-FR">fr-FR.plg_search_jem.ini</language>
-			</languages>
-		</plugin>
-	</plugins>
-
-	<check>
-		<directory>/plugins/jem</directory>
-		<directory>/plugins/search</directory>
-		<extension name="mailer" type="plugins" field="published" value="1">element='mailer'</extension>
-		<extension name="comments" type="plugins" field="published" value="0">element='comments'</extension>
-		<extension name="jem" type="plugins" field="published" value="1">element='jem'</extension>
-	</check>
-	
 	<updateservers>
 		<!--  TODO: Fix URL when feature is ready to use -->
 		<server type="extension" priority="1" name="JEM Update Site">http://www.joomlaeventmanager.invalid/update/jem-update.xml</server>
