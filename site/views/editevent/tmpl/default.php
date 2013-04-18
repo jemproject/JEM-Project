@@ -372,7 +372,7 @@ defined('_JEXEC') or die;
       	  <legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
       		<?php
           if ($this->row->datimage) :
-      		    echo ELOutput::flyer( $this->row, $this->dimage, 'event' );
+      		    echo JEMOutput::flyer( $this->row, $this->dimage, 'event' );
       		else :
       		    echo JHTML::_('image', 'media/com_jem/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => 'modal'));
       		endif;
@@ -431,7 +431,7 @@ defined('_JEXEC') or die;
     </form>
 
     <p class="copyright">
-    	<?php echo ELOutput::footer( ); ?>
+    	<?php echo JEMOutput::footer( ); ?>
     </p>
 
 </div>

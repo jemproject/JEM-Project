@@ -27,11 +27,11 @@ defined( '_JEXEC' ) or die;
 	<p class="buttons">
 		<?php
 			if ( !$this->params->get( 'popup' ) ) : //don't show in printpopup
-				echo ELOutput::submitbutton( $this->dellink, $this->params );
-				echo ELOutput::archivebutton( $this->params, $this->task );
+				echo JEMOutput::submitbutton( $this->dellink, $this->params );
+				echo JEMOutput::archivebutton( $this->params, $this->task );
 			endif;
 
-			echo ELOutput::printbutton( $this->print_link, $this->params );
+			echo JEMOutput::printbutton( $this->print_link, $this->params );
 		?>
 	</p>
 
@@ -50,7 +50,7 @@ defined( '_JEXEC' ) or die;
 		</h2>
 
 			<?php
-				echo ELOutput::flyer( $row, $row->limage, 'venue' );
+				echo JEMOutput::flyer( $row, $row->limage, 'venue' );
 			?>
 
 			<dl class="location floattext">
@@ -109,7 +109,7 @@ defined( '_JEXEC' ) or die;
 			?>
 
 		</dl>
-<p><?php echo ELOutput::mapicon( $row ); ?></p>
+<p><?php echo JEMOutput::mapicon( $row ); ?></p>
 		
 	    <?php if ($this->elsettings->showlocdescription == 1) :	?>
 		<h2 class="description"><?php echo JText::_( 'COM_JEM_DESCRIPTION' ).':'; ?></h2>
@@ -131,6 +131,6 @@ defined( '_JEXEC' ) or die;
 
 	<!--copyright-->
 	<p class="copyright">
-		<?php echo ELOutput::footer( ); ?>
+		<?php echo JEMOutput::footer( ); ?>
 	</p>
 </div>

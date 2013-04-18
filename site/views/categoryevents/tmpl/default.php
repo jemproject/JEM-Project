@@ -27,11 +27,11 @@ defined( '_JEXEC' ) or die;
 <p class="buttons">
 	<?php
 		if ( !$this->params->get( 'popup' ) ) : //don't show in printpopup
-			echo ELOutput::submitbutton( $this->dellink, $this->params );
-			echo ELOutput::archivebutton( $this->params, $this->task, $this->category->slug );
+			echo JEMOutput::submitbutton( $this->dellink, $this->params );
+			echo JEMOutput::archivebutton( $this->params, $this->task, $this->category->slug );
 		endif;
-		echo ELOutput::mailbutton( $this->category->slug, 'categoryevents', $this->params );
-		echo ELOutput::printbutton( $this->print_link, $this->params );
+		echo JEMOutput::mailbutton( $this->category->slug, 'categoryevents', $this->params );
+		echo JEMOutput::printbutton( $this->print_link, $this->params );
 	?>
 </p>
 
@@ -97,13 +97,13 @@ if (count($this->categories) && $this->category->id > 0) :
 
 
 <?php
-echo ELOutput::icalbutton($this->category->id, 'categoryevents');
+echo JEMOutput::icalbutton($this->category->id, 'categoryevents');
 ?>
 
 
 <!--copyright-->
 
 <p class="copyright">
-	<?php echo ELOutput::footer( ); ?>
+	<?php echo JEMOutput::footer( ); ?>
 </p>
 </div>

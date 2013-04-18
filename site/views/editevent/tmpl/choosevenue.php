@@ -116,6 +116,6 @@ defined('_JEXEC') or die;
 </p>
 
 <p class="copyright">
-<?php echo ELOutput::footer();	?>
+<?php echo JEMOutput::footer();	?>
 </p>
 </div>

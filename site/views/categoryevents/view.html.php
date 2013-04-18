@@ -240,9 +240,23 @@ class JEMViewCategoryevents extends JViewLegacy
 		$filter_type		= JRequest::getString('filter_type');
 
 		$sortselects = array();
-		$sortselects[]	= JHTML::_('select.option', 'title', $elsettings->titlename );
-		$sortselects[] 	= JHTML::_('select.option', 'venue', $elsettings->locationname );
-		$sortselects[] 	= JHTML::_('select.option', 'city', $elsettings->cityname );
+		
+		if ($elsettings->showtitle == 1) {
+			$sortselects[]	= JHTML::_('select.option', 'title', $elsettings->titlename );
+		}
+		if ($elsettings->showlocate == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'venue', $elsettings->locationname );
+		}
+		if ($elsettings->showcity == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'city', $elsettings->cityname );
+		}
+		if ($elsettings->showcat == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'type', $elsettings->catfroname );
+		}
+		if ($elsettings->showstate == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'state', $elsettings->statename );
+		}
+
 		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
 
 		$lists['order_Dir'] 	= $filter_order_Dir;

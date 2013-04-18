@@ -38,9 +38,9 @@ JHTML::_('behavior.modal');
 
 <div id="jem" class="event_id<?php echo $this->row->did; ?> el_details">
 	<p class="buttons">
-			<?php echo ELOutput::mailbutton( $this->row->slug, 'details', $this->params ); ?>
-			<?php echo ELOutput::printbutton( $this->print_link, $this->params ); ?>
-			<?php echo ELOutput::icalbutton($this->row->slug, 'details'); ?>
+			<?php echo JEMOutput::mailbutton( $this->row->slug, 'details', $this->params ); ?>
+			<?php echo JEMOutput::printbutton( $this->print_link, $this->params ); ?>
+			<?php echo JEMOutput::icalbutton($this->row->slug, 'details'); ?>
 	</p>
 
 <?php if ($this->params->def( 'show_page_title', 1 )) : ?>
@@ -53,12 +53,12 @@ JHTML::_('behavior.modal');
 	<h2 class="jem">
 		<?php
     	echo JText::_( 'COM_JEM_EVENT' );
-    	echo '&nbsp;'.ELOutput::editbutton($this->item->id, $this->row->did, $this->params, $this->allowedtoeditevent, 'editevent' );
+    	echo '&nbsp;'.JEMOutput::editbutton($this->item->id, $this->row->did, $this->params, $this->allowedtoeditevent, 'editevent' );
     	?>
 	</h2>
 
 	<?php //flyer
-	echo ELOutput::flyer( $this->row, $this->dimage, 'event' );
+	echo JEMOutput::flyer( $this->row, $this->dimage, 'event' );
 	?>
 
 	<dl class="event_info floattext">
@@ -74,10 +74,10 @@ JHTML::_('behavior.modal');
 			<?php
 			if (ELHelper::isValidDate($this->row->dates))
 			{
-				echo ELOutput::formatdate($this->row->dates, $this->row->times);
+				echo JEMOutput::formatdate($this->row->dates, $this->row->times);
     					
     		if (ELHelper::isValidDate($this->row->enddates) && $this->row->enddates != $this->row->dates) :
-    			echo ' - '.ELOutput::formatdate($this->row->enddates, $this->row->endtimes);
+    			echo ' - '.JEMOutput::formatdate($this->row->enddates, $this->row->endtimes);
     		endif;
 			}
 			else {
@@ -86,10 +86,10 @@ JHTML::_('behavior.modal');
     		
     		if ($this->elsettings->showtimedetails == 1) :
     	
-				echo '&nbsp;'.ELOutput::formattime($this->row->dates, $this->row->times);
+				echo '&nbsp;'.JEMOutput::formattime($this->row->dates, $this->row->times);
 						
 				if ($this->row->endtimes) :
-					echo ' - '.ELOutput::formattime($this->row->enddates, $this->row->endtimes);
+					echo ' - '.JEMOutput::formattime($this->row->enddates, $this->row->endtimes);
 				endif;
 			endif;
 			?>
@@ -173,11 +173,11 @@ JHTML::_('behavior.modal');
 
 		<h2 class="location">
 			<?php echo JText::_( 'COM_JEM_VENUE' ) ; ?>
-  			<?php echo ELOutput::editbutton($this->item->id, $this->row->locid, $this->params, $this->allowedtoeditvenue, 'editvenue' ); ?>
+  			<?php echo JEMOutput::editbutton($this->item->id, $this->row->locid, $this->params, $this->allowedtoeditvenue, 'editvenue' ); ?>
 		</h2>
 
 		<?php //flyer
-		echo ELOutput::flyer( $this->row, $this->limage, 'venue' );
+		echo JEMOutput::flyer( $this->row, $this->limage, 'venue' );
 		
 		?>
 
@@ -236,7 +236,7 @@ JHTML::_('behavior.modal');
 			endif;
 			?>
 		</dl>
-		<p><?php echo ELOutput::mapicon( $this->row ); ?>&nbsp;</p>
+		<p><?php echo JEMOutput::mapicon( $this->row ); ?>&nbsp;</p>
 		<?php if ($this->elsettings->showlocdescription == 1 && $this->row->locdescription != '' && $this->row->locdescription != '<br />') :	?>
 
 			<h2 class="location_desc"><?php echo JText::_( 'COM_JEM_DESCRIPTION' ); ?></h2>
@@ -262,7 +262,7 @@ JHTML::_('behavior.modal');
 
 
 <p class="copyright">
-	<?php echo ELOutput::footer( ); ?>
+	<?php echo JEMOutput::footer( ); ?>
 </p>
 
 <?php if ($this->params->get('facebook', 1) == 1) {  

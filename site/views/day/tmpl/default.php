@@ -25,7 +25,7 @@ defined( '_JEXEC' ) or die;
 <div id="jem" class="el_jem">
 <p class="buttons">
 	<?php
-		echo ELOutput::printbutton( $this->print_link, $this->params );
+		echo JEMOutput::printbutton( $this->print_link, $this->params );
 	?>
 </p>
 
@@ -57,7 +57,7 @@ defined( '_JEXEC' ) or die;
 <?php endif; ?>
 
 <p class="copyright">
-	<?php echo ELOutput::footer( ); ?>
+	<?php echo JEMOutput::footer( ); ?>
 </p>
 
 </div>

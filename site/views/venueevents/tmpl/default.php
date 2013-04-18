@@ -26,23 +26,23 @@ defined( '_JEXEC' ) or die;
 <p class="buttons">
 	<?php
 		if ( !$this->params->get( 'popup' ) ) : //don't show in printpopup
-			echo ELOutput::submitbutton( $this->dellink, $this->params );
-			echo ELOutput::archivebutton( $this->params, $this->task, $this->venue->slug );
+			echo JEMOutput::submitbutton( $this->dellink, $this->params );
+			echo JEMOutput::archivebutton( $this->params, $this->task, $this->venue->slug );
 		endif;
-		echo ELOutput::mailbutton( $this->venue->slug, 'venueevents', $this->params );
-		echo ELOutput::printbutton( $this->print_link, $this->params );
+		echo JEMOutput::mailbutton( $this->venue->slug, 'venueevents', $this->params );
+		echo JEMOutput::printbutton( $this->print_link, $this->params );
 	?>
 </p>
 <?php if ($this->params->def('show_page_title', 1)) : ?>
 	<h1 class='componentheading'>
 		<?php echo $this->escape($this->pagetitle); ?>
-    <?php echo ELOutput::editbutton($this->item->id, $this->venue->id, $this->params, $this->allowedtoeditvenue, 'editvenue' ); ?>
+    <?php echo JEMOutput::editbutton($this->item->id, $this->venue->id, $this->params, $this->allowedtoeditvenue, 'editvenue' ); ?>
 	</h1>
 <?php endif; ?>
 
 	<!--Venue-->
 	<?php //flyer
-	echo ELOutput::flyer( $this->venue, $this->limage, 'venue' );
+	echo JEMOutput::flyer( $this->venue, $this->limage, 'venue' );
 	?>
 
 	<dl class="location floattext">
@@ -94,7 +94,7 @@ defined( '_JEXEC' ) or die;
 		?>
 	</dl>
 
-	<p><?php echo ELOutput::mapicon( $this->venue ); ?></p>
+	<p><?php echo JEMOutput::mapicon( $this->venue ); ?></p>
 	<?php
   	if ($this->elsettings->showlocdescription == 1 && $this->venuedescription != '' && $this->venuedescription != '<br />') :
 	?>
@@ -138,7 +138,7 @@ defined( '_JEXEC' ) or die;
 
 
 <?php
-echo ELOutput::icalbutton($this->venue->id, 'venueevents');
+echo JEMOutput::icalbutton($this->venue->id, 'venueevents');
 ?>
 
 
@@ -146,6 +146,6 @@ echo ELOutput::icalbutton($this->venue->id, 'venueevents');
 <!--copyright-->
 
 <p class="copyright">
-	<?php echo ELOutput::footer( ); ?>
+	<?php echo JEMOutput::footer( ); ?>
 </p>
 </div>

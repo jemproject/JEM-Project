@@ -211,7 +211,7 @@ class JEMViewDetails extends JViewLegacy
 
     //create flag
     if ($row->country) {
-    	$row->countryimg = ELOutput::getFlag( $row->country );
+    	$row->countryimg = JEMOutput::getFlag( $row->country );
     }
 		
 		// load dispatcher for plugins    

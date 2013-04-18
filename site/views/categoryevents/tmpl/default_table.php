@@ -154,7 +154,7 @@ defined( '_JEXEC' ) or die;
 						
 						if ($row->datimage) :
   						$dimage = ELImage::flyercreator($row->datimage, 'event');
-  						echo ELOutput::flyer( $row, $dimage, 'event' );
+  						echo JEMOutput::flyer( $row, $dimage, 'event' );
 				else :
  						 echo JHTML::_('image', 'media/com_jem/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => ''));
 						 endif;
@@ -171,11 +171,11 @@ defined( '_JEXEC' ) or die;
     			<td headers="el_date" align="left">
     				<strong>
     			    <?php if (ELHelper::isValidDate($row->dates)): ?>
-	    					<?php echo ELOutput::formatdate($row->dates, $row->times); ?>
+	    					<?php echo JEMOutput::formatdate($row->dates, $row->times); ?>
 	    					
 	    					<?php
 	    					if ($row->enddates && $row->enddates != $row->dates) :
-	    						echo ' - '.ELOutput::formatdate($row->enddates, $row->endtimes);
+	    						echo ' - '.JEMOutput::formatdate($row->enddates, $row->endtimes);
 	    					endif;
 	    					?>
     					<?php else: ?>
@@ -188,10 +188,10 @@ defined( '_JEXEC' ) or die;
 					?>
 						<br />
 						<?php
-						echo ELOutput::formattime($row->dates, $row->times);
+						echo JEMOutput::formattime($row->dates, $row->times);
 						
 						if ($row->endtimes) :
-							echo ' - '.ELOutput::formattime($row->enddates, $row->endtimes);
+							echo ' - '.JEMOutput::formattime($row->enddates, $row->endtimes);
 						endif;
 					endif;
 					?>

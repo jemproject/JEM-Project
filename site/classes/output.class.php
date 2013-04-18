@@ -28,7 +28,7 @@ defined('_JEXEC') or die;
  *
  * @package JEM
  */
-class ELOutput {
+class JEMOutput {
 
 	/**
 	* Writes footer. Official copyright! Do not remove!

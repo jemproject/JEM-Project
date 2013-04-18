@@ -165,7 +165,7 @@ class JEMViewVenueevents extends JViewLegacy
 
         //create flag
         if ($venue->country) {
-        	$venue->countryimg = ELOutput::getFlag( $venue->country );
+        	$venue->countryimg = JEMOutput::getFlag( $venue->country );
         }
 
 		// Create the pagination object
