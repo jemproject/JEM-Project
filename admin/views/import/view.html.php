@@ -20,9 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
 /**
  * View class for the JEM home screen
@@ -32,38 +32,37 @@ jimport( 'joomla.application.component.view');
  */
 class JEMViewImport extends JViewLegacy {
 
-	function display($tpl = null)
-	{
+	function display($tpl = null) {
 		//Load pane behavior
 		jimport('joomla.html.pane');
 
 		//initialise variables
-		$document	=  JFactory::getDocument();
-		$user 		=  JFactory::getUser();
+		$document	= JFactory::getDocument();
+		$user 		= JFactory::getUser();
 
 		//build toolbar
-		JToolBarHelper::title( JText::_( 'COM_JEM_IMPORT' ), 'home' );
-		JToolBarHelper::help( 'el.import', true );
+		JToolBarHelper::title(JText::_('COM_JEM_IMPORT'), 'home');
+		JToolBarHelper::help('el.import', true);
 
 		// Get data from the model    
-		$eventfields =  $this->get( 'EventFields' );
-    	$catfields   =  $this->get( 'CategoryFields' );
-    	$venuefields =  $this->get( 'VenueFields' );
-    	$cateventsfields   =  $this->get( 'CateventsFields' );
+		$eventfields = $this->get('EventFields');
+		$catfields   = $this->get('CategoryFields');
+		$venuefields = $this->get('VenueFields');
+		$cateventsfields = $this->get('CateventsFields');
 
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
 		//Create Submenu
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem', true);
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
+		JSubMenuHelper::addEntry(JText::_('COM_JEM_JEM'), 'index.php?option=com_jem', true);
+		JSubMenuHelper::addEntry(JText::_('COM_JEM_EVENTS'), 'index.php?option=com_jem&view=events');
+		JSubMenuHelper::addEntry(JText::_('COM_JEM_VENUES'), 'index.php?option=com_jem&view=venues');
+		JSubMenuHelper::addEntry(JText::_('COM_JEM_CATEGORIES'), 'index.php?option=com_jem&view=categories');
+		JSubMenuHelper::addEntry(JText::_('COM_JEM_ARCHIVESCREEN'), 'index.php?option=com_jem&view=archive');
+		JSubMenuHelper::addEntry(JText::_('COM_JEM_GROUPS'), 'index.php?option=com_jem&view=groups');
+		JSubMenuHelper::addEntry(JText::_('COM_JEM_HELP'), 'index.php?option=com_jem&view=help');
 		if ($user->get('gid') > 24) {
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
+			JSubMenuHelper::addEntry(JText::_('COM_JEM_SETTINGS'), 'index.php?option=com_jem&controller=settings&task=edit');
 		}
 
 		//assign vars to the template
