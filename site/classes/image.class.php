@@ -32,17 +32,16 @@ class ELImage {
 	/**
 	* Creates a Thumbnail of an image
 	*
- 	* @author Christoph Lukes
+	* @author Christoph Lukes
 	* @since 0.9
- 	*
- 	* @param string $file The path to the file
+	*
+	* @param string $file The path to the file
 	* @param string $save The targetpath
 	* @param string $width The with of the image
 	* @param string $height The height of the image
 	* @return true when success
 	*/
-static	function thumb($file, $save, $width, $height)
-	{
+	static function thumb($file, $save, $width, $height) {
 		//GD-Lib > 2.0 only!
 		@unlink($save);
 
@@ -78,27 +77,27 @@ static	function thumb($file, $save, $width, $height)
 			$imgA = imagecreatefromgif($file);
 			$imgB = imagecreate($iNewW,$iNewH);
 			
-       		//keep gif transparent color if possible
-          	if(function_exists('imagecolorsforindex') && function_exists('imagecolortransparent')) {
-            	$transcolorindex = imagecolortransparent($imgA);
-            		//transparent color exists
-            		if($transcolorindex >= 0 ) {
-             			$transcolor = imagecolorsforindex($imgA, $transcolorindex);
-              			$transcolorindex = imagecolorallocate($imgB, $transcolor['red'], $transcolor['green'], $transcolor['blue']);
-              			imagefill($imgB, 0, 0, $transcolorindex);
-              			imagecolortransparent($imgB, $transcolorindex);
-              		//fill white
-            		} else {
-              			$whitecolorindex = @imagecolorallocate($imgB, 255, 255, 255);
-              			imagefill($imgB, 0, 0, $whitecolorindex);
-            		}
-            //fill white
-          	} else {
-            	$whitecolorindex = imagecolorallocate($imgB, 255, 255, 255);
-            	imagefill($imgB, 0, 0, $whitecolorindex);
-          	}
-          	imagecopyresampled($imgB, $imgA, 0, 0, 0, 0, $iNewW, $iNewH, $infos[0], $infos[1]);
-			imagegif($imgB, $save);        
+			//keep gif transparent color if possible
+			if(function_exists('imagecolorsforindex') && function_exists('imagecolortransparent')) {
+				$transcolorindex = imagecolortransparent($imgA);
+				//transparent color exists
+				if($transcolorindex >= 0) {
+					$transcolor = imagecolorsforindex($imgA, $transcolorindex);
+					$transcolorindex = imagecolorallocate($imgB, $transcolor['red'], $transcolor['green'], $transcolor['blue']);
+					imagefill($imgB, 0, 0, $transcolorindex);
+					imagecolortransparent($imgB, $transcolorindex);
+				//fill white
+				} else {
+					$whitecolorindex = @imagecolorallocate($imgB, 255, 255, 255);
+					imagefill($imgB, 0, 0, $whitecolorindex);
+				}
+			//fill white
+			} else {
+				$whitecolorindex = imagecolorallocate($imgB, 255, 255, 255);
+				imagefill($imgB, 0, 0, $whitecolorindex);
+			}
+			imagecopyresampled($imgB, $imgA, 0, 0, 0, 0, $iNewW, $iNewH, $infos[0], $infos[1]);
+			imagegif($imgB, $save);
 
 		} elseif($infos[2] == 2) {
 			/*
@@ -134,8 +133,7 @@ static	function thumb($file, $save, $width, $height)
 	*
 	* @return int
 	*/
-static	function gdVersion($user_ver = 0)
-	{
+	static function gdVersion($user_ver = 0) {
 		if (! extension_loaded('gd')) {
 			return;
 		}
@@ -147,7 +145,7 @@ static	function gdVersion($user_ver = 0)
 			return 1;
 		}
 		// Use the static variable if function was called previously.
-		if ($user_ver !=2 && $gd_ver > 0 ) {
+		if ($user_ver != 2 && $gd_ver > 0) {
 			return $gd_ver;
 		}
 		// Use the gd_info() function if possible.
@@ -193,26 +191,21 @@ static	function gdVersion($user_ver = 0)
 	* @return imagedata if available
 	*/
 
-    static function flyercreator($image, $type)	
-       {
-		$settings =  ELHelper::config();
+	static function flyercreator($image, $type) {
+		$settings = ELHelper::config();
 		
 		jimport('joomla.filesystem.file');
 
 		//define the environment based on the type
 		if ($type == 'event') {
-			$folder		= 'events';
-		} 
-                if ($type == 'category') {
-			$folder		= 'categories';
-		} 
-
-                if ($type == 'venue') {
-			$folder 	= 'venues';
+			$folder = 'events';
+		} else if ($type == 'category') {
+			$folder = 'categories';
+		} else if ($type == 'venue') {
+			$folder = 'venues';
 		}
 
-		if ( $image ) {
-
+		if ($image) {
 			//Create thumbnail if enabled and it does not exist already
 			if ($settings->gddisabled == 1 && !file_exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image)) {
 
@@ -226,15 +219,14 @@ static	function gdVersion($user_ver = 0)
 			$dimage['original'] = 'images/jem/'.$folder.'/'.$image;
 			$dimage['thumb'] 	= 'images/jem/'.$folder.'/small/'.$image;
 
-                        //set paths
+			//TODO: What is "limage" and "cimage" for?
+			//set paths
 			$limage['original'] = 'images/jem/'.$folder.'/'.$image;
 			$limage['thumb'] 	= 'images/jem/'.$folder.'/small/'.$image;
 
-                        //set paths
+			//set paths
 			$cimage['original'] = 'images/jem/'.$folder.'/'.$image;
 			$cimage['thumb'] 	= 'images/jem/'.$folder.'/small/'.$image;
-
-
 
 			//get imagesize of the original
 			$iminfo = @getimagesize('images/jem/'.$folder.'/'.$image);
@@ -248,59 +240,51 @@ static	function gdVersion($user_ver = 0)
 				if ($iRatioW < $iRatioH) {
 					$dimage['width'] 	= round($iminfo[0] * $iRatioW);
 					$dimage['height'] 	= round($iminfo[1] * $iRatioW);
-
-                                        $limage['width'] 	= round($iminfo[0] * $iRatioW);
+					$limage['width'] 	= round($iminfo[0] * $iRatioW);
 					$limage['height'] 	= round($iminfo[1] * $iRatioW);
-                                        $cimage['width'] 	= round($iminfo[0] * $iRatioW);
+					$cimage['width'] 	= round($iminfo[0] * $iRatioW);
 					$cimage['height'] 	= round($iminfo[1] * $iRatioW);
-
 				} else {
 					$dimage['width'] 	= round($iminfo[0] * $iRatioH);
 					$dimage['height'] 	= round($iminfo[1] * $iRatioH);
-                                        $limage['width'] 	= round($iminfo[0] * $iRatioH);
+					$limage['width'] 	= round($iminfo[0] * $iRatioH);
 					$limage['height'] 	= round($iminfo[1] * $iRatioH);
-                                        $cimage['width'] 	= round($iminfo[0] * $iRatioH);
+					$cimage['width'] 	= round($iminfo[0] * $iRatioH);
 					$cimage['height'] 	= round($iminfo[1] * $iRatioH);
 				}
-
 			} else {
-
 				$dimage['width'] 	= $iminfo[0];
 				$dimage['height'] 	= $iminfo[1];
-                                $limage['width'] 	= $iminfo[0];
+				$limage['width'] 	= $iminfo[0];
 				$limage['height'] 	= $iminfo[1];
-                                $cimage['width'] 	= $iminfo[0];
+				$cimage['width'] 	= $iminfo[0];
 				$cimage['height'] 	= $iminfo[1];
-
 			}
 
 			if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image)) {
-
 				//get imagesize of the thumbnail
 				$thumbiminfo = @getimagesize('images/jem/'.$folder.'/small/'.$image);
 				$dimage['thumbwidth'] 	= $thumbiminfo[0];
 				$dimage['thumbheight'] 	= $thumbiminfo[1];
-                                $limage['thumbwidth'] 	= $thumbiminfo[0];
+				$limage['thumbwidth'] 	= $thumbiminfo[0];
 				$limage['thumbheight'] 	= $thumbiminfo[1];
-                                $cimage['thumbwidth'] 	= $thumbiminfo[0];
+				$cimage['thumbwidth'] 	= $thumbiminfo[0];
 				$cimage['thumbheight'] 	= $thumbiminfo[1];
-
 			}
 			return $dimage;
-                        return $limage;
-                        return $cimage;
+			return $limage;
+			return $cimage;
 		}
 		return false;
 	}
-	
-	
 
- static	function check($file, $elsettings)
-	{
+
+
+	static function check($file, $elsettings) {
 		jimport('joomla.filesystem.file');
 
-		$sizelimit 	= $elsettings->sizelimit*1024; //size limit in kb
-		$imagesize 	= $file['size'];
+		$sizelimit = $elsettings->sizelimit*1024; //size limit in kb
+		$imagesize = $file['size'];
 
 		//check if the upload is an image...getimagesize will return false if not
 		if (!getimagesize($file['tmp_name'])) {
@@ -309,9 +293,9 @@ static	function gdVersion($user_ver = 0)
 		}
 
 		//check if the imagefiletype is valid
-		$fileext 	= strtolower(JFile::getExt($file['name']));
+		$fileext = strtolower(JFile::getExt($file['name']));
 
-		$allowable 	= array ('gif', 'jpg', 'png');
+		$allowable = array ('gif', 'jpg', 'png');
 		if (!in_array($fileext, $allowable)) {
 			JError::raiseWarning(100, JText::_('COM_JEM_WRONG_IMAGE_FILE_TYPE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'));
 			return false;
@@ -324,7 +308,7 @@ static	function gdVersion($user_ver = 0)
 		}
 
 		//XSS check
-		$xss_check =  JFile::read($file['tmp_name'],false,256);
+		$xss_check = JFile::read($file['tmp_name'], false, 256);
 		$html_tags = array('abbr','acronym','address','applet','area','audioscope','base','basefont','bdo','bgsound','big','blackface','blink','blockquote','body','bq','br','button','caption','center','cite','code','col','colgroup','comment','custom','dd','del','dfn','dir','div','dl','dt','em','embed','fieldset','fn','font','form','frame','frameset','h1','h2','h3','h4','h5','h6','head','hr','html','iframe','ilayer','img','input','ins','isindex','keygen','kbd','label','layer','legend','li','limittext','link','listing','map','marquee','menu','meta','multicol','nobr','noembed','noframes','noscript','nosmartquotes','object','ol','optgroup','option','param','plaintext','pre','rt','ruby','s','samp','script','select','server','shadow','sidebar','small','spacer','span','strike','strong','style','sub','sup','table','tbody','td','textarea','tfoot','th','thead','title','tr','tt','ul','var','wbr','xml','xmp','!DOCTYPE', '!--');
 		foreach($html_tags as $tag) {
 			// A tag is '<tagname ', so we need to add < and a space or '<tagname>'
@@ -348,32 +332,29 @@ static	function gdVersion($user_ver = 0)
 	*
 	* @return string $filename the sanitized and unique image file name
 	*/
- static	function sanitize($base_Dir, $filename)
-	{
+	static function sanitize($base_Dir, $filename) {
 		jimport('joomla.filesystem.file');
 
 		//check for any leading/trailing dots and remove them (trailing shouldn't be possible cause of the getEXT check)
-		$filename = preg_replace( "/^[.]*/", '', $filename );
-		$filename = preg_replace( "/[.]*$/", '', $filename ); //shouldn't be necessary, see above
+		$filename = preg_replace("/^[.]*/", '', $filename);
+		$filename = preg_replace("/[.]*$/", '', $filename); //shouldn't be necessary, see above
 
 		//we need to save the last dot position cause preg_replace will also replace dots
-		$lastdotpos = strrpos( $filename, '.' );
+		$lastdotpos = strrpos($filename, '.');
 
 		//replace invalid characters
-		$chars = '[^0-9a-zA-Z()_-]';
-		$filename 	= strtolower( preg_replace( "/$chars/", '_', $filename ) );
+		$filename = strtolower(preg_replace("/[^0-9a-zA-Z_-]/", '_', $filename));
 
 		//get the parts before and after the dot (assuming we have an extension...check was done before)
-		$beforedot	= substr( $filename, 0, $lastdotpos );
-		$afterdot 	= substr( $filename, $lastdotpos + 1 );
+		$beforedot	= substr($filename, 0, $lastdotpos);
+		$afterdot 	= substr($filename, $lastdotpos + 1);
 
 		//make a unique filename for the image and check it is not already taken
 		//if it is already taken keep trying till success
 		$now = time();
 
-		while( JFile::exists( $base_Dir . $beforedot . '_' . $now . '.' . $afterdot ) )
-		{
-   			$now++;
+		while(JFile::exists($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
+			$now++;
 		}
 
 		//create out of the seperated parts the new filename

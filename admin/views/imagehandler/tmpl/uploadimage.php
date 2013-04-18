@@ -20,21 +20,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 ?>
 
 <form method="post" action="<?php echo $this->request_url; ?>" enctype="multipart/form-data" name="adminForm" id="adminForm">
 
 <table class="noshow">
-  	<tr>
+	<tr>
 		<td width="50%" valign="top">
-		
-				<?php if($this->ftp): ?>
+
+			<?php if($this->ftp): ?>
 				<fieldset class="adminform">
 					<legend><?php echo JText::_('COM_JEM_FTP_TITLE'); ?></legend>
 
 					<?php echo JText::_('COM_JEM_FTP_DESC'); ?>
-					
+
 					<?php if(JError::isError($this->ftp)): ?>
 						<p><?php echo JText::_($this->ftp->message); ?></p>
 					<?php endif; ?>
@@ -63,103 +63,89 @@ defined( '_JEXEC' ) or die;
 			<?php endif; ?>
 
 			<fieldset class="adminform">
-			<legend><?php echo JText::_( 'COM_JEM_SELECT_IMAGE_UPLOAD' ); ?></legend>
-			<table class="admintable">
-				<tbody>
-					<tr>
-	          			<td>
- 							<input class="inputbox" name="userfile" id="userfile" type="file" />
-							<br /><br />
-							<input class="button" type="submit" value="<?php echo JText::_('COM_JEM_UPLOAD') ?>" name="adminForm" />
-    			       	</td>
-      				</tr>
-				</tbody>
-			</table>
+				<legend><?php echo JText::_('COM_JEM_SELECT_IMAGE_UPLOAD'); ?></legend>
+				<table class="admintable">
+					<tbody>
+						<tr>
+							<td>
+								<input class="inputbox" name="userfile" id="userfile" type="file" />
+								<br /><br />
+								<input class="button" type="submit" value="<?php echo JText::_('COM_JEM_UPLOAD') ?>" name="adminForm" />
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</fieldset>
 
 		</td>
-        <td width="50%" valign="top">
+		<td width="50%" valign="top">
 
 			<fieldset class="adminform">
-			<legend><?php echo JText::_( 'COM_JEM_ATTENTION' ); ?></legend>
-			<table class="admintable">
-				<tbody>
-					<tr>
-	          			<td>
- 							<b><?php
- 							echo JText::_( 'COM_JEM_TARGET_DIRECTORY' ).':'; ?></b>
-							<?php
-							if ($this->task == 'venueimg') {
-								echo "/images/jem/venues/";
-								$this->task = 'venueimgup';
-							} 
-							
-							if ($this->task == 'eventimg')
-							 {
-								echo "/images/jem/events/";
-								$this->task = 'eventimgup';
-							}
-							
-							if ($this->task == 'categoriesimg')
-							 {
-								echo "/images/jem/categories/";
-								$this->task = 'categoriesimgup';
-							}
-
-							?><br />
-							<b><?php echo JText::_( 'COM_JEM_IMAGE_FILESIZE' ).':'; ?></b> <?php echo $this->elsettings->sizelimit; ?> kb<br />
-
-							<?php
-							if ( $this->elsettings->gddisabled ) {
-
-								if (imagetypes() & IMG_PNG) {
-									echo "<br /><font color='green'>".JText::_( 'COM_JEM_PNG_SUPPORT' )."</font>";
-								} else {
-									echo "<br /><font color='red'>".JText::_( 'COM_JEM_NO_PNG_SUPPORT' )."</font>";
+				<legend><?php echo JText::_('COM_JEM_ATTENTION'); ?></legend>
+				<table class="admintable">
+					<tbody>
+						<tr>
+							<td>
+								<b><?php echo JText::_('COM_JEM_TARGET_DIRECTORY').':'; ?></b>
+								<?php
+								if($this->task == 'venueimg') {
+									echo "/images/jem/venues/";
+									$this->task = 'venueimgup';
+								} else if($this->task == 'eventimg') {
+									echo "/images/jem/events/";
+									$this->task = 'eventimgup';
+								} else if($this->task == 'categoriesimg') {
+									echo "/images/jem/categories/";
+									$this->task = 'categoriesimgup';
 								}
-								if (imagetypes() & IMG_JPEG) {
-									echo "<br /><font color='green'>".JText::_( 'COM_JEM_JPG_SUPPORT' )."</font>";
+								?>
+								<br />
+								<b><?php echo JText::_('COM_JEM_IMAGE_FILESIZE').':'; ?></b> <?php echo $this->elsettings->sizelimit; ?> kb<br />
+
+								<?php
+								if($this->elsettings->gddisabled == 0 || (imagetypes() & IMG_PNG)) {
+									echo "<br /><span style='color:green'>".JText::_('COM_JEM_PNG_SUPPORT')."</span>";
 								} else {
-									echo "<br /><font color='red'>".JText::_( 'COM_JEM_NO_JPG_SUPPORT' )."</font>";
+									echo "<br /><span style='color:red'>".JText::_('COM_JEM_NO_PNG_SUPPORT')."</span>";
 								}
-								if (imagetypes() & IMG_GIF) {
-									echo "<br /><font color='green'>".JText::_( 'COM_JEM_GIF_SUPPORT' )."</font>";
+								if($this->elsettings->gddisabled == 0 || (imagetypes() & IMG_JPEG)) {
+									echo "<br /><span style='color:green'>".JText::_('COM_JEM_JPG_SUPPORT')."</span>";
 								} else {
-									echo "<br /><font color='red'>".JText::_( 'COM_JEM_NO_GIF_SUPPORT' )."</font>";
+									echo "<br /><span style='color:red'>".JText::_('COM_JEM_NO_JPG_SUPPORT')."</span>";
 								}
-							} else {
-								echo "<br /><font color='green'>".JText::_( 'COM_JEM_PNG_SUPPORT' )."</font>";
-								echo "<br /><font color='green'>".JText::_( 'COM_JEM_JPG_SUPPORT' )."</font>";
-								echo "<br /><font color='green'>".JText::_( 'COM_JEM_GIF_SUPPORT' )."</font>";
-							}
-							?>
-    			       	</td>
-      				</tr>
-				</tbody>
-			</table>
+								if($this->elsettings->gddisabled == 0 || (imagetypes() & IMG_GIF)) {
+									echo "<br /><span style='color:green'>".JText::_('COM_JEM_GIF_SUPPORT')."</span>";
+								} else {
+									echo "<br /><span style='color:red'>".JText::_('COM_JEM_NO_GIF_SUPPORT')."</span>";
+								}
+								?>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</fieldset>
 
 		</td>
 	</tr>
 </table>
 
-<?php if ( $this->elsettings->gddisabled ) { ?>
+<?php if($this->elsettings->gddisabled) { ?>
 
 <table class="noshow">
 	<tr>
 		<td>
 
 			<fieldset class="adminform">
-			<legend><?php echo JText::_( 'COM_JEM_ATTENTION' ); ?></legend>
-			<table class="admintable">
-				<tbody>
-					<tr>
-	          			<td align="center">
-							<?php echo JText::_( 'COM_JEM_GD_WARNING' ); ?>
-    			     	 </td>
-      				</tr>
-				</tbody>
-			</table>
+				<legend><?php echo JText::_('COM_JEM_ATTENTION'); ?></legend>
+				<table class="admintable">
+					<tbody>
+						<tr>
+							<td align="center">
+								<?php echo JText::_('COM_JEM_GD_WARNING'); ?>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</fieldset>
 
 		</td>
@@ -168,12 +154,12 @@ defined( '_JEXEC' ) or die;
 
 <?php } ?>
 
-<?php echo JHTML::_( 'form.token' ); ?>
+<?php echo JHTML::_('form.token'); ?>
 <input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="controller" value="imagehandler" />
 <input type="hidden" name="task" value="<?php echo $this->task;?>" />
 </form>
 
 <p class="copyright">
-	<?php echo ELAdmin::footer( ); ?>
+	<?php echo ELAdmin::footer(); ?>
 </p>

@@ -31,7 +31,7 @@ jimport( 'joomla.application.component.view');
  * @package JEM
  * @since 0.9
  */
-class JEMViewImagehandler extends JViewLegacy  {
+class JEMViewImagehandler extends JViewLegacy {
 
 	/**
 	 * Image selection List
@@ -40,9 +40,9 @@ class JEMViewImagehandler extends JViewLegacy  {
 	 */
 	function display($tpl = null)
 	{
-		$app 	   =  JFactory::getApplication();
-		$option    =  JRequest::getString('option');
-		$document = JFactory::getDocument();
+		$app 		= JFactory::getApplication();
+		$option 	= JRequest::getString('option');
+		$document 	= JFactory::getDocument();
 
 		if($this->getLayout() == 'uploadimage') {
 			$this->_displayuploadimage($tpl);
@@ -50,29 +50,25 @@ class JEMViewImagehandler extends JViewLegacy  {
 		}
 
 		//get vars
-		$task 		= JRequest::getVar( 'task' );
-		$search 	= $app->getUserStateFromRequest( $option.'.search', 'search', '', 'string' );
-		$search 	= trim(JString::strtolower( $search ) );
+		$task 		= JRequest::getVar('task');
+		$search 	= $app->getUserStateFromRequest($option.'.search', 'search', '', 'string');
+		$search 	= trim(JString::strtolower($search));
 
 		//set variables
 		if ($task == 'selecteventimg') {
 			$folder = 'events';
 			$task 	= 'eventimg';
 			$redi	= 'selecteventimg';
-		} 
-		
-		if ($task == 'selectvenueimg') {
+		} else if ($task == 'selectvenueimg') {
 			$folder = 'venues';
 			$task 	= 'eventimg';
 			$redi	= 'selecteventimg';
-		} 
-		
-		if ($task == 'selectcategoriesimg') {
+		} else if ($task == 'selectcategoriesimg') {
 			$folder = 'categories';
 			$task 	= 'categoriesimg';
 			$redi	= 'selectcategoriesimg';
-		} 
-		JRequest::setVar( 'folder', $folder );
+		}
+		JRequest::setVar('folder', $folder);
 
 		// Do not allow cache
 		JResponse::allowCache(false);
@@ -81,26 +77,22 @@ class JEMViewImagehandler extends JViewLegacy  {
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
 		//get images
-		$images  = $this->get('images');
-		$pagination =  $this->get( 'Pagination' );
+		$images = $this->get('images');
+		$pagination = $this->get('Pagination');
 
-		$state2 =  $this->get('state');
-		
-		
 		if (count($images) > 0 || $search) {
 			$this->images 		= $images;
 			$this->folder 		= $folder;
 			$this->task 		= $redi;
 			$this->search 		= $search;
-			// $this->state		= $this;->get('state')
-			$this->state 		= $state2;
+			$this->state		= $this->get('state');
 			$this->pagination 	= $pagination;
 			parent::display($tpl);
 		} else {
 			//no images in the folder, redirect to uploadscreen and raise notice
 			JError::raiseNotice('SOME_ERROR_CODE', JText::_('COM_JEM_NO_IMAGES_AVAILABLE'));
 			$this->setLayout('uploadimage');
-			JRequest::setVar( 'task', $task );
+			JRequest::setVar('task', $task);
 			$this->_displayuploadimage($tpl);
 			return;
 		}
@@ -125,13 +117,12 @@ class JEMViewImagehandler extends JViewLegacy  {
 	function _displayuploadimage($tpl = null)
 	{
 		//initialise variables
-		$document	=  JFactory::getDocument();
-		$uri 		=  JFactory::getURI();
-		$uri2 = $uri->toString();
+		$document	= JFactory::getDocument();
+		$uri 		= JFactory::getURI()->toString();
 		$elsettings = ELAdmin::config();
 
 		//get vars
-		$task 		= JRequest::getVar( 'task' );
+		$task 		= JRequest::getVar('task');
 
 		//add css
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
@@ -142,7 +133,7 @@ class JEMViewImagehandler extends JViewLegacy  {
 		//assign data to template
 		$this->task 		= $task;
 		$this->elsettings 	= $elsettings;
-		$this->request_url 	= $uri2;
+		$this->request_url 	= $uri;
 		$this->ftp 			= $ftp;
 
 		parent::display($tpl);

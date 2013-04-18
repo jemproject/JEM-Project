@@ -39,14 +39,13 @@ class JEMControllerImagehandler extends JEMController
 	 *
 	 * @since 0.9
 	 */
-	function __construct()
-	{
+	function __construct() {
 		parent::__construct();
 
 		// Register Extra task
-		$this->registerTask( 'eventimgup', 	'uploadimage' );
-		$this->registerTask( 'venueimgup', 	'uploadimage' );
-		$this->registerTask( 'categoriesimgup', 	'uploadimage' );
+		$this->registerTask('eventimgup', 'uploadimage');
+		$this->registerTask('venueimgup', 'uploadimage');
+		$this->registerTask('categoriesimgup', 'uploadimage');
 	}
 
 	/**
@@ -56,8 +55,7 @@ class JEMControllerImagehandler extends JEMController
 	 * @return void
 	 * @since 0.9
 	 */
-	function uploadimage()
-	{
+	function uploadimage() {
 		global $app;
 		
 		// Check for request forgeries
@@ -65,8 +63,8 @@ class JEMControllerImagehandler extends JEMController
 
 		$elsettings = ELAdmin::config();
 
-		$file 		= JRequest::getVar( 'userfile', '', 'files', 'array' );
-		$task 		= JRequest::getVar( 'task' );
+		$file 		= JRequest::getVar('userfile', '', 'files', 'array');
+		$task 		= JRequest::getVar('task');
 		
 		// Set FTP credentials, if given
 		jimport('joomla.client.helper');
@@ -76,19 +74,15 @@ class JEMControllerImagehandler extends JEMController
 		//set the target directory
 		if ($task == 'venueimgup') {
 			$base_Dir = JPATH_SITE.DS.'images'.DS.'jem'.DS.'venues'.DS;
-		} 
-		
-		if ($task == 'eventimgup') {
+		} else if ($task == 'eventimgup') {
 			$base_Dir = JPATH_SITE.DS.'images'.DS.'jem'.DS.'events'.DS;
-		} 
-		
-		if ($task == 'categoriesimgup') {
+		} else if ($task == 'categoriesimgup') {
 			$base_Dir = JPATH_SITE.DS.'images'.DS.'jem'.DS.'categories'.DS;
 		} 
 
 		//do we have an upload?
 		if (empty($file['name'])) {
-			echo "<script> alert('".JText::_( 'COM_JEM_IMAGE_EMPTY' )."'); window.history.go(-1); </script>\n";
+			echo "<script> alert('".JText::_('COM_JEM_IMAGE_EMPTY')."'); window.history.go(-1); </script>\n";
 			$app->close();
 		}
 
@@ -105,11 +99,10 @@ class JEMControllerImagehandler extends JEMController
 
 		//upload the image
 		if (!JFile::upload($file['tmp_name'], $filepath)) {
-			echo "<script> alert('".JText::_( 'COM_JEM_UPLOAD_FAILED' )."'); window.history.go(-1); </script>\n";
+			echo "<script> alert('".JText::_('COM_JEM_UPLOAD_FAILED')."'); window.history.go(-1); </script>\n";
 			$app->close();
-
 		} else {
-			echo "<script> alert('".JText::_( 'COM_JEM_UPLOAD_COMPLETE' )."'); window.history.go(-1); window.parent.elSelectImage('$filename', '$filename'); </script>\n";
+			echo "<script> alert('".JText::_('COM_JEM_UPLOAD_COMPLETE')."'); window.history.go(-1); window.parent.elSelectImage('$filename', '$filename'); </script>\n";
 			$app->close();
 		}
 
@@ -122,8 +115,7 @@ class JEMControllerImagehandler extends JEMController
 	 * @return void
 	 * @since 0.9
 	 */
-	function delete()
-	{
+	function delete() {
 		global $app;
 
 		// Set FTP credentials, if given
@@ -131,12 +123,11 @@ class JEMControllerImagehandler extends JEMController
 		JClientHelper::setCredentialsFromRequest('ftp');
 
 		// Get some data from the request
-		$images	= JRequest::getVar( 'rm', array(), '', 'array' );
-		$folder = JRequest::getVar( 'folder');
+		$images	= JRequest::getVar('rm', array(), '', 'array');
+		$folder = JRequest::getVar('folder');
 
 		if (count($images)) {
-			foreach ($images as $image)
-			{
+			foreach ($images as $image) {
 				if ($image !== JFilterInput::getInstance()->clean($image, 'path')) {
 					JError::raiseWarning(100, JText::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'));
 					continue;
@@ -155,15 +146,11 @@ class JEMControllerImagehandler extends JEMController
 
 		if ($folder == 'events') {
 			$task = 'selecteventimg';
-		} 
-		
-		if ($folder == 'venues') {
+		} else if ($folder == 'venues') {
 			$task = 'selectvenueimg';
-		} 
-		
-		if ($folder == 'categories') {
+		} else if ($folder == 'categories') {
 			$task = 'selectcategoriesimg';
-		} 
+		}
 
 		$app->redirect('index.php?option=com_jem&view=imagehandler&task='.$task.'&tmpl=component');
 	}
