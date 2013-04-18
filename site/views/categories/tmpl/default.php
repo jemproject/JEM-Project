@@ -26,8 +26,8 @@ defined( '_JEXEC' ) or die;
 <div id="jem" class="el_categoriesview">
 <p class="buttons">
 	<?php
-		echo ELOutput::submitbutton( $this->dellink, $this->params );
-		echo ELOutput::archivebutton( $this->params, $this->task );
+		echo JEMOutput::submitbutton( $this->dellink, $this->params );
+		echo JEMOutput::archivebutton( $this->params, $this->task );
 	?>
 </p>
 
@@ -113,6 +113,6 @@ $i = 0;
 <!--copyright-->
 
 <p class="copyright">
-	<?php echo ELOutput::footer( ); ?>
+	<?php echo JEMOutput::footer( ); ?>
 </p>
 </div>

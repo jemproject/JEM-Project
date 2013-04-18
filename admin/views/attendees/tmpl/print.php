@@ -74,5 +74,5 @@ defined('_JEXEC') or die; ?>
 	</table>
 
 	<p class="copyright">
-		<?php echo ELAdmin::footer( ); ?>
+		<?php echo JEMAdmin::footer( ); ?>
 	</p>

@@ -85,7 +85,7 @@ class JEMModelEditevent extends JModelLegacy
 
 		// Initialize variables
 		$user		=  JFactory::getUser();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 
 		$view		= JRequest::getWord('view');
 
@@ -111,7 +111,7 @@ class JEMModelEditevent extends JModelLegacy
 			/*
 			* access check
 			*/
-			$editaccess	= ELUser::editaccess($elsettings->eventowner, $this->_event->created_by, $elsettings->eventeditrec, $elsettings->eventedit);			
+			$editaccess	= ELUser::editaccess($jemsettings->eventowner, $this->_event->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);			
 			$maintainer = ELUser::ismaintainer();
 
 			if ($maintainer || $editaccess ) $allowedtoeditevent = 1;
@@ -129,7 +129,7 @@ class JEMModelEditevent extends JModelLegacy
 
 			//Check if the user has access to the form
 			$maintainer = ELUser::ismaintainer();
-			$genaccess 	= ELUser::validate_user( $elsettings->evdelrec, $elsettings->delivereventsyes );
+			$genaccess 	= ELUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 			if ( !($maintainer || $genaccess )) {
 				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
@@ -229,7 +229,7 @@ class JEMModelEditevent extends JModelLegacy
 	function getCategories( )
 	{
 		$user		=  JFactory::getUser();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 		$userid		= (int) $user->get('id');
 		$superuser	= ELUser::superuser();
 		
@@ -265,7 +265,7 @@ class JEMModelEditevent extends JModelLegacy
 			if ($categories) {
 				//check if user is allowed to submit events in general, if yes allow to submit into categories
 				//which aren't assigned to a group. Otherwise restrict submission into maintained categories only 
-				if (ELUser::validate_user($elsettings->evdelrec, $elsettings->delivereventsyes)) {
+				if (ELUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes)) {
 					$where .= ' AND c.groupid = 0 OR c.groupid = '.$categories;
 				} else {
 					$where .= ' AND c.groupid = '.$categories;
@@ -416,7 +416,7 @@ class JEMModelEditevent extends JModelLegacy
 	 */
 	function _buildVenuesWhere(  )
 	{
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 		$filter_type		= JRequest::getInt('filter_type');
 		$filter 			= JRequest::getString('filter');
 		$filter 			= $this->_db->getEscaped( trim(JString::strtolower( $filter ) ) );
@@ -433,7 +433,7 @@ class JEMModelEditevent extends JModelLegacy
 			$where[] = 'LOWER(l.city) LIKE "%'.$filter.'%"';
 		}
 		
-		if ($elsettings->ownedvenuesonly) 
+		if ($jemsettings->ownedvenuesonly) 
 		{
 			$user = JFactory::getUser();
 			$userid = $user->get('id');
@@ -546,7 +546,7 @@ class JEMModelEditevent extends JModelLegacy
 		$app =  JFactory::getApplication();
 
 		$user 		=  JFactory::getUser();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 	
 		$cats 		= JRequest::getVar( 'cid', array(), 'post', 'array');
 		$row 		=  JTable::getInstance('jem_events', '');
@@ -565,11 +565,11 @@ class JEMModelEditevent extends JModelLegacy
 		*/
 		
 		//include the metatags
-		//$data['meta_description'] = addslashes(htmlspecialchars(trim($elsettings->meta_description)));
+		//$data['meta_description'] = addslashes(htmlspecialchars(trim($jemsettings->meta_description)));
 	/*	if (strlen($data['meta_description']) > 255) {
 			$data['meta_description'] = substr($data['meta_description'],0,254);
 		}
-		//$data['meta_keywords'] = addslashes(htmlspecialchars(trim($elsettings->meta_keywords)));
+		//$data['meta_keywords'] = addslashes(htmlspecialchars(trim($jemsettings->meta_keywords)));
 		if (strlen($data['meta_keywords']) > 200) {
 			$data['meta_keywords'] = substr($data['meta_keywords'],0,199);
 		}
@@ -597,7 +597,7 @@ class JEMModelEditevent extends JModelLegacy
 		if ($row->id) {
 
 			//check if user is allowed to edit events
-			$editaccess	= ELUser::editaccess($elsettings->eventowner, $row->created_by, $elsettings->eventeditrec, $elsettings->eventedit);
+			$editaccess	= ELUser::editaccess($jemsettings->eventowner, $row->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
 			$maintainer = ELUser::ismaintainer();
 
 			if ($maintainer || $editaccess ) $allowedtoeditevent = 1;
@@ -614,7 +614,7 @@ class JEMModelEditevent extends JModelLegacy
 			* This extra Check is needed to make it possible
 			* that the venue is published after an edit from an owner
 			*/
-			if ($elsettings->venueowner == 1 && $row->created_by == $user->get('id')) {
+			if ($jemsettings->venueowner == 1 && $row->created_by == $user->get('id')) {
 				$owneredit = 1;
 			} else {
 				$owneredit = 0;
@@ -624,7 +624,7 @@ class JEMModelEditevent extends JModelLegacy
 
 			//check if user is allowed to submit new events
 			$maintainer = ELUser::ismaintainer();
-			$genaccess 	= ELUser::validate_user( $elsettings->evdelrec, $elsettings->delivereventsyes );
+			$genaccess 	= ELUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 			if ( !($maintainer || $genaccess) ){
 				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
@@ -633,7 +633,7 @@ class JEMModelEditevent extends JModelLegacy
 			//get IP, time and userid
 			$row->created 		= gmdate('Y-m-d H:i:s');
 
-			$row->author_ip 	= $elsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
+			$row->author_ip 	= $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
 			$row->created_by 	= $user->get('id');
 
 			//Set owneredit to false
@@ -644,7 +644,7 @@ class JEMModelEditevent extends JModelLegacy
 		* Autopublish
 		* check if the user has the required rank for autopublish
 		*/
-		$autopubev = ELUser::validate_user( $elsettings->evpubrec, $elsettings->autopubl );
+		$autopubev = ELUser::validate_user( $jemsettings->evpubrec, $jemsettings->autopubl );
 		if ($autopubev || $owneredit) {
 				$row->published = 1 ;
 			} else {
@@ -654,7 +654,7 @@ class JEMModelEditevent extends JModelLegacy
 		//Image upload
 
 		//If image upload is required we will stop here if no file was attached
-		if ( empty($file['name']) && $elsettings->imageenabled == 2 ) {
+		if ( empty($file['name']) && $jemsettings->imageenabled == 2 ) {
 
 			$this->setError( JText::_( 'COM_JEM_IMAGE_EMPTY' ) );
 			return false;
@@ -662,21 +662,21 @@ class JEMModelEditevent extends JModelLegacy
 		
 		
 
-		if ( ( $elsettings->imageenabled == 2 || $elsettings->imageenabled == 1 ) && ( !empty($file['name'])  ) )  {
+		if ( ( $jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1 ) && ( !empty($file['name'])  ) )  {
 
 			jimport('joomla.filesystem.file');
 
 			$base_Dir 		= JPATH_SITE.'/images/jem/events/';
 
 			//check the image
-			$check = ELImage::check($file, $elsettings);
+			$check = JEMImage::check($file, $jemsettings);
 
 			if ($check === false) {
 				$app->redirect($_SERVER['HTTP_REFERER']);
 			}
 
 			//sanitize the image filename
-			$filename = ELImage::sanitize($base_Dir, $file['name']);
+			$filename = JEMImage::sanitize($base_Dir, $file['name']);
 			$filepath = $base_Dir . $filename;
 
 			if (!JFile::upload($file['tmp_name'], $filepath)) {
@@ -704,16 +704,16 @@ class JEMModelEditevent extends JModelLegacy
 
 			//check length
 			$length = JString::strlen($row->datdescription);
-			if ($length > $elsettings->datdesclimit) {
+			if ($length > $jemsettings->datdesclimit) {
 				//too long then shorten datdescription
-				$row->datdescription = JString::substr($row->datdescription, 0, $elsettings->datdesclimit);
+				$row->datdescription = JString::substr($row->datdescription, 0, $jemsettings->datdesclimit);
 				//add ...
 				$row->datdescription = $row->datdescription.'...';
 			}
 		}
 
 		//set registration regarding the el settings
-		switch ($elsettings->showfroregistra) {
+		switch ($jemsettings->showfroregistra) {
 			case 0:
 				$row->registra = 0;
 			break;
@@ -727,7 +727,7 @@ class JEMModelEditevent extends JModelLegacy
 			break;
 		}
 
-		switch ($elsettings->showfrounregistra) {
+		switch ($jemsettings->showfrounregistra) {
 			case 0:
 				$row->unregistra = 0;
 			break;
@@ -737,7 +737,7 @@ class JEMModelEditevent extends JModelLegacy
 			break;
 
 			case 2:
-				if ($elsettings->showfroregistra >= 1) {
+				if ($jemsettings->showfroregistra >= 1) {
 					$row->unregistra = $row->unregistra;
 				} else {
 					$row->unregistra = 0;
@@ -746,7 +746,7 @@ class JEMModelEditevent extends JModelLegacy
 		}
 
 		//Make sure the table is valid
-		if (!$row->check($elsettings)) {
+		if (!$row->check($jemsettings)) {
 			$this->setError($row->getError());
 			return false;
 		}

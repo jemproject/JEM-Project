@@ -38,8 +38,7 @@ class JEMViewImagehandler extends JViewLegacy {
 	 *
 	 * @since 0.9
 	 */
-	function display($tpl = null)
-	{
+	function display($tpl = null) {
 		$app 		= JFactory::getApplication();
 		$option 	= JRequest::getString('option');
 		$document 	= JFactory::getDocument();
@@ -98,8 +97,7 @@ class JEMViewImagehandler extends JViewLegacy {
 		}
 	}
 
-	function setImage($index = 0)
-	{
+	function setImage($index = 0) {
 		if (isset($this->images[$index])) {
 			$this->_tmp_img = $this->images[$index];
 		} else {
@@ -114,15 +112,14 @@ class JEMViewImagehandler extends JViewLegacy {
 	 *
 	 * @since 0.9
 	 */
-	function _displayuploadimage($tpl = null)
-	{
+	function _displayuploadimage($tpl = null) {
 		//initialise variables
-		$document	= JFactory::getDocument();
-		$uri 		= JFactory::getURI()->toString();
-		$elsettings = ELAdmin::config();
+		$document		= JFactory::getDocument();
+		$uri 			= JFactory::getURI()->toString();
+		$jemsettings	= JEMAdmin::config();
 
 		//get vars
-		$task 		= JRequest::getVar('task');
+		$task 			= JRequest::getVar('task');
 
 		//add css
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
@@ -132,7 +129,7 @@ class JEMViewImagehandler extends JViewLegacy {
 
 		//assign data to template
 		$this->task 		= $task;
-		$this->elsettings 	= $elsettings;
+		$this->jemsettings 	= $jemsettings;
 		$this->request_url 	= $uri;
 		$this->ftp 			= $ftp;
 

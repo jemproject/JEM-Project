@@ -40,7 +40,7 @@ class JEMViewEvents extends JViewLegacy {
 		$user 		=  JFactory::getUser();
 		$document	=  JFactory::getDocument();
 		$db  		=  JFactory::getDBO();
-		$elsettings = ELAdmin::config();
+		$jemsettings = JEMAdmin::config();
 
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.events.filter_order', 'filter_order', 	'a.dates', 'cmd' );
@@ -115,7 +115,7 @@ class JEMViewEvents extends JViewLegacy {
 		$this->pagination 	= $pagination;
 		$this->user 		= $user;
 		$this->template 	= $template;
-		$this->elsettings 	= $elsettings;
+		$this->jemsettings 	= $jemsettings;
 
 		parent::display($tpl);
 	}

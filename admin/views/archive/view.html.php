@@ -40,7 +40,7 @@ class JEMViewArchive extends JViewLegacy {
 		$document	=  JFactory::getDocument();
 		$db			=  JFactory::getDBO();
 		$user		=  JFactory::getUser();
-		$elsettings = ELAdmin::config();
+		$jemsettings = JEMAdmin::config();
 
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.archive.filter_order', 'filter_order', 'a.dates', 'cmd' );
@@ -100,7 +100,7 @@ class JEMViewArchive extends JViewLegacy {
 		$this->lists 		= $lists;
 		$this->rows 		= $rows;
 		$this->pagination 	= $pagination;
-		$this->elsettings 	= $elsettings;
+		$this->jemsettings 	= $jemsettings;
 		$this->template 	= $template;
 		$this->user 		= $user;
 

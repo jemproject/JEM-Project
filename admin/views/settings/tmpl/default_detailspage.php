@@ -14,7 +14,7 @@
 						</td>
        					<td valign="top">
 							<?php
-          						echo JHTML::_('select.booleanlist', 'showtimedetails', 'class="inputbox"', $this->elsettings->showtimedetails );
+          						echo JHTML::_('select.booleanlist', 'showtimedetails', 'class="inputbox"', $this->jemsettings->showtimedetails );
        						?>
        	 				</td>
       				</tr>
@@ -26,7 +26,7 @@
 						</td>
        					<td valign="top">
 		 					<?php
-          						echo JHTML::_('select.booleanlist', 'showevdescription', 'class="inputbox"', $this->elsettings->showevdescription );
+          						echo JHTML::_('select.booleanlist', 'showevdescription', 'class="inputbox"', $this->jemsettings->showevdescription );
        						?>
        	 				</td>
       				</tr>
@@ -38,7 +38,7 @@
 						</td>
        					<td valign="top">
 		 					<?php
-          						echo JHTML::_('select.booleanlist', 'showdetailstitle', 'class="inputbox"', $this->elsettings->showdetailstitle );
+          						echo JHTML::_('select.booleanlist', 'showdetailstitle', 'class="inputbox"', $this->jemsettings->showdetailstitle );
        						?>
        	 				</td>
       				</tr>
@@ -58,7 +58,7 @@
 						</td>
        					<td valign="top">
 		 					<?php
-          						echo JHTML::_('select.booleanlist', 'showlocdescription', 'class="inputbox"', $this->elsettings->showlocdescription );
+          						echo JHTML::_('select.booleanlist', 'showlocdescription', 'class="inputbox"', $this->jemsettings->showlocdescription );
        						?>
        	 				</td>
       				</tr>
@@ -70,7 +70,7 @@
 						</td>
        					<td valign="top">
 		 					<?php
-          						echo JHTML::_('select.booleanlist', 'showdetailsadress', 'class="inputbox"', $this->elsettings->showdetailsadress );
+          						echo JHTML::_('select.booleanlist', 'showdetailsadress', 'class="inputbox"', $this->jemsettings->showdetailsadress );
        						?>
        	 				</td>
       				</tr>
@@ -86,7 +86,7 @@
 							$showlink[] = JHTML::_('select.option', '0', JText::_( 'COM_JEM_NO_LINK' ) );
 							$showlink[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_LINK_TO_URL' ) );
 							$showlink[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_LINK_TO_VENUEVIEW' ) );
-							$show = JHTML::_('select.genericlist', $showlink, 'showdetlinkvenue', 'size="1" class="inputbox"', 'value', 'text', $this->elsettings->showdetlinkvenue );
+							$show = JHTML::_('select.genericlist', $showlink, 'showdetlinkvenue', 'size="1" class="inputbox"', 'value', 'text', $this->jemsettings->showdetlinkvenue );
 							echo $show;
           					?>
        	 				</td>
@@ -100,16 +100,16 @@
        					<td valign="top">
 							<?php
 							$mode = 0;
-							if ($this->elsettings->showmapserv == 1) {
+							if ($this->jemsettings->showmapserv == 1) {
 								$mode = 1;
-							} elseif ($this->elsettings->showmapserv == 2) {
+							} elseif ($this->jemsettings->showmapserv == 2) {
 								$mode = 2;
 							}
 							?>
 							<select name="showmapserv" size="1" class="inputbox" onChange="changemapMode()">
-  								<option value="0"<?php if ($this->elsettings->showmapserv == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_NO_MAP_SERVICE' ); ?></option>
-  								<option value="1"<?php if ($this->elsettings->showmapserv == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_GOOGLE_MAP_LINK' ); ?></option>
-  								<option value="2"<?php if ($this->elsettings->showmapserv == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_GOOGLE_MAP_DISP' ); ?></option>
+  								<option value="0"<?php if ($this->jemsettings->showmapserv == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_NO_MAP_SERVICE' ); ?></option>
+  								<option value="1"<?php if ($this->jemsettings->showmapserv == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_GOOGLE_MAP_LINK' ); ?></option>
+  								<option value="2"<?php if ($this->jemsettings->showmapserv == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_GOOGLE_MAP_DISP' ); ?></option>
 							</select>
        	 				</td>
       				</tr>
@@ -120,7 +120,7 @@
 							</span>
 						</td>
 						    <td valign="top">
-          					<input type="text" name="tld" value="<?php echo $this->elsettings->tld; ?>" size="3" maxlength="3" />
+          					<input type="text" name="tld" value="<?php echo $this->jemsettings->tld; ?>" size="3" maxlength="3" />
 						</td>
 					</tr>	
 					<tr id="lg"<?php if ($mode > 0) echo ' style="display:"'; ?>>
@@ -130,7 +130,7 @@
 							</span>
 						</td>
 						    <td valign="top">
-          					<input type="text" name="lg" value="<?php echo $this->elsettings->lg; ?>" size="3" maxlength="3" />
+          					<input type="text" name="lg" value="<?php echo $this->jemsettings->lg; ?>" size="3" maxlength="3" />
 						</td>
 					</tr>	
 				</tbody>
@@ -155,7 +155,7 @@
 		   					$regname = array();
 							$regname[] = JHTML::_('select.option', '0', JText::_( 'COM_JEM_USERNAME' ) );
 							$regname[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_NAME' ) );
-							$nametype = JHTML::_('select.genericlist', $regname, 'regname', 'size="1" class="inputbox"', 'value', 'text', $this->elsettings->regname );
+							$nametype = JHTML::_('select.genericlist', $regname, 'regname', 'size="1" class="inputbox"', 'value', 'text', $this->jemsettings->regname );
 							echo $nametype;
         					?>
        	 				</td>
@@ -169,13 +169,13 @@
        					<td valign="top">
        		 				<?php
 							$mode = 0;
-							if ($this->elsettings->comunsolution == 1) {
+							if ($this->jemsettings->comunsolution == 1) {
 								$mode = 1;
 							} // if
 							?>
        		 				<select name="comunsolution" size="1" class="inputbox" onChange="changeintegrateMode()">
-  								<option value="0"<?php if ($this->elsettings->comunsolution == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_DONT_USE_COM_SOL' ); ?></option>
-  								<option value="1"<?php if ($this->elsettings->comunsolution == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_COMBUILDER' ); ?></option>
+  								<option value="0"<?php if ($this->jemsettings->comunsolution == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_DONT_USE_COM_SOL' ); ?></option>
+  								<option value="1"<?php if ($this->jemsettings->comunsolution == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_COMBUILDER' ); ?></option>
 							</select>
        	 				</td>
       				</tr>
@@ -190,7 +190,7 @@
 		   					$comoption = array();
 							$comoption[] = JHTML::_('select.option', '0', JText::_( 'COM_JEM_LINK_PROFILE' ) );
 							$comoption[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_LINK_AVATAR' ) );
-							$comoptions = JHTML::_('select.genericlist', $comoption, 'comunoption', 'size="1" class="inputbox"', 'value', 'text', $this->elsettings->comunoption );
+							$comoptions = JHTML::_('select.genericlist', $comoption, 'comunoption', 'size="1" class="inputbox"', 'value', 'text', $this->jemsettings->comunoption );
 							echo $comoptions;
         					?>
        	 				</td>

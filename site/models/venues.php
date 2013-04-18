@@ -90,7 +90,7 @@ class JEMModelVenues extends JModelLegacy
 		$item    	= $menu->getActive();
 		$params		= $menu->getParams($item->id);
 
-		$elsettings 	=   ELHelper::config();
+		$jemsettings 	=   JEMHelper::config();
 
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
@@ -104,7 +104,7 @@ class JEMModelVenues extends JModelLegacy
 				$venue = $this->_data[$i];
 
 				//Create image information
-				$venue->limage = ELImage::flyercreator($venue->locimage, 'venue');
+				$venue->limage = JEMImage::flyercreator($venue->locimage, 'venue');
 
 				//Generate Venuedescription
 				if (empty ($venue->locdescription)) {
@@ -132,7 +132,7 @@ class JEMModelVenues extends JModelLegacy
 
     		    //create flag
 				if ($venue->country) {
-					$venue->countryimg = ELOutput::getFlag( $venue->country );
+					$venue->countryimg = JEMOutput::getFlag( $venue->country );
 				}
 				
 				//create target link

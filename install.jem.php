@@ -540,6 +540,51 @@ if (!$freshinstall) // update only if not fresh install
 {	
   $status->updates[] = array ('oldversion'=>'2.0.0.1', 'newversion'=>'2.0.0.1');
     
+     // first get tables to be checked for update
+	$tables = array( '#__jem_settings',
+               );
+	$tables = $db->getTableFields($tables, false);
+	
+  // update events table
+	$cols = $tables['#__jem_settings'];
+  
+	
+	if (!array_key_exists('recurrence_anticipation', $cols)) // remove the '&& 0'...
+	{
+    //update table
+    $query = ' ALTER TABLE #__jem_settings'
+           . ' ADD `recurrence_anticipation` VARCHAR( 20 ) NOT NULL DEFAULT "30", '
+           . ' ADD `ical_max_items` TINYINT( 4 ) NOT NULL DEFAULT "100", '
+           . ' ADD `empty_cat` TINYINT( 4 ) NOT NULL DEFAULT "1" '
+         
+           ;
+	 $db->setQuery($query);
+    if (!$db->query())
+    {
+        $status->updates[$i][] = array ('message'=>'Adding new fields to settings table', 'result'=>'failed');
+    } else
+    {
+        $status->updates[$i][] = array ('message'=>'Adding new fields to settings table', 'result'=>'success');
+    }
+	}	
+	
+	
+	
+	
+	
+	
+	
+ 
+  
+   /*   //first, check that the table structure has the new field. would be better if there was an install function for plugins...
+      $fields = $db->getTableFields(array('#__jem_cats_event_relations'));
+      if (!in_array('id', array_keys($fields['#__jem_cats_event_relations']))) {
+        $db->setQuery('ALTER TABLE `#__jem_cats_event_relations` ADD `id` INT NOT NULL AUTO_INCREMENT;');
+        $db->query();      	
+      }
+  */
+  
+  
 /*	// first get tables to be checked for update
 	$tables = array( '#__jem_events',
 	                 '#__jem_register', 
@@ -577,6 +622,8 @@ if (!$freshinstall) // update only if not fresh install
            ;
 
     $db->setQuery($query);
+  
+    
     if (!$db->query())
     {
         $status->updates[$i][] = array ('message'=>'Adding new fields to register table', 'result'=>'failed');
@@ -584,9 +631,8 @@ if (!$freshinstall) // update only if not fresh install
     {
         $status->updates[$i][] = array ('message'=>'Adding new fields to register table', 'result'=>'success');
     }
-	}	
+  */
 	
-	*/
 	
 	//increase counter
 	$i++;
@@ -668,7 +714,7 @@ if ($freshinstall)
     if (!$settingsresult)
     {
         //Set the default setting values -> fresh install
-        $query = "INSERT INTO #__jem_settings VALUES (1, 2, 1, 1, 1, 1, 1, 1, '1', '1', '100%', '20%', '40%', '20%', '', 'Datum', 'Activiteit', 'Locatie', 'city', '%d.%m.%Y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, 0, 'example@example.com', 0, '1000', -2, -2, -2, 1, '', 'Type', 1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, '[title], [a_name], [catsid], [times]', 'The event titled [title] starts on [dates]!', 1, 0, 'State', '0', 0, 1, 0, '1364604520', '', '', 'NL', 'NL', '100', '10%', 0, 'evimage', '0', 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 'attendee', '10%', 1, 30, 1, 1, 'media/com_jem/attachments', '1000', 'txt,csv,htm,html,xml,css,doc,xls,zip,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,tar.gz', 0)";
+        $query = "INSERT INTO #__jem_settings VALUES (1, 2, 1, 1, 1, 1, 1, 1, '1', '1', '100%', '20%', '40%', '20%', '', 'Datum', 'Activiteit', 'Locatie', 'city', '%d.%m.%Y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, 0, 'example@example.com', 0, '1000', -2, -2, -2, 1, '', 'Type', 1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, '[title], [a_name], [catsid], [times]', 'The event titled [title] starts on [dates]!', 1, 0, 'State', '0', 0, 1, 0, '1364604520', '', '', 'NL', 'NL', '100', '10%', 0, 'evimage', '0', 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 'attendee', '10%', 1, 30, 1, 1, 'media/com_jem/attachments', '1000', 'txt,csv,htm,html,xml,css,doc,xls,zip,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,tar.gz', 0, '30', 100, 1)";
         $db->setQuery($query);
         if (!$db->query())
         {

@@ -255,7 +255,7 @@ class JEMModelVenueevents extends JModelLegacy
 	function _buildVenueWhere( )
 	{
 		$app =  JFactory::getApplication();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 
 		
 		$user		= JFactory::getUser();
@@ -288,7 +288,7 @@ class JEMModelVenueevents extends JModelLegacy
 		 * If we have a filter, and this is enabled... lets tack the AND clause
 		 * for the filter onto the WHERE clause of the content item query.
 		 */
-		if ($elsettings->filter)
+		if ($jemsettings->filter)
 		{
 			$filter 		= JRequest::getString('filter');
 			$filter_type 	= JRequest::getWord('filter_type', '', 'request');

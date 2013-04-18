@@ -105,7 +105,7 @@ $options = array(
 </form>
 
 <p class="copyright">
-	<?php echo ELAdmin::footer( ); ?>
+	<?php echo JEMAdmin::footer( ); ?>
 </p>
 
 <?php

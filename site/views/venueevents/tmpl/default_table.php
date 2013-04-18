@@ -35,9 +35,9 @@ defined( '_JEXEC' ) or die;
 	}
 </script>
 
-<?php if ($this->elsettings->filter || $this->elsettings->display) : ?>
+<?php if ($this->jemsettings->filter || $this->jemsettings->display) : ?>
 <div id="el_filter" class="floattext">
-		<?php if ($this->elsettings->filter) : ?>
+		<?php if ($this->jemsettings->filter) : ?>
 		<div class="el_fleft">
 			<?php
 			echo '<label for="filter_type">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
@@ -48,7 +48,7 @@ defined( '_JEXEC' ) or die;
 			<button class="regular" onclick="document.getElementById('filter').value='';document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 		</div>
 		<?php endif; ?>
-		<?php if ($this->elsettings->display) : ?>
+		<?php if ($this->jemsettings->display) : ?>
 		<div class="el_fright">
 			<?php
 			echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
@@ -59,54 +59,54 @@ defined( '_JEXEC' ) or die;
 </div>
 <?php endif; ?>
 
-<table class="eventtable" style="width:<?php echo $this->elsettings->tablewidth; ?>;" summary="jem">
+<table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 	
 	<colgroup>
-		<col width="<?php echo $this->elsettings->datewidth; ?>" class="el_col_date" />
-		<?php if ($this->elsettings->showtitle == 1) : ?>
-			<col width="<?php echo $this->elsettings->titlewidth; ?>" class="el_col_title" />
+		<col width="<?php echo $this->jemsettings->datewidth; ?>" class="el_col_date" />
+		<?php if ($this->jemsettings->showtitle == 1) : ?>
+			<col width="<?php echo $this->jemsettings->titlewidth; ?>" class="el_col_title" />
 		<?php endif; ?>
-		<?php if ($this->elsettings->showlocate == 1) :	?>
-			<col width="<?php echo $this->elsettings->locationwidth; ?>" class="el_col_venue" />
+		<?php if ($this->jemsettings->showlocate == 1) :	?>
+			<col width="<?php echo $this->jemsettings->locationwidth; ?>" class="el_col_venue" />
 		<?php endif; ?>
-		<?php if ($this->elsettings->showcity == 1) :	?>
-			<col width="<?php echo $this->elsettings->citywidth; ?>" class="el_col_city" />
+		<?php if ($this->jemsettings->showcity == 1) :	?>
+			<col width="<?php echo $this->jemsettings->citywidth; ?>" class="el_col_city" />
 		<?php endif; ?>
-		<?php if ($this->elsettings->showstate == 1) :	?>
-			<col width="<?php echo $this->elsettings->statewidth; ?>" class="el_col_state" />
+		<?php if ($this->jemsettings->showstate == 1) :	?>
+			<col width="<?php echo $this->jemsettings->statewidth; ?>" class="el_col_state" />
 		<?php endif; ?>
-		<?php if ($this->elsettings->showcat == 1) :	?>
-			<col width="<?php echo $this->elsettings->catfrowidth; ?>" class="el_col_category" />
+		<?php if ($this->jemsettings->showcat == 1) :	?>
+			<col width="<?php echo $this->jemsettings->catfrowidth; ?>" class="el_col_category" />
 		<?php endif; ?>
 	</colgroup>
 
 	<thead>
 			<tr>
-				<th id="el_date" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->elsettings->datename), 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th id="el_date" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->datename), 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php
-				if ($this->elsettings->showtitle == 1) :
+				if ($this->jemsettings->showtitle == 1) :
 				?>
-				<th id="el_title" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->elsettings->titlename), 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				endif;
-				if ($this->elsettings->showlocate == 1) :
-				?>
-				<th id="el_location" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->elsettings->locationname), 'l.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th id="el_title" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->titlename), 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php
 				endif;
-				if ($this->elsettings->showcity == 1) :
+				if ($this->jemsettings->showlocate == 1) :
 				?>
-				<th id="el_city" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->elsettings->cityname), 'l.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th id="el_location" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->locationname), 'l.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php
 				endif;
-				if ($this->elsettings->showstate == 1) :
+				if ($this->jemsettings->showcity == 1) :
 				?>
-				<th id="el_state" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->elsettings->statename), 'l.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th id="el_city" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->cityname), 'l.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php
 				endif;
-				if ($this->elsettings->showcat == 1) :
+				if ($this->jemsettings->showstate == 1) :
 				?>
-				<th id="el_category" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->elsettings->catfroname), 'c.catname', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th id="el_state" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->statename), 'l.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<?php
+				endif;
+				if ($this->jemsettings->showcat == 1) :
+				?>
+				<th id="el_category" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->catfroname), 'c.catname', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php
 				endif;
 				?>
@@ -128,12 +128,12 @@ defined( '_JEXEC' ) or die;
 
     			<td headers="el_date" align="left">
     				<strong>
-    			    <?php if (ELHelper::isValidDate($row->dates)): ?>
-	    					<?php echo ELOutput::formatdate($row->dates, $row->times); ?>
+    			    <?php if (JEMHelper::isValidDate($row->dates)): ?>
+	    					<?php echo JEMOutput::formatdate($row->dates, $row->times); ?>
 	    					
 	    					<?php
 	    					if ($row->enddates && $row->enddates != $row->dates) :
-	    						echo ' - '.ELOutput::formatdate($row->enddates, $row->endtimes);
+	    						echo ' - '.JEMOutput::formatdate($row->enddates, $row->endtimes);
 	    					endif;
 	    					?>
     					<?php else: ?>
@@ -142,14 +142,14 @@ defined( '_JEXEC' ) or die;
     				</strong>
 
 					<?php
-					if ($this->elsettings->showtime == 1) :
+					if ($this->jemsettings->showtime == 1) :
 					?>
 						<br />
 						<?php
-						echo ELOutput::formattime($row->dates, $row->times);
+						echo JEMOutput::formattime($row->dates, $row->times);
 						
 						if ($row->endtimes) :
-							echo ' - '.ELOutput::formattime($row->enddates, $row->endtimes);
+							echo ' - '.JEMOutput::formattime($row->enddates, $row->endtimes);
 						endif;
 					endif;
 					?>
@@ -159,7 +159,7 @@ defined( '_JEXEC' ) or die;
 				//Link to details
 				$detaillink = JRoute::_( JEMHelperRoute::getRoute($row->slug) );
 				//title
-				if (($this->elsettings->showtitle == 1 ) && ($this->elsettings->showdetails == 1) ) :
+				if (($this->jemsettings->showtitle == 1 ) && ($this->jemsettings->showdetails == 1) ) :
 				?>
 
 				<td headers="el_title" align="left" valign="top"><a href="<?php echo $detaillink ; ?>"> <?php echo $this->escape($row->title); ?></a></td>
@@ -167,19 +167,19 @@ defined( '_JEXEC' ) or die;
 				<?php
 				endif;
 
-				if (( $this->elsettings->showtitle == 1 ) && ($this->elsettings->showdetails == 0) ) :
+				if (( $this->jemsettings->showtitle == 1 ) && ($this->jemsettings->showdetails == 0) ) :
 				?>
 
 				<td headers="el_title" align="left" valign="top"><?php echo $this->escape($row->title); ?></td>
 
 				<?php
 				endif;
-				if ($this->elsettings->showlocate == 1) :
+				if ($this->jemsettings->showlocate == 1) :
 				?>
 
 					<td headers="el_location" align="left" valign="top">
 						<?php
-						if ($this->elsettings->showlinkvenue == 1 ) :
+						if ($this->jemsettings->showlinkvenue == 1 ) :
 							echo $row->locid != 0 ? "<a href='".JRoute::_('index.php?view=venueevents&id='.$row->venueslug)."'>".$this->escape($row->venue)."</a>" : '-';
 						else :
 							echo $row->locid ? $this->escape($row->venue) : '-';
@@ -190,7 +190,7 @@ defined( '_JEXEC' ) or die;
 				<?php
 				endif;
 
-				if ($this->elsettings->showcity == 1) :
+				if ($this->jemsettings->showcity == 1) :
 				?>
 
 					<td headers="el_city" align="left" valign="top"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
@@ -198,7 +198,7 @@ defined( '_JEXEC' ) or die;
 				<?php
 				endif;
 
-				if ($this->elsettings->showstate == 1) :
+				if ($this->jemsettings->showstate == 1) :
 				?>
 
 					<td headers="el_state" align="left" valign="top"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
@@ -206,7 +206,7 @@ defined( '_JEXEC' ) or die;
 				<?php
 				endif;
 
-				if ($this->elsettings->showcat == 1) :
+				if ($this->jemsettings->showcat == 1) :
 				?>
 				<td headers="el_category" align="left" valign="top">
 					<?php
@@ -214,7 +214,7 @@ defined( '_JEXEC' ) or die;
 					$ix = 0;
 					foreach ($row->categories as $key => $category) :
 
-						if ($this->elsettings->catlinklist == 1) :
+						if ($this->jemsettings->catlinklist == 1) :
 						?>
 								<a href="<?php echo JRoute::_('index.php?view=categoryevents&id='.$category->catslug); ?>">
 									<?php echo $category->catname; ?>

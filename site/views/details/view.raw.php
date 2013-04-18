@@ -41,18 +41,18 @@ class JEMViewDetails extends JViewLegacy
 	function display($tpl = null)
 	{		
 		$mainframe = JFactory::getApplication();		
-		$settings = ELHelper::config();
+		$settings = JEMHelper::config();
 		
 		// Get data from the model
 		$row     = $this->get('Details');
 		$row->categories = $this->get('Categories');
 		$row->id = $row->did;
 		
-		$vcal = ELHelper::getCalendarTool();  // initiate new CALENDAR
+		$vcal = JEMHelper::getCalendarTool();  // initiate new CALENDAR
 	//	$vcal->setProperty('unique_id', 'event'.$row->did.'@'.$mainframe->getCfg('sitename'));
 		$vcal->setConfig( "filename", "event".$row->did.".ics" );
 
-		ELHelper::icalAddEvent($vcal, $row);		
+		JEMHelper::icalAddEvent($vcal, $row);		
 
 		$vcal->returnCalendar();                       // generate and redirect output to user browser
 		echo $vcal->createCalendar(); // debug

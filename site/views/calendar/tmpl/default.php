@@ -37,7 +37,7 @@ defined('_JEXEC') or die;
     $limit = $this->params->get('daylimit', 10);
     foreach ($this->rows as $row) :
     
-				if (!ELHelper::isValidDate($row->dates)) {
+				if (!JEMHelper::isValidDate($row->dates)) {
 					continue; // skip, open date !
 				} 
 				
@@ -58,10 +58,10 @@ defined('_JEXEC') or die;
         //for time printing
         $timehtml = '';
         
-		if ($this->elsettings->showtime == 1) :
+		if ($this->jemsettings->showtime == 1) :
 
-            $start = ELOutput::formattime($row->dates, $row->times);
-            $end = ELOutput::formattime($row->dates, $row->endtimes);
+            $start = JEMOutput::formattime($row->dates, $row->times);
+            $end = JEMOutput::formattime($row->dates, $row->endtimes);
             
 			if ($start != '') :
                 $timehtml = '<div class="time"><span class="label">'.JText::_('COM_JEM_TIME').': </span>';
@@ -120,13 +120,13 @@ defined('_JEXEC') or die;
        	
        	$catname = '<div class="catname">'.$multicatname.'</div>';
        	
-        $eventdate = ELOutput::formatdate($row->dates, $row->times);
+        $eventdate = JEMOutput::formatdate($row->dates, $row->times);
     
         //venue
-        if ($this->elsettings->showlocate == 1) :
+        if ($this->jemsettings->showlocate == 1) :
             $venue = '<div class="location"><span class="label">'.JText::_('COM_JEM_VENUE').': </span>';
             
-			if ($this->elsettings->showlinkvenue == 1 && 0) :
+			if ($this->jemsettings->showlinkvenue == 1 && 0) :
                 $venue .= $row->locid != 0 ? "<a href='".JRoute::_('index.php?view=venueevents&id='.$row->venueslug)."'>".$this->escape($row->venue)."</a>" : '-';
            	else :
              	$venue .= $row->locid ? $this->escape($row->venue) : '-';

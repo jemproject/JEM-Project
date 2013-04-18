@@ -52,7 +52,7 @@ class JEMViewCalendar extends JViewLegacy
         //initialize variables
         $document 	=  JFactory::getDocument();
         $menu 		=  $app->getMenu();
-        $elsettings =  ELHelper::config();
+        $jemsettings =  JEMHelper::config();
         $item 		= $menu->getActive();
         $params 	=  $app->getParams();
         $uri 		=  JFactory::getURI();
@@ -91,7 +91,7 @@ class JEMViewCalendar extends JViewLegacy
 				
 		$this->rows 		= $rows;
 		$this->params		= $params;
-		$this->elsettings	= $elsettings;
+		$this->jemsettings	= $jemsettings;
 		$this->cal			= $cal;
 
         parent::display($tpl);

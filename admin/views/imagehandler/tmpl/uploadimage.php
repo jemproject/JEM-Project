@@ -100,20 +100,20 @@ defined('_JEXEC') or die;
 								}
 								?>
 								<br />
-								<b><?php echo JText::_('COM_JEM_IMAGE_FILESIZE').':'; ?></b> <?php echo $this->elsettings->sizelimit; ?> kb<br />
+								<b><?php echo JText::_('COM_JEM_IMAGE_FILESIZE').':'; ?></b> <?php echo $this->jemsettings->sizelimit; ?> kb<br />
 
 								<?php
-								if($this->elsettings->gddisabled == 0 || (imagetypes() & IMG_PNG)) {
+								if($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_PNG)) {
 									echo "<br /><span style='color:green'>".JText::_('COM_JEM_PNG_SUPPORT')."</span>";
 								} else {
 									echo "<br /><span style='color:red'>".JText::_('COM_JEM_NO_PNG_SUPPORT')."</span>";
 								}
-								if($this->elsettings->gddisabled == 0 || (imagetypes() & IMG_JPEG)) {
+								if($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_JPEG)) {
 									echo "<br /><span style='color:green'>".JText::_('COM_JEM_JPG_SUPPORT')."</span>";
 								} else {
 									echo "<br /><span style='color:red'>".JText::_('COM_JEM_NO_JPG_SUPPORT')."</span>";
 								}
-								if($this->elsettings->gddisabled == 0 || (imagetypes() & IMG_GIF)) {
+								if($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_GIF)) {
 									echo "<br /><span style='color:green'>".JText::_('COM_JEM_GIF_SUPPORT')."</span>";
 								} else {
 									echo "<br /><span style='color:red'>".JText::_('COM_JEM_NO_GIF_SUPPORT')."</span>";
@@ -129,7 +129,7 @@ defined('_JEXEC') or die;
 	</tr>
 </table>
 
-<?php if($this->elsettings->gddisabled) { ?>
+<?php if($this->jemsettings->gddisabled) { ?>
 
 <table class="noshow">
 	<tr>
@@ -161,5 +161,5 @@ defined('_JEXEC') or die;
 </form>
 
 <p class="copyright">
-	<?php echo ELAdmin::footer(); ?>
+	<?php echo JEMAdmin::footer(); ?>
 </p>

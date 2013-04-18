@@ -46,7 +46,7 @@ class JEMViewSettings extends JViewLegacy {
 
 		//get data from model
 		$model		=  $this->getModel();
-		$elsettings =  $this->get( 'Data');
+		$jemsettings =  $this->get( 'Data');
 
 		//only admins have access to this view
 		if (!JFactory::getUser()->authorise('core.manage')) {
@@ -99,12 +99,12 @@ class JEMViewSettings extends JViewLegacy {
 		//$access = array_merge( $access, $acl->get_group_children_tree( null, 'USERS', false ) );
 
 		//Create the access control list
-		$accessLists['evdel_access']	= JHTML::_('select.genericlist', $access, 'delivereventsyes', 'class="inputbox" size="4"', 'value', 'text', $elsettings->delivereventsyes );
-		$accessLists['locdel_access']	= JHTML::_('select.genericlist', $access, 'deliverlocsyes', 'class="inputbox" size="4"', 'value', 'text', $elsettings->deliverlocsyes );
-		$accessLists['evpub_access']	= JHTML::_('select.genericlist', $access, 'autopubl', 'class="inputbox" size="4"', 'value', 'text', $elsettings->autopubl );
-		$accessLists['locpub_access']	= JHTML::_('select.genericlist', $access, 'autopublocate', 'class="inputbox" size="4"', 'value', 'text', $elsettings->autopublocate );
-		$accessLists['ev_edit']			= JHTML::_('select.genericlist', $access, 'eventedit', 'class="inputbox" size="4"', 'value', 'text', $elsettings->eventedit );
-		$accessLists['venue_edit']		= JHTML::_('select.genericlist', $access, 'venueedit', 'class="inputbox" size="4"', 'value', 'text', $elsettings->venueedit );
+		$accessLists['evdel_access']	= JHTML::_('select.genericlist', $access, 'delivereventsyes', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->delivereventsyes );
+		$accessLists['locdel_access']	= JHTML::_('select.genericlist', $access, 'deliverlocsyes', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->deliverlocsyes );
+		$accessLists['evpub_access']	= JHTML::_('select.genericlist', $access, 'autopubl', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->autopubl );
+		$accessLists['locpub_access']	= JHTML::_('select.genericlist', $access, 'autopublocate', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->autopublocate );
+		$accessLists['ev_edit']			= JHTML::_('select.genericlist', $access, 'eventedit', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->eventedit );
+		$accessLists['venue_edit']		= JHTML::_('select.genericlist', $access, 'venueedit', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->venueedit );
         
         $uri 		=  JFactory::getURI();
 		$uri2 = $uri->toString();
@@ -112,7 +112,7 @@ class JEMViewSettings extends JViewLegacy {
         
 		//assign data to template
 		$this->accessLists	= $accessLists;
-		$this->elsettings	= $elsettings;
+		$this->jemsettings	= $jemsettings;
 		$this->request_url	= $uri2;
 		
 		$this->WarningIcon();

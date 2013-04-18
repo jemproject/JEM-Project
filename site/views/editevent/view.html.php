@@ -57,7 +57,7 @@ class JEMViewEditevent extends JViewLegacy
 		// Initialize variables
 		$editor 	=  JFactory::getEditor();
 		$doc 		=  JFactory::getDocument();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 
 		//Get Data from the model
 		$row 			= $this->get('Event');
@@ -106,15 +106,15 @@ class JEMViewEditevent extends JViewLegacy
 
 		//Has the user access to the editor and the add venue screen
 		$editoruser = ELUser::editoruser();
-		$delloclink = ELUser::validate_user( $elsettings->locdelrec, $elsettings->deliverlocsyes );
+		$delloclink = ELUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
 		
 		//transform <br /> and <br> back to \r\n for non editorusers
 		if (!$editoruser) {
-			$row->datdescription = ELHelper::br2break($row->datdescription);
+			$row->datdescription = JEMHelper::br2break($row->datdescription);
 		}
 
 		//Get image information
-		$dimage = ELImage::flyercreator($row->datimage, 'event');
+		$dimage = JEMImage::flyercreator($row->datimage, 'event');
 
 		//Set the info image
 		$infoimage = JHTML::_('image', 'media/com_jem/images/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
@@ -154,7 +154,7 @@ class JEMViewEditevent extends JViewLegacy
     	$lists['recurrence_type'] = JHTML::_('select.genericlist', $rec_type, 'recurrence_type', '', 'value', 'text', $row->recurrence_type);
 
     	//if only owned events are allowed
-    	if ($elsettings->ownedvenuesonly) {
+    	if ($jemsettings->ownedvenuesonly) {
     		$venues     =  $this->get( 'UserVenues' );
 			//build list
 			$venuelist       = array();
@@ -171,13 +171,13 @@ class JEMViewEditevent extends JViewLegacy
 		$this->infoimage		= $infoimage;
 		$this->delloclink		= $delloclink;
 		$this->editoruser		= $editoruser;
-		$this->elsettings		= $elsettings;
+		$this->jemsettings		= $jemsettings;
 		$this->item				= $item;
 		$this->params			= $params;
 		$this->lists			= $lists;
 		$this->title            = $title;
 
-		$access2 = ELHelper::getAccesslevelOptions();
+		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access			= $access2;
 		
 		parent::display($tpl);

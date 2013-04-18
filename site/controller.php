@@ -356,7 +356,7 @@ class JEMController extends JControllerLegacy
 		$model->setId($id);
 		$model->delreguser();
 		
-		ELHelper::updateWaitingList($id);
+		JEMHelper::updateWaitingList($id);
 		
 		JPluginHelper::importPlugin( 'jem' );
     $dispatcher = JDispatcher::getInstance();
@@ -446,7 +446,7 @@ class JEMController extends JControllerLegacy
 		
 		$path = ELAttach::getAttachmentPath($id, $gid);
 				
-		$mime = ELHelper::getMimeType($path);
+		$mime = JEMHelper::getMimeType($path);
 		
 		$doc = JFactory::getDocument();
 		$doc->setMimeEncoding($mime);

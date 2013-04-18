@@ -21,7 +21,7 @@
  */
 
 defined('_JEXEC') or die;
-// ELHelper::headerDeclarations();
+// JEMHelper::headerDeclarations();
 ?>
 
 
@@ -150,5 +150,5 @@ defined('_JEXEC') or die;
 </form>
 
 <p class="copyright">
-  <?php echo ELAdmin::footer( ); ?>
+  <?php echo JEMAdmin::footer( ); ?>
 </p>

@@ -45,10 +45,10 @@ foreach ($this->registers as $register) :
   	endif;
   
 	//if CB
-	if ($this->elsettings->comunsolution == 1) :
+	if ($this->jemsettings->comunsolution == 1) :
 
 		
-		if ($this->elsettings->comunoption == 1) :
+		if ($this->jemsettings->comunoption == 1) :
 			//User has avatar
 			if(!empty($register->avatar)) :
     		$useravatar = JHTML::_('image.site', 'tn'.$register->avatar, 'images/comprofiler/', NULL, NULL, $register->name);
@@ -62,7 +62,7 @@ foreach ($this->registers as $register) :
 		endif;
 
 		//only show the username with link to profile
-		if ($this->elsettings->comunoption == 0) :
+		if ($this->jemsettings->comunoption == 0) :
 			echo "<li><span class='username'><a href='".JRoute::_( 'index.php?option=com_comprofiler&amp;task=userProfile&amp;user='.$register->uid )."'>".$register->name." </a></span></li>";
 		endif;
 
@@ -70,7 +70,7 @@ foreach ($this->registers as $register) :
 	endif;
 
 	//no communitycomponent is set so only show the username
-	if ($this->elsettings->comunsolution == 0) :
+	if ($this->jemsettings->comunsolution == 0) :
 		echo "<li><span class='username'>".$register->name."</span></li>";
 	endif;
 

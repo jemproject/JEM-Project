@@ -45,7 +45,7 @@ class JEMViewCategoryevents extends JViewLegacy
 		//initialize variables
 		$document 	=  JFactory::getDocument();
 		$menu		=  $app->getMenu();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 		//$item    	= $menu->getActive();
 		
 		//get menu information
@@ -130,7 +130,7 @@ class JEMViewCategoryevents extends JViewLegacy
 		
 		//Check if the user has access to the form
 		$maintainer = ELUser::ismaintainer();
-		$genaccess 	= ELUser::validate_user( $elsettings->evdelrec, $elsettings->delivereventsyes );
+		$genaccess 	= ELUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess ) 
 		{ 
@@ -161,8 +161,8 @@ class JEMViewCategoryevents extends JViewLegacy
 		if ($category->image != '') {
             $path = "file_path";
             $mediaparams = JComponentHelper::getParams('com_media');
-            $imgattribs['width'] = $elsettings->imagewidth;
-			$imgattribs['height'] = $elsettings->imagehight;
+            $imgattribs['width'] = $jemsettings->imagewidth;
+			$imgattribs['height'] = $jemsettings->imagehight;
 
 			$category->image = JHTML::image($mediaparams->get($path, 'images').'/jem/categories/'.$category->image, $category->catname, $imgattribs);
 		} else {
@@ -172,7 +172,7 @@ class JEMViewCategoryevents extends JViewLegacy
 		
 
 		//create select lists
-		$lists	= $this->_buildSortLists($elsettings);
+		$lists	= $this->_buildSortLists($jemsettings);
 		$this->lists			= $lists;
 		$this->action			= $uri->toString();
 
@@ -185,7 +185,7 @@ class JEMViewCategoryevents extends JViewLegacy
 		$this->task				= $task;
 		$this->catdescription	= $catdescription;
 		$this->pagination		= $pagination;
-		$this->elsettings		= $elsettings;
+		$this->jemsettings		= $jemsettings;
 		$this->item				= $item;
 		$this->categories		= $categories;
 
@@ -230,7 +230,7 @@ class JEMViewCategoryevents extends JViewLegacy
 		return $this->rows;
 	}
 
-	function _buildSortLists($elsettings)
+	function _buildSortLists($jemsettings)
 	{
 		// Table ordering values
 		$filter_order		= JRequest::getCmd('filter_order', 'a.dates');
@@ -240,9 +240,23 @@ class JEMViewCategoryevents extends JViewLegacy
 		$filter_type		= JRequest::getString('filter_type');
 
 		$sortselects = array();
-		$sortselects[]	= JHTML::_('select.option', 'title', $elsettings->titlename );
-		$sortselects[] 	= JHTML::_('select.option', 'venue', $elsettings->locationname );
-		$sortselects[] 	= JHTML::_('select.option', 'city', $elsettings->cityname );
+		
+		if ($jemsettings->showtitle == 1) {
+			$sortselects[]	= JHTML::_('select.option', 'title', $jemsettings->titlename );
+		}
+		if ($jemsettings->showlocate == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'venue', $jemsettings->locationname );
+		}
+		if ($jemsettings->showcity == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'city', $jemsettings->cityname );
+		}
+		if ($jemsettings->showcat == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'type', $jemsettings->catfroname );
+		}
+		if ($jemsettings->showstate == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'state', $jemsettings->statename );
+		}
+
 		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
 
 		$lists['order_Dir'] 	= $filter_order_Dir;

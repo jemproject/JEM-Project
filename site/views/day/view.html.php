@@ -44,7 +44,7 @@ class JEMViewDay extends JViewLegacy
 
 		//initialize variables
 		$document 	= JFactory::getDocument();
-		$elsettings = ELHelper::config();
+		$jemsettings = JEMHelper::config();
 		$menu		= $app->getMenu();
 		$item    	= $menu->getActive();
 		$params 	= $app->getParams();
@@ -65,7 +65,7 @@ class JEMViewDay extends JViewLegacy
 		$total 		= $this->get('Total');
 		$day		= $this->get('Day');
 		
-		$daydate = strftime( $elsettings->formatdate, strtotime( $day ));
+		$daydate = strftime( $jemsettings->formatdate, strtotime( $day ));
 
 		//are events available?
 		if (!$rows) {
@@ -94,7 +94,7 @@ class JEMViewDay extends JViewLegacy
 
 		//Check if the user has access to the form
 		$maintainer = ELUser::ismaintainer();
-		$genaccess 	= ELUser::validate_user( $elsettings->evdelrec, $elsettings->delivereventsyes );
+		$genaccess 	= ELUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess ) 
 		{ 
@@ -128,7 +128,7 @@ class JEMViewDay extends JViewLegacy
 		$this->dellink			= $dellink;
 		$this->pagination		= $pagination;
 		$this->page				= $page;
-		$this->elsettings		= $elsettings;
+		$this->jemsettings		= $jemsettings;
 		$this->lists			= $lists;
 		$this->daydate			= $daydate;
 
@@ -172,7 +172,7 @@ class JEMViewDay extends JViewLegacy
 	 */
 	function _buildSortLists()
 	{
-		$elsettings = ELHelper::config();
+		$jemsettings = JEMHelper::config();
 		
 		$filter_order		= JRequest::getCmd('filter_order', 'a.dates');
 		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', 'ASC');
@@ -181,9 +181,9 @@ class JEMViewDay extends JViewLegacy
 		$filter_type		= JRequest::getString('filter_type');
 
 		$sortselects = array();
-		$sortselects[]	= JHTML::_('select.option', 'title', $elsettings->titlename );
-		$sortselects[] 	= JHTML::_('select.option', 'venue', $elsettings->locationname );
-		$sortselects[] 	= JHTML::_('select.option', 'city', $elsettings->cityname );
+		$sortselects[]	= JHTML::_('select.option', 'title', $jemsettings->titlename );
+		$sortselects[] 	= JHTML::_('select.option', 'venue', $jemsettings->locationname );
+		$sortselects[] 	= JHTML::_('select.option', 'city', $jemsettings->cityname );
 		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
 
 		$lists['order_Dir'] 	= $filter_order_Dir;

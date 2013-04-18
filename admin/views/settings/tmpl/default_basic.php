@@ -16,7 +16,7 @@
 		  						$showdets = array();
 								$showdets[] = JHTML::_('select.option', '0', JText::_( 'COM_JEM_DETAILS_OFF' ) );
 								$showdets[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_LINK_ON_TITLE' ) );
-								$showdet = JHTML::_('select.genericlist', $showdets, 'showdetails', 'size="1" class="inputbox"', 'value', 'text', $this->elsettings->showdetails );
+								$showdet = JHTML::_('select.genericlist', $showdets, 'showdetails', 'size="1" class="inputbox"', 'value', 'text', $this->jemsettings->showdetails );
 								echo $showdet;
         					?>
        	 				</td>
@@ -28,7 +28,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="formatdate" value="<?php echo $this->elsettings->formatdate; ?>" size="15" maxlength="15" />
+							<input type="text" name="formatdate" value="<?php echo $this->jemsettings->formatdate; ?>" size="15" maxlength="15" />
 							&nbsp;<a href="http://www.php.net/strftime" target="_blank"><?php echo JText::_( 'COM_JEM_PHP_STRFTIME_MANUAL' ); ?></a>
        	 				</td>
       				</tr>
@@ -39,7 +39,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="formattime" value="<?php echo $this->elsettings->formattime; ?>" size="15" maxlength="15" />
+							<input type="text" name="formattime" value="<?php echo $this->jemsettings->formattime; ?>" size="15" maxlength="15" />
 							&nbsp;<a href="http://www.php.net/strftime" target="_blank"><?php echo JText::_( 'COM_JEM_PHP_STRFTIME_MANUAL' ); ?></a>
        	 				</td>
       				</tr>
@@ -50,7 +50,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="timename" value="<?php echo $this->elsettings->timename; ?>" size="15" maxlength="10" />
+							<input type="text" name="timename" value="<?php echo $this->jemsettings->timename; ?>" size="15" maxlength="10" />
        	 				</td>
       				</tr>
       				<tr>
@@ -61,7 +61,7 @@
 						</td>
        					<td valign="top">
 							<?php
-								echo JHTML::_('select.booleanlist', 'storeip', 'class="inputbox"', $this->elsettings->storeip );
+								echo JHTML::_('select.booleanlist', 'storeip', 'class="inputbox"', $this->jemsettings->storeip );
         					?>
        	 				</td>
       				</tr>
@@ -82,14 +82,14 @@
       					<td valign="top">
 							<?php
 							$mode = 0;
-							if ($this->elsettings->oldevent >= 1) {
+							if ($this->jemsettings->oldevent >= 1) {
 								$mode = 1;
 							} // if
 							?>
 							<select name="oldevent" size="1" class="inputbox" onChange="changeoldMode()">
-  								<option value="0"<?php if ($this->elsettings->oldevent == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_DO_NOTHING' ); ?></option>
-  								<option value="1"<?php if ($this->elsettings->oldevent == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_DELETE_OLD_EVENTS' ); ?></option>
-  								<option value="2"<?php if ($this->elsettings->oldevent == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_ARCHIVE_OLD_EVENTS' ); ?></option>
+  								<option value="0"<?php if ($this->jemsettings->oldevent == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_DO_NOTHING' ); ?></option>
+  								<option value="1"<?php if ($this->jemsettings->oldevent == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_DELETE_OLD_EVENTS' ); ?></option>
+  								<option value="2"<?php if ($this->jemsettings->oldevent == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_ARCHIVE_OLD_EVENTS' ); ?></option>
 							</select>&nbsp;
 							<span class="error hasTip" title="<?php echo JText::_( 'COM_JEM_WARNING' ); ?>::<?php echo JText::_( 'COM_JEM_OLD_EVENTS_WARN' ); ?>">
 								<?php echo $this->WarningIcon(); ?>
@@ -103,7 +103,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="minus" value="<?php echo $this->elsettings->minus; ?>" size="3" maxlength="2" />
+							<input type="text" name="minus" value="<?php echo $this->jemsettings->minus; ?>" size="3" maxlength="2" />
        	 				</td>
       				</tr>
 				</tbody>
@@ -126,7 +126,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="sizelimit" value="<?php echo $this->elsettings->sizelimit; ?>" size="10" maxlength="10" />
+							<input type="text" name="sizelimit" value="<?php echo $this->jemsettings->sizelimit; ?>" size="10" maxlength="10" />
        	 				</td>
       				</tr>
 					<tr>
@@ -136,7 +136,7 @@
 							</span>
 						</td>
        					<td valign="top">
-         					<input type="text" name="imagehight" value="<?php echo $this->elsettings->imagehight; ?>" size="10" maxlength="10" />
+         					<input type="text" name="imagehight" value="<?php echo $this->jemsettings->imagehight; ?>" size="10" maxlength="10" />
        	 				</td>
       				</tr>
 					<tr>
@@ -146,7 +146,7 @@
 							</span>
 						</td>
        					<td valign="top">
-         					<input type="text" name="imagewidth" value="<?php echo $this->elsettings->imagewidth; ?>" size="10" maxlength="10" />
+         					<input type="text" name="imagewidth" value="<?php echo $this->jemsettings->imagewidth; ?>" size="10" maxlength="10" />
          					<span class="error hasTip" title="<?php echo JText::_( 'COM_JEM_WARNING' );?>::<?php echo JText::_( 'WARNING MAX IMAGEWIDTH' ); ?>">
 								<?php echo $this->WarningIcon(); ?>
 							</span>
@@ -161,12 +161,12 @@
        					<td valign="top">
          					<?php
 							$mode = 0;
-							if ($this->elsettings->gddisabled == 1) {
+							if ($this->jemsettings->gddisabled == 1) {
 								$mode = 1;
 							} // if
 
 							//is the gd library installed on the server running JEM?
-							if ($gdv = ELImage::gdVersion()) {
+							if ($gdv = JEMImage::gdVersion()) {
 
 								//is it Version two or higher? If yes let the user the choice
    								if ($gdv >= 2) {
@@ -208,7 +208,7 @@
 						</td>
        					<td valign="top">
          					<?php
-							$html = JHTML::_('select.booleanlist', 'lightbox', 'class="inputbox"', $this->elsettings->lightbox );
+							$html = JHTML::_('select.booleanlist', 'lightbox', 'class="inputbox"', $this->jemsettings->lightbox );
 							echo $html;
 							?>
        	 				</td>
@@ -229,7 +229,7 @@
 						</td>
        					<td valign="top">
 							<?php
-								$meta_key = explode(", ", $this->elsettings->meta_keywords);
+								$meta_key = explode(", ", $this->jemsettings->meta_keywords);
 							?>
 							<select name="meta_keywords[]" multiple="multiple" size="5" class="inputbox">
 								<option value="[title]" <?php if(in_array("[title]",$meta_key)) { echo "selected=\"selected\""; } ?>>
@@ -279,7 +279,7 @@
 								<input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo JText::_( 'COM_JEM_ENDDATE' ); ?>" />
 								<input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo JText::_( 'COM_JEM_END_TIME' ); ?>" />
 							</p>
-							<textarea name="meta_description" id="meta_description" cols="35" rows="3" class="inputbox"><?php echo $this->elsettings->meta_description; ?></textarea>
+							<textarea name="meta_description" id="meta_description" cols="35" rows="3" class="inputbox"><?php echo $this->jemsettings->meta_description; ?></textarea>
 							<br/>
 							<input type="button" value="<?php echo JText::_( 'COM_JEM_META_DESCRIPTION_BUTTON' ); ?>" onclick="include_description()" />
 							&nbsp;

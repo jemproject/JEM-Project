@@ -155,7 +155,7 @@ defined( '_JEXEC' ) or die;
 	var tastendruck = false
 	function rechne(restzeichen)
 	{
-		maximum = <?php echo $this->elsettings->datdesclimit; ?>
+		maximum = <?php echo $this->jemsettings->datdesclimit; ?>
 
 		if (restzeichen.locdescription.value.length > maximum) {
           	restzeichen.locdescription.value = restzeichen.locdescription.value.substring(0, maximum)
@@ -243,7 +243,7 @@ defined( '_JEXEC' ) or die;
                 </span>
             </div>
 
-            <?php if ( $this->elsettings->showmapserv != 0 ) : ?>
+            <?php if ( $this->jemsettings->showmapserv != 0 ) : ?>
             <div class="el_map floattext">
                 <p>
                     <br /><strong><?php echo JText::_( 'COM_JEM_ENABLE_MAP' ).':'; ?></strong>
@@ -276,22 +276,22 @@ defined( '_JEXEC' ) or die;
 
         </fieldset>
 
-      	<?php	if (( $this->elsettings->imageenabled == 2 ) || ($this->elsettings->imageenabled == 1)) :	?>
+      	<?php	if (( $this->jemsettings->imageenabled == 2 ) || ($this->jemsettings->imageenabled == 1)) :	?>
       	<fieldset class="el_fldst_image">
 
             <legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
 
     		<?php
             if ($this->row->locimage) :
-    				echo ELOutput::flyer( $this->row, $this->limage, 'venue' );
+    				echo JEMOutput::flyer( $this->row, $this->limage, 'venue' );
     		else :
       		    echo JHTML::_('image', 'media/com_jem/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => 'modal'));
     		endif;
       		?>
 
             <label for="userfile"><?php echo JText::_('COM_JEM_IMAGE'); ?></label>
-      			<input class="inputbox <?php echo $this->elsettings->imageenabled == 2 ? 'required' : ''; ?>" name="userfile" id="userfile" type="file" />
-      			<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->elsettings->sizelimit.' kb'; ?>">
+      			<input class="inputbox <?php echo $this->jemsettings->imageenabled == 2 ? 'required' : ''; ?>" name="userfile" id="userfile" type="file" />
+      			<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->jemsettings->sizelimit.' kb'; ?>">
       				<?php echo $this->infoimage; ?>
       			</span>
 
@@ -313,7 +313,7 @@ defined( '_JEXEC' ) or die;
         		?>
       			<textarea style="width:100%;" rows="10" name="locdescription" class="inputbox" wrap="virtual" onkeyup="berechne(this.form)"></textarea><br />
       			<?php echo JText::_('COM_JEM_NO_HTML'); ?><br />
-      			<input disabled="disabled" value="<?php echo $this->elsettings->datdesclimit; ?>" size="4" name="zeige" /><?php echo JText::_('COM_JEM_AVAILABLE')." "; ?><br />
+      			<input disabled="disabled" value="<?php echo $this->jemsettings->datdesclimit; ?>" size="4" name="zeige" /><?php echo JText::_('COM_JEM_AVAILABLE')." "; ?><br />
       			<a href="javascript:rechne(document.adminForm);"><?php echo JText::_('COM_JEM_REFRESH'); ?></a>
 
         		<?php	endif; ?>
@@ -367,7 +367,7 @@ defined( '_JEXEC' ) or die;
     </form>
 
     <p class="copyright">
-        <?php echo ELOutput::footer( ); ?>
+        <?php echo JEMOutput::footer( ); ?>
     </p>
 
 </div>

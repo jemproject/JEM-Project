@@ -78,16 +78,16 @@ defined('_JEXEC') or die;
 			<td>
 				<?php
 					//Format date
-					if (ELHelper::isValidDate($row->dates)) {
-						$date = strftime( $this->elsettings->formatdate, strtotime( $row->dates ));
+					if (JEMHelper::isValidDate($row->dates)) {
+						$date = strftime( $this->jemsettings->formatdate, strtotime( $row->dates ));
 					} 
 					else {
 						$date		= JText::_('COM_JEM_OPEN_DATE');
 					}
-					if ( !ELHelper::isValidDate($row->enddates) ) {
+					if ( !JEMHelper::isValidDate($row->enddates) ) {
 						$displaydate = $date;
 					} else {
-						$enddate 	= strftime( $this->elsettings->formatdate, strtotime( $row->enddates ));
+						$enddate 	= strftime( $this->jemsettings->formatdate, strtotime( $row->enddates ));
 						$displaydate = $date.' - '.$enddate;
 					}
 
@@ -100,8 +100,8 @@ defined('_JEXEC') or die;
 					if (!$row->times) {
 						$displaytime = '-';
 					} else {
-						$time = strftime( $this->elsettings->formattime, strtotime( $row->times ));
-						$displaytime = $time.' '.$this->elsettings->timename;
+						$time = strftime( $this->jemsettings->formattime, strtotime( $row->times ));
+						$displaytime = $time.' '.$this->jemsettings->timename;
 					}
 					echo $displaytime;
 				?>
@@ -159,7 +159,7 @@ defined('_JEXEC') or die;
 </table>
 
 <p class="copyright">
-	<?php echo ELAdmin::footer( ); ?>
+	<?php echo JEMAdmin::footer( ); ?>
 </p>
 
 <input type="hidden" name="task" value="" />

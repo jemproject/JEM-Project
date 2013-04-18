@@ -50,7 +50,7 @@ class JEMViewEditvenue extends JViewLegacy
 
 		$editor 	=  JFactory::getEditor();
 		$doc 		=  JFactory::getDocument();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 
 		// Get requests
 		$id				= JRequest::getInt('id');
@@ -88,11 +88,11 @@ class JEMViewEditvenue extends JViewLegacy
 		
 		//transform <br /> and <br> back to \r\n for non editorusers
 		if (!$editoruser) {
-			$row->locdescription = ELHelper::br2break($row->locdescription);
+			$row->locdescription = JEMHelper::br2break($row->locdescription);
 		}
 
 		//Get image
-		$limage = ELImage::flyercreator($row->locimage, 'venue');
+		$limage = JEMImage::flyercreator($row->locimage, 'venue');
 
 		//Set the info image
 		$infoimage = JHTML::_('image', 'media/com_jem/images/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
@@ -100,7 +100,7 @@ class JEMViewEditvenue extends JViewLegacy
 		// country list
 		$countries = array();
     	$countries[] = JHTML::_('select.option', '', JText::_('COM_JEM_SELECT_COUNTRY'));
-    	$countries = array_merge($countries, ELHelper::getCountryOptions());
+    	$countries = array_merge($countries, JEMHelper::getCountryOptions());
     	$lists['countries'] = JHTML::_('select.genericlist', $countries, 'country', 'class="inputbox"', 'value', 'text', $row->country );
     	unset($countries);
 
@@ -109,7 +109,7 @@ class JEMViewEditvenue extends JViewLegacy
 		$this->editoruser		= $editoruser;
 		$this->limage			= $limage;
 		$this->infoimage		= $infoimage;
-		$this->elsettings		= $elsettings;
+		$this->jemsettings		= $jemsettings;
 		$this->item				= $item;
 		$this->params			= $params;
 		$this->lists			= $lists;
@@ -118,7 +118,7 @@ class JEMViewEditvenue extends JViewLegacy
 		$mode2 = JRequest::getVar('mode', '');
 		$this->mode				= $mode2;
 		
-		$access2 = ELHelper::getAccesslevelOptions();
+		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access			= $access2;
 
 		parent::display($tpl);

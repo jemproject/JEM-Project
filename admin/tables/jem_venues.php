@@ -91,7 +91,7 @@ class jem_venues extends JTable
 	}
 
 	// overloaded check function
-	//function check($elsettings)
+	//function check($jemsettings)
 	function check()
 	
 	{

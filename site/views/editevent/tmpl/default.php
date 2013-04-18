@@ -106,7 +106,7 @@ defined('_JEXEC') or die;
 		function rechne(restzeichen)
 		{
 
-			maximum = <?php echo $this->elsettings->datdesclimit; ?>
+			maximum = <?php echo $this->jemsettings->datdesclimit; ?>
 
 			if (restzeichen.datdescription.value.length > maximum) {
 				restzeichen.datdescription.value = restzeichen.datdescription.value.substring(0, maximum)
@@ -224,10 +224,10 @@ defined('_JEXEC') or die;
               </label>
         			<?php
         			/* <input class="inputbox validate-time" id="el_starttime" name="times" value="<?php echo substr($this->row->times, 0, 5); ?>" size="15" maxlength="8" /> */
-					echo ELHelper::buildtimeselect(23, 'starthours', substr( $this->row->times, 0, 2 )).' : ';
-					echo ELHelper::buildtimeselect(59, 'startminutes', substr( $this->row->times, 3, 2 ));
+					echo JEMHelper::buildtimeselect(23, 'starthours', substr( $this->row->times, 0, 2 )).' : ';
+					echo JEMHelper::buildtimeselect(59, 'startminutes', substr( $this->row->times, 3, 2 ));
 					?>
-                    <?php if ( $this->elsettings->showtime == 1 ) : ?>
+                    <?php if ( $this->jemsettings->showtime == 1 ) : ?>
         			<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_TIME_HINT'); ?>">
         			    <?php echo $this->infoimage; ?>
         			</small>
@@ -244,8 +244,8 @@ defined('_JEXEC') or die;
               </label>
         			<?php
         			/* <input class="inputbox validate-time" id="el_endtime" name="endtimes" value="<?php echo substr($this->row->endtimes, 0, 5); ?>" size="15" maxlength="8" />&nbsp; */
-					echo ELHelper::buildtimeselect(23, 'endhours', substr( $this->row->endtimes, 0, 2 )).' : ';
-					echo ELHelper::buildtimeselect(59, 'endminutes', substr( $this->row->endtimes, 3, 2 ));
+					echo JEMHelper::buildtimeselect(23, 'endhours', substr( $this->row->endtimes, 0, 2 )).' : ';
+					echo JEMHelper::buildtimeselect(59, 'endminutes', substr( $this->row->endtimes, 3, 2 ));
 					?>
         			<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_ENDTIME_HINT'); ?>">
         			    <?php echo $this->infoimage; ?>
@@ -255,12 +255,12 @@ defined('_JEXEC') or die;
         </fieldset>
 
 
-    	<?php if ( $this->elsettings->showfroregistra == 2 ) : ?>
+    	<?php if ( $this->jemsettings->showfroregistra == 2 ) : ?>
     	<fieldset class="el_fldst_registration">
 
           <legend><?php echo JText::_('COM_JEM_REGISTRATION'); ?></legend>
 
-          <?php if ( $this->elsettings->showfroregistra == 2 ) : ?>
+          <?php if ( $this->jemsettings->showfroregistra == 2 ) : ?>
           <div class="floattext">
               <p><strong><?php echo JText::_( 'COM_JEM_SUBMIT_REGISTER' ).':'; ?></strong></p>
 
@@ -296,7 +296,7 @@ defined('_JEXEC') or die;
       		//register end
       		endif;
 
-      		if ( $this->elsettings->showfrounregistra == 2 ) :
+      		if ( $this->jemsettings->showfrounregistra == 2 ) :
       		?>
       		<div class="el_unregister floattext">
         			<p><strong><?php echo JText::_( 'COM_JEM_SUBMIT_UNREGISTER' ).':'; ?></strong></p>
@@ -367,19 +367,19 @@ defined('_JEXEC') or die;
 
     	</fieldset>
 
-    	<?php if (( $this->elsettings->imageenabled == 2 ) || ($this->elsettings->imageenabled == 1)) : ?>
+    	<?php if (( $this->jemsettings->imageenabled == 2 ) || ($this->jemsettings->imageenabled == 1)) : ?>
     	<fieldset class="el_fldst_image">
       	  <legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
       		<?php
           if ($this->row->datimage) :
-      		    echo ELOutput::flyer( $this->row, $this->dimage, 'event' );
+      		    echo JEMOutput::flyer( $this->row, $this->dimage, 'event' );
       		else :
       		    echo JHTML::_('image', 'media/com_jem/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => 'modal'));
       		endif;
         	?>
           <label for="userfile"><?php echo JText::_('COM_JEM_IMAGE'); ?></label>
-      		<input class="inputbox <?php echo $this->elsettings->imageenabled == 2 ? 'required' : ''; ?>" name="userfile" id="userfile" type="file" />
-      		<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->elsettings->sizelimit.' kb'; ?>">
+      		<input class="inputbox <?php echo $this->jemsettings->imageenabled == 2 ? 'required' : ''; ?>" name="userfile" id="userfile" type="file" />
+      		<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->jemsettings->sizelimit.' kb'; ?>">
       		    <?php echo $this->infoimage; ?>
       		</small>
               <!--<div class="el_cur_image"><?php echo JText::_( 'COM_JEM_CURRENT_IMAGE' ); ?></div>
@@ -399,7 +399,7 @@ defined('_JEXEC') or die;
       		?>
       		<textarea style="width:100%;" rows="10" name="datdescription" class="inputbox" wrap="virtual" onkeyup="berechne(this.form)"><?php echo $this->row->datdescription; ?></textarea><br />
       		<?php echo JText::_( 'COM_JEM_NO_HTML' ); ?><br />
-      		<input disabled value="<?php echo $this->elsettings->datdesclimit; ?>" size="4" name="zeige" /><?php echo JText::_( 'COM_JEM_AVAILABLE' ); ?><br />
+      		<input disabled value="<?php echo $this->jemsettings->datdesclimit; ?>" size="4" name="zeige" /><?php echo JText::_( 'COM_JEM_AVAILABLE' ); ?><br />
       		<a href="javascript:rechne(document.adminForm);"><?php echo JText::_( 'COM_JEM_REFRESH' ); ?></a>
       		<?php endif; ?>
     	</fieldset>
@@ -431,7 +431,7 @@ defined('_JEXEC') or die;
     </form>
 
     <p class="copyright">
-    	<?php echo ELOutput::footer( ); ?>
+    	<?php echo JEMOutput::footer( ); ?>
     </p>
 
 </div>

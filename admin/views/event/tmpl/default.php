@@ -171,10 +171,10 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 				</td>
 				<td colspan="3">
 					<?php					
-					echo ELAdmin::buildtimeselect(23, 'starthours', substr( $this->row->times, 0, 2 )).' : ';
-					echo ELAdmin::buildtimeselect(59, 'startminutes', substr( $this->row->times, 3, 2 ));
+					echo JEMAdmin::buildtimeselect(23, 'starthours', substr( $this->row->times, 0, 2 )).' : ';
+					echo JEMAdmin::buildtimeselect(59, 'startminutes', substr( $this->row->times, 3, 2 ));
 					?>
-			  		<?php if ($this->elsettings->showtime == 1) { ?>
+			  		<?php if ($this->jemsettings->showtime == 1) { ?>
 						<span class="editlinktip hasTip" title="<?php echo JText::_ ( 'COM_JEM_NOTES' );?>::<?php echo JText::_ ( 'COM_JEM_FORMAT_TIME' );?>">
 							<?php echo $infoimage;?>
 						</span>
@@ -193,8 +193,8 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 				</td>
 				<td colspan="3">
 					<?php					
-					echo ELAdmin::buildtimeselect(23, 'endhours', substr( $this->row->endtimes, 0, 2 )).' : ';
-					echo ELAdmin::buildtimeselect(59, 'endminutes', substr( $this->row->endtimes, 3, 2 ));
+					echo JEMAdmin::buildtimeselect(23, 'endhours', substr( $this->row->endtimes, 0, 2 )).' : ';
+					echo JEMAdmin::buildtimeselect(59, 'endminutes', substr( $this->row->endtimes, 3, 2 ));
 					?>
 					<span class="editlinktip hasTip" title="<?php echo JText::_ ( 'COM_JEM_NOTES' );?>::<?php echo JText::_ ( 'COM_JEM_FORMAT_TIME_OPTIONAL' );?>">
 						<?php echo $infoimage;?>
@@ -520,7 +520,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 						if (! empty ( $this->row->meta_keywords )) {
 							$meta_keywords = $this->row->meta_keywords;
 						} else {
-							$meta_keywords = $this->elsettings->meta_keywords;
+							$meta_keywords = $this->jemsettings->meta_keywords;
 						}
 						?>
 					<textarea class="inputbox" name="meta_keywords" id="meta_keywords" rows="5" cols="40" maxlength="150" onfocus="get_inputbox('meta_keywords')" onblur="change_metatags()"><?php echo $meta_keywords; ?></textarea>
@@ -536,7 +536,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 					if (! empty ( $this->row->meta_description )) {
 						$meta_description = $this->row->meta_description;
 					} else {
-						$meta_description = $this->elsettings->meta_description;
+						$meta_description = $this->jemsettings->meta_description;
 					}
 					?>
 					<textarea class="inputbox" name="meta_description" id="meta_description" rows="5" cols="40" maxlength="200"	onfocus="get_inputbox('meta_description')" onblur="change_metatags()"><?php echo $meta_description;?></textarea>
@@ -580,7 +580,7 @@ echo JHTML::_ ( 'form.token' );
 </form>
 
 <p class="copyright">
-	<?php echo ELAdmin::footer (); ?>
+	<?php echo JEMAdmin::footer (); ?>
 </p>
 
 <?php

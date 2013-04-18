@@ -26,34 +26,34 @@ defined( '_JEXEC' ) or die;
 <p class="buttons">
 	<?php
 		if ( !$this->params->get( 'popup' ) ) : //don't show in printpopup
-			echo ELOutput::submitbutton( $this->dellink, $this->params );
-			echo ELOutput::archivebutton( $this->params, $this->task, $this->venue->slug );
+			echo JEMOutput::submitbutton( $this->dellink, $this->params );
+			echo JEMOutput::archivebutton( $this->params, $this->task, $this->venue->slug );
 		endif;
-		echo ELOutput::mailbutton( $this->venue->slug, 'venueevents', $this->params );
-		echo ELOutput::printbutton( $this->print_link, $this->params );
+		echo JEMOutput::mailbutton( $this->venue->slug, 'venueevents', $this->params );
+		echo JEMOutput::printbutton( $this->print_link, $this->params );
 	?>
 </p>
 <?php if ($this->params->def('show_page_title', 1)) : ?>
 	<h1 class='componentheading'>
 		<?php echo $this->escape($this->pagetitle); ?>
-    <?php echo ELOutput::editbutton($this->item->id, $this->venue->id, $this->params, $this->allowedtoeditvenue, 'editvenue' ); ?>
+    <?php echo JEMOutput::editbutton($this->item->id, $this->venue->id, $this->params, $this->allowedtoeditvenue, 'editvenue' ); ?>
 	</h1>
 <?php endif; ?>
 
 	<!--Venue-->
 	<?php //flyer
-	echo ELOutput::flyer( $this->venue, $this->limage, 'venue' );
+	echo JEMOutput::flyer( $this->venue, $this->limage, 'venue' );
 	?>
 
 	<dl class="location floattext">
-		<?php if (($this->elsettings->showdetlinkvenue == 1) && (!empty($this->venue->url))) : ?>
+		<?php if (($this->jemsettings->showdetlinkvenue == 1) && (!empty($this->venue->url))) : ?>
 		<dt class="venue"><?php echo JText::_( 'COM_JEM_WEBSITE' ).':'; ?></dt>
 			<dd class="venue">
 					<a href="<?php echo $this->venue->url; ?>" target="_blank"> <?php echo $this->venue->urlclean; ?></a>
 			</dd>
 		<?php endif; ?>
 
-		<?php if ( $this->elsettings->showdetailsadress == 1 ) : ?>
+		<?php if ( $this->jemsettings->showdetailsadress == 1 ) : ?>
 
   			<?php if ( $this->venue->street ) : ?>
   			<dt class="venue_street"><?php echo JText::_( 'COM_JEM_STREET' ).':'; ?></dt>
@@ -94,9 +94,9 @@ defined( '_JEXEC' ) or die;
 		?>
 	</dl>
 
-	<p><?php echo ELOutput::mapicon( $this->venue ); ?></p>
+	<p><?php echo JEMOutput::mapicon( $this->venue ); ?></p>
 	<?php
-  	if ($this->elsettings->showlocdescription == 1 && $this->venuedescription != '' && $this->venuedescription != '<br />') :
+  	if ($this->jemsettings->showlocdescription == 1 && $this->venuedescription != '' && $this->venuedescription != '<br />') :
 	?>
 
 		<h2 class="description"><?php echo JText::_( 'COM_JEM_DESCRIPTION' ); ?></h2>
@@ -138,7 +138,7 @@ defined( '_JEXEC' ) or die;
 
 
 <?php
-echo ELOutput::icalbutton($this->venue->id, 'venueevents');
+echo JEMOutput::icalbutton($this->venue->id, 'venueevents');
 ?>
 
 
@@ -146,6 +146,6 @@ echo ELOutput::icalbutton($this->venue->id, 'venueevents');
 <!--copyright-->
 
 <p class="copyright">
-	<?php echo ELOutput::footer( ); ?>
+	<?php echo JEMOutput::footer( ); ?>
 </p>
 </div>

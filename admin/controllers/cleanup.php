@@ -92,7 +92,7 @@ class JEMControllerCleanup extends JEMController
    */
   function triggerarchive()
   {
-    ELHelper::cleanup(1);
+    JEMHelper::cleanup(1);
 
     $link = 'index.php?option=com_jem&view=cleanup';
 

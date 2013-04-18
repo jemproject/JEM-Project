@@ -45,7 +45,7 @@ class JEMViewVenueevents extends JViewLegacy
 		//initialize variables
 		$document 	=  JFactory::getDocument();
 		$menu		=  $app->getMenu();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 		
 		//get menu information
 		$menu		= $app->getMenu();
@@ -84,12 +84,12 @@ class JEMViewVenueevents extends JViewLegacy
 		}
 
 		// Add needed scripts if the lightbox effect is enabled
-		if ($elsettings->lightbox == 1) {
+		if ($jemsettings->lightbox == 1) {
 			JHTML::_('behavior.modal');
 		}
 
 		//Get image
-		$limage = ELImage::flyercreator($venue->locimage, 'venue');
+		$limage = JEMImage::flyercreator($venue->locimage, 'venue');
 
 		//add alternate feed link
 		$link    = 'index.php?option=com_jem&view=venueevents&format=feed&id='.$venue->id;
@@ -131,7 +131,7 @@ class JEMViewVenueevents extends JViewLegacy
 
 		//Check if the user has access to the form
 		$maintainer = ELUser::ismaintainer();
-		$genaccess 	= ELUser::validate_user( $elsettings->evdelrec, $elsettings->delivereventsyes );
+		$genaccess 	= ELUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess ) 
 		{ 
@@ -149,7 +149,7 @@ class JEMViewVenueevents extends JViewLegacy
 			$results = $app->triggerEvent( 'onContentPrepare', array('com_jem.venueevents', &$venue, &$params, 0 ));
 			$venuedescription = $venue->text;
 		}
-    	$allowedtoeditvenue = ELUser::editaccess($elsettings->venueowner, $venue->created, $elsettings->venueeditrec, $elsettings->venueedit);
+    	$allowedtoeditvenue = ELUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
     
 		//build the url
         if(!empty($venue->url) && strtolower(substr($venue->url, 0, 7)) != "http://") {
@@ -165,7 +165,7 @@ class JEMViewVenueevents extends JViewLegacy
 
         //create flag
         if ($venue->country) {
-        	$venue->countryimg = ELOutput::getFlag( $venue->country );
+        	$venue->countryimg = JEMOutput::getFlag( $venue->country );
         }
 
 		// Create the pagination object
@@ -173,7 +173,7 @@ class JEMViewVenueevents extends JViewLegacy
 		$pagination = new JPagination($total, $limitstart, $limit);
 
 		//create select lists
-		$lists	= $this->_buildSortLists($elsettings);
+		$lists	= $this->_buildSortLists($jemsettings);
 		$this->lists				= $lists;
 		$this->action				= $uri->toString();
 
@@ -186,7 +186,7 @@ class JEMViewVenueevents extends JViewLegacy
 		$this->limage				= $limage;
 		$this->venuedescription		= $venuedescription;
 		$this->pagination			= $pagination;
-		$this->elsettings			= $elsettings;
+		$this->jemsettings			= $jemsettings;
 		$this->item					= $item;
 		$this->pagetitle			= $pagetitle;
 		$this->task					= $task;
@@ -220,7 +220,7 @@ class JEMViewVenueevents extends JViewLegacy
 		return $this->rows;
 	}
 
-	function _buildSortLists($elsettings)
+	function _buildSortLists($jemsettings)
 	{
 		// Table ordering values
 		$filter_order		= JRequest::getCmd('filter_order', 'a.dates');
@@ -229,10 +229,10 @@ class JEMViewVenueevents extends JViewLegacy
 		$filter				= $this->escape(JRequest::getString('filter'));
 		$filter_type		= JRequest::getString('filter_type');
 
-		if ($elsettings->showcat) {
+		if ($jemsettings->showcat) {
 			$sortselects = array();
-			$sortselects[]	= JHTML::_('select.option', 'title', $elsettings->titlename );
-			$sortselects[] 	= JHTML::_('select.option', 'type', $elsettings->catfroname );
+			$sortselects[]	= JHTML::_('select.option', 'title', $jemsettings->titlename );
+			$sortselects[] 	= JHTML::_('select.option', 'type', $jemsettings->catfroname );
 			$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
 		} else {
 			$sortselect = '';

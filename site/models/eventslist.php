@@ -245,7 +245,7 @@ class JEMModelEventslist extends JModelLegacy
 
 		// Get the paramaters of the active menu item
 		$params 	=  $app->getParams();
-        $elsettings =  ELHelper::config();
+        $jemsettings =  JEMHelper::config();
 		
         $task 		= JRequest::getWord('task');
 		
@@ -260,7 +260,7 @@ class JEMModelEventslist extends JModelLegacy
 		 * If we have a filter, and this is enabled... lets tack the AND clause
 		 * for the filter onto the WHERE clause of the item query.
 		 */
-		if ($elsettings->filter)
+		if ($jemsettings->filter)
 		{
 			$filter 		= JRequest::getString('filter', '', 'request');
 			$filter_type 	= JRequest::getWord('filter_type', '', 'request');
