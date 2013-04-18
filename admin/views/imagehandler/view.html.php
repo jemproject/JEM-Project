@@ -128,7 +128,7 @@ class JEMViewImagehandler extends JViewLegacy  {
 		$document	=  JFactory::getDocument();
 		$uri 		=  JFactory::getURI();
 		$uri2 = $uri->toString();
-		$elsettings = ELAdmin::config();
+		$jemsettings = JEMAdmin::config();
 
 		//get vars
 		$task 		= JRequest::getVar( 'task' );
@@ -141,7 +141,7 @@ class JEMViewImagehandler extends JViewLegacy  {
 
 		//assign data to template
 		$this->task 		= $task;
-		$this->elsettings 	= $elsettings;
+		$this->jemsettings 	= $jemsettings;
 		$this->request_url 	= $uri2;
 		$this->ftp 			= $ftp;
 

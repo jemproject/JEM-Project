@@ -43,7 +43,7 @@ class JEMViewAttendees extends JViewLegacy {
 
 		//initialise variables
 		$db			=  JFactory::getDBO();
-		$elsettings = ELAdmin::config();
+		$jemsettings = JEMAdmin::config();
 		$document	=  JFactory::getDocument();
 		$user		=  JFactory::getUser();
 
@@ -86,8 +86,8 @@ class JEMViewAttendees extends JViewLegacy {
 		$pagination =  $this->get( 'Pagination' );
 		$event 		=  $this->get( 'Event' );
 
- 		if (ELHelper::isValidDate($event->dates)) {
-			$event->dates = strftime($elsettings->formatdate, strtotime( $event->dates ));
+ 		if (JEMHelper::isValidDate($event->dates)) {
+			$event->dates = strftime($jemsettings->formatdate, strtotime( $event->dates ));
 		} 
 		else {
 			$event->dates		= JText::_('COM_JEM_OPEN_DATE');
@@ -130,7 +130,7 @@ class JEMViewAttendees extends JViewLegacy {
 	 */
 	function _displayprint($tpl = null)
 	{
-		$elsettings = ELAdmin::config();
+		$jemsettings = JEMAdmin::config();
 		$document	=  JFactory::getDocument();
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
@@ -138,9 +138,9 @@ class JEMViewAttendees extends JViewLegacy {
 		$event 		=  $this->get( 'Event' );
 
 	
-		if (ELHelper::isValidDate($event->dates)) {
-			$event->dates = strftime($elsettings->formatdate, strtotime( $event->dates ));
-		//	$date		= strftime( $this->elsettings->formatdate, strtotime( $event->dates ));
+		if (JEMHelper::isValidDate($event->dates)) {
+			$event->dates = strftime($jemsettings->formatdate, strtotime( $event->dates ));
+		//	$date		= strftime( $this->jemsettings->formatdate, strtotime( $event->dates ));
 		} 
 		else {
 			$event->dates	= JText::_('COM_JEM_OPEN_DATE');

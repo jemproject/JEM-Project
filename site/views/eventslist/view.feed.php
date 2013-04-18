@@ -43,7 +43,7 @@ class JEMViewEventslist extends JViewLegacy
 		$app =  JFactory::getApplication();
 
 		$doc 		=  JFactory::getDocument();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 
 		// Get some data from the model
 		JRequest::setVar('limit', $app->getCfg('feed_limit'));
@@ -72,13 +72,13 @@ class JEMViewEventslist extends JViewLegacy
      		 }
 		
 			//Format date
-			if (ELHelper::isValidDate($row->dates)) 
+			if (JEMHelper::isValidDate($row->dates)) 
 			{
-				$date = strftime( $elsettings->formatdate, strtotime( $row->dates ));
-				if (!ELHelper::isValidDate($row->enddates)) {
+				$date = strftime( $jemsettings->formatdate, strtotime( $row->dates ));
+				if (!JEMHelper::isValidDate($row->enddates)) {
 					$displaydate = $date;
 				} else {
-					$enddate 	= strftime( $elsettings->formatdate, strtotime( $row->enddates ));
+					$enddate 	= strftime( $jemsettings->formatdate, strtotime( $row->enddates ));
 					$displaydate = $date.' - '.$enddate;
 				}
 			}
@@ -88,13 +88,13 @@ class JEMViewEventslist extends JViewLegacy
 
 			//Format time
 			if ($row->times) {
-				$time = strftime( $elsettings->formattime, strtotime( $row->times ));
-				$time = $time.' '.$elsettings->timename;
+				$time = strftime( $jemsettings->formattime, strtotime( $row->times ));
+				$time = $time.' '.$jemsettings->timename;
 				$displaytime = $time;
 			}
 			if ($row->endtimes) {
-				$endtime = strftime( $elsettings->formattime, strtotime( $row->endtimes ));
-				$endtime = $endtime.' '.$elsettings->timename;
+				$endtime = strftime( $jemsettings->formattime, strtotime( $row->endtimes ));
+				$endtime = $endtime.' '.$jemsettings->timename;
 				$displaytime = $time.' - '.$endtime;
 			}
 

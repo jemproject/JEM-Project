@@ -13,7 +13,7 @@
 						</td>
        					<td valign="top">
 							<?php
-          						echo JHTML::_('select.booleanlist', 'showtime', 'class="inputbox"', $this->elsettings->showtime );
+          						echo JHTML::_('select.booleanlist', 'showtime', 'class="inputbox"', $this->jemsettings->showtime );
 							?>
 						</td>
       				</tr>
@@ -24,7 +24,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="tablewidth" value="<?php echo $this->elsettings->tablewidth; ?>" size="5" maxlength="4" />
+							<input type="text" name="tablewidth" value="<?php echo $this->jemsettings->tablewidth; ?>" size="5" maxlength="4" />
        	 				</td>
       				</tr>
 				</tbody>
@@ -41,7 +41,7 @@
 							</span>
 						</td>
        					<td valign="top">
-          					<input type="text" name="datewidth" value="<?php echo $this->elsettings->datewidth; ?>" size="5" maxlength="4" />
+          					<input type="text" name="datewidth" value="<?php echo $this->jemsettings->datewidth; ?>" size="5" maxlength="4" />
        	 				</td>
       				</tr>
 					<tr>
@@ -51,7 +51,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="datename" value="<?php echo $this->elsettings->datename; ?>" size="30" maxlength="25" />
+							<input type="text" name="datename" value="<?php echo $this->jemsettings->datename; ?>" size="30" maxlength="25" />
        	 				</td>
       				</tr>
 				</tbody>
@@ -71,7 +71,7 @@
        					<td valign="top">
           					<?php
 							$mode = 0;
-							if ($this->elsettings->showcity == 1) {
+							if ($this->jemsettings->showcity == 1) {
 							$mode = 1;
 							} // if
 							?>
@@ -86,7 +86,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="citywidth" value="<?php echo $this->elsettings->citywidth; ?>" size="5" maxlength="4" />
+							<input type="text" name="citywidth" value="<?php echo $this->jemsettings->citywidth; ?>" size="5" maxlength="4" />
        	 				</td>
       				</tr>
 					<tr id="city2"<?php if (!$mode) echo ' style="display:none"'; ?>>
@@ -96,7 +96,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="cityname" value="<?php echo $this->elsettings->cityname; ?>" size="30" maxlength="25" />
+							<input type="text" name="cityname" value="<?php echo $this->jemsettings->cityname; ?>" size="30" maxlength="25" />
        	 				</td>
       				</tr>
 				</tbody>
@@ -114,7 +114,7 @@
 							</span>
 						</td>
        					<td valign="top">
-          					<?php echo JHTML::_('select.booleanlist', 'showatte', 'class="inputbox"', $this->elsettings->showatte ); ?>
+          					<?php echo JHTML::_('select.booleanlist', 'showatte', 'class="inputbox"', $this->jemsettings->showatte ); ?>
        	 				</td>
       				</tr>
 					<tr>
@@ -124,7 +124,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="attewidth" value="<?php echo $this->elsettings->attewidth; ?>" size="5" maxlength="4" />
+							<input type="text" name="attewidth" value="<?php echo $this->jemsettings->attewidth; ?>" size="5" maxlength="4" />
        	 				</td>
       				</tr>
 					<tr>
@@ -134,7 +134,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="attename" value="<?php echo $this->elsettings->attename; ?>" size="30" maxlength="25" />
+							<input type="text" name="attename" value="<?php echo $this->jemsettings->attename; ?>" size="30" maxlength="25" />
        	 				</td>
       				</tr>
 				</tbody>
@@ -156,7 +156,7 @@
        					<td valign="top">
 							<?php
 							$mode = 0;
-							if ($this->elsettings->showtitle == 1) {
+							if ($this->jemsettings->showtitle == 1) {
 								$mode = 1;
 							} // if
 							?>
@@ -171,7 +171,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="titlewidth" value="<?php echo $this->elsettings->titlewidth; ?>" size="5" maxlength="4" />
+							<input type="text" name="titlewidth" value="<?php echo $this->jemsettings->titlewidth; ?>" size="5" maxlength="4" />
        	 				</td>
       				</tr>
 					<tr id="title2"<?php if (!$mode) echo ' style="display:none"'; ?>>
@@ -181,7 +181,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="titlename" value="<?php echo $this->elsettings->titlename; ?>" size="30" maxlength="25" />
+							<input type="text" name="titlename" value="<?php echo $this->jemsettings->titlename; ?>" size="30" maxlength="25" />
        	 				</td>
       				</tr>
 				</tbody>
@@ -204,7 +204,7 @@
        					<td valign="top">
 							<?php
 							$mode = 0;
-							if ($this->elsettings->showlocate == 1) {
+							if ($this->jemsettings->showlocate == 1) {
 								$mode = 1;
 							} // if
 							?>
@@ -219,7 +219,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="locationwidth" value="<?php echo $this->elsettings->locationwidth; ?>" size="5" maxlength="4" />
+							<input type="text" name="locationwidth" value="<?php echo $this->jemsettings->locationwidth; ?>" size="5" maxlength="4" />
        	 				</td>
       				</tr>
 					<tr id="locate2"<?php if (!$mode) echo ' style="display:none"'; ?>>
@@ -229,7 +229,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="locationname" value="<?php echo $this->elsettings->locationname; ?>" size="30" maxlength="25" />
+							<input type="text" name="locationname" value="<?php echo $this->jemsettings->locationname; ?>" size="30" maxlength="25" />
        	 				</td>
       				</tr>
 					<tr id="locate3"<?php if (!$mode) echo ' style="display:none"'; ?>>
@@ -240,7 +240,7 @@
 						</td>
        					<td valign="top">
 							<?php
-          					echo JHTML::_('select.booleanlist', 'showlinkvenue', 'class="inputbox"', $this->elsettings->showlinkvenue );
+          					echo JHTML::_('select.booleanlist', 'showlinkvenue', 'class="inputbox"', $this->jemsettings->showlinkvenue );
         					?>
        	 				</td>
       				</tr>
@@ -261,7 +261,7 @@
        					<td valign="top">
           					<?php
 							$mode = 0;
-							if ($this->elsettings->showstate == 1) {
+							if ($this->jemsettings->showstate == 1) {
 							$mode = 1;
 							} // if
 							?>
@@ -276,7 +276,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="statewidth" value="<?php echo $this->elsettings->statewidth; ?>" size="5" maxlength="4" />
+							<input type="text" name="statewidth" value="<?php echo $this->jemsettings->statewidth; ?>" size="5" maxlength="4" />
        	 				</td>
       				</tr>
 					<tr id="state2"<?php if (!$mode) echo ' style="display:none"'; ?>>
@@ -286,7 +286,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="statename" value="<?php echo $this->elsettings->statename; ?>" size="30" maxlength="25" />
+							<input type="text" name="statename" value="<?php echo $this->jemsettings->statename; ?>" size="30" maxlength="25" />
        	 				</td>
       				</tr>
 				</tbody>
@@ -306,7 +306,7 @@
        					<td valign="top">
 							<?php
 							$mode = 0;
-							if ($this->elsettings->showcat == 1) {
+							if ($this->jemsettings->showcat == 1) {
 								$mode = 1;
 							} // if
 							?>
@@ -321,7 +321,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="catfrowidth" value="<?php echo $this->elsettings->catfrowidth; ?>" size="5" maxlength="4" />
+							<input type="text" name="catfrowidth" value="<?php echo $this->jemsettings->catfrowidth; ?>" size="5" maxlength="4" />
        	 				</td>
       				</tr>
 					<tr id="cat2"<?php if (!$mode) echo ' style="display:none"'; ?>>
@@ -331,7 +331,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="catfroname" value="<?php echo $this->elsettings->catfroname; ?>" size="30" maxlength="25" />
+							<input type="text" name="catfroname" value="<?php echo $this->jemsettings->catfroname; ?>" size="30" maxlength="25" />
        	 				</td>
       				</tr>
 					<tr id="cat3"<?php if (!$mode) echo ' style="display:none"'; ?>>
@@ -342,7 +342,7 @@
 						</td>
        					<td valign="top">
 							<?php
-        						echo JHTML::_('select.booleanlist', 'catlinklist', 'class="inputbox"', $this->elsettings->catlinklist );
+        						echo JHTML::_('select.booleanlist', 'catlinklist', 'class="inputbox"', $this->jemsettings->catlinklist );
         					?>
        	 				</td>
       				</tr>
@@ -363,7 +363,7 @@
 						</td>
        					<td valign="top">
 							<?php
-          						echo JHTML::_('select.booleanlist', 'showeventimage', 'class="inputbox"', $this->elsettings->showeventimage );
+          						echo JHTML::_('select.booleanlist', 'showeventimage', 'class="inputbox"', $this->jemsettings->showeventimage );
 							?>
 						</td>
       				</tr>
@@ -374,7 +374,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="tableeventimagewidth" value="<?php echo $this->elsettings->tableeventimagewidth; ?>" size="5" maxlength="4" />
+							<input type="text" name="tableeventimagewidth" value="<?php echo $this->jemsettings->tableeventimagewidth; ?>" size="5" maxlength="4" />
        	 				</td>
       				</tr>
       				<tr>
@@ -384,7 +384,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="eventimagename" value="<?php echo $this->elsettings->eventimagename; ?>" size="30" maxlength="25" />
+							<input type="text" name="eventimagename" value="<?php echo $this->jemsettings->eventimagename; ?>" size="30" maxlength="25" />
        	 				</td>
       				</tr>
 				</tbody>

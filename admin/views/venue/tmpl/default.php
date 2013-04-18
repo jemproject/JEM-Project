@@ -495,7 +495,7 @@ if ( $this->settings->showmapserv == 0 ) { ?>
 </form>
 
 <p class="copyright">
-	<?php echo ELAdmin::footer( ); ?>
+	<?php echo JEMAdmin::footer( ); ?>
 </p>
 
 <?php

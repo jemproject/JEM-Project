@@ -98,7 +98,7 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&controller=attendees&task
 </form>
 
 <p class="copyright">
-	<?php echo ELAdmin::footer( ); ?>
+	<?php echo JEMAdmin::footer( ); ?>
 </p>
 
 <?php

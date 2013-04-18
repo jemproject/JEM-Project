@@ -39,7 +39,7 @@ class JEMViewEventelement extends JViewLegacy {
 		//initialise variables
 		$user 		=  JFactory::getUser();
 		$db			=  JFactory::getDBO();
-		$elsettings =  ELAdmin::config();
+		$jemsettings =  JEMAdmin::config();
 		$document	=  JFactory::getDocument();
 		
 		JHTML::_('behavior.tooltip');
@@ -85,7 +85,7 @@ class JEMViewEventelement extends JViewLegacy {
 		$this->lists 		= $lists;
 		$this->rows 		= $rows;
 		$this->pagination 	= $pagination;
-		$this->elsettings 	= $elsettings;
+		$this->jemsettings 	= $jemsettings;
 		$this->user 		= $user;
 
 		parent::display($tpl);

@@ -14,9 +14,9 @@
 						</td>
        					<td valign="top">
 							<select name="imageenabled" size="1" class="inputbox">
-  								<option value="0"<?php if ($this->elsettings->imageenabled == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_DISABLED' ); ?></option>
-  								<option value="1"<?php if ($this->elsettings->imageenabled == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_OPTIONAL' ); ?></option>
-  								<option value="2"<?php if ($this->elsettings->imageenabled == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_REQUIRED' ); ?></option>
+  								<option value="0"<?php if ($this->jemsettings->imageenabled == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_DISABLED' ); ?></option>
+  								<option value="1"<?php if ($this->jemsettings->imageenabled == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_OPTIONAL' ); ?></option>
+  								<option value="2"<?php if ($this->jemsettings->imageenabled == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_REQUIRED' ); ?></option>
 							</select>
        	 				</td>
       				</tr>
@@ -34,7 +34,7 @@
 							</span>
 						</td>
        					<td valign="top">
-							<input type="text" name="datdesclimit" value="<?php echo $this->elsettings->datdesclimit; ?>" size="5" maxlength="4" />
+							<input type="text" name="datdesclimit" value="<?php echo $this->jemsettings->datdesclimit; ?>" size="5" maxlength="4" />
        	 				</td>
       				</tr>
 				</tbody>
@@ -65,7 +65,7 @@
 						</td>
        					<td valign="top">
 							<?php
-							$html = JHTML::_('select.booleanlist', 'evdelrec', 'class="inputbox"', $this->elsettings->evdelrec );
+							$html = JHTML::_('select.booleanlist', 'evdelrec', 'class="inputbox"', $this->jemsettings->evdelrec );
 							echo $html;
 							?>
        	 				</td>
@@ -90,7 +90,7 @@
 						</td>
        					<td valign="top">
 							<?php
-							$html = JHTML::_('select.booleanlist', 'evpubrec', 'class="inputbox"', $this->elsettings->evpubrec );
+							$html = JHTML::_('select.booleanlist', 'evpubrec', 'class="inputbox"', $this->jemsettings->evpubrec );
 							echo $html;
 							?>
        	 				</td>
@@ -115,7 +115,7 @@
 						</td>
        					<td valign="top">
 							<?php
-							$html = JHTML::_('select.booleanlist', 'eventeditrec', 'class="inputbox"', $this->elsettings->eventeditrec );
+							$html = JHTML::_('select.booleanlist', 'eventeditrec', 'class="inputbox"', $this->jemsettings->eventeditrec );
 							echo $html;
 							?>
        	 				</td>
@@ -128,7 +128,7 @@
 						</td>
        					<td valign="top">
 							<?php
-							$html = JHTML::_('select.booleanlist', 'eventowner', 'class="inputbox"', $this->elsettings->eventowner );
+							$html = JHTML::_('select.booleanlist', 'eventowner', 'class="inputbox"', $this->jemsettings->eventowner );
 							echo $html;
 							?>
        	 				</td>
@@ -153,17 +153,17 @@
        					<td valign="top">
 							<?php
 							$mode = 0;
-							if ($this->elsettings->showfroregistra == 1) {
+							if ($this->jemsettings->showfroregistra == 1) {
 								$mode = 1;
 							} // if
-							if ($this->elsettings->showfroregistra == 2) {
+							if ($this->jemsettings->showfroregistra == 2) {
 								$mode = 2;
 							} // if
 							?>
 							<select name="showfroregistra" size="1" class="inputbox" onChange="changeregMode()">
-  								<option value="0"<?php if ($this->elsettings->showfroregistra == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_NO' ); ?></option>
-  								<option value="1"<?php if ($this->elsettings->showfroregistra == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_YES' ); ?></option>
-  								<option value="2"<?php if ($this->elsettings->showfroregistra == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_OPTIONAL' ); ?></option>
+  								<option value="0"<?php if ($this->jemsettings->showfroregistra == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_NO' ); ?></option>
+  								<option value="1"<?php if ($this->jemsettings->showfroregistra == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_YES' ); ?></option>
+  								<option value="2"<?php if ($this->jemsettings->showfroregistra == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_OPTIONAL' ); ?></option>
 							</select>
        	 				</td>
       				</tr>
@@ -179,7 +179,7 @@
 							$showfrounreg[] = JHTML::_('select.option', '0', JText::_( 'COM_JEM_NO' ) );
 							$showfrounreg[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_YES' ) );
 							$showfrounreg[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_OPTIONAL' ) );
-							$showfrounregist = JHTML::_('select.genericlist', $showfrounreg, 'showfrounregistra', 'size="1" class="inputbox"', 'value', 'text', $this->elsettings->showfrounregistra );
+							$showfrounregist = JHTML::_('select.genericlist', $showfrounreg, 'showfrounregistra', 'size="1" class="inputbox"', 'value', 'text', $this->jemsettings->showfrounregistra );
 							echo $showfrounregist;
         					?>
        	 				</td>
@@ -212,7 +212,7 @@
 						</td>
        					<td valign="top">
 							<?php
-							$html = JHTML::_('select.booleanlist', 'locdelrec', 'class="inputbox"', $this->elsettings->locdelrec );
+							$html = JHTML::_('select.booleanlist', 'locdelrec', 'class="inputbox"', $this->jemsettings->locdelrec );
 							echo $html;
 							?>
        	 				</td>
@@ -237,7 +237,7 @@
 						</td>
        					<td valign="top">
 							<?php
-							$html = JHTML::_('select.booleanlist', 'locpubrec', 'class="inputbox"', $this->elsettings->locpubrec );
+							$html = JHTML::_('select.booleanlist', 'locpubrec', 'class="inputbox"', $this->jemsettings->locpubrec );
 							echo $html;
 							?>
        	 				</td>
@@ -262,7 +262,7 @@
 						</td>
        					<td valign="top">
 							<?php
-							$html = JHTML::_('select.booleanlist', 'venueeditrec', 'class="inputbox"', $this->elsettings->venueeditrec );
+							$html = JHTML::_('select.booleanlist', 'venueeditrec', 'class="inputbox"', $this->jemsettings->venueeditrec );
 							echo $html;
 							?>
        	 				</td>
@@ -275,7 +275,7 @@
 						</td>
        					<td valign="top">
 							<?php
-							$html = JHTML::_('select.booleanlist', 'venueowner', 'class="inputbox"', $this->elsettings->venueowner );
+							$html = JHTML::_('select.booleanlist', 'venueowner', 'class="inputbox"', $this->jemsettings->venueowner );
 							echo $html;
 							?>
        	 				</td>

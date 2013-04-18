@@ -27,7 +27,7 @@ defined('_JEXEC') or die;
  *
  * @package JEM
  */
-class ELImage {
+class JEMImage {
 
 	/**
 	* Creates a Thumbnail of an image
@@ -195,7 +195,7 @@ static	function gdVersion($user_ver = 0)
 
     static function flyercreator($image, $type)	
        {
-		$settings =  ELHelper::config();
+		$settings =  JEMHelper::config();
 		
 		jimport('joomla.filesystem.file');
 
@@ -219,7 +219,7 @@ static	function gdVersion($user_ver = 0)
 				$filepath 	= JPATH_SITE.'/images/jem/'.$folder.'/'.$image;
 				$save 		= JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image;
 
-				ELImage::thumb($filepath, $save, $settings->imagewidth, $settings->imagehight);
+				JEMImage::thumb($filepath, $save, $settings->imagewidth, $settings->imagehight);
 			}
 
 			//set paths
@@ -295,11 +295,11 @@ static	function gdVersion($user_ver = 0)
 	
 	
 
- static	function check($file, $elsettings)
+ static	function check($file, $jemsettings)
 	{
 		jimport('joomla.filesystem.file');
 
-		$sizelimit 	= $elsettings->sizelimit*1024; //size limit in kb
+		$sizelimit 	= $jemsettings->sizelimit*1024; //size limit in kb
 		$imagesize 	= $file['size'];
 
 		//check if the upload is an image...getimagesize will return false if not

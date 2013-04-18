@@ -54,12 +54,12 @@ foreach($this->categories as $category) :
 	<div class="catimg">
 	  	<?php
 	  		
-	  		$elsettings 	=  ELHelper::config();
+	  		$jemsettings 	=  JEMHelper::config();
 	  		if ($category->image != '') {
             $path = "file_path";
             $mediaparams = JComponentHelper::getParams('com_media');
-            $imgattribs['width'] = $elsettings->imagewidth;
-			$imgattribs['height'] = $elsettings->imagehight;
+            $imgattribs['width'] = $jemsettings->imagewidth;
+			$imgattribs['height'] = $jemsettings->imagehight;
 
 			$category->image = JHTML::image($mediaparams->get($path, 'images').'/jem/categories/'.$category->image, $category->catname, $imgattribs);
 		} else {

@@ -16,7 +16,7 @@
 										</td>
        									<td valign="top">
         									<?php
-											echo JHTML::_('select.booleanlist', 'filter', 'class="inputbox"', $this->elsettings->filter, 'JSHOW', 'JHIDE' );
+											echo JHTML::_('select.booleanlist', 'filter', 'class="inputbox"', $this->jemsettings->filter, 'JSHOW', 'JHIDE' );
         									?>
        	 								</td>
       								</tr>
@@ -28,7 +28,7 @@
 										</td>
        									<td valign="top">
         									<?php
-											echo JHTML::_('select.booleanlist', 'display', 'class="inputbox"', $this->elsettings->display, 'JSHOW', 'JHIDE' );
+											echo JHTML::_('select.booleanlist', 'display', 'class="inputbox"', $this->jemsettings->display, 'JSHOW', 'JHIDE' );
         									?>
        	 								</td>
       								</tr>
@@ -40,7 +40,7 @@
 										</td>
        									<td valign="top">
 		 									<?php
-          									echo JHTML::_('select.booleanlist', 'icons', 'class="inputbox"', $this->elsettings->icons, 'JSHOW', 'JHIDE' );
+          									echo JHTML::_('select.booleanlist', 'icons', 'class="inputbox"', $this->jemsettings->icons, 'JSHOW', 'JHIDE' );
        										?>
        	 								</td>
       								</tr>
@@ -52,7 +52,7 @@
 										</td>
        									<td valign="top">
 		 									<?php
-          									echo JHTML::_('select.booleanlist', 'show_print_icon', 'class="inputbox"', $this->elsettings->show_print_icon, 'JSHOW', 'JHIDE' );
+          									echo JHTML::_('select.booleanlist', 'show_print_icon', 'class="inputbox"', $this->jemsettings->show_print_icon, 'JSHOW', 'JHIDE' );
        										?>
        	 								</td>
       								</tr>
@@ -64,7 +64,7 @@
 										</td>
        									<td valign="top">
 		 									<?php
-          									echo JHTML::_('select.booleanlist', 'show_archive_icon', 'class="inputbox"', $this->elsettings->show_archive_icon, 'JSHOW', 'JHIDE' );
+          									echo JHTML::_('select.booleanlist', 'show_archive_icon', 'class="inputbox"', $this->jemsettings->show_archive_icon, 'JSHOW', 'JHIDE' );
        										?>
        	 								</td>
       								</tr>
@@ -78,7 +78,7 @@
 										</td>
        									<td valign="top">
 		 									<?php
-          									echo JHTML::_('select.booleanlist', 'show_email_icon', 'class="inputbox"', $this->elsettings->show_email_icon, 'JSHOW', 'JHIDE' );
+          									echo JHTML::_('select.booleanlist', 'show_email_icon', 'class="inputbox"', $this->jemsettings->show_email_icon, 'JSHOW', 'JHIDE' );
        										?>
        	 								</td>
       								</tr>
@@ -90,7 +90,7 @@
 										</td>
        									<td valign="top">
 		 									<?php
-          									echo JHTML::_('select.booleanlist', 'events_ical', 'class="inputbox"', $this->elsettings->events_ical, 'JSHOW', 'JHIDE' );
+          									echo JHTML::_('select.booleanlist', 'events_ical', 'class="inputbox"', $this->jemsettings->events_ical, 'JSHOW', 'JHIDE' );
        										?>
        	 								</td>
       								</tr>
@@ -103,7 +103,7 @@
 											</span>
 										</td>
        									<td valign="top">
-											<input type="text" name="ical_max_items" value="<?php echo $this->elsettings->ical_max_items; ?>" size="3" maxlength="3" />
+											<input type="text" name="ical_max_items" value="<?php echo $this->jemsettings->ical_max_items; ?>" size="3" maxlength="3" />
        	 								</td>
       								</tr>
       								
@@ -115,7 +115,7 @@
 										</td>
        									<td valign="top">
 		 									<?php
-          									echo JHTML::_('select.booleanlist', 'discatheader', 'class="inputbox"', $this->elsettings->discatheader, 'JSHOW', 'JHIDE' );
+          									echo JHTML::_('select.booleanlist', 'discatheader', 'class="inputbox"', $this->jemsettings->discatheader, 'JSHOW', 'JHIDE' );
        										?>
        	 								</td>
       								</tr>
@@ -128,7 +128,7 @@
 										</td>
        									<td valign="top">
 		 									<?php
-          									echo JHTML::_('select.booleanlist', 'displaymyevents', 'class="inputbox"', $this->elsettings->displaymyevents, 'JSHOW', 'JHIDE' );
+          									echo JHTML::_('select.booleanlist', 'displaymyevents', 'class="inputbox"', $this->jemsettings->displaymyevents, 'JSHOW', 'JHIDE' );
        										?>
        	 								</td>
       								</tr>
@@ -139,7 +139,7 @@
 											</span>
 										</td>
        									<td valign="top">
-		 							<input type="text" name="recurrence_anticipation" value="<?php echo $this->elsettings->recurrence_anticipation; ?>" size="5" maxlength="3" />
+		 							<input type="text" name="recurrence_anticipation" value="<?php echo $this->jemsettings->recurrence_anticipation; ?>" size="5" maxlength="3" />
        	 								</td>
       								</tr>
       								
@@ -161,7 +161,7 @@
 		  									//$nr = array();
 											//$nr[] = JHTML::_('select.option', '0', JText::_('COM_JEM_SETTINGS_ICAL_TIMEZONE_FLOAT') );
 											//$nr[] = JHTML::_('select.option', '1', JText::_('COM_JEM_SETTINGS_ICAL_TIMEZONE_JOOMLA') );
-											//$nrevents = JHTML::_('select.genericlist', $nr, 'ical_tz', 'size="1" class="inputbox"', 'value', 'text', $this->elsettings->ical_tz );
+											//$nrevents = JHTML::_('select.genericlist', $nr, 'ical_tz', 'size="1" class="inputbox"', 'value', 'text', $this->jemsettings->ical_tz );
 											//echo $nrevents;
         									?>
        	 								
@@ -182,7 +182,7 @@
 		  									$nr = array();
 											$nr[] = JHTML::_('select.option', '0', JText::_('COM_JEM_SETTINGS_SUNDAY') );
 											$nr[] = JHTML::_('select.option', '1', JText::_('COM_JEM_SETTINGS_MONDAY') );
-											$nrevents = JHTML::_('select.genericlist', $nr, 'weekdaystart', 'size="1" class="inputbox"', 'value', 'text', $this->elsettings->weekdaystart );
+											$nrevents = JHTML::_('select.genericlist', $nr, 'weekdaystart', 'size="1" class="inputbox"', 'value', 'text', $this->jemsettings->weekdaystart );
 											echo $nrevents;
         									?>
        	 								
@@ -201,7 +201,7 @@
 										</td>
        									
 		 									<td valign="top">
-        									<input type="text" name="attachments_path" value="<?php echo $this->elsettings->attachments_path; ?>" size="40"  />
+        									<input type="text" name="attachments_path" value="<?php echo $this->jemsettings->attachments_path; ?>" size="40"  />
        	 								
        	 								</td>
       								</tr>
@@ -214,7 +214,7 @@
 										</td>
        									
 		 									<td valign="top">
-        									<input type="text" name="attachments_types" value="<?php echo $this->elsettings->attachments_types; ?>" size="40"  />
+        									<input type="text" name="attachments_types" value="<?php echo $this->jemsettings->attachments_types; ?>" size="40"  />
         									
        	 	
        	 								</td>
@@ -229,7 +229,7 @@
        									
 		 									<td valign="top">
         									
-		  									<input type="text" name="attachments_maxsize" value="<?php echo $this->elsettings->attachments_maxsize; ?>" size="40"  />
+		  									<input type="text" name="attachments_maxsize" value="<?php echo $this->jemsettings->attachments_maxsize; ?>" size="40"  />
         									
        	 								
        	 								</td>

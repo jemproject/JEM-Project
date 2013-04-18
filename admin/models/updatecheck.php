@@ -61,7 +61,7 @@ class JEMModelUpdatecheck extends JModelLegacy
 	function getUpdatedata()
 	{
 
-		$elsettings = ELAdmin::config();
+		$jemsettings = JEMAdmin::config();
 
 		include_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'classes'.DS.'Snoopy.class.php');
 
@@ -87,7 +87,7 @@ class JEMModelUpdatecheck extends JModelLegacy
 
 			$_updatedata->version 		= $data[0];
 			$_updatedata->versiondetail	= $data[1];
-			$_updatedata->date			= strftime( $elsettings->formatdate, strtotime( $data[2] ) );
+			$_updatedata->date			= strftime( $jemsettings->formatdate, strtotime( $data[2] ) );
 			$_updatedata->info 			= $data[3];
 			$_updatedata->download 		= $data[4];
 			$_updatedata->notes			= $data[5];

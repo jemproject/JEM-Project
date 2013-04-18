@@ -284,17 +284,17 @@ class JEMModelDetails extends JModelLegacy
 	function getRegisters()
 	{
 		//avatars should be displayed
-		$elsettings = ELHelper::config();
+		$jemsettings = JEMHelper::config();
 
 		$avatar	= '';
 		$join	= '';
 
-		if ($elsettings->comunoption == 1 && $elsettings->comunsolution == 1) {
+		if ($jemsettings->comunoption == 1 && $jemsettings->comunsolution == 1) {
 			$avatar = ', c.avatar';
 			$join	= ' LEFT JOIN #__comprofiler as c ON c.user_id = r.uid';
 		}
 
-		$name = $elsettings->regname ? 'u.name' : 'u.username';
+		$name = $jemsettings->regname ? 'u.name' : 'u.username';
 
 		//Get registered users
 		$query = 'SELECT '.$name.' AS name, r.uid'
@@ -324,7 +324,7 @@ class JEMModelDetails extends JModelLegacy
 		$app =  JFactory::getApplication();
 
 		$user 		=  JFactory::getUser();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 		$tzoffset	= $app->getCfg('offset');
 
 		$event 		= (int) $this->_id;
@@ -356,7 +356,7 @@ class JEMModelDetails extends JModelLegacy
 		}		
 
 		//IP
-		$uip 		= $elsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
+		$uip 		= $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
 
 		$obj = new stdClass();
 		$obj->event 	= (int)$event;

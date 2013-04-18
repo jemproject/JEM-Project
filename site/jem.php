@@ -38,7 +38,7 @@ require_once (JPATH_COMPONENT_SITE.DS.'classes'.DS.'categories.class.php');
 JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.DS.'tables');
 
 //perform cleanup if it wasn't done today (archive, delete, recurrence)
-ELHelper::cleanup();
+JEMHelper::cleanup();
 
 // Require the controller
 require_once (JPATH_COMPONENT.DS.'controller.php');

@@ -28,7 +28,7 @@ defined('_JEXEC') or die;
  *
  * @package JEM
  */
-class ELHelper {
+class JEMHelper {
 
 	/**
 	 * Pulls settings from database and stores in an static object
@@ -63,13 +63,13 @@ class ELHelper {
    	*/
 	static function cleanup($forced = 0)
 	{
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
     	$params = JComponentHelper::getParams('com_jem');   
-    	$weekstart = $elsettings->weekdaystart;
-    	$anticipation = $elsettings->recurrence_anticipation;
+    	$weekstart = $jemsettings->weekdaystart;
+    	$anticipation = $jemsettings->recurrence_anticipation;
 
 		$now 		= time();
-		$lastupdate = $elsettings->lastupdate;
+		$lastupdate = $jemsettings->lastupdate;
 
 		//last update later then 24h?
 		//$difference = $now - $lastupdate;
@@ -113,7 +113,7 @@ class ELHelper {
 				$recurrence_row['weekstart'] = $weekstart;
 				
 				// calculate next occurence date
-				$recurrence_row = ELHelper::calculate_recurrence($recurrence_row);
+				$recurrence_row = JEMHelper::calculate_recurrence($recurrence_row);
 				
 				// add events as long as we are under the interval and under the limit, if specified.				
 				while (($recurrence_row['recurrence_limit_date'] == $nulldate || strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date'])) 
@@ -138,20 +138,20 @@ class ELHelper {
 	          			}
           			}
           
-          			$recurrence_row = ELHelper::calculate_recurrence($recurrence_row);
+          			$recurrence_row = JEMHelper::calculate_recurrence($recurrence_row);
 				}
 			}
 
 			//delete outdated events
-			if ($elsettings->oldevent == 1) {
-				$query = 'DELETE FROM #__jem_events WHERE dates > 0  AND DATE_SUB(NOW(), INTERVAL '.$elsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates))';
+			if ($jemsettings->oldevent == 1) {
+				$query = 'DELETE FROM #__jem_events WHERE dates > 0  AND DATE_SUB(NOW(), INTERVAL '.$jemsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates))';
 				$db->SetQuery( $query );
 				$db->Query();
 			}
 
 			//Set state archived of outdated events
-			if ($elsettings->oldevent == 2) {
-				$query = 'UPDATE #__jem_events SET published = -1 WHERE dates > 0 AND DATE_SUB(NOW(), INTERVAL '.$elsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates)) AND published = 1';
+			if ($jemsettings->oldevent == 2) {
+				$query = 'UPDATE #__jem_events SET published = -1 WHERE dates > 0 AND DATE_SUB(NOW(), INTERVAL '.$jemsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates)) AND published = 1';
 				$db->SetQuery( $query );
 				$db->Query();
 			}
@@ -174,7 +174,7 @@ class ELHelper {
 
 		$day_time = 86400;	// 60 sec. * 60 min. * 24 h
 		$week_time = 604800;// $day_time * 7days
-		$date_array = ELHelper::generate_date($recurrence_row['dates'], $recurrence_row['enddates']);
+		$date_array = JEMHelper::generate_date($recurrence_row['dates'], $recurrence_row['enddates']);
 
 		switch($recurrence_type) {
 			case "1":
@@ -200,7 +200,7 @@ class ELHelper {
         }
 				break;
 			case "4":
-        		$selected = ELHelper::convert2CharsDaysToInt(explode(',', $recurrence_row['recurrence_byday']), $recurrence_row['weekstart']);  // the selected weekdays
+        		$selected = JEMHelper::convert2CharsDaysToInt(explode(',', $recurrence_row['recurrence_byday']), $recurrence_row['weekstart']);  // the selected weekdays
         		$current_weekday = (int) $date_array["weekday"];
 				
         		if ($recurrence_row['weekstart'] == 1) {
@@ -680,7 +680,7 @@ class ELHelper {
 		$mainframe = JFactory::getApplication();
     
 		$offset = (float) $mainframe->getCfg('offset');
-		$timezone_name = ELHelper::getTimeZone($offset);
+		$timezone_name = JEMHelper::getTimeZone($offset);
 								
 		$vcal = new vcalendar();                          // initiate new CALENDAR
 		if (!file_exists(JPATH_SITE.DS.'cache'.DS.'com_jem')) {
@@ -704,7 +704,7 @@ class ELHelper {
 		$params = $mainframe->getParams('com_jem');
 		
 		$offset = (float) $mainframe->getCfg('offset');
-		$timezone_name = ELHelper::getTimeZone($offset);
+		$timezone_name = JEMHelper::getTimeZone($offset);
 //		$hours = ($offset >= 0) ? floor($offset) : ceil($offset);
 //		$mins = abs($offset - $hours) * 60;
 //		$utcoffset = sprintf('%+03d%02d00', $hours, $mins);

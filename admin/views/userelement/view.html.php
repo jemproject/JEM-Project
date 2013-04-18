@@ -39,7 +39,7 @@ class JEMViewUserElement extends JViewLegacy {
 		//initialise variables
 		$document	=  JFactory::getDocument();
 		$user 		=  JFactory::getUser();
-		$elsettings = ELAdmin::config();
+		$jemsettings = JEMAdmin::config();
 		$db = JFactory::getDBO();
 		
 		//get var
@@ -67,7 +67,7 @@ class JEMViewUserElement extends JViewLegacy {
 		//assign data to template
 		$this->lists		= $lists;
 		$this->rows			= $users;
-		$this->elsettings	= $elsettings;
+		$this->jemsettings	= $jemsettings;
 		$this->pagination	= $pagination;
 
 		parent::display($tpl);

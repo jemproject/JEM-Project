@@ -42,7 +42,7 @@ foreach ($this->rows as $row)
 	//  $year = JHTML::date( $row->dates, "%Y" );
 //  $month = JHTML::date( $row->dates, "%m" );
  // $day = JHTML::date( $row->dates, "%d" );
-  if ($this->elsettings->showtime == 1)
+  if ($this->jemsettings->showtime == 1)
   {
   	$time = $row->times;
   }
@@ -50,13 +50,13 @@ foreach ($this->rows as $row)
   $detaillink 	= JRoute::_( JEMHelperRoute::getRoute($row->slug));
   
   //title
-  if (($this->elsettings->showtitle == 1 ) && ($this->elsettings->showdetails == 1) ) {
+  if (($this->jemsettings->showtitle == 1 ) && ($this->jemsettings->showdetails == 1) ) {
     $title = $this->escape($row->title);
   }
   
   // venue
-  if ($this->elsettings->showlocate == 1) {
-  	if ($this->elsettings->showlinkvenue == 1 ) {
+  if ($this->jemsettings->showlocate == 1) {
+  	if ($this->jemsettings->showlinkvenue == 1 ) {
   		$venue = $row->locid != 0 ? "<a href='".JRoute::_('index.php?view=venueevents&id='.$row->venueslug)."'>".$this->escape($row->venue)."</a>" : '-';
   	}
   	else {
@@ -65,7 +65,7 @@ foreach ($this->rows as $row)
   }
   
   // categories
-  if ($this->elsettings->showcat == 1) 
+  if ($this->jemsettings->showcat == 1) 
   {
   	$categories = '';
   	foreach ($row->categories as $key => $category)

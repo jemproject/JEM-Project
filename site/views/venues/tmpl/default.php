@@ -54,7 +54,7 @@ defined( '_JEXEC' ) or die;
 			?>
 
 			<dl class="location floattext">
-				<?php if (($this->elsettings->showdetlinkvenue == 1) && (!empty($row->url))) : ?>
+				<?php if (($this->jemsettings->showdetlinkvenue == 1) && (!empty($row->url))) : ?>
 				<dt class="venue_website"><?php echo JText::_( 'COM_JEM_WEBSITE' ).':'; ?></dt>
 	   			<dd class="venue_website">
 					<a href="<?php echo $row->url; ?>" target="_blank"> <?php echo $row->urlclean; ?></a>
@@ -62,7 +62,7 @@ defined( '_JEXEC' ) or die;
 				<?php endif; ?>
 
 				<?php
-	  			if ( $this->elsettings->showdetailsadress == 1 ) :
+	  			if ( $this->jemsettings->showdetailsadress == 1 ) :
 	  			?>
 
 	  			<?php if ( $row->street ) : ?>
@@ -111,7 +111,7 @@ defined( '_JEXEC' ) or die;
 		</dl>
 <p><?php echo JEMOutput::mapicon( $row ); ?></p>
 		
-	    <?php if ($this->elsettings->showlocdescription == 1) :	?>
+	    <?php if ($this->jemsettings->showlocdescription == 1) :	?>
 		<h2 class="description"><?php echo JText::_( 'COM_JEM_DESCRIPTION' ).':'; ?></h2>
 		<div class="description">
 	    	<?php echo $row->locdescription; ?>

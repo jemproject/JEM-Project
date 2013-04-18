@@ -63,7 +63,7 @@ class JEMControllerImagehandler extends JEMController
 		// Check for request forgeries
 		JSession::checkToken() or die;
 
-		$elsettings = ELAdmin::config();
+		$jemsettings = JEMAdmin::config();
 
 		$file 		= JRequest::getVar( 'userfile', '', 'files', 'array' );
 		$task 		= JRequest::getVar( 'task' );
@@ -93,14 +93,14 @@ class JEMControllerImagehandler extends JEMController
 		}
 
 		//check the image
-		$check = ELImage::check($file, $elsettings);
+		$check = JEMImage::check($file, $jemsettings);
 
 		if ($check === false) {
 			$app->redirect($_SERVER['HTTP_REFERER']);
 		}
 
 		//sanitize the image filename
-		$filename = ELImage::sanitize($base_Dir, $file['name']);
+		$filename = JEMImage::sanitize($base_Dir, $file['name']);
 		$filepath = $base_Dir . $filename;
 
 		//upload the image

@@ -44,7 +44,7 @@ class JEMViewCategoriesdetailed extends JViewLegacy
 
 		//initialise variables
 		$document 		=  JFactory::getDocument();
-		$elsettings 	=  ELHelper::config();
+		$jemsettings 	=  JEMHelper::config();
 		$model 			=  $this->getModel();
 		$menu			=  $app->getMenu();
 		$item    		=  $menu->getActive();
@@ -96,7 +96,7 @@ class JEMViewCategoriesdetailed extends JViewLegacy
 
 		//Check if the user has access to the form
 		$maintainer = ELUser::ismaintainer();
-		$genaccess 	= ELUser::validate_user( $elsettings->evdelrec, $elsettings->delivereventsyes );
+		$genaccess 	= ELUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess ) 
 		{ 
@@ -123,7 +123,7 @@ class JEMViewCategoriesdetailed extends JViewLegacy
 		$this->item				= $item;
 		$this->model			= $model;
 		$this->pagination		= $pagination;
-		$this->elsettings		= $elsettings;
+		$this->jemsettings		= $jemsettings;
 		$this->task				= $task;
 		$this->pagetitle		= $pagetitle;
 		

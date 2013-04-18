@@ -50,7 +50,7 @@ class JEMViewEvent extends JViewLegacy {
 		$db 		=  JFactory::getDBO();
 		$document	=  JFactory::getDocument();
 		$user 		=  JFactory::getUser();
-		$elsettings = ELAdmin::config();
+		$jemsettings = JEMAdmin::config();
 		$acl		=  JFactory::getACL();
 		
 		$nullDate 		= $db->getNullDate();
@@ -179,8 +179,8 @@ class JEMViewEvent extends JViewLegacy {
 		$this->editor 		= $editor;
 		$this->task 		= $task;
 		$this->nullDate 	= $nullDate;
-		$this->elsettings 	= $elsettings;
-		$access2 = ELHelper::getAccesslevelOptions();
+		$this->jemsettings 	= $jemsettings;
+		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access 		= $access2;
 
 		parent::display($tpl);
@@ -198,7 +198,7 @@ class JEMViewEvent extends JViewLegacy {
 		$editor 	=  JFactory::getEditor();
 		$document	=  JFactory::getDocument();
 		$uri 		=  JFactory::getURI();
-		$elsettings = ELAdmin::config();
+		$jemsettings = JEMAdmin::config();
 
 		//add css and js to document
 		JHTML::_('behavior.modal', 'a.modal');
@@ -225,7 +225,7 @@ class JEMViewEvent extends JViewLegacy {
 
 		$countries = array();
 		$countries[] = JHTML::_('select.option', '', JText::_('COM_JEM_SELECT_COUNTRY'));
-		$countries = array_merge($countries, ELHelper::getCountryOptions());
+		$countries = array_merge($countries, JEMHelper::getCountryOptions());
 		$lists['countries'] = JHTML::_('select.genericlist', $countries, 'country', 'class="inputbox"', 'value', 'text' );
 		unset($countries);
 		
@@ -239,7 +239,7 @@ class JEMViewEvent extends JViewLegacy {
 		
 		$uri2 = $uri->toString();
 		$this->request_url 	= $uri2;
-		$this->elsettings 	= $elsettings;
+		$this->jemsettings 	= $jemsettings;
 		$this->lists 		= $lists;
 
 		parent::display($tpl);

@@ -38,7 +38,7 @@ class JEMViewCategories extends JViewLegacy
 		$app =  JFactory::getApplication();
 
 		$document 	=  JFactory::getDocument();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 
 		$rows 		=  $this->get('Data');
 		$total 		=  $this->get('Total');
@@ -87,7 +87,7 @@ class JEMViewCategories extends JViewLegacy
 
 		//Check if the user has access to the form
 		$maintainer = ELUser::ismaintainer();
-		$genaccess 	= ELUser::validate_user( $elsettings->evdelrec, $elsettings->delivereventsyes );
+		$genaccess 	= ELUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess ) 
 		{ 
@@ -107,7 +107,7 @@ class JEMViewCategories extends JViewLegacy
 		$this->dellink			= $dellink;
 		$this->pagination		= $pagination;
 		$this->item				= $item;
-		$this->elsettings		= $elsettings;
+		$this->jemsettings		= $jemsettings;
 		$this->pagetitle		= $pagetitle;
 
 		parent::display($tpl);

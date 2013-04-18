@@ -123,5 +123,5 @@ if ($this->updatedata->failed == 0) {
 ?>
 
 <p class="copyright">
-	<?php echo ELAdmin::footer( ); ?>
+	<?php echo JEMAdmin::footer( ); ?>
 </p>

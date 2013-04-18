@@ -107,10 +107,10 @@ defined( '_JEXEC' ) or die;
 							}
 
 							?><br />
-							<b><?php echo JText::_( 'COM_JEM_IMAGE_FILESIZE' ).':'; ?></b> <?php echo $this->elsettings->sizelimit; ?> kb<br />
+							<b><?php echo JText::_( 'COM_JEM_IMAGE_FILESIZE' ).':'; ?></b> <?php echo $this->jemsettings->sizelimit; ?> kb<br />
 
 							<?php
-							if ( $this->elsettings->gddisabled ) {
+							if ( $this->jemsettings->gddisabled ) {
 
 								if (imagetypes() & IMG_PNG) {
 									echo "<br /><font color='green'>".JText::_( 'COM_JEM_PNG_SUPPORT' )."</font>";
@@ -143,7 +143,7 @@ defined( '_JEXEC' ) or die;
 	</tr>
 </table>
 
-<?php if ( $this->elsettings->gddisabled ) { ?>
+<?php if ( $this->jemsettings->gddisabled ) { ?>
 
 <table class="noshow">
 	<tr>
@@ -175,5 +175,5 @@ defined( '_JEXEC' ) or die;
 </form>
 
 <p class="copyright">
-	<?php echo ELAdmin::footer( ); ?>
+	<?php echo JEMAdmin::footer( ); ?>
 </p>

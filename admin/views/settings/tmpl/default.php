@@ -104,11 +104,11 @@ defined('_JEXEC') or die;
 		<?php echo JHTML::_( 'form.token' ); ?>
 		<input type="hidden" name="task" value="">
 		<input type="hidden" name="id" value="1">
-		<input type="hidden" name="lastupdate" value="<?php echo $this->elsettings->lastupdate; ?>">
+		<input type="hidden" name="lastupdate" value="<?php echo $this->jemsettings->lastupdate; ?>">
 		<input type="hidden" name="option" value="com_jem">
 		<input type="hidden" name="controller" value="settings">
 		</form>
 
 		<p class="copyright">
-			<?php echo ELAdmin::footer( ); ?>
+			<?php echo JEMAdmin::footer( ); ?>
 		</p>

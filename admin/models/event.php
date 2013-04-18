@@ -273,7 +273,7 @@ class JEMModelEvent extends JModelLegacy
 	{
 		//$app = JFactory::getApplication();
 
-		$elsettings = ELAdmin::config();
+		$jemsettings = JEMAdmin::config();
 		$user		=  JFactory::getUser();
 
 		$cats 		= JRequest::getVar( 'cid', array(), 'post', 'array');
@@ -331,13 +331,13 @@ class JEMModelEvent extends JModelLegacy
 			//get IP, time and userid
 			$row->created 			= gmdate('Y-m-d H:i:s');
 
-			$row->author_ip 		= $elsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
+			$row->author_ip 		= $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
 		}
 		
 		$row->version++;
 
 		// Make sure the data is valid
-		if (!$row->check($elsettings)) {
+		if (!$row->check($jemsettings)) {
 			$this->setError($row->getError());
 			return false;
 		}

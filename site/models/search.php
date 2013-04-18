@@ -391,7 +391,7 @@ class JEMModelSearch extends JModelLegacy
 			$top_id = $params->get('top_category', 0);
 			
    		$user   =  JFactory::getUser();
-    	$elsettings =  ELHelper::config();
+    	$jemsettings =  JEMHelper::config();
     	$userid   = (int) $user->get('id');
     	
     	if (JFactory::getUser()->authorise('core.manage')) {

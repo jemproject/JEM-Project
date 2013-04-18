@@ -43,20 +43,20 @@ static	function postUpload($post_files, $object)
 		$app = JFactory::getApplication();
 		$user = JFactory::getUser();
 		$params = JComponentHelper::getParams('com_jem');
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 
-		$path = JPATH_SITE.DS.$elsettings->attachments_path.DS.$object;
+		$path = JPATH_SITE.DS.$jemsettings->attachments_path.DS.$object;
 		
 		if (!(is_array($post_files) && count($post_files))) {
 			return false;
 		}
 		
-		$allowed = explode(",", $elsettings->attachments_types);
+		$allowed = explode(",", $jemsettings->attachments_types);
 		foreach ($allowed as $k => $v) {
 			$allowed[$k] = trim($v);
 		}
 		
-		$maxsizeinput = $elsettings->attachments_maxsize;
+		$maxsizeinput = $jemsettings->attachments_maxsize;
 		$defaultsize = 1000;
 		
 		
@@ -145,7 +145,7 @@ static	function getAttachments($object)
 		jimport('joomla.filesystem.folder');
 		$app = JFactory::getApplication();
 		$params = JComponentHelper::getParams('com_jem');
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 		
 		$user	=  JFactory::getUser();
 			
@@ -160,7 +160,7 @@ static	function getAttachments($object)
                  }
 
 
-		$path = JPATH_SITE.DS.$elsettings->attachments_path.DS.$object;
+		$path = JPATH_SITE.DS.$jemsettings->attachments_path.DS.$object;
 		
 		if (!file_exists($path)) {
 			return array();
@@ -201,7 +201,7 @@ static	function getAttachments($object)
     static	function getAttachmentPath($id) 
 	{		
 		$params = JComponentHelper::getParams('com_jem');
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 		
 		$user	=  JFactory::getUser();
 			
@@ -230,7 +230,7 @@ static	function getAttachments($object)
 			JError::raiseError(403, JText::_('COM_JEM_YOU_DONT_HAVE_ACCESS_TO_THIS_FILE'));			
 		}
 		
-		$path = JPATH_SITE.DS.$elsettings->attachments_path.DS.$res->object.DS.$res->file;		
+		$path = JPATH_SITE.DS.$jemsettings->attachments_path.DS.$res->object.DS.$res->file;		
 		if (!file_exists($path)) {
 			JError::raiseError(404, JText::_('COM_JEM_FILE_NOT_FOUND'));
 		}
@@ -252,7 +252,7 @@ static	function getAttachments($object)
 		jimport('joomla.filesystem.folder');
 		$app = JFactory::getApplication();
 		$params = JComponentHelper::getParams('com_jem');
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 		
 		// then get info for files from db
 		$db = JFactory::getDBO();
@@ -267,7 +267,7 @@ static	function getAttachments($object)
 			return false;
 		}
 				
-		$path = JPATH_SITE.DS.$elsettings->attachments_path.DS.$res->object.DS.$res->file;
+		$path = JPATH_SITE.DS.$jemsettings->attachments_path.DS.$res->object.DS.$res->file;
 		if (file_exists($path)) {
 			JFile::delete($path);
 		}

@@ -122,7 +122,7 @@ $infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', 
 				</span>
     		</td>
   		</tr>
-  		<?php if ( $this->elsettings->showmapserv != 0 ) { ?>
+  		<?php if ( $this->jemsettings->showmapserv != 0 ) { ?>
 		<tr>
 			<td>
 				<label for="map">
@@ -247,7 +247,7 @@ $infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', 
 </fieldset>
 
 <?php
-if ( $this->elsettings->showmapserv == 0 ) { ?>
+if ( $this->jemsettings->showmapserv == 0 ) { ?>
 	<input type="hidden" name="map" value="0" />
 <?php
 }
@@ -260,5 +260,5 @@ if ( $this->elsettings->showmapserv == 0 ) { ?>
 </form>
 
 <p class="copyright">
-	<?php echo ELAdmin::footer( ); ?>
+	<?php echo JEMAdmin::footer( ); ?>
 </p>

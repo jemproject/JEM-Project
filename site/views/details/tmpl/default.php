@@ -63,7 +63,7 @@ JHTML::_('behavior.modal');
 
 	<dl class="event_info floattext">
 
-		<?php if ($this->elsettings->showdetailstitle == 1) : ?>
+		<?php if ($this->jemsettings->showdetailstitle == 1) : ?>
 			<dt class="title"><?php echo JText::_( 'COM_JEM_TITLE' ).':'; ?></dt>
     		<dd class="title"><?php echo $this->escape($this->row->title); ?></dd>
 		<?php
@@ -72,11 +72,11 @@ JHTML::_('behavior.modal');
   		<dt class="when"><?php echo JText::_( 'COM_JEM_WHEN' ).':'; ?></dt>
 		<dd class="when">
 			<?php
-			if (ELHelper::isValidDate($this->row->dates))
+			if (JEMHelper::isValidDate($this->row->dates))
 			{
 				echo JEMOutput::formatdate($this->row->dates, $this->row->times);
     					
-    		if (ELHelper::isValidDate($this->row->enddates) && $this->row->enddates != $this->row->dates) :
+    		if (JEMHelper::isValidDate($this->row->enddates) && $this->row->enddates != $this->row->dates) :
     			echo ' - '.JEMOutput::formatdate($this->row->enddates, $this->row->endtimes);
     		endif;
 			}
@@ -84,7 +84,7 @@ JHTML::_('behavior.modal');
 				echo JText::_('COM_JEM_OPEN_DATE');
 			}
     		
-    		if ($this->elsettings->showtimedetails == 1) :
+    		if ($this->jemsettings->showtimedetails == 1) :
     	
 				echo '&nbsp;'.JEMOutput::formattime($this->row->dates, $this->row->times);
 						
@@ -99,15 +99,15 @@ JHTML::_('behavior.modal');
   		?>
 		    <dt class="where"><?php echo JText::_( 'COM_JEM_WHERE' ).':'; ?></dt>
 		    <dd class="where">
-    		<?php if (($this->elsettings->showdetlinkvenue == 1) && (!empty($this->row->url))) : ?>
+    		<?php if (($this->jemsettings->showdetlinkvenue == 1) && (!empty($this->row->url))) : ?>
 
 			    <a target="_blank" href="<?php echo $this->row->url; ?>"><?php echo $this->escape($this->row->venue); ?></a> -
 
-			<?php elseif ($this->elsettings->showdetlinkvenue == 2) : ?>
+			<?php elseif ($this->jemsettings->showdetlinkvenue == 2) : ?>
 
 			    <a href="<?php echo JRoute::_( 'index.php?view=venueevents&id='.$this->row->venueslug ); ?>"><?php echo $this->row->venue; ?></a> -
 
-			<?php elseif ($this->elsettings->showdetlinkvenue == 0) :
+			<?php elseif ($this->jemsettings->showdetlinkvenue == 0) :
 
 				echo $this->escape($this->row->venue).' - ';
 
@@ -138,7 +138,7 @@ JHTML::_('behavior.modal');
 			</dd><br />
 	</dl>
 
-  	<?php if ($this->elsettings->showevdescription == 1 && $this->row->datdescription != '' && $this->row->datdescription != '<br />') : ?>
+  	<?php if ($this->jemsettings->showevdescription == 1 && $this->row->datdescription != '' && $this->row->datdescription != '<br />') : ?>
 
   	    <h2 class="description"><?php echo JText::_( 'COM_JEM_DESCRIPTION' ); ?></h2>
   		<div class="description event_desc">
@@ -195,7 +195,7 @@ JHTML::_('behavior.modal');
 				</dd>
 
 			<?php
-  			if ( $this->elsettings->showdetailsadress == 1 ) :
+  			if ( $this->jemsettings->showdetailsadress == 1 ) :
   			?>
 
   				<?php if ( $this->row->street ) : ?>
@@ -237,7 +237,7 @@ JHTML::_('behavior.modal');
 			?>
 		</dl>
 		<p><?php echo JEMOutput::mapicon( $this->row ); ?>&nbsp;</p>
-		<?php if ($this->elsettings->showlocdescription == 1 && $this->row->locdescription != '' && $this->row->locdescription != '<br />') :	?>
+		<?php if ($this->jemsettings->showlocdescription == 1 && $this->row->locdescription != '' && $this->row->locdescription != '<br />') :	?>
 
 			<h2 class="location_desc"><?php echo JText::_( 'COM_JEM_DESCRIPTION' ); ?></h2>
   			<div class="description location_desc">

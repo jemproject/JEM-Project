@@ -103,7 +103,7 @@ class JEMModelCategories extends JModelLegacy
 	{
 		$app 		=  JFactory::getApplication();
 		$params 	=  $app->getParams();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_categories))
@@ -120,8 +120,8 @@ class JEMModelCategories extends JModelLegacy
 				
 				if ($category->image != '') {
 
-					$attribs['width'] = $elsettings->imagewidth;
-					$attribs['height'] = $elsettings->imagehight;
+					$attribs['width'] = $jemsettings->imagewidth;
+					$attribs['height'] = $jemsettings->imagehight;
 
 					$category->image = JHTML::image('images/jem/categories/'.$category->image, $category->catname, $attribs);
 				} else {

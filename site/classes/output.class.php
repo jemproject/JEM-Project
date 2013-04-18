@@ -62,7 +62,7 @@ static function footer( )
 	**/
 	static function submitbutton( $dellink, &$params )
 	{
-		$settings =  ELHelper::config();
+		$settings =  JEMHelper::config();
 		
 		
 		if ($dellink == 1) {
@@ -105,7 +105,7 @@ static function footer( )
 	static function archivebutton( &$params, $task = NULL, $id = NULL )
 	{
 
-		$settings =  ELHelper::config();
+		$settings =  JEMHelper::config();
 		if ($settings->show_archive_icon) {
 		
 		if ( $settings->oldevent == 2 ) {
@@ -175,7 +175,7 @@ static function footer( )
 	static function editbutton( $Itemid, $id, &$params, $allowedtoedit, $view)
 	{
 
-		$settings =  ELHelper::config();
+		$settings =  JEMHelper::config();
 		
 		
 		if ( $allowedtoedit ) {
@@ -231,7 +231,7 @@ static function footer( )
 	 */	
 	static function printbutton( $print_link, &$params )
 	{
-		$settings =  ELHelper::config();
+		$settings =  JEMHelper::config();
 		if ($settings->show_print_icon) {
 
 			JHTML::_('behavior.tooltip');
@@ -273,7 +273,7 @@ static function footer( )
 	 */
  	static function mailbutton($slug, $view, $params)
 	{
-		$settings =  ELHelper::config();
+		$settings =  JEMHelper::config();
 		
 		
 		if ($settings->show_email_icon) {
@@ -323,7 +323,7 @@ static function footer( )
  	static function icalbutton($slug, $view)
 	{
 		
-		$settings =  ELHelper::config();
+		$settings =  JEMHelper::config();
 		if ($settings->events_ical == 1) {
 
 			JHTML::_('behavior.tooltip');
@@ -366,7 +366,7 @@ static function footer( )
 	 */
  	static function mapicon($data)
 	{
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 		
 		//Link to map
         $mapimage = JHTML::image("media/com_jem/images/icon-48-globe.png",JText::_( 'COM_JEM_MAP' ));
@@ -383,11 +383,11 @@ static function footer( )
 		$data->country = JString::strtoupper($data->country);
 
 		//google map link or include
-		switch ($elsettings->showmapserv)
+		switch ($jemsettings->showmapserv)
 		{
 			case 1:
 			{
-				$url = 'http://maps.google.'.$elsettings->tld.'/maps?hl='.$elsettings->lg.'&q='.str_replace(" ", "+", $data->street).', '.$data->plz.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.$data->venue.')&ie=UTF8&z=15&iwloc=B&output=embed" ';
+				$url = 'http://maps.google.'.$jemsettings->tld.'/maps?hl='.$jemsettings->lg.'&q='.str_replace(" ", "+", $data->street).', '.$data->plz.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.$data->venue.')&ie=UTF8&z=15&iwloc=B&output=embed" ';
 				$attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
 				$output		= '<div class="mapicon2"><a class="modal" title="'.JText::_( 'COM_JEM_MAP' ).'" target="_blank" href="'.$url.'"'.$attributes.'><div class="mapicon" align="center">'.$mapimage.'</div></a></div>';
 				
@@ -396,7 +396,7 @@ static function footer( )
 
 			case 2:
 			{
-				$output		= '<div style="border: 1px solid #000;width:500px;" color="black"><iframe width="500" height="250" src="http://maps.google.'.$elsettings->tld.'/maps?hl='.$elsettings->lg.'&q='.str_replace(" ", "+", $data->street).', '.$data->plz.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.$data->venue.')&ie=UTF8&z=15&iwloc=B&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
+				$output		= '<div style="border: 1px solid #000;width:500px;" color="black"><iframe width="500" height="250" src="http://maps.google.'.$jemsettings->tld.'/maps?hl='.$jemsettings->lg.'&q='.str_replace(" ", "+", $data->street).', '.$data->plz.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.$data->venue.')&ie=UTF8&z=15&iwloc=B&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
 
 			} break;
 		}
@@ -416,7 +416,7 @@ static function footer( )
 	 */
  	static function flyer( $data, $image, $type )
 	{
-		$settings =  ELHelper::config();
+		$settings =  JEMHelper::config();
 
 		
 		if ($type == 'event') {
@@ -513,7 +513,7 @@ static	function getFlag($country)
 	 */
 static	function formatdate($date, $time)
 	{
-		$settings = ELHelper::config();
+		$settings = JEMHelper::config();
 		
 		if(!$date) {
 			return false;
@@ -541,7 +541,7 @@ static	function formatdate($date, $time)
 	 */
 static	function formattime($date, $time)
 	{
-		$settings = ELHelper::config();
+		$settings = JEMHelper::config();
 		
 		if(!$time) {
 			return;

@@ -129,7 +129,7 @@ class jem_events extends JTable
 	}
 
 	// overloaded check function
-	function check($elsettings=null)
+	function check($jemsettings=null)
 	{
 		// Check fields
 		if (empty($this->enddates)) {

@@ -149,7 +149,7 @@ class JEMViewCategory extends JViewLegacy {
 		$this->Lists 		= $Lists;
 		$this->row 			= $row;
 		$this->editor 		= $editor;
-		$access2 = ELHelper::getAccesslevelOptions();
+		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access 		= $access2;
 
 		parent::display($tpl);

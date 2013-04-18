@@ -112,7 +112,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
     {
         $app 		=  JFactory::getApplication();
         $params 	=  $app->getParams();
-        $elsettings =  ELHelper::config();
+        $jemsettings =  JEMHelper::config();
 
         // Lets load the content if it doesn't already exist
         if ( empty($this->_categories))

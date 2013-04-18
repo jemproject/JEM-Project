@@ -44,7 +44,7 @@ class JEMViewEventslist extends JViewLegacy
 
 		//initialize variables
 		$document 	=  JFactory::getDocument();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 		$menu		=  $app->getMenu();
 		$item    	= $menu->getActive();
 		$params 	=  $app->getParams();
@@ -99,7 +99,7 @@ class JEMViewEventslist extends JViewLegacy
    		
 		//Check if the user has access to the form
 		$maintainer = ELUser::ismaintainer();
-		$genaccess 	= ELUser::validate_user( $elsettings->evdelrec, $elsettings->delivereventsyes );
+		$genaccess 	= ELUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess ) 
 		{ 
@@ -144,7 +144,7 @@ class JEMViewEventslist extends JViewLegacy
 		$this->params			= $params;
 		$this->dellink			= $dellink;
 		$this->pagination		= $pagination;
-		$this->elsettings		= $elsettings;
+		$this->jemsettings		= $jemsettings;
 		$this->pagetitle		= $pagetitle;
 		
 		parent::display($tpl);
@@ -187,7 +187,7 @@ class JEMViewEventslist extends JViewLegacy
 	 */
 	function _buildSortLists()
 	{
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 		
 		$filter_order		= JRequest::getCmd('filter_order', 'a.dates');
 		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', 'ASC');
@@ -197,20 +197,20 @@ class JEMViewEventslist extends JViewLegacy
 
 		$sortselects = array();
 		
-		if ($elsettings->showtitle == 1) {
-			$sortselects[]	= JHTML::_('select.option', 'title', $elsettings->titlename );
+		if ($jemsettings->showtitle == 1) {
+			$sortselects[]	= JHTML::_('select.option', 'title', $jemsettings->titlename );
 		}
-		if ($elsettings->showlocate == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'venue', $elsettings->locationname );
+		if ($jemsettings->showlocate == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'venue', $jemsettings->locationname );
 		}
-		if ($elsettings->showcity == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'city', $elsettings->cityname );
+		if ($jemsettings->showcity == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'city', $jemsettings->cityname );
 		}
-		if ($elsettings->showcat == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'type', $elsettings->catfroname );
+		if ($jemsettings->showcat == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'type', $jemsettings->catfroname );
 		}
-		if ($elsettings->showstate == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'state', $elsettings->statename );
+		if ($jemsettings->showstate == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'state', $jemsettings->statename );
 		}
 
 		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );

@@ -41,7 +41,7 @@ class JEMViewCategoryevents extends JViewLegacy
 	function display($tpl = null)
 	{		
 		$mainframe = JFactory::getApplication();		
-		$settings = ELHelper::config();
+		$settings = JEMHelper::config();
 		
 		// Get data from the model
 		$model = $this->getModel();
@@ -51,13 +51,13 @@ class JEMViewCategoryevents extends JViewLegacy
 		
 		$catid = JRequest::getInt('id');
 		
-		$vcal = ELHelper::getCalendarTool();                          // initiate new CALENDAR
+		$vcal = JEMHelper::getCalendarTool();                          // initiate new CALENDAR
 		//$vcal->setProperty('unique_id', 'category'.$catid.'@'.$mainframe->getCfg('sitename'));
 		$vcal->setConfig( "filename", "category".$catid.".ics" );
 		
 		foreach ( $rows as $row )
 		{			
-			ELHelper::icalAddEvent($vcal, $row);	
+			JEMHelper::icalAddEvent($vcal, $row);	
 		}
 		$vcal->returnCalendar();                       // generate and redirect output to user browser
 		echo $vcal->createCalendar(); // debug

@@ -47,7 +47,7 @@ class JEMViewVenue extends JViewLegacy {
 		$document	=  JFactory::getDocument();
 		$user 		=  JFactory::getUser();
 		$db 		=  JFactory::getDBO();
-		$settings	=  ELAdmin::config();
+		$settings	=  JEMAdmin::config();
 		
 		$nullDate 		= $db->getNullDate();
 
@@ -123,7 +123,7 @@ class JEMViewVenue extends JViewLegacy {
 		
 		$countries = array();
 		$countries[] = JHTML::_('select.option', '', JText::_('COM_JEM_SELECT_COUNTRY'));
-		$countries = array_merge($countries, ELHelper::getCountryOptions());
+		$countries = array_merge($countries, JEMHelper::getCountryOptions());
 		$lists['countries'] = JHTML::_('select.genericlist', $countries, 'country', 'class="inputbox"', 'value', 'text', $row->country );
 		unset($countries);
 
@@ -134,7 +134,7 @@ class JEMViewVenue extends JViewLegacy {
 		$this->nullDate		= $nullDate;
 		$this->imageselect	= $imageselect;
 		$this->lists		= $lists;
-		$access2 = ELHelper::getAccesslevelOptions();
+		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access		= $access2;
 
 		parent::display($tpl);

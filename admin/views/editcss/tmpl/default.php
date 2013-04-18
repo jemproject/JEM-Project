@@ -72,7 +72,7 @@ defined('_JEXEC') or die;
 		</table>
 
 		<p class="copyright">
-			<?php echo ELAdmin::footer( ); ?>
+			<?php echo JEMAdmin::footer( ); ?>
 		</p>
 
 		<?php echo JHTML::_( 'form.token' ); ?>

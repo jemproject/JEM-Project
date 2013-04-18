@@ -28,7 +28,7 @@ defined('_JEXEC') or die;
  * @package JEM
  * @since 0.9
  */
-class ELAdmin {
+class JEMAdmin {
 
 	/**
 	* Writes footer. Do not remove!

@@ -76,7 +76,7 @@ class JEMModelEditvenue extends JModelLegacy
 
 		// Initialize variables
 		$user		=  JFactory::getUser();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 
 		$view		= JRequest::getWord('view');
 
@@ -95,7 +95,7 @@ class JEMModelEditvenue extends JModelLegacy
 			}
 
 			//access check
-			$allowedtoeditvenue = ELUser::editaccess($elsettings->venueowner, $this->_venue->created_by, $elsettings->venueeditrec, $elsettings->venueedit);
+			$allowedtoeditvenue = ELUser::editaccess($jemsettings->venueowner, $this->_venue->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 
 			if ($allowedtoeditvenue == 0) {
 
@@ -107,7 +107,7 @@ class JEMModelEditvenue extends JModelLegacy
 		} else {
 
 			//access checks
-			$delloclink = ELUser::validate_user( $elsettings->locdelrec, $elsettings->deliverlocsyes );
+			$delloclink = ELUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
 
 			if ($delloclink == 0) {
 				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
@@ -138,7 +138,7 @@ class JEMModelEditvenue extends JModelLegacy
 				$this->_venue->country			= '';
       			$this->_venue->latitude      	= '';
       			$this->_venue->longitude      	= '';
-				$this->_venue->map				= $elsettings->showmapserv ? 1 : 0;
+				$this->_venue->map				= $jemsettings->showmapserv ? 1 : 0;
 				$this->_venue->created			= '';
 				$this->_venue->created_by		= '';
 				$this->_venue->version			= 0;
@@ -207,7 +207,7 @@ class JEMModelEditvenue extends JModelLegacy
 		$app =  JFactory::getApplication();
 
 		$user 		=  JFactory::getUser();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 
 		$tzoffset 		= $app->getCfg('offset');
 
@@ -223,7 +223,7 @@ class JEMModelEditvenue extends JModelLegacy
 		if ($row->id) {
 
 			//check if user is allowed to edit venues
-			$allowedtoeditvenue = ELUser::editaccess($elsettings->venueowner, $row->created_by, $elsettings->venueeditrec, $elsettings->venueedit);
+			$allowedtoeditvenue = ELUser::editaccess($jemsettings->venueowner, $row->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 
 			if ($allowedtoeditvenue == 0) {
 				$row->checkin();
@@ -238,7 +238,7 @@ class JEMModelEditvenue extends JModelLegacy
 			//Is editor the owner of the venue
 			//This extra Check is needed to make it possible
 			//that the venue is published after an edit from an owner
-			if ($elsettings->venueowner == 1 && $row->created_by == $user->get('id')) {
+			if ($jemsettings->venueowner == 1 && $row->created_by == $user->get('id')) {
 				$owneredit = 1;
 			} else {
 				$owneredit = 0;
@@ -247,7 +247,7 @@ class JEMModelEditvenue extends JModelLegacy
 		} else {
 
 			//check if user is allowed to submit new venues
-			$delloclink = ELUser::validate_user( $elsettings->locdelrec, $elsettings->deliverlocsyes );
+			$delloclink = ELUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
 
 			if ($delloclink == 0){
 				$app->enqueueMessage( JText::_( 'COM_JEM_NO_ACCESS' ) );
@@ -257,7 +257,7 @@ class JEMModelEditvenue extends JModelLegacy
 			//get IP, time and userid
 			$row->created 			= gmdate('Y-m-d H:i:s');
 
-			$row->author_ip 		= $elsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
+			$row->author_ip 		= $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
 			$row->created_by		= $user->get('id');
 
 			//set owneredit to false
@@ -267,26 +267,26 @@ class JEMModelEditvenue extends JModelLegacy
 		//Image upload
 
 		//If image upload is required we will stop here if no file was attached
-		if ( empty($file['name']) && $elsettings->imageenabled == 2 ) {
+		if ( empty($file['name']) && $jemsettings->imageenabled == 2 ) {
 			$this->setError( JText::_( 'COM_JEM_IMAGE_EMPTY' ) );
 			return false;
 		}
 
-		if ( ( $elsettings->imageenabled == 2 || $elsettings->imageenabled == 1 ) && ( !empty($file['name'])  ) )  {
+		if ( ( $jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1 ) && ( !empty($file['name'])  ) )  {
 
 			jimport('joomla.filesystem.file');
 
 			$base_Dir 	= JPATH_SITE.'/images/jem/venues/';
 
 			//check the image
-			$check = ELImage::check($file, $elsettings);
+			$check = JEMImage::check($file, $jemsettings);
 
 			if ($check === false) {
 				$app->redirect($_SERVER['HTTP_REFERER']);
 			}
 
 			//sanitize the image filename
-			$filename = ELImage::sanitize($base_Dir, $file['name']);
+			$filename = JEMImage::sanitize($base_Dir, $file['name']);
 			$filepath = $base_Dir . $filename;
 
 			if (!JFile::upload( $file['tmp_name'], $filepath )) {
@@ -315,10 +315,10 @@ class JEMModelEditvenue extends JModelLegacy
 
 			//check length
 			$length = JString::strlen($row->locdescription);
-			if ($length > $elsettings->datdesclimit) {
+			if ($length > $jemsettings->datdesclimit) {
 
 				// if required shorten it
-				$row->locdescription = JString::substr($row->locdescription, 0, $elsettings->datdesclimit);
+				$row->locdescription = JString::substr($row->locdescription, 0, $jemsettings->datdesclimit);
 				//if shortened add ...
 				$row->locdescription = $row->locdescription.'...';
 			}
@@ -326,7 +326,7 @@ class JEMModelEditvenue extends JModelLegacy
 
 		//Autopublish
 		//check if the user has the required rank for autopublish
-		$autopublloc = ELUser::validate_user( $elsettings->locpubrec, $elsettings->autopublocate );
+		$autopublloc = ELUser::validate_user( $jemsettings->locpubrec, $jemsettings->autopublocate );
 
 		//Check if user is the owner of the venue
 		//If yes enable autopublish
@@ -339,7 +339,7 @@ class JEMModelEditvenue extends JModelLegacy
 		$row->version++;
 		
 		//Make sure the data is valid
-		if (!$row->check($elsettings)) {
+		if (!$row->check($jemsettings)) {
 			$this->setError($row->getError());
 			return false;
 		}

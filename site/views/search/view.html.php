@@ -44,7 +44,7 @@ class JEMViewSearch extends JViewLegacy
 
 		//initialize variables
 		$document 	=  JFactory::getDocument();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 		$menu		=  $app->getMenu();
 		$item    	= $menu->getActive();
 		$params 	=  $app->getParams();
@@ -103,7 +103,7 @@ class JEMViewSearch extends JViewLegacy
 
 		//Check if the user has access to the form
 		$maintainer = ELUser::ismaintainer();
-		$genaccess 	= ELUser::validate_user( $elsettings->evdelrec, $elsettings->delivereventsyes );
+		$genaccess 	= ELUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess ) 
 		{ 
@@ -190,7 +190,7 @@ class JEMViewSearch extends JViewLegacy
 		$this->params			= $params;
 		$this->dellink			= $dellink;
 		$this->pagination		= $pagination;
-		$this->elsettings		= $elsettings;
+		$this->jemsettings		= $jemsettings;
 		$this->pagetitle		= $pagetitle;
 		$this->filter_continent	= $filter_continent;
 		$this->filter_country	= $filter_country;
@@ -235,7 +235,7 @@ class JEMViewSearch extends JViewLegacy
 	 */
 	function _buildSortLists()
 	{
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 		
 		$filter_order		= JRequest::getCmd('filter_order', 'a.dates');
 		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', 'ASC');
@@ -244,8 +244,8 @@ class JEMViewSearch extends JViewLegacy
 		$filter_type		= JRequest::getString('filter_type');
 
 		$sortselects = array();
-		$sortselects[]	= JHTML::_('select.option', 'title', $elsettings->titlename );
-		$sortselects[] 	= JHTML::_('select.option', 'venue', $elsettings->locationname );
+		$sortselects[]	= JHTML::_('select.option', 'title', $jemsettings->titlename );
+		$sortselects[] 	= JHTML::_('select.option', 'venue', $jemsettings->locationname );
 		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
 
 		$lists['order_Dir'] 	= $filter_order_Dir;

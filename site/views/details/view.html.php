@@ -45,7 +45,7 @@ class JEMViewDetails extends JViewLegacy
 		$document 	=  JFactory::getDocument();
 		$user		=  JFactory::getUser();
 		$dispatcher =  JDispatcher::getInstance();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 		$params 	= $app->getParams('com_jem');
 
 		$row		=  $this->get('Details');
@@ -68,7 +68,7 @@ class JEMViewDetails extends JViewLegacy
 		}
 
 		//Check if user has access to the details
-		if ($elsettings->showdetails == 0) {
+		if ($jemsettings->showdetails == 0) {
 			return JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
 		}
 		
@@ -100,12 +100,12 @@ class JEMViewDetails extends JViewLegacy
 		$pathway->addItem( $this->escape($row->title), JRoute::_( JEMHelperRoute::getRoute($row->slug) ));
 		
 		//Get images
-		$dimage = ELImage::flyercreator($row->datimage, 'event');
-		$limage = ELImage::flyercreator($row->locimage, 'venue');
+		$dimage = JEMImage::flyercreator($row->datimage, 'event');
+		$limage = JEMImage::flyercreator($row->locimage, 'venue');
 
 		//Check user if he can edit
-		$allowedtoeditevent = ELUser::editaccess($elsettings->eventowner, $row->created_by, $elsettings->eventeditrec, $elsettings->eventedit);
-		$allowedtoeditvenue = ELUser::editaccess($elsettings->venueowner, $row->venueowner, $elsettings->venueeditrec, $elsettings->venueedit);
+		$allowedtoeditevent = ELUser::editaccess($jemsettings->eventowner, $row->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+		$allowedtoeditvenue = ELUser::editaccess($jemsettings->venueowner, $row->venueowner, $jemsettings->venueeditrec, $jemsettings->venueedit);
 
 		//Timecheck for registration
 		$jetzt = date("Y-m-d");
@@ -170,7 +170,7 @@ class JEMViewDetails extends JViewLegacy
 				}
 				if (preg_match("/[\/[\/]/",$keyword)) {
 					$keyword = trim(str_replace("[", "", str_replace("]", "", $keyword)));
-					$buffer = $this->keyword_switcher($keyword, $row, $categories, $elsettings->formattime, $elsettings->formatdate);
+					$buffer = $this->keyword_switcher($keyword, $row, $categories, $jemsettings->formattime, $jemsettings->formatdate);
 					if ($buffer != "") {
 						$meta_keywords_content .= $buffer;
 					} else {
@@ -188,7 +188,7 @@ class JEMViewDetails extends JViewLegacy
 			foreach($description as $desc) {
 					$keyword = substr($desc, 0, strpos($desc,"]",0));
 					if ($keyword != "") {
-						$description_content .= $this->keyword_switcher($keyword, $row, $categories, $elsettings->formattime, $elsettings->formatdate);
+						$description_content .= $this->keyword_switcher($keyword, $row, $categories, $jemsettings->formattime, $jemsettings->formatdate);
 						$description_content .= substr($desc, strpos($desc,"]",0)+1);
 					} else {
 						$description_content .= $desc;
@@ -232,7 +232,7 @@ class JEMViewDetails extends JViewLegacy
 		$this->registers			= $registers;
 		$this->isregistered			= $isregistered;
 		$this->formhandler			= $formhandler;
-		$this->elsettings			= $elsettings;
+		$this->jemsettings			= $jemsettings;
 		$this->item					= $item;
 		$this->user					= $user;
 		$this->dispatcher			= $dispatcher;

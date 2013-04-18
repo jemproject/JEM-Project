@@ -272,7 +272,7 @@ class JEMModelDay extends JModelLegacy
 	function _buildWhere()
 	{
 		$app =  JFactory::getApplication();
-        $elsettings =  ELHelper::config();
+        $jemsettings =  JEMHelper::config();
 		
 		$user		=  JFactory::getUser();
 		if (JFactory::getUser()->authorise('core.manage')) {
@@ -299,7 +299,7 @@ class JEMModelDay extends JModelLegacy
 		 * If we have a filter, and this is enabled... lets tack the AND clause
 		 * for the filter onto the WHERE clause of the content item query.
 		 */
-		if ($elsettings->filter)
+		if ($jemsettings->filter)
 		{
 			$filter 		= JRequest::getString('filter', '', 'request');
 			$filter_type 	= JRequest::getWord('filter_type', '', 'request');

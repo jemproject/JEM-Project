@@ -47,12 +47,12 @@ class JEMViewEventslist extends JViewLegacy
 		$mainframe = JFactory::getApplication();
     
 		$offset = (float) $mainframe->getCfg('offset');
-		$timezone_name = ELHelper::getTimeZone($offset);
+		$timezone_name = JEMHelper::getTimeZone($offset);
 		$hours = ($offset >= 0) ? floor($offset) : ceil($offset);
 		$mins = abs($offset - $hours) * 60;
 		$utcoffset = sprintf('%+03d%02d00', $hours, $mins);
 		
-		$settings = ELHelper::config();
+		$settings = JEMHelper::config();
 		
 		// Get data from the model
 		$model = $this->getModel();
@@ -61,13 +61,13 @@ class JEMViewEventslist extends JViewLegacy
 		$rows =  $model->getData();
 				
     // initiate new CALENDAR
-		$vcal = ELHelper::getCalendarTool();
+		$vcal = JEMHelper::getCalendarTool();
 	//	$vcal->setProperty('unique_id', 'allevents@'.$mainframe->getCfg('sitename'));
 		$vcal->setConfig( "filename", "events.ics" );
 		
 		foreach ( $rows as $row )
 		{				
-			ELHelper::icalAddEvent($vcal, $row);	
+			JEMHelper::icalAddEvent($vcal, $row);	
 		}
 		$vcal->returnCalendar();                       // generate and redirect output to user browser
 		echo $vcal->createCalendar(); // debug

@@ -117,7 +117,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 	</table>
 
 	<p class="copyright">
-		<?php echo ELAdmin::footer( ); ?>
+		<?php echo JEMAdmin::footer( ); ?>
 
 		<?php echo JHTML::_( 'form.token' ); ?>
 		<input type="hidden" name="boxchecked" value="0" />

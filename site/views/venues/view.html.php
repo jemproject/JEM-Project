@@ -43,7 +43,7 @@ class JEMViewVenues extends JViewLegacy
 		$app =  JFactory::getApplication();
 
 		$document 	=  JFactory::getDocument();
-		$elsettings =  ELHelper::config();
+		$jemsettings =  JEMHelper::config();
 
 		//get menu information
 		$menu		= $app->getMenu();
@@ -64,7 +64,7 @@ class JEMViewVenues extends JViewLegacy
 		$total 		=  $this->get('Total');
 
 		//Add needed scripts if the lightbox effect is enabled
-		if ($elsettings->lightbox == 1) {
+		if ($jemsettings->lightbox == 1) {
   			JHTML::_('behavior.modal');
 		}
 
@@ -104,7 +104,7 @@ class JEMViewVenues extends JViewLegacy
 
 		//Check if the user has access to the form
 		$maintainer = ELUser::ismaintainer();
-		$genaccess 	= ELUser::validate_user( $elsettings->evdelrec, $elsettings->delivereventsyes );
+		$genaccess 	= ELUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess ) 
 		{ 
@@ -125,7 +125,7 @@ class JEMViewVenues extends JViewLegacy
 		$this->limit			= $limit;
 		$this->total			= $total;
 		$this->item				= $item;
-		$this->elsettings		= $elsettings;
+		$this->jemsettings		= $jemsettings;
 		$this->task				= $task;
 		$this->pagetitle		= $pagetitle;
 
