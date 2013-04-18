@@ -103,7 +103,7 @@
 											</span>
 										</td>
        									<td valign="top">
-											<input type="text" name="icslimit" value="<?php echo $this->elsettings->icslimit; ?>" size="3" maxlength="3" />
+											<input type="text" name="ical_max_items" value="<?php echo $this->elsettings->ical_max_items; ?>" size="3" maxlength="3" />
        	 								</td>
       								</tr>
       								
@@ -139,7 +139,7 @@
 											</span>
 										</td>
        									<td valign="top">
-		 							<input type="text" name="repeat_window" value="<?php echo $this->elsettings->repeat_window; ?>" size="5" maxlength="3" />
+		 							<input type="text" name="recurrence_anticipation" value="<?php echo $this->elsettings->recurrence_anticipation; ?>" size="5" maxlength="3" />
        	 								</td>
       								</tr>
       								

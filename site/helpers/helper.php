@@ -65,8 +65,8 @@ class ELHelper {
 	{
 		$elsettings =  ELHelper::config();
     	$params = JComponentHelper::getParams('com_jem');   
-    	$weekstart = $params->get('weekdaystart',0);
-    	$anticipation = $params->get('recurrence_anticipation', 30);
+    	$weekstart = $elsettings->weekdaystart;
+    	$anticipation = $elsettings->recurrence_anticipation;
 
 		$now 		= time();
 		$lastupdate = $elsettings->lastupdate;
