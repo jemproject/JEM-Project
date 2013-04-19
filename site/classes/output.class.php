@@ -179,7 +179,7 @@ static function footer( )
 		
 		
 		if ( $allowedtoedit ) {
-            // if (((ELUser::ismaintainer()) && (ELUser::groupmaintained($id)==true))|| (ELUser::hasadminrights()== true) || (ELUser::groupmaintained($id)==false) )  {
+            // if (((JEMUser::ismaintainer()) && (JEMUser::groupmaintained($id)==true))|| (JEMUser::hasadminrights()== true) || (JEMUser::groupmaintained($id)==false) )  {
 			JHTML::_('behavior.tooltip');
 
 			switch ($view)

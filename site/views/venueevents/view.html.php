@@ -130,8 +130,8 @@ class JEMViewVenueevents extends JViewLegacy
 		}
 
 		//Check if the user has access to the form
-		$maintainer = ELUser::ismaintainer();
-		$genaccess 	= ELUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
+		$maintainer = JEMUser::ismaintainer();
+		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess ) 
 		{ 
@@ -149,7 +149,7 @@ class JEMViewVenueevents extends JViewLegacy
 			$results = $app->triggerEvent( 'onContentPrepare', array('com_jem.venueevents', &$venue, &$params, 0 ));
 			$venuedescription = $venue->text;
 		}
-    	$allowedtoeditvenue = ELUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
+    	$allowedtoeditvenue = JEMUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
     
 		//build the url
         if(!empty($venue->url) && strtolower(substr($venue->url, 0, 7)) != "http://") {

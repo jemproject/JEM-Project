@@ -105,8 +105,8 @@ class JEMViewEditevent extends JViewLegacy
 		$pathway->addItem($title, '');
 
 		//Has the user access to the editor and the add venue screen
-		$editoruser = ELUser::editoruser();
-		$delloclink = ELUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
+		$editoruser = JEMUser::editoruser();
+		$delloclink = JEMUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
 		
 		//transform <br /> and <br> back to \r\n for non editorusers
 		if (!$editoruser) {

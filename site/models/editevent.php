@@ -111,8 +111,8 @@ class JEMModelEditevent extends JModelLegacy
 			/*
 			* access check
 			*/
-			$editaccess	= ELUser::editaccess($jemsettings->eventowner, $this->_event->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);			
-			$maintainer = ELUser::ismaintainer();
+			$editaccess	= JEMUser::editaccess($jemsettings->eventowner, $this->_event->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);			
+			$maintainer = JEMUser::ismaintainer();
 
 			if ($maintainer || $editaccess ) $allowedtoeditevent = 1;
 
@@ -128,8 +128,8 @@ class JEMModelEditevent extends JModelLegacy
 		} else {
 
 			//Check if the user has access to the form
-			$maintainer = ELUser::ismaintainer();
-			$genaccess 	= ELUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
+			$maintainer = JEMUser::ismaintainer();
+			$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 			if ( !($maintainer || $genaccess )) {
 				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
@@ -231,7 +231,7 @@ class JEMModelEditevent extends JModelLegacy
 		$user		=  JFactory::getUser();
 		$jemsettings =  JEMHelper::config();
 		$userid		= (int) $user->get('id');
-		$superuser	= ELUser::superuser();
+		$superuser	= JEMUser::superuser();
 		
 		if (JFactory::getUser()->authorise('core.manage')) {
            $gid = (int) 3;      //viewlevel Special
@@ -265,7 +265,7 @@ class JEMModelEditevent extends JModelLegacy
 			if ($categories) {
 				//check if user is allowed to submit events in general, if yes allow to submit into categories
 				//which aren't assigned to a group. Otherwise restrict submission into maintained categories only 
-				if (ELUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes)) {
+				if (JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes)) {
 					$where .= ' AND c.groupid = 0 OR c.groupid = '.$categories;
 				} else {
 					$where .= ' AND c.groupid = '.$categories;
@@ -597,8 +597,8 @@ class JEMModelEditevent extends JModelLegacy
 		if ($row->id) {
 
 			//check if user is allowed to edit events
-			$editaccess	= ELUser::editaccess($jemsettings->eventowner, $row->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
-			$maintainer = ELUser::ismaintainer();
+			$editaccess	= JEMUser::editaccess($jemsettings->eventowner, $row->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+			$maintainer = JEMUser::ismaintainer();
 
 			if ($maintainer || $editaccess ) $allowedtoeditevent = 1;
 
@@ -623,8 +623,8 @@ class JEMModelEditevent extends JModelLegacy
 		} else {
 
 			//check if user is allowed to submit new events
-			$maintainer = ELUser::ismaintainer();
-			$genaccess 	= ELUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
+			$maintainer = JEMUser::ismaintainer();
+			$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 			if ( !($maintainer || $genaccess) ){
 				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
@@ -644,7 +644,7 @@ class JEMModelEditevent extends JModelLegacy
 		* Autopublish
 		* check if the user has the required rank for autopublish
 		*/
-		$autopubev = ELUser::validate_user( $jemsettings->evpubrec, $jemsettings->autopubl );
+		$autopubev = JEMUser::validate_user( $jemsettings->evpubrec, $jemsettings->autopubl );
 		if ($autopubev || $owneredit) {
 				$row->published = 1 ;
 			} else {
@@ -690,7 +690,7 @@ class JEMModelEditevent extends JModelLegacy
 			$row->datimage = $curimage;
 		}//end image if
 
-		$editoruser = ELUser::editoruser();
+		$editoruser = JEMUser::editoruser();
 
 		if (!$editoruser) {
 			//check datdescription --> wipe out code

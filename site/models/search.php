@@ -405,7 +405,7 @@ class JEMModelSearch extends JModelLegacy
            }
     	
     	
-    	$superuser  = ELUser::superuser();
+    	$superuser  = JEMUser::superuser();
 
 	    $where = ' WHERE c.published = 1 AND c.access <= '.$gid;
 

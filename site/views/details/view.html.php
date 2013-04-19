@@ -104,8 +104,8 @@ class JEMViewDetails extends JViewLegacy
 		$limage = JEMImage::flyercreator($row->locimage, 'venue');
 
 		//Check user if he can edit
-		$allowedtoeditevent = ELUser::editaccess($jemsettings->eventowner, $row->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
-		$allowedtoeditvenue = ELUser::editaccess($jemsettings->venueowner, $row->venueowner, $jemsettings->venueeditrec, $jemsettings->venueedit);
+		$allowedtoeditevent = JEMUser::editaccess($jemsettings->eventowner, $row->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+		$allowedtoeditvenue = JEMUser::editaccess($jemsettings->venueowner, $row->venueowner, $jemsettings->venueeditrec, $jemsettings->venueedit);
 
 		//Timecheck for registration
 		$jetzt = date("Y-m-d");

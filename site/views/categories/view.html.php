@@ -86,8 +86,8 @@ class JEMViewCategories extends JViewLegacy
 		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
 
 		//Check if the user has access to the form
-		$maintainer = ELUser::ismaintainer();
-		$genaccess 	= ELUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
+		$maintainer = JEMUser::ismaintainer();
+		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess ) 
 		{ 

@@ -93,8 +93,8 @@ class JEMViewDay extends JViewLegacy
 		}
 
 		//Check if the user has access to the form
-		$maintainer = ELUser::ismaintainer();
-		$genaccess 	= ELUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
+		$maintainer = JEMUser::ismaintainer();
+		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess ) 
 		{ 

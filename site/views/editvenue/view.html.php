@@ -84,7 +84,7 @@ class JEMViewEditvenue extends JViewLegacy
 		$doc->setTitle($title);
 
 		//editor user
-		$editoruser = ELUser::editoruser();
+		$editoruser = JEMUser::editoruser();
 		
 		//transform <br /> and <br> back to \r\n for non editorusers
 		if (!$editoruser) {

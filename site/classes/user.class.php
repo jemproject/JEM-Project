@@ -28,8 +28,7 @@ defined('_JEXEC') or die;
  * @package JEM
  * @since 0.9
  */
-class ELUser {
-
+class JEMUser {
 	/**
 	 * Checks access permissions of the user regarding on the groupid
 	 *
@@ -40,8 +39,7 @@ class ELUser {
 	 * @param int $level
 	 * @return boolean True on success
 	 */
-static	 function validate_user ( $recurse, $level )
-	{
+	static function validate_user ( $recurse, $level ) {
 		$user 		=  JFactory::getUser();
 
 		//only check when user is logged in
@@ -53,7 +51,7 @@ static	 function validate_user ( $recurse, $level )
 				return true;
 			}
 		//end logged in check
-		} 
+		}
 		//oh oh, user has no permissions
 		return false;
 	}
@@ -70,11 +68,10 @@ static	 function validate_user ( $recurse, $level )
 	 * @param int $level
 	 * @return boolean True on success
 	 */
-static	 function editaccess($allowowner, $ownerid, $recurse, $level)
-	{
+	static function editaccess($allowowner, $ownerid, $recurse, $level) {
 		$user		=  JFactory::getUser();
 
-		$generalaccess = ELUser::validate_user( $recurse, $level );
+		$generalaccess = JEMUser::validate_user( $recurse, $level );
 
 		if ($allowowner == 1 && ( $user->get('id') == $ownerid && $ownerid != 0 ) ) {
 			return true;
@@ -92,10 +89,9 @@ static	 function editaccess($allowowner, $ownerid, $recurse, $level)
 	 * 
 	 * @return boolean True on success
 	 */
-static	 function superuser()
-	{
+	static function superuser() {
 		$user 		=  JFactory::getUser();
-		
+
 		$group_ids = array(
 					24, //administrator
 					25 //super administrator
@@ -113,11 +109,10 @@ static	 function superuser()
 	 * 
 	 * @return boolean True on success
 	 */
-	static	 function editoruser()
-	{
+	static function editoruser() {
 		$user 		=  JFactory::getUser();
 		$userGroups = $user->getAuthorisedGroups();
-		
+
 		$group_ids = array(
  				//	2, // registered
 				//	3, // author
@@ -125,15 +120,14 @@ static	 function superuser()
 					5, // publisher
 					6, // manager
 					7, // administrator
-				   	8, // Super Users
+					8, // Super Users
 					);
 
 		foreach ($userGroups as $gid)	{
 				if (in_array($gid, $group_ids)) return true;
 		}
-		
+
 		return false;
-		
 	}
 
 	/**
@@ -141,8 +135,7 @@ static	 function superuser()
 	 *
 	 * @since 0.9
 	 */
-static	 function ismaintainer()
-	{
+	static function ismaintainer() {
 		//lets look if the user is a maintainer
 		$db 	= JFactory::getDBO();
 		$user	=  JFactory::getUser();

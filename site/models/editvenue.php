@@ -95,7 +95,7 @@ class JEMModelEditvenue extends JModelLegacy
 			}
 
 			//access check
-			$allowedtoeditvenue = ELUser::editaccess($jemsettings->venueowner, $this->_venue->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
+			$allowedtoeditvenue = JEMUser::editaccess($jemsettings->venueowner, $this->_venue->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 
 			if ($allowedtoeditvenue == 0) {
 
@@ -107,7 +107,7 @@ class JEMModelEditvenue extends JModelLegacy
 		} else {
 
 			//access checks
-			$delloclink = ELUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
+			$delloclink = JEMUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
 
 			if ($delloclink == 0) {
 				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
@@ -223,7 +223,7 @@ class JEMModelEditvenue extends JModelLegacy
 		if ($row->id) {
 
 			//check if user is allowed to edit venues
-			$allowedtoeditvenue = ELUser::editaccess($jemsettings->venueowner, $row->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
+			$allowedtoeditvenue = JEMUser::editaccess($jemsettings->venueowner, $row->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 
 			if ($allowedtoeditvenue == 0) {
 				$row->checkin();
@@ -247,7 +247,7 @@ class JEMModelEditvenue extends JModelLegacy
 		} else {
 
 			//check if user is allowed to submit new venues
-			$delloclink = ELUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
+			$delloclink = JEMUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
 
 			if ($delloclink == 0){
 				$app->enqueueMessage( JText::_( 'COM_JEM_NO_ACCESS' ) );
@@ -301,7 +301,7 @@ class JEMModelEditvenue extends JModelLegacy
 		}//end image upload if
 
 		//Check description
-		$editoruser = ELUser::editoruser();
+		$editoruser = JEMUser::editoruser();
 
 		if (!$editoruser) {
 			//check description --> wipe out code
@@ -326,7 +326,7 @@ class JEMModelEditvenue extends JModelLegacy
 
 		//Autopublish
 		//check if the user has the required rank for autopublish
-		$autopublloc = ELUser::validate_user( $jemsettings->locpubrec, $jemsettings->autopublocate );
+		$autopublloc = JEMUser::validate_user( $jemsettings->locpubrec, $jemsettings->autopublocate );
 
 		//Check if user is the owner of the venue
 		//If yes enable autopublish
