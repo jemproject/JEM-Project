@@ -39,8 +39,8 @@ class JEMUser {
 	 * @param int $level
 	 * @return boolean True on success
 	 */
-	static function validate_user ( $recurse, $level ) {
-		$user 		=  JFactory::getUser();
+	static function validate_user($recurse, $level) {
+		$user 		= JFactory::getUser();
 
 		//only check when user is logged in
 		if ( $user->get('id') ) {
@@ -69,7 +69,7 @@ class JEMUser {
 	 * @return boolean True on success
 	 */
 	static function editaccess($allowowner, $ownerid, $recurse, $level) {
-		$user		=  JFactory::getUser();
+		$user		= JFactory::getUser();
 
 		$generalaccess = JEMUser::validate_user( $recurse, $level );
 
@@ -90,13 +90,19 @@ class JEMUser {
 	 * @return boolean True on success
 	 */
 	static function superuser() {
-		$user 		=  JFactory::getUser();
+		$user 		= JFactory::getUser();
+		$userGroups = $user->getAuthorisedGroups();
 
 		$group_ids = array(
-					24, //administrator
-					25 //super administrator
+					7, //administrator
+					8  //super administrator
 					);
-		return in_array($user->get('gid'), $group_ids);
+
+		foreach ($userGroups as $gid) {
+			if (in_array($gid, $group_ids)) return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -110,7 +116,7 @@ class JEMUser {
 	 * @return boolean True on success
 	 */
 	static function editoruser() {
-		$user 		=  JFactory::getUser();
+		$user 		= JFactory::getUser();
 		$userGroups = $user->getAuthorisedGroups();
 
 		$group_ids = array(
@@ -120,11 +126,11 @@ class JEMUser {
 					5, // publisher
 					6, // manager
 					7, // administrator
-					8, // Super Users
+					8  // Super Users
 					);
 
-		foreach ($userGroups as $gid)	{
-				if (in_array($gid, $group_ids)) return true;
+		foreach ($userGroups as $gid) {
+			if (in_array($gid, $group_ids)) return true;
 		}
 
 		return false;
@@ -138,7 +144,7 @@ class JEMUser {
 	static function ismaintainer() {
 		//lets look if the user is a maintainer
 		$db 	= JFactory::getDBO();
-		$user	=  JFactory::getUser();
+		$user	= JFactory::getUser();
 
 		$query = 'SELECT g.group_id'
 				. ' FROM #__jem_groupmembers AS g'
