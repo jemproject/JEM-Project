@@ -42,59 +42,63 @@ class JEMModelImport extends JModelLegacy {
 	}
 
 	/**
-	 * return __jem_events table fields name
-	 *
-	 * @return array
+	 * Get the table fields of the events table
+	 * 
+	 * @return  array  An array with the fields of the events table
 	 */
 	function getEventFields() {
-		$tables = array ('#__jem_events');
-		$tablesfields = $this->_db->getTableFields($tables);
-
-		return array_keys($tablesfields['#__jem_events']);
+		return getFields('#__jem_events');
 	}
 
 	/**
-	*
-	* Return Venue Fields
+	* Get the table fields of the venues table
+	* 
+	* @return  array  An array with the fields of the venues table
 	*/  
 	function getVenueFields() {
-		$tables = array ('#__jem_venues');
-		$tablesfields = $this->_db->getTableFields($tables);
-
-		return array_keys($tablesfields['#__jem_venues']);
+		return getFields('#__jem_venues');
 	}
 
 	/**
-	 * return __jem_categories table fields name
-	 *
-	 * @return array
+	 * Get the table fields of the categories table
+	 * 
+	 * @return  array  An array with the fields of the categories table
 	 */
 	function getCategoryFields() {
-		$tables = array ('#__jem_categories');
-		$tablesfields = $this->_db->getTableFields($tables);
-
-		return array_keys($tablesfields['#__jem_categories']);
+		return getFields('#__jem_categories');
 	}
 
 	/**
-	 * return __jem_categories table fields name
-	 *
-	 * @return array
+	 * Get the table fields of the cats_event_relations table
+	 * 
+	 * @return  array  An array with the fields of the cats_event_relations table
 	 */
 	function getCateventsFields() {
-		$tables = array ('#__jem_cats_event_relations');
+		return getFields('#__jem_cats_event_relations');
+	}
+	
+	/**
+	 * Helper function to return table fields of a given table
+	 * 
+	 * @param   string  $tablename  The name of the table we want to get fields from
+	 * 
+	 * @return  array  An array with the fields of the table
+	 */
+	private function getFields($tablename) {
+		$tables = array ($tablename);
 		$tablesfields = $this->_db->getTableFields($tables);
-
-		return array_keys($tablesfields['#__jem_cats_event_relations']);
+		
+		return array_keys($tablesfields[$tablename]);
 	}
 
 	/**
-	 * import data corresponding to fieldsname into events table
+	 * Import data corresponding to fieldsname into events table
 	 *
-	 * @param array $fieldsname
-	 * @param array $data the records
-	 * @param boolean $replace replace if id already exists
-	 * @return int number of records inserted
+	 * @param   array   $fieldsname  Name of the fields
+	 * @param   array  $data  The records
+	 * @param   boolean  $replace Replace if ID already exists
+	 *
+	 * @return  array  Number of records inserted and updated
 	 */
 	function eventsimport($fieldsname, & $data, $replace = true) {
 		$ignore = array ();
@@ -176,136 +180,55 @@ class JEMModelImport extends JModelLegacy {
 
 
 	/**
-	 * import data corresponding to fieldsname into events table
+	 * Import data corresponding to fieldsname into events table
 	 *
-	 * @param array $fieldsname
-	 * @param array $data the records
-	 * @param boolean $replace replace if id already exists
-	 * @return int number of records inserted
+	 * @param   array   $fieldsname  Name of the fields
+	 * @param   array  $data  The records
+	 * @param   boolean  $replace Replace if ID already exists
+	 *
+	 * @return  array  Number of records inserted and updated
 	 */
 	function categoriesimport($fieldsname, & $data, $replace = true) {
-		$ignore = array ();
-		if (!$replace) {
-			$ignore[] = 'id';
-		}
-		$rec = array ('added' => 0, 'updated' => 0);
-
-		// parse each row
-		foreach ($data AS $row) {
-			$values = array ();
-			// parse each specified field and retrieve corresponding value for the record
-			foreach ($fieldsname AS $k => $field) {
-				$values[$field] = $row[$k];
-			}
-
-			$object = JTable::getInstance('jem_categories', '');
-
-			//print_r($values);exit;
-			$object->bind($values, $ignore);
-
-			if (!$object->check()) {
-				$this->setError($object->getError());
-				echo JText::_('Error check: ').$object->getError()."\n";
-				continue ;
-			}
-
-			// Store it in the db
-			if ($replace) {
-				// We want to keep id from database so first we try to insert into database. if it fails,
-				// it means the record already exists, we can use store().
-				if (!$object->insertIgnore()) {
-					if (!$object->store()) {
-						echo JText::_('Error store: ').$this->_db->getErrorMsg()."\n";
-						continue ;
-					} else {
-						$rec['updated']++;
-					}
-				} else {
-					$rec['added']++;
-				}
-			} else {
-				if (!$object->store()) {
-					echo JText::_('Error store: ').$this->_db->getErrorMsg()."\n";
-					continue ;
-				} else {
-					$rec['added']++;
-				}
-			}
-		}
-
-		return $rec;
+		return import('jem_categories', $fieldsname, $data, $replace);
 	}
 
 	/**
-	 * import data corresponding to fieldsname into events table
+	 * Import data corresponding to fieldsname into events table
 	 *
-	 * @param array $fieldsname
-	 * @param array $data the records
-	 * @param boolean $replace replace if id already exists
-	 * @return int number of records inserted
+	 * @param   array   $fieldsname  Name of the fields
+	 * @param   array  $data  The records
+	 * @param   boolean  $replace Replace if ID already exists
+	 *
+	 * @return  array  Number of records inserted and updated
 	 */
 	function cateventsimport($fieldsname, & $data, $replace = true) {
-		$ignore = array ();
-		if (!$replace) {
-			$ignore[] = 'id';
-		}
-		$rec = array ('added' => 0, 'updated' => 0);
-
-		// parse each row
-		foreach ($data AS $row) {
-			$values = array ();
-			// parse each specified field and retrieve corresponding value for the record
-			foreach ($fieldsname AS $k => $field) {
-				$values[$field] = $row[$k];
-			}
-
-			$object =  JTable::getInstance('jem_cats_event_relations', '');
-
-			//print_r($values);exit;
-			$object->bind($values, $ignore);
-
-			if (!$object->check()) {
-				$this->setError($object->getError());
-				echo JText::_('Error check: ').$object->getError()."\n";
-				continue ;
-			}
-
-			// Store it in the db
-			if ($replace) {
-				// We want to keep id from database so first we try to insert into database. if it fails,
-				// it means the record already exists, we can use store().
-				if (!$object->insertIgnore()) {
-					if (!$object->store()) {
-						echo JText::_('Error store: ').$this->_db->getErrorMsg()."\n";
-						continue ;
-					} else {
-						$rec['updated']++;
-					}
-				} else {
-					$rec['added']++;
-				}
-			} else {
-				if (!$object->store()) {
-					echo JText::_('Error store: ').$this->_db->getErrorMsg()."\n";
-					continue ;
-				} else {
-					$rec['added']++;
-				}
-			}
-		}
-
-		return $rec;
+		return import('jem_cats_event_relations', $fieldsname, $data, $replace);
 	}
 
 	/**
-	 * import data corresponding to fieldsname into events table
+	 * Import data corresponding to fieldsname into events table
 	 *
-	 * @param array $fieldsname
-	 * @param array $data the records
-	 * @param boolean $replace replace if id already exists
-	 * @return int number of records inserted
+	 * @param   array   $fieldsname  Name of the fields
+	 * @param   array  $data  The records
+	 * @param   boolean  $replace Replace if ID already exists
+	 *
+	 * @return  array  Number of records inserted and updated
 	 */
 	function venuesimport($fieldsname, & $data, $replace = true) {
+		return import('jem_venues', $fieldsname, $data, $replace);
+	}
+
+	/**
+	 * Import data corresponding to fieldsname into events table
+	 *
+	 * @param   string  $tablename  Name of the table where to add the data
+	 * @param   array   $fieldsname  Name of the fields
+	 * @param   array  $data  The records
+	 * @param   boolean  $replace Replace if ID already exists
+	 *
+	 * @return  array  Number of records inserted and updated
+	 */
+	private function import($tablename, $fieldsname, & $data, $replace = true) {
 		$ignore = array ();
 		if (!$replace) {
 			$ignore[] = 'id';
@@ -320,7 +243,7 @@ class JEMModelImport extends JModelLegacy {
 				$values[$field] = $row[$k];
 			}
 
-			$object = JTable::getInstance('jem_venues', '');
+			$object = JTable::getInstance($tablename, '');
 
 			//print_r($values);exit;
 			$object->bind($values, $ignore);
@@ -354,7 +277,7 @@ class JEMModelImport extends JModelLegacy {
 				}
 			}
 		}
-
+	
 		return $rec;
 	}
 }
