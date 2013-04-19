@@ -28,7 +28,7 @@ defined( '_JEXEC' ) or die;
 <?php 
 require_once (JPATH_COMPONENT_SITE.DS.'classes'.DS.'calendar.class.php');
 
-$cal = new ELCalendar($this->year, $this->month, $this->day);
+$cal = new JEMCalendar($this->year, $this->month, $this->day);
 $cal->enableMonthNav('index.php?view=categoryevents&layout=calendar&id='. $this->category->slug);
 $cal->setFirstWeekDay(1);
 
