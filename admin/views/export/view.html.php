@@ -55,9 +55,9 @@ class JEMViewExport extends JViewLegacy {
 		JSubMenuHelper::addEntry(JText::_('COM_JEM_ARCHIVESCREEN'), 'index.php?option=com_jem&view=archive');
 		JSubMenuHelper::addEntry(JText::_('COM_JEM_GROUPS'), 'index.php?option=com_jem&view=groups');
 		JSubMenuHelper::addEntry(JText::_('COM_JEM_HELP'), 'index.php?option=com_jem&view=help');
-	//	if($user->get('gid') > 24) {
-	//		JSubMenuHelper::addEntry(JText::_('SETTINGS'), 'index.php?option=com_jem&controller=settings&task=edit');
-	//	}
+        if (JFactory::getUser()->authorise('core.manage'))  {
+			JSubMenuHelper::addEntry(JText::_('SETTINGS'), 'index.php?option=com_jem&controller=settings&task=edit');
+		}
 
 		parent::display($tpl);
 
