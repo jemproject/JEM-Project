@@ -86,7 +86,7 @@ class JEMControllerCategories extends JEMController
 					$link = 'index.php?option=com_jem&view=categories';
 					break;
 			}
-			$msg = JText::_( 'CATEGORY SAVED' );
+			$msg = JText::_( 'COM_JEM_CATEGORY_SAVED' );
 
 			$cache = JFactory::getCache('com_jem');
 			$cache->clean();
@@ -116,7 +116,7 @@ class JEMControllerCategories extends JEMController
 		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
 
 		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseError(500, JText::_( 'Select an item to publish' ) );
+			JError::raiseError(500, JText::_( 'COM_JEM_SELECT_ITEM_TO_PUBLISH' ) );
 		}
 
 		$model = $this->getModel('categories');
@@ -126,7 +126,7 @@ class JEMControllerCategories extends JEMController
 		}
 
 		$total = count( $cid );
-		$msg 	= $total.' '.JText::_( 'CATEGORY PUBLISHED');
+		$msg 	= $total.' '.JText::_( 'COM_JEM_CATEGORY_PUBLISHED');
 
 		$this->setRedirect( 'index.php?option=com_jem&view=categories', $msg );
 	}
@@ -143,7 +143,7 @@ class JEMControllerCategories extends JEMController
 		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
 
 		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseError(500, JText::_( 'Select an item to unpublish' ) );
+			JError::raiseError(500, JText::_( 'COM_JEM_SELECT_ITEM_TO_UNPUBLISH' ) );
 		}
 
 		$model = $this->getModel('categories');
@@ -153,7 +153,7 @@ class JEMControllerCategories extends JEMController
 		}
 
 		$total = count( $cid );
-		$msg 	= $total.' '.JText::_( 'CATEGORY UNPUBLISHED');
+		$msg 	= $total.' '.JText::_( 'COM_JEM_CATEGORY_UNPUBLISHED');
 
 		$this->setRedirect( 'index.php?option=com_jem&view=categories', $msg );
 	}
@@ -220,7 +220,7 @@ class JEMControllerCategories extends JEMController
 		$cid		= JRequest::getVar( 'cid', array(0), 'post', 'array' );
 
 		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseWarning(500, JText::_( 'Select an item to delete' ) );
+			JError::raiseWarning(500, JText::_( 'COM_JEM_SELECT_ITEM_TO_DELETE' ) );
 		}
 
 		$model = $this->getModel('categories');
@@ -302,7 +302,7 @@ class JEMControllerCategories extends JEMController
 
 		// Error if checkedout by another administrator
 		if ($model->isCheckedOut( $user->get('id') )) {
-			$this->setRedirect( 'index.php?option=com_jem&view=categories', JText::_( 'EDITED BY ANOTHER ADMIN' ) );
+			$this->setRedirect( 'index.php?option=com_jem&view=categories', JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ) );
 		}
 
 		$model->checkout();
