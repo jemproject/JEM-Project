@@ -474,7 +474,7 @@ class JEMModelCategoryevents extends JModelLegacy
 		{
 			return JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
 		}
-		$this->_category->attachments = ELAttach::getAttachments('category'.$this->_category->id, $gid);
+		$this->_category->attachments = JEMAttachment::getAttachments('category'.$this->_category->id, $gid);
 
 		return $this->_category;
 	}

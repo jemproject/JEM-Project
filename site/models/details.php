@@ -187,7 +187,7 @@ class JEMModelDetails extends JModelLegacy
               }
 		}
 		
-			$this->_details->attachments = ELAttach::getAttachments('event'.$this->_details->did, $gid);
+			$this->_details->attachments = JEMAttachment::getAttachments('event'.$this->_details->did, $gid);
 			
 			return (boolean) $this->_details;
 		}

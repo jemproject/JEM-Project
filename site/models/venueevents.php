@@ -347,7 +347,7 @@ class JEMModelVenueevents extends JModelLegacy
 		$this->_db->setQuery( $query );
 
 		$_venue = $this->_db->loadObject();
-		$_venue->attachments = ELAttach::getAttachments('venue'.$_venue->id, $gid);
+		$_venue->attachments = JEMAttachment::getAttachments('venue'.$_venue->id, $gid);
 
 		return $_venue;
 	}

@@ -140,7 +140,7 @@ class JEMController extends JControllerLegacy
 	{
 		$id     = JRequest::getVar( 'id', 0, 'request', 'int' );
 
-		$res = ELAttach::remove($id);
+		$res = JEMAttachment::remove($id);
 		if (!$res) {
 			echo 0;
 			exit();

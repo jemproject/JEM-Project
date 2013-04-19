@@ -112,7 +112,7 @@ class JEMModelVenue extends JModelLegacy
 
 			if ($this->_data = $this->_db->loadObject())
 			{
-				$files = ELAttach::getAttachments('venue'.$this->_data->id);
+				$files = JEMAttachment::getAttachments('venue'.$this->_data->id);
 				$this->_data->attachments = $files;
 			}
 			
@@ -332,7 +332,7 @@ class JEMModelVenue extends JModelLegacy
 		$attachments['customname'] = JRequest::getVar( 'attach-name', array(), 'post', 'array' );
 		$attachments['description'] = JRequest::getVar( 'attach-desc', array(), 'post', 'array' );
 		$attachments['access'] = JRequest::getVar( 'attach-access', array(), 'post', 'array' );
-		ELAttach::postUpload($attachments, 'venue'.$row->id);
+		JEMAttachment::postUpload($attachments, 'venue'.$row->id);
 		
 		// and update old ones
 		$attachments = array();
@@ -347,7 +347,7 @@ class JEMModelVenue extends JModelLegacy
 			$attach['name'] = $old['name'][$k];
 			$attach['description'] = $old['description'][$k];
 			$attach['access'] = $old['access'][$k];
-			ELAttach::update($attach);
+			JEMAttachment::update($attach);
 		}
 		
 		return $row->id;

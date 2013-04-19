@@ -444,7 +444,7 @@ class JEMController extends JControllerLegacy
                }
            }
 		
-		$path = ELAttach::getAttachmentPath($id, $gid);
+		$path = JEMAttachment::getAttachmentPath($id, $gid);
 				
 		$mime = JEMHelper::getMimeType($path);
 		
@@ -476,7 +476,7 @@ class JEMController extends JControllerLegacy
 	{
 		$id     = JRequest::getVar( 'id', 0, 'request', 'int' );
 
-		$res = ELAttach::remove($id);
+		$res = JEMAttachment::remove($id);
 		if (!$res) {
 			echo 0;
 			exit();

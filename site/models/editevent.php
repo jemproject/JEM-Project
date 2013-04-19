@@ -213,7 +213,7 @@ class JEMModelEditevent extends JModelLegacy
 					;
 			$this->_db->setQuery($query);
 			$this->_event = $this->_db->loadObject();
-			$this->_event->attachments = ELAttach::getAttachments('event'.$this->_event->id);
+			$this->_event->attachments = JEMAttachment::getAttachments('event'.$this->_event->id);
 
 			return (boolean) $this->_event;
 		}
@@ -777,7 +777,7 @@ class JEMModelEditevent extends JModelLegacy
 		$attachments['customname'] = JRequest::getVar( 'attach-name', array(), 'post', 'array' );
 		$attachments['description'] = JRequest::getVar( 'attach-desc', array(), 'post', 'array' );
 		$attachments['access'] = JRequest::getVar( 'attach-access', array(), 'post', 'array' );
-		ELAttach::postUpload($attachments, 'event'.$row->id);
+		JEMAttachment::postUpload($attachments, 'event'.$row->id);
 		
 		// and update old ones
 		$attachments = array();
@@ -792,7 +792,7 @@ class JEMModelEditevent extends JModelLegacy
 			$attach['name'] = $old['name'][$k];
 			$attach['description'] = $old['description'][$k];
 			$attach['access'] = $old['access'][$k];
-			ELAttach::update($attach);
+			JEMAttachment::update($attach);
 		}
 		
 		return $row->id;

@@ -138,7 +138,7 @@ class JEMModelCategory extends JModelLegacy
 			$this->_data = $this->_db->loadObject();
 			
 			if ($this->_data) {
-				$files = ELAttach::getAttachments('category'.$this->_data->id);
+				$files = JEMAttachment::getAttachments('category'.$this->_data->id);
 				$this->_data->attachments = $files;
 			}
 
@@ -313,7 +313,7 @@ class JEMModelCategory extends JModelLegacy
 		$attachments['customname'] = JRequest::getVar( 'attach-name', array(), 'post', 'array' );
 		$attachments['description'] = JRequest::getVar( 'attach-desc', array(), 'post', 'array' );
 		$attachments['access'] = JRequest::getVar( 'attach-access', array(), 'post', 'array' );
-		ELAttach::postUpload($attachments, 'category'.$row->id);
+		JEMAttachment::postUpload($attachments, 'category'.$row->id);
 		
 		// and update old ones
 		$attachments = array();
@@ -328,7 +328,7 @@ class JEMModelCategory extends JModelLegacy
 			$attach['name'] = $old['name'][$k];
 			$attach['description'] = $old['description'][$k];
 			$attach['access'] = $old['access'][$k];
-			ELAttach::update($attach);
+			JEMAttachment::update($attach);
 		}
 
 		return $row->id;

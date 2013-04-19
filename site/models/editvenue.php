@@ -168,7 +168,7 @@ class JEMModelEditvenue extends JModelLegacy
 
 			$this->_venue = JTable::getInstance('jem_venues', '');
 			$this->_venue->load( $this->_id );
-			$this->_venue->attachments = ELAttach::getAttachments('venue'.$this->_venue->id);
+			$this->_venue->attachments = JEMAttachment::getAttachments('venue'.$this->_venue->id);
 
 			return $this->_venue;
 		}
@@ -356,7 +356,7 @@ class JEMModelEditvenue extends JModelLegacy
 		$attachments['customname'] = JRequest::getVar( 'attach-name', array(), 'post', 'array' );
 		$attachments['description'] = JRequest::getVar( 'attach-desc', array(), 'post', 'array' );
 		$attachments['access'] = JRequest::getVar( 'attach-access', array(), 'post', 'array' );
-		ELAttach::postUpload($attachments, 'venue'.$row->id);
+		JEMAttachment::postUpload($attachments, 'venue'.$row->id);
 		
 		// and update old ones
 		$attachments = array();
@@ -371,7 +371,7 @@ class JEMModelEditvenue extends JModelLegacy
 			$attach['name'] = $old['name'][$k];
 			$attach['description'] = $old['description'][$k];
 			$attach['access'] = $old['access'][$k];
-			ELAttach::update($attach);
+			JEMAttachment::update($attach);
 		}
 		
 		//update item order
