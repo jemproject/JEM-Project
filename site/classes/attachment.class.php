@@ -38,10 +38,12 @@ class JEMAttachment extends JObject {
 	static function postUpload($post_files, $object) {
 		jimport('joomla.filesystem.file');
 		jimport('joomla.filesystem.folder');
+		require_once JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'classes'.DS.'image.class.php';
+		
 		$app = JFactory::getApplication();
 		$user = JFactory::getUser();
 		$params = JComponentHelper::getParams('com_jem');
-		$jemsettings =  JEMHelper::config();
+		$jemsettings = JEMHelper::config();
 
 		$path = JPATH_SITE.DS.$jemsettings->attachments_path.DS.$object;
 
@@ -54,23 +56,21 @@ class JEMAttachment extends JObject {
 			$allowed[$k] = trim($v);
 		}
 
-		$maxsizeinput = $jemsettings->attachments_maxsize;
-		$defaultsize = 1000;
+		$maxsizeinput = $jemsettings->attachments_maxsize*1024; //size in kb
 
-		$maxsize = $maxsizeinput * $defaultsize;
 		foreach ($post_files['name'] as $k => $file) {
 			if (empty($file)) {
 				continue;
 			}
 
-			// check extension
-			$tmp = explode(".", strtolower($file));
-			if (!in_array(end($tmp), $allowed)) {
+			// check if the filetype is valid
+			$fileext = strtolower(JFile::getExt($file));
+			if (!in_array($fileext, $allowed)) {
 				JError::raiseWarning(0, JText::_('COM_JEM_ERROR_ATTACHEMENT_EXTENSION_NOT_ALLOWED').': '.$file);
 				continue;
 			}
 			// check size
-			if ($post_files['size'][$k] > $maxsize) {
+			if ($post_files['size'][$k] > $maxsizeinput) {
 				JError::raiseWarning(0, JText::sprintf('COM_JEM_ERROR_ATTACHEMENT_FILE_TOO_BIG', $file, $post_files['size'][$k], $maxsize));
 				continue;
 			}
@@ -82,14 +82,18 @@ class JEMAttachment extends JObject {
 					JError::raiseWarning(0, JText::_('COM_JEM_ERROR_COULD_NOT_CREATE_FOLDER').': '.$path);
 					return false;
 				}
+
+				// Create an index.html
 				$text = '<html><body bgcolor="#FFFFFF"></body></html>';
 				JFile::write($path.DS.'index.html', $text);
 			}
 
-			JFile::copy($post_files['tmp_name'][$k], $path.DS.$file);
+			// TODO: Probably move this to a helper class
+			$sanitizedFilename = JEMImage::sanitize($path, $file);
+			JFile::copy($post_files['tmp_name'][$k], $path.DS.$sanitizedFilename);
 
 			$table = JTable::getInstance('jem_attachments', '');
-			$table->file = $file;
+			$table->file = $sanitizedFilename;
 			$table->object = $object;
 			if (isset($post_files['customname'][$k]) && !empty($post_files['customname'][$k])) {
 				$table->name = $post_files['customname'][$k];
