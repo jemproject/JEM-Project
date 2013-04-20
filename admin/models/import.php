@@ -47,7 +47,7 @@ class JEMModelImport extends JModelLegacy {
 	 * @return  array  An array with the fields of the events table
 	 */
 	function getEventFields() {
-		return getFields('#__jem_events');
+		return $this->getFields('#__jem_events');
 	}
 
 	/**
@@ -56,7 +56,7 @@ class JEMModelImport extends JModelLegacy {
 	* @return  array  An array with the fields of the venues table
 	*/  
 	function getVenueFields() {
-		return getFields('#__jem_venues');
+		return $this->getFields('#__jem_venues');
 	}
 
 	/**
@@ -65,7 +65,7 @@ class JEMModelImport extends JModelLegacy {
 	 * @return  array  An array with the fields of the categories table
 	 */
 	function getCategoryFields() {
-		return getFields('#__jem_categories');
+		return $this->getFields('#__jem_categories');
 	}
 
 	/**
@@ -74,7 +74,7 @@ class JEMModelImport extends JModelLegacy {
 	 * @return  array  An array with the fields of the cats_event_relations table
 	 */
 	function getCateventsFields() {
-		return getFields('#__jem_cats_event_relations');
+		return $this->getFields('#__jem_cats_event_relations');
 	}
 	
 	/**
@@ -189,7 +189,7 @@ class JEMModelImport extends JModelLegacy {
 	 * @return  array  Number of records inserted and updated
 	 */
 	function categoriesimport($fieldsname, & $data, $replace = true) {
-		return import('jem_categories', $fieldsname, $data, $replace);
+		return $this->import('jem_categories', $fieldsname, $data, $replace);
 	}
 
 	/**
@@ -202,7 +202,7 @@ class JEMModelImport extends JModelLegacy {
 	 * @return  array  Number of records inserted and updated
 	 */
 	function cateventsimport($fieldsname, & $data, $replace = true) {
-		return import('jem_cats_event_relations', $fieldsname, $data, $replace);
+		return $this->import('jem_cats_event_relations', $fieldsname, $data, $replace);
 	}
 
 	/**
@@ -215,7 +215,7 @@ class JEMModelImport extends JModelLegacy {
 	 * @return  array  Number of records inserted and updated
 	 */
 	function venuesimport($fieldsname, & $data, $replace = true) {
-		return import('jem_venues', $fieldsname, $data, $replace);
+		return $this->import('jem_venues', $fieldsname, $data, $replace);
 	}
 
 	/**
