@@ -157,7 +157,7 @@ class JEMViewCategoryevents extends JViewLegacy
 		/*if ($category->image != '') {
 			$category->image = JHTML::image('jem/categories/'.$category->image, $category->catname);
 		}
-		*/
+		
 		if ($category->image != '') {
             $path = "file_path";
             $mediaparams = JComponentHelper::getParams('com_media');
@@ -168,6 +168,9 @@ class JEMViewCategoryevents extends JViewLegacy
 		} else {
 			$category->image = JHTML::image('media/com_jem/images/noimage.png', $category->catname);
 		}
+		*/
+		
+		$cimage = JEMImage::flyercreator($category->image,'category');
 		
 		
 
@@ -175,7 +178,7 @@ class JEMViewCategoryevents extends JViewLegacy
 		$lists	= $this->_buildSortLists($jemsettings);
 		$this->lists			= $lists;
 		$this->action			= $uri->toString();
-
+		$this->cimage				= $cimage;
 		$this->rows				= $rows;
 		$this->noevents			= $noevents;
 		$this->category			= $category;

@@ -96,6 +96,7 @@ class JEMViewCategories extends JViewLegacy
 		$dellink = 0;	
 		}
 		
+		
 		// Create the pagination object
 		jimport('joomla.html.pagination');
 

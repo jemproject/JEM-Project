@@ -22,6 +22,7 @@
 
 // no direct access
 defined( '_JEXEC' ) or die;
+JHTML::_('behavior.modal');
 ?>
 <div id="jem" class="el_categoryevents">
 <p class="buttons">
@@ -44,15 +45,15 @@ defined( '_JEXEC' ) or die;
 <?php endif; ?>
 
 <div class="floattext">
-  <?php if ($this->category->image) : ?>
-	<div class="catimg">
-		<?php echo $this->category->image; ?>
-		
-		
+ 
+ <div class="catimg">
+  <?php //flyer
+	echo JEMOutput::flyer( $this->category, $this->cimage, 'category' );
+	?>
 	</div>
-  <?php endif; ?>
+	
 	<div class="catdescription">
-		<?php echo $this->catdescription; ?>
+		<p><?php echo $this->catdescription; ?></p>
 	</div>
 </div>
 <!--subcategories-->

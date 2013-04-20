@@ -118,7 +118,7 @@ class JEMModelCategories extends JModelLegacy
 			{
 				$category = $this->_categories[$i];
 				
-				if ($category->image != '') {
+		/*		if ($category->image != '') {
 
 					$attribs['width'] = $jemsettings->imagewidth;
 					$attribs['height'] = $jemsettings->imagehight;
@@ -127,7 +127,7 @@ class JEMModelCategories extends JModelLegacy
 				} else {
 					$category->image = JHTML::image('media/com_jem/images/noimage.png', $category->catname);
 				}
-				
+			*/	
 				
 				
 				

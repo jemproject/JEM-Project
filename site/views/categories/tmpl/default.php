@@ -31,6 +31,8 @@ defined( '_JEXEC' ) or die;
 	?>
 </p>
 
+
+
 <?php if ($this->params->def( 'show_page_title', 1 )) : ?>
 	<h1 class="componentheading">
 		<?php echo $this->escape($this->pagetitle); ?>
@@ -44,20 +46,25 @@ defined( '_JEXEC' ) or die;
 		<?php echo JHTML::_('link', JRoute::_($row->linktarget), $this->escape($row->catname)); ?>
 	</h2>
 
-<?php if ($row->image) : ?>
-	<div class="catimg">
+
+	
+	  	<div class="catimg">
+	  	<?php //flyer
+	$cimage = JEMImage::flyercreator($row->image, 'category');
+	echo JEMOutput::flyer( $row, $cimage, 'category' );
+	?>
+	  	
 	  	<?php  		
-			 echo JHTML::_('link', JRoute::_($row->linktarget), $row->image);
+			// echo JHTML::_('link', JRoute::_($row->linktarget), $row->image);
 		?>
 		<p>
 			<?php
-			echo JText::_( 'COM_JEM_EVENTS' ).': ';
-			echo JHTML::_('link', JRoute::_($row->linktarget), $row->assignedevents ? $row->assignedevents : '0');
+	//		echo JText::_( 'COM_JEM_EVENTS' ).': ';
+		//	echo JHTML::_('link', JRoute::_($row->linktarget), $row->assignedevents ? $row->assignedevents : '0');
 			?>
 		</p>
 
 	</div>
-<?php endif; ?>
 
 	<div class="catdescription cat<?php echo $row->id; ?>"><?php echo $row->catdescription ; ?>
 	<p>

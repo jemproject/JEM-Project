@@ -48,7 +48,7 @@ $options = array(
  		if (task == 'cancel') {
  			submitform( task );
  		} else if (form.catname.value == ""){
- 			alert( "<?php echo JText::_ ( 'COM_JEM_ADD_TITLE' ); ?>" );
+ 			alert( "<?php echo JText::_ ( 'COM_JEM_ADD_NAME_CATEGORY' ); ?>" );
  			form.catname.focus();
    		} else {
    			<?php echo $this->editor->save( 'catdescription' ); ?>
