@@ -21,7 +21,7 @@
  */
 
 defined ( '_JEXEC' ) or die;
-
+JHTML::_('behavior.formvalidation');
 
 $options = array(
     'onActive' => 'function(title, description){
@@ -92,7 +92,7 @@ $options = array(
 $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png', JText::_ ( 'COM_JEM_NOTES' ) );
 ?>
 
-<form action="index.php" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
+<form action="index.php" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 <table border="0" width="100%">
 	<tr>
 	<td valign="top">
@@ -105,7 +105,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 					<label for="title"><?php echo JText::_ ( 'COM_JEM_EVENT_TITLE' ) . ':'; ?></label>
 				</td>
 				<td>
-					<input class="inputbox" name="title" value="<?php echo $this->row->title; ?>" size="50" maxlength="100" id="title" />
+					<input class="inputbox required" name="title" value="<?php echo $this->row->title; ?>" size="50" maxlength="100" id="title" />
 				</td>
 				<td>
 					<label for="published"><?php echo JText::_ ( 'COM_JEM_PUBLISHED' ) . ':'; ?></label>
@@ -315,7 +315,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 		$title = JText::_( 'COM_JEM_CATEGORIES' );
 		echo JHtml::_('sliders.panel', $title, 'category');
 		?>
-		<table width="100%"	style="border: 1px dashed silver; padding: 5px; margin-bottom: 10px;">
+		<table style="border: 1px dashed silver; width:100%; padding: 5px; margin-bottom: 10px;">
 			<tr>
 				<td>
 					<strong><?php echo JText::_ ( 'COM_JEM_CATEGORIES' ); ?></strong>
