@@ -156,7 +156,7 @@ $options = array(
 
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=venue'); ?>" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
 
-<table border="0" width="100%">
+<table style="width:100%">
 	<tr>
 		<td valign="top">
 		<?php echo JHtml::_('tabs.start', 'det-pane', $options); ?>

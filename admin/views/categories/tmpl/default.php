@@ -47,8 +47,8 @@ defined('_JEXEC') or die; ?>
 	<table class="adminlist">
 	<thead>
 		<tr>
-			<th width="5%"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-			<th width="5%"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+			<th width="1%"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th width="1%"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="20%"><?php echo JHTML::_('grid.sort', 'COM_JEM_ALIAS', 'c.alias', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
       <th width="10px" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_COLOR' ); ?></th>

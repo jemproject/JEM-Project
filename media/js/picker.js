@@ -2,24 +2,31 @@
  *	Gchats color picker by Majid Khosravi
  *	Copyright (c) 2006 - 2008 Gchat Design Studio
  *	URL: http://www.gchats.com
- *	Date: April 24 2008
+ *	Last Updated: August 29 2009
  *  Gchats color picker is freely distributable under the terms of GPL license.
  *  Please visit: http://www.gchats.com for updates
- *  @Version 1.1
+ *  @Version 1.2
  *--------------------------------------------------------------------------*/
 // JavaScript Document
 var layerWidth = 218;
 var layerHeight = 144;
 var currentId = "";
 var orgColor ="";
-function openPicker(id, offsetX, offsetY){
-  if (offsetX == null) offsetX=0;
-  if (offsetY == null) offsetY=0;
+var onPick = undefined;
+var onCancel = undefined;
+function openPicker(id, _onPick, _onCancel) {
+	if (_onPick) {
+		onPick = _onPick;
+	}
+	if (_onCancel) {
+		onCancel = _onCancel;
+    }	
 	currentId = id;
 	removeLayer("picker");
 	Obj = document.getElementById(id);
+	
 	orgColor = Obj.value;
-	createLayer("picker",findPosX(Obj)+Obj.offsetWidth+offsetX,findPosY(Obj)+offsetY);
+	createLayer("picker",findPosX(Obj)+Obj.offsetWidth+20,findPosY(Obj));
 }
 
 function createLayer(id,left,top){
@@ -89,13 +96,18 @@ function setClr(color){
 	Obj.style.backgroundColor=color;	
 	currentId = "";
 	removeLayer("picker");
-	
+	if (onPick) {
+		onPick();
+    }	
 }
 function cancel(){
 	Obj = document.getElementById(currentId);
 	Obj.value = orgColor;
 	Obj.style.backgroundColor=orgColor;	
 	removeLayer("picker");
+    if (onCancel) {
+		onCancel();
+    }
 }
 function removeLayer(id){
 	if(document.getElementById(id) ==null){

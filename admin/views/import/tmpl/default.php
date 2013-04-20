@@ -40,7 +40,7 @@ defined('_JEXEC') or die;
 				<?php echo JText::_("COM_JEM_IMPORT_CATEGORIES_DESC"); ?>
 			</li>
 			<li>
-				<?php echo JText::_( "IMPORT POSSIBLECOLUMNS" );?><p>
+				<?php echo JText::_( "COM_JEM_IMPORT_POSSIBLECOLUMNS" );?><p>
 				<?php echo 'categories, ' . implode(", ",$this->eventfields); ?></p>
 			</li>
 		</ul>
