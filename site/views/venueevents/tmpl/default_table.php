@@ -41,7 +41,7 @@ defined( '_JEXEC' ) or die;
 		<div class="el_fleft">
 			<?php
 			echo '<label for="filter_type">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
-			echo $this->lists['filter_types'].'&nbsp;';
+			echo $this->lists['filter_type'].'&nbsp;';
 			?>
 			<input type="text" name="filter" id="filter" value="<?php echo $this->lists['filter'];?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
 			<button class="regular" onclick="document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>

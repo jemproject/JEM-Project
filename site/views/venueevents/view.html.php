@@ -229,19 +229,30 @@ class JEMViewVenueevents extends JViewLegacy
 		$filter				= $this->escape(JRequest::getString('filter'));
 		$filter_type		= JRequest::getString('filter_type');
 
-		if ($jemsettings->showcat) {
-			$sortselects = array();
+		$sortselects = array();
+		
+		if ($jemsettings->showtitle == 1) {
 			$sortselects[]	= JHTML::_('select.option', 'title', $jemsettings->titlename );
-			$sortselects[] 	= JHTML::_('select.option', 'type', $jemsettings->catfroname );
-			$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
-		} else {
-			$sortselect = '';
 		}
+		if ($jemsettings->showlocate == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'venue', $jemsettings->locationname );
+		}
+		if ($jemsettings->showcity == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'city', $jemsettings->cityname );
+		}
+		if ($jemsettings->showcat == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'type', $jemsettings->catfroname );
+		}
+		if ($jemsettings->showstate == 1) {
+			$sortselects[] 	= JHTML::_('select.option', 'state', $jemsettings->statename );
+		}
+
+		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
 
 		$lists['order_Dir'] 	= $filter_order_Dir;
 		$lists['order'] 		= $filter_order;
 		$lists['filter'] 		= $filter;
-		$lists['filter_types'] 	= $sortselect;
+		$lists['filter_type'] 	= $sortselect;
 
 		return $lists;
 	}

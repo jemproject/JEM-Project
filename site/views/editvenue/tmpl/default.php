@@ -118,6 +118,11 @@ defined( '_JEXEC' ) or die;
   			validator.handleResponse(false,form.city);
   			form.city.focus();
   			return false;
+		} else if ( validator.validate(form.plz) === false) {
+  			alert("<?php echo JText::_( 'COM_JEM_ADD_ZIP', true ); ?>");
+  			validator.handleResponse(false,form.plz);
+  			form.plz.focus();
+  			return false;
 		} else if ( validator.validate(form.country) === false) {
    			alert("<?php echo JText::_( 'COM_JEM_ERROR_ADD_COUNTRY', true ); ?>");
    			validator.handleResponse(false,form.country);

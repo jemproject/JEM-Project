@@ -211,7 +211,7 @@ class JEMModelVenueevents extends JModelLegacy
 
 		//Get Events from Database
 		$query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.datdescription, a.created, '
-		    . ' l.venue, l.city, l.state, l.url, l.street, ct.name AS countryname, '
+		    . ' l.venue, l.city, l.state, l.url, l.street, c.catname, ct.name AS countryname, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 				. ' FROM #__jem_events AS a'
@@ -302,14 +302,25 @@ class JEMModelVenueevents extends JModelLegacy
 
 				switch ($filter_type)
 				{
-					case 'type' :
-						$where .= ' AND LOWER( c.catname ) LIKE '.$filter;
-						break;
-
 					case 'title' :
-					default:
 						$where .= ' AND LOWER( a.title ) LIKE '.$filter;
 						break;
+
+					case 'venue' :
+						$where .= ' AND LOWER( l.venue ) LIKE '.$filter;
+						break;
+
+					case 'city' :
+						$where .= ' AND LOWER( l.city ) LIKE '.$filter;
+						break;
+						
+					case 'type':
+                        $where .= ' AND LOWER( c.catname ) LIKE '.$filter;
+                        break;
+                        
+                    case 'state':
+                        $where .= ' AND LOWER( l.state ) LIKE '.$filter;
+                        break;    	
 					
 				}
 
