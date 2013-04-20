@@ -50,41 +50,26 @@ foreach($this->categories as $category) :
 
 <div class="cat<?php echo $category->id; ?> floattext">
 
-<?php if ($category->image) { ?>
-	<div class="catimg">
-	  	<?php
-	  		
-	  		$jemsettings 	=  JEMHelper::config();
-	  		if ($category->image != '') {
-            $path = "file_path";
-            $mediaparams = JComponentHelper::getParams('com_media');
-            $imgattribs['width'] = $jemsettings->imagewidth;
-			$imgattribs['height'] = $jemsettings->imagehight;
 
-			$category->image = JHTML::image($mediaparams->get($path, 'images').'/jem/categories/'.$category->image, $category->catname, $imgattribs);
-		} else {
-			$category->image = JHTML::image('media/com_jem/images/noimage.png', $category->catname);
-		}
-	  		//echo $category->image;
-	  		echo JHTML::_('link', JRoute::_($category->linktarget), $category->image);
-		?>
-		<p>
-			<?php
-				echo JText::_( 'COM_JEM_EVENTS' ).': ';
-				echo JHTML::_('link', JRoute::_($category->linktarget), $category->assignedevents ? $category->assignedevents : '0');
-			?>
-		</p>
-	</div>
-<?php } else {; ?>
 
 <div class="catimg">
-<?php 
-$category->image = JHTML::image('media/com_jem/images/noimage.png', $category->catname);
-echo JHTML::_('link', JRoute::_($category->linktarget), $category->image);
-?>
+	  	<?php //flyer
+	
+	if (empty($category->image)) {
 
+    $jemsettings =  JEMHelper::config();
+    $imgattribs['width'] = $jemsettings->imagewidth;
+    $imgattribs['height'] = $jemsettings->imagehight;
+
+	echo  JHTML::image('media/com_jem/images/noimage.png', $category->catname, $imgattribs);
+	}else{
+	
+	$cimage = JEMImage::flyercreator($category->image, 'category');
+	echo JEMOutput::flyer( $category, $cimage, 'category' );
+	
+	}
+	?>
 </div>
-<?php } ?>
 
 
 

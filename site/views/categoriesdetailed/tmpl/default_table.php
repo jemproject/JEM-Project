@@ -83,7 +83,7 @@ defined( '_JEXEC' ) or die;
 		$this->rows = $this->getRows();
 		if (!$this->rows) :
 		?>
-		<tr class="no_events"><td colspan="0"><?php echo JText::_( 'COM_JEM_NO_EVENTS' ); ?></td></tr>
+		<tr class="no_events"><td colspan="20"><?php echo JText::_( 'COM_JEM_NO_EVENTS' ); ?></td></tr>
 		<?php
 		else :
 

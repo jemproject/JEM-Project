@@ -91,7 +91,7 @@ class JEMViewDetails extends JViewLegacy
 
 		//pathway
 		$cats		= new JEMCategories($cid);
-    $parents	= $cats->getParentlist();
+        $parents	= $cats->getParentlist();
 		$pathway 	=  $app->getPathWay();
 		$pathway->setItemName( 1, $item->title );
 		foreach($parents as $parent) {
@@ -100,6 +100,7 @@ class JEMViewDetails extends JViewLegacy
 		$pathway->addItem( $this->escape($row->title), JRoute::_( JEMHelperRoute::getRoute($row->slug) ));
 		
 		//Get images
+		
 		$dimage = JEMImage::flyercreator($row->datimage, 'event');
 		$limage = JEMImage::flyercreator($row->locimage, 'venue');
 

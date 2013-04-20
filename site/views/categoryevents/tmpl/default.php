@@ -48,7 +48,17 @@ JHTML::_('behavior.modal');
  
  <div class="catimg">
   <?php //flyer
+	
+	if (empty($this->category->image)) {
+		$jemsettings =  JEMHelper::config();
+		$imgattribs['width'] = $jemsettings->imagewidth;
+		$imgattribs['height'] = $jemsettings->imagehight;
+		
+   echo  JHTML::image('media/com_jem/images/noimage.png', $this->category->catname, $imgattribs);
+	}else{
+	
 	echo JEMOutput::flyer( $this->category, $this->cimage, 'category' );
+	}
 	?>
 	</div>
 	

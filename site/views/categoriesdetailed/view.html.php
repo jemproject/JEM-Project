@@ -112,6 +112,9 @@ class JEMViewCategoriesdetailed extends JViewLegacy
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
 
+		
+		
+		
 
 		// Create the pagination object
 		jimport('joomla.html.pagination');
