@@ -240,6 +240,16 @@ class JEMModelVenues extends JModelLegacy
 		if ($search && $filter == 2) {
 			$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
 		}
+		
+		/*
+		 * Search state
+		*/
+		if ($search && $filter == 3) {
+			$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
+		}
+		
+		
+		
 
 		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
 

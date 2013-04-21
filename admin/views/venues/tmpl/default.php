@@ -46,6 +46,7 @@ defined('_JEXEC') or die;
 			<th width="20%"><?php echo JHTML::_('grid.sort', 'COM_JEM_ALIAS', 'l.alias', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th><?php echo JText::_( 'COM_JEM_WEBSITE' ); ?></th>
 			<th><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 			<th><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
 			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_EVENTS' ); ?></th>
@@ -114,6 +115,7 @@ defined('_JEXEC') or die;
 				?>
 			</td>
 			<td align="left"><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+			<td align="left"><?php echo $row->state ? htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
 			<td align="center"><?php echo $published; ?></td>
 			<td>
 				<?php echo JText::_( 'COM_JEM_AUTHOR' ).': '; ?><a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>"><?php echo $row->author; ?></a><br />

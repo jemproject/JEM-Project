@@ -52,6 +52,7 @@ defined('_JEXEC') or die;
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'loc.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th><?php echo JText::_( 'COM_JEM_CATEGORIES' ); ?></th>
 			    <th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 				<th class="title"><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
@@ -160,6 +161,7 @@ defined('_JEXEC') or die;
 					?>
 				</td>
 				<td><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+				<td><?php echo $row->state ? htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
 				<td>
 				<?php
 				$nr = count($row->categories);
