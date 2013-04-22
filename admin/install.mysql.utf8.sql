@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
 `waitinglist` tinyint(1) NOT NULL default '0',
 `hits` int(11) unsigned NOT NULL default '0',
 `published` tinyint(1) NOT NULL default '0',
+`contactid` tinyint(4) NOT NULL default '0',
 PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 

@@ -101,9 +101,10 @@ class JEMModelEvent extends JModelLegacy
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
 		{
-			$query = 'SELECT e.*, v.venue'
+			$query = 'SELECT e.*, v.venue, con.name AS contactname'
 					. ' FROM #__jem_events AS e'
 					. ' LEFT JOIN #__jem_venues AS v ON v.id = e.locid'
+					. ' LEFT JOIN #__contact_details AS con ON con.id = e.contactid'
 					. ' WHERE e.id = '.$this->_id
 					;
 			$this->_db->setQuery($query);

@@ -167,6 +167,41 @@ JHTML::_('behavior.modal');
   		</div>
   	<?php endif; ?>
 
+  	
+  	<!--  	Contact  --> 	
+  <?php if ($this->row->conid != 0) : ?>
+  
+  <h2 class="contact">
+			<?php echo JText::_( 'COM_JEM_CONTACT' ) ; ?>
+		</h2>
+  
+  
+  	<dl class="location floattext">
+  	<?php if ( $this->row->conname ) : ?>
+  				<dt class="con_name"><?php echo JText::_( 'COM_JEM_NAME' ).':'; ?></dt>
+				<dd class="con_name">
+    				<?php echo $this->escape($this->row->conname); ?>
+				</dd>
+				<?php endif; ?>
+				
+				<?php if ( $this->row->conemail ) : ?>
+  				<dt class="con_email"><?php echo JText::_( 'COM_JEM_EMAIL' ).':'; ?></dt>
+				<dd class="con_email">
+    				<?php echo $this->escape($this->row->conemail); ?>
+				</dd>
+				<?php endif; ?>
+				
+				<?php if ( $this->row->contelephone ) : ?>
+  				<dt class="con_telephone"><?php echo JText::_( 'COM_JEM_TELEPHONE' ).':'; ?></dt>
+				<dd class="con_telephone">
+    				<?php echo $this->escape($this->row->contelephone); ?>
+				</dd>
+				<?php endif; ?>
+  	</dl>
+  
+  	<?php endif ?>
+  	
+  	
 <!--  	Venue  -->
 
 	<?php if ($this->row->locid != 0) : ?>

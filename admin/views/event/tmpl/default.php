@@ -41,8 +41,8 @@ $options = array(
 <script type="text/javascript">
 
 	window.addEvent('domready', function() {  
-   		var hits = new eventscreen('hits', {id:<?php echo $this->row->id ? $this->row->id : 0; ?>, task:'gethits'});
-    	hits.fetchscreen();
+   		/*var hits = new eventscreen('hits', {id:<?php echo $this->row->id ? $this->row->id : 0; ?>, task:'gethits'});*/
+    	/*hits.fetchscreen();*/
 
     	$('maxplaces').addEvent('change', function(){
         if ($('event-available')) {                
@@ -93,7 +93,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 ?>
 
 <form action="index.php" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
-<table border="0" width="100%">
+<table style="width:100%">
 	<tr>
 	<td valign="top">
 		<?php echo JHtml::_('tabs.start','event-pane',$options); ?>
@@ -228,8 +228,8 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 			echo JHtml::_('sliders.start', 'det-pane', $options);
 			echo JHtml::_('sliders.panel', $title, 'date');
 			?>
-		<table width="100%"
-			style="border: 1px dashed silver; padding: 5px; margin-bottom: 10px;">
+		<table 
+			style="border: 1px dashed silver; width:100%; padding: 5px; margin-bottom: 10px;">
 			<?php if ($this->row->id) { ?>
 			<tr>
 				<td>
@@ -256,7 +256,8 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 				</td>
 			<td>
 			
-				<input class="inputbox" name="hits" value="<?php echo $this->row->hits; ?>" size="10" maxlength="10" id="hits" />
+				<input class="inputbox" name="hits" value="<?php echo $this->row->hits; ?>" size="10" maxlength="10" id="a_hits" />
+				<?php echo $this->resethits; ?>
 				</td>
 			</tr>
 			
@@ -330,8 +331,24 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 		</table>
 		
 		<?php
-		$title2 = JText::_( 'COM_JEM_REGISTRATION' );
-		echo JHtml::_('sliders.panel', $title2, 'registra');
+		$title2 = JText::_( 'COM_JEM_CONTACT' );
+		echo JHtml::_('sliders.panel', $title2, 'contact');
+		?>
+		<table>
+		<tr>
+				<td>
+					<label for="contactid"><?php echo JText::_ ( 'COM_JEM_CONTACT' ) . ':'; ?></label>
+				</td>
+				<td colspan="3">
+					<?php echo $this->contactselect; ?>
+				</td>
+			</tr>	
+		</table>
+
+		
+		<?php
+		$title3 = JText::_( 'COM_JEM_REGISTRATION' );
+		echo JHtml::_('sliders.panel', $title3, 'registra');
 		?>
 		<table>
 			<tr>
@@ -393,8 +410,8 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 		</table>
 		
 		<?php
-		$title2 = JText::_( 'COM_JEM_IMAGE' );
-		echo JHtml::_('sliders.panel', $title2, 'image');
+		$title4 = JText::_( 'COM_JEM_IMAGE' );
+		echo JHtml::_('sliders.panel', $title4, 'image');
 		?>
 		<table>
 			<tr>
@@ -423,10 +440,10 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 			
 		<?php
 		
-		$title4 = JText::_( 'COM_JEM_RECURRING_EVENTS' );
-		echo JHtml::_('sliders.panel', $title4, 'recurrence');
+		$title5 = JText::_( 'COM_JEM_RECURRING_EVENTS' );
+		echo JHtml::_('sliders.panel', $title5, 'recurrence');
 		?>
-		<table width="100%" style="height:200px;">
+		<table style="height:200px;width:100%">
 			<tr>
 				<td width="40%">
 					<?php echo JText::_ ( 'COM_JEM_RECURRENCE' ); ?>:
@@ -495,8 +512,8 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 			</script>
 			
 			<?php
-			$title5 = JText::_( 'COM_JEM_METADATA_INFORMATION' );
-			echo JHtml::_('sliders.panel', $title5, 'meta');
+			$title6 = JText::_( 'COM_JEM_METADATA_INFORMATION' );
+			echo JHtml::_('sliders.panel', $title6, 'meta');
 			?>
 			<table>
 			<tr>

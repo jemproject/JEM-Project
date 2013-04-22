@@ -545,6 +545,7 @@ if (!$freshinstall) // update only if not fresh install
      
      // first get tables to be checked for update
 	$tables = array( '#__jem_settings',
+					'#__jem_events',
                );
 	$tables = $db->getTableFields($tables, false);
 	
@@ -570,6 +571,40 @@ if (!$freshinstall) // update only if not fresh install
         $status->updates[$i][] = array ('message'=>'Adding new fields to settings table', 'result'=>'success');
     }
 	}	
+	
+	
+	// update events table
+	$cols2 = $tables['#__jem_events'];
+	
+	if (!array_key_exists('contactid', $cols2)) // remove the '&& 0'...
+	{
+    //update table
+    $query = ' ALTER TABLE #__jem_events'
+           . ' ADD `contactid` TINYINT( 4 ) NOT NULL DEFAULT "0" '
+           ;
+
+    $db->setQuery($query);
+  
+    
+    if (!$db->query())
+    {
+        $status->updates[$i][] = array ('message'=>'Adding contactid to events table', 'result'=>'failed');
+    } else
+    {
+        $status->updates[$i][] = array ('message'=>'Adding contactid to events table', 'result'=>'success');
+    }
+	
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	//END TODO comment, delete with public release 
 	

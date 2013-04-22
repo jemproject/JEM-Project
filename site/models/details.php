@@ -153,12 +153,12 @@ class JEMModelDetails extends JModelLegacy
 			// Get the WHERE clause
 			$where	= $this->_buildDetailsWhere();
 
-			$query = 'SELECT a.id AS did, a. published, a.dates, a.enddates, a.title, a.times, a.endtimes, '
+			$query = 'SELECT a.id AS did, a. published, a.contactid, a.dates, a.enddates, a.title, a.times, a.endtimes, '
 			    . ' a.datdescription, a.meta_keywords, a.meta_description, a.unregistra, a.locid, a.created_by, '
 			    . ' a.datimage, a.registra, a.maxplaces, a.waitinglist, '
 					. ' l.id AS locid, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, l.city, l.plz, l.street, l.country, ct.name AS countryname, l.map, l.created_by AS venueowner, l.latitude, l.longitude,'
 					. ' c.access AS cataccess, c.id AS catid, c.published AS catpublished,'
-					. ' u.name AS creator_name, u.username AS creator_username,'
+					. ' u.name AS creator_name, u.username AS creator_username, con.id AS conid, con.name AS conname, con.telephone AS contelephone, con.email_to AS conemail,'
 					. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 					. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 //					. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as categoryslug'
@@ -167,6 +167,7 @@ class JEMModelDetails extends JModelLegacy
 					. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
 					. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
 					. ' LEFT JOIN #__users AS u ON u.id = a.created_by'
+					. ' LEFT JOIN #__contact_details AS con ON con.id = a.contactid'
 					. ' LEFT JOIN #__jem_countries AS ct ON ct.iso2 = l.country '
 					. $where
 					. ' GROUP BY a.id '

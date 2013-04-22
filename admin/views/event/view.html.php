@@ -51,7 +51,7 @@ class JEMViewEvent extends JViewLegacy {
 		$document	=  JFactory::getDocument();
 		$user 		=  JFactory::getUser();
 		$jemsettings = JEMAdmin::config();
-		$acl		=  JFactory::getACL();
+		/*$acl		=  JFactory::getACL();*/
 		
 		$nullDate 		= $db->getNullDate();
 
@@ -128,6 +128,10 @@ class JEMViewEvent extends JViewLegacy {
 			window.parent.SqueezeBox.close();
 		}";
 
+		
+		$linkcsel = 'index.php?option=com_jem&amp;view=contactelement&amp;tmpl=component';
+		$linkcadd = 'index.php?option=com_jem&amp;task=addcontact&amp;tmpl=component';
+		
 		$linkvsel = 'index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component';
 		$linkvadd = 'index.php?option=com_jem&amp;task=addvenue&amp;tmpl=component';
 		$document->addScriptDeclaration($js);
@@ -140,6 +144,25 @@ class JEMViewEvent extends JViewLegacy {
 		$venueselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"window.open('$linkvadd', 'popup', 'width=750,height=400,scrollbars=yes,toolbar=no,status=no,resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')\" value=\"".JText::_('COM_JEM_ADD')."\" />";
 		$venueselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectVenue(0, '".JText::_('COM_JEM_NO_VENUE')."' );\" value=\"".JText::_('COM_JEM_NO_VENUE')."\" onblur=\"seo_switch()\" />";
 
+		
+		
+		
+		// build venue select js and load the view
+		$js = "
+		function elSelectContact(id, contactid) {
+			document.getElementById('a_id2').value = id;
+			document.getElementById('a_name2').value = contactid;
+			window.parent.SqueezeBox.close();
+		}";
+		
+		$document->addScriptDeclaration($js);
+		
+		$contactselect = "\n<div style=\"float: left;\"><input style=\"background: #ffffff;\" type=\"text\" id=\"a_name2\" value=\"$row->contactname\" disabled=\"disabled\" /></div>";
+		$contactselect .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_SELECT')."\" href=\"$linkcsel\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_SELECT')."</a></div></div>\n";
+		$contactselect .= "\n<input type=\"hidden\" id=\"a_id2\" name=\"contactid\" value=\"$row->contactid\" />";
+		$contactselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectContact(0, '".JText::_('COM_JEM_NO_CONTACT')."' );\" value=\"".JText::_('COM_JEM_NO_CONTACT')."\" onblur=\"seo_switch()\" />";
+		
+		
 		//build image select js and load the view
 		$js = "
 		function elSelectImage(image, imagename) {
@@ -160,6 +183,17 @@ class JEMViewEvent extends JViewLegacy {
 		$imageselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectImage('', '".JText::_('COM_JEM_SELECTIMAGE')."' );\" value=\"".JText::_('COM_JEM_RESET')."\" />";
 		$imageselect .= "\n<input type=\"hidden\" id=\"a_image\" name=\"datimage\" value=\"$row->datimage\" />";
 		
+		
+		$js = "
+		function elResetHits(id) {
+			document.getElementById('a_hits').value = id;
+		}";
+		
+		$document->addScriptDeclaration($js);
+		
+		$resethits = "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elResetHits(0, '".JText::_('COM_JEM_NO_HITS')."' );\" value=\"".JText::_('COM_JEM_NO_HITS')."\" onblur=\"seo_switch()\" />";
+		
+		
 		// recurrence type
 		$rec_type = array();
 		$rec_type[] = JHTML::_('select.option', 0, JText::_ ( 'COM_JEM_NOTHING' ));
@@ -176,6 +210,8 @@ class JEMViewEvent extends JViewLegacy {
 		$this->row 			= $row;
 		$this->imageselect 	= $imageselect;
 		$this->venueselect 	= $venueselect;
+		$this->resethits = $resethits;
+		$this->contactselect 	= $contactselect;
 		$this->editor 		= $editor;
 		$this->task 		= $task;
 		$this->nullDate 	= $nullDate;
