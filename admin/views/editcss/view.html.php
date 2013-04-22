@@ -49,7 +49,7 @@ class JEMViewEditcss extends JViewLegacy {
 
 		//get vars
 		$filename	= 'jem.css';
-		$path		= JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'assets'.DS.'css';
+		$path		= JPATH_SITE.DS.'media'.DS.'com_jem'.DS.'css';
 		$css_path	= $path.DS.$filename;
 
 		//create the toolbar

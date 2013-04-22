@@ -57,7 +57,7 @@ defined('_JEXEC') or die;
 
 	<tfoot>
 		<tr>
-			<td colspan="12">
+			<td colspan="20">
 				<?php echo $this->pagination->getListFooter(); ?>
 			</td>
 		</tr>

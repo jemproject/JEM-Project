@@ -17,7 +17,6 @@
 		<filename>router.php</filename>
 		<filename>LICENSE.php</filename>
 
-		<folder>assets</folder>
 		<folder>classes</folder>
 		<folder>helpers</folder>
 		<folder>models</folder>
@@ -68,7 +67,6 @@
 			<filename>uninstall.mysql.utf8.sql</filename>
 
 			<folder>classes</folder>
-			<folder>assets</folder>
 			<folder>help</folder>
 			<folder>views</folder>
 			<folder>models</folder>

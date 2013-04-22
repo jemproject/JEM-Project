@@ -74,7 +74,7 @@ class JEMController extends JControllerLegacy
 		JClientHelper::setCredentialsFromRequest('ftp');
 		$ftp = JClientHelper::getCredentials('ftp');
 		
-		$file = JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'assets'.DS.'css'.DS.$filename;
+		$file = JPATH_SITE.DS.'media'.DS.'com_jem'.DS.'css'.DS.$filename;
 		
 		// Try to make the css file writeable
 		if (!$ftp['enabled'] && JPath::isOwner($file) && !JPath::setPermissions($file, '0755')) {
