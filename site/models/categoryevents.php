@@ -79,12 +79,26 @@ class JEMModelCategoryevents extends JModelLegacy
 
 		$app =  JFactory::getApplication();
 
-		$id = JRequest::getInt('id');
-		$this->setId((int)$id);
+		
+		
+		
+		
 
 		// Get the paramaters of the active menu item
 		$params 	=  $app->getParams();
-
+		
+		if (!$params->get('id'))
+		{
+			$id = JRequest::getVar('id');
+		}else
+		{
+			$id = $params->get('id');
+		}
+		
+		$this->setId((int)$id);
+		
+		
+		
 		//get the number of events from database
 		$limit       	= $app->getUserStateFromRequest('com_jem.categoryevents.limit', 'limit', $params->def('display_num', 0), 'int');
 		$limitstart		= JRequest::getInt('limitstart');

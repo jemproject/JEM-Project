@@ -10,16 +10,10 @@
 		<description>COM_JEM_CATEGORYEVENTS_LAYOUT_DESC</description>
 	
 		<config>
-		<fields name="request" addfieldpath="/administrator/components/com_jem/models/fields"><fieldset name="request" label="basic">
-			<field name="id" type="categories" default="0" label="COM_JEM_SELECT_CATEGORY" description="COM_JEM_SELECT_CATEGORY_DESC" />
+		<fields name="params"><fieldset name="basic" label="basic">
+			<field name="id" type="categories" default="0" label="COM_JEM_SELECT_CATEGORY" description="COM_JEM_SELECT_CATEGORY_DESC" addfieldpath="/administrator/components/com_jem/models/fields" />
 	
-
-		
       <field name="displayChilds" type="radio" default="0" label="COM_JEM_DISPLAYCHILDS" description="COM_JEM_DISPLAYCHILDSDESC">
-        <option value="0">JNo</option>
-        <option value="1">JYes</option>
-      </field>
-      <field name="show_empty" type="radio" default="0" label="COM_JEM_SHOWEMPTYCHILD" description="COM_JEM_SHOWEMPTYCHILDDESC">
         <option value="0">JNo</option>
         <option value="1">JYes</option>
       </field>
