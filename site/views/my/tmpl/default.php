@@ -22,7 +22,7 @@
 
 defined( '_JEXEC' ) or die;
 ?>
-<div id="jem" class="el_jem">
+<div id="jem" class="jem_jem">
 
 <?php if ($this->params->def( 'show_page_title', 1 )) : ?>
 

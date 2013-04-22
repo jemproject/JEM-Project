@@ -23,7 +23,7 @@
 // no direct access
 defined( '_JEXEC' ) or die;
 ?>
-<div id="jem" class="el_categoriesview">
+<div id="jem" class="jem_categories_view">
 	<p class="buttons">
 		<?php
 		echo JEMOutput::submitbutton( $this->dellink, $this->params );

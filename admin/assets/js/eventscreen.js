@@ -49,7 +49,7 @@ fetchscreen: function( name, options )
                         dooptions = options;
                 }
                
-                var loader_html = '<p class="el_centerimg"><img src="media/com_jem/images/ajax-loader.gif" align="center"></p>';
+                var loader_html = '<p class="jem_centering"><img src="media/com_jem/images/ajax-loader.gif" align="center"></p>';
                 var url_to_load = this.options.script_url + "&task=" + this.options.task + "&id=" + this.options.id;
                
                 if (MooTools.version>='1.2.4') {
