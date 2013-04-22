@@ -179,7 +179,7 @@ defined( '_JEXEC' ) or die;
 </script>
 
 
-<div id="jem" class="el_editvenue">
+<div id="jem" class="jem_editvenue">
 
     <?php if ($this->params->def( 'show_page_title', 1 )) : ?>
     <h1 class="componentheading">
@@ -195,7 +195,7 @@ defined( '_JEXEC' ) or die;
 
     <form enctype="multipart/form-data" id="adminForm" action="<?php echo JRoute::_('index.php') ?>" method="post" class="form-validate">
 
-        <div class="el_save_buttons floattext">
+        <div class="jem_save_buttons floattext">
   			<button type="button" class="positive" onclick="return submitbutton('savevenue')">
   				<?php echo JText::_('COM_JEM_SAVE'); ?>
   			</button>
@@ -206,41 +206,41 @@ defined( '_JEXEC' ) or die;
 
 		 <p class="clear"></p>
 
-      	<fieldset class="el_fldst_address">
+      	<fieldset class="jem_fldst_address">
 
             <legend><?php echo JText::_('COM_JEM_ADDRESS'); ?></legend>
 
-            <div class="el_venue floattext">
+            <div class="jem_venue floattext">
                 <label for="venue"><?php echo JText::_( 'COM_JEM_VENUE' ).':'; ?></label>
                 <input class="inputbox required" type="text" name="venue" id="venue" value="<?php echo $this->row->venue; ?>" size="55" maxlength="50" />
             </div>
 
-            <div class="el_street floattext">
+            <div class="jem_street floattext">
                 <label for="street"><?php echo JText::_( 'COM_JEM_STREET' ).':'; ?></label>
                 <input class="inputbox" type="text" name="street" id="street" value="<?php echo $this->row->street; ?>" size="55" maxlength="50" />
             </div>
 
-            <div class="el_plz floattext">
+            <div class="jem_plz floattext">
                 <label for="plz"><?php echo JText::_( 'COM_JEM_ZIP' ).':'; ?></label>
                 <input class="inputbox" type="text" name="plz" id="plz" value="<?php echo $this->row->plz; ?>" size="15" maxlength="10" />
             </div>
 
-            <div class="el_city floattext">
+            <div class="jem_city floattext">
                 <label for="city"><?php echo JText::_( 'COM_JEM_CITY' ).':'; ?></label>
                 <input class="inputbox" type="text" name="city" id="city" value="<?php echo $this->row->city; ?>" size="55" maxlength="50" />
             </div>
 
-            <div class="el_state floattext">
+            <div class="jem_state floattext">
                 <label for="state"><?php echo JText::_( 'COM_JEM_STATE' ).':'; ?></label>
                 <input class="inputbox" type="text" name="state" id="state" value="<?php echo $this->row->state; ?>" size="55" maxlength="50" />
             </div>
 
-            <div class="el_country floattext">
+            <div class="jem_country floattext">
                 <label for="country"><?php echo JText::_( 'COM_JEM_COUNTRY' ).':'; ?></label>
                 <?php echo $this->lists['countries']; ?>
             </div>
 
-            <div class="el_url floattext">
+            <div class="jem_url floattext">
                 <label for="url"><?php echo JText::_( 'COM_JEM_WEBSITE' ).':'; ?></label>
                 <input class="inputbox validate-url" name="url" id="url" type="text" value="<?php echo $this->row->url; ?>" size="55" maxlength="199" />&nbsp;
                 <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_WEBSITE_HINT'); ?>">
@@ -249,7 +249,7 @@ defined( '_JEXEC' ) or die;
             </div>
 
             <?php if ( $this->jemsettings->showmapserv != 0 ) : ?>
-            <div class="el_map floattext">
+            <div class="jem_map floattext">
                 <p>
                     <br /><strong><?php echo JText::_( 'COM_JEM_ENABLE_MAP' ).':'; ?></strong>
                     <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_ADDRESS_NOTICE'); ?>">
@@ -263,14 +263,14 @@ defined( '_JEXEC' ) or die;
               	<label for="map1"><?php echo JText::_( 'COM_JEM_YES' ); ?></label>
               	<input type="radio" name="map" id="map1" onchange="addrequired();" value="1" <?php echo $this->row->map == 1 ? 'checked="checked"' : ''; ?> class="inputbox" />
             </div>
-            <div class="el_latitude floattext">
+            <div class="jem_latitude floattext">
                 <label for="latitude"><?php echo JText::_( 'COM_JEM_LATITUDE' ).':'; ?></label>
                 <input class="inputbox" name="latitude" id="latitude" type="text" onchange="removerequired();" value="<?php echo $this->row->latitude; ?>" size="15" maxlength="25" />&nbsp;
                 <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_LATITUDE_HINT'); ?>">
                     <?php echo $this->infoimage; ?>
                 </span>
             </div>
-            <div class="el_longitude floattext">
+            <div class="jem_longitude floattext">
                 <label for="longitude"><?php echo JText::_( 'COM_JEM_LONGITUDE' ).':'; ?></label>
                 <input class="inputbox" name="longitude" id="longitude" type="text" onchange="removerequired();" value="<?php echo $this->row->longitude; ?>" size="15" maxlength="25" />&nbsp;
                 <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_LONGITUDE_HINT'); ?>">
@@ -282,7 +282,7 @@ defined( '_JEXEC' ) or die;
         </fieldset>
 
       	<?php	if (( $this->jemsettings->imageenabled == 2 ) || ($this->jemsettings->imageenabled == 1)) :	?>
-      	<fieldset class="el_fldst_image">
+      	<fieldset class="jem_fldst_image">
 
             <legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
 
@@ -306,7 +306,7 @@ defined( '_JEXEC' ) or die;
       	</fieldset>
       	<?php endif; ?>
 
-      	<fieldset class="el_fldst_description">
+      	<fieldset class="jem_fldst_description">
 
           	<legend><?php echo JText::_('COM_JEM_DESCRIPTION'); ?></legend>
 
@@ -325,30 +325,30 @@ defined( '_JEXEC' ) or die;
 
       	</fieldset>
 
-      	<fieldset class="el_fldst_meta">
+      	<fieldset class="jem_fldst_meta">
 
           	<legend><?php echo JText::_('COM_JEM_METADATA_INFORMATION'); ?></legend>
 
-            <div class="el_box_left">
+            <div class="jem_box_left">
               	<label for="metadesc"><?php echo JText::_( 'COM_JEM_META_DESCRIPTION' ); ?></label>
           		<textarea class="inputbox" cols="40" rows="5" name="meta_description" id="metadesc" style="width:250px;"></textarea>
             </div>
 
-            <div class="el_box_right">
+            <div class="jem_box_right">
         		<label for="metakey"><?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?></label>
         		<textarea class="inputbox" cols="40" rows="5" name="meta_keywords" id="metakey" style="width:250px;"></textarea>
             </div>
 
             <br class="clear" />
             
-    		<input type="button" class="button el_fright" value="<?php echo JText::_( 'COM_JEM_ADD_VENUE_CITY' ); ?>" onclick="f=document.getElementById('adminForm');f.metakey.value=f.venue.value+', '+f.city.value+f.metakey.value;" />
+    		<input type="button" class="button jem_fright" value="<?php echo JText::_( 'COM_JEM_ADD_VENUE_CITY' ); ?>" onclick="f=document.getElementById('adminForm');f.metakey.value=f.venue.value+', '+f.city.value+f.metakey.value;" />
 
       	</fieldset>
       	
       	<?php echo $this->loadTemplate('attachments'); ?>
       	
 <!--  removed to avoid double posts in ie7
-      	<div class="el_save_buttons floattext">
+      	<div class="jem_save_buttons floattext">
     		<button type="button" onclick="return submitbutton('savevenue')">
     			<?php echo JText::_('COM_JEM_SAVE'); ?>
     		</button>

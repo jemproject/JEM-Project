@@ -153,7 +153,7 @@ label.invalid { color: #ff0000; }
 div.clear
 { border: 0; clear: both; float: none; height: 1px; line-height: 1px; }
 
-.el_centerimg {
+.jem_centering {
 	text-align: center;
     margin-top: 0px;
     margin-bottom: 0px;
