@@ -166,6 +166,8 @@ class JEMModelEvent extends JModelLegacy
             $event->datimage			= '';
             $event->venue				= JText::_('SELECTVENUE');
             $event->hits				= 0;
+            $event->contactname			= null;
+            $event->contactid			= null;
             $event->version				= 0;
             $event->modified			= $this->_db->getNullDate();
             $event->attachments		= array();
