@@ -36,7 +36,7 @@ defined('_JEXEC') or die;
 	}
 </script>
 
-<div id="jem" class="el_selectvenue">
+<div id="jem" class="jem_select_venue">
 
 <h1 class='componentheading'>
 	<?php
@@ -48,8 +48,8 @@ defined('_JEXEC') or die;
 
 <form action="index.php?option=com_jem&amp;view=editevent&amp;layout=choosevenue&amp;tmpl=component" method="post" id="adminForm">
 
-<div id="el_filter" class="floattext">
-		<div class="el_fleft">
+<div id="jem_filter" class="floattext">
+		<div class="jem_fleft">
 			<?php
 			echo '<label for="filter_type">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
 			echo $this->searchfilter.'&nbsp;';
@@ -58,7 +58,7 @@ defined('_JEXEC') or die;
 			<button onclick="document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
 			<button onclick="document.getElementById('filter').value='';document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 		</div>
-		<div class="el_fright">
+		<div class="jem_fright">
 			<?php
 			echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
 			echo $this->pagination->getLimitBox();

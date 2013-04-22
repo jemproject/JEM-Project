@@ -125,7 +125,7 @@ defined('_JEXEC') or die;
 	</script>
 
 
-<div id="jem" class="el_editevent">
+<div id="jem" class="jem_editevent">
 
     <?php if ($this->params->def( 'show_page_title', 1 )) : ?>
     <h1 class="componentheading">
@@ -140,7 +140,7 @@ defined('_JEXEC') or die;
     <?php endif; ?>
 
     <form enctype="multipart/form-data" id="adminForm" action="<?php echo JRoute::_('index.php') ?>" method="post" class="form-validate">
-        <div class="el_save_buttons floattext">
+        <div class="jem_save_buttons floattext">
             <button type="submit" class="positive" onclick="return submitbutton('saveevent')">
         	    <?php echo JText::_('COM_JEM_SAVE'); ?>
         	</button>
@@ -151,11 +151,11 @@ defined('_JEXEC') or die;
 
         <p class="clear"></p>
         
-    	<fieldset class="el_fldst_details">
+    	<fieldset class="jem_fldst_details">
     	
         	<legend><?php echo JText::_('COM_JEM_NORMAL_INFO'); ?></legend>
 
-          <div class="el_title floattext">
+          <div class="jem_title floattext">
               <label for="title">
                   <?php echo JText::_( 'COM_JEM_TITLE' ).':'; ?>
               </label>
@@ -163,33 +163,33 @@ defined('_JEXEC') or die;
               <input class="inputbox required" type="text" id="title" name="title" value="<?php echo $this->row->title; ?>" size="65" maxlength="60" />
           </div>
 
-          <div class="el_venue floattext">
+          <div class="jem_venue floattext">
               <label for="a_id">
                   <?php echo JText::_( 'COM_JEM_VENUE' ).':'; ?>
               </label>
 			
               <input type="text" id="a_name" name="venue" value="<?php echo $this->row->venue; ?>" disabled="disabled" />
 			
-              <div class='el_buttons floattext'>
+              <div class='jem_buttons floattext'>
               	
-                  <a class="el_venue_reset" title="<?php echo JText::_('COM_JEM_NO_VENUE'); ?>" onclick="elSelectVenue(0,'<?php echo JText::_('COM_JEM_NO_VENUE'); ?>');return false;" href="#">
+                  <a class="jem_venue_reset" title="<?php echo JText::_('COM_JEM_NO_VENUE'); ?>" onclick="elSelectVenue(0,'<?php echo JText::_('COM_JEM_NO_VENUE'); ?>');return false;" href="#">
                       <span><?php  echo JText::_('COM_JEM_NO_VENUE'); ?></span>
                   </a>
-                  <a class="el_venue_select modal" title="<?php echo JText::_('COM_JEM_SELECT'); ?>" href="<?php echo JRoute::_('index.php?view=editevent&layout=choosevenue&tmpl=component'); ?>" rel="{handler: 'iframe', size: {x: 650, y: 375}}">
+                  <a class="jem_venue_select modal" title="<?php echo JText::_('COM_JEM_SELECT'); ?>" href="<?php echo JRoute::_('index.php?view=editevent&layout=choosevenue&tmpl=component'); ?>" rel="{handler: 'iframe', size: {x: 650, y: 375}}">
                       <span><?php echo JText::_('COM_JEM_SELECT')?></span>
                   </a>
                   
                   <input class="inputbox required" type="hidden" id="a_id" name="locid" value="<?php echo $this->row->locid; ?>" />
              
                 <?php if ( $this->delloclink == 1 && !$this->row->id ) : //show location submission link ?>
-                  <a class="el_venue_add modal" title="<?php echo JText::_('COM_JEM_DELIVER_NEW_VENUE'); ?>" href="<?php echo JRoute::_('index.php?view=editvenue&mode=ajax&tmpl=component'); ?>" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
+                  <a class="jem_venue_add modal" title="<?php echo JText::_('COM_JEM_DELIVER_NEW_VENUE'); ?>" href="<?php echo JRoute::_('index.php?view=editvenue&mode=ajax&tmpl=component'); ?>" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
                       <span><?php echo JText::_('COM_JEM_DELIVER_NEW_VENUE')?></span>
                   </a>
                 <?php endif; ?>
               </div>
           </div>
 
-          <div class="el_category floattext">
+          <div class="jem_category floattext">
           		<label for="cid" class="cid">
                   <?php echo JText::_( 'COM_JEM_CATEGORY' ).':';?>
               </label>
@@ -198,7 +198,7 @@ defined('_JEXEC') or die;
           		?>
           </div>
 
-          <div class="el_startdate floattext">
+          <div class="jem_start_date floattext">
               <label for="dates">
                   <?php echo JText::_( 'COM_JEM_DATE' ).':'; ?>
               </label>
@@ -208,7 +208,7 @@ defined('_JEXEC') or die;
           		</small>
       		</div>
 
-      		<div class="el_enddate floattext">
+      		<div class="jem_enddate floattext">
               <label for="enddates">
                   <?php echo JText::_( 'COM_JEM_ENDDATE' ).':'; ?>
               </label>
@@ -218,12 +218,12 @@ defined('_JEXEC') or die;
         			</small>
       		</div>
 
-          <div class="el_date el_starttime floattext">
-              <label for="el_starttime">
+          <div class="jem_date jem_start_time floattext">
+              <label for="jem_start_time">
                         <?php echo JText::_( 'COM_JEM_TIME' ).':'; ?>
               </label>
         			<?php
-        			/* <input class="inputbox validate-time" id="el_starttime" name="times" value="<?php echo substr($this->row->times, 0, 5); ?>" size="15" maxlength="8" /> */
+        			/* <input class="inputbox validate-time" id="jem_start_time" name="times" value="<?php echo substr($this->row->times, 0, 5); ?>" size="15" maxlength="8" /> */
 					echo JEMHelper::buildtimeselect(23, 'starthours', substr( $this->row->times, 0, 2 )).' : ';
 					echo JEMHelper::buildtimeselect(59, 'startminutes', substr( $this->row->times, 3, 2 ));
 					?>
@@ -238,12 +238,12 @@ defined('_JEXEC') or die;
         			<?php endif;?>
       		</div>
 
-          <div class="el_date el_endtime floattext">
-              <label for="el_endtime">
+          <div class="jem_date jem_end_time floattext">
+              <label for="jem_end_time">
                   <?php echo JText::_( 'COM_JEM_ENDTIME' ).':'; ?>
               </label>
         			<?php
-        			/* <input class="inputbox validate-time" id="el_endtime" name="endtimes" value="<?php echo substr($this->row->endtimes, 0, 5); ?>" size="15" maxlength="8" />&nbsp; */
+        			/* <input class="inputbox validate-time" id="jem_end_time" name="endtimes" value="<?php echo substr($this->row->endtimes, 0, 5); ?>" size="15" maxlength="8" />&nbsp; */
 					echo JEMHelper::buildtimeselect(23, 'endhours', substr( $this->row->endtimes, 0, 2 )).' : ';
 					echo JEMHelper::buildtimeselect(59, 'endminutes', substr( $this->row->endtimes, 3, 2 ));
 					?>
@@ -256,7 +256,7 @@ defined('_JEXEC') or die;
 
 
     	<?php if ( $this->jemsettings->showfroregistra == 2 ) : ?>
-    	<fieldset class="el_fldst_registration">
+    	<fieldset class="jem_fldst_registration">
 
           <legend><?php echo JText::_('COM_JEM_REGISTRATION'); ?></legend>
 
@@ -298,7 +298,7 @@ defined('_JEXEC') or die;
 
       		if ( $this->jemsettings->showfrounregistra == 2 ) :
       		?>
-      		<div class="el_unregister floattext">
+      		<div class="jem_unregister floattext">
         			<p><strong><?php echo JText::_( 'COM_JEM_SUBMIT_UNREGISTER' ).':'; ?></strong></p>
 
             	<label for="unregistra0"><?php echo JText::_( 'COM_JEM_NO' ); ?></label>
@@ -320,7 +320,7 @@ defined('_JEXEC') or die;
     	endif;
     	?>
 
-    	<fieldset class="el_fldst_recurrence">
+    	<fieldset class="jem_fldst_recurrence">
 
           <legend><?php echo JText::_('COM_JEM_RECURRENCE'); ?></legend>
 
@@ -333,7 +333,7 @@ defined('_JEXEC') or die;
             	<label id="recurrence_output">&nbsp;</label>
               <div id="counter_row" style="display:none;">
                   <label for="recurrence_limit_date"><?php echo JText::_( 'COM_JEM_RECURRENCE_COUNTER' ); ?>:</label>
-                  <div class="el_date>"><?php echo JHTML::_('calendar', ($this->row->recurrence_limit_date <> 0000-00-00) ? $this->row->recurrence_limit_date : JText::_( 'COM_JEM_UNLIMITED' ), "recurrence_limit_date", "recurrence_limit_date"); ?>
+                  <div class="jem_date>"><?php echo JHTML::_('calendar', ($this->row->recurrence_limit_date <> 0000-00-00) ? $this->row->recurrence_limit_date : JText::_( 'COM_JEM_UNLIMITED' ), "recurrence_limit_date", "recurrence_limit_date"); ?>
               	    <a href="#" onclick="include_unlimited('<?php echo JText::_( 'COM_JEM_UNLIMITED' ); ?>'); return false;"><img src="media/com_jem/images/unlimited.png" width="16" height="16" alt="<?php echo JText::_( 'COM_JEM_UNLIMITED' ); ?>" /></a>
               	</div>
               </div>
@@ -368,7 +368,7 @@ defined('_JEXEC') or die;
     	</fieldset>
 
     	<?php if (( $this->jemsettings->imageenabled == 2 ) || ($this->jemsettings->imageenabled == 1)) : ?>
-    	<fieldset class="el_fldst_image">
+    	<fieldset class="jem_fldst_image">
       	  <legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
       		<?php
           if ($this->row->datimage) :
@@ -382,8 +382,8 @@ defined('_JEXEC') or die;
       		<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->jemsettings->sizelimit.' kb'; ?>">
       		    <?php echo $this->infoimage; ?>
       		</small>
-              <!--<div class="el_cur_image"><?php echo JText::_( 'COM_JEM_CURRENT_IMAGE' ); ?></div>
-      		<div class="el_sel_image"><?php echo JText::_( 'COM_JEM_SELECTED_IMAGE' ); ?></div>-->
+              <!--<div class="jem_current_image"><?php echo JText::_( 'COM_JEM_CURRENT_IMAGE' ); ?></div>
+      		<div class="jem_selected_image"><?php echo JText::_( 'COM_JEM_SELECTED_IMAGE' ); ?></div>-->
     	</fieldset>
     	<?php endif; ?>
 
@@ -407,7 +407,7 @@ defined('_JEXEC') or die;
     	<?php echo $this->loadTemplate('attachments'); ?>
     	
 <!--  removed to avoid double posts in ie7
-      <div class="el_save_buttons floattext">
+      <div class="jem_save_buttons floattext">
           <button type="submit" class="submit" onclick="return submitbutton('saveevent')">
         	    <?php echo JText::_('COM_JEM_SAVE'); ?>
         	</button>

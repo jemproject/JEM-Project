@@ -22,7 +22,7 @@
 
 defined ( '_JEXEC' ) or die;
 ?>
-<fieldset class="el_fldst_attachments">
+<fieldset class="jem_fldst_attachments">
 <legend><?php echo JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'); ?></legend>
 <table class="adminform" id="el-attachments">
 	<thead>

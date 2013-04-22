@@ -403,17 +403,17 @@ div#jem table.eventtable tr:hover td
  * @section JEM Table Filter Form
  *
  */
-div#jem #el_filter {
+div#jem #jem_filter {
 margin: 1em 0 0.5em 0; padding: 0.5em;
 border: solid 1px grey;
 background: orange;
 }
 
-div#jem .el_fleft {
+div#jem .jem_fleft {
 float: left;
 }
 
-div#jem .el_fright {
+div#jem .jem_fright {
 float: right;
 }
 
@@ -423,14 +423,14 @@ float: right;
  *
  */
 
-div.el_editevent form fieldset,
-div.el_editvenue form fieldset {
+div.jem_editevent form fieldset,
+div.jem_editvenue form fieldset {
 margin: 0 0 1em 0;
 padding: 1em;
 }
 
-    div.el_editevent form legend,
-    div.el_editvenue form legend {
+    div.jem_editevent form legend,
+    div.jem_editvenue form legend {
     padding: 0.3em;
     font-weight: bold;
     background: orange;
@@ -438,65 +438,65 @@ padding: 1em;
     border:1px solid black;
     }
 
-    div.el_editevent form label,
-    div.el_editvenue form label {
+    div.jem_editevent form label,
+    div.jem_editvenue form label {
     width: 9em;
     margin: 0; padding: 0;
     float: left; display: block;
     vertical-align: top;
     }
 
-    div.el_editevent form input:hover, /* event */
-    div.el_editevent form button:hover,
-    div.el_editevent form select:hover,
-    div.el_editevent form textarea:hover,
+    div.jem_editevent form input:hover, /* event */
+    div.jem_editevent form button:hover,
+    div.jem_editevent form select:hover,
+    div.jem_editevent form textarea:hover,
     
-    div.el_editvenue form input:hover, /* venue */
-    div.el_editvenue form button:hover,
-    div.el_editvenue form select:hover,
-    div.el_editvenue form textarea:hover {
+    div.jem_editvenue form input:hover, /* venue */
+    div.jem_editvenue form button:hover,
+    div.jem_editvenue form select:hover,
+    div.jem_editvenue form textarea:hover {
     margin: 0 0 0.5em 0; padding: 0.2em;
     border: 1px solid grey;
     cursor: pointer;
     background-color: yellow;
     }
-    div.el_editevent form input:active, /* event */
-    div.el_editevent form button:active,
-    div.el_editevent form select:active,
-    div.el_editevent form textarea:active,
+    div.jem_editevent form input:active, /* event */
+    div.jem_editevent form button:active,
+    div.jem_editevent form select:active,
+    div.jem_editevent form textarea:active,
     
-    div.el_editvenue form input:active, /* venue */
-    div.el_editvenue form button:active,
-    div.el_editvenue form select:active,
-    div.el_editvenue form textarea:active {
+    div.jem_editvenue form input:active, /* venue */
+    div.jem_editvenue form button:active,
+    div.jem_editvenue form select:active,
+    div.jem_editvenue form textarea:active {
     margin: 0 0 0.5em 0; padding: 0.2em;
     border: 1px solid grey;
     cursor: pointer;
     background-color: yellow;
     }
-    div.el_editevent form input:visited, /* event */
-    div.el_editevent form button:visited,
-    div.el_editevent form select:visited,
-    div.el_editevent form textarea:visited,
+    div.jem_editevent form input:visited, /* event */
+    div.jem_editevent form button:visited,
+    div.jem_editevent form select:visited,
+    div.jem_editevent form textarea:visited,
     
-    div.el_editvenue form input:visited, /* venue */
-    div.el_editvenue form button:visited,
-    div.el_editvenue form select:visited,
-    div.el_editvenue form textarea:visited {
+    div.jem_editvenue form input:visited, /* venue */
+    div.jem_editvenue form button:visited,
+    div.jem_editvenue form select:visited,
+    div.jem_editvenue form textarea:visited {
     margin: 0 0 0.5em 0; padding: 0.2em;
     border: 1px solid grey;
     cursor: pointer;
     background-color: yellow;
     }
-    div.el_editevent form input:active, /* event */
-    div.el_editevent form button:active,
-    div.el_editevent form select:active,
-    div.el_editevent form textarea:active,
+    div.jem_editevent form input:active, /* event */
+    div.jem_editevent form button:active,
+    div.jem_editevent form select:active,
+    div.jem_editevent form textarea:active,
     
-    div.el_editvenue form input:active, /* venue */
-    div.el_editvenue form button:active,
-    div.el_editvenue form select:active,
-    div.el_editvenue form textarea:active {
+    div.jem_editvenue form input:active, /* venue */
+    div.jem_editvenue form button:active,
+    div.jem_editvenue form select:active,
+    div.jem_editvenue form textarea:active {
     margin: 0 0 0.5em 0; padding: 0.2em;
     border: 1px solid grey;
     cursor: pointer;
@@ -505,27 +505,27 @@ padding: 1em;
     
     
     
-    div.el_editevent form input, /* event */
-    div.el_editevent form button,
-    div.el_editevent form select,
-    div.el_editevent form textarea,
+    div.jem_editevent form input, /* event */
+    div.jem_editevent form button,
+    div.jem_editevent form select,
+    div.jem_editevent form textarea,
     
-    div.el_editvenue form input, /* venue */
-    div.el_editvenue form button,
-    div.el_editvenue form select,
-    div.el_editvenue form textarea {
+    div.jem_editvenue form input, /* venue */
+    div.jem_editvenue form button,
+    div.jem_editvenue form select,
+    div.jem_editvenue form textarea {
     margin: 0 0 0.5em 0; padding: 0.2em;
     border: 1px solid grey;
     cursor: pointer;
     background-color: #fff;
     }
 
-    div.el_editevent form input#a_name {
+    div.jem_editevent form input#a_name {
     float: left;
     }
 
-    div.el_editevent form img,
-    div.el_editvenue form img {
+    div.jem_editevent form img,
+    div.jem_editvenue form img {
     border: 0;
     margin: 0;
     /*vertical-align: baseline;*/
@@ -533,19 +533,19 @@ padding: 1em;
     }
 
 /** venue select buttons */
-div.el_editevent div.el_buttons {
+div.jem_editevent div.jem_buttons {
 float: left;  width: 45%;
 }
 
-    div.el_editevent div.el_buttons button {
+    div.jem_editevent div.jem_buttons button {
     float: right;
     margin: 0 0 0 5px;
     }
 
-    div.el_editevent div.el_buttons a.el_venue_select,
-    div.el_editevent div.el_buttons a.el_venue_select:hover,
-    div.el_editevent div.el_buttons a.el_venue_select:active,
-    div.el_editevent div.el_buttons a.el_venue_select:focus {
+    div.jem_editevent div.jem_buttons a.jem_venue_select,
+    div.jem_editevent div.jem_buttons a.jem_venue_select:hover,
+    div.jem_editevent div.jem_buttons a.jem_venue_select:active,
+    div.jem_editevent div.jem_buttons a.jem_venue_select:focus {
     background: #fff url(../images/venue_select_btn_left.png) 0 0 no-repeat !important;
     background-color: #fff;
     margin: 0 5px 0 5px; padding: 0 0 0 28px;
@@ -555,10 +555,10 @@ float: left;  width: 45%;
     border:1px solid black;
     }
 
-    div.el_editevent div.el_buttons a.el_venue_select span,
-    div.el_editevent div.el_buttons a.el_venue_select:hover span,
-    div.el_editevent div.el_buttons a.el_venue_select:active span,
-    div.el_editevent div.el_buttons a.el_venue_select:focus span {
+    div.jem_editevent div.jem_buttons a.jem_venue_select span,
+    div.jem_editevent div.jem_buttons a.jem_venue_select:hover span,
+    div.jem_editevent div.jem_buttons a.jem_venue_select:active span,
+    div.jem_editevent div.jem_buttons a.jem_venue_select:focus span {
     background: transparent url(../images/venue_select_btn_right.png) 100% 0 no-repeat !important;
     text-decoration:underline !important;
     background-color: transparent;
@@ -570,12 +570,12 @@ float: left;  width: 45%;
 
 
 /** save buttons */
-div.el_save_buttons {
+div.jem_save_buttons {
 margin: 0 0 1em 0;
 float: right;
 }
 
-    div.el_save_buttons button {
+    div.jem_save_buttons button {
     font-size: 1.5em;
     cursor: pointer;
 line-height: 22px;
@@ -586,38 +586,38 @@ border-radius: 5px;
 border:1px solid black;
     }
 
-div.el_save_buttons button.submit:hover {
+div.jem_save_buttons button.submit:hover {
    
 background-color: lightgreen;
     }
 
-div.el_save_buttons button.cancel:hover {
+div.jem_save_buttons button.cancel:hover {
 background-color: red;
     }
 
 
 
 /** recurrence */
-div.el_editevent form label#recurrence_output {
+div.jem_editevent form label#recurrence_output {
 width: auto; float: none;
 margin: 5px 0;
 }
 
 /** registration */
-div.el_editevent form div.el_unregister,
-div.el_editevent form div.el_register {
+div.jem_editevent form div.jem_unregister,
+div.jem_editevent form div.jem_register {
 width: 35%; float: left;
 margin: 0 1em 0 0;
 }
 
 
-div.el_box_left,
-div.el_box_right {
+div.jem_box_left,
+div.jem_box_right {
 width: 45%;
 float: left;
 }
 
-div.el_box_right {
+div.jem_box_right {
 float: right;
 }
 
@@ -669,14 +669,14 @@ border:solid 0px #eee;
 margin:0 2px}
 
 
-div.el_editevent div.el_buttons a.el_venue_reset {
+div.jem_editevent div.jem_buttons a.jem_venue_reset {
     background: url("../images/venue_reset_btn_left.png") no-repeat scroll 0px 0px rgb(255, 255, 255) !important;
 }
 
-    div.el_editevent div.el_buttons a.el_venue_reset,
-    div.el_editevent div.el_buttons a.el_venue_reset:hover,
-    div.el_editevent div.el_buttons a.el_venue_reset:active,
-    div.el_editevent div.el_buttons a.el_venue_reset:focus {
+    div.jem_editevent div.jem_buttons a.jem_venue_reset,
+    div.jem_editevent div.jem_buttons a.jem_venue_reset:hover,
+    div.jem_editevent div.jem_buttons a.jem_venue_reset:active,
+    div.jem_editevent div.jem_buttons a.jem_venue_reset:focus {
     background: #fff url(../images/venue_reset_btn_left.png) 0 0 no-repeat !important;
     background-color: #fff;
     margin: 0 5px 0 5px; padding: 0 0 0 28px;
@@ -687,10 +687,10 @@ div.el_editevent div.el_buttons a.el_venue_reset {
     color: #000000 !important;
     }
 
-    div.el_editevent div.el_buttons a.el_venue_reset span,
-    div.el_editevent div.el_buttons a.el_venue_reset:hover span,
-    div.el_editevent div.el_buttons a.el_venue_reset:active span,
-    div.el_editevent div.el_buttons a.el_venue_reset:focus span {
+    div.jem_editevent div.jem_buttons a.jem_venue_reset span,
+    div.jem_editevent div.jem_buttons a.jem_venue_reset:hover span,
+    div.jem_editevent div.jem_buttons a.jem_venue_reset:active span,
+    div.jem_editevent div.jem_buttons a.jem_venue_reset:focus span {
     background: transparent url(../images/venue_select_btn_right.png) 100% 0 no-repeat !important;
     background-color: transparent;
     display: block;

@@ -22,7 +22,7 @@
 
 defined( '_JEXEC' ) or die;
 ?>
-<div id="jem" class="el_jem">
+<div id="jem" class="jem_jem">
 <p class="buttons">
 	<?php
 		echo JEMOutput::printbutton( $this->print_link, $this->params );

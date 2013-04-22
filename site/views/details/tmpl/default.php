@@ -36,7 +36,7 @@ JHTML::_('behavior.modal');
 }(document, 'script', 'facebook-jssdk'));</script>
 
 
-<div id="jem" class="event_id<?php echo $this->row->did; ?> el_details">
+<div id="jem" class="event_id<?php echo $this->row->did; ?> jem_details">
 	<p class="buttons">
 			<?php echo JEMOutput::mailbutton( $this->row->slug, 'details', $this->params ); ?>
 			<?php echo JEMOutput::printbutton( $this->print_link, $this->params ); ?>

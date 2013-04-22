@@ -27,7 +27,7 @@ defined( '_JEXEC' ) or die;
 JHTML::_('behavior.mootools');
 $this->document->addScript( $this->baseurl.'/media/com_jem/js/search.js' );
 ?>
-<div id="jem" class="el_jem">
+<div id="jem" class="jem_jem">
 <p class="buttons">
 	<?php
 		if ( !$this->params->get( 'popup' ) ) : //don't show in printpopup

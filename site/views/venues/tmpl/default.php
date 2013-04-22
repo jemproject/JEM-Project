@@ -23,7 +23,7 @@
 // no direct access
 defined( '_JEXEC' ) or die;
 ?>
-<div id="jem" class="el_venuesview">
+<div id="jem" class="jem_venues_view">
 	<p class="buttons">
 		<?php
 			if ( !$this->params->get( 'popup' ) ) : //don't show in printpopup

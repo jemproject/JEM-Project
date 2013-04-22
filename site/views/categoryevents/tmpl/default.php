@@ -24,7 +24,7 @@
 defined( '_JEXEC' ) or die;
 JHTML::_('behavior.modal');
 ?>
-<div id="jem" class="el_categoryevents">
+<div id="jem" class="jem_categoryevents">
 <p class="buttons">
 	<?php
 		if ( !$this->params->get( 'popup' ) ) : //don't show in printpopup

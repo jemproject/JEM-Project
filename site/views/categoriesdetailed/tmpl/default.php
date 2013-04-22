@@ -23,7 +23,7 @@
 defined( '_JEXEC' ) or die;
 ?>
 
-<div id="jem" class="el_categoriesdetailed">
+<div id="jem" class="jem_categories_detailed">
 <p class="buttons">
 	<?php
 		if ( !$this->params->get( 'popup' ) ) : //don't show in printpopup
