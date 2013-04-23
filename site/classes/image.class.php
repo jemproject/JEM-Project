@@ -30,21 +30,17 @@ defined('_JEXEC') or die;
 class JEMImage {
 
 
-	/*
-	 ##
-	# From: http://snipplr.com/view/57111/
-	# Based on: http://www.icant.co.uk/articles/phpthumbnails/
-	# Modified by JEM  Community
-	#
-	#
-	# $name = full path to original source
-	# $filename = full path to thumbnail
-	# $new_w thumbnail width
-	# $new_h thumbnail height
-	# $debug echo a few diagnostics
-	#
-	##
-	*/
+	/**
+	 *	From: http://snipplr.com/view/57111/
+	 *	Based on: http://www.icant.co.uk/articles/phpthumbnails/
+	 *	Modified by JEM  Community
+	 *	
+	 *	$name = full path to original source
+	 * 	$filename = full path to thumbnail
+	 *	$new_w thumbnail width
+	 * 	$new_h thumbnail height
+	 * 	$debug echo a few diagnostics
+	 */
 
 	static function thumb($name,$filename,$new_w,$new_h,$debug=false) {
 		$results = "";
@@ -54,30 +50,10 @@ class JEMImage {
 		if (preg_match("/jpg|jpeg/",$system)) $src_img = imagecreatefromjpeg($name);
 		if (preg_match("/gif/",$system)) {
 			$src_img = imagecreatefromgif($name);
-			// integer representation of the color black (rgb: 0,0,0)
-			$background = imagecolorallocate($src_img, 255,255,255);
-			// removing the black from the placeholder
-			imagecolortransparent($src_img, $background);
 		}
 
 		if (preg_match("/png/",$system)) {
 			$src_img = imagecreatefrompng($name);
-
-			// integer representation of the color black (rgb: 0,0,0)
-			// color to be transparent
-			$background = imagecolorallocate($src_img, 255, 255,255);
-			// removing the black from the placeholder
-			imagecolortransparent($src_img, $background);
-
-			// turning off alpha blending (to ensure alpha channel information
-			// is preserved, rather than removed (blending with the rest of the
-			// image in the form of black))
-			imagealphablending($src_img, false);
-
-			// turning on alpha channel information saving (to ensure the full range
-			// of transparency is preserved)
-			imagesavealpha($src_img, true);
-
 		}
 
 
@@ -109,6 +85,19 @@ class JEMImage {
 		$results .= "output size = $thumb_w x $thumb_h <br>
 		y offset = $yloc <br>";
 		$dst_img = ImageCreateTrueColor($new_w,$new_h);
+
+		if (preg_match("/gif/",$system)) {
+			$background = imagecolorallocate($dst_img, 0,0,0);
+			imagecolortransparent($dst_img, $background);
+		}
+
+		if (preg_match("/png/",$system)) {
+			$background = imagecolorallocate($dst_img, 0, 0,0);
+			imagecolortransparent($dst_img, $background);
+			imagealphablending($dst_img, false);
+			imagesavealpha($dst_img, true);
+		}
+
 		imagecopyresampled($dst_img,$src_img,0,0,0,$yloc,$thumb_w,$thumb_h,$old_x,$old_y);
 
 		if (preg_match("/png/",$system)) {
