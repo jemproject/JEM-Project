@@ -29,188 +29,78 @@ defined('_JEXEC') or die;
  */
 class JEMImage {
 
-
-	/**
-	 *	From: http://snipplr.com/view/57111/
-	 *	Based on: http://www.icant.co.uk/articles/phpthumbnails/
-	 *	Modified by JEM  Community
-	 *	
-	 *	$name = full path to original source
-	 * 	$filename = full path to thumbnail
-	 *	$new_w thumbnail width
-	 * 	$new_h thumbnail height
-	 * 	$debug echo a few diagnostics
-	 */
-
-	static function thumb($name,$filename,$new_w,$new_h,$debug=false) {
-		$results = "";
-		$array = explode(".",strtolower($name));
-		$system = end($array);
-		$results = "file extension = $system <br>";
-		if (preg_match("/jpg|jpeg/",$system)) $src_img = imagecreatefromjpeg($name);
-		if (preg_match("/gif/",$system)) {
-			$src_img = imagecreatefromgif($name);
+	
+	static function thumb($name,$filename,$new_w,$new_h)
+	{
+	
+	// load the image manipulation class
+	//require 'path/to/Zebra_Image.php';
+	
+	// create a new instance of the class
+	$image = new Zebra_Image();
+	
+	// indicate a source image (a GIF, PNG or JPEG file)
+	$image->source_path = $name;
+	
+	// indicate a target image
+	// note that there's no extra property to set in order to specify the target
+	// image's type -simply by writing '.jpg' as extension will instruct the script
+	// to create a 'jpg' file
+	$image->target_path = $filename;
+	
+	// since in this example we're going to have a jpeg file, let's set the output
+	// image's quality
+	$image->jpeg_quality = 100;
+	
+	// some additional properties that can be set
+	// read about them in the documentation
+	$image->preserve_aspect_ratio = true;
+	$image->enlarge_smaller_images = true;
+	$image->preserve_time = true;
+	
+	// resize the image to exactly 100x100 pixels by using the "crop from center" method
+	// (read more in the overview section or in the documentation)
+	//  and if there is an error, check what the error is about
+	if (!$image->resize($new_w, $new_h, ZEBRA_IMAGE_CROP_CENTER)) {
+	
+		// if there was an error, let's see what the error is about
+		switch ($image->error) {
+	
+			case 1:
+				echo 'Source file could not be found!';
+				break;
+			case 2:
+				echo 'Source file is not readable!';
+				break;
+			case 3:
+				echo 'Could not write target file!';
+				break;
+			case 4:
+				echo 'Unsupported source file format!';
+				break;
+			case 5:
+				echo 'Unsupported target file format!';
+				break;
+			case 6:
+				echo 'GD library version does not support target file format!';
+				break;
+			case 7:
+				echo 'GD library is not installed!';
+				break;
+	
 		}
-
-		if (preg_match("/png/",$system)) {
-			$src_img = imagecreatefrompng($name);
-		}
-
-
-		$old_x=imageSX($src_img);
-		$old_y=imageSY($src_img);
-
-		$results .= "image size = $old_x x $old_y <br>";
-
-		if($old_x > $old_y) {
-			$thumb_h = $new_h;
-			$ratio = $new_h / $old_y;
-			$thumb_w = ($old_x * $ratio);
-		}
-		if($old_x < $old_y) {
-			$thumb_w = $new_w;
-			$ratio = $new_w / $old_x;
-			$thumb_h = ($old_y * $ratio);
-		}
-		if($old_x == $old_y) {
-			$thumb_w = $new_w;
-			$thumb_h = $new_h;
-		}
-		if($new_h < $thumb_h) {
-			$yloc = round(($thumb_h - $new_h) / 2);
-		} else {
-			$yloc = 0;
-		}
-
-		$results .= "output size = $thumb_w x $thumb_h <br>
-		y offset = $yloc <br>";
-		$dst_img = ImageCreateTrueColor($new_w,$new_h);
-
-		if (preg_match("/gif/",$system)) {
-			$background = imagecolorallocate($dst_img, 0,0,0);
-			imagecolortransparent($dst_img, $background);
-		}
-
-		if (preg_match("/png/",$system)) {
-			$background = imagecolorallocate($dst_img, 0, 0,0);
-			imagecolortransparent($dst_img, $background);
-			imagealphablending($dst_img, false);
-			imagesavealpha($dst_img, true);
-		}
-
-		imagecopyresampled($dst_img,$src_img,0,0,0,$yloc,$thumb_w,$thumb_h,$old_x,$old_y);
-
-		if (preg_match("/png/",$system)) {
-			imagepng($dst_img,$filename);
-		}
-		if (preg_match("/jpg|jpeg/",$system)) {
-			imagejpeg($dst_img,$filename);
-		}
-		if (preg_match("/gif/",$system)) {
-			imagegif($dst_img,$filename);
-		}
-		imagedestroy($dst_img);
-		imagedestroy($src_img);
-		if($debug) echo $results;
-		return true;
+	
+		// if no errors
+	} else {
+	
+		echo '';
+	
 	}
-
-
-
-	/**
-	 * Creates a Thumbnail of an image
-	 *
-	 * @author Christoph Lukes
-	 * @since 0.9
-	 *
-	 * @param string $file The path to the file
-	 * @param string $save The targetpath
-	 * @param string $width The with of the image
-	 * @param string $height The height of the image
-	 * @return true when success
-	 */
-	static function thumbOriginal($file, $save, $width, $height) {
-		//GD-Lib > 2.0 only!
-		@unlink($save);
-
-		//get sizes else stop
-		if (!$infos = @getimagesize($file)) {
-			return false;
-		}
-
-		// keep proportions
-		$iWidth = $infos[0];
-		$iHeight = $infos[1];
-		$iRatioW = $width / $iWidth;
-		$iRatioH = $height / $iHeight;
-
-		if ($iRatioW < $iRatioH) {
-			$iNewW = $iWidth * $iRatioW;
-			$iNewH = $iHeight * $iRatioW;
-		} else {
-			$iNewW = $iWidth * $iRatioH;
-			$iNewH = $iHeight * $iRatioH;
-		}
-
-		//Don't resize images which are smaller than thumbs
-		if ($infos[0] < $width && $infos[1] < $height) {
-			$iNewW = $infos[0];
-			$iNewH = $infos[1];
-		}
-
-		if($infos[2] == 1) {
-			/*
-			 * Image is typ gif
-			*/
-			$imgA = imagecreatefromgif($file);
-			$imgB = imagecreate($iNewW,$iNewH);
-				
-			//keep gif transparent color if possible
-			if(function_exists('imagecolorsforindex') && function_exists('imagecolortransparent')) {
-				$transcolorindex = imagecolortransparent($imgA);
-				//transparent color exists
-				if($transcolorindex >= 0) {
-					$transcolor = imagecolorsforindex($imgA, $transcolorindex);
-					$transcolorindex = imagecolorallocate($imgB, $transcolor['red'], $transcolor['green'], $transcolor['blue']);
-					imagefill($imgB, 0, 0, $transcolorindex);
-					imagecolortransparent($imgB, $transcolorindex);
-					//fill white
-				} else {
-					$whitecolorindex = @imagecolorallocate($imgB, 255, 255, 255);
-					imagefill($imgB, 0, 0, $whitecolorindex);
-				}
-				//fill white
-			} else {
-				$whitecolorindex = imagecolorallocate($imgB, 255, 255, 255);
-				imagefill($imgB, 0, 0, $whitecolorindex);
-			}
-			imagecopyresampled($imgB, $imgA, 0, 0, 0, 0, $iNewW, $iNewH, $infos[0], $infos[1]);
-			imagegif($imgB, $save);
-
-		} elseif($infos[2] == 2) {
-			/*
-			 * Image is typ jpg
-			*/
-			$imgA = imagecreatefromjpeg($file);
-			$imgB = imagecreatetruecolor($iNewW,$iNewH);
-			imagecopyresampled($imgB, $imgA, 0, 0, 0, 0, $iNewW, $iNewH, $infos[0], $infos[1]);
-			imagejpeg($imgB, $save);
-
-		} elseif($infos[2] == 3) {
-			/*
-			 * Image is typ png
-			*/
-			$imgA = imagecreatefrompng($file);
-			$imgB = imagecreatetruecolor($iNewW, $iNewH);
-			imagealphablending($imgB, false);
-			imagecopyresampled($imgB, $imgA, 0, 0, 0, 0, $iNewW, $iNewH, $infos[0], $infos[1]);
-			imagesavealpha($imgB, true);
-			imagepng($imgB, $save);
-		} else {
-			return false;
-		}
-		return true;
+	
+	
 	}
+	
+	
 
 	/**
 	 * Determine the GD version

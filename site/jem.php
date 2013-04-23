@@ -33,6 +33,7 @@ require_once (JPATH_COMPONENT_SITE.DS.'classes'.DS.'image.class.php');
 require_once (JPATH_COMPONENT_SITE.DS.'classes'.DS.'output.class.php');
 require_once (JPATH_COMPONENT_SITE.DS.'classes'.DS.'attachment.class.php');
 require_once (JPATH_COMPONENT_SITE.DS.'classes'.DS.'categories.class.php');
+require_once (JPATH_COMPONENT_SITE.DS.'classes'.DS.'Zebra_Image.php');
 
 // Set the table directory
 JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.DS.'tables');
