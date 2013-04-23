@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -29,19 +29,118 @@ defined('_JEXEC') or die;
  */
 class JEMImage {
 
-	/**
-	* Creates a Thumbnail of an image
-	*
-	* @author Christoph Lukes
-	* @since 0.9
-	*
-	* @param string $file The path to the file
-	* @param string $save The targetpath
-	* @param string $width The with of the image
-	* @param string $height The height of the image
-	* @return true when success
+
+	/*
+	 ##
+	# From: http://snipplr.com/view/57111/
+	# Based on: http://www.icant.co.uk/articles/phpthumbnails/
+	# Modified by JEM  Community
+	#
+	#
+	# $name = full path to original source
+	# $filename = full path to thumbnail
+	# $new_w thumbnail width
+	# $new_h thumbnail height
+	# $debug echo a few diagnostics
+	#
+	##
 	*/
-	static function thumb($file, $save, $width, $height) {
+
+	static function thumb($name,$filename,$new_w,$new_h,$debug=false) {
+		$results = "";
+		$array = explode(".",strtolower($name));
+		$system = end($array);
+		$results = "file extension = $system <br>";
+		if (preg_match("/jpg|jpeg/",$system)) $src_img = imagecreatefromjpeg($name);
+		if (preg_match("/gif/",$system)) {
+			$src_img = imagecreatefromgif($name);
+			// integer representation of the color black (rgb: 0,0,0)
+			$background = imagecolorallocate($src_img, 255,255,255);
+			// removing the black from the placeholder
+			imagecolortransparent($src_img, $background);
+		}
+
+		if (preg_match("/png/",$system)) {
+			$src_img = imagecreatefrompng($name);
+
+			// integer representation of the color black (rgb: 0,0,0)
+			// color to be transparent
+			$background = imagecolorallocate($src_img, 255, 255,255);
+			// removing the black from the placeholder
+			imagecolortransparent($src_img, $background);
+
+			// turning off alpha blending (to ensure alpha channel information
+			// is preserved, rather than removed (blending with the rest of the
+			// image in the form of black))
+			imagealphablending($src_img, false);
+
+			// turning on alpha channel information saving (to ensure the full range
+			// of transparency is preserved)
+			imagesavealpha($src_img, true);
+
+		}
+
+
+		$old_x=imageSX($src_img);
+		$old_y=imageSY($src_img);
+
+		$results .= "image size = $old_x x $old_y <br>";
+
+		if($old_x > $old_y) {
+			$thumb_h = $new_h;
+			$ratio = $new_h / $old_y;
+			$thumb_w = ($old_x * $ratio);
+		}
+		if($old_x < $old_y) {
+			$thumb_w = $new_w;
+			$ratio = $new_w / $old_x;
+			$thumb_h = ($old_y * $ratio);
+		}
+		if($old_x == $old_y) {
+			$thumb_w = $new_w;
+			$thumb_h = $new_h;
+		}
+		if($new_h < $thumb_h) {
+			$yloc = round(($thumb_h - $new_h) / 2);
+		} else {
+			$yloc = 0;
+		}
+
+		$results .= "output size = $thumb_w x $thumb_h <br>
+		y offset = $yloc <br>";
+		$dst_img = ImageCreateTrueColor($new_w,$new_h);
+		imagecopyresampled($dst_img,$src_img,0,0,0,$yloc,$thumb_w,$thumb_h,$old_x,$old_y);
+
+		if (preg_match("/png/",$system)) {
+			imagepng($dst_img,$filename);
+		}
+		if (preg_match("/jpg|jpeg/",$system)) {
+			imagejpeg($dst_img,$filename);
+		}
+		if (preg_match("/gif/",$system)) {
+			imagegif($dst_img,$filename);
+		}
+		imagedestroy($dst_img);
+		imagedestroy($src_img);
+		if($debug) echo $results;
+		return true;
+	}
+
+
+
+	/**
+	 * Creates a Thumbnail of an image
+	 *
+	 * @author Christoph Lukes
+	 * @since 0.9
+	 *
+	 * @param string $file The path to the file
+	 * @param string $save The targetpath
+	 * @param string $width The with of the image
+	 * @param string $height The height of the image
+	 * @return true when success
+	 */
+	static function thumbOriginal($file, $save, $width, $height) {
 		//GD-Lib > 2.0 only!
 		@unlink($save);
 
@@ -72,11 +171,11 @@ class JEMImage {
 
 		if($infos[2] == 1) {
 			/*
-			* Image is typ gif
+			 * Image is typ gif
 			*/
 			$imgA = imagecreatefromgif($file);
 			$imgB = imagecreate($iNewW,$iNewH);
-			
+				
 			//keep gif transparent color if possible
 			if(function_exists('imagecolorsforindex') && function_exists('imagecolortransparent')) {
 				$transcolorindex = imagecolortransparent($imgA);
@@ -86,12 +185,12 @@ class JEMImage {
 					$transcolorindex = imagecolorallocate($imgB, $transcolor['red'], $transcolor['green'], $transcolor['blue']);
 					imagefill($imgB, 0, 0, $transcolorindex);
 					imagecolortransparent($imgB, $transcolorindex);
-				//fill white
+					//fill white
 				} else {
 					$whitecolorindex = @imagecolorallocate($imgB, 255, 255, 255);
 					imagefill($imgB, 0, 0, $whitecolorindex);
 				}
-			//fill white
+				//fill white
 			} else {
 				$whitecolorindex = imagecolorallocate($imgB, 255, 255, 255);
 				imagefill($imgB, 0, 0, $whitecolorindex);
@@ -101,7 +200,7 @@ class JEMImage {
 
 		} elseif($infos[2] == 2) {
 			/*
-			* Image is typ jpg
+			 * Image is typ jpg
 			*/
 			$imgA = imagecreatefromjpeg($file);
 			$imgB = imagecreatetruecolor($iNewW,$iNewH);
@@ -110,7 +209,7 @@ class JEMImage {
 
 		} elseif($infos[2] == 3) {
 			/*
-			* Image is typ png
+			 * Image is typ png
 			*/
 			$imgA = imagecreatefrompng($file);
 			$imgB = imagecreatetruecolor($iNewW, $iNewH);
@@ -125,14 +224,14 @@ class JEMImage {
 	}
 
 	/**
-	* Determine the GD version
-	* Code from php.net
-	*
-	* @since 0.9
-	* @param int
-	*
-	* @return int
-	*/
+	 * Determine the GD version
+	 * Code from php.net
+	 *
+	 * @since 0.9
+	 * @param int
+	 *
+	 * @return int
+	 */
 	static function gdVersion($user_ver = 0) {
 		if (! extension_loaded('gd')) {
 			return;
@@ -178,18 +277,18 @@ class JEMImage {
 	}
 
 
-		/**
-	* Creates image information of an image
-	*
-	* @author Christoph Lukes
-	* @since 0.9
-	*
-	* @param string $image The image name
-	* @param array $settings
-	* @param string $type event or venue
-	*
-	* @return imagedata if available
-	*/
+	/**
+	 * Creates image information of an image
+	 *
+	 * @author Christoph Lukes
+	 * @since 0.9
+	 *
+	 * @param string $image The image name
+	 * @param array $settings
+	 * @param string $type event or venue
+	 *
+	 * @return imagedata if available
+	 */
 
 	static function flyercreator($image, $type) {
 		$settings = JEMHelper::config();
@@ -320,16 +419,16 @@ class JEMImage {
 	}
 
 	/**
-	* Sanitize the image file name and return an unique string
-	*
-	* @since 0.9
-	* @author Christoph Lukes
-	*
-	* @param string $base_Dir the target directory
-	* @param string $filename the unsanitized imagefile name
-	*
-	* @return string $filename the sanitized and unique image file name
-	*/
+	 * Sanitize the image file name and return an unique string
+	 *
+	 * @since 0.9
+	 * @author Christoph Lukes
+	 *
+	 * @param string $base_Dir the target directory
+	 * @param string $filename the unsanitized imagefile name
+	 *
+	 * @return string $filename the sanitized and unique image file name
+	 */
 	static function sanitize($base_Dir, $filename) {
 		jimport('joomla.filesystem.file');
 
