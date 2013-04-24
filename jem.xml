@@ -10,6 +10,9 @@
 	<version>2.0.0.1</version>
 	<description>COM_JEM_INSTALLATION_DESCRIPTION</description>
 
+	<!-- Runs on install/uninstall/update; New in 1.6 -->
+	<scriptfile>script.php</scriptfile>
+	
 	<files folder="site">
 		<filename>index.html</filename>
 		<filename>jem.php</filename>
@@ -41,10 +44,6 @@
 			<file driver="mysql" charset="utf8">uninstall.mysql.utf8.sql</file>
 		</sql>
 	</uninstall>
-
-	<installfile>install.jem.php</installfile>
-
-	<uninstallfile>uninstall.jem.php</uninstallfile>
 
 	<administration>
 		<menu img="../media/com_jem/images/jem.png" link="option=com_jem">COM_JEM</menu>
