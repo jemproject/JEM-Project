@@ -10,7 +10,7 @@
 		<description>COM_JEM_VENUEEVENTS_LAYOUT_DESC</description>
 		<config>
 		<fields name="request" addfieldpath="/administrator/components/com_jem/models/fields"><fieldset name="request" label="basic">
-			<field name="id" type="venue" label="Select Venue" description="SELECTVENUE" />
+			<field name="id" type="venue" label="Select Venue" description="COM_JEM_SELECTVENUE" />
 		</fieldset></fields></config>
 	</state>
 </metadata>
