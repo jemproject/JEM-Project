@@ -15,7 +15,7 @@
         <option value="0">COM_JEM_NO</option>
         <option value="1">COM_JEM_YES</option>
       </field>
-	  	<field name="show_only_start" type="radio" default="1" label="COM_JEM_SHOW_ONLY_START_DAY" description="SHOW_ONLY_START DAY_DESC">
+	  	<field name="show_only_start" type="radio" default="1" label="COM_JEM_SHOWONLYSTARTDAY" description="COM_JEM_SHOWONLYSTARTDAY_DESC">
         <option value="0">COM_JEM_NO</option>
         <option value="1">COM_JEM_YES</option>
       </field>
