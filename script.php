@@ -1,8 +1,7 @@
 <?php
-// No direct access to this file
 defined('_JEXEC') or die;
 
-$db =  JFactory::getDBO();
+$db = JFactory::getDBO();
 jimport('joomla.filesystem.folder');
 
 
@@ -74,7 +73,7 @@ class com_jemInstallerScript
 				echo "</ul>";
 			}
 
-			if($error['folders']) {
+			if(isset($error['folders']) && $error['folders']) {
 			?>
 					<p>
 						Please check the existance of the listed directories.<br />
@@ -119,7 +118,7 @@ class com_jemInstallerScript
 				}
 			}
 
-			if($error[summary]) {
+			if(isset($error['summary']) && $error['summary']) {
 			?>
 					<p style='color:red;'><b>JEM was NOT installed successfully!</b></p>
 			<?php
