@@ -214,7 +214,7 @@ class JEMModelCleanup extends JModelLegacy
 		if ($fileList !== false) {
 			foreach ($fileList as $file)
 			{
-				if (is_file($basePath.DS.$file) && substr($file, 0, 1) != '.' && strtolower($file) !== 'index.html') {
+				if (is_file($basePath.DS.$file) && substr($file, 0, 1) != '.') {
 
 					$images[] = $file;
 

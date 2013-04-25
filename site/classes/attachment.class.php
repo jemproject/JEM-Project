@@ -82,10 +82,6 @@ class JEMAttachment extends JObject {
 					JError::raiseWarning(0, JText::_('COM_JEM_ERROR_COULD_NOT_CREATE_FOLDER').': '.$path);
 					return false;
 				}
-
-				// Create an index.html
-				$text = '<html><body bgcolor="#FFFFFF"></body></html>';
-				JFile::write($path.DS.'index.html', $text);
 			}
 
 			// TODO: Probably move this to a helper class
@@ -161,7 +157,7 @@ class JEMAttachment extends JObject {
 			return array();
 		}
 		// first list files in the folder
-		$files = JFolder::files($path, null, false, false, array('index.html'));
+		$files = JFolder::files($path, null, false, false);
 
 		// then get info for files from db
 		$db = JFactory::getDBO();

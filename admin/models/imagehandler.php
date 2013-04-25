@@ -147,7 +147,7 @@ class JEMModelImagehandler extends JModelLegacy
 		// Iterate over the files if they exist
 		if ($fileList !== false) {
 			foreach ($fileList as $file) {
-				if (is_file($basePath.DS.$file) && substr($file, 0, 1) != '.' && strtolower($file) !== 'index.html') {
+				if (is_file($basePath.DS.$file) && substr($file, 0, 1) != '.') {
 
 					if ($search == '') {
 						$tmp = new JObject();

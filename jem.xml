@@ -14,7 +14,6 @@
 	<scriptfile>script.php</scriptfile>
 	
 	<files folder="site">
-		<filename>index.html</filename>
 		<filename>jem.php</filename>
 		<filename>controller.php</filename>
 		<filename>router.php</filename>
@@ -57,7 +56,6 @@
 		</submenu>
 
 		<files folder="admin">
-			<filename>index.html</filename>
 			<filename>admin.jem.php</filename>
 			<filename>controller.php</filename>
 			<filename>access.xml</filename>
