@@ -154,11 +154,14 @@ class JEMModelEvents extends JModelLegacy
 		$where		= $this->_buildContentWhere();
 		$orderby	= $this->_buildContentOrderBy();
 
-		$query = 'SELECT a.*, loc.venue, loc.city, loc.state, loc.checked_out AS vchecked_out, u.email, u.name AS author'
+		$query = 'SELECT a.*, c.catname, c.id AS catid, loc.venue, loc.city, loc.state, loc.checked_out AS vchecked_out, u.email, u.name AS author'
 					. ' FROM #__jem_events AS a'
 					. ' LEFT JOIN #__jem_venues AS loc ON loc.id = a.locid'
 					. ' LEFT JOIN #__users AS u ON u.id = a.created_by'
+					. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+					. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
 					. $where
+					. ' GROUP BY a.id'
 					. $orderby
 					;
 
@@ -234,11 +237,11 @@ class JEMModelEvents extends JModelLegacy
 		if ($search && $filter == 3) {
 			$where[] = ' LOWER(loc.city) LIKE \'%'.$search.'%\' ';
 		}
-/*
+
 		if ($search && $filter == 4) {
-			$where[] = ' LOWER(cat.catname) LIKE \'%'.$search.'%\' ';
+			$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
 		}
-*/
+
 		
 		if ($search && $filter == 5) {
 			$where[] = ' LOWER(loc.state) LIKE \'%'.$search.'%\' ';

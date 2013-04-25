@@ -120,8 +120,8 @@ class JEMUser {
 		$userGroups = $user->getAuthorisedGroups();
 
 		$group_ids = array(
- 				//	2, // registered
-				//	3, // author
+ 					2, // registered
+					3, // author
 					4, // editor
 					5, // publisher
 					6, // manager

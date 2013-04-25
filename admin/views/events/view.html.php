@@ -103,7 +103,7 @@ class JEMViewEvents extends JViewLegacy {
 		$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_EVENT_TITLE' ) );
 		$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_VENUE' ) );
 		$filters[] = JHTML::_('select.option', '3', JText::_( 'COM_JEM_CITY' ) );
-	//	$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_CATEGORY' ) );
+		$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_CATEGORY' ) );
 		$filters[] = JHTML::_('select.option', '5', JText::_( 'COM_JEM_STATE' ) );
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
 
