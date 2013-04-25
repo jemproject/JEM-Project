@@ -20,8 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
@@ -63,7 +61,7 @@ class JEMModelUpdatecheck extends JModelLegacy
 
 		$jemsettings = JEMAdmin::config();
 
-		include_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'classes'.DS.'Snoopy.class.php');
+		include_once(JPATH_COMPONENT_ADMINISTRATOR.'/classes/Snoopy.class.php');
 
 		$snoopy = new Snoopy();
 

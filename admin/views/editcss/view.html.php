@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
- if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined( '_JEXEC' ) or die;
 
 jimport( 'joomla.application.component.view');
@@ -49,8 +48,8 @@ class JEMViewEditcss extends JViewLegacy {
 
 		//get vars
 		$filename	= 'jem.css';
-		$path		= JPATH_SITE.DS.'media'.DS.'com_jem'.DS.'css';
-		$css_path	= $path.DS.$filename;
+		$path		= JPATH_SITE.'/media/com_jem/css';
+		$css_path	= $path.'/'.$filename;
 
 		//create the toolbar
 		JToolBarHelper::title( JText::_( 'EDIT CSS' ), 'cssedit' );

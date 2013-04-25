@@ -76,7 +76,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 	$db		= JFactory::getDBO();
 	$user	= JFactory::getUser();
 
-	require_once(JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'helpers'.DS.'route.php');
+	require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 
 	if (is_array( $areas )) {
 		if (!array_intersect( $areas, array_keys( $this->onContentSearchAreas() ) )) {

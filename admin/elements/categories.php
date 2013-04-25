@@ -20,10 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// Check to ensure this file is included in Joomla!
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined('_JEXEC') or die();
-
 
 jimport('joomla.form.formfield');
 jimport('joomla.html.parameter.element');
@@ -36,18 +33,14 @@ jimport('joomla.html.parameter.element');
 
 class JFormFieldCategories extends JFormField
 {
-	
-	
-	
-        var $type = 'categories';
+	var $type = 'categories';
 
-        function getInput() {
-        return JElementCategories::fetchElement($this->name, $this->value, $this->element, $this->options['control']);
-        }
-
+	function getInput() {
+		return JElementCategories::fetchElement($this->name, $this->value, $this->element, $this->options['control']);
+	}
 }
-	
-	
+
+
 /*	 protected $type = 'Categories';
 	
 	
@@ -93,7 +86,7 @@ class JElementCategories extends JElement {
 		$doc 		= JFactory::getDocument();
 		$fieldName	= $control_name.'['.$name.']';
 
-		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_jem'.DS.'tables');
+		JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_jem/tables');
 
 		$category = JTable::getInstance('jem_categories', '');
 

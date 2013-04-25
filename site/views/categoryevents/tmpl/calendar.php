@@ -20,13 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined( '_JEXEC' ) or die;
-?>
 
-<?php 
-require_once (JPATH_COMPONENT_SITE.DS.'classes'.DS.'calendar.class.php');
+require_once (JPATH_COMPONENT_SITE.'/classes/calendar.class.php');
 
 $cal = new JEMCalendar($this->year, $this->month, $this->day);
 $cal->enableMonthNav('index.php?view=categoryevents&layout=calendar&id='. $this->category->slug);

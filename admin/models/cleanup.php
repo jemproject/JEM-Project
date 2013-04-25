@@ -20,8 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
@@ -134,8 +132,8 @@ class JEMModelCleanup extends JModelLegacy
 					continue;
 				}
 
-				$fullPath = JPath::clean(JPATH_SITE.DS.'images'.DS.'jem'.DS.$folder.DS.$image);
-				$fullPaththumb = JPath::clean(JPATH_SITE.DS.'images'.DS.'jem'.DS.$folder.DS.'small'.DS.$image);
+				$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
+				$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
 
 				if (is_file($fullPath)) {
 					JFile::delete($fullPath);
@@ -203,7 +201,7 @@ class JEMModelCleanup extends JModelLegacy
 	function _getavailable()
 	{
 		// Initialize variables
-		$basePath = JPATH_SITE.DS.'images'.DS.'jem'.DS.$this->_target;
+		$basePath = JPATH_SITE.'/images/jem/'.$this->_target;
 
 		$images 	= array ();
 
@@ -214,7 +212,7 @@ class JEMModelCleanup extends JModelLegacy
 		if ($fileList !== false) {
 			foreach ($fileList as $file)
 			{
-				if (is_file($basePath.DS.$file) && substr($file, 0, 1) != '.') {
+				if (is_file($basePath.'/'.$file) && substr($file, 0, 1) != '.') {
 
 					$images[] = $file;
 

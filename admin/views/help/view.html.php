@@ -19,8 +19,7 @@
  * along with JEM; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
- 
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
+
 defined( '_JEXEC' ) or die;
 
 jimport( 'joomla.application.component.view');
@@ -68,7 +67,7 @@ class JEMViewHelp extends JViewLegacy {
 		// Check for files in the actual language
 		$langTag = $lang->getTag();
 
-		if ( !JFolder::exists( JPATH_SITE . DS.'administrator'.DS.'components'.DS.'com_jem/help'.DS .$langTag ) ) {
+		if ( !JFolder::exists( JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag ) ) {
 			$langTag = 'en-GB';		// use english as fallback
 		}
 
@@ -97,14 +96,14 @@ class JEMViewHelp extends JViewLegacy {
 		// Check for files in the actual language
 		$langTag = $lang->getTag();
 
-		if( !JFolder::exists( JPATH_SITE . DS.'administrator'.DS.'components'.DS.'com_jem'.DS.'help'.DS .$langTag ) ) {
+		if( !JFolder::exists( JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag ) ) {
 			$langTag = 'en-GB';		// use english as fallback
 		}
-		$files = JFolder::files( JPATH_SITE . DS.'administrator'.DS.'components'.DS.'com_jem'.DS.'help'.DS.$langTag, '\.xml$|\.html$' );
+		$files = JFolder::files( JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag, '\.xml$|\.html$' );
 
 		$toc = array();
 		foreach ($files as $file) {
-			$buffer = file_get_contents( JPATH_SITE . DS.'administrator'.DS.'components'.DS.'com_jem'.DS.'help'.DS.$langTag.DS.$file );
+			$buffer = file_get_contents( JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag.'/'.$file );
 			if (preg_match( '#<title>(.*?)</title>#', $buffer, $m )) {
 				$title = trim( $m[1] );
 				if ($title) {

@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR); 
 defined('_JEXEC') or die;
 
 /**
@@ -449,7 +448,7 @@ static function footer( )
 			jimport('joomla.filesystem.file');
 
 			//does a thumbnail exist?
-			if (JFile::exists(JPATH_SITE.DS.'images'.DS.'jem'.DS.$folder.DS.'small'.DS.$imagefile)) {
+			if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
 
 				if ($settings->lightbox == 0) {
 
@@ -492,7 +491,7 @@ static	function getFlag($country)
 
         jimport('joomla.filesystem.file');
 
-        if (JFile::exists(JPATH_BASE.DS.'media/com_jem/images/flags'.DS.$country.'.gif')) {
+        if (JFile::exists(JPATH_BASE.'/media/com_jem/images/flags/'.$country.'.gif')) {
         	$countryimg = '<img src="'.JURI::base(true).'/media/com_jem/images/flags/'.$country.'.gif" alt="'.JText::_( 'COM_JEM_COUNTRY' ).': '.$country.'" width="16" height="11" />';
 
         	return $countryimg;

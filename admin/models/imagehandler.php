@@ -20,8 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
@@ -137,7 +135,7 @@ class JEMModelImagehandler extends JModelLegacy
 		$search = $this->getState('search');
 
 		// Initialize variables
-		$basePath = JPATH_SITE.DS.'images'.DS.'jem'.DS.$folder;
+		$basePath = JPATH_SITE.'/images/jem/'.$folder;
 		
 		$images = array ();
 
@@ -147,19 +145,19 @@ class JEMModelImagehandler extends JModelLegacy
 		// Iterate over the files if they exist
 		if ($fileList !== false) {
 			foreach ($fileList as $file) {
-				if (is_file($basePath.DS.$file) && substr($file, 0, 1) != '.') {
+				if (is_file($basePath.'/'.$file) && substr($file, 0, 1) != '.') {
 
 					if ($search == '') {
 						$tmp = new JObject();
 						$tmp->name = $file;
-						$tmp->path = JPath::clean($basePath.DS.$file);
+						$tmp->path = JPath::clean($basePath.'/'.$file);
 
 						$images[] = $tmp;
 
 					} elseif(stristr($file, $search)) {
 						$tmp = new JObject();
 						$tmp->name = $file;
-						$tmp->path = JPath::clean($basePath.DS.$file);
+						$tmp->path = JPath::clean($basePath.'/'.$file);
 
 						$images[] = $tmp;
 					}

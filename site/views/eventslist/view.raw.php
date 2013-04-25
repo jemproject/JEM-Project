@@ -20,12 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
-
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined( '_JEXEC' ) or die;
 
-require_once JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'classes'.DS.'iCalcreator.class.php';
+require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
 
 jimport( 'joomla.application.component.view');
 

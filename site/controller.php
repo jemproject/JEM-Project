@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
- if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined( '_JEXEC' ) or die;
 
 jimport('joomla.application.component.controller');
@@ -405,7 +404,7 @@ class JEMController extends JControllerLegacy
 				strftime('%d', strtotime($row->enddates)),
 				strftime('%Y', strtotime($row->enddates)),0);
 
-		require_once (JPATH_COMPONENT_SITE.DS.'classes'.DS.'vcal.class.php');
+		require_once (JPATH_COMPONENT_SITE.'/classes/vcal.class.php');
 
 		$v = new vCal();
 

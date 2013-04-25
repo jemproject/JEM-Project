@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined( '_JEXEC' ) or die;
 
 jimport('joomla.application.component.controller');
@@ -73,11 +72,11 @@ class JEMControllerImagehandler extends JEMController
 
 		//set the target directory
 		if ($task == 'venueimgup') {
-			$base_Dir = JPATH_SITE.DS.'images'.DS.'jem'.DS.'venues'.DS;
+			$base_Dir = JPATH_SITE.'/images/jem/venues/';
 		} else if ($task == 'eventimgup') {
-			$base_Dir = JPATH_SITE.DS.'images'.DS.'jem'.DS.'events'.DS;
+			$base_Dir = JPATH_SITE.'/images/jem/events/';
 		} else if ($task == 'categoriesimgup') {
-			$base_Dir = JPATH_SITE.DS.'images'.DS.'jem'.DS.'categories'.DS;
+			$base_Dir = JPATH_SITE.'/images/jem/categories/';
 		} 
 
 		//do we have an upload?
@@ -133,8 +132,8 @@ class JEMControllerImagehandler extends JEMController
 					continue;
 				}
 
-				$fullPath = JPath::clean(JPATH_SITE.DS.'images'.DS.'jem'.DS.$folder.DS.$image);
-				$fullPaththumb = JPath::clean(JPATH_SITE.DS.'images'.DS.'jem'.DS.$folder.DS.'small'.DS.$image);
+				$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
+				$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
 				if (is_file($fullPath)) {
 					JFile::delete($fullPath);
 					if (JFile::exists($fullPaththumb)) {

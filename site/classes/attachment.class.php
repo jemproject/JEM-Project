@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR); 
 defined('_JEXEC') or die;
 
 /**
@@ -38,14 +37,14 @@ class JEMAttachment extends JObject {
 	static function postUpload($post_files, $object) {
 		jimport('joomla.filesystem.file');
 		jimport('joomla.filesystem.folder');
-		require_once JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'classes'.DS.'image.class.php';
+		require_once JPATH_SITE.'/components/com_jem/classes/image.class.php';
 		
 		$app = JFactory::getApplication();
 		$user = JFactory::getUser();
 		$params = JComponentHelper::getParams('com_jem');
 		$jemsettings = JEMHelper::config();
 
-		$path = JPATH_SITE.DS.$jemsettings->attachments_path.DS.$object;
+		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$object;
 
 		if (!(is_array($post_files) && count($post_files))) {
 			return false;
@@ -86,7 +85,7 @@ class JEMAttachment extends JObject {
 
 			// TODO: Probably move this to a helper class
 			$sanitizedFilename = JEMImage::sanitize($path, $file);
-			JFile::copy($post_files['tmp_name'][$k], $path.DS.$sanitizedFilename);
+			JFile::copy($post_files['tmp_name'][$k], $path.'/'.$sanitizedFilename);
 
 			$table = JTable::getInstance('jem_attachments', '');
 			$table->file = $sanitizedFilename;
@@ -151,7 +150,7 @@ class JEMAttachment extends JObject {
 		}
 
 
-		$path = JPATH_SITE.DS.$jemsettings->attachments_path.DS.$object;
+		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$object;
 
 		if (!file_exists($path)) {
 			return array();
@@ -217,7 +216,7 @@ class JEMAttachment extends JObject {
 			JError::raiseError(403, JText::_('COM_JEM_YOU_DONT_HAVE_ACCESS_TO_THIS_FILE'));
 		}
 
-		$path = JPATH_SITE.DS.$jemsettings->attachments_path.DS.$res->object.DS.$res->file;
+		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$res->object.'/'.$res->file;
 		if (!file_exists($path)) {
 			JError::raiseError(404, JText::_('COM_JEM_FILE_NOT_FOUND'));
 		}
@@ -251,7 +250,7 @@ class JEMAttachment extends JObject {
 			return false;
 		}
 
-		$path = JPATH_SITE.DS.$jemsettings->attachments_path.DS.$res->object.DS.$res->file;
+		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$res->object.'/'.$res->file;
 		if (file_exists($path)) {
 			JFile::delete($path);
 		}

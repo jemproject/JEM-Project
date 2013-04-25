@@ -20,8 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// Check to ensure this file is included in Joomla!
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined('_JEXEC') or die();
 
 jimport('joomla.form.helper');
@@ -67,7 +65,7 @@ class JElementVenue extends JElement
 		$doc 		= JFactory::getDocument();
 		$fieldName	= $control_name.'['.$name.']';
 
-		JTable::addIncludePath(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_jem'.DS.'tables');
+		JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_jem/tables');
 
 		$venue = JTable::getInstance('jem_venues', '');
 		if ($value) {

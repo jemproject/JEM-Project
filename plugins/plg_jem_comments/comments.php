@@ -27,7 +27,7 @@ defined( '_JEXEC' ) or die;
 // Import library dependencies
 jimport( 'joomla.plugin.plugin' );
 
-include_once(JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'helpers'.DS.'route.php');
+include_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 
 class plgJEMComments extends JPlugin {
 	
@@ -72,8 +72,8 @@ class plgJEMComments extends JPlugin {
 	
 		//jomcomment integration
 		if ($this->params->get('commentsystem') == 1 ) {
-			if (file_exists(JPATH_SITE.DS.'plugins'.DS.'content'.DS.'jom_comment_bot.php')) {
-    			require_once(JPATH_SITE.DS.'plugins'.DS.'content'.DS.'jom_comment_bot.php');
+			if (file_exists(JPATH_SITE.'/plugins/content/jom_comment_bot.php')) {
+    			require_once(JPATH_SITE.'/plugins/content/jom_comment_bot.php');
 				$res	.= '<div class="elcomments">';
     			$res 	.= jomcomment($event_id, 'com_jem');
 				$res 	.= '</div>';
@@ -82,8 +82,8 @@ class plgJEMComments extends JPlugin {
 	
 		//jcomments integration
 		if ($this->params->get('commentsystem') == 2 ) {
-			if (file_exists(JPATH_SITE.DS.'components'.DS.'com_jcomments'.DS.'jcomments.php')) {
-				require_once(JPATH_SITE.DS.'components'.DS.'com_jcomments'.DS.'jcomments.php');
+			if (file_exists(JPATH_SITE.'/components/com_jcomments/jcomments.php')) {
+				require_once(JPATH_SITE.'/components/com_jcomments/jcomments.php');
 				$res .= '<div class="elcomments">';
 				$res .= JComments::showComments($event_id, 'com_jem', $event_title);
 				$res .= '</div>';
@@ -92,8 +92,8 @@ class plgJEMComments extends JPlugin {
 		
 		//JXtended Comments integration
 		if ($this->params->get('commentsystem') == 3 ) {
-			if (file_exists(JPATH_SITE.DS.'components'.DS.'com_comments'.DS.'helpers'.DS.'html'.DS.'comments.php')) {
-				require_once(JPATH_SITE.DS.'components'.DS.'com_comments'.DS.'helpers'.DS.'html'.DS.'comments.php');
+			if (file_exists(JPATH_SITE.'/components/com_comments/helpers/html/comments.php')) {
+				require_once(JPATH_SITE.'/components/com_comments/helpers/html/comments.php');
 				
 				$res .= '<div class="elcomments">';
 				

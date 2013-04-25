@@ -33,7 +33,7 @@ jimport('joomla.utilities.mail');
 $lang = JFactory::getLanguage();
 $lang->load('plg_jem_mailer', JPATH_ADMINISTRATOR);
 
-include_once(JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'helpers'.DS.'route.php');
+include_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 
 class plgJEMMailer extends JPlugin {
 

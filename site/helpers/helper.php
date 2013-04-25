@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR); 
 defined('_JEXEC') or die;
 
 /**
@@ -676,18 +675,18 @@ class JEMHelper {
 	 */
 	static function getCalendarTool()
 	{
-		require_once JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'classes'.DS.'iCalcreator.class.php';
+		require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
 		$mainframe = JFactory::getApplication();
     
 		$offset = (float) $mainframe->getCfg('offset');
 		$timezone_name = JEMHelper::getTimeZone($offset);
 								
 		$vcal = new vcalendar();                          // initiate new CALENDAR
-		if (!file_exists(JPATH_SITE.DS.'cache'.DS.'com_jem')) {
+		if (!file_exists(JPATH_SITE.'/cache/com_jem')) {
 			jimport('joomla.filesystem.folder');
-			JFolder::create(JPATH_SITE.DS.'cache'.DS.'com_jem');
+			JFolder::create(JPATH_SITE.'/cache/com_jem');
 		}
-		$vcal->setConfig('directory', JPATH_SITE.DS.'cache'.DS.'com_jem');
+		$vcal->setConfig('directory', JPATH_SITE.'/cache/com_jem');
 	//	$vcal->setProperty('unique_id', 'events@'.$mainframe->getCfg('sitename'));
 		$vcal->setProperty( "calscale", "GREGORIAN" ); 
     $vcal->setProperty( 'method', 'PUBLISH' );
@@ -699,7 +698,7 @@ class JEMHelper {
 	
 	static function icalAddEvent(&$calendartool, $event)
 	{
-		require_once JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'classes'.DS.'iCalcreator.class.php';
+		require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
 		$mainframe = JFactory::getApplication();
 		$params = $mainframe->getParams('com_jem');
 		

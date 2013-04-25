@@ -20,8 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
@@ -79,7 +77,7 @@ class JEMModelSampledata extends JModelLegacy
 		}
 		
 		//load sql file
-		if( !($buffer = file_get_contents($this->_filelist['folder'].DS.$scriptfile)) )
+		if( !($buffer = file_get_contents($this->_filelist['folder'].'/'.$scriptfile)) )
 		{
 			return false;
 		}
@@ -122,13 +120,13 @@ class JEMModelSampledata extends JModelLegacy
 		jimport('joomla.filesystem.archive');
 		
 		$filename	= 'sampledata.tar.gz';
-		$archive 	= JPATH_COMPONENT_ADMINISTRATOR.DS.'assets'.DS.$filename;
+		$archive 	= JPATH_COMPONENT_ADMINISTRATOR.'/assets/'.$filename;
 		
 		// Temporary folder to extract the archive into
 		$tmpdir = uniqid('sample_');
 
 		// Clean the paths to use for archive extraction
-		$extractdir = JPath::clean(JPATH_ROOT.DS.'tmp'.DS.$tmpdir);
+		$extractdir = JPath::clean(JPATH_ROOT.'/tmp/'.$tmpdir);
 		$archive 	= JPath::clean($archive);
 
 		//extract archive
@@ -214,11 +212,11 @@ class JEMModelSampledata extends JModelLegacy
 	 */
 	function _moveimages()
 	{
-		$imagebase = JPATH_ROOT.DS.'images'.DS.'jem';
+		$imagebase = JPATH_ROOT.'/images/jem';
 		foreach ($this->_filelist['files'] as $file)
 		{
-			JFile::copy($this->_filelist['folder'].DS.$file, $imagebase.DS.'venues'.DS.$file);
-			JFile::copy($this->_filelist['folder'].DS.$file, $imagebase.DS.'events'.DS.$file);
+			JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/venues/'.$file);
+			JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/events/'.$file);
 		}
 		
 		return true;

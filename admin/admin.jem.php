@@ -20,27 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined( '_JEXEC' ) or die;
 
 //Require classes
-require_once (JPATH_COMPONENT_SITE.DS.'helpers'.DS.'helper.php');
-require_once (JPATH_COMPONENT_SITE.DS.'helpers'.DS.'countries.php');
-require_once (JPATH_COMPONENT_SITE.DS.'classes'.DS.'image.class.php');
-require_once (JPATH_COMPONENT_SITE.DS.'classes'.DS.'attachment.class.php');
-require_once (JPATH_COMPONENT_SITE.DS.'classes'.DS.'categories.class.php');
-require_once (JPATH_COMPONENT_ADMINISTRATOR.DS.'classes'.DS.'admin.class.php');
+require_once (JPATH_COMPONENT_SITE.'/helpers/helper.php');
+require_once (JPATH_COMPONENT_SITE.'/helpers/countries.php');
+require_once (JPATH_COMPONENT_SITE.'/classes/image.class.php');
+require_once (JPATH_COMPONENT_SITE.'/classes/attachment.class.php');
+require_once (JPATH_COMPONENT_SITE.'/classes/categories.class.php');
+require_once (JPATH_COMPONENT_ADMINISTRATOR.'/classes/admin.class.php');
 
 // Set the table directory
-JTable::addIncludePath(JPATH_COMPONENT.DS.'tables');
+JTable::addIncludePath(JPATH_COMPONENT.'/tables');
 
 // Require the base controller
-require_once (JPATH_COMPONENT.DS.'controller.php');
+require_once (JPATH_COMPONENT.'/controller.php');
 
 // Require specific controller if requested
 if( $controller = JRequest::getWord('controller') ) {
-	$path = JPATH_COMPONENT.DS.'controllers'.DS.$controller.'.php';
+	$path = JPATH_COMPONENT.'/controllers/'.$controller.'.php';
 	if (file_exists($path)) {
 		require_once $path;
 	} else {

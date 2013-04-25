@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
- if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined( '_JEXEC' ) or die;
 
 jimport('joomla.application.component.controller');
@@ -74,7 +73,7 @@ class JEMController extends JControllerLegacy
 		JClientHelper::setCredentialsFromRequest('ftp');
 		$ftp = JClientHelper::getCredentials('ftp');
 		
-		$file = JPATH_SITE.DS.'media'.DS.'com_jem'.DS.'css'.DS.$filename;
+		$file = JPATH_SITE.'/media/com_jem/css/'.$filename;
 		
 		// Try to make the css file writeable
 		if (!$ftp['enabled'] && JPath::isOwner($file) && !JPath::setPermissions($file, '0755')) {

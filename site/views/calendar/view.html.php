@@ -20,14 +20,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
-
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 
-require_once (JPATH_COMPONENT_SITE.DS.'classes'.DS.'calendar.class.php');
+require_once (JPATH_COMPONENT_SITE.'/classes/calendar.class.php');
 
 /**
  * HTML View class for the Calendar View
