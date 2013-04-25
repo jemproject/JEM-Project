@@ -1,85 +1,109 @@
-	<table class="noshow">
-      <tr>
-        <td width="50%" valign="top">
+<?php
+/**
+ * @version 1.1 $Id$
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license GNU/GPL, see LICENSE.php
+ 
+ * JEM is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License 2
+ * as published by the Free Software Foundation.
+ *
+ * JEM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
+
+defined('_JEXEC') or die;
+?>
+<table class="noshow">
+	<tr>
+		<td width="50%" valign="top">
 		<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_DISPLAY_SETTINGS' ); ?></legend>
 				<table class="admintable">
 				<tbody>
-	 				<tr>
-	          			<td width="300" class="key">
+					<tr>
+						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SHOW_DETAILS' ); ?>::<?php echo JText::_('COM_JEM_SHOW_DETAILS_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_SHOW_DETAILS' ); ?>
 							</span>
 						</td>
-       					<td valign="top">
-        					<?php
-		  						$showdets = array();
+						<td valign="top">
+							<?php
+								$showdets = array();
 								$showdets[] = JHTML::_('select.option', '0', JText::_( 'COM_JEM_DETAILS_OFF' ) );
 								$showdets[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_LINK_ON_TITLE' ) );
 								$showdet = JHTML::_('select.genericlist', $showdets, 'showdetails', 'size="1" class="inputbox"', 'value', 'text', $this->jemsettings->showdetails );
 								echo $showdet;
-        					?>
-       	 				</td>
-      				</tr>
+							?>
+						</td>
+					</tr>
 					<tr>
-	          			<td width="300" class="key">
+						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_DATE_STRFTIME' ); ?>::<?php echo JText::_('COM_JEM_DATE_STRFTIME_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_DATE_STRFTIME' ); ?>
 							</span>
 						</td>
-       					<td valign="top">
+						<td valign="top">
 							<input type="text" name="formatdate" value="<?php echo $this->jemsettings->formatdate; ?>" size="15" maxlength="15" />
 							&nbsp;<a href="http://www.php.net/strftime" target="_blank"><?php echo JText::_( 'COM_JEM_PHP_STRFTIME_MANUAL' ); ?></a>
-       	 				</td>
-      				</tr>
+						</td>
+					</tr>
 					<tr>
-	          			<td width="300" class="key">
+						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_TIME_STRFTIME' ); ?>::<?php echo JText::_('COM_JEM_TIME_STRFTIME_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_TIME_STRFTIME' ); ?>
 							</span>
 						</td>
-       					<td valign="top">
+						<td valign="top">
 							<input type="text" name="formattime" value="<?php echo $this->jemsettings->formattime; ?>" size="15" maxlength="15" />
 							&nbsp;<a href="http://www.php.net/strftime" target="_blank"><?php echo JText::_( 'COM_JEM_PHP_STRFTIME_MANUAL' ); ?></a>
-       	 				</td>
-      				</tr>
+						</td>
+					</tr>
 					<tr>
-	          			<td width="300" class="key">
+						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_TIME_NAME' ); ?>::<?php echo JText::_('COM_JEM_TIME_NAME_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_TIME_NAME' ); ?>
 							</span>
 						</td>
-       					<td valign="top">
+						<td valign="top">
 							<input type="text" name="timename" value="<?php echo $this->jemsettings->timename; ?>" size="15" maxlength="10" />
-       	 				</td>
-      				</tr>
-      				<tr>
-	          			<td width="300" class="key">
+						</td>
+					</tr>
+					<tr>
+						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_STORE_IP' ); ?>::<?php echo JText::_('COM_JEM_STORE_IP_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_STORE_IP' ); ?>
 							</span>
 						</td>
-       					<td valign="top">
+						<td valign="top">
 							<?php
 								echo JHTML::_('select.booleanlist', 'storeip', 'class="inputbox"', $this->jemsettings->storeip );
-        					?>
-       	 				</td>
-      				</tr>
+							?>
+						</td>
+					</tr>
 				</tbody>
 			</table>
-		  </fieldset>
+		</fieldset>
 
-		  <fieldset class="adminform">
+		<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_EVENT_HANDLING' ); ?></legend>
 				<table class="admintable">
 				<tbody>
 					<tr>
-        				<td width="300" class="key">
+						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_OLD_EVENTS' ); ?>::<?php echo JText::_('COM_JEM_OLD_EVENTS_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_OLD_EVENTS' ); ?>
 							</span>
 						</td>
-      					<td valign="top">
+						<td valign="top">
 							<?php
 							$mode = 0;
 							if ($this->jemsettings->oldevent >= 1) {
@@ -87,79 +111,78 @@
 							} // if
 							?>
 							<select name="oldevent" size="1" class="inputbox" onChange="changeoldMode()">
-  								<option value="0"<?php if ($this->jemsettings->oldevent == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_DO_NOTHING' ); ?></option>
-  								<option value="1"<?php if ($this->jemsettings->oldevent == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_DELETE_OLD_EVENTS' ); ?></option>
-  								<option value="2"<?php if ($this->jemsettings->oldevent == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_ARCHIVE_OLD_EVENTS' ); ?></option>
+								<option value="0"<?php if ($this->jemsettings->oldevent == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_DO_NOTHING' ); ?></option>
+								<option value="1"<?php if ($this->jemsettings->oldevent == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_DELETE_OLD_EVENTS' ); ?></option>
+								<option value="2"<?php if ($this->jemsettings->oldevent == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_ARCHIVE_OLD_EVENTS' ); ?></option>
 							</select>&nbsp;
 							<span class="error hasTip" title="<?php echo JText::_( 'COM_JEM_WARNING' ); ?>::<?php echo JText::_( 'COM_JEM_OLD_EVENTS_WARN' ); ?>">
 								<?php echo $this->WarningIcon(); ?>
 							</span>
-      					</td>
-      				</tr>
-	 				<tr id="old"<?php if (!$mode) echo ' style="display:none"'; ?>>
-	          			<td width="300" class="key">
+						</td>
+					</tr>
+					<tr id="old"<?php if (!$mode) echo ' style="display:none"'; ?>>
+						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NUMBER_DELETE_DAYS' ); ?>::<?php echo JText::_('COM_JEM_NUMBER_DELETE_DAYS_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_NUMBER_DELETE_DAYS' ); ?>
 							</span>
 						</td>
-       					<td valign="top">
+						<td valign="top">
 							<input type="text" name="minus" value="<?php echo $this->jemsettings->minus; ?>" size="3" maxlength="2" />
-       	 				</td>
-      				</tr>
+						</td>
+					</tr>
 				</tbody>
-				</table>
-		  </fieldset>
+			</table>
+		</fieldset>
 
-		  
 
 		</td>
-        <td width="50%" valign="top">
+		<td width="50%" valign="top">
 
-       	<fieldset class="adminform">
+		<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_IMAGE_HANDLING' ); ?></legend>
 				<table class="admintable">
 				<tbody>
 					<tr>
-	          			<td width="300" class="key">
+						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_IMAGE_FILESIZE' ); ?>::<?php echo JText::_('COM_JEM_IMAGE_FILESIZE_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_IMAGE_FILESIZE' ); ?>
 							</span>
 						</td>
-       					<td valign="top">
+						<td valign="top">
 							<input type="text" name="sizelimit" value="<?php echo $this->jemsettings->sizelimit; ?>" size="10" maxlength="10" />
-       	 				</td>
-      				</tr>
+						</td>
+					</tr>
 					<tr>
-	          			<td width="300" class="key">
+						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_IMAGE_HEIGHT' ); ?>::<?php echo JText::_('COM_JEM_IMAGE_HEIGHT_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_IMAGE_HEIGHT' ); ?>
 							</span>
 						</td>
-       					<td valign="top">
-         					<input type="text" name="imagehight" value="<?php echo $this->jemsettings->imagehight; ?>" size="10" maxlength="10" />
-       	 				</td>
-      				</tr>
+						<td valign="top">
+							<input type="text" name="imagehight" value="<?php echo $this->jemsettings->imagehight; ?>" size="10" maxlength="10" />
+						</td>
+					</tr>
 					<tr>
-	          			<td width="300" class="key">
+						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_IMAGE_WIDTH' ); ?>::<?php echo JText::_('COM_JEM_IMAGE_WIDTH_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_IMAGE_WIDTH' ); ?>
 							</span>
 						</td>
-       					<td valign="top">
-         					<input type="text" name="imagewidth" value="<?php echo $this->jemsettings->imagewidth; ?>" size="10" maxlength="10" />
-         					<span class="error hasTip" title="<?php echo JText::_( 'COM_JEM_WARNING' );?>::<?php echo JText::_( 'WARNING MAX IMAGEWIDTH' ); ?>">
+						<td valign="top">
+							<input type="text" name="imagewidth" value="<?php echo $this->jemsettings->imagewidth; ?>" size="10" maxlength="10" />
+							<span class="error hasTip" title="<?php echo JText::_( 'COM_JEM_WARNING' );?>::<?php echo JText::_( 'WARNING MAX IMAGEWIDTH' ); ?>">
 								<?php echo $this->WarningIcon(); ?>
 							</span>
-       	 				</td>
-      				</tr>
+						</td>
+					</tr>
 					<tr>
-	          			<td width="300" class="key">
+						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_GD_LIBRARY' ); ?>::<?php echo JText::_('COM_JEM_GD_LIBRARY_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_GD_LIBRARY' ); ?>
 							</span>
 						</td>
-       					<td valign="top">
-         					<?php
+						<td valign="top">
+							<?php
 							$mode = 0;
 							if ($this->jemsettings->gddisabled == 1) {
 								$mode = 1;
@@ -169,50 +192,50 @@
 							if ($gdv = JEMImage::gdVersion()) {
 
 								//is it Version two or higher? If yes let the user the choice
-   								if ($gdv >= 2) {
-   								?>
-       								<input type="radio" id="gddisabled0" name="gddisabled" value="0" onclick="changegdMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'COM_JEM_NO' ); ?>
+								if ($gdv >= 2) {
+								?>
+									<input type="radio" id="gddisabled0" name="gddisabled" value="0" onclick="changegdMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'COM_JEM_NO' ); ?>
 									<input type="radio" id="gddisabled1" name="gddisabled" value="1" onclick="changegdMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'COM_JEM_YES' ); ?>
-       							<?php
-       								$note	= JText::_( 'COM_JEM_GD_VERSION_TWO' );
-       								$color	= 'green';
+								<?php
+									$note	= JText::_( 'COM_JEM_GD_VERSION_TWO' );
+									$color	= 'green';
 
-       							//No it is version one...disable thumbnailing
-   								} else {
-   								?>
-   								<input type="hidden" name="gddisabled" value="0" />
-   								<?php
-   								$note	= JText::_( 'COM_JEM_GD_VERSION_ONE' );
-   								$color	= 'red';
-   								}
+								//No it is version one...disable thumbnailing
+								} else {
+								?>
+								<input type="hidden" name="gddisabled" value="0" />
+								<?php
+								$note	= JText::_( 'COM_JEM_GD_VERSION_ONE' );
+								$color	= 'red';
+								}
 
-   							//the gd library is not available on this server...disable thumbnailing
+							//the gd library is not available on this server...disable thumbnailing
 							} else {
 							?>
 								<input type="hidden" name="gddisabled" value="0" />
-   							<?php
-   								$note	= JText::_( 'COM_JEM_NO_GD_LIBRARY' );
-   								$color	= 'red';
+							<?php
+								$note	= JText::_( 'COM_JEM_NO_GD_LIBRARY' );
+								$color	= 'red';
 							}
 							?>
 							<br />
 							<strong><?php echo JText::_( 'COM_JEM_STATUS' ).':'; ?></strong>
 							<font color="<?php echo $color; ?>"><?php echo $note; ?></font>
 						</td>
-      				</tr>
-      				<tr id="gd1"<?php if (!$mode) echo ' style="display:none"'; ?>>
-	          			<td width="300" class="key">
+					</tr>
+					<tr id="gd1"<?php if (!$mode) echo ' style="display:none"'; ?>>
+						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_IMAGE_LIGHTBOX' ); ?>::<?php echo JText::_('COM_JEM_IMAGE_LIGHTBOX_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_IMAGE_LIGHTBOX' ); ?>
 							</span>
 						</td>
-       					<td valign="top">
-         					<?php
+						<td valign="top">
+							<?php
 							$html = JHTML::_('select.booleanlist', 'lightbox', 'class="inputbox"', $this->jemsettings->lightbox );
 							echo $html;
 							?>
-       	 				</td>
-      				</tr>
+						</td>
+					</tr>
 				</tbody>
 			</table>
 		</fieldset>
@@ -222,12 +245,12 @@
 				<table class="admintable">
 				<tbody>
 					<tr>
-	          			<td width="300" class="key">
+						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?>::<?php echo JText::_('COM_JEM_META_KEYWORDS_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?>
 							</span>
 						</td>
-       					<td valign="top">
+						<td valign="top">
 							<?php
 								$meta_key = explode(", ", $this->jemsettings->meta_keywords);
 							?>
@@ -238,7 +261,7 @@
 								<?php echo JText::_( 'COM_JEM_VENUE' ); ?></option>
 								<!-- <option value="[locid]" <?php if(in_array("[locid]",$meta_key)) { echo "selected=\"selected\""; } ?>>
 								<?php echo JText::_( 'COM_JEM_CITY
-                                ' ); ?></option> -->
+								' ); ?></option> -->
 								<option value="[dates]" <?php if(in_array("[dates]",$meta_key)) { echo "selected=\"selected\""; } ?>>
 								<?php echo JText::_( 'COM_JEM_DATE' ); ?></option>
 								<option value="[times]" <?php if(in_array("[times]",$meta_key)) { echo "selected=\"selected\""; } ?>>
@@ -248,8 +271,8 @@
 								<option value="[endtimes]" <?php if(in_array("[endtimes]",$meta_key)) { echo "selected=\"selected\""; } ?>>
 								<?php echo JText::_( 'COM_JEM_END_TIME' ); ?></option>
 							</select>
-       	 				</td>
-      				</tr>
+						</td>
+					</tr>
 					<tr>
 						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_META_DESCRIPTION' ); ?>::<?php echo JText::_('COM_JEM_META_DESCRIPTION_TIP'); ?>">
@@ -293,5 +316,5 @@
 		</fieldset>
 
 		</td>
-      </tr>
-	</table>
+	</tr>
+</table>
