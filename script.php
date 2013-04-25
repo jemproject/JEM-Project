@@ -18,14 +18,16 @@ class com_jemInstallerScript
 	function install($parent) 
 	{
 //		$parent->getParent()->setRedirectURL('index.php?option=com_jem');
-
-		// Check for existing /images/jem directory
-		if (!$direxists = JFolder::exists(JPATH_SITE.'/images/jem'))
-		{?>
+		$error = array(
+			'summary' => 0,
+			'folders' => 0,
+			'settings' => 0
+			);
+		?>
 		<table class="adminlist">
 			<tr>
 				<td valign="top">
-					<img src="<?php echo '../media/com_jem/images/jemlogo.png'; ?>" height="100" width="250" alt="jem Logo" align="left">
+					<img src="../media/com_jem/images/jemlogo.png" height="100" width="250" alt="jem Logo" align="left">
 				</td>
 				<td valign="top" width="100%">
 					<h1>JEM</h1>
@@ -40,99 +42,97 @@ class com_jemInstallerScript
 				<td colspan="2">
 					<h2>Installation Status:</h2>
 					<h3>Check Folders:</h3>
-			<?php
-			$imageDir = "/images/jem";
+		<?php
+		$imageDir = "/images/jem";
 
-			$createDirs = array(
-				$imageDir,
-				$imageDir.'/categories',
-				$imageDir.'/categories/small',
-				$imageDir.'/events',
-				$imageDir.'/events/small',
-				$imageDir.'/venues',
-				$imageDir.'/venues/small'
-				);
+		$createDirs = array(
+			$imageDir,
+			$imageDir.'/categories',
+			$imageDir.'/categories/small',
+			$imageDir.'/events',
+			$imageDir.'/events/small',
+			$imageDir.'/venues',
+			$imageDir.'/venues/small'
+			);
 
-			// Check for existance of /images/jem directory
-			if ($direxists = JFolder::exists(JPATH_SITE.$createDirs[0])) {
-				echo "<p><span style='color:green;'>Installation finished:</span> Directory <i>$createDirs[0]</i> already exists. Skipping creation.</p>";
-			} else {
-				echo "<p><span style='color:orange;'>Info:</span> Directory <i>$createDirs[0]</i> does NOT exist.</p>";
-				echo "<p>Trying to create folder structure:</p>";
+		// Check for existance of /images/jem directory
+		if ($direxists = JFolder::exists(JPATH_SITE.$createDirs[0])) {
+			echo "<p><span style='color:green;'>Success:</span> Directory <i>$createDirs[0]</i> already exists. Skipping creation.</p>";
+		} else {
+			echo "<p><span style='color:orange;'>Info:</span> Directory <i>$createDirs[0]</i> does NOT exist.</p>";
+			echo "<p>Trying to create folder structure:</p>";
 
-				echo "<ul>";
-				// Folder creation
-				foreach($createDirs as $directory) {
- 					if ($makedir = JFolder::create(JPATH_SITE.$directory)) {
-						echo "<li><span style='color:green;'>Success:</span> Directory <i>$directory</i> created.</li>";
-					} else {
-						echo "<li><span style='color:red;'>Error:</font> Directory <i>$directory</i> NOT created.</li>";
-						$error['folders'] = 1;
-					}
+			echo "<ul>";
+			// Folder creation
+			foreach($createDirs as $directory) {
+				if ($makedir = JFolder::create(JPATH_SITE.$directory)) {
+					echo "<li><span style='color:green;'>Success:</span> Directory <i>$directory</i> created.</li>";
+				} else {
+					echo "<li><span style='color:red;'>Error:</font> Directory <i>$directory</i> NOT created.</li>";
+					$error['folders']++;
 				}
-				echo "</ul>";
 			}
+			echo "</ul>";
+		}
 
-			if(isset($error['folders']) && $error['folders']) {
-			?>
+		if($error['folders']) {
+		?>
 					<p>
 						Please check the existance of the listed directories.<br />
 						If they do not exist, create them and ensure JEM has write access to these directories.<br />
 						If you don't so, you prevent JEM from functioning correctly. (You can't upload images).
 					</p>
-			<?php
-			}
+		<?php
+		}
 
-			echo "<h3>Settings</h3>";
+		echo "<h3>Settings</h3>";
 
-			$db =  JFactory::getDBO();
-			$query = "SELECT id FROM #__jem_settings";
+		$db = JFactory::getDBO();
+		$query = "SELECT id FROM #__jem_settings";
+		$db->setQuery($query);
+		$db->loadResult();
+
+		if(!$db->loadResult()) {
+			$query = "INSERT INTO #__jem_settings VALUES (1, 2, 1, 1, 1, 1, 1, 1, '1', '1', '100%', '20%', '40%', '20%', '', 'Datum', 'Activiteit', "
+					."'Locatie', 'city', '%d.%m.%Y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, 0, 'example@example.com', 0, '1000', -2, -2, -2, 1, '', "
+					."'Type', 1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, '[title], [a_name], [categories], [times]', "
+					."'The event titled [title] starts on [dates]!', 1, 0, 'State', '0', 0, 1, 0, '1364604520', '', '', 'NL', 'NL', '100', '10%', 0, "
+					."'evimage', '0', 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 'attendee', '10%', 1, 30, 1, 1, 'media/com_jem/attachments', '1000', "
+					."'txt,csv,htm,html,xml,css,doc,xls,zip,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,tar.gz', 0, '30', 100, 1)";
 			$db->setQuery($query);
-			$db->loadResult();
 
-			if(!$db->loadResult()) {
-				$query = "INSERT INTO #__jem_settings VALUES (1, 2, 1, 1, 1, 1, 1, 1, '1', '1', '100%', '20%', '40%', '20%', '', 'Datum', 'Activiteit', "
-						."'Locatie', 'city', '%d.%m.%Y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, 0, 'example@example.com', 0, '1000', -2, -2, -2, 1, '', "
-						."'Type', 1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, '[title], [a_name], [categories], [times]', "
-						."'The event titled [title] starts on [dates]!', 1, 0, 'State', '0', 0, 1, 0, '1364604520', '', '', 'NL', 'NL', '100', '10%', 0, "
-						."'evimage', '0', 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 'attendee', '10%', 1, 30, 1, 1, 'media/com_jem/attachments', '1000', "
-						."'txt,csv,htm,html,xml,css,doc,xls,zip,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,tar.gz', 0, '30', 100, 1)";
-				$db->setQuery($query);
-
-				if (!$db->query()) {
-					echo "<p><span style='color:red;'>Error:</span> Saving default settings failed.</p>";
-					$error['settings'] = 1;
-				} else {
-					echo "<p><span style='color:green;'>Success:</span> Saved default settings.</p>";
-				}
+			if (!$db->query()) {
+				echo "<p><span style='color:red;'>Error:</span> Saving default settings failed.</p>";
+				$error['settings']++;
 			} else {
-				echo "<p><span style='color:green;'>Success:</span> Found existing (default) settings.</p>";
+				echo "<p><span style='color:green;'>Success:</span> Saved default settings.</p>";
 			}
+		} else {
+			echo "<p><span style='color:green;'>Success:</span> Found existing (default) settings.</p>";
+		}
 
-			echo "<h3>Summary</h3>";
+		echo "<h3>Summary</h3>";
 
-			foreach ($error as $k => $v) {
-				if($v) {
-					$error['summary'] = 1;
-					break;
-				}
+		foreach ($error as $k => $v) {
+			if($k != 'summary') {
+				$error['summary'] += $v;
 			}
+		}
 
-			if(isset($error['summary']) && $error['summary']) {
-			?>
+		if($error['summary']) {
+		?>
 					<p style='color:red;'><b>JEM was NOT installed successfully!</b></p>
-			<?php
-			} else {
-			?>
+		<?php
+		} else {
+		?>
 					<p style='color:green;'><b>JEM was installed successfully!</b> Have Fun.</p>
-			<?php
-			}
-			?>
+		<?php
+		}
+		?>
 				</td>
 			</tr>
 		</table>
 		<?php
-		}
 	}
 
 	/**
