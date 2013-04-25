@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="1.6.0" method="upgrade">
+<extension type="component" version="2.5" method="upgrade">
 	<name>JEM</name>
 	<creationDate>24 March 2013</creationDate>
 	<author>JEM Community</author>

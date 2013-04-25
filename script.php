@@ -1,153 +1,140 @@
 <?php
-
-
-
 // No direct access to this file
 defined('_JEXEC') or die;
+
 $db =  JFactory::getDBO();
 jimport('joomla.filesystem.folder');
 
 
 /**
- * Script file of HelloWorld component
+ * Script file of JEM component
  */
 class com_jemInstallerScript
 {
 	/**
-	 * method to install the component
+	 * Method to install the component
 	 *
 	 * @return void
 	 */
 	function install($parent) 
 	{
-		// $parent is the class calling this method
-	//	$parent->getParent()->setRedirectURL('index.php?option=com_jem');
-		
+//		$parent->getParent()->setRedirectURL('index.php?option=com_jem');
+
 		// Check for existing /images/jem directory
-    if (!$direxists = JFolder::exists(JPATH_SITE.'/images/jem'))
-    {?>
-	    
-	    <table cellpadding="4" cellspacing="0" border="0" width="100%" class="adminlist">
-	<tr>
-		<td valign="top">
-    		<img src="<?php echo '../media/com_jem/images/jemlogo.png'; ?>" height="100" width="250" alt="jem Logo" align="left">
-		</td>
-		<td valign="top" width="100%">
-       	 	<strong>JEM</strong><br/>
-        	<font class="small">by <a href="http://www.joomlaeventmanager.net" target="_blank">joomlaeventmanager.net </a><br/>
-        	Released under the terms and conditions of the <a href="http://www.gnu.org/licenses/gpl-2.0.html" target="_blank">GNU General Public License</a>.
-        	</font>
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2">
-	    
-			<code>Installation Status:<br />
+		if (!$direxists = JFolder::exists(JPATH_SITE.'/images/jem'))
+		{?>
+		<table class="adminlist">
+			<tr>
+				<td valign="top">
+					<img src="<?php echo '../media/com_jem/images/jemlogo.png'; ?>" height="100" width="250" alt="jem Logo" align="left">
+				</td>
+				<td valign="top" width="100%">
+					<h1>JEM</h1>
+					<p class="small">
+						by <a href="http://www.joomlaeventmanager.net" target="_blank">joomlaeventmanager.net</a><br/>
+						Released under the terms and conditions of the 
+						<a href="http://www.gnu.org/licenses/gpl-2.0.html" target="_blank">GNU General Public License</a>.
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<h2>Installation Status:</h2>
+					<h3>Check Folders:</h3>
 			<?php
-			// Check for existing /images/jem directory
-			if ($direxists = JFolder::exists( JPATH_SITE.'/images/jem' )) {
-				echo "<font color='green'>FINISHED:</font> Directory /images/jem exists. Skipping creation.<br />";
-			} else {
-				echo "<font color='orange'>Note:</font> The Directory /images/jem does NOT exist. jem will try to create them.<br />";
+			$imageDir = "/images/jem";
 
-				//Image folder creation 
-				if ($makedir = JFolder::create( JPATH_SITE.'/images/jem')) {
-					echo "<font color='green'>FINISHED:</font> Directory /images/jem created.<br />";
-				} else {
-					echo "<font color='red'>ERROR:</font> Directory /images/jem NOT created.<br />";
+			$createDirs = array(
+				$imageDir,
+				$imageDir.'/categories',
+				$imageDir.'/categories/small',
+				$imageDir.'/events',
+				$imageDir.'/events/small',
+				$imageDir.'/venues',
+				$imageDir.'/venues/small'
+				);
+
+			// Check for existance of /images/jem directory
+			if ($direxists = JFolder::exists(JPATH_SITE.$createDirs[0])) {
+				echo "<p><span style='color:green;'>Installation finished:</span> Directory <i>$createDirs[0]</i> already exists. Skipping creation.</p>";
+			} else {
+				echo "<p><span style='color:orange;'>Info:</span> Directory <i>$createDirs[0]</i> does NOT exist.</p>";
+				echo "<p>Trying to create folder structure:</p>";
+
+				echo "<ul>";
+				// Folder creation
+				foreach($createDirs as $directory) {
+ 					if ($makedir = JFolder::create(JPATH_SITE.$directory)) {
+						echo "<li><span style='color:green;'>Success:</span> Directory <i>$directory</i> created.</li>";
+					} else {
+						echo "<li><span style='color:red;'>Error:</font> Directory <i>$directory</i> NOT created.</li>";
+						$error['folders'] = 1;
+					}
 				}
-                if (JFolder::create(JPATH_SITE.'/images/jem/categories')) {
-					echo "<font color='green'>FINISHED:</font> Directory /images/jem/categories created.<br />";
-				} else {
-					echo "<font color='red'>ERROR:</font> Directory /images/jem/categories NOT created.<br />";
-				}
-				if (JFolder::create( JPATH_SITE.'/images/jem/categories/small')) {
-					echo "<font color='green'>FINISHED:</font> Directory /images/jem/categories/small created.<br />";
-				} else {
-					echo "<font color='red'>ERROR:</font> Directory /images/jem/categories/small NOT created.<br />";
-				}
-				if (JFolder::create(JPATH_SITE.'/images/jem/events')) {
-					echo "<font color='green'>FINISHED:</font> Directory /images/jem/events created.<br />";
-				} else {
-					echo "<font color='red'>ERROR:</font> Directory /images/jem/events NOT created.<br />";
-				}
-				if (JFolder::create( JPATH_SITE.'/images/jem/events/small')) {
-					echo "<font color='green'>FINISHED:</font> Directory /images/jem/events/small created.<br />";
-				} else {
-					echo "<font color='red'>ERROR:</font> Directory /images/jem/events/small NOT created.<br />";
-				}
-				if (JFolder::create( JPATH_SITE.'/images/jem/venues')) {
-					echo "<font color='green'>FINISHED:</font> Directory /images/jem/venues created.<br />";
-				} else {
-					echo "<font color='red'>ERROR:</font> Directory /images/jem/venues NOT created.<br />";
-				}
-				if (JFolder::create( JPATH_SITE.'/images/jem/venues/small')) {
-					echo "<font color='green'>FINISHED:</font> Directory /images/jem/venues/small created.<br />";
-				} else {
-					echo "<font color='red'>ERROR:</font> Directory /images/jem/venues/small NOT created.<br />";
-				}
+				echo "</ul>";
 			}
-        	?>
-        	<?php
-		$db =  JFactory::getDBO();
-		  $query = "INSERT INTO #__jem_settings VALUES (1, 2, 1, 1, 1, 1, 1, 1, '1', '1', '100%', '20%', '40%', '20%', '', 'Datum', 'Activiteit', 'Locatie', 'city', '%d.%m.%Y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, 0, 'example@example.com', 0, '1000', -2, -2, -2, 1, '', 'Type', 1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, '[title], [a_name], [categories], [times]', 'The event titled [title] starts on [dates]!', 1, 0, 'State', '0', 0, 1, 0, '1364604520', '', '', 'NL', 'NL', '100', '10%', 0, 'evimage', '0', 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 'attendee', '10%', 1, 30, 1, 1, 'media/com_jem/attachments', '1000', 'txt,csv,htm,html,xml,css,doc,xls,zip,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,tar.gz', 0, '30', 100, 1)";
-        $db->setQuery($query);
-        if (!$db->query())
-        {
-            echo "<font color='red'>ERROR:</font> Insert of default settings failed.<br />";
-        } else
-        {
-            echo "<font color='green'>FINISHED:</font> Insert of default settings was a succes.<br />";
-        }	
-        ?>
-			<br />
 
-			<?php
-			if (($direxists) || ($makedir)) {
+			if($error['folders']) {
 			?>
-				<font color="green"><b>JEM Installed Successfully!</b></font><br />
-				Ensure that JEM has write access to the directories shown above! Have Fun.
-				</code>
-			<?php
-			} else {
-			?>
-				<font color="red">
-				<b>Unfortunately JEM could NOT be installed successfully!</b>
-				</font>
-				<br /><br />
-				Please check following directories:<br />
-				</code>
-				<ul>
-					<li>/images/jem</li>
-					<li>/images/jem/categories</li>
-					<li>/images/jem/categories/small</li>
-					<li>/images/jem/events</li>
-					<li>/images/jem/events/small</li>
-					<li>/images/jem/venues</li>
-					<li>/images/jem/venues/small</li>
-				</ul>
-				<br />
-
-				<code>
-					If they do not exist, create them and ensure JEM has write access to these directories.<br />
-					If you don't so, you prevent JEM from functioning correctly. (You can't upload images).
-				</code>
-				
+					<p>
+						Please check the existance of the listed directories.<br />
+						If they do not exist, create them and ensure JEM has write access to these directories.<br />
+						If you don't so, you prevent JEM from functioning correctly. (You can't upload images).
+					</p>
 			<?php
 			}
-			
-			
-		?>	
-		</td>
-	</tr>
-</table>
-	  <?php  
-	    
-    }
-    
-  
 
-	}  // end of fuction install
+			echo "<h3>Settings</h3>";
+
+			$db =  JFactory::getDBO();
+			$query = "SELECT id FROM #__jem_settings";
+			$db->setQuery($query);
+			$db->loadResult();
+
+			if(!$db->loadResult()) {
+				$query = "INSERT INTO #__jem_settings VALUES (1, 2, 1, 1, 1, 1, 1, 1, '1', '1', '100%', '20%', '40%', '20%', '', 'Datum', 'Activiteit', "
+						."'Locatie', 'city', '%d.%m.%Y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, 0, 'example@example.com', 0, '1000', -2, -2, -2, 1, '', "
+						."'Type', 1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, '[title], [a_name], [categories], [times]', "
+						."'The event titled [title] starts on [dates]!', 1, 0, 'State', '0', 0, 1, 0, '1364604520', '', '', 'NL', 'NL', '100', '10%', 0, "
+						."'evimage', '0', 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 'attendee', '10%', 1, 30, 1, 1, 'media/com_jem/attachments', '1000', "
+						."'txt,csv,htm,html,xml,css,doc,xls,zip,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,tar.gz', 0, '30', 100, 1)";
+				$db->setQuery($query);
+
+				if (!$db->query()) {
+					echo "<p><span style='color:red;'>Error:</span> Saving default settings failed.</p>";
+					$error['settings'] = 1;
+				} else {
+					echo "<p><span style='color:green;'>Success:</span> Saved default settings.</p>";
+				}
+			} else {
+				echo "<p><span style='color:green;'>Success:</span> Found existing (default) settings.</p>";
+			}
+
+			echo "<h3>Summary</h3>";
+
+			foreach ($error as $k => $v) {
+				if($v) {
+					$error['summary'] = 1;
+					break;
+				}
+			}
+
+			if($error[summary]) {
+			?>
+					<p style='color:red;'><b>JEM was NOT installed successfully!</b></p>
+			<?php
+			} else {
+			?>
+					<p style='color:green;'><b>JEM was installed successfully!</b> Have Fun.</p>
+			<?php
+			}
+			?>
+				</td>
+			</tr>
+		</table>
+		<?php
+		}
+	}
 
 	/**
 	 * method to uninstall the component
@@ -156,7 +143,9 @@ class com_jemInstallerScript
 	 */
 	function uninstall($parent) 
 	{
-		// $parent is the class calling this method
+		?>
+		<h2>Uninstall Status:</h2>
+		<?php
 		echo '<p>' . JText::_('COM_JEM_UNINSTALL_TEXT') . '</p>';
 	}
 
@@ -167,8 +156,10 @@ class com_jemInstallerScript
 	 */
 	function update($parent) 
 	{
-		 // $parent is the class calling this method
-                echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->version) . '</p>';
+		?>
+		<h2>Update Status:</h2>
+		<?php
+		echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->version) . '</p>';
 	}
 
 	/**
@@ -178,24 +169,82 @@ class com_jemInstallerScript
 	 */
 	function preflight($type, $parent) 
 	{
-		// $parent is the class calling this method
+		$jversion = new JVersion();
+
+		// Minimum Joomla version as per Manifest file
+		$requiredJoomlaVersion = $parent->get('manifest')->attributes()->version;
+
+		// abort if the current Joomla release is older than required version
+		if(version_compare($jversion->getShortVersion(), $requiredJoomlaVersion, 'lt')) {
+			Jerror::raiseWarning(100, JText::sprintf('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION', $requiredJoomlaVersion));
+			return false;
+		}
+
+		// abort if the release being installed is not newer than the currently installed version
+		if ($type == 'update') {
+			// Installed component version
+			$oldRelease = $this->getParam('version');
+			// Installing component version as per Manifest file
+			$newRelease = $parent->get('manifest')->version;
+
+			if (version_compare($newRelease, $oldRelease, 'le')) {
+				Jerror::raiseWarning(100, JText::sprintf('COM_JEM_PREFLIGHT_INCORRECT_VERSION_SEQUENCE', $oldRelease, $newRelease));
+				return false;
+			}
+		}
+
 		// $type is the type of change (install, update or discover_install)
 		echo '<p>' . JText::_('COM_JEM_PREFLIGHT_' . $type . '_TEXT') . '</p>';
-	
-		
-		
-		
 	}
 
 	/**
-	 * method to run after an install/update/uninstall method
+	 * Method to run after an install/update/uninstall method
 	 *
 	 * @return void
 	 */
 	function postflight($type, $parent) 
 	{
-		// $parent is the class calling this method
 		// $type is the type of change (install, update or discover_install)
 		echo '<p>' . JText::_('COM_JEM_POSTFLIGHT_' . $type . '_TEXT') . '</p>';
+	}
+
+	/**
+	 * Get a parameter from the manifest file (actually, from the manifest cache).
+	 * 
+	 * @param $name  The name of the parameter
+	 * 
+	 * @return The parameter
+	 */
+	function getParam($name) {
+		$db = JFactory::getDbo();
+		$db->setQuery('SELECT manifest_cache FROM #__extensions WHERE name = "com_jem"');
+		$manifest = json_decode($db->loadResult(), true);
+		return $manifest[$name];
+	}
+
+	/**
+	 * Sets parameter values in the component's row of the extension table
+	 * 
+	 * @param $param_array  An array holding the params to store 
+	 */
+	function setParams($param_array) {
+		if (count($param_array) > 0) {
+			// read the existing component value(s)
+			$db = JFactory::getDbo();
+			$db->setQuery('SELECT params FROM #__extensions WHERE name = "com_jem"');
+			$params = json_decode($db->loadResult(), true);
+
+			// add the new variable(s) to the existing one(s)
+			foreach ($param_array as $name => $value) {
+				$params[(string) $name] = (string) $value;
+			}
+
+			// store the combined new and existing values back as a JSON string
+			$paramsString = json_encode($params);
+			$db->setQuery('UPDATE #__extensions SET params = ' .
+					$db->quote($paramsString) .
+					' WHERE name = "com_jem"');
+			$db->query();
+		}
 	}
 }
