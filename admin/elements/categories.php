@@ -100,7 +100,7 @@ class JElementCategories extends JElement {
 		if ($value) {
 			$category->load($value);
 		} else {
-			$category->catname = JText::_('SELECT CATEGORY');
+			$category->catname = JText::_('COM_JEM_SELECT_CATEGORY');
 		}
 
 		$js = "
@@ -112,7 +112,7 @@ class JElementCategories extends JElement {
 		
 		function elCatReset() {
 		  document.getElementById('a_id').value = 0;
-      document.getElementById('a_name').value = '".htmlspecialchars(JText::_('SELECT CATEGORY'))."';
+      document.getElementById('a_name').value = '".htmlspecialchars(JText::_('COM_JEM_SELECT_CATEGORY'))."';
 	  }
 		";
 
@@ -122,8 +122,8 @@ class JElementCategories extends JElement {
 		JHTML::_('behavior.modal', 'a.modal');
 
 		$html = "\n<div style=\"float: left;\"><input style=\"background: #ffffff;\" type=\"text\" id=\"a_name\" value=\"$category->catname\" disabled=\"disabled\" /></div>";
-		$html .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('Select')."\"  href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('Select')."</a></div></div>\n";
-    $html .= "<div class=\"button2-left\"><div class=\"blank\"><a title=\"".JText::_('Reset')."\" onClick=\"elCatReset();return false;\" >".JText::_('Reset')."</a></div></div>\n";
+		$html .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_SELECT')."\"  href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_SELECT')."</a></div></div>\n";
+    $html .= "<div class=\"button2-left\"><div class=\"blank\"><a title=\"".JText::_('COM_JEM_RESET')."\" onClick=\"elCatReset();return false;\" >".JText::_('COM_JEM_RESET')."</a></div></div>\n";
 		$html .= "\n<input type=\"hidden\" id=\"a_id\" name=\"$fieldName\" value=\"$value\" />";
 
 		return $html;
