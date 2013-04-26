@@ -73,16 +73,19 @@ class JEMModelUpdatecheck extends JModelLegacy
 
 		$snoopy->fetch($file);
 
+		
 		$_updatedata = null;
-
+		
 		if ($snoopy->status != 200 || $snoopy->error) {
 
+			$_updatedata = new stdClass();
 			$_updatedata->failed = 1;
 
 		} else {
 
 			$data = explode('|', $snoopy->results);
 
+			$_updatedate = new stdClass();
 			$_updatedata->version 		= $data[0];
 			$_updatedata->versiondetail	= $data[1];
 			$_updatedata->date			= strftime( $jemsettings->formatdate, strtotime( $data[2] ) );

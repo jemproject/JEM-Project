@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -29,7 +29,7 @@ jimport('joomla.application.component.controller');
  *
  * @package JEM
  * @since 0.9
- */
+*/
 class JEMControllerPlugins extends JEMController
 {
 	/**
@@ -41,7 +41,7 @@ class JEMControllerPlugins extends JEMController
 	{
 		parent::__construct();
 	}
-	
+
 	/**
 	 * Handles Plugin screen
 	 *
@@ -52,18 +52,18 @@ class JEMControllerPlugins extends JEMController
 	function plugins()
 	{
 		$db = JFactory::getDBO();
-		
+
 		$query = 'SELECT COUNT(*)'
-				. ' FROM #__plugins AS p'
+				. ' FROM #__extensions AS p'
 				. ' WHERE p.folder = '.$db->Quote("jem");
-				;
+		;
 		$db->setQuery( $query );
-		
+
 		$total = $db->loadResult();
-		
+
 		//any plugins installed? if not redirect to installation screen
 		if ($total > 0){
-			$link = 'index.php?option=com_plugins&filter_type=jem';
+			$link = 'index.php?option=com_plugins&filter_folder=jem';
 			$msg = "";
 		} else {
 			$link = 'index.php?option=com_installer';
@@ -71,6 +71,6 @@ class JEMControllerPlugins extends JEMController
 		}
 		$this->setRedirect($link, $msg);
 	}
-	
+
 }
 ?>
