@@ -63,7 +63,7 @@ class JEMControllerPlugins extends JEMController
 
 		//any plugins installed? if not redirect to installation screen
 		if ($total > 0){
-			$link = 'index.php?option=com_plugins&filter_folder=jem';
+			$link = 'index.php?option=com_plugins&filter_search=jem';
 			$msg = "";
 		} else {
 			$link = 'index.php?option=com_installer';
