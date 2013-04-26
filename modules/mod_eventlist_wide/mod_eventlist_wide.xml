@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install type="module" version="1.5.0">
+	<name>Latest Events Wide</name>
+	<creationDate>13 October 2012</creationDate>
+	<author>Christoph Lukes</author>
+	<copyright>GNU General Public License</copyright>
+	<authorEmail>info@schlu.net</authorEmail>
+	<authorUrl>http://www.schlu.net</authorUrl>
+	<version>1.1beta3.2.3-14</version>
+	<description>EventList Wide Module</description>
+
+	<files>
+		<filename module="mod_eventlist_wide">mod_eventlist_wide.php</filename>
+		<filename>index.html</filename>
+        <filename>helper.php</filename>
+        <folder>tmpl</folder>
+	</files>
+
+	<languages>
+		<language tag="en-GB">languages/en-GB.mod_eventlist_wide.ini</language>
+		<language tag="de-DE">languages/de-DE.mod_eventlist_wide.ini</language>
+	</languages>
+
+	<params>
+		<param name="count" type="text" default="5" label="EVENTS IN MODULE" description="EVENTS IN MODULE DESC" />
+		<param name="type" type="list" default="1" label="UPCOMING ARCHIVED OR CURRENT" description="UPCOMING ARCHIVED OR CURRENT DESC">
+			<option value="1">UPCOMING EVENTS</option>
+			<option value="2">ARCHIVED EVENTS</option>
+			<option value="3">CURRENT EVENTS</option>
+		</param>
+		<param name="cuttitle" type="text" default="18" label="MAX TITLE LENGTH" description="MAX TITLE LENGTH DESC" />
+		<param name="linkevent" type="radio" default="1" label="LINK TO DETAILS" description="LINK TO DETAILS DESC">
+			<option value="0">NO</option>
+			<option value="1">YES</option>
+		</param>
+		<param name="linkcategory" type="radio" default="1" label="LINK TO CATEGORY" description="LINK TO CATEGORY DESC">
+			<option value="0">NO</option>
+			<option value="1">YES</option>
+		</param>
+		<param name="linkvenue" type="radio" default="1" label="LINK TO VENUE" description="LINK TO VENUE DESC">
+			<option value="0">NO</option>
+			<option value="1">YES</option>
+		</param>
+		<param name="use_modal" type="radio" default="0" label="USE MODAL" description="USE MODAL DESC">
+			<option value="0">NO</option>
+			<option value="1">YES</option>
+		</param>
+		<param name="catid" type="text" default="" label="CATEGORY ID" description="CATEGORY ID DESC" />
+		<param name="venid" type="text" default="" label="VENUE ID" description="VENUE ID DESC" />
+
+		<param name="stateloc" type="text" default="" label="STATE" description="STATE DESC" />
+
+		<param name="datemethod" type="list" default="1" label="SHOW DATE OR DAY DIFFERENCE" description="SHOW DATE OR DAY DIFFERENCE DESC">
+			<option value="1">SHOW DATE</option>
+			<option value="2">SHOW DAY DIFFERENCE</option>
+		</param>
+		
+		<param name="formatdate" type="text" default="%d.%m.%Y" label="DATE FORMAT" description="DATE FORMAT DESC" />
+		<param name="formattime" type="text" default="%H.%M" label="TIME FORMAT" description="TIME FORMAT DESC" />
+		<param name="moduleclass_sfx" type="text" default="" label="MODULE CLASS SUFFIX" description="MODULE CLASS SUFFIX DESC" />
+	</params>
+
+	<params group="advanced">
+		<param name="cache" type="list" default="1" label="CACHING" description="CACHING DESC">
+			<option value="1">USE GLOBAL</option>
+			<option value="0">NO CACHING</option>
+		</param>
+		<param name="cache_time" type="text" default="900" label="CACHE TIME" description="CACHE TIME DESC" />
+	</params>
+
+</install>

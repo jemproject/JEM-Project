@@ -1,0 +1,76 @@
+/**
+ * @version 0.9 $Id$
+ * @package Joomla
+ * @subpackage EventList
+ * @copyright (C) 2005 - 2007 Christoph Lukes
+ * @license GNU/GPL, see LICENCE.php
+ * EventList is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License 2
+ * as published by the Free Software Foundation.
+
+ * EventList is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with EventList; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ **/
+ 
+div#elmodulewide {
+	width: 100%;
+}
+
+div#elmodulewide .eventset {
+	width: 100%;
+	margin-bottom: 10px;
+	padding: 5px;
+	border-bottom: 1px dotted silver;
+}
+
+div#elmodulewide span.event-title {
+	padding-left: 17px;
+	background: url(img/flag_red.png) no-repeat;
+	font-size: smaller;
+}
+
+div#elmodulewide span.time {
+	padding-left: 20px;
+	background: url(img/time.png) no-repeat;
+	padding-top: 2px;
+}
+
+div#elmodulewide span.date {
+	padding-left: 20px;
+	background: url(img/date.png) no-repeat;
+	padding-top: 2px;
+}
+
+div#elmodulewide span.category {
+	position: relative;
+	padding-left: 18px;
+	background: url(img/category.png) no-repeat;
+	font-size: smaller;
+}
+
+div#elmodulewide span.venue-title {
+	position: relative;
+	padding-left: 17px;
+	background: url(img/building.png) no-repeat;
+	font-size: smaller;
+}
+
+div#elmodulewide .event-image-cell {
+}
+
+div#elmodulewide .venue-image-cell {
+}
+
+div#elmodulewide .image-preview {
+	height: 35px;
+	border: 1px solid #CCCCCC;
+	padding: 3px;
+	background-color: white;
+	margin: 3px;
+}
