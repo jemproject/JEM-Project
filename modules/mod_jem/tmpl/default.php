@@ -21,12 +21,14 @@
 defined('_JEXEC') or die('Restricted access');
 ?>
 
-<ul class="eventlistmod<?php echo $params->get('moduleclass_sfx'); ?>">
+<ul class="jemmod<?php echo $params->get('moduleclass_sfx'); ?>">
 <?php if (count($items)): ?>
+
+
 <?php foreach ($list as $item) :  ?>
-	<li class="eventlistmod<?php echo $params->get('moduleclass_sfx'); ?>">
+	<li class="jemmod<?php echo $params->get('moduleclass_sfx'); ?>">
 		<?php if ($params->get('linkdet') == 1) : ?>
-		<a href="<?php echo $item->link; ?>" class="eventlistmod<?php echo $params->get('moduleclass_sfx'); ?>">
+		<a href="<?php echo $item->link; ?>" class="jemmod<?php echo $params->get('moduleclass_sfx'); ?>">
 			<?php echo $item->dateinfo; ?>
 		</a>
 		<?php else :
@@ -37,11 +39,11 @@ defined('_JEXEC') or die('Restricted access');
 		<br />
 
 		<?php if ($params->get('showtitloc') == 0 && $params->get('linkloc') == 1) : ?>
-			<a href="<?php echo $item->venueurl; ?>" class="eventlistmod<?php echo $params->get('moduleclass_sfx'); ?>">
+			<a href="<?php echo $item->venueurl; ?>" class="jemmod<?php echo $params->get('moduleclass_sfx'); ?>">
 				<?php echo $item->text; ?>
 			</a>
 		<?php elseif ($params->get('showtitloc') == 1 && $params->get('linkdet') == 2) : ?>
-			<a href="<?php echo $item->link; ?>" class="eventlistmod<?php echo $params->get('moduleclass_sfx'); ?>">
+			<a href="<?php echo $item->link; ?>" class="jemmod<?php echo $params->get('moduleclass_sfx'); ?>">
 				<?php echo $item->text; ?>
 			</a>
 		<?php

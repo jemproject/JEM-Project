@@ -25,9 +25,9 @@ defined('_JEXEC') or die('Restricted access');
 // get helper
 require_once (dirname(__FILE__).DS.'helper.php');
 
-require_once(JPATH_SITE.DS.'components'.DS.'com_eventlist'.DS.'helpers'.DS.'route.php');
+require_once(JPATH_SITE.DS.'components'.DS.'com_jem'.DS.'helpers'.DS.'route.php');
 
-$list = modEventListHelper::getList($params);
+$list = modJEMHelper::getList($params);
 
 // check if any results returned
 $items = count($list);
@@ -35,4 +35,4 @@ if (!$items) {
 	//return;
 }
 
-require(JModuleHelper::getLayoutPath('mod_eventlist'));
+require(JModuleHelper::getLayoutPath('mod_jem'));

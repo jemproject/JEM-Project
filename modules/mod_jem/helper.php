@@ -1,35 +1,36 @@
 <?php
 /**
- * @version 0.9 $Id$
- * @package Joomla
- * @subpackage EventList
- * @copyright (C) 2005 - 2008 Christoph Lukes
- * @license GNU/GPL, see LICENCE.php
- * EventList is free software; you can redistribute it and/or
+ * @version 1.1 $Id$
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license GNU/GPL, see LICENSE.php
+ 
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
- * EventList is distributed in the hope that it will be useful,
+ *
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die;
 
 /**
- * EventList Module helper
+ * JEM Module helper
  *
  * @package Joomla
- * @subpackage EventList Module
+ * @subpackage JEM Module
  * @since		0.9
  */
-class modEventListHelper
+class modJEMHelper
 {
 
 	/**
@@ -38,13 +39,22 @@ class modEventListHelper
 	 * @access public
 	 * @return array
 	 */
-	function getList(&$params)
+static	function getList(&$params)
 	{
-		global $mainframe;
+		global $app;
 
-		$db			=& JFactory::getDBO();
-		$user		=& JFactory::getUser();
-		$user_gid	= (int) $user->get('aid');
+		$db			= JFactory::getDBO();
+		$user		= JFactory::getUser();
+		
+		if (JFactory::getUser()->authorise('core.manage')) {
+			$gid = (int) 3;          //viewlevel Special
+		} else {
+			if($user->get('id')) {
+				$gid = (int) 2;     //viewlevel Registered
+			} else {
+				$gid = (int) 1;      //viewlevel Public
+			}
+		}
 
 		if ($params->get( 'type', '0' ) == 0) {
 			$where = ' WHERE a.published = 1';
@@ -78,12 +88,12 @@ class modEventListHelper
 		$query = 'SELECT DISTINCT a.*, l.venue, l.city, l.url,'
 				.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
         .' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug'
-				.' FROM #__eventlist_events AS a'
-        .' INNER JOIN #__eventlist_cats_event_relations AS rel ON rel.itemid = a.id'
-        .' INNER JOIN #__eventlist_categories AS c ON c.id = rel.catid'
-				.' LEFT JOIN #__eventlist_venues AS l ON l.id = a.locid'
+				.' FROM #__jem_events AS a'
+        .' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+        .' INNER JOIN #__jem_categories AS c ON c.id = rel.catid'
+				.' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 				. $where
-				.' AND c.access <= '.$user_gid
+				.' AND c.access <= '.$gid
 				.($catid ? $categories : '')
 				.($venid ? $venues : '')
 				. $order
@@ -105,11 +115,12 @@ class modEventListHelper
 				$row->title = htmlspecialchars( $row->title.'...', ENT_COMPAT, 'UTF-8');
 			}
 
-			$lists[$i]->link		= JRoute::_( EventListHelperRoute::getRoute($row->slug) );
-			$lists[$i]->dateinfo 	= modEventListHelper::_builddateinfo($row, $params);
+			$lists[$i] = new stdClass;
+			$lists[$i]->link		= JRoute::_( JEMHelperRoute::getRoute($row->slug) );
+			$lists[$i]->dateinfo 	= modJEMHelper::_builddateinfo($row, $params);
 			$lists[$i]->text		= $params->get('showtitloc', 0 ) ? $row->title : htmlspecialchars( $row->venue, ENT_COMPAT, 'UTF-8' );
 			$lists[$i]->city		= htmlspecialchars( $row->city, ENT_COMPAT, 'UTF-8' );
-			$lists[$i]->venueurl 	= !empty( $row->venueslug ) ? JRoute::_( EventListHelperRoute::getRoute($row->venueslug, 'venueevents') ) : null;
+			$lists[$i]->venueurl 	= !empty( $row->venueslug ) ? JRoute::_( JEMHelperRoute::getRoute($row->venueslug, 'venueevents') ) : null;
 			$i++;
 		}
 
@@ -122,11 +133,11 @@ class modEventListHelper
 	 * @access public
 	 * @return string
 	 */
-	function _builddateinfo($row, &$params)
+static	function _builddateinfo($row, &$params)
 	{
-		$date 		= modEventListHelper::_format_date($row->dates, $row->times, $params->get('formatdate', '%d.%m.%Y'));
-		$enddate 	= $row->enddates ? modEventListHelper::_format_date($row->enddates, $row->endtimes, $params->get('formatdate', '%d.%m.%Y')) : null;
-		$time		= $row->times ? modEventListHelper::_format_date($row->dates, $row->times, $params->get('formattime', '%H:%M')) : null;
+		$date 		= modJEMHelper::_format_date($row->dates, $row->times, $params->get('formatdate', '%d.%m.%Y'));
+		$enddate 	= $row->enddates ? modJEMHelper::_format_date($row->enddates, $row->endtimes, $params->get('formatdate', '%d.%m.%Y')) : null;
+		$time		= $row->times ? modJEMHelper::_format_date($row->dates, $row->times, $params->get('formattime', '%H:%M')) : null;
 		$dateinfo	= $date;
 
 		if ( isset($enddate) && $enddate != $date) {
@@ -146,7 +157,7 @@ class modEventListHelper
 	 * @access public
 	 * @return string
 	 */
-	function _format_url($url)
+static	function _format_url($url)
 	{
 		if(!empty($url) && strtolower(substr($url, 0, 7)) != "http://") {
         	$url = 'http://'.$url;
@@ -160,14 +171,14 @@ class modEventListHelper
 	 * @access public
 	 * @return string
 	 */
-	function _format_date($date, $time, $format)
+static	function _format_date($date, $time, $format)
 	{
 		//format date
 		if (strtotime($date)) {
 			$date = strftime($format, strtotime( $date.' '.$time ));
 		}
 		else {
-			$date = JText::_('MOD_EVENTLIST_OPEN_DATE');
+			$date = JText::_('MOD_JEM_OPEN_DATE');
 		}
 		
 		return $date;
