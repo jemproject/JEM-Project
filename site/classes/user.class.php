@@ -152,7 +152,7 @@ class JEMUser {
 				;
 		$db->setQuery( $query );
 
-		$catids = $db->loadResultArray();
+		$catids = $db->loadColumn();
 
 		//no results, no maintainer
 		if (!$catids) {

@@ -86,7 +86,7 @@ class JEMModelImport extends JModelLegacy {
 	 */
 	private function getFields($tablename) {
 		$tables = array ($tablename);
-		$tablesfields = $this->_db->getTableFields($tables);
+		$tablesfields = $this->_db->getTableColumns($tables);
 		
 		return array_keys($tablesfields[$tablename]);
 	}

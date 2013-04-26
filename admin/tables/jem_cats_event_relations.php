@@ -90,7 +90,7 @@ class jem_cats_event_relations extends JTable
    */
   function _insertIgnoreObject( $table, &$object, $keyName = NULL )
   {
-    $fmtsql = 'INSERT IGNORE INTO '.$this->_db->nameQuote($table).' ( %s ) VALUES ( %s ) ';
+    $fmtsql = 'INSERT IGNORE INTO '.$this->_db->quoteName($table).' ( %s ) VALUES ( %s ) ';
     $fields = array();
     foreach (get_object_vars( $object ) as $k => $v) {
       if (is_array($v) or is_object($v) or $v === NULL) {
@@ -99,7 +99,7 @@ class jem_cats_event_relations extends JTable
       if ($k[0] == '_') { // internal field
         continue;
       }
-      $fields[] = $this->_db->nameQuote( $k );
+      $fields[] = $this->_db->quoteName( $k );
       $values[] = $this->_db->isQuoted( $k ) ? $this->_db->Quote( $v ) : (int) $v;
     }
     $this->_db->setQuery( sprintf( $fmtsql, implode( ",", $fields ) ,  implode( ",", $values ) ) );

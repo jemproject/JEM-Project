@@ -196,7 +196,7 @@ class JEMModelGroups extends JModelLegacy
 		$app =  JFactory::getApplication();
 
 		$search 			= $app->getUserStateFromRequest( 'com_jem.search', 'search', '', 'string' );
-		$search 			= $this->_db->getEscaped( trim(JString::strtolower( $search ) ) );
+		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
 
 		$where = array();
 

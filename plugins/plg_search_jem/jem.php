@@ -105,7 +105,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 
 		switch ($phrase) {
 			case 'exact':
-				$text 		= $db->Quote( '%'.$db->getEscaped( $text, true ).'%', false );
+				$text 		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
 				$wheres2 	= array();
 				$wheres2[] 	= 'LOWER(a.title) LIKE '.$text;
 				$wheres2[] 	= 'LOWER(a.datdescription) LIKE '.$text;
@@ -120,7 +120,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 				$words = explode( ' ', $text );
 				$wheres = array();
 				foreach ($words as $word) {
-					$word 		= $db->Quote( '%'.$db->getEscaped( $word, true ).'%', false );
+					$word 		= $db->Quote( '%'.$db->escape( $word, true ).'%', false );
 					$wheres2 	= array();
 					$wheres2[] 	= 'LOWER(a.title) LIKE '.$word;
 					$wheres2[] 	= 'LOWER(a.datdescription) LIKE '.$word;
@@ -194,7 +194,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 
 		switch ($phrase) {
 			case 'exact':
-				$text 		= $db->Quote( '%'.$db->getEscaped( $text, true ).'%', false );
+				$text 		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
 				$wheres2 	= array();
 				$wheres2[] 	= 'LOWER(venue) LIKE '.$text;
 				$wheres2[] 	= 'LOWER(locdescription) LIKE '.$text;
@@ -210,7 +210,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 				$words = explode( ' ', $text );
 				$wheres = array();
 				foreach ($words as $word) {
-					$word 		= $db->Quote( '%'.$db->getEscaped( $word, true ).'%', false );
+					$word 		= $db->Quote( '%'.$db->escape( $word, true ).'%', false );
 					$wheres2 	= array();
 					$wheres2[] 	= 'LOWER(venue) LIKE '.$word;
 					$wheres2[] 	= 'LOWER(locdescription) LIKE '.$word;
@@ -264,7 +264,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 
 		switch ($phrase) {
 			case 'exact':
-				$text 		= $db->Quote( '%'.$db->getEscaped( $text, true ).'%', false );
+				$text 		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
 				$wheres2 	= array();
 				$wheres2[] 	= 'LOWER(catname) LIKE '.$text;
 				$wheres2[] 	= 'LOWER(catdescription) LIKE '.$text;
@@ -279,7 +279,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 				$words = explode( ' ', $text );
 				$wheres = array();
 				foreach ($words as $word) {
-					$word 		= $db->Quote( '%'.$db->getEscaped( $word, true ).'%', false );
+					$word 		= $db->Quote( '%'.$db->escape( $word, true ).'%', false );
 					$wheres2 	= array();
 					$wheres2[] 	= 'LOWER(catname) LIKE '.$word;
 					$wheres2[] 	= 'LOWER(catdescription) LIKE '.$word;

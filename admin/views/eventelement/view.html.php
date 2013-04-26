@@ -51,7 +51,7 @@ class JEMViewEventelement extends JViewLegacy {
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.eventelement.filter', 'filter', '', 'int' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_state', 'filter_state', '*', 'word' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.eventelement.search', 'search', '', 'string' );
-		$search 			= $db->getEscaped( trim(JString::strtolower( $search ) ) );
+		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 		$template 			= $app->getTemplate();
 
 		//prepare the document

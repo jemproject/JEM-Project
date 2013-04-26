@@ -186,7 +186,7 @@ class JEMModelCleanup extends JModelLegacy
 
 		$this->_db->setQuery($query);
 
-		$this->_assigned = $this->_db->loadResultArray();
+		$this->_assigned = $this->_db->loadColumn();
 
 		return $this->_assigned;
 	}

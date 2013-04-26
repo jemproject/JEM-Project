@@ -56,7 +56,7 @@
 		</submenu>
 
 		<files folder="admin">
-			<filename>admin.jem.php</filename>
+			<filename>jem.php</filename>
 			<filename>controller.php</filename>
 			<filename>access.xml</filename>
 			<filename>config.xml</filename>

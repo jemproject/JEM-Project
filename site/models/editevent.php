@@ -257,7 +257,7 @@ class JEMModelEditevent extends JModelLegacy
 					. ' WHERE g.member = '.$userid
 					;
 			$this->_db->setQuery( $query );
-			$catids = $this->_db->loadResultArray();
+			$catids = $this->_db->loadColumn();
 
 			$categories = implode(' OR c.groupid = ', $catids);
 
@@ -324,7 +324,7 @@ class JEMModelEditevent extends JModelLegacy
 	{
 		$query = 'SELECT DISTINCT catid FROM #__jem_cats_event_relations WHERE itemid = ' . (int)$this->_id;
 		$this->_db->setQuery($query);
-		$used = $this->_db->loadResultArray();
+		$used = $this->_db->loadColumn();
 		return $used;
 	}
 
@@ -419,7 +419,7 @@ class JEMModelEditevent extends JModelLegacy
 		$jemsettings =  JEMHelper::config();
 		$filter_type		= JRequest::getInt('filter_type');
 		$filter 			= JRequest::getString('filter');
-		$filter 			= $this->_db->getEscaped( trim(JString::strtolower( $filter ) ) );
+		$filter 			= $this->_db->escape( trim(JString::strtolower( $filter ) ) );
 
 		$where = array();
 		

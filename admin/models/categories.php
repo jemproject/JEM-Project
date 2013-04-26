@@ -111,7 +111,7 @@ class JEMModelCategories extends JModelLegacy
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categories.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categories.filter_state', 'filter_state', '', 'word' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.categories.search', 'search', '', 'string' );
-		$search 			= $this->_db->getEscaped( trim(JString::strtolower( $search ) ) );
+		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
 		
 		 
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
@@ -137,11 +137,11 @@ class JEMModelCategories extends JModelLegacy
 			
 			$query = 'SELECT c.id'
 					. ' FROM #__jem_categories AS c'
-					. ' WHERE LOWER(c.catname) LIKE '.$this->_db->Quote( '%'.$this->_db->getEscaped( $search, true ).'%', false )
+					. ' WHERE LOWER(c.catname) LIKE '.$this->_db->Quote( '%'.$this->_db->escape( $search, true ).'%', false )
 					. $where
 					;
 			$this->_db->setQuery( $query );
-			$search_rows = $this->_db->loadResultArray();					
+			$search_rows = $this->_db->loadColumn();
 		}
 		
 		$query = 'SELECT c.*, c.catname AS name, c.parent_id AS parent, u.name AS editor, g.title AS groupname, gr.name AS catgroup'

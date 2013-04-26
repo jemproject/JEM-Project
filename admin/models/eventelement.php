@@ -200,7 +200,7 @@ class JEMModelEventelement extends JModelLegacy
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_state', 'filter_state', '', 'word' );
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.eventelement.filter', 'filter', '', 'int' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.eventelement.search', 'search', '', 'string' );
-		$search 			= $this->_db->getEscaped( trim(JString::strtolower( $search ) ) );
+		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
 
 		$where = array();
 

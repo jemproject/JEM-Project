@@ -199,7 +199,7 @@ class JEMModelContactelement extends JModelLegacy
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.contactelement.filter', 'filter', '', 'int' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.contactelement.filter_state', 'filter_state', '', 'word' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.contactelement.search', 'search', '', 'string' );
-		$search 			= $this->_db->getEscaped( trim(JString::strtolower( $search ) ) );
+		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
 
 		$where = array();
 

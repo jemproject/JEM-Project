@@ -432,7 +432,7 @@ class JEMModelEvent extends JModelLegacy
 	{
 		$query = 'SELECT DISTINCT catid FROM #__jem_cats_event_relations WHERE itemid = ' . (int)$this->_id;
 		$this->_db->setQuery($query);
-		$used = $this->_db->loadResultArray();
+		$used = $this->_db->loadColumn();
 		return $used;
 	}
 }

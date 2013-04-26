@@ -220,7 +220,7 @@ class JEMModelGroup extends JModelLegacy
 
 			$this->_db->setQuery ($query);
 
-			$member_ids = $this->_db->loadResultArray();
+			$member_ids = $this->_db->loadColumn();
 
 			if (is_array($member_ids)) $this->_members = implode(',', $member_ids);
 		}

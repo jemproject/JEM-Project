@@ -46,7 +46,7 @@ class JEMViewUserElement extends JViewLegacy {
 		$filter_order		= $mainframe->getUserStateFromRequest( 'com_jem.users.filter_order', 'filter_order', 'u.name', 'cmd' );
 		$filter_order_Dir	= $mainframe->getUserStateFromRequest( 'com_jem.users.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 		$search 			= $mainframe->getUserStateFromRequest( 'com_jem.users.search', 'search', '', 'string' );
-		$search 			= $db->getEscaped( trim(JString::strtolower( $search ) ) );
+		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 		
 		//add css to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');

@@ -48,7 +48,7 @@ class JEMViewArchive extends JViewLegacy {
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.archive.filter', 'filter', '', 'int' );
 		$filter 			= intval( $filter );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.archive.search', 'search', '', 'string' );
-		$search 			= $db->getEscaped( trim(JString::strtolower( $search ) ) );
+		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 		$template			= $app->getTemplate();
 
 		//add css and submenu to document

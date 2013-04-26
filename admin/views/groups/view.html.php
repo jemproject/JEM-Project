@@ -45,7 +45,7 @@ class JEMViewGroups extends JViewLegacy {
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.groups.filter_order', 'filter_order', 	'name', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.groups.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.groups.search', 'search', '', 'string' );
-		$search 			= $db->getEscaped( trim(JString::strtolower( $search ) ) );
+		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 		$template			= $app->getTemplate();
 
 		//add css and submenu to document

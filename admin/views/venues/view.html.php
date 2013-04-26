@@ -47,7 +47,7 @@ class JEMViewVenues extends JViewLegacy {
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.venues.filter_state', 'filter_state', '*', 'word' );
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.venues.filter', 'filter', '', 'int' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.search', 'search', '', 'string' );
-		$search 			= $db->getEscaped( trim(JString::strtolower( $search ) ) );
+		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 		$template			= $app->getTemplate();
 
 		//add css and submenu to document

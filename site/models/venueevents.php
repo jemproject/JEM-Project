@@ -297,7 +297,7 @@ class JEMModelVenueevents extends JModelLegacy
 			{
 				// clean filter variables
 				$filter 		= JString::strtolower($filter);
-				$filter			= $this->_db->Quote( '%'.$this->_db->getEscaped( $filter, true ).'%', false );
+				$filter			= $this->_db->Quote( '%'.$this->_db->escape( $filter, true ).'%', false );
 				$filter_type 	= JString::strtolower($filter_type);
 
 				switch ($filter_type)

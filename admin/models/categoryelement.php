@@ -94,7 +94,7 @@ class JEMModelCategoryelement extends JModelLegacy
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categoryelement.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categoryelement.filter_state', 'filter_state', '', 'word' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.categoryelement.search', 'search', '', 'string' );
-		$search 			= $this->_db->getEscaped( trim(JString::strtolower( $search ) ) );
+		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
 		
 		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
@@ -119,11 +119,11 @@ class JEMModelCategoryelement extends JModelLegacy
 			
 			$query = 'SELECT c.id'
 					. ' FROM #__jem_categories AS c'
-					. ' WHERE LOWER(c.catname) LIKE '.$this->_db->Quote( '%'.$this->_db->getEscaped( $search, true ).'%', false )
+					. ' WHERE LOWER(c.catname) LIKE '.$this->_db->Quote( '%'.$this->_db->escape( $search, true ).'%', false )
 					. $where
 					;
 			$this->_db->setQuery( $query );
-			$search_rows = $this->_db->loadResultArray();					
+			$search_rows = $this->_db->loadColumn();
 		}
 		
 		$query = 'SELECT c.*, u.name AS editor, g.title AS groupname, gr.name AS catgroup'

@@ -85,7 +85,7 @@ class plgJEMMailer extends JPlugin {
 				return;
 			}
 			
-			$admin_mails 		= $db->loadResultArray(1);
+			$admin_mails 		= $db->loadColumn(1);
 			$additional_mails 	= explode( ',', trim($this->params->get('receivers')));
 			$this->_receivers	= array_merge($admin_mails, $additional_mails);
 			

@@ -48,7 +48,7 @@ class JEMViewCategories extends JViewLegacy {
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categories.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categories.filter_state', 		'filter_state', 	'*', 'word' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.categories.search', 			'search', 			'', 'string' );
-		$search 			= $db->getEscaped( trim(JString::strtolower( $search ) ) );
+		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
