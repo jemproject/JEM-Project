@@ -15,6 +15,8 @@
 				<option value="0">COM_JEM_HIDE</option>
 				<option value="1">COM_JEM_SHOW</option>
 			</field>
+			 <field name="excluded_cats" type="text" default="" label="COM_JEM_EXCLUDED_CATEGORY_IDS" 
+                description="COM_JEM_EXCLUDED_CATEGORY_IDS_DESC" /> 
 		</fieldset></fields></config>
 	</state>
 </metadata>

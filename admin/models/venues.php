@@ -249,6 +249,13 @@ class JEMModelVenues extends JModelLegacy
 		}
 		
 		
+		/*
+		 * Search state
+		*/
+		if ($search && $filter == 4) {
+			$where[] = ' LOWER(l.country) LIKE \'%'.$search.'%\' ';
+		}
+		
 		
 
 		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );

@@ -256,6 +256,17 @@ class JEMModelEventslist extends JModelLegacy
 			$where = ' WHERE a.published = 1';
 		}
 
+		
+		// get excluded categories
+		$excluded_cats = trim( $params->get( 'excluded_cats', '' ) );
+		
+		if ($excluded_cats != '' )  {
+			$cats_excluded    = explode( ',', $excluded_cats );
+			$where .= ' AND ( c.id!=' . implode( ' AND c.id!=', $cats_excluded ) . ')';
+		}
+		// === END Exlucded categories add === //
+		
+		
 		/*
 		 * If we have a filter, and this is enabled... lets tack the AND clause
 		 * for the filter onto the WHERE clause of the item query.
@@ -345,10 +356,13 @@ class JEMModelEventslist extends JModelLegacy
 		return $data;
 	}
 	
+	
+	
 	function getCategories($id)
 	{
 		$user		=  JFactory::getUser();
 		
+		$where		= $this->_buildWhere2();
 		
 		if (JFactory::getUser()->authorise('core.manage')) {
               $gid = (int) 3;          //viewlevel Special
@@ -368,15 +382,54 @@ class JEMModelEventslist extends JModelLegacy
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				. ' AND c.published = 1'
-				. ' AND c.access  <= '.$gid;
+				. ' AND c.access  <= '.$gid
+				. $where
 				;
-				
-	
+
+			
 		$this->_db->setQuery( $query );
 
 		$this->_cats = $this->_db->loadObjectList();
 
 		return $this->_cats;
 	}
+	
+	
+	
+	function _buildWhere2()
+	{
+		$app =  JFactory::getApplication();
+	
+		// Get the paramaters of the active menu item
+		$params 	=  $app->getParams();
+		$jemsettings =  JEMHelper::config();
+		
+		
+	
+	// get excluded categories
+	$excluded_cats = trim( $params->get( 'excluded_cats', '' ) );
+	
+	if ($excluded_cats != '' )  {
+		$cats_excluded    = explode( ',', $excluded_cats );
+		$where = ' AND ( c.id!=' . implode( ' AND c.id!=', $cats_excluded ) . ')';
+	}
+	// === END Exlucded categories add === //
+	else
+	{
+		$where = '';	
+	}
+	
+	
+	return $where;
+	
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 }
 ?>
