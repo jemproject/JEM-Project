@@ -52,9 +52,9 @@ function __construct(& $subject, $config)
  */
 function onContentSearchAreas()
 	{
-		static $areas = array(	'elevents' => 'PLG_JEM_SEARCHBOT_EVENTS',
-								'elvenues' => 'PLG_JEM_SEARCHBOT_VENUES',
-								'elcategories' => 'PLG_JEM_SEARCHBOT_JEM_CATEGORIES'
+		static $areas = array(	'elevents' => 'PLG_JEM_SEARCH_EVENTS',
+								'elvenues' => 'PLG_JEM_SEARCH_VENUES',
+								'elcategories' => 'PLG_JEM_SEARCH_JEM_CATEGORIES'
 							  );
 
 			return $areas;
@@ -97,7 +97,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		return array();
 	}
 
-	$searchJEM = $db->Quote(JText::_( 'PLG_JEM_SEARCHBOT_JEM' ));
+	$searchJEM = $db->Quote(JText::_( 'PLG_JEM_SEARCH_JEM' ));
 
 	$rows = array();
 

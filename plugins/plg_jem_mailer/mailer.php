@@ -226,8 +226,8 @@ class plgJEMMailer extends JPlugin {
 			if ($this->params->get('reg_mail_user_onoff', '1')) {
 				
 				$data 				= new stdClass();
-				$data->subject 		= JText::sprintf('PLG_JEMMAILER_MAIL_USER_REG_ON_WAITING_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEMMAILER_MAIL_USER_REG_ON_WAITING_BODY', $user->name, $user->username, $details->title, $link, $SiteName);
+				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_USER_REG_ON_WAITING_SUBJECT', $this->_SiteName);
+				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_REG_ON_WAITING_BODY', $user->name, $user->username, $details->title, $link, $SiteName);
 				$data->receivers 	= $user->email;
 				
 				$this->_mailer($data);
@@ -237,8 +237,8 @@ class plgJEMMailer extends JPlugin {
 			if ($this->params->get('reg_mail_admin_onoff', '0') && $this->params->get('receivers')) {
 				
 				$data 				= new stdClass();
-				$data->subject 		= JText::sprintf('PLG_JEMMAILER_MAIL_ADMIN_REG_ON_WAITING_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEMMAILER_MAIL_ADMIN_REG_ON_WAITING_BODY', $user->name, $user->username, $details->title, $link, $SiteName);
+				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_SUBJECT', $this->_SiteName);
+				$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_BODY', $user->name, $user->username, $details->title, $link, $SiteName);
 				$data->receivers 	= $this->_receivers;
 				
 				$this->_mailer($data);
@@ -250,8 +250,8 @@ class plgJEMMailer extends JPlugin {
 			if ($this->params->get('reg_mail_user_onoff', '1')) {
 				
 				$data 				= new stdClass();
-				$data->subject 		= JText::sprintf('PLG_JEMMAILER_MAIL_USER_REG_ON_ATTENDING_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEMMAILER_MAIL_USER_REG_ON_ATTENDING_BODY', $user->name, $user->username, $details->title, $link, $SiteName);
+				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_USER_REG_ON_ATTENDING_SUBJECT', $this->_SiteName);
+				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_REG_ON_ATTENDING_BODY', $user->name, $user->username, $details->title, $link, $SiteName);
 				$data->receivers 	= $user->email;
 				
 				$this->_mailer($data);
@@ -261,8 +261,8 @@ class plgJEMMailer extends JPlugin {
 			if ($this->params->get('reg_mail_admin_onoff', '0') && $this->params->get('receivers')) {
 				
 				$data 				= new stdClass();
-				$data->subject 		= JText::sprintf('PLG_JEMMAILER_MAIL_ADMIN_REG_ON_ATTENDING_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEMMAILER_MAIL_ADMIN_REG_ON_ATTENDING_BODY', $user->name, $user->username, $details->title, $link, $SiteName);
+				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_SUBJECT', $this->_SiteName);
+				$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_BODY', $user->name, $user->username, $details->title, $link, $SiteName);
 				$data->receivers 	= $this->_receivers;
 				
 				$this->_mailer($data);

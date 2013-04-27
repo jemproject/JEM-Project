@@ -29,11 +29,11 @@
 					<option value="0">No</option>
 					<option value="1">Yes</option>
 				</field>
-				<field type="radio" name="reg_mail_user_onoff" label="PLG_JEMMAILER_SETTINGS_USER_REG_ONOFF" default="1" description="PLG_JEMMAILER_SETTINGS_USER_REG_ONOFF_DESC">
+				<field type="radio" name="reg_mail_user_onoff" label="PLG_JEM_MAILER_SETTINGS_USER_REG_ONOFF" default="1" description="PLG_JEM_MAILER_SETTINGS_USER_REG_ONOFF_DESC">
 					<option value="0">No</option>
 					<option value="1">Yes</option>
 				</field>
-				<field type="radio" name="reg_mail_admin_onoff" label="PLG_JEMMAILER_SETTINGS_ADMIN_REG_ONOFF" default="0" description="PLG_JEMMAILER_SETTINGS_ADMIN_REG_ONOFF_DESC">
+				<field type="radio" name="reg_mail_admin_onoff" label="PLG_JEM_MAILER_SETTINGS_ADMIN_REG_ONOFF" default="0" description="PLG_JEM_MAILER_SETTINGS_ADMIN_REG_ONOFF_DESC">
 					<option value="0">No</option>
 					<option value="1">Yes</option>
 				</field>
