@@ -194,11 +194,11 @@ class modJEMwideHelper
 		if($params->get('datemethod', 1) == 2) {
 			//check if today or tomorrow
 			if($row->dates == $today) {
-				$result = JText::_( 'TODAY' );
+				$result = JText::_('MOD_JEM_WIDE_TODAY');
 			} elseif($row->dates == $tomorrow) {
-				$result = JText::_( 'TOMORROW' );
+				$result = JText::_('MOD_JEM_WIDE_TOMORROW');
 			} elseif($row->dates == $yesterday) {
-				$result = JText::_( 'YESTERDAY' );
+				$result = JText::_('MOD_JEM_WIDE_YESTERDAY');
 			
 			//This one isn't very different from the DAYS AGO output but it seems 
 			//adequate to use a different language string here.
