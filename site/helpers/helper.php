@@ -52,129 +52,135 @@ class JEMHelper {
 		return $config;
 	}
 
+	
+	
 	/**
-   	* Performs dayly scheduled cleanups
-   	*
-   	* Currently it archives and removes outdated events
-   	* and takes care of the recurrence of events
-   	*
- 	* @since 0.9
-   	*/
+	 * Performs dayly scheduled cleanups
+	 *
+	 * Currently it archives and removes outdated events
+	 * and takes care of the recurrence of events
+	 *
+	 * @since 0.9
+	 */
 	static function cleanup($forced = 0)
 	{
 		$jemsettings =  JEMHelper::config();
-    	$params = JComponentHelper::getParams('com_jem');   
-    	$weekstart = $jemsettings->weekdaystart;
-    	$anticipation = $jemsettings->recurrence_anticipation;
-
+		$params = JComponentHelper::getParams('com_jem');
+		$weekstart = $jemsettings->weekdaystart;
+		$anticipation = $jemsettings->recurrence_anticipation;
+	
 		$now 		= time();
 		$lastupdate = $jemsettings->lastupdate;
-
+	
 		//last update later then 24h?
 		//$difference = $now - $lastupdate;
-
+	
 		//if ( $difference > 86400 ) {
-
+	
 		//better: new day since last update?
 		$nrdaysnow = floor($now / 86400);
 		$nrdaysupdate = floor($lastupdate / 86400);
-
+	
 		if ( $nrdaysnow > $nrdaysupdate || $forced ) {
-
+	
 			$db			=  JFactory::getDBO();
-
+	
 			// get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
 			$nulldate = '0000-00-00';
 			$query = ' SELECT id, CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id, '
-			       . ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, '
-			       . ' MAX(dates) as dates, MAX(enddates) as enddates, MAX(recurrence_counter) as counter '
-			       . ' FROM #__jem_events '
-			       . ' WHERE recurrence_type <> "0" '
-			       . ' AND CASE recurrence_limit_date WHEN '.$nulldate.' THEN 1 ELSE NOW() < recurrence_limit_date END '
-			       . ' AND recurrence_number <> "0" '
-			       . ' AND `published` = 1 '
-			       . ' GROUP BY first_id'
-			       . ' ORDER BY dates DESC';
+					. ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, '
+					. ' MAX(dates) as dates, MAX(enddates) as enddates, MAX(recurrence_counter) as counter '
+					. ' FROM #__jem_events '
+				    . ' WHERE recurrence_type <> "0" '
+				    . ' AND CASE recurrence_limit_date WHEN '.$nulldate.' THEN 1 ELSE NOW() < recurrence_limit_date END '
+				    . ' AND recurrence_number <> "0" '
+				    . ' AND `published` = 1 '
+				    . ' GROUP BY first_id'
+				    . ' ORDER BY dates DESC';
 			$db->SetQuery( $query );
 			$recurrence_array = $db->loadAssocList();
-			
-			foreach($recurrence_array as $recurrence_row) 
+				
+			foreach($recurrence_array as $recurrence_row)
 			{
 				// get the info of reference event for the duplicates
 				$ref_event = JTable::getInstance('jem_events', '');
 				$ref_event->load($recurrence_row['id']);
-								
+	
 				// get the recurrence information
 				$recurrence_number = $recurrence_row['recurrence_number'];
 				$recurrence_type = $recurrence_row['recurrence_type'];
-				
+	
 				// the first day of the week is used for certain rules
 				$recurrence_row['weekstart'] = $weekstart;
-				
+	
 				// calculate next occurence date
 				$recurrence_row = JEMHelper::calculate_recurrence($recurrence_row);
-				
-				// add events as long as we are under the interval and under the limit, if specified.				
-				while (($recurrence_row['recurrence_limit_date'] == $nulldate || strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date'])) 
-				     && strtotime($recurrence_row['dates']) <= time() + 86400*$anticipation) 
+	
+				// add events as long as we are under the interval and under the limit, if specified.
+				while (($recurrence_row['recurrence_limit_date'] == $nulldate || strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
+						&& strtotime($recurrence_row['dates']) <= time() + 86400*$anticipation)
 				{
 					$new_event = JTable::getInstance('jem_events', '');
 					$new_event->bind($ref_event, array('id', 'hits', 'dates', 'enddates'));
 					$new_event->recurrence_first_id = $recurrence_row['first_id'];
-          			$new_event->recurrence_counter = $recurrence_row['counter'] + 1;
+					$new_event->recurrence_counter = $recurrence_row['counter'] + 1;
 					$new_event->dates = $recurrence_row['dates'];
-          			$new_event->enddates = $recurrence_row['enddates'];
-          
-          			if ($new_event->store())
-          			{
-          				$recurrence_row['counter']++;
-	          			//duplicate categories event relationships
-	          			$query = ' INSERT INTO #__jem_cats_event_relations (itemid, catid) '
-	                 			. ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__jem_cats_event_relations WHERE itemid = ' . $db->Quote($ref_event->id);
-	          			$db->setQuery($query);
-	          			if (!$db->query()) {
-	          				echo JText::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
-	          			}
-          			}
-          
-          			$recurrence_row = JEMHelper::calculate_recurrence($recurrence_row);
+					$new_event->enddates = $recurrence_row['enddates'];
+	
+					if ($new_event->store())
+					{
+						$recurrence_row['counter']++;
+						//duplicate categories event relationships
+						$query = ' INSERT INTO #__jem_cats_event_relations (itemid, catid) '
+								. ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__jem_cats_event_relations WHERE itemid = ' . $db->Quote($ref_event->id);
+						$db->setQuery($query);
+						if (!$db->query()) {
+							echo JText::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
+						}
+					}
+	
+					$recurrence_row = JEMHelper::calculate_recurrence($recurrence_row);
 				}
 			}
-
+	
 			//delete outdated events
 			if ($jemsettings->oldevent == 1) {
 				$query = 'DELETE FROM #__jem_events WHERE dates > 0  AND DATE_SUB(NOW(), INTERVAL '.$jemsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates))';
 				$db->SetQuery( $query );
 				$db->Query();
 			}
-
+	
 			//Set state archived of outdated events
 			if ($jemsettings->oldevent == 2) {
 				$query = 'UPDATE #__jem_events SET published = -1 WHERE dates > 0 AND DATE_SUB(NOW(), INTERVAL '.$jemsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates)) AND published = 1';
 				$db->SetQuery( $query );
 				$db->Query();
 			}
-			
+				
 			//Set timestamp of last cleanup
 			$query = 'UPDATE #__jem_settings SET lastupdate = '.time().' WHERE id = 1';
 			$db->SetQuery( $query );
 			$db->Query();
 		}
 	}
+	
+	
+	
 
+	
 	/**
 	 * this methode calculate the next date
 	 */
-	static function calculate_recurrence($recurrence_row) 
+	static function calculate_recurrence($recurrence_row)
 	{
 		// get the recurrence information
 		$recurrence_number = $recurrence_row['recurrence_number'];
 		$recurrence_type = $recurrence_row['recurrence_type'];
-
+	
 		$day_time = 86400;	// 60 sec. * 60 min. * 24 h
 		$week_time = 604800;// $day_time * 7days
 		$date_array = JEMHelper::generate_date($recurrence_row['dates'], $recurrence_row['enddates']);
-
+	
 		switch($recurrence_type) {
 			case "1":
 				// +1 hour for the Summer to Winter clock change
@@ -187,105 +193,154 @@ class JEMHelper {
 				$start_day = $start_day + ($recurrence_number * $week_time);
 				break;
 			case "3": // month recurrence
-			  /*
-			   * warning here, we have to make sure the date exists: 31 of october + 1 month = 31 of november, which doesn't exists => skip the date!
-			   */
+				/*
+				 * warning here, we have to make sure the date exists: 31 of october + 1 month = 31 of november, which doesn't exists => skip the date!
+				 */
 				$start_day = mktime(1,0,0,($date_array["month"] + $recurrence_number),$date_array["day"],$date_array["year"]);
-
-        $i = 1;        
-        while ( date('d', $start_day) !=  $date_array["day"] && $i < 20 ) { // not the same day of the month... try next date !
-        	$i++;
-          $start_day = mktime(1,0,0,($date_array["month"] + $recurrence_number*$i),$date_array["day"],$date_array["year"]);
-        }
-				break;
-			case "4":
-        		$selected = JEMHelper::convert2CharsDaysToInt(explode(',', $recurrence_row['recurrence_byday']), $recurrence_row['weekstart']);  // the selected weekdays
-        		$current_weekday = (int) $date_array["weekday"];
-				
-        		if ($recurrence_row['weekstart'] == 1) {
-        			// O for monday, not sunday
-        			$current_weekday = ($current_weekday + 6) % 7;
-        		}
-        
-        		if (count($selected) == 0) {
-        			// this shouldn't happen, but if it does, to prevent problem use the current weekday for the repetition.
-          			JError::raiseWarning(500, JText::_( 'Empty weekday recurrence' ) );
-          			$selected = array($current_weekday);
-        		}
-		
-        		sort($selected);
-				
-				if ($recurrence_number < 5) {
-					// 1. - 4. week in a month
-					// look for the position of current start date in 'selected' days.
-					if ($current_weekday >= max($selected)) {
-						
-						// last selected day of the week => next occurence is first selected day of next (interval) week
-            			$start_day = $date_array["unixtime"] - ($current_weekday - $selected[0]) * $day_time + $week_time * $recurrence_number;
-					
-					} else{
-						
-						// next weekday
-						foreach($selected as $k => $day)
-	          			{
-	            			if ($current_weekday < $day) {
-                				$next_weekday = $day;
-                			break;
-	            			}
-	          			}
-						$start_day = $date_array["unixtime"] + ($next_weekday - $current_weekday) * $day_time;
-					}
-				} else {					
-         			if ($current_weekday >= max($selected)) {
-            			// next occurence is next month
-          				// the last or the before last week in a month
-            			// the last day in the new month
-	         			$start_day = mktime(1,0,0,($date_array["month"] + 2),1,$date_array["year"]) - $day_time;
-	          			$weekday_is = date("w",$start_day);
-	          
-	          			// first selected day of the week
-	          			$weekday_must = $selected[0];
-	          
-	          			// calculate the day difference between these days
-	          			if ($weekday_is >= $weekday_must) {
-	            			$day_diff = $weekday_is - $weekday_must;
-	          			} else {
-	            			$day_diff = ($weekday_is - $weekday_must) + 7;
-	          			}
-						
-	          			$start_day = ($start_day - ($day_diff * $day_time));
-						
-	          			if ($recurrence_number == 6) {  // before last?
-	            			$start_day = $start_day - $week_time;
-	          			}
-          			} else {
-          				// next weekday
-            			foreach($selected as $k => $day)
-            			{
-              				if ($current_weekday < $day) {
-                				$next_weekday = $day;
-                			break;
-              				}
-            			}
-            			// next occurence is next selected weekday
-            			$start_day = $date_array["unixtime"] + ($next_weekday - $current_weekday) * $day_time;          	
-          			}
+	
+				$i = 1;
+				while ( date('d', $start_day) !=  $date_array["day"] && $i < 20 ) { // not the same day of the month... try next date !
+					$i++;
+					$start_day = mktime(1,0,0,($date_array["month"] + $recurrence_number*$i),$date_array["day"],$date_array["year"]);
 				}
 				break;
+				
+				
+			case "4": // weekday
+
+				$selected = JEMHelper::convert2CharsDaysToInt(explode(',', $recurrence_row['recurrence_byday']), 0);  // the selected weekdays
+
+				$days_names = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
+
+				$litterals  = array('first', 'second', 'third', 'fourth');
+
+				if (count($selected) == 0) 
+
+				{
+
+					// this shouldn't happen, but if it does, to prevent problem use the current weekday for the repetition.
+
+					JError::raiseWarning(500, JText::_( 'Empty weekday recurrence' ) );
+
+					$current_weekday = (int) $date_array["weekday"];
+
+					$selected = array($current_weekday);
+
+				}
+
+				
+
+				$start_day = null;
+
+				foreach ($selected as $s)
+
+				{
+
+					$next = null;
+
+					switch ($recurrence_number)
+
+					{
+
+						
+						case 6: // before last 'x' of the month
+
+							$next      = strtotime("previous ".$days_names[$s].' - 1 week ', mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
+
+							$nextmonth = strtotime("previous ".$days_names[$s].' - 1 week ', mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
+
+							break;
+
+							
+						case 5: // last 'x' of the month
+							
+							$next      = strtotime("previous ".$days_names[$s], mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
+							
+							$nextmonth = strtotime("previous ".$days_names[$s], mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
+							
+							break;
+							
+
+						case 4: // xth 'x' of the month
+
+						case 3:
+
+						case 2:
+
+						case 1:
+
+						default:
+
+							$next      = strtotime($litterals[$recurrence_number-1]." ".$days_names[$s].' of this month', mktime(1,0,0,$date_array["month"]   ,1,$date_array["year"]));
+
+							$nextmonth = strtotime($litterals[$recurrence_number-1]." ".$days_names[$s].' of this month', mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
+
+							break;
+
+					}
+
+					
+
+					// is the next / nextm day eligible for next date ?
+
+					if ($next && $next > strtotime($recurrence_row['dates'])) // after current date ! 
+
+					{
+
+						if (!$start_day || $start_day > $next) { // comes before the current 'start_date'
+
+							$start_day = $next;
+
+						}
+
+					}
+
+					if ($nextmonth && (!$start_day || $start_day > $nextmonth)) {
+
+						$start_day = $nextmonth;
+
+					}
+
+				}
+
+				break;
+
 		}
+
 		
+
+		if (!$start_day) {
+
+			return false;
+
+		}
+
 		$recurrence_row['dates'] = date("Y-m-d", $start_day);
+
 		
+
 		if ($recurrence_row['enddates']) {
+
 			$recurrence_row['enddates'] = date("Y-m-d", $start_day + $date_array["day_diff"]);
+
 		}
+
 		
+
 		if ($start_day < $date_array["unixtime"]) {
+
 			JError::raiseError(500, JText::_( 'Recurrence date generation error' ) );
+
 		}
+
 		
+
 		return $recurrence_row;
+
 	}
+	
+	
+	
 
 	/**
 	 * this method generate the date string to a date array
