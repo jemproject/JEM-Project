@@ -56,7 +56,10 @@ defined('_JEXEC') or die;
 			<span class="date">
 				<?php echo $item->date; ?>
 			</span>
-			<?php if ($item->time && $this->datemethod == 1) : ?>
+			<?php 
+			
+			if ($item->time && $params->get('datemethod', 1) == 1) : 
+			?>
 			<span class="time">
 				<?php echo $item->time; ?>
 			</span>

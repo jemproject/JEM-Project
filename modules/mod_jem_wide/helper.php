@@ -39,13 +39,21 @@ class modJEMwideHelper
 	 * @access public
 	 * @return array
 	 */
-	function getList(&$params)
+static	function getList(&$params)
 	{
-		global $mainframe;
+		$app = JFactory::getApplication();
 
-		$db			=& JFactory::getDBO();
-		$user		=& JFactory::getUser();
-		$user_gid	= (int) $user->get('aid');
+		$db			= JFactory::getDBO();
+		$user		= JFactory::getUser();
+	if (JFactory::getUser()->authorise('core.manage')) {
+			$gid = (int) 3;          //viewlevel Special
+		} else {
+			if($user->get('id')) {
+				$gid = (int) 2;     //viewlevel Registered
+			} else {
+				$gid = (int) 1;      //viewlevel Public
+			}
+		}
 
 		//all upcoming events//all upcoming events
 		if ($params->get( 'type' ) == 1) {
@@ -116,7 +124,7 @@ class modJEMwideHelper
         .' INNER JOIN #__jem_categories AS c ON c.id = rel.catid'
 				.' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 				. $where
-				.' AND c.access <= '.$user_gid
+				.' AND c.access <= '.$gid
 				.($catid ? $categories : '')
 				.($venid ? $venues : '')
 				.($state ? $stat : '')
@@ -140,7 +148,7 @@ class modJEMwideHelper
 		{
 			//create thumbnails if needed and receive imagedata
 			$dimage = JEMImage::flyercreator($row->datimage, 'event');
-			$limage = JEMImage::flyercreator($row->locimage);
+			$limage = JEMImage::flyercreator($row->locimage, 'venue');
 						
 			//cut titel
 			$length = strlen(htmlspecialchars( $row->title ));
@@ -150,6 +158,7 @@ class modJEMwideHelper
 				$row->title = $row->title.'...';
 			}
 			
+			$lists[$i] = new stdClass();
 			$lists[$i]->title			= htmlspecialchars( $row->title, ENT_COMPAT, 'UTF-8' );
 			$lists[$i]->venue			= htmlspecialchars( $row->venue, ENT_COMPAT, 'UTF-8' );
 			$lists[$i]->catname			= htmlspecialchars( $row->catname, ENT_COMPAT, 'UTF-8' );
@@ -177,7 +186,7 @@ class modJEMwideHelper
 	 * @access public
 	 * @return string
 	 */
-	function _format_date($row, &$params)
+static	function _format_date($row, &$params)
 	{
 		//Get needed timestamps and format
 		$yesterday_stamp	= mktime(0, 0, 0, date("m") , date("d")-1, date("Y"));
@@ -252,7 +261,7 @@ class modJEMwideHelper
 	 * @access public
 	 * @return string
 	 */
-	function _format_time($date, $time, &$params)
+static	function _format_time($date, $time, &$params)
 	{
 		$time = strftime( $params->get('formattime', '%H:%M'), strtotime( $date.' '.$time ));
 

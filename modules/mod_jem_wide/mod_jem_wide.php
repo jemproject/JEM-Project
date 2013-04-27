@@ -33,7 +33,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/image.class.php');
 
 $list = modJEMwideHelper::getList($params);
 
-$document 	= & JFactory::getDocument();
+$document 	=  JFactory::getDocument();
 $document->addStyleSheet(JURI::base(true).'/modules/mod_jem_wide/tmpl/mod_jem_wide.css');
 
 // check if any results returned
