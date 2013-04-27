@@ -1,35 +1,36 @@
 <?php
 /**
- * @version 0.9 $Id$
- * @package Joomla
- * @subpackage EventList Wide Module
- * @copyright (C) 2005 - 2008 Christoph Lukes
- * @license GNU/GPL, see LICENCE.php
- * EventList is free software; you can redistribute it and/or
+ * @version 1.1 $Id$
+ * @package JEM
+ * @subpackage JEM Wide Module
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license GNU/GPL, see LICENSE.php
+ *
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
- * EventList is distributed in the hope that it will be useful,
+ *
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
-defined('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die;
 
 /**
- * EventList Modulewide helper
+ * JEM Modulewide helper
  *
  * @package Joomla
- * @subpackage EventList Wide Module
+ * @subpackage JEM Wide Module
  * @since		1.0
  */
-class modEventListwideHelper
+class modJEMwideHelper
 {
 
 	/**
@@ -97,7 +98,7 @@ class modEventListwideHelper
 			foreach ($rawstate as $val)
 			{
 				if ($val) {
-					$states[] = '"'.trim($db->getEscaped($val)).'"';
+					$states[] = '"'.trim($db->escape($val)).'"';
 				}
 			}
 	
@@ -110,10 +111,10 @@ class modEventListwideHelper
 				.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				.' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug,'
 				.' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as categoryslug'
-				.' FROM #__eventlist_events AS a'
-        .' INNER JOIN #__eventlist_cats_event_relations AS rel ON rel.itemid = a.id'
-        .' INNER JOIN #__eventlist_categories AS c ON c.id = rel.catid'
-				.' LEFT JOIN #__eventlist_venues AS l ON l.id = a.locid'
+				.' FROM #__jem_events AS a'
+        .' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+        .' INNER JOIN #__jem_categories AS c ON c.id = rel.catid'
+				.' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 				. $where
 				.' AND c.access <= '.$user_gid
 				.($catid ? $categories : '')
@@ -138,8 +139,8 @@ class modEventListwideHelper
 		foreach ((array) $rows as $row )
 		{
 			//create thumbnails if needed and receive imagedata
-			$dimage = ELImage::flyercreator($row->datimage, 'event');
-			$limage = ELImage::flyercreator($row->locimage);
+			$dimage = JEMImage::flyercreator($row->datimage, 'event');
+			$limage = JEMImage::flyercreator($row->locimage);
 						
 			//cut titel
 			$length = strlen(htmlspecialchars( $row->title ));
@@ -153,11 +154,11 @@ class modEventListwideHelper
 			$lists[$i]->venue			= htmlspecialchars( $row->venue, ENT_COMPAT, 'UTF-8' );
 			$lists[$i]->catname			= htmlspecialchars( $row->catname, ENT_COMPAT, 'UTF-8' );
 			$lists[$i]->state			= htmlspecialchars( $row->state, ENT_COMPAT, 'UTF-8' );			
-			$lists[$i]->eventlink		= $params->get('linkevent', 1) ? JRoute::_( EventListHelperRoute::getRoute($row->slug) ) : '';
-			$lists[$i]->venuelink		= $params->get('linkvenue', 1) ? JRoute::_( EventListHelperRoute::getRoute($row->venueslug, 'venueevents') ) : '';
-			$lists[$i]->categorylink	= $params->get('linkcategory', 1) ? JRoute::_( EventListHelperRoute::getRoute($row->categoryslug, 'categoryevents') ) : '';
-			$lists[$i]->date 			= modEventListwideHelper::_format_date($row, $params);
-			$lists[$i]->time 			= $row->times ? modEventListwideHelper::_format_time($row->dates, $row->times, $params) : '' ;
+			$lists[$i]->eventlink		= $params->get('linkevent', 1) ? JRoute::_( JEMHelperRoute::getRoute($row->slug) ) : '';
+			$lists[$i]->venuelink		= $params->get('linkvenue', 1) ? JRoute::_( JEMHelperRoute::getRoute($row->venueslug, 'venueevents') ) : '';
+			$lists[$i]->categorylink	= $params->get('linkcategory', 1) ? JRoute::_( JEMHelperRoute::getRoute($row->categoryslug, 'categoryevents') ) : '';
+			$lists[$i]->date 			= modJEMwideHelper::_format_date($row, $params);
+			$lists[$i]->time 			= $row->times ? modJEMwideHelper::_format_time($row->dates, $row->times, $params) : '' ;
 			$lists[$i]->eventimage		= JURI::base(true).'/'.$dimage['thumb'];
 			$lists[$i]->eventimageorig	= JURI::base(true).'/'.$dimage['original'];
 			$lists[$i]->venueimage		= JURI::base(true).'/'.$limage['thumb'];

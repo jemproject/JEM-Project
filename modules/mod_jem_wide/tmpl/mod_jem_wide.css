@@ -1,73 +1,75 @@
 /**
- * @version 0.9 $Id$
- * @package Joomla
- * @subpackage EventList
- * @copyright (C) 2005 - 2007 Christoph Lukes
- * @license GNU/GPL, see LICENCE.php
- * EventList is free software; you can redistribute it and/or
+ * @version 1.1 $Id$
+ * @package JEM
+ * @subpackage JEM Latest Events Wide Module
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license GNU/GPL, see LICENSE.php
+ *
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
- * EventList is distributed in the hope that it will be useful,
+ *
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- **/
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
  
-div#elmodulewide {
+div#jemmodulewide {
 	width: 100%;
 }
 
-div#elmodulewide .eventset {
+div#jemmodulewide .eventset {
 	width: 100%;
 	margin-bottom: 10px;
 	padding: 5px;
 	border-bottom: 1px dotted silver;
 }
 
-div#elmodulewide span.event-title {
+div#jemmodulewide span.event-title {
 	padding-left: 17px;
 	background: url(img/flag_red.png) no-repeat;
 	font-size: smaller;
 }
 
-div#elmodulewide span.time {
+div#jemmodulewide span.time {
 	padding-left: 20px;
 	background: url(img/time.png) no-repeat;
 	padding-top: 2px;
 }
 
-div#elmodulewide span.date {
+div#jemmodulewide span.date {
 	padding-left: 20px;
 	background: url(img/date.png) no-repeat;
 	padding-top: 2px;
 }
 
-div#elmodulewide span.category {
+div#jemmodulewide span.category {
 	position: relative;
 	padding-left: 18px;
 	background: url(img/category.png) no-repeat;
 	font-size: smaller;
 }
 
-div#elmodulewide span.venue-title {
+div#jemmodulewide span.venue-title {
 	position: relative;
 	padding-left: 17px;
 	background: url(img/building.png) no-repeat;
 	font-size: smaller;
 }
 
-div#elmodulewide .event-image-cell {
+div#jemmodulewide .event-image-cell {
 }
 
-div#elmodulewide .venue-image-cell {
+div#jemmodulewide .venue-image-cell {
 }
 
-div#elmodulewide .image-preview {
+div#jemmodulewide .image-preview {
 	height: 35px;
 	border: 1px solid #CCCCCC;
 	padding: 3px;

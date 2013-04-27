@@ -1,36 +1,39 @@
 <?php
 /**
- * @version 0.9 $Id$
- * @package Joomla
- * @subpackage EventList Wide Module
- * @copyright (C) 2005 - 2008 Christoph Lukes
- * @license GNU/GPL, see LICENCE.php
- * EventList is free software; you can redistribute it and/or
+ * @version 1.1 $Id$
+ * @package JEM
+ * @subpackage JEM Wide Module
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license GNU/GPL, see LICENSE.php
+ *
+ * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
-
- * EventList is distributed in the hope that it will be useful,
+ *
+ * JEM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
- * along with EventList; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * along with JEM; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-defined('_JEXEC') or die('Restricted access');
+
+defined('_JEXEC') or die;
 ?>
 
-<div id="elmodulewide">
+<div id="jemmodulewide">
 
-<table border="0" cellpadding="5" cellspacing="0" class="eventset" summary="mod_eventlist_wide">
+<table class="eventset" summary="mod_jem_wide">
 
 	<colgroup>
-			<col width="30%" class="elmodw_col_title" />
-			<col width="20%" class="elmodw_col_category" />
-			<col width="20%" class="elmodw_col_venue" />
-			<col width="15%" class="elmodw_col_eventimage" />
-			<col width="15%" class="elmodw_col_venueimage" />
+		<col width="30%" class="jemmodw_col_title" />
+		<col width="20%" class="jemmodw_col_category" />
+		<col width="20%" class="jemmodw_col_venue" />
+		<col width="15%" class="jemmodw_col_eventimage" />
+		<col width="15%" class="jemmodw_col_venueimage" />
 	</colgroup>
 
 <?php foreach ($list as $item) :  ?>

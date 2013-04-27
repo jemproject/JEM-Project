@@ -1,67 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="module" version="2.5" client="site" method="upgrade">
-	<name>Upcoming Events</name>
-	<creationDate>26 April 2013</creationDate>
+	<name>JEM Upcoming Events Module</name>
 	<author>JEM Community</author>
-	<copyright>GNU General Public License</copyright>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
+	<creationDate>26 April 2013</creationDate>
+	<copyright>Copyright (C) 2013-2013 joomlaeventmanager.net</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<version>2.0.0.1</version>
-	<description>JEM Module basic</description>
+	<description>JEM Upcoming Events Module. JEM is based on Eventlist by Christoph Lukes (http://www.schlu.net)</description>
 
 	<files>
 		<filename module="mod_jem">mod_jem.php</filename>
-		<filename>index.html</filename>
-        <filename>helper.php</filename>
-        <filename>tmpl/default.php</filename>
-        <filename>tmpl/index.html</filename>
+		<filename>helper.php</filename>
+		<filename>tmpl/default.php</filename>
 	</files>
 
 	<languages>
 		<language tag="en-GB">languages/en-GB.mod_jem.ini</language>
 		<language tag="de-DE">languages/de-DE.mod_jem.ini</language>
 		<language tag="nl-NL">languages/nl-NL.mod_jem.ini</language>
-   		<language tag="fr-FR">languages/fr-FR.mod_jem.ini</language>
+		<language tag="fr-FR">languages/fr-FR.mod_jem.ini</language>
 	</languages>
 
 	<config>
 		<fields name="params">
 			<fieldset name="basic">
-		<field name="count" type="text" default="5" label="EVENTS IN MODULE" description="EVENTS IN MODULE DESC" />
-		<field name="type" type="list" default="0" label="UPCOMING OR ARCHIVED" description="UPCOMING OR ARCHIVED DESC">
-			<option value="0">COM_JEM_UPCOMING_EVENTS</option>
-			<option value="1">COM_JEM_ARCHIVED_EVENTS</option>
-		</field>
-    <field name="event_after" type="text" default="" label="OCCURING IN" description="OCCURING IN DESC" />
-		<field name="showtitloc" type="list" default="0" label="TITLE OR VENUE" description="TITLE OR VENUE DESC">
-			<option value="0">COM_JEM_VENUE</option>
-			<option value="1">COM_JEM_TITLE</option>
-		</field>
-		<field name="cuttitle" type="text" default="18" label="MAX TITLE LENGTH" description="MAX TITLE LENGTH DESC" />
-		<field name="linkloc" type="radio" default="1" label="LINK TO VENUE" description="LINK TO VENUE DESC">
-			<option value="0">JNO</option>
-			<option value="1">JYES</option>
-		</field>
-		<field name="linkdet" type="list" default="1" label="LINK TO DETAILS" description="LINK TO DETAILS DESC">
-			<option value="0">JNO</option>
-			<option value="1">COM_JEM_DATE</option>
-			<option value="2">COM_JEM_TITLE</option>
-		</field>
-		<field name="catid" type="text" default="" label="CATEGORY ID" description="CATEGORY ID DESC" />
-		<field name="venid" type="text" default="" label="VENUE ID" description="VENUE ID DESC" />
-		<field name="formatdate" type="text" default="%d.%m.%Y" label="DATE FORMAT" description="DATE FORMAT DESC" />
-		<field name="formattime" type="text" default="%H.%M" label="TIME FORMAT" description="TIME FORMAT DESC" />
-    <field name="moduleclass_sfx" type="text" default="" label="Module Class Suffix" description="PARAMMODULECLASSSUFFIX" />
-	</fieldset>
-
-	<fieldset name="advanced">
-		<field name="cache" type="list" default="1" label="CACHING" description="CACHING DESC">
-			<option value="1">COM_JEM_USE_GLOBAL</option>
-			<option value="0">COM_JEM_NO_CACHING</option>
-		</field>
-			
-		<field name="cache_time" type="text" default="900" label="CACHE TIME" description="CACHE TIME DESC" />
-	</fieldset>
-	</fields>
+				<field name="count" type="text" default="5" label="EVENTS IN MODULE" description="EVENTS IN MODULE DESC" />
+				<field name="type" type="list" default="0" label="UPCOMING OR ARCHIVED" description="UPCOMING OR ARCHIVED DESC">
+					<option value="0">COM_JEM_UPCOMING_EVENTS</option>
+					<option value="1">COM_JEM_ARCHIVED_EVENTS</option>
+				</field>
+				<field name="event_after" type="text" default="" label="OCCURING IN" description="OCCURING IN DESC" />
+				<field name="showtitloc" type="list" default="0" label="TITLE OR VENUE" description="TITLE OR VENUE DESC">
+					<option value="0">COM_JEM_VENUE</option>
+					<option value="1">COM_JEM_TITLE</option>
+				</field>
+				<field name="cuttitle" type="text" default="18" label="MAX TITLE LENGTH" description="MAX TITLE LENGTH DESC" />
+				<field name="linkloc" type="radio" default="1" label="LINK TO VENUE" description="LINK TO VENUE DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="linkdet" type="list" default="1" label="LINK TO DETAILS" description="LINK TO DETAILS DESC">
+					<option value="0">JNO</option>
+					<option value="1">COM_JEM_DATE</option>
+					<option value="2">COM_JEM_TITLE</option>
+				</field>
+				<field name="catid" type="text" default="" label="CATEGORY ID" description="CATEGORY ID DESC" />
+				<field name="venid" type="text" default="" label="VENUE ID" description="VENUE ID DESC" />
+				<field name="formatdate" type="text" default="%d.%m.%Y" label="DATE FORMAT" description="DATE FORMAT DESC" />
+				<field name="formattime" type="text" default="%H.%M" label="TIME FORMAT" description="TIME FORMAT DESC" />
+				<field name="moduleclass_sfx" type="text" default="" label="Module Class Suffix" description="PARAMMODULECLASSSUFFIX" />
+			</fieldset>
+		
+			<fieldset name="advanced">
+				<field name="cache" type="list" default="1" label="CACHING" description="CACHING DESC">
+					<option value="1">COM_JEM_USE_GLOBAL</option>
+					<option value="0">COM_JEM_NO_CACHING</option>
+				</field>
+				<field name="cache_time" type="text" default="900" label="CACHE TIME" description="CACHE TIME DESC" />
+			</fieldset>
+		</fields>
 	</config>
 </extension>
