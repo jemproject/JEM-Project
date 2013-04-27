@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="1.6" type="plugin" group="search" method="upgrade">
+<extension version="2.5" type="plugin" group="search" method="upgrade">
 	<name>JEM - Search Plugin</name>
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
@@ -17,14 +17,14 @@
 	<languages folder="language">
 		<language tag="en-GB">en-GB/en-GB.plg_search_jem.ini</language>
 		<language tag="de-DE">de-DE/de-DE.plg_search_jem.ini</language>
-    	<language tag="fr-FR">fr-FR/fr-FR.plg_search_jem.ini</language>
+		<language tag="fr-FR">fr-FR/fr-FR.plg_search_jem.ini</language>
 	</languages>
 
 	<config>
-	<fields name="params">
-	<fieldset name="basic">
-		<field name="search_limit" type="text" size="5" default="50" label="SEARCH LIMIT" description="NUMBER ITEMS RETURN"/>
-	</fieldset>
-	</fields>
-   </config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field name="search_limit" type="text" size="5" default="50" label="SEARCH LIMIT" description="NUMBER ITEMS RETURN"/>
+			</fieldset>
+		</fields>
+	</config>
 </extension>
