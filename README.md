@@ -15,6 +15,7 @@ This version includes:
 - Altered Gmap
 - Calendar
 - Changed category upload (just like the venue & event)
+- Exclude categories in simplelist
 
 Tips, suggestions are very welcome..
 
