@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -20,10 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
 /**
  * HTML Details View class of the JEM component
@@ -40,38 +39,33 @@ class JEMViewDetails extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
-		$document 	=  JFactory::getDocument();
-		$user		=  JFactory::getUser();
-		$dispatcher =  JDispatcher::getInstance();
-		$jemsettings =  JEMHelper::config();
-		$params 	= $app->getParams('com_jem');
+		$document		= JFactory::getDocument();
+		$user			= JFactory::getUser();
+		$dispatcher		= JDispatcher::getInstance();
+		$jemsettings	= JEMHelper::config();
+		$params			= $app->getParams('com_jem');
 
-		$row		=  $this->get('Details');
-		$categories	=  $this->get('Categories');
-		$registers	=  $this->get('Registers');
+		$row			= $this->get('Details');
+		$categories		= $this->get('Categories');
+		$registers		= $this->get('Registers');
 		$isregistered	= $this->get('UserIsRegistered');
 
 		//get menu information
-		$menu		= $app->getMenu();
-		$item = $menu->getActive();
-		
-	//	print_r($item);
-		
-		
+		$menu			= $app->getMenu();
+		$item			= $menu->getActive();
 
 		//Check if the id exists
-		if ($row->did == 0)
-		{
-			return JError::raiseError( 404, JText::sprintf( 'Event #%d not found', $row->did ) );
+		if ($row->did == 0) {
+			return JError::raiseError(404, JText::sprintf('Event #%d not found', $row->did));
 		}
 
 		//Check if user has access to the details
 		if ($jemsettings->showdetails == 0) {
-			return JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
+			return JError::raiseError(403, JText::_('COM_JEM_NO_ACCESS'));
 		}
-		
+
 		$cid		= JRequest::getInt('cid', 0);
 
 		//add css file
@@ -81,26 +75,25 @@ class JEMViewDetails extends JViewLegacy
 		//Print
 		$pop	= JRequest::getBool('pop');
 
-		$params->def( 'page_title', JText::_( 'COM_JEM_DETAILS' ));
+		$params->def('page_title', JText::_('COM_JEM_DETAILS'));
 
-		if ( $pop ) {
-			$params->set( 'popup', 1 );
+		if ($pop) {
+			$params->set('popup', 1);
 		}
 
-		$print_link = JRoute::_( JEMHelperRoute::getRoute($row->slug).'&print=1&tmpl=component' );
+		$print_link = JRoute::_(JEMHelperRoute::getRoute($row->slug).'&print=1&tmpl=component');
 
 		//pathway
 		$cats		= new JEMCategories($cid);
-        $parents	= $cats->getParentlist();
-		$pathway 	=  $app->getPathWay();
-		$pathway->setItemName( 1, $item->title );
+		$parents	= $cats->getParentlist();
+		$pathway 	= $app->getPathWay();
+		$pathway->setItemName(1, $item->title);
 		foreach($parents as $parent) {
-			$pathway->addItem( $this->escape($parent->catname), JRoute::_('index.php?view=categoryevents&id='.$parent->categoryslug));
+			$pathway->addItem($this->escape($parent->catname), JRoute::_('index.php?view=categoryevents&id='.$parent->categoryslug));
 		}
-		$pathway->addItem( $this->escape($row->title), JRoute::_( JEMHelperRoute::getRoute($row->slug) ));
-		
+		$pathway->addItem($this->escape($row->title), JRoute::_(JEMHelperRoute::getRoute($row->slug)));
+
 		//Get images
-		
 		$dimage = JEMImage::flyercreator($row->datimage, 'event');
 		$limage = JEMImage::flyercreator($row->locimage, 'venue');
 
@@ -115,20 +108,17 @@ class JEMViewDetails extends JViewLegacy
 		$timecheck = $now - $date;
 
 		//let's build the registration handling
-		$formhandler  = 0;
+		$formhandler = 0;
 
 		//is the user allready registered at the event
-		if ( $isregistered ) {
+		if ($isregistered) {
 			$formhandler = 3;
-		} 
-		else if ( $timecheck > 0 ) { //check if it is too late to register and overwrite $formhandler
+		} else if ($timecheck > 0) { //check if it is too late to register and overwrite $formhandler
 			$formhandler = 1;
-		}
-		else if ( !$user->get('id') ) { //is the user registered at joomla and overwrite $formhandler if not
+		} else if (!$user->get('id')) { //is the user registered at joomla and overwrite $formhandler if not
 			$formhandler = 2;
-		}
-		else {
-			$formhandler = 4;			
+		} else {
+			$formhandler = 4;
 		}
 
 		if ($formhandler >= 3) {
@@ -180,7 +170,6 @@ class JEMViewDetails extends JViewLegacy
 				} else {
 					$meta_keywords_content .= $keyword;
 				}
-
 			}
 		}
 		if (!empty($row->meta_description)) {
@@ -194,33 +183,32 @@ class JEMViewDetails extends JViewLegacy
 					} else {
 						$description_content .= $desc;
 					}
-
 			}
 		} else {
 			$description_content = "";
 		}
 
 		//set page title and meta stuff
-		$document->setTitle( $row->title );
-    $document->setMetadata('keywords', $meta_keywords_content );
-    $document->setDescription( strip_tags($description_content) );
+		$document->setTitle($row->title);
+		$document->setMetadata('keywords', $meta_keywords_content);
+		$document->setDescription(strip_tags($description_content));
 
-    //build the url
-    if(!empty($row->url) && strtolower(substr($row->url, 0, 7)) != "http://") {
-    	$row->url = 'http://'.$row->url;
-    }
+		//build the url
+		if(!empty($row->url) && strtolower(substr($row->url, 0, 7)) != "http://") {
+			$row->url = 'http://'.$row->url;
+		}
 
-    //create flag
-    if ($row->country) {
-    	$row->countryimg = JEMOutput::getFlag( $row->country );
-    }
-		
-		// load dispatcher for plugins    
-		JPluginHelper::importPlugin( 'jem' );
+		//create flag
+		if ($row->country) {
+			$row->countryimg = JEMOutput::getFlag($row->country);
+		}
+
+		// load dispatcher for plugins
+		JPluginHelper::importPlugin('jem');
 		$row->pluginevent = new stdClass();
 		$results = $dispatcher->trigger('onEventDetailsEnd', array ($row->did, $this->escape($row->title)));
 		$row->pluginevent->onEventDetailsEnd = trim(implode("\n", $results));
-		
+
 		//assign vars to jview
 		$this->row					= $row;
 		$this->categories			= $categories;
@@ -252,7 +240,7 @@ class JEMViewDetails extends JViewLegacy
 				$i = 0;
 				$content = '';
 				$n = count($categories);
-    			foreach ($categories as $category) {
+				foreach ($categories as $category) {
 					$content .= $this->escape($category->catname);
 					$i++;
 					if ($i != $n) {
@@ -267,15 +255,18 @@ class JEMViewDetails extends JViewLegacy
 			case "endtimes":
 				$content = '';
 				if ($row->$keyword) {
-					$content = strftime( $formattime ,strtotime( $row->$keyword ) );
+					$content = strftime($formattime ,strtotime($row->$keyword));
 				}
 				break;
 			case "dates":
 			case "enddates":
-				$content = strftime( $formatdate ,strtotime( $row->$keyword ) );
+				$content = strftime($formatdate ,strtotime($row->$keyword));
 				break;
 			default:
-				$content = $row->$keyword;
+				$content = "";
+				if(isset($row->$keyword)) {
+					$content = $row->$keyword;
+				}
 				break;
 		}
 		return $content;
