@@ -215,41 +215,41 @@ static	function _format_date($row, &$params)
 			//the event has an enddate and it's earlier than yesterday
 			} elseif($row->enddates && $enddates_stamp < $yesterday_stamp) {
 				$days = round( ($today_stamp - $enddates_stamp) / 86400 );
-				$result = JText::sprintf( 'ENDED DAYS AGO', $days );
+				$result = JText::sprintf( 'MOD_JEM_WIDE_ENDED_DAYS_AGO', $days );
 				
 			//the event has an enddate and it's later than today but the startdate is earlier than today
 			//means a currently running event 
 			} elseif($row->enddates && $enddates_stamp > $today_stamp && $dates_stamp < $today_stamp) {
 				$days = round( ($today_stamp - $dates_stamp) / 86400 );
-				$result = JText::sprintf( 'STARTED DAYS AGO', $days );
+				$result = JText::sprintf( 'MOD_JEM_WIDE_STARTED_DAYS_AGO', $days );
 				
 			//the events date is earlier than yesterday
 			} elseif($dates_stamp < $yesterday_stamp) {
 				$days = round( ($today_stamp - $dates_stamp) / 86400 );
-				$result = JText::sprintf( 'DAYS AGO', $days );
+				$result = JText::sprintf( 'MOD_JEM_WIDE_DAYS_AGO', $days );
 				
 			//the events date is later than tomorrow
 			} elseif($dates_stamp > $tomorrow_stamp) {
 				$days = round( ($dates_stamp - $today_stamp) / 86400 );
-				$result = JText::sprintf( 'DAYS AHEAD', $days );
+				$result = JText::sprintf( 'MOD_JEM_WIDE_DAYS_AHEAD', $days );
 			}
 		} else {
 			//single day event
 			$date = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime( $row->dates.' '.$row->times ));
-			$result = JText::sprintf('ON DATE', $date);
+			$result = JText::sprintf('MOD_JEM_WIDE_ON_DATE', $date);
 			
 			//Upcoming multidayevent (From 16.10.2008 Until 18.08.2008)
 			if($dates_stamp > $tomorrow_stamp && $enddates_stamp) {
 				$startdate = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime( $row->dates.' '.$row->times ));
 				$enddate = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime( $row->enddates.' '.$row->endtimes ));
-				$result = JText::sprintf('FROM UNTIL', $startdate, $enddate);
+				$result = JText::sprintf('MOD_JEM_WIDE_FROM_UNTIL', $startdate, $enddate);
 			}
 			
 			//current multidayevent (Until 18.08.2008)
 			if( $row->enddates && $enddates_stamp > $today_stamp && $dates_stamp < $today_stamp ) {
 				//format date
 				$result = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime( $row->enddates.' '.$row->endtimes ));
-				$result = JText::sprintf('UNTIL', $result);
+				$result = JText::sprintf('MOD_JEM_WIDE_UNTIL', $result);
 			}
 		}
 				
