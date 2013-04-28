@@ -11,14 +11,14 @@
 	<description>JEM Latest Events Wide Module. JEM is based on Eventlist by Christoph Lukes (http://www.schlu.net)</description>
 
 	<files>
-		<filename module="MOD_JEM_WIDE_wide">MOD_JEM_WIDE_wide.php</filename>
+		<filename module="mod_jem_wide">mod_jem_wide.php</filename>
 		<filename>helper.php</filename>
 		<folder>tmpl</folder>
 	</files>
 
 	<languages>
-		<language tag="en-GB">languages/en-GB.MOD_JEM_WIDE_wide.ini</language>
-		<language tag="de-DE">languages/de-DE.MOD_JEM_WIDE_wide.ini</language>	
+		<language tag="en-GB">languages/en-GB.mod_jem_wide.ini</language>
+		<language tag="de-DE">languages/de-DE.mod_jem_wide.ini</language>	
 	</languages>
 
 	<config>
