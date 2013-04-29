@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
@@ -65,12 +64,11 @@ class JEMModelEvents extends JModelLegacy
 
 		$app =  JFactory::getApplication();
 
-		$limit		= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
-		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
+		$limit		= $app->getUserStateFromRequest('com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limitstart = $app->getUserStateFromRequest('com_jem.limitstart', 'limitstart', 0, 'int');
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
-
 	}
 
 	/**
@@ -89,16 +87,13 @@ class JEMModelEvents extends JModelLegacy
 			if ($this->_data)
 			{
 				$this->_data = $this->_additionals($this->_data);
-				$this->_data = $this->_getAttendeesNumbers($this->_data);
-				
-				$k = 0;
+				$this->_data = JEMHelper::getAttendeesNumbers($this->_data);
+
 				$count = count($this->_data);
 				for($i = 0; $i < $count; $i++)
 				{
 					$item = $this->_data[$i];
 					$item->categories = $this->getCategories($item->id);
-					
-					$k = 1 - $k;
 				}
 			}
 		}
@@ -136,7 +131,7 @@ class JEMModelEvents extends JModelLegacy
 		if (empty($this->_pagination))
 		{
 			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
+			$this->_pagination = new JPagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
 		}
 
 		return $this->_pagination;
@@ -178,19 +173,15 @@ class JEMModelEvents extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.events.filter_order', 'filter_order', 'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.events.filter_order_Dir', 'filter_order_Dir', '', 'word' );
-		
+		$filter_order		= $app->getUserStateFromRequest('com_jem.events.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.events.filter_order_Dir', 'filter_order_Dir', '', 'word');
+
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
-		
-		
-		if ($filter_order != '')
-		{
+
+		if ($filter_order != '') {
 			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
-		}
-		else
-		{
+		} else {
 			$orderby = ' ORDER BY a.dates, a.times ';
 		}
 
@@ -207,10 +198,10 @@ class JEMModelEvents extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.filter_state', 'filter_state', '', 'word' );
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.search', 'search', '', 'string' );
-		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
+		$filter_state 	= $app->getUserStateFromRequest('com_jem.filter_state', 'filter_state', '', 'word');
+		$filter 		= $app->getUserStateFromRequest('com_jem.filter', 'filter', '', 'int');
+		$search 		= $app->getUserStateFromRequest('com_jem.search', 'search', '', 'string');
+		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();
 
@@ -242,13 +233,11 @@ class JEMModelEvents extends JModelLegacy
 			$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
 		}
 
-		
 		if ($search && $filter == 5) {
 			$where[] = ' LOWER(loc.state) LIKE \'%'.$search.'%\' ';
 		}
-		
-		
-		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+
+		$where 		= (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
 
 		return $where;
 	}
@@ -263,13 +252,12 @@ class JEMModelEvents extends JModelLegacy
 	function _additionals($rows)
 	{
 		for ($i=0, $n=count($rows); $i < $n; $i++) {
-
 			// Get editor name
 			$query = 'SELECT name'
 					. ' FROM #__users'
 					. ' WHERE id = '.$rows[$i]->modified_by
 					;
-			$this->_db->SetQuery( $query );
+			$this->_db->SetQuery($query);
 
 			$rows[$i]->editor = $this->_db->loadResult();
 		}
@@ -289,17 +277,17 @@ class JEMModelEvents extends JModelLegacy
 		$user 	= JFactory::getUser();
 		$userid = (int) $user->get('id');
 
-		if (count( $cid ))
+		if (count($cid))
 		{
-			$cids = implode( ',', $cid );
+			$cids = implode(',', $cid);
 
 			$query = 'UPDATE #__jem_events'
 				. ' SET published = '. (int) $publish
 				. ' WHERE id IN ('. $cids .')'
-				. ' AND ( checked_out = 0 OR ( checked_out = ' .$userid. ' ) )'
+				. ' AND (checked_out = 0 OR (checked_out = ' .$userid. '))'
 			;
 
-			$this->_db->setQuery( $query );
+			$this->_db->setQuery($query);
 
 			if (!$this->_db->query()) {
 				$this->setError($this->_db->getErrorMsg());
@@ -319,20 +307,20 @@ class JEMModelEvents extends JModelLegacy
 	{
 		//$result = false;
 
-		if (count( $cid ))
+		if (count($cid))
 		{
-			$cids = implode( ',', $cid );
+			$cids = implode(',', $cid);
 			$query = 'DELETE FROM #__jem_events'
 					. ' WHERE id IN ('. $cids .')'
 					;
 
-			$this->_db->setQuery( $query );
+			$this->_db->setQuery($query);
 
 			if(!$this->_db->query()) {
 				$this->setError($this->_db->getErrorMsg());
 				return false;
 			}
-			
+
 			//remove assigned category references
 			$query = 'DELETE FROM #__jem_cats_event_relations'
 					.' WHERE itemid IN ('. $cids .')'
@@ -347,7 +335,7 @@ class JEMModelEvents extends JModelLegacy
 
 		return true;
 	}
-	
+
 	function getCategories($id)
 	{
 		$query = 'SELECT DISTINCT c.id, c.catname, c.checked_out AS cchecked_out'
@@ -355,25 +343,22 @@ class JEMModelEvents extends JModelLegacy
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				;
-	
-		$this->_db->setQuery( $query );
+
+		$this->_db->setQuery($query);
 
 		$this->_cats = $this->_db->loadObjectList();
-		
-		$k = 0;
+
 		$count = count($this->_cats);
 		for($i = 0; $i < $count; $i++)
 		{
 			$item = $this->_cats[$i];
 			$cats = new JEMCategories($item->id);
 			$item->parentcats = $cats->getParentlist();
-				
-			$k = 1 - $k;
 		}
-		
+
 		return $this->_cats;
 	}
-	
+
 	function clearrecurrences()
 	{
 		$query = ' UPDATE #__jem_events '
@@ -383,52 +368,10 @@ class JEMModelEvents extends JModelLegacy
 		       . ' recurrence_limit = 0,'
 		       . ' recurrence_limit_date = NULL,'
 		       . ' recurrence_byday = ""'
-		            ;
+		       ;
 		$this->_db->setQuery($query);
 		return ($this->_db->query());
 	}
-	
-	/**
-	 * adds attendees numbers to rows
-	 * 
-	 * @param $data reference to event rows
-	 * @return bool true on success
-	 */
-	function _getAttendeesNumbers(& $data)
-	{
-		if (!is_array($data) || !count($data)) {
-			return true;
-		}
-		// get the ids of events
-		$ids = array();
-		foreach ($data as $event) {
-			$ids[] = $event->id;
-		}
-		$ids = implode(",", $ids);
-		
-		$query = ' SELECT COUNT(id) as total, SUM(waiting) as waitinglist, event ' 
-		       . ' FROM #__jem_register ' 
-		       . ' WHERE event IN (' . $ids .')'
-		       . ' GROUP BY event '
-		       ;
-		$this->_db->setQuery($query);
-		$res = $this->_db->loadObjectList('event');
-		
-		foreach ($data as $k => $event) 
-		{
-			if (isset($res[$event->id]))
-			{
-				$data[$k]->waiting   = $res[$event->id]->waitinglist;
-				$data[$k]->regCount  = $res[$event->id]->total - $res[$event->id]->waitinglist;
-			}
-			else
-			{
-				$data[$k]->waiting   = 0;
-				$data[$k]->regCount  = 0;
-			}
-			$data[$k]->available = $data[$k]->maxplaces - $data[$k]->regCount;
-		}
-		return $data;
-	}
+
 }
 ?>

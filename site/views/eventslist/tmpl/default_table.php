@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -20,11 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
 defined( '_JEXEC' ) or die;
 ?>
 <script type="text/javascript">
-
 	function tableOrdering( order, dir, view )
 	{
 		var form = document.getElementById("adminForm");
@@ -34,7 +32,6 @@ defined( '_JEXEC' ) or die;
 		form.submit( view );
 	}
 </script>
-
 
 <?php if ($this->jemsettings->filter || $this->jemsettings->display) : ?>
 <div id="jem_filter" class="floattext">
@@ -66,7 +63,7 @@ defined( '_JEXEC' ) or die;
 		<?php if ($this->jemsettings->showeventimage == 1) :	?>
 			<col width="<?php echo $this->jemsettings->tableeventimagewidth; ?>" class="jem_col_event_image" />
 		<?php endif; ?>
-	<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
+			<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 		<?php if ($this->jemsettings->showtitle == 1) : ?>
 			<col width="<?php echo $this->jemsettings->titlewidth; ?>" class="jem_col_title" />
 		<?php endif; ?>
@@ -131,7 +128,7 @@ defined( '_JEXEC' ) or die;
 				?>
 			</tr>
 	</thead>
-	
+
 	<tbody>
 	<?php
 	if ($this->noevents == 1) :
@@ -144,57 +141,52 @@ defined( '_JEXEC' ) or die;
 
 	foreach ($this->rows as $row) :
 		?>
-  			<tr class="sectiontableentry<?php echo ($row->odd +1 ) . $this->params->get( 'pageclass_sfx' ); ?>" >
+			<tr class="sectiontableentry<?php echo ($row->odd +1 ) . $this->params->get( 'pageclass_sfx' ); ?>" >
 
-  			<?php
+			<?php
 				if ($this->jemsettings->showeventimage == 1) :
 				?>
 
 					<td headers="jem_eventimage" align="left" valign="top">
-						<?php 
-						// echo $row->datimage; 
-						
+						<?php
+						// echo $row->datimage;
+
 						if ($row->datimage) :
-  						$dimage = JEMImage::flyercreator($row->datimage, 'event');
-  						echo JEMOutput::flyer( $row, $dimage, 'event' );
+						$dimage = JEMImage::flyercreator($row->datimage, 'event');
+						echo JEMOutput::flyer( $row, $dimage, 'event' );
 				else :
- 						 echo JHTML::_('image', 'media/com_jem/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => ''));
-						 endif;
-						
+						echo JHTML::_('image', 'media/com_jem/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => ''));
+						endif;
+
 						?>
 					</td>
 
 				<?php
 				endif;
 				?>
-  			
-  			
-  			
-  			
-  			
-  			
-    			<td headers="jem_date" align="left">
-    				<strong>
-    				<?php if (JEMHelper::isValidDate($row->dates)): ?>
-    					<?php echo JEMOutput::formatdate($row->dates, $row->times); ?>
-    					
-    					<?php
-    					if ($row->enddates) :
-    						echo ' - '.JEMOutput::formatdate($row->enddates, $row->endtimes);
-    					endif;
-    					?>
-    					<?php else: ?>
-    						<?php echo JText::_('COM_JEM_OPEN_DATE'); ?>
-    					<?php endif; ?>
-    				</strong>
-    				
+
+				<td headers="jem_date" align="left">
+					<strong>
+					<?php if (JEMHelper::isValidDate($row->dates)): ?>
+						<?php echo JEMOutput::formatdate($row->dates, $row->times); ?>
+
+						<?php
+						if ($row->enddates) :
+							echo ' - '.JEMOutput::formatdate($row->enddates, $row->endtimes);
+						endif;
+						?>
+						<?php else: ?>
+							<?php echo JText::_('COM_JEM_OPEN_DATE'); ?>
+						<?php endif; ?>
+					</strong>
+
 					<?php
 					if ($this->jemsettings->showtime == 1) :
 					?>
 						<br />
 						<?php
 						echo JEMOutput::formattime($row->dates, $row->times);
-						
+
 						if ($row->endtimes) :
 							echo ' - '.JEMOutput::formattime($row->enddates, $row->endtimes);
 						endif;
@@ -202,10 +194,8 @@ defined( '_JEXEC' ) or die;
 					?>
 				</td>
 
-				
-				
 				<?php
-				
+
 				foreach ($row->categories as $key => $category) :
 					$cid = $category->catslug;
 					break;
@@ -260,7 +250,7 @@ defined( '_JEXEC' ) or die;
 				endif;
 
 				if ($this->jemsettings->showcat == 1) :
-				
+
 				?>
 				<td headers="jem_category" align="left" valign="top">
 					<?php
@@ -279,7 +269,7 @@ defined( '_JEXEC' ) or die;
 
 						<?php
 						endif;
-						
+
 						$ix++;
 						if ($ix != $nr) :
 							echo ', ';
@@ -289,24 +279,21 @@ defined( '_JEXEC' ) or die;
 				</td>
 				<?php
 				endif;
-				
-				
+
+
 				if ($this->jemsettings->showatte == 1) :
 				?>
-					<td headers="jem_atte" align="center" valign="top"><?php echo $row->attendees; ?></td>
+					<td headers="jem_atte" align="center" valign="top"><?php echo $row->regCount; ?></td>
 				<?php
 				endif;
 				?>
-				
-				
-				
+
 			</tr>
 
-  		<?php
+		<?php
 		endforeach;
 		endif;
 		?>
 
 	</tbody>
 </table>
-	

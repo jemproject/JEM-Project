@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
@@ -39,7 +38,7 @@ class JEMModelCategoryevents extends JModelLegacy
 	 * @var int
 	 */
 	var $_id = null;
-	
+
 	/**
 	 * Categories items Data
 	 *
@@ -79,28 +78,19 @@ class JEMModelCategoryevents extends JModelLegacy
 
 		$app =  JFactory::getApplication();
 
-		
-		
-		
-		
-
 		// Get the paramaters of the active menu item
 		$params 	=  $app->getParams();
-		
-		if (!$params->get('id'))
-		{
+
+		if (!$params->get('id')) {
 			$id = JRequest::getVar('id');
-		}else
-		{
+		} else {
 			$id = $params->get('id');
 		}
-		
+
 		$this->setId((int)$id);
-		
-		
-		
+
 		//get the number of events from database
-		$limit       	= $app->getUserStateFromRequest('com_jem.categoryevents.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit			= $app->getUserStateFromRequest('com_jem.categoryevents.limit', 'limit', $params->def('display_num', 0), 'int');
 		$limitstart		= JRequest::getInt('limitstart');
 
 		$this->setState('limit', $limit);
@@ -141,14 +131,14 @@ class JEMModelCategoryevents extends JModelLegacy
 	{
 		$this->setState('limitstart', (int) $value);
 	}
-	
+
 	/**
 	 * Method to get the events
 	 *
 	 * @access public
 	 * @return array
 	 */
-	function &getData( )
+	function &getData()
 	{
 		$pop	= JRequest::getBool('pop');
 		$user = JFactory::getUser();
@@ -159,36 +149,33 @@ class JEMModelCategoryevents extends JModelLegacy
 			$query = $this->_buildQuery();
 
 			if ($pop) {
-				$this->_data = $this->_getList( $query );
+				$this->_data = $this->_getList($query);
 			} else {
-				$this->_data = $this->_getList( $query, $this->getState('limitstart'), $this->getState('limit') );
+				$this->_data = $this->_getList($query, $this->getState('limitstart'), $this->getState('limit'));
 			}
 		}
 
 		if ($this->_data)
 		{
-			$this->_data = $this->_getAttendeesNumbers($this->_data);
+			$this->_data = JEMHelper::getAttendeesNumbers($this->_data);
 
-			$k = 0;
 			$count = count($this->_data);
 			for($i = 0; $i < $count; $i++)
 			{
 				$item = $this->_data[$i];
 				$item->categories = $this->getCategories($item->id);
-			
+
 				//child categories
-			//	$query	= $this->_buildChildsQuery( $item->id );
+			//	$query	= $this->_buildChildsQuery($item->id);
 			//	$this->_db->setQuery($query);
 			//	$item->categories = $this->_db->loadObjectList();
-				
+
 				//remove events without categories (users have no access to them)
 				if (empty($item->categories)) {
 					unset($this->_data[$i]);
 				}
-				
-				$k = 1 - $k;
 			}
-    }
+	}
 		return $this->_data;
 	}
 
@@ -204,12 +191,12 @@ class JEMModelCategoryevents extends JModelLegacy
 		if (empty($this->_pagination))
 		{
 			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
+			$this->_pagination = new JPagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
 		}
 
 		return $this->_pagination;
 	}
-	
+
 	/**
 	 * Total nr of Categories
 	 *
@@ -242,8 +229,8 @@ class JEMModelCategoryevents extends JModelLegacy
 
 		//Get Events from Database
 		$query = 'SELECT DISTINCT a.id, a.datimage, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.datdescription, a.created, '
-		    . ' a.maxplaces, a.waitinglist, '
-		    . ' l.venue, l.city, l.state, l.url, c.catname, l.street, ct.name AS countryname, '
+			. ' a.maxplaces, a.waitinglist, '
+			. ' l.venue, l.city, l.state, l.url, c.catname, l.street, ct.name AS countryname, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 				. ' FROM #__jem_events AS a'
@@ -268,7 +255,7 @@ class JEMModelCategoryevents extends JModelLegacy
 	{
 		$filter_order		= $this->getState('filter_order');
 		$filter_order_dir	= $this->getState('filter_order_dir');
-		 
+
 		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
 		$filter_order_dir	= JFilterInput::getinstance()->clean($filter_order_dir, 'word');
 
@@ -283,20 +270,20 @@ class JEMModelCategoryevents extends JModelLegacy
 	 * @access private
 	 * @return array
 	 */
-	function _buildCategoryWhere( )
+	function _buildCategoryWhere()
 	{
 		$app =  JFactory::getApplication();
 
 		$user		=  JFactory::getUser();
 		if (JFactory::getUser()->authorise('core.manage')) {
-           $gid = (int) 3;        //viewlevel Special
-           } else {
-               if($user->get('id')) {
-                   $gid = (int) 2;    //viewlevel Registered
-               } else {
-                   $gid = (int) 1;   //viewlevel Public
-               }
-           }
+			$gid = (int) 3;        //viewlevel Special
+		} else {
+			if($user->get('id')) {
+				$gid = (int) 2;    //viewlevel Registered
+			} else {
+				$gid = (int) 1;   //viewlevel Public
+			}
+		}
 
 		// Get the paramaters of the active menu item
 		$params 	=  $app->getParams();
@@ -310,18 +297,18 @@ class JEMModelCategoryevents extends JModelLegacy
 		} else {
 			$where = ' WHERE a.published = 1 ';
 		}
-		
+
 		// display event from direct childs ?
 		if (!$params->get('displayChilds', 0)) {
 			$where .= ' AND rel.catid = '.$this->_id;
 		} else {
-      		$where .= ' AND (rel.catid = '.$this->_id . ' OR c.parent_id = '.$this->_id . ')';			
+			$where .= ' AND (rel.catid = '.$this->_id . ' OR c.parent_id = '.$this->_id . ')';
 		}
-		
+
 		// display all event of recurring serie ?
-    	if ($params->get('only_first',0)) {
-     		$where .= ' AND a.recurrence_first_id = 0 ';
-    	}
+		if ($params->get('only_first',0)) {
+			$where .= ' AND a.recurrence_first_id = 0 ';
+		}
 
 		// only select events assigned to category the user has access to
 		$where .= ' AND c.access <= '.$gid;
@@ -339,32 +326,32 @@ class JEMModelCategoryevents extends JModelLegacy
 			{
 				// clean filter variables
 				$filter 		= JString::strtolower($filter);
-				$filter			= $this->_db->Quote( '%'.$this->_db->escape( $filter, true ).'%', false );
+				$filter			= $this->_db->Quote('%'.$this->_db->escape($filter, true).'%', false);
 				$filter_type 	= JString::strtolower($filter_type);
 
 				switch ($filter_type)
 				{
 					case 'title' :
-						$where .= ' AND LOWER( a.title ) LIKE '.$filter;
+						$where .= ' AND LOWER(a.title) LIKE '.$filter;
 						break;
 
 					case 'venue' :
-						$where .= ' AND LOWER( l.venue ) LIKE '.$filter;
+						$where .= ' AND LOWER(l.venue) LIKE '.$filter;
 						break;
 
 					case 'city' :
-						$where .= ' AND LOWER( l.city ) LIKE '.$filter;
+						$where .= ' AND LOWER(l.city) LIKE '.$filter;
 						break;
-						
+
 					case 'type':
-                        $where .= ' AND LOWER( c.catname ) LIKE '.$filter;
-                        break;
-                        
-                    case 'state':
-                        $where .= ' AND LOWER( l.state ) LIKE '.$filter;
-                        break;    	
-						
-						
+						$where .= ' AND LOWER(c.catname) LIKE '.$filter;
+						break;
+
+					case 'state':
+						$where .= ' AND LOWER(l.state) LIKE '.$filter;
+						break;
+
+
 				}
 			}
 		}
@@ -383,7 +370,7 @@ class JEMModelCategoryevents extends JModelLegacy
 		$this->_childs = $this->_getList($query);
 		return $this->_childs;
 	}
-	
+
 	/**
 	 * build query for direct child categories event count
 	 *
@@ -394,14 +381,14 @@ class JEMModelCategoryevents extends JModelLegacy
 	{
 		$user		= JFactory::getUser();
 		if (JFactory::getUser()->authorise('core.manage')) {
-           $gid = (int) 3;        //viewlevel Special
-           } else {
-               if($user->get('id')) {
-                   $gid = (int) 2;    //viewlevel Registered
-               } else {
-                   $gid = (int) 1;   //viewlevel Public
-               }
-           }
+			$gid = (int) 3;        //viewlevel Special
+		} else {
+			if($user->get('id')) {
+				$gid = (int) 2;    //viewlevel Registered
+			} else {
+				$gid = (int) 1;   //viewlevel Public
+			}
+		}
 		$ordering	= 'c.ordering ASC';
 
 		//build where clause
@@ -409,7 +396,7 @@ class JEMModelCategoryevents extends JModelLegacy
 		$where .= ' AND cc.parent_id = '.(int)$this->_id;
 		$where .= ' AND cc.access <= '.$gid;
 		//$where .= ' AND cc.access IN ('.$gid.')';
-		
+
 		//TODO: Make option for categories without events to be invisible in list
 		//check archive task and ensure that only categories get selected if they contain a published/archived event
 		$task 	= JRequest::getWord('task');
@@ -418,70 +405,66 @@ class JEMModelCategoryevents extends JModelLegacy
 		} else {
 			$where .= ' AND i.published = 1';
 		}
-		
+
 		$query = 'SELECT c.*,'
-				. ' CASE WHEN CHAR_LENGTH( c.alias ) THEN CONCAT_WS( \':\', c.id, c.alias ) ELSE c.id END AS slug,'
+				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END AS slug,'
 				. ' ec.assignedevents'
 				. ' FROM #__jem_categories AS c'
 				. ' INNER JOIN ('
-	          			. ' SELECT COUNT( DISTINCT i.id ) AS assignedevents, cc.id'
-	         			. ' FROM #__jem_events AS i'
-	          			. ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = i.id'
-	          			. ' INNER JOIN #__jem_categories AS cc ON cc.id = rel.catid'
-	          			. $where
-	          			. ' GROUP BY cc.id'
-	          	. ')' 
-          		. ' AS ec ON ec.id = c.id'
+						. ' SELECT COUNT(DISTINCT i.id) AS assignedevents, cc.id'
+						. ' FROM #__jem_events AS i'
+						. ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = i.id'
+						. ' INNER JOIN #__jem_categories AS cc ON cc.id = rel.catid'
+						. $where
+						. ' GROUP BY cc.id'
+				. ')'
+				. ' AS ec ON ec.id = c.id'
 				. ' ORDER BY '.$ordering
-			 	;
+				;
 
 		return $query;
 	}
-	
+
 	/**
 	 * Method to get the Category
 	 *
 	 * @access public
 	 * @return integer
 	 */
-	function getCategory( )
+	function getCategory()
 	{
 		//initialize some vars
-		
+
 		$user		= JFactory::getUser();
 		if (JFactory::getUser()->authorise('core.manage')) {
-           $gid = (int) 3;        //viewlevel Special
-           } else {
-               if($user->get('id')) {
-                   $gid = (int) 2;    //viewlevel Registered
-               } else {
-                   $gid = (int) 1;   //viewlevel Public
-               }
-           }
-		
-		
+			$gid = (int) 3;        //viewlevel Special
+		} else {
+			if($user->get('id')) {
+				$gid = (int) 2;    //viewlevel Registered
+			} else {
+				$gid = (int) 1;   //viewlevel Public
+			}
+		}
+
 		$query = 'SELECT *,'
 				.' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug'
 				.' FROM #__jem_categories'
 				.' WHERE id = '.$this->_id;
 
-		$this->_db->setQuery( $query );
+		$this->_db->setQuery($query);
 
 		$this->_category = $this->_db->loadObject();
-		
-		
+
 		$groups = $user->getAuthorisedViewLevels();
-            $allowed = in_array($this->_category->access, $groups);
-		
-		
-		
+			$allowed = in_array($this->_category->access, $groups);
+
 		//Make sure the category is published
 		if (!$this->_category->published)
 		{
-			JError::raiseError(404, JText::sprintf( 'CATEGORY #%d NOT FOUND', $this->_id ));
+			JError::raiseError(404, JText::sprintf('CATEGORY #%d NOT FOUND', $this->_id));
 			return false;
 		}
-		
+
 		//check whether category access level allows access
 		//additional check
 		if ($this->_category->access > $gid)
@@ -503,15 +486,15 @@ class JEMModelCategoryevents extends JModelLegacy
 	{
 		$user		=  JFactory::getUser();
 		if (JFactory::getUser()->authorise('core.manage')) {
-           $gid = (int) 3;      //viewlevel Special
-           } else {
-               if($user->get('id')) {
-                   $gid = (int) 2;    //viewlevel Registered
-               } else {
-                   $gid = (int) 1;    //viewlevel Public
-               }
-           }
-		
+			$gid = (int) 3;      //viewlevel Special
+		} else {
+			if($user->get('id')) {
+				$gid = (int) 2;    //viewlevel Registered
+			} else {
+				$gid = (int) 1;    //viewlevel Public
+			}
+		}
+
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
 				. ' FROM #__jem_categories AS c'
@@ -520,49 +503,13 @@ class JEMModelCategoryevents extends JModelLegacy
 				. ' AND c.published = 1'
 				. ' AND c.access  <= '.$gid;
 				;
-	
-		$this->_db->setQuery( $query );
+
+		$this->_db->setQuery($query);
 
 		$this->_cats = $this->_db->loadObjectList();
-		
+
 		return $this->_cats;
 	}
 
-	function _getAttendeesNumbers(& $data)
-	{
-		if (!is_array($data) || !count($data)) {
-			return true;
-		}
-		// get the ids of events
-		$ids = array();
-		foreach ($data as $event) {
-			$ids[] = $event->id;
-		}
-		$ids = implode(",", $ids);
-		
-		$query = ' SELECT COUNT(id) as total, SUM(waiting) as waitinglist, event ' 
-		       . ' FROM #__jem_register ' 
-		       . ' WHERE event IN (' . $ids .')'
-		       . ' GROUP BY event '
-		       ;
-		$this->_db->setQuery($query);
-		$res = $this->_db->loadObjectList('event');
-		
-		foreach ($data as $k => $event) 
-		{
-			if (isset($res[$event->id]))
-			{
-				$data[$k]->waiting   = $res[$event->id]->waitinglist;
-				$data[$k]->regCount  = $res[$event->id]->total - $res[$event->id]->waitinglist;
-			}
-			else
-			{
-				$data[$k]->waiting   = 0;
-				$data[$k]->regCount  = 0;
-			}
-			$data[$k]->available = $data[$k]->maxplaces - $data[$k]->regCount;
-		}
-		return $data;
-	}
 }
 ?>

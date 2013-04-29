@@ -1,11 +1,11 @@
 <?php
 /**
- * @version development 
+ * @version development
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -45,15 +45,15 @@ class JEMHelper {
 			$sql 	= 'SELECT * FROM #__jem_settings WHERE id = 1';
 			$db->setQuery($sql);
 			$config = $db->loadObject();
-			
+
 			$config->params = JComponentHelper::getParams('com_jem');
 		}
 
 		return $config;
 	}
 
-	
-	
+
+
 	/**
 	 * Performs dayly scheduled cleanups
 	 *
@@ -68,54 +68,54 @@ class JEMHelper {
 		$params = JComponentHelper::getParams('com_jem');
 		$weekstart = $jemsettings->weekdaystart;
 		$anticipation = $jemsettings->recurrence_anticipation;
-	
+
 		$now 		= time();
 		$lastupdate = $jemsettings->lastupdate;
-	
+
 		//last update later then 24h?
 		//$difference = $now - $lastupdate;
-	
-		//if ( $difference > 86400 ) {
-	
+
+		//if ($difference > 86400) {
+
 		//better: new day since last update?
 		$nrdaysnow = floor($now / 86400);
 		$nrdaysupdate = floor($lastupdate / 86400);
-	
-		if ( $nrdaysnow > $nrdaysupdate || $forced ) {
-	
+
+		if ($nrdaysnow > $nrdaysupdate || $forced) {
+
 			$db			=  JFactory::getDBO();
-	
+
 			// get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
 			$nulldate = '0000-00-00';
 			$query = ' SELECT id, CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id, '
 					. ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, '
 					. ' MAX(dates) as dates, MAX(enddates) as enddates, MAX(recurrence_counter) as counter '
 					. ' FROM #__jem_events '
-				    . ' WHERE recurrence_type <> "0" '
-				    . ' AND CASE recurrence_limit_date WHEN '.$nulldate.' THEN 1 ELSE NOW() < recurrence_limit_date END '
-				    . ' AND recurrence_number <> "0" '
-				    . ' AND `published` = 1 '
-				    . ' GROUP BY first_id'
-				    . ' ORDER BY dates DESC';
-			$db->SetQuery( $query );
+					. ' WHERE recurrence_type <> "0" '
+					. ' AND CASE recurrence_limit_date WHEN '.$nulldate.' THEN 1 ELSE NOW() < recurrence_limit_date END '
+					. ' AND recurrence_number <> "0" '
+					. ' AND `published` = 1 '
+					. ' GROUP BY first_id'
+					. ' ORDER BY dates DESC';
+			$db->SetQuery($query);
 			$recurrence_array = $db->loadAssocList();
-				
+
 			foreach($recurrence_array as $recurrence_row)
 			{
 				// get the info of reference event for the duplicates
 				$ref_event = JTable::getInstance('jem_events', '');
 				$ref_event->load($recurrence_row['id']);
-	
+
 				// get the recurrence information
 				$recurrence_number = $recurrence_row['recurrence_number'];
 				$recurrence_type = $recurrence_row['recurrence_type'];
-	
+
 				// the first day of the week is used for certain rules
 				$recurrence_row['weekstart'] = $weekstart;
-	
+
 				// calculate next occurence date
 				$recurrence_row = JEMHelper::calculate_recurrence($recurrence_row);
-	
+
 				// add events as long as we are under the interval and under the limit, if specified.
 				while (($recurrence_row['recurrence_limit_date'] == $nulldate || strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
 						&& strtotime($recurrence_row['dates']) <= time() + 86400*$anticipation)
@@ -126,7 +126,7 @@ class JEMHelper {
 					$new_event->recurrence_counter = $recurrence_row['counter'] + 1;
 					$new_event->dates = $recurrence_row['dates'];
 					$new_event->enddates = $recurrence_row['enddates'];
-	
+
 					if ($new_event->store())
 					{
 						$recurrence_row['counter']++;
@@ -138,36 +138,36 @@ class JEMHelper {
 							echo JText::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
 						}
 					}
-	
+
 					$recurrence_row = JEMHelper::calculate_recurrence($recurrence_row);
 				}
 			}
-	
+
 			//delete outdated events
 			if ($jemsettings->oldevent == 1) {
 				$query = 'DELETE FROM #__jem_events WHERE dates > 0  AND DATE_SUB(NOW(), INTERVAL '.$jemsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates))';
-				$db->SetQuery( $query );
+				$db->SetQuery($query);
 				$db->Query();
 			}
-	
+
 			//Set state archived of outdated events
 			if ($jemsettings->oldevent == 2) {
 				$query = 'UPDATE #__jem_events SET published = -1 WHERE dates > 0 AND DATE_SUB(NOW(), INTERVAL '.$jemsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates)) AND published = 1';
-				$db->SetQuery( $query );
+				$db->SetQuery($query);
 				$db->Query();
 			}
-				
+
 			//Set timestamp of last cleanup
 			$query = 'UPDATE #__jem_settings SET lastupdate = '.time().' WHERE id = 1';
-			$db->SetQuery( $query );
+			$db->SetQuery($query);
 			$db->Query();
 		}
 	}
-	
-	
-	
 
-	
+
+
+
+
 	/**
 	 * this methode calculate the next date
 	 */
@@ -176,11 +176,11 @@ class JEMHelper {
 		// get the recurrence information
 		$recurrence_number = $recurrence_row['recurrence_number'];
 		$recurrence_type = $recurrence_row['recurrence_type'];
-	
+
 		$day_time = 86400;	// 60 sec. * 60 min. * 24 h
 		$week_time = 604800;// $day_time * 7days
 		$date_array = JEMHelper::generate_date($recurrence_row['dates'], $recurrence_row['enddates']);
-	
+
 		switch($recurrence_type) {
 			case "1":
 				// +1 hour for the Summer to Winter clock change
@@ -197,150 +197,77 @@ class JEMHelper {
 				 * warning here, we have to make sure the date exists: 31 of october + 1 month = 31 of november, which doesn't exists => skip the date!
 				 */
 				$start_day = mktime(1,0,0,($date_array["month"] + $recurrence_number),$date_array["day"],$date_array["year"]);
-	
+
 				$i = 1;
-				while ( date('d', $start_day) !=  $date_array["day"] && $i < 20 ) { // not the same day of the month... try next date !
+				while (date('d', $start_day) !=  $date_array["day"] && $i < 20) { // not the same day of the month... try next date !
 					$i++;
 					$start_day = mktime(1,0,0,($date_array["month"] + $recurrence_number*$i),$date_array["day"],$date_array["year"]);
 				}
 				break;
-				
-				
 			case "4": // weekday
-
 				$selected = JEMHelper::convert2CharsDaysToInt(explode(',', $recurrence_row['recurrence_byday']), 0);  // the selected weekdays
-
 				$days_names = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
-
 				$litterals  = array('first', 'second', 'third', 'fourth');
-
-				if (count($selected) == 0) 
-
+				if (count($selected) == 0)
 				{
-
 					// this shouldn't happen, but if it does, to prevent problem use the current weekday for the repetition.
-
-					JError::raiseWarning(500, JText::_( 'Empty weekday recurrence' ) );
-
+					JError::raiseWarning(500, JText::_('Empty weekday recurrence'));
 					$current_weekday = (int) $date_array["weekday"];
-
 					$selected = array($current_weekday);
-
 				}
-
-				
 
 				$start_day = null;
-
 				foreach ($selected as $s)
-
 				{
-
 					$next = null;
-
-					switch ($recurrence_number)
-
-					{
-
-						
+					switch ($recurrence_number) {
 						case 6: // before last 'x' of the month
-
 							$next      = strtotime("previous ".$days_names[$s].' - 1 week ', mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
-
 							$nextmonth = strtotime("previous ".$days_names[$s].' - 1 week ', mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
-
 							break;
-
-							
 						case 5: // last 'x' of the month
-							
 							$next      = strtotime("previous ".$days_names[$s], mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
-							
 							$nextmonth = strtotime("previous ".$days_names[$s], mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
-							
 							break;
-							
-
 						case 4: // xth 'x' of the month
-
 						case 3:
-
 						case 2:
-
 						case 1:
-
 						default:
-
 							$next      = strtotime($litterals[$recurrence_number-1]." ".$days_names[$s].' of this month', mktime(1,0,0,$date_array["month"]   ,1,$date_array["year"]));
-
 							$nextmonth = strtotime($litterals[$recurrence_number-1]." ".$days_names[$s].' of this month', mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
-
 							break;
-
 					}
-
-					
 
 					// is the next / nextm day eligible for next date ?
-
-					if ($next && $next > strtotime($recurrence_row['dates'])) // after current date ! 
-
+					if ($next && $next > strtotime($recurrence_row['dates'])) // after current date !
 					{
-
 						if (!$start_day || $start_day > $next) { // comes before the current 'start_date'
-
 							$start_day = $next;
-
 						}
-
 					}
-
 					if ($nextmonth && (!$start_day || $start_day > $nextmonth)) {
-
 						$start_day = $nextmonth;
-
 					}
-
 				}
-
 				break;
-
 		}
-
-		
 
 		if (!$start_day) {
-
 			return false;
-
 		}
-
 		$recurrence_row['dates'] = date("Y-m-d", $start_day);
 
-		
-
 		if ($recurrence_row['enddates']) {
-
 			$recurrence_row['enddates'] = date("Y-m-d", $start_day + $date_array["day_diff"]);
-
 		}
-
-		
 
 		if ($start_day < $date_array["unixtime"]) {
-
-			JError::raiseError(500, JText::_( 'Recurrence date generation error' ) );
-
+			JError::raiseError(500, JText::_('Recurrence date generation error'));
 		}
 
-		
-
 		return $recurrence_row;
-
 	}
-	
-	
-	
 
 	/**
 	 * this method generate the date string to a date array
@@ -355,7 +282,7 @@ class JEMHelper {
 							"month" => $startdate[1],
 							"day" => $startdate[2],
 							"weekday" => date("w",mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0])),
-		          "unixtime" => mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0]));
+							"unixtime" => mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0]));
 		if ($enddate) {
 			$enddate = explode("-", $enddate);
 			$day_diff = (mktime(1,0,0,$enddate[1],$enddate[2],$enddate[0]) - mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0]));
@@ -363,7 +290,7 @@ class JEMHelper {
 		}
 		return $date_array;
 	}
-	
+
 	/**
 	 * return day number of the week starting with 0 for first weekday
 	 *
@@ -382,70 +309,69 @@ class JEMHelper {
 					case 'SU':
 						$result[] = 0;
 						break;
-		      		case 'MO':
-	          			$result[] = 1;
-	          			break;
-		      		case 'TU':
-	         			$result[] = 2;
-	          			break;
-		      		case 'WE':
-	          			$result[] = 3;
-	         			break;
-		      		case 'TH':
-	          			$result[] = 4;
-	          			break;
-		      		case 'FR':
-	          			$result[] = 5;
-	          			break;
-		      		case 'SA':
-	          			$result[] = 6;
-	          			break;
-		      		default:
-		        		JError::raiseWarning(500, JText::_( 'Wrong ical day string' ) );
+					case 'MO':
+						$result[] = 1;
+						break;
+					case 'TU':
+						$result[] = 2;
+						break;
+					case 'WE':
+						$result[] = 3;
+						break;
+					case 'TH':
+						$result[] = 4;
+						break;
+					case 'FR':
+						$result[] = 5;
+						break;
+					case 'SA':
+						$result[] = 6;
+						break;
+					default:
+						JError::raiseWarning(500, JText::_('Wrong ical day string'));
 				}
 			} else {
-				
+
 				//monday
-        		switch (strtoupper($day))
-        		{
-          			case 'MO':
-            			$result[] = 0;
-            			break;
-          			case 'TU':
-            			$result[] = 1;
-            			break;
-          			case 'WE':
-            			$result[] = 2;
-            			break;
-          			case 'TH':
-            			$result[] = 3;
-            			break;
-          			case 'FR':
-            			$result[] = 4;
-            			break;
-          			case 'SA':
-            			$result[] = 5;
-            			break;
-          			case 'SU':
-            			$result[] = 6;
-            			break;
-          			default:
-            			JError::raiseWarning(500, JText::_( 'Wrong ical day string' ) );
-        		}
-      		}
+				switch (strtoupper($day))
+				{
+					case 'MO':
+						$result[] = 0;
+						break;
+					case 'TU':
+						$result[] = 1;
+						break;
+					case 'WE':
+						$result[] = 2;
+						break;
+					case 'TH':
+						$result[] = 3;
+						break;
+					case 'FR':
+						$result[] = 4;
+						break;
+					case 'SA':
+						$result[] = 5;
+						break;
+					case 'SU':
+						$result[] = 6;
+						break;
+					default:
+						JError::raiseWarning(500, JText::_('Wrong ical day string'));
+				}
+			}
 		}
-		
+
 		return $result;
 	}
-	
+
 	/**
 	 * transforms <br /> and <br> back to \r\n
 	 *
 	 * @param string $string
 	 * @return string
 	 */
-	static function br2break($string)
-	{
+	static function br2break($string) {
 		return preg_replace("=<br(>|([\s/][^>]*)>)\r?\n?=i", "\r\n", $string);
 	}
 
@@ -469,21 +395,21 @@ class JEMHelper {
 			return false;
 		}
 	}
-	
+
 	static function buildtimeselect($max, $name, $selected, $class = 'class="inputbox"')
 	{
 		$timelist 	= array();
 
 		foreach(range(0, $max) as $wert) {
-		    if(strlen($wert) == 2) {
-				$timelist[] = JHTML::_( 'select.option', $wert, $wert);
-    		}else{
-      			$timelist[] = JHTML::_( 'select.option', '0'.$wert, '0'.$wert);
-    		}
+			if(strlen($wert) == 2) {
+				$timelist[] = JHTML::_('select.option', $wert, $wert);
+			}else{
+				$timelist[] = JHTML::_('select.option', '0'.$wert, '0'.$wert);
+			}
 		}
-		return JHTML::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected );
+		return JHTML::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
 	}
- 
+
 	/**
 	 * return country options from the database
 	 *
@@ -492,12 +418,12 @@ class JEMHelper {
 	static function getCountryOptions()
 	{
 		$db   =  JFactory::getDBO();
-    	$sql  = 'SELECT iso2 AS value, name AS text FROM #__jem_countries ORDER BY name';
-    	$db->setQuery($sql);
-    	
+		$sql  = 'SELECT iso2 AS value, name AS text FROM #__jem_countries ORDER BY name';
+		$db->setQuery($sql);
+
 		return $db->loadObjectList();
-  	}
-  	
+	}
+
 
 	/**
 	* Build the select list for access level
@@ -510,87 +436,86 @@ class JEMHelper {
 		. ' FROM #__viewlevels'
 		. ' ORDER BY id'
 		;
-		$db->setQuery( $query );
+		$db->setQuery($query);
 		$groups = $db->loadObjectList();
 
 		return $groups;
 	}
-	
+
 	/**
 	 * returns mime type of a file
-	 * 
+	 *
 	 * @param string file path
 	 * @return string mime type
 	 */
 	static function getMimeType($filename)
 	{
 		if (function_exists('finfo_open')) {
-            $finfo = finfo_open(FILEINFO_MIME);
-            $mimetype = finfo_file($finfo, $filename);
-            finfo_close($finfo);
-            return $mimetype;
-    	}
-		else if (function_exists('mime_content_type') && 0) 
+			$finfo = finfo_open(FILEINFO_MIME);
+			$mimetype = finfo_file($finfo, $filename);
+			finfo_close($finfo);
+			return $mimetype;
+		}
+		else if (function_exists('mime_content_type') && 0)
 		{
 			return mime_content_type($filename);
 		}
-		else 
+		else
 		{
 			$mime_types = array(
+				'txt' => 'text/plain',
+				'htm' => 'text/html',
+				'html' => 'text/html',
+				'php' => 'text/html',
+				'css' => 'text/css',
+				'js' => 'application/javascript',
+				'json' => 'application/json',
+				'xml' => 'application/xml',
+				'swf' => 'application/x-shockwave-flash',
+				'flv' => 'video/x-flv',
 
-            'txt' => 'text/plain',
-            'htm' => 'text/html',
-            'html' => 'text/html',
-            'php' => 'text/html',
-            'css' => 'text/css',
-            'js' => 'application/javascript',
-            'json' => 'application/json',
-            'xml' => 'application/xml',
-            'swf' => 'application/x-shockwave-flash',
-            'flv' => 'video/x-flv',
+				// images
+				'png' => 'image/png',
+				'jpe' => 'image/jpeg',
+				'jpeg' => 'image/jpeg',
+				'jpg' => 'image/jpeg',
+				'gif' => 'image/gif',
+				'bmp' => 'image/bmp',
+				'ico' => 'image/vnd.microsoft.icon',
+				'tiff' => 'image/tiff',
+				'tif' => 'image/tiff',
+				'svg' => 'image/svg+xml',
+				'svgz' => 'image/svg+xml',
 
-            // images
-            'png' => 'image/png',
-            'jpe' => 'image/jpeg',
-            'jpeg' => 'image/jpeg',
-            'jpg' => 'image/jpeg',
-            'gif' => 'image/gif',
-            'bmp' => 'image/bmp',
-            'ico' => 'image/vnd.microsoft.icon',
-            'tiff' => 'image/tiff',
-            'tif' => 'image/tiff',
-            'svg' => 'image/svg+xml',
-            'svgz' => 'image/svg+xml',
+				// archives
+				'zip' => 'application/zip',
+				'rar' => 'application/x-rar-compressed',
+				'exe' => 'application/x-msdownload',
+				'msi' => 'application/x-msdownload',
+				'cab' => 'application/vnd.ms-cab-compressed',
 
-            // archives
-            'zip' => 'application/zip',
-            'rar' => 'application/x-rar-compressed',
-            'exe' => 'application/x-msdownload',
-            'msi' => 'application/x-msdownload',
-            'cab' => 'application/vnd.ms-cab-compressed',
+				// audio/video
+				'mp3' => 'audio/mpeg',
+				'qt' => 'video/quicktime',
+				'mov' => 'video/quicktime',
 
-            // audio/video
-            'mp3' => 'audio/mpeg',
-            'qt' => 'video/quicktime',
-            'mov' => 'video/quicktime',
+				// adobe
+				'pdf' => 'application/pdf',
+				'psd' => 'image/vnd.adobe.photoshop',
+				'ai' => 'application/postscript',
+				'eps' => 'application/postscript',
+				'ps' => 'application/postscript',
 
-            // adobe
-            'pdf' => 'application/pdf',
-            'psd' => 'image/vnd.adobe.photoshop',
-            'ai' => 'application/postscript',
-            'eps' => 'application/postscript',
-            'ps' => 'application/postscript',
+				// ms office
+				'doc' => 'application/msword',
+				'rtf' => 'application/rtf',
+				'xls' => 'application/vnd.ms-excel',
+				'ppt' => 'application/vnd.ms-powerpoint',
 
-            // ms office
-            'doc' => 'application/msword',
-            'rtf' => 'application/rtf',
-            'xls' => 'application/vnd.ms-excel',
-            'ppt' => 'application/vnd.ms-powerpoint',
-
-            // open office
-            'odt' => 'application/vnd.oasis.opendocument.text',
-            'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
-        );
+				// open office
+				'odt' => 'application/vnd.oasis.opendocument.text',
+				'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+			);
 
 			//$ext = strtolower(array_pop(explode('.',$filename)));
 			$var = explode('.',$filename);
@@ -603,45 +528,45 @@ class JEMHelper {
 			}
 		}
 	}
-	
+
 
 	/**
 	 * updates waiting list of specified event
-	 * 
+	 *
 	 * @param int event id
 	 * @param boolean bump users off/to waiting list
 	 * @return bool
 	 */
 	static function updateWaitingList($event)
 	{
-    $db = Jfactory::getDBO();
-    
+	$db = Jfactory::getDBO();
+
 		// get event details for registration
-    $query = ' SELECT maxplaces, waitinglist FROM #__jem_events WHERE id = ' . $db->Quote($event);
-    $db->setQuery($query);
-    $event_places = $db->loadObject();    
-			
+		$query = ' SELECT maxplaces, waitinglist FROM #__jem_events WHERE id = ' . $db->Quote($event);
+		$db->setQuery($query);
+		$event_places = $db->loadObject();
+
 		// get attendees after deletion, and their status
 		$query = 'SELECT r.id, r.waiting '
 				. ' FROM #__jem_register AS r'
 				. ' WHERE r.event = '.$db->Quote($event)
 				. ' ORDER BY r.uregdate ASC '
 				;
-		$db->SetQuery( $query );
+		$db->SetQuery($query);
 		$res = $db->loadObjectList();
-			
+
 		$registered = 0;
-		$waiting    = array();
+		$waiting = array();
 		foreach ((array) $res as $r)
-		{				
+		{
 			if ($r->waiting) {
 				$waiting[] = $r->id;
 			}
-			else {				
+			else {
 				$registered++;
 			}
 		}
-			
+
 		if ($registered < $event_places->maxplaces && count($waiting))
 		{
 			// need to bump users to attending status
@@ -656,10 +581,10 @@ class JEMHelper {
 			{
 				$booked = $registered + count($bumping);
 				foreach ($bumping AS $register_id)
-				{		
-					JPluginHelper::importPlugin( 'jem' );
-			    $dispatcher = JDispatcher::getInstance();
-			   	$res = $dispatcher->trigger( 'onUserOnOffWaitinglist', array( $register_id ) );
+				{
+					JPluginHelper::importPlugin('jem');
+				$dispatcher = JDispatcher::getInstance();
+				$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($register_id));
 				}
 			}
 		}
@@ -667,48 +592,90 @@ class JEMHelper {
 		return true;
 	}
 
+	/**
+	 * Adds attendees numbers to rows
+	 *
+	 * @param $data reference to event rows
+	 * @return false on error, $data on success
+	 */
+	static function getAttendeesNumbers(& $data) {
+		// Make sure this is an array and it is not empty
+		if (!is_array($data) || !count($data)) {
+			return false;
+		}
+
+		// Get the ids of events
+		$ids = array();
+		foreach ($data as $event) {
+			$ids[] = $event->id;
+		}
+		$ids = implode(",", $ids);
+
+		$db = Jfactory::getDBO();
+
+		$query = ' SELECT COUNT(id) as total, SUM(waiting) as waitinglist, event '
+				. ' FROM #__jem_register '
+				. ' WHERE event IN (' . $ids .')'
+				. ' GROUP BY event ';
+
+		$db->setQuery($query);
+		$res = $db->loadObjectList('event');
+
+		foreach ($data as $k => $event) {
+			if (isset($res[$event->id])) {
+				$data[$k]->waiting  = $res[$event->id]->waitinglist;
+				$data[$k]->regCount = $res[$event->id]->total - $res[$event->id]->waitinglist;
+			} else {
+				$data[$k]->waiting  = 0;
+				$data[$k]->regCount = 0;
+			}
+			$data[$k]->available = $data[$k]->maxplaces - $data[$k]->regCount;
+		}
+		return $data;
+	}
+
   /**
    * returns array of timezones indexed by offset
-   * 
+   *
    * @return array
    */
 	static function getTimeZones()
 	{
-  	$timezones = array(
-        '-12'=>'Pacific/Kwajalein',
-        '-11'=>'Pacific/Samoa',
-        '-10'=>'Pacific/Honolulu',
-        '-9'=>'America/Juneau',
-        '-8'=>'America/Los_Angeles',
-        '-7'=>'America/Denver',
-        '-6'=>'America/Mexico_City',
-        '-5'=>'America/New_York',
-        '-4'=>'America/Caracas',
-        '-3.5'=>'America/St_Johns',
-        '-3'=>'America/Argentina/Buenos_Aires',
-        '-2'=>'Atlantic/Azores',// no cities here so just picking an hour ahead
-        '-1'=>'Atlantic/Azores',
-        '0'=>'Europe/London',
-        '1'=>'Europe/Paris',
-        '2'=>'Europe/Helsinki',
-        '3'=>'Europe/Moscow',
-        '3.5'=>'Asia/Tehran',
-        '4'=>'Asia/Baku',
-        '4.5'=>'Asia/Kabul',
-        '5'=>'Asia/Karachi',
-        '5.5'=>'Asia/Calcutta',
-        '6'=>'Asia/Colombo',
-        '7'=>'Asia/Bangkok',
-        '8'=>'Asia/Singapore',
-        '9'=>'Asia/Tokyo',
-        '9.5'=>'Australia/Darwin',
-        '10'=>'Pacific/Guam',
-        '11'=>'Asia/Magadan',
-        '12'=>'Asia/Kamchatka'
-    ); 
-    return $timezones;
-  }
-  
+		$timezones = array(
+			'-12'=>'Pacific/Kwajalein',
+			'-11'=>'Pacific/Samoa',
+			'-10'=>'Pacific/Honolulu',
+			'-9'=>'America/Juneau',
+			'-8'=>'America/Los_Angeles',
+			'-7'=>'America/Denver',
+			'-6'=>'America/Mexico_City',
+			'-5'=>'America/New_York',
+			'-4'=>'America/Caracas',
+			'-3.5'=>'America/St_Johns',
+			'-3'=>'America/Argentina/Buenos_Aires',
+			'-2'=>'Atlantic/Azores', // no cities here so just picking an hour ahead
+			'-1'=>'Atlantic/Azores',
+			'0'=>'Europe/London',
+			'1'=>'Europe/Paris',
+			'2'=>'Europe/Helsinki',
+			'3'=>'Europe/Moscow',
+			'3.5'=>'Asia/Tehran',
+			'4'=>'Asia/Baku',
+			'4.5'=>'Asia/Kabul',
+			'5'=>'Asia/Karachi',
+			'5.5'=>'Asia/Calcutta',
+			'6'=>'Asia/Colombo',
+			'7'=>'Asia/Bangkok',
+			'8'=>'Asia/Singapore',
+			'9'=>'Asia/Tokyo',
+			'9.5'=>'Australia/Darwin',
+			'10'=>'Pacific/Guam',
+			'11'=>'Asia/Magadan',
+			'12'=>'Asia/Kamchatka'
+		);
+	return $timezones;
+	}
+
   /**
    * returns timezone name from offset
    * @param string $offset
@@ -716,26 +683,26 @@ class JEMHelper {
    */
 	static function getTimeZone($offset)
 	{
-  	$tz = self::getTimeZones();
-  	if (isset($tz[$offset])) {
-  		return $tz[$offset];
-  	}
-  	return false;
+		$tz = self::getTimeZones();
+		if (isset($tz[$offset])) {
+			return $tz[$offset];
+		}
+		return false;
 	}
 
 	/**
 	 * return initialized calendar tool class for ics export
-	 * 
+	 *
 	 * @return object
 	 */
 	static function getCalendarTool()
 	{
 		require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
 		$mainframe = JFactory::getApplication();
-    
+
 		$offset = (float) $mainframe->getCfg('offset');
 		$timezone_name = JEMHelper::getTimeZone($offset);
-								
+
 		$vcal = new vcalendar();                          // initiate new CALENDAR
 		if (!file_exists(JPATH_SITE.'/cache/com_jem')) {
 			jimport('joomla.filesystem.folder');
@@ -743,63 +710,63 @@ class JEMHelper {
 		}
 		$vcal->setConfig('directory', JPATH_SITE.'/cache/com_jem');
 	//	$vcal->setProperty('unique_id', 'events@'.$mainframe->getCfg('sitename'));
-		$vcal->setProperty( "calscale", "GREGORIAN" ); 
-    $vcal->setProperty( 'method', 'PUBLISH' );
-    if ($timezone_name) {
-    	$vcal->setProperty( "X-WR-TIMEZONE", $timezone_name ); 
-    }
-    return $vcal;
+		$vcal->setProperty("calscale", "GREGORIAN");
+		$vcal->setProperty('method', 'PUBLISH');
+		if ($timezone_name) {
+			$vcal->setProperty("X-WR-TIMEZONE", $timezone_name);
+		}
+		return $vcal;
 	}
-	
+
 	static function icalAddEvent(&$calendartool, $event)
 	{
 		require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
 		$mainframe = JFactory::getApplication();
 		$params = $mainframe->getParams('com_jem');
-		
+
 		$offset = (float) $mainframe->getCfg('offset');
 		$timezone_name = JEMHelper::getTimeZone($offset);
 //		$hours = ($offset >= 0) ? floor($offset) : ceil($offset);
 //		$mins = abs($offset - $hours) * 60;
 //		$utcoffset = sprintf('%+03d%02d00', $hours, $mins);
-		
+
 		// get categories names
 		$categories = array();
 		foreach ($event->categories as $c) {
 			$categories[] = $c->catname;
 		}
-		
+
 		if (!$event->dates || $event->dates == '0000-00-00') {
 			// no start date...
 			return false;
-		}		
+		}
 		// make end date same as start date if not set
 		if (!$event->enddates || $event->enddates == '0000-00-00') {
 			$event->enddates = $event->dates;
 		}
-		
+
 		// start
 		if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/',$event->dates, $start_date)) {
 			JError::raiseError(0, JText::_('COM_JEM_ICAL_EXPORT_WRONG_STARTDATE_FORMAT'));
 		}
 		$date = array('year' => (int) $start_date[1], 'month' => (int) $start_date[2], 'day' => (int) $start_date[3]);
-			
+
 		// all day event if start time is not set
-		if ( !$event->times || $event->times == '00:00:00' ) // all day !
+		if (!$event->times || $event->times == '00:00:00') // all day !
 		{
 			$dateparam = array('VALUE' => 'DATE');
-					
+
 			// for ical all day events, dtend must be send to the next day
 			$event->enddates = strftime('%Y-%m-%d', strtotime($event->enddates.' +1 day'));
-			
+
 			if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/',$event->enddates, $end_date)) {
 				JError::raiseError(0, JText::_('COM_JEM_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'));
 			}
 			$date_end = array('year' => $end_date[1], 'month' => $end_date[2], 'day' => $end_date[3]);
-			$dateendparam = array('VALUE' => 'DATE');			
-		} 
+			$dateendparam = array('VALUE' => 'DATE');
+		}
 		else // not all day events, there is a start time
-		{		
+		{
 			if (!preg_match('/([0-9]{2}):([0-9]{2}):([0-9]{2})/',$event->times, $start_time)) {
 				JError::raiseError(0, JText::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'));
 			}
@@ -810,12 +777,12 @@ class JEMHelper {
 			if ($params->get('ical_tz', 1)) {
 				$dateparam['TZID'] = $timezone_name;
 			}
-			
-			if ( !$event->endtimes || $event->endtimes == '00:00:00' )
+
+			if (!$event->endtimes || $event->endtimes == '00:00:00')
 			{
 				$event->endtimes = $event->times;
 			}
-			
+
 			// if same day but end time < start time, change end date to +1 day
 			if ($event->enddates == $event->dates && strtotime($event->dates.' '.$event->endtimes) < strtotime($event->dates.' '.$event->times)) {
 				$event->enddates = strftime('%Y-%m-%d', strtotime($event->enddates.' +1 day'));
@@ -825,37 +792,37 @@ class JEMHelper {
 				JError::raiseError(0, JText::_('COM_JEM_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'));
 			}
 			$date_end = array('year' => $end_date[1], 'month' => $end_date[2], 'day' => $end_date[3]);
-						
+
 			if (!preg_match('/([0-9]{2}):([0-9]{2}):([0-9]{2})/',$event->endtimes, $end_time)) {
 				JError::raiseError(0, JText::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'));
 			}
 			$date_end['hour'] = $end_time[1];
 			$date_end['min']  = $end_time[2];
 			$date_end['sec']  = $end_time[3];
-			$dateendparam = array('VALUE' => 'DATE-TIME');	
+			$dateendparam = array('VALUE' => 'DATE-TIME');
 			if ($params->get('ical_tz', 1)) {
 				$dateendparam['TZID'] = $timezone_name;
-			}	
+			}
 		}
 
 		// item description text
 		$description = $event->title.'\\n';
-		$description .= JText::_( 'CATEGORY' ).': '.implode(', ', $categories).'\\n';
+		$description .= JText::_('CATEGORY').': '.implode(', ', $categories).'\\n';
 
 		// url link to event
-		
-		//Original link 
+
+		//Original link
 		//$link = JURI::base().JEMHelperRoute::getRoute($event->slug);
-		
+
 		$app =  JFactory::getApplication();
 		$menuitem = $app->getMenu()->getActive()->id;
 		$link = JURI::base().JEMHelperRoute::getRoute($event->slug).'&Itemid='.$menuitem;
-		
-		
-		
-		$link = JRoute::_( $link );
-		$description .= JText::_( 'COM_JEM_ICS_LINK' ).': '.$link.'\\n';
-		
+
+
+
+		$link = JRoute::_($link);
+		$description .= JText::_('COM_JEM_ICS_LINK').': '.$link.'\\n';
+
 		// location
 		$location = array($event->venue);
 		if (isset($event->street) && !empty($event->street)) {
@@ -869,25 +836,25 @@ class JEMHelper {
 			$location[] = $exp[0];
 		}
 		$location = implode(",", $location);
-			
+
 		$e = new vevent();              // initiate a new EVENT
-		$e->setProperty( 'summary', $event->title );           // title
-		$e->setProperty( 'categories', implode(', ', $categories) );           // categorize
-		$e->setProperty( 'dtstart', $date, $dateparam );
+		$e->setProperty('summary', $event->title);           // title
+		$e->setProperty('categories', implode(', ', $categories));           // categorize
+		$e->setProperty('dtstart', $date, $dateparam);
 		if (count($date_end)) {
-			$e->setProperty( 'dtend', $date_end, $dateendparam );
+			$e->setProperty('dtend', $date_end, $dateendparam);
 		}
-		$e->setProperty( 'description', $description );    // describe the event
-		$e->setProperty( 'location', $location ); // locate the event
-		$e->setProperty( 'url', $link );
-		$e->setProperty( 'uid', 'event'.$event->id.'@'.$mainframe->getCfg('sitename') );
-		$calendartool->addComponent( $e );                    // add component to calendar
+		$e->setProperty('description', $description);    // describe the event
+		$e->setProperty('location', $location); // locate the event
+		$e->setProperty('url', $link);
+		$e->setProperty('uid', 'event'.$event->id.'@'.$mainframe->getCfg('sitename'));
+		$calendartool->addComponent($e);                    // add component to calendar
 		return true;
 	}
-	
+
 	/**
 	 * return true is a date is valid (not null, or 0000-00...)
-	 * 
+	 *
 	 * @param string $date
 	 * @return boolean
 	 */
@@ -902,7 +869,7 @@ class JEMHelper {
 		if (!strtotime($date)) {
 			return false;
 		}
-		return true;		
+		return true;
 	}
 }
 ?>

@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
@@ -62,9 +61,9 @@ class JEMModelEventslist extends JModelLegacy
 		$params 	=  $app->getParams('com_jem');
 
 		//get the number of events from database
-		$limit       	= $app->getUserStateFromRequest('com_jem.jem.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit		= $app->getUserStateFromRequest('com_jem.jem.limit', 'limit', $params->def('display_num', 0), 'int');
 		$limitstart		= JRequest::getVar('limitstart', 0, '', 'int');
-			
+
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
 
@@ -90,14 +89,14 @@ class JEMModelEventslist extends JModelLegacy
 	{
 		$this->setState('limitstart', (int) $value);
 	}
-	
+
 	/**
 	 * Method to get the Events
 	 *
 	 * @access public
 	 * @return array
 	 */
-	function &getData( )
+	function &getData()
 	{
 		$pop	= JRequest::getBool('pop');
 
@@ -108,32 +107,32 @@ class JEMModelEventslist extends JModelLegacy
 			$pagination = $this->getPagination();
 
 			if ($pop) {
-				$this->_data = $this->_getList( $query );
+				$this->_data = $this->_getList($query);
 			} else {
-				$this->_data = $this->_getList( $query, $pagination->limitstart, $pagination->limit );
+				$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 			}
+		}
 
-			$this->_data = $this->_getAttendeesNumbers($this->_data);
-			
-			$k = 0;
+		if($this->_data)
+		{
+			$this->_data = JEMHelper::getAttendeesNumbers($this->_data);
+
 			$count = count($this->_data);
 			for($i = 0; $i < $count; $i++)
 			{
 				$item = $this->_data[$i];
 				$item->categories = $this->getCategories($item->id);
-				
+
 				//remove events without categories (users have no access to them)
 				if (empty($item->categories)) {
 					unset($this->_data[$i]);
 				} 
-				
-				$k = 1 - $k;
 			}
 		}
 
 		return $this->_data;
 	}
-	
+
 	/**
 	 * Total nr of events
 	 *
@@ -149,9 +148,8 @@ class JEMModelEventslist extends JModelLegacy
 			$this->_total = $this->_getListCount($query);
 		}
 
-
 		return $this->_total;
-		
+
 	}
 
 	/**
@@ -166,7 +164,7 @@ class JEMModelEventslist extends JModelLegacy
 		if (empty($this->_pagination))
 		{
 			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
+			$this->_pagination = new JPagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
 		}
 
 		return $this->_pagination;
@@ -186,19 +184,19 @@ class JEMModelEventslist extends JModelLegacy
 
 		// Get Events from Database ...
 		$query = ' SELECT a.id, a.dates, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription, a.maxplaces, a.waitinglist, '
-		       . ' l.venue, l.city, l.state, l.url, l.street, ct.name AS countryname, '
-		      		 . ' c.catname, c.id AS catid,'
-		       . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
-		       . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-		       . ' FROM #__jem_events AS a'
-		       . ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-		       . ' LEFT JOIN #__jem_countries AS ct ON ct.iso2 = l.country '
-		       		. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-					. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
-		       . $where
-		       . ' GROUP BY a.id'
-		       . $orderby
-		       ;
+				. ' l.venue, l.city, l.state, l.url, l.street, ct.name AS countryname, '
+				. ' c.catname, c.id AS catid,'
+				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
+				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
+				. ' FROM #__jem_events AS a'
+				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+				. ' LEFT JOIN #__jem_countries AS ct ON ct.iso2 = l.country '
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
+				. $where
+				. ' GROUP BY a.id'
+				. $orderby
+				;
 
 		return $query;
 	}
@@ -209,24 +207,18 @@ class JEMModelEventslist extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	
-	   function _buildOrderBy()
+
+	function _buildOrderBy()
 	{
 		$filter_order		= $this->getState('filter_order');
 		$filter_order_dir	= $this->getState('filter_order_dir');
-		
-		
+
 		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
 		$filter_order_dir	= JFilterInput::getinstance()->clean($filter_order_dir, 'word');
-		
-		
-		
-		if ($filter_order != '')
-		{
+
+		if ($filter_order != '') {
 			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_dir;
-		}
-		else
-		{
+		} else {
 			$orderby = ' ORDER BY a.dates, a.times ';
 		}
 
@@ -245,10 +237,10 @@ class JEMModelEventslist extends JModelLegacy
 
 		// Get the paramaters of the active menu item
 		$params 	=  $app->getParams();
-        $jemsettings =  JEMHelper::config();
-		
-        $task 		= JRequest::getWord('task');
-		
+		$jemsettings =  JEMHelper::config();
+
+		$task 		= JRequest::getWord('task');
+
 		// First thing we need to do is to select only needed events
 		if ($task == 'archive') {
 			$where = ' WHERE a.published = -1';
@@ -256,17 +248,16 @@ class JEMModelEventslist extends JModelLegacy
 			$where = ' WHERE a.published = 1';
 		}
 
-		
 		// get excluded categories
-		$excluded_cats = trim( $params->get( 'excluded_cats', '' ) );
-		
-		if ($excluded_cats != '' )  {
-			$cats_excluded    = explode( ',', $excluded_cats );
-			$where .= ' AND ( c.id!=' . implode( ' AND c.id!=', $cats_excluded ) . ')';
+		$excluded_cats = trim($params->get('excluded_cats', ''));
+
+		if ($excluded_cats != '') {
+			$cats_excluded = explode(',', $excluded_cats);
+			$where .= ' AND (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
 		}
-		// === END Exlucded categories add === //
-		
-		
+		// === END Exclucded categories add === //
+
+
 		/*
 		 * If we have a filter, and this is enabled... lets tack the AND clause
 		 * for the filter onto the WHERE clause of the item query.
@@ -280,102 +271,52 @@ class JEMModelEventslist extends JModelLegacy
 			{
 				// clean filter variables
 				$filter 		= JString::strtolower($filter);
-				$filter			= $this->_db->Quote( '%'.$this->_db->escape( $filter, true ).'%', false );
+				$filter			= $this->_db->Quote('%'.$this->_db->escape($filter, true).'%', false);
 				$filter_type 	= JString::strtolower($filter_type);
 
 				switch ($filter_type)
 				{
 					case 'title' :
-						$where .= ' AND LOWER( a.title ) LIKE '.$filter;
+						$where .= ' AND LOWER(a.title) LIKE '.$filter;
 						break;
 
 					case 'venue' :
-						$where .= ' AND LOWER( l.venue ) LIKE '.$filter;
+						$where .= ' AND LOWER(l.venue) LIKE '.$filter;
 						break;
 
 					case 'city' :
-						$where .= ' AND LOWER( l.city ) LIKE '.$filter;
+						$where .= ' AND LOWER(l.city) LIKE '.$filter;
 						break;
-						
+
 					case 'type':
-                        $where .= ' AND LOWER( c.catname ) LIKE '.$filter;
-                        break;
-                        
-                    case 'state':
-                        $where .= ' AND LOWER( l.state ) LIKE '.$filter;
-                        break;    
-                        
-                        
+						$where .= ' AND LOWER(c.catname) LIKE '.$filter;
+						break;
+
+					case 'state':
+						$where .= ' AND LOWER(l.state) LIKE '.$filter;
+						break;
 				}
 			}
 		}
 		return $where;
-		
 	}
-	
-	/**
-	 * adds attendees numbers to rows
-	 * 
-	 * @param $data reference to event rows
-	 * @return bool true on success
-	 */
-	function _getAttendeesNumbers(& $data)
-	{
-		if (!is_array($data)) {
-			return true;
-		}
-		// get the ids of events
-		$ids = array();
-		foreach ($data as $event) {
-			$ids[] = $event->id;
-		}
-		$ids = implode(",", $ids);
-		
-		$query = ' SELECT COUNT(id) as total, SUM(waiting) as waitinglist, event ' 
-		       . ' FROM #__jem_register ' 
-		       . ' WHERE event IN (' . $ids .')'
-		       . ' GROUP BY event '
-		       ;
-		$this->_db->setQuery($query);
-		$res = $this->_db->loadObjectList('event');
-		
-		foreach ($data as $k => $event) 
-		{
-			if (isset($res[$event->id]))
-			{
-				$data[$k]->waiting   = $res[$event->id]->waitinglist;
-				$data[$k]->attendees  = $res[$event->id]->total - $res[$event->id]->waitinglist;
-			}
-			else
-			{
-				$data[$k]->waiting   = 0;
-				$data[$k]->attendees  = 0;
-			}
-			$data[$k]->available = $data[$k]->maxplaces - $data[$k]->attendees;
-		}
-		return $data;
-	}
-	
-	
-	
+
 	function getCategories($id)
 	{
 		$user		=  JFactory::getUser();
-		
+
 		$where		= $this->_buildWhere2();
-		
+
 		if (JFactory::getUser()->authorise('core.manage')) {
-              $gid = (int) 3;          //viewlevel Special
-          } else {
-              if($user->get('id')) {
-                  $gid = (int) 2;     //viewlevel Registered
-              } else {
-                 $gid = (int) 1;      //viewlevel Public
-              }
-          }
-		
-		
-		
+			$gid = (int) 3;		//viewlevel Special
+		} else {
+			if($user->get('id')) {
+				$gid = (int) 2;	 //viewlevel Registered
+			} else {
+				$gid = (int) 1;	//viewlevel Public
+			}
+		}
+
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
 				. ' FROM #__jem_categories AS c'
@@ -386,50 +327,32 @@ class JEMModelEventslist extends JModelLegacy
 				. $where
 				;
 
-			
-		$this->_db->setQuery( $query );
+		$this->_db->setQuery($query);
 
 		$this->_cats = $this->_db->loadObjectList();
 
 		return $this->_cats;
 	}
-	
-	
-	
+
 	function _buildWhere2()
 	{
 		$app =  JFactory::getApplication();
-	
+
 		// Get the paramaters of the active menu item
 		$params 	=  $app->getParams();
 		$jemsettings =  JEMHelper::config();
-		
-		
-	
-	// get excluded categories
-	$excluded_cats = trim( $params->get( 'excluded_cats', '' ) );
-	
-	if ($excluded_cats != '' )  {
-		$cats_excluded    = explode( ',', $excluded_cats );
-		$where = ' AND ( c.id!=' . implode( ' AND c.id!=', $cats_excluded ) . ')';
+
+		// get excluded categories
+		$excluded_cats = trim($params->get('excluded_cats', ''));
+
+		if ($excluded_cats != '') {
+			$cats_excluded = explode(',', $excluded_cats);
+			$where = ' AND (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
+		} else {		// === END Exlucded categories add === //
+			$where = '';
+		}
+
+		return $where;
 	}
-	// === END Exlucded categories add === //
-	else
-	{
-		$where = '';	
-	}
-	
-	
-	return $where;
-	
-	}
-	
-	
-	
-	
-	
-	
-	
-	
 }
 ?>

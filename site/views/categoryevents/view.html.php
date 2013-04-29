@@ -20,10 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
 /**
  * HTML View class for the Categoryevents View
@@ -38,26 +37,23 @@ class JEMViewCategoryevents extends JViewLegacy
 	 *
 	 * @since 0.9
 	 */
-	function display( $tpl=null )
+	function display($tpl=null)
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		//initialize variables
-		$document 	=  JFactory::getDocument();
-		$menu		=  $app->getMenu();
-		$jemsettings =  JEMHelper::config();
-		//$item    	= $menu->getActive();
-		
+		$document 	= JFactory::getDocument();
+		$menu		= $app->getMenu();
+		$jemsettings = JEMHelper::config();
+		//$item		= $menu->getActive();
+
 		//get menu information
 		$menu		= $app->getMenu();
 		$item = $menu->getActive();
-		
-		
-		
-		
-		$params 	=  $app->getParams();
-		$uri 		=  JFactory::getURI();
-		$pathway 	=  $app->getPathWay();
+
+		$params 	= $app->getParams();
+		$uri 		= JFactory::getURI();
+		$pathway 	= $app->getPathWay();
 
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
@@ -65,14 +61,14 @@ class JEMViewCategoryevents extends JViewLegacy
 
 		// Request variables
 	//	$limitstart		= JRequest::getInt('limitstart');
-	//	$limit       	= $app->getUserStateFromRequest('com_jem.categoryevents.limit', 'limit', $params->def('display_num', 0), 'int');
+	//	$limit			= $app->getUserStateFromRequest('com_jem.categoryevents.limit', 'limit', $params->def('display_num', 0), 'int');
 		$task 			= JRequest::getWord('task');
 		$pop			= JRequest::getBool('pop');
 
 		//get data from model
-		$rows 		=  $this->get('Data');
-		$category 	=  $this->get('Category');
-		$categories	=  $this->get('Childs');
+		$rows 		= $this->get('Data');
+		$category 	= $this->get('Category');
+		$categories	= $this->get('Childs');
 
 		//are events available?
 		if (!$rows) {
@@ -84,84 +80,82 @@ class JEMViewCategoryevents extends JViewLegacy
 		//does the category exist
 		if ($category->id == 0)
 		{
-			return JError::raiseError( 404, JText::sprintf( 'Category #%d not found', $category->id ) );
+			return JError::raiseError(404, JText::sprintf('Category #%d not found', $category->id));
 		}
 
 		//Set Meta data
-		$document->setTitle( $item->title.' - '.$category->catname );
-    	$document->setMetadata( 'keywords', $category->meta_keywords );
-    	$document->setDescription( strip_tags($category->meta_description) );
+		$document->setTitle($item->title.' - '.$category->catname);
+		$document->setMetadata('keywords', $category->meta_keywords);
+		$document->setDescription(strip_tags($category->meta_description));
 
-    	//Print function
-		$params->def( 'print', !$app->getCfg( 'hidePrint' ) );
-		$params->def( 'icons', $app->getCfg( 'icons' ) );
+		//Print function
+		$params->def('print', !$app->getCfg('hidePrint'));
+		$params->def('icons', $app->getCfg('icons'));
 
-		if ( $pop ) {
-			$params->set( 'popup', 1 );
+		if ($pop) {
+			$params->set('popup', 1);
 		}
 
 		//add alternate feed link
-		$link    = 'index.php?option=com_jem&view=categoryevents&format=feed&id='.$category->id;
+		$link	= 'index.php?option=com_jem&view=categoryevents&format=feed&id='.$category->id;
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
-		$document->addHeadLink(JRoute::_($link.'&type=atom', 'alternate', 'rel'), $attribs);
+		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
 
 		//create the pathway
 		$cats		= new JEMCategories($category->id);
 		$parents	= $cats->getParentlist();
 
 		foreach($parents as $parent) {
-			$pathway->addItem( $this->escape($parent->catname), JRoute::_('index.php?view=categoryevents&id='.$parent->categoryslug));
+			$pathway->addItem($this->escape($parent->catname), JRoute::_('index.php?view=categoryevents&id='.$parent->categoryslug));
 		}
 
-		
 		if ($task == 'archive') {
-			$pathway->addItem( JText::_( 'COM_JEM_ARCHIVE' ).' - '.$category->catname, JRoute::_('index.php?option=com_jem&view=categoryevents&task=archive&id='.$category->slug));
-			$link = JRoute::_( 'index.php?option=com_jem&view=categoryevents&task=archive&id='.$category->slug );
-			$print_link = JRoute::_( 'index.php?option=com_jem&view=categoryevents&id='. $category->id .'&task=archive&print=1&tmpl=component');
-		        $pagetitle = $category->catname.' - '.JText::_( 'COM_JEM_ARCHIVE' );
-                        } else {
-			$pathway->addItem( $category->catname, JRoute::_('index.php?option=com_jem&view=categoryevents&id='.$category->slug));
-			$link = JRoute::_( 'index.php?option=com_jem&view=categoryevents&id='.$category->slug );
-			$print_link = JRoute::_( 'index.php?option=com_jem&view=categoryevents&id='. $category->id .'&print=1&tmpl=component');
-		        $pagetitle = $category->catname;
-                        }
-		
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE').' - '.$category->catname, JRoute::_('index.php?option=com_jem&view=categoryevents&task=archive&id='.$category->slug));
+			$link = JRoute::_('index.php?option=com_jem&view=categoryevents&task=archive&id='.$category->slug);
+			$print_link = JRoute::_('index.php?option=com_jem&view=categoryevents&id='. $category->id .'&task=archive&print=1&tmpl=component');
+			$pagetitle = $category->catname.' - '.JText::_('COM_JEM_ARCHIVE');
+		} else {
+			$pathway->addItem($category->catname, JRoute::_('index.php?option=com_jem&view=categoryevents&id='.$category->slug));
+			$link = JRoute::_('index.php?option=com_jem&view=categoryevents&id='.$category->slug);
+			$print_link = JRoute::_('index.php?option=com_jem&view=categoryevents&id='. $category->id .'&print=1&tmpl=component');
+			$pagetitle = $category->catname;
+		}
+
 		//Check if the user has access to the form
 		$maintainer = JEMUser::ismaintainer();
-		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
+		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
-		if ($maintainer || $genaccess ) 
-		{ 
-		$dellink = 1;
+		if ($maintainer || $genaccess) {
+			$dellink = 1;
 		} else {
-		$dellink = 0;	
+			$dellink = 0;
 		}
 
-		// Create the pagination object		
-		$pagination =  $this->get('Pagination');
+		// Create the pagination object
+		$pagination = $this->get('Pagination');
 
 		//Generate Categorydescription
 		if (empty ($category->catdescription)) {
-			$catdescription = JText::_( 'COM_JEM_NO_DESCRIPTION' );
+			$catdescription = JText::_('COM_JEM_NO_DESCRIPTION');
 		} else {
 			//execute plugins
 			$category->text	= $category->catdescription;
 			$category->title 	= $category->catname;
 			JPluginHelper::importPlugin('content');
-			$results = $app->triggerEvent( 'onContentPrepare', array('com_jem.categoryevents', &$category, &$params, 0 ));
+			$results = $app->triggerEvent('onContentPrepare', array('com_jem.categoryevents', &$category, &$params, 0));
 			$catdescription = $category->text;
 		}
 
 		/*if ($category->image != '') {
 			$category->image = JHTML::image('jem/categories/'.$category->image, $category->catname);
 		}
-		
+
 		if ($category->image != '') {
-            $path = "file_path";
-            $mediaparams = JComponentHelper::getParams('com_media');
-            $imgattribs['width'] = $jemsettings->imagewidth;
+			$path = "file_path";
+			$mediaparams = JComponentHelper::getParams('com_media');
+			$imgattribs['width'] = $jemsettings->imagewidth;
 			$imgattribs['height'] = $jemsettings->imagehight;
 
 			$category->image = JHTML::image($mediaparams->get($path, 'images').'/jem/categories/'.$category->image, $category->catname, $imgattribs);
@@ -169,10 +163,8 @@ class JEMViewCategoryevents extends JViewLegacy
 			$category->image = JHTML::image('media/com_jem/images/noimage.png', $category->catname);
 		}
 		*/
-		
+
 		$cimage = JEMImage::flyercreator($category->image,'category');
-		
-		
 
 		//create select lists
 		$lists	= $this->_buildSortLists($jemsettings);
@@ -192,19 +184,19 @@ class JEMViewCategoryevents extends JViewLegacy
 		$this->item				= $item;
 		$this->categories		= $categories;
 
-	  	if($this->getLayout() == 'calendar') 
-	  	{	  	
-	    	//add css for calendar
-	    	$document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendar.css');
-	    
-	  		$year  = intval( JRequest::getVar('yearID', strftime( "%Y" ) ));
-      		$month = intval( JRequest::getVar('monthID', strftime( "%m" ) ));
-      		$day   = intval( JRequest::getVar('dayID', strftime( "%d" ) ));
-      		$this->year			= $year;
-      		$this->month		= $month;
-      		$this->day			= $day;
-    	}
-		
+		if($this->getLayout() == 'calendar') 
+		{
+			//add css for calendar
+			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendar.css');
+
+			$year  = intval(JRequest::getVar('yearID', strftime("%Y")));
+			$month = intval(JRequest::getVar('monthID', strftime("%m")));
+			$day   = intval(JRequest::getVar('dayID', strftime("%d")));
+			$this->year			= $year;
+			$this->month		= $month;
+			$this->day			= $day;
+		}
+
 		parent::display($tpl);
 	}
 
@@ -220,12 +212,12 @@ class JEMViewCategoryevents extends JViewLegacy
 		if (!$count) {
 			return;
 		}
-		
+
 		$k = 0;
 		foreach($this->rows as $key => $row)
 		{
-			$row->odd   = $k;
-			
+			$row->odd = $k;
+
 			$this->rows[$key] = $row;
 			$k = 1 - $k;
 		}
@@ -243,24 +235,24 @@ class JEMViewCategoryevents extends JViewLegacy
 		$filter_type		= JRequest::getString('filter_type');
 
 		$sortselects = array();
-		
+
 		if ($jemsettings->showtitle == 1) {
-			$sortselects[]	= JHTML::_('select.option', 'title', $jemsettings->titlename );
+			$sortselects[]	= JHTML::_('select.option', 'title', $jemsettings->titlename);
 		}
 		if ($jemsettings->showlocate == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'venue', $jemsettings->locationname );
+			$sortselects[] 	= JHTML::_('select.option', 'venue', $jemsettings->locationname);
 		}
 		if ($jemsettings->showcity == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'city', $jemsettings->cityname );
+			$sortselects[] 	= JHTML::_('select.option', 'city', $jemsettings->cityname);
 		}
 		if ($jemsettings->showcat == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'type', $jemsettings->catfroname );
+			$sortselects[] 	= JHTML::_('select.option', 'type', $jemsettings->catfroname);
 		}
 		if ($jemsettings->showstate == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'state', $jemsettings->statename );
+			$sortselects[] 	= JHTML::_('select.option', 'state', $jemsettings->statename);
 		}
 
-		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
+		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
 
 		$lists['order_Dir'] 	= $filter_order_Dir;
 		$lists['order'] 		= $filter_order;
