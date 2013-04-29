@@ -147,8 +147,18 @@ static	function getList(&$params)
 		foreach ((array) $rows as $row )
 		{
 			//create thumbnails if needed and receive imagedata
-			$dimage = JEMImage::flyercreator($row->datimage, 'event');
-			$limage = JEMImage::flyercreator($row->locimage, 'venue');
+			if ($row->datimage) {
+				$dimage = JEMImage::flyercreator($row->datimage, 'event');
+			}
+			else{
+				$dimage = null;
+			}
+			if ($row->locimage) {
+				$limage = JEMImage::flyercreator($row->locimage, 'venue');
+			}
+			else{
+				$limage = null;
+			}
 						
 			//cut titel
 			$length = strlen(htmlspecialchars( $row->title ));
@@ -168,10 +178,24 @@ static	function getList(&$params)
 			$lists[$i]->categorylink	= $params->get('linkcategory', 1) ? JRoute::_( JEMHelperRoute::getRoute($row->categoryslug, 'categoryevents') ) : '';
 			$lists[$i]->date 			= modJEMwideHelper::_format_date($row, $params);
 			$lists[$i]->time 			= $row->times ? modJEMwideHelper::_format_time($row->dates, $row->times, $params) : '' ;
-			$lists[$i]->eventimage		= JURI::base(true).'/'.$dimage['thumb'];
-			$lists[$i]->eventimageorig	= JURI::base(true).'/'.$dimage['original'];
-			$lists[$i]->venueimage		= JURI::base(true).'/'.$limage['thumb'];
-			$lists[$i]->venueimageorig	= JURI::base(true).'/'.$limage['original'];
+			
+			if ($dimage == null) {
+				$lists[$i]->eventimage		= JURI::base(true).'/media/system/images/blank.png';
+				$lists[$i]->eventimageorig	= JURI::base(true).'/media/system/images/blank.png';
+			}
+			else {
+				$lists[$i]->eventimage		= JURI::base(true).'/'.$dimage['thumb'];
+				$lists[$i]->eventimageorig	= JURI::base(true).'/'.$dimage['original'];
+			}
+				
+			if ($limage == null) {
+				$lists[$i]->venueimage		= JURI::base(true).'/media/system/images/blank.png';
+				$lists[$i]->venueimageorig	= JURI::base(true).'/media/system/images/blank.png';
+			}
+			else {
+				$lists[$i]->venueimage		= JURI::base(true).'/'.$limage['thumb'];
+				$lists[$i]->venueimageorig	= JURI::base(true).'/'.$limage['original'];
+			}
 			$lists[$i]->eventdescription= strip_tags( $row->datdescription );
 			$lists[$i]->venuedescription= strip_tags( $row->locdescription );
 			$i++;

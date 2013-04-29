@@ -94,7 +94,13 @@ defined('_JEXEC') or die;
 		</td>
 		<td align="center" class="event-image-cell">
 			<?php if ($params->get('use_modal')) : ?>
-			<a href="<?php echo $item->eventimageorig; ?>" class="modal" title="<?php echo $item->title; ?>">
+			
+			<?php if ($item->eventimageorig) {
+				$image = $item->eventimageorig;
+			} else   { $image = '';   }
+			 ?>
+			
+			<a href="<?php echo $image; ?>" class="modal" title="<?php echo $item->title; ?>">
 			<?php endif; ?>
 						
 				<img src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" class="image-preview" />
