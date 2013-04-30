@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -47,7 +47,7 @@ class JEMController extends JControllerLegacy
 
 	/**
 	 * Display the view
-	 * 
+	 *
 	 * @since 0.9
 	 */
 	function display($cachable = false, $urlparams = false)
@@ -57,7 +57,7 @@ class JEMController extends JControllerLegacy
 
 	/**
 	 * Logic for canceling an event edit task
-	 * 
+	 *
 	 * @since 0.9
 	 */
 	function cancelevent()
@@ -65,7 +65,7 @@ class JEMController extends JControllerLegacy
 		$user		=  JFactory::getUser();
 		$id			= JRequest::getInt( 'id');
 		$session 	=  JFactory::getSession();
-		
+
 		$session->clear('eventform', 'com_jem');
 
 		// Must be logged in
@@ -91,18 +91,18 @@ class JEMController extends JControllerLegacy
 
 	/**
 	 * Logic for canceling an event and proceed to add a venue
-	 * 
+	 *
 	 * @since 0.9
 	 */
 	function addvenue()
 	{
 		$user	= JFactory::getUser();
 		$id		= JRequest::getInt( 'id');
-		
+
 		$post = JRequest::get( 'post' );
 		//sticky forms
 		$session = JFactory::getSession();
-		$session->set('eventform', $post, 'com_jem');
+		$session->set('venueform', $post, 'com_jem');
 
 		// Must be logged in
 		if ($user->get('id') < 1) {
@@ -130,11 +130,11 @@ class JEMController extends JControllerLegacy
 	{
 		$user	=  JFactory::getUser();
 		$id		= JRequest::getInt( 'id' );
-		
-    $mode = JRequest::getVar('mode');
-		
+
+		$mode = JRequest::getVar('mode');
+
 		$session 	=  JFactory::getSession();
-		
+
 		$session->clear('venueform', 'com_jem');
 
 		// Must be logged in
@@ -149,23 +149,23 @@ class JEMController extends JControllerLegacy
 
 			$row->load($id);
 			$row->checkin();
-		      
+
 			$link = JRoute::_('index.php?view=venueevents&id='.$id, false);
-			
+
 		} else {
 			$link = JRequest::getString('referer', JURI::base(), 'post');
 		}
-	
-		if ($mode == 'ajax') 
+
+		if ($mode == 'ajax')
 		{
-		  // close the window.
-		  $js = "window.parent.closeAdd() ";
-		  $doc = JFactory::getDocument();
-		  $doc->addScriptDeclaration($js);
-		  echo $msg;
-		  return;
+			// close the window.
+			$js = "window.parent.closeAdd() ";
+			$doc = JFactory::getDocument();
+			$doc->addScriptDeclaration($js);
+			echo $msg;
+			return;
 		}
-      
+
 		$this->setRedirect($link);
 	}
 
@@ -178,51 +178,52 @@ class JEMController extends JControllerLegacy
 	{
 		// Check for request forgeries
 		JRequest::checkToken() or die( 'Invalid Token' );
-		
+
 		//Sanitize
 		$post = JRequest::get( 'post' );
 		$post['locdescription'] = JRequest::getVar( 'locdescription', '', 'post', 'string', JREQUEST_ALLOWRAW );
-		
+
 		//sticky forms
 		$session = JFactory::getSession();
 		$session->set('venueform', $post, 'com_jem');
-    	
+
 		if (JRequest::getVar( 'latitude', '', 'post', 'string') == '') {
-      		unset($post['latitude']);
-    	}
-    	if (JRequest::getVar( 'longitude', '', 'post', 'string') == '') {
-	      	unset($post['longitude']);
-    	}
+			unset($post['latitude']);
+		}
+		if (JRequest::getVar( 'longitude', '', 'post', 'string') == '') {
+			unset($post['longitude']);
+		}
 
 		$isNew = ($post['id']) ? false : true;
-		
+
 		$file 		= JRequest::getVar( 'userfile', '', 'files', 'array' );
 
 		$model = $this->getModel('editvenue');
 
-    $mode = JRequest::getVar('mode');
-    
+		$mode = JRequest::getVar('mode');
+
 		if ($returnid = $model->store($post, $file)) {
 
 			$msg 	= JText::_( 'COM_JEM_VENUE_SAVED' );
-			
+
 			//check if we return from an addvenue form
-			if ($session->has('eventform', 'com_jem')) {
-				$link = JRoute::_('index.php?view=editevent', false) ;
+			if ($session->has('venueform', 'com_jem')) {
+				$link = JRoute::_('index.php?view=editvenue', false) ;
 				} else {
 				$link 	= JRoute::_('index.php?view=venueevents&id='.$returnid, false) ;
 			}
 
 			JPluginHelper::importPlugin( 'jem' );
-      		$dispatcher = JDispatcher::getInstance();
-      		$res = $dispatcher->trigger( 'onVenueEdited', array( $returnid, $isNew ) );
+			$dispatcher = JDispatcher::getInstance();
+			$res = $dispatcher->trigger( 'onVenueEdited', array( $returnid, $isNew ) );
 
 			$cache = JFactory::getCache('com_jem');
 			$cache->clean();
 
+			$session->clear('venueform', 'com_jem');
 		} else {
 
-			$msg 		= '';
+			$msg = '';
 			//back to form
 			$link 	= JRoute::_('index.php?view=editvenue', false) ;
 
@@ -230,21 +231,21 @@ class JEMController extends JControllerLegacy
 		}
 
 		$model->checkin();
-	
+
 		// in case it's called from modal window
-    	if ($mode == 'ajax') {
-      		$model->setId($returnid);
-      		$venue = $model->getVenue();
-      
-      		// fill the event form venue field, and close.
-      		$js = "window.parent.elSelectVenue('". $venue->id ."', '". str_replace( array("'", "\""), array("\\'", ""), $venue->venue)."')";
-      		$doc = JFactory::getDocument();      
-      		$doc->addScriptDeclaration($js);
-      		echo $msg;
-      		
-      		return;
-    	}
-    
+		if ($mode == 'ajax') {
+			$model->setId($returnid);
+			$venue = $model->getVenue();
+
+			// fill the event form venue field, and close.
+			$js = "window.parent.elSelectVenue('". $venue->id ."', '". str_replace( array("'", "\""), array("\\'", ""), $venue->venue)."')";
+			$doc = JFactory::getDocument();
+			$doc->addScriptDeclaration($js);
+			echo $msg;
+
+			return;
+		}
+
 		$this->setRedirect($link, $msg );
 	}
 
@@ -259,15 +260,15 @@ class JEMController extends JControllerLegacy
 	{
 		// Check for request forgeries
 		JRequest::checkToken() or die( 'Invalid Token' );
-		
+
 		//get image
 		$file 		= JRequest::getVar( 'userfile', '', 'files', 'array' );
 		$post 		= JRequest::get( 'post' );
-		
+
 		//sticky forms
 		$session = JFactory::getSession();
 		$session->set('eventform', $post, 'com_jem');
-		
+
 		$isNew = ($post['id']) ? false : true;
 
 		$model = $this->getModel('editevent');
@@ -276,22 +277,22 @@ class JEMController extends JControllerLegacy
 
 			$msg 	= JText::_( 'COM_JEM_EVENT_SAVED' );
 			$link 	= JRoute::_( JEMHelperRoute::getRoute($returnid), false) ;
-			
+
 			JPluginHelper::importPlugin( 'jem' );
 			$dispatcher = JDispatcher::getInstance();
-			$res = $dispatcher->trigger( 'onEventEdited', array( $returnid, $isNew ) );			
+			$res = $dispatcher->trigger( 'onEventEdited', array( $returnid, $isNew ) );
 
 			$cache = JFactory::getCache('com_jem');
 			$cache->clean();
-			
+
 			$session->clear('eventform', 'com_jem');
 
 		} else {
 
-			$msg 		= '';
+			$msg = '';
 			//back to form
 			$link 	= JRoute::_('index.php?view=editevent', false) ;
-			
+
 			JError::raiseWarning('SOME_ERROR_CODE', $model->getError() );
 		}
 
@@ -317,17 +318,17 @@ class JEMController extends JControllerLegacy
 
 		$model->setId($id);
 		$register_id = $model->userregister();
-		if (!$register_id) 
+		if (!$register_id)
 		{
 			$msg = $model->getError();
 			$this->setRedirect(JRoute::_( JEMHelperRoute::getRoute($id), false), $msg, 'error' );
 			$this->redirect();
 			return;
 		}
-		
+
 		JPluginHelper::importPlugin( 'jem' );
-    $dispatcher = JDispatcher::getInstance();
-   	$res = $dispatcher->trigger( 'onEventUserRegistered', array( $register_id ) );
+		$dispatcher = JDispatcher::getInstance();
+		$res = $dispatcher->trigger( 'onEventUserRegistered', array( $register_id ) );
 
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
@@ -354,12 +355,12 @@ class JEMController extends JControllerLegacy
 
 		$model->setId($id);
 		$model->delreguser();
-		
+
 		JEMHelper::updateWaitingList($id);
-		
+
 		JPluginHelper::importPlugin( 'jem' );
-    $dispatcher = JDispatcher::getInstance();
-    $res = $dispatcher->trigger( 'onEventUserUnregistered', array( $id ) ); 
+		$dispatcher = JDispatcher::getInstance();
+		$res = $dispatcher->trigger( 'onEventUserUnregistered', array( $id ) );
 
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
@@ -370,7 +371,7 @@ class JEMController extends JControllerLegacy
 
 	/**
 	 * offers the vcal/ical functonality
-	 * 
+	 *
 	 * @todo Not yet working
 	 *
 	 * @author Lybegard Karl-Olof
@@ -423,42 +424,42 @@ class JEMController extends JControllerLegacy
 		}
 
 	}
-	
+
 	/**
 	 * for attachement downloads
-	 * 
+	 *
 	 */
 	function getfile()
 	{
 		$id = JRequest::getInt('file');
 		$user = JFactory::getUser();
-		
+
 		if (JFactory::getUser()->authorise('core.manage')) {
-           $gid = (int) 3;      //viewlevel Special
-           } else {
-               if($user->get('id')) {
-                   $gid = (int) 2;    //viewlevel Registered
-               } else {
-                   $gid = (int) 1;    //viewlevel Public
-               }
-           }
-		
+			$gid = (int) 3;	  //viewlevel Special
+		} else {
+			if($user->get('id')) {
+				$gid = (int) 2;	//viewlevel Registered
+			} else {
+				$gid = (int) 1;	//viewlevel Public
+			}
+		}
+
 		$path = JEMAttachment::getAttachmentPath($id, $gid);
-				
+
 		$mime = JEMHelper::getMimeType($path);
-		
+
 		$doc = JFactory::getDocument();
 		$doc->setMimeEncoding($mime);
 		header('Content-Disposition: attachment; filename="'.basename($path).'"');
-		if ($fd = fopen ($path, "r")) 
+		if ($fd = fopen ($path, "r"))
 		{
-	    $fsize = filesize($path);
-	    header("Content-length: $fsize");
-	    header("Cache-control: private"); //use this to open files directly
-	    while(!feof($fd)) {
-	        $buffer = fread($fd, 2048);
-	        echo $buffer;
-	    }
+		$fsize = filesize($path);
+		header("Content-length: $fsize");
+		header("Cache-control: private"); //use this to open files directly
+		while(!feof($fd)) {
+			$buffer = fread($fd, 2048);
+			echo $buffer;
+		}
 		}
 		fclose ($fd);
 		return;
@@ -473,7 +474,7 @@ class JEMController extends JControllerLegacy
 	 */
 	function ajaxattachremove()
 	{
-		$id     = JRequest::getVar( 'id', 0, 'request', 'int' );
+		$id	 = JRequest::getVar( 'id', 0, 'request', 'int' );
 
 		$res = JEMAttachment::remove($id);
 		if (!$res) {
