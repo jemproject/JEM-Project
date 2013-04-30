@@ -32,20 +32,20 @@
 		</field>
 		<field name="cuttitle" type="text" default="18" label="MOD_JEM_WIDE_MAX_TITLE_LENGTH" description="MOD_JEM_WIDE_MAX_TITLE_LENGTH_DESC" />
 		<field name="linkevent" type="radio" default="1" label="MOD_JEM_WIDE_LINK_TO_DETAILS" description="MOD_JEM_WIDE_LINK_TO_DETAILS_DESC">
-			<option value="0">MOD_JEM_WIDE_NO</option>
-			<option value="1">MOD_JEM_WIDE_YES</option>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 		<field name="linkcategory" type="radio" default="1" label="MOD_JEM_WIDE_LINK_TO_CATEGORY" description="MOD_JEM_WIDE_LINK_TO_CATEGORY_DESC">
-			<option value="0">MOD_JEM_WIDE_NO</option>
-			<option value="1">MOD_JEM_WIDE_YES</option>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 		<field name="linkvenue" type="radio" default="1" label="MOD_JEM_WIDE_LINK_TO_VENUE" description="MOD_JEM_WIDE_LINK_TO_VENUE_DESC">
-			<option value="0">MOD_JEM_WIDE_NO</option>
-			<option value="1">MOD_JEM_WIDE_YES</option>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 		<field name="use_modal" type="radio" default="0" label="MOD_JEM_WIDE_USE_MODAL" description="MOD_JEM_WIDE_USE_MODAL_DESC">
-			<option value="0">MOD_JEM_WIDE_NO</option>
-			<option value="1">MOD_JEM_WIDE_YES</option>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 		<field name="catid" type="text" default="" label="MOD_JEM_WIDE_CATEGORY_ID" description="MOD_JEM_WIDE_CATEGORY_ID_DESC" />
 		<field name="venid" type="text" default="" label="MOD_JEM_WIDE_VENUE_ID" description="MOD_JEM_WIDE_VENUE_ID_DESC" />
