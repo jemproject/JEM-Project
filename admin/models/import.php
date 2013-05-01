@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
@@ -43,7 +42,7 @@ class JEMModelImport extends JModelLegacy {
 
 	/**
 	 * Get the table fields of the events table
-	 * 
+	 *
 	 * @return  array  An array with the fields of the events table
 	 */
 	function getEventFields() {
@@ -52,16 +51,16 @@ class JEMModelImport extends JModelLegacy {
 
 	/**
 	* Get the table fields of the venues table
-	* 
+	*
 	* @return  array  An array with the fields of the venues table
-	*/  
+	*/
 	function getVenueFields() {
 		return $this->getFields('#__jem_venues');
 	}
 
 	/**
 	 * Get the table fields of the categories table
-	 * 
+	 *
 	 * @return  array  An array with the fields of the categories table
 	 */
 	function getCategoryFields() {
@@ -70,25 +69,22 @@ class JEMModelImport extends JModelLegacy {
 
 	/**
 	 * Get the table fields of the cats_event_relations table
-	 * 
+	 *
 	 * @return  array  An array with the fields of the cats_event_relations table
 	 */
 	function getCateventsFields() {
 		return $this->getFields('#__jem_cats_event_relations');
 	}
-	
+
 	/**
 	 * Helper function to return table fields of a given table
-	 * 
+	 *
 	 * @param   string  $tablename  The name of the table we want to get fields from
-	 * 
+	 *
 	 * @return  array  An array with the fields of the table
 	 */
 	private function getFields($tablename) {
-		$tables = array ($tablename);
-		$tablesfields = $this->_db->getTableColumns($tables);
-		
-		return array_keys($tablesfields[$tablename]);
+		return array_keys($this->_db->getTableColumns($tablename));
 	}
 
 	/**
@@ -277,7 +273,7 @@ class JEMModelImport extends JModelLegacy {
 				}
 			}
 		}
-	
+
 		return $rec;
 	}
 }
