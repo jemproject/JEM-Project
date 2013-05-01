@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -68,16 +68,6 @@ defined('_JEXEC') or die;
 							<input type="text" name="datewidth" value="<?php echo $this->jemsettings->datewidth; ?>" size="5" maxlength="4" />
 						</td>
 					</tr>
-					<tr>
-						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_COLUMN_NAME' ); ?>::<?php echo JText::_('COM_JEM_COLUMN_NAME_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_COLUMN_NAME' ); ?>
-							</span>
-						</td>
-						<td valign="top">
-							<input type="text" name="datename" value="<?php echo $this->jemsettings->datename; ?>" size="30" maxlength="25" />
-						</td>
-					</tr>
 				</tbody>
 				</table>
 			</fieldset>
@@ -94,13 +84,10 @@ defined('_JEXEC') or die;
 						</td>
 						<td valign="top">
 							<?php
-							$mode = 0;
-							if ($this->jemsettings->showcity == 1) {
-							$mode = 1;
-							} // if
+							$mode = ($this->jemsettings->showcity == 1) ? 1 : 0;
 							?>
-							<input type="radio" id="showcity0" class="inputbox" name="showcity" value="0" onclick="changecityMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'COM_JEM_NO' ); ?>
-							<input type="radio" id="showcity1" class="inputbox" name="showcity" value="1" onclick="changecityMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'COM_JEM_YES' ); ?>
+							<input type="radio" id="showcity0" class="inputbox" name="showcity" value="0" onclick="changecityMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'JNO' ); ?>
+							<input type="radio" id="showcity1" class="inputbox" name="showcity" value="1" onclick="changecityMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'JYES' ); ?>
 						</td>
 					</tr>
 					<tr id="city1"<?php if (!$mode) echo ' style="display:none"'; ?>>
@@ -111,16 +98,6 @@ defined('_JEXEC') or die;
 						</td>
 						<td valign="top">
 							<input type="text" name="citywidth" value="<?php echo $this->jemsettings->citywidth; ?>" size="5" maxlength="4" />
-						</td>
-					</tr>
-					<tr id="city2"<?php if (!$mode) echo ' style="display:none"'; ?>>
-						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_COLUMN_NAME' ); ?>::<?php echo JText::_('COM_JEM_COLUMN_NAME_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_COLUMN_NAME' ); ?>
-							</span>
-						</td>
-						<td valign="top">
-							<input type="text" name="cityname" value="<?php echo $this->jemsettings->cityname; ?>" size="30" maxlength="25" />
 						</td>
 					</tr>
 				</tbody>
@@ -151,20 +128,9 @@ defined('_JEXEC') or die;
 							<input type="text" name="attewidth" value="<?php echo $this->jemsettings->attewidth; ?>" size="5" maxlength="4" />
 						</td>
 					</tr>
-					<tr>
-						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_COLUMN_NAME' ); ?>::<?php echo JText::_('COM_JEM_COLUMN_NAME_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_COLUMN_NAME' ); ?>
-							</span>
-						</td>
-						<td valign="top">
-							<input type="text" name="attename" value="<?php echo $this->jemsettings->attename; ?>" size="30" maxlength="25" />
-						</td>
-					</tr>
 				</tbody>
 				</table>
 			</fieldset>
-
 
 			<fieldset class="adminform">
 			<legend><?php echo JText::_( 'COM_JEM_TITLE_COLUMN' ); ?></legend>
@@ -178,13 +144,10 @@ defined('_JEXEC') or die;
 						</td>
 						<td valign="top">
 							<?php
-							$mode = 0;
-							if ($this->jemsettings->showtitle == 1) {
-								$mode = 1;
-							} // if
+							$mode = ($this->jemsettings->showtitle == 1) ? 1 : 0;
 							?>
-							<input type="radio" id="showtitle0" class="inputbox" name="showtitle" value="0" onclick="changetitleMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'COM_JEM_NO' ); ?>
-							<input type="radio" id="showtitle1" class="inputbox" name="showtitle" value="1" onclick="changetitleMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'COM_JEM_YES' ); ?>
+							<input type="radio" id="showtitle0" class="inputbox" name="showtitle" value="0" onclick="changetitleMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'JNO' ); ?>
+							<input type="radio" id="showtitle1" class="inputbox" name="showtitle" value="1" onclick="changetitleMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'JYES' ); ?>
 						</td>
 					</tr>
 					<tr id="title1"<?php if (!$mode) echo ' style="display:none"'; ?>>
@@ -195,16 +158,6 @@ defined('_JEXEC') or die;
 						</td>
 						<td valign="top">
 							<input type="text" name="titlewidth" value="<?php echo $this->jemsettings->titlewidth; ?>" size="5" maxlength="4" />
-						</td>
-					</tr>
-					<tr id="title2"<?php if (!$mode) echo ' style="display:none"'; ?>>
-						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_COLUMN_NAME' ); ?>::<?php echo JText::_('COM_JEM_COLUMN_NAME_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_COLUMN_NAME' ); ?>
-							</span>
-						</td>
-						<td valign="top">
-							<input type="text" name="titlename" value="<?php echo $this->jemsettings->titlename; ?>" size="30" maxlength="25" />
 						</td>
 					</tr>
 				</tbody>
@@ -226,13 +179,10 @@ defined('_JEXEC') or die;
 						</td>
 						<td valign="top">
 							<?php
-							$mode = 0;
-							if ($this->jemsettings->showlocate == 1) {
-								$mode = 1;
-							} // if
+							$mode = ($this->jemsettings->showlocate == 1) ? 1 : 0;
 							?>
-							<input type="radio" id="showlocate0" class="inputbox" name="showlocate" value="0" onclick="changelocateMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'COM_JEM_NO' ); ?>
-							<input type="radio" id="showlocate1" class="inputbox" name="showlocate" value="1" onclick="changelocateMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'COM_JEM_YES' ); ?>
+							<input type="radio" id="showlocate0" class="inputbox" name="showlocate" value="0" onclick="changelocateMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'JNO' ); ?>
+							<input type="radio" id="showlocate1" class="inputbox" name="showlocate" value="1" onclick="changelocateMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'JYES' ); ?>
 						</td>
 					</tr>
 					<tr id="locate1"<?php if (!$mode) echo ' style="display:none"'; ?>>
@@ -246,16 +196,6 @@ defined('_JEXEC') or die;
 						</td>
 					</tr>
 					<tr id="locate2"<?php if (!$mode) echo ' style="display:none"'; ?>>
-						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_COLUMN_NAME' ); ?>::<?php echo JText::_('COM_JEM_COLUMN_NAME_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_COLUMN_NAME' ); ?>
-							</span>
-						</td>
-						<td valign="top">
-							<input type="text" name="locationname" value="<?php echo $this->jemsettings->locationname; ?>" size="30" maxlength="25" />
-						</td>
-					</tr>
-					<tr id="locate3"<?php if (!$mode) echo ' style="display:none"'; ?>>
 						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_DISPLAY_LINK_TO_VENUE_VIEW' ); ?>::<?php echo JText::_('COM_JEM_DISPLAY_LINK_TO_VENUE_VIEW_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_DISPLAY_LINK_TO_VENUE_VIEW' ); ?>
@@ -283,13 +223,10 @@ defined('_JEXEC') or die;
 						</td>
 						<td valign="top">
 							<?php
-							$mode = 0;
-							if ($this->jemsettings->showstate == 1) {
-							$mode = 1;
-							} // if
+							$mode = ($this->jemsettings->showstate == 1) ? 1 : 0;
 							?>
-							<input type="radio" id="showstate0" class="inputbox" name="showstate" value="0" onclick="changestateMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'COM_JEM_NO' ); ?>
-							<input type="radio" id="showstate1" class="inputbox" name="showstate" value="1" onclick="changestateMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'COM_JEM_YES' ); ?>
+							<input type="radio" id="showstate0" class="inputbox" name="showstate" value="0" onclick="changestateMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'JNO' ); ?>
+							<input type="radio" id="showstate1" class="inputbox" name="showstate" value="1" onclick="changestateMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'JYES' ); ?>
 						</td>
 					</tr>
 					<tr id="state1"<?php if (!$mode) echo ' style="display:none"'; ?>>
@@ -300,16 +237,6 @@ defined('_JEXEC') or die;
 						</td>
 						<td valign="top">
 							<input type="text" name="statewidth" value="<?php echo $this->jemsettings->statewidth; ?>" size="5" maxlength="4" />
-						</td>
-					</tr>
-					<tr id="state2"<?php if (!$mode) echo ' style="display:none"'; ?>>
-						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_COLUMN_NAME' ); ?>::<?php echo JText::_('COM_JEM_COLUMN_NAME_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_COLUMN_NAME' ); ?>
-							</span>
-						</td>
-						<td valign="top">
-							<input type="text" name="statename" value="<?php echo $this->jemsettings->statename; ?>" size="30" maxlength="25" />
 						</td>
 					</tr>
 				</tbody>
@@ -328,13 +255,10 @@ defined('_JEXEC') or die;
 						</td>
 						<td valign="top">
 							<?php
-							$mode = 0;
-							if ($this->jemsettings->showcat == 1) {
-								$mode = 1;
-							} // if
+							$mode = ($this->jemsettings->showcat == 1) ? 1 : 0;
 							?>
-							<input type="radio" id="showcat0" class="inputbox" name="showcat" value="0" onclick="changecatMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'COM_JEM_NO' ); ?>
-							<input type="radio" id="showcat1" class="inputbox" name="showcat" value="1" onclick="changecatMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'COM_JEM_YES' ); ?>
+							<input type="radio" id="showcat0" class="inputbox" name="showcat" value="0" onclick="changecatMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'JNO' ); ?>
+							<input type="radio" id="showcat1" class="inputbox" name="showcat" value="1" onclick="changecatMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'JYES' ); ?>
 						</td>
 					</tr>
 					<tr id="cat1"<?php if (!$mode) echo ' style="display:none"'; ?>>
@@ -348,16 +272,6 @@ defined('_JEXEC') or die;
 						</td>
 					</tr>
 					<tr id="cat2"<?php if (!$mode) echo ' style="display:none"'; ?>>
-						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_COLUMN_NAME' ); ?>::<?php echo JText::_('COM_JEM_COLUMN_NAME_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_COLUMN_NAME' ); ?>
-							</span>
-						</td>
-						<td valign="top">
-							<input type="text" name="catfroname" value="<?php echo $this->jemsettings->catfroname; ?>" size="30" maxlength="25" />
-						</td>
-					</tr>
-					<tr id="cat3"<?php if (!$mode) echo ' style="display:none"'; ?>>
 						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_DISPLAY_LINK_TO_CATEGORY_VIEW' ); ?>::<?php echo JText::_('COM_JEM_DISPLAY_LINK_TO_CATEGORY_VIEW_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_DISPLAY_LINK_TO_CATEGORY_VIEW' ); ?>
@@ -390,7 +304,7 @@ defined('_JEXEC') or die;
 							?>
 						</td>
 					</tr>
-					<tr>
+					<tr id="eventimage1"<?php if (!$mode) echo ' style="display:none"'; ?>>
 						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_LAYOUT_TABLE_EVENTIMAGE_WIDTH' ); ?>::<?php echo JText::_('COM_JEM_LAYOUT_TABLE_EVENTIMAGE_WIDTH_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_LAYOUT_TABLE_EVENTIMAGE_WIDTH' ); ?>
@@ -398,16 +312,6 @@ defined('_JEXEC') or die;
 						</td>
 						<td valign="top">
 							<input type="text" name="tableeventimagewidth" value="<?php echo $this->jemsettings->tableeventimagewidth; ?>" size="5" maxlength="4" />
-						</td>
-					</tr>
-					<tr>
-						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_COLUMN_NAME' ); ?>::<?php echo JText::_('COM_JEM_COLUMN_NAME_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_COLUMN_NAME' ); ?>
-							</span>
-						</td>
-						<td valign="top">
-							<input type="text" name="eventimagename" value="<?php echo $this->jemsettings->eventimagename; ?>" size="30" maxlength="25" />
 						</td>
 					</tr>
 				</tbody>

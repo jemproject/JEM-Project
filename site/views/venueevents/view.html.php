@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -40,20 +40,20 @@ class JEMViewVenueevents extends JViewLegacy
 	 */
 	function display( $tpl = null )
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		//initialize variables
-		$document 	=  JFactory::getDocument();
-		$menu		=  $app->getMenu();
-		$jemsettings =  JEMHelper::config();
-		
+		$document 	= JFactory::getDocument();
+		$menu		= $app->getMenu();
+		$jemsettings = JEMHelper::config();
+
 		//get menu information
 		$menu		= $app->getMenu();
 		$item = $menu->getActive();
-	
-		
-		$params 	=  $app->getParams('com_jem');
-		$uri 		=  JFactory::getURI();
+
+
+		$params 	= $app->getParams('com_jem');
+		$uri 		= JFactory::getURI();
 
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
@@ -61,14 +61,14 @@ class JEMViewVenueevents extends JViewLegacy
 
 		// Request variables
 		$limitstart		= JRequest::getInt('limitstart');
-		$limit       	= $app->getUserStateFromRequest('com_jem.venueevents.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit			= $app->getUserStateFromRequest('com_jem.venueevents.limit', 'limit', $params->def('display_num', 0), 'int');
 		$pop			= JRequest::getBool('pop');
 		$task 			= JRequest::getWord('task');
 
 		//get data from model
-		$rows 		=  $this->get('Data');
-		$venue	 	=  $this->get('Venue');
-		$total 		=  $this->get('Total');
+		$rows 		= $this->get('Data');
+		$venue	 	= $this->get('Venue');
+		$total 		= $this->get('Total');
 
 		//does the venue exist?
 		if ($venue->id == 0)
@@ -92,16 +92,16 @@ class JEMViewVenueevents extends JViewLegacy
 		$limage = JEMImage::flyercreator($venue->locimage, 'venue');
 
 		//add alternate feed link
-		$link    = 'index.php?option=com_jem&view=venueevents&format=feed&id='.$venue->id;
+		$link	= 'index.php?option=com_jem&view=venueevents&format=feed&id='.$venue->id;
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
 
 		//pathway
-		$pathway 	=  $app->getPathWay();
+		$pathway 	= $app->getPathWay();
 		$pathway->setItemName(1, $item->title);
-		
+
 		//create the pathway
 		if ($task == 'archive') {
 			$pathway->addItem( JText::_( 'COM_JEM_ARCHIVE' ).' - '.$venue->venue, JRoute::_('index.php?option=com_jem&view=venueevents&task=archive&id='.$venue->slug));
@@ -114,10 +114,10 @@ class JEMViewVenueevents extends JViewLegacy
 			$print_link = JRoute::_('index.php?option=com_jem&view=venueevents&id='. $venue->slug .'&print=1&tmpl=component');
 			$pagetitle = $venue->venue;
 		}
-		
+
 		//set Page title
 		$document->setTitle( $pagetitle );
-   		$document->setMetaData( 'title' , $pagetitle );
+		$document->setMetaData( 'title' , $pagetitle );
 		$document->setMetadata('keywords', $venue->meta_keywords );
 		$document->setDescription( strip_tags($venue->meta_description) );
 
@@ -133,11 +133,11 @@ class JEMViewVenueevents extends JViewLegacy
 		$maintainer = JEMUser::ismaintainer();
 		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
-		if ($maintainer || $genaccess ) 
-		{ 
-		$dellink = 1;
+		if ($maintainer || $genaccess )
+		{
+			$dellink = 1;
 		} else {
-		$dellink = 0;	
+			$dellink = 0;
 		}
 
 		//Generate Venuedescription
@@ -149,24 +149,24 @@ class JEMViewVenueevents extends JViewLegacy
 			$results = $app->triggerEvent( 'onContentPrepare', array('com_jem.venueevents', &$venue, &$params, 0 ));
 			$venuedescription = $venue->text;
 		}
-    	$allowedtoeditvenue = JEMUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
-    
-		//build the url
-        if(!empty($venue->url) && strtolower(substr($venue->url, 0, 7)) != "http://") {
-        	$venue->url = 'http://'.$venue->url;
-        }
+		$allowedtoeditvenue = JEMUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
 
-        //prepare the url for output
-        if (strlen(htmlspecialchars($venue->url, ENT_QUOTES)) > 35) {
+		//build the url
+		if(!empty($venue->url) && strtolower(substr($venue->url, 0, 7)) != "http://") {
+			$venue->url = 'http://'.$venue->url;
+		}
+
+		//prepare the url for output
+		if (strlen(htmlspecialchars($venue->url, ENT_QUOTES)) > 35) {
 			$venue->urlclean = substr( htmlspecialchars($venue->url, ENT_QUOTES), 0 , 35).'...';
 		} else {
 			$venue->urlclean = htmlspecialchars($venue->url, ENT_QUOTES);
 		}
 
-        //create flag
-        if ($venue->country) {
-        	$venue->countryimg = JEMOutput::getFlag( $venue->country );
-        }
+		//create flag
+		if ($venue->country) {
+			$venue->countryimg = JEMOutput::getFlag( $venue->country );
+		}
 
 		// Create the pagination object
 		jimport('joomla.html.pagination');
@@ -207,12 +207,12 @@ class JEMViewVenueevents extends JViewLegacy
 		if (!$count) {
 			return;
 		}
-		
+
 		$k = 0;
 		foreach($this->rows as $key => $row)
 		{
 			$row->odd   = $k;
-			
+
 			$this->rows[$key] = $row;
 			$k = 1 - $k;
 		}
@@ -230,21 +230,21 @@ class JEMViewVenueevents extends JViewLegacy
 		$filter_type		= JRequest::getString('filter_type');
 
 		$sortselects = array();
-		
+
 		if ($jemsettings->showtitle == 1) {
-			$sortselects[]	= JHTML::_('select.option', 'title', $jemsettings->titlename );
+			$sortselects[]	= JHTML::_('select.option', 'title', JText::_('COM_JEM_TABLE_TITLE'));
 		}
 		if ($jemsettings->showlocate == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'venue', $jemsettings->locationname );
+			$sortselects[] 	= JHTML::_('select.option', 'venue', JText::_('COM_JEM_TABLE_LOCATION'));
 		}
 		if ($jemsettings->showcity == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'city', $jemsettings->cityname );
+			$sortselects[] 	= JHTML::_('select.option', 'city', JText::_('COM_JEM_TABLE_CITY'));
 		}
 		if ($jemsettings->showcat == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'type', $jemsettings->catfroname );
+			$sortselects[] 	= JHTML::_('select.option', 'type', JText::_('COM_JEM_TABLE_CATEGORY'));
 		}
 		if ($jemsettings->showstate == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'state', $jemsettings->statename );
+			$sortselects[] 	= JHTML::_('select.option', 'state', JText::_('COM_JEM_TABLE_STATE'));
 		}
 
 		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );

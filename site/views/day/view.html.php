@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -46,7 +46,7 @@ class JEMViewDay extends JViewLegacy
 		$document 	= JFactory::getDocument();
 		$jemsettings = JEMHelper::config();
 		$menu		= $app->getMenu();
-		$item    	= $menu->getActive();
+		$item 		= $menu->getActive();
 		$params 	= $app->getParams();
 
 		//add css file
@@ -64,7 +64,7 @@ class JEMViewDay extends JViewLegacy
 		$rows 		= $this->get('Data');
 		$total 		= $this->get('Total');
 		$day		= $this->get('Day');
-		
+
 		$daydate = strftime( $jemsettings->formatdate, strtotime( $day ));
 
 		//are events available?
@@ -96,11 +96,11 @@ class JEMViewDay extends JViewLegacy
 		$maintainer = JEMUser::ismaintainer();
 		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
-		if ($maintainer || $genaccess ) 
-		{ 
-		$dellink = 1;
+		if ($maintainer || $genaccess )
+		{
+			$dellink = 1;
 		} else {
-		$dellink = 0;	
+			$dellink = 0;
 		}
 
 		//add alternate feed link
@@ -134,7 +134,7 @@ class JEMViewDay extends JViewLegacy
 
 		parent::display($tpl);
 
-	}//function ListEvents end
+	}
 
 	/**
 	 * Manipulate Data
@@ -150,12 +150,12 @@ class JEMViewDay extends JViewLegacy
 		if (!$count) {
 			return;
 		}
-				
+
 		$k = 0;
 		foreach($this->rows as $key => $row)
 		{
-			$row->odd   = $k;
-			
+			$row->odd = $k;
+
 			$this->rows[$key] = $row;
 			$k = 1 - $k;
 		}
@@ -173,7 +173,7 @@ class JEMViewDay extends JViewLegacy
 	function _buildSortLists()
 	{
 		$jemsettings = JEMHelper::config();
-		
+
 		$filter_order		= JRequest::getCmd('filter_order', 'a.dates');
 		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', 'ASC');
 
@@ -181,9 +181,9 @@ class JEMViewDay extends JViewLegacy
 		$filter_type		= JRequest::getString('filter_type');
 
 		$sortselects = array();
-		$sortselects[]	= JHTML::_('select.option', 'title', $jemsettings->titlename );
-		$sortselects[] 	= JHTML::_('select.option', 'venue', $jemsettings->locationname );
-		$sortselects[] 	= JHTML::_('select.option', 'city', $jemsettings->cityname );
+		$sortselects[]	= JHTML::_('select.option', 'title', JText::_('COM_JEM_TABLE_TITLE'));
+		$sortselects[] 	= JHTML::_('select.option', 'venue', JText::_('COM_JEM_TABLE_LOCATION'));
+		$sortselects[] 	= JHTML::_('select.option', 'city', JText::_('COM_JEM_TABLE_CITY'));
 		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
 
 		$lists['order_Dir'] 	= $filter_order_Dir;

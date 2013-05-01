@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -25,7 +25,7 @@ defined( '_JEXEC' ) or die;
 ?>
 
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
-	
+
 	<colgroup>
 		<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 		<?php if ($this->jemsettings->showtitle == 1) : ?>
@@ -44,38 +44,38 @@ defined( '_JEXEC' ) or die;
 			<col width="<?php echo $this->jemsettings->catfrowidth; ?>" class="jem_col_category" />
 		<?php endif; ?>
 	</colgroup>
-	
+
 	<thead>
-			<tr>
-				<th id="jem_date_cat<?php echo $this->categoryid; ?>" class="sectiontableheader" align="left"><?php echo $this->escape($this->jemsettings->datename); ?></th>
-				<?php
-				if ($this->jemsettings->showtitle == 1) :
-				?>
-				<th id="jem_title_cat<?php echo $this->categoryid; ?>" class="sectiontableheader" align="left"><?php echo $this->escape($this->jemsettings->titlename); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showlocate == 1) :
-				?>
-				<th id="jem_location_cat<?php echo $this->categoryid; ?>" class="sectiontableheader" align="left"><?php echo $this->escape($this->jemsettings->locationname); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showcity == 1) :
-				?>
-				<th id="jem_city_cat<?php echo $this->categoryid; ?>" class="sectiontableheader" align="left"><?php echo $this->escape($this->jemsettings->cityname); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showstate == 1) :
-				?>
-				<th id="jem_state_cat<?php echo $this->categoryid; ?>" class="sectiontableheader" align="left"><?php echo $this->escape($this->jemsettings->statename); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showcat == 1) :
-				?>
-				<th id="jem_category_cat<?php echo $this->categoryid; ?>" class="sectiontableheader" align="left"><?php echo $this->escape($this->jemsettings->catfroname); ?></th>
-				<?php
-				endif;
-				?>
-			</tr>
+		<tr>
+			<th id="jem_date_cat<?php echo $this->categoryid; ?>" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_DATE'); ?></th>
+			<?php
+			if ($this->jemsettings->showtitle == 1) :
+			?>
+			<th id="jem_title_cat<?php echo $this->categoryid; ?>" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_TITLE'); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showlocate == 1) :
+			?>
+			<th id="jem_location_cat<?php echo $this->categoryid; ?>" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_LOCATION'); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showcity == 1) :
+			?>
+			<th id="jem_city_cat<?php echo $this->categoryid; ?>" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_CITY'); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showstate == 1) :
+			?>
+			<th id="jem_state_cat<?php echo $this->categoryid; ?>" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_STATE'); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showcat == 1) :
+			?>
+			<th id="jem_category_cat<?php echo $this->categoryid; ?>" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_CATEGORY'); ?></th>
+			<?php
+			endif;
+			?>
+		</tr>
 	</thead>
 
 	<tbody>
@@ -89,29 +89,29 @@ defined( '_JEXEC' ) or die;
 
 		foreach ($this->rows as $row) :
 		?>
-  			<tr class="sectiontableentry<?php echo ($row->odd +1 ) . $this->params->get( 'pageclass_sfx' ); ?>" >
-    			<td headers="jem_date_cat<?php echo $this->categoryid; ?>" align="left">
-    			    <strong>
-    			    <?php if (JEMHelper::isValidDate($row->dates)): ?>
-	    					<?php echo JEMOutput::formatdate($row->dates, $row->times); ?>
-	    					
-	    					<?php
-	    					if ($row->enddates && $row->enddates != $row->dates) :
-	    						echo ' - '.JEMOutput::formatdate($row->enddates, $row->endtimes);
-	    					endif;
-	    					?>
-    					<?php else: ?>
-    						<?php echo JText::_('COM_JEM_OPEN_DATE'); ?>
-    					<?php endif; ?>
-    				</strong>
-    				
+			<tr class="sectiontableentry<?php echo ($row->odd +1 ) . $this->params->get( 'pageclass_sfx' ); ?>" >
+				<td headers="jem_date_cat<?php echo $this->categoryid; ?>" align="left">
+					<strong>
+					<?php if (JEMHelper::isValidDate($row->dates)): ?>
+							<?php echo JEMOutput::formatdate($row->dates, $row->times); ?>
+
+							<?php
+							if ($row->enddates && $row->enddates != $row->dates) :
+								echo ' - '.JEMOutput::formatdate($row->enddates, $row->endtimes);
+							endif;
+							?>
+						<?php else: ?>
+							<?php echo JText::_('COM_JEM_OPEN_DATE'); ?>
+						<?php endif; ?>
+					</strong>
+
 					<?php
 					if ($this->jemsettings->showtime == 1) :
 					?>
 						<br />
 						<?php
 						echo JEMOutput::formattime($row->dates, $row->times);
-						
+
 						if ($row->endtimes) :
 							echo ' - '.JEMOutput::formattime($row->enddates, $row->endtimes);
 						endif;
@@ -159,7 +159,7 @@ defined( '_JEXEC' ) or die;
 				endif;
 
 				if ($this->jemsettings->showcat == 1) :
-				
+
 				?>
 				<td headers="jem_category_cat" align="left" valign="top">
 					<?php
@@ -178,7 +178,7 @@ defined( '_JEXEC' ) or die;
 
 						<?php
 						endif;
-						
+
 						$ix++;
 						if ($ix != $nr) :
 							echo ', ';

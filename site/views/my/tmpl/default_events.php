@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -44,25 +44,25 @@ defined( '_JEXEC' ) or die;
 
 <?php if ($this->jemsettings->filter || $this->jemsettings->display) : ?>
 <div id="jem_filter" class="floattext">
-    <?php if ($this->jemsettings->filter) : ?>
-    <div class="jem_fleft">
-      <?php
-      echo '<label for="filter_type">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
-      echo $this->lists['filter_types'].'&nbsp;';
-      ?>
-      <input type="text" name="filter" id="filter" value="<?php echo $this->lists['filter'];?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
-      <button onclick="document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-      <button onclick="document.getElementById('filter').value='';document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
-    </div>
-    <?php endif; ?>
-    <?php if ($this->jemsettings->display) : ?>
-    <div class="jem_fright">
-      <?php
-      echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
-      echo $this->events_pagination->getLimitBox();
-      ?>
-    </div>
-    <?php endif; ?>
+	<?php if ($this->jemsettings->filter) : ?>
+	<div class="jem_fleft">
+		<?php
+		echo '<label for="filter_type">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
+		echo $this->lists['filter_types'].'&nbsp;';
+		?>
+		<input type="text" name="filter" id="filter" value="<?php echo $this->lists['filter'];?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
+		<button onclick="document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+		<button onclick="document.getElementById('filter').value='';document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
+	</div>
+	<?php endif; ?>
+	<?php if ($this->jemsettings->display) : ?>
+	<div class="jem_fright">
+		<?php
+		echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
+		echo $this->events_pagination->getLimitBox();
+		?>
+	</div>
+	<?php endif; ?>
 </div>
 <?php endif; ?>
 
@@ -88,36 +88,36 @@ defined( '_JEXEC' ) or die;
 	</colgroup>
 
 	<thead>
-			<tr>
-				<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->datename), 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				if ($this->jemsettings->showtitle == 1) :
-				?>
-				<th id="jem_title" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->titlename), 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showlocate == 1) :
-				?>
-				<th id="jem_location" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->locationname), 'l.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showcity == 1) :
-				?>
-				<th id="jem_city" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->cityname), 'l.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showstate == 1) :
-				?>
-				<th id="jem_state" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->statename), 'l.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showcat == 1) :
-				?>
-				<th id="jem_category" class="sectiontableheader" align="left"><?php echo $this->escape($this->jemsettings->catfroname); ?></th>
-				<?php
-				endif;
-				?>
-			</tr>
+		<tr>
+			<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			if ($this->jemsettings->showtitle == 1) :
+			?>
+			<th id="jem_title" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showlocate == 1) :
+			?>
+			<th id="jem_location" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showcity == 1) :
+			?>
+			<th id="jem_city" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showstate == 1) :
+			?>
+			<th id="jem_state" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showcat == 1) :
+			?>
+			<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			endif;
+			?>
+		</tr>
 	</thead>
 	<tbody>
 	<?php
@@ -130,30 +130,30 @@ defined( '_JEXEC' ) or die;
 	$i = 0;
 	foreach ((array) $this->events as $row) :
 	?>
-  			<tr class="sectiontableentry<?php echo $i +1 . $this->params->get( 'pageclass_sfx' ); ?>" >
+			<tr class="sectiontableentry<?php echo $i +1 . $this->params->get( 'pageclass_sfx' ); ?>" >
 
-    			<td headers="jem_date" align="left">
-    				<strong>
-    			    <?php if (JEMHelper::isValidDate($row->dates)): ?>
-	    					<?php echo JEMOutput::formatdate($row->dates, $row->times); ?>
-	    					
-	    					<?php
-	    					if ($row->enddates && $row->enddates != $row->dates) :
-	    						echo ' - '.JEMOutput::formatdate($row->enddates, $row->endtimes);
-	    					endif;
-	    					?>
-    					<?php else: ?>
-    						<?php echo JText::_('COM_JEM_OPEN_DATE'); ?>
-    					<?php endif; ?>
-    				</strong>
-    				
+				<td headers="jem_date" align="left">
+					<strong>
+					<?php if (JEMHelper::isValidDate($row->dates)): ?>
+							<?php echo JEMOutput::formatdate($row->dates, $row->times); ?>
+
+							<?php
+							if ($row->enddates && $row->enddates != $row->dates) :
+								echo ' - '.JEMOutput::formatdate($row->enddates, $row->endtimes);
+							endif;
+							?>
+						<?php else: ?>
+							<?php echo JText::_('COM_JEM_OPEN_DATE'); ?>
+						<?php endif; ?>
+					</strong>
+
 					<?php
 					if ($this->jemsettings->showtime == 1) :
 					?>
 						<br />
 						<?php
 						echo JEMOutput::formattime($row->dates, $row->times);
-						
+
 						if ($row->endtimes) :
 							echo ' - '.JEMOutput::formattime($row->enddates, $row->endtimes);
 						endif;
@@ -231,7 +231,7 @@ defined( '_JEXEC' ) or die;
 
 						<?php
 						endif;
-						
+
 						$ix++;
 						if ($ix != $nr) :
 							echo ', ';
@@ -245,8 +245,8 @@ defined( '_JEXEC' ) or die;
 
 			</tr>
 
-  		<?php
-  		$i = 1 - $i;
+		<?php
+		$i = 1 - $i;
 		endforeach;
 		endif;
 		?>
@@ -260,10 +260,10 @@ defined( '_JEXEC' ) or die;
 </form>
 
 <div class="pagination">
-  <?php echo $this->events_pagination->getPagesLinks(); ?>
+	<?php echo $this->events_pagination->getPagesLinks(); ?>
 </div>
 
 <p class="pagescounter">
-  <?php echo $this->events_pagination->getPagesCounter(); ?>
+	<?php echo $this->events_pagination->getPagesCounter(); ?>
 </p>
 <?php endif; ?>

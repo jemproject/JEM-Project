@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -33,45 +33,45 @@ jimport('joomla.application.component.view');
  */
 class JEMViewMy extends JViewLegacy
 {
-    /**
-     * Creates the MyItems View
-     *
-     * @since 1.0
-     */
-    function display($tpl = null)
-    {
-        $app =  JFactory::getApplication();
+	/**
+	 * Creates the MyItems View
+	 *
+	 * @since 1.0
+	 */
+	function display($tpl = null)
+	{
+		$app =  JFactory::getApplication();
 
-        //initialize variables
-        $document 		=  JFactory::getDocument();
-        $jemsettings 	=  JEMHelper::config();
-        $menu 			=  $app->getMenu();
-        $item 			= $menu->getActive();
-        $params 		=  $app->getParams();
-        $uri 			=  JFactory::getURI();
-        $user			= JFactory::getUser();
-        $pathway 		=  $app->getPathWay();
-        
-        //redirect if not logged in
-        if ( !$user->get('id') ) {
-        	$app->redirect( $_SERVER['HTTP_REFERER'], JText::_('COM_JEM_NEED_LOGGED_IN'), 'error' );
-        }
+		//initialize variables
+		$document 		=  JFactory::getDocument();
+		$jemsettings 	=  JEMHelper::config();
+		$menu 			=  $app->getMenu();
+		$item 			= $menu->getActive();
+		$params 		=  $app->getParams();
+		$uri 			=  JFactory::getURI();
+		$user			= JFactory::getUser();
+		$pathway 		=  $app->getPathWay();
 
-        //add css file
-        $document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
-        $document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		//redirect if not logged in
+		if ( !$user->get('id') ) {
+			$app->redirect( $_SERVER['HTTP_REFERER'], JText::_('COM_JEM_NEED_LOGGED_IN'), 'error' );
+		}
 
-        // get variables
-        $limitstart = JRequest::getVar('limitstart', 0, '', 'int');
-        $limit 		= $app->getUserStateFromRequest('com_jem.my.limit', 'limit', $params->def('display_num', 5), 'int');
-        $task 		= JRequest::getWord('task');
-        $pop 		= JRequest::getBool('pop');
+		//add css file
+		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
-        //get data from model
+		// get variables
+		$limitstart = JRequest::getVar('limitstart', 0, '', 'int');
+		$limit 		= $app->getUserStateFromRequest('com_jem.my.limit', 'limit', $params->def('display_num', 5), 'int');
+		$task 		= JRequest::getWord('task');
+		$pop 		= JRequest::getBool('pop');
+
+		//get data from model
 		if($params->get('showmyevents')) {
-        	$events 	=  $this->get('Events');
+			$events 	=  $this->get('Events');
 			$events_pagination 	=  $this->get('EventsPagination');
-			
+
 			//are events available?
 		if (!$events) {
 			$noevents = 1;
@@ -79,119 +79,121 @@ class JEMViewMy extends JViewLegacy
 			$noevents = 0;
 		}
 
-			
 		}
 		if($params->get('showmyvenues')) {
-       		$venues 	=  $this->get('Venues');
+			$venues 	=  $this->get('Venues');
 			$venues_pagination 	=  $this->get('VenuesPagination');
 		}
 		if($params->get('showmyregistrations')) {
-       		$attending 	=  $this->get('Attending');
-        	$attending_pagination 	=  $this->get('AttendingPagination');
+			$attending 	=  $this->get('Attending');
+			$attending_pagination 	=  $this->get('AttendingPagination');
 		}
-		
-        //params
-        $params->def('page_title', $item->title);
 
-        if ($pop)
-        {//If printpopup set true
-            $params->set('popup', 1);
-        }
+		//params
+		$params->def('page_title', $item->title);
 
-        //pathway
-        $pathway->setItemName(1, $item->title);
+		if ($pop)
+		{//If printpopup set true
+			$params->set('popup', 1);
+		}
 
-        //Set Page title
+		//pathway
+		$pathway->setItemName(1, $item->title);
 
-        $pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_ITEMS'));
-        $document->setTitle($pagetitle);
-        $document->setMetaData('title', $pagetitle);
+		//Set Page title
 
-        //create select lists
-        $lists = $this->_buildSortLists();
+		$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_ITEMS'));
+		$document->setTitle($pagetitle);
+		$document->setMetaData('title', $pagetitle);
 
-        if ($lists['filter'])
-        {
-            //$uri->setVar('filter', JRequest::getString('filter'));
-            //$filter   = $mainframe->getUserStateFromRequest('com_jem.jem.filter', 'filter', '', 'string');
-            $uri->setVar('filter', $lists['filter']);
-            $uri->setVar('filter_type', JRequest::getString('filter_type'));
-        } else
-        {
-            $uri->delVar('filter');
-            $uri->delVar('filter_type');
-        }
+		//create select lists
+		$lists = $this->_buildSortLists();
 
-        $this->action					= $uri->toString();
+		if ($lists['filter'])
+		{
+			//$uri->setVar('filter', JRequest::getString('filter'));
+			//$filter   = $mainframe->getUserStateFromRequest('com_jem.jem.filter', 'filter', '', 'string');
+			$uri->setVar('filter', $lists['filter']);
+			$uri->setVar('filter_type', JRequest::getString('filter_type'));
+		} else
+		{
+			$uri->delVar('filter');
+			$uri->delVar('filter_type');
+		}
 
-        $this->events					= $events;
-        $this->venues					= $venues;
-        $this->attending				= $attending;
-        $this->task						= $task;
-        //$this->print_link				= $print_link;
-        $this->params					= $params;
-        //$this->dellink					= $dellink;
-        $this->events_pagination		= $events_pagination;
-        $this->venues_pagination		= $venues_pagination;
-        $this->attending_pagination		= $attending_pagination;
-        $this->jemsettings				= $jemsettings;
-        $this->pagetitle				= $pagetitle;
-        // $this->user					= $user;
-      
-        $this->lists 					= $lists;
-        $this->noevents					= $noevents;
+		$this->action					= $uri->toString();
 
-        parent::display($tpl);
+		$this->events					= $events;
+		$this->venues					= $venues;
+		$this->attending				= $attending;
+		$this->task						= $task;
+		//$this->print_link				= $print_link;
+		$this->params					= $params;
+		//$this->dellink					= $dellink;
+		$this->events_pagination		= $events_pagination;
+		$this->venues_pagination		= $venues_pagination;
+		$this->attending_pagination		= $attending_pagination;
+		$this->jemsettings				= $jemsettings;
+		$this->pagetitle				= $pagetitle;
+		// $this->user					= $user;
 
-    }
+		$this->lists 					= $lists;
+		$this->noevents					= $noevents;
 
-    /**
-     * Method to build the sortlists
-     *
-     * @access private
-     * @return array
-     * @since 0.9
-     */
-    function _buildSortLists()
-    {
-        $jemsettings =  JEMHelper::config();
+		parent::display($tpl);
 
-        $filter_order = JRequest::getCmd('filter_order', 'a.dates');
-        $filter_order_Dir = JRequest::getWord('filter_order_Dir', 'ASC');
+	}
 
-        $filter = $this->escape(JRequest::getString('filter'));
-        $filter_type = JRequest::getString('filter_type');
+	/**
+	 * Method to build the sortlists
+	 *
+	 * @access private
+	 * @return array
+	 * @since 0.9
+	 */
+	function _buildSortLists()
+	{
+		$jemsettings =  JEMHelper::config();
 
-        $sortselects = array ();
-        if ($jemsettings->showtitle == 1)
-        {
-            $sortselects[] = JHTML::_('select.option', 'title', $jemsettings->titlename);
-        }
-        if ($jemsettings->showlocate == 1)
-        {
-            $sortselects[] = JHTML::_('select.option', 'venue', $jemsettings->locationname);
-        }
-        if ($jemsettings->showcity == 1)
-        {
-            $sortselects[] = JHTML::_('select.option', 'city', $jemsettings->cityname);
-        }
-		
-        if ($jemsettings->showcat)
-        {
-            $sortselects[] = JHTML::_('select.option', 'type', $jemsettings->catfroname);
-        }
-		
-        $sortselect = JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
+		$filter_order = JRequest::getCmd('filter_order', 'a.dates');
+		$filter_order_Dir = JRequest::getWord('filter_order_Dir', 'ASC');
 
-        $lists['order_Dir'] = $filter_order_Dir;
-        $lists['order'] = $filter_order;
-        $lists['filter'] = $filter;
-        $lists['filter_types'] = $sortselect;
+		$filter = $this->escape(JRequest::getString('filter'));
+		$filter_type = JRequest::getString('filter_type');
 
-        return $lists;
-    }
-    
-    /**
+		$sortselects = array ();
+		if ($jemsettings->showtitle == 1)
+		{
+			$sortselects[] = JHTML::_('select.option', 'title', JText::_('COM_JEM_TABLE_TITLE'));
+		}
+		if ($jemsettings->showlocate == 1)
+		{
+			$sortselects[] = JHTML::_('select.option', 'venue', JText::_('COM_JEM_TABLE_LOCATION'));
+		}
+		if ($jemsettings->showcity == 1)
+		{
+			$sortselects[] = JHTML::_('select.option', 'city', JText::_('COM_JEM_TABLE_CITY'));
+		}
+		if ($jemsettings->showcat == 1)
+		{
+			$sortselects[] = JHTML::_('select.option', 'type', JText::_('COM_JEM_TABLE_CATEGORY'));
+		}
+		if ($jemsettings->showstate == 1)
+		{
+			$sortselects[] = JHTML::_('select.option', 'city', JText::_('COM_JEM_TABLE_STATE'));
+		}
+
+		$sortselect = JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
+
+		$lists['order_Dir'] = $filter_order_Dir;
+		$lists['order'] = $filter_order;
+		$lists['filter'] = $filter;
+		$lists['filter_types'] = $sortselect;
+
+		return $lists;
+	}
+
+	/**
 	 * Manipulate Data
 	 *
 	 * @access public
@@ -205,21 +207,18 @@ class JEMViewMy extends JViewLegacy
 		if (!$count) {
 			return;
 		}
-				
+
 		$k = 0;
 		foreach($this->events as $key => $row)
 		{
 			$row->odd   = $k;
-			
+
 			$this->events[$key] = $row;
 			$k = 1 - $k;
 		}
 
 		return $this->events;
 	}
-    
-    
-    
-    
+
 }
 ?>

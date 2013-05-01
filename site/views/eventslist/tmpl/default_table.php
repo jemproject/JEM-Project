@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
-
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -85,48 +85,48 @@ defined( '_JEXEC' ) or die;
 	</colgroup>
 
 	<thead>
-			<tr>
+		<tr>
 			<?php
 			if ($this->jemsettings->showeventimage == 1) :
 			?>
-			<th id="jem_eventimage" class="sectiontableheader" align="left"><?php echo $this->jemsettings->eventimagename; ?></th>
-				<?php
+			<th id="jem_eventimage" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_EVENTIMAGE'); ?></th>
+			<?php
 			endif;
 			?>
-			<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->datename), 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				if ($this->jemsettings->showtitle == 1) :
-				?>
-				<th id="jem_title" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->titlename), 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showlocate == 1) :
-				?>
-				<th id="jem_location" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->locationname), 'l.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showcity == 1) :
-				?>
-				<th id="jem_city" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->cityname), 'l.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showstate == 1) :
-				?>
-				<th id="jem_state" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->statename), 'l.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showcat == 1) :
-				?>
-				<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->catfroname), 'c.catname', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showatte == 1) :
-				?>
-				<th id="jem_atte" class="sectiontableheader" align="center"><?php echo $this->escape($this->jemsettings->attename); ?></th>
-				<?php
-				endif;
-				?>
-			</tr>
+			<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			if ($this->jemsettings->showtitle == 1) :
+			?>
+			<th id="jem_title" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showlocate == 1) :
+			?>
+			<th id="jem_location" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showcity == 1) :
+			?>
+			<th id="jem_city" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showstate == 1) :
+			?>
+			<th id="jem_state" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showcat == 1) :
+			?>
+			<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showatte == 1) :
+			?>
+			<th id="jem_atte" class="sectiontableheader" align="center"><?php echo JText::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
+			<?php
+			endif;
+			?>
+		</tr>
 	</thead>
 
 	<tbody>
@@ -154,7 +154,7 @@ defined( '_JEXEC' ) or die;
 						if ($row->datimage) :
 						$dimage = JEMImage::flyercreator($row->datimage, 'event');
 						echo JEMOutput::flyer( $row, $dimage, 'event' );
-				else :
+						else :
 						echo JHTML::_('image', 'media/com_jem/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => ''));
 						endif;
 

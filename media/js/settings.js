@@ -4,7 +4,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -29,8 +29,8 @@ function changeoldMode()
 			break;
 			default:
 				document.getElementById('old').style.display = '';
-		} // switch
-	} // if
+		}
+	}
 }
 
 function changeintegrateMode()
@@ -43,8 +43,8 @@ function changeintegrateMode()
 				break;
 			default:
 				document.getElementById('integrate').style.display = '';
-		} // switch
-	} // if
+		}
+	}
 }
 
 function changegdMode(mode)
@@ -56,8 +56,8 @@ function changegdMode(mode)
 				break;
 			default:
 				document.getElementById('gd1').style.display = '';
-		} // switch
-	} // if
+		}
+	}
 }
 
 function changemapMode()
@@ -80,8 +80,8 @@ function changemapMode()
 			default:
 				document.getElementById('map24').style.display = '';
 				document.getElementById('gapikey').style.display = '';
-		} // switch
-	} // if
+		}
+	}
 }
 
 function changetitleMode(mode)
@@ -91,13 +91,11 @@ function changetitleMode(mode)
 			case 0:
 				document.getElementById('title1').style.display = 'none';
 				document.adminForm.titlewidth.value='';
-				document.getElementById('title2').style.display = 'none';
 				break;
 			default:
 				document.getElementById('title1').style.display = '';
-				document.getElementById('title2').style.display = '';
-		} // switch
-	} // if
+		}
+	}
 }
 
 function changelocateMode(mode)
@@ -108,14 +106,12 @@ function changelocateMode(mode)
 				document.getElementById('locate1').style.display = 'none';
 				document.adminForm.locationwidth.value='';
 				document.getElementById('locate2').style.display = 'none';
-				document.getElementById('locate3').style.display = 'none';
 				break;
 			default:
 				document.getElementById('locate1').style.display = '';
 				document.getElementById('locate2').style.display = '';
-				document.getElementById('locate3').style.display = '';
-		} // switch
-	} // if
+		}
+	}
 }
 
 function changecityMode(mode)
@@ -125,13 +121,11 @@ function changecityMode(mode)
 			case 0:
 				document.getElementById('city1').style.display = 'none';
 				document.adminForm.citywidth.value='';
-				document.getElementById('city2').style.display = 'none';
 				break;
 			default:
 				document.getElementById('city1').style.display = '';
-				document.getElementById('city2').style.display = '';
-		} // switch
-	} // if
+		}
+	}
 }
 
 function changestateMode(mode)
@@ -141,13 +135,11 @@ function changestateMode(mode)
 			case 0:
 				document.getElementById('state1').style.display = 'none';
 				document.adminForm.statewidth.value='';
-				document.getElementById('state2').style.display = 'none';
 				break;
 			default:
 				document.getElementById('state1').style.display = '';
-				document.getElementById('state2').style.display = '';
-		} // switch
-	} // if
+		}
+	}
 }
 
 function changecatMode(mode)
@@ -158,14 +150,12 @@ function changecatMode(mode)
 				document.getElementById('cat1').style.display = 'none';
 				document.adminForm.catfrowidth.value='';
 				document.getElementById('cat2').style.display = 'none';
-				document.getElementById('cat3').style.display = 'none';
 				break;
 			default:
 				document.getElementById('cat1').style.display = '';
 				document.getElementById('cat2').style.display = '';
-				document.getElementById('cat3').style.display = '';
-		} // switch
-	} // if
+		}
+	}
 }
 
 function changeatteMode(mode)
@@ -175,13 +165,13 @@ function changeatteMode(mode)
 			case 0:
 				document.getElementById('atte1').style.display = 'none';
 				document.adminForm.attewidth.value='';
-				document.getElementById('atte2').style.display = 'none';				
+				document.getElementById('atte2').style.display = 'none';
 				break;
 			default:
 				document.getElementById('atte1').style.display = '';
-				document.getElementById('atte2').style.display = '';				
-		} // switch
-	} // if
+				document.getElementById('atte2').style.display = '';
+		}
+	}
 }
 
 function changeregMode()
@@ -194,8 +184,8 @@ function changeregMode()
 				break;
 			default:
 				document.getElementById('froreg').style.display = '';
-		} // switch
-	} // if
+		}
+	}
 }
 
 document.switcher = null;
@@ -203,22 +193,22 @@ if (MooTools.version == '1.11') {
 
 	Window.onDomReady(function(){
 
-		toggler = $('submenu')
-  	element = $('elconfig-document')
-  	if(element) {
-  		document.switcher = new JSwitcher(toggler, element, {cookieName: toggler.getAttribute('class')});
-  	}
+		toggler = $('submenu');
+		element = $('elconfig-document');
+		if(element) {
+			document.switcher = new JSwitcher(toggler, element, {cookieName: toggler.getAttribute('class')});
+		}
 
 	});
 
 } else {
 	window.addEvent('domready', function() {
 
-		toggler = $('submenu')
-  	element = $('elconfig-document')
-  	if(element) {
-  		document.switcher = new JSwitcher(toggler, element, {cookieName: toggler.getAttribute('class')});
-  	}
+		toggler = $('submenu');
+		element = $('elconfig-document');
+		if(element) {
+			document.switcher = new JSwitcher(toggler, element, {cookieName: toggler.getAttribute('class')});
+		}
 
 	});
 

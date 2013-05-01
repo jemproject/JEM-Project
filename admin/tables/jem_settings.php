@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -52,7 +52,7 @@ class jem_settings extends JTable
 	/** @var string */
 	var $map24id 			= null;
 	/** @var int */
-	var $gmapkey	 		= null;
+	var $gmapkey			= null;
 	/** @var string */
 	var $tablewidth 		= null;
 	/** @var string */
@@ -65,16 +65,6 @@ class jem_settings extends JTable
 	var $locationwidth 		= null;
 	/** @var string */
 	var $citywidth 			= null;
-	/** @var string */
-	var $datename 			= null;
-	/** @var string */
-	var $titlename 			= null;
-	/** @var string */
-	var $infobuttonname 	= null;
-	/** @var string */
-	var $locationname 		= null;
-	/** @var string */
-	var $cityname 			= null;
 	/** @var string */
 	var $formatdate 		= null;
 	/** @var string */
@@ -117,8 +107,6 @@ class jem_settings extends JTable
 	var $showcat 			= "0";
 	/** @var int */
 	var $catfrowidth 		= "";
-	/** @var string */
-	var $catfroname 		= null;
 	/** @var int */
 	var $evdelrec 			= "1";
 	/** @var int */
@@ -168,13 +156,11 @@ class jem_settings extends JTable
 	/** @var int */
 	var $showstate 			= "0";
 	/** @var string */
-	var $statename 			= null;
-	/** @var string */
 	var $statewidth 		= null;
 	/** @var int */
-	var $regname	 		= null;
+	var $regname			= null;
 	/** @var int */
-	var $storeip	 		= null;
+	var $storeip			= null;
 	/** @var int */
 	var $commentsystem		= 0;
 	/** @var string */
@@ -186,22 +172,18 @@ class jem_settings extends JTable
 	/** @var string */
 	var $tld 	= 0;
 	/**  */
-    var $icslimit           = 0;
+	var $icslimit			= 0;
 	/** @var int */
-	
-	 var $display_num    = 0;
-    var $cat_num    = 0;
-    var $filter    = 0;
-var $display    = 0;
-var $icons    = 0;
-var $show_print_icon    = 0;
-var $show_email_icon    = 0;
-var $events_ical    = 0;
 
-	
-	
-	
-	
+	var $display_num		= 0;
+	var $cat_num			= 0;
+	var $filter				= 0;
+	var $display			= 0;
+	var $icons				= 0;
+	var $show_print_icon	= 0;
+	var $show_email_icon	= 0;
+	var $events_ical		= 0;
+
 
 	function jem_settings(& $db) {
 		parent::__construct('#__jem_settings', 'id', $db);

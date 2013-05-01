@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -60,9 +60,9 @@ defined( '_JEXEC' ) or die;
 <?php endif; ?>
 
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
-	
+
 	<colgroup>
-		<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
+			<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 		<?php if ($this->jemsettings->showtitle == 1) : ?>
 			<col width="<?php echo $this->jemsettings->titlewidth; ?>" class="jem_col_title" />
 		<?php endif; ?>
@@ -81,36 +81,36 @@ defined( '_JEXEC' ) or die;
 	</colgroup>
 
 	<thead>
-			<tr>
-				<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->datename), 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				if ($this->jemsettings->showtitle == 1) :
-				?>
-				<th id="jem_title" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->titlename), 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showlocate == 1) :
-				?>
-				<th id="jem_location" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->locationname), 'l.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showcity == 1) :
-				?>
-				<th id="jem_city" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->cityname), 'l.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showstate == 1) :
-				?>
-				<th id="jem_state" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', $this->escape($this->jemsettings->statename), 'l.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<?php
-				endif;
-				if ($this->jemsettings->showcat == 1) :
-				?>
-				<th id="jem_category" class="sectiontableheader" align="left"><?php echo $this->escape($this->jemsettings->catfroname); ?></th>
-				<?php
-				endif;
-				?>
-			</tr>
+		<tr>
+			<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			if ($this->jemsettings->showtitle == 1) :
+			?>
+			<th id="jem_title" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showlocate == 1) :
+			?>
+			<th id="jem_location" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showcity == 1) :
+			?>
+			<th id="jem_city" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showstate == 1) :
+			?>
+			<th id="jem_state" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showcat == 1) :
+			?>
+			<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<?php
+			endif;
+			?>
+		</tr>
 	</thead>
 	<tbody>
 	<?php
@@ -124,27 +124,27 @@ defined( '_JEXEC' ) or die;
 
 	foreach ($this->rows as $row) :
 		?>
-  			<tr class="sectiontableentry<?php echo ($row->odd +1 ) . $this->params->get( 'pageclass_sfx' ); ?>" >
+			<tr class="sectiontableentry<?php echo ($row->odd +1 ) . $this->params->get( 'pageclass_sfx' ); ?>" >
 
-    			<td headers="jem_date" align="left">
-    				<strong>
-    			    <?php if (JEMHelper::isValidDate($row->dates)): ?>
-	    					<?php echo JEMOutput::formatdate($row->dates, $row->times); ?>
-	    					
-	    					<?php
-	    					if ($row->enddates && $row->enddates != $row->dates) :
-	    						echo ' - '.JEMOutput::formatdate($row->enddates, $row->endtimes);
-	    					endif;
-	    					?>
-    					<?php else: ?>
-    					<?php echo JText::_('COM_JEM_OPEN_DATE'); ?>
-    					<?php endif; ?>
-    				</strong>
+				<td headers="jem_date" align="left">
+					<strong>
+					<?php if (JEMHelper::isValidDate($row->dates)): ?>
+							<?php echo JEMOutput::formatdate($row->dates, $row->times); ?>
+
+							<?php
+							if ($row->enddates && $row->enddates != $row->dates) :
+								echo ' - '.JEMOutput::formatdate($row->enddates, $row->endtimes);
+							endif;
+							?>
+						<?php else: ?>
+						<?php echo JText::_('COM_JEM_OPEN_DATE'); ?>
+						<?php endif; ?>
+					</strong>
 					<?php if ($this->jemsettings->showtime == 1) : ?>
 						<br />
 						<?php
 						echo JEMOutput::formattime($row->dates, $row->times);
-						
+
 						if ($row->endtimes) :
 							echo ' - '.JEMOutput::formattime($row->enddates, $row->endtimes);
 						endif;
@@ -202,29 +202,29 @@ defined( '_JEXEC' ) or die;
 				endif;
 
 				if ($this->jemsettings->showcat == 1) : ?>
-          <td headers="jem_category" align="left" valign="top">
-					<?php 
-		        $nr = count($row->categories);
-		        $ix = 0; 
-		        foreach ($row->categories as $key => $category) : ?>
-		          <?php if ($this->jemsettings->catlinklist == 1): ?>					    
-                <a href="<?php echo JRoute::_('index.php?view=categoryevents&id='.$category->catslug); ?>">
-                  <?php echo $category->catname; ?>
-                </a>
-              <?php else: ?>
-                <?php echo $category->catname; ?>
-		        <?php endif;           
-			        $ix++;
-			        if ($ix != $nr) :
-			          echo ', ';
-			        endif;			        
-		        endforeach;	?>
-		        </td>
+					<td headers="jem_category" align="left" valign="top">
+					<?php
+				$nr = count($row->categories);
+				$ix = 0;
+				foreach ($row->categories as $key => $category) : ?>
+					<?php if ($this->jemsettings->catlinklist == 1): ?>
+				<a href="<?php echo JRoute::_('index.php?view=categoryevents&id='.$category->catslug); ?>">
+					<?php echo $category->catname; ?>
+				</a>
+				<?php else: ?>
+				<?php echo $category->catname; ?>
+				<?php endif;
+					$ix++;
+					if ($ix != $nr) :
+						echo ', ';
+					endif;
+				endforeach;	?>
+				</td>
 				<?php	endif; ?>
 
 			</tr>
 
-  		<?php
+		<?php
 		endforeach;
 		endif;
 		?>

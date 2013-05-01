@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -40,16 +40,16 @@ class JEMViewEventslist extends JViewLegacy
 	 */
 	function display( $tpl = null )
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		//initialize variables
-		$document 	=  JFactory::getDocument();
-		$jemsettings =  JEMHelper::config();
-		$menu		=  $app->getMenu();
-		$item    	= $menu->getActive();
-		$params 	=  $app->getParams();
-		$uri 		=  JFactory::getURI();
-		$pathway 	=  $app->getPathWay();
+		$document 	= JFactory::getDocument();
+		$jemsettings = JEMHelper::config();
+		$menu		= $app->getMenu();
+		$item		= $menu->getActive();
+		$params 	= $app->getParams();
+		$uri 		= JFactory::getURI();
+		$pathway 	= $app->getPathWay();
 
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
@@ -62,8 +62,8 @@ class JEMViewEventslist extends JViewLegacy
 		$pop		= JRequest::getBool('pop');
 
 		//get data from model
-		$rows 	=  $this->get('Data');
-		$total 	=  $this->get('Total');
+		$rows 	= $this->get('Data');
+		$total 	= $this->get('Total');
 
 		//are events available?
 		if (!$rows) {
@@ -81,7 +81,7 @@ class JEMViewEventslist extends JViewLegacy
 
 		//pathway
 		$pathway->setItemName( 1, $item->title );
-		
+
 		if ( $task == 'archive' ) {
 			$pathway->addItem(JText::_( 'COM_JEM_ARCHIVE' ), JRoute::_('index.php?view=eventslist&task=archive') );
 			$print_link = JRoute::_('index.php?view=eventslist&task=archive&tmpl=component&print=1');
@@ -90,36 +90,34 @@ class JEMViewEventslist extends JViewLegacy
 			$print_link = JRoute::_('index.php?view=eventslist&tmpl=component&print=1');
 			$pagetitle = $params->get('page_title');
 		}
-		
 
-   		//Set Page title
-        $document->setTitle($pagetitle);
-        $document->setMetaData( 'title' , $pagetitle );
-   		
-   		
+
+		//Set Page title
+		$document->setTitle($pagetitle);
+		$document->setMetaData( 'title' , $pagetitle );
+
+
 		//Check if the user has access to the form
 		$maintainer = JEMUser::ismaintainer();
 		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
-		if ($maintainer || $genaccess ) 
-		{ 
-		$dellink = 1;
+		if ($maintainer || $genaccess )
+		{
+			$dellink = 1;
 		} else {
-		$dellink = 0;	
+			$dellink = 0;
 		}
-		
-		
 
 		//add alternate feed link
-		$link    = 'index.php?option=com_jem&view=eventslist&format=feed';
+		$link	= 'index.php?option=com_jem&view=eventslist&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
-		
+
 		//create select lists
 		$lists	= $this->_buildSortLists();
-/*		
+/*
 		if ($lists['filter']) {
 			//$uri->setVar('filter', JRequest::getString('filter'));
 			//$filter		= $app->getUserStateFromRequest('com_jem.jem.filter', 'filter', '', 'string');
@@ -131,7 +129,7 @@ class JEMViewEventslist extends JViewLegacy
 		}
 */
 		// Create the pagination object
-		$pagination =  $this->get('Pagination');
+		$pagination = $this->get('Pagination');
 
 		$this->lists			= $lists;
 		$this->total			= $total;
@@ -146,7 +144,7 @@ class JEMViewEventslist extends JViewLegacy
 		$this->pagination		= $pagination;
 		$this->jemsettings		= $jemsettings;
 		$this->pagetitle		= $pagetitle;
-		
+
 		parent::display($tpl);
 
 	}
@@ -165,12 +163,12 @@ class JEMViewEventslist extends JViewLegacy
 		if (!$count) {
 			return;
 		}
-				
+
 		$k = 0;
 		foreach($this->rows as $key => $row)
 		{
 			$row->odd   = $k;
-			
+
 			$this->rows[$key] = $row;
 			$k = 1 - $k;
 		}
@@ -187,8 +185,8 @@ class JEMViewEventslist extends JViewLegacy
 	 */
 	function _buildSortLists()
 	{
-		$jemsettings =  JEMHelper::config();
-		
+		$jemsettings = JEMHelper::config();
+
 		$filter_order		= JRequest::getCmd('filter_order', 'a.dates');
 		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', 'ASC');
 
@@ -196,21 +194,21 @@ class JEMViewEventslist extends JViewLegacy
 		$filter_type		= JRequest::getString('filter_type');
 
 		$sortselects = array();
-		
+
 		if ($jemsettings->showtitle == 1) {
-			$sortselects[]	= JHTML::_('select.option', 'title', $jemsettings->titlename );
+			$sortselects[]	= JHTML::_('select.option', 'title', JText::_('COM_JEM_TABLE_TITLE'));
 		}
 		if ($jemsettings->showlocate == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'venue', $jemsettings->locationname );
+			$sortselects[] 	= JHTML::_('select.option', 'venue', JText::_('COM_JEM_TABLE_LOCATION'));
 		}
 		if ($jemsettings->showcity == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'city', $jemsettings->cityname );
+			$sortselects[] 	= JHTML::_('select.option', 'city', JText::_('COM_JEM_TABLE_CITY'));
 		}
 		if ($jemsettings->showcat == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'type', $jemsettings->catfroname );
+			$sortselects[] 	= JHTML::_('select.option', 'type', JText::_('COM_JEM_TABLE_CATEGORY'));
 		}
 		if ($jemsettings->showstate == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'state', $jemsettings->statename );
+			$sortselects[] 	= JHTML::_('select.option', 'state', JText::_('COM_JEM_TABLE_STATE'));
 		}
 
 		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
