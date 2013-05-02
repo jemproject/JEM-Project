@@ -54,7 +54,7 @@ class JEMControllerArchive extends JEMController
 		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
 
 		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseError(500, JText::_( 'Select an item to unarchive' ) );
+			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_UNARCHIVE' ) );
 		}
 
 		$model = $this->getModel('archive');
@@ -64,7 +64,7 @@ class JEMControllerArchive extends JEMController
 		}
 
 		$total = count( $cid );
-		$msg 	= $total.' '.JText::_('EVENT UNARCHIVED');
+		$msg 	= $total.' '.JText::_('COM_JEM_EVENTS_UNARCHIVED');
 
 		$this->setRedirect( 'index.php?option=com_jem&view=archive', $msg );
 	}
@@ -83,7 +83,7 @@ class JEMControllerArchive extends JEMController
 		$total = count( $cid );
 
 		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseError(500, JText::_( 'Select an item to delete' ) );
+			JError::raiseError(500, JText::_( 'COM_JEM_SELECT_ITEM_TO_DELETE' ) );
 		}
 
 		$model = $this->getModel('archive');
@@ -91,7 +91,7 @@ class JEMControllerArchive extends JEMController
 			echo "<script> alert('".$model->getError(true)."'); window.history.go(-1); </script>\n";
 		}
 
-		$msg = $total.' '.JText::_( 'EVENTS DELETED');
+		$msg = $total.' '.JText::_( 'COM_JEM_EVENTS_DELETED');
 
 		$this->setRedirect( 'index.php?option=com_jem&view=archive', $msg );
 	}

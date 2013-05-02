@@ -80,6 +80,7 @@ class JEMViewCategoryevents extends JViewLegacy
 		//does the category exist
 		if ($category->id == 0)
 		{
+			// TODO Translation
 			return JError::raiseError(404, JText::sprintf('Category #%d not found', $category->id));
 		}
 

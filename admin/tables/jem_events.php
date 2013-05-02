@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -148,15 +148,15 @@ class jem_events extends JTable
 		$titlelength = JString::strlen($this->title);
 
 		if ( $this->title == '' ) {
-			$this->_error = JText::_( 'ADD TITLE' );
-      		JError::raiseWarning('SOME_ERROR_CODE', $this->_error );
-      		return false;
+			$this->_error = JText::_('COM_JEM_ADD_TITLE');
+			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+			return false;
 		}
 
 		if ( $titlelength > 100 ) {
-      		$this->_error = JText::_( 'ERROR TITLE LONG' );
-      		JError::raiseWarning('SOME_ERROR_CODE', $this->_error );
-      		return false;
+			$this->_error = JText::_('COM_JEM_ERROR_TITLE_LONG' );
+			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+			return false;
 		}
 
 		$alias = JFilterOutput::stringURLSafe($this->title);
@@ -166,54 +166,54 @@ class jem_events extends JTable
 		}
 
 		if ($this->dates && !preg_match("/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/", $this->dates)) {
-	      	$this->_error = JText::_( 'DATE WRONG' );
-	      	JError::raiseWarning('SOME_ERROR_CODE', $this->_error );
-	      	return false;
+			$this->_error = JText::_('COM_JEM_DATE_WRONG');
+			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+			return false;
 		}
 
 		if (isset($this->enddates)) {
 			if (!preg_match("/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/", $this->enddates)) {
-				$this->_error = JText::_( 'ENDDATE WRONG FORMAT');
-				JError::raiseWarning('SOME_ERROR_CODE', $this->_error );
+				$this->_error = JText::_('COM_JEM_ENDDATE_WRONG_FORMAT');
+				JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
 				return false;
 			}
 		}
 
 /*		if (isset($this->recurrence_limit_date)) {
 			if (!preg_match("/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/", $this->recurrence_limit_date)) {
-	 		     	$this->_error = JText::_( 'WRONGRECURRENCEDATEFORMAT' );
-	 		     	JError::raiseWarning('SOME_ERROR_CODE', $this->_error );
-	 		     	return false;
+	 				$this->_error = JText::_('COM_JEM_WRONGRECURRENCEDATEFORMAT');
+	 				JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+	 				return false;
 			}
 		}
 		*/
 
 		if (isset($this->times) && $this->times) {
-   			if (!preg_match("/^[0-2][0-9]:[0-5][0-9](:[0-5][0-9])?$/", $this->times)) {
-      			$this->_error = JText::_( 'WRONGSTARTTIMEFORMAT'.': '.$this->times );
-      			JError::raiseWarning('SOME_ERROR_CODE', $this->_error );
-      			return false;
-	  		}
+			if (!preg_match("/^[0-2][0-9]:[0-5][0-9](:[0-5][0-9])?$/", $this->times)) {
+				$this->_error = JText::_( 'WRONGSTARTTIMEFORMAT'.': '.$this->times );
+				JError::raiseWarning('SOME_ERROR_CODE', $this->_error );
+				return false;
+			}
 		}
 
 		if (isset($this->endtimes) && $this->endtimes) {
-   			if (!preg_match("/^[0-2][0-9]:[0-5][0-9](:[0-5][0-9])?$/", $this->endtimes)) {
-      			$this->_error = JText::_( 'WRONGENDTIMEFORMAT' );
-      			JError::raiseWarning('SOME_ERROR_CODE', $this->_error );
-      			return false;
-	  		}
+			if (!preg_match("/^[0-2][0-9]:[0-5][0-9](:[0-5][0-9])?$/", $this->endtimes)) {
+				$this->_error = JText::_('COM_JEM_WRONGENDTIMEFORMAT');
+				JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+				return false;
+			}
 		}
 
 		//No venue or category choosen?
 		if($this->locid == '') {
-			$this->_error = JText::_( 'VENUE EMPTY');
-			JError::raiseWarning('SOME_ERROR_CODE', $this->_error );
+			$this->_error = JText::_('COM_JEM_VENUE_EMPTY');
+			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
 			return false;
 		}
 
 		return true;
 	}
-	
+
 
   /**
    * try to insert first, update if fails

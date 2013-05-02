@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -123,19 +123,19 @@ class JEMModelMy extends JModelLegacy
             {
                 $this->_events = $this->_getList($query, $pagination->limitstart, $pagination->limit);
             }
-			
+
 			$k = 0;
 			$count = count($this->_events);
 			for($i = 0; $i < $count; $i++)
 			{
 				$item = $this->_events[$i];
 				$item->categories = $this->getCategories($item->eventid);
-				
+
 				//remove events without categories (users have no access to them)
 				if (empty($item->categories)) {
 					unset($this->_events[$i]);
-				} 
-				
+				}
+
 				$k = 1 - $k;
 			}
         }
@@ -166,19 +166,19 @@ class JEMModelMy extends JModelLegacy
             {
                 $this->_attending = $this->_getList($query, $pagination->limitstart, $pagination->limit);
             }
-			
+
 			$k = 0;
 			$count = count($this->_attending);
 			for($i = 0; $i < $count; $i++)
 			{
 				$item = $this->_attending[$i];
 				$item->categories = $this->getCategories($item->eventid);
-				
+
 				//remove events without categories (users have no access to them)
 				if (empty($item->categories)) {
 					unset($this->_attending[$i]);
-				} 
-				
+				}
+
 				$k = 1 - $k;
 			}
         }
@@ -406,10 +406,10 @@ class JEMModelMy extends JModelLegacy
         $filter_order = $this->getState('filter_order');
         $filter_order_dir = $this->getState('filter_order_dir');
 
-        
+
         $filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
 		$filter_order_dir	= JFilterInput::getinstance()->clean($filter_order_dir, 'word');
-        
+
         $orderby = ' ORDER BY '.$filter_order.' '.$filter_order_dir.', a.dates, a.times';
 
         return $orderby;
@@ -523,18 +523,18 @@ class JEMModelMy extends JModelLegacy
         {
             $where = ' WHERE a.published = 1';
         }
-		
+
 		//limit output so only future events the user attends will be shown
 		if ($params->get('filtermyregs')) {
 			$where .= ' AND DATE_SUB(NOW(), INTERVAL '.(int)$params->get('myregspast').' DAY) < (IF (a.enddates <> '.$nulldate.', a.enddates, a.dates))';
 		}
-		
+
         // then if the user is attending the event
         $where .= ' AND r.uid = '.$this->_db->Quote($user->id);
 
         return $where;
     }
-	
+
 	function getCategories($id)
 	{
 		$user		=  JFactory::getUser();
@@ -547,7 +547,7 @@ class JEMModelMy extends JModelLegacy
                    $gid = (int) 1;    //viewlevel Public
                }
            }
-		
+
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
 				. ' FROM #__jem_categories AS c'
@@ -556,7 +556,7 @@ class JEMModelMy extends JModelLegacy
 				. ' AND c.published = 1'
 				. ' AND c.access  <= '.$gid;
 				;
-	
+
 		$this->_db->setQuery( $query );
 
 		$this->_cats = $this->_db->loadObjectList();
@@ -728,7 +728,7 @@ class MyAttendingPagination extends JPagination
         // Initialize variables
         $html = "<div class=\"list-footer\">\n";
 
-        $html .= "\n<div class=\"limit\">".JText::_('Display Num').$list['limitfield']."</div>";
+        $html .= "\n<div class=\"limit\">".JText::_('COM_JEM_DISPLAY_NUM').$list['limitfield']."</div>";
         $html .= $list['pageslinks'];
         $html .= "\n<div class=\"counter\">".$list['pagescounter']."</div>";
 

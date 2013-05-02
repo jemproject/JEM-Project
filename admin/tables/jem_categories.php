@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -84,11 +84,11 @@ class jem_categories extends JTable
 	{
 		// Not typed in a category name?
 		if (trim( $this->catname ) == '') {
-			$this->_error = JText::_( 'ADD NAME CATEGORY' );
-			JError::raiseWarning('SOME_ERROR_CODE', $this->_error );
+			$this->_error = JText::_('COM_JEM_ADD_NAME_CATEGORY');
+			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
 			return false;
 		}
-		
+
 		$alias = JFilterOutput::stringURLSafe($this->catname);
 
 		if(empty($this->alias) || $this->alias === $alias ) {
@@ -102,14 +102,14 @@ class jem_categories extends JTable
 
 		$xid = intval($this->_db->loadResult());
 		if ($xid && $xid != intval($this->id)) {
-			JError::raiseWarning('SOME_ERROR_CODE', JText::sprintf('CATEGORY NAME ALREADY EXIST', $this->catname));
+			JError::raiseWarning('SOME_ERROR_CODE', JText::sprintf('COM_JEM_CATEGORY_NAME_ALREADY_EXIST', $this->catname));
 			return false;
 		}
-    */  
+    */
 
 		return true;
 	}
-	
+
 	/**
 	 * try to insert first, update if fails
 	 *
@@ -130,7 +130,7 @@ class jem_categories extends JTable
 			return false;
 		}
 		return true;
-	}	
+	}
 
 	/**
 	 * Inserts a row into a table based on an objects properties, ignore if already exists

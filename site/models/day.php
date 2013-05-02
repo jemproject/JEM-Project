@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -46,7 +46,7 @@ class JEMModelDay extends JModelLegacy
 	 * @var integer
 	 */
 	var $_total = null;
-	
+
 	/**
 	 * Date
 	 *
@@ -85,7 +85,7 @@ class JEMModelDay extends JModelLegacy
 		// Get the filter request variables
 		$this->setState('filter_order', JRequest::getCmd('filter_order', 'a.dates'));
 		$this->setState('filter_order_dir', JRequest::getWord('filter_order_Dir', 'ASC'));
-			
+
 		$rawday = JRequest::getInt('id', 0, 'request');
 		$this->setDate($rawday);
 	}
@@ -102,39 +102,39 @@ class JEMModelDay extends JModelLegacy
 
 		// Get the paramaters of the active menu item
 		$params 	=  $app->getParams('com_jem');
-		
+
 		//0 means we have a direct request from a menuitem and without any parameters (eg: calendar module)
 		if ($date == 0) {
-			
+
 			$dayoffset	= $params->get('days');
 			$timestamp	= mktime(0, 0, 0, date("m"), date("d") + $dayoffset, date("Y"));
 			$date		= strftime('%Y-%m-%d', $timestamp);
-			
+
 		//a valid date  has 8 characters
 		} elseif (strlen($date) == 8) {
-			
+
 			$year 	= substr($date, 0, -4);
 			$month	= substr($date, 4, -2);
 			$tag	= substr($date, 6);
-			
+
 			//check if date is valid
 			if (checkdate($month, $tag, $year)) {
-				
+
 				$date = $year.'-'.$month.'-'.$tag;
-				
+
 			} else {
-				
+
 				//date isn't valid raise notice and use current date
 				$date = date('Ymd');
-				JError::raiseNotice( 'SOME_ERROR_CODE', JText::_('INVALID DATE REQUESTED USING CURRENT') );
-				
+				JError::raiseNotice( 'SOME_ERROR_CODE', JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'));
+
 			}
-			
+
 		} else {
 			//date isn't valid raise notice and use current date
 			$date = date('Ymd');
-			JError::raiseNotice( 'SOME_ERROR_CODE', JText::_('INVALID DATE REQUESTED USING CURRENT') );
-			
+			JError::raiseNotice( 'SOME_ERROR_CODE', JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'));
+
 		}
 
 		$this->_date = $date;
@@ -161,19 +161,19 @@ class JEMModelDay extends JModelLegacy
 				$pagination = $this->getPagination();
 				$this->_data = $this->_getList( $query, $pagination->limitstart, $pagination->limit );
 			}
-			
+
 			$k = 0;
 			$count = count($this->_data);
 			for($i = 0; $i < $count; $i++)
 			{
 				$item = $this->_data[$i];
 				$item->categories = $this->getCategories($item->id);
-				
+
 				//remove events without categories (users have no access to them)
 				if (empty($item->categories)) {
 					unset($this->_data[$i]);
-				} 
-				
+				}
+
 				$k = 1 - $k;
 			}
 		}
@@ -254,7 +254,7 @@ class JEMModelDay extends JModelLegacy
 	{
 		$filter_order		= $this->getState('filter_order');
 		$filter_order_dir	= $this->getState('filter_order_dir');
-		
+
 		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
 		$filter_order_dir	= JFilterInput::getinstance()->clean($filter_order_dir, 'word');
 
@@ -273,7 +273,7 @@ class JEMModelDay extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
         $jemsettings =  JEMHelper::config();
-		
+
 		$user		=  JFactory::getUser();
 		if (JFactory::getUser()->authorise('core.manage')) {
            $gid = (int) 3;      //viewlevel Special
@@ -291,7 +291,7 @@ class JEMModelDay extends JModelLegacy
 
 		// First thing we need to do is to select only published events
 		$where = ' WHERE a.published = 1';
-		
+
 		// Second is to only select events of the specified day
 		$where .= ' AND (\''.$this->_date.'\' BETWEEN (a.dates) AND (IF (a.enddates >= a.dates, a.enddates, a.dates)) OR \''.$this->_date.'\' = a.dates)';
 
@@ -329,7 +329,7 @@ class JEMModelDay extends JModelLegacy
 		}
 		return $where;
 	}
-	
+
 	/**
 	 * Return date
 	 *
@@ -340,7 +340,7 @@ class JEMModelDay extends JModelLegacy
 	{
 		return $this->_date;
 	}
-	
+
 
   /**
    * get event categories
@@ -360,7 +360,7 @@ class JEMModelDay extends JModelLegacy
                    $gid = (int) 1;    //viewlevel Public
                }
            }
-    
+
     $query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
         . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
         . ' FROM #__jem_categories AS c'
@@ -369,11 +369,11 @@ class JEMModelDay extends JModelLegacy
         . ' AND c.published = 1'
         . ' AND c.access  <= '.$gid;
         ;
-  
+
     $this->_db->setQuery( $query );
 
     $this->_cats = $this->_db->loadObjectList();
-    
+
     return $this->_cats;
   }
 }

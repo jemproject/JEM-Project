@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -41,7 +41,7 @@ class JEMViewEventelement extends JViewLegacy {
 		$db			=  JFactory::getDBO();
 		$jemsettings =  JEMAdmin::config();
 		$document	=  JFactory::getDocument();
-		
+
 		JHTML::_('behavior.tooltip');
 		JHTML::_('behavior.modal');
 
@@ -55,7 +55,7 @@ class JEMViewEventelement extends JViewLegacy {
 		$template 			= $app->getTemplate();
 
 		//prepare the document
-		$document->setTitle(JText::_( 'SELECTEVENT' ));
+		$document->setTitle(JText::_('COM_JEM_SELECTEVENT'));
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
 		//Get data from the model
@@ -72,10 +72,10 @@ class JEMViewEventelement extends JViewLegacy {
 
 		//Create the filter selectlist
 		$filters = array();
-		$filters[] = JHTML::_('select.option', '1', JText::_( 'EVENT TITLE' ) );
-		$filters[] = JHTML::_('select.option', '2', JText::_( 'VENUE' ) );
-		$filters[] = JHTML::_('select.option', '3', JText::_( 'CITY' ) );
-	//	$filters[] = JHTML::_('select.option', '4', JText::_( 'CATEGORY' ) );
+		$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_EVENT_TITLE'));
+		$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_VENUE'));
+		$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_CITY'));
+	//	$filters[] = JHTML::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
 
 		// search filter

@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -41,7 +41,7 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&controller=attendees&task
 	{
 		var form = document.getElementById('adminForm');
 		var validator = document.formvalidator;
-			
+
 		if (pressbutton == 'cancel') {
 			submitform( pressbutton );
 			return;
@@ -71,15 +71,15 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&controller=attendees&task
 				<input type="text" name="username" id="username" readonly="readonly" value="<?php echo $this->row->username; ?>" />
 				<input type="hidden" name="uid" id="uid" value="<?php echo $this->row->uid; ?>" />
 				<a class="usermodal" title="<?php echo JText::_('COM_JEM_SELECT_USER'); ?>" href="<?php echo $selectuser_link; ?>" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
-					<span><?php echo JText::_('Select user')?></span>
-        </a>
+					<span><?php echo JText::_('COM_JEM_SELECT_USER')?></span>
+		</a>
 			</td>
 		</tr>
 		<?php if (!$this->row->id): ?>
 		<tr>
 			<td class="key" width="150">
 				<label for="sendemail">
-					<?php echo JText::_( 'Send registration notification email' ).':'; ?>
+					<?php echo JText::_('COM_JEM_SEND_REGISTRATION_NOTIFICATION_EMAIL').':'; ?>
 				</label>
 			</td>
 			<td>

@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
@@ -109,7 +108,7 @@ class JEMModelEvent extends JModelLegacy
 					;
 			$this->_db->setQuery($query);
 			$this->_data = $this->_db->loadObject();
-			
+
 			if ($this->_data)
 			{
 				$this->_getAttachments();
@@ -152,8 +151,8 @@ class JEMModelEvent extends JModelLegacy
             $event->registra			= 0;
             $event->unregistra			= 0;
             $event->maxplaces			= 0;
-            $event->booked	  		= 0;
-            $event->waitinglist		= 0;            
+            $event->booked				= 0;
+            $event->waitinglist			= 0;
             $event->datdescription		= '';
             $event->meta_keywords		= '';
             $event->meta_description	= '';
@@ -164,19 +163,19 @@ class JEMModelEvent extends JModelLegacy
             $event->recurrence_counter 	= 0;
             $event->recurrence_byday 	= '';
             $event->datimage			= '';
-            $event->venue				= JText::_('SELECTVENUE');
+            $event->venue				= JText::_('COM_JEM_SELECTVENUE');
             $event->hits				= 0;
             $event->contactname			= null;
             $event->contactid			= null;
             $event->version				= 0;
             $event->modified			= $this->_db->getNullDate();
-            $event->attachments		= array();
+            $event->attachments			= array();
             $this->_data				= $event;
             return (boolean) $this->_data;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * load attachements to $_data
 	 * requires _data !
@@ -186,11 +185,11 @@ class JEMModelEvent extends JModelLegacy
 		$files = JEMAttachment::getAttachments('event'.$this->_data->id);
 		$this->_data->attachments = $files;
 	}
-	
+
 	function _getBooked()
 	{
-		$query = ' SELECT count(id) ' 
-		       . ' FROM #__jem_register ' 
+		$query = ' SELECT count(id) '
+		       . ' FROM #__jem_register '
 		       . ' WHERE event = ' . $this->_db->Quote($this->_data->id)
 		       . '   AND waiting = 0 '
 		       ;
@@ -260,7 +259,7 @@ class JEMModelEvent extends JModelLegacy
 		} elseif ($this->_id < 1) {
 			return false;
 		} else {
-			JError::raiseWarning( 0, 'Unable to Load Data');
+			JError::raiseWarning( 0, JText::_('COM_JEM_UNABLE_TO_LOAD_DATA'));
 			return false;
 		}
 	}
@@ -280,7 +279,7 @@ class JEMModelEvent extends JModelLegacy
 		$user		=  JFactory::getUser();
 
 		$cats 		= JRequest::getVar( 'cid', array(), 'post', 'array');
-		
+
 		$row = JTable::getInstance('jem_events', '');
 
 		// Bind the form fields to the table
@@ -288,16 +287,16 @@ class JEMModelEvent extends JModelLegacy
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 		}
-		
+
 		//get values from time selectlist and concatenate them accordingly
 		$starthours		= JRequest::getCmd( 'starthours');
 		$startminutes	= JRequest::getCmd( 'startminutes');
 		$endhours		= JRequest::getCmd( 'endhours');
 		$endminutes		= JRequest::getCmd( 'endminutes');
-		
+
 		$row->times		= $starthours.':'.$startminutes;
 		$row->endtimes	= $endhours.':'.$endminutes;
-		
+
 		// Check the metatags
 		if (JString::strlen($row->meta_description) > 255) {
 			$row->meta_description = JString::substr($row->meta_description, 0, 254);
@@ -336,7 +335,7 @@ class JEMModelEvent extends JModelLegacy
 
 			$row->author_ip 		= $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
 		}
-		
+
 		$row->version++;
 
 		// Make sure the data is valid
@@ -350,21 +349,21 @@ class JEMModelEvent extends JModelLegacy
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 		}
-		
+
 		//store cat relation
 		$query = 'DELETE FROM #__jem_cats_event_relations WHERE itemid = '.$row->id;
 		$this->_db->setQuery($query);
 		$this->_db->query();
-			
+
 		foreach($cats as $cat)
 		{
 			$query = 'INSERT INTO #__jem_cats_event_relations (`catid`, `itemid`) VALUES(' . $cat . ',' . $row->id . ')';
 			$this->_db->setQuery($query);
 			$this->_db->query();
 		}
-		
-		
-		
+
+
+
 		// attachments
 		// new ones first
 		$attachments = JRequest::getVar( 'attach', array(), 'files', 'array' );
@@ -372,7 +371,7 @@ class JEMModelEvent extends JModelLegacy
 		$attachments['description'] = JRequest::getVar( 'attach-desc', array(), 'post', 'array' );
 		$attachments['access'] = JRequest::getVar( 'attach-access', array(), 'post', 'array' );
 		JEMAttachment::postUpload($attachments, 'event'.$row->id);
-		
+
 		// and update old ones
 		$attachments = array();
 		$old['id'] = JRequest::getVar( 'attached-id', array(), 'post', 'array' );
@@ -388,10 +387,10 @@ class JEMModelEvent extends JModelLegacy
 			$attach['access'] = $old['access'][$k];
 			JEMAttachment::update($attach);
 		}
-		
-		return $row->id;		
+
+		return $row->id;
 	}
-	
+
 	/**
 	 * Fetch event hits
 	 *
@@ -403,10 +402,10 @@ class JEMModelEvent extends JModelLegacy
 		$query = 'SELECT hits FROM #__jem_events WHERE id = '.(int)$id;
 		$this->_db->setQuery($query);
 		$hits = $this->_db->loadResult();
-		
+
 		return $hits;
 	}
-	
+
 	/**
 	 * Reset hitcount
 	 *
@@ -422,7 +421,7 @@ class JEMModelEvent extends JModelLegacy
 		$row->checkin();
 		return $row->id;
 	}
-	
+
 	/**
 	 * Get assigned cats
 	 *

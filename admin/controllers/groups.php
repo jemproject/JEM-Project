@@ -53,11 +53,11 @@ class JEMControllerGroups extends JEMController
 	{
 		// Check for request forgeries
 		JRequest::checkToken() or die( 'Invalid Token' );
-		
+
 		$session 	= JFactory::getSession();
-		
+
 		$session->clear('groupform', 'com_jem');
-		
+
 		$group = JTable::getInstance('jem_groups', '');
 		$group->bind(JRequest::get('post'));
 		$group->checkin();
@@ -115,25 +115,25 @@ class JEMControllerGroups extends JEMController
 		JRequest::checkToken() or die( 'Invalid Token' );
 
 		$post 	= JRequest::get( 'post' );
-		
+
 		//sticky forms
 		$session = JFactory::getSession();
 		$session->set('groupform', $post, 'com_jem');
-				
+
 		$model = $this->getModel('group');
 
 		if ($model->store($post)) {
 
 			$link 	= 'index.php?option=com_jem&view=groups';
 			$msg	= JText::_( 'COM_JEM_GROUP_SAVED');
-			
+
 			$session->clear('groupform', 'com_jem');
-			
+
 		} else {
 
 			$link 	= 'index.php?option=com_jem&view=group';
 			$msg	= '';
-	
+
 		}
 
 		$model->checkin();
@@ -155,7 +155,7 @@ class JEMControllerGroups extends JEMController
 		$total = count( $cid );
 
 		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseError(500, JText::_( 'Select an item to delete' ) );
+			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
 		}
 
 		$model = $this->getModel('groups');

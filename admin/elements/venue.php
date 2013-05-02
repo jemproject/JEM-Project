@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -32,24 +32,18 @@ JFormHelper::loadFieldClass('list');
  * @since 1.5
  */
 
- 
+
  class JFormFieldVenue extends JFormFieldList
 {
-	
-	
-	
         var $type = 'Venue';
 
         function getInput() {
         return JElementVenue::fetchElement($this->name, $this->value, $this->element, $this->options['control']);
         }
-
 }
- 
- 
- 
- 
- 
+
+
+
 class JElementVenue extends JElement
 {
    /**
@@ -71,7 +65,7 @@ class JElementVenue extends JElement
 		if ($value) {
 			$venue->load($value);
 		} else {
-			$venue->venue = JText::_('SELECTVENUE');
+			$venue->venue = JText::_('COM_JEM_SELECTVENUE');
 		}
 
 		$js = "
@@ -87,7 +81,7 @@ class JElementVenue extends JElement
 		JHTML::_('behavior.modal', 'a.modal');
 
 		$html = "\n<div style=\"float: left;\"><input style=\"background: #ffffff;\" type=\"text\" id=\"a_name\" value=\"$venue->venue\" disabled=\"disabled\" /></div>";
-		$html .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('Select')."\"  href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('Select')."</a></div></div>\n";
+		$html .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_SELECT')."\"  href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_SELECT')."</a></div></div>\n";
 		$html .= "\n<input type=\"hidden\" id=\"a_id\" name=\"$fieldName\" value=\"$value\" />";
 
 		return $html;

@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -39,7 +39,7 @@ class JEMViewAttendee extends JViewLegacy {
 		$document	=  JFactory::getDocument();
 		$user 		=  JFactory::getUser();
 		$app 		=  JFactory::getApplication();
-		
+
 		// Load the form validation behavior
 		JHTML::_('behavior.formvalidation');
 
@@ -52,10 +52,9 @@ class JEMViewAttendee extends JViewLegacy {
 
 		//create the toolbar
 		if ( $cid ) {
-			JToolBarHelper::title( JText::_( 'EDIT ATTENDEE' ), 'users' );
-
+			JToolBarHelper::title( JText::_('COM_JEM_EDIT_ATTENDEE'), 'users');
 		} else {
-			JToolBarHelper::title( JText::_( 'ADD ATTENDEE' ), 'users' );
+			JToolBarHelper::title( JText::_('COM_JEM_ADD_ATTENDEE'), 'users');
 		}
 		JToolBarHelper::apply();
 		JToolBarHelper::save();
@@ -71,7 +70,7 @@ class JEMViewAttendee extends JViewLegacy {
 		// fail if checked out not by 'me'
 		if ($row->id) {
 //			if ($model->isCheckedOut( $user->get('id') )) {
-//				JError::raiseWarning( 'SOME_ERROR_CODE', $row->catname.' '.JText::_( 'EDITED BY ANOTHER ADMIN' ));
+//				JError::raiseWarning( 'SOME_ERROR_CODE', $row->catname.' '.JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
 //				$app->redirect( 'index.php?option=com_jem&view=attendees&id='.$event_id );
 //			}
 		}

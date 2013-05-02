@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -170,7 +170,7 @@ defined('_JEXEC') or die;
 						</td>
 						<td valign="top">
 							<input type="text" name="imagewidth" value="<?php echo $this->jemsettings->imagewidth; ?>" size="10" maxlength="10" />
-							<span class="error hasTip" title="<?php echo JText::_( 'COM_JEM_WARNING' );?>::<?php echo JText::_( 'WARNING MAX IMAGEWIDTH' ); ?>">
+							<span class="error hasTip" title="<?php echo JText::_('COM_JEM_WARNING');?>::<?php echo JText::_('COM_JEM_WARNING_MAX_IMAGEWIDTH'); ?>">
 								<?php echo $this->WarningIcon(); ?>
 							</span>
 						</td>
@@ -194,8 +194,8 @@ defined('_JEXEC') or die;
 								//is it Version two or higher? If yes let the user the choice
 								if ($gdv >= 2) {
 								?>
-									<input type="radio" id="gddisabled0" name="gddisabled" value="0" onclick="changegdMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'COM_JEM_NO' ); ?>
-									<input type="radio" id="gddisabled1" name="gddisabled" value="1" onclick="changegdMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'COM_JEM_YES' ); ?>
+									<input type="radio" id="gddisabled0" name="gddisabled" value="0" onclick="changegdMode(0)"<?php if (!$mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'JNO' ); ?>
+									<input type="radio" id="gddisabled1" name="gddisabled" value="1" onclick="changegdMode(1)"<?php if ($mode) echo ' checked="checked"'; ?>/><?php echo JText::_( 'JYES' ); ?>
 								<?php
 									$note	= JText::_( 'COM_JEM_GD_VERSION_TWO' );
 									$color	= 'green';

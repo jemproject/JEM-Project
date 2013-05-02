@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
-
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -106,7 +106,7 @@ class JEMController extends JControllerLegacy
 
 		// Must be logged in
 		if ($user->get('id') < 1) {
-			JError::raiseError( 403, JText::_('ALERTNOTAUTH') );
+			JError::raiseError( 403, JText::_('COM_JEM_ALERTNOTAUTH'));
 			return;
 		}
 

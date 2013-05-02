@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -240,23 +240,23 @@ class JEMModelVenues extends JModelLegacy
 		if ($search && $filter == 2) {
 			$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
 		}
-		
+
 		/*
 		 * Search state
 		*/
 		if ($search && $filter == 3) {
 			$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
 		}
-		
-		
+
+
 		/*
 		 * Search state
 		*/
 		if ($search && $filter == 4) {
 			$where[] = ' LOWER(l.country) LIKE \'%'.$search.'%\' ';
 		}
-		
-		
+
+
 
 		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
 
@@ -276,7 +276,7 @@ class JEMModelVenues extends JModelLegacy
 		* Get editor name
 		*/
 		$count = count($rows);
-		
+
 		for ($i=0, $n=$count; $i < $n; $i++) {
 
 			$query = 'SELECT name'
@@ -286,7 +286,7 @@ class JEMModelVenues extends JModelLegacy
 
 			$this->_db->setQuery( $query );
 			$rows[$i]->editor = $this->_db->loadResult();
-			
+
 			/*
 			* Get nr of assigned events
 			*/
@@ -294,7 +294,7 @@ class JEMModelVenues extends JModelLegacy
 				.' FROM #__jem_events'
 				.' WHERE locid = ' . (int)$rows[$i]->id
 				;
-					
+
 			$this->_db->setQuery($query);
 			$rows[$i]->assignedevents = $this->_db->loadResult();
 		}
@@ -409,11 +409,11 @@ class JEMModelVenues extends JModelLegacy
 
 		if (count( $err )) {
 			$cids 	= implode( ', ', $err );
-    		$msg 	= JText::sprintf( 'VENUE ASSIGNED EVENT', $cids );
+    		$msg 	= JText::sprintf('COM_JEM_VENUE_ASSIGNED_EVENT', $cids );
     		return $msg;
 		} else {
 			$total 	= count( $cid );
-			$msg 	= $total.' '.JText::_('VENUES DELETED');
+			$msg 	= $total.' '.JText::_('COM_JEM_VENUES_DELETED');
 			return $msg;
 		}
 	}

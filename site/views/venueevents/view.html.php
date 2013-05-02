@@ -73,6 +73,7 @@ class JEMViewVenueevents extends JViewLegacy
 		//does the venue exist?
 		if ($venue->id == 0)
 		{
+			// TODO Translation
 			return JError::raiseError( 404, JText::sprintf( 'Venue #%d not found', $venue->id ) );
 		}
 

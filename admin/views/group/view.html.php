@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -38,7 +38,7 @@ class JEMViewGroup extends JViewLegacy {
 
 		//Load pane behavior
 		jimport('joomla.html.pane');
-		
+
 		// Load the form validation behavior
 		JHTML::_('behavior.formvalidation');
 
@@ -56,7 +56,7 @@ class JEMViewGroup extends JViewLegacy {
 		//Get data from the model
 		$model				=  $this->getModel();
 		$row      			=  $this->get( 'Data');
-		
+
 		//sticky forms
 		/*$session = JFactory::getSession();
 		if ($session->has('groupform', 'com_jem')) {
@@ -71,7 +71,7 @@ class JEMViewGroup extends JViewLegacy {
 		// fail if checked out not by 'me'
 		if ($row->id) {
 			if ($model->isCheckedOut( $user->get('id') )) {
-				JError::raiseWarning( 'SOME_ERROR_CODE', $row->name.' '.JText::_( 'EDITED BY ANOTHER ADMIN' ));
+				JError::raiseWarning( 'SOME_ERROR_CODE', $row->name.' '.JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
 				$app->redirect( 'index.php?option=com_jem&view=groups' );
 			}
 		}

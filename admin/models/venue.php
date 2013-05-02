@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -115,7 +115,7 @@ class JEMModelVenue extends JModelLegacy
 				$files = JEMAttachment::getAttachments('venue'.$this->_data->id);
 				$this->_data->attachments = $files;
 			}
-			
+
 			return (boolean) $this->_data;
 		}
 		return true;
@@ -136,21 +136,21 @@ class JEMModelVenue extends JModelLegacy
 			//sticky forms
 			$session = JFactory::getSession();
 			if ($session->has('venueform', 'com_jem')) {
-				
+
 				$venueform 		= $session->get('venueform', 0, 'com_jem');
 				$venue 	=  JTable::getInstance('jem_venues', '');
-								
+
 				if (!$venue->bind($venueform)) {
 					JError::raiseError( 500, $this->_db->stderr() );
 					return false;
 				}
 				$this->_data				= $venue;
 				return (boolean) $this->_data;
-				
+
 			} else {
 				$createdate =  JFactory::getDate();
 				$user =  JFactory::getUser();
-			
+
 				$venue = new stdClass();
 				$venue->id					= 0;
 				$venue->venue				= null;
@@ -176,7 +176,7 @@ class JEMModelVenue extends JModelLegacy
 				$venue->version				= 0;
 				$venue->attachments		= array();
 				$this->_data				= $venue;
-				
+
 				return (boolean) $this->_data;
 			}
 		}
@@ -244,7 +244,7 @@ class JEMModelVenue extends JModelLegacy
 		} elseif ($this->_id < 1) {
 			return false;
 		} else {
-			JError::raiseWarning( 0, 'Unable to Load Data');
+			JError::raiseWarning( 0, JText::_('COM_JEM_UNABLE_TO_LOAD_DATA'));
 			return false;
 		}
 	}
@@ -313,7 +313,7 @@ class JEMModelVenue extends JModelLegacy
 		}
 
 		$row->version++;
-		
+
 		// Make sure the data is valid
 		if (!$row->check($jemsettings)) {
 			$this->setError($row->getError());
@@ -325,7 +325,7 @@ class JEMModelVenue extends JModelLegacy
 			JError::raiseError(500, $this->_db->getErrorMsg() );
 			return false;
 		}
-	
+
 		// attachments
 		// new ones first
 		$attachments = JRequest::getVar( 'attach', array(), 'files', 'array' );
@@ -333,7 +333,7 @@ class JEMModelVenue extends JModelLegacy
 		$attachments['description'] = JRequest::getVar( 'attach-desc', array(), 'post', 'array' );
 		$attachments['access'] = JRequest::getVar( 'attach-access', array(), 'post', 'array' );
 		JEMAttachment::postUpload($attachments, 'venue'.$row->id);
-		
+
 		// and update old ones
 		$attachments = array();
 		$old['id'] = JRequest::getVar( 'attached-id', array(), 'post', 'array' );
@@ -349,7 +349,7 @@ class JEMModelVenue extends JModelLegacy
 			$attach['access'] = $old['access'][$k];
 			JEMAttachment::update($attach);
 		}
-		
+
 		return $row->id;
 	}
 }

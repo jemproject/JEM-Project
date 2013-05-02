@@ -461,6 +461,7 @@ class JEMModelCategoryevents extends JModelLegacy
 		//Make sure the category is published
 		if (!$this->_category->published)
 		{
+			// TODO Translation
 			JError::raiseError(404, JText::sprintf('CATEGORY #%d NOT FOUND', $this->_id));
 			return false;
 		}

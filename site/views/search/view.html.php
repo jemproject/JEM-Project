@@ -152,13 +152,13 @@ class JEMViewSearch extends JViewLegacy
 		// country filter
 		$continents = array();
 		$continents[] = JHTML::_('select.option', '', JText::_('COM_JEM_SELECT_CONTINENT'));
-		$continents[] = JHTML::_('select.option', 'AF', JText::_('Africa'));
-		$continents[] = JHTML::_('select.option', 'AS', JText::_('Asia'));
-		$continents[] = JHTML::_('select.option', 'EU', JText::_('Europe'));
-		$continents[] = JHTML::_('select.option', 'NA', JText::_('North America'));
-		$continents[] = JHTML::_('select.option', 'SA', JText::_('South America'));
-		$continents[] = JHTML::_('select.option', 'OC', JText::_('Oceania'));
-		$continents[] = JHTML::_('select.option', 'AN', JText::_('Antartica'));
+		$continents[] = JHTML::_('select.option', 'AF', JText::_('COM_JEM_AFRICA'));
+		$continents[] = JHTML::_('select.option', 'AS', JText::_('COM_JEM_ASIA'));
+		$continents[] = JHTML::_('select.option', 'EU', JText::_('COM_JEM_EUROPE'));
+		$continents[] = JHTML::_('select.option', 'NA', JText::_('COM_JEM_NORTH_AMERICA'));
+		$continents[] = JHTML::_('select.option', 'SA', JText::_('COM_JEM_SOUTH_AMERICA'));
+		$continents[] = JHTML::_('select.option', 'OC', JText::_('COM_JEM_OCEANIA'));
+		$continents[] = JHTML::_('select.option', 'AN', JText::_('COM_JEM_ANTARCTICA'));
 		$lists['continents'] = JHTML::_('select.genericlist', $continents, 'filter_continent', 'class="inputbox"', 'value', 'text', $filter_continent);
 		unset($continents);
 

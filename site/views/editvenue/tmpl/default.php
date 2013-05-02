@@ -257,10 +257,10 @@ defined( '_JEXEC' ) or die;
                     </span>
                 </p>
 
-                <label for="map0"><?php echo JText::_( 'COM_JEM_NO' ); ?></label>
+                <label for="map0"><?php echo JText::_( 'JNO' ); ?></label>
                 <input type="radio" name="map" id="map0" onchange="removerequired();" value="0" <?php echo $this->row->map == 0 ? 'checked="checked"' : ''; ?> class="inputbox" />
                 <br class="clear" />
-              	<label for="map1"><?php echo JText::_( 'COM_JEM_YES' ); ?></label>
+              	<label for="map1"><?php echo JText::_( 'JYES' ); ?></label>
               	<input type="radio" name="map" id="map1" onchange="addrequired();" value="1" <?php echo $this->row->map == 1 ? 'checked="checked"' : ''; ?> class="inputbox" />
             </div>
             <div class="jem_latitude floattext">

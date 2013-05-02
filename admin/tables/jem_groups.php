@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -53,8 +53,8 @@ class jem_groups extends JTable
 	{
 		// Not typed in a category name?
 		if (trim( $this->name ) == '') {
-			$this->_error = JText::_( 'ADD GROUP NAME' );
-			JError::raiseWarning('SOME_ERROR_CODE', $this->_error );
+			$this->_error = JText::_('COM_JEM_ADD_GROUP_NAME');
+			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
 			return false;
 		}
 
@@ -64,7 +64,7 @@ class jem_groups extends JTable
 
 		$xid = intval($this->_db->loadResult());
 		if ($xid && $xid != intval($this->id)) {
-			JError::raiseWarning('SOME_ERROR_CODE', JText::sprintf('GROUP NAME ALREADY EXIST', $this->name));
+			JError::raiseWarning('SOME_ERROR_CODE', JText::sprintf('COM_JEM_GROUP_NAME_ALREADY_EXIST', $this->name));
 			return false;
 		}
 

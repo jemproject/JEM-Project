@@ -264,12 +264,12 @@ defined('_JEXEC') or die;
           <div class="floattext">
               <p><strong><?php echo JText::_( 'COM_JEM_SUBMIT_REGISTER' ).':'; ?></strong></p>
 
-              <label for="registra0"><?php echo JText::_( 'COM_JEM_NO' ); ?></label>
+              <label for="registra0"><?php echo JText::_( 'JNO' ); ?></label>
         			<input type="radio" name="registra" id="registra0" value="0" <?php echo (!$this->row->registra) ? 'checked="checked"': ''; ?> />
 
         			<br class="clear" />
 
-              <label for="registra1"><?php echo JText::_( 'COM_JEM_YES' ); ?></label>
+              <label for="registra1"><?php echo JText::_( 'JYES' ); ?></label>
             	<input type="radio" name="registra" id="registra1" value="1" <?php echo ($this->row->registra) ? 'checked="checked"': ''; ?> />
           </div>
           
@@ -283,10 +283,10 @@ defined('_JEXEC') or die;
       		
           <div class="floattext">
         			<p><strong><?php echo JText::_( 'COM_JEM_ENABLE_WAITINGLIST' ).':'; ?></strong></p>
-            	<label for="waitinglist0"><?php echo JText::_( 'COM_JEM_NO' ); ?></label>
+            	<label for="waitinglist0"><?php echo JText::_( 'JNO' ); ?></label>
         			<input type="radio" name="waitinglist" id="waitinglist0" value="0" <?php echo (!$this->row->waitinglist) ? 'checked="checked"': ''; ?> />
         			<br class="clear" />
-            	<label for="waitinglist1"><?php echo JText::_( 'COM_JEM_YES' ); ?></label>
+            	<label for="waitinglist1"><?php echo JText::_( 'JYES' ); ?></label>
             	<input type="radio" name="waitinglist" id="waitinglist1" value="1" <?php echo ($this->row->waitinglist) ? 'checked="checked"': ''; ?> />
         			<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_ENABLE_WAITINGLIST' ); ?>::<?php echo JText::_('COM_JEM_ENABLE_WAITINGLIST_TIP'); ?>">
         			    <?php echo $this->infoimage; ?>
@@ -301,12 +301,12 @@ defined('_JEXEC') or die;
       		<div class="jem_unregister floattext">
         			<p><strong><?php echo JText::_( 'COM_JEM_SUBMIT_UNREGISTER' ).':'; ?></strong></p>
 
-            	<label for="unregistra0"><?php echo JText::_( 'COM_JEM_NO' ); ?></label>
+            	<label for="unregistra0"><?php echo JText::_( 'JNO' ); ?></label>
         			<input type="radio" name="unregistra" id="unregistra0" value="0" <?php echo (!$this->row->unregistra) ? 'checked="checked"': ''; ?> />
 
         			<br class="clear" />
 
-            	<label for="unregistra1"><?php echo JText::_( 'COM_JEM_YES' ); ?></label>
+            	<label for="unregistra1"><?php echo JText::_( 'JYES' ); ?></label>
             	<input type="radio" name="unregistra" id="unregistra1" value="1" <?php echo ($this->row->unregistra) ? 'checked="checked"': ''; ?> />
       		</div>
       		<?php

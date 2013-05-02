@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -83,8 +83,8 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>::<?php echo JText::_('COM_JEM_RECURSIV_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIVE' ); ?>::<?php echo JText::_('COM_JEM_RECURSIVE_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_RECURSIVE' ); ?>
 							</span>
 						</td>
 						<td valign="top">
@@ -108,8 +108,8 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>::<?php echo JText::_('COM_JEM_RECURSIV_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIVE' ); ?>::<?php echo JText::_('COM_JEM_RECURSIVE_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_RECURSIVE' ); ?>
 							</span>
 						</td>
 						<td valign="top">
@@ -133,8 +133,8 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>::<?php echo JText::_('COM_JEM_RECURSIV_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIVE' ); ?>::<?php echo JText::_('COM_JEM_RECURSIVE_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_RECURSIVE' ); ?>
 							</span>
 						</td>
 						<td valign="top">
@@ -185,8 +185,8 @@ defined('_JEXEC') or die;
 							} // if
 							?>
 							<select name="showfroregistra" size="1" class="inputbox" onChange="changeregMode()">
-								<option value="0"<?php if ($this->jemsettings->showfroregistra == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_NO' ); ?></option>
-								<option value="1"<?php if ($this->jemsettings->showfroregistra == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_YES' ); ?></option>
+								<option value="0"<?php if ($this->jemsettings->showfroregistra == 0) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'JNO' ); ?></option>
+								<option value="1"<?php if ($this->jemsettings->showfroregistra == 1) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'JYES' ); ?></option>
 								<option value="2"<?php if ($this->jemsettings->showfroregistra == 2) { ?> selected="selected"<?php } ?>><?php echo JText::_( 'COM_JEM_OPTIONAL' ); ?></option>
 							</select>
 						</td>
@@ -200,8 +200,8 @@ defined('_JEXEC') or die;
 						<td valign="top">
 							<?php
 							$showfrounreg = array();
-							$showfrounreg[] = JHTML::_('select.option', '0', JText::_( 'COM_JEM_NO' ) );
-							$showfrounreg[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_YES' ) );
+							$showfrounreg[] = JHTML::_('select.option', '0', JText::_( 'JNO' ) );
+							$showfrounreg[] = JHTML::_('select.option', '1', JText::_( 'JYES' ) );
 							$showfrounreg[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_OPTIONAL' ) );
 							$showfrounregist = JHTML::_('select.genericlist', $showfrounreg, 'showfrounregistra', 'size="1" class="inputbox"', 'value', 'text', $this->jemsettings->showfrounregistra );
 							echo $showfrounregist;
@@ -230,8 +230,8 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>::<?php echo JText::_('COM_JEM_RECURSIV_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIVE' ); ?>::<?php echo JText::_('COM_JEM_RECURSIVE_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_RECURSIVE' ); ?>
 							</span>
 						</td>
 						<td valign="top">
@@ -255,8 +255,8 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>::<?php echo JText::_('COM_JEM_RECURSIV_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIVE' ); ?>::<?php echo JText::_('COM_JEM_RECURSIVE_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_RECURSIVE' ); ?>
 							</span>
 						</td>
 						<td valign="top">
@@ -280,8 +280,8 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>::<?php echo JText::_('COM_JEM_RECURSIV_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_RECURSIV' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_RECURSIVE' ); ?>::<?php echo JText::_('COM_JEM_RECURSIVE_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_RECURSIVE' ); ?>
 							</span>
 						</td>
 						<td valign="top">

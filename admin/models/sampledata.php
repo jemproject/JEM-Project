@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -40,7 +40,7 @@ class JEMModelSampledata extends JModelLegacy
 	 * @var array
 	 */
 	var $_filelist = array();
-	
+
 	/**
 	 * Constructor
 	 *
@@ -49,15 +49,15 @@ class JEMModelSampledata extends JModelLegacy
 	function __construct()
 	{
 		parent::__construct();
-		
+
 		if ($this->_check()) {
-			JError::raiseWarning('SOME ERROR CODE', JText::_('DATA ALREADY INSTALLED'));
+			JError::raiseWarning('SOME ERROR CODE', JText::_('COM_JEM_DATA_ALREADY_INSTALLED'));
 			return false;
 		}
-		
+
 		$this->_filelist = $this->_unpack();
 	}
-	
+
 	 /**
 	 * Process sampledata
 	 *
@@ -66,7 +66,7 @@ class JEMModelSampledata extends JModelLegacy
 	 * @since 0.9
 	 */
 	function loaddata()
-	{	
+	{
 		//determine sql file
 		foreach ($this->_filelist['files'] as $key => $file)
 		{
@@ -75,13 +75,13 @@ class JEMModelSampledata extends JModelLegacy
 				unset($this->_filelist['files'][$key]);
 			}
 		}
-		
+
 		//load sql file
 		if( !($buffer = file_get_contents($this->_filelist['folder'].'/'.$scriptfile)) )
 		{
 			return false;
 		}
-		
+
 		//extract queries out of sql file
 		$queries = $this->_splitSql($buffer);
 
@@ -95,19 +95,19 @@ class JEMModelSampledata extends JModelLegacy
 				$this->_db->query();
 			}
 		}
-		
+
 		//move images in proper directory
 		$this->_moveimages();
 
-		
+
 		//delete temporary extraction folder
 		if(!$this->_deletetmp()) {
-			JError::raiseWarning('SOME ERROR CODE', JText::_('UNABLE TO DELETE TMP FOLDER'));
+			JError::raiseWarning('SOME ERROR CODE', JText::_('COM_JEM_UNABLE_TO_DELETE_TMP_FOLDER'));
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Unpack archive and build array of files
 	 *
@@ -118,10 +118,10 @@ class JEMModelSampledata extends JModelLegacy
 	function _unpack()
 	{
 		jimport('joomla.filesystem.archive');
-		
+
 		$filename	= 'sampledata.tar.gz';
 		$archive 	= JPATH_COMPONENT_ADMINISTRATOR.'/assets/'.$filename;
-		
+
 		// Temporary folder to extract the archive into
 		$tmpdir = uniqid('sample_');
 
@@ -133,13 +133,13 @@ class JEMModelSampledata extends JModelLegacy
 		$result = JArchive::extract( $archive, $extractdir);
 
 		if ( $result === false ) {
-			JError::raiseWarning('SOME ERROR CODE', JText::_('UNABLE TO EXTRACT ARCHIVE'));
+			JError::raiseWarning('SOME ERROR CODE', JText::_('COM_JEM_UNABLE_TO_EXTRACT_ARCHIVE'));
 			return false;
 		}
 
 		//return the files found in the extract folder and also folder name
 		$files = array();
-		
+
 		if ($handle = opendir( $extractdir ))
 		{
 			while (false !== ($file = readdir($handle)))
@@ -154,10 +154,10 @@ class JEMModelSampledata extends JModelLegacy
 		}
 		$_filelist['files'] 	= $files;
 		$_filelist['folder'] 	= $extractdir;
-		
+
 		return $_filelist;
 	}
-	
+
 	/**
 	 * Split sql to single queries
 	 *
@@ -202,7 +202,7 @@ class JEMModelSampledata extends JModelLegacy
 		}
 		return ($ret);
 	}
-	
+
 	/**
 	 * Copy images into the venues/events folder
 	 *
@@ -218,10 +218,10 @@ class JEMModelSampledata extends JModelLegacy
 			JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/venues/'.$file);
 			JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/events/'.$file);
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Delete temporary folder
 	 *
@@ -239,7 +239,7 @@ class JEMModelSampledata extends JModelLegacy
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Checks if Data exist
 	 *
@@ -250,11 +250,11 @@ class JEMModelSampledata extends JModelLegacy
 	function _check()
 	{
 		$query = 'SELECT id FROM #__jem_categories';
-		
+
 		$this->_db->setQuery( $query );
-		
+
 		$result = $this->_db->loadResult();
-		
+
 		return $result;
 	}
 }

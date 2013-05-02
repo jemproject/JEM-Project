@@ -211,7 +211,7 @@ class JEMHelper {
 				if (count($selected) == 0)
 				{
 					// this shouldn't happen, but if it does, to prevent problem use the current weekday for the repetition.
-					JError::raiseWarning(500, JText::_('Empty weekday recurrence'));
+					JError::raiseWarning(500, JText::_('COM_JEM_EMPTY_WEEKDAY_RECURRENCE'));
 					$current_weekday = (int) $date_array["weekday"];
 					$selected = array($current_weekday);
 				}
@@ -263,7 +263,7 @@ class JEMHelper {
 		}
 
 		if ($start_day < $date_array["unixtime"]) {
-			JError::raiseError(500, JText::_('Recurrence date generation error'));
+			JError::raiseError(500, JText::_('COM_JEM_RECURRENCE_DATE_GENERATION_ERROR'));
 		}
 
 		return $recurrence_row;
@@ -328,7 +328,7 @@ class JEMHelper {
 						$result[] = 6;
 						break;
 					default:
-						JError::raiseWarning(500, JText::_('Wrong ical day string'));
+						JError::raiseWarning(500, JText::_('COM_JEM_WRONG_ICAL_DAY_STRING'));
 				}
 			} else {
 
@@ -357,7 +357,7 @@ class JEMHelper {
 						$result[] = 6;
 						break;
 					default:
-						JError::raiseWarning(500, JText::_('Wrong ical day string'));
+						JError::raiseWarning(500, JText::_('COM_JEM_WRONG_ICAL_DAY_STRING'));
 				}
 			}
 		}
@@ -574,8 +574,8 @@ class JEMHelper {
 			$query = ' UPDATE #__jem_register SET waiting = 0 WHERE id IN ('.implode(',', $bumping).')';
 			$db->setQuery($query);
 			if (!$db->query()) {
-				$this->setError(JText::_('Failed bumping users from waiting to confirmed list'));
-				Jerror::raisewarning(0, JText::_('Failed bumping users from waiting to confirmed list').': '.$db->getErrorMsg());
+				$this->setError(JText::_('COM_JEM_FAILED_BUMPING_USERS_FROM_WAITING_TO_CONFIRMED_LIST'));
+				Jerror::raisewarning(0, JText::_('COM_JEM_FAILED_BUMPING_USERS_FROM_WAITING_TO_CONFIRMED_LIST').': '.$db->getErrorMsg());
 			}
 			else
 			{
@@ -807,7 +807,7 @@ class JEMHelper {
 
 		// item description text
 		$description = $event->title.'\\n';
-		$description .= JText::_('CATEGORY').': '.implode(', ', $categories).'\\n';
+		$description .= JText::_('COM_JEM_CATEGORY').': '.implode(', ', $categories).'\\n';
 
 		// url link to event
 

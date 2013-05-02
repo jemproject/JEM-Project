@@ -13,11 +13,11 @@
 		<fields name="params"  ><fieldset name="basic">
 	  	<field name="displayLegend" type="radio" default="1" label="COM_JEM_DISPLAY_LEGEND" description="COM_JEM_DISPLAY_LEGEND DESC">
         <option value="0">COM_JEM_NO</option>
-        <option value="1">COM_JEM_YES</option>
+        <option value="1">JYES</option>
       </field>
 	  	<field name="show_only_start" type="radio" default="1" label="COM_JEM_SHOWONLYSTARTDAY" description="COM_JEM_SHOWONLYSTARTDAY_DESC">
         <option value="0">COM_JEM_NO</option>
-        <option value="1">COM_JEM_YES</option>
+        <option value="1">JYES</option>
       </field>
       <field name="firstweekday" type="radio" default="1" label="COM_JEM_SELECTFIRSTWEEKDAY" description="COM_JEM_SELECTFIRSTWEEKDAYDESC">
         <option value="0">COM_JEM_SUNDAY</option>

@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -125,7 +125,7 @@ class JEMModelGroup extends JModelLegacy
 			$this->_data = $this->_db->loadObject();
 
 			return (boolean) $this->_data;
-			
+
 		}
 		return true;
 	}
@@ -242,17 +242,17 @@ class JEMModelGroup extends JModelLegacy
 			//sticky forms
 			$session = JFactory::getSession();
 			if ($session->has('groupform', 'com_jem')) {
-				
+
 				$groupform 	= $session->get('groupform', 0, 'com_jem');
 				$group 		=  JTable::getInstance('jem_groups', '');
-								
+
 				if (!$group->bind($groupform)) {
 					JError::raiseError( 500, $this->_db->stderr() );
 					return false;
 				}
 				$this->_data				= $group;
 				return (boolean) $this->_data;
-				
+
 			} else {
 				$group = new stdClass();
 				$group->id					= 0;
@@ -283,7 +283,7 @@ class JEMModelGroup extends JModelLegacy
 	}
 
 
-	
+
 	/**
 	 * Method to checkout/lock the item
 	 *
@@ -328,7 +328,7 @@ class JEMModelGroup extends JModelLegacy
 		} elseif ($this->_id < 1) {
 			return false;
 		} else {
-			JError::raiseWarning( 0, 'Unable to Load Data');
+			JError::raiseWarning( 0, JText::_('COM_JEM_UNABLE_TO_LOAD_DATA'));
 			return false;
 		}
 	}

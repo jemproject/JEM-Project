@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -27,10 +27,10 @@ defined('_JEXEC') or die;
 
 		<?php if($this->ftp): ?>
 				<fieldset class="adminform">
-					<legend><?php echo JText::_('FTP TITLE'); ?></legend>
+					<legend><?php echo JText::_('COM_JEM_FTP_TITLE'); ?></legend>
 
-					<?php echo JText::_('FTP DESC'); ?>
-					
+					<?php echo JText::_('COM_JEM_FTP_DESC'); ?>
+
 					<?php if(JError::isError($this->ftp)): ?>
 						<p><?php echo JText::_($this->ftp->message); ?></p>
 					<?php endif; ?>
@@ -39,7 +39,7 @@ defined('_JEXEC') or die;
 						<tbody>
 							<tr>
 								<td width="120">
-									<label for="username"><?php echo JText::_('USERNAME'); ?>:</label>
+									<label for="username"><?php echo JText::_('COM_JEM_USERNAME'); ?>:</label>
 								</td>
 								<td>
 									<input type="text" id="username" name="username" class="input_box" size="70" value="" />
@@ -47,7 +47,7 @@ defined('_JEXEC') or die;
 							</tr>
 							<tr>
 								<td width="120">
-									<label for="password"><?php echo JText::_('PASSWORD'); ?>:</label>
+									<label for="password"><?php echo JText::_('COM_JEM_PASSWORD'); ?>:</label>
 								</td>
 								<td>
 									<input type="password" id="password" name="password" class="input_box" size="70" value="" />
@@ -80,7 +80,7 @@ defined('_JEXEC') or die;
 		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="task" value="" />
 </form>
-		
+
 <?php
 //keep session alive while editing
 JHTML::_('behavior.keepalive');

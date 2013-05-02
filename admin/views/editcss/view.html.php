@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -39,10 +39,10 @@ class JEMViewEditcss extends JViewLegacy {
 		//initialise variables
 		$document	=  JFactory::getDocument();
 		$user 		=  JFactory::getUser();
-		
+
 		//only admins have access to this view
 		if (!JFactory::getUser()->authorise('core.manage')) {
-			JError::raiseWarning( 'SOME_ERROR_CODE', JText::_( 'ALERTNOTAUTH'));
+			JError::raiseWarning( 'SOME_ERROR_CODE', JText::_('COM_JEM_ALERTNOTAUTH'));
 			$app->redirect( 'index.php?option=com_jem&view=jem' );
 		}
 
@@ -52,7 +52,7 @@ class JEMViewEditcss extends JViewLegacy {
 		$css_path	= $path.'/'.$filename;
 
 		//create the toolbar
-		JToolBarHelper::title( JText::_( 'EDIT CSS' ), 'cssedit' );
+		JToolBarHelper::title( JText::_('COM_JEM_EDIT_CSS'), 'cssedit');
 		JToolBarHelper::apply( 'applycss' );
 		JToolBarHelper::spacer();
 		JToolBarHelper::save( 'savecss' );
@@ -60,7 +60,7 @@ class JEMViewEditcss extends JViewLegacy {
 		JToolBarHelper::cancel();
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'el.editcss', true );
-		
+
 		JRequest::setVar( 'hidemainmenu', 1 );
 
 		//add css to document
@@ -69,7 +69,7 @@ class JEMViewEditcss extends JViewLegacy {
 		//read the the stylesheet
 		jimport('joomla.filesystem.file');
 		$content = JFile::read($css_path);
-		
+
 		jimport('joomla.client.helper');
 		$ftp = JClientHelper::setCredentialsFromRequest('ftp');
 
@@ -79,7 +79,7 @@ class JEMViewEditcss extends JViewLegacy {
 		}
 		else
 		{
-			$msg = JText::sprintf('FAILED TO OPEN FILE FOR WRITING', $css_path);
+			$msg = JText::sprintf('COM_JEM_FAILED_TO_OPEN_FILE_FOR_WRITING', $css_path);
 			$app->redirect('index.php?option=com_jem', $msg);
 		}
 

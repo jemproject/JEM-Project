@@ -58,7 +58,7 @@ class JEMControllerEvents extends JEMController
 		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
 
 		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseError(500, JText::_( 'Select an item to publish' ) );
+			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_PUBLISH'));
 		}
 
 		$model = $this->getModel('events');
@@ -84,7 +84,7 @@ class JEMControllerEvents extends JEMController
 		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
 
 		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseError(500, JText::_( 'Select an item to unpublish' ) );
+			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_UNPUBLISH'));
 		}
 
 		$model = $this->getModel('events');
@@ -110,7 +110,7 @@ class JEMControllerEvents extends JEMController
 		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
 
 		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseError(500, JText::_( 'Select an item to archive' ) );
+			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_ARCHIVE'));
 		}
 
 		$model = $this->getModel('events');
@@ -135,7 +135,7 @@ class JEMControllerEvents extends JEMController
 	{
 		// Check for request forgeries
 		JRequest::checkToken() or die( 'Invalid Token' );
-		
+
 		$group =  JTable::getInstance('jem_events', '');
 		$group->bind(JRequest::get('post'));
 		$group->checkin();
@@ -173,7 +173,7 @@ class JEMControllerEvents extends JEMController
 		if ($task == 'copy') {
 			JRequest::setVar( 'task', $task );
 		} else {
-			
+
 			$user	= JFactory::getUser();
 			// Error if checkedout by another administrator
 			if ($model->isCheckedOut( $user->get('id') )) {
@@ -195,7 +195,7 @@ class JEMControllerEvents extends JEMController
 	{
 		// Check for request forgeries
 		JRequest::checkToken() or die( 'Invalid Token' );
-		
+
 		$task		= JRequest::getVar('task');
 
 		$post = JRequest::get( 'post' );
@@ -247,7 +247,7 @@ class JEMControllerEvents extends JEMController
 		$total = count( $cid );
 
 		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseError(500, JText::_( 'Select an item to delete' ) );
+			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
 		}
 
 		$model = $this->getModel('events');
@@ -262,7 +262,7 @@ class JEMControllerEvents extends JEMController
 
 		$this->setRedirect( 'index.php?option=com_jem&view=events', $msg );
 	}
-	
+
 	/**
 	 * Fetch hit count of the event
 	 *
@@ -282,14 +282,14 @@ class JEMControllerEvents extends JEMController
 			echo 0;
 		}
 	}
-	
+
 	/**
 	 * Reset hit count of the event
 	 *
 	 * @access public
 	 * @return void
 	 * @since 1.1
-	 */	
+	 */
 	function resethits()
 	{
 		$id		= JRequest::getInt( 'id', 0 );

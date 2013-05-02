@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -101,9 +101,9 @@ class JEMControllerSettings extends JEMController
 		$model 	= $this->getModel('settings');
 
 		if ($model->store($post)) {
-			$msg	= JText::_( 'SETTINGS SAVE');
+			$msg	= JText::_('COM_JEM_SETTINGS_SAVED');
 		} else {
-			$msg	= JText::_( 'SAVE SETTINGS FAILED');
+			$msg	= JText::_('COM_JEM_SAVE_SETTINGS_FAILED');
 		}
 
 		switch ($task)

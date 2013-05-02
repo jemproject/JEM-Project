@@ -58,6 +58,7 @@ class JEMViewDetails extends JViewLegacy
 
 		//Check if the id exists
 		if ($row->did == 0) {
+			// TODO Translation
 			return JError::raiseError(404, JText::sprintf('Event #%d not found', $row->did));
 		}
 

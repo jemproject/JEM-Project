@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -31,7 +31,7 @@ jimport( 'joomla.application.component.view');
  * @since 0.9
  */
 class JEMViewSettings extends JViewLegacy {
-    
+
 	function display($tpl = null) {
 
 		$app 	   =  JFactory::getApplication();
@@ -49,20 +49,20 @@ class JEMViewSettings extends JViewLegacy {
 
 		//only admins have access to this view
 		if (!JFactory::getUser()->authorise('core.manage')) {
-			JError::raiseWarning( 'SOME_ERROR_CODE', JText::_( 'ALERTNOTAUTH'));
+			JError::raiseWarning( 'SOME_ERROR_CODE', JText::_('COM_JEM_ALERTNOTAUTH'));
 			$app->redirect( 'index.php?option=com_jem&view=jem' );
 		}
 
 		// fail if checked out not by 'me'
 		if ($model->isCheckedOut( $user->get('id') )) {
-			JError::raiseWarning( 'SOME_ERROR_CODE', JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ));
+			JError::raiseWarning( 'SOME_ERROR_CODE', JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
 			$app->redirect( 'index.php?option=com_jem&view=jem' );
 		}
 
 		JHTML::_('behavior.tooltip');
 		JHTML::_('behavior.switcher');
-		
-	
+
+
 		//add css, js and submenu to document
 		$document->addScript( JURI::root().'media/com_jem/js/settings.js' );
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
@@ -76,7 +76,7 @@ class JEMViewSettings extends JViewLegacy {
 		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
 		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
 		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&view=settings', true);
-		
+
 		//create the toolbar
 		JToolBarHelper::title( JText::_( 'COM_JEM_SETTINGS' ), 'settings' );
 		JToolBarHelper::apply();
@@ -104,19 +104,19 @@ class JEMViewSettings extends JViewLegacy {
 		$accessLists['locpub_access']	= JHTML::_('select.genericlist', $access, 'autopublocate', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->autopublocate );
 		$accessLists['ev_edit']			= JHTML::_('select.genericlist', $access, 'eventedit', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->eventedit );
 		$accessLists['venue_edit']		= JHTML::_('select.genericlist', $access, 'venueedit', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->venueedit );
-        
+
         $uri 		=  JFactory::getURI();
 		$uri2 = $uri->toString();
 
-        
+
 		//assign data to template
 		$this->accessLists	= $accessLists;
 		$this->jemsettings	= $jemsettings;
 		$this->request_url	= $uri2;
-		
+
 		$this->WarningIcon();
 		parent::display($tpl);
-		
+
 
 	}
 

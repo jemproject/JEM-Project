@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -88,7 +88,7 @@ class JEMViewAttendees extends JViewLegacy {
 
  		if (JEMHelper::isValidDate($event->dates)) {
 			$event->dates = strftime($jemsettings->formatdate, strtotime( $event->dates ));
-		} 
+		}
 		else {
 			$event->dates		= JText::_('COM_JEM_OPEN_DATE');
 		}
@@ -103,11 +103,11 @@ class JEMViewAttendees extends JViewLegacy {
 		$lists['search'] = $search;
 
 		// waiting list status
-		$options = array( JHTML::_('select.option', 0, JText::_('all')), 
-		                  JHTML::_('select.option', 1, JText::_('attending')), 
-		                  JHTML::_('select.option', 2, JText::_('waiting')) ) ;
+		$options = array( JHTML::_('select.option', 0, JText::_('COM_JEM_ALL')),
+		                  JHTML::_('select.option', 1, JText::_('COM_JEM_ATTENDING')),
+		                  JHTML::_('select.option', 2, JText::_('COM_JEM_WAITING')) ) ;
 		$lists['waiting'] = JHTML::_('select.genericlist', $options, 'filter_waiting', 'onChange="this.form.submit();"', 'value', 'text', $filter_waiting);
-		
+
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order']		= $filter_order;
@@ -137,15 +137,15 @@ class JEMViewAttendees extends JViewLegacy {
 		$rows      	=  $this->get( 'Data');
 		$event 		=  $this->get( 'Event' );
 
-	
+
 		if (JEMHelper::isValidDate($event->dates)) {
 			$event->dates = strftime($jemsettings->formatdate, strtotime( $event->dates ));
 		//	$date		= strftime( $this->jemsettings->formatdate, strtotime( $event->dates ));
-		} 
+		}
 		else {
 			$event->dates	= JText::_('COM_JEM_OPEN_DATE');
 		}
-		
+
 		//assign data to template
 		$this->rows 		= $rows;
 		$this->event 		= $event;

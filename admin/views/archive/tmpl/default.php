@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -28,7 +28,7 @@ defined('_JEXEC') or die; ?>
 		<tr>
 			<td width="100%">
 				<?php echo JText::_( 'COM_JEM_SEARCH' ).' '.$this->lists['filter']; ?>
-				<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onchange="document.adminForm.submit();" title="<?php echo JText::_( 'Filter by title or enter article ID' );?>"/>
+				<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onchange="document.adminForm.submit();" title="<?php echo JText::_('COM_JEM_FILTER_BY_TITLE_OR_ENTER_ARTICLE_ID');?>"/>
 				<button onclick="this.form.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
 				<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 			</td>
@@ -63,7 +63,7 @@ defined('_JEXEC') or die; ?>
 			foreach ($this->rows as $i => $row) :
 				if (JEMHelper::isValidDate($row->dates)) {
 					$date		= strftime( $this->jemsettings->formatdate, strtotime( $row->dates ));
-				} 
+				}
 				else {
 					$date		= JText::_('COM_JEM_OPEN_DATE');
 				}
@@ -96,31 +96,31 @@ defined('_JEXEC') or die; ?>
 					<?php
 				$nr = count($row->categories);
 				$ix = 0;
-				foreach ($row->categories as $key => $category) :				
+				foreach ($row->categories as $key => $category) :
 					$catlink	= 'index.php?option=com_jem&amp;controller=categories&amp;task=edit&amp;cid[]='. $category->id;
 					$title = htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8');
 					if (JString::strlen($title) > 20) {
 						$title = JString::substr( $title , 0 , 20).'...';
 					}
-					
+
 					$path = '';
 					$pnr = count($category->parentcats);
 					$pix = 0;
 					foreach ($category->parentcats as $key => $parentcats) :
-					
+
 						$path .= $parentcats->catname;
-						
+
 						$pix++;
 						if ($pix != $pnr) :
 							$path .= ' » ';
-						endif;	
+						endif;
 					endforeach;
-					
+
 					if ( $category->cchecked_out && ( $category->cchecked_out != $this->user->get('id') ) ) {
 							echo $title;
-					} else { 
+					} else {
 					?>
-						<span class="editlinktip hasTip" title="<?php echo JText::_( 'EDIT CATEGORY' );?>::<?php echo $path; ?>">
+						<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_EDIT_CATEGORY');?>::<?php echo $path; ?>">
 						<a href="<?php echo $catlink; ?>">
 							<?php echo $title; ?>
 						</a>
@@ -132,7 +132,7 @@ defined('_JEXEC') or die; ?>
 						echo ', ';
 					endif;
 				endforeach;
-				?>				
+				?>
 				</td>
 				<td><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
 				<td>
