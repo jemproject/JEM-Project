@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
@@ -62,7 +61,7 @@ class JEMModelEditvenue extends JModelLegacy
 	function setId($id)
 	{
 		// Set new venue ID
-		$this->_id			= $id;
+		$this->_id = $id;
 	}
 
 	/**
@@ -72,22 +71,21 @@ class JEMModelEditvenue extends JModelLegacy
 	 */
 	function &getVenue(  )
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		// Initialize variables
-		$user		=  JFactory::getUser();
-		$jemsettings =  JEMHelper::config();
+		$user		= JFactory::getUser();
+		$jemsettings = JEMHelper::config();
 
 		$view		= JRequest::getWord('view');
 
+		// ID exists => edit
 		if ($this->_id) {
 
 			// Load the Event data
 			$this->_loadVenue();
 
-			/*
-			* Error if allready checked out
-			*/
+			// Error if allready checked out
 			if ($this->_venue->isCheckedOut( $user->get('id') )) {
 				$app->redirect( 'index.php?view='.$view, JText::_( 'COM_JEM_THE_VENUE' ).' '.$this->_venue->venue.' '.JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ) );
 			} else {
@@ -98,12 +96,10 @@ class JEMModelEditvenue extends JModelLegacy
 			$allowedtoeditvenue = JEMUser::editaccess($jemsettings->venueowner, $this->_venue->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 
 			if ($allowedtoeditvenue == 0) {
-
 				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
-
 			}
 
-
+		// ID does not exist => add
 		} else {
 
 			//access checks
@@ -112,14 +108,14 @@ class JEMModelEditvenue extends JModelLegacy
 			if ($delloclink == 0) {
 				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
 			}
-			
+
 			//sticky forms
 			$session = JFactory::getSession();
 			if ($session->has('venueform', 'com_jem')) {
-				
+
 				$venueform 		= $session->get('venueform', 0, 'com_jem');
-				$this->_venue 	=  JTable::getInstance('jem_venues', '');
-								
+				$this->_venue 	= JTable::getInstance('jem_venues', '');
+
 				if (!$this->_venue->bind($venueform)) {
 					JError::raiseError( 500, $this->_db->stderr() );
 					return false;
@@ -136,8 +132,8 @@ class JEMModelEditvenue extends JModelLegacy
 				$this->_venue->city				= '';
 				$this->_venue->state			= '';
 				$this->_venue->country			= '';
-      			$this->_venue->latitude      	= '';
-      			$this->_venue->longitude      	= '';
+				$this->_venue->latitude			= '';
+				$this->_venue->longitude		= '';
 				$this->_venue->map				= $jemsettings->showmapserv ? 1 : 0;
 				$this->_venue->created			= '';
 				$this->_venue->created_by		= '';
@@ -146,14 +142,11 @@ class JEMModelEditvenue extends JModelLegacy
 				$this->_venue->locimage			= '';
 				$this->_venue->meta_keywords	= '';
 				$this->_venue->meta_description	= '';
-				$this->_venue->attachments	= array();
-				
+				$this->_venue->attachments		= array();
 			}
-
 		}
 
 		return $this->_venue;
-
 	}
 
 	/**
@@ -204,15 +197,17 @@ class JEMModelEditvenue extends JModelLegacy
 	 */
 	function store($data, $file)
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
-		$user 		=  JFactory::getUser();
-		$jemsettings =  JEMHelper::config();
+		$user 		= JFactory::getUser();
+		$jemsettings = JEMHelper::config();
 
-		$tzoffset 		= $app->getCfg('offset');
+		$tzoffset 	= $app->getCfg('offset');
 
-		$row 		=  JTable::getInstance('jem_venues', '');
-	
+		$row 		= JTable::getInstance('jem_venues', '');
+
+		$curimage = JRequest::getVar( 'curimage', '', 'post','string' );
+
 		//bind it to the table
 		if (!$row->bind($data)) {
 			JError::raiseError( 500, $this->_db->stderr() );
@@ -232,7 +227,6 @@ class JEMModelEditvenue extends JModelLegacy
 			}
 
 			$row->modified 		= gmdate('Y-m-d H:i:s');
-
 			$row->modified_by 	= $user->get('id');
 
 			//Is editor the owner of the venue
@@ -262,6 +256,15 @@ class JEMModelEditvenue extends JModelLegacy
 
 			//set owneredit to false
 			$owneredit = 0;
+		}
+
+		//Autopublish
+		//check if the user has the required rank for autopublish
+		$autopublloc = JEMUser::validate_user( $jemsettings->locpubrec, $jemsettings->autopublocate );
+		if ($autopublloc || $owneredit) {
+			$row->published = 1 ;
+		} else {
+			$row->published = 0 ;
 		}
 
 		//Image upload
@@ -297,7 +300,7 @@ class JEMModelEditvenue extends JModelLegacy
 			}
 		} else {
 			//keep image if edited and left blank
-			$row->locimage = $row->curimage;
+			$row->locimage = $curimage;
 		}//end image upload if
 
 		//Check description
@@ -324,20 +327,8 @@ class JEMModelEditvenue extends JModelLegacy
 			}
 		}
 
-		//Autopublish
-		//check if the user has the required rank for autopublish
-		$autopublloc = JEMUser::validate_user( $jemsettings->locpubrec, $jemsettings->autopublocate );
-
-		//Check if user is the owner of the venue
-		//If yes enable autopublish
-		if ($autopublloc || $owneredit) {
-			$row->published = 1 ;
-		} else {
-			$row->published = 0 ;
-		}
-
 		$row->version++;
-		
+
 		//Make sure the data is valid
 		if (!$row->check($jemsettings)) {
 			$this->setError($row->getError());
@@ -349,7 +340,7 @@ class JEMModelEditvenue extends JModelLegacy
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 		}
-	
+
 		// attachments
 		// new ones first
 		$attachments = JRequest::getVar( 'attach', array(), 'files', 'array' );
@@ -357,7 +348,7 @@ class JEMModelEditvenue extends JModelLegacy
 		$attachments['description'] = JRequest::getVar( 'attach-desc', array(), 'post', 'array' );
 		$attachments['access'] = JRequest::getVar( 'attach-access', array(), 'post', 'array' );
 		JEMAttachment::postUpload($attachments, 'venue'.$row->id);
-		
+
 		// and update old ones
 		$attachments = array();
 		$old['id'] = JRequest::getVar( 'attached-id', array(), 'post', 'array' );
@@ -373,7 +364,7 @@ class JEMModelEditvenue extends JModelLegacy
 			$attach['access'] = $old['access'][$k];
 			JEMAttachment::update($attach);
 		}
-		
+
 		//update item order
 		$row->reorder();
 
