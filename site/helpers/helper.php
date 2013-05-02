@@ -52,8 +52,6 @@ class JEMHelper {
 		return $config;
 	}
 
-
-
 	/**
 	 * Performs dayly scheduled cleanups
 	 *
@@ -83,7 +81,7 @@ class JEMHelper {
 
 		if ($nrdaysnow > $nrdaysupdate || $forced) {
 
-			$db			=  JFactory::getDBO();
+			$db =  JFactory::getDBO();
 
 			// get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
 			$nulldate = '0000-00-00';
@@ -163,10 +161,6 @@ class JEMHelper {
 			$db->Query();
 		}
 	}
-
-
-
-
 
 	/**
 	 * this methode calculate the next date
@@ -302,63 +296,31 @@ class JEMHelper {
 		$result = array();
 		foreach ($days as $day)
 		{
-			if ($firstday == 0) // sunday
+			switch (strtoupper($day))
 			{
-				switch (strtoupper($day))
-				{
-					case 'SU':
-						$result[] = 0;
-						break;
-					case 'MO':
-						$result[] = 1;
-						break;
-					case 'TU':
-						$result[] = 2;
-						break;
-					case 'WE':
-						$result[] = 3;
-						break;
-					case 'TH':
-						$result[] = 4;
-						break;
-					case 'FR':
-						$result[] = 5;
-						break;
-					case 'SA':
-						$result[] = 6;
-						break;
-					default:
-						JError::raiseWarning(500, JText::_('COM_JEM_WRONG_ICAL_DAY_STRING'));
-				}
-			} else {
-
-				//monday
-				switch (strtoupper($day))
-				{
-					case 'MO':
-						$result[] = 0;
-						break;
-					case 'TU':
-						$result[] = 1;
-						break;
-					case 'WE':
-						$result[] = 2;
-						break;
-					case 'TH':
-						$result[] = 3;
-						break;
-					case 'FR':
-						$result[] = 4;
-						break;
-					case 'SA':
-						$result[] = 5;
-						break;
-					case 'SU':
-						$result[] = 6;
-						break;
-					default:
-						JError::raiseWarning(500, JText::_('COM_JEM_WRONG_ICAL_DAY_STRING'));
-				}
+				case 'MO':
+					$result[] = 1 - $firstday;
+					break;
+				case 'TU':
+					$result[] = 2 - $firstday;
+					break;
+				case 'WE':
+					$result[] = 3 - $firstday;
+					break;
+				case 'TH':
+					$result[] = 4 - $firstday;
+					break;
+				case 'FR':
+					$result[] = 5 - $firstday;
+					break;
+				case 'SA':
+					$result[] = 6 - $firstday;
+					break;
+				case 'SU':
+					$result[] = (7 - $firstday) % 7;
+					break;
+				default:
+					JError::raiseWarning(500, JText::_('COM_JEM_WRONG_ICAL_DAY_STRING'));
 			}
 		}
 
@@ -423,7 +385,6 @@ class JEMHelper {
 
 		return $db->loadObjectList();
 	}
-
 
 	/**
 	* Build the select list for access level
@@ -529,7 +490,6 @@ class JEMHelper {
 		}
 	}
 
-
 	/**
 	 * updates waiting list of specified event
 	 *
@@ -539,7 +499,7 @@ class JEMHelper {
 	 */
 	static function updateWaitingList($event)
 	{
-	$db = Jfactory::getDBO();
+		$db = Jfactory::getDBO();
 
 		// get event details for registration
 		$query = ' SELECT maxplaces, waitinglist FROM #__jem_events WHERE id = ' . $db->Quote($event);
@@ -634,11 +594,11 @@ class JEMHelper {
 		return $data;
 	}
 
-  /**
-   * returns array of timezones indexed by offset
-   *
-   * @return array
-   */
+	/**
+	 * returns array of timezones indexed by offset
+	 *
+	 * @return array
+	 */
 	static function getTimeZones()
 	{
 		$timezones = array(
@@ -817,8 +777,6 @@ class JEMHelper {
 		$app =  JFactory::getApplication();
 		$menuitem = $app->getMenu()->getActive()->id;
 		$link = JURI::base().JEMHelperRoute::getRoute($event->slug).'&Itemid='.$menuitem;
-
-
 
 		$link = JRoute::_($link);
 		$description .= JText::_('COM_JEM_ICS_LINK').': '.$link.'\\n';
