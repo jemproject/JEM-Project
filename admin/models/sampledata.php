@@ -119,7 +119,7 @@ class JEMModelSampledata extends JModelLegacy
 	{
 		jimport('joomla.filesystem.archive');
 
-		$filename	= 'sampledata.tar.gz';
+		$filename	= 'sampledata.zip';
 		$archive 	= JPATH_COMPONENT_ADMINISTRATOR.'/assets/'.$filename;
 
 		// Temporary folder to extract the archive into

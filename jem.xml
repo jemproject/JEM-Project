@@ -63,6 +63,7 @@
 			<filename>install.mysql.utf8.sql</filename>
 			<filename>uninstall.mysql.utf8.sql</filename>
 
+			<folder>assets</folder>
 			<folder>classes</folder>
 			<folder>help</folder>
 			<folder>views</folder>
