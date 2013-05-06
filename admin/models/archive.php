@@ -318,6 +318,19 @@ class JEMModelArchive extends JModelLegacy
 				$this->setError($this->_db->getErrorMsg());
 				return false;
 			}
+			
+			
+			//remove assigned category references
+			$query = 'DELETE FROM #__jem_cats_event_relations'
+					.' WHERE itemid IN ('. $cids .')';
+							
+			$this->_db->setQuery($query);
+			
+			if(!$this->_db->query()) {
+			$this->setError($this->_db->getErrorMsg());
+			return false;
+			}
+					
 		}
 
 		return true;

@@ -184,13 +184,6 @@ JHTML::_('behavior.modal');
 				</dd>
 				<?php endif; ?>
 				
-				<?php if ( $this->row->conemail ) : ?>
-  				<dt class="con_email"><?php echo JText::_( 'COM_JEM_EMAIL' ).':'; ?></dt>
-				<dd class="con_email">
-    				<?php echo $this->escape($this->row->conemail); ?>
-				</dd>
-				<?php endif; ?>
-				
 				<?php if ( $this->row->contelephone ) : ?>
   				<dt class="con_telephone"><?php echo JText::_( 'COM_JEM_TELEPHONE' ).':'; ?></dt>
 				<dd class="con_telephone">
@@ -300,7 +293,7 @@ JHTML::_('behavior.modal');
 	<?php echo JEMOutput::footer( ); ?>
 </p>
 
-<?php if ($this->params->get('facebook', 1) == 1) {  
+<?php if ($this->params->get('facebook', 0) == 1) {  
 $currenturl = JURI::current(); ?>
 
 <div class="fb-like" data-href="<?php echo $currenturl ?>" data-send="true" data-layout="button_count" data-width="450" data-show-faces="true" data-font="segoe ui"></div>

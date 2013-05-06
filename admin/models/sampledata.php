@@ -212,14 +212,40 @@ class JEMModelSampledata extends JModelLegacy
 	 */
 	function _moveimages()
 	{
+
 		$imagebase = JPATH_ROOT.'/images/jem';
+
 		foreach ($this->_filelist['files'] as $file)
 		{
-			JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/venues/'.$file);
-			JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/events/'.$file);
+			if  (substr_count($file,"event")) 
+				{
+			   		JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/events/'.$file);
+				}
+			if  (substr_count($file,"evthumb"))
+				{
+			   		JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/events/small/'.$file);
+				}
+                	
+			if  (substr_count($file,"venue"))
+				{
+			   		JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/venues/'.$file);
+				}
+			if  (substr_count($file,"vethumb"))
+				{
+			   		JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/venues/small/'.$file);
+				}	
+		
+			if  (substr_count($file,"cat"))
+				{
+			   		JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/categories/'.$file);
+				} 
+			if  (substr_count($file,"catthumb"))
+				{
+					JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/categories/small/'.$file);
+				}
 		}
-
-		return true;
+		
+		return true; 
 	}
 
 	/**
