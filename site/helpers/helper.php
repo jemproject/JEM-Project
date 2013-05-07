@@ -736,7 +736,7 @@ class JEMHelper {
 			$date['min']  = $start_time[2];
 			$date['sec']  = $start_time[3];
 			$dateparam = array('VALUE' => 'DATE-TIME');
-			if ($params->get('ical_tz', 1)) {
+			if ($jemsettings->ical_tz == 1) {
 				$dateparam['TZID'] = $timezone_name;
 			}
 
