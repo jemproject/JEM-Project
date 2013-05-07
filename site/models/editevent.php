@@ -766,6 +766,12 @@ class JEMModelEditevent extends JModelLegacy
 			JEMAttachment::update($attach);
 		}
 
+		// check for recurrence, when filled it will perform the cleanup function
+		if ($row->recurrence_number > 0)
+		{
+			JEMHelper::cleanup(1);
+		}
+		
 		return $row->id;
 	}
 }

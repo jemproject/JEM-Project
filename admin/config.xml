@@ -24,17 +24,6 @@
 			<option value="1">COM_JEM_SHOW</option>
 		</field>
 	</fieldset>
-	<fieldset name="COM_JEM_SETTINGS_ICAL">
-		<field name="ical_tz" type="radio" default="1" label="COM_JEM_SETTINGS_ICAL_TIMEZONE" description="COM_JEM_SETTINGS_ICAL_TIMEZONE_DESC">
-			<option value="0">COM_JEM_SETTINGS_ICAL_TIMEZONE_FLOAT</option>
-			<option value="1">COM_JEM_SETTINGS_ICAL_TIMEZONE_JOOMLA</option>
-		</field>
-		<field name="events_ical" type="radio" default="1" label="COM_JEM_SETTINGS_SHOW_EVENTS_ICAL" description="COM_JEM_SETTINGS_SHOW_EVENTS_ICAL_DESC">
-			<option value="0">No</option>
-			<option value="1">Yes</option>
-		</field>
-		<field name="ical_max_items" type="text" default="100" label="COM_JEM_SETTINGS_ICAL_MAX_ITEMS" description="COM_JEM_SETTINGS_ICAL_MAX_ITEMS_DESC" />
-	</fieldset>
 
 	<fieldset
 		name="permissions"

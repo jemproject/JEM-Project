@@ -683,6 +683,8 @@ class JEMHelper {
 		require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
 		$mainframe = JFactory::getApplication();
 		$params = $mainframe->getParams('com_jem');
+		
+		$jemsettings =  JEMHelper::config();
 
 		$offset = (float) $mainframe->getCfg('offset');
 		$timezone_name = JEMHelper::getTimeZone($offset);
@@ -760,7 +762,7 @@ class JEMHelper {
 			$date_end['min']  = $end_time[2];
 			$date_end['sec']  = $end_time[3];
 			$dateendparam = array('VALUE' => 'DATE-TIME');
-			if ($params->get('ical_tz', 1)) {
+			if ($jemsettings->ical_tz == 1) {
 				$dateendparam['TZID'] = $timezone_name;
 			}
 		}
