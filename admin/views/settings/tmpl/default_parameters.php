@@ -164,27 +164,26 @@ defined('_JEXEC') or die;
 											<input type="text" name="recurrence_anticipation" value="<?php echo $this->jemsettings->recurrence_anticipation; ?>" size="5" maxlength="3" />
 										</td>
 									</tr>
-									<!-- ----------------  ------------------  ------------  -->
-									<!--
+									
 									<tr valign="top">
 										<td width="300" class="key">
 											<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SETTINGS_ICAL_TIMEZONE' ); ?>::<?php echo JText::_('COM_JEM_SETTINGS_ICAL_TIMEZONE_DESC'); ?>">
 												<?php 
-												//echo JText::_( 'COM_JEM_SETTINGS_ICAL_TIMEZONE' ); 
+												echo JText::_( 'COM_JEM_SETTINGS_ICAL_TIMEZONE' ); 
 												?>
 											</span>
 										</td>
 										<td valign="top">
 											<?php
-											//$nr = array();
-											//$nr[] = JHTML::_('select.option', '0', JText::_('COM_JEM_SETTINGS_ICAL_TIMEZONE_FLOAT') );
-											//$nr[] = JHTML::_('select.option', '1', JText::_('COM_JEM_SETTINGS_ICAL_TIMEZONE_JOOMLA') );
-											//$nrevents = JHTML::_('select.genericlist', $nr, 'ical_tz', 'size="1" class="inputbox"', 'value', 'text', $this->jemsettings->ical_tz );
-											//echo $nrevents;
+											$nr = array();
+											$nr[] = JHTML::_('select.option', '0', JText::_('COM_JEM_SETTINGS_ICAL_TIMEZONE_FLOAT') );
+											$nr[] = JHTML::_('select.option', '1', JText::_('COM_JEM_SETTINGS_ICAL_TIMEZONE_JOOMLA') );
+											$nrevents = JHTML::_('select.genericlist', $nr, 'ical_tz', 'size="1" class="inputbox"', 'value', 'text', $this->jemsettings->ical_tz );
+											echo $nrevents;
 											?>
 										</td>
 									</tr>
-									-->
+									
 
 									<tr valign="top">
 										<td width="300" class="key">
@@ -238,7 +237,7 @@ defined('_JEXEC') or die;
 											<input type="text" name="attachments_maxsize" value="<?php echo $this->jemsettings->attachments_maxsize; ?>" size="40"  />
 										</td>
 									</tr>
-									<!------  ------ ------- ------- ------- ------- --->
+									
 								</tbody>
 							</table>
 						</fieldset>
