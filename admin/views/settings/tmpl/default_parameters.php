@@ -161,7 +161,7 @@ defined('_JEXEC') or die;
 											</span>
 										</td>
 										<td valign="top">
-											<input type="text" name="recurrence_anticipation" value="<?php echo $this->jemsettings->recurrence_anticipation; ?>" size="5" maxlength="3" />
+											<input type="text" class="required" name="recurrence_anticipation" value="<?php echo $this->jemsettings->recurrence_anticipation; ?>" size="5" maxlength="3" />
 										</td>
 									</tr>
 									

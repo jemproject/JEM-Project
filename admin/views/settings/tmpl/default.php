@@ -26,11 +26,29 @@ defined('_JEXEC') or die;
  JHtml::_('behavior.formvalidation');
  JHtml::_('behavior.tooltip');
  JHtml::_('behavior.switcher');
-
-
 // Load submenu template, using element id 'submenu' as needed by behavior.switcher
 // $this->document->setBuffer($this->loadTemplate('navigation'), 'modules', 'submenu');
 ?>
+
+<script>
+Joomla.submitbutton = function(task)
+{
+
+	var form = document.adminForm;
+
+	if (task == 'cancel') {
+		submitform( task );
+	} else if (form.recurrence_anticipation.value == "" || form.recurrence_anticipation.value == 0 ){
+		alert( "<?php echo JText::_ ( 'COM_JEM_ADD_RECURRENCE' ); ?>" );
+		form.recurrence_anticipation.focus();
+	} else {
+		submitform( task );
+	}
+}
+
+</script>
+
+
 
 <form action="index.php" method="post" id="adminForm" name="adminForm">
 
