@@ -28,7 +28,7 @@ defined('_JEXEC') or die; ?>
 		<tr>
 			<td width="100%">
 				<?php echo JText::_( 'COM_JEM_SEARCH' ).' '.$this->lists['filter']; ?>
-				<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onchange="document.adminForm.submit();" title="<?php echo JText::_('COM_JEM_FILTER_BY_TITLE_OR_ENTER_ARTICLE_ID');?>"/>
+				<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onchange="document.adminForm.submit();" />
 				<button onclick="this.form.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
 				<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 			</td>

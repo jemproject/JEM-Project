@@ -55,8 +55,9 @@ class JEMControllerPlugins extends JEMController
 
 		$query = 'SELECT COUNT(*)'
 				. ' FROM #__extensions AS p'
-				. ' WHERE p.folder = '.$db->Quote("jem");
-		;
+				. ' WHERE p.name LIKE '.$db->Quote("%jem%")
+				. ' AND p.type = '.$db->Quote("plugin");
+				;
 		$db->setQuery( $query );
 
 		$total = $db->loadResult();
