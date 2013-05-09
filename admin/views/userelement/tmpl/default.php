@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.0 $Id: default.php 662 2008-05-09 22:28:53Z schlu $
+ * @version 1.9 $Id$
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes

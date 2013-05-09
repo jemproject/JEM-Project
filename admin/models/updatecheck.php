@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Id$
+ * @version 1.9 $Id$
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -95,7 +95,7 @@ class JEMModelUpdatecheck extends JModelLegacy
 			$_updatedata->changes 		= explode(';', $data[6]);
 			$_updatedata->failed 		= 0;
 
-			$_updatedata->current = version_compare( '2.0.0.1', $_updatedata->version );
+			$_updatedata->current = version_compare( '1.9', $_updatedata->version );
 
 		}
 

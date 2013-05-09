@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.1 $Id$
+ * @version 1.9 $Id$
  * @package JEM
  * @subpackage JEM Mailer Plugin
  * @copyright (C) 2013-2013 joomlaeventmanager.net
