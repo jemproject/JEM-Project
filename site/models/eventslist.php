@@ -234,6 +234,17 @@ class JEMModelEventslist extends JModelLegacy
 	function _buildWhere()
 	{
 		$app =  JFactory::getApplication();
+		$user		=  JFactory::getUser();
+	
+	if (JFactory::getUser()->authorise('core.manage')) {
+			$gid = (int) 3;		//viewlevel Special
+		} else {
+			if($user->get('id')) {
+				$gid = (int) 2;	 //viewlevel Registered
+			} else {
+				$gid = (int) 1;	//viewlevel Public
+			}
+		}
 
 		// Get the paramaters of the active menu item
 		$params 	=  $app->getParams();
@@ -247,7 +258,10 @@ class JEMModelEventslist extends JModelLegacy
 		} else {
 			$where = ' WHERE a.published = 1';
 		}
-
+		$where .= ' AND c.published = 1';
+		$where .= ' AND c.access  <= '.$gid;
+		
+		
 		// get excluded categories
 		$excluded_cats = trim($params->get('excluded_cats', ''));
 
@@ -255,7 +269,7 @@ class JEMModelEventslist extends JModelLegacy
 			$cats_excluded = explode(',', $excluded_cats);
 			$where .= ' AND (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
 		}
-		// === END Exclucded categories add === //
+		// === END Excluded categories add === //
 
 
 		/*
