@@ -337,10 +337,13 @@ class JEMModelMy extends JModelLegacy
         //Get Events from Database
 		$query = 'SELECT DISTINCT a.id as eventid, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription,'
 				. ' l.venue, l.city, l.state, l.url,'
+				. ' c.catname, c.id AS catid,'
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 				. ' FROM #__jem_events AS a'
 				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
 				. $where
 				. $orderby
 				;
@@ -451,6 +454,12 @@ class JEMModelMy extends JModelLegacy
             $where = ' WHERE a.published = 1';
         }
 
+
+			$where .= ' AND c.published = 1';
+        	$where .= ' AND c.access  <= '.$gid;
+        
+        
+        
         // then if the user is the owner of the event
         $where .= ' AND a.created_by = '.$this->_db->Quote($user->id);
 
