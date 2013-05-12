@@ -281,7 +281,10 @@ class JEMModelVenueevents extends JModelLegacy
 			$where = ' WHERE a.published = 1 && a.locid = '.$this->_id;
 		}
 		
-		// Second is to only select events assigned to category the user has access to
+		// Second is to only select published categorys
+		$where .= ' AND c.published = 1';
+		
+		// Third is to only select events assigned to category the user has access to
 		$where .= ' AND c.access  <= '.$gid;
 	
 		/*

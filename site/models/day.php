@@ -76,8 +76,8 @@ class JEMModelDay extends JModelLegacy
 		$params 	=  $app->getParams('com_jem');
 
 		//get the number of events from database
-		$limit       	= $app->getUserStateFromRequest('com_jem.day.limit', 'limit', $params->def('display_num', 0), 'int');
-		$limitstart		= JRequest::getInt('limitstart');
+		$limit      = $app->getUserStateFromRequest('com_jem.day.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limitstart = $app->getUserStateFromRequest('com_jem.day.limitstart', 'limitstart', 0, 'int');
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -237,6 +237,8 @@ class JEMModelDay extends JModelLegacy
 				. ' FROM #__jem_events AS a'
 				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 				. ' LEFT JOIN #__jem_countries AS ct ON ct.iso2 = l.country '
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
 				. $where
 				. $orderby
 				;
@@ -291,6 +293,9 @@ class JEMModelDay extends JModelLegacy
 
 		// First thing we need to do is to select only published events
 		$where = ' WHERE a.published = 1';
+		
+		$where .= ' AND c.published = 1';
+		$where .= ' AND c.access  <= '.$gid;
 
 		// Second is to only select events of the specified day
 		$where .= ' AND (\''.$this->_date.'\' BETWEEN (a.dates) AND (IF (a.enddates >= a.dates, a.enddates, a.dates)) OR \''.$this->_date.'\' = a.dates)';
@@ -302,7 +307,8 @@ class JEMModelDay extends JModelLegacy
 		if ($jemsettings->filter)
 		{
 			$filter 		= JRequest::getString('filter', '', 'request');
-			$filter_type 	= JRequest::getWord('filter_type', '', 'request');
+			$filter_type 	= JRequest::getWord('filter_type', '', 'request');	
+			
 
 			if ($filter)
 			{
