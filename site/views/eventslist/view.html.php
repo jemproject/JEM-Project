@@ -30,7 +30,7 @@ jimport( 'joomla.application.component.view');
  *
  * @package JEM
  * @since 0.9
- */
+*/
 class JEMViewEventslist extends JViewLegacy
 {
 	/**
@@ -50,14 +50,29 @@ class JEMViewEventslist extends JViewLegacy
 		$params 	= $app->getParams();
 		$uri 		= JFactory::getURI();
 		$pathway 	= $app->getPathWay();
+		$db  		=  JFactory::getDBO();
 
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
-		// get variables
-		$limitstart	= JRequest::getVar('limitstart', 0, '', 'int');
-		$limit		= $app->getUserStateFromRequest('com_jem.eventslist.limit', 'limit', $params->def('display_num', 0), 'int');
+		// get variables (original)
+		//$limitstart	= JRequest::getVar('limitstart', 0, '', 'int');
+		//$limit		= $app->getUserStateFromRequest('com_jem.eventslist.limit', 'limit', $params->def('display_num', 0), 'int');
+
+
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_order', 'filter_order', 	'a.dates', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_state', 'filter_state', 	'*', 'word' );
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.eventslist.filter', 'filter', '', 'int' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.eventslist.search', 'search', '', 'string' );
+		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
+
+		// table ordering
+		$lists['order_Dir'] = $filter_order_Dir;
+		$lists['order'] = $filter_order;
+
+
 		$task 		= JRequest::getWord('task');
 		$pop		= JRequest::getBool('pop');
 
@@ -115,19 +130,46 @@ class JEMViewEventslist extends JViewLegacy
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
 
-		//create select lists
-		$lists	= $this->_buildSortLists();
-/*
-		if ($lists['filter']) {
-			//$uri->setVar('filter', JRequest::getString('filter'));
-			//$filter		= $app->getUserStateFromRequest('com_jem.jem.filter', 'filter', '', 'string');
-			$uri->setVar('filter', $lists['filter']);
-			$uri->setVar('filter_type', JRequest::getString('filter_type'));
-		} else {
-			$uri->delVar('filter');
-			$uri->delVar('filter_type');
+		//create select lists (original)
+		//$lists	= $this->_buildSortLists();
+
+
+		//search filter
+		$filters = array();
+
+		if ($jemsettings->showtitle == 1) {
+			$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_TITLE' ) );
 		}
-*/
+		if ($jemsettings->showlocate == 1) {
+			$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_VENUE' ) );
+		}
+		if ($jemsettings->showcity == 1) {
+			$filters[] = JHTML::_('select.option', '3', JText::_( 'COM_JEM_CITY' ) );
+		}
+		if ($jemsettings->showcat == 1) {
+			$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_CATEGORY' ) );
+		}
+		if ($jemsettings->showstate == 1) {
+			$filters[] = JHTML::_('select.option', '5', JText::_( 'COM_JEM_STATE' ) );
+		}
+		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
+
+		// search filter
+		$lists['search']= $search;
+
+
+
+		/*
+		 if ($lists['filter']) {
+		//$uri->setVar('filter', JRequest::getString('filter'));
+		//$filter		= $app->getUserStateFromRequest('com_jem.jem.filter', 'filter', '', 'string');
+		$uri->setVar('filter', $lists['filter']);
+		$uri->setVar('filter_type', JRequest::getString('filter_type'));
+		} else {
+		$uri->delVar('filter');
+		$uri->delVar('filter_type');
+		}
+		*/
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
 

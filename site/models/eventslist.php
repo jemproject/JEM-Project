@@ -61,15 +61,12 @@ class JEMModelEventslist extends JModelLegacy
 		$params 	=  $app->getParams('com_jem');
 
 		//get the number of events from database
-		$limit		= $app->getUserStateFromRequest('com_jem.jem.limit', 'limit', $params->def('display_num', 0), 'int');
-		$limitstart		= JRequest::getVar('limitstart', 0, '', 'int');
-
+		$limit		= $app->getUserStateFromRequest('com_jem.eventslist.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limitstart = $app->getUserStateFromRequest('com_jem.eventslist.limitstart', 'limitstart', 0, 'int');
+	
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
 
-		// Get the filter request variables
-		$this->setState('filter_order', JRequest::getCmd('filter_order', 'a.dates'));
-		$this->setState('filter_order_dir', JRequest::getWord('filter_order_Dir', 'ASC'));
 	}
 
 	/**
@@ -109,7 +106,7 @@ class JEMModelEventslist extends JModelLegacy
 			if ($pop) {
 				$this->_data = $this->_getList($query);
 			} else {
-				$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
+				$this->_data = $this->_getList($query, $this->getState('limitstart'), $this->getState('limit'));
 			}
 		}
 
@@ -210,19 +207,22 @@ class JEMModelEventslist extends JModelLegacy
 
 	function _buildOrderBy()
 	{
-		$filter_order		= $this->getState('filter_order');
-		$filter_order_dir	= $this->getState('filter_order_dir');
-
-		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
-		$filter_order_dir	= JFilterInput::getinstance()->clean($filter_order_dir, 'word');
-
+		$app =  JFactory::getApplication();
+		
+		$filter_order		= $app->getUserStateFromRequest('com_jem.eventslist.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.eventslist.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		
+		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		
 		if ($filter_order != '') {
-			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_dir;
+			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
 		} else {
 			$orderby = ' ORDER BY a.dates, a.times ';
 		}
-
+		
 		return $orderby;
+		
 	}
 
 	/**
@@ -234,9 +234,13 @@ class JEMModelEventslist extends JModelLegacy
 	function _buildWhere()
 	{
 		$app =  JFactory::getApplication();
+		$task 		= JRequest::getWord('task');
+		$params 	=  $app->getParams();
+		$jemsettings =  JEMHelper::config();
+		
 		$user		=  JFactory::getUser();
-	
-	if (JFactory::getUser()->authorise('core.manage')) {
+		
+		if (JFactory::getUser()->authorise('core.manage')) {
 			$gid = (int) 3;		//viewlevel Special
 		} else {
 			if($user->get('id')) {
@@ -245,74 +249,65 @@ class JEMModelEventslist extends JModelLegacy
 				$gid = (int) 1;	//viewlevel Public
 			}
 		}
+		
+		
+		$filter_state 	= $app->getUserStateFromRequest('com_jem.eventslist.filter_state', 'filter_state', '', 'word');
+		$filter 		= $app->getUserStateFromRequest('com_jem.eventslist.filter', 'filter', '', 'int');
+		$search 		= $app->getUserStateFromRequest('com_jem.eventslist.search', 'search', '', 'string');
+		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
+		
 
-		// Get the paramaters of the active menu item
-		$params 	=  $app->getParams();
-		$jemsettings =  JEMHelper::config();
-
-		$task 		= JRequest::getWord('task');
-
+		$where = array();
+		
 		// First thing we need to do is to select only needed events
 		if ($task == 'archive') {
-			$where = ' WHERE a.published = -1';
+			$where[] = ' a.published = -1';
 		} else {
-			$where = ' WHERE a.published = 1';
+			$where[] = ' a.published = 1';
 		}
-		$where .= ' AND c.published = 1';
-		$where .= ' AND c.access  <= '.$gid;
-		
+		$where[] = ' c.published = 1';
+		$where[] = ' c.access  <= '.$gid;
 		
 		// get excluded categories
 		$excluded_cats = trim($params->get('excluded_cats', ''));
-
+		
 		if ($excluded_cats != '') {
 			$cats_excluded = explode(',', $excluded_cats);
-			$where .= ' AND (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
+			$where [] = '  (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
 		}
 		// === END Excluded categories add === //
-
-
-		/*
-		 * If we have a filter, and this is enabled... lets tack the AND clause
-		 * for the filter onto the WHERE clause of the item query.
-		 */
+		
+		
 		if ($jemsettings->filter)
-		{
-			$filter 		= JRequest::getString('filter', '', 'request');
-			$filter_type 	= JRequest::getWord('filter_type', '', 'request');
-
-			if ($filter)
-			{
-				// clean filter variables
-				$filter 		= JString::strtolower($filter);
-				$filter			= $this->_db->Quote('%'.$this->_db->escape($filter, true).'%', false);
-				$filter_type 	= JString::strtolower($filter_type);
-
-				switch ($filter_type)
-				{
-					case 'title' :
-						$where .= ' AND LOWER(a.title) LIKE '.$filter;
-						break;
-
-					case 'venue' :
-						$where .= ' AND LOWER(l.venue) LIKE '.$filter;
-						break;
-
-					case 'city' :
-						$where .= ' AND LOWER(l.city) LIKE '.$filter;
-						break;
-
-					case 'type':
-						$where .= ' AND LOWER(c.catname) LIKE '.$filter;
-						break;
-
-					case 'state':
-						$where .= ' AND LOWER(l.state) LIKE '.$filter;
-						break;
-				}
-			}
+		{	
+			
+		if ($search && $filter == 1) {
+			$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
 		}
+		
+		if ($search && $filter == 2) {
+			$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
+		}
+		
+		if ($search && $filter == 3) {
+			$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
+		}
+		
+		if ($search && $filter == 4) {
+			$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
+		}
+		
+		if ($search && $filter == 5) {
+			$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
+		}
+		
+		} // end tag of jemsettings->filter decleration
+		
+		$where 		= (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
+		
 		return $where;
+		
+
 	}
 
 	function getCategories($id)
