@@ -31,7 +31,7 @@ defined('_JEXEC') or die;
 class JEMAdmin {
 
 	/**
-	* Writes footer. Do not remove!
+	* Writes footer. 
 	*
 	* @since 0.9
 	*/
@@ -39,11 +39,13 @@ static	function footer( )
 	{
         $params =  JComponentHelper::getParams('com_jem');
      
-        if ($params->get('copyright') == 1) {
-		echo '<font color="grey">Powered by <a href="http://www.schlu.net" target="_blank">Schlu.net</a> | <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
+       /* if ($params->get('copyright') == 1) { */
+		echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
+       /*  
         } else {
 	     echo '';   
-        }
+        } 
+        */
 
 	}
 

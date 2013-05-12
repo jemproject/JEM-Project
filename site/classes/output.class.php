@@ -30,7 +30,7 @@ defined('_JEXEC') or die;
 class JEMOutput {
 
 	/**
-	* Writes footer. Official copyright! Do not remove!
+	* Writes footer. 
 	*
 	* @author Christoph Lukes
 	* @since 0.9
@@ -41,11 +41,13 @@ static function footer( )
 		$app =  JFactory::getApplication();
         $params 		=  $app->getParams();
         
-        if ($params->get('copyright') == 1) {
-		echo '<font color="grey">Powered by <a href="http://www.schlu.net" target="_blank">Schlu.net</a> | <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
-        } else {
+        /* if ($params->get('copyright') == 1) { */
+		echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
+        /*
+         } else {
 	     echo '';   
         }
+        */
 		
 		}
 
