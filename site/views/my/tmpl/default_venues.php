@@ -56,7 +56,5 @@ defined( '_JEXEC' ) or die;
   <?php echo $this->venues_pagination->getPagesLinks(); ?>
 </div>
 
-<p class="pagescounter">
-  <?php echo $this->venues_pagination->getPagesCounter(); ?>
-</p>
+
 <?php endif; ?>

@@ -110,10 +110,7 @@ defined('_JEXEC') or die;
 	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 
-<p class="pagescounter">
-	<?php
-	// echo $this->pagination->getPagesCounter(); ?>
-</p>
+
 
 <p class="copyright">
 <?php echo JEMOutput::footer();	?>

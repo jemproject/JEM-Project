@@ -99,11 +99,7 @@ if (count($this->categories) && $this->category->id > 0) :
 	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 
-<p class="pagescounter">
-	<?php 
-	//echo $this->pagination->getPagesCounter(); 
-	?>
-</p>
+
 <?php endif; ?>
 
 

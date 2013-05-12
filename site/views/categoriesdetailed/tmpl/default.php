@@ -127,11 +127,7 @@ endforeach;
 	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 
-<div class="pagescounter">
-	<?php 
-	//echo $this->pagination->getPagesCounter(); 
-	?>
-</div>
+
 
 <!--copyright-->
 

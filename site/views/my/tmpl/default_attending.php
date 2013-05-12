@@ -227,7 +227,5 @@ defined( '_JEXEC' ) or die;
 	<?php echo $this->attending_pagination->getPagesLinks(); ?>
 </div>
 
-<p class="pagescounter">
-	<?php echo $this->attending_pagination->getPagesCounter(); ?>
-</p>
+
 <?php endif; ?>
