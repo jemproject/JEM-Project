@@ -218,11 +218,25 @@ class JEMModelDetails extends JModelLegacy
 	 */
 	function getCategories()
 	{
+		$user		=  JFactory::getUser();
+		if (JFactory::getUser()->authorise('core.manage')) {
+			$gid = (int) 3;		//viewlevel Special
+		} else {
+			if($user->get('id')) {
+				$gid = (int) 2;	 //viewlevel Registered
+			} else {
+				$gid = (int) 1;	//viewlevel Public
+			}
+		}
+		
+		
 		$query = 'SELECT DISTINCT c.id, c.catname,'
 		. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as slug'
 		. ' FROM #__jem_categories AS c'
 		. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 		. ' WHERE rel.itemid = '.$this->_id
+		. ' AND c.published = 1'
+		. ' AND c.access  <= '.$gid
 		;
 
 		$this->_db->setQuery( $query );
