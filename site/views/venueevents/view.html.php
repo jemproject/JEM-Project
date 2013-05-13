@@ -46,6 +46,7 @@ class JEMViewVenueevents extends JViewLegacy
 		$document 	= JFactory::getDocument();
 		$menu		= $app->getMenu();
 		$jemsettings = JEMHelper::config();
+		$db  		=  JFactory::getDBO();
 
 		//get menu information
 		$menu		= $app->getMenu();
@@ -59,12 +60,21 @@ class JEMViewVenueevents extends JViewLegacy
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
-		// Request variables
-		$limitstart		= JRequest::getInt('limitstart');
-		$limit			= $app->getUserStateFromRequest('com_jem.venueevents.limit', 'limit', $params->def('display_num', 0), 'int');
+		
+		// get variables
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.venueevents.filter_order', 'filter_order', 	'a.dates', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.venueevents.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.venueevents.filter_state', 'filter_state', 	'*', 'word' );
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.venueevents.filter', 'filter', '', 'int' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.venueevents.search', 'search', '', 'string' );
+		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 		$pop			= JRequest::getBool('pop');
 		$task 			= JRequest::getWord('task');
-
+		
+		// table ordering
+		$lists['order_Dir'] = $filter_order_Dir;
+		$lists['order'] = $filter_order;
+		
 		//get data from model
 		$rows 		= $this->get('Data');
 		$venue	 	= $this->get('Venue');
@@ -168,13 +178,35 @@ class JEMViewVenueevents extends JViewLegacy
 		if ($venue->country) {
 			$venue->countryimg = JEMOutput::getFlag( $venue->country );
 		}
-
+		
 		// Create the pagination object
-		jimport('joomla.html.pagination');
-		$pagination = new JPagination($total, $limitstart, $limit);
+		$pagination = $this->get('Pagination');
 
-		//create select lists
-		$lists	= $this->_buildSortLists($jemsettings);
+	 
+		//search filter
+		$filters = array();
+		
+		if ($jemsettings->showtitle == 1) {
+			$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_TITLE' ) );
+		}
+		if ($jemsettings->showlocate == 1) {
+			$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_VENUE' ) );
+		}
+		if ($jemsettings->showcity == 1) {
+			$filters[] = JHTML::_('select.option', '3', JText::_( 'COM_JEM_CITY' ) );
+		}
+		if ($jemsettings->showcat == 1) {
+			$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_CATEGORY' ) );
+		}
+		if ($jemsettings->showstate == 1) {
+			$filters[] = JHTML::_('select.option', '5', JText::_( 'COM_JEM_STATE' ) );
+		}
+		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
+		
+		// search filter
+		$lists['search']= $search;
+		
+		 
 		$this->lists				= $lists;
 		$this->action				= $uri->toString();
 
@@ -221,41 +253,5 @@ class JEMViewVenueevents extends JViewLegacy
 		return $this->rows;
 	}
 
-	function _buildSortLists($jemsettings)
-	{
-		// Table ordering values
-		$filter_order		= JRequest::getCmd('filter_order', 'a.dates');
-		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', 'ASC');
-
-		$filter				= $this->escape(JRequest::getString('filter'));
-		$filter_type		= JRequest::getString('filter_type');
-
-		$sortselects = array();
-
-		if ($jemsettings->showtitle == 1) {
-			$sortselects[]	= JHTML::_('select.option', 'title', JText::_('COM_JEM_TABLE_TITLE'));
-		}
-		if ($jemsettings->showlocate == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'venue', JText::_('COM_JEM_TABLE_LOCATION'));
-		}
-		if ($jemsettings->showcity == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'city', JText::_('COM_JEM_TABLE_CITY'));
-		}
-		if ($jemsettings->showcat == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'type', JText::_('COM_JEM_TABLE_CATEGORY'));
-		}
-		if ($jemsettings->showstate == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'state', JText::_('COM_JEM_TABLE_STATE'));
-		}
-
-		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
-
-		$lists['order_Dir'] 	= $filter_order_Dir;
-		$lists['order'] 		= $filter_order;
-		$lists['filter'] 		= $filter;
-		$lists['filter_type'] 	= $sortselect;
-
-		return $lists;
-	}
 }
 ?>

@@ -29,7 +29,7 @@ jimport('joomla.application.component.view');
  *
  * @package JEM
  * @since 0.9
- */
+*/
 class JEMViewCategoryevents extends JViewLegacy
 {
 	/**
@@ -39,31 +39,69 @@ class JEMViewCategoryevents extends JViewLegacy
 	 */
 	function display($tpl=null)
 	{
-		$app = JFactory::getApplication();
-
+		
 		//initialize variables
-		$document 	= JFactory::getDocument();
-		$menu		= $app->getMenu();
-		$jemsettings = JEMHelper::config();
-		//$item		= $menu->getActive();
+		$app = JFactory::getApplication();
+		$document 		= JFactory::getDocument();
+		$menu			= $app->getMenu();
+		$jemsettings 	= JEMHelper::config();
+		$db  			=  JFactory::getDBO();
+		//$item			= $menu->getActive();
 
+		
 		//get menu information
-		$menu		= $app->getMenu();
-		$item = $menu->getActive();
+		$menu			= $app->getMenu();
+		$item 			= $menu->getActive();
+		$params 		= $app->getParams();
+		$uri 			= JFactory::getURI();
+		$pathway 		= $app->getPathWay();
 
-		$params 	= $app->getParams();
-		$uri 		= JFactory::getURI();
-		$pathway 	= $app->getPathWay();
-
+		
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
-		// Request variables
-	//	$limitstart		= JRequest::getInt('limitstart');
-	//	$limit			= $app->getUserStateFromRequest('com_jem.categoryevents.limit', 'limit', $params->def('display_num', 0), 'int');
-		$task 			= JRequest::getWord('task');
-		$pop			= JRequest::getBool('pop');
+
+		// get variables
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.categoryevents.filter_order', 'filter_order', 	'a.dates', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categoryevents.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categoryevents.filter_state', 'filter_state', 	'*', 'word' );
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.categoryevents.filter', 'filter', '', 'int' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.categoryevents.search', 'search', '', 'string' );
+		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
+		$task 				= JRequest::getWord('task');
+		$pop				= JRequest::getBool('pop');
+
+
+		// table ordering
+		$lists['order_Dir'] = $filter_order_Dir;
+		$lists['order'] 	= $filter_order;
+
+
+		//search filter
+		$filters = array();
+
+		if ($jemsettings->showtitle == 1) {
+			$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_TITLE' ) );
+		}
+		if ($jemsettings->showlocate == 1) {
+			$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_VENUE' ) );
+		}
+		if ($jemsettings->showcity == 1) {
+			$filters[] = JHTML::_('select.option', '3', JText::_( 'COM_JEM_CITY' ) );
+		}
+		if ($jemsettings->showcat == 1) {
+			$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_CATEGORY' ) );
+		}
+		if ($jemsettings->showstate == 1) {
+			$filters[] = JHTML::_('select.option', '5', JText::_( 'COM_JEM_STATE' ) );
+		}
+		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
+
+		
+		// search filter
+		$lists['search']= $search;
+
 
 		//get data from model
 		$rows 		= $this->get('Data');
@@ -149,26 +187,9 @@ class JEMViewCategoryevents extends JViewLegacy
 			$catdescription = $category->text;
 		}
 
-		/*if ($category->image != '') {
-			$category->image = JHTML::image('jem/categories/'.$category->image, $category->catname);
-		}
-
-		if ($category->image != '') {
-			$path = "file_path";
-			$mediaparams = JComponentHelper::getParams('com_media');
-			$imgattribs['width'] = $jemsettings->imagewidth;
-			$imgattribs['height'] = $jemsettings->imagehight;
-
-			$category->image = JHTML::image($mediaparams->get($path, 'images').'/jem/categories/'.$category->image, $category->catname, $imgattribs);
-		} else {
-			$category->image = JHTML::image('media/com_jem/images/noimage.png', $category->catname);
-		}
-		*/
-
 		$cimage = JEMImage::flyercreator($category->image,'category');
 
 		//create select lists
-		$lists	= $this->_buildSortLists($jemsettings);
 		$this->lists			= $lists;
 		$this->action			= $uri->toString();
 		$this->cimage				= $cimage;
@@ -226,41 +247,6 @@ class JEMViewCategoryevents extends JViewLegacy
 		return $this->rows;
 	}
 
-	function _buildSortLists($jemsettings)
-	{
-		// Table ordering values
-		$filter_order		= JRequest::getCmd('filter_order', 'a.dates');
-		$filter_order_Dir	= JRequest::getCmd('filter_order_Dir', 'ASC');
 
-		$filter				= $this->escape(JRequest::getString('filter'));
-		$filter_type		= JRequest::getString('filter_type');
-
-		$sortselects = array();
-
-		if ($jemsettings->showtitle == 1) {
-			$sortselects[]	= JHTML::_('select.option', 'title', JText::_('COM_JEM_TABLE_TITLE'));
-		}
-		if ($jemsettings->showlocate == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'venue', JText::_('COM_JEM_TABLE_LOCATION'));
-		}
-		if ($jemsettings->showcity == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'city', JText::_('COM_JEM_TABLE_CITY'));
-		}
-		if ($jemsettings->showcat == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'type', JText::_('COM_JEM_TABLE_CATEGORY'));
-		}
-		if ($jemsettings->showstate == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'state', JText::_('COM_JEM_TABLE_STATE'));
-		}
-
-		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
-
-		$lists['order_Dir'] 	= $filter_order_Dir;
-		$lists['order'] 		= $filter_order;
-		$lists['filter'] 		= $filter;
-		$lists['filter_type'] 	= $sortselect;
-
-		return $lists;
-	}
 }
 ?>

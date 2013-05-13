@@ -56,11 +56,7 @@ class JEMViewEventslist extends JViewLegacy
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
-		// get variables (original)
-		//$limitstart	= JRequest::getVar('limitstart', 0, '', 'int');
-		//$limit		= $app->getUserStateFromRequest('com_jem.eventslist.limit', 'limit', $params->def('display_num', 0), 'int');
-
-
+		// get variables
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_order', 'filter_order', 	'a.dates', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_state', 'filter_state', 	'*', 'word' );
@@ -130,10 +126,7 @@ class JEMViewEventslist extends JViewLegacy
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
 
-		//create select lists (original)
-		//$lists	= $this->_buildSortLists();
-
-
+		
 		//search filter
 		$filters = array();
 
@@ -218,49 +211,6 @@ class JEMViewEventslist extends JViewLegacy
 		return $this->rows;
 	}
 
-	/**
-	 * Method to build the sortlists
-	 *
-	 * @access private
-	 * @return array
-	 * @since 0.9
-	 */
-	function _buildSortLists()
-	{
-		$jemsettings = JEMHelper::config();
 
-		$filter_order		= JRequest::getCmd('filter_order', 'a.dates');
-		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', 'ASC');
-
-		$filter				= $this->escape(JRequest::getString('filter'));
-		$filter_type		= JRequest::getString('filter_type');
-
-		$sortselects = array();
-
-		if ($jemsettings->showtitle == 1) {
-			$sortselects[]	= JHTML::_('select.option', 'title', JText::_('COM_JEM_TABLE_TITLE'));
-		}
-		if ($jemsettings->showlocate == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'venue', JText::_('COM_JEM_TABLE_LOCATION'));
-		}
-		if ($jemsettings->showcity == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'city', JText::_('COM_JEM_TABLE_CITY'));
-		}
-		if ($jemsettings->showcat == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'type', JText::_('COM_JEM_TABLE_CATEGORY'));
-		}
-		if ($jemsettings->showstate == 1) {
-			$sortselects[] 	= JHTML::_('select.option', 'state', JText::_('COM_JEM_TABLE_STATE'));
-		}
-
-		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
-
-		$lists['order_Dir'] 	= $filter_order_Dir;
-		$lists['order'] 		= $filter_order;
-		$lists['filter'] 		= $filter;
-		$lists['filter_types'] 	= $sortselect;
-
-		return $lists;
-	}
 }
 ?>

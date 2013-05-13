@@ -38,7 +38,7 @@ defined( '_JEXEC' ) or die;
 		<?php if ($this->jemsettings->filter) : ?>
 		<div class="jem_fleft">
 			<?php
-			echo '<label for="filter_type">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
+			echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
 			echo $this->lists['filter'].'&nbsp;';
 			?>
 			<input type="text" name="search" id="search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />

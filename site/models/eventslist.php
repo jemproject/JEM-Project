@@ -66,6 +66,7 @@ class JEMModelEventslist extends JModelLegacy
 	
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
+		
 
 	}
 
