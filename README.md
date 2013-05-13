@@ -17,6 +17,7 @@ This version includes:
 - Changed category upload (just like the venue & event)
 - Exclude categories in simplelist
 - 10 Custom fields
+- Contact
 
 Tips, suggestions are very welcome..
 
