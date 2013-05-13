@@ -154,7 +154,7 @@ class JEMModelDetails extends JModelLegacy
 			$where	= $this->_buildDetailsWhere();
 
 			$query = 'SELECT a.id AS did, a. published, a.contactid, a.dates, a.enddates, a.title, a.times, a.endtimes, '
-			    . ' a.datdescription, a.meta_keywords, a.meta_description, a.unregistra, a.locid, a.created_by, '
+			    . ' a.datdescription, a.meta_keywords, a.custom01, a.custom02, a.custom03, a.custom04, a.custom05, a.custom06, a.custom07, a.custom08, a.custom09, a.custom10, a.meta_description, a.unregistra, a.locid, a.created_by, '
 			    . ' a.datimage, a.registra, a.maxplaces, a.waitinglist, '
 					. ' l.id AS locid, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, l.city, l.plz, l.street, l.country, ct.name AS countryname, l.map, l.created_by AS venueowner, l.latitude, l.longitude,'
 					. ' c.access AS cataccess, c.id AS catid, c.published AS catpublished,'

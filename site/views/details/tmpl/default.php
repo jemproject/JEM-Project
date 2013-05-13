@@ -135,7 +135,77 @@ JHTML::_('behavior.modal');
 					endif;
 				endforeach;
     			?>
-			</dd><br />
+			</dd>
+			
+			<?php if ($this->row->custom01) : ?>
+  	<dt class="custom01"><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD1' ).':'; ?></dt>
+  	<dd class="custom01"><a target="_blank" href="<?php echo $this->escape($this->row->custom01); ?>">link</a></dd>
+  <?php
+  	endif;
+  	?>
+  
+  <?php if ($this->row->custom02) : ?>
+  	<dt class="custom02"><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD2' ).':'; ?></dt>
+  	<dd class="custom02"><?php echo $this->escape($this->row->custom02); ?></dd>
+  <?php
+  	endif;
+  	?>
+  
+  <?php if ($this->row->custom03) : ?>
+  	<dt class="custom03"><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD3' ).':'; ?></dt>
+  	<dd class="custom03"><?php echo $this->escape($this->row->custom03); ?></dd>
+  <?php
+  	endif;
+  	?>
+  <?php if ($this->row->custom04) : ?>
+  	<dt class="custom04"><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD4' ).':'; ?></dt>
+  	<dd class="custom04"><?php echo $this->escape($this->row->custom04); ?></dd>
+  <?php
+  	endif;
+  	?>
+  
+  <?php if ($this->row->custom05) : ?>
+  	<dt class="custom05"><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD5' ).':'; ?></dt>
+  	<dd class="custom05"><?php echo $this->escape($this->row->custom05); ?></dd>
+  <?php
+  	endif;
+  	?>
+  
+  <?php if ($this->row->custom06) : ?>
+  	<dt class="custom06"><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD6' ).':'; ?></dt>
+  	<dd class="custom06"><?php echo $this->escape($this->row->custom06); ?></dd>
+  <?php
+  	endif;
+  	?>
+  
+   <?php if ($this->row->custom07) : ?>
+  	<dt class="custom07"><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD7' ).':'; ?></dt>
+  	<dd class="custom07"><?php echo $this->escape($this->row->custom07); ?></dd>
+  <?php
+  	endif;
+  	?>
+  
+   <?php if ($this->row->custom08) : ?>
+  	<dt class="custom08"><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD8' ).':'; ?></dt>
+  	<dd class="custom08"><?php echo $this->escape($this->row->custom08); ?></dd>
+  <?php
+  	endif;
+  	?>
+  
+   <?php if ($this->row->custom09) : ?>
+  	<dt class="custom09"><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD9' ).':'; ?></dt>
+  	<dd class="custom09"><?php echo $this->escape($this->row->custom09); ?></dd>
+  <?php
+  	endif;
+  	?>
+  
+   <?php if ($this->row->custom10) : ?>
+  	<dt class="custom10"><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD10' ).':'; ?></dt>
+  	<dd class="custom10"><?php echo $this->escape($this->row->custom10); ?></dd>
+  <?php
+  	endif;
+  	?>
+				
 	</dl>
 
   	<?php if ($this->jemsettings->showevdescription == 1 && $this->row->datdescription != '' && $this->row->datdescription != '<br />') : ?>

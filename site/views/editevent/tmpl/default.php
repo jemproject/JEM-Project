@@ -254,6 +254,95 @@ defined('_JEXEC') or die;
 
         </fieldset>
 
+        
+        <fieldset >
+         <legend><?php echo JText::_('COM_JEM_CUSTOM_FIELDS'); ?></legend>
+        <div class="el_custom01 floattext">
+      		              <label for="custom01">
+      		                  <?php echo JText::_( 'COM_JEM_CUSTOM_FIELD1' ).':'; ?>
+      		              </label>
+      		
+      		              <input type="text" class="inputbox" id="custom01" name="custom01" value="<?php echo $this->escape($this->row->custom01); ?>" size="65" maxlength="60" />
+      		          </div>
+      		          
+      		          <div class="el_custom02 floattext">
+      		              <label for="custom02">
+      		                  <?php echo JText::_( 'COM_JEM_CUSTOM_FIELD2' ).':'; ?>
+      		              </label>
+      		
+      		              <input type="text" class="inputbox" id="custom02" name="custom02" value="<?php echo $this->escape($this->row->custom02); ?>" size="65" maxlength="60" />
+      		          </div>
+      		          
+      		          <div class="el_custom03 floattext">
+      		              <label for="custom03">
+      		                  <?php echo JText::_( 'COM_JEM_CUSTOM_FIELD3' ).':'; ?>
+      		              </label>
+      		
+      		              <input type="text" class="inputbox" id="custom03" name="custom03" value="<?php echo $this->escape($this->row->custom03); ?>" size="65" maxlength="60" />
+      		          </div>
+      		          
+      		          <div class="el_custom04 floattext">
+      		              <label for="custom04">
+      		                  <?php echo JText::_( 'COM_JEM_CUSTOM_FIELD4' ).':'; ?>
+      		              </label>
+      		
+      		              <input type="text" class="inputbox" id="custom04" name="custom04" value="<?php echo $this->escape($this->row->custom04); ?>" size="65" maxlength="60" />
+      		          </div>
+      		          
+      		          <div class="el_custom05 floattext">
+      		              <label for="custom05">
+      		                  <?php echo JText::_( 'COM_JEM_CUSTOM_FIELD5' ).':'; ?>
+      		              </label>
+      		
+      		              <input type="text" class="inputbox" id="custom05" name="custom05" value="<?php echo $this->escape($this->row->custom05); ?>" size="65" maxlength="60" />
+      		          </div>
+      		          
+      		          <div class="el_custom06 floattext">
+      		              <label for="custom06">
+      		                  <?php echo JText::_( 'COM_JEM_CUSTOM_FIELD6' ).':'; ?>
+      		              </label>
+      		
+      		              <input type="text" class="inputbox" id="custom06" name="custom06" value="<?php echo $this->escape($this->row->custom06); ?>" size="65" maxlength="60" />
+      		          </div>
+      		          
+      		          <div class="el_custom07 floattext">
+      		              <label for="custom07">
+      		                  <?php echo JText::_( 'COM_JEM_CUSTOM_FIELD7' ).':'; ?>
+      		              </label>
+      		
+      		              <input type="text" class="inputbox" id="custom07" name="custom07" value="<?php echo $this->escape($this->row->custom07); ?>" size="65" maxlength="60" />
+      		          </div>
+      		          
+      		          <div class="el_custom08 floattext">
+      		              <label for="custom08">
+      		                  <?php echo JText::_( 'COM_JEM_CUSTOM_FIELD8' ).':'; ?>
+      		              </label>
+      		
+      		              <input type="text" class="inputbox" id="custom08" name="custom08" value="<?php echo $this->escape($this->row->custom08); ?>" size="65" maxlength="60" />
+      		          </div>
+      		          
+      		          <div class="el_custom09 floattext">
+      		              <label for="custom09">
+      		                  <?php echo JText::_( 'COM_JEM_CUSTOM_FIELD9' ).':'; ?>
+      		              </label>
+      		
+      		              <input type="text" class="inputbox" id="custom04" name="custom09" value="<?php echo $this->escape($this->row->custom09); ?>" size="65" maxlength="60" />
+      		          </div>
+      		          
+      		          <div class="el_custom10 floattext">
+      		              <label for="custom10">
+      		                  <?php echo JText::_( 'COM_JEM_CUSTOM_FIELD10' ).':'; ?>
+      		              </label>
+      		
+      		              <input type="text" class="inputbox" id="custom10" name="custom10" value="<?php echo $this->escape($this->row->custom10); ?>" size="65" maxlength="60" />
+      		          </div>
+      		</fieldset>
+        
+        
+        
+        
+        
+        
 
     	<?php if ( $this->jemsettings->showfroregistra == 2 ) : ?>
     	<fieldset class="jem_fldst_registration">

@@ -171,6 +171,16 @@ class JEMModelEditevent extends JModelLegacy
 				$this->_event->attachments			= array();
 				$this->_event->maxplaces			= 0;
 				$this->_event->waitinglist			= 0;
+				$this->_event->custom01			= '';
+				$this->_event->custom02			= '';
+				$this->_event->custom03			= '';
+				$this->_event->custom04			= '';
+				$this->_event->custom05			= '';
+				$this->_event->custom06			= '';
+				$this->_event->custom07			= '';
+				$this->_event->custom08			= '';
+				$this->_event->custom09			= '';
+				$this->_event->custom10			= '';
 				$this->_event->venue				= JText::_('COM_JEM_SELECTVENUE');
 			}
 		}
