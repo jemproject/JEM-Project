@@ -129,11 +129,11 @@ defined( '_JEXEC' ) or die;
 				<td headers="jem_date" align="left">
 					<strong>
 					<?php if (JEMHelper::isValidDate($row->dates)): ?>
-							<?php echo JEMOutput::formatdate($row->dates, $row->times); ?>
+							<?php echo JEMOutput::formatdate($row->dates); ?>
 
 							<?php
 							if ($row->enddates && $row->enddates != $row->dates) :
-								echo ' - '.JEMOutput::formatdate($row->enddates, $row->endtimes);
+								echo ' - '.JEMOutput::formatdate($row->enddates);
 							endif;
 							?>
 						<?php else: ?>
@@ -143,10 +143,10 @@ defined( '_JEXEC' ) or die;
 					<?php if ($this->jemsettings->showtime == 1) : ?>
 						<br />
 						<?php
-						echo JEMOutput::formattime($row->dates, $row->times);
+						echo JEMOutput::formattime($row->times);
 
 						if ($row->endtimes) :
-							echo ' - '.JEMOutput::formattime($row->enddates, $row->endtimes);
+							echo ' - '.JEMOutput::formattime($row->endtimes);
 						endif;
 					endif;
 					?>

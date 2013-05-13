@@ -74,10 +74,10 @@ JHTML::_('behavior.modal');
 			<?php
 			if (JEMHelper::isValidDate($this->row->dates))
 			{
-				echo JEMOutput::formatdate($this->row->dates, $this->row->times);
+				echo JEMOutput::formatdate($this->row->dates);
     					
     		if (JEMHelper::isValidDate($this->row->enddates) && $this->row->enddates != $this->row->dates) :
-    			echo ' - '.JEMOutput::formatdate($this->row->enddates, $this->row->endtimes);
+    			echo ' - '.JEMOutput::formatdate($this->row->enddates);
     		endif;
 			}
 			else {
@@ -86,10 +86,10 @@ JHTML::_('behavior.modal');
     		
     		if ($this->jemsettings->showtimedetails == 1) :
     	
-				echo '&nbsp;'.JEMOutput::formattime($this->row->dates, $this->row->times);
+				echo '&nbsp;'.JEMOutput::formattime($this->row->times);
 						
 				if ($this->row->endtimes) :
-					echo ' - '.JEMOutput::formattime($this->row->enddates, $this->row->endtimes);
+					echo ' - '.JEMOutput::formattime($this->row->endtimes);
 				endif;
 			endif;
 			?>

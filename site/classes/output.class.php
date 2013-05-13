@@ -512,8 +512,17 @@ static	function getFlag($country)
 	 *
 	 * @since 0.9
 	 */
-static	function formatdate($date, $time)
+static	function formatdate($date)
 	{
+		$settings = JEMHelper::config();
+		
+		jimport('joomla.utilities.date');
+		$jdate = new JDate($date);
+		return $jdate->format(JText::_($settings->formatdate));
+		
+		
+		
+		/* @todo delete, old code
 		$settings = JEMHelper::config();
 		
 		if(!$date) {
@@ -525,9 +534,10 @@ static	function formatdate($date, $time)
 		}
 		
 		//Format date
-		$formatdate = strftime( $settings->formatdate, strtotime( $date.' '.$time ));
+		$formatdate = strftime( $settings->formatdate, strtotime( $date));
 		
 		return $formatdate;
+		*/
 	}
 	
 	/**
@@ -540,7 +550,7 @@ static	function formatdate($date, $time)
 	 *
 	 * @since 0.9
 	 */
-static	function formattime($date, $time)
+static	function formattime($time)
 	{
 		$settings = JEMHelper::config();
 		
@@ -549,7 +559,7 @@ static	function formattime($date, $time)
 		}
 		
 		//Format time
-		$formattime = strftime( $settings->formattime, strtotime( $date.' '.$time ));
+		$formattime = strftime( $settings->formattime, strtotime( $time ));
 		$formattime .= ' '.$settings->timename;
 		
 		return $formattime;

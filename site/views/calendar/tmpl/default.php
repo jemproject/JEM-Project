@@ -60,8 +60,8 @@ defined('_JEXEC') or die;
         
 		if ($this->jemsettings->showtime == 1) :
 
-            $start = JEMOutput::formattime($row->dates, $row->times);
-            $end = JEMOutput::formattime($row->dates, $row->endtimes);
+            $start = JEMOutput::formattime($row->times);
+            $end = JEMOutput::formattime($row->endtimes);
             
 			if ($start != '') :
                 $timehtml = '<div class="time"><span class="label">'.JText::_('COM_JEM_TIME').': </span>';
@@ -120,7 +120,7 @@ defined('_JEXEC') or die;
        	
        	$catname = '<div class="catname">'.$multicatname.'</div>';
        	
-        $eventdate = JEMOutput::formatdate($row->dates, $row->times);
+        $eventdate = JEMOutput::formatdate($row->dates);
     
         //venue
         if ($this->jemsettings->showlocate == 1) :
