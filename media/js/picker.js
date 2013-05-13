@@ -114,12 +114,12 @@ function removeLayer(id){
 		return;	
 	}
 	if (document.layers && document.layers[id]) {
-  		document.layers[id].visibility='hide'
-		delete document.layers[id]
+  		document.layers[id].visibility='hide';
+		delete document.layers[id];
 	}
 	if (document.all && document.all[id]) {
-		document.all[id].innerHTML=''
-		document.all[id].outerHTML=''
+		document.all[id].innerHTML='';
+		document.all[id].outerHTML='';
 	}else if(document.getElementById){
 		 var b = document.body;
  		 var layer = document.getElementById(id);
@@ -153,7 +153,7 @@ function colorTable(){
 		if(c==0 || c==3){
 			table +="<tr>";	
 		}
-		table += "<td>"	
+		table += "<td>";
 		
 		table = table+'<table border="0" cellpadding="0" cellspacing="1" class="color_table"> ';
 		for (var j = 0; j<6; j++) {
@@ -165,7 +165,7 @@ function colorTable(){
 			table +="</tr>";
 		}
 		table +="</table>";
-		table += "</td>"	
+		table += "</td>";	
 		if(c==2 || c==5){
 			table +="</tr>";	
 		}	
