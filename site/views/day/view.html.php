@@ -48,15 +48,27 @@ class JEMViewDay extends JViewLegacy
 		$menu		= $app->getMenu();
 		$item 		= $menu->getActive();
 		$params 	= $app->getParams();
+		$db  		=  JFactory::getDBO();
+		$uri 		= JFactory::getURI();
 
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		// get variables
-		$limitstart	= JRequest::getVar('limitstart', 0, '', 'int');
-		$limit		= JRequest::getVar('limit', $params->get('display_num'), '', 'int');
-
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.day.filter_order', 'filter_order', 	'a.dates', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.day.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.day.filter_state', 'filter_state', 	'*', 'word' );
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.day.filter', 'filter', '', 'int' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.day.search', 'search', '', 'string' );
+		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
+		
+		// table ordering
+		$lists['order_Dir'] = $filter_order_Dir;
+		$lists['order'] = $filter_order;
+		
+		$task 		= JRequest::getWord('task');
+		
 		$pop			= JRequest::getBool('pop');
 		$pathway 		= $app->getPathWay();
 
@@ -81,7 +93,7 @@ class JEMViewDay extends JViewLegacy
 			$params->set( 'popup', 1 );
 		}
 
-		$print_link = JRoute::_('index.php?view=day&tmpl=component&pop=1');
+		$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1');
 
 		//pathway
 		$pathway->setItemName( 1, $item->title );
@@ -109,25 +121,44 @@ class JEMViewDay extends JViewLegacy
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
-
+	
+		
+		//search filter
+		$filters = array();
+		
+		if ($jemsettings->showtitle == 1) {
+			$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_TITLE' ) );
+		}
+		if ($jemsettings->showlocate == 1) {
+			$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_VENUE' ) );
+		}
+		if ($jemsettings->showcity == 1) {
+			$filters[] = JHTML::_('select.option', '3', JText::_( 'COM_JEM_CITY' ) );
+		}
+		if ($jemsettings->showcat == 1) {
+			$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_CATEGORY' ) );
+		}
+		if ($jemsettings->showstate == 1) {
+			$filters[] = JHTML::_('select.option', '5', JText::_( 'COM_JEM_STATE' ) );
+		}
+		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
+		
+		// search filter
+		$lists['search']= $search;
+		
 		// Create the pagination object
-		$page = $total - $limit;
-
-		jimport('joomla.html.pagination');
-		$pagination = new JPagination($total, $limitstart, $limit);
-
-		//create select lists
-		$lists	= $this->_buildSortLists();
-
+		$pagination = $this->get('Pagination');
+		
 		$this->lists			= $lists;
-
 		$this->rows				= $rows;
 		$this->noevents			= $noevents;
 		$this->print_link		= $print_link;
 		$this->params			= $params;
 		$this->dellink			= $dellink;
 		$this->pagination		= $pagination;
-		$this->page				= $page;
+		$this->action			= $uri->toString();
+	
+		$this->task				= $task;
 		$this->jemsettings		= $jemsettings;
 		$this->lists			= $lists;
 		$this->daydate			= $daydate;
@@ -163,35 +194,5 @@ class JEMViewDay extends JViewLegacy
 		return $this->rows;
 	}
 
-	/**
-	 * Method to build the sortlists
-	 *
-	 * @access private
-	 * @return array
-	 * @since 0.9
-	 */
-	function _buildSortLists()
-	{
-		$jemsettings = JEMHelper::config();
-
-		$filter_order		= JRequest::getCmd('filter_order', 'a.dates');
-		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', 'ASC');
-
-		$filter				= $this->escape(JRequest::getString('filter'));
-		$filter_type		= JRequest::getString('filter_type');
-
-		$sortselects = array();
-		$sortselects[]	= JHTML::_('select.option', 'title', JText::_('COM_JEM_TABLE_TITLE'));
-		$sortselects[] 	= JHTML::_('select.option', 'venue', JText::_('COM_JEM_TABLE_LOCATION'));
-		$sortselects[] 	= JHTML::_('select.option', 'city', JText::_('COM_JEM_TABLE_CITY'));
-		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
-
-		$lists['order_Dir'] 	= $filter_order_Dir;
-		$lists['order'] 		= $filter_order;
-		$lists['filter'] 		= $filter;
-		$lists['filter_type'] 	= $sortselect;
-
-		return $lists;
-	}
 }
 ?>

@@ -40,12 +40,12 @@ defined( '_JEXEC' ) or die;
 		<?php if ($this->jemsettings->filter) : ?>
 		<div class="jem_fleft">
 			<?php
-			echo '<label for="filter_type">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
-			echo $this->lists['filter_type'].'&nbsp;';
+			echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
+			echo $this->lists['filter'].'&nbsp;';
 			?>
-			<input type="text" name="filter" id="filter" value="<?php echo $this->lists['filter'];?>" class="text_area" onchange="document.getElementById('adminForm').submit();" />
-			<button onclick="document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-			<button onclick="document.getElementById('filter').value='';document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
+			<input type="text" name="search" id="search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+			<button onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+			<button onclick="$('search').value='';document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 		</div>
 		<?php endif; ?>
 		<?php if ($this->jemsettings->display) : ?>

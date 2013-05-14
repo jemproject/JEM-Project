@@ -35,24 +35,26 @@ defined( '_JEXEC' ) or die;
 
 <!--table-->
 
-<form action="<?php echo JRoute::_('index.php') ?>" method="post" id="adminForm">
+<form action="<?php echo $this->action; ?>" method="post" name="adminForm" id="adminForm">
 <?php echo $this->loadTemplate('table'); ?>
 
 <p>
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 <input type="hidden" name="filter_order_Dir" value="" />
+<input type="hidden" name="task" value="<?php echo $this->task; ?>" />
+<input type="hidden" name="view" value="day" />
 </p>
 </form>
 
 <!--footer-->
 
-<?php if (( $this->page > 0 ) && ( !$this->params->get( 'popup' ) )) : ?>
+
 <div class="pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 
 
-<?php endif; ?>
+
 
 <p class="copyright">
 	<?php echo JEMOutput::footer( ); ?>
