@@ -108,7 +108,9 @@ class JEMModelVenues extends JModelLegacy
 		if (empty($this->_data))
 		{
 			$query = $this->_buildQuery();
-			$this->_data = $this->_getList($query, $this->getState('limitstart'), $this->getState('limit'));
+			
+			$pagination = $this->getPagination();
+			$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 			$this->_data = $this->_additionals($this->_data);
 		}
 

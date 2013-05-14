@@ -107,7 +107,8 @@ class JEMModelEventslist extends JModelLegacy
 			if ($pop) {
 				$this->_data = $this->_getList($query);
 			} else {
-				$this->_data = $this->_getList($query, $this->getState('limitstart'), $this->getState('limit'));
+				$pagination = $this->getPagination();
+				$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 			}
 		}
 
