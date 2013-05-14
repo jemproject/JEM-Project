@@ -44,6 +44,7 @@ class JEMViewEventslist extends JViewLegacy
 
 		//initialize variables
 		$document 	= JFactory::getDocument();
+		
 		$jemsettings = JEMHelper::config();
 		$menu		= $app->getMenu();
 		$item		= $menu->getActive();
@@ -52,6 +53,7 @@ class JEMViewEventslist extends JViewLegacy
 		$pathway 	= $app->getPathWay();
 		$db  		=  JFactory::getDBO();
 
+		
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
@@ -63,18 +65,17 @@ class JEMViewEventslist extends JViewLegacy
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.eventslist.filter', 'filter', '', 'int' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.eventslist.search', 'search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
-
+		$task 		= JRequest::getWord('task');
+		
+		
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
 
-
-		$task 		= JRequest::getWord('task');
-		$pop		= JRequest::getBool('pop');
-
+		
 		//get data from model
 		$rows 	= $this->get('Data');
-		$total 	= $this->get('Total');
+
 
 		//are events available?
 		if (!$rows) {
@@ -83,13 +84,11 @@ class JEMViewEventslist extends JViewLegacy
 			$noevents = 0;
 		}
 
+		
 		//params
 		$params->def( 'page_title', $item->title);
 
-		if ( $pop ) {//If printpopup set true
-			$params->set( 'popup', 1 );
-		}
-
+		
 		//pathway
 		$pathway->setItemName( 1, $item->title );
 
@@ -126,7 +125,7 @@ class JEMViewEventslist extends JViewLegacy
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
 
-		
+
 		//search filter
 		$filters = array();
 
@@ -150,24 +149,11 @@ class JEMViewEventslist extends JViewLegacy
 		// search filter
 		$lists['search']= $search;
 
-
-
-		/*
-		 if ($lists['filter']) {
-		//$uri->setVar('filter', JRequest::getString('filter'));
-		//$filter		= $app->getUserStateFromRequest('com_jem.jem.filter', 'filter', '', 'string');
-		$uri->setVar('filter', $lists['filter']);
-		$uri->setVar('filter_type', JRequest::getString('filter_type'));
-		} else {
-		$uri->delVar('filter');
-		$uri->delVar('filter_type');
-		}
-		*/
+		
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
 
 		$this->lists			= $lists;
-		$this->total			= $total;
 		$this->action			= $uri->toString();
 
 		$this->rows				= $rows;

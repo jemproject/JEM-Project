@@ -30,7 +30,7 @@ jimport( 'joomla.application.component.view');
  *
  * @package JEM
  * @since 0.9
- */
+*/
 class JEMViewVenueevents extends JViewLegacy
 {
 	/**
@@ -60,7 +60,7 @@ class JEMViewVenueevents extends JViewLegacy
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
-		
+
 		// get variables
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.venueevents.filter_order', 'filter_order', 	'a.dates', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.venueevents.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
@@ -68,17 +68,17 @@ class JEMViewVenueevents extends JViewLegacy
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.venueevents.filter', 'filter', '', 'int' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.venueevents.search', 'search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
-		$pop			= JRequest::getBool('pop');
-		$task 			= JRequest::getWord('task');
 		
+		$task 			= JRequest::getWord('task');
+
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
-		
+
 		//get data from model
 		$rows 		= $this->get('Data');
 		$venue	 	= $this->get('Venue');
-		$total 		= $this->get('Total');
+		
 
 		//does the venue exist?
 		if ($venue->id == 0)
@@ -132,14 +132,7 @@ class JEMViewVenueevents extends JViewLegacy
 		$document->setMetadata('keywords', $venue->meta_keywords );
 		$document->setDescription( strip_tags($venue->meta_description) );
 
-		//Printfunction
-		$params->def( 'print', !$app->getCfg( 'hidePrint' ) );
-		$params->def( 'icons', $app->getCfg( 'icons' ) );
-
-		if ( $pop ) {
-			$params->set( 'popup', 1 );
-		}
-
+		
 		//Check if the user has access to the form
 		$maintainer = JEMUser::ismaintainer();
 		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
@@ -178,14 +171,14 @@ class JEMViewVenueevents extends JViewLegacy
 		if ($venue->country) {
 			$venue->countryimg = JEMOutput::getFlag( $venue->country );
 		}
-		
+
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
 
-	 
+
 		//search filter
 		$filters = array();
-		
+
 		if ($jemsettings->showtitle == 1) {
 			$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_TITLE' ) );
 		}
@@ -202,11 +195,11 @@ class JEMViewVenueevents extends JViewLegacy
 			$filters[] = JHTML::_('select.option', '5', JText::_( 'COM_JEM_STATE' ) );
 		}
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
-		
+
 		// search filter
 		$lists['search']= $search;
-		
-		 
+
+			
 		$this->lists				= $lists;
 		$this->action				= $uri->toString();
 
