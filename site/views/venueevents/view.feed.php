@@ -77,11 +77,11 @@ class JEMViewVenueevents extends JViewLegacy
 			//Format date
 			if (JEMHelper::isValidDate($row->dates)) 
 			{
-				$date = strftime( $jemsettings->formatdate, strtotime( $row->dates ));
+				$date = JEMOutput::formatdate($row->dates);
 				if (!JEMHelper::isValidDate($row->enddates)) {
 					$displaydate = $date;
 				} else {
-					$enddate 	= strftime( $jemsettings->formatdate, strtotime( $row->enddates ));
+					$enddate 	= JEMOutput::formatdate($row->enddates);
 					$displaydate = $date.' - '.$enddate;
 				}
 			}

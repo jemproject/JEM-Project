@@ -65,7 +65,7 @@ class JEMViewDay extends JViewLegacy
 		$total 		= $this->get('Total');
 		$day		= $this->get('Day');
 
-		$daydate = strftime( $jemsettings->formatdate, strtotime( $day ));
+		$daydate = JEMOutput::formatdate($day);
 
 		//are events available?
 		if (!$rows) {
