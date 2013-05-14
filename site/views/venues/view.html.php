@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -30,7 +30,7 @@ jimport( 'joomla.application.component.view');
  *
  * @package JEM
  * @since 0.9
- */
+*/
 class JEMViewVenues extends JViewLegacy
 {
 	/**
@@ -42,13 +42,13 @@ class JEMViewVenues extends JViewLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$document 	=  JFactory::getDocument();
+		$document 	 =  JFactory::getDocument();
 		$jemsettings =  JEMHelper::config();
 
 		//get menu information
 		$menu		= $app->getMenu();
 		$item    	= $menu->getActive();
-		$params 	=  $app->getParams();
+		$params 	= $app->getParams();
 
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
@@ -56,8 +56,7 @@ class JEMViewVenues extends JViewLegacy
 
 		// Request variables
 		$limitstart		= JRequest::getInt('limitstart');
-		$limit			= JRequest::getVar('limit', $params->get('display_num'), '', 'int');
-		$pop			= JRequest::getBool('pop', 0, '', 'int');
+		$limit			= JRequest::getVar('limit', $params->get('display_num'));
 		$task 			= JRequest::getWord('task');
 
 		$rows 		=  $this->get('Data');
@@ -65,7 +64,7 @@ class JEMViewVenues extends JViewLegacy
 
 		//Add needed scripts if the lightbox effect is enabled
 		if ($jemsettings->lightbox == 1) {
-  			JHTML::_('behavior.modal');
+			JHTML::_('behavior.modal');
 		}
 
 		//add alternate feed link
@@ -78,7 +77,7 @@ class JEMViewVenues extends JViewLegacy
 		//pathway
 		$pathway 	=  $app->getPathWay();
 		$pathway->setItemName(1, $item->title);
-		
+
 		if ( $task == 'archive' ) {
 			$pathway->addItem(JText::_( 'COM_JEM_ARCHIVE' ), JRoute::_('index.php?view=venues&task=archive') );
 			$pagetitle = $params->get('page_title').' - '.JText::_( 'COM_JEM_ARCHIVE' );
@@ -87,35 +86,27 @@ class JEMViewVenues extends JViewLegacy
 			$pagetitle = $params->get('page_title');
 			$print_link = JRoute::_('index.php?view=venues&print=1&tmpl=component');
 		}
-		
+
 		//Set Page title
 		$document->setTitle( $pagetitle );
-   		$document->setMetadata( 'title' , $pagetitle );
-   		$document->setMetadata('keywords', $pagetitle );
+		$document->setMetadata( 'title' , $pagetitle );
+		$document->setMetadata('keywords', $pagetitle );
 
-
-		//Printfunction
-		$params->def( 'print', !$app->getCfg( 'hidePrint' ) );
-		$params->def( 'icons', $app->getCfg( 'icons' ) );
-
-		if ( $pop ) {
-			$params->set( 'popup', 1 );
-		}
 
 		//Check if the user has access to the form
 		$maintainer = JEMUser::ismaintainer();
 		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
-		if ($maintainer || $genaccess ) 
-		{ 
-		$dellink = 1;
+		if ($maintainer || $genaccess )
+		{
+			$dellink = 1;
 		} else {
-		$dellink = 0;	
+			$dellink = 0;
 		}
 
 		// Create the pagination object
-		jimport('joomla.html.pagination');
-		$pagination = new JPagination($total, $limitstart, $limit);
+		$pagination    =  $this->get('Pagination');
+		
 
 		$this->rows				= $rows;
 		$this->print_link		= $print_link;

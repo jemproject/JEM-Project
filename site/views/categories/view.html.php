@@ -96,11 +96,6 @@ class JEMViewCategories extends JViewLegacy
 		$dellink = 0;	
 		}
 		
-		
-		// Create the pagination object
-		jimport('joomla.html.pagination');
-
-		$pagination = new JPagination($total, $limitstart, $limit);
 
 		$this->rows				= $rows;
 		$this->task				= $task;
