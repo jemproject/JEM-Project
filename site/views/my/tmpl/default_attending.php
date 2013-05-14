@@ -27,18 +27,6 @@ defined( '_JEXEC' ) or die;
 <?php if (count((array)$this->attending)) : ?>
 <h2><?php echo JText::_('COM_JEM_REGISTERED_TO'); ?></h2>
 
-<script type="text/javascript">
-
-	function tableOrdering( order, dir, view )
-	{
-		var form = document.getElementById("attending-events");
-
-		form.filter_order.value 	= order;
-		form.filter_order_Dir.value	= dir;
-		form.submit( view );
-	}
-</script>
-
 <form action="<?php echo $this->action; ?>" method="post" id="attending-events">
 
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Attending">
@@ -64,31 +52,31 @@ defined( '_JEXEC' ) or die;
 
 	<thead>
 		<tr>
-			<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th id="jem_date" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_DATE'); ?></th>
 			<?php
 			if ($this->jemsettings->showtitle == 1) :
 			?>
-			<th id="jem_title" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th id="jem_title" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_TITLE'); ?></th>
 			<?php
 			endif;
 			if ($this->jemsettings->showlocate == 1) :
 			?>
-			<th id="jem_location" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th id="jem_location" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_LOCATION'); ?></th>
 			<?php
 			endif;
 			if ($this->jemsettings->showcity == 1) :
 			?>
-			<th id="jem_city" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th id="jem_city" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_CITY'); ?></th>
 			<?php
 			endif;
 			if ($this->jemsettings->showstate == 1) :
 			?>
-			<th id="jem_state" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th id="jem_state" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_STATE'); ?></th>
 			<?php
 			endif;
 			if ($this->jemsettings->showcat == 1) :
 			?>
-			<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th id="jem_category" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_CATEGORY'); ?></th>
 			<?php
 			endif;
 			?>
