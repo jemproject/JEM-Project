@@ -26,6 +26,7 @@ defined( '_JEXEC' ) or die;
 require_once (JPATH_COMPONENT_SITE.'/helpers/helper.php');
 require_once (JPATH_COMPONENT_SITE.'/helpers/countries.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/image.class.php');
+require_once (JPATH_COMPONENT_SITE.'/classes/output.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/attachment.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/categories.class.php');
 require_once (JPATH_COMPONENT_ADMINISTRATOR.'/classes/admin.class.php');
