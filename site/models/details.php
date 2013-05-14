@@ -103,13 +103,13 @@ class JEMModelDetails extends JModelLegacy
 			// Is the category published?
 			if (!$this->_details->published && $this->_details->catid)
 			{
-				JError::raiseError( 404, JText::_("COM_JEM_CATEGORY_NOT_PUBLISHED") );
+				throw new Exception( JText::_("COM_JEM_CATEGORY_NOT_PUBLISHED"),403 );
 			}
 
 			// Do we have access to the category?
 			if (($this->_details->cataccess > $gid) && $this->_details->catid)
 			{
-				return JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
+				 throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			}
 			
 			
