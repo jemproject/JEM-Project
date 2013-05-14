@@ -22,9 +22,5 @@ This version includes:
 Tips, suggestions are very welcome..
 
 
-Note
-=========
- - 13.05:  Added 10 fields to events_table
- - 14.05:  Changed date format
 
 
