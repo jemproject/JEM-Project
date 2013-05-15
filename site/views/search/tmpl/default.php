@@ -23,18 +23,12 @@
 defined( '_JEXEC' ) or die;
 
 
-// add javascript
-JHTML::_('behavior.mootools');
-$this->document->addScript( $this->baseurl.'/media/com_jem/js/search.js' );
 ?>
 <div id="jem" class="jem_jem">
 <p class="buttons">
 	<?php
-		if ( !$this->params->get( 'popup' ) ) : //don't show in printpopup
-			echo JEMOutput::submitbutton( $this->dellink, $this->params );
-			echo JEMOutput::archivebutton( $this->params, $this->task );
-		endif;
-
+		echo JEMOutput::submitbutton( $this->dellink, $this->params );
+		echo JEMOutput::archivebutton( $this->params, $this->task );
 		echo JEMOutput::printbutton( $this->print_link, $this->params );
 	?>
 </p>
@@ -66,6 +60,8 @@ $this->document->addScript( $this->baseurl.'/media/com_jem/js/search.js' );
 <p>
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 <input type="hidden" name="filter_order_Dir" value="" />
+<input type="hidden" name="task" value="<?php echo $this->task; ?>" />
+<input type="hidden" name="view" value="search" />
 </p>
 </form>
 

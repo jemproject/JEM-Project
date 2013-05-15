@@ -26,11 +26,8 @@ defined( '_JEXEC' ) or die;
 <div id="jem" class="jem_venues_view">
 	<p class="buttons">
 		<?php
-			if ( !$this->params->get( 'popup' ) ) : //don't show in printpopup
-				echo JEMOutput::submitbutton( $this->dellink, $this->params );
-				echo JEMOutput::archivebutton( $this->params, $this->task );
-			endif;
-
+			echo JEMOutput::submitbutton( $this->dellink, $this->params );
+			echo JEMOutput::archivebutton( $this->params, $this->task );
 			echo JEMOutput::printbutton( $this->print_link, $this->params );
 		?>
 	</p>

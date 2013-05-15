@@ -55,8 +55,6 @@ class JEMViewVenues extends JViewLegacy
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		// Request variables
-		$limitstart		= JRequest::getInt('limitstart');
-		$limit			= JRequest::getVar('limit', $params->get('display_num'));
 		$task 			= JRequest::getWord('task');
 
 		$rows 		=  $this->get('Data');
@@ -113,8 +111,6 @@ class JEMViewVenues extends JViewLegacy
 		$this->params			= $params;
 		$this->dellink			= $dellink;
 		$this->pagination		= $pagination;
-		$this->limit			= $limit;
-		$this->total			= $total;
 		$this->item				= $item;
 		$this->jemsettings		= $jemsettings;
 		$this->task				= $task;

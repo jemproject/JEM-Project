@@ -27,10 +27,8 @@ JHTML::_('behavior.modal');
 <div id="jem" class="jem_categoryevents">
 <p class="buttons">
 	<?php
-		if ( !$this->params->get( 'popup' ) ) : //don't show in printpopup
-			echo JEMOutput::submitbutton( $this->dellink, $this->params );
-			echo JEMOutput::archivebutton( $this->params, $this->task, $this->category->slug );
-		endif;
+		echo JEMOutput::submitbutton( $this->dellink, $this->params );
+		echo JEMOutput::archivebutton( $this->params, $this->task, $this->category->slug );
 		echo JEMOutput::mailbutton( $this->category->slug, 'categoryevents', $this->params );
 		echo JEMOutput::printbutton( $this->print_link, $this->params );
 	?>
@@ -94,13 +92,12 @@ if (count($this->categories) && $this->category->id > 0) :
 
 <!--pagination-->
 
-<?php if (!$this->params->get( 'popup' ) ) : ?>
+
 <div class="pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 
 
-<?php endif; ?>
 
 
 <?php

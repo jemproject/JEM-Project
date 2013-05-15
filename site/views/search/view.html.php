@@ -51,9 +51,14 @@ class JEMViewSearch extends JViewLegacy
 		$uri 		= JFactory::getURI();
 		$pathway 	= $app->getPathWay();
 
+		
+		// add javascript
+		JHTML::_('behavior.mootools');
+		
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		$document->addScript( $this->baseurl.'/media/com_jem/js/search.js' );
 
 		// get variables
 		$limitstart			= JRequest::getVar('limitstart', 0, '', 'int');
@@ -65,8 +70,8 @@ class JEMViewSearch extends JViewLegacy
 		$filter_date_to		= $app->getUserStateFromRequest('com_jem.search.filter_date_to', 'filter_date_to', '', 'string');
 		$filter_category 	= $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
 		$task				= JRequest::getWord('task');
-		$pop				= JRequest::getBool('pop');
 
+		
 		//get data from model
 		$rows 	= $this->get('Data');
 		$total 	= $this->get('Total');
@@ -81,9 +86,6 @@ class JEMViewSearch extends JViewLegacy
 		//params
 		$params->def( 'page_title', $item->title);
 
-		if ( $pop ) {//If printpopup set true
-			$params->set( 'popup', 1 );
-		}
 
 		//pathway
 		$pathway->setItemName( 1, $item->title );
@@ -180,7 +182,6 @@ class JEMViewSearch extends JViewLegacy
 		}
 
 		$this->lists			= $lists;
-		$this->total			= $total;
 		$this->action			= $uri->toString();
 
 		$this->rows				= $rows;
