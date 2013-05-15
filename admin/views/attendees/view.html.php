@@ -72,8 +72,8 @@ class JEMViewAttendees extends JViewLegacy {
 
 		//add toolbar
 		JToolBarHelper::title( JText::_( 'COM_JEM_REGISTERED_USERS' ), 'users' );
-		//JToolBarHelper::addNew();
-		//JToolBarHelper::editList();
+		JToolBarHelper::addNew();
+		JToolBarHelper::editList();
 		JToolBarHelper::spacer();
 		JToolBarHelper::deleteList();
 		JToolBarHelper::spacer();

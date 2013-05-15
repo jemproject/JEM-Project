@@ -129,6 +129,7 @@ class JEMModelAttendee extends JModelLegacy
 		if (empty($this->_data))
 		{
 			$data = JTable::getInstance('jem_register', '');
+			$data->username = null;
 			$this->_data = $data;			
 		}
 		return true;
