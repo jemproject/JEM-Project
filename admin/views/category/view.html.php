@@ -120,8 +120,7 @@ class JEMViewCategory extends JViewLegacy {
 			document.getElementById('a_image').value = image;
 			document.getElementById('a_imagename').value = imagename;
 			document.getElementById('imagelib').src = '../images/jem/categories/' + image;
-			var btn = window.parent.document.getElementById('sbox-btn-close');
-            btn.fireEvent('click');
+			window.parent.SqueezeBox.close();
 		}";
 		
 		$link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task=categoriesimg&amp;tmpl=component';

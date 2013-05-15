@@ -33,7 +33,7 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&controller=attendees&task
 	{
 		$('uid').value = id;
 		$('username').value = username;
-		$('sbox-window').close();
+		window.parent.SqueezeBox.close();
 	}
 
 
