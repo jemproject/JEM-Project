@@ -92,7 +92,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 				<td><input type="checkbox" id="cb<?php echo $i;?>" name="cid[]" value="<?php echo $row->id; ?>" onclick="isChecked(this.checked);" /></td>
 				<td><a href="<?php echo JRoute::_( 'index.php?option=com_jem&controller=attendees&task=edit&cid[]='.$row->id ); ?>"><?php echo $row->name; ?></a></td>
 				<td>
-					<a href="<?php echo JRoute::_( 'index.php?option=com_users&task=edit&cid[]='.$row->uid ); ?>"><?php echo $row->username; ?></a>
+					<a href="<?php echo JRoute::_( 'index.php?option=com_users&task=user.edit&id='.$row->uid ); ?>"><?php echo $row->username; ?></a>
 				</td>
 				<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
 				<td><?php echo $row->uip == 'DISABLED' ? JText::_( 'COM_JEM_DISABLED' ) : $row->uip; ?></td>

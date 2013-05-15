@@ -182,7 +182,7 @@ class JEMModelAttendees extends JModelLegacy
 		$query = 'SELECT r.*, u.username, u.name, u.email'
 		. ' FROM #__jem_register AS r'
 		. ' LEFT JOIN #__jem_events AS a ON r.event = a.id'
-		. ' LEFT JOIN #__users AS u ON r.uid = u.id'
+		. ' LEFT JOIN #__users AS u ON u.id = r.uid'
 		. $where
 		. $orderby
 		;
