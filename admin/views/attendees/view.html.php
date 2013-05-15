@@ -87,7 +87,7 @@ class JEMViewAttendees extends JViewLegacy {
 		$event 		=  $this->get( 'Event' );
 
  		if (JEMHelper::isValidDate($event->dates)) {
-			$event->dates = strftime($jemsettings->formatdate, strtotime( $event->dates ));
+			$event->dates = JEMOutput::formatdate($event->dates);
 		}
 		else {
 			$event->dates		= JText::_('COM_JEM_OPEN_DATE');
@@ -103,9 +103,9 @@ class JEMViewAttendees extends JViewLegacy {
 		$lists['search'] = $search;
 
 		// waiting list status
-		$options = array( JHTML::_('select.option', 0, JText::_('COM_JEM_ALL')),
-		                  JHTML::_('select.option', 1, JText::_('COM_JEM_ATTENDING')),
-		                  JHTML::_('select.option', 2, JText::_('COM_JEM_WAITING')) ) ;
+		$options = array( JHTML::_('select.option', 0, JText::_('COM_JEM_ATT_FILTER_ALL')),
+		                  JHTML::_('select.option', 1, JText::_('COM_JEM_ATT_FILTER_ATTENDING')),
+		                  JHTML::_('select.option', 2, JText::_('COM_JEM_ATT_FILTER_WAITING')) ) ;
 		$lists['waiting'] = JHTML::_('select.genericlist', $options, 'filter_waiting', 'onChange="this.form.submit();"', 'value', 'text', $filter_waiting);
 
 		// table ordering
@@ -139,8 +139,7 @@ class JEMViewAttendees extends JViewLegacy {
 
 
 		if (JEMHelper::isValidDate($event->dates)) {
-			$event->dates = strftime($jemsettings->formatdate, strtotime( $event->dates ));
-		//	$date		= strftime( $this->jemsettings->formatdate, strtotime( $event->dates ));
+			$event->dates = JEMOutput::formatdate($event->dates);
 		}
 		else {
 			$event->dates	= JText::_('COM_JEM_OPEN_DATE');

@@ -67,7 +67,7 @@ $options = array(
 	</tr>
 </table>
 
-<table border="0" width="100%" class="adminlist">
+<table style="width:100%" class="adminlist">
 	<tr valign="top">
 		<td align="left">
 
@@ -75,7 +75,7 @@ $options = array(
 			echo JHtml::_('sliders.start', 'det-pane', $options);
 			
 			$title2 = JText::_( 'COM_JEM_SCREEN_HELP' );
-			echo JHtml::_('sliders.panel', $title2, 'registra');
+			echo JHtml::_('sliders.panel', $title2, 'help');
 			?>
 			<table class="adminlist">
 				<?php
@@ -88,6 +88,17 @@ $options = array(
 				}
 				?>
 			</table>
+			<?php 
+			$title3 = JText::_( 'COM_JEM_CONFIG_INFO' );
+			echo JHtml::_('sliders.panel', $title3, 'registra');
+			?>
+			<table class="adminlist">
+				<tr>
+				<td><label>Version:</label></td>
+				<td><?php echo '1.9'; ?></td>
+				</tr>
+			</table>
+			
 
 			<?php
 			echo JHtml::_('sliders.end');
