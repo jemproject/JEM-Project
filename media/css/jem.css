@@ -715,7 +715,7 @@ div.jem_editevent div.jem_buttons a.jem_venue_reset {
     display: block;
     height: 1%; width: auto;
     padding: 0 6px 0 0;
-    border: 1px solid rgb(0, 0, 0);
+    border: 0px solid rgb(0, 0, 0);
     cursor:pointer;
     color: #000;
     }
