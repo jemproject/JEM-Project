@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -44,11 +44,11 @@ class JEMHelperRoute
 	 *
 	 * @return string determined Link
 	 */
-static	function getRoute($id, $view = 'details')
+	static function getRoute($id, $view = 'details')
 	{
 		//Not needed currently but kept because of a possible hierarchic link structure in future
 		$needles = array(
-			$view  => (int) $id
+			$view => (int) $id
 		);
 
 		//Create the link
@@ -72,51 +72,51 @@ static	function getRoute($id, $view = 'details')
 	 *
 	 * @return int Itemid
 	 */
-static	function _findItem($needles)
+	static function _findItem($needles)
 	{
 		$component = JComponentHelper::getComponent('com_jem');
 
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		$menus	= $app->getMenu();
 		$items	= $menus->getItems('component_id', $component->id);
 		$user 	= JFactory::getUser();
-		
-		
+
+
 		if (JFactory::getUser()->authorise('core.manage')) {
-              $access = (int) 3;  //viewlevel Special
-          } else {
-              if($user->get('id')) {
-                  $access = (int) 2;  //viewlevel Registered
-              } else {
-                 $access = (int) 1;   //viewlevel Public
-              }
-          }
-        //false if there exists no menu item at all
-		if (!$items)  {
-            return false;
-        }
-        else {
-		  //Not needed currently but kept because of a possible hierarchic link structure in future
-		  foreach($needles as $needle => $id)
-		  {
-		      	foreach($items as $item)
-			     {
-
-				    if ((@$item->query['view'] == $needle) && (@$item->query['id'] == $id) && ($item->published == 1) && ($item->access <= $access)) {
+			$access = (int) 3;  //viewlevel Special
+		} else {
+			if($user->get('id')) {
+				$access = (int) 2;  //viewlevel Registered
+			} else {
+				$access = (int) 1;  //viewlevel Public
+			}
+		}
+		//false if there exists no menu item at all
+		if (!$items) {
+			return false;
+		}
+		else {
+			//Not needed currently but kept because of a possible hierarchic link structure in future
+			foreach($needles as $needle => $id)
+			{
+				foreach($items as $item)
+				{
+					if ((@$item->query['view'] == $needle) && (@$item->query['id'] == $id) && ($item->access <= $access)) {
 					return $item;
-				    }
-			     }
+					}
+				}
 
-		      /*	//no menuitem exists -> return first possible match
-		      	foreach($items as $item)
-		      	{
-			     	if ($item->published == 1 && $item->access <= $access) {
-				        	return $item;
-			     	}
-		      	}  */
-
-		  }
+				/*
+				//no menuitem exists -> return first possible match
+				foreach($items as $item)
+				{
+					if ($item->published == 1 && $item->access <= $access) {
+						return $item;
+					}
+				}
+				*/
+			}
 		}
 
 		return false;
