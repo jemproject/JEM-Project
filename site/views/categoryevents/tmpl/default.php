@@ -44,6 +44,9 @@ JHTML::_('behavior.modal');
 
 <div class="floattext">
  
+ 
+ 
+ <?php if ($this->jemsettings->discatheader) {  ?>
  <div class="catimg">
   <?php //flyer
 	
@@ -59,6 +62,7 @@ JHTML::_('behavior.modal');
 	}
 	?>
 	</div>
+	<?php } ?>
 	
 	<div class="catdescription">
 		<p><?php echo $this->catdescription; ?></p>

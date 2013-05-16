@@ -45,6 +45,8 @@ defined( '_JEXEC' ) or die;
 		<h2 class="jem cat<?php echo $row->id; ?>">
 			<?php echo JHTML::_('link', JRoute::_($row->linktarget), $this->escape($row->catname)); ?>
 		</h2>
+		
+		<?php if ($this->jemsettings->discatheader) {  ?>
 		<div class="catimg">
 			<?php //flyer
 
@@ -72,6 +74,7 @@ defined( '_JEXEC' ) or die;
 			</p>
 
 		</div>
+		<?php } ?>
 
 		<div class="catdescription cat<?php echo $row->id; ?>">
 			<?php echo $row->catdescription ; ?>
