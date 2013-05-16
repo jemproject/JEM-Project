@@ -77,7 +77,7 @@ defined('_JEXEC') or die;
 
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=group'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 
-<table border="0" width="100%">
+<table style="width:100%">
 	<tr>
 		<td valign="top">
 

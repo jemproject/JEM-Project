@@ -61,7 +61,7 @@ $infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', 
 <form action="<?php echo $this->request_url; ?>" method="post" name="adminForm" id="adminForm">
 
 
-<table class="adminform" width="100%">
+<table class="adminform" style="width:100%">
 	<tr>
 		<td>
 			<div style="float: left;">

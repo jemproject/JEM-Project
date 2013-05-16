@@ -36,12 +36,12 @@ class JEMViewGroups extends JViewLegacy {
 	{
 		$app = JFactory::getApplication();
 
-		//initialise variables
+		// initialise variables
 		$document	=  JFactory::getDocument();
 		$db			=  JFactory::getDBO();
 		$user 		=  JFactory::getUser();
 
-		//get vars
+		// get vars
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.groups.filter_order', 'filter_order', 	'name', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.groups.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.groups.search', 'search', '', 'string' );
@@ -51,23 +51,12 @@ class JEMViewGroups extends JViewLegacy {
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
-		//Create Submenu
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups', true);
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
-		if (JFactory::getUser()->authorise('core.manage')) {
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
-		}
-
 		JHTML::_('behavior.tooltip');
 
-		// Get data from the model
+		// get data from the model
 		$rows      	=  $this->get( 'Data');
-		//$total      = $this->get( 'Total');
+		
+		// add pagination
 		$pagination 	=  $this->get( 'Pagination' );
 
 
@@ -78,7 +67,7 @@ class JEMViewGroups extends JViewLegacy {
 		// search filter
 		$lists['search']= $search;
 
-		//assign data to template
+		// assign data to template
 		$this->lists 		= $lists;
 		$this->rows 		= $rows;
 		$this->pagination 	= $pagination;
@@ -95,14 +84,13 @@ class JEMViewGroups extends JViewLegacy {
 	
 	
 	/*
-	 *
 	* Add Toolbar
-	*
 	*/
 	
 	function addToolbar()
 	{
-	//create the toolbar
+		
+	// create the toolbar
 	JToolBarHelper::title( JText::_( 'COM_JEM_GROUPS' ), 'groups' );
 	JToolBarHelper::addNew();
 	JToolBarHelper::spacer();
@@ -111,12 +99,22 @@ class JEMViewGroups extends JViewLegacy {
 	JToolBarHelper::deleteList();
 	JToolBarHelper::spacer();
 	JToolBarHelper::help( 'el.listgroups', true );
+	
+	// create Submenu
+	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
+	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
+	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
+	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
+	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
+	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups', true);
+	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
+	if (JFactory::getUser()->authorise('core.manage')) {
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
 	}
 	
 	
+	}
 	
 	
-	
-	
-}
+} // end of class
 ?>

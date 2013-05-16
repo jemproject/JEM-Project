@@ -70,35 +70,6 @@ class JEMViewVenue extends JViewLegacy {
 			}
 		}
 
-		//create the toolbar
-		if ( $cid ) {
-			JToolBarHelper::title( JText::_( 'COM_JEM_EDIT_VENUE' ), 'venuesedit' );
-
-			//makes data safe
-			JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'locdescription' );
-
-		} else {
-			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_VENUE' ), 'venuesedit' );
-
-			//set the submenu
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
-			if (JFactory::getUser()->authorise('core.manage')) {
-				JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
-			}
-		}
-		JToolBarHelper::apply();
-		JToolBarHelper::spacer();
-		JToolBarHelper::save();
-		JToolBarHelper::spacer();
-		JToolBarHelper::cancel();
-		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.editvenues', true );
 
 		//Build the image select functionality
 		$js = "
@@ -137,7 +108,58 @@ class JEMViewVenue extends JViewLegacy {
 		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access		= $access2;
 
+		// add toolbar
+		$this->addToolbar();
+		
 		parent::display($tpl);
 	}
-}
+	
+	
+	
+	/*
+	 * Add Toolbar
+	*/
+	
+	function addToolbar()
+	{
+		
+		//get vars
+		$cid 			= JRequest::getVar( 'cid' );
+		
+		//create the toolbar
+		if ( $cid ) {
+			JToolBarHelper::title( JText::_( 'COM_JEM_EDIT_VENUE' ), 'venuesedit' );
+		
+			//makes data safe
+			JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'locdescription' );
+		
+		} else {
+			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_VENUE' ), 'venuesedit' );
+		
+			//set the submenu
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
+			if (JFactory::getUser()->authorise('core.manage')) {
+				JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
+			}
+		}
+		JToolBarHelper::apply();
+		JToolBarHelper::spacer();
+		JToolBarHelper::save();
+		JToolBarHelper::spacer();
+		JToolBarHelper::cancel();
+		JToolBarHelper::spacer();
+		JToolBarHelper::help( 'el.editvenues', true );
+		
+	}
+	
+
+	
+	
+} // end of class
 ?>

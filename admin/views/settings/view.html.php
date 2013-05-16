@@ -67,26 +67,6 @@ class JEMViewSettings extends JViewLegacy {
 		$document->addScript( JURI::root().'media/com_jem/js/settings.js' );
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
-		//Create Submenu
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&view=settings', true);
-
-		//create the toolbar
-		JToolBarHelper::title( JText::_( 'COM_JEM_SETTINGS' ), 'settings' );
-		JToolBarHelper::apply();
-		JToolBarHelper::spacer();
-		JToolBarHelper::save('save');
-		JToolBarHelper::spacer();
-		JToolBarHelper::cancel();
-		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.settings', true );
-
 		$accessLists = array();
 
  	  	//Create custom group levels to include into the public group selectList
@@ -115,10 +95,46 @@ class JEMViewSettings extends JViewLegacy {
 		$this->request_url	= $uri2;
 
 		$this->WarningIcon();
+		
+		// add toolbar
+		$this->addToolbar();
+		
 		parent::display($tpl);
 
-
 	}
+	
+	
+	
+	/*
+	 * Add Toolbar
+	*/
+	
+	function addToolbar()
+	{
+		
+		//Create Submenu
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&view=settings', true);
+		
+		//create the toolbar
+		JToolBarHelper::title( JText::_( 'COM_JEM_SETTINGS' ), 'settings' );
+		JToolBarHelper::apply();
+		JToolBarHelper::spacer();
+		JToolBarHelper::save('save');
+		JToolBarHelper::spacer();
+		JToolBarHelper::cancel();
+		JToolBarHelper::spacer();
+		JToolBarHelper::help( 'el.settings', true );
+		
+	}
+	
+	
 
 	function WarningIcon()
 	{

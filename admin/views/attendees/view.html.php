@@ -58,29 +58,7 @@ class JEMViewAttendees extends JViewLegacy {
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
-		//Create Submenu
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
-		if (JFactory::getUser()->authorise('core.manage')) {
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
-		}
-
-		//add toolbar
-		JToolBarHelper::title( JText::_( 'COM_JEM_REGISTERED_USERS' ), 'users' );
-		JToolBarHelper::addNew();
-		JToolBarHelper::editList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::deleteList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::custom('back', 'back', 'back', JText::_('COM_JEM_BACK'), false);
-		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.registereduser', true );
-
+		
 		// Get data from the model
 		$rows      	=  $this->get( 'Data');
 		$pagination =  $this->get( 'Pagination' );
@@ -118,6 +96,9 @@ class JEMViewAttendees extends JViewLegacy {
 		$this->pagination 	= $pagination;
 		$this->event 		= $event;
 
+		// add toolbar
+		$this->addToolbar();
+		
 		parent::display($tpl);
 	}
 
@@ -151,5 +132,41 @@ class JEMViewAttendees extends JViewLegacy {
 
 		parent::display($tpl);
 	}
+	
+	
+	/*
+	 * Add Toolbar
+	*/
+	
+	function addToolbar()
+	{
+		
+		//Create Submenu
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
+		if (JFactory::getUser()->authorise('core.manage')) {
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
+		}
+		
+		//add toolbar
+		JToolBarHelper::title( JText::_( 'COM_JEM_REGISTERED_USERS' ), 'users' );
+		JToolBarHelper::addNew();
+		JToolBarHelper::editList();
+		JToolBarHelper::spacer();
+		JToolBarHelper::deleteList();
+		JToolBarHelper::spacer();
+		JToolBarHelper::custom('back', 'back', 'back', JText::_('COM_JEM_ATT_BACK'), false);
+		JToolBarHelper::spacer();
+		JToolBarHelper::help( 'el.registereduser', true );
+		
+	}
+	
+	
+	
 }
 ?>

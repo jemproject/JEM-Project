@@ -65,7 +65,7 @@ class JEMViewGroup extends JViewLegacy {
 			//TODO: refactor model to make this work
 		} else {		*/
 			$maintainers 		=  $this->get( 'Members');
-	//	}
+		//	}
 		$available_users 	=  $this->get( 'Available');
 
 		// fail if checked out not by 'me'
@@ -79,6 +79,33 @@ class JEMViewGroup extends JViewLegacy {
 		//make data safe
 		JFilterOutput::objectHTMLSafe( $row );
 
+		//create selectlists
+		$lists = array();
+		$lists['maintainers']		= JHTML::_('select.genericlist', $maintainers, 'maintainers[]', 'class="inputbox" size="20" onDblClick="moveOptions(document.adminForm[\'maintainers[]\'], document.adminForm[\'available_users\'])" multiple="multiple" style="padding: 6px; width: 250px;"', 'value', 'text' );
+		$lists['available_users']	= JHTML::_('select.genericlist', $available_users, 'available_users', 'class="inputbox" size="20" onDblClick="moveOptions(document.adminForm[\'available_users\'], document.adminForm[\'maintainers[]\'])" multiple="multiple" style="padding: 6px; width: 250px;"', 'value', 'text' );
+
+		//assign data to template
+		$this->row 			= $row;
+		$this->template 	= $template;
+		$this->lists 		= $lists;
+
+		// add toolbar
+		$this->addToolbar();
+		
+		parent::display($tpl);
+	}
+	
+	
+	/*
+	 * Add Toolbar
+	*/
+	
+	function addToolbar()
+	{
+		
+		//get vars
+		$cid 			= JRequest::getInt( 'cid' );
+		
 		//build toolbar
 		if ( $cid ) {
 			JToolBarHelper::title( JText::_( 'COM_JEM_EDIT_GROUP' ), 'groupedit' );
@@ -86,7 +113,7 @@ class JEMViewGroup extends JViewLegacy {
 		} else {
 			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_GROUP' ), 'groupedit' );
 			JToolBarHelper::spacer();
-
+		
 			//Create Submenu
 			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
 			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
@@ -104,18 +131,9 @@ class JEMViewGroup extends JViewLegacy {
 		JToolBarHelper::cancel();
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'el.editgroup', true );
-
-		//create selectlists
-		$lists = array();
-		$lists['maintainers']		= JHTML::_('select.genericlist', $maintainers, 'maintainers[]', 'class="inputbox" size="20" onDblClick="moveOptions(document.adminForm[\'maintainers[]\'], document.adminForm[\'available_users\'])" multiple="multiple" style="padding: 6px; width: 250px;"', 'value', 'text' );
-		$lists['available_users']	= JHTML::_('select.genericlist', $available_users, 'available_users', 'class="inputbox" size="20" onDblClick="moveOptions(document.adminForm[\'available_users\'], document.adminForm[\'maintainers[]\'])" multiple="multiple" style="padding: 6px; width: 250px;"', 'value', 'text' );
-
-		//assign data to template
-		$this->row 			= $row;
-		$this->template 	= $template;
-		$this->lists 		= $lists;
-
-		parent::display($tpl);
+		
 	}
-}
+	
+	
+} // end of class
 ?>

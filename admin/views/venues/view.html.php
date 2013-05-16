@@ -53,26 +53,11 @@ class JEMViewVenues extends JViewLegacy {
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
-		//Create Submenu
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues', true);
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
-		if (JFactory::getUser()->authorise('core.manage')) {
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
-		}
-
 		JHTML::_('behavior.tooltip');
 
-		
 		// Get data from the model
-		$rows      	=  $this->get( 'Data');
-		//$total      = $this->get( 'Total');
+		$rows      		=  $this->get( 'Data');
 		$pagination 	=  $this->get( 'Pagination' );
-		
 		
 		//publish unpublished filter
 		$lists['state']	= JHTML::_('grid.state', $filter_state );
@@ -113,13 +98,12 @@ class JEMViewVenues extends JViewLegacy {
 	
 	
 	/*
-	 *
 	* Add Toolbar
-	*
 	*/
 	
 	function addToolbar()
 	{
+		
 	//create the toolbar
 	JToolBarHelper::title( JText::_( 'COM_JEM_VENUES' ), 'venues' );
 	JToolBarHelper::publishList();
@@ -133,9 +117,22 @@ class JEMViewVenues extends JViewLegacy {
 	JToolBarHelper::deleteList();
 	JToolBarHelper::spacer();
 	JToolBarHelper::help( 'el.listvenues', true );
+	
+	//Create Submenu
+	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
+	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
+	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues', true);
+	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
+	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
+	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
+	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
+	if (JFactory::getUser()->authorise('core.manage')) {
+		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
+	}
+	
 	}
 	
 	
 	
-}
+} // end of class
 ?>

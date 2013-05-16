@@ -56,35 +56,7 @@ class JEMViewCategory extends JViewLegacy {
     	$document->addStyleSheet(JURI::root().'media/com_jem/css/picker.css');
     	$document->addScript( JURI::root().'media/com_jem/js/picker.js' );
 
-		//create the toolbar
-		if ( $cid ) {
-			JToolBarHelper::title( JText::_( 'COM_JEM_EDIT_CATEGORY' ), 'categoriesedit' );
-
-		} else {
-			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_CATEGORY' ), 'categoriesedit' );
-
-			//set the submenu
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
-			if (JFactory::getUser()->authorise('core.manage')) {
-				JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
-			}
-		}
-		JToolBarHelper::apply();
-		JToolBarHelper::spacer();
-		JToolBarHelper::save();
-		JToolBarHelper::spacer();
-		//JToolBarHelper::media_manager();
-		//JToolBarHelper::spacer();
-		JToolBarHelper::cancel();
-		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.editcategories', true );
-
+    	
 		//Get data from the model
 		$model		=  $this->getModel();
 		$row     	=  $this->get( 'Data' );
@@ -103,14 +75,8 @@ class JEMViewCategory extends JViewLegacy {
 		JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'catdescription' );
 
 		//build selectlists
-		$Lists = array();
-		$javascript = "onchange=\"javascript:if (document.forms[0].image.options[selectedIndex].value!='') {document.imagelib.src='../images/stories/' + document.forms[0].image.options[selectedIndex].value} else {document.imagelib.src='../images/blank.png'}\"";
-	//	$Lists['imagelist'] 		= JHTML::_('list.images', 'image', $row->image, $javascript, '/images/stories/' );
-	//	$Lists['access'] 			= JHTML::_('list.accesslevel', $row );
-	//  $Lists['access'] = JHTML::_('access.level', 'access', $row->access); 
-	$Lists['access'] 			= JHTML::_('access.assetgrouplist', 'access', $row->access);
-	
-	
+		$Lists = array();	
+		$Lists['access'] 			= JHTML::_('access.assetgrouplist', 'access', $row->access);
 		$Lists['parent_id'] 		= JEMCategories::buildcatselect($categories, 'parent_id', $row->parent_id, 1);
 
 
@@ -150,8 +116,53 @@ class JEMViewCategory extends JViewLegacy {
 		$this->editor 		= $editor;
 		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access 		= $access2;
+
+		// add toolbar
+		$this->addToolbar();
 		
 		parent::display($tpl);
 	}
+	
+	
+	/*
+	 * Add Toolbar
+	*/
+	
+	function addToolbar()
+	{
+		
+		//get vars
+		$cid 		= JRequest::getVar( 'cid' );
+		
+		//create the toolbar
+		if ( $cid ) {
+			JToolBarHelper::title( JText::_( 'COM_JEM_EDIT_CATEGORY' ), 'categoriesedit' );
+		
+		} else {
+			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_CATEGORY' ), 'categoriesedit' );
+		
+			//set the submenu
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
+			if (JFactory::getUser()->authorise('core.manage')) {
+				JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
+			}
+		}
+		JToolBarHelper::apply();
+		JToolBarHelper::spacer();
+		JToolBarHelper::save();
+		JToolBarHelper::spacer();
+		JToolBarHelper::cancel();
+		JToolBarHelper::spacer();
+		JToolBarHelper::help( 'el.editcategories', true );
+		
+	}
+	
+	
 }
 ?>

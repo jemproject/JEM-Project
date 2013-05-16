@@ -71,34 +71,6 @@ class JEMViewEvent extends JViewLegacy {
 		// include the unlimited script
 		$document->addScript($url.'media/com_jem/js/unlimited.js');
 
-		//build toolbar
-		if ($task == 'copy') {
-		  	JToolBarHelper::title( JText::_( 'COM_JEM_COPY_EVENT'), 'eventedit');		
-		} elseif ( $cid ) {
-			JToolBarHelper::title( JText::_( 'COM_JEM_EDIT_EVENT' ), 'eventedit' );
-		} else {
-			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_EVENT' ), 'eventedit' );
-
-			//set the submenu
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
-			if (JFactory::getUser()->authorise('core.manage')) {
-				JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
-			}
-		}
-		JToolBarHelper::apply();
-		JToolBarHelper::spacer();
-		JToolBarHelper::save();
-		JToolBarHelper::spacer();
-		JToolBarHelper::cancel();
-		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.editevents', true );
-
 		//get data from model
 		$model		=  $this->getModel();
 		$row     	=  $this->get( 'Data' );
@@ -144,8 +116,6 @@ class JEMViewEvent extends JViewLegacy {
 		$venueselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"window.open('$linkvadd', 'popup', 'width=750,height=400,scrollbars=yes,toolbar=no,status=no,resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')\" value=\"".JText::_('COM_JEM_ADD')."\" />";
 		$venueselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectVenue(0, '".JText::_('COM_JEM_NO_VENUE')."' );\" value=\"".JText::_('COM_JEM_NO_VENUE')."\" onblur=\"seo_switch()\" />";
 
-		
-		
 		
 		// build venue select js and load the view
 		$js = "
@@ -197,11 +167,11 @@ class JEMViewEvent extends JViewLegacy {
 		// recurrence type
 		$rec_type = array();
 		$rec_type[] = JHTML::_('select.option', 0, JText::_ ( 'COM_JEM_NOTHING' ));
-    $rec_type[] = JHTML::_('select.option', 1, JText::_ ( 'COM_JEM_DAYLY' ));
-    $rec_type[] = JHTML::_('select.option', 2, JText::_ ( 'COM_JEM_WEEKLY' ));
-    $rec_type[] = JHTML::_('select.option', 3, JText::_ ( 'COM_JEM_MONTHLY' ));
-	  $rec_type[] = JHTML::_('select.option', 4, JText::_ ( 'COM_JEM_WEEKDAY' ));
-    $Lists['recurrence_type'] = JHTML::_('select.genericlist', $rec_type, 'recurrence_type', '', 'value', 'text', $row->recurrence_type);
+		$rec_type[] = JHTML::_('select.option', 1, JText::_ ( 'COM_JEM_DAYLY' ));
+		$rec_type[] = JHTML::_('select.option', 2, JText::_ ( 'COM_JEM_WEEKLY' ));
+		$rec_type[] = JHTML::_('select.option', 3, JText::_ ( 'COM_JEM_MONTHLY' ));
+		$rec_type[] = JHTML::_('select.option', 4, JText::_ ( 'COM_JEM_WEEKDAY' ));
+		$Lists['recurrence_type'] = JHTML::_('select.genericlist', $rec_type, 'recurrence_type', '', 'value', 'text', $row->recurrence_type);
 		
     
     	
@@ -219,6 +189,9 @@ class JEMViewEvent extends JViewLegacy {
 		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access 		= $access2;
 
+		// add toolbar
+		$this->addToolbar();
+		
 		parent::display($tpl);
 	}
 
@@ -280,5 +253,50 @@ class JEMViewEvent extends JViewLegacy {
 
 		parent::display($tpl);
 	}
-}
+	
+	
+	/*
+	 * Add Toolbar
+	*/
+	
+	function addToolbar()
+	{
+		
+		//get vars
+		$cid		= JRequest::getVar( 'cid' );
+		$task		= JRequest::getVar('task');
+		
+		//build toolbar
+		if ($task == 'copy') {
+			JToolBarHelper::title( JText::_( 'COM_JEM_COPY_EVENT'), 'eventedit');
+		} elseif ( $cid ) {
+			JToolBarHelper::title( JText::_( 'COM_JEM_EDIT_EVENT' ), 'eventedit' );
+		} else {
+			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_EVENT' ), 'eventedit' );
+		
+			//set the submenu
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
+			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
+			if (JFactory::getUser()->authorise('core.manage')) {
+				JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
+			}
+		}
+		JToolBarHelper::apply();
+		JToolBarHelper::spacer();
+		JToolBarHelper::save();
+		JToolBarHelper::spacer();
+		JToolBarHelper::cancel();
+		JToolBarHelper::spacer();
+		JToolBarHelper::help( 'el.editevents', true );
+		
+	}
+	
+	
+	
+} // end of class
 ?>

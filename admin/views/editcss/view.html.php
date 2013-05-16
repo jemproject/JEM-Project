@@ -51,15 +51,6 @@ class JEMViewEditcss extends JViewLegacy {
 		$path		= JPATH_SITE.'/media/com_jem/css';
 		$css_path	= $path.'/'.$filename;
 
-		//create the toolbar
-		JToolBarHelper::title( JText::_('COM_JEM_EDIT_CSS'), 'cssedit');
-		JToolBarHelper::apply( 'applycss' );
-		JToolBarHelper::spacer();
-		JToolBarHelper::save( 'savecss' );
-		JToolBarHelper::spacer();
-		JToolBarHelper::cancel();
-		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.editcss', true );
 
 		JRequest::setVar( 'hidemainmenu', 1 );
 
@@ -89,6 +80,31 @@ class JEMViewEditcss extends JViewLegacy {
 		$this->filename 	= $filename;
 		$this->ftp 			= $ftp;
 
+		// add toolbar
+		$this->addToolbar();
+		
 		parent::display($tpl);
 	}
-}
+	
+	/*
+	 * Add Toolbar
+	*/
+	
+	function addToolbar()
+	{
+		
+		//create the toolbar
+		JToolBarHelper::title( JText::_('COM_JEM_EDIT_CSS'), 'cssedit');
+		JToolBarHelper::apply( 'applycss' );
+		JToolBarHelper::spacer();
+		JToolBarHelper::save( 'savecss' );
+		JToolBarHelper::spacer();
+		JToolBarHelper::cancel();
+		JToolBarHelper::spacer();
+		JToolBarHelper::help( 'el.editcss', true );
+		
+	}
+	
+	
+	
+} // end of class

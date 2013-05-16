@@ -41,10 +41,6 @@ class JEMViewJEM extends JViewLegacy {
 		$document	=  JFactory::getDocument();
 		$user 		=  JFactory::getUser();
 
-		//build toolbar
-		JToolBarHelper::title( JText::_( 'COM_JEM_JEM' ), 'home' );
-		JToolBarHelper::help( 'el.intro', true );
-
 		// Get data from the model
 		$events      =  $this->get( 'Eventsdata');
 		$venue       =  $this->get( 'Venuesdata');
@@ -53,6 +49,33 @@ class JEMViewJEM extends JViewLegacy {
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root(true).'/media/com_jem/css/backend.css');
 
+	
+		//assign vars to the template
+		$this->events		= $events;
+		$this->venue		= $venue;
+		$this->category		= $category;
+		$this->user			= $user;
+
+		// add toolbar
+		$this->addToolbar();
+		
+		parent::display($tpl);
+
+	}
+	
+	
+	
+	/*
+	 * Add Toolbar
+	*/
+	
+	function addToolbar()
+	{
+		
+		//build toolbar
+		JToolBarHelper::title( JText::_( 'COM_JEM_JEM' ), 'home' );
+		JToolBarHelper::help( 'el.intro', true );
+		
 		//Create Submenu
 		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem', true);
 		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
@@ -64,18 +87,11 @@ class JEMViewJEM extends JViewLegacy {
 		if (JFactory::getUser()->authorise('core.manage')) {
 			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
 		}
-        JToolBarhelper::preferences('com_jem');
+		JToolBarhelper::preferences('com_jem');
 		
-		
-		//assign vars to the template
-		$this->events		= $events;
-		$this->venue		= $venue;
-		$this->category		= $category;
-		$this->user			= $user;
-
-		parent::display($tpl);
-
 	}
+	
+	
 
 	/**
 	 * Creates the buttons view
@@ -113,5 +129,7 @@ class JEMViewJEM extends JViewLegacy {
 		</div>
 		<?php
 	}
-}
+
+
+}  // end of class
 ?>

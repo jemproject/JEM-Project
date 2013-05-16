@@ -58,7 +58,6 @@ class JEMViewContactelement extends JViewLegacy {
 
 		// Get data from the model
 		$rows      	=  $this->get( 'Data');
-//		$total      = $this->get( 'Total');
 		$pagination 	=  $this->get( 'Pagination' );
 
 		//publish unpublished filter

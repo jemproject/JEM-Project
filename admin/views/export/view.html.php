@@ -40,13 +40,27 @@ class JEMViewExport extends JViewLegacy {
 		$document	= JFactory::getDocument();
 		$user 		= JFactory::getUser();
 
-		//build toolbar
-		JToolBarHelper::title(JText::_('COM_JEM_EXPORT'), 'home');
-		JToolBarHelper::help('el.import', true);
-
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
+		// add toolbar
+		$this->addToolbar();
+		
+		parent::display($tpl);
+
+	}
+	
+	/*
+	 * Add Toolbar
+	*/
+	
+	function addToolbar()
+	{
+		
+		//build toolbar
+		JToolBarHelper::title(JText::_('COM_JEM_EXPORT'), 'home');
+		JToolBarHelper::help('el.import', true);
+		
 		//Create Submenu
 		JSubMenuHelper::addEntry(JText::_('COM_JEM_JEM'), 'index.php?option=com_jem', true);
 		JSubMenuHelper::addEntry(JText::_('COM_JEM_EVENTS'), 'index.php?option=com_jem&view=events');
@@ -55,12 +69,13 @@ class JEMViewExport extends JViewLegacy {
 		JSubMenuHelper::addEntry(JText::_('COM_JEM_ARCHIVESCREEN'), 'index.php?option=com_jem&view=archive');
 		JSubMenuHelper::addEntry(JText::_('COM_JEM_GROUPS'), 'index.php?option=com_jem&view=groups');
 		JSubMenuHelper::addEntry(JText::_('COM_JEM_HELP'), 'index.php?option=com_jem&view=help');
-        if (JFactory::getUser()->authorise('core.manage'))  {
+		if (JFactory::getUser()->authorise('core.manage'))  {
 			JSubMenuHelper::addEntry(JText::_('COM_JEM_SETTINGS'), 'index.php?option=com_jem&controller=settings&task=edit');
 		}
-
-		parent::display($tpl);
-
+		
 	}
-}
+	
+	
+	
+} // end of class
 ?>

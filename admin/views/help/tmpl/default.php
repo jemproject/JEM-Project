@@ -41,7 +41,7 @@ $options = array(
 <table border="1" class="adminform">
 	<tr>
 		<td colspan="2">
-			<table width="100%">
+			<table style="width:100%">
 				<tr>
 					<td>
 						<strong><?php echo JText::_( 'COM_JEM_SEARCH' ); ?></strong>

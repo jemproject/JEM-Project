@@ -49,6 +49,20 @@ class JEMViewCleanup extends JViewLegacy {
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
+
+		// add toolbar
+		$this->addToolbar();
+		
+		parent::display($tpl);
+	}
+	
+	
+	/*
+	 * Add Toolbar
+	*/
+	
+	function addToolbar()
+	{
 		//Create Submenu
 		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
 		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
@@ -60,12 +74,12 @@ class JEMViewCleanup extends JViewLegacy {
 		if (!JFactory::getUser()->authorise('core.manage')) {
 			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
 		}
-
+		
 		//create the toolbar
 		JToolBarHelper::title( JText::_( 'COM_JEM_CLEANUP' ), 'housekeeping' );
-		JToolBarHelper::help( 'el.cleanup', true );
-
-		parent::display($tpl);
+		JToolBarHelper::help( 'el.cleanup', true );	
 	}
-}
+	
+	
+} // end of class
 ?>

@@ -50,18 +50,6 @@ class JEMViewAttendee extends JViewLegacy {
 		//add css to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
-		//create the toolbar
-		if ( $cid ) {
-			JToolBarHelper::title( JText::_('COM_JEM_EDIT_ATTENDEE'), 'users');
-		} else {
-			JToolBarHelper::title( JText::_('COM_JEM_ADD_ATTENDEE'), 'users');
-		}
-		JToolBarHelper::apply();
-		JToolBarHelper::save();
-		JToolBarHelper::spacer();
-		JToolBarHelper::cancel();
-		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.editattendee', true );
 
 		//Get data from the model
 		$model		=  $this->getModel();
@@ -84,7 +72,44 @@ class JEMViewAttendee extends JViewLegacy {
 		$this->row		= $row;
 		$this->event 	= $event_id;
 
+		// add toolbar
+		$this->addToolbar();
+		
 		parent::display($tpl);
 	}
+	
+	
+	/*
+	 * Add Toolbar
+	*/
+	
+	function addToolbar()
+	{
+	
+		//get vars
+		$cid       = JRequest::getVar( 'cid' );
+		
+		//create the toolbar
+		if ( $cid ) {
+			JToolBarHelper::title( JText::_('COM_JEM_EDIT_ATTENDEE'), 'users');
+		} else {
+			JToolBarHelper::title( JText::_('COM_JEM_ADD_ATTENDEE'), 'users');
+		}
+		JToolBarHelper::apply();
+		JToolBarHelper::save();
+		JToolBarHelper::spacer();
+		JToolBarHelper::cancel();
+		JToolBarHelper::spacer();
+		JToolBarHelper::help( 'el.editattendee', true );
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 }
 ?>

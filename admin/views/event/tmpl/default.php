@@ -335,7 +335,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 			echo JHtml::_('sliders.panel', $title2, 'custom');
 			?>
 			
-			<table width="100%">
+			<table style="width:100%">
 				<tr>
             	  <td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD1' ).':'; ?></td>
             	  <td><input class="inputbox" name="custom01" value="<?php echo $this->row->custom01; ?>" size="20" maxlength="200" id="custom01" /></td>
