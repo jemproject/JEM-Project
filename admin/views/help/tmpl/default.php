@@ -89,7 +89,9 @@ $options = array(
 				?>
 			</table>
 			<?php 
-			$title3 = JText::_( 'COM_JEM_CONFIG_INFO' );
+			// @todo add posibility to show current versions of JEM 
+			// Plugins, modules, components
+			$title3 = JText::_( 'COM_JEM_HELP_CONFIGINFO' );
 			echo JHtml::_('sliders.panel', $title3, 'registra');
 			?>
 			<table class="adminlist">

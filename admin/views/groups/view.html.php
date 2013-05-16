@@ -70,15 +70,6 @@ class JEMViewGroups extends JViewLegacy {
 		//$total      = $this->get( 'Total');
 		$pagination 	=  $this->get( 'Pagination' );
 
-		//create the toolbar
-		JToolBarHelper::title( JText::_( 'COM_JEM_GROUPS' ), 'groups' );
-		JToolBarHelper::addNew();
-		JToolBarHelper::spacer();
-		JToolBarHelper::editList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::deleteList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.listgroups', true );
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
@@ -94,7 +85,38 @@ class JEMViewGroups extends JViewLegacy {
 		$this->user 		= $user;
 		$this->template 	= $template;
 
+		
+		// add toolbar
+		$this->addToolbar();
+		
 		parent::display($tpl);
 	}
+	
+	
+	
+	/*
+	 *
+	* Add Toolbar
+	*
+	*/
+	
+	function addToolbar()
+	{
+	//create the toolbar
+	JToolBarHelper::title( JText::_( 'COM_JEM_GROUPS' ), 'groups' );
+	JToolBarHelper::addNew();
+	JToolBarHelper::spacer();
+	JToolBarHelper::editList();
+	JToolBarHelper::spacer();
+	JToolBarHelper::deleteList();
+	JToolBarHelper::spacer();
+	JToolBarHelper::help( 'el.listgroups', true );
+	}
+	
+	
+	
+	
+	
+	
 }
 ?>

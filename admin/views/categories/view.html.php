@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -29,7 +29,7 @@ jimport( 'joomla.application.component.view');
  *
  * @package JEM
  * @since 0.9
- */
+*/
 class JEMViewCategories extends JViewLegacy {
 
 	function display($tpl = null)
@@ -40,7 +40,7 @@ class JEMViewCategories extends JViewLegacy {
 		$user 		=  JFactory::getUser();
 		$db  		=  JFactory::getDBO();
 		$document	=  JFactory::getDocument();
-		
+
 		JHTML::_('behavior.tooltip');
 
 		//get vars
@@ -65,25 +65,11 @@ class JEMViewCategories extends JViewLegacy {
 			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
 		}
 
-		//create the toolbar
-		JToolBarHelper::title( JText::_( 'COM_JEM_CATEGORIES' ), 'elcategories' );
-		JToolBarHelper::publishList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::unpublishList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::addNew();
-		JToolBarHelper::spacer();
-		JToolBarHelper::editList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::deleteList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.listcategories', true );
-
 		//Get data from the model
 		$rows      	=  $this->get( 'Data');
 		//$total      = $this->get( 'Total');
 		$pagination 	=  $this->get( 'Pagination' );
-		
+
 		//publish unpublished filter
 		$lists['state']	= JHTML::_('grid.state', $filter_state );
 		// search filter
@@ -102,7 +88,42 @@ class JEMViewCategories extends JViewLegacy {
 		$this->ordering 	= $ordering;
 		$this->user 		= $user;
 
+
+		// add toolbar
+		$this->addToolbar();
+
 		parent::display($tpl);
 	}
+
+
+
+	/*
+	 *
+	* Add Toolbar
+	*
+	*/
+
+	function addToolbar()
+	{
+		//create the toolbar
+		JToolBarHelper::title( JText::_( 'COM_JEM_CATEGORIES' ), 'elcategories' );
+		JToolBarHelper::publishList();
+		JToolBarHelper::spacer();
+		JToolBarHelper::unpublishList();
+		JToolBarHelper::spacer();
+		JToolBarHelper::addNew();
+		JToolBarHelper::spacer();
+		JToolBarHelper::editList();
+		JToolBarHelper::spacer();
+		JToolBarHelper::deleteList();
+		JToolBarHelper::spacer();
+		JToolBarHelper::help( 'el.listcategories', true );
+	}
+
+
+
+
+
+
 }
 ?>

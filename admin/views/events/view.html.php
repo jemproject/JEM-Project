@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -29,7 +29,7 @@ jimport( 'joomla.application.component.view');
  *
  * @package JEM
  * @since 0.9
- */
+*/
 class JEMViewEvents extends JViewLegacy {
 
 	function display($tpl = null)
@@ -68,24 +68,6 @@ class JEMViewEvents extends JViewLegacy {
 
 		JHTML::_('behavior.tooltip');
 
-		//create the toolbar
-		JToolBarHelper::title( JText::_( 'COM_JEM_EVENTS' ), 'events' );
-		JToolBarHelper::archiveList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::publishList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::unpublishList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::addNew();
-		JToolBarHelper::spacer();
-		JToolBarHelper::editList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'remove', $alt = 'JACTION_DELETE');
-		JToolBarHelper::spacer();
-		JToolBarHelper::custom( 'copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
-		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.listevents', true );
-
 		// Get data from the model
 		$rows      	=  $this->get( 'Data');
 		//$total      = $this->get( 'Total');
@@ -118,7 +100,45 @@ class JEMViewEvents extends JViewLegacy {
 		$this->template 	= $template;
 		$this->jemsettings 	= $jemsettings;
 
+
+		// add toolbar
+		$this->addToolbar();
+
 		parent::display($tpl);
 	}
+
+
+
+	/*
+	 *
+	* Add Toolbar
+	*
+	*/
+
+	function addToolbar()
+	{
+
+		JToolBarHelper::title( JText::_( 'COM_JEM_EVENTS' ), 'events' );
+		JToolBarHelper::archiveList();
+		JToolBarHelper::spacer();
+		JToolBarHelper::publishList();
+		JToolBarHelper::spacer();
+		JToolBarHelper::unpublishList();
+		JToolBarHelper::spacer();
+		JToolBarHelper::addNew();
+		JToolBarHelper::spacer();
+		JToolBarHelper::editList();
+		JToolBarHelper::spacer();
+		JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'remove', $alt = 'JACTION_DELETE');
+		JToolBarHelper::spacer();
+		JToolBarHelper::custom( 'copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
+		JToolBarHelper::spacer();
+		JToolBarHelper::help( 'el.listevents', true );
+
+	}
+
+
+
+
 }
 ?>

@@ -237,6 +237,7 @@ class JEMModelCategoryevents extends JModelLegacy
 				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 				. ' LEFT JOIN #__jem_countries AS ct ON ct.iso2 = l.country '
 				. $where
+				. ' GROUP BY a.id'
 				. $orderby
 				;
 

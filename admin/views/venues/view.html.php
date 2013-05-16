@@ -67,20 +67,7 @@ class JEMViewVenues extends JViewLegacy {
 
 		JHTML::_('behavior.tooltip');
 
-		//create the toolbar
-		JToolBarHelper::title( JText::_( 'COM_JEM_VENUES' ), 'venues' );
-		JToolBarHelper::publishList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::unpublishList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::addNew();
-		JToolBarHelper::spacer();
-		JToolBarHelper::editList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::deleteList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.listvenues', true );
-
+		
 		// Get data from the model
 		$rows      	=  $this->get( 'Data');
 		//$total      = $this->get( 'Total');
@@ -97,15 +84,18 @@ class JEMViewVenues extends JViewLegacy {
 		$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_COUNTRY' ) );
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
 
+		
 		// search filter
 		$lists['search']= $search;
 
+		
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
 
 		$ordering = ($lists['order'] == 'l.ordering');
 
+		
 		//assign data to template
 		$this->lists		= $lists;
 		$this->rows			= $rows;
@@ -114,7 +104,38 @@ class JEMViewVenues extends JViewLegacy {
 		$this->user			= $user;
 		$this->template		= $template;
 
+		
+		// add toolbar
+		$this->addToolbar();
+		
 		parent::display($tpl);
 	}
+	
+	
+	/*
+	 *
+	* Add Toolbar
+	*
+	*/
+	
+	function addToolbar()
+	{
+	//create the toolbar
+	JToolBarHelper::title( JText::_( 'COM_JEM_VENUES' ), 'venues' );
+	JToolBarHelper::publishList();
+	JToolBarHelper::spacer();
+	JToolBarHelper::unpublishList();
+	JToolBarHelper::spacer();
+	JToolBarHelper::addNew();
+	JToolBarHelper::spacer();
+	JToolBarHelper::editList();
+	JToolBarHelper::spacer();
+	JToolBarHelper::deleteList();
+	JToolBarHelper::spacer();
+	JToolBarHelper::help( 'el.listvenues', true );
+	}
+	
+	
+	
 }
 ?>
