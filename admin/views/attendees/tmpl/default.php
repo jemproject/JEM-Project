@@ -62,8 +62,8 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 	<table class="adminlist">
 		<thead>
 			<tr>
-				<th width="5%"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-				<th width="5%"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+				<th width="1%"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+				<th width="1%"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_NAME', 'u.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_USERNAME', 'u.username', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>

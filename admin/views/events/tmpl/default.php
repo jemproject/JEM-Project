@@ -239,7 +239,7 @@ defined('_JEXEC') or die;
 							}
 						}
 					?>
-						<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_MANAGE_ATTENDEES'); ?>">
+						<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_EVENTS_MANAGEATTENDEES'); ?>">
 						<?php echo $count; ?>
 						</a>
 					<?php
