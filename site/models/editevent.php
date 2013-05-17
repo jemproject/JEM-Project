@@ -171,16 +171,16 @@ class JEMModelEditevent extends JModelLegacy
 				$this->_event->attachments			= array();
 				$this->_event->maxplaces			= 0;
 				$this->_event->waitinglist			= 0;
-				$this->_event->custom01			= '';
-				$this->_event->custom02			= '';
-				$this->_event->custom03			= '';
-				$this->_event->custom04			= '';
-				$this->_event->custom05			= '';
-				$this->_event->custom06			= '';
-				$this->_event->custom07			= '';
-				$this->_event->custom08			= '';
-				$this->_event->custom09			= '';
-				$this->_event->custom10			= '';
+				$this->_event->custom1				= '';
+				$this->_event->custom2				= '';
+				$this->_event->custom3				= '';
+				$this->_event->custom4				= '';
+				$this->_event->custom5				= '';
+				$this->_event->custom6				= '';
+				$this->_event->custom7				= '';
+				$this->_event->custom8				= '';
+				$this->_event->custom9				= '';
+				$this->_event->custom10				= '';
 				$this->_event->venue				= JText::_('COM_JEM_SELECTVENUE');
 			}
 		}
@@ -781,7 +781,7 @@ class JEMModelEditevent extends JModelLegacy
 		{
 			JEMHelper::cleanup(1);
 		}
-		
+
 		return $row->id;
 	}
 }

@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -40,21 +40,21 @@ $options = array(
 
 <script type="text/javascript">
 
-	window.addEvent('domready', function() {  
+	window.addEvent('domready', function() {
    		/*var hits = new eventscreen('hits', {id:<?php echo $this->row->id ? $this->row->id : 0; ?>, task:'gethits'});*/
     	/*hits.fetchscreen();*/
 
     	$('maxplaces').addEvent('change', function(){
-        if ($('event-available')) {                
+        if ($('event-available')) {
 					var val = parseInt($('maxplaces').value);
 					var booked = parseInt($('event-booked').getText());
 					$('event-available').setText(val-booked);
-        } 
+        }
     	});
 	});
 
 	function reseter(task, id, div)
-	{	
+	{
 		var res = new eventscreen();
     	res.reseter( task, id, div );
 	}
@@ -72,7 +72,7 @@ $options = array(
 		} else if (form.dates.value && !form.dates.value.match(/[0-9]{4}-[0-1][0-9]-[0-3][0-9]/gi)) {
 			alert("<?php echo JText::_ ( 'COM_JEM_DATE_WRONG' ); ?>");
 		} else if (form.enddates.value !="" && !form.enddates.value.match(/[0-9]{4}-[0-1][0-9]-[0-3][0-9]/gi)) {
-			alert("<?php echo JText::_ ( 'COM_JEM_ENDDATE_WRONG' );	?>");		
+			alert("<?php echo JText::_ ( 'COM_JEM_ENDDATE_WRONG' );	?>");
 		} else if (form.cid.selectedIndex == -1) {
 			alert( "<?php echo JText::_ ( 'COM_JEM_CHOOSE_CATEGORY' );?>" );
 		} else if (form.locid.value == ""){
@@ -170,7 +170,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 					</label>
 				</td>
 				<td colspan="3">
-					<?php					
+					<?php
 					echo JEMAdmin::buildtimeselect(23, 'starthours', substr( $this->row->times, 0, 2 )).' : ';
 					echo JEMAdmin::buildtimeselect(59, 'startminutes', substr( $this->row->times, 3, 2 ));
 					?>
@@ -192,7 +192,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 					</label>
 				</td>
 				<td colspan="3">
-					<?php					
+					<?php
 					echo JEMAdmin::buildtimeselect(23, 'endhours', substr( $this->row->endtimes, 0, 2 )).' : ';
 					echo JEMAdmin::buildtimeselect(59, 'endminutes', substr( $this->row->endtimes, 3, 2 ));
 					?>
@@ -215,20 +215,20 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 			</tr>
 		</table>
 
-		
+
 		<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event' ); ?>
 		<?php echo $this->loadTemplate('attachments'); ?>
 		<?php echo JHtml::_('tabs.end'); ?>
 	</td>
 
 	<td valign="top" width="320px" style="padding: 7px 0 0 5px">
-		
+
 		<?php
 		$title = JText::_( 'COM_JEM_DETAILS' );
 			echo JHtml::_('sliders.start', 'det-pane', $options);
 			echo JHtml::_('sliders.panel', $title, 'date');
 			?>
-		<table 
+		<table
 			style="border: 1px dashed silver; width:100%; padding: 5px; margin-bottom: 10px;">
 			<?php if ($this->row->id) { ?>
 			<tr>
@@ -255,14 +255,14 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 					<strong><?php echo JText::_ ( 'COM_JEM_HITS' );	?></strong>
 				</td>
 			<td>
-			
+
 				<input class="inputbox" name="hits" value="<?php echo $this->row->hits; ?>" size="10" maxlength="10" id="a_hits" />
 				<?php echo $this->resethits; ?>
 				</td>
 			</tr>
-			
-			
-			
+
+
+
 			<tr>
 				<td>
 					<strong><?php echo JText::_ ( 'COM_JEM_REVISED' ); ?></strong>
@@ -309,9 +309,9 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 					?>
 				</td>
 			</tr>
-		
+
 		</table>
-		
+
         <?php
 		$title = JText::_( 'COM_JEM_CATEGORIES' );
 		echo JHtml::_('sliders.panel', $title, 'category');
@@ -329,64 +329,64 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 				</td>
 			</tr>
 		</table>
-		
+
 		<?php
 			$title2 = JText::_( 'COM_JEM_CUSTOMFIELDS' );
 			echo JHtml::_('sliders.panel', $title2, 'custom');
 			?>
-			
+
 			<table style="width:100%">
 				<tr>
             	  <td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD1' ).':'; ?></td>
-            	  <td><input class="inputbox" name="custom01" value="<?php echo $this->row->custom01; ?>" size="20" maxlength="200" id="custom01" /></td>
+            	  <td><input class="inputbox" name="custom1" value="<?php echo $this->row->custom1; ?>" size="20" maxlength="200" id="custom1" /></td>
             	  <td>&nbsp;</td>
             	  <td>&nbsp;</td>
             </tr>
             	<tr>
             	  <td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD2' ).':'; ?></td>
-            	  <td><input class="inputbox" name="custom02" value="<?php echo $this->row->custom02; ?>" size="20" maxlength="200" id="custom02" /></td>
+            	  <td><input class="inputbox" name="custom2" value="<?php echo $this->row->custom2; ?>" size="20" maxlength="200" id="custom2" /></td>
                 <td>&nbsp;</td>
             	  <td>&nbsp;</td>
             </tr>
             	<tr>
             	  <td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD3' ).':'; ?></td>
-            	  <td><input class="inputbox" name="custom03" value="<?php echo $this->row->custom03; ?>" size="20" maxlength="100" id="custom03" /></td>
+            	  <td><input class="inputbox" name="custom3" value="<?php echo $this->row->custom3; ?>" size="20" maxlength="100" id="custom3" /></td>
                 <td>&nbsp;</td>
             	  <td>&nbsp;</td>
             </tr>
             	<tr>
             	  <td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD4' ).':'; ?></td>
-            	  <td><input class="inputbox" name="custom04" value="<?php echo $this->row->custom04; ?>" size="20" maxlength="100" id="custom04" /></td>
+            	  <td><input class="inputbox" name="custom4" value="<?php echo $this->row->custom4; ?>" size="20" maxlength="100" id="custom4" /></td>
                 <td>&nbsp;</td>
             	  <td>&nbsp;</td>
             </tr>
             	<tr>
             	  <td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD5' ).':'; ?></td>
-            	  <td><input class="inputbox" name="custom05" value="<?php echo $this->row->custom05; ?>" size="20" maxlength="100" id="custom05" /></td>
+            	  <td><input class="inputbox" name="custom5" value="<?php echo $this->row->custom5; ?>" size="20" maxlength="100" id="custom5" /></td>
                 <td>&nbsp;</td>
             	  <td>&nbsp;</td>
             </tr>
             	<tr>
             	  <td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD6' ).':'; ?></td>
-            	  <td><input class="inputbox" name="custom06" value="<?php echo $this->row->custom06; ?>" size="20" maxlength="100" id="custom06" /></td>
+            	  <td><input class="inputbox" name="custom6" value="<?php echo $this->row->custom6; ?>" size="20" maxlength="100" id="custom6" /></td>
                 <td>&nbsp;</td>
             	  <td>&nbsp;</td>
             </tr>
             	<tr>
             	  <td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD7' ).':'; ?></td>
-            	  <td><input class="inputbox" name="custom07" value="<?php echo $this->row->custom07; ?>" size="20" maxlength="100" id="custom07" /></td>
+            	  <td><input class="inputbox" name="custom7" value="<?php echo $this->row->custom7; ?>" size="20" maxlength="100" id="custom7" /></td>
                 <td>&nbsp;</td>
             	  <td>&nbsp;</td>
             </tr>
             	<tr>
             	  <td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD8' ).':'; ?></td>
-            	  <td><input class="inputbox" name="custom08" value="<?php echo $this->row->custom08; ?>" size="20" maxlength="100" id="custom08" /></td>
+            	  <td><input class="inputbox" name="custom8" value="<?php echo $this->row->custom8; ?>" size="20" maxlength="100" id="custom8" /></td>
                 <td>&nbsp;</td>
             	  <td>&nbsp;</td>
             </tr>
             	<tr>
             	  <td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD9' ).':'; ?></td>
-            	  <td><input class="inputbox" name="custom09" value="<?php echo $this->row->custom09; ?>" size="20" maxlength="100" id="custom09" /></td>
+            	  <td><input class="inputbox" name="custom9" value="<?php echo $this->row->custom9; ?>" size="20" maxlength="100" id="custom9" /></td>
                 <td>&nbsp;</td>
             	  <td>&nbsp;</td>
             </tr>
@@ -396,9 +396,9 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
                 <td>&nbsp;</td>
             	  <td>&nbsp;</td>
             </tr>
-				
+
 				</table>
-		
+
 		<?php
 		$title3 = JText::_( 'COM_JEM_CONTACT' );
 		echo JHtml::_('sliders.panel', $title3, 'contact');
@@ -411,10 +411,10 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 				<td colspan="3">
 					<?php echo $this->contactselect; ?>
 				</td>
-			</tr>	
+			</tr>
 		</table>
 
-		
+
 		<?php
 		$title4 = JText::_( 'COM_JEM_REGISTRATION' );
 		echo JHtml::_('sliders.panel', $title4, 'registra');
@@ -477,7 +477,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 				</td>
 			</tr>
 		</table>
-		
+
 		<?php
 		$title5 = JText::_( 'COM_JEM_IMAGE' );
 		echo JHtml::_('sliders.panel', $title5, 'image');
@@ -501,14 +501,14 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 							jsimg='../images/jem/events/' + imname;
 							document.getElementById('imagelib').src= jsimg;
 						}
-					</script> 
+					</script>
 					<br />
 				</td>
 			</tr>
 		</table>
-			
+
 		<?php
-		
+
 		$title6 = JText::_( 'COM_JEM_RECURRING_EVENTS' );
 		echo JHtml::_('sliders.panel', $title6, 'recurrence');
 		?>
@@ -539,9 +539,9 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 				<td><br /><br /></td>
 			</tr>
 		</table>
-		
+
 		<br />
-		
+
 		<input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $this->row->recurrence_number;?>" />
     <input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->row->recurrence_byday;?>" />
 		<script
@@ -579,7 +579,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 				start_recurrencescript();
 			-->
 			</script>
-			
+
 			<?php
 			$title7 = JText::_( 'COM_JEM_METADATA_INFORMATION' );
 			echo JHtml::_('sliders.panel', $title7, 'meta');
@@ -591,7 +591,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 					<input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php	echo JText::_ ( 'COM_JEM_VENUE' );?>" />
 					<input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php	echo JText::_ ( 'COM_JEM_CATEGORIES' );?>" />
 					<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_ ( 'COM_JEM_DATE' );?>" />
-				
+
 					<p>
 						<input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo JText::_ ( 'COM_JEM_EVENT_TIME' );?>" />
 						<input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo JText::_ ( 'COM_JEM_ENDDATE' );?>" />

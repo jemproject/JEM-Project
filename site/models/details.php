@@ -1,11 +1,11 @@
 <?php
 /**
-* @version 1.9 $Id$ 
+* @version 1.9 $Id$
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -89,7 +89,7 @@ class JEMModelDetails extends JModelLegacy
 		if ($this->_loadDetails())
 		{
 			$user	=  JFactory::getUser();
-			
+
 		  if (JFactory::getUser()->authorise('core.manage')) {
               $gid = (int) 3;          //viewlevel Special
           } else {
@@ -99,7 +99,7 @@ class JEMModelDetails extends JModelLegacy
                  $gid = (int) 1;      //viewlevel Public
               }
           }
-            
+
 			// Is the category published?
 			if (!$this->_details->published && $this->_details->catid)
 			{
@@ -111,9 +111,9 @@ class JEMModelDetails extends JModelLegacy
 			{
 				 throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			}
-			
-			
-		
+
+
+
 		//check session if uservisit already recorded
 		$session 	= JFactory::getSession();
 		$hitcheck = false;
@@ -131,11 +131,11 @@ class JEMModelDetails extends JModelLegacy
 		}
 
 		return $this->_details;
-	
-		
+
+
 	}
-	
-	
+
+
 	}
 
 	/**
@@ -149,12 +149,12 @@ class JEMModelDetails extends JModelLegacy
 	{
 		if (empty($this->_details))
 		{
-			
+
 			// Get the WHERE clause
 			$where	= $this->_buildDetailsWhere();
 
 			$query = 'SELECT a.id AS did, a. published, a.contactid, a.dates, a.enddates, a.title, a.times, a.endtimes, '
-			    . ' a.datdescription, a.meta_keywords, a.custom01, a.custom02, a.custom03, a.custom04, a.custom05, a.custom06, a.custom07, a.custom08, a.custom09, a.custom10, a.meta_description, a.unregistra, a.locid, a.created_by, '
+			    . ' a.datdescription, a.meta_keywords, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.meta_description, a.unregistra, a.locid, a.created_by, '
 			    . ' a.datimage, a.registra, a.maxplaces, a.waitinglist, '
 					. ' l.id AS locid, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, l.city, l.plz, l.street, l.country, ct.name AS countryname, l.map, l.created_by AS venueowner, l.latitude, l.longitude,'
 					. ' c.access AS cataccess, c.id AS catid, c.published AS catpublished,'
@@ -174,10 +174,10 @@ class JEMModelDetails extends JModelLegacy
 					;
     		$this->_db->setQuery($query);
 			$this->_details = $this->_db->loadObject();
-						
-			
+
+
 			$user	=  JFactory::getUser();
-			
+
 		  if (JFactory::getUser()->authorise('core.manage')) {
               $gid = (int) 3;          //viewlevel Special
           } else {
@@ -187,9 +187,9 @@ class JEMModelDetails extends JModelLegacy
                  $gid = (int) 1;      //viewlevel Public
               }
 		}
-		
+
 			$this->_details->attachments = JEMAttachment::getAttachments('event'.$this->_details->did, $gid);
-			
+
 			return (boolean) $this->_details;
 		}
 		return true;
@@ -208,7 +208,7 @@ class JEMModelDetails extends JModelLegacy
 
 		return $where;
 	}
-	
+
 	/**
 	 * Method to get the categories
 	 *
@@ -228,8 +228,8 @@ class JEMModelDetails extends JModelLegacy
 				$gid = (int) 1;	//viewlevel Public
 			}
 		}
-		
-		
+
+
 		$query = 'SELECT DISTINCT c.id, c.catname,'
 		. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as slug'
 		. ' FROM #__jem_categories AS c'
@@ -245,7 +245,7 @@ class JEMModelDetails extends JModelLegacy
 
 		return $this->_cats;
 	}
-	
+
 	/**
 	 * Method to increment the hit counter for the item
 	 *
@@ -263,7 +263,7 @@ class JEMModelDetails extends JModelLegacy
 		}
 		return false;
 	}
-	
+
 
 	/**
 	 * Method to check if the user is already registered
@@ -345,22 +345,22 @@ class JEMModelDetails extends JModelLegacy
 		$event 		= (int) $this->_id;
 		$uid 		= (int) $user->get('id');
 		$onwaiting = 0;
-	
+
 		// Must be logged in
 		if ($uid < 1) {
 			JError::raiseError( 403, JText::_('COM_JEM_ALERTNOTAUTH') );
 			return;
 		}
-		
+
 		$model = $this->setId($event);
-		
+
 		$details = $this->getDetails();
-		
+
 		if ($details->maxplaces > 0) // there is a max
 		{
 			// check if the user should go on waiting list
 			$attendees = $this->getRegisters();
-			if (count($attendees) >= $details->maxplaces) 
+			if (count($attendees) >= $details->maxplaces)
 			{
 				if (!$details->waitinglist) {
 					$this->setError(JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'));
@@ -368,7 +368,7 @@ class JEMModelDetails extends JModelLegacy
 				}
 				$onwaiting = 1;
 			}
-		}		
+		}
 
 		//IP
 		$uip 		= $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
@@ -383,7 +383,7 @@ class JEMModelDetails extends JModelLegacy
 
 		return $this->_db->insertid();
 	}
-	
+
 	/**
 	 * Deletes a registered user
 	 *

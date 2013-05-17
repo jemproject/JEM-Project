@@ -112,15 +112,14 @@ JHTML::_('behavior.modal');
 
 		<?php
 		for($cr = 1; $cr <= 10; $cr++) {
-			$leadingZero = ($cr<10) ? '0' : '';
-			$currentRow = $this->row->{'custom'.$leadingZero.$cr};
+			$currentRow = $this->row->{'custom'.$cr};
 			if(substr($currentRow, 0, 7) == "http://") {
 				$currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
  			}
 			if($currentRow) {
 		?>
-				<dt class="custom<?php echo $leadingZero.$cr; ?>"><?php echo JText::_('COM_JEM_CUSTOM_FIELD'.$cr).':'; ?></dt>
-				<dd class="custom<?php echo $leadingZero.$cr; ?>"><?php echo $currentRow; ?></dd>
+				<dt class="custom<?php echo $cr; ?>"><?php echo JText::_('COM_JEM_CUSTOM_FIELD'.$cr).':'; ?></dt>
+				<dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
 		<?php
 			}
 		}
