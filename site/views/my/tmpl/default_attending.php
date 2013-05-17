@@ -20,8 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 ?>
 
 <?php if (count((array)$this->attending)) : ?>
@@ -87,42 +86,18 @@ defined( '_JEXEC' ) or die;
 	$i = 0;
 	foreach ((array) $this->attending as $row) :
 	?>
-			<tr class="sectiontableentry<?php echo $i +1 . $this->params->get( 'pageclass_sfx' ); ?>" >
+			<tr class="sectiontableentry<?php echo $i +1 . $this->params->get('pageclass_sfx'); ?>" >
 
 				<td headers="jem_date" align="left">
-					<strong>
-					<?php if (JEMHelper::isValidDate($row->dates)): ?>
-							<?php echo JEMOutput::formatdate($row->dates); ?>
-
-							<?php
-							if ($row->enddates && $row->enddates != $row->dates) :
-								echo ' - '.JEMOutput::formatdate($row->enddates);
-							endif;
-							?>
-						<?php else: ?>
-							<?php echo JText::_('COM_JEM_OPEN_DATE'); ?>
-						<?php endif; ?>
-					</strong>
-
-					<?php
-					if ($this->jemsettings->showtime == 1) :
-					?>
-						<br />
-						<?php
-						echo JEMOutput::formattime($row->times);
-
-						if ($row->endtimes) :
-							echo ' - '.JEMOutput::formattime($row->endtimes);
-						endif;
-					endif;
-					?>
+					<?php echo JEMOutput::formatShortDateTime($row->dates, $row->times,
+						$row->enddates, $row->endtimes); ?>
 				</td>
 
 				<?php
 				//Link to details
-				$detaillink = JRoute::_( JEMHelperRoute::getRoute($row->slug) );
+				$detaillink = JRoute::_(JEMHelperRoute::getRoute($row->slug));
 				//title
-				if (($this->jemsettings->showtitle == 1 ) && ($this->jemsettings->showdetails == 1) ) :
+				if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) :
 				?>
 
 				<td headers="jem_title" align="left" valign="top"><a href="<?php echo $detaillink ; ?>"> <?php echo $this->escape($row->title); ?></a></td>
@@ -130,7 +105,7 @@ defined( '_JEXEC' ) or die;
 				<?php
 				endif;
 
-				if (( $this->jemsettings->showtitle == 1 ) && ($this->jemsettings->showdetails == 0) ) :
+				if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) :
 				?>
 
 				<td headers="jem_title" align="left" valign="top"><?php echo $this->escape($row->title); ?></td>
@@ -142,7 +117,7 @@ defined( '_JEXEC' ) or die;
 
 					<td headers="jem_location" align="left" valign="top">
 						<?php
-						if ($this->jemsettings->showlinkvenue == 1 ) :
+						if ($this->jemsettings->showlinkvenue == 1) :
 							echo $row->locid != 0 ? "<a href='".JRoute::_('index.php?view=venueevents&id='.$row->venueslug)."'>".$this->escape($row->venue)."</a>" : '-';
 						else :
 							echo $row->locid ? $this->escape($row->venue) : '-';

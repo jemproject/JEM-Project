@@ -130,32 +130,8 @@ defined('_JEXEC') or die;
 			<tr class="sectiontableentry<?php echo $i +1 . $this->params->get('pageclass_sfx'); ?>" >
 
 				<td headers="jem_date" align="left">
-					<strong>
-					<?php if (JEMHelper::isValidDate($row->dates)): ?>
-							<?php echo JEMOutput::formatdate($row->dates); ?>
-
-							<?php
-							if ($row->enddates && $row->enddates != $row->dates) :
-								echo ' - '.JEMOutput::formatdate($row->enddates);
-							endif;
-							?>
-						<?php else: ?>
-							<?php echo JText::_('COM_JEM_OPEN_DATE'); ?>
-						<?php endif; ?>
-					</strong>
-
-					<?php
-					if ($this->jemsettings->showtime == 1) :
-					?>
-						<br />
-						<?php
-						echo JEMOutput::formattime($row->times);
-
-						if ($row->endtimes) :
-							echo ' - '.JEMOutput::formattime($row->endtimes);
-						endif;
-					endif;
-					?>
+					<?php echo JEMOutput::formatShortDateTime($row->dates, $row->times,
+						$row->enddates, $row->endtimes); ?>
 				</td>
 
 				<?php

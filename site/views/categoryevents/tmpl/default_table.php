@@ -20,11 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
 defined( '_JEXEC' ) or die;
 ?>
 <script type="text/javascript">
-
 	function tableOrdering( order, dir, view )
 	{
 		var form = document.getElementById("adminForm");
@@ -37,7 +35,7 @@ defined( '_JEXEC' ) or die;
 
 <?php if ($this->jemsettings->filter || $this->jemsettings->display) : ?>
 <div id="jem_filter" class="floattext">
-		<?php if ($this->jemsettings->filter) : ?>
+	<?php if ($this->jemsettings->filter) : ?>
 		<div class="jem_fleft">
 			<?php
 			echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
@@ -47,15 +45,15 @@ defined( '_JEXEC' ) or die;
 			<button onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
 			<button onclick="$('search').value='';document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 		</div>
-		<?php endif; ?>
-		<?php if ($this->jemsettings->display) : ?>
+	<?php endif; ?>
+	<?php if ($this->jemsettings->display) : ?>
 		<div class="jem_fright">
 			<?php
 			echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
 			echo $this->pagination->getLimitBox();
 			?>
 		</div>
-		<?php endif; ?>
+	<?php endif; ?>
 </div>
 <?php endif; ?>
 
@@ -153,11 +151,11 @@ defined( '_JEXEC' ) or die;
 						// echo $row->datimage;
 
 						if ($row->datimage) :
-						$dimage = JEMImage::flyercreator($row->datimage, 'event');
-						echo JEMOutput::flyer( $row, $dimage, 'event' );
-				else :
-						 echo JHTML::_('image', 'media/com_jem/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => ''));
-						 endif;
+							$dimage = JEMImage::flyercreator($row->datimage, 'event');
+							echo JEMOutput::flyer( $row, $dimage, 'event' );
+						else :
+							echo JHTML::_('image', 'media/com_jem/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => ''));
+						endif;
 
 						?>
 					</td>
@@ -166,35 +164,9 @@ defined( '_JEXEC' ) or die;
 				endif;
 				?>
 
-
-
 				<td headers="jem_date" align="left">
-					<strong>
-					<?php if (JEMHelper::isValidDate($row->dates)): ?>
-							<?php echo JEMOutput::formatdate($row->dates); ?>
-
-							<?php
-							if ($row->enddates && $row->enddates != $row->dates) :
-								echo ' - '.JEMOutput::formatdate($row->enddates);
-							endif;
-							?>
-						<?php else: ?>
-						<?php echo JText::_('COM_JEM_OPEN_DATE'); ?>
-						<?php endif; ?>
-					</strong>
-
-					<?php
-					if ($this->jemsettings->showtime == 1) :
-					?>
-						<br />
-						<?php
-						echo JEMOutput::formattime($row->times);
-
-						if ($row->endtimes) :
-							echo ' - '.JEMOutput::formattime($row->endtimes);
-						endif;
-					endif;
-					?>
+					<?php echo JEMOutput::formatShortDateTime($row->dates, $row->times,
+						$row->enddates, $row->endtimes); ?>
 				</td>
 
 				<?php
@@ -203,17 +175,13 @@ defined( '_JEXEC' ) or die;
 				//title
 				if (($this->jemsettings->showtitle == 1 ) && ($this->jemsettings->showdetails == 1) ) :
 				?>
-
-				<td headers="jem_title" align="left" valign="top"><a href="<?php echo $detaillink ; ?>"> <?php echo $this->escape($row->title); ?></a></td>
-
+					<td headers="jem_title" align="left" valign="top"><a href="<?php echo $detaillink ; ?>"> <?php echo $this->escape($row->title); ?></a></td>
 				<?php
 				endif;
 
 				if (( $this->jemsettings->showtitle == 1 ) && ($this->jemsettings->showdetails == 0) ) :
 				?>
-
-				<td headers="jem_title" align="left" valign="top"><?php echo $this->escape($row->title); ?></td>
-
+					<td headers="jem_title" align="left" valign="top"><?php echo $this->escape($row->title); ?></td>
 				<?php
 				endif;
 				if ($this->jemsettings->showlocate == 1) :
@@ -242,7 +210,6 @@ defined( '_JEXEC' ) or die;
 
 				if ($this->jemsettings->showstate == 1) :
 				?>
-
 					<td headers="jem_state" align="left" valign="top"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
 				<?php
 				endif;
@@ -288,7 +255,7 @@ defined( '_JEXEC' ) or die;
 			</tr>
 
 		<?php
-		endforeach;
+			endforeach;
 		endif;
 		?>
 

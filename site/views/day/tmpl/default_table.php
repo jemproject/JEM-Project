@@ -20,11 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
 defined( '_JEXEC' ) or die;
 ?>
 <script type="text/javascript">
-
 	function tableOrdering( order, dir, view )
 	{
 		var form = document.getElementById("adminForm");
@@ -37,7 +35,7 @@ defined( '_JEXEC' ) or die;
 
 <?php if ($this->jemsettings->filter || $this->jemsettings->display) : ?>
 <div id="jem_filter" class="floattext">
-		<?php if ($this->jemsettings->filter) : ?>
+	<?php if ($this->jemsettings->filter) : ?>
 		<div class="jem_fleft">
 			<?php
 			echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
@@ -47,15 +45,15 @@ defined( '_JEXEC' ) or die;
 			<button onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
 			<button onclick="$('search').value='';document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 		</div>
-		<?php endif; ?>
-		<?php if ($this->jemsettings->display) : ?>
+	<?php endif; ?>
+	<?php if ($this->jemsettings->display) : ?>
 		<div class="jem_fright">
 			<?php
 			echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
 			echo $this->pagination->getLimitBox();
 			?>
 		</div>
-		<?php endif; ?>
+	<?php endif; ?>
 </div>
 <?php endif; ?>
 
@@ -127,29 +125,8 @@ defined( '_JEXEC' ) or die;
 			<tr class="sectiontableentry<?php echo ($row->odd +1 ) . $this->params->get( 'pageclass_sfx' ); ?>" >
 
 				<td headers="jem_date" align="left">
-					<strong>
-					<?php if (JEMHelper::isValidDate($row->dates)): ?>
-							<?php echo JEMOutput::formatdate($row->dates); ?>
-
-							<?php
-							if ($row->enddates && $row->enddates != $row->dates) :
-								echo ' - '.JEMOutput::formatdate($row->enddates);
-							endif;
-							?>
-						<?php else: ?>
-						<?php echo JText::_('COM_JEM_OPEN_DATE'); ?>
-						<?php endif; ?>
-					</strong>
-					<?php if ($this->jemsettings->showtime == 1) : ?>
-						<br />
-						<?php
-						echo JEMOutput::formattime($row->times);
-
-						if ($row->endtimes) :
-							echo ' - '.JEMOutput::formattime($row->endtimes);
-						endif;
-					endif;
-					?>
+					<?php echo JEMOutput::formatShortDateTime($row->dates, $row->times,
+						$row->enddates, $row->endtimes); ?>
 				</td>
 
 				<?php
@@ -158,17 +135,13 @@ defined( '_JEXEC' ) or die;
 				//title
 				if (($this->jemsettings->showtitle == 1 ) && ($this->jemsettings->showdetails == 1) ) :
 				?>
-
-				<td headers="jem_title" align="left" valign="top"><a href="<?php echo $detaillink ; ?>"> <?php echo $this->escape($row->title); ?></a></td>
-
+					<td headers="jem_title" align="left" valign="top"><a href="<?php echo $detaillink ; ?>"> <?php echo $this->escape($row->title); ?></a></td>
 				<?php
 				endif;
 
 				if (( $this->jemsettings->showtitle == 1 ) && ($this->jemsettings->showdetails == 0) ) :
 				?>
-
-				<td headers="jem_title" align="left" valign="top"><?php echo $this->escape($row->title); ?></td>
-
+					<td headers="jem_title" align="left" valign="top"><?php echo $this->escape($row->title); ?></td>
 				<?php
 				endif;
 				if ($this->jemsettings->showlocate == 1) :
@@ -189,9 +162,7 @@ defined( '_JEXEC' ) or die;
 
 				if ($this->jemsettings->showcity == 1) :
 				?>
-
 					<td headers="jem_city" align="left" valign="top"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
-
 				<?php
 				endif;
 
@@ -220,12 +191,10 @@ defined( '_JEXEC' ) or die;
 					endif;
 				endforeach;	?>
 				</td>
-				<?php	endif; ?>
-
+				<?php endif; ?>
 			</tr>
-
 		<?php
-		endforeach;
+			endforeach;
 		endif;
 		?>
 

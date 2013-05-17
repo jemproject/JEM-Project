@@ -509,6 +509,48 @@ class JEMOutput {
 		return $formattime;
 	}
 
+	static function formatLongDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "")
+	{
+		$settings = JEMHelper::config();
+		$output = "";
+
+		if (JEMHelper::isValidDate($dateStart)) {
+			$output .= self::formatdate($dateStart);
+
+			if ($settings->showtimedetails && $timeStart) {
+				$output .= ', '.self::formattime($timeStart);
+			}
+
+			if (JEMHelper::isValidDate($dateEnd) && $dateEnd != $dateStart) {
+				$output .= ' - '.self::formatdate($dateEnd);
+			}
+
+			if ($settings->showtimedetails && $timeEnd) {
+				$output .= ', '.self::formattime($timeEnd);
+			}
+		} else {
+			$output .= JText::_('COM_JEM_OPEN_DATE');
+
+			if ($settings->showtimedetails) {
+				if($timeStart) {
+					$output .= ', '.self::formattime($timeStart);
+				}
+
+				if ($timeEnd) {
+					$output .= ' - '.self::formattime($timeEnd);
+				}
+			}
+		}
+
+		return $output;
+	}
+
+	static function formatShortDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "")
+	{
+		// TODO: Implement short version
+		return self::formatLongDateTime($dateStart, $timeStart, $dateEnd, $timeEnd);
+	}
+
 	/**
 	 * Returns an array for ical formatting
 	 * @param string date

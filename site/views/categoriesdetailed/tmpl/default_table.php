@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-// no direct access
 defined( '_JEXEC' ) or die;
 ?>
 
@@ -91,32 +90,8 @@ defined( '_JEXEC' ) or die;
 		?>
 			<tr class="sectiontableentry<?php echo ($row->odd +1 ) . $this->params->get( 'pageclass_sfx' ); ?>" >
 				<td headers="jem_date_cat<?php echo $this->categoryid; ?>" align="left">
-					<strong>
-					<?php if (JEMHelper::isValidDate($row->dates)): ?>
-							<?php echo JEMOutput::formatdate($row->dates); ?>
-
-							<?php
-							if ($row->enddates && $row->enddates != $row->dates) :
-								echo ' - '.JEMOutput::formatdate($row->enddates);
-							endif;
-							?>
-						<?php else: ?>
-							<?php echo JText::_('COM_JEM_OPEN_DATE'); ?>
-						<?php endif; ?>
-					</strong>
-
-					<?php
-					if ($this->jemsettings->showtime == 1) :
-					?>
-						<br />
-						<?php
-						echo JEMOutput::formattime($row->times);
-
-						if ($row->endtimes) :
-							echo ' - '.JEMOutput::formattime($row->endtimes);
-						endif;
-					endif;
-					?>
+					<?php echo JEMOutput::formatShortDateTime($row->dates, $row->times,
+						$row->enddates, $row->endtimes); ?>
 				</td>
 				<?php
 				//Link to details
@@ -173,9 +148,7 @@ defined( '_JEXEC' ) or die;
 									<?php echo $category->catname; ?>
 								</a>
 						<?php else : ?>
-
 							<?php echo $category->catname; ?>
-
 						<?php
 						endif;
 
@@ -186,12 +159,10 @@ defined( '_JEXEC' ) or die;
 					endforeach;
 					?>
 				</td>
-				<?php
-				endif;
-				?>
+				<?php endif; ?>
 			</tr>
   			<?php
-			endforeach;
+				endforeach;
 			endif;
 			?>
 	</tbody>
