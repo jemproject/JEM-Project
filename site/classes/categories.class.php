@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
-
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -69,8 +69,8 @@ class JEMCategories
 		$parentcats = array_reverse($parentcats);
 
 		foreach ($parentcats as $cid) {
-
-			$query = 'SELECT catname,' . ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as categoryslug' . ' FROM #__jem_categories' . ' WHERE id =' . (int) $cid . ' AND published = 1';
+			$query = 'SELECT catname,' . ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as categoryslug'
+					. ' FROM #__jem_categories' . ' WHERE id =' . (int) $cid . ' AND published = 1';
 
 			$db->setQuery($query);
 			$this->category[] = $db->loadObject();
@@ -88,7 +88,6 @@ class JEMCategories
 
 		$query = 'SELECT parent_id FROM #__jem_categories WHERE id = ' . (int) $cid;
 		$db->setQuery($query);
-
 
 		$parentcats = array();
 
@@ -109,9 +108,7 @@ class JEMCategories
 	 */
 	static function getParentlist()
 	{
-
 		$category = array();
-
 		return $category;
 	}
 
@@ -143,7 +140,7 @@ class JEMCategories
 		$children = array();
 		foreach ($rows as $child) {
 			$parent = $child->parent_id;
-			$list   = @$children[$parent] ? $children[$parent] : array();
+			$list = @$children[$parent] ? $children[$parent] : array();
 			array_push($list, $child);
 			$children[$parent] = $list;
 		}
@@ -167,10 +164,10 @@ class JEMCategories
 				$id = $v->id;
 
 				if ($type) {
-					$pre    = '&nbsp;|_&nbsp;';
+					$pre = '&nbsp;|_&nbsp;';
 					$spacer = '&nbsp;&nbsp;&nbsp;';
 				} else {
-					$pre    = '- ';
+					$pre = '- ';
 					$spacer = '&nbsp;&nbsp;';
 				}
 
@@ -187,8 +184,9 @@ class JEMCategories
 						$txt = $pre;
 					}
 				}
-				$pt                  = $v->parent_id;
-				$list[$id]           = $v;
+
+				$pt = $v->parent_id;
+				$list[$id] = $v;
 				$list[$id]->treename = "$indent$txt";
 				$list[$id]->children = count(@$children[$id]);
 
@@ -254,18 +252,15 @@ class JEMCategories
 	static function getChilds($id)
 	{
 		$db = JFactory::getDBO();
-
 		$query = ' SELECT id, parent_id ' . ' FROM #__jem_categories ' . ' WHERE published = 1 ';
-
 		$db->setQuery($query);
-
 		$rows = $db->loadObjectList();
 
 		//get array children
 		$children = array();
 		foreach ($rows as $child) {
 			$parent = $child->parent_id;
-			$list   = @$children[$parent] ? $children[$parent] : array();
+			$list = @$children[$parent] ? $children[$parent] : array();
 			array_push($list, $child);
 			$children[$parent] = $list;
 		}
@@ -282,7 +277,7 @@ class JEMCategories
 	static function _getChildsRecurse($id, $childs)
 	{
 		$result = array(
-				$id
+			$id
 		);
 		if (@$childs[$id]) {
 			foreach ($childs[$id] AS $c) {

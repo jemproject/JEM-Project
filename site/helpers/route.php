@@ -78,32 +78,31 @@ class JEMHelperRoute
 
 		$app = JFactory::getApplication();
 
-		$menus	= $app->getMenu();
-		$items	= $menus->getItems('component_id', $component->id);
-		$user 	= JFactory::getUser();
+		$menus = $app->getMenu();
+		$items = $menus->getItems('component_id', $component->id);
+		$user = JFactory::getUser();
 
 
 		if (JFactory::getUser()->authorise('core.manage')) {
-			$access = (int) 3;  //viewlevel Special
+			$access = (int) 3; //viewlevel Special
 		} else {
 			if($user->get('id')) {
-				$access = (int) 2;  //viewlevel Registered
+				$access = (int) 2; //viewlevel Registered
 			} else {
-				$access = (int) 1;  //viewlevel Public
+				$access = (int) 1; //viewlevel Public
 			}
 		}
 		//false if there exists no menu item at all
 		if (!$items) {
 			return false;
-		}
-		else {
+		} else {
 			//Not needed currently but kept because of a possible hierarchic link structure in future
 			foreach($needles as $needle => $id)
 			{
 				foreach($items as $item)
 				{
 					if ((@$item->query['view'] == $needle) && (@$item->query['id'] == $id) && ($item->access <= $access)) {
-					return $item;
+						return $item;
 					}
 				}
 

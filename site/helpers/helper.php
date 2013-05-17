@@ -41,8 +41,8 @@ class JEMHelper {
 
 		if (!is_object($config))
 		{
-			$db 	=  JFactory::getDBO();
-			$sql 	= 'SELECT * FROM #__jem_settings WHERE id = 1';
+			$db = JFactory::getDBO();
+			$sql = 'SELECT * FROM #__jem_settings WHERE id = 1';
 			$db->setQuery($sql);
 			$config = $db->loadObject();
 
@@ -53,7 +53,7 @@ class JEMHelper {
 	}
 
 	/**
-	 * Performs dayly scheduled cleanups
+	 * Performs daily scheduled cleanups
 	 *
 	 * Currently it archives and removes outdated events
 	 * and takes care of the recurrence of events
@@ -62,26 +62,21 @@ class JEMHelper {
 	 */
 	static function cleanup($forced = 0)
 	{
-		$jemsettings =  JEMHelper::config();
+		$jemsettings = JEMHelper::config();
 		$params = JComponentHelper::getParams('com_jem');
 		$weekstart = $jemsettings->weekdaystart;
 		$anticipation = $jemsettings->recurrence_anticipation;
 
-		$now 		= time();
+		$now = time();
 		$lastupdate = $jemsettings->lastupdate;
 
-		//last update later then 24h?
-		//$difference = $now - $lastupdate;
-
-		//if ($difference > 86400) {
-
-		//better: new day since last update?
+		// New day since last update?
 		$nrdaysnow = floor($now / 86400);
 		$nrdaysupdate = floor($lastupdate / 86400);
 
 		if ($nrdaysnow > $nrdaysupdate || $forced) {
 
-			$db =  JFactory::getDBO();
+			$db = JFactory::getDBO();
 
 			// get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
 			$nulldate = '0000-00-00';
@@ -115,7 +110,8 @@ class JEMHelper {
 				$recurrence_row = JEMHelper::calculate_recurrence($recurrence_row);
 
 				// add events as long as we are under the interval and under the limit, if specified.
-				while (($recurrence_row['recurrence_limit_date'] == $nulldate || strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
+				while (($recurrence_row['recurrence_limit_date'] == $nulldate
+						|| strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
 						&& strtotime($recurrence_row['dates']) <= time() + 86400*$anticipation)
 				{
 					$new_event = JTable::getInstance('jem_events', '');
@@ -130,7 +126,8 @@ class JEMHelper {
 						$recurrence_row['counter']++;
 						//duplicate categories event relationships
 						$query = ' INSERT INTO #__jem_cats_event_relations (itemid, catid) '
-								. ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__jem_cats_event_relations WHERE itemid = ' . $db->Quote($ref_event->id);
+								. ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__jem_cats_event_relations '
+								. ' WHERE itemid = ' . $db->Quote($ref_event->id);
 						$db->setQuery($query);
 						if (!$db->query()) {
 							echo JText::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
@@ -143,14 +140,17 @@ class JEMHelper {
 
 			//delete outdated events
 			if ($jemsettings->oldevent == 1) {
-				$query = 'DELETE FROM #__jem_events WHERE dates > 0  AND DATE_SUB(NOW(), INTERVAL '.$jemsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates))';
+				$query = 'DELETE FROM #__jem_events WHERE dates > 0 AND '
+						.' DATE_SUB(NOW(), INTERVAL '.$jemsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates))';
 				$db->SetQuery($query);
 				$db->Query();
 			}
 
 			//Set state archived of outdated events
 			if ($jemsettings->oldevent == 2) {
-				$query = 'UPDATE #__jem_events SET published = -1 WHERE dates > 0 AND DATE_SUB(NOW(), INTERVAL '.$jemsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates)) AND published = 1';
+				$query = 'UPDATE #__jem_events SET published = -1 WHERE dates > 0 AND '
+						.' DATE_SUB(NOW(), INTERVAL '.$jemsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates)) '
+						.' AND published = 1';
 				$db->SetQuery($query);
 				$db->Query();
 			}
@@ -171,37 +171,39 @@ class JEMHelper {
 		$recurrence_number = $recurrence_row['recurrence_number'];
 		$recurrence_type = $recurrence_row['recurrence_type'];
 
-		$day_time = 86400;	// 60 sec. * 60 min. * 24 h
-		$week_time = 604800;// $day_time * 7days
+		$day_time = 86400;	// 60s * 60min * 24h
+		$week_time = $day_time * 7;
 		$date_array = JEMHelper::generate_date($recurrence_row['dates'], $recurrence_row['enddates']);
 
 		switch($recurrence_type) {
 			case "1":
 				// +1 hour for the Summer to Winter clock change
-				$start_day = mktime(1,0,0,$date_array["month"],$date_array["day"],$date_array["year"]);
+				$start_day = mktime(1, 0, 0, $date_array["month"], $date_array["day"], $date_array["year"]);
 				$start_day = $start_day + ($recurrence_number * $day_time);
 				break;
 			case "2":
 				// +1 hour for the Summer to Winter clock change
-				$start_day = mktime(1,0,0,$date_array["month"],$date_array["day"],$date_array["year"]);
+				$start_day = mktime(1, 0, 0, $date_array["month"], $date_array["day"], $date_array["year"]);
 				$start_day = $start_day + ($recurrence_number * $week_time);
 				break;
 			case "3": // month recurrence
 				/*
-				 * warning here, we have to make sure the date exists: 31 of october + 1 month = 31 of november, which doesn't exists => skip the date!
+				 * warning here, we have to make sure the date exists:
+				 * 31 of october + 1 month = 31 of november, which doesn't exists => skip the date!
 				 */
 				$start_day = mktime(1,0,0,($date_array["month"] + $recurrence_number),$date_array["day"],$date_array["year"]);
 
 				$i = 1;
-				while (date('d', $start_day) !=  $date_array["day"] && $i < 20) { // not the same day of the month... try next date !
+				while (date('d', $start_day) != $date_array["day"] && $i < 20) { // not the same day of the month... try next date !
 					$i++;
 					$start_day = mktime(1,0,0,($date_array["month"] + $recurrence_number*$i),$date_array["day"],$date_array["year"]);
 				}
 				break;
 			case "4": // weekday
-				$selected = JEMHelper::convert2CharsDaysToInt(explode(',', $recurrence_row['recurrence_byday']), 0);  // the selected weekdays
+				// the selected weekdays
+				$selected = JEMHelper::convert2CharsDaysToInt(explode(',', $recurrence_row['recurrence_byday']), 0);
 				$days_names = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
-				$litterals  = array('first', 'second', 'third', 'fourth');
+				$litterals = array('first', 'second', 'third', 'fourth');
 				if (count($selected) == 0)
 				{
 					// this shouldn't happen, but if it does, to prevent problem use the current weekday for the repetition.
@@ -216,20 +218,26 @@ class JEMHelper {
 					$next = null;
 					switch ($recurrence_number) {
 						case 6: // before last 'x' of the month
-							$next      = strtotime("previous ".$days_names[$s].' - 1 week ', mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
-							$nextmonth = strtotime("previous ".$days_names[$s].' - 1 week ', mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
+							$next      = strtotime("previous ".$days_names[$s].' - 1 week ',
+											mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
+							$nextmonth = strtotime("previous ".$days_names[$s].' - 1 week ',
+											mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
 							break;
 						case 5: // last 'x' of the month
-							$next      = strtotime("previous ".$days_names[$s], mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
-							$nextmonth = strtotime("previous ".$days_names[$s], mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
+							$next      = strtotime("previous ".$days_names[$s],
+											mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
+							$nextmonth = strtotime("previous ".$days_names[$s],
+											mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
 							break;
 						case 4: // xth 'x' of the month
 						case 3:
 						case 2:
 						case 1:
 						default:
-							$next      = strtotime($litterals[$recurrence_number-1]." ".$days_names[$s].' of this month', mktime(1,0,0,$date_array["month"]   ,1,$date_array["year"]));
-							$nextmonth = strtotime($litterals[$recurrence_number-1]." ".$days_names[$s].' of this month', mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
+							$next      = strtotime($litterals[$recurrence_number-1]." ".$days_names[$s].' of this month',
+											mktime(1,0,0,$date_array["month"]   ,1,$date_array["year"]));
+							$nextmonth = strtotime($litterals[$recurrence_number-1]." ".$days_names[$s].' of this month',
+											mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
 							break;
 					}
 
@@ -360,7 +368,7 @@ class JEMHelper {
 
 	static function buildtimeselect($max, $name, $selected, $class = 'class="inputbox"')
 	{
-		$timelist 	= array();
+		$timelist = array();
 
 		foreach(range(0, $max) as $wert) {
 			if(strlen($wert) == 2) {
@@ -379,8 +387,8 @@ class JEMHelper {
 	 */
 	static function getCountryOptions()
 	{
-		$db   =  JFactory::getDBO();
-		$sql  = 'SELECT iso2 AS value, name AS text FROM #__jem_countries ORDER BY name';
+		$db = JFactory::getDBO();
+		$sql = 'SELECT iso2 AS value, name AS text FROM #__jem_countries ORDER BY name';
 		$db->setQuery($sql);
 
 		return $db->loadObjectList();
@@ -521,8 +529,7 @@ class JEMHelper {
 		{
 			if ($r->waiting) {
 				$waiting[] = $r->id;
-			}
-			else {
+			} else {
 				$registered++;
 			}
 		}
@@ -536,9 +543,7 @@ class JEMHelper {
 			if (!$db->query()) {
 				$this->setError(JText::_('COM_JEM_FAILED_BUMPING_USERS_FROM_WAITING_TO_CONFIRMED_LIST'));
 				Jerror::raisewarning(0, JText::_('COM_JEM_FAILED_BUMPING_USERS_FROM_WAITING_TO_CONFIRMED_LIST').': '.$db->getErrorMsg());
-			}
-			else
-			{
+			} else {
 				$booked = $registered + count($bumping);
 				foreach ($bumping AS $register_id)
 				{
@@ -636,11 +641,11 @@ class JEMHelper {
 	return $timezones;
 	}
 
-  /**
-   * returns timezone name from offset
-   * @param string $offset
-   * @return string
-   */
+	/**
+	 * returns timezone name from offset
+	 * @param string $offset
+	 * @return string
+	 */
 	static function getTimeZone($offset)
 	{
 		$tz = self::getTimeZones();
@@ -663,7 +668,7 @@ class JEMHelper {
 		$offset = (float) $mainframe->getCfg('offset');
 		$timezone_name = JEMHelper::getTimeZone($offset);
 
-		$vcal = new vcalendar();                          // initiate new CALENDAR
+		$vcal = new vcalendar();
 		if (!file_exists(JPATH_SITE.'/cache/com_jem')) {
 			jimport('joomla.filesystem.folder');
 			JFolder::create(JPATH_SITE.'/cache/com_jem');
@@ -683,8 +688,8 @@ class JEMHelper {
 		require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
 		$mainframe = JFactory::getApplication();
 		$params = $mainframe->getParams('com_jem');
-		
-		$jemsettings =  JEMHelper::config();
+
+		$jemsettings = JEMHelper::config();
 
 		$offset = (float) $mainframe->getCfg('offset');
 		$timezone_name = JEMHelper::getTimeZone($offset);
@@ -740,13 +745,13 @@ class JEMHelper {
 				$dateparam['TZID'] = $timezone_name;
 			}
 
-			if (!$event->endtimes || $event->endtimes == '00:00:00')
-			{
+			if (!$event->endtimes || $event->endtimes == '00:00:00') {
 				$event->endtimes = $event->times;
 			}
 
 			// if same day but end time < start time, change end date to +1 day
-			if ($event->enddates == $event->dates && strtotime($event->dates.' '.$event->endtimes) < strtotime($event->dates.' '.$event->times)) {
+			if ($event->enddates == $event->dates
+					&& strtotime($event->dates.' '.$event->endtimes) < strtotime($event->dates.' '.$event->times)) {
 				$event->enddates = strftime('%Y-%m-%d', strtotime($event->enddates.' +1 day'));
 			}
 
@@ -776,7 +781,7 @@ class JEMHelper {
 		//Original link
 		//$link = JURI::base().JEMHelperRoute::getRoute($event->slug);
 
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 		$menuitem = $app->getMenu()->getActive()->id;
 		$link = JURI::base().JEMHelperRoute::getRoute($event->slug).'&Itemid='.$menuitem;
 
@@ -797,18 +802,18 @@ class JEMHelper {
 		}
 		$location = implode(",", $location);
 
-		$e = new vevent();              // initiate a new EVENT
-		$e->setProperty('summary', $event->title);           // title
-		$e->setProperty('categories', implode(', ', $categories));           // categorize
+		$e = new vevent();
+		$e->setProperty('summary', $event->title);
+		$e->setProperty('categories', implode(', ', $categories));
 		$e->setProperty('dtstart', $date, $dateparam);
 		if (count($date_end)) {
 			$e->setProperty('dtend', $date_end, $dateendparam);
 		}
-		$e->setProperty('description', $description);    // describe the event
-		$e->setProperty('location', $location); // locate the event
+		$e->setProperty('description', $description);
+		$e->setProperty('location', $location);
 		$e->setProperty('url', $link);
 		$e->setProperty('uid', 'event'.$event->id.'@'.$mainframe->getCfg('sitename'));
-		$calendartool->addComponent($e);                    // add component to calendar
+		$calendartool->addComponent($e); // add component to calendar
 		return true;
 	}
 
