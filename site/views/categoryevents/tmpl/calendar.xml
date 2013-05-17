@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="Categoryevents calendar Layout">
+	<layout title="COM_JEM_CATEGORYEVENTS_CALENDAR_LAYOUT">
 		<message>
-			<![CDATA[CATEGORYEVENTS CALENDAR LAYOUT DESC]]>
+			<![CDATA[COM_JEM_CATEGORYEVENTS_CALENDAR_LAYOUT_DESC]]>
 		</message>
 	</layout>
 	<state>
-		<name>CATEGORYEVENTS CALENDAR LAYOUT</name>
-		<description>CATEGORYEVENTS CALENDAR LAYOUT DESC</description>
+		<name>COM_JEM_CATEGORYEVENTS_CALENDAR_LAYOUT</name>
+		<description>COM_JEM_CATEGORYEVENTS_CALENDAR_LAYOUT_DESC</description>
 		<fields name="request" addfieldpath="/administrator/components/com_jem/models/fields">
         <fieldset name="request">
 			<field name="id" type="categories" default="0" label="COM_JEM_SELECT_CATEGORY" description="COM_JEM_SELECT_CATEGORY_DESC" />

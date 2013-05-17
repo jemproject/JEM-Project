@@ -47,13 +47,13 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_DATE_STRFTIME' ); ?>::<?php echo JText::_('COM_JEM_DATE_STRFTIME_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_DATE_STRFTIME' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_DATE_DATE' ); ?>::<?php echo JText::_('COM_JEM_DATE_DATE_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_DATE_DATE' ); ?>
 							</span>
 						</td>
 						<td valign="top">
 							<input type="text" name="formatdate" value="<?php echo $this->jemsettings->formatdate; ?>" size="15" maxlength="15" />
-							&nbsp;<a href="http://www.php.net/strftime" target="_blank"><?php echo JText::_( 'COM_JEM_PHP_STRFTIME_MANUAL' ); ?></a>
+							&nbsp;<a href="http://php.net/manual/en/function.date.php" target="_blank"><?php echo JText::_( 'COM_JEM_PHP_DATE_MANUAL' ); ?></a>
 						</td>
 					</tr>
 					<tr>

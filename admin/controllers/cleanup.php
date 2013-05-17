@@ -84,7 +84,7 @@ class JEMControllerCleanup extends JEMController
  	}
  	
   /**
-   * logic to massdelete unassigned images
+   * 
    *
    * @access public
    * @return void
