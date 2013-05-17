@@ -25,7 +25,13 @@ defined( '_JEXEC' ) or die;
 
 //the user is not registered allready -> display registration form
 ?>
-<?php if ($this->row->maxplaces && count($this->registers) >= $this->row->maxplaces && !$this->row->waitinglist): ?>
+<?php 
+
+if ($this->print == 0) {
+
+
+if ($this->row->maxplaces && count($this->registers) >= $this->row->maxplaces && !$this->row->waitinglist): 
+?>
 	<p class="el-event-full">
 		<?php echo JText::_( 'COM_JEM_EVENT_FULL_NOTICE' ); ?>
 	</p>
@@ -48,4 +54,4 @@ defined( '_JEXEC' ) or die;
 	<input type="hidden" name="task" value="userregister" />
 </p>
 </form>
-<?php endif;
+<?php endif;   }

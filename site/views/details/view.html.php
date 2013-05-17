@@ -52,6 +52,8 @@ class JEMViewDetails extends JViewLegacy
 		$registers		= $this->get('Registers');
 		$isregistered	= $this->get('UserIsRegistered');
 
+		
+		
 		//get menu information
 		$menu			= $app->getMenu();
 		$item			= $menu->getActive();
@@ -75,7 +77,7 @@ class JEMViewDetails extends JViewLegacy
 
 		//Print
 		$pop	= JRequest::getBool('pop');
-
+				
 		$params->def('page_title', JText::_('COM_JEM_DETAILS'));
 
 		if ($pop) {
@@ -84,6 +86,8 @@ class JEMViewDetails extends JViewLegacy
 		
 		
 		$print	= JRequest::getBool('print');
+		
+		
 		if ($print) {
 
 			$document = JFactory::getDocument();
@@ -223,6 +227,7 @@ class JEMViewDetails extends JViewLegacy
 		$row->pluginevent->onEventDetailsEnd = trim(implode("\n", $results));
 
 		//assign vars to jview
+		$this->print				= $print;
 		$this->row					= $row;
 		$this->categories			= $categories;
 		$this->params				= $params;
