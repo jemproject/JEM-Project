@@ -10,7 +10,7 @@
 		<description>COM_JEM_EVENT_SUBMISSION_DESC</description>
    <config>
 			<fields name="params"><fieldset name="basic" label="basic">
-      <field name="introtext" type="textarea" default="" label="COM_JEM_INTROTEXT_FIELD" rows="8" cols="30" description="COM_JEM_INTROTEXT_FIELD_TIP"/>
+      <field name="introtext" filter="safehtml" type="textarea" default="" label="COM_JEM_INTROTEXT_FIELD" rows="8" cols="30" description="COM_JEM_INTROTEXT_FIELD_TIP"/>
       <field name="showintrotext" type="radio" default="0" label="COM_JEM_DISPLAY_INTROTEXT" description="COM_JEM_DISPLAY_INTROTEXT_TIP">
         <option value="0">COM_JEM_HIDE</option>
         <option value="1">COM_JEM_SHOW</option>
