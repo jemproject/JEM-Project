@@ -81,6 +81,18 @@ class JEMViewDetails extends JViewLegacy
 		if ($pop) {
 			$params->set('popup', 1);
 		}
+		
+		
+		$print	= JRequest::getBool('print');
+		if ($print) {
+
+			$document = JFactory::getDocument();
+			
+			$style = '#main a:link, #main a:visited {text-decoration: none;color: inherit;}';
+			$document->addStyleDeclaration( $style );
+			$document->setMetaData('robots', 'noindex, nofollow');
+		}
+		
 
 		$print_link = JRoute::_(JEMHelperRoute::getRoute($row->slug).'&print=1&tmpl=component');
 

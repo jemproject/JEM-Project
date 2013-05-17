@@ -30,36 +30,44 @@ defined('_JEXEC') or die;
 class JEMOutput {
 
 	/**
-	* Writes footer.
-	*
-	* @author Christoph Lukes
-	* @since 0.9
-	*/
+	 * Writes footer.
+	 *
+	 * @author Christoph Lukes
+	 * @since 0.9
+	 */
 	static function footer()
 	{
 
 		$app = JFactory::getApplication();
 		$params = $app->getParams();
 
-		// if ($params->get('copyright') == 1) {
+		if ($app->input->get('print','','int')) {
+			//button in popup
+			$output = '';
+		} else {
+				
+			// if ($params->get('copyright') == 1) {
 			echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
-		// }
+			// }
 
+		}
+			
 	}
 
 	/**
-	* Writes Event submission button
-	*
-	* @author Christoph Lukes
-	* @since 0.9
-	*
-	* @param int $dellink Access of user
-	* @param array $params needed params
-	* @param string $view the view the user will redirected to
-	**/
+	 * Writes Event submission button
+	 *
+	 * @author Christoph Lukes
+	 * @since 0.9
+	 *
+	 * @param int $dellink Access of user
+	 * @param array $params needed params
+	 * @param string $view the view the user will redirected to
+	 **/
 	static function submitbutton($dellink, &$params)
 	{
 		$settings = JEMHelper::config();
+		$app = JFactory::getApplication();
 
 		if ($dellink == 1) {
 			JHTML::_('behavior.tooltip');
@@ -70,14 +78,14 @@ class JEMOutput {
 				$image = JText::_('COM_JEM_DELIVER_NEW_EVENT');
 			}
 
-			if (JRequest::getInt('print')) {
+			if ($app->input->get('print','','int')) {
 				//button in popup
 				$output = '';
 			} else {
 				$link = 'index.php?view=editevent';
 				$overlib = JText::_('COM_JEM_SUBMIT_EVENT_TIP');
 				$output = '<a href="'.JRoute::_($link).'" class="editlinktip hasTip" title="'.JText::_('COM_JEM_DELIVER_NEW_EVENT')
-					.'::'.$overlib.'">'.$image.'</a>';
+				.'::'.$overlib.'">'.$image.'</a>';
 			}
 			return $output;
 		}
@@ -86,18 +94,19 @@ class JEMOutput {
 	}
 
 	/**
-	* Writes Archivebutton
-	*
-	* @author Christoph Lukes
-	* @since 0.9
-	*
-	* @param int $oldevent Archive used or not
-	* @param array $params needed params
-	* @param string $task The current task
-	* @param int $categid The cat id
-	*/
+	 * Writes Archivebutton
+	 *
+	 * @author Christoph Lukes
+	 * @since 0.9
+	 *
+	 * @param int $oldevent Archive used or not
+	 * @param array $params needed params
+	 * @param string $task The current task
+	 * @param int $categid The cat id
+	 */
 	static function archivebutton(&$params, $task = NULL, $id = NULL)
 	{
+		$app = JFactory::getApplication();
 		$settings = JEMHelper::config();
 
 		if ($settings->show_archive_icon) {
@@ -137,7 +146,7 @@ class JEMOutput {
 					}
 				}
 
-				if (JRequest::getInt('print')) {
+				if ($app->input->get('print','','int')) {
 					//button in popup
 					$output = '';
 				} else{
@@ -161,6 +170,7 @@ class JEMOutput {
 	 */
 	static function editbutton($Itemid, $id, &$params, $allowedtoedit, $view)
 	{
+		$app = JFactory::getApplication();
 		$settings = JEMHelper::config();
 
 		if ($allowedtoedit) {
@@ -190,7 +200,7 @@ class JEMOutput {
 					break;
 			}
 
-			if (JRequest::getInt('print')) {
+		if ($app->input->get('print','','int')) {
 				//button in popup
 				$output = '';
 			} else {
@@ -211,6 +221,7 @@ class JEMOutput {
 	 */
 	static function printbutton($print_link, &$params)
 	{
+		$app = JFactory::getApplication();
 		$settings = JEMHelper::config();
 		if ($settings->show_print_icon) {
 			JHTML::_('behavior.tooltip');
@@ -224,7 +235,7 @@ class JEMOutput {
 				$image = JText::_('COM_JEM_PRINT');
 			}
 
-			if (JRequest::getInt('print')) {
+			if ($app->input->get('print','','int')) {
 				//button in popup
 				$overlib = JText::_('COM_JEM_PRINT_TIP');
 				$text = JText::_('COM_JEM_PRINT');
@@ -248,8 +259,9 @@ class JEMOutput {
 	 * @param array $params
 	 * @since 0.9
 	 */
- 	static function mailbutton($slug, $view, $params)
+	static function mailbutton($slug, $view, $params)
 	{
+		$app = JFactory::getApplication();
 		$settings = JEMHelper::config();
 
 		if ($settings->show_email_icon) {
@@ -270,7 +282,7 @@ class JEMOutput {
 				$image = JText::_('COM_JEM_EMAIL');
 			}
 
-			if (JRequest::getInt('print')) {
+			if ($app->input->get('print','','int')) {
 				//button in popup
 				$output = '';
 			} else {
@@ -295,8 +307,9 @@ class JEMOutput {
 	 * @param array $params
 	 * @since 0.9
 	 */
- 	static function icalbutton($slug, $view)
+	static function icalbutton($slug, $view)
 	{
+		$app = JFactory::getApplication();
 		$settings = JEMHelper::config();
 		if ($settings->events_ical == 1) {
 			JHTML::_('behavior.tooltip');
@@ -308,7 +321,7 @@ class JEMOutput {
 				$image = JText::_('COM_JEM_EXPORT_ICS');
 			}
 
-			if (JRequest::getInt('print')) {
+			if ($app->input->get('print','','int')) {
 				//button in popup
 				$output = '';
 			} else {
@@ -333,8 +346,9 @@ class JEMOutput {
 	 *
 	 * @since 0.9
 	 */
- 	static function mapicon($data)
+	static function mapicon($data)
 	{
+		$app = JFactory::getApplication();
 		$jemsettings = JEMHelper::config();
 
 		//Link to map
@@ -378,7 +392,7 @@ class JEMOutput {
 	 *
 	 * @since 0.9
 	 */
- 	static function flyer($data, $image, $type)
+	static function flyer($data, $image, $type)
 	{
 		$settings = JEMHelper::config();
 
@@ -421,7 +435,7 @@ class JEMOutput {
 			$icon = '<img src="'.JURI::base().'/'.$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 			$output = '<a href="'.$url.'" '.$attributes.'>'.$icon.'</a>';
 
-		// Otherwise take the values for the original image specified in the settings
+			// Otherwise take the values for the original image specified in the settings
 		} else {
 			$output = '<img class="modal" src="'.JURI::base().'/'.$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
 		}
@@ -468,23 +482,6 @@ class JEMOutput {
 		jimport('joomla.utilities.date');
 		$jdate = new JDate($date);
 		return $jdate->format(JText::_($settings->formatdate));
-
-		/* @todo delete, old code
-		$settings = JEMHelper::config();
-
-		if(!$date) {
-			return false;
-		}
-
-		if(!$time) {
-			$time = '00:00:00';
-		}
-
-		//Format date
-		$formatdate = strftime($settings->formatdate, strtotime($date));
-
-		return $formatdate;
-		*/
 	}
 
 	/**
@@ -533,8 +530,8 @@ class JEMOutput {
 		$parsed = strftime('%Y-%m-%d %H:%M:%S', $sec);
 
 		$date = array('year' => (int) substr($parsed, 0, 4),
-					'month' => (int) substr($parsed, 5, 2),
-					'day' => (int) substr($parsed, 8, 2));
+				'month' => (int) substr($parsed, 5, 2),
+				'day' => (int) substr($parsed, 8, 2));
 
 		//Format time
 		if (substr($parsed, 11, 8) != '00:00:00')
