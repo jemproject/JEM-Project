@@ -100,10 +100,10 @@ $options = array(
 
 
 							$link = 'index.php?option=com_jem&amp;view=import';
-							JEMViewJEM::quickiconButton( $link, 'icon-48-sampledata.png', JText::_( 'COM_JEM_IMPORT_DATA' ) );
+							JEMViewJEM::quickiconButton( $link, 'icon-48-tableimport.png', JText::_( 'COM_JEM_IMPORT_DATA' ) );
 
 							$link = 'index.php?option=com_jem&amp;view=export';
-							JEMViewJEM::quickiconButton( $link, 'icon-48-sampledata.png', JText::_( 'COM_JEM_EXPORT_DATA' ) );
+							JEMViewJEM::quickiconButton( $link, 'icon-48-tableexport.png', JText::_( 'COM_JEM_EXPORT_DATA' ) );
 
 
 						}

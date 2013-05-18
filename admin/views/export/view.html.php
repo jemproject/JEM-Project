@@ -58,7 +58,7 @@ class JEMViewExport extends JViewLegacy {
 	{
 		
 		//build toolbar
-		JToolBarHelper::title(JText::_('COM_JEM_EXPORT'), 'home');
+		JToolBarHelper::title(JText::_('COM_JEM_EXPORT'), 'tableexport');
 		JToolBarHelper::help('el.import', true);
 		
 		//Create Submenu

@@ -71,7 +71,7 @@ class JEMViewImport extends JViewLegacy {
 	{
 		
 		//build toolbar
-		JToolBarHelper::title(JText::_('COM_JEM_IMPORT'), 'home');
+		JToolBarHelper::title(JText::_('COM_JEM_IMPORT'), 'tableimport');
 		JToolBarHelper::help('el.import', true);
 		
 		//Create Submenu
