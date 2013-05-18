@@ -8,13 +8,12 @@ One of the things are the plugins.
 
 This version includes:
 - Import/Export view
-- Altered Settings page
 - Multicategory support
 - Parent category
 - Ical output
 - Gmap
 - Calendar
-- Exclude categories in simplelist
+- Option to Exclude categories in simplelistview
 - 10 Custom fields
 - Contact
 
