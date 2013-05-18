@@ -96,17 +96,30 @@ defined( '_JEXEC' ) or die;
 	    			<?php echo $row->countryimg ? $row->countryimg : $row->country; ?>
 	    		</dd>
 	    		<?php endif; ?>
-
+	    		   		
 	    		<dt class="venue_assignedevents"><?php echo JText::_( 'COM_JEM_EVENTS' ).':'; ?></dt>
 	    		<dd class="venue_assignedevents">
 	    			<a href="<?php echo $row->targetlink; ?>"><?php echo $row->assignedevents; ?></a>
 	    		</dd>
+	    		<?php if ($this->jemsettings->showmapserv == 1) { ?>
+				<dt class="venue_mapicon"><?php echo JText::_('COM_JEM_MAP').':'; ?></dt>
+				<dd class="venue_mapicon">
+					<?php 
+					echo JEMOutput::mapicon($row);
+					?>
+				</dd>
+				<?php 	}  ?>
 			<?php
 			endif;
 			?>
 
 		</dl>
-<p><?php echo JEMOutput::mapicon( $row ); ?></p>
+<p><?php 
+if ($this->jemsettings->showmapserv == 2)
+{
+	echo JEMOutput::mapicon($row);
+}
+?></p>
 		
 	    <?php if ($this->jemsettings->showlocdescription == 1) :	?>
 		<h2 class="description"><?php echo JText::_( 'COM_JEM_DESCRIPTION' ).':'; ?></h2>
