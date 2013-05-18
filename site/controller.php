@@ -162,7 +162,7 @@ class JEMController extends JControllerLegacy
 			$js = "window.parent.closeAdd() ";
 			$doc = JFactory::getDocument();
 			$doc->addScriptDeclaration($js);
-			echo $msg;
+			/* echo $msg; */
 			return;
 		}
 
@@ -241,7 +241,7 @@ class JEMController extends JControllerLegacy
 			$js = "window.parent.elSelectVenue('". $venue->id ."', '". str_replace( array("'", "\""), array("\\'", ""), $venue->venue)."')";
 			$doc = JFactory::getDocument();
 			$doc->addScriptDeclaration($js);
-			echo $msg;
+			/* echo $msg; */
 
 			return;
 		}

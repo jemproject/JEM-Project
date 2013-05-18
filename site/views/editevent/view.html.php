@@ -83,7 +83,7 @@ class JEMViewEditevent extends JViewLegacy
 
 		JHTML::_('behavior.formvalidation');
 		JHTML::_('behavior.tooltip');
-		JHTML::_('behavior.modal', 'a.modal');
+		JHTML::_('behavior.modal', 'a.flyermodal');
 
 		//add css file
 		$doc->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
@@ -208,7 +208,7 @@ class JEMViewEditevent extends JViewLegacy
 		$rows 	= $this->get('Venues');
 		$total 	= $this->get('Countitems');
 		
-		JHTML::_('behavior.modal', 'a.modal');
+		JHTML::_('behavior.modal', 'a.flyermodal');
 
 		// Create the pagination object
 		jimport('joomla.html.pagination');

@@ -37,7 +37,7 @@ defined( '_JEXEC' ) or die;
 		/* echo $this->escape($this->pagetitle); */
 		echo '&nbsp';
 		?>
-    <?php echo JEMOutput::editbutton($this->item->id, $this->venue->id, $this->params, $this->allowedtoeditvenue, 'editvenue' ); ?>
+    
 	</h1>
 <?php endif; ?>
 
@@ -45,6 +45,7 @@ defined( '_JEXEC' ) or die;
 	
 		<h2 class="jem">
 			<?php echo $this->escape($this->pagetitle); ?>
+			<?php echo JEMOutput::editbutton($this->item->id, $this->venue->id, $this->params, $this->allowedtoeditvenue, 'editvenue' ); ?>
 		</h2>
 	<?php //flyer
 	echo JEMOutput::flyer( $this->venue, $this->limage, 'venue' );

@@ -175,14 +175,14 @@ defined('_JEXEC') or die;
                   <a class="jem_venue_reset" title="<?php echo JText::_('COM_JEM_NO_VENUE'); ?>" onclick="elSelectVenue(0,'<?php echo JText::_('COM_JEM_NO_VENUE'); ?>');return false;" href="#">
                       <span><?php  echo JText::_('COM_JEM_NO_VENUE'); ?></span>
                   </a>
-                  <a class="jem_venue_select modal" title="<?php echo JText::_('COM_JEM_SELECT'); ?>" href="<?php echo JRoute::_('index.php?view=editevent&layout=choosevenue&tmpl=component'); ?>" rel="{handler: 'iframe', size: {x: 650, y: 375}}">
+                  <a class="jem_venue_select flyermodal" title="<?php echo JText::_('COM_JEM_SELECT'); ?>" href="<?php echo JRoute::_('index.php?view=editevent&layout=choosevenue&tmpl=component'); ?>" rel="{handler: 'iframe', size: {x: 650, y: 375}}">
                       <span><?php echo JText::_('COM_JEM_SELECT')?></span>
                   </a>
 
                   <input class="inputbox required" type="hidden" id="a_id" name="locid" value="<?php echo $this->row->locid; ?>" />
 
                 <?php if ( $this->delloclink == 1 && !$this->row->id ) : //show location submission link ?>
-                  <a class="jem_venue_add modal" title="<?php echo JText::_('COM_JEM_DELIVER_NEW_VENUE'); ?>" href="<?php echo JRoute::_('index.php?view=editvenue&mode=ajax&tmpl=component'); ?>" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
+                  <a class="jem_venue_add flyermodal" title="<?php echo JText::_('COM_JEM_DELIVER_NEW_VENUE'); ?>" href="<?php echo JRoute::_('index.php?view=editvenue&mode=ajax&tmpl=component'); ?>" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
                       <span><?php echo JText::_('COM_JEM_DELIVER_NEW_VENUE')?></span>
                   </a>
                 <?php endif; ?>
@@ -463,7 +463,7 @@ defined('_JEXEC') or die;
           if ($this->row->datimage) :
       		    echo JEMOutput::flyer( $this->row, $this->dimage, 'event' );
       		else :
-      		    echo JHTML::_('image', 'media/com_jem/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'), array('class' => 'modal'));
+      		    echo JHTML::_('image', 'media/com_jem/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'));
       		endif;
         	?>
           <label for="userfile"><?php echo JText::_('COM_JEM_IMAGE'); ?></label>
