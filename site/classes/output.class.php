@@ -237,10 +237,12 @@ class JEMOutput {
 
 			if ($app->input->get('print','','int')) {
 				//button in popup
-				//$overlib = JText::_('COM_JEM_PRINT_TIP');
-				//$text = JText::_('COM_JEM_PRINT');
+				$overlib = JText::_('COM_JEM_PRINT_TIP');
+				$text = JText::_('COM_JEM_PRINT');
+				$title = 'title='.JText::_('JGLOBAL_PRINT');
+				$pimage = JHTML::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), $title, true);
 				//$output = '<a href="#" onclick="window.print();return false;" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
-				$output = '<a href="#" onclick="window.print();return false;">'.$image.'</a>';
+				$output = '<a href="#" onclick="window.print();return false;">'.$pimage.'</a>';
 			} else {
 				//button in view
 				$overlib = JText::_('COM_JEM_PRINT_TIP');
