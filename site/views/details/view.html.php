@@ -91,9 +91,7 @@ class JEMViewDetails extends JViewLegacy
 		if ($print) {
 
 			$document = JFactory::getDocument();
-			
-			$style = '#main a:link, #main a:visited {text-decoration: none;color: inherit;}';
-			$document->addStyleDeclaration( $style );
+			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/print.css');
 			$document->setMetaData('robots', 'noindex, nofollow');
 		}
 		
