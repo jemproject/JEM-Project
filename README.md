@@ -14,7 +14,6 @@ This version includes:
 - Ical output
 - Altered Gmap
 - Calendar
-- Changed category upload (just like the venue & event)
 - Exclude categories in simplelist
 - 10 Custom fields
 - Contact
