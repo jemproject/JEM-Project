@@ -108,7 +108,7 @@ class JEMModelEditevent extends JModelLegacy
 			if ($maintainer || $editaccess ) $allowedtoeditevent = 1;
 
 			if ($allowedtoeditevent == 0) {
-				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
+				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			}
 
 		// ID does not exist => add
@@ -119,7 +119,7 @@ class JEMModelEditevent extends JModelLegacy
 			$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 			if ( !($maintainer || $genaccess )) {
-				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
+				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			}
 
 			//sticky forms

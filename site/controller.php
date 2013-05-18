@@ -70,7 +70,7 @@ class JEMController extends JControllerLegacy
 
 		// Must be logged in
 		if ($user->get('id') < 1) {
-			JError::raiseError( 403, JText::_('COM_JEM_ALERTNOTAUTH') );
+			throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			return;
 		}
 
@@ -106,7 +106,7 @@ class JEMController extends JControllerLegacy
 
 		// Must be logged in
 		if ($user->get('id') < 1) {
-			JError::raiseError( 403, JText::_('COM_JEM_ALERTNOTAUTH'));
+			throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			return;
 		}
 
@@ -139,7 +139,7 @@ class JEMController extends JControllerLegacy
 
 		// Must be logged in
 		if ($user->get('id') < 1) {
-			JError::raiseError( 403, JText::_('COM_JEM_ALERTNOTAUTH') );
+			throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			return;
 		}
 

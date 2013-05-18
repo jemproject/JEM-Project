@@ -96,7 +96,7 @@ class JEMModelEditvenue extends JModelLegacy
 			$allowedtoeditvenue = JEMUser::editaccess($jemsettings->venueowner, $this->_venue->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 
 			if ($allowedtoeditvenue == 0) {
-				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
+				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			}
 
 		// ID does not exist => add
@@ -106,7 +106,7 @@ class JEMModelEditvenue extends JModelLegacy
 			$delloclink = JEMUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
 
 			if ($delloclink == 0) {
-				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
+				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			}
 
 			//sticky forms
