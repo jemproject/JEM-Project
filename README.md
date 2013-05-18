@@ -12,7 +12,7 @@ This version includes:
 - Multicategory support
 - Parent category
 - Ical output
-- Altered Gmap
+- Gmap
 - Calendar
 - Exclude categories in simplelist
 - 10 Custom fields
