@@ -255,11 +255,12 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 			
 
 		</dl>
-		<p><?php 
-		if ($this->jemsettings->showmapserv == 2){
-		echo JEMOutput::mapicon($this->row); 
-        }
-		?>&nbsp;</p>
+		<?php 
+		if ($this->jemsettings->showmapserv == 2){ ?>
+		<p>
+		<?php echo JEMOutput::mapicon($this->row);  ?>
+		</p>
+        <?php } ?>
 		<?php if ($this->jemsettings->showlocdescription == 1 && $this->row->locdescription != ''
  			&& $this->row->locdescription != '<br />') : ?>
 
