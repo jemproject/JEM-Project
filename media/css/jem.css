@@ -218,6 +218,7 @@ div#jem .copyright {
 font-size: 0.9em; text-align: center;
 margin: 1em 0;
 color: #aaa;
+float:none;
 }
 
 
@@ -227,15 +228,15 @@ color: #aaa;
  * flyer, locations, maps, ...
  */
 div#jem .modal {
-float:right !important;
+/* float:right !important; */
 /* margin:0.3em; */
-/*position: static;*/
-border: 1px solid #000000 !important;
-width:auto;
-position: static !important;
-background:transparent;
-border:0px solid black;
-box-shadow:none;
+/* position: static;*/
+/* border: 1px solid #000000 !important; */
+/* width:auto; */
+/* position: static !important; */
+/* background:transparent; */
+/* border:0px solid black; */
+/* box-shadow:none; */
 }
 
 div#jem .notmodal {
@@ -251,16 +252,29 @@ box-shadow:none;
 }
 
 
+div#jem .flyerimage {
+float:right !important;
+/* margin:0.3em; */
+/*position: static;*/
+border: 1px solid #000000 !important;
+width:auto;
+position: static !important;
+background:transparent;
+border:0px solid black;
+box-shadow:none;
+}
+
+
 div#jem .mapicon {
-float: right !important;
-position:relative;	
+/* float: right !important; */
+/* position:relative;	*/
 }
 
 div#jem .mapicon2 {
-float: right !important;
-position:relative;	
-top:-60px;
-right:80px;
+/* float: right !important; */
+/* position:relative;	*/
+/* top:-60px; */
+/* right:80px; */
 }
 
 

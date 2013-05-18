@@ -22,7 +22,9 @@
 
 defined('_JEXEC') or die;
 
-JHTML::_('behavior.modal');
+//JHTML::_('behavior.modal');
+JHTML::_('behavior.modal', 'a.flyermodal');
+
 ?>
 
 
@@ -224,7 +226,7 @@ JHTML::_('behavior.modal');
 				<?php if ($this->row->city) : ?>
 				<dt class="venue_city"><?php echo JText::_('COM_JEM_CITY').':'; ?></dt>
 				<dd class="venue_city">
-					<?php echo $this->escape($this->row->city); ?>
+					<?php echo $this->escape($this->row->city);?>
 				</dd>
 				<?php endif; ?>
 
@@ -241,9 +243,23 @@ JHTML::_('behavior.modal');
 					<?php echo $this->row->countryimg ? $this->row->countryimg : $this->row->country; ?>
 				</dd>
 				<?php endif; ?>
+			<?php if ($this->jemsettings->showmapserv == 1) { ?>
+				<dt class="venue_mapicon"><?php echo JText::_('COM_JEM_MAP').':'; ?></dt>
+				<dd class="venue_mapicon">
+					<?php 
+					echo JEMOutput::mapicon($this->row);
+					?>
+				</dd>
+				<?php 	}  ?>
 			<?php endif; ?>
+			
+
 		</dl>
-		<p><?php echo JEMOutput::mapicon($this->row); ?>&nbsp;</p>
+		<p><?php 
+		if ($this->jemsettings->showmapserv == 2){
+		echo JEMOutput::mapicon($this->row); 
+        }
+		?>&nbsp;</p>
 		<?php if ($this->jemsettings->showlocdescription == 1 && $this->row->locdescription != ''
  			&& $this->row->locdescription != '<br />') : ?>
 

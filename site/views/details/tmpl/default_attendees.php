@@ -82,6 +82,8 @@ endforeach;
 <?php endif; ?>
 
 <?php
+
+if ($this->print == 0) {
 switch ($this->formhandler) {
 
 	case 1:
@@ -99,6 +101,7 @@ switch ($this->formhandler) {
 	case 4:
 		echo $this->loadTemplate('regform');
 	break;
+}
 }
 ?>
 </div>

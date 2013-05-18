@@ -87,12 +87,25 @@ defined( '_JEXEC' ) or die;
     			<?php echo $this->venue->countryimg ? $this->venue->countryimg : $this->venue->country; ?>
     		</dd>
     		<?php endif; ?>
-		<?php
-		endif; //showdetails ende
-		?>
+    		<?php if ($this->jemsettings->showmapserv == 1) { ?>
+				<dt class="venue_mapicon"><?php echo JText::_('COM_JEM_MAP').':'; ?></dt>
+				<dd class="venue_mapicon">
+					<?php 
+					echo JEMOutput::mapicon($this->venue);
+					?>
+				</dd>
+				<?php 	}  ?>
+			<?php endif; ?>
 	</dl>
 
-	<p><?php echo JEMOutput::mapicon( $this->venue ); ?></p>
+	<p>
+	<?php 
+		if ($this->jemsettings->showmapserv == 2)
+		{
+		echo JEMOutput::mapicon($this->venue);
+		}
+	?>
+	</p>
 	<?php
   	if ($this->jemsettings->showlocdescription == 1 && $this->venuedescription != '' && $this->venuedescription != '<br />') :
 	?>

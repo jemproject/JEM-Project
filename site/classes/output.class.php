@@ -355,7 +355,7 @@ class JEMOutput {
 		$jemsettings = JEMHelper::config();
 
 		//Link to map
-		$mapimage = JHTML::image("media/com_jem/images/icon-48-globe.png",JText::_('COM_JEM_MAP'));
+		$mapimage = JHTML::image("media/com_jem/images/map_icon.png",JText::_('COM_JEM_MAP'));
 
 		//set var
 		$output = null;
@@ -374,7 +374,7 @@ class JEMOutput {
 			case 1:
 				$url = 'http://maps.google.'.$jemsettings->tld.'/maps?hl='.$jemsettings->lg.'&q='.str_replace(" ", "+", $data->street).', '.$data->plz.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.$data->venue.')&ie=UTF8&z=15&iwloc=B&output=embed" ';
 				$attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
-				$output = '<div class="mapicon2"><a class="modal" title="'.JText::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'><div class="mapicon" align="center">'.$mapimage.'</div></a></div>';
+				$output = '<a class="flyermodal" title="'.JText::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'</a>';
 				break;
 
 			case 2:
@@ -430,17 +430,17 @@ class JEMOutput {
 				$url = '#';
 				$attributes = 'class="notmodal" onclick="window.open(\''.JURI::base().'/'.$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
 			} else {
-				JHTML::_('behavior.modal');
+				JHTML::_('behavior.modal', 'a.flyermodal');
 				$url = JURI::base().'/'.$image['original'];
-				$attributes = 'class="modal" title="'.$info.'"';
+				$attributes = 'class="flyermodal" title="'.$info.'"';
 			}
 
 			$icon = '<img src="'.JURI::base().'/'.$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
-			$output = '<a href="'.$url.'" '.$attributes.'>'.$icon.'</a>';
+			$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
 
 			// Otherwise take the values for the original image specified in the settings
 		} else {
-			$output = '<img class="modal" src="'.JURI::base().'/'.$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
+			$output = '<img class="flyermodal" src="'.JURI::base().'/'.$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
 		}
 
 		return $output;
