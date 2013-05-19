@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-defined ( '_JEXEC' ) or die;
+defined ('_JEXEC') or die;
 ?>
 <fieldset class="jem_fldst_attachments">
 <legend><?php echo JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'); ?></legend>
@@ -37,12 +37,12 @@ defined ( '_JEXEC' ) or die;
 	<tbody>
 		<?php foreach ($this->row->attachments as $file): ?>
 		<tr>
-			<td ><?php echo $file->file; ?><input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/></td>
+			<td><?php echo wordwrap($file->file, 30, "<br>", true); ?><input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/></td>
 			<td><input type="text" name="attached-name[]"  value="<?php echo $file->name; ?>" /></td>
-			<td ><input type="text" name="attached-desc[]" value="<?php echo $file->description; ?>" /></td>
+			<td><input type="text" name="attached-desc[]" value="<?php echo $file->description; ?>" /></td>
 			<td><?php echo JHTML::_('select.genericlist', $this->access, 'attached-access[]', 'class="inputbox" size="3"', 'value', 'text', $file->access); ?></td>
-			<td ><?php echo JHTML::image('media/com_jem/images/publish_x.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT')
-			                         , array('id' => 'attach-remove'.$file->id,'class' => 'attach-remove')); ?></td>
+			<td><?php echo JHTML::image('media/com_jem/images/publish_x.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT')
+					, array('id' => 'attach-remove'.$file->id,'class' => 'attach-remove')); ?></td>
 		</tr>
 		<?php endforeach; ?>
 		<tr>
