@@ -45,13 +45,13 @@ class JEMOutput {
 			//button in popup
 			$output = '';
 		} else {
-				
+
 			// if ($params->get('copyright') == 1) {
 			echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
 			// }
 
 		}
-			
+
 	}
 
 	/**
@@ -472,27 +472,29 @@ class JEMOutput {
 	 * Formats date
 	 *
 	 * @param string $date
-	 * @param string $time
-	 *
+	 * @param string $format
 	 * @return string $formatdate
 	 *
 	 * @since 0.9
 	 */
-	static function formatdate($date)
+	static function formatdate($date, $format = "")
 	{
 		$settings = JEMHelper::config();
 
 		jimport('joomla.utilities.date');
 		$jdate = new JDate($date);
-		return $jdate->format(JText::_($settings->formatdate));
+		if (!$format) {
+			// If no format set, use long format  as standard
+			$format = JText::_($settings->formatdate);
+		}
+
+		return $jdate->format($format);
 	}
 
 	/**
 	 * Formats time
 	 *
-	 * @param string $date
 	 * @param string $time
-	 *
 	 * @return string $formattime
 	 *
 	 * @since 0.9
@@ -512,34 +514,49 @@ class JEMOutput {
 		return $formattime;
 	}
 
-	static function formatLongDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "")
+	/**
+	 * Formats the input dates and times to be used as a from-to string for
+	 * events. Takes care of unset dates and or times.
+	 *
+	 * @param string $dateStart Start date of event
+	 * @param string $timeStart Start time of event
+	 * @param string $dateEnd End date of event
+	 * @param string $timeEnd End time of event
+	 * @param string $format Date Format
+	 * @return string Formatted date and time string to print
+	 */
+	static function formatDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "", $format = "")
 	{
 		$settings = JEMHelper::config();
 		$output = "";
 
-		if (JEMHelper::isValidDate($dateStart)) {
-			$output .= self::formatdate($dateStart);
+		if(JEMHelper::isValidDate($dateStart)) {
+			$output .= self::formatdate($dateStart, $format);
 
-			if ($settings->showtimedetails && $timeStart) {
+			if($settings->showtimedetails && $timeStart) {
 				$output .= ', '.self::formattime($timeStart);
 			}
 
-			if (JEMHelper::isValidDate($dateEnd) && $dateEnd != $dateStart) {
-				$output .= ' - '.self::formatdate($dateEnd);
+			// Display end date only when it differs from start date
+			$displayDateEnd = JEMHelper::isValidDate($dateEnd) && $dateEnd != $dateStart;
+			if($displayDateEnd) {
+				$output .= ' - '.self::formatdate($dateEnd, $format);
 			}
 
-			if ($settings->showtimedetails && $timeEnd) {
-				$output .= ', '.self::formattime($timeEnd);
+			// Display end time only when both times are set
+			if($settings->showtimedetails && $timeStart && $timeEnd) {
+				$output .= $displayDateEnd ? ', ' : ' - ';
+				$output .= self::formattime($timeEnd);
 			}
 		} else {
 			$output .= JText::_('COM_JEM_OPEN_DATE');
 
-			if ($settings->showtimedetails) {
+			if($settings->showtimedetails) {
 				if($timeStart) {
 					$output .= ', '.self::formattime($timeStart);
 				}
-
-				if ($timeEnd) {
+				// Display end time only when both times are set
+				if($timeStart && $timeEnd) {
 					$output .= ' - '.self::formattime($timeEnd);
 				}
 			}
@@ -548,10 +565,42 @@ class JEMOutput {
 		return $output;
 	}
 
+	/**
+	 * Formats the input dates and times to be used as a long from-to string for
+	 * events. Takes care of unset dates and or times.
+	 *
+	 * @param string $dateStart Start date of event
+	 * @param string $timeStart Start time of event
+	 * @param string $dateEnd End date of event
+	 * @param string $timeEnd End time of event
+	 * @return string Formatted date and time string to print
+	 */
+	static function formatLongDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "")
+	{
+		return self::formatDateTime($dateStart, $timeStart, $dateEnd, $timeEnd);
+	}
+
+	/**
+	 * Formats the input dates and times to be used as a short from-to string for
+	 * events. Takes care of unset dates and or times.
+	 *
+	 * @param string $dateStart Start date of event
+	 * @param string $timeStart Start time of event
+	 * @param string $dateEnd End date of event
+	 * @param string $timeEnd End time of event
+	 * @return string Formatted date and time string to print
+	 */
 	static function formatShortDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "")
 	{
-		// TODO: Implement short version
-		return self::formatLongDateTime($dateStart, $timeStart, $dateEnd, $timeEnd);
+		$settings = JEMHelper::config();
+
+		// Use format saved in settings if specified or format in language file otherwise
+		if(isset($settings->formatShortDate) && $settings->formatShortDate) {
+			$format = $settings->formatShortDate;
+		} else {
+			$format = JText::_('COM_JEM_FORMAT_SHORT_DATE');
+		}
+		return self::formatDateTime($dateStart, $timeStart, $dateEnd, $timeEnd, $format);
 	}
 
 	/**

@@ -145,6 +145,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_settings` (
   `locationwidth` varchar(20) NOT NULL,
   `citywidth` varchar(20) NOT NULL,
   `formatdate` varchar(100) NOT NULL,
+  `formatShortDate` varchar(20) NOT NULL,
   `formattime` varchar(100) NOT NULL,
   `timename` varchar(50) NOT NULL,
   `showdetails` tinyint(4) NOT NULL,

@@ -47,12 +47,23 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_DATE_DATE' ); ?>::<?php echo JText::_('COM_JEM_DATE_DATE_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_DATE_DATE' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SETTINGS_DATE_FORMAT' ); ?>::<?php echo JText::_('COM_JEM_DATE_FORMAT_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_SETTINGS_DATE_FORMAT' ); ?>
 							</span>
 						</td>
 						<td valign="top">
 							<input type="text" name="formatdate" value="<?php echo $this->jemsettings->formatdate; ?>" size="15" maxlength="15" />
+							&nbsp;<a href="http://php.net/manual/en/function.date.php" target="_blank"><?php echo JText::_( 'COM_JEM_PHP_DATE_MANUAL' ); ?></a>
+						</td>
+					</tr>
+					<tr>
+						<td width="300" class="key">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SETTINGS_SHORT_DATE_FORMAT' ); ?>::<?php echo JText::_('COM_JEM_SETTINGS_SHORT_DATE_FORMAT_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_SETTINGS_SHORT_DATE_FORMAT' ); ?>
+							</span>
+						</td>
+						<td valign="top">
+							<input type="text" name="formatShortDate" value="<?php echo $this->jemsettings->formatShortDate; ?>" size="15" maxlength="15" />
 							&nbsp;<a href="http://php.net/manual/en/function.date.php" target="_blank"><?php echo JText::_( 'COM_JEM_PHP_DATE_MANUAL' ); ?></a>
 						</td>
 					</tr>
