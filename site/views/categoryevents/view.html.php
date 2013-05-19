@@ -24,6 +24,7 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 
+
 /**
  * HTML View class for the Categoryevents View
  *
@@ -48,6 +49,7 @@ class JEMViewCategoryevents extends JViewLegacy
 		$db  			=  JFactory::getDBO();
 		//$item			= $menu->getActive();
 
+		JHTML::_('behavior.tooltip');
 		
 		//get menu information
 		$menu			= $app->getMenu();
@@ -206,17 +208,65 @@ class JEMViewCategoryevents extends JViewLegacy
 		$this->item				= $item;
 		$this->categories		= $categories;
 
+		
+		
+		
+		
+		
+		
 		if($this->getLayout() == 'calendar')
 		{
-			//add css for calendar
-			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendar.css');
+			$app =  JFactory::getApplication();
 
-			$year  = intval(JRequest::getVar('yearID', strftime("%Y")));
-			$month = intval(JRequest::getVar('monthID', strftime("%m")));
-			$day   = intval(JRequest::getVar('dayID', strftime("%d")));
-			$this->year			= $year;
-			$this->month		= $month;
-			$this->day			= $day;
+        // Load tooltips behavior
+        JHTML::_('behavior.tooltip');
+
+        //initialize variables
+        $document 	=  JFactory::getDocument();
+        $menu 		=  $app->getMenu();
+        $jemsettings =  JEMHelper::config();
+        $item 		= $menu->getActive();
+        $params 	=  $app->getParams();
+        $uri 		=  JFactory::getURI();
+        $pathway 	=  $app->getPathWay();
+
+        //add css file
+        $document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+        $document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+        $document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendar.css');
+        
+        // add javascript
+       // $document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
+
+        $category 	= $this->get('Category');
+        
+        $year 	= (int)JRequest::getVar('yearID', strftime("%Y"));
+        $month 	= (int)JRequest::getVar('monthID', strftime("%m"));
+
+        //get data from model and set the month
+        $model =  $this->getModel();
+        $model->setDate(mktime(0, 0, 1, $month, 1, $year));
+
+        $rows =  $this->get('Data');
+
+        //Set Meta data
+        $document->setTitle($item->title);
+
+        //Set Page title
+        $pagetitle = $params->def('page_title', $item->title);
+        $document->setTitle($pagetitle);
+        $document->setMetaData('title', $pagetitle);
+
+        //init calendar
+		$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
+		$cal->enableMonthNav('index.php?view=categoryevents&layout=calendar&id='. $category->slug);
+		$cal->setFirstWeekDay($params->get('firstweekday', 1));
+		//$cal->enableDayLinks(false);
+				
+		$this->rows 		= $rows;
+		$this->params		= $params;
+		$this->jemsettings	= $jemsettings;
+		$this->cal			= $cal;
 		}
 
 		parent::display($tpl);
@@ -247,6 +297,39 @@ class JEMViewCategoryevents extends JViewLegacy
 		return $this->rows;
 	}
 
+	
+	/**
+	 * Creates a tooltip
+	 *
+	 * @access  public
+	 * @param string  $tooltip The tip string
+	 * @param string  $title The title of the tooltip
+	 * @param string  $text The text for the tip
+	 * @param string  $href An URL that will be used to create the link
+	 * @param string  $class the class to use for tip.
+	 * @return  string
+	 * @since 1.5
+	 */
+	function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '')
+	{
+		$tooltip = (htmlspecialchars($tooltip));
+		$title = (htmlspecialchars($title));
+	
+		if ($title) {
+			$title = $title.'::';
+		}
+	
+		if ($href) {
+			$href = JRoute::_($href);
+			$style = '';
+			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'"><a href="'.$href.'">'.$text.'</a></span>';
+		} else {
+			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'">'.$text.'</span>';
+		}
+	
+		return $tip;
+	}
+	
 
 }
 ?>

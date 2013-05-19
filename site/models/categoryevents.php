@@ -77,6 +77,8 @@ class JEMModelCategoryevents extends JModelLegacy
 		parent::__construct();
 
 		$app =  JFactory::getApplication();
+		
+		$this->setdate(time());
 
 		// Get the paramaters of the active menu item
 		$params 	=  $app->getParams();
@@ -96,6 +98,11 @@ class JEMModelCategoryevents extends JModelLegacy
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
 
+	}
+	
+	function setdate($date)
+	{
+		$this->_date = $date;
 	}
 
 	/**
@@ -228,7 +235,7 @@ class JEMModelCategoryevents extends JModelLegacy
 		//Get Events from Database
 		$query = 'SELECT DISTINCT a.id, a.datimage, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.datdescription, a.created, '
 			. ' a.maxplaces, a.waitinglist, '
-			. ' l.venue, l.city, l.state, l.url, c.catname, l.street, ct.name AS countryname, '
+			. ' l.venue, l.city, l.state, l.url, c.color, c.catname, l.street, ct.name AS countryname, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 				. ' FROM #__jem_events AS a'
@@ -508,7 +515,7 @@ class JEMModelCategoryevents extends JModelLegacy
 			}
 		}
 
-		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
+		$query = 'SELECT DISTINCT c.id, c.catname, c.color, c.access, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
 				. ' FROM #__jem_categories AS c'
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'

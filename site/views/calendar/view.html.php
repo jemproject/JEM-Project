@@ -24,8 +24,6 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 
-require_once (JPATH_COMPONENT_SITE.'/classes/calendar.class.php');
-
 /**
  * HTML View class for the Calendar View
  *
