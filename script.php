@@ -7,7 +7,7 @@ jimport('joomla.filesystem.folder');
 
 /**
  * Script file of JEM component
- */
+*/
 class com_jemInstallerScript
 {
 	/**
@@ -15,48 +15,48 @@ class com_jemInstallerScript
 	 *
 	 * @return void
 	 */
-	function install($parent) 
+	function install($parent)
 	{
-//		$parent->getParent()->setRedirectURL('index.php?option=com_jem');
+		//		$parent->getParent()->setRedirectURL('index.php?option=com_jem');
 		$error = array(
-			'summary' => 0,
-			'folders' => 0,
-			'settings' => 0
-			);
+				'summary' => 0,
+				'folders' => 0,
+				'settings' => 0
+		);
 		?>
-		<table class="adminlist">
-			<tr>
-				<td valign="top">
-					<img src="../media/com_jem/images/jemlogo.png" height="100" width="250" alt="jem Logo" align="left">
-				</td>
-				<td valign="top" width="100%">
-					<h1>JEM</h1>
-					<p class="small">
-						by <a href="http://www.joomlaeventmanager.net" target="_blank">joomlaeventmanager.net</a><br/>
-						Released under the terms and conditions of the 
-						<a href="http://www.gnu.org/licenses/gpl-2.0.html" target="_blank">GNU General Public License</a>.
-					</p>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2">
-					<h2>Installation Status:</h2>
-					<h3>Check Folders:</h3>
-		<?php
-		$imageDir = "/images/jem";
+<table class="adminlist">
+	<tr>
+		<td valign="top"><img src="../media/com_jem/images/jemlogo.png"
+			height="100" width="250" alt="jem Logo" align="left">
+		</td>
+		<td valign="top" width="100%">
+			<h1>JEM</h1>
+			<p class="small">
+				by <a href="http://www.joomlaeventmanager.net" target="_blank">joomlaeventmanager.net</a><br />
+				Released under the terms and conditions of the <a
+					href="http://www.gnu.org/licenses/gpl-2.0.html" target="_blank">GNU
+					General Public License</a>.
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<h2>Installation Status:</h2>
+			<h3>Check Folders:</h3> <?php
+			$imageDir = "/images/jem";
 
-		$createDirs = array(
-			$imageDir,
-			$imageDir.'/categories',
-			$imageDir.'/categories/small',
-			$imageDir.'/events',
-			$imageDir.'/events/small',
-			$imageDir.'/venues',
-			$imageDir.'/venues/small'
+			$createDirs = array(
+					$imageDir,
+					$imageDir.'/categories',
+					$imageDir.'/categories/small',
+					$imageDir.'/events',
+					$imageDir.'/events/small',
+					$imageDir.'/venues',
+					$imageDir.'/venues/small'
 			);
 
-		// Check for existance of /images/jem directory
-		if ($direxists = JFolder::exists(JPATH_SITE.$createDirs[0])) {
+			// Check for existance of /images/jem directory
+			if ($direxists = JFolder::exists(JPATH_SITE.$createDirs[0])) {
 			echo "<p><span style='color:green;'>Success:</span> Directory <i>$createDirs[0]</i> already exists. Skipping creation.</p>";
 		} else {
 			echo "<p><span style='color:orange;'>Info:</span> Directory <i>$createDirs[0]</i> does NOT exist.</p>";
@@ -77,12 +77,12 @@ class com_jemInstallerScript
 
 		if($error['folders']) {
 		?>
-					<p>
-						Please check the existance of the listed directories.<br />
-						If they do not exist, create them and ensure JEM has write access to these directories.<br />
-						If you don't so, you prevent JEM from functioning correctly. (You can't upload images).
-					</p>
-		<?php
+			<p>
+				Please check the existance of the listed directories.<br /> If they
+				do not exist, create them and ensure JEM has write access to these
+				directories.<br /> If you don't so, you prevent JEM from functioning
+				correctly. (You can't upload images).
+			</p> <?php
 		}
 
 		echo "<h3>Settings</h3>";
@@ -94,7 +94,7 @@ class com_jemInstallerScript
 
 		if(!$db->loadResult()) {
 			$query = "INSERT INTO #__jem_settings VALUES (1, 2, 1, 1, 1, 1, 1, 1, '1', '1', '100%', '20%', '40%', '20%', '', "
-					."'D, j. F Y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, 0, 'example@example.com', 0, '1000', -2, -2, -2, 1, '', "
+	 				."'D, j. F Y', 'f.j.y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, 0, 'example@example.com', 0, '1000', -2, -2, -2, 1, '', "
 					."1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, '[title], [a_name], [categories], [times]', "
 					."'The event titled [title] starts on [dates]!', 1, 0, '0', 0, 1, 0, '1364604520', '', '', 'COM', 'US', '100', '10%', 0, "
 					."'0', 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, '10%', 1, 30, 1, 1, 'media/com_jem/attachments', '1000', "
@@ -121,18 +121,20 @@ class com_jemInstallerScript
 
 		if($error['summary']) {
 		?>
-					<p style='color:red;'><b>JEM was NOT installed successfully!</b></p>
-		<?php
+			<p style='color: red;'>
+				<b>JEM was NOT installed successfully!</b>
+			</p> <?php
 		} else {
 		?>
-					<p style='color:green;'><b>JEM was installed successfully!</b> Have Fun.</p>
-		<?php
+			<p style='color: green;'>
+				<b>JEM was installed successfully!</b> Have Fun.
+			</p> <?php
 		}
 		?>
-				</td>
-			</tr>
-		</table>
-		<?php
+		</td>
+	</tr>
+</table>
+<?php
 	}
 
 	/**
@@ -140,12 +142,12 @@ class com_jemInstallerScript
 	 *
 	 * @return void
 	 */
-	function uninstall($parent) 
+	function uninstall($parent)
 	{
 		?>
-		<h2>Uninstall Status:</h2>
-		<?php
-		echo '<p>' . JText::_('COM_JEM_UNINSTALL_TEXT') . '</p>';
+<h2>Uninstall Status:</h2>
+<?php
+echo '<p>' . JText::_('COM_JEM_UNINSTALL_TEXT') . '</p>';
 	}
 
 	/**
@@ -153,12 +155,12 @@ class com_jemInstallerScript
 	 *
 	 * @return void
 	 */
-	function update($parent) 
+	function update($parent)
 	{
 		?>
-		<h2>Update Status:</h2>
-		<?php
-		echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->version) . '</p>';
+<h2>Update Status:</h2>
+<?php
+echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->version) . '</p>';
 	}
 
 	/**
@@ -166,7 +168,7 @@ class com_jemInstallerScript
 	 *
 	 * @return void
 	 */
-	function preflight($type, $parent) 
+	function preflight($type, $parent)
 	{
 		$jversion = new JVersion();
 
@@ -201,7 +203,7 @@ class com_jemInstallerScript
 	 *
 	 * @return void
 	 */
-	function postflight($type, $parent) 
+	function postflight($type, $parent)
 	{
 		// $type is the type of change (install, update or discover_install)
 		echo '<p>' . JText::_('COM_JEM_POSTFLIGHT_' . $type . '_TEXT') . '</p>';
@@ -209,9 +211,9 @@ class com_jemInstallerScript
 
 	/**
 	 * Get a parameter from the manifest file (actually, from the manifest cache).
-	 * 
+	 *
 	 * @param $name  The name of the parameter
-	 * 
+	 *
 	 * @return The parameter
 	 */
 	function getParam($name) {
@@ -223,8 +225,8 @@ class com_jemInstallerScript
 
 	/**
 	 * Sets parameter values in the component's row of the extension table
-	 * 
-	 * @param $param_array  An array holding the params to store 
+	 *
+	 * @param $param_array  An array holding the params to store
 	 */
 	function setParams($param_array) {
 		if (count($param_array) > 0) {
