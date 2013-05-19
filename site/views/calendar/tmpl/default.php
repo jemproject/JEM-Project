@@ -138,7 +138,7 @@ defined('_JEXEC') or die;
         
 		//generate the output
 		$content .= $colorpic;       
-		$content .= $this->caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'eventTip');
+		$content .= $this->caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip');
        	$content .= $contentend;
     
         $this->cal->setEventContent($year, $month, $day, $content);

@@ -106,7 +106,7 @@ class JEMViewCalendar extends JViewLegacy
      * @return  string
      * @since 1.5
      */
-    function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = 'editlinktip hasTip')
+    function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '')
     {
         $tooltip = (htmlspecialchars($tooltip));
         $title = (htmlspecialchars($title));
