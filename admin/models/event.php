@@ -69,7 +69,7 @@ class JEMModelEvent extends JModelLegacy
 	function setId($id)
 	{
 		// Set event id and wipe data
-		$this->_id	    = $id;
+		$this->_id		= $id;
 		$this->_data	= null;
 	}
 
@@ -83,7 +83,7 @@ class JEMModelEvent extends JModelLegacy
 		{
 
 		}
-		else  $this->_initData();
+		else $this->_initData();
 
 		return $this->_data;
 	}
@@ -131,57 +131,57 @@ class JEMModelEvent extends JModelLegacy
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
 		{
-            $createdate =  JFactory::getDate();
-            $user =  JFactory::getUser();
+			$createdate = JFactory::getDate();
+			$user = JFactory::getUser();
 
-            $event = new stdClass();
-            $event->id					= 0;
-            $event->locid				= 0;
-            //$event->categories			= '';
-            $event->dates				= null;
-            $event->enddates			= null;
-            $event->times				= null;
-            $event->endtimes			= null;
-            $event->title				= '';
-            $event->alias				= '';
-            $event->created				= $createdate->toUnix();
-            $event->author_ip			= '';
-            $event->created_by			= $user->get('id');
-            $event->published			= 1;
-            $event->registra			= 0;
-            $event->unregistra			= 0;
-            $event->maxplaces			= 0;
-            $event->booked				= 0;
-            $event->waitinglist			= 0;
-            $event->datdescription		= '';
-            $event->meta_keywords		= '';
-            $event->meta_description	= '';
-            $event->recurrence_number	= 0;
-            $event->recurrence_type		= 0;
-            $event->recurrence_limit_date	= '0000-00-00';
-            $event->recurrence_limit 	= 0;
-            $event->recurrence_counter 	= 0;
-            $event->recurrence_byday 	= '';
-            $event->datimage			= '';
-            $event->venue				= JText::_('COM_JEM_SELECTVENUE');
-            $event->hits				= 0;
-            $event->contactname			= null;
-            $event->contactid			= null;
-            $event->custom1				= null;
-            $event->custom2				= null;
-            $event->custom3				= null;
-            $event->custom4				= null;
-            $event->custom5				= null;
-            $event->custom6				= null;
-            $event->custom7				= null;
-            $event->custom8				= null;
-            $event->custom9				= null;
-            $event->custom10			= null;
-            $event->version				= 0;
-            $event->modified			= $this->_db->getNullDate();
-            $event->attachments			= array();
-            $this->_data				= $event;
-            return (boolean) $this->_data;
+			$event = new stdClass();
+			$event->id					= 0;
+			$event->locid				= 0;
+			//$event->categories		= '';
+			$event->dates				= null;
+			$event->enddates			= null;
+			$event->times				= null;
+			$event->endtimes			= null;
+			$event->title				= '';
+			$event->alias				= '';
+			$event->created				= $createdate->toUnix();
+			$event->author_ip			= '';
+			$event->created_by			= $user->get('id');
+			$event->published			= 1;
+			$event->registra			= 0;
+			$event->unregistra			= 0;
+			$event->maxplaces			= 0;
+			$event->booked				= 0;
+			$event->waitinglist			= 0;
+			$event->datdescription		= '';
+			$event->meta_keywords		= '';
+			$event->meta_description	= '';
+			$event->recurrence_number	= 0;
+			$event->recurrence_type		= 0;
+			$event->recurrence_limit_date	= '0000-00-00';
+			$event->recurrence_limit 	= 0;
+			$event->recurrence_counter 	= 0;
+			$event->recurrence_byday 	= '';
+			$event->datimage			= '';
+			$event->venue				= JText::_('COM_JEM_SELECTVENUE');
+			$event->hits				= 0;
+			$event->contactname			= null;
+			$event->contactid			= null;
+			$event->custom1				= null;
+			$event->custom2				= null;
+			$event->custom3				= null;
+			$event->custom4				= null;
+			$event->custom5				= null;
+			$event->custom6				= null;
+			$event->custom7				= null;
+			$event->custom8				= null;
+			$event->custom9				= null;
+			$event->custom10			= null;
+			$event->version				= 0;
+			$event->modified			= $this->_db->getNullDate();
+			$event->attachments			= array();
+			$this->_data				= $event;
+			return (boolean) $this->_data;
 		}
 		return true;
 	}
@@ -199,10 +199,10 @@ class JEMModelEvent extends JModelLegacy
 	function _getBooked()
 	{
 		$query = ' SELECT count(id) '
-		       . ' FROM #__jem_register '
-		       . ' WHERE event = ' . $this->_db->Quote($this->_data->id)
-		       . '   AND waiting = 0 '
-		       ;
+			   . ' FROM #__jem_register '
+			   . ' WHERE event = ' . $this->_db->Quote($this->_data->id)
+			   . '   AND waiting = 0 '
+			   ;
 		$this->_db->setQuery($query);
 		$res = $this->_db->loadResult();
 		$this->_data->booked = $res;
@@ -219,7 +219,7 @@ class JEMModelEvent extends JModelLegacy
 	{
 		if ($this->_id)
 		{
-			$event =  JTable::getInstance('jem_events', '');
+			$event = JTable::getInstance('jem_events', '');
 			return $event->checkin($this->_id);
 		}
 		return false;
@@ -243,7 +243,7 @@ class JEMModelEvent extends JModelLegacy
 				$uid	= $user->get('id');
 			}
 			// Lets get to it and checkout the thing...
-			$event =  JTable::getInstance('jem_events', '');
+			$event = JTable::getInstance('jem_events', '');
 			return $event->checkout($uid, $this->_id);
 		}
 		return false;
@@ -286,9 +286,9 @@ class JEMModelEvent extends JModelLegacy
 		//$app = JFactory::getApplication();
 
 		$jemsettings = JEMAdmin::config();
-		$user		=  JFactory::getUser();
+		$user = JFactory::getUser();
 
-		$cats 		= JRequest::getVar( 'cid', array(), 'post', 'array');
+		$cats = JRequest::getVar( 'cid', array(), 'post', 'array');
 
 		$row = JTable::getInstance('jem_events', '');
 
@@ -307,6 +307,31 @@ class JEMModelEvent extends JModelLegacy
 		$row->times		= $starthours.':'.$startminutes;
 		$row->endtimes	= $endhours.':'.$endminutes;
 
+		// Check begin date is before end date
+		if($row->enddates == '0000-00-00' || $row->enddates == null) {
+			if($row->endtimes == '00:00') {
+				// Specials case: endtime is 00:00
+				$date1 = new DateTime('00:00:00');
+				$date2 = new DateTime($row->endtimes.':00');
+			} else {
+				$date1 = new DateTime($row->times.':00');
+				$date2 = new DateTime($row->endtimes.':00');
+			}
+		} else {
+			if($row->endtimes == '00:00') {
+				// Specials case: endtime is 00:00
+				$date1 = new DateTime($row->dates.' '.'00:00:00');
+				$date2 = new DateTime($row->enddates.' '.$row->endtimes.':00');
+			} else {
+				$date1 = new DateTime($row->dates.' '.$row->times.':00');
+				$date2 = new DateTime($row->enddates.' '.$row->endtimes.':00');
+			}
+		}
+		if($date1 > $date2) {
+			JError::raiseWarning('SOME_ERROR_CODE', JText::_('COM_JEM_ERROR_END_BEFORE_START'));
+			return false;
+		}
+
 		// Check the metatags
 		if (JString::strlen($row->meta_description) > 255) {
 			$row->meta_description = JString::substr($row->meta_description, 0, 254);
@@ -318,7 +343,7 @@ class JEMModelEvent extends JModelLegacy
 
 		//Check if image was selected
 		jimport('joomla.filesystem.file');
-		$format 	= JFile::getExt('JPATH_SITE/images/jem/events/'.$row->datimage);
+		$format = JFile::getExt('JPATH_SITE/images/jem/events/'.$row->datimage);
 
 		$allowable 	= array ('gif', 'jpg', 'png');
 		if (in_array($format, $allowable)) {
@@ -341,9 +366,9 @@ class JEMModelEvent extends JModelLegacy
 			$row->modified_by 	= '';
 
 			//get IP, time and userid
-			$row->created 			= gmdate('Y-m-d H:i:s');
+			$row->created 		= gmdate('Y-m-d H:i:s');
 
-			$row->author_ip 		= $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
+			$row->author_ip 	= $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
 		}
 
 		$row->version++;
@@ -431,7 +456,7 @@ class JEMModelEvent extends JModelLegacy
 	 */
 	function resetHits($id)
 	{
-		$row  = $this->getTable('jem_events', '');
+		$row = $this->getTable('jem_events', '');
 		$row->load($id);
 		$row->hits = 0;
 		$row->store();
