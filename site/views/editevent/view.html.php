@@ -193,12 +193,13 @@ class JEMViewEditevent extends JViewLegacy
 	function _displaychoosevenue($tpl)
 	{
 		$app =  JFactory::getApplication();
+		$jemsettings =  JEMHelper::config();
 
 		$document	=  JFactory::getDocument();
 		$params 	=  $app->getParams();
 
 		$limitstart			= JRequest::getVar('limitstart', 0, '', 'int');
-		$limit				= $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit				= $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
 		$filter_order		= JRequest::getCmd('filter_order', 'l.venue');
 		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', 'ASC');;
 		$filter				= JRequest::getString('filter');

@@ -128,6 +128,16 @@ defined('_JEXEC') or die;
 											<input type="text" name="ical_max_items" value="<?php echo $this->jemsettings->ical_max_items; ?>" size="3" maxlength="3" />
 										</td>
 									</tr>
+									<tr>
+										<td width="300" class="key">
+											<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EVENT_NUMBER' ); ?>::<?php echo JText::_('COM_JEM_EVENT_NUMBER_TIP'); ?>">
+												<?php echo JText::_( 'COM_JEM_EVENT_NUMBER' ); ?>
+											</span>
+										</td>
+										<td valign="top">
+											<input type="text" name="display_num" value="<?php echo $this->jemsettings->display_num; ?>" size="3" maxlength="3" />
+										</td>
+									</tr>
 
 									<tr valign="top">
 										<td width="300" class="key">

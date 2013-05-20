@@ -260,7 +260,7 @@ class JEMViewCategoryevents extends JViewLegacy
         //init calendar
 		$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
 		$cal->enableMonthNav('index.php?view=categoryevents&layout=calendar&id='. $category->slug);
-		$cal->setFirstWeekDay($params->get('firstweekday', 1));
+		$cal->setFirstWeekDay($jemsettings->weekdaystart);
 		//$cal->enableDayLinks(false);
 				
 		$this->rows 		= $rows;

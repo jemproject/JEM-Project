@@ -87,7 +87,7 @@ class JEMViewJEM extends JViewLegacy {
 		if (JFactory::getUser()->authorise('core.manage')) {
 			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
 		}
-		JToolBarhelper::preferences('com_jem');
+		/*JToolBarhelper::preferences('com_jem');*/
 		
 	}
 	

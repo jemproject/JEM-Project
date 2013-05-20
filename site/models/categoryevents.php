@@ -77,6 +77,7 @@ class JEMModelCategoryevents extends JModelLegacy
 		parent::__construct();
 
 		$app =  JFactory::getApplication();
+		$jemsettings =  JEMHelper::config();
 		
 		$this->setdate(time());
 
@@ -92,7 +93,7 @@ class JEMModelCategoryevents extends JModelLegacy
 		$this->setId((int)$id);
 
 		//get the number of events from database
-		$limit			= $app->getUserStateFromRequest('com_jem.categoryevents.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit			= $app->getUserStateFromRequest('com_jem.categoryevents.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart 	= $app->getUserStateFromRequest('com_jem.categoryevents.limitstart', 'limitstart', 0, 'int');
 		
 		$this->setState('limit', $limit);

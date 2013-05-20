@@ -71,6 +71,7 @@ class JEMModelVenueevents extends JModelLegacy
 		parent::__construct();
 
 		$app =  JFactory::getApplication();
+		$jemsettings =  JEMHelper::config();
 
 		$id = JRequest::getInt('id');
 		$this->setId((int)$id);
@@ -79,7 +80,7 @@ class JEMModelVenueevents extends JModelLegacy
 		$params 	=  $app->getParams('com_jem');
 
 		//get the number of events from database
-		$limit       	= $app->getUserStateFromRequest('com_jem.venueevents.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit       	= $app->getUserStateFromRequest('com_jem.venueevents.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart 	= $app->getUserStateFromRequest('com_jem.venueevents.limitstart', 'limitstart', 0, 'int');
 
 		$this->setState('limit', $limit);
