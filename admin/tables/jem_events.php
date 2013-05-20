@@ -136,11 +136,21 @@ class jem_events extends JTable
 			$this->enddates = NULL;
 		}
 
-		if ($this->times == '00:00') {
+		if (preg_match("/^:[0-5][0-9](:[0-5][0-9])?$/", $this->times)) {
+			$this->_error = JText::_( 'WRONGSTARTTIMEFORMAT'.': '.$this->times );
+			JError::raiseWarning('SOME_ERROR_CODE', $this->_error );
+			return false;
+		}
+		if (empty($this->times) || preg_match("/^:[0-5][0-9](:[0-5][0-9])?$/", $this->times)) {
 			$this->times = NULL;
 		}
-
-		if ($this->endtimes == '00:00') {
+		if (preg_match("/^:[0-5][0-9](:[0-5][0-9])?$/", $this->endtimes)) {
+			$this->_error = JText::_( 'WRONGENDTIMEFORMAT'.': '.$this->endtimes );
+			JError::raiseWarning('SOME_ERROR_CODE', $this->_error );
+			return false;
+		}
+		if (empty($this->endtimes) || empty($this->times) || preg_match("/^:[0-5][0-9](:[0-5][0-9])?$/", $this->endtimes)
+			 || preg_match("/^:[0-5][0-9](:[0-5][0-9])?$/", $this->times)) {
 			$this->endtimes = NULL;
 		}
 

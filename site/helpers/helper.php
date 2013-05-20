@@ -369,12 +369,13 @@ class JEMHelper {
 	static function buildtimeselect($max, $name, $selected, $class = 'class="inputbox"')
 	{
 		$timelist = array();
+		$timelist[0] = JHTML::_('select.option', '', '');
 
-		foreach(range(0, $max) as $wert) {
-			if(strlen($wert) == 2) {
-				$timelist[] = JHTML::_('select.option', $wert, $wert);
-			}else{
-				$timelist[] = JHTML::_('select.option', '0'.$wert, '0'.$wert);
+		foreach(range(0, $max) as $value) {
+			if($value >= 10) {
+				$timelist[] = JHTML::_('select.option', $value, $value);
+			} else {
+				$timelist[] = JHTML::_('select.option', '0'.$value, '0'.$value);
 			}
 		}
 		return JHTML::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
@@ -719,7 +720,7 @@ class JEMHelper {
 		$date = array('year' => (int) $start_date[1], 'month' => (int) $start_date[2], 'day' => (int) $start_date[3]);
 
 		// all day event if start time is not set
-		if (!$event->times || $event->times == '00:00:00') // all day !
+		if (!$event->times) // all day !
 		{
 			$dateparam = array('VALUE' => 'DATE');
 

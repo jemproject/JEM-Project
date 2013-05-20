@@ -31,25 +31,20 @@ defined('_JEXEC') or die;
 class JEMAdmin {
 
 	/**
-	* Writes footer. 
+	* Writes footer.
 	*
 	* @since 0.9
 	*/
-static	function footer( )
+	static function footer()
 	{
-        $params =  JComponentHelper::getParams('com_jem');
-     
-       /* if ($params->get('copyright') == 1) { */
-		echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
-       /*  
-        } else {
-	     echo '';   
-        } 
-        */
+		$params =  JComponentHelper::getParams('com_jem');
 
+		// if ($params->get('copyright') == 1) {
+		echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
+		// }
 	}
 
-static	function config()
+	static function config()
 	{
 		$db = JFactory::getDBO();
 
@@ -59,19 +54,20 @@ static	function config()
 
 		return $config;
 	}
-	
-static	function buildtimeselect($max, $name, $selected, $class = 'class="inputbox"')
-	{
-		$timelist 	= array();
 
-		foreach(range(0, $max) as $wert) {
-		    if(strlen($wert) == 2) {
-				$timelist[] = JHTML::_( 'select.option', $wert, $wert);
-    		}else{
-      			$timelist[] = JHTML::_( 'select.option', '0'.$wert, '0'.$wert);
-    		}
+	static function buildtimeselect($max, $name, $selected, $class = 'class="inputbox"')
+	{
+		$timelist = array();
+		$timelist[0] = JHTML::_('select.option', '', '');
+
+		foreach(range(0, $max) as $value) {
+			if($value >= 10) {
+				$timelist[] = JHTML::_('select.option', $value, $value);
+			} else {
+				$timelist[] = JHTML::_('select.option', '0'.$value, '0'.$value);
+			}
 		}
-		return JHTML::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected );
+		return JHTML::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
 	}
 }
 

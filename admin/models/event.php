@@ -299,32 +299,46 @@ class JEMModelEvent extends JModelLegacy
 		}
 
 		//get values from time selectlist and concatenate them accordingly
-		$starthours		= JRequest::getCmd( 'starthours');
-		$startminutes	= JRequest::getCmd( 'startminutes');
-		$endhours		= JRequest::getCmd( 'endhours');
-		$endminutes		= JRequest::getCmd( 'endminutes');
+		$starthours		= JRequest::getCmd('starthours');
+		$startminutes	= JRequest::getCmd('startminutes');
+		$endhours		= JRequest::getCmd('endhours');
+		$endminutes		= JRequest::getCmd('endminutes');
 
-		$row->times		= $starthours.':'.$startminutes;
-		$row->endtimes	= $endhours.':'.$endminutes;
+		// Emtpy time values are allowed and are stored as null values
+		if ($starthours != '') {
+			if ($startminutes == '') {
+				$startminutes = '00';
+			}
+			$row->times = $starthours.':'.$startminutes;
+			if ($endhours != '') {
+				if ($endminutes == '') {
+					$endminutes = '00';
+				}
+				$row->endtimes = $endhours.':'.$endminutes;
+			}
+		}
 
 		// Check begin date is before end date
+
+		// Check if end date is set
 		if($row->enddates == '0000-00-00' || $row->enddates == null) {
-			if($row->endtimes == '00:00') {
-				// Specials case: endtime is 00:00
-				$date1 = new DateTime('00:00:00');
-				$date2 = new DateTime($row->endtimes.':00');
+			// Check if end time is set
+			if($row->endtimes == null) {
+				// Compare is not needed, but make sure the check passes
+				$date1 = new DateTime('00:00');
+				$date2 = new DateTime('00:00');
 			} else {
-				$date1 = new DateTime($row->times.':00');
-				$date2 = new DateTime($row->endtimes.':00');
+				$date1 = new DateTime($row->times);
+				$date2 = new DateTime($row->endtimes);
 			}
 		} else {
-			if($row->endtimes == '00:00') {
-				// Specials case: endtime is 00:00
-				$date1 = new DateTime($row->dates.' '.'00:00:00');
-				$date2 = new DateTime($row->enddates.' '.$row->endtimes.':00');
+			// Check if end time is set
+			if($row->endtimes == null) {
+				$date1 = new DateTime($row->dates);
+				$date2 = new DateTime($row->enddates);
 			} else {
-				$date1 = new DateTime($row->dates.' '.$row->times.':00');
-				$date2 = new DateTime($row->enddates.' '.$row->endtimes.':00');
+				$date1 = new DateTime($row->dates.' '.$row->times);
+				$date2 = new DateTime($row->enddates.' '.$row->endtimes);
 			}
 		}
 		if($date1 > $date2) {

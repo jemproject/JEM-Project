@@ -577,8 +577,47 @@ class JEMModelEditevent extends JModelLegacy
 		$endhours		= JRequest::getCmd( 'endhours');
 		$endminutes		= JRequest::getCmd( 'endminutes');
 
-		$row->times		= $starthours.':'.$startminutes;
-		$row->endtimes	= $endhours.':'.$endminutes;
+		// Emtpy time values are allowed and are stored as null values
+		if ($starthours != '') {
+			if ($startminutes == '') {
+				$startminutes = '00';
+			}
+			$row->times = $starthours.':'.$startminutes;
+			if ($endhours != '') {
+				if ($endminutes == '') {
+					$endminutes = '00';
+				}
+				$row->endtimes = $endhours.':'.$endminutes;
+			}
+		}
+
+		// Check begin date is before end date
+
+		// Check if end date is set
+		if($row->enddates == '0000-00-00' || $row->enddates == null) {
+			// Check if end time is set
+			if($row->endtimes == null) {
+				// Compare is not needed, but make sure the check passes
+				$date1 = new DateTime('00:00');
+				$date2 = new DateTime('00:00');
+			} else {
+				$date1 = new DateTime($row->times);
+				$date2 = new DateTime($row->endtimes);
+			}
+		} else {
+			// Check if end time is set
+			if($row->endtimes == null) {
+				$date1 = new DateTime($row->dates);
+				$date2 = new DateTime($row->enddates);
+			} else {
+				$date1 = new DateTime($row->dates.' '.$row->times);
+				$date2 = new DateTime($row->enddates.' '.$row->endtimes);
+			}
+		}
+		if($date1 > $date2) {
+			JError::raiseWarning('SOME_ERROR_CODE', JText::_('COM_JEM_ERROR_END_BEFORE_START'));
+			return false;
+		}
 
 		//Are we saving from an item edit?
 		if ($row->id) {
