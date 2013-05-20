@@ -116,6 +116,8 @@ class JEMViewVenues extends JViewLegacy {
 	JToolBarHelper::spacer();
 	JToolBarHelper::deleteList();
 	JToolBarHelper::spacer();
+	JToolBarHelper::custom( 'copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
+	JToolBarHelper::spacer();
 	JToolBarHelper::help( 'el.listvenues', true );
 	
 	//Create Submenu

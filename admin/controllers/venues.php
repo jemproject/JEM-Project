@@ -46,6 +46,7 @@ class JEMControllerVenues extends JEMController
 		// Register Extra task
 		$this->registerTask( 'add', 		'edit' );
 		$this->registerTask( 'apply', 		'save' );
+		$this->registerTask( 'copy',	 	'edit' );
 	}
 
 	/**
@@ -191,7 +192,12 @@ class JEMControllerVenues extends JEMController
 		JRequest::setVar( 'hidemainmenu', 1 );
 
 		$model 	= $this->getModel('venue');
-		$user	= JFactory::getUser();
+		$task 	= JRequest::getVar('task');
+
+		if ($task == 'copy') {
+			JRequest::setVar( 'task', $task );
+		} else {
+			$user	= JFactory::getUser();
 
 		// Error if checkedout by another administrator
 		if ($model->isCheckedOut( $user->get('id') )) {
@@ -200,6 +206,7 @@ class JEMControllerVenues extends JEMController
 
 		$model->checkout();
 		
+		}
 		parent::display();
 	}
 

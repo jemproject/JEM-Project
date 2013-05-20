@@ -486,12 +486,22 @@ if ( $this->settings->showmapserv == 0 ) { ?>
 }
 ?>
 	<?php echo JHTML::_( 'form.token' ); ?>
-	<input type="hidden" name="controller" value="venues" />
+	<input type="hidden" name="option" value="com_jem" />
+<input type="hidden" name="controller" value="venues" />
+<input type="hidden" name="view" value="venue" />
+<input type="hidden" name="task" value="" />
+<?php if ($this->task == 'copy') {?>
+	<input type="hidden" name="id" value="" />
+	<input type="hidden" name="created" value="" />
+	<input type="hidden" name="author_ip" value="" />
+	<input type="hidden" name="created_by" value="" />
+	<input type="hidden" name="version" value="" />
+<?php } else {	?>
 	<input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
 	<input type="hidden" name="created" value="<?php echo $this->row->created; ?>" />
 	<input type="hidden" name="author_ip" value="<?php echo $this->row->author_ip; ?>" />
 	<input type="hidden" name="version" value="<?php echo $this->row->version;?>" />
-	<input type="hidden" name="task" value="" />
+<?php } ?>
 </form>
 
 <p class="copyright">

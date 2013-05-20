@@ -53,6 +53,7 @@ class JEMViewVenue extends JViewLegacy {
 
 		//get vars
 		$cid 			= JRequest::getVar( 'cid' );
+		$task		= JRequest::getVar('task');
 
 		//add css and js to document
 		$document->addScript(JURI::root().'media/com_jem/js/attachments.js' );
@@ -107,6 +108,7 @@ class JEMViewVenue extends JViewLegacy {
 		$this->lists		= $lists;
 		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access		= $access2;
+		$this->task 		= $task;
 
 		// add toolbar
 		$this->addToolbar();
@@ -125,9 +127,12 @@ class JEMViewVenue extends JViewLegacy {
 		
 		//get vars
 		$cid 			= JRequest::getVar( 'cid' );
+		$task		= JRequest::getVar('task');
 		
-		//create the toolbar
-		if ( $cid ) {
+				//build toolbar
+		if ($task == 'copy') {
+			JToolBarHelper::title( JText::_( 'COM_JEM_COPY_VENUE'), 'venuesedit');
+		} elseif ( $cid ) { 
 			JToolBarHelper::title( JText::_( 'COM_JEM_EDIT_VENUE' ), 'venuesedit' );
 		
 			//makes data safe
