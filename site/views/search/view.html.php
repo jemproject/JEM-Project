@@ -61,8 +61,8 @@ class JEMViewSearch extends JViewLegacy
 		$document->addScript( $this->baseurl.'/media/com_jem/js/search.js' );
 
 		// get variables
-		$limitstart			= JRequest::getVar('limitstart', 0, '', 'int');
-		$limit				= $app->getUserStateFromRequest('com_jem.search.limit', 'limit', $params->def('display_num', 0), 'int');
+		//$limitstart			= JRequest::getVar('limitstart', 0, '', 'int');
+		//$limit				= $app->getUserStateFromRequest('com_jem.search.limit', 'limit', $params->def('display_num', 0), 'int');
 		$filter_continent	= $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
 		$filter_country		= $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
 		$filter_city		= $app->getUserStateFromRequest('com_jem.search.filter_city', 'filter_city', '', 'string');

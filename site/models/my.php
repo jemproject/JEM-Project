@@ -80,12 +80,13 @@ class JEMModelMy extends JModelLegacy
         parent::__construct();
 
         $app =  JFactory::getApplication();
-
+        $jemsettings =  JEMHelper::config();
+        
         // Get the paramaters of the active menu item
         $params =  $app->getParams('com_jem');
 
         //get the number of events from database
-        $limit = $app->getUserStateFromRequest('com_jem.my.limit', 'limit', $params->def('display_num', 0), 'int');
+        $limit = $app->getUserStateFromRequest('com_jem.my.limit', 'limit', $jemsettings->display_num, 'int');
         $limitstart_events = JRequest::getVar('limitstart_events', 0, '', 'int');
         $limitstart_venues = JRequest::getVar('limitstart_venues', 0, '', 'int');
         $limitstart_attending = JRequest::getVar('limitstart_attending', 0, '', 'int');

@@ -64,12 +64,13 @@ class JEMModelSearch extends JModelLegacy
 		parent::__construct();
 
 		$app =  JFactory::getApplication();
+		$jemsettings =  JEMHelper::config();
 
 		// Get the paramaters of the active menu item
 		$params 	=  $app->getParams('com_jem');
 
 		//get the number of events from database
-		$limit       	= $app->getUserStateFromRequest('com_jem.search.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit       	= $app->getUserStateFromRequest('com_jem.search.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart		= JRequest::getVar('limitstart', 0, '', 'int');
 			
 		$this->setState('limit', $limit);
