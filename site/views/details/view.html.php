@@ -52,6 +52,28 @@ class JEMViewDetails extends JViewLegacy
 		$registers		= $this->get('Registers');
 		$isregistered	= $this->get('UserIsRegistered');
 
+		// canonical link (from Joomla SEF)
+		// @todo sort out Itemid's
+		$router = $app->getRouter();
+		$uri     = JUri::getInstance();
+		$domain  = $params->get('domain');
+		
+		if ($domain === null || $domain === '')
+		{
+			$domain = $uri->toString(array('scheme', 'host', 'port'));
+		}
+		
+			$parsed = $router->parse($uri);
+			$fakelink = 'index.php?' . http_build_query($parsed);
+			//var_dump($fakelink);
+			$link = $domain . JRoute::_($fakelink, false);
+			//var_dump($link);
+		
+				if ($uri !== $link)
+		{
+		
+			$document->addHeadLink(($link), 'canonical');
+		}
 		
 		
 		//get menu information
@@ -275,8 +297,11 @@ class JEMViewDetails extends JViewLegacy
 				}
 				break;
 			case "dates":
+				$content = JEMOutput::formatShortDateTime($row->$keyword, null, null, null);
+				break;
 			case "enddates":
-				$content = strftime($formatdate ,strtotime($row->$keyword));
+				//$content = strftime($formatdate ,strtotime($row->$keyword));
+				$content = JEMOutput::formatShortDateTime(null, null, $row->keyword, null);
 				break;
 			default:
 				$content = "";
