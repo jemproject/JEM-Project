@@ -37,10 +37,10 @@ JHTML::_('behavior.tooltip');
 	</tr>
 </table>
 
-<table class="adminlist">
+<table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
-			<th width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th class="center" width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'Name', 'u.name', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'Username', 'u.username', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'Email', 'u.email', $this->lists['order_Dir'], $this->lists['order'], 'selectuser' ); ?></th>
@@ -62,7 +62,7 @@ JHTML::_('behavior.tooltip');
 				$row = $this->rows[$i];
 		?>
 		<tr class="<?php echo "row$k"; ?>">
-			<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td>
 				<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_SELECT');?>::<?php echo $row->name; ?>">
 				<a style="cursor:pointer" onclick="window.parent.elSelectUser('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->username ); ?>');">

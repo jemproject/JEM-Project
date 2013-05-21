@@ -39,15 +39,15 @@ defined('_JEXEC') or die;
 	</tr>
 </table>
 
-<table class="adminlist">
+<table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
-			<th width="7"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th width="7" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_ADDRESS', 'con.address', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th align="left" class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
 			<th align="left" class="title"><?php echo JText::_( 'COM_JEM_TELEPHONE' ); ?></th>
-			<th class="title"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
+			<th class="title center"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 		</tr>
 	</thead>
 
@@ -66,7 +66,7 @@ defined('_JEXEC') or die;
 			$row = $this->rows[$i];
    		?>
 		<tr class="<?php echo "row$k"; ?>">
-			<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td align="left">
 				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SELECT' );?>::<?php echo $row->name; ?>">
 				<a style="cursor:pointer" onclick="window.parent.elSelectContact('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->name ); ?>');">
@@ -76,7 +76,7 @@ defined('_JEXEC') or die;
 			<td align="left"><?php echo htmlspecialchars($row->address, ENT_QUOTES, 'UTF-8'); ?></td>
 			<td align="left"><?php echo htmlspecialchars($row->email_to, ENT_QUOTES, 'UTF-8'); ?></td>
 			<td align="left"><?php echo htmlspecialchars($row->telephone, ENT_QUOTES, 'UTF-8'); ?></td>
-			<td>
+			<td class="center">
 				<?php $img = $row->published ? 'tick.png' : 'publish_x.png'; ?>
 				<img src="../media/com_jem/images/<?php echo $img;?>" width="16" height="16" border="0" alt="" />
 			</td>

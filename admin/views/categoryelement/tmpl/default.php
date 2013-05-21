@@ -37,10 +37,10 @@ defined('_JEXEC') or die;
 	</tr>
 </table>
 
-<table class="adminlist">
+<table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
-			<th width="7"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th width="7" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_CATEGORY', 'catname', $this->lists['order_Dir'], $this->lists['order'], 'categoryelement' ); ?></th>
 			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_ACCESS' ); ?></th>
 			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
@@ -65,7 +65,7 @@ defined('_JEXEC') or die;
 			$access = $row->groupname;
    		?>
 		<tr class="<?php echo "row$k"; ?>">
-			<td width="7"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+			<td class="center" width="7"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td align="left">
 				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SELECT' );?>::<?php echo $row->catname; ?>">
 				<?php echo $row->treename; ?>
@@ -74,7 +74,7 @@ defined('_JEXEC') or die;
 				</a></span>
 			</td>
 			<td align="center"><?php echo $access; ?></td>
-			<td align="center">
+			<td class="center">
 				<?php
 				$img = $row->published ? 'tick.png' : 'publish_x.png';
 				$alt = $row->published ? 'Published' : 'Unpublished';

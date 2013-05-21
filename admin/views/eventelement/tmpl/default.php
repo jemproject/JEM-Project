@@ -39,17 +39,17 @@ defined('_JEXEC') or die;
 	</tr>
 </table>
 
-<table class="adminlist">
+<table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
-			<th width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th class="center" width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_START', 'a.times', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo JText::_('COM_JEM_CATEGORY'); ?></th>
-		    <th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
+		    <th class="center" width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 		</tr>
 	</thead>
 
@@ -68,7 +68,7 @@ defined('_JEXEC') or die;
 				$row = $this->rows[$i];
 		?>
 		<tr class="<?php echo "row$k"; ?>">
-			<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td>
 				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SELECT' );?>::<?php echo $row->title; ?>">
 				<a style="cursor:pointer" onclick="window.parent.elSelectEvent('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->title ); ?>');">
@@ -148,7 +148,7 @@ defined('_JEXEC') or die;
 					endif;
 				endforeach;
 				?></td>
-			<td align="center">
+			<td class="center" align="center">
 				<?php $img = $row->published ? 'tick.png' : 'publish_x.png'; ?>
 				<img src="../media/com_jem/images/<?php echo $img;?>" width="16" height="16" border="0" alt="" />
 			</td>
