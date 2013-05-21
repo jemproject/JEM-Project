@@ -275,6 +275,38 @@ table#el-attachments img {
 table#el-attachments img:hover {
 }
 
+
+/* -------------------
+   General Pagination
+--------------------- */
+div.pagination {
+    clear: inherit;
+    float: both;
+    text-align: center !important;
+    margin: 15px 0 0 0 !important;
+}
+
+ 
+div.pagination p.counter {
+    font-style: italic;
+}
+ 
+div.pagination ul {
+    list-style: none;
+    text-align: center !important;
+    padding: 0;
+}
+ 
+div.pagination ul li {
+    list-style: none;
+    display: inline;
+    padding: 0 5px 0 5px;
+}
+
+
+
+
+
 /* -- CONTROL PANEL STYLES ----------------------------- */
 /* ---bluestork template, J2.5-------------------------- */
 .cpanel div.icon, #cpanel div.icon {
@@ -355,6 +387,9 @@ div.cpanel-right {
 
 
 
+
+
+
 /* -----------ZEBRA STRIPES, J3+ Isis template -------------- */
 
 .table-striped tbody tr:nth-child(odd) td,
@@ -373,7 +408,7 @@ div.cpanel-right {
 table {
 	max-width: 100%;
 	background-color: transparent;
-	border-collapse: collapse;
+	border-collapse: seperate;
 	border-spacing: 0;
 }
 .table {
@@ -390,10 +425,11 @@ table {
 }
 .table th {
 	font-weight: bold;
-	/* background: ''; */
+	background: #E3E0D5;
 }
 .table thead th {
 	vertical-align: bottom;
+
 }
 .table caption + thead tr:first-child th,
 .table caption + thead tr:first-child td,
@@ -401,7 +437,8 @@ table {
 .table colgroup + thead tr:first-child td,
 .table thead:first-child tr:first-child th,
 .table thead:first-child tr:first-child td {
-	border-top: 0;
+	border-top: 1px solid #999;
+	border-bottom: 1px solid #999;
 }
 .table tbody + tbody {
 	border-top: 2px solid #ddd;
@@ -624,21 +661,33 @@ table .span24 {
 }
 
 
+table.table tfoot tr {
+    text-align: center;
+    color: rgb(51, 51, 51);
+}
 
+table.table tfoot tr {
+	text-align: center;
+	color: #333;
+}
 
+table.table tfoot td,table.table tfoot th {
+	background-color: #f7f7f7;
+	border-top: 1px solid #999;
+	text-align: center;
+}
 
+table.table .pagination {
+	display: inline-block;
+	padding: 0;
+	margin: 0 auto;
+}
 
-
-
-
-
-
-
-
-
-
-
-
+.center,
+.table td.center,
+.table th.center {
+	text-align: center;
+}
 
 
 
