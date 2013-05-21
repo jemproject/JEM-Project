@@ -47,18 +47,18 @@ defined('_JEXEC') or die; ?>
 	<table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
-			<th width="1%"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-			<th width="1%"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+			<th class="center" width="1%"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th class="center" width="1%"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="20%"><?php echo JHTML::_('grid.sort', 'COM_JEM_ALIAS', 'c.alias', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-      <th width="10px" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_COLOR' ); ?></th>
+      <th width="10px" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_COLOR' ); ?></th>
 			<th width="15%"><?php echo JHTML::_('grid.sort', 'COM_JEM_GROUP', 'gr.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_EVENTS' ); ?></th>
-			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
+			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_EVENTS' ); ?></th>
+			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 			<th width="7%"><?php echo JHTML::_('grid.sort', 'COM_JEM_ACCESS', 'c.access', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="5%"><?php echo JHTML::_('grid.sort', 'COM_JEM_REORDER', 'c.ordering', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="1%"><?php echo JHTML::_('grid.order', $this->rows, 'filesave.png', 'saveordercat' ); ?></th>
-			<th width="1%" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'c.id', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th width="1%" class="center" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'c.id', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 		</tr>
 	</thead>
 
@@ -81,8 +81,8 @@ defined('_JEXEC') or die; ?>
 			$access = $row->groupname;
    		?>
 		<tr class="row<?php echo $i % 2; ?>">
-			<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-			<td><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
+			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+			<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 			<td align="left">
 				<?php
 				if ( $row->checked_out && ( $row->checked_out != $this->user->get('id') ) ) {
@@ -112,7 +112,7 @@ defined('_JEXEC') or die; ?>
         &nbsp;
         </div>
       </td>
-			<td align="center">
+			<td class="center">
 				<?php if ($row->catgroup) {	?>
 					<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_GROUP' );?>::<?php echo $row->catgroup; ?>">
 					<a href="<?php echo $grouplink; ?>">
@@ -124,10 +124,10 @@ defined('_JEXEC') or die; ?>
 				}
 				?>
 			</td>
-			<td align="center">
+			<td class="center">
 				<?php echo $row->assignedevents; ?>
 			</td>
-			<td align="center">
+			<td class="center">
 				<?php echo $published; ?>
 			</td>
 			<td align="center">
@@ -142,7 +142,7 @@ defined('_JEXEC') or die; ?>
 
 				<input type="text" name="order[]" size="5" value="<?php echo $row->ordering; ?>" <?php echo $disabled; ?> class="text_area" style="text-align: center" />
 			</td>
-			<td align="center"><?php echo $row->id; ?></td>
+			<td class="center"><?php echo $row->id; ?></td>
 		</tr>
 		<?php 
  endforeach; 

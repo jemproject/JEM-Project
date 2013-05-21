@@ -79,7 +79,7 @@ defined('_JEXEC') or die;
 				<?php
 					//Format date
 					if (JEMHelper::isValidDate($row->dates)) {
-						$date = strftime( $this->jemsettings->formatdate, strtotime( $row->dates ));
+						$date = JEMOutput::formatdate($row->dates); 
 					} 
 					else {
 						$date		= JText::_('COM_JEM_OPEN_DATE');
@@ -87,7 +87,7 @@ defined('_JEXEC') or die;
 					if ( !JEMHelper::isValidDate($row->enddates) ) {
 						$displaydate = $date;
 					} else {
-						$enddate 	= strftime( $this->jemsettings->formatdate, strtotime( $row->enddates ));
+						$enddate 	= JEMOutput::formatdate($row->dates); 
 						$displaydate = $date.' - '.$enddate;
 					}
 

@@ -42,7 +42,7 @@ defined('_JEXEC') or die; ?>
 
 	<br />
 
-	<table class="adminlist">
+	<table class="table table-striped" id="articleList">
 		<thead>
 			<tr>
 				<th class="title"><?php echo JText::_( 'COM_JEM_NAME' ); ?></th>
@@ -50,7 +50,7 @@ defined('_JEXEC') or die; ?>
 				<th class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
 				<th class="title"><?php echo JText::_( 'COM_JEM_IP_ADDRESS' ); ?></th>
 				<th class="title"><?php echo JText::_( 'COM_JEM_REGDATE' ); ?></th>
-				<th class="title"><?php echo JText::_( 'COM_JEM_USER_ID'); ?></th>
+				<th class="title center"><?php echo JText::_( 'COM_JEM_USER_ID'); ?></th>
 			</tr>
 		</thead>
 
@@ -66,7 +66,7 @@ defined('_JEXEC') or die; ?>
 				<td><?php echo $row->email; ?></td>
 				<td><?php echo $row->uip; ?></td>
 				<td><?php echo JHTML::Date( $row->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ); ?></td>
-				<td><?php echo $row->uid; ?></td>
+				<td class="center"><?php echo $row->uid; ?></td>
 			</tr>
 			<?php $k = 1 - $k;  } ?>
 		</tbody>

@@ -38,8 +38,8 @@ defined('_JEXEC') or die; ?>
 	<table class="table table-striped" id="articleList">
 		<thead>
 			<tr>
-				<th width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-				<th width="5"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+				<th width="5" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+				<th width="5" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_START', 'a.times', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
@@ -84,8 +84,8 @@ defined('_JEXEC') or die; ?>
 				}
    			?>
 			<tr class="row<?php echo $i % 2; ?>">
-				<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-				<td><input type="checkbox" id="cb<?php echo $i;?>" name="cid[]" value="<?php echo $row->id; ?>" onclick="isChecked(this.checked);" /></td>
+				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+				<td class="center"><input type="checkbox" id="cb<?php echo $i;?>" name="cid[]" value="<?php echo $row->id; ?>" onclick="isChecked(this.checked);" /></td>
 				<td>
 					<?php echo $displaydate; ?>
 				</td>

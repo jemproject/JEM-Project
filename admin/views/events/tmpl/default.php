@@ -45,8 +45,8 @@ defined('_JEXEC') or die;
 <table class="table table-striped" id="articleList">
 		<thead>
 			<tr>
-				<th width="1%"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-				<th width="1%"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+				<th width="1%" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+				<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TIME', 'a.times', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
@@ -54,11 +54,11 @@ defined('_JEXEC') or die;
 				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'loc.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th><?php echo JText::_( 'COM_JEM_CATEGORIES' ); ?></th>
-			    <th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
+			    <th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 				<th class="title"><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
-				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ); ?></th>
-				<th width="1%" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'a.id', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="title center"><?php echo JHTML::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ); ?></th>
+				<th width="1%" class="center" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'a.id', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			</tr>
 		</thead>
 
@@ -101,8 +101,8 @@ defined('_JEXEC') or die;
 				$published 	= JHTML::_('grid.published', $row, $i );
    			?>
 			<tr class="row<?php echo $i % 2; ?>">
-				<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-				<td><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
+				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+				<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 				<td>
 					<?php
 					if ( $row->checked_out && ( $row->checked_out != $this->user->get('id') ) ) {
@@ -204,7 +204,7 @@ defined('_JEXEC') or die;
 				endforeach;
 				?>
 				</td>
-				<td align="center"><?php echo $published; ?></td>
+				<td class="center"><?php echo $published; ?></td>
 				<td>
 					<?php echo JText::_( 'COM_JEM_AUTHOR' ).': '; ?><a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>"><?php echo $row->author; ?></a><br />
 					<?php echo JText::_( 'COM_JEM_EMAIL' ).': '; ?><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a><br />
@@ -224,9 +224,9 @@ defined('_JEXEC') or die;
 						<?php echo $image; ?>
 					</span>
 				</td>
-				<td align="center"><?php echo $row->hits; ?></td>
+				<td class="center"><?php echo $row->hits; ?></td>
 				
-				<td align="center">
+				<td class="center">
 					<?php
 					if ($row->registra == 1) {
 						$linkreg 	= 'index.php?option=com_jem&amp;view=attendees&amp;id='.$row->id;
@@ -252,7 +252,7 @@ defined('_JEXEC') or die;
 					}
 					?>
 				</td>
-				<td align="center"><?php echo $row->id; ?></td>
+				<td class="center"><?php echo $row->id; ?></td>
 			</tr>
 			<?php endforeach; ?>
 

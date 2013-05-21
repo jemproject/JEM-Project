@@ -59,21 +59,21 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 		</tr>
 	</table>
 
-	<table class="adminlist">
+	<table class="table table-striped" id="articleList">
 		<thead>
 			<tr>
-				<th width="1%"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-				<th width="1%"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+				<th width="1%" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+				<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_NAME', 'u.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_USERNAME', 'u.username', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
 				<th class="title"><?php echo JText::_( 'COM_JEM_IP_ADDRESS' ); ?></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_USER_ID', 'r.uid', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="title center"><?php echo JHTML::_('grid.sort', 'COM_JEM_USER_ID', 'r.uid', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php if ($this->event->waitinglist): ?>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php endif;?>
-				<th class="title"><?php echo JText::_( 'COM_JEM_REMOVE_USER' ); ?></th>
+				<th class="title center"><?php echo JText::_( 'COM_JEM_REMOVE_USER' ); ?></th>
 			</tr>
 		</thead>
 
@@ -88,8 +88,8 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
    		foreach ($this->rows as $i => $row) :
 			?>
 			<tr class="row<?php echo $i % 2; ?>">
-				<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-				<td><input type="checkbox" id="cb<?php echo $i;?>" name="cid[]" value="<?php echo $row->id; ?>" onclick="isChecked(this.checked);" /></td>
+				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+				<td class="center"><input type="checkbox" id="cb<?php echo $i;?>" name="cid[]" value="<?php echo $row->id; ?>" onclick="isChecked(this.checked);" /></td>
 				<td><a href="<?php echo JRoute::_( 'index.php?option=com_jem&controller=attendees&task=edit&cid[]='.$row->id ); ?>"><?php echo $row->name; ?></a></td>
 				<td>
 					<a href="<?php echo JRoute::_( 'index.php?option=com_users&task=user.edit&id='.$row->uid ); ?>"><?php echo $row->username; ?></a>
@@ -97,7 +97,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 				<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
 				<td><?php echo $row->uip == 'DISABLED' ? JText::_( 'COM_JEM_DISABLED' ) : $row->uip; ?></td>
 				<td><?php echo JHTML::Date( $row->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ); ?></td>
-				<td><?php echo $row->uid; ?></td>
+				<td class="center"><?php echo $row->uid; ?></td>
 				<?php if ($this->event->waitinglist): ?>
 				<td class="hasTip" title="<?php echo ($row->waiting ? JText::_('COM_JEM_ON_WAITINGLIST') : JText::_('COM_JEM_ATTENDING')).'::'; ?>">
 					<?php if ($row->waiting):?>
@@ -109,7 +109,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 					<?php endif;?>
 				</td>
 				<?php endif;?>
-				<td><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','remove')"><img src="../media/com_jem/images/publish_x.png" width="16" height="16" border="0" alt="Delete" /></a></td>
+				<td class="center"><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','remove')"><img src="../media/com_jem/images/publish_x.png" width="16" height="16" border="0" alt="Delete" /></a></td>
 			</tr>
 			<?php endforeach; ?>
 		</tbody>

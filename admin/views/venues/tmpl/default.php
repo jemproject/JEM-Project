@@ -40,19 +40,19 @@ defined('_JEXEC') or die;
 <table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
-			<th width="1%"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-			<th width="1%"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+			<th width="1%" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="20%"><?php echo JHTML::_('grid.sort', 'COM_JEM_ALIAS', 'l.alias', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th><?php echo JText::_( 'COM_JEM_WEBSITE' ); ?></th>
 			<th><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="1%"><?php echo JHTML::_('grid.sort', 'COM_JEM_COUNTRY', 'l.country', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
+			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 			<th><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
-			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_EVENTS' ); ?></th>
-		    <th width="5%" colspan="2"><?php echo JHTML::_('grid.sort', 'COM_JEM_REORDER', 'l.ordering', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-		    <th width="1%" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'l.id', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_EVENTS' ); ?></th>
+		    <th width="8%" colspan="2"><?php echo JHTML::_('grid.sort', 'COM_JEM_REORDER', 'l.ordering', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+		    <th width="1%" class="center" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'l.id', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 		</tr>
 	</thead>
 
@@ -71,8 +71,8 @@ defined('_JEXEC') or die;
 			$published 	= JHTML::_('grid.published', $row, $i );
    		?>
 		<tr class="row<?php echo $i % 2; ?>">
-			<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-			<td><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
+			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+			<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 			<td align="left">
 				<?php
 				if ( $row->checked_out && ( $row->checked_out != $this->user->get('id') ) ) {
@@ -117,8 +117,8 @@ defined('_JEXEC') or die;
 			</td>
 			<td align="left"><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
 			<td align="left"><?php echo $row->state ? htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
-			<td align="left"><?php echo $row->country ? htmlspecialchars($row->country, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
-			<td align="center"><?php echo $published; ?></td>
+			<td class="center"><?php echo $row->country ? htmlspecialchars($row->country, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+			<td class="center"><?php echo $published; ?></td>
 			<td>
 				<?php echo JText::_( 'COM_JEM_AUTHOR' ).': '; ?><a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>"><?php echo $row->author; ?></a><br />
 				<?php echo JText::_( 'COM_JEM_EMAIL' ).': '; ?><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a><br />
@@ -138,7 +138,7 @@ defined('_JEXEC') or die;
 					<?php echo $image; ?>
 				</span>
 			</td>
-			<td align="center"><?php echo $row->assignedevents; ?></td>
+			<td class="center"><?php echo $row->assignedevents; ?></td>
 			<td align="right">
 				<?php
 				echo $this->pagination->orderUpIcon( $i, true, 'orderup', 'Move Up', $this->ordering );
@@ -149,7 +149,7 @@ defined('_JEXEC') or die;
 				echo $this->pagination->orderDownIcon( $i,$this->pagination->total, true, 'orderdown', 'Move Down', $this->ordering );
 				?>
 			</td>
-			<td align="center"><?php echo $row->id; ?></td>
+			<td class="center"><?php echo $row->id; ?></td>
 		</tr>
 		<?php endforeach; ?>
 

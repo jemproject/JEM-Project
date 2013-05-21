@@ -39,8 +39,8 @@ defined('_JEXEC') or die;
 	<table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
-			<th width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-			<th width="5"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+			<th width="5" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th width="5" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 			<th width="30%" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_GROUP_NAME', 'name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th><?php echo JText::_( 'COM_JEM_DESCRIPTION' ); ?></th>
 		</tr>
@@ -61,8 +61,8 @@ defined('_JEXEC') or die;
 		
    		?>
 			<tr class="row<?php echo $i % 2; ?>">
-			<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-			<td><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
+			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+			<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 			<td>
 				<?php
 					if ( $row->checked_out && ( $row->checked_out != $this->user->get('id') ) ) {
