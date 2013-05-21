@@ -37,7 +37,7 @@ defined('_JEXEC') or die;
 	</tr>
 </table>
 
-<table class="adminlist">
+<table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
 			<th width="1%"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
