@@ -40,8 +40,45 @@ class JEMControllerArchive extends JEMController
 	function __construct()
 	{
 		parent::__construct();
+		
+		$this->registerTask( 'copy',	 	'edit' );
 	}
 
+	
+	/**
+	 * logic to create the edit event screen
+	 *
+	 * @access public
+	 * @return void
+	 * @since 0.9
+	 */
+	function edit( )
+	{
+		JRequest::setVar( 'view', 'event' );
+		JRequest::setVar( 'hidemainmenu', 1 );
+	
+		$model 	= $this->getModel('event');
+		$task 	= JRequest::getVar('task');
+	
+		if ($task == 'copy') {
+			JRequest::setVar( 'task', $task );
+		} else {
+	
+			$user	= JFactory::getUser();
+			// Error if checkedout by another administrator
+			if ($model->isCheckedOut( $user->get('id') )) {
+				$this->setRedirect( 'index.php?option=com_jem&view=events', JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ) );
+			}
+			$model->checkout();
+		}
+		parent::display();
+	}
+	
+	
+	
+	
+	
+	
 	/**
 	 * unarchives an Event
 	 *
