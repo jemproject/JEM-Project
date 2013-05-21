@@ -78,13 +78,13 @@ class JEMModelCategoryevents extends JModelLegacy
 
 		$app =  JFactory::getApplication();
 		$jemsettings =  JEMHelper::config();
-		
+
 		$this->setdate(time());
 
 		// Get the paramaters of the active menu item
 		$params 	=  $app->getParams();
 
-		if (!$params->get('id')) {
+		if (JRequest::getVar('id')) {
 			$id = JRequest::getVar('id');
 		} else {
 			$id = $params->get('id');
@@ -95,12 +95,12 @@ class JEMModelCategoryevents extends JModelLegacy
 		//get the number of events from database
 		$limit			= $app->getUserStateFromRequest('com_jem.categoryevents.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart 	= $app->getUserStateFromRequest('com_jem.categoryevents.limitstart', 'limitstart', 0, 'int');
-		
+
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
 
 	}
-	
+
 	function setdate($date)
 	{
 		$this->_date = $date;
@@ -261,21 +261,21 @@ class JEMModelCategoryevents extends JModelLegacy
 	function _buildCategoryOrderBy()
 	{
 		$app =  JFactory::getApplication();
-		
+
 		$filter_order		= $app->getUserStateFromRequest('com_jem.categoryevents.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.categoryevents.filter_order_Dir', 'filter_order_Dir', '', 'word');
-		
+
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
-		
+
 		if ($filter_order != '') {
 			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
 		} else {
 			$orderby = ' ORDER BY a.dates, a.times ';
 		}
-		
+
 		return $orderby;
-		
+
 
 	}
 
@@ -291,7 +291,7 @@ class JEMModelCategoryevents extends JModelLegacy
 		$task 		= JRequest::getWord('task');
 		$params 	=  $app->getParams();
 		$jemsettings =  JEMHelper::config();
-		
+
 		$user		=  JFactory::getUser();
 		if (JFactory::getUser()->authorise('core.manage')) {
 			$gid = (int) 3;        //viewlevel Special
@@ -303,79 +303,79 @@ class JEMModelCategoryevents extends JModelLegacy
 			}
 		}
 
-		
+
 		$filter_state 	= $app->getUserStateFromRequest('com_jem.categoryevents.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.categoryevents.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.categoryevents.search', 'search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
-		
-		
+
+
 		$where = array();
-		
+
 		// First thing we need to do is to select only needed events
 		if ($task == 'archive') {
 			$where[] = ' a.published = -1';
 		} else {
 			$where[] = ' a.published = 1';
 		}
-		
+
 		// display event from direct childs ?
 		if (!$params->get('displayChilds', 0)) {
 			$where[] = ' rel.catid = '.$this->_id;
 		} else {
 			$where[] = ' (rel.catid = '.$this->_id . ' OR c.parent_id = '.$this->_id . ')';
 		}
-		
+
 		// display all event of recurring serie ?
 		if ($params->get('only_first',0)) {
 			$where[] = ' a.recurrence_first_id = 0 ';
 		}
-		
+
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access  <= '.$gid;
-		
-		
+
+
 		/*
 		// get excluded categories
 		$excluded_cats = trim($params->get('excluded_cats', ''));
-		
+
 		if ($excluded_cats != '') {
 			$cats_excluded = explode(',', $excluded_cats);
 			$where [] = '  (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
 		}
 		// === END Excluded categories add === //
 		 * */
-		
-		
+
+
 		if ($jemsettings->filter)
 		{
-				
+
 			if ($search && $filter == 1) {
 				$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
 			}
-		
+
 			if ($search && $filter == 2) {
 				$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
 			}
-		
+
 			if ($search && $filter == 3) {
 				$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
 			}
-		
+
 			if ($search && $filter == 4) {
 				$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
 			}
-		
+
 			if ($search && $filter == 5) {
 				$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
 			}
-		
+
 		} // end tag of jemsettings->filter decleration
-		
+
 		$where 		= (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
-		
+
 		return $where;
-		
+
 	}
 
 	/**
