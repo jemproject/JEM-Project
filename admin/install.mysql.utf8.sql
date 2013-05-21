@@ -223,9 +223,10 @@ CREATE TABLE IF NOT EXISTS `#__jem_settings` (
   `attachments_maxsize` varchar(15) NOT NULL DEFAULT '1000',
   `attachments_types` varchar(100) NOT NULL DEFAULT 'txt,csv,htm,html,xml,css,doc,xls,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,zip,tar.gz',
   `ownedvenuesonly` int(11) NOT NULL,
- `recurrence_anticipation` varchar(20) NOT NULL DEFAULT '30',
+  `recurrence_anticipation` varchar(20) NOT NULL DEFAULT '30',
   `ical_max_items` tinyint(4) NOT NULL DEFAULT '100',
   `empty_cat` tinyint(4) NOT NULL DEFAULT '1',
+  `defaultCountry` varchar(10) NOT NULL,
   UNIQUE KEY `id` (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

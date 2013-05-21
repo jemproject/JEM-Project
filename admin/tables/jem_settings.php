@@ -68,6 +68,8 @@ class jem_settings extends JTable
 	/** @var string */
 	var $formatdate 		= null;
 	/** @var string */
+	var $formatShortDate	= null;
+	/** @var string */
 	var $formattime 		= null;
 	/** @var string */
 	var $timename 			= null;
@@ -171,7 +173,7 @@ class jem_settings extends JTable
 	var $checked_out_time 	= 0;
 	/** @var string */
 	var $tld 	= 0;
-	/**  */
+	/** @var string */
 	var $icslimit			= 0;
 	/** @var int */
 
@@ -183,6 +185,9 @@ class jem_settings extends JTable
 	var $show_print_icon	= 0;
 	var $show_email_icon	= 0;
 	var $events_ical		= 0;
+
+	/** @var string */
+	var $defaultCountry		= null;
 
 
 	function jem_settings(& $db) {

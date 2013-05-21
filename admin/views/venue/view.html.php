@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -20,9 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
 /**
  * View class for the JEM Venueedit screen
@@ -48,7 +48,7 @@ class JEMViewVenue extends JViewLegacy {
 		$user 		=  JFactory::getUser();
 		$db 		=  JFactory::getDBO();
 		$settings	=  JEMAdmin::config();
-		
+
 		$nullDate 		= $db->getNullDate();
 
 		//get vars
@@ -61,7 +61,7 @@ class JEMViewVenue extends JViewLegacy {
 
 		// Get data from the model
 		$model		=  $this->getModel();
-		$row      	=  $this->get( 'Data');
+		$row		=  $this->get( 'Data');
 
 		// fail if checked out not by 'me'
 		if ($row->id) {
@@ -70,7 +70,6 @@ class JEMViewVenue extends JViewLegacy {
 				$app->redirect( 'index.php?option=com_jem&view=venues' );
 			}
 		}
-
 
 		//Build the image select functionality
 		$js = "
@@ -92,11 +91,12 @@ class JEMViewVenue extends JViewLegacy {
 		$imageselect .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_SELECTIMAGE')."\" href=\"$link2\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_SELECTIMAGE')."</a></div></div>\n";
 		$imageselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectImage('', '".JText::_('COM_JEM_SELECTIMAGE')."' );\" value=\"".JText::_('COM_JEM_RESET')."\" />";
 		$imageselect .= "\n<input type=\"hidden\" id=\"a_image\" name=\"locimage\" value=\"$row->locimage\" />";
-		
+
 		$countries = array();
 		$countries[] = JHTML::_('select.option', '', JText::_('COM_JEM_SELECT_COUNTRY'));
 		$countries = array_merge($countries, JEMHelper::getCountryOptions());
-		$lists['countries'] = JHTML::_('select.genericlist', $countries, 'country', 'class="inputbox"', 'value', 'text', $row->country );
+		$selectedCountry = ($row->id) ? $row->country : $settings->defaultCountry;
+		$lists['countries'] = JHTML::_('select.genericlist', $countries, 'country', 'class="inputbox"', 'value', 'text', $selectedCountry );
 		unset($countries);
 
 		//assign data to template
@@ -112,35 +112,31 @@ class JEMViewVenue extends JViewLegacy {
 
 		// add toolbar
 		$this->addToolbar();
-		
+
 		parent::display($tpl);
 	}
-	
-	
-	
-	/*
+
+	/**
 	 * Add Toolbar
-	*/
-	
+	 */
 	function addToolbar()
 	{
-		
 		//get vars
-		$cid 			= JRequest::getVar( 'cid' );
+		$cid 		= JRequest::getVar( 'cid' );
 		$task		= JRequest::getVar('task');
-		
-				//build toolbar
+
+		//build toolbar
 		if ($task == 'copy') {
 			JToolBarHelper::title( JText::_( 'COM_JEM_COPY_VENUE'), 'venuesedit');
-		} elseif ( $cid ) { 
+		} elseif ( $cid ) {
 			JToolBarHelper::title( JText::_( 'COM_JEM_EDIT_VENUE' ), 'venuesedit' );
-		
+
 			//makes data safe
 			JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'locdescription' );
-		
+
 		} else {
 			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_VENUE' ), 'venuesedit' );
-		
+
 			//set the submenu
 			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
 			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
@@ -160,11 +156,7 @@ class JEMViewVenue extends JViewLegacy {
 		JToolBarHelper::cancel();
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'el.editvenues', true );
-		
-	}
-	
 
-	
-	
-} // end of class
+	}
+}
 ?>

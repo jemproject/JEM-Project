@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -174,12 +174,12 @@ defined('_JEXEC') or die;
 											<input type="text" class="required" name="recurrence_anticipation" value="<?php echo $this->jemsettings->recurrence_anticipation; ?>" size="5" maxlength="3" />
 										</td>
 									</tr>
-									
+
 									<tr valign="top">
 										<td width="300" class="key">
 											<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SETTINGS_ICAL_TIMEZONE' ); ?>::<?php echo JText::_('COM_JEM_SETTINGS_ICAL_TIMEZONE_DESC'); ?>">
-												<?php 
-												echo JText::_( 'COM_JEM_SETTINGS_ICAL_TIMEZONE' ); 
+												<?php
+												echo JText::_( 'COM_JEM_SETTINGS_ICAL_TIMEZONE' );
 												?>
 											</span>
 										</td>
@@ -193,7 +193,7 @@ defined('_JEXEC') or die;
 											?>
 										</td>
 									</tr>
-									
+
 
 									<tr valign="top">
 										<td width="300" class="key">
@@ -209,7 +209,26 @@ defined('_JEXEC') or die;
 											$nrevents = JHTML::_('select.genericlist', $nr, 'weekdaystart', 'size="1" class="inputbox"', 'value', 'text', $this->jemsettings->weekdaystart );
 											echo $nrevents;
 											?>
-										
+
+										</td>
+									</tr>
+
+									<tr valign="top">
+										<td width="300" class="key">
+											<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY' ); ?>::<?php echo JText::_('COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY_DESC'); ?>">
+												<?php echo JText::_( 'COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY' ); ?>
+											</span>
+										</td>
+										<td valign="top">
+											<?php
+											$countries = array();
+											$countries[] = JHTML::_('select.option', '', '');
+											$countries = array_merge($countries, $this->countries);
+											$countrylist = JHTML::_('select.genericlist', $countries, 'defaultCountry', 'class="inputbox"', 'value', 'text', $this->jemsettings->defaultCountry);
+											unset($countries);
+											echo $countrylist;
+											?>
+
 										</td>
 									</tr>
 
@@ -230,7 +249,7 @@ defined('_JEXEC') or die;
 												<?php echo JText::_( 'COM_JEM_SETTINGS_ATTACHEMENT_TYPES' ); ?>
 											</span>
 										</td>
-										
+
 											<td valign="top">
 											<input type="text" name="attachments_types" value="<?php echo $this->jemsettings->attachments_types; ?>" size="40"  />
 
@@ -247,7 +266,7 @@ defined('_JEXEC') or die;
 											<input type="text" name="attachments_maxsize" value="<?php echo $this->jemsettings->attachments_maxsize; ?>" size="40"  />
 										</td>
 									</tr>
-									
+
 								</tbody>
 							</table>
 						</fieldset>
