@@ -68,7 +68,6 @@ if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$search
 		</thead>
 
 		<tbody>
-		<tr id="highlighter-start"></tr>
 			<?php
 			foreach ($this->rows as $i => $row) :
 				//Prepare date
@@ -253,7 +252,6 @@ if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$search
 				<td class="center"><?php echo $row->id; ?></td>
 			</tr>
 			<?php endforeach; ?>
-			<tr id="highlighter-end"></tr>
 		</tbody>
 		
 				<tfoot>
@@ -265,7 +263,6 @@ if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$search
 		</tfoot>
 
 	</table>
-<span id="highlighter-end"></span>
 
 	<p class="copyright">
 		<?php echo JEMAdmin::footer( ); ?>
