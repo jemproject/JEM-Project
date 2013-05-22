@@ -237,9 +237,14 @@ class JEMModelEvents extends JModelLegacy
 		if ($search && $filter == 5) {
 			$where[] = ' LOWER(loc.state) LIKE \'%'.$search.'%\' ';
 		}
+		
+		if ($search && $filter == 6) {
+			$where[] = ' (LOWER(a.title) LIKE \'%'.$search.'%\' OR LOWER(loc.venue) LIKE \'%'.$search.'%\' OR LOWER(loc.city) LIKE \'%'.$search.'%\' OR LOWER(c.catname) LIKE \'%'.$search.'%\' OR LOWER(loc.state) LIKE \'%'.$search.'%\') ';
+		}
+		
 
 		$where 		= (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
-
+		
 		return $where;
 	}
 

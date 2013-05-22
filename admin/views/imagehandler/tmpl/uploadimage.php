@@ -140,7 +140,7 @@ defined('_JEXEC') or die;
 				<table class="admintable">
 					<tbody>
 						<tr>
-							<td align="center">
+							<td class="center">
 								<?php echo JText::_('COM_JEM_GD_WARNING'); ?>
 							</td>
 						</tr>

@@ -73,7 +73,7 @@ defined('_JEXEC') or die;
 					<?php echo htmlspecialchars($row->catname, ENT_QUOTES, 'UTF-8'); ?>
 				</a></span>
 			</td>
-			<td align="center"><?php echo $access; ?></td>
+			<td class="center"><?php echo $access; ?></td>
 			<td class="center">
 				<?php
 				$img = $row->published ? 'tick.png' : 'publish_x.png';

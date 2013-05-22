@@ -67,6 +67,7 @@ class JEMViewVenues extends JViewLegacy {
 		$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_CITY' ) );
 		$filters[] = JHTML::_('select.option', '3', JText::_( 'COM_JEM_STATE' ) );
 		$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_COUNTRY' ) );
+		$filters[] = JHTML::_('select.option', '5', JText::_( 'JALL' ) );		
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
 
 		

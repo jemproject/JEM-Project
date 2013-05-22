@@ -218,9 +218,7 @@ class JEMModelVenues extends JModelLegacy
 
 		$where = array();
 
-		/*
-		* Filter state
-		*/
+		/* Filter state */
 		if ( $filter_state ) {
 			if ( $filter_state == 'P' ) {
 				$where[] = 'l.published = 1';
@@ -229,35 +227,30 @@ class JEMModelVenues extends JModelLegacy
 			}
 		}
 
-		/*
-		* Search venues
-		*/
+		/* Search venues */
 		if ($search && $filter == 1) {
 			$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
 		}
 
-		/*
-		* Search city
-		*/
+		/* Search city */
 		if ($search && $filter == 2) {
 			$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
 		}
 
-		/*
-		 * Search state
-		*/
+		/* Search state */
 		if ($search && $filter == 3) {
 			$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
 		}
 
-
-		/*
-		 * Search state
-		*/
+		/* Search country */
 		if ($search && $filter == 4) {
 			$where[] = ' LOWER(l.country) LIKE \'%'.$search.'%\' ';
 		}
-
+		
+		/* Search all */
+		if ($search && $filter == 5) {
+			$where[] = ' (LOWER(l.venue) LIKE \'%'.$search.'%\' OR LOWER(l.city) LIKE \'%'.$search.'%\' OR LOWER(l.state) LIKE \'%'.$search.'%\' OR LOWER(l.country) LIKE \'%'.$search.'%\') ';
+		}
 
 
 		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );

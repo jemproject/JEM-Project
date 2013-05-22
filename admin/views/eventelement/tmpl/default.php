@@ -148,7 +148,7 @@ defined('_JEXEC') or die;
 					endif;
 				endforeach;
 				?></td>
-			<td class="center" align="center">
+			<td class="center">
 				<?php $img = $row->published ? 'tick.png' : 'publish_x.png'; ?>
 				<img src="../media/com_jem/images/<?php echo $img;?>" width="16" height="16" border="0" alt="" />
 			</td>

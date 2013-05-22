@@ -107,7 +107,7 @@ defined('_JEXEC') or die; ?>
 				}
 				?>
 			</td>
-      <td align="center">
+      <td class="center">
         <div class="colorpreview" style="width: 15px; background: <?php echo ( $row->color == '' )?"transparent":$row->color; ?>;" title="<?php echo $row->color; ?>">
         &nbsp;
         </div>
