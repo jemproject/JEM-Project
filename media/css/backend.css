@@ -389,7 +389,6 @@ div.cpanel-right {
 
 
 
-
 /* -----------ZEBRA STRIPES, J3+ Isis template -------------- */
 
 .table-striped tbody tr:nth-child(odd) td,
@@ -410,6 +409,9 @@ table {
 	background-color: transparent;
 	border-collapse: seperate;
 	border-spacing: 0;
+	
+	/* font-family: Helvetica; */
+	/* font-size:1.1em; */
 }
 .table {
 	width: 100%;
@@ -688,6 +690,14 @@ table.table .pagination {
 .table th.center {
 	text-align: center;
 }
+
+
+
+
+.highlight {   background: none repeat scroll 0 0 #FFFF00; }
+
+
+
 
 
 

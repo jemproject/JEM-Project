@@ -21,6 +21,11 @@
  */
 
 defined('_JEXEC') or die;
+
+$searchterms = $this->lists['search'];
+ 
+//Highlight search terms with js (if we did a search => more performant and otherwise crash)
+if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$searchterms));
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=events'); ?>" method="post" name="adminForm" id="adminForm">
@@ -41,36 +46,29 @@ defined('_JEXEC') or die;
 			</td>
 		</tr>
 	</table>
-
+	
 <table class="table table-striped" id="articleList">
 		<thead>
 			<tr>
 				<th width="1%" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 				<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TIME', 'a.times', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'loc.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th><?php echo JText::_( 'COM_JEM_CATEGORIES' ); ?></th>
-			    <th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
-				<th class="title"><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
-				<th class="title center"><?php echo JHTML::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ); ?></th>
-				<th width="1%" class="center" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'a.id', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			    <th width="1%" class="center nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
+				<th class="nowrap"><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
+				<th class="center"><?php echo JHTML::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th width="1%" class="center nowrap"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ); ?></th>
+				<th width="1%" class="center nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'a.id', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			</tr>
 		</thead>
 
-		<tfoot>
-			<tr>
-				<td colspan="20">
-					<?php echo $this->pagination->getListFooter(); ?>
-				</td>
-			</tr>
-		</tfoot>
-
 		<tbody>
+		<tr id="highlighter-start"></tr>
 			<?php
 			foreach ($this->rows as $i => $row) :
 				//Prepare date
@@ -255,9 +253,19 @@ defined('_JEXEC') or die;
 				<td class="center"><?php echo $row->id; ?></td>
 			</tr>
 			<?php endforeach; ?>
-
+			<tr id="highlighter-end"></tr>
 		</tbody>
+		
+				<tfoot>
+			<tr>
+				<td colspan="20">
+					<?php echo $this->pagination->getListFooter(); ?>
+				</td>
+			</tr>
+		</tfoot>
+
 	</table>
+<span id="highlighter-end"></span>
 
 	<p class="copyright">
 		<?php echo JEMAdmin::footer( ); ?>
@@ -268,4 +276,5 @@ defined('_JEXEC') or die;
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-</form>
+
+	</form>
