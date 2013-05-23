@@ -81,7 +81,7 @@ class JEMModelMy extends JModelLegacy
 
         $app =  JFactory::getApplication();
         $jemsettings =  JEMHelper::config();
-        
+
         // Get the paramaters of the active menu item
         $params =  $app->getParams('com_jem');
 
@@ -430,16 +430,8 @@ class JEMModelMy extends JModelLegacy
         $app =  JFactory::getApplication();
         $jemsettings =  JEMHelper::config();
 
-        $user =  JFactory::getUser();
-        if (JFactory::getUser()->authorise('core.manage')) {
-           $gid = (int) 3;      //viewlevel Special
-           } else {
-               if($user->get('id')) {
-                   $gid = (int) 2;    //viewlevel Registered
-               } else {
-                   $gid = (int) 1;    //viewlevel Public
-               }
-           }
+        $user = JFactory::getUser();
+        $gid = JEMHelper::getGID($user);
 
         // Get the paramaters of the active menu item
         $params =  $app->getParams();
@@ -458,9 +450,9 @@ class JEMModelMy extends JModelLegacy
 
 			$where .= ' AND c.published = 1';
         	$where .= ' AND c.access  <= '.$gid;
-        
-        
-        
+
+
+
         // then if the user is the owner of the event
         $where .= ' AND a.created_by = '.$this->_db->Quote($user->id);
 
@@ -547,16 +539,8 @@ class JEMModelMy extends JModelLegacy
 
 	function getCategories($id)
 	{
-		$user		=  JFactory::getUser();
-		if (JFactory::getUser()->authorise('core.manage')) {
-           $gid = (int) 3;      //viewlevel Special
-           } else {
-               if($user->get('id')) {
-                   $gid = (int) 2;    //viewlevel Registered
-               } else {
-                   $gid = (int) 1;    //viewlevel Public
-               }
-           }
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
 
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'

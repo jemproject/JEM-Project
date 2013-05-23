@@ -292,16 +292,8 @@ class JEMModelCategoryevents extends JModelLegacy
 		$params 	=  $app->getParams();
 		$jemsettings =  JEMHelper::config();
 
-		$user		=  JFactory::getUser();
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;        //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;    //viewlevel Registered
-			} else {
-				$gid = (int) 1;   //viewlevel Public
-			}
-		}
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
 
 
 		$filter_state 	= $app->getUserStateFromRequest('com_jem.categoryevents.filter_state', 'filter_state', '', 'word');
@@ -399,17 +391,10 @@ class JEMModelCategoryevents extends JModelLegacy
 	 */
 	function _buildChildsQuery()
 	{
-		$user		= JFactory::getUser();
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;        //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;    //viewlevel Registered
-			} else {
-				$gid = (int) 1;   //viewlevel Public
-			}
-		}
-		$ordering	= 'c.ordering ASC';
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
+
+		$ordering = 'c.ordering ASC';
 
 		//build where clause
 		$where = ' WHERE cc.published = 1';
@@ -455,16 +440,8 @@ class JEMModelCategoryevents extends JModelLegacy
 	{
 		//initialize some vars
 
-		$user		= JFactory::getUser();
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;        //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;    //viewlevel Registered
-			} else {
-				$gid = (int) 1;   //viewlevel Public
-			}
-		}
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
 
 		$query = 'SELECT *,'
 				.' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug'
@@ -505,16 +482,8 @@ class JEMModelCategoryevents extends JModelLegacy
 	 */
 	function getCategories($id)
 	{
-		$user		=  JFactory::getUser();
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;      //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;    //viewlevel Registered
-			} else {
-				$gid = (int) 1;    //viewlevel Public
-			}
-		}
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
 
 		$query = 'SELECT DISTINCT c.id, c.catname, c.color, c.access, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'

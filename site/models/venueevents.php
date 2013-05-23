@@ -263,29 +263,21 @@ class JEMModelVenueevents extends JModelLegacy
 	function _buildWhere( )
 	{
 		$app 			=  JFactory::getApplication();
-		$task 			=	JRequest::getWord('task');
+		$task 			=  JRequest::getWord('task');
 		$params 		=  $app->getParams();
 		$jemsettings 	=  JEMHelper::config();
 
-		$user		= JFactory::getUser();
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;      //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;    //viewlevel Registered
-			} else {
-				$gid = (int) 1;    //viewlevel Public
-			}
-		}
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
 
 		$filter_state 		= $app->getUserStateFromRequest('com_jem.venueevents.filter_state', 'filter_state', '', 'word');
 		$filter 			= $app->getUserStateFromRequest('com_jem.venueevents.filter', 'filter', '', 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.venueevents.search', 'search', '', 'string');
 		$search 			= $this->_db->escape(trim(JString::strtolower($search)));
-		 
-		 
+
+
 		$where = array();
-		 
+
 		// First thing we need to do is to select only needed events
 		if ($task == 'archive') {
 			$where[] = ' a.published = -1 && a.locid = '.$this->_id;
@@ -294,50 +286,50 @@ class JEMModelVenueevents extends JModelLegacy
 		}
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access  <= '.$gid;
-		 
-		 
+
+
 		/* get excluded categories
 		 $excluded_cats = trim($params->get('excluded_cats', ''));
-		 
+
 		if ($excluded_cats != '') {
 		$cats_excluded = explode(',', $excluded_cats);
 		$where [] = '  (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
 		}
 		// === END Excluded categories add === //
 		*/
-		 
-		 
+
+
 		if ($jemsettings->filter)
 		{
-			 
+
 			if ($search && $filter == 1) {
 				$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
 			}
-			 
+
 			if ($search && $filter == 2) {
 				$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
 			}
-			 
+
 			if ($search && $filter == 3) {
 				$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
 			}
-			 
+
 			if ($search && $filter == 4) {
 				$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
 			}
-			 
+
 			if ($search && $filter == 5) {
 				$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
 			}
-			 
+
 		} // end tag of jemsettings->filter decleration
-		 
+
 		$where 		= (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
-		 
+
 		return $where;
-		 
-		 
-		
+
+
+
 	}
 
 	/**
@@ -348,17 +340,8 @@ class JEMModelVenueevents extends JModelLegacy
 	 */
 	function getVenue( )
 	{
-		$user		=  JFactory::getUser();
-
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;      //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;    //viewlevel Registered
-			} else {
-				$gid = (int) 1;    //viewlevel Public
-			}
-		}
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
 
 		//Location holen
 		$query = 'SELECT *,'
@@ -376,16 +359,8 @@ class JEMModelVenueevents extends JModelLegacy
 
 	function getCategories($id)
 	{
-		$user		=  JFactory::getUser();
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;      //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;    //viewlevel Registered
-			} else {
-				$gid = (int) 1;    //viewlevel Public
-			}
-		}
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
 
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'

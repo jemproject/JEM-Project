@@ -214,16 +214,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 	function _buildDataQuery($id)
 	{
 		$user = JFactory::getUser();
-
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;	 //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;	//viewlevel Registered
-			} else {
-				$gid = (int) 1;	//viewlevel Public
-			}
-		}
+		$gid = JEMHelper::getGID($user);
 
 		$id = (int)$id;
 
@@ -256,16 +247,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 	function getCategories($id)
 	{
 		$user = JFactory::getUser();
-
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;	 //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;	//viewlevel Registered
-			} else {
-				$gid = (int) 1;	//viewlevel Public
-			}
-		}
+		$gid = JEMHelper::getGID($user);
 
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
 		.' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
@@ -318,15 +300,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 		}
 
 		$user = JFactory::getUser();
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;	//viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;	//viewlevel Registered
-			} else {
-				$gid = (int) 1;	//viewlevel Public
-			}
-		}
+		$gid = JEMHelper::getGID($user);
 
 		$ordering = 'c.ordering ASC';
 
@@ -392,15 +366,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 		$params = $app->getParams('com_jem');
 
 		$user = JFactory::getUser();
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;	//viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;	//viewlevel Registered
-			} else {
-				$gid = (int) 1;	//viewlevel Public
-			}
-		}
+		$gid = JEMHelper::getGID($user);
 
 		$query = 'SELECT DISTINCT c.id'
 			.' FROM #__jem_categories AS c';

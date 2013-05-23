@@ -88,17 +88,9 @@ class JEMModelDetails extends JModelLegacy
 		 */
 		if ($this->_loadDetails())
 		{
-			$user	=  JFactory::getUser();
+			$user = JFactory::getUser();
+			$gid = JEMHelper::getGID($user);
 
-		  if (JFactory::getUser()->authorise('core.manage')) {
-              $gid = (int) 3;          //viewlevel Special
-          } else {
-              if($user->get('id')) {
-                  $gid = (int) 2;     //viewlevel Registered
-              } else {
-                 $gid = (int) 1;      //viewlevel Public
-              }
-          }
 
 			// Is the category published?
 			if (!$this->_details->published && $this->_details->catid)
@@ -172,21 +164,11 @@ class JEMModelDetails extends JModelLegacy
 					. $where
 					. ' GROUP BY a.id '
 					;
-    		$this->_db->setQuery($query);
+			$this->_db->setQuery($query);
 			$this->_details = $this->_db->loadObject();
 
-
-			$user	=  JFactory::getUser();
-
-		  if (JFactory::getUser()->authorise('core.manage')) {
-              $gid = (int) 3;          //viewlevel Special
-          } else {
-              if($user->get('id')) {
-                  $gid = (int) 2;     //viewlevel Registered
-              } else {
-                 $gid = (int) 1;      //viewlevel Public
-              }
-		}
+			$user = JFactory::getUser();
+			$gid = JEMHelper::getGID($user);
 
 			$this->_details->attachments = JEMAttachment::getAttachments('event'.$this->_details->did, $gid);
 
@@ -218,16 +200,8 @@ class JEMModelDetails extends JModelLegacy
 	 */
 	function getCategories()
 	{
-		$user		=  JFactory::getUser();
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;		//viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;	 //viewlevel Registered
-			} else {
-				$gid = (int) 1;	//viewlevel Public
-			}
-		}
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
 
 
 		$query = 'SELECT DISTINCT c.id, c.catname,'

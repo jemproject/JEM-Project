@@ -1,11 +1,11 @@
 <?php
 /**
-* @version 1.9 $Id$ 
+* @version 1.9 $Id$
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -30,7 +30,7 @@ defined('_JEXEC') or die;
 class JEMAttachment extends JObject {
 	/**
 	 * upload files for the specified object
-	 * 
+	 *
 	 * @param array data from JRequest 'files'
 	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
 	 */
@@ -38,7 +38,7 @@ class JEMAttachment extends JObject {
 		jimport('joomla.filesystem.file');
 		jimport('joomla.filesystem.folder');
 		require_once JPATH_SITE.'/components/com_jem/classes/image.class.php';
-		
+
 		$app = JFactory::getApplication();
 		$user = JFactory::getUser();
 		$params = JComponentHelper::getParams('com_jem');
@@ -139,15 +139,8 @@ class JEMAttachment extends JObject {
 		$params = JComponentHelper::getParams('com_jem');
 		$jemsettings =  JEMHelper::config();
 
-		$user	=  JFactory::getUser();
-
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;		//viewlevel Special
-		} else if($user->get('id')) {
-			$gid = (int) 2;		//viewlevel Registered
-		} else {
-			$gid = (int) 1;		//viewlevel Public
-		}
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
 
 
 		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$object;
@@ -168,8 +161,8 @@ class JEMAttachment extends JObject {
 			return array();
 		}
 
-		$query = ' SELECT * ' 
-			   . ' FROM #__jem_attachments ' 
+		$query = ' SELECT * '
+			   . ' FROM #__jem_attachments '
 			   . ' WHERE file IN ('. implode(',', $fnames) .')'
 			   . '   AND object = '. $db->Quote($object);
 		if (!is_null($gid)) {
@@ -185,26 +178,19 @@ class JEMAttachment extends JObject {
 
 	/**
 	 * get the file
-	 * 
+	 *
 	 * @param int $id
 	 */
 	static function getAttachmentPath($id) {
 		$params = JComponentHelper::getParams('com_jem');
-		$jemsettings =  JEMHelper::config();
+		$jemsettings = JEMHelper::config();
 
-		$user	=  JFactory::getUser();
-
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;		//viewlevel Special
-		} else if($user->get('id')) {
-			$gid = (int) 2;		//viewlevel Registered
-		} else {
-			$gid = (int) 1;		//viewlevel Public
-		}
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
 
 		$db = JFactory::getDBO();
-		$query = ' SELECT * ' 
-			   . ' FROM #__jem_attachments ' 
+		$query = ' SELECT * '
+			   . ' FROM #__jem_attachments '
 			   . ' WHERE id = '. $db->Quote(intval($id));
 		$db->setQuery($query);
 		$res = $db->loadObject();
@@ -226,7 +212,7 @@ class JEMAttachment extends JObject {
 
 	/**
 	 * remove attachment for objects
-	 * 
+	 *
 	 * @param id from db
 	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
 	 * @return boolean
@@ -241,8 +227,8 @@ class JEMAttachment extends JObject {
 		// then get info for files from db
 		$db = JFactory::getDBO();
 
-		$query = ' SELECT file, object ' 
-			   . ' FROM #__jem_attachments ' 
+		$query = ' SELECT file, object '
+			   . ' FROM #__jem_attachments '
 			   . ' WHERE id = ' . $db->Quote($id);
 		$db->setQuery($query);
 		$res = $db->loadObject();
@@ -255,7 +241,7 @@ class JEMAttachment extends JObject {
 			JFile::delete($path);
 		}
 
-		$query = ' DELETE FROM #__jem_attachments ' 
+		$query = ' DELETE FROM #__jem_attachments '
 			   . ' WHERE id = '. $db->Quote($id);
 		$db->setQuery($query);
 		$res = $db->query();

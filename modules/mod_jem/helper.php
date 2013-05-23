@@ -43,18 +43,9 @@ static	function getList(&$params)
 	{
 		global $app;
 
-		$db			= JFactory::getDBO();
-		$user		= JFactory::getUser();
-		
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;          //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;     //viewlevel Registered
-			} else {
-				$gid = (int) 1;      //viewlevel Public
-			}
-		}
+		$db = JFactory::getDBO();
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
 
 		if ($params->get( 'type', '0' ) == 0) {
 			$where = ' WHERE a.published = 1';
@@ -180,7 +171,7 @@ static	function _format_date($date, $time, $format)
 		else {
 			$date = JText::_('MOD_JEM_OPEN_DATE');
 		}
-		
+
 		return $date;
 	}
 }

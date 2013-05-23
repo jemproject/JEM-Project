@@ -220,15 +220,7 @@ class JEMModelCategories extends JModelLegacy
 		}
 
 		$user = JFactory::getUser();
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;	  //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;	//viewlevel Registered
-			} else {
-				$gid = (int) 1;	//viewlevel Public
-			}
-		}
+		$gid = JEMHelper::getGID($user);
 
 		$ordering = 'c.ordering ASC';
 
@@ -295,15 +287,7 @@ class JEMModelCategories extends JModelLegacy
 		$params = $app->getParams('com_jem');
 
 		$user = JFactory::getUser();
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;	  //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;	//viewlevel Registered
-			} else {
-				$gid = (int) 1;	//viewlevel Public
-			}
-		}
+		$gid = JEMHelper::getGID($user);
 
 		$query = 'SELECT DISTINCT c.id'
 			. ' FROM #__jem_categories AS c';

@@ -81,17 +81,8 @@ class JEMHelperRoute
 		$menus = $app->getMenu();
 		$items = $menus->getItems('component_id', $component->id);
 		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
 
-
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$access = (int) 3; //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$access = (int) 2; //viewlevel Registered
-			} else {
-				$access = (int) 1; //viewlevel Public
-			}
-		}
 		//false if there exists no menu item at all
 		if (!$items) {
 			return false;
@@ -101,7 +92,7 @@ class JEMHelperRoute
 			{
 				foreach($items as $item)
 				{
-					if ((@$item->query['view'] == $needle) && (@$item->query['id'] == $id) && ($item->access <= $access)) {
+					if ((@$item->query['view'] == $needle) && (@$item->query['id'] == $id) && ($item->access <= $gid)) {
 						return $item;
 					}
 				}
@@ -110,7 +101,7 @@ class JEMHelperRoute
 				//no menuitem exists -> return first possible match
 				foreach($items as $item)
 				{
-					if ($item->published == 1 && $item->access <= $access) {
+					if ($item->published == 1 && $item->access <= $gid) {
 						return $item;
 					}
 				}

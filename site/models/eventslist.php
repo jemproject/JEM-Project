@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -57,7 +57,7 @@ class JEMModelEventslist extends JModelLegacy
 
 		$app =  JFactory::getApplication();
 		$jemsettings =  JEMHelper::config();
-		
+
 
 		// Get the paramaters of the active menu item
 		$params 	=  $app->getParams('com_jem');
@@ -66,10 +66,10 @@ class JEMModelEventslist extends JModelLegacy
 		//$limit		= $app->getUserStateFromRequest('com_jem.eventslist.limit', 'limit', $params->def('display_num', 0), 'int');
 		$limit		= $app->getUserStateFromRequest('com_jem.eventslist.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart = $app->getUserStateFromRequest('com_jem.eventslist.limitstart', 'limitstart', 0, 'int');
-	
+
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
-		
+
 
 	}
 
@@ -128,7 +128,7 @@ class JEMModelEventslist extends JModelLegacy
 				//remove events without categories (users have no access to them)
 				if (empty($item->categories)) {
 					unset($this->_data[$i]);
-				} 
+				}
 			}
 		}
 
@@ -213,21 +213,21 @@ class JEMModelEventslist extends JModelLegacy
 	function _buildOrderBy()
 	{
 		$app =  JFactory::getApplication();
-		
+
 		$filter_order		= $app->getUserStateFromRequest('com_jem.eventslist.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.eventslist.filter_order_Dir', 'filter_order_Dir', '', 'word');
-		
+
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
-		
+
 		if ($filter_order != '') {
 			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
 		} else {
 			$orderby = ' ORDER BY a.dates, a.times ';
 		}
-		
+
 		return $orderby;
-		
+
 	}
 
 	/**
@@ -242,28 +242,18 @@ class JEMModelEventslist extends JModelLegacy
 		$task 		= JRequest::getWord('task');
 		$params 	=  $app->getParams();
 		$jemsettings =  JEMHelper::config();
-		
-		$user		=  JFactory::getUser();
-		
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;		//viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;	 //viewlevel Registered
-			} else {
-				$gid = (int) 1;	//viewlevel Public
-			}
-		}
-		
-		
+
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
+
 		$filter_state 	= $app->getUserStateFromRequest('com_jem.eventslist.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.eventslist.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.eventslist.search', 'search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
-		
+
 
 		$where = array();
-		
+
 		// First thing we need to do is to select only needed events
 		if ($task == 'archive') {
 			$where[] = ' a.published = -1';
@@ -272,64 +262,55 @@ class JEMModelEventslist extends JModelLegacy
 		}
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access  <= '.$gid;
-		
+
 		// get excluded categories
 		$excluded_cats = trim($params->get('excluded_cats', ''));
-		
+
 		if ($excluded_cats != '') {
 			$cats_excluded = explode(',', $excluded_cats);
 			$where [] = '  (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
 		}
 		// === END Excluded categories add === //
-		
-		
+
+
 		if ($jemsettings->filter)
-		{	
-			
+		{
+
 		if ($search && $filter == 1) {
 			$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
 		}
-		
+
 		if ($search && $filter == 2) {
 			$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
 		}
-		
+
 		if ($search && $filter == 3) {
 			$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
 		}
-		
+
 		if ($search && $filter == 4) {
 			$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
 		}
-		
+
 		if ($search && $filter == 5) {
 			$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
 		}
-		
+
 		} // end tag of jemsettings->filter decleration
-		
+
 		$where 		= (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
-		
+
 		return $where;
-		
+
 
 	}
 
 	function getCategories($id)
 	{
-		$user		=  JFactory::getUser();
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
 
 		$where		= $this->_buildWhere2();
-
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;		//viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;	 //viewlevel Registered
-			} else {
-				$gid = (int) 1;	//viewlevel Public
-			}
-		}
 
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'

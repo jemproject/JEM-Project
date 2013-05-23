@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -94,39 +94,39 @@ class JEMModelCalendar extends JModelLegacy
 
         $app =  JFactory::getApplication();
         $params =  $app->getParams();
-        
+
         // Lets load the content if it doesn't already exist
         if ( empty($this->_data))
         {
           $query = $this->_buildQuery();
           $this->_data = $this->_getList( $query );
-          
+
           $multi = array();
-            
+
 	        foreach($this->_data AS $item)
 					{
 						//$item = $this->_data[$i];
-						
+
 						$item->categories = $this->getCategories($item->id);
-						
-						if (!is_null($item->enddates) && !$params->get('show_only_start', 1)) 
+
+						if (!is_null($item->enddates) && !$params->get('show_only_start', 1))
 						{
-							if ($item->enddates != $item->dates) 
-							{							
+							if ($item->enddates != $item->dates)
+							{
 								$day = $item->start_day;
-		
+
 								for ($counter = 0; $counter <= $item->datediff-1; $counter++)
 								{
 									$day++;
-								
+
 									//next day:
 									$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
-									
+
 									//ensure we only generate days of current month in this loop
 									if (strftime('%m', $this->_date) == strftime('%m', $nextday)) {
 										$multi[$counter] = clone $item;
 										$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
-										
+
 										//add generated days to data
 										$this->_data = array_merge($this->_data, $multi);
 									}
@@ -135,11 +135,11 @@ class JEMModelCalendar extends JModelLegacy
 								}
 							}
 						}
-		
+
 						//remove events without categories (users have no access to them)
 						if (empty($item->categories)) {
 							unset($item);
-						}						
+						}
 					}
 				}
         return $this->_data;
@@ -183,7 +183,7 @@ class JEMModelCalendar extends JModelLegacy
 
         // Get the paramaters of the active menu item
         $params =  $app->getParams();
-        
+
         $top_category = $params->get('top_category', 0);
 
         $task = JRequest::getWord('task');
@@ -200,19 +200,19 @@ class JEMModelCalendar extends JModelLegacy
         // only select events within specified dates. (chosen month)
         $monthstart = mktime(0, 0, 1, strftime('%m', $this->_date), 1, strftime('%Y', $this->_date));
         $monthend = mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
-        
+
 				$filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', $monthstart));
 				$where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $this->_db->Quote('0000-00-00') .', a.enddates, a.dates), '. $filter_date_from .') >= 0';
 				$filter_date_to = $this->_db->Quote(strftime('%Y-%m-%d', $monthend));
 				$where .= ' AND DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
-					
+
         if ($top_category) {
         	$children = JEMCategories::getChilds($top_category);
         	if (count($children)) {
-        		$where .= ' AND r.catid IN ('. implode(',', $children) .')';   
-        	}     	
+        		$where .= ' AND r.catid IN ('. implode(',', $children) .')';
+        	}
         }
-        
+
         return $where;
     }
 
@@ -224,18 +224,10 @@ class JEMModelCalendar extends JModelLegacy
      */
     function getCategories($id)
     {
-    	$user =  JFactory::getUser();
-        if (JFactory::getUser()->authorise('core.manage')) {
-           $gid = (int) 3;      //viewlevel Special
-           } else {
-               if($user->get('id')) {
-                   $gid = (int) 2;    //viewlevel Registered
-               } else {
-                   $gid = (int) 1;    //viewlevel Public
-               }
-           }
+		$user =  JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
 
-        
+
         $query = 'SELECT c.id, c.catname, c.access, c.color, c.published, c.checked_out AS cchecked_out,'
         . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
         . ' FROM #__jem_categories AS c'
@@ -248,7 +240,7 @@ class JEMModelCalendar extends JModelLegacy
         $this->_db->setQuery($query);
 
         $this->_categories = $this->_db->loadObjectList();
-        
+
         return $this->_categories;
     }
 }

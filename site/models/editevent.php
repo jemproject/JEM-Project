@@ -226,15 +226,7 @@ class JEMModelEditevent extends JModelLegacy
 		$userid		= (int) $user->get('id');
 		$superuser	= JEMUser::superuser();
 
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;	  //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;	//viewlevel Registered
-			} else {
-				$gid = (int) 1;	//viewlevel Public
-			}
-		}
+		$gid = JEMHelper::getGID($user);
 
 		$where = ' WHERE c.published = 1 AND c.access <= '.$gid;
 

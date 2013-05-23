@@ -837,5 +837,25 @@ class JEMHelper {
 		}
 		return true;
 	}
+
+	/**
+	 * Get the Group ID of a specific user or the current user
+	 * @param JUser $user The user object
+	 * @return int The Group ID
+	 */
+	static function getGID($user = null) {
+		if(is_null($user)) {
+			$user = JFactory::getUser();
+		}
+
+		if($user->authorise('core.manage')) {
+			$gid = 3;	// viewlevel Special
+		} elseif($user->get('id')) {
+			$gid = 2;	// viewlevel Registered
+		} else {
+			$gid = 1;	// viewlevel Public
+		}
+		return $gid;
+	}
 }
 ?>

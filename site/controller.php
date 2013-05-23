@@ -432,17 +432,8 @@ class JEMController extends JControllerLegacy
 	function getfile()
 	{
 		$id = JRequest::getInt('file');
-		$user = JFactory::getUser();
 
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;	  //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;	//viewlevel Registered
-			} else {
-				$gid = (int) 1;	//viewlevel Public
-			}
-		}
+		$gid = JEMHelper::getGID();
 
 		$path = JEMAttachment::getAttachmentPath($id, $gid);
 

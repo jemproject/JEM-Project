@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -41,14 +41,14 @@ class JEMModelSearch extends JModelLegacy
 	var $_data = null;
 
 	var $_total = null;
-	
+
 	/**
 	 * Pagination object
 	 *
 	 * @var object
 	 */
 	var $_pagination = null;
-	
+
 	/**
 	 * the query
 	 */
@@ -72,7 +72,7 @@ class JEMModelSearch extends JModelLegacy
 		//get the number of events from database
 		$limit       	= $app->getUserStateFromRequest('com_jem.search.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart		= JRequest::getVar('limitstart', 0, '', 'int');
-			
+
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
 
@@ -109,12 +109,12 @@ class JEMModelSearch extends JModelLegacy
 			{
 				$item = $this->_data[$i];
 				$item->categories = $this->getCategories($item->id);
-				
+
 				//remove events without categories (users have no access to them)
 				if (empty($item->categories)) {
 					unset($this->_data[$i]);
-				} 
-				
+				}
+
 				$k = 1 - $k;
 			}
 		}
@@ -153,7 +153,7 @@ class JEMModelSearch extends JModelLegacy
 			// Get the WHERE and ORDER BY clauses for the query
 			$where		= $this->_buildWhere();
 			$orderby	= $this->_buildOrderBy();
-	
+
 			//Get Events from Database
 			$this->_query = 'SELECT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription,'
 					. ' l.venue, l.city, l.state, l.url,'
@@ -199,11 +199,11 @@ class JEMModelSearch extends JModelLegacy
 
 		// Get the paramaters of the active menu item
 		$params 	=  $app->getParams();
-	   
+
 		$top_category = $params->get('top_category', 0);
 
 		$task 		= JRequest::getWord('task');
-		
+
 		// First thing we need to do is to select only needed events
 		if ($task == 'archive') {
 			$where = ' WHERE a.published = -1';
@@ -253,12 +253,12 @@ class JEMModelSearch extends JModelLegacy
 		$nulldate = '0000-00-00';
 		if ($params->get('date_filter_type', 0) == 1) // match on all events dates (between start and end)
 		{
-			if ($filter_date_from && strtotime($filter_date_from)) 
+			if ($filter_date_from && strtotime($filter_date_from))
 			{
 				$filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_from)));
 				$where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $this->_db->Quote($nulldate) .', a.enddates, a.dates), '. $filter_date_from .') >= 0';
 			}
-			if ($filter_date_to && strtotime($filter_date_to)) 
+			if ($filter_date_to && strtotime($filter_date_to))
 			{
 				$filter_date_to = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_to)));
 				$where .= ' AND DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
@@ -266,16 +266,16 @@ class JEMModelSearch extends JModelLegacy
 		}
 		else // match only on start date
 		{
-			if ($filter_date_from && strtotime($filter_date_from)) 
+			if ($filter_date_from && strtotime($filter_date_from))
 			{
 				$filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_from)));
 				$where .= ' AND DATEDIFF(a.dates, '. $filter_date_from .') >= 0';
 			}
-			if ($filter_date_to && strtotime($filter_date_to)) 
+			if ($filter_date_to && strtotime($filter_date_to))
 			{
 				$filter_date_to = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_to)));
 				$where .= ' AND DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
-			}			
+			}
 		}
 		// filter country
 		if ($filter_continent) {
@@ -294,10 +294,10 @@ class JEMModelSearch extends JModelLegacy
 			$cats = JEMCategories::getChilds((int) $filter_category);
 			$where .= ' AND rel.catid IN (' . implode(', ', $cats) .')';
 		}
-			
+
 		return $where;
 	}
-	
+
 	function getTotal()
 	{
 		// Lets load the total nr if it doesn't already exist
@@ -308,20 +308,12 @@ class JEMModelSearch extends JModelLegacy
     	}
     	return $this->_total;
 	}
-	
+
 	function getCategories($id)
 	{
-		$user		=  JFactory::getUser();
-		if (JFactory::getUser()->authorise('core.manage')) {
-           $gid = (int) 3;      //viewlevel Special
-           } else {
-               if($user->get('id')) {
-                   $gid = (int) 2;    //viewlevel Registered
-               } else {
-                   $gid = (int) 1;    //viewlevel Public
-               }
-           }
-		
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
+
 		$query = 'SELECT c.id, c.catname, c.access, c.ordering, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
 				. ' FROM #__jem_categories AS c'
@@ -330,36 +322,36 @@ class JEMModelSearch extends JModelLegacy
 				. ' AND c.published = 1'
 				. ' AND c.access  <= '.$gid;
 				;
-	
+
 		$this->_db->setQuery( $query );
 
 		$this->_cats = $this->_db->loadObjectList();
-		
+
 		return $this->_cats;
 	}
-  
+
   	function getCountryOptions()
   	{
     	$app =  JFactory::getApplication();
-		
+
   		$filter_continent = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
-  	
+
 			$query = ' SELECT c.iso2 as value, c.name as text '
          		  . ' FROM #__jem_events AS a'
          		  . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
          		  . ' INNER JOIN #__jem_countries as c ON c.iso2 = l.country '
           		;
-				 
+
     	if ($filter_continent) {
       		$query .= ' WHERE c.continent = ' . $this->_db->Quote($filter_continent);
     	}
     	$query .= ' GROUP BY c.iso2 ';
     	$query .= ' ORDER BY c.name ';
     	$this->_db->setQuery($query);
-		
+
     	return $this->_db->loadObjectList();
   	}
-	
+
 	function getCityOptions()
 	{
 		if (!$country = JRequest::getString('filter_country', '', 'request')) {
@@ -370,12 +362,12 @@ class JEMModelSearch extends JModelLegacy
            . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
            . ' INNER JOIN #__jem_countries as c ON c.iso2 = l.country '
            . ' WHERE l.country = ' . $this->_db->Quote($country)
-           . ' ORDER BY l.city ';           
-    		
+           . ' ORDER BY l.city ';
+
 			$this->_db->setQuery($query);
     		return $this->_db->loadObjectList();
 	}
-	
+
 
   	/**
   	 * logic to get the categories
@@ -385,27 +377,18 @@ class JEMModelSearch extends JModelLegacy
  	  */
   	function getCategoryTree()
   	{
-			$app =  JFactory::getApplication();
-	
-			// Get the paramaters of the active menu item
-			$params 	=  $app->getParams('com_jem');
-			$top_id = $params->get('top_category', 0);
-			
-   		$user   =  JFactory::getUser();
-    	$jemsettings =  JEMHelper::config();
-    	$userid   = (int) $user->get('id');
-    	
-    	if (JFactory::getUser()->authorise('core.manage')) {
-           $gid = (int) 3;      //viewlevel Special
-           } else {
-               if($user->get('id')) {
-                   $gid = (int) 2;    //viewlevel Registered
-               } else {
-                   $gid = (int) 1;    //viewlevel Public
-               }
-           }
-    	
-    	
+		$app =  JFactory::getApplication();
+
+		// Get the paramaters of the active menu item
+		$params 	=  $app->getParams('com_jem');
+		$top_id = $params->get('top_category', 0);
+
+		$user = JFactory::getUser();
+		$jemsettings = JEMHelper::config();
+		$userid = (int) $user->get('id');
+		$gid = JEMHelper::getGID($user);
+
+
     	$superuser  = JEMUser::superuser();
 
 	    $where = ' WHERE c.published = 1 AND c.access <= '.$gid;
@@ -417,12 +400,12 @@ class JEMModelSearch extends JModelLegacy
     	    . $where
         	. ' ORDER BY c.ordering'
         	;
-    	$this->_db->setQuery( $query );  
+    	$this->_db->setQuery( $query );
     	$rows = $this->_db->loadObjectList();
-    	
+
     	//set depth limit
     	$levellimit = 10;
-    
+
     	//get children
     	$children = array();
     	foreach ($rows as $child) {
@@ -430,8 +413,8 @@ class JEMModelSearch extends JModelLegacy
     		$list = @$children[$parent] ? $children[$parent] : array();
     		array_push($list, $child);
     		$children[$parent] = $list;
-    	}	
-    
+    	}
+
 		//get list of the items
     	return JEMCategories::treerecurse($top_id, '', array(), $children, true, max(0, $levellimit-1));
   	}

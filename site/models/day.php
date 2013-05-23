@@ -252,21 +252,21 @@ class JEMModelDay extends JModelLegacy
 	function _buildOrderBy()
 	{
 		$app =  JFactory::getApplication();
-		
+
 		$filter_order		= $app->getUserStateFromRequest('com_jem.day.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.day.filter_order_Dir', 'filter_order_Dir', '', 'word');
-		
+
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
-		
+
 		if ($filter_order != '') {
 			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
 		} else {
 			$orderby = ' ORDER BY a.dates, a.times ';
 		}
-		
+
 		return $orderby;
-		
+
 	}
 
 	/**
@@ -277,84 +277,75 @@ class JEMModelDay extends JModelLegacy
 	 */
 	function _buildWhere()
 	{
-		$app =  JFactory::getApplication();
-		$task 		= JRequest::getWord('task');
-		$params 	=  $app->getParams();
-		$jemsettings =  JEMHelper::config();
-		
-		$user		=  JFactory::getUser();
-		
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;		//viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;	 //viewlevel Registered
-			} else {
-				$gid = (int) 1;	//viewlevel Public
-			}
-		}
-		
-		$nulldate 	= '0000-00-00';
-		
+		$app = JFactory::getApplication();
+		$task = JRequest::getWord('task');
+		$params = $app->getParams();
+		$jemsettings = JEMHelper::config();
+
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
+
+		$nulldate = '0000-00-00';
+
 		$filter_state 	= $app->getUserStateFromRequest('com_jem.day.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.day.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.day.search', 'search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
-		
-		
+
+
 		$where = array();
-		
+
 		// First thing we need to do is to select only needed events
-		
+
 		$where[] = ' a.published = 1';
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access  <= '.$gid;
-		
-		
+
+
 		// Second is to only select events of the specified day
 		$where[]= ' (\''.$this->_date.'\' BETWEEN (a.dates) AND (IF (a.enddates >= a.dates, a.enddates, a.dates)) OR \''.$this->_date.'\' = a.dates)';
-		
+
 		/*
 		// get excluded categories
 		$excluded_cats = trim($params->get('excluded_cats', ''));
-		
+
 		if ($excluded_cats != '') {
 			$cats_excluded = explode(',', $excluded_cats);
 			$where [] = '  (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
 		}
 		// === END Excluded categories add === //
 		 * */
-		
-		
+
+
 		if ($jemsettings->filter)
 		{
-				
+
 			if ($search && $filter == 1) {
 				$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
 			}
-		
+
 			if ($search && $filter == 2) {
 				$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
 			}
-		
+
 			if ($search && $filter == 3) {
 				$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
 			}
-		
+
 			if ($search && $filter == 4) {
 				$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
 			}
-		
+
 			if ($search && $filter == 5) {
 				$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
 			}
-		
+
 		} // end tag of jemsettings->filter decleration
-		
+
 		$where 		= (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
-		
+
 		return $where;
-			
+
 	}
 
 	/**
@@ -369,39 +360,31 @@ class JEMModelDay extends JModelLegacy
 	}
 
 
-  /**
-   * get event categories
-   *
-   * @param int event id
-   * @return array
-   */
-  function getCategories($id)
-  {
-    $user   =  JFactory::getUser();
-    if (JFactory::getUser()->authorise('core.manage')) {
-           $gid = (int) 3;      //viewlevel Special
-           } else {
-               if($user->get('id')) {
-                   $gid = (int) 2;    //viewlevel Registered
-               } else {
-                   $gid = (int) 1;    //viewlevel Public
-               }
-           }
+	/**
+	 * get event categories
+	 *
+	 * @param int event id
+	 * @return array
+	 */
+	function getCategories($id)
+	{
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
 
-    $query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
-        . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-        . ' FROM #__jem_categories AS c'
-        . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-        . ' WHERE rel.itemid = '.(int)$id
-        . ' AND c.published = 1'
-        . ' AND c.access  <= '.$gid;
-        ;
+		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
+				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
+				. ' FROM #__jem_categories AS c'
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
+				. ' WHERE rel.itemid = '.(int)$id
+				. ' AND c.published = 1'
+				. ' AND c.access <= '.$gid;
+				;
 
-    $this->_db->setQuery( $query );
+		$this->_db->setQuery( $query );
 
-    $this->_cats = $this->_db->loadObjectList();
+		$this->_cats = $this->_db->loadObjectList();
 
-    return $this->_cats;
-  }
+		return $this->_cats;
+	}
 }
 ?>
