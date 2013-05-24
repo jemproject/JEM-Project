@@ -188,14 +188,18 @@ class JEMModelVenues extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.venues.filter_order', 'filter_order', 'l.ordering', 'cmd' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.venues.filter_order', 'filter_order', 'l.venue', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.venues.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
-	//	$orderby 	= ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', l.ordering';
-		$orderby 	= ' ORDER BY '.$filter_order.' '.$filter_order_Dir;
+		
+		if ($filter_order != '') {
+			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
+		} else {
+			$orderby = ' ORDER BY l.venue ';
+		}
 
 		return $orderby;
 	}

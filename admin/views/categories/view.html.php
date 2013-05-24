@@ -43,7 +43,7 @@ class JEMViewCategories extends JViewLegacy {
 		JHTML::_('behavior.tooltip');
 
 		//get vars
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.categories.filter_order', 		'filter_order', 	'c.ordering', 'cmd' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.categories.filter_order', 		'filter_order', 	'c.catname', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categories.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categories.filter_state', 		'filter_state', 	'*', 'word' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.categories.search', 			'search', 			'', 'string' );

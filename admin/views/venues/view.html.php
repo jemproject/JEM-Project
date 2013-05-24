@@ -42,7 +42,7 @@ class JEMViewVenues extends JViewLegacy {
 		$document	=  JFactory::getDocument();
 
 		//get vars
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.venues.filter_order', 'filter_order', 'l.ordering', 'cmd' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.venues.filter_order', 'filter_order', 'l.venue', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.venues.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.venues.filter_state', 'filter_state', '*', 'word' );
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.venues.filter', 'filter', '', 'int' );
