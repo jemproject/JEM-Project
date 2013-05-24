@@ -58,6 +58,7 @@ class JEMViewEditevent extends JViewLegacy
 		$editor 	=  JFactory::getEditor();
 		$doc 		=  JFactory::getDocument();
 		$jemsettings =  JEMHelper::config();
+		$url 		= JURI::root();
 
 		//Get Data from the model
 		$row 			= $this->get('Event');
@@ -88,6 +89,7 @@ class JEMViewEditevent extends JViewLegacy
 		//add css file
 		$doc->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$doc->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		$doc->addScript($url.'media/com_jem/js/seo.js');
 
 		//Set page title
 		$id ? $title = JText::_( 'COM_JEM_EDIT_EVENT' ) : $title = JText::_( 'COM_JEM_ADD_EVENT' );

@@ -533,26 +533,15 @@ class JEMModelEditevent extends JModelLegacy
 		//Sanitize
 		$data['datdescription'] = JRequest::getVar( 'datdescription', '', 'post','string', JREQUEST_ALLOWRAW );
 
-		//include the metatags
-	/*	if (strlen($data['meta_description']) > 255) {
-			$data['meta_description'] = substr($data['meta_description'],0,254);
+		
+		// Check the metatags
+		if (JString::strlen($row->meta_description) > 255) {
+			$row->meta_description = JString::substr($row->meta_description, 0, 254);
 		}
 
-		if (strlen($data['meta_keywords']) > 200) {
-			$data['meta_keywords'] = substr($data['meta_keywords'],0,199);
+		if (JString::strlen($row->meta_keywords) > 200) {
+			$row->meta_keywords = JString::substr($row->meta_keywords, 0, 199);
 		}
-		*/
-
-		//include the metatags
-		//$data['meta_description'] = addslashes(htmlspecialchars(trim($jemsettings->meta_description)));
-	/*	if (strlen($data['meta_description']) > 255) {
-			$data['meta_description'] = substr($data['meta_description'],0,254);
-		}
-		//$data['meta_keywords'] = addslashes(htmlspecialchars(trim($jemsettings->meta_keywords)));
-		if (strlen($data['meta_keywords']) > 200) {
-			$data['meta_keywords'] = substr($data['meta_keywords'],0,199);
-		}
-		*/
 
 
 		$curimage = JRequest::getVar( 'curimage', '', 'post','string' );

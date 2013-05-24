@@ -81,6 +81,8 @@ defined('_JEXEC') or die;
 					echo $this->editor->save( 'datdescription' );
   			}
 			?>
+			$("meta_keywords").value = $keywords;
+			$("meta_description").value = $description;
 				submit_unlimited();
 				elsubmitform(pressbutton);
 
@@ -493,6 +495,64 @@ defined('_JEXEC') or die;
       		<?php endif; ?>
     	</fieldset>
 
+    	
+    	     	<fieldset class="jem_fldst_meta">
+
+          <table style="width:100%">
+			<tr>
+				<td>
+					<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_ ( 'COM_JEM_TITLE' );	?>" />
+					<input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php	echo JText::_ ( 'COM_JEM_VENUE' );?>" />
+					<input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php	echo JText::_ ( 'COM_JEM_CATEGORIES' );?>" />
+					<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_ ( 'COM_JEM_DATE' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo JText::_ ( 'COM_JEM_TIME' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo JText::_ ( 'COM_JEM_ENDDATE' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo JText::_ ( 'COM_JEM_ENDTIME' );?>" />
+					<br />
+					<label for="meta_keywords">
+						<?php echo JText::_ ( 'COM_JEM_META_KEYWORDS' ) . ':';?>
+					</label>
+					<br />
+						<?php
+						if (! empty ( $this->row->meta_keywords )) {
+							$meta_keywords = $this->row->meta_keywords;
+						} else {
+							$meta_keywords = $this->jemsettings->meta_keywords;
+						}
+						?>
+					<textarea class="inputbox" name="meta_keywords" id="meta_keywords" rows="5" cols="40" maxlength="150" onfocus="get_inputbox('meta_keywords')" onblur="change_metatags()"><?php echo $meta_keywords; ?></textarea>
+				</td>
+			<tr>
+			<tr>
+				<td>
+					<label for="meta_description">
+						<?php echo JText::_ ( 'COM_JEM_META_DESCRIPTION' ) . ':';?>
+					</label>
+					<br />
+					<?php
+					if (! empty ( $this->row->meta_description )) {
+						$meta_description = $this->row->meta_description;
+					} else {
+						$meta_description = $this->jemsettings->meta_description;
+					}
+					?>
+					<textarea class="inputbox" name="meta_description" id="meta_description" rows="5" cols="40" maxlength="200"	onfocus="get_inputbox('meta_description')" onblur="change_metatags()"><?php echo $meta_description;?></textarea>
+				</td>
+			</tr>
+				<!-- include the metatags end-->
+		</table>
+		<script type="text/javascript">
+		<!--
+			starter("<?php
+			echo JText::_ ( 'COM_JEM_META_ERROR' );
+			?>");	// window.onload is already in use, call the function manualy instead
+		-->
+		</script>
+
+      	</fieldset>
+    	
+    	
+    	
     	<?php echo $this->loadTemplate('attachments'); ?>
 
 <!--  removed to avoid double posts in ie7
