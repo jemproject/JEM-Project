@@ -242,7 +242,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 			<?php } ?>
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_JEM_STATE' ); ?></strong>
+					<strong><?php echo JText::_ ( 'COM_JEM_STATUS' ); ?></strong>
 				</td>
 				<td>
 					<?php
