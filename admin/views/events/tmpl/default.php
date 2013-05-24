@@ -59,7 +59,7 @@ if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$search
 				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'loc.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th><?php echo JText::_( 'COM_JEM_CATEGORIES' ); ?></th>
-			    <th width="1%" class="center nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
+			    <th width="1%" class="center nowrap"><?php echo JText::_( 'JSTATUS' ); ?></th>
 				<th class="nowrap"><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
 				<th class="center"><?php echo JHTML::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th width="1%" class="center nowrap"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ); ?></th>

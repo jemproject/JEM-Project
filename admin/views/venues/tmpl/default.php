@@ -48,7 +48,7 @@ defined('_JEXEC') or die;
 			<th><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="1%"><?php echo JHTML::_('grid.sort', 'COM_JEM_COUNTRY', 'l.country', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
+			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'JSTATUS' ); ?></th>
 			<th><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
 			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_EVENTS' ); ?></th>
 		    <th width="8%" colspan="2"><?php echo JHTML::_('grid.sort', 'COM_JEM_REORDER', 'l.ordering', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>

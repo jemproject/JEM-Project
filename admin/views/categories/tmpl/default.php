@@ -49,12 +49,12 @@ defined('_JEXEC') or die; ?>
 		<tr>
 			<th class="center" width="1%"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 			<th class="center" width="1%"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th class="title"><?php echo JHTML::_('grid.sort', 'JCATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="20%"><?php echo JHTML::_('grid.sort', 'COM_JEM_ALIAS', 'c.alias', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
       <th width="10px" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_COLOR' ); ?></th>
 			<th width="15%"><?php echo JHTML::_('grid.sort', 'COM_JEM_GROUP', 'gr.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_EVENTS' ); ?></th>
-			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
+			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'JSTATUS' ); ?></th>
 			<th width="7%"><?php echo JHTML::_('grid.sort', 'COM_JEM_ACCESS', 'c.access', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="5%"><?php echo JHTML::_('grid.sort', 'COM_JEM_REORDER', 'c.ordering', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th width="1%"><?php echo JHTML::_('grid.order', $this->rows, 'filesave.png', 'saveordercat' ); ?></th>
