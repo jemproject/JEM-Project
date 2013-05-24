@@ -297,11 +297,11 @@ class JEMViewDetails extends JViewLegacy
 				}
 				break;
 			case "dates":
-				$content = JEMOutput::formatShortDateTime($row->$keyword, null, null, null);
+				$content = JEMOutput::formatdate($row->dates);
 				break;
 			case "enddates":
 				//$content = strftime($formatdate ,strtotime($row->$keyword));
-				$content = JEMOutput::formatShortDateTime(null, null, $row->keyword, null);
+				$content = JEMOutput::formatdate($row->enddates); 
 				break;
 			default:
 				$content = "";
