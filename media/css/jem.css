@@ -54,6 +54,13 @@ div#jem .hr
 }
 
 
+div#jem .tabs
+{
+margin:inherit;
+}
+
+
+
 div#jem .inputbox:hover
 {
 border:1px solid grey;
@@ -610,6 +617,13 @@ margin: 0 0 1em 0;
 float: right;
 }
 
+div.right {
+margin: 0 0 1em 0;
+float: right;
+}
+
+
+
     div.jem_save_buttons button {
     font-size: 1.5em;
     cursor: pointer;
@@ -848,6 +862,138 @@ button.regular, .buttons a.regular{
     background-color:#6299c5 !important;
      border:1px solid grey !important;
     color:#fff !important;
+}
+
+
+
+/* -- TAB STYLES ----------------------------- */
+div#jem dl.tabs {
+	float: left;
+	margin: 0 0 -1px 0;
+	z-index: 50;
+}
+
+div#jem dl.tabs dt {
+	float: left;
+	padding: 4px 10px;
+	border: 1px solid #ccc;
+	margin-left: 3px;
+	background: #e9e9e9;
+	color: #666;
+}
+
+div#jem dl.tabs dt.open {
+	background: #F9F9F9;
+	border-bottom: 1px solid #f9f9f9;
+	z-index: 100;
+	color: #000;
+}
+
+div#jem div.current {
+	clear: both;
+	border: 1px solid #ccc;
+	padding: 10px 10px;
+}
+
+div#jem div.current dd {
+	padding: 0;
+	margin: 0;
+}
+
+div#jem dl#content-pane.tabs {
+	margin: 1px 0 0 0;
+}
+
+div#jem div.current label,
+div#jem div.current span.faux-label {
+	display: block;
+	min-width: 150px;
+	float: left;
+	clear: left;
+	margin-top: 8px;
+}
+
+div#jem div.current fieldset {
+	border: none 0;
+}
+
+div#jem div.current fieldset.adminform {
+	border: 1px #ccc solid;
+}
+
+div#jem div.current fieldset.radio {
+	float: left;
+}
+
+div#jem div.current fieldset.radio input {
+	clear: none;
+	min-width: 15px;
+	float: left;
+	margin: 3px 0 0 2px;
+}
+
+div#jem div.current fieldset.radio label {
+	clear: none;
+	min-width: 45px;
+	float: left;
+	margin: 3px 0 0 5px;
+}
+
+div#jem div.current fieldset.checkboxes {
+	float: left;
+	clear: right;
+}
+
+div#jem div.current fieldset.checkboxes input {
+	clear: left;
+	min-width: 15px;
+	float: left;
+	margin: 3px 0 0 2px;
+}
+
+div#jem div.current fieldset.checkboxes label {
+	clear: right;
+	min-width: 45px;
+	margin: 3px 0 0 5px;
+}
+
+div#jem div.current input,
+div#jem div.current textarea,
+div#jem div.current select {
+	clear: none;
+	float: left;
+	margin: 3px 0 0 2px;
+}
+
+div#jem div.current select {
+	margin-bottom: 15px;
+}
+
+div#jem p.tab-description {
+	font-size: 1.091em;
+	margin-left: 0;
+	margin-top: 5px;
+}
+
+/* Tab changes for accessibility */
+div#jem dl.tabs dt h3 {
+	margin: 0;
+	padding: 0;
+	font-size: 1em;
+	font-weight: normal;
+}
+
+div#jem dl.tabs dt h3 a:link {
+	color:#333333;
+	outline:medium none;
+	text-decoration:none;
+}
+
+div#jem dl.tabs dt h3 a {
+	color:#333333;
+	outline:medium none;
+	text-decoration:none;
+	background:none;
 }
 
 

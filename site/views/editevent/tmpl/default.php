@@ -22,6 +22,19 @@
 
 // no direct access
 defined('_JEXEC') or die;
+
+$options = array(
+		'onActive' => 'function(title, description){
+        description.setStyle("display", "block");
+        title.addClass("open").removeClass("closed");
+    }',
+		'onBackground' => 'function(title, description){
+        description.setStyle("display", "none");
+        title.addClass("closed").removeClass("open");
+    }',
+		'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
+		'useCookie' => true, // this must not be a string. Don't use quotes.
+);
 ?>
 
 <script type="text/javascript">
@@ -128,21 +141,8 @@ defined('_JEXEC') or die;
 
 
 <div id="jem" class="jem_editevent">
-
-    <?php if ($this->params->def( 'show_page_title', 1 )) : ?>
-    <h1 class="componentheading">
-        <?php echo $this->title; ?>
-    </h1>
-    <?php endif; ?>
-
-    <?php if ($this->params->get('showintrotext')) : ?>
-      <div class="description no_space floattext">
-        <?php echo $this->params->get('introtext'); ?>
-      </div>
-    <?php endif; ?>
-
-    <form enctype="multipart/form-data" id="adminForm" action="<?php echo JRoute::_('index.php') ?>" method="post" class="form-validate">
-        <div class="jem_save_buttons floattext">
+<form enctype="multipart/form-data" id="adminForm" action="<?php echo JRoute::_('index.php') ?>" method="post" class="form-validate">
+      <div class="buttons">
             <button type="submit" class="positive" onclick="return submitbutton('saveevent')">
         	    <?php echo JText::_('COM_JEM_SAVE'); ?>
         	</button>
@@ -150,9 +150,24 @@ defined('_JEXEC') or die;
         	    <?php echo JText::_('COM_JEM_CANCEL'); ?>
         	</button>
         </div>
+ 
+    <?php if ($this->params->def( 'show_page_title', 1 )) : ?>
+    <h1 class="componentheading">
+        <?php echo $this->title; ?>
+    </h1>
+    <?php endif; ?>
+ 
+    <?php if ($this->params->get('showintrotext')) : ?>
+      <div class="description no_space floattext">
+        <?php echo $this->params->get('introtext'); ?>
+      </div>
+    <?php endif; ?>
 
-        <p class="clear"></p>
-
+   <p>&nbsp;</p>
+       
+       <?php echo JHtml::_('tabs.start','event-pane',$options); ?>
+<?php	echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_MAIN_TAB'), 'event' ); ?>
+  
     	<fieldset class="jem_fldst_details">
 
         	<legend><?php echo JText::_('COM_JEM_NORMAL_INFO'); ?></legend>
@@ -256,8 +271,33 @@ defined('_JEXEC') or die;
 
         </fieldset>
 
+ <!--  DESCRIPTION  -->
+    	<fieldset class="description">
+      		<legend><?php echo JText::_('COM_JEM_DESCRIPTION'); ?></legend>
 
-        <fieldset >
+      		<?php
+      		//if usertyp min editor then editor else textfield
+      		if ($this->editoruser) :
+      			echo $this->editor->display('datdescription', $this->row->datdescription, '100%', '400', '70', '15', array('pagebreak', 'readmore') );
+      		else :
+      		?>
+      		<textarea style="width:100%;" rows="10" name="datdescription" class="inputbox" wrap="virtual" onkeyup="berechne(this.form)"><?php echo $this->row->datdescription; ?></textarea><br />
+      		<?php echo JText::_( 'COM_JEM_NO_HTML' ); ?><br />
+      		<input disabled value="<?php echo $this->jemsettings->datdesclimit; ?>" size="4" name="zeige" /><?php echo JText::_( 'COM_JEM_AVAILABLE' ); ?><br />
+      		<a href="javascript:rechne(document.adminForm);"><?php echo JText::_( 'COM_JEM_REFRESH' ); ?></a>
+      		<?php endif; ?>
+    	</fieldset>
+
+    	
+    	   
+    	
+    	<!-- TAB: SECOND -->
+    		<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_SECOND_TAB'), 'eventsecond' ); ?> 	
+    	
+    	
+    	<!-- CUSTOM FIELDS -->
+    	        	
+    	       <fieldset >
          <legend><?php echo JText::_('COM_JEM_CUSTOM_FIELDS'); ?></legend>
         <div class="jem_custom1 floattext">
       		              <label for="custom1">
@@ -340,13 +380,8 @@ defined('_JEXEC') or die;
       		          </div>
       		</fieldset>
 
-
-
-
-
-
-
-    	<?php if ( $this->jemsettings->showfroregistra == 2 ) : ?>
+    	
+    		<?php if ( $this->jemsettings->showfroregistra == 2 ) : ?>
     	<fieldset class="jem_fldst_registration">
 
           <legend><?php echo JText::_('COM_JEM_REGISTRATION'); ?></legend>
@@ -477,27 +512,13 @@ defined('_JEXEC') or die;
       		<div class="jem_selected_image"><?php echo JText::_( 'COM_JEM_SELECTED_IMAGE' ); ?></div>-->
     	</fieldset>
     	<?php endif; ?>
-
-
-    	<fieldset class="description">
-      		<legend><?php echo JText::_('COM_JEM_DESCRIPTION'); ?></legend>
-
-      		<?php
-      		//if usertyp min editor then editor else textfield
-      		if ($this->editoruser) :
-      			echo $this->editor->display('datdescription', $this->row->datdescription, '100%', '400', '70', '15', array('pagebreak', 'readmore') );
-      		else :
-      		?>
-      		<textarea style="width:100%;" rows="10" name="datdescription" class="inputbox" wrap="virtual" onkeyup="berechne(this.form)"><?php echo $this->row->datdescription; ?></textarea><br />
-      		<?php echo JText::_( 'COM_JEM_NO_HTML' ); ?><br />
-      		<input disabled value="<?php echo $this->jemsettings->datdesclimit; ?>" size="4" name="zeige" /><?php echo JText::_( 'COM_JEM_AVAILABLE' ); ?><br />
-      		<a href="javascript:rechne(document.adminForm);"><?php echo JText::_( 'COM_JEM_REFRESH' ); ?></a>
-      		<?php endif; ?>
-    	</fieldset>
-
     	
-    	     	<fieldset class="jem_fldst_meta">
-
+    	  
+    	  
+    	  <!--  START META FIELDSET -->
+    	  
+    	  	<fieldset class="jem_fldst_meta">
+   <legend><?php echo JText::_('COM_JEM_META_HANDLING'); ?></legend>
           <table style="width:100%">
 			<tr>
 				<td>
@@ -550,8 +571,8 @@ defined('_JEXEC') or die;
 		</script>
 
       	</fieldset>
-    	
-    	
+      	
+      		  <!--  END META FIELDSET -->
     	
     	<?php echo $this->loadTemplate('attachments'); ?>
 
@@ -565,6 +586,7 @@ defined('_JEXEC') or die;
         	</button>
       </div>
 -->
+        	    	<?php echo JHtml::_('tabs.end'); ?>
 		<p class="clear">
     	<input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
     	<input type="hidden" name="referer" value="<?php echo @$_SERVER['HTTP_REFERER']; ?>" />

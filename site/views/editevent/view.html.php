@@ -53,6 +53,8 @@ class JEMViewEditevent extends JViewLegacy
 			$this->_displaychoosevenue($tpl);
 			return;
 		}
+		
+		
 
 		// Initialize variables
 		$editor 	=  JFactory::getEditor();
@@ -85,6 +87,7 @@ class JEMViewEditevent extends JViewLegacy
 		JHTML::_('behavior.formvalidation');
 		JHTML::_('behavior.tooltip');
 		JHTML::_('behavior.modal', 'a.flyermodal');
+		jimport('joomla.html.pane');
 
 		//add css file
 		$doc->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
