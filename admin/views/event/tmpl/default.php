@@ -111,10 +111,15 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 					<label for="published"><?php echo JText::_ ( 'COM_JEM_PUBLISHED' ) . ':'; ?></label>
 				</td>
 				<td>
-					<?php
-					$html = JHTML::_ ( 'select.booleanlist', 'published', '', $this->row->published );
-					echo $html;
-					?>
+				<?php
+				$nr = array();
+				$nr[] = JHTML::_('select.option', '0', JText::_('JUNPUBLISHED') );
+				$nr[] = JHTML::_('select.option', '1', JText::_('JPUBLISHED') );
+				$nr[] = JHTML::_('select.option', '2', JText::_('JARCHIVED') );
+				$nr[] = JHTML::_('select.option', '-2', JText::_('JTRASHED') );
+				$nrpublished = JHTML::_('select.genericlist', $nr, 'published', 'size="1" class="inputbox"', 'value', 'text', $this->row->published );
+				echo $nrpublished;
+				?>
 				</td>
 			</tr>
 			<tr>
