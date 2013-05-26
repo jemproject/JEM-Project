@@ -87,7 +87,7 @@ class JEMHelper {
 					. ' WHERE recurrence_type <> "0" '
 					. ' AND CASE recurrence_limit_date WHEN '.$nulldate.' THEN 1 ELSE NOW() < recurrence_limit_date END '
 					. ' AND recurrence_number <> "0" '
-					. ' AND `published` = 1 '
+					. ' AND published = 1 '
 					. ' GROUP BY first_id'
 					. ' ORDER BY dates DESC';
 			$db->SetQuery($query);

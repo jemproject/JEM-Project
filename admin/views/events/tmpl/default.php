@@ -42,7 +42,12 @@ if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$search
 				<button onclick="$('search').value='';document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 			</td>
 			<td nowrap="nowrap">
-				<?php echo $this->lists['state'];	?>
+				<?php //echo $this->lists['state'];	?>
+				
+							<select name="filter_state" class="inputbox" onchange="this.form.submit()">
+				<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
+				<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->lists['state'], true);?>
+			</select>
 			</td>
 		</tr>
 	</table>
@@ -95,7 +100,7 @@ if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$search
 
 				$link 			= 'index.php?option=com_jem&amp;controller=events&amp;task=edit&amp;cid[]='.$row->id;
 				$venuelink 		= 'index.php?option=com_jem&amp;controller=venues&amp;task=edit&amp;cid[]='.$row->locid;
-				$published 	= JHTML::_('grid.published', $row, $i );
+				$published 	= JHTML::_('jgrid.published', $row->published, $i );
    			?>
 			<tr class="row<?php echo $i % 2; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>

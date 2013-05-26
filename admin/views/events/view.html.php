@@ -45,7 +45,7 @@ class JEMViewEvents extends JViewLegacy {
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.events.filter_order', 'filter_order', 	'a.dates', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.events.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.events.filter_state', 'filter_state', 	'*', 'word' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.events.filter_state', 'filter_state', 	'', 'string' );
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.events.filter', 'filter', '', 'int' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.events.search', 'search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
@@ -61,7 +61,7 @@ class JEMViewEvents extends JViewLegacy {
 		$pagination 	=  $this->get( 'Pagination' );
 
 		//publish unpublished filter
-		$lists['state']	= JHTML::_('grid.state', $filter_state );
+		$lists['state']	= $filter_state;
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
@@ -79,6 +79,7 @@ class JEMViewEvents extends JViewLegacy {
 
 		// search filter
 		$lists['search']= $search;
+		
 
 		//assign data to template
 		$this->lists 		= $lists;
@@ -102,20 +103,47 @@ class JEMViewEvents extends JViewLegacy {
 	*/
 
 	function addToolbar()
-	{
-
+	{	
 		JToolBarHelper::title( JText::_( 'COM_JEM_EVENTS' ), 'events' );
-		JToolBarHelper::archiveList();
-		JToolBarHelper::spacer();
+		
+		if ($this->lists['state'] != 2)
+		{
 		JToolBarHelper::publishList();
 		JToolBarHelper::spacer();
 		JToolBarHelper::unpublishList();
 		JToolBarHelper::spacer();
+	    }
+	    
+	    if ($this->lists['state'] != -1)
+	    {
+	    	JToolBarHelper::divider();
+	    	if ($this->lists['state'] != 2)
+	    	{
+	    		JToolBarHelper::archiveList();
+	    	}
+	    	elseif ($this->lists['state'] == 2)
+	    	{
+	    		JToolBarHelper::unarchiveList();
+	    	}
+
+	    }
+	    
+	    if ($this->lists['state'] == -2)
+	    {
+	    	JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'remove', $alt = 'JACTION_DELETE');
+	    }
+		elseif (JFactory::getUser()->authorise('core.edit.state'))
+		{
+			JToolBarHelper::trash('trash');
+			JToolBarHelper::divider();
+		}
+	    
+
 		JToolBarHelper::addNew();
 		JToolBarHelper::spacer();
 		JToolBarHelper::editList();
 		JToolBarHelper::spacer();
-		JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'remove', $alt = 'JACTION_DELETE');
+
 		JToolBarHelper::spacer();
 		JToolBarHelper::custom( 'copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
 		JToolBarHelper::spacer();

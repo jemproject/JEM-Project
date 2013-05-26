@@ -225,7 +225,7 @@ class JEMModelArchive extends JModelLegacy
 		$search 			= $app->getUserStateFromRequest( 'com_jem.archive.search', 'search', '', 'string' );
 		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
 
-		$where = array('a.published 	= -1',);
+		$where = array('a.published 	= 2',);
 
 		if ($search && $filter == 1) {
 			$where[] = ' LOWER(a.title) LIKE \'%'.$this->_db->escape($search).'%\' ';

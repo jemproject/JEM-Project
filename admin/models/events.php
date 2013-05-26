@@ -199,24 +199,25 @@ class JEMModelEvents extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_state 	= $app->getUserStateFromRequest('com_jem.filter_state', 'filter_state', '', 'word');
+		$filter_state 	= $app->getUserStateFromRequest('com_jem.filter_state', 'filter_state', '', 'string');
 		$filter 		= $app->getUserStateFromRequest('com_jem.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.search', 'search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
 
+		// debug filter_state
+		/* var_dump($filter_state); */
+		
 		$where = array();
 
-		if ($filter_state) {
-			if ($filter_state == 'P') {
-				$where[] = 'a.published = 1';
-			} else if ($filter_state == 'U') {
-				$where[] = 'a.published = 0';
-			} else {
-				$where[] = 'a.published >= 0';
-			}
-		} else {
-			$where[] = 'a.published >= 0';
+		
+		// Filter by published state
+		$published = $filter_state;
+		if (is_numeric($published)) {
+			$where[] = 'a.published = '.(int) $published;
+		} elseif ($published === '') {
+			$where[] = '(a.published = 0 OR a.published = 1)';
 		}
+	
 
 		if ($search && $filter == 1) {
 			$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';

@@ -98,6 +98,35 @@ class JEMControllerEvents extends JEMController
 		$this->setRedirect( 'index.php?option=com_jem&view=events', $msg );
 	}
 
+	
+	/**
+	 * Logic to unpublish events
+	 *
+	 * @access public
+	 * @return void
+	 * @since 0.9
+	 */
+	function trash()
+	{
+		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
+	
+		if (!is_array( $cid ) || count( $cid ) < 1) {
+			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_UNPUBLISH'));
+		}
+	
+		$model = $this->getModel('events');
+		if(!$model->publish($cid, -2)) {
+			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
+		}
+	
+		$total = count( $cid );
+		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_TRASHED');
+	
+		$this->setRedirect( 'index.php?option=com_jem&view=events', $msg );
+	}
+	
+	
+	
 	/**
 	 * Logic to archive events
 	 *
@@ -114,7 +143,7 @@ class JEMControllerEvents extends JEMController
 		}
 
 		$model = $this->getModel('events');
-		if(!$model->publish($cid, -1)) {
+		if(!$model->publish($cid, 2)) {
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
 
@@ -123,6 +152,44 @@ class JEMControllerEvents extends JEMController
 
 		$this->setRedirect( 'index.php?option=com_jem&view=events', $msg );
 	}
+	
+	
+	/**
+	 * unarchives an Event
+	 *
+	 * @access public
+	 * @return void
+	 * @since 0.9
+	 */
+	function unarchive()
+	{
+		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
+	
+		if (!is_array( $cid ) || count( $cid ) < 1) {
+			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_UNARCHIVE' ) );
+		}
+	
+		$model = $this->getModel('events');
+	
+		if(!$model->publish($cid, 0)) {
+			echo "<script> alert('".$model->getError(true)."'); window.history.go(-1); </script>\n";
+		}
+	
+		$total = count( $cid );
+		$msg 	= $total.' '.JText::_('COM_JEM_EVENTS_UNARCHIVED');
+	
+		$this->setRedirect( 'index.php?option=com_jem&view=events', $msg );
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	/**
 	 * logic for cancel an action
