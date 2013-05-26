@@ -112,15 +112,9 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 				</td>
 				<td>
 					<?php
-					// $html = JHTML::_ ( 'select.booleanlist', 'published', '', $this->row->published );
-					// echo $html;
+					$html = JHTML::_ ( 'select.booleanlist', 'published', '', $this->row->published );
+					echo $html;
 					?>
-					
-					
-					<select name="filter_state" class="inputbox">
-				<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
-				<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->row->published, true);?>
-			</select>
 				</td>
 			</tr>
 			<tr>
