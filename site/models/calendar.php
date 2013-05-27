@@ -191,7 +191,7 @@ class JEMModelCalendar extends JModelLegacy
         // First thing we need to do is to select only the published events
         if ($task == 'archive')
         {
-            $where = ' WHERE a.published = -1 ';
+            $where = ' WHERE a.published = 2 ';
         } else
         {
             $where = ' WHERE a.published = 1 ';

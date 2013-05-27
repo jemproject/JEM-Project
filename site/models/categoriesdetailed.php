@@ -222,7 +222,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 
 		// First thing we need to do is to select only the requested events
 		if ($task == 'archive') {
-			$where = ' WHERE a.published = -1 && rel.catid = '.$id;
+			$where = ' WHERE a.published = 2 && rel.catid = '.$id;
 		} else {
 			$where = ' WHERE a.published = 1 && rel.catid = '.$id;
 		}
@@ -317,7 +317,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 		// if they contain a published/archived event
 		$task = JRequest::getWord('task');
 		if($task == 'archive') {
-			$where_sub .= ' AND i.published = -1';
+			$where_sub .= ' AND i.published = 2';
 		} else {
 			$where_sub .= ' AND i.published = 1';
 		}
@@ -384,7 +384,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 		{
 			$task = JRequest::getWord('task');
 			if($task == 'archive') {
-				$query .= ' AND e.published = -1';
+				$query .= ' AND e.published = 2';
 			} else {
 				$query .= ' AND e.published = 1';
 			}

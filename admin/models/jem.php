@@ -101,11 +101,23 @@ class JEMModelJEM extends JModelLegacy
 		*/
 		$query = 'SELECT count(*)'
 					. ' FROM #__jem_events'
-					. ' WHERE published = -1'
+					. ' WHERE published = 2'
 					;
 
 		$this->_db->SetQuery($query);
   		$_events[] = $this->_db->loadResult();
+  		
+  		
+  		/*
+  		 * Get nr of all trashed events
+  		*/
+  		$query = 'SELECT count(*)'
+					. ' FROM #__jem_events'
+					. ' WHERE published = -2'
+					;
+  		
+		$this->_db->SetQuery($query);
+		$_events[] = $this->_db->loadResult();
 
   		/*
 		* Get total nr of events

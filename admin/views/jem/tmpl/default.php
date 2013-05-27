@@ -143,9 +143,15 @@ $options = array(
 					</td>
 				</tr>
 				<tr>
-					<td><?php echo JText::_( 'COM_JEM_EVENTS_TOTAL' ).': '; ?>
+					<td><?php echo JText::_( 'COM_JEM_EVENTS_TRASHED' ).': '; ?>
 					</td>
 					<td><b><?php echo $this->events[3]; ?> </b>
+					</td>
+				</tr>
+				<tr>
+					<td><?php echo JText::_( 'COM_JEM_EVENTS_TOTAL' ).': '; ?>
+					</td>
+					<td><b><?php echo $this->events[4]; ?> </b>
 					</td>
 				</tr>
 			</table> <?php

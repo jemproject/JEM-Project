@@ -237,7 +237,7 @@ class JEMModelCategories extends JModelLegacy
 		// if they contain a published/archived event
 		$task = JRequest::getWord('task');
 		if($task == 'archive') {
-			$where_sub .= ' AND i.published = -1';
+			$where_sub .= ' AND i.published = 2';
 		} else {
 			$where_sub .= ' AND i.published = 1';
 		}
@@ -305,7 +305,7 @@ class JEMModelCategories extends JModelLegacy
 		{
 			$task = JRequest::getWord('task');
 			if($task == 'archive') {
-				$query .= ' AND e.published = -1';
+				$query .= ' AND e.published = 2';
 			} else {
 				$query .= ' AND e.published = 1';
 			}

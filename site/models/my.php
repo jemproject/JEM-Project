@@ -441,7 +441,7 @@ class JEMModelMy extends JModelLegacy
         // First thing we need to do is to select only needed events
         if ($task == 'archive')
         {
-            $where = ' WHERE a.published = -1';
+            $where = ' WHERE a.published = 2';
         } else
         {
             $where = ' WHERE a.published = 1';
@@ -520,7 +520,7 @@ class JEMModelMy extends JModelLegacy
         // First thing we need to do is to select only needed events
         if ($task == 'archive')
         {
-            $where = ' WHERE a.published = -1';
+            $where = ' WHERE a.published = 2';
         } else
         {
             $where = ' WHERE a.published = 1';

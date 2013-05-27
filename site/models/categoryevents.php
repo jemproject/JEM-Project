@@ -306,7 +306,7 @@ class JEMModelCategoryevents extends JModelLegacy
 
 		// First thing we need to do is to select only needed events
 		if ($task == 'archive') {
-			$where[] = ' a.published = -1';
+			$where[] = ' a.published = 2';
 		} else {
 			$where[] = ' a.published = 1';
 		}
@@ -406,7 +406,7 @@ class JEMModelCategoryevents extends JModelLegacy
 		//check archive task and ensure that only categories get selected if they contain a published/archived event
 		$task 	= JRequest::getWord('task');
 		if($task == 'archive') {
-			$where .= ' AND i.published = -1';
+			$where .= ' AND i.published = 2';
 		} else {
 			$where .= ' AND i.published = 1';
 		}

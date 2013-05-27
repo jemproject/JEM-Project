@@ -148,7 +148,7 @@ class JEMHelper {
 
 			//Set state archived of outdated events
 			if ($jemsettings->oldevent == 2) {
-				$query = 'UPDATE #__jem_events SET published = -1 WHERE dates > 0 AND '
+				$query = 'UPDATE #__jem_events SET published = 2 WHERE dates > 0 AND '
 						.' DATE_SUB(NOW(), INTERVAL '.$jemsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates)) '
 						.' AND published = 1';
 				$db->SetQuery($query);

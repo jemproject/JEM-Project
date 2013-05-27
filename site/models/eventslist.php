@@ -256,7 +256,7 @@ class JEMModelEventslist extends JModelLegacy
 
 		// First thing we need to do is to select only needed events
 		if ($task == 'archive') {
-			$where[] = ' a.published = -1';
+			$where[] = ' a.published = 2';
 		} else {
 			$where[] = ' a.published = 1';
 		}
