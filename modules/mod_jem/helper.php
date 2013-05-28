@@ -55,7 +55,7 @@ static	function getList(&$params)
 			}
 			$order = ' ORDER BY a.dates, a.times';
 		} else {
-			$where = ' WHERE a.published = -1';
+			$where = ' WHERE a.published = 2';
 			$order = ' ORDER BY a.dates DESC, a.times DESC';
 		}
 

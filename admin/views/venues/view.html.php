@@ -31,62 +31,44 @@ jimport( 'joomla.application.component.view');
  * @since 0.9
  */
 class JEMViewVenues extends JViewLegacy {
+	
+	protected $state;
+	protected $items;
+	protected $pagination;
 
-	function display($tpl = null)
+	
+	public function display($tpl = null)
 	{
 		$app =  JFactory::getApplication();
+		$template			= $app->getTemplate();
 
 		//initialise variables
 		$user 		=  JFactory::getUser();
 		$db 		=  JFactory::getDBO();
 		$document	=  JFactory::getDocument();
 
-		//get vars
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.venues.filter_order', 'filter_order', 'l.venue', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.venues.filter_order_Dir', 'filter_order_Dir', '', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.venues.filter_state', 'filter_state', '*', 'word' );
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.venues.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.venues.search', 'search', '', 'string' );
-		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
-		$template			= $app->getTemplate();
-
+		
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
 		JHTML::_('behavior.tooltip');
 
 		// Get data from the model
-		$rows      		=  $this->get( 'Data');
-		$pagination 	=  $this->get( 'Pagination' );
+		$this->rows      	=  $this->get( 'Items');
+		$this->pagination 	=  $this->get( 'Pagination' );
+		$this->state		= $this->get('State');
 		
-		//publish unpublished filter
-		$lists['state']	= JHTML::_('grid.state', $filter_state );
-
 		$filters = array();
 		$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_VENUE' ) );
 		$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_CITY' ) );
 		$filters[] = JHTML::_('select.option', '3', JText::_( 'COM_JEM_STATE' ) );
 		$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_COUNTRY' ) );
 		$filters[] = JHTML::_('select.option', '5', JText::_( 'JALL' ) );		
-		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
-
+		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $this->state->get('filter') );
 		
-		// search filter
-		$lists['search']= $search;
-
-		
-		// table ordering
-		$lists['order_Dir'] = $filter_order_Dir;
-		$lists['order'] = $filter_order;
-
-		$ordering = ($lists['order'] == 'l.ordering');
-
 		
 		//assign data to template
 		$this->lists		= $lists;
-		$this->rows			= $rows;
-		$this->pagination	= $pagination;
-		$this->ordering		= $ordering;
 		$this->user			= $user;
 		$this->template		= $template;
 
@@ -102,7 +84,7 @@ class JEMViewVenues extends JViewLegacy {
 	* Add Toolbar
 	*/
 	
-	function addToolbar()
+	protected function addToolbar()
 	{
 		
 	//create the toolbar

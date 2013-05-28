@@ -57,7 +57,7 @@ static	function getList(&$params)
 
 		//archived events only
 		if ($params->get( 'type' ) == 2) {
-			$where = ' WHERE a.published = -1';
+			$where = ' WHERE a.published = 2';
 			$order = ' ORDER BY a.dates DESC, a.times DESC';
 		}
 

@@ -21,6 +21,9 @@
  */
 
 defined('_JEXEC') or die;
+$listOrder	= $this->escape($this->state->get('list.ordering'));
+$listDirn	= $this->escape($this->state->get('list.direction'));
+
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=venues'); ?>" method="post" name="adminForm" id="adminForm">
@@ -29,11 +32,17 @@ defined('_JEXEC') or die;
 	<tr>
 		<td width="100%">
 			 <?php echo JText::_( 'COM_JEM_SEARCH' ).' '.$this->lists['filter']; ?>
-			<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
+			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->escape($this->state->get('filter_search')); ?>" class="text_area" onChange="document.adminForm.submit();" />
 			<button onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-			<button onclick="$('search').value='';document.adminForm.submit();;"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
+			<button onclick="$('filter_search').value='';document.adminForm.submit();;"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 		</td>
-		<td nowrap="nowrap"><?php echo $this->lists['state']; ?></td>
+		<td nowrap="nowrap"><?php //echo $this->lists['state']; ?>
+		
+			<select name="filter_state" class="inputbox" onchange="this.form.submit()">
+				<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
+				<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions',array('all' => 0, 'archived' => 0, 'trash' => 0)), 'value', 'text', $this->state->get('filter_state'), true);?>
+			</select>
+		</td>
 	</tr>
 </table>
 
@@ -42,17 +51,17 @@ defined('_JEXEC') or die;
 		<tr>
 			<th width="1%" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 			<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-			<th width="20%"><?php echo JHTML::_('grid.sort', 'COM_JEM_ALIAS', 'l.alias', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'a.venue', $listDirn, $listOrder ); ?></th>
+			<th width="20%"><?php echo JHTML::_('grid.sort', 'COM_JEM_ALIAS', 'a.alias', $listDirn, $listOrder ); ?></th>
 			<th><?php echo JText::_( 'COM_JEM_WEBSITE' ); ?></th>
-			<th><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-			<th><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-			<th width="1%"><?php echo JHTML::_('grid.sort', 'COM_JEM_COUNTRY', 'l.country', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'a.city', $listDirn, $listOrder ); ?></th>
+			<th><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'a.state', $listDirn, $listOrder ); ?></th>
+			<th width="1%"><?php echo JHTML::_('grid.sort', 'COM_JEM_COUNTRY', 'a.country', $listDirn, $listOrder ); ?></th>
 			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'JSTATUS' ); ?></th>
 			<th><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
 			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_EVENTS' ); ?></th>
-		    <th width="8%" colspan="2"><?php echo JHTML::_('grid.sort', 'COM_JEM_REORDER', 'l.ordering', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-		    <th width="1%" class="center" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'l.id', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+		    <th width="8%" colspan="2"><?php echo JHTML::_('grid.sort', 'COM_JEM_REORDER', 'a.ordering', $listDirn, $listOrder ); ?></th>
+		    <th width="1%" class="center" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?></th>
 		</tr>
 	</thead>
 
@@ -69,6 +78,7 @@ defined('_JEXEC') or die;
 		foreach ($this->rows as $i => $row) :
 			$link 		= 'index.php?option=com_jem&amp;controller=venues&amp;task=edit&amp;cid[]='. $row->id;
 			$published 	= JHTML::_('grid.published', $row, $i );
+			$ordering	= ($listOrder == 'a.ordering');
    		?>
 		<tr class="row<?php echo $i % 2; ?>">
 			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
@@ -141,12 +151,13 @@ defined('_JEXEC') or die;
 			<td class="center"><?php echo $row->assignedevents; ?></td>
 			<td align="right">
 				<?php
-				echo $this->pagination->orderUpIcon( $i, true, 'orderup', 'Move Up', $this->ordering );
+				/* @todo fix ordering  */
+				echo $this->pagination->orderUpIcon( $i, true, 'orderup', 'Move Up', $ordering );
 				?>
 			</td>
 			<td align="left">
 				<?php
-				echo $this->pagination->orderDownIcon( $i,$this->pagination->total, true, 'orderdown', 'Move Down', $this->ordering );
+				echo $this->pagination->orderDownIcon( $i,$this->pagination->total, true, 'orderdown', 'Move Down', $ordering );
 				?>
 			</td>
 			<td class="center"><?php echo $row->id; ?></td>
@@ -164,6 +175,6 @@ defined('_JEXEC') or die;
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="controller" value="venues" />
-	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
+	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
 </form>
