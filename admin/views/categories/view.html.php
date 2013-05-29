@@ -45,7 +45,7 @@ class JEMViewCategories extends JViewLegacy {
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.categories.filter_order', 		'filter_order', 	'c.catname', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categories.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categories.filter_state', 		'filter_state', 	'*', 'word' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categories.filter_state', 		'filter_state', 	'', 'string' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.categories.search', 			'search', 			'', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 
@@ -57,7 +57,7 @@ class JEMViewCategories extends JViewLegacy {
 		$pagination 	=  $this->get( 'Pagination' );
 
 		//publish unpublished filter
-		$lists['state']	= JHTML::_('grid.state', $filter_state );
+		$lists['state']	= $filter_state;
 		// search filter
 		$lists['search']= $search;
 

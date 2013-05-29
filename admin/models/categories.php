@@ -109,7 +109,7 @@ class JEMModelCategories extends JModelLegacy
 		$limitstart 		= $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.categories.filter_order', 		'filter_order', 	'c.ordering', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categories.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categories.filter_state', 'filter_state', '', 'word' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categories.filter_state', 'filter_state', '', 'string' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.categories.search', 'search', '', 'string' );
 		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
 		
@@ -120,15 +120,17 @@ class JEMModelCategories extends JModelLegacy
 		$orderby 	= ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', c.ordering';
 		
 		$where = array();
-		if ( $filter_state ) {
-			if ( $filter_state == 'P' ) {
-				$where[] = 'c.published = 1';
-			} else if ($filter_state == 'U' ) {
-				$where[] = 'c.published = 0';
-			}
+		
+		// Filter by published state
+		$published = $filter_state;
+		if (is_numeric($published)) {
+			$where[] = 'c.published = '.(int) $published;
+		} elseif ($published === '') {
+			$where[] = '(c.published = 0 OR c.published = 1)';
 		}
 		
-		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+		
+		$where 		= ( count( $where ) ? ' AND ' . implode( ' AND ', $where ) : '' );
 		
 		//select the records
 		//note, since this is a tree we have to do the limits code-side
@@ -178,7 +180,7 @@ class JEMModelCategories extends JModelLegacy
     	//eventually only pick out the searched items.
 		if ($search) {
 			$list1 = array();
-
+			
 			foreach ($search_rows as $sid )
 			{
 				foreach ($list as $item)
