@@ -88,7 +88,7 @@ $infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', 
 
 <fieldset>
 	<legend><?php echo JText::_('COM_JEM_ADDRESS'); ?></legend>
-	<table class="adminform" width="100%">
+	<table class="adminform" style="width:100%">
 		<tr>
   			<td><?php echo JText::_( 'COM_JEM_STREET' ).':'; ?></td>
 			<td><input name="street" value="" size="55" maxlength="50" /></td>

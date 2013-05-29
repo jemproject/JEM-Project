@@ -26,8 +26,6 @@ defined('_JEXEC') or die;
  JHtml::_('behavior.formvalidation');
  JHtml::_('behavior.tooltip');
  JHtml::_('behavior.switcher');
-// Load submenu template, using element id 'submenu' as needed by behavior.switcher
-// $this->document->setBuffer($this->loadTemplate('navigation'), 'modules', 'submenu');
 ?>
 
 <script>
@@ -111,7 +109,7 @@ Joomla.submitbutton = function(task)
                 ?>
             </div></div>
 
-		</div>
+	
 		
 		<?php
 		echo JHtml::_('sliders.end');

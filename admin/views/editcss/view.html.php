@@ -22,7 +22,7 @@
 
 defined( '_JEXEC' ) or die;
 
-jimport( 'joomla.application.component.view');
+
 
 /**
  * View class for the JEM CSS edit screen
@@ -32,7 +32,7 @@ jimport( 'joomla.application.component.view');
  */
 class JEMViewEditcss extends JViewLegacy {
 
-	function display($tpl = null) {
+	public function display($tpl = null) {
 
 		$app =  JFactory::getApplication();
 
@@ -90,7 +90,7 @@ class JEMViewEditcss extends JViewLegacy {
 	 * Add Toolbar
 	*/
 	
-	function addToolbar()
+	protected function addToolbar()
 	{
 		
 		//create the toolbar

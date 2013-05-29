@@ -121,7 +121,7 @@ defined('_JEXEC') or die;
 			<table>
 				<tr>
 					<td>
-						<textarea wrap="virtual" rows="10" cols="40" name="description" class="inputbox"><?php echo $this->row->description; ?></textarea>
+						<textarea wrap="soft" rows="10" cols="40" name="description" class="inputbox"><?php echo $this->row->description; ?></textarea>
 					</td>
 				</tr>
 			</table>

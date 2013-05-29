@@ -229,7 +229,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 	<td valign="top" width="320px" style="padding: 7px 0 0 5px">
 
 		<?php
-		$title = JText::_( 'COM_JEM_FIELDSET_PUBLISHING' );
+		$title = JText::_( 'COM_JEM_DETAILS' );
 			echo JHtml::_('sliders.start', 'det-pane', $options);
 			echo JHtml::_('sliders.panel', $title, 'date');
 			?>

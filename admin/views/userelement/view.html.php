@@ -22,7 +22,6 @@
 
 defined( '_JEXEC' ) or die;
 
-jimport( 'joomla.application.component.view');
 
 /**
  * View class for the JEM user element screen
@@ -32,7 +31,7 @@ jimport( 'joomla.application.component.view');
  */
 class JEMViewUserElement extends JViewLegacy {
 
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		$mainframe = JFactory::getApplication();
 		

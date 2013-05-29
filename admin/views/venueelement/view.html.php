@@ -22,7 +22,6 @@
 
 defined( '_JEXEC' ) or die;
 
-jimport( 'joomla.application.component.view');
 
 /**
  * View class for the JEM venueselect screen
@@ -32,7 +31,7 @@ jimport( 'joomla.application.component.view');
  */
 class JEMViewVenueelement extends JViewLegacy {
 
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		$app =  JFactory::getApplication();
 

@@ -22,7 +22,6 @@
 
 defined( '_JEXEC' ) or die;
 
-jimport( 'joomla.application.component.view');
 
 /**
  * View class for the JEM event screen
@@ -32,7 +31,7 @@ jimport( 'joomla.application.component.view');
  */
 class JEMViewEvent extends JViewLegacy {
 
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		$app =  JFactory::getApplication();
 
@@ -201,7 +200,7 @@ class JEMViewEvent extends JViewLegacy {
 	 * @since 0.9
 	 *
 	 */
-	function _displayaddvenue($tpl)
+	public function _displayaddvenue($tpl)
 	{
 		//initialise variables
 		$editor 	=  JFactory::getEditor();
@@ -259,7 +258,7 @@ class JEMViewEvent extends JViewLegacy {
 	 * Add Toolbar
 	*/
 	
-	function addToolbar()
+	protected function addToolbar()
 	{
 		
 		//get vars
@@ -273,18 +272,6 @@ class JEMViewEvent extends JViewLegacy {
 			JToolBarHelper::title( JText::_( 'COM_JEM_EDIT_EVENT' ), 'eventedit' );
 		} else {
 			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_EVENT' ), 'eventedit' );
-		
-			//set the submenu
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups');
-			JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
-			if (JFactory::getUser()->authorise('core.manage')) {
-				JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
-			}
 		}
 		JToolBarHelper::apply();
 		JToolBarHelper::spacer();

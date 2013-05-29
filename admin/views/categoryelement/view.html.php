@@ -32,7 +32,7 @@ jimport( 'joomla.application.component.view');
  */
 class JEMViewCategoryelement extends JViewLegacy {
 
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		//initialise variables
 		$document	=  JFactory::getDocument();

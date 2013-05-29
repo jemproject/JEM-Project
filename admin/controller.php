@@ -22,7 +22,6 @@
 
 defined( '_JEXEC' ) or die;
 
-jimport('joomla.application.component.controller');
 
 /**
  * JEM Component Controller
@@ -32,6 +31,14 @@ jimport('joomla.application.component.controller');
  */
 class JEMController extends JControllerLegacy
 {
+	
+	/**
+	 * @var		string	The default view.
+	 * @since	1.6
+	 */
+	protected $default_view = 'jem';
+	
+	
 	function __construct()
 	{
 		parent::__construct();
@@ -43,10 +50,20 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Display the view
 	 */
-	function display($cachable = false, $urlparams = false)
-
+	public function display($cachable = false, $urlparams = false)
 	{
+		require_once JPATH_COMPONENT.'/helpers/helper.php';
+		
+		// Load the submenu.
+		JEMHelperBackend::addSubmenu(JRequest::getCmd('view', 'jem'));
+		
+		$view	= JRequest::getCmd('view', 'jem');
+		$layout = JRequest::getCmd('layout', 'jem');
+		$id		= JRequest::getInt('id');
+		
+		
 		parent::display();
+		return $this;
 
 	}
 

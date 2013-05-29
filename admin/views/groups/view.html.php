@@ -22,7 +22,6 @@
 
 defined( '_JEXEC' ) or die;
 
-jimport( 'joomla.application.component.view');
 
 /**
  * View class for the JEM groups screen
@@ -32,7 +31,7 @@ jimport( 'joomla.application.component.view');
  */
 class JEMViewGroups extends JViewLegacy {
 
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		$app = JFactory::getApplication();
 
@@ -87,9 +86,11 @@ class JEMViewGroups extends JViewLegacy {
 	* Add Toolbar
 	*/
 	
-	function addToolbar()
+	protected function addToolbar()
 	{
 		
+	require_once JPATH_COMPONENT . '/helpers/helper.php';
+	
 	// create the toolbar
 	JToolBarHelper::title( JText::_( 'COM_JEM_GROUPS' ), 'groups' );
 	JToolBarHelper::addNew();
@@ -99,20 +100,7 @@ class JEMViewGroups extends JViewLegacy {
 	JToolBarHelper::deleteList();
 	JToolBarHelper::spacer();
 	JToolBarHelper::help( 'el.listgroups', true );
-	
-	// create Submenu
-	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_JEM' ), 'index.php?option=com_jem');
-	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_EVENTS' ), 'index.php?option=com_jem&view=events');
-	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_VENUES' ), 'index.php?option=com_jem&view=venues');
-	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_CATEGORIES' ), 'index.php?option=com_jem&view=categories');
-	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'index.php?option=com_jem&view=archive');
-	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_GROUPS' ), 'index.php?option=com_jem&view=groups', true);
-	JSubMenuHelper::addEntry( JText::_( 'COM_JEM_HELP' ), 'index.php?option=com_jem&view=help');
-	if (JFactory::getUser()->authorise('core.manage')) {
-		JSubMenuHelper::addEntry( JText::_( 'COM_JEM_SETTINGS' ), 'index.php?option=com_jem&controller=settings&task=edit');
-	}
-	
-	
+
 	}
 	
 	

@@ -22,7 +22,7 @@
 
 defined( '_JEXEC' ) or die;
 
-jimport( 'joomla.application.component.view');
+
 
 /**
  * View class for the JEM attendee screen
@@ -32,7 +32,7 @@ jimport( 'joomla.application.component.view');
  */
 class JEMViewAttendee extends JViewLegacy {
 
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		//initialise variables
 		$editor 	=  JFactory::getEditor();
@@ -83,7 +83,7 @@ class JEMViewAttendee extends JViewLegacy {
 	 * Add Toolbar
 	*/
 	
-	function addToolbar()
+	protected function addToolbar()
 	{
 	
 		//get vars
@@ -104,12 +104,7 @@ class JEMViewAttendee extends JViewLegacy {
 		
 	}
 	
-	
-	
-	
-	
-	
-	
+
 	
 }
 ?>

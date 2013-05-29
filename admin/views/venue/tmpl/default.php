@@ -214,11 +214,11 @@ $options = array(
 	
 	<td valign="top" width="320px" style="padding: 7px 0 0 5px">
 			<?php
-			$title = JText::_( 'COM_JEM_FIELDSET_PUBLISHING' );
+			$title = JText::_( 'COM_JEM_DETAILS' );
 		echo JHtml::_('sliders.start', 'det-pane', $options);
 		echo JHtml::_('sliders.panel', $title, 'details');
 			?>
-		<table width="100%"	style="border: 1px dashed silver; padding: 5px; margin-bottom: 10px;">
+		<table 	style="width:100%; border: 1px dashed silver; padding: 5px; margin-bottom: 10px;">
 			<?php if ($this->row->id) { ?>
 			<tr>
 				<td>

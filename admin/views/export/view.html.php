@@ -22,7 +22,7 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
+
 
 /**
  * View class(based on the import screen)
@@ -32,7 +32,7 @@ jimport('joomla.application.component.view');
  */
 class JEMViewExport extends JViewLegacy {
 
-	function display($tpl = null) {
+	public function display($tpl = null) {
 		//Load pane behavior
 		jimport('joomla.html.pane');
 
@@ -54,25 +54,16 @@ class JEMViewExport extends JViewLegacy {
 	 * Add Toolbar
 	*/
 	
-	function addToolbar()
+	protected function addToolbar()
 	{
 		
+		require_once JPATH_COMPONENT . '/helpers/helper.php';
+		
 		//build toolbar
+		JToolBarHelper::back();
 		JToolBarHelper::title(JText::_('COM_JEM_EXPORT'), 'tableexport');
 		JToolBarHelper::help('el.import', true);
-		
-		//Create Submenu
-		JSubMenuHelper::addEntry(JText::_('COM_JEM_JEM'), 'index.php?option=com_jem', true);
-		JSubMenuHelper::addEntry(JText::_('COM_JEM_EVENTS'), 'index.php?option=com_jem&view=events');
-		JSubMenuHelper::addEntry(JText::_('COM_JEM_VENUES'), 'index.php?option=com_jem&view=venues');
-		JSubMenuHelper::addEntry(JText::_('COM_JEM_CATEGORIES'), 'index.php?option=com_jem&view=categories');
-		JSubMenuHelper::addEntry(JText::_('COM_JEM_ARCHIVESCREEN'), 'index.php?option=com_jem&view=archive');
-		JSubMenuHelper::addEntry(JText::_('COM_JEM_GROUPS'), 'index.php?option=com_jem&view=groups');
-		JSubMenuHelper::addEntry(JText::_('COM_JEM_HELP'), 'index.php?option=com_jem&view=help');
-		if (JFactory::getUser()->authorise('core.manage'))  {
-			JSubMenuHelper::addEntry(JText::_('COM_JEM_SETTINGS'), 'index.php?option=com_jem&controller=settings&task=edit');
-		}
-		
+
 	}
 	
 	
