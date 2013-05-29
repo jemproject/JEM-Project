@@ -27,6 +27,7 @@ defined('_JEXEC') or die;
 require_once (dirname(__FILE__).'/helper.php');
 
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
+require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 
 $list = modJEMHelper::getList($params);
 

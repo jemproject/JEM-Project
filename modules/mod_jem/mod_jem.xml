@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="module" version="2.5" client="site" method="upgrade">
-	<name>JEM Upcoming Events Module</name>
+	<name>JEM Latest Events Basic Module</name>
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
@@ -26,39 +26,39 @@
 	<config>
 		<fields name="params">
 			<fieldset name="basic">
-				<field name="count" type="text" default="5" label="EVENTS IN MODULE" description="EVENTS IN MODULE DESC" />
-				<field name="type" type="list" default="0" label="UPCOMING OR ARCHIVED" description="UPCOMING OR ARCHIVED DESC">
-					<option value="0">COM_JEM_UPCOMING_EVENTS</option>
-					<option value="1">COM_JEM_ARCHIVED_EVENTS</option>
+				<field name="count" type="text" default="5" label="MOD_JEM_EVENTS_IN_MODULE" description="MOD_JEM_EVENTS_IN_MODULE_DESC" />
+				<field name="type" type="list" default="0" label="MOD_JEM_UPCOMING_OR_ARCHIVED" description="MOD_JEM_UPCOMING_OR_ARCHIVED_DESC">
+					<option value="0">MOD_JEM_UPCOMING_EVENTS</option>
+					<option value="1">MOD_JEM_ARCHIVED_EVENTS</option>
 				</field>
-				<field name="event_after" type="text" default="" label="OCCURING IN" description="OCCURING IN DESC" />
-				<field name="showtitloc" type="list" default="0" label="TITLE OR VENUE" description="TITLE OR VENUE DESC">
-					<option value="0">COM_JEM_VENUE</option>
-					<option value="1">COM_JEM_TITLE</option>
+				<field name="event_after" type="text" default="" label="MOD_JEM_OCCURING_IN" description="MOD_JEM_OCCURING_IN_DESC" />
+				<field name="showtitloc" type="list" default="0" label="MOD_JEM_TITLE_OR_VENUE" description="MOD_JEM_TITLE_OR_VENUE_DESC">
+					<option value="0">MOD_JEM_VENUE</option>
+					<option value="1">MOD_JEM_TITLE</option>
 				</field>
-				<field name="cuttitle" type="text" default="18" label="MAX TITLE LENGTH" description="MAX TITLE LENGTH DESC" />
-				<field name="linkloc" type="radio" default="1" label="LINK TO VENUE" description="LINK TO VENUE DESC">
+				<field name="cuttitle" type="text" default="18" label="MOD_JEM_MAX_TITLE_LENGTH" description="MOD_JEM_MAX_TITLE_LENGTH_DESC" />
+				<field name="linkloc" type="radio" default="1" label="MOD_JEM_LINK_TO_VENUE" description="MOD_JEM_LINK_TO_VENUE_DESC">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="linkdet" type="list" default="1" label="LINK TO DETAILS" description="LINK TO DETAILS DESC">
+				<field name="linkdet" type="list" default="1" label="MOD_JEM_LINK_TO_DETAILS" description="MOD_JEM_LINK_TO_DETAILS_DESC">
 					<option value="0">JNO</option>
-					<option value="1">COM_JEM_DATE</option>
-					<option value="2">COM_JEM_TITLE</option>
+					<option value="1">MOD_JEM_DATE</option>
+					<option value="2">MOD_JEM_TITLE</option>
 				</field>
-				<field name="catid" type="text" default="" label="CATEGORY ID" description="CATEGORY ID DESC" />
-				<field name="venid" type="text" default="" label="VENUE ID" description="VENUE ID DESC" />
-				<field name="formatdate" type="text" default="%d.%m.%Y" label="DATE FORMAT" description="DATE FORMAT DESC" />
-				<field name="formattime" type="text" default="%H.%M" label="TIME FORMAT" description="TIME FORMAT DESC" />
-				<field name="moduleclass_sfx" type="text" default="" label="Module Class Suffix" description="PARAMMODULECLASSSUFFIX" />
+				<field name="catid" type="text" default="" label="MOD_JEM_CATEGORY_ID" description="MOD_JEM_CATEGORY_ID_DESC" />
+				<field name="venid" type="text" default="" label="MOD_JEM_VENUE_ID" description="MOD_JEM_VENUE_ID_DESC" />
+				<field name="formatdate" type="text" default="%d.%m.%Y" label="MOD_JEM_DATE_FORMAT" description="MOD_JEM_DATE_FORMAT_DESC" />
+				<field name="formattime" type="text" default="%H.%M" label="MOD_JEM_TIME_FORMAT" description="MOD_JEM_TIME_FORMAT_DESC" />
+				<field name="moduleclass_sfx" type="text" default="" label="MOD_JEM_MODULE_CLASS_SUFFIX" description="MOD_JEM_MODULE_CLASS_SUFFIX_DESC" />
 			</fieldset>
 		
 			<fieldset name="advanced">
-				<field name="cache" type="list" default="1" label="CACHING" description="CACHING DESC">
-					<option value="1">COM_JEM_USE_GLOBAL</option>
-					<option value="0">COM_JEM_NO_CACHING</option>
+				<field name="cache" type="list" default="1" label="MOD_JEM_CACHING" description="MOD_JEM_CACHING_DESC">
+					<option value="1">MOD_JEM_USE_GLOBAL</option>
+					<option value="0">MOD_JEM_NO_CACHING</option>
 				</field>
-				<field name="cache_time" type="text" default="900" label="CACHE TIME" description="CACHE TIME DESC" />
+				<field name="cache_time" type="text" default="900" label="MOD_JEM_CACHE_TIME" description="MOD_JEM_CACHE_TIME_DESC" />
 			</fieldset>
 		</fields>
 	</config>

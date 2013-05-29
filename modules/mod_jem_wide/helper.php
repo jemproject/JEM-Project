@@ -127,7 +127,7 @@ static	function getList(&$params)
 		$db->setQuery($query);
 		$rows = $db->loadObjectList();
 
-//		exit('test');
+		//exit('test');
 
 		if ($params->get('use_modal', 0)) {
 			JHTML::_('behavior.modal');
