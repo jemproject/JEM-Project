@@ -261,6 +261,10 @@ class JEMViewEvent extends JViewLegacy {
 	protected function addToolbar()
 	{
 		
+		$app = JFactory::getApplication();
+		$input = $app->input;
+		$input->set('hidemainmenu', 1);
+		
 		//get vars
 		$cid		= JRequest::getVar( 'cid' );
 		$task		= JRequest::getVar('task');

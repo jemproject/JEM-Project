@@ -136,7 +136,7 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 				$delivertime 	= JHTML::Date( $row->created, JText::_( 'DATE_FORMAT_LC2' ) );
 				$edittime 		= JHTML::Date( $row->modified, JText::_( 'DATE_FORMAT_LC2' ) );
 				$ip				= $row->author_ip == 'COM_JEM_DISABLED' ? JText::_( 'COM_JEM_DISABLED' ) : $row->author_ip;
-				$image 			= JHTML::_('image', 'administrator/templates/'. $this->template .'/images/menu/icon-16-info.png', JText::_('COM_JEM_NOTES') );
+				$image 			= JHTML::image('media/com_jem/images/icon-16-info.png', JText::_('COM_JEM_NOTES') );
 				$overlib 		= JText::_( 'COM_JEM_CREATED_AT' ).': '.$delivertime.'<br />';
 				$overlib		.= JText::_( 'COM_JEM_WITH_IP' ).': '.$ip.'<br />';
 				if ($row->modified != '0000-00-00 00:00:00') {

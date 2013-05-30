@@ -31,6 +31,7 @@ defined('_JEXEC') or die;
  */
 class JEMViewVenue extends JViewLegacy {
 
+	
 	public function display($tpl = null)
 	{
 		$app =  JFactory::getApplication();
@@ -38,6 +39,7 @@ class JEMViewVenue extends JViewLegacy {
 		// Load pane behavior
 		jimport('joomla.html.pane');
 		JHTML::_('behavior.tooltip');
+		
 		// Load the form validation behavior
 		JHTML::_('behavior.formvalidation');
 
@@ -120,6 +122,14 @@ class JEMViewVenue extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
+		
+		// with this option we're disabling (grey-out) the top menu of Joomla backend
+		// as you can see the variable hidemainmenu is set to true
+		
+		$app = JFactory::getApplication();
+		$input = $app->input;
+		$input->set('hidemainmenu', 1);
+		
 		//get vars
 		$cid 		= JRequest::getVar( 'cid' );
 		$task		= JRequest::getVar('task');
