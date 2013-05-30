@@ -55,7 +55,7 @@
 			<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=archive">COM_JEM_MENU_ARCHIVE</menu>
 			<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=groups">COM_JEM_MENU_GROUPS</menu>
 			<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=help">COM_JEM_MENU_HELP</menu>
-			<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;controller=settings&amp;task=edit">COM_JEM_MENU_SETTINGS</menu>
+			<menu img="../media/com_jem/images/jem.png" link="option=com_jem&amp;view=settings">COM_JEM_MENU_SETTINGS</menu>
 		</submenu>
 
 		<files folder="admin">
@@ -69,6 +69,7 @@
 			<folder>assets</folder>
 			<folder>classes</folder>
 			<folder>help</folder>
+			<folder>helpers</folder>
 			<folder>views</folder>
 			<folder>models</folder>
 			<folder>controllers</folder>
