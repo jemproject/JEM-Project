@@ -148,7 +148,7 @@ class JEMViewEvents extends JViewLegacy {
 		JToolBarHelper::spacer();
 		JToolBarHelper::custom( 'copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
 		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.listevents', true );
+		JToolBarHelper::help( 'listevents', true );
 		
 	}
 

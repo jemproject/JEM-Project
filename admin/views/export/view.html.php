@@ -62,7 +62,6 @@ class JEMViewExport extends JViewLegacy {
 		//build toolbar
 		JToolBarHelper::back();
 		JToolBarHelper::title(JText::_('COM_JEM_EXPORT'), 'tableexport');
-		JToolBarHelper::help('el.import', true);
 
 	}
 	

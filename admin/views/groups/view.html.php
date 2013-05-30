@@ -99,7 +99,7 @@ class JEMViewGroups extends JViewLegacy {
 	JToolBarHelper::spacer();
 	JToolBarHelper::deleteList();
 	JToolBarHelper::spacer();
-	JToolBarHelper::help( 'el.listgroups', true );
+	JToolBarHelper::help( 'listgroups', true );
 
 	}
 	

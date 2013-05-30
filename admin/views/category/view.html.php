@@ -146,7 +146,7 @@ class JEMViewCategory extends JViewLegacy {
 		JToolBarHelper::spacer();
 		JToolBarHelper::cancel();
 		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.editcategories', true );
+		JToolBarHelper::help( 'editcategories', true );
 		
 	}
 	

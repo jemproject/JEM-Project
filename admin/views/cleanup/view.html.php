@@ -67,7 +67,7 @@ class JEMViewCleanup extends JViewLegacy {
 		//create the toolbar
 		JToolBarHelper::back();
 		JToolBarHelper::title( JText::_( 'COM_JEM_CLEANUP' ), 'housekeeping' );
-		JToolBarHelper::help( 'el.cleanup', true );	
+		JToolBarHelper::help( 'cleanup', true );	
 	}
 	
 	

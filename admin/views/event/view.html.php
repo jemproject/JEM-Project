@@ -279,7 +279,7 @@ class JEMViewEvent extends JViewLegacy {
 		JToolBarHelper::spacer();
 		JToolBarHelper::cancel();
 		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.editevents', true );
+		JToolBarHelper::help( 'editevents', true );
 		
 	}
 	

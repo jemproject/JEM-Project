@@ -72,7 +72,7 @@ class JEMViewImport extends JViewLegacy {
 		//build toolbar
 		JToolBarHelper::back();
 		JToolBarHelper::title(JText::_('COM_JEM_IMPORT'), 'tableimport');
-		JToolBarHelper::help('el.import', true);
+		JToolBarHelper::help('import', true);
 		
 		//Create Submenu
 		require_once JPATH_COMPONENT . '/helpers/helper.php';

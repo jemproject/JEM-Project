@@ -143,7 +143,7 @@ class JEMViewVenue extends JViewLegacy {
 		JToolBarHelper::spacer();
 		JToolBarHelper::cancel();
 		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.editvenues', true );
+		JToolBarHelper::help( 'editvenues', true );
 
 	}
 }

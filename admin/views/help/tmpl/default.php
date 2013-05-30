@@ -51,13 +51,13 @@ $options = array(
 						<input type="button" value="<?php echo JText::_( 'COM_JEM_RESET' ); ?>" class="button" onclick="f=document.adminForm;f.search.value='';f.submit()" />
 					</td>
 					<td style="text-align:right">
-						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/el.intro.html'; ?>" target='helpFrame'><?php echo JText::_( 'COM_JEM_HOME' ); ?></a>
+						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/intro.html'; ?>" target='helpFrame'><?php echo JText::_( 'COM_JEM_HOME' ); ?></a>
 						|
-						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/el.gethelp.html'; ?>" target='helpFrame'><?php echo JText::_( 'COM_JEM_GET_HELP' ); ?></a>
+						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/gethelp.html'; ?>" target='helpFrame'><?php echo JText::_( 'COM_JEM_GET_HELP' ); ?></a>
 						|
-						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/el.givehelp.html'; ?>" target='helpFrame'><?php echo JText::_( 'COM_JEM_GIVE_HELP' ); ?></a>
+						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/givehelp.html'; ?>" target='helpFrame'><?php echo JText::_( 'COM_JEM_GIVE_HELP' ); ?></a>
 						|
-						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/el.credits.html'; ?>" target='helpFrame'><?php echo JText::_( 'COM_JEM_CREDITS' ); ?></a>
+						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/credits.html'; ?>" target='helpFrame'><?php echo JText::_( 'COM_JEM_CREDITS' ); ?></a>
 						|
 						<?php echo JHTML::_('link', 'http://www.gnu.org/licenses/gpl-2.0.html', JText::_( 'COM_JEM_LICENSE' ), array('target' => 'helpFrame')) ?>
 					</td>
@@ -107,7 +107,7 @@ $options = array(
 		  	?>
 		</td>
 		<td width="75%">
-			<iframe name="helpFrame" src="<?php echo 'components/com_jem/help/'.$this->langTag.'/el.intro.html'; ?>" class="helpFrame"></iframe>
+			<iframe name="helpFrame" src="<?php echo 'components/com_jem/help/'.$this->langTag.'/intro.html'; ?>" class="helpFrame"></iframe>
 		</td>
 	</tr>
 </table>

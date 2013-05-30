@@ -101,7 +101,7 @@ class JEMViewEditcss extends JViewLegacy {
 		JToolBarHelper::spacer();
 		JToolBarHelper::cancel();
 		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.editcss', true );
+		JToolBarHelper::help( 'editcss', true );
 		
 	}
 	

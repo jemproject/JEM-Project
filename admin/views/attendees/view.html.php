@@ -150,7 +150,7 @@ class JEMViewAttendees extends JViewLegacy {
 		JToolBarHelper::spacer();
 		JToolBarHelper::custom('back', 'back', 'back', JText::_('COM_JEM_ATT_BACK'), false);
 		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.registereduser', true );
+		JToolBarHelper::help( 'registereduser', true );
 		
 	}
 	

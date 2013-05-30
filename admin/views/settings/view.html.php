@@ -115,7 +115,7 @@ class JEMViewSettings extends JViewLegacy {
 		JToolBarHelper::spacer();
 		JToolBarHelper::cancel();
 		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.settings', true );
+		JToolBarHelper::help( 'settings', true );
 	}
 
 	function WarningIcon()

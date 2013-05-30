@@ -109,7 +109,7 @@ class JEMViewArchive extends JViewLegacy {
 	JToolBarHelper::spacer();
 	JToolBarHelper::custom( 'copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
 	JToolBarHelper::spacer();
-	JToolBarHelper::help( 'el.archive', true );
+	JToolBarHelper::help( 'archive', true );
 
 	}
 	

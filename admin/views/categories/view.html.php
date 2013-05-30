@@ -103,7 +103,7 @@ class JEMViewCategories extends JViewLegacy {
 		JToolBarHelper::spacer();
 		JToolBarHelper::deleteList();
 		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.listcategories', true );
+		JToolBarHelper::help( 'listcategories', true );
 		
 	}
 

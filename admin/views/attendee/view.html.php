@@ -100,7 +100,7 @@ class JEMViewAttendee extends JViewLegacy {
 		JToolBarHelper::spacer();
 		JToolBarHelper::cancel();
 		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.editattendee', true );
+		JToolBarHelper::help( 'editattendee', true );
 		
 	}
 	

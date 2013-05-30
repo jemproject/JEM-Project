@@ -117,7 +117,7 @@ class JEMViewGroup extends JViewLegacy {
 		JToolBarHelper::spacer();
 		JToolBarHelper::cancel();
 		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'el.editgroup', true );
+		JToolBarHelper::help( 'editgroup', true );
 		
 	}
 	
