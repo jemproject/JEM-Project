@@ -214,7 +214,7 @@ $options = array(
 	
 	<td valign="top" width="320px" style="padding: 7px 0 0 5px">
 			<?php
-			$title = JText::_( 'COM_JEM_DETAILS' );
+			$title = JText::_( 'COM_JEM_FIELDSET_PUBLISHING' );
 		echo JHtml::_('sliders.start', 'det-pane', $options);
 		echo JHtml::_('sliders.panel', $title, 'details');
 			?>
