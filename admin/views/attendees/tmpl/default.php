@@ -53,7 +53,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 			</td>
 			<?php if ($this->event->waitinglist): ?>
 			 <td style="text-align:right; white-space:nowrap;">
-			 	<?php echo JText::_( 'COM_JEM_STATE' ).' '.$this->lists['waiting']; ?>
+			 	<?php echo JText::_( 'COM_JEM_STATUS' ).' '.$this->lists['waiting']; ?>
 			</td>
 			<?php endif; ?>
 		</tr>
