@@ -66,11 +66,16 @@ class JEMControllerEvents extends JEMController
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
 
+		JPluginHelper::importPlugin('finder');
+		$dispatcher = JDispatcher::getInstance();
+		$res = $dispatcher->trigger('onFinderChangeState', array('com_jem.event', $cid, 1));
+
 		$total = count( $cid );
 		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_PUBLISHED');
 
 		$this->setRedirect( 'index.php?option=com_jem&view=events', $msg );
 	}
+
 
 	/**
 	 * Logic to unpublish events
@@ -92,15 +97,19 @@ class JEMControllerEvents extends JEMController
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
 
+		JPluginHelper::importPlugin('finder');
+		$dispatcher = JDispatcher::getInstance();
+		$res = $dispatcher->trigger('onFinderChangeState', array('com_jem.event', $cid, 0));
+
 		$total = count( $cid );
 		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_UNPUBLISHED');
 
 		$this->setRedirect( 'index.php?option=com_jem&view=events', $msg );
 	}
 
-	
+
 	/**
-	 * Logic to unpublish events
+	 * Logic to trash events
 	 *
 	 * @access public
 	 * @return void
@@ -109,24 +118,27 @@ class JEMControllerEvents extends JEMController
 	function trash()
 	{
 		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
-	
+
 		if (!is_array( $cid ) || count( $cid ) < 1) {
 			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_UNPUBLISH'));
 		}
-	
+
 		$model = $this->getModel('events');
 		if(!$model->publish($cid, -2)) {
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
-	
+
+		JPluginHelper::importPlugin('finder');
+		$dispatcher = JDispatcher::getInstance();
+		$res = $dispatcher->trigger('onFinderChangeState', array('com_jem.event', $cid, -2));
+
 		$total = count( $cid );
 		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_TRASHED');
-	
+
 		$this->setRedirect( 'index.php?option=com_jem&view=events', $msg );
 	}
-	
-	
-	
+
+
 	/**
 	 * Logic to archive events
 	 *
@@ -147,13 +159,17 @@ class JEMControllerEvents extends JEMController
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
 
+		JPluginHelper::importPlugin('finder');
+		$dispatcher = JDispatcher::getInstance();
+		$res = $dispatcher->trigger('onFinderChangeState', array('com_jem.event', $cid, 2));
+
 		$total = count( $cid );
 		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_ARCHIVED');
 
 		$this->setRedirect( 'index.php?option=com_jem&view=events', $msg );
 	}
-	
-	
+
+
 	/**
 	 * unarchives an Event
 	 *
@@ -164,32 +180,27 @@ class JEMControllerEvents extends JEMController
 	function unarchive()
 	{
 		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
-	
+
 		if (!is_array( $cid ) || count( $cid ) < 1) {
 			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_UNARCHIVE' ) );
 		}
-	
+
 		$model = $this->getModel('events');
-	
+
 		if(!$model->publish($cid, 0)) {
 			echo "<script> alert('".$model->getError(true)."'); window.history.go(-1); </script>\n";
 		}
-	
+
+		JPluginHelper::importPlugin('finder');
+		$dispatcher = JDispatcher::getInstance();
+		$res = $dispatcher->trigger('onFinderChangeState', array('com_jem.event', $cid, 0));
+
 		$total = count( $cid );
 		$msg 	= $total.' '.JText::_('COM_JEM_EVENTS_UNARCHIVED');
-	
+
 		$this->setRedirect( 'index.php?option=com_jem&view=events', $msg );
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 
 	/**
 	 * logic for cancel an action
@@ -269,9 +280,21 @@ class JEMControllerEvents extends JEMController
 		$post['datdescription'] = JRequest::getVar( 'datdescription', '', 'post','string', JREQUEST_ALLOWRAW );
 		$post['datdescription']	= str_replace( '<br>', '<br />', $post['datdescription'] );
 
+		$isNew = ($post['id']) ? false : true;
+
 		$model = $this->getModel('event');
 
+		// Mock up a JTable class for finder
+		$row = new stdClass;
+		$row->id = $post['id'];
+
+		JPluginHelper::importPlugin('finder');
+		$dispatcher = JDispatcher::getInstance();
+		$res = $dispatcher->trigger('onFinderBeforeSave', array('com_jem.event', $row, $isNew));
+
 		if ($returnid = $model->store($post)) {
+			$row->id = $returnid;
+			$res = $dispatcher->trigger('onFinderAfterSave', array('com_jem.event', $row, $isNew));
 
 			switch ($task)
 			{
@@ -323,6 +346,16 @@ class JEMControllerEvents extends JEMController
 		}
 
 		$msg = $total.' '.JText::_( 'COM_JEM_EVENTS_DELETED');
+
+		JPluginHelper::importPlugin('finder');
+		$dispatcher = JDispatcher::getInstance();
+		foreach($cid as $id) {
+			// Mock up a JTable class for finder
+			$row = new stdClass;
+			$row->id = $id;
+
+			$res = $dispatcher->trigger('onFinderAfterDelete', array('com_jem.event', $row));
+		}
 
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();

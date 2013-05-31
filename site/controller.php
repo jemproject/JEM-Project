@@ -273,14 +273,22 @@ class JEMController extends JControllerLegacy
 
 		$model = $this->getModel('editevent');
 
-		if ($returnid = $model->store($post, $file)) {
+		// Mock up a JTable class for finder
+		$row = new stdClass;
+		$row->id = $post['id'];
 
+		JPluginHelper::importPlugin('finder');
+		$dispatcher = JDispatcher::getInstance();
+		$res = $dispatcher->trigger('onFinderBeforeSave', array('com_jem.event', $row, $isNew));
+
+		if ($returnid = $model->store($post, $file)) {
+			$row->id = $returnid;
 			$msg 	= JText::_( 'COM_JEM_EVENT_SAVED' );
 			$link 	= JRoute::_( JEMHelperRoute::getRoute($returnid), false) ;
 
-			JPluginHelper::importPlugin( 'jem' );
-			$dispatcher = JDispatcher::getInstance();
-			$res = $dispatcher->trigger( 'onEventEdited', array( $returnid, $isNew ) );
+			JPluginHelper::importPlugin('jem');
+			$res = $dispatcher->trigger('onEventEdited', array($returnid, $isNew));
+			$res = $dispatcher->trigger('onFinderAfterSave', array('com_jem.event', $row, $isNew));
 
 			$cache = JFactory::getCache('com_jem');
 			$cache->clean();

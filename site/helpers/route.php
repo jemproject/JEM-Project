@@ -24,6 +24,7 @@ defined('_JEXEC') or die;
 
 // Component Helper
 jimport('joomla.application.component.helper');
+require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 
 /**
  * JEM Component Route Helper
@@ -40,19 +41,25 @@ class JEMHelperRoute
 	 *
 	 * @param int The id of an JEM item
 	 * @param string The view
+	 * @param string The category of the item
 	 * @since 0.9
 	 *
 	 * @return string determined Link
 	 */
-	static function getRoute($id, $view = 'details')
+	static function getRoute($id, $view = 'details', $category = null)
 	{
-		//Not needed currently but kept because of a possible hierarchic link structure in future
+		// Not needed currently but kept because of a possible hierarchic link structure in future
 		$needles = array(
 			$view => (int) $id
 		);
 
-		//Create the link
+		// Create the link
 		$link = 'index.php?option=com_jem&view='.$view.'&id='. $id;
+
+		// Add category, if available
+		if(!is_null($category)) {
+			$link .= '&catid='.$category;
+		}
 
 		if($item = JEMHelperRoute::_findItem($needles)) {
 			$link .= '&Itemid='.$item->id;

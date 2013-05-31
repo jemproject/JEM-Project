@@ -60,14 +60,14 @@ class JEMControllerCategories extends JEMController
 	{
 		// Check for request forgeries
 		JRequest::checkToken() or die( 'Invalid Token' );
-		
+
 		$task		= JRequest::getVar('task');
 
 		//Sanitize
 		$post = JRequest::get( 'post' );
 		$post['catdescription'] = JRequest::getVar( 'catdescription', '', 'post', 'string', JREQUEST_ALLOWRAW );
 		$post['catdescription']	= str_replace( '<br>', '<br />', $post['catdescription'] );
-		
+
 		//sticky forms
 		$session = JFactory::getSession();
 		$session->set('categoryform', $post, 'com_jem');
@@ -90,7 +90,7 @@ class JEMControllerCategories extends JEMController
 
 			$cache = JFactory::getCache('com_jem');
 			$cache->clean();
-			
+
 			$session->clear('categoryform', 'com_jem');
 
 		} else {
@@ -125,6 +125,10 @@ class JEMControllerCategories extends JEMController
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
 
+		JPluginHelper::importPlugin('finder');
+		$dispatcher = JDispatcher::getInstance();
+		$res = $dispatcher->trigger('onFinderCategoryChangeState', array('com_jem', $cid, 1));
+
 		$total = count( $cid );
 		$msg 	= $total.' '.JText::_( 'COM_JEM_CATEGORY_PUBLISHED');
 
@@ -151,6 +155,10 @@ class JEMControllerCategories extends JEMController
 		if(!$model->publish($cid, 0)) {
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
+
+		JPluginHelper::importPlugin('finder');
+		$dispatcher = JDispatcher::getInstance();
+		$res = $dispatcher->trigger('onFinderCategoryChangeState', array('com_jem', $cid, 1));
 
 		$total = count( $cid );
 		$msg 	= $total.' '.JText::_( 'COM_JEM_CATEGORY_UNPUBLISHED');
@@ -244,10 +252,10 @@ class JEMControllerCategories extends JEMController
 	{
 		// Check for request forgeries
 		JRequest::checkToken() or die( 'Invalid Token' );
-		
+
 		$session 	= JFactory::getSession();
 		$session->clear('categoryform', 'com_jem');
-		
+
 		$category = JTable::getInstance('jem_categories', '');
 		$category->bind(JRequest::get('post'));
 		$category->checkin();
@@ -263,10 +271,10 @@ class JEMControllerCategories extends JEMController
 	 * @since 0.9
 	 */
 	function access( )
-	{		
+	{
 		// Check for request forgeries
 		JRequest::checkToken() or jexit( 'Invalid Token' );
-		
+
 		$cid		= JRequest::getVar( 'cid', array(0), 'post', 'array' );
 		$id			= (int)$cid[0];
 		$task		= JRequest::getVar( 'task' );
@@ -306,7 +314,7 @@ class JEMControllerCategories extends JEMController
 		}
 
 		$model->checkout();
-		
+
 		parent::display();
 	}
 }

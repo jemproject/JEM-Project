@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="2.5" type="plugin" group="finder" method="upgrade">
+	<name>JEM - Finder Plugin</name>
+	<creationDate>22 April 2013</creationDate>
+	<author>JEM Community</author>
+	<authorEmail>info@joomlaeventmanager.net</authorEmail>
+	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
+	<copyright>Copyright (C) 2013-2013 joomlaeventmanager.net</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<version>1.0</version>
+	<description>PLG_FINDER_JEM_XML_DESCRIPTION</description>
+
+	<!-- <scriptfile>script.php</scriptfile> -->
+	<files>
+		<file plugin="jem">jem.php</file>
+	</files>
+	<languages>
+		<language tag="en-GB">languages/en-GB.plg_finder_jem.ini</language>
+		<language tag="en-GB">languages/en-GB.plg_finder_jem.sys.ini</language>
+	</languages>
+</extension>
