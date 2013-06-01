@@ -2,9 +2,8 @@
 /**
  * @version 1.1 $Id$
  * @package JEM
- * @subpackage JEM Comments Plugin
+ * @subpackage JEM Finder Plugin
  * @copyright (C) 2013-2013 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
 
  * JEM is free software; you can redistribute it and/or
@@ -21,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
 jimport('joomla.application.component.helper');
 
@@ -290,8 +289,8 @@ class plgFinderJEM extends FinderIndexerAdapter {
 		$item->body = FinderIndexerHelper::prepareContent($item->datdescription, $item->params);
 
 		// Build the necessary route and path information.
-		$item->url = $this->getURL($item->id, $this->extension, $this->layout).'&cat='.$item->catslug;
-		$item->route = JEMHelperRoute::getRoute($item->slug, null, $item->catslug);
+		$item->url = $this->getURL($item->slug, $this->extension, $this->layout).'&catid='.$item->catslug;
+		$item->route = JEMHelperRoute::getRoute($item->slug, 'details', $item->catslug);
 		$item->path = FinderIndexerHelper::getContentPath($item->route);
 
 		// Get the menu title if it exists.
