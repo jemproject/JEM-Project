@@ -52,9 +52,9 @@ class JEMViewDetails extends JViewLegacy
 		$registers		= $this->get('Registers');
 		$isregistered	= $this->get('UserIsRegistered');
 
-		// canonical link (from Joomla SEF)
+		// canonical link (from Joomla SEF), disabled for now
 		// @todo sort out Itemid's
-		$router = $app->getRouter();
+		/*$router = $app->getRouter();
 		$uri     = JUri::getInstance();
 		$domain  = $params->get('domain');
 		
@@ -74,7 +74,7 @@ class JEMViewDetails extends JViewLegacy
 		
 			$document->addHeadLink(($link), 'canonical');
 		}
-		
+		*/
 		
 		//get menu information
 		$menu			= $app->getMenu();
