@@ -93,7 +93,7 @@ class JEMModelDetails extends JModelLegacy
 
 
 			// Is the category published?
-			if (!$this->_details->published && $this->_details->catid)
+			if (!$this->_details->catpublished && $this->_details->catid)
 			{
 				throw new Exception( JText::_("COM_JEM_CATEGORY_NOT_PUBLISHED"),403 );
 			}
@@ -145,7 +145,7 @@ class JEMModelDetails extends JModelLegacy
 			// Get the WHERE clause
 			$where	= $this->_buildDetailsWhere();
 
-			$query = 'SELECT a.id AS did, a. published, a.contactid, a.dates, a.enddates, a.title, a.times, a.endtimes, '
+			$query = 'SELECT a.id AS did, a.published, a.contactid, a.dates, a.enddates, a.title, a.times, a.endtimes, '
 			    . ' a.datdescription, a.meta_keywords, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.meta_description, a.unregistra, a.locid, a.created_by, '
 			    . ' a.datimage, a.registra, a.maxplaces, a.waitinglist, '
 					. ' l.id AS locid, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, l.city, l.plz, l.street, l.country, ct.name AS countryname, l.map, l.created_by AS venueowner, l.latitude, l.longitude,'
