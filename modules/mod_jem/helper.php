@@ -85,6 +85,7 @@ static	function getList(&$params)
 				.' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 				. $where
 				.' AND c.access <= '.$gid
+				.' AND c.published = 1'
 				.($catid ? $categories : '')
 				.($venid ? $venues : '')
 				. $order
