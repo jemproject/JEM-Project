@@ -8,7 +8,7 @@
 	<copyright>Copyright (C) 2013-2013 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<version>1.9</version>
-	<description>JEM Mailer Plugin. JEM is based on Eventlist by Christoph Lukes (http://www.schlu.net)</description>
+	<description>JEM Mailer Plugin.</description>
 
 	<files>
 		<filename plugin="mailer">mailer.php</filename>
