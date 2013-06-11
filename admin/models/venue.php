@@ -262,8 +262,6 @@ class JEMModelVenue extends JModelLegacy
 		$user		=  JFactory::getUser();
 		$config 	=  JFactory::getConfig();
 
-		$tzoffset 	= $config->getValue('config.offset');
-
 		$row  = $this->getTable('jem_venues', '');
 
 		// bind it to the table
