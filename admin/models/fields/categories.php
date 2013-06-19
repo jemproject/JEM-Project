@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -26,22 +26,18 @@ jimport('joomla.form.formfield');
 jimport('joomla.html.parameter.element');
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
+
 /**
  * Renders an Category element
  *
  * @package JEM
  * @since 0.9
  */
-
 class JFormFieldCategories extends JFormFieldList
 {
-	
-	
-	
-        protected $type = 'Categories';
+	protected $type = 'Categories';
 
-        
-           /**
+	/**
 	 * Method to get the field input markup.
 	 *
 	 * @return	string	The field input markup.
@@ -63,12 +59,11 @@ class JFormFieldCategories extends JFormFieldList
 		// Add the script to the document head.
 		JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));
 
-
 		// Setup variables for display.
-		$html	= array();
-		$link	= 'index.php?option=com_jem&amp;view=categoryelement&amp;tmpl=component&amp;object='.$this->id;
+		$html = array();
+		$link = 'index.php?option=com_jem&amp;view=categoryelement&amp;tmpl=component&amp;object='.$this->id;
 
-		$db	= JFactory::getDBO();
+		$db = JFactory::getDBO();
 		$db->setQuery(
 			'SELECT catname' .
 			' FROM #__jem_categories' .
@@ -114,79 +109,5 @@ class JFormFieldCategories extends JFormFieldList
 
 		return implode("\n", $html);
 	}
-        
-        
-}       
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
-	
-	
-class JElementCategories extends JElement {	
-	/**
-	* Element name
-	*
-	* @access	protected
-	* @var		string
-	*/
-	var	$_name = 'categories';
-
-	function fetchElement($name, $value, &$node, $control_name)
-	{
-		$doc 		= JFactory::getDocument();
-		$fieldName	= $control_name.'['.$name.']';
-
-		JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_jem/tables');
-
-		$category = JTable::getInstance('jem_categories', '');
-
-		if ($value) {
-			$category->load($value);
-		} else {
-			$category->catname = JText::_('COM_JEM_SELECT_CATEGORY');
-		}
-
-		$js = "
-		function elSelectCategory(id, category) {
-			document.getElementById('a_id').value = id;
-			document.getElementById('a_name').value = category;
-			window.parent.SqueezeBox.close();
-		}
-		
-		function elCatReset() {
-		  document.getElementById('a_id').value = 0;
-      document.getElementById('a_name').value = '".htmlspecialchars(JText::_('COM_JEM_SELECT_CATEGORY'))."';
-	  }
-		";
-
-		$link = 'index.php?option=com_jem&amp;view=categoryelement&amp;tmpl=component';
-		$doc->addScriptDeclaration($js);
-
-		JHTML::_('behavior.modal', 'a.modal');
-
-		$html = "\n<div style=\"float: left;\"><input style=\"background: #ffffff;\" type=\"text\" id=\"a_name\" value=\"$category->catname\" disabled=\"disabled\" /></div>";
-		$html .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_SELECT')."\"  href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_SELECT')."</a></div></div>\n";
-    $html .= "<div class=\"button2-left\"><div class=\"blank\"><a title=\"".JText::_('COM_JEM_RESET')."\" onClick=\"elCatReset();return false;\" >".JText::_('COM_JEM_RESET')."</a></div></div>\n";
-		$html .= "\n<input type=\"hidden\" id=\"a_id\" name=\"$fieldName\" value=\"$value\" />";
-
-		return $html;
-	}
-	
-	
-	
-	
-}  // End of class
+}
 ?>

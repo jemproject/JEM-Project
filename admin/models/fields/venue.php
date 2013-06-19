@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+ *
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -27,26 +27,17 @@ jimport('joomla.html.parameter.element');
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
 
-
 /**
  * Renders an venue element
  *
  * @package JEM
  * @since 1.5
  */
-/**
- * HelloWorld Form Field class for the HelloWorld component
- */
 class JFormFieldVenue extends JFormFieldList
 {
-        /**
-         * The field type.
-         *
-         * @var         string
-         */
-        protected $type = 'Venue';
- 
-        /**
+	protected $type = 'Venue';
+
+	/**
 	 * Method to get the field input markup.
 	 *
 	 * @return	string	The field input markup.
@@ -68,12 +59,11 @@ class JFormFieldVenue extends JFormFieldList
 		// Add the script to the document head.
 		JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));
 
-
 		// Setup variables for display.
-		$html	= array();
-		$link	= 'index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component&amp;object='.$this->id;
+		$html = array();
+		$link = 'index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component&amp;object='.$this->id;
 
-		$db	= JFactory::getDBO();
+		$db = JFactory::getDBO();
 		$db->setQuery(
 			'SELECT venue' .
 			' FROM #__jem_venues' .
@@ -119,11 +109,5 @@ class JFormFieldVenue extends JFormFieldList
 
 		return implode("\n", $html);
 	}
-        
-        
-        
-	
-	
-}	
-	
+}
 ?>

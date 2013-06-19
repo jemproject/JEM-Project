@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-	<fieldset name="COM_JEM_GLOBAL_SETTINGS" addpath="/administrator/components/com_jem/elements">
+	<fieldset name="COM_JEM_GLOBAL_SETTINGS" addpath="/administrator/components/com_jem/models/fields">
 		<field name="display_num" type="list" default="15" label="COM_JEM_EVENT_NUMBER" description="COM_JEM_EVENT_NUMBER_TIP">
 			<option value="5">5</option>
 			<option value="10">10</option>
