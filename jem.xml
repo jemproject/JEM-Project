@@ -73,7 +73,6 @@
 			<folder>views</folder>
 			<folder>models</folder>
 			<folder>controllers</folder>
-			<folder>elements</folder>
 			<folder>tables</folder>
 			<folder>language</folder>
 		</files>
