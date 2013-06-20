@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -33,7 +33,7 @@ class JEMViewEvent extends JViewLegacy {
 
 	public function display($tpl = null)
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		if($this->getLayout() == 'addvenue') {
 			$this->_displayaddvenue($tpl);
@@ -45,21 +45,20 @@ class JEMViewEvent extends JViewLegacy {
 		JHTML::_('behavior.tooltip');
 
 		//initialise variables
-		$editor 	=  JFactory::getEditor();
-		$db 		=  JFactory::getDBO();
-		$document	=  JFactory::getDocument();
-		$user 		=  JFactory::getUser();
+		$editor 	= JFactory::getEditor();
+		$db 		= JFactory::getDBO();
+		$document	= JFactory::getDocument();
+		$user 		= JFactory::getUser();
 		$jemsettings = JEMAdmin::config();
-		/*$acl		=  JFactory::getACL();*/
-		
-		$nullDate 		= $db->getNullDate();
+		/*$acl		= JFactory::getACL();*/
+
+		$nullDate 	= $db->getNullDate();
 
 		//get vars
 		$cid		= JRequest::getVar( 'cid' );
 		$task		= JRequest::getVar('task');
 		//$url 		= $app->isAdmin() ? $app->getSiteURL() : JURI::base();
 		$url 		= JURI::root();
-
 
 		//add the custom stylesheet and the javascript
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
@@ -71,10 +70,10 @@ class JEMViewEvent extends JViewLegacy {
 		$document->addScript($url.'media/com_jem/js/unlimited.js');
 
 		//get data from model
-		$model		=  $this->getModel();
-		$row     	=  $this->get( 'Data' );
+		$model		= $this->getModel();
+		$row		= $this->get( 'Data' );
 		$categories = JEMCategories::getCategoriesTree(1);
-		$selectedcats =  $this->get( 'Catsselected' );
+		$selectedcats = $this->get( 'Catsselected' );
 
 		// fail if checked out not by 'me'
 		if ($row->id) {
@@ -90,7 +89,7 @@ class JEMViewEvent extends JViewLegacy {
 		//build selectlists
 		$Lists = array();
 		$Lists['category'] = JEMCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8"');
-		
+
 		//build venue select js and load the view
 		$js = "
 		function elSelectVenue(id, venue) {
@@ -99,10 +98,10 @@ class JEMViewEvent extends JViewLegacy {
 			window.parent.SqueezeBox.close();
 		}";
 
-		
+
 		$linkcsel = 'index.php?option=com_jem&amp;view=contactelement&amp;tmpl=component';
 		$linkcadd = 'index.php?option=com_jem&amp;task=addcontact&amp;tmpl=component';
-		
+
 		$linkvsel = 'index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component';
 		$linkvadd = 'index.php?option=com_jem&amp;task=addvenue&amp;tmpl=component';
 		$document->addScriptDeclaration($js);
@@ -115,7 +114,6 @@ class JEMViewEvent extends JViewLegacy {
 		$venueselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"window.open('$linkvadd', 'popup', 'width=750,height=400,scrollbars=yes,toolbar=no,status=no,resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')\" value=\"".JText::_('COM_JEM_ADD')."\" />";
 		$venueselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectVenue(0, '".JText::_('COM_JEM_NO_VENUE')."' );\" value=\"".JText::_('COM_JEM_NO_VENUE')."\" onblur=\"seo_switch()\" />";
 
-		
 		// build venue select js and load the view
 		$js = "
 		function elSelectContact(id, contactid) {
@@ -123,15 +121,14 @@ class JEMViewEvent extends JViewLegacy {
 			document.getElementById('a_name2').value = contactid;
 			window.parent.SqueezeBox.close();
 		}";
-		
+
 		$document->addScriptDeclaration($js);
-		
+
 		$contactselect = "\n<div style=\"float: left;\"><input style=\"background: #ffffff;\" type=\"text\" id=\"a_name2\" value=\"$row->contactname\" disabled=\"disabled\" /></div>";
 		$contactselect .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_SELECT')."\" href=\"$linkcsel\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_SELECT')."</a></div></div>\n";
 		$contactselect .= "\n<input type=\"hidden\" id=\"a_id2\" name=\"contactid\" value=\"$row->contactid\" />";
 		$contactselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectContact(0, '".JText::_('COM_JEM_NO_CONTACT')."' );\" value=\"".JText::_('COM_JEM_NO_CONTACT')."\" onblur=\"seo_switch()\" />";
-		
-		
+
 		//build image select js and load the view
 		$js = "
 		function elSelectImage(image, imagename) {
@@ -151,18 +148,16 @@ class JEMViewEvent extends JViewLegacy {
 
 		$imageselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectImage('', '".JText::_('COM_JEM_SELECTIMAGE')."' );\" value=\"".JText::_('COM_JEM_RESET')."\" />";
 		$imageselect .= "\n<input type=\"hidden\" id=\"a_image\" name=\"datimage\" value=\"$row->datimage\" />";
-		
-		
+
 		$js = "
 		function elResetHits(id) {
 			document.getElementById('a_hits').value = id;
 		}";
-		
+
 		$document->addScriptDeclaration($js);
-		
+
 		$resethits = "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elResetHits(0, '".JText::_('COM_JEM_NO_HITS')."' );\" value=\"".JText::_('COM_JEM_NO_HITS')."\" onblur=\"seo_switch()\" />";
-		
-		
+
 		// recurrence type
 		$rec_type = array();
 		$rec_type[] = JHTML::_('select.option', 0, JText::_ ( 'COM_JEM_NOTHING' ));
@@ -171,9 +166,7 @@ class JEMViewEvent extends JViewLegacy {
 		$rec_type[] = JHTML::_('select.option', 3, JText::_ ( 'COM_JEM_MONTHLY' ));
 		$rec_type[] = JHTML::_('select.option', 4, JText::_ ( 'COM_JEM_WEEKDAY' ));
 		$Lists['recurrence_type'] = JHTML::_('select.genericlist', $rec_type, 'recurrence_type', '', 'value', 'text', $row->recurrence_type);
-		
-    
-    	
+
 		//assign vars to the template
 		$this->Lists 		= $Lists;
 		$this->row 			= $row;
@@ -190,7 +183,7 @@ class JEMViewEvent extends JViewLegacy {
 
 		// add toolbar
 		$this->addToolbar();
-		
+
 		parent::display($tpl);
 	}
 
@@ -203,9 +196,9 @@ class JEMViewEvent extends JViewLegacy {
 	public function _displayaddvenue($tpl)
 	{
 		//initialise variables
-		$editor 	=  JFactory::getEditor();
-		$document	=  JFactory::getDocument();
-		$uri 		=  JFactory::getURI();
+		$editor 	= JFactory::getEditor();
+		$document	= JFactory::getDocument();
+		$uri 		= JFactory::getURI();
 		$jemsettings = JEMAdmin::config();
 
 		//add css and js to document
@@ -234,9 +227,10 @@ class JEMViewEvent extends JViewLegacy {
 		$countries = array();
 		$countries[] = JHTML::_('select.option', '', JText::_('COM_JEM_SELECT_COUNTRY'));
 		$countries = array_merge($countries, JEMHelper::getCountryOptions());
-		$lists['countries'] = JHTML::_('select.genericlist', $countries, 'country', 'class="inputbox"', 'value', 'text' );
+		$selectedCountry = $jemsettings->defaultCountry;
+		$lists['countries'] = JHTML::_('select.genericlist', $countries, 'country', 'class="inputbox"', 'value', 'text', $selectedCountry);
 		unset($countries);
-		
+
 		//set published
 		$published = 1;
 
@@ -244,7 +238,7 @@ class JEMViewEvent extends JViewLegacy {
 		$this->editor 		= $editor;
 		$this->imageselect 	= $imageselect;
 		$this->published 	= $published;
-		
+
 		$uri2 = $uri->toString();
 		$this->request_url 	= $uri2;
 		$this->jemsettings 	= $jemsettings;
@@ -252,23 +246,21 @@ class JEMViewEvent extends JViewLegacy {
 
 		parent::display($tpl);
 	}
-	
-	
+
 	/*
 	 * Add Toolbar
 	*/
-	
 	protected function addToolbar()
 	{
-		
+
 		$app = JFactory::getApplication();
 		$input = $app->input;
 		$input->set('hidemainmenu', 1);
-		
+
 		//get vars
 		$cid		= JRequest::getVar( 'cid' );
 		$task		= JRequest::getVar('task');
-		
+
 		//build toolbar
 		if ($task == 'copy') {
 			JToolBarHelper::title( JText::_( 'COM_JEM_COPY_EVENT'), 'eventedit');
@@ -284,10 +276,6 @@ class JEMViewEvent extends JViewLegacy {
 		JToolBarHelper::cancel();
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'editevents', true );
-		
 	}
-	
-	
-	
-} // end of class
+}
 ?>

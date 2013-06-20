@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -76,7 +76,7 @@ $infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', 
 				<button type="button" onclick="submitbutton('addvenue')">
 					<?php echo JText::_( 'COM_JEM_SAVE' ); ?>
 				</button>
-				<button type="button" onclick="window.parent.close()" />
+				<button type="button" onclick="window.parent.close()">
 					<?php echo JText::_( 'COM_JEM_CANCEL' ); ?>
 				</button>
 			</div>
