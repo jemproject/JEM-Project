@@ -28,7 +28,7 @@ defined('_JEXEC') or die;
  *
  * @package Joomla
  * @subpackage JEM Wide Module
- * @since		1.0
+ * @since 1.0
  */
 class modJEMwideHelper
 {
@@ -39,7 +39,7 @@ class modJEMwideHelper
 	 * @access public
 	 * @return array
 	 */
-static	function getList(&$params)
+	static function getList(&$params)
 	{
 		$app = JFactory::getApplication();
 
@@ -48,7 +48,7 @@ static	function getList(&$params)
 		$gid = JEMHelper::getGID($user);
 
 		//all upcoming events//all upcoming events
-		if ($params->get( 'type' ) == 1) {
+		if ($params->get('type') == 1) {
 			$where = " WHERE (TIMEDIFF(CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00')),NOW()) > 1";
 			$where .= " OR (a.enddates AND TIMEDIFF(CONCAT(a.enddates,' ',IFNULL(a.times,'00:00:00')),NOW())) > 1) ";
 			$where .= ' AND a.published = 1';
@@ -56,44 +56,41 @@ static	function getList(&$params)
 		}
 
 		//archived events only
-		if ($params->get( 'type' ) == 2) {
+		if ($params->get('type') == 2) {
 			$where = ' WHERE a.published = 2';
 			$order = ' ORDER BY a.dates DESC, a.times DESC';
 		}
 
 		//currently running events only
-		if ($params->get( 'type' ) == 3) {
+		if ($params->get('type') == 3) {
 			$where = ' WHERE a.published = 1';
-			$where .= ' AND ( a.dates = CURDATE()';
-			$where .= ' OR ( a.enddates >= CURDATE() AND a.dates <= CURDATE() ))';
+			$where .= ' AND (a.dates = CURDATE()';
+			$where .= ' OR (a.enddates >= CURDATE() AND a.dates <= CURDATE()))';
 			$order = ' ORDER BY a.dates, a.times';
 		}
 
 		//clean parameter data
-		$catid 	= trim( $params->get('catid') );
-		$venid 	= trim( $params->get('venid') );
-		$state	= JString::strtolower(trim( $params->get('stateloc') ) );
+		$catid = trim($params->get('catid'));
+		$venid = trim($params->get('venid'));
+		$state = JString::strtolower(trim($params->get('stateloc')));
 
 		//Build category selection query statement
-		if ($catid)
-		{
-			$ids = explode( ',', $catid );
-			JArrayHelper::toInteger( $ids );
-			$categories = ' AND (c.id=' . implode( ' OR c.id=', $ids ) . ')';
+		if ($catid) {
+			$ids = explode(',', $catid);
+			JArrayHelper::toInteger($ids);
+			$categories = ' AND (c.id=' . implode(' OR c.id=', $ids) . ')';
 		}
 
 		//Build venue selection query statement
-		if ($venid)
-		{
-			$ids = explode( ',', $venid );
-			JArrayHelper::toInteger( $ids );
-			$venues = ' AND (l.id=' . implode( ' OR l.id=', $ids ) . ')';
+		if ($venid) {
+			$ids = explode(',', $venid);
+			JArrayHelper::toInteger($ids);
+			$venues = ' AND (l.id=' . implode(' OR l.id=', $ids) . ')';
 		}
 
 		//Build state selection query statement
-		if ($state)
-		{
-			$rawstate = explode( ',', $state );
+		if ($state) {
+			$rawstate = explode(',', $state);
 
 			foreach ($rawstate as $val)
 			{
@@ -102,7 +99,7 @@ static	function getList(&$params)
 				}
 			}
 
-			JArrayHelper::toString( $states );
+			JArrayHelper::toString($states);
 			$stat = ' AND (LOWER(l.state)='.implode(' OR LOWER(l.state)=',$states).')';
 		}
 
@@ -112,8 +109,8 @@ static	function getList(&$params)
 				.' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug,'
 				.' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as categoryslug'
 				.' FROM #__jem_events AS a'
-        .' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-        .' INNER JOIN #__jem_categories AS c ON c.id = rel.catid'
+				.' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+				.' INNER JOIN #__jem_categories AS c ON c.id = rel.catid'
 				.' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 				. $where
 				.' AND c.access <= '.$gid
@@ -122,13 +119,11 @@ static	function getList(&$params)
 				.($venid ? $venues : '')
 				.($state ? $stat : '')
 				. $order
-				.' LIMIT '.(int)$params->get( 'count', '2' )
+				.' LIMIT '.(int)$params->get('count', '2')
 				;
 
 		$db->setQuery($query);
 		$rows = $db->loadObjectList();
-
-		//exit('test');
 
 		if ($params->get('use_modal', 0)) {
 			JHTML::_('behavior.modal');
@@ -137,24 +132,22 @@ static	function getList(&$params)
 		//Loop through the result rows and prepare data
 		$i		= 0;
 		$lists	= array();
-		foreach ((array) $rows as $row )
+		foreach ((array) $rows as $row)
 		{
 			//create thumbnails if needed and receive imagedata
 			if ($row->datimage) {
 				$dimage = JEMImage::flyercreator($row->datimage, 'event');
-			}
-			else{
+			} else {
 				$dimage = null;
 			}
 			if ($row->locimage) {
 				$limage = JEMImage::flyercreator($row->locimage, 'venue');
-			}
-			else{
+			} else {
 				$limage = null;
 			}
 
 			//cut titel
-			$length = strlen(htmlspecialchars( $row->title ));
+			$length = strlen(htmlspecialchars($row->title));
 
 			if ($length > $params->get('cuttitle', '25')) {
 				$row->title = substr($row->title, 0, $params->get('cuttitle', '18'));
@@ -162,21 +155,20 @@ static	function getList(&$params)
 			}
 
 			$lists[$i] = new stdClass();
-			$lists[$i]->title			= htmlspecialchars( $row->title, ENT_COMPAT, 'UTF-8' );
-			$lists[$i]->venue			= htmlspecialchars( $row->venue, ENT_COMPAT, 'UTF-8' );
-			$lists[$i]->catname			= htmlspecialchars( $row->catname, ENT_COMPAT, 'UTF-8' );
-			$lists[$i]->state			= htmlspecialchars( $row->state, ENT_COMPAT, 'UTF-8' );
-			$lists[$i]->eventlink		= $params->get('linkevent', 1) ? JRoute::_( JEMHelperRoute::getRoute($row->slug) ) : '';
-			$lists[$i]->venuelink		= $params->get('linkvenue', 1) ? JRoute::_( JEMHelperRoute::getRoute($row->venueslug, 'venueevents') ) : '';
-			$lists[$i]->categorylink	= $params->get('linkcategory', 1) ? JRoute::_( JEMHelperRoute::getRoute($row->categoryslug, 'categoryevents') ) : '';
+			$lists[$i]->title			= htmlspecialchars($row->title, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->venue			= htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->catname			= htmlspecialchars($row->catname, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->state			= htmlspecialchars($row->state, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->eventlink		= $params->get('linkevent', 1) ? JRoute::_(JEMHelperRoute::getRoute($row->slug)) : '';
+			$lists[$i]->venuelink		= $params->get('linkvenue', 1) ? JRoute::_(JEMHelperRoute::getRoute($row->venueslug, 'venueevents')) : '';
+			$lists[$i]->categorylink	= $params->get('linkcategory', 1) ? JRoute::_(JEMHelperRoute::getRoute($row->categoryslug, 'categoryevents')) : '';
 			$lists[$i]->date 			= modJEMwideHelper::_format_date($row, $params);
 			$lists[$i]->time 			= $row->times ? modJEMwideHelper::_format_time($row->dates, $row->times, $params) : '' ;
 
 			if ($dimage == null) {
 				$lists[$i]->eventimage		= JURI::base(true).'/media/system/images/blank.png';
 				$lists[$i]->eventimageorig	= JURI::base(true).'/media/system/images/blank.png';
-			}
-			else {
+			} else {
 				$lists[$i]->eventimage		= JURI::base(true).'/'.$dimage['thumb'];
 				$lists[$i]->eventimageorig	= JURI::base(true).'/'.$dimage['original'];
 			}
@@ -184,13 +176,12 @@ static	function getList(&$params)
 			if ($limage == null) {
 				$lists[$i]->venueimage		= JURI::base(true).'/media/system/images/blank.png';
 				$lists[$i]->venueimageorig	= JURI::base(true).'/media/system/images/blank.png';
-			}
-			else {
+			} else {
 				$lists[$i]->venueimage		= JURI::base(true).'/'.$limage['thumb'];
 				$lists[$i]->venueimageorig	= JURI::base(true).'/'.$limage['original'];
 			}
-			$lists[$i]->eventdescription= strip_tags( $row->datdescription );
-			$lists[$i]->venuedescription= strip_tags( $row->locdescription );
+			$lists[$i]->eventdescription= strip_tags($row->datdescription);
+			$lists[$i]->venuedescription= strip_tags($row->locdescription);
 			$i++;
 		}
 
@@ -203,7 +194,7 @@ static	function getList(&$params)
 	 * @access public
 	 * @return string
 	 */
-static	function _format_date($row, &$params)
+	static function _format_date($row, &$params)
 	{
 		//Get needed timestamps and format
 		$yesterday_stamp	= mktime(0, 0, 0, date("m") , date("d")-1, date("Y"));
@@ -231,41 +222,41 @@ static	function _format_date($row, &$params)
 			//
 			//the event has an enddate and it's earlier than yesterday
 			} elseif($row->enddates && $enddates_stamp < $yesterday_stamp) {
-				$days = round( ($today_stamp - $enddates_stamp) / 86400 );
-				$result = JText::sprintf( 'MOD_JEM_WIDE_ENDED_DAYS_AGO', $days );
+				$days = round(($today_stamp - $enddates_stamp) / 86400);
+				$result = JText::sprintf('MOD_JEM_WIDE_ENDED_DAYS_AGO', $days);
 
 			//the event has an enddate and it's later than today but the startdate is earlier than today
 			//means a currently running event
 			} elseif($row->enddates && $enddates_stamp > $today_stamp && $dates_stamp < $today_stamp) {
-				$days = round( ($today_stamp - $dates_stamp) / 86400 );
-				$result = JText::sprintf( 'MOD_JEM_WIDE_STARTED_DAYS_AGO', $days );
+				$days = round(($today_stamp - $dates_stamp) / 86400);
+				$result = JText::sprintf('MOD_JEM_WIDE_STARTED_DAYS_AGO', $days);
 
 			//the events date is earlier than yesterday
 			} elseif($dates_stamp < $yesterday_stamp) {
-				$days = round( ($today_stamp - $dates_stamp) / 86400 );
-				$result = JText::sprintf( 'MOD_JEM_WIDE_DAYS_AGO', $days );
+				$days = round(($today_stamp - $dates_stamp) / 86400);
+				$result = JText::sprintf('MOD_JEM_WIDE_DAYS_AGO', $days);
 
 			//the events date is later than tomorrow
 			} elseif($dates_stamp > $tomorrow_stamp) {
-				$days = round( ($dates_stamp - $today_stamp) / 86400 );
-				$result = JText::sprintf( 'MOD_JEM_WIDE_DAYS_AHEAD', $days );
+				$days = round(($dates_stamp - $today_stamp) / 86400);
+				$result = JText::sprintf('MOD_JEM_WIDE_DAYS_AHEAD', $days);
 			}
 		} else {
 			//single day event
-			$date = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime( $row->dates.' '.$row->times ));
+			$date = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime($row->dates.' '.$row->times));
 			$result = JText::sprintf('MOD_JEM_WIDE_ON_DATE', $date);
 
 			//Upcoming multidayevent (From 16.10.2008 Until 18.08.2008)
 			if($dates_stamp > $tomorrow_stamp && $enddates_stamp) {
-				$startdate = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime( $row->dates.' '.$row->times ));
-				$enddate = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime( $row->enddates.' '.$row->endtimes ));
+				$startdate = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime($row->dates.' '.$row->times));
+				$enddate = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime($row->enddates.' '.$row->endtimes));
 				$result = JText::sprintf('MOD_JEM_WIDE_FROM_UNTIL', $startdate, $enddate);
 			}
 
 			//current multidayevent (Until 18.08.2008)
-			if( $row->enddates && $enddates_stamp > $today_stamp && $dates_stamp < $today_stamp ) {
+			if($row->enddates && $enddates_stamp > $today_stamp && $dates_stamp < $today_stamp) {
 				//format date
-				$result = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime( $row->enddates.' '.$row->endtimes ));
+				$result = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime($row->enddates.' '.$row->endtimes));
 				$result = JText::sprintf('MOD_JEM_WIDE_UNTIL', $result);
 			}
 		}
@@ -278,9 +269,9 @@ static	function _format_date($row, &$params)
 	 * @access public
 	 * @return string
 	 */
-static	function _format_time($date, $time, &$params)
+	static function _format_time($date, $time, &$params)
 	{
-		$time = strftime( $params->get('formattime', '%H:%M'), strtotime( $date.' '.$time ));
+		$time = strftime($params->get('formattime', '%H:%M'), strtotime($date.' '.$time));
 
 		return $time;
 	}

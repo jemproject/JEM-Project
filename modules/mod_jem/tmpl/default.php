@@ -28,7 +28,7 @@ defined('_JEXEC') or die;
 <?php if (count($items)): ?>
 
 
-<?php foreach ($list as $item) :  ?>
+<?php foreach ($list as $item) : ?>
 	<li class="jemmod<?php echo $params->get('moduleclass_sfx'); ?>">
 		<?php if ($params->get('linkdet') == 1) : ?>
 		<a href="<?php echo $item->link; ?>" class="jemmod<?php echo $params->get('moduleclass_sfx'); ?>">

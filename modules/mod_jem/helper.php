@@ -39,7 +39,7 @@ class modJEMHelper
 	 * @access public
 	 * @return array
 	 */
-static	function getList(&$params)
+	static function getList(&$params)
 	{
 		global $app;
 
@@ -47,10 +47,10 @@ static	function getList(&$params)
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
 
-		if ($params->get( 'type', '0' ) == 0) {
+		if ($params->get('type', '0') == 0) {
 			$where = ' WHERE a.published = 1';
-			if ($params->get( 'event_after', '0' )) {
-				$limit_date = strftime('%Y-%m-%d', time() + $params->get( 'event_after', '0' ) * 86400);
+			if ($params->get('event_after', '0')) {
+				$limit_date = strftime('%Y-%m-%d', time() + $params->get('event_after', '0') * 86400);
 				$where .= ' AND a.dates >= ' . $db->Quote($limit_date);
 			}
 			$order = ' ORDER BY a.dates, a.times';
@@ -59,29 +59,27 @@ static	function getList(&$params)
 			$order = ' ORDER BY a.dates DESC, a.times DESC';
 		}
 
-		$catid 	= trim( $params->get('catid') );
-		$venid 	= trim( $params->get('venid') );
+		$catid 	= trim($params->get('catid'));
+		$venid 	= trim($params->get('venid'));
 
-		if ($catid)
-		{
-			$ids = explode( ',', $catid );
-			JArrayHelper::toInteger( $ids );
-			$categories = ' AND (c.id=' . implode( ' OR c.id=', $ids ) . ')';
+		if ($catid) {
+			$ids = explode(',', $catid);
+			JArrayHelper::toInteger($ids);
+			$categories = ' AND (c.id=' . implode(' OR c.id=', $ids) . ')';
 		}
-		if ($venid)
-		{
-			$ids = explode( ',', $venid );
-			JArrayHelper::toInteger( $ids );
-			$venues = ' AND (l.id=' . implode( ' OR l.id=', $ids ) . ')';
+		if ($venid) {
+			$ids = explode(',', $venid);
+			JArrayHelper::toInteger($ids);
+			$venues = ' AND (l.id=' . implode(' OR l.id=', $ids) . ')';
 		}
 
-		//get $params->get( 'count', '2' ) nr of datasets
+		//get $params->get('count', '2') nr of datasets
 		$query = 'SELECT DISTINCT a.*, l.venue, l.city, l.url,'
 				.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
-        .' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug'
+				.' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug'
 				.' FROM #__jem_events AS a'
-        .' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-        .' INNER JOIN #__jem_categories AS c ON c.id = rel.catid'
+				.' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+				.' INNER JOIN #__jem_categories AS c ON c.id = rel.catid'
 				.' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 				. $where
 				.' AND c.access <= '.$gid
@@ -89,7 +87,7 @@ static	function getList(&$params)
 				.($catid ? $categories : '')
 				.($venid ? $venues : '')
 				. $order
-				.' LIMIT '.(int)$params->get( 'count', '2' )
+				.' LIMIT '.(int)$params->get('count', '2')
 				;
 
 		$db->setQuery($query);
@@ -97,22 +95,22 @@ static	function getList(&$params)
 
 		$i		= 0;
 		$lists	= array();
-		foreach ( $rows as $row )
+		foreach ($rows as $row)
 		{
 			//cut titel
-			$length = strlen(htmlspecialchars( $row->title ));
+			$length = strlen(htmlspecialchars($row->title));
 
 			if ($length > $params->get('cuttitle', '18')) {
 				$row->title = substr($row->title, 0, $params->get('cuttitle', '18'));
-				$row->title = htmlspecialchars( $row->title.'...', ENT_COMPAT, 'UTF-8');
+				$row->title = htmlspecialchars($row->title.'...', ENT_COMPAT, 'UTF-8');
 			}
 
 			$lists[$i] = new stdClass;
-			$lists[$i]->link		= JRoute::_( JEMHelperRoute::getRoute($row->slug) );
+			$lists[$i]->link		= JRoute::_(JEMHelperRoute::getRoute($row->slug));
 			$lists[$i]->dateinfo 	= modJEMHelper::_builddateinfo($row, $params);
-			$lists[$i]->text		= $params->get('showtitloc', 0 ) ? $row->title : htmlspecialchars( $row->venue, ENT_COMPAT, 'UTF-8' );
-			$lists[$i]->city		= htmlspecialchars( $row->city, ENT_COMPAT, 'UTF-8' );
-			$lists[$i]->venueurl 	= !empty( $row->venueslug ) ? JRoute::_( JEMHelperRoute::getRoute($row->venueslug, 'venueevents') ) : null;
+			$lists[$i]->text		= $params->get('showtitloc', 0) ? $row->title : htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->city		= htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->venueurl 	= !empty($row->venueslug) ? JRoute::_(JEMHelperRoute::getRoute($row->venueslug, 'venueevents')) : null;
 			$i++;
 		}
 
@@ -125,18 +123,18 @@ static	function getList(&$params)
 	 * @access public
 	 * @return string
 	 */
-static	function _builddateinfo($row, &$params)
+	static function _builddateinfo($row, &$params)
 	{
 		$date 		= modJEMHelper::_format_date($row->dates, $row->times, $params->get('formatdate', '%d.%m.%Y'));
 		$enddate 	= $row->enddates ? modJEMHelper::_format_date($row->enddates, $row->endtimes, $params->get('formatdate', '%d.%m.%Y')) : null;
 		$time		= $row->times ? modJEMHelper::_format_date($row->dates, $row->times, $params->get('formattime', '%H:%M')) : null;
 		$dateinfo	= $date;
 
-		if ( isset($enddate) && $enddate != $date) {
+		if (isset($enddate) && $enddate != $date) {
 			$dateinfo .= ' - '.$enddate;
 		}
 
-		if ( isset($time) ) {
+		if (isset($time)) {
 			$dateinfo .= ' | '.$time;
 		}
 
@@ -149,11 +147,11 @@ static	function _builddateinfo($row, &$params)
 	 * @access public
 	 * @return string
 	 */
-static	function _format_url($url)
+	static function _format_url($url)
 	{
 		if(!empty($url) && strtolower(substr($url, 0, 7)) != "http://") {
-        	$url = 'http://'.$url;
-        }
+			$url = 'http://'.$url;
+		}
 		return $url;
 	}
 
@@ -163,13 +161,12 @@ static	function _format_url($url)
 	 * @access public
 	 * @return string
 	 */
-static	function _format_date($date, $time, $format)
+	static function _format_date($date, $time, $format)
 	{
 		//format date
 		if (strtotime($date)) {
-			$date = strftime($format, strtotime( $date.' '.$time ));
-		}
-		else {
+			$date = strftime($format, strtotime($date.' '.$time));
+		} else {
 			$date = JText::_('MOD_JEM_OPEN_DATE');
 		}
 

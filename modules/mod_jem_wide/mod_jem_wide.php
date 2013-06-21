@@ -24,7 +24,7 @@
 defined('_JEXEC') or die;
 
 // get module helper
-require_once (dirname(__FILE__).'/helper.php');
+require_once(dirname(__FILE__).'/helper.php');
 
 //require needed component classes
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
@@ -33,7 +33,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/image.class.php');
 
 $list = modJEMwideHelper::getList($params);
 
-$document 	=  JFactory::getDocument();
+$document = JFactory::getDocument();
 $document->addStyleSheet(JURI::base(true).'/modules/mod_jem_wide/tmpl/mod_jem_wide.css');
 
 // check if any results returned

@@ -36,44 +36,44 @@ defined('_JEXEC') or die;
 		<col width="15%" class="jemmodw_col_venueimage" />
 	</colgroup>
 
-<?php foreach ($list as $item) :  ?>
+<?php foreach ($list as $item) : ?>
 	<tr>
 		<td valign="top">
 			<span class="event-title">
 				<?php if ($item->eventlink) : ?>
 				<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->title; ?>">
 				<?php endif; ?>
-						
+
 					<?php echo $item->title; ?>
-							
+
 				<?php if ($item->eventlink) : ?>
 				</a>
 				<?php endif; ?>
 			</span>
-			
+
 			<br />
-			
+
 			<span class="date">
 				<?php echo $item->date; ?>
 			</span>
-			<?php 
-			
-			if ($item->time && $params->get('datemethod', 1) == 1) : 
+			<?php
+
+			if ($item->time && $params->get('datemethod', 1) == 1) :
 			?>
 			<span class="time">
 				<?php echo $item->time; ?>
 			</span>
 			<?php endif; ?>
-						
+
 		</td>
 		<td>
 			<span class="category">
 				<?php if ($item->categorylink) : ?>
 				<a href="<?php echo $item->categorylink; ?>" title="<?php echo $item->catname; ?>">
 				<?php endif; ?>
-						
+
 					<?php echo $item->catname; ?>
-							
+
 				<?php if ($item->categorylink) : ?>
 				</a>
 				<?php endif; ?>
@@ -84,9 +84,9 @@ defined('_JEXEC') or die;
 				<?php if ($item->venuelink) : ?>
 				<a href="<?php echo $item->venuelink; ?>" title="<?php echo $item->venue; ?>">
 				<?php endif; ?>
-						
+
 					<?php echo $item->venue; ?>
-							
+
 				<?php if ($item->venuelink) : ?>
 				</a>
 				<?php endif; ?>
@@ -94,17 +94,17 @@ defined('_JEXEC') or die;
 		</td>
 		<td align="center" class="event-image-cell">
 			<?php if ($params->get('use_modal')) : ?>
-			
+
 			<?php if ($item->eventimageorig) {
 				$image = $item->eventimageorig;
-			} else   { $image = '';   }
+			} else { $image = ''; }
 			 ?>
-			
+
 			<a href="<?php echo $image; ?>" class="modal" title="<?php echo $item->title; ?>">
 			<?php endif; ?>
-						
+
 				<img src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" class="image-preview" />
-								
+
 			<?php if ($item->eventlink) : ?>
 			</a>
 			<?php endif; ?>
@@ -113,9 +113,9 @@ defined('_JEXEC') or die;
 			<?php if ($params->get('use_modal')) : ?>
 			<a href="<?php echo $item->venueimageorig; ?>" class="modal" title="<?php echo $item->venue; ?>">
 			<?php endif; ?>
-						
+
 				<img src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" class="image-preview" />
-							
+
 			<?php if ($item->venuelink) : ?>
 			</a>
 			<?php endif; ?>
