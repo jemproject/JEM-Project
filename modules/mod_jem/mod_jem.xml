@@ -17,10 +17,10 @@
 	</files>
 
 	<languages>
-		<language tag="en-GB">languages/en-GB.mod_jem.ini</language>
-		<language tag="de-DE">languages/de-DE.mod_jem.ini</language>
-		<language tag="nl-NL">languages/nl-NL.mod_jem.ini</language>
-		<language tag="fr-FR">languages/fr-FR.mod_jem.ini</language>
+		<language tag="en-GB">language/en-GB/en-GB.mod_jem.ini</language>
+		<language tag="de-DE">language/de-DE/de-DE.mod_jem.ini</language>
+		<language tag="nl-NL">language/nl-NL/nl-NL.mod_jem.ini</language>
+		<language tag="fr-FR">language/fr-FR/fr-FR.mod_jem.ini</language>
 	</languages>
 
 	<config>
