@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="2.5" type="plugin" group="finder" method="upgrade">
-	<name>JEM - Finder Plugin</name>
+	<name>plg_finder_jem</name>
 	<creationDate>22 April 2013</creationDate>
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
@@ -13,9 +13,15 @@
 	<!-- <scriptfile>script.php</scriptfile> -->
 	<files>
 		<file plugin="jem">jem.php</file>
+		
+		<folder>language</folder>
 	</files>
+
+	<!-- Do not remove the language tag, because the language file is needed 
+		 in the administrator/language folder. The language file will only be 
+		 loaded from this location when accessing the finder component at the 
+		 frontend. This is a limitation in J2.5 -->
 	<languages>
-		<language tag="en-GB">languages/en-GB.plg_finder_jem.ini</language>
-		<language tag="en-GB">languages/en-GB.plg_finder_jem.sys.ini</language>
+		<language tag="en-GB">language/en-GB/en-GB.plg_finder_jem.ini</language>
 	</languages>
 </extension>
