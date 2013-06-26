@@ -108,7 +108,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 					<input class="inputbox required" name="title" value="<?php echo $this->row->title; ?>" size="50" maxlength="100" id="title" />
 				</td>
 				<td>
-					<label for="published"><?php echo JText::_ ( 'COM_JEM_PUBLISHED' ) . ':'; ?></label>
+					<label for="status"><?php echo JText::_ ( 'COM_JEM_STATUS' ) . ':'; ?></label>
 				</td>
 				<td>
 				<?php
