@@ -379,7 +379,26 @@ $options = array(
       		              <input type="text" class="inputbox" id="custom10" name="custom10" value="<?php echo $this->escape($this->row->custom10); ?>" size="65" maxlength="60" />
       		          </div>
       		</fieldset>
-
+      		
+      		<fieldset>
+      		<legend><?php echo JText::_('COM_JEM_STATE'); ?></legend>
+      		
+      		<div>
+					<label for="published"><?php echo JText::_ ( 'COM_JEM_STATE' ) . ':'; ?></label>
+				</div>
+				<div>
+				<?php
+				$nr = array();
+				$nr[] = JHTML::_('select.option', '0', JText::_('JUNPUBLISHED') );
+				$nr[] = JHTML::_('select.option', '1', JText::_('JPUBLISHED') );
+				$nr[] = JHTML::_('select.option', '2', JText::_('JARCHIVED') );
+				$nr[] = JHTML::_('select.option', '-2', JText::_('JTRASHED') );
+				$nrpublished = JHTML::_('select.genericlist', $nr, 'published', 'size="1" class="inputbox"', 'value', 'text', $this->row->published );
+				echo $nrpublished;
+				?>
+				</div>
+</fieldset>
+      		
     	
     		<?php if ( $this->jemsettings->showfroregistra == 2 ) : ?>
     	<fieldset class="jem_fldst_registration">
