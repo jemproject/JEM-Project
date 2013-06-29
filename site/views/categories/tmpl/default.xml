@@ -12,11 +12,11 @@
 		<fields name="params"  ><fieldset name="basic" label="basic">	 
 		  <field name="catid" label="COM_JEM_SELECTTOPCAT" default="0" type="categories" description="COM_JEM_SELECTTOPCATDESC" addfieldpath="/administrator/components/com_jem/models/fields" /> 
       <field name="usecat" type="radio" default="1" label="COM_JEM_DISPLAYCHILDS" description="COM_JEM_DISPLAYCHILDSDESC">
-        <option value="0">COM_JEM_NO</option>
+        <option value="0">JNO</option>
         <option value="1">JYES</option>
       </field> 
       <field name="showemptychilds" type="radio" default="1" label="COM_JEM_SHOWEMPTYCHILD" description="COM_JEM_SHOWEMPTYCHILDDESC">
-        <option value="0">COM_JEM_NO</option>
+        <option value="0">JNO</option>
         <option value="1">JYES</option>
       </field>
 		</fieldset>
