@@ -380,25 +380,29 @@ $options = array(
       		          </div>
       		</fieldset>
       		
+      		<!-- NOT WORKING -->
+      		<!-- @todo rework -->
+      		
+      	<!--  
       		<fieldset>
-      		<legend><?php echo JText::_('JSTATUS'); ?></legend>
+      		<legend><?php // echo JText::_('JSTATUS'); ?></legend>
       		
       		<div>
-					<label for="status"><?php echo JText::_ ( 'JSTATUS' ) . ':'; ?></label>
+					<label for="status"><?php // echo JText::_ ( 'JSTATUS' ) . ':'; ?></label>
 				</div>
 				<div>
 				<?php
-				$nr = array();
-				$nr[] = JHTML::_('select.option', '0', JText::_('JUNPUBLISHED') );
-				$nr[] = JHTML::_('select.option', '1', JText::_('JPUBLISHED') );
-				$nr[] = JHTML::_('select.option', '2', JText::_('JARCHIVED') );
-				$nr[] = JHTML::_('select.option', '-2', JText::_('JTRASHED') );
-				$nrpublished = JHTML::_('select.genericlist', $nr, 'published', 'size="1" class="inputbox"', 'value', 'text', $this->row->published );
-				echo $nrpublished;
+				//$nr = array();
+				//$nr[] = JHTML::_('select.option', '0', JText::_('JUNPUBLISHED') );
+				//$nr[] = JHTML::_('select.option', '1', JText::_('JPUBLISHED') );
+				//$nr[] = JHTML::_('select.option', '2', JText::_('JARCHIVED') );
+				//$nr[] = JHTML::_('select.option', '-2', JText::_('JTRASHED') );
+				//$nrpublished = JHTML::_('select.genericlist', $nr, 'published', 'size="1" class="inputbox"', 'value', 'text', $this->row->published );
+				// echo $nrpublished;
 				?>
 				</div>
 </fieldset>
-      		
+      		-->
     	
     		<?php if ( $this->jemsettings->showfroregistra == 2 ) : ?>
     	<fieldset class="jem_fldst_registration">
