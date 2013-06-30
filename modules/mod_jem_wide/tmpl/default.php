@@ -22,6 +22,7 @@
  */
 
 defined('_JEXEC') or die;
+JHTML::_('behavior.modal', 'a.flyermodal');
 ?>
 
 <div id="jemmodulewide">
@@ -100,7 +101,7 @@ defined('_JEXEC') or die;
 			} else { $image = ''; }
 			 ?>
 
-			<a href="<?php echo $image; ?>" class="modal" title="<?php echo $item->title; ?>">
+			<a href="<?php echo $image; ?>" class="flyermodal" title="<?php echo $item->title; ?>">
 			<?php endif; ?>
 
 				<img src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" class="image-preview" />
@@ -111,7 +112,7 @@ defined('_JEXEC') or die;
 		</td>
 		<td align="center" class="event-image-cell">
 			<?php if ($params->get('use_modal')) : ?>
-			<a href="<?php echo $item->venueimageorig; ?>" class="modal" title="<?php echo $item->venue; ?>">
+			<a href="<?php echo $item->venueimageorig; ?>" class="flyermodal" title="<?php echo $item->venue; ?>">
 			<?php endif; ?>
 
 				<img src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" class="image-preview" />
