@@ -89,7 +89,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 			?>
 			<tr class="row<?php echo $i % 2; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-				<td class="center"><input type="checkbox" id="cb<?php echo $i;?>" name="cid[]" value="<?php echo $row->id; ?>" onclick="isChecked(this.checked);" /></td>
+				<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 				<td><a href="<?php echo JRoute::_( 'index.php?option=com_jem&controller=attendees&task=edit&cid[]='.$row->id ); ?>"><?php echo $row->name; ?></a></td>
 				<td>
 					<a href="<?php echo JRoute::_( 'index.php?option=com_users&task=user.edit&id='.$row->uid ); ?>"><?php echo $row->username; ?></a>

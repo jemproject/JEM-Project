@@ -85,7 +85,7 @@ defined('_JEXEC') or die; ?>
    			?>
 			<tr class="row<?php echo $i % 2; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-				<td class="center"><input type="checkbox" id="cb<?php echo $i;?>" name="cid[]" value="<?php echo $row->id; ?>" onclick="isChecked(this.checked);" /></td>
+				<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 				<td>
 					<?php echo $displaydate; ?>
 				</td>
