@@ -247,11 +247,31 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 			<?php } ?>
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_JEM_STATUS' ); ?></strong>
+					<strong><?php echo JText::_ ( 'JSTATUS' ); ?></strong>
 				</td>
 				<td>
-					<?php
-					echo $this->row->published > 0 ? JText::_ ( 'COM_JEM_PUBLISHED' ) : ($this->row->published < 0 ? JText::_ ( 'COM_JEM_ARCHIVED' ) : JText::_ ( 'COM_JEM_DRAFT_UNPUBLISHED' ));
+					<?php	
+					if ($this->row->published == 0)
+					{
+						echo JText::_ ( 'JUNPUBLISHED' );
+					}
+					
+					if ($this->row->published == 1)
+					{
+						echo JText::_ ( 'JPUBLISHED' );
+					}
+					
+					if ($this->row->published == -2)
+					{
+						echo JText::_ ( 'JTRASHED' );
+							
+					}
+					
+					if ($this->row->published == 2)
+					{
+						echo JText::_ ( 'JARCHIVED' );
+					}
+					
 					?>
 				</td>
 			</tr>
