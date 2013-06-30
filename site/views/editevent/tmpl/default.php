@@ -381,10 +381,10 @@ $options = array(
       		</fieldset>
       		
       		<fieldset>
-      		<legend><?php echo JText::_('COM_JEM_STATE'); ?></legend>
+      		<legend><?php echo JText::_('JSTATUS'); ?></legend>
       		
       		<div>
-					<label for="published"><?php echo JText::_ ( 'COM_JEM_STATE' ) . ':'; ?></label>
+					<label for="status"><?php echo JText::_ ( 'JSTATUS' ) . ':'; ?></label>
 				</div>
 				<div>
 				<?php
