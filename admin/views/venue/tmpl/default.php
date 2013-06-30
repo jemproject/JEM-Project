@@ -231,11 +231,11 @@ $options = array(
 			<?php } ?>
 			<tr>
 				<td>
-					<strong><?php echo JText::_ ( 'COM_JEM_STATUS' ); ?></strong>
+					<strong><?php echo JText::_ ( 'JSTATUS' ); ?></strong>
 				</td>
 				<td>
 					<?php
-					echo $this->row->published > 0 ? JText::_ ( 'COM_JEM_PUBLISHED' ) : ($this->row->published < 0 ? JText::_ ( 'COM_JEM_ARCHIVED' ) : JText::_ ( 'COM_JEM_DRAFT_UNPUBLISHED' ));
+					echo $this->row->published > 0 ? JText::_ ( 'JPUBLISHED' ) : ($this->row->published < 0 ? JText::_ ( 'JARCHIVED' ) : JText::_ ( 'JUNPUBLISHED' ));
 					?>
 				</td>
 			</tr>
@@ -492,10 +492,9 @@ if ( $this->settings->showmapserv == 0 ) { ?>
 <input type="hidden" name="task" value="" />
 <?php if ($this->task == 'copy') {?>
 	<input type="hidden" name="id" value="" />
-	<input type="hidden" name="created" value="" />
-	<input type="hidden" name="author_ip" value="" />
-	<input type="hidden" name="created_by" value="" />
-	<input type="hidden" name="version" value="" />
+	<input type="hidden" name="created" value="<?php echo $this->row->created; ?>" />
+	<input type="hidden" name="author_ip" value="<?php echo $this->row->author_ip; ?>" />
+	<input type="hidden" name="version" value="<?php echo $this->row->version;?>" />
 <?php } else {	?>
 	<input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
 	<input type="hidden" name="created" value="<?php echo $this->row->created; ?>" />
