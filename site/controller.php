@@ -118,6 +118,155 @@ class JEMController extends JControllerLegacy
 		$this->setRedirect( JRoute::_('index.php?view=editvenue', false ) );
 	}
 
+		
+	
+	/**
+	 * Logic for canceling an event and proceed to add a venue
+	 *
+	 * @since 0.9
+	 */
+	function unpublishtask()
+	{
+	
+		$app = JFactory::getApplication();
+		$menuitem = $app->getMenu()->getActive()->id;
+		$input = $app->input;
+	
+		$cid 	= $input->get( 'cid', array(0), 'post', 'array' );
+	
+		$false = array_search('0', $cid);
+	
+		if ($false === 0) {
+			JError::raiseNotice(100, JText::_('COM_JEM_SELECT_ITEM_TO_UNPUBLISH'));
+			$this->setRedirect( 'index.php?option=com_jem&view=my'.'&Itemid='.$menuitem);
+			return;
+		}
+	
+		$model = $this->getModel('my');
+		if(!$model->publish($cid, 0)) {
+			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
+		}
+	
+		$total = count( $cid );
+		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_UNPUBLISHED');
+	
+	
+		$this->setRedirect( 'index.php?option=com_jem&view=my'.'&Itemid='.$menuitem, $msg );
+	}
+	
+	
+	
+	/**
+	 * Logic for canceling an event and proceed to add a venue
+	 *
+	 * @since 0.9
+	 */
+	function unpublish()
+	{
+	
+		$app = JFactory::getApplication();
+		$menuitem = $app->getMenu()->getActive()->id;
+		$input = $app->input;
+	
+		$cid 	= $input->get( 'cid', array(0), 'post', 'array' );
+	
+		$false = array_search('0', $cid);
+	
+		if ($false === 0) {
+			JError::raiseNotice(100, JText::_('COM_JEM_SELECT_ITEM_TO_UNPUBLISH'));
+			$this->setRedirect( 'index.php?option=com_jem&view=my'.'&Itemid='.$menuitem);
+			return;
+		}
+	
+		$model = $this->getModel('my');
+		if(!$model->publish($cid, 0)) {
+			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
+		}
+	
+		$total = count( $cid );
+		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_UNPUBLISHED');
+	
+	
+		$this->setRedirect( 'index.php?option=com_jem&view=my'.'&Itemid='.$menuitem, $msg );
+	}
+	
+	
+	/**
+	 * Logic to publish events
+	 *
+	 * @access public
+	 * @return void
+	 * @since 0.9
+	 */
+	function publish()
+	{
+		$app = JFactory::getApplication();
+		$menuitem = $app->getMenu()->getActive()->id;
+		$input = $app->input;
+	
+		$cid 	= $input->get( 'cid', array(0), 'post', 'array' );
+	
+		$false = array_search('0', $cid);
+	
+		if ($false === 0) {
+			JError::raiseNotice(100, JText::_('COM_JEM_SELECT_ITEM_TO_PUBLISH'));
+			$this->setRedirect( 'index.php?option=com_jem&view=my'.'&Itemid='.$menuitem);
+			return;
+		}
+	
+		$model = $this->getModel('my');
+		if(!$model->publish($cid, 1)) {
+			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
+		}
+	
+		$total = count( $cid );
+		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_PUBLISHED');
+	
+		$this->setRedirect( 'index.php?option=com_jem&view=my'.'&Itemid='.$menuitem, $msg );
+	}
+	
+	
+	/**
+	 * Logic to trash events
+	 *
+	 * @access public
+	 * @return void
+	 * @since 0.9
+	 */
+	function trash()
+	{
+		
+		$app = JFactory::getApplication();
+		$menuitem = $app->getMenu()->getActive()->id;
+		$input = $app->input;
+		
+		
+		$cid 	= $input->get( 'cid', array(0), 'post', 'array' );
+
+			$false = array_search('0', $cid);
+	
+		if ($false === 0) {
+			JError::raiseNotice(100, JText::_('COM_JEM_SELECT_ITEM_TO_TRASH'));
+			$this->setRedirect( 'index.php?option=com_jem&view=my'.'&Itemid='.$menuitem);
+			return;
+		}
+
+		$model = $this->getModel('my');
+		if(!$model->publish($cid, -2)) {
+			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
+		}
+
+		$total = count( $cid );
+		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_TRASHED');
+
+		$this->setRedirect( 'index.php?option=com_jem&view=my'.'&Itemid='.$menuitem, $msg );
+	}
+	
+	
+	
+	
+	
+	
 	/**
 	 * Logic for canceling a venue edit task
 	 *

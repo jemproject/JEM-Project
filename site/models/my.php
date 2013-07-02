@@ -86,12 +86,32 @@ class JEMModelMy extends JModelLegacy
         $params =  $app->getParams('com_jem');
 
         //get the number of events from database
+
+        $limit		= $app->getUserStateFromRequest('com_jem.my.limit', 'limit', $jemsettings->display_num, 'int');
+        $limitstart = $app->getUserStateFromRequest('com_jem.my.limitstart', 'limitstart', 0, 'int');
+        
+        $this->setState('limit', $limit);
+        $this->setState('limitstart', $limitstart);
+        
+        
+        
+        $limit		= $app->getUserStateFromRequest('com_jem.myvenue.limit', 'limit_venue', $jemsettings->display_num, 'int');
+        $limitstart = $app->getUserStateFromRequest('com_jem.myvenue.limitstart', 'limitstart_venue', 0, 'int');
+        
+        $this->setState('limit_venue', $limit);
+        $this->setState('limitstart_venue', $limitstart);
+        
+        
+        
+        
+        /*
+        
         $limit = $app->getUserStateFromRequest('com_jem.my.limit', 'limit', $jemsettings->display_num, 'int');
         $limitstart_events = JRequest::getVar('limitstart_events', 0, '', 'int');
         $limitstart_venues = JRequest::getVar('limitstart_venues', 0, '', 'int');
         $limitstart_attending = JRequest::getVar('limitstart_attending', 0, '', 'int');
 
-        $this->setState('limit', $limit);
+      $this->setState('limit', $limit);
         $this->setState('limitstart_events', $limitstart_events);
         $this->setState('limitstart_venues', $limitstart_venues);
         $this->setState('limitstart_attending', $limitstart_attending);
@@ -99,6 +119,7 @@ class JEMModelMy extends JModelLegacy
         // Get the filter request variables
         $this->setState('filter_order', JRequest::getCmd('filter_order', 'a.dates'));
         $this->setState('filter_order_dir', JRequest::getCmd('filter_order_Dir', 'ASC'));
+        */
     }
 
     /**
@@ -122,6 +143,7 @@ class JEMModelMy extends JModelLegacy
                 $this->_events = $this->_getList($query);
             } else
             {
+            	$pagination = $this->getEventsPagination();
                 $this->_events = $this->_getList($query, $pagination->limitstart, $pagination->limit);
             }
 
@@ -144,6 +166,43 @@ class JEMModelMy extends JModelLegacy
         return $this->_events;
     }
 
+    
+    
+    /**
+     * Method to (un)publish a event
+     *
+     * @access	public
+     * @return	boolean	True on success
+     * @since	1.5
+     */
+    function publish($cid = array(), $publish = 1)
+    {
+    	$user 	= JFactory::getUser();
+    	$userid = (int) $user->get('id');
+    
+    	if (count($cid))
+    	{
+    		$cids = implode(',', $cid);
+    
+    		$query = 'UPDATE #__jem_events'
+    				. ' SET published = '. (int) $publish
+    				. ' WHERE id IN ('. $cids .')'
+    						. ' AND (checked_out = 0 OR (checked_out = ' .$userid. '))'
+    								;
+    
+    								$this->_db->setQuery($query);
+    
+    								if (!$this->_db->query()) {
+    									$this->setError($this->_db->getErrorMsg());
+    									return false;
+    								}
+    	}
+    }
+    
+    
+    
+    
+    
     /**
      * Method to get the Events user is attending
      *
@@ -208,6 +267,7 @@ class JEMModelMy extends JModelLegacy
                 $this->_venues = $this->_getList($query);
             } else
             {
+            	$pagination = $this->getVenuesPagination();
                 $this->_venues = $this->_getList($query, $pagination->limitstart, $pagination->limit);
             }
         }
@@ -266,6 +326,7 @@ class JEMModelMy extends JModelLegacy
             $this->_total_venues = $this->_getListCount($query);
         }
 
+       // var_dump($query);exit;
         return $this->_total_venues;
     }
 
@@ -281,7 +342,8 @@ class JEMModelMy extends JModelLegacy
         if ( empty($this->_pagination_events))
         {
             jimport('joomla.html.pagination');
-            $this->_pagination_events = new MyEventsPagination($this->getTotalEvents(), $this->getState('limitstart_events'), $this->getState('limit'));
+            $this->_pagination_events = new MyEventsPagination($this->getTotalEvents(), $this->getState('limitstart'), $this->getState('limit'));
+            //$this->_pagination_events = new JPagination($this->getTotalEvents(), $this->getState('limitstart'), $this->getState('limit'));
         }
 
         return $this->_pagination_events;
@@ -336,7 +398,7 @@ class JEMModelMy extends JModelLegacy
         $orderby = $this->_buildOrderBy();
 
         //Get Events from Database
-		$query = 'SELECT DISTINCT a.id as eventid, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription,'
+		$query = 'SELECT DISTINCT a.id as eventid, a.dates, a.enddates, a.published, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription,'
 				. ' l.venue, l.city, l.state, l.url,'
 				. ' c.catname, c.id AS catid,'
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
@@ -387,13 +449,14 @@ class JEMModelMy extends JModelLegacy
      */
     function _buildQueryVenues()
     {
+    	$orderbyvenue = $this->_buildOrderByVenue();
         $user =  JFactory::getUser();
         //Get Events from Database
         $query = 'SELECT l.id, l.venue, l.city, l.state, l.url, l.published, '
         .' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug'
         .' FROM #__jem_venues AS l '
         .' WHERE l.created_by = '.$this->_db->Quote($user->id)
-        .' ORDER BY l.venue ASC '
+        .$orderbyvenue
         ;
 
         return $query;
@@ -407,7 +470,29 @@ class JEMModelMy extends JModelLegacy
      */
     function _buildOrderBy()
     {
-        $filter_order = $this->getState('filter_order');
+        
+    	
+    	$app =  JFactory::getApplication();
+    	
+    	$filter_order		= $app->getUserStateFromRequest('com_jem.my.filter_order', 'filter_order', 'a.dates', 'cmd');
+    	$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.my.filter_order_Dir', 'filter_order_Dir', '', 'word');
+    	
+    	$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
+    	$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+    	
+    	if ($filter_order != '') {
+    		$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
+    	} else {
+    		$orderby = ' ORDER BY a.dates, a.times ';
+    	}
+    	
+    	return $orderby;
+    	
+    	
+    	
+    	
+    	/*
+    	$filter_order = $this->getState('filter_order');
         $filter_order_dir = $this->getState('filter_order_dir');
 
 
@@ -417,8 +502,45 @@ class JEMModelMy extends JModelLegacy
         $orderby = ' ORDER BY '.$filter_order.' '.$filter_order_dir.', a.dates, a.times';
 
         return $orderby;
+        */
     }
 
+    
+    
+    /**
+     * Build the order clause
+     *
+     * @access private
+     * @return string
+     */
+    function _buildOrderByVenue()
+    {
+    
+    	 
+    	$app =  JFactory::getApplication();
+    	 
+    	$filter_order		= $app->getUserStateFromRequest('com_jem.myvenue.filter_order_venue', 'filter_order_venue', 'l.venue', 'cmd');
+    	$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myvenue.filter_order_Dir_venue', 'filter_order_Dir_venue', '', 'word');
+    	 
+    	$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
+    	$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+    	 
+    	if ($filter_order != '') {
+    		$orderbyvenue = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
+    	} else {
+    		$orderbyvenue = ' ORDER BY l.venue ';
+    	}
+    	 
+
+    	return $orderbyvenue;
+    }
+    
+    
+    
+    
+    
+    
+    
     /**
      * Build the where clause
      *
@@ -428,15 +550,77 @@ class JEMModelMy extends JModelLegacy
     function _buildWhere()
     {
         $app =  JFactory::getApplication();
+        $task = JRequest::getWord('task');
+        // Get the paramaters of the active menu item
+        $params =  $app->getParams();
+        
         $jemsettings =  JEMHelper::config();
 
         $user = JFactory::getUser();
         $gid = JEMHelper::getGID($user);
 
-        // Get the paramaters of the active menu item
-        $params =  $app->getParams();
-
-        $task = JRequest::getWord('task');
+        $filter_state 	= $app->getUserStateFromRequest('com_jem.my.filter_state', 'filter_state', '', 'word');
+        $filter 		= $app->getUserStateFromRequest('com_jem.my.filter', 'filter', '', 'int');
+        $search 		= $app->getUserStateFromRequest('com_jem.my.search', 'search', '', 'string');
+        $search 		= $this->_db->escape(trim(JString::strtolower($search)));
+        
+        
+        $where = array();
+        
+        // First thing we need to do is to select only needed events
+        if ($task == 'archive') {
+        	$where[] = ' a.published = 2';
+        } else {
+        	$where[] = ' (a.published = 1 OR a.published = 0)';
+        }
+        $where[] = ' c.published = 1';
+        $where[] = ' c.access  <= '.$gid;
+        
+        // get excluded categories
+        $excluded_cats = trim($params->get('excluded_cats', ''));
+        
+        if ($excluded_cats != '') {
+        	$cats_excluded = explode(',', $excluded_cats);
+        	$where [] = '  (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
+        }
+        // === END Excluded categories add === //
+        
+        
+        if ($jemsettings->filter)
+        {
+        
+        	if ($search && $filter == 1) {
+        		$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
+        	}
+        
+        	if ($search && $filter == 2) {
+        		$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
+        	}
+        
+        	if ($search && $filter == 3) {
+        		$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
+        	}
+        
+        	if ($search && $filter == 4) {
+        		$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
+        	}
+        
+        	if ($search && $filter == 5) {
+        		$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
+        	}
+        
+        } // end tag of jemsettings->filter decleration
+        
+        $where 		= (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
+        
+        return $where;
+        
+        
+        
+        
+        
+/*
+   
 
         // First thing we need to do is to select only needed events
         if ($task == 'archive')
@@ -444,7 +628,8 @@ class JEMModelMy extends JModelLegacy
             $where = ' WHERE a.published = 2';
         } else
         {
-            $where = ' WHERE a.published = 1';
+            //$where = ' WHERE a.published = 1';
+        	$where = ' WHERE (a.published = 1 OR a.published = 0)';
         }
 
 
@@ -459,10 +644,7 @@ class JEMModelMy extends JModelLegacy
         // Second is to only select events assigned to category the user has access to
       //  $where .= ' AND c.access <= '.$gid;
 
-        /*
-         * If we have a filter, and this is enabled... lets tack the AND clause
-         * for the filter onto the WHERE clause of the item query.
-         */
+        
         if ($jemsettings->filter)
         {
             $filter = JRequest::getString('filter', '', 'request');
@@ -497,6 +679,9 @@ class JEMModelMy extends JModelLegacy
             }
         }
         return $where;
+        */
+        
+        
     }
 
     /**
@@ -577,28 +762,35 @@ class MyEventsPagination extends JPagination
         if (!$this->_viewall)
         {
             $data->all->base = '0';
-            $data->all->link = JRoute::_("&limitstart_events=");
+            //$data->all->link = JRoute::_("&limitstart_events=");
+            $data->all->link = JRoute::_("&limitstart=0");
         }
 
         // Set the start and previous data objects
-        $data->start = new JPaginationObject(JText::_('COM_JEM_START'));
-        $data->previous = new JPaginationObject(JText::_('COM_JEM_PREV'));
+        $data->start = new JPaginationObject(JText::_('JLIB_HTML_START'));
+        $data->previous = new JPaginationObject(JText::_('JPREV'));
 
         if ($this->get('pages.current') > 1)
         {
             $page = ($this->get('pages.current')-2)*$this->limit;
 
-            $page = $page == 0?'':$page; //set the empty for removal from route
+            /* by disabling this line,  the link for previous page (second -> first page) is working) */
+           // $page = $page == 0?'':$page; //set the empty for removal from route
 
             $data->start->base = '0';
-            $data->start->link = JRoute::_("&limitstart_events=");
+            //$data->start->link = JRoute::_("&limitstart_events=");
+            
+            /* this is for the link to the first page */
+            $data->start->link = JRoute::_("&limitstart=0");
+
             $data->previous->base = $page;
-            $data->previous->link = JRoute::_("&limitstart_events=".$page);
+            //$data->previous->link = JRoute::_("&limitstart_events=".$page);
+            $data->previous->link = JRoute::_("&limitstart=".$page);
         }
 
         // Set the next and end data objects
-        $data->next = new JPaginationObject(JText::_('COM_JEM_NEXT'));
-        $data->end = new JPaginationObject(JText::_('COM_JEM_END'));
+        $data->next = new JPaginationObject(JText::_('JNEXT'));
+        $data->end = new JPaginationObject(JText::_('JLIB_HTML_END'));
 
         if ($this->get('pages.current') < $this->get('pages.total'))
         {
@@ -606,9 +798,11 @@ class MyEventsPagination extends JPagination
             $end = ($this->get('pages.total')-1)*$this->limit;
 
             $data->next->base = $next;
-            $data->next->link = JRoute::_("&limitstart_events=".$next);
+            //$data->next->link = JRoute::_("&limitstart_events=".$next);
+            $data->next->link = JRoute::_("&limitstart=".$next);
             $data->end->base = $end;
-            $data->end->link = JRoute::_("&limitstart_events=".$end);
+            //$data->end->link = JRoute::_("&limitstart_events=".$end);
+            $data->end->link = JRoute::_("&limitstart=".$end);
         }
 
         $data->pages = array ();
@@ -617,13 +811,14 @@ class MyEventsPagination extends JPagination
         {
             $offset = ($i-1)*$this->limit;
 
-            $offset = $offset == 0?'':$offset; //set the empty for removal from route
+            //$offset = $offset == 0?'':$offset; //set the empty for removal from route
 
             $data->pages[$i] = new JPaginationObject($i);
             if ($i != $this->get('pages.current') || $this->_viewall)
             {
                 $data->pages[$i]->base = $offset;
-                $data->pages[$i]->link = JRoute::_("&limitstart_events=".$offset);
+               // $data->pages[$i]->link = JRoute::_("&limitstart_events=".$offset);
+                $data->pages[$i]->link = JRoute::_("&limitstart=".$offset);
             }
         }
         return $data;
@@ -638,7 +833,8 @@ class MyEventsPagination extends JPagination
         $html .= $list['pageslinks'];
         $html .= "\n<div class=\"counter\">".$list['pagescounter']."</div>";
 
-        $html .= "\n<input type=\"hidden\" name=\"limitstart_events\" value=\"".$list['limitstart']."\" />";
+        //$html .= "\n<input type=\"hidden\" name=\"limitstart_events\" value=\"".$list['limitstart']."\" />";
+        $html .= "\n<input type=\"hidden\" name=\"limitstart\" value=\"".$list['limitstart']."\" />";
         $html .= "\n</div>";
 
         return $html;
@@ -763,7 +959,7 @@ class MyVenuesPagination extends JPagination
         {
             $page = ($this->get('pages.current')-2)*$this->limit;
 
-            $page = $page == 0?'':$page; //set the empty for removal from route
+           // $page = $page == 0?'':$page; //set the empty for removal from route
 
             $data->start->base = '0';
             $data->start->link = JRoute::_("&limitstart_venues=");

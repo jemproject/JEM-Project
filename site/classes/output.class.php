@@ -342,6 +342,102 @@ class JEMOutput {
 	}
 
 	
+	/**
+	 * Creates the publish button
+	 *
+	 */
+	static function publishbutton()
+	{
+		$app = JFactory::getApplication();
+		$settings = JEMHelper::config();
+		
+			JHTML::_('behavior.tooltip');
+	
+			// checks template image directory for image, if non found default are loaded
+			
+			$image = JHTML::image("media/com_jem/images/publish.png",JText::_('COM_JEM_PUBLISH'));
+	
+			if ($app->input->get('print','','int')) {
+				//button in popup
+				$output = '';
+			} else {
+				//button in view
+				$overlib = JText::_('COM_JEM_PUBLISH_TIP');
+				$text = JText::_('COM_JEM_PUBLISH');
+	
+				$print_link = "javascript:void(Joomla.submitbutton('publish'));";
+				$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
+			}
+	
+			return $output;
+		
+		return;
+	}
+	
+	/**
+	 * Creates the trash button
+	 *
+	 */
+	static function trashbutton()
+	{
+		$app = JFactory::getApplication();
+		$settings = JEMHelper::config();
+	
+		JHTML::_('behavior.tooltip');
+	
+		// checks template image directory for image, if non found default are loaded
+			
+		$image = JHTML::image("media/com_jem/images/trash.png",JText::_('COM_JEM_TRASH'));
+	
+		if ($app->input->get('print','','int')) {
+			//button in popup
+			$output = '';
+		} else {
+			//button in view
+			$overlib = JText::_('COM_JEM_TRASH_TIP');
+			$text = JText::_('COM_JEM_TRASH');
+	
+			$print_link = "javascript:void(Joomla.submitbutton('trash'));";
+			$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
+		}
+	
+		return $output;
+	
+		return;
+	}
+	
+	/**
+	 * Creates the unpublish button
+	 *
+	 */
+	static function unpublishbutton()
+	{
+		$app = JFactory::getApplication();
+		$settings = JEMHelper::config();
+	
+		JHTML::_('behavior.tooltip');
+	
+		// checks template image directory for image, if non found default are loaded
+			
+		$image = JHTML::image("media/com_jem/images/unpublish.png",JText::_('COM_JEM_UNPUBLISH'));
+	
+		if ($app->input->get('print','','int')) {
+			//button in popup
+			$output = '';
+		} else {
+			//button in view
+			$overlib = JText::_('COM_JEM_UNPUBLISH_TIP');
+			$text = JText::_('COM_JEM_UNPUBLISH');
+	
+			$print_link = "javascript:void(Joomla.submitbutton('unpublish'));";
+			$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
+		}
+	
+		return $output;
+	
+		return;
+	}
+	
 
 	
 	/**

@@ -37,19 +37,18 @@ defined('_JEXEC') or die;
 	}
 </script>
 
-<form action="<?php echo $this->action; ?>" method="post" id="adminForm">
-
+<form action="<?php echo $this->action; ?>" method="post" name="adminForm" id="adminForm">
 <?php if ($this->jemsettings->filter || $this->jemsettings->display) : ?>
 <div id="jem_filter" class="floattext">
 	<?php if ($this->jemsettings->filter) : ?>
 	<div class="jem_fleft">
 		<?php
-		echo '<label for="filter_type">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
-		echo $this->lists['filter_types'].'&nbsp;';
+		echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
+		echo $this->lists['filter'].'&nbsp;';
 		?>
-		<input type="text" name="filter" id="filter" value="<?php echo $this->lists['filter'];?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
-		<button onclick="document.getElementById('adminForm').submit();"><?php echo JText::_('COM_JEM_GO'); ?></button>
-		<button onclick="document.getElementById('filter').value='';document.getElementById('adminForm').submit();"><?php echo JText::_('COM_JEM_RESET'); ?></button>
+		<input type="text" name="search" id="search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+		<button onclick="document.adminForm.submit();"><?php echo JText::_('COM_JEM_GO'); ?></button>
+		<button onclick="$('search').value='';document.adminForm.submit();"><?php echo JText::_('COM_JEM_RESET'); ?></button>
 	</div>
 	<?php endif; ?>
 	<?php if ($this->jemsettings->display) : ?>
@@ -63,9 +62,12 @@ defined('_JEXEC') or die;
 </div>
 <?php endif; ?>
 
+
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 
 	<colgroup>
+	<col width="1%" class="jem_col_num" />
+	<col width="1%" class="jem_col_checkall" />
 		<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 		<?php if ($this->jemsettings->showtitle == 1) : ?>
 			<col width="<?php echo $this->jemsettings->titlewidth; ?>" class="jem_col_title" />
@@ -82,10 +84,13 @@ defined('_JEXEC') or die;
 		<?php if ($this->jemsettings->showcat == 1) :	?>
 			<col width="<?php echo $this->jemsettings->catfrowidth; ?>" class="jem_col_category" />
 		<?php endif; ?>
+		<col width="1%" class="jem_col_status" />
 	</colgroup>
 
 	<thead>
 		<tr>
+				<th ><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+				<th><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 			<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<?php
 			if ($this->jemsettings->showtitle == 1) :
@@ -114,6 +119,7 @@ defined('_JEXEC') or die;
 			<?php
 			endif;
 			?>
+			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'JSTATUS' ); ?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -122,13 +128,15 @@ defined('_JEXEC') or die;
 		?>
 		<tr align="center"><td colspan="0"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
 		<?php
+	
+
 	else :
-
-	$i = 0;
-	foreach ((array) $this->events as $row) :
+	foreach ($this->events as $i => $row) :
 	?>
-			<tr class="sectiontableentry<?php echo $i +1 . $this->params->get('pageclass_sfx'); ?>" >
-
+			<tr class="row<?php echo $i % 2; ?>">
+				<td><?php echo $this->events_pagination->getRowOffset( $i ); ?></td>
+				<td><?php echo JHtml::_('grid.id', $i, $row->eventid); ?></td>
+				
 				<td headers="jem_date" align="left">
 					<?php echo JEMOutput::formatShortDateTime($row->dates, $row->times,
 						$row->enddates, $row->endtimes); ?>
@@ -215,7 +223,7 @@ defined('_JEXEC') or die;
 				<?php
 				endif;
 				?>
-
+<td class="center"><?php echo JHTML::_('jgrid.published', $row->published, $i ); ?></td>
 			</tr>
 
 		<?php
@@ -227,11 +235,14 @@ defined('_JEXEC') or die;
 	</tbody>
 </table>
 <p>
+<?php // echo $this->getToolbar(); ?>
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-<input type="hidden" name="filter_order_Dir" value="" />
+	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+	<input type="hidden" name="boxchecked" value="0" />
+<input type = "hidden" name = "task" value = "" />
+<input type = "hidden" name = "option" value = "com_jem" />
 </p>
 </form>
-
 <div class="pagination">
 	<?php echo $this->events_pagination->getPagesLinks(); ?>
 </div>
