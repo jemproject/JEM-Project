@@ -341,6 +341,9 @@ class JEMOutput {
 		return;
 	}
 
+	
+
+	
 	/**
 	 * Creates the map button
 	 *
@@ -372,13 +375,63 @@ class JEMOutput {
 		switch ($jemsettings->showmapserv)
 		{
 			case 1:
-				$url = 'http://maps.google.'.$jemsettings->tld.'/maps?hl='.$jemsettings->lg.'&q='.str_replace(" ", "+", $data->street).', '.$data->plz.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.$data->venue.')&ie=UTF8&z=15&iwloc=B&output=embed" ';
+				// link
+				$url1 = 'http://maps.google.'.$jemsettings->tld.'/maps?hl='.$jemsettings->lg.'&q='.str_replace(" ", "+", $data->street).', '.$data->plz.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.$data->venue.')&ie=UTF8&z=15&iwloc=B&output=embed" ';
+				$url2 = 'http://maps.google.'.$jemsettings->tld.'/maps?hl='.$jemsettings->lg.'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
+				
+				
+				if ($data->latitude == 0.000000)
+				{
+					$data->latitude = null;
+				}
+				
+				if ($data->longitude == 0.000000)
+				{
+					$data->longitude = null;
+				}
+				
+				
+				if ($data->latitude && $data->longitude)
+				{
+					$url = $url2;
+				}
+				else
+				{
+					$url = $url1;
+				}
+				
 				$attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
 				$output = '<a class="flyermodal" title="'.JText::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'</a>';
 				break;
 
+				
 			case 2:
-				$output = '<div style="border: 1px solid #000;width:500px;" color="black"><iframe width="500" height="250" src="http://maps.google.'.$jemsettings->tld.'/maps?hl='.$jemsettings->lg.'&q='.str_replace(" ", "+", $data->street).', '.$data->plz.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.$data->venue.')&ie=UTF8&z=15&iwloc=B&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
+				// include
+				$url1 = 'http://maps.google.'.$jemsettings->tld.'/maps?hl='.$jemsettings->lg.'&q='.str_replace(" ", "+", $data->street).', '.$data->plz.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.$data->venue.')&ie=UTF8&z=15&iwloc=B&output=embed';
+				$url2 = 'https://maps.google.com/maps?q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
+				
+				
+				if ($data->latitude == 0.000000)
+				{
+					$data->latitude = null;
+				}
+				
+				if ($data->longitude == 0.000000)
+				{
+					$data->longitude = null;
+				}
+				
+				
+				if ($data->latitude && $data->longitude)
+				{
+					$url = $url2;
+				}
+				else
+				{
+					$url = $url1;
+				}
+				
+				$output = '<div style="border: 1px solid #000;width:500px;" color="black"><iframe width="500" height="250" src="'.$url.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
 				break;
 		}
 
