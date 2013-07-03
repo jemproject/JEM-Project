@@ -336,69 +336,25 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 		<?php
 			$title2 = JText::_( 'COM_JEM_CUSTOMFIELDS' );
 			echo JHtml::_('sliders.panel', $title2, 'custom');
-			?>
+		?>
 
-			<table style="width:100%">
+		<table style="width:100%">
+			<?php
+			for($cr = 1; $cr <= 10; $cr++) {
+				$currentRow = $this->row->{'custom'.$cr};
+				if(substr($currentRow, 0, 7) == "http://") {
+					$currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
+	 			}
+			?>
 				<tr>
-				<td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD1' ).':'; ?></td>
-				<td><input class="inputbox" name="custom1" value="<?php echo $this->row->custom1; ?>" size="20" maxlength="200" id="custom1" /></td>
+				<td><?php echo JText::_('COM_JEM_CUSTOM_FIELD'.$cr).':'; ?></td>
+				<td><input class="inputbox" name="custom<?php echo $cr; ?>" value="<?php echo $currentRow; ?>" size="20" maxlength="200" id="custom<?php echo $cr; ?>" /></td>
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
-			</tr>
-				<tr>
-				<td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD2' ).':'; ?></td>
-				<td><input class="inputbox" name="custom2" value="<?php echo $this->row->custom2; ?>" size="20" maxlength="200" id="custom2" /></td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
-				<tr>
-				<td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD3' ).':'; ?></td>
-				<td><input class="inputbox" name="custom3" value="<?php echo $this->row->custom3; ?>" size="20" maxlength="100" id="custom3" /></td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
-				<tr>
-				<td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD4' ).':'; ?></td>
-				<td><input class="inputbox" name="custom4" value="<?php echo $this->row->custom4; ?>" size="20" maxlength="100" id="custom4" /></td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
-				<tr>
-				<td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD5' ).':'; ?></td>
-				<td><input class="inputbox" name="custom5" value="<?php echo $this->row->custom5; ?>" size="20" maxlength="100" id="custom5" /></td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
-				<tr>
-				<td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD6' ).':'; ?></td>
-				<td><input class="inputbox" name="custom6" value="<?php echo $this->row->custom6; ?>" size="20" maxlength="100" id="custom6" /></td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
-				<tr>
-				<td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD7' ).':'; ?></td>
-				<td><input class="inputbox" name="custom7" value="<?php echo $this->row->custom7; ?>" size="20" maxlength="100" id="custom7" /></td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
-				<tr>
-				<td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD8' ).':'; ?></td>
-				<td><input class="inputbox" name="custom8" value="<?php echo $this->row->custom8; ?>" size="20" maxlength="100" id="custom8" /></td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
-				<tr>
-				<td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD9' ).':'; ?></td>
-				<td><input class="inputbox" name="custom9" value="<?php echo $this->row->custom9; ?>" size="20" maxlength="100" id="custom9" /></td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
-				<tr>
-				<td><?php echo JText::_( 'COM_JEM_CUSTOM_FIELD10' ).':'; ?></td>
-				<td><input class="inputbox" name="custom10" value="<?php echo $this->row->custom10; ?>" size="20" maxlength="100" id="custom10" /></td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
+				</tr>
+			<?php
+			}
+			?>
 		</table>
 
 		<?php
