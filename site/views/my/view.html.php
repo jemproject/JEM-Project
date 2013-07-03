@@ -64,11 +64,10 @@ class JEMViewMy extends JViewLegacy
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 
-
 		$events 	=  $this->get('Events');
 		$events_pagination 	=  $this->get('EventsPagination');
 
-			//are events available?
+		//are events available?
 		if (!$events) {
 			$noevents = 1;
 		} else {
@@ -110,10 +109,7 @@ class JEMViewMy extends JViewLegacy
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
-
-		
-		
-		
+			
 		
 		//params
 		$params->def('page_title', $item->title);
@@ -177,23 +173,7 @@ class JEMViewMy extends JViewLegacy
 	
 	
 	function getToolbar() {
-	
-	
-		// add required stylesheets from admin template
-		$document    =  JFactory::getDocument();
-		$document->addStyleSheet('administrator/templates/system/css/system.css');
-		//now we add the necessary stylesheets from the administrator template
-		//in this case i make reference to the bluestork default administrator template in joomla 1.6
-		$document->addCustomTag(
-				'<link href="administrator/templates/bluestork/css/template.css" rel="stylesheet" type="text/css" />'."\n\n".
-				'<!--[if IE 7]>'."\n".
-				'<link href="administrator/templates/bluestork/css/ie7.css" rel="stylesheet" type="text/css" />'."\n".
-				'<![endif]-->'."\n".
-				'<!--[if gte IE 8]>'."\n\n".
-				'<link href="administrator/templates/bluestork/css/ie8.css" rel="stylesheet" type="text/css" />'."\n".
-				'<![endif]-->'."\n".
-				'<link rel="stylesheet" href="administrator/templates/bluestork/css/rounded.css" type="text/css" />'."\n"
-		);
+
 		//load the JToolBar library and create a toolbar
 		jimport('joomla.html.toolbar');
 		$bar = new JToolBar( 'toolbar' );
