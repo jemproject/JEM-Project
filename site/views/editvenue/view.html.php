@@ -43,8 +43,14 @@ class JEMViewEditvenue extends JViewLegacy
 		$app = JFactory::getApplication();;
 
 		$user = JFactory::getUser();
-		if (!$user->id) {
-			$app->redirect(JRoute::_($_SERVER["HTTP_REFERER"]), JText::_('COM_JEM_PLEASE_LOGIN_TOBEABLETOSUBMITVENUES'), 'error' );
+	
+		//redirect if not logged in
+		if ( !$user->get('id') ) {
+		//	$app->redirect( $_SERVER['HTTP_REFERER'], JText::_('COM_JEM_NEED_LOGGED_IN'), 'error' );
+			// Add a message to the message queue
+			$app->enqueueMessage(JText::_('COM_JEM_NEED_LOGGED_IN'), 'error');
+			return false;
+			
 		}
 
 		$editor 	= JFactory::getEditor();
