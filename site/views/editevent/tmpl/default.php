@@ -301,9 +301,6 @@ $options = array(
 			<?php
 			for($cr = 1; $cr <= 10; $cr++) {
 				$currentRow = $this->row->{'custom'.$cr};
-				if(substr($currentRow, 0, 7) == "http://") {
-					$currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
-				}
 			?>
 				<div class="jem_custom<?php echo $cr; ?> floattext">
 					<label for="custom<?php echo $cr; ?>">

@@ -342,9 +342,6 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 			<?php
 			for($cr = 1; $cr <= 10; $cr++) {
 				$currentRow = $this->row->{'custom'.$cr};
-				if(substr($currentRow, 0, 7) == "http://") {
-					$currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
-	 			}
 			?>
 				<tr>
 				<td><?php echo JText::_('COM_JEM_CUSTOM_FIELD'.$cr).':'; ?></td>
