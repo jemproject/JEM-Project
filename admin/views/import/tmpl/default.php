@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license GNU/GPL, see LICENSE.php
- 
+
  * JEM is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 2
  * as published by the Free Software Foundation.
@@ -118,7 +118,7 @@ defined('_JEXEC') or die;
 			</tr>
 		</table>
 	</fieldset>
-	
+
 	<fieldset>
 		<legend><?php echo JText::_('COM_JEM_IMPORT_CATEGORIES'); ?></legend>
 		<?php echo JText::_('COM_JEM_IMPORT_INSTRUCTIONS') ?>
@@ -144,20 +144,20 @@ defined('_JEXEC') or die;
 					</label>
 				</td>
 				<td>
-					<input type="file" id="cat-file-upload" accept="text/*" name="Filecats" />
+					<input type="file" id="cat-file-upload" accept="text/*" name="Filecategories" />
 					<input type="submit" id="cat-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='csvcategoriesimport';return true;"/>
 					<span id="upload-clear"></span>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<label for="replace_cats">
+					<label for="replace_categories">
 						<?php echo JText::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?>
 					</label>
 				</td>
 				<td>
 					<?php
-					$html = JHTML::_('select.booleanlist', 'replace_cats', 'class="inputbox"', 0);
+					$html = JHTML::_('select.booleanlist', 'replace_categories', 'class="inputbox"', 0);
 					echo $html;
 					?>
 				</td>
