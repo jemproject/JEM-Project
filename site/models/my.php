@@ -576,6 +576,9 @@ class JEMModelMy extends JModelLegacy
         $where[] = ' c.published = 1';
         $where[] = ' c.access  <= '.$gid;
         
+        // then if the user is the owner of the event
+        $where[] = ' a.created_by = '.$this->_db->Quote($user->id);
+        
         // get excluded categories
         $excluded_cats = trim($params->get('excluded_cats', ''));
         
