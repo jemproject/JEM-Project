@@ -28,7 +28,7 @@ jimport('joomla.application.component.view');
 /**
  * HTML View class for the JEM View
  */
-class JEMViewMy extends JViewLegacy
+class JEMViewMyattending extends JViewLegacy
 {
 	/**
 	 * Creates the My-Events View
@@ -59,21 +59,21 @@ class JEMViewMy extends JViewLegacy
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 
-		$events 	=  $this->get('Events');
-		$events_pagination 	=  $this->get('EventsPagination');
+		$attending 	=  $this->get('Attending');
+        $attending_pagination 	=  $this->get('AttendingPagination');
 
 		//are events available?
-		if (!$events) {
-			$noevents = 1;
+		if (!$attending) {
+			$noattending = 1;
 		} else {
-			$noevents = 0;
+			$noattending = 0;
 		}
 		// get variables
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.my.filter_order', 'filter_order', 	'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.my.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.my.filter_state', 'filter_state', 	'*', 'word' );
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.my.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.my.search', 'search', '', 'string' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.myattending.filter_order', 'filter_order', 	'a.dates', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.myattending.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.myattending.filter_state', 'filter_state', 	'*', 'word' );
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.myattending.filter', 'filter', '', 'int' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.myattending.search', 'search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 		
 		$task 		= JRequest::getWord('task');
@@ -112,23 +112,21 @@ class JEMViewMy extends JViewLegacy
 		$pathway->setItemName(1, $item->title);
 
 		//Set Page title
-		$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_ITEMS'));
+		$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_ATTENDING'));
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title', $pagetitle);
 
 
-
 		$this->action					= $uri->toString();
-		$this->events					= $events;
+		$this->attending				= $attending;
 		$this->task						= $task;
 		$this->params					= $params;
-		$this->events_pagination		= $events_pagination;
+		$this->attending_pagination 	= $attending_pagination;
 		$this->jemsettings				= $jemsettings;
 		$this->pagetitle				= $pagetitle;
 		$this->lists 					= $lists;
-		$this->noevents					= $noevents;
+		$this->noattending				= $noattending;
 
-		$this->getToolbar();
 		parent::display($tpl);
 
 	}
@@ -160,32 +158,7 @@ class JEMViewMy extends JViewLegacy
 
 		return $this->events;
 	}
-	
-	
-	
-	function getToolbar() 
-	{
-		//load the JToolBar library and create a toolbar
-		jimport('joomla.html.toolbar');
-		$bar = new JToolBar( 'toolbar' );
-		//and make whatever calls you require
-		$bar->appendButton( 'Frontend', 'unpublish', 'unpublish', 'unpublish', false );
-		$bar->appendButton( 'Frontend', 'publish', 'publish', 'publish', false );
-		//generate the html and return
-		return $bar->render();
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		
 	
 	
 

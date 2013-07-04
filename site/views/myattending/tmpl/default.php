@@ -23,13 +23,7 @@
 defined( '_JEXEC' ) or die;
 ?>
 <div id="jem" class="jem_jem">
-<p class="buttons">
-	<?php
-		echo JEMOutput::publishbutton();
-		echo JEMOutput::unpublishbutton();
-		echo JEMOutput::trashbutton();
-	?>
-</p>
+
 <?php if ($this->params->def( 'show_page_title', 1 )) : ?>
 
     <h1 class="componentheading">
@@ -41,7 +35,7 @@ defined( '_JEXEC' ) or die;
 <!--table-->
 
 <?php 
-	echo $this->loadTemplate('events'); 
+	echo $this->loadTemplate('attending'); 
 ?>
 
 

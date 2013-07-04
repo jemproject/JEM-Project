@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_JEM_MYATTENDING_LAYOUT">
+		<message>
+			<![CDATA[COM_JEM_MYATTENDING_LAYOUT_DESC]]>
+		</message>
+	</layout>
+	<state>
+		<name>COM_JEM_MYATTENDING_LAYOUT</name>
+		<description>COM_JEM_MYATTENDING_LAYOUT_DESC</description>
+	</state>
+</metadata>
