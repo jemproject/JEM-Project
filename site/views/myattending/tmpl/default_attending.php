@@ -208,6 +208,7 @@ defined('_JEXEC') or die;
 		<?php
 		$i = 1 - $i;
 		endforeach;
+		endif;
 		?>
 
 	</tbody>
@@ -225,5 +226,3 @@ defined('_JEXEC') or die;
 	<?php echo $this->attending_pagination->getPagesLinks(); ?>
 </div>
 
-
-<?php endif; ?>
