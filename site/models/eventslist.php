@@ -29,7 +29,7 @@ jimport('joomla.application.component.model');
  *
  * @package JEM
  * @since 0.9
- */
+*/
 class JEMModelEventslist extends JModelLegacy
 {
 	/**
@@ -200,7 +200,7 @@ class JEMModelEventslist extends JModelLegacy
 				. $orderby
 				;
 
-		return $query;
+				return $query;
 	}
 
 	/**
@@ -246,6 +246,8 @@ class JEMModelEventslist extends JModelLegacy
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
 
+		$catswitch = $params->get('categoryswitch', '0');
+
 		$filter_state 	= $app->getUserStateFromRequest('com_jem.eventslist.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.eventslist.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.eventslist.search', 'search', '', 'string');
@@ -263,12 +265,30 @@ class JEMModelEventslist extends JModelLegacy
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access  <= '.$gid;
 
-		// get excluded categories
-		$excluded_cats = trim($params->get('excluded_cats', ''));
 
-		if ($excluded_cats != '') {
-			$cats_excluded = explode(',', $excluded_cats);
-			$where [] = '  (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
+		// get included categories
+		if ($catswitch == 1)
+		{
+				
+			$included_cats = trim($params->get('categoryswitchcats', ''));
+
+			if ($included_cats != '') {
+				$cats_included = explode(',', $included_cats);
+				$where [] = '  (c.id=' . implode(' AND c.id=', $cats_included) . ')';
+			}
+
+		}
+
+
+		// get excluded categories
+		if ($catswitch == 0)
+		{
+			$excluded_cats = trim($params->get('categoryswitchcats', ''));
+
+			if ($excluded_cats != '') {
+				$cats_excluded = explode(',', $excluded_cats);
+				$where [] = '  (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
+			}
 		}
 		// === END Excluded categories add === //
 
@@ -276,25 +296,25 @@ class JEMModelEventslist extends JModelLegacy
 		if ($jemsettings->filter)
 		{
 
-		if ($search && $filter == 1) {
-			$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
-		}
+			if ($search && $filter == 1) {
+				$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
+			}
 
-		if ($search && $filter == 2) {
-			$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
-		}
+			if ($search && $filter == 2) {
+				$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
+			}
 
-		if ($search && $filter == 3) {
-			$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
-		}
+			if ($search && $filter == 3) {
+				$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
+			}
 
-		if ($search && $filter == 4) {
-			$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
-		}
+			if ($search && $filter == 4) {
+				$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
+			}
 
-		if ($search && $filter == 5) {
-			$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
-		}
+			if ($search && $filter == 5) {
+				$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
+			}
 
 		} // end tag of jemsettings->filter decleration
 
@@ -337,14 +357,38 @@ class JEMModelEventslist extends JModelLegacy
 		$params 	=  $app->getParams();
 		$jemsettings =  JEMHelper::config();
 
-		// get excluded categories
-		$excluded_cats = trim($params->get('excluded_cats', ''));
+		$catswitch = $params->get('categoryswitch', '0');
 
-		if ($excluded_cats != '') {
-			$cats_excluded = explode(',', $excluded_cats);
-			$where = ' AND (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
-		} else {		// === END Exlucded categories add === //
-			$where = '';
+
+
+
+		// get included categories
+		if ($catswitch == 1)
+		{
+				
+			$included_cats = trim($params->get('categoryswitchcats', ''));
+			if ($included_cats != '') {
+				$cats_included = explode(',', $included_cats);
+				$where = ' AND (c.id=' . implode(' AND c.id=', $cats_included) . ')';
+			} else {		// === END Exlucded categories add === //
+				$where = '';
+			}
+
+		}
+
+		// get excluded categories
+		if ($catswitch == 0)
+		{
+
+			$excluded_cats = trim($params->get('categoryswitchcats', ''));
+
+			if ($excluded_cats != '') {
+				$cats_excluded = explode(',', $excluded_cats);
+				$where = ' AND (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
+			} else {		// === END Exlucded categories add === //
+				$where = '';
+			}
+
 		}
 
 		return $where;

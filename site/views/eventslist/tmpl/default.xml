@@ -9,14 +9,26 @@
 		<name>COM_JEM_SIMPLELIST_LAYOUT</name>
 		<description>COM_JEM_SIMPLELIST_LAYOUT_DESC</description>
 		<config>
-			<fields name="params"><fieldset name="basic" label="basic">
-			<field name="introtext" filter="safehtml" type="textarea" default="" label="COM_JEM_INTROTEXT_FIELD" rows="8" cols="30" description="COM_JEM_INTROTEXT_FIELD_TIP"/>
-			<field name="showintrotext" type="radio" default="0" label="COM_JEM_DISPLAY_INTROTEXT" description="COM_JEM_DISPLAY_INTROTEXT_TIP">
-				<option value="0">COM_JEM_HIDE</option>
-				<option value="1">COM_JEM_SHOW</option>
-			</field>
-			 <field name="excluded_cats" type="text" default="" label="COM_JEM_EXCLUDED_CATEGORY_IDS" 
-                description="COM_JEM_EXCLUDED_CATEGORY_IDS_DESC" /> 
-		</fieldset></fields></config>
+			<fields name="params">
+				<fieldset name="basic" label="basic">
+					<field name="introtext" filter="safehtml" type="textarea"
+						default="" label="COM_JEM_INTROTEXT_FIELD" rows="8" cols="30"
+						description="COM_JEM_INTROTEXT_FIELD_TIP" />
+					<field name="showintrotext" type="radio" default="0"
+						label="COM_JEM_DISPLAY_INTROTEXT" description="COM_JEM_DISPLAY_INTROTEXT_TIP">
+						<option value="0">COM_JEM_HIDE</option>
+						<option value="1">COM_JEM_SHOW</option>
+					</field>
+					<field name="categoryswitch" type="radio" default="0"
+						label="COM_JEM_CATEGORYSWITCH" description="COM_JEM_CATEGORYSWITCH_DESC">
+						<option value="0">COM_JEM_EXCLUDE</option>
+						<option value="1">COM_JEM_INCLUDE</option>
+					</field>
+
+					<field name="categoryswitchcats" type="text" default=""
+						label="COM_JEM_CATEGORYSWITCHCATS" description="COM_JEM_CATEGORYSWITCHCATS_DESC" />
+				</fieldset>
+			</fields>
+		</config>
 	</state>
 </metadata>
