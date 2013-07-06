@@ -149,7 +149,7 @@ class JEMModelEventslist extends JModelLegacy
 			$query = $this->_buildQuery();
 			$this->_total = $this->_getListCount($query);
 		}
-
+		
 		return $this->_total;
 
 	}
@@ -274,11 +274,13 @@ class JEMModelEventslist extends JModelLegacy
 
 			if ($included_cats != '') {
 				$cats_included = explode(',', $included_cats);
-				$where [] = '  (c.id=' . implode(' AND c.id=', $cats_included) . ')';
+				$where [] = '  (c.id=' . implode(' OR c.id=', $cats_included) . ')';
 			}
 
 		}
 
+		
+		
 
 		// get excluded categories
 		if ($catswitch == 0)
@@ -292,6 +294,7 @@ class JEMModelEventslist extends JModelLegacy
 		}
 		// === END Excluded categories add === //
 
+		
 
 		if ($jemsettings->filter)
 		{
@@ -320,6 +323,7 @@ class JEMModelEventslist extends JModelLegacy
 
 		$where 		= (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
 
+		
 		return $where;
 
 
@@ -369,7 +373,7 @@ class JEMModelEventslist extends JModelLegacy
 			$included_cats = trim($params->get('categoryswitchcats', ''));
 			if ($included_cats != '') {
 				$cats_included = explode(',', $included_cats);
-				$where = ' AND (c.id=' . implode(' AND c.id=', $cats_included) . ')';
+				$where = ' AND (c.id=' . implode(' OR c.id=', $cats_included) . ')';
 			} else {		// === END Exlucded categories add === //
 				$where = '';
 			}
