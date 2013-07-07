@@ -97,83 +97,8 @@ class JEMModelImport extends JModelLegacy {
 	 * @return  array  Number of records inserted and updated
 	 */
 	function eventsimport($fieldsname, & $data, $replace = true) {
-		$ignore = array ();
-		if (!$replace) {
-			$ignore[] = 'id';
-		}
-		$rec = array ('added' => 0, 'updated' => 0);
-
-		// parse each row
-		foreach ($data AS $row) {
-			$values = array ();
-			// parse each specified field and retrieve corresponding value for the record
-			foreach ($fieldsname AS $k => $field) {
-				$values[$field] = $row[$k];
-			}
-
-			$object = JTable::getInstance('jem_events', '');
-
-			//print_r($values);exit;
-			$object->bind($values, $ignore);
-
-			// Make sure the data is valid
-			if (!$object->check()) {
-				$this->setError($object->getError());
-				echo JText::_('Error check: ').$object->getError()."\n";
-				continue ;
-			}
-
-			// Store it in the db
-			if ($replace) {
-				// We want to keep id from database so first we try to insert into database. if it fails,
-				// it means the record already exists, we can use store().
-				if (!$object->insertIgnore()) {
-					if (!$object->store()) {
-						echo JText::_('Error store: ').$this->_db->getErrorMsg()."\n";
-						continue ;
-					} else {
-						$rec['updated']++;
-					}
-				} else {
-					$rec['added']++;
-				}
-			} else {
-				if (!$object->store()) {
-					echo JText::_('Error store: ').$this->_db->getErrorMsg()."\n";
-					continue ;
-				} else {
-					$rec['added']++;
-				}
-			}
-
-			// print_r($object); exit;
-			// we need to update the categories-events table too
-			// store cat relation
-			$query = 'DELETE FROM #__jem_cats_event_relations WHERE itemid = '.$object->id;
-			$this->_db->setQuery($query);
-			$this->_db->query();
-
-			if ( isset ($values['categories'])) {
-				$cats = explode(',', $values['categories']);
-				if (count($cats)) {
-					foreach ($cats as $cat) {
-						$query = 'INSERT INTO #__jem_cats_event_relations (`catid`, `itemid`) VALUES('.$cat.','.$object->id.')';
-						$this->_db->setQuery($query);
-						$this->_db->query();
-					}
-				}
-			}
-		}
-
-		// force the cleanup to update the imported events status
-		$settings = JTable::getInstance('jem_settings', '');
-		$settings->load(1);
-		$settings->lastupdate = 0;
-		$settings->store();
-
-		return $rec;
+		return $this->import('jem_events', $fieldsname, $data, $replace);
 	}
-
 
 	/**
 	 * Import data corresponding to fieldsname into events table
@@ -241,9 +166,9 @@ class JEMModelImport extends JModelLegacy {
 
 			$object = JTable::getInstance($tablename, '');
 
-			//print_r($values);exit;
 			$object->bind($values, $ignore);
 
+			// Make sure the data is valid
 			if (!$object->check()) {
 				$this->setError($object->getError());
 				echo JText::_('Error check: ').$object->getError()."\n";
@@ -261,7 +186,7 @@ class JEMModelImport extends JModelLegacy {
 					} else {
 						$rec['updated']++;
 					}
-				} else 	{
+				} else {
 					$rec['added']++;
 				}
 			} else {
@@ -272,6 +197,33 @@ class JEMModelImport extends JModelLegacy {
 					$rec['added']++;
 				}
 			}
+
+			if($tablename == "jem_events") {
+				// we need to update the categories-events table too
+				// store cat relation
+				$query = 'DELETE FROM #__jem_cats_event_relations WHERE itemid = '.$object->id;
+				$this->_db->setQuery($query);
+				$this->_db->query();
+
+				if ( isset ($values['categories'])) {
+					$cats = explode(',', $values['categories']);
+					if (count($cats)) {
+						foreach ($cats as $cat) {
+							$query = 'INSERT INTO #__jem_cats_event_relations (`catid`, `itemid`) VALUES('.$cat.','.$object->id.')';
+							$this->_db->setQuery($query);
+							$this->_db->query();
+						}
+					}
+				}
+			}
+		}
+
+		if($tablename == "jem_events") {
+			// force the cleanup to update the imported events status
+			$settings = JTable::getInstance('jem_settings', '');
+			$settings->load(1);
+			$settings->lastupdate = 0;
+			$settings->store();
 		}
 
 		return $rec;
