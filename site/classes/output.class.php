@@ -482,6 +482,9 @@ class JEMOutput {
 	{
 		$app = JFactory::getApplication();
 		$settings = JEMHelper::config();
+		
+		$id = JRequest::getInt('id');
+		$fid = JRequest::getInt('Itemid');
 	
 		JHTML::_('behavior.tooltip');
 	
@@ -497,7 +500,7 @@ class JEMOutput {
 			$overlib = JText::_('COM_JEM_BACK');
 			$text = JText::_('COM_JEM_BACK');
 				
-			$link = 'index.php?option=com_jem&amp;view='.$view.'&amp;controller='.$backlink.'&amp;task=back';
+			$link = 'index.php?option=com_jem&amp;view='.$view.'&amp;task=attendees.back&id='.$id.'&Itemid='.$fid;
 			$output	= '<a href="'. JRoute::_($link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 		}
 	

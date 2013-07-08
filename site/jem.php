@@ -33,7 +33,6 @@ require_once (JPATH_COMPONENT_SITE.'/classes/attachment.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/categories.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/Zebra_Image.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/calendar.class.php');
-JLoader::register('JButtonFrontend', dirname(__FILE__) . '/helpers/buttons.php');
 
 // Set the table directory
 JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
@@ -44,24 +43,14 @@ JEMHelper::cleanup();
 // Require the controller
 require_once (JPATH_COMPONENT.'/controller.php');
 
-// Require specific controller if requested
-if( $controller = JRequest::getWord('controller') ) {
-	$path = JPATH_COMPONENT.'/controllers/'.$controller.'.php';
-	if (file_exists($path)) {
-		require_once $path;
-	} else {
-		$controller = '';
-	}
-}
 
-
-// Create the controller
-$classname  = 'JEMController'.$controller;
-$controller = new $classname( );
-
-// Perform the Request task
-$controller->execute( JRequest::getVar('task', null, 'default', 'cmd') );
-
-// Redirect if set by the controller
+$controller = JControllerLegacy::getInstance('Jem');
+$controller->execute(JRequest::getCmd('task'));
 $controller->redirect();
+
+
+
+
+
+
 ?>

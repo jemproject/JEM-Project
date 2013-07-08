@@ -282,7 +282,8 @@ class JEMModelAttendees extends JModelLegacy
 	 */
 	function getEvent()
 	{
-		$query = 'SELECT id, title, dates, enddates, times, endtimes, maxplaces, waitinglist FROM #__jem_events WHERE id = '.$this->_id;
+		
+		$query = 'SELECT id, alias, title, dates, enddates, times, endtimes, maxplaces, waitinglist FROM #__jem_events WHERE id = '.$this->_id;
 
 		$this->_db->setQuery( $query );
 

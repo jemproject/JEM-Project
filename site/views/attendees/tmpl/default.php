@@ -25,15 +25,8 @@ defined('_JEXEC') or die;
 JHTML::_('behavior.tooltip');
 $colspan = ($this->event->waitinglist ? 10 : 9);
 
-	$db = JFactory::getDBO();
-	$query = "SELECT `id` FROM `#__menu` WHERE `link` LIKE '%index.php?option=com_jem&view=my%' AND `type` = 'component' AND `published` = '1' LIMIT 1";
-	$db->setQuery($query);
-							
-							
-	$menuitem= $db->loadResult();
-							
-	if(!$menuitem)
-	$menuitem = 999999;
+$detaillink = JRoute::_('index.php?option=com_jem&view=details&id='.$this->event->id.':'.$this->event->alias);
+	
 ?>
 <script type="text/javascript">
 	function tableOrdering(order, dir, view)
@@ -78,7 +71,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 		<tr>
 		  	<td width="80%">
 
-				<b><?php echo JText::_( 'COM_JEM_TITLE' ).':'; ?></b>&nbsp;<?php echo htmlspecialchars($this->event->title, ENT_QUOTES, 'UTF-8'); ?>
+				<b><?php echo JText::_( 'COM_JEM_TITLE' ).':'; ?></b>&nbsp;<a href="<?php echo $detaillink ; ?>"><?php echo htmlspecialchars($this->event->title, ENT_QUOTES, 'UTF-8'); ?></a>
 				<br />
 				<b><?php echo JText::_( 'COM_JEM_DATE' ).':'; ?></b>&nbsp;
 				
@@ -139,19 +132,19 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 			<tr class="row<?php echo $i % 2; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 				<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
-				<td><a href="<?php echo JRoute::_( 'index.php?option=com_jem&controller=attendees&task=edit&cid[]='.$row->id ); ?>"><?php echo $row->name; ?></a></td>
+				<td><?php echo $row->name; ?></td>
 				<td>
-					<a href="<?php echo JRoute::_( 'index.php?option=com_users&task=user.edit&id='.$row->uid ); ?>"><?php echo $row->username; ?></a>
+					<?php echo $row->username; ?>
 				</td>
 				<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
 				<td><?php echo JHTML::Date( $row->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ); ?></td>
 				<?php if ($this->event->waitinglist): ?>
 				<td class="hasTip center" title="<?php echo ($row->waiting ? JText::_('COM_JEM_ON_WAITINGLIST') : JText::_('COM_JEM_ATTENDING')).'::'; ?>">
 					<?php if ($row->waiting):?>
-						<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&task=attendeetoggle&id='.$row->id),
+						<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendeetoggle&id='.$row->id),
 						                        JHTML::image('media/com_jem/images/publish_y.png', JText::_('COM_JEM_ON_WAITINGLIST'))); ?>
 					<?php else: ?>
-						<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&task=attendeetoggle&id='.$row->id),
+						<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendeetoggle&id='.$row->id),
 						                        JHTML::image('media/com_jem/images/tick.png', JText::_('COM_JEM_ATTENDING'))); ?>
 					<?php endif;?>
 				</td>

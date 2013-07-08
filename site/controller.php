@@ -688,6 +688,7 @@ class JEMController extends JControllerLegacy
 		
 		$cid = JRequest::getVar( 'cid', array(0), 'post', 'array' );
 		$id 	= JRequest::getInt('id');
+		$fid = JRequest::getInt('Itemid');
 		$total 	= count( $cid );
 		
 		$model = $this->getModel('attendees');
@@ -705,7 +706,7 @@ class JEMController extends JControllerLegacy
 		
 		$msg = $total.' '.JText::_( 'COM_JEM_REGISTERED_USERS_DELETED');
 		
-		$this->setRedirect( 'index.php?option=com_jem&view=attendees&id='.$id, $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=attendees&id='.$id.'&Itemid='.$fid, $msg );
 		
 	}
 	

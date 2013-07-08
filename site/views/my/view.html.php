@@ -129,7 +129,7 @@ class JEMViewMy extends JViewLegacy
 		$this->lists 					= $lists;
 		$this->noevents					= $noevents;
 
-		$this->getToolbar();
+		
 		parent::display($tpl);
 
 	}
@@ -162,33 +162,7 @@ class JEMViewMy extends JViewLegacy
 		return $this->events;
 	}
 	
-	
-	
-	function getToolbar() 
-	{
-		//load the JToolBar library and create a toolbar
-		jimport('joomla.html.toolbar');
-		$bar = new JToolBar( 'toolbar' );
-		//and make whatever calls you require
-		$bar->appendButton( 'Frontend', 'unpublish', 'unpublish', 'unpublish', false );
-		$bar->appendButton( 'Frontend', 'publish', 'publish', 'publish', false );
-		//generate the html and return
-		return $bar->render();
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 
 }
 ?>
