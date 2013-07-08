@@ -56,8 +56,6 @@ if( $controller = JRequest::getWord('controller') ) {
 
 
 // Create the controller
-/* @todo test if controllers do work in the front */
-/*$classname  = 'JEMController';*/
 $classname  = 'JEMController'.$controller;
 $controller = new $classname( );
 

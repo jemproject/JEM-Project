@@ -642,7 +642,7 @@ class JEMController extends JControllerLegacy
 	function attendeetoggle()
 	{
 		$id = JRequest::getInt('id');
-		
+		$fid = JRequest::getInt('Itemid');
 
 		$model = $this->getModel('attendee');
 		$model->setId($id);
@@ -673,20 +673,8 @@ class JEMController extends JControllerLegacy
 			$type = 'error';
 		}
 		
-		/* @todo check this code */
 		
-		$db = JFactory::getDBO();
-		$query = "SELECT `id` FROM `#__menu` WHERE `link` LIKE '%index.php?option=com_jem&view=my' AND `type` = 'component' AND `published` = '1' LIMIT 1";
-		$db->setQuery($query);
-			
-			
-		$menuitem= $db->loadResult();
-			
-		if(!$menuitem)
-			$menuitem = 999999;
-		
-		
-		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$attendee->event.'&Itemid='.$menuitem, $msg, $type);
+		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$attendee->event.'&Itemid='.$fid, $msg, $type);
 		$this->redirect();
 	}
 	
@@ -723,14 +711,7 @@ class JEMController extends JControllerLegacy
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 }
 ?>
