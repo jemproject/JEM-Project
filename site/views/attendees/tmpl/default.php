@@ -70,7 +70,6 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 	</div>
 <?php endif; ?>
 
-<!--  Table  -->
 <h2><?php echo htmlspecialchars($this->event->title, ENT_QUOTES, 'UTF-8'); ?></h2>
 
 <form action="<?php echo $this->action; ?>"  method="post" name="adminForm" id="adminForm">
@@ -78,8 +77,13 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 	<table class="adminlist">
 		<tr>
 		  	<td width="80%">
-				<b><?php echo JText::_( 'COM_JEM_DATE' ).':'; ?></b>&nbsp;<?php echo $this->event->dates; ?><br />
+
 				<b><?php echo JText::_( 'COM_JEM_TITLE' ).':'; ?></b>&nbsp;<?php echo htmlspecialchars($this->event->title, ENT_QUOTES, 'UTF-8'); ?>
+				<br />
+				<b><?php echo JText::_( 'COM_JEM_DATE' ).':'; ?></b>&nbsp;
+				
+				<?php echo JEMOutput::formatLongDateTime($this->event->dates, $this->event->times,
+				$this->event->enddates, $this->event->endtimes); ?>
 			</td>
 			
 		  </tr>

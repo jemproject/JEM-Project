@@ -56,7 +56,6 @@ class JEMViewAttendees extends JViewLegacy {
 		
 		
 		//redirect if not logged in
-		//@todo fix redirection or erros that are appearing when logging out/logging
 		if ( !$user->get('id') ) {
 			$app->enqueueMessage(JText::_('COM_JEM_NEED_LOGGED_IN'), 'error');
 			return false;
@@ -78,9 +77,6 @@ class JEMViewAttendees extends JViewLegacy {
 
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
-
-		
-		
 		
 		// Get data from the model
 		$rows      	=  $this->get( 'Data');
@@ -101,12 +97,6 @@ class JEMViewAttendees extends JViewLegacy {
 		$backlink = 'attendees';
 		$view = 'attendees';
 		
- 		if (JEMHelper::isValidDate($event->dates)) {
-			$event->dates = JEMOutput::formatdate($event->dates);
-		}
-		else {
-			$event->dates		= JText::_('COM_JEM_OPEN_DATE');
-		}
 
 		//build filter selectlist
 		$filters = array();
@@ -139,9 +129,6 @@ class JEMViewAttendees extends JViewLegacy {
 		$this->print_link		= $print_link;
 		$this->item				= $item;
 		$this->action				= $uri->toString();
-
-		// add toolbar
-		/*$this->addToolbar();*/
 		
 		parent::display($tpl);
 	}
@@ -168,13 +155,6 @@ class JEMViewAttendees extends JViewLegacy {
 		$event 		=  $this->get( 'Event' );
 
 
-		if (JEMHelper::isValidDate($event->dates)) {
-			$event->dates = JEMOutput::formatdate($event->dates);
-		}
-		else {
-			$event->dates	= JText::_('COM_JEM_OPEN_DATE');
-		}
-
 		//assign data to template
 		$this->rows 		= $rows;
 		$this->event 		= $event;
@@ -182,27 +162,6 @@ class JEMViewAttendees extends JViewLegacy {
 		parent::display($tpl);
 	}
 	
-	
-	/*
-	 * Add Toolbar
-	*/
-	
-	/*protected function addToolbar()
-	{
-			
-		//add toolbar
-		JToolBarHelper::title( JText::_( 'COM_JEM_REGISTERED_USERS' ), 'users' );
-		JToolBarHelper::addNew();
-		JToolBarHelper::editList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::deleteList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::custom('back', 'back', 'back', JText::_('COM_JEM_ATT_BACK'), false);
-		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'registereduser', true );
-		
-	}
-	*/
 	
 	
 }
