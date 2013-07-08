@@ -84,7 +84,7 @@ defined('_JEXEC') or die;
 		<?php if ($this->jemsettings->showcat == 1) :	?>
 			<col width="<?php echo $this->jemsettings->catfrowidth; ?>" class="jem_col_category" />
 		<?php endif; ?>
-		<?php if ($this->jemsettings->showatte == 1) :	?>
+		<?php if ($this->params->get('filterattendees') == 1) :	?>
 			<col width="<?php echo $this->jemsettings->attewidth; ?>" class="jem_col_atte" />
 		<?php endif; ?>
 		<col width="1%" class="jem_col_status" />
@@ -121,7 +121,7 @@ defined('_JEXEC') or die;
 			<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<?php
 			endif;
-			if ($this->jemsettings->showatte == 1) :
+			if ($this->params->get('filterattendees') == 1) :
 			?>
 			<th id="jem_atte" class="sectiontableheader" align="center"><?php echo JText::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
 			<?php
@@ -231,7 +231,7 @@ defined('_JEXEC') or die;
 				<?php
 				endif;
 				
-				if ($this->jemsettings->showatte == 1) :
+				if ($this->params->get('filterattendees') == 1) :
 				?>
 									<td headers="jem_atte" align="center" valign="top">
 									<?php
@@ -251,7 +251,6 @@ defined('_JEXEC') or die;
 					?>
 					
 					
-					<!-- test -->
 					<?php 
 					if ($count > 0 && $row->published == 1)
 					{
@@ -277,7 +276,7 @@ defined('_JEXEC') or die;
 				<?php 	} ?>
 				
 					
-					<!-- end test -->
+
 					<?php
 					}else {
 					?>
@@ -307,7 +306,7 @@ defined('_JEXEC') or die;
 	</tbody>
 </table>
 <p>
-<?php // echo $this->getToolbar(); ?>
+
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 	<input type="hidden" name="boxchecked" value="0" />
