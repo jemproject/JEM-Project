@@ -197,6 +197,25 @@ function jemParseRoute($segments)
     	{
       		$vars['view'] = 'my';
     	} break;
+    	
+    	case 'myattending':
+    		{
+    			$vars['view'] = 'myattending';
+    		} break;
+    		
+    		case 'attendees':
+    			{
+    				$id = explode(':', $segments[1]);
+    				$vars['id'] = $id[0];
+    				$vars['view'] = 'attendees';
+    				$count = count($segments);
+    				if($count > 2) {
+    					$vars['task'] = $segments[2];
+    				}
+    			} break;
+    	
+    	
+    	
 		
     // some tasks !
 		case 'getfile': 

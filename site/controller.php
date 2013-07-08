@@ -292,7 +292,7 @@ class JEMController extends JControllerLegacy
 		if ($id) {
 			// Create and load a venues table
 			$row = JTable::getInstance('jem_venues', '');
-
+			
 			$row->load($id);
 			$row->checkin();
 
@@ -366,6 +366,7 @@ class JEMController extends JControllerLegacy
 			$cache = JFactory::getCache('com_jem');
 			$cache->clean();
 
+			
 			$session->clear('venueform', 'com_jem');
 		} else {
 
@@ -579,5 +580,157 @@ class JEMController extends JControllerLegacy
 		echo 1;
 		exit();
 	}
+	
+	
+	
+	/**
+	 * Exporttask
+	 * view: attendees
+	 */
+	function attendeeexport()
+	{
+		$app = JFactory::getApplication();
+		
+		$model = $this->getModel('attendees');
+		
+		$datas = $model->getData();
+		
+		header('Content-Type: text/x-csv');
+		header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+		header('Content-Disposition: attachment; filename=attendees.csv');
+		header('Pragma: no-cache');
+		
+		$k = 0;
+		$export = '';
+		$col = array();
+		
+		for($i=0; $i < count($datas); $i++)
+		{
+		$data = $datas[$i];
+		
+		$col[] = str_replace("\"", "\"\"", $data->name);
+		$col[] = str_replace("\"", "\"\"", $data->username);
+		$col[] = str_replace("\"", "\"\"", $data->email);
+		$col[] = str_replace("\"", "\"\"", JHTML::Date( $data->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ));
+		$col[] = str_replace("\"", "\"\"", $data->uid);
+		
+		for($j = 0; $j < count($col); $j++)
+		{
+		$export .= "\"" . $col[$j] . "\"";
+		
+		if($j != count($col)-1)
+		{
+		$export .= ";";
+		}
+		}
+		$export .= "\r\n";
+		$col = '';
+		
+		$k = 1 - $k;
+		}
+		
+		echo $export;
+		
+			$app->close();
+	}
+	
+	
+	/**
+	 * toggletask
+	 * view: attendees
+	 */
+	function attendeetoggle()
+	{
+		$id = JRequest::getInt('id');
+		
+
+		$model = $this->getModel('attendee');
+		$model->setId($id);
+		
+		$attendee = $model->getData();
+		$res = $model->toggle();
+		
+		$type = 'message';
+		
+		if ($res)
+		{
+			JPluginHelper::importPlugin( 'jem' );
+			$dispatcher = JDispatcher::getInstance();
+			$res = $dispatcher->trigger( 'onUserOnOffWaitinglist', array( $id ) );
+		
+			if ($attendee->waiting)
+			{
+				$msg = JText::_('COM_JEM_ADDED_TO_ATTENDING');
+			}
+			else
+			{
+				$msg = JText::_('COM_JEM_ADDED_TO_WAITING');
+			}
+		}
+		else
+		{
+			$msg = JText::_('COM_JEM_WAITINGLIST_TOGGLE_ERROR').': '.$model->getError();
+			$type = 'error';
+		}
+		
+		/* @todo check this code */
+		
+		$db = JFactory::getDBO();
+		$query = "SELECT `id` FROM `#__menu` WHERE `link` LIKE '%index.php?option=com_jem&view=my' AND `type` = 'component' AND `published` = '1' LIMIT 1";
+		$db->setQuery($query);
+			
+			
+		$menuitem= $db->loadResult();
+			
+		if(!$menuitem)
+			$menuitem = 999999;
+		
+		
+		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$attendee->event.'&Itemid='.$menuitem, $msg, $type);
+		$this->redirect();
+	}
+	
+	/**
+	 * removetask
+	 * view=attendees
+	 */
+	function attendeeremove()
+	{
+		
+		
+		$cid = JRequest::getVar( 'cid', array(0), 'post', 'array' );
+		$id 	= JRequest::getInt('id');
+		$total 	= count( $cid );
+		
+		$model = $this->getModel('attendees');
+		
+		if (!is_array( $cid ) || count( $cid ) < 1) {
+			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
+		}
+		
+		if(!$model->remove($cid)) {
+			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
+		}
+		
+		$cache = JFactory::getCache('com_jem');
+		$cache->clean();
+		
+		$msg = $total.' '.JText::_( 'COM_JEM_REGISTERED_USERS_DELETED');
+		
+		$this->setRedirect( 'index.php?option=com_jem&view=attendees&id='.$id, $msg );
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
 ?>

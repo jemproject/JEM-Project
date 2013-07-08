@@ -438,7 +438,76 @@ class JEMOutput {
 		return;
 	}
 	
+	
+	/**
+	 * Creates the export button
+	 * view=attendee
+	 *
+	 */
+	static function exportbutton($eventid)
+	{
+		$app = JFactory::getApplication();
+		$settings = JEMHelper::config();
+	
+		JHTML::_('behavior.tooltip');
+	
+		// checks template image directory for image, if non found default are loaded
+			
+		$image = JHTML::image("media/com_jem/images/export_excel.png",JText::_('COM_JEM_EXPORT'));
+	
+		if ($app->input->get('print','','int')) {
+			//button in popup
+			$output = '';
+		} else {
+			//button in view
+			$overlib = JText::_('COM_JEM_EXPORT_TIP');
+			$text = JText::_('COM_JEM_EXPORT');
+			
+			$print_link = 'index.php?option=com_jem&amp;view=attendees&amp;task=attendeeexport&amp;tmpl=raw&amp;id='.$eventid;
+			$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
+		}
+	
+		return $output;
+	
+		return;
+	}
 
+	
+	/**
+	 * Creates the back button
+	 * view=attendee
+	 *
+	 */
+	static function backbutton($backlink, $view)
+	{
+		$app = JFactory::getApplication();
+		$settings = JEMHelper::config();
+	
+		JHTML::_('behavior.tooltip');
+	
+		// checks template image directory for image, if non found default are loaded
+			
+		$image = JHTML::image("media/com_jem/images/icon-16-back.png",JText::_('COM_JEM_BACK'));
+	
+		if ($app->input->get('print','','int')) {
+			//button in popup
+			$output = '';
+		} else {
+			//button in view
+			$overlib = JText::_('COM_JEM_BACK');
+			$text = JText::_('COM_JEM_BACK');
+				
+			$link = 'index.php?option=com_jem&amp;view='.$view.'&amp;controller='.$backlink.'&amp;task=back';
+			$output	= '<a href="'. JRoute::_($link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
+		}
+	
+		return $output;
+	
+		return;
+	}
+	
+	
+	
 	
 	/**
 	 * Creates the map button

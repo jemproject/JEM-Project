@@ -44,8 +44,21 @@ JEMHelper::cleanup();
 // Require the controller
 require_once (JPATH_COMPONENT.'/controller.php');
 
+// Require specific controller if requested
+if( $controller = JRequest::getWord('controller') ) {
+	$path = JPATH_COMPONENT.'/controllers/'.$controller.'.php';
+	if (file_exists($path)) {
+		require_once $path;
+	} else {
+		$controller = '';
+	}
+}
+
+
 // Create the controller
-$classname  = 'JEMController';
+/* @todo test if controllers do work in the front */
+/*$classname  = 'JEMController';*/
+$classname  = 'JEMController'.$controller;
 $controller = new $classname( );
 
 // Perform the Request task

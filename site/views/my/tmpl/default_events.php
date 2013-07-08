@@ -84,6 +84,9 @@ defined('_JEXEC') or die;
 		<?php if ($this->jemsettings->showcat == 1) :	?>
 			<col width="<?php echo $this->jemsettings->catfrowidth; ?>" class="jem_col_category" />
 		<?php endif; ?>
+		<?php if ($this->jemsettings->showatte == 1) :	?>
+			<col width="<?php echo $this->jemsettings->attewidth; ?>" class="jem_col_atte" />
+		<?php endif; ?>
 		<col width="1%" class="jem_col_status" />
 	</colgroup>
 
@@ -116,6 +119,11 @@ defined('_JEXEC') or die;
 			if ($this->jemsettings->showcat == 1) :
 			?>
 			<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+			<?php
+			endif;
+			if ($this->jemsettings->showatte == 1) :
+			?>
+			<th id="jem_atte" class="sectiontableheader" align="center"><?php echo JText::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
 			<?php
 			endif;
 			?>
@@ -222,7 +230,71 @@ defined('_JEXEC') or die;
 				</td>
 				<?php
 				endif;
+				
+				if ($this->jemsettings->showatte == 1) :
 				?>
+									<td headers="jem_atte" align="center" valign="top">
+									<?php
+					if ($row->registra == 1) {
+
+					$app = JFactory::getApplication();
+					$menuitem = $app->getMenu()->getActive()->id;
+								$linkreg 	= 'index.php?option=com_jem&amp;view=attendees&amp;id='.$row->id.'&Itemid='.$menuitem;
+						$count = $row->regCount;
+						if ($row->maxplaces) 
+						{
+							$count .= '/'.$row->maxplaces;
+							if ($row->waitinglist && $row->waiting) {
+								$count .= ' +'.$row->waiting;
+							}
+						}
+					?>
+					
+					
+					<!-- test -->
+					<?php 
+					if ($count > 0 && $row->published == 1)
+					{
+						?>
+						<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_EVENTS_MANAGEATTENDEES'); ?>">
+						<?php echo $count; ?>
+						</a>
+				<?php 	} ?>
+				
+				
+				<?php 
+					if ($row->published == 0)
+					{
+						?>
+						<?php echo $count; ?>
+				<?php 	} ?>
+				
+				<?php 
+					if ($count == 0  && $row->published == 1)
+					{
+						?>
+						<?php echo $count; ?>
+				<?php 	} ?>
+				
+					
+					<!-- end test -->
+					<?php
+					}else {
+					?>
+					<?php echo JHTML::_('image', 'media/com_jem/images/publish_r.png',JText::_('COM_JEM_NOTES')); ?>
+					
+					
+					<?php
+					}
+					?>
+									
+									
+									
+									
+									</td>
+								<?php
+								endif;
+								?>
 <td class="center"><?php echo JHTML::_('jgrid.published', $row->published, $i ); ?></td>
 			</tr>
 
