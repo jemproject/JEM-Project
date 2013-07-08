@@ -21,6 +21,7 @@
  */
 
 defined( '_JEXEC' ) or die;
+JHTML::_('behavior.modal', 'a.flyermodal');
 ?>
 <div id="jem" class="jem_venue_events">
 <p class="buttons">
@@ -34,7 +35,6 @@ defined( '_JEXEC' ) or die;
 <?php if ($this->params->def('show_page_title', 1)) : ?>
 	<h1 class='componentheading'>
 		<?php 
-		/* echo $this->escape($this->pagetitle); */
 		echo '&nbsp';
 		?>
     

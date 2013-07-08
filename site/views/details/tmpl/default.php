@@ -22,7 +22,6 @@
 
 defined('_JEXEC') or die;
 
-//JHTML::_('behavior.modal');
 JHTML::_('behavior.modal', 'a.flyermodal');
 
 ?>
