@@ -43,7 +43,7 @@
 				</field>
 				<field name="catid" type="text" default="" label="MOD_JEM_CATEGORY_ID" description="MOD_JEM_CATEGORY_ID_DESC" />
 				<field name="venid" type="text" default="" label="MOD_JEM_VENUE_ID" description="MOD_JEM_VENUE_ID_DESC" />
-				<field name="formatdate" type="text" default="%d.%m.%Y" label="MOD_JEM_DATE_FORMAT" description="MOD_JEM_DATE_FORMAT_DESC" />
+				<field name="formatdate" type="text" default="D, j. F Y" label="MOD_JEM_DATE_FORMAT" description="MOD_JEM_DATE_FORMAT_DESC" />
 				<field name="formattime" type="text" default="%H.%M" label="MOD_JEM_TIME_FORMAT" description="MOD_JEM_TIME_FORMAT_DESC" />
 				<field name="moduleclass_sfx" type="text" default="" label="MOD_JEM_MODULE_CLASS_SUFFIX" description="MOD_JEM_MODULE_CLASS_SUFFIX_DESC" />
 			</fieldset>

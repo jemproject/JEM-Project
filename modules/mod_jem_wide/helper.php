@@ -126,7 +126,7 @@ class modJEMwideHelper
 		$rows = $db->loadObjectList();
 
 		if ($params->get('use_modal', 0)) {
-			JHTML::_('behavior.modal');
+			JHTML::_('behavior.modal', 'a.flyermodal');
 		}
 
 		//Loop through the result rows and prepare data
@@ -242,21 +242,23 @@ class modJEMwideHelper
 				$result = JText::sprintf('MOD_JEM_WIDE_DAYS_AHEAD', $days);
 			}
 		} else {
+			
+			
 			//single day event
-			$date = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime($row->dates.' '.$row->times));
+			$date = JEMOutput::formatdate($row->dates, $params->get('formatdate', '%d.%m.%Y') );
 			$result = JText::sprintf('MOD_JEM_WIDE_ON_DATE', $date);
 
 			//Upcoming multidayevent (From 16.10.2008 Until 18.08.2008)
 			if($dates_stamp > $tomorrow_stamp && $enddates_stamp) {
-				$startdate = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime($row->dates.' '.$row->times));
-				$enddate = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime($row->enddates.' '.$row->endtimes));
+				$startdate = JEMOutput::formatdate($row->dates, $params->get('formatdate', '%d.%m.%Y') );
+				$enddate = JEMOutput::formatdate($row->enddates, $params->get('formatdate', '%d.%m.%Y') );
 				$result = JText::sprintf('MOD_JEM_WIDE_FROM_UNTIL', $startdate, $enddate);
 			}
 
 			//current multidayevent (Until 18.08.2008)
 			if($row->enddates && $enddates_stamp > $today_stamp && $dates_stamp < $today_stamp) {
 				//format date
-				$result = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime($row->enddates.' '.$row->endtimes));
+				$result = JEMOutput::formatdate($end->dates, $params->get('formatdate', '%d.%m.%Y') );
 				$result = JText::sprintf('MOD_JEM_WIDE_UNTIL', $result);
 			}
 		}

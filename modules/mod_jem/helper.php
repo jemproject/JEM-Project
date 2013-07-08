@@ -107,7 +107,8 @@ class modJEMHelper
 
 			$lists[$i] = new stdClass;
 			$lists[$i]->link		= JRoute::_(JEMHelperRoute::getRoute($row->slug));
-			$lists[$i]->dateinfo 	= modJEMHelper::_builddateinfo($row, $params);
+			$lists[$i]->dateinfo 	= JEMOutput::formatShortDateTime($row->dates, $row->times,
+						$row->enddates, $row->endtimes);
 			$lists[$i]->text		= $params->get('showtitloc', 0) ? $row->title : htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->city		= htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->venueurl 	= !empty($row->venueslug) ? JRoute::_(JEMHelperRoute::getRoute($row->venueslug, 'venueevents')) : null;
@@ -117,12 +118,16 @@ class modJEMHelper
 		return $lists;
 	}
 
+	
+	
 	/**
 	 * Method to a formated and structured string of date infos
 	 *
 	 * @access public
 	 * @return string
 	 */
+	
+	/*
 	static function _builddateinfo($row, &$params)
 	{
 		$date 		= modJEMHelper::_format_date($row->dates, $row->times, $params->get('formatdate', '%d.%m.%Y'));
@@ -140,6 +145,7 @@ class modJEMHelper
 
 		return $dateinfo;
 	}
+	*/
 
 	/**
 	 * Method to get a valid url
@@ -161,6 +167,8 @@ class modJEMHelper
 	 * @access public
 	 * @return string
 	 */
+	
+	/*
 	static function _format_date($date, $time, $format)
 	{
 		//format date
@@ -172,4 +180,5 @@ class modJEMHelper
 
 		return $date;
 	}
+	*/
 }

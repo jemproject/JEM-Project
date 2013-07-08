@@ -54,7 +54,7 @@
 			<option value="2">MOD_JEM_WIDE_SHOW_DAY_DIFFERENCE</option>
 		</field>
 
-		<field name="formatdate" type="text" default="%d.%m.%Y" label="MOD_JEM_WIDE_DATE_FORMAT" description="MOD_JEM_WIDE_DATE_FORMAT_DESC" />
+		<field name="formatdate" type="text" default="D, j. F Y" label="MOD_JEM_WIDE_DATE_FORMAT" description="MOD_JEM_WIDE_DATE_FORMAT_DESC" />
 		<field name="formattime" type="text" default="%H.%M" label="MOD_JEM_WIDE_TIME_FORMAT" description="MOD_JEM_WIDE_TIME_FORMAT_DESC" />
 		<field name="moduleclass_sfx" type="text" default="" label="MOD_JEM_WIDE_MODULE_CLASS_SUFFIX" description="MOD_JEM_WIDE_MODULE_CLASS_SUFFIX_DESC" />
 	</fieldset>
