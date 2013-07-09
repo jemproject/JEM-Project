@@ -53,7 +53,7 @@ class JEMViewSearch extends JViewLegacy
 
 		
 		// add javascript
-		JHTML::_('behavior.mootools');
+		JHtml::_('behavior.framework');
 		
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');

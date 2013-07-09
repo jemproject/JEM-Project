@@ -147,7 +147,7 @@ class JEMModelMyattending extends JModelLegacy
         if ( empty($this->_pagination_attending))
         {
             jimport('joomla.html.pagination');
-            $this->_pagination_attending = new MyAttendingPagination($this->getTotalAttending(), $this->getState('limitstart'), $this->getState('limit'));
+            $this->_pagination_attending = new JPagination($this->getTotalAttending(), $this->getState('limitstart'), $this->getState('limit'));
         }
 
         return $this->_pagination_attending;
@@ -324,94 +324,6 @@ class JEMModelMyattending extends JModelLegacy
 
 		return $this->_cats;
 	}
-}
-
-
-
-class MyAttendingPagination extends JPagination
-{
-    /**
-     * Create and return the pagination data object
-     *
-     * @access  public
-     * @return  object  Pagination data object
-     * @since 1.5
-     */
-    function _buildDataObject()
-    {
-        // Initialize variables
-        $data = new stdClass ();
-
-        $data->all = new JPaginationObject(JText::_('COM_JEM_VIEW_ALL'));
-        if (!$this->_viewall)
-        {
-            $data->all->base = '0';
-            $data->all->link = JRoute::_("&limitstart=0");
-        }
-
-        // Set the start and previous data objects
-        $data->start = new JPaginationObject(JText::_('JLIB_HTML_START'));
-        $data->previous = new JPaginationObject(JText::_('JPREV'));
-
-        if ($this->get('pages.current') > 1)
-        {
-            $page = ($this->get('pages.current')-2)*$this->limit;
-
-           // $page = $page == 0?'':$page; //set the empty for removal from route
-
-            $data->start->base = '0';
-            $data->start->link = JRoute::_("&limitstart=0");
-            $data->previous->base = $page;
-            $data->previous->link = JRoute::_("&limitstart=".$page);
-        }
-
-        // Set the next and end data objects
-        $data->next = new JPaginationObject(JText::_('JNEXT'));
-        $data->end = new JPaginationObject(JText::_('JLIB_HTML_END'));
-
-        if ($this->get('pages.current') < $this->get('pages.total'))
-        {
-            $next = $this->get('pages.current')*$this->limit;
-            $end = ($this->get('pages.total')-1)*$this->limit;
-
-            $data->next->base = $next;
-            $data->next->link = JRoute::_("&limitstart=".$next);
-            $data->end->base = $end;
-            $data->end->link = JRoute::_("&limitstart=".$end);
-        }
-
-        $data->pages = array ();
-        $stop = $this->get('pages.stop');
-        for ($i = $this->get('pages.start'); $i <= $stop; $i++)
-        {
-            $offset = ($i-1)*$this->limit;
-
-            //$offset = $offset == 0?'':$offset; //set the empty for removal from route
-
-            $data->pages[$i] = new JPaginationObject($i);
-            if ($i != $this->get('pages.current') || $this->_viewall)
-            {
-                $data->pages[$i]->base = $offset;
-                $data->pages[$i]->link = JRoute::_("&limitstart=".$offset);
-            }
-        }
-        return $data;
-    }
-
-    function _list_footer($list)
-    {
-        // Initialize variables
-        $html = "<div class=\"list-footer\">\n";
-
-        $html .= "\n<div class=\"limit\">".JText::_('COM_JEM_DISPLAY_NUM').$list['limitfield']."</div>";
-        $html .= $list['pageslinks'];
-        $html .= "\n<div class=\"counter\">".$list['pagescounter']."</div>";
-
-        $html .= "\n<input type=\"hidden\" name=\"limitstart_attending\" value=\"".$list['limitstart']."\" />";
-        $html .= "\n</div>";
-
-        return $html;
-    }
 
 
 
