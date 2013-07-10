@@ -85,6 +85,8 @@ class JEMModelEvents extends JModelLegacy
 			$query = $this->_buildQuery();
 			$pagination = $this->getPagination();
 			$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
+			
+		}	
 			if ($this->_data)
 			{
 				$this->_data = $this->_additionals($this->_data);
@@ -97,7 +99,7 @@ class JEMModelEvents extends JModelLegacy
 					$item->categories = $this->getCategories($item->id);
 				}
 			}
-		}
+		
 
 		return $this->_data;
 	}

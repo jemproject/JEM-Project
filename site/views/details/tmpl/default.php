@@ -242,14 +242,9 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 					<?php echo $this->row->countryimg ? $this->row->countryimg : $this->row->country; ?>
 				</dd>
 				<?php endif; ?>
-			<?php if ($this->jemsettings->showmapserv == 1) { ?>
-				<dt class="venue_mapicon"><?php echo JText::_('COM_JEM_MAP').':'; ?></dt>
-				<dd class="venue_mapicon">
-					<?php 
+			<?php if ($this->jemsettings->showmapserv == 1) { 
 					echo JEMOutput::mapicon($this->row);
-					?>
-				</dd>
-				<?php 	}  ?>
+				 	}  ?>
 			<?php endif; ?>
 			
 
