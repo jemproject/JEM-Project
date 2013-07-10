@@ -77,7 +77,7 @@ defined('_JEXEC') or die; ?>
 			foreach ($this->rows as $i => $row) :
 			$link 		= 'index.php?option=com_jem&amp;controller=categories&amp;task=edit&amp;cid[]='. $row->id;
 			$grouplink 	= 'index.php?option=com_jem&amp;controller=groups&amp;task=edit&amp;cid[]='. $row->groupid;
-			$published 	= JHTML::_('grid.published', $row, $i );
+			$published 	= JHTML::_('jgrid.published', $row->published, $i );
 			$access = $row->groupname;
    		?>
 		<tr class="row<?php echo $i % 2; ?>">
@@ -108,7 +108,7 @@ defined('_JEXEC') or die; ?>
 				?>
 			</td>
       <td class="center">
-        <div class="colorpreview" style="width: 15px; background: <?php echo ( $row->color == '' )?"transparent":$row->color; ?>;" title="<?php echo $row->color; ?>">
+        <div class="colorpreview" style="width: 20px; background: <?php echo ( $row->color == '' )?"transparent":$row->color; ?>;" title="<?php echo $row->color; ?>">
         &nbsp;
         </div>
       </td>
