@@ -11,7 +11,7 @@
 		<config>
 			<fields name="params">
 				<fieldset name="basic">
-					<field name="displayLegend" type="radio" default="1" label="COM_JEM_DISPLAY_LEGEND" description="COM_JEM_DISPLAY_LEGEND DESC">
+					<field name="displayLegend" type="radio" default="1" label="COM_JEM_DISPLAY_LEGEND" description="COM_JEM_DISPLAY_LEGEND_DESC">
 						<option value="0">JNO</option>
 						<option value="1">JYES</option>
 					</field>
