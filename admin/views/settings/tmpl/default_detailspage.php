@@ -137,7 +137,7 @@ defined('_JEXEC') or die;
 							</select>
 						</td>
 					</tr>
-					<tr id="gmapinline"<?php if ($mode == 2)  echo ' style="display:"'; ?>>
+					<tr id="tld"<?php if ($mode == 2|| $mode == 1)  echo ' style="display:"'; ?>>
 						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_GOOGLE_MAP_TLD' ); ?>::<?php echo JText::_('COM_JEM_GOOGLE_MAP_TLD_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_GOOGLE_MAP_TLD' ); ?>
@@ -147,7 +147,7 @@ defined('_JEXEC') or die;
 							<input type="text" name="tld" value="<?php echo $this->jemsettings->tld; ?>" size="3" maxlength="3" />
 						</td>
 					</tr>	
-					<tr id="gmapinline1"<?php if ($mode == 2) echo ' style="display:"'; ?>>
+					<tr id="lg"<?php if ($mode == 2 || $mode == 1) echo ' style="display:"'; ?>>
 						<td width="300" class="key">
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_GOOGLE_MAP_LG' ); ?>::<?php echo JText::_('COM_JEM_GOOGLE_MAP_LG_TIP'); ?>">
 								<?php echo JText::_( 'COM_JEM_GOOGLE_MAP_LG' ); ?>

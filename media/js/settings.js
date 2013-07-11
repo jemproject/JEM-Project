@@ -66,20 +66,20 @@ function changemapMode()
 		mode = window.document.adminForm.showmapserv.selectedIndex;
 		switch (mode) {
 			case 0:
-				document.getElementById('gmapinline').style.display = 'none';
-				document.getElementById('gmapinline1').style.display = 'none';
+				document.getElementById('tld').style.display = 'none';
+				document.getElementById('lg').style.display = 'none';
 				break;
 			case 1:
-				document.getElementById('gmapinline').style.display = 'none';
-				document.getElementById('gmapinline1').style.display = 'none';
+				document.getElementById('tld').style.display = '';
+				document.getElementById('lg').style.display = '';
 				break;
 			case 2:
-				document.getElementById('gmapinline').style.display = '';
-				document.getElementById('gmapinline1').style.display = '';
+				document.getElementById('tld').style.display = '';
+				document.getElementById('lg').style.display = '';
 				break;
 			default:
-				document.getElementById('gmapinline').style.display = '';
-				document.getElementById('gmapinline1').style.display = '';
+				document.getElementById('tld').style.display = '';
+				document.getElementById('lg').style.display = '';
 		}
 	}
 }
