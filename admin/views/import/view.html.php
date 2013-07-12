@@ -5,7 +5,6 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- 
  */
 
 defined('_JEXEC') or die;
@@ -27,7 +26,7 @@ class JEMViewImport extends JViewLegacy {
 		$document	= JFactory::getDocument();
 		$user 		= JFactory::getUser();
 
-		// Get data from the model    
+		// Get data from the model
 		$eventfields = $this->get('EventFields');
 		$catfields   = $this->get('CategoryFields');
 		$venuefields = $this->get('VenueFields');
@@ -44,29 +43,29 @@ class JEMViewImport extends JViewLegacy {
 
 		// add toolbar
 		$this->addToolbar();
-		
+
 		parent::display($tpl);
 
 	}
-	
+
 
 	/*
 	 * Add Toolbar
 	*/
-	
+
 	protected function addToolbar()
 	{
-		
+
 		//build toolbar
 		JToolBarHelper::back();
 		JToolBarHelper::title(JText::_('COM_JEM_IMPORT'), 'tableimport');
 		JToolBarHelper::help('import', true);
-		
+
 		//Create Submenu
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
-		
+
 	}
-	
-	
+
+
 } // end of class
 ?>

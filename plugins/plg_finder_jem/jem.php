@@ -5,7 +5,6 @@
  * @subpackage JEM Finder Plugin
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
-
  */
 
 defined('_JEXEC') or die;
