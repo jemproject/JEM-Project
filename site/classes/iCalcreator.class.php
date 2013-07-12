@@ -1572,7 +1572,6 @@ class vcalendar {
  * @since 2.16.4 - 2012-12-17
  * @param string $sortArg, optional
  * @return void
- *
  */
   function sort( $sortArg=FALSE ) {
     if( is_array( $this->components )) {
@@ -1652,7 +1651,6 @@ class vcalendar {
  * @since 2.16.2 - 2012-12-18
  * @param mixed $unparsedtext, optional, strict rfc2445 formatted, single property string or array of property strings
  * @return bool FALSE if error occurs during parsing
- *
  */
   function parse( $unparsedtext=FALSE ) {
     $nl = $this->getConfig( 'nl' );
@@ -5800,7 +5798,6 @@ class calendarComponent {
  * @since 2.16.2 - 2012-12-18
  * @param mixed $unparsedtext, optional, strict rfc2445 formatted, single property string or array of strings
  * @return bool FALSE if error occurs during parsing
- *
  */
   function parse( $unparsedtext=null ) {
     $nl = $this->getConfig( 'nl' );
@@ -7067,7 +7064,6 @@ class vtimezone extends calendarComponent {
  *
  * @author Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
  * @since 2.10.1 - 2011-07-16
- *
  */
 class iCalUtilityFunctions {
   // Store the single instance of iCalUtilityFunctions
@@ -10195,7 +10191,6 @@ function _getXMLProperties( & $iCal, & $property ) {
  * @author Yitzchok Lavi <icalcreator@onebigsystem.com>
  *         adjusted for iCalcreator Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
  * @version 1.0.2 - 2011-02-24
- *
  */
 /**
  * Returns array with the offset information from UTC for a (UTC) datetime/timestamp in the
@@ -10205,7 +10200,6 @@ function _getXMLProperties( & $iCal, & $property ) {
  * $param string $tzid,           time zone identifier
  * $param mixed  $timestamp,      timestamp or a UTC datetime (in array format)
  * @return array, time zone data with keys for 'offsetHis', 'offsetSec' and 'tzname'
- *
  */
 function getTzOffsetForDate($timezonesarray, $tzid, $timestamp) {
     if( is_array( $timestamp )) {
@@ -10262,7 +10256,6 @@ function getTzOffsetForDate($timezonesarray, $tzid, $timestamp) {
  * @param object $vcalendar, iCalcreator calendar instance
  * @return array, time zone transition timestamp, array before(offsetHis, offsetSec), array after(offsetHis, offsetSec, tzname)
  *                based on the timezone data in the vcalendar object
- *
  */
 function getTimezonesAsDateArrays($vcalendar) {
     $timezonedata = array();
@@ -10287,7 +10280,6 @@ function getTimezonesAsDateArrays($vcalendar) {
  *
  * @param object $vtzc, an iCalcreator calendar standard/daylight instance
  * @return array, time zone data; array before(offsetHis, offsetSec), array after(offsetHis, offsetSec, tzname)
- *
  */
 function expandTimezoneDates($vtzc) {
     $tzdates = array();

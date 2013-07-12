@@ -1,22 +1,9 @@
 /**
- * @version 1.9 $Id$
+ * @version 1.9
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 
@@ -167,7 +154,6 @@ border:1px solid grey;
 
 /**
  * @section headlines
- *
  */
 div#jem h2 {
     font-size: normal !important;
@@ -317,7 +303,6 @@ div#jem .map {
 
 /**
  * @section registered user list
- *
  */
  
 div#jem div.register {
@@ -379,7 +364,6 @@ div.pagination ul li {
 
 /**
  * @section Categoryview
- *
  */
 div#jem .catimg {
 margin: 0 0.5em 0.5em 0;
@@ -398,7 +382,6 @@ margin: 0 0 0.5em 0;
 
 /**
  * @section JEM Table
- *
  */
 div#jem table.eventtable
 { background: #DEDEDE; margin: 1em 1px; width: 100%; font-size: 1em; border-collapse:collapse; }
@@ -443,7 +426,6 @@ div#jem table.eventtable tr:hover td
 
 /**
  * @section JEM Table Filter Form
- *
  */
 div#jem #jem_filter {
 margin: 1em 0 0.5em 0; padding: 0.5em;
@@ -462,7 +444,6 @@ float: right;
 
 /**
  * @section Editevent Form
- *
  */
 
 div.jem_editevent form fieldset,
@@ -700,7 +681,6 @@ table#el-attachments th {
 
 /**
  * googlemap
- *
  */
 #googlemap {
 margin-top: 20px;
