@@ -71,6 +71,15 @@ table.month {
 	border-bottom: 1px solid black;
 }
 
+
+
+.daynum a:link, a:hover, a:visited, a:active {
+	color:#FFFFFF !important;
+	
+}
+
+
+
 .monthday, .selectedday {
 	background-color:#F7F7F7;
 	height:88px;
@@ -96,13 +105,17 @@ table.month {
 }
 
 .eventcontent {
-	margin:0px;
+	margin:2px;
 	overflow:hidden;
-	padding:1px;
-	white-space:nowrap;
+	padding:5px;
+	background-color:yellow;
+	border: 1px solid grey;
+	border-radius: 2px;
+	padding: 5px;
+	margin: 2px;
 }
 
-.eventcontent a:link, a:visited {
+.eventcontent a:link, a:visited, a:active {
   color: #333;
 }
 
@@ -169,9 +182,12 @@ table.month {
   color: #FBFCEF;
   text-decoration:none;
 }
+
 .today .daynum {
-  background-color:#31528E;
+ /* background-color:#31528E;*/
 }
+
+
 div#buttonshowall {
   float: left;
   padding: 1px 5px;
