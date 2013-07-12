@@ -73,9 +73,8 @@ table.month {
 
 
 
-.daynum a:link, a:hover, a:visited, a:active {
+.daynum  {
 	color:#FFFFFF !important;
-	
 }
 
 
@@ -105,15 +104,27 @@ table.month {
 }
 
 .eventcontent {
-	margin:2px;
+	margin:1px;
 	overflow:hidden;
-	padding:5px;
+	padding:1px;
 	background-color:yellow;
 	border: 1px solid grey;
 	border-radius: 2px;
 	padding: 5px;
 	margin: 2px;
 }
+
+
+.cat1
+{
+	/*background-color:yellow;*/
+	/*border: 1px solid grey;*/
+	/*border-radius: 2px;*/
+	/*padding: 5px;*/
+	/*margin: 2px;*/
+	
+}
+
 
 .eventcontent a:link, a:visited, a:active {
   color: #333;
