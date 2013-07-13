@@ -24,7 +24,22 @@ $options = array(
 );
 
 ?>
-
+ <script src="http://api.mygeoposition.com/api/geopicker/api.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        function lookupGeoData15() {            
+            myGeoPositionGeoPicker({
+                returnFieldMap            : {
+                                          'latitude'        :    '<LAT>',
+                                          'longitude'        :    '<LNG>',
+                                          'street'        :    '<STREET> <STREETNUMBER>',
+                                          'plz'        :    '<POSTALCODE>',
+                                          'city'        :    '<CITY>',
+                                          'state' : '<STATE_LONG>',
+                                          'country' : '<COUNTRY>'
+                                          },
+            });
+        }
+    </script>
 <script type="text/javascript">
 	window.addEvent('domready', function(){
 		var form = document.getElementById('adminForm');
@@ -394,7 +409,15 @@ $options = array(
       </td>
     </tr>
 		<?php } ?>
+		<tr><td> <button type="button" onclick="lookupGeoData15();">GeoPicker</button></td><tr>
 	</table>
+	
+	
+   
+	
+
+	
+	
 	<?php
 	$title2 = JText::_( 'COM_JEM_IMAGE' );
 	echo JHtml::_('sliders.panel', $title2, 'image');
