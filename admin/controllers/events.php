@@ -274,6 +274,8 @@ class JEMControllerEvents extends JEMController
 		// Mock up a JTable class for finder
 		$row = new stdClass;
 		$row->id = $post['id'];
+		// TODO: Get correct access level for onFinderBeforeSave and onFinderAfterSave
+		$row->access = 1;
 
 		JPluginHelper::importPlugin('finder');
 		$dispatcher = JDispatcher::getInstance();
