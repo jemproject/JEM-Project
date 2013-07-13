@@ -125,7 +125,7 @@ class JEMController extends JControllerLegacy
 
 		if ($false === 0) {
 			JError::raiseNotice(100, JText::_('COM_JEM_SELECT_ITEM_TO_UNPUBLISH'));
-			$this->setRedirect( 'index.php?option=com_jem&view=my'.'&Itemid='.$menuitem);
+			$this->setRedirect( 'index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem);
 			return;
 		}
 
@@ -138,7 +138,7 @@ class JEMController extends JControllerLegacy
 		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_UNPUBLISHED');
 
 
-		$this->setRedirect( 'index.php?option=com_jem&view=my'.'&Itemid='.$menuitem, $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem, $msg );
 	}
 
 
@@ -161,7 +161,7 @@ class JEMController extends JControllerLegacy
 
 		if ($false === 0) {
 			JError::raiseNotice(100, JText::_('COM_JEM_SELECT_ITEM_TO_UNPUBLISH'));
-			$this->setRedirect( 'index.php?option=com_jem&view=my'.'&Itemid='.$menuitem);
+			$this->setRedirect( 'index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem);
 			return;
 		}
 
@@ -174,7 +174,7 @@ class JEMController extends JControllerLegacy
 		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_UNPUBLISHED');
 
 
-		$this->setRedirect( 'index.php?option=com_jem&view=my'.'&Itemid='.$menuitem, $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem, $msg );
 	}
 
 
@@ -197,7 +197,7 @@ class JEMController extends JControllerLegacy
 
 		if ($false === 0) {
 			JError::raiseNotice(100, JText::_('COM_JEM_SELECT_ITEM_TO_PUBLISH'));
-			$this->setRedirect( 'index.php?option=com_jem&view=my'.'&Itemid='.$menuitem);
+			$this->setRedirect( 'index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem);
 			return;
 		}
 
@@ -209,7 +209,7 @@ class JEMController extends JControllerLegacy
 		$total = count( $cid );
 		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_PUBLISHED');
 
-		$this->setRedirect( 'index.php?option=com_jem&view=my'.'&Itemid='.$menuitem, $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem, $msg );
 	}
 
 
@@ -234,7 +234,7 @@ class JEMController extends JControllerLegacy
 
 		if ($false === 0) {
 			JError::raiseNotice(100, JText::_('COM_JEM_SELECT_ITEM_TO_TRASH'));
-			$this->setRedirect( 'index.php?option=com_jem&view=my'.'&Itemid='.$menuitem);
+			$this->setRedirect( 'index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem);
 			return;
 		}
 
@@ -246,7 +246,7 @@ class JEMController extends JControllerLegacy
 		$total = count( $cid );
 		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_TRASHED');
 
-		$this->setRedirect( 'index.php?option=com_jem&view=my'.'&Itemid='.$menuitem, $msg );
+		$this->setRedirect( 'index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem, $msg );
 	}
 
 

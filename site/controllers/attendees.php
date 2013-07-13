@@ -37,12 +37,12 @@ class JEMControllerAttendees extends JEMController
   function back()
   {
   	$fid = JRequest::getInt('Itemid');
-  	$link = 'index.php?option=com_jem&view=my&Itemid='.$fid;
-  	
+  	$link = 'index.php?option=com_jem&view=myevents&Itemid='.$fid;
+
     $this->setRedirect( $link );
     $this->redirect();
   }
 
-  
+
 }
 ?>

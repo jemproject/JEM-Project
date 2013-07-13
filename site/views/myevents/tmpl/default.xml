@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_JEM_MYEVENTS_LAYOUT">
+		<message>
+			<![CDATA[COM_JEM_MYEVENTS_LAYOUT_DESC]]>
+		</message>
+	</layout>
+	<state>
+		<name>COM_JEM_MYEVENTS_LAYOUT</name>
+		<description>COM_JEM_MYEVENTS_LAYOUT_DESC</description>
+	</state>
+	<config>
+		<fields name="params">
+			<fieldset name="basic" label="basic">
+				<field name="filterattendees" type="radio" default="1" label="COM_JEM_FILTER_ATTENDEES" description="COM_JEM_FILTER_ATTENDEES_DESC">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</metadata>
