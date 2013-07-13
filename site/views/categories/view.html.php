@@ -48,7 +48,7 @@ class JEMViewCategories extends JViewLegacy
 
 		//pathway
 		$pathway 	=  $app->getPathWay();
-		$pathway->setItemName(1, $item->title);
+		if($item) $pathway->setItemName(1, $item->title);
 
 		if ( $task == 'archive' ) {
 			$pathway->addItem(JText::_( 'COM_JEM_ARCHIVE' ), JRoute::_('index.php?view=categories&task=archive') );

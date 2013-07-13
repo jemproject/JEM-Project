@@ -44,25 +44,25 @@ class JEMViewDetails extends JViewLegacy
 		/*$router = $app->getRouter();
 		$uri     = JUri::getInstance();
 		$domain  = $params->get('domain');
-		
+
 		if ($domain === null || $domain === '')
 		{
 			$domain = $uri->toString(array('scheme', 'host', 'port'));
 		}
-		
+
 			$parsed = $router->parse($uri);
 			$fakelink = 'index.php?' . http_build_query($parsed);
 			//var_dump($fakelink);
 			$link = $domain . JRoute::_($fakelink, false);
 			//var_dump($link);
-		
+
 				if ($uri !== $link)
 		{
-		
+
 			$document->addHeadLink(($link), 'canonical');
 		}
 		*/
-		
+
 		//get menu information
 		$menu			= $app->getMenu();
 		$item			= $menu->getActive();
@@ -86,24 +86,24 @@ class JEMViewDetails extends JViewLegacy
 
 		//Print
 		$pop	= JRequest::getBool('pop');
-				
+
 		$params->def('page_title', JText::_('COM_JEM_DETAILS'));
 
 		if ($pop) {
 			$params->set('popup', 1);
 		}
-		
-		
+
+
 		$print	= JRequest::getBool('print');
-		
-		
+
+
 		if ($print) {
 
 			$document = JFactory::getDocument();
 			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/print.css');
 			$document->setMetaData('robots', 'noindex, nofollow');
 		}
-		
+
 
 		$print_link = JRoute::_(JEMHelperRoute::getRoute($row->slug).'&print=1&tmpl=component');
 
@@ -111,7 +111,7 @@ class JEMViewDetails extends JViewLegacy
 		$cats		= new JEMCategories($cid);
 		$parents	= $cats->getParentlist();
 		$pathway 	= $app->getPathWay();
-		$pathway->setItemName(1, $item->title);
+
 		foreach($parents as $parent) {
 			$pathway->addItem($this->escape($parent->catname), JRoute::_('index.php?view=categoryevents&id='.$parent->categoryslug));
 		}
@@ -288,7 +288,7 @@ class JEMViewDetails extends JViewLegacy
 				break;
 			case "enddates":
 				//$content = strftime($formatdate ,strtotime($row->$keyword));
-				$content = JEMOutput::formatdate($row->enddates); 
+				$content = JEMOutput::formatdate($row->enddates);
 				break;
 			default:
 				$content = "";

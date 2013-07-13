@@ -96,7 +96,7 @@ class JEMViewMy extends JViewLegacy
 		$params->def('page_title', $item->title);
 
 		//pathway
-		$pathway->setItemName(1, $item->title);
+		if($item) $pathway->setItemName(1, $item->title);
 
 		//Set Page title
 		$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_ITEMS'));

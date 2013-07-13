@@ -42,7 +42,8 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 	<h2 class="jem">
 		<?php
 		echo JText::_('COM_JEM_EVENT');
-		echo '&nbsp;'.JEMOutput::editbutton($this->item->id, $this->row->did, $this->params, $this->allowedtoeditevent, 'editevent');
+		$itemid = $this->item ? $this->item->id : 0;
+		echo '&nbsp;'.JEMOutput::editbutton($itemid, $this->row->did, $this->params, $this->allowedtoeditevent, 'editevent');
 		?>
 	</h2>
 
@@ -173,8 +174,11 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 	<?php if ($this->row->locid != 0) : ?>
 
 		<h2 class="location">
-			<?php echo JText::_('COM_JEM_VENUE') ; ?>
-			<?php echo JEMOutput::editbutton($this->item->id, $this->row->locid, $this->params, $this->allowedtoeditvenue, 'editvenue'); ?>
+			<?php
+			echo JText::_('COM_JEM_VENUE') ;
+			$itemid = $this->item ? $this->item->id : 0 ;
+			echo JEMOutput::editbutton($itemid, $this->row->locid, $this->params, $this->allowedtoeditvenue, 'editvenue');
+			?>
 		</h2>
 
 		<?php //flyer
@@ -229,14 +233,14 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 					<?php echo $this->row->countryimg ? $this->row->countryimg : $this->row->country; ?>
 				</dd>
 				<?php endif; ?>
-			<?php if ($this->jemsettings->showmapserv == 1) { 
+			<?php if ($this->jemsettings->showmapserv == 1) {
 					echo JEMOutput::mapicon($this->row);
 				 	}  ?>
 			<?php endif; ?>
-			
+
 
 		</dl>
-		<?php 
+		<?php
 		if ($this->jemsettings->showmapserv == 2){ ?>
 		<p>
 		<?php echo JEMOutput::mapicon($this->row);  ?>

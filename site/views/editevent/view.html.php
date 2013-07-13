@@ -29,9 +29,9 @@ class JEMViewEditevent extends JViewLegacy
 	{
 		$app 		=  JFactory::getApplication();
 		$session 	=  JFactory::getSession();
-		
+
 		$user   =  JFactory::getUser();
-		
+
 		//redirect if not logged in
 		if ( !$user->get('id') ) {
 			$app->enqueueMessage(JText::_('COM_JEM_NEED_LOGGED_IN'), 'error');
@@ -42,8 +42,8 @@ class JEMViewEditevent extends JViewLegacy
 			$this->_displaychoosevenue($tpl);
 			return;
 		}
-		
-		
+
+
 
 		// Initialize variables
 		$editor 	=  JFactory::getEditor();
@@ -53,10 +53,10 @@ class JEMViewEditevent extends JViewLegacy
 
 		//Get Data from the model
 		$row 			= $this->get('Event');
-		
+
 		//Cause of group limits we can't use class here to build the categories tree
 		$categories		= $this->get('Categories');
-		
+
 		//sticky form categorie data
 		if ($session->has('eventform', 'com_jem')) {
 			$eventform = $session->get('eventform', 0, 'com_jem');
@@ -64,7 +64,7 @@ class JEMViewEditevent extends JViewLegacy
 		} else {
 			$selectedcats 	= $this->get( 'Catsselected' );
 		}
-		
+
 		//build selectlists
 		$categories = JEMCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8 class="inputbox required validate-cid"');
 		//Get requests
@@ -90,18 +90,18 @@ class JEMViewEditevent extends JViewLegacy
 
 		// Get the menu object of the active menu item
 		$menu		= $app->getMenu();
-		$item    	= $menu->getActive();
-		$params 	=  $app->getParams('com_jem');
+		$item		= $menu->getActive();
+		$params 	= $app->getParams('com_jem');
 
 		//pathway
-		$pathway 	=  $app->getPathWay();
-		$pathway->setItemName(1, $item->title);
+		$pathway 	= $app->getPathWay();
+		if($item) $pathway->setItemName(1, $item->title);
 		$pathway->addItem($title, '');
 
 		//Has the user access to the editor and the add venue screen
 		$editoruser = JEMUser::editoruser();
 		$delloclink = JEMUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
-		
+
 		//transform <br /> and <br> back to \r\n for non editorusers
 		if (!$editoruser) {
 			$row->datdescription = JEMHelper::br2break($row->datdescription);
@@ -122,9 +122,9 @@ class JEMViewEditevent extends JViewLegacy
 			document.getElementById('a_name').value = venue;
 			window.parent.SqueezeBox.close();
 		}
-		
+
 		function closeAdd() {
-			window.parent.SqueezeBox.close(); 
+			window.parent.SqueezeBox.close();
     	}
     	";
 
@@ -133,11 +133,11 @@ class JEMViewEditevent extends JViewLegacy
 		$doc->addScript($url.'media/com_jem/js/recurrence.js');
 		// include the unlimited script
 		$doc->addScript($url.'media/com_jem/js/unlimited.js');
-		
+
 		$doc->addScript('media/com_jem/js/attachments.js' );
-		
+
 		$lists = array();
-		
+
 		// recurrence type
     	$rec_type = array();
     	$rec_type[] = JHTML::_('select.option', 0, JText::_ ( 'COM_JEM_NOTHING' ));
@@ -157,7 +157,7 @@ class JEMViewEditevent extends JViewLegacy
 
 			$lists['venueselect']    = JHTML::_('select.genericlist', $venuelist, 'locid', 'size="1" class="inputbox"', 'value', 'text', $row->locid );
     	}
-    	
+
 		$this->row				= $row;
 		$this->categories		= $categories;
 		$this->editor			= $editor;
@@ -173,7 +173,7 @@ class JEMViewEditevent extends JViewLegacy
 
 		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access			= $access2;
-		
+
 		parent::display($tpl);
 
 	}
@@ -202,7 +202,7 @@ class JEMViewEditevent extends JViewLegacy
 		// Get/Create the model
 		$rows 	= $this->get('Venues');
 		$total 	= $this->get('Countitems');
-		
+
 		JHTML::_('behavior.modal', 'a.flyermodal');
 
 		// Create the pagination object

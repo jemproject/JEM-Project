@@ -97,7 +97,7 @@ class JEMViewVenueevents extends JViewLegacy
 
 		//pathway
 		$pathway 	= $app->getPathWay();
-		$pathway->setItemName(1, $item->title);
+		if($item) $pathway->setItemName(1, $item->title);
 
 		//create the pathway
 		if ($task == 'archive') {

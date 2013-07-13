@@ -66,7 +66,7 @@ class JEMViewEditvenue extends JViewLegacy
 
 		//pathway
 		$pathway 	= $app->getPathWay();
-		$pathway->setItemName(1, $item->title);
+		if($item) $pathway->setItemName(1, $item->title);
 		$pathway->addItem($title, '');
 
 		//Set Title
