@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cbinstall version="1.9" type="plugin" group="user">
+	<name>CB JEM MyEvents</name>
+	<author>JEM Community</author>
+	<creationDate>14/07/2013</creationDate>
+	<copyright>Copyright (C) 2013-2013 joomlaeventmanager.net</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<authorEmail>info@joomlaeventmanager.net</authorEmail>
+	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
+	<version>1.9</version>
+	<description>
+		This plugin will show events submitted by the user in their profile. 
+	</description>
+	<files>
+		<filename plugin="jemmyevents_cb">jemmyevents_cb.php</filename>
+		<filename>index.html</filename>
+		<filename>jemmyevents_cb.css</filename>
+		<filename>language/english.php</filename>
+	</files>
+	<params>	
+    </params>
+	<tabs>
+		<tab name="My Events" description="Created Events" class="jemmyeventsTab" fields="0" position="cb_tabmain" displaytype="tab">
+		<params>
+			<param name="end_date" type="radio" default="0" label="End Date" description="Show/Hide the end date ">
+				<option value="0">Hide</option>
+				<option value="1">Show</option>
+        	</param>
+			<param name="start_date" type="radio" default="0" label="Start Date" description="Show/Hide the start date ">
+				<option value="0">Hide</option>
+				<option value="1">Show</option>
+        	</param>
+        	<param name="event_image" type="radio" default="0" label="Event image" description="Show/Hide the image ">
+				<option value="0">Hide</option>
+				<option value="1">Show</option>
+        	</param>
+        	<param name="event_categories" type="radio" default="0" label="Event categories" description="Show/Hide the category ">
+				<option value="0">Hide</option>
+				<option value="1">Show</option>
+        	</param>
+        	<param name="event_attending" type="radio" default="0" label="Event image" description="Show/Hide attending">
+				<option value="0">Hide</option>
+				<option value="1">Show</option>
+        	</param>
+		</params>
+			<fields>
+			</fields>
+		</tab>
+	</tabs>
+	<install>
+		<queries>
+		</queries>
+	</install>
+	<uninstall>
+	</uninstall>
+</cbinstall>
+
