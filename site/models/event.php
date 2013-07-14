@@ -12,19 +12,19 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.model');
 
 /**
- * JEM Component Details Model
+ * JEM Component Event Model
  *
  * @package JEM
  * @since 0.9
  */
-class JEMModelDetails extends JModelLegacy
+class JEMModelEvent extends JModelLegacy
 {
 	/**
-	 * Details data in details array
+	 * Event data in event array
 	 *
 	 * @var array
 	 */
-	var $_details = null;
+	var $_event = null;
 
 
 	/**
@@ -48,44 +48,44 @@ class JEMModelDetails extends JModelLegacy
 	}
 
 	/**
-	 * Method to set the details id
+	 * Method to set the event id
 	 *
 	 * @access	public
-	 * @param	int	details ID number
+	 * @param	int	event ID number
 	 */
 
 	function setId($id)
 	{
-		// Set new details ID and wipe data
+		// Set new event ID and wipe data
 		$this->_id			= $id;
 	}
 
 	/**
-	 * Method to get event data for the Detailsview
+	 * Method to get event data for the Eventview
 	 *
 	 * @access public
 	 * @return array
 	 * @since 0.9
 	 */
-	function &getDetails( )
+	function &getEvent( )
 	{
 		/*
 		 * Load the Category data
 		 */
-		if ($this->_loadDetails())
+		if ($this->_loadEvent())
 		{
 			$user = JFactory::getUser();
 			$gid = JEMHelper::getGID($user);
 
 
 			// Is the category published?
-			if (!$this->_details->catpublished && $this->_details->catid)
+			if (!$this->_event->catpublished && $this->_event->catid)
 			{
 				throw new Exception( JText::_("COM_JEM_CATEGORY_NOT_PUBLISHED"),403 );
 			}
 
 			// Do we have access to the category?
-			if (($this->_details->cataccess > $gid) && $this->_details->catid)
+			if (($this->_event->cataccess > $gid) && $this->_event->catid)
 			{
 				 throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			}
@@ -97,18 +97,18 @@ class JEMModelDetails extends JModelLegacy
 		$hitcheck = false;
 		if ($session->has('hit', 'jem')) {
 			$hitcheck 	= $session->get('hit', 0, 'jem');
-			$hitcheck 	= in_array($this->_details->did, $hitcheck);
+			$hitcheck 	= in_array($this->_event->did, $hitcheck);
 		}
 		if (!$hitcheck) {
 			//record hit
 			$this->hit();
 
 			$stamp = array();
-			$stamp[] = $this->_details->did;
+			$stamp[] = $this->_event->did;
 			$session->set('hit', $stamp, 'jem');
 		}
 
-		return $this->_details;
+		return $this->_event;
 
 
 	}
@@ -123,13 +123,13 @@ class JEMModelDetails extends JModelLegacy
 	 * @return	array
 	 * @since	0.9
 	 */
-	function _loadDetails()
+	function _loadEvent()
 	{
-		if (empty($this->_details))
+		if (empty($this->_event))
 		{
 
 			// Get the WHERE clause
-			$where	= $this->_buildDetailsWhere();
+			$where	= $this->_buildEventWhere();
 
 			$query = 'SELECT a.id AS did, a.published, a.contactid, a.dates, a.enddates, a.title, a.times, a.endtimes, '
 			    . ' a.datdescription, a.meta_keywords, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.meta_description, a.unregistra, a.locid, a.created_by, '
@@ -151,26 +151,26 @@ class JEMModelDetails extends JModelLegacy
 					. ' GROUP BY a.id '
 					;
 			$this->_db->setQuery($query);
-			$this->_details = $this->_db->loadObject();
+			$this->_event = $this->_db->loadObject();
 
 			$user = JFactory::getUser();
 			$gid = JEMHelper::getGID($user);
 
-			$this->_details->attachments = JEMAttachment::getAttachments('event'.$this->_details->did, $gid);
+			$this->_event->attachments = JEMAttachment::getAttachments('event'.$this->_event->did, $gid);
 
-			return (boolean) $this->_details;
+			return (boolean) $this->_event;
 		}
 		return true;
 	}
 
 	/**
-	 * Method to build the WHERE clause of the query to select the details
+	 * Method to build the WHERE clause of the query to select the event
 	 *
 	 * @access	private
 	 * @return	string	WHERE clause
 	 * @since	0.9
 	 */
-	function _buildDetailsWhere()
+	function _buildEventWhere()
 	{
 		$where = ' WHERE a.id = '.$this->_id;
 
@@ -314,15 +314,15 @@ class JEMModelDetails extends JModelLegacy
 
 		$model = $this->setId($event);
 
-		$details = $this->getDetails();
+		$event = $this->getEvent();
 
-		if ($details->maxplaces > 0) // there is a max
+		if ($event->maxplaces > 0) // there is a max
 		{
 			// check if the user should go on waiting list
 			$attendees = $this->getRegisters();
-			if (count($attendees) >= $details->maxplaces)
+			if (count($attendees) >= $event->maxplaces)
 			{
-				if (!$details->waitinglist) {
+				if (!$event->waitinglist) {
 					$this->setError(JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'));
 					return false;
 				}

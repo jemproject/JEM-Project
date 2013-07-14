@@ -12,15 +12,15 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.view');
 
 /**
- * HTML Details View class of the JEM component
+ * HTML Event View class of the JEM component
  *
  * @package JEM
  * @since 0.9
  */
-class JEMViewDetails extends JViewLegacy
+class JEMViewEvent extends JViewLegacy
 {
 	/**
-	 * Creates the output for the details view
+	 * Creates the output for the Event view
 	 *
  	 * @since 0.9
 	 */
@@ -34,7 +34,7 @@ class JEMViewDetails extends JViewLegacy
 		$jemsettings	= JEMHelper::config();
 		$params			= $app->getParams('com_jem');
 
-		$row			= $this->get('Details');
+		$row			= $this->get('Event');
 		$categories		= $this->get('Categories');
 		$registers		= $this->get('Registers');
 		$isregistered	= $this->get('UserIsRegistered');
@@ -73,7 +73,7 @@ class JEMViewDetails extends JViewLegacy
 			return JError::raiseError(404, JText::sprintf('Event #%d not found', $row->did));
 		}
 
-		//Check if user has access to the details
+		//Check if user has access to the event
 		if ($jemsettings->showdetails == 0) {
 			return JError::raiseError(403, JText::_('COM_JEM_NO_ACCESS'));
 		}
@@ -87,7 +87,7 @@ class JEMViewDetails extends JViewLegacy
 		//Print
 		$pop	= JRequest::getBool('pop');
 
-		$params->def('page_title', JText::_('COM_JEM_DETAILS'));
+		$params->def('page_title', JText::_('COM_JEM_EVENT'));
 
 		if ($pop) {
 			$params->set('popup', 1);
@@ -230,8 +230,8 @@ class JEMViewDetails extends JViewLegacy
 		// load dispatcher for plugins
 		JPluginHelper::importPlugin('jem');
 		$row->pluginevent = new stdClass();
-		$results = $dispatcher->trigger('onEventDetailsEnd', array ($row->did, $this->escape($row->title)));
-		$row->pluginevent->onEventDetailsEnd = trim(implode("\n", $results));
+		$results = $dispatcher->trigger('onEventEnd', array ($row->did, $this->escape($row->title)));
+		$row->pluginevent->onEventEnd = trim(implode("\n", $results));
 
 		//assign vars to jview
 		$this->print				= $print;

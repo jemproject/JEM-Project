@@ -9,23 +9,23 @@
  */
 
 defined('_JEXEC') or die;
- 
+
 // Import library dependencies
 jimport( 'joomla.plugin.plugin' );
 
 include_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 
 class plgJEMComments extends JPlugin {
-	
-	
+
+
 	public function __construct(& $subject, $config)
     {
             parent::__construct($subject, $config);
             $this->loadLanguage();
     }
-	
-	
-	
+
+
+
 	/**
 	 * Constructor
 	 *
@@ -37,7 +37,7 @@ class plgJEMComments extends JPlugin {
 	{
 		parent::__construct($subject, $config);
 	}
-	
+
 	/**
 	 * This method handles the supported comment systems
 	 *
@@ -47,15 +47,15 @@ class plgJEMComments extends JPlugin {
 	 * @return	boolean
 	 * @since 1.0
 	 */
-	public function onEventDetailsEnd($event_id, $event_title = '' )
-	{	
+	public function onEventEnd($event_id, $event_title = '' )
+	{
 		//simple, skip if processing not needed
 		if (!$this->params->get('commentsystem', '0') ) {
 			return '';
 		}
-		
+
 		$res = '';
-	
+
 		//jomcomment integration
 		if ($this->params->get('commentsystem') == 1 ) {
 			if (file_exists(JPATH_SITE.'/plugins/content/jom_comment_bot.php')) {
@@ -65,7 +65,7 @@ class plgJEMComments extends JPlugin {
 				$res 	.= '</div>';
   			}
 		}
-	
+
 		//jcomments integration
 		if ($this->params->get('commentsystem') == 2 ) {
 			if (file_exists(JPATH_SITE.'/components/com_jcomments/jcomments.php')) {
@@ -75,20 +75,20 @@ class plgJEMComments extends JPlugin {
 				$res .= '</div>';
 			}
 		}
-		
+
 		//JXtended Comments integration
 		if ($this->params->get('commentsystem') == 3 ) {
 			if (file_exists(JPATH_SITE.'/components/com_comments/helpers/html/comments.php')) {
 				require_once(JPATH_SITE.'/components/com_comments/helpers/html/comments.php');
-				
+
 				$res .= '<div class="elcomments">';
-				
+
 				// display sharing
 				$res .= JHtml::_('comments.share', substr($_SERVER['REQUEST_URI'], 1), $event_title);
-				
+
 				// display ratings
 				$res .= JHtml::_('comments.rating', 'jem', $event_id, JEMHelperRoute::getRoute($event_id), substr($_SERVER['REQUEST_URI'], 1), $event_title);
-				
+
 				// display comments
 				$res .= JHtml::_('comments.comments', 'jem', $event_id, JEMHelperRoute::getRoute($event_id), substr($_SERVER['REQUEST_URI'], 1), $event_title);
 				$res .= '<style type="text/css">';

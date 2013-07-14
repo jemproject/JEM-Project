@@ -36,7 +36,7 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="linkdet" type="list" default="1" label="MOD_JEM_LINK_TO_DETAILS" description="MOD_JEM_LINK_TO_DETAILS_DESC">
+				<field name="linkdet" type="list" default="1" label="MOD_JEM_LINK_TO_EVENT" description="MOD_JEM_LINK_TO_EVENT_DESC">
 					<option value="0">JNO</option>
 					<option value="1">MOD_JEM_DATE</option>
 					<option value="2">MOD_JEM_TITLE</option>

@@ -59,11 +59,11 @@ function jemParseRoute($segments)
 			}
 		} break;
 
-		case 'details':
+		case 'event':
 		{
 			$id = explode(':', $segments[1]);
 			$vars['id'] = $id[0];
-			$vars['view'] = 'details';
+			$vars['view'] = 'event';
 		} break;
 
 		case 'venueevents':

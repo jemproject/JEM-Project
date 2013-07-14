@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_JEM_DETAILS_LAYOUT">
+	<layout title="COM_JEM_EVENT_LAYOUT">
 		<message>
-			<![CDATA[COM_JEM_DETAILS_LAYOUT_DESC]]>
+			<![CDATA[COM_JEM_EVENT_LAYOUT_DESC]]>
 		</message>
 	</layout>
 	<state>
-		<name>COM_JEM_DETAILS_LAYOUT</name>
-		<description>COM_JEM_DETAILS_LAYOUT_DESC</description>
+		<name>COM_JEM_EVENT_LAYOUT</name>
+		<description>COM_JEM_EVENT_LAYOUT_DESC</description>
 		<config>
 		<fields name="request" addfieldpath="/administrator/components/com_jem/models/fields"><fieldset name="request" label="basic">
 			<field name="id" type="event" label="COM_JEM_SELECT_EVENT" description="COM_JEM_SELECT_EVENT_DESC" />

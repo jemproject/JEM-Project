@@ -142,7 +142,7 @@ defined('_JEXEC') or die;
 					break;
 				endforeach;
 				//Link to details
-				$detaillink = JRoute::_('index.php?view=details&id='. $row->slug);
+				$detaillink = JRoute::_('index.php?view=event&id='. $row->slug);
 				//title
 				if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) :
 				?>

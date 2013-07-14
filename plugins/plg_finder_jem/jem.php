@@ -44,7 +44,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * @var    string
 	 * @since  2.5
 	 */
-	protected $layout = 'details';
+	protected $layout = 'event';
 
 	/**
 	 * The type of content that the adapter indexes.
@@ -277,7 +277,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 
 		// Build the necessary route and path information.
 		$item->url = $this->getURL($item->slug, $this->extension, $this->layout).'&catid='.$item->catslug;
-		$item->route = JEMHelperRoute::getRoute($item->slug, 'details', $item->catslug);
+		$item->route = JEMHelperRoute::getRoute($item->slug, 'event', $item->catslug);
 		$item->path = FinderIndexerHelper::getContentPath($item->route);
 
 		// Get the menu title if it exists.

@@ -18,14 +18,14 @@ defined('_JEXEC') or die;
 				<tbody>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SHOW_DETAILS' ); ?>::<?php echo JText::_('COM_JEM_SHOW_DETAILS_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_SHOW_DETAILS' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SHOW_EVENT' ); ?>::<?php echo JText::_('COM_JEM_SHOW_EVENT_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_SHOW_EVENT' ); ?>
 							</span>
 						</td>
 						<td valign="top">
 							<?php
 								$showdets = array();
-								$showdets[] = JHTML::_('select.option', '0', JText::_( 'COM_JEM_DETAILS_OFF' ) );
+								$showdets[] = JHTML::_('select.option', '0', JText::_( 'COM_JEM_EVENT_OFF' ) );
 								$showdets[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_LINK_ON_TITLE' ) );
 								$showdet = JHTML::_('select.genericlist', $showdets, 'showdetails', 'size="1" class="inputbox"', 'value', 'text', $this->jemsettings->showdetails );
 								echo $showdet;

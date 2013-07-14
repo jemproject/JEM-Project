@@ -42,7 +42,7 @@ Joomla.submitbutton = function(task)
 			<?php
 			$title = JText::_( 'COM_JEM_BASIC_SETTINGS' );
 			echo JHtml::_('tabs.start', 'det-pane', array('useCookie'=>1));
-			
+
 			echo JHtml::_('tabs.panel', $title, 'basic');
 			?>
 
@@ -58,19 +58,19 @@ Joomla.submitbutton = function(task)
 			?>
 			<div id="page-usercontrol" class="tab">
 			<div class="noshow">
-				<?php 
-				echo $this->loadTemplate('usercontrol'); 
+				<?php
+				echo $this->loadTemplate('usercontrol');
 				?>
 			</div></div>
-			
+
 			<?php
-			$title = JText::_( 'COM_JEM_DETAILS_PAGE' );
-			echo JHtml::_('tabs.panel', $title, 'details');
+			$title = JText::_( 'COM_JEM_EVENT_PAGE' );
+			echo JHtml::_('tabs.panel', $title, 'event');
 			?>
-			<div id="page-details" class="tab">
+			<div id="page-event" class="tab">
 			<div class="noshow">
-				<?php 
-				echo $this->loadTemplate('detailspage');
+				<?php
+				echo $this->loadTemplate('eventpage');
 				 ?>
 			</div></div>
 
@@ -80,8 +80,8 @@ Joomla.submitbutton = function(task)
 			?>
             <div id="page-layout" class="tab">
             <div class="noshow">
-				<?php 
-				echo $this->loadTemplate('layout'); 
+				<?php
+				echo $this->loadTemplate('layout');
 				?>
 			</div></div>
 
@@ -91,19 +91,19 @@ Joomla.submitbutton = function(task)
 			?>
             <div id="page-parameters" class="tab">
             <div class="noshow">
-               <?php 
+               <?php
                echo $this->loadTemplate('parameters');
                 ?>
             </div></div>
 
-	
-		
+
+
 		<?php
 		echo JHtml::_('sliders.end');
 		?>
-		
+
 		<div class="clr"></div>
-		
+
 		<?php echo JHTML::_( 'form.token' ); ?>
 		<input type="hidden" name="task" value="">
 		<input type="hidden" name="id" value="1">

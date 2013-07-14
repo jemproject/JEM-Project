@@ -189,7 +189,7 @@ input#evdelrec0.inputbox, input#evdelrec1.inputbox, input#evpubrec0.inputbox, in
 }
 
 
-/*align radio buttons on details setting page*/
+/*align radio buttons on event setting page*/
 label#showtimedetails0-lbl, label#showtimedetails1-lbl, label#showevdescription0-lbl, label#showevdescription1-lbl, label#showdetailstitle0-lbl, label#showdetailstitle1-lbl, label#showlocdescription0-lbl, label#showlocdescription1-lbl, label#showdetailsadress0-lbl, label#showdetailsadress1-lbl {
     float: none;
     display: inline;

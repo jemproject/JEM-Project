@@ -25,11 +25,11 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 }(document, 'script', 'facebook-jssdk'));
 </script>
 
-<div id="jem" class="event_id<?php echo $this->row->did; ?> jem_details">
+<div id="jem" class="event_id<?php echo $this->row->did; ?> jem_event">
 	<p class="buttons">
-		<?php echo JEMOutput::mailbutton($this->row->slug, 'details', $this->params); ?>
+		<?php echo JEMOutput::mailbutton($this->row->slug, 'event', $this->params); ?>
 		<?php echo JEMOutput::printbutton($this->print_link, $this->params); ?>
-		<?php echo JEMOutput::icalbutton($this->row->slug, 'details'); ?>
+		<?php echo JEMOutput::icalbutton($this->row->slug, 'event'); ?>
 	</p>
 
 	<?php if ($this->params->def('show_page_title', 1)) : ?>
@@ -38,7 +38,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 		</h1>
 	<?php endif; ?>
 
-	<!-- Details EVENT -->
+	<!-- Event -->
 	<h2 class="jem">
 		<?php
 		echo JText::_('COM_JEM_EVENT');
@@ -262,7 +262,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 		<?php echo $this->loadTemplate('attendees'); ?>
 	<?php endif; ?>
 
-	<?php echo $this->row->pluginevent->onEventDetailsEnd; ?>
+	<?php echo $this->row->pluginevent->onEventEnd; ?>
 
 	<p class="copyright">
 		<?php echo JEMOutput::footer(); ?>

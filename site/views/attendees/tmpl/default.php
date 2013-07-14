@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 JHTML::_('behavior.tooltip');
 $colspan = ($this->event->waitinglist ? 10 : 9);
 
-$detaillink = JRoute::_('index.php?option=com_jem&view=details&id='.$this->event->id.':'.$this->event->alias);
+$detaillink = JRoute::_('index.php?option=com_jem&view=event&id='.$this->event->id.':'.$this->event->alias);
 	
 ?>
 <script type="text/javascript">

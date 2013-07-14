@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<view title="DETAILS LAYOUT">
+	<view title="EVENT LAYOUT">
 		<message>
-			<![CDATA[DETAILS LAYOUT TIP]]>
+			<![CDATA[EVENT LAYOUT TIP]]>
 		</message>
 	</view>
 </metadata>

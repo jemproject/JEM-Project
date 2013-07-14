@@ -33,7 +33,7 @@ class JEMHelperRoute
 	 *
 	 * @return string determined Link
 	 */
-	static function getRoute($id, $view = 'details', $category = null)
+	static function getRoute($id, $view = 'event', $category = null)
 	{
 		// Not needed currently but kept because of a possible hierarchic link structure in future
 		$needles = array(

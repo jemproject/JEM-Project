@@ -28,7 +28,7 @@
 			<option value="3">MOD_JEM_WIDE_CURRENT_EVENTS</option>
 		</field>
 		<field name="cuttitle" type="text" default="18" label="MOD_JEM_WIDE_MAX_TITLE_LENGTH" description="MOD_JEM_WIDE_MAX_TITLE_LENGTH_DESC" />
-		<field name="linkevent" type="radio" default="1" label="MOD_JEM_WIDE_LINK_TO_DETAILS" description="MOD_JEM_WIDE_LINK_TO_DETAILS_DESC">
+		<field name="linkevent" type="radio" default="1" label="MOD_JEM_WIDE_LINK_TO_EVENT" description="MOD_JEM_WIDE_LINK_TO_EVENT_DESC">
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>
