@@ -14,7 +14,7 @@ jimport('joomla.application.component.view');
 /**
  * HTML View class for the JEM View
  */
-class JEMViewMyvenues extends JViewLegacy
+class JEMViewMyevents extends JViewLegacy
 {
 	/**
 	 * Creates the Myevents View
