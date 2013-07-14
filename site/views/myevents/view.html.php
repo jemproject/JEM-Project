@@ -14,16 +14,16 @@ jimport('joomla.application.component.view');
 /**
  * HTML View class for the JEM View
  */
-class JEMViewMy extends JViewLegacy
+class JEMViewMyvenues extends JViewLegacy
 {
 	/**
-	 * Creates the My-Events View
+	 * Creates the Myevents View
 	 */
 	function display($tpl = null)
 	{
 		$app =  JFactory::getApplication();
 
-		
+
 		//initialize variables
 		$document 		=  JFactory::getDocument();
 		$jemsettings 	=  JEMHelper::config();
@@ -56,18 +56,18 @@ class JEMViewMy extends JViewLegacy
 			$noevents = 0;
 		}
 		// get variables
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.my.filter_order', 'filter_order', 	'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.my.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.my.filter_state', 'filter_state', 	'*', 'word' );
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.my.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.my.search', 'search', '', 'string' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.myevents.filter_order', 'filter_order', 	'a.dates', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.myevents.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.myevents.filter_state', 'filter_state', 	'*', 'word' );
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.myevents.filter', 'filter', '', 'int' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.myevents.search', 'search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
-		
+
 		$task 		= JRequest::getWord('task');
-		
+
 		//search filter
 		$filters = array();
-		
+
 		if ($jemsettings->showtitle == 1) {
 			$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_TITLE' ) );
 		}
@@ -84,14 +84,14 @@ class JEMViewMy extends JViewLegacy
 			$filters[] = JHTML::_('select.option', '5', JText::_( 'COM_JEM_STATE' ) );
 		}
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
-		
+
 		// search filter
 		$lists['search']= $search;
-		
+
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
-			
+
 		//params
 		$params->def('page_title', $item->title);
 
@@ -99,7 +99,7 @@ class JEMViewMy extends JViewLegacy
 		if($item) $pathway->setItemName(1, $item->title);
 
 		//Set Page title
-		$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_ITEMS'));
+		$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_EVENTS'));
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title', $pagetitle);
 
@@ -115,7 +115,7 @@ class JEMViewMy extends JViewLegacy
 		$this->lists 					= $lists;
 		$this->noevents					= $noevents;
 
-		
+
 		parent::display($tpl);
 
 	}
@@ -147,7 +147,7 @@ class JEMViewMy extends JViewLegacy
 
 		return $this->events;
 	}
-	
+
 
 
 }
