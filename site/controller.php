@@ -302,6 +302,8 @@ class JEMController extends JControllerLegacy
 		$this->setRedirect($link);
 	}
 
+	
+	
 	/**
 	 * Saves the submitted venue to the database
 	 *
@@ -311,77 +313,80 @@ class JEMController extends JControllerLegacy
 	{
 		// Check for request forgeries
 		JRequest::checkToken() or die( 'Invalid Token' );
-
-		//Sanitize
-		$post = JRequest::get( 'post' );
-		$post['locdescription'] = JRequest::getVar( 'locdescription', '', 'post', 'string', JREQUEST_ALLOWRAW );
-
+	
+		//get image
+		$file 		= JRequest::getVar( 'userfile', '', 'files', 'array' );
+		$post 		= JRequest::get( 'post' );
+		
+		$Itemid 		= JRequest::getCmd( 'Itemid' );
+		
 		//sticky forms
 		$session = JFactory::getSession();
 		$session->set('venueform', $post, 'com_jem');
-
+		
+		$isNew = ($post['id']) ? false : true;
+		
+		$model = $this->getModel('editvenue');
+		
+		//Sanitize
+		$post['locdescription'] = JRequest::getVar( 'locdescription', '', 'post', 'string', JREQUEST_ALLOWRAW );
 		if (JRequest::getVar( 'latitude', '', 'post', 'string') == '') {
 			unset($post['latitude']);
 		}
 		if (JRequest::getVar( 'longitude', '', 'post', 'string') == '') {
 			unset($post['longitude']);
 		}
-
-		$isNew = ($post['id']) ? false : true;
-
-		$file 		= JRequest::getVar( 'userfile', '', 'files', 'array' );
-
-		$model = $this->getModel('editvenue');
-
+		
 		$mode = JRequest::getVar('mode');
-
+		
 		if ($returnid = $model->store($post, $file)) {
-
+			$row->id = $returnid;
+			
+		
 			$msg 	= JText::_( 'COM_JEM_VENUE_SAVED' );
-
-			//check if we return from an addvenue form
-			if ($session->has('venueform', 'com_jem')) {
-				$link = JRoute::_('index.php?view=editvenue', false) ;
-				} else {
-				$link 	= JRoute::_('index.php?view=venueevents&id='.$returnid, false) ;
-			}
-
+			
+			
+			/*$link 	= JRoute::_( JEMHelperRoute::getRoute($returnid), false) ;*/
+			$link = 'index.php?option=com_jem&view=venueevents&id='.$returnid.'&Itemid='.$Itemid;
+			
+		
 			JPluginHelper::importPlugin( 'jem' );
 			$dispatcher = JDispatcher::getInstance();
 			$res = $dispatcher->trigger( 'onVenueEdited', array( $returnid, $isNew ) );
-
+			
 			$cache = JFactory::getCache('com_jem');
 			$cache->clean();
-
-
+			
 			$session->clear('venueform', 'com_jem');
-		} else {
-
-			$msg = '';
-			//back to form
-			$link 	= JRoute::_('index.php?view=editvenue', false) ;
-
-			JError::raiseWarning('SOME_ERROR_CODE', $model->getError() );
-		}
-
-		$model->checkin();
-
-		// in case it's called from modal window
-		if ($mode == 'ajax') {
-			$model->setId($returnid);
-			$venue = $model->getVenue();
-
-			// fill the event form venue field, and close.
-			$js = "window.parent.elSelectVenue('". $venue->id ."', '". str_replace( array("'", "\""), array("\\'", ""), $venue->venue)."')";
-			$doc = JFactory::getDocument();
-			$doc->addScriptDeclaration($js);
-			/* echo $msg; */
-
-			return;
-		}
-
-		$this->setRedirect($link, $msg );
+			
+			} else {
+				
+				$msg = '';
+				//back to form
+				$link 	= JRoute::_('index.php?view=editvenue', false) ;
+				JError::raiseWarning('SOME_ERROR_CODE', $model->getError() );
+			}
+			$model->checkin();
+			
+			
+			if ($mode == 'ajax') {
+				$model->setId($returnid);
+				$venue = $model->getVenue();
+			
+				// fill the event form venue field, and close.
+				$js = "window.parent.elSelectVenue('". $venue->id ."', '". str_replace( array("'", "\""), array("\\'", ""), $venue->venue)."')";
+				$doc = JFactory::getDocument();
+				$doc->addScriptDeclaration($js);
+				// echo $msg;
+			
+				return;
+			}	
+			$this->setRedirect($link, $msg );
+			
 	}
+	
+	
+	
 
 	/**
 	 * Cleanes and saves the submitted event to the database
