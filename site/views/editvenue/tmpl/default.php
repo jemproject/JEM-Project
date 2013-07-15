@@ -317,18 +317,36 @@ defined('_JEXEC') or die;
           	<legend><?php echo JText::_('COM_JEM_METADATA_INFORMATION'); ?></legend>
 
             <div class="jem_box_left">
-              	<label for="metadesc"><?php echo JText::_( 'COM_JEM_META_DESCRIPTION' ); ?></label>
-          		<textarea class="inputbox" cols="40" rows="5" name="meta_description" id="metadesc" style="width:250px;"></textarea>
+              	<label for="meta_description"><?php echo JText::_( 'COM_JEM_META_DESCRIPTION' ); ?></label>
+              	<br />
+					<?php
+					if (! empty ( $this->row->meta_description )) {
+						$meta_description = $this->row->meta_description;
+					} else {
+						$meta_description = $this->jemsettings->meta_description;
+					}
+					?>
+          		<textarea class="inputbox" cols="40" rows="5" name="meta_description" id="meta_description" style="width:250px;"><?php echo $meta_description;?></textarea>
             </div>
 
             <div class="jem_box_right">
-        		<label for="metakey"><?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?></label>
-        		<textarea class="inputbox" cols="40" rows="5" name="meta_keywords" id="metakey" style="width:250px;"></textarea>
+        		<label for="meta_keywords"><?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?></label>
+        		
+        		<br />
+						<?php
+						if (! empty ( $this->row->meta_keywords )) {
+							$meta_keywords = $this->row->meta_keywords;
+						} else {
+							$meta_keywords = $this->jemsettings->meta_keywords;
+						}
+						?>
+        		
+        		<textarea class="inputbox" cols="40" rows="5" name="meta_keywords" id="meta_keywords" style="width:250px;"><?php echo $meta_keywords; ?></textarea>
             </div>
 
             <br class="clear" />
             
-    		<input type="button" class="button jem_fright" value="<?php echo JText::_( 'COM_JEM_ADD_VENUE_CITY' ); ?>" onclick="f=document.getElementById('adminForm');f.metakey.value=f.venue.value+', '+f.city.value+f.metakey.value;" />
+    		<input type="button" class="button jem_fright" value="<?php echo JText::_( 'COM_JEM_ADD_VENUE_CITY' ); ?>" onclick="f=document.getElementById('adminForm');f.meta_keywords.value=f.venue.value+', '+f.city.value+f.meta_keywords.value;" />
 
       	</fieldset>
       	
@@ -345,7 +363,6 @@ defined('_JEXEC') or die;
 		</div>
 -->		
 		<p class="clear">
-      	<input type="hidden" name="option" value="com_jem" />
       	<input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
       	<input type="hidden" name="referer" value="<?php echo @$_SERVER['HTTP_REFERER']; ?>" />
       	<input type="hidden" name="created" value="<?php echo $this->row->created; ?>" />
@@ -354,13 +371,14 @@ defined('_JEXEC') or die;
         <input type="hidden" name="mode" value="<?php echo $this->mode; ?>" />
       	<?php echo JHTML::_( 'form.token' ); ?>
       	<input type="hidden" name="task" value="" />
+      	<input type="hidden" name="view" value="editvenue">
       	</p>
 
     </form>
 
-    <p class="copyright">
+    <div class="copyright">
         <?php echo JEMOutput::footer( ); ?>
-    </p>
+    </div>
 
 </div>
 
