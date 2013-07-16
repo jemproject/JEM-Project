@@ -60,7 +60,7 @@ defined('_JEXEC') or die;
             endif;
         endif;
     
-        $eventname = '<div class="eventName">'.$this->escape($row->title).'</div>';
+        $eventname = '<div class="eventName">'.JText::_('COM_JEM_TITLE').': '.$this->escape($row->title).'</div>';
       $detaillink 	= JRoute::_( JEMHelperRoute::getRoute($row->slug));
         //initialize variables
         $multicatname = '';
@@ -84,7 +84,7 @@ defined('_JEXEC') or die;
         	if ($category->color):
         		$multicatname .= '<span class="colorpic" style="background-color: '.$category->color.';"></span>'.$category->catname;
         	else:
-				$multicatname 	.= $category->catname;
+				$multicatname 	.= JText::_('COM_JEM_CATEGORY').': '.$category->catname;
 			endif;
 			$ix++;
 			if ($ix != $nr) :
