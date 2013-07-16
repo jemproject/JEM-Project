@@ -5,24 +5,36 @@
 			<![CDATA[COM_JEM_DETAILED_CATEGORIES_LAYOUT_DESC]]>
 		</message>
 	</layout>
-	<state>
-		<name>COM_JEM_DETAILED_CATEGORIES_LAYOUT</name>
-		<description>COM_JEM_DETAILED_CATEGORIES_LAYOUT_DESC</description>
-		<config>
-		<fields name="params"><fieldset name="basic" label="basic">
-		
-      <field name="id" type="categories" default="0" label="COM_JEM_SELECT_CATEGORY" description="COM_JEM_SELECT_CATEGORY_DESC" addfieldpath="/administrator/components/com_jem/models/fields" />
-   
-			<field name="detcat_nr" type="text" size="1" default="3" label="COM_JEM_DET_CATEGORIES_PREVIEW" description="COM_JEM_DET_CATEGORIES_PREVIEW_DESC" />
-			<field name="cat_num" type="text" size="2" default="4" label="COM_JEM_CAT_DISPLAY" description="COM_JEM_CAT_DISPLAY_DESC" />
-			<field name="empty_cat" type="radio" default="1" label="COM_JEM_EMPTY_CAT" description="COM_JEM_EMPTY_CAT_DESC">
-			<option value="0">COM_JEM_HIDE</option>
-			<option value="1">COM_JEM_SHOW</option>
-		</field>
+
+	<fields name="params">
+		<fieldset name="basic"
+			addfieldpath="/administrator/components/com_jem/models/fields"
+		>
+			<field name="id" type="categories"
+				default="0"
+				label="COM_JEM_SELECT_CATEGORY"
+				description="COM_JEM_SELECT_CATEGORY_DESC"
+			/>
+			<field name="detcat_nr" type="text"
+				size="1"
+				default="3"
+				label="COM_JEM_DET_CATEGORIES_PREVIEW"
+				description="COM_JEM_DET_CATEGORIES_PREVIEW_DESC"
+			/>
+			<field name="cat_num" type="text"
+				size="2"
+				default="4"
+				label="COM_JEM_CAT_DISPLAY"
+				description="COM_JEM_CAT_DISPLAY_DESC"
+			/>
+			<field name="empty_cat" type="radio"
+				default="1"
+				label="COM_JEM_EMPTY_CAT"
+				description="COM_JEM_EMPTY_CAT_DESC"
+			>
+				<option value="0">COM_JEM_HIDE</option>
+				<option value="1">COM_JEM_SHOW</option>
+			</field>
 		</fieldset>
-		
-		 </fields>
-		
-		</config>
-	</state>
+ 	</fields>
 </metadata>

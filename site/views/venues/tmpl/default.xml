@@ -5,12 +5,15 @@
 			<![CDATA[COM_JEM_VENUES_LAYOUT_DESC]]>
 		</message>
 	</layout>
-	<state>
-		<name>COM_JEM_VENUES_LAYOUT</name>
-		<description>COM_JEM_VENUES_LAYOUT_DESC</description>
-		<config>
-			<fields name="params"><fieldset name="basic" label="basic">
-			<field name="display_venues_num" type="text" size="2" default="5" label="COM_JEM_VENUE_NUMBER" description="COM_JEM_VENUE_NUMBER_TIP" />
-		</fieldset></fields></config>
-	</state>
+
+	<fields name="params">
+		<fieldset name="basic">
+			<field name="display_venues_num" type="text"
+				size="2"
+				default="5"
+				label="COM_JEM_VENUE_NUMBER"
+				description="COM_JEM_VENUE_NUMBER_TIP"
+			/>
+		</fieldset>
+	</fields>
 </metadata>

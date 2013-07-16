@@ -5,12 +5,15 @@
 			<![CDATA[COM_JEM_VENUEEVENTS_LAYOUT_DESC]]>
 		</message>
 	</layout>
-	<state>
-		<name>COM_JEM_VENUEEVENTS_LAYOUT</name>
-		<description>COM_JEM_VENUEEVENTS_LAYOUT_DESC</description>
-		<config>
-		<fields name="request" addfieldpath="/administrator/components/com_jem/models/fields"><fieldset name="request" label="basic">
-			<field name="id" type="venue" label="COM_JEM_SELECTVENUE" description="COM_JEM_SELECTVENUE_DESC" />
-		</fieldset></fields></config>
-	</state>
+
+	<fields name="request">
+		<fieldset name="request"
+			addfieldpath="/administrator/components/com_jem/models/fields"
+		>
+			<field name="id" type="venue"
+				label="COM_JEM_SELECTVENUE"
+				description="COM_JEM_SELECTVENUE_DESC"
+			/>
+		</fieldset>
+	</fields>
 </metadata>

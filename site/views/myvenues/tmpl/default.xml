@@ -5,9 +5,4 @@
 			<![CDATA[COM_JEM_MYVENUES_LAYOUT_DESC]]>
 		</message>
 	</layout>
-	<state>
-		<name>COM_JEM_MYVENUES_LAYOUT</name>
-		<description>COM_JEM_MYVENUES_LAYOUT_DESC</description>
-	</state>
-	
 </metadata>

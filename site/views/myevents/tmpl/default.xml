@@ -5,18 +5,17 @@
 			<![CDATA[COM_JEM_MYEVENTS_LAYOUT_DESC]]>
 		</message>
 	</layout>
-	<state>
-		<name>COM_JEM_MYEVENTS_LAYOUT</name>
-		<description>COM_JEM_MYEVENTS_LAYOUT_DESC</description>
-	</state>
-	<config>
-		<fields name="params">
-			<fieldset name="basic" label="basic">
-				<field name="displayattendeecolumn" type="radio" default="1" label="COM_JEM_DISPLAYATTENDEECOLUMN" description="COM_JEM_DISPLAYATTENDEECOLUMN_DESC">
-					<option value="0">JNO</option>
-					<option value="1">JYES</option>
-				</field>
-			</fieldset>
-		</fields>
-	</config>
+
+	<fields name="params">
+		<fieldset name="basic">
+			<field name="displayattendeecolumn" type="radio"
+				default="1"
+				label="COM_JEM_DISPLAYATTENDEECOLUMN"
+				description="COM_JEM_DISPLAYATTENDEECOLUMN_DESC"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+		</fieldset>
+	</fields>
 </metadata>

@@ -5,21 +5,32 @@
 			<![CDATA[COM_JEM_CATEGORIES_LAYOUT_DESC]]>
 		</message>
 	</layout>
-	<state>
-		<name>COM_JEM_CATEGORIES_LAYOUT</name>
-		<description>COM_JEM_CATEGORIES_LAYOUT_DESC</description>
-		<config>
-		<fields name="params"  ><fieldset name="basic" label="basic">	 
-		  <field name="catid" label="COM_JEM_SELECTTOPCAT" default="0" type="categories" description="COM_JEM_SELECTTOPCATDESC" addfieldpath="/administrator/components/com_jem/models/fields" /> 
-      <field name="usecat" type="radio" default="1" label="COM_JEM_DISPLAYCHILDS" description="COM_JEM_DISPLAYCHILDSDESC">
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
-      </field> 
-      <field name="showemptychilds" type="radio" default="1" label="COM_JEM_SHOWEMPTYCHILD" description="COM_JEM_SHOWEMPTYCHILDDESC">
-        <option value="0">JNO</option>
-        <option value="1">JYES</option>
-      </field>
+
+	<fields name="params">
+		<fieldset name="basic"
+			addfieldpath="/administrator/components/com_jem/models/fields"
+		>
+			<field name="catid" type="categories"
+				default="0"
+				label="COM_JEM_SELECTTOPCAT"
+				description="COM_JEM_SELECTTOPCATDESC"
+			/>
+			<field name="usecat" type="radio"
+				default="1"
+				label="COM_JEM_DISPLAYCHILDS"
+				description="COM_JEM_DISPLAYCHILDSDESC"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="showemptychilds" type="radio"
+				default="1"
+				label="COM_JEM_SHOWEMPTYCHILD"
+				description="COM_JEM_SHOWEMPTYCHILDDESC"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+  			</field>
 		</fieldset>
-</fields></config>
-</state>
+	</fields>
 </metadata>

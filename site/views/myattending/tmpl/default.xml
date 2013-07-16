@@ -5,16 +5,23 @@
 			<![CDATA[COM_JEM_MYATTENDING_LAYOUT_DESC]]>
 		</message>
 	</layout>
-	<state>
-		<name>COM_JEM_MYATTENDING_LAYOUT</name>
-		<description>COM_JEM_MYATTENDING_LAYOUT_DESC</description>
-	</state>
-	<config>
-			<fields name="params"><fieldset name="basic" label="basic">
-	<field name="filtermyregs" type="radio" default="1" label="COM_JEM_FILTER_MYREGISTRATIONS" description="COM_JEM_FILTER_MYREGISTRATIONS_TIP">
+
+	<fields name="params">
+		<fieldset name="basic">
+			<field name="filtermyregs" type="radio"
+				default="1"
+				label="COM_JEM_FILTER_MYREGISTRATIONS"
+				description="COM_JEM_FILTER_MYREGISTRATIONS_TIP"
+			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
-			<field name="myregspast" type="text" size="4" default="1" label="COM_JEM_MYREGSPAST" description="COM_JEM_MYREGSPAST_DESC" />
-	</fieldset></fields></config>
+			<field name="myregspast" type="text"
+				size="4"
+				default="1"
+				label="COM_JEM_MYREGSPAST"
+				description="COM_JEM_MYREGSPAST_DESC"
+			/>
+		</fieldset>
+	</fields>
 </metadata>
