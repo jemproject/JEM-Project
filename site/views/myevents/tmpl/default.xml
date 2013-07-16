@@ -12,7 +12,7 @@
 	<config>
 		<fields name="params">
 			<fieldset name="basic" label="basic">
-				<field name="filterattendees" type="radio" default="1" label="COM_JEM_FILTER_ATTENDEES" description="COM_JEM_FILTER_ATTENDEES_DESC">
+				<field name="displayattendeecolumn" type="radio" default="1" label="COM_JEM_DISPLAYATTENDEECOLUMN" description="COM_JEM_DISPLAYATTENDEECOLUMN_DESC">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>

@@ -71,7 +71,7 @@ defined('_JEXEC') or die;
 		<?php if ($this->jemsettings->showcat == 1) :	?>
 			<col width="<?php echo $this->jemsettings->catfrowidth; ?>" class="jem_col_category" />
 		<?php endif; ?>
-		<?php if ($this->params->get('filterattendees') == 1) :	?>
+		<?php if ($this->params->get('displayattendeecolumn') == 1) :	?>
 			<col width="<?php echo $this->jemsettings->attewidth; ?>" class="jem_col_atte" />
 		<?php endif; ?>
 		<col width="1%" class="jem_col_status" />
@@ -108,7 +108,7 @@ defined('_JEXEC') or die;
 			<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<?php
 			endif;
-			if ($this->params->get('filterattendees') == 1) :
+			if ($this->params->get('displayattendeecolumn') == 1) :
 			?>
 			<th id="jem_atte" class="sectiontableheader" align="center"><?php echo JText::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
 			<?php
@@ -218,7 +218,7 @@ defined('_JEXEC') or die;
 				<?php
 				endif;
 				
-				if ($this->params->get('filterattendees') == 1) :
+				if ($this->params->get('displayattendeecolumn') == 1) :
 				?>
 									<td headers="jem_atte" align="center" valign="top">
 									<?php
