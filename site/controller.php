@@ -129,7 +129,7 @@ class JEMController extends JControllerLegacy
 			return;
 		}
 
-		$model = $this->getModel('my');
+		$model = $this->getModel('myevents');
 		if(!$model->publish($cid, 0)) {
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
@@ -165,7 +165,7 @@ class JEMController extends JControllerLegacy
 			return;
 		}
 
-		$model = $this->getModel('my');
+		$model = $this->getModel('myevents');
 		if(!$model->publish($cid, 0)) {
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
@@ -201,7 +201,7 @@ class JEMController extends JControllerLegacy
 			return;
 		}
 
-		$model = $this->getModel('my');
+		$model = $this->getModel('myevents');
 		if(!$model->publish($cid, 1)) {
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
@@ -238,7 +238,7 @@ class JEMController extends JControllerLegacy
 			return;
 		}
 
-		$model = $this->getModel('my');
+		$model = $this->getModel('myevents');
 		if(!$model->publish($cid, -2)) {
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
