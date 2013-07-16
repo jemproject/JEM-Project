@@ -61,9 +61,6 @@ class JEMViewCategories extends JViewLegacy
 		$document->setTitle( $pagetitle );
    		$document->setMetaData( 'title' , $pagetitle );
 
-		//get icon settings
-		$params->def( 'icons', $app->getCfg( 'icons' ) );
-
 		//add alternate feed link
 		$link    = 'index.php?option=com_jem&view=eventslist&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');

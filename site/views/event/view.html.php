@@ -39,29 +39,6 @@ class JEMViewEvent extends JViewLegacy
 		$registers		= $this->get('Registers');
 		$isregistered	= $this->get('UserIsRegistered');
 
-		// canonical link (from Joomla SEF), disabled for now
-		// @todo sort out Itemid's
-		/*$router = $app->getRouter();
-		$uri     = JUri::getInstance();
-		$domain  = $params->get('domain');
-
-		if ($domain === null || $domain === '')
-		{
-			$domain = $uri->toString(array('scheme', 'host', 'port'));
-		}
-
-			$parsed = $router->parse($uri);
-			$fakelink = 'index.php?' . http_build_query($parsed);
-			//var_dump($fakelink);
-			$link = $domain . JRoute::_($fakelink, false);
-			//var_dump($link);
-
-				if ($uri !== $link)
-		{
-
-			$document->addHeadLink(($link), 'canonical');
-		}
-		*/
 
 		//get menu information
 		$menu			= $app->getMenu();
@@ -84,21 +61,13 @@ class JEMViewEvent extends JViewLegacy
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
-		//Print
-		$pop	= JRequest::getBool('pop');
 
 		$params->def('page_title', JText::_('COM_JEM_EVENT'));
-
-		if ($pop) {
-			$params->set('popup', 1);
-		}
-
-
+		
+		
 		$print	= JRequest::getBool('print');
-
-
+		
 		if ($print) {
-
 			$document = JFactory::getDocument();
 			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/print.css');
 			$document->setMetaData('robots', 'noindex, nofollow');

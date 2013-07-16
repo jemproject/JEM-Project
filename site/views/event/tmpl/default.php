@@ -26,11 +26,11 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 </script>
 
 <div id="jem" class="event_id<?php echo $this->row->did; ?> jem_event">
-	<p class="buttons">
+	<div class="buttons">
 		<?php echo JEMOutput::mailbutton($this->row->slug, 'event', $this->params); ?>
 		<?php echo JEMOutput::printbutton($this->print_link, $this->params); ?>
 		<?php echo JEMOutput::icalbutton($this->row->slug, 'event'); ?>
-	</p>
+	</div>
 
 	<?php if ($this->params->def('show_page_title', 1)) : ?>
 		<h1 class="componentheading">
@@ -264,9 +264,9 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 
 	<?php echo $this->row->pluginevent->onEventEnd; ?>
 
-	<p class="copyright">
+	<div class="copyright">
 		<?php echo JEMOutput::footer(); ?>
-	</p>
+	</div>
 
 	<?php if ($this->params->get('facebook', 0) == 1) {
 		$currenturl = JURI::current(); ?>

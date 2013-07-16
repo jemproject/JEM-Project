@@ -119,15 +119,15 @@ class JEMViewVenueevents extends JViewLegacy
 		$document->setDescription( strip_tags($venue->meta_description) );
 
 		
-		//Check if the user has access to the form
+		//Check if the user has access to the add-venueform
 		$maintainer = JEMUser::ismaintainer();
 		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess )
 		{
-			$dellink = 1;
+			$addvenuelink = 1;
 		} else {
-			$dellink = 0;
+			$addvenuelink = 0;
 		}
 
 		//Generate Venuedescription
@@ -194,7 +194,7 @@ class JEMViewVenueevents extends JViewLegacy
 		$this->venue				= $venue;
 		$this->print_link			= $print_link;
 		$this->params				= $params;
-		$this->dellink				= $dellink;
+		$this->addvenuelink		= $addvenuelink;
 		$this->limage				= $limage;
 		$this->venuedescription		= $venuedescription;
 		$this->pagination			= $pagination;

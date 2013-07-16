@@ -10,12 +10,12 @@
 defined('_JEXEC') or die;
 ?>
 <div id="jem" class="jem_categories_view">
-	<p class="buttons">
+	<div class="buttons">
 		<?php
 		echo JEMOutput::submitbutton( $this->dellink, $this->params );
 		echo JEMOutput::archivebutton( $this->params, $this->task );
 		?>
-	</p>
+	</div>
 
 
 
@@ -118,7 +118,7 @@ defined('_JEXEC') or die;
 
 	<!--copyright-->
 
-	<p class="copyright">
+	<div class="copyright">
 		<?php echo JEMOutput::footer( ); ?>
-	</p>
+	</div>
 </div>

@@ -28,8 +28,8 @@ defined('_JEXEC') or die;
 
 <!--footer-->
 
-<p class="copyright">
+<div class="copyright">
   <?php echo JEMOutput::footer( ); ?>
-</p>
+</div>
 
 </div>

@@ -12,13 +12,13 @@ defined('_JEXEC') or die;
 
 ?>
 <div id="jem" class="jem_jem">
-<p class="buttons">
+<div class="buttons">
 	<?php
 		echo JEMOutput::submitbutton( $this->dellink, $this->params );
 		echo JEMOutput::archivebutton( $this->params, $this->task );
 		echo JEMOutput::printbutton( $this->print_link, $this->params );
 	?>
-</p>
+</div>
 
 <?php if ($this->params->def( 'show_page_title', 1 )) : ?>
 
@@ -59,8 +59,8 @@ defined('_JEXEC') or die;
 </div>
 
 
-<p class="copyright">
+<div class="copyright">
 	<?php echo JEMOutput::footer( ); ?>
-</p>
+</div>
 
 </div>

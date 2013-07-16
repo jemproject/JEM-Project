@@ -27,13 +27,13 @@ $detaillink = JRoute::_('index.php?option=com_jem&view=event&id='.$this->event->
 </script>
 
 <div id="jem" class="jem_jem">
-<p class="buttons">
+<div class="buttons">
 	<?php
 		echo JEMOutput::printbutton( $this->print_link, $this->params );
 		echo JEMOutput::exportbutton( $this->event->id);
 		echo JEMOutput::backbutton( $this->backlink, $this->view );
 	?>
-</p>
+</div>
 
 <?php if ($this->params->def( 'show_page_title', 1 )) : ?>
 

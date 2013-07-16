@@ -11,15 +11,13 @@ defined('_JEXEC') or die;
 ?>
 
 <div id="jem" class="jem_categories_detailed">
-<p class="buttons">
+<div class="buttons">
 	<?php
-		if ( !$this->params->get( 'popup' ) ) : //don't show in printpopup
-			echo JEMOutput::submitbutton( $this->dellink, $this->params );
-			echo JEMOutput::archivebutton( $this->params, $this->task );
-		endif;
+		echo JEMOutput::submitbutton( $this->dellink, $this->params ); 
+		echo JEMOutput::archivebutton( $this->params, $this->task );
 		echo JEMOutput::printbutton( $this->print_link, $this->params );
 	?>
-</p>
+</div>
 
 <?php if ($this->params->get('show_page_title')) : ?>
 
@@ -118,7 +116,7 @@ endforeach;
 
 <!--copyright-->
 
-<p class="copyright">
+<div class="copyright">
 	<?php echo JEMOutput::footer( ); ?>
-</p>
+</div>
 </div>

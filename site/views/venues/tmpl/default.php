@@ -9,15 +9,15 @@
 
 defined('_JEXEC') or die;
 ?>
-<div id="jem"
-	class="jem_venues_view">
-	<p class="buttons">
+<div id="jem" class="jem_venues_view">
+	<div class="buttons">
 		<?php
-		echo JEMOutput::submitbutton( $this->dellink, $this->params );
+		/* @todo this button is disabled as we have to check the addvenue code
+		/* echo JEMOutput::addvenuebutton( $this->addvenuelink, $this->params, $this->settings ); */
 		echo JEMOutput::archivebutton( $this->params, $this->task );
 		echo JEMOutput::printbutton( $this->print_link, $this->params );
 		?>
-	</p>
+	</div>
 
 	<?php if ($this->params->def('show_page_title', 1)) : ?>
 	<h1 class='componentheading'>
@@ -140,7 +140,7 @@ defined('_JEXEC') or die;
 
 
 	<!--copyright-->
-	<p class="copyright">
+	<div class="copyright">
 		<?php echo JEMOutput::footer( ); ?>
-	</p>
+	</div>
 </div>

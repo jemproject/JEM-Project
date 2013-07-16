@@ -10,11 +10,11 @@
 defined('_JEXEC') or die;
 ?>
 <div id="jem" class="jem_jem">
-<p class="buttons">
+<div class="buttons">
 	<?php
 		echo JEMOutput::printbutton( $this->print_link, $this->params );
 	?>
-</p>
+</div>
 
 <h1 class="componentheading">
 	<?php echo $this->daydate; ?>
@@ -43,8 +43,8 @@ defined('_JEXEC') or die;
 
 
 
-<p class="copyright">
+<div class="copyright">
 	<?php echo JEMOutput::footer( ); ?>
-</p>
+</div>
 
 </div>

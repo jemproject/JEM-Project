@@ -40,7 +40,6 @@ class JEMViewCategoriesdetailed extends JViewLegacy
 		$limitstart		=  JRequest::getInt('limitstart');
 		$limit			=  JRequest::getInt('limit', $params->get('cat_num'));
 		$pathway 		=  $app->getPathWay();
-		$pop			=  JRequest::getBool('pop');
 		$task 			=  JRequest::getWord('task');
 
 		//Get data from the model
@@ -71,14 +70,6 @@ class JEMViewCategoriesdetailed extends JViewLegacy
 		$document->setTitle( $pagetitle );
 		$document->setMetadata( 'title' , $pagetitle );
 		$document->setMetadata( 'keywords' , $pagetitle );
-
-		//Print
-		$params->def( 'print', !$app->getCfg( 'hidePrint' ) );
-		$params->def( 'icons', $app->getCfg( 'icons' ) );
-
-		if ( $pop ) {
-			$params->set( 'popup', 1 );
-		}
 
 		//Check if the user has access to the form
 		$maintainer = JEMUser::ismaintainer();

@@ -77,15 +77,15 @@ class JEMViewVenues extends JViewLegacy
 		$document->setMetadata('keywords', $pagetitle );
 
 
-		//Check if the user has access to the form
+		//Check if the user has access to the addvenue-form
 		$maintainer = JEMUser::ismaintainer();
 		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess )
 		{
-			$dellink = 1;
+			$addvenuelink = 1;
 		} else {
-			$dellink = 0;
+			$addvenuelink = 0;
 		}
 
 		// Create the pagination object
@@ -95,7 +95,7 @@ class JEMViewVenues extends JViewLegacy
 		$this->rows				= $rows;
 		$this->print_link		= $print_link;
 		$this->params			= $params;
-		$this->dellink			= $dellink;
+		$this->addvenuelink			= $addvenuelink;
 		$this->pagination		= $pagination;
 		$this->item				= $item;
 		$this->jemsettings		= $jemsettings;

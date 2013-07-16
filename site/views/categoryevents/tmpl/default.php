@@ -11,9 +11,9 @@ defined('_JEXEC') or die;
 JHTML::_('behavior.modal');
 ?>
 <div id="jem" class="jem_categoryevents">
-<p class="buttons">
+<div class="buttons">
 	<?php
-		echo JEMOutput::submitbutton( $this->dellink, $this->params );
+		echo JEMOutput::submitbutton( $this->dellink, $this->params ); 
 		echo JEMOutput::archivebutton( $this->params, $this->task, $this->category->slug );
 		echo JEMOutput::mailbutton( $this->category->slug, 'categoryevents', $this->params );
 		echo JEMOutput::printbutton( $this->print_link, $this->params );
@@ -97,7 +97,7 @@ echo JEMOutput::icalbutton($this->category->id, 'categoryevents');
 
 <!--copyright-->
 
-<p class="copyright">
+<div class="copyright">
 	<?php echo JEMOutput::footer( ); ?>
-</p>
+</div>
 </div>

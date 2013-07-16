@@ -54,8 +54,6 @@ class JEMViewDay extends JViewLegacy
 		$lists['order'] = $filter_order;
 		
 		$task 		= JRequest::getWord('task');
-		
-		$pop			= JRequest::getBool('pop');
 		$pathway 		= $app->getPathWay();
 
 		//get data from model
@@ -75,9 +73,6 @@ class JEMViewDay extends JViewLegacy
 		//params
 		$params->def( 'page_title', $item->title);
 
-		if ( $pop ) {//If printpopup set true
-			$params->set( 'popup', 1 );
-		}
 
 		$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1');
 

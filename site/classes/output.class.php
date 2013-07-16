@@ -49,7 +49,7 @@ class JEMOutput {
 	 *
 	 * @param int $dellink Access of user
 	 * @param array $params needed params
-	 * @param string $view the view the user will redirected to
+	 * 
 	 **/
 	static function submitbutton($dellink, &$params)
 	{
@@ -79,6 +79,50 @@ class JEMOutput {
 
 		return;
 	}
+	
+	
+	
+	
+	/**
+	 * Writes Venue submission button
+	 *
+	 * @param int $addvenuelink Access of user
+	 * @param array $params needed params
+	 * @param $settings, retrieved from settings-table
+	 * 
+	 * Active in views: 
+	 * venueevents, venues
+	 * 
+	 **/
+	static function addvenuebutton($addvenuelink, $params, $settings)
+	{
+		$app = JFactory::getApplication();
+	
+		if ($addvenuelink == 1) {
+			JHTML::_('behavior.tooltip');
+	
+			if ($settings->icons) {
+				$image = JHTML::image("media/com_jem/images/addvenue.png",JText::_('COM_JEM_DELIVER_NEW_VENUE'));
+			} else {
+				$image = JText::_('COM_JEM_DELIVER_NEW_VENUE');
+			}
+	
+			if ($app->input->get('print','','int')) {
+				//button in popup
+				$output = '';
+			} else {
+				$link = 'index.php?view=editvenue';
+				$overlib = JText::_('COM_JEM_SUBMIT_VENUE_TIP');
+				$output = '<a href="'.JRoute::_($link).'" class="editlinktip hasTip" title="'.JText::_('COM_JEM_DELIVER_NEW_VENUE')
+				.'::'.$overlib.'">'.$image.'</a>';
+			}
+			return $output;
+		}
+	
+		return;
+	}
+	
+	
 
 	/**
 	 * Writes Archivebutton

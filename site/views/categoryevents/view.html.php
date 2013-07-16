@@ -34,7 +34,6 @@ class JEMViewCategoryevents extends JViewLegacy
 		$menu			= $app->getMenu();
 		$jemsettings 	= JEMHelper::config();
 		$db  			=  JFactory::getDBO();
-		//$item			= $menu->getActive();
 
 		JHTML::_('behavior.tooltip');
 		
@@ -59,7 +58,6 @@ class JEMViewCategoryevents extends JViewLegacy
 		$search 			= $app->getUserStateFromRequest( 'com_jem.categoryevents.search', 'search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 		$task 				= JRequest::getWord('task');
-		$pop				= JRequest::getBool('pop');
 
 
 		// table ordering
@@ -116,13 +114,6 @@ class JEMViewCategoryevents extends JViewLegacy
 		$document->setMetadata('keywords', $category->meta_keywords);
 		$document->setDescription(strip_tags($category->meta_description));
 
-		//Print function
-		$params->def('print', !$app->getCfg('hidePrint'));
-		$params->def('icons', $app->getCfg('icons'));
-
-		if ($pop) {
-			$params->set('popup', 1);
-		}
 
 		//add alternate feed link
 		$link	= 'index.php?option=com_jem&view=categoryevents&format=feed&id='.$category->id;
