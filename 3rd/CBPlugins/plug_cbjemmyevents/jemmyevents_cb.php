@@ -188,7 +188,7 @@ class jemmyeventsTab extends cbTabHandler {
 			. ' LEFT JOIN `#__jem_venues` AS l ON l.id = a.locid ' 
 			. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id ' 
 			. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
-			. ' WHERE (a.published = 1 OR a.published = 0) AND c.published = 1 AND a.created_by = '.$userid.' AND c.access <= '.$gid
+			. ' WHERE a.published = 1 AND c.published = 1 AND a.created_by = '.$userid.' AND c.access <= '.$gid
 			. ' GROUP BY a.id'
 			. ' ORDER BY a.dates'
 			;
@@ -351,7 +351,7 @@ class jemmyeventsTab extends cbTabHandler {
 		$result_titles=explode(" " , $result->title);
 		$result_title=implode("-" , $result_titles);
 		$return .= "\n\t\t\t<td class='jemmyeventsCBTabTableTitle'>";
-		$return .= "\n\t\t\t\t<a href=\"". JRoute::_('index.php?option=com_jem&view=details&id='.$result->eventid.'&Itemid='.$S_Itemid1) ."\">{$result->title}</a>";
+		$return .= "\n\t\t\t\t<a href=\"". JRoute::_('index.php?option=com_jem&view=event&id='.$result->eventid.'&Itemid='.$S_Itemid1) ."\">{$result->title}</a>";
 		$return .= "\n\t\t\t</td>";
 
 		/* Category field */
@@ -448,7 +448,7 @@ else
 	
 	
 	
-	function getEditTabDisabled($tab,$user,$ui) 
+	function getEditTabDISABLED($tab,$user,$ui) 
 	{
 		
 		/* loading global variables */
@@ -478,10 +478,12 @@ else
 			$result_title=null;
 			$base_url = $this->_getAbsURLwithParam(array());
 			
+			
 			$event_image = $params->get('event_image' );
 			$end_date = $params->get('end_date' );
 			$start_date = $params->get('start_date');
-			
+			$event_categories = $params->get('event_categories');
+			$event_attending = $params->get('event_attending');
 			
 			/* load css */
 			$_CB_framework->addCustomHeadTag("<link href=\"".$_CB_framework->getCfg( 'live_site' )."/components/com_comprofiler/plugin/user/plug_cbjemmyevents/jemmyevents_cb.css\" rel=\"stylesheet\" type=\"text/css\" />");
@@ -572,6 +574,10 @@ else
 			
 			//	$user_type=$results[0]->gid ;
 			if ($userid == $user->id) {
+				
+				
+				if ($user->gid == 8)
+				{
 				$url = "index.php?option=com_jem&view=editevent&Itemid=$S_Itemid1" ;
 				$url1 = JRoute::_($url);
 				$return .= "<a href='$url1' class='eventCBAddLink'>". _JEMMYEVENTS_ADDNEW. "</a>";
@@ -587,6 +593,7 @@ else
 				}
 				if ($sum > 0) {
 					$return .="<br><br>".$sum._JEMMYEVENTS_PUB."<br>";
+				}
 				}
 			}
 			
@@ -644,7 +651,7 @@ else
 		
 		
 		/* Attendees */
-			if (event_attending){
+			if ($event_attending){
 		$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableExp'>";
 		$return .= "\n\t\t\t\t" . _JEMMYEVENTS_REGISTER;
 		$return .= "\n\t\t\t</th>";
@@ -707,7 +714,7 @@ else
 		$return .= "\n\t\t\t</td>";
 
 		/* Category field */
-		if (event_categories){
+		if ($event_categories){
 		$return .= "\n\t\t\t<td class='jemmyeventsCBTabTableCat'>";
 		$return .= "\n\t\t\t\t{$cat}";
 		$return .= "\n\t\t\t</td>";

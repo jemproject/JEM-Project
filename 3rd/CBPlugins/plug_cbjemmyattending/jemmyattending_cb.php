@@ -167,35 +167,6 @@ class jemmyattendingTab extends cbTabHandler {
 
 	
 
-		/* Info for adding new event
-		 * 
-		 * When user is admin/manager group a link will be displayed
-		 * not used at the moment 
-		 */
-										
-		// entry
-		if ($userid == $user->id) 
-		{
-		
-		$url1 = JRoute::_("index.php?option=com_jem&view=editevent&Itemid=$S_Itemid");
-		$userj = JFactory::getuser();
-		
-		
-		foreach($userj->groups as $key => $value)
-		{
-			if( !in_array( $key, array('Super Users', 'Administrator') ) )
-				{
-					$return .= '';
-				}
-			else
-				{
-					$return .= "<a href='$url1' class='jemmyattendingCBAddLink'>". _JEMMYATTENDING_ADDNEW. "</a>";
-				}
-		} //end foreach																								
-		
-		} 
-
-
 		/* Headers
 		 * 
 		 * The classes are retrieved from:
@@ -208,6 +179,7 @@ class jemmyattendingTab extends cbTabHandler {
 		 * - add a new string, like: _EVENT_NEWNAME
 		 * - add the translation to the language file
 		 */
+		
 		
 		
 		/* start of form */
@@ -291,7 +263,7 @@ class jemmyattendingTab extends cbTabHandler {
 		
 		/* Title field */
 		$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableTitle'>";
-		$return .= "\n\t\t\t\t<a href=\"". JRoute::_('index.php?option=com_jem&view=details&id='.$result->eventid.'&Itemid='.$S_Itemid) ."\">{$result->title}</a>";
+		$return .= "\n\t\t\t\t<a href=\"". JRoute::_('index.php?option=com_jem&view=event&id='.$result->eventid.'&Itemid='.$S_Itemid) ."\">{$result->title}</a>";
 		$return .= "\n\t\t\t</td>";
 	
 		
