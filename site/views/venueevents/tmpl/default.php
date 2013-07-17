@@ -13,9 +13,8 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 <div id="jem" class="jem_venue_events">
 <div class="buttons">
 	<?php
-	
-		/* @todo this button is disabled as we have to check the addvenue code 
-		/* echo JEMOutput::addvenuebutton( $this->addvenuelink, $this->params, $this->jemsettings ); */
+		echo JEMOutput::addvenuebutton( $this->addvenuelink, $this->params, $this->jemsettings );
+		echo JEMOutput::submitbutton( $this->dellink, $this->params );
 		echo JEMOutput::archivebutton( $this->params, $this->task, $this->venue->slug );
 		echo JEMOutput::mailbutton( $this->venue->slug, 'venueevents', $this->params );
 		echo JEMOutput::printbutton( $this->print_link, $this->params );

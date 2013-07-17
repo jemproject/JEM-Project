@@ -120,6 +120,10 @@ CREATE TABLE IF NOT EXISTS `#__jem_groups` (
 `description` mediumtext NOT NULL,
 `checked_out` int(11) NOT NULL default '0',
 `checked_out_time` datetime NOT NULL default '0000-00-00 00:00:00',
+`addvenue` int(11) NOT NULL,
+`addevent` int(11) NOT NULL,
+`publishvenue` int(11) NOT NULL,
+`editvenue` int(11) NOT NULL,
 PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 

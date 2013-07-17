@@ -113,6 +113,44 @@ defined('_JEXEC') or die;
 				</tr>
 			</table>
 			<?php
+				$title2 = JText::_( 'COM_JEM_GROUP_PERMISSIONS' );
+				echo JHtml::_('sliders.panel', $title2, 'group');
+				?>
+				<table>
+					<tr>
+						<td>
+						<label for="addvenue"> <?php echo JText::_( 'COM_JEM_ADDVENUE' ).':'; ?></label>
+						</td>
+						<td>
+						<?php 
+				echo JHTML::_('select.booleanlist', 'addvenue', 'class="inputbox"', $this->row->addvenue, 'JYES', 'JNO' );
+						?>
+						</td>
+					</tr>
+					<tr>
+						<td>
+						<label for="publishvenue"> <?php echo JText::_( 'COM_JEM_PUBLISHVENUE' ).':'; ?></label>
+						</td>
+						<td>
+						<?php 
+				echo JHTML::_('select.booleanlist', 'publishvenue', 'class="inputbox"', $this->row->publishvenue, 'JYES', 'JNO' );
+						?>
+						</td>
+					</tr>
+					<tr>
+						<td>
+						<label for="editvenue"> <?php echo JText::_( 'COM_JEM_EDITVENUE' ).':'; ?></label>
+						</td>
+						<td>
+						<?php 
+				echo JHTML::_('select.booleanlist', 'editvenue', 'class="inputbox"', $this->row->editvenue, 'JYES', 'JNO' );
+						?>
+						</td>
+					</tr>
+				</table>
+			
+			
+			<?php
 			echo JHtml::_('sliders.end');
 			?>
 		</td>

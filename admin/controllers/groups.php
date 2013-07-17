@@ -155,5 +155,77 @@ class JEMControllerGroups extends JEMController
 
 		$this->setRedirect( 'index.php?option=com_jem&view=groups', $msg );
 	}
+	
+	
+	
+	/**
+	 * Logic to publish events
+	 *
+	 * @access public
+	 * @return void
+	 * @since 0.9
+	 */
+	function enableaddvenue()
+	{
+		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
+	
+		if (!is_array( $cid ) || count( $cid ) < 1) {
+			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM'));
+		}
+	
+		$model = $this->getModel('groups');
+		if(!$model->addvenue($cid, 1)) {
+			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
+		}
+	
+	
+		$total = count( $cid );
+		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_PUBLISHED');
+	
+		 $this->setRedirect( 'index.php?option=com_jem&view=groups', $msg );
+	}
+	
+	
+	/**
+	 * Logic to unpublish events
+	 *
+	 * @access public
+	 * @return void
+	 * @since 0.9
+	 */
+	function disableaddvenue()
+	{
+		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
+	
+		if (!is_array( $cid ) || count( $cid ) < 1) {
+			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM'));
+		}
+	
+		$model = $this->getModel('groups');
+		if(!$model->addvenue($cid, 0)) {
+			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
+		}
+	
+		$total = count( $cid );
+		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_UNPUBLISHED');
+	
+		 $this->setRedirect( 'index.php?option=com_jem&view=groups', $msg );
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
 ?>

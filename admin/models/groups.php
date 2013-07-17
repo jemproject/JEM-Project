@@ -150,6 +150,41 @@ class JEMModelGroups extends JModelLegacy
 		return $query;
 	}
 
+	
+	/**
+	 * Method to enable/disable rights
+	 * for submitting venue
+	 *
+	 * @access	public
+	 * @return	boolean	True on success
+	 * @since	1.5
+	 */
+	function addvenue($cid = array(), $publish = 1)
+	{
+		$user 	= JFactory::getUser();
+		$userid = (int) $user->get('id');
+	
+		if (count($cid))
+		{
+			$cids = implode(',', $cid);
+	
+			$query = 'UPDATE #__jem_groups'
+					. ' SET addvenue = '. (int) $publish
+					. ' WHERE id IN ('. $cids .')'
+					//. ' AND (checked_out = 0 OR (checked_out = ' .$userid. '))'
+					;
+	
+					$this->_db->setQuery($query);
+	
+					if (!$this->_db->query()) {
+					$this->setError($this->_db->getErrorMsg());
+					return false;
+			}
+		}
+	}
+	
+	
+	
 	/**
 	 * Build the order clause
 	 *

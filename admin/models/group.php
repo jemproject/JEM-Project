@@ -33,6 +33,14 @@ class JEMModelGroup extends JModelLegacy
 	 */
 	var $_data = null;
 
+	
+	/**
+	 * Groups data array
+	 *
+	 * @var array
+	 */
+	var $_groups = null;
+	
 	/**
 	 * Members data string
 	 *
@@ -90,6 +98,8 @@ class JEMModelGroup extends JModelLegacy
 		return $this->_data;
 	}
 
+	
+	
 	/**
 	 * Method to load content data
 	 *
@@ -244,6 +254,9 @@ class JEMModelGroup extends JModelLegacy
 				$group->id					= 0;
 				$group->name				= null;
 				$group->description			= null;
+				$group->addvenue			= null;
+				$group->publishvenue			= null;
+				$group->editvenue			= null;
 				$this->_data				= $group;
 				return (boolean) $this->_data;
 			}

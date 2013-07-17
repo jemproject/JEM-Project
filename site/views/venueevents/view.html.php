@@ -119,17 +119,29 @@ class JEMViewVenueevents extends JViewLegacy
 		$document->setDescription( strip_tags($venue->meta_description) );
 
 		
-		//Check if the user has access to the add-venueform
+		//Check if the user has access to the add-eventform
 		$maintainer = JEMUser::ismaintainer();
 		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess )
 		{
+			$dellink = 1;
+		} else {
+			$dellink = 0;
+		}
+
+		//Check if the user has access to the add-venueform
+		$maintainer2 = JEMUser::addvenuegroups();
+		$genaccess2 	= JEMUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
+		if ($maintainer2 || $genaccess2 )
+		{
 			$addvenuelink = 1;
 		} else {
 			$addvenuelink = 0;
 		}
-
+		
+		
+		
 		//Generate Venuedescription
 		if (!$venue->locdescription == '' || !$venue->locdescription == '<br />') {
 			//execute plugins
@@ -139,8 +151,20 @@ class JEMViewVenueevents extends JViewLegacy
 			$results = $app->triggerEvent( 'onContentPrepare', array('com_jem.venueevents', &$venue, &$params, 0 ));
 			$venuedescription = $venue->text;
 		}
-		$allowedtoeditvenue = JEMUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
+		
+		
+		//Check if the user has access to the edit-venueform
+		$maintainer3 = JEMUser::editvenuegroups();
+		$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
+		if ($maintainer3 || $genaccess3 )
+		{
+			$allowedtoeditvenue = 1;
+		} else {
+			$allowedtoeditvenue = 0;
+		}
+		
 
+		
 		//build the url
 		if(!empty($venue->url) && strtolower(substr($venue->url, 0, 7)) != "http://") {
 			$venue->url = 'http://'.$venue->url;
@@ -195,6 +219,7 @@ class JEMViewVenueevents extends JViewLegacy
 		$this->print_link			= $print_link;
 		$this->params				= $params;
 		$this->addvenuelink		= $addvenuelink;
+		$this->dellink		= $dellink;
 		$this->limage				= $limage;
 		$this->venuedescription		= $venuedescription;
 		$this->pagination			= $pagination;

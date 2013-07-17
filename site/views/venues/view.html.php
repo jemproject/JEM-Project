@@ -77,11 +77,21 @@ class JEMViewVenues extends JViewLegacy
 		$document->setMetadata('keywords', $pagetitle );
 
 
-		//Check if the user has access to the addvenue-form
+		//Check if the user has access to the add-eventform
 		$maintainer = JEMUser::ismaintainer();
 		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess )
+		{
+			$dellink = 1;
+		} else {
+			$dellink = 0;
+		}
+
+		//Check if the user has access to the add-venueform
+		$maintainer2 = JEMUser::addvenuegroups();
+		$genaccess2 	= JEMUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
+		if ($maintainer2 || $genaccess2 )
 		{
 			$addvenuelink = 1;
 		} else {
@@ -96,6 +106,7 @@ class JEMViewVenues extends JViewLegacy
 		$this->print_link		= $print_link;
 		$this->params			= $params;
 		$this->addvenuelink			= $addvenuelink;
+		$this->dellink		= $dellink;
 		$this->pagination		= $pagination;
 		$this->item				= $item;
 		$this->jemsettings		= $jemsettings;

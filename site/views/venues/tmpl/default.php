@@ -12,8 +12,8 @@ defined('_JEXEC') or die;
 <div id="jem" class="jem_venues_view">
 	<div class="buttons">
 		<?php
-		/* @todo this button is disabled as we have to check the addvenue code
-		/* echo JEMOutput::addvenuebutton( $this->addvenuelink, $this->params, $this->settings ); */
+		echo JEMOutput::addvenuebutton( $this->addvenuelink, $this->params, $this->jemsettings );
+		echo JEMOutput::submitbutton( $this->dellink, $this->params );
 		echo JEMOutput::archivebutton( $this->params, $this->task );
 		echo JEMOutput::printbutton( $this->print_link, $this->params );
 		?>

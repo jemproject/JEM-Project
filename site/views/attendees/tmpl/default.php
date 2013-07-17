@@ -143,10 +143,6 @@ $detaillink = JRoute::_('index.php?option=com_jem&view=event&id='.$this->event->
 		</tbody>
 
 	</table>
-
-	<p class="copyright">
-		<?php echo JEMOutput::footer( ); ?>
-
 		<?php echo JHTML::_( 'form.token' ); ?>
 		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="boxchecked" value="0" />
@@ -156,8 +152,12 @@ $detaillink = JRoute::_('index.php?option=com_jem&view=event&id='.$this->event->
 		<input type="hidden" name="Itemid" value="<?php echo $this->item->id;?>" />
 		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-	</p>
+	
 </form>
 <div class="pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>
+</div>
+
+<div class="copyright">
+<?php echo JEMOutput::footer( ); ?>
 </div>

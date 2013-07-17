@@ -112,7 +112,7 @@ class JEMOutput {
 				$output = '';
 			} else {
 				$link = 'index.php?view=editvenue';
-				$overlib = JText::_('COM_JEM_SUBMIT_VENUE_TIP');
+				$overlib = JText::_('COM_JEM_SUBMIT_VENUE_DESC');
 				$output = '<a href="'.JRoute::_($link).'" class="editlinktip hasTip" title="'.JText::_('COM_JEM_DELIVER_NEW_VENUE')
 				.'::'.$overlib.'">'.$image.'</a>';
 			}
