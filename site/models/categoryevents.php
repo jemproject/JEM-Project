@@ -132,20 +132,14 @@ class JEMModelCategoryevents extends JModelLegacy
 	 */
 	function &getData()
 	{
-		$pop	= JRequest::getBool('pop');
 		$user = JFactory::getUser();
 
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
 		{
-			$query = $this->_buildQuery();
-
-			if ($pop) {
-				$this->_data = $this->_getList($query);
-			} else {
 				$pagination = $this->getPagination();
+				$query = $this->_buildQuery();
 				$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
-			}
 		}
 
 		if ($this->_data)
