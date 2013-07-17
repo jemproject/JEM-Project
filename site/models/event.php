@@ -314,15 +314,15 @@ class JEMModelEvent extends JModelLegacy
 
 		$model = $this->setId($event);
 
-		$event = $this->getEvent();
+		$event2 = $this->getEvent();
 
-		if ($event->maxplaces > 0) // there is a max
+		if ($event2->maxplaces > 0) // there is a max
 		{
 			// check if the user should go on waiting list
 			$attendees = $this->getRegisters();
-			if (count($attendees) >= $event->maxplaces)
+			if (count($attendees) >= $event2->maxplaces)
 			{
-				if (!$event->waitinglist) {
+				if (!$event2->waitinglist) {
 					$this->setError(JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'));
 					return false;
 				}
