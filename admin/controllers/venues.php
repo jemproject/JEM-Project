@@ -284,5 +284,26 @@ class JEMControllerVenues extends JEMController
 
 		$this->setRedirect( $link, $msg );
 	}
+	
+	
+	/**
+	 * Method to checkin/unlock the item
+	 *
+	 * @access	public
+	 * @return	boolean	True on success
+	 * @since	0.9
+	 */
+	function checkin()
+	{
+		$model = $this->getModel('venue');
+		$model->checkin();
+		
+		$msg	= JText::_( '');
+		$link 	= 'index.php?option=com_jem&view=venues';
+		$this->setRedirect( $link, $msg );
+		
+	}
+	
+	
 }
 ?>

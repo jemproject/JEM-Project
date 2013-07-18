@@ -119,7 +119,7 @@ defined('_JEXEC') or die;
 				<table>
 					<tr>
 						<td>
-						<label for="addvenue"> <?php echo JText::_( 'COM_JEM_ADDVENUE' ).':'; ?></label>
+						<span class="hasTip" title="<?php echo JText::_( 'COM_JEM_GROUP_ADDVENUE' ); ?>::<?php echo JText::_('COM_JEM_GROUP_ADDVENUE_DESC'); ?> "> <?php echo JText::_( 'COM_JEM_GROUP_ADDVENUE' ); ?></span>
 						</td>
 						<td>
 						<?php 
@@ -129,7 +129,7 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td>
-						<label for="publishvenue"> <?php echo JText::_( 'COM_JEM_PUBLISHVENUE' ).':'; ?></label>
+						<span class="hasTip" title="<?php echo JText::_( 'COM_JEM_GROUP_PUBLISHVENUE' ); ?>::<?php echo JText::_('COM_JEM_GROUP_PUBLISHVENUE_DESC'); ?> "> <?php echo JText::_( 'COM_JEM_GROUP_PUBLISHVENUE' ); ?></span>
 						</td>
 						<td>
 						<?php 
@@ -139,7 +139,7 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td>
-						<label for="editvenue"> <?php echo JText::_( 'COM_JEM_EDITVENUE' ).':'; ?></label>
+						<span class="hasTip" title="<?php echo JText::_( 'COM_JEM_GROUP_EDITVENUE' ); ?>::<?php echo JText::_('COM_JEM_GROUP_EDITVENUE_DESC'); ?> "> <?php echo JText::_( 'COM_JEM_GROUP_EDITVENUE' ); ?></span>
 						</td>
 						<td>
 						<?php 

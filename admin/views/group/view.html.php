@@ -27,6 +27,7 @@ class JEMViewGroup extends JViewLegacy {
 
 		// Load the form validation behavior
 		JHTML::_('behavior.formvalidation');
+		JHTML::_('behavior.tooltip');
 
 		//initialise variables
 		$document	=  JFactory::getDocument();

@@ -11,6 +11,9 @@ defined('_JEXEC') or die;
 $listOrder	= $this->escape($this->state->get('list.ordering'));
 $listDirn	= $this->escape($this->state->get('list.direction'));
 
+$user		= JFactory::getUser();
+$userId		= $user->get('id');
+
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=venues'); ?>" method="post" name="adminForm" id="adminForm">
@@ -64,32 +67,32 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 		<?php
 		foreach ($this->rows as $i => $row) :
 			$link 		= 'index.php?option=com_jem&amp;controller=venues&amp;task=edit&amp;cid[]='. $row->id;
-			$published 	= JHTML::_('grid.published', $row, $i );
+			$published 	= JHTML::_('jgrid.published', $row->published, $i );
 			$ordering	= ($listOrder == 'a.ordering');
+			$canCheckin = $user->authorise('core.manage',		'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
    		?>
 		<tr class="row<?php echo $i % 2; ?>">
 			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 			<td align="left">
-				<?php
-				if ( $row->checked_out && ( $row->checked_out != $this->user->get('id') ) ) {
-					echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8');
-				} else {
-					?>
-					<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_VENUE' );?>::<?php echo $row->venue; ?>">
-					<a href="<?php echo $link; ?>">
-					<?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>
-					</a></span>
-				<?php
-				}
-				?>
+			
+			
+				<?php if ($row->checked_out) : ?>
+						<?php echo JHtml::_('jgrid.checkedout', $i, $row->editor, $row->checked_out_time, '', $canCheckin); ?>
+					<?php endif; ?>
+						<a href="<?php echo $link; ?>">
+							<?php echo $this->escape($row->venue); ?></a>
+				
+					<p class="smallsub">
+						<?php echo JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($row->alias));?></p>
+				
 			</td>
 			<td>
 				<?php
 				if (JString::strlen($row->alias) > 25) {
-					echo JString::substr( htmlspecialchars($row->alias, ENT_QUOTES, 'UTF-8'), 0 , 25).'...';
+					echo JString::substr( JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($row->alias), 0 , 25)).'...';
 				} else {
-					echo htmlspecialchars($row->alias, ENT_QUOTES, 'UTF-8');
+					echo JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($row->alias));
 				}
 				?>
 			</td>
