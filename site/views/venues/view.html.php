@@ -15,14 +15,12 @@ jimport( 'joomla.application.component.view');
  * HTML View class for the Venues View
  *
  * @package JEM
- * @since 0.9
 */
 class JEMViewVenues extends JViewLegacy
 {
 	/**
 	 * Creates the Venuesview
 	 *
-	 * @since 0.9
 	 */
 	function display( $tpl = null )
 	{
@@ -42,14 +40,9 @@ class JEMViewVenues extends JViewLegacy
 
 		// Request variables
 		$task 			= JRequest::getWord('task');
-
 		$rows 		=  $this->get('Data');
 		$total 		=  $this->get('Total');
 
-		//Add needed scripts if the lightbox effect is enabled
-		if ($jemsettings->lightbox == 1) {
-			JHTML::_('behavior.modal');
-		}
 
 		//add alternate feed link
 		$link    = 'index.php?option=com_jem&view=venues&format=feed';
@@ -77,15 +70,15 @@ class JEMViewVenues extends JViewLegacy
 		$document->setMetadata('keywords', $pagetitle );
 
 
-		//Check if the user has access to the add-eventform
+		// Check if the user has access to the add-eventform		
 		$maintainer = JEMUser::ismaintainer();
 		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess )
 		{
-			$dellink = 1;
+			$addeventlink = 1;
 		} else {
-			$dellink = 0;
+			$addeventlink = 0;
 		}
 
 		//Check if the user has access to the add-venueform
@@ -106,7 +99,7 @@ class JEMViewVenues extends JViewLegacy
 		$this->print_link		= $print_link;
 		$this->params			= $params;
 		$this->addvenuelink			= $addvenuelink;
-		$this->dellink		= $dellink;
+		$this->addeventlink		= $addeventlink;
 		$this->pagination		= $pagination;
 		$this->item				= $item;
 		$this->jemsettings		= $jemsettings;

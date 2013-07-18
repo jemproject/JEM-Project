@@ -15,14 +15,12 @@ jimport( 'joomla.application.component.view');
  * HTML View class for the Venueevents View
  *
  * @package JEM
- * @since 0.9
 */
 class JEMViewVenueevents extends JViewLegacy
 {
 	/**
 	 * Creates the Venueevents View
 	 *
-	 * @since 0.9
 	 */
 	function display( $tpl = null )
 	{
@@ -80,11 +78,6 @@ class JEMViewVenueevents extends JViewLegacy
 			$noevents = 0;
 		}
 
-		// Add needed scripts if the lightbox effect is enabled
-		if ($jemsettings->lightbox == 1) {
-			JHTML::_('behavior.modal');
-		}
-
 		//Get image
 		$limage = JEMImage::flyercreator($venue->locimage, 'venue');
 
@@ -125,9 +118,9 @@ class JEMViewVenueevents extends JViewLegacy
 
 		if ($maintainer || $genaccess )
 		{
-			$dellink = 1;
+			$addeventlink = 1;
 		} else {
-			$dellink = 0;
+			$addeventlink = 0;
 		}
 
 		//Check if the user has access to the add-venueform
@@ -219,7 +212,7 @@ class JEMViewVenueevents extends JViewLegacy
 		$this->print_link			= $print_link;
 		$this->params				= $params;
 		$this->addvenuelink		= $addvenuelink;
-		$this->dellink		= $dellink;
+		$this->addeventlink		= $addeventlink;
 		$this->limage				= $limage;
 		$this->venuedescription		= $venuedescription;
 		$this->pagination			= $pagination;

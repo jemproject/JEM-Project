@@ -44,9 +44,6 @@ class JEMOutput {
 	/**
 	 * Writes Event submission button
 	 *
-	 * @author Christoph Lukes
-	 * @since 0.9
-	 *
 	 * @param int $dellink Access of user
 	 * @param array $params needed params
 	 * 
@@ -84,7 +81,7 @@ class JEMOutput {
 	
 	
 	/**
-	 * Writes Venue submission button
+	 * Writes addvenuebutton
 	 *
 	 * @param int $addvenuelink Access of user
 	 * @param array $params needed params
@@ -112,7 +109,7 @@ class JEMOutput {
 				$output = '';
 			} else {
 				$link = 'index.php?view=editvenue';
-				$overlib = JText::_('COM_JEM_SUBMIT_VENUE_DESC');
+				$overlib = JText::_('COM_JEM_DELIVER_NEW_VENUE_DESC');
 				$output = '<a href="'.JRoute::_($link).'" class="editlinktip hasTip" title="'.JText::_('COM_JEM_DELIVER_NEW_VENUE')
 				.'::'.$overlib.'">'.$image.'</a>';
 			}
@@ -127,13 +124,12 @@ class JEMOutput {
 	/**
 	 * Writes Archivebutton
 	 *
-	 * @author Christoph Lukes
-	 * @since 0.9
-	 *
-	 * @param int $oldevent Archive used or not
 	 * @param array $params needed params
 	 * @param string $task The current task
-	 * @param int $categid The cat id
+	 * 
+	 * Views:
+	 * Categories, Categoriesdetailed, Categoryevents, Eventslist, Search, Venueevents, Venues
+	 * 
 	 */
 	static function archivebutton(&$params, $task = NULL, $id = NULL)
 	{
@@ -197,7 +193,10 @@ class JEMOutput {
 	 * @param array $params
 	 * @param int $allowedtoedit
 	 * @param string $view
-	 * @since 0.9
+	 * 
+	 * Views:
+	 * Event, Venueevents
+	 * 
 	 */
 	static function editbutton($Itemid, $id, &$params, $allowedtoedit, $view)
 	{
@@ -205,7 +204,6 @@ class JEMOutput {
 		$settings = JEMHelper::config();
 
 		if ($allowedtoedit) {
-			// if (((JEMUser::ismaintainer()) && (JEMUser::groupmaintained($id)==true))|| (JEMUser::hasadminrights()== true) || (JEMUser::groupmaintained($id)==false)) {
 			JHTML::_('behavior.tooltip');
 
 			switch ($view)
@@ -248,7 +246,6 @@ class JEMOutput {
 	 *
 	 * @param string $print_link
 	 * @param array $params
-	 * @since 0.9
 	 */
 	static function printbutton($print_link, &$params)
 	{
@@ -259,7 +256,7 @@ class JEMOutput {
 
 			$status = 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no';
 
-			// checks template image directory for image, if non found default are loaded
+			
 			if ($settings->icons) {
 				$image = JHTML::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), NULL, true);
 			} else {
@@ -272,7 +269,6 @@ class JEMOutput {
 				$text = JText::_('COM_JEM_PRINT');
 				$title = 'title='.JText::_('JGLOBAL_PRINT');
 				$pimage = JHTML::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), $title, true);
-				//$output = '<a href="#" onclick="window.print();return false;" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 				$output = '<a href="#" onclick="window.print();return false;">'.$pimage.'</a>';
 			} else {
 				//button in view
@@ -290,8 +286,11 @@ class JEMOutput {
 	 * Creates the email button
 	 *
 	 * @param object $slug
+	 * @param $view
 	 * @param array $params
-	 * @since 0.9
+	 * 
+	 * Views:
+	 * Categoryevents, Event, Venueevents
 	 */
 	static function mailbutton($slug, $view, $params)
 	{
@@ -339,7 +338,6 @@ class JEMOutput {
 	 *
 	 * @param object $slug
 	 * @param array $params
-	 * @since 0.9
 	 */
 	static function icalbutton($slug, $view)
 	{
@@ -348,7 +346,7 @@ class JEMOutput {
 		if ($settings->events_ical == 1) {
 			JHTML::_('behavior.tooltip');
 
-			// checks template image directory for image, if non found default are loaded
+	
 			if ($settings->icons) {
 				$image = JHTML::image("media/com_jem/images/iCal2.0.png",JText::_('COM_JEM_EXPORT_ICS'));
 			} else {
@@ -375,6 +373,9 @@ class JEMOutput {
 	
 	/**
 	 * Creates the publish button
+	 * 
+	 * View: 
+	 * Myevents
 	 *
 	 */
 	static function publishbutton()
@@ -384,7 +385,6 @@ class JEMOutput {
 		
 			JHTML::_('behavior.tooltip');
 	
-			// checks template image directory for image, if non found default are loaded
 			
 			$image = JHTML::image("media/com_jem/images/publish.png",JText::_('COM_JEM_PUBLISH'));
 	
@@ -407,6 +407,9 @@ class JEMOutput {
 	
 	/**
 	 * Creates the trash button
+	 * 
+	 * View:
+	 * Myevents
 	 *
 	 */
 	static function trashbutton()
@@ -439,6 +442,9 @@ class JEMOutput {
 	
 	/**
 	 * Creates the unpublish button
+	 * 
+	 * View:
+	 * Myevents
 	 *
 	 */
 	static function unpublishbutton()
@@ -472,7 +478,9 @@ class JEMOutput {
 	
 	/**
 	 * Creates the export button
-	 * view=attendee
+	 * 
+	 * view:
+	 * attendees
 	 *
 	 */
 	static function exportbutton($eventid)
@@ -506,7 +514,9 @@ class JEMOutput {
 	
 	/**
 	 * Creates the back button
-	 * view=attendee
+	 * 
+	 * view:
+	 * attendees
 	 *
 	 */
 	static function backbutton($backlink, $view)
@@ -547,9 +557,7 @@ class JEMOutput {
 	 * Creates the map button
 	 *
 	 * @param obj $data
-	 * @param obj $settings
 	 *
-	 * @since 0.9
 	 */
 	static function mapicon($data)
 	{
@@ -642,11 +650,9 @@ class JEMOutput {
 	 * Creates the flyer
 	 *
 	 * @param obj $data
-	 * @param obj $settings
 	 * @param array $image
 	 * @param string $type
 	 *
-	 * @since 0.9
 	 */
 	static function flyer($data, $image, $type)
 	{
@@ -704,7 +710,6 @@ class JEMOutput {
 	 *
 	 * @param string $country
 	 *
-	 * @since 0.9
 	 */
 	static function getFlag($country)
 	{
@@ -728,7 +733,6 @@ class JEMOutput {
 	 * @param string $format
 	 * @return string $formatdate
 	 *
-	 * @since 0.9
 	 */
 	static function formatdate($date, $format = "")
 	{
@@ -750,7 +754,6 @@ class JEMOutput {
 	 * @param string $time
 	 * @return string $formattime
 	 *
-	 * @since 0.9
 	 */
 	static function formattime($time)
 	{

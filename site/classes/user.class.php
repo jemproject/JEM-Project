@@ -13,14 +13,11 @@ defined('_JEXEC') or die;
  * Holds all authentication logic
  *
  * @package JEM
- * @since 0.9
  */
 class JEMUser {
 	/**
 	 * Checks access permissions of the user regarding on the groupid
 	 *
-	 * @author Christoph Lukes
-	 * @since 0.9
 	 *
 	 * @param int $recurse
 	 * @param int $level
@@ -46,8 +43,6 @@ class JEMUser {
 	/**
 	 * Checks if the user is allowed to edit an item
 	 *
-	 * @author Christoph Lukes
-	 * @since 0.9
 	 *
 	 * @param int $allowowner
 	 * @param int $ownerid
@@ -71,8 +66,6 @@ class JEMUser {
 	/**
 	 * Checks if the user is a superuser
 	 * A superuser will allways have access if the feature is activated
-	 *
-	 * @since 0.9
 	 * 
 	 * @return boolean True on success
 	 */
@@ -97,8 +90,6 @@ class JEMUser {
 	 *
 	 * We could use the validate_user method instead of this to allow to set a groupid
 	 * Not sure if this is a good idea
-	 *
-	 * @since 0.9
 	 * 
 	 * @return boolean True on success
 	 */
@@ -166,8 +157,9 @@ class JEMUser {
 	
 	
 	/**
-	 * Checks if a group is allowed to create venues 
-	 * 
+	 * Checks if an user is a groupmember and if so
+	 * if the group is allowed to add-venues
+	 *
 	 */
 	static function addvenuegroups() {
 		//lets look if the user is a maintainer
@@ -208,7 +200,8 @@ class JEMUser {
 	
 	
 	/**
-	 * Checks if a group is allowed to submit venues
+	 * Checks if an user is a groupmember and if so
+	 * if the group is allowed to publish-venues
 	 *
 	 */
 		static function publishvenuegroups() {
@@ -219,7 +212,7 @@ class JEMUser {
 	
 		/*
 		 * just a basic check to see if the current user is in an usergroup with
-		* access for submitting venues
+		* access for publishing venues
 		*
 		* if a result then return true, otherwise false
 		*
@@ -247,7 +240,8 @@ class JEMUser {
 	
 	
 	/**
-	 * Checks if a group is allowed to submit venues
+	 * Checks if an user is a groupmember and if so
+	 * if the group is allowed to edit-venues
 	 *
 	 */
 	static function editvenuegroups() {
@@ -258,7 +252,7 @@ class JEMUser {
 	
 		/*
 		 * just a basic check to see if the current user is in an usergroup with
-		* access for submitting venues
+		* access for editing venues
 		*
 		* if a result then return true, otherwise false
 		*

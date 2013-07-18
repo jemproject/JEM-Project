@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 	<div class="buttons">
 		<?php
 		echo JEMOutput::addvenuebutton( $this->addvenuelink, $this->params, $this->jemsettings );
-		echo JEMOutput::submitbutton( $this->dellink, $this->params );
+		echo JEMOutput::submitbutton( $this->addeventlink, $this->params );
 		echo JEMOutput::archivebutton( $this->params, $this->task );
 		echo JEMOutput::printbutton( $this->print_link, $this->params );
 		?>
@@ -34,10 +34,15 @@ defined('_JEXEC') or die;
 		</a>
 	</h2>
 
+	
+	<!-- FLYER -->
 	<?php
 	echo JEMOutput::flyer( $row, $row->limage, 'venue' );
 	?>
 
+	
+	<!--  -->
+	
 	<dl class="location floattext">
 		<?php if (($this->jemsettings->showdetlinkvenue == 1) && (!empty($row->url))) : ?>
 		<dt class="venue_website">

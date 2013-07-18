@@ -155,9 +155,6 @@ class JEMModelGroups extends JModelLegacy
 	 * Method to enable/disable rights
 	 * for submitting venue
 	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 * @since	1.5
 	 */
 	function addvenue($cid = array(), $publish = 1)
 	{
