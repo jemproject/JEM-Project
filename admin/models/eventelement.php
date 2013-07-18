@@ -73,15 +73,11 @@ class JEMModelEventelement extends JModelLegacy
 			$this->_data = $this->_getList($query, $this->getState('limitstart'), $this->getState('limit'));
 			if ($this->_data)
 			{
-				
-				$k = 0;
 				$count = count($this->_data);
 				for($i = 0; $i < $count; $i++)
 				{
 					$item = $this->_data[$i];
 					$item->categories = $this->getCategories($item->id);
-					
-					$k = 1 - $k;
 				}
 			}
 		}
@@ -102,10 +98,6 @@ class JEMModelEventelement extends JModelLegacy
 		{
 			$query = $this->_buildQuery();
 			$this->_total = $this->_getListCount($query);
-		
-		// for debugging query		
-		//	print_r($query);
-			
 		}
 
 		return $this->_total;
@@ -163,8 +155,8 @@ class JEMModelEventelement extends JModelLegacy
 		$app =  JFactory::getApplication();
 
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_order', 'filter_order', 'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );	
-		
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
+
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
@@ -183,10 +175,10 @@ class JEMModelEventelement extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_state', 'filter_state', '', 'word' );
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.eventelement.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.eventelement.search', 'search', '', 'string' );
-		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
+		$filter_state 	= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_state', 'filter_state', '', 'word' );
+		$filter 		= $app->getUserStateFromRequest( 'com_jem.eventelement.filter', 'filter', '', 'int' );
+		$search 		= $app->getUserStateFromRequest( 'com_jem.eventelement.search', 'search', '', 'string' );
+		$search 		= $this->_db->escape( trim(JString::strtolower( $search ) ) );
 
 		$where = array();
 
@@ -221,8 +213,8 @@ class JEMModelEventelement extends JModelLegacy
 
 		return $where;
 	}
-	
-	
+
+
 	function getCategories($id)
 	{
 		$query = 'SELECT DISTINCT c.id, c.catname, c.checked_out AS cchecked_out'
@@ -230,34 +222,20 @@ class JEMModelEventelement extends JModelLegacy
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				;
-	
+
 		$this->_db->setQuery( $query );
 
 		$this->_cats = $this->_db->loadObjectList();
-		
-		$k = 0;
+
 		$count = count($this->_cats);
 		for($i = 0; $i < $count; $i++)
 		{
 			$item = $this->_cats[$i];
 			$cats = new JEMCategories($item->id);
 			$item->parentcats = $cats->getParentlist();
-				
-			$k = 1 - $k;
 		}
-		
+
 		return $this->_cats;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }
 ?>

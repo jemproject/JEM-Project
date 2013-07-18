@@ -99,7 +99,6 @@ class JEMModelMyevents extends JModelLegacy
 		{
 			$this->_events = JEMHelper::getAttendeesNumbers($this->_events);
 
-			$k = 0;
 			$count = count($this->_events);
 			for($i = 0; $i < $count; $i++)
 			{
@@ -110,14 +109,11 @@ class JEMModelMyevents extends JModelLegacy
 				if (empty($item->categories)) {
 					unset($this->_events[$i]);
 				}
-
-				$k = 1 - $k;
 			}
 		}
 
 		return $this->_events;
 	}
-
 
 
 	/**
@@ -173,7 +169,6 @@ class JEMModelMyevents extends JModelLegacy
 	}
 
 
-
 	/**
 	 * Method to get a pagination object for the events
 	 *
@@ -193,7 +188,6 @@ class JEMModelMyevents extends JModelLegacy
 	}
 
 
-
 	/**
 	 * Build the query
 	 *
@@ -209,22 +203,20 @@ class JEMModelMyevents extends JModelLegacy
 		//Get Events from Database
 		$query = 'SELECT DISTINCT a.id as eventid, a.id, a.dates, a.enddates, a.published, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription,a.registra, a.maxplaces, a.waitinglist,'
 				. ' l.venue, l.city, l.state, l.url,'
-						. ' c.catname, c.id AS catid,'
-						. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
-						. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-						. ' FROM #__jem_events AS a'
-						. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-						. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-						. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
-						. $where
-						. ' GROUP BY a.id'
-						. $orderby
-						;
+				. ' c.catname, c.id AS catid,'
+				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
+				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
+				. ' FROM #__jem_events AS a'
+				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
+				. $where
+				. ' GROUP BY a.id'
+				. $orderby
+				;
 
-						return $query;
+				return $query;
 	}
-
-
 
 
 	/**
@@ -235,8 +227,6 @@ class JEMModelMyevents extends JModelLegacy
 	 */
 	function _buildOrderBy()
 	{
-
-
 		$app =  JFactory::getApplication();
 
 		$filter_order		= $app->getUserStateFromRequest('com_jem.myevents.filter_order', 'filter_order', 'a.dates', 'cmd');
@@ -252,10 +242,7 @@ class JEMModelMyevents extends JModelLegacy
 		}
 
 		return $orderby;
-
-
 	}
-
 
 
 	/**
@@ -281,7 +268,6 @@ class JEMModelMyevents extends JModelLegacy
 		$search 		= $app->getUserStateFromRequest('com_jem.myevents.search', 'search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
 
-
 		$where = array();
 
 		// First thing we need to do is to select only needed events
@@ -305,10 +291,8 @@ class JEMModelMyevents extends JModelLegacy
 		}
 		// === END Excluded categories add === //
 
-
 		if ($jemsettings->filter)
 		{
-
 			if ($search && $filter == 1) {
 				$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
 			}
@@ -328,15 +312,12 @@ class JEMModelMyevents extends JModelLegacy
 			if ($search && $filter == 5) {
 				$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
 			}
+		}
 
-		} // end tag of jemsettings->filter decleration
-
-		$where 		= (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
+		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
 
 		return $where;
-
 	}
-
 
 
 	function getCategories($id)
@@ -346,11 +327,11 @@ class JEMModelMyevents extends JModelLegacy
 
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-						. ' FROM #__jem_categories AS c'
-								. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-										. ' WHERE rel.itemid = '.(int)$id
-										. ' AND c.published = 1'
-												. ' AND c.access  <= '.$gid;
+				. ' FROM #__jem_categories AS c'
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
+				. ' WHERE rel.itemid = '.(int)$id
+				. ' AND c.published = 1'
+				. ' AND c.access  <= '.$gid;
 		;
 
 		$this->_db->setQuery( $query );
@@ -359,8 +340,5 @@ class JEMModelMyevents extends JModelLegacy
 
 		return $this->_cats;
 	}
-
-
-
 }
 ?>

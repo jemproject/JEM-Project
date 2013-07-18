@@ -77,7 +77,6 @@ class JEMControllerAttendees extends JEMController
 		header('Content-Disposition: attachment; filename=attendees.csv');
 		header('Pragma: no-cache');
 
-		$k = 0;
 		$export = '';
 		$col = array();
 
@@ -85,25 +84,23 @@ class JEMControllerAttendees extends JEMController
 		{
 			$data = $datas[$i];
 
-    		$col[] = str_replace("\"", "\"\"", $data->name);
-    		$col[] = str_replace("\"", "\"\"", $data->username);
-    		$col[] = str_replace("\"", "\"\"", $data->email);
-    		$col[] = str_replace("\"", "\"\"", JHTML::Date( $data->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ));
-    		$col[] = str_replace("\"", "\"\"", $data->uid);
+			$col[] = str_replace("\"", "\"\"", $data->name);
+			$col[] = str_replace("\"", "\"\"", $data->username);
+			$col[] = str_replace("\"", "\"\"", $data->email);
+			$col[] = str_replace("\"", "\"\"", JHTML::Date( $data->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ));
+			$col[] = str_replace("\"", "\"\"", $data->uid);
 
-   	 		for($j = 0; $j < count($col); $j++)
-    		{
-        		$export .= "\"" . $col[$j] . "\"";
+			for($j = 0; $j < count($col); $j++)
+			{
+				$export .= "\"" . $col[$j] . "\"";
 
-        		if($j != count($col)-1)
-       	 		{
-            		$export .= ";";
-        		}
-    		}
-    		$export .= "\r\n";
-    		$col = '';
-
-			$k = 1 - $k;
+				if($j != count($col)-1)
+				{
+					$export .= ";";
+				}
+			}
+			$export .= "\r\n";
+			$col = '';
 		}
 
 		echo $export;
@@ -116,7 +113,7 @@ class JEMControllerAttendees extends JEMController
 	 */
   function back()
   {
-    $this->setRedirect( 'index.php?option=com_jem&view=events' );
+	$this->setRedirect( 'index.php?option=com_jem&view=events' );
   }
 
   function toggle()
@@ -134,8 +131,8 @@ class JEMControllerAttendees extends JEMController
 		if ($res)
 		{
 			JPluginHelper::importPlugin( 'jem' );
-	    $dispatcher = JDispatcher::getInstance();
-	   	$res = $dispatcher->trigger( 'onUserOnOffWaitinglist', array( $id ) );
+		$dispatcher = JDispatcher::getInstance();
+		$res = $dispatcher->trigger( 'onUserOnOffWaitinglist', array( $id ) );
 
 			if ($attendee->waiting)
 			{

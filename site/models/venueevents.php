@@ -66,7 +66,7 @@ class JEMModelVenueevents extends JModelLegacy
 		$params 	=  $app->getParams('com_jem');
 
 		//get the number of events from database
-		$limit       	= $app->getUserStateFromRequest('com_jem.venueevents.limit', 'limit', $jemsettings->display_num, 'int');
+		$limit			= $app->getUserStateFromRequest('com_jem.venueevents.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart 	= $app->getUserStateFromRequest('com_jem.venueevents.limitstart', 'limitstart', 0, 'int');
 
 		$this->setState('limit', $limit);
@@ -128,7 +128,6 @@ class JEMModelVenueevents extends JModelLegacy
 			}
 		}
 
-		$k = 0;
 		$count = count($this->_data);
 		for($i = 0; $i < $count; $i++)
 		{
@@ -139,8 +138,6 @@ class JEMModelVenueevents extends JModelLegacy
 			if (empty($item->categories)) {
 				unset($this->_data[$i]);
 			}
-
-			$k = 1 - $k;
 		}
 
 		return $this->_data;
@@ -220,7 +217,6 @@ class JEMModelVenueevents extends JModelLegacy
 	 */
 	function _buildOrderBy()
 	{
-
 		$app =  JFactory::getApplication();
 
 		$filter_order		= $app->getUserStateFromRequest('com_jem.venueevents.filter_order', 'filter_order', 'a.dates', 'cmd');
@@ -236,9 +232,8 @@ class JEMModelVenueevents extends JModelLegacy
 		}
 
 		return $orderby;
-
-
 	}
+
 
 	/**
 	 * Method to build the WHERE clause
@@ -261,7 +256,6 @@ class JEMModelVenueevents extends JModelLegacy
 		$search 			= $app->getUserStateFromRequest('com_jem.venueevents.search', 'search', '', 'string');
 		$search 			= $this->_db->escape(trim(JString::strtolower($search)));
 
-
 		$where = array();
 
 		// First thing we need to do is to select only needed events
@@ -273,7 +267,6 @@ class JEMModelVenueevents extends JModelLegacy
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access  <= '.$gid;
 
-
 		/* get excluded categories
 		 $excluded_cats = trim($params->get('excluded_cats', ''));
 
@@ -284,10 +277,8 @@ class JEMModelVenueevents extends JModelLegacy
 		// === END Excluded categories add === //
 		*/
 
-
 		if ($jemsettings->filter)
 		{
-
 			if ($search && $filter == 1) {
 				$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
 			}
@@ -307,16 +298,13 @@ class JEMModelVenueevents extends JModelLegacy
 			if ($search && $filter == 5) {
 				$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
 			}
+		}
 
-		} // end tag of jemsettings->filter decleration
-
-		$where 		= (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
+		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
 
 		return $where;
-
-
-
 	}
+
 
 	/**
 	 * Method to get the Venue
@@ -343,6 +331,7 @@ class JEMModelVenueevents extends JModelLegacy
 		return $_venue;
 	}
 
+
 	function getCategories($id)
 	{
 		$user = JFactory::getUser();
@@ -361,15 +350,12 @@ class JEMModelVenueevents extends JModelLegacy
 
 		$this->_cats = $this->_db->loadObjectList();
 
-		$k = 0;
 		$count = count($this->_cats);
 		for($i = 0; $i < $count; $i++)
 		{
 			$item = $this->_cats[$i];
 			$cats = new JEMCategories($item->id);
 			$item->parentcats = $cats->getParentlist();
-
-			$k = 1 - $k;
 		}
 
 		return $this->_cats;

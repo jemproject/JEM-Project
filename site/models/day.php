@@ -102,15 +102,11 @@ class JEMModelDay extends JModelLegacy
 
 			//check if date is valid
 			if (checkdate($month, $tag, $year)) {
-
 				$date = $year.'-'.$month.'-'.$tag;
-
 			} else {
-
 				//date isn't valid raise notice and use current date
 				$date = date('Ymd');
 				JError::raiseNotice( 'SOME_ERROR_CODE', JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'));
-
 			}
 
 		} else {
@@ -145,7 +141,6 @@ class JEMModelDay extends JModelLegacy
 				$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 			}
 
-			$k = 0;
 			$count = count($this->_data);
 			for($i = 0; $i < $count; $i++)
 			{
@@ -156,8 +151,6 @@ class JEMModelDay extends JModelLegacy
 				if (empty($item->categories)) {
 					unset($this->_data[$i]);
 				}
-
-				$k = 1 - $k;
 			}
 		}
 
@@ -302,10 +295,8 @@ class JEMModelDay extends JModelLegacy
 		// === END Excluded categories add === //
 		 * */
 
-
 		if ($jemsettings->filter)
 		{
-
 			if ($search && $filter == 1) {
 				$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
 			}
@@ -325,13 +316,11 @@ class JEMModelDay extends JModelLegacy
 			if ($search && $filter == 5) {
 				$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
 			}
+		}
 
-		} // end tag of jemsettings->filter decleration
-
-		$where 		= (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
+		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
 
 		return $where;
-
 	}
 
 	/**

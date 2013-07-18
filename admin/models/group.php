@@ -33,14 +33,14 @@ class JEMModelGroup extends JModelLegacy
 	 */
 	var $_data = null;
 
-	
+
 	/**
 	 * Groups data array
 	 *
 	 * @var array
 	 */
 	var $_groups = null;
-	
+
 	/**
 	 * Members data string
 	 *
@@ -77,7 +77,7 @@ class JEMModelGroup extends JModelLegacy
 	function setId($id)
 	{
 		// Set event id and wipe data
-		$this->_id	    = $id;
+		$this->_id		= $id;
 		$this->_data	= null;
 	}
 
@@ -98,8 +98,8 @@ class JEMModelGroup extends JModelLegacy
 		return $this->_data;
 	}
 
-	
-	
+
+
 	/**
 	 * Method to load content data
 	 *
@@ -135,33 +135,30 @@ class JEMModelGroup extends JModelLegacy
 	 */
 	function &getMembers()
 	{
-    	$members = $this->_members();
+		$members = $this->_members();
 
-    	$users = array();
+		$users = array();
 
-    	if ($members) {
-        	$query = 'SELECT id AS value, username, name'
-        			. ' FROM #__users'
-        			. ' WHERE id IN ('.$members.')'
-        			. ' ORDER BY name ASC'
-        			;
+		if ($members) {
+			$query = 'SELECT id AS value, username, name'
+					. ' FROM #__users'
+					. ' WHERE id IN ('.$members.')'
+					. ' ORDER BY name ASC'
+					;
 
-        	$this->_db->setQuery( $query );
+			$this->_db->setQuery( $query );
 
-        	$users = $this->_db->loadObjectList();
+			$users = $this->_db->loadObjectList();
 
-			$k = 0;
 			for($i=0; $i < count( $users ); $i++) {
-    			$item = $users[$i];
+				$item = $users[$i];
 
 				$item->text = $item->name.' ('.$item->username.')';
-
-    			$k = 1 - $k;
 			}
 
-    	}
+		}
 
-    	return $users;
+		return $users;
 	}
 
 	/**
@@ -175,25 +172,22 @@ class JEMModelGroup extends JModelLegacy
 	{
 		$members = $this->_members();
 
-    	// get non selected members
-    	$query = 'SELECT id AS value, username, name FROM #__users';
-    	$query .= ' WHERE block = 0' ;
+		// get non selected members
+		$query = 'SELECT id AS value, username, name FROM #__users';
+		$query .= ' WHERE block = 0' ;
 
-    	if ($members) $query .= ' AND id NOT IN ('.$members.')' ;
+		if ($members) $query .= ' AND id NOT IN ('.$members.')' ;
 
-    	$query .= ' ORDER BY name ASC';
+		$query .= ' ORDER BY name ASC';
 
-    	$this->_db->setQuery($query);
+		$this->_db->setQuery($query);
 
-    	$this->_available = $this->_db->loadObjectList();
+		$this->_available = $this->_db->loadObjectList();
 
-    	$k = 0;
 		for($i=0, $n=count( $this->_available ); $i < $n; $i++) {
-    		$item = $this->_available[$i];
+			$item = $this->_available[$i];
 
 			$item->text = $item->name.' ('.$item->username.')';
-
-    		$k = 1 - $k;
 		}
 
 		return $this->_available;
@@ -208,7 +202,7 @@ class JEMModelGroup extends JModelLegacy
 	 */
 	function _members()
 	{
-    	//get selected members
+		//get selected members
 		if ($this->_id){
 			$query = 'SELECT member'
 					. ' FROM #__jem_groupmembers'
