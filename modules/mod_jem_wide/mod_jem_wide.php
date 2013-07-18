@@ -17,6 +17,7 @@ require_once(dirname(__FILE__).'/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/image.class.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 
 $list = modJEMwideHelper::getList($params);
