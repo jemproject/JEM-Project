@@ -9,19 +9,21 @@ defined('_JEXEC') or die;
 /**
  *  component helper.
  *
- * @package		Joomla.Administrator
  * @subpackage	com_jem
  * @since		1.6
  */
 class JEMHelperBackend
 {
+	
+	public static $extension = 'com_jem';
+	
 	/**
 	 * Configure the Linkbar.
 	 *
 	 * @param	string	The name of the active view.
 	 *
 	 * @return	void
-	 * @since	1.6
+	 * 
 	 */
 	public static function addSubmenu($vName)
 	{

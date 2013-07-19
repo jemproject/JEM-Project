@@ -87,10 +87,9 @@ class JEMViewEvent extends JViewLegacy {
 
 
 		$linkcsel = 'index.php?option=com_jem&amp;view=contactelement&amp;tmpl=component';
-		$linkcadd = 'index.php?option=com_jem&amp;task=addcontact&amp;tmpl=component';
 
 		$linkvsel = 'index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component';
-		$linkvadd = 'index.php?option=com_jem&amp;task=addvenue&amp;tmpl=component';
+		$linkvadd = 'index.php?option=com_jem&amp;task=event.showaddvenue&amp;tmpl=component';
 		$document->addScriptDeclaration($js);
 
 		JHTML::_('behavior.modal', 'a.modal');

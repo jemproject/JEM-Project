@@ -463,7 +463,9 @@ $options = array(
 					<?php echo JText::_( 'COM_JEM_META_DESCRIPTION' ); ?>:
 				</label>
 				<br />
-				<textarea class="inputbox" cols="40" rows="5" name="meta_description" id="metadesc" style="width:300px;"><?php echo str_replace('&','&amp;',$this->row->meta_description); ?></textarea>
+				<textarea class="inputbox" cols="40" rows="5" 
+				name="meta_description" id="metadesc" style="width:300px;">
+				<?php echo str_replace('&','&amp;',$this->row->meta_description); ?></textarea>
 			</td>
 		</tr>
 		<tr>

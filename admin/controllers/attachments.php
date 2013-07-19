@@ -22,7 +22,7 @@ class JEMControllerAttachments extends JEMController
 	/**
 	 * Constructor
 	 *
-	 *@since 0.9
+	 *
 	 */
 	function __construct()
 	{

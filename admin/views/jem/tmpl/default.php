@@ -69,11 +69,6 @@ $options = array(
 							$link = 'index.php?option=com_jem&amp;task=settings.edit';
 							JEMViewJEM::quickiconButton( $link, 'icon-48-settings.png', JText::_( 'COM_JEM_SETTINGS' ) );
 
-							/* @todo delete when decided 
-							$link = 'index.php?option=com_jem&amp;view=editcss';
-							JEMViewJEM::quickiconButton( $link, 'icon-48-cssedit.png', JText::_( 'COM_JEM_EDIT_CSS' ) );
-							*/
-
 							$link = 'index.php?option=com_jem&amp;view=cleanup';
 							JEMViewJEM::quickiconButton( $link, 'icon-48-housekeeping.png', JText::_( 'COM_JEM_CLEANUP' ) );
 

@@ -22,8 +22,8 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 				<b><?php echo JText::_( 'COM_JEM_EVENT_TITLE' ).':'; ?></b>&nbsp;<?php echo htmlspecialchars($this->event->title, ENT_QUOTES, 'UTF-8'); ?>
 			</td>
 			<td width="20%">
-				<div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_JEM_PRINT'); ?>" onclick="window.open('index.php?option=com_jem&amp;view=attendees&amp;layout=print&amp;task=print&amp;tmpl=component&amp;id=<?php echo $this->event->id; ?>', 'popup', 'width=750,height=400,scrollbars=yes,toolbar=no,status=no,resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><?php echo JText::_('COM_JEM_PRINT'); ?></a></div></div>
-				<div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_JEM_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_jem&amp;task=export&amp;controller=attendees&amp;tmpl=raw&amp;id=<?php echo $this->event->id; ?>')"><?php echo JText::_('COM_JEM_CSV_EXPORT'); ?></a></div></div>
+				<div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_JEM_PRINT'); ?>" onclick="window.open('index.php?option=com_jem&amp;view=attendees&amp;layout=print&amp;tmpl=component&amp;id=<?php echo $this->event->id; ?>', 'popup', 'width=750,height=400,scrollbars=yes,toolbar=no,status=no,resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><?php echo JText::_('COM_JEM_PRINT'); ?></a></div></div>
+				<div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_JEM_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_jem&amp;task=attendees.export&amp;tmpl=raw&amp;id=<?php echo $this->event->id; ?>')"><?php echo JText::_('COM_JEM_CSV_EXPORT'); ?></a></div></div>
 			</td>
 		  </tr>
 	</table>

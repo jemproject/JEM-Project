@@ -38,7 +38,7 @@ class JEMControllerEvent extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * @since 0.9
+	 * 
 	 */
 	function cancel()
 	{
@@ -53,13 +53,55 @@ class JEMControllerEvent extends JEMController
 	}
 	
 	
+	/**
+	 * logic to create the new event screen
+	 *
+	 * @access public
+	 * @return void
+	 * @since 0.9
+	 */
+	function add( )
+	{
+		$this->setRedirect( 'index.php?option=com_jem&view=event' );
+	}
+	
+	
+	/**
+	 * logic to create the edit event screen
+	 *
+	 * @access public
+	 * @return void
+	 * @since 0.9
+	 */
+	function edit( )
+	{
+		JRequest::setVar( 'view', 'event' );
+		JRequest::setVar( 'hidemainmenu', 1 );
+	
+		$model 	= $this->getModel('event');
+		$task 	= JRequest::getVar('task');
+	
+		if ($task == 'copy') {
+			JRequest::setVar( 'task', $task );
+		} else {
+	
+			$user	= JFactory::getUser();
+			// Error if checkedout by another administrator
+			if ($model->isCheckedOut( $user->get('id') )) {
+				$this->setRedirect( 'index.php?option=com_jem&view=events', JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ) );
+			}
+			$model->checkout();
+		}
+		parent::display();
+	}
+	
 	
 	/**
 	 * logic to save an event
 	 *
 	 * @access public
 	 * @return void
-	 * @since 0.9
+	 * 
 	 */
 	function save()
 	{
@@ -118,11 +160,22 @@ class JEMControllerEvent extends JEMController
 	}
 	
 	
+	function showaddvenue()
+	{
+	JRequest::setVar( 'view', 'event' );
+	JRequest::setVar( 'layout', 'addvenue'  );
+	
+	parent::display();
+	}
+	
+	
+	
 	/**
 	 * saves the venue in the database
 	 *
 	 * @access public
 	 * @return void
+	 * 
 	 */
 	function addvenue()
 	{

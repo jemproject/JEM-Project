@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
  * View class for the JEM events screen
  *
  * @package JEM
- * @since 0.9
+ * 
 */
 class JEMViewEvents extends JViewLegacy {
 
@@ -93,8 +93,36 @@ class JEMViewEvents extends JViewLegacy {
 		
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
 		
+		/* @todo check code
+		 * categoryid/actions has to be altered
+		 */
+
+		/*
+		 * retrieving the allowed actions for the user
+		 * */
+		$canDo = JEMHelperBackend::getActions(0);
+		$user = JFactory::getUser();
 		
+		/* title, icon is mapped in css */
 		JToolBarHelper::title( JText::_( 'COM_JEM_EVENTS' ), 'events' );
+		
+		
+		/* create */
+		if (($canDo->get('core.create')))
+		{
+			JToolBarHelper::addNew('event.add');
+		}
+		
+		/* edit */
+		JToolBarHelper::spacer();
+		if (($canDo->get('core.edit')))
+		{
+			JToolBarHelper::editList('event.edit');
+		}
+		
+		/* state */
+		if ($canDo->get('core.edit.state'))
+		{
 		
 		if ($this->lists['state'] != 2)
 		{
@@ -118,20 +146,22 @@ class JEMViewEvents extends JViewLegacy {
 
 	    }
 	    
-	    if ($this->lists['state'] == -2)
+		}
+		
+	
+		/* delete-trash */
+	    if ($this->lists['state'] == -2 && $canDo->get('core.delete'))
 	    {
-	    	JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'remove', $alt = 'JACTION_DELETE');
+	    	JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'events.remove', $alt = 'JACTION_DELETE');
+	    	JToolBarHelper::divider();
 	    }
-		elseif (JFactory::getUser()->authorise('core.edit.state'))
+		elseif ($canDo->get('core.edit.state'))
 		{
 			JToolBarHelper::trash('events.trash');
 			JToolBarHelper::divider();
 		}
 	    
-
-		JToolBarHelper::addNew('events.add');
-		JToolBarHelper::spacer();
-		JToolBarHelper::editList('events.edit');
+		
 		JToolBarHelper::spacer();
 		JToolBarHelper::custom( 'events.copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
 		JToolBarHelper::spacer();

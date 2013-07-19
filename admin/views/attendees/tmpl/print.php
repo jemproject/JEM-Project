@@ -59,7 +59,3 @@ defined('_JEXEC') or die; ?>
 		</tbody>
 
 	</table>
-
-	<p class="copyright">
-		<?php echo JEMAdmin::footer( ); ?>
-	</p>
