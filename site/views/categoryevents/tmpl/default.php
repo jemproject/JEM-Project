@@ -18,7 +18,7 @@ JHTML::_('behavior.modal');
 		echo JEMOutput::mailbutton( $this->category->slug, 'categoryevents', $this->params );
 		echo JEMOutput::printbutton( $this->print_link, $this->params );
 	?>
-</p>
+</div>
 
 <?php if ($this->params->def( 'show_page_title', 1 )) : ?>
 
