@@ -214,7 +214,7 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 		</table>
 
 
-		<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event' ); ?>
+		<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachment' ); ?>
 		<?php echo $this->loadTemplate('attachments'); ?>
 		<?php echo JHtml::_('tabs.end'); ?>
 	</td>
