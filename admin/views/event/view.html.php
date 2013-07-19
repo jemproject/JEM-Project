@@ -238,10 +238,23 @@ class JEMViewEvent extends JViewLegacy {
 	protected function addToolbar()
 	{
 
+		
+		/* variables */
 		$app = JFactory::getApplication();
 		$input = $app->input;
 		$input->set('hidemainmenu', 1);
 
+		$user		= JFactory::getUser();
+		$userId		= $user->get('id');
+
+		
+		$checkedOut	= !($this->row->checked_out == 0 || $this->row->checked_out == $userId);
+		$canDo		= JEMHelperBackend::getActions(0);
+		
+		/*$isNew		= ($this->row->id == 0);*/
+		/*JToolBarHelper::title($isNew ? JText::_('COM_JEM_ADD_EVENT') : JText::_('COM_JEM_EDIT_EVENT'), 'eventedit');*/
+		
+		
 		//get vars
 		$cid		= JRequest::getVar( 'cid' );
 		$task		= JRequest::getVar('task');
@@ -254,11 +267,18 @@ class JEMViewEvent extends JViewLegacy {
 		} else {
 			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_EVENT' ), 'eventedit' );
 		}
+		// If not checked out, can save the item.
+		if (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.create')))) 
+		{
 		JToolBarHelper::apply('event.apply');
 		JToolBarHelper::spacer();
 		JToolBarHelper::save('event.save');
 		JToolBarHelper::spacer();
-		JToolBarHelper::cancel('event.cancel');
+		}
+		
+	
+		JToolBarHelper::cancel('event.cancel', 'JTOOLBAR_CLOSE');
+		
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'editevents', true );
 	}

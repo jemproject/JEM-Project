@@ -40,13 +40,14 @@ class JEMViewEvents extends JViewLegacy {
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
+		// for the tooltip
 		JHTML::_('behavior.tooltip');
 
 		// Get data from the model
 		$rows      	=  $this->get( 'Data');
 		$pagination 	=  $this->get( 'Pagination' );
 
-		//publish unpublished filter
+		//	The publishing state [0 = unpublished, 1 = published, 2=archived, -2=trashed]
 		$lists['state']	= $filter_state;
 
 		// table ordering
@@ -97,9 +98,7 @@ class JEMViewEvents extends JViewLegacy {
 		 * categoryid/actions has to be altered
 		 */
 
-		/*
-		 * retrieving the allowed actions for the user
-		 * */
+		/* retrieving the allowed actions for the user */
 		$canDo = JEMHelperBackend::getActions(0);
 		$user = JFactory::getUser();
 		
@@ -160,11 +159,13 @@ class JEMViewEvents extends JViewLegacy {
 			JToolBarHelper::trash('events.trash');
 			JToolBarHelper::divider();
 		}
-	    
-		
+	   
+		/* copy */
 		JToolBarHelper::spacer();
 		JToolBarHelper::custom( 'events.copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
 		JToolBarHelper::spacer();
+		
+		/* help */
 		JToolBarHelper::help( 'listevents', true );
 		
 	}

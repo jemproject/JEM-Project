@@ -40,7 +40,7 @@ defined('_JEXEC') or die;
 				</td>
 				<td>
 					<input type="file" id="event-file-upload" accept="text/*" name="Fileevents" />
-					<input type="submit" id="event-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='csveventimport';return true;"/>
+					<input type="submit" id="event-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='import.csveventimport';return true;"/>
 					<span id="upload-clear"></span>
 				</td>
 			</tr>
@@ -86,7 +86,7 @@ defined('_JEXEC') or die;
 				</td>
 				<td>
 					<input type="file" id="venue-file-upload" accept="text/*" name="Filevenues" />
-					<input type="submit" id="venue-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='csvvenuesimport';return true;"/>
+					<input type="submit" id="venue-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='import.csvvenuesimport';return true;"/>
 					<span id="upload-clear"></span>
 				</td>
 			</tr>
@@ -132,7 +132,7 @@ defined('_JEXEC') or die;
 				</td>
 				<td>
 					<input type="file" id="cat-file-upload" accept="text/*" name="Filecategories" />
-					<input type="submit" id="cat-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='csvcategoriesimport';return true;"/>
+					<input type="submit" id="cat-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='import.csvcategoriesimport';return true;"/>
 					<span id="upload-clear"></span>
 				</td>
 			</tr>
@@ -178,7 +178,7 @@ defined('_JEXEC') or die;
 				</td>
 				<td>
 					<input type="file" id="catevents-file-upload" accept="text/*" name="Filecatevents" />
-					<input type="submit" id="catevents-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='csvcateventsimport';return true;"/>
+					<input type="submit" id="catevents-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='import.csvcateventsimport';return true;"/>
 					<span id="upload-clear"></span>
 				</td>
 			</tr>

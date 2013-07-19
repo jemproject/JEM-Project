@@ -13,9 +13,7 @@ defined('_JEXEC') or die;
 
 /**
  * View class for the JEM Venues screen
- *
- * @package JEM
- * @since 0.9
+ * 
  */
 class JEMViewVenues extends JViewLegacy {
 
@@ -41,7 +39,7 @@ class JEMViewVenues extends JViewLegacy {
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
-		//add style to description of the tooltip (addtip)
+		//add style to description of the tooltip (hastip)
 		JHTML::_('behavior.tooltip');
 
 		// add filter selection for the search
@@ -74,22 +72,78 @@ class JEMViewVenues extends JViewLegacy {
 	protected function addToolbar()
 	{
 
-		//create the toolbar
+		/* submenu */
+		require_once JPATH_COMPONENT . '/helpers/helper.php';
 		
-		/* 
-		 * Adding title + icon, the icon is mapped within backend.css
+		/* Adding title + icon
+		 * 
+		 * the icon is mapped within backend.css
 		 * The word 'venues' is referring to the venues icon
 		 * */
 		JToolBarHelper::title( JText::_( 'COM_JEM_VENUES' ), 'venues' );
-		JToolBarHelper::publishList('venues.publish');
+		
+		/* retrieving the allowed actions for the user */
+		$canDo = JEMHelperBackend::getActions(0);
+		$user = JFactory::getUser();
+		
+		/* create */
+		if (($canDo->get('core.create')))
+		{
+			JToolBarHelper::addNew('venue.add');
+		}
+		
+		/* edit */
 		JToolBarHelper::spacer();
-		JToolBarHelper::unpublishList('venues.unpublish');
-		JToolBarHelper::spacer();
-		JToolBarHelper::addNew('venues.add');
-		JToolBarHelper::spacer();
-		JToolBarHelper::editList('venues.edit');
-		JToolBarHelper::spacer();
-		JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'venues.remove', $alt = 'JACTION_DELETE');
+		if (($canDo->get('core.edit')))
+		{
+			JToolBarHelper::editList('venue.edit');
+		}
+		
+		/* state */
+		if ($canDo->get('core.edit.state'))
+		{
+		
+			if ($this->state->get('filter.state') != 2)
+			{
+				JToolBarHelper::publishList('venues.publish');
+				JToolBarHelper::unpublishList('venues.unpublish');
+			}
+			 
+			/*if ($this->lists['state'] != -1)
+			{
+				JToolBarHelper::divider();
+				if ($this->lists['state'] != 2)
+				{
+					JToolBarHelper::archiveList('venues.archive');
+				}
+				elseif ($this->lists['state'] == 2)
+				{
+					JToolBarHelper::unarchiveList('venues.unarchive');
+				}
+		
+			}*/
+			 
+		}
+		
+		
+		/* delete-trash */
+		if ($canDo->get('core.delete'))
+		{
+			JToolBarHelper::divider();
+			JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'venues.remove', $alt = 'JACTION_DELETE');
+			
+		}
+		/*elseif ($canDo->get('core.edit.state'))
+		{
+			JToolBarHelper::trash('events.trash');
+			JToolBarHelper::divider();
+		}*/
+		
+		
+		
+		
+		/* copy */
+		JToolBarHelper::divider();
 		JToolBarHelper::spacer();
 		JToolBarHelper::custom( 'venues.copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
 		JToolBarHelper::spacer();
@@ -99,8 +153,7 @@ class JEMViewVenues extends JViewLegacy {
 		 */
 		JToolBarHelper::help( 'listvenues', true );
 
-		//create Submenu
-		require_once JPATH_COMPONENT . '/helpers/helper.php';
+		
 
 	}
 

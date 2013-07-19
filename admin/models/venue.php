@@ -154,6 +154,7 @@ class JEMModelVenue extends JModelLegacy
 				$venue->published			= 1;
 				$venue->locdescription		= null;
 				$venue->meta_keywords		= null;
+				$venue->checked_out		= null;
 				$venue->meta_description	= null;
 				$venue->created				= $createdate->toUnix();
 				$venue->modified			= $this->_db->getNullDate();

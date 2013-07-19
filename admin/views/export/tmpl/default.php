@@ -32,7 +32,7 @@ defined('_JEXEC') or die;
 				<td>
 					<div class="button2-left">
 						<div class="blank">
-							<a title="<?php echo JText::_('COM_JEM_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_jem&task=export&controller=export')"><?php echo JText::_('COM_JEM_EXPORT_EVENTS'); ?></a>
+							<a title="<?php echo JText::_('COM_JEM_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_jem&task=export.export')"><?php echo JText::_('COM_JEM_EXPORT_EVENTS'); ?></a>
 						</div>
 					</div>
 				</td>
@@ -60,7 +60,7 @@ defined('_JEXEC') or die;
 				<td>
 					<div class="button2-left">
 						<div class="blank">
-							<a title="<?php echo JText::_('COM_JEM_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_jem&task=exportcats&controller=export')"><?php echo JText::_('COM_JEM_EXPORT_CATEGORIES'); ?></a>
+							<a title="<?php echo JText::_('COM_JEM_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_jem&task=export.exportcats')"><?php echo JText::_('COM_JEM_EXPORT_CATEGORIES'); ?></a>
 						</div>
 					</div>
 				</td>
@@ -88,7 +88,7 @@ defined('_JEXEC') or die;
 				<td>
 					<div class="button2-left">
 						<div class="blank">
-							<a title="<?php echo JText::_('COM_JEM_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_jem&task=exportvenues&controller=export')"><?php echo JText::_('COM_JEM_EXPORT_VENUES'); ?></a>
+							<a title="<?php echo JText::_('COM_JEM_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_jem&task=export.exportvenues')"><?php echo JText::_('COM_JEM_EXPORT_VENUES'); ?></a>
 						</div>
 					</div>
 				</td>
@@ -116,7 +116,7 @@ defined('_JEXEC') or die;
 				<td>
 					<div class="button2-left">
 						<div class="blank">
-							<a title="<?php echo JText::_('COM_JEM_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_jem&task=exportcatevents&controller=export')"><?php echo JText::_('COM_JEM_EXPORT_CAT_EVENTS'); ?></a>
+							<a title="<?php echo JText::_('COM_JEM_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_jem&task=export.exportcatevents')"><?php echo JText::_('COM_JEM_EXPORT_CAT_EVENTS'); ?></a>
 						</div>
 					</div>	
 				</td>

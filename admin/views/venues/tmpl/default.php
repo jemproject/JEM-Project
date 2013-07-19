@@ -78,7 +78,7 @@ $userId		= $user->get('id');
 			
 			
 				<?php if ($row->checked_out) : ?>
-						<?php echo JHtml::_('jgrid.checkedout', $i, $row->editor, $row->checked_out_time, '', $canCheckin); ?>
+						<?php echo JHtml::_('jgrid.checkedout', $i, $row->editor, $row->checked_out_time, 'venues.', $canCheckin); ?>
 					<?php endif; ?>
 						<a href="<?php echo $link; ?>">
 							<?php echo $this->escape($row->venue); ?></a>
