@@ -96,7 +96,7 @@ class JEMControllerSettings extends JEMController
 		switch ($task)
 		{
 			case 'apply':
-				$link = 'index.php?option=com_jem&controller=settings&task=edit';
+				$link = 'index.php?option=com_jem&task=settings.edit';
 				break;
 
 			default:

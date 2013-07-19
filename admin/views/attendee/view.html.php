@@ -82,10 +82,10 @@ class JEMViewAttendee extends JViewLegacy {
 		} else {
 			JToolBarHelper::title( JText::_('COM_JEM_ADD_ATTENDEE'), 'users');
 		}
-		JToolBarHelper::apply();
-		JToolBarHelper::save();
+		JToolBarHelper::apply('attendee.apply');
+		JToolBarHelper::save('attendee.save');
 		JToolBarHelper::spacer();
-		JToolBarHelper::cancel();
+		JToolBarHelper::cancel('attendee.cancel');
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'editattendee', true );
 		

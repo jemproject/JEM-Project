@@ -77,7 +77,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 			<tr class="row<?php echo $i % 2; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 				<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
-				<td><a href="<?php echo JRoute::_( 'index.php?option=com_jem&controller=attendees&task=edit&cid[]='.$row->id ); ?>"><?php echo $row->name; ?></a></td>
+				<td><a href="<?php echo JRoute::_( 'index.php?option=com_jem&task=attendees.edit&cid[]='.$row->id ); ?>"><?php echo $row->name; ?></a></td>
 				<td>
 					<a href="<?php echo JRoute::_( 'index.php?option=com_users&task=user.edit&id='.$row->uid ); ?>"><?php echo $row->username; ?></a>
 				</td>
@@ -88,15 +88,15 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 				<?php if ($this->event->waitinglist): ?>
 				<td class="hasTip" title="<?php echo ($row->waiting ? JText::_('COM_JEM_ON_WAITINGLIST') : JText::_('COM_JEM_ATTENDING')).'::'; ?>">
 					<?php if ($row->waiting):?>
-						<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&controller=attendees&task=toggle&id='.$row->id),
+						<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&task=attendees.toggle&id='.$row->id),
 						                        JHTML::image('media/com_jem/images/publish_y.png', JText::_('COM_JEM_ON_WAITINGLIST'))); ?>
 					<?php else: ?>
-						<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&controller=attendees&task=toggle&id='.$row->id),
+						<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&attendees.toggle&id='.$row->id),
 						                        JHTML::image('media/com_jem/images/tick.png', JText::_('COM_JEM_ATTENDING'))); ?>
 					<?php endif;?>
 				</td>
 				<?php endif;?>
-				<td class="center"><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','remove')"><img src="../media/com_jem/images/publish_x.png" width="16" height="16" border="0" alt="Delete" /></a></td>
+				<td class="center"><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendees.remove')"><img src="../media/com_jem/images/publish_x.png" width="16" height="16" border="0" alt="Delete" /></a></td>
 			</tr>
 			<?php endforeach; ?>
 		</tbody>
@@ -108,7 +108,6 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 
 		<?php echo JHTML::_( 'form.token' ); ?>
 		<input type="hidden" name="boxchecked" value="0" />
-		<input type="hidden" name="controller" value="attendees" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="id" value="<?php echo $this->event->id; ?>" />
 		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />

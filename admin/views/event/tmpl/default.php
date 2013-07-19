@@ -20,7 +20,7 @@ $options = array(
 		title.addClass("closed").removeClass("open");
 	}',
 	'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
-	'useCookie' => true, // this must not be a string. Don't use quotes.
+	'useCookie' => false, // this must not be a string. Don't use quotes.
 );
 
 ?>
