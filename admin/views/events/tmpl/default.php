@@ -85,9 +85,9 @@ if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$search
 					$displaytime = $time.' '.$this->jemsettings->timename;
 				}
 
-				$link 			= 'index.php?option=com_jem&amp;controller=events&amp;task=edit&amp;cid[]='.$row->id;
-				$venuelink 		= 'index.php?option=com_jem&amp;controller=venues&amp;task=edit&amp;cid[]='.$row->locid;
-				$published 	= JHTML::_('jgrid.published', $row->published, $i );
+				$link 			= 'index.php?option=com_jem&amp;task=events.edit&amp;cid[]='.$row->id;
+				$venuelink 		= 'index.php?option=com_jem&amp;task=venues.edit&amp;cid[]='.$row->locid;
+				$published 	= JHTML::_('jgrid.published', $row->published, $i, 'events.');
    			?>
 			<tr class="row<?php echo $i % 2; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
@@ -156,7 +156,7 @@ if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$search
 				$nr = count($row->categories);
 				$ix = 0;
 				foreach ($row->categories as $key => $category) :				
-					$catlink	= 'index.php?option=com_jem&amp;controller=categories&amp;task=edit&amp;cid[]='. $category->id;
+					$catlink	= 'index.php?option=com_jem&amp;task=categories.edit&amp;cid[]='. $category->id;
 					$title = htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8');
 					if (JString::strlen($title) > 20) {
 						$title = JString::substr( $title , 0 , 20).'...';
@@ -261,7 +261,6 @@ if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$search
 	</p>
 
 	<input type="hidden" name="boxchecked" value="0" />
-	<input type="hidden" name="controller" value="events" />
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />

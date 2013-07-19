@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
 		var form = document.getElementById('adminForm');
 		var validator = document.formvalidator;
 			
-		if (task == 'cancel') {
+		if (task == 'group.cancel') {
 			submitform( task );
 			return;
 		}
@@ -158,7 +158,6 @@ defined('_JEXEC') or die;
 </table>
 
 <?php echo JHTML::_( 'form.token' ); ?>
-<input type="hidden" name="controller" value="groups" />
 <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
 <input type="hidden" name="task" value="" />
 </form>

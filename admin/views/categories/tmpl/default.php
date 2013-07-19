@@ -62,9 +62,9 @@ defined('_JEXEC') or die; ?>
 	<tbody>
 		<?php
 			foreach ($this->rows as $i => $row) :
-			$link 		= 'index.php?option=com_jem&amp;controller=categories&amp;task=edit&amp;cid[]='. $row->id;
-			$grouplink 	= 'index.php?option=com_jem&amp;controller=groups&amp;task=edit&amp;cid[]='. $row->groupid;
-			$published 	= JHTML::_('jgrid.published', $row->published, $i );
+			$link 		= 'index.php?option=com_jem&amp;task=categories.edit&amp;cid[]='. $row->id;
+			$grouplink 	= 'index.php?option=com_jem&amp;task=groups.edit&amp;cid[]='. $row->groupid;
+			$published 	= JHTML::_('jgrid.published', $row->published, $i, 'categories.' );
 			$access = $row->groupname;
    		?>
 		<tr class="row<?php echo $i % 2; ?>">

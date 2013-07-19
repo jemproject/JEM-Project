@@ -59,14 +59,14 @@ $options = array(
 						$link = 'index.php?option=com_jem&amp;view=archive';
 						JEMViewJEM::quickiconButton( $link, 'icon-48-archive.png', JText::_( 'COM_JEM_ARCHIVESCREEN' ) );
 
-						$link = 'index.php?option=com_jem&amp;controller=plugins&amp;task=plugins';
+						$link = 'index.php?option=com_jem&amp;task=plugins.plugins';
 						JEMViewJEM::quickiconButton( $link, 'icon-48-plugins.png', JText::_( 'COM_JEM_MANAGE_PLUGINS' ) );
 
 
 
 						//only admins should be able to see this items
 						if (JFactory::getUser()->authorise('core.manage')) {
-							$link = 'index.php?option=com_jem&amp;controller=settings&amp;task=edit';
+							$link = 'index.php?option=com_jem&amp;task=settings.edit';
 							JEMViewJEM::quickiconButton( $link, 'icon-48-settings.png', JText::_( 'COM_JEM_SETTINGS' ) );
 
 							/* @todo delete when decided 
@@ -82,7 +82,7 @@ $options = array(
 							JEMViewJEM::quickiconButton( $link, 'icon-48-update.png', JText::_( 'COM_JEM_UPDATE_CHECK' ), 1 );
 							*/
 
-							$link = 'index.php?option=com_jem&amp;controller=sampledata&amp;task=load';
+							$link = 'index.php?option=com_jem&amp;task=sampledata.load';
 							JEMViewJEM::quickiconButton( $link, 'icon-48-sampledata.png', JText::_( 'COM_JEM_LOAD_SAMPLE_DATA' ) );
 
 

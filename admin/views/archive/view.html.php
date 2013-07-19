@@ -90,11 +90,11 @@ class JEMViewArchive extends JViewLegacy {
 	
 	//create the toolbar
 	JToolBarHelper::title( JText::_( 'COM_JEM_ARCHIVESCREEN' ), 'archive' );
-	JToolBarHelper::unarchiveList();
+	JToolBarHelper::unarchiveList('archive.unarchive');
 	JToolBarHelper::spacer();
-	JToolBarHelper::deleteList();
+	JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'archive.remove', $alt = 'JACTION_DELETE');
 	JToolBarHelper::spacer();
-	JToolBarHelper::custom( 'copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
+	JToolBarHelper::custom( 'archive.copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
 	JToolBarHelper::spacer();
 	JToolBarHelper::help( 'archive', true );
 

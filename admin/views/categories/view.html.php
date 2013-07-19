@@ -80,15 +80,15 @@ class JEMViewCategories extends JViewLegacy {
 		
 		//create the toolbar
 		JToolBarHelper::title( JText::_( 'COM_JEM_CATEGORIES' ), 'elcategories' );
-		JToolBarHelper::publishList();
+		JToolBarHelper::publishList('categories.publish');
 		JToolBarHelper::spacer();
-		JToolBarHelper::unpublishList();
+		JToolBarHelper::unpublishList('categories.unpublish');
 		JToolBarHelper::spacer();
-		JToolBarHelper::addNew();
+		JToolBarHelper::addNew('categories.add');
 		JToolBarHelper::spacer();
-		JToolBarHelper::editList();
+		JToolBarHelper::editList('categories.edit');
 		JToolBarHelper::spacer();
-		JToolBarHelper::deleteList();
+		JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'categories.remove', $alt = 'JACTION_DELETE');
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'listcategories', true );
 		

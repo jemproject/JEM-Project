@@ -37,6 +37,11 @@ class JEMViewGroups extends JViewLegacy {
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
+		// Tooltipping
+		/*
+		 * can be used by using a ::
+		 * 
+		 */
 		JHTML::_('behavior.tooltip');
 
 		// get data from the model
@@ -80,11 +85,11 @@ class JEMViewGroups extends JViewLegacy {
 	
 	// create the toolbar
 	JToolBarHelper::title( JText::_( 'COM_JEM_GROUPS' ), 'groups' );
-	JToolBarHelper::addNew();
+	JToolBarHelper::addNew('groups.add');
 	JToolBarHelper::spacer();
-	JToolBarHelper::editList();
+	JToolBarHelper::editList('groups.edit');
 	JToolBarHelper::spacer();
-	JToolBarHelper::deleteList();
+	JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'groups.remove', $alt = 'JACTION_DELETE');
 	JToolBarHelper::spacer();
 	JToolBarHelper::help( 'listgroups', true );
 

@@ -96,11 +96,11 @@ class JEMViewSettings extends JViewLegacy {
 
 		//create the toolbar
 		JToolBarHelper::title( JText::_( 'COM_JEM_SETTINGS' ), 'settings' );
-		JToolBarHelper::apply();
+		JToolBarHelper::apply('settings.apply');
 		JToolBarHelper::spacer();
-		JToolBarHelper::save('save');
+		JToolBarHelper::save('settings.save');
 		JToolBarHelper::spacer();
-		JToolBarHelper::cancel();
+		JToolBarHelper::cancel('settings.cancel');
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'settings', true );
 	}

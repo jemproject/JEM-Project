@@ -58,6 +58,7 @@ class JEMModelCategory extends JModelLegacy
 	 *
 	 * @access	public
 	 * @param	int category identifier
+	 * 
 	 */
 	function setId($id)
 	{
@@ -71,7 +72,7 @@ class JEMModelCategory extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	array
-	 * @since	0.9
+	 * 
 	 */
 	function &getData()
 	{
@@ -89,7 +90,8 @@ class JEMModelCategory extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
+	 * 
 	 */
 	function &getGroups()
 	{
@@ -109,7 +111,7 @@ class JEMModelCategory extends JModelLegacy
 	 *
 	 * @access	private
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function _loadData()
 	{
@@ -138,7 +140,7 @@ class JEMModelCategory extends JModelLegacy
 	 *
 	 * @access	private
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function _initData()
 	{
@@ -186,7 +188,7 @@ class JEMModelCategory extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function checkin()
 	{
@@ -204,7 +206,7 @@ class JEMModelCategory extends JModelLegacy
 	 * @access	public
 	 * @param	int	$uid	User ID of the user checking the item out
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function checkout($uid = null)
 	{
@@ -228,7 +230,7 @@ class JEMModelCategory extends JModelLegacy
 	 * @access	public
 	 * @param	int	A user id
 	 * @return	boolean	True if checked out
-	 * @since	0.9
+	 * 
 	 */
 	function isCheckedOut( $uid=0 )
 	{
@@ -252,7 +254,7 @@ class JEMModelCategory extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	1.5
+	 * 
 	 */
 	function store($data)
 	{

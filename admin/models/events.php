@@ -193,9 +193,6 @@ class JEMModelEvents extends JModelLegacy
 		$search 		= $app->getUserStateFromRequest('com_jem.search', 'search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
 
-		// debug filter_state
-		/* var_dump($filter_state); */
-		
 		$where = array();
 
 		

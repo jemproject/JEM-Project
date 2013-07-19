@@ -81,17 +81,17 @@ class JEMViewVenues extends JViewLegacy {
 		 * The word 'venues' is referring to the venues icon
 		 * */
 		JToolBarHelper::title( JText::_( 'COM_JEM_VENUES' ), 'venues' );
-		JToolBarHelper::publishList();
+		JToolBarHelper::publishList('venues.publish');
 		JToolBarHelper::spacer();
-		JToolBarHelper::unpublishList();
+		JToolBarHelper::unpublishList('venues.unpublish');
 		JToolBarHelper::spacer();
-		JToolBarHelper::addNew();
+		JToolBarHelper::addNew('venues.add');
 		JToolBarHelper::spacer();
-		JToolBarHelper::editList();
+		JToolBarHelper::editList('venues.edit');
 		JToolBarHelper::spacer();
-		JToolBarHelper::deleteList();
+		JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'venues.remove', $alt = 'JACTION_DELETE');
 		JToolBarHelper::spacer();
-		JToolBarHelper::custom( 'copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
+		JToolBarHelper::custom( 'venues.copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
 		JToolBarHelper::spacer();
 		
 		/* Reference to help-page located in the folder help.

@@ -24,21 +24,7 @@ JTable::addIncludePath(JPATH_COMPONENT.'/tables');
 // Require the base controller
 require_once (JPATH_COMPONENT.'/controller.php');
 
-// Require specific controller if requested
-if( $controller = JRequest::getWord('controller') ) {
-	$path = JPATH_COMPONENT.'/controllers/'.$controller.'.php';
-	if (file_exists($path)) {
-		require_once $path;
-	} else {
-		$controller = '';
-	}
-}
-
-//Create the controller
-$classname  = 'JEMController'.$controller;
-$controller = new $classname( );
-
-// Perform the Request task
-$controller->execute( JRequest::getWord('task'));
+$controller = JControllerLegacy::getInstance('Jem');
+$controller->execute(JRequest::getCmd('task'));
 $controller->redirect();
 ?>

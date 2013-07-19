@@ -104,9 +104,9 @@ class JEMViewGroup extends JViewLegacy {
 			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_GROUP' ), 'groupedit' );
 			JToolBarHelper::spacer();
 		}
-		JToolBarHelper::save();
+		JToolBarHelper::save('group.save');
 		JToolBarHelper::spacer();
-		JToolBarHelper::cancel();
+		JToolBarHelper::cancel('group.cancel');
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'editgroup', true );
 		

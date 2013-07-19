@@ -98,9 +98,9 @@ class JEMViewEvents extends JViewLegacy {
 		
 		if ($this->lists['state'] != 2)
 		{
-		JToolBarHelper::publishList();
+		JToolBarHelper::publishList('events.publish');
 		JToolBarHelper::spacer();
-		JToolBarHelper::unpublishList();
+		JToolBarHelper::unpublishList('events.unpublish');
 		JToolBarHelper::spacer();
 	    }
 	    
@@ -109,11 +109,11 @@ class JEMViewEvents extends JViewLegacy {
 	    	JToolBarHelper::divider();
 	    	if ($this->lists['state'] != 2)
 	    	{
-	    		JToolBarHelper::archiveList();
+	    		JToolBarHelper::archiveList('events.archive');
 	    	}
 	    	elseif ($this->lists['state'] == 2)
 	    	{
-	    		JToolBarHelper::unarchiveList();
+	    		JToolBarHelper::unarchiveList('events.unarchive');
 	    	}
 
 	    }
@@ -124,16 +124,16 @@ class JEMViewEvents extends JViewLegacy {
 	    }
 		elseif (JFactory::getUser()->authorise('core.edit.state'))
 		{
-			JToolBarHelper::trash('trash');
+			JToolBarHelper::trash('events.trash');
 			JToolBarHelper::divider();
 		}
 	    
 
-		JToolBarHelper::addNew();
+		JToolBarHelper::addNew('events.add');
 		JToolBarHelper::spacer();
-		JToolBarHelper::editList();
+		JToolBarHelper::editList('events.edit');
 		JToolBarHelper::spacer();
-		JToolBarHelper::custom( 'copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
+		JToolBarHelper::custom( 'events.copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'listevents', true );
 		

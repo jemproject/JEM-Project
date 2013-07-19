@@ -32,7 +32,7 @@ $options = array(
 	{
     	 var form = document.adminForm;
 
- 		if (task == 'cancel') {
+ 		if (task == 'category.cancel') {
  			submitform( task );
  		} else if (form.catname.value == ""){
  			alert( "<?php echo JText::_ ( 'COM_JEM_ADD_NAME_CATEGORY' ); ?>" );
@@ -46,10 +46,7 @@ $options = array(
 </script>
 
 
-<form
-	action="<?php echo JRoute::_('index.php?option=com_jem&view=category'); ?>"
-	method="post" name="adminForm" id="adminForm" class="form-validate"
-	enctype="multipart/form-data">
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=category'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 
 	<table style="width:100%">
 		<tr>
@@ -206,8 +203,7 @@ $options = array(
 
 	<?php echo JHTML::_( 'form.token' ); ?>
 	<input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
-	<input type="hidden" name="controller" value="categories" /> <input
-		type="hidden" name="task" value="" />
+	<input type="hidden" name="task" value="" />
 </form>
 
 <p class="copyright">

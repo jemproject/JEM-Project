@@ -35,7 +35,6 @@ defined('_JEXEC') or die;
 			echo $this->editor->save( 'locdescription' );
 			?>
 			submitform( task );
-			//window.parent.close();
 		}
 	}
 </script>
@@ -60,7 +59,7 @@ $infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', 
 			</div>
 
 			<div style="float: right;">
-				<button type="button" onclick="submitbutton('addvenue')">
+				<button type="button" onclick="submitbutton('event.addvenue')">
 					<?php echo JText::_( 'COM_JEM_SAVE' ); ?>
 				</button>
 				<button type="button" onclick="window.parent.close()">
@@ -241,7 +240,6 @@ if ( $this->jemsettings->showmapserv == 0 ) { ?>
 ?>
 <?php echo JHTML::_( 'form.token' ); ?>
 <input type="hidden" name="option" value="com_jem" />
-<input type="hidden" name="controller" value="venues" />
 <input type="hidden" name="id" value="" />
 <input type="hidden" name="task" value="" />
 </form>

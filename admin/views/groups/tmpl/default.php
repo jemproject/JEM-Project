@@ -44,7 +44,7 @@ defined('_JEXEC') or die;
 	<tbody>
 		<?php
 	    foreach ($this->rows as $i => $row) :
-	    $link 		= 'index.php?option=com_jem&amp;controller=groups&amp;task=edit&amp;cid[]='.$row->id;
+	    $link 		= 'index.php?option=com_jem&amp;task=groups.edit&amp;cid[]='.$row->id;
 		
    		?>
 			<tr class="row<?php echo $i % 2; ?>">

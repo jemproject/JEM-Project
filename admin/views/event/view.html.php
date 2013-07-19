@@ -177,7 +177,6 @@ class JEMViewEvent extends JViewLegacy {
 	/**
 	 * Creates the output for the add venue screen
 	 *
-	 * @since 0.9
 	 *
 	 */
 	public function _displayaddvenue($tpl)
@@ -256,11 +255,11 @@ class JEMViewEvent extends JViewLegacy {
 		} else {
 			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_EVENT' ), 'eventedit' );
 		}
-		JToolBarHelper::apply();
+		JToolBarHelper::apply('event.apply');
 		JToolBarHelper::spacer();
-		JToolBarHelper::save();
+		JToolBarHelper::save('event.save');
 		JToolBarHelper::spacer();
-		JToolBarHelper::cancel();
+		JToolBarHelper::cancel('event.cancel');
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'editevents', true );
 	}

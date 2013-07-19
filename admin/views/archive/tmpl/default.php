@@ -84,7 +84,7 @@ defined('_JEXEC') or die; ?>
 				$nr = count($row->categories);
 				$ix = 0;
 				foreach ($row->categories as $key => $category) :
-					$catlink	= 'index.php?option=com_jem&amp;controller=categories&amp;task=edit&amp;cid[]='. $category->id;
+					$catlink	= 'index.php?option=com_jem&amp;task=categories.edit&amp;cid[]='. $category->id;
 					$title = htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8');
 					if (JString::strlen($title) > 20) {
 						$title = JString::substr( $title , 0 , 20).'...';

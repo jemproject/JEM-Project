@@ -130,11 +130,11 @@ class JEMViewCategory extends JViewLegacy {
 		} else {
 			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_CATEGORY' ), 'categoriesedit' );
 		}
-		JToolBarHelper::apply();
+		JToolBarHelper::apply('category.apply');
 		JToolBarHelper::spacer();
-		JToolBarHelper::save();
+		JToolBarHelper::save('category.save');
 		JToolBarHelper::spacer();
-		JToolBarHelper::cancel();
+		JToolBarHelper::cancel('category.cancel');
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'editcategories', true );
 		

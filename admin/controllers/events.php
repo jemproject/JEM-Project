@@ -288,7 +288,7 @@ class JEMControllerEvents extends JEMController
 			switch ($task)
 			{
 				case 'apply' :
-					$link = 'index.php?option=com_jem&controller=events&view=event&hidemainmenu=1&cid[]='.$returnid;
+					$link = 'index.php?option=com_jem&view=event&hidemainmenu=1&cid[]='.$returnid;
 					break;
 
 				default :

@@ -50,7 +50,7 @@ $options = array(
 	{
 		var form = document.adminForm;
 
-		if (task == 'cancel') {
+		if (task == 'event.cancel') {
 			submitform( task );
 		} else if (form.title.value == ""){
 			alert( "<?php echo JText::_ ( 'COM_JEM_ADD_TITLE' ); ?>" );
@@ -588,7 +588,6 @@ $infoimage = JHTML::image ( JURI::root().'media/com_jem/images/icon-16-hint.png'
 echo JHTML::_ ( 'form.token' );
 ?>
 <input type="hidden" name="option" value="com_jem" />
-<input type="hidden" name="controller" value="events" />
 <input type="hidden" name="view" value="event" />
 <input type="hidden" name="task" value="" />
 <?php if ($this->task == 'copy') {?>

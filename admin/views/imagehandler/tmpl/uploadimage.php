@@ -77,13 +77,13 @@ defined('_JEXEC') or die;
 								<?php
 								if($this->task == 'venueimg') {
 									echo "/images/jem/venues/";
-									$this->task = 'venueimgup';
+									$this->task = 'imagehandler.venueimgup';
 								} else if($this->task == 'eventimg') {
 									echo "/images/jem/events/";
-									$this->task = 'eventimgup';
+									$this->task = 'imagehandler.eventimgup';
 								} else if($this->task == 'categoriesimg') {
 									echo "/images/jem/categories/";
-									$this->task = 'categoriesimgup';
+									$this->task = 'imagehandler.categoriesimgup';
 								}
 								?>
 								<br />
@@ -143,7 +143,6 @@ defined('_JEXEC') or die;
 
 <?php echo JHTML::_('form.token'); ?>
 <input type="hidden" name="option" value="com_jem" />
-<input type="hidden" name="controller" value="imagehandler" />
 <input type="hidden" name="task" value="<?php echo $this->task;?>" />
 </form>
 

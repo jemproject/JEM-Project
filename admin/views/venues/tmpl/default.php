@@ -66,8 +66,8 @@ $userId		= $user->get('id');
 	<tbody>
 		<?php
 		foreach ($this->rows as $i => $row) :
-			$link 		= 'index.php?option=com_jem&amp;controller=venues&amp;task=edit&amp;cid[]='. $row->id;
-			$published 	= JHTML::_('jgrid.published', $row->published, $i );
+			$link 		= 'index.php?option=com_jem&amp;task=venues.edit&amp;cid[]='. $row->id;
+			$published 	= JHTML::_('jgrid.published', $row->published, $i, 'venues.' );
 			$ordering	= ($listOrder == 'a.ordering');
 			$canCheckin = $user->authorise('core.manage',		'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
    		?>
@@ -82,17 +82,13 @@ $userId		= $user->get('id');
 					<?php endif; ?>
 						<a href="<?php echo $link; ?>">
 							<?php echo $this->escape($row->venue); ?></a>
-				
-					<p class="smallsub">
-						<?php echo JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($row->alias));?></p>
-				
 			</td>
 			<td>
 				<?php
 				if (JString::strlen($row->alias) > 25) {
 					echo JString::substr( JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($row->alias), 0 , 25)).'...';
 				} else {
-					echo JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($row->alias));
+					echo $this->escape($row->alias);
 				}
 				?>
 			</td>
@@ -164,7 +160,6 @@ $userId		= $user->get('id');
 
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="task" value="" />
-	<input type="hidden" name="controller" value="venues" />
 	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
 </form>
