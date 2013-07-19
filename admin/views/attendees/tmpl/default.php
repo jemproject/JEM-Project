@@ -91,7 +91,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 						<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&task=attendees.toggle&id='.$row->id),
 						                        JHTML::image('media/com_jem/images/publish_y.png', JText::_('COM_JEM_ON_WAITINGLIST'))); ?>
 					<?php else: ?>
-						<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&attendees.toggle&id='.$row->id),
+						<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&task=attendees.toggle&id='.$row->id),
 						                        JHTML::image('media/com_jem/images/tick.png', JText::_('COM_JEM_ATTENDING'))); ?>
 					<?php endif;?>
 				</td>
