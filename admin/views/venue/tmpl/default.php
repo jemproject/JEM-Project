@@ -87,7 +87,7 @@ $options = array(
 		var locdescription = <?php echo $this->editor->getContent( 'locdescription' ); ?>
 		var validator = document.formvalidator;
 
-		if (task == 'cancel') {
+		if (task == 'venue.cancel') {
 			submitform( task );
 			return;
 		}

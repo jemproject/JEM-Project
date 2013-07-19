@@ -134,11 +134,11 @@ class JEMViewVenue extends JViewLegacy {
 			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_VENUE' ), 'venuesedit' );
 
 		}
-		JToolBarHelper::apply();
+		JToolBarHelper::apply('venue.apply');
 		JToolBarHelper::spacer();
-		JToolBarHelper::save();
+		JToolBarHelper::save('venue.save');
 		JToolBarHelper::spacer();
-		JToolBarHelper::cancel();
+		JToolBarHelper::cancel('venue.cancel');
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'editvenues', true );
 
