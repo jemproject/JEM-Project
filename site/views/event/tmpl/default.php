@@ -87,7 +87,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 			$i = 0;
 			foreach ($this->categories as $category) :
 			?>
-				<a href="<?php echo JRoute::_('index.php?view=categoryevents&id='. $category->slug); ?>">
+				<a href="<?php echo JRoute::_('index.php?view=category&id='. $category->slug); ?>">
 					<?php echo $this->escape($category->catname); ?>
 				</a>
 			<?php

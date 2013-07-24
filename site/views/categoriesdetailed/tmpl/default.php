@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 <div id="jem" class="jem_categories_detailed">
 <div class="buttons">
 	<?php
-		echo JEMOutput::submitbutton( $this->dellink, $this->params ); 
+		echo JEMOutput::submitbutton( $this->dellink, $this->params );
 		echo JEMOutput::archivebutton( $this->params, $this->task );
 		echo JEMOutput::printbutton( $this->print_link, $this->params );
 	?>
@@ -39,7 +39,7 @@ foreach($this->categories as $category) :
 
 <div class="catimg">
 	  	<?php //flyer
-	
+
 	if (empty($category->image)) {
 
     $jemsettings =  JEMHelper::config();
@@ -48,10 +48,10 @@ foreach($this->categories as $category) :
 
 	echo  JHTML::image('media/com_jem/images/noimage.png', $category->catname, $imgattribs);
 	}else{
-	
+
 	$cimage = JEMImage::flyercreator($category->image, 'category');
 	echo JEMOutput::flyer( $category, $cimage, 'category' );
-	
+
 	}
 	?>
 </div>
@@ -70,7 +70,7 @@ foreach($this->categories as $category) :
 
 </div>
 
-<?php 
+<?php
 //only show this part if subcategries are available
 if (count($category->subcats)) :
 ?>
@@ -84,8 +84,8 @@ $i = 0;
 ?>
 <div class="subcategorieslist">
 	<?php foreach ($category->subcats as $sub) : ?>
-		<strong><a href="<?php echo JRoute::_( 'index.php?view=categoryevents&id='. $sub->slug ); ?>"><?php echo $this->escape($sub->catname); ?></a></strong> (<?php echo $sub->assignedevents != null ? $sub->assignedevents : 0; ?>)
-		<?php 
+		<strong><a href="<?php echo JRoute::_( 'index.php?view=category&id='. $sub->slug ); ?>"><?php echo $this->escape($sub->catname); ?></a></strong> (<?php echo $sub->assignedevents != null ? $sub->assignedevents : 0; ?>)
+		<?php
 		$i++;
 		if ($i != $n) :
 			echo ',';

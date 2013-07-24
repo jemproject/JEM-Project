@@ -10,12 +10,12 @@
 defined('_JEXEC') or die;
 JHTML::_('behavior.modal');
 ?>
-<div id="jem" class="jem_categoryevents">
+<div id="jem" class="jem_category">
 <div class="buttons">
 	<?php
-		echo JEMOutput::submitbutton( $this->dellink, $this->params ); 
+		echo JEMOutput::submitbutton( $this->dellink, $this->params );
 		echo JEMOutput::archivebutton( $this->params, $this->task, $this->category->slug );
-		echo JEMOutput::mailbutton( $this->category->slug, 'categoryevents', $this->params );
+		echo JEMOutput::mailbutton( $this->category->slug, 'category', $this->params );
 		echo JEMOutput::printbutton( $this->print_link, $this->params );
 	?>
 </div>
@@ -29,33 +29,33 @@ JHTML::_('behavior.modal');
 <?php endif; ?>
 
 <div class="floattext">
- 
- 
- 
+
+
+
  <?php if ($this->jemsettings->discatheader) {  ?>
  <div class="catimg">
   <?php //flyer
-	
+
 	if (empty($this->category->image)) {
 		$jemsettings =  JEMHelper::config();
 		$imgattribs['width'] = $jemsettings->imagewidth;
 		$imgattribs['height'] = $jemsettings->imagehight;
-		
+
    echo  JHTML::image('media/com_jem/images/noimage.png', $this->category->catname, $imgattribs);
 	}else{
-	
+
 	echo JEMOutput::flyer( $this->category, $this->cimage, 'category' );
 	}
 	?>
 	</div>
 	<?php } ?>
-	
+
 	<div class="catdescription">
 		<p><?php echo $this->catdescription; ?></p>
 	</div>
 </div>
 <!--subcategories-->
-<?php 
+<?php
 //only show this part if subcategries are available
 if (count($this->categories) && $this->category->id > 0) :
 ?>
@@ -73,7 +73,7 @@ if (count($this->categories) && $this->category->id > 0) :
 <input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-<input type="hidden" name="view" value="categoryevents" />
+<input type="hidden" name="view" value="category" />
 <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
 <input type="hidden" name="id" value="<?php echo $this->category->id; ?>" />
 <input type="hidden" name="Itemid" value="<?php echo $this->item->id;?>" />
@@ -91,7 +91,7 @@ if (count($this->categories) && $this->category->id > 0) :
 
 
 <?php
-echo JEMOutput::icalbutton($this->category->id, 'categoryevents');
+echo JEMOutput::icalbutton($this->category->id, 'category');
 ?>
 
 

@@ -17,7 +17,7 @@ jimport('joomla.application.component.view');
  * @package JEM
  * @since		0.9
  */
-class JEMViewCategoryevents extends JViewLegacy
+class JEMViewCategory extends JViewLegacy
 {
 	/**
 	 * Creates the Event Feed of the Category

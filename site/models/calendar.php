@@ -12,7 +12,7 @@ defined('_JEXEC') or die ;
 jimport('joomla.application.component.model');
 
 /**
- * JEM Component Categoryevents Model
+ * JEM Component Calendar Model
  *
  * @package JEM
  * @since		0.9

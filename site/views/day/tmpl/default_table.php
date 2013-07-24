@@ -166,7 +166,7 @@ defined('_JEXEC') or die;
 				$ix = 0;
 				foreach ($row->categories as $key => $category) : ?>
 					<?php if ($this->jemsettings->catlinklist == 1): ?>
-				<a href="<?php echo JRoute::_('index.php?view=categoryevents&id='.$category->catslug); ?>">
+				<a href="<?php echo JRoute::_('index.php?view=category&id='.$category->catslug); ?>">
 					<?php echo $category->catname; ?>
 				</a>
 				<?php else: ?>

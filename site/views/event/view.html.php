@@ -63,10 +63,10 @@ class JEMViewEvent extends JViewLegacy
 
 
 		$params->def('page_title', JText::_('COM_JEM_EVENT'));
-		
-		
+
+
 		$print	= JRequest::getBool('print');
-		
+
 		if ($print) {
 			$document = JFactory::getDocument();
 			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/print.css');
@@ -82,7 +82,7 @@ class JEMViewEvent extends JViewLegacy
 		$pathway 	= $app->getPathWay();
 
 		foreach($parents as $parent) {
-			$pathway->addItem($this->escape($parent->catname), JRoute::_('index.php?view=categoryevents&id='.$parent->categoryslug));
+			$pathway->addItem($this->escape($parent->catname), JRoute::_('index.php?view=category&id='.$parent->categoryslug));
 		}
 		$pathway->addItem($this->escape($row->title), JRoute::_(JEMHelperRoute::getRoute($row->slug)));
 
@@ -91,9 +91,9 @@ class JEMViewEvent extends JViewLegacy
 		$limage = JEMImage::flyercreator($row->locimage, 'venue');
 
 		//Check user if he can edit
-		
+
 		$allowedtoeditevent = JEMUser::editaccess($jemsettings->eventowner, $row->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
-		
+
 		//Check if the user has access to the edit-venueform
 		$maintainer3 = JEMUser::editvenuegroups();
 		$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $row->venueowner, $jemsettings->venueeditrec, $jemsettings->venueedit);

@@ -293,7 +293,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		$list3 = $db->loadObjectList();
 
 		foreach((array) $list3 as $key => $row) {
-			$list3[$key]->href = JEMHelperRoute::getRoute($row->slug, 'categoryevents');
+			$list3[$key]->href = JEMHelperRoute::getRoute($row->slug, 'category');
 		}
 
 		$rows[] = $list3;

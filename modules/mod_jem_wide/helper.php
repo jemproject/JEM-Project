@@ -148,7 +148,7 @@ class modJEMwideHelper
 			$lists[$i]->state			= htmlspecialchars($row->state, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->eventlink		= $params->get('linkevent', 1) ? JRoute::_(JEMHelperRoute::getRoute($row->slug)) : '';
 			$lists[$i]->venuelink		= $params->get('linkvenue', 1) ? JRoute::_(JEMHelperRoute::getRoute($row->venueslug, 'venue')) : '';
-			$lists[$i]->categorylink	= $params->get('linkcategory', 1) ? JRoute::_(JEMHelperRoute::getRoute($row->categoryslug, 'categoryevents')) : '';
+			$lists[$i]->categorylink	= $params->get('linkcategory', 1) ? JRoute::_(JEMHelperRoute::getRoute($row->categoryslug, 'category')) : '';
 			$lists[$i]->date 			= modJEMwideHelper::_format_date($row, $params);
 			$lists[$i]->time 			= $row->times ? modJEMwideHelper::_format_time($row->dates, $row->times, $params) : '' ;
 

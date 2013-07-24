@@ -31,7 +31,7 @@ defined('_JEXEC') or die;
 		<h2 class="jem cat<?php echo $row->id; ?>">
 			<?php echo JHTML::_('link', JRoute::_($row->linktarget), $this->escape($row->catname)); ?>
 		</h2>
-		
+
 		<?php if ($this->jemsettings->discatheader) {  ?>
 		<div class="catimg">
 			<?php //flyer
@@ -49,7 +49,7 @@ defined('_JEXEC') or die;
 
 	}
 	?>
-    <?php  		
+    <?php
 			// echo JHTML::_('link', JRoute::_($row->linktarget), $row->image);
 			?>
 			<p>
@@ -76,7 +76,7 @@ defined('_JEXEC') or die;
 
 	</div>
 
-	<?php 
+	<?php
 	//only show this part if subcategries are available
 	if (count($row->subcats)) :
 	?>
@@ -92,11 +92,11 @@ defined('_JEXEC') or die;
 		<?php foreach ($row->subcats as $sub) : ?>
 		<?php if ($this->params->get('showemptychilds',1) || $sub->assignedevents): ?>
 		<strong><a
-			href="<?php echo JRoute::_( 'index.php?view=categoryevents&id='. $sub->slug ); ?>"><?php echo $this->escape($sub->catname); ?>
+			href="<?php echo JRoute::_( 'index.php?view=category&id='. $sub->slug ); ?>"><?php echo $this->escape($sub->catname); ?>
 		</a> </strong> (
 		<?php echo $sub->assignedevents != null ? $sub->assignedevents : 0; ?>
 		)
-		<?php 
+		<?php
 		$i++;
 		if ($i != $n) :
 		echo ',';
@@ -114,7 +114,7 @@ defined('_JEXEC') or die;
 		<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
 
-	
+
 
 	<!--copyright-->
 

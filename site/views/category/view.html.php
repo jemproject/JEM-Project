@@ -13,21 +13,21 @@ jimport('joomla.application.component.view');
 
 
 /**
- * HTML View class for the Categoryevents View
+ * HTML View class for the Category View
  *
  * @package JEM
  * @since 0.9
 */
-class JEMViewCategoryevents extends JViewLegacy
+class JEMViewCategory extends JViewLegacy
 {
 	/**
-	 * Creates the Categoryevents View
+	 * Creates the Category View
 	 *
 	 * @since 0.9
 	 */
 	function display($tpl=null)
 	{
-		
+
 		//initialize variables
 		$app = JFactory::getApplication();
 		$document 		= JFactory::getDocument();
@@ -36,7 +36,7 @@ class JEMViewCategoryevents extends JViewLegacy
 		$db  			=  JFactory::getDBO();
 
 		JHTML::_('behavior.tooltip');
-		
+
 		//get menu information
 		$menu			= $app->getMenu();
 		$item 			= $menu->getActive();
@@ -44,18 +44,18 @@ class JEMViewCategoryevents extends JViewLegacy
 		$uri 			= JFactory::getURI();
 		$pathway 		= $app->getPathWay();
 
-		
+
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 
 		// get variables
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.categoryevents.filter_order', 'filter_order', 	'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categoryevents.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categoryevents.filter_state', 'filter_state', 	'*', 'word' );
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.categoryevents.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.categoryevents.search', 'search', '', 'string' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.category.filter_order', 'filter_order', 	'a.dates', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.category.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
+		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.category.filter_state', 'filter_state', 	'*', 'word' );
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.category.filter', 'filter', '', 'int' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.category.search', 'search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 		$task 				= JRequest::getWord('task');
 
@@ -85,7 +85,7 @@ class JEMViewCategoryevents extends JViewLegacy
 		}
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
 
-		
+
 		// search filter
 		$lists['search']= $search;
 
@@ -116,7 +116,7 @@ class JEMViewCategoryevents extends JViewLegacy
 
 
 		//add alternate feed link
-		$link	= 'index.php?option=com_jem&view=categoryevents&format=feed&id='.$category->id;
+		$link	= 'index.php?option=com_jem&view=category&format=feed&id='.$category->id;
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -127,18 +127,18 @@ class JEMViewCategoryevents extends JViewLegacy
 		$parents	= $cats->getParentlist();
 
 		foreach($parents as $parent) {
-			$pathway->addItem($this->escape($parent->catname), JRoute::_('index.php?view=categoryevents&id='.$parent->categoryslug));
+			$pathway->addItem($this->escape($parent->catname), JRoute::_('index.php?view=category&id='.$parent->categoryslug));
 		}
 
 		if ($task == 'archive') {
-			$pathway->addItem(JText::_('COM_JEM_ARCHIVE').' - '.$category->catname, JRoute::_('index.php?option=com_jem&view=categoryevents&task=archive&id='.$category->slug));
-			$link = JRoute::_('index.php?option=com_jem&view=categoryevents&task=archive&id='.$category->slug);
-			$print_link = JRoute::_('index.php?option=com_jem&view=categoryevents&id='. $category->id .'&task=archive&print=1&tmpl=component');
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE').' - '.$category->catname, JRoute::_('index.php?option=com_jem&view=category&task=archive&id='.$category->slug));
+			$link = JRoute::_('index.php?option=com_jem&view=category&task=archive&id='.$category->slug);
+			$print_link = JRoute::_('index.php?option=com_jem&view=category&id='. $category->id .'&task=archive&print=1&tmpl=component');
 			$pagetitle = $category->catname.' - '.JText::_('COM_JEM_ARCHIVE');
 		} else {
-			$pathway->addItem($category->catname, JRoute::_('index.php?option=com_jem&view=categoryevents&id='.$category->slug));
-			$link = JRoute::_('index.php?option=com_jem&view=categoryevents&id='.$category->slug);
-			$print_link = JRoute::_('index.php?option=com_jem&view=categoryevents&id='. $category->id .'&print=1&tmpl=component');
+			$pathway->addItem($category->catname, JRoute::_('index.php?option=com_jem&view=category&id='.$category->slug));
+			$link = JRoute::_('index.php?option=com_jem&view=category&id='.$category->slug);
+			$print_link = JRoute::_('index.php?option=com_jem&view=category&id='. $category->id .'&print=1&tmpl=component');
 			$pagetitle = $category->catname;
 		}
 
@@ -163,7 +163,7 @@ class JEMViewCategoryevents extends JViewLegacy
 			$category->text	= $category->catdescription;
 			$category->title 	= $category->catname;
 			JPluginHelper::importPlugin('content');
-			$results = $app->triggerEvent('onContentPrepare', array('com_jem.categoryevents', &$category, &$params, 0));
+			$results = $app->triggerEvent('onContentPrepare', array('com_jem.category', &$category, &$params, 0));
 			$catdescription = $category->text;
 		}
 
@@ -186,12 +186,12 @@ class JEMViewCategoryevents extends JViewLegacy
 		$this->item				= $item;
 		$this->categories		= $categories;
 
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
 		if($this->getLayout() == 'calendar')
 		{
 			$app =  JFactory::getApplication();
@@ -212,12 +212,12 @@ class JEMViewCategoryevents extends JViewLegacy
         $document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
         $document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
         $document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendar.css');
-        
+
         // add javascript
        // $document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
 
         $category 	= $this->get('Category');
-        
+
         $year 	= (int)JRequest::getVar('yearID', strftime("%Y"));
         $month 	= (int)JRequest::getVar('monthID', strftime("%m"));
 
@@ -237,10 +237,10 @@ class JEMViewCategoryevents extends JViewLegacy
 
         //init calendar
 		$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
-		$cal->enableMonthNav('index.php?view=categoryevents&layout=calendar&id='. $category->slug);
+		$cal->enableMonthNav('index.php?view=category&layout=calendar&id='. $category->slug);
 		$cal->setFirstWeekDay($jemsettings->weekdaystart);
 		//$cal->enableDayLinks(false);
-				
+
 		$this->rows 		= $rows;
 		$this->params		= $params;
 		$this->jemsettings	= $jemsettings;
@@ -275,7 +275,7 @@ class JEMViewCategoryevents extends JViewLegacy
 		return $this->rows;
 	}
 
-	
+
 	/**
 	 * Creates a tooltip
 	 *
@@ -292,11 +292,11 @@ class JEMViewCategoryevents extends JViewLegacy
 	{
 		$tooltip = (htmlspecialchars($tooltip));
 		$title = (htmlspecialchars($title));
-	
+
 		if ($title) {
 			$title = $title.'::';
 		}
-	
+
 		if ($href) {
 			$href = JRoute::_($href);
 			$style = '';
@@ -304,10 +304,10 @@ class JEMViewCategoryevents extends JViewLegacy
 		} else {
 			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'">'.$text.'</span>';
 		}
-	
+
 		return $tip;
 	}
-	
+
 
 }
 ?>

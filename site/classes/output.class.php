@@ -128,7 +128,7 @@ class JEMOutput {
 	 * @param string $task The current task
 	 *
 	 * Views:
-	 * Categories, Categoriesdetailed, Categoryevents, Eventslist, Search, Venue, Venues
+	 * Categories, Categoriesdetailed, Category, Eventslist, Search, Venue, Venues
 	 *
 	 */
 	static function archivebutton(&$params, $task = NULL, $id = NULL)
@@ -290,7 +290,7 @@ class JEMOutput {
 	 * @param array $params
 	 *
 	 * Views:
-	 * Categoryevents, Event, Venue
+	 * Category, Event, Venue
 	 */
 	static function mailbutton($slug, $view, $params)
 	{

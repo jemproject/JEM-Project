@@ -12,15 +12,15 @@ defined('_JEXEC') or die;
 jimport( 'joomla.application.component.view');
 
 /**
- * HTML View class for the Categoryevents View
+ * HTML View class for the Category View
  *
  * @package JEM
  * @since 1.1
  */
-class JEMViewCategoryevents extends JViewLegacy
+class JEMViewCategory extends JViewLegacy
 {
 	/**
-	 * Creates the output for the Categoryevents view
+	 * Creates the output for the Category view
 	 *
  	 * @since 2.0
 	 */

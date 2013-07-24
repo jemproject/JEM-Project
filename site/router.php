@@ -47,11 +47,11 @@ function jemParseRoute($segments)
 	//Handle View and Identifier
 	switch($segments[0])
 	{
-		case 'categoryevents':
+		case 'category':
 		{
 			$id = explode(':', $segments[1]);
 			$vars['id'] = $id[0];
-			$vars['view'] = 'categoryevents';
+			$vars['view'] = 'category';
 
 			$count = count($segments);
 			if($count > 2) {

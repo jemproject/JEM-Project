@@ -12,12 +12,12 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.model');
 
 /**
- * JEM Component Categoryevents Model
+ * JEM Component Category Model
  *
  * @package JEM
  * @since 0.9
  */
-class JEMModelCategoryevents extends JModelLegacy
+class JEMModelCategory extends JModelLegacy
 {
 	/**
 	 * Category id
@@ -80,8 +80,8 @@ class JEMModelCategoryevents extends JModelLegacy
 		$this->setId((int)$id);
 
 		//get the number of events from database
-		$limit			= $app->getUserStateFromRequest('com_jem.categoryevents.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart 	= $app->getUserStateFromRequest('com_jem.categoryevents.limitstart', 'limitstart', 0, 'int');
+		$limit			= $app->getUserStateFromRequest('com_jem.category.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart 	= $app->getUserStateFromRequest('com_jem.category.limitstart', 'limitstart', 0, 'int');
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -243,8 +243,8 @@ class JEMModelCategoryevents extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest('com_jem.categoryevents.filter_order', 'filter_order', 'a.dates', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.categoryevents.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		$filter_order		= $app->getUserStateFromRequest('com_jem.category.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.category.filter_order_Dir', 'filter_order_Dir', '', 'word');
 
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
@@ -277,9 +277,9 @@ class JEMModelCategoryevents extends JModelLegacy
 		$gid = JEMHelper::getGID($user);
 
 
-		$filter_state 	= $app->getUserStateFromRequest('com_jem.categoryevents.filter_state', 'filter_state', '', 'word');
-		$filter 		= $app->getUserStateFromRequest('com_jem.categoryevents.filter', 'filter', '', 'int');
-		$search 		= $app->getUserStateFromRequest('com_jem.categoryevents.search', 'search', '', 'string');
+		$filter_state 	= $app->getUserStateFromRequest('com_jem.category.filter_state', 'filter_state', '', 'word');
+		$filter 		= $app->getUserStateFromRequest('com_jem.category.filter', 'filter', '', 'int');
+		$search 		= $app->getUserStateFromRequest('com_jem.category.search', 'search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
 
 

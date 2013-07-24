@@ -65,16 +65,16 @@ abstract class JEMHelperRoute
 		return $link;
 	}
 
-	public static function getCategoryEventsRoute($id)
+	public static function getCategoryRoute($id)
 	{
 		$needles = array(
-			'categoryevents' => array((int) $id)
+			'category' => array((int) $id)
 		);
 
 		// Create the link
-		$link = 'index.php?option=com_jem&view=categoryevents&id='. $id;
+		$link = 'index.php?option=com_jem&view=category&id='. $id;
 
-		// If no categoryevents view works try categories
+		// If no category view works try categories
 		$needles['categories'] = array(self::artificalId);
 
 		$category = new JEMCategories($id);

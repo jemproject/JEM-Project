@@ -312,7 +312,7 @@ class jemmyeventsTab extends cbTabHandler {
 		**/
 		$result = $results[$i];
 		$checked 	= JHTML::_('grid.id',   $i, $result->id );
-		$catHref = "index.php?option=com_jem&amp;view=categoryevents&amp;id={$result->catid}&amp;Itemid={$S_Itemid1}";
+		$catHref = "index.php?option=com_jem&amp;view=category&amp;id={$result->catid}&amp;Itemid={$S_Itemid1}";
 		$cats = "\n\t\t\t<a href='{$catHref}' title='{$result->catname}'>{$result->catname}</a>";
 
 
@@ -356,7 +356,7 @@ class jemmyeventsTab extends cbTabHandler {
 
 		/* Category field */
 		if ($event_categories==1){
-		$cat = "<a href='".JRoute::_('index.php?option=com_jem&view=categoryevents&id='.$result->catid.'&Itemid='.$S_Itemid1)."'>{$result->catname}</a>";
+		$cat = "<a href='".JRoute::_('index.php?option=com_jem&view=category&id='.$result->catid.'&Itemid='.$S_Itemid1)."'>{$result->catname}</a>";
 		$return .= "\n\t\t\t<td class='jemmyeventsCBTabTableCat'>";
 		$return .= "\n\t\t\t\t$cat";
 		$return .= "\n\t\t\t</td>";
@@ -674,7 +674,7 @@ else
 		**/
 		$result = $results[$i];
 		$checked 	= JHTML::_('grid.id',   $i, $result->id );
-		$catHref = "index.php?option=com_jem&amp;view=categoryevents&amp;id={$result->catid}&amp;Itemid={$S_Itemid1}";
+		$catHref = "index.php?option=com_jem&amp;view=category&amp;id={$result->catid}&amp;Itemid={$S_Itemid1}";
 		$cat = "\n\t\t\t<a href='{$catHref}' title='{$result->catname}'>{$result->catname}</a>";
 
 
