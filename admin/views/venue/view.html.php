@@ -7,141 +7,107 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined('_JEXEC') or die;
+defined( '_JEXEC' ) or die;
+
 
 
 /**
- * View class for the JEM Venueedit screen
+ * View class Venue
  *
- * @package JEM
- * @since 0.9
+ * @package Joomla
+ * @subpackage JEM
+ * 
  */
 class JEMViewVenue extends JViewLegacy {
 
+	protected $form;
+	protected $item;
+	protected $state;
+	
+	
 	
 	public function display($tpl = null)
 	{
-		$app =  JFactory::getApplication();
 
-		// Load pane behavior
-		jimport('joomla.html.pane');
+		// Initialise variables.
+		$this->form	 = $this->get('Form');
+		$this->item	 = $this->get('Item');
+		$this->state = $this->get('State');
+
+		// Check for errors.
+		if (count($errors = $this->get('Errors'))) {
+			JError::raiseError(500, implode("\n", $errors));
+			return false;
+		}
+		JHTML::_('behavior.modal', 'a.modal');
 		JHTML::_('behavior.tooltip');
-		
-		// Load the form validation behavior
 		JHTML::_('behavior.formvalidation');
-
+		
+		
 		//initialise variables
 		$editor 	=  JFactory::getEditor();
 		$document	=  JFactory::getDocument();
 		$user 		=  JFactory::getUser();
 		$db 		=  JFactory::getDBO();
-		$settings	=  JEMAdmin::config();
-
-		$nullDate 		= $db->getNullDate();
-
-		//get vars
-		$cid 			= JRequest::getVar( 'cid' );
+		$this->settings	=  JEMAdmin::config();
 		$task		= JRequest::getVar('task');
-
-		//add css and js to document
-		$document->addScript(JURI::root().'media/com_jem/js/attachments.js' );
+		$this->task 		= $task;
+		$url 		= JURI::root();
+		
+		
+		// CSS Stylesheet
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
-
-		// Get data from the model
-		$model		=  $this->getModel();
-		$row		=  $this->get( 'Data');
-
-		// fail if checked out not by 'me'
-		if ($row->id) {
-			if ($model->isCheckedOut( $user->get('id') )) {
-				JError::raiseWarning( 'SOME_ERROR_CODE', $row->venue.' '.JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ));
-				$app->redirect( 'index.php?option=com_jem&view=venues' );
-			}
-		}
-
-		//Build the image select functionality
-		$js = "
-		function elSelectImage(image, imagename) {
-			document.getElementById('a_image').value = image;
-			document.getElementById('a_imagename').value = imagename;
-			document.getElementById('imagelib').src = '../images/jem/venues/' + image;
-			window.parent.SqueezeBox.close();
-		}";
-
-		$link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task=venueimg&amp;tmpl=component';
-		$link2 = 'index.php?option=com_jem&amp;view=imagehandler&amp;task=selectvenueimg&amp;tmpl=component';
-		$document->addScriptDeclaration($js);
-
-		JHTML::_('behavior.modal', 'a.modal');
-
-		$imageselect = "\n<input style=\"background: #ffffff;\" type=\"text\" id=\"a_imagename\" value=\"$row->locimage\" disabled=\"disabled\" onchange=\"javascript:if (document.forms[0].a_imagename.value!='') {document.imagelib.src='../images/jem/venues/' + document.forms[0].a_imagename.value} else {document.imagelib.src='../images/blank.png'}\"; /><br />";
-		$imageselect .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_UPLOAD')."\" href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_UPLOAD')."</a></div></div>\n";
-		$imageselect .= "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_SELECTIMAGE')."\" href=\"$link2\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_SELECTIMAGE')."</a></div></div>\n";
-		$imageselect .= "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectImage('', '".JText::_('COM_JEM_SELECTIMAGE')."' );\" value=\"".JText::_('COM_JEM_RESET')."\" />";
-		$imageselect .= "\n<input type=\"hidden\" id=\"a_image\" name=\"locimage\" value=\"$row->locimage\" />";
-
-		$countries = array();
-		$countries[] = JHTML::_('select.option', '', JText::_('COM_JEM_SELECT_COUNTRY'));
-		$countries = array_merge($countries, JEMHelper::getCountryOptions());
-		$selectedCountry = ($row->id) ? $row->country : $settings->defaultCountry;
-		$lists['countries'] = JHTML::_('select.genericlist', $countries, 'country', 'class="inputbox"', 'value', 'text', $selectedCountry );
-		unset($countries);
-
-		//assign data to template
-		$this->row			= $row;
-		$this->editor		= $editor;
-		$this->settings		= $settings;
-		$this->nullDate		= $nullDate;
-		$this->imageselect	= $imageselect;
-		$this->lists		= $lists;
+		$document->addScript(JURI::root().'media/com_jem/js/attachments.js' );
+		
 		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access		= $access2;
-		$this->task 		= $task;
 
-		// add toolbar
 		$this->addToolbar();
-
 		parent::display($tpl);
+		
 	}
+		
+		
+	
+
 
 	/**
-	 * Add Toolbar
+	 * Add the page title and toolbar.
+	 *
 	 */
 	protected function addToolbar()
 	{
-		
-		// with this option we're disabling (grey-out) the top menu of Joomla backend
-		// as you can see the variable hidemainmenu is set to true
-		
-		$app = JFactory::getApplication();
-		$input = $app->input;
-		$input->set('hidemainmenu', 1);
-		
-		//get vars
-		$cid 		= JRequest::getVar( 'cid' );
-		$task		= JRequest::getVar('task');
+		JRequest::setVar('hidemainmenu', true);
 
-		//build toolbar
-		if ($task == 'copy') {
-			JToolBarHelper::title( JText::_( 'COM_JEM_COPY_VENUE'), 'venuesedit');
-		} elseif ( $cid ) {
-			JToolBarHelper::title( JText::_( 'COM_JEM_EDIT_VENUE' ), 'venuesedit' );
+		$user		= JFactory::getUser();
+		$isNew		= ($this->item->id == 0);
+		$checkedOut	= !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+		$canDo		= JEMHelperBackend::getActions();
 
-			//makes data safe
-			JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'locdescription' );
+		JToolBarHelper::title($isNew ? JText::_('COM_JEM_ADD_VENUE') : JText::_('COM_JEM_EDIT_VENUE'), 'venuesedit');
 
-		} else {
-			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_VENUE' ), 'venuesedit' );
-
+		// If not checked out, can save the item.
+		if (!$checkedOut && ($canDo->get('core.edit')||$canDo->get('core.create'))) {
+			JToolBarHelper::apply('venue.apply');
+			JToolBarHelper::save('venue.save');
 		}
-		JToolBarHelper::apply('venue.apply');
-		JToolBarHelper::spacer();
-		JToolBarHelper::save('venue.save');
-		JToolBarHelper::spacer();
-		JToolBarHelper::cancel('venue.cancel');
-		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'editvenues', true );
+		if (!$checkedOut && $canDo->get('core.create')) {
 
+			JToolBarHelper::save2new('venue.save2new');
+		}
+		// If an existing item, can save to a copy.
+		if (!$isNew && $canDo->get('core.create')) {
+			JToolBarHelper::save2copy('venue.save2copy');
+		}
+
+		if (empty($this->item->id))  {
+			JToolBarHelper::cancel('venue.cancel');
+		} else {
+			JToolBarHelper::cancel('venue.cancel', 'JTOOLBAR_CLOSE');
+		}
+
+		JToolBarHelper::help( 'editvenues', true );
 	}
+
 }
 ?>

@@ -164,6 +164,7 @@ class JEMModelEvent extends JModelLegacy
 			$event->custom8				= null;
 			$event->custom9				= null;
 			$event->custom10			= null;
+			$event->checked_out = null;
 			$event->version				= 0;
 			$event->modified			= $this->_db->getNullDate();
 			$event->attachments			= array();

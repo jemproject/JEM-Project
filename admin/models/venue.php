@@ -7,335 +7,234 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
+// No direct access.
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
+jimport('joomla.application.component.modeladmin');
 
 /**
- * JEM Component Venue Model
+ * Venue model.
  *
- * @package JEM
- * @since 0.9
  */
-class JEMModelVenue extends JModelLegacy
+class JEMModelVenue extends JModelAdmin
 {
 	/**
-	 * venue id
+	 * Method to test whether a record can be deleted.
 	 *
-	 * @var int
+	 * @param	object	A record object.
+	 * @return	boolean	True if allowed to delete the record. Defaults to the permission set in the component.
+	 * 
 	 */
-	var $_id = null;
-
-	/**
-	 * venue data array
-	 *
-	 * @var array
-	 */
-	var $_data = null;
-
-	/**
-	 * Constructor
-	 *
-	 * @since 0.9
-	 */
-	function __construct()
+	protected function canDelete($record)
 	{
-		parent::__construct();
-
-		$array = JRequest::getVar('cid',  0, '', 'array');
-		$this->setId((int)$array[0]);
-	}
-
-	/**
-	 * Method to set the identifier
-	 *
-	 * @access	public
-	 * @param	int event identifier
-	 */
-	function setId($id)
-	{
-		// Set venue id and wipe data
-		$this->_id	    = $id;
-		$this->_data	= null;
-	}
-
-	/**
-	 * Logic for the event edit screen
-	 *
-	 * @access public
-	 * @return array
-	 * @since 0.9
-	 */
-	function &getData()
-	{
-		if ($this->_loadData())
+		if (!empty($record->id)) 
 		{
-
-		}
-		else  $this->_initData();
-
-		return $this->_data;
-	}
-
-	/**
-	 * Method to load content event data
-	 *
-	 * @access	private
-	 * @return	boolean	True on success
-	 * @since	0.9
-	 */
-	function _loadData()
-	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_data))
-		{
-			$query = 'SELECT *'
-					. ' FROM #__jem_venues'
-					. ' WHERE id = '.$this->_id
-					;
-
-			$this->_db->setQuery($query);
-
-			if ($this->_data = $this->_db->loadObject())
-			{
-				$files = JEMAttachment::getAttachments('venue'.$this->_data->id);
-				$this->_data->attachments = $files;
-			}
-
-			return (boolean) $this->_data;
-		}
-		return true;
-	}
-
-	/**
-	 * Method to initialise the venue data
-	 *
-	 * @access	private
-	 * @return	boolean	True on success
-	 * @since	0.9
-	 */
-	function _initData()
-	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_data))
-		{
-			//sticky forms
-			$session = JFactory::getSession();
-			if ($session->has('venueform', 'com_jem')) {
-
-				$venueform 		= $session->get('venueform', 0, 'com_jem');
-				$venue 	=  JTable::getInstance('jem_venues', '');
-
-				if (!$venue->bind($venueform)) {
-					JError::raiseError( 500, $this->_db->stderr() );
-					return false;
+				if ($record->state != -2) 
+				{
+					return ;
 				}
-				$this->_data				= $venue;
-				return (boolean) $this->_data;
+				
+				
+				$user = JFactory::getUser();
 
-			} else {
-				$createdate =  JFactory::getDate();
-				$user =  JFactory::getUser();
-
-				$venue = new stdClass();
-				$venue->id					= 0;
-				$venue->venue				= null;
-				$venue->alias				= null;
-				$venue->url					= null;
-				$venue->street				= null;
-				$venue->city				= null;
-				$venue->plz					= null;
-				$venue->state				= null;
-				$venue->country				= null;
-      			$venue->latitude      		= null;
-     			$venue->longitude     		= null;
-				$venue->locimage			= '';
-				$venue->map					= 1;
-				$venue->published			= 1;
-				$venue->locdescription		= null;
-				$venue->meta_keywords		= null;
-				$venue->checked_out		= null;
-				$venue->meta_description	= null;
-				$venue->created				= $createdate->toUnix();
-				$venue->modified			= $this->_db->getNullDate();
-				$venue->author_ip			= null;
-				$venue->created_by			= $user->get('id');
-				$venue->version				= 0;
-				$venue->attachments		= array();
-				$this->_data				= $venue;
-
-				return (boolean) $this->_data;
-			}
+				if (!empty($record->catid)) {
+					return $user->authorise('core.delete', 'com_jem.category.'.(int) $record->catid);
+				}
+			
+				else 
+				{
+					return $user->authorise('core.delete', 'com_jem');
+				}
 		}
-		return true;
+		
+		
 	}
 
 	/**
-	 * Method to checkin/unlock the item
+	 * Method to test whether a record can be deleted.
 	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 * @since	0.9
+	 * @param	object	A record object.
+	 * @return	boolean	True if allowed to change the state of the record. Defaults to the permission set in the component.
+	 * 
 	 */
-	function checkin()
+	protected function canEditState($record)
 	{
-		if ($this->_id)
-		{
-			$venue =  JTable::getInstance('jem_venues', '');
-			return $venue->checkin($this->_id);
+		$user = JFactory::getUser();
+
+		if (!empty($record->catid)) {
+			return $user->authorise('core.edit.state', 'com_jem.category.'.(int) $record->catid);
 		}
-		return false;
+		else {
+			return $user->authorise('core.edit.state', 'com_jem');
+		}
 	}
 
 	/**
-	 * Method to checkout/lock the item
+	 * Returns a reference to the a Table object, always creating it.
 	 *
-	 * @access	public
-	 * @param	int	$uid	User ID of the user checking the item out
-	 * @return	boolean	True on success
-	 * @since	0.9
+	 * @param	type	The table type to instantiate
+	 * @param	string	A prefix for the table class name. Optional.
+	 * @param	array	Configuration array for model. Optional.
+	 * @return	JTable	A database object
+	 * 
 	 */
-	function checkout($uid = null)
+	public function getTable($type = 'Venue', $prefix = 'JEMTable', $config = array())
 	{
-		if ($this->_id)
-		{
-			// Make sure we have a user id to checkout the venue with
-			if (is_null($uid)) {
-				$user	= JFactory::getUser();
-				$uid	= $user->get('id');
-			}
-			// Lets get to it and checkout the thing...
-			$venue =  JTable::getInstance('jem_venues', '');
-			return $venue->checkout($uid, $this->_id);
-		}
-		return false;
+		return JTable::getInstance($type, $prefix, $config);
 	}
 
 	/**
-	 * Tests if the venue is checked out
+	 * Method to get the record form.
 	 *
-	 * @access	public
-	 * @param	int	A user id
-	 * @return	boolean	True if checked out
-	 * @since	0.9
+	 * @param	array	$data		Data for the form.
+	 * @param	boolean	$loadData	True if the form is to load its own data (default case), false if not.
+	 * @return	mixed	A JForm object on success, false on failure
+	 * 
 	 */
-	function isCheckedOut( $uid=0 )
+	public function getForm($data = array(), $loadData = true)
 	{
-		if ($this->_loadData())
-		{
-			if ($uid) {
-				return ($this->_data->checked_out && $this->_data->checked_out != $uid);
-			} else {
-				return $this->_data->checked_out;
-			}
-		} elseif ($this->_id < 1) {
-			return false;
-		} else {
-			JError::raiseWarning( 0, JText::_('COM_JEM_UNABLE_TO_LOAD_DATA'));
+		// Get the form.
+		$form = $this->loadForm('com_jem.venue', 'venue', array('control' => 'jform', 'load_data' => $loadData));
+		if (empty($form)) {
 			return false;
 		}
+
+		return $form;
 	}
 
+	
+	
+	
 	/**
-	 * Method to store the venue
+	 * Method to get a single record.
 	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 * @since	1.5
+	 * @param	integer	The id of the primary key.
+	 *
+	 * @return	mixed	Object on success, false on failure.
 	 */
-	function store($data)
+	public function getItem($pk = null)
 	{
 		$jemsettings = JEMAdmin::config();
-		$user		=  JFactory::getUser();
-		$config 	=  JFactory::getConfig();
+		
+		
+		if ($item = parent::getItem($pk)) {
+			
+			
+		$files = JEMAttachment::getAttachments('venue'.$item->id);
+		$item->attachments = $files;
+		}
+		$item->author_ip = $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
+		
+		if (empty($item->id))
+		{ 
+		$item->country = $jemsettings->defaultCountry;
+		}
+	
+		return $item;
+	}
+	
+	
+	
+	/**
+	 * Method to get the data that should be injected in the form.
+	 *
+	 */
+	protected function loadFormData()
+	{
+		
+		// Check the session for previously entered form data.
+		$data = JFactory::getApplication()->getUserState('com_jem.edit.venue.data', array());
 
-		$row  = $this->getTable('jem_venues', '');
-
-		// bind it to the table
-		if (!$row->bind($data)) {
-			JError::raiseError(500, $this->_db->getErrorMsg() );
-			return false;
+		if (empty($data)) {
+			$data = $this->getItem();
 		}
 
-		// Check if image was selected
-		jimport('joomla.filesystem.file');
-		$format 	= JFile::getExt(JPATH_SITE.'/images/jem/venues/'.$row->locimage);
+		return $data;
+	}
 
-		$allowable 	= array ('gif', 'jpg', 'png');
-		if (in_array($format, $allowable)) {
-			$row->locimage = $row->locimage;
+	/**
+	 * Prepare and sanitise the table data prior to saving.
+	 *
+	 */
+	protected function prepareTable(&$table)
+	{
+		
+		//Debug
+		/* var_dump($_POST);exit; */
+		
+		
+		$app =  JFactory::getApplication();
+		$date	= JFactory::getDate();
+		$jemsettings = JEMAdmin::config();
+		
+		$user	= JFactory::getUser();
+		if ($table->id) {
+			// Existing item
+			$table->modified	= $date->toSql();
+			$table->modified_by	= $user->get('id');
 		} else {
-			$row->locimage = '';
-		}
+			// New venue. A venue created and created_by field can be set by the user,
+			// so we don't touch either of these if they are set.
+			
+			if (!intval($table->created)) {
+			$table->created = $date->toSql();
+			}
+			
+			if (empty($this->created_by)) {
+			$table->created_by = $user->get('id');
+			}
+			
+			
+			}
+			
+			//uppercase needed by mapservices
+			if ($table->country) {
+				$table->country = JString::strtoupper($table->country);
+			}
 
-		// sanitise id field
-		$row->id = (int) $row->id;
-
-		$nullDate	= $this->_db->getNullDate();
-
-		// Are we saving from an item edit?
-		if ($row->id) {
-			$row->modified 		= gmdate('Y-m-d H:i:s');
-			$row->modified_by 	= $user->get('id');
-		} else {
-			$row->modified 		= $nullDate;
-			$row->modified_by 	= '';
-
-			//get IP, time and userid
-			$row->created 			= gmdate('Y-m-d H:i:s');
-
-			$row->author_ip 		= $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
-		}
-
-		//uppercase needed by mapservices
-		if ($row->country) {
-			$row->country = JString::strtoupper($row->country);
-		}
-
-		//update item order
-		if (!$row->id) {
-			$row->ordering = $row->getNextOrder();
-		}
-
-		$row->version++;
-
-		// Make sure the data is valid
-		if (!$row->check($jemsettings)) {
-			$this->setError($row->getError());
-			return false;
-		}
-
-		// Store it in the db
-		if (!$row->store()) {
-			JError::raiseError(500, $this->_db->getErrorMsg() );
-			return false;
-		}
-
-		// attachments
-		// new ones first
-		$attachments = JRequest::getVar( 'attach', array(), 'files', 'array' );
-		$attachments['customname'] = JRequest::getVar( 'attach-name', array(), 'post', 'array' );
-		$attachments['description'] = JRequest::getVar( 'attach-desc', array(), 'post', 'array' );
-		$attachments['access'] = JRequest::getVar( 'attach-access', array(), 'post', 'array' );
-		JEMAttachment::postUpload($attachments, 'venue'.$row->id);
-
-		// and update old ones
-		$attachments = array();
-		$old['id'] = JRequest::getVar( 'attached-id', array(), 'post', 'array' );
-		$old['name'] = JRequest::getVar( 'attached-name', array(), 'post', 'array' );
-		$old['description'] = JRequest::getVar( 'attached-desc', array(), 'post', 'array' );
-		$old['access'] = JRequest::getVar( 'attached-access', array(), 'post', 'array' );
-		foreach ($old['id'] as $k => $id)
-		{
-			$attach = array();
-			$attach['id'] = $id;
-			$attach['name'] = $old['name'][$k];
-			$attach['description'] = $old['description'][$k];
-			$attach['access'] = $old['access'][$k];
-			JEMAttachment::update($attach);
-		}
-
-		return $row->id;
+			
+			// Check if image was selected
+			jimport('joomla.filesystem.file');
+			$format 	= JFile::getExt(JPATH_SITE.'/images/jem/venues/'.$table->locimage);
+			
+			$allowable 	= array ('gif', 'jpg', 'png');
+			if (in_array($format, $allowable)) {
+				$table->locimage = $table->locimage;
+			} else {
+				$table->locimage = '';
+			}	
+			
+		
+			// attachments
+			// new ones first
+			$attachments = JRequest::getVar( 'attach', array(), 'files', 'array' );
+			$attachments['customname'] = JRequest::getVar( 'attach-name', array(), 'post', 'array' );
+			$attachments['description'] = JRequest::getVar( 'attach-desc', array(), 'post', 'array' );
+			$attachments['access'] = JRequest::getVar( 'attach-access', array(), 'post', 'array' );
+			JEMAttachment::postUpload($attachments, 'venue'.$table->id);
+			
+			// and update old ones
+			$attachments = array();
+			$old['id'] = JRequest::getVar( 'attached-id', array(), 'post', 'array' );
+			$old['name'] = JRequest::getVar( 'attached-name', array(), 'post', 'array' );
+			$old['description'] = JRequest::getVar( 'attached-desc', array(), 'post', 'array' );
+			$old['access'] = JRequest::getVar( 'attached-access', array(), 'post', 'array' );
+			foreach ($old['id'] as $k => $id)
+			{
+				$attach = array();
+				$attach['id'] = $id;
+				$attach['name'] = $old['name'][$k];
+				$attach['description'] = $old['description'][$k];
+				$attach['access'] = $old['access'][$k];
+				JEMAttachment::update($attach);
+			}
+			
+			
+		
+		$table->venue = htmlspecialchars_decode($table->venue, ENT_QUOTES);
+		
+		// Increment the content version number.
+		$table->version++;
+		
 	}
 }
-?>

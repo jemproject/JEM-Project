@@ -23,6 +23,10 @@ $options = array(
 );
 
 ?>
+
+
+<form action="<?php echo JRoute::_('index.php?option=com_jem');?>" id="application-form" method="post" name="adminForm" class="form-validate">
+
 <table style="width:100%">
 	<tr>
 		<td valign="top">
@@ -41,7 +45,7 @@ $options = array(
 						$link = 'index.php?option=com_jem&amp;view=venues';
 						JEMViewJEM::quickiconButton( $link, 'icon-48-venues.png', JText::_( 'COM_JEM_VENUES' ) );
 
-						$link = 'index.php?option=com_jem&amp;view=venue';
+						$link = 'index.php?option=com_jem&task=venue.add';
 						JEMViewJEM::quickiconButton( $link, 'icon-48-venuesedit.png', JText::_( 'COM_JEM_ADD_VENUE' ) );
 
 						$link = 'index.php?option=com_jem&amp;view=categories';
@@ -71,11 +75,6 @@ $options = array(
 
 							$link = 'index.php?option=com_jem&amp;view=cleanup';
 							JEMViewJEM::quickiconButton( $link, 'icon-48-housekeeping.png', JText::_( 'COM_JEM_CLEANUP' ) );
-
-							/* @todo delete when decided
-							$link = 'index.php?option=com_jem&amp;view=updatecheck';
-							JEMViewJEM::quickiconButton( $link, 'icon-48-update.png', JText::_( 'COM_JEM_UPDATE_CHECK' ), 1 );
-							*/
 
 							$link = 'index.php?option=com_jem&amp;task=sampledata.load';
 							JEMViewJEM::quickiconButton( $link, 'icon-48-sampledata.png', JText::_( 'COM_JEM_LOAD_SAMPLE_DATA' ) );
@@ -193,6 +192,8 @@ $options = array(
 	</tr>
 </table>
 
+
+</form>
 <p class="copyright">
 	<?php echo JEMAdmin::footer( ); ?>
 </p>

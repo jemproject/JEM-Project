@@ -61,7 +61,10 @@ class JEMViewJEM extends JViewLegacy {
 		//build toolbar
 		JToolBarHelper::title( JText::_( 'COM_JEM_JEM' ), 'home' );
 		JToolBarHelper::help( 'intro', true );
-		/*JToolBarhelper::preferences('com_jem');*/
+		
+		if (JFactory::getUser()->authorise('core.manage')) {
+		JToolBarhelper::preferences('com_jem');
+		}
 		
 		//Create Submenu
 		require_once JPATH_COMPONENT . '/helpers/helper.php';

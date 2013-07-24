@@ -5,43 +5,56 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ *
  */
 
-defined('_JEXEC') or die;
-
+defined( '_JEXEC' ) or die;
 
 
 /**
- * View class for the JEM Venues screen
- * 
+ * View class for the EventList Venues screen
+ *
+ * @package Joomla
+ * @subpackage EventList
+ * @since 0.9
  */
-class JEMViewVenues extends JViewLegacy {
+ 
+ class JEMViewVenues extends JViewLegacy {
 
-	protected $state;
+
 	protected $items;
 	protected $pagination;
+	protected $state;
+
 
 
 	public function display($tpl = null)
 	{
-
+		
 		$app =  JFactory::getApplication();
 		$user 		=  JFactory::getUser();
 		$document	=  JFactory::getDocument();
-
 		
-		// Get data from the model
-		$this->rows      	=	$this->get('Items');
-		$this->pagination 	=	$this->get('Pagination');
-		$this->state		=	$this->get('State');
-
 		
+        // Initialise variables.
+		$this->items		= $this->get('Items');
+		$this->pagination	= $this->get('Pagination');
+		$this->state		= $this->get('State');
+
+		// Check for errors.
+		if (count($errors = $this->get('Errors')))
+		{
+			JError::raiseError(500, implode("\n", $errors));
+			return false;
+		}
+
+	
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
-
+		
 		//add style to description of the tooltip (hastip)
 		JHTML::_('behavior.tooltip');
-
+		
 		// add filter selection for the search
 		$filters = array();
 		$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_VENUE' ) );
@@ -50,19 +63,21 @@ class JEMViewVenues extends JViewLegacy {
 		$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_COUNTRY' ) );
 		$filters[] = JHTML::_('select.option', '5', JText::_( 'JALL' ) );
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $this->state->get('filter') );
-
+		
 		
 		//assign data to template
 		$this->lists		= $lists;
 		$this->user			= $user;
 
-
 		// add toolbar
 		$this->addToolbar();
-
+		
 		
 		parent::display($tpl);
-	}
+		}
+
+
+
 
 
 	/*
@@ -143,10 +158,10 @@ class JEMViewVenues extends JViewLegacy {
 		
 		
 		/* copy */
-		JToolBarHelper::divider();
-		JToolBarHelper::spacer();
-		JToolBarHelper::custom( 'venues.copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
-		JToolBarHelper::spacer();
+		//JToolBarHelper::divider();
+		//JToolBarHelper::spacer();
+		//JToolBarHelper::custom( 'venues.copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
+		//JToolBarHelper::spacer();
 		
 		/* Reference to help-page located in the folder help.
 		 * The variable 'true' is saying to look in the component directory
@@ -160,4 +175,7 @@ class JEMViewVenues extends JViewLegacy {
 
 
 } // end of class
+ 
+
+
 ?>

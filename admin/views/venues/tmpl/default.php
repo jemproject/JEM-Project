@@ -8,11 +8,16 @@
  */
 
 defined('_JEXEC') or die;
-$listOrder	= $this->escape($this->state->get('list.ordering'));
-$listDirn	= $this->escape($this->state->get('list.direction'));
+
 
 $user		= JFactory::getUser();
 $userId		= $user->get('id');
+$listOrder	= $this->escape($this->state->get('list.ordering'));
+$listDirn	= $this->escape($this->state->get('list.direction'));
+$canOrder	= $user->authorise('core.edit.state', 'com_jem.category');
+$saveOrder	= $listOrder=='ordering';
+
+$params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 
 ?>
 
@@ -65,23 +70,33 @@ $userId		= $user->get('id');
 
 	<tbody>
 		<?php
-		foreach ($this->rows as $i => $row) :
-			$link 		= 'index.php?option=com_jem&amp;task=venues.edit&amp;cid[]='. $row->id;
-			$published 	= JHTML::_('jgrid.published', $row->published, $i, 'venues.' );
-			$ordering	= ($listOrder == 'a.ordering');
-			$canCheckin = $user->authorise('core.manage',		'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
+		foreach ($this->items as $i => $row) :
+		$ordering	= ($listOrder == 'ordering');
+	/*	$row->cat_link = JRoute::_('index.php?option=com_categories&extension=com_jem&task=edit&type=other&cid[]='. $row->catid);*/
+		$canCreate	= $user->authorise('core.create');
+		$canEdit	= $user->authorise('core.edit');
+		$canCheckin	= $user->authorise('core.manage',		'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
+		$canChange	= $user->authorise('core.edit.state') && $canCheckin;
+		
+		
+
+		
+			$link 		= 'index.php?option=com_jem&amp;task=venue.edit&amp;id='. $row->id;
+			$published 	= JHtml::_('jgrid.published', $row->published, $i, 'venues.', $canChange, 'cb', $row->publish_up, $row->publish_down);
    		?>
 		<tr class="row<?php echo $i % 2; ?>">
 			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 			<td align="left">
-			
-			
 				<?php if ($row->checked_out) : ?>
 						<?php echo JHtml::_('jgrid.checkedout', $i, $row->editor, $row->checked_out_time, 'venues.', $canCheckin); ?>
 					<?php endif; ?>
-						<a href="<?php echo $link; ?>">
+										<?php if ($canEdit) : ?>
+						<a href="<?php echo JRoute::_('index.php?option=com_jem&task=venue.edit&id='.(int) $row->id); ?>">
 							<?php echo $this->escape($row->venue); ?></a>
+					<?php else : ?>
+							<?php echo $this->escape($row->venue); ?>
+					<?php endif; ?>
 			</td>
 			<td>
 				<?php
@@ -157,9 +172,12 @@ $userId		= $user->get('id');
 <p class="copyright">
 	<?php echo JEMAdmin::footer( ); ?>
 </p>
-
+<div>
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
-</form>
+<?php echo JHtml::_('form.token'); ?>
+	</div>
+	
+	</form>

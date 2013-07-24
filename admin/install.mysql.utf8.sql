@@ -73,6 +73,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
 `checked_out` int(11) NOT NULL default '0',
 `checked_out_time` datetime NOT NULL default '0000-00-00 00:00:00',
 `ordering` int(11) NOT NULL default '0',
+`publish_up` datetime NOT NULL,
+`publish_down` datetime NOT NULL,
 PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
