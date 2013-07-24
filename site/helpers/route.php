@@ -118,20 +118,16 @@ abstract class JEMHelperRoute
 		return $link;
 	}
 
-	public static function getVenueeventsRoute($id) {
-		return getVenueRoute($id);
-	}
-
 	public static function getVenueRoute($id)
 	{
 		$needles = array(
-			'venueevents' => array((int) $id)
+			'venue' => array((int) $id)
 		);
 
 		// Create the link
-		$link = 'index.php?option=com_jem&view=venueevents&id='. $id;
+		$link = 'index.php?option=com_jem&view=venue&id='. $id;
 
-		// If no venueevents view works try venues
+		// If no venue view works try venues
 		$needles['venues'] = array(self::artificalId);
 
 		if ($item = self::_findItem($needles)) {

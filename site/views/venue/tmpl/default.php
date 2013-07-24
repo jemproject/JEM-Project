@@ -9,27 +9,27 @@
 
 defined('_JEXEC') or die;
 ?>
-<div id="jem" class="jem_venue_events">
+<div id="jem" class="jem_venue">
 <div class="buttons">
 	<?php
 		echo JEMOutput::addvenuebutton( $this->addvenuelink, $this->params, $this->jemsettings );
 		echo JEMOutput::submitbutton( $this->addeventlink, $this->params );
 		echo JEMOutput::archivebutton( $this->params, $this->task, $this->venue->slug );
-		echo JEMOutput::mailbutton( $this->venue->slug, 'venueevents', $this->params );
+		echo JEMOutput::mailbutton( $this->venue->slug, 'venue', $this->params );
 		echo JEMOutput::printbutton( $this->print_link, $this->params );
 	?>
 </div>
 <?php if ($this->params->def('show_page_title', 1)) : ?>
 	<h1 class='componentheading'>
-		<?php 
+		<?php
 		echo '&nbsp';
 		?>
-    
+
 	</h1>
 <?php endif; ?>
 
 	<!--Venue-->
-	
+
 		<h2 class="jem">
 			<?php echo $this->escape($this->pagetitle); ?>
 			<?php echo JEMOutput::editbutton($this->item->id, $this->venue->id, $this->params, $this->allowedtoeditvenue, 'editvenue' ); ?>
@@ -82,17 +82,17 @@ defined('_JEXEC') or die;
     			<?php echo $this->venue->countryimg ? $this->venue->countryimg : $this->venue->country; ?>
     		</dd>
     		<?php endif; ?>
-    		<?php 
-    		if ($this->jemsettings->showmapserv == 1) 
-    					{ 
+    		<?php
+    		if ($this->jemsettings->showmapserv == 1)
+    					{
 					echo JEMOutput::mapicon($this->venue);
-						}  
-			endif; 
+						}
+			endif;
 			?>
 	</dl>
 
 	<p>
-	<?php 
+	<?php
 		if ($this->jemsettings->showmapserv == 2)
 		{
 		echo JEMOutput::mapicon($this->venue);
@@ -120,7 +120,7 @@ defined('_JEXEC') or die;
 	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="" />
-	<input type="hidden" name="view" value="venueevents" />
+	<input type="hidden" name="view" value="venue" />
 	<input type="hidden" name="id" value="<?php echo $this->venue->id; ?>" />
 	<input type="hidden" name="Itemid" value="<?php echo $this->item->id;?>" />
 	</p>
@@ -134,7 +134,7 @@ defined('_JEXEC') or die;
 
 
 <?php
-echo JEMOutput::icalbutton($this->venue->id, 'venueevents');
+echo JEMOutput::icalbutton($this->venue->id, 'venue');
 ?>
 
 

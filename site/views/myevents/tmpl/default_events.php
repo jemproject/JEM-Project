@@ -123,7 +123,7 @@ defined('_JEXEC') or die;
 		?>
 		<tr align="center"><td colspan="0"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
 		<?php
-	
+
 
 	else :
 	foreach ($this->events as $i => $row) :
@@ -131,7 +131,7 @@ defined('_JEXEC') or die;
 			<tr class="row<?php echo $i % 2; ?>">
 				<td><?php echo $this->events_pagination->getRowOffset( $i ); ?></td>
 				<td><?php echo JHtml::_('grid.id', $i, $row->eventid); ?></td>
-				
+
 				<td headers="jem_date" align="left">
 					<?php echo JEMOutput::formatShortDateTime($row->dates, $row->times,
 						$row->enddates, $row->endtimes); ?>
@@ -162,7 +162,7 @@ defined('_JEXEC') or die;
 					<td headers="jem_location" align="left" valign="top">
 						<?php
 						if ($this->jemsettings->showlinkvenue == 1) :
-							echo $row->locid != 0 ? "<a href='".JRoute::_('index.php?view=venueevents&id='.$row->venueslug)."'>".$this->escape($row->venue)."</a>" : '-';
+							echo $row->locid != 0 ? "<a href='".JRoute::_('index.php?view=venue&id='.$row->venueslug)."'>".$this->escape($row->venue)."</a>" : '-';
 						else :
 							echo $row->locid ? $this->escape($row->venue) : '-';
 						endif;
@@ -217,7 +217,7 @@ defined('_JEXEC') or die;
 				</td>
 				<?php
 				endif;
-				
+
 				if ($this->params->get('displayattendeecolumn') == 1) :
 				?>
 									<td headers="jem_atte" align="center" valign="top">
@@ -228,7 +228,7 @@ defined('_JEXEC') or die;
 					$menuitem = $app->getMenu()->getActive()->id;
 								$linkreg 	= 'index.php?option=com_jem&amp;view=attendees&amp;id='.$row->id.'&Itemid='.$menuitem;
 						$count = $row->regCount;
-						if ($row->maxplaces) 
+						if ($row->maxplaces)
 						{
 							$count .= '/'.$row->maxplaces;
 							if ($row->waitinglist && $row->waiting) {
@@ -236,9 +236,9 @@ defined('_JEXEC') or die;
 							}
 						}
 					?>
-					
-					
-					<?php 
+
+
+					<?php
 					if ($count > 0 && $row->published == 1)
 					{
 						?>
@@ -246,37 +246,37 @@ defined('_JEXEC') or die;
 						<?php echo $count; ?>
 						</a>
 				<?php 	} ?>
-				
-				
-				<?php 
+
+
+				<?php
 					if ($row->published == 0)
 					{
 						?>
 						<?php echo $count; ?>
 				<?php 	} ?>
-				
-				<?php 
+
+				<?php
 					if ($count == 0  && $row->published == 1)
 					{
 						?>
 						<?php echo $count; ?>
 				<?php 	} ?>
-				
-					
+
+
 
 					<?php
 					}else {
 					?>
 					<?php echo JHTML::_('image', 'media/com_jem/images/publish_r.png',JText::_('COM_JEM_NOTES')); ?>
-					
-					
+
+
 					<?php
 					}
 					?>
-									
-									
-									
-									
+
+
+
+
 									</td>
 								<?php
 								endif;

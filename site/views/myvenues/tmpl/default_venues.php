@@ -82,14 +82,14 @@ defined('_JEXEC') or die;
 		?>
 		<tr align="center"><td colspan="0"><?php echo JText::_('COM_JEM_NO_VENUES'); ?></td></tr>
 		<?php
-	
+
 
 	else :
 	foreach ($this->venues as $i => $row) :
 	?>
 			<tr class="row<?php echo $i % 2; ?>">
 
-	
+
 				<?php
 				if ($this->jemsettings->showlocate == 1) :
 				?>
@@ -97,7 +97,7 @@ defined('_JEXEC') or die;
 					<td headers="jem_location" align="left" valign="top">
 						<?php
 						if ($this->jemsettings->showlinkvenue == 1) :
-							echo $row->id != 0 ? "<a href='".JRoute::_('index.php?view=venueevents&id='.$row->venueslug)."'>".$this->escape($row->venue)."</a>" : '-';
+							echo $row->id != 0 ? "<a href='".JRoute::_('index.php?view=venue&id='.$row->venueslug)."'>".$this->escape($row->venue)."</a>" : '-';
 						else :
 							echo $row->id ? $this->escape($row->venue) : '-';
 						endif;
@@ -120,7 +120,7 @@ defined('_JEXEC') or die;
 				endif;
 				endforeach;
 				?>
-					
+
 				</td>
 			</tr>
 

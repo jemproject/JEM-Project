@@ -13,14 +13,14 @@ defined('_JEXEC') or die;
 jimport('joomla.plugin.plugin');
 jimport('joomla.html.parameter');
 
-       
+
 
 
 class plgSearchJEM extends JPlugin
 {
-	
-	
-       
+
+
+
 
 //Load the Plugin language file out of the administration
 // JPlugin::loadLanguage( 'plg_search_jem', JPATH_ADMINISTRATOR);
@@ -32,7 +32,7 @@ function __construct(& $subject, $config)
     {
             parent::__construct($subject, $config);
             JPlugin::loadLanguage( 'plg_search_jem', JPATH_ADMINISTRATOR);
-    } 
+    }
 /**
  * @return array An array of search areas
  */
@@ -136,8 +136,8 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 				$order = 'a.dates, a.times DESC';
 		}
 
-		
-		
+
+
 		if (JFactory::getUser()->authorise('core.manage')) {
            $gid = (int) 3;
             } else {
@@ -147,8 +147,8 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
                    $gid = (int) 1;
                 }
             }
-		
-		
+
+
 		$query = 'SELECT a.id, a.title AS title,'
 		. ' a.datdescription AS text,'
 		. ' a.dates AS created,'
@@ -240,7 +240,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		$list2 = $db->loadObjectList();
 
 		foreach((array) $list2 as $key => $row) {
-			$list2[$key]->href = JEMHelperRoute::getRoute($row->slug, 'venueevents');
+			$list2[$key]->href = JEMHelperRoute::getRoute($row->slug, 'venue');
 		}
 
 		$rows[] = $list2;

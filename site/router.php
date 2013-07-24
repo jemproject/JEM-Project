@@ -66,11 +66,11 @@ function jemParseRoute($segments)
 			$vars['view'] = 'event';
 		} break;
 
-		case 'venueevents':
+		case 'venue':
 		{
 			$id = explode(':', $segments[1]);
 			$vars['id'] = $id[0];
-			$vars['view'] = 'venueevents';
+			$vars['view'] = 'venue';
 			$count = count($segments);
 			if($count > 2) {
 				$vars['task'] = $segments[2];

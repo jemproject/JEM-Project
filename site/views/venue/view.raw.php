@@ -17,10 +17,10 @@ jimport( 'joomla.application.component.view');
  * @package JEM
  * @since 1.1
  */
-class JEMViewVenueevents extends JViewLegacy
+class JEMViewVenue extends JViewLegacy
 {
 	/**
-	 * Creates the output for the Venueevents view
+	 * Creates the output for the Venue view
 	 *
  	 * @since 2.0
 	 */

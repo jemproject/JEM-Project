@@ -12,12 +12,12 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.view');
 
 /**
- * HTML View class for the Venueevents View
+ * HTML View class for the Venue View
  *
  * @package JEM
  * @since 0.9
  */
-class JEMViewVenueevents extends JViewLegacy
+class JEMViewVenue extends JViewLegacy
 {
 	/**
 	 * Creates the Event Feed of the Venue

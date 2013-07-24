@@ -66,7 +66,7 @@ class JEMUser {
 	/**
 	 * Checks if the user is a superuser
 	 * A superuser will allways have access if the feature is activated
-	 * 
+	 *
 	 * @return boolean True on success
 	 */
 	static function superuser() {
@@ -90,7 +90,7 @@ class JEMUser {
 	 *
 	 * We could use the validate_user method instead of this to allow to set a groupid
 	 * Not sure if this is a good idea
-	 * 
+	 *
 	 * @return boolean True on success
 	 */
 	static function editoruser() {
@@ -149,13 +149,13 @@ class JEMUser {
 		$db->setQuery( $query );
 
 		$maintainer = $db->loadResult();
-	
+
 		return $maintainer;
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Checks if an user is a groupmember and if so
 	 * if the group is allowed to add-venues
@@ -165,19 +165,19 @@ class JEMUser {
 		//lets look if the user is a maintainer
 		$db 	= JFactory::getDBO();
 		$user	= JFactory::getUser();
-	
-		
+
+
 		/*
 		 * just a basic check to see if the current user is in an usergroup with
 		 * access for submitting venues
-		 * 
+		 *
 		 * if a result then return true, otherwise false
-		 * 
+		 *
 		 * views:
-		 * venues, venueevents, editvenue
-		 * 
+		 * venues, venue, editvenue
+		 *
 		 */
-		
+
 				$query = 'SELECT gr.id'
 				. ' FROM #__jem_groups AS gr'
 				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
@@ -185,20 +185,20 @@ class JEMUser {
 				. ' WHERE g.member = '.(int) $user->get('id')
 				;
 				$db->setQuery( $query );
-				
+
 				$groupnumber = $db->loadResult();
-				
+
 				//no results
 				if (!$groupnumber) {
 				return null;
 				}  else {
-					
+
 				return $groupnumber;
-				
+
 				}
 	}
-	
-	
+
+
 	/**
 	 * Checks if an user is a groupmember and if so
 	 * if the group is allowed to publish-venues
@@ -208,8 +208,8 @@ class JEMUser {
 		//lets look if the user is a maintainer
 		$db 	= JFactory::getDBO();
 		$user	= JFactory::getUser();
-	
-	
+
+
 		/*
 		 * just a basic check to see if the current user is in an usergroup with
 		* access for publishing venues
@@ -217,7 +217,7 @@ class JEMUser {
 		* if a result then return true, otherwise false
 		*
 		*/
-	
+
 		$query = 'SELECT gr.id'
 				. ' FROM #__jem_groups AS gr'
 				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
@@ -225,20 +225,20 @@ class JEMUser {
 				. ' WHERE g.member = '.(int) $user->get('id')
 				;
 				$db->setQuery( $query );
-	
+
 				$groupnumber = $db->loadResult();
-	
+
 				//no results
 				if (!$groupnumber) {
 						return null;
 				}  else {
-												
+
 				return $groupnumber;
-	
+
 				}
 	}
-	
-	
+
+
 	/**
 	 * Checks if an user is a groupmember and if so
 	 * if the group is allowed to edit-venues
@@ -248,8 +248,8 @@ class JEMUser {
 		//lets look if the user is a maintainer
 		$db 	= JFactory::getDBO();
 		$user	= JFactory::getUser();
-	
-	
+
+
 		/*
 		 * just a basic check to see if the current user is in an usergroup with
 		* access for editing venues
@@ -257,7 +257,7 @@ class JEMUser {
 		* if a result then return true, otherwise false
 		*
 		*/
-	
+
 		$query = 'SELECT gr.id'
 				. ' FROM #__jem_groups AS gr'
 				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
@@ -265,27 +265,27 @@ class JEMUser {
 				. ' WHERE g.member = '.(int) $user->get('id')
 				;
 				$db->setQuery( $query );
-	
+
 				$groupnumber = $db->loadResult();
-	
+
 				//no results
 				if (!$groupnumber) {
 						return null;
 						}  else {
-	
+
 				return $groupnumber;
-	
+
 				}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
 }

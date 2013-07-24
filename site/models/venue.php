@@ -12,12 +12,12 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.model');
 
 /**
- * JEM Component Venueevents Model
+ * JEM Component Venue Model
  *
  * @package JEM
  * @since 0.9
 */
-class JEMModelVenueevents extends JModelLegacy
+class JEMModelVenue extends JModelLegacy
 {
 	/**
 	 * Events data array
@@ -66,8 +66,8 @@ class JEMModelVenueevents extends JModelLegacy
 		$params 	=  $app->getParams('com_jem');
 
 		//get the number of events from database
-		$limit			= $app->getUserStateFromRequest('com_jem.venueevents.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart 	= $app->getUserStateFromRequest('com_jem.venueevents.limitstart', 'limitstart', 0, 'int');
+		$limit			= $app->getUserStateFromRequest('com_jem.venue.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart 	= $app->getUserStateFromRequest('com_jem.venue.limitstart', 'limitstart', 0, 'int');
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -219,8 +219,8 @@ class JEMModelVenueevents extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest('com_jem.venueevents.filter_order', 'filter_order', 'a.dates', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.venueevents.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		$filter_order		= $app->getUserStateFromRequest('com_jem.venue.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.venue.filter_order_Dir', 'filter_order_Dir', '', 'word');
 
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
@@ -251,9 +251,9 @@ class JEMModelVenueevents extends JModelLegacy
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
 
-		$filter_state 		= $app->getUserStateFromRequest('com_jem.venueevents.filter_state', 'filter_state', '', 'word');
-		$filter 			= $app->getUserStateFromRequest('com_jem.venueevents.filter', 'filter', '', 'int');
-		$search 			= $app->getUserStateFromRequest('com_jem.venueevents.search', 'search', '', 'string');
+		$filter_state 		= $app->getUserStateFromRequest('com_jem.venue.filter_state', 'filter_state', '', 'word');
+		$filter 			= $app->getUserStateFromRequest('com_jem.venue.filter', 'filter', '', 'int');
+		$search 			= $app->getUserStateFromRequest('com_jem.venue.search', 'search', '', 'string');
 		$search 			= $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();

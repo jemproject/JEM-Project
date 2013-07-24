@@ -313,7 +313,7 @@ class jemmyattendingTab extends cbTabHandler {
 		 * a link to the venueevent is specified so people can visit the venue page
 		 */
 		if ($event_venue==1){
-		$location = "<a href='".JRoute::_('index.php?option=com_jem&view=venueevents&id='.$result->locid.'&Itemid='.$S_Itemid)."'>{$result->venue}</a>";
+		$location = "<a href='".JRoute::_('index.php?option=com_jem&view=venue&id='.$result->locid.'&Itemid='.$S_Itemid)."'>{$result->venue}</a>";
 		$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableVenue'>";
 		$return .= "\n\t\t\t\t$location <small style='font-style:italic;'>- {$result->city}</small>";
 		$return .= "\n\t\t\t</td>";

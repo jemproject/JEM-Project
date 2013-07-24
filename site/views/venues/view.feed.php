@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 jimport( 'joomla.application.component.view');
 
 /**
- * HTML View class for the Venueevents View
+ * HTML View class for the Venues View
  *
  * @package JEM
  * @since 0.9
@@ -42,7 +42,7 @@ class JEMViewVenues extends JViewLegacy
 
 			// url link to article
 			//  used instead of &amp; as this is converted by feed creator
-			$link = 'index.php?option=com_jem&view=venueevents&id='. $row->id;
+			$link = 'index.php?option=com_jem&view=venue&id='. $row->id;
 			$link = JRoute::_( $link );
 
 			// strip html from feed item description text
