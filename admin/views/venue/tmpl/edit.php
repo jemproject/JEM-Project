@@ -200,9 +200,17 @@ function test()
 				</li>
 				<li><?php echo $this->form->getLabel('published'); ?> <?php echo $this->form->getInput('published'); ?>
 				</li>
+				
+				<li>
+				<label><?php echo JText::_( 'COM_JEM_ADDRESS_FINDER' );?></label>
+				<button type="button" onclick="lookupGeoData15();">GeoPicker</button>
+				</li>
 				</ul>
 				
-			<button type="button" onclick="lookupGeoData15();">GeoPicker</button>
+			<div class="clr"></div>
+			</fieldset>
+			
+			<fieldset class="adminform">
 			
 			<div>
 				<?php echo $this->form->getLabel('locdescription'); ?>
