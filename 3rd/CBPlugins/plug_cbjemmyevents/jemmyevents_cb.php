@@ -1,7 +1,5 @@
 <?php
 /**
- *
- *
  * @package My Events
  * @version JEM v1.9 & CB 1.9
  * @author JEM Community
@@ -10,21 +8,20 @@
  * Just a note:
  * Keep the query code inline with my-attending view
  *
- **/
+ */
 
 if ( ! ( defined( '_VALID_CB' ) || defined( '_JEXEC' ) || defined( '_VALID_MOS' ) ) )
 {
 	die();
 }
 
+require_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/output.class.php');
 require_once (JPATH_SITE.'/components/com_jem/helpers/helper.php');
-require_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
+require_once (JPATH_SITE.'/components/com_jem/helpers/route.php');
 
 
 class jemmyeventsTab extends cbTabHandler {
-
-
 	/*  Show My Events
 	*/
 	function jemmyeventsTab()
@@ -311,8 +308,8 @@ class jemmyeventsTab extends cbTabHandler {
 		 *
 		**/
 		$result = $results[$i];
-		$checked 	= JHTML::_('grid.id',   $i, $result->id );
-		$catHref = "index.php?option=com_jem&amp;view=category&amp;id={$result->catid}&amp;Itemid={$S_Itemid1}";
+		$checked = JHTML::_('grid.id', $i, $result->id );
+		$catHref = JRoute::_(JEMHelperRoute::getCategoryRoute($result->catid));
 		$cats = "\n\t\t\t<a href='{$catHref}' title='{$result->catname}'>{$result->catname}</a>";
 
 
@@ -351,12 +348,12 @@ class jemmyeventsTab extends cbTabHandler {
 		$result_titles=explode(" " , $result->title);
 		$result_title=implode("-" , $result_titles);
 		$return .= "\n\t\t\t<td class='jemmyeventsCBTabTableTitle'>";
-		$return .= "\n\t\t\t\t<a href=\"". JRoute::_('index.php?option=com_jem&view=event&id='.$result->eventid.'&Itemid='.$S_Itemid1) ."\">{$result->title}</a>";
+		$return .= "\n\t\t\t\t<a href=\"". JRoute::_(JEMHelperRoute::getEventRoute($result->eventid)) ."\">{$result->title}</a>";
 		$return .= "\n\t\t\t</td>";
 
 		/* Category field */
 		if ($event_categories==1){
-		$cat = "<a href='".JRoute::_('index.php?option=com_jem&view=category&id='.$result->catid.'&Itemid='.$S_Itemid1)."'>{$result->catname}</a>";
+		$cat = "<a href='".JRoute::_(JEMHelperRoute::getCategoryRoute($result->catid))."'>{$result->catname}</a>";
 		$return .= "\n\t\t\t<td class='jemmyeventsCBTabTableCat'>";
 		$return .= "\n\t\t\t\t$cat";
 		$return .= "\n\t\t\t</td>";
@@ -680,8 +677,8 @@ else
 		 *
 		**/
 		$result = $results[$i];
-		$checked 	= JHTML::_('grid.id',   $i, $result->id );
-		$catHref = "index.php?option=com_jem&amp;view=category&amp;id={$result->catid}&amp;Itemid={$S_Itemid1}";
+		$checked = JHTML::_('grid.id', $i, $result->id );
+		$catHref = JRoute::_(JEMHelperRoute::getCategoryRoute($result->catid));
 		$cat = "\n\t\t\t<a href='{$catHref}' title='{$result->catname}'>{$result->catname}</a>";
 
 

@@ -91,9 +91,9 @@ defined('_JEXEC') or die;
 	<div class="subcategorieslist">
 		<?php foreach ($row->subcats as $sub) : ?>
 		<?php if ($this->params->get('showemptychilds',1) || $sub->assignedevents): ?>
-		<strong><a
-			href="<?php echo JRoute::_( 'index.php?view=category&id='. $sub->slug ); ?>"><?php echo $this->escape($sub->catname); ?>
-		</a> </strong> (
+		<strong><a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($sub->slug)); ?>">
+			<?php echo $this->escape($sub->catname); ?>
+		</a></strong> (
 		<?php echo $sub->assignedevents != null ? $sub->assignedevents : 0; ?>
 		)
 		<?php
@@ -114,10 +114,7 @@ defined('_JEXEC') or die;
 		<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
 
-
-
 	<!--copyright-->
-
 	<div class="copyright">
 		<?php echo JEMOutput::footer( ); ?>
 	</div>

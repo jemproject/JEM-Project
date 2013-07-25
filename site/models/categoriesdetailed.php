@@ -131,10 +131,9 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 
 				$category->linktext = $task == 'archive'?JText::_('COM_JEM_SHOW_ARCHIVE') : JText::_('COM_JEM_SHOW_EVENTS');
 
+				$category->linktarget = JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug));
 				if ($task == 'archive') {
-					$category->linktarget = JRoute::_('index.php?view=category&id='.$category->slug.'&task=archive');
-				} else {
-					$category->linktarget = JRoute::_('index.php?view=category&id='.$category->slug);
+					$category->linktarget .= '&task=archive';
 				}
 			}
 

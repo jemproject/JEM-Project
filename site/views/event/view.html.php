@@ -82,7 +82,7 @@ class JEMViewEvent extends JViewLegacy
 		$pathway 	= $app->getPathWay();
 
 		foreach($parents as $parent) {
-			$pathway->addItem($this->escape($parent->catname), JRoute::_('index.php?view=category&id='.$parent->categoryslug));
+			$pathway->addItem($this->escape($parent->catname), JRoute::_(JEMHelperRoute::getCategoryRoute($parent->categoryslug)));
 		}
 		$pathway->addItem($this->escape($row->title), JRoute::_(JEMHelperRoute::getRoute($row->slug)));
 

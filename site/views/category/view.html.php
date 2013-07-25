@@ -116,7 +116,7 @@ class JEMViewCategory extends JViewLegacy
 
 
 		//add alternate feed link
-		$link	= 'index.php?option=com_jem&view=category&format=feed&id='.$category->id;
+		$link	= '&format=feed&id='.$category->id;
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -132,12 +132,10 @@ class JEMViewCategory extends JViewLegacy
 
 		if ($task == 'archive') {
 			$pathway->addItem(JText::_('COM_JEM_ARCHIVE').' - '.$category->catname, JRoute::_('index.php?option=com_jem&view=category&task=archive&id='.$category->slug));
-			$link = JRoute::_('index.php?option=com_jem&view=category&task=archive&id='.$category->slug);
 			$print_link = JRoute::_('index.php?option=com_jem&view=category&id='. $category->id .'&task=archive&print=1&tmpl=component');
 			$pagetitle = $category->catname.' - '.JText::_('COM_JEM_ARCHIVE');
 		} else {
 			$pathway->addItem($category->catname, JRoute::_('index.php?option=com_jem&view=category&id='.$category->slug));
-			$link = JRoute::_('index.php?option=com_jem&view=category&id='.$category->slug);
 			$print_link = JRoute::_('index.php?option=com_jem&view=category&id='. $category->id .'&print=1&tmpl=component');
 			$pagetitle = $category->catname;
 		}

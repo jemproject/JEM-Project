@@ -454,8 +454,8 @@ class plgJEMMailer extends JPlugin {
 			return false;
 		}
 
-		//link for event
-		$link   = JRoute::_(JURI::base().'index.php?option=com_jem&view=venue&id='.$venue->slug, false);
+		//link for venue
+		$link = JRoute::_(JURI::base().'index.php?option=com_jem&view=venue&id='.$venue->slug, false);
 
 		//strip description from tags / scripts, etc...
 		$text_description = JFilterOutput::cleanText($venue->locdescription);

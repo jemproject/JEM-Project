@@ -41,9 +41,8 @@ class JEMViewVenues extends JViewLegacy
 			$title = html_entity_decode( $title );
 
 			// url link to article
-			//  used instead of &amp; as this is converted by feed creator
-			$link = 'index.php?option=com_jem&view=venue&id='. $row->id;
-			$link = JRoute::_( $link );
+			// used & instead of &amp; as this is converted by feed creator
+			$link = JRoute::_(JEMHelperRoute::getVenueRoute($row->id), false);
 
 			// strip html from feed item description text
 			$description = $row->locdescription;

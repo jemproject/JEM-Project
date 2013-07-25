@@ -113,7 +113,7 @@ defined('_JEXEC') or die;
             $venue = '<div class="location"><span class="label">'.JText::_('COM_JEM_VENUE').': </span>';
 
 			if ($this->jemsettings->showlinkvenue == 1 && 0) :
-                $venue .= $row->locid != 0 ? "<a href='".JRoute::_('index.php?view=venue&id='.$row->venueslug)."'>".$this->escape($row->venue)."</a>" : '-';
+                $venue .= $row->locid != 0 ? "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
            	else :
              	$venue .= $row->locid ? $this->escape($row->venue) : '-';
             endif;

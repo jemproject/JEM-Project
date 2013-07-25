@@ -45,7 +45,7 @@ class JEMViewVenues extends JViewLegacy
 
 
 		//add alternate feed link
-		$link    = 'index.php?option=com_jem&view=venues&format=feed';
+		$link    = '&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -70,7 +70,7 @@ class JEMViewVenues extends JViewLegacy
 		$document->setMetadata('keywords', $pagetitle );
 
 
-		// Check if the user has access to the add-eventform		
+		// Check if the user has access to the add-eventform
 		$maintainer = JEMUser::ismaintainer();
 		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
@@ -93,7 +93,7 @@ class JEMViewVenues extends JViewLegacy
 
 		// Create the pagination object
 		$pagination    =  $this->get('Pagination');
-		
+
 
 		$this->rows				= $rows;
 		$this->print_link		= $print_link;

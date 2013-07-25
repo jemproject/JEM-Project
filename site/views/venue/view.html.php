@@ -82,7 +82,7 @@ class JEMViewVenue extends JViewLegacy
 		$limage = JEMImage::flyercreator($venue->locimage, 'venue');
 
 		//add alternate feed link
-		$link	= 'index.php?option=com_jem&view=venue&format=feed&id='.$venue->id;
+		$link	= '&format=feed&id='.$venue->id;
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -95,12 +95,10 @@ class JEMViewVenue extends JViewLegacy
 		//create the pathway
 		if ($task == 'archive') {
 			$pathway->addItem( JText::_( 'COM_JEM_ARCHIVE' ).' - '.$venue->venue, JRoute::_('index.php?option=com_jem&view=venue&task=archive&id='.$venue->slug));
-			$link = JRoute::_( 'index.php?option=com_jem&view=venue&id='.$venue->slug.'&task=archive' );
 			$print_link = JRoute::_('index.php?option=com_jem&view=venue&id='. $venue->slug .'&task=archive&print=1&tmpl=component');
 			$pagetitle = $venue->venue.' - '.JText::_( 'COM_JEM_ARCHIVE' );
 		} else {
 			$pathway->addItem( $venue->venue, JRoute::_('index.php?option=com_jem&view=venue&id='.$venue->slug));
-			$link = JRoute::_( 'index.php?option=com_jem&view=venue&id='.$venue->slug );
 			$print_link = JRoute::_('index.php?option=com_jem&view=venue&id='. $venue->slug .'&print=1&tmpl=component');
 			$pagetitle = $venue->venue;
 		}

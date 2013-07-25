@@ -7,13 +7,13 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined('_JEXEC') or die; 
+defined('_JEXEC') or die;
 
 JHTML::_('behavior.tooltip');
 $colspan = ($this->event->waitinglist ? 10 : 9);
 
-$detaillink = JRoute::_('index.php?option=com_jem&view=event&id='.$this->event->id.':'.$this->event->alias);
-	
+$detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this->event->alias));
+
 ?>
 <script type="text/javascript">
 	function tableOrdering(order, dir, view)
@@ -61,11 +61,11 @@ $detaillink = JRoute::_('index.php?option=com_jem&view=event&id='.$this->event->
 				<b><?php echo JText::_( 'COM_JEM_TITLE' ).':'; ?></b>&nbsp;<a href="<?php echo $detaillink ; ?>"><?php echo htmlspecialchars($this->event->title, ENT_QUOTES, 'UTF-8'); ?></a>
 				<br />
 				<b><?php echo JText::_( 'COM_JEM_DATE' ).':'; ?></b>&nbsp;
-				
+
 				<?php echo JEMOutput::formatLongDateTime($this->event->dates, $this->event->times,
 				$this->event->enddates, $this->event->endtimes); ?>
 			</td>
-			
+
 		  </tr>
 	</table>
 
@@ -80,7 +80,7 @@ $detaillink = JRoute::_('index.php?option=com_jem&view=event&id='.$this->event->
 			</div>
 			<?php if ($this->event->waitinglist): ?>
 			 <div style="text-align:right; white-space:nowrap;">
-			 	<?php echo JText::_( 'COM_JEM_STATUS' ).' '.$this->lists['waiting']; 
+			 	<?php echo JText::_( 'COM_JEM_STATUS' ).' '.$this->lists['waiting'];
 			 	echo '&nbsp;';
 			 	?>
 			</div>
@@ -92,7 +92,7 @@ $detaillink = JRoute::_('index.php?option=com_jem&view=event&id='.$this->event->
 			?>
 		</div>
 		</div>
-	
+
 
 	<table class="eventtable" style="width:100%" id="articleList">
 		<thead>
@@ -110,7 +110,7 @@ $detaillink = JRoute::_('index.php?option=com_jem&view=event&id='.$this->event->
 			</tr>
 		</thead>
 
-		
+
 
 		<tbody>
 			<?php
@@ -152,7 +152,7 @@ $detaillink = JRoute::_('index.php?option=com_jem&view=event&id='.$this->event->
 		<input type="hidden" name="Itemid" value="<?php echo $this->item->id;?>" />
 		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-	
+
 </form>
 <div class="pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>

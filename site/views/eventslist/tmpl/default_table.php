@@ -142,7 +142,7 @@ defined('_JEXEC') or die;
 					break;
 				endforeach;
 				//Link to details
-				$detaillink = JRoute::_('index.php?view=event&id='. $row->slug);
+				$detaillink = JRoute::_(JEMHelperRoute::getEventRoute($row->slug));
 				//title
 				if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) :
 				?>
@@ -165,7 +165,7 @@ defined('_JEXEC') or die;
 					<td headers="jem_location" align="left" valign="top">
 						<?php
 						if ($this->jemsettings->showlinkvenue == 1) :
-							echo $row->locid != 0 ? "<a href='".JRoute::_('index.php?view=venue&id='.$row->venueslug)."'>".$this->escape($row->venue)."</a>" : '-';
+							echo $row->locid != 0 ? "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
 						else :
 							echo $row->locid ? $this->escape($row->venue) : '-';
 						endif;
@@ -197,7 +197,7 @@ defined('_JEXEC') or die;
 
 						if ($this->jemsettings->catlinklist == 1) :
 						?>
-							<a href="<?php echo JRoute::_('index.php?view=category&id='.$category->catslug); ?>">
+							<a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($category->catslug); ?>">
 								<?php echo $category->catname; ?>
 							</a>
 						<?php

@@ -84,7 +84,7 @@ $i = 0;
 ?>
 <div class="subcategorieslist">
 	<?php foreach ($category->subcats as $sub) : ?>
-		<strong><a href="<?php echo JRoute::_( 'index.php?view=category&id='. $sub->slug ); ?>"><?php echo $this->escape($sub->catname); ?></a></strong> (<?php echo $sub->assignedevents != null ? $sub->assignedevents : 0; ?>)
+		<strong><a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($sub->slug)); ?>"><?php echo $this->escape($sub->catname); ?></a></strong> (<?php echo $sub->assignedevents != null ? $sub->assignedevents : 0; ?>)
 		<?php
 		$i++;
 		if ($i != $n) :

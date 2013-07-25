@@ -69,7 +69,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 				<?php if (($this->jemsettings->showdetlinkvenue == 1) && (!empty($this->row->url))) : ?>
 					<a target="_blank" href="<?php echo $this->row->url; ?>"><?php echo $this->escape($this->row->venue); ?></a> -
 				<?php elseif ($this->jemsettings->showdetlinkvenue == 2) : ?>
-					<a href="<?php echo JRoute::_('index.php?view=venue&id='.$this->row->venueslug); ?>"><?php echo $this->row->venue; ?></a> -
+					<a href="<?php echo JRoute::_(JEMHelperRoute::getVenueRoute($this->row->venueslug)); ?>"><?php echo $this->row->venue; ?></a> -
 				<?php elseif ($this->jemsettings->showdetlinkvenue == 0) :
 					echo $this->escape($this->row->venue).' - ';
 				endif;
@@ -87,7 +87,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 			$i = 0;
 			foreach ($this->categories as $category) :
 			?>
-				<a href="<?php echo JRoute::_('index.php?view=category&id='. $category->slug); ?>">
+				<a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug)); ?>">
 					<?php echo $this->escape($category->catname); ?>
 				</a>
 			<?php
@@ -188,7 +188,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 		<dl class="location floattext">
 			<dt class="venue"><?php echo JText::_('COM_JEM_LOCATION').':'; ?></dt>
 			<dd class="venue">
-			<?php echo "<a href='".JRoute::_('index.php?view=venue&id='.$this->row->venueslug)."'>".$this->escape($this->row->venue)."</a>"; ?>
+			<?php echo "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($this->row->venueslug))."'>".$this->escape($this->row->venue)."</a>"; ?>
 
 			<?php if (!empty($this->row->url)) : ?>
 				&nbsp; - &nbsp;

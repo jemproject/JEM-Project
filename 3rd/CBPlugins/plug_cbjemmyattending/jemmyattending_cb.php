@@ -1,7 +1,5 @@
 <?php
 /**
- *
- *
  * @package My Attending
  * @version JEM v1.9 & CB 1.9
  * @author JEM Community
@@ -12,20 +10,18 @@
  *
  */
 
-// ensure this file is being included by a parent file
 if ( ! ( defined( '_VALID_CB' ) || defined( '_JEXEC' ) || defined( '_VALID_MOS' ) ) )
- {
+{
 	die();
 }
 
+require_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/output.class.php');
 require_once (JPATH_SITE.'/components/com_jem/helpers/helper.php');
-require_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
+require_once (JPATH_SITE.'/components/com_jem/helpers/route.php');
 
 
 class jemmyattendingTab extends cbTabHandler {
-
-
 	/* JEM Attending tab
 	 */
 	function jemmyattendingTab()
@@ -44,7 +40,6 @@ class jemmyattendingTab extends cbTabHandler {
 			include_once($UElanguagePath.'/language/'.$_CB_framework->getCfg('lang').'.php');
 		} else include_once($UElanguagePath.'/language/english.php');
 	}
-
 
 
 	/* Display Tab
@@ -263,7 +258,7 @@ class jemmyattendingTab extends cbTabHandler {
 
 		/* Title field */
 		$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableTitle'>";
-		$return .= "\n\t\t\t\t<a href=\"". JRoute::_('index.php?option=com_jem&view=event&id='.$result->eventid.'&Itemid='.$S_Itemid) ."\">{$result->title}</a>";
+		$return .= "\n\t\t\t\t<a href=\"". JRoute::_(JEMHelperRoute::getEventRoute($result->eventid)) ."\">{$result->title}</a>";
 		$return .= "\n\t\t\t</td>";
 
 
@@ -285,7 +280,7 @@ class jemmyattendingTab extends cbTabHandler {
 		 * a link to the venueevent is specified so people can visit the venue page
 		 */
 		if ($event_venue==1){
-		$location = "<a href='".JRoute::_('index.php?option=com_jem&view=venue&id='.$result->locid.'&Itemid='.$S_Itemid)."'>{$result->venue}</a>";
+		$location = "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($result->locid))."'>{$result->venue}</a>";
 		$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableVenue'>";
 		$return .= "\n\t\t\t\t$location <small style='font-style:italic;'>- {$result->city}</small>";
 		$return .= "\n\t\t\t</td>";
