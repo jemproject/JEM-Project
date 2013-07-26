@@ -24,21 +24,16 @@ class JEMOutput {
 	 */
 	static function footer()
 	{
-
 		$app = JFactory::getApplication();
 		$params = $app->getParams();
 
 		if ($app->input->get('print','','int')) {
 			//button in popup
-			$output = '';
 		} else {
-
 			// if ($params->get('copyright') == 1) {
 			echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
 			// }
-
 		}
-
 	}
 
 	/**
@@ -46,7 +41,6 @@ class JEMOutput {
 	 *
 	 * @param int $dellink Access of user
 	 * @param array $params needed params
-	 *
 	 **/
 	static function submitbutton($dellink, &$params)
 	{
@@ -77,9 +71,6 @@ class JEMOutput {
 		return;
 	}
 
-
-
-
 	/**
 	 * Writes addvenuebutton
 	 *
@@ -89,7 +80,6 @@ class JEMOutput {
 	 *
 	 * Active in views:
 	 * venue, venues
-	 *
 	 **/
 	static function addvenuebutton($addvenuelink, $params, $settings)
 	{
@@ -119,8 +109,6 @@ class JEMOutput {
 		return;
 	}
 
-
-
 	/**
 	 * Writes Archivebutton
 	 *
@@ -129,7 +117,6 @@ class JEMOutput {
 	 *
 	 * Views:
 	 * Categories, Categoriesdetailed, Category, Eventslist, Search, Venue, Venues
-	 *
 	 */
 	static function archivebutton(&$params, $task = NULL, $id = NULL)
 	{
@@ -175,10 +162,8 @@ class JEMOutput {
 
 				if ($app->input->get('print','','int')) {
 					//button in popup
-					$output = '';
 				} else{
-					$output = '<a href="'.$link.'" class="editlinktip hasTip" title="'.$title.'::'.$overlib.'">'.$image.'</a>';
-					return $output;
+					return '<a href="'.$link.'" class="editlinktip hasTip" title="'.$title.'::'.$overlib.'">'.$image.'</a>';
 				}
 			}
 		}
@@ -196,7 +181,6 @@ class JEMOutput {
 	 *
 	 * Views:
 	 * Event, Venue
-	 *
 	 */
 	static function editbutton($Itemid, $id, &$params, $allowedtoedit, $view)
 	{
@@ -231,11 +215,9 @@ class JEMOutput {
 
 		if ($app->input->get('print','','int')) {
 				//button in popup
-				$output = '';
 			} else {
-				$link 	= 'index.php?view='.$view.'&id='.$id.'&returnid='.$Itemid;
-				$output	= '<a href="'.JRoute::_($link).'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
-				return $output;
+				$link = 'index.php?view='.$view.'&id='.$id.'&returnid='.$Itemid;
+				return '<a href="'.JRoute::_($link).'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 			}
 		}
 		return;
@@ -255,7 +237,6 @@ class JEMOutput {
 			JHTML::_('behavior.tooltip');
 
 			$status = 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no';
-
 
 			if ($settings->icons) {
 				$image = JHTML::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), NULL, true);
@@ -317,21 +298,16 @@ class JEMOutput {
 
 			if ($app->input->get('print','','int')) {
 				//button in popup
-				$output = '';
 			} else {
 				//button in view
 				$overlib = JText::_('COM_JEM_EMAIL_TIP');
 				$text = JText::_('COM_JEM_EMAIL');
-				$output	= '<a href="'. JRoute::_($url) .'" class="editlinktip hasTip" onclick="window.open(this.href,\'win2\',\''.$status.'\'); return false;" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
-
-				return $output;
+				return '<a href="'. JRoute::_($url) .'" class="editlinktip hasTip" onclick="window.open(this.href,\'win2\',\''.$status.'\'); return false;" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 			}
 
 		}
 		return;
 	}
-
-
 
 	/**
 	 * Creates the ical button
@@ -345,7 +321,6 @@ class JEMOutput {
 		$settings = JEMHelper::config();
 		if ($settings->events_ical == 1) {
 			JHTML::_('behavior.tooltip');
-
 
 			if ($settings->icons) {
 				$image = JHTML::image("media/com_jem/images/iCal2.0.png",JText::_('COM_JEM_EXPORT_ICS'));
@@ -370,39 +345,34 @@ class JEMOutput {
 		return;
 	}
 
-
 	/**
 	 * Creates the publish button
 	 *
 	 * View:
 	 * Myevents
-	 *
 	 */
 	static function publishbutton()
 	{
 		$app = JFactory::getApplication();
 		$settings = JEMHelper::config();
 
-			JHTML::_('behavior.tooltip');
+		JHTML::_('behavior.tooltip');
 
+		$image = JHTML::image("media/com_jem/images/publish.png",JText::_('COM_JEM_PUBLISH'));
 
-			$image = JHTML::image("media/com_jem/images/publish.png",JText::_('COM_JEM_PUBLISH'));
+		if ($app->input->get('print','','int')) {
+			//button in popup
+			$output = '';
+		} else {
+			//button in view
+			$overlib = JText::_('COM_JEM_PUBLISH_TIP');
+			$text = JText::_('COM_JEM_PUBLISH');
 
-			if ($app->input->get('print','','int')) {
-				//button in popup
-				$output = '';
-			} else {
-				//button in view
-				$overlib = JText::_('COM_JEM_PUBLISH_TIP');
-				$text = JText::_('COM_JEM_PUBLISH');
+			$print_link = "javascript:void(Joomla.submitbutton('publish'));";
+			$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
+		}
 
-				$print_link = "javascript:void(Joomla.submitbutton('publish'));";
-				$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
-			}
-
-			return $output;
-
-		return;
+		return $output;
 	}
 
 	/**
@@ -410,7 +380,6 @@ class JEMOutput {
 	 *
 	 * View:
 	 * Myevents
-	 *
 	 */
 	static function trashbutton()
 	{
@@ -419,7 +388,7 @@ class JEMOutput {
 
 		JHTML::_('behavior.tooltip');
 
-		// checks template image directory for image, if non found default are loaded
+		// checks template image directory for image, if none found default are loaded
 
 		$image = JHTML::image("media/com_jem/images/trash.png",JText::_('COM_JEM_TRASH'));
 
@@ -436,8 +405,6 @@ class JEMOutput {
 		}
 
 		return $output;
-
-		return;
 	}
 
 	/**
@@ -445,7 +412,6 @@ class JEMOutput {
 	 *
 	 * View:
 	 * Myevents
-	 *
 	 */
 	static function unpublishbutton()
 	{
@@ -454,7 +420,7 @@ class JEMOutput {
 
 		JHTML::_('behavior.tooltip');
 
-		// checks template image directory for image, if non found default are loaded
+		// checks template image directory for image, if none found default are loaded
 
 		$image = JHTML::image("media/com_jem/images/unpublish.png",JText::_('COM_JEM_UNPUBLISH'));
 
@@ -471,17 +437,13 @@ class JEMOutput {
 		}
 
 		return $output;
-
-		return;
 	}
-
 
 	/**
 	 * Creates the export button
 	 *
 	 * view:
 	 * attendees
-	 *
 	 */
 	static function exportbutton($eventid)
 	{
@@ -490,7 +452,7 @@ class JEMOutput {
 
 		JHTML::_('behavior.tooltip');
 
-		// checks template image directory for image, if non found default are loaded
+		// checks template image directory for image, if none found default are loaded
 
 		$image = JHTML::image("media/com_jem/images/export_excel.png",JText::_('COM_JEM_EXPORT'));
 
@@ -507,17 +469,13 @@ class JEMOutput {
 		}
 
 		return $output;
-
-		return;
 	}
-
 
 	/**
 	 * Creates the back button
 	 *
 	 * view:
 	 * attendees
-	 *
 	 */
 	static function backbutton($backlink, $view)
 	{
@@ -529,7 +487,7 @@ class JEMOutput {
 
 		JHTML::_('behavior.tooltip');
 
-		// checks template image directory for image, if non found default are loaded
+		// checks template image directory for image, if none found default are loaded
 
 		$image = JHTML::image("media/com_jem/images/icon-16-back.png",JText::_('COM_JEM_BACK'));
 
@@ -546,18 +504,12 @@ class JEMOutput {
 		}
 
 		return $output;
-
-		return;
 	}
-
-
-
 
 	/**
 	 * Creates the map button
 	 *
 	 * @param obj $data
-	 *
 	 */
 	static function mapicon($data)
 	{
@@ -578,66 +530,33 @@ class JEMOutput {
 
 		$data->country = JString::strtoupper($data->country);
 
+		if ($data->latitude == 0.000000) {
+			$data->latitude = null;
+		}
+		if ($data->longitude == 0.000000) {
+			$data->longitude = null;
+		}
+		$url1 = 'http://maps.google.'.$jemsettings->tld.'/maps?hl='.$jemsettings->lg.'&q='.str_replace(" ", "+", $data->street).', '.$data->plz.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.$data->venue.')&ie=UTF8&z=15&iwloc=B&output=embed" ';
+
 		//google map link or include
 		switch ($jemsettings->showmapserv)
 		{
 			case 1:
 				// link
-				$url1 = 'http://maps.google.'.$jemsettings->tld.'/maps?hl='.$jemsettings->lg.'&q='.str_replace(" ", "+", $data->street).', '.$data->plz.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.$data->venue.')&ie=UTF8&z=15&iwloc=B&output=embed" ';
 				$url2 = 'http://maps.google.'.$jemsettings->tld.'/maps?hl='.$jemsettings->lg.'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
 
-
-				if ($data->latitude == 0.000000)
-				{
-					$data->latitude = null;
-				}
-
-				if ($data->longitude == 0.000000)
-				{
-					$data->longitude = null;
-				}
-
-
-				if ($data->latitude && $data->longitude)
-				{
-					$url = $url2;
-				}
-				else
-				{
-					$url = $url1;
-				}
+				$url = ($data->latitude && $data->longitude) ? $url2 : $url1;
 
 				$message = JText::_('COM_JEM_MAP').':';
 				$attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
 				$output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal" title="'.JText::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'</a></dd>';
 				break;
 
-
 			case 2:
 				// include
-				$url1 = 'http://maps.google.'.$jemsettings->tld.'/maps?hl='.$jemsettings->lg.'&q='.str_replace(" ", "+", $data->street).', '.$data->plz.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.$data->venue.')&ie=UTF8&z=15&iwloc=B&output=embed';
 				$url2 = 'https://maps.google.com/maps?q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
 
-
-				if ($data->latitude == 0.000000)
-				{
-					$data->latitude = null;
-				}
-
-				if ($data->longitude == 0.000000)
-				{
-					$data->longitude = null;
-				}
-
-
-				if ($data->latitude && $data->longitude)
-				{
-					$url = $url2;
-				}
-				else
-				{
-					$url = $url1;
-				}
+				$url = ($data->latitude && $data->longitude) ? $url2 : $url1;
 
 				$output = '<div style="border: 1px solid #000;width:500px;" color="black"><iframe width="500" height="250" src="'.$url.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
 				break;
@@ -652,28 +571,29 @@ class JEMOutput {
 	 * @param obj $data
 	 * @param array $image
 	 * @param string $type
-	 *
 	 */
 	static function flyer($data, $image, $type)
 	{
 		$settings = JEMHelper::config();
 
-		if ($type == 'event') {
-			$folder = 'events';
-			$imagefile = $data->datimage;
-			$info = $data->title;
-		}
+		switch($type) {
+			case 'event':
+				$folder = 'events';
+				$imagefile = $data->datimage;
+				$info = $data->title;
+				break;
 
-		if ($type == 'category') {
-			$folder = 'categories';
-			$imagefile = $data->image;
-			$info = $data->catname;
-		}
+			case 'category':
+				$folder = 'categories';
+				$imagefile = $data->image;
+				$info = $data->catname;
+				break;
 
-		if ($type == 'venue') {
-			$folder = 'venues';
-			$imagefile = $data->locimage;
-			$info = $data->venue;
+			case 'venue':
+				$folder = 'venues';
+				$imagefile = $data->locimage;
+				$info = $data->venue;
+				break;
 		}
 
 		// Do we have an image?
@@ -709,7 +629,6 @@ class JEMOutput {
 	 * Creates the country flag
 	 *
 	 * @param string $country
-	 *
 	 */
 	static function getFlag($country)
 	{
@@ -732,7 +651,6 @@ class JEMOutput {
 	 * @param string $date
 	 * @param string $format
 	 * @return string $formatdate
-	 *
 	 */
 	static function formatdate($date, $format = "")
 	{
@@ -753,7 +671,6 @@ class JEMOutput {
 	 *
 	 * @param string $time
 	 * @return string $formattime
-	 *
 	 */
 	static function formattime($time)
 	{
