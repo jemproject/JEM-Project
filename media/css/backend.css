@@ -158,7 +158,6 @@ div#page-parameters fieldset.adminform .el-spacer {
 
 /* align radio buttons horizontally */
 .inputbox {
-    float: none;
     margin: 5px 5px 5px 5px;
     cursor: pointer;
 }
