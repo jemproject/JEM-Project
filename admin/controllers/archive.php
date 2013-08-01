@@ -42,6 +42,7 @@ class JEMControllerArchive extends JEMController
 	function edit( )
 	{
 		JRequest::setVar( 'view', 'event' );
+		JRequest::setVar( 'layout', 'edit' );
 		JRequest::setVar( 'hidemainmenu', 1 );
 	
 		$model 	= $this->getModel('event');

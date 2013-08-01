@@ -45,7 +45,7 @@ class JEMController extends JControllerLegacy
 
 		// variables, if non found back to default
 		$view	= JRequest::getCmd('view', 'jem');
-		$layout = JRequest::getCmd('layout', 'default.php');
+		$layout = JRequest::getCmd('layout', 'default');
 		$id		= JRequest::getInt('id');
 				
 		parent::display();

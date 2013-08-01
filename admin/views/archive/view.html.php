@@ -94,8 +94,8 @@ class JEMViewArchive extends JViewLegacy {
 	JToolBarHelper::spacer();
 	JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'archive.remove', $alt = 'JACTION_DELETE');
 	JToolBarHelper::spacer();
-	JToolBarHelper::custom( 'archive.copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
-	JToolBarHelper::spacer();
+	//JToolBarHelper::custom( 'archive.copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
+	//JToolBarHelper::spacer();
 	JToolBarHelper::help( 'archive', true );
 
 	}
