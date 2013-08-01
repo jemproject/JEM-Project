@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+
+	<fieldset name="details"
+		addfieldpath="/administrator/components/com_jem/models/fields">
+
+
+		<field name="title" type="text" class="inputbox" size="20"
+			label="COM_JEM_EVENT_TITLE" description="COM_JEM_EVENT_TITLE"
+			required="true" />
+
+		<field name="alias" type="text" class="inputbox" size="40"
+			label="COM_JEM_ALIAS" description="COM_JEM_ALIAS" />
+
+		<field name="datdescription" type="editor" class="inputbox"
+			rows="3" cols="40" label="COM_JEM_EVENT_DESCRIPTION" description="COM_JEM_EVENT_DESCRIPTION_DESC" />
+
+		<field name="dates" type="calendar" label="COM_JEM_DATE"
+			description="COM_JEM_DATE" class="inputbox" size="22" format="%Y-%m-%d" />
+
+		<field name="enddates" type="calendar" label="COM_JEM_ENDDATE"
+			description="COM_JEM_ENDDATE" class="inputbox" size="22" format="%Y-%m-%d" />
+
+		<field name="times" type="starttime" class="inputbox" size="10"
+			label="COM_JEM_EVENT_TIME" description="COM_JEM_EVENT_TIME" required="false" />
+
+		<field name="endtimes" type="endtime" class="inputbox" size="10"
+			label="COM_JEM_END_TIME" description="COM_JEM_END_TIME" required="false" />
+
+		<field name="cats" type="catoptions" multiple="true" class="inputbox"
+			size="10" label="COM_JEM_CATEGORIES" description="COM_JEM_CATEGORIES"
+			required="false" />
+
+
+	</fieldset>
+
+
+
+	<fieldset name="publish">
+
+
+		<field name="id" type="text" default="0" readonly="true" class="readonly"
+			label="JGLOBAL_FIELD_ID_LABEL" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="created" type="calendar" class="readonly"
+			label="JGLOBAL_FIELD_CREATED_LABEL" description="JGLOBAL_FIELD_CREATED_DESC"
+			size="22" default="now" readonly="true" format="%Y-%m-%d %H:%M:%S"
+			filter="user_utc" />
+
+		<field name="modified" type="calendar" class="readonly"
+			label="JGLOBAL_FIELD_MODIFIED_LABEL" description="COM_JEM_EDITED_AT"
+			size="22" readonly="true" format="%Y-%m-%d %H:%M:%S" filter="user_utc" />
+
+		<field name="version" type="text" default="0" readonly="true"
+			class="readonly" label="COM_JEM_REVISED" description="COM_JEM_REVISED" />
+
+		<field name="created_by" type="user" label="JGLOBAL_FIELD_CREATED_BY_LABEL"
+			description="JGLOBAL_FIELD_CREATED_BY_Desc" />
+
+		<field name="published" type="list" label="JSTATUS"
+			description="COM_JEM_PUBLISHED_DESC" class="inputbox" size="1"
+			default="1">
+			<option value="1">JPUBLISHED</option>
+			<option value="0">JUNPUBLISHED</option>
+			<option value="2">JARCHIVED</option>
+			<option value="-2">JTRASHED</option>
+		</field>
+
+
+	</fieldset>
+
+
+
+	<fieldset name="request"
+		addfieldpath="/administrator/components/com_jem/models/fields">
+		
+		
+		<field name="locid" label="COM_JEM_VENUE" type="modal_venue"
+			size="40" description="COM_JEM_VENUE" required="false" />
+
+		<field name="contactid" label="COM_JEM_CONTACT" type="modal_contact"
+			size="40" description="COM_JEM_CONTACT" required="false" />
+	
+	
+	</fieldset>
+
+
+	<fieldset name="image" label="COM_JEM_IMAGE">
+
+
+		<field name="datimage" type="imageselectevent" class="inputbox"
+			size="40" label="COM_JEM_IMAGESELECT" description="COM_JEM_IMAGESELECT" />
+
+
+	</fieldset>
+
+
+	<fieldset name="custom">
+
+
+		<field name="custom1" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD1" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom2" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD2" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom3" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD3" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom4" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD4" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom5" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD5" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom6" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD6" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom7" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD7" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom8" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD8" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom9" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD9" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom10" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD10" description="JGLOBAL_FIELD_ID_DESC" />
+
+
+	</fieldset>
+
+
+	<fieldset name="registration">
+
+
+		<field name="registra" type="checkbox" size="20" class="inputbox"
+			label="COM_JEM_ENABLE_REGISTRATION" description="COM_JEM_ENABLE_REGISTRATION_DESC"
+			value="1" default="0" />
+
+		<field name="unregistra" type="checkbox" size="20" class="inputbox"
+			label="COM_JEM_ENABLE_UNREGISTRATION" description="COM_JEM_ENABLE_UNREGISTRATION_DESC"
+			value="1" default="0" />
+
+		<field name="maxplaces" type="text" size="4" class="inputbox"
+			label="COM_JEM_MAX_PLACES" description="COM_JEM_MAX_PLACES_DESC" />
+
+
+		<field name="booked" type="text" size="4" class="inputbox"
+			label="COM_JEM_BOOKED_PLACES" description="COM_JEM_BOOKED_PLACES_DESC" />
+
+		<field name="avplaces" type="text" size="4" class="inputbox"
+			label="COM_JEM_AVAILABLE_PLACES" description="COM_JEM_AVAILABLE_PLACES_DESC" />
+
+		<field name="waitinglist" type="checkbox" size="20" class="inputbox"
+			label="COM_JEM_ENABLE_UNREGISTRATION" description="COM_JEM_ENABLE_UNREGISTRATION_DESC"
+			value="1" default="0" />
+
+
+	</fieldset>
+
+
+	<fieldset name="recurrence" label="COM_JEM_RECURRING_EVENTS">
+
+
+		<field name="recurrence_type" type="list" default="0"
+			label="COM_JEM_RECURRENCE" description="COM_JEM_RECURRENCE">
+			<option value="0">COM_JEM_NOTHING</option>
+			<option value="1">COM_JEM_DAYLY</option>
+			<option value="2">COM_JEM_WEEKLY</option>
+			<option value="3">COM_JEM_MONTHLY</option>
+			<option value="4">COM_JEM_WEEKDAY</option>
+		</field>
+
+		<field name="recurrence_limit_date" type="calendar" default="0000-00-00"
+			label="COM_JEM_RECURRENCE_COUNTER" description="COM_JEM_RECURRENCE_COUNTER"
+			class="inputbox" size="22" format="%Y-%m-%d" />
+
+
+	</fieldset>
+
+
+	<fieldset name="meta" label="JGLOBAL_FIELDSET_METADATA_OPTIONS">
+
+
+		<field id="meta_keywordsOR" name="meta_keywords" type="textarea"
+			label="JFIELD_META_KEYWORDS_LABEL" description="JFIELD_META_KEYWORDS_DESC"
+			class="inputbox" rows="3" cols="30" />
+
+		<field id="meta_descriptionOR" name="meta_description" type="textarea"
+			label="JFIELD_META_DESCRIPTION_LABEL" description="JFIELD_META_DESCRIPTION_DESC"
+			class="inputbox" rows="3" cols="30" />
+
+
+	</fieldset>
+
+
+</form>

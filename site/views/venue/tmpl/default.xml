@@ -10,7 +10,7 @@
 		<fieldset name="request"
 			addfieldpath="/administrator/components/com_jem/models/fields"
 		>
-			<field name="id" type="venue"
+			<field name="id" type="modal_venue"
 				label="COM_JEM_SELECTVENUE"
 				description="COM_JEM_SELECTVENUE_DESC"
 			/>

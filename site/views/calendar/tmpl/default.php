@@ -81,9 +81,9 @@ defined('_JEXEC') or die;
 
         	//attach category color if any in front of the catname
         	if ($category->color):
-        		$multicatname .= '<span class="colorpic" style="background-color: '.$category->color.';"></span>'.JText::_('COM_JEM_CATEGORY').': '.$category->catname;
+        		$multicatname .= '<span class="colorpic" style="width:6px; background: '.$category->color.';"></span>'.$category->catname;
         	else:
-				$multicatname 	.= JText::_('COM_JEM_CATEGORY').': '.$category->catname;
+				$multicatname 	.= $category->catname;
 			endif;
 			$ix++;
 			if ($ix != $nr) :
@@ -92,9 +92,8 @@ defined('_JEXEC') or die;
 
 			//attach category color if any in front of the event title in the calendar overview
 			if ( isset ($category->color) && $category->color) :
-          		$colorpic .= '<span class="colorpic" style="background-color: '.$category->color.';"></span>';
+          		$colorpic .= '<span class="colorpic" style="width:6px; background: '.$category->color.';"></span>';
         	endif;
-
         	//count occurence of the category
        		if (!array_key_exists($category->id, $countcatevents)) :
 				$countcatevents[$category->id] = 1;

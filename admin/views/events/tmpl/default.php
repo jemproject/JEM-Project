@@ -9,59 +9,78 @@
 
 defined('_JEXEC') or die;
 
-$searchterms = $this->lists['search'];
+$user		= JFactory::getUser();
+$userId		= $user->get('id');
+$listOrder	= $this->escape($this->state->get('list.ordering'));
+$listDirn	= $this->escape($this->state->get('list.direction'));
+$canOrder	= $user->authorise('core.edit.state', 'com_jem.category');
+$saveOrder	= $listOrder=='ordering';
+
+$params		= (isset($this->state->params)) ? $this->state->params : new JObject();
+
+
+
+//$searchterms = $this->lists['search'];
  
 //Highlight search terms with js (if we did a search => more performant and otherwise crash)
-if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$searchterms));
+//if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$searchterms));
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=events'); ?>" method="post" name="adminForm" id="adminForm">
 
-	<table class="adminform">
-		<tr>
-			<td width="100%">
-				<?php
-				echo JText::_( 'COM_JEM_SEARCH' );
-				echo $this->lists['filter'];
-				?>
-				<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-				<button onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-				<button onclick="$('search').value='';document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
-			</td>
-			<td nowrap="nowrap">
-				<?php //echo $this->lists['state'];	?>
-				
-							<select name="filter_state" class="inputbox" onchange="this.form.submit()">
+
+<table class="adminform">
+	<tr>
+		<td width="100%">
+			 <?php echo JText::_( 'COM_JEM_SEARCH' ).' '.$this->lists['filter']; ?>
+			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->escape($this->state->get('filter_search')); ?>" class="text_area" onChange="document.adminForm.submit();" />
+			<button onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+			<button onclick="$('filter_search').value='';document.adminForm.submit();;"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
+		</td>
+		<td nowrap="nowrap"><?php //echo $this->lists['state']; ?>
+		
+			<select name="filter_state" class="inputbox" onchange="this.form.submit()">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
-				<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->lists['state'], true);?>
+				<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter_state'), true);?>
 			</select>
-			</td>
-		</tr>
-	</table>
+		</td>
+	</tr>
+</table>
+
+
 	
 <table class="table table-striped" id="articleList">
 		<thead>
 			<tr>
 				<th width="1%" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 				<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-				<th class="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TIME', 'a.times', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<th class="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'loc.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $listDirn, $listOrder ); ?></th>
+				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TIME', 'a.times', $listDirn, $listOrder ); ?></th>
+				<th class="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $listDirn, $listOrder ); ?></th>
+				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $listDirn, $listOrder ); ?></th>
+				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $listDirn, $listOrder ); ?></th>
+				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'loc.state', $listDirn, $listOrder ); ?></th>
 				<th><?php echo JText::_( 'COM_JEM_CATEGORIES' ); ?></th>
 			    <th width="1%" class="center nowrap"><?php echo JText::_( 'JSTATUS' ); ?></th>
 				<th class="nowrap"><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
-				<th class="center"><?php echo JHTML::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="center"><?php echo JHTML::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $listDirn, $listOrder ); ?></th>
 				<th width="1%" class="center nowrap"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ); ?></th>
-				<th width="1%" class="center nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'a.id', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th width="1%" class="center nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?></th>
 			</tr>
 		</thead>
+		
+		<tfoot>
+		<tr>
+			<td colspan="20">
+				<?php echo $this->pagination->getListFooter(); ?>
+			</td>
+		</tr>
+	</tfoot>
+		
 
 		<tbody>
 			<?php
-			foreach ($this->rows as $i => $row) :
+			foreach ($this->items as $i => $row) :
 				//Prepare date
 				if (JEMHelper::isValidDate($row->dates)) {
 					$date = JEMOutput::formatdate($row->dates); 
@@ -85,6 +104,16 @@ if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$search
 					$displaytime = $time.' '.$this->jemsettings->timename;
 				}
 
+				
+				$ordering	= ($listOrder == 'ordering');
+				/*	$row->cat_link = JRoute::_('index.php?option=com_categories&extension=com_jem&task=edit&type=other&cid[]='. $row->catid);*/
+				$canCreate	= $user->authorise('core.create');
+				$canEdit	= $user->authorise('core.edit');
+				$canCheckin	= $user->authorise('core.manage',		'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
+				$canChange	= $user->authorise('core.edit.state') && $canCheckin;
+				
+				
+				
 				$link 			= 'index.php?option=com_jem&amp;task=events.edit&amp;cid[]='.$row->id;
 				$venuelink 		= 'index.php?option=com_jem&amp;task=venues.edit&amp;cid[]='.$row->locid;
 				$published 	= JHTML::_('jgrid.published', $row->published, $i, 'events.');
@@ -93,43 +122,37 @@ if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$search
 				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 				<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 				<td>
-					<?php
-					if ( $row->checked_out && ( $row->checked_out != $this->user->get('id') ) ) {
-						echo $displaydate;
-					} else {
-						?>
-						<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_EVENT' );?>::<?php echo $row->title; ?>">
-						<a href="<?php echo $link; ?>">
-						<?php echo $displaydate; ?>
-						</a></span>
-						<?php
-					}
-					?>
+				<?php if ($row->checked_out) : ?>
+						<?php echo JHtml::_('jgrid.checkedout', $i, $row->editor, $row->checked_out_time, 'events.', $canCheckin); ?>
+					<?php endif; ?>
+										<?php if ($canEdit) : ?>
+						<a href="<?php echo JRoute::_('index.php?option=com_jem&task=event.edit&id='.(int) $row->id); ?>">
+							<?php echo $displaydate; ?></a>
+					<?php else : ?>
+							<?php echo $displaydate; ?>
+					<?php endif; ?>
 				</td>
 				<td><?php echo $displaytime; ?></td>
 				<td>
-					<?php
-					if ( $row->checked_out && ( $row->checked_out != $this->user->get('id') ) ) {
-						echo htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8');
-					} else {
-						?>
-						<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_EVENT' );?>::<?php echo $row->title; ?>">
-						<a href="<?php echo $link; ?>">
-							<?php echo htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8'); ?>
-						</a></span>
-						<?php
-					}
-					?>
-
+				<?php if ($row->checked_out) : ?>
+						<?php echo JHtml::_('jgrid.checkedout', $i, $row->editor, $row->checked_out_time, 'events.', $canCheckin); ?>
+					<?php endif; ?>
+										<?php if ($canEdit) : ?>
+						<a href="<?php echo JRoute::_('index.php?option=com_jem&task=event.edit&id='.(int) $row->id); ?>">
+							<?php echo $this->escape($row->title); ?></a>
+					<?php else : ?>
+							<?php echo $this->escape($row->title); ?>
+					<?php endif; ?>
 					<br />
-
-					<?php
-					if (JString::strlen($row->alias) > 25) {
-						echo JString::substr( htmlspecialchars($row->alias, ENT_QUOTES, 'UTF-8'), 0 , 25).'...';
-					} else {
-						echo htmlspecialchars($row->alias, ENT_QUOTES, 'UTF-8');
-					}
-					?>
+				<?php
+				if (JString::strlen($row->alias) > 25) {
+					echo JString::substr( JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($row->alias), 0 , 25)).'...';
+				} else {
+					echo $this->escape($row->alias);
+				}
+				?>
+				
+				
 				</td>
 				<td>
 					<?php
@@ -201,7 +224,7 @@ if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$search
 					$created	 	= JHTML::Date( $row->created, JText::_( 'DATE_FORMAT_LC2' ) );
 					$edited 		= JHTML::Date( $row->modified, JText::_( 'DATE_FORMAT_LC2' ) );
 					$ip				= $row->author_ip == 'COM_JEM_DISABLED' ? JText::_( 'COM_JEM_DISABLED' ) : $row->author_ip;
-					$image 			= JHTML::_('image', 'administrator/templates/'. $this->template .'/images/menu/icon-16-info.png', JText::_('COM_JEM_NOTES') );
+					$image 			= JHTML::image('media/com_jem/images/icon-16-info.png', JText::_('COM_JEM_NOTES') );
 					$overlib 		= JText::_( 'COM_JEM_CREATED_AT' ).': '.$created.'<br />';
 					$overlib		.= JText::_( 'COM_JEM_WITH_IP' ).': '.$ip.'<br />';
 					if ($row->modified != '0000-00-00 00:00:00') {
@@ -229,7 +252,8 @@ if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$search
 						}
 					?>
 						<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_EVENTS_MANAGEATTENDEES'); ?>">
-						<?php echo $count; ?>
+						<?php echo $count; 						?>
+						
 						</a>
 					<?php
 					}else {
@@ -246,13 +270,7 @@ if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$search
 			<?php endforeach; ?>
 		</tbody>
 		
-				<tfoot>
-			<tr>
-				<td colspan="20">
-					<?php echo $this->pagination->getListFooter(); ?>
-				</td>
-			</tr>
-		</tfoot>
+				
 
 	</table>
 
@@ -262,7 +280,7 @@ if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$search
 
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="task" value="" />
-	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-
+	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
+	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
+<?php echo JHtml::_('form.token'); ?>
 	</form>

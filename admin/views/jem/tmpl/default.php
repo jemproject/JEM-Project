@@ -39,7 +39,7 @@ $options = array(
 						$link = 'index.php?option=com_jem&amp;view=events';
 						JEMViewJEM::quickiconButton( $link, 'icon-48-events.png', JText::_( 'COM_JEM_EVENTS' ) );
 
-						$link = 'index.php?option=com_jem&amp;view=event';
+						$link = 'index.php?option=com_jem&amp;task=event.add';
 						JEMViewJEM::quickiconButton( $link, 'icon-48-eventedit.png', JText::_( 'COM_JEM_ADD_EVENT' ) );
 
 						$link = 'index.php?option=com_jem&amp;view=venues';

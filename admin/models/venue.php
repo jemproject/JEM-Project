@@ -29,7 +29,7 @@ class JEMModelVenue extends JModelAdmin
 	{
 		if (!empty($record->id)) 
 		{
-				if ($record->state != -2) 
+				if ($record->published != -2) 
 				{
 					return ;
 				}
