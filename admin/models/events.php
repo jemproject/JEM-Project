@@ -32,16 +32,14 @@ class JEMModelEvents extends JModelList
 	{
 		if (empty($config['filter_fields'])) {
 			$config['filter_fields'] = array(
-					'id', 'a.id',
 					'alias', 'a.alias',
 					'state', 'a.state',
-					'country', 'a.country',
-					'url', 'a.url',
-					'street', 'a.street',
-					'plz', 'a.plz',
-					'city', 'a.city',
-					'ordering', 'a.ordering',
-					'created', 'a.created',
+					'times', 'a.times',
+					'venue','loc.venue',
+					'city','loc.city',
+					'dates', 'a.dates',
+					'hits', 'a.hits',
+					'id', 'a.id',
 			);
 		}
 

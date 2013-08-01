@@ -24,7 +24,7 @@ $params = $params->toArray();
 	window.addEvent('domready', function(){
 		var form = document.getElementById('event-form');
 		var metakeywords = $('jform_meta_keywords');
-		test();
+		
 
 		$('jform_maxplaces').addEvent('change', function(){
 			if ($('event-available')) {
@@ -59,13 +59,7 @@ $params = $params->toArray();
 	}
 </script>
 
-<script>
-function meta()
-{
-	//f=document.getElementById('event-form');
-	//f.jform_meta_keywords.value=f.jform_title.value+', '+f.jform_alias.value+f.jform_meta_keywords.value;
-}
-</script>
+
 
 
 <form
@@ -77,12 +71,12 @@ function meta()
 	<div class="width-55 fltlft">
 	
 <?php echo JHtml::_('tabs.start', 'det-pane'); ?>
-		<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_VENUE_INFO_TAB'), 'info' ); ?>
+		<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_INFO_TAB'), 'info' ); ?>
 		
 		<!-- START OF LEFT FIELDSET -->
 		<fieldset class="adminform">
 			<legend>
-				<?php echo empty($this->item->id) ? JText::_('COM_JEM_NEW_VENUE') : JText::sprintf('COM_JEM_VENUE_DETAILS', $this->item->id); ?>
+				<?php echo empty($this->item->id) ? JText::_('COM_JEM_NEW_EVENT') : JText::sprintf('COM_JEM_EVENT_DETAILS', $this->item->id); ?>
 			</legend>
 
 			<ul class="adminformlist">
