@@ -184,8 +184,14 @@ class JEMModelVenue extends JModelAdmin
 			$table->created_by = $user->get('id');
 			}
 			
-			
 			}
+			
+			$jinput = JFactory::getApplication()->input;
+			$ip = $jinput->get('author_ip', '', 'string');
+				
+			
+			$this->author_ip 		= $ip;
+			
 			
 			//uppercase needed by mapservices
 			if ($table->country) {
@@ -203,6 +209,25 @@ class JEMModelVenue extends JModelAdmin
 			} else {
 				$table->locimage = '';
 			}	
+			
+			$table->venue = htmlspecialchars_decode($table->venue, ENT_QUOTES);
+			
+			// Increment the content version number.
+			$table->version++;
+			
+			
+			// Make sure the data is valid
+			if (!$table->check()) {
+				$this->setError($table->getError());
+				return false;
+			}
+			
+			// Store it in the db
+			if (!$table->store()) {
+				JError::raiseError(500, $this->_db->getErrorMsg() );
+				return false;
+			}
+			
 			
 		
 			// attachments
@@ -231,10 +256,7 @@ class JEMModelVenue extends JModelAdmin
 			
 			
 		
-		$table->venue = htmlspecialchars_decode($table->venue, ENT_QUOTES);
 		
-		// Increment the content version number.
-		$table->version++;
 		
 	}
 }

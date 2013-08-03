@@ -28,40 +28,13 @@ class JEMTableEvent extends JTable
 	function check()
 	{
 		
-		// Check begin date is before end date
-			
-		// Check if end date is set
-		if($this->enddates == '0000-00-00' || $this->enddates == null) {
-			// Check if end time is set
-			if($this->endtimes == null) {
-				// Compare is not needed, but make sure the check passes
-				$date1 = new DateTime('00:00');
-				$date2 = new DateTime('00:00');
-			} else {
-				$date1 = new DateTime($this->times);
-				$date2 = new DateTime($this->endtimes);
-			}
-		} else {
-			// Check if end time is set
-			if($this->endtimes == null) {
-				$date1 = new DateTime($this->dates);
-				$date2 = new DateTime($this->enddates);
-			} else {
-				$date1 = new DateTime($this->dates.' '.$this->times);
-				$date2 = new DateTime($this->enddates.' '.$this->endtimes);
-			}
-		}
-			
-		if($date1 > $date2) {
-			JError::raiseWarning('SOME_ERROR_CODE', JText::_('COM_JEM_ERROR_END_BEFORE_START'));
-			return false;
-		}
-			
-		
 		if (empty($this->enddates)) {
 			$this->enddates = NULL;
 		}
 		
+		if (empty($this->dates)) {
+			$this->dates = NULL;
+		}
 
 		return true;
 	}
@@ -73,37 +46,16 @@ class JEMTableEvent extends JTable
 	 */
 	public function store($updateNulls = false)
 	{
-		// Debugging
-		/* var_dump($_FILES);exit; */
-		/* var_dump($_POST);exit; */ 
-		
-		
-		//$date	= JFactory::getDate();
-		//$user	= JFactory::getUser();
-		
-		//$jinput = JFactory::getApplication()->input;
-		//$ip = $jinput->get('author_ip', '', 'string');
-			
-		
-		//$this->author_ip 		= $ip;
-		
-		
-		// check for recurrence, when filled it will perform the cleanup function
-		if ($this->recurrence_number > 0)
-		{
-			//var_dump($_POST);exit;
-			JEMHelper::cleanup(1);
-		}
 		
 			// Verify that the alias is unique
 			$table = JTable::getInstance('Event', 'JEMTable');
 					/*if ($table->load(array('alias'=>$this->alias, 'catid'=>$this->catid)) && ($table->id != $this->id || $this->id==0)) {*/
-			if ($table->load(array('alias'=>$this->alias)) && ($table->id != $this->id || $this->id==0)) {
-			
-			
-					$this->setError(JText::_('COM_JEM_ERROR_UNIQUE_ALIAS'));
-					return false;
-					}
+			//if ($table->load(array('alias'=>$this->alias)) && ($table->id != $this->id || $this->id==0)) {
+			//
+			//
+				//	$this->setError(JText::_('COM_JEM_ERROR_UNIQUE_ALIAS'));
+				//	return false;
+				//	}
 					// Attempt to store the user data.
 					return parent::store($updateNulls);
 		}

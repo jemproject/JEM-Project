@@ -120,25 +120,21 @@ class JEMTableVenue extends JTable
 		/* var_dump($_POST);exit; */
 		
 		
-		$date	= JFactory::getDate();
-		$user	= JFactory::getUser();
+		//$date	= JFactory::getDate();
+		//$user	= JFactory::getUser();
 		
-		$jinput = JFactory::getApplication()->input;
-		$ip = $jinput->get('author_ip', '', 'string');
-			
 		
-		$this->author_ip 		= $ip;
 		
 	
 			// Verify that the alias is unique
 			$table = JTable::getInstance('Venue', 'JEMTable');
 					/*if ($table->load(array('alias'=>$this->alias, 'catid'=>$this->catid)) && ($table->id != $this->id || $this->id==0)) {*/
-			if ($table->load(array('alias'=>$this->alias)) && ($table->id != $this->id || $this->id==0)) {
+			//if ($table->load(array('alias'=>$this->alias)) && ($table->id != $this->id || $this->id==0)) {
 			
-			
-					$this->setError(JText::_('COM_JEM_ERROR_UNIQUE_ALIAS'));
-					return false;
-					}
+			//
+			//		$this->setError(JText::_('COM_JEM_ERROR_UNIQUE_ALIAS'));
+			//		return false;
+			//		}
 					// Attempt to store the user data.
 					return parent::store($updateNulls);
 		}

@@ -235,7 +235,65 @@ $params = $params->toArray();
 		</fieldset>
 		
 		
-		
+		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_RECURRING_EVENTS'), 'recurrence'); ?>
+		<fieldset class="panelform">
+			<ul class="adminformlist">
+				
+				
+				
+				<li><?php echo $this->form->getLabel('recurrence_type'); ?> <?php echo $this->form->getInput('recurrence_type'); ?>
+				</li>
+				<li id="recurrence_output">
+				<label></label>
+				</li>
+				<li id="counter_row" style="display: none;>
+					<?php echo $this->form->getLabel('recurrence_limit_date'); ?> <?php echo $this->form->getInput('recurrence_limit_date'); ?>
+				</li>
+				
+
+				
+				
+				<input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $this->item->recurrence_number;?>" />
+				<input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->item->recurrence_byday;?>" />
+			
+			<script
+			type="text/javascript">
+			<!--
+				var $select_output = new Array();
+				$select_output[1] = "<?php
+				echo JText::_ ( 'COM_JEM_OUTPUT_DAY' );
+				?>";
+				$select_output[2] = "<?php
+				echo JText::_ ( 'COM_JEM_OUTPUT_WEEK' );
+				?>";
+				$select_output[3] = "<?php
+				echo JText::_ ( 'COM_JEM_OUTPUT_MONTH' );
+				?>";
+				$select_output[4] = "<?php
+				echo JText::_ ( 'COM_JEM_OUTPUT_WEEKDAY' );
+				?>";
+
+				var $weekday = new Array();
+				$weekday[0] = new Array("MO", "<?php echo JText::_ ( 'COM_JEM_MONDAY' ); ?>");
+				$weekday[1] = new Array("TU", "<?php echo JText::_ ( 'COM_JEM_TUESDAY' ); ?>");
+				$weekday[2] = new Array("WE", "<?php echo JText::_ ( 'COM_JEM_WEDNESDAY' ); ?>");
+				$weekday[3] = new Array("TH", "<?php echo JText::_ ( 'COM_JEM_THURSDAY' ); ?>");
+				$weekday[4] = new Array("FR", "<?php echo JText::_ ( 'COM_JEM_FRIDAY' ); ?>");
+				$weekday[5] = new Array("SA", "<?php echo JText::_ ( 'COM_JEM_SATURDAY' ); ?>");
+				$weekday[6] = new Array("SU", "<?php echo JText::_ ( 'COM_JEM_SUNDAY' ); ?>");
+
+				var $before_last = "<?php
+				echo JText::_ ( 'COM_JEM_BEFORE_LAST' );
+				?>";
+				var $last = "<?php
+				echo JText::_ ( 'COM_JEM_LAST' );
+				?>";
+				start_recurrencescript();
+			-->
+			</script>
+			
+			</ul>
+		</fieldset>
 		
 		
 		

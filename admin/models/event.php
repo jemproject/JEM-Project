@@ -171,13 +171,27 @@ class JEMModelEvent extends JModelAdmin
 	protected function prepareTable(&$table)
 	{
 		
-		//Debug
-		// var_dump($_POST);exit; 
+		// Debug
+		/* var_dump($_POST);exit; */ 
+		/* var_dump($_FILES);exit; */
 		
 		
 		$app =  JFactory::getApplication();
 		$date	= JFactory::getDate();
 		$jemsettings = JEMAdmin::config();
+		
+		
+		/* JInput
+		 * 
+		 * Example: $foo = $jinput->get('varname', 'default_value', 'filter');
+		 * Possible filters: http://docs.joomla.org/Retrieving_request_data_using_JInput
+		 * 
+		 */
+		$jinput = JFactory::getApplication()->input;
+		
+		
+		
+		
 		
 		$user	= JFactory::getUser();
 		if ($table->id) {
@@ -199,22 +213,91 @@ class JEMModelEvent extends JModelAdmin
 			
 			}
 			
-			$cats = JRequest::getVar( 'cid', array(), 'post', 'array');
 			
-			$recurrencenumber = JRequest::getVar( 'recurrence_number');
-			$recurrencebyday = JRequest::getVar( 'recurrence_byday');
 			
-			$metakeywords = JRequest::getVar( 'meta_keywords');
-			$metadescription = JRequest::getVar( 'meta_description');
+		// Bind the form fields to the table
+		//if (!$table->bind( JRequest::get( 'post' ) )) {
+        //return JError::raiseWarning( 500, $row->getError() );
+		//}
+
+		//get values from time selectlist and concatenate them accordingly
+		$starthours		= JRequest::getCmd('starthours');
+		$startminutes	= JRequest::getCmd('startminutes');
+		$endhours		= JRequest::getCmd('endhours');
+		$endminutes		= JRequest::getCmd('endminutes');
+
+		// Emtpy time values are allowed and are stored as null values
+		if ($starthours != '') {
+			if ($startminutes == '') {
+				$startminutes = '00';
+			}
+			$table->times = $starthours.':'.$startminutes;
+			if ($endhours != '') {
+				if ($endminutes == '') {
+					$endminutes = '00';
+				}
+				$table->endtimes = $endhours.':'.$endminutes;
+			}
+		}
+
+		// Check begin date is before end date
+
+		// Check if end date is set
+		if($table->enddates == '0000-00-00' || $table->enddates == null) {
+			// Check if end time is set
+			if($table->endtimes == null) {
+				// Compare is not needed, but make sure the check passes
+				$date1 = new DateTime('00:00');
+				$date2 = new DateTime('00:00');
+			} else {
+				$date1 = new DateTime($table->times);
+				$date2 = new DateTime($table->endtimes);
+			}
+		} else {
+			// Check if end time is set
+			if($table->endtimes == null) {
+				$date1 = new DateTime($table->dates);
+				$date2 = new DateTime($table->enddates);
+			} else {
+				$date1 = new DateTime($table->dates.' '.$table->times);
+				$date2 = new DateTime($table->enddates.' '.$table->endtimes);
+			}
+		}
+		if($date1 > $date2) {
+			JError::raiseWarning('SOME_ERROR_CODE', JText::_('COM_JEM_ERROR_END_BEFORE_START'));
+			return false;
+		}
+				
 			
-			$hits = JRequest::getVar( 'hits');
+			
+			
+			
+			
+			$cats = $jinput->get( 'cid', array(), 'post', 'array');
+			
+			
+			$recurrencenumber = $jinput->get('recurrence_number','','int');
+			$recurrencebyday = $jinput->get('recurrence_byday','','word');
+			
+			$metakeywords = $jinput->get( 'meta_keywords','','');
+			$metadescription = $jinput->get( 'meta_description','','');
+			
+			$hits = $jinput->get( 'hits','','int');
 			$table->hits = $hits;
 			
 			
-			$table->recurrence_number = $recurrencenumber;
-			$table->recurrence_byday = $recurrencebyday;
-			//$table->recurrence_selectlist = $recurrenceselectlist;
-			
+			if($table->dates == '0000-00-00' || $table->dates == null) {
+			$table->recurrence_number = '0';
+			$table->recurrence_byday = '0';	
+			$table->recurrence_counter = '0';
+			$table->recurrence_type = '0';
+			$table->recurrence_limit = '0';
+			$table->recurrence_limit_date = '0000-00-00';
+			} else 
+			{
+				$table->recurrence_number = $recurrencenumber;
+				$table->recurrence_byday = $recurrencebyday;
+			}
 			
 			$table->meta_keywords = $metakeywords;
 			$table->meta_description = $metadescription;
@@ -234,47 +317,11 @@ class JEMModelEvent extends JModelAdmin
 			
 			
 			
-			
-			
-			
-			
-			
-			/*
-			$jinput = JFactory::getApplication()->input;
-			$cats = $jinput->get( 'cid', array(), 'post', 'array');
-			
-			
-			
-			$db		= JFactory::getDbo();
-			$query	= $db->getQuery(true);
-			
-			$conditions = array(
-					'itemid = '.$table->id);
-			//store cat relation
-			$query->delete($db->quoteName('#__jem_cats_event_relations'));
-			$query->where($conditions);
-			$this->_db->setQuery($query);
-			
-			
-			
-			foreach($cats as $cat)
-			{
-				$values = array($cat, $table->id);
-				$query->insert($db->quoteName('#__jem_cats_event_relations'));
-				$query->columns($db->quoteName(array('catid', 'itemid')));
-				$query->values(implode(',',$values));
-				$this->_db->setQuery($query);
-			}
-				*/
-			
-			
-			
-			
 			//get values from time selectlist and concatenate them accordingly
-			$starthours		= JRequest::getCmd('starthours');
-			$startminutes	= JRequest::getCmd('startminutes');
-			$endhours		= JRequest::getCmd('endhours');
-			$endminutes		= JRequest::getCmd('endminutes');
+			$starthours		= $jinput->get('starthours','','cmd');
+			$startminutes	= $jinput->get('startminutes','','cmd');
+			$endhours		= $jinput->get('endhours','','cmd');
+			$endminutes		= $jinput->get('endminutes','','cmd');
 			
 			// Emtpy time values are allowed and are stored as null values
 			if ($starthours != '') {
@@ -304,6 +351,23 @@ class JEMModelEvent extends JModelAdmin
 				$table->datimage = '';
 			}	
 			
+
+			$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
+			
+			// Increment the content version number.
+			$table->version++;
+			
+			// Make sure the data is valid
+			if (!$table->check()) {
+				$this->setError($table->getError());
+				return false;
+			}
+			
+			if (!$table->store()) {
+				JError::raiseError(500, $table->getError() );
+			}
+			
+			
 		
 			// attachments
 			// new ones first
@@ -330,13 +394,13 @@ class JEMModelEvent extends JModelAdmin
 			}
 			
 			
+			// check for recurrence, when filled it will perform the cleanup function
+			if ($table->recurrence_number > 0 && !($table->dates == '0000-00-00' || $table->dates == null) )
+			{
+				JEMHelper::cleanup(1);
+			}
 			
-			
-			
-		$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
 		
-		// Increment the content version number.
-		$table->version++;
 		
 		
 		
