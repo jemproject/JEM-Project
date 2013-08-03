@@ -119,14 +119,24 @@ class JEMModelEvent extends JModelAdmin
 		
 		if ($item = parent::getItem($pk)) {
 			
+			$db = JFactory::getDbo();
 			
+			/*
+			$query = $db->getQuery(true);
+			$query->select(array('count(id)'));
+			$query->from('#__jem_register');
+			$query->where("event = $item->id AND waiting = 0");
+			*/
 
+			
 			$query = ' SELECT count(id) '
 					. ' FROM #__jem_register '
-					. ' WHERE event = ' . $item->id
-					. '   AND waiting = 0 '
+					. ' WHERE event = ' . $db->quote($item->id)
+					. ' AND waiting = 0 '
 					;
-			$this->_db->setQuery($query);
+					
+					
+			$db->setQuery($query);
 			$res = $this->_db->loadResult();
 			$item->booked = $res;
 			
@@ -269,10 +279,7 @@ class JEMModelEvent extends JModelAdmin
 		}
 				
 			
-			
-			
-			
-			
+
 			$cats = $jinput->get( 'cid', array(), 'post', 'array');
 			
 			
@@ -303,10 +310,52 @@ class JEMModelEvent extends JModelAdmin
 			$table->meta_description = $metadescription;
 			
 			
+			
+			/*
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
+			$query->delete($db->quoteName('#__jem_cats_event_relations'));
+			$query->where("itemid = $table->id");		
+			$db->setQuery($query);
+			*/
+			
+		/*	
+			foreach($cats as $cat)
+			{
+			
+				// Get a db connection.
+				$db = JFactory::getDbo();
+				
+				// Create a new query object.
+				$query = $db->getQuery(true);
+				
+				// Insert columns.
+				$columns = array('catid', 'itemid');
+				
+				// Insert values.
+				$values = array($cat, $table->id);
+				
+				// Prepare the insert query.
+				$query
+				->insert($db->quoteName('#__jem_cats_event_relations'))
+				->columns($db->quoteName($columns))
+				->values(implode(',', $values));
+				
+				// Reset the query using our newly populated query object.
+				$db->setQuery($query);
+				//var_dump($query);exit;
+				
+			}
+			*/
+				
+			
+			
+			
 			//store cat relation
 			$query = 'DELETE FROM #__jem_cats_event_relations WHERE itemid = '.$table->id;
 			$this->_db->setQuery($query);
 			$this->_db->query();
+			//
 			
 			foreach($cats as $cat)
 			{

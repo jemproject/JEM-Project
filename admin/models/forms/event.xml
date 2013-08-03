@@ -154,7 +154,7 @@
 			label="COM_JEM_AVAILABLE_PLACES" description="COM_JEM_AVAILABLE_PLACES_DESC" />
 
 		<field name="waitinglist" type="checkbox" size="20" class="inputbox"
-			label="COM_JEM_ENABLE_UNREGISTRATION" description="COM_JEM_ENABLE_UNREGISTRATION_DESC"
+			label="COM_JEM_ENABLE_WAITINGLIST" description="COM_JEM_ENABLE_WAITINGLIST_DESC"
 			value="1" default="0" />
 
 
