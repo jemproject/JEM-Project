@@ -79,6 +79,8 @@ $options = array(
 							$link = 'index.php?option=com_jem&amp;task=sampledata.load';
 							JEMViewJEM::quickiconButton( $link, 'icon-48-sampledata.png', JText::_( 'COM_JEM_LOAD_SAMPLE_DATA' ) );
 
+							$link = 'index.php?option=com_jem&amp;view=updatecheck';
+							JEMViewJEM::quickiconButton( $link, 'icon-48-update.png', JText::_( 'COM_JEM_UPDATE_CHECK' ) );
 
 							$link = 'index.php?option=com_jem&amp;view=import';
 							JEMViewJEM::quickiconButton( $link, 'icon-48-tableimport.png', JText::_( 'COM_JEM_IMPORT_DATA' ) );

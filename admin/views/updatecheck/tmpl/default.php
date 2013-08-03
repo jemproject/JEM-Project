@@ -75,7 +75,7 @@ if ($this->updatedata->failed == 0) {
 			<tr>
 		  		<td><b><?php echo JText::_( 'COM_JEM_FILES' ).':'; ?></b></td>
 		  		<td>
-					<a href="<?php echo $this->updatedata->download; ?>" target="_blank">Download upgradepack</a>
+					<a href="<?php echo $this->updatedata->download; ?>" target="_blank">Click to Download</a>
 		  		</td>
 			</tr>
 			<tr>

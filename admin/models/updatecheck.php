@@ -53,7 +53,7 @@ class JEMModelUpdatecheck extends JModelLegacy
 		$snoopy = new Snoopy();
 
 		//set the source file
-		$file = 'http://www.joomlaeventmanager.net/update.csv';
+		$file = 'http://www.joomlaeventmanager.com/update.csv';
 
 		$snoopy->read_timeout 	= 30;
 		$snoopy->agent 			= "Mozilla/5.0 (compatible; Konqueror/3.2; Linux 2.6.2) (KHTML, like Gecko)";
@@ -72,10 +72,15 @@ class JEMModelUpdatecheck extends JModelLegacy
 
 			$data = explode('|', $snoopy->results);
 
-			$_updatedate = new stdClass();
+			
+			$_updatedata = new stdClass();
+			
+			/* version to check, not visible in table */
 			$_updatedata->version 		= $data[0];
+			
+			/* in table */
 			$_updatedata->versiondetail	= $data[1];
-			$_updatedata->date			= strftime( $jemsettings->formatdate, strtotime( $data[2] ) );
+			$_updatedata->date			= JEMOutput::formatdate($data[2]);
 			$_updatedata->info 			= $data[3];
 			$_updatedata->download 		= $data[4];
 			$_updatedata->notes			= $data[5];

@@ -38,7 +38,27 @@ class JEMViewUpdatecheck extends JViewLegacy {
 		//assign data to template
 		$this->template		= $template;
 		$this->updatedata	= $updatedata;
+		
+		// add toolbar
+		$this->addToolbar();
 
 		parent::display($tpl);
 	}
+	
+	
+	/**
+	 * Add Toolbar
+	 */
+	protected function addToolbar()
+	{
+	
+		
+		//create the toolbar
+		JToolBarHelper::title( JText::_( 'COM_JEM_UPDATE_CHECK' ), 'settings' );
+
+		JToolBarHelper::back();
+		
+		//JToolBarHelper::help( 'updatecheck', true );
+	}
+	
 }
