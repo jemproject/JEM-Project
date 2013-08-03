@@ -18,7 +18,7 @@ JFormHelper::loadFieldClass('list');
  * Renders an venue element
  *
  * @package JEM
- * @since 1.5
+ * 
  */
 class JFormFieldVenue extends JFormFieldList
 {
@@ -72,7 +72,7 @@ class JFormFieldVenue extends JFormFieldList
 		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$title.'" disabled="disabled" size="35" />';
 		$html[] = '</div>';
 
-		// The user select button.
+		// 
 		$html[] = '<div class="button2-left">';
 		$html[] = '  <div class="blank">';
 		$html[] = '	<a class="modal" title="'.JText::_('COM_JEM_SELECT_VENUE').'"  href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}">'.JText::_('COM_JEM_SELECT_VENUE').'</a>';

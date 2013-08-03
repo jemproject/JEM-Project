@@ -55,7 +55,7 @@ class JFormFieldImageselect extends JFormFieldList
 		$link2 = 'index.php?option=com_jem&amp;view=imagehandler&amp;task=selectvenueimg&amp;tmpl=component';
 		
 		
-		// The current user display field.
+		// 
 		$html[] = "<div class=\"fltlft\">";
 		$html[] = "<input style=\"background: #ffffff;\" type=\"text\" id=\"a_imagename\" value=\"$this->value\" disabled=\"disabled\" onchange=\"javascript:if (document.forms[0].a_imagename.value!='') {document.imagelib.src='../images/jem/venues/' + document.forms[0].a_imagename.value} else {document.imagelib.src='../images/blank.png'}\"; />";
 		$html[] = "</div>";

@@ -156,59 +156,7 @@ class JEMHelperBackend
 	
 	
 	
-	public static function getCatOptions()
-	{
-		
-		$db		= JFactory::getDbo();
-		$query	= $db->getQuery(true);
-		//$query = 'SELECT DISTINCT catid FROM #__jem_cats_event_relations WHERE itemid = ' . (int)$this->_id;
-		$query = 'SELECT DISTINCT catid FROM #__jem_cats_event_relations';
-		
-		$db->setQuery($query);
-		$catselected = $db->loadColumn();
-		
 	
-//		$categories = JEMCategories::getCategoriesTree(1);
-//		$selectedcats = $this->get( 'Catsselected' );
-	
-//		$Lists = array();
-//		$Lists['category'] = JEMCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8"');
-		
-		// alternative way
-	
-		/*	$options = array();
-	
-		$db		= JFactory::getDbo();
-		$query	= $db->getQuery(true);
-	
-		$query->select('iso2 As value, name As text');
-		$query->from('#__jem_countries AS a');
-		$query->order('a.name');
-	
-	
-		// Get the options.
-		$db->setQuery($query);
-	
-		$options = $db->loadObjectList();
-	
-		// Check for a database error.
-		if ($db->getErrorNum()) {
-		JError::raiseWarning(500, $db->getErrorMsg());
-		}
-		*/
-	
-		// Merge any additional options in the XML definition.
-		//$options = array_merge(parent::getOptions(), $options);
-	
-	
-		//$options = array();
-		//$options = array_merge(JEMHelper::getCountryOptions(),$options);
-	
-		//array_unshift($options, JEMCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8"'));
-	
-	$options = 'foobar';
-		return $options;
-	}
 	
 
 }

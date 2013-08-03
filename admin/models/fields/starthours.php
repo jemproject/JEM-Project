@@ -17,7 +17,7 @@ jimport('joomla.form.formfield');
 require_once dirname(__FILE__) . '/../../helpers/helper.php';
 
 /**
- * CountryOptions Field class.
+ * StartHours Field class.
  *
  * 
  */

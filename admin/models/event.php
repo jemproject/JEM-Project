@@ -120,6 +120,8 @@ class JEMModelEvent extends JModelAdmin
 		if ($item = parent::getItem($pk)) {
 			
 			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
+			
 			
 			/*
 			$query = $db->getQuery(true);
@@ -274,7 +276,7 @@ class JEMModelEvent extends JModelAdmin
 			}
 		}
 		if($date1 > $date2) {
-			JError::raiseWarning('SOME_ERROR_CODE', JText::_('COM_JEM_ERROR_END_BEFORE_START'));
+			JError::raiseWarning(100, JText::_('COM_JEM_ERROR_END_BEFORE_START'));
 			return false;
 		}
 				
@@ -348,18 +350,19 @@ class JEMModelEvent extends JModelAdmin
 			}
 			*/
 				
-			
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
 			
 			
 			//store cat relation
-			$query = 'DELETE FROM #__jem_cats_event_relations WHERE itemid = '.$table->id;
+			$query = 'DELETE FROM #__jem_cats_event_relations WHERE itemid = '.$db->quote($table->id);
 			$this->_db->setQuery($query);
 			$this->_db->query();
 			//
 			
 			foreach($cats as $cat)
 			{
-				$query = 'INSERT INTO #__jem_cats_event_relations (`catid`, `itemid`) VALUES(' . $cat . ',' . $table->id . ')';
+				$query = 'INSERT INTO #__jem_cats_event_relations (`catid`, `itemid`) VALUES(' . $db->quote($cat) . ',' . $db->quote($table->id) . ')';
 				$this->_db->setQuery($query);
 				$this->_db->query();
 			}

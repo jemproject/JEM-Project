@@ -37,30 +37,7 @@ class JFormFieldCatOptions extends JFormField
 	{
 	
 	
-		//$categories = JEMCategories::getCategoriesTree(1);
-		//$selectedcats = $this->get( 'Catsselected' );
-	
-		//build selectlists
-		//$Lists = array();
-		//$Lists['category'] = JEMCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8"');
-	
-		//$query = 'SELECT DISTINCT catid FROM #__jem_cats_event_relations WHERE itemid = ' . (int)$this->_id;
-		//$this->_db->setQuery($query);
-		//$used = $this->_db->loadColumn();
-		//return $used;
-	
-		// static function buildcatselect($list, $name, $selected, $top, $class = 'class="inputbox"')
-		// {
-		//	$catlist = array();
-		//
-		// if ($top) {
-		//		$catlist[] = JHTML::_('select.option', '0', JText::_('COM_JEM_TOPLEVEL'));
-		//	}
-		//
-		//	$catlist = array_merge($catlist, JEMCategories::getcatselectoptions($list));
-		//
-		//	return JHTML::_('select.genericlist', $catlist, $name, $class, 'value', 'text', $selected);
-		// }
+
 	
 	
 		$options = array();
@@ -87,25 +64,16 @@ class JFormFieldCatOptions extends JFormField
 		// Output
 		$currentid = JFactory::getApplication()->input->getInt('id');
 		
-		
 		$categories = JEMCategories::getCategoriesTree(1);
 		
 		$db		= JFactory::getDbo();
 		$query	= $db->getQuery(true);
-		//$query = 'SELECT DISTINCT catid FROM #__jem_cats_event_relations WHERE itemid = ' . (int)$this->_id;
-		$query = 'SELECT DISTINCT catid FROM #__jem_cats_event_relations WHERE itemid = '. $currentid;
+		$query = 'SELECT DISTINCT catid FROM #__jem_cats_event_relations WHERE itemid = '. $db->quote($currentid);
 		
 		$db->setQuery($query);
 		$selectedcats = $db->loadColumn();
 		
 
-		
-		//var_dump($var2);exit;
-		
-		//var_dump($selectedcats);exit;
-		//var_dump($_POST);exit;
-		//var_dump($attr);exit;
-		
 		
 	
 		return JEMCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, trim($attr));
