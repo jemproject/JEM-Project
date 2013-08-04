@@ -11,16 +11,13 @@ defined('_JEXEC') or die;
 
 /**
  * Holds helpfull administration related stuff
- *
- * @package JEM
- * @since 0.9
+ * 
  */
 class JEMAdmin {
 
 	/**
 	* Writes footer.
 	*
-	* @since 0.9
 	*/
 	static function footer()
 	{

@@ -8,7 +8,11 @@
  */
 
 defined('_JEXEC') or die;
+?>
 
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=updatecheck'); ?>" method="post" name="adminForm" id="adminForm">
+
+<?php 
 if ($this->updatedata->failed == 0) {
 		?>
 		<table style="width:100%" class="adminlist">
@@ -108,7 +112,6 @@ if ($this->updatedata->failed == 0) {
 <?php
 }
 ?>
-
-<p class="copyright">
-	<?php echo JEMAdmin::footer( ); ?>
-</p>
+<input type="hidden" name="task" value="" />
+<?php echo JHtml::_('form.token'); ?>
+</form>

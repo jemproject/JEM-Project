@@ -22,6 +22,8 @@ class JEMViewUpdatecheck extends JViewLegacy {
 
 		$app 	   =  JFactory::getApplication();
 
+		JHtml::_('behavior.framework');
+		
 		//initialise variables
 		$document	= JFactory::getDocument();
 
@@ -55,6 +57,7 @@ class JEMViewUpdatecheck extends JViewLegacy {
 		
 		//create the toolbar
 		JToolBarHelper::title( JText::_( 'COM_JEM_UPDATE_CHECK' ), 'settings' );
+		JToolBarHelper::help( 'update', true );
 
 		JToolBarHelper::back();
 		
