@@ -44,7 +44,9 @@ if ($this->updatedata->failed == 0) {
 
 		<br />
 
-		<table style="width:100%" class="adminlist">
+		
+			
+			<table style="width:100%" class="adminlist">
 			<tr>
 		  		<td><b><?php echo JText::_( 'COM_JEM_VERSION' ).':'; ?></b></td>
 		  		<td><?php
@@ -91,6 +93,19 @@ if ($this->updatedata->failed == 0) {
 			</tr>
 		</table>
 
+		<br />
+		<table style="width:200px;" class="adminlist">
+			<tr>
+		  		<td><b><?php echo JText::_( 'COM_JEM_INSTALLED_VERSION' ).':'; ?></b></td>
+		  		<td><?php
+					echo '1.9.1';
+					?>
+		  		</td>
+			</tr>
+			</table>
+			
+			
+		
 <?php
 } else {
 ?>
