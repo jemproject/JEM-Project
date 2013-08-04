@@ -254,12 +254,14 @@ table#el-attachments td {
 }
 
 table#el-attachments img {
-    
+   cursor:pointer; 
 }
 
 
 table#el-attachments img:hover {
 }
+
+
 
 
 /* -------------------

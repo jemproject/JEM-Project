@@ -313,15 +313,17 @@ class JEMModelEvent extends JModelAdmin
 			
 			
 			
-			/*
+			
 			$db = JFactory::getDbo();
+		
 			$query = $db->getQuery(true);
 			$query->delete($db->quoteName('#__jem_cats_event_relations'));
-			$query->where("itemid = $table->id");		
+			$query->where('itemid = '.$table->id);	
+				
 			$db->setQuery($query);
-			*/
+			$db->query();
 			
-		/*	
+			
 			foreach($cats as $cat)
 			{
 			
@@ -345,30 +347,12 @@ class JEMModelEvent extends JModelAdmin
 				
 				// Reset the query using our newly populated query object.
 				$db->setQuery($query);
-				//var_dump($query);exit;
-				
-			}
-			*/
-				
-			$db = JFactory::getDbo();
-			$query = $db->getQuery(true);
+				$db->query();
 			
-			
-			//store cat relation
-			$query = 'DELETE FROM #__jem_cats_event_relations WHERE itemid = '.$db->quote($table->id);
-			$this->_db->setQuery($query);
-			$this->_db->query();
-			//
-			
-			foreach($cats as $cat)
-			{
-				$query = 'INSERT INTO #__jem_cats_event_relations (`catid`, `itemid`) VALUES(' . $db->quote($cat) . ',' . $db->quote($table->id) . ')';
-				$this->_db->setQuery($query);
-				$this->_db->query();
 			}
 			
 			
-			
+
 			//get values from time selectlist and concatenate them accordingly
 			$starthours		= $jinput->get('starthours','','cmd');
 			$startminutes	= $jinput->get('startminutes','','cmd');
@@ -420,7 +404,39 @@ class JEMModelEvent extends JModelAdmin
 			}
 			
 			
+
+			
+			$fileFilter = new JInput($_FILES);
+			
 		
+			// attachments
+			// new ones first
+			$attachments = $fileFilter->get( 'attach', null, 'array' );
+			$attachments['customname'] = $jinput->post->get( 'attach-name', null, 'array' );
+			$attachments['description'] = $jinput->post->get( 'attach-desc', null, 'array' );
+			$attachments['access'] = $jinput->post->get( 'attach-access', null, 'array' );
+			JEMAttachment::postUpload($attachments, 'event'.$table->id);
+				
+			// and update old ones
+			$attachments = array();
+			$old['id'] = $jinput->post->get( 'attached-id', null, 'array' );
+			$old['name'] = $jinput->post->get( 'attached-name', null, 'array' );
+			$old['description'] = $jinput->post->get( 'attached-desc', null, 'array' );
+			$old['access'] = $jinput->post->get( 'attached-access', null, 'array' );
+			foreach ($old['id'] as $k => $id)
+			{
+				$attach = array();
+				$attach['id'] = $id;
+				$attach['name'] = $old['name'][$k];
+				$attach['description'] = $old['description'][$k];
+				$attach['access'] = $old['access'][$k];
+				JEMAttachment::update($attach);
+			}
+			
+			
+			
+			/*
+			
 			// attachments
 			// new ones first
 			$attachments = JRequest::getVar( 'attach', array(), 'files', 'array' );
@@ -444,6 +460,9 @@ class JEMModelEvent extends JModelAdmin
 				$attach['access'] = $old['access'][$k];
 				JEMAttachment::update($attach);
 			}
+			
+			*/
+			
 			
 			
 			// check for recurrence, when filled it will perform the cleanup function
