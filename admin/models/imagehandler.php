@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -17,7 +17,7 @@ jimport('joomla.filesystem.file');
  * JEM Component Imageselect Model
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMModelImagehandler extends JModelLegacy
 {
@@ -31,7 +31,6 @@ class JEMModelImagehandler extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
 	 */
 	function __construct() {
 		parent::__construct();
@@ -66,7 +65,7 @@ class JEMModelImagehandler extends JModelLegacy
 	 * Build imagelist
 	 *
 	 * @return array $list The imagefiles from a directory to display
-	 * @since 0.9
+	 * 
 	 */
 	function getImages() {
 		$list = $this->getList();
@@ -106,7 +105,7 @@ class JEMModelImagehandler extends JModelLegacy
 	 * Build imagelist
 	 *
 	 * @return array $list The imagefiles from a directory
-	 * @since 0.9
+	 * 
 	 */
 	function getList()
 	{
@@ -178,7 +177,7 @@ class JEMModelImagehandler extends JModelLegacy
 	 * Build display size
 	 *
 	 * @return array width and height
-	 * @since 0.9
+	 * 
 	 */
 	function _imageResize($width, $height, $target) {
 		//takes the larger size of the width and height and applies the
@@ -201,7 +200,7 @@ class JEMModelImagehandler extends JModelLegacy
 	 * Return human readable size info
 	 *
 	 * @return string size of image
-	 * @since 0.9
+	 * 
 	 */
 	function _parseSize($size) {
 		if ($size < 1024) {

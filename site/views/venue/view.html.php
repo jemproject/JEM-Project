@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -226,7 +226,7 @@ class JEMViewVenue extends JViewLegacy
 	/**
 	 * Manipulate Data
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	function &getRows()
 	{

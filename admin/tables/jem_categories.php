@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
  * JEM categories Model class
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class jem_categories extends JTable
 {
@@ -65,7 +65,7 @@ class jem_categories extends JTable
 	 *
 	 * @access public
 	 * @return boolean
-	 * @since 1.0
+	 * 
 	 */
 	function check()
 	{

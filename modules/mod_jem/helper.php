@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @subpackage JEM Module
  * @copyright (C) 2013-2013 joomlaeventmanager.net
@@ -15,7 +15,7 @@ defined('_JEXEC') or die;
  *
  * @package Joomla
  * @subpackage JEM Module
- * @since		0.9
+ * 
  */
 class modJEMHelper
 {

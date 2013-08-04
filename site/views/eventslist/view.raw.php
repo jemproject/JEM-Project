@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -14,17 +14,17 @@ require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
 jimport( 'joomla.application.component.view');
 
 /**
- * ICS events list View class of the JEM component
+ * ICS events list View
  *
  * @package JEM
- * @since 1.1
+ * 
  */
 class JEMViewEventslist extends JViewLegacy
 {
 	/**
 	 * Creates the output for the Eventslist view
 	 *
- 	 * @since 2.0
+ 	 * 
 	 */
 	function display($tpl = null)
 	{

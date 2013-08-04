@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,14 +15,14 @@ jimport('joomla.application.component.controller');
  * JEM Component Cleanup Controller
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMControllerCleanup extends JEMController
 {
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	function __construct()
 	{
@@ -39,7 +39,7 @@ class JEMControllerCleanup extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * @since 0.9
+	 * 
 	 */
 	function delete()
 	{
@@ -73,11 +73,11 @@ class JEMControllerCleanup extends JEMController
  	 	
  	
   /**
-   * 
+   * Triggerarchive + Recurrences
    *
    * @access public
    * @return void
-   * @since 0.9
+   * 
    */
   function triggerarchive()
   {

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
  * View class for the JEM attendees screen
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMViewAttendees extends JViewLegacy {
 
@@ -94,7 +94,7 @@ class JEMViewAttendees extends JViewLegacy {
 	 *
 	 * @param $tpl
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	public function _displayprint($tpl = null)
 	{

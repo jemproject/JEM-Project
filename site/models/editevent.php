@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Editevent Model
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMModelEditevent extends JModelLegacy
 {
@@ -36,7 +36,6 @@ class JEMModelEditevent extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 1.5
 	 */
 	function __construct()
 	{
@@ -61,7 +60,6 @@ class JEMModelEditevent extends JModelLegacy
 	 * logic to get the event
 	 *
 	 * @access public
-	 * @since	0.9
 	 *
 	 * @return object
 	 */
@@ -286,7 +284,7 @@ class JEMModelEditevent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	1.0
+	 * 
 	 */
 	function getCatsselected()
 	{
@@ -436,7 +434,7 @@ class JEMModelEditevent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function checkin()
 	{
@@ -457,7 +455,7 @@ class JEMModelEditevent extends JModelLegacy
 	 * @access	public
 	 * @param	int	$uid	User ID of the user checking the item out
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function checkout($uid = null)
 	{
@@ -486,7 +484,7 @@ class JEMModelEditevent extends JModelLegacy
 	 * @access	public
 	 * @param	int	A user id
 	 * @return	boolean	True if checked out
-	 * @since	0.9
+	 *
 	 */
 	function isCheckedOut( $uid=0 )
 	{
@@ -505,7 +503,7 @@ class JEMModelEditevent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	id
-	 * @since	0.9
+	 * 
 	 */
 	function store($data, $file)
 	{

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Categoryelement Model
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMModelCategoryelement extends JModelLegacy
 {	/**
@@ -35,7 +35,6 @@ class JEMModelCategoryelement extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
 	 */
 	function __construct()
 	{

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @subpackage JEM Mailer Plugin
  * @copyright (C) 2013-2013 joomlaeventmanager.net
@@ -46,7 +46,7 @@ class plgJEMMailer extends JPlugin {
 	 *
 	 * @param object $subject The object to observe
 	 * @param 	array  $config  An array that holds the plugin configuration
-	 * @since 1.0
+	 * 
 	 */
 	public function plgJEMMailer(&$subject, $config = array())
 	{
@@ -86,7 +86,7 @@ class plgJEMMailer extends JPlugin {
 	 * @access	public
 	 * @param   int 	$event_id 	 Integer Event identifier
 	 * @return	boolean
-	 * @since 1.0
+	 * 
 	 */
 	public function onEventUserRegistered($register_id)
 	{
@@ -174,7 +174,7 @@ class plgJEMMailer extends JPlugin {
 	 * @access	public
 	 * @param   int 	$event_id 	 Integer Event identifier
 	 * @return	boolean
-	 * @since 1.0
+	 * 
 	 */
 	public function onUserOnOffWaitinglist($register_id)
 	{
@@ -264,7 +264,7 @@ class plgJEMMailer extends JPlugin {
 	 * @access	public
 	 * @param   int 	$event_id 	 Integer Event identifier
 	 * @return	boolean
-	 * @since 1.0
+	 * 
 	 */
 	public function onEventUserUnregistered($event_id)
 	{
@@ -324,7 +324,7 @@ class plgJEMMailer extends JPlugin {
 	 * @param   int 	$event_id 	 Integer Event identifier
 	 * @param   int 	$edited 	 Integer Event new or edited
 	 * @return	boolean
-	 * @since 1.0
+	 * 
 	 */
 	public function onEventEdited($event_id, $edited)
 	{
@@ -428,7 +428,7 @@ class plgJEMMailer extends JPlugin {
 	 * @param   int 	$venue_id 	 Integer Venue identifier
 	 * @param   int 	$edited 	 Integer Venue new or edited
 	 * @return	boolean
-	 * @since 1.0
+	 * 
 	 */
 	public function onVenueEdited($venue_id, $edited)
 	{
@@ -529,7 +529,7 @@ class plgJEMMailer extends JPlugin {
 	 * @access	private
 	 * @param   object 	$data 	 mail data object
 	 * @return	boolean
-	 * @since 1.0
+	 * 
 	 */
 	private function _mailer($data)
 	{

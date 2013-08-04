@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -117,7 +117,7 @@ class JEMUser {
 	/**
 	 * Checks if the user is a maintainer of a category
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	static function ismaintainer() {
 		//lets look if the user is a maintainer
@@ -277,12 +277,6 @@ class JEMUser {
 
 				}
 	}
-
-
-
-
-
-
 
 
 

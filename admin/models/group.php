@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Group Model
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMModelGroup extends JModelLegacy
 {
@@ -58,7 +58,6 @@ class JEMModelGroup extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
 	 */
 	function __construct()
 	{
@@ -105,7 +104,7 @@ class JEMModelGroup extends JModelLegacy
 	 *
 	 * @access	private
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function _loadData()
 	{
@@ -131,7 +130,7 @@ class JEMModelGroup extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function &getMembers()
 	{
@@ -166,7 +165,7 @@ class JEMModelGroup extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	mixed
-	 * @since	0.9
+	 * 
 	 */
 	function &getAvailable()
 	{
@@ -198,7 +197,7 @@ class JEMModelGroup extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	string
-	 * @since	0.9
+	 * 
 	 */
 	function _members()
 	{
@@ -222,7 +221,7 @@ class JEMModelGroup extends JModelLegacy
 	 *
 	 * @access	private
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function _initData()
 	{
@@ -263,7 +262,7 @@ class JEMModelGroup extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function checkin()
 	{
@@ -283,7 +282,7 @@ class JEMModelGroup extends JModelLegacy
 	 * @access	public
 	 * @param	int	$uid	User ID of the user checking the item out
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function checkout($uid = null)
 	{
@@ -307,7 +306,7 @@ class JEMModelGroup extends JModelLegacy
 	 * @access	public
 	 * @param	int	A user id
 	 * @return	boolean	True if checked out
-	 * @since	0.9
+	 * 
 	 */
 	function isCheckedOut( $uid=0 )
 	{
@@ -330,7 +329,7 @@ class JEMModelGroup extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	1.5
+	 * 
 	 */
 	function store($data)
 	{

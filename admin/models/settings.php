@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Settings Model
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMModelSettings extends JModelLegacy
 {
@@ -29,7 +29,7 @@ class JEMModelSettings extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	function __construct()
 	{
@@ -55,7 +55,7 @@ class JEMModelSettings extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function checkin()
 	{
@@ -73,7 +73,7 @@ class JEMModelSettings extends JModelLegacy
 	 * @access	public
 	 * @param	int	$uid	User ID of the user checking the item out
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function checkout($uid = null)
 	{
@@ -98,7 +98,7 @@ class JEMModelSettings extends JModelLegacy
 	 * @access	public
 	 * @param	int	A user id
 	 * @return	boolean	True if checked out
-	 * @since	0.9
+	 * 
 	 */
 	function isCheckedOut( $uid=0 )
 	{

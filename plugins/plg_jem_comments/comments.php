@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @subpackage JEM Comments Plugin
  * @copyright (C) 2013-2013 joomlaeventmanager.net
@@ -31,7 +31,7 @@ class plgJEMComments extends JPlugin {
 	 *
 	 * @param object $subject The object to observe
 	 * @param 	array  $config  An array that holds the plugin configuration
-	 * @since 1.0
+	 * 
 	 */
 	public function plgJEMComments(&$subject, $config = array())
 	{
@@ -45,7 +45,7 @@ class plgJEMComments extends JPlugin {
 	 * @param   int 	$event_id 	 Integer Event identifier
 	 * @param   int 	$event_title	 String Event title
 	 * @return	boolean
-	 * @since 1.0
+	 * 
 	 */
 	public function onEventEnd($event_id, $event_title = '' )
 	{

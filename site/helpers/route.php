@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -19,7 +19,7 @@ require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
  *
  * @static
  * @package		JEM
- * @since 0.9
+ * 
  */
 abstract class JEMHelperRoute
 {
@@ -32,7 +32,7 @@ abstract class JEMHelperRoute
 	 * @param int The id of an JEM item
 	 * @param string The view
 	 * @param string The category of the item
-	 * @since 0.9
+	 * 
 	 *
 	 * @return string determined Link
 	 */
@@ -147,7 +147,7 @@ abstract class JEMHelperRoute
 	 * if not the active menuitem will be returned
 	 *
 	 * @param array The id and view
-	 * @since 0.9
+	 * 
 	 *
 	 * @return int Itemid
 	 */

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @subpackage JEM Finder Plugin
  * @copyright (C) 2013-2013 joomlaeventmanager.net
@@ -19,14 +19,14 @@ require_once JPATH_ADMINISTRATOR . '/components/com_finder/helpers/indexer/adapt
  *
  * @package     Joomla
  * @subpackage  Finder.jem
- * @since       2.5
+ * 
  */
 class plgFinderJEM extends FinderIndexerAdapter {
 	/**
 	 * The plugin identifier.
 	 *
 	 * @var    string
-	 * @since  2.5
+	 *
 	 */
 	protected $context = 'JEM';
 
@@ -34,7 +34,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * The extension name.
 	 *
 	 * @var    string
-	 * @since  2.5
+	 * 
 	 */
 	protected $extension = 'com_jem';
 
@@ -42,7 +42,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * The sublayout to use when rendering the results.
 	 *
 	 * @var    string
-	 * @since  2.5
+	 * 
 	 */
 	protected $layout = 'event';
 
@@ -50,7 +50,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * The type of content that the adapter indexes.
 	 *
 	 * @var    string
-	 * @since  2.5
+	 * 
 	 */
 	protected $type_title = 'Event';
 
@@ -58,7 +58,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * The table name.
 	 *
 	 * @var    string
-	 * @since  2.5
+	 * 
 	 */
 	protected $table = '#__jem_events';
 
@@ -66,7 +66,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * The state field.
 	 *
 	 * @var    string
-	 * @since  2.5
+	 * 
 	 */
 	protected $state_field = 'published';
 
@@ -76,7 +76,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * @param   object  &$subject  The object to observe
 	 * @param   array   $config    An array that holds the plugin configuration
 	 *
-	 * @since   2.5
 	 */
 	public function __construct(&$subject, $config)
 	{
@@ -95,7 +94,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  void
 	 *
-	 * @since   2.5
 	 */
 	public function onFinderCategoryChangeState($extension, $pks, $value)
 	{
@@ -114,7 +112,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  boolean  True on success.
 	 *
-	 * @since   2.5
 	 * @throws  Exception on database error.
 	 */
 	public function onFinderAfterDelete($context, $table)
@@ -144,7 +141,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  boolean  True on success.
 	 *
-	 * @since   2.5
 	 * @throws  Exception on database error.
 	 */
 	public function onFinderAfterSave($context, $row, $isNew)
@@ -187,7 +183,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  boolean  True on success.
 	 *
-	 * @since   2.5
 	 * @throws  Exception on database error.
 	 */
 	public function onFinderBeforeSave($context, $row, $isNew)
@@ -226,7 +221,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  void
 	 *
-	 * @since   2.5
 	 */
 	public function onFinderChangeState($context, $pks, $value)
 	{
@@ -250,7 +244,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  void
 	 *
-	 * @since   2.5
 	 * @throws  Exception on database error.
 	 */
 	protected function index(FinderIndexerResult $item, $format = 'html')
@@ -331,7 +324,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  boolean  True on success.
 	 *
-	 * @since   2.5
 	 */
 	protected function setup()
 	{
@@ -348,7 +340,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  JDatabaseQuery  A database object.
 	 *
-	 * @since   2.5
 	 */
 	protected function getListQuery($sql = null)
 	{
@@ -435,7 +426,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  void
 	 *
-	 * @since   2.5
 	 */
 	protected function checkCategoryAccess($row)
 	{
@@ -456,7 +446,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  void
 	 *
-	 * @since   2.5
 	 */
 	protected function checkItemAccess($row)
 	{

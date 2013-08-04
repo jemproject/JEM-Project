@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -19,7 +19,7 @@ class JEMModelExport extends JModelList {
 	*
 	* @param array An optional associative array of configuration settings.
 	* @see JController
-	* @since 1.6
+	* 
 	*/
 	public function __construct($config = array()) {
 		if (empty($config['filter_fields'])) {
@@ -72,7 +72,7 @@ class JEMModelExport extends JModelList {
 	* Build an SQL query to load the list data.
 	*
 	* @return JDatabaseQuery
-	* @since 1.6
+	* 
 	*/
 	protected function getListQuery() {
 		// Create a new query object.
@@ -141,7 +141,7 @@ class JEMModelExport extends JModelList {
 	* Build an SQL query to load the list data.
 	*
 	* @return JDatabaseQuery
-	* @since 1.6
+	* 
 	*/
 	protected function getListQuerycats() {
 		// Create a new query object.
@@ -210,7 +210,7 @@ class JEMModelExport extends JModelList {
 	* Build an SQL query to load the list data.
 	*
 	* @return JDatabaseQuery
-	* @since 1.6
+	* 
 	*/
 	protected function getListQueryvenues() {
 		// Create a new query object.
@@ -279,7 +279,7 @@ class JEMModelExport extends JModelList {
 	* Build an SQL query to load the list data.
 	*
 	* @return JDatabaseQuery
-	* @since 1.6
+	* 
 	*/
 	protected function getListQuerycatsevents() {
 		// Create a new query object.

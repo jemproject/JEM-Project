@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -83,7 +83,7 @@ class JEMImage {
 	 * Determine the GD version
 	 * Code from php.net
 	 *
-	 * @since 0.9
+	 * 
 	 * @param int
 	 *
 	 * @return int
@@ -134,9 +134,6 @@ class JEMImage {
 
 	/**
 	 * Creates image information of an image
-	 *
-	 * @author Christoph Lukes
-	 * @since 0.9
 	 *
 	 * @param string $image The image name
 	 * @param array $settings
@@ -275,8 +272,6 @@ class JEMImage {
 	/**
 	 * Sanitize the image file name and return an unique string
 	 *
-	 * @since 0.9
-	 * @author Christoph Lukes
 	 *
 	 * @param string $base_Dir the target directory
 	 * @param string $filename the unsanitized imagefile name

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Event Model
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMModelEvent extends JModelLegacy
 {
@@ -37,7 +37,6 @@ class JEMModelEvent extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
 	 */
 	function __construct()
 	{
@@ -65,7 +64,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access public
 	 * @return array
-	 * @since 0.9
+	 * 
 	 */
 	function &getEvent( )
 	{
@@ -121,7 +120,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access	private
 	 * @return	array
-	 * @since	0.9
+	 *
 	 */
 	function _loadEvent()
 	{
@@ -168,7 +167,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access	private
 	 * @return	string	WHERE clause
-	 * @since	0.9
+	 * 
 	 */
 	function _buildEventWhere()
 	{
@@ -182,7 +181,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	object
-	 * @since	1.1
+	 * 
 	 */
 	function getCategories()
 	{
@@ -211,7 +210,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	1.1
+	 * 
 	 */
 	function hit()
 	{
@@ -231,7 +230,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	mixed false if not registered, 1 for registerd, 2 for waiting list
-	 * @since	1.1
+	 * 
 	 */
 	function getUserIsRegistered()
 	{
@@ -254,7 +253,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	object
-	 * @since	0.9
+	 * 
 	 */
 	function getRegisters()
 	{
@@ -292,7 +291,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access public
 	 * @return int register id on success, else false
-	 * @since 0.7
+	 * 
 	 */
 	function userregister()
 	{
@@ -349,7 +348,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access public
 	 * @return true on success
-	 * @since 0.7
+	 * 
 	 */
 	function delreguser()
 	{

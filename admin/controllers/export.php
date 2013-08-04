@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -16,7 +16,7 @@ jimport('joomla.application.component.controlleradmin');
 class JEMControllerExport extends JControllerAdmin {
 	/**
 	* Proxy for getModel.
-	* @since 1.6
+	* 
 	*/
 	public function getModel($name = 'Export', $prefix = 'JEMModel', $config=array()) {
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));

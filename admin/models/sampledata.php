@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -17,7 +17,7 @@ jimport('joomla.application.component.model');
  * JEM Component Sampledata Model
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMModelSampledata extends JModelLegacy
 {
@@ -31,14 +31,13 @@ class JEMModelSampledata extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
 	 */
 	function __construct()
 	{
 		parent::__construct();
 
 		if ($this->_check()) {
-			JError::raiseWarning('SOME ERROR CODE', JText::_('COM_JEM_DATA_ALREADY_INSTALLED'));
+			JError::raiseWarning(100, JText::_('COM_JEM_DATA_ALREADY_INSTALLED'));
 			return false;
 		}
 
@@ -50,7 +49,7 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @access public
 	 * @return true on success
-	 * @since 0.9
+	 * 
 	 */
 	function loaddata()
 	{
@@ -100,7 +99,7 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @access private
 	 * @return array
-	 * @since 0.9
+	 * 
 	 */
 	function _unpack()
 	{
@@ -150,7 +149,7 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @access private
 	 * @return array
-	 * @since 0.9
+	 * 
 	 */
 	function _splitsql($sql)
 	{
@@ -195,7 +194,7 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @access private
 	 * @return true on success
-	 * @since 0.9
+	 * 
 	 */
 	function _moveimages()
 	{
@@ -240,7 +239,7 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @access private
 	 * @return true on success
-	 * @since 0.9
+	 * 
 	 */
 	function _deletetmp()
 	{
@@ -258,7 +257,7 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @access private
 	 * @return void
-	 * @since 0.9
+	 * 
 	 */
 	function _check()
 	{

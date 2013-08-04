@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -17,7 +17,7 @@ jimport('joomla.filesystem.file');
  * JEM Component Cleanup Model
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMModelCleanup extends JModelLegacy
 {
@@ -52,7 +52,6 @@ class JEMModelCleanup extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
 	 */
 	function __construct()
 	{
@@ -92,7 +91,6 @@ class JEMModelCleanup extends JModelLegacy
 	 * Method to delete the images
 	 *
 	 * @access	public
-	 * @since 0.9
 	 * @return int
 	 */
 	function delete()
@@ -140,7 +138,6 @@ class JEMModelCleanup extends JModelLegacy
 	 * Method to determine the images to delete
 	 *
 	 * @access	private
-	 * @since 0.9
 	 * @return array
 	 */
 	function _getImages()
@@ -154,7 +151,6 @@ class JEMModelCleanup extends JModelLegacy
 	 * Method to determine the assigned images
 	 *
 	 * @access	private
-	 * @since 0.9
 	 * @return array
 	 */
 	function _getassigned()
@@ -182,7 +178,6 @@ class JEMModelCleanup extends JModelLegacy
 	 * Method to determine the unassigned images
 	 *
 	 * @access	private
-	 * @since 0.9
 	 * @return array
 	 */
 	function _getavailable()

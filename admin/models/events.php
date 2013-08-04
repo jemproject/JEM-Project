@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.modellist');
 
 /**
- * JEM Component Venues Model
+ * JEM Component Events Model
  *
  **/
 
@@ -265,7 +265,7 @@ class JEMModelEvents extends JModelList
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function publish($cid = array(), $publish = 1)
 	{
@@ -297,7 +297,7 @@ class JEMModelEvents extends JModelList
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function move($direction)
 	{
@@ -322,7 +322,7 @@ class JEMModelEvents extends JModelList
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function remove($cid)
 	{
@@ -389,7 +389,7 @@ class JEMModelEvents extends JModelList
 	 *
 	 * @access private
 	 * @return object
-	 * @since 0.9
+	 * 
 	 */
 	public function getItems()
 	{

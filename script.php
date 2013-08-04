@@ -98,7 +98,7 @@ class com_jemInstallerScript
 					."1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, '[title], [a_name], [categories], [times]', "
 					."'The event titled [title] starts on [dates]!', 1, 0, '0', 0, 1, 0, '1364604520', '', '', 'COM', 'US', '100', '10%', '10', "
 					."'0', 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, '10%', 1, 30, 1, 1, 'media/com_jem/attachments', '1000', "
-					."'txt,csv,htm,html,xml,css,doc,xls,zip,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,tar.gz', 0, '365', 100, 1, '')";
+					."'txt,csv,htm,html,xml,css,doc,xls,zip,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,tar.gz', 0, '365', 100, 1, '','1.9.1','')";
 			$db->setQuery($query);
 
 			if (!$db->query()) {

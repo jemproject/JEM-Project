@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,14 +15,14 @@ jimport('joomla.application.component.view');
  * HTML View class for the Calendar View
  *
  * @package JEM
- * @since 1.1
+ * 
  */
 class JEMViewCalendar extends JViewLegacy
 {
     /**
      * Creates the Calendar View
      *
-     * @since 1.1
+     * 
      */
     function display($tpl = null)
     {
@@ -89,7 +89,7 @@ class JEMViewCalendar extends JViewLegacy
      * @param string  $href An URL that will be used to create the link
      * @param string  $class the class to use for tip.
      * @return  string
-     * @since 1.5
+     * 
      */
     function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '')
     {

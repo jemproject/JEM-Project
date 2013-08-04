@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component attendee Model
  *
  * @package JEM
- * @since 1.1
+ * 
  */
 class JEMModelAttendee extends JModelLegacy
 {
@@ -36,7 +36,7 @@ class JEMModelAttendee extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	function __construct()
 	{
@@ -64,7 +64,7 @@ class JEMModelAttendee extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	array
-	 * @since	0.9
+	 * 
 	 */
 	function &getData()
 	{
@@ -82,7 +82,7 @@ class JEMModelAttendee extends JModelLegacy
 	 *
 	 * @access	private
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function _loadData()
 	{
@@ -107,7 +107,7 @@ class JEMModelAttendee extends JModelLegacy
 	 *
 	 * @access	private
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function _initData()
 	{
@@ -141,7 +141,7 @@ class JEMModelAttendee extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	1.1
+	 * 
 	 */
 	function store($data)
 	{

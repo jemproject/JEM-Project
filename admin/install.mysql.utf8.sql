@@ -233,6 +233,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_settings` (
   `ical_max_items` tinyint(4) NOT NULL DEFAULT '100',
   `empty_cat` tinyint(4) NOT NULL DEFAULT '1',
   `defaultCountry` varchar(10) NOT NULL,
+  `tversion` varchar(5) NOT NULL DEFAULT '1.9.1',
+  `fitemid` varchar(5) NOT NULL,
   UNIQUE KEY `id` (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -251,7 +253,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_attachments` (
   `ordering` int(11) NOT NULL default '0',
   `added` datetime NOT NULL default '0000-00-00 00:00:00',
   `added_by` int(11) NOT NULL default '0',
-  PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `#__jem_countries` (
@@ -261,7 +263,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_countries` (
   `iso3` varchar(3) NOT NULL,
   `un` int(11) NOT NULL,
   `name` varchar(30) NOT NULL,
-  PRIMARY KEY  (`id`),
+    PRIMARY KEY  (`id`),
   KEY `iso2` (`iso2`)
 ) ENGINE=MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
 

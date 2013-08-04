@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -16,7 +16,7 @@ jimport('joomla.html.pagination');
  * JEM Component JEM Model
  *
  * @package JEM
- * @since 1.0
+ *
  */
 class JEMModelMyvenues extends JModelLegacy
 {
@@ -29,7 +29,7 @@ class JEMModelMyvenues extends JModelLegacy
     /**
      * Constructor
      *
-     * @since 1.0
+     * 
      */
     function __construct()
     {

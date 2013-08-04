@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,14 +15,14 @@ jimport( 'joomla.application.component.view');
  * HTML View class for the EditeventView
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMViewEditevent extends JViewLegacy
 {
 	/**
 	 * Creates the output for event submissions
 	 *
-	 * @since 0.4
+	 * 
 	 *
 	 */
 	function display( $tpl=null )
@@ -180,8 +180,6 @@ class JEMViewEditevent extends JViewLegacy
 
 	/**
 	 * Creates the output for the venue select listing
-	 *
-	 * @since 0.9
 	 *
 	 */
 	function _displaychoosevenue($tpl)

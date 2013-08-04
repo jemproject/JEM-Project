@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component users Model
  *
  * @package JEM
- * @since 1.1
+ * 
  */
 class JEMModelUsers extends JModelLegacy
 {
@@ -43,7 +43,6 @@ class JEMModelUsers extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
 	 */
 	function __construct()
 	{
@@ -83,7 +82,7 @@ class JEMModelUsers extends JModelLegacy
 	 *
 	 * @access public
 	 * @return integer
-	 * @since 0.9
+	 * 
 	 */
 	function getTotal()
 	{
@@ -120,7 +119,7 @@ class JEMModelUsers extends JModelLegacy
 	 *
 	 * @access private
 	 * @return string
-	 * @since 0.9
+	 * 
 	 */
 	function _buildQuery()
 	{
@@ -142,7 +141,7 @@ class JEMModelUsers extends JModelLegacy
 	 *
 	 * @access private
 	 * @return string
-	 * @since 0.9
+	 * 
 	 */
 	function _buildContentOrderBy()
 	{
@@ -165,7 +164,7 @@ class JEMModelUsers extends JModelLegacy
 	 *
 	 * @access private
 	 * @return string
-	 * @since 0.9
+	 * 
 	 */
 	function _buildContentWhere()
 	{

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -266,7 +266,7 @@ class JEMModelVenues extends JModelList
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function publish($cid = array(), $publish = 1)
 	{
@@ -298,7 +298,7 @@ class JEMModelVenues extends JModelList
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function move($direction)
 	{
@@ -323,7 +323,7 @@ class JEMModelVenues extends JModelList
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function remove($cid)
 	{
@@ -387,7 +387,7 @@ class JEMModelVenues extends JModelList
 	 *
 	 * @access private
 	 * @return object
-	 * @since 0.9
+	 * 
 	 */
 	public function getItems()
 	{

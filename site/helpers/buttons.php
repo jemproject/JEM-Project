@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -54,7 +54,7 @@ public function fetchButton($type = 'Standard', $name = '', $text = '', $task = 
  *
  * @return  string  Button CSS Id
  *
- * @since   11.1
+ *
  */
 public function fetchId($type = 'Standard', $name = '', $text = '', $task = '', $list = true, $hideMenu = false)
 {
@@ -70,7 +70,7 @@ public function fetchId($type = 'Standard', $name = '', $text = '', $task = '', 
  *
  * @return  string   JavaScript command string
  *
- * @since   11.1
+ * 
  */
 protected function _getCommand($name, $task, $list)
 {

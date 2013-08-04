@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Categories Model
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMModelCategories extends JModelLegacy
 {
@@ -52,7 +52,6 @@ class JEMModelCategories extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
 	 */
 	function __construct()
 	{
@@ -208,7 +207,7 @@ class JEMModelCategories extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function publish($cid = array(), $publish = 1)
 	{
@@ -251,7 +250,7 @@ class JEMModelCategories extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function move($direction)
 	{
@@ -269,19 +268,13 @@ class JEMModelCategories extends JModelLegacy
 
 		return true;
 	}
-	/**
-
-	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 * @since	0.9
-	 */
+	
 	/**
 	 * Method to order categories
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	1.0
+	 * 
 	 */
 	function saveorder($cid = array(), $order)
 	{
@@ -321,7 +314,7 @@ class JEMModelCategories extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function _countcatevents($id)
 	{
@@ -344,7 +337,7 @@ class JEMModelCategories extends JModelLegacy
 	 * 
 	 * @access	public
 	 * @return	string $msg
-	 * @since	0.9
+	 * 
 	 */
 	function delete($cids)
 	{
@@ -406,14 +399,14 @@ class JEMModelCategories extends JModelLegacy
 		}
 	}
 	
-		/**
+	/**
 	 * Method to set the access level of the category
 	 *
 	 * @access	public
 	 * @param integer id of the category
 	 * @param integer access level
 	 * @return	boolean	True on success
-	 * @since	1.0
+	 * 
 	 */
 	function access($id, $access)
 	{				
@@ -484,7 +477,7 @@ class JEMModelCategories extends JModelLegacy
 	 * @param string $type
 	 * @return oject
 	 * 
-	 * @since 1.1
+	 * 
 	 */
 	function _addCategories($id, &$list, $type = 'children')
 	{

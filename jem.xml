@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="2.5" method="upgrade">
 	<name>JEM</name>
-	<creationDate>24 March 2013</creationDate>
+	<creationDate>04 August 2013</creationDate>
 	<author>JEM Community</author>
 	<copyright>Copyright (C) 2013-2013 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<version>1.9</version>
+	<version>1.9.1</version>
 	<description>COM_JEM_INSTALLATION_DESCRIPTION</description>
 
 	<!-- Runs on install/uninstall/update; New in 1.6 -->

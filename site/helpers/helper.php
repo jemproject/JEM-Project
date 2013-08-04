@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -20,7 +20,7 @@ class JEMHelper {
 	 * Pulls settings from database and stores in an static object
 	 *
 	 * @return object
-	 * @since 0.9
+	 * 
 	 */
 	static function config()
 	{
@@ -45,7 +45,7 @@ class JEMHelper {
 	 * Currently it archives and removes outdated events
 	 * and takes care of the recurrence of events
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	static function cleanup($forced = 0)
 	{
@@ -64,7 +64,8 @@ class JEMHelper {
 		if ($nrdaysnow > $nrdaysupdate || $forced) {
 
 			$db = JFactory::getDBO();
-
+			
+					
 			// get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
 			$nulldate = '0000-00-00';
 			$query = ' SELECT id, CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id, '
@@ -80,6 +81,9 @@ class JEMHelper {
 			$db->SetQuery($query);
 			$recurrence_array = $db->loadAssocList();
 
+			
+
+			
 			foreach($recurrence_array as $recurrence_row)
 			{
 				// get the info of reference event for the duplicates
@@ -116,9 +120,17 @@ class JEMHelper {
 								. ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__jem_cats_event_relations '
 								. ' WHERE itemid = ' . $db->Quote($ref_event->id);
 						$db->setQuery($query);
-						if (!$db->query()) {
+						
+						$user = JFactory::getUser();
+						
+						if($user->authorise('core.manage')) 
+						{
+							if (!$db->query()) {
 							echo JText::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
+							}
 						}
+						
+						
 					}
 
 					$recurrence_row = JEMHelper::calculate_recurrence($recurrence_row);

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,14 +15,14 @@ jimport('joomla.application.component.controller');
  * JEM Component Controller
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMController extends JControllerLegacy
 {
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	function __construct()
 	{
@@ -32,7 +32,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Display the view
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	function display($cachable = false, $urlparams = false)
 	{
@@ -42,7 +42,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Logic for canceling an event edit task
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	function cancelevent()
 	{
@@ -75,7 +75,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Logic for canceling an event and proceed to add a venue
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	function addvenue()
 	{
@@ -107,7 +107,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Logic for canceling an event and proceed to add a venue
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	function unpublishtask()
 	{
@@ -139,7 +139,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Logic for canceling an event and proceed to add a venue
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	function unpublish()
 	{
@@ -173,7 +173,7 @@ class JEMController extends JControllerLegacy
 	 *
 	 * @access public
 	 * @return void
-	 * @since 0.9
+	 * 
 	 */
 	function publish()
 	{
@@ -207,7 +207,7 @@ class JEMController extends JControllerLegacy
 	 *
 	 * @access public
 	 * @return void
-	 * @since 0.9
+	 * 
 	 */
 	function trash()
 	{
@@ -239,7 +239,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Logic for canceling a venue edit task
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	function cancelvenue()
 	{
@@ -286,7 +286,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Saves the submitted venue to the database
 	 *
-	 * @since 0.5
+	 * 
 	 */
 	function savevenue()
 	{
@@ -363,7 +363,7 @@ class JEMController extends JControllerLegacy
 	 *
 	 * TODO: Check if the user is allowed to post events assigned to this category/venue
 	 *
-	 * @since 0.4
+	 * 
 	 */
 	function saveevent()
 	{
@@ -421,7 +421,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Saves the registration to the database
 	 *
-	 * @since 0.7
+	 * 
 	 */
 	function userregister()
 	{
@@ -458,7 +458,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Deletes a registered user
 	 *
-	 * @since 0.7
+	 * 
 	 */
 	function delreguser()
 	{
@@ -522,7 +522,7 @@ class JEMController extends JControllerLegacy
 	 *
 	 * @return true on sucess
 	 * @access private
-	 * @since 1.1
+	 * 
 	 */
 	function ajaxattachremove()
 	{

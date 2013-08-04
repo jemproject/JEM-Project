@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Archive Model
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMModelArchive extends JModelLegacy
 {
@@ -50,7 +50,6 @@ class JEMModelArchive extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
 	 */
 	function __construct()
 	{
@@ -264,7 +263,7 @@ class JEMModelArchive extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	1.5
+	 * 
 	 */
 	function publish($cid = array(), $publish = 1)
 	{
@@ -293,7 +292,7 @@ class JEMModelArchive extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function delete($cid = array())
 	{
