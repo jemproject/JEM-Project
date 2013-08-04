@@ -18,7 +18,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 <script>
 (function(d, s, id) {
 	var js, fjs = d.getElementsByTagName(s)[0];
-	if (d.getElementById(id)) return;
+	if (d.getElementById(id)) return;
 	js = d.createElement(s); js.id = id;
 	js.src = "//connect.facebook.net/nl_NL/all.js#xfbml=1";
 	fjs.parentNode.insertBefore(js, fjs);
@@ -74,7 +74,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 					echo $this->escape($this->row->venue).' - ';
 				endif;
 
-				echo $this->escape($this->row->city); ?>
+				echo $this->escape(ucwords(strtolower($this->row->city))).', '.$this->escape(ucwords(strtolower($this->row->state))); ?>
 			</dd>
 
 		<?php endif;
@@ -216,14 +216,14 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 				<?php if ($this->row->city) : ?>
 				<dt class="venue_city"><?php echo JText::_('COM_JEM_CITY').':'; ?></dt>
 				<dd class="venue_city">
-					<?php echo $this->escape($this->row->city);?>
+					<?php echo $this->escape((ucwords(strtolower$this->row->city)));?>
 				</dd>
 				<?php endif; ?>
 
 				<?php if ($this->row->state) : ?>
 				<dt class="venue_state"><?php echo JText::_('COM_JEM_STATE').':'; ?></dt>
 				<dd class="venue_state">
-					<?php echo $this->escape($this->row->state); ?>
+					<?php echo $this->escape((ucwords(strtolower$this->row->state))); ?>
 				</dd>
 				<?php endif; ?>
 
