@@ -45,6 +45,35 @@ class JEMViewCalendar extends JViewLegacy
         $document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
         $document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendar.css');
         
+        
+        
+       
+        $evlinkcolor = $params->get('eventlinkcolor');
+        $evbackgroundcolor = $params->get('eventbackgroundcolor');
+        $currentdaycolor = $params->get('currentdaycolor');
+        
+        
+        
+        $style = '
+        
+        .eventcontent a:link, a:visited, a:active {
+        color:' . $evlinkcolor . ';
+        }
+        .eventcontent {		
+        background-color:'.$evbackgroundcolor .';		
+        		}
+        				
+        .today .daynum {
+ 		 background-color:'.$currentdaycolor.';
+		}		
+
+ 		 		
+        '
+        ;
+        $document->addStyleDeclaration( $style );
+        
+        
+        
         // add javascript
         $document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
 
@@ -70,6 +99,8 @@ class JEMViewCalendar extends JViewLegacy
 		$cal->enableMonthNav('index.php?view=calendar');
 		$cal->setFirstWeekDay($params->get('firstweekday', 1));
 		$cal->enableDayLinks(false);
+		
+		
 				
 		$this->rows 		= $rows;
 		$this->params		= $params;

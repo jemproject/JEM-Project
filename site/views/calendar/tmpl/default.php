@@ -16,6 +16,7 @@ defined('_JEXEC') or die;
     	</h1>
     <?php endif; ?>
 
+     
 <?php
     $countcatevents = array ();
 
@@ -34,7 +35,15 @@ defined('_JEXEC') or die;
 
        @$countperday[$year.$month.$day]++;
        if ($countperday[$year.$month.$day] == $limit+1) {
-        $this->cal->setEventContent($year, $month, $day, JText::_('COM_JEM_AND_MORE'));
+       // $this->cal->setEventContent($year, $month, $day, JText::_('COM_JEM_AND_MORE'));
+
+       	
+       	
+       	$var1a = JRoute::_( 'index.php?view=day&id='.$year.$month.$day,$this->cal->actyear,$this->cal->actmonth );
+		$var1b = JText::_('COM_JEM_AND_MORE');
+       	$var1c = "<a href=\"".$var1a."\">".$var1b."</a>";
+       	
+       	$this->cal->setEventContent($year, $month, $day, $var1c);
        	continue;
        }
        else if ($countperday[$year.$month.$day] > $limit+1) {

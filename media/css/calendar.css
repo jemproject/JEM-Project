@@ -59,13 +59,6 @@ table.month {
 }
 
 
-
-.daynum  {
-	color:#FFFFFF !important;
-}
-
-
-
 .monthday, .selectedday {
 	background-color:#F7F7F7;
 	height:88px;
@@ -94,7 +87,6 @@ table.month {
 	margin:1px;
 	overflow:hidden;
 	padding:1px;
-	background-color:yellow;
 	border: 1px solid grey;
 	border-radius: 2px;
 	padding: 5px;
@@ -113,9 +105,11 @@ table.month {
 }
 
 
+/*
 .eventcontent a:link, a:visited, a:active {
   color: #333;
 }
+*/
 
 /* for the tooltip */
 .custom-tip {
@@ -177,12 +171,16 @@ table.month {
 }
 
 .daynum a {
-  color: #FBFCEF;
+  color: #FBFCEF !important;
   text-decoration:none;
+  background-color:inherit !important;
 }
 
-.today .daynum {
- /* background-color:#31528E;*/
+
+
+.today .daynum a  {
+  color:#FFFFFF !important;
+  background-color:inherit !important;
 }
 
 

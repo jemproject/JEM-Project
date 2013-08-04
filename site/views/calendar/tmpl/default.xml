@@ -44,6 +44,10 @@
 				label="COM_JEM_MAX_EVENTS_PER_DAY"
 				description="COM_JEM_MAX_EVENTS_PER_DAY_DESC"
 			/>
+			
+			<field name="eventlinkcolor" type="color" default="#000000" label="COM_JEM_CALENDAR_EVENTLINKCOLOR"  />
+			<field name="eventbackgroundcolor" type="color" default="#FFFF00" label="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR"  />
+			<field name="currentdaycolor" type="color" default="#AD5A60" label="COM_JEM_CALENDAR_CURRENTDAYCOLOR"  />
 		</fieldset>
 	</fields>
 </metadata>

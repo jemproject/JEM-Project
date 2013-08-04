@@ -216,14 +216,14 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 				<?php if ($this->row->city) : ?>
 				<dt class="venue_city"><?php echo JText::_('COM_JEM_CITY').':'; ?></dt>
 				<dd class="venue_city">
-					<?php echo $this->escape((ucwords(strtolower$this->row->city)));?>
+					<?php echo $this->escape((ucwords(strtolower($this->row->city))));?>
 				</dd>
 				<?php endif; ?>
 
 				<?php if ($this->row->state) : ?>
 				<dt class="venue_state"><?php echo JText::_('COM_JEM_STATE').':'; ?></dt>
 				<dd class="venue_state">
-					<?php echo $this->escape((ucwords(strtolower$this->row->state))); ?>
+					<?php echo $this->escape((ucwords(strtolower($this->row->state)))); ?>
 				</dd>
 				<?php endif; ?>
 
