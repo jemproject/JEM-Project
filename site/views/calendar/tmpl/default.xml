@@ -47,7 +47,8 @@
 			
 			<field name="eventlinkcolor" type="color" default="#000000" label="COM_JEM_CALENDAR_EVENTLINKCOLOR"  />
 			<field name="eventbackgroundcolor" type="color" default="#FFFF00" label="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR"  />
-			<field name="currentdaycolor" type="color" default="#AD5A60" label="COM_JEM_CALENDAR_CURRENTDAYCOLOR"  />
+			<field name="currentdaycolor" type="color" default="#CCCC99" label="COM_JEM_CALENDAR_CURRENTDAYCOLOR"  />
+			<field name="eventandmorecolor" type="color" default="#FFFF00" label="COM_JEM_CALENDAR_EVENTANDMORECOLOR"  />
 		</fieldset>
 	</fields>
 </metadata>

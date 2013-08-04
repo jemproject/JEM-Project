@@ -93,6 +93,16 @@ table.month {
 	margin: 2px;
 }
 
+.eventandmore {
+	margin:1px;
+	overflow:hidden;
+	padding:1px;
+	border: 1px solid grey;
+	border-radius: 2px;
+	padding: 5px;
+	margin: 2px;
+}
+
 
 .cat1
 {

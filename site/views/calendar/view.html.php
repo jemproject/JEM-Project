@@ -51,7 +51,7 @@ class JEMViewCalendar extends JViewLegacy
         $evlinkcolor = $params->get('eventlinkcolor');
         $evbackgroundcolor = $params->get('eventbackgroundcolor');
         $currentdaycolor = $params->get('currentdaycolor');
-        
+        $eventandmorecolor = $params->get('eventandmorecolor');
         
         
         $style = '
@@ -61,6 +61,9 @@ class JEMViewCalendar extends JViewLegacy
         }
         .eventcontent {		
         background-color:'.$evbackgroundcolor .';		
+        		}
+        .eventandmore {		
+        background-color:'.$eventandmorecolor .';		
         		}
         				
         .today .daynum {
