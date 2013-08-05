@@ -245,6 +245,7 @@ class JEMCategories
 		// if (is_array($list))
 		// {
 		foreach ($list as $item) {
+
 			$catlist[] = JHTML::_('select.option', $item->id, $item->treename);
 		}
 		// }

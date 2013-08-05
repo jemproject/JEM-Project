@@ -35,8 +35,32 @@ defined('_JEXEC') or die;
 
        @$countperday[$year.$month.$day]++;
        if ($countperday[$year.$month.$day] == $limit+1) {
-        $this->cal->setEventContent($year, $month, $day, JText::_('COM_JEM_AND_MORE'));
+       	
+       	
+       	$var1a = JRoute::_( 'index.php?view=day&id='.$year.$month.$day );
+       	$var1b = JText::_('COM_JEM_AND_MORE');
+       	$var1c = "<a href=\"".$var1a."\">".$var1b."</a>";
+       	$id = 'eventandmore';
+       	
+       	/**
+       	 * $cal->setEventContent($year,$month,$day,$content,[$contentUrl,$id])
+       	 *
+       	 * Info from: http://www.micronetwork.de/activecalendar/demo/doc/doc_en.html
+       	 *
+       	 * Call this method, if you want the class to create a new HTML table within the date specified by the parameters $year, $month, $day.
+       	 * The parameter $content can be a string or an array.
+       	 * If $content is a string, then the new generated table will contain one row with the value of $content.
+       	 * If it is an array, the generated table will contain as many rows as the array length and each row will contain the value of each array item.
+       	 * The parameter $contentUrl is optional: If you set a $contentUrl, an event content specific link (..href='$contentUrl'..) will be generated
+       	 * in the 'event content' table row(s), even if the method $cal->enableDayLinks($link) was not called.
+       	 * The parameter $id is optional as well: if you set an $id, a HTML class='$id' will be generated for each event content (default: 'eventcontent').
+       	 *
+       	 *
+       	 * */
+       	
+       	$this->cal->setEventContent($year, $month, $day, $var1c,null, $id);
        	continue;
+       	
        }
        else if ($countperday[$year.$month.$day] > $limit+1) {
        	continue;

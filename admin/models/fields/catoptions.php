@@ -59,7 +59,15 @@ class JFormFieldCatOptions extends JFormField
 		$attr .= $this->element['onchange'] ? ' onchange="'.(string) $this->element['onchange'].'"' : '';
 	
 	
+		//$attr .= $this->element['required'] ? ' class="required modal-value"' : "";
 		
+		//var_dump($attr);exit;
+		
+		/*
+		if ($this->required) {
+			$class = ' class="required modal-value"';
+		}
+		*/
 	
 		// Output
 		$currentid = JFactory::getApplication()->input->getInt('id');

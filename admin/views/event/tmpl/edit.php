@@ -25,7 +25,6 @@ $params = $params->toArray();
 		var form = document.getElementById('event-form');
 		var metakeywords = $('jform_meta_keywords');
 		
-
 		$('jform_maxplaces').addEvent('change', function(){
 			if ($('event-available')) {
 						var val = parseInt($('jform_maxplaces').value);
@@ -102,6 +101,7 @@ $params = $params->toArray();
 				</li>
 				
 				<li><?php echo $this->form->getLabel('cats'); ?> <?php echo $this->form->getInput('cats'); ?>
+				
 				</li>
 				
 				

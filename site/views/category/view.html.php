@@ -50,6 +50,34 @@ class JEMViewCategory extends JViewLegacy
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 
+		$evlinkcolor = $params->get('eventlinkcolor');
+		$evbackgroundcolor = $params->get('eventbackgroundcolor');
+		$currentdaycolor = $params->get('currentdaycolor');
+		$eventandmorecolor = $params->get('eventandmorecolor');
+		
+		
+		$style = '
+		
+        .eventcontent a:link, a:visited, a:active {
+        color:' . $evlinkcolor . ';
+        }
+        .eventcontent {
+        background-color:'.$evbackgroundcolor .';
+        		}
+        .eventandmore {
+        background-color:'.$eventandmorecolor .';
+        		}
+		
+        .today .daynum {
+ 		 background-color:'.$currentdaycolor.';
+		}
+		
+		
+        ';
+		$document->addStyleDeclaration( $style );
+		
+		
+		
 		// get variables
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.category.filter_order', 'filter_order', 	'a.dates', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.category.filter_order_Dir', 'filter_order_Dir',	'', 'word' );

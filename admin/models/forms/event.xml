@@ -10,7 +10,7 @@
 			required="true" />
 
 		<field name="alias" type="text" class="inputbox" size="40"
-			label="COM_JEM_ALIAS" description="COM_JEM_ALIAS" />
+			label="COM_JEM_ALIAS" description="COM_JEM_ALIAS" required="true" />
 
 		<field name="datdescription" type="editor" class="inputbox"
 			rows="3" cols="40" label="COM_JEM_EVENT_DESCRIPTION" description="COM_JEM_EVENT_DESCRIPTION_DESC" />
@@ -27,11 +27,9 @@
 		<field name="endtimes" type="endtime" class="inputbox" size="10"
 			label="COM_JEM_END_TIME" description="COM_JEM_END_TIME" required="false" />
 
-		<field name="cats" type="catoptions" multiple="true" class="inputbox"
-			size="10" label="COM_JEM_CATEGORIES" description="COM_JEM_CATEGORIES"
+		<field name="cats" type="catoptions" multiple="true" class="inputbox required"
+			size="10" label="COM_JEM_FIELD_CATEGORIES" labelclass=""  description="COM_JEM_FIELD_CATEGORIES"
 			required="false" />
-
-
 	</fieldset>
 
 

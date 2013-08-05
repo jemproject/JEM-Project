@@ -6,8 +6,8 @@
 		</message>
 	</layout>
 
-	<fields name="request">
-		<fieldset name="request"
+	<fields name="params">
+		<fieldset name="basic"
 			addfieldpath="/administrator/components/com_jem/models/fields"
 		>
 			<field name="id" type="categories"
@@ -15,6 +15,15 @@
 				label="COM_JEM_SELECT_CATEGORY"
 				description="COM_JEM_SELECT_CATEGORY_DESC"
 			/>
-		</fieldset>
+			
+			
+			
+			<field name="eventlinkcolor" type="color" default="#000000" label="COM_JEM_CALENDAR_EVENTLINKCOLOR"  />
+			<field name="eventbackgroundcolor" type="color" default="#FFFF00" label="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR"  />
+			<field name="currentdaycolor" type="color" default="#CCCC99" label="COM_JEM_CALENDAR_CURRENTDAYCOLOR"  />
+			<field name="eventandmorecolor" type="color" default="#FFFF00" label="COM_JEM_CALENDAR_EVENTANDMORECOLOR"  />
+			</fieldset>
+			
+		
 	</fields>
 </metadata>
