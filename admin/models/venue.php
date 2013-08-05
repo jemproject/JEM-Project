@@ -190,7 +190,7 @@ class JEMModelVenue extends JModelAdmin
 			$ip = $jinput->get('author_ip', '', 'string');
 				
 			
-			$this->author_ip 		= $ip;
+			$table->author_ip 		= $ip;
 			
 			
 			//uppercase needed by mapservices
@@ -229,21 +229,22 @@ class JEMModelVenue extends JModelAdmin
 			}
 			
 			
-		
+			$fileFilter = new JInput($_FILES);
+			
 			// attachments
 			// new ones first
-			$attachments = JRequest::getVar( 'attach', array(), 'files', 'array' );
-			$attachments['customname'] = JRequest::getVar( 'attach-name', array(), 'post', 'array' );
-			$attachments['description'] = JRequest::getVar( 'attach-desc', array(), 'post', 'array' );
-			$attachments['access'] = JRequest::getVar( 'attach-access', array(), 'post', 'array' );
+			$attachments = $fileFilter->get( 'attach', null, 'array' );
+			$attachments['customname'] = $jinput->post->get( 'attach-name', null, 'array' );
+			$attachments['description'] = $jinput->post->get( 'attach-desc', null, 'array' );
+			$attachments['access'] = $jinput->post->get( 'attach-access', null, 'array' );
 			JEMAttachment::postUpload($attachments, 'venue'.$table->id);
 			
 			// and update old ones
 			$attachments = array();
-			$old['id'] = JRequest::getVar( 'attached-id', array(), 'post', 'array' );
-			$old['name'] = JRequest::getVar( 'attached-name', array(), 'post', 'array' );
-			$old['description'] = JRequest::getVar( 'attached-desc', array(), 'post', 'array' );
-			$old['access'] = JRequest::getVar( 'attached-access', array(), 'post', 'array' );
+			$old['id'] = $jinput->post->get( 'attached-id', null, 'array' );
+			$old['name'] = $jinput->post->get( 'attached-name', null, 'array' );
+			$old['description'] = $jinput->post->get( 'attached-desc', null, 'array' );
+			$old['access'] = $jinput->post->get( 'attached-access', null, 'array' );
 			foreach ($old['id'] as $k => $id)
 			{
 				$attach = array();
@@ -253,7 +254,6 @@ class JEMModelVenue extends JModelAdmin
 				$attach['access'] = $old['access'][$k];
 				JEMAttachment::update($attach);
 			}
-			
 			
 		
 		

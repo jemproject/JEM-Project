@@ -38,8 +38,8 @@ ini_set('gd.jpeg_ignore_warning', true);
  *  For more resources visit {@link http://stefangabos.ro/}
  *
  *  @author     Stefan Gabos <contact@stefangabos.ro>
- *  @version    2.2.2 (last revision: August 31, 2012)
- *  @copyright  (c) 2006 - 2012 Stefan Gabos
+ *  @version    2.2.3 (last revision: July 14, 2013)
+ *  @copyright  (c) 2006 - 2013 Stefan Gabos
  *  @license    http://www.gnu.org/licenses/lgpl-3.0.txt GNU LESSER GENERAL PUBLIC LICENSE
  *  @package    Zebra_Image
  */
@@ -1253,7 +1253,7 @@ class Zebra_Image
                 case IMAGETYPE_GIF:
 
                     // create an image from file
-                    $identifier = @imagecreatefromgif($this->source_path);
+                    $identifier = imagecreatefromgif($this->source_path);
 
                     // get the index of the transparent color (if any)
                     if (($this->source_transparent_color_index = imagecolortransparent($identifier)) >= 0)
@@ -1270,7 +1270,7 @@ class Zebra_Image
                 case IMAGETYPE_JPEG:
 
                     // create an image from file
-                    $identifier = @imagecreatefromjpeg($this->source_path);
+                    $identifier = imagecreatefromjpeg($this->source_path);
 
                     break;
 
@@ -1278,7 +1278,7 @@ class Zebra_Image
                 case IMAGETYPE_PNG:
 
                     // create an image from file
-                    $identifier = @imagecreatefrompng($this->source_path);
+                    $identifier = imagecreatefrompng($this->source_path);
 
                     // disable blending
                     imagealphablending($identifier, false);
