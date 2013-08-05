@@ -115,7 +115,7 @@ $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 				
 				
 				$link 			= 'index.php?option=com_jem&amp;task=events.edit&amp;cid[]='.$row->id;
-				$venuelink 		= 'index.php?option=com_jem&amp;task=venues.edit&amp;cid[]='.$row->locid;
+				$venuelink 		= 'index.php?option=com_jem&amp;task=venue.edit&amp;cid[]='.$row->locid;
 				$published 	= JHTML::_('jgrid.published', $row->published, $i, 'events.');
    			?>
 			<tr class="row<?php echo $i % 2; ?>">
