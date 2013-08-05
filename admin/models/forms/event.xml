@@ -128,7 +128,6 @@
 		<field name="custom10" type="text" size="20" readonly="false"
 			class="inputbox" label="COM_JEM_CUSTOM_FIELD10" description="JGLOBAL_FIELD_ID_DESC" />
 
-
 	</fieldset>
 
 

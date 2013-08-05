@@ -104,7 +104,7 @@ class JEMViewCalendar extends JViewLegacy
 		$cal->enableDayLinks(false);
 		
 		
-				
+	
 		$this->rows 		= $rows;
 		$this->params		= $params;
 		$this->jemsettings	= $jemsettings;

@@ -39,7 +39,7 @@ defined('_JEXEC') or die;
 
        	
        	
-       	$var1a = JRoute::_( 'index.php?view=day&id='.$year.$month.$day,$this->cal->actyear,$this->cal->actmonth );
+       	$var1a = JRoute::_( 'index.php?view=day&id='.$year.$month.$day );
 		$var1b = JText::_('COM_JEM_AND_MORE');
        	$var1c = "<a href=\"".$var1a."\">".$var1b."</a>";
        	$id = 'eventandmore';
@@ -66,7 +66,13 @@ defined('_JEXEC') or die;
        else if ($countperday[$year.$month.$day] > $limit+1) {
        	continue;
        }
-
+       
+       
+       
+       
+       
+       
+       
         //for time printing
         $timehtml = '';
 

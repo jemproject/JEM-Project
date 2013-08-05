@@ -313,46 +313,6 @@ class JEMModelEvent extends JModelAdmin
 			
 			
 			
-			
-			$db = JFactory::getDbo();
-		
-			$query = $db->getQuery(true);
-			$query->delete($db->quoteName('#__jem_cats_event_relations'));
-			$query->where('itemid = '.$table->id);	
-				
-			$db->setQuery($query);
-			$db->query();
-			
-			
-			foreach($cats as $cat)
-			{
-			
-				// Get a db connection.
-				$db = JFactory::getDbo();
-				
-				// Create a new query object.
-				$query = $db->getQuery(true);
-				
-				// Insert columns.
-				$columns = array('catid', 'itemid');
-				
-				// Insert values.
-				$values = array($cat, $table->id);
-				
-				// Prepare the insert query.
-				$query
-				->insert($db->quoteName('#__jem_cats_event_relations'))
-				->columns($db->quoteName($columns))
-				->values(implode(',', $values));
-				
-				// Reset the query using our newly populated query object.
-				$db->setQuery($query);
-				$db->query();
-			
-			}
-			
-			
-
 			//get values from time selectlist and concatenate them accordingly
 			$starthours		= $jinput->get('starthours','','cmd');
 			$startminutes	= $jinput->get('startminutes','','cmd');
@@ -432,6 +392,45 @@ class JEMModelEvent extends JModelAdmin
 				$attach['access'] = $old['access'][$k];
 				JEMAttachment::update($attach);
 			}
+			
+			
+			$db = JFactory::getDbo();
+			
+			$query = $db->getQuery(true);
+			$query->delete($db->quoteName('#__jem_cats_event_relations'));
+			$query->where('itemid = '.$table->id);
+			
+			$db->setQuery($query);
+			$db->query();
+				
+				
+			foreach($cats as $cat)
+			{
+					
+				// Get a db connection.
+				$db = JFactory::getDbo();
+			
+				// Create a new query object.
+				$query = $db->getQuery(true);
+			
+				// Insert columns.
+				$columns = array('catid', 'itemid');
+			
+				// Insert values.
+				$values = array($cat, $table->id);
+			
+				// Prepare the insert query.
+				$query
+				->insert($db->quoteName('#__jem_cats_event_relations'))
+				->columns($db->quoteName($columns))
+				->values(implode(',', $values));
+			
+				// Reset the query using our newly populated query object.
+				$db->setQuery($query);
+				$db->query();
+					
+			}
+			
 			
 			
 			
