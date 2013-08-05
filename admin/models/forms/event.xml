@@ -10,7 +10,7 @@
 			required="true" />
 
 		<field name="alias" type="text" class="inputbox" size="40"
-			label="COM_JEM_ALIAS" description="COM_JEM_ALIAS" required="true" />
+			label="COM_JEM_ALIAS" description="COM_JEM_ALIAS" required="false" />
 
 		<field name="datdescription" type="editor" class="inputbox"
 			rows="3" cols="40" label="COM_JEM_EVENT_DESCRIPTION" description="COM_JEM_EVENT_DESCRIPTION_DESC" />

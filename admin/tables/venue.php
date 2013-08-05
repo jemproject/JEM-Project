@@ -33,16 +33,19 @@ class JEMTableVenue extends JTable
 			return false;
 		}
 		
-		$alias = JFilterOutput::stringURLSafe($this->venue);
 		
-		if(empty($this->alias) || $this->alias === $alias ) {
-			$this->alias = $alias;
+		
+		// Set alias
+		$this->alias = JApplication::stringURLSafe($this->alias);
+		if (empty($this->alias)) {
+			$this->alias = JApplication::stringURLSafe($this->venue);
 		}
+		
 		
 		if ( $this->map ){
 			if ( !trim($this->street) || !trim($this->city) || !trim($this->country) || !trim($this->plz) ) {
 				if (( !trim($this->latitude) && !trim($this->longitude))) {
-					$this->setErrorr = JText::_('COM_JEM_ERROR_ADDRESS');
+					$this->setError = JText::_('COM_JEM_ERROR_ADDRESS');
 					return false;
 				}
 			}

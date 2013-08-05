@@ -36,6 +36,16 @@ class JEMTableEvent extends JTable
 			$this->dates = NULL;
 		}
 
+		
+		
+		// Set alias
+		$this->alias = JApplication::stringURLSafe($this->alias);
+		if (empty($this->alias)) {
+			$this->alias = JApplication::stringURLSafe($this->title);
+		}
+		
+		
+		
 		return true;
 	}
 	
@@ -46,17 +56,21 @@ class JEMTableEvent extends JTable
 	 */
 	public function store($updateNulls = false)
 	{
-		
 			// Verify that the alias is unique
 			$table = JTable::getInstance('Event', 'JEMTable');
-					/*if ($table->load(array('alias'=>$this->alias, 'catid'=>$this->catid)) && ($table->id != $this->id || $this->id==0)) {*/
-			//if ($table->load(array('alias'=>$this->alias)) && ($table->id != $this->id || $this->id==0)) {
-			//
-			//
-				//	$this->setError(JText::_('COM_JEM_ERROR_UNIQUE_ALIAS'));
-				//	return false;
-				//	}
-					// Attempt to store the user data.
+		 
+			
+			// @todo alter error reporting
+			
+			/* if ($table->load(array('alias'=>$this->alias, 'catid'=>$this->catid)) && ($table->id != $this->id || $this->id==0)) {
+			if ($table->load(array('alias'=>$this->alias)) && ($table->id != $this->id || $this->id==0)) {
+			
+				
+					$this->setError(JText::_('COM_JEM_ERROR_UNIQUE_ALIAS'));
+					return false;
+					}
+					*/
+					
 					return parent::store($updateNulls);
 		}
 	
