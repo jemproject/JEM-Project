@@ -84,7 +84,7 @@ $options = array(
 			<table class="adminlist">
 				<tr>
 				<td><label>Version:</label></td>
-				<td><?php echo '1.9'; ?></td>
+				<td><?php echo '1.9.1'; ?></td>
 				</tr>
 			</table>
 			
