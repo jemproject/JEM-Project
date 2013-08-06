@@ -25,6 +25,19 @@ $params = $params->toArray();
 		var form = document.getElementById('event-form');
 		var metakeywords = $('jform_meta_keywords');
 		
+
+		$('cid').addEvent('change', function(){
+			testcid();
+			});
+
+		$('cid').addEvent('keyup', function(){
+			testcid();
+			});
+		$('cid').addEvent('click', function(){
+			testcid();
+			});
+
+		
 		$('jform_maxplaces').addEvent('change', function(){
 			if ($('event-available')) {
 						var val = parseInt($('jform_maxplaces').value);
@@ -42,13 +55,38 @@ $params = $params->toArray();
 			});
 
 	});
+
+
+
+
+
+function testcid()
+{
+var x=document.getElementById("cid").selectedIndex;
+var y=document.getElementById("cid").options;
+var z=document.getElementById("cid");
+var z2=document.getElementById("jform_cats-lbl");
+
+
+if (x == -1)
+{
+	z2.addClass("invalid");
+} else
+{
+	z2.removeClass('invalid');
+}
+
+
+
+}
 </script>
 
-
+	
 
 <script type="text/javascript">
 	Joomla.submitbutton = function(task)
 	{
+		testcid();
 		if (task == 'event.cancel' || document.formvalidator.isValid(document.id('event-form'))) {
 			Joomla.submitform(task, document.getElementById('event-form'));
 
