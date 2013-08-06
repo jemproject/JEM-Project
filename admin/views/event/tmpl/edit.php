@@ -24,19 +24,58 @@ $params = $params->toArray();
 	window.addEvent('domready', function(){
 		var form = document.getElementById('event-form');
 		var metakeywords = $('jform_meta_keywords');
+
+		var x=document.getElementById("cid").selectedIndex;
+		var y=document.getElementById("cid").options;
+		var z=document.getElementById("cid");
+
+		z.morph({
+	        opacity: 1,
+	        backgroundColor: '#D5EEFF'
+	      });
+
+
+		/* defining an Event */
+		/* thx go to: http://stackoverflow.com/questions/12426763/mootools-clickout-function-for-inputbox */ 
 		
-
-		$('cid').addEvent('change', function(){
-			testcid();
-			});
-
-		$('cid').addEvent('keyup', function(){
-			testcid();
-			});
-		$('cid').addEvent('click', function(){
-			testcid();
-			});
-
+		
+		Element.Events.outerClick = {
+			    base : 'click',    
+			    condition : function(event){
+			        event.stopPropagation();
+			        return false;
+			    },
+			    onAdd : function(fn){
+			        this.getDocument().addEvent('click', fn);
+			    },
+			    onRemove : function(fn){
+			        this.getDocument().removeEvent('click', fn);
+			    }
+			};
+		
+		$('cid').set('opacity', 1).addEvents({
+		    change: function(){
+		        //alert('change');
+		        //testcid();
+		    },
+		    keyup: function(){
+		        //alert('keyup');
+		    	//testcid();
+		    },
+		    click: function(){
+		       // alert('click');
+		    	//testcid();
+		    },
+		    mouseenter: function(){
+		      },
+		    mouseleave: function(){   
+		      } ,
+		    outerClick: function(){
+			     // alert('outerClick');
+		    	  testcid();
+		      }
+		});
+		
 		
 		$('jform_maxplaces').addEvent('change', function(){
 			if ($('event-available')) {
