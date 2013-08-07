@@ -565,11 +565,8 @@ class JEMController extends JControllerLegacy
 		{
 			$data = $datas[$i];
 
-			$col[] = str_replace("\"", "\"\"", $data->name);
 			$col[] = str_replace("\"", "\"\"", $data->username);
-			$col[] = str_replace("\"", "\"\"", $data->email);
 			$col[] = str_replace("\"", "\"\"", JHTML::Date( $data->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ));
-			$col[] = str_replace("\"", "\"\"", $data->uid);
 
 			for($j = 0; $j < count($col); $j++)
 			{

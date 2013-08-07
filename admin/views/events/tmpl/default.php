@@ -19,12 +19,38 @@ $saveOrder	= $listOrder=='ordering';
 $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 
 
+/*
+Call the highlight function with the text to highlight. 
+http://johannburkard.de/blog/programming/javascript/highlight-javascript-text-higlighting-jquery-plugin.html
 
-//$searchterms = $this->lists['search'];
- 
-//Highlight search terms with js (if we did a search => more performant and otherwise crash)
-//if (strlen($searchterms)>1) JHtml::_('behavior.highlighter', explode(' ',$searchterms));
+To highlight all occurrances of “bla” (case insensitive) in all li elements, use the following code:
+	$('li').highlight('bla');
+
+Remove highlighting
+	The highlight can be removed from any element with the removeHighlight function. 
+	In this example, all highlights under the element with the ID highlight-plugin are removed.
+
+	$('#highlight-plugin').removeHighlight();
+*/
 ?>
+
+<script>
+window.addEvent('domready', function(){
+	var h = <?php echo $params->get('highlight','0'); ?>;
+
+	switch(h)
+	{
+	case 0:
+	  break;
+	case 1:
+		highlightevents();
+	  break;
+	}
+});
+</script>
+
+
+
 
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=events'); ?>" method="post" name="adminForm" id="adminForm">
 
@@ -34,7 +60,7 @@ $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 		<td width="100%">
 			 <?php echo JText::_( 'COM_JEM_SEARCH' ).' '.$this->lists['filter']; ?>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->escape($this->state->get('filter_search')); ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+			<button id="gosearch" onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
 			<button onclick="$('filter_search').value='';document.adminForm.submit();;"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 		</td>
 		<td nowrap="nowrap"><?php //echo $this->lists['state']; ?>
@@ -78,7 +104,7 @@ $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 	</tfoot>
 		
 
-		<tbody>
+		<tbody id="seach_in_here">
 			<?php
 			foreach ($this->items as $i => $row) :
 				//Prepare date
@@ -133,7 +159,7 @@ $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 					<?php endif; ?>
 				</td>
 				<td><?php echo $displaytime; ?></td>
-				<td>
+				<td class="eventtitle">
 				<?php if ($row->checked_out) : ?>
 						<?php echo JHtml::_('jgrid.checkedout', $i, $row->editor, $row->checked_out_time, 'events.', $canCheckin); ?>
 					<?php endif; ?>
@@ -154,7 +180,7 @@ $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 				
 				
 				</td>
-				<td>
+				<td class="venue">
 					<?php
 					if ($row->venue) {
 						if ( $row->vchecked_out && ( $row->vchecked_out != $this->user->get('id') ) ) {
@@ -172,8 +198,8 @@ $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 					}
 					?>
 				</td>
-				<td><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
-				<td><?php echo $row->state ? htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+				<td class="city"><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+				<td class="state"><?php echo $row->state ? htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
 				<td>
 				<?php
 				$nr = count($row->categories);

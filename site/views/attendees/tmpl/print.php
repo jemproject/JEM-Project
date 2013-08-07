@@ -38,9 +38,7 @@ defined('_JEXEC') or die; ?>
 <table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
-			<th class="title"><?php echo JText::_( 'COM_JEM_NAME' ); ?></th>
 			<th class="title"><?php echo JText::_( 'COM_JEM_USERNAME' ); ?></th>
-			<th class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
 			<th class="title"><?php echo JText::_( 'COM_JEM_REGDATE' ); ?></th>
 		</tr>
 	</thead>
@@ -52,9 +50,7 @@ defined('_JEXEC') or die; ?>
 				$row = $this->rows[$i];
 				?>
 		<tr class="<?php echo "row$k"; ?>">
-			<td><?php echo $row->name; ?></td>
 			<td><?php echo $row->username; ?></td>
-			<td><?php echo $row->email; ?></td>
 			<td><?php echo JHTML::Date( $row->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ); ?>
 			</td>
 		</tr>

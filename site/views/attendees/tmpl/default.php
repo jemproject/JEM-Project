@@ -99,9 +99,7 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 			<tr>
 				<th width="1%" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 				<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_NAME', 'u.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_USERNAME', 'u.username', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				<th class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php if ($this->event->waitinglist): ?>
 				<th class="center"><?php echo JHTML::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
@@ -119,11 +117,9 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 			<tr class="row<?php echo $i % 2; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 				<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
-				<td><?php echo $row->name; ?></td>
 				<td>
 					<?php echo $row->username; ?>
 				</td>
-				<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
 				<td><?php echo JHTML::Date( $row->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ); ?></td>
 				<?php if ($this->event->waitinglist): ?>
 				<td class="hasTip center" title="<?php echo ($row->waiting ? JText::_('COM_JEM_ON_WAITINGLIST') : JText::_('COM_JEM_ATTENDING')).'::'; ?>">

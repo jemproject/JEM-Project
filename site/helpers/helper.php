@@ -776,15 +776,7 @@ class JEMHelper {
 		$description = $event->title.'\\n';
 		$description .= JText::_('COM_JEM_CATEGORY').': '.implode(', ', $categories).'\\n';
 
-		// url link to event
-
-		//Original link
-		//$link = JURI::base().JEMHelperRoute::getRoute($event->slug);
-
-		$app = JFactory::getApplication();
-		$menuitem = $app->getMenu()->getActive()->id;
-		$link = JURI::base().JEMHelperRoute::getRoute($event->slug).'&Itemid='.$menuitem;
-
+		$link = JURI::base().JEMHelperRoute::getRoute($event->slug);
 		$link = JRoute::_($link);
 		$description .= JText::_('COM_JEM_ICS_LINK').': '.$link.'\\n';
 

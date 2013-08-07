@@ -67,8 +67,10 @@ $params = $params->toArray();
 		    	//testcid();
 		    },
 		    mouseenter: function(){
+		    	// alert('mouseenter');
 		      },
-		    mouseleave: function(){   
+		    mouseleave: function(){
+		    	// alert('mouseleave');   
 		      } ,
 		    outerClick: function(){
 			     // alert('outerClick');

@@ -34,12 +34,18 @@ defined( '_JEXEC' ) or die;
 		$app =  JFactory::getApplication();
 		$user 		=  JFactory::getUser();
 		$document	=  JFactory::getDocument();
-		
+		$url 		= JURI::root();
 		
         // Initialise variables.
 		$this->items		= $this->get('Items');
 		$this->pagination	= $this->get('Pagination');
 		$this->state		= $this->get('State');
+		
+		$params = $this->state->get('params');
+		
+		// highlighter
+		$highlighter = $params->get('highlight','0');
+		
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -48,9 +54,23 @@ defined( '_JEXEC' ) or die;
 			return false;
 		}
 
-	
+		JHTML::_('behavior.mootools');
+		
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+		$document->addCustomTag( '<script type="text/javascript">jQuery.noConflict();</script>' );
+		
+		if ($highlighter){
+			$document->addScript($url.'media/com_jem/js/highlighter.js');
+			$style = '
+        .red a:link, .red a:visited, .red a:active {
+        color:red;}
+        '
+				 ;
+				 $document->addStyleDeclaration( $style );
+		}
+	
 		
 		//add style to description of the tooltip (hastip)
 		JHTML::_('behavior.tooltip');

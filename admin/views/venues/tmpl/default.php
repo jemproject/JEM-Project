@@ -21,6 +21,23 @@ $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 
 ?>
 
+<script>
+window.addEvent('domready', function(){
+var h = <?php echo $params->get('highlight','0'); ?>;
+
+switch(h)
+{
+case 0:
+  break;
+case 1:
+	highlightvenues();
+  break;
+}
+
+
+});
+</script>
+
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=venues'); ?>" method="post" name="adminForm" id="adminForm">
 
 <table class="adminform">
@@ -68,7 +85,7 @@ $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 		</tr>
 	</tfoot>
 
-	<tbody>
+	<tbody id="seach_in_here">
 		<?php
 		foreach ($this->items as $i => $row) :
 		$ordering	= ($listOrder == 'ordering');
@@ -87,7 +104,7 @@ $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 		<tr class="row<?php echo $i % 2; ?>">
 			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
-			<td align="left">
+			<td align="left" class="venue">
 				<?php if ($row->checked_out) : ?>
 						<?php echo JHtml::_('jgrid.checkedout', $i, $row->editor, $row->checked_out_time, 'venues.', $canCheckin); ?>
 					<?php endif; ?>
@@ -126,9 +143,9 @@ $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 				}
 				?>
 			</td>
-			<td align="left"><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
-			<td align="left"><?php echo $row->state ? htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
-			<td class="center"><?php echo $row->country ? htmlspecialchars($row->country, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+			<td align="left" class="city"><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+			<td align="left" class="state"><?php echo $row->state ? htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+			<td class="center" class="country"><?php echo $row->country ? htmlspecialchars($row->country, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
 			<td class="center"><?php echo $published; ?></td>
 			<td>
 				<?php echo JText::_( 'COM_JEM_AUTHOR' ).': '; ?><a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>"><?php echo $row->author; ?></a><br />

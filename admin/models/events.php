@@ -239,7 +239,7 @@ class JEMModelEvents extends JModelList
 								
 				/* search all */
 				if ($search && $filter == 5) {
-					$query->where('(loc.venue LIKE '.$search.' OR a.alias LIKE '.$search.' OR a.city LIKE '.$search.' OR a.state LIKE '.$search.' OR a.country LIKE '.$search.')');
+					$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR loc.country LIKE '.$search.')');
 				}
 				
 			

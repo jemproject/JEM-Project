@@ -84,6 +84,7 @@ table.month {
 }
 
 .eventcontent {
+	background-color:yellow;
 	margin:1px;
 	overflow:hidden;
 	padding:1px;
@@ -93,7 +94,12 @@ table.month {
 	margin: 2px;
 }
 
+.eventcontent a:link, a:visited {
+  color: #333;
+}
+
 .eventandmore {
+	background-color:yellow;
 	margin:1px;
 	overflow:hidden;
 	padding:1px;
@@ -187,10 +193,9 @@ table.month {
 }
 
 
-
 .today .daynum a  {
-  color:#FFFFFF !important;
-  background-color:inherit !important;
+  color:#FFFFFF;
+  background-color:red;
 }
 
 

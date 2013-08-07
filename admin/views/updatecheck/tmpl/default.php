@@ -97,9 +97,7 @@ if ($this->updatedata->failed == 0) {
 		<table style="width:200px;" class="adminlist">
 			<tr>
 		  		<td><b><?php echo JText::_( 'COM_JEM_INSTALLED_VERSION' ).':'; ?></b></td>
-		  		<td><?php
-					echo '1.9.1';
-					?>
+		  		<td><?php echo $this->updatedata->installedversion; ?>
 		  		</td>
 			</tr>
 			</table>

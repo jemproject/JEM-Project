@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="module" version="2.5" client="site" method="upgrade">
-	<name>JEM Calendar module</name>
+	<name>mod_jem_cal</name>
 	<creationDate>04 August 2013</creationDate>
 	<author>Toni Smillie, JEM Community</author>
 	<copyright>GNU General Public License 2</copyright>	 

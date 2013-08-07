@@ -46,7 +46,9 @@ class JEMModelUpdatecheck extends JModelLegacy
 	{
 
 		$jemsettings = JEMAdmin::config();
-
+		$installedversion = self::getParam('version');
+		
+		
 		include_once(JPATH_COMPONENT_ADMINISTRATOR.'/classes/Snoopy.class.php');
 
 		$snoopy = new Snoopy();
@@ -85,13 +87,29 @@ class JEMModelUpdatecheck extends JModelLegacy
 			$_updatedata->notes			= $data[5];
 			$_updatedata->changes 		= explode(';', $data[6]);
 			$_updatedata->failed 		= 0;
+			$_updatedata->installedversion 		= $installedversion;
 
-			$_updatedata->current = version_compare( '1.9.1', $_updatedata->version );
+			$_updatedata->current = version_compare( $installedversion, $_updatedata->version );
 
 		}
-
+		
 		return $_updatedata;
 	}
+	
+	
+	/*
+	 * get a variable from the manifest file (actually, from the manifest cache).
+	 * in this case it will be the installed version of jem
+	*/
+	function getParam( $name ) {
+		$db = JFactory::getDbo();
+		$db->setQuery('SELECT manifest_cache FROM #__extensions WHERE name = "com_jem"');
+		$manifest = json_decode( $db->loadResult(), true );
+		return $manifest[ $name ];
+	}
+	
+	
+	
 
 }
 ?>

@@ -35,8 +35,9 @@ defined( '_JEXEC' ) or die;
 		$user 		=  JFactory::getUser();
 		$document	=  JFactory::getDocument();
 		
-		$jemsettings = JEMAdmin::config();
 		
+		$jemsettings = JEMAdmin::config();
+		$url 		= JURI::root();
 		
         // Initialise variables.
 		$this->items		= $this->get('Items');
@@ -44,16 +45,34 @@ defined( '_JEXEC' ) or die;
 		$this->state		= $this->get('State');
 		//$this->categories		= $this->get('Categories');
 
+		$params = $this->state->get('params');
+		
+		// highlighter
+		$highlighter = $params->get('highlight','0');
+		
+		
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
 		{
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
-
+		JHTML::_('behavior.mootools');
 	
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+		$document->addCustomTag( '<script type="text/javascript">jQuery.noConflict();</script>' );
+		
+		if ($highlighter){
+		$document->addScript($url.'media/com_jem/js/highlighter.js');
+		$style = '
+        .red a:link, .red a:visited, .red a:active {
+        color:red;}
+        '
+		 ;
+		 $document->addStyleDeclaration( $style );
+		}
 		
 		//add style to description of the tooltip (hastip)
 		JHTML::_('behavior.tooltip');
