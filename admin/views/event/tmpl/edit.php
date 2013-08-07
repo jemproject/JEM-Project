@@ -30,17 +30,16 @@ $params = $params->toArray();
 		var z=document.getElementById("cid");
 
 		z.morph({
-	        opacity: 1,
-	        backgroundColor: '#D5EEFF'
-	      });
+		    opacity: 1,
+		    backgroundColor: '#D5EEFF'
+		});
 
 
 		/* defining an Event */
-		/* thx go to: http://stackoverflow.com/questions/12426763/mootools-clickout-function-for-inputbox */ 
-		
-		
+		/* thx go to: http://stackoverflow.com/questions/12426763/mootools-clickout-function-for-inputbox */
+
 		Element.Events.outerClick = {
-			    base : 'click',    
+			    base : 'click',
 			    condition : function(event){
 			        event.stopPropagation();
 			        return false;
@@ -52,7 +51,7 @@ $params = $params->toArray();
 			        this.getDocument().removeEvent('click', fn);
 			    }
 			};
-		
+
 		$('cid').set('opacity', 1).addEvents({
 		    change: function(){
 		        //alert('change');
@@ -70,15 +69,15 @@ $params = $params->toArray();
 		    	// alert('mouseenter');
 		      },
 		    mouseleave: function(){
-		    	// alert('mouseleave');   
+		    	// alert('mouseleave');
 		      } ,
 		    outerClick: function(){
 			     // alert('outerClick');
 		    	  testcid();
 		      }
 		});
-		
-		
+
+
 		$('jform_maxplaces').addEvent('change', function(){
 			if ($('event-available')) {
 						var val = parseInt($('jform_maxplaces').value);
@@ -97,32 +96,23 @@ $params = $params->toArray();
 
 	});
 
+	function testcid()
+	{
+		var x=document.getElementById("cid").selectedIndex;
+		var y=document.getElementById("cid").options;
+		var z=document.getElementById("cid");
+		var z2=document.getElementById("jform_cats-lbl");
 
 
-
-
-function testcid()
-{
-var x=document.getElementById("cid").selectedIndex;
-var y=document.getElementById("cid").options;
-var z=document.getElementById("cid");
-var z2=document.getElementById("jform_cats-lbl");
-
-
-if (x == -1)
-{
-	z2.addClass("invalid");
-} else
-{
-	z2.removeClass('invalid');
-}
-
-
-
-}
+		if (x == -1)
+		{
+			z2.addClass("invalid");
+		} else
+		{
+			z2.removeClass('invalid');
+		}
+	}
 </script>
-
-	
 
 <script type="text/javascript">
 	Joomla.submitbutton = function(task)
@@ -139,7 +129,6 @@ if (x == -1)
 
 
 
-
 <form
 	action="<?php echo JRoute::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>"
 	class="form-validate" method="post" name="adminForm" id="event-form" enctype="multipart/form-data">
@@ -147,10 +136,10 @@ if (x == -1)
 
 	<!-- START OF LEFT DIV -->
 	<div class="width-55 fltlft">
-	
+
 <?php echo JHtml::_('tabs.start', 'det-pane'); ?>
 		<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_INFO_TAB'), 'info' ); ?>
-		
+
 		<!-- START OF LEFT FIELDSET -->
 		<fieldset class="adminform">
 			<legend>
@@ -158,41 +147,30 @@ if (x == -1)
 			</legend>
 
 			<ul class="adminformlist">
-
 				<li><?php echo $this->form->getLabel('title');?> <?php echo $this->form->getInput('title'); ?>
 				</li>
-				
+
 				<li><?php echo $this->form->getLabel('alias'); ?> <?php echo $this->form->getInput('alias'); ?>
 				</li>
-				
-				
-				
+
 				<li><?php echo $this->form->getLabel('dates'); ?> <?php echo $this->form->getInput('dates'); ?>
 				</li>
-				
+
 				<li><?php echo $this->form->getLabel('enddates'); ?> <?php echo $this->form->getInput('enddates'); ?>
 				</li>
-				
+
 				<li><?php echo $this->form->getLabel('times'); ?> <?php echo $this->form->getInput('times'); ?>
-				</li>	
-				
+				</li>
+
 				<li><?php echo $this->form->getLabel('endtimes'); ?> <?php echo $this->form->getInput('endtimes'); ?>
 				</li>
-				
+
 				<li><?php echo $this->form->getLabel('cats'); ?> <?php echo $this->form->getInput('cats'); ?>
-				
 				</li>
-				
-				
-				
 			</ul>
-				
-</fieldset>
+		</fieldset>
 
-
-
-
-<fieldset class="adminform">
+		<fieldset class="adminform">
 			<ul class="adminformlist">
 				<li><?php echo $this->form->getLabel('locid'); ?> <?php echo $this->form->getInput('locid'); ?>
 				</li>
@@ -203,9 +181,9 @@ if (x == -1)
 			</ul>
 		</fieldset>
 
-			
+
 			<fieldset class="adminform">
-			
+
 			<div>
 				<?php echo $this->form->getLabel('datdescription'); ?>
 				<div class="clr"></div>
@@ -222,17 +200,13 @@ if (x == -1)
 	</div>
 
 
-
-
 	<!--  START RIGHT DIV -->
 	<div class="width-40 fltrt">
 
 		<!-- START OF SLIDERS -->
 		<?php echo JHtml::_('sliders.start', 'venue-sliders-'.$this->item->id, array('useCookie'=>1)); ?>
 
-		
-		
-		
+
 		<!-- START OF PANEL PUBLISHING -->
 		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_FIELDSET_PUBLISHING'), 'publishing-details'); ?>
 
@@ -240,27 +214,27 @@ if (x == -1)
 		<!-- RETRIEVING OF FIELDSET PUBLISHING -->
 		<fieldset class="panelform">
 			<ul class="adminformlist">
-				
+
 				<li><?php echo $this->form->getLabel('id'); ?> <?php echo $this->form->getInput('id'); ?>
 				</li>
-				
+
 				<li><?php echo $this->form->getLabel('created_by'); ?> <?php echo $this->form->getInput('created_by'); ?>
 				</li>
-				
+
 				<li><label><?php echo JText::_ ( 'COM_JEM_HITS' );	?></label>
 				<input class="inputbox" name="hits" value="<?php echo $this->item->hits; ?>" size="10" maxlength="10" id="a_hits" />
 				<?php echo $this->resethits; ?>
 				</li>
-				
+
 				<li><?php echo $this->form->getLabel('created'); ?> <?php echo $this->form->getInput('created'); ?>
 				</li>
-			
+
 				<li><?php echo $this->form->getLabel('modified'); ?> <?php echo $this->form->getInput('modified'); ?>
 				</li>
-				
+
 				<li><?php echo $this->form->getLabel('version'); ?> <?php echo $this->form->getInput('version'); ?>
 				</li>
-			
+
 			</ul>
 		</fieldset>
 
@@ -273,68 +247,62 @@ if (x == -1)
 				<?php endforeach; ?>
 			</ul>
 		</fieldset>
-		
+
 		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_REGISTRATION'), 'registra'); ?>
 		<fieldset class="panelform">
 			<ul class="adminformlist">
-			
 				<li><?php echo $this->form->getLabel('registra'); ?> <?php echo $this->form->getInput('registra'); ?>
 				</li>
 				<li><?php echo $this->form->getLabel('unregistra'); ?> <?php echo $this->form->getInput('unregistra'); ?>
 				</li>
 				<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?>
 				</li>
-				
+
 				<li><label><?php echo JText::_ ( 'COM_JEM_BOOKED_PLACES' ) . ':';?></label><input id="event-booked" class="readonly" type="text"  value="<?php echo $this->item->booked; ?>" />
 				</li>
-				
+
 				<?php if ($this->item->maxplaces): ?>
 				<li><label><?php echo JText::_ ( 'COM_JEM_AVAILABLE_PLACES' ) . ':';?></label><input id="event-available" class="readonly" type="text"  value="<?php echo ($this->item->maxplaces-$this->item->booked); ?>" />
 				</li>
-				<?php 
-				endif;				 
+				<?php
+				endif;
 				?>
-				
+
 				<li><?php echo $this->form->getLabel('waitinglist'); ?> <?php echo $this->form->getInput('waitinglist'); ?>
 				</li>
 			</ul>
 		</fieldset>
-		
-	
-		
+
+
+
 		<!-- START OF PANEL IMAGE -->
 		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_IMAGE'), 'image-event'); ?>
 
-		
+
 		<fieldset class="panelform">
 			<ul class="adminformlist">
 				<li><?php echo $this->form->getLabel('datimage'); ?> <?php echo $this->form->getInput('datimage'); ?>
 				</li>
 			</ul>
 		</fieldset>
-		
-		
+
+
 		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_RECURRING_EVENTS'), 'recurrence'); ?>
 		<fieldset class="panelform">
 			<ul class="adminformlist">
-				
-				
-				
 				<li><?php echo $this->form->getLabel('recurrence_type'); ?> <?php echo $this->form->getInput('recurrence_type'); ?>
 				</li>
 				<li id="recurrence_output">
 				<label></label>
 				</li>
-				<li id="counter_row" style="display: none;>
+				<li id="counter_row" style="display: none;">
 					<?php echo $this->form->getLabel('recurrence_limit_date'); ?> <?php echo $this->form->getInput('recurrence_limit_date'); ?>
 				</li>
-				
+			</ul>
 
-				
-				
 				<input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $this->item->recurrence_number;?>" />
 				<input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->item->recurrence_byday;?>" />
-			
+
 			<script
 			type="text/javascript">
 			<!--
@@ -370,24 +338,16 @@ if (x == -1)
 				start_recurrencescript();
 			-->
 			</script>
-			
-			</ul>
 		</fieldset>
-		
-		
-		
-		
-		
-		
-		
+
+
+
 		<!-- START OF PANEL META -->
 		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_METADATA_INFORMATION'), 'meta-event'); ?>
 
 
 		<!-- RETRIEVING OF FIELDSET META -->
 		<fieldset class="panelform">
-		
-		
 					<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_ ( 'COM_JEM_EVENT_TITLE' );	?>" />
 					<input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php	echo JText::_ ( 'COM_JEM_VENUE' );?>" />
 					<input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php	echo JText::_ ( 'COM_JEM_CATEGORIES' );?>" />
@@ -399,7 +359,7 @@ if (x == -1)
 						<input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo JText::_ ( 'COM_JEM_END_TIME' );?>" />
 					</p>
 					<br />
-			
+
 			<br />
 						<label for="meta_keywords">
 						<?php echo JText::_ ( 'COM_JEM_META_KEYWORDS' ) . ':';?>
@@ -413,9 +373,9 @@ if (x == -1)
 						}
 						?>
 					<textarea class="inputbox" name="meta_keywords" id="meta_keywords" rows="5" cols="40" maxlength="150" onfocus="get_inputbox('meta_keywords')" onblur="change_metatags()"><?php echo $meta_keywords; ?></textarea>
-			
-			
-			
+
+
+
 			<label for="meta_description">
 						<?php echo JText::_ ( 'COM_JEM_META_DESCRIPTION' ) . ':';?>
 					</label>
@@ -437,24 +397,19 @@ if (x == -1)
 			?>");	// window.onload is already in use, call the function manualy instead
 		-->
 		</script>
-		
+
 
 	<?php echo JHtml::_('sliders.end'); ?>
-	
-<input type="hidden" name="task" value="" />	
+
+<input type="hidden" name="task" value="" />
 <input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
 				</li>
-				
-							
+
 				<!--  END RIGHT DIV -->
 				<?php echo JHTML::_( 'form.token' ); ?>
 				</div>
-			
-			
-				
+
 		<div class="clr"></div>
-		
+
 </form>
 
-
-        
