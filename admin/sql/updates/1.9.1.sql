@@ -1,0 +1,1 @@
+UPDATE `#__jem_settings` SET showtitle = 1-showtitle WHERE id = 1;

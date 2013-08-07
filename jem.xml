@@ -34,15 +34,21 @@
 
 	<install>
 		<sql>
-			<file driver="mysql" charset="utf8">install.mysql.utf8.sql</file>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
 		</sql>
 	</install>
 
 	<uninstall>
 		<sql>
-			<file driver="mysql" charset="utf8">uninstall.mysql.utf8.sql</file>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
 		</sql>
 	</uninstall>
+	
+	<update>
+		<schemas>
+			<schemapath type="mysql">sql/updates</schemapath>
+		</schemas>
+	</update>
 
 	<administration>
 		<menu img="../media/com_jem/images/jem.png" link="option=com_jem">COM_JEM</menu>
@@ -63,8 +69,6 @@
 			<filename>controller.php</filename>
 			<filename>access.xml</filename>
 			<filename>config.xml</filename>
-			<filename>install.mysql.utf8.sql</filename>
-			<filename>uninstall.mysql.utf8.sql</filename>
 
 			<folder>assets</folder>
 			<folder>classes</folder>
@@ -73,6 +77,7 @@
 			<folder>views</folder>
 			<folder>models</folder>
 			<folder>controllers</folder>
+			<folder>sql</folder>
 			<folder>tables</folder>
 			<folder>language</folder>
 		</files>
