@@ -171,7 +171,8 @@ echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->ver
 	function preflight($type, $parent)
 	{
 		$jversion = new JVersion();
-
+		$oldRelease = $this->getParam('version');
+		
 		// Minimum Joomla version as per Manifest file
 		$requiredJoomlaVersion = $parent->get('manifest')->attributes()->version;
 
@@ -185,6 +186,7 @@ echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->ver
 		if ($type == 'update') {
 			// Installed component version
 			$oldRelease = $this->getParam('version');
+						
 			// Installing component version as per Manifest file
 			$newRelease = $parent->get('manifest')->version;
 
@@ -192,10 +194,43 @@ echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->ver
 				Jerror::raiseWarning(100, JText::sprintf('COM_JEM_PREFLIGHT_INCORRECT_VERSION_SEQUENCE', $oldRelease, $newRelease));
 				return false;
 			}
-		}
+		} 
+			
+			if($oldRelease == 1.9)
+			{
+		
+			$db = JFactory::getDbo();
+			$query = "SELECT extension_id FROM #__extensions WHERE type='component' and element='com_jem'";
+			$db->setQuery($query);
 
-		// $type is the type of change (install, update or discover_install)
-		echo '<p>' . JText::_('COM_JEM_PREFLIGHT_' . $type . '_TEXT') . '</p>';
+			$extensionid = $db->loadResult();
+			$versionid = '1.9';
+			
+		
+			// Create a new query object.
+			$query = $db->getQuery(true);
+ 
+			// Insert columns.
+			$columns = array('extension_id', 'version_id');
+ 
+			// Insert values.
+			$values = array($extensionid, $versionid);
+ 
+			// Prepare the insert query.
+			$query
+    		->insert($db->quoteName('#__schemas'))
+    		->columns($db->quoteName($columns))
+    		->values(implode(',', $values));
+ 
+			// Reset the query using our newly populated query object.
+			$db->setQuery($query);
+			$db->query();
+			
+			}
+
+
+			// $type is the type of change (install, update or discover_install)
+			echo '<p>' . JText::_('COM_JEM_PREFLIGHT_' . $type . '_TEXT') . '</p>';
 	}
 
 	/**
@@ -218,7 +253,7 @@ echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->ver
 	 */
 	function getParam($name) {
 		$db = JFactory::getDbo();
-		$db->setQuery('SELECT manifest_cache FROM #__extensions WHERE name = "com_jem"');
+		$db->setQuery('SELECT manifest_cache FROM #__extensions WHERE type = "component" and element = "com_jem"');
 		$manifest = json_decode($db->loadResult(), true);
 		return $manifest[$name];
 	}
@@ -232,7 +267,7 @@ echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->ver
 		if (count($param_array) > 0) {
 			// read the existing component value(s)
 			$db = JFactory::getDbo();
-			$db->setQuery('SELECT params FROM #__extensions WHERE name = "com_jem"');
+			$db->setQuery('SELECT params FROM #__extensions WHERE type = "component" and element = "com_jem"');
 			$params = json_decode($db->loadResult(), true);
 
 			// add the new variable(s) to the existing one(s)
