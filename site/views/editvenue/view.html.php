@@ -56,6 +56,8 @@ class JEMViewEditvenue extends JViewLegacy
 		$doc->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		$doc->addScript('media/com_jem/js/attachments.js' );
+		$doc->addScript('http://api.mygeoposition.com/api/geopicker/api.js');
+		$doc->addScript(JURI::root().'media/com_jem/js/geodata.js' );
 
 		// Get the menu object of the active menu item
 		$menu		= $app->getMenu();

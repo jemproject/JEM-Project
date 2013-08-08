@@ -9,22 +9,8 @@
 
 defined('_JEXEC') or die;
 ?>
-<script src="http://api.mygeoposition.com/api/geopicker/api.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        function lookupGeoData15() {            
-            myGeoPositionGeoPicker({
-                returnFieldMap            : {
-                                          'latitude'        :    '<LAT>',
-                                          'longitude'        :    '<LNG>',
-                                          'street'        :    '<STREET> <STREETNUMBER>',
-                                          'plz'        :    '<POSTALCODE>',
-                                          'city'        :    '<CITY>',
-                                          'state' : '<STATE_LONG>',
-                                          'country' : '<COUNTRY>'
-                                          },
-            });
-        }
-    </script>
+
+    
 <script type="text/javascript">
 	window.addEvent('domready', function() { 
 		var form = document.getElementById('adminForm');
@@ -280,7 +266,7 @@ defined('_JEXEC') or die;
                 </span>
             </div>
             <?php endif; ?>
-		<div><button type="button" onclick="lookupGeoData15();">GeoPicker</button></div>
+		<div><button type="button" onclick="lookupGeoData2();">GeoPicker</button></div>
         </fieldset>
 
       	<?php	if (( $this->jemsettings->imageenabled == 2 ) || ($this->jemsettings->imageenabled == 1)) :	?>

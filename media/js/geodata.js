@@ -1,4 +1,4 @@
-function lookupGeoData15() {            
+function lookupGeoData() {            
             myGeoPositionGeoPicker({
                 returnFieldMap            : {
                                           'jform_latitude'        :    '<LAT>',
@@ -11,3 +11,19 @@ function lookupGeoData15() {
                                           },
             });
         }
+
+
+
+function lookupGeoData2() {            
+    myGeoPositionGeoPicker({
+        returnFieldMap            : {
+                                  'latitude'        :    '<LAT>',
+                                  'longitude'        :    '<LNG>',
+                                  'street'        :    '<STREET> <STREETNUMBER>',
+                                  'plz'        :    '<POSTALCODE>',
+                                  'city'        :    '<CITY>',
+                                  'state' : '<STATE_LONG>',
+                                  'country' : '<COUNTRY>'
+                                  },
+    });
+}

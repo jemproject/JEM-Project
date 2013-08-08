@@ -184,7 +184,7 @@ function test()
 				
 				<li>
 				<label><?php echo JText::_( 'COM_JEM_ADDRESS_FINDER' );?></label>
-				<button type="button" onclick="lookupGeoData15();">GeoPicker</button>
+				<button type="button" onclick="lookupGeoData();">GeoPicker</button>
 				</li>
 				</ul>
 				
