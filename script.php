@@ -17,7 +17,6 @@ class com_jemInstallerScript
 	 */
 	function install($parent)
 	{
-		//		$parent->getParent()->setRedirectURL('index.php?option=com_jem');
 		$error = array(
 				'summary' => 0,
 				'folders' => 0,
@@ -145,9 +144,9 @@ class com_jemInstallerScript
 	function uninstall($parent)
 	{
 		?>
-<h2>Uninstall Status:</h2>
-<?php
-echo '<p>' . JText::_('COM_JEM_UNINSTALL_TEXT') . '</p>';
+		<h2>Uninstall Status:</h2>
+		<?php
+		echo '<p>' . JText::_('COM_JEM_UNINSTALL_TEXT') . '</p>';
 	}
 
 	/**
@@ -158,9 +157,9 @@ echo '<p>' . JText::_('COM_JEM_UNINSTALL_TEXT') . '</p>';
 	function update($parent)
 	{
 		?>
-<h2>Update Status:</h2>
-<?php
-echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->version) . '</p>';
+		<h2>Update Status:</h2>
+		<?php
+		echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->version) . '</p>';
 	}
 
 	/**
@@ -171,8 +170,7 @@ echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->ver
 	function preflight($type, $parent)
 	{
 		$jversion = new JVersion();
-		$oldRelease = $this->getParam('version');
-		
+
 		// Minimum Joomla version as per Manifest file
 		$requiredJoomlaVersion = $parent->get('manifest')->attributes()->version;
 
@@ -186,7 +184,7 @@ echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->ver
 		if ($type == 'update') {
 			// Installed component version
 			$oldRelease = $this->getParam('version');
-						
+
 			// Installing component version as per Manifest file
 			$newRelease = $parent->get('manifest')->version;
 
@@ -194,43 +192,13 @@ echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->ver
 				Jerror::raiseWarning(100, JText::sprintf('COM_JEM_PREFLIGHT_INCORRECT_VERSION_SEQUENCE', $oldRelease, $newRelease));
 				return false;
 			}
-		} 
-			
-			if($oldRelease == 1.9)
-			{
-		
-			$db = JFactory::getDbo();
-			$query = "SELECT extension_id FROM #__extensions WHERE type='component' and element='com_jem'";
-			$db->setQuery($query);
 
-			$extensionid = $db->loadResult();
-			$versionid = '1.9';
-			
-		
-			// Create a new query object.
-			$query = $db->getQuery(true);
- 
-			// Insert columns.
-			$columns = array('extension_id', 'version_id');
- 
-			// Insert values.
-			$values = array($extensionid, $versionid);
- 
-			// Prepare the insert query.
-			$query
-    		->insert($db->quoteName('#__schemas'))
-    		->columns($db->quoteName($columns))
-    		->values(implode(',', $values));
- 
-			// Reset the query using our newly populated query object.
-			$db->setQuery($query);
-			$db->query();
-			
-			}
+			// Initialize schema table if necessary
+			$this->initializeSchema($oldRelease);
+		}
 
-
-			// $type is the type of change (install, update or discover_install)
-			echo '<p>' . JText::_('COM_JEM_PREFLIGHT_' . $type . '_TEXT') . '</p>';
+		// $type is the type of change (install, update or discover_install)
+		echo '<p>' . JText::_('COM_JEM_PREFLIGHT_' . $type . '_TEXT') . '</p>';
 	}
 
 	/**
@@ -251,7 +219,7 @@ echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->ver
 	 *
 	 * @return The parameter
 	 */
-	function getParam($name) {
+	private function getParam($name) {
 		$db = JFactory::getDbo();
 		$db->setQuery('SELECT manifest_cache FROM #__extensions WHERE type = "component" and element = "com_jem"');
 		$manifest = json_decode($db->loadResult(), true);
@@ -263,7 +231,7 @@ echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->ver
 	 *
 	 * @param $param_array  An array holding the params to store
 	 */
-	function setParams($param_array) {
+	private function setParams($param_array) {
 		if (count($param_array) > 0) {
 			// read the existing component value(s)
 			$db = JFactory::getDbo();
@@ -282,5 +250,33 @@ echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->ver
 					' WHERE name = "com_jem"');
 			$db->query();
 		}
+	}
+
+	private function initializeSchema($versionId) {
+		$db = JFactory::getDbo();
+
+		// Get extension ID of JEM
+		$query = "SELECT extension_id FROM #__extensions WHERE type='component' and element='com_jem'";
+		$db->setQuery($query);
+		$extensionId = $db->loadResult();
+
+		// Check if an entry already exists in schemas table
+		$query = $db->getQuery(true);
+		$query->select('version_id')->from('#__schemas')->where('extension_id = '.$extensionId);
+		$db->setQuery($query);
+
+		if($db->loadResult()) {
+			// Entry exists, return
+			return;
+		}
+
+		// Insert extension ID and old release version number into schemas table
+		$query = $db->getQuery(true);
+		$query->insert('#__schemas')
+			->columns($db->quoteName(array('extension_id', 'version_id')))
+			->values(implode(',', array($extensionId, $versionId)));
+
+		$db->setQuery($query);
+		$db->query();
 	}
 }
