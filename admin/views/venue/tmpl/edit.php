@@ -37,8 +37,8 @@ $params = $params->toArray();
 	window.addEvent('domready', function(){
 		var form = document.getElementById('venue-form');
 		var map = $('jform_map');
-		test();
-
+		setAttribute();
+		
 		if(map && map.checked == true) {
 			addrequired();
 		}	
@@ -49,8 +49,28 @@ $params = $params->toArray();
 
 	});
 
+	
+	function setAttribute()
+	{
+
+		var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "postal_code"
+	    document.getElementById("jform_plz").setAttributeNode(attribute);
+
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "locality"
+	    document.getElementById("jform_city").setAttributeNode(attribute);
+
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "administrative_area_level_1"
+	    document.getElementById("jform_state").setAttributeNode(attribute);
+
+  
+	}
 
 
+
+	
 function meta()
 {
 	f=document.getElementById('venue-form');
@@ -119,7 +139,52 @@ function test()
 
 	</script>
 
+    
+    <script>
+      jQuery(function(){
+    	  jQuery("#geocomplete").geocomplete({
+          map: ".map_canvas",
+          details: "form ",
+          detailsAttribute: "geo-data",
+          markerOptions: {
+            draggable: true
+          }
+        });
+        
+    	  jQuery("#geocomplete").bind("geocode:dragged", function(event, latLng){
+    		  jQuery("input[id=jform_latitude]").val(latLng.lat());
+    		  jQuery("input[id=jform_longitude]").val(latLng.lng());
+    		  jQuery("#geocomplete").geocomplete("find", latLng.toString());
+    		 /* option to show the reset-link */
+    		 /* jQuery("#reset").show();*/
+        });
 
+
+
+    	  jQuery("#geocomplete").bind("geocode:result", function(event, result){
+				var street = document.getElementById("route").value ;
+    	  		var streetnumber = document.getElementById("street_number").value ;
+    	  		var country = document.getElementById("country").value;
+    	  		
+    	  		document.getElementById("jform_street").value = street + ' ' + streetnumber;
+    	  		document.getElementById("jform_country").value = country;
+    	  	
+        });
+    	  
+    	  
+        /* option to attach a reset function to the reset-link
+    	  jQuery("#reset").click(function(){
+   		  jQuery("#geocomplete").geocomplete("resetMarker");
+   		  jQuery("#reset").hide();
+          return false;
+        });
+     	*/
+        
+    	  jQuery("#find").click(function(){
+    		  jQuery("#geocomplete").trigger("geocode");
+        }).click();
+      });
+    </script>
 
 <form
 	action="<?php echo JRoute::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>"
@@ -163,11 +228,22 @@ function test()
 
 				<li><?php echo $this->form->getLabel('url'); ?> <?php echo $this->form->getInput('url'); ?>
 				</li>
-
-				
-
-				
+		 
 </fieldset>
+
+
+<fieldset class="adminform" id="geodata">
+<legend>Geodata</legend>
+
+
+ <input id="geocomplete" type="text" placeholder="Type in an address" value="" />
+      <input id="find" type="button" value="find" />
+      <br><br>
+ <div class="map_canvas"></div>
+        
+      <a id="reset" href="#" style="display:none;">Reset Marker</a>
+</fieldset>
+
 
 <fieldset class="adminform">
 <ul class="adminformlist">
@@ -180,11 +256,6 @@ function test()
 				<li><?php echo $this->form->getLabel('id'); ?> <?php echo $this->form->getInput('id'); ?>
 				</li>
 				<li><?php echo $this->form->getLabel('published'); ?> <?php echo $this->form->getInput('published'); ?>
-				</li>
-				
-				<li>
-				<label><?php echo JText::_( 'COM_JEM_ADDRESS_FINDER' );?></label>
-				<button type="button" onclick="lookupGeoData();">GeoPicker</button>
 				</li>
 				</ul>
 				
@@ -284,7 +355,12 @@ function test()
 			
 				
 		<div class="clr"></div>
-		
+	
+	
+        <input id="route" name="" geo-data="route" type="hidden" value="">
+        <input id="street_number" name="street_number" geo-data="street_number" type="hidden" value="">
+       <input id="country" name="country" geo-data="country_short" type="hidden" value="">
+   
 </form>
 
 

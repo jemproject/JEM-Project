@@ -39,6 +39,7 @@ class JEMViewVenue extends JViewLegacy {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
+		JHTML::_('behavior.mootools');
 		JHTML::_('behavior.modal', 'a.modal');
 		JHTML::_('behavior.tooltip');
 		JHTML::_('behavior.formvalidation');
@@ -57,9 +58,17 @@ class JEMViewVenue extends JViewLegacy {
 		
 		// CSS Stylesheet
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/geostyle.css');
 		$document->addScript(JURI::root().'media/com_jem/js/attachments.js' );
-		$document->addScript('http://api.mygeoposition.com/api/geopicker/api.js');
-		$document->addScript(JURI::root().'media/com_jem/js/geodata.js' );
+		//$document->addScript(JURI::root().'media/com_jem/js/geodata.js' );
+		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
+		
+		// Noconflict
+		$document->addCustomTag( '<script type="text/javascript">jQuery.noConflict();</script>' );
+		
+		// JQuery scripts
+		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+		$document->addScript(JURI::root().'media/com_jem/js/jquery.geocomplete.js');
 		
 		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access		= $access2;
