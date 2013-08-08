@@ -22,24 +22,6 @@ $params = $params->toArray();
 
 
 
-<script
-	src="http://api.mygeoposition.com/api/geopicker/api.js"
-	type="text/javascript"></script>
-<script type="text/javascript">
-        function lookupGeoData15() {            
-            myGeoPositionGeoPicker({
-                returnFieldMap            : {
-                                          'jform_latitude'        :    '<LAT>',
-                                          'jform_longitude'        :    '<LNG>',
-                                          'jform_street'        :    '<STREET> <STREETNUMBER>',
-                                          'jform_plz'        :    '<POSTALCODE>',
-                                          'jform_city'        :    '<CITY>',
-                                          'jform_state' : '<STATE_LONG>',
-                                          'jform_country' : '<COUNTRY>'
-                                          },
-            });
-        }
-    </script>
 
 <script type="text/javascript">
 	Joomla.submitbutton = function(task)
@@ -71,7 +53,6 @@ $params = $params->toArray();
 
 function meta()
 {
-
 	f=document.getElementById('venue-form');
 	f.jform_meta_keywords.value=f.jform_venue.value+', '+f.jform_city.value+f.jform_meta_keywords.value;
 }

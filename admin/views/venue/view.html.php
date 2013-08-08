@@ -58,6 +58,8 @@ class JEMViewVenue extends JViewLegacy {
 		// CSS Stylesheet
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 		$document->addScript(JURI::root().'media/com_jem/js/attachments.js' );
+		$document->addScript('http://api.mygeoposition.com/api/geopicker/api.js');
+		$document->addScript(JURI::root().'media/com_jem/js/geodata.js' );
 		
 		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access		= $access2;
