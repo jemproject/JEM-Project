@@ -22,62 +22,30 @@ $params = $params->toArray();
 
 <script type="text/javascript">
 	window.addEvent('domready', function(){
-		var form = document.getElementById('event-form');
-		var metakeywords = $('jform_meta_keywords');
 
-		var x=document.getElementById("cid").selectedIndex;
-		var y=document.getElementById("cid").options;
+	setbgcats();
+	seteventcats();
+	checkmaxplaces();
+	});
+
+	function setbgcats()
+	{	
 		var z=document.getElementById("cid");
 
 		z.morph({
-		    opacity: 1,
 		    backgroundColor: '#D5EEFF'
 		});
+	}
 
-
-		/* defining an Event */
-		/* thx go to: http://stackoverflow.com/questions/12426763/mootools-clickout-function-for-inputbox */
-
-		Element.Events.outerClick = {
-			    base : 'click',
-			    condition : function(event){
-			        event.stopPropagation();
-			        return false;
-			    },
-			    onAdd : function(fn){
-			        this.getDocument().addEvent('click', fn);
-			    },
-			    onRemove : function(fn){
-			        this.getDocument().removeEvent('click', fn);
-			    }
-			};
-
-		$('cid').set('opacity', 1).addEvents({
-		    change: function(){
-		        //alert('change');
-		        //testcid();
-		    },
-		    keyup: function(){
-		        //alert('keyup');
-		    	//testcid();
-		    },
-		    click: function(){
-		       // alert('click');
-		    	//testcid();
-		    },
-		    mouseenter: function(){
-		    	// alert('mouseenter');
-		      },
-		    mouseleave: function(){
-		    	// alert('mouseleave');
-		      } ,
-		    outerClick: function(){
-			     // alert('outerClick');
-		    	  testcid();
-		      }
+	function seteventcats()
+	{
+		$('cid').addEvent('blur',function(){
+		        testcid();
 		});
+	}
 
-
+	function checkmaxplaces()
+	{
 		$('jform_maxplaces').addEvent('change', function(){
 			if ($('event-available')) {
 						var val = parseInt($('jform_maxplaces').value);
@@ -93,14 +61,11 @@ $params = $params->toArray();
 						$('event-available').value = (val-booked);
 			}
 			});
-
-	});
-
+	}
+	
 	function testcid()
 	{
 		var x=document.getElementById("cid").selectedIndex;
-		var y=document.getElementById("cid").options;
-		var z=document.getElementById("cid");
 		var z2=document.getElementById("jform_cats-lbl");
 
 
