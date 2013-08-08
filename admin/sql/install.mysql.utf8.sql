@@ -233,8 +233,6 @@ CREATE TABLE IF NOT EXISTS `#__jem_settings` (
   `ical_max_items` tinyint(4) NOT NULL DEFAULT '100',
   `empty_cat` tinyint(4) NOT NULL DEFAULT '1',
   `defaultCountry` varchar(10) NOT NULL,
-  `tversion` varchar(5) NOT NULL DEFAULT '1.9.1',
-  `fitemid` varchar(5) NOT NULL,
   UNIQUE KEY `id` (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -259,10 +257,21 @@ CREATE TABLE IF NOT EXISTS `#__jem_countries` (
   `iso2` varchar(2) NOT NULL,
   `iso3` varchar(3) NOT NULL,
   `un` int(11) NOT NULL,
-  `name` varchar(30) NOT NULL,
+  `name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `iso2` (`iso2`)
 ) ENGINE=MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+INSERT INTO #__jem_settings VALUES
+(1, 2, 1, 1, 1, 1, 1, 1, '1', '1', '100%', '20%', '40%', '20%', '', 
+'D, j. F Y', 'j.m.y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, 0, 
+'example@example.com', 0, '1000', -2, -2, -2, 1, '',
+1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, 
+'[title], [a_name], [categories], [times]', 'The event titled [title] starts on [dates]!',
+1, 0, '0', 0, 1, 0, '1364604520', '', '', 'COM', 'US', '100', '10%', '10',
+'0', 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, '10%', 1, 30, 1, 1, 'media/com_jem/attachments', '1000',
+'txt,csv,htm,html,xml,css,doc,xls,zip,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,tar.gz',
+0, '365', 100, 1, '')
 
 INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, `name`) VALUES
 (1, 'AS', 'AF', 'AFG', 4, 'Afghanistan, Islamic Republic of'),
@@ -496,7 +505,7 @@ INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, 
 (230, 'AF', 'UG', 'UGA', 800, 'Uganda, Republic of'),
 (231, 'EU', 'UA', 'UKR', 804, 'Ukraine'),
 (232, 'AS', 'AE', 'ARE', 784, 'United Arab Emirates'),
-(233, 'EU', 'GB', 'GBR', 826, 'United Kingdom, United Kingdom of Great Britain and Nothern Ireland'),
+(233, 'EU', 'GB', 'GBR', 826, 'United Kingdom, United Kingdom of Great Britain and Northern Ireland'),
 (234, 'NA', 'US', 'USA', 840, 'United States, United States of America'),
 (235, 'OC', 'UM', 'UMI', 581, 'United States Minor Outlying Islands'),
 (236, 'NA', 'VI', 'VIR', 850, 'Virgin Islands (US), Virgin Islands of the United States'),

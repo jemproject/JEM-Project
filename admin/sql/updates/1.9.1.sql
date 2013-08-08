@@ -7,6 +7,9 @@ ALTER TABLE `#__jem_groups`
 	ADD addevent int(11) NOT NULL,
 	ADD publishvenue int(11) NOT NULL,
 	ADD editvenue int(11) NOT NULL;
+	
+ALTER TABLE `#__jem_countries`
+	CHANGE name name VARCHAR(100);
 
 UPDATE `#__jem_countries` SET name = 'Afghanistan, Islamic Republic of' WHERE id = 1;
 UPDATE `#__jem_countries` SET name = 'Aland Islands' WHERE id = 2;
@@ -64,7 +67,7 @@ UPDATE `#__jem_countries` SET name = 'Syria, Syrian Arab Republic' WHERE id = 21
 UPDATE `#__jem_countries` SET name = 'Taiwan, Republic of China (Taiwan)' WHERE id = 216;
 UPDATE `#__jem_countries` SET name = 'Timor-Leste (East Timor), Democratic Republic of' WHERE id = 220;
 UPDATE `#__jem_countries` SET name = 'Tunisia, Republic of' WHERE id = 225;
-UPDATE `#__jem_countries` SET name = 'United Kingdom, United Kingdom of Great Britain and Nothern Ireland' WHERE id = 233;
+UPDATE `#__jem_countries` SET name = 'United Kingdom, United Kingdom of Great Britain and Northern Ireland' WHERE id = 233;
 UPDATE `#__jem_countries` SET name = 'United States, United States of America' WHERE id = 234;
 UPDATE `#__jem_countries` SET name = 'United States Minor Outlying Islands' WHERE id = 235;
 UPDATE `#__jem_countries` SET name = 'Virgin Islands (US), Virgin Islands of the United States' WHERE id = 236;

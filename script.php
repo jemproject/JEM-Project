@@ -19,8 +19,7 @@ class com_jemInstallerScript
 	{
 		$error = array(
 				'summary' => 0,
-				'folders' => 0,
-				'settings' => 0
+				'folders' => 0
 		);
 		?>
 <table class="adminlist">
@@ -91,22 +90,7 @@ class com_jemInstallerScript
 		$db->setQuery($query);
 		$db->loadResult();
 
-		if(!$db->loadResult()) {
-			$query = "INSERT INTO #__jem_settings VALUES (1, 2, 1, 1, 1, 1, 1, 1, '1', '1', '100%', '20%', '40%', '20%', '', "
-	 				."'D, j. F Y', 'j.m.y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, 0, 'example@example.com', 0, '1000', -2, -2, -2, 1, '', "
-					."1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, '[title], [a_name], [categories], [times]', "
-					."'The event titled [title] starts on [dates]!', 1, 0, '0', 0, 1, 0, '1364604520', '', '', 'COM', 'US', '100', '10%', '10', "
-					."'0', 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, '10%', 1, 30, 1, 1, 'media/com_jem/attachments', '1000', "
-					."'txt,csv,htm,html,xml,css,doc,xls,zip,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,tar.gz', 0, '365', 100, 1, '','1.9.1','')";
-			$db->setQuery($query);
-
-			if (!$db->query()) {
-				echo "<p><span style='color:red;'>Error:</span> Saving default settings failed.</p>";
-				$error['settings']++;
-			} else {
-				echo "<p><span style='color:green;'>Success:</span> Saved default settings.</p>";
-			}
-		} else {
+		if($db->loadResult()) {
 			echo "<p><span style='color:green;'>Success:</span> Found existing (default) settings.</p>";
 		}
 
