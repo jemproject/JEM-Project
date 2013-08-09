@@ -18,11 +18,11 @@ defined('_JEXEC') or die;
 		setAttribute();
 		test();
 		
-		if(map == true) {
+		if(map.checked == true) {
 			addrequired();
 		}	
 
-		if(map == false) {
+		if(map.checked == false) {
 			removerequired();
 		}
 
@@ -62,6 +62,14 @@ defined('_JEXEC') or die;
 	    attribute.nodeValue = "country_short"
 	    document.getElementById("country").setAttributeNode(attribute);
 
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "lat"
+	    document.getElementById("latitude").setAttributeNode(attribute);
+
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "lng"
+	    document.getElementById("longitude").setAttributeNode(attribute);
+
 	    
   
 	}
@@ -75,7 +83,7 @@ defined('_JEXEC') or die;
 
 				var streetcheck = $(form.street).hasClass('required');
 			 
-			 if(map == true) {
+			 if(map.checked == true) {
 				 var lat = $('latitude');
 					var lon = $('longitude');
 					if(lat.value == ('' || 0.000000) || lon.value == ('' || 0.000000)) {
@@ -93,7 +101,7 @@ defined('_JEXEC') or die;
 			 	
 			 
 			 
-				if(map && map.checked == false) {
+				if(map.checked == false) {
 					removerequired();
 				}
 		    };
