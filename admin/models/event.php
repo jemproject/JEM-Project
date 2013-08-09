@@ -38,11 +38,32 @@ class JEMModelEvent extends JModelAdmin
 				$user = JFactory::getUser();
 
 				if (!empty($record->catid)) {
+					
+					
+					$db = JFactory::getDbo();
+						
+					$query = $db->getQuery(true);
+					$query->delete($db->quoteName('#__jem_cats_event_relations'));
+					$query->where('itemid = '.$record->id);
+						
+					$db->setQuery($query);
+					$db->query();
+					
 					return $user->authorise('core.delete', 'com_jem.category.'.(int) $record->catid);
 				}
 			
 				else 
 				{
+					
+					$db = JFactory::getDbo();
+					
+					$query = $db->getQuery(true);
+					$query->delete($db->quoteName('#__jem_cats_event_relations'));
+					$query->where('itemid = '.$record->id);
+					
+					$db->setQuery($query);
+					$db->query();
+					
 					return $user->authorise('core.delete', 'com_jem');
 				}
 		}
