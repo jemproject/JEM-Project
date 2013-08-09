@@ -48,16 +48,27 @@ class JEMViewEditvenue extends JViewLegacy
 		$row 		= $this->Get('Venue');
 		JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'locdescription' );
 
+		JHTML::_('behavior.mootools');
 		JHTML::_('behavior.formvalidation');
 		JHTML::_('behavior.tooltip');
 
 		//add css file
 		$doc->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		$doc->addStyleSheet(JURI::root().'media/com_jem/css/geostyle.css');
 		$doc->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		$doc->addScript('media/com_jem/js/attachments.js' );
-		$doc->addScript('http://api.mygeoposition.com/api/geopicker/api.js');
-		$doc->addScript(JURI::root().'media/com_jem/js/geodata.js' );
+		//$doc->addScript('http://api.mygeoposition.com/api/geopicker/api.js');
+		//$doc->addScript(JURI::root().'media/com_jem/js/geodata.js' );
+		$doc->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
+		
+		
+		// Noconflict
+		$doc->addCustomTag( '<script type="text/javascript">jQuery.noConflict();</script>' );
+		
+		// JQuery scripts
+		$doc->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+		$doc->addScript(JURI::root().'media/com_jem/js/jquery.geocomplete.js');
 
 		// Get the menu object of the active menu item
 		$menu		= $app->getMenu();

@@ -15,9 +15,15 @@ defined('_JEXEC') or die;
 	window.addEvent('domready', function() { 
 		var form = document.getElementById('adminForm');
 		var map = $('map1');
+		setAttribute();
+		test();
 		
-		if(map && map.checked) {
+		if(map == true) {
 			addrequired();
+		}	
+
+		if(map == false) {
+			removerequired();
 		}
 
 		document.formvalidator.setHandler('url',
@@ -31,6 +37,73 @@ defined('_JEXEC') or die;
 			}
 		);
 	});
+
+
+	function setAttribute()
+	{
+
+		var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "postal_code"
+	    document.getElementById("plz").setAttributeNode(attribute);
+
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "locality"
+	    document.getElementById("city").setAttributeNode(attribute);
+
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "administrative_area_level_1"
+	    document.getElementById("state").setAttributeNode(attribute);
+
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "street_address"
+	    document.getElementById("street").setAttributeNode(attribute);
+
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "country_short"
+	    document.getElementById("country").setAttributeNode(attribute);
+
+	    
+  
+	}
+	
+	function test()
+	{
+		 var handler = function(e) {
+
+			 var form = document.getElementById('adminForm');
+				var map = $('map1');
+
+				var streetcheck = $(form.street).hasClass('required');
+			 
+			 if(map == true) {
+				 var lat = $('latitude');
+					var lon = $('longitude');
+					if(lat.value == ('' || 0.000000) || lon.value == ('' || 0.000000)) {
+							if(!streetcheck) {  
+								addrequired();
+							}
+						
+				} else {
+					if(lat.value != ('' || 0.000000) && lon.value != ('' || 0.000000) ) {  
+						
+					removerequired();
+						}
+					}
+				}
+			 	
+			 
+			 
+				if(map && map.checked == false) {
+					removerequired();
+				}
+		    };
+		    document.getElementById('map1').onchange = handler; 
+		    document.getElementById('map1').onkeyup = handler;
+		    document.getElementById('latitude').onchange = handler; 
+		    document.getElementById('latitude').onkeyup = handler;
+		    document.getElementById('longitude').onchange = handler; 
+		    document.getElementById('longitude').onkeyup = handler;
+	}
 	
 	function addrequired() {
 		
@@ -164,6 +237,47 @@ defined('_JEXEC') or die;
   		rechne(restzeichen)
   	}
 </script>
+				
+				 <script>
+      jQuery(function(){
+    	  jQuery("#geocomplete").geocomplete({
+          map: ".map_canvas",
+          details: "form ",
+          detailsAttribute: "geo-data",
+          markerOptions: {
+            draggable: true
+          }
+        });
+        
+    	  jQuery("#geocomplete").bind("geocode:dragged", function(event, latLng){
+    		  jQuery("input[id=latitude]").val(latLng.lat());
+    		  jQuery("input[id=longitude]").val(latLng.lng());
+    		  jQuery("#geocomplete").geocomplete("find", latLng.toString());
+    		 /* option to show the reset-link */
+    		 /* jQuery("#reset").show();*/
+        });
+
+
+
+    	  jQuery("#geocomplete").bind("geocode:result", function(event, result){
+    	  		//var country = document.getElementById("country").value;
+    	  		//document.getElementById("country").value = country;
+        });
+    	  
+    	  
+        /* option to attach a reset function to the reset-link
+    	  jQuery("#reset").click(function(){
+   		  jQuery("#geocomplete").geocomplete("resetMarker");
+   		  jQuery("#reset").hide();
+          return false;
+        });
+     	*/
+        
+    	  jQuery("#find").click(function(){
+    		  jQuery("#geocomplete").trigger("geocode");
+        }).click();
+      });
+    </script>
 
 
 <div id="jem" class="jem_editvenue">
@@ -266,8 +380,20 @@ defined('_JEXEC') or die;
                 </span>
             </div>
             <?php endif; ?>
-		<div><button type="button" onclick="lookupGeoData2();">GeoPicker</button></div>
+		
         </fieldset>
+        
+        <fieldset class="adminform" id="geodata">
+<legend>Geodata</legend>
+
+
+ <input id="geocomplete" type="text" placeholder="Type in an address" value="" />
+      <input id="find" type="button" value="find" />
+      <br><br>
+ <div class="map_canvas"></div>
+        
+      <a id="reset" href="#" style="display:none;">Reset Marker</a>
+</fieldset>
 
       	<?php	if (( $this->jemsettings->imageenabled == 2 ) || ($this->jemsettings->imageenabled == 1)) :	?>
       	<fieldset class="jem_fldst_image">
