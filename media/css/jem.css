@@ -73,7 +73,9 @@ cursor:pointer;
 div#jem .inputbox
 {
 border:1px solid grey;
-background: #B3BABA;
+/*background: #B3BABA;*/
+
+background: #C6CCBE;
 cursor:pointer;
 
 }
