@@ -205,7 +205,7 @@ class com_jemInstallerScript
 	 */
 	private function getParam($name) {
 		$db = JFactory::getDbo();
-		$db->setQuery('SELECT manifest_cache FROM #__extensions WHERE type = "component" and element = "com_jem"');
+		$db->setQuery('SELECT manifest_cache FROM #__extensions WHERE type = "component" AND element = "com_jem"');
 		$manifest = json_decode($db->loadResult(), true);
 		return $manifest[$name];
 	}
@@ -219,7 +219,7 @@ class com_jemInstallerScript
 		if (count($param_array) > 0) {
 			// read the existing component value(s)
 			$db = JFactory::getDbo();
-			$db->setQuery('SELECT params FROM #__extensions WHERE type = "component" and element = "com_jem"');
+			$db->setQuery('SELECT params FROM #__extensions WHERE type = "component" AND element = "com_jem"');
 			$params = json_decode($db->loadResult(), true);
 
 			// add the new variable(s) to the existing one(s)
@@ -231,7 +231,7 @@ class com_jemInstallerScript
 			$paramsString = json_encode($params);
 			$db->setQuery('UPDATE #__extensions SET params = ' .
 					$db->quote($paramsString) .
-					' WHERE name = "com_jem"');
+					' WHERE type = "component" AND element = "com_jem"');
 			$db->query();
 		}
 	}
@@ -243,6 +243,11 @@ class com_jemInstallerScript
 		$query = "SELECT extension_id FROM #__extensions WHERE type='component' and element='com_jem'";
 		$db->setQuery($query);
 		$extensionId = $db->loadResult();
+
+		if(!$extensionId) {
+			// This is a fresh installation, return
+			return;
+		}
 
 		// Check if an entry already exists in schemas table
 		$query = $db->getQuery(true);
