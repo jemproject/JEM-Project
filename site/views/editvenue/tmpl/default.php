@@ -244,6 +244,7 @@ defined('_JEXEC') or die;
           map: ".map_canvas",
           details: "form ",
           detailsAttribute: "geo-data",
+          types: ['establishment', 'geocode'],	
           markerOptions: {
             draggable: true
           }
