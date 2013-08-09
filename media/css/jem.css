@@ -46,6 +46,14 @@ div#jem .tabs
 margin:inherit;
 }
 
+input .required {
+    background-color: rgb(213, 238, 255) !important;
+}
+
+/* container JEM, 2 classes (inputbox + required) specified */
+div#jem .inputbox.required {
+    background-color: rgb(213, 238, 255) !important;
+}
 
 
 div#jem .inputbox:hover
