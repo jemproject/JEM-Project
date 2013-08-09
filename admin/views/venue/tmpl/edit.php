@@ -160,6 +160,7 @@ function test()
           map: ".map_canvas",
           details: "form ",
           detailsAttribute: "geo-data",
+          types: ['establishment', 'geocode'],				
           markerOptions: {
             draggable: true
           }
