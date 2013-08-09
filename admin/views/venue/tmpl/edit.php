@@ -70,6 +70,14 @@ $params = $params->toArray();
 	    attribute.nodeValue = "street_address"
 	    document.getElementById("jform_street").setAttributeNode(attribute);
 
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "lat"
+	    document.getElementById("jform_latitude").setAttributeNode(attribute);
+
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "lng"
+	    document.getElementById("jform_longitude").setAttributeNode(attribute);
+
 	    
   
 	}
