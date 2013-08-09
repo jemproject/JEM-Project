@@ -118,7 +118,7 @@ case 1:
 			<td>
 				<?php
 				if (JString::strlen($row->alias) > 25) {
-					echo JString::substr( JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($row->alias), 0 , 25)).'...';
+					echo JString::substr($this->escape($row->alias), 0 , 25).'...';
 				} else {
 					echo $this->escape($row->alias);
 				}
