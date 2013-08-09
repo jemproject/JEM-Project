@@ -145,31 +145,6 @@ defined('_JEXEC') or die;
 		var venue = form.venue.value;
 		venue.replace(/\s/g,'');
 		
-		var map = $('map1');
-		var streetcheck = $(form.street).hasClass('required');
-	
-		//workaround cause validate strict doesn't allow and operator
-		//and ie doesn't understand CDATA properly
-		if (map && map.checked) {
-			var lat = $('latitude');
-			var lon = $('longitude');
-			if(lat.value == '') {  
-				if(lon.value == '') {
-					if(!streetcheck) {  
-						addrequired();
-					}
-				}
-			} else {
-				//if coordinates are given remove check for address
-				removerequired();
-			}
-		}
-
-		if (map && !map.checked) {
-			if(streetcheck) {  
-				removerequired();
-			}
-		}
 
 		if ( venue.length==0 ) {
    			alert("<?php echo JText::_( 'COM_JEM_ERROR_ADD_VENUE', true ); ?>");
