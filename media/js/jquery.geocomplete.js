@@ -63,7 +63,7 @@
     "neighborhood premise subpremise postal_code natural_feature airport " +
     "park point_of_interest post_box street_number floor room " +
     "lat lng viewport location " +
-    "formatted_address location_type bounds").split(" ");
+    "formatted_address street_address location_type bounds").split(" ");
 
   // See: [Places Details Responses](https://developers.google.com/maps/documentation/javascript/places#place_details_responses)
   // on Google Developers.
@@ -353,6 +353,9 @@
       // Add infos about the address and geometry.
       $.extend(data, {
         formatted_address: result.formatted_address,
+        // added custom text
+        street_address: result.formatted_address.split(',')[0],
+        // continue original
         location_type: geometry.location_type || "PLACES",
         viewport: viewport,
         bounds: bounds,

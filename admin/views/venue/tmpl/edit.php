@@ -7,7 +7,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die;
 
 
 JHtml::_('behavior.tooltip');
@@ -66,6 +66,11 @@ $params = $params->toArray();
 	    attribute.nodeValue = "administrative_area_level_1"
 	    document.getElementById("jform_state").setAttributeNode(attribute);
 
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "street_address"
+	    document.getElementById("jform_street").setAttributeNode(attribute);
+
+	    
   
 	}
 
@@ -163,13 +168,8 @@ function test()
 
 
     	  jQuery("#geocomplete").bind("geocode:result", function(event, result){
-				var street = document.getElementById("route").value ;
-    	  		var streetnumber = document.getElementById("street_number").value ;
     	  		var country = document.getElementById("country").value;
-    	  		
-    	  		document.getElementById("jform_street").value = street + ' ' + streetnumber;
     	  		document.getElementById("jform_country").value = country;
-    	  	
         });
     	  
     	  
@@ -356,10 +356,6 @@ function test()
 			
 				
 		<div class="clr"></div>
-	
-	
-        <input id="route" name="" geo-data="route" type="hidden" value="">
-        <input id="street_number" name="street_number" geo-data="street_number" type="hidden" value="">
        <input id="country" name="country" geo-data="country_short" type="hidden" value="">
    
 </form>
