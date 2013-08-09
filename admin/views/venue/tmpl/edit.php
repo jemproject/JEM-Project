@@ -38,6 +38,7 @@ $params = $params->toArray();
 		var form = document.getElementById('venue-form');
 		var map = $('jform_map');
 		setAttribute();
+		test();
 		
 		if(map && map.checked == true) {
 			addrequired();
