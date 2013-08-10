@@ -12,8 +12,8 @@
 		<field name="alias" type="text" class="inputbox" size="40"
 			label="COM_JEM_ALIAS" description="COM_JEM_ALIAS" required="false" />
 
-		<field name="datdescription" type="editor" class="inputbox"
-			rows="3" cols="40" label="COM_JEM_EVENT_DESCRIPTION" description="COM_JEM_EVENT_DESCRIPTION_DESC" />
+		<field name="datdescription" type="editor" hide="pagebreak,readmore" class="inputbox"
+			rows="3" cols="40" label="COM_JEM_EVENT_DESCRIPTION" description="COM_JEM_EVENT_DESCRIPTION_DESC" filter="safehtml" />
 
 		<field name="dates" type="calendar" label="COM_JEM_DATE"
 			description="COM_JEM_DATE" class="inputbox" size="22" format="%Y-%m-%d" />
