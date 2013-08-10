@@ -172,7 +172,7 @@ class com_jemInstallerScript
 			// Installing component version as per Manifest file
 			$newRelease = $parent->get('manifest')->version;
 
-			if (version_compare($newRelease, $oldRelease, 'le')) {
+			if (version_compare($newRelease, $oldRelease, 'lt')) {
 				Jerror::raiseWarning(100, JText::sprintf('COM_JEM_PREFLIGHT_INCORRECT_VERSION_SEQUENCE', $oldRelease, $newRelease));
 				return false;
 			}
