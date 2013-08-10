@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<extension type="package" version="2.5">
-	<name>JEM Package</name>
+<extension type="package" version="2.5" method="upgrade">
+	<name>pkg_jem</name>
 	<packagename>jem</packagename>
-	<creationDate>27 April 2013</creationDate>
+	<creationDate>04 August 2013</creationDate>
 	<copyright>Copyright (C) 2013-2013 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
 
-	<version>1.9.0</version>
-	<description>JEM package combined with important modules and plugins.</description>
+	<version>1.9.1</version>
+	<description>PKG_JEM_INSTALLATION_DESCRIPTION</description>
 	<url>http://www.joomlaeventmanager.net/</url>
 	<packager>JEM Community</packager>
 	<packagerurl>http://www.joomlaeventmanager.net/</packagerurl>
@@ -25,4 +25,8 @@
 		<file type="plugin" id="comments" group="jem">plg_jem_comments.zip</file>
 		<file type="plugin" id="mailer" group="jem">plg_jem_mailer.zip</file>
 	</files>
+	
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.pkg_jem.sys.ini</language>
+	</languages>
 </extension>
