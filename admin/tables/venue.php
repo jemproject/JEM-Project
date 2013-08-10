@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 
 /**
  * JEM Venue Model
- * 
+ *
  */
 class JEMTableVenue extends JTable
 {
@@ -23,7 +23,7 @@ class JEMTableVenue extends JTable
 	}
 
 
-	
+
 	// overloaded check function
 	function check()
 	{
@@ -32,35 +32,34 @@ class JEMTableVenue extends JTable
 			$this->setError = JText::_('COM_JEM_ADD_VENUE');
 			return false;
 		}
-		
-		
-		
+
+
+
 		// Set alias
 		$this->alias = JApplication::stringURLSafe($this->alias);
 		if (empty($this->alias)) {
 			$this->alias = JApplication::stringURLSafe($this->venue);
 		}
-		
-		
+
+
 		if ( $this->map ){
-			if ( !trim($this->street) || !trim($this->city) || !trim($this->country) || !trim($this->plz) ) {
+			if ( !trim($this->street) || !trim($this->city) || !trim($this->country) || !trim($this->postalCode) ) {
 				if (( !trim($this->latitude) && !trim($this->longitude))) {
 					$this->setError = JText::_('COM_JEM_ERROR_ADDRESS');
 					return false;
 				}
 			}
 		}
-		
+
 		if (JFilterInput::checkAttribute(array ('href', $this->url))) {
 			$this->setError = JText::_('COM_JEM_ERROR_URL_WRONG_FORMAT');
 			return false;
 		}
-		
+
 		if (trim($this->url)) {
 			$this->url = strip_tags($this->url);
-			$urllength = strlen($this->url);
-		
-			if ($urllength > 199) {
+
+			if (strlen($this->url) > 199) {
 				$this->setError = JText::_('COM_JEM_ERROR_URL_LONG');
 				return false;
 			}
@@ -70,48 +69,42 @@ class JEMTableVenue extends JTable
 				return false;
 			}
 		}
-		
+
 		$this->street = strip_tags($this->street);
 		$streetlength = JString::strlen($this->street);
 		if ($streetlength > 50) {
 			$this->setError = JText::_('COM_JEM_ERROR_STREET_LONG');
 			return false;
 		}
-		
-		$this->plz = strip_tags($this->plz);
-		$plzlength = JString::strlen($this->plz);
-		if ($plzlength > 10) {
+
+		$this->postalCode = strip_tags($this->postalCode);
+		if (JString::strlen($this->postalCode) > 10) {
 			$this->setError = JText::_('COM_JEM_ERROR_ZIP_LONG');
 			return false;
 		}
-		
+
 		$this->city = strip_tags($this->city);
-		$citylength = JString::strlen($this->city);
-		if ($citylength > 50) {
+		if (JString::strlen($this->city) > 50) {
 			$this->setError = JText::_('COM_JEM_ERROR_CITY_LONG');
 			return false;
 		}
-		
+
 		$this->state = strip_tags($this->state);
-		$statelength = JString::strlen($this->state);
-		if ($statelength > 50) {
+		if (JString::strlen($this->state) > 50) {
 			$this->setError = JText::_('COM_JEM_ERROR_STATE_LONG');
 			return false;
 		}
-		
+
 		$this->country = strip_tags($this->country);
-		$countrylength = JString::strlen($this->country);
-		if ($countrylength > 2) {
+		if (JString::strlen($this->country) > 2) {
 			$this->setError = JText::_('COM_JEM_ERROR_COUNTRY_LONG');
 			return false;
 		}
-		
-		
 
 		return true;
 	}
-	
-	
+
+
 	/**
 	 * Overload the store method for the Venue table.
 	 *
@@ -121,19 +114,19 @@ class JEMTableVenue extends JTable
 		// Debugging
 		/* var_dump($_FILES);exit; */
 		/* var_dump($_POST);exit; */
-		
-		
+
+
 		//$date	= JFactory::getDate();
 		//$user	= JFactory::getUser();
-		
-		
-		
-	
+
+
+
+
 			// Verify that the alias is unique
 			$table = JTable::getInstance('Venue', 'JEMTable');
 					/*if ($table->load(array('alias'=>$this->alias, 'catid'=>$this->catid)) && ($table->id != $this->id || $this->id==0)) {*/
 			//if ($table->load(array('alias'=>$this->alias)) && ($table->id != $this->id || $this->id==0)) {
-			
+
 			//
 			//		$this->setError(JText::_('COM_JEM_ERROR_UNIQUE_ALIAS'));
 			//		return false;
@@ -141,22 +134,22 @@ class JEMTableVenue extends JTable
 					// Attempt to store the user data.
 					return parent::store($updateNulls);
 		}
-	
-		
+
+
 		public function bind($array, $ignore = '')
 		{
-			
+
 			// in here we are checking for the empty value of the checkbox
-			
+
 			if (!isset($array['map']))
 				$array['map'] = 0 ;
-		
+
 			//don't override without calling base class
 			return parent::bind($array, $ignore);
-		}	
-		
-		
-		
+		}
+
+
+
 		/**
 	 * Method to set the publishing state for a row or list of rows in the database
 	 * table. The method respects checked out rows by other users and will attempt
@@ -169,7 +162,7 @@ class JEMTableVenue extends JTable
 	 *
 	 * @return  boolean  True on success.
 	 *
-	 * 
+	 *
 	 */
 	function publish($pks = null, $state = 1, $userId = 0)
 	{
@@ -245,6 +238,6 @@ class JEMTableVenue extends JTable
 		return true;
 	}
 
-	
+
 }
 ?>

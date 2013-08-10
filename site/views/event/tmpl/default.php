@@ -206,10 +206,10 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 				</dd>
 				<?php endif; ?>
 
-				<?php if ($this->row->plz) : ?>
-				<dt class="venue_plz"><?php echo JText::_('COM_JEM_ZIP').':'; ?></dt>
-				<dd class="venue_plz">
-					<?php echo $this->escape($this->row->plz); ?>
+				<?php if ($this->row->postalCode) : ?>
+				<dt class="venue_postalCode"><?php echo JText::_('COM_JEM_ZIP').':'; ?></dt>
+				<dd class="venue_postalCode">
+					<?php echo $this->escape($this->row->postalCode); ?>
 				</dd>
 				<?php endif; ?>
 

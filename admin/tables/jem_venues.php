@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
  * JEM venues Model class
  *
  * @package JEM
- * 
+ *
  */
 class jem_venues extends JTable
 {
@@ -31,7 +31,7 @@ class jem_venues extends JTable
 	/** @var string */
 	var $street 			= '';
 	/** @var string */
-	var $plz 				= '';
+	var $postalCode			= '';
 	/** @var string */
 	var $city 				= '';
 	/** @var string */
@@ -96,7 +96,7 @@ class jem_venues extends JTable
 		}
 
 		if ( $this->map ){
-			if ( !trim($this->street) || !trim($this->city) || !trim($this->country) || !trim($this->plz) ) {
+			if ( !trim($this->street) || !trim($this->city) || !trim($this->country) || !trim($this->postalCode) ) {
 				if (( !trim($this->latitude) && !trim($this->longitude))) {
 					$this->_error = JText::_('COM_JEM_ERROR_ADDRESS');
 					JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
@@ -113,9 +113,8 @@ class jem_venues extends JTable
 
 		if (trim($this->url)) {
 			$this->url = strip_tags($this->url);
-			$urllength = strlen($this->url);
 
-			if ($urllength > 199) {
+			if (strlen($this->url) > 199) {
 				$this->_error = JText::_('COM_JEM_ERROR_URL_LONG');
 				JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
 				return false;
@@ -129,40 +128,35 @@ class jem_venues extends JTable
 		}
 
 		$this->street = strip_tags($this->street);
-		$streetlength = JString::strlen($this->street);
-		if ($streetlength > 50) {
+		if (JString::strlen($this->street) > 50) {
 			$this->_error = JText::_('COM_JEM_ERROR_STREET_LONG');
 			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
 			return false;
 		}
 
-		$this->plz = strip_tags($this->plz);
-		$plzlength = JString::strlen($this->plz);
-		if ($plzlength > 10) {
+		$this->postalCode = strip_tags($this->postalCode);
+		if (JString::strlen($this->postalCode) > 10) {
 			$this->_error = JText::_('COM_JEM_ERROR_ZIP_LONG');
 			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
 			return false;
 		}
 
 		$this->city = strip_tags($this->city);
-		$citylength = JString::strlen($this->city);
-		if ($citylength > 50) {
+		if (JString::strlen($this->city) > 50) {
 			$this->_error = JText::_('COM_JEM_ERROR_CITY_LONG');
 			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
 			return false;
 		}
 
 		$this->state = strip_tags($this->state);
-		$statelength = JString::strlen($this->state);
-		if ($statelength > 50) {
+		if (JString::strlen($this->state) > 50) {
 			$this->_error = JText::_('COM_JEM_ERROR_STATE_LONG');
 			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
 			return false;
 		}
 
 		$this->country = strip_tags($this->country);
-		$countrylength = JString::strlen($this->country);
-		if ($countrylength > 2) {
+		if (JString::strlen($this->country) > 2) {
 			$this->_error = JText::_('COM_JEM_ERROR_COUNTRY_LONG');
 			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
 			return false;

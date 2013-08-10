@@ -4,7 +4,7 @@ function lookupGeoData() {
                                           'jform_latitude'        :    '<LAT>',
                                           'jform_longitude'        :    '<LNG>',
                                           'jform_street'        :    '<STREET> <STREETNUMBER>',
-                                          'jform_plz'        :    '<POSTALCODE>',
+                                          'jform_postalCode'        :    '<POSTALCODE>',
                                           'jform_city'        :    '<CITY>',
                                           'jform_state' : '<STATE_LONG>',
                                           'jform_country' : '<COUNTRY>'
@@ -20,7 +20,7 @@ function lookupGeoData2() {
                                   'latitude'        :    '<LAT>',
                                   'longitude'        :    '<LNG>',
                                   'street'        :    '<STREET> <STREETNUMBER>',
-                                  'plz'        :    '<POSTALCODE>',
+                                  'postalCode'        :    '<POSTALCODE>',
                                   'city'        :    '<CITY>',
                                   'state' : '<STATE_LONG>',
                                   'country' : '<COUNTRY>'

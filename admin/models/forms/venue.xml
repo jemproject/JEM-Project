@@ -37,7 +37,7 @@
 			size="40" label="COM_JEM_LONGITUDE"
 			description="COM_JEM_LONGITUDE" />
 			
-			<field name="plz"  type="text" class="inputbox"
+			<field name="postalCode"  type="text" class="inputbox"
 			size="40" label="COM_JEM_ZIP"
 			description="COM_JEM_ZIP" />
 			

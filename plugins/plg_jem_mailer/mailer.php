@@ -441,7 +441,7 @@ class plgJEMMailer extends JPlugin {
 		$db 	= JFactory::getDBO();
 		$user 	= JFactory::getUser();
 
-		$query = ' SELECT v.id, v.published, v.venue, v.city, v.street, v.plz, v.url, v.country, v.locdescription, v.created, v.modified,'
+		$query = ' SELECT v.id, v.published, v.venue, v.city, v.street, v.postalCode, v.url, v.country, v.locdescription, v.created, v.modified,'
 				. ' CASE WHEN CHAR_LENGTH(v.alias) THEN CONCAT_WS(\':\', v.id, v.alias) ELSE v.id END as slug'
 				. ' FROM #__jem_venues AS v'
 				. ' WHERE v.id = ' . (int)$venue_id;
@@ -472,7 +472,7 @@ class plgJEMMailer extends JPlugin {
 				$data 				= new stdClass();
 				$edited 			= JHTML::Date( $venue->modified, JText::_( 'DATE_FORMAT_LC2' ) );
 				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_EDIT_VENUE_MAIL', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_EDIT_VENUE', $user->name, $user->username, $user->email, $modified_ip, $edited, $venue->venue, $venue->url, $venue->street, $venue->plz, $venue->city, $venue->country, $text_description, $state);
+				$data->body			= JText::sprintf('PLG_JEM_MAILER_EDIT_VENUE', $user->name, $user->username, $user->email, $modified_ip, $edited, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $state);
 				$data->receivers 	= $this->_receivers;
 
 				$this->_mailer($data);
@@ -485,7 +485,7 @@ class plgJEMMailer extends JPlugin {
 				$data 				= new stdClass();
 				$created 			= JHTML::Date( $venue->created, JText::_( 'DATE_FORMAT_LC2' ) );
 				$data->subject		= JText::sprintf('PLG_JEM_MAILER_NEW_VENUE_MAIL', $this->_SiteName);
-				$data->body 		= JText::sprintf('PLG_JEM_MAILER_NEW_VENUE', $user->name, $user->username, $user->email, $venue->author_ip, $created, $venue->venue, $venue->url, $venue->street, $venue->plz, $venue->city, $venue->country, $text_description, $state);
+				$data->body 		= JText::sprintf('PLG_JEM_MAILER_NEW_VENUE', $user->name, $user->username, $user->email, $venue->author_ip, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $state);
 				$data->receivers 	= $this->_receivers;
 
 				$this->_mailer($data);
@@ -501,7 +501,7 @@ class plgJEMMailer extends JPlugin {
 
 				$data 				= new stdClass();
 				$edited 			= JHTML::Date( $venue->modified, JText::_( 'DATE_FORMAT_LC2' ) );
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_VENUE', $user->name, $user->username, $isNew, $venue->venue, $venue->url, $venue->street, $venue->plz, $venue->city, $venue->country, $text_description, $state);
+				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_VENUE', $user->name, $user->username, $isNew, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $state);
 				$data->subject		= JText::sprintf( 'PLG_JEM_MAILER_EDIT_USER_VENUE_MAIL', $this->_SiteName );
 				$data->receivers 	= $user->email;
 
@@ -512,7 +512,7 @@ class plgJEMMailer extends JPlugin {
 			if ($this->params->get('newvenue_mail_user', '1')) {
 				$data 				= new stdClass();
 				$created 			= JHTML::Date( $venue->created, JText::_( 'DATE_FORMAT_LC2' ) );
-				$data->body 		= JText::sprintf('PLG_JEM_MAILER_USER_MAIL_NEW_VENUE', $user->name, $user->username, $created, $venue->venue, $venue->url, $venue->street, $venue->plz, $venue->city, $venue->country, $text_description, $state);
+				$data->body 		= JText::sprintf('PLG_JEM_MAILER_USER_MAIL_NEW_VENUE', $user->name, $user->username, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $state);
 				$data->subject		= JText::sprintf( 'PLG_JEM_MAILER_NEW_USER_VENUE_MAIL', $this->_SiteName );
 				$data->receivers 	= $user->email;
 

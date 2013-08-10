@@ -39,10 +39,10 @@ $params = $params->toArray();
 		var map = $('jform_map');
 		setAttribute();
 		test();
-		
+
 		if(map && map.checked == true) {
 			addrequired();
-		}	
+		}
 
 		if(map && map.checked == false) {
 			removerequired();
@@ -50,13 +50,13 @@ $params = $params->toArray();
 
 	});
 
-	
+
 	function setAttribute()
 	{
 
 		var attribute = document.createAttribute("geo-data");
 	    attribute.nodeValue = "postal_code"
-	    document.getElementById("jform_plz").setAttributeNode(attribute);
+	    document.getElementById("jform_postalCode").setAttributeNode(attribute);
 
 	    var attribute = document.createAttribute("geo-data");
 	    attribute.nodeValue = "locality"
@@ -78,19 +78,19 @@ $params = $params->toArray();
 	    attribute.nodeValue = "lng"
 	    document.getElementById("jform_longitude").setAttributeNode(attribute);
 
-	    
-  
+
+
 	}
 
 
 
-	
+
 function meta()
 {
 	f=document.getElementById('venue-form');
 	f.jform_meta_keywords.value=f.jform_venue.value+', '+f.jform_city.value+f.jform_meta_keywords.value;
 }
-	
+
 
 function test()
 {
@@ -100,72 +100,72 @@ function test()
 			var map = $('jform_map');
 
 			var streetcheck = $(form.jform_street).hasClass('required');
-		 
+
 		 if(map && map.checked == true) {
 			 var lat = $('jform_latitude');
 				var lon = $('jform_longitude');
 				if(lat.value == ('' || 0.000000) || lon.value == ('' || 0.000000)) {
-						if(!streetcheck) {  
+						if(!streetcheck) {
 							addrequired();
 						}
-					
+
 			} else {
-				if(lat.value != ('' || 0.000000) && lon.value != ('' || 0.000000) ) {  
-					
+				if(lat.value != ('' || 0.000000) && lon.value != ('' || 0.000000) ) {
+
 				removerequired();
 					}
 				}
 			}
-		 	
-		 
-		 
+
+
+
 			if(map && map.checked == false) {
 				removerequired();
 			}
 	    };
-	    document.getElementById('jform_map').onchange = handler; 
+	    document.getElementById('jform_map').onchange = handler;
 	    document.getElementById('jform_map').onkeyup = handler;
-	    document.getElementById('jform_latitude').onchange = handler; 
+	    document.getElementById('jform_latitude').onchange = handler;
 	    document.getElementById('jform_latitude').onkeyup = handler;
-	    document.getElementById('jform_longitude').onchange = handler; 
+	    document.getElementById('jform_longitude').onchange = handler;
 	    document.getElementById('jform_longitude').onkeyup = handler;
 }
-	
+
 	function addrequired() {
-		
+
 		var form = document.getElementById('venue-form');
-		
+
 		$(form.jform_street).addClass('required');
-		$(form.jform_plz).addClass('required');
+		$(form.jform_postalCode).addClass('required');
 		$(form.jform_city).addClass('required');
 		$(form.jform_country).addClass('required');
 	}
-	
+
 	function removerequired() {
-		
+
 		var form = document.getElementById('venue-form');
-		
+
 		$(form.jform_street).removeClass('required');
-		$(form.jform_plz).removeClass('required');
+		$(form.jform_postalCode).removeClass('required');
 		$(form.jform_city).removeClass('required');
 		$(form.jform_country).removeClass('required');
 	}
 
 	</script>
 
-    
+
     <script>
       jQuery(function(){
     	  jQuery("#geocomplete").geocomplete({
           map: ".map_canvas",
           details: "form ",
           detailsAttribute: "geo-data",
-          types: ['establishment', 'geocode'],				
+          types: ['establishment', 'geocode'],
           markerOptions: {
             draggable: true
           }
         });
-        
+
     	  jQuery("#geocomplete").bind("geocode:dragged", function(event, latLng){
     		  jQuery("input[id=jform_latitude]").val(latLng.lat());
     		  jQuery("input[id=jform_longitude]").val(latLng.lng());
@@ -180,8 +180,8 @@ function test()
     	  		var country = document.getElementById("country").value;
     	  		document.getElementById("jform_country").value = country;
         });
-    	  
-    	  
+
+
         /* option to attach a reset function to the reset-link
     	  jQuery("#reset").click(function(){
    		  jQuery("#geocomplete").geocomplete("resetMarker");
@@ -189,7 +189,7 @@ function test()
           return false;
         });
      	*/
-        
+
     	  jQuery("#find").click(function(){
     		  jQuery("#geocomplete").trigger("geocode");
         }).click();
@@ -203,10 +203,10 @@ function test()
 
 	<!-- START OF LEFT DIV -->
 	<div class="width-55 fltlft">
-	
+
 <?php echo JHtml::_('tabs.start', 'det-pane'); ?>
 		<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_VENUE_INFO_TAB'), 'info' ); ?>
-		
+
 		<!-- START OF LEFT FIELDSET -->
 		<fieldset class="adminform">
 			<legend>
@@ -217,28 +217,28 @@ function test()
 
 				<li><?php echo $this->form->getLabel('venue');?> <?php echo $this->form->getInput('venue'); ?>
 				</li>
-				
+
 				<li><?php echo $this->form->getLabel('alias'); ?> <?php echo $this->form->getInput('alias'); ?>
 				</li>
-				
+
 				<li><?php echo $this->form->getLabel('street'); ?> <?php echo $this->form->getInput('street'); ?>
 				</li>
-				
-				<li><?php echo $this->form->getLabel('plz'); ?> <?php echo $this->form->getInput('plz'); ?>
+
+				<li><?php echo $this->form->getLabel('postalCode'); ?> <?php echo $this->form->getInput('postalCode'); ?>
 				</li>
-				
+
 				<li><?php echo $this->form->getLabel('city'); ?> <?php echo $this->form->getInput('city'); ?>
 				</li>
 
 				<li><?php echo $this->form->getLabel('state'); ?> <?php echo $this->form->getInput('state'); ?>
 				</li>
-				
+
 				<li><?php echo $this->form->getLabel('country'); ?> <?php echo $this->form->getInput('country'); ?>
 				</li>
 
 				<li><?php echo $this->form->getLabel('url'); ?> <?php echo $this->form->getInput('url'); ?>
 				</li>
-		 
+
 </fieldset>
 
 
@@ -250,7 +250,7 @@ function test()
       <input id="find" type="button" value="find" />
       <br><br>
  <div class="map_canvas"></div>
-        
+
       <a id="reset" href="#" style="display:none;">Reset Marker</a>
 </fieldset>
 
@@ -268,12 +268,12 @@ function test()
 				<li><?php echo $this->form->getLabel('published'); ?> <?php echo $this->form->getInput('published'); ?>
 				</li>
 				</ul>
-				
+
 			<div class="clr"></div>
 			</fieldset>
-			
+
 			<fieldset class="adminform">
-			
+
 			<div>
 				<?php echo $this->form->getLabel('locdescription'); ?>
 				<div class="clr"></div>
@@ -298,9 +298,9 @@ function test()
 		<!-- START OF SLIDERS -->
 		<?php echo JHtml::_('sliders.start', 'venue-sliders-'.$this->item->id, array('useCookie'=>1)); ?>
 
-		
-		
-		
+
+
+
 		<!-- START OF PANEL PUBLISHING -->
 		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_FIELDSET_PUBLISHING'), 'publishing-details'); ?>
 
@@ -315,24 +315,24 @@ function test()
 			</ul>
 		</fieldset>
 
-		
-		
-		
+
+
+
 		<!-- START OF PANEL IMAGE -->
 		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_IMAGE'), 'image-event'); ?>
 
-		
+
 		<fieldset class="panelform">
 			<ul class="adminformlist">
 				<li><?php echo $this->form->getLabel('locimage'); ?> <?php echo $this->form->getInput('locimage'); ?>
 				</li>
 			</ul>
 		</fieldset>
-		
-		
-		
-		
-		
+
+
+
+
+
 		<!-- START OF PANEL META -->
 		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_METADATA_INFORMATION'), 'meta-event'); ?>
 
@@ -348,26 +348,25 @@ function test()
 			</ul>
 		</fieldset>
 
-		
-		
+
+
 
 	<?php echo JHtml::_('sliders.end'); ?>
-	
-<input type="hidden" name="task" value="" />	
+
+<input type="hidden" name="task" value="" />
 <input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
 				</li>
-				
-							
+
+
 				<!--  END RIGHT DIV -->
 				<?php echo JHTML::_( 'form.token' ); ?>
 				</div>
-			
-			
-				
+
+
+
 		<div class="clr"></div>
        <input id="country" name="country" geo-data="country_short" type="hidden" value="">
-   
+
 </form>
 
 
-        

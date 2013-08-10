@@ -39,7 +39,7 @@ class JEMModelVenues extends JModelList
 					'country', 'a.country',
 					'url', 'a.url',
 					'street', 'a.street',
-					'plz', 'a.plz',
+					'postalCode', 'a.postalCode',
 					'city', 'a.city',
 					'ordering', 'a.ordering',
 					'created', 'a.created',
@@ -131,7 +131,7 @@ class JEMModelVenues extends JModelList
 		$query->select(
 				$this->getState(
 						'list.select',
-						'a.id, a.venue, a.alias, a.url, a.street, a.plz, a.city, a.state, a.country,'
+						'a.id, a.venue, a.alias, a.url, a.street, a.postalCode, a.city, a.state, a.country,'
 						.'a.latitude, a.longitude, a.locdescription, a.meta_keywords, a.meta_description,'
 						.'a.locimage, a.map, a.created_by, a.author_ip, a.created, a.created, a.modified,'
 						.'a.modified_by, a.version, a.published, a.checked_out, a.checked_out_time,'

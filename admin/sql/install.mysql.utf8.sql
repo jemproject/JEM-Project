@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
   `alias` varchar(100) NOT NULL default '',
   `url` varchar(200)  NOT NULL default '',
   `street` varchar(50) default NULL,
-  `plz` varchar(20) default NULL,
+  `postalCode` varchar(20) default NULL,
   `city` varchar(50) default NULL,
   `state` varchar(50) default NULL,
   `country` varchar(2) default NULL,

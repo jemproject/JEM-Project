@@ -1,6 +1,7 @@
 ALTER TABLE `#__jem_venues`
 	ADD publish_up datetime NOT NULL,
-	ADD publish_down datetime NOT NULL;
+	ADD publish_down datetime NOT NULL,
+	CHANGE plz postalCode varchar(20) default NULL;
 	
 ALTER TABLE `#__jem_groups`
 	ADD addvenue int(11) NOT NULL,
@@ -9,7 +10,7 @@ ALTER TABLE `#__jem_groups`
 	ADD editvenue int(11) NOT NULL;
 	
 ALTER TABLE `#__jem_countries`
-	CHANGE name name VARCHAR(100);
+	CHANGE name name varchar(100) NOT NULL;
 
 UPDATE `#__jem_countries` SET name = 'Afghanistan, Islamic Republic of' WHERE id = 1;
 UPDATE `#__jem_countries` SET name = 'Aland Islands' WHERE id = 2;

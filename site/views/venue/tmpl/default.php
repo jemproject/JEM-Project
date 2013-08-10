@@ -41,10 +41,10 @@ defined('_JEXEC') or die;
 			</dd>
 			<?php endif; ?>
 
-			<?php if ( $this->venue->plz ) : ?>
-			<dt class="venue_plz"><?php echo JText::_( 'COM_JEM_ZIP' ).':'; ?></dt>
-			<dd class="venue_plz" itemprop="postalCode">
-				<?php echo $this->escape($this->venue->plz); ?>
+			<?php if ( $this->venue->postalCode ) : ?>
+			<dt class="venue_postalCode"><?php echo JText::_( 'COM_JEM_ZIP' ).':'; ?></dt>
+			<dd class="venue_postalCode" itemprop="postalCode">
+				<?php echo $this->escape($this->venue->postalCode); ?>
 			</dd>
 			<?php endif; ?>
 

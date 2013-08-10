@@ -24,9 +24,9 @@ defined('_JEXEC') or die;
 		} else if (form.street.value == "" && form.map.value == "1"){
 			alert( "<?php echo JText::_( 'COM_JEM_ADD_STREET' ); ?>" );
 			form.street.focus();
-		} else if (form.plz.value == "" && form.map.value == "1"){
+		} else if (form.postalCode.value == "" && form.map.value == "1"){
 			alert( "<?php echo JText::_( 'COM_JEM_ADD_ZIP' ); ?>" );
-			form.plz.focus();
+			form.postalCode.focus();
 		} else if (form.country.value == "" && form.map.value == "1"){
 			alert( "<?php echo JText::_( 'COM_JEM_ADD_COUNTRY' ); ?>" );
 			form.country.focus();
@@ -81,7 +81,7 @@ $infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', 
 	 	</tr>
   		<tr>
   		  	<td><?php echo JText::_( 'COM_JEM_ZIP' ).':'; ?></td>
-  		  	<td><input name="plz" value="" size="15" maxlength="10" /></td>
+  		  	<td><input name="postalCode" value="" size="15" maxlength="10" /></td>
 	  	</tr>
   		<tr>
   			<td><?php echo JText::_( 'COM_JEM_CITY' ).':'; ?></td>

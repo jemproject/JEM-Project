@@ -67,12 +67,12 @@ defined('_JEXEC') or die;
 		</dd>
 		<?php endif; ?>
 
-		<?php if ( $row->plz ) : ?>
-		<dt class="venue_plz">
+		<?php if ( $row->postalCode ) : ?>
+		<dt class="venue_postalCode">
 			<?php echo JText::_( 'COM_JEM_ZIP' ).':'; ?>
 		</dt>
-		<dd class="venue_plz">
-			<?php echo $this->escape($row->plz); ?>
+		<dd class="venue_postalCode">
+			<?php echo $this->escape($row->postalCode); ?>
 		</dd>
 		<?php endif; ?>
 
