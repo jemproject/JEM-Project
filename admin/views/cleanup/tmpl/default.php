@@ -10,7 +10,11 @@
 defined('_JEXEC') or die;
 ?>
 <table style="width:100%">
+	
+	
+	<!-- FIRST TR -->
 	<tr>
+		<!-- CLEAN EVENT IMG -->
 		<td width="10%">
 			<div class="linkicon">
 				<a href="index.php?option=com_jem&amp;task=cleanup.cleaneventimg">
@@ -22,6 +26,8 @@ defined('_JEXEC') or die;
 		<td width="40%" valign="middle">
 			<?php echo JText::_( 'COM_JEM_CLEANUP_EVENT_IMG_DESC' ); ?>
 		</td>
+		
+		<!-- CLEAN VENUE IMG -->
 		<td width="10%">
 			<div class="linkicon">
 				<a href="index.php?option=com_jem&amp;task=cleanup.cleanvenueimg">
@@ -34,7 +40,12 @@ defined('_JEXEC') or die;
 			<?php echo JText::_( 'COM_JEM_CLEANUP_VENUE_IMG_DESC' ); ?>
 		</td>
 		</tr>
-		<tr>
+		
+		
+		
+	<!-- SECOND TR -->	
+	<tr>
+		<!-- CLEAN CATEGORY IMG -->
 		<td width="10%">
 			<div class="linkicon">
 				<a href="index.php?option=com_jem&amp;task=cleanup.cleancategoryimg">
@@ -47,22 +58,46 @@ defined('_JEXEC') or die;
 			<?php echo JText::_( 'COM_JEM_CLEANUP_CATEGORY_IMG_DESC' ); ?>
 		</td>
 		
-		
-		
-		
-	
-    <td width="10%">
-      <div class="linkicon">
-        <a href="index.php?option=com_jem&amp;task=cleanup.triggerarchive">
-          <?php echo JHTML::_('image', 'media/com_jem/images/icon-48-archive.png',  JText::_( 'COM_JEM_CLEANUP_TRIGGER_AUTOARCHIVE' ) ); ?>
-          <span><?php echo JText::_( 'COM_JEM_CLEANUP_TRIGGER_AUTOARCHIVE' ); ?></span>
-        </a>
-      </div>
-    </td>
-    <td width="40%" valign="middle">
-      <?php echo JText::_( 'COM_JEM_CLEANUP_TRIGGER_AUTOARCHIVE_DESC' ); ?>
-    </td>
-    <td width="10%"></td>
-    <td width="40%"></td>
+		<!-- CLEAN TRIGGER ARCHIVE -->
+   		 <td width="10%">
+     		 <div class="linkicon">
+        		<a href="index.php?option=com_jem&amp;task=cleanup.triggerarchive">
+          			<?php echo JHTML::_('image', 'media/com_jem/images/icon-48-archive.png',  JText::_( 'COM_JEM_CLEANUP_TRIGGER_AUTOARCHIVE' ) ); ?>
+         			 <span><?php echo JText::_( 'COM_JEM_CLEANUP_TRIGGER_AUTOARCHIVE' ); ?></span>
+       			 </a>
+      		</div>
+    	</td>
+   		 <td width="40%" valign="middle">
+      		<?php echo JText::_( 'COM_JEM_CLEANUP_TRIGGER_AUTOARCHIVE_DESC' ); ?>
+    	</td>
   </tr>
+  
+  
+  <!-- THIRD TR -->	
+	<tr>
+		<!-- TRUNCATE CATEGORY/EVENT REFERENCES -->
+		<td width="10%">
+			<div class="linkicon">
+				<a href="index.php?option=com_jem&amp;task=cleanup.truncatecats">
+					<?php echo JHTML::_('image', 'media/com_jem/images/icon-48-cleancategoryimg.png',  JText::_( 'COM_JEM_TRUNCATECATREF' ) ); ?>
+					<span><?php echo JText::_( 'COM_JEM_TRUNCATECATREF' ); ?></span>
+				</a>
+			</div>
+		</td>
+		<td width="40%" valign="middle">
+		<table>
+		<tr><td><?php echo JText::_( 'COM_JEM_TRUNCATECATREF_DESC' ); ?></td></tr>
+		<tr>
+		<td>total references: <?php echo $this->totalcats;?></td>
+			
+			<tr>
+			</table>
+		</td>
+		
+
+  </tr>
+  
+  
+  
+  
 </table>

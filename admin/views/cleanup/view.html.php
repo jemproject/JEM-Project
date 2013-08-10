@@ -25,6 +25,9 @@ class JEMViewCleanup extends JViewLegacy {
 		//initialise variables
 		$document		=  JFactory::getDocument();
 		$user			=  JFactory::getUser();
+		
+		$this->totalcats      	=  $this->get( 'Countcats');
+		
 
 		//only admins have access to this view
 		if (!JFactory::getUser()->authorise('core.manage')) {

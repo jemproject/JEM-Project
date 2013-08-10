@@ -133,6 +133,54 @@ class JEMModelCleanup extends JModelLegacy
 
 		return $deleted;
 	}
+	
+	
+	
+	/**
+	 * Method to delete the cat_relations table
+	 *
+	 * @access	public
+	 * @return int
+	 */
+	function truncatecats()
+	{
+		
+		$db = JFactory::getDbo();
+
+		$query = $db->getQuery(true);
+		$db->setQuery('TRUNCATE TABLE ' . $db->quoteName('#__jem_cats_event_relations'));
+		$db->query();
+		
+
+		return true;
+	}
+	
+	
+	/**
+	 * Method to delete the cat_relations table
+	 *
+	 * @access	public
+	 * @return int
+	 */
+	function getCountcats()
+	{
+	
+		$db = JFactory::getDbo();
+		$query = 'SELECT *'
+				. ' FROM #__jem_cats_event_relations'
+				;
+	
+		$db->setQuery($query);
+		$db->$query();
+	
+		$total = $db->loadObjectList();
+	
+		$count = count($total);
+	
+		return $count;
+	}
+	
+	
 
 	/**
 	 * Method to determine the images to delete

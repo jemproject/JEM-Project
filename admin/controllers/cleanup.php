@@ -57,6 +57,8 @@ class JEMControllerCleanup extends JEMController
 			$type = JText::_('COM_JEM_CATEGORY');
 		} 
 		
+		
+		
 
 
 		$model = $this->getModel('cleanup');
@@ -70,7 +72,31 @@ class JEMControllerCleanup extends JEMController
 		$this->setRedirect( $link, $msg );
  	}
  	
+ 	
+ 	/**
+ 	 * logic to truncate table cats_relations
+ 	 *
+ 	 * @access public
+ 	 * @return void
+ 	 *
+ 	 */
+ 	function truncatecats()
+ 	{
+
+ 		$model = $this->getModel('cleanup');
+ 	
+ 		$truncate = $model->truncatecats();
+ 		
+ 		$link = 'index.php?option=com_jem&view=cleanup';
+ 	
+ 		$msg = JText::_( 'COM_JEM_TRUNCATECATSEVENTREF_DONE');
+ 	
+ 		$this->setRedirect( $link, $msg );
+ 	}
+ 	
+ 	
  	 	
+ 	
  	
   /**
    * Triggerarchive + Recurrences
