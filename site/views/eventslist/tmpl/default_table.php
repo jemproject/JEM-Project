@@ -183,7 +183,7 @@ defined('_JEXEC') or die;
 
 				if ($this->jemsettings->showstate == 1) :
 				?>
-					<td headers="jem_state" align="left" valign="top"><?php ucwords(strtolower($row->state)) ? $this->escape(ucwords(strtolower($row->state))) : '-'; ?></td>
+					<td headers="jem_state" align="left" valign="top"><?php echo ucwords(strtolower($row->state)) ? $this->escape(ucwords(strtolower($row->state))) : '-'; ?></td>
 				<?php
 				endif;
 
