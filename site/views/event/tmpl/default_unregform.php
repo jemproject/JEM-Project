@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 <?php 
 //the user is allready registered. Let's check if he can unregister from the event
 
+
 if ($this->print == 0) {
 
 if ($this->row->unregistra == 0) :

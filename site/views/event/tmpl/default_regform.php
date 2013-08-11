@@ -12,6 +12,8 @@ defined('_JEXEC') or die;
 //the user is not registered allready -> display registration form
 ?>
 <?php 
+if ($this->row->registra == 1) 
+{
 
 if ($this->print == 0) {
 
@@ -40,4 +42,7 @@ if ($this->row->maxplaces && count($this->registers) >= $this->row->maxplaces &&
 	<input type="hidden" name="task" value="userregister" />
 </p>
 </form>
-<?php endif;   }
+<?php endif;   
+}
+
+}

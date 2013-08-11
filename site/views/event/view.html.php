@@ -39,6 +39,7 @@ class JEMViewEvent extends JViewLegacy
 		$registers		= $this->get('Registers');
 		$isregistered	= $this->get('UserIsRegistered');
 
+		
 
 		//get menu information
 		$menu			= $app->getMenu();
@@ -123,7 +124,8 @@ class JEMViewEvent extends JViewLegacy
 		} else {
 			$formhandler = 4;
 		}
-
+		
+		
 		if ($formhandler >= 3) {
 			$js = "function check(checkbox, senden) {
 				if(checkbox.checked==true){

@@ -263,9 +263,13 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 	<?php endif; ?>
 
 	<!-- Registration -->
-	<?php if ($this->row->registra == 1) : ?>
+	<?php 
+// if ($this->row->registra == 1) : 
+?>
 		<?php echo $this->loadTemplate('attendees'); ?>
-	<?php endif; ?>
+	<?php 
+	// endif; 
+	?>
 
 	<?php echo $this->row->pluginevent->onEventEnd; ?>
 
