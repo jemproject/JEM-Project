@@ -79,16 +79,16 @@ defined('_JEXEC') or die;
 		<td width="10%">
 			<div class="linkicon">
 				<a href="index.php?option=com_jem&amp;task=cleanup.truncatecats">
-					<?php echo JHTML::_('image', 'media/com_jem/images/icon-48-cleancategoryimg.png',  JText::_( 'COM_JEM_TRUNCATECATREF' ) ); ?>
-					<span><?php echo JText::_( 'COM_JEM_TRUNCATECATREF' ); ?></span>
+					<?php echo JHTML::_('image', 'media/com_jem/images/icon-48-cleancategoryimg.png',  JText::_( 'COM_JEM_CLEANUP_TRUNCATECATEVENTREF' ) ); ?>
+					<span><?php echo JText::_( 'COM_JEM_CLEANUP_TRUNCATECATEVENTREF' ); ?></span>
 				</a>
 			</div>
 		</td>
 		<td width="40%" valign="middle">
 		<table>
-		<tr><td><?php echo JText::_( 'COM_JEM_TRUNCATECATREF_DESC' ); ?></td></tr>
+		<tr><td><?php echo JText::_( 'COM_JEM_CLEANUP_TRUNCATECATEVENTREF_DESC' ); ?></td></tr>
 		<tr>
-		<td>total references: <?php echo $this->totalcats;?></td>
+		<td><?php echo JText::sprintf( 'COM_JEM_CLEANUP_TOTALCATEVENTREF', $this->totalcats ) ?></td>
 			
 			<tr>
 			</table>

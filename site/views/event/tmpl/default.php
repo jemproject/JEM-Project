@@ -157,7 +157,12 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 			<?php if ($this->row->conname) : ?>
 				<dt class="con_name"><?php echo JText::_('COM_JEM_NAME').':'; ?></dt>
 				<dd class="con_name">
-					<?php echo $this->escape($this->row->conname); ?>
+					<?php 
+					echo $this->escape($this->row->conname); 
+					//echo "<a href='".JRoute::_('index.php?option=com_contact&view=contact&id='.$this->row->conid)."'>".$this->escape($this->row->conname)."</a>";		
+					?>
+					
+					
 				</dd>
 			<?php endif; ?>
 

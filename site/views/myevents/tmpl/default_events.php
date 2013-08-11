@@ -224,9 +224,17 @@ defined('_JEXEC') or die;
 									<?php
 					if ($row->registra == 1) {
 
+					if ($this->enableemailaddress == 1)
+					{
+					$emailaddress = '&em='.$this->enableemailaddress;
+					}else
+					{
+						$emailaddress = '';
+					}
+
 					$app = JFactory::getApplication();
 					$menuitem = $app->getMenu()->getActive()->id;
-								$linkreg 	= 'index.php?option=com_jem&amp;view=attendees&amp;id='.$row->id.'&Itemid='.$menuitem;
+								$linkreg 	= 'index.php?option=com_jem&amp;view=attendees&amp;id='.$row->id.'&Itemid='.$menuitem.$emailaddress;
 						$count = $row->regCount;
 						if ($row->maxplaces)
 						{
@@ -242,7 +250,7 @@ defined('_JEXEC') or die;
 					if ($count > 0 && $row->published == 1)
 					{
 						?>
-						<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_EVENTS_MANAGEATTENDEES'); ?>">
+						<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>">
 						<?php echo $count; ?>
 						</a>
 				<?php 	} ?>
@@ -296,6 +304,10 @@ defined('_JEXEC') or die;
 
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+	
+	<input type="hidden" name="enableemailaddress" value="<?php echo $this->enableemailaddress; ?>" />
+	
+	
 	<input type="hidden" name="boxchecked" value="0" />
 <input type = "hidden" name = "task" value = "" />
 <input type = "hidden" name = "option" value = "com_jem" />

@@ -363,7 +363,7 @@ class JEMOutput {
 			$output = '';
 		} else {
 			//button in view
-			$overlib = JText::_('COM_JEM_PUBLISH_TIP');
+			$overlib = JText::_('COM_JEM_PUBLISH_DESC');
 			$text = JText::_('COM_JEM_PUBLISH');
 
 			$print_link = "javascript:void(Joomla.submitbutton('publish'));";
@@ -395,7 +395,7 @@ class JEMOutput {
 			$output = '';
 		} else {
 			//button in view
-			$overlib = JText::_('COM_JEM_TRASH_TIP');
+			$overlib = JText::_('COM_JEM_TRASH_DESC');
 			$text = JText::_('COM_JEM_TRASH');
 
 			$print_link = "javascript:void(Joomla.submitbutton('trash'));";
@@ -427,7 +427,7 @@ class JEMOutput {
 			$output = '';
 		} else {
 			//button in view
-			$overlib = JText::_('COM_JEM_UNPUBLISH_TIP');
+			$overlib = JText::_('COM_JEM_UNPUBLISH_DESC');
 			$text = JText::_('COM_JEM_UNPUBLISH');
 
 			$print_link = "javascript:void(Joomla.submitbutton('unpublish'));";
@@ -447,6 +447,18 @@ class JEMOutput {
 	{
 		$app = JFactory::getApplication();
 		$settings = JEMHelper::config();
+		
+		// Emailaddress
+		$jinput = JFactory::getApplication()->input;
+		$enableemailaddress = $jinput->get('em','','int');
+		
+		if ($enableemailaddress == 1)
+		{
+			$emailaddress = '&em='.$enableemailaddress;
+		}else
+		{
+			$emailaddress = '';
+		}
 
 		JHTML::_('behavior.tooltip');
 
@@ -459,10 +471,10 @@ class JEMOutput {
 			$output = '';
 		} else {
 			//button in view
-			$overlib = JText::_('COM_JEM_EXPORT_TIP');
+			$overlib = JText::_('COM_JEM_EXPORT_DESC');
 			$text = JText::_('COM_JEM_EXPORT');
 
-			$print_link = 'index.php?option=com_jem&amp;view=attendees&amp;task=attendeeexport&amp;tmpl=raw&amp;id='.$eventid;
+			$print_link = 'index.php?option=com_jem&amp;view=attendees&amp;task=attendeeexport&amp;tmpl=raw&amp;id='.$eventid.$emailaddress;
 			$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 		}
 

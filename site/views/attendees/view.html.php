@@ -79,8 +79,19 @@ class JEMViewAttendees extends JViewLegacy {
 		if($item) $pathway->setItemName(1, $item->title);
 		$pathway->addItem('Att:'.$event->title);
 		
-
-		$print_link = JRoute::_('index.php?option=com_jem&amp;view=attendees&amp;layout=print&amp;task=print&amp;tmpl=component&amp;id='.$event->id);
+		
+		// Emailaddress
+		$jinput = JFactory::getApplication()->input;
+		$enableemailaddress = $jinput->get('em','','int');
+		
+		if ($enableemailaddress == 1)
+		{
+			$emailaddress = '&em='.$enableemailaddress;
+		}else
+		{
+			$emailaddress = '';
+		}
+		$print_link = JRoute::_('index.php?option=com_jem&amp;view=attendees&amp;layout=print&amp;task=print&amp;tmpl=component&amp;id='.$event->id.$emailaddress);
 		$backlink = 'attendees';
 		$view = 'attendees';
 		
@@ -98,15 +109,20 @@ class JEMViewAttendees extends JViewLegacy {
 		$options = array( JHTML::_('select.option', 0, JText::_('COM_JEM_ATT_FILTER_ALL')),
 		                  JHTML::_('select.option', 1, JText::_('COM_JEM_ATT_FILTER_ATTENDING')),
 		                  JHTML::_('select.option', 2, JText::_('COM_JEM_ATT_FILTER_WAITING')) ) ;
-		$lists['waiting'] = JHTML::_('select.genericlist', $options, 'filter_waiting', 'onChange="this.form.submit();"', 'value', 'text', $filter_waiting);
+		$lists['waiting'] = JHTML::_('select.genericlist', $options, 'filter_waiting', 'class="inputbox" onChange="this.form.submit();"', 'value', 'text', $filter_waiting);
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order']		= $filter_order;
 
+		
+		
+		
+		
 		//assign to template
 		$this->params			= $params;
 		$this->lists 		= $lists;
+		$this->enableemailaddress = $enableemailaddress;
 		$this->rows 		= $rows;
 		$this->pagination 	= $pagination;
 		$this->event 		= $event;
@@ -137,6 +153,9 @@ class JEMViewAttendees extends JViewLegacy {
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 		
+		// Emailaddress
+		$jinput = JFactory::getApplication()->input;
+		$enableemailaddress = $jinput->get('em','','int');
 
 		$rows      	=  $this->get( 'Data');
 		$event 		=  $this->get( 'Event' );
@@ -145,6 +164,7 @@ class JEMViewAttendees extends JViewLegacy {
 		//assign data to template
 		$this->rows 		= $rows;
 		$this->event 		= $event;
+		$this->enableemailaddress = $enableemailaddress;
 
 		parent::display($tpl);
 	}

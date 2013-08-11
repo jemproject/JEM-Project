@@ -104,7 +104,17 @@ class JEMViewMyevents extends JViewLegacy
 		$document->setMetaData('title', $pagetitle);
 
 
-
+		//
+		if ($params->get('enableemailaddress','0') == 1)
+		{
+		$enableemailaddress = 1;
+		}else{
+		$enableemailaddress = 0;
+		}
+		
+		
+		
+		$this->enableemailaddress		= $enableemailaddress;
 		$this->action					= $uri->toString();
 		$this->events					= $events;
 		$this->task						= $task;

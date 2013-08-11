@@ -40,6 +40,11 @@ defined('_JEXEC') or die; ?>
 		<tr>
 			<th class="title"><?php echo JText::_( 'COM_JEM_USERNAME' ); ?></th>
 			<th class="title"><?php echo JText::_( 'COM_JEM_REGDATE' ); ?></th>
+			
+			<?php if ($this->enableemailaddress == 1) {?>
+			<th class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
+			<?php } ?>
+			
 		</tr>
 	</thead>
 
@@ -52,6 +57,11 @@ defined('_JEXEC') or die; ?>
 		<tr class="<?php echo "row$k"; ?>">
 			<td><?php echo $row->username; ?></td>
 			<td><?php echo JHTML::Date( $row->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ); ?>
+			
+			<?php if ($this->enableemailaddress == 1) {?>
+			<td><?php echo $row->email; ?></td>
+			<?php } ?>
+			
 			</td>
 		</tr>
 		<?php $k = 1 - $k;  

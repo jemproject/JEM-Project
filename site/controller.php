@@ -548,6 +548,10 @@ class JEMController extends JControllerLegacy
 	function attendeeexport()
 	{
 		$app = JFactory::getApplication();
+		
+		$jinput = JFactory::getApplication()->input;
+		$enableemailadress = $jinput->get('em','','int');
+		
 
 		$model = $this->getModel('attendees');
 
@@ -566,6 +570,10 @@ class JEMController extends JControllerLegacy
 			$data = $datas[$i];
 
 			$col[] = str_replace("\"", "\"\"", $data->username);
+			if ($enableemailadress == 1)
+			{
+			$col[] = str_replace("\"", "\"\"", $data->email);
+			}
 			$col[] = str_replace("\"", "\"\"", JHTML::Date( $data->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ));
 
 			for($j = 0; $j < count($col); $j++)
