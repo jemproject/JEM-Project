@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 ?>
 
 
-<h2><?php echo JText::_('COM_JEM_MYVENUES'); ?></h2>
+<h2><?php echo JText::_('COM_JEM_MY_VENUES'); ?></h2>
 
 <form action="<?php echo $this->action; ?>" method="post" id="adminForm" name="adminForm">
 
