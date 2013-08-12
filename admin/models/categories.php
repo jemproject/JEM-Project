@@ -101,7 +101,7 @@ class JEMModelCategories extends JModelLegacy
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
-		$orderby 	= ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', c.ordering';
+		$orderby = ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', c.ordering';
 
 		$where = array();
 
@@ -113,7 +113,6 @@ class JEMModelCategories extends JModelLegacy
 			$where[] = '(c.published = 0 OR c.published = 1)';
 		}
 
-
 		$where = ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
 
 		//select the records
@@ -121,21 +120,22 @@ class JEMModelCategories extends JModelLegacy
 		if ($search) {
 			$query = 'SELECT c.id'
 					. ' FROM #__jem_categories AS c'
-					. ' WHERE LOWER(c.catname) LIKE '.$this->_db->Quote( '%'.$this->_db->escape( $search, true ).'%', false )
 					. $where
+					. ($where == '' ? ' WHERE ' : ' AND ')
+					. ' LOWER(c.catname) LIKE '.$this->_db->Quote( '%'.$this->_db->escape( $search, true ).'%', false )
 					;
 			$this->_db->setQuery( $query );
 			$search_rows = $this->_db->loadColumn();
 		}
 
 		$query = 'SELECT c.*, c.catname AS name, c.parent_id AS parent, u.name AS editor, g.title AS groupname, gr.name AS catgroup'
-					. ' FROM #__jem_categories AS c'
-					. ' LEFT JOIN #__viewlevels AS g ON g.id = c.access'
-					. ' LEFT JOIN #__users AS u ON u.id = c.checked_out'
-					. ' LEFT JOIN #__jem_groups AS gr ON gr.id = c.groupid'
-					. $where
-					. $orderby
-					;
+				. ' FROM #__jem_categories AS c'
+				. ' LEFT JOIN #__viewlevels AS g ON g.id = c.access'
+				. ' LEFT JOIN #__users AS u ON u.id = c.checked_out'
+				. ' LEFT JOIN #__jem_groups AS gr ON gr.id = c.groupid'
+				. $where
+				. $orderby
+				;
 		$this->_db->setQuery( $query );
 		$rows = $this->_db->loadObjectList();
 
@@ -148,13 +148,13 @@ class JEMModelCategories extends JModelLegacy
 		//first pass - collect children
 		if (is_array($rows))
 		{
-		foreach ($rows as $child) {
-			$parent = $child->parent_id;
-			$list 	= @$children[$parent] ? $children[$parent] : array();
-			array_push($list, $child);
-			$children[$parent] = $list;
+			foreach ($rows as $child) {
+				$parent = $child->parent_id;
+				$list 	= @$children[$parent] ? $children[$parent] : array();
+				array_push($list, $child);
+				$children[$parent] = $list;
+			}
 		}
-	}
 
 		//second pass - get an indent list of the items
 		$list = JEMCategories::treerecurse(0, '', array(), $children, false, max(0, $levellimit-1));
