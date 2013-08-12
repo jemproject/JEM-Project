@@ -63,12 +63,14 @@ border:1px solid grey;
 background:#DDE084;
 }
 
+/*
 div#jem .inputbox2
 {
 border:1px solid grey;
 background: #B3BABA;
 cursor:pointer;
 }
+*/
 
 div#jem .inputbox
 {
@@ -491,7 +493,8 @@ padding: 1em;
     margin: 0 0 0.5em 0; padding: 0.2em;
     border: 1px solid grey;
     cursor: pointer;
-    background-color: yellow;
+    background:#DDE084;
+    border:1px solid grey;
     }
     div.jem_editevent form input:active, /* event */
     div.jem_editevent form button:active,
@@ -505,7 +508,7 @@ padding: 1em;
     margin: 0 0 0.5em 0; padding: 0.2em;
     border: 1px solid grey;
     cursor: pointer;
-    background-color: yellow;
+    background-color: #C6CCBE;
     }
     div.jem_editevent form input:visited, /* event */
     div.jem_editevent form button:visited,
@@ -519,7 +522,7 @@ padding: 1em;
     margin: 0 0 0.5em 0; padding: 0.2em;
     border: 1px solid grey;
     cursor: pointer;
-    background-color: yellow;
+    background-color: #C6CCBE;
     }
     div.jem_editevent form input:active, /* event */
     div.jem_editevent form button:active,
@@ -533,7 +536,7 @@ padding: 1em;
     margin: 0 0 0.5em 0; padding: 0.2em;
     border: 1px solid grey;
     cursor: pointer;
-    background-color: yellow;
+    background-color: #C6CCBE;
     }
     
     
@@ -550,7 +553,7 @@ padding: 1em;
     margin: 0 0 0.5em 0; padding: 0.2em;
     border: 1px solid grey;
     cursor: pointer;
-    background-color: #fff;
+    background-color: #C6CCBE;
     }
 
     div.jem_editevent form input#a_name {
@@ -564,6 +567,11 @@ padding: 1em;
     /*vertical-align: baseline;*/
     cursor: pointer;
     }
+
+
+
+
+
 
 /** venue select buttons */
 div.jem_editevent div.jem_buttons {
