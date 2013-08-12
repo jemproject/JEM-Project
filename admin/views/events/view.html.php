@@ -57,7 +57,7 @@ defined( '_JEXEC' ) or die;
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
-		JHTML::_('behavior.mootools');
+		JHtml::_('behavior.framework');
 	
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');

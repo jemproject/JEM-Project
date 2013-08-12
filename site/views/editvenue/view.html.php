@@ -48,7 +48,7 @@ class JEMViewEditvenue extends JViewLegacy
 		$row 		= $this->Get('Venue');
 		JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'locdescription' );
 
-		JHTML::_('behavior.mootools');
+		JHtml::_('behavior.framework');
 		JHTML::_('behavior.formvalidation');
 		JHTML::_('behavior.tooltip');
 
