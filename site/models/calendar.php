@@ -15,219 +15,211 @@ jimport('joomla.application.component.model');
  * JEM Component Calendar Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelCalendar extends JModelLegacy
 {
-    /**
-     * Events data array
-     *
-     * @var array
-     */
-    var $_data = null;
+	/**
+	 * Events data array
+	 *
+	 * @var array
+	 */
+	var $_data = null;
 
-    /**
-     * Tree categories data array
-     *
-     * @var array
-     */
-    var $_categories = null;
+	/**
+	 * Tree categories data array
+	 *
+	 * @var array
+	 */
+	var $_categories = null;
 
-    /**
-     * Events total
-     *
-     * @var integer
-     */
-    var $_total = null;
+	/**
+	 * Events total
+	 *
+	 * @var integer
+	 */
+	var $_total = null;
 
-    /**
-     * The reference date
-     *
-     * @var int unix timestamp
-     */
-    var $_date = 0;
+	/**
+	 * The reference date
+	 *
+	 * @var int unix timestamp
+	 */
+	var $_date = 0;
 
-    /**
-     * Constructor
-     *
-     * 
-     */
-    function __construct()
-    {
-        parent::__construct();
+	/**
+	 * Constructor
+	 *
+	 *
+	 */
+	function __construct()
+	{
+		parent::__construct();
 
-        $app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
-        $this->setdate(time());
+		$this->setdate(time());
 
-        // Get the paramaters of the active menu item
-        $params =  $app->getParams();
-    }
+		// Get the paramaters of the active menu item
+		$params = $app->getParams();
+	}
 
-    function setdate($date)
-    {
-        $this->_date = $date;
-    }
+	function setdate($date)
+	{
+		$this->_date = $date;
+	}
 
-    /**
-     * Method to get the events
-     *
-     * @access public
-     * @return array
-     */
-    function &getData()
-    {
+	/**
+	 * Method to get the events
+	 *
+	 * @access public
+	 * @return array
+	 */
+	function &getData()
+	{
+		$app = JFactory::getApplication();
+		$params = $app->getParams();
 
-        $app =  JFactory::getApplication();
-        $params =  $app->getParams();
+		// Lets load the content if it doesn't already exist
+		if ( empty($this->_data)) {
+			$query = $this->_buildQuery();
+			$this->_data = $this->_getList( $query );
 
-        // Lets load the content if it doesn't already exist
-        if ( empty($this->_data))
-        {
-          $query = $this->_buildQuery();
-          $this->_data = $this->_getList( $query );
+			$multi = array();
 
-          $multi = array();
+			foreach($this->_data AS $item) {
+				$item->categories = $this->getCategories($item->id);
 
-	        foreach($this->_data AS $item)
+				if (!is_null($item->enddates) && !$params->get('show_only_start', 1))
+				{
+					if ($item->enddates != $item->dates)
 					{
-						//$item = $this->_data[$i];
+						$day = $item->start_day;
 
-						$item->categories = $this->getCategories($item->id);
-
-						if (!is_null($item->enddates) && !$params->get('show_only_start', 1))
+						for ($counter = 0; $counter <= $item->datediff-1; $counter++)
 						{
-							if ($item->enddates != $item->dates)
-							{
-								$day = $item->start_day;
+							$day++;
 
-								for ($counter = 0; $counter <= $item->datediff-1; $counter++)
-								{
-									$day++;
+							//next day:
+							$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
 
-									//next day:
-									$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
+							//ensure we only generate days of current month in this loop
+							if (strftime('%m', $this->_date) == strftime('%m', $nextday)) {
+								$multi[$counter] = clone $item;
+								$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
 
-									//ensure we only generate days of current month in this loop
-									if (strftime('%m', $this->_date) == strftime('%m', $nextday)) {
-										$multi[$counter] = clone $item;
-										$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
-
-										//add generated days to data
-										$this->_data = array_merge($this->_data, $multi);
-									}
-									//unset temp array holding generated days before working on the next multiday event
-									unset($multi);
-								}
+								//add generated days to data
+								$this->_data = array_merge($this->_data, $multi);
 							}
-						}
-
-						//remove events without categories (users have no access to them)
-						if (empty($item->categories)) {
-							unset($item);
+							//unset temp array holding generated days before working on the next multiday event
+							unset($multi);
 						}
 					}
 				}
-        return $this->_data;
-    }
 
-    /**
-     * Build the query
-     *
-     * @access private
-     * @return string
-     */
-    function _buildQuery()
-    {
-        // Get the WHERE clauses for the query
-        $where = $this->_buildCategoryWhere();
+				//remove events without categories (users have no access to them)
+				if (empty($item->categories)) {
+					unset($item);
+				}
+			}
+		}
+		return $this->_data;
+	}
 
-        //Get Events from Database
-        $query = 'SELECT DATEDIFF(a.enddates, a.dates) AS datediff, a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.datdescription, a.created, l.venue, l.city, l.state, l.url,'
-        .' DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month,'
-        .' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
-        .' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-        .' FROM #__jem_events AS a'
-        .' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-        .' LEFT JOIN #__jem_cats_event_relations AS r ON r.itemid = a.id '
-        .$where
-        .' GROUP BY a.id '
-        ;
+	/**
+	 * Build the query
+	 *
+	 * @access private
+	 * @return string
+	 */
+	function _buildQuery()
+	{
+		// Get the WHERE clauses for the query
+		$where = $this->_buildCategoryWhere();
 
-        return $query;
-    }
+		//Get Events from Database
+		$query = 'SELECT DATEDIFF(a.enddates, a.dates) AS datediff, a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.datdescription, a.created, l.venue, l.city, l.state, l.url,'
+			.' DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month,'
+			.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
+			.' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
+			.' FROM #__jem_events AS a'
+			.' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+			.' LEFT JOIN #__jem_cats_event_relations AS r ON r.itemid = a.id '
+			.$where
+			.' GROUP BY a.id '
+			;
 
-    /**
-     * Method to build the WHERE clause
-     *
-     * @access private
-     * @return array
-     */
-    function _buildCategoryWhere()
-    {
-        $app =  JFactory::getApplication();
+		return $query;
+	}
 
-        // Get the paramaters of the active menu item
-        $params =  $app->getParams();
+	/**
+	 * Method to build the WHERE clause
+	 *
+	 * @access private
+	 * @return array
+	 */
+	function _buildCategoryWhere()
+	{
+		$app = JFactory::getApplication();
 
-        $top_category = $params->get('top_category', 0);
+		// Get the paramaters of the active menu item
+		$params = $app->getParams();
 
-        $task = JRequest::getWord('task');
+		$top_category = $params->get('top_category', 0);
 
-        // First thing we need to do is to select only the published events
-        if ($task == 'archive')
-        {
-            $where = ' WHERE a.published = 2 ';
-        } else
-        {
-            $where = ' WHERE a.published = 1 ';
-        }
+		$task = JRequest::getWord('task');
 
-        // only select events within specified dates. (chosen month)
-        $monthstart = mktime(0, 0, 1, strftime('%m', $this->_date), 1, strftime('%Y', $this->_date));
-        $monthend = mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
+		// First thing we need to do is to select only the published events
+		if ($task == 'archive') {
+			$where = ' WHERE a.published = 2 ';
+		} else {
+			$where = ' WHERE a.published = 1 ';
+		}
 
-				$filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', $monthstart));
-				$where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $this->_db->Quote('0000-00-00') .', a.enddates, a.dates), '. $filter_date_from .') >= 0';
-				$filter_date_to = $this->_db->Quote(strftime('%Y-%m-%d', $monthend));
-				$where .= ' AND DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
+		// only select events within specified dates. (chosen month)
+		$monthstart = mktime(0, 0, 1, strftime('%m', $this->_date), 1, strftime('%Y', $this->_date));
+		$monthend = mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
 
-        if ($top_category) {
-        	$children = JEMCategories::getChilds($top_category);
-        	if (count($children)) {
-        		$where .= ' AND r.catid IN ('. implode(',', $children) .')';
-        	}
-        }
+		$filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', $monthstart));
+		$where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $this->_db->Quote('0000-00-00') .', a.enddates, a.dates), '. $filter_date_from .') >= 0';
+		$filter_date_to = $this->_db->Quote(strftime('%Y-%m-%d', $monthend));
+		$where .= ' AND DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
 
-        return $where;
-    }
+		if ($top_category) {
+			$children = JEMCategories::getChilds($top_category);
+			if (count($children)) {
+				$where .= ' AND r.catid IN ('. implode(',', $children) .')';
+			}
+		}
 
-    /**
-     * Method to get the Categories
-     *
-     * @access public
-     * @return integer
-     */
-    function getCategories($id)
-    {
-		$user =  JFactory::getUser();
+		return $where;
+	}
+
+	/**
+	 * Method to get the Categories
+	 *
+	 * @access public
+	 * @return integer
+	 */
+	function getCategories($id)
+	{
+		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
 
+		$query = 'SELECT c.id, c.catname, c.access, c.color, c.published, c.checked_out AS cchecked_out,'
+			. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
+			. ' FROM #__jem_categories AS c'
+			. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
+			. ' WHERE rel.itemid = '.(int)$id
+			. ' AND c.published = 1'
+			. ' AND c.access <= '.$gid;
+			;
 
-        $query = 'SELECT c.id, c.catname, c.access, c.color, c.published, c.checked_out AS cchecked_out,'
-        . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-        . ' FROM #__jem_categories AS c'
-        . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-        . ' WHERE rel.itemid = '.(int)$id
-		. ' AND c.published = 1'
-        . ' AND c.access  <= '.$gid;
-        ;
+		$this->_db->setQuery($query);
 
-        $this->_db->setQuery($query);
+		$this->_categories = $this->_db->loadObjectList();
 
-        $this->_categories = $this->_db->loadObjectList();
-
-        return $this->_categories;
-    }
+		return $this->_categories;
+	}
 }
 ?>

@@ -13,7 +13,6 @@ defined('_JEXEC') or die;
 <h2><?php echo JText::_('COM_JEM_MY_EVENTS'); ?></h2>
 
 <script type="text/javascript">
-
 	function tableOrdering(order, dir, view)
 	{
 		var form = document.getElementById("adminForm");
@@ -51,7 +50,6 @@ defined('_JEXEC') or die;
 
 
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
-
 	<colgroup>
 	<col width="1%" class="jem_col_num" />
 	<col width="1%" class="jem_col_checkall" />
@@ -79,8 +77,8 @@ defined('_JEXEC') or die;
 
 	<thead>
 		<tr>
-				<th ><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-				<th><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+			<th ><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 			<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<?php
 			if ($this->jemsettings->showtitle == 1) :
@@ -123,10 +121,8 @@ defined('_JEXEC') or die;
 		?>
 		<tr align="center"><td colspan="0"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
 		<?php
-
-
 	else :
-	foreach ($this->events as $i => $row) :
+		foreach ($this->events as $i => $row) :
 	?>
 			<tr class="row<?php echo $i % 2; ?>">
 				<td><?php echo $this->events_pagination->getRowOffset( $i ); ?></td>
@@ -151,14 +147,11 @@ defined('_JEXEC') or die;
 
 				if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) :
 				?>
-
 				<td headers="jem_title" align="left" valign="top"><?php echo $this->escape($row->title); ?></td>
-
 				<?php
 				endif;
 				if ($this->jemsettings->showlocate == 1) :
 				?>
-
 					<td headers="jem_location" align="left" valign="top">
 						<?php
 						if ($this->jemsettings->showlinkvenue == 1) :
@@ -174,17 +167,13 @@ defined('_JEXEC') or die;
 
 				if ($this->jemsettings->showcity == 1) :
 				?>
-
 					<td headers="jem_city" align="left" valign="top"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
-
 				<?php
 				endif;
 
 				if ($this->jemsettings->showstate == 1) :
 				?>
-
 					<td headers="jem_state" align="left" valign="top"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
-
 				<?php
 				endif;
 
@@ -198,13 +187,11 @@ defined('_JEXEC') or die;
 
 						if ($this->jemsettings->catlinklist == 1) :
 						?>
-								<a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($category->catslug)); ?>">
-									<?php echo $category->catname; ?>
-								</a>
+							<a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($category->catslug)); ?>">
+								<?php echo $category->catname; ?>
+							</a>
 						<?php else : ?>
-
 							<?php echo $category->catname; ?>
-
 						<?php
 						endif;
 
@@ -220,21 +207,19 @@ defined('_JEXEC') or die;
 
 				if ($this->params->get('displayattendeecolumn') == 1) :
 				?>
-									<td headers="jem_atte" align="center" valign="top">
-									<?php
+				<td headers="jem_atte" align="center" valign="top">
+				<?php
 					if ($row->registra == 1) {
+						if ($this->enableemailaddress == 1)
+						{
+						$emailaddress = '&em='.$this->enableemailaddress;
+						} else {
+							$emailaddress = '';
+						}
 
-					if ($this->enableemailaddress == 1)
-					{
-					$emailaddress = '&em='.$this->enableemailaddress;
-					}else
-					{
-						$emailaddress = '';
-					}
-
-					$app = JFactory::getApplication();
-					$menuitem = $app->getMenu()->getActive()->id;
-								$linkreg 	= 'index.php?option=com_jem&amp;view=attendees&amp;id='.$row->id.'&Itemid='.$menuitem.$emailaddress;
+						$app = JFactory::getApplication();
+						$menuitem = $app->getMenu()->getActive()->id;
+						$linkreg 	= 'index.php?option=com_jem&amp;view=attendees&amp;id='.$row->id.'&Itemid='.$menuitem.$emailaddress;
 						$count = $row->regCount;
 						if ($row->maxplaces)
 						{
@@ -243,53 +228,31 @@ defined('_JEXEC') or die;
 								$count .= ' +'.$row->waiting;
 							}
 						}
-					?>
 
+						if ($count > 0 && $row->published == 1)
+						{
+							?>
+							<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>">
+							<?php echo $count; ?>
+							</a>
+							<?php
+						}
 
-					<?php
-					if ($count > 0 && $row->published == 1)
-					{
-						?>
-						<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>">
-						<?php echo $count; ?>
-						</a>
-				<?php 	} ?>
-
-
-				<?php
-					if ($row->published == 0)
-					{
-						?>
-						<?php echo $count; ?>
-				<?php 	} ?>
-
-				<?php
-					if ($count == 0  && $row->published == 1)
-					{
-						?>
-						<?php echo $count; ?>
-				<?php 	} ?>
-
-
-
-					<?php
-					}else {
-					?>
-					<?php echo JHTML::_('image', 'media/com_jem/images/publish_r.png',JText::_('COM_JEM_NOTES')); ?>
-
-
-					<?php
+						if ($row->published == 0)
+						{
+							echo $count;
+						}
+						if ($count == 0  && $row->published == 1)
+						{
+							echo $count;
+						}
+					} else {
+						echo JHTML::_('image', 'media/com_jem/images/publish_r.png',JText::_('COM_JEM_NOTES'));
 					}
-					?>
-
-
-
-
-									</td>
-								<?php
-								endif;
-								?>
-<td class="center"><?php echo JHTML::_('jgrid.published', $row->published, $i ); ?></td>
+				?>
+				</td>
+				<?php endif; ?>
+				<td class="center"><?php echo JHTML::_('jgrid.published', $row->published, $i ); ?></td>
 			</tr>
 
 		<?php
@@ -298,22 +261,17 @@ defined('_JEXEC') or die;
 		endif;
 		?>
 
-	</tbody>
-</table>
-<p>
-
-<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-	
-	<input type="hidden" name="enableemailaddress" value="<?php echo $this->enableemailaddress; ?>" />
-	
-	
-	<input type="hidden" name="boxchecked" value="0" />
-<input type = "hidden" name = "task" value = "" />
-<input type = "hidden" name = "option" value = "com_jem" />
-</p>
+		</tbody>
+	</table>
+	<p>
+		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+		<input type="hidden" name="enableemailaddress" value="<?php echo $this->enableemailaddress; ?>" />
+		<input type="hidden" name="boxchecked" value="0" />
+		<input type="hidden" name="task" value="" />
+		<input type="hidden" name="option" value="com_jem" />
+	</p>
 </form>
 <div class="pagination">
 	<?php echo $this->events_pagination->getPagesLinks(); ?>
 </div>
-

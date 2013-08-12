@@ -15,9 +15,6 @@ jimport('joomla.application.component.modellist');
  * JEM Component Events Model
  *
  **/
-
-
-
 class JEMModelEvents extends JModelList
 {
 
@@ -26,7 +23,7 @@ class JEMModelEvents extends JModelList
 	 *
 	 * @param	array	An optional associative array of configuration settings.
 	 * @see		JController
-	 * 
+	 *
 	 */
 	public function __construct($config = array())
 	{
@@ -46,13 +43,12 @@ class JEMModelEvents extends JModelList
 		parent::__construct($config);
 	}
 
-
 	/**
 	 * Method to auto-populate the model state.
 	 *
 	 * Note. Calling getState in this method will result in recursion.
 	 *
-	 * 
+	 *
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
@@ -67,7 +63,7 @@ class JEMModelEvents extends JModelList
 
 		$published = $this->getUserStateFromRequest($this->context.'.filter_state', 'filter_state', '', 'string');
 		$this->setState('filter_state', $published);
-		
+
 		$filterfield = $this->getUserStateFromRequest($this->context.'.filter', 'filter', '', 'int');
 		$this->setState('filter', $filterfield);
 
@@ -95,7 +91,7 @@ class JEMModelEvents extends JModelList
 	 *
 	 * @param	string		$id	A prefix for the store id.
 	 * @return	string		A store id.
-	 * 
+	 *
 	 */
 	protected function getStoreId($id = '')
 	{
@@ -132,13 +128,12 @@ class JEMModelEvents extends JModelList
 		);
 		$query->from($db->quoteName('#__jem_events').' AS a');
 
-		
+
 		// Join over the users for the checked out user.
 		$query->select('loc.venue, loc.city, loc.state, loc.checked_out AS vchecked_out');
 		$query->join('LEFT', '#__jem_venues AS loc ON loc.id=a.locid');
-		
 
-		
+
 		// Join over the language
 		//$query->select('l.title AS language_title');
 		//$query->join('LEFT', $db->quoteName('#__languages').' AS l ON l.lang_code = a.language');
@@ -146,29 +141,28 @@ class JEMModelEvents extends JModelList
 		// Join over the users for the checked out user.
 		$query->select('uc.name AS editor');
 		$query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
-		
+
 		// Join over the asset groups.
 		/*$query->select('ag.title AS access_level');
 		$query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');*/
-		
+
 		// Join over the categories.
 		/*$query->select('c.title AS category_title');
 		$query->join('LEFT', '#__categories AS c ON c.id = a.catid');*/
-		
-		
+
+
 		// Join over the author & email.
 		$query->select('u.email, u.name AS author');
 		$query->join('LEFT', '#__users AS u ON u.id=a.created_by');
 
-		
-		
+
 		//
 		// Adding this line will only turn up venues with assigned events to them.
 		//
 		// Join over the assigned events
 		//$query->select('COUNT( e.locid ) AS assignedevents');
 		//$query->join('LEFT', '#__jem_events AS e ON e.locid=a.id');
-			
+
 		// Join over the asset groups.
 		//$query->select('ag.title AS access_level');
 		//$query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');
@@ -202,50 +196,46 @@ class JEMModelEvents extends JModelList
 		//if (is_numeric($categoryId)) {
 		//	$query->where('a.catid = '.(int) $categoryId);
 		//}
-		
-		
-		
-
 
 		// Filter by search in title
 		$filter = $this->getState('filter');
 		$search = $this->getState('filter_search');
-		
+
 		if (!empty($search)) {
 			if (stripos($search, 'id:') === 0) {
 				$query->where('a.id = '.(int) substr($search, 3));
 			} else {
 				$search = $db->Quote('%'.$db->escape($search, true).'%');
-				
+
 				/* search venue or alias */
 				if ($search && $filter == 1) {
 				$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.')');
 				}
-				
+
 				/* search city */
 				if ($search && $filter == 2) {
 				$query->where('loc.city LIKE '.$search);
 				}
-				
+
 				/* search state */
 				if ($search && $filter == 3) {
 					$query->where('loc.state LIKE '.$search);
 				}
-				
+
 				/* search country */
 				if ($search && $filter == 4) {
 					$query->where('loc.country LIKE '.$search);
 				}
-								
+
 				/* search all */
 				if ($search && $filter == 5) {
 					$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR loc.country LIKE '.$search.')');
 				}
-				
-			
+
+
 			}
 		}
-			
+
 		// Add the list ordering clause.
 		$orderCol	= $this->state->get('list.ordering');
 		$orderDirn	= $this->state->get('list.direction');
@@ -257,15 +247,12 @@ class JEMModelEvents extends JModelList
 		return $query;
 	}
 
-
-
-
 	/**
 	 * Method to (un)publish a venue
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * 
+	 *
 	 */
 	function publish($cid = array(), $publish = 1)
 	{
@@ -280,7 +267,7 @@ class JEMModelEvents extends JModelList
 					. ' SET published = '. (int) $publish
 					. ' WHERE id IN ('. $cids .')'
 					. ' AND ( checked_out = 0 OR ( checked_out = ' .$userid. ' ) )'
-									;
+					;
 
 			$this->_db->setQuery( $query );
 
@@ -291,13 +278,12 @@ class JEMModelEvents extends JModelList
 		}
 	}
 
-
 	/**
 	 * Method to move a venue
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * 
+	 *
 	 */
 	function move($direction)
 	{
@@ -316,158 +302,132 @@ class JEMModelEvents extends JModelList
 		return true;
 	}
 
-	
+
 	/**
 	 * Method to remove a venue
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * 
+	 *
 	 */
 	function remove($cid)
 	{
 		$cids = implode( ',', $cid );
-	
+
 		$query = 'SELECT v.id, v.venue, COUNT( e.locid ) AS numcat'
 				. ' FROM #__jem_venues AS v'
-						. ' LEFT JOIN #__jem_events AS e ON e.locid = v.id'
-								. ' WHERE v.id IN ('. $cids .')'
-										. ' GROUP BY v.id'
-												;
-												$this->_db->setQuery( $query );
-	
-												if (!($rows = $this->_db->loadObjectList())) {
-													JError::raiseError( 500, $this->_db->stderr() );
-													return false;
-												}
-	
-												$err = array();
-												$cid = array();
-												foreach ($rows as $row) {
-													if ($row->numcat == 0) {
-														$cid[] = $row->id;
-													} else {
-														$err[] = $row->venue;
-													}
-												}
-	
-												if (count( $cid ))
-												{
-													$cids = implode( ',', $cid );
-	
-													$query = 'DELETE FROM #__jem_venues'
-															. ' WHERE id IN ('. $cids .')'
-																	;
-	
-																	$this->_db->setQuery( $query );
-	
-																	if(!$this->_db->query()) {
-																		$this->setError($this->_db->getErrorMsg());
-																		return false;
-																	}
-												}
-	
-												if (count( $err )) {
-													$cids 	= implode( ', ', $err );
-													$msg 	= JText::sprintf('COM_JEM_VENUE_ASSIGNED_EVENT', $cids );
-													return $msg;
-												} else {
-													$total 	= count( $cid );
-													$msg 	= $total.' '.JText::_('COM_JEM_VENUES_DELETED');
-													return $msg;
-												}
-	}
-	
-	
+				. ' LEFT JOIN #__jem_events AS e ON e.locid = v.id'
+				. ' WHERE v.id IN ('. $cids .')'
+				. ' GROUP BY v.id'
+				;
+		$this->_db->setQuery( $query );
 
-	
-	
-	
+		if (!($rows = $this->_db->loadObjectList())) {
+			JError::raiseError( 500, $this->_db->stderr() );
+			return false;
+		}
+
+		$err = array();
+		$cid = array();
+		foreach ($rows as $row) {
+			if ($row->numcat == 0) {
+				$cid[] = $row->id;
+			} else {
+				$err[] = $row->venue;
+			}
+		}
+
+		if (count( $cid ))
+		{
+			$cids = implode( ',', $cid );
+
+			$query = 'DELETE FROM #__jem_venues'
+					. ' WHERE id IN ('. $cids .')'
+					;
+
+			$this->_db->setQuery( $query );
+
+			if(!$this->_db->query()) {
+				$this->setError($this->_db->getErrorMsg());
+				return false;
+			}
+		}
+
+		if (count( $err )) {
+			$cids 	= implode( ', ', $err );
+			$msg 	= JText::sprintf('COM_JEM_VENUE_ASSIGNED_EVENT', $cids );
+			return $msg;
+		} else {
+			$total 	= count( $cid );
+			$msg 	= $total.' '.JText::_('COM_JEM_VENUES_DELETED');
+			return $msg;
+		}
+	}
 
 	/**
-	 *  Method to get the userinformation of edited/submitted venues
+	 * Method to get the userinformation of edited/submitted venues
 	 *
 	 * @access private
 	 * @return object
-	 * 
+	 *
 	 */
 	public function getItems()
 	{
-
 		$items = parent::getItems();
-		
-		/*
-		 * Get editor name
-		*/
+
 		$count = count($items);
-		
+
 		if ($count) {
 			$items = JEMHelper::getAttendeesNumbers($items);
 		}
-		
-		
+
 		for ($i=0, $n=$count; $i < $n; $i++) {
-		
+			// Get editor name
 			$query = 'SELECT name'
 					. ' FROM #__users'
 					. ' WHERE id = '.$items[$i]->modified_by
 					;
-		
-					$this->_db->setQuery( $query );
-					$items[$i]->editor = $this->_db->loadResult();
-		
-								
-								
-					$items[$i]->categories = $this->getCategories($items[$i]->id);
-								
-					/*
-					 * Get nr of assigned events
-					*/
-					$query = 'SELECT COUNT( id )'
-							.' FROM #__jem_events'
-							.' WHERE locid = ' . (int)$items[$i]->id
-							;
-		
-					$this->_db->setQuery($query);
-					$items[$i]->assignedevents = $this->_db->loadResult();
+
+			$this->_db->setQuery( $query );
+			$items[$i]->editor = $this->_db->loadResult();
+
+			$items[$i]->categories = $this->getCategories($items[$i]->id);
+
+			/*
+			 * Get nr of assigned events
+			*/
+			$query = 'SELECT COUNT( id )'
+					.' FROM #__jem_events'
+					.' WHERE locid = ' . (int)$items[$i]->id
+					;
+
+			$this->_db->setQuery($query);
+			$items[$i]->assignedevents = $this->_db->loadResult();
 		}
 
 		return $items;
 	}
 
-
-	
-	
-	
 	function getCategories($id)
 	{
 		$query = 'SELECT DISTINCT c.id, c.catname, c.checked_out AS cchecked_out'
 				. ' FROM #__jem_categories AS c'
-						. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-								. ' WHERE rel.itemid = '.(int)$id
-								;
-	
-								$this->_db->setQuery($query);
-	
-								$this->_cats = $this->_db->loadObjectList();
-	
-								$count = count($this->_cats);
-								for($i = 0; $i < $count; $i++)
-								{
-									$item = $this->_cats[$i];
-									$cats = new JEMCategories($item->id);
-									$item->parentcats = $cats->getParentlist();
-	}
-	
-			return $this->_cats;
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
+				. ' WHERE rel.itemid = '.(int)$id
+				;
+
+		$this->_db->setQuery($query);
+
+		$this->_cats = $this->_db->loadObjectList();
+
+		$count = count($this->_cats);
+		for($i = 0; $i < $count; $i++)
+		{
+			$item = $this->_cats[$i];
+			$cats = new JEMCategories($item->id);
+			$item->parentcats = $cats->getParentlist();
 		}
-	
-	
-	
-	
-	
-	
 
-
-}  // End of class
-
+		return $this->_cats;
+	}
+}
