@@ -14,16 +14,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 ?>
 
 
-<div id="fb-root"></div>
-<script>
-(function(d, s, id) {
-	var js, fjs = d.getElementsByTagName(s)[0];
-	if (d.getElementById(id)) return;
-	js = d.createElement(s); js.id = id;
-	js.src = "//connect.facebook.net/nl_NL/all.js#xfbml=1";
-	fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
-</script>
+
 
 <div id="jem" class="event_id<?php echo $this->row->did; ?> jem_event">
 	<div class="buttons">
@@ -276,10 +267,4 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 	<div class="copyright">
 		<?php echo JEMOutput::footer(); ?>
 	</div>
-
-	<?php if ($this->params->get('facebook', 0) == 1) {
-		$currenturl = JURI::current(); ?>
-		<div class="fb-like" data-href="<?php echo $currenturl ?>" data-send="true" data-layout="button_count"
-			data-width="450" data-show-faces="true" data-font="segoe ui"></div>
-	<?php } ?>
 </div>
