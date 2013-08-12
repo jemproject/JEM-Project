@@ -15,7 +15,7 @@ defined('_JEXEC') or die;
  *
  * @package Joomla
  * @subpackage JEM Module
- * 
+ *
  */
 class modJEMHelper
 {
@@ -105,35 +105,6 @@ class modJEMHelper
 		return $lists;
 	}
 
-
-
-	/**
-	 * Method to a formated and structured string of date infos
-	 *
-	 * @access public
-	 * @return string
-	 */
-
-	/*
-	static function _builddateinfo($row, &$params)
-	{
-		$date 		= modJEMHelper::_format_date($row->dates, $row->times, $params->get('formatdate', '%d.%m.%Y'));
-		$enddate 	= $row->enddates ? modJEMHelper::_format_date($row->enddates, $row->endtimes, $params->get('formatdate', '%d.%m.%Y')) : null;
-		$time		= $row->times ? modJEMHelper::_format_date($row->dates, $row->times, $params->get('formattime', '%H:%M')) : null;
-		$dateinfo	= $date;
-
-		if (isset($enddate) && $enddate != $date) {
-			$dateinfo .= ' - '.$enddate;
-		}
-
-		if (isset($time)) {
-			$dateinfo .= ' | '.$time;
-		}
-
-		return $dateinfo;
-	}
-	*/
-
 	/**
 	 * Method to get a valid url
 	 *
@@ -147,25 +118,4 @@ class modJEMHelper
 		}
 		return $url;
 	}
-
-	/**
-	 * Method to format date information
-	 *
-	 * @access public
-	 * @return string
-	 */
-
-	/*
-	static function _format_date($date, $time, $format)
-	{
-		//format date
-		if (strtotime($date)) {
-			$date = strftime($format, strtotime($date.' '.$time));
-		} else {
-			$date = JText::_('MOD_JEM_OPEN_DATE');
-		}
-
-		return $date;
-	}
-	*/
 }
