@@ -29,7 +29,7 @@ class JEMTableVenue extends JTable
 	{
 		// not typed in a venue name
 		if(!trim($this->venue)) {
-			$this->setError = JText::_('COM_JEM_ADD_VENUE');
+			$this->setError(JText::_('COM_JEM_ADD_VENUE'));
 			return false;
 		}
 
@@ -45,14 +45,14 @@ class JEMTableVenue extends JTable
 		if ( $this->map ){
 			if ( !trim($this->street) || !trim($this->city) || !trim($this->country) || !trim($this->postalCode) ) {
 				if (( !trim($this->latitude) && !trim($this->longitude))) {
-					$this->setError = JText::_('COM_JEM_ERROR_ADDRESS');
+					$this->setError(JText::_('COM_JEM_ERROR_ADDRESS'));
 					return false;
 				}
 			}
 		}
 
 		if (JFilterInput::checkAttribute(array ('href', $this->url))) {
-			$this->setError = JText::_('COM_JEM_ERROR_URL_WRONG_FORMAT');
+			$this->setError(JText::_('COM_JEM_ERROR_URL_WRONG_FORMAT'));
 			return false;
 		}
 
@@ -60,12 +60,12 @@ class JEMTableVenue extends JTable
 			$this->url = strip_tags($this->url);
 
 			if (strlen($this->url) > 199) {
-				$this->setError = JText::_('COM_JEM_ERROR_URL_LONG');
+				$this->setError(JText::_('COM_JEM_ERROR_URL_LONG'));
 				return false;
 			}
 			if (!preg_match( '/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}'
 					.'((:[0-9]{1,5})?\/.*)?$/i' , $this->url)) {
-				$this->setError = JText::_('COM_JEM_ERROR_URL_WRONG_FORMAT');
+				$this->setError(JText::_('COM_JEM_ERROR_URL_WRONG_FORMAT'));
 				return false;
 			}
 		}
@@ -73,31 +73,31 @@ class JEMTableVenue extends JTable
 		$this->street = strip_tags($this->street);
 		$streetlength = JString::strlen($this->street);
 		if ($streetlength > 50) {
-			$this->setError = JText::_('COM_JEM_ERROR_STREET_LONG');
+			$this->setError(JText::_('COM_JEM_ERROR_STREET_LONG'));
 			return false;
 		}
 
 		$this->postalCode = strip_tags($this->postalCode);
 		if (JString::strlen($this->postalCode) > 10) {
-			$this->setError = JText::_('COM_JEM_ERROR_ZIP_LONG');
+			$this->setError(JText::_('COM_JEM_ERROR_ZIP_LONG'));
 			return false;
 		}
 
 		$this->city = strip_tags($this->city);
 		if (JString::strlen($this->city) > 50) {
-			$this->setError = JText::_('COM_JEM_ERROR_CITY_LONG');
+			$this->setError(JText::_('COM_JEM_ERROR_CITY_LONG'));
 			return false;
 		}
 
 		$this->state = strip_tags($this->state);
 		if (JString::strlen($this->state) > 50) {
-			$this->setError = JText::_('COM_JEM_ERROR_STATE_LONG');
+			$this->setError(JText::_('COM_JEM_ERROR_STATE_LONG'));
 			return false;
 		}
 
 		$this->country = strip_tags($this->country);
 		if (JString::strlen($this->country) > 2) {
-			$this->setError = JText::_('COM_JEM_ERROR_COUNTRY_LONG');
+			$this->setError(JText::_('COM_JEM_ERROR_COUNTRY_LONG'));
 			return false;
 		}
 
