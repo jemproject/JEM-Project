@@ -262,7 +262,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_countries` (
   KEY `iso2` (`iso2`)
 ) ENGINE=MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
 
-INSERT INTO #__jem_settings VALUES
+INSERT IGNORE INTO #__jem_settings VALUES
 (1, 2, 1, 1, 1, 1, 1, 1, '1', '1', '100%', '20%', '40%', '20%', '', 
 'D, j. F Y', 'j.m.y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, 0, 
 'example@example.com', 0, '1000', -2, -2, -2, 1, '',

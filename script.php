@@ -21,52 +21,42 @@ class com_jemInstallerScript
 				'summary' => 0,
 				'folders' => 0
 		);
+
+		$this->getHeader();
 		?>
-<table class="adminlist">
-	<tr>
-		<td valign="top"><img src="../media/com_jem/images/jemlogo.png"
-			height="100" width="250" alt="jem Logo" align="left">
-		</td>
-		<td valign="top" width="100%">
-			<h1>JEM</h1>
-			<p class="small">
-				by <a href="http://www.joomlaeventmanager.net" target="_blank">joomlaeventmanager.net</a><br />
-				Released under the terms and conditions of the <a
-					href="http://www.gnu.org/licenses/gpl-2.0.html" target="_blank">GNU
-					General Public License</a>.
-			</p>
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2">
-			<h2>Installation Status:</h2>
-			<h3>Check Folders:</h3> <?php
-			$imageDir = "/images/jem";
 
-			$createDirs = array(
-					$imageDir,
-					$imageDir.'/categories',
-					$imageDir.'/categories/small',
-					$imageDir.'/events',
-					$imageDir.'/events/small',
-					$imageDir.'/venues',
-					$imageDir.'/venues/small'
-			);
+		<h2><?php echo JText::_('COM_JEM_INSTALL_STATUS'); ?>:</h2>
+		<h3><?php echo JText::_('COM_JEM_INSTALL_CHECK_FOLDERS'); ?>:</h3> <?php
 
-			// Check for existance of /images/jem directory
-			if ($direxists = JFolder::exists(JPATH_SITE.$createDirs[0])) {
-			echo "<p><span style='color:green;'>Success:</span> Directory <i>$createDirs[0]</i> already exists. Skipping creation.</p>";
+		$imageDir = "/images/jem";
+		$createDirs = array(
+				$imageDir,
+				$imageDir.'/categories',
+				$imageDir.'/categories/small',
+				$imageDir.'/events',
+				$imageDir.'/events/small',
+				$imageDir.'/venues',
+				$imageDir.'/venues/small'
+		);
+
+		// Check for existance of /images/jem directory
+		if ($direxists = JFolder::exists(JPATH_SITE.$createDirs[0])) {
+			echo "<p><span style='color:green;'>".JText::_('COM_JEM_INSTALL_SUCCESS').":</span> ".
+				JText::sprintf('COM_JEM_INSTALL_DIRECTORY_EXISTS_SKIP', $createDirs[0])."</p>";
 		} else {
-			echo "<p><span style='color:orange;'>Info:</span> Directory <i>$createDirs[0]</i> does NOT exist.</p>";
-			echo "<p>Trying to create folder structure:</p>";
+			echo "<p><span style='color:orange;'>".JText::_('COM_JEM_INSTALL_INFO').":</span> ".
+				JText::sprintf('COM_JEM_INSTALL_DIRECTORY_NOT_EXISTS', $createDirs[0])."</p>";
+			echo "<p>".JText::_('COM_JEM_INSTALL_DIRECTORY_TRY_CREATE').":</p>";
 
 			echo "<ul>";
 			// Folder creation
 			foreach($createDirs as $directory) {
 				if ($makedir = JFolder::create(JPATH_SITE.$directory)) {
-					echo "<li><span style='color:green;'>Success:</span> Directory <i>$directory</i> created.</li>";
+					echo "<li><span style='color:green;'>".JText::_('COM_JEM_INSTALL_SUCCESS').":</span> ".
+						JText::sprintf('COM_JEM_INSTALL_DIRECTORY_CREATED', $directory)."</li>";
 				} else {
-					echo "<li><span style='color:red;'>Error:</font> Directory <i>$directory</i> NOT created.</li>";
+					echo "<li><span style='color:red;'>".JText::_('COM_JEM_INSTALL_ERROR').":</span> ".
+						JText::sprintf('COM_JEM_INSTALL_DIRECTORY_NOT_CREATED', $directory)."</li>";
 					$error['folders']++;
 				}
 			}
@@ -74,27 +64,23 @@ class com_jemInstallerScript
 		}
 
 		if($error['folders']) {
-		?>
-			<p>
-				Please check the existance of the listed directories.<br /> If they
-				do not exist, create them and ensure JEM has write access to these
-				directories.<br /> If you don't so, you prevent JEM from functioning
-				correctly. (You can't upload images).
-			</p> <?php
+			echo "<p>".JText::_('COM_JEM_INSTALL_DIRECTORY_CHECK_EXISTANCE')."</p>";
 		}
 
-		echo "<h3>Settings</h3>";
+		echo "<h3>".JText::_('COM_JEM_INSTALL_SETTINGS')."</h3>";
 
 		$db = JFactory::getDBO();
-		$query = "SELECT id FROM #__jem_settings";
+		$query = $db->getQuery(true);
+		$query->select('id')->from('#__jem_settings');
 		$db->setQuery($query);
 		$db->loadResult();
 
 		if($db->loadResult()) {
-			echo "<p><span style='color:green;'>Success:</span> Found existing (default) settings.</p>";
+			echo "<p><span style='color:green;'>".JText::_('COM_JEM_INSTALL_SUCCESS').":</span> ".
+				JText::_('COM_JEM_INSTALL_FOUND_SETTINGS')."</p>";
 		}
 
-		echo "<h3>Summary</h3>";
+		echo "<h3>".JText::_('COM_JEM_INSTALL_SUMMARY')."</h3>";
 
 		foreach ($error as $k => $v) {
 			if($k != 'summary') {
@@ -105,19 +91,15 @@ class com_jemInstallerScript
 		if($error['summary']) {
 		?>
 			<p style='color: red;'>
-				<b>JEM was NOT installed successfully!</b>
-			</p> <?php
+				<b><?php echo JText::_('COM_JEM_INSTALL_INSTALLATION_NOT_SUCCESSFUL'); ?></b>
+			</p>
+		<?php
 		} else {
 		?>
 			<p style='color: green;'>
-				<b>JEM was installed successfully!</b> Have Fun.
+				<b><?php echo JText::_('COM_JEM_INSTALL_INSTALLATION_SUCCESSFUL'); ?></b>
 			</p> <?php
 		}
-		?>
-		</td>
-	</tr>
-</table>
-<?php
 	}
 
 	/**
@@ -127,10 +109,10 @@ class com_jemInstallerScript
 	 */
 	function uninstall($parent)
 	{
-		?>
-		<h2>Uninstall Status:</h2>
+		$this->getHeader(); ?>
+		<h2><?php echo JText::_('COM_JEM_UNINSTALL_STATUS'); ?>:</h2>
+		<p><?php echo JText::_('COM_JEM_UNINSTALL_TEXT'); ?></p>
 		<?php
-		echo '<p>' . JText::_('COM_JEM_UNINSTALL_TEXT') . '</p>';
 	}
 
 	/**
@@ -140,10 +122,10 @@ class com_jemInstallerScript
 	 */
 	function update($parent)
 	{
-		?>
-		<h2>Update Status:</h2>
+		$this->getHeader(); ?>
+		<h2><?php echo JText::_('COM_JEM_UPDATE_STATUS'); ?>:</h2>
+		<p><?php echo JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->version); ?></p>;
 		<?php
-		echo '<p>' . JText::sprintf('COM_JEM_UPDATE_TEXT', $parent->get('manifest')->version) . '</p>';
 	}
 
 	/**
@@ -205,7 +187,9 @@ class com_jemInstallerScript
 	 */
 	private function getParam($name) {
 		$db = JFactory::getDbo();
-		$db->setQuery('SELECT manifest_cache FROM #__extensions WHERE type = "component" AND element = "com_jem"');
+		$query = $db->getQuery(true);
+		$query->select('manifest_cache')->from('#__extensions')->where(array("type = 'component'", "element = 'com_jem'"));
+		$db->setQuery($query);
 		$manifest = json_decode($db->loadResult(), true);
 		return $manifest[$name];
 	}
@@ -219,7 +203,9 @@ class com_jemInstallerScript
 		if (count($param_array) > 0) {
 			// read the existing component value(s)
 			$db = JFactory::getDbo();
-			$db->setQuery('SELECT params FROM #__extensions WHERE type = "component" AND element = "com_jem"');
+			$query = $db->getQuery(true);
+			$query->select('params')->from('#__extensions')->where(array("type = 'component'", "element = 'com_jem'"));
+			$db->setQuery($query);
 			$params = json_decode($db->loadResult(), true);
 
 			// add the new variable(s) to the existing one(s)
@@ -229,18 +215,29 @@ class com_jemInstallerScript
 
 			// store the combined new and existing values back as a JSON string
 			$paramsString = json_encode($params);
-			$db->setQuery('UPDATE #__extensions SET params = ' .
-					$db->quote($paramsString) .
-					' WHERE type = "component" AND element = "com_jem"');
+			$query = $db->getQuery(true);
+			$query->update('#__extensions')
+				->set('params = '.$db->quote($paramsString))
+				->where(array("type = 'component'", "element = 'com_jem'"));
+			$db->setQuery($query);
 			$db->query();
 		}
+	}
+
+	private function getHeader() {
+		?>
+		<img src="../media/com_jem/images/jemlogo.png" alt="" style="float:left; padding-right:20px;" />
+		<h1><?php echo JText::_('COM_JEM'); ?></h1>
+	 	<p class="small"><?php echo JText::_('COM_JEM_INSTALLATION_HEADER'); ?></p>
+		<?php
 	}
 
 	private function initializeSchema($versionId) {
 		$db = JFactory::getDbo();
 
 		// Get extension ID of JEM
-		$query = "SELECT extension_id FROM #__extensions WHERE type='component' and element='com_jem'";
+		$query = $db->getQuery(true);
+		$query->select('extension_id')->from('#__extensions')->where(array("type='component'", "element='com_jem'"));
 		$db->setQuery($query);
 		$extensionId = $db->loadResult();
 
@@ -263,7 +260,7 @@ class com_jemInstallerScript
 		$query = $db->getQuery(true);
 		$query->insert('#__schemas')
 			->columns($db->quoteName(array('extension_id', 'version_id')))
-			->values(implode(',', array($extensionId, $versionId)));
+			->values(implode(',', array($extensionId, $db->quote($versionId))));
 
 		$db->setQuery($query);
 		$db->query();
