@@ -7,12 +7,12 @@
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<version>1.9.1</version>
+	<version>1.9.2</version>
 	<description>COM_JEM_INSTALLATION_DESCRIPTION</description>
 
 	<!-- Runs on install/uninstall/update; New in 1.6 -->
 	<scriptfile>script.php</scriptfile>
-	
+
 	<files folder="site">
 		<filename>jem.php</filename>
 		<filename>controller.php</filename>
@@ -43,7 +43,7 @@
 			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
 		</sql>
 	</uninstall>
-	
+
 	<update>
 		<schemas>
 			<schemapath type="mysql">sql/updates</schemapath>

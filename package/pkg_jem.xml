@@ -9,7 +9,7 @@
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
 
-	<version>1.9.1</version>
+	<version>1.9.2</version>
 	<description>PKG_JEM_INSTALLATION_DESCRIPTION</description>
 	<url>http://www.joomlaeventmanager.net/</url>
 	<packager>JEM Community</packager>
@@ -25,7 +25,7 @@
 		<file type="plugin" id="comments" group="jem">plg_jem_comments.zip</file>
 		<file type="plugin" id="mailer" group="jem">plg_jem_mailer.zip</file>
 	</files>
-	
+
 	<languages folder="language">
 		<language tag="en-GB">en-GB/en-GB.pkg_jem.sys.ini</language>
 	</languages>
