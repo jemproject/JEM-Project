@@ -218,10 +218,10 @@ class JEMModelEvent extends JModelAdmin
 		//}
 
 		//get values from time selectlist and concatenate them accordingly
-		$starthours		= JRequest::getCmd('starthours');
-		$startminutes	= JRequest::getCmd('startminutes');
-		$endhours		= JRequest::getCmd('endhours');
-		$endminutes		= JRequest::getCmd('endminutes');
+		$starthours		= $jinput->get('starthours','','cmd');
+		$startminutes	= $jinput->get('startminutes','','cmd');
+		$endhours		= $jinput->get('endhours','','cmd');
+		$endminutes		= $jinput->get('endminutes','','cmd');
 
 		// Emtpy time values are allowed and are stored as null values
 		if ($starthours != '') {
@@ -293,26 +293,6 @@ class JEMModelEvent extends JModelAdmin
 		$table->meta_keywords = $metakeywords;
 		$table->meta_description = $metadescription;
 
-		//get values from time selectlist and concatenate them accordingly
-		$starthours		= $jinput->get('starthours','','cmd');
-		$startminutes	= $jinput->get('startminutes','','cmd');
-		$endhours		= $jinput->get('endhours','','cmd');
-		$endminutes		= $jinput->get('endminutes','','cmd');
-
-		// Emtpy time values are allowed and are stored as null values
-		if ($starthours != '') {
-			if ($startminutes == '') {
-				$startminutes = '00';
-			}
-			$table->times = $starthours.':'.$startminutes;
-			if ($endhours != '') {
-				if ($endminutes == '') {
-					$endminutes = '00';
-				}
-				$table->endtimes = $endhours.':'.$endminutes;
-			}
-		}
-
 		// Check if image was selected
 		jimport('joomla.filesystem.file');
 		$format 	= JFile::getExt(JPATH_SITE.'/images/jem/events/'.$table->datimage);
@@ -336,7 +316,7 @@ class JEMModelEvent extends JModelAdmin
 			return false;
 		}
 
-		if (!$table->store()) {
+		if (!$table->store(true)) {
 			JError::raiseError(500, $table->getError() );
 		}
 
