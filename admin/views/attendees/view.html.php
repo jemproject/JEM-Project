@@ -14,11 +14,11 @@ defined('_JEXEC') or die;
  * View class for the JEM attendees screen
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewAttendees extends JViewLegacy {
 
-	
+
 	public function display($tpl = null)
 	{
 		$app =  JFactory::getApplication();
@@ -45,17 +45,16 @@ class JEMViewAttendees extends JViewLegacy {
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
-		
+
 		// Get data from the model
-		$rows      	=  $this->get( 'Data');
-		$pagination =  $this->get( 'Pagination' );
-		$event 		=  $this->get( 'Event' );
+		$rows 		= $this->get( 'Data');
+		$pagination = $this->get( 'Pagination' );
+		$event 		= $this->get( 'Event' );
 
  		if (JEMHelper::isValidDate($event->dates)) {
 			$event->dates = JEMOutput::formatdate($event->dates);
-		}
-		else {
-			$event->dates		= JText::_('COM_JEM_OPEN_DATE');
+		} else {
+			$event->dates = JText::_('COM_JEM_OPEN_DATE');
 		}
 
 		//build filter selectlist
@@ -85,7 +84,7 @@ class JEMViewAttendees extends JViewLegacy {
 
 		// add toolbar
 		$this->addToolbar();
-		
+
 		parent::display($tpl);
 	}
 
@@ -94,40 +93,39 @@ class JEMViewAttendees extends JViewLegacy {
 	 *
 	 * @param $tpl
 	 *
-	 * 
+	 *
 	 */
 	public function _displayprint($tpl = null)
 	{
 		$jemsettings = JEMAdmin::config();
-		$document	=  JFactory::getDocument();
+		$document = JFactory::getDocument();
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
-		$rows      	=  $this->get( 'Data');
-		$event 		=  $this->get( 'Event' );
+		$rows = $this->get( 'Data');
+		$event = $this->get( 'Event' );
 
 
 		if (JEMHelper::isValidDate($event->dates)) {
 			$event->dates = JEMOutput::formatdate($event->dates);
-		}
-		else {
-			$event->dates	= JText::_('COM_JEM_OPEN_DATE');
+		} else {
+			$event->dates = JText::_('COM_JEM_OPEN_DATE');
 		}
 
 		//assign data to template
-		$this->rows 		= $rows;
-		$this->event 		= $event;
+		$this->rows = $rows;
+		$this->event = $event;
 
 		parent::display($tpl);
 	}
-	
-	
+
+
 	/*
 	 * Add Toolbar
 	*/
-	
+
 	protected function addToolbar()
 	{
-			
+
 		//add toolbar
 		JToolBarHelper::title( JText::_( 'COM_JEM_REGISTERED_USERS' ), 'users' );
 		JToolBarHelper::addNew('attendees.add');
@@ -138,10 +136,10 @@ class JEMViewAttendees extends JViewLegacy {
 		JToolBarHelper::custom('attendees.back', 'back', 'back', JText::_('COM_JEM_ATT_BACK'), false);
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'registereduser', true );
-		
+
 	}
-	
-	
-	
+
+
+
 }
 ?>

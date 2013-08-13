@@ -65,20 +65,7 @@ defined('_JEXEC') or die;
 			<td>
 				<?php
 					//Format date
-					if (JEMHelper::isValidDate($row->dates)) {
-						$date = JEMOutput::formatdate($row->dates); 
-					} 
-					else {
-						$date		= JText::_('COM_JEM_OPEN_DATE');
-					}
-					if ( !JEMHelper::isValidDate($row->enddates) ) {
-						$displaydate = $date;
-					} else {
-						$enddate 	= JEMOutput::formatdate($row->dates); 
-						$displaydate = $date.' - '.$enddate;
-					}
-
-					echo $displaydate;
+					echo JEMOutput::formatLongDateTime($row->dates, null, $row->enddates, null);
 				?>
 			</td>
 			<td>
@@ -98,35 +85,35 @@ defined('_JEXEC') or die;
 			<td><?php
 				$nr = count($row->categories);
 				$ix = 0;
-				foreach ($row->categories as $key => $category) :				
+				foreach ($row->categories as $key => $category) :
 					$catlink	= 'index.php?option=com_jem&amp;controller=categories&amp;task=edit&amp;cid[]='. $category->id;
 					$title = htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8');
 					if (JString::strlen($title) > 20) {
 						$title = JString::substr( $title , 0 , 20).'...';
 					}
-					
+
 					$path = '';
 					$pnr = count($category->parentcats);
 					$pix = 0;
 					foreach ($category->parentcats as $key => $parentcats) :
-					
+
 						$path .= $parentcats->catname;
-						
+
 						$pix++;
 						if ($pix != $pnr) :
 							$path .= ' » ';
-						endif;	
+						endif;
 					endforeach;
-					
+
 					if ( $category->cchecked_out && ( $category->cchecked_out != $this->user->get('id') ) ) {
 							echo $title;
-					} else { 
+					} else {
 					?>
-						
-	
+
+
 							<?php echo $title; ?>
-						
-				
+
+
 					<?php
 					}
 					$ix++;

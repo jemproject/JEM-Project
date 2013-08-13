@@ -15,7 +15,7 @@ defined('_JEXEC') or die;
  *
  * @package Joomla
  * @subpackage JEM Wide Module
- * 
+ *
  */
 class modJEMwideHelper
 {
@@ -191,7 +191,7 @@ class modJEMwideHelper
 		$tomorrow_stamp 	= mktime(0, 0, 0, date("m") , date("d")+1, date("Y"));
 		$tomorrow 			= strftime("%Y-%m-%d", $tomorrow_stamp);
 
-		$dates_stamp		= strtotime($row->dates);
+		$dates_stamp		= $row->dates ? strtotime($row->dates) : null;
 		$enddates_stamp		= $row->enddates ? strtotime($row->enddates) : null;
 
 		//if datemethod show day difference
@@ -214,17 +214,17 @@ class modJEMwideHelper
 
 			//the event has an enddate and it's later than today but the startdate is earlier than today
 			//means a currently running event
-			} elseif($row->enddates && $enddates_stamp > $today_stamp && $dates_stamp < $today_stamp) {
+			} elseif($row->dates && $row->enddates && $enddates_stamp > $today_stamp && $dates_stamp < $today_stamp) {
 				$days = round(($today_stamp - $dates_stamp) / 86400);
 				$result = JText::sprintf('MOD_JEM_WIDE_STARTED_DAYS_AGO', $days);
 
 			//the events date is earlier than yesterday
-			} elseif($dates_stamp < $yesterday_stamp) {
+			} elseif($row->dates && $dates_stamp < $yesterday_stamp) {
 				$days = round(($today_stamp - $dates_stamp) / 86400);
 				$result = JText::sprintf('MOD_JEM_WIDE_DAYS_AGO', $days);
 
 			//the events date is later than tomorrow
-			} elseif($dates_stamp > $tomorrow_stamp) {
+			} elseif($row->dates && $dates_stamp > $tomorrow_stamp) {
 				$days = round(($dates_stamp - $today_stamp) / 86400);
 				$result = JText::sprintf('MOD_JEM_WIDE_DAYS_AHEAD', $days);
 			}

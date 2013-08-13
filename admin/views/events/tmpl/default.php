@@ -105,19 +105,9 @@ window.addEvent('domready', function(){
 			<?php
 			foreach ($this->items as $i => $row) :
 				//Prepare date
-				if (JEMHelper::isValidDate($row->dates)) {
-					$date = JEMOutput::formatdate($row->dates);
-				}
-				else {
-					$date		= JText::_('COM_JEM_OPEN_DATE');
-				}
-
-				if (!JEMHelper::isValidDate($row->enddates)) {
-					$displaydate = $date;
-				} else {
-					$enddate 	= JEMOutput::formatdate($row->enddates);
-					$displaydate = $date.' - <br />'.$enddate;
-				}
+				$displaydate = JEMOutput::formatLongDateTime($row->dates, null, $row->enddates, null);
+				// Insert a break between date and enddate if possible
+				$displaydate = str_replace(" - ", " -<br />", $displaydate);
 
 				//Prepare time
 				if (!$row->times) {

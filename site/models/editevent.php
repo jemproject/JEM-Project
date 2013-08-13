@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Editevent Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelEditevent extends JModelLegacy
 {
@@ -131,7 +131,7 @@ class JEMModelEditevent extends JModelLegacy
 				$this->_event = new stdClass();
 				$this->_event->id					= 0;
 				$this->_event->locid				= '';
-				$this->_event->dates				= '';
+				$this->_event->dates				= null;
 				$this->_event->enddates				= null;
 				$this->_event->title				= '';
 				$this->_event->times				= null;
@@ -284,7 +284,7 @@ class JEMModelEditevent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * 
+	 *
 	 */
 	function getCatsselected()
 	{
@@ -434,7 +434,7 @@ class JEMModelEditevent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * 
+	 *
 	 */
 	function checkin()
 	{
@@ -455,7 +455,7 @@ class JEMModelEditevent extends JModelLegacy
 	 * @access	public
 	 * @param	int	$uid	User ID of the user checking the item out
 	 * @return	boolean	True on success
-	 * 
+	 *
 	 */
 	function checkout($uid = null)
 	{
@@ -503,7 +503,7 @@ class JEMModelEditevent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	id
-	 * 
+	 *
 	 */
 	function store($data, $file)
 	{
@@ -518,7 +518,7 @@ class JEMModelEditevent extends JModelLegacy
 		//Sanitize
 		$data['datdescription'] = JRequest::getVar( 'datdescription', '', 'post','string', JREQUEST_ALLOWRAW );
 
-		
+
 		// Check the metatags
 		if (JString::strlen($row->meta_description) > 255) {
 			$row->meta_description = JString::substr($row->meta_description, 0, 254);

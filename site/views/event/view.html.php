@@ -15,14 +15,14 @@ jimport('joomla.application.component.view');
  * HTML Event View class of the JEM component
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewEvent extends JViewLegacy
 {
 	/**
 	 * Creates the output for the Event view
 	 *
- 	 * 
+ 	 *
 	 */
 	function display($tpl = null)
 	{
@@ -39,7 +39,7 @@ class JEMViewEvent extends JViewLegacy
 		$registers		= $this->get('Registers');
 		$isregistered	= $this->get('UserIsRegistered');
 
-		
+
 
 		//get menu information
 		$menu			= $app->getMenu();
@@ -106,8 +106,7 @@ class JEMViewEvent extends JViewLegacy
 		}
 
 		//Timecheck for registration
-		$jetzt = date("Y-m-d");
-		$now = strtotime($jetzt);
+		$now = strtotime(date("Y-m-d"));
 		$date = strtotime($row->dates);
 		$timecheck = $now - $date;
 
@@ -124,8 +123,8 @@ class JEMViewEvent extends JViewLegacy
 		} else {
 			$formhandler = 4;
 		}
-		
-		
+
+
 		if ($formhandler >= 3) {
 			$js = "function check(checkbox, senden) {
 				if(checkbox.checked==true){
@@ -238,7 +237,7 @@ class JEMViewEvent extends JViewLegacy
 	/**
 	 * structures the keywords
 	 *
- 	 * 
+ 	 *
 	 */
 	function keyword_switcher($keyword, $row, $categories, $formattime, $formatdate) {
 		switch ($keyword) {

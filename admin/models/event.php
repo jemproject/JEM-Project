@@ -278,7 +278,7 @@ class JEMModelEvent extends JModelAdmin
 		$table->hits = $hits;
 
 
-		if($table->dates == '0000-00-00' || $table->dates == null) {
+		if($table->dates == null) {
 			$table->recurrence_number = '0';
 			$table->recurrence_byday = '0';
 			$table->recurrence_counter = '0';
@@ -429,7 +429,7 @@ class JEMModelEvent extends JModelAdmin
 		*/
 
 		// check for recurrence, when filled it will perform the cleanup function
-		if ($table->recurrence_number > 0 && !($table->dates == '0000-00-00' || $table->dates == null) )
+		if ($table->recurrence_number > 0 && !$table->dates == null)
 		{
 			JEMHelper::cleanup(1);
 		}

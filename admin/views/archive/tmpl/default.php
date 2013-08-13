@@ -48,28 +48,19 @@ defined('_JEXEC') or die; ?>
 		<tbody>
 			<?php
 			foreach ($this->rows as $i => $row) :
-				if (JEMHelper::isValidDate($row->dates)) {
-					$date		= JEMOutput::formatdate($row->dates);
-				}
-				else {
-					$date		= JText::_('COM_JEM_OPEN_DATE');
-				}
-
-				if (!JEMHelper::isValidDate($row->enddates)) {
-					$displaydate = $date;
-				} else {
-					$enddate 	= JEMOutput::formatdate($row->enddates);
-					$displaydate = $date.' - <br />'.$enddate;
-				}
+				//Prepare date
+				$displaydate = JEMOutput::formatLongDateTime($row->dates, null, $row->enddates, null);
+				// Insert a break between date and enddate if possible
+				$displaydate = str_replace(" - ", " -<br />", $displaydate);
 
 				//Don't display 0 time
 				if (!$row->times) {
-					$time = '';
+					$time = '-';
 				} else {
 					$time = strftime( $this->jemsettings->formattime, strtotime( $row->times ));
 					$time = $time.' '.$this->jemsettings->timename;
 				}
-   			?>
+			?>
 			<tr class="row<?php echo $i % 2; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 				<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>

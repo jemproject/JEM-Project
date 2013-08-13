@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS `#__jem_events` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `locid` int(11) unsigned NOT NULL default '0',
-  `dates` date NOT NULL default '0000-00-00',
+  `dates` date NULL default NULL,
   `enddates` date NULL default NULL,
   `times` time NULL default NULL,
   `endtimes` time NULL default NULL,
