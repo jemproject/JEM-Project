@@ -23,7 +23,7 @@ defined ( '_JEXEC' ) or die;
 	<tbody>
 		<?php foreach ($this->row->attachments as $file): ?>
 		<tr>
-			<td><?php echo $file->file; ?><input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/></td>
+			<td><input class="readonly" type="text" readonly="readonly" value="<?php echo $file->file; ?>"><input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/></td>
 			<td><input type="text" name="attached-name[]" style="width: 100%" value="<?php echo $file->name; ?>" /></td>
 			<td><input type="text" name="attached-desc[]" style="width: 100%" value="<?php echo $file->description; ?>" /></td>
 			<td><?php echo JHTML::_('select.genericlist', $this->access, 'attached-access[]', 'class="inputbox" size="3"', 'value', 'text', $file->access); ?></td>
@@ -48,4 +48,3 @@ defined ( '_JEXEC' ) or die;
 		</tr>
 	</tbody>
 </table>
-			
