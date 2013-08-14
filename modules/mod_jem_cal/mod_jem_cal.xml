@@ -13,10 +13,9 @@
 	<files>
 		<filename module="mod_jem_cal">mod_jem_cal.php</filename>
 		<filename>mod_jem_cal.css</filename>
-		<filename>index.html</filename>
 		<filename>helper.php</filename>
 		<filename>tmpl/default.php</filename>
-		<filename>tmpl/index.html</filename>
+		
 
 		<folder>language</folder>
 	</files>
