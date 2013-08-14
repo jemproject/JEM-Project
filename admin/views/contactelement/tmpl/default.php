@@ -60,8 +60,7 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 			<td align="left">
 				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SELECT' );?>::<?php echo $row->name; ?>">
 				<a style="cursor:pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');"><?php echo $this->escape($row->name); ?></a>
-				<?php echo htmlspecialchars($row->name, ENT_QUOTES, 'UTF-8'); ?>
-				</a></span>
+				</span>
 			</td>
 			<td align="left"><?php echo htmlspecialchars($row->address, ENT_QUOTES, 'UTF-8'); ?></td>
 			<td align="left"><?php echo htmlspecialchars($row->email_to, ENT_QUOTES, 'UTF-8'); ?></td>
