@@ -132,7 +132,7 @@ class jemmyeventsTab extends cbTabHandler {
 		*/
 
 		//get param for thumbnail
-		$query = "SELECT gddisabled FROM #__eventlist_settings";
+		$query = "SELECT gddisabled FROM #__jem_settings";
 		$_CB_database->setQuery( $query );
 		$thumb= $_CB_database->loadResult();
 
