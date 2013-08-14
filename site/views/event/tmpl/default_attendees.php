@@ -9,7 +9,11 @@
 
 defined('_JEXEC') or die;
 ?>
+
+<?php if ($this->row->registra == 1) : ?>
 <h2 class="register"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ).':'; ?></h2>
+<?php  endif; ?>
+
 
 <div class="register">
 <?php
@@ -26,14 +30,14 @@ foreach ($this->registers as $register) :
 	// is a plugin catching this ?
 	//TODO: remove markup..the plugin should handle this to improve flexibility
 	if ($res = $this->dispatcher->trigger( 'onAttendeeDisplay', array( $register->uid, &$text ))) :
-	
+
 		echo '<li>'.$text.'</li>';
   	endif;
-  
+
 	//if CB
 	if ($this->jemsettings->comunsolution == 1) :
 
-		
+
 		if ($this->jemsettings->comunoption == 1) :
 			//User has avatar
 			if(!empty($register->avatar)) :
