@@ -10,7 +10,7 @@ table.month {
 	background-color:#FFFFFF;
 	border:2px solid #000000;
 	table-layout:fixed;
-	width:690px;
+	width:100%;
 }
 
 .monthname {
@@ -92,6 +92,7 @@ table.month {
 	border-radius: 2px;
 	padding: 5px;
 	margin: 2px;
+	word-wrap: break-word;
 }
 
 .eventcontent a:link, a:visited {
