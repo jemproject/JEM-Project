@@ -186,7 +186,7 @@ window.addEvent('domready', function(){
 				</td>
 				<td class="city"><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
 				<td class="state"><?php echo $row->state ? htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
-				<td>
+				<td class="category">
 				<?php
 				$nr = count($row->categories);
 				$ix = 0;

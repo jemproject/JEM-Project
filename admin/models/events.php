@@ -37,6 +37,7 @@ class JEMModelEvents extends JModelList
 					'dates', 'a.dates',
 					'hits', 'a.hits',
 					'id', 'a.id',
+					'catname', 'c.catname',
 			);
 		}
 
@@ -67,8 +68,8 @@ class JEMModelEvents extends JModelList
 		$filterfield = $this->getUserStateFromRequest($this->context.'.filter', 'filter', '', 'int');
 		$this->setState('filter', $filterfield);
 
-		//	$categoryId = $this->getUserStateFromRequest($this->context.'.filter.category_id', 'filter_category_id', '');
-		//	$this->setState('filter.category_id', $categoryId);
+		//  $categoryId = $this->getUserStateFromRequest($this->context.'.filter.category_id', 'filter_category_id', '');
+		//  $this->setState('filter.category_id', $categoryId);
 
 		//	$language = $this->getUserStateFromRequest($this->context.'.filter.language', 'filter_language', '');
 		//	$this->setState('filter.language', $language);
@@ -79,7 +80,7 @@ class JEMModelEvents extends JModelList
 		$this->setState('params', $params);
 
 		// List state information.
-		parent::populateState('a.title', 'asc');
+		parent::populateState('a.dates', 'asc');
 	}
 
 	/**
@@ -146,35 +147,19 @@ class JEMModelEvents extends JModelList
 		/*$query->select('ag.title AS access_level');
 		$query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');*/
 
+		// Join over the cat_relations
+		$query->select('rel.*');
+		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid=a.id');
+
 		// Join over the categories.
-		/*$query->select('c.title AS category_title');
-		$query->join('LEFT', '#__categories AS c ON c.id = a.catid');*/
+		$query->select('c.catname, c.id AS catid');
+		$query->join('LEFT', '#__jem_categories AS c ON c.id=rel.catid');
 
 
 		// Join over the author & email.
 		$query->select('u.email, u.name AS author');
 		$query->join('LEFT', '#__users AS u ON u.id=a.created_by');
 
-
-		//
-		// Adding this line will only turn up venues with assigned events to them.
-		//
-		// Join over the assigned events
-		//$query->select('COUNT( e.locid ) AS assignedevents');
-		//$query->join('LEFT', '#__jem_events AS e ON e.locid=a.id');
-
-		// Join over the asset groups.
-		//$query->select('ag.title AS access_level');
-		//$query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');
-
-		// Join over the categories.
-		//$query->select('c.title AS category_title');
-		//$query->join('LEFT', '#__categories AS c ON c.id = a.catid');
-
-		// Filter by access level.
-		//if ($access = $this->getState('filter.access')) {
-		//	$query->where('a.access = '.(int) $access);
-		//}
 
 		// Implement View Level Access
 		//if (!$user->authorise('core.admin'))
@@ -190,12 +175,6 @@ class JEMModelEvents extends JModelList
 		} elseif ($published === '') {
 			$query->where('(a.published IN (0, 1))');
 		}
-
-		// Filter by category.
-		//$categoryId = $this->getState('filter.category_id');
-		//if (is_numeric($categoryId)) {
-		//	$query->where('a.catid = '.(int) $categoryId);
-		//}
 
 		// Filter by search in title
 		$filter = $this->getState('filter');
@@ -227,9 +206,14 @@ class JEMModelEvents extends JModelList
 					$query->where('loc.country LIKE '.$search);
 				}
 
-				/* search all */
+				/* search category */
 				if ($search && $filter == 5) {
-					$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR loc.country LIKE '.$search.')');
+					$query->where('c.catname LIKE '.$search);
+				}
+
+				/* search all */
+				if ($search && $filter == 6) {
+					$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR c.catname LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR loc.country LIKE '.$search.')');
 				}
 
 
