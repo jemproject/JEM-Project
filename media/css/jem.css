@@ -1,22 +1,9 @@
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 
@@ -59,6 +46,14 @@ div#jem .tabs
 margin:inherit;
 }
 
+input .required {
+    background-color: rgb(213, 238, 255) !important;
+}
+
+/* container JEM, 2 classes (inputbox + required) specified */
+div#jem .inputbox.required {
+    background-color: rgb(213, 238, 255) !important;
+}
 
 
 div#jem .inputbox:hover
@@ -68,17 +63,21 @@ border:1px solid grey;
 background:#DDE084;
 }
 
+/*
 div#jem .inputbox2
 {
 border:1px solid grey;
 background: #B3BABA;
 cursor:pointer;
 }
+*/
 
 div#jem .inputbox
 {
 border:1px solid grey;
-background: #B3BABA;
+/*background: #B3BABA;*/
+
+background: #C6CCBE;
 cursor:pointer;
 
 }
@@ -167,7 +166,6 @@ border:1px solid grey;
 
 /**
  * @section headlines
- *
  */
 div#jem h2 {
     font-size: normal !important;
@@ -187,7 +185,7 @@ border: none;
 /**
  * @section definitionlist
  *
- * Event Details
+ * Event
  */
 div#jem dl {
 margin: 0 5px;
@@ -317,7 +315,6 @@ div#jem .map {
 
 /**
  * @section registered user list
- *
  */
  
 div#jem div.register {
@@ -379,7 +376,6 @@ div.pagination ul li {
 
 /**
  * @section Categoryview
- *
  */
 div#jem .catimg {
 margin: 0 0.5em 0.5em 0;
@@ -398,7 +394,6 @@ margin: 0 0 0.5em 0;
 
 /**
  * @section JEM Table
- *
  */
 div#jem table.eventtable
 { background: #DEDEDE; margin: 1em 1px; width: 100%; font-size: 1em; border-collapse:collapse; }
@@ -443,7 +438,6 @@ div#jem table.eventtable tr:hover td
 
 /**
  * @section JEM Table Filter Form
- *
  */
 div#jem #jem_filter {
 margin: 1em 0 0.5em 0; padding: 0.5em;
@@ -462,7 +456,6 @@ float: right;
 
 /**
  * @section Editevent Form
- *
  */
 
 div.jem_editevent form fieldset,
@@ -500,7 +493,8 @@ padding: 1em;
     margin: 0 0 0.5em 0; padding: 0.2em;
     border: 1px solid grey;
     cursor: pointer;
-    background-color: yellow;
+    background:#DDE084;
+    border:1px solid grey;
     }
     div.jem_editevent form input:active, /* event */
     div.jem_editevent form button:active,
@@ -514,7 +508,7 @@ padding: 1em;
     margin: 0 0 0.5em 0; padding: 0.2em;
     border: 1px solid grey;
     cursor: pointer;
-    background-color: yellow;
+    background-color: #C6CCBE;
     }
     div.jem_editevent form input:visited, /* event */
     div.jem_editevent form button:visited,
@@ -528,7 +522,7 @@ padding: 1em;
     margin: 0 0 0.5em 0; padding: 0.2em;
     border: 1px solid grey;
     cursor: pointer;
-    background-color: yellow;
+    background-color: #C6CCBE;
     }
     div.jem_editevent form input:active, /* event */
     div.jem_editevent form button:active,
@@ -542,7 +536,7 @@ padding: 1em;
     margin: 0 0 0.5em 0; padding: 0.2em;
     border: 1px solid grey;
     cursor: pointer;
-    background-color: yellow;
+    background-color: #C6CCBE;
     }
     
     
@@ -559,7 +553,7 @@ padding: 1em;
     margin: 0 0 0.5em 0; padding: 0.2em;
     border: 1px solid grey;
     cursor: pointer;
-    background-color: #fff;
+    background-color: #C6CCBE;
     }
 
     div.jem_editevent form input#a_name {
@@ -573,6 +567,11 @@ padding: 1em;
     /*vertical-align: baseline;*/
     cursor: pointer;
     }
+
+
+
+
+
 
 /** venue select buttons */
 div.jem_editevent div.jem_buttons {
@@ -700,7 +699,6 @@ table#el-attachments th {
 
 /**
  * googlemap
- *
  */
 #googlemap {
 margin-top: 20px;

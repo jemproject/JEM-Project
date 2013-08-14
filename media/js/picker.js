@@ -12,8 +12,8 @@ var layerWidth = 218;
 var layerHeight = 144;
 var currentId = "";
 var orgColor ="";
-var onPick = undefined;
-var onCancel = undefined;
+var onPick = "";
+var onCancel = "";
 function openPicker(id, _onPick, _onCancel) {
 	if (_onPick) {
 		onPick = _onPick;
@@ -97,7 +97,7 @@ function setClr(color){
 	currentId = "";
 	removeLayer("picker");
 	if (onPick) {
-		onPick();
+		/*onPick();*/
     }	
 }
 function cancel(){
@@ -106,7 +106,7 @@ function cancel(){
 	Obj.style.backgroundColor=orgColor;	
 	removeLayer("picker");
     if (onCancel) {
-		onCancel();
+		/*oncancel();*/
     }
 }
 function removeLayer(id){

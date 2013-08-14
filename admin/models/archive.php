@@ -1,26 +1,12 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// no direct access
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
@@ -29,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Archive Model
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMModelArchive extends JModelLegacy
 {
@@ -64,7 +50,6 @@ class JEMModelArchive extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
 	 */
 	function __construct()
 	{
@@ -92,7 +77,7 @@ class JEMModelArchive extends JModelLegacy
 	function setId($id)
 	{
 		// Set id and wipe data
-		$this->_id	    = $id;
+		$this->_id		= $id;
 		$this->_data 	= null;
 	}
 
@@ -108,19 +93,16 @@ class JEMModelArchive extends JModelLegacy
 		if (empty($this->_data))
 		{
 			$query = $this->_buildQuery();
-			
+
 			$pagination = $this->getPagination();
 			$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 			$this->_data = $this->_additionals($this->_data);
-			
-			$k = 0;
+
 			$count = count($this->_data);
 			for($i = 0; $i < $count; $i++)
 			{
 				$item = $this->_data[$i];
 				$item->categories = $this->getCategories($item->id);
-				
-				$k = 1 - $k;
 			}
 		}
 
@@ -201,8 +183,7 @@ class JEMModelArchive extends JModelLegacy
 
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.archive.filter_order', 		'filter_order', 	'a.dates', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.archive.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
-		
-		 
+
 		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
@@ -221,9 +202,9 @@ class JEMModelArchive extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.archive.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.archive.search', 'search', '', 'string' );
-		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
+		$filter = $app->getUserStateFromRequest( 'com_jem.archive.filter', 'filter', '', 'int' );
+		$search = $app->getUserStateFromRequest( 'com_jem.archive.search', 'search', '', 'string' );
+		$search = $this->_db->escape( trim(JString::strtolower( $search ) ) );
 
 		$where = array('a.published 	= 2',);
 
@@ -282,7 +263,7 @@ class JEMModelArchive extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	1.5
+	 * 
 	 */
 	function publish($cid = array(), $publish = 1)
 	{
@@ -311,7 +292,7 @@ class JEMModelArchive extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function delete($cid = array())
 	{
@@ -327,24 +308,24 @@ class JEMModelArchive extends JModelLegacy
 				$this->setError($this->_db->getErrorMsg());
 				return false;
 			}
-			
-			
+
+
 			//remove assigned category references
 			$query = 'DELETE FROM #__jem_cats_event_relations'
 					.' WHERE itemid IN ('. $cids .')';
-							
+
 			$this->_db->setQuery($query);
-			
+
 			if(!$this->_db->query()) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 			}
-					
+
 		}
 
 		return true;
 	}
-	
+
 	function getCategories($id)
 	{
 		$query = 'SELECT DISTINCT c.id, c.catname, c.checked_out AS cchecked_out'
@@ -352,22 +333,19 @@ class JEMModelArchive extends JModelLegacy
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				;
-	
+
 		$this->_db->setQuery( $query );
 
 		$this->_cats = $this->_db->loadObjectList();
-		
-		$k = 0;
+
 		$count = count($this->_cats);
 		for($i = 0; $i < $count; $i++)
 		{
 			$item = $this->_cats[$i];
 			$cats = new JEMCategories($item->id);
 			$item->parentcats = $cats->getParentlist();
-				
-			$k = 1 - $k;
 		}
-		
+
 		return $this->_cats;
 	}
 }

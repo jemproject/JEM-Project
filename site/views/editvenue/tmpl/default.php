@@ -1,36 +1,29 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// no direct access
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 ?>
 
+
 <script type="text/javascript">
-	window.addEvent('domready', function() { 
+	window.addEvent('domready', function() {
 		var form = document.getElementById('adminForm');
 		var map = $('map1');
-		
-		if(map && map.checked) {
+		setAttribute();
+		test();
+
+		if(map.checked == true) {
 			addrequired();
+		}
+
+		if(map.checked == false) {
+			removerequired();
 		}
 
 		document.formvalidator.setHandler('url',
@@ -44,23 +37,98 @@ defined( '_JEXEC' ) or die;
 			}
 		);
 	});
-	
+
+
+	function setAttribute()
+	{
+
+		var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "postal_code"
+	    document.getElementById("postalCode").setAttributeNode(attribute);
+
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "locality"
+	    document.getElementById("city").setAttributeNode(attribute);
+
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "administrative_area_level_1"
+	    document.getElementById("state").setAttributeNode(attribute);
+
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "street_address"
+	    document.getElementById("street").setAttributeNode(attribute);
+
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "country_short"
+	    document.getElementById("country").setAttributeNode(attribute);
+
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "lat"
+	    document.getElementById("latitude").setAttributeNode(attribute);
+
+	    var attribute = document.createAttribute("geo-data");
+	    attribute.nodeValue = "lng"
+	    document.getElementById("longitude").setAttributeNode(attribute);
+
+
+
+	}
+
+	function test()
+	{
+		 var handler = function(e) {
+
+			 var form = document.getElementById('adminForm');
+				var map = $('map1');
+
+				var streetcheck = $(form.street).hasClass('required');
+
+			 if(map.checked == true) {
+				 var lat = $('latitude');
+					var lon = $('longitude');
+					if(lat.value == ('' || 0.000000) || lon.value == ('' || 0.000000)) {
+							if(!streetcheck) {
+								addrequired();
+							}
+
+				} else {
+					if(lat.value != ('' || 0.000000) && lon.value != ('' || 0.000000) ) {
+
+					removerequired();
+						}
+					}
+				}
+
+
+
+				if(map.checked == false) {
+					removerequired();
+				}
+		    };
+		    document.getElementById('map1').onchange = handler;
+		    document.getElementById('map1').onkeyup = handler;
+		    document.getElementById('latitude').onchange = handler;
+		    document.getElementById('latitude').onkeyup = handler;
+		    document.getElementById('longitude').onchange = handler;
+		    document.getElementById('longitude').onkeyup = handler;
+	}
+
 	function addrequired() {
-		
+
 		var form = document.getElementById('adminForm');
-		
+
 		$(form.street).addClass('required');
-		$(form.plz).addClass('required');
+		$(form.postalCode).addClass('required');
 		$(form.city).addClass('required');
 		$(form.country).addClass('required');
 	}
-	
+
 	function removerequired() {
-		
+
 		var form = document.getElementById('adminForm');
-		
+
 		$(form.street).removeClass('required');
-		$(form.plz).removeClass('required');
+		$(form.postalCode).removeClass('required');
 		$(form.city).removeClass('required');
 		$(form.country).removeClass('required');
 	}
@@ -76,32 +144,7 @@ defined( '_JEXEC' ) or die;
 		var validator = document.formvalidator;
 		var venue = form.venue.value;
 		venue.replace(/\s/g,'');
-		
-		var map = $('map1');
-		var streetcheck = $(form.street).hasClass('required');
-	
-		//workaround cause validate strict doesn't allow and operator
-		//and ie doesn't understand CDATA properly
-		if (map && map.checked) {
-			var lat = $('latitude');
-			var lon = $('longitude');
-			if(lat.value == '') {  
-				if(lon.value == '') {
-					if(!streetcheck) {  
-						addrequired();
-					}
-				}
-			} else {
-				//if coordinates are given remove check for address
-				removerequired();
-			}
-		}
 
-		if (map && !map.checked) {
-			if(streetcheck) {  
-				removerequired();
-			}
-		}
 
 		if ( venue.length==0 ) {
    			alert("<?php echo JText::_( 'COM_JEM_ERROR_ADD_VENUE', true ); ?>");
@@ -118,10 +161,10 @@ defined( '_JEXEC' ) or die;
   			validator.handleResponse(false,form.city);
   			form.city.focus();
   			return false;
-		} else if ( validator.validate(form.plz) === false) {
+		} else if ( validator.validate(form.postalCode) === false) {
   			alert("<?php echo JText::_( 'COM_JEM_ADD_ZIP', true ); ?>");
-  			validator.handleResponse(false,form.plz);
-  			form.plz.focus();
+  			validator.handleResponse(false,form.postalCode);
+  			form.postalCode.focus();
   			return false;
 		} else if ( validator.validate(form.country) === false) {
    			alert("<?php echo JText::_( 'COM_JEM_ERROR_ADD_COUNTRY', true ); ?>");
@@ -135,17 +178,17 @@ defined( '_JEXEC' ) or die;
   			<?php if ($this->editoruser):
 								// JavaScript for extracting editor text
 								echo $this->editor->save( 'locdescription' );
-							endif; 
+							endif;
 				?>
 			elsubmitform(pressbutton);
 
 			return true;
 		}
 	}
-	
+
 	//joomla submitform needs form name
 	function elsubmitform(pressbutton){
-			
+
 			var form = document.getElementById('adminForm');
 			if (pressbutton) {
 				form.task.value=pressbutton;
@@ -178,6 +221,48 @@ defined( '_JEXEC' ) or die;
   	}
 </script>
 
+				 <script>
+      jQuery(function(){
+    	  jQuery("#geocomplete").geocomplete({
+          map: ".map_canvas",
+          details: "form ",
+          detailsAttribute: "geo-data",
+          types: ['establishment', 'geocode'],
+          markerOptions: {
+            draggable: true
+          }
+        });
+
+    	  jQuery("#geocomplete").bind("geocode:dragged", function(event, latLng){
+    		  jQuery("input[id=latitude]").val(latLng.lat());
+    		  jQuery("input[id=longitude]").val(latLng.lng());
+    		  jQuery("#geocomplete").geocomplete("find", latLng.toString());
+    		 /* option to show the reset-link */
+    		 /* jQuery("#reset").show();*/
+        });
+
+
+
+    	  jQuery("#geocomplete").bind("geocode:result", function(event, result){
+    	  		//var country = document.getElementById("country").value;
+    	  		//document.getElementById("country").value = country;
+        });
+
+
+        /* option to attach a reset function to the reset-link
+    	  jQuery("#reset").click(function(){
+   		  jQuery("#geocomplete").geocomplete("resetMarker");
+   		  jQuery("#reset").hide();
+          return false;
+        });
+     	*/
+
+    	  jQuery("#find").click(function(){
+    		  jQuery("#geocomplete").trigger("geocode");
+        }).click();
+      });
+    </script>
+
 
 <div id="jem" class="jem_editvenue">
     <form enctype="multipart/form-data" id="adminForm" action="<?php echo JRoute::_('index.php') ?>" method="post" class="form-validate">
@@ -194,7 +279,7 @@ defined( '_JEXEC' ) or die;
         <?php echo $this->title; ?>
     </h1>
     <?php endif; ?>
-    
+
     <?php if ($this->params->get('showintrotext')) : ?>
 		  <div class="description no_space floattext">
 		    <?php echo $this->params->get('introtext'); ?>
@@ -203,7 +288,7 @@ defined( '_JEXEC' ) or die;
 
   <p>&nbsp;</p>
 
- 
+
 
 		 <p class="clear"></p>
 
@@ -221,9 +306,9 @@ defined( '_JEXEC' ) or die;
                 <input class="inputbox" type="text" name="street" id="street" value="<?php echo $this->row->street; ?>" size="55" maxlength="50" />
             </div>
 
-            <div class="jem_plz floattext">
-                <label for="plz"><?php echo JText::_( 'COM_JEM_ZIP' ).':'; ?></label>
-                <input class="inputbox" type="text" name="plz" id="plz" value="<?php echo $this->row->plz; ?>" size="15" maxlength="10" />
+            <div class="jem_postalCode floattext">
+                <label for="postalCode"><?php echo JText::_( 'COM_JEM_ZIP' ).':'; ?></label>
+                <input class="inputbox" type="text" name="postalCode" id="postalCode" value="<?php echo $this->row->postalCode; ?>" size="15" maxlength="10" />
             </div>
 
             <div class="jem_city floattext">
@@ -282,6 +367,18 @@ defined( '_JEXEC' ) or die;
 
         </fieldset>
 
+        <fieldset class="adminform" id="geodata">
+<legend>Geodata</legend>
+
+
+ <input id="geocomplete" type="text" placeholder="Type in an address" value="" />
+      <input id="find" type="button" value="find" />
+      <br><br>
+ <div class="map_canvas"></div>
+
+      <a id="reset" href="#" style="display:none;">Reset Marker</a>
+</fieldset>
+
       	<?php	if (( $this->jemsettings->imageenabled == 2 ) || ($this->jemsettings->imageenabled == 1)) :	?>
       	<fieldset class="jem_fldst_image">
 
@@ -331,23 +428,41 @@ defined( '_JEXEC' ) or die;
           	<legend><?php echo JText::_('COM_JEM_METADATA_INFORMATION'); ?></legend>
 
             <div class="jem_box_left">
-              	<label for="metadesc"><?php echo JText::_( 'COM_JEM_META_DESCRIPTION' ); ?></label>
-          		<textarea class="inputbox" cols="40" rows="5" name="meta_description" id="metadesc" style="width:250px;"></textarea>
+              	<label for="meta_description"><?php echo JText::_( 'COM_JEM_META_DESCRIPTION' ); ?></label>
+              	<br />
+					<?php
+					if (! empty ( $this->row->meta_description )) {
+						$meta_description = $this->row->meta_description;
+					} else {
+						$meta_description = $this->jemsettings->meta_description;
+					}
+					?>
+          		<textarea class="inputbox" cols="40" rows="5" name="meta_description" id="meta_description" style="width:250px;"><?php echo $meta_description;?></textarea>
             </div>
 
             <div class="jem_box_right">
-        		<label for="metakey"><?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?></label>
-        		<textarea class="inputbox" cols="40" rows="5" name="meta_keywords" id="metakey" style="width:250px;"></textarea>
+        		<label for="meta_keywords"><?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?></label>
+
+        		<br />
+						<?php
+						if (! empty ( $this->row->meta_keywords )) {
+							$meta_keywords = $this->row->meta_keywords;
+						} else {
+							$meta_keywords = $this->jemsettings->meta_keywords;
+						}
+						?>
+
+        		<textarea class="inputbox" cols="40" rows="5" name="meta_keywords" id="meta_keywords" style="width:250px;"><?php echo $meta_keywords; ?></textarea>
             </div>
 
             <br class="clear" />
-            
-    		<input type="button" class="button jem_fright" value="<?php echo JText::_( 'COM_JEM_ADD_VENUE_CITY' ); ?>" onclick="f=document.getElementById('adminForm');f.metakey.value=f.venue.value+', '+f.city.value+f.metakey.value;" />
+
+    		<input type="button" class="button jem_fright" value="<?php echo JText::_( 'COM_JEM_ADD_VENUE_CITY' ); ?>" onclick="f=document.getElementById('adminForm');f.meta_keywords.value=f.venue.value+', '+f.city.value+f.meta_keywords.value;" />
 
       	</fieldset>
-      	
+
       	<?php echo $this->loadTemplate('attachments'); ?>
-      	
+
 <!--  removed to avoid double posts in ie7
       	<div class="jem_save_buttons floattext">
     		<button type="button" onclick="return submitbutton('savevenue')">
@@ -357,9 +472,8 @@ defined( '_JEXEC' ) or die;
     			<?php echo JText::_('COM_JEM_CANCEL'); ?>
     		</button>
 		</div>
--->		
+-->
 		<p class="clear">
-      	<input type="hidden" name="option" value="com_jem" />
       	<input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
       	<input type="hidden" name="referer" value="<?php echo @$_SERVER['HTTP_REFERER']; ?>" />
       	<input type="hidden" name="created" value="<?php echo $this->row->created; ?>" />
@@ -368,13 +482,14 @@ defined( '_JEXEC' ) or die;
         <input type="hidden" name="mode" value="<?php echo $this->mode; ?>" />
       	<?php echo JHTML::_( 'form.token' ); ?>
       	<input type="hidden" name="task" value="" />
+      	<input type="hidden" name="view" value="editvenue">
       	</p>
 
     </form>
 
-    <p class="copyright">
+    <div class="copyright">
         <?php echo JEMOutput::footer( ); ?>
-    </p>
+    </div>
 
 </div>
 

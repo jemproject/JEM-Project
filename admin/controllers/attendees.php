@@ -1,26 +1,13 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- *
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
 jimport('joomla.application.component.controller');
 
@@ -28,14 +15,14 @@ jimport('joomla.application.component.controller');
  * JEM Component Attendees Controller
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMControllerAttendees extends JEMController
 {
 	/**
 	 * Constructor
 	 *
-	 *@since 0.9
+	 *
 	 */
 	function __construct()
 	{
@@ -51,7 +38,7 @@ class JEMControllerAttendees extends JEMController
 	 *
 	 * @return true on sucess
 	 * @access private
-	 * @since 0.9
+	 * 
 	 */
 	function remove()
 	{
@@ -90,7 +77,6 @@ class JEMControllerAttendees extends JEMController
 		header('Content-Disposition: attachment; filename=attendees.csv');
 		header('Pragma: no-cache');
 
-		$k = 0;
 		$export = '';
 		$col = array();
 
@@ -98,25 +84,23 @@ class JEMControllerAttendees extends JEMController
 		{
 			$data = $datas[$i];
 
-    		$col[] = str_replace("\"", "\"\"", $data->name);
-    		$col[] = str_replace("\"", "\"\"", $data->username);
-    		$col[] = str_replace("\"", "\"\"", $data->email);
-    		$col[] = str_replace("\"", "\"\"", JHTML::Date( $data->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ));
-    		$col[] = str_replace("\"", "\"\"", $data->uid);
+			$col[] = str_replace("\"", "\"\"", $data->name);
+			$col[] = str_replace("\"", "\"\"", $data->username);
+			$col[] = str_replace("\"", "\"\"", $data->email);
+			$col[] = str_replace("\"", "\"\"", JHTML::Date( $data->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ));
+			$col[] = str_replace("\"", "\"\"", $data->uid);
 
-   	 		for($j = 0; $j < count($col); $j++)
-    		{
-        		$export .= "\"" . $col[$j] . "\"";
+			for($j = 0; $j < count($col); $j++)
+			{
+				$export .= "\"" . $col[$j] . "\"";
 
-        		if($j != count($col)-1)
-       	 		{
-            		$export .= ";";
-        		}
-    		}
-    		$export .= "\r\n";
-    		$col = '';
-
-			$k = 1 - $k;
+				if($j != count($col)-1)
+				{
+					$export .= ";";
+				}
+			}
+			$export .= "\r\n";
+			$col = '';
 		}
 
 		echo $export;
@@ -129,7 +113,7 @@ class JEMControllerAttendees extends JEMController
 	 */
   function back()
   {
-    $this->setRedirect( 'index.php?option=com_jem&view=events' );
+	$this->setRedirect( 'index.php?option=com_jem&view=events' );
   }
 
   function toggle()
@@ -147,8 +131,8 @@ class JEMControllerAttendees extends JEMController
 		if ($res)
 		{
 			JPluginHelper::importPlugin( 'jem' );
-	    $dispatcher = JDispatcher::getInstance();
-	   	$res = $dispatcher->trigger( 'onUserOnOffWaitinglist', array( $id ) );
+		$dispatcher = JDispatcher::getInstance();
+		$res = $dispatcher->trigger( 'onUserOnOffWaitinglist', array( $id ) );
 
 			if ($attendee->waiting)
 			{
@@ -173,7 +157,7 @@ class JEMControllerAttendees extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * @since 1.1
+	 * 
 	 */
 	function cancel()
 	{
@@ -192,7 +176,7 @@ class JEMControllerAttendees extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * @since 1.1
+	 * 
 	 */
 	function edit( )
 	{
@@ -217,7 +201,7 @@ class JEMControllerAttendees extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * @since 1.1
+	 * 
 	 */
 	function save()
 	{

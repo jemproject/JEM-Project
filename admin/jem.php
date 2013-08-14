@@ -1,28 +1,23 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
-//Require classes
+
+
+// Access check.
+if (!JFactory::getUser()->authorise('core.manage', 'com_jem')) {
+	return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
+}
+
+
+// Require classes
 require_once (JPATH_COMPONENT_SITE.'/helpers/helper.php');
 require_once (JPATH_COMPONENT_SITE.'/helpers/countries.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/image.class.php');
@@ -37,21 +32,10 @@ JTable::addIncludePath(JPATH_COMPONENT.'/tables');
 // Require the base controller
 require_once (JPATH_COMPONENT.'/controller.php');
 
-// Require specific controller if requested
-if( $controller = JRequest::getWord('controller') ) {
-	$path = JPATH_COMPONENT.'/controllers/'.$controller.'.php';
-	if (file_exists($path)) {
-		require_once $path;
-	} else {
-		$controller = '';
-	}
-}
+// specify the prefix of the controllers
+$controller = JControllerLegacy::getInstance('Jem');
 
-//Create the controller
-$classname  = 'JEMController'.$controller;
-$controller = new $classname( );
-
-// Perform the Request task
-$controller->execute( JRequest::getWord('task'));
+// controller is activated upon a task
+$controller->execute(JRequest::getCmd('task'));
 $controller->redirect();
 ?>

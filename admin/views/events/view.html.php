@@ -1,157 +1,201 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
-
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 defined( '_JEXEC' ) or die;
 
 
 /**
- * View class for the JEM events screen
+ * View class for the EventList Venues screen
  *
- * @package JEM
- * @since 0.9
-*/
-class JEMViewEvents extends JViewLegacy {
+ * @package Joomla
+ * @subpackage EventList
+ * 
+ */
+ 
+ class JEMViewEvents extends JViewLegacy {
+
+
+	protected $items;
+	protected $pagination;
+	protected $state;
+
+
 
 	public function display($tpl = null)
 	{
+		
 		$app =  JFactory::getApplication();
-
-		//initialise variables
 		$user 		=  JFactory::getUser();
 		$document	=  JFactory::getDocument();
-		$db  		=  JFactory::getDBO();
+		
+		
 		$jemsettings = JEMAdmin::config();
+		$url 		= JURI::root();
+		
+        // Initialise variables.
+		$this->items		= $this->get('Items');
+		$this->pagination	= $this->get('Pagination');
+		$this->state		= $this->get('State');
+		//$this->categories		= $this->get('Categories');
 
-		//get vars
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.events.filter_order', 'filter_order', 	'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.events.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.events.filter_state', 'filter_state', 	'', 'string' );
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.events.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.events.search', 'search', '', 'string' );
-		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
-		$template			= $app->getTemplate();
-
+		$params = $this->state->get('params');
+		
+		// highlighter
+		$highlighter = $params->get('highlight','0');
+		
+		
+		// Check for errors.
+		if (count($errors = $this->get('Errors')))
+		{
+			JError::raiseError(500, implode("\n", $errors));
+			return false;
+		}
+		JHtml::_('behavior.framework');
+	
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
-
+		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+		$document->addCustomTag( '<script type="text/javascript">jQuery.noConflict();</script>' );
+		
+		if ($highlighter){
+		$document->addScript($url.'media/com_jem/js/highlighter.js');
+		$style = '
+        .red a:link, .red a:visited, .red a:active {
+        color:red;}
+        '
+		 ;
+		 $document->addStyleDeclaration( $style );
+		}
+		
+		//add style to description of the tooltip (hastip)
 		JHTML::_('behavior.tooltip');
-
-		// Get data from the model
-		$rows      	=  $this->get( 'Data');
-		$pagination 	=  $this->get( 'Pagination' );
-
-		//publish unpublished filter
-		$lists['state']	= $filter_state;
-
-		// table ordering
-		$lists['order_Dir'] = $filter_order_Dir;
-		$lists['order'] = $filter_order;
-
-		//search filter
+		
+		// add filter selection for the search
 		$filters = array();
 		$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_EVENT_TITLE' ) );
-		$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_VENUE' ) );
-		$filters[] = JHTML::_('select.option', '3', JText::_( 'COM_JEM_CITY' ) );
-		$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_CATEGORY' ) );
-		$filters[] = JHTML::_('select.option', '5', JText::_( 'COM_JEM_STATE' ) );
-		$filters[] = JHTML::_('select.option', '6', JText::_( 'JALL' ) );
-		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
-
-		// search filter
-		$lists['search']= $search;
+		$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_CITY' ) );
+		$filters[] = JHTML::_('select.option', '3', JText::_( 'COM_JEM_STATE' ) );
+		$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_COUNTRY' ) );
+		$filters[] = JHTML::_('select.option', '5', JText::_( 'JALL' ) );
+		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $this->state->get('filter') );
 		
-
+		
 		//assign data to template
-		$this->lists 		= $lists;
-		$this->rows 		= $rows;
-		$this->pagination 	= $pagination;
-		$this->user 		= $user;
-		$this->template 	= $template;
-		$this->jemsettings 	= $jemsettings;
-
+		$this->lists		= $lists;
+		$this->user			= $user;
+		$this->jemsettings  = $jemsettings;
 
 		// add toolbar
 		$this->addToolbar();
-
+		
+		
 		parent::display($tpl);
-	}
+		}
+
+
 
 
 
 	/*
-	* Add Toolbar
+	 * Add Toolbar
 	*/
 
 	protected function addToolbar()
-	{	
-		
+	{
+
+		/* submenu */
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
 		
-		
+		/* Adding title + icon
+		 * 
+		 * the icon is mapped within backend.css
+		 * The word 'venues' is referring to the venues icon
+		 * */
 		JToolBarHelper::title( JText::_( 'COM_JEM_EVENTS' ), 'events' );
 		
-		if ($this->lists['state'] != 2)
+		/* retrieving the allowed actions for the user */
+		$canDo = JEMHelperBackend::getActions(0);
+		$user = JFactory::getUser();
+		
+		/* create */
+		if (($canDo->get('core.create')))
 		{
-		JToolBarHelper::publishList();
+			JToolBarHelper::addNew('event.add');
+		}
+		
+		/* edit */
 		JToolBarHelper::spacer();
-		JToolBarHelper::unpublishList();
-		JToolBarHelper::spacer();
-	    }
-	    
-	    if ($this->lists['state'] != -1)
-	    {
-	    	JToolBarHelper::divider();
-	    	if ($this->lists['state'] != 2)
-	    	{
-	    		JToolBarHelper::archiveList();
-	    	}
-	    	elseif ($this->lists['state'] == 2)
-	    	{
-	    		JToolBarHelper::unarchiveList();
-	    	}
-
-	    }
-	    
-	    if ($this->lists['state'] == -2)
-	    {
-	    	JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'remove', $alt = 'JACTION_DELETE');
-	    }
-		elseif (JFactory::getUser()->authorise('core.edit.state'))
+		if (($canDo->get('core.edit')))
 		{
-			JToolBarHelper::trash('trash');
+			JToolBarHelper::editList('event.edit');
+		}
+		
+		
+		
+		
+		
+		/* state */
+		if ($canDo->get('core.edit.state'))
+		{
+		
+			if ($this->state->get('filter_state') != 2)
+			{
+				JToolBarHelper::publishList('events.publish', 'JTOOLBAR_PUBLISH', true);
+				JToolBarHelper::unpublishList('events.unpublish', 'JTOOLBAR_UNPUBLISH', true);
+			}
+			 
+			if ($this->state->get('filter_state') != -1)
+			{
+				JToolBarHelper::divider();
+				if ($this->state->get('filter_state') != 2)
+				{
+					JToolBarHelper::archiveList('events.archive');
+				}
+				elseif ($this->state->get('filter_state') == 2)
+				{
+					JToolBarHelper::unarchiveList('events.publish');
+				}
+		
+			}
+			 
+		}
+		
+		
+		if ($canDo->get('core.edit.state'))
+		{
+			JToolBarHelper::checkin('events.checkin');
+		}
+		
+		
+		if ($this->state->get('filter_state') == -2 && $canDo->get('core.delete'))
+		{
+			JToolBarHelper::deleteList('', 'events.delete', 'JTOOLBAR_EMPTY_TRASH');
 			JToolBarHelper::divider();
 		}
-	    
-
-		JToolBarHelper::addNew();
-		JToolBarHelper::spacer();
-		JToolBarHelper::editList();
-		JToolBarHelper::spacer();
-		JToolBarHelper::custom( 'copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY' );
-		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'listevents', true );
+		elseif ($canDo->get('core.edit.state'))
+		{
+			JToolBarHelper::trash('events.trash');
+			JToolBarHelper::divider();
+		}
 		
+		
+		JToolBarHelper::help( 'listevents', true );
+
+		
+
 	}
 
 
-}
+
+} // end of class
+ 
+
+
 ?>

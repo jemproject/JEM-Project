@@ -1,23 +1,10 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
-
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -37,9 +24,9 @@ defined('_JEXEC') or die;
 		} else if (form.street.value == "" && form.map.value == "1"){
 			alert( "<?php echo JText::_( 'COM_JEM_ADD_STREET' ); ?>" );
 			form.street.focus();
-		} else if (form.plz.value == "" && form.map.value == "1"){
+		} else if (form.postalCode.value == "" && form.map.value == "1"){
 			alert( "<?php echo JText::_( 'COM_JEM_ADD_ZIP' ); ?>" );
-			form.plz.focus();
+			form.postalCode.focus();
 		} else if (form.country.value == "" && form.map.value == "1"){
 			alert( "<?php echo JText::_( 'COM_JEM_ADD_COUNTRY' ); ?>" );
 			form.country.focus();
@@ -48,7 +35,6 @@ defined('_JEXEC') or die;
 			echo $this->editor->save( 'locdescription' );
 			?>
 			submitform( task );
-			//window.parent.close();
 		}
 	}
 </script>
@@ -73,7 +59,7 @@ $infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', 
 			</div>
 
 			<div style="float: right;">
-				<button type="button" onclick="submitbutton('addvenue')">
+				<button type="button" onclick="submitbutton('event.addvenue')">
 					<?php echo JText::_( 'COM_JEM_SAVE' ); ?>
 				</button>
 				<button type="button" onclick="window.parent.close()">
@@ -95,7 +81,7 @@ $infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', 
 	 	</tr>
   		<tr>
   		  	<td><?php echo JText::_( 'COM_JEM_ZIP' ).':'; ?></td>
-  		  	<td><input name="plz" value="" size="15" maxlength="10" /></td>
+  		  	<td><input name="postalCode" value="" size="15" maxlength="10" /></td>
 	  	</tr>
   		<tr>
   			<td><?php echo JText::_( 'COM_JEM_CITY' ).':'; ?></td>
@@ -254,7 +240,6 @@ if ( $this->jemsettings->showmapserv == 0 ) { ?>
 ?>
 <?php echo JHTML::_( 'form.token' ); ?>
 <input type="hidden" name="option" value="com_jem" />
-<input type="hidden" name="controller" value="venues" />
 <input type="hidden" name="id" value="" />
 <input type="hidden" name="task" value="" />
 </form>

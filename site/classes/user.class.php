@@ -1,23 +1,10 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -26,14 +13,11 @@ defined('_JEXEC') or die;
  * Holds all authentication logic
  *
  * @package JEM
- * @since 0.9
  */
 class JEMUser {
 	/**
 	 * Checks access permissions of the user regarding on the groupid
 	 *
-	 * @author Christoph Lukes
-	 * @since 0.9
 	 *
 	 * @param int $recurse
 	 * @param int $level
@@ -59,8 +43,6 @@ class JEMUser {
 	/**
 	 * Checks if the user is allowed to edit an item
 	 *
-	 * @author Christoph Lukes
-	 * @since 0.9
 	 *
 	 * @param int $allowowner
 	 * @param int $ownerid
@@ -85,8 +67,6 @@ class JEMUser {
 	 * Checks if the user is a superuser
 	 * A superuser will allways have access if the feature is activated
 	 *
-	 * @since 0.9
-	 * 
 	 * @return boolean True on success
 	 */
 	static function superuser() {
@@ -111,8 +91,6 @@ class JEMUser {
 	 * We could use the validate_user method instead of this to allow to set a groupid
 	 * Not sure if this is a good idea
 	 *
-	 * @since 0.9
-	 * 
 	 * @return boolean True on success
 	 */
 	static function editoruser() {
@@ -139,7 +117,7 @@ class JEMUser {
 	/**
 	 * Checks if the user is a maintainer of a category
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	static function ismaintainer() {
 		//lets look if the user is a maintainer
@@ -153,6 +131,7 @@ class JEMUser {
 		$db->setQuery( $query );
 
 		$catids = $db->loadColumn();
+
 
 		//no results, no maintainer
 		if (!$catids) {
@@ -173,4 +152,134 @@ class JEMUser {
 
 		return $maintainer;
 	}
+
+
+
+
+	/**
+	 * Checks if an user is a groupmember and if so
+	 * if the group is allowed to add-venues
+	 *
+	 */
+	static function addvenuegroups() {
+		//lets look if the user is a maintainer
+		$db 	= JFactory::getDBO();
+		$user	= JFactory::getUser();
+
+
+		/*
+		 * just a basic check to see if the current user is in an usergroup with
+		 * access for submitting venues
+		 *
+		 * if a result then return true, otherwise false
+		 *
+		 * views:
+		 * venues, venue, editvenue
+		 *
+		 */
+
+				$query = 'SELECT gr.id'
+				. ' FROM #__jem_groups AS gr'
+				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
+				. ' AND gr.addvenue = 1 '
+				. ' WHERE g.member = '.(int) $user->get('id')
+				;
+				$db->setQuery( $query );
+
+				$groupnumber = $db->loadResult();
+
+				//no results
+				if (!$groupnumber) {
+				return null;
+				}  else {
+
+				return $groupnumber;
+
+				}
+	}
+
+
+	/**
+	 * Checks if an user is a groupmember and if so
+	 * if the group is allowed to publish-venues
+	 *
+	 */
+		static function publishvenuegroups() {
+		//lets look if the user is a maintainer
+		$db 	= JFactory::getDBO();
+		$user	= JFactory::getUser();
+
+
+		/*
+		 * just a basic check to see if the current user is in an usergroup with
+		* access for publishing venues
+		*
+		* if a result then return true, otherwise false
+		*
+		*/
+
+		$query = 'SELECT gr.id'
+				. ' FROM #__jem_groups AS gr'
+				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
+				. ' AND gr.publishvenue = 1 '
+				. ' WHERE g.member = '.(int) $user->get('id')
+				;
+				$db->setQuery( $query );
+
+				$groupnumber = $db->loadResult();
+
+				//no results
+				if (!$groupnumber) {
+						return null;
+				}  else {
+
+				return $groupnumber;
+
+				}
+	}
+
+
+	/**
+	 * Checks if an user is a groupmember and if so
+	 * if the group is allowed to edit-venues
+	 *
+	 */
+	static function editvenuegroups() {
+		//lets look if the user is a maintainer
+		$db 	= JFactory::getDBO();
+		$user	= JFactory::getUser();
+
+
+		/*
+		 * just a basic check to see if the current user is in an usergroup with
+		* access for editing venues
+		*
+		* if a result then return true, otherwise false
+		*
+		*/
+
+		$query = 'SELECT gr.id'
+				. ' FROM #__jem_groups AS gr'
+				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
+				. ' AND gr.editvenue = 1 '
+				. ' WHERE g.member = '.(int) $user->get('id')
+				;
+				$db->setQuery( $query );
+
+				$groupnumber = $db->loadResult();
+
+				//no results
+				if (!$groupnumber) {
+						return null;
+						}  else {
+
+				return $groupnumber;
+
+				}
+	}
+
+
+
+
+
 }

@@ -1,23 +1,10 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- *
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -28,14 +15,14 @@ jimport('joomla.application.component.view');
  * HTML View class for the Editevents View
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMViewEditvenue extends JViewLegacy
 {
 	/**
 	 * Creates the output for venue submissions
 	 *
-	 * @since 0.5
+	 * 
 	 * @param int $tpl
 	 */
 	function display( $tpl=null )
@@ -61,14 +48,27 @@ class JEMViewEditvenue extends JViewLegacy
 		$row 		= $this->Get('Venue');
 		JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'locdescription' );
 
+		JHtml::_('behavior.framework');
 		JHTML::_('behavior.formvalidation');
 		JHTML::_('behavior.tooltip');
 
 		//add css file
 		$doc->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		$doc->addStyleSheet(JURI::root().'media/com_jem/css/geostyle.css');
 		$doc->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		$doc->addScript('media/com_jem/js/attachments.js' );
+		//$doc->addScript('http://api.mygeoposition.com/api/geopicker/api.js');
+		//$doc->addScript(JURI::root().'media/com_jem/js/geodata.js' );
+		$doc->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
+		
+		
+		// Noconflict
+		$doc->addCustomTag( '<script type="text/javascript">jQuery.noConflict();</script>' );
+		
+		// JQuery scripts
+		$doc->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+		$doc->addScript(JURI::root().'media/com_jem/js/jquery.geocomplete.js');
 
 		// Get the menu object of the active menu item
 		$menu		= $app->getMenu();
@@ -79,7 +79,7 @@ class JEMViewEditvenue extends JViewLegacy
 
 		//pathway
 		$pathway 	= $app->getPathWay();
-		$pathway->setItemName(1, $item->title);
+		if($item) $pathway->setItemName(1, $item->title);
 		$pathway->addItem($title, '');
 
 		//Set Title

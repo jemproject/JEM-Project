@@ -1,23 +1,10 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die; ?>
@@ -75,9 +62,9 @@ defined('_JEXEC') or die; ?>
 	<tbody>
 		<?php
 			foreach ($this->rows as $i => $row) :
-			$link 		= 'index.php?option=com_jem&amp;controller=categories&amp;task=edit&amp;cid[]='. $row->id;
-			$grouplink 	= 'index.php?option=com_jem&amp;controller=groups&amp;task=edit&amp;cid[]='. $row->groupid;
-			$published 	= JHTML::_('grid.published', $row, $i );
+			$link 		= 'index.php?option=com_jem&amp;task=categories.edit&amp;cid[]='. $row->id;
+			$grouplink 	= 'index.php?option=com_jem&amp;task=groups.edit&amp;cid[]='. $row->groupid;
+			$published 	= JHTML::_('jgrid.published', $row->published, $i, 'categories.' );
 			$access = $row->groupname;
    		?>
 		<tr class="row<?php echo $i % 2; ?>">
@@ -108,7 +95,7 @@ defined('_JEXEC') or die; ?>
 				?>
 			</td>
       <td class="center">
-        <div class="colorpreview" style="width: 15px; background: <?php echo ( $row->color == '' )?"transparent":$row->color; ?>;" title="<?php echo $row->color; ?>">
+        <div class="colorpreview" style="width: 20px; background: <?php echo ( $row->color == '' )?"transparent":$row->color; ?>;" title="<?php echo $row->color; ?>">
         &nbsp;
         </div>
       </td>

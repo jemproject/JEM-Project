@@ -1,26 +1,12 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// no direct access
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
@@ -29,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Venueelement Model
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMModelContactelement extends JModelLegacy
 {
@@ -64,7 +50,6 @@ class JEMModelContactelement extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
 	 */
 	function __construct()
 	{
@@ -102,7 +87,6 @@ class JEMModelContactelement extends JModelLegacy
 	 *
 	 * @access public
 	 * @return integer
-	 * @since 0.9
 	 */
 	function getTotal()
 	{
@@ -138,7 +122,6 @@ class JEMModelContactelement extends JModelLegacy
 	 *
 	 * @access private
 	 * @return string
-	 * @since 0.9
 	 */
 	function _buildQuery()
 	{
@@ -160,7 +143,6 @@ class JEMModelContactelement extends JModelLegacy
 	 *
 	 * @access private
 	 * @return string
-	 * @since 0.9
 	 */
 	function _buildContentOrderBy()
 	{
@@ -190,7 +172,6 @@ class JEMModelContactelement extends JModelLegacy
 	 *
 	 * @access private
 	 * @return string
-	 * @since 0.9
 	 */
 	function _buildContentWhere()
 	{

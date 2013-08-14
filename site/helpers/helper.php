@@ -1,23 +1,10 @@
 <?php
 /**
-* @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- *
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -33,7 +20,7 @@ class JEMHelper {
 	 * Pulls settings from database and stores in an static object
 	 *
 	 * @return object
-	 * @since 0.9
+	 *
 	 */
 	static function config()
 	{
@@ -58,7 +45,7 @@ class JEMHelper {
 	 * Currently it archives and removes outdated events
 	 * and takes care of the recurrence of events
 	 *
-	 * @since 0.9
+	 *
 	 */
 	static function cleanup($forced = 0)
 	{
@@ -78,6 +65,7 @@ class JEMHelper {
 
 			$db = JFactory::getDBO();
 
+
 			// get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
 			$nulldate = '0000-00-00';
 			$query = ' SELECT id, CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id, '
@@ -92,6 +80,9 @@ class JEMHelper {
 					. ' ORDER BY dates DESC';
 			$db->SetQuery($query);
 			$recurrence_array = $db->loadAssocList();
+
+
+
 
 			foreach($recurrence_array as $recurrence_row)
 			{
@@ -129,9 +120,17 @@ class JEMHelper {
 								. ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__jem_cats_event_relations '
 								. ' WHERE itemid = ' . $db->Quote($ref_event->id);
 						$db->setQuery($query);
-						if (!$db->query()) {
+
+						$user = JFactory::getUser();
+
+						if($user->authorise('core.manage'))
+						{
+							if (!$db->query()) {
 							echo JText::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
+							}
 						}
+
+
 					}
 
 					$recurrence_row = JEMHelper::calculate_recurrence($recurrence_row);
@@ -704,12 +703,12 @@ class JEMHelper {
 			$categories[] = $c->catname;
 		}
 
-		if (!$event->dates || $event->dates == '0000-00-00') {
+		if (!$event->dates) {
 			// no start date...
 			return false;
 		}
 		// make end date same as start date if not set
-		if (!$event->enddates || $event->enddates == '0000-00-00') {
+		if (!$event->enddates) {
 			$event->enddates = $event->dates;
 		}
 
@@ -777,15 +776,7 @@ class JEMHelper {
 		$description = $event->title.'\\n';
 		$description .= JText::_('COM_JEM_CATEGORY').': '.implode(', ', $categories).'\\n';
 
-		// url link to event
-
-		//Original link
-		//$link = JURI::base().JEMHelperRoute::getRoute($event->slug);
-
-		$app = JFactory::getApplication();
-		$menuitem = $app->getMenu()->getActive()->id;
-		$link = JURI::base().JEMHelperRoute::getRoute($event->slug).'&Itemid='.$menuitem;
-
+		$link = JURI::base().JEMHelperRoute::getRoute($event->slug);
 		$link = JRoute::_($link);
 		$description .= JText::_('COM_JEM_ICS_LINK').': '.$link.'\\n';
 

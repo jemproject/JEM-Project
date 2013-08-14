@@ -4,10 +4,10 @@
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>13 October 2012</creationDate>
+	<creationDate>04 August 2013</creationDate>
 	<copyright>Copyright (C) 2013-2013 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>1.9</version>
+	<version>1.9.2</version>
 	<description>MOD_JEM_WIDE_XML_DESCRIPTION</description>
 
 	<files>
@@ -28,7 +28,7 @@
 			<option value="3">MOD_JEM_WIDE_CURRENT_EVENTS</option>
 		</field>
 		<field name="cuttitle" type="text" default="18" label="MOD_JEM_WIDE_MAX_TITLE_LENGTH" description="MOD_JEM_WIDE_MAX_TITLE_LENGTH_DESC" />
-		<field name="linkevent" type="radio" default="1" label="MOD_JEM_WIDE_LINK_TO_DETAILS" description="MOD_JEM_WIDE_LINK_TO_DETAILS_DESC">
+		<field name="linkevent" type="radio" default="1" label="MOD_JEM_WIDE_LINK_TO_EVENT" description="MOD_JEM_WIDE_LINK_TO_EVENT_DESC">
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>
@@ -54,7 +54,7 @@
 			<option value="2">MOD_JEM_WIDE_SHOW_DAY_DIFFERENCE</option>
 		</field>
 
-		<field name="formatdate" type="text" default="%d.%m.%Y" label="MOD_JEM_WIDE_DATE_FORMAT" description="MOD_JEM_WIDE_DATE_FORMAT_DESC" />
+		<field name="formatdate" type="text" default="D, j. F Y" label="MOD_JEM_WIDE_DATE_FORMAT" description="MOD_JEM_WIDE_DATE_FORMAT_DESC" />
 		<field name="formattime" type="text" default="%H.%M" label="MOD_JEM_WIDE_TIME_FORMAT" description="MOD_JEM_WIDE_TIME_FORMAT_DESC" />
 		<field name="moduleclass_sfx" type="text" default="" label="MOD_JEM_WIDE_MODULE_CLASS_SUFFIX" description="MOD_JEM_WIDE_MODULE_CLASS_SUFFIX_DESC" />
 	</fieldset>

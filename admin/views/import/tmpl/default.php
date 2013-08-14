@@ -1,23 +1,10 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
-
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -53,7 +40,7 @@ defined('_JEXEC') or die;
 				</td>
 				<td>
 					<input type="file" id="event-file-upload" accept="text/*" name="Fileevents" />
-					<input type="submit" id="event-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='csveventimport';return true;"/>
+					<input type="submit" id="event-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='import.csveventimport';return true;"/>
 					<span id="upload-clear"></span>
 				</td>
 			</tr>
@@ -99,7 +86,7 @@ defined('_JEXEC') or die;
 				</td>
 				<td>
 					<input type="file" id="venue-file-upload" accept="text/*" name="Filevenues" />
-					<input type="submit" id="venue-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='csvvenuesimport';return true;"/>
+					<input type="submit" id="venue-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='import.csvvenuesimport';return true;"/>
 					<span id="upload-clear"></span>
 				</td>
 			</tr>
@@ -145,7 +132,7 @@ defined('_JEXEC') or die;
 				</td>
 				<td>
 					<input type="file" id="cat-file-upload" accept="text/*" name="Filecategories" />
-					<input type="submit" id="cat-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='csvcategoriesimport';return true;"/>
+					<input type="submit" id="cat-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='import.csvcategoriesimport';return true;"/>
 					<span id="upload-clear"></span>
 				</td>
 			</tr>
@@ -191,7 +178,7 @@ defined('_JEXEC') or die;
 				</td>
 				<td>
 					<input type="file" id="catevents-file-upload" accept="text/*" name="Filecatevents" />
-					<input type="submit" id="catevents-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='csvcateventsimport';return true;"/>
+					<input type="submit" id="catevents-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='import.csvcateventsimport';return true;"/>
 					<span id="upload-clear"></span>
 				</td>
 			</tr>

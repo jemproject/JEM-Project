@@ -1,23 +1,10 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
-
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die; ?>
@@ -61,28 +48,19 @@ defined('_JEXEC') or die; ?>
 		<tbody>
 			<?php
 			foreach ($this->rows as $i => $row) :
-				if (JEMHelper::isValidDate($row->dates)) {
-					$date		= JEMOutput::formatdate($row->dates);
-				}
-				else {
-					$date		= JText::_('COM_JEM_OPEN_DATE');
-				}
-
-				if (!JEMHelper::isValidDate($row->enddates)) {
-					$displaydate = $date;
-				} else {
-					$enddate 	= JEMOutput::formatdate($row->enddates);
-					$displaydate = $date.' - <br />'.$enddate;
-				}
+				//Prepare date
+				$displaydate = JEMOutput::formatLongDateTime($row->dates, null, $row->enddates, null);
+				// Insert a break between date and enddate if possible
+				$displaydate = str_replace(" - ", " -<br />", $displaydate);
 
 				//Don't display 0 time
 				if (!$row->times) {
-					$time = '';
+					$time = '-';
 				} else {
 					$time = strftime( $this->jemsettings->formattime, strtotime( $row->times ));
 					$time = $time.' '.$this->jemsettings->timename;
 				}
-   			?>
+			?>
 			<tr class="row<?php echo $i % 2; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 				<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
@@ -97,7 +75,7 @@ defined('_JEXEC') or die; ?>
 				$nr = count($row->categories);
 				$ix = 0;
 				foreach ($row->categories as $key => $category) :
-					$catlink	= 'index.php?option=com_jem&amp;controller=categories&amp;task=edit&amp;cid[]='. $category->id;
+					$catlink	= 'index.php?option=com_jem&amp;task=categories.edit&amp;cid[]='. $category->id;
 					$title = htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8');
 					if (JString::strlen($title) > 20) {
 						$title = JString::substr( $title , 0 , 20).'...';

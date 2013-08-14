@@ -1,27 +1,13 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// no direct access
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
 jimport( 'joomla.application.component.view');
 
@@ -29,7 +15,7 @@ jimport( 'joomla.application.component.view');
  * HTML View class for the Categories View
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMViewCategories extends JViewLegacy
 {
@@ -62,7 +48,7 @@ class JEMViewCategories extends JViewLegacy
 
 		//pathway
 		$pathway 	=  $app->getPathWay();
-		$pathway->setItemName(1, $item->title);
+		if($item) $pathway->setItemName(1, $item->title);
 
 		if ( $task == 'archive' ) {
 			$pathway->addItem(JText::_( 'COM_JEM_ARCHIVE' ), JRoute::_('index.php?view=categories&task=archive') );
@@ -74,9 +60,6 @@ class JEMViewCategories extends JViewLegacy
 		//Set Page title
 		$document->setTitle( $pagetitle );
    		$document->setMetaData( 'title' , $pagetitle );
-
-		//get icon settings
-		$params->def( 'icons', $app->getCfg( 'icons' ) );
 
 		//add alternate feed link
 		$link    = 'index.php?option=com_jem&view=eventslist&format=feed';

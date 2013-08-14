@@ -1,35 +1,21 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
-
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// no direct access
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 ?>
 <div id="jem" class="jem_categories_view">
-	<p class="buttons">
+	<div class="buttons">
 		<?php
 		echo JEMOutput::submitbutton( $this->dellink, $this->params );
 		echo JEMOutput::archivebutton( $this->params, $this->task );
 		?>
-	</p>
+	</div>
 
 
 
@@ -45,7 +31,7 @@ defined( '_JEXEC' ) or die;
 		<h2 class="jem cat<?php echo $row->id; ?>">
 			<?php echo JHTML::_('link', JRoute::_($row->linktarget), $this->escape($row->catname)); ?>
 		</h2>
-		
+
 		<?php if ($this->jemsettings->discatheader) {  ?>
 		<div class="catimg">
 			<?php //flyer
@@ -63,7 +49,7 @@ defined( '_JEXEC' ) or die;
 
 	}
 	?>
-    <?php  		
+    <?php
 			// echo JHTML::_('link', JRoute::_($row->linktarget), $row->image);
 			?>
 			<p>
@@ -90,7 +76,7 @@ defined( '_JEXEC' ) or die;
 
 	</div>
 
-	<?php 
+	<?php
 	//only show this part if subcategries are available
 	if (count($row->subcats)) :
 	?>
@@ -105,12 +91,12 @@ defined( '_JEXEC' ) or die;
 	<div class="subcategorieslist">
 		<?php foreach ($row->subcats as $sub) : ?>
 		<?php if ($this->params->get('showemptychilds',1) || $sub->assignedevents): ?>
-		<strong><a
-			href="<?php echo JRoute::_( 'index.php?view=categoryevents&id='. $sub->slug ); ?>"><?php echo $this->escape($sub->catname); ?>
-		</a> </strong> (
+		<strong><a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($sub->slug)); ?>">
+			<?php echo $this->escape($sub->catname); ?>
+		</a></strong> (
 		<?php echo $sub->assignedevents != null ? $sub->assignedevents : 0; ?>
 		)
-		<?php 
+		<?php
 		$i++;
 		if ($i != $n) :
 		echo ',';
@@ -128,11 +114,8 @@ defined( '_JEXEC' ) or die;
 		<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
 
-	
-
 	<!--copyright-->
-
-	<p class="copyright">
+	<div class="copyright">
 		<?php echo JEMOutput::footer( ); ?>
-	</p>
+	</div>
 </div>

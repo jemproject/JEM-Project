@@ -5,11 +5,15 @@
 			<![CDATA[COM_JEM_DAY_LAYOUT_DESC]]>
 		</message>
 	</layout>
-	<state>
-		<name>COM_JEM_DAY_LAYOUT</name>
-		<description>COM_JEM_DAY_LAYOUT_DESC</description>
-		<config><fields name="params"><fieldset name="basic" label="basic">
-			<field name="days" type="text" size="2" default="0" label="COM_JEM_DAYS_FIELD" description="COM_JEM_DAYS_FIELD_TIP" />
-		</fieldset></fields></config>
-	</state>
+
+	<fields name="params">
+		<fieldset name="basic">
+			<field name="days" type="text"
+				default="0"
+				size="2"
+				label="COM_JEM_DAYS_FIELD"
+				description="COM_JEM_DAYS_FIELD_TIP"
+			/>
+		</fieldset>
+	</fields>
 </metadata>

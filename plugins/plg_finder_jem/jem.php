@@ -1,23 +1,10 @@
 <?php
 /**
- * @version 1.1 $Id$
+ * @version 1.9.1
  * @package JEM
  * @subpackage JEM Finder Plugin
  * @copyright (C) 2013-2013 joomlaeventmanager.net
- * @license GNU/GPL, see LICENSE.php
-
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -32,14 +19,14 @@ require_once JPATH_ADMINISTRATOR . '/components/com_finder/helpers/indexer/adapt
  *
  * @package     Joomla
  * @subpackage  Finder.jem
- * @since       2.5
+ * 
  */
 class plgFinderJEM extends FinderIndexerAdapter {
 	/**
 	 * The plugin identifier.
 	 *
 	 * @var    string
-	 * @since  2.5
+	 *
 	 */
 	protected $context = 'JEM';
 
@@ -47,7 +34,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * The extension name.
 	 *
 	 * @var    string
-	 * @since  2.5
+	 * 
 	 */
 	protected $extension = 'com_jem';
 
@@ -55,15 +42,15 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * The sublayout to use when rendering the results.
 	 *
 	 * @var    string
-	 * @since  2.5
+	 * 
 	 */
-	protected $layout = 'details';
+	protected $layout = 'event';
 
 	/**
 	 * The type of content that the adapter indexes.
 	 *
 	 * @var    string
-	 * @since  2.5
+	 * 
 	 */
 	protected $type_title = 'Event';
 
@@ -71,7 +58,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * The table name.
 	 *
 	 * @var    string
-	 * @since  2.5
+	 * 
 	 */
 	protected $table = '#__jem_events';
 
@@ -79,7 +66,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * The state field.
 	 *
 	 * @var    string
-	 * @since  2.5
+	 * 
 	 */
 	protected $state_field = 'published';
 
@@ -89,7 +76,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * @param   object  &$subject  The object to observe
 	 * @param   array   $config    An array that holds the plugin configuration
 	 *
-	 * @since   2.5
 	 */
 	public function __construct(&$subject, $config)
 	{
@@ -108,7 +94,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  void
 	 *
-	 * @since   2.5
 	 */
 	public function onFinderCategoryChangeState($extension, $pks, $value)
 	{
@@ -127,7 +112,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  boolean  True on success.
 	 *
-	 * @since   2.5
 	 * @throws  Exception on database error.
 	 */
 	public function onFinderAfterDelete($context, $table)
@@ -157,7 +141,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  boolean  True on success.
 	 *
-	 * @since   2.5
 	 * @throws  Exception on database error.
 	 */
 	public function onFinderAfterSave($context, $row, $isNew)
@@ -200,7 +183,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  boolean  True on success.
 	 *
-	 * @since   2.5
 	 * @throws  Exception on database error.
 	 */
 	public function onFinderBeforeSave($context, $row, $isNew)
@@ -239,7 +221,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  void
 	 *
-	 * @since   2.5
 	 */
 	public function onFinderChangeState($context, $pks, $value)
 	{
@@ -263,7 +244,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  void
 	 *
-	 * @since   2.5
 	 * @throws  Exception on database error.
 	 */
 	protected function index(FinderIndexerResult $item, $format = 'html')
@@ -290,7 +270,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 
 		// Build the necessary route and path information.
 		$item->url = $this->getURL($item->slug, $this->extension, $this->layout).'&catid='.$item->catslug;
-		$item->route = JEMHelperRoute::getRoute($item->slug, 'details', $item->catslug);
+		$item->route = JEMHelperRoute::getRoute($item->slug, 'event', $item->catslug);
 		$item->path = FinderIndexerHelper::getContentPath($item->route);
 
 		// Get the menu title if it exists.
@@ -344,7 +324,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  boolean  True on success.
 	 *
-	 * @since   2.5
 	 */
 	protected function setup()
 	{
@@ -361,7 +340,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  JDatabaseQuery  A database object.
 	 *
-	 * @since   2.5
 	 */
 	protected function getListQuery($sql = null)
 	{
@@ -448,7 +426,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  void
 	 *
-	 * @since   2.5
 	 */
 	protected function checkCategoryAccess($row)
 	{
@@ -469,7 +446,6 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  void
 	 *
-	 * @since   2.5
 	 */
 	protected function checkItemAccess($row)
 	{

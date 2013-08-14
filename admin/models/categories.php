@@ -1,26 +1,12 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// no direct access
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
@@ -29,11 +15,11 @@ jimport('joomla.application.component.model');
  * JEM Component Categories Model
  *
  * @package JEM
- * @since 0.9
+ *
  */
 class JEMModelCategories extends JModelLegacy
 {
-	
+
 	/**
 	 * Category data array
 	 *
@@ -48,7 +34,7 @@ class JEMModelCategories extends JModelLegacy
 	 */
 	var $_total = null;
 
-	
+
 	/**
 	 * Pagination object
 	 *
@@ -66,13 +52,12 @@ class JEMModelCategories extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
 	 */
 	function __construct()
 	{
 		parent::__construct();
 
-		$array = JRequest::getVar('cid',  0, '', 'array');
+		$array = JRequest::getVar('cid', 0, '', 'array');
 		$this->setId((int)$array[0]);
 
 	}
@@ -86,7 +71,7 @@ class JEMModelCategories extends JModelLegacy
 	function setId($id)
 	{
 		// Set id
-		$this->_id	 = $id;
+		$this->_id = $id;
 	}
 
 	/**
@@ -97,30 +82,29 @@ class JEMModelCategories extends JModelLegacy
 	 */
 	function getData()
 	{
-		$app =  JFactory::getApplication();
-		
+		$app = JFactory::getApplication();
+
 		static $items;
 
 		if (isset($items)) {
 			return $items;
 		}
-		
+
 		$limit				= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart 		= $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.categories.filter_order', 		'filter_order', 	'c.ordering', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categories.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.categories.filter_order', 'filter_order', 'c.ordering', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categories.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categories.filter_state', 'filter_state', '', 'string' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.categories.search', 'search', '', 'string' );
 		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
-		
-		 
+
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
-		
-		$orderby 	= ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', c.ordering';
-		
+
+		$orderby = ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', c.ordering';
+
 		$where = array();
-		
+
 		// Filter by published state
 		$published = $filter_state;
 		if (is_numeric($published)) {
@@ -128,59 +112,57 @@ class JEMModelCategories extends JModelLegacy
 		} elseif ($published === '') {
 			$where[] = '(c.published = 0 OR c.published = 1)';
 		}
-		
-		
-		$where 		= ( count( $where ) ? ' AND ' . implode( ' AND ', $where ) : '' );
-		
+
+		$where = ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+
 		//select the records
 		//note, since this is a tree we have to do the limits code-side
-		if ($search) {			
-			
-			
+		if ($search) {
 			$query = 'SELECT c.id'
 					. ' FROM #__jem_categories AS c'
-					. ' WHERE LOWER(c.catname) LIKE '.$this->_db->Quote( '%'.$this->_db->escape( $search, true ).'%', false )
 					. $where
+					. ($where == '' ? ' WHERE ' : ' AND ')
+					. ' LOWER(c.catname) LIKE '.$this->_db->Quote( '%'.$this->_db->escape( $search, true ).'%', false )
 					;
 			$this->_db->setQuery( $query );
 			$search_rows = $this->_db->loadColumn();
 		}
-		
+
 		$query = 'SELECT c.*, c.catname AS name, c.parent_id AS parent, u.name AS editor, g.title AS groupname, gr.name AS catgroup'
-					. ' FROM #__jem_categories AS c'
-					. ' LEFT JOIN #__viewlevels AS g ON g.id = c.access'
-					. ' LEFT JOIN #__users AS u ON u.id = c.checked_out'
-					. ' LEFT JOIN #__jem_groups AS gr ON gr.id = c.groupid'
-					. $where
-					. $orderby
-					;
+				. ' FROM #__jem_categories AS c'
+				. ' LEFT JOIN #__viewlevels AS g ON g.id = c.access'
+				. ' LEFT JOIN #__users AS u ON u.id = c.checked_out'
+				. ' LEFT JOIN #__jem_groups AS gr ON gr.id = c.groupid'
+				. $where
+				. $orderby
+				;
 		$this->_db->setQuery( $query );
 		$rows = $this->_db->loadObjectList();
-				
+
 		//establish the hierarchy of the categories
 		$children = array();
-		
-    	//set depth limit
-    	$levellimit = 10;
+
+		//set depth limit
+		$levellimit = 10;
 
 		//first pass - collect children
 		if (is_array($rows))
 		{
-    	foreach ($rows as $child) {
-        	$parent = $child->parent_id;
-       		$list 	= @$children[$parent] ? $children[$parent] : array();
-        	array_push($list, $child);
-        	$children[$parent] = $list;
-    	}
-	}
-    	
-    	//second pass - get an indent list of the items
-    	$list = JEMCategories::treerecurse(0, '', array(), $children, false, max(0, $levellimit-1));
-    
-    	//eventually only pick out the searched items.
+			foreach ($rows as $child) {
+				$parent = $child->parent_id;
+				$list 	= @$children[$parent] ? $children[$parent] : array();
+				array_push($list, $child);
+				$children[$parent] = $list;
+			}
+		}
+
+		//second pass - get an indent list of the items
+		$list = JEMCategories::treerecurse(0, '', array(), $children, false, max(0, $levellimit-1));
+
+		//eventually only pick out the searched items.
 		if ($search) {
 			$list1 = array();
-			
+
 			foreach ($search_rows as $sid )
 			{
 				foreach ($list as $item)
@@ -193,22 +175,22 @@ class JEMModelCategories extends JModelLegacy
 			// replace full list with found items
 			$list = $list1;
 		}
-		
-    	$total = count( $list );
+
+		$total = count( $list );
 
 		jimport('joomla.html.pagination');
 		$this->_pagination = new JPagination( $total, $limitstart, $limit );
 
 		// slice out elements based on limits
 		$list = array_slice( $list, $this->_pagination->limitstart, $this->_pagination->limit );
-    	
-		foreach ($list as $category)	{
+
+		foreach ($list as $category) {
 			$category->assignedevents = $this->_countcatevents( $category->id );
 		}
 
 		return $list;
 	}
-	
+
 	function &getPagination()
 	{
 		if ($this->_pagination == null) {
@@ -222,7 +204,7 @@ class JEMModelCategories extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 *
 	 */
 	function publish($cid = array(), $publish = 1)
 	{
@@ -243,7 +225,7 @@ class JEMModelCategories extends JModelLegacy
 					$this->_addCategories($id, $cid, 'parents');
 				}
 			}
-			
+
 			$cids = implode( ',', $cid );
 
 			$query = 'UPDATE #__jem_categories'
@@ -265,7 +247,7 @@ class JEMModelCategories extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 *
 	 */
 	function move($direction)
 	{
@@ -283,31 +265,25 @@ class JEMModelCategories extends JModelLegacy
 
 		return true;
 	}
-	/**
 
-	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 * @since	0.9
-	 */
 	/**
 	 * Method to order categories
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	1.0
+	 *
 	 */
 	function saveorder($cid = array(), $order)
 	{
 		$row = JTable::getInstance('jem_categories', '');
-		
+
 		$groupings = array();
 
 		// update ordering values
 		for( $i=0; $i < count($cid); $i++ )
 		{
 			$row->load( (int) $cid[$i] );
-			
+
 			// track categories
 			$groupings[] = $row->parent_id;
 
@@ -320,7 +296,7 @@ class JEMModelCategories extends JModelLegacy
 				}
 			}
 		}
-		
+
 		// execute updateOrder for each parent group
 		$groupings = array_unique( $groupings );
 		foreach ($groupings as $group){
@@ -329,13 +305,13 @@ class JEMModelCategories extends JModelLegacy
 
 		return true;
 	}
-	
+
 	/**
 	 * Method to count the nr of assigned events to the category
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 *
 	 */
 	function _countcatevents($id)
 	{
@@ -345,20 +321,20 @@ class JEMModelCategories extends JModelLegacy
 				.' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
 				.' WHERE rel.catid = ' . (int)$id
 				;
-					
+
 		$this->_db->setQuery($query);
 		$number = $this->_db->loadResult();
-    	
-    	return $number;
+
+		return $number;
 	}
-	
+
 
 	/**
 	 * Method to remove a category
-	 * 
+	 *
 	 * @access	public
 	 * @return	string $msg
-	 * @since	0.9
+	 *
 	 */
 	function delete($cids)
 	{
@@ -367,7 +343,7 @@ class JEMModelCategories extends JModelLegacy
 		{
 			$this->_addCategories($id, $cids);
 		}
-		
+
 		$cids = implode( ',', $cids );
 
 		$query = 'SELECT c.id, c.catname, COUNT( e.catid ) AS numcat'
@@ -385,10 +361,10 @@ class JEMModelCategories extends JModelLegacy
 
 		$err = array();
 		$cid = array();
-		
-		//TODO: Categories and its childs without assigned items will not be deleted if another tree has any item entry 
+
+		//TODO: Categories and its childs without assigned items will not be deleted if another tree has any item entry
 		foreach ($rows as $row) {
-			if ($row->numcat == 0) {				
+			if ($row->numcat == 0) {
 				$cid[] = $row->id;
 			} else {
 				$err[] = $row->catname;
@@ -411,44 +387,44 @@ class JEMModelCategories extends JModelLegacy
 
 		if (count( $err )) {
 			$cids 	= implode( ', ', $err );
-    		$msg 	= JText::sprintf( 'COM_JEM_EVENT_ASSIGNED_CATEGORY', $cids );
-    		return $msg;
+			$msg 	= JText::sprintf( 'COM_JEM_EVENT_ASSIGNED_CATEGORY', $cids );
+			return $msg;
 		} else {
 			$total 	= count( $cid );
 			$msg 	= $total.' '.JText::_('COM_JEM_CATEGORIES_DELETED');
 			return $msg;
 		}
 	}
-	
-		/**
+
+	/**
 	 * Method to set the access level of the category
 	 *
 	 * @access	public
 	 * @param integer id of the category
 	 * @param integer access level
 	 * @return	boolean	True on success
-	 * @since	1.0
+	 *
 	 */
 	function access($id, $access)
-	{				
-		$category  = $this->getTable('jem_categories', '');
-		
+	{
+		$category = $this->getTable('jem_categories', '');
+
 		//handle childs
 		$cids = array();
 		$cids[] = $id;
 		$this->_addCategories($id, $cids);
-		
+
 		foreach ($cids as $cid) {
-			
+
 			$category->load( (int)$cid );
-			
-			if ($category->access < $access) {				
+
+			if ($category->access < $access) {
 				$category->access = $access;
 			} else {
 				$category->load( $id );
 				$category->access = $access;
 			}
-			
+
 			if ( !$category->check() ) {
 				$this->setError($this->_db->getErrorMsg());
 				return false;
@@ -457,25 +433,25 @@ class JEMModelCategories extends JModelLegacy
 				$this->setError($this->_db->getErrorMsg());
 				return false;
 			}
-			
+
 		}
 
 		//handle parents
 		$pcids = array();
 		$this->_addCategories($id, $pcids, 'parents');
-				
+
 		foreach ($pcids as $pcid) {
-			
+
 			if($pcid == 0 || $pcid == $id) {
 				continue;
 			}
-			
+
 			$category->load( (int)$pcid );
-			
-			if ($category->access > $access) {	
+
+			if ($category->access > $access) {
 
 				$category->access = $access;
-				
+
 				if ( !$category->check() ) {
 					$this->setError($this->_db->getErrorMsg());
 					return false;
@@ -484,12 +460,12 @@ class JEMModelCategories extends JModelLegacy
 					$this->setError($this->_db->getErrorMsg());
 					return false;
 				}
-				
+
 			}
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Method to add children/parents to a specific category
 	 *
@@ -497,14 +473,14 @@ class JEMModelCategories extends JModelLegacy
 	 * @param array $list
 	 * @param string $type
 	 * @return oject
-	 * 
-	 * @since 1.1
+	 *
+	 *
 	 */
 	function _addCategories($id, &$list, $type = 'children')
 	{
 		// Initialize variables
 		$return = true;
-		
+
 		if ($type == 'children') {
 			$get = 'id';
 			$source = 'parent_id';
@@ -525,7 +501,7 @@ class JEMModelCategories extends JModelLegacy
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 		}
-		
+
 		// Recursively iterate through all children
 		foreach ($rows as $row)
 		{

@@ -1,30 +1,40 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+
+$user		= JFactory::getUser();
+$userId		= $user->get('id');
 $listOrder	= $this->escape($this->state->get('list.ordering'));
 $listDirn	= $this->escape($this->state->get('list.direction'));
+$canOrder	= $user->authorise('core.edit.state', 'com_jem.category');
+$saveOrder	= $listOrder=='ordering';
+
+$params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 
 ?>
+
+<script>
+window.addEvent('domready', function() {
+	var h = <?php echo $params->get('highlight','0'); ?>;
+
+	switch(h)
+	{
+	case 0:
+		break;
+	case 1:
+		highlightvenues();
+		break;
+	}
+});
+</script>
 
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=venues'); ?>" method="post" name="adminForm" id="adminForm">
 
@@ -37,7 +47,7 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 			<button onclick="$('filter_search').value='';document.adminForm.submit();;"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 		</td>
 		<td nowrap="nowrap"><?php //echo $this->lists['state']; ?>
-		
+
 			<select name="filter_state" class="inputbox" onchange="this.form.submit()">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions',array('all' => 0, 'archived' => 0, 'trash' => 0)), 'value', 'text', $this->state->get('filter_state'), true);?>
@@ -60,8 +70,8 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'JSTATUS' ); ?></th>
 			<th><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
 			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_EVENTS' ); ?></th>
-		    <th width="8%" colspan="2"><?php echo JHTML::_('grid.sort', 'COM_JEM_REORDER', 'a.ordering', $listDirn, $listOrder ); ?></th>
-		    <th width="1%" class="center" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?></th>
+			<th width="8%" colspan="2"><?php echo JHTML::_('grid.sort', 'COM_JEM_REORDER', 'a.ordering', $listDirn, $listOrder ); ?></th>
+			<th width="1%" class="center" nowrap="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?></th>
 		</tr>
 	</thead>
 
@@ -73,36 +83,42 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 		</tr>
 	</tfoot>
 
-	<tbody>
+	<tbody id="seach_in_here">
 		<?php
-		foreach ($this->rows as $i => $row) :
-			$link 		= 'index.php?option=com_jem&amp;controller=venues&amp;task=edit&amp;cid[]='. $row->id;
-			$published 	= JHTML::_('grid.published', $row, $i );
-			$ordering	= ($listOrder == 'a.ordering');
-   		?>
+		foreach ($this->items as $i => $row) :
+		$ordering	= ($listOrder == 'ordering');
+	/*	$row->cat_link = JRoute::_('index.php?option=com_categories&extension=com_jem&task=edit&type=other&cid[]='. $row->catid);*/
+		$canCreate	= $user->authorise('core.create');
+		$canEdit	= $user->authorise('core.edit');
+		$canCheckin	= $user->authorise('core.manage',		'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
+		$canChange	= $user->authorise('core.edit.state') && $canCheckin;
+
+
+
+
+			$link 		= 'index.php?option=com_jem&amp;task=venue.edit&amp;id='. $row->id;
+			$published 	= JHtml::_('jgrid.published', $row->published, $i, 'venues.', $canChange, 'cb', $row->publish_up, $row->publish_down);
+		?>
 		<tr class="row<?php echo $i % 2; ?>">
 			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
-			<td align="left">
-				<?php
-				if ( $row->checked_out && ( $row->checked_out != $this->user->get('id') ) ) {
-					echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8');
-				} else {
-					?>
-					<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_VENUE' );?>::<?php echo $row->venue; ?>">
-					<a href="<?php echo $link; ?>">
-					<?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>
-					</a></span>
-				<?php
-				}
-				?>
+			<td align="left" class="venue">
+				<?php if ($row->checked_out) : ?>
+					<?php echo JHtml::_('jgrid.checkedout', $i, $row->editor, $row->checked_out_time, 'venues.', $canCheckin); ?>
+				<?php endif; ?>
+				<?php if ($canEdit) : ?>
+					<a href="<?php echo JRoute::_('index.php?option=com_jem&task=venue.edit&id='.(int) $row->id); ?>">
+						<?php echo $this->escape($row->venue); ?></a>
+				<?php else : ?>
+						<?php echo $this->escape($row->venue); ?>
+				<?php endif; ?>
 			</td>
 			<td>
 				<?php
 				if (JString::strlen($row->alias) > 25) {
-					echo JString::substr( htmlspecialchars($row->alias, ENT_QUOTES, 'UTF-8'), 0 , 25).'...';
+					echo JString::substr($this->escape($row->alias), 0 , 25).'...';
 				} else {
-					echo htmlspecialchars($row->alias, ENT_QUOTES, 'UTF-8');
+					echo $this->escape($row->alias);
 				}
 				?>
 			</td>
@@ -125,9 +141,9 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 				}
 				?>
 			</td>
-			<td align="left"><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
-			<td align="left"><?php echo $row->state ? htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
-			<td class="center"><?php echo $row->country ? htmlspecialchars($row->country, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+			<td align="left" class="city"><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+			<td align="left" class="state"><?php echo $row->state ? htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+			<td class="center" class="country"><?php echo $row->country ? htmlspecialchars($row->country, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
 			<td class="center"><?php echo $published; ?></td>
 			<td>
 				<?php echo JText::_( 'COM_JEM_AUTHOR' ).': '; ?><a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>"><?php echo $row->author; ?></a><br />
@@ -171,10 +187,11 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 <p class="copyright">
 	<?php echo JEMAdmin::footer( ); ?>
 </p>
-
+<div>
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="task" value="" />
-	<input type="hidden" name="controller" value="venues" />
 	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
+	<?php echo JHtml::_('form.token'); ?>
+</div>
 </form>

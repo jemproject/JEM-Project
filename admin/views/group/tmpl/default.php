@@ -1,23 +1,10 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -29,7 +16,7 @@ defined('_JEXEC') or die;
 		var form = document.getElementById('adminForm');
 		var validator = document.formvalidator;
 			
-		if (task == 'cancel') {
+		if (task == 'group.cancel') {
 			submitform( task );
 			return;
 		}
@@ -126,6 +113,44 @@ defined('_JEXEC') or die;
 				</tr>
 			</table>
 			<?php
+				$title2 = JText::_( 'COM_JEM_GROUP_PERMISSIONS' );
+				echo JHtml::_('sliders.panel', $title2, 'group');
+				?>
+				<table>
+					<tr>
+						<td>
+						<span class="hasTip" title="<?php echo JText::_( 'COM_JEM_GROUP_ADDVENUE' ); ?>::<?php echo JText::_('COM_JEM_GROUP_ADDVENUE_DESC'); ?> "> <?php echo JText::_( 'COM_JEM_GROUP_ADDVENUE' ); ?></span>
+						</td>
+						<td>
+						<?php 
+				echo JHTML::_('select.booleanlist', 'addvenue', 'class="inputbox"', $this->row->addvenue, 'JYES', 'JNO' );
+						?>
+						</td>
+					</tr>
+					<tr>
+						<td>
+						<span class="hasTip" title="<?php echo JText::_( 'COM_JEM_GROUP_PUBLISHVENUE' ); ?>::<?php echo JText::_('COM_JEM_GROUP_PUBLISHVENUE_DESC'); ?> "> <?php echo JText::_( 'COM_JEM_GROUP_PUBLISHVENUE' ); ?></span>
+						</td>
+						<td>
+						<?php 
+				echo JHTML::_('select.booleanlist', 'publishvenue', 'class="inputbox"', $this->row->publishvenue, 'JYES', 'JNO' );
+						?>
+						</td>
+					</tr>
+					<tr>
+						<td>
+						<span class="hasTip" title="<?php echo JText::_( 'COM_JEM_GROUP_EDITVENUE' ); ?>::<?php echo JText::_('COM_JEM_GROUP_EDITVENUE_DESC'); ?> "> <?php echo JText::_( 'COM_JEM_GROUP_EDITVENUE' ); ?></span>
+						</td>
+						<td>
+						<?php 
+				echo JHTML::_('select.booleanlist', 'editvenue', 'class="inputbox"', $this->row->editvenue, 'JYES', 'JNO' );
+						?>
+						</td>
+					</tr>
+				</table>
+			
+			
+			<?php
 			echo JHtml::_('sliders.end');
 			?>
 		</td>
@@ -133,7 +158,6 @@ defined('_JEXEC') or die;
 </table>
 
 <?php echo JHTML::_( 'form.token' ); ?>
-<input type="hidden" name="controller" value="groups" />
 <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
 <input type="hidden" name="task" value="" />
 </form>

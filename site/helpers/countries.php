@@ -1,23 +1,18 @@
 <?php
 /**
-* @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- *
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * 
+ * 
+ * Country list: http://erikastokes.com/mysql-help/mysql-country-table.php
+ * Api country checker: http://api.worldbank.org/countries/ss
+ * 
+ * Lat+long finder: http://www.findlatitudeandlongitude.com/?loc=
+ * For example:  http://www.findlatitudeandlongitude.com/?loc=Sint+Maarten&id=316082
+ * 
  */
 
 defined('_JEXEC') or die;
@@ -31,15 +26,15 @@ class JEMHelperCountries
 	 */
 	function getCountries()
 	{
-		$country["AFG"] = array("iso2" => "AF", "name" => "Afghanistan, Islamic Republic ");
-		$country["ALA"] = array("iso2" => "AX", "name" => "Åland Islands");
+		$country["AFG"] = array("iso2" => "AF", "name" => "Afghanistan, Islamic Republic of");
+		$country["ALA"] = array("iso2" => "AX", "name" => "Aland Islands");
 		$country["ALB"] = array("iso2" => "AL", "name" => "Albania, Republic of");
-		$country["DZA"] = array("iso2" => "DZ", "name" => "Algeria, People's Democratic Republic");
+		$country["DZA"] = array("iso2" => "DZ", "name" => "Algeria, People's Democratic Republic of");
 		$country["ASM"] = array("iso2" => "AS", "name" => "American Samoa");
 		$country["AND"] = array("iso2" => "AD", "name" => "Andorra, Principality of");
 		$country["AGO"] = array("iso2" => "AO", "name" => "Angola, Republic of");
 		$country["AIA"] = array("iso2" => "AI", "name" => "Anguilla");
-		$country["ATA"] = array("iso2" => "AQ", "name" => "Antarctica (the territory Sout");
+		$country["ATA"] = array("iso2" => "AQ", "name" => "Antarctica");
 		$country["ATG"] = array("iso2" => "AG", "name" => "Antigua and Barbuda");
 		$country["ARG"] = array("iso2" => "AR", "name" => "Argentina, Argentine Republic");
 		$country["ARM"] = array("iso2" => "AM", "name" => "Armenia, Republic of");
@@ -47,23 +42,23 @@ class JEMHelperCountries
 		$country["AUS"] = array("iso2" => "AU", "name" => "Australia, Commonwealth of");
 		$country["AUT"] = array("iso2" => "AT", "name" => "Austria, Republic of");
 		$country["AZE"] = array("iso2" => "AZ", "name" => "Azerbaijan, Republic of");
-		$country["BHS"] = array("iso2" => "BS", "name" => "Bahamas, Commonwealth of the");
+		$country["BHS"] = array("iso2" => "BS", "name" => "Bahamas, Commonwealth of The");
 		$country["BHR"] = array("iso2" => "BH", "name" => "Bahrain, Kingdom of");
-		$country["BGD"] = array("iso2" => "BD", "name" => "Bangladesh, People's Republic ");
+		$country["BGD"] = array("iso2" => "BD", "name" => "Bangladesh, People's Republic of");
 		$country["BRB"] = array("iso2" => "BB", "name" => "Barbados");
 		$country["BLR"] = array("iso2" => "BY", "name" => "Belarus, Republic of");
 		$country["BEL"] = array("iso2" => "BE", "name" => "Belgium, Kingdom of");
 		$country["BLZ"] = array("iso2" => "BZ", "name" => "Belize");
 		$country["BEN"] = array("iso2" => "BJ", "name" => "Benin, Republic of");
-		$country["BMU"] = array("iso2" => "BM", "name" => "Bermuda");
+		$country["BMU"] = array("iso2" => "BM", "name" => "Bermuda, Bermuda Islands");
 		$country["BTN"] = array("iso2" => "BT", "name" => "Bhutan, Kingdom of");
-		$country["BOL"] = array("iso2" => "BO", "name" => "Bolivia, Republic of");
+		$country["BOL"] = array("iso2" => "BO", "name" => "Bolivia, Plurinational State of Bolivia");
 		$country["BIH"] = array("iso2" => "BA", "name" => "Bosnia and Herzegovina");
 		$country["BWA"] = array("iso2" => "BW", "name" => "Botswana, Republic of");
-		$country["BVT"] = array("iso2" => "BV", "name" => "Bouvet Island (Bouvetoya)");
+		$country["BVT"] = array("iso2" => "BV", "name" => "Bouvet Island");
 		$country["BRA"] = array("iso2" => "BR", "name" => "Brazil, Federative Republic of");
 		$country["IOT"] = array("iso2" => "IO", "name" => "British Indian Ocean Territory");
-		$country["VGB"] = array("iso2" => "VG", "name" => "British Virgin Islands");
+	    $country["VGB"] = array("iso2" => "VG", "name" => "Virgin Islands (British), British Virgin Islands");
 		$country["BRN"] = array("iso2" => "BN", "name" => "Brunei Darussalam");
 		$country["BGR"] = array("iso2" => "BG", "name" => "Bulgaria, Republic of");
 		$country["BFA"] = array("iso2" => "BF", "name" => "Burkina Faso");
@@ -72,7 +67,7 @@ class JEMHelperCountries
 		$country["CMR"] = array("iso2" => "CM", "name" => "Cameroon, Republic of");
 		$country["CAN"] = array("iso2" => "CA", "name" => "Canada");
 		$country["CPV"] = array("iso2" => "CV", "name" => "Cape Verde, Republic of");
-		$country["CYM"] = array("iso2" => "KY", "name" => "Cayman Islands");
+		$country["CYM"] = array("iso2" => "KY", "name" => "Cayman Islands, The");
 		$country["CAF"] = array("iso2" => "CF", "name" => "Central African Republic");
 		$country["TCD"] = array("iso2" => "TD", "name" => "Chad, Republic of");
 		$country["CHL"] = array("iso2" => "CL", "name" => "Chile, Republic of");
@@ -81,11 +76,11 @@ class JEMHelperCountries
 		$country["CCK"] = array("iso2" => "CC", "name" => "Cocos (Keeling) Islands");
 		$country["COL"] = array("iso2" => "CO", "name" => "Colombia, Republic of");
 		$country["COM"] = array("iso2" => "KM", "name" => "Comoros, Union of the");
-		$country["COD"] = array("iso2" => "CD", "name" => "Congo, Democratic Republic of ");
+        $country["COD"] = array("iso2" => "CD", "name" => "Congo, Democratic Republic of the");
 		$country["COG"] = array("iso2" => "CG", "name" => "Congo, Republic of the");
 		$country["COK"] = array("iso2" => "CK", "name" => "Cook Islands");
 		$country["CRI"] = array("iso2" => "CR", "name" => "Costa Rica, Republic of");
-		$country["CIV"] = array("iso2" => "CI", "name" => "Cote d'Ivoire, Republic of");
+		$country["CIV"] = array("iso2" => "CI", "name" => "Cote d'Ivoire (Ivory Coast), Republic of");
 		$country["HRV"] = array("iso2" => "HR", "name" => "Croatia, Republic of");
 		$country["CUB"] = array("iso2" => "CU", "name" => "Cuba, Republic of");
 		$country["CYP"] = array("iso2" => "CY", "name" => "Cyprus, Republic of");
@@ -100,17 +95,17 @@ class JEMHelperCountries
 		$country["GNQ"] = array("iso2" => "GQ", "name" => "Equatorial Guinea, Republic of");
 		$country["ERI"] = array("iso2" => "ER", "name" => "Eritrea, State of");
 		$country["EST"] = array("iso2" => "EE", "name" => "Estonia, Republic of");
-		$country["ETH"] = array("iso2" => "ET", "name" => "Ethiopia, Federal Democratic R");
-		$country["FRO"] = array("iso2" => "FO", "name" => "Faroe Islands");
-		$country["FLK"] = array("iso2" => "FK", "name" => "Falkland Islands (Malvinas)");
-		$country["FJI"] = array("iso2" => "FJ", "name" => "Fiji, Republic of the Fiji Isl");
+		$country["ETH"] = array("iso2" => "ET", "name" => "Ethiopia, Federal Democratic Republic of");
+		$country["FRO"] = array("iso2" => "FO", "name" => "Faroe Islands, The");
+		$country["FLK"] = array("iso2" => "FK", "name" => "Falkland Islands (Malvinas), The");
+		$country["FJI"] = array("iso2" => "FJ", "name" => "Fiji, Republic of the Fiji");
 		$country["FIN"] = array("iso2" => "FI", "name" => "Finland, Republic of");
 		$country["FRA"] = array("iso2" => "FR", "name" => "France, French Republic");
 		$country["GUF"] = array("iso2" => "GF", "name" => "French Guiana");
 		$country["PYF"] = array("iso2" => "PF", "name" => "French Polynesia");
 		$country["ATF"] = array("iso2" => "TF", "name" => "French Southern Territories");
 		$country["GAB"] = array("iso2" => "GA", "name" => "Gabon, Gabonese Republic");
-		$country["GMB"] = array("iso2" => "GM", "name" => "Gambia, Republic of the");
+		$country["GMB"] = array("iso2" => "GM", "name" => "Gambia, Republic of The");
 		$country["GEO"] = array("iso2" => "GE", "name" => "Georgia");
 		$country["DEU"] = array("iso2" => "DE", "name" => "Germany, Federal Republic of");
 		$country["GHA"] = array("iso2" => "GH", "name" => "Ghana, Republic of");
@@ -121,16 +116,16 @@ class JEMHelperCountries
 		$country["GLP"] = array("iso2" => "GP", "name" => "Guadeloupe");
 		$country["GUM"] = array("iso2" => "GU", "name" => "Guam");
 		$country["GTM"] = array("iso2" => "GT", "name" => "Guatemala, Republic of");
-		$country["GGY"] = array("iso2" => "GG", "name" => "Guernsey, Bailiwick of");
+		$country["GGY"] = array("iso2" => "GG", "name" => "Guernsey");
 		$country["GIN"] = array("iso2" => "GN", "name" => "Guinea, Republic of");
 		$country["GNB"] = array("iso2" => "GW", "name" => "Guinea-Bissau, Republic of");
-		$country["GUY"] = array("iso2" => "GY", "name" => "Guyana, Co-operative Republic ");
+		$country["GUY"] = array("iso2" => "GY", "name" => "Guyana, Co-operative Republic of");
 		$country["HTI"] = array("iso2" => "HT", "name" => "Haiti, Republic of");
 		$country["HMD"] = array("iso2" => "HM", "name" => "Heard Island and McDonald Isla");
-		$country["VAT"] = array("iso2" => "VA", "name" => "Holy See (Vatican City State)");
+		$country["VAT"] = array("iso2" => "VA", "name" => "Vatican City, State of the Vatican City");
 		$country["HND"] = array("iso2" => "HN", "name" => "Honduras, Republic of");
-		$country["HKG"] = array("iso2" => "HK", "name" => "Hong Kong, Special Administrat");
-		$country["HUN"] = array("iso2" => "HU", "name" => "Hungary, Republic of");
+		$country["HKG"] = array("iso2" => "HK", "name" => "Hong Kong");
+		$country["HUN"] = array("iso2" => "HU", "name" => "Hungary");
 		$country["ISL"] = array("iso2" => "IS", "name" => "Iceland, Republic of");
 		$country["IND"] = array("iso2" => "IN", "name" => "India, Republic of");
 		$country["IDN"] = array("iso2" => "ID", "name" => "Indonesia, Republic of");
@@ -147,46 +142,45 @@ class JEMHelperCountries
 		$country["KAZ"] = array("iso2" => "KZ", "name" => "Kazakhstan, Republic of");
 		$country["KEN"] = array("iso2" => "KE", "name" => "Kenya, Republic of");
 		$country["KIR"] = array("iso2" => "KI", "name" => "Kiribati, Republic of");
-		$country["PRK"] = array("iso2" => "KP", "name" => "Korea, Democratic People's Rep");
-		$country["KOR"] = array("iso2" => "KR", "name" => "Korea, Republic of");
+		$country["PRK"] = array("iso2" => "KP", "name" => "North Korea, Democratic People's Republic of Korea");
+		$country["KOR"] = array("iso2" => "KR", "name" => "South Korea, Republic of Korea");
 		$country["KWT"] = array("iso2" => "KW", "name" => "Kuwait, State of");
-		$country["KGZ"] = array("iso2" => "KG", "name" => "Kyrgyz Republic");
-		$country["LAO"] = array("iso2" => "LA", "name" => "Lao People's Democratic Republ");
+		$country["KGZ"] = array("iso2" => "KG", "name" => "Kyrgyzstan, Kyrgyz Republic");
+		$country["LAO"] = array("iso2" => "LA", "name" => "Laos, Lao People's Democratic Republic");
 		$country["LVA"] = array("iso2" => "LV", "name" => "Latvia, Republic of");
-		$country["LBN"] = array("iso2" => "LB", "name" => "Lebanon, Lebanese Republic");
+		$country["LBN"] = array("iso2" => "LB", "name" => "Lebanon, Republic of");
 		$country["LSO"] = array("iso2" => "LS", "name" => "Lesotho, Kingdom of");
 		$country["LBR"] = array("iso2" => "LR", "name" => "Liberia, Republic of");
-		$country["LBY"] = array("iso2" => "LY", "name" => "Libyan Arab Jamahiriya");
+		$country["LBY"] = array("iso2" => "LY", "name" => "Libya");
 		$country["LIE"] = array("iso2" => "LI", "name" => "Liechtenstein, Principality of");
 		$country["LTU"] = array("iso2" => "LT", "name" => "Lithuania, Republic of");
 		$country["LUX"] = array("iso2" => "LU", "name" => "Luxembourg, Grand Duchy of");
-		$country["MAC"] = array("iso2" => "MO", "name" => "Macao, Special Administrative ");
-		$country["MKD"] = array("iso2" => "MK", "name" => "Macedonia, the former Yugoslav");
+		$country["MAC"] = array("iso2" => "MO", "name" => "Macao, The Macao Special Administrative Region");
+		$country["MKD"] = array("iso2" => "MK", "name" => "Macedonia, The Former Yugoslav Republic of");
 		$country["MDG"] = array("iso2" => "MG", "name" => "Madagascar, Republic of");
 		$country["MWI"] = array("iso2" => "MW", "name" => "Malawi, Republic of");
 		$country["MYS"] = array("iso2" => "MY", "name" => "Malaysia");
 		$country["MDV"] = array("iso2" => "MV", "name" => "Maldives, Republic of");
 		$country["MLI"] = array("iso2" => "ML", "name" => "Mali, Republic of");
 		$country["MLT"] = array("iso2" => "MT", "name" => "Malta, Republic of");
-		$country["MHL"] = array("iso2" => "MH", "name" => "Marshall Islands, Republic of ");
+		$country["MHL"] = array("iso2" => "MH", "name" => "Marshall Islands, Republic of the");
 		$country["MTQ"] = array("iso2" => "MQ", "name" => "Martinique");
-		$country["MRT"] = array("iso2" => "MR", "name" => "Mauritania, Islamic Republic o");
+		$country["MRT"] = array("iso2" => "MR", "name" => "Mauritania, Islamic Republic of");
 		$country["MUS"] = array("iso2" => "MU", "name" => "Mauritius, Republic of");
 		$country["MYT"] = array("iso2" => "YT", "name" => "Mayotte");
 		$country["MEX"] = array("iso2" => "MX", "name" => "Mexico, United Mexican States");
-		$country["FSM"] = array("iso2" => "FM", "name" => "Micronesia, Federated States o");
+		$country["FSM"] = array("iso2" => "FM", "name" => "Micronesia, Federated States of");
 		$country["MDA"] = array("iso2" => "MD", "name" => "Moldova, Republic of");
 		$country["MCO"] = array("iso2" => "MC", "name" => "Monaco, Principality of");
 		$country["MNG"] = array("iso2" => "MN", "name" => "Mongolia");
-		$country["MNE"] = array("iso2" => "ME", "name" => "Montenegro, Republic of");
+		$country["MNE"] = array("iso2" => "ME", "name" => "Montenegro");
 		$country["MSR"] = array("iso2" => "MS", "name" => "Montserrat");
 		$country["MAR"] = array("iso2" => "MA", "name" => "Morocco, Kingdom of");
 		$country["MOZ"] = array("iso2" => "MZ", "name" => "Mozambique, Republic of");
-		$country["MMR"] = array("iso2" => "MM", "name" => "Myanmar, Union of");
+		$country["MMR"] = array("iso2" => "MM", "name" => "Myanmar (Burma), Republic of the Union of Myanmar");
 		$country["NAM"] = array("iso2" => "NA", "name" => "Namibia, Republic of");
 		$country["NRU"] = array("iso2" => "NR", "name" => "Nauru, Republic of");
-		$country["NPL"] = array("iso2" => "NP", "name" => "Nepal, State of");
-		$country["ANT"] = array("iso2" => "AN", "name" => "Netherlands Antilles");
+		$country["NPL"] = array("iso2" => "NP", "name" => "Nepal, Federal Democratic Republic of");
 		$country["NLD"] = array("iso2" => "NL", "name" => "Netherlands, Kingdom of the");
 		$country["NCL"] = array("iso2" => "NC", "name" => "New Caledonia");
 		$country["NZL"] = array("iso2" => "NZ", "name" => "New Zealand");
@@ -195,67 +189,67 @@ class JEMHelperCountries
 		$country["NGA"] = array("iso2" => "NG", "name" => "Nigeria, Federal Republic of");
 		$country["NIU"] = array("iso2" => "NU", "name" => "Niue");
 		$country["NFK"] = array("iso2" => "NF", "name" => "Norfolk Island");
-		$country["MNP"] = array("iso2" => "MP", "name" => "Northern Mariana Islands, Comm");
+		$country["MNP"] = array("iso2" => "MP", "name" => "Northern Mariana Islands");
 		$country["NOR"] = array("iso2" => "NO", "name" => "Norway, Kingdom of");
 		$country["OMN"] = array("iso2" => "OM", "name" => "Oman, Sultanate of");
 		$country["PAK"] = array("iso2" => "PK", "name" => "Pakistan, Islamic Republic of");
 		$country["PLW"] = array("iso2" => "PW", "name" => "Palau, Republic of");
-		$country["PSE"] = array("iso2" => "PS", "name" => "Palestinian Territory, Occupie");
+		$country["PSE"] = array("iso2" => "PS", "name" => "Palestine, State of Palestine (or Occupied Palestinian Territory)");
 		$country["PAN"] = array("iso2" => "PA", "name" => "Panama, Republic of");
-		$country["PNG"] = array("iso2" => "PG", "name" => "Papua New Guinea, Independent ");
+		$country["PNG"] = array("iso2" => "PG", "name" => "Papua New Guinea, Independent State of");
 		$country["PRY"] = array("iso2" => "PY", "name" => "Paraguay, Republic of");
 		$country["PER"] = array("iso2" => "PE", "name" => "Peru, Republic of");
 		$country["PHL"] = array("iso2" => "PH", "name" => "Philippines, Republic of the");
-		$country["PCN"] = array("iso2" => "PN", "name" => "Pitcairn Islands");
+		$country["PCN"] = array("iso2" => "PN", "name" => "Pitcairn");
 		$country["POL"] = array("iso2" => "PL", "name" => "Poland, Republic of");
 		$country["PRT"] = array("iso2" => "PT", "name" => "Portugal, Portuguese Republic");
 		$country["PRI"] = array("iso2" => "PR", "name" => "Puerto Rico, Commonwealth of");
 		$country["QAT"] = array("iso2" => "QA", "name" => "Qatar, State of");
 		$country["REU"] = array("iso2" => "RE", "name" => "Reunion");
 		$country["ROU"] = array("iso2" => "RO", "name" => "Romania");
-		$country["RUS"] = array("iso2" => "RU", "name" => "Russian Federation");
+		$country["RUS"] = array("iso2" => "RU", "name" => "Russia, Russian Federation");
 		$country["RWA"] = array("iso2" => "RW", "name" => "Rwanda, Republic of");
 		$country["BLM"] = array("iso2" => "BL", "name" => "Saint Barthelemy");
-		$country["SHN"] = array("iso2" => "SH", "name" => "Saint Helena");
-		$country["KNA"] = array("iso2" => "KN", "name" => "Saint Kitts and Nevis, Federat");
+		$country["SHN"] = array("iso2" => "SH", "name" => "Saint Helena, Ascension and Tristan da Cunha");
+		$country["KNA"] = array("iso2" => "KN", "name" => "Saint Kitts and Nevis, Federation of Saint Christopher and Nevis");
 		$country["LCA"] = array("iso2" => "LC", "name" => "Saint Lucia");
 		$country["MAF"] = array("iso2" => "MF", "name" => "Saint Martin");
 		$country["SPM"] = array("iso2" => "PM", "name" => "Saint Pierre and Miquelon");
-		$country["VCT"] = array("iso2" => "VC", "name" => "Saint Vincent and the Grenadin");
+		$country["VCT"] = array("iso2" => "VC", "name" => "Saint Vincent and the Grenadines");
 		$country["WSM"] = array("iso2" => "WS", "name" => "Samoa, Independent State of");
 		$country["SMR"] = array("iso2" => "SM", "name" => "San Marino, Republic of");
-		$country["STP"] = array("iso2" => "ST", "name" => "Sao Tome and Principe, Democra");
+		$country["STP"] = array("iso2" => "ST", "name" => "Sao Tome and Principe, Democratic Republic of");
 		$country["SAU"] = array("iso2" => "SA", "name" => "Saudi Arabia, Kingdom of");
 		$country["SEN"] = array("iso2" => "SN", "name" => "Senegal, Republic of");
 		$country["SRB"] = array("iso2" => "RS", "name" => "Serbia, Republic of");
 		$country["SYC"] = array("iso2" => "SC", "name" => "Seychelles, Republic of");
 		$country["SLE"] = array("iso2" => "SL", "name" => "Sierra Leone, Republic of");
 		$country["SGP"] = array("iso2" => "SG", "name" => "Singapore, Republic of");
-		$country["SVK"] = array("iso2" => "SK", "name" => "Slovakia (Slovak Republic)");
+		$country["SVK"] = array("iso2" => "SK", "name" => "Slovakia, Slovak Republic");
 		$country["SVN"] = array("iso2" => "SI", "name" => "Slovenia, Republic of");
 		$country["SLB"] = array("iso2" => "SB", "name" => "Solomon Islands");
 		$country["SOM"] = array("iso2" => "SO", "name" => "Somalia, Somali Republic");
 		$country["ZAF"] = array("iso2" => "ZA", "name" => "South Africa, Republic of");
-		$country["SGS"] = array("iso2" => "GS", "name" => "South Georgia and the South Sa");
+		$country["SGS"] = array("iso2" => "GS", "name" => "South Georgia and the South Sandwich Islands");
 		$country["ESP"] = array("iso2" => "ES", "name" => "Spain, Kingdom of");
-		$country["LKA"] = array("iso2" => "LK", "name" => "Sri Lanka, Democratic Socialis");
-		$country["SDN"] = array("iso2" => "SD", "name" => "Sudan, Republic of");
+		$country["LKA"] = array("iso2" => "LK", "name" => "Sri Lanka, Democratic Socialist Republic of");
+		$country["SDN"] = array("iso2" => "SD", "name" => "Sudan, Republic of the");
 		$country["SUR"] = array("iso2" => "SR", "name" => "Suriname, Republic of");
-		$country["SJM"] = array("iso2" => "SJ", "name" => "Svalbard & Jan Mayen Islands");
+		$country["SJM"] = array("iso2" => "SJ", "name" => "Svalbard and Jan Mayen");
 		$country["SWZ"] = array("iso2" => "SZ", "name" => "Swaziland, Kingdom of");
 		$country["SWE"] = array("iso2" => "SE", "name" => "Sweden, Kingdom of");
-		$country["CHE"] = array("iso2" => "CH", "name" => "Switzerland, Swiss Confederati");
-		$country["SYR"] = array("iso2" => "SY", "name" => "Syrian Arab Republic");
-		$country["TWN"] = array("iso2" => "TW", "name" => "Taiwan");
+		$country["CHE"] = array("iso2" => "CH", "name" => "Switzerland, Swiss Confederation");
+		$country["SYR"] = array("iso2" => "SY", "name" => "Syria, Syrian Arab Republic");
+		$country["TWN"] = array("iso2" => "TW", "name" => "Taiwan, Republic of China (Taiwan)");
 		$country["TJK"] = array("iso2" => "TJ", "name" => "Tajikistan, Republic of");
 		$country["TZA"] = array("iso2" => "TZ", "name" => "Tanzania, United Republic of");
 		$country["THA"] = array("iso2" => "TH", "name" => "Thailand, Kingdom of");
-		$country["TLS"] = array("iso2" => "TL", "name" => "Timor-Leste, Democratic Republ");
+		$country["TLS"] = array("iso2" => "TL", "name" => "Timor-Leste (East Timor), Democratic Republic of");
 		$country["TGO"] = array("iso2" => "TG", "name" => "Togo, Togolese Republic");
 		$country["TKL"] = array("iso2" => "TK", "name" => "Tokelau");
 		$country["TON"] = array("iso2" => "TO", "name" => "Tonga, Kingdom of");
 		$country["TTO"] = array("iso2" => "TT", "name" => "Trinidad and Tobago, Republic ");
-		$country["TUN"] = array("iso2" => "TN", "name" => "Tunisia, Tunisian Republic");
+		$country["TUN"] = array("iso2" => "TN", "name" => "Tunisia, Republic of");
 		$country["TUR"] = array("iso2" => "TR", "name" => "Turkey, Republic of");
 		$country["TKM"] = array("iso2" => "TM", "name" => "Turkmenistan");
 		$country["TCA"] = array("iso2" => "TC", "name" => "Turks and Caicos Islands");
@@ -263,10 +257,10 @@ class JEMHelperCountries
 		$country["UGA"] = array("iso2" => "UG", "name" => "Uganda, Republic of");
 		$country["UKR"] = array("iso2" => "UA", "name" => "Ukraine");
 		$country["ARE"] = array("iso2" => "AE", "name" => "United Arab Emirates");
-		$country["GBR"] = array("iso2" => "GB", "name" => "United Kingdom of Great Britain");
-		$country["USA"] = array("iso2" => "US", "name" => "United States of America");
-		$country["UMI"] = array("iso2" => "UM", "name" => "United States Minor Outlying I");
-		$country["VIR"] = array("iso2" => "VI", "name" => "United States Virgin Islands");
+		$country["GBR"] = array("iso2" => "GB", "name" => "United Kingdom, United Kingdom of Great Britain and Nothern Ireland");
+		$country["USA"] = array("iso2" => "US", "name" => "United States, United States of America");
+		$country["UMI"] = array("iso2" => "UM", "name" => "United States Minor Outlying Islands");
+		$country["VIR"] = array("iso2" => "VI", "name" => "Virgin Islands (US), Virgin Islands of the United States");
 		$country["URY"] = array("iso2" => "UY", "name" => "Uruguay, Eastern Republic of");
 		$country["UZB"] = array("iso2" => "UZ", "name" => "Uzbekistan, Republic of");
 		$country["VUT"] = array("iso2" => "VU", "name" => "Vanuatu, Republic of");
@@ -274,9 +268,14 @@ class JEMHelperCountries
 		$country["VNM"] = array("iso2" => "VN", "name" => "Vietnam, Socialist Republic of");
 		$country["WLF"] = array("iso2" => "WF", "name" => "Wallis and Futuna");
 		$country["ESH"] = array("iso2" => "EH", "name" => "Western Sahara");
-		$country["YEM"] = array("iso2" => "YE", "name" => "Yemen");
+		$country["YEM"] = array("iso2" => "YE", "name" => "Yemen, Republic of");
 		$country["ZMB"] = array("iso2" => "ZM", "name" => "Zambia, Republic of");
 		$country["ZWE"] = array("iso2" => "ZW", "name" => "Zimbabwe, Republic of");
+		$country["BES"] = array("iso2" => "BQ", "name" => "Bonaire, Sint Eustatius and Saba");
+		$country["CUW"] = array("iso2" => "CW", "name" => "Curacao");
+		$country["SXM"] = array("iso2" => "SX", "name" => "Sint Maarten");
+		$country["SSD"] = array("iso2" => "SS", "name" => "South Sudan, Republic of");
+		$country["XKX"] = array("iso2" => "XK", "name" => "Kosov, Republic of");
 		$country["0"] = array("iso2" => "0", "name" => "NO VALID COUNTRY");
 		return $country;
 	}
@@ -291,7 +290,6 @@ class JEMHelperCountries
 		$countrycoord['AI'] = array(18.25, -63.17);
 		$countrycoord['AL'] = array(41, 20);
 		$countrycoord['AM'] = array(40, 45);
-		$countrycoord['AN'] = array(12.25, -68.75);
 		$countrycoord['AO'] = array(-12.5, 18.5);
 		$countrycoord['AP'] = array(35, 105);
 		$countrycoord['AQ'] = array(-90, 0);
@@ -523,7 +521,12 @@ class JEMHelperCountries
 		$countrycoord['YT'] = array(-12.83, 45.17);
 		$countrycoord['ZA'] = array(-29, 24);
 		$countrycoord['ZM'] = array(-15, 30);
-		$countrycoord['ZW'] = array(-20, 30);
+		$countrycoord['ZW'] = array(-20, 30);	
+		$countrycoord['BQ'] = array(17.48, -62.98);
+		$countrycoord['CW'] = array(10.0, -84.0);
+		$countrycoord['SX'] = array(18.03, -63.07);
+		$countrycoord['SS'] = array(12.86, 30.21);
+		$countrycoord['XK'] = array(41.91, 24.7);
 		return $countrycoord;
 	}
 
@@ -696,7 +699,6 @@ class JEMHelperCountries
 		$convert2to3["NR"] = "NRU";
 		$convert2to3["NP"] = "NPL";
 		$convert2to3["NL"] = "NLD";
-		$convert2to3["AN"] = "ANT";
 		$convert2to3["NC"] = "NCL";
 		$convert2to3["NZ"] = "NZL";
 		$convert2to3["NI"] = "NIC";
@@ -789,6 +791,11 @@ class JEMHelperCountries
 		$convert2to3["YU"] = "YUG";
 		$convert2to3["ZM"] = "ZMB";
 		$convert2to3["ZW"] = "ZWE";
+		$convert2to3['BQ'] = "BES";
+		$convert2to3['CW'] = "CUW";
+		$convert2to3['SX'] = "SXM";
+		$convert2to3['SS'] = "SSD";
+		$convert2to3['XK'] = "XKX";
 		if (isset($convert2to3[$iso_code_2])) {
 			return $convert2to3[$iso_code_2];
 		} else {
@@ -1046,6 +1053,11 @@ class JEMHelperCountries
 		$convert3to2["YUG"] = "YU";
 		$convert3to2["ZMB"] = "ZM";
 		$convert3to2["ZWE"] = "ZW";
+		$convert3to2['BES'] = "BQ";
+		$convert3to2['CUW'] = "CW";
+		$convert3to2['SXM'] = "SX";
+		$convert3to2['SSD'] = "SS";
+		$convert3to2['XKX'] = "XK";
 		if (isset($convert3to2[$iso_code_3]))
 		{
 			return $convert3to2[$iso_code_3];

@@ -1,23 +1,10 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- *
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -31,14 +18,14 @@ defined('_JEXEC') or die;
 				<tbody>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SHOW_DETAILS' ); ?>::<?php echo JText::_('COM_JEM_SHOW_DETAILS_TIP'); ?>">
-								<?php echo JText::_( 'COM_JEM_SHOW_DETAILS' ); ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SHOW_EVENT' ); ?>::<?php echo JText::_('COM_JEM_SHOW_EVENT_TIP'); ?>">
+								<?php echo JText::_( 'COM_JEM_SHOW_EVENT' ); ?>
 							</span>
 						</td>
 						<td valign="top">
 							<?php
 								$showdets = array();
-								$showdets[] = JHTML::_('select.option', '0', JText::_( 'COM_JEM_DETAILS_OFF' ) );
+								$showdets[] = JHTML::_('select.option', '0', JText::_( 'COM_JEM_EVENT_OFF' ) );
 								$showdets[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_LINK_ON_TITLE' ) );
 								$showdet = JHTML::_('select.genericlist', $showdets, 'showdetails', 'size="1" class="inputbox"', 'value', 'text', $this->jemsettings->showdetails );
 								echo $showdet;

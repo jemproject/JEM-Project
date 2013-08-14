@@ -1,26 +1,12 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- *
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// no direct access
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modellist');
@@ -28,13 +14,7 @@ jimport('joomla.application.component.modellist');
 /**
  * JEM Component Venues Model
  *
- * @package JEM
- * @since 0.9
-*/
-
-/* @todo cleanup model */
-
-
+ **/
 class JEMModelVenues extends JModelList
 {
 
@@ -43,7 +23,7 @@ class JEMModelVenues extends JModelList
 	 *
 	 * @param	array	An optional associative array of configuration settings.
 	 * @see		JController
-	 * @since	1.6
+	 *
 	 */
 	public function __construct($config = array())
 	{
@@ -56,22 +36,22 @@ class JEMModelVenues extends JModelList
 					'country', 'a.country',
 					'url', 'a.url',
 					'street', 'a.street',
-					'plz', 'a.plz',
+					'postalCode', 'a.postalCode',
 					'city', 'a.city',
 					'ordering', 'a.ordering',
+					'created', 'a.created',
 			);
 		}
 
 		parent::__construct($config);
 	}
 
-
 	/**
 	 * Method to auto-populate the model state.
 	 *
 	 * Note. Calling getState in this method will result in recursion.
 	 *
-	 * @since	1.6
+	 *
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
@@ -87,7 +67,7 @@ class JEMModelVenues extends JModelList
 
 		$published = $this->getUserStateFromRequest($this->context.'.filter_state', 'filter_state', '', 'string');
 		$this->setState('filter_state', $published);
-		
+
 		$filterfield = $this->getUserStateFromRequest($this->context.'.filter', 'filter', '', 'int');
 		$this->setState('filter', $filterfield);
 
@@ -115,7 +95,7 @@ class JEMModelVenues extends JModelList
 	 *
 	 * @param	string		$id	A prefix for the store id.
 	 * @return	string		A store id.
-	 * @since	1.6
+	 *
 	 */
 	protected function getStoreId($id = '')
 	{
@@ -134,7 +114,7 @@ class JEMModelVenues extends JModelList
 	 * Build an SQL query to load the list data.
 	 *
 	 * @return	JDatabaseQuery
-	 * @since	1.6
+	 *
 	 */
 	protected function getListQuery()
 	{
@@ -147,7 +127,11 @@ class JEMModelVenues extends JModelList
 		$query->select(
 				$this->getState(
 						'list.select',
-						'a.*'
+						'a.id, a.venue, a.alias, a.url, a.street, a.postalCode, a.city, a.state, a.country,'
+						.'a.latitude, a.longitude, a.locdescription, a.meta_keywords, a.meta_description,'
+						.'a.locimage, a.map, a.created_by, a.author_ip, a.created, a.created, a.modified,'
+						.'a.modified_by, a.version, a.published, a.checked_out, a.checked_out_time,'
+						.'a.ordering, a.publish_up, a.publish_down'
 				)
 		);
 		$query->from($db->quoteName('#__jem_venues').' AS a');
@@ -160,6 +144,15 @@ class JEMModelVenues extends JModelList
 		$query->select('uc.name AS editor');
 		$query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
 
+		// Join over the asset groups.
+		/*$query->select('ag.title AS access_level');
+		$query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');*/
+
+		// Join over the categories.
+		/*$query->select('c.title AS category_title');
+		$query->join('LEFT', '#__categories AS c ON c.id = a.catid');*/
+
+
 		// Join over the author & email.
 		$query->select('u.email, u.name AS author');
 		$query->join('LEFT', '#__users AS u ON u.id=a.created_by');
@@ -170,7 +163,7 @@ class JEMModelVenues extends JModelList
 		// Join over the assigned events
 		//$query->select('COUNT( e.locid ) AS assignedevents');
 		//$query->join('LEFT', '#__jem_events AS e ON e.locid=a.id');
-			
+
 		// Join over the asset groups.
 		//$query->select('ag.title AS access_level');
 		//$query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');
@@ -204,50 +197,44 @@ class JEMModelVenues extends JModelList
 		//if (is_numeric($categoryId)) {
 		//	$query->where('a.catid = '.(int) $categoryId);
 		//}
-		
-		
-		
-
 
 		// Filter by search in title
 		$filter = $this->getState('filter');
 		$search = $this->getState('filter_search');
-		
+
 		if (!empty($search)) {
 			if (stripos($search, 'id:') === 0) {
 				$query->where('a.id = '.(int) substr($search, 3));
 			} else {
 				$search = $db->Quote('%'.$db->escape($search, true).'%');
-				
+
 				/* search venue or alias */
 				if ($search && $filter == 1) {
 				$query->where('(a.venue LIKE '.$search.' OR a.alias LIKE '.$search.')');
 				}
-				
+
 				/* search city */
 				if ($search && $filter == 2) {
 				$query->where('a.city LIKE '.$search);
 				}
-				
+
 				/* search state */
 				if ($search && $filter == 3) {
 					$query->where('a.state LIKE '.$search);
 				}
-				
+
 				/* search country */
 				if ($search && $filter == 4) {
 					$query->where('a.country LIKE '.$search);
 				}
-								
+
 				/* search all */
 				if ($search && $filter == 5) {
 					$query->where('(a.venue LIKE '.$search.' OR a.alias LIKE '.$search.' OR a.city LIKE '.$search.' OR a.state LIKE '.$search.' OR a.country LIKE '.$search.')');
 				}
-				
-			
 			}
 		}
-			
+
 		// Add the list ordering clause.
 		$orderCol	= $this->state->get('list.ordering');
 		$orderDirn	= $this->state->get('list.direction');
@@ -259,15 +246,12 @@ class JEMModelVenues extends JModelList
 		return $query;
 	}
 
-
-
-
 	/**
 	 * Method to (un)publish a venue
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 *
 	 */
 	function publish($cid = array(), $publish = 1)
 	{
@@ -282,7 +266,7 @@ class JEMModelVenues extends JModelList
 					. ' SET published = '. (int) $publish
 					. ' WHERE id IN ('. $cids .')'
 					. ' AND ( checked_out = 0 OR ( checked_out = ' .$userid. ' ) )'
-									;
+					;
 
 			$this->_db->setQuery( $query );
 
@@ -293,13 +277,12 @@ class JEMModelVenues extends JModelList
 		}
 	}
 
-
 	/**
 	 * Method to move a venue
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 *
 	 */
 	function move($direction)
 	{
@@ -323,9 +306,9 @@ class JEMModelVenues extends JModelList
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 *
 	 */
-	function delete($cid)
+	function remove($cid)
 	{
 		$cids = implode( ',', $cid );
 
@@ -338,55 +321,53 @@ class JEMModelVenues extends JModelList
 		$this->_db->setQuery( $query );
 
 		if (!($rows = $this->_db->loadObjectList())) {
-		JError::raiseError( 500, $this->_db->stderr() );
-		return false;
+			JError::raiseError( 500, $this->_db->stderr() );
+			return false;
 		}
 
 		$err = array();
 		$cid = array();
 		foreach ($rows as $row) {
-		if ($row->numcat == 0) {
-		$cid[] = $row->id;
-		} else {
-		$err[] = $row->venue;
-		}
+			if ($row->numcat == 0) {
+				$cid[] = $row->id;
+			} else {
+				$err[] = $row->venue;
+			}
 		}
 
 		if (count( $cid ))
 		{
-		$cids = implode( ',', $cid );
+			$cids = implode( ',', $cid );
 
-		$query = 'DELETE FROM #__jem_venues'
-				. ' WHERE id IN ('. $cids .')'
-				;
+			$query = 'DELETE FROM #__jem_venues'
+					. ' WHERE id IN ('. $cids .')'
+					;
 
-		$this->_db->setQuery( $query );
+			$this->_db->setQuery( $query );
 
-		if(!$this->_db->query()) {
-		$this->setError($this->_db->getErrorMsg());
-			return false;
+			if(!$this->_db->query()) {
+				$this->setError($this->_db->getErrorMsg());
+				return false;
 			}
-			}
+		}
 
-												if (count( $err )) {
-													$cids 	= implode( ', ', $err );
-													$msg 	= JText::sprintf('COM_JEM_VENUE_ASSIGNED_EVENT', $cids );
-													return $msg;
-												} else {
-													$total 	= count( $cid );
-													$msg 	= $total.' '.JText::_('COM_JEM_VENUES_DELETED');
-													return $msg;
-												}
+		if (count( $err )) {
+			$cids 	= implode( ', ', $err );
+			$msg 	= JText::sprintf('COM_JEM_VENUE_ASSIGNED_EVENT', $cids );
+			return $msg;
+		} else {
+			$total 	= count( $cid );
+			$msg 	= $total.' '.JText::_('COM_JEM_VENUES_DELETED');
+			return $msg;
+		}
 	}
 
-
-
 	/**
-	 *  Method to get the userinformation of edited/submitted venues
+	 * Method to get the userinformation of edited/submitted venues
 	 *
 	 * @access private
 	 * @return object
-	 * @since 0.9
+	 *
 	 */
 	public function getItems()
 	{
@@ -398,7 +379,6 @@ class JEMModelVenues extends JModelList
 		$count = count($items);
 
 		for ($i=0, $n=$count; $i < $n; $i++) {
-
 			$query = 'SELECT name'
 					. ' FROM #__users'
 					. ' WHERE id = '.$items[$i]->modified_by
@@ -421,9 +401,4 @@ class JEMModelVenues extends JModelList
 
 		return $items;
 	}
-
-
-
-
-}  // End of class
-
+}

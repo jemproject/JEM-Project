@@ -1,23 +1,10 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -30,7 +17,7 @@ jimport('joomla.filesystem.file');
  * JEM Component Imageselect Model
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMModelImagehandler extends JModelLegacy
 {
@@ -44,7 +31,6 @@ class JEMModelImagehandler extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
 	 */
 	function __construct() {
 		parent::__construct();
@@ -79,7 +65,7 @@ class JEMModelImagehandler extends JModelLegacy
 	 * Build imagelist
 	 *
 	 * @return array $list The imagefiles from a directory to display
-	 * @since 0.9
+	 * 
 	 */
 	function getImages() {
 		$list = $this->getList();
@@ -119,7 +105,7 @@ class JEMModelImagehandler extends JModelLegacy
 	 * Build imagelist
 	 *
 	 * @return array $list The imagefiles from a directory
-	 * @since 0.9
+	 * 
 	 */
 	function getList()
 	{
@@ -191,7 +177,7 @@ class JEMModelImagehandler extends JModelLegacy
 	 * Build display size
 	 *
 	 * @return array width and height
-	 * @since 0.9
+	 * 
 	 */
 	function _imageResize($width, $height, $target) {
 		//takes the larger size of the width and height and applies the
@@ -214,7 +200,7 @@ class JEMModelImagehandler extends JModelLegacy
 	 * Return human readable size info
 	 *
 	 * @return string size of image
-	 * @since 0.9
+	 * 
 	 */
 	function _parseSize($size) {
 		if ($size < 1024) {

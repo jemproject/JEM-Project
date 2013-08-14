@@ -1,26 +1,12 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// no direct access
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
@@ -29,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Venues Model
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMModelVenues extends JModelLegacy
 {
@@ -57,7 +43,7 @@ class JEMModelVenues extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	function __construct()
 	{
@@ -87,19 +73,18 @@ class JEMModelVenues extends JModelLegacy
 		$app =  JFactory::getApplication();
 
 		$menu		= $app->getMenu();
-		$item    	= $menu->getActive();
+		$item		= $menu->getActive();
 		$params		= $menu->getParams($item->id);
 
-		$jemsettings 	=   JEMHelper::config();
+		$jemsettings 	= JEMHelper::config();
 
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
 		{
 			$query = $this->_buildQuery();
 			$pagination = $this->getPagination();
-      		$this->_data = $this->_getList( $query, $pagination->limitstart,  $pagination->limit );
+			$this->_data = $this->_getList( $query, $pagination->limitstart,  $pagination->limit );
 
-			$k = 0;
 			for($i = 0; $i <  count($this->_data); $i++)
 			{
 				$venue = $this->_data[$i];
@@ -122,7 +107,7 @@ class JEMModelVenues extends JModelLegacy
 				//build the url
 				if(!empty($venue->url) && strtolower(substr($venue->url, 0, 7)) != "http://") {
 					$venue->url = 'http://'.$venue->url;
-    		    }
+				}
 
 				//prepare the url for output
 				if (strlen(htmlspecialchars($venue->url, ENT_QUOTES)) > 35) {
@@ -131,21 +116,18 @@ class JEMModelVenues extends JModelLegacy
 					$venue->urlclean = htmlspecialchars($venue->url, ENT_QUOTES);
 				}
 
-    		    //create flag
+				//create flag
 				if ($venue->country) {
 					$venue->countryimg = JEMOutput::getFlag( $venue->country );
 				}
-				
+
 				//create target link
 				$task 	= JRequest::getVar('task', '', '', 'string');
 
+				$venue->targetlink = JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug));
 				if ($task == 'archive') {
-					$venue->targetlink = JRoute::_('index.php?view=venueevents&id='.$venue->slug.'&task=archive');
-				} else {
-					$venue->targetlink = JRoute::_('index.php?view=venueevents&id='.$venue->slug);
+					$venue->targetlink .= '&task=archive';
 				}
-		
-				$k = 1 - $k;
 			}
 
 		}
@@ -204,7 +186,7 @@ class JEMModelVenues extends JModelLegacy
 		} else {
 			$eventstate = ' AND a.published = 1';
 		}
-		
+
 		//get categories
 		$query = 'SELECT v.*, COUNT( a.id ) AS assignedevents,'
 				. ' CASE WHEN CHAR_LENGTH(v.alias) THEN CONCAT_WS(\':\', v.id, v.alias) ELSE v.id END as slug'

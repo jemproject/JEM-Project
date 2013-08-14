@@ -1,42 +1,28 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// no direct access
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
 jimport( 'joomla.application.component.view');
 
 /**
- * HTML View class for the Venueevents View
+ * HTML View class for the Venues View
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMViewVenues extends JViewLegacy
 {
 	/**
 	 * Creates the Event Feed of the Venue
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	function display( )
 	{
@@ -55,9 +41,8 @@ class JEMViewVenues extends JViewLegacy
 			$title = html_entity_decode( $title );
 
 			// url link to article
-			//  used instead of &amp; as this is converted by feed creator
-			$link = 'index.php?option=com_jem&view=venueevents&id='. $row->id;
-			$link = JRoute::_( $link );
+			// used & instead of &amp; as this is converted by feed creator
+			$link = JRoute::_(JEMHelperRoute::getVenueRoute($row->id), false);
 
 			// strip html from feed item description text
 			$description = $row->locdescription;

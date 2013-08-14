@@ -1,24 +1,11 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @subpackage JEM Module
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- *
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -28,7 +15,7 @@ defined('_JEXEC') or die;
  *
  * @package Joomla
  * @subpackage JEM Module
- * @since		0.9
+ *
  */
 class modJEMHelper
 {
@@ -107,38 +94,15 @@ class modJEMHelper
 
 			$lists[$i] = new stdClass;
 			$lists[$i]->link		= JRoute::_(JEMHelperRoute::getRoute($row->slug));
-			$lists[$i]->dateinfo 	= modJEMHelper::_builddateinfo($row, $params);
+			$lists[$i]->dateinfo 	= JEMOutput::formatShortDateTime($row->dates, $row->times,
+						$row->enddates, $row->endtimes);
 			$lists[$i]->text		= $params->get('showtitloc', 0) ? $row->title : htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->city		= htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->venueurl 	= !empty($row->venueslug) ? JRoute::_(JEMHelperRoute::getRoute($row->venueslug, 'venueevents')) : null;
+			$lists[$i]->venueurl 	= !empty($row->venueslug) ? JRoute::_(JEMHelperRoute::getRoute($row->venueslug, 'venue')) : null;
 			$i++;
 		}
 
 		return $lists;
-	}
-
-	/**
-	 * Method to a formated and structured string of date infos
-	 *
-	 * @access public
-	 * @return string
-	 */
-	static function _builddateinfo($row, &$params)
-	{
-		$date 		= modJEMHelper::_format_date($row->dates, $row->times, $params->get('formatdate', '%d.%m.%Y'));
-		$enddate 	= $row->enddates ? modJEMHelper::_format_date($row->enddates, $row->endtimes, $params->get('formatdate', '%d.%m.%Y')) : null;
-		$time		= $row->times ? modJEMHelper::_format_date($row->dates, $row->times, $params->get('formattime', '%H:%M')) : null;
-		$dateinfo	= $date;
-
-		if (isset($enddate) && $enddate != $date) {
-			$dateinfo .= ' - '.$enddate;
-		}
-
-		if (isset($time)) {
-			$dateinfo .= ' | '.$time;
-		}
-
-		return $dateinfo;
 	}
 
 	/**
@@ -153,23 +117,5 @@ class modJEMHelper
 			$url = 'http://'.$url;
 		}
 		return $url;
-	}
-
-	/**
-	 * Method to format date information
-	 *
-	 * @access public
-	 * @return string
-	 */
-	static function _format_date($date, $time, $format)
-	{
-		//format date
-		if (strtotime($date)) {
-			$date = strftime($format, strtotime($date.' '.$time));
-		} else {
-			$date = JText::_('MOD_JEM_OPEN_DATE');
-		}
-
-		return $date;
 	}
 }

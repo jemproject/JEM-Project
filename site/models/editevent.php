@@ -1,23 +1,10 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- *
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -28,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Editevent Model
  *
  * @package JEM
- * @since 0.9
+ *
  */
 class JEMModelEditevent extends JModelLegacy
 {
@@ -49,7 +36,6 @@ class JEMModelEditevent extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 1.5
 	 */
 	function __construct()
 	{
@@ -74,7 +60,6 @@ class JEMModelEditevent extends JModelLegacy
 	 * logic to get the event
 	 *
 	 * @access public
-	 * @since	0.9
 	 *
 	 * @return object
 	 */
@@ -146,7 +131,7 @@ class JEMModelEditevent extends JModelLegacy
 				$this->_event = new stdClass();
 				$this->_event->id					= 0;
 				$this->_event->locid				= '';
-				$this->_event->dates				= '';
+				$this->_event->dates				= null;
 				$this->_event->enddates				= null;
 				$this->_event->title				= '';
 				$this->_event->times				= null;
@@ -299,7 +284,7 @@ class JEMModelEditevent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	1.0
+	 *
 	 */
 	function getCatsselected()
 	{
@@ -449,7 +434,7 @@ class JEMModelEditevent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 *
 	 */
 	function checkin()
 	{
@@ -470,7 +455,7 @@ class JEMModelEditevent extends JModelLegacy
 	 * @access	public
 	 * @param	int	$uid	User ID of the user checking the item out
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 *
 	 */
 	function checkout($uid = null)
 	{
@@ -499,7 +484,7 @@ class JEMModelEditevent extends JModelLegacy
 	 * @access	public
 	 * @param	int	A user id
 	 * @return	boolean	True if checked out
-	 * @since	0.9
+	 *
 	 */
 	function isCheckedOut( $uid=0 )
 	{
@@ -518,7 +503,7 @@ class JEMModelEditevent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	id
-	 * @since	0.9
+	 *
 	 */
 	function store($data, $file)
 	{
@@ -533,7 +518,7 @@ class JEMModelEditevent extends JModelLegacy
 		//Sanitize
 		$data['datdescription'] = JRequest::getVar( 'datdescription', '', 'post','string', JREQUEST_ALLOWRAW );
 
-		
+
 		// Check the metatags
 		if (JString::strlen($row->meta_description) > 255) {
 			$row->meta_description = JString::substr($row->meta_description, 0, 254);

@@ -1,0 +1,38 @@
+a.jemmyeventsCBAddLink {
+margin:5px;
+}
+
+.jemmyeventsCBTabTable{
+width: 100%;
+}
+
+.jemmyeventsCBTabTable td{
+padding: 0px;
+}
+
+.jemmyeventstableheader{
+}
+
+.jemmyeventsCBTabTableTitle{
+padding:3px;
+text-align:left;
+}
+
+.jemmyeventsCBTabTableCat{
+padding:3px;
+text-align:left;
+}
+
+.jemmyeventsCBTabTableStart{
+padding:3px;
+text-align:left;
+}
+
+.jemmyeventsCBTabTableExp{
+padding:3px;
+text-align:left;
+}
+
+.jemmyeventsCBTabTableReg{
+text-align:center;
+}

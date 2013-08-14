@@ -1,26 +1,13 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- *
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 ?>
 <script type="text/javascript">
 	function tableOrdering( order, dir, view )
@@ -150,7 +137,7 @@ defined( '_JEXEC' ) or die;
 					<td headers="jem_location" align="left" valign="top">
 						<?php
 						if ($this->jemsettings->showlinkvenue == 1 ) :
-							echo $row->locid != 0 ? "<a href='".JRoute::_('index.php?view=venueevents&id='.$row->venueslug)."'>".$this->escape($row->venue)."</a>" : '-';
+							echo $row->locid != 0 ? "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
 						else :
 							echo $row->locid ? $this->escape($row->venue) : '-';
 						endif;
@@ -179,7 +166,7 @@ defined( '_JEXEC' ) or die;
 				$ix = 0;
 				foreach ($row->categories as $key => $category) : ?>
 					<?php if ($this->jemsettings->catlinklist == 1): ?>
-				<a href="<?php echo JRoute::_('index.php?view=categoryevents&id='.$category->catslug); ?>">
+				<a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($category->catslug)); ?>">
 					<?php echo $category->catname; ?>
 				</a>
 				<?php else: ?>

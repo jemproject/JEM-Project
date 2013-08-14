@@ -1,23 +1,10 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- *
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -28,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Editvenue Model
  *
  * @package JEM
- * @since 0.9
+ *
  */
 class JEMModelEditvenue extends JModelLegacy
 {
@@ -42,7 +29,6 @@ class JEMModelEditvenue extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 1.5
 	 */
 	function __construct()
 	{
@@ -93,19 +79,33 @@ class JEMModelEditvenue extends JModelLegacy
 			}
 
 			//access check
-			$allowedtoeditvenue = JEMUser::editaccess($jemsettings->venueowner, $this->_venue->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
-
-			if ($allowedtoeditvenue == 0) {
+			$maintainer3 = JEMUser::editvenuegroups();
+			$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $this->_venue->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
+			if ($maintainer3 || $genaccess3 )
+			{
+				$allowedtoeditvenue = 1;
+			} else {
 				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			}
+
+
+
 
 		// ID does not exist => add
 		} else {
 
 			//access checks
+			$maintainer2 = JEMUser::addvenuegroups();
 			$delloclink = JEMUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
 
-			if ($delloclink == 0) {
+			if ($maintainer2 || $delloclink )
+			{
+				$addvenuelink = 1;
+			} else {
+				$addvenuelink = 0;
+			}
+
+			if ($addvenuelink == 0) {
 				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			}
 
@@ -127,7 +127,7 @@ class JEMModelEditvenue extends JModelLegacy
 				$this->_venue->venue			= '';
 				$this->_venue->url				= '';
 				$this->_venue->street			= '';
-				$this->_venue->plz				= '';
+				$this->_venue->postalCode		= '';
 				$this->_venue->locdescription	= '';
 				$this->_venue->city				= '';
 				$this->_venue->state			= '';
@@ -173,7 +173,7 @@ class JEMModelEditvenue extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 *
 	 */
 	function checkin()
 	{
@@ -193,7 +193,7 @@ class JEMModelEditvenue extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	id
-	 * @since	0.9
+	 *
 	 */
 	function store($data, $file)
 	{
@@ -218,13 +218,18 @@ class JEMModelEditvenue extends JModelLegacy
 		if ($row->id) {
 
 			//check if user is allowed to edit venues
-			$allowedtoeditvenue = JEMUser::editaccess($jemsettings->venueowner, $row->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 
-			if ($allowedtoeditvenue == 0) {
-				$row->checkin();
-				$app->enqueueMessage( JText::_( 'COM_JEM_NO_ACCESS' ) );
-				return false;
+
+			//access check
+			$maintainer3 = JEMUser::editvenuegroups();
+			$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $row->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
+			if ($maintainer3 || $genaccess3 )
+			{
+				$allowedtoeditvenue = 1;
+			} else {
+				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			}
+
 
 			$row->modified 		= gmdate('Y-m-d H:i:s');
 			$row->modified_by 	= $user->get('id');
@@ -241,11 +246,19 @@ class JEMModelEditvenue extends JModelLegacy
 		} else {
 
 			//check if user is allowed to submit new venues
+
+			$maintainer2 = JEMUser::addvenuegroups();
 			$delloclink = JEMUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
 
-			if ($delloclink == 0){
-				$app->enqueueMessage( JText::_( 'COM_JEM_NO_ACCESS' ) );
-				return false;
+			if ($maintainer2 || $delloclink )
+			{
+				$addvenuelink = 1;
+			} else {
+				$addvenuelink = 0;
+			}
+
+			if ($addvenuelink == 0) {
+				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			}
 
 			//get IP, time and userid
@@ -260,8 +273,10 @@ class JEMModelEditvenue extends JModelLegacy
 
 		//Autopublish
 		//check if the user has the required rank for autopublish
+		$autopublgroups = JEMUser::publishvenuegroups();
+
 		$autopublloc = JEMUser::validate_user( $jemsettings->locpubrec, $jemsettings->autopublocate );
-		if ($autopublloc || $owneredit) {
+		if ($autopublloc || $owneredit || $autopublgroups) {
 			$row->published = 1 ;
 		} else {
 			$row->published = 0 ;

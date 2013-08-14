@@ -1,27 +1,13 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- *
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// no direct access
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
 jimport( 'joomla.application.component.view');
 
@@ -29,14 +15,14 @@ jimport( 'joomla.application.component.view');
  * HTML View class for the JEM View
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMViewSearch extends JViewLegacy
 {
 	/**
 	 * Creates the Simple List View
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	function display( $tpl = null )
 	{
@@ -53,16 +39,14 @@ class JEMViewSearch extends JViewLegacy
 
 		
 		// add javascript
-		JHTML::_('behavior.mootools');
+		JHtml::_('behavior.framework');
 		
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 		$document->addScript( $this->baseurl.'/media/com_jem/js/search.js' );
 
-		// get variables
-		//$limitstart			= JRequest::getVar('limitstart', 0, '', 'int');
-		//$limit				= $app->getUserStateFromRequest('com_jem.search.limit', 'limit', $params->def('display_num', 0), 'int');
+		
 		$filter_continent	= $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
 		$filter_country		= $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
 		$filter_city		= $app->getUserStateFromRequest('com_jem.search.filter_city', 'filter_city', '', 'string');
@@ -205,7 +189,7 @@ class JEMViewSearch extends JViewLegacy
 	 *
 	 * @access public
 	 * @return object $rows
-	 * @since 0.9
+	 * 
 	 */
 	function &getRows()
 	{
@@ -232,7 +216,7 @@ class JEMViewSearch extends JViewLegacy
 	 *
 	 * @access private
 	 * @return array
-	 * @since 0.9
+	 * 
 	 */
 	function _buildSortLists()
 	{

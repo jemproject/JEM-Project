@@ -1,37 +1,24 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
-
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
 
 /**
  * View class for the JEM attendees screen
  *
  * @package JEM
- * @since 0.9
+ *
  */
 class JEMViewAttendees extends JViewLegacy {
 
-	
+
 	public function display($tpl = null)
 	{
 		$app =  JFactory::getApplication();
@@ -58,17 +45,16 @@ class JEMViewAttendees extends JViewLegacy {
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
-		
+
 		// Get data from the model
-		$rows      	=  $this->get( 'Data');
-		$pagination =  $this->get( 'Pagination' );
-		$event 		=  $this->get( 'Event' );
+		$rows 		= $this->get( 'Data');
+		$pagination = $this->get( 'Pagination' );
+		$event 		= $this->get( 'Event' );
 
  		if (JEMHelper::isValidDate($event->dates)) {
 			$event->dates = JEMOutput::formatdate($event->dates);
-		}
-		else {
-			$event->dates		= JText::_('COM_JEM_OPEN_DATE');
+		} else {
+			$event->dates = JText::_('COM_JEM_OPEN_DATE');
 		}
 
 		//build filter selectlist
@@ -98,7 +84,7 @@ class JEMViewAttendees extends JViewLegacy {
 
 		// add toolbar
 		$this->addToolbar();
-		
+
 		parent::display($tpl);
 	}
 
@@ -107,54 +93,53 @@ class JEMViewAttendees extends JViewLegacy {
 	 *
 	 * @param $tpl
 	 *
-	 * @since 0.9
+	 *
 	 */
 	public function _displayprint($tpl = null)
 	{
 		$jemsettings = JEMAdmin::config();
-		$document	=  JFactory::getDocument();
+		$document = JFactory::getDocument();
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
-		$rows      	=  $this->get( 'Data');
-		$event 		=  $this->get( 'Event' );
+		$rows = $this->get( 'Data');
+		$event = $this->get( 'Event' );
 
 
 		if (JEMHelper::isValidDate($event->dates)) {
 			$event->dates = JEMOutput::formatdate($event->dates);
-		}
-		else {
-			$event->dates	= JText::_('COM_JEM_OPEN_DATE');
+		} else {
+			$event->dates = JText::_('COM_JEM_OPEN_DATE');
 		}
 
 		//assign data to template
-		$this->rows 		= $rows;
-		$this->event 		= $event;
+		$this->rows = $rows;
+		$this->event = $event;
 
 		parent::display($tpl);
 	}
-	
-	
+
+
 	/*
 	 * Add Toolbar
 	*/
-	
+
 	protected function addToolbar()
 	{
-			
+
 		//add toolbar
 		JToolBarHelper::title( JText::_( 'COM_JEM_REGISTERED_USERS' ), 'users' );
-		JToolBarHelper::addNew();
-		JToolBarHelper::editList();
+		JToolBarHelper::addNew('attendees.add');
+		JToolBarHelper::editList('attendees.edit');
 		JToolBarHelper::spacer();
-		JToolBarHelper::deleteList();
+		JToolBarHelper::deleteList('attendees.remove');
 		JToolBarHelper::spacer();
-		JToolBarHelper::custom('back', 'back', 'back', JText::_('COM_JEM_ATT_BACK'), false);
+		JToolBarHelper::custom('attendees.back', 'back', 'back', JText::_('COM_JEM_ATT_BACK'), false);
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'registereduser', true );
-		
+
 	}
-	
-	
-	
+
+
+
 }
 ?>

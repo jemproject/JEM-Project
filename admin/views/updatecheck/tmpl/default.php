@@ -1,27 +1,18 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+?>
 
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=updatecheck'); ?>" method="post" name="adminForm" id="adminForm">
+
+<?php 
 if ($this->updatedata->failed == 0) {
 		?>
 		<table style="width:100%" class="adminlist">
@@ -53,7 +44,9 @@ if ($this->updatedata->failed == 0) {
 
 		<br />
 
-		<table style="width:100%" class="adminlist">
+		
+			
+			<table style="width:100%" class="adminlist">
 			<tr>
 		  		<td><b><?php echo JText::_( 'COM_JEM_VERSION' ).':'; ?></b></td>
 		  		<td><?php
@@ -88,7 +81,7 @@ if ($this->updatedata->failed == 0) {
 			<tr>
 		  		<td><b><?php echo JText::_( 'COM_JEM_FILES' ).':'; ?></b></td>
 		  		<td>
-					<a href="<?php echo $this->updatedata->download; ?>" target="_blank">Download upgradepack</a>
+					<a href="<?php echo $this->updatedata->download; ?>" target="_blank">Click to Download</a>
 		  		</td>
 			</tr>
 			<tr>
@@ -100,6 +93,17 @@ if ($this->updatedata->failed == 0) {
 			</tr>
 		</table>
 
+		<br />
+		<table style="width:200px;" class="adminlist">
+			<tr>
+		  		<td><b><?php echo JText::_( 'COM_JEM_INSTALLED_VERSION' ).':'; ?></b></td>
+		  		<td><?php echo $this->updatedata->installedversion; ?>
+		  		</td>
+			</tr>
+			</table>
+			
+			
+		
 <?php
 } else {
 ?>
@@ -121,7 +125,6 @@ if ($this->updatedata->failed == 0) {
 <?php
 }
 ?>
-
-<p class="copyright">
-	<?php echo JEMAdmin::footer( ); ?>
-</p>
+<input type="hidden" name="task" value="" />
+<?php echo JHtml::_('form.token'); ?>
+</form>

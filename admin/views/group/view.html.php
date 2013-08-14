@@ -1,33 +1,20 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- *
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
 
 /**
  * View class for the JEM editgroup screen
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMViewGroup extends JViewLegacy {
 
@@ -40,6 +27,7 @@ class JEMViewGroup extends JViewLegacy {
 
 		// Load the form validation behavior
 		JHTML::_('behavior.formvalidation');
+		JHTML::_('behavior.tooltip');
 
 		//initialise variables
 		$document	=  JFactory::getDocument();
@@ -116,9 +104,9 @@ class JEMViewGroup extends JViewLegacy {
 			JToolBarHelper::title( JText::_( 'COM_JEM_ADD_GROUP' ), 'groupedit' );
 			JToolBarHelper::spacer();
 		}
-		JToolBarHelper::save();
+		JToolBarHelper::save('group.save');
 		JToolBarHelper::spacer();
-		JToolBarHelper::cancel();
+		JToolBarHelper::cancel('group.cancel');
 		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'editgroup', true );
 		

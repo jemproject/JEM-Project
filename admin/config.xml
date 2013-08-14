@@ -1,32 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-	<fieldset name="COM_JEM_GLOBAL_SETTINGS" addpath="/administrator/components/com_jem/models/fields">
-		<field name="display_num" type="list" default="15" label="COM_JEM_EVENT_NUMBER" description="COM_JEM_EVENT_NUMBER_TIP">
-			<option value="5">5</option>
-			<option value="10">10</option>
-			<option value="15">15</option>
-			<option value="20">20</option>
-			<option value="25">25</option>
-			<option value="30">30</option>
-			<option value="50">50</option>
-		</field>
-		<field name="cat_num" type="text" size="2" default="4" label="COM_JEM_CAT_DISPLAY" description="COM_JEM_CAT_DISPLAY_DESC" />
-		<field name="empty_cat" type="radio" default="0" label="COM_JEM_EMPTY_CATEGORIES" description="COM_JEM_EMPTY_CATEGORIES_DESC">
-			<option value="0">COM_JEM_HIDE</option>
-			<option value="1">COM_JEM_SHOW</option>
-		</field>
-		<!--
-		<field name="copyright" type="radio" default="1" label="COM_JEM_SHOW_COPYRIGHT" description="COM_JEM_SHOW_COPYRIGHT_DESC">
-			<option value="0">COM_JEM_HIDE</option>
-			<option value="1">COM_JEM_SHOW</option>
-		</field>
-		-->
-		<field name="facebook" type="radio" default="1" label="COM_JEM_FACEBOOK" description="COM_JEM_FACEBOOK_DESC">
-			<option value="0">COM_JEM_HIDE</option>
-			<option value="1">COM_JEM_SHOW</option>
-		</field>
-	</fieldset>
 
+<!--
+<fieldset name="settings">
+<field
+			name="highlight"
+			type="radio"
+			default="0"
+			label="COM_JEM_ENABLE_HIGHLIGHT"
+			description="COM_JEM_ENABLE_HIGHLIGHT_DESC">
+			<option
+				value="0">JNO</option>
+			<option
+				value="1">JYES</option>
+		</field>
+	
+		
+</fieldset>
+-->	
 	<fieldset
 		name="permissions"
 		label="JCONFIG_PERMISSIONS_LABEL"
@@ -40,7 +31,7 @@
 			class="inputbox"
 			validate="rules"
 			filter="rules"
-			component="com_content"
+			component="com_jem"
 			section="component" />
 	</fieldset>
 </config>

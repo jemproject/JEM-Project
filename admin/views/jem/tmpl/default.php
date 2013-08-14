@@ -1,23 +1,10 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
-
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -36,6 +23,10 @@ $options = array(
 );
 
 ?>
+
+
+<form action="<?php echo JRoute::_('index.php?option=com_jem');?>" id="application-form" method="post" name="adminForm" class="form-validate">
+
 <table style="width:100%">
 	<tr>
 		<td valign="top">
@@ -48,13 +39,13 @@ $options = array(
 						$link = 'index.php?option=com_jem&amp;view=events';
 						JEMViewJEM::quickiconButton( $link, 'icon-48-events.png', JText::_( 'COM_JEM_EVENTS' ) );
 
-						$link = 'index.php?option=com_jem&amp;view=event';
+						$link = 'index.php?option=com_jem&amp;task=event.add';
 						JEMViewJEM::quickiconButton( $link, 'icon-48-eventedit.png', JText::_( 'COM_JEM_ADD_EVENT' ) );
 
 						$link = 'index.php?option=com_jem&amp;view=venues';
 						JEMViewJEM::quickiconButton( $link, 'icon-48-venues.png', JText::_( 'COM_JEM_VENUES' ) );
 
-						$link = 'index.php?option=com_jem&amp;view=venue';
+						$link = 'index.php?option=com_jem&task=venue.add';
 						JEMViewJEM::quickiconButton( $link, 'icon-48-venuesedit.png', JText::_( 'COM_JEM_ADD_VENUE' ) );
 
 						$link = 'index.php?option=com_jem&amp;view=categories';
@@ -72,32 +63,24 @@ $options = array(
 						$link = 'index.php?option=com_jem&amp;view=archive';
 						JEMViewJEM::quickiconButton( $link, 'icon-48-archive.png', JText::_( 'COM_JEM_ARCHIVESCREEN' ) );
 
-						$link = 'index.php?option=com_jem&amp;controller=plugins&amp;task=plugins';
+						$link = 'index.php?option=com_jem&amp;task=plugins.plugins';
 						JEMViewJEM::quickiconButton( $link, 'icon-48-plugins.png', JText::_( 'COM_JEM_MANAGE_PLUGINS' ) );
 
 
 
 						//only admins should be able to see this items
 						if (JFactory::getUser()->authorise('core.manage')) {
-							$link = 'index.php?option=com_jem&amp;controller=settings&amp;task=edit';
+							$link = 'index.php?option=com_jem&amp;task=settings.edit';
 							JEMViewJEM::quickiconButton( $link, 'icon-48-settings.png', JText::_( 'COM_JEM_SETTINGS' ) );
-
-							/* @todo delete when decided 
-							$link = 'index.php?option=com_jem&amp;view=editcss';
-							JEMViewJEM::quickiconButton( $link, 'icon-48-cssedit.png', JText::_( 'COM_JEM_EDIT_CSS' ) );
-							*/
 
 							$link = 'index.php?option=com_jem&amp;view=cleanup';
 							JEMViewJEM::quickiconButton( $link, 'icon-48-housekeeping.png', JText::_( 'COM_JEM_CLEANUP' ) );
 
-							/* @todo delete when decided
-							$link = 'index.php?option=com_jem&amp;view=updatecheck';
-							JEMViewJEM::quickiconButton( $link, 'icon-48-update.png', JText::_( 'COM_JEM_UPDATE_CHECK' ), 1 );
-							*/
-
-							$link = 'index.php?option=com_jem&amp;controller=sampledata&amp;task=load';
+							$link = 'index.php?option=com_jem&amp;task=sampledata.load';
 							JEMViewJEM::quickiconButton( $link, 'icon-48-sampledata.png', JText::_( 'COM_JEM_LOAD_SAMPLE_DATA' ) );
 
+							$link = 'index.php?option=com_jem&amp;view=updatecheck';
+							JEMViewJEM::quickiconButton( $link, 'icon-48-update.png', JText::_( 'COM_JEM_UPDATE_CHECK' ) );
 
 							$link = 'index.php?option=com_jem&amp;view=import';
 							JEMViewJEM::quickiconButton( $link, 'icon-48-tableimport.png', JText::_( 'COM_JEM_IMPORT_DATA' ) );
@@ -211,6 +194,8 @@ $options = array(
 	</tr>
 </table>
 
+
+</form>
 <p class="copyright">
 	<?php echo JEMAdmin::footer( ); ?>
 </p>

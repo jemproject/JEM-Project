@@ -1,7 +1,10 @@
 <?php
 /**
- * @copyright	Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @version 1.9.1
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -9,19 +12,21 @@ defined('_JEXEC') or die;
 /**
  *  component helper.
  *
- * @package		Joomla.Administrator
  * @subpackage	com_jem
- * @since		1.6
+ * 
  */
 class JEMHelperBackend
 {
+	
+	public static $extension = 'com_jem';
+	
 	/**
 	 * Configure the Linkbar.
 	 *
 	 * @param	string	The name of the active view.
 	 *
 	 * @return	void
-	 * @since	1.6
+	 * 
 	 */
 	public static function addSubmenu($vName)
 	{
@@ -67,7 +72,7 @@ class JEMHelperBackend
 		$vName == 'help'
 				);
 		
-		if (JFactory::getUser()->authorise('core.manage', 'com_jem')) {
+		if (JFactory::getUser()->authorise('core.manage')) {
 			JSubMenuHelper::addEntry(
 			JText::_('COM_JEM_SETTINGS'),
 			'index.php?option=com_jem&view=settings',
@@ -85,13 +90,12 @@ class JEMHelperBackend
 	 * @param	int		The category ID.
 	 *
 	 * @return	JObject
-	 * @since	1.6
+	 * 
 	 * 
 	 */
 	public static function getActions($categoryId = 0)
 	{
 		
-		/* @todo sort out the getActions function*/
 		$user	= JFactory::getUser();
 		$result	= new JObject;
 
@@ -112,5 +116,50 @@ class JEMHelperBackend
 		return $result;
 	}
 
+	
+	
+	public static function getCountryOptions()
+	{
+		// alternative way
+		
+		/*	$options = array();
+	
+		$db		= JFactory::getDbo();
+		$query	= $db->getQuery(true);
+	
+		$query->select('iso2 As value, name As text');
+		$query->from('#__jem_countries AS a');
+		$query->order('a.name');
+
+		
+		// Get the options.
+		$db->setQuery($query);
+	
+		$options = $db->loadObjectList();
+	
+		// Check for a database error.
+		if ($db->getErrorNum()) {
+			JError::raiseWarning(500, $db->getErrorMsg());
+		}
+		*/
+	
+		// Merge any additional options in the XML definition.
+		//$options = array_merge(parent::getOptions(), $options);
+		
+		
+		$options = array();
+		$options = array_merge(JEMHelper::getCountryOptions(),$options);
+		
+		array_unshift($options, JHtml::_('select.option', '0', JText::_('COM_JEM_SELECT_COUNTRY')));
+	
+		return $options;
+	}
+	
+	
+	
+	
+	
+	
+	
 
 }

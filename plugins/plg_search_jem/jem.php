@@ -1,40 +1,26 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @subpackage JEM Search Plugin
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// no direct access
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
 jimport('joomla.plugin.plugin');
 jimport('joomla.html.parameter');
 
-       
+
 
 
 class plgSearchJEM extends JPlugin
 {
-	
-	
-       
+
+
+
 
 //Load the Plugin language file out of the administration
 // JPlugin::loadLanguage( 'plg_search_jem', JPATH_ADMINISTRATOR);
@@ -46,7 +32,7 @@ function __construct(& $subject, $config)
     {
             parent::__construct($subject, $config);
             JPlugin::loadLanguage( 'plg_search_jem', JPATH_ADMINISTRATOR);
-    } 
+    }
 /**
  * @return array An array of search areas
  */
@@ -150,8 +136,8 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 				$order = 'a.dates, a.times DESC';
 		}
 
-		
-		
+
+
 		if (JFactory::getUser()->authorise('core.manage')) {
            $gid = (int) 3;
             } else {
@@ -161,8 +147,8 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
                    $gid = (int) 1;
                 }
             }
-		
-		
+
+
 		$query = 'SELECT a.id, a.title AS title,'
 		. ' a.datdescription AS text,'
 		. ' a.dates AS created,'
@@ -254,7 +240,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		$list2 = $db->loadObjectList();
 
 		foreach((array) $list2 as $key => $row) {
-			$list2[$key]->href = JEMHelperRoute::getRoute($row->slug, 'venueevents');
+			$list2[$key]->href = JEMHelperRoute::getRoute($row->slug, 'venue');
 		}
 
 		$rows[] = $list2;
@@ -307,7 +293,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		$list3 = $db->loadObjectList();
 
 		foreach((array) $list3 as $key => $row) {
-			$list3[$key]->href = JEMHelperRoute::getRoute($row->slug, 'categoryevents');
+			$list3[$key]->href = JEMHelperRoute::getRoute($row->slug, 'category');
 		}
 
 		$rows[] = $list3;

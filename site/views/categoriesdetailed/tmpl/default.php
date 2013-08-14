@@ -1,38 +1,23 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 ?>
 
 <div id="jem" class="jem_categories_detailed">
-<p class="buttons">
+<div class="buttons">
 	<?php
-		if ( !$this->params->get( 'popup' ) ) : //don't show in printpopup
-			echo JEMOutput::submitbutton( $this->dellink, $this->params );
-			echo JEMOutput::archivebutton( $this->params, $this->task );
-		endif;
+		echo JEMOutput::submitbutton( $this->dellink, $this->params );
+		echo JEMOutput::archivebutton( $this->params, $this->task );
 		echo JEMOutput::printbutton( $this->print_link, $this->params );
 	?>
-</p>
+</div>
 
 <?php if ($this->params->get('show_page_title')) : ?>
 
@@ -54,7 +39,7 @@ foreach($this->categories as $category) :
 
 <div class="catimg">
 	  	<?php //flyer
-	
+
 	if (empty($category->image)) {
 
     $jemsettings =  JEMHelper::config();
@@ -63,10 +48,10 @@ foreach($this->categories as $category) :
 
 	echo  JHTML::image('media/com_jem/images/noimage.png', $category->catname, $imgattribs);
 	}else{
-	
+
 	$cimage = JEMImage::flyercreator($category->image, 'category');
 	echo JEMOutput::flyer( $category, $cimage, 'category' );
-	
+
 	}
 	?>
 </div>
@@ -85,7 +70,7 @@ foreach($this->categories as $category) :
 
 </div>
 
-<?php 
+<?php
 //only show this part if subcategries are available
 if (count($category->subcats)) :
 ?>
@@ -99,8 +84,8 @@ $i = 0;
 ?>
 <div class="subcategorieslist">
 	<?php foreach ($category->subcats as $sub) : ?>
-		<strong><a href="<?php echo JRoute::_( 'index.php?view=categoryevents&id='. $sub->slug ); ?>"><?php echo $this->escape($sub->catname); ?></a></strong> (<?php echo $sub->assignedevents != null ? $sub->assignedevents : 0; ?>)
-		<?php 
+		<strong><a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($sub->slug)); ?>"><?php echo $this->escape($sub->catname); ?></a></strong> (<?php echo $sub->assignedevents != null ? $sub->assignedevents : 0; ?>)
+		<?php
 		$i++;
 		if ($i != $n) :
 			echo ',';
@@ -131,7 +116,7 @@ endforeach;
 
 <!--copyright-->
 
-<p class="copyright">
+<div class="copyright">
 	<?php echo JEMOutput::footer( ); ?>
-</p>
+</div>
 </div>

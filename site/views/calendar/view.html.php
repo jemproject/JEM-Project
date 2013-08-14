@@ -1,23 +1,10 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
@@ -28,14 +15,14 @@ jimport('joomla.application.component.view');
  * HTML View class for the Calendar View
  *
  * @package JEM
- * @since 1.1
+ * 
  */
 class JEMViewCalendar extends JViewLegacy
 {
     /**
      * Creates the Calendar View
      *
-     * @since 1.1
+     * 
      */
     function display($tpl = null)
     {
@@ -57,6 +44,38 @@ class JEMViewCalendar extends JViewLegacy
         $document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
         $document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
         $document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendar.css');
+        
+        
+        
+       
+        $evlinkcolor = $params->get('eventlinkcolor');
+        $evbackgroundcolor = $params->get('eventbackgroundcolor');
+        $currentdaycolor = $params->get('currentdaycolor');
+        $eventandmorecolor = $params->get('eventandmorecolor');
+        
+        
+        $style = '
+        
+        .eventcontent a:link, a:visited, a:active {
+        color:' . $evlinkcolor . ';
+        }
+        .eventcontent {		
+        background-color:'.$evbackgroundcolor .';		
+        		}
+        .eventandmore {		
+        background-color:'.$eventandmorecolor .';		
+        		}
+        				
+        .today .daynum {
+ 		 background-color:'.$currentdaycolor.';
+		}		
+
+ 		 		
+        '
+        ;
+        $document->addStyleDeclaration( $style );
+        
+        
         
         // add javascript
         $document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
@@ -83,7 +102,9 @@ class JEMViewCalendar extends JViewLegacy
 		$cal->enableMonthNav('index.php?view=calendar');
 		$cal->setFirstWeekDay($params->get('firstweekday', 1));
 		$cal->enableDayLinks(false);
-				
+		
+		
+	
 		$this->rows 		= $rows;
 		$this->params		= $params;
 		$this->jemsettings	= $jemsettings;
@@ -102,7 +123,7 @@ class JEMViewCalendar extends JViewLegacy
      * @param string  $href An URL that will be used to create the link
      * @param string  $class the class to use for tip.
      * @return  string
-     * @since 1.5
+     * 
      */
     function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '')
     {

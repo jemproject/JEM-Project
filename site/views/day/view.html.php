@@ -1,27 +1,13 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- *
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// no direct access
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
 jimport( 'joomla.application.component.view');
 
@@ -29,14 +15,14 @@ jimport( 'joomla.application.component.view');
  * HTML View class for the Day View
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMViewDay extends JViewLegacy
 {
 	/**
 	 * Creates the Day View
 	 *
-	 * @since 0.9
+	 * 
 	 */
 	function display( $tpl = null )
 	{
@@ -68,8 +54,6 @@ class JEMViewDay extends JViewLegacy
 		$lists['order'] = $filter_order;
 		
 		$task 		= JRequest::getWord('task');
-		
-		$pop			= JRequest::getBool('pop');
 		$pathway 		= $app->getPathWay();
 
 		//get data from model
@@ -89,9 +73,6 @@ class JEMViewDay extends JViewLegacy
 		//params
 		$params->def( 'page_title', $item->title);
 
-		if ( $pop ) {//If printpopup set true
-			$params->set( 'popup', 1 );
-		}
 
 		$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1');
 
@@ -172,7 +153,7 @@ class JEMViewDay extends JViewLegacy
 	 *
 	 * @access public
 	 * @return object $rows
-	 * @since 0.9
+	 * 
 	 */
 	function &getRows()
 	{

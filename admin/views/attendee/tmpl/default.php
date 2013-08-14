@@ -1,30 +1,17 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- *
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
 JHTML::_('behavior.modal', 'a.usermodal');
 
-$selectuser_link = JRoute::_('index.php?option=com_jem&controller=attendees&task=selectuser&tmpl=component');
+$selectuser_link = JRoute::_('index.php?option=com_jem&task=attendee.selectuser&tmpl=component');
 ?>
 
 <script type="text/javascript">
@@ -93,7 +80,6 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&controller=attendees&task
 <?php echo JHTML::_( 'form.token' ); ?>
 <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
 <input type="hidden" name="event" value="<?php echo ($this->row->event ? $this->row->event : $this->event); ?>" />
-<input type="hidden" name="controller" value="attendees" />
 <input type="hidden" name="task" value="" />
 </form>
 

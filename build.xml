@@ -29,18 +29,20 @@
 			<zipfileset dir="${cfg.buildVersionDir}/components" prefix="packages" />
 			<zipfileset dir="${cfg.buildVersionDir}/plugins" prefix="packages" />
 			<zipfileset dir="${cfg.buildVersionDir}/modules" prefix="packages" />
-			<zipfileset dir="." includes="pkg_${cfg.name}.xml" />
+			<zipfileset dir="package" />
 		</zip>
 	</target>
 
-	<target name="build_component" description="packages the finaly component file">
+	<target name="build_component" description="packages the final component file">
 		<zip destfile="${cfg.buildVersionDir}/components/${cfg.comName}.zip" basedir="${cfg.comDir}">
 			<exclude name="${cfg.buildDir}/**" />
 			<exclude name=".settings/**" />
 			<exclude name=".*" />
 			<exclude name="build.*" />
-			<exclude name="plugins/**" />
+			<exclude name="3rd/**" />
 			<exclude name="modules/**" />
+			<exclude name="package/**" />
+			<exclude name="plugins/**" />
 		</zip>
 	</target>
 

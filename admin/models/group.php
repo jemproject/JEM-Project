@@ -1,26 +1,12 @@
 <?php
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
-
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-//no direct access
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
@@ -29,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Group Model
  *
  * @package JEM
- * @since 0.9
+ * 
  */
 class JEMModelGroup extends JModelLegacy
 {
@@ -46,6 +32,14 @@ class JEMModelGroup extends JModelLegacy
 	 * @var array
 	 */
 	var $_data = null;
+
+
+	/**
+	 * Groups data array
+	 *
+	 * @var array
+	 */
+	var $_groups = null;
 
 	/**
 	 * Members data string
@@ -64,7 +58,6 @@ class JEMModelGroup extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * @since 0.9
 	 */
 	function __construct()
 	{
@@ -83,7 +76,7 @@ class JEMModelGroup extends JModelLegacy
 	function setId($id)
 	{
 		// Set event id and wipe data
-		$this->_id	    = $id;
+		$this->_id		= $id;
 		$this->_data	= null;
 	}
 
@@ -104,12 +97,14 @@ class JEMModelGroup extends JModelLegacy
 		return $this->_data;
 	}
 
+
+
 	/**
 	 * Method to load content data
 	 *
 	 * @access	private
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function _loadData()
 	{
@@ -135,37 +130,34 @@ class JEMModelGroup extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function &getMembers()
 	{
-    	$members = $this->_members();
+		$members = $this->_members();
 
-    	$users = array();
+		$users = array();
 
-    	if ($members) {
-        	$query = 'SELECT id AS value, username, name'
-        			. ' FROM #__users'
-        			. ' WHERE id IN ('.$members.')'
-        			. ' ORDER BY name ASC'
-        			;
+		if ($members) {
+			$query = 'SELECT id AS value, username, name'
+					. ' FROM #__users'
+					. ' WHERE id IN ('.$members.')'
+					. ' ORDER BY name ASC'
+					;
 
-        	$this->_db->setQuery( $query );
+			$this->_db->setQuery( $query );
 
-        	$users = $this->_db->loadObjectList();
+			$users = $this->_db->loadObjectList();
 
-			$k = 0;
 			for($i=0; $i < count( $users ); $i++) {
-    			$item = $users[$i];
+				$item = $users[$i];
 
 				$item->text = $item->name.' ('.$item->username.')';
-
-    			$k = 1 - $k;
 			}
 
-    	}
+		}
 
-    	return $users;
+		return $users;
 	}
 
 	/**
@@ -173,31 +165,28 @@ class JEMModelGroup extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	mixed
-	 * @since	0.9
+	 * 
 	 */
 	function &getAvailable()
 	{
 		$members = $this->_members();
 
-    	// get non selected members
-    	$query = 'SELECT id AS value, username, name FROM #__users';
-    	$query .= ' WHERE block = 0' ;
+		// get non selected members
+		$query = 'SELECT id AS value, username, name FROM #__users';
+		$query .= ' WHERE block = 0' ;
 
-    	if ($members) $query .= ' AND id NOT IN ('.$members.')' ;
+		if ($members) $query .= ' AND id NOT IN ('.$members.')' ;
 
-    	$query .= ' ORDER BY name ASC';
+		$query .= ' ORDER BY name ASC';
 
-    	$this->_db->setQuery($query);
+		$this->_db->setQuery($query);
 
-    	$this->_available = $this->_db->loadObjectList();
+		$this->_available = $this->_db->loadObjectList();
 
-    	$k = 0;
 		for($i=0, $n=count( $this->_available ); $i < $n; $i++) {
-    		$item = $this->_available[$i];
+			$item = $this->_available[$i];
 
 			$item->text = $item->name.' ('.$item->username.')';
-
-    		$k = 1 - $k;
 		}
 
 		return $this->_available;
@@ -208,11 +197,11 @@ class JEMModelGroup extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	string
-	 * @since	0.9
+	 * 
 	 */
 	function _members()
 	{
-    	//get selected members
+		//get selected members
 		if ($this->_id){
 			$query = 'SELECT member'
 					. ' FROM #__jem_groupmembers'
@@ -232,7 +221,7 @@ class JEMModelGroup extends JModelLegacy
 	 *
 	 * @access	private
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function _initData()
 	{
@@ -258,6 +247,9 @@ class JEMModelGroup extends JModelLegacy
 				$group->id					= 0;
 				$group->name				= null;
 				$group->description			= null;
+				$group->addvenue			= null;
+				$group->publishvenue			= null;
+				$group->editvenue			= null;
 				$this->_data				= $group;
 				return (boolean) $this->_data;
 			}
@@ -270,7 +262,7 @@ class JEMModelGroup extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function checkin()
 	{
@@ -290,7 +282,7 @@ class JEMModelGroup extends JModelLegacy
 	 * @access	public
 	 * @param	int	$uid	User ID of the user checking the item out
 	 * @return	boolean	True on success
-	 * @since	0.9
+	 * 
 	 */
 	function checkout($uid = null)
 	{
@@ -314,7 +306,7 @@ class JEMModelGroup extends JModelLegacy
 	 * @access	public
 	 * @param	int	A user id
 	 * @return	boolean	True if checked out
-	 * @since	0.9
+	 * 
 	 */
 	function isCheckedOut( $uid=0 )
 	{
@@ -337,7 +329,7 @@ class JEMModelGroup extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * @since	1.5
+	 * 
 	 */
 	function store($data)
 	{

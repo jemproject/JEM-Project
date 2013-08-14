@@ -1,22 +1,9 @@
 /**
- * @version 1.9 $Id$
+ * @version 1.9.1
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
- * @license GNU/GPL, see LICENSE.php
- 
- * JEM is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License 2
- * as published by the Free Software Foundation.
- *
- * JEM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JEM; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 table.month {
@@ -71,6 +58,7 @@ table.month {
 	border-bottom: 1px solid black;
 }
 
+
 .monthday, .selectedday {
 	background-color:#F7F7F7;
 	height:88px;
@@ -96,15 +84,48 @@ table.month {
 }
 
 .eventcontent {
-	margin:0px;
+	background-color:yellow;
+	margin:1px;
 	overflow:hidden;
 	padding:1px;
-	white-space:nowrap;
+	border: 1px solid grey;
+	border-radius: 2px;
+	padding: 5px;
+	margin: 2px;
 }
 
 .eventcontent a:link, a:visited {
   color: #333;
 }
+
+.eventandmore {
+	background-color:yellow;
+	margin:1px;
+	overflow:hidden;
+	padding:1px;
+	border: 1px solid grey;
+	border-radius: 2px;
+	padding: 5px;
+	margin: 2px;
+}
+
+
+.cat1
+{
+	/*background-color:yellow;*/
+	/*border: 1px solid grey;*/
+	/*border-radius: 2px;*/
+	/*padding: 5px;*/
+	/*margin: 2px;*/
+	
+}
+
+
+/*
+.eventcontent a:link, a:visited, a:active {
+  color: #333;
+}
+*/
 
 /* for the tooltip */
 .custom-tip {
@@ -166,12 +187,18 @@ table.month {
 }
 
 .daynum a {
-  color: #FBFCEF;
+  color: #FBFCEF !important;
   text-decoration:none;
+  background-color:inherit !important;
 }
-.today .daynum {
-  background-color:#31528E;
+
+
+.today .daynum a  {
+  color:#FFFFFF;
+  background-color:red;
 }
+
+
 div#buttonshowall {
   float: left;
   padding: 1px 5px;

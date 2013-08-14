@@ -4,10 +4,10 @@
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>26 April 2013</creationDate>
+	<creationDate>04 August 2013</creationDate>
 	<copyright>Copyright (C) 2013-2013 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>1.9</version>
+	<version>1.9.2</version>
 	<description>MOD_JEM_XML_DESCRIPTION</description>
 
 	<files>
@@ -36,14 +36,14 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="linkdet" type="list" default="1" label="MOD_JEM_LINK_TO_DETAILS" description="MOD_JEM_LINK_TO_DETAILS_DESC">
+				<field name="linkdet" type="list" default="1" label="MOD_JEM_LINK_TO_EVENT" description="MOD_JEM_LINK_TO_EVENT_DESC">
 					<option value="0">JNO</option>
 					<option value="1">MOD_JEM_DATE</option>
 					<option value="2">MOD_JEM_TITLE</option>
 				</field>
 				<field name="catid" type="text" default="" label="MOD_JEM_CATEGORY_ID" description="MOD_JEM_CATEGORY_ID_DESC" />
 				<field name="venid" type="text" default="" label="MOD_JEM_VENUE_ID" description="MOD_JEM_VENUE_ID_DESC" />
-				<field name="formatdate" type="text" default="%d.%m.%Y" label="MOD_JEM_DATE_FORMAT" description="MOD_JEM_DATE_FORMAT_DESC" />
+				<field name="formatdate" type="text" default="D, j. F Y" label="MOD_JEM_DATE_FORMAT" description="MOD_JEM_DATE_FORMAT_DESC" />
 				<field name="formattime" type="text" default="%H.%M" label="MOD_JEM_TIME_FORMAT" description="MOD_JEM_TIME_FORMAT_DESC" />
 				<field name="moduleclass_sfx" type="text" default="" label="MOD_JEM_MODULE_CLASS_SUFFIX" description="MOD_JEM_MODULE_CLASS_SUFFIX_DESC" />
 			</fieldset>
