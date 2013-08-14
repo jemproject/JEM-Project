@@ -165,7 +165,7 @@ class jemmyattendingTab extends cbTabHandler {
 		/* Headers
 		 *
 		 * The classes are retrieved from:
-		 * components/com_comprofiler/plugin/user/plug_cbjemmyattending/showeventlist_cb.css
+		 * components/com_comprofiler/plugin/user/plug_cbjemmyattending/jemmyevents_cb.css
 		 *
 		 * The language strings are retrieved from:
 		 * components/com_comprofiler/plugin/user/plug_cbjemmyattending/language/*languagecode*

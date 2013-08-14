@@ -15,7 +15,7 @@
 }
 
 /* Overall calendar table properties */
-.eventcalq table.mod_eventlistcalq_calendar {
+.eventcalq table.mod_jemcalq_calendar {
 	width: 154px;
 	padding: 0;
 	margin: 0;
@@ -27,7 +27,7 @@
 }
 
 /* Blank cell properties */
-.eventcalq td.mod_eventlistcalq {
+.eventcalq td.mod_jemcalq {
 	font: bold 11px/20px "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
 	border-right: 1px solid #A2ADBC;
 	border-bottom: 1px solid #A2ADBC;
@@ -38,7 +38,7 @@
 }
 
 /* Today cell preperties */
-.eventcalq td.mod_eventlistcalq_caltoday
+.eventcalq td.mod_jemcalq_caltoday
 {
 	font: bold 11px/20px "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
 	border-right: 1px solid #A2ADBC;
@@ -51,8 +51,8 @@
 }
 
 /* Today Event day cell hover Link / Visited*/
-.eventcalq td.mod_eventlistcalq_caltodaylink a:link,
-.eventcalq td.mod_eventlistcalq_caltodaylink a:visited{
+.eventcalq td.mod_jemcalq_caltodaylink a:link,
+.eventcalq td.mod_jemcalq_caltodaylink a:visited{
 	text-decoration: none;
 	width: 19px;
 	height: 18px;
@@ -63,7 +63,7 @@
 }
 
 /* Today Event day cell hover */
-.eventcalq td.mod_eventlistcalq_caltodaylink a:hover {
+.eventcalq td.mod_jemcalq_caltodaylink a:hover {
 	text-decoration: none;
 	width: 19px;
 	height: 18px;
@@ -75,7 +75,7 @@
 }
 
 /* Non event day cell preperties */
-.eventcalq td.mod_eventlistcalq_calday {
+.eventcalq td.mod_jemcalq_calday {
 	font: bold 11px/20px "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
 	border-right: 1px solid #A2ADBC;
 	border-bottom: 1px solid #A2ADBC;
@@ -86,8 +86,8 @@
 }
 
 /* Event day cell properties */
-.eventcalq td.mod_eventlistcalq_caldaylink, 
-.eventcalq td.mod_eventlistcalq_caltodaylink {
+.eventcalq td.mod_jemcalq_caldaylink, 
+.eventcalq td.mod_jemcalq_caltodaylink {
 	font: bold 11px/20px "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
 	border-right: 1px solid #A2ADBC;
 	border-bottom: 1px solid #A2ADBC;
@@ -98,8 +98,8 @@
 }
 
 /* Event day cell hover Link / Visited*/
-.eventcalq td.mod_eventlistcalq_caldaylink a:link,
-.eventcalq td.mod_eventlistcalq_caldaylink a:visited{
+.eventcalq td.mod_jemcalq_caldaylink a:link,
+.eventcalq td.mod_jemcalq_caldaylink a:visited{
 	text-decoration: none;
 	font-weight: bold;
 	display: block;
@@ -108,7 +108,7 @@
 }
 
 /* Event day cell hover */
-.eventcalq td.mod_eventlistcalq_caldaylink a:hover {
+.eventcalq td.mod_jemcalq_caldaylink a:hover {
 	text-decoration: none;
 	font-weight: bold;
 	display: block;
@@ -116,7 +116,7 @@
 	background-color: #0066FF;
 }
 /* Month heading properies */
-.eventcalq caption.mod_eventlistcalq_calendar-month {
+.eventcalq caption.mod_jemcalq_calendar-month {
 	font: bold 12px/20px "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
 	color: #ffffff;
 	background-color: #666666;
@@ -124,22 +124,22 @@
 }
 
 /* Month heading Link / Visited properties */
-.eventcalq caption.mod_eventlistcalq_calendar-month a,
-.eventcalq caption.mod_eventlistcalq_calendar-month a:link,
-.eventcalq caption.mod_eventlistcalq_calendar-month a:visited
+.eventcalq caption.mod_jemcalq_calendar-month a,
+.eventcalq caption.mod_jemcalq_calendar-month a:link,
+.eventcalq caption.mod_jemcalq_calendar-month a:visited
 {
 color: #DFEFFF;
 }
 
 
 /* Month heading Hover properties */
-.eventcalq caption.mod_eventlistcalq_calendar-month a:hover{
+.eventcalq caption.mod_jemcalq_calendar-month a:hover{
 color: #990000;
 text-decoration: none;
 }
 
 /* Day of week heading properties*/
-.eventcalq th.mod_eventlistcalq_daynames {
+.eventcalq th.mod_jemcalq_daynames {
 	font: bold 11px/20px "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
 	color: #616B76;
 	background: #D9E2E1;

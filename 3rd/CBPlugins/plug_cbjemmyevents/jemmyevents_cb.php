@@ -106,7 +106,7 @@ class jemmyeventsTab extends cbTabHandler {
 		$event_attending = $params->get('event_attending');
 
 
-		/* load eventlistcss */
+		/* load css */
 		$_CB_framework->addCustomHeadTag("<link href=\"".$_CB_framework->getCfg( 'live_site' )."/components/com_comprofiler/plugin/user/plug_cbjemmyevents/jemmyevents_cb.css\" rel=\"stylesheet\" type=\"text/css\" />");
 
 		/* check for tabdescription */
@@ -143,7 +143,7 @@ class jemmyeventsTab extends cbTabHandler {
 		* Used for links
 		*/
 
-		// get eventlist itemid
+		// get eventslist itemid
 		$query = "SELECT `id` FROM `#__menu` WHERE `link` LIKE '%index.php?option=com_jem&view=eventslist%' AND `type` = 'component' AND `published` = '1' LIMIT 1";
 		$_CB_database->setQuery( $query );
 

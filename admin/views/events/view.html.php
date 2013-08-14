@@ -12,13 +12,13 @@ defined( '_JEXEC' ) or die;
 
 
 /**
- * View class for the EventList Venues screen
+ * View class for the JEM Events screen
  *
  * @package Joomla
- * @subpackage EventList
- * 
+ * @subpackage JEM
+ *
  */
- 
+
  class JEMViewEvents extends JViewLegacy {
 
 
@@ -30,15 +30,15 @@ defined( '_JEXEC' ) or die;
 
 	public function display($tpl = null)
 	{
-		
+
 		$app =  JFactory::getApplication();
 		$user 		=  JFactory::getUser();
 		$document	=  JFactory::getDocument();
-		
-		
+
+
 		$jemsettings = JEMAdmin::config();
 		$url 		= JURI::root();
-		
+
         // Initialise variables.
 		$this->items		= $this->get('Items');
 		$this->pagination	= $this->get('Pagination');
@@ -46,11 +46,11 @@ defined( '_JEXEC' ) or die;
 		//$this->categories		= $this->get('Categories');
 
 		$params = $this->state->get('params');
-		
+
 		// highlighter
 		$highlighter = $params->get('highlight','0');
-		
-		
+
+
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
 		{
@@ -58,12 +58,12 @@ defined( '_JEXEC' ) or die;
 			return false;
 		}
 		JHtml::_('behavior.framework');
-	
+
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 		$document->addCustomTag( '<script type="text/javascript">jQuery.noConflict();</script>' );
-		
+
 		if ($highlighter){
 		$document->addScript($url.'media/com_jem/js/highlighter.js');
 		$style = '
@@ -73,10 +73,10 @@ defined( '_JEXEC' ) or die;
 		 ;
 		 $document->addStyleDeclaration( $style );
 		}
-		
+
 		//add style to description of the tooltip (hastip)
 		JHTML::_('behavior.tooltip');
-		
+
 		// add filter selection for the search
 		$filters = array();
 		$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_EVENT_TITLE' ) );
@@ -85,8 +85,8 @@ defined( '_JEXEC' ) or die;
 		$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_COUNTRY' ) );
 		$filters[] = JHTML::_('select.option', '5', JText::_( 'JALL' ) );
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $this->state->get('filter') );
-		
-		
+
+
 		//assign data to template
 		$this->lists		= $lists;
 		$this->user			= $user;
@@ -94,8 +94,8 @@ defined( '_JEXEC' ) or die;
 
 		// add toolbar
 		$this->addToolbar();
-		
-		
+
+
 		parent::display($tpl);
 		}
 
@@ -112,45 +112,45 @@ defined( '_JEXEC' ) or die;
 
 		/* submenu */
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
-		
+
 		/* Adding title + icon
-		 * 
+		 *
 		 * the icon is mapped within backend.css
 		 * The word 'venues' is referring to the venues icon
 		 * */
 		JToolBarHelper::title( JText::_( 'COM_JEM_EVENTS' ), 'events' );
-		
+
 		/* retrieving the allowed actions for the user */
 		$canDo = JEMHelperBackend::getActions(0);
 		$user = JFactory::getUser();
-		
+
 		/* create */
 		if (($canDo->get('core.create')))
 		{
 			JToolBarHelper::addNew('event.add');
 		}
-		
+
 		/* edit */
 		JToolBarHelper::spacer();
 		if (($canDo->get('core.edit')))
 		{
 			JToolBarHelper::editList('event.edit');
 		}
-		
-		
-		
-		
-		
+
+
+
+
+
 		/* state */
 		if ($canDo->get('core.edit.state'))
 		{
-		
+
 			if ($this->state->get('filter_state') != 2)
 			{
 				JToolBarHelper::publishList('events.publish', 'JTOOLBAR_PUBLISH', true);
 				JToolBarHelper::unpublishList('events.unpublish', 'JTOOLBAR_UNPUBLISH', true);
 			}
-			 
+
 			if ($this->state->get('filter_state') != -1)
 			{
 				JToolBarHelper::divider();
@@ -162,18 +162,18 @@ defined( '_JEXEC' ) or die;
 				{
 					JToolBarHelper::unarchiveList('events.publish');
 				}
-		
+
 			}
-			 
+
 		}
-		
-		
+
+
 		if ($canDo->get('core.edit.state'))
 		{
 			JToolBarHelper::checkin('events.checkin');
 		}
-		
-		
+
+
 		if ($this->state->get('filter_state') == -2 && $canDo->get('core.delete'))
 		{
 			JToolBarHelper::deleteList('', 'events.delete', 'JTOOLBAR_EMPTY_TRASH');
@@ -184,18 +184,18 @@ defined( '_JEXEC' ) or die;
 			JToolBarHelper::trash('events.trash');
 			JToolBarHelper::divider();
 		}
-		
-		
+
+
 		JToolBarHelper::help( 'listevents', true );
 
-		
+
 
 	}
 
 
 
 } // end of class
- 
+
 
 
 ?>

@@ -136,15 +136,15 @@ if($n) $n = '&nbsp;'.($nl ? '<a href="'.htmlspecialchars($nl).'" rel="nofollow">
 
 $month_href = NULL;
 
-$calendar .= '<table class="mod_eventlistcalq_calendar" cellspacing="0" cellpadding="0">'."\n".
-	'<caption class="mod_eventlistcalq_calendar-month">'.$p.($month_href ? '<a href="'.htmlspecialchars($month_href).'" rel="nofollow">'.$title.'</a>' : $title).$n."</caption>\n<tr>";
+$calendar .= '<table class="mod_jemcalq_calendar" cellspacing="0" cellpadding="0">'."\n".
+	'<caption class="mod_jemcalq_calendar-month">'.$p.($month_href ? '<a href="'.htmlspecialchars($month_href).'" rel="nofollow">'.$title.'</a>' : $title).$n."</caption>\n<tr>";
 
 
 if($day_name_length){ #if the day names should be shown ($day_name_length > 0)
 	#if day_name_length is >3, the full name of the day will be printed
 	if ($day_name_length >3){
 	foreach($day_names_long as $d)
-		$calendar .= '<th class="mod_eventlistcalq_daynames" abbr="'.$d.'">&nbsp;'.$d.'&nbsp;</th>';
+		$calendar .= '<th class="mod_jemcalq_daynames" abbr="'.$d.'">&nbsp;'.$d.'&nbsp;</th>';
 	$calendar .= "</tr>\n<tr>";
 	}
 	else
@@ -152,11 +152,11 @@ if($day_name_length){ #if the day names should be shown ($day_name_length > 0)
 		foreach($day_names_short as $d)
 		if (function_exists('mb_substr'))
 		{
-			$calendar .= '<th class="mod_eventlistcalq_daynames" abbr="'.$d.'">&nbsp;'.mb_substr($d,0,$day_name_length,'UTF-8').'&nbsp;</th>';
+			$calendar .= '<th class="mod_jemcalq_daynames" abbr="'.$d.'">&nbsp;'.mb_substr($d,0,$day_name_length,'UTF-8').'&nbsp;</th>';
 		}
 		else
 		{
-			$calendar .= '<th class="mod_eventlistcalq_daynames" abbr="'.$d.'">&nbsp;'.substr($d,0,$day_name_length).'&nbsp;</th>';
+			$calendar .= '<th class="mod_jemcalq_daynames" abbr="'.$d.'">&nbsp;'.substr($d,0,$day_name_length).'&nbsp;</th>';
 		}
 		$calendar .= "</tr>\n<tr>";
 	}
@@ -171,7 +171,7 @@ $currmonth 	= date( 'm', $time);
 $curryear 	= date( 'Y', $time);
 
 for ($counti = 0; $counti < $weekday; $counti++) {
-	$calendar .= '<td class="mod_eventlistcalq">&nbsp;</td>'; #initial 'empty' days
+	$calendar .= '<td class="mod_jemcalq">&nbsp;</td>'; #initial 'empty' days
 }
 
 for($day = 1, $days_in_month = gmdate('t', $uxtime_first_of_month); $day <= $days_in_month; $day++, $weekday++) {
@@ -186,7 +186,7 @@ for($day = 1, $days_in_month = gmdate('t', $uxtime_first_of_month); $day <= $day
 	} else {
 		$istoday = 0;
 	}
-	$tdbaseclass = ( $istoday ) ? 'mod_eventlistcalq_caltoday' : 'mod_eventlistcalq_calday';
+	$tdbaseclass = ( $istoday ) ? 'mod_jemcalq_caltoday' : 'mod_jemcalq_calday';
 
 	//space in front of daynumber when day < 10
 	($day < 10) ? $space = '&nbsp;&nbsp;': $space = '';
@@ -237,7 +237,7 @@ for($day = 1, $days_in_month = gmdate('t', $uxtime_first_of_month); $day <= $day
 	}
 }
 for ($counti = $weekday; $counti < 7; $counti++) {
-	$calendar .= '<td class="mod_eventlistcalq">&nbsp;</td>'; #remaining 'empty' days
+	$calendar .= '<td class="mod_jemcalq">&nbsp;</td>'; #remaining 'empty' days
 }
 
 echo $calendar."</tr>\n</table>\n";

@@ -55,13 +55,13 @@ if ($Remember == 1) // Remember which month / year is selected. Don't jump back 
 {
 	if ($req_month == 0)
 	{
-		$req_month = $app->getUserState("eventlistcalqmonth");
-		$req_year = $app->getUserState("eventlistcalqyear");
+		$req_month = $app->getUserState("jemcalqmonth");
+		$req_year = $app->getUserState("jemcalqyear");
 	}
 	else
 	{
-		$app->setUserState("eventlistcalqmonth",$req_month);
-		$app->setUserState("eventlistcalqyear",$req_year);
+		$app->setUserState("jemcalqmonth",$req_month);
+		$app->setUserState("jemcalqyear",$req_year);
 	}
 }
 
@@ -122,7 +122,7 @@ $nlink = $request_link.'&el_mcal_month='.$next_month.'&el_mcal_year='.$next_mont
 $prev_link =  JRoute::_($plink, false) ;
 $next_link =  JRoute::_($nlink, false) ;
 
-$days = modeventlistcalqHelper::getdays($offset_year, $offset_month, $params);
+$days = modjemcalqHelper::getdays($offset_year, $offset_month, $params);
 
 require( JModuleHelper::getLayoutPath( 'mod_jem_cal' ) );
 ?>

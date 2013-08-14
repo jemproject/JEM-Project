@@ -16,7 +16,7 @@
 
 defined('_JEXEC') or die;
 
-class modeventlistcalqhelper
+class modjemcalqhelper
 {
 	static function getdays ($greq_year, $greq_month, &$params)
 	{

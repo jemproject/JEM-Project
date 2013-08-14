@@ -24,11 +24,11 @@
 	<config>
 		<fields name="params">
 			<fieldset name="basic">
-			<field name="Default_Stylesheet" type="radio" default="1" label="Use Default Stylesheet" description="Use the default stylesheet modules/mod_jemcal15q/mod_jemcal15q.css">
+			<field name="Default_Stylesheet" type="radio" default="1" label="Use Default Stylesheet" description="Use the default stylesheet modules/mod_jem_cal/mod_jemcal15q.css">
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>
-		<field name="User_stylesheet" type="text" default="" label="User Stylesheet" description="Use an alternative stylesheet e.g. modules/mod_eventlistcal15q/mystylesheet.css" />	
+		<field name="User_stylesheet" type="text" default="" label="User Stylesheet" description="Use an alternative stylesheet e.g. modules/mod_jem_cal/mystylesheet.css" />	
 		<field name="@spacer" type="spacer" default="" label="" description="" />
 		<field name="Show_Tooltips" type="radio" default="1" label="Show Tooltips?" description="Choose to show tooltips on mouse rollover on calendar dates.">
 			<option value="0">JNO</option>
