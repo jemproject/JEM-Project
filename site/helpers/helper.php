@@ -106,7 +106,7 @@ class JEMHelper {
 						&& strtotime($recurrence_row['dates']) <= time() + 86400*$anticipation)
 				{
 					$new_event = JTable::getInstance('jem_events', '');
-					$new_event->bind($ref_event, array('id', 'hits', 'dates', 'enddates'));
+					$new_event->bind($ref_event, array('id', 'hits', 'dates', 'enddates','checked_out_time','checked_out'));
 					$new_event->recurrence_first_id = $recurrence_row['first_id'];
 					$new_event->recurrence_counter = $recurrence_row['counter'] + 1;
 					$new_event->dates = $recurrence_row['dates'];
@@ -206,7 +206,7 @@ class JEMHelper {
 				if (count($selected) == 0)
 				{
 					// this shouldn't happen, but if it does, to prevent problem use the current weekday for the repetition.
-					JError::raiseWarning(500, JText::_('COM_JEM_EMPTY_WEEKDAY_RECURRENCE'));
+					JError::raiseWarning(500, JText::_('COM_JEM_WRONG_EVENTRECURRENCE_WEEKDAY'));
 					$current_weekday = (int) $date_array["weekday"];
 					$selected = array($current_weekday);
 				}
@@ -327,7 +327,7 @@ class JEMHelper {
 					$result[] = (7 - $firstday) % 7;
 					break;
 				default:
-					JError::raiseWarning(500, JText::_('COM_JEM_WRONG_ICAL_DAY_STRING'));
+					JError::raiseWarning(500, JText::_('COM_JEM_WRONG_EVENTRECURRENCE_WEEKDAY'));
 			}
 		}
 
