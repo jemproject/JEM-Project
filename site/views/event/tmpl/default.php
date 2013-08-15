@@ -15,22 +15,6 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 
 
 
-
-<div id="jem" class="event_id<?php echo $this->row->did; ?> jem_event">
-	<div class="buttons">
-		<?php echo JEMOutput::mailbutton($this->row->slug, 'event', $this->params); ?>
-		<?php echo JEMOutput::printbutton($this->print_link, $this->params); ?>
-		<?php echo JEMOutput::icalbutton($this->row->slug, 'event'); ?>
-	</div>
-
-	<?php if ($this->params->def('show_page_title', 1)) : ?>
-		<h1 class="componentheading">
-			<?php echo $this->escape($this->row->title); ?>
-		</h1>
-	<?php endif; ?>
-
-	<!-- Event -->
-	<h2 class="jem">
 		<?php
 		echo JText::_('COM_JEM_EVENT');
 		$itemid = $this->item ? $this->item->id : 0;
