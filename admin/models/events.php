@@ -219,6 +219,8 @@ class JEMModelEvents extends JModelList
 
 			}
 		}
+		$query->group('a.id');
+
 
 		// Add the list ordering clause.
 		$orderCol	= $this->state->get('list.ordering');
