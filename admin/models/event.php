@@ -127,23 +127,14 @@ class JEMModelEvent extends JModelAdmin
 		if ($item = parent::getItem($pk)) {
 
 			$db = JFactory::getDbo();
-			$query = $db->getQuery(true);
 
-			/*
 			$query = $db->getQuery(true);
 			$query->select(array('count(id)'));
 			$query->from('#__jem_register');
-			$query->where("event = $item->id AND waiting = 0");
-			*/
-
-			$query = ' SELECT count(id) '
-					. ' FROM #__jem_register '
-					. ' WHERE event = ' . $db->quote($item->id)
-					. ' AND waiting = 0 '
-					;
+			$query->where(array('event= '.$db->quote($item->id), 'waiting= 0'));
 
 			$db->setQuery($query);
-			$res = $this->_db->loadResult();
+			$res = $db->loadResult();
 			$item->booked = $res;
 
 			$files = JEMAttachment::getAttachments('event'.$item->id);
@@ -179,12 +170,19 @@ class JEMModelEvent extends JModelAdmin
 	/**
 	 * Prepare and sanitise the table data prior to saving.
 	 *
+	 * With $table you can call a table name
+	 *
 	 */
 	protected function prepareTable(&$table)
 	{
 		$app = JFactory::getApplication();
 		$date = JFactory::getDate();
 		$jemsettings = JEMAdmin::config();
+
+		// Debug
+		/* var_dump($_POST);exit; */
+		/* var_dump($_FILES);exit; */
+		// var_dump($table);exit;
 
 		/* JInput
 		 *
@@ -212,9 +210,10 @@ class JEMModelEvent extends JModelAdmin
 			}
 		}
 
+
 		// Bind the form fields to the table
 		//if (!$table->bind( JRequest::get( 'post' ) )) {
-		//return JError::raiseWarning( 500, $row->getError() );
+		//return JError::raiseWarning( 500, $table->getError() );
 		//}
 
 		//get values from time selectlist and concatenate them accordingly
@@ -278,12 +277,12 @@ class JEMModelEvent extends JModelAdmin
 
 
 		if($table->dates == null || $table->recurrence_type == '0') {
-			$table->recurrence_number = '0';
-			$table->recurrence_byday = '0';
-			$table->recurrence_counter = '0';
-			$table->recurrence_type = '0';
-			$table->recurrence_limit = '0';
-			$table->recurrence_limit_date = '0000-00-00';
+			$table->recurrence_number = '';
+			$table->recurrence_byday = '';
+			$table->recurrence_counter = '';
+			$table->recurrence_type = '';
+			$table->recurrence_limit = '';
+			$table->recurrence_limit_date = '';
 		} else {
 			$table->recurrence_number = $recurrencenumber;
 			$table->recurrence_byday = $recurrencebyday;
@@ -381,31 +380,6 @@ class JEMModelEvent extends JModelAdmin
 			$db->query();
 		}
 
-		/*
-		// attachments
-		// new ones first
-		$attachments = JRequest::getVar( 'attach', array(), 'files', 'array' );
-		$attachments['customname'] = JRequest::getVar( 'attach-name', array(), 'post', 'array' );
-		$attachments['description'] = JRequest::getVar( 'attach-desc', array(), 'post', 'array' );
-		$attachments['access'] = JRequest::getVar( 'attach-access', array(), 'post', 'array' );
-		JEMAttachment::postUpload($attachments, 'event'.$table->id);
-
-		// and update old ones
-		$attachments = array();
-		$old['id'] = JRequest::getVar( 'attached-id', array(), 'post', 'array' );
-		$old['name'] = JRequest::getVar( 'attached-name', array(), 'post', 'array' );
-		$old['description'] = JRequest::getVar( 'attached-desc', array(), 'post', 'array' );
-		$old['access'] = JRequest::getVar( 'attached-access', array(), 'post', 'array' );
-		foreach ($old['id'] as $k => $id)
-		{
-			$attach = array();
-			$attach['id'] = $id;
-			$attach['name'] = $old['name'][$k];
-			$attach['description'] = $old['description'][$k];
-			$attach['access'] = $old['access'][$k];
-			JEMAttachment::update($attach);
-		}
-		*/
 
 		// check for recurrence, when filled it will perform the cleanup function
 		if ($table->recurrence_number > 0 && !$table->dates == null)
