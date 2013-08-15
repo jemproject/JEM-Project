@@ -267,9 +267,8 @@ class JEMModelEvent extends JModelAdmin
 
 		$cats = $jinput->get( 'cid', array(), 'post', 'array');
 
-
 		$recurrencenumber = $jinput->get('recurrence_number','','int');
-		$recurrencebyday = $jinput->get('recurrence_byday','','word');
+		$recurrencebyday = $jinput->get('recurrence_byday','','string');
 
 		$metakeywords = $jinput->get( 'meta_keywords','','');
 		$metadescription = $jinput->get( 'meta_description','','');
@@ -278,7 +277,7 @@ class JEMModelEvent extends JModelAdmin
 		$table->hits = $hits;
 
 
-		if($table->dates == null) {
+		if($table->dates == null || $table->recurrence_type == '0') {
 			$table->recurrence_number = '0';
 			$table->recurrence_byday = '0';
 			$table->recurrence_counter = '0';
