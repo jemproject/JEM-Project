@@ -11,16 +11,16 @@ defined('_JEXEC') or die; ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=archive'); ?>" method="post" name="adminForm" id="adminForm">
 
-	<table class="adminform">
-		<tr>
-			<td width="100%">
-				<?php echo JText::_( 'COM_JEM_SEARCH' ).' '.$this->lists['filter']; ?>
-				<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onchange="document.adminForm.submit();" />
-				<button onclick="this.form.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-				<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
-			</td>
-		</tr>
-	</table>
+	<fieldset id="filter-bar">
+	<div class="filter-search fltlft">
+				<?php echo $this->lists['filter']; ?>
+				<input type="text" name="search" id="search" placeholder="<?php echo JText::_( 'COM_JEM_SEARCH' );?>" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="this.form.submit()" />
+				<button type="submit"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+				<button type="button" onclick="document.id('search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+			</div>
+
+</fieldset>
+<div class="clr"> </div>
 
 	<table class="table table-striped" id="articleList">
 		<thead>

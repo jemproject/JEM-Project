@@ -53,23 +53,23 @@ window.addEvent('domready', function(){
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=events'); ?>" method="post" name="adminForm" id="adminForm">
 
 
-<table class="adminform">
-	<tr>
-		<td width="100%">
-			 <?php echo JText::_( 'COM_JEM_SEARCH' ).' '.$this->lists['filter']; ?>
-			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->escape($this->state->get('filter_search')); ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button id="gosearch" onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-			<button onclick="$('filter_search').value='';document.adminForm.submit();;"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
-		</td>
-		<td nowrap="nowrap"><?php //echo $this->lists['state']; ?>
+<fieldset id="filter-bar">
+	<div class="filter-search fltlft">
+			<?php echo $this->lists['filter']; ?>
+			<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo JText::_( 'COM_JEM_SEARCH' );?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>" class="text_area" onChange="document.adminForm.submit();" />
+			<button type="submit"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+		</div>
+		<div class="filter-select fltrt">
 
 			<select name="filter_state" class="inputbox" onchange="this.form.submit()">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter_state'), true);?>
 			</select>
-		</td>
-	</tr>
-</table>
+		</div>
+
+</fieldset>
+<div class="clr"> </div>
 
 
 <table class="table table-striped" id="articleList">

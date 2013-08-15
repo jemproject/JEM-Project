@@ -12,16 +12,14 @@ defined('_JEXEC') or die;
 
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=groups'); ?>"  method="post" name="adminForm" id="adminForm">
 
-<table class="adminform">
-	<tr>
-		<td width="100%">
-			<?php echo JText::_( 'COM_JEM_SEARCH' );?>
-			<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-			<button onclick="$('search').value='';document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
-		</td>
-	</tr>
-</table>
+<fieldset id="filter-bar">
+	<div class="filter-search fltlft">
+			<input type="text" name="search" id="search" placeholder="<?php echo JText::_( 'COM_JEM_SEARCH' );?>" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
+			<button type="submit" onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+			<button type="button" onclick="document.id('search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+	</div>
+</fieldset>
+<div class="clr"> </div>
 
 	<table class="table table-striped" id="articleList">
 	<thead>
@@ -45,7 +43,7 @@ defined('_JEXEC') or die;
 		<?php
 	    foreach ($this->rows as $i => $row) :
 	    $link 		= 'index.php?option=com_jem&amp;task=groups.edit&amp;cid[]='.$row->id;
-		
+
    		?>
 			<tr class="row<?php echo $i % 2; ?>">
 			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>

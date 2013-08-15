@@ -12,25 +12,25 @@ defined('_JEXEC') or die; ?>
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=categories'); ?>" method="post" name="adminForm" id="adminForm">
 
 
-	<table class="adminform">
-		<tr>
-			<td width="100%">
-				<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-				<button onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-				<button onclick="$('search').value='';document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
-			</td>
-			<td nowrap="nowrap">
+<fieldset id="filter-bar">
+	<div class="filter-search fltlft">
+				<input type="text" name="search" id="search" placeholder="<?php echo JText::_( 'COM_JEM_SEARCH' );?>" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="this.form.submit()" />
+				<button type="submit"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+				<button type="button" onclick="document.id('search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+			</div>
+		<div class="filter-select fltrt">
 			  			<select name="filter_state" class="inputbox" onchange="this.form.submit()">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions',array('all' => 0, 'archived' => 0, 'trash' => 0)), 'value', 'text', $this->lists['state'], true);?>
 			</select>
-			</td>
-		</tr>
-	</table>
+			</div>
 
-			
-	
-	
+</fieldset>
+<div class="clr"> </div>
+
+
+
+
 	<table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
@@ -52,8 +52,8 @@ defined('_JEXEC') or die; ?>
 	<tfoot>
 		<tr>
 			<td colspan="20">
-				<?php 
-				echo $this->pagination->getListFooter(); 
+				<?php
+				echo $this->pagination->getListFooter();
 				?>
 			</td>
 		</tr>
@@ -131,8 +131,8 @@ defined('_JEXEC') or die; ?>
 			</td>
 			<td class="center"><?php echo $row->id; ?></td>
 		</tr>
-		<?php 
- endforeach; 
+		<?php
+ endforeach;
 		?>
 	</tbody>
 
