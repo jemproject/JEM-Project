@@ -283,9 +283,7 @@ window.addEvent('domready', function(){
 		</tbody>
 	</table>
 
-	<p class="copyright">
-		<?php echo JEMAdmin::footer( ); ?>
-	</p>
+
 
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="task" value="" />
