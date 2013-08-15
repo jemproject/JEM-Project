@@ -11,7 +11,8 @@ defined('_JEXEC') or die;
 ?>
 
 <?php if ($this->row->registra == 1) : ?>
-<h2 class="register"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ).':'; ?></h2>
+<dt class="register"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ).':'; ?></dt>
+		<br /><p>
 <?php  endif; ?>
 
 
