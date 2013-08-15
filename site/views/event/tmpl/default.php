@@ -257,6 +257,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 	<?php
 if ($this->row->registra == 1) :
 ?>
+	<h2 class="register"><?php echo JText::_( 'COM_JEM_REGISTRATION' ).':'; ?></h2>
 		<?php echo $this->loadTemplate('attendees'); ?>
 	<?php
 	 endif;
