@@ -11,37 +11,39 @@ defined('_JEXEC') or die;
 
 
 /**
- * View class for the JEM user element screen
+ * View class for the JEM userelement screen
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewUserElement extends JViewLegacy {
 
 	public function display($tpl = null)
 	{
-		$mainframe = JFactory::getApplication();
-		
+		$app =  JFactory::getApplication();
+
 		//initialise variables
 		$document	=  JFactory::getDocument();
 		$user 		=  JFactory::getUser();
 		$jemsettings = JEMAdmin::config();
 		$db = JFactory::getDBO();
-		
+
 		//get var
-		$filter_order		= $mainframe->getUserStateFromRequest( 'com_jem.users.filter_order', 'filter_order', 'u.name', 'cmd' );
-		$filter_order_Dir	= $mainframe->getUserStateFromRequest( 'com_jem.users.filter_order_Dir', 'filter_order_Dir', '', 'word' );
-		$search 			= $mainframe->getUserStateFromRequest( 'com_jem.users.search', 'search', '', 'string' );
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.userelement.filter_order', 'filter_order', 'u.name', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.userelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.userelement.search', 'search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
-		
-		//add css to document
+
+
+		//prepare the document
+		$document->setTitle(JText::_('COM_JEM_SELECTATTENDEE'));
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
-		
-		$modelusers = JModelLegacy::getInstance('Users', 'JEMModel');
-		
-		$users = $modelusers->getData();
-		$pagination = $modelusers->getPagination();
-		
+
+		//Get data from the model
+		$users      	=  $this->get('Data');
+		$pagination 	=  $this->get('Pagination');
+
+
 		//build selectlists
 		$lists = array();
 		// table ordering
