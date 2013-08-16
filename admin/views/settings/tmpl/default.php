@@ -82,6 +82,16 @@ window.addEvent('domready', function(){
 
 
 
+	$('jform_gddisabled0').addEvent('click', lboff);
+	$('jform_gddisabled1').addEvent('click', lbon);
+
+	if($('jform_gddisabled1').checked)
+	{
+		lbon();
+	}
+
+
+
 
 	});
 
@@ -186,6 +196,16 @@ function evimageoff()
 	evimagewidth.value='';
 }
 
+function lbon()
+{
+	document.getElementById('lb1').style.display = '';
+}
+
+
+function lboff()
+{
+	document.getElementById('lb1').style.display = 'none';
+}
 
 </script>
 
@@ -255,7 +275,7 @@ function evimageoff()
 
 		<input type="hidden" name="task" value="">
 		<input type="hidden" name="id" value="1">
-		<input type="hidden" name="lastupdate" value="<?php //echo $this->jemsettings->lastupdate; ?>">
+		<input type="hidden" name="lastupdate" value="<?php $this->jemsettings->lastupdate; ?>">
 		<input type="hidden" name="option" value="com_jem">
 		<input type="hidden" name="controller" value="settings">
 		<?php echo JHtml::_('form.token'); ?>

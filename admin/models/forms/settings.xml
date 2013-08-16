@@ -46,12 +46,7 @@
 		</field>
 		
 		
-		<field name="gddisabled" type="radio"
-			label="COM_JEM_GD_LIBRARY" description="COM_JEM_GD_LIBRARY_DESC"
-			class="inputbox" default="0" required="false" >	
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
-		</field>
+		
 		
 
 	</fieldset>
@@ -224,7 +219,28 @@
 			label="COM_JEM_IMAGE_WIDTH" description="COM_JEM_IMAGE_WIDTH_TIP"
 			class="inputbox" size="10" maxlength="10" required="false" />
 		
-				
+			
+			<field name="gddisabled" type="radio"
+			label="COM_JEM_GD_LIBRARY" description="COM_JEM_GD_LIBRARY_TIP"
+			class="inputbox" default="0" required="false" >	
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+			</field>
+			
+			<field name="gdversion" type="text"
+			label="COM_JEM_GD_VERSION" description="COM_JEM_GD_VERSION_TIP"
+			class="inputbox" default="0" required="false" />	
+			
+			<field name="lightbox" type="radio"
+			label="COM_JEM_IMAGE_LIGHTBOX" description="COM_JEM_IMAGE_LIGHTBOX_TIP"
+			class="inputbox" default="0" required="false" >	
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+			</field>
+
+
+
+			
 	</fieldset>
 	
 	
@@ -621,12 +637,6 @@
 
 				
 	</fieldset>
-	
-	
-	
-	
-	
-	
 	
 	
 	

@@ -79,18 +79,23 @@ class JEMModelSettings extends JModelForm
 	 * Saves the settings
 	 *
 	 */
-	function store($post)
+	function store($post,$post2)
 	{
 
+		//var_dump($post2);exit;
 		//var_dump($post);exit;
 
 		$settings 	= JTable::getInstance('jem_settings', '');
+		$jinput = JFactory::getApplication()->input;
 
 		// Bind the form fields to the table
 		if (!$settings->bind($post)) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 		}
+
+		$varmetakey = $jinput->get('meta_keywords','','');
+		$settings->meta_keywords = $varmetakey;
 
 		$meta_key="";
 		foreach ($settings->meta_keywords as $meta_keyword) {
@@ -99,19 +104,44 @@ class JEMModelSettings extends JModelForm
 			}
 			$meta_key .= $meta_keyword;
 		}
+
+
+		// binding the input fields (outside the jform)
+
+
+		$varoldevent = $jinput->get('oldevent','','int');
+		$varminus = $jinput->get('minus','','int');
+		$vartld = $jinput->get('tld','','string');
+		$varlg = $jinput->get('lg','','word');
+		$varcomunsolution = $jinput->get('comunsolution','','int');
+		$varcomunoption = $jinput->get('comunoption','','int');
+		$varshowfroregistra = $jinput->get('showfroregistra','','');
+		$varshowfrounregistra = $jinput->get('showfrounregistra','','');
+		$varlastupdate = $jinput->get('lastupdate','','');
+
+		$settings->oldevent = $varoldevent;
+		$settings->minus = $varminus;
+		$settings->tld = $vartld;
+		$settings->lg = $varlg;
+		$settings->comunsolution = $varcomunsolution;
+		$settings->comunoption = $varcomunoption;
+		$settings->showfroregistra = $varshowfroregistra;
+		$settings->showfrounregistra = $varshowfrounregistra;
+		$settings->lastupdate = $varlastupdate;
+
+
 		$settings->meta_keywords = $meta_key;
+
 		$settings->id = 1;
 
 
-		//var_dump($settings);exit;
-		//$settings->store();
+
 
 		if (!$settings->store()) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 		}
 
-		//var_dump($settings);exit;
 
 		return true;
 	}

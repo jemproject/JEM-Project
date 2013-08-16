@@ -48,14 +48,14 @@ class JEMControllerSettings extends JControllerLegacy
 		$jinput = JFactory::getApplication()->input;
 
 		$post = JRequest::getVar('jform', array(), 'post', 'array');
-		/* $post = $jinput->getArray($_POST); */
-		/* var_dump($post);exit; */
+		//$post2 = $jinput->getArray($_POST);
+		//var_dump($post2);exit;
 
 
 		//get model
 		$model 	= $this->getModel('settings');
 
-		if ($model->store($post)) {
+		if ($model->store($post,$post2)) {
 			$msg	= JText::_('COM_JEM_SETTINGS_SAVED');
 		} else {
 			$msg	= JText::_('COM_JEM_SAVE_SETTINGS_FAILED');
