@@ -612,7 +612,26 @@
 		
 		
 		
-				
+		
+		
+		<field name="showmapserv" type="list"
+			label="COM_JEM_DISPLAY_LINK_TO_MAP" description="COM_JEM_DISPLAY_LINK_TO_MAP_TIP"
+			class="inputbox" default="0" required="false" >	
+			<option value="0">COM_JEM_NO_MAP_SERVICE</option>
+			<option value="1">COM_JEM_GOOGLE_MAP_LINK</option>
+			<option value="2">COM_JEM_GOOGLE_MAP_DISP</option>
+		</field>
+		
+		
+		<field name="tld" type="text"
+			label="COM_JEM_GOOGLE_MAP_TLD" description="COM_JEM_GOOGLE_MAP_TLD_TIP"
+			class="inputbox" size="10" maxlength="10" required="false" />
+			
+		<field name="lg" type="text"
+			label="COM_JEM_GOOGLE_MAP_LG" description="COM_JEM_GOOGLE_MAP_LG_TIP"
+			class="inputbox" size="10" maxlength="10" required="false" />
+		
+		
 	</fieldset>
 	
 	

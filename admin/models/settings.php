@@ -111,8 +111,6 @@ class JEMModelSettings extends JModelForm
 
 		$varoldevent = $jinput->get('oldevent','','int');
 		$varminus = $jinput->get('minus','','int');
-		$vartld = $jinput->get('tld','','string');
-		$varlg = $jinput->get('lg','','word');
 		$varcomunsolution = $jinput->get('comunsolution','','int');
 		$varcomunoption = $jinput->get('comunoption','','int');
 		$varshowfroregistra = $jinput->get('showfroregistra','','');
@@ -121,8 +119,6 @@ class JEMModelSettings extends JModelForm
 
 		$settings->oldevent = $varoldevent;
 		$settings->minus = $varminus;
-		$settings->tld = $vartld;
-		$settings->lg = $varlg;
 		$settings->comunsolution = $varcomunsolution;
 		$settings->comunoption = $varcomunoption;
 		$settings->showfroregistra = $varshowfroregistra;

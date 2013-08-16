@@ -91,10 +91,41 @@ window.addEvent('domready', function(){
 	}
 
 
+	$("jform_showmapserv").addEvent('change', testmap);
+
+
+
+	var mapserv = $("jform_showmapserv");
+	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
+
+	if (nrmapserv == 1 || nrmapserv == 2)
+	{
+	mapon();
+	} else
+		{
+	mapoff();
+		}
 
 
 	});
 
+
+
+function testmap()
+{
+
+	var mapserv = $("jform_showmapserv");
+	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
+
+	if (nrmapserv == 1 || nrmapserv == 2)
+	{
+	mapon();
+	} else
+		{
+	mapoff();
+		}
+
+}
 
 
 function cityon()
@@ -206,6 +237,22 @@ function lboff()
 {
 	document.getElementById('lb1').style.display = 'none';
 }
+
+
+function mapon()
+{
+	document.getElementById('map1').style.display = '';
+	document.getElementById('map2').style.display = '';
+}
+
+
+function mapoff()
+{
+
+	document.getElementById('map1').style.display = 'none';
+	document.getElementById('map2').style.display = 'none';
+}
+
 
 </script>
 
