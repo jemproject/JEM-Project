@@ -7,110 +7,73 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
+// No direct access.
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
+jimport('joomla.application.component.modelform');
 
 /**
- * JEM Component Settings Model
+ * Settings model.
  *
- * @package JEM
- * 
  */
-class JEMModelSettings extends JModelLegacy
+class JEMModelSettings extends JModelForm
 {
-	/**
-	 * Settings data
-	 *
-	 * @var array
-	 */
-	var $_data = null;
 
 	/**
-	 * Constructor
+	 * Method to get the record form.
 	 *
-	 * 
+	 * @param	array	$data		Data for the form.
+	 * @param	boolean	$loadData	True if the form is to load its own data (default case), false if not.
+	 * @return	mixed	A JForm object on success, false on failure
+	 *
 	 */
-	function __construct()
+	public function getForm($data = array(), $loadData = true)
 	{
-		parent::__construct();
+		// Get the form.
+		$form = $this->loadForm('com_jem.settings', 'settings', array('control' => 'jform', 'load_data' => $loadData));
+		if (empty($form)) {
+			return false;
+		}
+
+		return $form;
 	}
 
+
+
 	/**
-	 * Logic for the settings screen
+	 * Loading the table data
+	 *
 	 *
 	 */
-	function &getData()
+	public function getData()
 	{
 		$query = 'SELECT * FROM #__jem_settings WHERE id = 1';
 
 		$this->_db->setQuery($query);
-		$this->_data = $this->_db->loadObject();
+		$data = $this->_db->loadObject();
 
-		return $this->_data;
+		return $data;
 	}
 
 	/**
-	 * Method to checkin/unlock the item
+	 * Method to get the data that should be injected in the form.
 	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 * 
 	 */
-	function checkin()
+	protected function loadFormData()
 	{
-		$item = $this->getTable('jem_settings', '');
-		if(! $item->checkin(1)) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
-		}
-		return false;
-	}
 
-	/**
-	 * Method to checkout/lock the item
-	 *
-	 * @access	public
-	 * @param	int	$uid	User ID of the user checking the item out
-	 * @return	boolean	True on success
-	 * 
-	 */
-	function checkout($uid = null)
-	{
-		// Make sure we have a user id to checkout the article with
-		if (is_null($uid)) {
-			$user	= JFactory::getUser();
-			$uid	= $user->get('id');
-		}
-		// Lets get to it and checkout the thing...
-		$item =  $this->getTable('jem_settings', '');
-		if(!$item->checkout($uid, 1)) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
+		// Check the session for previously entered form data.
+		$data = JFactory::getApplication()->getUserState('com_jem.edit.settings.data', array());
+
+		if (empty($data)) {
+			$data = $this->getData();
 		}
 
-		return true;
+		return $data;
 	}
 
-	/**
-	 * Tests if the event is checked out
-	 *
-	 * @access	public
-	 * @param	int	A user id
-	 * @return	boolean	True if checked out
-	 * 
-	 */
-	function isCheckedOut( $uid=0 )
-	{
-		if ($this->getData())
-		{
-			if ($uid) {
-				return ($this->_data->checked_out && $this->_data->checked_out != $uid);
-			} else {
-				return $this->_data->checked_out;
-			}
-		}
-	}
+
+
 
 	/**
 	 * Saves the settings
@@ -118,6 +81,9 @@ class JEMModelSettings extends JModelLegacy
 	 */
 	function store($post)
 	{
+
+		//var_dump($post);exit;
+
 		$settings 	= JTable::getInstance('jem_settings', '');
 
 		// Bind the form fields to the table
@@ -136,12 +102,30 @@ class JEMModelSettings extends JModelLegacy
 		$settings->meta_keywords = $meta_key;
 		$settings->id = 1;
 
+
+		//var_dump($settings);exit;
+		//$settings->store();
+
 		if (!$settings->store()) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 		}
 
-    	return true;
+		//var_dump($settings);exit;
+
+		return true;
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
-?>

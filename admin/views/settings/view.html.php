@@ -19,66 +19,124 @@ defined('_JEXEC') or die;
  */
 class JEMViewSettings extends JViewLegacy {
 
+
+	protected $form;
+	protected $data;
+	protected $state;
+
+
 	public function display($tpl = null) {
+
+
+		$form	= $this->get('Form');
+		$data	= $this->get('Data');
+
+		$jemsettings	= $this->get('Data');
+		$document 	= JFactory::getDocument();
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+
+
+
+		/*
+		 * Bootstrap Css
+		 * - Toolbar icons will be moved due to the background-position (icons)
+		 *
+		 */
+
+		// $document->addStyleSheet(JURI::root().'media/com_jem/bootstrap/css/bootstrap.css'); */
+
+
+		//var_dump($form);exit;
+		//var_dump($data);exit;
+
+		// Check for model errors.
+		if ($errors = $this->get('Errors')) {
+			JError::raiseError(500, implode('<br />', $errors));
+			return false;
+		}
+
+		// Bind the form to the data.
+		if ($form && $data) {
+			$form->bind($data);
+		}
+
+		// Check for errors.
+		if (count($errors = $this->get('Errors'))) {
+			JError::raiseError(500, implode("\n", $errors));
+			return false;
+		}
+		JHTML::_('behavior.modal', 'a.modal');
+		JHTML::_('behavior.tooltip');
+		JHTML::_('behavior.formvalidation');
+		JHTML::_('behavior.framework');
+
+
+
+
 		$app = JFactory::getApplication();
 
 		//initialise variables
-		$document 	= JFactory::getDocument();
+
 		$acl		= JFactory::getACL();
 		$uri 		= JFactory::getURI();
 		$user 		= JFactory::getUser();
 
 		//get data from model
-		$model		= $this->getModel();
-		$jemsettings = $this->get( 'Data');
+		//$model		= $this->getModel();
+		// $jemsettings = $this->get( 'Data');
 
 		//only admins have access to this view
-		if (!JFactory::getUser()->authorise('core.manage')) {
-			JError::raiseWarning( 'SOME_ERROR_CODE', JText::_('COM_JEM_ALERTNOTAUTH'));
-			$app->redirect( 'index.php?option=com_jem&view=jem' );
-		}
+		//if (!JFactory::getUser()->authorise('core.manage')) {
+		//	JError::raiseWarning( 'SOME_ERROR_CODE', JText::_('COM_JEM_ALERTNOTAUTH'));
+		//	$app->redirect( 'index.php?option=com_jem&view=jem' );
+		//}
 
 		// fail if checked out not by 'me'
-		if ($model->isCheckedOut( $user->get('id') )) {
-			JError::raiseWarning( 'SOME_ERROR_CODE', JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
-			$app->redirect( 'index.php?option=com_jem&view=jem' );
-		}
+		//if ($model->isCheckedOut( $user->get('id') )) {
+		//	JError::raiseWarning( 'SOME_ERROR_CODE', JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
+		//	$app->redirect( 'index.php?option=com_jem&view=jem' );
+		//}
 
-		JHTML::_('behavior.tooltip');
-		JHTML::_('behavior.switcher');
+		//JHTML::_('behavior.tooltip');
+		//JHTML::_('behavior.switcher');
 
 		//add css, js and submenu to document
-		$document->addScript( JURI::root().'media/com_jem/js/settings.js' );
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+		//$document->addScript( JURI::root().'media/com_jem/js/settings.js' );
 
-		$accessLists = array();
+
+	   $accessLists = array();
 
 		//Create custom group levels to include into the public group selectList
 		$access   = array();
 		$access[] = JHTML::_('select.option', -2, JText::_( 'COM_JEM_ONLYADMINS' ) );
-		//$access[] = JHTML::_('select.option', 0 , JText::_( 'COM_JEM_EVERYBODY' ) );
+		$access[] = JHTML::_('select.option', 0 , JText::_( 'COM_JEM_EVERYBODY' ) );
 		$access[] = JHTML::_('select.option', -1, JText::_( 'COM_JEM_ALLREGISTERED' ) );
 		//$pub_groups = array_merge( $pub_groups, $acl->get_group_children_tree( null, 'Registered', true ) );
 		//$access = array_merge( $access, $acl->get_group_children_tree( null, 'USERS', false ) );
 
-		//Create the access control list
-		$accessLists['evdel_access']	= JHTML::_('select.genericlist', $access, 'delivereventsyes', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->delivereventsyes );
-		$accessLists['locdel_access']	= JHTML::_('select.genericlist', $access, 'deliverlocsyes', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->deliverlocsyes );
-		$accessLists['evpub_access']	= JHTML::_('select.genericlist', $access, 'autopubl', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->autopubl );
-		$accessLists['locpub_access']	= JHTML::_('select.genericlist', $access, 'autopublocate', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->autopublocate );
-		$accessLists['ev_edit']			= JHTML::_('select.genericlist', $access, 'eventedit', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->eventedit );
-		$accessLists['venue_edit']		= JHTML::_('select.genericlist', $access, 'venueedit', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->venueedit );
+		// Create the access control list
+		// $accessLists['evdel_access']	= JHTML::_('select.genericlist', $access, 'delivereventsyes', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->delivereventsyes );
+		// $accessLists['locdel_access']	= JHTML::_('select.genericlist', $access, 'deliverlocsyes', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->deliverlocsyes );
+		// $accessLists['evpub_access']	= JHTML::_('select.genericlist', $access, 'autopubl', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->autopubl );
+		// $accessLists['locpub_access']	= JHTML::_('select.genericlist', $access, 'autopublocate', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->autopublocate );
+		// $accessLists['ev_edit']			= JHTML::_('select.genericlist', $access, 'eventedit', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->eventedit );
+		// $accessLists['venue_edit']		= JHTML::_('select.genericlist', $access, 'venueedit', 'class="inputbox" size="4"', 'value', 'text', $jemsettings->venueedit );
 
-		$uri = JFactory::getURI();
-		$uri2 = $uri->toString();
+		//$uri = JFactory::getURI();
+		//$uri2 = $uri->toString();
 
 		//assign data to template
 		$this->accessLists	= $accessLists;
-		$this->jemsettings	= $jemsettings;
-		$this->request_url	= $uri2;
+		//$this->jemsettings	= $jemsettings;
+		//$this->request_url	= $uri2;
 		$this->countries	= JEMHelper::getCountryOptions();
 
-		$this->WarningIcon();
+		//$this->WarningIcon();
+
+
+		$this->assignRef('form',	$form);
+		$this->assignRef('data',	$data);
+		$this->assignRef('jemsettings',	$jemsettings);
 
 		// add toolbar
 		$this->addToolbar();
@@ -86,24 +144,31 @@ class JEMViewSettings extends JViewLegacy {
 		parent::display($tpl);
 	}
 
+
+
 	/**
-	 * Add Toolbar
+	 * Add the page title and toolbar.
+	 *
+	 * @since	1.6
 	 */
 	protected function addToolbar()
 	{
+
 		//Create Submenu
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
 
-		//create the toolbar
-		JToolBarHelper::title( JText::_( 'COM_JEM_SETTINGS' ), 'settings' );
+		JToolBarHelper::title(JText::_('COM_JEM_SETTINGS'), 'settings');
 		JToolBarHelper::apply('settings.apply');
-		JToolBarHelper::spacer();
 		JToolBarHelper::save('settings.save');
-		JToolBarHelper::spacer();
+		JToolBarHelper::divider();
 		JToolBarHelper::cancel('settings.cancel');
-		JToolBarHelper::spacer();
+		JToolBarHelper::divider();
 		JToolBarHelper::help( 'settings', true );
 	}
+
+
+
+
 
 	function WarningIcon()
 	{

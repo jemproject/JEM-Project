@@ -70,7 +70,7 @@ $options = array(
 
 						//only admins should be able to see this items
 						if (JFactory::getUser()->authorise('core.manage')) {
-							$link = 'index.php?option=com_jem&amp;task=settings.edit';
+							$link = 'index.php?option=com_jem&amp;view=settings';
 							JEMViewJEM::quickiconButton( $link, 'icon-48-settings.png', JText::_( 'COM_JEM_SETTINGS' ) );
 
 							$link = 'index.php?option=com_jem&amp;view=cleanup';
@@ -90,7 +90,7 @@ $options = array(
 
 
 						}
-						
+
 						$link = 'index.php?option=com_jem&amp;view=help';
 						JEMViewJEM::quickiconButton( $link, 'icon-48-help.png', JText::_( 'COM_JEM_HELP' ) );
 

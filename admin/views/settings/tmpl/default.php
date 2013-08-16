@@ -10,108 +10,254 @@
 defined('_JEXEC') or die;
 
 // Load tooltips behavior
- JHtml::_('behavior.formvalidation');
- JHtml::_('behavior.tooltip');
- JHtml::_('behavior.switcher');
+JHtml::_('behavior.formvalidation');
+JHtml::_('behavior.switcher');
+JHtml::_('behavior.tooltip');
 ?>
 
 <script>
-Joomla.submitbutton = function(task)
-{
+window.addEvent('domready', function(){
 
-	var form = document.adminForm;
 
-	if (task == 'cancel') {
-		submitform( task );
-	} else if (form.recurrence_anticipation.value == "" || form.recurrence_anticipation.value == 0 ){
-		alert( "<?php echo JText::_ ( 'COM_JEM_ADD_RECURRENCE' ); ?>" );
-		form.recurrence_anticipation.focus();
-	} else {
-		submitform( task );
+	$('jform_showcity0').addEvent('click', cityoff);
+	$('jform_showcity1').addEvent('click', cityon);
+
+	if($('jform_showcity1').checked)
+	{
+		cityon();
 	}
+
+	$('jform_showatte0').addEvent('click', atteoff);
+	$('jform_showatte1').addEvent('click', atteon);
+
+	if($('jform_showatte1').checked)
+	{
+		atteon();
+	}
+
+	$('jform_showtitle0').addEvent('click', titleoff);
+	$('jform_showtitle1').addEvent('click', titleon);
+
+	if($('jform_showtitle1').checked)
+	{
+		titleon();
+	}
+
+
+	$('jform_showlocate0').addEvent('click', locoff);
+	$('jform_showlocate1').addEvent('click', locon);
+
+	if($('jform_showlocate1').checked)
+	{
+		locon();
+	}
+
+
+
+	$('jform_showstate0').addEvent('click', stateoff);
+	$('jform_showstate1').addEvent('click', stateon);
+
+	if($('jform_showstate1').checked)
+	{
+		stateon();
+	}
+
+
+	$('jform_showcat0').addEvent('click', catoff);
+	$('jform_showcat1').addEvent('click', caton);
+
+	if($('jform_showcat1').checked)
+	{
+		caton();
+	}
+
+
+	$('jform_showeventimage0').addEvent('click', evimageoff);
+	$('jform_showeventimage1').addEvent('click', evimageon);
+
+	if($('jform_showeventimage1').checked)
+	{
+		evimageon();
+	}
+
+
+
+
+	});
+
+
+
+function cityon()
+{
+	document.getElementById('city1').style.display = '';
 }
+
+
+function cityoff()
+{
+	var citywidth = document.getElementById('jform_citywidth');
+	document.getElementById('city1').style.display = 'none';
+	citywidth.value='';
+}
+
+
+function atteon()
+{
+	document.getElementById('atte1').style.display = '';
+}
+
+
+function atteoff()
+{
+	var attewidth = document.getElementById('jform_attewidth');
+	document.getElementById('atte1').style.display = 'none';
+	attewidth.value='';
+}
+
+function titleon()
+{
+	document.getElementById('title1').style.display = '';
+}
+
+
+function titleoff()
+{
+	var titlewidth = document.getElementById('jform_titlewidth');
+	document.getElementById('title1').style.display = 'none';
+	titlewidth.value='';
+}
+
+
+function locon()
+{
+	document.getElementById('loc1').style.display = '';
+	document.getElementById('loc2').style.display = '';
+}
+
+
+function locoff()
+{
+	var locatewidth = document.getElementById('jform_locationwidth');
+	document.getElementById('loc1').style.display = 'none';
+	locatewidth.value='';
+	document.getElementById('loc2').style.display = 'none';
+}
+
+
+function stateon()
+{
+	document.getElementById('state1').style.display = '';
+}
+
+
+function stateoff()
+{
+	var statewidth = document.getElementById('jform_statewidth');
+	document.getElementById('state1').style.display = 'none';
+	statewidth.value='';
+}
+
+function caton()
+{
+	document.getElementById('cat1').style.display = '';
+	document.getElementById('cat2').style.display = '';
+}
+
+
+function catoff()
+{
+	var catwidth = document.getElementById('jform_catfrowidth');
+	document.getElementById('cat1').style.display = 'none';
+	catwidth.value='';
+	document.getElementById('cat2').style.display = 'none';
+}
+
+
+function evimageon()
+{
+	document.getElementById('evimage1').style.display = '';
+}
+
+
+function evimageoff()
+{
+	var evimagewidth = document.getElementById('jform_tableeventimagewidth');
+	document.getElementById('evimage1').style.display = 'none';
+	evimagewidth.value='';
+}
+
 
 </script>
 
 
 
-<form action="index.php" method="post" id="adminForm" name="adminForm">
+<script type="text/javascript">
+	Joomla.submitbutton = function(task)
+	{
+		if (task == 'settings.cancel' || document.formvalidator.isValid(document.id('settings-form'))) {
+			Joomla.submitform(task, document.getElementById('settings-form'));
+
+		}
+	}
+</script>
+
+<form action="index.php" method="post" id="settings-form" name="adminForm" class="form-validate">
 
 
 
 			<?php
-			$title = JText::_( 'COM_JEM_BASIC_SETTINGS' );
-			echo JHtml::_('tabs.start', 'det-pane', array('useCookie'=>1));
-
-			echo JHtml::_('tabs.panel', $title, 'basic');
+			echo JHtml::_('tabs.start', 'settings-pane', array('useCookie'=>1));
+			echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_BASIC_SETTINGS' ), 'settings-basic');
 			?>
 
-			<div id="config-document">
-			<div id="page-basic" class="tab">
-			<div class="noshow">
-				<?php echo $this->loadTemplate('basic'); ?>
-			</div></div></div>
+					<?php echo $this->loadTemplate('basicdisplay'); ?>
+					<?php echo $this->loadTemplate('basiceventhandling'); ?>
+					<?php echo $this->loadTemplate('basicimagehandling'); ?>
+					<?php echo $this->loadTemplate('basicmetahandling'); ?>
 
 			<?php
-			$title = JText::_( 'COM_JEM_USER_CONTROL' );
-			echo JHtml::_('tabs.panel', $title, 'layout');
+			echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_EVENT_PAGE' ), 'layout2');
 			?>
-			<div id="page-usercontrol" class="tab">
-			<div class="noshow">
-				<?php
-				echo $this->loadTemplate('usercontrol');
-				?>
-			</div></div>
+
+					<?php echo $this->loadTemplate('evvenues'); ?>
+					<?php echo $this->loadTemplate('evevents'); ?>
+					<?php echo $this->loadTemplate('evregistration'); ?>
+
+
 
 			<?php
-			$title = JText::_( 'COM_JEM_EVENT_PAGE' );
-			echo JHtml::_('tabs.panel', $title, 'event');
+			echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_LAYOUT' ), 'layout');
 			?>
-			<div id="page-event" class="tab">
-			<div class="noshow">
-				<?php
-				echo $this->loadTemplate('eventpage');
-				 ?>
-			</div></div>
+
+				<?php echo $this->loadTemplate('layout'); ?>
 
 			<?php
-			$title = JText::_( 'COM_JEM_LAYOUT' );
-			echo JHtml::_('tabs.panel', $title, 'layout');
+			echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_GLOBAL_PARAMETERS' ), 'parameters');
 			?>
-            <div id="page-layout" class="tab">
-            <div class="noshow">
-				<?php
-				echo $this->loadTemplate('layout');
-				?>
-			</div></div>
 
-			<?php
-			$title = JText::_( 'COM_JEM_GLOBAL_PARAMETERS' );
-			echo JHtml::_('tabs.panel', $title, 'parameters');
-			?>
-            <div id="page-parameters" class="tab">
-            <div class="noshow">
                <?php
                echo $this->loadTemplate('parameters');
                 ?>
-            </div></div>
+
+                <?php
+			echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_USER_CONTROL' ), 'usercontrol');
+			?>
+
+               <?php
+               echo $this->loadTemplate('usercontrol');
+                ?>
 
 
+		<?php echo JHtml::_('tabs.end'); ?>
 
-		<?php
-		echo JHtml::_('sliders.end');
-		?>
 
 		<div class="clr"></div>
 
-		<?php echo JHTML::_( 'form.token' ); ?>
 		<input type="hidden" name="task" value="">
 		<input type="hidden" name="id" value="1">
-		<input type="hidden" name="lastupdate" value="<?php echo $this->jemsettings->lastupdate; ?>">
+		<input type="hidden" name="lastupdate" value="<?php //echo $this->jemsettings->lastupdate; ?>">
 		<input type="hidden" name="option" value="com_jem">
 		<input type="hidden" name="controller" value="settings">
+		<?php echo JHtml::_('form.token'); ?>
 		</form>
 
-		<p class="copyright">
-			<?php echo JEMAdmin::footer( ); ?>
-		</p>
