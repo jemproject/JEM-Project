@@ -22,9 +22,7 @@
 		<field name="formatdate" type="text"
 			label="COM_JEM_SETTINGS_DATE_FORMAT" description="COM_JEM_SETTINGS_DATE_FORMAT_TIP"
 			class="inputbox" size="20" required="false" />				
-						
-		<field name="urlfunctiondate" type="url" default="http://php.net/manual/en/function.date.php" label="COM_JEM_PHP_DATE_MANUAL" description="" size="40" />
-						
+												
 		<field name="formatShortDate" type="text"
 			label="COM_JEM_SETTINGS_SHORT_DATE_FORMAT" description="COM_JEM_SETTINGS_SHORT_DATE_FORMAT_TIP"
 			class="inputbox" size="20" required="false" />				
@@ -32,8 +30,7 @@
 		<field name="formattime" type="text"
 			label="COM_JEM_TIME_STRFTIME" description="COM_JEM_TIME_STRFTIME_TIP"
 			class="inputbox" size="20" required="false" />					
-		<field name="urlfunctionstrftime" type="url" default="http://www.php.net/strftime" label="COM_JEM_PHP_STRFTIME_MANUAL" description="" size="40" />			
-					
+							
 					<field name="timename" type="text"
 			label="COM_JEM_TIME_NAME" description="COM_JEM_TIME_NAME_TIP"
 			class="inputbox" size="15" maxlength="10" required="false" />	
@@ -46,9 +43,6 @@
 		</field>
 		
 		
-		
-		
-
 	</fieldset>
 	
 	
