@@ -116,7 +116,7 @@ class JEMViewEvent extends JViewLegacy
 		//is the user allready registered at the event
 		if ($isregistered) {
 			$formhandler = 3;
-		} else if ($timecheck > 0) { //check if it is too late to register and overwrite $formhandler
+		} else if ($timecheck > 0 && !is_null($row->dates)) { //check if it is too late to register and overwrite $formhandler
 			$formhandler = 1;
 		} else if (!$user->get('id')) { //is the user registered at joomla and overwrite $formhandler if not
 			$formhandler = 2;
@@ -126,11 +126,11 @@ class JEMViewEvent extends JViewLegacy
 
 
 		if ($formhandler >= 3) {
-			$js = "function check(checkbox, senden) {
+			$js = "function check(checkbox, send) {
 				if(checkbox.checked==true){
-					senden.disabled = false;
+					send.disabled = false;
 				} else {
-					senden.disabled = true;
+					send.disabled = true;
 				}}";
 			$document->addScriptDeclaration($js);
 		}
