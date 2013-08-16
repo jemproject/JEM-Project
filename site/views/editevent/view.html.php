@@ -15,22 +15,21 @@ jimport( 'joomla.application.component.view');
  * HTML View class for the EditeventView
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewEditevent extends JViewLegacy
 {
 	/**
 	 * Creates the output for event submissions
 	 *
-	 * 
+	 *
 	 *
 	 */
 	function display( $tpl=null )
 	{
-		$app 		=  JFactory::getApplication();
-		$session 	=  JFactory::getSession();
-
-		$user   =  JFactory::getUser();
+		$app 		= JFactory::getApplication();
+		$session 	= JFactory::getSession();
+		$user 		= JFactory::getUser();
 
 		//redirect if not logged in
 		if ( !$user->get('id') ) {
@@ -43,32 +42,30 @@ class JEMViewEditevent extends JViewLegacy
 			return;
 		}
 
-
-
 		// Initialize variables
-		$editor 	=  JFactory::getEditor();
-		$doc 		=  JFactory::getDocument();
-		$jemsettings =  JEMHelper::config();
+		$editor 	= JFactory::getEditor();
+		$doc 		= JFactory::getDocument();
+		$jemsettings = JEMHelper::config();
 		$url 		= JURI::root();
 
 		//Get Data from the model
-		$row 			= $this->get('Event');
+		$row 		= $this->get('Event');
 
 		//Cause of group limits we can't use class here to build the categories tree
-		$categories		= $this->get('Categories');
+		$categories = $this->get('Categories');
 
 		//sticky form categorie data
 		if ($session->has('eventform', 'com_jem')) {
 			$eventform = $session->get('eventform', 0, 'com_jem');
 			$selectedcats = $eventform['cid'];
 		} else {
-			$selectedcats 	= $this->get( 'Catsselected' );
+			$selectedcats = $this->get( 'Catsselected' );
 		}
 
 		//build selectlists
 		$categories = JEMCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8 class="inputbox required validate-cid"');
 		//Get requests
-		$id					= JRequest::getInt('id');
+		$id = JRequest::getInt('id');
 
 		//Clean output
 		JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'datdescription' );
@@ -113,9 +110,6 @@ class JEMViewEditevent extends JViewLegacy
 		//Set the info image
 		$infoimage = JHTML::_('image', 'media/com_jem/images/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
 
-		//Create the stuff required for the venueselect functionality
-		$url	= $app->isAdmin() ? $app->getSiteURL() : JURI::base();
-
 		$js = "
 		function elSelectVenue(id, venue) {
 			document.getElementById('a_id').value = id;
@@ -125,8 +119,8 @@ class JEMViewEditevent extends JViewLegacy
 
 		function closeAdd() {
 			window.parent.SqueezeBox.close();
-    	}
-    	";
+		}
+		";
 
 		$doc->addScriptDeclaration($js);
 		// include the recurrence script
@@ -139,24 +133,24 @@ class JEMViewEditevent extends JViewLegacy
 		$lists = array();
 
 		// recurrence type
-    	$rec_type = array();
-    	$rec_type[] = JHTML::_('select.option', 0, JText::_ ( 'COM_JEM_NOTHING' ));
-    	$rec_type[] = JHTML::_('select.option', 1, JText::_ ( 'COM_JEM_DAYLY' ));
-    	$rec_type[] = JHTML::_('select.option', 2, JText::_ ( 'COM_JEM_WEEKLY' ));
-    	$rec_type[] = JHTML::_('select.option', 3, JText::_ ( 'COM_JEM_MONTHLY' ));
-    	$rec_type[] = JHTML::_('select.option', 4, JText::_ ( 'COM_JEM_WEEKDAY' ));
-    	$lists['recurrence_type'] = JHTML::_('select.genericlist', $rec_type, 'recurrence_type', '', 'value', 'text', $row->recurrence_type);
+		$rec_type = array();
+		$rec_type[] = JHTML::_('select.option', 0, JText::_ ( 'COM_JEM_NOTHING' ));
+		$rec_type[] = JHTML::_('select.option', 1, JText::_ ( 'COM_JEM_DAYLY' ));
+		$rec_type[] = JHTML::_('select.option', 2, JText::_ ( 'COM_JEM_WEEKLY' ));
+		$rec_type[] = JHTML::_('select.option', 3, JText::_ ( 'COM_JEM_MONTHLY' ));
+		$rec_type[] = JHTML::_('select.option', 4, JText::_ ( 'COM_JEM_WEEKDAY' ));
+		$lists['recurrence_type'] = JHTML::_('select.genericlist', $rec_type, 'recurrence_type', '', 'value', 'text', $row->recurrence_type);
 
-    	//if only owned events are allowed
-    	if ($jemsettings->ownedvenuesonly) {
-    		$venues     =  $this->get( 'UserVenues' );
+		//if only owned events are allowed
+		if ($jemsettings->ownedvenuesonly) {
+			$venues     	= $this->get( 'UserVenues' );
 			//build list
-			$venuelist       = array();
-			$venuelist[]     = JHTML::_('select.option', '0', JText::_( 'COM_JEM_NO_VENUE' ) );
-			$venuelist       = array_merge( $venuelist, $venues );
+			$venuelist  	= array();
+			$venuelist[]	= JHTML::_('select.option', '0', JText::_( 'COM_JEM_NO_VENUE' ) );
+			$venuelist  	= array_merge( $venuelist, $venues );
 
-			$lists['venueselect']    = JHTML::_('select.genericlist', $venuelist, 'locid', 'size="1" class="inputbox"', 'value', 'text', $row->locid );
-    	}
+			$lists['venueselect'] = JHTML::_('select.genericlist', $venuelist, 'locid', 'size="1" class="inputbox"', 'value', 'text', $row->locid );
+		}
 
 		$this->row				= $row;
 		$this->categories		= $categories;
@@ -169,13 +163,12 @@ class JEMViewEditevent extends JViewLegacy
 		$this->item				= $item;
 		$this->params			= $params;
 		$this->lists			= $lists;
-		$this->title            = $title;
+		$this->title			= $title;
 
 		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access			= $access2;
 
 		parent::display($tpl);
-
 	}
 
 	/**
@@ -184,11 +177,11 @@ class JEMViewEditevent extends JViewLegacy
 	 */
 	function _displaychoosevenue($tpl)
 	{
-		$app =  JFactory::getApplication();
-		$jemsettings =  JEMHelper::config();
+		$app = JFactory::getApplication();
+		$jemsettings = JEMHelper::config();
 
-		$document	=  JFactory::getDocument();
-		$params 	=  $app->getParams();
+		$document	= JFactory::getDocument();
+		$params 	= $app->getParams();
 
 		$limitstart			= JRequest::getVar('limitstart', 0, '', 'int');
 		$limit				= $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
@@ -224,7 +217,6 @@ class JEMViewEditevent extends JViewLegacy
 		$this->pagination		= $pagination;
 		$this->lists			= $lists;
 		$this->filter			= $filter;
-
 
 		parent::display($tpl);
 	}
