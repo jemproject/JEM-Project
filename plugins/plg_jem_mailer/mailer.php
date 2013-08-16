@@ -32,21 +32,18 @@ class plgJEMMailer extends JPlugin {
 	private $_receivers = array();
 
 
-
-	 public function __construct(& $subject, $config)
-    {
-            parent::__construct($subject, $config);
-            $this->loadLanguage();
-    }
-
-
+	public function __construct(& $subject, $config)
+	{
+		parent::__construct($subject, $config);
+		$this->loadLanguage();
+	}
 
 	/**
 	 * Constructor
 	 *
 	 * @param object $subject The object to observe
-	 * @param 	array  $config  An array that holds the plugin configuration
-	 * 
+	 * @param array  $config  An array that holds the plugin configuration
+	 *
 	 */
 	public function plgJEMMailer(&$subject, $config = array())
 	{
@@ -86,7 +83,7 @@ class plgJEMMailer extends JPlugin {
 	 * @access	public
 	 * @param   int 	$event_id 	 Integer Event identifier
 	 * @return	boolean
-	 * 
+	 *
 	 */
 	public function onEventUserRegistered($register_id)
 	{
@@ -168,13 +165,13 @@ class plgJEMMailer extends JPlugin {
 		return true;
 	}
 
-/**
+	/**
 	 * This method handles any mailings triggered by an attendees being bumped on/off waiting list
 	 *
 	 * @access	public
 	 * @param   int 	$event_id 	 Integer Event identifier
 	 * @return	boolean
-	 * 
+	 *
 	 */
 	public function onUserOnOffWaitinglist($register_id)
 	{
@@ -203,7 +200,7 @@ class plgJEMMailer extends JPlugin {
 		$user 	= JFactory::getUser($details->uid);
 		//create link to event
 		$app = JFactory::getApplication();
-		$url 		= $app->isAdmin() ? $app->getSiteURL() : JURI::base();
+		$url = JURI::root();
 		$link =JRoute::_($url. JEMHelperRoute::getRoute($details->slug), false);
 
 		if ($details->waiting) // added to the waiting list
@@ -264,7 +261,7 @@ class plgJEMMailer extends JPlugin {
 	 * @access	public
 	 * @param   int 	$event_id 	 Integer Event identifier
 	 * @return	boolean
-	 * 
+	 *
 	 */
 	public function onEventUserUnregistered($event_id)
 	{
@@ -324,7 +321,7 @@ class plgJEMMailer extends JPlugin {
 	 * @param   int 	$event_id 	 Integer Event identifier
 	 * @param   int 	$edited 	 Integer Event new or edited
 	 * @return	boolean
-	 * 
+	 *
 	 */
 	public function onEventEdited($event_id, $edited)
 	{
@@ -353,7 +350,7 @@ class plgJEMMailer extends JPlugin {
 		}
 
 		//link for event
-		$link   = JRoute::_(JURI::base().JEMHelperRoute::getRoute($event->slug), false);
+		$link = JRoute::_(JURI::base().JEMHelperRoute::getRoute($event->slug), false);
 
 		//strip description from tags / scripts, etc...
 		$text_description = JFilterOutput::cleanText($event->datdescription);
@@ -363,7 +360,7 @@ class plgJEMMailer extends JPlugin {
 
 		$state 	= $event->published ? JText::sprintf('PLG_JEM_MAILER_EVENT_PUBLISHED', $link) : JText::_('PLG_JEM_MAILER_EVENT_UNPUBLISHED');
 
-		if (edited) {
+		if ($edited) {
 
 			if ($this->params->get('editevent_mail_admin', '0')) {
 
@@ -393,7 +390,7 @@ class plgJEMMailer extends JPlugin {
 		//overwrite $state with usermail text
 		$state 	= $event->published ? JText::sprintf('PLG_JEM_MAILER_USER_MAIL_EVENT_PUBLISHED', $link) : JText::_('PLG_JEM_MAILER_USER_MAIL_EVENT_UNPUBLISHED');
 
-		if (edited) {
+		if ($edited) {
 
 			if ($this->params->get('editevent_mail_user', '1')) {
 
@@ -428,7 +425,7 @@ class plgJEMMailer extends JPlugin {
 	 * @param   int 	$venue_id 	 Integer Venue identifier
 	 * @param   int 	$edited 	 Integer Venue new or edited
 	 * @return	boolean
-	 * 
+	 *
 	 */
 	public function onVenueEdited($venue_id, $edited)
 	{
@@ -463,9 +460,9 @@ class plgJEMMailer extends JPlugin {
 		$modified_ip 	= getenv('REMOTE_ADDR');
 		$edited 		= JHTML::Date( $venue->modified, JText::_( 'DATE_FORMAT_LC2' ) );
 
-		$state 	= $venue->published ? JText::sprintf('PLG_JEM_MAILER_VENUE_PUBLISHED', $link) : JText::_('PLG_JEM_MAILER_VENUE_UNPUBLISHED');
+		$state = $venue->published ? JText::sprintf('PLG_JEM_MAILER_VENUE_PUBLISHED', $link) : JText::_('PLG_JEM_MAILER_VENUE_UNPUBLISHED');
 
-		if (edited) {
+		if ($edited) {
 
 			if ($this->params->get('editvenue_mail_admin', '0')) {
 
@@ -495,7 +492,7 @@ class plgJEMMailer extends JPlugin {
 		//overwrite $state with usermail text
 		$state 	= $venue->published ? JText::sprintf('PLG_JEM_MAILER_USER_MAIL_VENUE_PUBLISHED', $link) : JText::_('PLG_JEM_MAILER_USER_MAIL_VENUE_UNPUBLISHED');
 
-		if (edited) {
+		if ($edited) {
 
 			if ($this->params->get('editvenue_mail_user', '1')) {
 
@@ -529,7 +526,7 @@ class plgJEMMailer extends JPlugin {
 	 * @access	private
 	 * @param   object 	$data 	 mail data object
 	 * @return	boolean
-	 * 
+	 *
 	 */
 	private function _mailer($data)
 	{
