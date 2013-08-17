@@ -195,6 +195,33 @@
 	
 	
 	
+	<fieldset
+		name="usercontrolregistration"
+		label="COM_JEM_REGISTRATION">
+		
+		<field name="showfroregistra" type="list"
+			label="COM_JEM_SUBMIT_REGISTER" description="COM_JEM_SUBMIT_REGISTER_TIP"
+			class="inputbox" default="0" required="false" >	
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+			<option value="2">COM_JEM_OPTIONAL</option>
+		</field>	
+				
+		<field name="showfrounregistra" type="list"
+			label="COM_JEM_SUBMIT_UNREGISTER" description="COM_JEM_SUBMIT_UNREGISTER_TIP"
+			class="inputbox" default="0" required="false" >	
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+			<option value="2">COM_JEM_OPTIONAL</option>
+		</field>			
+				
+				
+				
+	</fieldset>
+	
+	
+	
+	
 	
 	<fieldset
 		name="evimagehandling"

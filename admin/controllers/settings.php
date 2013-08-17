@@ -48,7 +48,7 @@ class JEMControllerSettings extends JControllerLegacy
 		$jinput = JFactory::getApplication()->input;
 
 		$post = JRequest::getVar('jform', array(), 'post', 'array');
-		//$post2 = $jinput->getArray($_POST);
+		$post2 = $jinput->getArray($_POST);
 		//var_dump($post2);exit;
 
 

@@ -110,14 +110,10 @@ class JEMModelSettings extends JModelForm
 		// binding the input fields (outside the jform)
 		$varcomunsolution = $jinput->get('comunsolution','','int');
 		$varcomunoption = $jinput->get('comunoption','','int');
-		$varshowfroregistra = $jinput->get('showfroregistra','','');
-		$varshowfrounregistra = $jinput->get('showfrounregistra','','');
 		$varlastupdate = $jinput->get('lastupdate','','');
 
 		$settings->comunsolution = $varcomunsolution;
 		$settings->comunoption = $varcomunoption;
-		$settings->showfroregistra = $varshowfroregistra;
-		$settings->showfrounregistra = $varshowfrounregistra;
 		$settings->lastupdate = $varlastupdate;
 
 
