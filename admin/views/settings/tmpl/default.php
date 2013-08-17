@@ -107,6 +107,23 @@ window.addEvent('domready', function(){
 		}
 
 
+	$("jform_oldevent").addEvent('change', testevhandler);
+
+	var evhandler = $("jform_oldevent");
+	var nrevhandler = evhandler.options[evhandler.selectedIndex].value;
+
+	if (nrevhandler == 1 || nrevhandler == 2)
+	{
+	evhandleron();
+	} else
+		{
+	evhandleroff();
+		}
+
+
+
+
+
 	});
 
 
@@ -127,6 +144,21 @@ function testmap()
 
 }
 
+function testevhandler()
+{
+
+	var evhandler = $("jform_oldevent");
+	var nrevhandler = evhandler.options[evhandler.selectedIndex].value;
+
+	if (nrevhandler == 1 || nrevhandler == 2)
+	{
+	evhandleron();
+	} else
+		{
+	evhandleroff();
+		}
+
+}
 
 function cityon()
 {
@@ -251,6 +283,18 @@ function mapoff()
 
 	document.getElementById('map1').style.display = 'none';
 	document.getElementById('map2').style.display = 'none';
+}
+
+
+function evhandleron()
+{
+	document.getElementById('evhandler1').style.display = '';
+}
+
+
+function evhandleroff()
+{
+	document.getElementById('evhandler1').style.display = 'none';
 }
 
 

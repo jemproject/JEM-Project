@@ -231,11 +231,30 @@
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 			</field>
-
-
-
+	</fieldset>
+	
+	
+	<fieldset
+		name="eveventhandling"
+		label="COM_JEM_EVENT_HANDLING">
+		
+		<field name="oldevent" type="list"
+			label="COM_JEM_OLD_EVENTS" description="COM_JEM_OLD_EVENTS_TIP"
+			class="inputbox" default="0" required="false" >	
+			<option value="0">COM_JEM_DO_NOTHING</option>
+			<option value="1">COM_JEM_DELETE_OLD_EVENTS</option>
+			<option value="2">COM_JEM_ARCHIVE_OLD_EVENTS</option>
+		</field>
+		
+		
+		<field name="minus" type="text"
+			label="COM_JEM_NUMBER_DELETE_DAYS" description="COM_JEM_NUMBER_DELETE_DAYS_TIP"
+			class="inputbox" size="10" maxlength="10" required="false" />
+			
 			
 	</fieldset>
+	
+	
 	
 	
 	

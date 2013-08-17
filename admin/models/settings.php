@@ -82,6 +82,7 @@ class JEMModelSettings extends JModelForm
 	function store($post,$post2)
 	{
 
+		// debug
 		//var_dump($post2);exit;
 		//var_dump($post);exit;
 
@@ -107,18 +108,12 @@ class JEMModelSettings extends JModelForm
 
 
 		// binding the input fields (outside the jform)
-
-
-		$varoldevent = $jinput->get('oldevent','','int');
-		$varminus = $jinput->get('minus','','int');
 		$varcomunsolution = $jinput->get('comunsolution','','int');
 		$varcomunoption = $jinput->get('comunoption','','int');
 		$varshowfroregistra = $jinput->get('showfroregistra','','');
 		$varshowfrounregistra = $jinput->get('showfrounregistra','','');
 		$varlastupdate = $jinput->get('lastupdate','','');
 
-		$settings->oldevent = $varoldevent;
-		$settings->minus = $varminus;
 		$settings->comunsolution = $varcomunsolution;
 		$settings->comunoption = $varcomunoption;
 		$settings->showfroregistra = $varshowfroregistra;
