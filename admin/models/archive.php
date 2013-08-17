@@ -195,15 +195,17 @@ class JEMModelArchive extends JModelList
 				$query->where('loc.city LIKE '.$search);
 				}
 
-				/* search state */
+				/* search state
 				if ($search && $filter == 3) {
 					$query->where('loc.state LIKE '.$search);
 				}
+				*/
 
-				/* search country */
+				/* search country
 				if ($search && $filter == 4) {
 					$query->where('loc.country LIKE '.$search);
 				}
+				*/
 
 				/* search category */
 				if ($search && $filter == 5) {
@@ -212,7 +214,7 @@ class JEMModelArchive extends JModelList
 
 				/* search all */
 				if ($search && $filter == 6) {
-					$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR c.catname LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR loc.country LIKE '.$search.')');
+					$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR c.catname LIKE '.$search.' OR loc.city LIKE '.$search.')');
 				}
 
 
