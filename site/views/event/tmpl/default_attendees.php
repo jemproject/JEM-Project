@@ -10,15 +10,13 @@
 defined('_JEXEC') or die;
 ?>
 
-<?php if ($this->row->registra == 1) : ?>
-<dt class="register"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ).':'; ?></dt>
-		<br /><p>
-<?php  endif; ?>
-
-
 <div class="register">
+<dl class="floattext">
+	<dt class="register"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ).':'; ?></dt>
+	<dd class="register">
+
 <?php
-//only set style info if users allready have registered and user is allowed to see it
+//only set style info if users already have registered and user is allowed to see it
 if ($this->registers) :
 ?>
 	<ul class="user floattext">
@@ -33,21 +31,20 @@ foreach ($this->registers as $register) :
 	if ($res = $this->dispatcher->trigger( 'onAttendeeDisplay', array( $register->uid, &$text ))) :
 
 		echo '<li>'.$text.'</li>';
-  	endif;
+	endif;
 
 	//if CB
 	if ($this->jemsettings->comunsolution == 1) :
 
-
 		if ($this->jemsettings->comunoption == 1) :
 			//User has avatar
 			if(!empty($register->avatar)) :
-    		$useravatar = JHTML::_('image.site', 'tn'.$register->avatar, 'images/comprofiler/', NULL, NULL, $register->name);
+				$useravatar = JHTML::_('image.site', 'tn'.$register->avatar, 'images/comprofiler/', NULL, NULL, $register->name);
 				echo "<li><a href='".JRoute::_('index.php?option=com_comprofiler&task=userProfile&user='.$register->uid )."'>".$useravatar."<span class='username'>".$register->name."</span></a></li>";
 
 			//User has no avatar
 			else :
-    		$nouseravatar = JHTML::_('image.site', 'tnnophoto.jpg', 'components/com_comprofiler/images/english/', NULL, NULL, $register->name);
+				$nouseravatar = JHTML::_('image.site', 'tnnophoto.jpg', 'components/com_comprofiler/images/english/', NULL, NULL, $register->name);
 				echo "<li><a href='".JRoute::_( 'index.php?option=com_comprofiler&task=userProfile&user='.$register->uid )."'>".$nouseravatar."<span class='username'>".$register->name."</span></a></li>";
 			endif;
 		endif;
@@ -70,6 +67,8 @@ endforeach;
 ?>
 
 	</ul>
+	</dd>
+</dl>
 <?php endif; ?>
 
 <?php
