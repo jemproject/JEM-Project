@@ -18,37 +18,7 @@ $saveOrder	= $listOrder=='ordering';
 
 $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 
-
-/*
- Call the highlight function with the text to highlight.
-http://johannburkard.de/blog/programming/javascript/highlight-javascript-text-higlighting-jquery-plugin.html
-
-To highlight all occurrances of �bla� (case insensitive) in all li elements, use the following code:
-$('li').highlight('bla');
-
-Remove highlighting
-The highlight can be removed from any element with the removeHighlight function.
-In this example, all highlights under the element with the ID highlight-plugin are removed.
-
-$('#highlight-plugin').removeHighlight();
-*/
 ?>
-
-<script>
-window.addEvent('domready', function(){
-	var h = <?php echo $params->get('highlight','0'); ?>;
-
-	switch(h)
-	{
-	case 0:
-		break;
-	case 1:
-		highlightevents();
-		break;
-	}
-});
-</script>
-
 
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=archive'); ?>" method="post" name="adminForm" id="adminForm">
 
