@@ -12,10 +12,10 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.controller');
 
 /**
- * JEM Component Cleanup Controller
+ * JEM Component Updatecheck Controller
  *
  * @package JEM
- * 
+ *
  */
 class JEMControllerUpdatecheck extends JEMController
 {
@@ -28,7 +28,7 @@ class JEMControllerUpdatecheck extends JEMController
 		parent::__construct();
 
 		// Register Extra task
-	
+
 	}
 
 

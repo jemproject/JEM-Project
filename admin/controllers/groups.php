@@ -13,7 +13,7 @@ defined( '_JEXEC' ) or die;
 jimport('joomla.application.component.controlleradmin');
 
 /**
- * Groups Controller
+ * JEM Component Groups Controller
  *
  */
 class JEMControllerGroups extends JControllerAdmin

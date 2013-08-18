@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.modelform');
 
 /**
- * Settings model.
+ * JEM Component Settings Model
  *
  */
 class JEMModelSettings extends JModelForm

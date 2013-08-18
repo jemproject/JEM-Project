@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.modeladmin');
 
 /**
- * Group model.
+ * JEM Component Group Model
  *
  */
 class JEMModelGroup extends JModelAdmin

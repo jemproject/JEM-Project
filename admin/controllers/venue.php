@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.controllerform');
 
 /**
- * Venue controller class.
+ * JEM Component Venue Controller
  *
 */
 class JEMControllerVenue extends JControllerForm

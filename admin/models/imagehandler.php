@@ -14,10 +14,10 @@ jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
 
 /**
- * JEM Component Imageselect Model
+ * JEM Component Imagehandler Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelImagehandler extends JModelLegacy
 {
@@ -65,7 +65,7 @@ class JEMModelImagehandler extends JModelLegacy
 	 * Build imagelist
 	 *
 	 * @return array $list The imagefiles from a directory to display
-	 * 
+	 *
 	 */
 	function getImages() {
 		$list = $this->getList();
@@ -105,7 +105,7 @@ class JEMModelImagehandler extends JModelLegacy
 	 * Build imagelist
 	 *
 	 * @return array $list The imagefiles from a directory
-	 * 
+	 *
 	 */
 	function getList()
 	{
@@ -122,7 +122,7 @@ class JEMModelImagehandler extends JModelLegacy
 
 		// Initialize variables
 		$basePath = JPATH_SITE.'/images/jem/'.$folder;
-		
+
 		$images = array ();
 
 		// Get the list of files and folders from the given folder
@@ -152,12 +152,12 @@ class JEMModelImagehandler extends JModelLegacy
 		}
 
 		$list = $images;
-		
+
 		$this->setState('total', count($list));
-		
+
 		return $list;
 	}
-	
+
 	/**
 	 * Method to get a pagination object for the images
 	 *
@@ -177,7 +177,7 @@ class JEMModelImagehandler extends JModelLegacy
 	 * Build display size
 	 *
 	 * @return array width and height
-	 * 
+	 *
 	 */
 	function _imageResize($width, $height, $target) {
 		//takes the larger size of the width and height and applies the
@@ -200,7 +200,7 @@ class JEMModelImagehandler extends JModelLegacy
 	 * Return human readable size info
 	 *
 	 * @return string size of image
-	 * 
+	 *
 	 */
 	function _parseSize($size) {
 		if ($size < 1024) {

@@ -12,17 +12,17 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.controller');
 
 /**
- * JEM Component Categories Controller
+ * JEM Component Category Controller
  *
  * @package JEM
- * 
+ *
  */
 class JEMControllerCategory extends JEMController
 {
 	/**
 	 * Constructor
 	 *
-	 * 
+	 *
 	 */
 	function __construct()
 	{
@@ -41,7 +41,7 @@ class JEMControllerCategory extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function save()
 	{
@@ -96,7 +96,7 @@ class JEMControllerCategory extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function publish()
 	{
@@ -127,7 +127,7 @@ class JEMControllerCategory extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function unpublish()
 	{
@@ -158,7 +158,7 @@ class JEMControllerCategory extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function orderup()
 	{
@@ -173,7 +173,7 @@ class JEMControllerCategory extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function orderdown()
 	{
@@ -188,7 +188,7 @@ class JEMControllerCategory extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function saveordercat()
 	{
@@ -208,7 +208,7 @@ class JEMControllerCategory extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function remove()
 	{
@@ -233,7 +233,7 @@ class JEMControllerCategory extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function cancel()
 	{
@@ -255,7 +255,7 @@ class JEMControllerCategory extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function access( )
 	{
@@ -285,7 +285,7 @@ class JEMControllerCategory extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function edit( )
 	{

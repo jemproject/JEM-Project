@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.modellist');
 
 /**
- * JEM Component Events Model
+ * JEM Component Groups Model
  *
  **/
 class JEMModelGroups extends JModelList

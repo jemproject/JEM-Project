@@ -12,10 +12,10 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.model');
 
 /**
- * JEM Component Venueelement Model
+ * JEM Component Contactelement Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelContactelement extends JModelLegacy
 {
@@ -151,7 +151,7 @@ class JEMModelContactelement extends JModelLegacy
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.contactelement.filter_order', 'filter_order', 'con.ordering', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.contactelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 
-		
+
 		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
@@ -163,7 +163,7 @@ class JEMModelContactelement extends JModelLegacy
 		{
 			$orderby = ' ORDER BY con.name ';
 		}
-		
+
 		return $orderby;
 	}
 

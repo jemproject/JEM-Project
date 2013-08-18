@@ -12,10 +12,10 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.controller');
 
 /**
- * JEM Component Archive Controller
+ * JEM Component Plugins Controller
  *
  * @package JEM
- * 
+ *
 */
 class JEMControllerPlugins extends JEMController
 {
@@ -34,7 +34,7 @@ class JEMControllerPlugins extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function plugins()
 	{

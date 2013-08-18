@@ -12,10 +12,10 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.controller');
 
 /**
- * JEM Component Attendees Controller
+ * JEM Component Import Controller
  *
  * @package JEM
- * 
+ *
  */
 class JEMControllerImport extends JEMController {
 	/**

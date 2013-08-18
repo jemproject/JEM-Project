@@ -13,12 +13,12 @@ defined( '_JEXEC' ) or die;
 jimport('joomla.application.component.controlleradmin');
 
 /**
- * Venues Controller
+ * JEM Component Venues Controller
  *
  */
 class JEMControllerVenues extends JControllerAdmin
 {
-	
+
 	/**
 	 * @var		string	The prefix to use with controller messages.
 	 *
@@ -26,44 +26,44 @@ class JEMControllerVenues extends JControllerAdmin
 	protected $text_prefix = 'COM_JEM_VENUES';
 
 
-	
+
 	/**
 	 * Proxy for getModel.
-	 * 
+	 *
 	 */
 	public function getModel($name = 'Venue', $prefix = 'JEMModel', $config = array('ignore_request' => true))
 	{
 		$model = parent::getModel($name, $prefix, $config);
 		return $model;
 	}
-	
-	
+
+
 	/**
 	 * logic for remove venues
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function remove()
 	{
 		$cid = JRequest::getVar( 'cid', array(0), 'post', 'array' );
-	
+
 		if (!is_array( $cid ) || count( $cid ) < 1) {
 			JError::raiseError(500, JText::_( 'COM_JEM_SELECT_AN_ITEM_TO_DELETE' ) );
 		}
-	
+
 		$model = $this->getModel('venues');
-	
+
 		$msg = $model->remove($cid);
-	
+
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
-	
+
 		$this->setRedirect( 'index.php?option=com_jem&view=venues', $msg );
 	}
 
-	
+
 
 }
 ?>

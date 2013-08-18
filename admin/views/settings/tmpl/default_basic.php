@@ -258,8 +258,7 @@ defined('_JEXEC') or die;
 								<option value="[a_name]" <?php if(in_array("[a_name]",$meta_key)) { echo "selected=\"selected\""; } ?>>
 								<?php echo JText::_( 'COM_JEM_VENUE' ); ?></option>
 								<!-- <option value="[locid]" <?php if(in_array("[locid]",$meta_key)) { echo "selected=\"selected\""; } ?>>
-								<?php echo JText::_( 'COM_JEM_CITY
-								' ); ?></option> -->
+								<?php echo JText::_( 'COM_JEM_CITY' ); ?></option> -->
 								<option value="[dates]" <?php if(in_array("[dates]",$meta_key)) { echo "selected=\"selected\""; } ?>>
 								<?php echo JText::_( 'COM_JEM_DATE' ); ?></option>
 								<option value="[times]" <?php if(in_array("[times]",$meta_key)) { echo "selected=\"selected\""; } ?>>

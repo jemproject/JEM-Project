@@ -13,10 +13,15 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.controlleradmin');
 
+
+/**
+ * JEM Component Export Controller
+ *
+ */
 class JEMControllerExport extends JControllerAdmin {
 	/**
 	* Proxy for getModel.
-	* 
+	*
 	*/
 	public function getModel($name = 'Export', $prefix = 'JEMModel', $config=array()) {
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));

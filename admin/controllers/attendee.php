@@ -12,10 +12,10 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.controller');
 
 /**
- * JEM Component Attendees Controller
+ * JEM Component Attendee Controller
  *
  * @package JEM
- * 
+ *
  */
 class JEMControllerAttendee extends JEMController
 {
@@ -37,7 +37,7 @@ class JEMControllerAttendee extends JEMController
 	 *
 	 * @return true on sucess
 	 * @access private
-	 * 
+	 *
 	 */
 	function remove()
 	{
@@ -156,7 +156,7 @@ class JEMControllerAttendee extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function cancel()
 	{
@@ -175,7 +175,7 @@ class JEMControllerAttendee extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function edit( )
 	{
@@ -200,7 +200,7 @@ class JEMControllerAttendee extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function save()
 	{

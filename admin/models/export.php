@@ -13,13 +13,17 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modellist');
 
+/**
+ * JEM Component Export Model
+ *
+ **/
 class JEMModelExport extends JModelList {
 	/**
 	* Constructor.
 	*
 	* @param array An optional associative array of configuration settings.
 	* @see JController
-	* 
+	*
 	*/
 	public function __construct($config = array()) {
 		if (empty($config['filter_fields'])) {
@@ -72,7 +76,7 @@ class JEMModelExport extends JModelList {
 	* Build an SQL query to load the list data.
 	*
 	* @return JDatabaseQuery
-	* 
+	*
 	*/
 	protected function getListQuery() {
 		// Create a new query object.
@@ -141,7 +145,7 @@ class JEMModelExport extends JModelList {
 	* Build an SQL query to load the list data.
 	*
 	* @return JDatabaseQuery
-	* 
+	*
 	*/
 	protected function getListQuerycats() {
 		// Create a new query object.
@@ -210,7 +214,7 @@ class JEMModelExport extends JModelList {
 	* Build an SQL query to load the list data.
 	*
 	* @return JDatabaseQuery
-	* 
+	*
 	*/
 	protected function getListQueryvenues() {
 		// Create a new query object.
@@ -279,7 +283,7 @@ class JEMModelExport extends JModelList {
 	* Build an SQL query to load the list data.
 	*
 	* @return JDatabaseQuery
-	* 
+	*
 	*/
 	protected function getListQuerycatsevents() {
 		// Create a new query object.

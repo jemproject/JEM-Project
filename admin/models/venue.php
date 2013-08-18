@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.modeladmin');
 
 /**
- * Venue model.
+ * JEM Component Venue Model
  *
  */
 class JEMModelVenue extends JModelAdmin
@@ -23,31 +23,31 @@ class JEMModelVenue extends JModelAdmin
 	 *
 	 * @param	object	A record object.
 	 * @return	boolean	True if allowed to delete the record. Defaults to the permission set in the component.
-	 * 
+	 *
 	 */
 	protected function canDelete($record)
 	{
-		if (!empty($record->id)) 
+		if (!empty($record->id))
 		{
-				if ($record->published != -2) 
+				if ($record->published != -2)
 				{
 					return ;
 				}
-				
-				
+
+
 				$user = JFactory::getUser();
 
 				if (!empty($record->catid)) {
 					return $user->authorise('core.delete', 'com_jem.category.'.(int) $record->catid);
 				}
-			
-				else 
+
+				else
 				{
 					return $user->authorise('core.delete', 'com_jem');
 				}
 		}
-		
-		
+
+
 	}
 
 	/**
@@ -55,7 +55,7 @@ class JEMModelVenue extends JModelAdmin
 	 *
 	 * @param	object	A record object.
 	 * @return	boolean	True if allowed to change the state of the record. Defaults to the permission set in the component.
-	 * 
+	 *
 	 */
 	protected function canEditState($record)
 	{
@@ -76,7 +76,7 @@ class JEMModelVenue extends JModelAdmin
 	 * @param	string	A prefix for the table class name. Optional.
 	 * @param	array	Configuration array for model. Optional.
 	 * @return	JTable	A database object
-	 * 
+	 *
 	 */
 	public function getTable($type = 'Venue', $prefix = 'JEMTable', $config = array())
 	{
@@ -89,7 +89,7 @@ class JEMModelVenue extends JModelAdmin
 	 * @param	array	$data		Data for the form.
 	 * @param	boolean	$loadData	True if the form is to load its own data (default case), false if not.
 	 * @return	mixed	A JForm object on success, false on failure
-	 * 
+	 *
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
@@ -102,9 +102,9 @@ class JEMModelVenue extends JModelAdmin
 		return $form;
 	}
 
-	
-	
-	
+
+
+
 	/**
 	 * Method to get a single record.
 	 *
@@ -115,33 +115,33 @@ class JEMModelVenue extends JModelAdmin
 	public function getItem($pk = null)
 	{
 		$jemsettings = JEMAdmin::config();
-		
-		
+
+
 		if ($item = parent::getItem($pk)) {
-			
-			
+
+
 		$files = JEMAttachment::getAttachments('venue'.$item->id);
 		$item->attachments = $files;
 		}
 		$item->author_ip = $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
-		
+
 		if (empty($item->id))
-		{ 
+		{
 		$item->country = $jemsettings->defaultCountry;
 		}
-	
+
 		return $item;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Method to get the data that should be injected in the form.
 	 *
 	 */
 	protected function loadFormData()
 	{
-		
+
 		// Check the session for previously entered form data.
 		$data = JFactory::getApplication()->getUserState('com_jem.edit.venue.data', array());
 
@@ -158,15 +158,15 @@ class JEMModelVenue extends JModelAdmin
 	 */
 	protected function prepareTable(&$table)
 	{
-		
+
 		//Debug
 		/* var_dump($_POST);exit; */
-		
-		
+
+
 		$app =  JFactory::getApplication();
 		$date	= JFactory::getDate();
 		$jemsettings = JEMAdmin::config();
-		
+
 		$user	= JFactory::getUser();
 		if ($table->id) {
 			// Existing item
@@ -175,62 +175,62 @@ class JEMModelVenue extends JModelAdmin
 		} else {
 			// New venue. A venue created and created_by field can be set by the user,
 			// so we don't touch either of these if they are set.
-			
+
 			if (!intval($table->created)) {
 			$table->created = $date->toSql();
 			}
-			
+
 			if (empty($this->created_by)) {
 			$table->created_by = $user->get('id');
 			}
-			
+
 			}
-			
+
 			$jinput = JFactory::getApplication()->input;
 			$ip = $jinput->get('author_ip', '', 'string');
-				
-			
+
+
 			$table->author_ip 		= $ip;
-			
-			
+
+
 			//uppercase needed by mapservices
 			if ($table->country) {
 				$table->country = JString::strtoupper($table->country);
 			}
 
-			
+
 			// Check if image was selected
 			jimport('joomla.filesystem.file');
 			$format 	= JFile::getExt(JPATH_SITE.'/images/jem/venues/'.$table->locimage);
-			
+
 			$allowable 	= array ('gif', 'jpg', 'png');
 			if (in_array($format, $allowable)) {
 				$table->locimage = $table->locimage;
 			} else {
 				$table->locimage = '';
-			}	
-			
+			}
+
 			$table->venue = htmlspecialchars_decode($table->venue, ENT_QUOTES);
-			
+
 			// Increment the content version number.
 			$table->version++;
-			
-			
+
+
 			// Make sure the data is valid
 			if (!$table->check()) {
 				$this->setError($table->getError());
 				return false;
 			}
-			
+
 			// Store it in the db
 			if (!$table->store()) {
 				JError::raiseError(500, $this->_db->getErrorMsg() );
 				return false;
 			}
-			
-			
+
+
 			$fileFilter = new JInput($_FILES);
-			
+
 			// attachments
 			// new ones first
 			$attachments = $fileFilter->get( 'attach', null, 'array' );
@@ -238,7 +238,7 @@ class JEMModelVenue extends JModelAdmin
 			$attachments['description'] = $jinput->post->get( 'attach-desc', null, 'array' );
 			$attachments['access'] = $jinput->post->get( 'attach-access', null, 'array' );
 			JEMAttachment::postUpload($attachments, 'venue'.$table->id);
-			
+
 			// and update old ones
 			$attachments = array();
 			$old['id'] = $jinput->post->get( 'attached-id', null, 'array' );
@@ -254,9 +254,9 @@ class JEMModelVenue extends JModelAdmin
 				$attach['access'] = $old['access'][$k];
 				JEMAttachment::update($attach);
 			}
-			
-		
-		
-		
+
+
+
+
 	}
 }

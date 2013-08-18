@@ -163,7 +163,7 @@
 			
 			
 				<field name="defaultCountry" type="countryoptions"
-			label="COM_JEM_COUNTRY" description="COM_JEM_COUNTRY_DESC" />
+			label="COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY" description="COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY_DESC" />
 
 
 	</fieldset>
@@ -334,7 +334,7 @@
 		
 			
 			<field name="showatte" type="radio"
-			label="COM_JEM_DISPLAY_ATTENDEE_FRONT" description="COM_JEM_DISPLAY_ATTENDEE_FRONT_TIP"
+			label="COM_JEM_DISPLAY_ATTENDEE_FRONT" description="COM_JEM_DISPLAY_ATTENDEE_FRONT_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
@@ -342,7 +342,7 @@
 			
 			
 			<field name="attewidth" type="text"
-			label="COM_JEM_WIDTH_ATTENDEE_COLUMN" description="COM_JEM_WIDTH_ATTENDEE_COLUMN_TIP"
+			label="COM_JEM_WIDTH_ATTENDEE_COLUMN" description="COM_JEM_WIDTH_ATTENDEE_COLUMN_DESC"
 			class="inputbox" size="10" maxlength="10" required="false" />
 			
 				

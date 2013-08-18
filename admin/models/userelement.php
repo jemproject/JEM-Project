@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.model');
 
 /**
- * JEM Component users Model
+ * JEM Component Userelement Model
  *
  * @package JEM
  *

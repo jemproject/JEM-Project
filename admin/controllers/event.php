@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.controllerform');
 
 /**
- * Venue controller class.
+ * JEM Component Event Controller
  *
 */
 class JEMControllerEvent extends JControllerForm
@@ -38,9 +38,9 @@ class JEMControllerEvent extends JControllerForm
 		parent::__construct($config);
 
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Function that allows child controller access to model data after the data has been saved.
 	 *
@@ -50,11 +50,11 @@ class JEMControllerEvent extends JControllerForm
 	 * @return  void
 	 *
 	 */
-	
+
 	/*protected function postSaveHook($model, $validData)
 	{
-		
-		
+
+
 	}
 	*/
 

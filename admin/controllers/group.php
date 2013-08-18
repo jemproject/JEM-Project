@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.controllerform');
 
 /**
- * Group controller class.
+ * JEM Component Group Controller
  *
 */
 class JEMControllerGroup extends JControllerForm

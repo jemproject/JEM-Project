@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.modeladmin');
 
 /**
- * Event model.
+ * JEM Component Event model.
  *
  */
 class JEMModelEvent extends JModelAdmin
