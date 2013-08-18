@@ -123,8 +123,45 @@ window.addEvent('domready', function(){
 
 
 
+	$('jform_comunsolution').addEvent('change', testcomm);
+
+
+	var commhandler = $("jform_comunsolution");
+	var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
+
+	if (nrcommhandler == 1)
+	{
+	common();
+	} else
+		{
+	commoff();
+		}
+
+
 
 	});
+
+
+
+
+function testcomm()
+{
+
+	var commhandler = $("jform_comunsolution");
+	var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
+
+	if (nrcommhandler == 1)
+	{
+	common();
+	} else
+		{
+	commoff();
+		}
+
+}
+
+
+
 
 
 
@@ -295,6 +332,18 @@ function evhandleron()
 function evhandleroff()
 {
 	document.getElementById('evhandler1').style.display = 'none';
+}
+
+
+function common()
+{
+	document.getElementById('comm1').style.display = '';
+}
+
+
+function commoff()
+{
+	document.getElementById('comm1').style.display = 'none';
 }
 
 

@@ -694,6 +694,22 @@
 		</field>
 		
 
+		<field name="comunsolution" type="list"
+			label="COM_JEM_COM_SOL" description="COM_JEM_COM_SOL_TIP"
+			class="inputbox" default="0" required="false" >	
+			<option value="0">COM_JEM_DONT_USE_COM_SOL</option>
+			<option value="1">COM_JEM_COMBUILDER</option>
+		</field>
+		
+		
+		<field name="comunoption" type="list"
+			label="COM_JEM_TYPE_COM_INTEGRATION" description="COM_JEM_TYPE_COM_INTEGRATION_TIP"
+			class="inputbox" default="0" required="false" >	
+			<option value="0">COM_JEM_LINK_PROFILE</option>
+			<option value="1">COM_JEM_LINK_AVATAR</option>
+		</field>
+
+
 				
 	</fieldset>
 	
