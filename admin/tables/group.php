@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 /**
- * JEM groups Model class
+ * JEM Group Table
  *
  * @package JEM
  *

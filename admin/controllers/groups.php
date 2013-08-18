@@ -38,6 +38,38 @@ class JEMControllerGroups extends JControllerAdmin
 	}
 
 
+	/**
+	 * logic to remove a group
+	 *
+	 * @access public
+	 * @return void
+	 *
+	 */
+	function remove()
+	{
+
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
+		$cid = JRequest::getVar( 'cid', array(0), 'post', 'array' );
+
+		$total = count( $cid );
+
+		if (!is_array( $cid ) || count( $cid ) < 1) {
+			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
+		}
+
+		$model = $this->getModel('groups');
+
+		if(!$model->delete($cid)) {
+			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
+		}
+
+		$msg = $total.' '.JText::_( 'COM_JEM_GROUPS_DELETED');
+
+		$this->setRedirect( 'index.php?option=com_jem&view=groups', $msg );
+	}
 
 
 }

@@ -250,4 +250,47 @@ class JEMModelGroups extends JModelList
 		return $items;
 	}
 
+
+	/**
+	 * Method to remove a group
+	 *
+	 * @access	public
+	 * @return	boolean	True on success
+	 *
+	 */
+	function delete($cid = array())
+	{
+		if (count( $cid ))
+		{
+			$cids = implode( ',', $cid );
+
+			$query = 'DELETE FROM #__jem_groups'
+					. ' WHERE id IN ('. $cids .')'
+					;
+
+			$this->_db->setQuery( $query );
+
+			if(!$this->_db->query()) {
+				$this->setError($this->_db->getErrorMsg());
+				return false;
+							}
+
+			$query = 'DELETE FROM #__jem_groupmembers'
+					. ' WHERE group_id IN ('. $cids .')'
+					;
+
+			$this->_db->setQuery( $query );
+
+			if(!$this->_db->query()) {
+			$this->setError($this->_db->getErrorMsg());
+			return false;
+			}
+
+		}
+
+		return true;
+	}
+
+
+
 }

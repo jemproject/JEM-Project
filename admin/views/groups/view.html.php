@@ -160,7 +160,8 @@ defined( '_JEXEC' ) or die;
 		}
 		*/
 
-
+		JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'groups.remove', $alt = 'JACTION_DELETE');
+		JToolBarHelper::spacer();
 		JToolBarHelper::help( 'listgroups', true );
 
 
