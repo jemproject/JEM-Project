@@ -153,31 +153,17 @@ class JEMModelGroup extends JModelAdmin
 		$app = JFactory::getApplication();
 		$date = JFactory::getDate();
 		$jemsettings = JEMAdmin::config();
-
-
-		//var_dump($_POST);exit;
-
-		// Debug
-
-		/* var_dump($_FILES);exit; */
-		//var_dump($table);exit;
-
-		/* JInput
-		 *
-		 * Example: $foo = $jinput->get('varname', 'default_value', 'filter');
-		 * Possible filters: http://docs.joomla.org/Retrieving_request_data_using_JInput
-		 *
-		 */
-		$jinput = JFactory::getApplication()->input;
 		$user	= JFactory::getUser();
+		$db = JFactory::getDbo();
 
-
+		$jinput = JFactory::getApplication()->input;
 
 		// Bind the form fields to the table
-		//if (!$table->bind( JRequest::get( 'post' ) )) {
-		//return JError::raiseWarning( 500, $table->getError() );
-		//}
-
+		/*
+		if (!$table->bind( JRequest::get( 'post' ) )) {
+		return JError::raiseWarning( 500, $table->getError() );
+		}
+		*/
 
 
 		// Make sure the data is valid
@@ -186,28 +172,39 @@ class JEMModelGroup extends JModelAdmin
 			return false;
 		}
 
+		// Store data
 		if (!$table->store(true)) {
 			JError::raiseError(500, $table->getError() );
 		}
 
-
-
-
-
-
 		$members =JRequest::getVar('maintainers',  '', 'post', 'array');
 
-		$this->_db->setQuery ('DELETE FROM #__jem_groupmembers WHERE group_id = '.$table->id);
-		$this->_db->query();
 
-		foreach ($members as $member){
+		// Updating group references
+		$query = $db->getQuery(true);
+		$query->delete($db->quoteName('#__jem_groupmembers'));
+		$query->where('group_id = '.$table->id);
+
+		$db->setQuery($query);
+		$db->query();
+
+
+		foreach($members as $member)
+		{
 			$member = intval($member);
-			$this->_db->setQuery ("INSERT INTO #__jem_groupmembers (group_id, member) VALUES ($table->id, $member)");
-			$this->_db->query();
+
+			$query = $db->getQuery(true);
+			$columns = array('group_id', 'member');
+			$values = array($table->id, $member);
+
+			$query
+			->insert($db->quoteName('#__jem_groupmembers'))
+			->columns($db->quoteName($columns))
+			->values(implode(',', $values));
+
+			$db->setQuery($query);
+			$db->query();
 		}
-
-
-
 
 	}
 
