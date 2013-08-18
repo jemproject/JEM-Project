@@ -7,133 +7,221 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
+// No direct access.
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
+jimport('joomla.application.component.modeladmin');
 
 /**
- * JEM Component Group Model
+ * Group model.
  *
- * @package JEM
- * 
  */
-class JEMModelGroup extends JModelLegacy
+class JEMModelGroup extends JModelAdmin
 {
 	/**
-	 * Event id
+	 * Method to test whether a record can be deleted.
 	 *
-	 * @var int
-	 */
-	var $_id = null;
-
-	/**
-	 * Event data array
-	 *
-	 * @var array
-	 */
-	var $_data = null;
-
-
-	/**
-	 * Groups data array
-	 *
-	 * @var array
-	 */
-	var $_groups = null;
-
-	/**
-	 * Members data string
-	 *
-	 * @var string
-	 */
-	var $_members = null;
-
-	/**
-	 * available data array
-	 *
-	 * @var array
-	 */
-	var $_available = null;
-
-	/**
-	 * Constructor
+	 * @param	object	A record object.
+	 * @return	boolean	True if allowed to delete the record. Defaults to the permission set in the component.
 	 *
 	 */
-	function __construct()
+	protected function canDelete($record)
 	{
-		parent::__construct();
+		if (!empty($record->id))
+		{
+			if ($record->published != -2)
+			{
+				return ;
+			}
 
-		$array = JRequest::getVar('cid',  0, '', 'array');
-		$this->setId((int)$array[0]);
+			$user = JFactory::getUser();
+
+			if (!empty($record->catid)) {
+
+
+				return $user->authorise('core.delete', 'com_jem.category.'.(int) $record->catid);
+			} else {
+
+
+				return $user->authorise('core.delete', 'com_jem');
+			}
+		}
 	}
 
 	/**
-	 * Method to set the identifier
+	 * Method to test whether a record can be deleted.
 	 *
-	 * @access	public
-	 * @param	int event identifier
-	 */
-	function setId($id)
-	{
-		// Set event id and wipe data
-		$this->_id		= $id;
-		$this->_data	= null;
-	}
-
-	/**
-	 * Logic for the Group edit screen
+	 * @param	object	A record object.
+	 * @return	boolean	True if allowed to change the state of the record. Defaults to the permission set in the component.
 	 *
 	 */
-	function &getData()
+	protected function canEditState($record)
 	{
+		$user = JFactory::getUser();
 
-		if ($this->_loadData())
+		if (!empty($record->catid)) {
+
+
+			return $user->authorise('core.edit.state', 'com_jem.category.'.(int) $record->catid);
+		}
+
+		else
+
 		{
 
+			return $user->authorise('core.edit.state', 'com_jem');
 		}
-		else  $this->_initData();
-
-		//$this->_loadData();
-		return $this->_data;
 	}
-
-
 
 	/**
-	 * Method to load content data
+	 * Returns a reference to the a Table object, always creating it.
 	 *
-	 * @access	private
-	 * @return	boolean	True on success
-	 * 
+	 * @param	type	The table type to instantiate
+	 * @param	string	A prefix for the table class name. Optional.
+	 * @param	array	Configuration array for model. Optional.
+	 * @return	JTable	A database object
+	 *
 	 */
-	function _loadData()
+	public function getTable($type = 'Group', $prefix = 'JEMTable', $config = array())
 	{
-		//Lets load the content if it doesn't already exist
-		if (empty($this->_data))
-		{
-			$query = 'SELECT *'
-					. ' FROM #__jem_groups'
-					. ' WHERE id = '.$this->_id
-					;
-			$this->_db->setQuery($query);
+		return JTable::getInstance($type, $prefix, $config);
+	}
 
-			$this->_data = $this->_db->loadObject();
+	/**
+	 * Method to get the record form.
+	 *
+	 * @param	array	$data		Data for the form.
+	 * @param	boolean	$loadData	True if the form is to load its own data (default case), false if not.
+	 * @return	mixed	A JForm object on success, false on failure
+	 *
+	 */
+	public function getForm($data = array(), $loadData = true)
+	{
+		// Get the form.
+		$form = $this->loadForm('com_jem.group', 'group', array('control' => 'jform', 'load_data' => $loadData));
+		if (empty($form)) {
+			return false;
+		}
 
-			return (boolean) $this->_data;
+		return $form;
+	}
+
+	/**
+	 * Method to get a single record.
+	 *
+	 * @param	integer	The id of the primary key.
+	 *
+	 * @return	mixed	Object on success, false on failure.
+	 */
+	public function getItem($pk = null)
+	{
+		$jemsettings = JEMAdmin::config();
+
+		if ($item = parent::getItem($pk)) {
 
 		}
-		return true;
+
+
+		return $item;
 	}
+
+	/**
+	 * Method to get the data that should be injected in the form.
+	 *
+	 */
+	protected function loadFormData()
+	{
+
+		// Check the session for previously entered form data.
+		$data = JFactory::getApplication()->getUserState('com_jem.edit.group.data', array());
+
+		if (empty($data)) {
+			$data = $this->getItem();
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Prepare and sanitise the table data prior to saving.
+	 *
+	 * With $table you can call a table name
+	 *
+	 */
+	protected function prepareTable(&$table)
+	{
+		$app = JFactory::getApplication();
+		$date = JFactory::getDate();
+		$jemsettings = JEMAdmin::config();
+
+
+		//var_dump($_POST);exit;
+
+		// Debug
+
+		/* var_dump($_FILES);exit; */
+		//var_dump($table);exit;
+
+		/* JInput
+		 *
+		 * Example: $foo = $jinput->get('varname', 'default_value', 'filter');
+		 * Possible filters: http://docs.joomla.org/Retrieving_request_data_using_JInput
+		 *
+		 */
+		$jinput = JFactory::getApplication()->input;
+		$user	= JFactory::getUser();
+
+
+
+		// Bind the form fields to the table
+		//if (!$table->bind( JRequest::get( 'post' ) )) {
+		//return JError::raiseWarning( 500, $table->getError() );
+		//}
+
+
+
+		// Make sure the data is valid
+		if (!$table->check()) {
+			$this->setError($table->getError());
+			return false;
+		}
+
+		if (!$table->store(true)) {
+			JError::raiseError(500, $table->getError() );
+		}
+
+
+
+
+
+
+		$members =JRequest::getVar('maintainers',  '', 'post', 'array');
+
+		$this->_db->setQuery ('DELETE FROM #__jem_groupmembers WHERE group_id = '.$table->id);
+		$this->_db->query();
+
+		foreach ($members as $member){
+			$member = intval($member);
+			$this->_db->setQuery ("INSERT INTO #__jem_groupmembers (group_id, member) VALUES ($table->id, $member)");
+			$this->_db->query();
+		}
+
+
+
+
+	}
+
 
 	/**
 	 * Method to get the members data
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * 
+	 *
 	 */
 	function &getMembers()
 	{
+
 		$members = $this->_members();
 
 		$users = array();
@@ -150,9 +238,9 @@ class JEMModelGroup extends JModelLegacy
 			$users = $this->_db->loadObjectList();
 
 			for($i=0; $i < count( $users ); $i++) {
-				$item = $users[$i];
+			$item = $users[$i];
 
-				$item->text = $item->name.' ('.$item->username.')';
+			$item->text = $item->name.' ('.$item->username.')';
 			}
 
 		}
@@ -160,12 +248,50 @@ class JEMModelGroup extends JModelLegacy
 		return $users;
 	}
 
+
+	/**
+	 * Method to get the selected members
+	 *
+	 * @access	public
+	 * @return	string
+	 *
+	 */
+	function _members()
+	{
+
+		$item = parent::getItem();
+
+		//get selected members
+		if ($item->id == null)
+		{
+			$this->_members = null;
+		} else {
+
+		if ($item->id){
+			$query = 'SELECT member'
+					. ' FROM #__jem_groupmembers'
+					. ' WHERE group_id = '.$item->id;
+
+			$this->_db->setQuery ($query);
+
+			$member_ids = $this->_db->loadColumn();
+
+			if (is_array($member_ids)) $this->_members = implode(',', $member_ids);
+		}
+		}
+
+		return $this->_members;
+	}
+
+
+
+
 	/**
 	 * Method to get the available users
 	 *
 	 * @access	public
 	 * @return	mixed
-	 * 
+	 *
 	 */
 	function &getAvailable()
 	{
@@ -192,179 +318,13 @@ class JEMModelGroup extends JModelLegacy
 		return $this->_available;
 	}
 
-	/**
-	 * Method to get the selected members
-	 *
-	 * @access	public
-	 * @return	string
-	 * 
-	 */
-	function _members()
-	{
-		//get selected members
-		if ($this->_id){
-			$query = 'SELECT member'
-					. ' FROM #__jem_groupmembers'
-					. ' WHERE group_id = '.$this->_id;
-
-			$this->_db->setQuery ($query);
-
-			$member_ids = $this->_db->loadColumn();
-
-			if (is_array($member_ids)) $this->_members = implode(',', $member_ids);
-		}
-		return $this->_members;
-	}
-
-	/**
-	 * Method to initialise the group data
-	 *
-	 * @access	private
-	 * @return	boolean	True on success
-	 * 
-	 */
-	function _initData()
-	{
-		//Lets load the content if it doesn't already exist
-		if (empty($this->_data))
-		{
-			//sticky forms
-			$session = JFactory::getSession();
-			if ($session->has('groupform', 'com_jem')) {
-
-				$groupform 	= $session->get('groupform', 0, 'com_jem');
-				$group 		=  JTable::getInstance('jem_groups', '');
-
-				if (!$group->bind($groupform)) {
-					JError::raiseError( 500, $this->_db->stderr() );
-					return false;
-				}
-				$this->_data				= $group;
-				return (boolean) $this->_data;
-
-			} else {
-				$group = new stdClass();
-				$group->id					= 0;
-				$group->name				= null;
-				$group->description			= null;
-				$group->addvenue			= null;
-				$group->publishvenue			= null;
-				$group->editvenue			= null;
-				$this->_data				= $group;
-				return (boolean) $this->_data;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Method to checkin/unlock the item
-	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 * 
-	 */
-	function checkin()
-	{
-		if ($this->_id)
-		{
-			$group = JTable::getInstance('jem_groups', '');
-			return $group->checkin($this->_id);
-		}
-		return false;
-	}
 
 
 
-	/**
-	 * Method to checkout/lock the item
-	 *
-	 * @access	public
-	 * @param	int	$uid	User ID of the user checking the item out
-	 * @return	boolean	True on success
-	 * 
-	 */
-	function checkout($uid = null)
-	{
-		if ($this->_id)
-		{
-			// Make sure we have a user id to checkout the group with
-			if (is_null($uid)) {
-				$user	= JFactory::getUser();
-				$uid	= $user->get('id');
-			}
-			// Lets get to it and checkout the thing...
-			$group =  JTable::getInstance('jem_groups', '');
-			return $group->checkout($uid, $this->_id);
-		}
-		return false;
-	}
 
-	/**
-	 * Tests if the event is checked out
-	 *
-	 * @access	public
-	 * @param	int	A user id
-	 * @return	boolean	True if checked out
-	 * 
-	 */
-	function isCheckedOut( $uid=0 )
-	{
-		if ($this->_loadData())
-		{
-			if ($uid) {
-				return ($this->_data->checked_out && $this->_data->checked_out != $uid);
-			} else {
-				return $this->_data->checked_out;
-			}
-		} elseif ($this->_id < 1) {
-			return false;
-		} else {
-			JError::raiseWarning( 0, JText::_('COM_JEM_UNABLE_TO_LOAD_DATA'));
-			return false;
-		}
-	}
-	/**
-	 * Method to store the group
-	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 * 
-	 */
-	function store($data)
-	{
-		$row = JTable::getInstance('jem_groups', '');
 
-		//Bind the form fields to the table
-		if (!$row->bind($data)) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
-		}
 
-		// Make sure the data is valid
-		if (!$row->check()) {
-			$this->setError($row->getError());
-			return false;
-		}
 
-		//Store the table to the database
-		if (!$row->store()) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
-		}
 
-		$members =JRequest::getVar('maintainers',  '', 'post', 'array');
 
-		$this->_db->setQuery ('DELETE FROM #__jem_groupmembers WHERE group_id = '.$row->id);
-		$this->_db->query();
-
-		foreach ($members as $member){
-			$member = intval($member);
-			$this->_db->setQuery ("INSERT INTO #__jem_groupmembers (group_id, member) VALUES ($row->id, $member)");
-			$this->_db->query();
-		}
-
-		return true;
-	}
 }
-?>

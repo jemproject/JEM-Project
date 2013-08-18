@@ -5,96 +5,172 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ *
  */
 
-defined('_JEXEC') or die;
+defined( '_JEXEC' ) or die;
 
 
 /**
- * View class for the JEM groups screen
+ * View class for the JEM Groups screen
  *
- * @package JEM
- * 
+ * @package Joomla
+ * @subpackage JEM
+ *
  */
-class JEMViewGroups extends JViewLegacy {
+
+ class JEMViewGroups extends JViewLegacy {
+
+
+	protected $items;
+	protected $pagination;
+	protected $state;
+
+
 
 	public function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
 
-		// initialise variables
-		$document	=  JFactory::getDocument();
-		$db			=  JFactory::getDBO();
+		$app =  JFactory::getApplication();
 		$user 		=  JFactory::getUser();
+		$document	=  JFactory::getDocument();
 
-		// get vars
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.groups.filter_order', 'filter_order', 	'name', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.groups.filter_order_Dir', 'filter_order_Dir', '', 'word' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.groups.search', 'search', '', 'string' );
-		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
-		$template			= $app->getTemplate();
+
+		$jemsettings = JEMAdmin::config();
+		$url 		= JURI::root();
+
+        // Initialise variables.
+		$this->items		= $this->get('Items');
+		$this->pagination	= $this->get('Pagination');
+		$this->state		= $this->get('State');
+
+		// Retrieving params
+		$params = $this->state->get('params');
+
+
+		// loading Mootools
+		JHtml::_('behavior.framework');
 
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
-		// Tooltipping
-		/*
-		 * can be used by using a ::
-		 * 
-		 */
+
+
+
+		//add style to description of the tooltip (hastip)
 		JHTML::_('behavior.tooltip');
 
-		// get data from the model
-		$rows      	=  $this->get( 'Data');
-		
-		// add pagination
-		$pagination 	=  $this->get( 'Pagination' );
 
+		//assign data to template
+		//$this->lists		= $lists;
+		$this->user			= $user;
+		$this->jemsettings  = $jemsettings;
 
-		// table ordering
-		$lists['order_Dir'] = $filter_order_Dir;
-		$lists['order'] = $filter_order;
-
-		// search filter
-		$lists['search']= $search;
-
-		// assign data to template
-		$this->lists 		= $lists;
-		$this->rows 		= $rows;
-		$this->pagination 	= $pagination;
-		$this->user 		= $user;
-		$this->template 	= $template;
-
-		
 		// add toolbar
 		$this->addToolbar();
-		
+
+
 		parent::display($tpl);
-	}
-	
-	
-	
-	/*
-	* Add Toolbar
-	*/
-	
+		}
+
+
+
+
+
+	 /**
+	  * Add Toolbar
+	  */
+
 	protected function addToolbar()
 	{
-		
-	require_once JPATH_COMPONENT . '/helpers/helper.php';
-	
-	// create the toolbar
-	JToolBarHelper::title( JText::_( 'COM_JEM_GROUPS' ), 'groups' );
-	JToolBarHelper::addNew('groups.add');
-	JToolBarHelper::spacer();
-	JToolBarHelper::editList('groups.edit');
-	JToolBarHelper::spacer();
-	JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'groups.remove', $alt = 'JACTION_DELETE');
-	JToolBarHelper::spacer();
-	JToolBarHelper::help( 'listgroups', true );
+
+		/* submenu */
+		require_once JPATH_COMPONENT . '/helpers/helper.php';
+
+		/* Adding title + icon
+		 *
+		 * the icon is mapped within backend.css
+		 * The word 'venues' is referring to the venues icon
+		 * */
+		JToolBarHelper::title( JText::_( 'COM_JEM_GROUPS' ), 'groups' );
+
+		/* retrieving the allowed actions for the user */
+		$canDo = JEMHelperBackend::getActions(0);
+		$user = JFactory::getUser();
+
+		/* create */
+		if (($canDo->get('core.create')))
+		{
+			JToolBarHelper::addNew('group.add');
+		}
+
+		/* edit */
+		JToolBarHelper::spacer();
+		if (($canDo->get('core.edit')))
+		{
+			JToolBarHelper::editList('group.edit');
+		}
+
+
+		/* state */
+		/*
+		if ($canDo->get('core.edit.state'))
+		{
+
+			if ($this->state->get('filter_state') != 2)
+			{
+				JToolBarHelper::publishList('groups.publish', 'JTOOLBAR_PUBLISH', true);
+				JToolBarHelper::unpublishList('groups.unpublish', 'JTOOLBAR_UNPUBLISH', true);
+			}
+
+			if ($this->state->get('filter_state') != -1)
+			{
+				JToolBarHelper::divider();
+				if ($this->state->get('filter_state') != 2)
+				{
+					JToolBarHelper::archiveList('groups.archive');
+				}
+				elseif ($this->state->get('filter_state') == 2)
+				{
+					JToolBarHelper::unarchiveList('groups.publish');
+				}
+
+			}
+
+		}
+		*/
+
+
+		if ($canDo->get('core.edit.state'))
+		{
+			JToolBarHelper::checkin('groups.checkin');
+		}
+
+
+		/*
+		if ($this->state->get('filter_state') == -2 && $canDo->get('core.delete'))
+		{
+			JToolBarHelper::deleteList('', 'events.delete', 'JTOOLBAR_EMPTY_TRASH');
+			JToolBarHelper::divider();
+		}
+		elseif ($canDo->get('core.edit.state'))
+		{
+			JToolBarHelper::trash('events.trash');
+			JToolBarHelper::divider();
+		}
+		*/
+
+
+		JToolBarHelper::help( 'listgroups', true );
+
+
 
 	}
-	
-	
+
+
+
 } // end of class
+
+
+
 ?>

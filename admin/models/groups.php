@@ -9,260 +9,245 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
+jimport('joomla.application.component.modellist');
 
 /**
  * JEM Component Events Model
  *
- * @package JEM
- *
- */
-class JEMModelGroups extends JModelLegacy
+ **/
+class JEMModelGroups extends JModelList
 {
-	/**
-	 * Events data array
-	 *
-	 * @var array
-	 */
-	var $_data = null;
 
 	/**
-	 * Events total
+	 * Constructor.
 	 *
-	 * @var integer
-	 */
-	var $_total = null;
-
-	/**
-	 * Pagination object
-	 *
-	 * @var object
-	 */
-	var $_pagination = null;
-
-	/**
-	 * Constructor
+	 * @param	array	An optional associative array of configuration settings.
+	 * @see		JController
 	 *
 	 */
-	function __construct()
+	public function __construct($config = array())
 	{
-		parent::__construct();
-
-		$app =  JFactory::getApplication();
-
-		$limit		= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
-		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
-
-		$this->setState('limit', $limit);
-		$this->setState('limitstart', $limitstart);
-
-		$array = JRequest::getVar('cid',  0, '', 'array');
-		$this->setId((int)$array[0]);
-	}
-
-	/**
-	 * Method to set the category identifier
-	 *
-	 * @access	public
-	 * @param	int Category identifier
-	 */
-	function setId($id)
-	{
-		// Set id and wipe data
-		$this->_id	    = $id;
-		$this->_data 	= null;
-	}
-
-	/**
-	 * Method to get event item data
-	 *
-	 * @access public
-	 * @return array
-	 */
-	function getData()
-	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_data))
-		{
-			$query = $this->_buildQuery();
-			$pagination = $this->getPagination();
-			$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
+		if (empty($config['filter_fields'])) {
+			$config['filter_fields'] = array(
+					'name', 'a.name',
+			);
 		}
 
-		return $this->_data;
+		parent::__construct($config);
 	}
 
 	/**
-	 * Total nr of groups
+	 * Method to auto-populate the model state.
 	 *
-	 * @access public
-	 * @return integer
+	 * Note. Calling getState in this method will result in recursion.
+	 *
+	 *
 	 */
-	function getTotal()
+	protected function populateState($ordering = null, $direction = null)
 	{
-		// Lets load the total nr if it doesn't already exist
-		if (empty($this->_total))
-		{
-			$query = $this->_buildQuery();
-			$this->_total = $this->_getListCount($query);
+		// Initialise variables.
+		$app = JFactory::getApplication('administrator');
+
+		$search = $this->getUserStateFromRequest($this->context.'.filter_search', 'filter_search');
+		$this->setState('filter_search', $search);
+
+		//	$accessId = $this->getUserStateFromRequest($this->context.'.filter.access', 'filter_access', null, 'int');
+		//	$this->setState('filter.access', $accessId);
+
+		$published = $this->getUserStateFromRequest($this->context.'.filter_state', 'filter_state', '', 'string');
+		$this->setState('filter_state', $published);
+
+		$filterfield = $this->getUserStateFromRequest($this->context.'.filter', 'filter', '', 'int');
+		$this->setState('filter', $filterfield);
+
+		//  $categoryId = $this->getUserStateFromRequest($this->context.'.filter.category_id', 'filter_category_id', '');
+		//  $this->setState('filter.category_id', $categoryId);
+
+		//	$language = $this->getUserStateFromRequest($this->context.'.filter.language', 'filter_language', '');
+		//	$this->setState('filter.language', $language);
+
+
+		// Load the parameters.
+		$params = JComponentHelper::getParams('com_jem');
+		$this->setState('params', $params);
+
+		// List state information.
+		parent::populateState('a.name', 'asc');
+	}
+
+	/**
+	 * Method to get a store id based on model configuration state.
+	 *
+	 * This is necessary because the model is used by the component and
+	 * different modules that might need different sets of data or different
+	 * ordering requirements.
+	 *
+	 * @param	string		$id	A prefix for the store id.
+	 * @return	string		A store id.
+	 *
+	 */
+	protected function getStoreId($id = '')
+	{
+		// Compile the store id.
+		$id.= ':' . $this->getState('filter_search');
+		//$id.= ':' . $this->getState('filter.access');
+		$id.= ':' . $this->getState('filter_published');
+		$id.= ':' . $this->getState('filter');
+		//$id.= ':' . $this->getState('filter.category_id');
+		//$id.= ':' . $this->getState('filter.language');
+
+		return parent::getStoreId($id);
+	}
+
+	/**
+	 * Build an SQL query to load the list data.
+	 *
+	 * @return	JDatabaseQuery
+	 *
+	 */
+	protected function getListQuery()
+	{
+		// Create a new query object.
+		$db		= $this->getDbo();
+		$query	= $db->getQuery(true);
+		$user	= JFactory::getUser();
+
+		// Select the required fields from the table.
+		$query->select(
+				$this->getState(
+						'list.select',
+						'a.*'
+				)
+		);
+		$query->from($db->quoteName('#__jem_groups').' AS a');
+
+
+		// Join over the users for the checked out user.
+		//$query->select('loc.venue, loc.city, loc.state, loc.checked_out AS vchecked_out');
+		//$query->join('LEFT', '#__jem_venues AS loc ON loc.id=a.locid');
+
+
+		// Join over the language
+		//$query->select('l.title AS language_title');
+		//$query->join('LEFT', $db->quoteName('#__languages').' AS l ON l.lang_code = a.language');
+
+		// Join over the users for the checked out user.
+		//$query->select('uc.name AS editor');
+		//$query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
+
+		// Join over the asset groups.
+		/*$query->select('ag.title AS access_level');
+		$query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');*/
+
+		// Join over the cat_relations
+		//$query->select('rel.*');
+		//$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid=a.id');
+
+		// Join over the categories.
+		//$query->select('c.catname, c.id AS catid');
+		//$query->join('LEFT', '#__jem_categories AS c ON c.id=rel.catid');
+
+
+		// Join over the author & email.
+		//$query->select('u.email, u.name AS author');
+		//$query->join('LEFT', '#__users AS u ON u.id=a.created_by');
+
+
+		// Implement View Level Access
+		//if (!$user->authorise('core.admin'))
+		//{
+		//	$groups	= implode(',', $user->getAuthorisedViewLevels());
+		//	$query->where('a.access IN ('.$groups.')');
+		//}
+
+		// Filter by published state
+		//$published = $this->getState('filter_state');
+		//if (is_numeric($published)) {
+		//	$query->where('a.published = '.(int) $published);
+		//} elseif ($published === '') {
+		//	$query->where('(a.published IN (0, 1))');
+		//}
+
+		// Filter by search in title
+		//$filter = $this->getState('filter');
+		$search = $this->getState('filter_search');
+
+		if (!empty($search)) {
+			if (stripos($search, 'id:') === 0) {
+				$query->where('a.id = '.(int) substr($search, 3));
+			} else {
+				$search = $db->Quote('%'.$db->escape($search, true).'%');
+
+
+				/* search category */
+				if ($search) {
+					$query->where('a.name LIKE '.$search);
+				}
+
+
+
+			}
 		}
+		// $query->group('a.id');
 
-		return $this->_total;
-	}
 
-	/**
-	 * Method to get a pagination object for the groups
-	 *
-	 * @access public
-	 * @return integer
-	 */
-	function getPagination()
-	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_pagination))
-		{
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
-		}
-
-		return $this->_pagination;
-	}
-
-	/**
-	 * Build the query
-	 *
-	 * @access private
-	 * @return string
-	 */
-	function _buildQuery()
-	{
-		// Get the WHERE and ORDER BY clauses for the query
-		$where		= $this->_buildContentWhere();
-		$orderby	= $this->_buildContentOrderBy();
-
-		$query = 'SELECT *'
-					. ' FROM #__jem_groups'
-					. $where
-					. $orderby
-					;
-
+		// Add the list ordering clause.
+		$orderCol	= $this->state->get('list.ordering');
+		$orderDirn	= $this->state->get('list.direction');
+		//if ($orderCol == 'a.ordering' || $orderCol == 'category_title') {
+		//	$orderCol = 'c.title '.$orderDirn.', a.ordering';
+		//}
+		$query->order($db->escape($orderCol.' '.$orderDirn));
+		//echo nl2br(str_replace('#__','jos_',$query));
 		return $query;
 	}
 
-	
+
+
 	/**
-	 * Method to enable/disable rights
-	 * for submitting venue
-	 *
-	 */
-	function addvenue($cid = array(), $publish = 1)
-	{
-		$user 	= JFactory::getUser();
-		$userid = (int) $user->get('id');
-	
-		if (count($cid))
-		{
-			$cids = implode(',', $cid);
-	
-			$query = 'UPDATE #__jem_groups'
-					. ' SET addvenue = '. (int) $publish
-					. ' WHERE id IN ('. $cids .')'
-					//. ' AND (checked_out = 0 OR (checked_out = ' .$userid. '))'
-					;
-	
-					$this->_db->setQuery($query);
-	
-					if (!$this->_db->query()) {
-					$this->setError($this->_db->getErrorMsg());
-					return false;
-			}
-		}
-	}
-	
-	
-	
-	/**
-	 * Build the order clause
+	 * Method to get the userinformation of edited/submitted venues
 	 *
 	 * @access private
-	 * @return string
-	 */
-	function _buildContentOrderBy()
-	{
-		$app =  JFactory::getApplication();
-
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.groups.filter_order', 'filter_order', 'name', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.groups.filter_order_Dir', 'filter_order_Dir', '', 'word' );
-
-		
-		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
-
-		$orderby 	= ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', name';
-
-		return $orderby;
-	}
-
-		/**
-	 * Build the where clause
+	 * @return object
 	 *
-	 * @access private
-	 * @return string
 	 */
-	function _buildContentWhere()
+	public function getItems()
 	{
-		$app =  JFactory::getApplication();
+		$items = parent::getItems();
 
-		$search 			= $app->getUserStateFromRequest( 'com_jem.search', 'search', '', 'string' );
-		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
+		/*
+		$count = count($items);
 
-		$where = array();
-
-		$where[] = ' LOWER(name) LIKE \'%'.$search.'%\' ';
-
-		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
-
-		return $where;
-	}
-
-	/**
-	 * Method to remove a group
-	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 * 
-	 */
-	function delete($cid = array())
-	{
-		if (count( $cid ))
-		{
-			$cids = implode( ',', $cid );
-
-			$query = 'DELETE FROM #__jem_groups'
-					. ' WHERE id IN ('. $cids .')'
-					;
-
-			$this->_db->setQuery( $query );
-
-			if(!$this->_db->query()) {
-				$this->setError($this->_db->getErrorMsg());
-				return false;
-			}
-
-			$query = 'DELETE FROM #__jem_groupmembers'
-					. ' WHERE group_id IN ('. $cids .')'
-					;
-
-			$this->_db->setQuery( $query );
-
-			if(!$this->_db->query()) {
-				$this->setError($this->_db->getErrorMsg());
-				return false;
-			}
+		if ($count) {
 
 		}
 
-		return true;
+
+		for ($i=0, $n=$count; $i < $n; $i++) {
+			// Get editor name
+			$query = 'SELECT name'
+					. ' FROM #__users'
+					. ' WHERE id = '.$items[$i]->modified_by
+					;
+
+			$this->_db->setQuery( $query );
+			$items[$i]->editor = $this->_db->loadResult();
+
+			$items[$i]->categories = $this->getCategories($items[$i]->id);
+
+
+			// Get nr of assigned events
+			$query = 'SELECT COUNT( id )'
+					.' FROM #__jem_events'
+					.' WHERE locid = ' . (int)$items[$i]->id
+					;
+
+			$this->_db->setQuery($query);
+			$items[$i]->assignedevents = $this->_db->loadResult();
+		}
+		*/
+
+		return $items;
 	}
+
 }
-?>

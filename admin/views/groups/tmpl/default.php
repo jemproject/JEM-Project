@@ -8,73 +8,98 @@
  */
 
 defined('_JEXEC') or die;
+
+$user		= JFactory::getUser();
+$userId		= $user->get('id');
+$listOrder	= $this->escape($this->state->get('list.ordering'));
+$listDirn	= $this->escape($this->state->get('list.direction'));
+$canOrder	= $user->authorise('core.edit.state', 'com_jem.category');
+$saveOrder	= $listOrder=='ordering';
+
+$params		= (isset($this->state->params)) ? $this->state->params : new JObject();
+
 ?>
 
-<form action="<?php echo JRoute::_('index.php?option=com_jem&view=groups'); ?>"  method="post" name="adminForm" id="adminForm">
+
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=groups'); ?>" method="post" name="adminForm" id="adminForm">
+
 
 <fieldset id="filter-bar">
 	<div class="filter-search fltlft">
-			<input type="text" name="search" id="search" placeholder="<?php echo JText::_( 'COM_JEM_SEARCH' );?>" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button type="submit" onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-			<button type="button" onclick="document.id('search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
-	</div>
+			<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo JText::_( 'COM_JEM_SEARCH' );?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>" class="text_area" onChange="document.adminForm.submit();" />
+			<button type="submit"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+		</div>
 </fieldset>
 <div class="clr"> </div>
 
-	<table class="table table-striped" id="articleList">
-	<thead>
-		<tr>
+
+<table class="table table-striped" id="articleList">
+		<thead>
+			<tr>
 			<th width="5" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 			<th width="5" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-			<th width="30%" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_GROUP_NAME', 'name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th width="30%" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_GROUP_NAME', 'name', $listDirn, $listOrder ); ?></th>
 			<th><?php echo JText::_( 'COM_JEM_DESCRIPTION' ); ?></th>
-		</tr>
-	</thead>
+			</tr>
+		</thead>
 
-	<tfoot>
+		<tfoot>
 		<tr>
-			<td colspan="4">
+			<td colspan="20">
 				<?php echo $this->pagination->getListFooter(); ?>
 			</td>
 		</tr>
 	</tfoot>
 
-	<tbody>
-		<?php
-	    foreach ($this->rows as $i => $row) :
-	    $link 		= 'index.php?option=com_jem&amp;task=groups.edit&amp;cid[]='.$row->id;
 
-   		?>
+		<tbody id="seach_in_here">
+			<?php
+			foreach ($this->items as $i => $row) :
+
+				$ordering	= ($listOrder == 'ordering');
+				/*	$row->cat_link = JRoute::_('index.php?option=com_categories&extension=com_jem&task=edit&type=other&cid[]='. $row->catid);*/
+				$canCreate	= $user->authorise('core.create');
+				$canEdit	= $user->authorise('core.edit');
+				$canCheckin	= $user->authorise('core.manage',		'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
+				$canChange	= $user->authorise('core.edit.state') && $canCheckin;
+
+				$link 		= 'index.php?option=com_jem&amp;task=group.edit&amp;id='.$row->id;
+
+
+			?>
 			<tr class="row<?php echo $i % 2; ?>">
-			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-			<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
-			<td>
+				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+				<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
+				<td>
+					<?php if ($row->checked_out) : ?>
+						<?php echo JHtml::_('jgrid.checkedout', $i, '', $row->checked_out_time, 'groups.', $canCheckin); ?>
+					<?php endif; ?>
+					<?php if ($canEdit) : ?>
+						<a href="<?php echo $link; ?>">
+							<?php echo $this->escape($row->name); ?></a>
+					<?php else : ?>
+							<?php echo $this->escape($row->name); ?>
+					<?php endif; ?>
+				</td>
+				<td>
 				<?php
-					if ( $row->checked_out && ( $row->checked_out != $this->user->get('id') ) ) {
-						echo htmlspecialchars($row->name, ENT_QUOTES, 'UTF-8');
-					} else {
-				?>
-				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_GROUP' );?>::<?php echo $row->name; ?>">
-				<a href="<?php echo $link; ?>">
-				<?php echo htmlspecialchars($row->name, ENT_QUOTES, 'UTF-8'); ?>
-				</a></span>
-				<?php } ?>
-			</td>
-			<td><?php echo htmlspecialchars($row->description, ENT_QUOTES, 'UTF-8'); ?></td>
-		</tr>
-		<?php endforeach; ?>
 
-	</tbody>
+				$desc = $row->description;
+				$descoutput = strip_tags($desc);
+				echo $this->escape($descoutput);
 
-</table>
+				?></td>
+			</tr>
+			<?php endforeach; ?>
+		</tbody>
+	</table>
 
-<p class="copyright">
-	<?php echo JEMAdmin::footer( ); ?>
-</p>
 
-<input type="hidden" name="boxchecked" value="0" />
-<input type="hidden" name="controller" value="groups" />
-<input type="hidden" name="task" value="" />
-<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+
+	<input type="hidden" name="boxchecked" value="0" />
+	<input type="hidden" name="task" value="" />
+	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
+	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
+	<?php echo JHtml::_('form.token'); ?>
 </form>
