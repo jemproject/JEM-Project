@@ -158,6 +158,7 @@ function test()
       jQuery(function(){
     	  jQuery("#geocomplete").geocomplete({
           map: ".map_canvas",
+          /* location: "default address", */
           details: "form ",
           detailsAttribute: "geo-data",
           types: ['establishment', 'geocode'],
