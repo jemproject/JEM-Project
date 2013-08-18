@@ -216,6 +216,7 @@ function test()
 
 			<ul class="adminformlist">
 
+
 				<li><?php echo $this->form->getLabel('venue');?> <?php echo $this->form->getInput('venue'); ?>
 				</li>
 
@@ -239,50 +240,17 @@ function test()
 
 				<li><?php echo $this->form->getLabel('url'); ?> <?php echo $this->form->getInput('url'); ?>
 				</li>
-
-</fieldset>
-
-
-<fieldset class="adminform" id="geodata">
-<legend>Geodata</legend>
-
-
- <input id="geocomplete" type="text" placeholder="Type in an address" value="" />
-      <input id="find" type="button" value="find" />
-      <br><br>
- <div class="map_canvas"></div>
-
-      <a id="reset" href="#" style="display:none;">Reset Marker</a>
-</fieldset>
-
-
-<fieldset class="adminform">
-<ul class="adminformlist">
-				<li><?php echo $this->form->getLabel('latitude'); ?> <?php echo $this->form->getInput('latitude'); ?>
-				</li>
-				<li><?php echo $this->form->getLabel('longitude'); ?> <?php echo $this->form->getInput('longitude'); ?>
-				</li>
-				<li><?php echo $this->form->getLabel('map'); ?> <?php echo $this->form->getInput('map'); ?>
-				</li>
-				<li><?php echo $this->form->getLabel('id'); ?> <?php echo $this->form->getInput('id'); ?>
-				</li>
-				<li><?php echo $this->form->getLabel('published'); ?> <?php echo $this->form->getInput('published'); ?>
-				</li>
-				</ul>
-
-			<div class="clr"></div>
-			</fieldset>
-
-			<fieldset class="adminform">
-
-			<div>
+</ul>
+				<div>
 				<?php echo $this->form->getLabel('locdescription'); ?>
 				<div class="clr"></div>
 				<?php echo $this->form->getInput('locdescription'); ?>
 			</div>
 
-			<!-- END OF FIELDSET -->
-		</fieldset>
+</fieldset>
+
+
+
 
 <?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
 				<?php echo $this->loadTemplate('attachments'); ?>
@@ -309,10 +277,15 @@ function test()
 		<!-- RETRIEVING OF FIELDSET PUBLISHING -->
 		<fieldset class="panelform">
 			<ul class="adminformlist">
+				<li><?php echo $this->form->getLabel('id'); ?> <?php echo $this->form->getInput('id'); ?>
+				</li>
+				<li><?php echo $this->form->getLabel('published'); ?> <?php echo $this->form->getInput('published'); ?>
+				</li>
 				<?php foreach($this->form->getFieldset('publish') as $field): ?>
 				<li><?php echo $field->label; ?> <?php echo $field->input; ?>
 				</li>
 				<?php endforeach; ?>
+
 			</ul>
 		</fieldset>
 
@@ -351,12 +324,43 @@ function test()
 
 
 
+		<!-- START OF PANEL PUBLISHING -->
+		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_FIELDSET_GEODATA'), 'venue-geodata'); ?>
+
+
+		<!-- START OF GEODATA -->
+<fieldset class="adminform" id="geodata">
+
+ <input id="geocomplete" type="text" placeholder="<?php echo JText::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
+      <input id="find" type="button" value="find" />
+      <br><br>
+ <div class="map_canvas"></div>
+
+      <a id="reset" href="#" style="display:none;">Reset Marker</a>
+</fieldset>
+
+
+<fieldset class="adminform">
+<ul class="adminformlist">
+				<li><?php echo $this->form->getLabel('latitude'); ?> <?php echo $this->form->getInput('latitude'); ?>
+				</li>
+				<li><?php echo $this->form->getLabel('longitude'); ?> <?php echo $this->form->getInput('longitude'); ?>
+				</li>
+				<li><?php echo $this->form->getLabel('map'); ?> <?php echo $this->form->getInput('map'); ?>
+				</li>
+				</ul>
+
+			<div class="clr"></div>
+			</fieldset>
+
+
+
+
 
 	<?php echo JHtml::_('sliders.end'); ?>
 
 <input type="hidden" name="task" value="" />
 <input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
-				</li>
 
 
 				<!--  END RIGHT DIV -->
