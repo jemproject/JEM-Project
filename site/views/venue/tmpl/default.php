@@ -90,7 +90,7 @@ defined('_JEXEC') or die;
 
 	<?php if ($this->jemsettings->showlocdescription == 1 && $this->venuedescription != '' && $this->venuedescription != '<br />') : ?>
 		<h2 class="description">
-			<?php echo JText::_( 'COM_JEM_DESCRIPTION' ); ?>
+			<?php echo JText::_( 'COM_JEM_VENUE_DESCRIPTION' ); ?>
 		</h2>
 		<div class="description no_space floattext" itemprop="description">
 			<?php echo $this->venuedescription;	?>
