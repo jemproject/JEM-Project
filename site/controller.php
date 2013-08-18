@@ -15,14 +15,14 @@ jimport('joomla.application.component.controller');
  * JEM Component Controller
  *
  * @package JEM
- * 
+ *
  */
 class JEMController extends JControllerLegacy
 {
 	/**
 	 * Constructor
 	 *
-	 * 
+	 *
 	 */
 	function __construct()
 	{
@@ -32,7 +32,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Display the view
 	 *
-	 * 
+	 *
 	 */
 	function display($cachable = false, $urlparams = false)
 	{
@@ -42,7 +42,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Logic for canceling an event edit task
 	 *
-	 * 
+	 *
 	 */
 	function cancelevent()
 	{
@@ -75,7 +75,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Logic for canceling an event and proceed to add a venue
 	 *
-	 * 
+	 *
 	 */
 	function addvenue()
 	{
@@ -107,10 +107,14 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Logic for canceling an event and proceed to add a venue
 	 *
-	 * 
+	 *
 	 */
 	function unpublishtask()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
+
 		$app = JFactory::getApplication();
 		$menuitem = $app->getMenu()->getActive()->id;
 		$input = $app->input;
@@ -139,10 +143,14 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Logic for canceling an event and proceed to add a venue
 	 *
-	 * 
+	 *
 	 */
 	function unpublish()
 	{
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$app = JFactory::getApplication();
 		$menuitem = $app->getMenu()->getActive()->id;
 		$input = $app->input;
@@ -173,10 +181,14 @@ class JEMController extends JControllerLegacy
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function publish()
 	{
+
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$app = JFactory::getApplication();
 		$menuitem = $app->getMenu()->getActive()->id;
 		$input = $app->input;
@@ -207,10 +219,13 @@ class JEMController extends JControllerLegacy
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function trash()
 	{
+		// Check for request forgeries
+		JRequest::checkToken() or die( 'Invalid Token' );
+
 		$app = JFactory::getApplication();
 		$menuitem = $app->getMenu()->getActive()->id;
 		$input = $app->input;
@@ -239,7 +254,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Logic for canceling a venue edit task
 	 *
-	 * 
+	 *
 	 */
 	function cancelvenue()
 	{
@@ -286,7 +301,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Saves the submitted venue to the database
 	 *
-	 * 
+	 *
 	 */
 	function savevenue()
 	{
@@ -363,7 +378,7 @@ class JEMController extends JControllerLegacy
 	 *
 	 * TODO: Check if the user is allowed to post events assigned to this category/venue
 	 *
-	 * 
+	 *
 	 */
 	function saveevent()
 	{
@@ -421,7 +436,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Saves the registration to the database
 	 *
-	 * 
+	 *
 	 */
 	function userregister()
 	{
@@ -458,7 +473,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Deletes a registered user
 	 *
-	 * 
+	 *
 	 */
 	function delreguser()
 	{
@@ -522,7 +537,7 @@ class JEMController extends JControllerLegacy
 	 *
 	 * @return true on sucess
 	 * @access private
-	 * 
+	 *
 	 */
 	function ajaxattachremove()
 	{
@@ -548,10 +563,10 @@ class JEMController extends JControllerLegacy
 	function attendeeexport()
 	{
 		$app = JFactory::getApplication();
-		
+
 		$jinput = JFactory::getApplication()->input;
 		$enableemailadress = $jinput->get('em','','int');
-		
+
 
 		$model = $this->getModel('attendees');
 
