@@ -44,8 +44,6 @@ class JEMViewWeekcal extends JViewLegacy
         $document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
         $document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
         $document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendarweek.css');
-        //$document->addStyleSheet($this->baseurl.'/media/com_jem/css/plain_wide.css');
-
 
 
         $evlinkcolor = $params->get('eventlinkcolor');
@@ -76,7 +74,6 @@ class JEMViewWeekcal extends JViewLegacy
         $document->addStyleDeclaration( $style );
 
 
-
         // add javascript
         $document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
 
@@ -84,9 +81,6 @@ class JEMViewWeekcal extends JViewLegacy
         $month 	= (int)JRequest::getVar('monthID', strftime("%m"));
         $day = (int)JRequest::getVar('dayID', strftime("%d"));
 
-        //get data from model and set the month
-        $model =  $this->getModel();
-        $model->setDate(mktime(0, 0, 1, $month, 1, $year));
 
         $rows =  $this->get('Data');
 
@@ -98,29 +92,10 @@ class JEMViewWeekcal extends JViewLegacy
         $document->setTitle($pagetitle);
         $document->setMetaData('title', $pagetitle);
 
-        //init calendar
-		//$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
-		//$cal->enableMonthNav('index.php?view=calendar');
 
-
-
-		$cal = new activeCalendarWeek($year,$month,$day,$app->getCfg('offset'));
-
-		$cal->setFirstWeekDay($params->get('firstweekday', 1));
-		//$cal->enableWeekNum("Week",'index.php?view=weekcal',''); // enables week number column with linkable week numbers
+        $cal = new activeCalendarWeek($year,$month,$day);
 		$cal->enableWeekNum(JText::_('COM_JEM_WKCAL_WEEK'),null,''); // enables week number column with linkable week numbers
-
-		//$cal->showWeeks();
-		//$cal->enableDayLinks(false);
-		//$link = ('index.php');
-		//$weekurl=$_SERVER['PHP_SELF']."?css=".@$_GET['css']; // the links url is this page
-		//$cal = new activeCalendar("2007","11");
-		//$cal->enableDayLinks($myurl); // enables day links
-
-
-
-
-
+		$cal->setFirstWeekDay(1);
 
 		$this->rows 		= $rows;
 		$this->params		= $params;

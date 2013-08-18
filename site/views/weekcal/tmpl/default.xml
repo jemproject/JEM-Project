@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_JEM_WKCAL_LAYOUT">
+		<message>
+			<![CDATA[COM_JEM_WKCAL_LAYOUT_DESC]]>
+		</message>
+	</layout>
+
+	<fields name="params">
+		<fieldset name="basic"
+			addfieldpath="/administrator/components/com_jem/models/fields"
+		>
+			
+			<!-- 
+			<field name="show_only_start" type="radio"
+				default="1"
+				label="COM_JEM_SHOWONLYSTARTDAY"
+				description="COM_JEM_SHOWONLYSTARTDAY_DESC"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+  			</field>
+  			-->
+  			
+			<field name="top_category" type="categories"
+				default="0"
+				label="COM_JEM_SELECT_TOP_CATEGORY"
+				description="COM_JEM_SELECT_TOP_CATEGORY_DESC"
+			/>
+			<field name="daylimit" type="text"
+				default="10"
+				label="COM_JEM_MAX_EVENTS_PER_DAY"
+				description="COM_JEM_MAX_EVENTS_PER_DAY_DESC"
+			/>
+			
+			<field name="nrweeks" type="text"
+				default="1"
+				label="COM_JEM_WKCAL_NRWEEKS"
+				description="COM_JEM_WKCAL_NRWEEKS_DESC"
+			/>
+			
+			<field name="eventlinkcolor" type="color" default="#000000" label="COM_JEM_CALENDAR_EVENTLINKCOLOR"  />
+			<field name="eventbackgroundcolor" type="color" default="#FFFF00" label="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR"  />
+			<field name="currentdaycolor" type="color" default="#CCCC99" label="COM_JEM_CALENDAR_CURRENTDAYCOLOR"  />
+			<field name="eventandmorecolor" type="color" default="#FFFF00" label="COM_JEM_CALENDAR_EVENTANDMORECOLOR"  />
+		</fieldset>
+	</fields>
+</metadata>

@@ -155,11 +155,11 @@ defined('_JEXEC') or die;
 
 	endforeach;
 
-	// print the calendar
-	// print ($this->cal->showMonth());
 
+	$currentWeek = date("W");
 	$nrweeks = $this->params->get('nrweeks', 1);
-	print $this->cal->showWeeks($nrweeks);
+	print $this->cal->showWeeksByID($currentWeek,$nrweeks);
+
 ?>
 </div>
 
@@ -168,27 +168,30 @@ defined('_JEXEC') or die;
 
 	<div id="buttonshowall">
 		<?php
-		//echo JText::_('COM_JEM_SHOWALL');
+		echo JText::_('COM_JEM_SHOWALL');
 		?>
 	</div>
 
 	<div id="buttonhideall">
 		<?php
-		//echo JText::_('COM_JEM_HIDEALL');
+		echo JText::_('COM_JEM_HIDEALL');
 		?>
 	</div>
 
 	<?php
 
-	/*
+
 
 	//print the legend
-	if($this->params->get('displayLegend')) :
+	if($this->params->get('displayLegend','1')) :
 
 	$counter = array();
 
+
+
 	//walk through events
 	foreach ($this->rows as $row):
+
 
 		//walk through the event categories
 		foreach ($row->categories as $cat) :
@@ -199,8 +202,10 @@ defined('_JEXEC') or die;
 				//add cat id to cat counter
 				$counter[] = $cat->id;
 
+
 				//build legend
 				if (array_key_exists($cat->id, $countcatevents)):
+				//var_dump($countcatevents);exit;
 				?>
 
 					<div class="eventCat" catid="<?php echo $cat->id; ?>">
@@ -209,6 +214,9 @@ defined('_JEXEC') or die;
 							echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';
 						endif;
 						echo $cat->catname.' ('.$countcatevents[$cat->id].')';
+
+
+
 						?>
 					</div>
 				<?php
@@ -220,7 +228,7 @@ defined('_JEXEC') or die;
 
 	endforeach;
 	endif;
-	*/
+
 
 	?>
 </div>

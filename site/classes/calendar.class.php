@@ -251,12 +251,24 @@ PUBLIC enableWeekNum() -> enables a week number column
 */
 function enableWeekNum($title="",$link=false,$javaScript=false){
 // checking before enabling, as week number calulation works only if php version > 4.1.0 [php function: date ("W")]
-	if (is_integer($this->getWeekNum($this->actday))){
+	if (is_integer($this->getWeekNum($this->actday)))
+	{
 		$this->weekNum=true;
 		$this->weekNumTitle=$title;
 		$this->monthSpan++;
-		if ($link) $this->weekUrl=$link;
-		elseif ($javaScript) $this->javaScriptWeek=$javaScript;
+
+		if (empty($link))
+		 {  $this->weekUrl=''; }
+		else
+		{
+			$this->weekUrl=$link;
+		}
+
+
+		if (empty($javaScript))
+		{ $this->javaScriptWeek=''; }
+		else {$this->javaScriptWeek=$javaScript;
+		}
 	}
 }
 /*
@@ -290,15 +302,15 @@ function setEventContent($year, $month, $day, $content, $url=false, $id=false)
 {
 	// event time
 	$eventTime = $this->mkActiveTime(0, 0, 1, $month, $day, $year);
-	
+
 	// add to eventcontent array
 	$eventContent[$eventTime] = $content;
 	$this->calEventContent[] = $eventContent;
-  
+
 	// add specific id
 	if (!$id) $id = $this->cssEventContent;
 	$this->calEventContentId[] = $id;
-	
+
   	// add url
   	if ($url) $this->calEventContentUrl[] = $url;
 	else $this->calEventContentUrl[] = $this->calInit++;
@@ -456,7 +468,7 @@ $out="<tr>\n";
 		if ($stmonth == 12) {
 			$stmonth = 1;
 			$curyear++;
-		} 
+		}
 		else $stmonth++;
 	}
 $out.="</tr>\n";
@@ -638,9 +650,9 @@ function mkDay($var)
 	} else {
 		$linkstr= $var;
 	}
-	
+
   if ($this->isEvent($var))
-  {	
+  {
 		if ($this->eventUrl)
 		{
 			$out="<td class=\"".$this->eventID."\"><div class=\"daynum\"><a href=\"".$this->eventUrl."\">".$var."</div></a>".$eventContent."</td>";
@@ -802,7 +814,7 @@ function mkEventContent($var)
 					if (is_string($eventContent)) {
 						$eventContent = array($eventContent);
 					}
-					
+
 					foreach($eventContent as $arrayContent)
 					{
 						$out .= '<div class="'.$eventContentid.'">';

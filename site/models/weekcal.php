@@ -94,12 +94,15 @@ class JEMModelWeekcal extends JModelLegacy
 				{
 					if ($item->enddates != $item->dates)
 					{
+						// $day = $item->start_day;
 						$day = $item->start_day;
 
 						for ($counter = 0; $counter <= $item->datediff-1; $counter++)
 						{
+							//@todo sort out, multi-day events
 							$day++;
 
+							/*
 							//next day:
 							$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
 
@@ -113,6 +116,8 @@ class JEMModelWeekcal extends JModelLegacy
 							}
 							//unset temp array holding generated days before working on the next multiday event
 							unset($multi);
+							*/
+
 						}
 					}
 				}
@@ -139,7 +144,7 @@ class JEMModelWeekcal extends JModelLegacy
 
 		//Get Events from Database
 		$query = 'SELECT DATEDIFF(a.enddates, a.dates) AS datediff, a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.datdescription, a.created, l.venue, l.city, l.state, l.url,'
-			.' DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month,'
+			.' DAYOFWEEK(a.dates) AS weekday, DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month, WEEK(a.dates) AS weeknumber, '
 			.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 			.' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 			.' FROM #__jem_events AS a'
@@ -155,11 +160,14 @@ class JEMModelWeekcal extends JModelLegacy
 	/**
 	 * Method to build the WHERE clause
 	 *
+	 * In here we will have to calculate the given weeks
+	 *
 	 * @access private
 	 * @return array
 	 */
 	function _buildCategoryWhere()
 	{
+
 		$app = JFactory::getApplication();
 
 		// Get the paramaters of the active menu item
@@ -176,14 +184,18 @@ class JEMModelWeekcal extends JModelLegacy
 			$where = ' WHERE a.published = 1 ';
 		}
 
-		// only select events within specified dates. (chosen month)
-		$monthstart = mktime(0, 0, 1, strftime('%m', $this->_date), 1, strftime('%Y', $this->_date));
-		$monthend = mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
 
-		$filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', $monthstart));
-		$where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $this->_db->Quote('0000-00-00') .', a.enddates, a.dates), '. $filter_date_from .') >= 0';
-		$filter_date_to = $this->_db->Quote(strftime('%Y-%m-%d', $monthend));
-		$where .= ' AND DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
+		$currentTime = date("Y-m-d");
+		$currentTime2 = date('Y-m-d',strtotime(date('o-\\WW')));
+
+		$numberOfWeeks = $params->get('nrweeks', '1');
+		$newTime = strtotime('+'.$numberOfWeeks.' weeks '.'- 1 day', strtotime($currentTime2));
+		$newTime = date('Y-m-d',$newTime);
+
+
+		$where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $this->_db->Quote('0000-00-00') .', a.enddates, a.dates), "'. $currentTime2 .'") >= 0';
+		$where .= ' AND DATEDIFF(a.dates, "'. $newTime .'") <= 0';
+
 
 		if ($top_category) {
 			$children = JEMCategories::getChilds($top_category);
