@@ -177,13 +177,13 @@ defined('_JEXEC') or die;
 
 				if ($this->jemsettings->showcity == 1) :
 				?>
-					<td headers="jem_city" align="left" valign="top"><?php echo ucwords(strtolower($row->city)) ? $this->escape(ucwords(strtolower($row->city))) : '-'; ?></td>
+					<td headers="jem_city" align="left" valign="top"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
 				<?php
 				endif;
 
 				if ($this->jemsettings->showstate == 1) :
 				?>
-					<td headers="jem_state" align="left" valign="top"><?php ucwords(strtolower($row->state)) ? $this->escape(ucwords(strtolower($row->state))) : '-'; ?></td>
+					<td headers="jem_state" align="left" valign="top"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
 				<?php
 				endif;
 
