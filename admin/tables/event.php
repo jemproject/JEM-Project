@@ -10,8 +10,8 @@
 defined('_JEXEC') or die;
 
 /**
- * JEM Venue Model
- * 
+ * JEM Event Table
+ *
  */
 class JEMTableEvent extends JTable
 {
@@ -23,33 +23,33 @@ class JEMTableEvent extends JTable
 	}
 
 
-	
+
 	// overloaded check function
 	function check()
 	{
-		
+
 		if (empty($this->enddates)) {
 			$this->enddates = NULL;
 		}
-		
+
 		if (empty($this->dates)) {
 			$this->dates = NULL;
 		}
 
-		
-		
+
+
 		// Set alias
 		$this->alias = JApplication::stringURLSafe($this->alias);
 		if (empty($this->alias)) {
 			$this->alias = JApplication::stringURLSafe($this->title);
 		}
-		
-		
-		
+
+
+
 		return true;
 	}
-	
-	
+
+
 	/**
 	 * Overload the store method for the Venue table.
 	 *
@@ -58,46 +58,46 @@ class JEMTableEvent extends JTable
 	{
 			// Verify that the alias is unique
 			$table = JTable::getInstance('Event', 'JEMTable');
-		 
-			
+
+
 			// @todo alter error reporting
-			
+
 			/* if ($table->load(array('alias'=>$this->alias, 'catid'=>$this->catid)) && ($table->id != $this->id || $this->id==0)) {
 			if ($table->load(array('alias'=>$this->alias)) && ($table->id != $this->id || $this->id==0)) {
-			
-				
+
+
 					$this->setError(JText::_('COM_JEM_ERROR_UNIQUE_ALIAS'));
 					return false;
 					}
 					*/
-					
+
 					return parent::store($updateNulls);
 		}
-	
-		
+
+
 		public function bind($array, $ignore = '')
 		{
-			
+
 			// in here we are checking for the empty value of the checkbox
-			
-			
+
+
 			if (!isset($array['registra']))
 				$array['registra'] = 0 ;
-			
+
 			if (!isset($array['unregistra']))
 				$array['unregistra'] = 0 ;
-			
+
 			if (!isset($array['waitinglist']))
 				$array['waitinglist'] = 0 ;
-			
-			
-		
+
+
+
 			//don't override without calling base class
 			return parent::bind($array, $ignore);
-		}	
-		
-		
-		
+		}
+
+
+
 		/**
 	 * Method to set the publishing state for a row or list of rows in the database
 	 * table. The method respects checked out rows by other users and will attempt
@@ -110,7 +110,7 @@ class JEMTableEvent extends JTable
 	 *
 	 * @return  boolean  True on success.
 	 *
-	 * 
+	 *
 	 */
 	function publish($pks = null, $state = 1, $userId = 0)
 	{
@@ -186,6 +186,6 @@ class JEMTableEvent extends JTable
 		return true;
 	}
 
-	
+
 }
 ?>

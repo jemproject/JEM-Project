@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 
 /**
  * Holds helpfull administration related stuff
- * 
+ *
  */
 class JEMAdmin {
 
@@ -24,7 +24,7 @@ class JEMAdmin {
 		$params =  JComponentHelper::getParams('com_jem');
 
 		// if ($params->get('copyright') == 1) {
-		echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
+		// echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
 		// }
 	}
 

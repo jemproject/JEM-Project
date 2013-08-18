@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 /**
- * JEM Settings Model
+ * JEM Settings Table
  *
  */
 class JEMTableSettings extends JTable

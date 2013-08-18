@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 /**
- * JEM Venue Model
+ * JEM Venue Table
  *
  */
 class JEMTableVenue extends JTable
