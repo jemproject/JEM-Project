@@ -64,7 +64,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 					echo $this->escape($this->row->venue).' - ';
 				endif;
 
-				echo $this->escape(ucwords(strtolower($this->row->city))).', '.$this->escape(ucwords(strtolower($this->row->state))); ?>
+				echo $this->escape($this->row->city).', '.$this->escape($this->row->state); ?>
 			</dd>
 
 		<?php endif;
@@ -109,7 +109,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 	<?php if ($this->jemsettings->showevdescription == 1 && $this->row->datdescription != ''
  		&& $this->row->datdescription != '<br />') : ?>
 
-		<h2 class="description"><?php echo JText::_('COM_JEM_DESCRIPTION'); ?></h2>
+		<h2 class="description"><?php echo JText::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
 		<div class="description event_desc">
 			<?php echo $this->row->datdescription; ?>
 		</div>
@@ -211,14 +211,14 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 				<?php if ($this->row->city) : ?>
 				<dt class="venue_city"><?php echo JText::_('COM_JEM_CITY').':'; ?></dt>
 				<dd class="venue_city">
-					<?php echo $this->escape((ucwords(strtolower($this->row->city))));?>
+					<?php echo $this->escape($this->row->city);?>
 				</dd>
 				<?php endif; ?>
 
 				<?php if ($this->row->state) : ?>
 				<dt class="venue_state"><?php echo JText::_('COM_JEM_STATE').':'; ?></dt>
 				<dd class="venue_state">
-					<?php echo $this->escape((ucwords(strtolower($this->row->state)))); ?>
+					<?php echo $this->escape($this->row->state); ?>
 				</dd>
 				<?php endif; ?>
 
@@ -244,7 +244,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 		<?php if ($this->jemsettings->showlocdescription == 1 && $this->row->locdescription != ''
  			&& $this->row->locdescription != '<br />') : ?>
 
-			<h2 class="location_desc"><?php echo JText::_('COM_JEM_DESCRIPTION'); ?></h2>
+			<h2 class="location_desc"><?php echo JText::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
 			<div class="description location_desc">
 				<?php echo $this->row->locdescription;	?>
 			</div>
