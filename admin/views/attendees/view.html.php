@@ -131,7 +131,7 @@ class JEMViewAttendees extends JViewLegacy {
 		JToolBarHelper::addNew('attendees.add');
 		JToolBarHelper::editList('attendees.edit');
 		JToolBarHelper::spacer();
-		JToolBarHelper::deleteList('attendees.remove');
+		JToolBarHelper::deleteList('', 'attendees.remove', 'COM_JEM_DELETE');
 		JToolBarHelper::spacer();
 		JToolBarHelper::custom('attendees.back', 'back', 'back', JText::_('COM_JEM_ATT_BACK'), false);
 		JToolBarHelper::spacer();
