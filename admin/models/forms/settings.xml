@@ -9,7 +9,7 @@
 			name="showdetails"
 			type="list"
 			label="COM_JEM_SHOW_EVENT"
-			description="COM_JEM_SHOW_EVENT_TIP"
+			description="COM_JEM_SHOW_EVENT_DESC"
 			class="inputbox"
 			size="1"
 			default="1"
@@ -20,23 +20,23 @@
 			
 								
 		<field name="formatdate" type="text"
-			label="COM_JEM_SETTINGS_DATE_FORMAT" description="COM_JEM_SETTINGS_DATE_FORMAT_TIP"
+			label="COM_JEM_SETTINGS_DATE_FORMAT" description="COM_JEM_SETTINGS_DATE_FORMAT_DESC"
 			class="inputbox" size="20" required="false" />				
 												
 		<field name="formatShortDate" type="text"
-			label="COM_JEM_SETTINGS_SHORT_DATE_FORMAT" description="COM_JEM_SETTINGS_SHORT_DATE_FORMAT_TIP"
+			label="COM_JEM_SETTINGS_SHORT_DATE_FORMAT" description="COM_JEM_SETTINGS_SHORT_DATE_FORMAT_DESC"
 			class="inputbox" size="20" required="false" />				
 					
 		<field name="formattime" type="text"
-			label="COM_JEM_TIME_STRFTIME" description="COM_JEM_TIME_STRFTIME_TIP"
+			label="COM_JEM_TIME_STRFTIME" description="COM_JEM_TIME_STRFTIME_DESC"
 			class="inputbox" size="20" required="false" />					
 							
 					<field name="timename" type="text"
-			label="COM_JEM_TIME_NAME" description="COM_JEM_TIME_NAME_TIP"
+			label="COM_JEM_TIME_NAME" description="COM_JEM_TIME_NAME_DESC"
 			class="inputbox" size="15" maxlength="10" required="false" />	
 			
 				<field name="storeip" type="radio"
-			label="COM_JEM_STORE_IP" description="COM_JEM_STORE_IP_TIP"
+			label="COM_JEM_STORE_IP" description="COM_JEM_STORE_IP_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
@@ -113,7 +113,7 @@
 			class="inputbox" size="3" maxlength="3" required="false" />	
 
 		<field name="display_num" type="text"
-			label="COM_JEM_EVENT_NUMBER" description="COM_JEM_EVENT_NUMBER_TIP"
+			label="COM_JEM_EVENT_NUMBER" description="COM_JEM_EVENT_NUMBER_DESC"
 			class="inputbox" size="3" maxlength="3" required="false" />	
 
 		<field name="discatheader" type="radio"
@@ -179,12 +179,12 @@
 		label="COM_JEM_USER_CONTROL">
 		
 		<field name="datdesclimit" type="text"
-			label="COM_JEM_DESCRIPTION_LIMIT" description="COM_JEM_DESCRIPTION_LIMIT_TIP"
+			label="COM_JEM_DESCRIPTION_LIMIT" description="COM_JEM_DESCRIPTION_LIMIT_DESC"
 			class="inputbox" size="5" required="false" />
 		
 		
 		<field name="imageenabled" type="list"
-			label="COM_JEM_IMAGE_UPLOAD_OPTIONS" description="COM_JEM_IMAGE_UPLOAD_OPTIONS_TIP"
+			label="COM_JEM_IMAGE_UPLOAD_OPTIONS" description="COM_JEM_IMAGE_UPLOAD_OPTIONS_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">COM_JEM_DISABLED</option>
 			<option value="1">COM_JEM_OPTIONAL</option>
@@ -200,7 +200,7 @@
 		label="COM_JEM_REGISTRATION">
 		
 		<field name="showfroregistra" type="list"
-			label="COM_JEM_SUBMIT_REGISTER" description="COM_JEM_SUBMIT_REGISTER_TIP"
+			label="COM_JEM_SUBMIT_REGISTER" description="COM_JEM_SUBMIT_REGISTER_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
@@ -208,7 +208,7 @@
 		</field>	
 				
 		<field name="showfrounregistra" type="list"
-			label="COM_JEM_SUBMIT_UNREGISTER" description="COM_JEM_SUBMIT_UNREGISTER_TIP"
+			label="COM_JEM_SUBMIT_UNREGISTER" description="COM_JEM_SUBMIT_UNREGISTER_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
@@ -228,32 +228,32 @@
 		label="COM_JEM_IMAGE_HANDLING">
 		
 			<field name="sizelimit" type="text"
-			label="COM_JEM_IMAGE_FILESIZE" description="COM_JEM_IMAGE_FILESIZE_TIP"
+			label="COM_JEM_IMAGE_FILESIZE" description="COM_JEM_IMAGE_FILESIZE_DESC"
 			class="inputbox" size="10" maxlength="10" required="false" />
 			
 			<!-- @todo rename field -->
 			<field name="imagehight" type="text"
-			label="COM_JEM_IMAGE_HEIGHT" description="COM_JEM_IMAGE_HEIGHT_TIP"
+			label="COM_JEM_IMAGE_HEIGHT" description="COM_JEM_IMAGE_HEIGHT_DESC"
 			class="inputbox" size="10" maxlength="10" required="false" />
 			
 			<field name="imagewidth" type="text"
-			label="COM_JEM_IMAGE_WIDTH" description="COM_JEM_IMAGE_WIDTH_TIP"
+			label="COM_JEM_IMAGE_WIDTH" description="COM_JEM_IMAGE_WIDTH_DESC"
 			class="inputbox" size="10" maxlength="10" required="false" />
 		
 			
 			<field name="gddisabled" type="radio"
-			label="COM_JEM_GD_LIBRARY" description="COM_JEM_GD_LIBRARY_TIP"
+			label="COM_JEM_GD_LIBRARY" description="COM_JEM_GD_LIBRARY_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 			</field>
 			
 			<field name="gdversion" type="text"
-			label="COM_JEM_GD_VERSION" description="COM_JEM_GD_VERSION_TIP"
+			label="COM_JEM_GD_VERSION" description="COM_JEM_GD_VERSION_DESC"
 			class="inputbox" default="0" required="false" />	
 			
 			<field name="lightbox" type="radio"
-			label="COM_JEM_IMAGE_LIGHTBOX" description="COM_JEM_IMAGE_LIGHTBOX_TIP"
+			label="COM_JEM_IMAGE_LIGHTBOX" description="COM_JEM_IMAGE_LIGHTBOX_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
@@ -266,7 +266,7 @@
 		label="COM_JEM_EVENT_HANDLING">
 		
 		<field name="oldevent" type="list"
-			label="COM_JEM_OLD_EVENTS" description="COM_JEM_OLD_EVENTS_TIP"
+			label="COM_JEM_OLD_EVENTS" description="COM_JEM_OLD_EVENTS_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">COM_JEM_DO_NOTHING</option>
 			<option value="1">COM_JEM_DELETE_OLD_EVENTS</option>
@@ -275,7 +275,7 @@
 		
 		
 		<field name="minus" type="text"
-			label="COM_JEM_NUMBER_DELETE_DAYS" description="COM_JEM_NUMBER_DELETE_DAYS_TIP"
+			label="COM_JEM_NUMBER_DELETE_DAYS" description="COM_JEM_NUMBER_DELETE_DAYS_DESC"
 			class="inputbox" size="10" maxlength="10" required="false" />
 			
 			
@@ -290,18 +290,18 @@
 		label="COM_JEM_GENERAL_LAYOUT_SETTINGS">
 		
 			<field name="showtime" type="radio"
-			label="COM_JEM_DISPLAY_TIME" description="COM_JEM_DISPLAY_TIME_FRONT_TIP"
+			label="COM_JEM_DISPLAY_TIME" description="COM_JEM_DISPLAY_TIME_FRONT_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JHIDE</option>
 			<option value="1">JSHOW</option>
 			</field>
 			
 			<field name="tablewidth" type="text"
-			label="COM_JEM_FRONT_TABLE_WIDTH" description="COM_JEM_FRONT_TABLE_WIDTH_TIP"
+			label="COM_JEM_FRONT_TABLE_WIDTH" description="COM_JEM_FRONT_TABLE_WIDTH_DESC"
 			class="inputbox" size="10" maxlength="10" required="false" />
 			
 			<field name="datewidth" type="text"
-			label="COM_JEM_WIDTH_DATE_COLUMN" description="COM_JEM_WIDTH_DATE_COLUMN_TIP"
+			label="COM_JEM_WIDTH_DATE_COLUMN" description="COM_JEM_WIDTH_DATE_COLUMN_DESC"
 			class="inputbox" size="10" maxlength="10" required="false" />
 				
 	</fieldset>
@@ -313,7 +313,7 @@
 		
 			
 			<field name="showcity" type="radio"
-			label="COM_JEM_DISPLAY_CITY_FRONT" description="COM_JEM_DISPLAY_CITY_FRONT_TIP"
+			label="COM_JEM_DISPLAY_CITY_FRONT" description="COM_JEM_DISPLAY_CITY_FRONT_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
@@ -321,7 +321,7 @@
 			
 			
 			<field name="citywidth" type="text"
-			label="COM_JEM_WIDTH_CITY_COLUMN" description="COM_JEM_WIDTH_CITY_COLUMN_TIP"
+			label="COM_JEM_WIDTH_CITY_COLUMN" description="COM_JEM_WIDTH_CITY_COLUMN_DESC"
 			class="inputbox" size="10" maxlength="10" required="false" />
 			
 				
@@ -355,7 +355,7 @@
 		
 			
 			<field name="showtitle" type="radio"
-			label="COM_JEM_DISPLAY_TITLE_FRONT" description="COM_JEM_DISPLAY_TITLE_FRONT_TIP"
+			label="COM_JEM_DISPLAY_TITLE_FRONT" description="COM_JEM_DISPLAY_TITLE_FRONT_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
@@ -363,7 +363,7 @@
 			
 			
 			<field name="titlewidth" type="text"
-			label="COM_JEM_WIDTH_TITLE_COLUMN" description="COM_JEM_WIDTH_TITLE_COLUMN_TIP"
+			label="COM_JEM_WIDTH_TITLE_COLUMN" description="COM_JEM_WIDTH_TITLE_COLUMN_DESC"
 			class="inputbox" size="10" maxlength="10" required="false" />
 			
 				
@@ -375,18 +375,18 @@
 		label="COM_JEM_VENUE_COLUMN">
 		
 			<field name="showlocate" type="radio"
-			label="COM_JEM_DISPLAY_VENUE_FRONT" description="COM_JEM_DISPLAY_VENUE_FRONT_TIP"
+			label="COM_JEM_DISPLAY_VENUE_FRONT" description="COM_JEM_DISPLAY_VENUE_FRONT_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 			</field>
 			
 			<field name="locationwidth" type="text"
-			label="COM_JEM_WIDTH_VENUE_COLUMN" description="COM_JEM_WIDTH_VENUE_COLUMN_TIP"
+			label="COM_JEM_WIDTH_VENUE_COLUMN" description="COM_JEM_WIDTH_VENUE_COLUMN_DESC"
 			class="inputbox" size="10" maxlength="10" required="false" />
 			
 			<field name="showlinkvenue" type="radio"
-			label="COM_JEM_DISPLAY_LINK_TO_VENUE_VIEW" description="COM_JEM_DISPLAY_LINK_TO_VENUE_VIEW_TIP"
+			label="COM_JEM_DISPLAY_LINK_TO_VENUE_VIEW" description="COM_JEM_DISPLAY_LINK_TO_VENUE_VIEW_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
@@ -401,14 +401,14 @@
 		label="COM_JEM_STATE_COLUMN">
 		
 			<field name="showstate" type="radio"
-			label="COM_JEM_DISPLAY_STATE_FRONT" description="COM_JEM_DISPLAY_STATE_FRONT_TIP"
+			label="COM_JEM_DISPLAY_STATE_FRONT" description="COM_JEM_DISPLAY_STATE_FRONT_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 			</field>
 			
 			<field name="statewidth" type="text"
-			label="COM_JEM_WIDTH_STATE_COLUMN" description="COM_JEM_WIDTH_STATE_COLUMN_TIP"
+			label="COM_JEM_WIDTH_STATE_COLUMN" description="COM_JEM_WIDTH_STATE_COLUMN_DESC"
 			class="inputbox" size="10" maxlength="10" required="false" />	
 	</fieldset>
 	
@@ -419,18 +419,18 @@
 		label="COM_JEM_CATEGORY_COLUMN">
 		
 			<field name="showcat" type="radio"
-			label="COM_JEM_DISPLAY_CATEGORY_FRONT" description="COM_JEM_DISPLAY_CATEGORY_FRONT_TIP"
+			label="COM_JEM_DISPLAY_CATEGORY_FRONT" description="COM_JEM_DISPLAY_CATEGORY_FRONT_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 			</field>
 			
 			<field name="catfrowidth" type="text"
-			label="COM_JEM_WIDTH_CATEGORY_COLUMN" description="COM_JEM_WIDTH_CATEGORY_COLUMN_TIP"
+			label="COM_JEM_WIDTH_CATEGORY_COLUMN" description="COM_JEM_WIDTH_CATEGORY_COLUMN_DESC"
 			class="inputbox" size="10" maxlength="10" required="false" />
 			
 			<field name="catlinklist" type="radio"
-			label="COM_JEM_DISPLAY_LINK_TO_CATEGORY_VIEW" description="COM_JEM_DISPLAY_LINK_TO_CATEGORY_VIEW_TIP"
+			label="COM_JEM_DISPLAY_LINK_TO_CATEGORY_VIEW" description="COM_JEM_DISPLAY_LINK_TO_CATEGORY_VIEW_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
@@ -476,7 +476,7 @@
 		label="COM_JEM_AC_EVENTS">
 		
 		<field name="delivereventsyes" type="list"
-			label="COM_JEM_AC_EVENT_SUBMIT" description="COM_JEM_AC_EVENT_SUBMIT_TIP"
+			label="COM_JEM_AC_EVENT_SUBMIT" description="COM_JEM_AC_EVENT_SUBMIT_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="-2">COM_JEM_ONLYADMINS</option>
 			<option value="1">COM_JEM_EVERYBODY</option>
@@ -484,14 +484,14 @@
 		</field>
 		
 		<field name="evdelrec" type="radio"
-			label="COM_JEM_RECURSIVE" description="COM_JEM_RECURSIVE_TIP"
+			label="COM_JEM_RECURSIVE" description="COM_JEM_RECURSIVE_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JHIDE</option>
 			<option value="1">JYES</option>
 		</field>
 		
 		<field name="autopubl" type="list"
-			label="COM_JEM_AUTOPUBLISH" description="COM_JEM_AUTOPUBLISH_TIP"
+			label="COM_JEM_AUTOPUBLISH" description="COM_JEM_AUTOPUBLISH_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="-2">COM_JEM_ONLYADMINS</option>
 			<option value="1">COM_JEM_EVERYBODY</option>
@@ -499,14 +499,14 @@
 		</field>
 		
 		<field name="evpubrec" type="radio"
-			label="COM_JEM_RECURSIVE" description="COM_JEM_RECURSIVE_TIP"
+			label="COM_JEM_RECURSIVE" description="COM_JEM_RECURSIVE_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>
 		
 		<field name="eventedit" type="list"
-			label="COM_JEM_AC_EVENT_EDIT" description="COM_JEM_AC_EVENT_EDIT_TIP"
+			label="COM_JEM_AC_EVENT_EDIT" description="COM_JEM_AC_EVENT_EDIT_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="-2">COM_JEM_ONLYADMINS</option>
 			<option value="1">COM_JEM_EVERYBODY</option>
@@ -514,14 +514,14 @@
 		</field>
 		
 		<field name="eventeditrec" type="radio"
-			label="COM_JEM_RECURSIVE" description="COM_JEM_RECURSIVE_TIP"
+			label="COM_JEM_RECURSIVE" description="COM_JEM_RECURSIVE_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>
 		
 		<field name="eventowner" type="radio"
-			label="COM_JEM_EDIT_EVENT_FRONTEND_USER" description="COM_JEM_EDIT_EVENT_FRONTEND_USER_TIP"
+			label="COM_JEM_EDIT_EVENT_FRONTEND_USER" description="COM_JEM_EDIT_EVENT_FRONTEND_USER_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
@@ -546,14 +546,14 @@
 		</field>
 		
 		<field name="locdelrec" type="radio"
-			label="COM_JEM_RECURSIVE" description="COM_JEM_RECURSIVE_TIP"
+			label="COM_JEM_RECURSIVE" description="COM_JEM_RECURSIVE_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>
 		
 		<field name="autopublocate" type="list"
-			label="COM_JEM_AUTOPUBLISH" description="COM_JEM_AUTOPUBLISH_TIP"
+			label="COM_JEM_AUTOPUBLISH" description="COM_JEM_AUTOPUBLISH_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="-2">COM_JEM_ONLYADMINS</option>
 			<option value="1">COM_JEM_EVERYBODY</option>
@@ -561,14 +561,14 @@
 		</field>
 		
 		<field name="locpubrec" type="radio"
-			label="COM_JEM_RECURSIVE" description="COM_JEM_RECURSIVE_TIP"
+			label="COM_JEM_RECURSIVE" description="COM_JEM_RECURSIVE_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>
 		
 		<field name="venueedit" type="list"
-			label="COM_JEM_AC_VENUE_EDIT" description="COM_JEM_AC_VENUE_EDIT_TIP"
+			label="COM_JEM_AC_VENUE_EDIT" description="COM_JEM_AC_VENUE_EDIT_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="-2">COM_JEM_ONLYADMINS</option>
 			<option value="1">COM_JEM_EVERYBODY</option>
@@ -576,7 +576,7 @@
 		</field>
 		
 		<field name="venueeditrec" type="radio"
-			label="COM_JEM_RECURSIVE" description="COM_JEM_RECURSIVE_TIP"
+			label="COM_JEM_RECURSIVE" description="COM_JEM_RECURSIVE_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
@@ -584,7 +584,7 @@
 		
 		
 		<field name="venueowner" type="radio"
-			label="COM_JEM_EDIT_VENUE_FRONTEND_USER" description="COM_JEM_EDIT_VENUE_FRONTEND_USER_TIP"
+			label="COM_JEM_EDIT_VENUE_FRONTEND_USER" description="COM_JEM_EDIT_VENUE_FRONTEND_USER_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
@@ -604,21 +604,21 @@
 		
 		
 		<field name="showtimedetails" type="radio"
-			label="COM_JEM_DISPLAY_TIME" description="COM_JEM_DISPLAY_TIME_TIP"
+			label="COM_JEM_DISPLAY_TIME" description="COM_JEM_DISPLAY_TIME_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JHIDE</option>
 			<option value="1">JSHOW</option>
 		</field>
 		
 		<field name="showevdescription" type="radio"
-			label="COM_JEM_DISPLAY_EVENT_DESCRIPT" description="COM_JEM_DISPLAY_EVENT_DESCRIPT_TIP"
+			label="COM_JEM_DISPLAY_EVENT_DESCRIPT" description="COM_JEM_DISPLAY_EVENT_DESCRIPT_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JHIDE</option>
 			<option value="1">JSHOW</option>
 		</field>
 		
 		<field name="showdetailstitle" type="radio"
-			label="COM_JEM_DISPLAY_EVENT_TITLE" description="COM_JEM_DISPLAY_EVENT_TITLE_TIP"
+			label="COM_JEM_DISPLAY_EVENT_TITLE" description="COM_JEM_DISPLAY_EVENT_TITLE_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JHIDE</option>
 			<option value="1">JSHOW</option>
@@ -635,21 +635,21 @@
 		
 		
 		<field name="showlocdescription" type="radio"
-			label="COM_JEM_DISPLAY_VENUE_DESCRIPT" description="COM_JEM_DISPLAY_VENUE_DESCRIPT_TIP"
+			label="COM_JEM_DISPLAY_VENUE_DESCRIPT" description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JHIDE</option>
 			<option value="1">JSHOW</option>
 		</field>
 		
 		<field name="showdetailsadress" type="radio"
-			label="COM_JEM_DISPLAY_ADDRESS" description="COM_JEM_DISPLAY_ADDRESS_TIP"
+			label="COM_JEM_DISPLAY_ADDRESS" description="COM_JEM_DISPLAY_ADDRESS_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">JHIDE</option>
 			<option value="1">JSHOW</option>
 		</field>
 		
 		<field name="showdetlinkvenue" type="list"
-			label="COM_JEM_DISPLAY_ADDRESS" description="COM_JEM_DISPLAY_ADDRESS_TIP"
+			label="COM_JEM_DISPLAY_ADDRESS" description="COM_JEM_DISPLAY_ADDRESS_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">COM_JEM_NO_LINK</option>
 			<option value="1">COM_JEM_LINK_TO_URL</option>
@@ -661,7 +661,7 @@
 		
 		
 		<field name="showmapserv" type="list"
-			label="COM_JEM_DISPLAY_LINK_TO_MAP" description="COM_JEM_DISPLAY_LINK_TO_MAP_TIP"
+			label="COM_JEM_DISPLAY_LINK_TO_MAP" description="COM_JEM_DISPLAY_LINK_TO_MAP_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">COM_JEM_NO_MAP_SERVICE</option>
 			<option value="1">COM_JEM_GOOGLE_MAP_LINK</option>
@@ -670,11 +670,11 @@
 		
 		
 		<field name="tld" type="text"
-			label="COM_JEM_GOOGLE_MAP_TLD" description="COM_JEM_GOOGLE_MAP_TLD_TIP"
+			label="COM_JEM_GOOGLE_MAP_TLD" description="COM_JEM_GOOGLE_MAP_TLD_DESC"
 			class="inputbox" size="10" maxlength="10" required="false" />
 			
 		<field name="lg" type="text"
-			label="COM_JEM_GOOGLE_MAP_LG" description="COM_JEM_GOOGLE_MAP_LG_TIP"
+			label="COM_JEM_GOOGLE_MAP_LG" description="COM_JEM_GOOGLE_MAP_LG_DESC"
 			class="inputbox" size="10" maxlength="10" required="false" />
 		
 		
@@ -687,7 +687,7 @@
 		
 	
 		<field name="regname" type="list"
-			label="COM_JEM_TYPE_REG_NAME" description="COM_JEM_TYPE_REG_NAME_TIP"
+			label="COM_JEM_TYPE_REG_NAME" description="COM_JEM_TYPE_REG_NAME_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">COM_JEM_USERNAME</option>
 			<option value="1">COM_JEM_NAME</option>
@@ -695,7 +695,7 @@
 		
 
 		<field name="comunsolution" type="list"
-			label="COM_JEM_COM_SOL" description="COM_JEM_COM_SOL_TIP"
+			label="COM_JEM_COM_SOL" description="COM_JEM_COM_SOL_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">COM_JEM_DONT_USE_COM_SOL</option>
 			<option value="1">COM_JEM_COMBUILDER</option>
@@ -703,7 +703,7 @@
 		
 		
 		<field name="comunoption" type="list"
-			label="COM_JEM_TYPE_COM_INTEGRATION" description="COM_JEM_TYPE_COM_INTEGRATION_TIP"
+			label="COM_JEM_TYPE_COM_INTEGRATION" description="COM_JEM_TYPE_COM_INTEGRATION_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="0">COM_JEM_LINK_PROFILE</option>
 			<option value="1">COM_JEM_LINK_AVATAR</option>

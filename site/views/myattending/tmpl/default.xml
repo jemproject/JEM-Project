@@ -11,7 +11,7 @@
 			<field name="filtermyregs" type="radio"
 				default="1"
 				label="COM_JEM_FILTER_MYREGISTRATIONS"
-				description="COM_JEM_FILTER_MYREGISTRATIONS_TIP"
+				description="COM_JEM_FILTER_MYREGISTRATIONS_DESC"
 			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>

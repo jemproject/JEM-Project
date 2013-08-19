@@ -12,7 +12,7 @@
 				default="0"
 				size="2"
 				label="COM_JEM_DAYS_FIELD"
-				description="COM_JEM_DAYS_FIELD_TIP"
+				description="COM_JEM_DAYS_FIELD_DESC"
 			/>
 		</fieldset>
 	</fields>

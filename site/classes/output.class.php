@@ -59,7 +59,7 @@ class JEMOutput {
 				$output = '';
 			} else {
 				$link = 'index.php?view=editevent';
-				$overlib = JText::_('COM_JEM_SUBMIT_EVENT_TIP');
+				$overlib = JText::_('COM_JEM_SUBMIT_EVENT_DESC');
 				$output = '<a href="'.JRoute::_($link).'" class="editlinktip hasTip" title="'.JText::_('COM_JEM_DELIVER_NEW_EVENT')
 				.'::'.$overlib.'">'.$image.'</a>';
 			}
@@ -134,7 +134,7 @@ class JEMOutput {
 					} else {
 						$image = JText::_('COM_JEM_SHOW_EVENTS');
 					}
-					$overlib = JText::_('COM_JEM_SHOW_EVENTS_TIP');
+					$overlib = JText::_('COM_JEM_SHOW_EVENTS_DESC');
 					$title = JText::_('COM_JEM_SHOW_EVENTS');
 
 					if ($id) {
@@ -148,7 +148,7 @@ class JEMOutput {
 					} else {
 						$image = JText::_('COM_JEM_SHOW_ARCHIVE');
 					}
-					$overlib = JText::_('COM_JEM_SHOW_ARCHIVE_TIP');
+					$overlib = JText::_('COM_JEM_SHOW_ARCHIVE_DESC');
 					$title = JText::_('COM_JEM_SHOW_ARCHIVE');
 
 					if ($id) {
@@ -196,7 +196,7 @@ class JEMOutput {
 					} else {
 						$image = JText::_('COM_JEM_EDIT_EVENT');
 					}
-					$overlib = JText::_('COM_JEM_EDIT_EVENT_TIP');
+					$overlib = JText::_('COM_JEM_EDIT_EVENT_DESC');
 					$text = JText::_('COM_JEM_EDIT_EVENT');
 					break;
 
@@ -206,7 +206,7 @@ class JEMOutput {
 					} else {
 						$image = JText::_('COM_JEM_EDIT_VENUE');
 					}
-					$overlib = JText::_('COM_JEM_EDIT_VENUE_TIP');
+					$overlib = JText::_('COM_JEM_EDIT_VENUE_DESC');
 					$text = JText::_('COM_JEM_EDIT_VENUE');
 					break;
 			}
@@ -244,14 +244,14 @@ class JEMOutput {
 
 			if ($app->input->get('print','','int')) {
 				//button in popup
-				$overlib = JText::_('COM_JEM_PRINT_TIP');
+				$overlib = JText::_('COM_JEM_PRINT_DESC');
 				$text = JText::_('COM_JEM_PRINT');
 				$title = 'title='.JText::_('JGLOBAL_PRINT');
 				$pimage = JHTML::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), $title, true);
 				$output = '<a href="#" onclick="window.print();return false;">'.$pimage.'</a>';
 			} else {
 				//button in view
-				$overlib = JText::_('COM_JEM_PRINT_TIP');
+				$overlib = JText::_('COM_JEM_PRINT_DESC');
 				$text = JText::_('COM_JEM_PRINT');
 				$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" onclick="window.open(this.href,\'win2\',\''.$status.'\'); return false;" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 			}
@@ -298,7 +298,7 @@ class JEMOutput {
 				//button in popup
 			} else {
 				//button in view
-				$overlib = JText::_('COM_JEM_EMAIL_TIP');
+				$overlib = JText::_('COM_JEM_EMAIL_DESC');
 				$text = JText::_('COM_JEM_EMAIL');
 				return '<a href="'. JRoute::_($url) .'" class="editlinktip hasTip" onclick="window.open(this.href,\'win2\',\''.$status.'\'); return false;" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 			}
@@ -331,7 +331,7 @@ class JEMOutput {
 				$output = '';
 			} else {
 				//button in view
-				$overlib = JText::_('COM_JEM_ICAL_TIP');
+				$overlib = JText::_('COM_JEM_ICAL_DESC');
 				$text = JText::_('COM_JEM_ICAL');
 
 				$print_link = 'index.php?view='.$view.'&id='.$slug.'&format=raw&layout=ics';

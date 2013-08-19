@@ -18,7 +18,7 @@ defined('_JEXEC') or die;
 				<tbody>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SHOW_EVENT' ); ?>::<?php echo JText::_('COM_JEM_SHOW_EVENT_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SHOW_EVENT' ); ?>::<?php echo JText::_('COM_JEM_SHOW_EVENT_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_SHOW_EVENT' ); ?>
 							</span>
 						</td>
@@ -34,7 +34,7 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SETTINGS_DATE_FORMAT' ); ?>::<?php echo JText::_('COM_JEM_DATE_FORMAT_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SETTINGS_DATE_FORMAT' ); ?>::<?php echo JText::_('COM_JEM_DATE_FORMAT_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_SETTINGS_DATE_FORMAT' ); ?>
 							</span>
 						</td>
@@ -45,7 +45,7 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SETTINGS_SHORT_DATE_FORMAT' ); ?>::<?php echo JText::_('COM_JEM_SETTINGS_SHORT_DATE_FORMAT_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SETTINGS_SHORT_DATE_FORMAT' ); ?>::<?php echo JText::_('COM_JEM_SETTINGS_SHORT_DATE_FORMAT_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_SETTINGS_SHORT_DATE_FORMAT' ); ?>
 							</span>
 						</td>
@@ -56,7 +56,7 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_TIME_STRFTIME' ); ?>::<?php echo JText::_('COM_JEM_TIME_STRFTIME_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_TIME_STRFTIME' ); ?>::<?php echo JText::_('COM_JEM_TIME_STRFTIME_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_TIME_STRFTIME' ); ?>
 							</span>
 						</td>
@@ -67,7 +67,7 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_TIME_NAME' ); ?>::<?php echo JText::_('COM_JEM_TIME_NAME_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_TIME_NAME' ); ?>::<?php echo JText::_('COM_JEM_TIME_NAME_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_TIME_NAME' ); ?>
 							</span>
 						</td>
@@ -77,7 +77,7 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_STORE_IP' ); ?>::<?php echo JText::_('COM_JEM_STORE_IP_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_STORE_IP' ); ?>::<?php echo JText::_('COM_JEM_STORE_IP_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_STORE_IP' ); ?>
 							</span>
 						</td>
@@ -97,7 +97,7 @@ defined('_JEXEC') or die;
 				<tbody>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_OLD_EVENTS' ); ?>::<?php echo JText::_('COM_JEM_OLD_EVENTS_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_OLD_EVENTS' ); ?>::<?php echo JText::_('COM_JEM_OLD_EVENTS_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_OLD_EVENTS' ); ?>
 							</span>
 						</td>
@@ -120,7 +120,7 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr id="old"<?php if (!$mode) echo ' style="display:none"'; ?>>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NUMBER_DELETE_DAYS' ); ?>::<?php echo JText::_('COM_JEM_NUMBER_DELETE_DAYS_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NUMBER_DELETE_DAYS' ); ?>::<?php echo JText::_('COM_JEM_NUMBER_DELETE_DAYS_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_NUMBER_DELETE_DAYS' ); ?>
 							</span>
 						</td>
@@ -142,7 +142,7 @@ defined('_JEXEC') or die;
 				<tbody>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_IMAGE_FILESIZE' ); ?>::<?php echo JText::_('COM_JEM_IMAGE_FILESIZE_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_IMAGE_FILESIZE' ); ?>::<?php echo JText::_('COM_JEM_IMAGE_FILESIZE_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_IMAGE_FILESIZE' ); ?>
 							</span>
 						</td>
@@ -152,7 +152,7 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_IMAGE_HEIGHT' ); ?>::<?php echo JText::_('COM_JEM_IMAGE_HEIGHT_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_IMAGE_HEIGHT' ); ?>::<?php echo JText::_('COM_JEM_IMAGE_HEIGHT_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_IMAGE_HEIGHT' ); ?>
 							</span>
 						</td>
@@ -162,7 +162,7 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_IMAGE_WIDTH' ); ?>::<?php echo JText::_('COM_JEM_IMAGE_WIDTH_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_IMAGE_WIDTH' ); ?>::<?php echo JText::_('COM_JEM_IMAGE_WIDTH_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_IMAGE_WIDTH' ); ?>
 							</span>
 						</td>
@@ -175,7 +175,7 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_GD_LIBRARY' ); ?>::<?php echo JText::_('COM_JEM_GD_LIBRARY_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_GD_LIBRARY' ); ?>::<?php echo JText::_('COM_JEM_GD_LIBRARY_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_GD_LIBRARY' ); ?>
 							</span>
 						</td>
@@ -223,7 +223,7 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr id="gd1"<?php if (!$mode) echo ' style="display:none"'; ?>>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_IMAGE_LIGHTBOX' ); ?>::<?php echo JText::_('COM_JEM_IMAGE_LIGHTBOX_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_IMAGE_LIGHTBOX' ); ?>::<?php echo JText::_('COM_JEM_IMAGE_LIGHTBOX_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_IMAGE_LIGHTBOX' ); ?>
 							</span>
 						</td>
@@ -244,7 +244,7 @@ defined('_JEXEC') or die;
 				<tbody>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?>::<?php echo JText::_('COM_JEM_META_KEYWORDS_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?>::<?php echo JText::_('COM_JEM_META_KEYWORDS_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?>
 							</span>
 						</td>
@@ -272,7 +272,7 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_META_DESCRIPTION' ); ?>::<?php echo JText::_('COM_JEM_META_DESCRIPTION_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_META_DESCRIPTION' ); ?>::<?php echo JText::_('COM_JEM_META_DESCRIPTION_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_META_DESCRIPTION' ); ?>
 							</span>
 						</td>

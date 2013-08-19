@@ -344,7 +344,7 @@ $options = array(
 			<div class="floattext">
 				<label for="maxplaces"><?php echo JText::_( 'COM_JEM_MAX_PLACES' ); ?></label>
 				<input type="text" name="maxplaces" id="maxplaces" value="<?php echo $this->row->maxplaces; ?>" />
-				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_MAX_PLACES' ); ?>::<?php echo JText::_('COM_JEM_MAX_PLACES_TIP'); ?>">
+				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_MAX_PLACES' ); ?>::<?php echo JText::_('COM_JEM_MAX_PLACES_DESC'); ?>">
 					<?php echo $this->infoimage; ?>
 				</small>
 			</div>
@@ -356,7 +356,7 @@ $options = array(
 					<br class="clear" />
 				<label for="waitinglist1"><?php echo JText::_( 'JYES' ); ?></label>
 				<input type="radio" name="waitinglist" id="waitinglist1" value="1" <?php echo ($this->row->waitinglist) ? 'checked="checked"': ''; ?> />
-					<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_ENABLE_WAITINGLIST' ); ?>::<?php echo JText::_('COM_JEM_ENABLE_WAITINGLIST_TIP'); ?>">
+					<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_ENABLE_WAITINGLIST' ); ?>::<?php echo JText::_('COM_JEM_ENABLE_WAITINGLIST_DESC'); ?>">
 						<?php echo $this->infoimage; ?>
 					</small>
 			</div>

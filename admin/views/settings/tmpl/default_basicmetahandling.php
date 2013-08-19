@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
 				<tbody>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?>::<?php echo JText::_('COM_JEM_META_KEYWORDS_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?>::<?php echo JText::_('COM_JEM_META_KEYWORDS_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?>
 							</span>
 						</td>
@@ -44,7 +44,7 @@ defined('_JEXEC') or die;
 					</tr>
 					<tr>
 						<td width="300" class="key">
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_META_DESCRIPTION' ); ?>::<?php echo JText::_('COM_JEM_META_DESCRIPTION_TIP'); ?>">
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_META_DESCRIPTION' ); ?>::<?php echo JText::_('COM_JEM_META_DESCRIPTION_DESC'); ?>">
 								<?php echo JText::_( 'COM_JEM_META_DESCRIPTION' ); ?>
 							</span>
 						</td>

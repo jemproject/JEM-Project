@@ -12,7 +12,7 @@
 				size="2"
 				default="5"
 				label="COM_JEM_VENUE_NUMBER"
-				description="COM_JEM_VENUE_NUMBER_TIP"
+				description="COM_JEM_VENUE_NUMBER_DESC"
 			/>
 		</fieldset>
 	</fields>

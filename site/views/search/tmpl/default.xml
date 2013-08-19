@@ -16,12 +16,12 @@
 				label="COM_JEM_INTROTEXT_FIELD"
 				rows="8"
 				cols="30"
-				description="COM_JEM_INTROTEXT_FIELD_TIP"
+				description="COM_JEM_INTROTEXT_FIELD_DESC"
 			/>
 			<field name="showintrotext" type="radio"
 				default="0"
 				label="COM_JEM_DISPLAY_INTROTEXT"
-				description="COM_JEM_DISPLAY_INTROTEXT_TIP"
+				description="COM_JEM_DISPLAY_INTROTEXT_DESC"
 			>
 				<option value="0">COM_JEM_HIDE</option>
 				<option value="1">COM_JEM_SHOW</option>
@@ -34,7 +34,7 @@
 			<field name="date_filter_type" type="radio"
 				default="0"
 				label="COM_JEM_DATE_FILTER_TYPE"
-				description="COM_JEM_DATE_FILTER_TYPE_TIP"
+				description="COM_JEM_DATE_FILTER_TYPE_DESC"
 			>
 				<option value="0">COM_JEM_EVENT_START_DATE</option>
 				<option value="1">COM_JEM_ALL_EVENT_DATES</option>
@@ -42,7 +42,7 @@
 			<field name="template_suffix" type="text"
 				default=""
 				label="COM_JEM_SEARCH_TABLE_LAYOUT_SUFFIX"
-				description="COM_JEM_SEARCH_TABLE_LAYOUT_SUFFIX_TIP"
+				description="COM_JEM_SEARCH_TABLE_LAYOUT_SUFFIX_DESC"
 			/>
 		</fieldset>
 	</fields>

@@ -14,12 +14,12 @@
 				rows="8"
 				cols="30"
 				label="COM_JEM_INTROTEXT_FIELD"
-				description="COM_JEM_INTROTEXT_FIELD_TIP"
+				description="COM_JEM_INTROTEXT_FIELD_DESC"
 			/>
 			<field name="showintrotext" type="radio"
 				default="0"
 				label="COM_JEM_DISPLAY_INTROTEXT"
-				description="COM_JEM_DISPLAY_INTROTEXT_TIP"
+				description="COM_JEM_DISPLAY_INTROTEXT_DESC"
 			>
 				<option value="0">COM_JEM_HIDE</option>
 				<option value="1">COM_JEM_SHOW</option>
