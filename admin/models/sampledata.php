@@ -17,7 +17,7 @@ jimport('joomla.application.component.model');
  * JEM Component Sampledata Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelSampledata extends JModelLegacy
 {
@@ -37,8 +37,7 @@ class JEMModelSampledata extends JModelLegacy
 		parent::__construct();
 
 		if ($this->_check()) {
-			JError::raiseWarning(100, JText::_('COM_JEM_DATA_ALREADY_INSTALLED'));
-			return false;
+		return false;
 		}
 
 		$this->_filelist = $this->_unpack();
@@ -49,10 +48,17 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @access public
 	 * @return true on success
-	 * 
+	 *
 	 */
 	function loaddata()
 	{
+
+		if ($this->_check()) {
+			JError::raiseWarning(100, JText::_('COM_JEM_DATA_ALREADY_INSTALLED'));
+			return false;
+		}
+
+
 		//determine sql file
 		foreach ($this->_filelist['files'] as $key => $file)
 		{
@@ -99,7 +105,7 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @access private
 	 * @return array
-	 * 
+	 *
 	 */
 	function _unpack()
 	{
@@ -149,7 +155,7 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @access private
 	 * @return array
-	 * 
+	 *
 	 */
 	function _splitsql($sql)
 	{
@@ -194,7 +200,7 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @access private
 	 * @return true on success
-	 * 
+	 *
 	 */
 	function _moveimages()
 	{
@@ -203,7 +209,7 @@ class JEMModelSampledata extends JModelLegacy
 
 		foreach ($this->_filelist['files'] as $file)
 		{
-			if  (substr_count($file,"event")) 
+			if  (substr_count($file,"event"))
 				{
 			   		JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/events/'.$file);
 				}
@@ -211,7 +217,7 @@ class JEMModelSampledata extends JModelLegacy
 				{
 			   		JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/events/small/'.$file);
 				}
-                	
+
 			if  (substr_count($file,"venue"))
 				{
 			   		JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/venues/'.$file);
@@ -219,19 +225,19 @@ class JEMModelSampledata extends JModelLegacy
 			if  (substr_count($file,"vethumb"))
 				{
 			   		JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/venues/small/'.$file);
-				}	
-		
+				}
+
 			if  (substr_count($file,"cat"))
 				{
 			   		JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/categories/'.$file);
-				} 
+				}
 			if  (substr_count($file,"catthumb"))
 				{
 					JFile::copy($this->_filelist['folder'].'/'.$file, $imagebase.'/categories/small/'.$file);
 				}
 		}
-		
-		return true; 
+
+		return true;
 	}
 
 	/**
@@ -239,7 +245,7 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @access private
 	 * @return true on success
-	 * 
+	 *
 	 */
 	function _deletetmp()
 	{
@@ -257,17 +263,19 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @access private
 	 * @return void
-	 * 
+	 *
 	 */
 	function _check()
 	{
-		$query = 'SELECT id FROM #__jem_categories';
 
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select(array('id'));
+		$query->from('#__jem_categories');
 		$this->_db->setQuery( $query );
-
 		$result = $this->_db->loadResult();
-
 		return $result;
+
 	}
 }
 ?>
