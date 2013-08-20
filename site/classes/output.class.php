@@ -714,7 +714,8 @@ class JEMOutput {
 		$output = "";
 
 		if(JEMHelper::isValidDate($dateStart)) {
-			$output .= self::formatdate($dateStart, $format);
+			//$output .= self::formatdate($dateStart, $format);
+			$output .= '<meta itemprop="startDate" content="'.$dateStart.'"><abbr title="'.$dateStart.'" class="dtstart">'.self::formatdate($dateStart, $format).'</abbr>';
 
 			if($settings->showtimedetails && $timeStart) {
 				$output .= ', '.self::formattime($timeStart);
@@ -723,7 +724,8 @@ class JEMOutput {
 			// Display end date only when it differs from start date
 			$displayDateEnd = JEMHelper::isValidDate($dateEnd) && $dateEnd != $dateStart;
 			if($displayDateEnd) {
-				$output .= ' - '.self::formatdate($dateEnd, $format);
+				//$output .= ' - '.self::formatdate($dateEnd, $format);
+				$output .= ' - <meta itemprop="endDate" content="'.$dateEnd.'"><abbr title="'.$dateEnd.'" class="dtend">'.self::formatdate($dateEnd, $format).'</abbr>';
 			}
 
 			// Display end time only when both times are set

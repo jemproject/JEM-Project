@@ -24,6 +24,9 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 		<h1 class="componentheading">
 			<?php echo $this->escape($this->row->title); ?>
 		</h1>
+		<?php if ($this->row->published == 2) : ?>
+			<?php echo '<h4>Archived: This is a past event</h4>'; ?>
+		<?php endif; ?>
 	<?php endif; ?>
 
 	<!-- Event -->
@@ -143,7 +146,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 			<?php echo JText::_('COM_JEM_CONTACT') ; ?>
 		</h2>
 
-		<dl class="location floattext">
+		<dl class="contact floattext">
 			<?php if ($this->row->conname) : ?>
 				<dt class="con_name"><?php echo JText::_('COM_JEM_NAME').':'; ?></dt>
 				<dd class="con_name">
