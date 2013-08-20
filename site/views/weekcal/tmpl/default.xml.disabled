@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_JEM_WKCAL_LAYOUT">
+	<layout title="COM_JEM_WEEKCAL_VIEW_DEFAULT_TITLE">
 		<message>
-			<![CDATA[COM_JEM_WKCAL_LAYOUT_DESC]]>
+			<![CDATA[COM_JEM_WEEKCAL_VIEW_DEFAULT_DESC]]>
 		</message>
 	</layout>
 
@@ -10,7 +10,6 @@
 		<fieldset name="basic"
 			addfieldpath="/administrator/components/com_jem/models/fields"
 		>
-			
 			<field name="show_only_start" type="radio"
 				default="1"
 				label="COM_JEM_SHOWONLYSTARTDAY"
@@ -18,7 +17,7 @@
 			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
-  			</field>
+			</field>
 			<field name="top_category" type="categories"
 				default="0"
 				label="COM_JEM_SELECT_TOP_CATEGORY"
@@ -29,17 +28,31 @@
 				label="COM_JEM_MAX_EVENTS_PER_DAY"
 				description="COM_JEM_MAX_EVENTS_PER_DAY_DESC"
 			/>
-			
 			<field name="nrweeks" type="text"
 				default="1"
 				label="COM_JEM_WKCAL_NRWEEKS"
 				description="COM_JEM_WKCAL_NRWEEKS_DESC"
 			/>
-			
-			<field name="eventlinkcolor" type="color" default="#000000" label="COM_JEM_CALENDAR_EVENTLINKCOLOR"  />
-			<field name="eventbackgroundcolor" type="color" default="#FFFF00" label="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR"  />
-			<field name="currentdaycolor" type="color" default="#CCCC99" label="COM_JEM_CALENDAR_CURRENTDAYCOLOR"  />
-			<field name="eventandmorecolor" type="color" default="#FFFF00" label="COM_JEM_CALENDAR_EVENTANDMORECOLOR"  />
+			<field name="eventlinkcolor" type="color"
+				default="#000000"
+				label="COM_JEM_CALENDAR_EVENTLINKCOLOR"
+				description="COM_JEM_CALENDAR_EVENTLINKCOLOR_DESC"
+			/>
+			<field name="eventbackgroundcolor" type="color"
+				default="#FFFF00"
+				label="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR"
+				description="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR_DESC"
+			/>
+			<field name="currentdaycolor" type="color"
+				default="#CCCC99"
+				label="COM_JEM_CALENDAR_CURRENTDAYCOLOR"
+				description="COM_JEM_CALENDAR_CURRENTDAYCOLOR_DESC"
+			/>
+			<field name="eventandmorecolor" type="color"
+				default="#FFFF00"
+				label="COM_JEM_CALENDAR_EVENTANDMORECOLOR"
+				description="COM_JEM_CALENDAR_EVENTANDMORECOLOR_DESC"
+			/>
 		</fieldset>
 	</fields>
 </metadata>

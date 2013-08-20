@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_JEM_DETAILED_CATEGORIES_LAYOUT">
+	<layout title="COM_JEM_CATEGORIESDETAILED_VIEW_DEFAULT_TITLE">
 		<message>
-			<![CDATA[COM_JEM_DETAILED_CATEGORIES_LAYOUT_DESC]]>
+			<![CDATA[COM_JEM_CATEGORIESDETAILED_VIEW_DEFAULT_DESC]]>
 		</message>
 	</layout>
 
@@ -36,5 +36,5 @@
 				<option value="1">COM_JEM_SHOW</option>
 			</field>
 		</fieldset>
- 	</fields>
+	</fields>
 </metadata>

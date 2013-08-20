@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_JEM_CATEGORIES_LAYOUT">
+	<layout title="COM_JEM_CATEGORIES_VIEW_DEFAULT_TITLE">
 		<message>
-			<![CDATA[COM_JEM_CATEGORIES_LAYOUT_DESC]]>
+			<![CDATA[COM_JEM_CATEGORIES_VIEW_DEFAULT_DESC]]>
 		</message>
 	</layout>
 
@@ -30,7 +30,7 @@
 			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
-  			</field>
+			</field>
 		</fieldset>
 	</fields>
 </metadata>
