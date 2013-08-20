@@ -25,7 +25,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 			<?php echo $this->escape($this->row->title); ?>
 		</h1>
 		<?php if ($this->row->published == 2) : ?>
-			<?php echo '.JText::_('COM_JEM_EVENT_ARCHIVED').'; ?>
+			<?php echo JText::_('COM_JEM_EVENT_ARCHIVED'); ?>
 		<?php endif; ?>
 	<?php endif; ?>
 
