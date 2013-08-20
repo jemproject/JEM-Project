@@ -146,7 +146,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 			<?php echo JText::_('COM_JEM_CONTACT') ; ?>
 		</h2>
 
-		<dl class="location floattext">
+		<dl class="contact floattext">
 			<?php if ($this->row->conname) : ?>
 				<dt class="con_name"><?php echo JText::_('COM_JEM_NAME').':'; ?></dt>
 				<dd class="con_name">
