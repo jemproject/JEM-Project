@@ -447,11 +447,11 @@ class JEMOutput {
 	{
 		$app = JFactory::getApplication();
 		$settings = JEMHelper::config();
-		
+
 		// Emailaddress
 		$jinput = JFactory::getApplication()->input;
 		$enableemailaddress = $jinput->get('em','','int');
-		
+
 		if ($enableemailaddress == 1)
 		{
 			$emailaddress = '&em='.$enableemailaddress;

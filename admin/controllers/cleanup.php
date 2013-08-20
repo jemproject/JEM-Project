@@ -15,14 +15,14 @@ jimport('joomla.application.component.controller');
  * JEM Component Cleanup Controller
  *
  * @package JEM
- * 
+ *
  */
 class JEMControllerCleanup extends JEMController
 {
 	/**
 	 * Constructor
 	 *
-	 * 
+	 *
 	 */
 	function __construct()
 	{
@@ -39,7 +39,7 @@ class JEMControllerCleanup extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function delete()
 	{
@@ -47,18 +47,18 @@ class JEMControllerCleanup extends JEMController
 
 		if ($task == 'cleaneventimg') {
 			$type = JText::_('COM_JEM_EVENT');
-		} 
-		
+		}
+
 		if ($task == 'cleanvenueimg') {
 			$type = JText::_('COM_JEM_VENUE');
-		} 
-		
+		}
+
 		if ($task == 'cleancategoryimg') {
 			$type = JText::_('COM_JEM_CATEGORY');
-		} 
-		
-		
-		
+		}
+
+
+
 
 
 		$model = $this->getModel('cleanup');
@@ -71,8 +71,8 @@ class JEMControllerCleanup extends JEMController
 
 		$this->setRedirect( $link, $msg );
  	}
- 	
- 	
+
+
  	/**
  	 * logic to truncate table cats_relations
  	 *
@@ -84,26 +84,26 @@ class JEMControllerCleanup extends JEMController
  	{
 
  		$model = $this->getModel('cleanup');
- 	
+
  		$truncate = $model->truncatecats();
- 		
+
  		$link = 'index.php?option=com_jem&view=cleanup';
- 	
- 		$msg = JText::_( 'COM_JEM_TRUNCATECATSEVENTREF_DONE');
- 	
+
+ 		$msg = JText::_( 'COM_JEM_CLEANUP_TRUNCATECATSEVENTREF_DONE');
+
  		$this->setRedirect( $link, $msg );
  	}
- 	
- 	
- 	 	
- 	
- 	
+
+
+
+
+
   /**
    * Triggerarchive + Recurrences
    *
    * @access public
    * @return void
-   * 
+   *
    */
   function triggerarchive()
   {
