@@ -57,7 +57,12 @@ class JEMModelCategories extends JModelLegacy
 	{
 		parent::__construct();
 
-		$array = JRequest::getVar('cid', 0, '', 'array');
+		$jinput = JFactory::getApplication()->input;
+		$array = $jinput->get('cid',  0, 'array');
+
+		/* @todo Cleanup
+		 *
+		 *  $array = JRequest::getVar('cid', 0, '', 'array'); */
 		$this->setId((int)$array[0]);
 
 	}
@@ -190,6 +195,8 @@ class JEMModelCategories extends JModelLegacy
 
 		return $list;
 	}
+
+
 
 	function &getPagination()
 	{

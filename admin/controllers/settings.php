@@ -41,7 +41,7 @@ class JEMControllerSettings extends JControllerLegacy
 	public function save()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		// Sanitize
 		$task	= JRequest::getVar('task');

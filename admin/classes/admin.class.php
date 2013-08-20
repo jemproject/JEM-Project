@@ -30,10 +30,18 @@ class JEMAdmin {
 
 	static function config()
 	{
-		$db = JFactory::getDBO();
 
-		$sql = 'SELECT * FROM #__jem_settings WHERE id = 1';
-		$db->setQuery($sql);
+		$db = JFactory::getDbo();
+
+		$query = $db->getQuery(true);
+		$query->select(array('*'));
+		$query->from('#__jem_settings');
+		$query->where(array('id= '.$db->quote('1')));
+
+		$db->setQuery($query);
+
+		//$sql = 'SELECT * FROM #__jem_settings WHERE id = 1';
+		//$db->setQuery($sql);
 		$config = $db->loadObject();
 
 		return $config;

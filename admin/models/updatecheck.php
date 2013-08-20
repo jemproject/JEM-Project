@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Updatecheck Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelUpdatecheck extends JModelLegacy
 {
@@ -40,15 +40,15 @@ class JEMModelUpdatecheck extends JModelLegacy
 	 *
 	 * @access public
 	 * @return object
-	 * 
+	 *
 	 */
 	function getUpdatedata()
 	{
 
 		$jemsettings = JEMAdmin::config();
 		$installedversion = self::getParam('version');
-		
-		
+
+
 		include_once(JPATH_COMPONENT_ADMINISTRATOR.'/classes/Snoopy.class.php');
 
 		$snoopy = new Snoopy();
@@ -61,9 +61,9 @@ class JEMModelUpdatecheck extends JModelLegacy
 
 		$snoopy->fetch($file);
 
-		
+
 		$_updatedata = null;
-		
+
 		if ($snoopy->status != 200 || $snoopy->error) {
 
 			$_updatedata = new stdClass();
@@ -73,12 +73,12 @@ class JEMModelUpdatecheck extends JModelLegacy
 
 			$data = explode('|', $snoopy->results);
 
-			
+
 			$_updatedata = new stdClass();
-			
+
 			/* version to check, not visible in table */
 			$_updatedata->version 		= $data[0];
-			
+
 			/* in table */
 			$_updatedata->versiondetail	= $data[1];
 			$_updatedata->date			= JEMOutput::formatdate($data[2]);
@@ -92,24 +92,31 @@ class JEMModelUpdatecheck extends JModelLegacy
 			$_updatedata->current = version_compare( $installedversion, $_updatedata->version );
 
 		}
-		
+
 		return $_updatedata;
 	}
-	
-	
+
+
 	/*
 	 * get a variable from the manifest file (actually, from the manifest cache).
 	 * in this case it will be the installed version of jem
 	*/
 	function getParam( $name ) {
+
 		$db = JFactory::getDbo();
-		$db->setQuery('SELECT manifest_cache FROM #__extensions WHERE name = "com_jem"');
+
+		$query = $db->getQuery(true);
+		$query->select(array('manifest_cache'));
+		$query->from('#__extensions');
+		$query->where(array('name = '.$db->quote('com_jem')));
+		$db->setQuery($query);
+
 		$manifest = json_decode( $db->loadResult(), true );
 		return $manifest[ $name ];
 	}
-	
-	
-	
+
+
+
 
 }
 ?>

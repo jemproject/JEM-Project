@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+
+	<fieldset name="details"
+		addfieldpath="/administrator/components/com_jem/models/fields">
+
+
+		<field name="catname" type="text" class="inputbox" size="20"
+			label="COM_JEM_CATEGORY" description="COM_JEM_CATEGORY"
+			required="true" />
+			
+			<field name="alias" type="text" class="inputbox" size="20"
+			label="COM_JEM_ALIAS" description="COM_JEM_ALIAS"
+			required="true" />
+			
+					<field name="catdescription" type="editor" hide="pagebreak,readmore" class="inputbox"
+			width="100%"  label="COM_JEM_CATEGORY_DESCRIPTION" description="COM_JEM_CATEGORY_DESCRIPTION_DESC" filter="safehtml" />
+			
+			<field name="published" type="list" label="JSTATUS"
+			description="COM_JEM_CATEGORY_PUBLISHED_DESC" class="inputbox" size="1"
+			default="1">
+			<option value="1">JPUBLISHED</option>
+			<option value="0">JUNPUBLISHED</option>
+		</field>
+		
+		<field name="parent_id" type="catoptions2" multiple="false" class="inputbox"
+			size="10" label="COM_JEM_PARENT_CATEGORY" labelclass=""  description="COM_JEM_PARENT_CATEGORY"
+			required="false" />
+
+	</fieldset>
+
+
+
+	<fieldset name="publish">
+		<field name="id" type="text" default="0" readonly="true" class="readonly"
+			label="JGLOBAL_FIELD_ID_LABEL" description="JGLOBAL_FIELD_ID_DESC" />
+	</fieldset>
+
+
+
+	<fieldset name="request"
+		addfieldpath="/administrator/components/com_jem/models/fields">
+		
+		
+		<field name="locid" label="COM_JEM_VENUE" type="modal_venue"
+			size="40" description="COM_JEM_VENUE" required="false" />
+
+		<field name="contactid" label="COM_JEM_CONTACT" type="modal_contact"
+			size="40" description="COM_JEM_CONTACT" required="false" />
+	
+	
+	</fieldset>
+
+
+	<fieldset name="image" label="COM_JEM_IMAGE">
+
+
+		<field name="image" type="imageselectcategory" class="inputbox"
+			size="40" label="COM_JEM_IMAGESELECT" description="COM_JEM_IMAGESELECT" />
+
+
+	</fieldset>
+
+
+<fieldset name="meta"
+		label="JGLOBAL_FIELDSET_METADATA_OPTIONS"
+	>
+
+		<field name="meta_keywords" type="textarea" class="inputbox"
+			rows="3" cols="30" label="JFIELD_META_KEYWORDS_LABEL"
+			description="COM_JEM_FIELD_METAKEYWORDS_DESC" />
+			
+			<field name="meta_description" type="textarea" class="inputbox"
+			rows="3" cols="30" label="JFIELD_META_DESCRIPTION_LABEL"
+			description="COM_JEM_FIELD_METADESCRIPTION_DESC" />
+
+	</fieldset>
+
+</form>
