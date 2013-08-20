@@ -15,7 +15,7 @@ jimport('joomla.application.component.controller');
  * JEM Component Attendees Controller
  *
  * @package JEM
- * 
+ *
  */
 class JEMControllerAttendees extends JEMController
 {
@@ -38,12 +38,18 @@ class JEMControllerAttendees extends JEMController
 	 *
 	 * @return true on sucess
 	 * @access private
-	 * 
+	 *
 	 */
 	function remove()
 	{
-		$cid = JRequest::getVar( 'cid', array(0), 'post', 'array' );
-		$id 	= JRequest::getInt('id');
+		// Check for request forgeries.
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+
+		$jinput = JFactory::getApplication()->input;
+		$cid = $jinput->get('cid',  0, 'array');
+		$id = $jinput->get('id','','int');
+
+
 		$total 	= count( $cid );
 
 		$model = $this->getModel('attendees');
@@ -66,6 +72,8 @@ class JEMControllerAttendees extends JEMController
 
 	function export()
 	{
+
+
 		$app = JFactory::getApplication();
 
 		$model = $this->getModel('attendees');
@@ -118,7 +126,9 @@ class JEMControllerAttendees extends JEMController
 
   function toggle()
   {
-		$id = JRequest::getInt('id');
+
+  		$jinput = JFactory::getApplication()->input;
+  		$id = $jinput->get('id','','int');
 
 		$model = $this->getModel('attendee');
 		$model->setId($id);
@@ -152,106 +162,39 @@ class JEMControllerAttendees extends JEMController
 		$this->redirect();
   }
 
-	/**
-	 * logic for cancel an action
-	 *
-	 * @access public
-	 * @return void
-	 * 
-	 */
-	function cancel()
-	{
-		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
 
-		$venue =  JTable::getInstance('jem_register', '');
-		$venue->bind(JRequest::get('post'));
-		$venue->checkin();
-
-		$this->setRedirect( 'index.php?option=com_jem&view=attendees&id='.JRequest::getInt('event') );
-	}
 
 	/**
 	 * logic to create the edit attendee view
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function edit( )
 	{
-		JRequest::setVar( 'view', 'attendee' );
-		JRequest::setVar( 'hidemainmenu', 1 );
+		// Check for request forgeries.
+		// JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+
+		$jinput = JFactory::getApplication()->input;
+		$jinput->set('view', 'attendee');
+		$jinput->set('hidemainmenu', '1');
 
 		$model 	= $this->getModel('attendee');
+
+		/*
 		$user	= JFactory::getUser();
 
-//		// Error if checkedout by another administrator
-//		if ($model->isCheckedOut( $user->get('id') )) {
-//			$this->setRedirect('index.php?option=com_jem&view=attendees', JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
-//		}
-//
-//		$model->checkout();
-
-		parent::display();
-	}
-
-	/**
-	 * saves the attendee in the database
-	 *
-	 * @access public
-	 * @return void
-	 * 
-	 */
-	function save()
-	{
-		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
-
-		$task		= JRequest::getVar('task');
-
-		// Sanitize
-		$post = JRequest::get( 'post' );
-
-		$model = $this->getModel('attendee');
-
-		if ($row = $model->store($post))
-		{
-			if (JRequest::getInt('sendemail', 0))
-			{
-				JPluginHelper::importPlugin( 'jem' );
-			$dispatcher = JDispatcher::getInstance();
-			$res = $dispatcher->trigger( 'onEventUserRegistered', array( $row->id ) );
-			}
-
-			switch ($task)
-			{
-				case 'apply':
-					$link = 'index.php?option=com_jem&view=attendee&hidemainmenu=1&cid[]='.$row->id.'&event='.$row->event;
-					break;
-
-				default:
-					$link = 'index.php?option=com_jem&view=attendees&id='.$row->event;
-					break;
-			}
-			$msg	= JText::_('COM_JEM_ATTENDEE_SAVED');
-
-			$cache = JFactory::getCache('com_jem');
-			$cache->clean();
-
-		} else {
-
-			$msg 	= '';
-			$link 	= 'index.php?option=com_jem&view=attendees&id='.JRequest::getInt('event');
-
+		// Error if checkedout by another administrator
+		if ($model->isCheckedOut( $user->get('id') )) {
+			$this->setRedirect('index.php?option=com_jem&view=attendees', JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
 		}
-		$this->setRedirect( $link, $msg );
-	}
+		$model->checkout();
+		*/
 
-	function selectUser()
-	{
-		JRequest::setVar('view', 'userelement');
 		parent::display();
 	}
+
+
 }
 ?>

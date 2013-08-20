@@ -47,12 +47,19 @@ class JEMModelSettings extends JModelForm
 	 */
 	public function getData()
 	{
-		$query = 'SELECT * FROM #__jem_settings WHERE id = 1';
 
-		$this->_db->setQuery($query);
-		$data = $this->_db->loadObject();
+		$db = JFactory::getDbo();
+
+		$query = $db->getQuery(true);
+		$query->select(array('*'));
+		$query->from('#__jem_settings');
+		$query->where(array('id = 1 '));
+
+		$db->setQuery($query);
+		$data = $db->loadObject();
 
 		return $data;
+
 	}
 
 	/**
@@ -83,8 +90,8 @@ class JEMModelSettings extends JModelForm
 	{
 
 		// debug
-		//var_dump($post2);exit;
-		//var_dump($post);exit;
+		/* var_dump($post2);exit */
+		/* var_dump($post);exit */
 
 		$settings 	= JTable::getInstance('jem_settings', '');
 		$jinput = JFactory::getApplication()->input;
@@ -115,7 +122,6 @@ class JEMModelSettings extends JModelForm
 
 		$settings->meta_keywords = $meta_key;
 		$settings->id = 1;
-
 
 
 

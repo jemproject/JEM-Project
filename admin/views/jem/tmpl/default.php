@@ -57,7 +57,7 @@ $options = array(
 						$link = 'index.php?option=com_jem&amp;view=groups';
 						JEMViewJEM::quickiconButton( $link, 'icon-48-groups.png', JText::_( 'COM_JEM_GROUPS' ) );
 
-						$link = 'index.php?option=com_jem&amp;view=group';
+						$link = 'index.php?option=com_jem&amp;task=group.add';
 						JEMViewJEM::quickiconButton( $link, 'icon-48-groupedit.png', JText::_( 'COM_JEM_ADD_GROUP' ) );
 
 						$link = 'index.php?option=com_jem&amp;view=archive';

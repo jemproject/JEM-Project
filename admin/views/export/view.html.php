@@ -12,10 +12,10 @@ defined('_JEXEC') or die;
 
 
 /**
- * View class
+ * View class Export
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewExport extends JViewLegacy {
 

@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Home Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelJEM extends JModelLegacy
 {
@@ -40,6 +40,9 @@ class JEMModelJEM extends JModelLegacy
 	 */
 	var $_category = null;
 
+
+
+
 	/**
 	 * Constructor
 	 *
@@ -48,6 +51,8 @@ class JEMModelJEM extends JModelLegacy
 	{
 		parent::__construct();
 	}
+
+
 
 	/**
 	 * Method to get event item data
@@ -59,58 +64,56 @@ class JEMModelJEM extends JModelLegacy
 	{
 		$_events = array();
 
-		/*
-		* Get nr of all published events
-		*/
-		$query = 'SELECT count(*)'
-					. ' FROM #__jem_events'
-					. ' WHERE published = 1'
-					;
+		$db = JFactory::getDbo();
 
-		$this->_db->SetQuery($query);
-  		$_events[] = $this->_db->loadResult();
 
-		/*
-		* Get nr of all unpublished events
-		*/
-		$query = 'SELECT count(*)'
-					. ' FROM #__jem_events'
-					. ' WHERE published = 0'
-					;
+		/* Get nr of all published events */
+		$query = $db->getQuery(true);
+		$query->select(array('count(*)'));
+		$query->from('#__jem_events');
+		$query->where(array('published = 1'));
 
-		$this->_db->SetQuery($query);
-  		$_events[] = $this->_db->loadResult();
+		$db->setQuery($query);
+		$_events[] = $db->loadResult();
 
-		/*
-		* Get nr of all archived events
-		*/
-		$query = 'SELECT count(*)'
-					. ' FROM #__jem_events'
-					. ' WHERE published = 2'
-					;
 
-		$this->_db->SetQuery($query);
-  		$_events[] = $this->_db->loadResult();
-  		
-  		
-  		/*
-  		 * Get nr of all trashed events
-  		*/
-  		$query = 'SELECT count(*)'
-					. ' FROM #__jem_events'
-					. ' WHERE published = -2'
-					;
-  		
-		$this->_db->SetQuery($query);
-		$_events[] = $this->_db->loadResult();
+		/* Get nr of all unpublished events */
+		$query = $db->getQuery(true);
+		$query->select(array('count(*)'));
+		$query->from('#__jem_events');
+		$query->where(array('published = 0'));
 
-  		/*
-		* Get total nr of events
-		*/
+		$db->setQuery($query);
+		$_events[] = $db->loadResult();
+
+
+		/* Get nr of all archived events */
+		$query = $db->getQuery(true);
+		$query->select(array('count(*)'));
+		$query->from('#__jem_events');
+		$query->where(array('published = 2'));
+
+		$db->setQuery($query);
+		$_events[] = $db->loadResult();
+
+
+		/* Get nr of all trashed events */
+		$query = $db->getQuery(true);
+		$query->select(array('count(*)'));
+		$query->from('#__jem_events');
+		$query->where(array('published = -2'));
+
+		$db->setQuery($query);
+		$_events[] = $db->loadResult();
+
+
+  		/* Get total nr of events */
 		$_events[] = array_sum($_events);
 
 		return $_events;
 	}
+
+
 
 	/**
 	 * Method to get venue item data
@@ -122,37 +125,38 @@ class JEMModelJEM extends JModelLegacy
 	{
 		$_venue = array();
 
-		/*
-		* Get nr of all published venues
-		*/
-		$query = 'SELECT count(*)'
-					. ' FROM #__jem_venues'
-					. ' WHERE published = 1'
-					;
+		$db = JFactory::getDbo();
 
-		$this->_db->SetQuery($query);
-  		$_venue[] = $this->_db->loadResult();
 
-		/*
-		* Get nr of all unpublished venues
-		*/
-		$query = 'SELECT count(*)'
-					. ' FROM #__jem_venues'
-					. ' WHERE published = 0'
-					;
+		/* Get nr of all published venues */
+		$query = $db->getQuery(true);
+		$query->select(array('count(*)'));
+		$query->from('#__jem_venues');
+		$query->where(array('published = 1'));
 
-		$this->_db->SetQuery($query);
-  		$_venue[] = $this->_db->loadResult();
+		$db->setQuery($query);
+		$_venue[] = $db->loadResult();
 
-  		/*
-		* Get total nr of venues
-		*/
+
+		/* Get nr of all unpublished venues */
+		$query = $db->getQuery(true);
+		$query->select(array('count(*)'));
+		$query->from('#__jem_venues');
+		$query->where(array('published = 0'));
+
+		$db->setQuery($query);
+		$_venue[] = $db->loadResult();
+
+
+		/* Get total nr of venues */
   		$_venue[] = array_sum($_venue);
 
 		return $_venue;
 	}
 
-		/**
+
+
+	/**
 	 * Method to get categories item data
 	 *
 	 * @access public
@@ -162,31 +166,30 @@ class JEMModelJEM extends JModelLegacy
 	{
 		$_category = array();
 
-		/*
-		* Get nr of all published categories
-		*/
-		$query = 'SELECT count(*)'
-					. ' FROM #__jem_categories'
-					. ' WHERE published = 1'
-					;
+		$db = JFactory::getDbo();
 
-		$this->_db->SetQuery($query);
-  		$_category[] = $this->_db->loadResult();
 
-		/*
-		* Get nr of all unpublished categories
-		*/
-		$query = 'SELECT count(*)'
-					. ' FROM #__jem_categories'
-					. ' WHERE published = 0'
-					;
+		/* Get nr of all published categories */
+		$query = $db->getQuery(true);
+		$query->select(array('count(*)'));
+		$query->from('#__jem_categories');
+		$query->where(array('published = 1'));
 
-		$this->_db->SetQuery($query);
-  		$_category[] = $this->_db->loadResult();
+		$db->setQuery($query);
+		$_category[] = $db->loadResult();
 
-  		/*
-		* Get total nr of categories
-		*/
+
+		/* Get nr of all published categories */
+		$query = $db->getQuery(true);
+		$query->select(array('count(*)'));
+		$query->from('#__jem_categories');
+		$query->where(array('published = 0'));
+
+		$db->setQuery($query);
+		$_category[] = $db->loadResult();
+
+
+  		/* Get total nr of categories */
   		$_category[] = array_sum($_category);
 
 		return $_category;

@@ -7,7 +7,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined('_JEXEC') or die; 
+defined('_JEXEC') or die;
 JHTML::_('behavior.tooltip');
 
 $colspan = ($this->event->waitinglist ? 10 : 9);
@@ -106,7 +106,9 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 	<p class="copyright">
 		<?php echo JEMAdmin::footer( ); ?>
 
-		<?php echo JHTML::_( 'form.token' ); ?>
+		<?php
+		echo JHTML::_( 'form.token' );
+		?>
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="id" value="<?php echo $this->event->id; ?>" />

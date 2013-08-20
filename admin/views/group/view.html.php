@@ -12,7 +12,7 @@ defined( '_JEXEC' ) or die;
 
 
 /**
- * View class Venue
+ * View class Group
  *
  * @package Joomla
  * @subpackage JEM

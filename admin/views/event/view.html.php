@@ -12,20 +12,20 @@ defined( '_JEXEC' ) or die;
 
 
 /**
- * View class Venue
+ * View class Event
  *
  * @package Joomla
  * @subpackage JEM
- * 
+ *
  */
 class JEMViewEvent extends JViewLegacy {
 
 	protected $form;
 	protected $item;
 	protected $state;
-	
-	
-	
+
+
+
 	public function display($tpl = null)
 	{
 
@@ -42,8 +42,8 @@ class JEMViewEvent extends JViewLegacy {
 		JHTML::_('behavior.modal', 'a.modal');
 		JHTML::_('behavior.tooltip');
 		JHTML::_('behavior.formvalidation');
-		
-		
+
+
 		//initialise variables
 		$jemsettings = JEMHelper::config();
 		$editor 	=  JFactory::getEditor();
@@ -54,45 +54,45 @@ class JEMViewEvent extends JViewLegacy {
 		$task		= JRequest::getVar('task');
 		$this->task 		= $task;
 		$url 		= JURI::root();
-		
+
 		$categories = JEMCategories::getCategoriesTree(1);
 		$selectedcats = $this->get( 'Catsselected' );
-		
+
 		$Lists = array();
 		$Lists['category'] = JEMCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8"');
-		
-		
-		
-		
+
+
+
+
 		// CSS Stylesheet
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 		$document->addScript(JURI::root().'media/com_jem/js/attachments.js' );
-		
+
 		$document->addScript($url.'media/com_jem/js/recurrencebackend.js');
 		$document->addScript($url.'media/com_jem/js/unlimited.js');
 		$document->addScript($url.'media/com_jem/js/seobackend.js');
-		
+
 		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access		= $access2;
 		$this->jemsettings		= $jemsettings;
 		$this->Lists 		= $Lists;
-		
+
 		$js = "
 		function jResetHits(id) {
 			document.getElementById('a_hits').value = id;
 		}";
-		
+
 		$document->addScriptDeclaration($js);
-		
+
 		$this->resethits = "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"jResetHits(0, '".JText::_('COM_JEM_NO_HITS')."' );\" value=\"".JText::_('COM_JEM_NO_HITS')."\" onblur=\"seo_switch()\" />";
 
 		$this->addToolbar();
 		parent::display($tpl);
-		
+
 	}
-		
-		
-	
+
+
+
 
 
 	/**

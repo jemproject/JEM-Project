@@ -99,15 +99,6 @@ class JEMModelAttendee extends JModelLegacy
 			$query->join('LEFT', '#__users AS u ON (u.id = r.uid)');
 			$query->where(array('r.id= '.$db->quote($this->_id)));
 
-			/*
-			 * @todo cleanup
-			*
-			$query = 'SELECT r.*, u.username '
-			. ' FROM #__jem_register AS r '
-			. ' LEFT JOIN #__users AS u ON u.id = r.uid '
-			. ' WHERE r.id = '.$this->_id
-			;
-			*/
 
 			$this->_db->setQuery($query);
 			$this->_data = $this->_db->loadObject();
@@ -184,35 +175,18 @@ class JEMModelAttendee extends JModelLegacy
 			$row->uregdate 		= gmdate('Y-m-d H:i:s');
 
 
-
-
 			$db = JFactory::getDbo();
-
 			$query = $db->getQuery(true);
 			$query->select(array('e.maxplaces','e.waitinglist','COUNT(r.id) as booked'));
 			$query->from('#__jem_events AS e');
 			$query->join('INNER', '#__jem_register AS r ON (r.event = e.id)');
 
-			$query->where(array('e.id= '.$this->_db->Quote($eventid), 'r.waiting= 0'));
+			$query->where(array('e.id= '.$db->quote($eventid), 'r.waiting= 0'));
 			$query->group('e.id');
 
 
-
-			/*
-			 * @todo cleanup
-			 *
-			$query = ' SELECT e.maxplaces, e.waitinglist, COUNT(r.id) as booked '
-					. ' FROM #__jem_events AS e '
-					. ' INNER JOIN #__jem_register AS r ON r.event = e.id '
-					. ' WHERE e.id = ' . $this->_db->Quote($eventid)
-					. ' AND r.waiting = 0 '
-					. ' GROUP BY e.id ';
-			*/
-
-
-			$this->_db->setQuery($query);
-			$details = $this->_db->loadObject();
-
+			$db->setQuery($query);
+			$details = $db->loadObject();
 
 			// put on waiting list ?
 			if ($details->maxplaces > 0) // there is a max
@@ -227,7 +201,9 @@ class JEMModelAttendee extends JModelLegacy
 					$row->waiting = 1;
 				}
 			}
-		}
+
+
+		} // End of row->id statement
 
 		// Make sure the data is valid
 		if (!$row->check()) {

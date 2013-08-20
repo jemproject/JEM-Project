@@ -182,7 +182,7 @@ class JEMModelEvent extends JModelAdmin
 		// Debug
 		/* var_dump($_POST);exit; */
 		/* var_dump($_FILES);exit; */
-		// var_dump($table);exit;
+		/* var_dump($table);exit; */
 
 		/* JInput
 		 *

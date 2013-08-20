@@ -32,80 +32,7 @@ class JEMControllerAttendee extends JEMController
 		$this->registerTask( 'apply', 		'save' );
 	}
 
-	/**
-	 * Delete attendees
-	 *
-	 * @return true on sucess
-	 * @access private
-	 *
-	 */
-	function remove()
-	{
-		$cid = JRequest::getVar( 'cid', array(0), 'post', 'array' );
-		$id 	= JRequest::getInt('id');
-		$total 	= count( $cid );
 
-		$model = $this->getModel('attendees');
-
-		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
-		}
-
-		if(!$model->remove($cid)) {
-			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
-		}
-
-		$cache = JFactory::getCache('com_jem');
-		$cache->clean();
-
-		$msg = $total.' '.JText::_( 'COM_JEM_REGISTERED_USERS_DELETED');
-
-		$this->setRedirect( 'index.php?option=com_jem&view=attendees&id='.$id, $msg );
-	}
-
-	function export()
-	{
-		$app = JFactory::getApplication();
-
-		$model = $this->getModel('attendees');
-
-		$datas = $model->getData();
-
-		header('Content-Type: text/x-csv');
-		header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-		header('Content-Disposition: attachment; filename=attendees.csv');
-		header('Pragma: no-cache');
-
-		$export = '';
-		$col = array();
-
-		for($i=0; $i < count($datas); $i++)
-		{
-			$data = $datas[$i];
-
-			$col[] = str_replace("\"", "\"\"", $data->name);
-			$col[] = str_replace("\"", "\"\"", $data->username);
-			$col[] = str_replace("\"", "\"\"", $data->email);
-			$col[] = str_replace("\"", "\"\"", JHTML::Date( $data->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ));
-			$col[] = str_replace("\"", "\"\"", $data->uid);
-
-			for($j = 0; $j < count($col); $j++)
-			{
-				$export .= "\"" . $col[$j] . "\"";
-
-				if($j != count($col)-1)
-				{
-					$export .= ";";
-				}
-			}
-			$export .= "\r\n";
-			$col = '';
-		}
-
-		echo $export;
-
-		$app->close();
-	}
 
 	/**
 	 * redirect to events page
@@ -115,41 +42,7 @@ class JEMControllerAttendee extends JEMController
 	$this->setRedirect( 'index.php?option=com_jem&view=events' );
   }
 
-  function toggle()
-  {
-		$id = JRequest::getInt('id');
 
-		$model = $this->getModel('attendee');
-		$model->setId($id);
-
-		$attendee = $model->getData();
-		$res = $model->toggle();
-
-		$type = 'message';
-
-		if ($res)
-		{
-			JPluginHelper::importPlugin( 'jem' );
-		$dispatcher = JDispatcher::getInstance();
-		$res = $dispatcher->trigger( 'onUserOnOffWaitinglist', array( $id ) );
-
-			if ($attendee->waiting)
-			{
-				$msg = JText::_('COM_JEM_ADDED_TO_ATTENDING');
-			}
-			else
-			{
-				$msg = JText::_('COM_JEM_ADDED_TO_WAITING');
-			}
-		}
-		else
-		{
-			$msg = JText::_('COM_JEM_WAITINGLIST_TOGGLE_ERROR').': '.$model->getError();
-			$type = 'error';
-		}
-		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$attendee->event, $msg, $type);
-		$this->redirect();
-  }
 
 	/**
 	 * logic for cancel an action
@@ -160,8 +53,8 @@ class JEMControllerAttendee extends JEMController
 	 */
 	function cancel()
 	{
-		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		// Check for request forgeries.
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		$venue =  JTable::getInstance('jem_register', '');
 		$venue->bind(JRequest::get('post'));
@@ -170,30 +63,7 @@ class JEMControllerAttendee extends JEMController
 		$this->setRedirect( 'index.php?option=com_jem&view=attendees&id='.JRequest::getInt('event') );
 	}
 
-	/**
-	 * logic to create the edit attendee view
-	 *
-	 * @access public
-	 * @return void
-	 *
-	 */
-	function edit( )
-	{
-		JRequest::setVar( 'view', 'attendee' );
-		JRequest::setVar( 'hidemainmenu', 1 );
 
-		$model 	= $this->getModel('attendee');
-		$user	= JFactory::getUser();
-
-//		// Error if checkedout by another administrator
-//		if ($model->isCheckedOut( $user->get('id') )) {
-//			$this->setRedirect('index.php?option=com_jem&view=attendees', JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
-//		}
-//
-//		$model->checkout();
-
-		parent::display();
-	}
 
 	/**
 	 * saves the attendee in the database
@@ -204,21 +74,35 @@ class JEMControllerAttendee extends JEMController
 	 */
 	function save()
 	{
-		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		// Check for request forgeries.
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$task		= JRequest::getVar('task');
+		// Defining JInput
+		$jinput = JFactory::getApplication()->input;
 
-		// Sanitize
-		$post = JRequest::get( 'post' );
+		// retrieving task "apply"
+		$task = $jinput->get('task','','');
+		/* another way:
+		$task	= $this->getTask();
+		*/
+
+		// Retrieving $post
+		$post = $jinput->getArray($_POST);
+
+		// Retrieving email-setting
+		$sendemail = $jinput->get('sendemail','0','int');
+
+		// Retrieving event-id
+		$eventid = $jinput->get('event','','int');
+
 
 		$model = $this->getModel('attendee');
 
 		if ($row = $model->store($post))
 		{
-			if (JRequest::getInt('sendemail', 0))
+			if ($sendemail == 1)
 			{
-				JPluginHelper::importPlugin( 'jem' );
+			JPluginHelper::importPlugin( 'jem' );
 			$dispatcher = JDispatcher::getInstance();
 			$res = $dispatcher->trigger( 'onEventUserRegistered', array( $row->id ) );
 			}
@@ -241,7 +125,7 @@ class JEMControllerAttendee extends JEMController
 		} else {
 
 			$msg 	= '';
-			$link 	= 'index.php?option=com_jem&view=attendees&id='.JRequest::getInt('event');
+			$link 	= 'index.php?option=com_jem&view=attendees&id='.$eventid;
 
 		}
 		$this->setRedirect( $link, $msg );
@@ -249,7 +133,8 @@ class JEMControllerAttendee extends JEMController
 
 	function selectUser()
 	{
-		JRequest::setVar('view', 'userelement');
+		$jinput = JFactory::getApplication()->input;
+		$jinput->set('view', 'userelement');
 		parent::display();
 	}
 }

@@ -11,10 +11,10 @@ defined('_JEXEC') or die;
 
 
 /**
- * View class for the JEM venueselect screen
+ * View class for the JEM Contactelement screen
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewContactelement extends JViewLegacy {
 
@@ -25,7 +25,7 @@ class JEMViewContactelement extends JViewLegacy {
 		//initialise variables
 		$db			=  JFactory::getDBO();
 		$document	=  JFactory::getDocument();
-		
+
 		JHTML::_('behavior.tooltip');
 		JHTML::_('behavior.modal');
 

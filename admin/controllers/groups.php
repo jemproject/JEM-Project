@@ -52,7 +52,10 @@ class JEMControllerGroups extends JControllerAdmin
 		// Check for request forgeries
 		JRequest::checkToken() or die( 'Invalid Token' );
 
-		$cid = JRequest::getVar( 'cid', array(0), 'post', 'array' );
+
+		$jinput = JFactory::getApplication()->input;
+		$cid = $jinput->get('cid',  0, 'array');
+
 
 		$total = count( $cid );
 
