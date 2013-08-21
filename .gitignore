@@ -166,3 +166,4 @@ pip-log.txt
 ## JEM
 #############
 /build.config
+/build.number

@@ -5,6 +5,10 @@
 	<!-- load variables from config file -->
 	<property name="cfg.configFile" location="build.config" />
 	<loadproperties srcfile="${cfg.configFile}" />
+	
+	<!-- load variables from package xml file -->
+	<buildnumber file ="build.number" />
+	<xmlproperty file="package/pkg_jem.xml" prefix="pkg_jem" keepRoot="false" />
 
 	<!-- auto values but should be checked -->
 	<property name="cfg.comName" value="com_${cfg.name}" />
@@ -12,7 +16,7 @@
 	<property name="cfg.buildVersionDir" value="${cfg.buildDir}" /><!-- /${cfg.versionDir} -->
 	<property name="cfg.adminFilesDir" location="${cfg.comDir}/admin" />
 	<property name="cfg.siteFilesDir" location="${cfg.comDir}/site" />
-	<property name="cfg.extensionsDir" location="${cfg.adminFilesDir}/extensions" />
+	<property name="cfg.version" value="${pkg_jem.version}.${build.number}" />
 
 	<target name="build" depends="clean, init, build_package, info" />
 
@@ -21,11 +25,10 @@
 		<mkdir dir="${cfg.buildVersionDir}/plugins" />
 		<mkdir dir="${cfg.buildVersionDir}/modules" />
 		<mkdir dir="${cfg.buildVersionDir}/components" />
-		<!-- <mkdir dir="${cfg.extensionsDir}" /> -->
 	</target>
 
 	<target name="build_package" depends="build_plugins, build_modules, build_component" description="packages the final package file">
-		<zip destfile="${cfg.buildVersionDir}/pkg_${cfg.name}.zip">
+		<zip destfile="${cfg.buildVersionDir}/pkg_${cfg.name}_v${cfg.version}.zip">
 			<zipfileset dir="${cfg.buildVersionDir}/components" prefix="packages" />
 			<zipfileset dir="${cfg.buildVersionDir}/plugins" prefix="packages" />
 			<zipfileset dir="${cfg.buildVersionDir}/modules" prefix="packages" />
@@ -63,25 +66,14 @@
 
 	<!--
 	<target name="build_debug" description="builds any debug plugins or code">
-		
 		<zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_toolbox.zip" basedir="${cfg.versionDir}/billets_plugin_toolbox" />
 		<zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_debug.zip" basedir="${cfg.versionDir}/billets_plugin_debug" />
 	</target>
 	-->
 
-	<!--
-	<target name="update_extensions" depends="build_plugins, build_modules" description="copies fresh builds of plugins and extensions to the admin/extensions folder">
-		<copy todir="${cfg.extensionsDir}" overwrite="true">
-			<fileset dir="${cfg.buildVersionDir}/plugins" />
-		</copy>
-		<copy todir="${cfg.extensionsDir}" overwrite="true">
-			<fileset dir="${cfg.buildVersionDir}/modules" />
-		</copy>
-	</target>
-	-->
-
 	<target name="info" description="prints information">
 		<echo message="Project:			${cfg.name}" />
+		<echo message="Version:			${cfg.version}" />
 		<tstamp>
 			<format property="buildtime" pattern="yyyy-MM-dd'T'HH:mm:ss" />
 		</tstamp>
@@ -91,7 +83,6 @@
 	<target name="clean" description="Destroys all generated files and dirs.">
 		<delete dir="${cfg.buildVersionDir}" />
 		<delete dir="${cfg.buildDir}" />
-		<delete dir="${cfg.extensionsDir}" />
 		<delete file="${cfg.xmlfile}" />
 	</target>
 
