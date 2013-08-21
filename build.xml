@@ -58,6 +58,7 @@
 		<!-- add all module directories here -->
 		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}.zip" basedir="modules/mod_${cfg.name}" />
 		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_wide.zip" basedir="modules/mod_${cfg.name}_wide" />
+		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_cal.zip" basedir="modules/mod_${cfg.name}_cal" />
 	</target>
 
 	<!--

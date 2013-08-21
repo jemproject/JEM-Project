@@ -18,8 +18,11 @@
 
 	<files folder="packages">
 		<file type="component" id="com_jem">com_jem.zip</file>
+
 		<file type="module" id="mod_jem" client="site">mod_jem.zip</file>
 		<file type="module" id="mod_jem_wide" client="site">mod_jem_wide.zip</file>
+		<file type="module" id="mod_jem_cal" client="site">mod_jem_cal.zip</file>
+
 		<file type="plugin" id="jem" group="search">plg_search_jem.zip</file>
 		<file type="plugin" id="jem" group="finder">plg_finder_jem.zip</file>
 		<file type="plugin" id="comments" group="jem">plg_jem_comments.zip</file>
