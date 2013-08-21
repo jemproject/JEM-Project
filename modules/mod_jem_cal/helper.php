@@ -68,9 +68,9 @@ class modjemcalqhelper
 				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 				. $wherestr
 				. ' AND c.access  <= '.$gid
-				. ' GROUP BY a.id'
 				.($catid ? $categories : '')
 				.($venid ? $venues : '')
+				. ' GROUP BY a.id'
 				;
 
 
