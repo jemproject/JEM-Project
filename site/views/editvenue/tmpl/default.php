@@ -349,21 +349,9 @@ defined('_JEXEC') or die;
               	<label for="map1"><?php echo JText::_( 'JYES' ); ?></label>
               	<input type="radio" name="map" id="map1" onchange="addrequired();" value="1" <?php echo $this->row->map == 1 ? 'checked="checked"' : ''; ?> class="inputbox" />
             </div>
-            <div class="jem_latitude floattext">
-                <label for="latitude"><?php echo JText::_( 'COM_JEM_LATITUDE' ).':'; ?></label>
-                <input class="inputbox" name="latitude" id="latitude" type="text" onchange="removerequired();" value="<?php echo $this->row->latitude; ?>" size="15" maxlength="25" />&nbsp;
-                <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_LATITUDE_HINT'); ?>">
-                    <?php echo $this->infoimage; ?>
-                </span>
-            </div>
-            <div class="jem_longitude floattext">
-                <label for="longitude"><?php echo JText::_( 'COM_JEM_LONGITUDE' ).':'; ?></label>
-                <input class="inputbox" name="longitude" id="longitude" type="text" onchange="removerequired();" value="<?php echo $this->row->longitude; ?>" size="15" maxlength="25" />&nbsp;
-                <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_LONGITUDE_HINT'); ?>">
-                    <?php echo $this->infoimage; ?>
-                </span>
-            </div>
             <?php endif; ?>
+
+
 
         </fieldset>
 
@@ -377,6 +365,21 @@ defined('_JEXEC') or die;
  <div class="map_canvas"></div>
 
       <a id="reset" href="#" style="display:none;">Reset Marker</a>
+
+        <div class="jem_latitude floattext">
+                <label for="latitude"><?php echo JText::_( 'COM_JEM_LATITUDE' ).':'; ?></label>
+                <input class="inputbox" name="latitude" id="latitude" type="text" onchange="removerequired();" value="<?php echo $this->row->latitude; ?>" size="15" maxlength="25" />&nbsp;
+                <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_LATITUDE_HINT'); ?>">
+                    <?php echo $this->infoimage; ?>
+                </span>
+            </div>
+            <div class="jem_longitude floattext">
+                <label for="longitude"><?php echo JText::_( 'COM_JEM_LONGITUDE' ).':'; ?></label>
+                <input class="inputbox" name="longitude" id="longitude" type="text" onchange="removerequired();" value="<?php echo $this->row->longitude; ?>" size="15" maxlength="25" />&nbsp;
+                <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_LONGITUDE_HINT'); ?>">
+                    <?php echo $this->infoimage; ?>
+                </span>
+            </div>
 </fieldset>
 
       	<?php	if (( $this->jemsettings->imageenabled == 2 ) || ($this->jemsettings->imageenabled == 1)) :	?>
