@@ -55,12 +55,6 @@ class JEMHelperBackend
 		);
 
 		JSubMenuHelper::addEntry(
-		JText::_('COM_JEM_ARCHIVESCREEN'),
-		'index.php?option=com_jem&view=archive',
-		$vName == 'archive'
-				);
-
-		JSubMenuHelper::addEntry(
 		JText::_('COM_JEM_GROUPS'),
 		'index.php?option=com_jem&view=groups',
 		$vName == 'groups'
