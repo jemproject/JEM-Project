@@ -91,7 +91,7 @@ class JEMModelWeekcal extends JModelLegacy
 			foreach($this->_data AS $item) {
 				$item->categories = $this->getCategories($item->id);
 
-				if (!is_null($item->enddates) && !$params->get('show_only_start', 0))
+				if (!is_null($item->enddates) && !$params->get('show_only_start', 1))
 				{
 					if ($item->enddates != $item->dates)
 					{
