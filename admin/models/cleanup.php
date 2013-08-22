@@ -17,7 +17,7 @@ jimport('joomla.filesystem.file');
  * JEM Component Cleanup Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelCleanup extends JModelLegacy
 {
@@ -57,17 +57,21 @@ class JEMModelCleanup extends JModelLegacy
 	{
 		parent::__construct();
 
-		if (JRequest::getCmd('task') == 'cleaneventimg') {
+		$jinput = JFactory::getApplication()->input;
+		$task = $jinput->get('task', '', 'cmd');
+
+
+		if ($task == 'cleaneventimg') {
 			$target = 'events';
 			$this->settarget($target);
 		}
 
-		if (JRequest::getCmd('task') == 'cleanvenueimg') {
+		if ($task == 'cleanvenueimg') {
 			$target = 'venues';
 			$this->settarget($target);
 		}
 
-		if (JRequest::getCmd('task') == 'cleancategoryimg') {
+		if ($task == 'cleancategoryimg') {
 			$target = 'categories';
 			$this->settarget($target);
 		}
@@ -104,10 +108,9 @@ class JEMModelCleanup extends JModelLegacy
 		$folder = $this->_target;
 
 		$count = count($images);
+		$fail = 0;
 
 		if ($count) {
-
-			$fail = 0;
 
 			foreach ($images as $image)
 			{
@@ -133,9 +136,9 @@ class JEMModelCleanup extends JModelLegacy
 
 		return $deleted;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Method to delete the cat_relations table
 	 *
@@ -144,43 +147,42 @@ class JEMModelCleanup extends JModelLegacy
 	 */
 	function truncatecats()
 	{
-		
+
 		$db = JFactory::getDbo();
 
 		$query = $db->getQuery(true);
 		$db->setQuery('TRUNCATE TABLE ' . $db->quoteName('#__jem_cats_event_relations'));
 		$db->query();
-		
+
 
 		return true;
 	}
-	
-	
+
+
 	/**
-	 * Method to delete the cat_relations table
+	 * Method to count the cat_relations table
 	 *
 	 * @access	public
 	 * @return int
 	 */
 	function getCountcats()
 	{
-	
+
 		$db = JFactory::getDbo();
-		$query = 'SELECT *'
-				. ' FROM #__jem_cats_event_relations'
-				;
-	
+		$query = $db->getQuery(true);
+		$query->select(array('*'));
+		$query->from('#__jem_cats_event_relations');
 		$db->setQuery($query);
-		$db->$query();
-	
+		$db->query();
+
 		$total = $db->loadObjectList();
-	
+
 		$count = count($total);
-	
+
 		return $count;
 	}
-	
-	
+
+
 
 	/**
 	 * Method to determine the images to delete
