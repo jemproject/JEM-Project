@@ -83,7 +83,7 @@ else
 
 //set now
 $config = JFactory::getConfig();
-$tzoffset = $config->getValue('config.offset');
+$tzoffset = $config->get('config.offset');
 $time 			= time()  + (($tzoffset + $Time_offset)*60*60); //25/2/08 Change for v 0.6 to incorporate server offset into time;
 $today_month 	= date( 'm', $time);
 $today_year 	= date( 'Y', $time);

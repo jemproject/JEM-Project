@@ -164,7 +164,7 @@ if($day_name_length){ #if the day names should be shown ($day_name_length > 0)
 
 // Today
 $config = JFactory::getConfig();
-$tzoffset = $config->getValue('config.offset');
+$tzoffset = $config->get('config.offset');
 $time 		= time()  + (($tzoffset + $Time_offset)*60*60); //25/2/08 Change for v 0.6 to incorporate server offset into time;
 $today 		= date( 'j', $time);
 $currmonth 	= date( 'm', $time);
