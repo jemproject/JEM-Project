@@ -81,7 +81,7 @@ class JEMControllerAttendee extends JEMController
 		$jinput = JFactory::getApplication()->input;
 
 		// retrieving task "apply"
-		$task = $jinput->get('task','','');
+		$task = $jinput->get('task','','cmd');
 		/* another way:
 		$task	= $this->getTask();
 		*/

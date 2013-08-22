@@ -15,13 +15,12 @@ jimport('joomla.application.component.controller');
  * JEM Component Attachments Controller
  *
  * @package JEM
- * 
+ *
  */
 class JEMControllerAttachments extends JEMController
 {
 	/**
 	 * Constructor
-	 *
 	 *
 	 */
 	function __construct()

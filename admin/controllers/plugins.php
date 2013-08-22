@@ -19,15 +19,17 @@ jimport('joomla.application.component.controller');
 */
 class JEMControllerPlugins extends JEMController
 {
+
+
 	/**
 	 * Constructor
-	 *
 	 *
 	 */
 	function __construct()
 	{
 		parent::__construct();
 	}
+
 
 	/**
 	 * Handles Plugin screen
@@ -40,14 +42,16 @@ class JEMControllerPlugins extends JEMController
 	{
 		$db = JFactory::getDBO();
 
-		$query = 'SELECT COUNT(*)'
-				. ' FROM #__extensions AS p'
-				. ' WHERE p.name LIKE '.$db->Quote("%jem%")
-				. ' AND p.type = '.$db->Quote("plugin");
-				;
-		$db->setQuery( $query );
+		$query = $db->getQuery(true);
+		$query->select(array('count(*)'));
+		$query->from('#__extensions AS p');
+		$query->where(array('p.name LIKE '.$db->quote("%jem%"), 'p.type = '.$db->quote("plugin")));
+
+		$db->setQuery($query);
+
 
 		$total = $db->loadResult();
+
 
 		//any plugins installed? if not redirect to installation screen
 		if ($total > 0){
@@ -55,7 +59,7 @@ class JEMControllerPlugins extends JEMController
 			$msg = "";
 		} else {
 			$link = 'index.php?option=com_installer';
-			$msg = JText::_("NO JEM PLUGINS INSTALLED");
+			$msg = JText::_("COM_JEM_PLUGINS_NOPLUGINSINSTALLED");
 		}
 		$this->setRedirect($link, $msg);
 	}
