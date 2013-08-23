@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
 <?php if ($this->row->maxplaces > 0 ) {?>
 <dt class="register"><?php echo JText::_ ( 'COM_JEM_MAX_PLACES' ) . ':';?></dt>
 <dd class="register"><?php echo $this->row->maxplaces; ?></dd>
-<br/>
+
 <dt class="register"><?php echo JText::_ ( 'COM_JEM_BOOKED_PLACES' ) . ':';?></dt>
 <dd class="register"><?php echo $this->row->booked; ?></dd>
 
@@ -27,7 +27,7 @@ defined('_JEXEC') or die;
 <dd>
 <?php echo ($this->row->maxplaces-$this->row->booked); ?>
 </dd>
-<br/>
+
 	<?php
 	endif;
 	?>
