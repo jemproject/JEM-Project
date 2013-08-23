@@ -20,6 +20,13 @@ defined('_JEXEC') or die;
 	<?php endif; ?>
 
 
+	<?php if ($this->params->get('showintrotext')) : ?>
+	<div class="description no_space floattext">
+		<?php echo $this->params->get('introtext'); ?>
+	</div>
+	<p><p>
+<?php endif; ?>
+
 	<?php
 	$countcatevents = array ();
 
