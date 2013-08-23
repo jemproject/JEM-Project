@@ -22,79 +22,81 @@
 	<config>
 		<fields name="params">
 			<fieldset name="basic">
-				<field name="Default_Stylesheet" type="radio" default="1" label="Use Default Stylesheet" description="Use the default stylesheet modules/mod_jem_cal/mod_jemcal15q.css">
+				<field name="Default_Stylesheet" type="radio" default="1" label="MOD_JEM_CAL_DEFAULTSTYLESHEET" description="MOD_JEM_CAL_DEFAULTSTYLESHEET_DESC">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="User_stylesheet" type="text" default="" label="User Stylesheet" description="Use an alternative stylesheet e.g. modules/mod_jem_cal/mystylesheet.css" />
+				<field name="User_stylesheet" type="text" default="" label="MOD_JEM_CAL_USERSTYLESHEET" description="MOD_JEM_CAL_USERSTYLESHEET_DESC" />
 				<field name="spacer1" type="spacer" label="" description="" hr="true" />
-				<field name="Show_Tooltips" type="radio" default="1" label="Show Tooltips?" description="Choose to show tooltips on mouse rollover on calendar dates.">
+				<field name="Show_Tooltips" type="radio" default="1" label="MOD_JEM_CAL_SHOWTOOLTIPS" description="MOD_JEM_CAL_SHOWTOOLTIPS_DESC">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="Show_Tooltips_Title" type="radio" default="1" label="Show Tooltips Title?" description="Choose to show the tooltips title.">
+				<field name="Show_Tooltips_Title" type="radio" default="1" label="MOD_JEM_CAL_SHOWTOOLTIPSTITLE" description="MOD_JEM_CAL_SHOWTOOLTIPSTITLE_DESC">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="cal15q_tooltips_title" type="text" default="Event" label="ToolTips Title (Singular)" description="Define the tooltips title (Singular)" />
-				<field name="cal15q_tooltipspl_title" type="text" default="Events" label="ToolTips Title (Plural)" description="Define the tooltips title (Plural)" />
-					<field name="DisplayCat" type="radio" default="0" label="Display Category in Tooltip?" description="Display the Category in the Tooltip">
+				<field name="cal15q_tooltips_title" type="text" default="MOD_JEM_CAL_EVENT" label="MOD_JEM_CAL_TOOLTIPSTITLE" description="MOD_JEM_CAL_TOOLTIPSTITLE_DESC" />
+				<field name="cal15q_tooltipspl_title" type="text" default="MOD_JEM_CAL_EVENTS" label="MOD_JEM_CAL_TOOLTIPSTITLEPL" description="MOD_JEM_CAL_TOOLTIPSTITLEPL_DESC" />
+				<field name="DisplayCat" type="radio" default="0" label="MOD_JEM_CAL_DISPLAYCAT" description="MOD_JEM_CAL_DISPLAYCAT_DESC">
 					<option value="0">JNO</option>
-					<option value="1">Yes</option>
+					<option value="1">JYes</option>
 				</field>
-				<field name="DisplayVenue" type="radio" default="0" label="Display Venue in Tooltip?" description="Display the Venue in the Tooltip">
+				<field name="DisplayVenue" type="radio" default="0" label="MOD_JEM_CAL_DISPLAYVENUE" description="MOD_JEM_CAL_DISPLAYVENUE_DESC">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
 				<field name="spacer2" type="spacer" label="" description="" hr="true" />
-				<field name="UseJoomlaLanguage" type="radio" default="1" label="Use Joomla Language for Days/Months?" description="Use the default Joomla language for Day and Month names">
+				<field name="UseJoomlaLanguage" type="radio" default="1" label="MOD_JEM_CAL_USEJOOMLALANGUAGE" description="MOD_JEM_CAL_USEJOOMLALANGUAGE_DESC">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="day_name_length" type="list" default="2" label="Length of the Dayname" description="Select if you want to display the full dayname or a short version">
-					<option value="0">COM_JEM_CAL_DONTDISPLAYDAYS</option>
-					<option value="1">COM_JEM_CAL_ONELETTER</option>
-					<option value="2">COM_JEM_CAL_TWOLETTERS</option>
-					<option value="3">COM_JEM_CAL_THREELETTERS</option>
-					<option value="4">COM_JEM_CAL_FULLNAME</option>
+				<field name="day_name_length" type="list" default="2" label="MOD_JEM_CAL_DAYNAMELENGTH" description="MOD_JEM_CAL_DAYNAMELENGTH_DESC">
+					<option value="0">MOD_JEM_CAL_DONTDISPLAYDAYS</option>
+					<option value="1">MOD_JEM_CAL_ONELETTER</option>
+					<option value="2">MOD_JEM_CAL_TWOLETTERS</option>
+					<option value="3">MOD_JEM_CAL_THREELETTERS</option>
+					<option value="4">MOD_JEM_CAL_FULLNAME</option>
 				</field>
-				<field name="first_day" type="list" default="1" label="Start week" description="Start the week at sunday or monday">
+				<field name="first_day" type="list" default="1" label="MOD_JEM_CAL_FIRSTDAY" description="MOD_JEM_CAL_FIRSTDAY_DESC">
 					<option value="0">Sunday</option>
 					<option value="1">Monday</option>
 				</field>
-				<field name="Year_length" type="radio" default="1" label="Year Length" description="Select to show 2 or 4 letters">
-					<option value="0">COM_JEM_CAL_TWO</option>
-					<option value="1">COM_JEM_CAL_FOUR</option>
+				<field name="Year_length" type="radio" default="1" label="MOD_JEM_CAL_YEARLENGTH" description="MOD_JEM_CAL_YEARLENGTH_DESC">
+					<option value="0">MOD_JEM_CAL_TWO</option>
+					<option value="1">MOD_JEM_CAL_FOUR</option>
 				</field>
-				<field name="Month_length" type="radio" default="0" label="Short month name?" description="Select if you wish to display the full month name or not.">
+				<field name="Month_length" type="radio" default="0" label="MOD_JEM_CAL_MONTHLENGTH" description="MOD_JEM_CAL_MONTHLENGTH_DESC">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="Month_offset" type="text" default="0" label="Month Offset" description="Offset the month so enter 1 for a month ahear, -1 for a month behind etc" />
-				<field name="Time_offset" type="text" default="0" label="Time Offset (Hours)" description="Use this ONLY if you need to offset your time from the server settings" />
+				<field name="Month_offset" type="text" default="0" label="MOD_JEM_CAL_MONTHOFFSET" description="MOD_JEM_CAL_MONTHOFFSET_DESC" />
+				<field name="Time_offset" type="text" default="0" label="MOD_JEM_CAL_TIMEOFFSET" description="MOD_JEM_CAL_TIMEOFFSET_DESC" />
 				<field name="spacer3" type="spacer" label="" description="" hr="true" />
-				<field name="Remember" type="radio" default="1" label="Remember?" description="Remember which month/year is selected on page change, no jumping back to current day.">
+				<field name="Remember" type="radio" default="1" label="MOD_JEM_CAL_REMEMBER" description="MOD_JEM_CAL_REMEMBER_DESC">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="CurrentEvents" type="radio" default="1" label="Show Current Events" description="Show current events. Do not set both this and Archive events to No otherwise NO events will show">
+				<field name="CurrentEvents" type="radio" default="1" label="MOD_JEM_CAL_CURRENTEVENTS" description="MOD_JEM_CAL_CURRENTEVENTS_DESC">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="ArchivedEvents" type="radio" default="0" label="Show Archived Events" description="Show archive events. Do not set both this and Current events to No otherwise NO events will show">
+				<field name="ArchivedEvents" type="radio" default="0" label="MOD_JEM_CAL_ARCHIVEDEVENTS" description="MOD_JEM_CAL_ARCHIVEDEVENTS_DESC">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="StraightToDetails" type="radio" default="1" label="Go Straight To Details?" description="Go straight to the details page when there is only one event to choose from">
+				<field name="StraightToDetails" type="radio" default="1" label="MOD_JEM_CAL_STRAIGHTTODETAILS" description="MOD_JEM_CAL_STRAIGHTTODETAILS_DESC">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
 				<field name="spacer4" type="spacer" label="" description="" hr="true" />
-				<field name="moduleclass_sfx" type="text" default="" label="Module Class Suffix" description="A suffix to be applied to the css class of the module (table.moduletable), this allows individual module styling" />
-				<field name="locale_override" type="text" default="" label="Locale Override" description="Define the server locale you want the calendar to use to override the default - this can only be used if NOT using the default Joomla langauge" />
-				<field name="catid" type="text" default="" label="CATEGORY ID" description="Category ID - Display a calendar only for the categories chosen, separate IDs with commas e.g. 1,3" />
-				<field name="venid" type="text" default="" label="VENUE ID" description="Venue ID - Display a calendar only for the venue(s) chosen, separate IDs with commas e.g. 1,3" />
-				<field name="FixItemID" type="text" default="" label="Override ItemID" description="Override the ItemID used when calendar link goes straight to details to a fixed menu item" />
+				
+				
+				<field name="moduleclass_sfx" type="text" default="" label="MOD_JEM_CAL_MODULECLASSSFX" description="MOD_JEM_CAL_MODULECLASSSFX_DESC" />
+				<field name="locale_override" type="text" default="" label="MOD_JEM_CAL_LOCALEOVERRIDE" description="MOD_JEM_CAL_LOCALEOVERRIDE_DESC" />
+				<field name="catid" type="text" default="" label="MOD_JEM_CAL_CATID" description="MOD_JEM_CAL_CATID_DESC" />
+				<field name="venid" type="text" default="" label="MOD_JEM_CAL_VENID" description="MOD_JEM_CAL_VENID_DESC" />
+				<field name="FixItemID" type="text" default="" label="MOD_JEM_CAL_FIXEDITEMID" description="MOD_JEM_CAL_FIXEDITEMID_DESC" />
 			</fieldset>
 		</fields>
 	</config>
