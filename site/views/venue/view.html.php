@@ -53,7 +53,7 @@ class JEMViewVenue extends JViewLegacy
 		$search 			= $app->getUserStateFromRequest( 'com_jem.venue.search', 'search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 
-		$task 			= JRequest::getWord('task');
+		$task 				= JRequest::getWord('task');
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
@@ -131,19 +131,6 @@ class JEMViewVenue extends JViewLegacy
 			$addvenuelink = 0;
 		}
 
-
-
-		//Generate Venuedescription
-		if (!$venue->locdescription == '' || !$venue->locdescription == '<br />') {
-			//execute plugins
-			$venue->text	= $venue->locdescription;
-			$venue->title 	= $venue->venue;
-			JPluginHelper::importPlugin('content');
-			$results = $app->triggerEvent( 'onContentPrepare', array('com_jem.venue', &$venue, &$params, 0 ));
-			$venuedescription = $venue->text;
-		}
-
-
 		//Check if the user has access to the edit-venueform
 		$maintainer3 = JEMUser::editvenuegroups();
 		$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
@@ -154,7 +141,15 @@ class JEMViewVenue extends JViewLegacy
 			$allowedtoeditvenue = 0;
 		}
 
-
+		//Generate Venuedescription
+		if (!$venue->locdescription == '' || !$venue->locdescription == '<br />') {
+			//execute plugins
+			$venue->text	= $venue->locdescription;
+			$venue->title 	= $venue->venue;
+			JPluginHelper::importPlugin('content');
+			$results = $app->triggerEvent( 'onContentPrepare', array('com_jem.venue', &$venue, &$params, 0 ));
+			$venuedescription = $venue->text;
+		}
 
 		//build the url
 		if(!empty($venue->url) && strtolower(substr($venue->url, 0, 7)) != "http://") {
@@ -226,7 +221,7 @@ class JEMViewVenue extends JViewLegacy
 	/**
 	 * Manipulate Data
 	 *
-	 * 
+	 *
 	 */
 	function &getRows()
 	{

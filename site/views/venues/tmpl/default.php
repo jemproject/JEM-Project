@@ -34,15 +34,10 @@ defined('_JEXEC') or die;
 		</a>
 	</h2>
 
-	
 	<!-- FLYER -->
-	<?php
-	echo JEMOutput::flyer( $row, $row->limage, 'venue' );
-	?>
+	<?php echo JEMOutput::flyer( $row, $row->limage, 'venue' ); ?>
 
-	
 	<!--  -->
-	
 	<dl class="location floattext">
 		<?php if (($this->jemsettings->showdetlinkvenue == 1) && (!empty($row->url))) : ?>
 		<dt class="venue_website">
@@ -110,17 +105,16 @@ defined('_JEXEC') or die;
 			<a href="<?php echo $row->targetlink; ?>"><?php echo $row->assignedevents; ?>
 			</a>
 		</dd>
-		<?php 
-		if ($this->jemsettings->showmapserv == 1)
-		 		{ 
+		<?php
+		if ($this->jemsettings->showmapserv == 1) {
 			echo JEMOutput::mapicon($row);
-				}  
+		}
 		endif;
 		?>
 
 	</dl>
 	<p>
-		<?php 
+		<?php
 		if ($this->jemsettings->showmapserv == 2)
 		{
 			echo JEMOutput::mapicon($row);
@@ -128,13 +122,13 @@ defined('_JEXEC') or die;
 		?>
 	</p>
 
-	<?php if ($this->jemsettings->showlocdescription == 1) :	?>
-	<h2 class="description">
-		<?php echo JText::_( 'COM_JEM_VENUE_DESCRIPTION' ).':'; ?>
-	</h2>
-	<div class="description">
-		<?php echo $row->locdescription; ?>
-	</div>
+	<?php if ($this->jemsettings->showlocdescription == 1 && $row->locdescription != '' && $row->locdescription != '<br />') : ?>
+		<h2 class="description">
+			<?php echo JText::_( 'COM_JEM_VENUE_DESCRIPTION' ).':'; ?>
+		</h2>
+		<div class="description">
+			<?php echo $row->locdescription; ?>
+		</div>
 	<?php endif; ?>
 	<?php endforeach; ?>
 

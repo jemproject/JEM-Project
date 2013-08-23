@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Venues Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelVenues extends JModelLegacy
 {
@@ -42,17 +42,15 @@ class JEMModelVenues extends JModelLegacy
 
 	/**
 	 * Constructor
-	 *
-	 * 
 	 */
 	function __construct()
 	{
 		parent::__construct();
 
-		$app =  JFactory::getApplication();
+		$app =  Factory::getApplication();
 
 		// Get the paramaters of the active menu item
-		$params 	=  $app->getParams('com_jem');
+		$params = $app->getParams('com_jem');
 
 		//get the number of events from database
 		$limit			= JRequest::getInt('limit', $params->get('display_venues_num'));
@@ -70,13 +68,8 @@ class JEMModelVenues extends JModelLegacy
 	 */
 	function &getData( )
 	{
-		$app =  JFactory::getApplication();
-
-		$menu		= $app->getMenu();
-		$item		= $menu->getActive();
-		$params		= $menu->getParams($item->id);
-
-		$jemsettings 	= JEMHelper::config();
+		$app = JFactory::getApplication();
+		$params = $app->getParams('com_jem');
 
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
@@ -85,7 +78,7 @@ class JEMModelVenues extends JModelLegacy
 			$pagination = $this->getPagination();
 			$this->_data = $this->_getList( $query, $pagination->limitstart,  $pagination->limit );
 
-			for($i = 0; $i <  count($this->_data); $i++)
+			for($i = 0; $i < count($this->_data); $i++)
 			{
 				$venue = $this->_data[$i];
 
@@ -93,14 +86,12 @@ class JEMModelVenues extends JModelLegacy
 				$venue->limage = JEMImage::flyercreator($venue->locimage, 'venue');
 
 				//Generate Venuedescription
-				if (empty ($venue->locdescription)) {
-					$venue->locdescription = JText::_( 'COM_JEM_NO_DESCRIPTION' );
-				} else {
+				if (!$venue->locdescription == '' || !$venue->locdescription == '<br />') {
 					//execute plugins
 					$venue->text	= $venue->locdescription;
 					$venue->title 	= $venue->venue;
 					JPluginHelper::importPlugin('content');
-					$results = $app->triggerEvent( 'onContentPrepare', array( 'com_jem.venues', &$venue, &$params, 0 ));
+					$results = $app->triggerEvent( 'onContentPrepare', array( 'com_jem.venue', &$venue, &$params, 0 ));
 					$venue->locdescription = $venue->text;
 				}
 
