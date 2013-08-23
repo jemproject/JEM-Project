@@ -28,13 +28,13 @@ margin-right:10px;
 margin-left:95px;
 }
 
-#jemmoduleteaser .calendar .year{
+#jemmoduleteaser .calendar .yearteaser{
 font-size: 6px;
 height:5px;
 color: #e1e1e1;
 }
 
-#jemmoduleteaser .calendar .month {
+#jemmoduleteaser .calendar .monthteaser {
 font-size: 8px;
 color: white;
 text-transform:uppercase;
@@ -42,14 +42,14 @@ font-weight:bold;
 text-shadow: #666 1px 1px 1px;
 }
 
-#jemmoduleteaser .calendar .day{
+#jemmoduleteaser .calendar .dayteaser{
 font-weight:bold;
 font-size: 12px;
 padding-top:3px;
 color: #333;
 }
 
-#jemmoduleteaser .calendar .daynum{
+#jemmoduleteaser .calendar .daynumteaser{
 font-size: 29px;
 font-weight:bold;
 color: #FF6400;

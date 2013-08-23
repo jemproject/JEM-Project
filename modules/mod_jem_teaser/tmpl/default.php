@@ -32,16 +32,16 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 	<tr>
 		<td>
 			<div class="calendar">
-				<div class="year">
+				<div class="yearteaser">
 					<!--I don't need <?php echo $item->year; ?> -->
 				</div>
-				<div class="month">
+				<div class="monthteaser">
 					<?php echo $item->month; ?>
 				</div>
-				<div class="day">
+				<div class="dayteaser">
 					<?php echo $item->dayname; ?>
 				</div>
-				<div class="daynum">
+				<div class="daynumteaser">
 					<?php echo $item->daynum; ?>
 				</div>
 			</div>
