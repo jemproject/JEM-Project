@@ -62,6 +62,7 @@
 		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}.zip" basedir="modules/mod_${cfg.name}" />
 		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_wide.zip" basedir="modules/mod_${cfg.name}_wide" />
 		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_cal.zip" basedir="modules/mod_${cfg.name}_cal" />
+		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_teaser.zip" basedir="modules/mod_${cfg.name}_teaser" />
 	</target>
 
 	<!--
@@ -101,12 +102,12 @@
 	</target>
 
 	<target name="upload" description="attempts to upload build file to ftp server">
-		<fileset id="ftp.upload.fileset" dir="${cfg.buildVersionDir}/components">
+		<fileset id="ftp.upload.fileset" dir="${cfg.buildVersionDir}">
 			<include name="*.zip" />
 		</fileset>
 
 		<echo>FTP target is ${ftp.server}</echo>
-		<ftp server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}" action="put" remotedir="${ftp.dir}">
+		<ftp server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}" action="put" remotedir="${ftp.dir}" passive="yes">
 			<fileset refid="ftp.upload.fileset" />
 		</ftp>
 	</target>
