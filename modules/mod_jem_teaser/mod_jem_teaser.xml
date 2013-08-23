@@ -34,7 +34,7 @@
 				</field>
 					<field name="count" type="text" default="5" label="MOD_JEM_TEASER_EVENTS_IN_MODULE" description="MOD_JEM_TEASER_EVENTS_IN_MODULE_DESC" />
 				<field name="cuttitle" type="text" default="18" label="MOD_JEM_TEASER_MAX_TITLE_LENGTH" description="MOD_JEM_TEASER_MAX_TITLE_LENGTH_DESC" />
-				<field name="descriptionlength" type="text" default="300" label="MOD_JEM_TEASER_MAX_DESCRIPTION_LENGTH" description="MOD_EJEM_TEASER_MAX_DESCRIPTION_LENGTH_DESC" />
+				<field name="descriptionlength" type="text" default="300" label="MOD_JEM_TEASER_MAX_DESCRIPTION_LENGTH" description="MOD_JEM_TEASER_MAX_DESCRIPTION_LENGTH_DESC" />
 				<field name="br" type="radio" default="0" label="MOD_JEM_TEASER_ALLOW_LINEBREAK" description="MOD_JEM_TEASER_ALLOW_LINEBREAK_DESC">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
