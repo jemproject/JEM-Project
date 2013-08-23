@@ -27,6 +27,53 @@ class JEMTableEvent extends JTable
 	// overloaded check function
 	function check()
 	{
+		$jinput = JFactory::getApplication()->input;
+
+		//get values from time selectlist and concatenate them accordingly
+		$starthours		= $jinput->get('starthours','','cmd');
+		$startminutes	= $jinput->get('startminutes','','cmd');
+		$endhours		= $jinput->get('endhours','','cmd');
+		$endminutes		= $jinput->get('endminutes','','cmd');
+
+		// Emtpy time values are allowed and are stored as null values
+		if ($starthours != '') {
+			if ($startminutes == '') {
+				$startminutes = '00';
+			}
+			$this->times = $starthours.':'.$startminutes;
+			if ($endhours != '') {
+				if ($endminutes == '') {
+					$endminutes = '00';
+				}
+				$this->endtimes = $endhours.':'.$endminutes;
+			}
+		}
+
+		// Check begin date is before end date
+
+		// Check if end date is set
+		if($this->enddates == '0000-00-00' || $this->enddates == null) {
+			// Check if end time is set
+			if($this->endtimes == null) {
+				// Compare is not needed, but make sure the check passes
+				$date1 = new DateTime('00:00');
+				$date2 = new DateTime('00:00');
+			} else {
+				$date1 = new DateTime($this->times);
+				$date2 = new DateTime($this->endtimes);
+			}
+		} else {
+			// Check if end time is set
+			if($this->endtimes == null) {
+				$date1 = new DateTime($this->dates);
+				$date2 = new DateTime($this->enddates);
+			} else {
+				$date1 = new DateTime($this->dates.' '.$this->times);
+				$date2 = new DateTime($this->enddates.' '.$this->endtimes);
+			}
+		}
+
+
 
 		if (empty($this->enddates)) {
 			$this->enddates = NULL;
@@ -35,6 +82,22 @@ class JEMTableEvent extends JTable
 		if (empty($this->dates)) {
 			$this->dates = NULL;
 		}
+
+
+
+		if($date1 > $date2) {
+			$this->setError(JText::_('COM_JEM_ERROR_END_BEFORE_START'));
+			return false;
+		}
+
+
+
+
+
+
+
+
+
 
 
 

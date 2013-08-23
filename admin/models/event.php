@@ -216,53 +216,7 @@ class JEMModelEvent extends JModelAdmin
 		//return JError::raiseWarning( 500, $table->getError() );
 		//}
 
-		//get values from time selectlist and concatenate them accordingly
-		$starthours		= $jinput->get('starthours','','cmd');
-		$startminutes	= $jinput->get('startminutes','','cmd');
-		$endhours		= $jinput->get('endhours','','cmd');
-		$endminutes		= $jinput->get('endminutes','','cmd');
 
-		// Emtpy time values are allowed and are stored as null values
-		if ($starthours != '') {
-			if ($startminutes == '') {
-				$startminutes = '00';
-			}
-			$table->times = $starthours.':'.$startminutes;
-			if ($endhours != '') {
-				if ($endminutes == '') {
-					$endminutes = '00';
-				}
-				$table->endtimes = $endhours.':'.$endminutes;
-			}
-		}
-
-		// Check begin date is before end date
-
-		// Check if end date is set
-		if($table->enddates == '0000-00-00' || $table->enddates == null) {
-			// Check if end time is set
-			if($table->endtimes == null) {
-				// Compare is not needed, but make sure the check passes
-				$date1 = new DateTime('00:00');
-				$date2 = new DateTime('00:00');
-			} else {
-				$date1 = new DateTime($table->times);
-				$date2 = new DateTime($table->endtimes);
-			}
-		} else {
-			// Check if end time is set
-			if($table->endtimes == null) {
-				$date1 = new DateTime($table->dates);
-				$date2 = new DateTime($table->enddates);
-			} else {
-				$date1 = new DateTime($table->dates.' '.$table->times);
-				$date2 = new DateTime($table->enddates.' '.$table->endtimes);
-			}
-		}
-		if($date1 > $date2) {
-			JError::raiseWarning(100, JText::_('COM_JEM_ERROR_END_BEFORE_START'));
-			return false;
-		}
 
 		$cats = $jinput->get( 'cid', array(), 'post', 'array');
 
