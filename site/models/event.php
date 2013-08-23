@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Event Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelEvent extends JModelLegacy
 {
@@ -64,7 +64,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access public
 	 * @return array
-	 * 
+	 *
 	 */
 	function &getEvent( )
 	{
@@ -127,6 +127,8 @@ class JEMModelEvent extends JModelLegacy
 		if (empty($this->_event))
 		{
 
+			$db = JFactory::getDbo();
+
 			// Get the WHERE clause
 			$where	= $this->_buildEventWhere();
 
@@ -152,10 +154,22 @@ class JEMModelEvent extends JModelLegacy
 			$this->_db->setQuery($query);
 			$this->_event = $this->_db->loadObject();
 
+
+			// Define Attachments
 			$user = JFactory::getUser();
 			$gid = JEMHelper::getGID($user);
 
 			$this->_event->attachments = JEMAttachment::getAttachments('event'.$this->_event->did, $gid);
+
+
+			// Define Booked
+			$query = $db->getQuery(true);
+			$query->select(array('COUNT(*)'));
+			$query->from('#__jem_register');
+			$query->where(array('event= '.$db->quote($this->_event->did), 'waiting= 0'));
+			$db->setQuery($query);
+			$res = $db->loadResult();
+			$this->_event->booked = $res;
 
 			return (boolean) $this->_event;
 		}
@@ -167,7 +181,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access	private
 	 * @return	string	WHERE clause
-	 * 
+	 *
 	 */
 	function _buildEventWhere()
 	{
@@ -181,7 +195,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	object
-	 * 
+	 *
 	 */
 	function getCategories()
 	{
@@ -210,7 +224,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * 
+	 *
 	 */
 	function hit()
 	{
@@ -230,7 +244,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	mixed false if not registered, 1 for registerd, 2 for waiting list
-	 * 
+	 *
 	 */
 	function getUserIsRegistered()
 	{
@@ -253,7 +267,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	object
-	 * 
+	 *
 	 */
 	function getRegisters()
 	{
@@ -291,7 +305,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access public
 	 * @return int register id on success, else false
-	 * 
+	 *
 	 */
 	function userregister()
 	{
@@ -348,7 +362,7 @@ class JEMModelEvent extends JModelLegacy
 	 *
 	 * @access public
 	 * @return true on success
-	 * 
+	 *
 	 */
 	function delreguser()
 	{

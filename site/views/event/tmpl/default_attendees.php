@@ -12,6 +12,25 @@ defined('_JEXEC') or die;
 
 <div class="register">
 <dl class="floattext">
+
+<?php if ($this->row->maxplaces > 0 ) {?>
+<dt class="register"><?php echo JText::_ ( 'COM_JEM_MAX_PLACES' ) . ':';?></dt>
+<dd class="register"><?php echo $this->row->maxplaces; ?></dd>
+
+<dt class="register"><?php echo JText::_ ( 'COM_JEM_BOOKED_PLACES' ) . ':';?></dt>
+<dd class="register"><?php echo $this->row->booked; ?></dd>
+
+<?php } ?>
+
+<?php if ($this->row->maxplaces > 0): ?>
+<dt><label><?php echo JText::_ ( 'COM_JEM_AVAILABLE_PLACES' ) . ':';?></label></dt>
+<dd>
+<?php echo ($this->row->maxplaces-$this->row->booked); ?>
+</dd>
+	<?php
+	endif;
+	?>
+
 	<dt class="register"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ).':'; ?></dt>
 	<dd class="register">
 
