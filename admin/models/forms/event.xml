@@ -5,7 +5,7 @@
 		addfieldpath="/administrator/components/com_jem/models/fields">
 
 
-		<field name="title" type="text" class="inputbox" size="20"
+		<field name="title" type="text" class="inputbox" size="40"
 			label="COM_JEM_EVENT_TITLE" description="COM_JEM_EVENT_TITLE"
 			required="true" />
 
