@@ -57,10 +57,10 @@ $options = array(
 				alert("<?php echo JText::_( 'COM_JEM_ADD_TITLE', true ); ?>");
 				validator.handleResponse(false,form.title);
 				return false;
-			} else if ( validator.validate(form.locid) === false ) {
-				alert("<?php echo JText::_( 'COM_JEM_SELECT_VENUE', true ); ?>");
-				validator.handleResponse(false,form.locid);
-				return false;
+			//} else if ( validator.validate(form.locid) === false ) {
+			//	alert("<?php // echo JText::_( 'COM_JEM_SELECT_VENUE', true ); ?>");
+			//	validator.handleResponse(false,form.locid);
+			//	return false;
 				} else if ( form.cid.selectedIndex == -1 ) {
 				alert("<?php echo JText::_( 'COM_JEM_SELECT_CATEGORY', true ); ?>");
 				validator.handleResponse(false,form.cid);
@@ -171,20 +171,19 @@ $options = array(
 
 				<input type="text" id="a_name" name="venue" value="<?php echo $this->row->venue; ?>" disabled="disabled" />
 
-				<div class='jem_buttons floattext'>
+				<div>
 
-					<a class="jem_venue_reset" title="<?php echo JText::_('COM_JEM_NO_VENUE'); ?>" onclick="elSelectVenue(0,'<?php echo JText::_('COM_JEM_NO_VENUE'); ?>');return false;" href="#">
-						<span><?php  echo JText::_('COM_JEM_NO_VENUE'); ?></span>
-					</a>
-					<a class="jem_venue_select flyermodal" title="<?php echo JText::_('COM_JEM_SELECT'); ?>" href="<?php echo JRoute::_('index.php?view=editevent&layout=choosevenue&tmpl=component'); ?>" rel="{handler: 'iframe', size: {x: 650, y: 375}}">
-						<span><?php echo JText::_('COM_JEM_SELECT')?></span>
+
+
+					<a class="flyermodal button1" title="<?php echo JText::_('COM_JEM_SELECT'); ?>" href="<?php echo JRoute::_('index.php?view=editevent&layout=choosevenue&tmpl=component'); ?>" rel="{handler: 'iframe', size: {x: 650, y: 375}}">
+						<?php echo JText::_('COM_JEM_SELECT')?>
 					</a>
 
 					<input class="inputbox required" type="hidden" id="a_id" name="locid" value="<?php echo $this->row->locid; ?>" />
 
 					<?php if ( $this->delloclink == 1 && !$this->row->id ) : //show location submission link ?>
-						<a class="jem_venue_add flyermodal" title="<?php echo JText::_('COM_JEM_DELIVER_NEW_VENUE'); ?>" href="<?php echo JRoute::_('index.php?view=editvenue&mode=ajax&tmpl=component'); ?>" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
-							<span><?php echo JText::_('COM_JEM_DELIVER_NEW_VENUE')?></span>
+						<a class="flyermodal button1" title="<?php echo JText::_('COM_JEM_DELIVER_NEW_VENUE'); ?>" href="<?php echo JRoute::_('index.php?view=editvenue&mode=ajax&tmpl=component'); ?>" rel="{handler: 'iframe', size: {x: 800, y: 500}}">
+							<?php echo JText::_('COM_JEM_DELIVER_NEW_VENUE')?>
 						</a>
 					<?php endif; ?>
 				</div>

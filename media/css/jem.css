@@ -135,6 +135,35 @@ div#jem {
 }
 
 
+div#jem .button1 {
+	-webkit-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
+	-moz-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
+	box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
+	background-color:#EBE8E9;
+	border:1px solid #29447E;
+	font-family:'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
+	font-size:12px;
+	font-weight:700;
+	padding:2px 6px;
+	margin: 2px;
+	cursor:pointer;
+	/*height:28px;*/
+	color:#000000;
+	position: relative;
+	text-decoration:none;
+	top: 8px;
+	left: 3px;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px
+}
+
+div#jem .button1:hover {
+	background-color:#D1C9CC;
+	color:#000000;
+	text-decoration:none;
+}
+
 
 div#jem .clear
 { border: 0; clear: both; float: none; height: 1px; line-height: 1px; }

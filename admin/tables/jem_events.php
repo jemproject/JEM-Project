@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
  * JEM events Model class
  *
  * @package JEM
- * 
+ *
  */
 class jem_events extends JTable
 {
@@ -202,11 +202,11 @@ class jem_events extends JTable
 		}
 
 		//No venue or category choosen?
-		if($this->locid == '') {
-			$this->_error = JText::_('COM_JEM_VENUE_EMPTY');
-			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
-			return false;
-		}
+		//if($this->locid == '') {
+		//	$this->_error = JText::_('COM_JEM_VENUE_EMPTY');
+		//	JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
+		//	return false;
+		//}
 
 		return true;
 	}

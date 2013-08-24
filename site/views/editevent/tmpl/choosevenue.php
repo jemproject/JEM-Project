@@ -8,6 +8,10 @@
  */
 
 defined('_JEXEC') or die;
+
+
+$function = JRequest::getCmd('function', 'jSelectVenue');
+
 ?>
 
 <script type="text/javascript">
@@ -32,7 +36,7 @@ defined('_JEXEC') or die;
 
 <div class="clear"></div>
 
-<form action="index.php?option=com_jem&amp;view=editevent&amp;layout=choosevenue&amp;tmpl=component" method="post" id="adminForm">
+<form action="index.php?option=com_jem&amp;view=editevent&amp;layout=choosevenue&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
 
 <div id="jem_filter" class="floattext">
 		<div class="jem_fleft">
@@ -41,8 +45,9 @@ defined('_JEXEC') or die;
 			echo $this->searchfilter.'&nbsp;';
 			?>
 			<input type="text" name="filter" id="filter" value="<?php echo $this->filter;?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
-			<button onclick="document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-			<button onclick="document.getElementById('filter').value='';document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
+			<button type="submit"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+			<button type="button" onclick="document.id('search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
+			<button type="button" onclick="if (window.parent) window.parent.elSelectVenue('', '<?php echo JText::_('COM_JEM_SELECTVENUE') ?>');"><?php echo JText::_('COM_JEM_NOVENUE')?></button>
 		</div>
 		<div class="jem_fright">
 			<?php
@@ -69,9 +74,7 @@ defined('_JEXEC') or die;
 		<tr class="row<?php echo $i % 2; ?>">
 			<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td align="left">
-				<a style="cursor:pointer" onclick="window.parent.elSelectVenue('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->venue); ?>');">
-						<?php echo $this->escape($row->venue); ?>
-				</a>
+			 <a style="cursor:pointer" onclick="if (window.parent) window.parent.elSelectVenue('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
 			</td>
 			<td align="left"><?php echo $this->escape($row->city); ?></td>
 			<td align="left"><?php echo $this->escape($row->state); ?></td>
@@ -82,6 +85,7 @@ defined('_JEXEC') or die;
 </table>
 
 <p>
+<input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
 <input type="hidden" name="task" value="selectvenue" />
 <input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="tmpl" value="component" />

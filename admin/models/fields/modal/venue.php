@@ -1,9 +1,9 @@
 <?php
 // No direct access
  defined('_JEXEC') or die('Restricted access');
- 
+
  jimport('joomla.form.formfield');
- 
+
  /**
   * Book form field class
   */
@@ -23,7 +23,7 @@
   {
           // Load modal behavior
           JHtml::_('behavior.modal', 'a.modal');
- 
+
           // Build the script
           $script = array();
           $script[] = '    function jSelectVenue_'.$this->id.'(id, venue, object) {';
@@ -31,45 +31,42 @@
           $script[] = '        document.id("'.$this->id.'_name").value = venue;';
           $script[] = '        SqueezeBox.close();';
           $script[] = '    }';
- 
+
           // Add to document head
           JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));
- 
+
           // Setup variables for display
           $html = array();
-          
+
           $link = 'index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component&amp;function=jSelectVenue_'.$this->id;
-          
-          
-          //$link = 'index.php?option=com_jem&amp;view=venueelement&amp;layout=modal'.
-          //        '&amp;tmpl=component&amp;function=elSelectVenue_'.$this->id;
- 
+
+
           $db = JFactory::getDbo();
           $query = $db->getQuery(true);
           $query->select('venue');
           $query->from('#__jem_venues');
           $query->where('id='.(int)$this->value);
           $db->setQuery($query);
-          
-          
+
+
           $venue = $db->loadResult();
-          
+
           if ($error = $db->getErrorMsg()) {
           	JError::raiseWarning(500, $error);
           }
-          
-  
-          
+
+
+
           if (empty($venue)) {
                   $venue = JText::_('COM_JEM_SELECTVENUE');
           }
           $venue = htmlspecialchars($venue, ENT_QUOTES, 'UTF-8');
- 
+
           // The current book input field
           $html[] = '<div class="fltlft">';
           $html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$venue.'" disabled="disabled" size="35" />';
           $html[] = '</div>';
- 
+
           // The book select button
           $html[] = '<div class="button2-left">';
           $html[] = '  <div class="blank">';
@@ -77,7 +74,7 @@
                          JText::_('COM_JEM_SELECT').'</a>';
           $html[] = '  </div>';
           $html[] = '</div>';
- 
+
          // The active book id field
           if (0 == (int)$this->value) {
                   $value = '';
@@ -90,9 +87,9 @@
           if ($this->required) {
                   $class = ' class="required modal-value"';
           }
- 
+
           $html[] = '<input type="hidden" id="'.$this->id.'_id"'.$class.' name="'.$this->name.'" value="'.$value.'" />';
- 
+
          return implode("\n", $html);
   }
 
@@ -114,6 +111,6 @@
 
 
 
- 
+
  }
  ?>

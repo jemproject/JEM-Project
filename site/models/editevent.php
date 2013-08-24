@@ -195,6 +195,29 @@ class JEMModelEditevent extends JModelLegacy
 
 			return (boolean) $this->_event;
 		}
+
+
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('venue');
+		$query->from('#__jem_venues');
+		$query->where('id='.(int)$this->_event->locid);
+		$db->setQuery($query);
+
+
+		$venue = $db->loadResult();
+
+		if ($error = $db->getErrorMsg()) {
+			JError::raiseWarning(500, $error);
+		}
+		if (empty($venue)) {
+			$this->_event->venue = JText::_('COM_JEM_SELECTVENUE');
+		}
+
+
+
+
+
 		return true;
 	}
 

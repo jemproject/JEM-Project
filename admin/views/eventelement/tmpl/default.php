@@ -49,12 +49,8 @@ defined('_JEXEC') or die;
 	</tfoot>
 
 	<tbody>
-		<?php
-			$k = 0;
-			for ($i=0, $n=count( $this->rows ); $i < $n; $i++) {
-				$row = $this->rows[$i];
-		?>
-		<tr class="<?php echo "row$k"; ?>">
+			<?php foreach ($this->rows as $i => $row) : ?>
+		<tr class="row<?php echo $i % 2; ?>">
 			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td>
 				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SELECT' );?>::<?php echo $row->title; ?>">
@@ -127,7 +123,7 @@ defined('_JEXEC') or die;
 				<img src="../media/com_jem/images/<?php echo $img;?>" width="16" height="16" border="0" alt="" />
 			</td>
 		</tr>
-			<?php $k = 1 - $k; } ?>
+			<?php endforeach; ?>
 	</tbody>
 
 </table>
