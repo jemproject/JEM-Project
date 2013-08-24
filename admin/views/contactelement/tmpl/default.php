@@ -36,6 +36,8 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 			<th width="7" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_ADDRESS', 'con.address', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'con.suburb', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'con.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th align="left" class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
 			<th align="left" class="title"><?php echo JText::_( 'COM_JEM_TELEPHONE' ); ?></th>
 			<th class="title center"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
@@ -44,7 +46,7 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 
 	<tfoot>
 		<tr>
-			<td colspan="6">
+			<td colspan="12">
 				<?php echo $this->pagination->getListFooter(); ?>
 			</td>
 		</tr>
@@ -56,10 +58,12 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td align="left">
 				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SELECT' );?>::<?php echo $row->name; ?>">
-				<a style="cursor:pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');"><?php echo $this->escape($row->name); ?></a>
+				<a style="cursor:pointer;" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');"><?php echo $this->escape($row->name); ?></a>
 				</span>
 			</td>
 			<td align="left"><?php echo htmlspecialchars($row->address, ENT_QUOTES, 'UTF-8'); ?></td>
+			<td align="left"><?php echo htmlspecialchars($row->suburb, ENT_QUOTES, 'UTF-8'); ?></td>
+			<td align="left"><?php echo htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8'); ?></td>
 			<td align="left"><?php echo htmlspecialchars($row->email_to, ENT_QUOTES, 'UTF-8'); ?></td>
 			<td align="left"><?php echo htmlspecialchars($row->telephone, ENT_QUOTES, 'UTF-8'); ?></td>
 			<td class="center">

@@ -57,6 +57,8 @@ class JEMViewContactelement extends JViewLegacy {
 		$filters = array();
 		$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_NAME' ) );
 		$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_ADDRESS' ) );
+		$filters[] = JHTML::_('select.option', '3', JText::_( 'COM_JEM_CITY' ) );
+		$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_STATE' ) );
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
 
 		// search filter
