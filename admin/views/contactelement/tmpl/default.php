@@ -20,8 +20,9 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 		<td width="100%">
 			<?php echo JText::_( 'COM_JEM_SEARCH' ).' '.$this->lists['filter']; ?>
 			<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button onclick="this.form.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-			<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
+			<button type="submit"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+			<button type="button" onclick="document.id('search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
+			<button type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo JText::_('COM_JEM_SELECTCONTACT') ?>');"><?php echo JText::_('COM_JEM_NOCONTACT')?></button>
 		</td>
 		<td nowrap="nowrap">
 			 <?php echo $this->lists['state']; ?>
@@ -50,12 +51,8 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 	</tfoot>
 
 	<tbody>
-		<?php
-		$k = 0;
-		for ($i=0, $n=count( $this->rows ); $i < $n; $i++) {
-			$row = $this->rows[$i];
-   		?>
-		<tr class="<?php echo "row$k"; ?>">
+		<?php foreach ($this->rows as $i => $row) : ?>
+		 <tr class="row<?php echo $i % 2; ?>">
 			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td align="left">
 				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SELECT' );?>::<?php echo $row->name; ?>">
@@ -71,7 +68,7 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 			</td>
 		</tr>
 
-		<?php $k = 1 - $k; } ?>
+		<?php endforeach; ?>
 
 	</tbody>
 

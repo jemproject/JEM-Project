@@ -19,8 +19,9 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 		<td width="100%">
 			<?php echo JText::_( 'COM_JEM_SEARCH' ).' '.$this->lists['filter']; ?>
 			<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button onclick="this.form.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-			<button onclick="this.form.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
+			<button type="submit"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+			<button type="button" onclick="document.id('search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
+			<button type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo JText::_('COM_JEM_SELECTVENUE') ?>');"><?php echo JText::_('COM_JEM_NOVENUE')?></button>
 		</td>
 		<td nowrap="nowrap">
 			 <?php echo $this->lists['state']; ?>
@@ -54,7 +55,6 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 			<td align="left">
 				 <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
             </td>
-			</td>
 			<td align="left"><?php echo htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8'); ?></td>
 			<td class="center"><?php echo htmlspecialchars($row->country, ENT_QUOTES, 'UTF-8'); ?></td>
 			<td class="center">
