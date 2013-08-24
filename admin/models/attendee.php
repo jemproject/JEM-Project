@@ -172,29 +172,45 @@ class JEMModelAttendee extends JModelLegacy
 		if ($row->id) {
 
 		} else {
-			$row->uregdate 		= gmdate('Y-m-d H:i:s');
-
+			$row->uregdate = gmdate('Y-m-d H:i:s');
 
 			$db = JFactory::getDbo();
+
+			// Get event
 			$query = $db->getQuery(true);
-			$query->select(array('e.maxplaces','e.waitinglist','COUNT(r.id) as booked'));
-			$query->from('#__jem_events AS e');
-			$query->join('INNER', '#__jem_register AS r ON (r.event = e.id)');
-
-			$query->where(array('e.id= '.$db->quote($eventid), 'r.waiting= 0'));
-			$query->group('e.id');
-
+			$query->select(array('maxplaces','waitinglist'));
+			$query->from('#__jem_events');
+			$query->where('id= '.$db->quote($eventid));
 
 			$db->setQuery($query);
-			$details = $db->loadObject();
+			$event = $db->loadObject();
+
+			// Get register information of the event
+			$query = $db->getQuery(true);
+			$query->select(array('COUNT(id) AS registered', 'COALESCE(SUM(waiting), 0) AS waiting'));
+			$query->from('#__jem_register');
+			$query->where('event = '.$db->quote($eventid));
+
+			$db->setQuery($query);
+			$register = $db->loadObject();
+
+			// If no one is registered yet, $register is null!
+			if(is_null($register)) {
+				$register = new stdclass;
+				$register->registered = 0;
+				$register->waiting = 0;
+				$register->booked = 0;
+			} else {
+				$register->booked = $register->registered - $register->waiting;
+			}
 
 			// put on waiting list ?
-			if ($details->maxplaces > 0) // there is a max
+			if ($event->maxplaces > 0) // there is a max
 			{
 				// check if the user should go on waiting list
-				if ($details->booked >= $details->maxplaces)
+				if ($register->booked >= $event->maxplaces)
 				{
-					if (!$details->waitinglist) {
+					if (!$event->waitinglist) {
 						JError::raiseWarning(0, JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'));
 						return false;
 					}
