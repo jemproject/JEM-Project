@@ -139,6 +139,13 @@ label.invalid { color: #ff0000; }
 .copyright
 { font-size: 0.85em; text-align: center; margin: 1em 0; color: #aaa; }
 
+
+input#jform_title
+{
+	font-size: 0.909em !important;
+}
+
+
 div.clear
 { border: 0; clear: both; float: none; height: 1px; line-height: 1px; }
 
