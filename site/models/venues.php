@@ -47,7 +47,7 @@ class JEMModelVenues extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app =  Factory::getApplication();
+		$app =  JFactory::getApplication();
 
 		// Get the paramaters of the active menu item
 		$params = $app->getParams('com_jem');
