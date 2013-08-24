@@ -97,8 +97,12 @@ defined('_JEXEC') or die;
 				 itemprop="event" itemscope itemtype="http://schema.org/Event">
 
 				<td headers="jem_date" align="left">
-					<?php echo JEMOutput::formatShortDateTime($row->dates, $row->times,
-						$row->enddates, $row->endtimes); ?>
+					<?php
+						echo JEMOutput::formatShortDateTime($row->dates, $row->times,
+							$row->enddates, $row->endtimes);
+						echo JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times,
+							$row->enddates, $row->endtimes);
+					?>
 				</td>
 
 				<?php

@@ -669,7 +669,7 @@ class JEMOutput {
 		jimport('joomla.utilities.date');
 		$jdate = new JDate($date);
 		if (!$format) {
-			// If no format set, use long format  as standard
+			// If no format set, use long format as standard
 			$format = JText::_($settings->formatdate);
 		}
 
@@ -682,7 +682,7 @@ class JEMOutput {
 	 * @param string $time
 	 * @return string $formattime
 	 */
-	static function formattime($time)
+	static function formattime($time, $format = "", $addSuffix = true)
 	{
 		$settings = JEMHelper::config();
 
@@ -690,11 +690,18 @@ class JEMOutput {
 			return;
 		}
 
-		//Format time
-		$formattime = strftime($settings->formattime, strtotime($time));
-		$formattime .= ' '.$settings->timename;
+		if(!$format) {
+			// If no format set, use settings format as standard
+			$format = $settings->formattime;
+		}
 
-		return $formattime;
+		$formattedTime = strftime($format, strtotime($time));
+
+		if($addSuffix) {
+			$formattedTime .= ' '.$settings->timename;
+		}
+
+		return $formattedTime;
 	}
 
 	/**
@@ -784,6 +791,46 @@ class JEMOutput {
 			$format = JText::_('COM_JEM_FORMAT_SHORT_DATE');
 		}
 		return self::formatDateTime($dateStart, $timeStart, $dateEnd, $timeEnd, $format);
+	}
+
+	static function formatSchemaOrgDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "") {
+		$settings = JEMHelper::config();
+		$output = "";
+		$formatD = "Y-m-d";
+		$formatT = "%H:%M";
+
+		if(JEMHelper::isValidDate($dateStart)) {
+			$content = self::formatdate($dateStart, $formatD);
+
+			if($settings->showtimedetails && $timeStart) {
+				$content .= 'T'.self::formattime($timeStart, $formatT, false);
+			}
+			$output .= '<meta itemprop="startDate" content="'.$content.'" />';
+
+			if(JEMHelper::isValidDate($dateEnd)) {
+				$content = self::formatdate($dateEnd, $formatD);
+
+				if($settings->showtimedetails && $timeEnd) {
+					$content .= 'T'.self::formattime($timeEnd, $formatT, false);
+				}
+				$output .= '<meta itemprop="endDate" content="'.$content.'" />';
+			}
+		} else {
+			// Open date
+
+			if($settings->showtimedetails) {
+				if($timeStart) {
+					$content = self::formattime($timeStart, $formatT, false);
+					$output .= '<meta itemprop="startDate" content="'.$content.'" />';
+				}
+				// Display end time only when both times are set
+				if($timeStart && $timeEnd) {
+					$content .= self::formattime($timeEnd, $formatT, false);
+					$output .= '<meta itemprop="endDate" content="'.$content.'" />';
+				}
+			}
+		}
+		return $output;
 	}
 
 	/**
