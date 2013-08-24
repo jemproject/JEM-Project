@@ -22,7 +22,7 @@ class JEMViewEventslist extends JViewLegacy
 	/**
 	 * Creates the Simple List View
 	 *
-	 * 
+	 *
 	 */
 	function display( $tpl = null )
 	{
@@ -30,7 +30,7 @@ class JEMViewEventslist extends JViewLegacy
 
 		//initialize variables
 		$document 	= JFactory::getDocument();
-		
+
 		$jemsettings = JEMHelper::config();
 		$menu		= $app->getMenu();
 		$item		= $menu->getActive();
@@ -39,7 +39,7 @@ class JEMViewEventslist extends JViewLegacy
 		$pathway 	= $app->getPathWay();
 		$db  		=  JFactory::getDBO();
 
-		
+
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
@@ -49,16 +49,16 @@ class JEMViewEventslist extends JViewLegacy
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_state', 'filter_state', 	'*', 'word' );
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.eventslist.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.eventslist.search', 'search', '', 'string' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_search', 'filter_search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 		$task 		= JRequest::getWord('task');
-		
-		
+
+
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
 
-		
+
 		//get data from model
 		$rows 	= $this->get('Data');
 
@@ -70,11 +70,11 @@ class JEMViewEventslist extends JViewLegacy
 			$noevents = 0;
 		}
 
-		
+
 		//params
 		$params->def( 'page_title', $item->title);
 
-		
+
 		//pathway
 		$pathway->setItemName( 1, $item->title );
 
@@ -135,7 +135,7 @@ class JEMViewEventslist extends JViewLegacy
 		// search filter
 		$lists['search']= $search;
 
-		
+
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
 
@@ -161,7 +161,7 @@ class JEMViewEventslist extends JViewLegacy
 	 *
 	 * @access public
 	 * @return object $rows
-	 * 
+	 *
 	 */
 	function &getRows()
 	{

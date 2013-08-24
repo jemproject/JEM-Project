@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Category Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelCategory extends JModelLegacy
 {
@@ -278,7 +278,7 @@ class JEMModelCategory extends JModelLegacy
 
 		$filter_state 	= $app->getUserStateFromRequest('com_jem.category.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.category.filter', 'filter', '', 'int');
-		$search 		= $app->getUserStateFromRequest('com_jem.category.search', 'search', '', 'string');
+		$search 		= $app->getUserStateFromRequest('com_jem.category.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
 
 

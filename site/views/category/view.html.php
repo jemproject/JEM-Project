@@ -16,14 +16,14 @@ jimport('joomla.application.component.view');
  * HTML View class for the Category View
  *
  * @package JEM
- * 
+ *
 */
 class JEMViewCategory extends JViewLegacy
 {
 	/**
 	 * Creates the Category View
 	 *
-	 * 
+	 *
 	 */
 	function display($tpl=null)
 	{
@@ -54,10 +54,10 @@ class JEMViewCategory extends JViewLegacy
 		$evbackgroundcolor = $params->get('eventbackgroundcolor');
 		$currentdaycolor = $params->get('currentdaycolor');
 		$eventandmorecolor = $params->get('eventandmorecolor');
-		
-		
+
+
 		$style = '
-		
+
         .eventcontent a:link, a:visited, a:active {
         color:' . $evlinkcolor . ';
         }
@@ -67,23 +67,23 @@ class JEMViewCategory extends JViewLegacy
         .eventandmore {
         background-color:'.$eventandmorecolor .';
         		}
-		
+
         .today .daynum {
  		 background-color:'.$currentdaycolor.';
 		}
-		
-		
+
+
         ';
 		$document->addStyleDeclaration( $style );
-		
-		
-		
+
+
+
 		// get variables
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.category.filter_order', 'filter_order', 	'a.dates', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.category.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.category.filter_state', 'filter_state', 	'*', 'word' );
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.category.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.category.search', 'search', '', 'string' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.category.filter_search', 'filter_search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 		$task 				= JRequest::getWord('task');
 
@@ -279,7 +279,7 @@ class JEMViewCategory extends JViewLegacy
 	/**
 	 * Manipulate Data
 	 *
-	 * 
+	 *
 	 */
 	function &getRows()
 	{
@@ -312,7 +312,7 @@ class JEMViewCategory extends JViewLegacy
 	 * @param string  $href An URL that will be used to create the link
 	 * @param string  $class the class to use for tip.
 	 * @return  string
-	 * 
+	 *
 	 */
 	function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '')
 	{

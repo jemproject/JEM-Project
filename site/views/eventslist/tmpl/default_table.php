@@ -28,9 +28,9 @@ defined('_JEXEC') or die;
 			echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
 			echo $this->lists['filter'].'&nbsp;';
 			?>
-			<input type="text" name="search" id="search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
-			<button onclick="document.adminForm.submit();"><?php echo JText::_('COM_JEM_GO'); ?></button>
-			<button onclick="$('search').value='';document.adminForm.submit();"><?php echo JText::_('COM_JEM_RESET'); ?></button>
+			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+			<button class="buttonfilter" type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
+			<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
 		<?php endif; ?>
 		<?php if ($this->jemsettings->display) : ?>

@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component JEM Model
  *
  * @package JEM
- * 
+ *
 */
 class JEMModelEventslist extends JModelLegacy
 {
@@ -135,7 +135,7 @@ class JEMModelEventslist extends JModelLegacy
 			$query = $this->_buildQuery();
 			$this->_total = $this->_getListCount($query);
 		}
-		
+
 		return $this->_total;
 
 	}
@@ -236,7 +236,7 @@ class JEMModelEventslist extends JModelLegacy
 
 		$filter_state 	= $app->getUserStateFromRequest('com_jem.eventslist.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.eventslist.filter', 'filter', '', 'int');
-		$search 		= $app->getUserStateFromRequest('com_jem.eventslist.search', 'search', '', 'string');
+		$search 		= $app->getUserStateFromRequest('com_jem.eventslist.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
 
 
@@ -255,7 +255,7 @@ class JEMModelEventslist extends JModelLegacy
 		// get included categories
 		if ($catswitch == 1)
 		{
-				
+
 			$included_cats = trim($params->get('categoryswitchcats', ''));
 
 			if ($included_cats != '') {
@@ -265,8 +265,8 @@ class JEMModelEventslist extends JModelLegacy
 
 		}
 
-		
-		
+
+
 
 		// get excluded categories
 		if ($catswitch == 0)
@@ -280,7 +280,7 @@ class JEMModelEventslist extends JModelLegacy
 		}
 		// === END Excluded categories add === //
 
-		
+
 
 		if ($jemsettings->filter)
 		{
@@ -309,7 +309,7 @@ class JEMModelEventslist extends JModelLegacy
 
 		$where 		= (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
 
-		
+
 		return $where;
 
 
@@ -355,7 +355,7 @@ class JEMModelEventslist extends JModelLegacy
 		// get included categories
 		if ($catswitch == 1)
 		{
-				
+
 			$included_cats = trim($params->get('categoryswitchcats', ''));
 			if ($included_cats != '') {
 				$cats_included = explode(',', $included_cats);
