@@ -40,7 +40,7 @@ defined('_JEXEC') or die;
 			echo '<label for="filter_type">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
 			echo $this->searchfilter.'&nbsp;';
 			?>
-			<input type="text" name="filter" id="filter" value="<?php echo $this->filter;?>" class="text_area" onchange="document.getElementById('adminForm').submit();" />
+			<input type="text" name="filter" id="filter" value="<?php echo $this->filter;?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
 			<button onclick="document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
 			<button onclick="document.getElementById('filter').value='';document.getElementById('adminForm').submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
 		</div>
@@ -53,23 +53,20 @@ defined('_JEXEC') or die;
 
 </div>
 
-<table class="eventtable" width="100%" summary="jem">
+<table class="eventtable" style="width:100%" summary="jem">
 	<thead>
 		<tr>
 			<th width="7" class="sectiontableheader" align="left"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 			<th align="left" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
 			<th align="left" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
+			<th align="left" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<th align="left" class="sectiontableheader" align="left"><?php echo JText::_( 'COM_JEM_COUNTRY' ); ?></th>
 		</tr>
 	</thead>
 
 	<tbody>
-		<?php
-		$k = 0;
-		for ($i=0, $n=count( $this->rows ); $i < $n; $i++) {
-			$row = $this->rows[$i];
-		?>
-		<tr class="<?php echo "row$k"; ?>">
+		<?php foreach ($this->rows as $i => $row) : ?>
+		<tr class="row<?php echo $i % 2; ?>">
 			<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td align="left">
 				<a style="cursor:pointer" onclick="window.parent.elSelectVenue('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->venue); ?>');">
@@ -77,9 +74,10 @@ defined('_JEXEC') or die;
 				</a>
 			</td>
 			<td align="left"><?php echo $this->escape($row->city); ?></td>
-			<td align="left"><?php echo $row->country; ?></td>
+			<td align="left"><?php echo $this->escape($row->state); ?></td>
+			<td align="left"><?php echo $this->escape($row->country); ?></td>
 		</tr>
-		<?php $k = 1 - $k; } ?>
+		<?php endforeach; ?>
 	</tbody>
 </table>
 

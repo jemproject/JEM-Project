@@ -312,7 +312,7 @@ class JEMModelEditevent extends JModelLegacy
 		$limit		= $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $params->def('display_num', 0), 'int');
 		$limitstart	= JRequest::getInt('limitstart');
 
-		$query = 'SELECT l.id, l.venue, l.city, l.country, l.published'
+		$query = 'SELECT l.id, l.venue, l.state, l.city, l.country, l.published'
 				.' FROM #__jem_venues AS l'
 				. $where
 				. $orderby
@@ -395,6 +395,10 @@ class JEMModelEditevent extends JModelLegacy
 
 		if ($filter && $filter_type == 2) {
 			$where[] = 'LOWER(l.city) LIKE "%'.$filter.'%"';
+		}
+
+		if ($filter && $filter_type == 3) {
+			$where[] = 'LOWER(l.state) LIKE "%'.$filter.'%"';
 		}
 
 		if ($jemsettings->ownedvenuesonly)

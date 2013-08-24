@@ -183,12 +183,22 @@ class JEMViewEditevent extends JViewLegacy
 		$document	= JFactory::getDocument();
 		$params 	= $app->getParams();
 
-		$limitstart			= JRequest::getVar('limitstart', 0, '', 'int');
+
+		//$limitstart			= JRequest::getVar('limitstart', 0, '', 'int');
+		//$filter_order		= JRequest::getCmd('filter_order', 'l.venue');
+		//$filter_order_Dir	= JRequest::getWord('filter_order_Dir', 'ASC');;
+		//$filter				= JRequest::getString('filter');
+		//$filter_type		= JRequest::getInt('filter_type');
+
+		$jinput = JFactory::getApplication()->input;
+		$limitstart = $jinput->get('limitstart','0','int');
 		$limit				= $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
-		$filter_order		= JRequest::getCmd('filter_order', 'l.venue');
-		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', 'ASC');;
-		$filter				= JRequest::getString('filter');
-		$filter_type		= JRequest::getInt('filter_type');
+
+		$filter_order 		= $jinput->get('filter_order','l.venue','cmd');
+		$filter_order_Dir   = $jinput->get('filter_order_Dir','ASC','word');
+		$filter			    = $jinput->get('filter','','string');
+		$filter_type		= $jinput->get('filter_type','','int');
+
 
 		// Get/Create the model
 		$rows 	= $this->get('Venues');
@@ -210,6 +220,7 @@ class JEMViewEditevent extends JViewLegacy
 		$filters = array();
 		$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_VENUE' ) );
 		$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_CITY' ) );
+		$filters[] = JHTML::_('select.option', '3', JText::_( 'COM_JEM_STATE' ) );
 		$searchfilter = JHTML::_('select.genericlist', $filters, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
 
 		$this->rows				= $rows;

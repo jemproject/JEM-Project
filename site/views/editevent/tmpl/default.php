@@ -161,7 +161,7 @@ $options = array(
 					<?php echo JText::_( 'COM_JEM_TITLE' ).':'; ?>
 			 	</label>
 
-				<input class="inputbox required" type="text" id="title" name="title" value="<?php echo $this->row->title; ?>" size="65" maxlength="60" />
+				<input class="inputbox required" type="text" id="title" name="title" value="<?php echo $this->row->title; ?>" size="40" maxlength="60" />
 			</div>
 
 			<div class="jem_venue floattext">
@@ -265,7 +265,7 @@ $options = array(
 				echo $this->editor->display('datdescription', $this->row->datdescription, '100%', '400', '70', '15', array('pagebreak', 'readmore') );
 			else :
 			?>
-			<textarea style="width:100%;" rows="10" name="datdescription" class="inputbox" wrap="virtual" onkeyup="berechne(this.form)"><?php echo $this->row->datdescription; ?></textarea><br />
+			<textarea style="width:100%;" rows="10" name="datdescription" class="inputbox" wrap="soft" onkeyup="berechne(this.form)"><?php echo $this->row->datdescription; ?></textarea><br />
 			<?php echo JText::_( 'COM_JEM_NO_HTML' ); ?><br />
 			<input disabled value="<?php echo $this->jemsettings->datdesclimit; ?>" size="4" name="zeige" /><?php echo JText::_( 'COM_JEM_AVAILABLE' ); ?><br />
 			<a href="javascript:rechne(document.adminForm);"><?php echo JText::_( 'COM_JEM_REFRESH' ); ?></a>
