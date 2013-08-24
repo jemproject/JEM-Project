@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Venueelement Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelVenueelement extends JModelLegacy
 {
@@ -87,7 +87,7 @@ class JEMModelVenueelement extends JModelLegacy
 	 *
 	 * @access public
 	 * @return integer
-	 * 
+	 *
 	 */
 	function getTotal()
 	{
@@ -124,7 +124,7 @@ class JEMModelVenueelement extends JModelLegacy
 	 *
 	 * @access private
 	 * @return string
-	 * 
+	 *
 	 */
 	function _buildQuery()
 	{
@@ -146,7 +146,7 @@ class JEMModelVenueelement extends JModelLegacy
 	 *
 	 * @access private
 	 * @return string
-	 * 
+	 *
 	 */
 	function _buildContentOrderBy()
 	{
@@ -155,7 +155,7 @@ class JEMModelVenueelement extends JModelLegacy
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_order', 'filter_order', 'l.ordering', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 
-		
+
 		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
@@ -169,7 +169,7 @@ class JEMModelVenueelement extends JModelLegacy
 	 *
 	 * @access private
 	 * @return string
-	 * 
+	 *
 	 */
 	function _buildContentWhere()
 	{
@@ -206,6 +206,15 @@ class JEMModelVenueelement extends JModelLegacy
 		if ($search && $filter == 2) {
 			$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
 		}
+
+
+		/*
+		 * Search state
+		*/
+		if ($search && $filter == 3) {
+			$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
+		}
+
 
 		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
 

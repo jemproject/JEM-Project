@@ -10,6 +10,10 @@
 defined('_JEXEC') or die;
 
 $function = JRequest::getCmd('function', 'jSelectVenue');
+
+
+
+
 ?>
 
 <form action="index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
@@ -35,6 +39,7 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 			<th class="center" width="7"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'venueelement' ); ?></th>
 			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'venueelement' ); ?></th>
+			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<th align="left" class="title center"><?php echo JText::_( 'COM_JEM_COUNTRY' ); ?></th>
 			<th class="title center"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 		</tr>
@@ -56,6 +61,7 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 				 <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
             </td>
 			<td align="left"><?php echo htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8'); ?></td>
+			<td align="left"><?php echo htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8'); ?></td>
 			<td class="center"><?php echo htmlspecialchars($row->country, ENT_QUOTES, 'UTF-8'); ?></td>
 			<td class="center">
 				<?php $img = $row->published ? 'tick.png' : 'publish_x.png'; ?>
@@ -74,6 +80,7 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 </p>
 
 <input type="hidden" name="task" value="" />
+<input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 </form>

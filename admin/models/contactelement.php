@@ -134,7 +134,6 @@ class JEMModelContactelement extends JModelLegacy
 				. $where
 				. $orderby
 				;
-		//print_r($query);
 		return $query;
 	}
 
@@ -203,11 +202,28 @@ class JEMModelContactelement extends JModelLegacy
 		}
 
 		/*
-		* Search city
+		* Search address
 		*/
 		if ($search && $filter == 2) {
 			$where[] = ' LOWER(con.address) LIKE \'%'.$search.'%\' ';
 		}
+
+		/*
+		 * Search city
+		*/
+		if ($search && $filter == 3) {
+			$where[] = ' LOWER(con.suburb) LIKE \'%'.$search.'%\' ';
+		}
+
+		/*
+		 * Search state
+		*/
+		if ($search && $filter == 4) {
+			$where[] = ' LOWER(con.state) LIKE \'%'.$search.'%\' ';
+		}
+
+
+
 
 		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
 
