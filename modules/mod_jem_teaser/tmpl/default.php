@@ -55,12 +55,13 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 						<a href="<?php echo $item->eventimageorig; ?>" class="modal-jem" title="<?php echo $item->title; ?> ">
 						<img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" /></a>
 					<?php else : ?>
+					<?php endif; ?>
 						<?php if(($item->venueimage)!=str_replace("jpg","",($item->venueimage)) OR
 								 ($item->venueimage)!=str_replace("gif","",($item->venueimage)) OR
 								 ($item->venueimage)!=str_replace("png","",($item->venueimage))) : ?>
 							<a href="<?php echo $item->venueimageorig; ?>" class="modal-jem" title="<?php echo $item->venue; ?> ">
 							<img src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" class="float_right image-preview" /></a>
-						<?php endif; ?>
+						
 					<?php endif; ?>
 				</div>
 				<div>
