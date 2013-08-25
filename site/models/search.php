@@ -193,7 +193,8 @@ class JEMModelSearch extends JModelLegacy
 			$where = ' WHERE a.published = 1';
 		}
 
-		$filter            = JRequest::getString('filter', '', 'request');
+		//$filter            = JRequest::getString('filter', '', 'request');
+		$filter 		= $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
 		$filter_type       = JRequest::getWord('filter_type', '', 'request');
 		$filter_continent  = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
 		$filter_country    = $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');

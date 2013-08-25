@@ -30,9 +30,9 @@ defined('_JEXEC') or die;
 			</td>
 			<td>
 				<?php echo  $this->lists['filter_types']; ?>
-				<input type="text" name="filter" id="filter" value="<?php echo $this->lists['filter'];?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
-				<button onclick="document.getElementById('adminForm').submit();"><?php echo JText::_('COM_JEM_GO'); ?></button>
-				<button onclick="document.getElementById('filter').value='';document.getElementById('adminForm').submit();"><?php echo JText::_('COM_JEM_RESET'); ?></button>
+				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['filter'];?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
+			<button class="buttonfilter" type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
+			<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 			</td>
 		</tr>
 		<tr>
@@ -81,7 +81,7 @@ defined('_JEXEC') or die;
 		<?php endif; ?>
 		<tr>
 			<td colspan="2">
-			<input type="submit" value="<?php echo JText::_('COM_JEM_SEARCH_SUBMIT'); ?>"/>
+			<input class="buttonfilter" type="submit" value="<?php echo JText::_('COM_JEM_SEARCH_SUBMIT'); ?>"/>
 			</td>
 		</tr>
 		</table>

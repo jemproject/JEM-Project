@@ -15,14 +15,14 @@ jimport( 'joomla.application.component.view');
  * HTML View class for the JEM View
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewSearch extends JViewLegacy
 {
 	/**
 	 * Creates the Simple List View
 	 *
-	 * 
+	 *
 	 */
 	function display( $tpl = null )
 	{
@@ -37,16 +37,16 @@ class JEMViewSearch extends JViewLegacy
 		$uri 		= JFactory::getURI();
 		$pathway 	= $app->getPathWay();
 
-		
+
 		// add javascript
 		JHtml::_('behavior.framework');
-		
+
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 		$document->addScript( $this->baseurl.'/media/com_jem/js/search.js' );
 
-		
+
 		$filter_continent	= $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
 		$filter_country		= $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
 		$filter_city		= $app->getUserStateFromRequest('com_jem.search.filter_city', 'filter_city', '', 'string');
@@ -55,7 +55,7 @@ class JEMViewSearch extends JViewLegacy
 		$filter_category 	= $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
 		$task				= JRequest::getWord('task');
 
-		
+
 		//get data from model
 		$rows 	= $this->get('Data');
 		$total 	= $this->get('Total');
@@ -189,7 +189,7 @@ class JEMViewSearch extends JViewLegacy
 	 *
 	 * @access public
 	 * @return object $rows
-	 * 
+	 *
 	 */
 	function &getRows()
 	{
@@ -216,16 +216,23 @@ class JEMViewSearch extends JViewLegacy
 	 *
 	 * @access private
 	 * @return array
-	 * 
+	 *
 	 */
 	function _buildSortLists()
 	{
 		$jemsettings = JEMHelper::config();
 
+		$app = JFactory::getApplication();
+		$db  		=  JFactory::getDBO();
+
 		$filter_order		= JRequest::getCmd('filter_order', 'a.dates');
 		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', 'ASC');
 
-		$filter				= $this->escape(JRequest::getString('filter'));
+
+		$filter 			= $app->getUserStateFromRequest( 'com_jem.search.filter_search', 'filter_search', '', 'string' );
+		$filter 			= $db->escape( trim(JString::strtolower( $filter ) ) );
+
+		//$filter				= $this->escape(JRequest::getString('filter'));
 		$filter_type		= JRequest::getString('filter_type');
 
 		$sortselects = array();
