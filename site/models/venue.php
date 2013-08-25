@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Venue Model
  *
  * @package JEM
- * 
+ *
 */
 class JEMModelVenue extends JModelLegacy
 {
@@ -252,7 +252,7 @@ class JEMModelVenue extends JModelLegacy
 
 		$filter_state 		= $app->getUserStateFromRequest('com_jem.venue.filter_state', 'filter_state', '', 'word');
 		$filter 			= $app->getUserStateFromRequest('com_jem.venue.filter', 'filter', '', 'int');
-		$search 			= $app->getUserStateFromRequest('com_jem.venue.search', 'search', '', 'string');
+		$search 			= $app->getUserStateFromRequest('com_jem.venue.filter_search', 'filter_search', '', 'string');
 		$search 			= $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();

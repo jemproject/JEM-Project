@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 ?>
-<?php 
+<?php
 //the user is allready registered. Let's check if he can unregister from the event
 
 
@@ -33,14 +33,15 @@ else:
 			<?php endif;?>
 			<input type="checkbox" name="reg_check" onclick="check(this, document.getElementById('jem_send_attend'))" />
 		</p>
-		<p>
-			<input type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo JText::_( 'COM_JEM_UNREGISTER' ); ?>" disabled="disabled" />
-		</p>
-		<p>
+		<p></p>
+		<div class="center">
+			<input class="button1" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo JText::_( 'COM_JEM_UNREGISTER' ); ?>" disabled="disabled" />
+		</div>
+
+		<p></p>
 			<input type="hidden" name="rdid" value="<?php echo $this->row->did; ?>" />
 			<?php echo JHTML::_( 'form.token' ); ?>
 			<input type="hidden" name="task" value="delreguser" />
-		</p>
 	</form>
 	<?php
 endif;

@@ -74,9 +74,9 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 	<div id="jem_filter" class="floattext">
 		<div class="jem_fleft">
 			 	<?php echo JText::_( 'COM_JEM_SEARCH' ).' '.$this->lists['filter']; ?>
-				<input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
-				<button onclick="document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-				<button onclick="$('search').value='';document.adminForm.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
+				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
+				<button class="buttonfilter" type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
+			<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 			</div>
 			<?php if ($this->event->waitinglist): ?>
 			 <div style="text-align:right; white-space:nowrap;">
@@ -100,12 +100,12 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 				<th width="1%" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 				<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_USERNAME', 'u.username', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-				
+
 				<?php if ($this->enableemailaddress == 1) {?>
 				<th class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
 				<?php } ?>
-				
-				
+
+
 				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php if ($this->event->waitinglist): ?>
 				<th class="center"><?php echo JHTML::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
@@ -126,12 +126,12 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 				<td>
 					<?php echo $row->username; ?>
 				</td>
-				
-				
+
+
 				<?php if ($this->enableemailaddress == 1) {?>
 				<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
 				<?php } ?>
-				
+
 				<td><?php echo JHTML::Date( $row->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ); ?></td>
 				<?php if ($this->event->waitinglist): ?>
 				<td class="hasTip center" title="<?php echo ($row->waiting ? JText::_('COM_JEM_ON_WAITINGLIST') : JText::_('COM_JEM_ATTENDEES_ATTENDING')).'::'; ?>">

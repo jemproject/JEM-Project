@@ -20,7 +20,7 @@ jimport('joomla.html.pagination');
  */
 class JEMModelMyvenues extends JModelLegacy
 {
-  
+
     var $_venues = null;
 
     var $_total_venues = null;
@@ -29,7 +29,7 @@ class JEMModelMyvenues extends JModelLegacy
     /**
      * Constructor
      *
-     * 
+     *
      */
     function __construct()
     {
@@ -44,12 +44,12 @@ class JEMModelMyvenues extends JModelLegacy
         //get the number of events
         $limit		= $app->getUserStateFromRequest('com_jem.myvenues.limit', 'limit', $jemsettings->display_num, 'int');
         $limitstart = $app->getUserStateFromRequest('com_jem.myvenues.limitstart', 'limitstart', 0, 'int');
-        
+
         $this->setState('limit', $limit);
         $this->setState('limitstart', $limitstart);
     }
 
- 
+
 
     /**
      * Method to get the Events user is attending
@@ -76,13 +76,13 @@ class JEMModelMyvenues extends JModelLegacy
                 $this->_venues = $this->_getList($query, $pagination->limitstart, $pagination->limit);
             }
 
-		
+
         }
 
         return $this->_venues;
     }
 
- 
+
 
     /**
      * Total nr of events
@@ -98,12 +98,12 @@ class JEMModelMyvenues extends JModelLegacy
             $query = $this->_buildQueryVenues();
             $this->_total_venues = $this->_getListCount($query);
         }
-        
+
 
         return $this->_total_venues;
     }
 
-  
+
 
 
     /**
@@ -124,7 +124,7 @@ class JEMModelMyvenues extends JModelLegacy
         return $this->_pagination_venues;
     }
 
- 
+
 
     /**
      * Build the query
@@ -146,12 +146,12 @@ class JEMModelMyvenues extends JModelLegacy
         .$orderby
         ;
 
-      
+
         return $query;
     }
 
 
-    
+
     /**
      * Build the order clause
      *
@@ -160,28 +160,28 @@ class JEMModelMyvenues extends JModelLegacy
      */
     function _buildOrderByVenues()
     {
-    
-    	 
+
+
     	$app =  JFactory::getApplication();
-    	 
+
     	$filter_order		= $app->getUserStateFromRequest('com_jem.myvenues.filter_order', 'filter_order', 'l.venue', 'cmd');
     	$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myvenues.filter_order_Dir', 'filter_order_Dir', '', 'word');
-    	 
+
     	$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
     	$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
-    	 
+
     	if ($filter_order != '') {
     		$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
     	} else {
     		$orderby = ' ORDER BY l.venue ';
     	}
-    	 
+
     	return $orderby;
-    
+
     }
-    
-    
- 
+
+
+
 
     /**
      * Build the where clause
@@ -194,64 +194,64 @@ class JEMModelMyvenues extends JModelLegacy
         $app =  JFactory::getApplication();
 
         $user =  JFactory::getUser();
-		
+
         // Get the paramaters of the active menu item
         $params =  $app->getParams();
         $task = JRequest::getWord('task');
 
         $jemsettings =  JEMHelper::config();
-        
+
         $user = JFactory::getUser();
         $gid = JEMHelper::getGID($user);
-        
+
         $filter_state 	= $app->getUserStateFromRequest('com_jem.myvenues.filter_state', 'filter_state', '', 'word');
         $filter 		= $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', '', 'int');
-        $search 		= $app->getUserStateFromRequest('com_jem.myvenues.search', 'search', '', 'string');
+        $search 		= $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');
         $search 		= $this->_db->escape(trim(JString::strtolower($search)));
-        
-        
+
+
         $where = array();
-        
+
         $where[] = ' l.published = 1';
-       
+
 
         // then if the user is attending the event
         $where [] = ' l.created_by = '.$this->_db->Quote($user->id);
-        
-        
-        
+
+
+
         if ($jemsettings->filter)
         {
-        
+
         	//if ($search && $filter == 1) {
         	//	$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
         	//}
-        
+
         	if ($search && $filter == 2) {
         		$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
         	}
-        
+
         	if ($search && $filter == 3) {
         		$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
         	}
-        
+
         	//if ($search && $filter == 4) {
         	//	$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
         	//}
-        
+
         	if ($search && $filter == 5) {
         		$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
         	}
-        
+
         } // end tag of jemsettings->filter decleration
-        
+
         $where 		= (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
-        
+
         return $where;
     }
 
-    
- 
+
+
 
 }
 ?>

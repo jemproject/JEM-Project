@@ -15,14 +15,14 @@ jimport( 'joomla.application.component.view');
  * HTML View class for the Day View
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewDay extends JViewLegacy
 {
 	/**
 	 * Creates the Day View
 	 *
-	 * 
+	 *
 	 */
 	function display( $tpl = null )
 	{
@@ -46,13 +46,13 @@ class JEMViewDay extends JViewLegacy
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.day.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.day.filter_state', 'filter_state', 	'*', 'word' );
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.day.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.day.search', 'search', '', 'string' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.day.filter_search', 'filter_search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
-		
+
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
-		
+
 		$task 		= JRequest::getWord('task');
 		$pathway 		= $app->getPathWay();
 
@@ -102,11 +102,11 @@ class JEMViewDay extends JViewLegacy
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
-	
-		
+
+
 		//search filter
 		$filters = array();
-		
+
 		if ($jemsettings->showtitle == 1) {
 			$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_TITLE' ) );
 		}
@@ -123,13 +123,13 @@ class JEMViewDay extends JViewLegacy
 			$filters[] = JHTML::_('select.option', '5', JText::_( 'COM_JEM_STATE' ) );
 		}
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
-		
+
 		// search filter
 		$lists['search']= $search;
-		
+
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
-		
+
 		$this->lists			= $lists;
 		$this->rows				= $rows;
 		$this->noevents			= $noevents;
@@ -138,7 +138,7 @@ class JEMViewDay extends JViewLegacy
 		$this->dellink			= $dellink;
 		$this->pagination		= $pagination;
 		$this->action			= $uri->toString();
-	
+
 		$this->task				= $task;
 		$this->jemsettings		= $jemsettings;
 		$this->lists			= $lists;
@@ -153,7 +153,7 @@ class JEMViewDay extends JViewLegacy
 	 *
 	 * @access public
 	 * @return object $rows
-	 * 
+	 *
 	 */
 	function &getRows()
 	{

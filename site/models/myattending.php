@@ -16,7 +16,7 @@ jimport('joomla.html.pagination');
  * JEM Component JEM Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelMyattending extends JModelLegacy
 {
@@ -209,7 +209,7 @@ class JEMModelMyattending extends JModelLegacy
 
 		$filter_state 	= $app->getUserStateFromRequest('com_jem.myattending.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.myattending.filter', 'filter', '', 'int');
-		$search 		= $app->getUserStateFromRequest('com_jem.myattending.search', 'search', '', 'string');
+		$search 		= $app->getUserStateFromRequest('com_jem.myattending.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();

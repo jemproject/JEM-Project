@@ -60,7 +60,7 @@ class JEMViewMyevents extends JViewLegacy
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.myevents.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.myevents.filter_state', 'filter_state', 	'*', 'word' );
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.myevents.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.myevents.search', 'search', '', 'string' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.myevents.filter_search', 'filter_search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 
 		$task 		= JRequest::getWord('task');
@@ -111,9 +111,9 @@ class JEMViewMyevents extends JViewLegacy
 		}else{
 		$enableemailaddress = 0;
 		}
-		
-		
-		
+
+
+
 		$this->enableemailaddress		= $enableemailaddress;
 		$this->action					= $uri->toString();
 		$this->events					= $events;
@@ -136,7 +136,7 @@ class JEMViewMyevents extends JViewLegacy
 	 *
 	 * @access public
 	 * @return object $rows
-	 * 
+	 *
 	 */
 	function &getRows()
 	{

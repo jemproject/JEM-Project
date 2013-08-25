@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component attendees Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelAttendees extends JModelLegacy
 {
@@ -64,7 +64,7 @@ class JEMModelAttendees extends JModelLegacy
 
 		$app =  JFactory::getApplication();
 		$jemsettings =  JEMHelper::config();
-		
+
 		$id = JRequest::getInt('id');
 		$this->setId((int)$id);
 
@@ -158,7 +158,7 @@ class JEMModelAttendees extends JModelLegacy
 	 *
 	 * @access private
 	 * @return integer
-	 * 
+	 *
 	 */
 	function _buildQuery()
 	{
@@ -193,8 +193,8 @@ class JEMModelAttendees extends JModelLegacy
 
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.attendees.filter_order', 		'filter_order', 	'u.username', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.attendees.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
-		
-		
+
+
 		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
@@ -208,7 +208,7 @@ class JEMModelAttendees extends JModelLegacy
 	 *
 	 * @access private
 	 * @return string
-	 * 
+	 *
 	 */
 	function _buildContentWhere()
 	{
@@ -217,7 +217,7 @@ class JEMModelAttendees extends JModelLegacy
 		$gid = JEMHelper::getGID($user);
 
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.attendees.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.attendees.search', 'search', '', 'string' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.attendees.filter_search', 'filter_search', '', 'string' );
 		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
 		$filter_waiting	= $app->getUserStateFromRequest( 'com_jem.attendees.waiting',	'filter_waiting',	0, 'int' );
 
@@ -228,21 +228,23 @@ class JEMModelAttendees extends JModelLegacy
 			$where[] = ' (a.waitinglist = 0 OR r.waiting = '.($filter_waiting-1).') ';
 		}
 
-		
+
 		// First thing we need to do is to select only needed events
 		$where[] = ' a.published = 1';
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access  <= '.$gid;
-		
+
 		// then if the user is the owner of the event
 		$where[] = ' a.created_by = '.$this->_db->Quote($user->id);
-		
+
 		/*
 		* Search name
 		*/
+		/*
 		if ($search && $filter == 1) {
 			$where[] = ' LOWER(u.name) LIKE \'%'.$search.'%\' ';
 		}
+		*/
 
 		/*
 		* Search username
@@ -261,11 +263,11 @@ class JEMModelAttendees extends JModelLegacy
 	 *
 	 * @access public
 	 * @return object
-	 * 
+	 *
 	 */
 	function getEvent()
 	{
-		
+
 		$query = 'SELECT id, alias, title, dates, enddates, times, endtimes, maxplaces, waitinglist FROM #__jem_events WHERE id = '.$this->_id;
 
 		$this->_db->setQuery( $query );
@@ -280,14 +282,14 @@ class JEMModelAttendees extends JModelLegacy
 	 *
 	 * @access public
 	 * @return true on success
-	 * 
+	 *
 	 */
 	function remove($cid = array())
 	{
 		if (count( $cid ))
 		{
 			$user = implode(',', $cid);
-			
+
 			$query = 'DELETE FROM #__jem_register WHERE id IN ('. $user .') ';
 
 			$this->_db->setQuery( $query );

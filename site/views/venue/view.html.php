@@ -50,7 +50,7 @@ class JEMViewVenue extends JViewLegacy
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.venue.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.venue.filter_state', 'filter_state', 	'*', 'word' );
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.venue.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.venue.search', 'search', '', 'string' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.venue.filter_search', 'filter_search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 
 		$task 				= JRequest::getWord('task');

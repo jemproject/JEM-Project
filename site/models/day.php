@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Day Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelDay extends JModelLegacy
 {
@@ -267,7 +267,7 @@ class JEMModelDay extends JModelLegacy
 
 		$filter_state 	= $app->getUserStateFromRequest('com_jem.day.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.day.filter', 'filter', '', 'int');
-		$search 		= $app->getUserStateFromRequest('com_jem.day.search', 'search', '', 'string');
+		$search 		= $app->getUserStateFromRequest('com_jem.day.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
 
 

@@ -23,7 +23,7 @@ class JEMViewMyattending extends JViewLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		
+
 		//initialize variables
 		$document 		=  JFactory::getDocument();
 		$jemsettings 	=  JEMHelper::config();
@@ -39,7 +39,7 @@ class JEMViewMyattending extends JViewLegacy
 		if ( !$user->get('id') ) {
 			$app->enqueueMessage(JText::_('COM_JEM_NEED_LOGGED_IN'), 'error');
 			return false;
-			
+
 		}
 
 		//add css file
@@ -61,14 +61,14 @@ class JEMViewMyattending extends JViewLegacy
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.myattending.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.myattending.filter_state', 'filter_state', 	'*', 'word' );
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.myattending.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.myattending.search', 'search', '', 'string' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.myattending.filter_search', 'filter_search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
-		
+
 		$task 		= JRequest::getWord('task');
-		
+
 		//search filter
 		$filters = array();
-		
+
 		if ($jemsettings->showtitle == 1) {
 			$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_TITLE' ) );
 		}
@@ -85,14 +85,14 @@ class JEMViewMyattending extends JViewLegacy
 			$filters[] = JHTML::_('select.option', '5', JText::_( 'COM_JEM_STATE' ) );
 		}
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
-		
+
 		// search filter
 		$lists['search']= $search;
-		
+
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
-			
+
 		//params
 		$params->def('page_title', $item->title);
 
@@ -125,7 +125,7 @@ class JEMViewMyattending extends JViewLegacy
 	 *
 	 * @access public
 	 * @return object $rows
-	 * 
+	 *
 	 */
 	function &getRows()
 	{
@@ -146,9 +146,9 @@ class JEMViewMyattending extends JViewLegacy
 
 		return $this->events;
 	}
-		
-	
-	
+
+
+
 
 }
 ?>

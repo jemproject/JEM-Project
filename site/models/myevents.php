@@ -16,7 +16,7 @@ jimport('joomla.html.pagination');
  * JEM Component JEM Model
  *
  * @package JEM
- * 
+ *
 */
 class JEMModelMyevents extends JModelLegacy
 {
@@ -120,7 +120,7 @@ class JEMModelMyevents extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * 
+	 *
 	 */
 	function publish($cid = array(), $publish = 1)
 	{
@@ -264,7 +264,7 @@ class JEMModelMyevents extends JModelLegacy
 
 		$filter_state 	= $app->getUserStateFromRequest('com_jem.myevents.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.myevents.filter', 'filter', '', 'int');
-		$search 		= $app->getUserStateFromRequest('com_jem.myevents.search', 'search', '', 'string');
+		$search 		= $app->getUserStateFromRequest('com_jem.myevents.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();

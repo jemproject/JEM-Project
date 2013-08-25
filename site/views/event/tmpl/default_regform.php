@@ -11,14 +11,14 @@ defined('_JEXEC') or die;
 
 //the user is not registered allready -> display registration form
 ?>
-<?php 
-if ($this->row->registra == 1) 
+<?php
+if ($this->row->registra == 1)
 {
 
 if ($this->print == 0) {
 
 
-if ($this->row->maxplaces && count($this->registers) >= $this->row->maxplaces && !$this->row->waitinglist): 
+if ($this->row->maxplaces && count($this->registers) >= $this->row->maxplaces && !$this->row->waitinglist):
 ?>
 	<p class="el-event-full">
 		<?php echo JText::_( 'COM_JEM_EVENT_FULL_NOTICE' ); ?>
@@ -34,7 +34,7 @@ if ($this->row->maxplaces && count($this->registers) >= $this->row->maxplaces &&
 		<input type="checkbox" name="reg_check" onclick="check(this, document.getElementById('jem_send_attend'))" />
 	</p>
 <p>
-	<input type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo JText::_( 'COM_JEM_REGISTER' ); ?>" disabled="disabled" />
+	<input class="button1" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo JText::_( 'COM_JEM_REGISTER' ); ?>" disabled="disabled" />
 </p>
 <p>
 	<input type="hidden" name="rdid" value="<?php echo $this->row->did; ?>" />
@@ -42,7 +42,7 @@ if ($this->row->maxplaces && count($this->registers) >= $this->row->maxplaces &&
 	<input type="hidden" name="task" value="userregister" />
 </p>
 </form>
-<?php endif;   
+<?php endif;
 }
 
 }

@@ -135,6 +135,29 @@ div#jem {
 }
 
 
+
+   /**
+	* @section button
+	* 
+	* 
+	*/
+	
+	
+	/* Alinging the icons to the right */
+div#jem .buttons
+{ 
+	float:right; 
+}
+
+
+div#jem .buttons a
+{ 
+border:1px solid grey; 
+}	
+	
+	
+
+/* Edit-event view */
 div#jem .button1 {
 	-webkit-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
 	-moz-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
@@ -158,7 +181,41 @@ div#jem .button1 {
 	-webkit-border-radius:5px
 }
 
+/* Edit-event view, hover */
 div#jem .button1:hover {
+	background-color:#D1C9CC;
+	color:#000000;
+	text-decoration:none;
+}
+
+
+/* Filter button  */
+
+div#jem .buttonfilter {
+	-webkit-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
+	-moz-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
+	box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
+	background-color:#EBE8E9;
+	border:1px solid #29447E;
+	font-family:'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
+	font-size:12px;
+	font-weight:700;
+	padding:2px 6px;
+	/* margin: 2px; */
+	cursor:pointer;
+	/* height:28px; */
+	color:#000000;
+	position: relative;
+	text-decoration:none;
+	top: inherit;
+	left: inherit;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px
+}
+
+/* Filter button:hover */
+div#jem .buttonfilter:hover {
 	background-color:#D1C9CC;
 	color:#000000;
 	text-decoration:none;
@@ -175,22 +232,7 @@ div#jem .floattext
 { display:block; /* safari */ }
 
 
-/**
- * @section buttons
- *
- * print, pdf, ...
- */
-div#jem .buttons
-{ float:right; }
 
-div#jem .buttons img
-{  }
-
-div#jem .buttons a
-{ 
-
-border:1px solid grey; 
-}
 
 
 /**
@@ -821,6 +863,7 @@ div.jem_editevent div.jem_buttons a.jem_venue_reset {
 
 /* STANDARD */
 
+/*
 button:hover, .buttons a:hover{
     background-color:#dff4ff !important;
     border:1px solid grey !important;
@@ -831,6 +874,7 @@ button:hover, .buttons a:hover{
     border:1px solid #6299c5 !important;
     color:#fff !important;
 }
+*/
 
 /* POSITIVE */
 
