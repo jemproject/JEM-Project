@@ -46,26 +46,26 @@ defined('_JEXEC') or die;
 
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 	<colgroup>
-		<?php if ($this->jemsettings->showeventimage == 1) :	?>
+		<?php if ($this->jemsettings->showeventimage == 1) : ?>
 			<col width="<?php echo $this->jemsettings->tableeventimagewidth; ?>" class="jem_col_event_image" />
 		<?php endif; ?>
 			<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 		<?php if ($this->jemsettings->showtitle == 1) : ?>
 			<col width="<?php echo $this->jemsettings->titlewidth; ?>" class="jem_col_title" />
 		<?php endif; ?>
-		<?php if ($this->jemsettings->showlocate == 1) :	?>
+		<?php if ($this->jemsettings->showlocate == 1) : ?>
 			<col width="<?php echo $this->jemsettings->locationwidth; ?>" class="jem_col_venue" />
 		<?php endif; ?>
-		<?php if ($this->jemsettings->showcity == 1) :	?>
+		<?php if ($this->jemsettings->showcity == 1) : ?>
 			<col width="<?php echo $this->jemsettings->citywidth; ?>" class="jem_col_city" />
 		<?php endif; ?>
-		<?php if ($this->jemsettings->showstate == 1) :	?>
+		<?php if ($this->jemsettings->showstate == 1) : ?>
 			<col width="<?php echo $this->jemsettings->statewidth; ?>" class="jem_col_state" />
 		<?php endif; ?>
-		<?php if ($this->jemsettings->showcat == 1) :	?>
+		<?php if ($this->jemsettings->showcat == 1) : ?>
 			<col width="<?php echo $this->jemsettings->catfrowidth; ?>" class="jem_col_category" />
 		<?php endif; ?>
-		<?php if ($this->jemsettings->showatte == 1) :	?>
+		<?php if ($this->jemsettings->showatte == 1) : ?>
 			<col width="<?php echo $this->jemsettings->attewidth; ?>" class="jem_col_atte" />
 		<?php endif; ?>
 	</colgroup>
@@ -98,70 +98,50 @@ defined('_JEXEC') or die;
 	</thead>
 
 	<tbody>
-	<?php
-	if ($this->noevents == 1) :
-		?>
+	<?php if ($this->noevents == 1) : ?>
 		<tr align="center"><td colspan="20"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
+	<?php else : ?>
 		<?php
-	else :
+		$this->rows = $this->getRows();
 
-	$this->rows = $this->getRows();
-
-	foreach ($this->rows as $row) :
+		foreach ($this->rows as $row) :
 		?>
-			<tr class="sectiontableentry<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" >
+			<tr class="sectiontableentry<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>"
+				itemscope="itemscope" itemtype="http://schema.org/Event">
 
-			<?php
-				if ($this->jemsettings->showeventimage == 1) :
-				?>
-
+				<?php if ($this->jemsettings->showeventimage == 1) : ?>
 					<td headers="jem_eventimage" align="left" valign="top">
 						<?php
-						// echo $row->datimage;
-
 						if ($row->datimage) :
 							$dimage = JEMImage::flyercreator($row->datimage, 'event');
 							echo JEMOutput::flyer($row, $dimage, 'event');
 						endif;
 						?>
 					</td>
-
-				<?php
-				endif;
-				?>
+				<?php endif; ?>
 
 				<td headers="jem_date" align="left">
-					<?php echo JEMOutput::formatShortDateTime($row->dates, $row->times,
-						$row->enddates, $row->endtimes); ?>
+					<?php
+						echo JEMOutput::formatShortDateTime($row->dates, $row->times,
+							$row->enddates, $row->endtimes);
+						echo JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times,
+							$row->enddates, $row->endtimes);
+					?>
 				</td>
 
-				<?php
+				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
+					<td headers="jem_title" align="left" valign="top">
+						<a href="<?php echo JRoute::_(JEMHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
+							<span itemprop="name"><?php echo $this->escape($row->title); ?></span>
+						</a>
+					</td>
+				<?php endif; ?>
 
-				foreach ($row->categories as $key => $category) :
-					$cid = $category->catslug;
-					break;
-				endforeach;
-				//Link to details
-				$detaillink = JRoute::_(JEMHelperRoute::getEventRoute($row->slug));
-				//title
-				if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) :
-				?>
+				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
+					<td headers="jem_title" align="left" valign="top" itemprop="name"><?php echo $this->escape($row->title); ?></td>
+				<?php endif; ?>
 
-				<td headers="jem_title" align="left" valign="top"><a href="<?php echo $detaillink ; ?>"> <?php echo $this->escape($row->title); ?></a></td>
-
-				<?php
-				endif;
-
-				if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) :
-				?>
-
-				<td headers="jem_title" align="left" valign="top"><?php echo $this->escape($row->title); ?></td>
-
-				<?php
-				endif;
-				if ($this->jemsettings->showlocate == 1) :
-				?>
-
+				<?php if ($this->jemsettings->showlocate == 1) : ?>
 					<td headers="jem_location" align="left" valign="top">
 						<?php
 						if ($this->jemsettings->showlinkvenue == 1) :
@@ -171,24 +151,17 @@ defined('_JEXEC') or die;
 						endif;
 						?>
 					</td>
+				<?php endif; ?>
 
-				<?php
-				endif;
-
-				if ($this->jemsettings->showcity == 1) :
-				?>
+				<?php if ($this->jemsettings->showcity == 1) : ?>
 					<td headers="jem_city" align="left" valign="top"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
-				<?php
-				endif;
+				<?php endif; ?>
 
-				if ($this->jemsettings->showstate == 1) :
-				?>
+				<?php if ($this->jemsettings->showstate == 1) : ?>
 					<td headers="jem_state" align="left" valign="top"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
-				<?php
-				endif;
+				<?php endif; ?>
 
-				if ($this->jemsettings->showcat == 1) :
-				?>
+				<?php if ($this->jemsettings->showcat == 1) : ?>
 					<td headers="jem_category" align="left" valign="top">
 					<?php
 					$nr = count($row->categories);
@@ -212,21 +185,17 @@ defined('_JEXEC') or die;
 					endforeach;
 					?>
 				</td>
-				<?php
-				endif;
+				<?php endif; ?>
 
-				if ($this->jemsettings->showatte == 1) :
-				?>
+				<?php if ($this->jemsettings->showatte == 1) : ?>
 					<td headers="jem_atte" align="center" valign="top"><?php echo $row->regCount; ?></td>
-				<?php
-				endif;
-				?>
+				<?php endif; ?>
 			</tr>
 
 		<?php
 		endforeach;
-		endif;
-		?>
+	endif;
+	?>
 
 	</tbody>
 </table>

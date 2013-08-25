@@ -13,7 +13,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 
 ?>
 
-<div id="jem" class="event_id<?php echo $this->row->did; ?> jem_event">
+<div id="jem" class="event_id<?php echo $this->row->did; ?> jem_event" itemscope="itemscope" itemtype="http://schema.org/Event">
 	<div class="buttons">
 		<?php echo JEMOutput::mailbutton($this->row->slug, 'event', $this->params); ?>
 		<?php echo JEMOutput::printbutton($this->print_link, $this->params); ?>
@@ -28,8 +28,6 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 
 	<!-- Event -->
 	<h2 class="jem">
-
-
 		<?php
 		echo JText::_('COM_JEM_EVENT');
 		$itemid = $this->item ? $this->item->id : 0;
@@ -37,21 +35,23 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 		?>
 	</h2>
 
-	<?php //flyer
-	echo JEMOutput::flyer($this->row, $this->dimage, 'event');
-	?>
+	<?php echo JEMOutput::flyer($this->row, $this->dimage, 'event'); ?>
 
 	<dl class="event_info floattext">
 		<?php if ($this->jemsettings->showdetailstitle == 1) : ?>
 			<dt class="title"><?php echo JText::_('COM_JEM_TITLE').':'; ?></dt>
-			<dd class="title"><?php echo $this->escape($this->row->title); ?></dd>
+			<dd class="title" itemprop="name"><?php echo $this->escape($this->row->title); ?></dd>
 		<?php
 		endif;
 		?>
 		<dt class="when"><?php echo JText::_('COM_JEM_WHEN').':'; ?></dt>
 		<dd class="when">
-			<?php echo JEMOutput::formatLongDateTime($this->row->dates, $this->row->times,
-				$this->row->enddates, $this->row->endtimes); ?>
+			<?php
+				echo JEMOutput::formatLongDateTime($this->row->dates, $this->row->times,
+					$this->row->enddates, $this->row->endtimes);
+				echo JEMOutput::formatSchemaOrgDateTime($this->row->dates, $this->row->times,
+					$this->row->enddates, $this->row->endtimes);
+			?>
 		</dd>
 		<?php if ($this->row->locid != 0) : ?>
 			<dt class="where"><?php echo JText::_('COM_JEM_WHERE').':'; ?></dt>
@@ -66,9 +66,8 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 
 				echo $this->escape($this->row->city).', '.$this->escape($this->row->state); ?>
 			</dd>
-
 		<?php endif;
-		$n = count($this->categories);
+			$n = count($this->categories);
 		?>
 
 		<dt class="category"><?php echo $n < 2 ? JText::_('COM_JEM_CATEGORY') : JText::_('COM_JEM_CATEGORIES'); ?>:</dt>
@@ -110,10 +109,9 @@ JHTML::_('behavior.modal', 'a.flyermodal');
  		&& $this->row->datdescription != '<br />') : ?>
 
 		<h2 class="description"><?php echo JText::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
-		<div class="description event_desc">
+		<div class="description event_desc" itemprop="description">
 			<?php echo $this->row->datdescription; ?>
 		</div>
-
 	<?php endif; ?>
 
 	<?php if ($this->row->attachments && count($this->row->attachments)):?>
@@ -167,7 +165,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 
 	<!--  	Venue  -->
 	<?php if ($this->row->locid != 0) : ?>
-
+		<div itemprop="location" itemscope="itemscope" itemtype="http://schema.org/Place">
 		<h2 class="location">
 			<?php
 			echo JText::_('COM_JEM_VENUE') ;
@@ -175,12 +173,9 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 			echo JEMOutput::editbutton($itemid, $this->row->locid, $this->params, $this->allowedtoeditvenue, 'editvenue');
 			?>
 		</h2>
+		<?php echo JEMOutput::flyer($this->row, $this->limage, 'venue'); ?>
 
-		<?php //flyer
-		echo JEMOutput::flyer($this->row, $this->limage, 'venue');
-		?>
-
-		<dl class="location floattext">
+		<dl class="location">
 			<dt class="venue"><?php echo JText::_('COM_JEM_LOCATION').':'; ?></dt>
 			<dd class="venue">
 			<?php echo "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($this->row->venueslug))."'>".$this->escape($this->row->venue)."</a>"; ?>
@@ -190,34 +185,33 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 				<a target="_blank" href="<?php echo $this->row->url; ?>"> <?php echo JText::_('COM_JEM_WEBSITE'); ?></a>
 			<?php endif; ?>
 			</dd>
-
-			<?php
-			if ($this->jemsettings->showdetailsadress == 1) :
-			?>
+		</dl>
+		<?php if ($this->jemsettings->showdetailsadress == 1) : ?>
+			<dl class="location floattext" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
 				<?php if ($this->row->street) : ?>
 				<dt class="venue_street"><?php echo JText::_('COM_JEM_STREET').':'; ?></dt>
-				<dd class="venue_street">
+				<dd class="venue_street" itemprop="streetAddress">
 					<?php echo $this->escape($this->row->street); ?>
 				</dd>
 				<?php endif; ?>
 
 				<?php if ($this->row->postalCode) : ?>
 				<dt class="venue_postalCode"><?php echo JText::_('COM_JEM_ZIP').':'; ?></dt>
-				<dd class="venue_postalCode">
+				<dd class="venue_postalCode" itemprop="postalCode">
 					<?php echo $this->escape($this->row->postalCode); ?>
 				</dd>
 				<?php endif; ?>
 
 				<?php if ($this->row->city) : ?>
 				<dt class="venue_city"><?php echo JText::_('COM_JEM_CITY').':'; ?></dt>
-				<dd class="venue_city">
+				<dd class="venue_city" itemprop="addressLocality">
 					<?php echo $this->escape($this->row->city);?>
 				</dd>
 				<?php endif; ?>
 
 				<?php if ($this->row->state) : ?>
 				<dt class="venue_state"><?php echo JText::_('COM_JEM_STATE').':'; ?></dt>
-				<dd class="venue_state">
+				<dd class="venue_state" itemprop="addressRegion">
 					<?php echo $this->escape($this->row->state); ?>
 				</dd>
 				<?php endif; ?>
@@ -226,41 +220,36 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 				<dt class="venue_country"><?php echo JText::_('COM_JEM_COUNTRY').':'; ?></dt>
 				<dd class="venue_country">
 					<?php echo $this->row->countryimg ? $this->row->countryimg : $this->row->country; ?>
+					<meta itemprop="addressCountry" content="<?php echo $this->row->country; ?>" />
 				</dd>
 				<?php endif; ?>
-			<?php if ($this->jemsettings->showmapserv == 1) {
-					echo JEMOutput::mapicon($this->row);
-				 	}  ?>
+
+				<?php if ($this->jemsettings->showmapserv == 1) : ?>
+					<?php echo JEMOutput::mapicon($this->row); ?>
+				<?php endif; ?>
+			</dl>
+			<?php if ($this->jemsettings->showmapserv == 2) : ?>
+				<?php echo JEMOutput::mapicon($this->row); ?>
 			<?php endif; ?>
-
-
-		</dl>
-		<?php
-		if ($this->jemsettings->showmapserv == 2){ ?>
-		<p>
-		<?php echo JEMOutput::mapicon($this->row);  ?>
-		</p>
-        <?php } ?>
-		<?php if ($this->jemsettings->showlocdescription == 1 && $this->row->locdescription != ''
- 			&& $this->row->locdescription != '<br />') : ?>
-
-			<h2 class="location_desc"><?php echo JText::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
-			<div class="description location_desc">
-				<?php echo $this->row->locdescription;	?>
-			</div>
 		<?php endif; ?>
 
+
+		<?php if ($this->jemsettings->showlocdescription == 1 && $this->row->locdescription != ''
+			&& $this->row->locdescription != '<br />') : ?>
+
+			<h2 class="location_desc"><?php echo JText::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
+			<div class="description location_desc" itemprop="description">
+				<?php echo $this->row->locdescription; ?>
+			</div>
+		<?php endif; ?>
+		</div>
 	<?php endif; ?>
 
 	<!-- Registration -->
-	<?php
-if ($this->row->registra == 1) :
-?>
+	<?php if ($this->row->registra == 1) : ?>
 	<h2 class="register"><?php echo JText::_( 'COM_JEM_REGISTRATION' ).':'; ?></h2>
 		<?php echo $this->loadTemplate('attendees'); ?>
-	<?php
-	 endif;
-	?>
+	<?php endif; ?>
 
 	<?php echo $this->row->pluginevent->onEventEnd; ?>
 

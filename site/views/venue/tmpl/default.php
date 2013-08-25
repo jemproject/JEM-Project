@@ -32,8 +32,17 @@ defined('_JEXEC') or die;
 	</h2>
 	<?php echo JEMOutput::flyer( $this->venue, $this->limage, 'venue' ); ?>
 
-	<dl class="location floattext" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
-		<?php if ( $this->jemsettings->showdetailsadress == 1 ) : ?>
+	<?php if (($this->jemsettings->showdetlinkvenue == 1) && (!empty($this->venue->url))) : ?>
+		<dl class="location">
+			<dt class="venue"><?php echo JText::_( 'COM_JEM_WEBSITE' ).':'; ?></dt>
+			<dd class="venue">
+				<a href="<?php echo $this->venue->url; ?>" target="_blank"><?php echo $this->venue->urlclean; ?></a>
+			</dd>
+		</dl>
+	<?php endif; ?>
+
+	<?php if ( $this->jemsettings->showdetailsadress == 1 ) : ?>
+		<dl class="location floattext" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
 			<?php if ( $this->venue->street ) : ?>
 			<dt class="venue_street"><?php echo JText::_( 'COM_JEM_STREET' ).':'; ?></dt>
 			<dd class="venue_street" itemprop="streetAddress">
@@ -64,36 +73,27 @@ defined('_JEXEC') or die;
 
 			<?php if ( $this->venue->country ) : ?>
 			<dt class="venue_country"><?php echo JText::_( 'COM_JEM_COUNTRY' ).':'; ?></dt>
-			<dd class="venue_country" itemprop="addressCountry">
+			<dd class="venue_country">
 				<?php echo $this->venue->countryimg ? $this->venue->countryimg : $this->venue->country; ?>
+				<meta itemprop="addressCountry" content="<?php echo $this->venue->country; ?>" />
 			</dd>
 			<?php endif; ?>
-			<?php if ($this->jemsettings->showmapserv == 1) {
-					echo JEMOutput::mapicon($this->venue);
-				}
-		endif; ?>
-	</dl>
-	<?php if (($this->jemsettings->showdetlinkvenue == 1) && (!empty($this->venue->url))) : ?>
-		<dl class="location floattext">
-			<dt class="venue"><?php echo JText::_( 'COM_JEM_WEBSITE' ).':'; ?></dt>
-			<dd class="venue">
-				<a href="<?php echo $this->venue->url; ?>" target="_blank" itemprop="url"><?php echo $this->venue->urlclean; ?></a>
-			</dd>
+
+			<?php if ($this->jemsettings->showmapserv == 1) : ?>
+				<?php echo JEMOutput::mapicon($this->venue); ?>
+			<?php endif; ?>
 		</dl>
+		<?php if ($this->jemsettings->showmapserv == 2) : ?>
+			<?php echo JEMOutput::mapicon($this->venue); ?>
+		<?php endif; ?>
 	<?php endif; ?>
 
-	<p>
-		<?php if ($this->jemsettings->showmapserv == 2) {
-			echo JEMOutput::mapicon($this->venue);
-		} ?>
-	</p>
+	<?php if ($this->jemsettings->showlocdescription == 1 && $this->venuedescription != ''
+ 		&& $this->venuedescription != '<br />') : ?>
 
-	<?php if ($this->jemsettings->showlocdescription == 1 && $this->venuedescription != '' && $this->venuedescription != '<br />') : ?>
-		<h2 class="description">
-			<?php echo JText::_( 'COM_JEM_VENUE_DESCRIPTION' ); ?>
-		</h2>
+		<h2 class="description"><?php echo JText::_( 'COM_JEM_VENUE_DESCRIPTION' ); ?></h2>
 		<div class="description no_space floattext" itemprop="description">
-			<?php echo $this->venuedescription;	?>
+			<?php echo $this->venuedescription; ?>
 		</div>
 	<?php endif; ?>
 

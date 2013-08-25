@@ -45,7 +45,6 @@ defined('_JEXEC') or die;
 <?php endif; ?>
 
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
-
 	<colgroup>
 			<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 		<?php if ($this->jemsettings->showtitle == 1) : ?>
@@ -110,7 +109,7 @@ defined('_JEXEC') or die;
 				$detaillink = JRoute::_(JEMHelperRoute::getRoute($row->slug));
 				//title
 				if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
-					<td headers="jem_title" align="left" valign="top" itemprop="name"><a href="<?php echo $detaillink ; ?>"> <?php echo $this->escape($row->title); ?></a></td>
+					<td headers="jem_title" align="left" valign="top" itemprop="name"><a href="<?php echo $detaillink ; ?>" itemprop="url"> <?php echo $this->escape($row->title); ?></a></td>
 				<?php endif; ?>
 
 				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
@@ -120,7 +119,7 @@ defined('_JEXEC') or die;
 					<td headers="jem_location" align="left" valign="top">
 						<?php
 						if ($this->jemsettings->showlinkvenue == 1) :
-							echo $row->locid != 0 ? "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug))."' itemprop='url'>".$this->escape($row->venue)."</a>" : '-';
+							echo $row->locid != 0 ? "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
 						else :
 							echo $row->locid ? $this->escape($row->venue) : '-';
 						endif;
