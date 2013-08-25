@@ -405,7 +405,7 @@ class JEMModelEditevent extends JModelLegacy
 	{
 		$jemsettings = JEMHelper::config();
 		$filter_type = JRequest::getInt('filter_type');
-		$filter 	 = JRequest::getString('filter');
+		$filter 	 = JRequest::getString('filter_search');
 		$filter 	 = $this->_db->escape( trim(JString::strtolower( $filter ) ) );
 
 		$where = array();

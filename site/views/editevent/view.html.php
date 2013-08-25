@@ -196,7 +196,7 @@ class JEMViewEditevent extends JViewLegacy
 
 		$filter_order 		= $jinput->get('filter_order','l.venue','cmd');
 		$filter_order_Dir   = $jinput->get('filter_order_Dir','ASC','word');
-		$filter			    = $jinput->get('filter','','string');
+		$filter			    = $jinput->get('filter_search','','string');
 		$filter_type		= $jinput->get('filter_type','','int');
 
 

@@ -10,8 +10,6 @@
 defined('_JEXEC') or die;
 
 
-$function = JRequest::getCmd('function', 'jSelectVenue');
-
 ?>
 
 <script type="text/javascript">
@@ -44,10 +42,10 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 			echo '<label for="filter_type">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
 			echo $this->searchfilter.'&nbsp;';
 			?>
-			<input type="text" name="filter" id="filter" value="<?php echo $this->filter;?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
-			<button type="submit"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-			<button type="button" onclick="document.id('search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
-			<button type="button" onclick="if (window.parent) window.parent.elSelectVenue('', '<?php echo JText::_('COM_JEM_SELECTVENUE') ?>');"><?php echo JText::_('COM_JEM_NOVENUE')?></button>
+			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->filter;?>" class="inputbox" onchange="document.adminForm.submit();" />
+			<button class="buttonfilter" type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
+			<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+			<button class="buttonfilter" type="button" onclick="if (window.parent) window.parent.elSelectVenue('', '<?php echo JText::_('COM_JEM_SELECTVENUE') ?>');"><?php echo JText::_('COM_JEM_NOVENUE')?></button>
 		</div>
 		<div class="jem_fright">
 			<?php
@@ -85,7 +83,6 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 </table>
 
 <p>
-<input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
 <input type="hidden" name="task" value="selectvenue" />
 <input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="tmpl" value="component" />
