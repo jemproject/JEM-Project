@@ -164,27 +164,25 @@ defined('_JEXEC') or die;
 				<?php if ($this->jemsettings->showcat == 1) : ?>
 					<td headers="jem_category" align="left" valign="top">
 					<?php
-					$nr = count($row->categories);
-					$ix = 0;
-					foreach ($row->categories as $key => $category) :
-
-						if ($this->jemsettings->catlinklist == 1) :
-						?>
+						$nr = count($row->categories);
+						$ix = 0;
+					?>
+					<?php foreach ($row->categories as $key => $category) : ?>
+						<?php if ($this->jemsettings->catlinklist == 1) : ?>
 							<a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($category->catslug)); ?>">
 								<?php echo $category->catname; ?>
 							</a>
+						<?php else: ?>
+							<?php echo $category->catname; ?>
+						<?php endif; ?>
 						<?php
-						else :
-							echo $category->catname;
-						endif;
-
 						$ix++;
-						if ($ix != $nr) :
-							echo ', ';
-						endif;
-					endforeach;
-					?>
-				</td>
+						?>
+						<?php if ($ix != $nr) : ?>
+							<?php echo ', '; ?>
+						<?php endif; ?>
+					<?php endforeach; ?>
+					</td>
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showatte == 1) : ?>
