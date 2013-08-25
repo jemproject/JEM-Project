@@ -10,7 +10,6 @@
 defined('_JEXEC') or die;
 ?>
 
-
 <h2><?php echo JText::_('COM_JEM_MY_VENUES'); ?></h2>
 
 <form action="<?php echo $this->action; ?>" method="post" id="adminForm" name="adminForm">
@@ -40,9 +39,7 @@ defined('_JEXEC') or die;
 <?php endif; ?>
 
 
-
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Attending">
-
 	<colgroup>
 		<?php if ($this->jemsettings->showlocate == 1) :	?>
 			<col width="<?php echo $this->jemsettings->locationwidth; ?>" class="jem_col_venue" />
@@ -57,90 +54,58 @@ defined('_JEXEC') or die;
 
 	<thead>
 		<tr>
-				<?php
-			if ($this->jemsettings->showlocate == 1) :
-			?>
+			<?php if ($this->jemsettings->showlocate == 1) : ?>
 			<th id="jem_location" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-			<?php
-			endif;
-			if ($this->jemsettings->showcity == 1) :
-			?>
+			<?php endif; ?>
+			<?php if ($this->jemsettings->showcity == 1) : ?>
 			<th id="jem_city" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-			<?php
-			endif;
-			if ($this->jemsettings->showstate == 1) :
-			?>
+			<?php endif; ?>
+			<?php if ($this->jemsettings->showstate == 1) : ?>
 			<th id="jem_state" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-			<?php
-			endif;
-			?>
+			<?php endif; ?>
 		</tr>
 	</thead>
 	<tbody>
-	<?php
-	if (count((array)$this->venues) == 0) :
-		?>
+	<?php if (count((array)$this->venues) == 0) : ?>
 		<tr align="center"><td colspan="0"><?php echo JText::_('COM_JEM_NO_VENUES'); ?></td></tr>
-		<?php
-
-
-	else :
-	foreach ($this->venues as $i => $row) :
-	?>
+	<?php else :?>
+		<?php foreach ($this->venues as $i => $row) : ?>
 			<tr class="row<?php echo $i % 2; ?>">
 
-
-				<?php
-				if ($this->jemsettings->showlocate == 1) :
-				?>
-
+				<?php if ($this->jemsettings->showlocate == 1) : ?>
 					<td headers="jem_location" align="left" valign="top">
-						<?php
-						if ($this->jemsettings->showlinkvenue == 1) :
-							echo $row->id != 0 ? "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
-						else :
-							echo $row->id ? $this->escape($row->venue) : '-';
-						endif;
-						?>
+						<?php if ($this->jemsettings->showlinkvenue == 1) : ?>
+							<?php echo $row->id != 0 ? "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-'; ?>
+						<?php else : ?>
+							<?php echo $row->id ? $this->escape($row->venue) : '-'; ?>
+						<?php endif; ?>
 					</td>
+				<?php endif; ?>
 
-				<?php
-				endif;
-
-				if ($this->jemsettings->showcity == 1) :
-				?>
+				<?php if ($this->jemsettings->showcity == 1) : ?>
 					<td headers="jem_city" align="left" valign="top"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
-				<?php
-				endif;
+				<?php endif; ?>
 
-				if ($this->jemsettings->showstate == 1) :
-				?>
+				<?php if ($this->jemsettings->showstate == 1) : ?>
 					<td headers="jem_state" align="left" valign="top"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
-				<?php
-				endif;
-				endforeach;
-				?>
-
-				</td>
+				<?php endif; ?>
 			</tr>
-
-		<?php
-		$i = 1 - $i;
-		endif;
-		?>
-
+			<?php
+				$i = 1 - $i;
+			?>
+		<?php endforeach; ?>
+	<?php endif; ?>
 	</tbody>
 </table>
-<p>
+
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 <input type="hidden" name="boxchecked" value="0" />
-<input type = "hidden" name = "task" value = "" />
-<input type = "hidden" name = "option" value = "com_jem" />
-</p>
+<input type="hidden" name="task" value="" />
+<input type="hidden" name="option" value="com_jem" />
+
 </form>
 
 <div class="pagination">
 	<?php echo $this->venues_pagination->getPagesLinks(); ?>
 </div>
-

@@ -12,24 +12,21 @@ defined('_JEXEC') or die;
 <div id="jem" class="jem_jem">
 
 <?php if ($this->params->def( 'show_page_title', 1 )) : ?>
-
-    <h1 class="componentheading">
+	<h1 class="componentheading">
 		<?php echo $this->escape($this->pagetitle); ?>
 	</h1>
-
 <?php endif; ?>
 
 <!--table-->
 
-<?php 
-	echo $this->loadTemplate('venues'); 
+<?php
+	echo $this->loadTemplate('venues');
 ?>
-
 
 <!--footer-->
 
 <div class="copyright">
-  <?php echo JEMOutput::footer( ); ?>
+	<?php echo JEMOutput::footer( ); ?>
 </div>
 
 </div>

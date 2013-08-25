@@ -51,9 +51,9 @@ defined('_JEXEC') or die;
 
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 	<colgroup>
-	<col width="1%" class="jem_col_num" />
-	<col width="1%" class="jem_col_checkall" />
-		<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
+			<col width="1%" class="jem_col_num" />
+			<col width="1%" class="jem_col_checkall" />
+			<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 		<?php if ($this->jemsettings->showtitle == 1) : ?>
 			<col width="<?php echo $this->jemsettings->titlewidth; ?>" class="jem_col_title" />
 		<?php endif; ?>
@@ -72,7 +72,7 @@ defined('_JEXEC') or die;
 		<?php if ($this->params->get('displayattendeecolumn') == 1) :	?>
 			<col width="<?php echo $this->jemsettings->attewidth; ?>" class="jem_col_atte" />
 		<?php endif; ?>
-		<col width="1%" class="jem_col_status" />
+			<col width="1%" class="jem_col_status" />
 	</colgroup>
 
 	<thead>
@@ -80,51 +80,34 @@ defined('_JEXEC') or die;
 			<th ><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 			<th><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 			<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-			<?php
-			if ($this->jemsettings->showtitle == 1) :
-			?>
+			<?php if ($this->jemsettings->showtitle == 1) : ?>
 			<th id="jem_title" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-			<?php
-			endif;
-			if ($this->jemsettings->showlocate == 1) :
-			?>
+			<?php endif; ?>
+			<?php if ($this->jemsettings->showlocate == 1) : ?>
 			<th id="jem_location" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-			<?php
-			endif;
-			if ($this->jemsettings->showcity == 1) :
-			?>
+			<?php endif; ?>
+			<?php if ($this->jemsettings->showcity == 1) : ?>
 			<th id="jem_city" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-			<?php
-			endif;
-			if ($this->jemsettings->showstate == 1) :
-			?>
+			<?php endif; ?>
+			<?php if ($this->jemsettings->showstate == 1) : ?>
 			<th id="jem_state" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-			<?php
-			endif;
-			if ($this->jemsettings->showcat == 1) :
-			?>
+			<?php endif; ?>
+			<?php if ($this->jemsettings->showcat == 1) : ?>
 			<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-			<?php
-			endif;
-			if ($this->params->get('displayattendeecolumn') == 1) :
-			?>
+			<?php endif; ?>
+			<?php if ($this->params->get('displayattendeecolumn') == 1) : ?>
 			<th id="jem_atte" class="sectiontableheader" align="center"><?php echo JText::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
-			<?php
-			endif;
-			?>
+			<?php endif; ?>
 			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'JSTATUS' ); ?></th>
 		</tr>
 	</thead>
 	<tbody>
-	<?php
-	if (count((array)$this->events) == 0) :
-		?>
+	<?php if (count((array)$this->events) == 0) : ?>
 		<tr align="center"><td colspan="0"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
-		<?php
-	else :
-		foreach ($this->events as $i => $row) :
-	?>
+	<?php else : ?>
+		<?php foreach ($this->events as $i => $row) : ?>
 			<tr class="row<?php echo $i % 2; ?>">
+
 				<td><?php echo $this->events_pagination->getRowOffset( $i ); ?></td>
 				<td><?php echo JHtml::_('grid.id', $i, $row->eventid); ?></td>
 
@@ -133,86 +116,65 @@ defined('_JEXEC') or die;
 						$row->enddates, $row->endtimes); ?>
 				</td>
 
-				<?php
-				//Link to details
-				$detaillink = JRoute::_(JEMHelperRoute::getRoute($row->slug));
-				//title
-				if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) :
-				?>
-
-				<td headers="jem_title" align="left" valign="top"><a href="<?php echo $detaillink ; ?>"> <?php echo $this->escape($row->title); ?></a></td>
-
-				<?php
-				endif;
-
-				if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) :
-				?>
-				<td headers="jem_title" align="left" valign="top"><?php echo $this->escape($row->title); ?></td>
-				<?php
-				endif;
-				if ($this->jemsettings->showlocate == 1) :
-				?>
-					<td headers="jem_location" align="left" valign="top">
-						<?php
-						if ($this->jemsettings->showlinkvenue == 1) :
-							echo $row->locid != 0 ? "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
-						else :
-							echo $row->locid ? $this->escape($row->venue) : '-';
-						endif;
-						?>
+				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
+					<td headers="jem_title" align="left" valign="top">
+						<a href="<?php echo JRoute::_(JEMHelperRoute::getEventRoute($row->slug)); ?>">
+							<?php echo $this->escape($row->title); ?>
+						</a>
 					</td>
+				<?php endif; ?>
 
-				<?php
-				endif;
+				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
+					<td headers="jem_title" align="left" valign="top"><?php echo $this->escape($row->title); ?></td>
+				<?php endif; ?>
 
-				if ($this->jemsettings->showcity == 1) :
-				?>
+				<?php if ($this->jemsettings->showlocate == 1) : ?>
+					<td headers="jem_location" align="left" valign="top">
+						<?php if ($this->jemsettings->showlinkvenue == 1) :  ?>
+							<?php echo $row->locid != 0 ? "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-'; ?>
+						<?php else : ?>
+							<?php echo $row->locid ? $this->escape($row->venue) : '-'; ?>
+						<?php endif; ?>
+					</td>
+				<?php endif; ?>
+
+				<?php if ($this->jemsettings->showcity == 1) : ?>
 					<td headers="jem_city" align="left" valign="top"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
-				<?php
-				endif;
+				<?php endif; ?>
 
-				if ($this->jemsettings->showstate == 1) :
-				?>
+				<?php if ($this->jemsettings->showstate == 1) : ?>
 					<td headers="jem_state" align="left" valign="top"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
-				<?php
-				endif;
+				<?php endif; ?>
 
-				if ($this->jemsettings->showcat == 1) :
-				?>
-				<td headers="jem_category" align="left" valign="top">
+				<?php if ($this->jemsettings->showcat == 1) : ?>
+					<td headers="jem_category" align="left" valign="top">
 					<?php
-					$nr = count($row->categories);
-					$ix = 0;
-					foreach ($row->categories as $key => $category) :
-
-						if ($this->jemsettings->catlinklist == 1) :
-						?>
+						$nr = count($row->categories);
+						$ix = 0;
+					?>
+					<?php foreach ($row->categories as $key => $category) : ?>
+						<?php if ($this->jemsettings->catlinklist == 1) : ?>
 							<a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($category->catslug)); ?>">
 								<?php echo $category->catname; ?>
 							</a>
 						<?php else : ?>
 							<?php echo $category->catname; ?>
+						<?php endif; ?>
 						<?php
-						endif;
+							$ix++;
+						?>
+						<?php if ($ix != $nr) : ?>
+							<?php echo ', '; ?>
+						<?php endif; ?>
+					<?php endforeach; ?>
+					</td>
+				<?php endif; ?>
 
-						$ix++;
-						if ($ix != $nr) :
-							echo ', ';
-						endif;
-					endforeach;
-					?>
-				</td>
-				<?php
-				endif;
-
-				if ($this->params->get('displayattendeecolumn') == 1) :
-				?>
-				<td headers="jem_atte" align="center" valign="top">
-				<?php
-					if ($row->registra == 1) {
-						if ($this->enableemailaddress == 1)
-						{
-						$emailaddress = '&em='.$this->enableemailaddress;
+				<?php if ($this->params->get('displayattendeecolumn') == 1) : ?>
+					<td headers="jem_atte" align="center" valign="top">
+					<?php if ($row->registra == 1) {
+						if ($this->enableemailaddress == 1) {
+							$emailaddress = '&em='.$this->enableemailaddress;
 						} else {
 							$emailaddress = '';
 						}
@@ -229,8 +191,7 @@ defined('_JEXEC') or die;
 							}
 						}
 
-						if ($count > 0 && $row->published == 1)
-						{
+						if ($count > 0 && $row->published == 1) {
 							?>
 							<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>">
 							<?php echo $count; ?>
@@ -238,41 +199,39 @@ defined('_JEXEC') or die;
 							<?php
 						}
 
-						if ($row->published == 0)
-						{
+						if ($row->published == 0) {
 							echo $count;
 						}
-						if ($count == 0  && $row->published == 1)
-						{
+						if ($count == 0  && $row->published == 1) {
 							echo $count;
 						}
 					} else {
 						echo JHTML::_('image', 'media/com_jem/images/publish_r.png',JText::_('COM_JEM_NOTES'));
 					}
-				?>
+					?>
 				</td>
 				<?php endif; ?>
 				<td class="center"><?php echo JHTML::_('jgrid.published', $row->published, $i ); ?></td>
 			</tr>
 
 		<?php
-		$i = 1 - $i;
-		endforeach;
-		endif;
+			$i = 1 - $i;
 		?>
+		<?php endforeach;?>
+	<?php endif;?>
+	</tbody>
+</table>
 
-		</tbody>
-	</table>
-	<p>
-		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-		<input type="hidden" name="enableemailaddress" value="<?php echo $this->enableemailaddress; ?>" />
-		<input type="hidden" name="boxchecked" value="0" />
-		<input type="hidden" name="task" value="" />
-		<input type="hidden" name="option" value="com_jem" />
-		<?php echo JHtml::_('form.token'); ?>
-	</p>
+<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+<input type="hidden" name="enableemailaddress" value="<?php echo $this->enableemailaddress; ?>" />
+<input type="hidden" name="boxchecked" value="0" />
+<input type="hidden" name="task" value="" />
+<input type="hidden" name="option" value="com_jem" />
+<?php echo JHtml::_('form.token'); ?>
+
 </form>
+
 <div class="pagination">
 	<?php echo $this->events_pagination->getPagesLinks(); ?>
 </div>
