@@ -32,7 +32,7 @@ class JEMViewCategories extends JViewLegacy {
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.categories.filter_order', 		'filter_order', 	'c.catname', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categories.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categories.filter_state', 		'filter_state', 	'', 'string' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.categories.search', 			'search', 			'', 'string' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.categories.filter_search', 	'filter_search', 	'', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 
 		//add css and submenu to document
@@ -75,12 +75,12 @@ class JEMViewCategories extends JViewLegacy {
 
 	protected function addToolbar()
 	{
-		
+
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
-		
+
 		//create the toolbar
 		JToolBarHelper::title( JText::_( 'COM_JEM_CATEGORIES' ), 'elcategories' );
-		
+
 		JToolBarHelper::addNew('categories.add');
 		JToolBarHelper::spacer();
 		JToolBarHelper::editList('categories.edit');
@@ -88,9 +88,9 @@ class JEMViewCategories extends JViewLegacy {
 		JToolBarHelper::unpublishList('categories.unpublish');
 		JToolBarHelper::divider();
 		JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'categories.remove', $alt = 'JACTION_DELETE');
-		
+
 		JToolBarHelper::help( 'listcategories', true );
-		
+
 	}
 
 }

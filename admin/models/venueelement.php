@@ -177,7 +177,7 @@ class JEMModelVenueelement extends JModelLegacy
 
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.venueelement.filter', 'filter', '', 'int' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_state', 'filter_state', '', 'word' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.venueelement.search', 'search', '', 'string' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_search', 'filter_search', '', 'string' );
 		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
 
 		$where = array();

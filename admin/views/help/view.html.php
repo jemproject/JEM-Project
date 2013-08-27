@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
  * View class for the JEM Help screen
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewHelp extends JViewLegacy {
 
@@ -30,7 +30,7 @@ class JEMViewHelp extends JViewLegacy {
 		$user			=  JFactory::getUser();
 
 		//get vars
-		$helpsearch 	= JRequest::getString( 'search' );
+		$helpsearch 	= JRequest::getString( 'filter_search' );
 
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
@@ -52,7 +52,7 @@ class JEMViewHelp extends JViewLegacy {
 
 		// add toolbar
 		$this->addToolbar();
-		
+
 		parent::display($tpl);
 	}
 
@@ -94,25 +94,25 @@ class JEMViewHelp extends JViewLegacy {
 		asort( $toc );
 		return $toc;
 	}
-	
-	
+
+
 	/*
 	 * Add Toolbar
 	*/
-	
+
 	protected function addToolbar()
 	{
-		
+
 		//Create Submenu
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
-		
+
 		//create the toolbar
 		JToolBarHelper::title( JText::_( 'COM_JEM_HELP' ), 'help' );
-		
+
 	}
-	
-	
-	
-	
+
+
+
+
 } // end of class
 ?>

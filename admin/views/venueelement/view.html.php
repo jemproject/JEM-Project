@@ -34,7 +34,7 @@ class JEMViewVenueelement extends JViewLegacy {
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.venueelement.filter', 'filter', '', 'int' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_state', 'filter_state', '*', 'word' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.venueelement.search', 'search', '', 'string' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_search', 'filter_search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 		$template 			= $app->getTemplate();
 

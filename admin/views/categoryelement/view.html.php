@@ -15,7 +15,7 @@ jimport( 'joomla.application.component.view');
  * View class for the JEM categoryelement screen
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewCategoryelement extends JViewLegacy {
 
@@ -25,7 +25,7 @@ class JEMViewCategoryelement extends JViewLegacy {
 		$document	=  JFactory::getDocument();
 		$db			=  JFactory::getDBO();
 		$app 		=  JFactory::getApplication();
-		
+
 		JHTML::_('behavior.tooltip');
 		JHTML::_('behavior.modal');
 
@@ -33,7 +33,7 @@ class JEMViewCategoryelement extends JViewLegacy {
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.categoryelement.filter_order', 'filter_order', 'c.ordering', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categoryelement.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categoryelement.filter_state', 'filter_state', '*', 'word' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.categoryelement.search', 'search', '', 'string' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.categoryelement.filter_search', 'filter_search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 		$template 			= $app->getTemplate();
 

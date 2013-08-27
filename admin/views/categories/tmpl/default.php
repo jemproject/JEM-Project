@@ -14,9 +14,9 @@ defined('_JEXEC') or die; ?>
 
 <fieldset id="filter-bar">
 	<div class="filter-search fltlft">
-				<input type="text" name="search" id="search" placeholder="<?php echo JText::_( 'COM_JEM_SEARCH' );?>" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="this.form.submit()" />
-				<button type="submit"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-				<button type="button" onclick="document.id('search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+				<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo JText::_( 'COM_JEM_SEARCH' );?>" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="this.form.submit()" />
+				<button class="buttonfilter" type="submit"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+				<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 			</div>
 		<div class="filter-select fltrt">
 			  			<select name="filter_state" class="inputbox" onchange="this.form.submit()">

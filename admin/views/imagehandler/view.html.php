@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
  * Based on the Joomla! media component
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewImagehandler extends JViewLegacy {
 
@@ -36,7 +36,7 @@ class JEMViewImagehandler extends JViewLegacy {
 
 		//get vars
 		$task 		= JRequest::getVar('task');
-		$search 	= $app->getUserStateFromRequest($option.'.search', 'search', '', 'string');
+		$search 	= $app->getUserStateFromRequest($option.'.filter_search', 'filter_search', '', 'string');
 		$search 	= trim(JString::strtolower($search));
 
 		//set variables
@@ -108,7 +108,7 @@ class JEMViewImagehandler extends JViewLegacy {
 
 		//add css
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
-		
+
 		jimport('joomla.client.helper');
 		$ftp = JClientHelper::setCredentialsFromRequest('ftp');
 

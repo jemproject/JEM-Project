@@ -41,7 +41,7 @@ class JEMModelImagehandler extends JModelLegacy
 		$task 		= JRequest::getVar('task');
 		$limit		= $app->getUserStateFromRequest($option.'imageselect'.$task.'limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest($option.'imageselect'.$task.'limitstart', 'limitstart', 0, 'int');
-		$search 	= $app->getUserStateFromRequest($option.'.search', 'search', '', 'string');
+		$search 	= $app->getUserStateFromRequest($option.'.filter_search', 'filter_search', '', 'string');
 		$search 	= trim(JString::strtolower($search));
 
 		$this->setState('limit', $limit);

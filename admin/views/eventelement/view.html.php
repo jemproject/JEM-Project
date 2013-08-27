@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
  * View class for the JEM eventelement screen
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewEventelement extends JViewLegacy {
 
@@ -36,7 +36,7 @@ class JEMViewEventelement extends JViewLegacy {
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.eventelement.filter', 'filter', '', 'int' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_state', 'filter_state', '*', 'word' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.eventelement.search', 'search', '', 'string' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_search', 'filter_search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
 		$template 			= $app->getTemplate();
 

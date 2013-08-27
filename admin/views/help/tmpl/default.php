@@ -33,9 +33,9 @@ $options = array(
 					<td>
 						<strong><?php echo JText::_( 'COM_JEM_SEARCH' ); ?></strong>
 						<input class="text_area" type="hidden" name="option" value="com_jem" />
-						<input type="text" name="search" id="search" value="<?php echo $this->helpsearch;?>" class="inputbox" />
+						<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->helpsearch;?>" class="inputbox" />
 						<input type="submit" value="<?php echo JText::_( 'COM_JEM_GO' ); ?>" class="button" />
-						<input type="button" value="<?php echo JText::_( 'COM_JEM_RESET' ); ?>" class="button" onclick="f=document.adminForm;f.search.value='';f.submit()" />
+						<input type="button" value="<?php echo JText::_( 'COM_JEM_RESET' ); ?>" class="button" onclick="f=document.adminForm;f.filter_search.value='';f.submit()" />
 					</td>
 					<td style="text-align:right">
 						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/intro.html'; ?>" target='helpFrame'><?php echo JText::_( 'COM_JEM_HOME' ); ?></a>
@@ -60,7 +60,7 @@ $options = array(
 
 			<?php
 			echo JHtml::_('sliders.start', 'det-pane', $options);
-			
+
 			$title2 = JText::_( 'COM_JEM_SCREEN_HELP' );
 			echo JHtml::_('sliders.panel', $title2, 'help');
 			?>
@@ -74,7 +74,7 @@ $options = array(
 					echo '</tr>';
 				}
 				?>
-			</table>			
+			</table>
 
 			<?php
 			echo JHtml::_('sliders.end');

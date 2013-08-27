@@ -169,7 +169,7 @@ class JEMModelUserelement extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$search 			= $app->getUserStateFromRequest( 'com_jem.users.search', 'search', '', 'string' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.users.filter_search', 'filter_search', '', 'string' );
 		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
 
 		$where = array();

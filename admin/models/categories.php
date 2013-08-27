@@ -100,7 +100,7 @@ class JEMModelCategories extends JModelLegacy
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.categories.filter_order', 'filter_order', 'c.ordering', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categories.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categories.filter_state', 'filter_state', '', 'string' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.categories.search', 'search', '', 'string' );
+		$search 			= $app->getUserStateFromRequest( 'com_jem.categories.filter_search', 'filter_search', '', 'string' );
 		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
 
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
