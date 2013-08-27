@@ -141,6 +141,22 @@ class JEMModelEvent extends JModelAdmin
 			$item->attachments = $files;
 		}
 
+
+		if ($item->id)
+		{
+				$item->recurrence_type == '0';
+				$item->recurrence_number = '';
+				$item->recurrence_byday = '';
+				$item->recurrence_counter = '';
+				$item->recurrence_first_id = '';
+				$item->recurrence_type = '';
+				$item->recurrence_limit = '';
+				$item->recurrence_limit_date = '';
+		}
+
+
+
+
 		$item->author_ip = $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
 
 		if (empty($item->id)) {
@@ -190,6 +206,7 @@ class JEMModelEvent extends JModelAdmin
 		 * Possible filters: http://docs.joomla.org/Retrieving_request_data_using_JInput
 		 *
 		 */
+
 		$jinput = JFactory::getApplication()->input;
 		$user	= JFactory::getUser();
 
@@ -197,6 +214,9 @@ class JEMModelEvent extends JModelAdmin
 			// Existing item
 			$table->modified	= $date->toSql();
 			$table->modified_by	= $user->get('id');
+
+			$table->recurrence_first_id = '';
+
 		} else {
 			// New Event. An event created and created_by field can be set by the user,
 			// so we don't touch either of these if they are set.
@@ -241,6 +261,8 @@ class JEMModelEvent extends JModelAdmin
 			$table->recurrence_number = $recurrencenumber;
 			$table->recurrence_byday = $recurrencebyday;
 		}
+
+
 
 		$table->meta_keywords = $metakeywords;
 		$table->meta_description = $metadescription;
