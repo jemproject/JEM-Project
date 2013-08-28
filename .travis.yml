@@ -1,0 +1,32 @@
+language: php
+
+php:
+    # using major version aliases
+    - 5.3
+#   - 5.4
+    - 5.5
+
+env:
+    - DB=mysql
+
+before_script:
+    - pear config-set auto_discover 1
+    - pear install PHP_CodeSniffer
+    - pear install phpunit/phpcpd
+    - pear channel-discover pear.phpmd.org
+#   - pear channel-discover pear.pdepend.org
+    - pear install phpmd/PHP_PMD
+    - phpenv rehash
+
+    - git clone git://github.com/joomla/coding-standards.git $(pear config-get php_dir)/PHP/CodeSniffer/Standards/Joomla
+##  - export WP_TESTS_DIR=/tmp/wordpress-tests/
+##  - bash ci/bin/install-wp-tests.sh wordpress_test root '' ${WP_VERSION}
+
+script:
+    - find . -name '*.php' -exec php -lf {} \;
+
+#    - phpcs -s -n --ignore=/site/classes/iCal*,/site/classes/Zebra*,/admin/classes/Snoopy* --standard=Joomla .
+    - phpcpd --exclude /site/classes/iCal*,/site/classes/Zebra*,/admin/classes/Snoopy* .
+
+    - phpmd . --exclude /site/classes/iCal*,/site/classes/Zebra*,/admin/classes/Snoopy* text codesize,unusedcode,naming,design
+#   - phpunit
