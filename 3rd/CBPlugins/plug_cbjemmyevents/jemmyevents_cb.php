@@ -707,7 +707,7 @@ else
 		$result_titles=explode(" " , $result->title);
 		$result_title=implode("-" , $result_titles);
 		$return .= "\n\t\t\t<td class='jemmyeventsCBTabTableTitle'>";
-		$return .= "\n\t\t\t\t<a href=\"". JRoute::_('index.php?option=com_jem&view=details&id='.$result->id.'&Itemid='.$S_Itemid1) ."\">{$result->title}</a>";
+		$return .= "\n\t\t\t\t<a href=\"". JRoute::_('index.php?option=com_jem&view=event&id='.$result->id.'&Itemid='.$S_Itemid1) ."\">{$result->title}</a>";
 		$return .= "\n\t\t\t</td>";
 
 		/* Category field */

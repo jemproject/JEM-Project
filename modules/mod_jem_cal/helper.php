@@ -177,7 +177,7 @@ class modjemcalqhelper
 						else
 						{
 							//Create the link - copied from Jroute
-							$evlink = 'index.php?option=com_jem&view=details&id='. $event->slug.'&Itemid='.$FixItemID;
+							$evlink = 'index.php?option=com_jem&view=event&id='. $event->slug.'&Itemid='.$FixItemID;
 							$link = JRoute::_( $evlink );
 						}
 
