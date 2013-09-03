@@ -17,33 +17,26 @@ defined('_JEXEC') or die;
  */
 class JEMTableGroup extends JTable
 {
-
-
 	function __construct(&$db)
 	{
 		parent::__construct('#__jem_groups', 'id', $db);
 	}
 
 
-
 	// overloaded check function
 	function check()
 	{
-
 		// Not typed in a category name?
 		if (trim($this->name ) == '') {
 			$this->setError(JText::_('COM_JEM_ADD_GROUP_NAME'));
 			return false;
 		}
 
-
 		// Set alias
 		//$this->alias = JApplication::stringURLSafe($this->alias);
 		//if (empty($this->alias)) {
 		//	$this->alias = JApplication::stringURLSafe($this->title);
 		//}
-
-
 
 		return true;
 	}
@@ -55,24 +48,17 @@ class JEMTableGroup extends JTable
 	 */
 	public function store($updateNulls = false)
 	{
-		// Verify that the alias is unique
-		$table = JTable::getInstance('Group', 'JEMTable');
-
-
 		return parent::store($updateNulls);
 	}
 
 
 	public function bind($array, $ignore = '')
 	{
-
 		// in here we are checking for the empty value of the checkbox
-
 
 		//don't override without calling base class
 		return parent::bind($array, $ignore);
 	}
-
 
 
 	/**
@@ -100,15 +86,11 @@ class JEMTableGroup extends JTable
 		$state = (int) $state;
 
 		// If there are no primary keys set check to see if the instance key is set.
-		if (empty($pks))
-		{
-			if ($this->$k)
-			{
+		if (empty($pks)) {
+			if ($this->$k) {
 				$pks = array($this->$k);
-			}
-			// Nothing to set publishing state on, return false.
-			else
-			{
+			} else {
+				// Nothing to set publishing state on, return false.
 				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 				return false;
 			}
@@ -118,12 +100,9 @@ class JEMTableGroup extends JTable
 		$where = $k . '=' . implode(' OR ' . $k . '=', $pks);
 
 		// Determine if there is checkin support for the table.
-		if (!property_exists($this, 'checked_out') || !property_exists($this, 'checked_out_time'))
-		{
+		if (!property_exists($this, 'checked_out') || !property_exists($this, 'checked_out_time')) {
 			$checkin = '';
-		}
-		else
-		{
+		} else {
 			$checkin = ' AND (checked_out = 0 OR checked_out = ' . (int) $userId . ')';
 		}
 
@@ -136,25 +115,21 @@ class JEMTableGroup extends JTable
 		$this->_db->query();
 
 		// Check for a database error.
-		if ($this->_db->getErrorNum())
-		{
+		if ($this->_db->getErrorNum()) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 		}
 
 		// If checkin is supported and all rows were adjusted, check them in.
-		if ($checkin && (count($pks) == $this->_db->getAffectedRows()))
-		{
+		if ($checkin && (count($pks) == $this->_db->getAffectedRows())) {
 			// Checkin the rows.
-			foreach ($pks as $pk)
-			{
+			foreach ($pks as $pk) {
 				$this->checkin($pk);
 			}
 		}
 
 		// If the JTable instance value is in the list of primary keys that were set, set the instance.
-		if (in_array($this->$k, $pks))
-		{
+		if (in_array($this->$k, $pks)) {
 			$this->published = $state;
 		}
 
@@ -162,8 +137,5 @@ class JEMTableGroup extends JTable
 
 		return true;
 	}
-
-
-
 }
 ?>

@@ -29,20 +29,15 @@ class JEMModelGroup extends JModelAdmin
 	{
 		if (!empty($record->id))
 		{
-			if ($record->published != -2)
-			{
+			if ($record->published != -2) {
 				return ;
 			}
 
 			$user = JFactory::getUser();
 
 			if (!empty($record->catid)) {
-
-
 				return $user->authorise('core.delete', 'com_jem.category.'.(int) $record->catid);
 			} else {
-
-
 				return $user->authorise('core.delete', 'com_jem');
 			}
 		}
@@ -60,15 +55,8 @@ class JEMModelGroup extends JModelAdmin
 		$user = JFactory::getUser();
 
 		if (!empty($record->catid)) {
-
-
 			return $user->authorise('core.edit.state', 'com_jem.category.'.(int) $record->catid);
-		}
-
-		else
-
-		{
-
+		} else {
 			return $user->authorise('core.edit.state', 'com_jem');
 		}
 	}
@@ -115,12 +103,7 @@ class JEMModelGroup extends JModelAdmin
 	 */
 	public function getItem($pk = null)
 	{
-		$jemsettings = JEMAdmin::config();
-
-		if ($item = parent::getItem($pk)) {
-
-		}
-
+		$item = parent::getItem($pk);
 
 		return $item;
 	}
@@ -150,21 +133,12 @@ class JEMModelGroup extends JModelAdmin
 	 */
 	protected function prepareTable(&$table)
 	{
-		$app = JFactory::getApplication();
-		$date = JFactory::getDate();
-		$jemsettings = JEMAdmin::config();
-		$user	= JFactory::getUser();
 		$db = JFactory::getDbo();
 
-		$jinput = JFactory::getApplication()->input;
-
 		// Bind the form fields to the table
-		/*
-		if (!$table->bind( JRequest::get( 'post' ) )) {
-		return JError::raiseWarning( 500, $table->getError() );
-		}
-		*/
-
+// 		if (!$table->bind(JRequest::get('post'))) {
+// 			return JError::raiseWarning(500, $table->getError());
+// 		}
 
 		// Make sure the data is valid
 		if (!$table->check()) {
@@ -174,11 +148,10 @@ class JEMModelGroup extends JModelAdmin
 
 		// Store data
 		if (!$table->store(true)) {
-			JError::raiseError(500, $table->getError() );
+			JError::raiseError(500, $table->getError());
 		}
 
 		$members =JRequest::getVar('maintainers',  '', 'post', 'array');
-
 
 		// Updating group references
 		$query = $db->getQuery(true);
@@ -187,7 +160,6 @@ class JEMModelGroup extends JModelAdmin
 
 		$db->setQuery($query);
 		$db->query();
-
 
 		foreach($members as $member)
 		{
@@ -198,14 +170,13 @@ class JEMModelGroup extends JModelAdmin
 			$values = array($table->id, $member);
 
 			$query
-			->insert($db->quoteName('#__jem_groupmembers'))
-			->columns($db->quoteName($columns))
-			->values(implode(',', $values));
+				->insert($db->quoteName('#__jem_groupmembers'))
+				->columns($db->quoteName($columns))
+				->values(implode(',', $values));
 
 			$db->setQuery($query);
 			$db->query();
 		}
-
 	}
 
 
@@ -218,7 +189,6 @@ class JEMModelGroup extends JModelAdmin
 	 */
 	function &getMembers()
 	{
-
 		$members = $this->_members();
 
 		$users = array();
@@ -230,18 +200,17 @@ class JEMModelGroup extends JModelAdmin
 					. ' ORDER BY name ASC'
 					;
 
-			$this->_db->setQuery( $query );
+			$this->_db->setQuery($query);
 
 			$users = $this->_db->loadObjectList();
 
-			for($i=0; $i < count( $users ); $i++) {
+			for($i=0; $i < count($users); $i++) {
 			$item = $users[$i];
 
 			$item->text = $item->name.' ('.$item->username.')';
 			}
 
 		}
-
 		return $users;
 	}
 
@@ -255,32 +224,29 @@ class JEMModelGroup extends JModelAdmin
 	 */
 	function _members()
 	{
-
 		$item = parent::getItem();
 
 		//get selected members
-		if ($item->id == null)
-		{
+		if ($item->id == null) {
 			$this->_members = null;
 		} else {
+			if ($item->id) {
+				$query = 'SELECT member'
+						. ' FROM #__jem_groupmembers'
+						. ' WHERE group_id = '.$item->id;
 
-		if ($item->id){
-			$query = 'SELECT member'
-					. ' FROM #__jem_groupmembers'
-					. ' WHERE group_id = '.$item->id;
+				$this->_db->setQuery ($query);
 
-			$this->_db->setQuery ($query);
+				$member_ids = $this->_db->loadColumn();
 
-			$member_ids = $this->_db->loadColumn();
-
-			if (is_array($member_ids)) $this->_members = implode(',', $member_ids);
-		}
+				if (is_array($member_ids)) {
+					$this->_members = implode(',', $member_ids);
+				}
+			}
 		}
 
 		return $this->_members;
 	}
-
-
 
 
 	/**
@@ -298,7 +264,9 @@ class JEMModelGroup extends JModelAdmin
 		$query = 'SELECT id AS value, username, name FROM #__users';
 		$query .= ' WHERE block = 0' ;
 
-		if ($members) $query .= ' AND id NOT IN ('.$members.')' ;
+		if ($members) {
+			$query .= ' AND id NOT IN ('.$members.')' ;
+		}
 
 		$query .= ' ORDER BY name ASC';
 
@@ -306,7 +274,7 @@ class JEMModelGroup extends JModelAdmin
 
 		$this->_available = $this->_db->loadObjectList();
 
-		for($i=0, $n=count( $this->_available ); $i < $n; $i++) {
+		for($i=0, $n=count($this->_available); $i < $n; $i++) {
 			$item = $this->_available[$i];
 
 			$item->text = $item->name.' ('.$item->username.')';
@@ -314,14 +282,4 @@ class JEMModelGroup extends JModelAdmin
 
 		return $this->_available;
 	}
-
-
-
-
-
-
-
-
-
-
 }

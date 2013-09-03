@@ -7,7 +7,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
 
 
@@ -16,19 +16,16 @@ defined( '_JEXEC' ) or die;
  *
  * @package Joomla
  * @subpackage JEM
- * 
+ *
  */
 class JEMViewVenue extends JViewLegacy {
 
 	protected $form;
 	protected $item;
 	protected $state;
-	
-	
-	
+
 	public function display($tpl = null)
 	{
-
 		// Initialise variables.
 		$this->form	 = $this->get('Form');
 		$this->item	 = $this->get('Item');
@@ -39,47 +36,38 @@ class JEMViewVenue extends JViewLegacy {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
+
 		JHtml::_('behavior.framework');
 		JHTML::_('behavior.modal', 'a.modal');
 		JHTML::_('behavior.tooltip');
 		JHTML::_('behavior.formvalidation');
-		
-		
+
 		//initialise variables
-		$editor 	=  JFactory::getEditor();
-		$document	=  JFactory::getDocument();
-		$user 		=  JFactory::getUser();
-		$db 		=  JFactory::getDBO();
-		$this->settings	=  JEMAdmin::config();
+		$document	= JFactory::getDocument();
+		$this->settings	= JEMAdmin::config();
 		$task		= JRequest::getVar('task');
 		$this->task 		= $task;
-		$url 		= JURI::root();
-		
-		
+
 		// CSS Stylesheet
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/geostyle.css');
-		$document->addScript(JURI::root().'media/com_jem/js/attachments.js' );
-		//$document->addScript(JURI::root().'media/com_jem/js/geodata.js' );
+		$document->addScript(JURI::root().'media/com_jem/js/attachments.js');
+		//$document->addScript(JURI::root().'media/com_jem/js/geodata.js');
 		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
-		
+
 		// Noconflict
-		$document->addCustomTag( '<script type="text/javascript">jQuery.noConflict();</script>' );
-		
+		$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
+
 		// JQuery scripts
 		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 		$document->addScript(JURI::root().'media/com_jem/js/jquery.geocomplete.js');
-		
+
 		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access		= $access2;
 
 		$this->addToolbar();
 		parent::display($tpl);
-		
 	}
-		
-		
-	
 
 
 	/**
@@ -103,7 +91,6 @@ class JEMViewVenue extends JViewLegacy {
 			JToolBarHelper::save('venue.save');
 		}
 		if (!$checkedOut && $canDo->get('core.create')) {
-
 			JToolBarHelper::save2new('venue.save2new');
 		}
 		// If an existing item, can save to a copy.
@@ -117,8 +104,7 @@ class JEMViewVenue extends JViewLegacy {
 			JToolBarHelper::cancel('venue.cancel', 'JTOOLBAR_CLOSE');
 		}
 
-		JToolBarHelper::help( 'editvenues', true );
+		JToolBarHelper::help('editvenues', true);
 	}
-
 }
 ?>

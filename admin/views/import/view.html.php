@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
  * View class for the JEM import screen
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewImport extends JViewLegacy {
 
@@ -24,7 +24,6 @@ class JEMViewImport extends JViewLegacy {
 
 		//initialise variables
 		$document	= JFactory::getDocument();
-		$user 		= JFactory::getUser();
 
 		// Get data from the model
 		$eventfields = $this->get('EventFields');
@@ -45,17 +44,14 @@ class JEMViewImport extends JViewLegacy {
 		$this->addToolbar();
 
 		parent::display($tpl);
-
 	}
 
 
-	/*
+	/**
 	 * Add Toolbar
-	*/
-
+	 */
 	protected function addToolbar()
 	{
-
 		//build toolbar
 		JToolBarHelper::back();
 		JToolBarHelper::title(JText::_('COM_JEM_IMPORT'), 'tableimport');
@@ -63,9 +59,6 @@ class JEMViewImport extends JViewLegacy {
 
 		//Create Submenu
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
-
 	}
-
-
-} // end of class
+}
 ?>

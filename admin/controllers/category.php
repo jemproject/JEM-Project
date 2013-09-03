@@ -29,11 +29,11 @@ class JEMControllerCategory extends JEMController
 		parent::__construct();
 
 		// Register Extra task
-		$this->registerTask( 'add'  ,		 	'edit' );
-		$this->registerTask( 'apply', 			'save' );
-		$this->registerTask( 'accesspublic', 	'access' );
-		$this->registerTask( 'accessregistered','access' );
-		$this->registerTask( 'accessspecial', 	'access' );
+		$this->registerTask('add'  ,		 	'edit');
+		$this->registerTask('apply', 			'save');
+		$this->registerTask('accesspublic', 	'access');
+		$this->registerTask('accessregistered','access');
+		$this->registerTask('accessspecial', 	'access');
 	}
 
 	/**
@@ -46,14 +46,14 @@ class JEMControllerCategory extends JEMController
 	function save()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		JRequest::checkToken() or die('Invalid Token');
 
-		$task		= JRequest::getVar('task');
+		$task = JRequest::getVar('task');
 
 		//Sanitize
-		$post = JRequest::get( 'post' );
-		$post['catdescription'] = JRequest::getVar( 'catdescription', '', 'post', 'string', JREQUEST_ALLOWRAW );
-		$post['catdescription']	= str_replace( '<br>', '<br />', $post['catdescription'] );
+		$post = JRequest::get('post');
+		$post['catdescription'] = JRequest::getVar('catdescription', '', 'post', 'string', JREQUEST_ALLOWRAW);
+		$post['catdescription']	= str_replace('<br>', '<br />', $post['catdescription']);
 
 		//sticky forms
 		$session = JFactory::getSession();
@@ -62,7 +62,6 @@ class JEMControllerCategory extends JEMController
 		$model = $this->getModel('category');
 
 		if ($returnid = $model->store($post)) {
-
 			switch ($task)
 			{
 				case 'apply' :
@@ -73,15 +72,13 @@ class JEMControllerCategory extends JEMController
 					$link = 'index.php?option=com_jem&view=categories';
 					break;
 			}
-			$msg = JText::_( 'COM_JEM_CATEGORY_SAVED' );
+			$msg = JText::_('COM_JEM_CATEGORY_SAVED');
 
 			$cache = JFactory::getCache('com_jem');
 			$cache->clean();
 
 			$session->clear('categoryform', 'com_jem');
-
 		} else {
-
 			$msg 	= '';
 			$link 	= 'index.php?option=com_jem&view=category';
 		}
@@ -100,10 +97,10 @@ class JEMControllerCategory extends JEMController
 	 */
 	function publish()
 	{
-		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
+		$cid 	= JRequest::getVar('cid', array(0), 'post', 'array');
 
-		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseError(500, JText::_( 'COM_JEM_SELECT_ITEM_TO_PUBLISH' ) );
+		if (!is_array($cid) || count($cid) < 1) {
+			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_PUBLISH'));
 		}
 
 		$model = $this->getModel('categories');
@@ -114,12 +111,12 @@ class JEMControllerCategory extends JEMController
 
 		JPluginHelper::importPlugin('finder');
 		$dispatcher = JDispatcher::getInstance();
-		$res = $dispatcher->trigger('onFinderCategoryChangeState', array('com_jem', $cid, 1));
+		$dispatcher->trigger('onFinderCategoryChangeState', array('com_jem', $cid, 1));
 
-		$total = count( $cid );
-		$msg 	= $total.' '.JText::_( 'COM_JEM_CATEGORY_PUBLISHED');
+		$total = count($cid);
+		$msg = $total.' '.JText::_('COM_JEM_CATEGORY_PUBLISHED');
 
-		$this->setRedirect( 'index.php?option=com_jem&view=categories', $msg );
+		$this->setRedirect('index.php?option=com_jem&view=categories', $msg);
 	}
 
 	/**
@@ -131,10 +128,10 @@ class JEMControllerCategory extends JEMController
 	 */
 	function unpublish()
 	{
-		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
+		$cid = JRequest::getVar('cid', array(0), 'post', 'array');
 
-		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseError(500, JText::_( 'COM_JEM_SELECT_ITEM_TO_UNPUBLISH' ) );
+		if (!is_array($cid) || count($cid) < 1) {
+			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_UNPUBLISH'));
 		}
 
 		$model = $this->getModel('categories');
@@ -145,12 +142,12 @@ class JEMControllerCategory extends JEMController
 
 		JPluginHelper::importPlugin('finder');
 		$dispatcher = JDispatcher::getInstance();
-		$res = $dispatcher->trigger('onFinderCategoryChangeState', array('com_jem', $cid, 1));
+		$dispatcher->trigger('onFinderCategoryChangeState', array('com_jem', $cid, 1));
 
-		$total = count( $cid );
-		$msg 	= $total.' '.JText::_( 'COM_JEM_CATEGORY_UNPUBLISHED');
+		$total = count($cid);
+		$msg = $total.' '.JText::_('COM_JEM_CATEGORY_UNPUBLISHED');
 
-		$this->setRedirect( 'index.php?option=com_jem&view=categories', $msg );
+		$this->setRedirect('index.php?option=com_jem&view=categories', $msg);
 	}
 
 	/**
@@ -165,7 +162,7 @@ class JEMControllerCategory extends JEMController
 		$model = $this->getModel('categories');
 		$model->move(-1);
 
-		$this->setRedirect( 'index.php?option=com_jem&view=categories');
+		$this->setRedirect('index.php?option=com_jem&view=categories');
 	}
 
 	/**
@@ -180,7 +177,7 @@ class JEMControllerCategory extends JEMController
 		$model = $this->getModel('categories');
 		$model->move(1);
 
-		$this->setRedirect( 'index.php?option=com_jem&view=categories');
+		$this->setRedirect('index.php?option=com_jem&view=categories');
 	}
 
 	/**
@@ -192,15 +189,15 @@ class JEMControllerCategory extends JEMController
 	 */
 	function saveordercat()
 	{
-		$cid 	= JRequest::getVar( 'cid', array(0), 'post', 'array' );
-		$order 	= JRequest::getVar( 'order', array(0), 'post', 'array' );
+		$cid 	= JRequest::getVar('cid', array(0), 'post', 'array');
+		$order 	= JRequest::getVar('order', array(0), 'post', 'array');
 		JArrayHelper::toInteger($order, array(0));
 
 		$model = $this->getModel('categories');
 		$model->saveorder($cid, $order);
 
 		$msg = 'New ordering saved';
-		$this->setRedirect( 'index.php?option=com_jem&view=categories', $msg );
+		$this->setRedirect('index.php?option=com_jem&view=categories', $msg);
 	}
 
 	/**
@@ -212,10 +209,10 @@ class JEMControllerCategory extends JEMController
 	 */
 	function remove()
 	{
-		$cid		= JRequest::getVar( 'cid', array(0), 'post', 'array' );
+		$cid = JRequest::getVar('cid', array(0), 'post', 'array');
 
-		if (!is_array( $cid ) || count( $cid ) < 1) {
-			JError::raiseWarning(500, JText::_( 'COM_JEM_SELECT_ITEM_TO_DELETE' ) );
+		if (!is_array($cid) || count($cid) < 1) {
+			JError::raiseWarning(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
 		}
 
 		$model = $this->getModel('categories');
@@ -225,7 +222,7 @@ class JEMControllerCategory extends JEMController
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
-		$this->setRedirect( 'index.php?option=com_jem&view=categories', $msg );
+		$this->setRedirect('index.php?option=com_jem&view=categories', $msg);
 	}
 
 	/**
@@ -238,7 +235,7 @@ class JEMControllerCategory extends JEMController
 	function cancel()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		JRequest::checkToken() or die('Invalid Token');
 
 		$session 	= JFactory::getSession();
 		$session->clear('categoryform', 'com_jem');
@@ -247,7 +244,7 @@ class JEMControllerCategory extends JEMController
 		$category->bind(JRequest::get('post'));
 		$category->checkin();
 
-		$this->setRedirect( 'index.php?option=com_jem&view=categories' );
+		$this->setRedirect('index.php?option=com_jem&view=categories');
 	}
 
 	/**
@@ -257,14 +254,14 @@ class JEMControllerCategory extends JEMController
 	 * @return void
 	 *
 	 */
-	function access( )
+	function access()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or jexit( 'Invalid Token' );
+		JRequest::checkToken() or jexit('Invalid Token');
 
-		$cid		= JRequest::getVar( 'cid', array(0), 'post', 'array' );
+		$cid		= JRequest::getVar('cid', array(0), 'post', 'array');
 		$id			= (int)$cid[0];
-		$task		= JRequest::getVar( 'task' );
+		$task		= JRequest::getVar('task');
 
 		if ($task == 'accesspublic') {
 			$access = 0;
@@ -275,9 +272,9 @@ class JEMControllerCategory extends JEMController
 		}
 
 		$model = $this->getModel('categories');
-		$model->access( $id, $access );
+		$model->access($id, $access);
 
-		$this->setRedirect('index.php?option=com_jem&view=categories' );
+		$this->setRedirect('index.php?option=com_jem&view=categories');
 	}
 
 	/**
@@ -287,17 +284,17 @@ class JEMControllerCategory extends JEMController
 	 * @return void
 	 *
 	 */
-	function edit( )
+	function edit()
 	{
-		JRequest::setVar( 'view', 'category' );
-		JRequest::setVar( 'hidemainmenu', 1 );
+		JRequest::setVar('view', 'category');
+		JRequest::setVar('hidemainmenu', 1);
 
 		$model 	= $this->getModel('category');
 		$user	= JFactory::getUser();
 
 		// Error if checkedout by another administrator
-		if ($model->isCheckedOut( $user->get('id') )) {
-			$this->setRedirect( 'index.php?option=com_jem&view=categories', JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ) );
+		if ($model->isCheckedOut($user->get('id'))) {
+			$this->setRedirect('index.php?option=com_jem&view=categories', JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
 		}
 
 		$model->checkout();

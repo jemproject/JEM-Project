@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
  * JEM categories Model class
  *
  * @package JEM
- * 
+ *
  */
 class jem_categories extends JTable
 {
@@ -65,12 +65,12 @@ class jem_categories extends JTable
 	 *
 	 * @access public
 	 * @return boolean
-	 * 
+	 *
 	 */
 	function check()
 	{
 		// Not typed in a category name?
-		if (trim( $this->catname ) == '') {
+		if (trim($this->catname) == '') {
 			$this->_error = JText::_('COM_JEM_ADD_NAME_CATEGORY');
 			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
 			return false;
@@ -78,7 +78,7 @@ class jem_categories extends JTable
 
 		$alias = JFilterOutput::stringURLSafe($this->catname);
 
-		if(empty($this->alias) || $this->alias === $alias ) {
+		if(empty($this->alias) || $this->alias === $alias) {
 			$this->alias = $alias;
 		}
 
@@ -92,7 +92,7 @@ class jem_categories extends JTable
 			JError::raiseWarning('SOME_ERROR_CODE', JText::sprintf('COM_JEM_CATEGORY_NAME_ALREADY_EXIST', $this->catname));
 			return false;
 		}
-    */
+		*/
 
 		return true;
 	}
@@ -106,14 +106,11 @@ class jem_categories extends JTable
 	 * @param boolean If false, null object variables are not updated
 	 * @return null|string null if successful otherwise returns and error message
 	 */
-	function insertIgnore( $updateNulls=false )
+	function insertIgnore($updateNulls=false)
 	{
-		$k = $this->_tbl_key;
-
-		$ret = $this->_insertIgnoreObject( $this->_tbl, $this, $this->_tbl_key );
-		if( !$ret )
-		{
-			$this->setError(get_class( $this ).'::store failed - '.$this->_db->getErrorMsg());
+		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
+		if(!$ret) {
+			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
 			return false;
 		}
 		return true;
@@ -128,21 +125,21 @@ class jem_categories extends JTable
 	 * @param	string	The name of the primary key. If provided the object property is updated.
 	 * @return int number of affected row
 	 */
-	function _insertIgnoreObject( $table, &$object, $keyName = NULL )
+	function _insertIgnoreObject($table, &$object, $keyName = NULL)
 	{
-		$fmtsql = 'INSERT IGNORE INTO '.$this->_db->quoteName($table).' ( %s ) VALUES ( %s ) ';
+		$fmtsql = 'INSERT IGNORE INTO '.$this->_db->quoteName($table).' (%s) VALUES (%s) ';
 		$fields = array();
-		foreach (get_object_vars( $object ) as $k => $v) {
+		foreach (get_object_vars($object) as $k => $v) {
 			if (is_array($v) or is_object($v) or $v === NULL) {
 				continue;
 			}
 			if ($k[0] == '_') { // internal field
 				continue;
 			}
-			$fields[] = $this->_db->quoteName( $k );
-			$values[] = $this->_db->isQuoted( $k ) ? $this->_db->Quote( $v ) : (int) $v;
+			$fields[] = $this->_db->quoteName($k);
+			$values[] = $this->_db->isQuoted($k) ? $this->_db->Quote($v) : (int) $v;
 		}
-		$this->_db->setQuery( sprintf( $fmtsql, implode( ",", $fields ) ,  implode( ",", $values ) ) );
+		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields) ,  implode(",", $values)));
 		if (!$this->_db->query()) {
 			return false;
 		}

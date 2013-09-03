@@ -12,50 +12,41 @@ defined('_JEXEC') or die;
 
 /**
  * JEM Component Controller
- *  
  */
 class JEMController extends JControllerLegacy
 {
-	
 	/**
 	 * @var		string	The default view.
-	 * 
+	 *
 	 */
 	protected $default_view = 'jem';
-	
-	
+
+
 	function __construct()
 	{
 		parent::__construct();
 	}
 
-	
+
 	/**
 	 * Display the view
-	 * 
+	 *
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
 		require_once JPATH_COMPONENT.'/helpers/helper.php';
-		
+
 		// Load the submenu.
 		// if no view found then refert to jem
-		
+
 		JEMHelperBackend::addSubmenu(JRequest::getCmd('view', 'jem'));
 
-		// variables, if non found back to default
-		$view	= JRequest::getCmd('view', 'jem');
-		$layout = JRequest::getCmd('layout', 'default');
-		$id		= JRequest::getInt('id');
-				
 		parent::display();
 		return $this;
-
 	}
 
-	
 
-	/*
+	/**
 	 * @todo check code
 	 * Function to clear recurrences, not used
 	 */
@@ -63,7 +54,7 @@ class JEMController extends JControllerLegacy
 	{
 		$model = $this->getModel('events');
 		$model->clearrecurrences();
-		$this->setRedirect( 'index,php?option=com_jem', Jtext::_('COM_JEM_RECURRENCES_CLEARED'));
+		$this->setRedirect('index,php?option=com_jem', Jtext::_('COM_JEM_RECURRENCES_CLEARED'));
 	}
 
 	/**
@@ -71,16 +62,16 @@ class JEMController extends JControllerLegacy
 	 *
 	 * @return true on sucess
 	 * @access private
-	 * 
+	 *
 	 * Views:
 	 * category, event, venue
-	 * 
+	 *
 	 * Reference to the task is located in the attachments.js
-	 * 
+	 *
 	 */
 	function ajaxattachremove()
 	{
-		$id     = JRequest::getVar( 'id', 0, 'request', 'int' );
+		$id = JRequest::getVar('id', 0, 'request', 'int');
 
 		$res = JEMAttachment::remove($id);
 		if (!$res) {

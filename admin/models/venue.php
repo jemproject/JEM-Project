@@ -29,25 +29,18 @@ class JEMModelVenue extends JModelAdmin
 	{
 		if (!empty($record->id))
 		{
-				if ($record->published != -2)
-				{
-					return ;
-				}
+			if ($record->published != -2) {
+				return ;
+			}
 
+			$user = JFactory::getUser();
 
-				$user = JFactory::getUser();
-
-				if (!empty($record->catid)) {
-					return $user->authorise('core.delete', 'com_jem.category.'.(int) $record->catid);
-				}
-
-				else
-				{
-					return $user->authorise('core.delete', 'com_jem');
-				}
+			if (!empty($record->catid)) {
+				return $user->authorise('core.delete', 'com_jem.category.'.(int) $record->catid);
+			} else {
+				return $user->authorise('core.delete', 'com_jem');
+			}
 		}
-
-
 	}
 
 	/**
@@ -63,8 +56,7 @@ class JEMModelVenue extends JModelAdmin
 
 		if (!empty($record->catid)) {
 			return $user->authorise('core.edit.state', 'com_jem.category.'.(int) $record->catid);
-		}
-		else {
+		} else {
 			return $user->authorise('core.edit.state', 'com_jem');
 		}
 	}
@@ -103,8 +95,6 @@ class JEMModelVenue extends JModelAdmin
 	}
 
 
-
-
 	/**
 	 * Method to get a single record.
 	 *
@@ -116,18 +106,15 @@ class JEMModelVenue extends JModelAdmin
 	{
 		$jemsettings = JEMAdmin::config();
 
-
 		if ($item = parent::getItem($pk)) {
-
-
-		$files = JEMAttachment::getAttachments('venue'.$item->id);
-		$item->attachments = $files;
+			$files = JEMAttachment::getAttachments('venue'.$item->id);
+			$item->attachments = $files;
 		}
+
 		$item->author_ip = $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
 
-		if (empty($item->id))
-		{
-		$item->country = $jemsettings->defaultCountry;
+		if (empty($item->id)) {
+			$item->country = $jemsettings->defaultCountry;
 		}
 
 		return $item;
@@ -141,7 +128,6 @@ class JEMModelVenue extends JModelAdmin
 	 */
 	protected function loadFormData()
 	{
-
 		// Check the session for previously entered form data.
 		$data = JFactory::getApplication()->getUserState('com_jem.edit.venue.data', array());
 
@@ -158,16 +144,9 @@ class JEMModelVenue extends JModelAdmin
 	 */
 	protected function prepareTable(&$table)
 	{
+		$date = JFactory::getDate();
+		$user = JFactory::getUser();
 
-		//Debug
-		/* var_dump($_POST);exit; */
-
-
-		$app =  JFactory::getApplication();
-		$date	= JFactory::getDate();
-		$jemsettings = JEMAdmin::config();
-
-		$user	= JFactory::getUser();
 		if ($table->id) {
 			// Existing item
 			$table->modified	= $date->toSql();
@@ -177,86 +156,76 @@ class JEMModelVenue extends JModelAdmin
 			// so we don't touch either of these if they are set.
 
 			if (!intval($table->created)) {
-			$table->created = $date->toSql();
+				$table->created = $date->toSql();
 			}
 
 			if (empty($this->created_by)) {
-			$table->created_by = $user->get('id');
+				$table->created_by = $user->get('id');
 			}
+		}
 
-			}
+		$jinput = JFactory::getApplication()->input;
+		$ip = $jinput->get('author_ip', '', 'string');
 
-			$jinput = JFactory::getApplication()->input;
-			$ip = $jinput->get('author_ip', '', 'string');
+		$table->author_ip 		= $ip;
 
+		//uppercase needed by mapservices
+		if ($table->country) {
+			$table->country = JString::strtoupper($table->country);
+		}
 
-			$table->author_ip 		= $ip;
+		// Check if image was selected
+		jimport('joomla.filesystem.file');
+		$format = JFile::getExt(JPATH_SITE.'/images/jem/venues/'.$table->locimage);
 
+		$allowable 	= array ('gif', 'jpg', 'png');
+		if (in_array($format, $allowable)) {
+			$table->locimage = $table->locimage;
+		} else {
+			$table->locimage = '';
+		}
 
-			//uppercase needed by mapservices
-			if ($table->country) {
-				$table->country = JString::strtoupper($table->country);
-			}
+		$table->venue = htmlspecialchars_decode($table->venue, ENT_QUOTES);
 
+		// Increment the content version number.
+		$table->version++;
 
-			// Check if image was selected
-			jimport('joomla.filesystem.file');
-			$format 	= JFile::getExt(JPATH_SITE.'/images/jem/venues/'.$table->locimage);
+		// Make sure the data is valid
+		if (!$table->check()) {
+			$this->setError($table->getError());
+			return false;
+		}
 
-			$allowable 	= array ('gif', 'jpg', 'png');
-			if (in_array($format, $allowable)) {
-				$table->locimage = $table->locimage;
-			} else {
-				$table->locimage = '';
-			}
+		// Store it in the db
+		if (!$table->store()) {
+			JError::raiseError(500, $this->_db->getErrorMsg());
+			return false;
+		}
 
-			$table->venue = htmlspecialchars_decode($table->venue, ENT_QUOTES);
+		$fileFilter = new JInput($_FILES);
 
-			// Increment the content version number.
-			$table->version++;
+		// attachments
+		// new ones first
+		$attachments = $fileFilter->get('attach', null, 'array');
+		$attachments['customname'] = $jinput->post->get('attach-name', null, 'array');
+		$attachments['description'] = $jinput->post->get('attach-desc', null, 'array');
+		$attachments['access'] = $jinput->post->get('attach-access', null, 'array');
+		JEMAttachment::postUpload($attachments, 'venue'.$table->id);
 
+		// and update old ones
+		$attachments = array();
+		$old['id'] = $jinput->post->get('attached-id', null, 'array');
+		$old['name'] = $jinput->post->get('attached-name', null, 'array');
+		$old['description'] = $jinput->post->get('attached-desc', null, 'array');
+		$old['access'] = $jinput->post->get('attached-access', null, 'array');
 
-			// Make sure the data is valid
-			if (!$table->check()) {
-				$this->setError($table->getError());
-				return false;
-			}
-
-			// Store it in the db
-			if (!$table->store()) {
-				JError::raiseError(500, $this->_db->getErrorMsg() );
-				return false;
-			}
-
-
-			$fileFilter = new JInput($_FILES);
-
-			// attachments
-			// new ones first
-			$attachments = $fileFilter->get( 'attach', null, 'array' );
-			$attachments['customname'] = $jinput->post->get( 'attach-name', null, 'array' );
-			$attachments['description'] = $jinput->post->get( 'attach-desc', null, 'array' );
-			$attachments['access'] = $jinput->post->get( 'attach-access', null, 'array' );
-			JEMAttachment::postUpload($attachments, 'venue'.$table->id);
-
-			// and update old ones
-			$attachments = array();
-			$old['id'] = $jinput->post->get( 'attached-id', null, 'array' );
-			$old['name'] = $jinput->post->get( 'attached-name', null, 'array' );
-			$old['description'] = $jinput->post->get( 'attached-desc', null, 'array' );
-			$old['access'] = $jinput->post->get( 'attached-access', null, 'array' );
-			foreach ($old['id'] as $k => $id)
-			{
-				$attach = array();
-				$attach['id'] = $id;
-				$attach['name'] = $old['name'][$k];
-				$attach['description'] = $old['description'][$k];
-				$attach['access'] = $old['access'][$k];
-				JEMAttachment::update($attach);
-			}
-
-
-
-
+		foreach ($old['id'] as $k => $id) {
+			$attach = array();
+			$attach['id'] = $id;
+			$attach['name'] = $old['name'][$k];
+			$attach['description'] = $old['description'][$k];
+			$attach['access'] = $old['access'][$k];
+			JEMAttachment::update($attach);
+		}
 	}
 }

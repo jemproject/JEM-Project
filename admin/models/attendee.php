@@ -56,8 +56,8 @@ class JEMModelAttendee extends JModelLegacy
 	function setId($id)
 	{
 		// Set category id and wipe data
-		$this->_id	    = $id;
-		$this->_data	= null;
+		$this->_id = $id;
+		$this->_data = null;
 	}
 
 	/**
@@ -69,11 +69,9 @@ class JEMModelAttendee extends JModelLegacy
 	 */
 	function &getData()
 	{
-		if ($this->_loadData())
-		{
-
+		if (!$this->_loadData()) {
+			$this->_initData();
 		}
-		else  $this->_initData();
 
 		return $this->_data;
 	}
@@ -151,22 +149,18 @@ class JEMModelAttendee extends JModelLegacy
 	 */
 	function store($data)
 	{
-		$user		= JFactory::getUser();
-		$config 	= JFactory::getConfig();
 		$eventid = $data['event'];
 
-		$row  = $this->getTable('jem_register', '');
+		$row = $this->getTable('jem_register', '');
 
 		// bind it to the table
 		if (!$row->bind($data)) {
-			JError::raiseError(500, $this->_db->getErrorMsg() );
+			JError::raiseError(500, $this->_db->getErrorMsg());
 			return false;
 		}
 
 		// sanitise id field
 		$row->id = (int) $row->id;
-
-		$nullDate	= $this->_db->getNullDate();
 
 		// Are we saving from an item edit?
 		if ($row->id) {
@@ -217,9 +211,7 @@ class JEMModelAttendee extends JModelLegacy
 					$row->waiting = 1;
 				}
 			}
-
-
-		} // End of row->id statement
+		}
 
 		// Make sure the data is valid
 		if (!$row->check()) {
@@ -229,7 +221,7 @@ class JEMModelAttendee extends JModelLegacy
 
 		// Store it in the db
 		if (!$row->store()) {
-			JError::raiseError(500, $this->_db->getErrorMsg() );
+			JError::raiseError(500, $this->_db->getErrorMsg());
 			return false;
 		}
 

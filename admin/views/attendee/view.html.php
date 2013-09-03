@@ -15,38 +15,35 @@ defined('_JEXEC') or die;
  * View class for the JEM attendee screen
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewAttendee extends JViewLegacy {
 
 	public function display($tpl = null)
 	{
 		//initialise variables
-		$editor 	=  JFactory::getEditor();
-		$document	=  JFactory::getDocument();
-		$user 		=  JFactory::getUser();
-		$app 		=  JFactory::getApplication();
+		$document	= JFactory::getDocument();
+// 		$user 		= JFactory::getUser();
+// 		$app 		= JFactory::getApplication();
 
 		// Load the form validation behavior
 		JHTML::_('behavior.formvalidation');
 
 		//get vars
-		$cid       = JRequest::getVar( 'cid' );
-		$event_id  = JRequest::getInt( 'id' );
+		$event_id = JRequest::getInt('id');
 
 		//add css to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
-
 		//Get data from the model
-		$model		=  $this->getModel();
-		$row     	=  $this->get( 'Data' );
+// 		$model		= $this->getModel();
+		$row		= $this->get('Data');
 
 		// fail if checked out not by 'me'
 		if ($row->id) {
-//			if ($model->isCheckedOut( $user->get('id') )) {
-//				JError::raiseWarning( 'SOME_ERROR_CODE', $row->catname.' '.JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
-//				$app->redirect( 'index.php?option=com_jem&view=attendees&id='.$event_id );
+//			if ($model->isCheckedOut($user->get('id'))) {
+//				JError::raiseWarning('SOME_ERROR_CODE', $row->catname.' '.JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
+//				$app->redirect('index.php?option=com_jem&view=attendees&id='.$event_id);
 //			}
 		}
 
@@ -61,37 +58,31 @@ class JEMViewAttendee extends JViewLegacy {
 
 		// add toolbar
 		$this->addToolbar();
-		
+
 		parent::display($tpl);
 	}
-	
-	
-	/*
+
+
+	/**
 	 * Add Toolbar
-	*/
-	
+	 */
 	protected function addToolbar()
 	{
-	
 		//get vars
-		$cid       = JRequest::getVar( 'cid' );
-		
+		$cid = JRequest::getVar('cid');
+
 		//create the toolbar
-		if ( $cid ) {
-			JToolBarHelper::title( JText::_('COM_JEM_EDIT_ATTENDEE'), 'users');
+		if ($cid) {
+			JToolBarHelper::title(JText::_('COM_JEM_EDIT_ATTENDEE'), 'users');
 		} else {
-			JToolBarHelper::title( JText::_('COM_JEM_ADD_ATTENDEE'), 'users');
+			JToolBarHelper::title(JText::_('COM_JEM_ADD_ATTENDEE'), 'users');
 		}
 		JToolBarHelper::apply('attendee.apply');
 		JToolBarHelper::save('attendee.save');
 		JToolBarHelper::spacer();
 		JToolBarHelper::cancel('attendee.cancel');
 		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'editattendee', true );
-		
+		JToolBarHelper::help('editattendee', true);
 	}
-	
-
-	
 }
 ?>

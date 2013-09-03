@@ -17,7 +17,6 @@ jimport('joomla.application.component.modellist');
  **/
 class JEMModelGroups extends JModelList
 {
-
 	/**
 	 * Constructor.
 	 *
@@ -45,9 +44,6 @@ class JEMModelGroups extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		// Initialise variables.
-		$app = JFactory::getApplication('administrator');
-
 		$search = $this->getUserStateFromRequest($this->context.'.filter_search', 'filter_search');
 		$this->setState('filter_search', $search);
 
@@ -56,7 +52,6 @@ class JEMModelGroups extends JModelList
 
 		$filterfield = $this->getUserStateFromRequest($this->context.'.filter', 'filter', '', 'int');
 		$this->setState('filter', $filterfield);
-
 
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_jem');
@@ -80,9 +75,9 @@ class JEMModelGroups extends JModelList
 	protected function getStoreId($id = '')
 	{
 		// Compile the store id.
-		$id.= ':' . $this->getState('filter_search');
-		$id.= ':' . $this->getState('filter_published');
-		$id.= ':' . $this->getState('filter');
+		$id .= ':' . $this->getState('filter_search');
+		$id .= ':' . $this->getState('filter_published');
+		$id .= ':' . $this->getState('filter');
 
 		return parent::getStoreId($id);
 	}
@@ -98,7 +93,6 @@ class JEMModelGroups extends JModelList
 		// Create a new query object.
 		$db		= $this->getDbo();
 		$query	= $db->getQuery(true);
-		$user	= JFactory::getUser();
 
 		// Select the required fields from the table.
 		$query->select(
@@ -117,14 +111,10 @@ class JEMModelGroups extends JModelList
 			} else {
 				$search = $db->Quote('%'.$db->escape($search, true).'%');
 
-
 				/* search category */
 				if ($search) {
 					$query->where('a.name LIKE '.$search);
 				}
-
-
-
 			}
 		}
 		// $query->group('a.id');
@@ -139,7 +129,6 @@ class JEMModelGroups extends JModelList
 		//echo nl2br(str_replace('#__','jos_',$query));
 		return $query;
 	}
-
 
 
 	/**
@@ -166,15 +155,15 @@ class JEMModelGroups extends JModelList
 	 */
 	function delete($cid = array())
 	{
-		if (count( $cid ))
+		if (count($cid))
 		{
-			$cids = implode( ',', $cid );
+			$cids = implode(',', $cid);
 
 			$query = 'DELETE FROM #__jem_groups'
 					. ' WHERE id IN ('. $cids .')'
 					;
 
-			$this->_db->setQuery( $query );
+			$this->_db->setQuery($query);
 
 			if(!$this->_db->query()) {
 				$this->setError($this->_db->getErrorMsg());
@@ -185,7 +174,7 @@ class JEMModelGroups extends JModelList
 					. ' WHERE group_id IN ('. $cids .')'
 					;
 
-			$this->_db->setQuery( $query );
+			$this->_db->setQuery($query);
 
 			if(!$this->_db->query()) {
 			$this->setError($this->_db->getErrorMsg());
@@ -196,7 +185,4 @@ class JEMModelGroups extends JModelList
 
 		return true;
 	}
-
-
-
 }

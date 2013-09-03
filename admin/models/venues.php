@@ -17,7 +17,6 @@ jimport('joomla.application.component.modellist');
  **/
 class JEMModelVenues extends JModelList
 {
-
 	/**
 	 * Constructor.
 	 *
@@ -55,9 +54,6 @@ class JEMModelVenues extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		// Initialise variables.
-		$app = JFactory::getApplication('administrator');
-
 		// Load the filter state.
 		$search = $this->getUserStateFromRequest($this->context.'.filter_search', 'filter_search');
 		$this->setState('filter_search', $search);
@@ -121,7 +117,7 @@ class JEMModelVenues extends JModelList
 		// Create a new query object.
 		$db		= $this->getDbo();
 		$query	= $db->getQuery(true);
-		$user	= JFactory::getUser();
+// 		$user	= JFactory::getUser();
 
 		// Select the required fields from the table.
 		$query->select(
@@ -161,7 +157,7 @@ class JEMModelVenues extends JModelList
 		// Adding this line will only turn up venues with assigned events to them.
 		//
 		// Join over the assigned events
-		//$query->select('COUNT( e.locid ) AS assignedevents');
+		//$query->select('COUNT(e.locid) AS assignedevents');
 		//$query->join('LEFT', '#__jem_events AS e ON e.locid=a.id');
 
 		// Join over the asset groups.
@@ -208,29 +204,29 @@ class JEMModelVenues extends JModelList
 			} else {
 				$search = $db->Quote('%'.$db->escape($search, true).'%');
 
-				/* search venue or alias */
-				if ($search && $filter == 1) {
-				$query->where('(a.venue LIKE '.$search.' OR a.alias LIKE '.$search.')');
-				}
-
-				/* search city */
-				if ($search && $filter == 2) {
-				$query->where('a.city LIKE '.$search);
-				}
-
-				/* search state */
-				if ($search && $filter == 3) {
-					$query->where('a.state LIKE '.$search);
-				}
-
-				/* search country */
-				if ($search && $filter == 4) {
-					$query->where('a.country LIKE '.$search);
-				}
-
-				/* search all */
-				if ($search && $filter == 5) {
-					$query->where('(a.venue LIKE '.$search.' OR a.alias LIKE '.$search.' OR a.city LIKE '.$search.' OR a.state LIKE '.$search.' OR a.country LIKE '.$search.')');
+				if($search) {
+					switch($filter) {
+						case 1:
+							/* search venue or alias */
+							$query->where('(a.venue LIKE '.$search.' OR a.alias LIKE '.$search.')');
+							break;
+						case 2:
+							/* search city */
+							$query->where('a.city LIKE '.$search);
+							break;
+						case 3:
+							/* search state */
+							$query->where('a.state LIKE '.$search);
+							break;
+						case 4:
+							/* search country */
+							$query->where('a.country LIKE '.$search);
+							break;
+						case 5:
+						default:
+							/* search all */
+							$query->where('(a.venue LIKE '.$search.' OR a.alias LIKE '.$search.' OR a.city LIKE '.$search.' OR a.state LIKE '.$search.' OR a.country LIKE '.$search.')');
+					}
 				}
 			}
 		}
@@ -258,17 +254,17 @@ class JEMModelVenues extends JModelList
 		$user 	= JFactory::getUser();
 		$userid = $user->get('id');
 
-		if (count( $cid ))
+		if (count($cid))
 		{
-			$cids = implode( ',', $cid );
+			$cids = implode(',', $cid);
 
 			$query = 'UPDATE #__jem_venues'
 					. ' SET published = '. (int) $publish
 					. ' WHERE id IN ('. $cids .')'
-					. ' AND ( checked_out = 0 OR ( checked_out = ' .$userid. ' ) )'
+					. ' AND (checked_out = 0 OR (checked_out = ' .$userid. '))'
 					;
 
-			$this->_db->setQuery( $query );
+			$this->_db->setQuery($query);
 
 			if (!$this->_db->query()) {
 			$this->setError($this->_db->getErrorMsg());
@@ -288,12 +284,12 @@ class JEMModelVenues extends JModelList
 	{
 		$row = JTable::getInstance('jem_venues', '');
 
-		if (!$row->load( $this->_id ) ) {
+		if (!$row->load($this->_id)) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 		}
 
-		if (!$row->move( $direction )) {
+		if (!$row->move($direction)) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 		}
@@ -310,18 +306,18 @@ class JEMModelVenues extends JModelList
 	 */
 	function remove($cid)
 	{
-		$cids = implode( ',', $cid );
+		$cids = implode(',', $cid);
 
-		$query = 'SELECT v.id, v.venue, COUNT( e.locid ) AS numcat'
+		$query = 'SELECT v.id, v.venue, COUNT(e.locid) AS numcat'
 				. ' FROM #__jem_venues AS v'
 				. ' LEFT JOIN #__jem_events AS e ON e.locid = v.id'
 				. ' WHERE v.id IN ('. $cids .')'
 				. ' GROUP BY v.id'
 				;
-		$this->_db->setQuery( $query );
+		$this->_db->setQuery($query);
 
 		if (!($rows = $this->_db->loadObjectList())) {
-			JError::raiseError( 500, $this->_db->stderr() );
+			JError::raiseError(500, $this->_db->stderr());
 			return false;
 		}
 
@@ -335,15 +331,15 @@ class JEMModelVenues extends JModelList
 			}
 		}
 
-		if (count( $cid ))
+		if (count($cid))
 		{
-			$cids = implode( ',', $cid );
+			$cids = implode(',', $cid);
 
 			$query = 'DELETE FROM #__jem_venues'
 					. ' WHERE id IN ('. $cids .')'
 					;
 
-			$this->_db->setQuery( $query );
+			$this->_db->setQuery($query);
 
 			if(!$this->_db->query()) {
 				$this->setError($this->_db->getErrorMsg());
@@ -351,12 +347,12 @@ class JEMModelVenues extends JModelList
 			}
 		}
 
-		if (count( $err )) {
-			$cids 	= implode( ', ', $err );
-			$msg 	= JText::sprintf('COM_JEM_VENUE_ASSIGNED_EVENT', $cids );
+		if (count($err)) {
+			$cids 	= implode(', ', $err);
+			$msg 	= JText::sprintf('COM_JEM_VENUE_ASSIGNED_EVENT', $cids);
 			return $msg;
 		} else {
-			$total 	= count( $cid );
+			$total 	= count($cid);
 			$msg 	= $total.' '.JText::_('COM_JEM_VENUES_DELETED');
 			return $msg;
 		}
@@ -384,13 +380,13 @@ class JEMModelVenues extends JModelList
 					. ' WHERE id = '.$items[$i]->modified_by
 					;
 
-			$this->_db->setQuery( $query );
+			$this->_db->setQuery($query);
 			$items[$i]->editor = $this->_db->loadResult();
 
 			/*
 			* Get nr of assigned events
 			*/
-			$query = 'SELECT COUNT( id )'
+			$query = 'SELECT COUNT(id)'
 					.' FROM #__jem_events'
 					.' WHERE locid = ' . (int)$items[$i]->id
 					;

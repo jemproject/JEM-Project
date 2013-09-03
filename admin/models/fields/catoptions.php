@@ -19,7 +19,7 @@ require_once dirname(__FILE__) . '/../../helpers/helper.php';
 /**
  * CountryOptions Field class.
  *
- * 
+ *
  */
 class JFormFieldCatOptions extends JFormField
 {
@@ -29,64 +29,41 @@ class JFormFieldCatOptions extends JFormField
 	 */
 	protected $type = 'CatOptions';
 
-	
-	
-	
-	
 	public function getInput()
 	{
-	
-	
-
-	
-	
-		$options = array();
-	
 		$attr = '';
-	
+
 		// Initialize some field attributes.
 		$attr .= $this->element['class'] ? ' class="'.(string) $this->element['class'].'"' : '';
-	
+
 		// To avoid user's confusion, readonly="true" should imply disabled="true".
-		if ( (string) $this->element['readonly'] == 'true' || (string) $this->element['disabled'] == 'true') {
+		if ((string) $this->element['readonly'] == 'true' || (string) $this->element['disabled'] == 'true') {
 			$attr .= ' disabled="disabled"';
 		}
-	
+
 		//$attr .= $this->element['size'] ? ' size="'.(int) $this->element['size'].'"' : '';
 		$attr .= $this->multiple ? ' multiple="multiple"' : '';
-	
+
 		// Initialize JavaScript field attributes.
 		$attr .= $this->element['onchange'] ? ' onchange="'.(string) $this->element['onchange'].'"' : '';
-	
-	
+
 		//$attr .= $this->element['required'] ? ' class="required modal-value"' : "";
-		
-		//var_dump($attr);exit;
-		
-		/*
-		if ($this->required) {
-			$class = ' class="required modal-value"';
-		}
-		*/
-	
+
+// 		if ($this->required) {
+// 			$class = ' class="required modal-value"';
+// 		}
+
 		// Output
 		$currentid = JFactory::getApplication()->input->getInt('id');
-		
 		$categories = JEMCategories::getCategoriesTree(1);
-		
+
 		$db		= JFactory::getDbo();
 		$query	= $db->getQuery(true);
 		$query = 'SELECT DISTINCT catid FROM #__jem_cats_event_relations WHERE itemid = '. $db->quote($currentid);
-		
+
 		$db->setQuery($query);
 		$selectedcats = $db->loadColumn();
-		
 
-		
-	
 		return JEMCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, trim($attr));
-	
-	
 	}
-	
 }

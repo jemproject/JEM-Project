@@ -20,29 +20,26 @@ class JEMViewUserElement extends JViewLegacy {
 
 	public function display($tpl = null)
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		//initialise variables
-		$document	=  JFactory::getDocument();
-		$user 		=  JFactory::getUser();
+		$document	= JFactory::getDocument();
 		$jemsettings = JEMAdmin::config();
 		$db = JFactory::getDBO();
 
 		//get var
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.userelement.filter_order', 'filter_order', 'u.name', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.userelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.userelement.filter_search', 'filter_search', '', 'string' );
-		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
-
+		$filter_order		= $app->getUserStateFromRequest('com_jem.userelement.filter_order', 'filter_order', 'u.name', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.userelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		$search 			= $app->getUserStateFromRequest('com_jem.userelement.filter_search', 'filter_search', '', 'string');
+		$search 			= $db->escape(trim(JString::strtolower($search)));
 
 		//prepare the document
 		$document->setTitle(JText::_('COM_JEM_SELECTATTENDEE'));
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
 		//Get data from the model
-		$users      	=  $this->get('Data');
-		$pagination 	=  $this->get('Pagination');
-
+		$users			= $this->get('Data');
+		$pagination 	= $this->get('Pagination');
 
 		//build selectlists
 		$lists = array();

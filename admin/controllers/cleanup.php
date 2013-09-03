@@ -29,9 +29,9 @@ class JEMControllerCleanup extends JEMController
 		parent::__construct();
 
 		// Register Extra task
-		$this->registerTask( 'cleaneventimg', 	'delete' );
-		$this->registerTask( 'cleanvenueimg', 	'delete' );
-		$this->registerTask( 'cleancategoryimg', 	'delete' );
+		$this->registerTask('cleaneventimg', 	'delete');
+		$this->registerTask('cleanvenueimg', 	'delete');
+		$this->registerTask('cleancategoryimg', 	'delete');
 	}
 
 	/**
@@ -47,73 +47,58 @@ class JEMControllerCleanup extends JEMController
 
 		if ($task == 'cleaneventimg') {
 			$type = JText::_('COM_JEM_EVENT');
-		}
-
-		if ($task == 'cleanvenueimg') {
+		} elseif ($task == 'cleanvenueimg') {
 			$type = JText::_('COM_JEM_VENUE');
-		}
-
-		if ($task == 'cleancategoryimg') {
+		} elseif ($task == 'cleancategoryimg') {
 			$type = JText::_('COM_JEM_CATEGORY');
 		}
 
-
-
-
-
 		$model = $this->getModel('cleanup');
-
 		$total = $model->delete();
 
 		$link = 'index.php?option=com_jem&view=cleanup';
+		// TODO: Use translation with variable
+		$msg = $total.' '.$type.' '.JText::_('COM_JEM_IMAGES_DELETED');
 
-		$msg = $total.' '.$type.' '.JText::_( 'COM_JEM_IMAGES_DELETED');
-
-		$this->setRedirect( $link, $msg );
- 	}
-
-
- 	/**
- 	 * logic to truncate table cats_relations
- 	 *
- 	 * @access public
- 	 * @return void
- 	 *
- 	 */
- 	function truncatecats()
- 	{
-
- 		$model = $this->getModel('cleanup');
-
- 		$truncate = $model->truncatecats();
-
- 		$link = 'index.php?option=com_jem&view=cleanup';
-
- 		$msg = JText::_( 'COM_JEM_CLEANUP_TRUNCATECATSEVENTREF_DONE');
-
- 		$this->setRedirect( $link, $msg );
- 	}
+		$this->setRedirect($link, $msg);
+	}
 
 
+	/**
+	 * logic to truncate table cats_relations
+	 *
+	 * @access public
+	 * @return void
+	 *
+	 */
+	function truncatecats()
+	{
+
+		$model = $this->getModel('cleanup');
+		$model->truncatecats();
+
+		$link = 'index.php?option=com_jem&view=cleanup';
+		$msg = JText::_('COM_JEM_CLEANUP_TRUNCATECATSEVENTREF_DONE');
+
+		$this->setRedirect($link, $msg);
+	}
 
 
+	/**
+	 * Triggerarchive + Recurrences
+	 *
+	 * @access public
+	 * @return void
+	 *
+	 */
+	function triggerarchive()
+	{
+		JEMHelper::cleanup(1);
 
-  /**
-   * Triggerarchive + Recurrences
-   *
-   * @access public
-   * @return void
-   *
-   */
-  function triggerarchive()
-  {
-    JEMHelper::cleanup(1);
+		$link = 'index.php?option=com_jem&view=cleanup';
+		$msg = JText::_('COM_JEM_AUTOARCHIVE_DONE');
 
-    $link = 'index.php?option=com_jem&view=cleanup';
-
-    $msg = JText::_( 'COM_JEM_AUTOARCHIVE_DONE');
-
-    $this->setRedirect( $link, $msg );
-  }
+		$this->setRedirect($link, $msg);
+	}
 }
 ?>

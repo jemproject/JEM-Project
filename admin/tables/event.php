@@ -15,13 +15,10 @@ defined('_JEXEC') or die;
  */
 class JEMTableEvent extends JTable
 {
-
-
 	function __construct(&$db)
 	{
 		parent::__construct('#__jem_events', 'id', $db);
 	}
-
 
 
 	// overloaded check function
@@ -74,7 +71,6 @@ class JEMTableEvent extends JTable
 		}
 
 
-
 		if (empty($this->enddates)) {
 			$this->enddates = NULL;
 		}
@@ -83,31 +79,16 @@ class JEMTableEvent extends JTable
 			$this->dates = NULL;
 		}
 
-
-
 		if($date1 > $date2) {
 			$this->setError(JText::_('COM_JEM_ERROR_END_BEFORE_START'));
 			return false;
 		}
-
-
-
-
-
-
-
-
-
-
-
 
 		// Set alias
 		$this->alias = JApplication::stringURLSafe($this->alias);
 		if (empty($this->alias)) {
 			$this->alias = JApplication::stringURLSafe($this->title);
 		}
-
-
 
 		return true;
 	}
@@ -119,49 +100,42 @@ class JEMTableEvent extends JTable
 	 */
 	public function store($updateNulls = false)
 	{
-			// Verify that the alias is unique
-			$table = JTable::getInstance('Event', 'JEMTable');
+		// Verify that the alias is unique
+// 		$table = JTable::getInstance('Event', 'JEMTable');
 
+		// @todo alter error reporting
 
-			// @todo alter error reporting
-
-			/* if ($table->load(array('alias'=>$this->alias, 'catid'=>$this->catid)) && ($table->id != $this->id || $this->id==0)) {
-			if ($table->load(array('alias'=>$this->alias)) && ($table->id != $this->id || $this->id==0)) {
-
-
-					$this->setError(JText::_('COM_JEM_ERROR_UNIQUE_ALIAS'));
-					return false;
-					}
-					*/
-
-					return parent::store($updateNulls);
+		/*
+		if ($table->load(array('alias'=>$this->alias, 'catid'=>$this->catid)) && ($table->id != $this->id || $this->id==0)) {
+		if ($table->load(array('alias'=>$this->alias)) && ($table->id != $this->id || $this->id==0)) {
+			$this->setError(JText::_('COM_JEM_ERROR_UNIQUE_ALIAS'));
+			return false;
 		}
+		*/
+
+		return parent::store($updateNulls);
+	}
 
 
-		public function bind($array, $ignore = '')
-		{
+	public function bind($array, $ignore = '')
+	{
+		// in here we are checking for the empty value of the checkbox
 
-			// in here we are checking for the empty value of the checkbox
+		if (!isset($array['registra']))
+			$array['registra'] = 0 ;
 
+		if (!isset($array['unregistra']))
+			$array['unregistra'] = 0 ;
 
-			if (!isset($array['registra']))
-				$array['registra'] = 0 ;
+		if (!isset($array['waitinglist']))
+			$array['waitinglist'] = 0 ;
 
-			if (!isset($array['unregistra']))
-				$array['unregistra'] = 0 ;
-
-			if (!isset($array['waitinglist']))
-				$array['waitinglist'] = 0 ;
-
-
-
-			//don't override without calling base class
-			return parent::bind($array, $ignore);
-		}
+		//don't override without calling base class
+		return parent::bind($array, $ignore);
+	}
 
 
-
-		/**
+	/**
 	 * Method to set the publishing state for a row or list of rows in the database
 	 * table. The method respects checked out rows by other users and will attempt
 	 * to checkin rows that it can after adjustments are made.
@@ -186,15 +160,11 @@ class JEMTableEvent extends JTable
 		$state = (int) $state;
 
 		// If there are no primary keys set check to see if the instance key is set.
-		if (empty($pks))
-		{
-			if ($this->$k)
-			{
+		if (empty($pks)) {
+			if ($this->$k) {
 				$pks = array($this->$k);
-			}
-			// Nothing to set publishing state on, return false.
-			else
-			{
+			} else {
+				// Nothing to set publishing state on, return false.
 				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 				return false;
 			}
@@ -204,12 +174,9 @@ class JEMTableEvent extends JTable
 		$where = $k . '=' . implode(' OR ' . $k . '=', $pks);
 
 		// Determine if there is checkin support for the table.
-		if (!property_exists($this, 'checked_out') || !property_exists($this, 'checked_out_time'))
-		{
+		if (!property_exists($this, 'checked_out') || !property_exists($this, 'checked_out_time')) {
 			$checkin = '';
-		}
-		else
-		{
+		} else {
 			$checkin = ' AND (checked_out = 0 OR checked_out = ' . (int) $userId . ')';
 		}
 
@@ -222,25 +189,21 @@ class JEMTableEvent extends JTable
 		$this->_db->query();
 
 		// Check for a database error.
-		if ($this->_db->getErrorNum())
-		{
+		if ($this->_db->getErrorNum()) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 		}
 
 		// If checkin is supported and all rows were adjusted, check them in.
-		if ($checkin && (count($pks) == $this->_db->getAffectedRows()))
-		{
+		if ($checkin && (count($pks) == $this->_db->getAffectedRows())) {
 			// Checkin the rows.
-			foreach ($pks as $pk)
-			{
+			foreach ($pks as $pk) {
 				$this->checkin($pk);
 			}
 		}
 
 		// If the JTable instance value is in the list of primary keys that were set, set the instance.
-		if (in_array($this->$k, $pks))
-		{
+		if (in_array($this->$k, $pks)) {
 			$this->published = $state;
 		}
 
@@ -248,7 +211,5 @@ class JEMTableEvent extends JTable
 
 		return true;
 	}
-
-
 }
 ?>

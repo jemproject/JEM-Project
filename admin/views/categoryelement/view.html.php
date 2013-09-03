@@ -22,31 +22,30 @@ class JEMViewCategoryelement extends JViewLegacy {
 	public function display($tpl = null)
 	{
 		//initialise variables
-		$document	=  JFactory::getDocument();
-		$db			=  JFactory::getDBO();
-		$app 		=  JFactory::getApplication();
+		$document	= JFactory::getDocument();
+		$db			= JFactory::getDBO();
+		$app 		= JFactory::getApplication();
 
 		JHTML::_('behavior.tooltip');
 		JHTML::_('behavior.modal');
 
 		//get vars
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.categoryelement.filter_order', 'filter_order', 'c.ordering', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categoryelement.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categoryelement.filter_state', 'filter_state', '*', 'word' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.categoryelement.filter_search', 'filter_search', '', 'string' );
-		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
-		$template 			= $app->getTemplate();
+		$filter_order		= $app->getUserStateFromRequest('com_jem.categoryelement.filter_order', 'filter_order', 'c.ordering', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.categoryelement.filter_order_Dir',	'filter_order_Dir',	'', 'word');
+		$filter_state 		= $app->getUserStateFromRequest('com_jem.categoryelement.filter_state', 'filter_state', '*', 'word');
+		$search 			= $app->getUserStateFromRequest('com_jem.categoryelement.filter_search', 'filter_search', '', 'string');
+		$search 			= $db->escape(trim(JString::strtolower($search)));
 
 		//prepare document
-		$document->setTitle(JText::_( 'COM_JEM_SELECT_CATEGORY'));;
+		$document->setTitle(JText::_('COM_JEM_SELECT_CATEGORY'));;
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
 		// Get data from the model
-		$rows      	=  $this->get( 'Data');
-		$pagination 	=  $this->get( 'Pagination' );
+		$rows = $this->get('Data');
+		$pagination = $this->get('Pagination');
 
 		//publish unpublished filter
-		$lists['state']	= JHTML::_('grid.state', $filter_state );
+		$lists['state'] = JHTML::_('grid.state', $filter_state);
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;

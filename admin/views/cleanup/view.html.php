@@ -14,52 +14,46 @@ defined('_JEXEC') or die;
  * View class for the JEM Cleanup screen
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewCleanup extends JViewLegacy {
 
 	public function display($tpl = null) {
 
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		//initialise variables
-		$document		=  JFactory::getDocument();
-		$user			=  JFactory::getUser();
-		
-		$this->totalcats      	=  $this->get( 'Countcats');
-		
+		$document		= JFactory::getDocument();
+
+		$this->totalcats = $this->get('Countcats');
 
 		//only admins have access to this view
 		if (!JFactory::getUser()->authorise('core.manage')) {
-			JError::raiseWarning( 'SOME_ERROR_CODE', JText::_( 'COM_JEM_ALERTNOTAUTH'));
-			$app->redirect( 'index.php?option=com_jem&view=jem' );
+			JError::raiseWarning('SOME_ERROR_CODE', JText::_('COM_JEM_ALERTNOTAUTH'));
+			$app->redirect('index.php?option=com_jem&view=jem');
 		}
 
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
-
 		// add toolbar
 		$this->addToolbar();
-		
+
 		parent::display($tpl);
 	}
-	
-	
-	/*
+
+
+	/**
 	 * Add Toolbar
-	*/
-	
+	 */
 	protected function addToolbar()
 	{
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
-		
+
 		//create the toolbar
 		JToolBarHelper::back();
-		JToolBarHelper::title( JText::_( 'COM_JEM_CLEANUP' ), 'housekeeping' );
-		JToolBarHelper::help( 'cleanup', true );	
+		JToolBarHelper::title(JText::_('COM_JEM_CLEANUP'), 'housekeeping');
+		JToolBarHelper::help('cleanup', true);
 	}
-	
-	
-} // end of class
+}
 ?>

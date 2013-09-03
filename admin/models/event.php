@@ -27,10 +27,8 @@ class JEMModelEvent extends JModelAdmin
 	 */
 	protected function canDelete($record)
 	{
-		if (!empty($record->id))
-		{
-			if ($record->published != -2)
-			{
+		if (!empty($record->id)) {
+			if ($record->published != -2) {
 				return ;
 			}
 
@@ -125,7 +123,6 @@ class JEMModelEvent extends JModelAdmin
 		$jemsettings = JEMAdmin::config();
 
 		if ($item = parent::getItem($pk)) {
-
 			$db = JFactory::getDbo();
 
 			$query = $db->getQuery(true);
@@ -141,7 +138,6 @@ class JEMModelEvent extends JModelAdmin
 			$item->attachments = $files;
 		}
 
-
 		if ($item->id)
 		{
 				$item->recurrence_type == '0';
@@ -153,9 +149,6 @@ class JEMModelEvent extends JModelAdmin
 				$item->recurrence_limit = '';
 				$item->recurrence_limit_date = '';
 		}
-
-
-
 
 		$item->author_ip = $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
 
@@ -191,14 +184,7 @@ class JEMModelEvent extends JModelAdmin
 	 */
 	protected function prepareTable(&$table)
 	{
-		$app = JFactory::getApplication();
 		$date = JFactory::getDate();
-		$jemsettings = JEMAdmin::config();
-
-		// Debug
-		/* var_dump($_POST);exit; */
-		/* var_dump($_FILES);exit; */
-		/* var_dump($table);exit; */
 
 		/* JInput
 		 *
@@ -216,7 +202,6 @@ class JEMModelEvent extends JModelAdmin
 			$table->modified_by	= $user->get('id');
 
 			$table->recurrence_first_id = '';
-
 		} else {
 			// New Event. An event created and created_by field can be set by the user,
 			// so we don't touch either of these if they are set.
@@ -230,25 +215,22 @@ class JEMModelEvent extends JModelAdmin
 			}
 		}
 
-
 		// Bind the form fields to the table
-		//if (!$table->bind( JRequest::get( 'post' ) )) {
-		//return JError::raiseWarning( 500, $table->getError() );
+		//if (!$table->bind(JRequest::get('post'))) {
+		//return JError::raiseWarning(500, $table->getError());
 		//}
 
 
-
-		$cats = $jinput->get( 'cid', array(), 'post', 'array');
+		$cats = $jinput->get('cid', array(), 'post', 'array');
 
 		$recurrencenumber = $jinput->get('recurrence_number','','int');
 		$recurrencebyday = $jinput->get('recurrence_byday','','string');
 
-		$metakeywords = $jinput->get( 'meta_keywords','','');
-		$metadescription = $jinput->get( 'meta_description','','');
+		$metakeywords = $jinput->get('meta_keywords','','');
+		$metadescription = $jinput->get('meta_description','','');
 
-		$hits = $jinput->get( 'hits','','int');
+		$hits = $jinput->get('hits','','int');
 		$table->hits = $hits;
-
 
 		if($table->dates == null || $table->recurrence_type == '0') {
 			$table->recurrence_number = '';
@@ -261,8 +243,6 @@ class JEMModelEvent extends JModelAdmin
 			$table->recurrence_number = $recurrencenumber;
 			$table->recurrence_byday = $recurrencebyday;
 		}
-
-
 
 		$table->meta_keywords = $metakeywords;
 		$table->meta_description = $metadescription;
@@ -278,7 +258,6 @@ class JEMModelEvent extends JModelAdmin
 			$table->datimage = '';
 		}
 
-
 		$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
 
 		// Increment the content version number.
@@ -291,25 +270,25 @@ class JEMModelEvent extends JModelAdmin
 		}
 
 		if (!$table->store(true)) {
-			JError::raiseError(500, $table->getError() );
+			JError::raiseError(500, $table->getError());
 		}
 
 		$fileFilter = new JInput($_FILES);
 
 		// attachments
 		// new ones first
-		$attachments = $fileFilter->get( 'attach', null, 'array' );
-		$attachments['customname'] = $jinput->post->get( 'attach-name', null, 'array' );
-		$attachments['description'] = $jinput->post->get( 'attach-desc', null, 'array' );
-		$attachments['access'] = $jinput->post->get( 'attach-access', null, 'array' );
+		$attachments = $fileFilter->get('attach', null, 'array');
+		$attachments['customname'] = $jinput->post->get('attach-name', null, 'array');
+		$attachments['description'] = $jinput->post->get('attach-desc', null, 'array');
+		$attachments['access'] = $jinput->post->get('attach-access', null, 'array');
 		JEMAttachment::postUpload($attachments, 'event'.$table->id);
 
 		// and update old ones
 		$attachments = array();
-		$old['id'] = $jinput->post->get( 'attached-id', array(), 'array' );
-		$old['name'] = $jinput->post->get( 'attached-name', array(), 'array' );
-		$old['description'] = $jinput->post->get( 'attached-desc', array(), 'array' );
-		$old['access'] = $jinput->post->get( 'attached-access', array(), 'array' );
+		$old['id'] = $jinput->post->get('attached-id', array(), 'array');
+		$old['name'] = $jinput->post->get('attached-name', array(), 'array');
+		$old['description'] = $jinput->post->get('attached-desc', array(), 'array');
+		$old['access'] = $jinput->post->get('attached-access', array(), 'array');
 
 		foreach ($old['id'] as $k => $id)
 		{
@@ -320,7 +299,6 @@ class JEMModelEvent extends JModelAdmin
 			$attach['access'] = $old['access'][$k];
 			JEMAttachment::update($attach);
 		}
-
 
 		$db = JFactory::getDbo();
 
@@ -355,7 +333,6 @@ class JEMModelEvent extends JModelAdmin
 			$db->setQuery($query);
 			$db->query();
 		}
-
 
 		// check for recurrence, when filled it will perform the cleanup function
 		if ($table->recurrence_number > 0 && !$table->dates == null)

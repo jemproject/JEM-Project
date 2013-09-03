@@ -7,7 +7,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
 
 
@@ -24,11 +24,8 @@ class JEMViewEvent extends JViewLegacy {
 	protected $item;
 	protected $state;
 
-
-
 	public function display($tpl = null)
 	{
-
 		// Initialise variables.
 		$this->form	 = $this->get('Form');
 		$this->item	 = $this->get('Item');
@@ -43,30 +40,23 @@ class JEMViewEvent extends JViewLegacy {
 		JHTML::_('behavior.tooltip');
 		JHTML::_('behavior.formvalidation');
 
-
 		//initialise variables
 		$jemsettings = JEMHelper::config();
-		$editor 	=  JFactory::getEditor();
-		$document	=  JFactory::getDocument();
-		$user 		=  JFactory::getUser();
-		$db 		=  JFactory::getDBO();
-		$this->settings	=  JEMAdmin::config();
+		$document	= JFactory::getDocument();
+		$this->settings	= JEMAdmin::config();
 		$task		= JRequest::getVar('task');
 		$this->task 		= $task;
 		$url 		= JURI::root();
 
 		$categories = JEMCategories::getCategoriesTree(1);
-		$selectedcats = $this->get( 'Catsselected' );
+		$selectedcats = $this->get('Catsselected');
 
 		$Lists = array();
 		$Lists['category'] = JEMCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8"');
 
-
-
-
 		// CSS Stylesheet
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
-		$document->addScript(JURI::root().'media/com_jem/js/attachments.js' );
+		$document->addScript(JURI::root().'media/com_jem/js/attachments.js');
 
 		$document->addScript($url.'media/com_jem/js/recurrencebackend.js');
 		$document->addScript($url.'media/com_jem/js/unlimited.js');
@@ -84,15 +74,12 @@ class JEMViewEvent extends JViewLegacy {
 
 		$document->addScriptDeclaration($js);
 
-		$this->resethits = "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"jResetHits(0, '".JText::_('COM_JEM_NO_HITS')."' );\" value=\"".JText::_('COM_JEM_NO_HITS')."\" onblur=\"seo_switch()\" />";
+		$this->resethits = "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"jResetHits(0, '".JText::_('COM_JEM_NO_HITS')."');\" value=\"".JText::_('COM_JEM_NO_HITS')."\" onblur=\"seo_switch()\" />";
 
 		$this->addToolbar();
 		parent::display($tpl);
 
 	}
-
-
-
 
 
 	/**
@@ -116,7 +103,6 @@ class JEMViewEvent extends JViewLegacy {
 			JToolBarHelper::save('event.save');
 		}
 		if (!$checkedOut && $canDo->get('core.create')) {
-
 			JToolBarHelper::save2new('event.save2new');
 		}
 		// If an existing item, can save to a copy.
@@ -130,8 +116,7 @@ class JEMViewEvent extends JViewLegacy {
 			JToolBarHelper::cancel('event.cancel', 'JTOOLBAR_CLOSE');
 		}
 
-		JToolBarHelper::help( 'editevents', true );
+		JToolBarHelper::help('editevents', true);
 	}
-
 }
 ?>

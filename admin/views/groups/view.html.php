@@ -8,7 +8,7 @@
  *
  */
 
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
 
 /**
@@ -21,32 +21,21 @@ defined( '_JEXEC' ) or die;
 
  class JEMViewGroups extends JViewLegacy {
 
-
 	protected $items;
 	protected $pagination;
 	protected $state;
 
-
-
 	public function display($tpl = null)
 	{
-
-		$app =  JFactory::getApplication();
-		$user 		=  JFactory::getUser();
-		$document	=  JFactory::getDocument();
-
+		$user 		= JFactory::getUser();
+		$document	= JFactory::getDocument();
 
 		$jemsettings = JEMAdmin::config();
-		$url 		= JURI::root();
 
-        // Initialise variables.
+		// Initialise variables.
 		$this->items		= $this->get('Items');
 		$this->pagination	= $this->get('Pagination');
 		$this->state		= $this->get('State');
-
-		// Retrieving params
-		$params = $this->state->get('params');
-
 
 		// loading Mootools
 		JHtml::_('behavior.framework');
@@ -54,12 +43,8 @@ defined( '_JEXEC' ) or die;
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
-
-
-
 		//add style to description of the tooltip (hastip)
 		JHTML::_('behavior.tooltip');
-
 
 		//assign data to template
 		//$this->lists		= $lists;
@@ -69,21 +54,15 @@ defined( '_JEXEC' ) or die;
 		// add toolbar
 		$this->addToolbar();
 
-
 		parent::display($tpl);
 		}
 
 
-
-
-
-	 /**
-	  * Add Toolbar
-	  */
-
+	/**
+	 * Add Toolbar
+	 */
 	protected function addToolbar()
 	{
-
 		/* submenu */
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
 
@@ -92,25 +71,21 @@ defined( '_JEXEC' ) or die;
 		 * the icon is mapped within backend.css
 		 * The word 'venues' is referring to the venues icon
 		 * */
-		JToolBarHelper::title( JText::_( 'COM_JEM_GROUPS' ), 'groups' );
+		JToolBarHelper::title(JText::_('COM_JEM_GROUPS'), 'groups');
 
 		/* retrieving the allowed actions for the user */
 		$canDo = JEMHelperBackend::getActions(0);
-		$user = JFactory::getUser();
 
 		/* create */
-		if (($canDo->get('core.create')))
-		{
+		if (($canDo->get('core.create'))) {
 			JToolBarHelper::addNew('group.add');
 		}
 
 		/* edit */
 		JToolBarHelper::spacer();
-		if (($canDo->get('core.edit')))
-		{
+		if (($canDo->get('core.edit'))) {
 			JToolBarHelper::editList('group.edit');
 		}
-
 
 		/* state */
 		/*
@@ -134,44 +109,27 @@ defined( '_JEXEC' ) or die;
 				{
 					JToolBarHelper::unarchiveList('groups.publish');
 				}
-
 			}
-
 		}
 		*/
 
-
-		if ($canDo->get('core.edit.state'))
-		{
+		if ($canDo->get('core.edit.state')) {
 			JToolBarHelper::checkin('groups.checkin');
 		}
 
-
 		/*
-		if ($this->state->get('filter_state') == -2 && $canDo->get('core.delete'))
-		{
+		if ($this->state->get('filter_state') == -2 && $canDo->get('core.delete')) {
 			JToolBarHelper::deleteList('', 'events.delete', 'JTOOLBAR_EMPTY_TRASH');
 			JToolBarHelper::divider();
-		}
-		elseif ($canDo->get('core.edit.state'))
-		{
+		} elseif ($canDo->get('core.edit.state')) {
 			JToolBarHelper::trash('events.trash');
 			JToolBarHelper::divider();
 		}
 		*/
 
-		JToolBarHelper::deleteList($msg = 'COM_JEM_CONFIRM_DELETE', $task = 'groups.remove', $alt = 'JACTION_DELETE');
+		JToolBarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'groups.remove', 'JACTION_DELETE');
 		JToolBarHelper::spacer();
-		JToolBarHelper::help( 'listgroups', true );
-
-
-
+		JToolBarHelper::help('listgroups', true);
 	}
-
-
-
-} // end of class
-
-
-
+}
 ?>

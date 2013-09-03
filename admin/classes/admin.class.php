@@ -21,11 +21,11 @@ class JEMAdmin {
 	*/
 	static function footer()
 	{
-		$params =  JComponentHelper::getParams('com_jem');
+// 		$params = JComponentHelper::getParams('com_jem');
 
-		// if ($params->get('copyright') == 1) {
-		// echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
-		// }
+// 		if ($params->get('copyright') == 1) {
+// 			echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
+// 		}
 	}
 
 	static function config()

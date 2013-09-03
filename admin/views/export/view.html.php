@@ -25,7 +25,6 @@ class JEMViewExport extends JViewLegacy {
 
 		//initialise variables
 		$document	= JFactory::getDocument();
-		$user 		= JFactory::getUser();
 
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
@@ -34,25 +33,18 @@ class JEMViewExport extends JViewLegacy {
 		$this->addToolbar();
 
 		parent::display($tpl);
-
 	}
 
-	/*
+	/**
 	 * Add Toolbar
-	*/
-
+	 */
 	protected function addToolbar()
 	{
-
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
 
 		//build toolbar
 		JToolBarHelper::back();
 		JToolBarHelper::title(JText::_('COM_JEM_EXPORT'), 'tableexport');
-
 	}
-
-
-
-} // end of class
+}
 ?>

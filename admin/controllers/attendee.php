@@ -28,20 +28,18 @@ class JEMControllerAttendee extends JEMController
 		parent::__construct();
 
 		// Register Extra task
-		$this->registerTask( 'add', 		'edit' );
-		$this->registerTask( 'apply', 		'save' );
+		$this->registerTask('add', 		'edit');
+		$this->registerTask('apply', 		'save');
 	}
-
 
 
 	/**
 	 * redirect to events page
 	 */
-  function back()
-  {
-	$this->setRedirect( 'index.php?option=com_jem&view=events' );
-  }
-
+	function back()
+	{
+		$this->setRedirect('index.php?option=com_jem&view=events');
+	}
 
 
 	/**
@@ -56,13 +54,12 @@ class JEMControllerAttendee extends JEMController
 		// Check for request forgeries.
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$venue =  JTable::getInstance('jem_register', '');
+		$venue = JTable::getInstance('jem_register', '');
 		$venue->bind(JRequest::get('post'));
 		$venue->checkin();
 
-		$this->setRedirect( 'index.php?option=com_jem&view=attendees&id='.JRequest::getInt('event') );
+		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.JRequest::getInt('event'));
 	}
-
 
 
 	/**
@@ -82,9 +79,7 @@ class JEMControllerAttendee extends JEMController
 
 		// retrieving task "apply"
 		$task = $jinput->get('task','','cmd');
-		/* another way:
-		$task	= $this->getTask();
-		*/
+// 		$task	= $this->getTask();
 
 		// Retrieving $post
 		$post = $jinput->getArray($_POST);
@@ -95,16 +90,13 @@ class JEMControllerAttendee extends JEMController
 		// Retrieving event-id
 		$eventid = $jinput->get('event','','int');
 
-
 		$model = $this->getModel('attendee');
 
-		if ($row = $model->store($post))
-		{
-			if ($sendemail == 1)
-			{
-			JPluginHelper::importPlugin( 'jem' );
-			$dispatcher = JDispatcher::getInstance();
-			$res = $dispatcher->trigger( 'onEventUserRegistered', array( $row->id ) );
+		if ($row = $model->store($post)) {
+			if ($sendemail == 1) {
+				JPluginHelper::importPlugin('jem');
+				$dispatcher = JDispatcher::getInstance();
+				$dispatcher->trigger('onEventUserRegistered', array($row->id));
 			}
 
 			switch ($task)
@@ -117,18 +109,15 @@ class JEMControllerAttendee extends JEMController
 					$link = 'index.php?option=com_jem&view=attendees&id='.$row->event;
 					break;
 			}
-			$msg	= JText::_('COM_JEM_ATTENDEE_SAVED');
+			$msg = JText::_('COM_JEM_ATTENDEE_SAVED');
 
 			$cache = JFactory::getCache('com_jem');
 			$cache->clean();
-
 		} else {
-
 			$msg 	= '';
 			$link 	= 'index.php?option=com_jem&view=attendees&id='.$eventid;
-
 		}
-		$this->setRedirect( $link, $msg );
+		$this->setRedirect($link, $msg);
 	}
 
 	function selectUser()

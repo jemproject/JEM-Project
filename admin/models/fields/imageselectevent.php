@@ -25,7 +25,7 @@ class JFormFieldImageselectevent extends JFormFieldList
 	public function getLabel() {
 		// code that returns HTML that will be shown as the label
 	}
-	
+
 	/**
 	 * Method to get the field input markup.
 	 *
@@ -53,36 +53,28 @@ class JFormFieldImageselectevent extends JFormFieldList
 		$html = array();
 		$link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task=eventimg&amp;tmpl=component';
 		$link2 = 'index.php?option=com_jem&amp;view=imagehandler&amp;task=selecteventimg&amp;tmpl=component';
-		
-		
+
 		//
 		$html[] = "<div class=\"fltlft\">";
 		$html[] = "<input style=\"background: #ffffff;\" type=\"text\" id=\"a_imagename\" value=\"$this->value\" disabled=\"disabled\" onchange=\"javascript:if (document.forms[0].a_imagename.value!='') {document.imagelib.src='../images/jem/events/' + document.forms[0].a_imagename.value} else {document.imagelib.src='../images/blank.png'}\"; />";
 		$html[] = "</div>";
-		
+
 		$html[] = "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_UPLOAD')."\" href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_UPLOAD')."</a></div></div>\n";
 		$html[] = "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_SELECTIMAGE')."\" href=\"$link2\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_SELECTIMAGE')."</a></div></div>\n";
-		$html[] = "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectImage('', '".JText::_('COM_JEM_SELECTIMAGE')."' );\" value=\"".JText::_('COM_JEM_RESET')."\" />";
-		
-		$value = $this->value;
-		
+		$html[] = "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectImage('', '".JText::_('COM_JEM_SELECTIMAGE')."');\" value=\"".JText::_('COM_JEM_RESET')."\" />";
+
 		$html[] = "\n<input type=\"hidden\" id=\"a_image\" name=\"$this->name\" value=\"$this->value\" />";
-		
-		
+
 		$html [] = "<br /><img src=\"../media/system/images/blank.png\" name=\"imagelib\" id=\"imagelib\" width=\"80\" height=\"80\" border=\"2\" alt=\"Preview\" />";
 		$html [] = "<script type=\"text/javascript\">";
-		$html [] = "if (document.forms[0].a_imagename.value!=''){";
+		$html [] = "if (document.forms[0].a_imagename.value!='') {";
 		$html [] = "var imname = document.forms[0].a_imagename.value;";
 		$html [] = "jsimg='../images/jem/events/' + imname;";
 		$html [] = "document.getElementById('imagelib').src= jsimg;";
 		$html [] = "}";
 		$html [] = "</script>";
-		
-		
-		
+
 		return implode("\n", $html);
-		
-	
 	}
 }
 ?>

@@ -29,8 +29,8 @@ class JEMControllerAttendees extends JEMController
 		parent::__construct();
 
 		// Register Extra task
-		$this->registerTask( 'add', 		'edit' );
-		$this->registerTask( 'apply', 		'save' );
+		$this->registerTask('add', 		'edit');
+		$this->registerTask('apply', 		'save');
 	}
 
 	/**
@@ -49,12 +49,11 @@ class JEMControllerAttendees extends JEMController
 		$cid = $jinput->get('cid',  0, 'array');
 		$id = $jinput->get('id','','int');
 
-
-		$total 	= count( $cid );
+		$total 	= count($cid);
 
 		$model = $this->getModel('attendees');
 
-		if (!is_array( $cid ) || count( $cid ) < 1) {
+		if (!is_array($cid) || count($cid) < 1) {
 			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
 		}
 
@@ -65,15 +64,13 @@ class JEMControllerAttendees extends JEMController
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
-		$msg = $total.' '.JText::_( 'COM_JEM_REGISTERED_USERS_DELETED');
+		$msg = $total.' '.JText::_('COM_JEM_REGISTERED_USERS_DELETED');
 
-		$this->setRedirect( 'index.php?option=com_jem&view=attendees&id='.$id, $msg );
+		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$id, $msg);
 	}
 
 	function export()
 	{
-
-
 		$app = JFactory::getApplication();
 
 		$model = $this->getModel('attendees');
@@ -95,7 +92,7 @@ class JEMControllerAttendees extends JEMController
 			$col[] = str_replace("\"", "\"\"", $data->name);
 			$col[] = str_replace("\"", "\"\"", $data->username);
 			$col[] = str_replace("\"", "\"\"", $data->email);
-			$col[] = str_replace("\"", "\"\"", JHTML::Date( $data->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ));
+			$col[] = str_replace("\"", "\"\"", JHTML::Date($data->uregdate, JText::_('DATE_FORMAT_LC2')));
 			$col[] = str_replace("\"", "\"\"", $data->uid);
 
 			for($j = 0; $j < count($col); $j++)
@@ -119,16 +116,15 @@ class JEMControllerAttendees extends JEMController
 	/**
 	 * redirect to events page
 	 */
-  function back()
-  {
-	$this->setRedirect( 'index.php?option=com_jem&view=events' );
-  }
+	function back()
+	{
+		$this->setRedirect('index.php?option=com_jem&view=events');
+	}
 
-  function toggle()
-  {
-
-  		$jinput = JFactory::getApplication()->input;
-  		$id = $jinput->get('id','','int');
+	function toggle()
+	{
+		$jinput = JFactory::getApplication()->input;
+		$id = $jinput->get('id','','int');
 
 		$model = $this->getModel('attendee');
 		$model->setId($id);
@@ -140,9 +136,9 @@ class JEMControllerAttendees extends JEMController
 
 		if ($res)
 		{
-			JPluginHelper::importPlugin( 'jem' );
+			JPluginHelper::importPlugin('jem');
 		$dispatcher = JDispatcher::getInstance();
-		$res = $dispatcher->trigger( 'onUserOnOffWaitinglist', array( $id ) );
+		$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($id));
 
 			if ($attendee->waiting)
 			{
@@ -160,8 +156,7 @@ class JEMControllerAttendees extends JEMController
 		}
 		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$attendee->event, $msg, $type);
 		$this->redirect();
-  }
-
+	}
 
 
 	/**
@@ -171,7 +166,7 @@ class JEMControllerAttendees extends JEMController
 	 * @return void
 	 *
 	 */
-	function edit( )
+	function edit()
 	{
 		// Check for request forgeries.
 		// JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
@@ -180,13 +175,13 @@ class JEMControllerAttendees extends JEMController
 		$jinput->set('view', 'attendee');
 		$jinput->set('hidemainmenu', '1');
 
+		/*
 		$model 	= $this->getModel('attendee');
 
-		/*
 		$user	= JFactory::getUser();
 
 		// Error if checkedout by another administrator
-		if ($model->isCheckedOut( $user->get('id') )) {
+		if ($model->isCheckedOut($user->get('id'))) {
 			$this->setRedirect('index.php?option=com_jem&view=attendees', JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
 		}
 		$model->checkout();
@@ -194,7 +189,5 @@ class JEMControllerAttendees extends JEMController
 
 		parent::display();
 	}
-
-
 }
 ?>

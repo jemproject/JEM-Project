@@ -80,7 +80,6 @@ class jem_venues extends JTable
 	// overloaded check function
 	//function check($jemsettings)
 	function check()
-
 	{
 		// not typed in a venue name
 		if(!trim($this->venue)) {
@@ -91,13 +90,13 @@ class jem_venues extends JTable
 
 		$alias = JFilterOutput::stringURLSafe($this->venue);
 
-		if(empty($this->alias) || $this->alias === $alias ) {
+		if(empty($this->alias) || $this->alias === $alias) {
 			$this->alias = $alias;
 		}
 
-		if ( $this->map ){
-			if ( !trim($this->street) || !trim($this->city) || !trim($this->country) || !trim($this->postalCode) ) {
-				if (( !trim($this->latitude) && !trim($this->longitude))) {
+		if ($this->map) {
+			if (!trim($this->street) || !trim($this->city) || !trim($this->country) || !trim($this->postalCode)) {
+				if ((!trim($this->latitude) && !trim($this->longitude))) {
 					$this->_error = JText::_('COM_JEM_ERROR_ADDRESS');
 					JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
 					return false;
@@ -119,7 +118,7 @@ class jem_venues extends JTable
 				JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
 				return false;
 			}
-			if (!preg_match( '/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}'
+			if (!preg_match('/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}'
 			.'((:[0-9]{1,5})?\/.*)?$/i' , $this->url)) {
 				$this->_error = JText::_('COM_JEM_ERROR_URL_WRONG_FORMAT');
 				JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
@@ -163,7 +162,8 @@ class jem_venues extends JTable
 		}
 
 		/** check for existing name */
-/*		$query = 'SELECT id FROM #__jem_venues WHERE venue = '.$this->_db->Quote($this->venue);
+		/*
+		$query = 'SELECT id FROM #__jem_venues WHERE venue = '.$this->_db->Quote($this->venue);
 		$this->_db->setQuery($query);
 
 		$xid = intval($this->_db->loadResult());
@@ -171,7 +171,7 @@ class jem_venues extends JTable
 			JError::raiseWarning('SOME_ERROR_CODE', JText::sprintf('COM_JEM_VENUE_NAME_ALREADY_EXIST', $this->venue));
 			return false;
 		}
-*/
+		*/
 
 		return true;
 	}
@@ -186,14 +186,11 @@ class jem_venues extends JTable
 	 * @param boolean If false, null object variables are not updated
 	 * @return null|string null if successful otherwise returns and error message
 	 */
-	function insertIgnore( $updateNulls=false )
+	function insertIgnore($updateNulls=false)
 	{
-		$k = $this->_tbl_key;
-
-		$ret = $this->_insertIgnoreObject( $this->_tbl, $this, $this->_tbl_key );
-		if( !$ret )
-		{
-			$this->setError(get_class( $this ).'::store failed - '.$this->_db->getErrorMsg());
+		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
+		if(!$ret) {
+			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
 			return false;
 		}
 		return true;
@@ -208,21 +205,21 @@ class jem_venues extends JTable
 	 * @param string  The name of the primary key. If provided the object property is updated.
 	 * @return int number of affected row
 	 */
-	function _insertIgnoreObject( $table, &$object, $keyName = NULL )
+	function _insertIgnoreObject($table, &$object, $keyName = NULL)
 	{
-		$fmtsql = 'INSERT IGNORE INTO '.$this->_db->quoteName($table).' ( %s ) VALUES ( %s ) ';
+		$fmtsql = 'INSERT IGNORE INTO '.$this->_db->quoteName($table).' (%s) VALUES (%s) ';
 		$fields = array();
-		foreach (get_object_vars( $object ) as $k => $v) {
+		foreach (get_object_vars($object) as $k => $v) {
 			if (is_array($v) or is_object($v) or $v === NULL) {
 				continue;
 			}
 			if ($k[0] == '_') { // internal field
 				continue;
 			}
-			$fields[] = $this->_db->quoteName( $k );
-			$values[] = $this->_db->isQuoted( $k ) ? $this->_db->Quote( $v ) : (int) $v;
+			$fields[] = $this->_db->quoteName($k);
+			$values[] = $this->_db->isQuoted($k) ? $this->_db->Quote($v) : (int) $v;
 		}
-		$this->_db->setQuery( sprintf( $fmtsql, implode( ",", $fields ), implode( ",", $values ) ) );
+		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
 		if (!$this->_db->query()) {
 			return false;
 		}
@@ -232,12 +229,5 @@ class jem_venues extends JTable
 		}
 		return $this->_db->getAffectedRows();
 	}
-
-
-
-
-
-
-
 }
 ?>

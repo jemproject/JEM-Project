@@ -19,35 +19,25 @@ defined('_JEXEC') or die;
  */
 class JEMViewSettings extends JViewLegacy {
 
-
 	protected $form;
 	protected $data;
 	protected $state;
 
 
 	public function display($tpl = null) {
-
-
 		$form	= $this->get('Form');
 		$data	= $this->get('Data');
 
-		$jemsettings	= $this->get('Data');
+		$jemsettings = $this->get('Data');
 		$document 	= JFactory::getDocument();
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
-
-
 		$style = '
+		    div.current fieldset.radio input {
+		        cursor: pointer;
+		    }';
 
-        div.current fieldset.radio input {
-			cursor: pointer;
-		}
-
-
-        '
-		 		 		;
-		 		 		$document->addStyleDeclaration( $style );
-
+		$document->addStyleDeclaration($style);
 
 		/* Bootstrap Css
 		 * - Toolbar icons will be moved due to the background-position (icons)
@@ -80,27 +70,16 @@ class JEMViewSettings extends JViewLegacy {
 		JHTML::_('behavior.formvalidation');
 		JHTML::_('behavior.framework');
 
-
-
-
 		$app = JFactory::getApplication();
-
-		//initialise variables
-
-		$acl		= JFactory::getACL();
-		$uri 		= JFactory::getURI();
-		$user 		= JFactory::getUser();
-
 
 		//only admins have access to this view
 		if (!JFactory::getUser()->authorise('core.manage')) {
-			JError::raiseWarning( 'SOME_ERROR_CODE', JText::_('COM_JEM_ALERTNOTAUTH'));
-			$app->redirect( 'index.php?option=com_jem&view=jem' );
+			JError::raiseWarning('SOME_ERROR_CODE', JText::_('COM_JEM_ALERTNOTAUTH'));
+			$app->redirect('index.php?option=com_jem&view=jem');
 		}
 
 		//add css, js and submenu to document
-		//$document->addScript( JURI::root().'media/com_jem/js/settings.js' );
-
+		//$document->addScript(JURI::root().'media/com_jem/js/settings.js');
 
 		$this->assignRef('form',	$form);
 		$this->assignRef('data',	$data);
@@ -113,7 +92,6 @@ class JEMViewSettings extends JViewLegacy {
 	}
 
 
-
 	/**
 	 * Add the page title and toolbar.
 	 *
@@ -121,7 +99,6 @@ class JEMViewSettings extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
-
 		//Create Submenu
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
 
@@ -131,17 +108,12 @@ class JEMViewSettings extends JViewLegacy {
 		JToolBarHelper::divider();
 		JToolBarHelper::cancel('settings.cancel');
 		JToolBarHelper::divider();
-		JToolBarHelper::help( 'settings', true );
+		JToolBarHelper::help('settings', true);
 	}
-
-
-
 
 
 	function WarningIcon()
 	{
-		$app = JFactory::getApplication();
-
 		$url = JURI::root();
 		$tip = '<img src="'.$url.'media/system/images/tooltip.png" border="0"  alt="" />';
 

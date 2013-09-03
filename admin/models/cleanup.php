@@ -60,23 +60,16 @@ class JEMModelCleanup extends JModelLegacy
 		$jinput = JFactory::getApplication()->input;
 		$task = $jinput->get('task', '', 'cmd');
 
-
 		if ($task == 'cleaneventimg') {
 			$target = 'events';
 			$this->settarget($target);
-		}
-
-		if ($task == 'cleanvenueimg') {
+		} elseif ($task == 'cleanvenueimg') {
 			$target = 'venues';
 			$this->settarget($target);
-		}
-
-		if ($task == 'cleancategoryimg') {
+		} elseif ($task == 'cleancategoryimg') {
 			$target = 'categories';
 			$this->settarget($target);
 		}
-
-
 	}
 
 	/**
@@ -88,7 +81,7 @@ class JEMModelCleanup extends JModelLegacy
 	function settarget($target)
 	{
 		// Set id and wipe data
-		$this->_target	 = $target;
+		$this->_target = $target;
 	}
 
 	/**
@@ -111,7 +104,6 @@ class JEMModelCleanup extends JModelLegacy
 		$fail = 0;
 
 		if ($count) {
-
 			foreach ($images as $image)
 			{
 				if ($image !== JFilterInput::getInstance()->clean($image, 'path')) {
@@ -138,7 +130,6 @@ class JEMModelCleanup extends JModelLegacy
 	}
 
 
-
 	/**
 	 * Method to delete the cat_relations table
 	 *
@@ -147,13 +138,10 @@ class JEMModelCleanup extends JModelLegacy
 	 */
 	function truncatecats()
 	{
-
 		$db = JFactory::getDbo();
 
-		$query = $db->getQuery(true);
 		$db->setQuery('TRUNCATE TABLE ' . $db->quoteName('#__jem_cats_event_relations'));
 		$db->query();
-
 
 		return true;
 	}
@@ -167,7 +155,6 @@ class JEMModelCleanup extends JModelLegacy
 	 */
 	function getCountcats()
 	{
-
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select(array('*'));
@@ -177,9 +164,7 @@ class JEMModelCleanup extends JModelLegacy
 
 		$total = $db->loadObjectList();
 
-		$count = count($total);
-
-		return $count;
+		return count($total);
 	}
 
 
@@ -207,18 +192,15 @@ class JEMModelCleanup extends JModelLegacy
 	{
 		if ($this->_target == 'events') {
 			$field = 'datimage';
-	    }
-		if ($this->_target == 'venues') {
+		} elseif ($this->_target == 'venues') {
 			$field = 'locimage';
-	    }
-		if ($this->_target == 'categories') {
+		} elseif ($this->_target == 'categories') {
 			$field = 'image';
-	    }
+		}
 
 		$query = 'SELECT '.$field.' FROM #__jem_'.$this->_target;
 
 		$this->_db->setQuery($query);
-
 		$this->_assigned = $this->_db->loadColumn();
 
 		return $this->_assigned;
@@ -235,19 +217,17 @@ class JEMModelCleanup extends JModelLegacy
 		// Initialize variables
 		$basePath = JPATH_SITE.'/images/jem/'.$this->_target;
 
-		$images 	= array ();
+		$images = array ();
 
 		// Get the list of files and folders from the given folder
-		$fileList 	= JFolder::files($basePath);
+		$fileList = JFolder::files($basePath);
 
 		// Iterate over the files if they exist
 		if ($fileList !== false) {
 			foreach ($fileList as $file)
 			{
 				if (is_file($basePath.'/'.$file) && substr($file, 0, 1) != '.') {
-
 					$images[] = $file;
-
 				}
 			}
 		}

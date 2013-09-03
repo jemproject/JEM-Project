@@ -7,7 +7,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined( '_JEXEC' ) or die;
+defined('_JEXEC') or die;
 
 
 
@@ -24,11 +24,8 @@ class JEMViewGroup extends JViewLegacy {
 	protected $item;
 	protected $state;
 
-
-
 	public function display($tpl = null)
 	{
-
 		// Initialise variables.
 		$this->form	 = $this->get('Form');
 		$this->item	 = $this->get('Item');
@@ -39,58 +36,46 @@ class JEMViewGroup extends JViewLegacy {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
+
 		JHTML::_('behavior.modal', 'a.modal');
 		JHTML::_('behavior.tooltip');
 		JHTML::_('behavior.formvalidation');
 
-
 		//initialise variables
 		$jemsettings = JEMHelper::config();
-		$editor 	=  JFactory::getEditor();
-		$document	=  JFactory::getDocument();
-		$user 		=  JFactory::getUser();
-		$db 		=  JFactory::getDBO();
-		$this->settings	=  JEMAdmin::config();
+		$document	= JFactory::getDocument();
+		$this->settings	= JEMAdmin::config();
 		$task		= JRequest::getVar('task');
-		$this->task 		= $task;
+		$this->task = $task;
 		$url 		= JURI::root();
-
 
 		// CSS Stylesheet
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
-		$document->addScript(JURI::root().'media/com_jem/js/attachments.js' );
+		$document->addScript(JURI::root().'media/com_jem/js/attachments.js');
 
 		$document->addScript($url.'media/com_jem/js/recurrencebackend.js');
 		$document->addScript($url.'media/com_jem/js/unlimited.js');
 		$document->addScript($url.'media/com_jem/js/seobackend.js');
 
-
-		$maintainers 		=  $this->get( 'Members');
-		$available_users 	=  $this->get( 'Available');
+		$maintainers 		= $this->get('Members');
+		$available_users 	= $this->get('Available');
 
 		//make data safe
-		JFilterOutput::objectHTMLSafe( $this->item );
+		JFilterOutput::objectHTMLSafe($this->item);
 
 		//create selectlists
 		$lists = array();
-		$lists['maintainers']		= JHTML::_('select.genericlist', $maintainers, 'maintainers[]', 'class="inputbox" size="20" onDblClick="moveOptions(document.adminForm[\'maintainers[]\'], document.adminForm[\'available_users\'])" multiple="multiple" style="padding: 6px; width: 250px;"', 'value', 'text' );
-		$lists['available_users']	= JHTML::_('select.genericlist', $available_users, 'available_users', 'class="inputbox" size="20" onDblClick="moveOptions(document.adminForm[\'available_users\'], document.adminForm[\'maintainers[]\'])" multiple="multiple" style="padding: 6px; width: 250px;"', 'value', 'text' );
-
-
+		$lists['maintainers']		= JHTML::_('select.genericlist', $maintainers, 'maintainers[]', 'class="inputbox" size="20" onDblClick="moveOptions(document.adminForm[\'maintainers[]\'], document.adminForm[\'available_users\'])" multiple="multiple" style="padding: 6px; width: 250px;"', 'value', 'text');
+		$lists['available_users']	= JHTML::_('select.genericlist', $available_users, 'available_users', 'class="inputbox" size="20" onDblClick="moveOptions(document.adminForm[\'available_users\'], document.adminForm[\'maintainers[]\'])" multiple="multiple" style="padding: 6px; width: 250px;"', 'value', 'text');
 
 		// $access2 = JEMHelper::getAccesslevelOptions();
 		//$this->access		= $access2;
 		$this->jemsettings		= $jemsettings;
 		$this->lists 		= $lists;
 
-
 		$this->addToolbar();
 		parent::display($tpl);
-
 	}
-
-
-
 
 
 	/**
@@ -114,7 +99,6 @@ class JEMViewGroup extends JViewLegacy {
 			JToolBarHelper::save('group.save');
 		}
 		if (!$checkedOut && $canDo->get('core.create')) {
-
 			JToolBarHelper::save2new('group.save2new');
 		}
 		// If an existing item, can save to a copy.
@@ -128,8 +112,7 @@ class JEMViewGroup extends JViewLegacy {
 			JToolBarHelper::cancel('group.cancel', 'JTOOLBAR_CLOSE');
 		}
 
-		JToolBarHelper::help( 'editgroup', true );
+		JToolBarHelper::help('editgroup', true);
 	}
-
 }
 ?>
