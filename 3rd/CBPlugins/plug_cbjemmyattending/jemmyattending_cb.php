@@ -30,9 +30,10 @@ class jemmyattendingTab extends cbTabHandler {
 	}
 
 
-	/* Retrieve the languagefile
+	/**
+	 * Retrieve the languagefile
 	 * The file is located in the folder language
-	*/
+	 */
 	function _getLanguageFile() {
 		global $_CB_framework;
 		$UElanguagePath=$_CB_framework->getCfg( 'absolute_path' ).'/components/com_comprofiler/plugin/user/plug_cbjemmyattending';
@@ -42,24 +43,20 @@ class jemmyattendingTab extends cbTabHandler {
 	}
 
 
-	/* Display Tab
+	/**
+	 * Display Tab
 	 */
 	function getDisplayTab($tab,$user,$ui) {
-
-
 		/* loading global variables */
-		global $_CB_database,$my,$_CB_framework,$mosConfig_live_site , $Itemid ;
-
+		global $_CB_database,$_CB_framework;
 
 		/* loading the language function */
 		self::_getLanguageFile();
-
 
 		/*loading params set by the backend*/
 		$params = $this->params;
 
 		/* other variables */
-		$live_site = JURI::base();
 		$return = null;
 
 		$event_description = $params->get('event_description');
@@ -67,52 +64,46 @@ class jemmyattendingTab extends cbTabHandler {
 		$event_startdate = $params->get('event_startdate');
 		$event_venue = $params->get('event_venue');
 
-
 		/* message at the bottom of the table */
 		$event_tab_message = $params->get('hwTabMessage', "");
 
-
 		/* load css */
 		$_CB_framework->addCustomHeadTag("<link href=\"".$_CB_framework->getCfg( 'live_site' )."/components/com_comprofiler/plugin/user/plug_cbjemmyattending/jemmyattending_cb.css\" rel=\"stylesheet\" type=\"text/css\" />");
-
 
 		/* check for tabdescription */
 		if ($tab->description == null)
 		{
 			$tabdescription = "_JEMMYATTENDING_NO_DESCRIPTION";
-		}
-		else
-		{
+		} else {
 			$tabdescription = $tab->description;
 		}
 
-		/*  Tab description
+		/*
+		 * Tab description
 		 *
-		*  the text will be on top of the table
-		*  can be filled in the backend, section: Tab management
-		*/
+		 * the text will be on top of the table
+		 * can be filled in the backend, section: Tab management
+		 */
 
 		// html content is allowed in descriptions
 		$return .= "\t\t<div class=\"tab_Description\">". $tabdescription. "</div>\n";
 
-
-		/* Check if gd is enabled, for thumbnails
+		/*
+		 * Check if gd is enabled, for thumbnails
 		 *
-		* Is not used at the moment
-		*/
+		 * Is not used at the moment
+		 */
 
 		//get param for thumbnail
-		$query = "SELECT gddisabled FROM #__jem_settings";
-		$_CB_database->setQuery( $query );
-		$thumb= $_CB_database->loadResult();
+// 		$query = "SELECT gddisabled FROM #__jem_settings";
+// 		$_CB_database->setQuery( $query );
+// 		$thumb= $_CB_database->loadResult();
 
 
-
-
-		/* Check for an Itemid
-		 *
-		* Used for links
-		*/
+		/*
+		 * Check for an Itemid
+		 * Used for links
+		 */
 
 		// get itemid
 		$query = "SELECT `id` FROM `#__menu` WHERE `link` LIKE '%index.php?option=com_jem&view=eventslist%' AND `type` = 'component' AND `published` = '1' LIMIT 1";
@@ -120,12 +111,11 @@ class jemmyattendingTab extends cbTabHandler {
 
 		$S_Itemid= $_CB_database->loadResult();
 
-		if(!$S_Itemid)
+		if(!$S_Itemid) {
 			$S_Itemid = 999999;
+		}
 
-
-		/* retrieval user parameters
-		 */
+		// retrieval user parameters
 		$userid = $user->id;
 
 		if (JFactory::getUser()->authorise('core.manage')) {
@@ -138,11 +128,12 @@ class jemmyattendingTab extends cbTabHandler {
 			}
 		}
 
-		/* Query
+		/*
+		 * Query
 		 *
-		* Retrieval of the data
-		* Keep it inline with the my-events view
-		*/
+		 * Retrieval of the data
+		 * Keep it inline with the my-events view
+		 */
 
 		// get events
 		$query = 'SELECT DISTINCT a.id AS eventid, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription, a.published,'
@@ -160,9 +151,8 @@ class jemmyattendingTab extends cbTabHandler {
 		$_CB_database->setQuery( $query );
 		$results = $_CB_database->loadObjectList();
 
-
-
-		/* Headers
+		/*
+		 * Headers
 		 *
 		 * The classes are retrieved from:
 		 * components/com_comprofiler/plugin/user/plug_cbjemmyattending/jemmyevents_cb.css
@@ -174,8 +164,6 @@ class jemmyattendingTab extends cbTabHandler {
 		 * - add a new string, like: _EVENT_NEWNAME
 		 * - add the translation to the language file
 		 */
-
-
 
 		/* start of form */
 		$return .= "\n\t<form method=\"post\" name=\"jemmyattendingForm\">";
@@ -192,154 +180,147 @@ class jemmyattendingTab extends cbTabHandler {
 		$return .= "\n\t\t\t</th>";
 
 		/* Description header */
-		if ($event_description==1){
-		$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableDesc'>";
-		$return .= "\n\t\t\t\t" . _JEMMYATTENDING_DESC;
-		$return .= "\n\t\t\t</th>";
+		if ($event_description==1) {
+			$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableDesc'>";
+			$return .= "\n\t\t\t\t" . _JEMMYATTENDING_DESC;
+			$return .= "\n\t\t\t</th>";
 		}
 
 		/* City header */
-		if ($event_venue==1){
-		$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableVenue'>";
-		$return .= "\n\t\t\t\t" . _JEMMYATTENDING_CITY;
-		$return .= "\n\t\t\t</th>";
+		if ($event_venue==1) {
+			$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableVenue'>";
+			$return .= "\n\t\t\t\t" . _JEMMYATTENDING_CITY;
+			$return .= "\n\t\t\t</th>";
 		}
 
 		/* Startdate header */
-		if ($event_startdate==1){
-		$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableStart'>";
-		$return .= "\n\t\t\t\t" . _JEMMYATTENDING_START;
-		$return .= "\n\t\t\t</th>";
+		if ($event_startdate==1) {
+			$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableStart'>";
+			$return .= "\n\t\t\t\t" . _JEMMYATTENDING_START;
+			$return .= "\n\t\t\t</th>";
 		}
 
 		/* Enddate header */
-		if ($event_enddate==1){
-		$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableExp'>";
-		$return .= "\n\t\t\t\t" . _JEMMYATTENDING_EXPIRE;
-		$return .= "\n\t\t\t</th>";
+		if ($event_enddate==1) {
+			$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableExp'>";
+			$return .= "\n\t\t\t\t" . _JEMMYATTENDING_EXPIRE;
+			$return .= "\n\t\t\t</th>";
 		}
 
 		/* End of headerline */
 		$return .= "\n\t\t</tr>";
 
-
-		/* Counting data
-		 *
+		/*
+		 * Counting data
 		 * If data is available start with the rows
-		 * */
+		 */
 		$entryCount = 0;
 		if(count($results)) {
-		foreach($results as $result) {
-		$entryCount++;
+			foreach($results as $result) {
+				$entryCount++;
+
+				/* Variables */
+				$query = "SELECT formatShortDate FROM #__jem_settings";
+				$_CB_database->setQuery( $query );
+				$settings= $_CB_database->loadObjectList();
+
+				/*
+				 * adding the class row0/row1 to the rows
+				 *
+				 * this is for the coloring of the rows
+				 * The variable has been added to the tr of the rows
+			 	 */
+				$CSSClass = $entryCount%2 ? "row0" : "row1";
+
+				/*
+				 * Start of rowline
+				 *
+				 * The variable for the tr class has been defined above
+				 * result stands for the variables of the query
+				 */
+				$return .= "\n\t\t<tr class='{$CSSClass}'>";
+
+				/* Title field */
+				$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableTitle'>";
+				$return .= "\n\t\t\t\t<a href=\"". JRoute::_(JEMHelperRoute::getEventRoute($result->eventid)) ."\">{$result->title}</a>";
+				$return .= "\n\t\t\t</td>";
 
 
+				/*
+				 * Description field
+				 *
+				 * the max length is specified
+				 * the (...) is being added behind the description, also with small descriptions
+				 */
+				if ($event_description==1) {
+					$description = substr($result->datdescription,0,150);
+					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableDesc'>";
+					$return .= "\n\t\t\t\t{$description} (...)";
+					$return .= "\n\t\t\t</td>";
+				}
 
-		/* Variables */
-		$query = "SELECT formatShortDate FROM #__jem_settings";
-		$_CB_database->setQuery( $query );
-		$settings= $_CB_database->loadObjectList();
+				/* Venue field
+				 *
+				 * a link to the venueevent is specified so people can visit the venue page
+				 */
+				if ($event_venue==1) {
+					$location = "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($result->locid))."'>{$result->venue}</a>";
+					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableVenue'>";
+					$return .= "\n\t\t\t\t$location <small style='font-style:italic;'>- {$result->city}</small>";
+					$return .= "\n\t\t\t</td>";
+				}
 
+				/* Startdate field */
+				if ($event_startdate==1) {
+					$startdate2 =	JEMOutput::formatdate($result->dates, $settings[0]->formatShortDate);
+					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTablestart'>";
+					$return .= "\n\t\t\t\t{$startdate2}";
+					$return .= "\n\t\t\t</td>";
+				}
 
-		/* adding the class row0/row1 to the rows
-		 *
-		 * this is for the coloring of the rows
-		 * The variable has been added to the tr of the rows
-	 	**/
-		$CSSClass = $entryCount%2 ? "row0" : "row1";
+				/*
+				 * Enddate
+				 * if no enddate is given nothing will show up
+				 */
+				if ($event_enddate==1) {
+					$enddate2 =	JEMOutput::formatdate($result->enddates, $settings[0]->formatShortDate);
+					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableExp'>";
+					$return .= "\n\t\t\t\t{$enddate2}";
+					$return .= "\n\t\t\t</td>";
+				}
 
+				/* Closing the rowline */
+				$return .= "\n\t\t</tr>";
 
-		/* Start of rowline
-		 *
-		 * The variable for the tr class has been defined above
-		 * result stands for the variables of the query
-		 * */
-		$return .= "\n\t\t<tr class='{$CSSClass}'>";
+			} // end of displaying rows
+		} else {
+			// When no data has been found the user will see a message
 
-
-		/* Title field */
-		$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableTitle'>";
-		$return .= "\n\t\t\t\t<a href=\"". JRoute::_(JEMHelperRoute::getEventRoute($result->eventid)) ."\">{$result->title}</a>";
-		$return .= "\n\t\t\t</td>";
-
-
-		/* Description field
-		 *
-		 * the max length is specified
-		 * the (...) is being added behind the description, also with small descriptions
-		 * */
-		if ($event_description==1){
-		$description = substr($result->datdescription,0,150);
-		$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableDesc'>";
-		$return .= "\n\t\t\t\t{$description} (...)";
-		$return .= "\n\t\t\t</td>";
+			/* display no listings */
+			$return .= _JEMMYATTENDING_NO_LISTING;
 		}
 
+		/* closing tag of the table */
+		$return .="</table>";
 
-		/* Venue field
+		/* closing of the form */
+		$return .="</form>";
+
+		/*
+		 * Message for at the bottom, below the table
 		 *
-		 * a link to the venueevent is specified so people can visit the venue page
+		 * At the top we did specify the variable
+		 * but not sure where we can fill it
 		 */
-		if ($event_venue==1){
-		$location = "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($result->locid))."'>{$result->venue}</a>";
-		$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableVenue'>";
-		$return .= "\n\t\t\t\t$location <small style='font-style:italic;'>- {$result->city}</small>";
-		$return .= "\n\t\t\t</td>";
-		}
+		$return .= "\t\t<div>\n<p>". htmlspecialchars($event_tab_message). "</p></div>\n";
 
-		/* Startdate field */
-		if ($event_startdate==1){
-			$startdate2 =	JEMOutput::formatdate($result->dates, $settings[0]->formatShortDate);
-		$return .= "\n\t\t\t<td class='jemmyattendingCBTabTablestart'>";
-		$return .= "\n\t\t\t\t{$startdate2}";
-		$return .= "\n\t\t\t</td>";
-		}
-
-		/* Enddate
-		 * if no enddate is given nothing will show up
-		 * */
-		if ($event_enddate==1){
-			$enddate2 =	JEMOutput::formatdate($result->enddates, $settings[0]->formatShortDate);
-		$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableExp'>";
-		$return .= "\n\t\t\t\t{$enddate2}";
-		$return .= "\n\t\t\t</td>";
-		}
-
-		/* Closing the rowline */
-		$return .= "\n\t\t</tr>";
-
-	} // end of displaying rows
-		}
-
-else
-	{
-	/* When no data has been found the user will see a message
-	 */
-
-	/* display no listings */
-	$return .= _JEMMYATTENDING_NO_LISTING;
+		/*
+		 * Showing the code
+		 *
+		 * We did specify the code above, but we do want to display it to the user
+		 * There were a lot of "$return ." and all of them will be printed.
+		 */
+		return $return;
 	}
-
-	/* closing tag of the table */
-	$return .="</table>";
-
-	/* closing of the form */
-	$return .="</form>";
-
-	/* Message for at the bottom, below the table
-	 *
-	 * At the top we did specify the variable
-	 * but not sure where we can fill it
-	 */
-	$return .= "\t\t<div>\n<p>". htmlspecialchars($event_tab_message). "</p></div>\n";
-
-	/* Showing the code
-	 *
-	 * We did specify the code above, but we do want to display it to the user
-	 * There were a lot of "$return ." and all of them will be printed.
-	 */
-	return $return;
-
-
-	} // end of getDisplayTab function
-} // end of Tab class
+}
 ?>
