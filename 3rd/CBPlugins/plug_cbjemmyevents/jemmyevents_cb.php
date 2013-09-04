@@ -10,7 +10,7 @@
  *
  */
 
-if ( ! ( defined( '_VALID_CB' ) || defined( '_JEXEC' ) || defined( '_VALID_MOS' ) ) )
+if (! (defined('_VALID_CB') || defined('_JEXEC') || defined('_VALID_MOS')))
 {
 	die();
 }
@@ -25,7 +25,7 @@ class jemmyeventsTab extends cbTabHandler {
 	/**
 	 * Show My Events
 	 */
-	function jemmyeventsTab()
+	function __construct()
 	{
 		$this->cbTabHandler();
 	}
@@ -37,7 +37,7 @@ class jemmyeventsTab extends cbTabHandler {
 	 */
 	function _getLanguageFile() {
 		global $_CB_framework;
-		$UElanguagePath=$_CB_framework->getCfg( 'absolute_path' ).'/components/com_comprofiler/plugin/user/plug_cbjemmyevents';
+		$UElanguagePath=$_CB_framework->getCfg('absolute_path').'/components/com_comprofiler/plugin/user/plug_cbjemmyevents';
 		if (file_exists($UElanguagePath.'/language/'.$_CB_framework->getCfg('lang').'.php')) {
 			include_once($UElanguagePath.'/language/'.$_CB_framework->getCfg('lang').'.php');
 		} else include_once($UElanguagePath.'/language/english.php');
@@ -72,7 +72,7 @@ class jemmyeventsTab extends cbTabHandler {
 		global $_CB_database;
 		foreach($_POST as $delete_id) {
 			$query = "DELETE FROM #__jem_events where id=".$delete_id;
-			$_CB_database->setQuery( $query );
+			$_CB_database->setQuery($query);
 		}
 	}
 
@@ -99,14 +99,14 @@ class jemmyeventsTab extends cbTabHandler {
 		$return = null;
 		$result_title = null;
 
-		$event_image = $params->get('event_image' );
-		$end_date = $params->get('end_date' );
+		$event_image = $params->get('event_image');
+		$end_date = $params->get('end_date');
 		$start_date = $params->get('start_date');
 		$event_categories = $params->get('event_categories');
 		$event_attending = $params->get('event_attending');
 
 		/* load css */
-		$_CB_framework->addCustomHeadTag("<link href=\"".$_CB_framework->getCfg( 'live_site' )."/components/com_comprofiler/plugin/user/plug_cbjemmyevents/jemmyevents_cb.css\" rel=\"stylesheet\" type=\"text/css\" />");
+		$_CB_framework->addCustomHeadTag("<link href=\"".$_CB_framework->getCfg('live_site')."/components/com_comprofiler/plugin/user/plug_cbjemmyevents/jemmyevents_cb.css\" rel=\"stylesheet\" type=\"text/css\" />");
 
 		/* check for tabdescription */
 		if($tab->description == null) {
@@ -129,7 +129,7 @@ class jemmyeventsTab extends cbTabHandler {
 
 		//get param for thumbnail
 // 		$query = "SELECT gddisabled FROM #__jem_settings";
-// 		$_CB_database->setQuery( $query );
+// 		$_CB_database->setQuery($query);
 // 		$thumb= $_CB_database->loadResult();
 
 
@@ -141,7 +141,7 @@ class jemmyeventsTab extends cbTabHandler {
 
 		// get eventslist itemid
 		$query = "SELECT `id` FROM `#__menu` WHERE `link` LIKE '%index.php?option=com_jem&view=eventslist%' AND `type` = 'component' AND `published` = '1' LIMIT 1";
-		$_CB_database->setQuery( $query );
+		$_CB_database->setQuery($query);
 
 		$S_Itemid1= $_CB_database->loadResult();
 
@@ -182,7 +182,7 @@ class jemmyeventsTab extends cbTabHandler {
 			. ' GROUP BY a.id'
 			. ' ORDER BY a.dates'
 			;
-		$_CB_database->setQuery( $query );
+		$_CB_database->setQuery($query);
 		$results = $_CB_database->loadObjectList();
 
 
@@ -195,7 +195,7 @@ class jemmyeventsTab extends cbTabHandler {
 		 {
 			$url = "index.php?option=com_jem&view=editevent" ;
 			$query4 = "SELECT `published` FROM `#__jem_events` WHERE `created_by` = id and `published` = 1 " ;
-			$_CB_database->setQuery( $query4 );
+			$_CB_database->setQuery($query4);
 			$results4 = $_CB_database->loadObjectList();
 
 			$sum = "0";
@@ -284,17 +284,17 @@ class jemmyeventsTab extends cbTabHandler {
 		$entryCount = 0;
 		$cat = null;
 		if(count($results)) {
-			for ($i=0, $n = count( $results ); $i < $n; $i++) {
+			for ($i=0, $n = count($results); $i < $n; $i++) {
 				$entryCount++;
 
 				// defining variables
 				$result = $results[$i];
-// 				$checked = JHTML::_('grid.id', $i, $result->id );
+// 				$checked = JHTML::_('grid.id', $i, $result->id);
 				$catHref = JRoute::_(JEMHelperRoute::getCategoryRoute($result->catid));
 // 				$cats = "\n\t\t\t<a href='{$catHref}' title='{$result->catname}'>{$result->catname}</a>";
 
 				$query = "SELECT formatShortDate FROM #__jem_settings";
-				$_CB_database->setQuery( $query );
+				$_CB_database->setQuery($query);
 				$settings= $_CB_database->loadObjectList();
 
 				/*
@@ -316,7 +316,7 @@ class jemmyeventsTab extends cbTabHandler {
 				/* Image field */
 				if($event_image == 1) {
 					$dimage =	JEMImage::flyercreator($result->datimage, 'event');
-					$pimage =	JEMOutput::flyer( $result, $dimage, 'event' );
+					$pimage =	JEMOutput::flyer($result, $dimage, 'event');
 					$return .= "\n\t\t\t<td class='jemmyeventsCBTabTableImage'>";
 					$return .= "\n\t\t\t\t{$pimage}";
 					$return .= "\n\t\t\t</td>";
@@ -434,13 +434,13 @@ class jemmyeventsTab extends cbTabHandler {
 			$return = null;
 			$result_title = null;
 
-			$end_date = $params->get('end_date' );
+			$end_date = $params->get('end_date');
 			$start_date = $params->get('start_date');
 			$event_categories = $params->get('event_categories');
 			$event_attending = $params->get('event_attending');
 
 			/* load css */
-			$_CB_framework->addCustomHeadTag("<link href=\"".$_CB_framework->getCfg( 'live_site' )."/components/com_comprofiler/plugin/user/plug_cbjemmyevents/jemmyevents_cb.css\" rel=\"stylesheet\" type=\"text/css\" />");
+			$_CB_framework->addCustomHeadTag("<link href=\"".$_CB_framework->getCfg('live_site')."/components/com_comprofiler/plugin/user/plug_cbjemmyevents/jemmyevents_cb.css\" rel=\"stylesheet\" type=\"text/css\" />");
 
 			/* check for tabdescription */
 			if($tab->description == null) {
@@ -463,7 +463,7 @@ class jemmyeventsTab extends cbTabHandler {
 
 			//get param for thumbnail
 // 			$query = "SELECT gddisabled FROM #__jem_settings";
-// 			$_CB_database->setQuery( $query );
+// 			$_CB_database->setQuery($query);
 // 			$thumb= $_CB_database->loadResult();
 
 			/*
@@ -474,7 +474,7 @@ class jemmyeventsTab extends cbTabHandler {
 
 			// get  itemid
 			$query = "SELECT `id` FROM `#__menu` WHERE `link` LIKE '%index.php?option=com_jem&view=eventslist%' AND `type` = 'component' AND `published` = '1' LIMIT 1";
-			$_CB_database->setQuery( $query );
+			$_CB_database->setQuery($query);
 
 			$S_Itemid1= $_CB_database->loadResult();
 
@@ -515,7 +515,7 @@ class jemmyeventsTab extends cbTabHandler {
 				. ' GROUP BY a.id'
 				. ' ORDER BY a.dates'
 				;
-			$_CB_database->setQuery( $query );
+			$_CB_database->setQuery($query);
 			$results = $_CB_database->loadObjectList();
 
 
@@ -526,7 +526,7 @@ class jemmyeventsTab extends cbTabHandler {
 					$url = "index.php?option=com_jem&view=editevent&Itemid=$S_Itemid1" ;
 					$return .= "<a href='".JRoute::_($url)."' class='eventCBAddLink'>". _JEMMYEVENTS_ADDNEW. "</a>";
 					$query4 = "SELECT `published` FROM `#__jem_events` WHERE `created_by` = $userid and `published` = 0 " ;
-					$_CB_database->setQuery( $query4 );
+					$_CB_database->setQuery($query4);
 					$results4 = $_CB_database->loadObjectList();
 
 					$sum = "0";
@@ -611,17 +611,17 @@ class jemmyeventsTab extends cbTabHandler {
 			$entryCount = 0;
 			$cat = null;
 			if(count($results)) {
-				for ($i=0, $n = count( $results ); $i < $n; $i++) {
+				for ($i=0, $n = count($results); $i < $n; $i++) {
 					$entryCount++;
 
 					// defining variables
 					$result = $results[$i];
-// 					$checked = JHTML::_('grid.id', $i, $result->id );
+// 					$checked = JHTML::_('grid.id', $i, $result->id);
 					$catHref = JRoute::_(JEMHelperRoute::getCategoryRoute($result->catid));
 					$cat = "\n\t\t\t<a href='{$catHref}' title='{$result->catname}'>{$result->catname}</a>";
 
 					$query = "SELECT formatShortDate FROM #__jem_settings";
-					$_CB_database->setQuery( $query );
+					$_CB_database->setQuery($query);
 					$settings= $_CB_database->loadObjectList();
 
 					/*

@@ -87,7 +87,7 @@ class jem_events extends JTable
 	*
 	* @var string
 	*/
-	var $recurrence_byday = '';
+	var $recurrence_byday 	= '';
 	/** @var int id of first event for recurrence events*/
 	var $recurrence_first_id = 0;
 	/** @var string */
@@ -111,7 +111,7 @@ class jem_events extends JTable
 	/** @var date */
 	var $checked_out_time 	= 0;
 
-	function jem_events(& $db) {
+	function __construct(& $db) {
 		parent::__construct('#__jem_events', 'id', $db);
 	}
 

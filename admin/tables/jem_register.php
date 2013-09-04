@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
  * JEM registration Model class
  *
  * @package JEM
- * 
+ *
  */
 class jem_register extends JTable
 {
@@ -31,9 +31,9 @@ class jem_register extends JTable
 	/** @var string */
 	var $uip 		= null;
 	/** @var int */
-	var $waiting 		= 0;
+	var $waiting 	= 0;
 
-	function jem_register(& $db) {
+	function __construct(& $db) {
 		parent::__construct('#__jem_register', 'id', $db);
 	}
 }

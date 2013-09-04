@@ -34,7 +34,7 @@ class jem_cats_event_relations extends JTable
 	 */
 	var $ordering = null;
 
-	function jem_cats_event_relations(& $db) {
+	function __construct(& $db) {
 		parent::__construct('#__jem_cats_event_relations', 'catid', $db);
 	}
 

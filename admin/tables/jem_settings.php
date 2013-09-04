@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
  * JEM settings table class
  *
  * @package JEM
- * 
+ *
  */
 class jem_settings extends JTable
 {
@@ -177,7 +177,7 @@ class jem_settings extends JTable
 	var $defaultCountry		= null;
 
 
-	function jem_settings(& $db) {
+	function __construct(& $db) {
 		parent::__construct('#__jem_settings', 'id', $db);
 	}
 }

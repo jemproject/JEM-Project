@@ -30,7 +30,7 @@ var $cssMonthWeek="monthweek";
 PUBLIC activeCalendarWeek() -> class constructor. Calls the main class constructor
 ********************************************************************************
 */
-function activeCalendarWeek($year=false,$month=false,$day=false,$GMTDiff="none") {
+function __construct($year=false,$month=false,$day=false,$GMTDiff="none") {
 parent::JEMCalendar($year, $month, $day, $GMTDiff);
 $this->GMT=$GMTDiff;
 }

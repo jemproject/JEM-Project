@@ -157,7 +157,7 @@ PUBLIC activeCalendar() -> class constructor, does the initial date calculation
 $GMTDiff: GMT Zone for current day calculation, do not set to use local server time
 ********************************************************************************
 */
-function JEMCalendar($year=false,$month=false,$day=false,$GMTDiff="none"){
+function __construct($year=false,$month=false,$day=false,$GMTDiff="none"){
 $this->timetoday=time();
 $this->selectedday=-2;
 $this->selectedyear=$year;

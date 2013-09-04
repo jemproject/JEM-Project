@@ -38,7 +38,7 @@ class JEMCategories
 	 *
 	 * @param int category id
 	 */
-	function JEMCategories($cid)
+	function __construct($cid)
 	{
 		$this->id = $cid;
 	}
@@ -244,7 +244,6 @@ class JEMCategories
 		// if (is_array($list))
 		// {
 		foreach ($list as $item) {
-
 			$catlist[] = JHTML::_('select.option', $item->id, $item->treename);
 		}
 		// }

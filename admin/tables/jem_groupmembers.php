@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
  * JEM groupmembers Model class
  *
  * @package JEM
- * 
+ *
  */
 class jem_groupmembers extends JTable
 {
@@ -21,11 +21,11 @@ class jem_groupmembers extends JTable
 	 * Primary Key
 	 * @var int
 	 */
-	var $id 				= null;
+	var $id 		= null;
 	/** @var int */
-	var $member				= null;
+	var $member		= null;
 
-	function jem_groupmembers(& $db) {
+	function __construct(& $db) {
 		parent::__construct('#__jem_groupmembers', '', $db);
 	}
 }

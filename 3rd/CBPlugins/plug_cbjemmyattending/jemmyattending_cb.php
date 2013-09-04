@@ -10,7 +10,7 @@
  *
  */
 
-if ( ! ( defined( '_VALID_CB' ) || defined( '_JEXEC' ) || defined( '_VALID_MOS' ) ) )
+if (! (defined('_VALID_CB') || defined('_JEXEC') || defined('_VALID_MOS')))
 {
 	die();
 }
@@ -24,7 +24,7 @@ require_once (JPATH_SITE.'/components/com_jem/helpers/route.php');
 class jemmyattendingTab extends cbTabHandler {
 	/* JEM Attending tab
 	 */
-	function jemmyattendingTab()
+	function __construct()
 	{
 		$this->cbTabHandler();
 	}
@@ -36,7 +36,7 @@ class jemmyattendingTab extends cbTabHandler {
 	 */
 	function _getLanguageFile() {
 		global $_CB_framework;
-		$UElanguagePath=$_CB_framework->getCfg( 'absolute_path' ).'/components/com_comprofiler/plugin/user/plug_cbjemmyattending';
+		$UElanguagePath=$_CB_framework->getCfg('absolute_path').'/components/com_comprofiler/plugin/user/plug_cbjemmyattending';
 		if (file_exists($UElanguagePath.'/language/'.$_CB_framework->getCfg('lang').'.php')) {
 			include_once($UElanguagePath.'/language/'.$_CB_framework->getCfg('lang').'.php');
 		} else include_once($UElanguagePath.'/language/english.php');
@@ -68,7 +68,7 @@ class jemmyattendingTab extends cbTabHandler {
 		$event_tab_message = $params->get('hwTabMessage', "");
 
 		/* load css */
-		$_CB_framework->addCustomHeadTag("<link href=\"".$_CB_framework->getCfg( 'live_site' )."/components/com_comprofiler/plugin/user/plug_cbjemmyattending/jemmyattending_cb.css\" rel=\"stylesheet\" type=\"text/css\" />");
+		$_CB_framework->addCustomHeadTag("<link href=\"".$_CB_framework->getCfg('live_site')."/components/com_comprofiler/plugin/user/plug_cbjemmyattending/jemmyattending_cb.css\" rel=\"stylesheet\" type=\"text/css\" />");
 
 		/* check for tabdescription */
 		if ($tab->description == null)
@@ -96,7 +96,7 @@ class jemmyattendingTab extends cbTabHandler {
 
 		//get param for thumbnail
 // 		$query = "SELECT gddisabled FROM #__jem_settings";
-// 		$_CB_database->setQuery( $query );
+// 		$_CB_database->setQuery($query);
 // 		$thumb= $_CB_database->loadResult();
 
 
@@ -107,7 +107,7 @@ class jemmyattendingTab extends cbTabHandler {
 
 		// get itemid
 		$query = "SELECT `id` FROM `#__menu` WHERE `link` LIKE '%index.php?option=com_jem&view=eventslist%' AND `type` = 'component' AND `published` = '1' LIMIT 1";
-		$_CB_database->setQuery( $query );
+		$_CB_database->setQuery($query);
 
 		$S_Itemid= $_CB_database->loadResult();
 
@@ -148,7 +148,7 @@ class jemmyattendingTab extends cbTabHandler {
 				. ' WHERE a.published = 1 AND c.published = 1 AND DATE_SUB(NOW(), INTERVAL 1 DAY) < (IF (a.enddates <> 0000-00-00, a.enddates, a.dates)) AND r.uid = '.$userid.' AND c.access <= '.$gid
 				. ' ORDER BY a.dates'
 				;
-		$_CB_database->setQuery( $query );
+		$_CB_database->setQuery($query);
 		$results = $_CB_database->loadObjectList();
 
 		/*
@@ -221,7 +221,7 @@ class jemmyattendingTab extends cbTabHandler {
 
 				/* Variables */
 				$query = "SELECT formatShortDate FROM #__jem_settings";
-				$_CB_database->setQuery( $query );
+				$_CB_database->setQuery($query);
 				$settings= $_CB_database->loadObjectList();
 
 				/*

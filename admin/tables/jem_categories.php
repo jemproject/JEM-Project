@@ -56,7 +56,7 @@ class jem_categories extends JTable
 	/**
 	* @param database A database connector object
 	*/
-	function jem_categories(& $db) {
+	function __construct(& $db) {
 		parent::__construct('#__jem_categories', 'id', $db);
 	}
 

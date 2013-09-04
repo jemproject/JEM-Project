@@ -73,7 +73,7 @@ class jem_venues extends JTable
 	/** @var int */
 	var $ordering 			= null;
 
-	function jem_venues(& $db) {
+	function __construct(& $db) {
 		parent::__construct('#__jem_venues', 'id', $db);
 	}
 

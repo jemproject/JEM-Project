@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
  * JEM groups Model class
  *
  * @package JEM
- * 
+ *
  */
 class jem_groups extends JTable
 {
@@ -31,7 +31,7 @@ class jem_groups extends JTable
 	/** @var date */
 	var $checked_out_time	= 0;
 
-	function jem_groups(& $db) {
+	function __construct(& $db) {
 		parent::__construct('#__jem_groups', 'id', $db);
 	}
 
@@ -39,7 +39,7 @@ class jem_groups extends JTable
 	function check()
 	{
 		// Not typed in a category name?
-		if (trim( $this->name ) == '') {
+		if (trim($this->name) == '') {
 			$this->_error = JText::_('COM_JEM_ADD_GROUP_NAME');
 			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
 			return false;
