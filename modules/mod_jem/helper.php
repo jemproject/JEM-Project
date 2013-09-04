@@ -28,8 +28,6 @@ class modJEMHelper
 	 */
 	static function getList(&$params)
 	{
-		global $app;
-
 		$db = JFactory::getDBO();
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);

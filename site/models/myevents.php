@@ -34,14 +34,12 @@ class JEMModelMyevents extends JModelLegacy
 	 */
 	var $_total_events = null;
 
-
 	/**
 	 * Pagination object
 	 *
 	 * @var object
 	 */
 	var $_pagination_events = null;
-
 
 	/**
 	 * Constructor
@@ -51,11 +49,8 @@ class JEMModelMyevents extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app =  JFactory::getApplication();
-		$jemsettings =  JEMHelper::config();
-
-		// Get the paramaters of the active menu item
-		$params =  $app->getParams('com_jem');
+		$app = JFactory::getApplication();
+		$jemsettings = JEMHelper::config();
 
 		//get the number of events from database
 
@@ -64,7 +59,6 @@ class JEMModelMyevents extends JModelLegacy
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
-
 	}
 
 	/**
@@ -78,29 +72,23 @@ class JEMModelMyevents extends JModelLegacy
 		$pop = JRequest::getBool('pop');
 
 		// Lets load the content if it doesn't already exist
-		if ( empty($this->_events))
-		{
+		if ( empty($this->_events)) {
 			$query = $this->_buildQueryEvents();
 			$pagination = $this->getEventsPagination();
 
-			if ($pop)
-			{
+			if ($pop) {
 				$this->_events = $this->_getList($query);
-			} else
-			{
+			} else {
 				$pagination = $this->getEventsPagination();
 				$this->_events = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 			}
 		}
 
-
-		if($this->_events)
-		{
+		if($this->_events) {
 			$this->_events = JEMHelper::getAttendeesNumbers($this->_events);
 
 			$count = count($this->_events);
-			for($i = 0; $i < $count; $i++)
-			{
+			for($i = 0; $i < $count; $i++) {
 				$item = $this->_events[$i];
 				$item->categories = $this->getCategories($item->eventid);
 
@@ -127,8 +115,7 @@ class JEMModelMyevents extends JModelLegacy
 		$user 	= JFactory::getUser();
 		$userid = (int) $user->get('id');
 
-		if (count($cid))
-		{
+		if (count($cid)) {
 			$cids = implode(',', $cid);
 
 			$query = 'UPDATE #__jem_events'
@@ -139,12 +126,10 @@ class JEMModelMyevents extends JModelLegacy
 
 			$this->_db->setQuery($query);
 
-		if (!$this->_db->query())
-		{
-			$this->setError($this->_db->getErrorMsg());
-			return false;
-		}
-
+			if (!$this->_db->query()) {
+				$this->setError($this->_db->getErrorMsg());
+				return false;
+			}
 		}
 	}
 
@@ -158,8 +143,7 @@ class JEMModelMyevents extends JModelLegacy
 	function getTotalEvents()
 	{
 		// Lets load the total nr if it doesn't already exist
-		if ( empty($this->_total_events))
-		{
+		if ( empty($this->_total_events)) {
 			$query = $this->_buildQueryEvents();
 			$this->_total_events = $this->_getListCount($query);
 		}
@@ -177,8 +161,7 @@ class JEMModelMyevents extends JModelLegacy
 	function getEventsPagination()
 	{
 		// Lets load the content if it doesn't already exist
-		if ( empty($this->_pagination_events))
-		{
+		if ( empty($this->_pagination_events)) {
 			jimport('joomla.html.pagination');
 			$this->_pagination_events = new JPagination($this->getTotalEvents(), $this->getState('limitstart'), $this->getState('limit'));
 		}
@@ -214,7 +197,7 @@ class JEMModelMyevents extends JModelLegacy
 				. $orderby
 				;
 
-				return $query;
+		return $query;
 	}
 
 
@@ -226,7 +209,7 @@ class JEMModelMyevents extends JModelLegacy
 	 */
 	function _buildOrderBy()
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		$filter_order		= $app->getUserStateFromRequest('com_jem.myevents.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myevents.filter_order_Dir', 'filter_order_Dir', '', 'word');
@@ -252,17 +235,17 @@ class JEMModelMyevents extends JModelLegacy
 	 */
 	function _buildWhere()
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 		$task = JRequest::getWord('task');
 		// Get the paramaters of the active menu item
-		$params =  $app->getParams();
+		$params = $app->getParams();
 
-		$jemsettings =  JEMHelper::config();
+		$jemsettings = JEMHelper::config();
 
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
 
-		$filter_state 	= $app->getUserStateFromRequest('com_jem.myevents.filter_state', 'filter_state', '', 'word');
+// 		$filter_state 	= $app->getUserStateFromRequest('com_jem.myevents.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.myevents.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.myevents.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
@@ -290,26 +273,23 @@ class JEMModelMyevents extends JModelLegacy
 		}
 		// === END Excluded categories add === //
 
-		if ($jemsettings->filter)
-		{
-			if ($search && $filter == 1) {
-				$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 2) {
-				$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 3) {
-				$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 4) {
-				$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 5) {
-				$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
+		if ($jemsettings->filter && $search) {
+			switch($filter) {
+				case 1:
+					$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
+					break;
+				case 2:
+					$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
+					break;
+				case 3:
+					$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
+					break;
+				case 4:
+					$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
+					break;
+				case 5:
+				default:
+					$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
 			}
 		}
 
@@ -334,7 +314,6 @@ class JEMModelMyevents extends JModelLegacy
 		;
 
 		$this->_db->setQuery( $query );
-
 		$this->_cats = $this->_db->loadObjectList();
 
 		return $this->_cats;

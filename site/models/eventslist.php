@@ -41,12 +41,8 @@ class JEMModelEventslist extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app =  JFactory::getApplication();
-		$jemsettings =  JEMHelper::config();
-
-
-		// Get the paramaters of the active menu item
-		$params 	=  $app->getParams('com_jem');
+		$app = JFactory::getApplication();
+		$jemsettings = JEMHelper::config();
 
 		//get the number of events from database
 		//$limit		= $app->getUserStateFromRequest('com_jem.eventslist.limit', 'limit', $params->def('display_num', 0), 'int');
@@ -55,8 +51,6 @@ class JEMModelEventslist extends JModelLegacy
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
-
-
 	}
 
 	/**
@@ -198,7 +192,7 @@ class JEMModelEventslist extends JModelLegacy
 
 	function _buildOrderBy()
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		$filter_order		= $app->getUserStateFromRequest('com_jem.eventslist.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.eventslist.filter_order_Dir', 'filter_order_Dir', '', 'word');
@@ -224,21 +218,20 @@ class JEMModelEventslist extends JModelLegacy
 	 */
 	function _buildWhere()
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 		$task 		= JRequest::getWord('task');
-		$params 	=  $app->getParams();
-		$jemsettings =  JEMHelper::config();
+		$params 	= $app->getParams();
+		$jemsettings = JEMHelper::config();
 
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
 
 		$catswitch = $params->get('categoryswitch', '0');
 
-		$filter_state 	= $app->getUserStateFromRequest('com_jem.eventslist.filter_state', 'filter_state', '', 'word');
+// 		$filter_state 	= $app->getUserStateFromRequest('com_jem.eventslist.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.eventslist.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.eventslist.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
-
 
 		$where = array();
 
@@ -251,26 +244,18 @@ class JEMModelEventslist extends JModelLegacy
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access  <= '.$gid;
 
-
 		// get included categories
-		if ($catswitch == 1)
-		{
-
+		if ($catswitch == 1) {
 			$included_cats = trim($params->get('categoryswitchcats', ''));
 
 			if ($included_cats != '') {
 				$cats_included = explode(',', $included_cats);
 				$where [] = '  (c.id=' . implode(' OR c.id=', $cats_included) . ')';
 			}
-
 		}
 
-
-
-
 		// get excluded categories
-		if ($catswitch == 0)
-		{
+		if ($catswitch == 0) {
 			$excluded_cats = trim($params->get('categoryswitchcats', ''));
 
 			if ($excluded_cats != '') {
@@ -280,39 +265,29 @@ class JEMModelEventslist extends JModelLegacy
 		}
 		// === END Excluded categories add === //
 
-
-
-		if ($jemsettings->filter)
-		{
-
-			if ($search && $filter == 1) {
-				$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
+		if ($jemsettings->filter && $search) {
+			switch($filter) {
+				case 1:
+					$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
+					break;
+				case 2:
+					$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
+					break;
+				case 3:
+					$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
+					break;
+				case 4:
+					$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
+					break;
+				case 5:
+				default:
+					$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
 			}
+		}
 
-			if ($search && $filter == 2) {
-				$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 3) {
-				$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 4) {
-				$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 5) {
-				$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
-			}
-
-		} // end tag of jemsettings->filter decleration
-
-		$where 		= (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
-
+		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
 
 		return $where;
-
-
 	}
 
 	function getCategories($id)
@@ -333,7 +308,6 @@ class JEMModelEventslist extends JModelLegacy
 				;
 
 		$this->_db->setQuery($query);
-
 		$this->_cats = $this->_db->loadObjectList();
 
 		return $this->_cats;
@@ -341,21 +315,14 @@ class JEMModelEventslist extends JModelLegacy
 
 	function _buildWhere2()
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		// Get the paramaters of the active menu item
-		$params 	=  $app->getParams();
-		$jemsettings =  JEMHelper::config();
-
+		$params 	= $app->getParams();
 		$catswitch = $params->get('categoryswitch', '0');
 
-
-
-
 		// get included categories
-		if ($catswitch == 1)
-		{
-
+		if ($catswitch == 1) {
 			$included_cats = trim($params->get('categoryswitchcats', ''));
 			if ($included_cats != '') {
 				$cats_included = explode(',', $included_cats);
@@ -363,13 +330,10 @@ class JEMModelEventslist extends JModelLegacy
 			} else {		// === END Exlucded categories add === //
 				$where = '';
 			}
-
 		}
 
 		// get excluded categories
-		if ($catswitch == 0)
-		{
-
+		if ($catswitch == 0) {
 			$excluded_cats = trim($params->get('categoryswitchcats', ''));
 
 			if ($excluded_cats != '') {
@@ -378,7 +342,6 @@ class JEMModelEventslist extends JModelLegacy
 			} else {		// === END Exlucded categories add === //
 				$where = '';
 			}
-
 		}
 
 		return $where;

@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Categoriesdetailed Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelCategoriesdetailed extends JModelLegacy
 {
@@ -93,7 +93,6 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 	{
 		$app = JFactory::getApplication();
 		$params = $app->getParams();
-		$jemsettings = JEMHelper::config();
 
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_categories))
@@ -121,7 +120,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 					$category->text = $category->catdescription;
 					$category->title = $category->catname;
 					JPluginHelper::importPlugin('content');
-					$results = $app->triggerEvent('onContentPrepare', array ('com_jem.categoriesdetailed', & $category, & $params, 0));
+					$app->triggerEvent('onContentPrepare', array ('com_jem.categoriesdetailed', & $category, & $params, 0));
 					$category->catdescription = $category->text;
 				}
 

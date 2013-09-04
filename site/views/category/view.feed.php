@@ -15,21 +15,20 @@ jimport('joomla.application.component.view');
  * JEM Component Category Feed
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewCategory extends JViewLegacy
 {
 	/**
 	 * Creates the Event Feed of the Category
 	 *
-	 * 
+	 *
 	 */
 	function display()
 	{
 		$app = JFactory::getApplication();
 
 		$doc = JFactory::getDocument();
-		$jemsettings = JEMHelper::config();
 
 		// Get some data from the model
 		JRequest::setVar('limit', $app->getCfg('feed_limit'));

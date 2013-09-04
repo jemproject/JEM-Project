@@ -26,9 +26,7 @@ class JEMAttachment extends JObject {
 		jimport('joomla.filesystem.folder');
 		require_once JPATH_SITE.'/components/com_jem/classes/image.class.php';
 
-		$app = JFactory::getApplication();
 		$user = JFactory::getUser();
-		$params = JComponentHelper::getParams('com_jem');
 		$jemsettings = JEMHelper::config();
 
 		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$object;
@@ -57,7 +55,7 @@ class JEMAttachment extends JObject {
 			}
 			// check size
 			if ($post_files['size'][$k] > $maxsizeinput) {
-				JError::raiseWarning(0, JText::sprintf('COM_JEM_ERROR_ATTACHEMENT_FILE_TOO_BIG', $file, $post_files['size'][$k], $maxsize));
+				JError::raiseWarning(0, JText::sprintf('COM_JEM_ERROR_ATTACHEMENT_FILE_TOO_BIG', $file, $post_files['size'][$k], $maxsizeinput));
 				continue;
 			}
 
@@ -122,9 +120,7 @@ class JEMAttachment extends JObject {
 	static function getAttachments($object) {
 		jimport('joomla.filesystem.file');
 		jimport('joomla.filesystem.folder');
-		$app = JFactory::getApplication();
-		$params = JComponentHelper::getParams('com_jem');
-		$jemsettings =  JEMHelper::config();
+		$jemsettings = JEMHelper::config();
 
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
@@ -169,7 +165,6 @@ class JEMAttachment extends JObject {
 	 * @param int $id
 	 */
 	static function getAttachmentPath($id) {
-		$params = JComponentHelper::getParams('com_jem');
 		$jemsettings = JEMHelper::config();
 
 		$user = JFactory::getUser();
@@ -207,9 +202,7 @@ class JEMAttachment extends JObject {
 	static function remove($id) {
 		jimport('joomla.filesystem.file');
 		jimport('joomla.filesystem.folder');
-		$app = JFactory::getApplication();
-		$params = JComponentHelper::getParams('com_jem');
-		$jemsettings =  JEMHelper::config();
+		$jemsettings = JEMHelper::config();
 
 		// then get info for files from db
 		$db = JFactory::getDBO();

@@ -55,11 +55,11 @@ class JEMModelDay extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app =  JFactory::getApplication();
-		$jemsettings =  JEMHelper::config();
+		$app = JFactory::getApplication();
+		$jemsettings = JEMHelper::config();
 
 		// Get the paramaters of the active menu item
-		$params 	=  $app->getParams('com_jem');
+		$params = $app->getParams('com_jem');
 
 		//get the number of events from database
 		$limit      = $app->getUserStateFromRequest('com_jem.day.limit', 'limit', $jemsettings->display_num, 'int');
@@ -80,21 +80,19 @@ class JEMModelDay extends JModelLegacy
 	 */
 	function setDate($date)
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		// Get the paramaters of the active menu item
-		$params 	=  $app->getParams('com_jem');
+		$params = $app->getParams('com_jem');
 
 		//0 means we have a direct request from a menuitem and without any parameters (eg: calendar module)
 		if ($date == 0) {
-
 			$dayoffset	= $params->get('days');
 			$timestamp	= mktime(0, 0, 0, date("m"), date("d") + $dayoffset, date("Y"));
 			$date		= strftime('%Y-%m-%d', $timestamp);
 
 		//a valid date  has 8 characters
 		} elseif (strlen($date) == 8) {
-
 			$year 	= substr($date, 0, -4);
 			$month	= substr($date, 4, -2);
 			$tag	= substr($date, 6);
@@ -105,14 +103,12 @@ class JEMModelDay extends JModelLegacy
 			} else {
 				//date isn't valid raise notice and use current date
 				$date = date('Ymd');
-				JError::raiseNotice( 'SOME_ERROR_CODE', JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'));
+				JError::raiseNotice('SOME_ERROR_CODE', JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'));
 			}
-
 		} else {
 			//date isn't valid raise notice and use current date
 			$date = date('Ymd');
-			JError::raiseNotice( 'SOME_ERROR_CODE', JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'));
-
+			JError::raiseNotice('SOME_ERROR_CODE', JText::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'));
 		}
 
 		$this->_date = $date;
@@ -124,9 +120,9 @@ class JEMModelDay extends JModelLegacy
 	 * @access public
 	 * @return array
 	 */
-	function &getData( )
+	function &getData()
 	{
-		$pop	= JRequest::getBool('pop');
+		$pop = JRequest::getBool('pop');
 
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
@@ -134,7 +130,7 @@ class JEMModelDay extends JModelLegacy
 			$query = $this->_buildQuery();
 
 			if ($pop) {
-				$this->_data = $this->_getList( $query );
+				$this->_data = $this->_getList($query);
 			} else {
 				$pagination = $this->getPagination();
 				$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
@@ -186,7 +182,7 @@ class JEMModelDay extends JModelLegacy
 		if (empty($this->_pagination))
 		{
 			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
+			$this->_pagination = new JPagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
 		}
 
 		return $this->_pagination;
@@ -229,7 +225,7 @@ class JEMModelDay extends JModelLegacy
 	 */
 	function _buildOrderBy()
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		$filter_order		= $app->getUserStateFromRequest('com_jem.day.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.day.filter_order_Dir', 'filter_order_Dir', '', 'word');
@@ -244,7 +240,6 @@ class JEMModelDay extends JModelLegacy
 		}
 
 		return $orderby;
-
 	}
 
 	/**
@@ -256,20 +251,15 @@ class JEMModelDay extends JModelLegacy
 	function _buildWhere()
 	{
 		$app = JFactory::getApplication();
-		$task = JRequest::getWord('task');
-		$params = $app->getParams();
 		$jemsettings = JEMHelper::config();
 
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
 
-		$nulldate = '0000-00-00';
-
-		$filter_state 	= $app->getUserStateFromRequest('com_jem.day.filter_state', 'filter_state', '', 'word');
+// 		$filter_state 	= $app->getUserStateFromRequest('com_jem.day.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.day.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.day.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
-
 
 		$where = array();
 
@@ -278,7 +268,6 @@ class JEMModelDay extends JModelLegacy
 		$where[] = ' a.published = 1';
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access  <= '.$gid;
-
 
 		// Second is to only select events of the specified day
 		$where[]= ' (\''.$this->_date.'\' BETWEEN (a.dates) AND (IF (a.enddates >= a.dates, a.enddates, a.dates)) OR \''.$this->_date.'\' = a.dates)';
@@ -292,28 +281,22 @@ class JEMModelDay extends JModelLegacy
 			$where [] = '  (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
 		}
 		// === END Excluded categories add === //
-		 * */
+		*/
 
-		if ($jemsettings->filter)
+		if ($jemsettings->filter && $search)
 		{
-			if ($search && $filter == 1) {
-				$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 2) {
-				$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 3) {
-				$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 4) {
-				$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 5) {
-				$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
+			switch($filter) {
+				case 1:
+					$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
+				case 2:
+					$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
+				case 3:
+					$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
+				case 4:
+					$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
+				case 5:
+				default:
+					$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
 			}
 		}
 
@@ -354,7 +337,7 @@ class JEMModelDay extends JModelLegacy
 				. ' AND c.access <= '.$gid;
 				;
 
-		$this->_db->setQuery( $query );
+		$this->_db->setQuery($query);
 
 		$this->_cats = $this->_db->loadObjectList();
 

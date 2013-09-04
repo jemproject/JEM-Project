@@ -56,12 +56,7 @@ class JEMModelCalendar extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app = JFactory::getApplication();
-
 		$this->setdate(time());
-
-		// Get the paramaters of the active menu item
-		$params = $app->getParams();
 	}
 
 	function setdate($date)
@@ -81,9 +76,9 @@ class JEMModelCalendar extends JModelLegacy
 		$params = $app->getParams();
 
 		// Lets load the content if it doesn't already exist
-		if ( empty($this->_data)) {
+		if (empty($this->_data)) {
 			$query = $this->_buildQuery();
-			$this->_data = $this->_getList( $query );
+			$this->_data = $this->_getList($query);
 
 			$multi = array();
 

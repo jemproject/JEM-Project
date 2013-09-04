@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
 /**
  * HTML View class for the Venue View
@@ -22,7 +22,7 @@ class JEMViewVenue extends JViewLegacy
 	 * Creates the Venue View
 	 *
 	 */
-	function display( $tpl = null )
+	function display($tpl = null)
 	{
 		$app = JFactory::getApplication();
 
@@ -30,12 +30,11 @@ class JEMViewVenue extends JViewLegacy
 		$document 	= JFactory::getDocument();
 		$menu		= $app->getMenu();
 		$jemsettings = JEMHelper::config();
-		$db  		=  JFactory::getDBO();
+		$db 		= JFactory::getDBO();
 
 		//get menu information
 		$menu		= $app->getMenu();
 		$item = $menu->getActive();
-
 
 		$params 	= $app->getParams('com_jem');
 		$uri 		= JFactory::getURI();
@@ -46,12 +45,12 @@ class JEMViewVenue extends JViewLegacy
 
 
 		// get variables
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.venue.filter_order', 'filter_order', 	'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.venue.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.venue.filter_state', 'filter_state', 	'*', 'word' );
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.venue.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.venue.filter_search', 'filter_search', '', 'string' );
-		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
+		$filter_order		= $app->getUserStateFromRequest('com_jem.venue.filter_order', 'filter_order', 	'a.dates', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.venue.filter_order_Dir', 'filter_order_Dir',	'', 'word');
+// 		$filter_state 		= $app->getUserStateFromRequest('com_jem.venue.filter_state', 'filter_state', 	'*', 'word');
+		$filter 			= $app->getUserStateFromRequest('com_jem.venue.filter', 'filter', '', 'int');
+		$search 			= $app->getUserStateFromRequest('com_jem.venue.filter_search', 'filter_search', '', 'string');
+		$search 			= $db->escape(trim(JString::strtolower($search)));
 
 		$task 				= JRequest::getWord('task');
 
@@ -63,12 +62,10 @@ class JEMViewVenue extends JViewLegacy
 		$rows 		= $this->get('Data');
 		$venue	 	= $this->get('Venue');
 
-
 		//does the venue exist?
-		if ($venue->id == 0)
-		{
+		if ($venue->id == 0) {
 			// TODO Translation
-			return JError::raiseError( 404, JText::sprintf( 'Venue #%d not found', $venue->id ) );
+			return JError::raiseError(404, JText::sprintf('Venue #%d not found', $venue->id));
 		}
 
 		//are events available?
@@ -94,28 +91,26 @@ class JEMViewVenue extends JViewLegacy
 
 		//create the pathway
 		if ($task == 'archive') {
-			$pathway->addItem( JText::_( 'COM_JEM_ARCHIVE' ).' - '.$venue->venue, JRoute::_('index.php?option=com_jem&view=venue&task=archive&id='.$venue->slug));
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE').' - '.$venue->venue, JRoute::_('index.php?option=com_jem&view=venue&task=archive&id='.$venue->slug));
 			$print_link = JRoute::_('index.php?option=com_jem&view=venue&id='. $venue->slug .'&task=archive&print=1&tmpl=component');
-			$pagetitle = $venue->venue.' - '.JText::_( 'COM_JEM_ARCHIVE' );
+			$pagetitle = $venue->venue.' - '.JText::_('COM_JEM_ARCHIVE');
 		} else {
-			$pathway->addItem( $venue->venue, JRoute::_('index.php?option=com_jem&view=venue&id='.$venue->slug));
+			$pathway->addItem($venue->venue, JRoute::_('index.php?option=com_jem&view=venue&id='.$venue->slug));
 			$print_link = JRoute::_('index.php?option=com_jem&view=venue&id='. $venue->slug .'&print=1&tmpl=component');
 			$pagetitle = $venue->venue;
 		}
 
 		//set Page title
-		$document->setTitle( $pagetitle );
-		$document->setMetaData( 'title' , $pagetitle );
-		$document->setMetadata('keywords', $venue->meta_keywords );
-		$document->setDescription( strip_tags($venue->meta_description) );
-
+		$document->setTitle($pagetitle);
+		$document->setMetaData('title' , $pagetitle);
+		$document->setMetadata('keywords', $venue->meta_keywords);
+		$document->setDescription(strip_tags($venue->meta_description));
 
 		//Check if the user has access to the add-eventform
 		$maintainer = JEMUser::ismaintainer();
-		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
+		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
-		if ($maintainer || $genaccess )
-		{
+		if ($maintainer || $genaccess) {
 			$addeventlink = 1;
 		} else {
 			$addeventlink = 0;
@@ -123,9 +118,8 @@ class JEMViewVenue extends JViewLegacy
 
 		//Check if the user has access to the add-venueform
 		$maintainer2 = JEMUser::addvenuegroups();
-		$genaccess2 	= JEMUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
-		if ($maintainer2 || $genaccess2 )
-		{
+		$genaccess2 	= JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
+		if ($maintainer2 || $genaccess2) {
 			$addvenuelink = 1;
 		} else {
 			$addvenuelink = 0;
@@ -134,8 +128,7 @@ class JEMViewVenue extends JViewLegacy
 		//Check if the user has access to the edit-venueform
 		$maintainer3 = JEMUser::editvenuegroups();
 		$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
-		if ($maintainer3 || $genaccess3 )
-		{
+		if ($maintainer3 || $genaccess3) {
 			$allowedtoeditvenue = 1;
 		} else {
 			$allowedtoeditvenue = 0;
@@ -147,7 +140,7 @@ class JEMViewVenue extends JViewLegacy
 			$venue->text	= $venue->locdescription;
 			$venue->title 	= $venue->venue;
 			JPluginHelper::importPlugin('content');
-			$results = $app->triggerEvent( 'onContentPrepare', array('com_jem.venue', &$venue, &$params, 0 ));
+			$app->triggerEvent('onContentPrepare', array('com_jem.venue', &$venue, &$params, 0));
 			$venuedescription = $venue->text;
 		}
 
@@ -158,43 +151,41 @@ class JEMViewVenue extends JViewLegacy
 
 		//prepare the url for output
 		if (strlen(htmlspecialchars($venue->url, ENT_QUOTES)) > 35) {
-			$venue->urlclean = substr( htmlspecialchars($venue->url, ENT_QUOTES), 0 , 35).'...';
+			$venue->urlclean = substr(htmlspecialchars($venue->url, ENT_QUOTES), 0 , 35).'...';
 		} else {
 			$venue->urlclean = htmlspecialchars($venue->url, ENT_QUOTES);
 		}
 
 		//create flag
 		if ($venue->country) {
-			$venue->countryimg = JEMOutput::getFlag( $venue->country );
+			$venue->countryimg = JEMOutput::getFlag($venue->country);
 		}
 
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
 
-
 		//search filter
 		$filters = array();
 
 		if ($jemsettings->showtitle == 1) {
-			$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_TITLE' ) );
+			$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_TITLE'));
 		}
 		if ($jemsettings->showlocate == 1) {
-			$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_VENUE' ) );
+			$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_VENUE'));
 		}
 		if ($jemsettings->showcity == 1) {
-			$filters[] = JHTML::_('select.option', '3', JText::_( 'COM_JEM_CITY' ) );
+			$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_CITY'));
 		}
 		if ($jemsettings->showcat == 1) {
-			$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_CATEGORY' ) );
+			$filters[] = JHTML::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
 		}
 		if ($jemsettings->showstate == 1) {
-			$filters[] = JHTML::_('select.option', '5', JText::_( 'COM_JEM_STATE' ) );
+			$filters[] = JHTML::_('select.option', '5', JText::_('COM_JEM_STATE'));
 		}
-		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
+		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
 
 		// search filter
 		$lists['search']= $search;
-
 
 		$this->lists				= $lists;
 		$this->action				= $uri->toString();
@@ -204,8 +195,8 @@ class JEMViewVenue extends JViewLegacy
 		$this->venue				= $venue;
 		$this->print_link			= $print_link;
 		$this->params				= $params;
-		$this->addvenuelink		= $addvenuelink;
-		$this->addeventlink		= $addeventlink;
+		$this->addvenuelink			= $addvenuelink;
+		$this->addeventlink			= $addeventlink;
 		$this->limage				= $limage;
 		$this->venuedescription		= $venuedescription;
 		$this->pagination			= $pagination;
@@ -220,8 +211,6 @@ class JEMViewVenue extends JViewLegacy
 
 	/**
 	 * Manipulate Data
-	 *
-	 *
 	 */
 	function &getRows()
 	{
@@ -232,8 +221,7 @@ class JEMViewVenue extends JViewLegacy
 		}
 
 		$k = 0;
-		foreach($this->rows as $key => $row)
-		{
+		foreach($this->rows as $key => $row) {
 			$row->odd   = $k;
 
 			$this->rows[$key] = $row;
@@ -242,6 +230,5 @@ class JEMViewVenue extends JViewLegacy
 
 		return $this->rows;
 	}
-
 }
 ?>

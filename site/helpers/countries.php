@@ -5,14 +5,14 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- * 
- * 
+ *
+ *
  * Country list: http://erikastokes.com/mysql-help/mysql-country-table.php
  * Api country checker: http://api.worldbank.org/countries/ss
- * 
+ *
  * Lat+long finder: http://www.findlatitudeandlongitude.com/?loc=
  * For example:  http://www.findlatitudeandlongitude.com/?loc=Sint+Maarten&id=316082
- * 
+ *
  */
 
 defined('_JEXEC') or die;
@@ -58,7 +58,7 @@ class JEMHelperCountries
 		$country["BVT"] = array("iso2" => "BV", "name" => "Bouvet Island");
 		$country["BRA"] = array("iso2" => "BR", "name" => "Brazil, Federative Republic of");
 		$country["IOT"] = array("iso2" => "IO", "name" => "British Indian Ocean Territory");
-	    $country["VGB"] = array("iso2" => "VG", "name" => "Virgin Islands (British), British Virgin Islands");
+		$country["VGB"] = array("iso2" => "VG", "name" => "Virgin Islands (British), British Virgin Islands");
 		$country["BRN"] = array("iso2" => "BN", "name" => "Brunei Darussalam");
 		$country["BGR"] = array("iso2" => "BG", "name" => "Bulgaria, Republic of");
 		$country["BFA"] = array("iso2" => "BF", "name" => "Burkina Faso");
@@ -76,7 +76,7 @@ class JEMHelperCountries
 		$country["CCK"] = array("iso2" => "CC", "name" => "Cocos (Keeling) Islands");
 		$country["COL"] = array("iso2" => "CO", "name" => "Colombia, Republic of");
 		$country["COM"] = array("iso2" => "KM", "name" => "Comoros, Union of the");
-        $country["COD"] = array("iso2" => "CD", "name" => "Congo, Democratic Republic of the");
+		$country["COD"] = array("iso2" => "CD", "name" => "Congo, Democratic Republic of the");
 		$country["COG"] = array("iso2" => "CG", "name" => "Congo, Republic of the");
 		$country["COK"] = array("iso2" => "CK", "name" => "Cook Islands");
 		$country["CRI"] = array("iso2" => "CR", "name" => "Costa Rica, Republic of");
@@ -521,7 +521,7 @@ class JEMHelperCountries
 		$countrycoord['YT'] = array(-12.83, 45.17);
 		$countrycoord['ZA'] = array(-29, 24);
 		$countrycoord['ZM'] = array(-15, 30);
-		$countrycoord['ZW'] = array(-20, 30);	
+		$countrycoord['ZW'] = array(-20, 30);
 		$countrycoord['BQ'] = array(17.48, -62.98);
 		$countrycoord['CW'] = array(10.0, -84.0);
 		$countrycoord['SX'] = array(18.03, -63.07);
@@ -534,10 +534,9 @@ class JEMHelperCountries
 	{
 		$countries = self::getCountries();
 		$options = array();
-		foreach ($countries AS $k => $c)
-		{
-			$name = explode(',', $c['name']);
-			$options[] = JHTML::_('select.option', $c['iso2'], JText::_($name[0]), $value_tag, $text_tag);
+		foreach ($countries as $country) {
+			$name = explode(',', $country['name']);
+			$options[] = JHTML::_('select.option', $country['iso2'], JText::_($name[0]), $value_tag, $text_tag);
 		}
 		return $options;
 	}

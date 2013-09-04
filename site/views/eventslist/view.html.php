@@ -37,8 +37,7 @@ class JEMViewEventslist extends JViewLegacy
 		$params 	= $app->getParams();
 		$uri 		= JFactory::getURI();
 		$pathway 	= $app->getPathWay();
-		$db  		=  JFactory::getDBO();
-
+		$db 		=  JFactory::getDBO();
 
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
@@ -47,21 +46,18 @@ class JEMViewEventslist extends JViewLegacy
 		// get variables
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_order', 'filter_order', 	'a.dates', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_state', 'filter_state', 	'*', 'word' );
+// 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_state', 'filter_state', 	'*', 'word' );
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.eventslist.filter', 'filter', '', 'int' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_search', 'filter_search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
-		$task 		= JRequest::getWord('task');
-
+		$task 				= JRequest::getWord('task');
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
 
-
 		//get data from model
 		$rows 	= $this->get('Data');
-
 
 		//are events available?
 		if (!$rows) {
@@ -70,10 +66,8 @@ class JEMViewEventslist extends JViewLegacy
 			$noevents = 0;
 		}
 
-
 		//params
 		$params->def( 'page_title', $item->title);
-
 
 		//pathway
 		$pathway->setItemName( 1, $item->title );
@@ -87,18 +81,15 @@ class JEMViewEventslist extends JViewLegacy
 			$pagetitle = $params->get('page_title');
 		}
 
-
 		//Set Page title
 		$document->setTitle($pagetitle);
 		$document->setMetaData( 'title' , $pagetitle );
-
 
 		//Check if the user has access to the form
 		$maintainer = JEMUser::ismaintainer();
 		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
-		if ($maintainer || $genaccess )
-		{
+		if ($maintainer || $genaccess ) {
 			$dellink = 1;
 		} else {
 			$dellink = 0;
@@ -110,7 +101,6 @@ class JEMViewEventslist extends JViewLegacy
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
-
 
 		//search filter
 		$filters = array();
@@ -135,7 +125,6 @@ class JEMViewEventslist extends JViewLegacy
 		// search filter
 		$lists['search']= $search;
 
-
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
 
@@ -153,7 +142,6 @@ class JEMViewEventslist extends JViewLegacy
 		$this->pagetitle		= $pagetitle;
 
 		parent::display($tpl);
-
 	}
 
 	/**
@@ -182,7 +170,5 @@ class JEMViewEventslist extends JViewLegacy
 
 		return $this->rows;
 	}
-
-
 }
 ?>

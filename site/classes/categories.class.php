@@ -30,14 +30,14 @@ class JEMCategories
 	 * Category data
 	 *
 	 * @var array
-	*/
+	 */
 	var $category = array();
 
 	/**
 	 * Constructor
 	 *
 	 * @param int category id
-	*/
+	 */
 	function JEMCategories($cid)
 	{
 		$this->id = $cid;
@@ -194,7 +194,6 @@ class JEMCategories
 					}
 				}
 
-				$pt = $v->parent_id;
 				$list[$id] = $v;
 				$list[$id]->treename = "$indent$txt";
 				$list[$id]->children = count(@$children[$id]);

@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
 /**
  * HTML View class for the Day View
@@ -24,9 +24,9 @@ class JEMViewDay extends JViewLegacy
 	 *
 	 *
 	 */
-	function display( $tpl = null )
+	function display($tpl = null)
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		//initialize variables
 		$document 	= JFactory::getDocument();
@@ -34,7 +34,7 @@ class JEMViewDay extends JViewLegacy
 		$menu		= $app->getMenu();
 		$item 		= $menu->getActive();
 		$params 	= $app->getParams();
-		$db  		=  JFactory::getDBO();
+		$db  		= JFactory::getDBO();
 		$uri 		= JFactory::getURI();
 
 		//add css file
@@ -42,12 +42,12 @@ class JEMViewDay extends JViewLegacy
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		// get variables
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.day.filter_order', 'filter_order', 	'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.day.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.day.filter_state', 'filter_state', 	'*', 'word' );
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.day.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.day.filter_search', 'filter_search', '', 'string' );
-		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
+		$filter_order		= $app->getUserStateFromRequest('com_jem.day.filter_order', 'filter_order', 	'a.dates', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.day.filter_order_Dir', 'filter_order_Dir',	'', 'word');
+// 		$filter_state 		= $app->getUserStateFromRequest('com_jem.day.filter_state', 'filter_state', 	'*', 'word');
+		$filter 			= $app->getUserStateFromRequest('com_jem.day.filter', 'filter', '', 'int');
+		$search 			= $app->getUserStateFromRequest('com_jem.day.filter_search', 'filter_search', '', 'string');
+		$search 			= $db->escape(trim(JString::strtolower($search)));
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
@@ -58,7 +58,6 @@ class JEMViewDay extends JViewLegacy
 
 		//get data from model
 		$rows 		= $this->get('Data');
-		$total 		= $this->get('Total');
 		$day		= $this->get('Day');
 
 		$daydate = JEMOutput::formatdate($day);
@@ -71,26 +70,24 @@ class JEMViewDay extends JViewLegacy
 		}
 
 		//params
-		$params->def( 'page_title', $item->title);
-
+		$params->def('page_title', $item->title);
 
 		$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1');
 
 		//pathway
-		$pathway->setItemName( 1, $item->title );
+		$pathway->setItemName(1, $item->title);
 
 		//Set Page title
 		if (!$item->title) {
 			$document->setTitle($params->get('page_title'));
-			$document->setMetadata( 'keywords' , $params->get('page_title') );
+			$document->setMetadata('keywords' , $params->get('page_title'));
 		}
 
 		//Check if the user has access to the form
 		$maintainer = JEMUser::ismaintainer();
-		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
+		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
-		if ($maintainer || $genaccess )
-		{
+		if ($maintainer || $genaccess) {
 			$dellink = 1;
 		} else {
 			$dellink = 0;
@@ -103,26 +100,25 @@ class JEMViewDay extends JViewLegacy
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
 
-
 		//search filter
 		$filters = array();
 
 		if ($jemsettings->showtitle == 1) {
-			$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_TITLE' ) );
+			$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_TITLE'));
 		}
 		if ($jemsettings->showlocate == 1) {
-			$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_VENUE' ) );
+			$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_VENUE'));
 		}
 		if ($jemsettings->showcity == 1) {
-			$filters[] = JHTML::_('select.option', '3', JText::_( 'COM_JEM_CITY' ) );
+			$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_CITY'));
 		}
 		if ($jemsettings->showcat == 1) {
-			$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_CATEGORY' ) );
+			$filters[] = JHTML::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
 		}
 		if ($jemsettings->showstate == 1) {
-			$filters[] = JHTML::_('select.option', '5', JText::_( 'COM_JEM_STATE' ) );
+			$filters[] = JHTML::_('select.option', '5', JText::_('COM_JEM_STATE'));
 		}
-		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
+		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
 
 		// search filter
 		$lists['search']= $search;
@@ -145,7 +141,6 @@ class JEMViewDay extends JViewLegacy
 		$this->daydate			= $daydate;
 
 		parent::display($tpl);
-
 	}
 
 	/**
@@ -164,8 +159,7 @@ class JEMViewDay extends JViewLegacy
 		}
 
 		$k = 0;
-		foreach($this->rows as $key => $row)
-		{
+		foreach($this->rows as $key => $row) {
 			$row->odd = $k;
 
 			$this->rows[$key] = $row;

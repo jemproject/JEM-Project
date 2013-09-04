@@ -23,7 +23,7 @@ class JEMOutput {
 	static function footer()
 	{
 		$app = JFactory::getApplication();
-		$params = $app->getParams();
+// 		$params = $app->getParams();
 
 		if ($app->input->get('print','','int')) {
 			//button in popup
@@ -352,7 +352,6 @@ class JEMOutput {
 	static function publishbutton()
 	{
 		$app = JFactory::getApplication();
-		$settings = JEMHelper::config();
 
 		JHTML::_('behavior.tooltip');
 
@@ -382,7 +381,6 @@ class JEMOutput {
 	static function trashbutton()
 	{
 		$app = JFactory::getApplication();
-		$settings = JEMHelper::config();
 
 		JHTML::_('behavior.tooltip');
 
@@ -414,7 +412,6 @@ class JEMOutput {
 	static function unpublishbutton()
 	{
 		$app = JFactory::getApplication();
-		$settings = JEMHelper::config();
 
 		JHTML::_('behavior.tooltip');
 
@@ -446,7 +443,6 @@ class JEMOutput {
 	static function exportbutton($eventid)
 	{
 		$app = JFactory::getApplication();
-		$settings = JEMHelper::config();
 
 		// Emailaddress
 		$jinput = JFactory::getApplication()->input;
@@ -490,7 +486,6 @@ class JEMOutput {
 	static function backbutton($backlink, $view)
 	{
 		$app = JFactory::getApplication();
-		$settings = JEMHelper::config();
 
 		$id = JRequest::getInt('id');
 		$fid = JRequest::getInt('Itemid');
@@ -523,7 +518,6 @@ class JEMOutput {
 	 */
 	static function mapicon($data)
 	{
-		$app = JFactory::getApplication();
 		$jemsettings = JEMHelper::config();
 
 		//Link to map
@@ -546,11 +540,11 @@ class JEMOutput {
 		if ($data->longitude == 0.000000) {
 			$data->longitude = null;
 		}
-		
+
 		$url1 = 'http://maps.google.'.$jemsettings->tld.'/maps?hl='.$jemsettings->lg.'&q='.str_replace(" ", "+", $data->street).', '.$data->postalCode.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.mb_ereg_replace("&", "+", $data->venue).')&ie=UTF8&z=15&iwloc=B&output=embed" ';
 
 		//var_dump($url1);exit;
-		
+
 		//google map link or include
 		switch ($jemsettings->showmapserv)
 		{

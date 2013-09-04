@@ -9,13 +9,13 @@
 
 defined('_JEXEC') or die;
 
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
 /**
  * HTML View class for the Categoriesdetailed View
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewCategoriesdetailed extends JViewLegacy
 {
@@ -24,62 +24,59 @@ class JEMViewCategoriesdetailed extends JViewLegacy
 	 *
 	 *
 	 */
-	function display( $tpl = null )
+	function display($tpl = null)
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		//initialise variables
-		$document 		=  JFactory::getDocument();
-		$jemsettings 	=  JEMHelper::config();
-		$model 			=  $this->getModel();
-		$menu			=  $app->getMenu();
-		$item    		=  $menu->getActive();
-		$params 		=  $app->getParams();
+		$document 		= JFactory::getDocument();
+		$jemsettings 	= JEMHelper::config();
+		$model 			= $this->getModel();
+		$menu			= $app->getMenu();
+		$item			= $menu->getActive();
+		$params 		= $app->getParams();
 
 		//get vars
-		$limitstart		=  JRequest::getInt('limitstart');
-		$limit			=  JRequest::getInt('limit', $params->get('cat_num'));
-		$pathway 		=  $app->getPathWay();
-		$task 			=  JRequest::getWord('task');
+		$pathway 		= $app->getPathWay();
+		$task 			= JRequest::getWord('task');
 
 		//Get data from the model
-		$categories		=  $this->get('Data');
-		$total 			=  $this->get('Total');
-    	
-		// Create the pagination object   
-    	$pagination =  $this->get('Pagination');
+		$categories		= $this->get('Data');
+
+		// Create the pagination object
+		$pagination = $this->get('Pagination');
 
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
-		$params->def( 'page_title', $item->title);
+		$params->def('page_title', $item->title);
 
 		//pathway
 		if($item) $pathway->setItemName(1, $item->title);
-		
-		if ( $task == 'archive' ) {
-			$pathway->addItem(JText::_( 'COM_JEM_ARCHIVE' ), JRoute::_('index.php?view=categoriesdetailed&task=archive') );
-			$print_link = JRoute::_( 'index.php?option=com_jem&view=categoriesdetailed&task=archive&print=1&tmpl=component' );
-			$pagetitle = $params->get('page_title').' - '.JText::_( 'COM_JEM_ARCHIVE' );
+
+		if ($task == 'archive') {
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=categoriesdetailed&task=archive'));
+			$print_link = JRoute::_('index.php?option=com_jem&view=categoriesdetailed&task=archive&print=1&tmpl=component');
+			$pagetitle = $params->get('page_title').' - '.JText::_('COM_JEM_ARCHIVE');
 		} else {
-			$print_link = JRoute::_( 'index.php?option=com_jem&view=categoriesdetailed&print=1&tmpl=component' );
+			$print_link = JRoute::_('index.php?option=com_jem&view=categoriesdetailed&print=1&tmpl=component');
 			$pagetitle = $params->get('page_title');
 		}
+
 		//set Page title
-		$document->setTitle( $pagetitle );
-		$document->setMetadata( 'title' , $pagetitle );
-		$document->setMetadata( 'keywords' , $pagetitle );
+		$document->setTitle($pagetitle);
+		$document->setMetadata('title' , $pagetitle);
+		$document->setMetadata('keywords' , $pagetitle);
 
 		//Check if the user has access to the form
 		$maintainer = JEMUser::ismaintainer();
-		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
+		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
-		if ($maintainer || $genaccess ) 
-		{ 
-		$dellink = 1;
+		if ($maintainer || $genaccess) {
+			$dellink = 1;
 		} else {
-		$dellink = 0;	
+			$dellink = 0;
 		}
 
 		//add alternate feed link
@@ -88,10 +85,6 @@ class JEMViewCategoriesdetailed extends JViewLegacy
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
-
-		
-		
-		
 
 		// Create the pagination object
 		jimport('joomla.html.pagination');
@@ -106,16 +99,14 @@ class JEMViewCategoriesdetailed extends JViewLegacy
 		$this->jemsettings		= $jemsettings;
 		$this->task				= $task;
 		$this->pagetitle		= $pagetitle;
-		
 
 		parent::display($tpl);
-
-	}//function end
+	}
 
 	/**
 	 * Manipulate Data
 	 *
-	 * 
+	 *
 	 */
 	function getRows()
 	{
@@ -124,12 +115,12 @@ class JEMViewCategoriesdetailed extends JViewLegacy
 		if (!$count) {
 			return;
 		}
-		
+
 		$k = 0;
 		foreach($this->rows as $key => $row)
 		{
-			$row->odd   = $k;
-			
+			$row->odd = $k;
+
 			$this->rows[$key] = $row;
 			$k = 1 - $k;
 		}

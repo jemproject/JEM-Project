@@ -28,8 +28,6 @@ class modJEMwideHelper
 	 */
 	static function getList(&$params)
 	{
-		$app = JFactory::getApplication();
-
 		$db = JFactory::getDBO();
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
@@ -245,7 +243,7 @@ class modJEMwideHelper
 			//current multidayevent (Until 18.08.2008)
 			if($row->enddates && $enddates_stamp > $today_stamp && $dates_stamp < $today_stamp) {
 				//format date
-				$result = JEMOutput::formatdate($end->dates, $params->get('formatdate', '%d.%m.%Y') );
+				$result = JEMOutput::formatdate($row->enddates, $params->get('formatdate', '%d.%m.%Y') );
 				$result = JText::sprintf('MOD_JEM_WIDE_UNTIL', $result);
 			}
 		}

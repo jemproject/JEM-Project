@@ -55,7 +55,7 @@ class JEMModelEditvenue extends JModelLegacy
 	 *
 	 * @return array
 	 */
-	function &getVenue(  )
+	function &getVenue()
 	{
 		$app = JFactory::getApplication();
 
@@ -67,39 +67,32 @@ class JEMModelEditvenue extends JModelLegacy
 
 		// ID exists => edit
 		if ($this->_id) {
-
 			// Load the Event data
 			$this->_loadVenue();
 
 			// Error if allready checked out
-			if ($this->_venue->isCheckedOut( $user->get('id') )) {
-				$app->redirect( 'index.php?view='.$view, JText::_( 'COM_JEM_THE_VENUE' ).' '.$this->_venue->venue.' '.JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ) );
+			if ($this->_venue->isCheckedOut($user->get('id'))) {
+				$app->redirect('index.php?view='.$view, JText::_('COM_JEM_THE_VENUE').' '.$this->_venue->venue.' '.JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
 			} else {
-				$this->_venue->checkout( $user->get('id') );
+				$this->_venue->checkout($user->get('id'));
 			}
 
 			//access check
 			$maintainer3 = JEMUser::editvenuegroups();
 			$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $this->_venue->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
-			if ($maintainer3 || $genaccess3 )
-			{
-				$allowedtoeditvenue = 1;
+			if ($maintainer3 || $genaccess3) {
+// 				$allowedtoeditvenue = 1;
 			} else {
 				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			}
 
-
-
-
 		// ID does not exist => add
 		} else {
-
 			//access checks
 			$maintainer2 = JEMUser::addvenuegroups();
-			$delloclink = JEMUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
+			$delloclink = JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
 
-			if ($maintainer2 || $delloclink )
-			{
+			if ($maintainer2 || $delloclink) {
 				$addvenuelink = 1;
 			} else {
 				$addvenuelink = 0;
@@ -112,12 +105,11 @@ class JEMModelEditvenue extends JModelLegacy
 			//sticky forms
 			$session = JFactory::getSession();
 			if ($session->has('venueform', 'com_jem')) {
-
 				$venueform 		= $session->get('venueform', 0, 'com_jem');
 				$this->_venue 	= JTable::getInstance('jem_venues', '');
 
 				if (!$this->_venue->bind($venueform)) {
-					JError::raiseError( 500, $this->_db->stderr() );
+					JError::raiseError(500, $this->_db->stderr());
 					return false;
 				}
 			} else {
@@ -155,12 +147,12 @@ class JEMModelEditvenue extends JModelLegacy
 	 * @access private
 	 * @return array
 	 */
-	function _loadVenue( )
+	function _loadVenue()
 	{
 		if (empty($this->_venue)) {
 
 			$this->_venue = JTable::getInstance('jem_venues', '');
-			$this->_venue->load( $this->_id );
+			$this->_venue->load($this->_id);
 			$this->_venue->attachments = JEMAttachment::getAttachments('venue'.$this->_venue->id);
 
 			return $this->_venue;
@@ -202,34 +194,28 @@ class JEMModelEditvenue extends JModelLegacy
 		$user 		= JFactory::getUser();
 		$jemsettings = JEMHelper::config();
 
-		$tzoffset 	= $app->getCfg('offset');
-
 		$row 		= JTable::getInstance('jem_venues', '');
 
-		$curimage = JRequest::getVar( 'curimage', '', 'post','string' );
+		$curimage = JRequest::getVar('curimage', '', 'post','string');
 
 		//bind it to the table
 		if (!$row->bind($data)) {
-			JError::raiseError( 500, $this->_db->stderr() );
+			JError::raiseError(500, $this->_db->stderr());
 			return false;
 		}
 
 		//Are we saving from an item edit?
 		if ($row->id) {
-
 			//check if user is allowed to edit venues
-
 
 			//access check
 			$maintainer3 = JEMUser::editvenuegroups();
 			$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $row->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
-			if ($maintainer3 || $genaccess3 )
-			{
-				$allowedtoeditvenue = 1;
+			if ($maintainer3 || $genaccess3) {
+// 				$allowedtoeditvenue = 1;
 			} else {
 				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			}
-
 
 			$row->modified 		= gmdate('Y-m-d H:i:s');
 			$row->modified_by 	= $user->get('id');
@@ -242,16 +228,13 @@ class JEMModelEditvenue extends JModelLegacy
 			} else {
 				$owneredit = 0;
 			}
-
 		} else {
-
 			//check if user is allowed to submit new venues
 
 			$maintainer2 = JEMUser::addvenuegroups();
-			$delloclink = JEMUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
+			$delloclink = JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
 
-			if ($maintainer2 || $delloclink )
-			{
+			if ($maintainer2 || $delloclink) {
 				$addvenuelink = 1;
 			} else {
 				$addvenuelink = 0;
@@ -275,7 +258,7 @@ class JEMModelEditvenue extends JModelLegacy
 		//check if the user has the required rank for autopublish
 		$autopublgroups = JEMUser::publishvenuegroups();
 
-		$autopublloc = JEMUser::validate_user( $jemsettings->locpubrec, $jemsettings->autopublocate );
+		$autopublloc = JEMUser::validate_user($jemsettings->locpubrec, $jemsettings->autopublocate);
 		if ($autopublloc || $owneredit || $autopublgroups) {
 			$row->published = 1 ;
 		} else {
@@ -285,12 +268,12 @@ class JEMModelEditvenue extends JModelLegacy
 		//Image upload
 
 		//If image upload is required we will stop here if no file was attached
-		if ( empty($file['name']) && $jemsettings->imageenabled == 2 ) {
-			$this->setError( JText::_( 'COM_JEM_IMAGE_EMPTY' ) );
+		if (empty($file['name']) && $jemsettings->imageenabled == 2) {
+			$this->setError(JText::_('COM_JEM_IMAGE_EMPTY'));
 			return false;
 		}
 
-		if ( ( $jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1 ) && ( !empty($file['name'])  ) )  {
+		if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1) && (!empty($file['name']))) {
 
 			jimport('joomla.filesystem.file');
 
@@ -307,8 +290,8 @@ class JEMModelEditvenue extends JModelLegacy
 			$filename = JEMImage::sanitize($base_Dir, $file['name']);
 			$filepath = $base_Dir . $filename;
 
-			if (!JFile::upload( $file['tmp_name'], $filepath )) {
-				$this->setError( JText::_( 'COM_JEM_UPLOAD_FAILED' ) );
+			if (!JFile::upload($file['tmp_name'], $filepath)) {
+				$this->setError(JText::_('COM_JEM_UPLOAD_FAILED'));
 				return false;
 			} else {
 				$row->locimage = $filename;
@@ -316,7 +299,7 @@ class JEMModelEditvenue extends JModelLegacy
 		} else {
 			//keep image if edited and left blank
 			$row->locimage = $curimage;
-		}//end image upload if
+		}
 
 		//Check description
 		$editoruser = JEMUser::editoruser();
@@ -358,18 +341,18 @@ class JEMModelEditvenue extends JModelLegacy
 
 		// attachments
 		// new ones first
-		$attachments = JRequest::getVar( 'attach', array(), 'files', 'array' );
-		$attachments['customname'] = JRequest::getVar( 'attach-name', array(), 'post', 'array' );
-		$attachments['description'] = JRequest::getVar( 'attach-desc', array(), 'post', 'array' );
-		$attachments['access'] = JRequest::getVar( 'attach-access', array(), 'post', 'array' );
+		$attachments = JRequest::getVar('attach', array(), 'files', 'array');
+		$attachments['customname'] = JRequest::getVar('attach-name', array(), 'post', 'array');
+		$attachments['description'] = JRequest::getVar('attach-desc', array(), 'post', 'array');
+		$attachments['access'] = JRequest::getVar('attach-access', array(), 'post', 'array');
 		JEMAttachment::postUpload($attachments, 'venue'.$row->id);
 
 		// and update old ones
 		$attachments = array();
-		$old['id'] = JRequest::getVar( 'attached-id', array(), 'post', 'array' );
-		$old['name'] = JRequest::getVar( 'attached-name', array(), 'post', 'array' );
-		$old['description'] = JRequest::getVar( 'attached-desc', array(), 'post', 'array' );
-		$old['access'] = JRequest::getVar( 'attached-access', array(), 'post', 'array' );
+		$old['id'] = JRequest::getVar('attached-id', array(), 'post', 'array');
+		$old['name'] = JRequest::getVar('attached-name', array(), 'post', 'array');
+		$old['description'] = JRequest::getVar('attached-desc', array(), 'post', 'array');
+		$old['access'] = JRequest::getVar('attached-access', array(), 'post', 'array');
 		foreach ($old['id'] as $k => $id)
 		{
 			$attach = array();

@@ -15,7 +15,7 @@ jimport( 'joomla.application.component.view');
  * RAW Event View class of the JEM component
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewEvent extends JViewLegacy
 {
@@ -25,21 +25,20 @@ class JEMViewEvent extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
-		$mainframe = JFactory::getApplication();
-		$settings = JEMHelper::config();
-
 		// Get data from the model
-		$row     = $this->get('Event');
+		$row = $this->get('Event');
 		$row->categories = $this->get('Categories');
 		$row->id = $row->did;
 
-		$vcal = JEMHelper::getCalendarTool();  // initiate new CALENDAR
-	//	$vcal->setProperty('unique_id', 'event'.$row->did.'@'.$mainframe->getCfg('sitename'));
+		// initiate new CALENDAR
+		$vcal = JEMHelper::getCalendarTool();
+// 		$vcal->setProperty('unique_id', 'event'.$row->did.'@'.$mainframe->getCfg('sitename'));
 		$vcal->setConfig( "filename", "event".$row->did.".ics" );
 
 		JEMHelper::icalAddEvent($vcal, $row);
 
-		$vcal->returnCalendar();                       // generate and redirect output to user browser
+		// generate and redirect output to user browser
+		$vcal->returnCalendar();
 		echo $vcal->createCalendar(); // debug
 	}
 }

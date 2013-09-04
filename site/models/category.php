@@ -62,13 +62,13 @@ class JEMModelCategory extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app =  JFactory::getApplication();
-		$jemsettings =  JEMHelper::config();
+		$app = JFactory::getApplication();
+		$jemsettings = JEMHelper::config();
 
 		$this->setdate(time());
 
 		// Get the paramaters of the active menu item
-		$params 	=  $app->getParams();
+		$params 	= $app->getParams();
 
 		if (JRequest::getVar('id')) {
 			$id = JRequest::getVar('id');
@@ -131,37 +131,32 @@ class JEMModelCategory extends JModelLegacy
 	 */
 	function &getData()
 	{
-		$user = JFactory::getUser();
-
 		// Lets load the content if it doesn't already exist
-		if (empty($this->_data))
-		{
-				$pagination = $this->getPagination();
-				$query = $this->_buildQuery();
-				$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
+		if (empty($this->_data)) {
+			$pagination = $this->getPagination();
+			$query = $this->_buildQuery();
+			$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 		}
 
-		if ($this->_data)
-		{
+		if ($this->_data) {
 			$this->_data = JEMHelper::getAttendeesNumbers($this->_data);
 
 			$count = count($this->_data);
-			for($i = 0; $i < $count; $i++)
-			{
+			for($i = 0; $i < $count; $i++) {
 				$item = $this->_data[$i];
 				$item->categories = $this->getCategories($item->id);
 
 				//child categories
-			//	$query	= $this->_buildChildsQuery($item->id);
-			//	$this->_db->setQuery($query);
-			//	$item->categories = $this->_db->loadObjectList();
+// 				$query	= $this->_buildChildsQuery($item->id);
+// 				$this->_db->setQuery($query);
+// 				$item->categories = $this->_db->loadObjectList();
 
 				//remove events without categories (users have no access to them)
 				if (empty($item->categories)) {
 					unset($this->_data[$i]);
 				}
 			}
-	}
+		}
 		return $this->_data;
 	}
 
@@ -240,7 +235,7 @@ class JEMModelCategory extends JModelLegacy
 	 */
 	function _buildCategoryOrderBy()
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		$filter_order		= $app->getUserStateFromRequest('com_jem.category.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.category.filter_order_Dir', 'filter_order_Dir', '', 'word');
@@ -255,8 +250,6 @@ class JEMModelCategory extends JModelLegacy
 		}
 
 		return $orderby;
-
-
 	}
 
 	/**
@@ -267,20 +260,18 @@ class JEMModelCategory extends JModelLegacy
 	 */
 	function _buildCategoryWhere()
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 		$task 		= JRequest::getWord('task');
-		$params 	=  $app->getParams();
-		$jemsettings =  JEMHelper::config();
+		$params 	= $app->getParams();
+		$jemsettings = JEMHelper::config();
 
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
 
-
-		$filter_state 	= $app->getUserStateFromRequest('com_jem.category.filter_state', 'filter_state', '', 'word');
+// 		$filter_state 	= $app->getUserStateFromRequest('com_jem.category.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.category.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.category.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
-
 
 		$where = array();
 
@@ -306,7 +297,6 @@ class JEMModelCategory extends JModelLegacy
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access  <= '.$gid;
 
-
 		/*
 		// get excluded categories
 		$excluded_cats = trim($params->get('excluded_cats', ''));
@@ -316,38 +306,31 @@ class JEMModelCategory extends JModelLegacy
 			$where [] = '  (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
 		}
 		// === END Excluded categories add === //
-		 * */
+		 */
 
-
-		if ($jemsettings->filter)
-		{
-
-			if ($search && $filter == 1) {
-				$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
+		if ($jemsettings->filter && $search) {
+			switch($filter) {
+				case 1:
+					$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
+					break;
+				case 2:
+					$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
+					break;
+				case 3:
+					$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
+					break;
+				case 4:
+					$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
+					break;
+				case 5:
+				default:
+					$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
 			}
+		}
 
-			if ($search && $filter == 2) {
-				$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 3) {
-				$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 4) {
-				$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 5) {
-				$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
-			}
-
-		} // end tag of jemsettings->filter decleration
-
-		$where 		= (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
+		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
 
 		return $where;
-
 	}
 
 	/**
@@ -433,7 +416,7 @@ class JEMModelCategory extends JModelLegacy
 		$this->_category = $this->_db->loadObject();
 
 		$groups = $user->getAuthorisedViewLevels();
-			$allowed = in_array($this->_category->access, $groups);
+// 		$allowed = in_array($this->_category->access, $groups);
 
 		//Make sure the category is published
 		if (!$this->_category->published)
@@ -480,6 +463,5 @@ class JEMModelCategory extends JModelLegacy
 
 		return $this->_cats;
 	}
-
 }
 ?>

@@ -47,7 +47,7 @@ class JEMController extends JControllerLegacy
 	function cancelevent()
 	{
 		$user		= JFactory::getUser();
-		$id			= JRequest::getInt( 'id');
+		$id			= JRequest::getInt('id');
 		$session 	= JFactory::getSession();
 
 		$session->clear('eventform', 'com_jem');
@@ -65,7 +65,7 @@ class JEMController extends JControllerLegacy
 			$row->load($id);
 			$row->checkin();
 
-			$this->setRedirect( JRoute::_( JEMHelperRoute::getRoute($id), false) );
+			$this->setRedirect(JRoute::_(JEMHelperRoute::getRoute($id), false));
 		} else {
 			$link = JRequest::getString('referer', JURI::base(), 'post');
 			$this->setRedirect($link);
@@ -80,9 +80,9 @@ class JEMController extends JControllerLegacy
 	function addvenue()
 	{
 		$user	= JFactory::getUser();
-		$id		= JRequest::getInt( 'id');
+		$id		= JRequest::getInt('id');
 
-		$post = JRequest::get( 'post' );
+		$post = JRequest::get('post');
 		//sticky forms
 		$session = JFactory::getSession();
 		$session->set('venueform', $post, 'com_jem');
@@ -101,7 +101,7 @@ class JEMController extends JControllerLegacy
 			$row->checkin();
 		}
 
-		$this->setRedirect( JRoute::_('index.php?view=editvenue', false ) );
+		$this->setRedirect(JRoute::_('index.php?view=editvenue', false));
 	}
 
 	/**
@@ -112,20 +112,20 @@ class JEMController extends JControllerLegacy
 	function unpublishtask()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		JRequest::checkToken() or die('Invalid Token');
 
 
 		$app = JFactory::getApplication();
 		$menuitem = $app->getMenu()->getActive()->id;
 		$input = $app->input;
 
-		$cid 	= $input->get( 'cid', array(0), 'post', 'array' );
+		$cid 	= $input->get('cid', array(0), 'post', 'array');
 
 		$false = array_search('0', $cid);
 
 		if ($false === 0) {
 			JError::raiseNotice(100, JText::_('COM_JEM_SELECT_ITEM_TO_UNPUBLISH'));
-			$this->setRedirect( 'index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem);
+			$this->setRedirect('index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem);
 			return;
 		}
 
@@ -134,10 +134,10 @@ class JEMController extends JControllerLegacy
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
 
-		$total = count( $cid );
+		$total = count($cid);
 		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_UNPUBLISHED');
 
-		$this->setRedirect( 'index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem, $msg );
+		$this->setRedirect('index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem, $msg);
 	}
 
 	/**
@@ -149,19 +149,19 @@ class JEMController extends JControllerLegacy
 	{
 
 		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		JRequest::checkToken() or die('Invalid Token');
 
 		$app = JFactory::getApplication();
 		$menuitem = $app->getMenu()->getActive()->id;
 		$input = $app->input;
 
-		$cid 	= $input->get( 'cid', array(0), 'post', 'array' );
+		$cid 	= $input->get('cid', array(0), 'post', 'array');
 
 		$false = array_search('0', $cid);
 
 		if ($false === 0) {
 			JError::raiseNotice(100, JText::_('COM_JEM_SELECT_ITEM_TO_UNPUBLISH'));
-			$this->setRedirect( 'index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem);
+			$this->setRedirect('index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem);
 			return;
 		}
 
@@ -170,10 +170,10 @@ class JEMController extends JControllerLegacy
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
 
-		$total = count( $cid );
+		$total = count($cid);
 		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_UNPUBLISHED');
 
-		$this->setRedirect( 'index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem, $msg );
+		$this->setRedirect('index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem, $msg);
 	}
 
 	/**
@@ -187,19 +187,19 @@ class JEMController extends JControllerLegacy
 	{
 
 		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		JRequest::checkToken() or die('Invalid Token');
 
 		$app = JFactory::getApplication();
 		$menuitem = $app->getMenu()->getActive()->id;
 		$input = $app->input;
 
-		$cid 	= $input->get( 'cid', array(0), 'post', 'array' );
+		$cid 	= $input->get('cid', array(0), 'post', 'array');
 
 		$false = array_search('0', $cid);
 
 		if ($false === 0) {
 			JError::raiseNotice(100, JText::_('COM_JEM_SELECT_ITEM_TO_PUBLISH'));
-			$this->setRedirect( 'index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem);
+			$this->setRedirect('index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem);
 			return;
 		}
 
@@ -208,10 +208,10 @@ class JEMController extends JControllerLegacy
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
 
-		$total = count( $cid );
+		$total = count($cid);
 		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_PUBLISHED');
 
-		$this->setRedirect( 'index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem, $msg );
+		$this->setRedirect('index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem, $msg);
 	}
 
 	/**
@@ -224,19 +224,19 @@ class JEMController extends JControllerLegacy
 	function trash()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		JRequest::checkToken() or die('Invalid Token');
 
 		$app = JFactory::getApplication();
 		$menuitem = $app->getMenu()->getActive()->id;
 		$input = $app->input;
 
-		$cid 	= $input->get( 'cid', array(0), 'post', 'array' );
+		$cid 	= $input->get('cid', array(0), 'post', 'array');
 
 		$false = array_search('0', $cid);
 
 		if ($false === 0) {
 			JError::raiseNotice(100, JText::_('COM_JEM_SELECT_ITEM_TO_TRASH'));
-			$this->setRedirect( 'index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem);
+			$this->setRedirect('index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem);
 			return;
 		}
 
@@ -245,10 +245,10 @@ class JEMController extends JControllerLegacy
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
 
-		$total = count( $cid );
+		$total = count($cid);
 		$msg 	= $total.' '.JText::_('COM_JEM_EVENT_TRASHED');
 
-		$this->setRedirect( 'index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem, $msg );
+		$this->setRedirect('index.php?option=com_jem&view=myevents'.'&Itemid='.$menuitem, $msg);
 	}
 
 	/**
@@ -258,12 +258,12 @@ class JEMController extends JControllerLegacy
 	 */
 	function cancelvenue()
 	{
-		$user	=  JFactory::getUser();
-		$id		= JRequest::getInt( 'id' );
+		$user	= JFactory::getUser();
+		$id		= JRequest::getInt('id');
 
 		$mode = JRequest::getVar('mode');
 
-		$session 	=  JFactory::getSession();
+		$session 	= JFactory::getSession();
 
 		$session->clear('venueform', 'com_jem');
 
@@ -306,13 +306,11 @@ class JEMController extends JControllerLegacy
 	function savevenue()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		JRequest::checkToken() or die('Invalid Token');
 
 		//get image
-		$file 		= JRequest::getVar( 'userfile', '', 'files', 'array' );
-		$post 		= JRequest::get( 'post' );
-
-		$Itemid 	= JRequest::getCmd( 'Itemid' );
+		$file 		= JRequest::getVar('userfile', '', 'files', 'array');
+		$post 		= JRequest::get('post');
 
 		//sticky forms
 		$session = JFactory::getSession();
@@ -323,27 +321,25 @@ class JEMController extends JControllerLegacy
 		$model = $this->getModel('editvenue');
 
 		//Sanitize
-		$post['locdescription'] = JRequest::getVar( 'locdescription', '', 'post', 'string', JREQUEST_ALLOWRAW );
-		if (JRequest::getVar( 'latitude', '', 'post', 'string') == '') {
+		$post['locdescription'] = JRequest::getVar('locdescription', '', 'post', 'string', JREQUEST_ALLOWRAW);
+		if (JRequest::getVar('latitude', '', 'post', 'string') == '') {
 			unset($post['latitude']);
 		}
-		if (JRequest::getVar( 'longitude', '', 'post', 'string') == '') {
+		if (JRequest::getVar('longitude', '', 'post', 'string') == '') {
 			unset($post['longitude']);
 		}
 
 		$mode = JRequest::getVar('mode');
 
 		if ($returnid = $model->store($post, $file)) {
-			$row->id = $returnid;
-
-			$msg 	= JText::_( 'COM_JEM_VENUE_SAVED' );
+			$msg 	= JText::_('COM_JEM_VENUE_SAVED');
 
 			$link = JRoute::_(JEMHelperRoute::getVenueRoute($returnid), false) ;
 			//$link = 'index.php?option=com_jem&view=venue&id='.$returnid.'&Itemid='.$Itemid;
 
-			JPluginHelper::importPlugin( 'jem' );
+			JPluginHelper::importPlugin('jem');
 			$dispatcher = JDispatcher::getInstance();
-			$res = $dispatcher->trigger( 'onVenueEdited', array( $returnid, $isNew ) );
+			$dispatcher->trigger('onVenueEdited', array($returnid, $isNew));
 
 			$cache = JFactory::getCache('com_jem');
 			$cache->clean();
@@ -353,7 +349,7 @@ class JEMController extends JControllerLegacy
 			$msg = '';
 			//back to form
 			$link 	= JRoute::_('index.php?view=editvenue', false) ;
-			JError::raiseWarning('SOME_ERROR_CODE', $model->getError() );
+			JError::raiseWarning('SOME_ERROR_CODE', $model->getError());
 		}
 
 		$model->checkin();
@@ -363,14 +359,14 @@ class JEMController extends JControllerLegacy
 			$venue = $model->getVenue();
 
 			// fill the event form venue field, and close.
-			$js = "window.parent.elSelectVenue('". $venue->id ."', '". str_replace( array("'", "\""), array("\\'", ""), $venue->venue)."')";
+			$js = "window.parent.elSelectVenue('". $venue->id ."', '". str_replace(array("'", "\""), array("\\'", ""), $venue->venue)."')";
 			$doc = JFactory::getDocument();
 			$doc->addScriptDeclaration($js);
 			// echo $msg;
 
 			return;
 		}
-		$this->setRedirect($link, $msg );
+		$this->setRedirect($link, $msg);
 	}
 
 	/**
@@ -383,11 +379,11 @@ class JEMController extends JControllerLegacy
 	function saveevent()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		JRequest::checkToken() or die('Invalid Token');
 
 		//get image
-		$file 		= JRequest::getVar( 'userfile', '', 'files', 'array' );
-		$post 		= JRequest::get( 'post' );
+		$file 		= JRequest::getVar('userfile', '', 'files', 'array');
+		$post 		= JRequest::get('post');
 
 		//sticky forms
 		$session = JFactory::getSession();
@@ -409,8 +405,8 @@ class JEMController extends JControllerLegacy
 
 		if ($returnid = $model->store($post, $file)) {
 			$row->id = $returnid;
-			$msg 	= JText::_( 'COM_JEM_EVENT_SAVED' );
-			$link 	= JRoute::_( JEMHelperRoute::getRoute($returnid), false) ;
+			$msg 	= JText::_('COM_JEM_EVENT_SAVED');
+			$link 	= JRoute::_(JEMHelperRoute::getRoute($returnid), false) ;
 
 			JPluginHelper::importPlugin('jem');
 			$res = $dispatcher->trigger('onEventEdited', array($returnid, $isNew));
@@ -425,12 +421,12 @@ class JEMController extends JControllerLegacy
 			//back to form
 			$link 	= JRoute::_('index.php?view=editevent', false) ;
 
-			JError::raiseWarning('SOME_ERROR_CODE', $model->getError() );
+			JError::raiseWarning('SOME_ERROR_CODE', $model->getError());
 		}
 
 		$model->checkin();
 
-		$this->setRedirect($link, $msg );
+		$this->setRedirect($link, $msg);
 	}
 
 	/**
@@ -441,9 +437,9 @@ class JEMController extends JControllerLegacy
 	function userregister()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		JRequest::checkToken() or die('Invalid Token');
 
-		$id 	= JRequest::getInt( 'rdid', 0, 'post' );
+		$id 	= JRequest::getInt('rdid', 0, 'post');
 
 		// Get the model
 		$model = $this->getModel('Event', 'JEMModel');
@@ -453,21 +449,21 @@ class JEMController extends JControllerLegacy
 		if (!$register_id)
 		{
 			$msg = $model->getError();
-			$this->setRedirect(JRoute::_( JEMHelperRoute::getRoute($id), false), $msg, 'error' );
+			$this->setRedirect(JRoute::_(JEMHelperRoute::getRoute($id), false), $msg, 'error');
 			$this->redirect();
 			return;
 		}
 
-		JPluginHelper::importPlugin( 'jem' );
+		JPluginHelper::importPlugin('jem');
 		$dispatcher = JDispatcher::getInstance();
-		$res = $dispatcher->trigger( 'onEventUserRegistered', array( $register_id ) );
+		$dispatcher->trigger('onEventUserRegistered', array($register_id));
 
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
-		$msg = JText::_( 'COM_JEM_REGISTERED_SUCCESSFULL' );
+		$msg = JText::_('COM_JEM_REGISTERED_SUCCESSFULL');
 
-		$this->setRedirect(JRoute::_( JEMHelperRoute::getRoute($id), false), $msg );
+		$this->setRedirect(JRoute::_(JEMHelperRoute::getRoute($id), false), $msg);
 	}
 
 	/**
@@ -478,27 +474,27 @@ class JEMController extends JControllerLegacy
 	function delreguser()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
+		JRequest::checkToken() or die('Invalid Token');
 
-		$id 	= JRequest::getInt( 'rdid', 0, 'post' );
+		$id 	= JRequest::getInt('rdid', 0, 'post');
 
 		// Get/Create the model
-		$model =  $this->getModel('Event', 'JEMModel');
+		$model = $this->getModel('Event', 'JEMModel');
 
 		$model->setId($id);
 		$model->delreguser();
 
 		JEMHelper::updateWaitingList($id);
 
-		JPluginHelper::importPlugin( 'jem' );
+		JPluginHelper::importPlugin('jem');
 		$dispatcher = JDispatcher::getInstance();
-		$res = $dispatcher->trigger( 'onEventUserUnregistered', array( $id ) );
+		$dispatcher->trigger('onEventUserUnregistered', array($id));
 
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
-		$msg = JText::_( 'COM_JEM_UNREGISTERED_SUCCESSFULL' );
-		$this->setRedirect( JRoute::_( JEMHelperRoute::getRoute($id), false), $msg );
+		$msg = JText::_('COM_JEM_UNREGISTERED_SUCCESSFULL');
+		$this->setRedirect(JRoute::_(JEMHelperRoute::getRoute($id), false), $msg);
 	}
 
 	/**
@@ -541,7 +537,7 @@ class JEMController extends JControllerLegacy
 	 */
 	function ajaxattachremove()
 	{
-		$id	 = JRequest::getVar( 'id', 0, 'request', 'int' );
+		$id	 = JRequest::getVar('id', 0, 'request', 'int');
 
 		$res = JEMAttachment::remove($id);
 		if (!$res) {
@@ -589,7 +585,7 @@ class JEMController extends JControllerLegacy
 			{
 			$col[] = str_replace("\"", "\"\"", $data->email);
 			}
-			$col[] = str_replace("\"", "\"\"", JHTML::Date( $data->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ));
+			$col[] = str_replace("\"", "\"\"", JHTML::Date($data->uregdate, JText::_('DATE_FORMAT_LC2')));
 
 			for($j = 0; $j < count($col); $j++)
 			{
@@ -628,9 +624,9 @@ class JEMController extends JControllerLegacy
 
 		if ($res)
 		{
-			JPluginHelper::importPlugin( 'jem' );
+			JPluginHelper::importPlugin('jem');
 			$dispatcher = JDispatcher::getInstance();
-			$res = $dispatcher->trigger( 'onUserOnOffWaitinglist', array( $id ) );
+			$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($id));
 
 			if ($attendee->waiting) {
 				$msg = JText::_('COM_JEM_ADDED_TO_ATTENDING');
@@ -654,14 +650,14 @@ class JEMController extends JControllerLegacy
 	 */
 	function attendeeremove()
 	{
-		$cid = JRequest::getVar( 'cid', array(0), 'post', 'array' );
+		$cid = JRequest::getVar('cid', array(0), 'post', 'array');
 		$id  = JRequest::getInt('id');
 		$fid = JRequest::getInt('Itemid');
-		$total = count( $cid );
+		$total = count($cid);
 
 		$model = $this->getModel('attendees');
 
-		if (!is_array( $cid ) || count( $cid ) < 1) {
+		if (!is_array($cid) || count($cid) < 1) {
 			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
 		}
 
@@ -672,9 +668,9 @@ class JEMController extends JControllerLegacy
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
-		$msg = $total.' '.JText::_( 'COM_JEM_REGISTERED_USERS_DELETED');
+		$msg = $total.' '.JText::_('COM_JEM_REGISTERED_USERS_DELETED');
 
-		$this->setRedirect( 'index.php?option=com_jem&view=attendees&id='.$id.'&Itemid='.$fid, $msg );
+		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$id.'&Itemid='.$fid, $msg);
 	}
 
 }

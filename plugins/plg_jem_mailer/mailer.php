@@ -183,7 +183,6 @@ class plgJEMMailer extends JPlugin {
 
 		$user 	= JFactory::getUser($details->uid);
 		//create link to event
-		$app = JFactory::getApplication();
 		$url = JURI::root();
 		$link =JRoute::_($url. JEMHelperRoute::getRoute($details->slug), false);
 
@@ -459,7 +458,7 @@ class plgJEMMailer extends JPlugin {
 			if ($this->params->get('editvenue_mail_user', '1')) {
 				$data 				= new stdClass();
 				$edited 			= JHTML::Date( $venue->modified, JText::_( 'DATE_FORMAT_LC2' ) );
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_VENUE', $user->name, $user->username, $isNew, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $state);
+				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_VENUE', $user->name, $user->username, $edited, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $state);
 				$data->subject		= JText::sprintf( 'PLG_JEM_MAILER_EDIT_USER_VENUE_MAIL', $this->_SiteName );
 				$data->receivers 	= $user->email;
 

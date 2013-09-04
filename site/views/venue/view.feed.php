@@ -15,28 +15,25 @@ jimport('joomla.application.component.view');
  * HTML View class for the Venue View
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewVenue extends JViewLegacy
 {
 	/**
 	 * Creates the Event Feed of the Venue
 	 *
-	 * 
+	 *
 	 */
 	function display()
 	{
 		$app = JFactory::getApplication();
-
-		$doc		= JFactory::getDocument();
-		$jemsettings = JEMHelper::config();
+		$doc = JFactory::getDocument();
 
 		// Get some data from the model
 		JRequest::setVar('limit', $app->getCfg('feed_limit'));
 		$rows = $this->get('Data');
 
-		foreach ($rows as $row)
-		{
+		foreach ($rows as $row) {
 			// strip html from feed item title
 			$title = $this->escape($row->title);
 			$title = html_entity_decode($title);
@@ -46,8 +43,7 @@ class JEMViewVenue extends JViewLegacy
 			$category = $this->escape($row->catname);
 			$category = html_entity_decode($category);
 			*/
-			if (!empty($row->categories))
-			{
+			if (!empty($row->categories)) {
 				$category = array();
 				foreach ($row->categories AS $category2) {
 					$category[] = $category2->catname;

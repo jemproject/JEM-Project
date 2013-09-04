@@ -86,24 +86,19 @@ class modjemcalqhelper
 				$eyear = $event->created_year;
 				$emonth = $event->created_month;
 				$eday = $event->created_day;
-
-			}
-			else
-			{
+			} else {
 				list($eyear, $emonth, $eday) = explode('-', $event->enddates);
 			}
 			// The two cases for roll over the year end with an event that goes across the year boundary.
-			if ($greq_year < $eyear)
-			{
+			if ($greq_year < $eyear) {
 				$emonth = $emonth + 12;
 			}
 
-			if ($event->created_year < $greq_year)
-			{
+			if ($event->created_year < $greq_year) {
 				$event->created_month = $event->created_month - 12;
 			}
 
-			if (  ($greq_year >= $event->created_year) && ($greq_year <= $eyear)
+			if ( ($greq_year >= $event->created_year) && ($greq_year <= $eyear)
 				&& ($greq_month >= $event->created_month) && ($greq_month <= $emonth) )
 			{
 				// Set end day for current month
@@ -128,7 +123,7 @@ class modjemcalqhelper
 
 					$uxdate = mktime(0,0,0,$greq_month,$count,$greq_year);
 					$tdate = strftime('%Y%m%d',$uxdate);// Toni change Joomla 1.5
-					$created_day = $count;
+// 					$created_day = $count;
 
 		//			$tt = $days[$count][1];
 
@@ -148,7 +143,6 @@ class modjemcalqhelper
 							$title = $title . '&nbsp;@' . htmlspecialchars($event->venue);
 							}
 						}
-						$stodid = $event->id;
 						$stod = 1;
 					}
 					else

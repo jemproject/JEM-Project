@@ -26,8 +26,7 @@ class JEMHelper {
 	{
 		static $config;
 
-		if (!is_object($config))
-		{
+		if (!is_object($config)) {
 			$db = JFactory::getDBO();
 			$sql = 'SELECT * FROM #__jem_settings WHERE id = 1';
 			$db->setQuery($sql);
@@ -50,7 +49,6 @@ class JEMHelper {
 	static function cleanup($forced = 0)
 	{
 		$jemsettings = JEMHelper::config();
-		$params = JComponentHelper::getParams('com_jem');
 		$weekstart = $jemsettings->weekdaystart;
 		$anticipation = $jemsettings->recurrence_anticipation;
 
@@ -62,9 +60,7 @@ class JEMHelper {
 		$nrdaysupdate = floor($lastupdate / 86400);
 
 		if ($nrdaysnow > $nrdaysupdate || $forced) {
-
 			$db = JFactory::getDBO();
-
 
 			// get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
 			$nulldate = '0000-00-00';
@@ -81,18 +77,11 @@ class JEMHelper {
 			$db->SetQuery($query);
 			$recurrence_array = $db->loadAssocList();
 
-
-
-
 			foreach($recurrence_array as $recurrence_row)
 			{
 				// get the info of reference event for the duplicates
 				$ref_event = JTable::getInstance('jem_events', '');
 				$ref_event->load($recurrence_row['id']);
-
-				// get the recurrence information
-				$recurrence_number = $recurrence_row['recurrence_number'];
-				$recurrence_type = $recurrence_row['recurrence_type'];
 
 				// the first day of the week is used for certain rules
 				$recurrence_row['weekstart'] = $weekstart;
@@ -123,14 +112,11 @@ class JEMHelper {
 
 						$user = JFactory::getUser();
 
-						if($user->authorise('core.manage'))
-						{
+						if($user->authorise('core.manage')) {
 							if (!$db->query()) {
-							echo JText::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
+								echo JText::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
 							}
 						}
-
-
 					}
 
 					$recurrence_row = JEMHelper::calculate_recurrence($recurrence_row);
@@ -544,12 +530,11 @@ class JEMHelper {
 				$this->setError(JText::_('COM_JEM_FAILED_BUMPING_USERS_FROM_WAITING_TO_CONFIRMED_LIST'));
 				Jerror::raisewarning(0, JText::_('COM_JEM_FAILED_BUMPING_USERS_FROM_WAITING_TO_CONFIRMED_LIST').': '.$db->getErrorMsg());
 			} else {
-				$booked = $registered + count($bumping);
 				foreach ($bumping AS $register_id)
 				{
 					JPluginHelper::importPlugin('jem');
-				$dispatcher = JDispatcher::getInstance();
-				$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($register_id));
+					$dispatcher = JDispatcher::getInstance();
+					$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($register_id));
 				}
 			}
 		}
@@ -687,8 +672,6 @@ class JEMHelper {
 	{
 		require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
 		$mainframe = JFactory::getApplication();
-		$params = $mainframe->getParams('com_jem');
-
 		$jemsettings = JEMHelper::config();
 
 		$offset = (float) $mainframe->getCfg('offset');

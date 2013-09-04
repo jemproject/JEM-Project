@@ -19,7 +19,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_finder/helpers/indexer/adapt
  *
  * @package     Joomla
  * @subpackage  Finder.jem
- * 
+ *
  */
 class plgFinderJEM extends FinderIndexerAdapter {
 	/**
@@ -34,7 +34,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * The extension name.
 	 *
 	 * @var    string
-	 * 
+	 *
 	 */
 	protected $extension = 'com_jem';
 
@@ -42,7 +42,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * The sublayout to use when rendering the results.
 	 *
 	 * @var    string
-	 * 
+	 *
 	 */
 	protected $layout = 'event';
 
@@ -50,7 +50,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * The type of content that the adapter indexes.
 	 *
 	 * @var    string
-	 * 
+	 *
 	 */
 	protected $type_title = 'Event';
 
@@ -58,7 +58,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * The table name.
 	 *
 	 * @var    string
-	 * 
+	 *
 	 */
 	protected $table = '#__jem_events';
 
@@ -66,7 +66,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 * The state field.
 	 *
 	 * @var    string
-	 * 
+	 *
 	 */
 	protected $state_field = 'published';
 
@@ -404,7 +404,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	{
 		$db = JFactory::getDbo();
 		// Check if we can use the supplied SQL query.
-		$sql = $this->db->getQuery(true);
+		$sql = $db->getQuery(true);
 
 		// Item ID
 		$sql->select('a.id');

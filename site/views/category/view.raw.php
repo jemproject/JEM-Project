@@ -15,18 +15,17 @@ jimport( 'joomla.application.component.view');
  * HTML View class for the Category View
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewCategory extends JViewLegacy
 {
 	/**
 	 * Creates the output for the Category view
 	 *
- 	 * 
+ 	 *
 	 */
 	function display($tpl = null)
 	{
-		$mainframe = JFactory::getApplication();
 		$settings = JEMHelper::config();
 
 		// Get data from the model
@@ -37,15 +36,16 @@ class JEMViewCategory extends JViewLegacy
 
 		$catid = JRequest::getInt('id');
 
-		$vcal = JEMHelper::getCalendarTool();                          // initiate new CALENDAR
+		// initiate new CALENDAR
+		$vcal = JEMHelper::getCalendarTool();
 		//$vcal->setProperty('unique_id', 'category'.$catid.'@'.$mainframe->getCfg('sitename'));
 		$vcal->setConfig( "filename", "category".$catid.".ics" );
 
-		foreach ( $rows as $row )
-		{
+		foreach ( $rows as $row ) {
 			JEMHelper::icalAddEvent($vcal, $row);
 		}
-		$vcal->returnCalendar();                       // generate and redirect output to user browser
+		// generate and redirect output to user browser
+		$vcal->returnCalendar();
 		echo $vcal->createCalendar(); // debug
 	}
 }

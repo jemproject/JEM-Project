@@ -40,7 +40,7 @@ class com_jemInstallerScript
 		);
 
 		// Check for existance of /images/jem directory
-		if ($direxists = JFolder::exists(JPATH_SITE.$createDirs[0])) {
+		if (JFolder::exists(JPATH_SITE.$createDirs[0])) {
 			echo "<p><span style='color:green;'>".JText::_('COM_JEM_INSTALL_SUCCESS').":</span> ".
 				JText::sprintf('COM_JEM_INSTALL_DIRECTORY_EXISTS_SKIP', $createDirs[0])."</p>";
 		} else {
@@ -51,7 +51,7 @@ class com_jemInstallerScript
 			echo "<ul>";
 			// Folder creation
 			foreach($createDirs as $directory) {
-				if ($makedir = JFolder::create(JPATH_SITE.$directory)) {
+				if (JFolder::create(JPATH_SITE.$directory)) {
 					echo "<li><span style='color:green;'>".JText::_('COM_JEM_INSTALL_SUCCESS').":</span> ".
 						JText::sprintf('COM_JEM_INSTALL_DIRECTORY_CREATED', $directory)."</li>";
 				} else {

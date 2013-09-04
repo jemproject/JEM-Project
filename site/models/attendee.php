@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component attendee Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelAttendee extends JModelLegacy
 {
@@ -36,13 +36,13 @@ class JEMModelAttendee extends JModelLegacy
 	/**
 	 * Constructor
 	 *
-	 * 
+	 *
 	 */
 	function __construct()
 	{
 		parent::__construct();
 
-		$array = JRequest::getVar('cid',  0, '', 'array');
+		$array = JRequest::getVar('cid', 0, '', 'array');
 		$this->setId((int)$array[0]);
 	}
 
@@ -55,8 +55,8 @@ class JEMModelAttendee extends JModelLegacy
 	function setId($id)
 	{
 		// Set category id and wipe data
-		$this->_id	    = $id;
-		$this->_data	= null;
+		$this->_id = $id;
+		$this->_data = null;
 	}
 
 	/**
@@ -64,15 +64,13 @@ class JEMModelAttendee extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	array
-	 * 
+	 *
 	 */
 	function &getData()
 	{
-		if ($this->_loadData())
-		{
-
+		if (!$this->_loadData()) {
+			$this->_initData();
 		}
-		else  $this->_initData();
 
 		return $this->_data;
 	}
@@ -82,7 +80,7 @@ class JEMModelAttendee extends JModelLegacy
 	 *
 	 * @access	private
 	 * @return	boolean	True on success
-	 * 
+	 *
 	 */
 	function _loadData()
 	{
@@ -107,16 +105,15 @@ class JEMModelAttendee extends JModelLegacy
 	 *
 	 * @access	private
 	 * @return	boolean	True on success
-	 * 
+	 *
 	 */
 	function _initData()
 	{
 		// Lets load the content if it doesn't already exist
-		if (empty($this->_data))
-		{
+		if (empty($this->_data)) {
 			$data = JTable::getInstance('jem_register', '');
 			$data->username = null;
-			$this->_data = $data;			
+			$this->_data = $data;
 		}
 		return true;
 	}
@@ -124,30 +121,28 @@ class JEMModelAttendee extends JModelLegacy
 	function toggle()
 	{
 		$attendee = $this->getData();
-		
+
 		if (!$attendee->id) {
 			$this->setError('COM_JEM_MISSING_ATTENDEE_ID');
 			return false;
 		}
-		
+
 		$row = JTable::getInstance('jem_register', '');
 		$row->bind($attendee);
 		$row->waiting = $attendee->waiting ? 0 : 1;
-		return $row->store();		
+		return $row->store();
 	}
-	
+
 /**
 	 * Method to store the attendee
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 * 
+	 *
 	 */
 	function store($data)
 	{
-		$user		= JFactory::getUser();
-		$config 	= JFactory::getConfig();
-		$eventid = $data['event']; 
+		$eventid = $data['event'];
 
 		$row  = $this->getTable('jem_register', '');
 
@@ -160,28 +155,24 @@ class JEMModelAttendee extends JModelLegacy
 		// sanitise id field
 		$row->id = (int) $row->id;
 
-		$nullDate	= $this->_db->getNullDate();
-
 		// Are we saving from an item edit?
-		if ($row->id) {
-			
-		} else {
+		if (!$row->id) {
 			$row->uregdate 		= gmdate('Y-m-d H:i:s');
-			
-			$query = ' SELECT e.maxplaces, e.waitinglist, COUNT(r.id) as booked ' 
+
+			$query = ' SELECT e.maxplaces, e.waitinglist, COUNT(r.id) as booked '
 			       . ' FROM #__jem_events AS e '
-			       . ' INNER JOIN #__jem_register AS r ON r.event = e.id ' 
+			       . ' INNER JOIN #__jem_register AS r ON r.event = e.id '
 			       . ' WHERE e.id = ' . $this->_db->Quote($eventid)
 			       . '   AND r.waiting = 0 '
 			       . ' GROUP BY e.id ';
 			$this->_db->setQuery($query);
 			$details = $this->_db->loadObject();
-			
+
 			// put on waiting list ?
 			if ($details->maxplaces > 0) // there is a max
 			{
 				// check if the user should go on waiting list
-				if ($details->booked >= $details->maxplaces) 
+				if ($details->booked >= $details->maxplaces)
 				{
 					if (!$details->waitinglist) {
 						JError::raiseWarning(0, JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'));
@@ -191,7 +182,7 @@ class JEMModelAttendee extends JModelLegacy
 				}
 			}
 		}
-		
+
 		// Make sure the data is valid
 		if (!$row->check()) {
 			$this->setError($row->getError());
@@ -203,7 +194,7 @@ class JEMModelAttendee extends JModelLegacy
 			JError::raiseError(500, $this->_db->getErrorMsg() );
 			return false;
 		}
-		
+
 		return $row;
 	}
 }

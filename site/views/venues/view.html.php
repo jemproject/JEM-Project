@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
 /**
  * HTML View class for the Venues View
@@ -22,16 +22,16 @@ class JEMViewVenues extends JViewLegacy
 	 * Creates the Venuesview
 	 *
 	 */
-	function display( $tpl = null )
+	function display($tpl = null)
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
-		$document 	 =  JFactory::getDocument();
-		$jemsettings =  JEMHelper::config();
+		$document 	 = JFactory::getDocument();
+		$jemsettings = JEMHelper::config();
 
 		//get menu information
 		$menu		= $app->getMenu();
-		$item    	= $menu->getActive();
+		$item 		= $menu->getActive();
 		$params 	= $app->getParams();
 
 		//add css file
@@ -39,10 +39,8 @@ class JEMViewVenues extends JViewLegacy
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		// Request variables
-		$task 			= JRequest::getWord('task');
-		$rows 		=  $this->get('Data');
-		$total 		=  $this->get('Total');
-
+		$task 	= JRequest::getWord('task');
+		$rows 	= $this->get('Data');
 
 		//add alternate feed link
 		$link    = '&format=feed';
@@ -52,12 +50,12 @@ class JEMViewVenues extends JViewLegacy
 		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
 
 		//pathway
-		$pathway 	=  $app->getPathWay();
+		$pathway 	= $app->getPathWay();
 		if($item) $pathway->setItemName(1, $item->title);
 
-		if ( $task == 'archive' ) {
-			$pathway->addItem(JText::_( 'COM_JEM_ARCHIVE' ), JRoute::_('index.php?view=venues&task=archive') );
-			$pagetitle = $params->get('page_title').' - '.JText::_( 'COM_JEM_ARCHIVE' );
+		if ($task == 'archive') {
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=venues&task=archive'));
+			$pagetitle = $params->get('page_title').' - '.JText::_('COM_JEM_ARCHIVE');
 			$print_link = JRoute::_('index.php?view=venues&task=archive&print=1&tmpl=component');
 		} else {
 			$pagetitle = $params->get('page_title');
@@ -65,17 +63,15 @@ class JEMViewVenues extends JViewLegacy
 		}
 
 		//Set Page title
-		$document->setTitle( $pagetitle );
-		$document->setMetadata( 'title' , $pagetitle );
-		$document->setMetadata('keywords', $pagetitle );
-
+		$document->setTitle($pagetitle);
+		$document->setMetadata('title' , $pagetitle);
+		$document->setMetadata('keywords', $pagetitle);
 
 		// Check if the user has access to the add-eventform
 		$maintainer = JEMUser::ismaintainer();
-		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
+		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
-		if ($maintainer || $genaccess )
-		{
+		if ($maintainer || $genaccess) {
 			$addeventlink = 1;
 		} else {
 			$addeventlink = 0;
@@ -83,22 +79,20 @@ class JEMViewVenues extends JViewLegacy
 
 		//Check if the user has access to the add-venueform
 		$maintainer2 = JEMUser::addvenuegroups();
-		$genaccess2 	= JEMUser::validate_user( $jemsettings->locdelrec, $jemsettings->deliverlocsyes );
-		if ($maintainer2 || $genaccess2 )
-		{
+		$genaccess2 	= JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
+		if ($maintainer2 || $genaccess2) {
 			$addvenuelink = 1;
 		} else {
 			$addvenuelink = 0;
 		}
 
 		// Create the pagination object
-		$pagination    =  $this->get('Pagination');
-
+		$pagination = $this->get('Pagination');
 
 		$this->rows				= $rows;
 		$this->print_link		= $print_link;
 		$this->params			= $params;
-		$this->addvenuelink			= $addvenuelink;
+		$this->addvenuelink		= $addvenuelink;
 		$this->addeventlink		= $addeventlink;
 		$this->pagination		= $pagination;
 		$this->item				= $item;

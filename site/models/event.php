@@ -26,7 +26,6 @@ class JEMModelEvent extends JModelLegacy
 	 */
 	var $_event = null;
 
-
 	/**
 	 * registeres in array
 	 *
@@ -56,7 +55,7 @@ class JEMModelEvent extends JModelLegacy
 	function setId($id)
 	{
 		// Set new event ID and wipe data
-		$this->_id			= $id;
+		$this->_id = $id;
 	}
 
 	/**
@@ -66,53 +65,43 @@ class JEMModelEvent extends JModelLegacy
 	 * @return array
 	 *
 	 */
-	function &getEvent( )
+	function &getEvent()
 	{
 		/*
 		 * Load the Category data
 		 */
-		if ($this->_loadEvent())
-		{
+		if ($this->_loadEvent()) {
 			$user = JFactory::getUser();
 			$gid = JEMHelper::getGID($user);
 
-
 			// Is the category published?
-			if (!$this->_event->catpublished && $this->_event->catid)
-			{
-				throw new Exception( JText::_("COM_JEM_CATEGORY_NOT_PUBLISHED"),403 );
+			if (!$this->_event->catpublished && $this->_event->catid) {
+				throw new Exception(JText::_("COM_JEM_CATEGORY_NOT_PUBLISHED"),403 );
 			}
 
 			// Do we have access to the category?
-			if (($this->_event->cataccess > $gid) && $this->_event->catid)
-			{
+			if (($this->_event->cataccess > $gid) && $this->_event->catid) {
 				 throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
 			}
 
+			//check session if uservisit already recorded
+			$session 	= JFactory::getSession();
+			$hitcheck = false;
+			if ($session->has('hit', 'jem')) {
+				$hitcheck 	= $session->get('hit', 0, 'jem');
+				$hitcheck 	= in_array($this->_event->did, $hitcheck);
+			}
+			if (!$hitcheck) {
+				//record hit
+				$this->hit();
 
+				$stamp = array();
+				$stamp[] = $this->_event->did;
+				$session->set('hit', $stamp, 'jem');
+			}
 
-		//check session if uservisit already recorded
-		$session 	= JFactory::getSession();
-		$hitcheck = false;
-		if ($session->has('hit', 'jem')) {
-			$hitcheck 	= $session->get('hit', 0, 'jem');
-			$hitcheck 	= in_array($this->_event->did, $hitcheck);
+			return $this->_event;
 		}
-		if (!$hitcheck) {
-			//record hit
-			$this->hit();
-
-			$stamp = array();
-			$stamp[] = $this->_event->did;
-			$session->set('hit', $stamp, 'jem');
-		}
-
-		return $this->_event;
-
-
-	}
-
-
 	}
 
 	/**
@@ -124,17 +113,15 @@ class JEMModelEvent extends JModelLegacy
 	 */
 	function _loadEvent()
 	{
-		if (empty($this->_event))
-		{
-
+		if (empty($this->_event)) {
 			$db = JFactory::getDbo();
 
 			// Get the WHERE clause
 			$where	= $this->_buildEventWhere();
 
 			$query = 'SELECT a.id AS did, a.published, a.contactid, a.dates, a.enddates, a.title, a.times, a.endtimes, '
-			    . ' a.datdescription, a.meta_keywords, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.meta_description, a.unregistra, a.locid, a.created_by, '
-			    . ' a.datimage, a.registra, a.maxplaces, a.waitinglist, '
+					. ' a.datdescription, a.meta_keywords, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.meta_description, a.unregistra, a.locid, a.created_by, '
+					. ' a.datimage, a.registra, a.maxplaces, a.waitinglist, '
 					. ' l.id AS locid, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, l.city, l.postalCode, l.street, l.country, ct.name AS countryname, l.map, l.created_by AS venueowner, l.latitude, l.longitude,'
 					. ' c.access AS cataccess, c.id AS catid, c.published AS catpublished,'
 					. ' u.name AS creator_name, u.username AS creator_username, con.id AS conid, con.name AS conname, con.telephone AS contelephone, con.email_to AS conemail,'
@@ -154,13 +141,11 @@ class JEMModelEvent extends JModelLegacy
 			$this->_db->setQuery($query);
 			$this->_event = $this->_db->loadObject();
 
-
 			// Define Attachments
 			$user = JFactory::getUser();
 			$gid = JEMHelper::getGID($user);
 
 			$this->_event->attachments = JEMAttachment::getAttachments('event'.$this->_event->did, $gid);
-
 
 			// Define Booked
 			$query = $db->getQuery(true);
@@ -212,7 +197,7 @@ class JEMModelEvent extends JModelLegacy
 		. ' AND c.access  <= '.$gid
 		;
 
-		$this->_db->setQuery( $query );
+		$this->_db->setQuery($query );
 
 		$this->_cats = $this->_db->loadObjectList();
 
@@ -230,7 +215,7 @@ class JEMModelEvent extends JModelLegacy
 	{
 		if ($this->_id)
 		{
-			$item =  JTable::getInstance('jem_events', '');
+			$item = JTable::getInstance('jem_events', '');
 			$item->hit($this->_id);
 			return true;
 		}
@@ -249,7 +234,7 @@ class JEMModelEvent extends JModelLegacy
 	function getUserIsRegistered()
 	{
 		// Initialize variables
-		$user 		=  JFactory::getUser();
+		$user 		= JFactory::getUser();
 		$userid		= (int) $user->get('id', 0);
 
 		//usercheck
@@ -258,7 +243,7 @@ class JEMModelEvent extends JModelLegacy
 				. ' WHERE uid = '.$userid
 				. ' AND event = '.$this->_id
 				;
-		$this->_db->setQuery( $query );
+		$this->_db->setQuery($query );
 		return $this->_db->loadResult();
 	}
 
@@ -293,7 +278,7 @@ class JEMModelEvent extends JModelLegacy
 				. ' WHERE event = '.$this->_id
 				. '   AND waiting = 0 '
 				;
-		$this->_db->setQuery( $query );
+		$this->_db->setQuery($query );
 
 		$this->_registers = $this->_db->loadObjectList();
 
@@ -309,11 +294,10 @@ class JEMModelEvent extends JModelLegacy
 	 */
 	function userregister()
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
-		$user 		=  JFactory::getUser();
-		$jemsettings =  JEMHelper::config();
-		$tzoffset	= $app->getCfg('offset');
+		$user 		= JFactory::getUser();
+		$jemsettings = JEMHelper::config();
 
 		$event 		= (int) $this->_id;
 		$uid 		= (int) $user->get('id');
@@ -321,11 +305,11 @@ class JEMModelEvent extends JModelLegacy
 
 		// Must be logged in
 		if ($uid < 1) {
-			JError::raiseError( 403, JText::_('COM_JEM_ALERTNOTAUTH') );
+			JError::raiseError(403, JText::_('COM_JEM_ALERTNOTAUTH') );
 			return;
 		}
 
-		$model = $this->setId($event);
+		$this->setId($event);
 
 		$event2 = $this->getEvent();
 
@@ -333,8 +317,7 @@ class JEMModelEvent extends JModelLegacy
 		{
 			// check if the user should go on waiting list
 			$attendees = $this->getRegisters();
-			if (count($attendees) >= $event2->maxplaces)
-			{
+			if (count($attendees) >= $event2->maxplaces) {
 				if (!$event2->waitinglist) {
 					$this->setError(JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'));
 					return false;
@@ -344,7 +327,7 @@ class JEMModelEvent extends JModelLegacy
 		}
 
 		//IP
-		$uip 		= $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
+		$uip = $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
 
 		$obj = new stdClass();
 		$obj->event 	= (int)$event;
@@ -366,22 +349,22 @@ class JEMModelEvent extends JModelLegacy
 	 */
 	function delreguser()
 	{
-		$user 	=  JFactory::getUser();
+		$user 	= JFactory::getUser();
 
 		$event 	= (int) $this->_id;
 		$userid = $user->get('id');
 
 		// Must be logged in
 		if ($userid < 1) {
-			JError::raiseError( 403, JText::_('COM_JEM_ALERTNOTAUTH') );
+			JError::raiseError(403, JText::_('COM_JEM_ALERTNOTAUTH') );
 			return;
 		}
 
 		$query = 'DELETE FROM #__jem_register WHERE event = '.$event.' AND uid= '.$userid;
-		$this->_db->SetQuery( $query );
+		$this->_db->SetQuery($query );
 
 		if (!$this->_db->query()) {
-				JError::raiseError( 500, $this->_db->getErrorMsg() );
+				JError::raiseError(500, $this->_db->getErrorMsg() );
 		}
 
 		return true;

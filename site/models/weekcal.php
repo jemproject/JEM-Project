@@ -56,12 +56,7 @@ class JEMModelWeekcal extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app = JFactory::getApplication();
-
 		$this->setdate(time());
-
-		// Get the paramaters of the active menu item
-		$params = $app->getParams();
 	}
 
 	function setdate($date)
@@ -81,28 +76,23 @@ class JEMModelWeekcal extends JModelLegacy
 		$params = $app->getParams();
 
 		// Lets load the content if it doesn't already exist
-		if ( empty($this->_data)) {
+		if (empty($this->_data)) {
 			$query = $this->_buildQuery();
-			$this->_data = $this->_getList( $query );
+			$this->_data = $this->_getList($query);
 
 			$multi = array();
-
 
 			foreach($this->_data AS $item) {
 				$item->categories = $this->getCategories($item->id);
 
-				if (!is_null($item->enddates) && !$params->get('show_only_start', 1))
-				{
-					if ($item->enddates != $item->dates)
-					{
+				if (!is_null($item->enddates) && !$params->get('show_only_start', 1)) {
+					if ($item->enddates != $item->dates) {
 						// $day = $item->start_day;
 						$day = $item->start_day;
 
-						for ($counter = 0; $counter <= $item->datediff-1; $counter++)
-						{
+						for ($counter = 0; $counter <= $item->datediff-1; $counter++) {
 							//@todo sort out, multi-day events
 							$day++;
-
 
 							//next day:
 							$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
@@ -117,31 +107,23 @@ class JEMModelWeekcal extends JModelLegacy
 							//}
 							//unset temp array holding generated days before working on the next multiday event
 							unset($multi);
-
-
 						}
 					}
 				}
-
 
 				//remove events without categories (users have no access to them)
 				if (empty($item->categories)) {
 					unset($item);
 				}
 			}
-
 		}
 
-
-
-
-		foreach ($this->_data as $index => $item)
-		{
+		foreach ($this->_data as $index => $item) {
 			$date = $item->dates;
 			//$now = time();
 			$check = date('Y-m-d',strtotime(date('o-\\WW')));
 
-			if ($date < $check ) {
+			if ($date < $check) {
 				unset ($this->_data[$index]);
 			}
 		}
@@ -186,7 +168,6 @@ class JEMModelWeekcal extends JModelLegacy
 	 */
 	function _buildCategoryWhere()
 	{
-
 		$user = JFactory::getUser();
 		$app = JFactory::getApplication();
 		$gid = JEMHelper::getGID($user);
@@ -207,17 +188,14 @@ class JEMModelWeekcal extends JModelLegacy
 		$where .= ' AND c.published = 1';
 		$where .= ' AND c.access  <= '.$gid;
 
-		$currentTime = date("Y-m-d");
 		$currentTime2 = date('Y-m-d',strtotime(date('o-\\WW')));
 
 		$numberOfWeeks = $params->get('nrweeks', '1');
 		$newTime = strtotime('+'.$numberOfWeeks.' weeks '.'- 1 day', strtotime($currentTime2));
 		$newTime = date('Y-m-d',$newTime);
 
-
 		$where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $this->_db->Quote('0000-00-00') .', a.enddates, a.dates), "'. $currentTime2 .'") >= 0';
 		$where .= ' AND DATEDIFF(a.dates, "'. $newTime .'") <= 0';
-
 
 		if ($top_category) {
 			$children = JEMCategories::getChilds($top_category);
@@ -225,7 +203,6 @@ class JEMModelWeekcal extends JModelLegacy
 				$where .= ' AND r.catid IN ('. implode(',', $children) .')';
 			}
 		}
-
 
 		return $where;
 	}
@@ -251,7 +228,6 @@ class JEMModelWeekcal extends JModelLegacy
 			;
 
 		$this->_db->setQuery($query);
-
 		$this->_categories = $this->_db->loadObjectList();
 
 		return $this->_categories;

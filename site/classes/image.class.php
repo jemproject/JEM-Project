@@ -46,7 +46,7 @@ class JEMImage {
 		// resize the image to exactly 100x100 pixels by using the "crop from center" method
 		// (read more in the overview section or in the documentation)
 		// and if there is an error, check what the error is about
-		if (!$image->resize($new_w, $new_h, ZEBRA_IMAGE_CROP_CENTER, $background=-1)) {
+		if (!$image->resize($new_w, $new_h, ZEBRA_IMAGE_CROP_CENTER, -1)) {
 
 			// if there was an error, let's see what the error is about
 			switch ($image->error) {
@@ -83,7 +83,7 @@ class JEMImage {
 	 * Determine the GD version
 	 * Code from php.net
 	 *
-	 * 
+	 *
 	 * @param int
 	 *
 	 * @return int

@@ -28,8 +28,6 @@ class modJEMteaserHelper
 	 */
 	public static function getList(&$params)
 	{
-		$app = JFactory::getApplication();
-
 		$db = JFactory::getDBO();
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
@@ -79,8 +77,7 @@ class modJEMteaserHelper
 		if ($state) {
 			$rawstate = explode(',', $state);
 
-			foreach ($rawstate as $val)
-			{
+			foreach ($rawstate as $val) {
 				if ($val) {
 					$states[] = '"'.trim($db->escape($val)).'"';
 				}

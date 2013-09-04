@@ -21,25 +21,23 @@ class JEMViewMyattending extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
-		$app =  JFactory::getApplication();
-
+		$app = JFactory::getApplication();
 
 		//initialize variables
-		$document 		=  JFactory::getDocument();
-		$jemsettings 	=  JEMHelper::config();
-		$menu 			=  $app->getMenu();
-		$item 			=  $menu->getActive();
-		$params 		=  $app->getParams();
-		$uri 			=  JFactory::getURI();
-		$user			=  JFactory::getUser();
-		$pathway 		=  $app->getPathWay();
-		$db  			=  JFactory::getDBO();
+		$document 		= JFactory::getDocument();
+		$jemsettings 	= JEMHelper::config();
+		$menu 			= $app->getMenu();
+		$item 			= $menu->getActive();
+		$params 		= $app->getParams();
+		$uri 			= JFactory::getURI();
+		$user			= JFactory::getUser();
+		$pathway 		= $app->getPathWay();
+		$db  			= JFactory::getDBO();
 
-			//redirect if not logged in
-		if ( !$user->get('id') ) {
+		//redirect if not logged in
+		if (!$user->get('id')) {
 			$app->enqueueMessage(JText::_('COM_JEM_NEED_LOGGED_IN'), 'error');
 			return false;
-
 		}
 
 		//add css file
@@ -47,8 +45,8 @@ class JEMViewMyattending extends JViewLegacy
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 
-		$attending 	=  $this->get('Attending');
-        $attending_pagination 	=  $this->get('AttendingPagination');
+		$attending 	= $this->get('Attending');
+		$attending_pagination 	= $this->get('AttendingPagination');
 
 		//are events available?
 		if (!$attending) {
@@ -57,34 +55,34 @@ class JEMViewMyattending extends JViewLegacy
 			$noattending = 0;
 		}
 		// get variables
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.myattending.filter_order', 'filter_order', 	'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.myattending.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.myattending.filter_state', 'filter_state', 	'*', 'word' );
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.myattending.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.myattending.filter_search', 'filter_search', '', 'string' );
-		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
+		$filter_order		= $app->getUserStateFromRequest('com_jem.myattending.filter_order', 'filter_order', 	'a.dates', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myattending.filter_order_Dir', 'filter_order_Dir',	'', 'word');
+// 		$filter_state 		= $app->getUserStateFromRequest('com_jem.myattending.filter_state', 'filter_state', 	'*', 'word');
+		$filter 			= $app->getUserStateFromRequest('com_jem.myattending.filter', 'filter', '', 'int');
+		$search 			= $app->getUserStateFromRequest('com_jem.myattending.filter_search', 'filter_search', '', 'string');
+		$search 			= $db->escape(trim(JString::strtolower($search)));
 
-		$task 		= JRequest::getWord('task');
+		$task 				= JRequest::getWord('task');
 
 		//search filter
 		$filters = array();
 
 		if ($jemsettings->showtitle == 1) {
-			$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_TITLE' ) );
+			$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_TITLE'));
 		}
 		if ($jemsettings->showlocate == 1) {
-			$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_VENUE' ) );
+			$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_VENUE'));
 		}
 		if ($jemsettings->showcity == 1) {
-			$filters[] = JHTML::_('select.option', '3', JText::_( 'COM_JEM_CITY' ) );
+			$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_CITY'));
 		}
 		if ($jemsettings->showcat == 1) {
-			$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_CATEGORY' ) );
+			$filters[] = JHTML::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
 		}
 		if ($jemsettings->showstate == 1) {
-			$filters[] = JHTML::_('select.option', '5', JText::_( 'COM_JEM_STATE' ) );
+			$filters[] = JHTML::_('select.option', '5', JText::_('COM_JEM_STATE'));
 		}
-		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
+		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
 
 		// search filter
 		$lists['search']= $search;
@@ -104,7 +102,6 @@ class JEMViewMyattending extends JViewLegacy
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title', $pagetitle);
 
-
 		$this->action					= $uri->toString();
 		$this->attending				= $attending;
 		$this->task						= $task;
@@ -116,7 +113,6 @@ class JEMViewMyattending extends JViewLegacy
 		$this->noattending				= $noattending;
 
 		parent::display($tpl);
-
 	}
 
 
@@ -136,8 +132,7 @@ class JEMViewMyattending extends JViewLegacy
 		}
 
 		$k = 0;
-		foreach($this->events as $key => $row)
-		{
+		foreach($this->events as $key => $row) {
 			$row->odd   = $k;
 
 			$this->events[$key] = $row;
@@ -146,9 +141,5 @@ class JEMViewMyattending extends JViewLegacy
 
 		return $this->events;
 	}
-
-
-
-
 }
 ?>

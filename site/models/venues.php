@@ -47,14 +47,14 @@ class JEMModelVenues extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		// Get the paramaters of the active menu item
 		$params = $app->getParams('com_jem');
 
 		//get the number of events from database
-		$limit			= JRequest::getInt('limit', $params->get('display_venues_num'));
-		$limitstart		= JRequest::getInt('limitstart');
+		$limit		= JRequest::getInt('limit', $params->get('display_venues_num'));
+		$limitstart	= JRequest::getInt('limitstart');
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -66,20 +66,18 @@ class JEMModelVenues extends JModelLegacy
 	 * @access public
 	 * @return array
 	 */
-	function &getData( )
+	function &getData()
 	{
 		$app = JFactory::getApplication();
 		$params = $app->getParams('com_jem');
 
 		// Lets load the content if it doesn't already exist
-		if (empty($this->_data))
-		{
+		if (empty($this->_data)) {
 			$query = $this->_buildQuery();
 			$pagination = $this->getPagination();
-			$this->_data = $this->_getList( $query, $pagination->limitstart,  $pagination->limit );
+			$this->_data = $this->_getList($query, $pagination->limitstart,  $pagination->limit);
 
-			for($i = 0; $i < count($this->_data); $i++)
-			{
+			for($i = 0; $i < count($this->_data); $i++) {
 				$venue = $this->_data[$i];
 
 				//Create image information
@@ -91,7 +89,7 @@ class JEMModelVenues extends JModelLegacy
 					$venue->text	= $venue->locdescription;
 					$venue->title 	= $venue->venue;
 					JPluginHelper::importPlugin('content');
-					$results = $app->triggerEvent( 'onContentPrepare', array( 'com_jem.venue', &$venue, &$params, 0 ));
+					$app->triggerEvent('onContentPrepare', array('com_jem.venue', &$venue, &$params, 0));
 					$venue->locdescription = $venue->text;
 				}
 
@@ -102,14 +100,14 @@ class JEMModelVenues extends JModelLegacy
 
 				//prepare the url for output
 				if (strlen(htmlspecialchars($venue->url, ENT_QUOTES)) > 35) {
-					$venue->urlclean = substr( htmlspecialchars($venue->url, ENT_QUOTES), 0 , 35).'...';
+					$venue->urlclean = substr(htmlspecialchars($venue->url, ENT_QUOTES), 0 , 35).'...';
 				} else {
 					$venue->urlclean = htmlspecialchars($venue->url, ENT_QUOTES);
 				}
 
 				//create flag
 				if ($venue->country) {
-					$venue->countryimg = JEMOutput::getFlag( $venue->country );
+					$venue->countryimg = JEMOutput::getFlag($venue->country);
 				}
 
 				//create target link
@@ -135,8 +133,7 @@ class JEMModelVenues extends JModelLegacy
 	function getTotal()
 	{
 		// Lets load the total nr if it doesn't already exist
-		if (empty($this->_total))
-		{
+		if (empty($this->_total)) {
 			$query = $this->_buildQuery();
 			$this->_total = $this->_getListCount($query);
 		}
@@ -153,10 +150,9 @@ class JEMModelVenues extends JModelLegacy
 	function getPagination()
 	{
 		// Lets load the content if it doesn't already exist
-		if (empty($this->_pagination))
-		{
+		if (empty($this->_pagination)) {
 			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
+			$this->_pagination = new JPagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
 		}
 
 		return $this->_pagination;
@@ -179,7 +175,7 @@ class JEMModelVenues extends JModelLegacy
 		}
 
 		//get categories
-		$query = 'SELECT v.*, COUNT( a.id ) AS assignedevents,'
+		$query = 'SELECT v.*, COUNT(a.id) AS assignedevents,'
 				. ' CASE WHEN CHAR_LENGTH(v.alias) THEN CONCAT_WS(\':\', v.id, v.alias) ELSE v.id END as slug'
 				. ' FROM #__jem_venues as v'
 				. ' LEFT JOIN #__jem_events AS a ON a.locid = v.id'

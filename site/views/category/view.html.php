@@ -27,13 +27,12 @@ class JEMViewCategory extends JViewLegacy
 	 */
 	function display($tpl=null)
 	{
-
 		//initialize variables
 		$app = JFactory::getApplication();
 		$document 		= JFactory::getDocument();
 		$menu			= $app->getMenu();
 		$jemsettings 	= JEMHelper::config();
-		$db  			=  JFactory::getDBO();
+		$db  			= JFactory::getDBO();
 
 		JHTML::_('behavior.tooltip');
 
@@ -44,11 +43,9 @@ class JEMViewCategory extends JViewLegacy
 		$uri 			= JFactory::getURI();
 		$pathway 		= $app->getPathWay();
 
-
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-
 
 		$evlinkcolor = $params->get('eventlinkcolor');
 		$evbackgroundcolor = $params->get('eventbackgroundcolor');
@@ -57,66 +54,56 @@ class JEMViewCategory extends JViewLegacy
 
 
 		$style = '
-
-        .eventcontent a:link, a:visited, a:active {
-        color:' . $evlinkcolor . ';
-        }
-        .eventcontent {
-        background-color:'.$evbackgroundcolor .';
-        		}
-        .eventandmore {
-        background-color:'.$eventandmorecolor .';
-        		}
-
-        .today .daynum {
- 		 background-color:'.$currentdaycolor.';
+		.eventcontent a:link, a:visited, a:active {
+			color:' . $evlinkcolor . ';
 		}
+		.eventcontent {
+			background-color:'.$evbackgroundcolor .';
+		}
+		.eventandmore {
+			background-color:'.$eventandmorecolor .';
+		}
+		.today .daynum {
+	 		 background-color:'.$currentdaycolor.';
+		}';
 
-
-        ';
-		$document->addStyleDeclaration( $style );
-
-
+		$document->addStyleDeclaration($style);
 
 		// get variables
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.category.filter_order', 'filter_order', 	'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.category.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.category.filter_state', 'filter_state', 	'*', 'word' );
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.category.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.category.filter_search', 'filter_search', '', 'string' );
-		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
+		$filter_order		= $app->getUserStateFromRequest('com_jem.category.filter_order', 'filter_order', 	'a.dates', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.category.filter_order_Dir', 'filter_order_Dir',	'', 'word');
+// 		$filter_state 		= $app->getUserStateFromRequest('com_jem.category.filter_state', 'filter_state', 	'*', 'word');
+		$filter 			= $app->getUserStateFromRequest('com_jem.category.filter', 'filter', '', 'int');
+		$search 			= $app->getUserStateFromRequest('com_jem.category.filter_search', 'filter_search', '', 'string');
+		$search 			= $db->escape(trim(JString::strtolower($search)));
 		$task 				= JRequest::getWord('task');
-
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] 	= $filter_order;
 
-
 		//search filter
 		$filters = array();
 
 		if ($jemsettings->showtitle == 1) {
-			$filters[] = JHTML::_('select.option', '1', JText::_( 'COM_JEM_TITLE' ) );
+			$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_TITLE'));
 		}
 		if ($jemsettings->showlocate == 1) {
-			$filters[] = JHTML::_('select.option', '2', JText::_( 'COM_JEM_VENUE' ) );
+			$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_VENUE'));
 		}
 		if ($jemsettings->showcity == 1) {
-			$filters[] = JHTML::_('select.option', '3', JText::_( 'COM_JEM_CITY' ) );
+			$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_CITY'));
 		}
 		if ($jemsettings->showcat == 1) {
-			$filters[] = JHTML::_('select.option', '4', JText::_( 'COM_JEM_CATEGORY' ) );
+			$filters[] = JHTML::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
 		}
 		if ($jemsettings->showstate == 1) {
-			$filters[] = JHTML::_('select.option', '5', JText::_( 'COM_JEM_STATE' ) );
+			$filters[] = JHTML::_('select.option', '5', JText::_('COM_JEM_STATE'));
 		}
-		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
-
+		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
 
 		// search filter
 		$lists['search']= $search;
-
 
 		//get data from model
 		$rows 		= $this->get('Data');
@@ -141,7 +128,6 @@ class JEMViewCategory extends JViewLegacy
 		$document->setTitle($item->title.' - '.$category->catname);
 		$document->setMetadata('keywords', $category->meta_keywords);
 		$document->setDescription(strip_tags($category->meta_description));
-
 
 		//add alternate feed link
 		$link	= '&format=feed&id='.$category->id;
@@ -189,7 +175,7 @@ class JEMViewCategory extends JViewLegacy
 			$category->text	= $category->catdescription;
 			$category->title 	= $category->catname;
 			JPluginHelper::importPlugin('content');
-			$results = $app->triggerEvent('onContentPrepare', array('com_jem.category', &$category, &$params, 0));
+			$app->triggerEvent('onContentPrepare', array('com_jem.category', &$category, &$params, 0));
 			$catdescription = $category->text;
 		}
 
@@ -212,65 +198,58 @@ class JEMViewCategory extends JViewLegacy
 		$this->item				= $item;
 		$this->categories		= $categories;
 
+		if($this->getLayout() == 'calendar') {
+			$app = JFactory::getApplication();
 
+			// Load tooltips behavior
+			JHTML::_('behavior.tooltip');
 
+			//initialize variables
+			$document 	= JFactory::getDocument();
+			$menu 		= $app->getMenu();
+			$jemsettings = JEMHelper::config();
+			$item 		= $menu->getActive();
+			$params 	= $app->getParams();
+			$uri 		= JFactory::getURI();
+			$pathway 	= $app->getPathWay();
 
+			//add css file
+			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendar.css');
 
+			// add javascript
+			// $document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
 
+			$category = $this->get('Category');
 
-		if($this->getLayout() == 'calendar')
-		{
-			$app =  JFactory::getApplication();
+			$year = (int)JRequest::getVar('yearID', strftime("%Y"));
+			$month = (int)JRequest::getVar('monthID', strftime("%m"));
 
-        // Load tooltips behavior
-        JHTML::_('behavior.tooltip');
+			//get data from model and set the month
+			$model = $this->getModel();
+			$model->setDate(mktime(0, 0, 1, $month, 1, $year));
 
-        //initialize variables
-        $document 	=  JFactory::getDocument();
-        $menu 		=  $app->getMenu();
-        $jemsettings =  JEMHelper::config();
-        $item 		= $menu->getActive();
-        $params 	=  $app->getParams();
-        $uri 		=  JFactory::getURI();
-        $pathway 	=  $app->getPathWay();
+			$rows = $this->get('Data');
 
-        //add css file
-        $document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
-        $document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-        $document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendar.css');
+			//Set Meta data
+			$document->setTitle($item->title);
 
-        // add javascript
-       // $document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
+			//Set Page title
+			$pagetitle = $params->def('page_title', $item->title);
+			$document->setTitle($pagetitle);
+			$document->setMetaData('title', $pagetitle);
 
-        $category 	= $this->get('Category');
+			//init calendar
+			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
+			$cal->enableMonthNav('index.php?view=category&layout=calendar&id='. $category->slug);
+			$cal->setFirstWeekDay($jemsettings->weekdaystart);
+			//$cal->enableDayLinks(false);
 
-        $year 	= (int)JRequest::getVar('yearID', strftime("%Y"));
-        $month 	= (int)JRequest::getVar('monthID', strftime("%m"));
-
-        //get data from model and set the month
-        $model =  $this->getModel();
-        $model->setDate(mktime(0, 0, 1, $month, 1, $year));
-
-        $rows =  $this->get('Data');
-
-        //Set Meta data
-        $document->setTitle($item->title);
-
-        //Set Page title
-        $pagetitle = $params->def('page_title', $item->title);
-        $document->setTitle($pagetitle);
-        $document->setMetaData('title', $pagetitle);
-
-        //init calendar
-		$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
-		$cal->enableMonthNav('index.php?view=category&layout=calendar&id='. $category->slug);
-		$cal->setFirstWeekDay($jemsettings->weekdaystart);
-		//$cal->enableDayLinks(false);
-
-		$this->rows 		= $rows;
-		$this->params		= $params;
-		$this->jemsettings	= $jemsettings;
-		$this->cal			= $cal;
+			$this->rows 		= $rows;
+			$this->params		= $params;
+			$this->jemsettings	= $jemsettings;
+			$this->cal			= $cal;
 		}
 
 		parent::display($tpl);
@@ -290,8 +269,7 @@ class JEMViewCategory extends JViewLegacy
 		}
 
 		$k = 0;
-		foreach($this->rows as $key => $row)
-		{
+		foreach($this->rows as $key => $row) {
 			$row->odd = $k;
 
 			$this->rows[$key] = $row;
@@ -325,7 +303,6 @@ class JEMViewCategory extends JViewLegacy
 
 		if ($href) {
 			$href = JRoute::_($href);
-			$style = '';
 			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'"><a href="'.$href.'">'.$text.'</a></span>';
 		} else {
 			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'">'.$text.'</span>';
@@ -333,7 +310,5 @@ class JEMViewCategory extends JViewLegacy
 
 		return $tip;
 	}
-
-
 }
 ?>

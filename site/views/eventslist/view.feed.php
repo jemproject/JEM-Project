@@ -15,28 +15,23 @@ jimport('joomla.application.component.view');
  * HTML View class for the JEM View
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewEventslist extends JViewLegacy
 {
 	/**
 	 * Creates the Event Feed
-	 *
-	 * 
 	 */
 	function display($cachable = false, $urlparams = false)
 	{
 		$app = JFactory::getApplication();
-
 		$doc = JFactory::getDocument();
-		$jemsettings = JEMHelper::config();
 
 		// Get some data from the model
 		JRequest::setVar('limit', $app->getCfg('feed_limit'));
 		$rows = $this->get('Data');
 
-		foreach ($rows as $row)
-		{
+		foreach ($rows as $row) {
 			// strip html from feed item title
 			$title = $this->escape($row->title);
 			$title = html_entity_decode($title);

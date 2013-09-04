@@ -55,22 +55,18 @@ class JEMModelVenue extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app =  JFactory::getApplication();
-		$jemsettings =  JEMHelper::config();
+		$app = JFactory::getApplication();
+		$jemsettings = JEMHelper::config();
 
 		$id = JRequest::getInt('id');
 		$this->setId((int)$id);
 
-		// Get the paramaters of the active menu item
-		$params 	=  $app->getParams('com_jem');
-
 		//get the number of events from database
-		$limit			= $app->getUserStateFromRequest('com_jem.venue.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart 	= $app->getUserStateFromRequest('com_jem.venue.limitstart', 'limitstart', 0, 'int');
+		$limit		= $app->getUserStateFromRequest('com_jem.venue.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart = $app->getUserStateFromRequest('com_jem.venue.limitstart', 'limitstart', 0, 'int');
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
-
 	}
 
 	/**
@@ -110,17 +106,16 @@ class JEMModelVenue extends JModelLegacy
 	 * @access public
 	 * @return array
 	 */
-	function &getData( )
+	function &getData()
 	{
-		$pop	= JRequest::getBool('pop');
+		$pop = JRequest::getBool('pop');
 
 		// Lets load the content if it doesn't already exist
-		if (empty($this->_data))
-		{
+		if (empty($this->_data)) {
 			$query = $this->_buildQuery();
 
 			if ($pop) {
-				$this->_data = $this->_getList( $query );
+				$this->_data = $this->_getList($query);
 			} else {
 				$pagination = $this->getPagination();
 				$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
@@ -128,8 +123,7 @@ class JEMModelVenue extends JModelLegacy
 		}
 
 		$count = count($this->_data);
-		for($i = 0; $i < $count; $i++)
-		{
+		for($i = 0; $i < $count; $i++) {
 			$item = $this->_data[$i];
 			$item->categories = $this->getCategories($item->id);
 
@@ -151,8 +145,7 @@ class JEMModelVenue extends JModelLegacy
 	function getTotal()
 	{
 		// Lets load the total nr if it doesn't already exist
-		if (empty($this->_total))
-		{
+		if (empty($this->_total)) {
 			$query = $this->_buildQuery();
 			$this->_total = $this->_getListCount($query);
 		}
@@ -169,10 +162,9 @@ class JEMModelVenue extends JModelLegacy
 	function getPagination()
 	{
 		// Lets load the content if it doesn't already exist
-		if (empty($this->_pagination))
-		{
+		if (empty($this->_pagination)) {
 			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
+			$this->_pagination = new JPagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
 		}
 
 		return $this->_pagination;
@@ -205,7 +197,7 @@ class JEMModelVenue extends JModelLegacy
 				. $orderby
 				;
 
-				return $query;
+		return $query;
 	}
 
 	/**
@@ -216,7 +208,7 @@ class JEMModelVenue extends JModelLegacy
 	 */
 	function _buildOrderBy()
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		$filter_order		= $app->getUserStateFromRequest('com_jem.venue.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.venue.filter_order_Dir', 'filter_order_Dir', '', 'word');
@@ -240,17 +232,16 @@ class JEMModelVenue extends JModelLegacy
 	 * @access private
 	 * @return array
 	 */
-	function _buildWhere( )
+	function _buildWhere()
 	{
-		$app 			=  JFactory::getApplication();
-		$task 			=  JRequest::getWord('task');
-		$params 		=  $app->getParams();
-		$jemsettings 	=  JEMHelper::config();
+		$app 			= JFactory::getApplication();
+		$task 			= JRequest::getWord('task');
+		$jemsettings 	= JEMHelper::config();
 
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
 
-		$filter_state 		= $app->getUserStateFromRequest('com_jem.venue.filter_state', 'filter_state', '', 'word');
+// 		$filter_state 		= $app->getUserStateFromRequest('com_jem.venue.filter_state', 'filter_state', '', 'word');
 		$filter 			= $app->getUserStateFromRequest('com_jem.venue.filter', 'filter', '', 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.venue.filter_search', 'filter_search', '', 'string');
 		$search 			= $this->_db->escape(trim(JString::strtolower($search)));
@@ -276,26 +267,23 @@ class JEMModelVenue extends JModelLegacy
 		// === END Excluded categories add === //
 		*/
 
-		if ($jemsettings->filter)
-		{
-			if ($search && $filter == 1) {
-				$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 2) {
-				$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 3) {
-				$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 4) {
-				$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 5) {
-				$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
+		if ($jemsettings->filter && $search) {
+			switch($filter) {
+				case 1:
+					$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
+					break;
+				case 2:
+					$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
+					break;
+				case 3:
+					$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
+					break;
+				case 4:
+					$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
+					break;
+				case 5:
+				default:
+					$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
 			}
 		}
 
@@ -311,7 +299,7 @@ class JEMModelVenue extends JModelLegacy
 	 * @access public
 	 * @return array
 	 */
-	function getVenue( )
+	function getVenue()
 	{
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
@@ -322,7 +310,7 @@ class JEMModelVenue extends JModelLegacy
 				.' FROM #__jem_venues'
 				.' WHERE id ='. $this->_id;
 
-		$this->_db->setQuery( $query );
+		$this->_db->setQuery($query);
 
 		$_venue = $this->_db->loadObject();
 		$_venue->attachments = JEMAttachment::getAttachments('venue'.$_venue->id, $gid);
@@ -343,15 +331,14 @@ class JEMModelVenue extends JModelLegacy
 				. ' WHERE rel.itemid = '.(int)$id
 				. ' AND c.published = 1'
 				. ' AND c.access  <= '.$gid;
-		;
 
-		$this->_db->setQuery( $query );
+		$this->_db->setQuery($query);
 
 		$this->_cats = $this->_db->loadObjectList();
 
 		$count = count($this->_cats);
-		for($i = 0; $i < $count; $i++)
-		{
+
+		for($i = 0; $i < $count; $i++) {
 			$item = $this->_cats[$i];
 			$cats = new JEMCategories($item->id);
 			$item->parentcats = $cats->getParentlist();

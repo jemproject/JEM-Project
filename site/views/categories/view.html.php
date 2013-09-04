@@ -9,26 +9,25 @@
 
 defined('_JEXEC') or die;
 
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
 /**
  * HTML View class for the Categories View
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewCategories extends JViewLegacy
 {
-	function display( $tpl=null )
+	function display($tpl=null)
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
-		$document 	=  JFactory::getDocument();
-		$jemsettings =  JEMHelper::config();
+		$document = JFactory::getDocument();
+		$jemsettings = JEMHelper::config();
 
-		$rows 		=  $this->get('Data');
-		$total 		=  $this->get('Total');
-		$pagination    =  $this->get('Pagination');
+		$rows = $this->get('Data');
+		$pagination = $this->get('Pagination');
 
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
@@ -36,30 +35,30 @@ class JEMViewCategories extends JViewLegacy
 
 		//get menu information
 		$menu		= $app->getMenu();
-		$item    	= $menu->getActive();
+		$item		= $menu->getActive();
 		$params 	= $app->getParams('com_jem');
 
 		// Request variables
-		$limitstart		= JRequest::getInt('limitstart');
-		$limit			= JRequest::getInt('limit', $params->get('cat_num'));
-		$task			= JRequest::getWord('task');
+		$task		= JRequest::getWord('task');
 
-		$params->def( 'page_title', $item->title);
+		$params->def('page_title', $item->title);
 
 		//pathway
-		$pathway 	=  $app->getPathWay();
-		if($item) $pathway->setItemName(1, $item->title);
+		$pathway = $app->getPathWay();
+		if($item) {
+			$pathway->setItemName(1, $item->title);
+		}
 
-		if ( $task == 'archive' ) {
-			$pathway->addItem(JText::_( 'COM_JEM_ARCHIVE' ), JRoute::_('index.php?view=categories&task=archive') );
-			$pagetitle = $params->get('page_title').' - '.JText::_( 'COM_JEM_ARCHIVE' );
+		if ($task == 'archive') {
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=categories&task=archive'));
+			$pagetitle = $params->get('page_title').' - '.JText::_('COM_JEM_ARCHIVE');
 		} else {
 			$pagetitle = $params->get('page_title');
 		}
 
 		//Set Page title
-		$document->setTitle( $pagetitle );
-   		$document->setMetaData( 'title' , $pagetitle );
+		$document->setTitle($pagetitle);
+		$document->setMetaData('title' , $pagetitle);
 
 		//add alternate feed link
 		$link    = 'index.php?option=com_jem&view=eventslist&format=feed';
@@ -70,15 +69,13 @@ class JEMViewCategories extends JViewLegacy
 
 		//Check if the user has access to the form
 		$maintainer = JEMUser::ismaintainer();
-		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
+		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
-		if ($maintainer || $genaccess ) 
-		{ 
-		$dellink = 1;
+		if ($maintainer || $genaccess) {
+			$dellink = 1;
 		} else {
-		$dellink = 0;	
+			$dellink = 0;
 		}
-		
 
 		$this->rows				= $rows;
 		$this->task				= $task;

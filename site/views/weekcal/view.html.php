@@ -19,81 +19,70 @@ jimport('joomla.application.component.view');
  */
 class JEMViewWeekcal extends JViewLegacy
 {
-    /**
-     * Creates the Calendar View
-     *
-     *
-     */
-    function display($tpl = null)
-    {
-        $app =  JFactory::getApplication();
+	/**
+	 * Creates the Calendar View
+	 *
+	 *
+	 */
+	function display($tpl = null)
+	{
+		$app = JFactory::getApplication();
 
-        // Load tooltips behavior
-        JHTML::_('behavior.tooltip');
+		// Load tooltips behavior
+		JHTML::_('behavior.tooltip');
 
-        //initialize variables
-        $document 	=  JFactory::getDocument();
-        $menu 		=  $app->getMenu();
-        $jemsettings =  JEMHelper::config();
-        $item 		= $menu->getActive();
-        $params 	=  $app->getParams();
-        $uri 		=  JFactory::getURI();
-        $pathway 	=  $app->getPathWay();
+		//initialize variables
+		$document 	= JFactory::getDocument();
+		$menu 		= $app->getMenu();
+		$jemsettings = JEMHelper::config();
+		$item 		= $menu->getActive();
+		$params 	= $app->getParams();
 
-        //add css file
-        $document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
-        $document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-        $document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendarweek.css');
+		//add css file
+		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendarweek.css');
 
-
-        $evlinkcolor = $params->get('eventlinkcolor');
-        $evbackgroundcolor = $params->get('eventbackgroundcolor');
-        $currentdaycolor = $params->get('currentdaycolor');
-        $eventandmorecolor = $params->get('eventandmorecolor');
+		$evlinkcolor = $params->get('eventlinkcolor');
+		$evbackgroundcolor = $params->get('eventbackgroundcolor');
+		$currentdaycolor = $params->get('currentdaycolor');
+		$eventandmorecolor = $params->get('eventandmorecolor');
 
 
-        $style = '
-
-        .eventcontent a:link, a:visited, a:active {
-        color:' . $evlinkcolor . ';
-        }
-        .eventcontent {
-        background-color:'.$evbackgroundcolor .';
-        		}
-        .eventandmore {
-        background-color:'.$eventandmorecolor .';
-        		}
-
-        .today .daynum {
- 		 background-color:'.$currentdaycolor.';
+		$style = '
+		.eventcontent a:link, a:visited, a:active {
+			color:' . $evlinkcolor . ';
 		}
+		.eventcontent {
+			background-color:'.$evbackgroundcolor .';
+		}
+		.eventandmore {
+			background-color:'.$eventandmorecolor .';
+		}
+		.today .daynum {
+			background-color:'.$currentdaycolor.';
+		}';
 
+		$document->addStyleDeclaration($style);
 
-        '
-        ;
-        $document->addStyleDeclaration( $style );
+		// add javascript
+		$document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
 
+		$year 	= (int)JRequest::getVar('yearID', strftime("%Y"));
+		$month 	= (int)JRequest::getVar('monthID', strftime("%m"));
+		$day = (int)JRequest::getVar('dayID', strftime("%d"));
 
-        // add javascript
-        $document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
+		$rows = $this->get('Data');
 
-        $year 	= (int)JRequest::getVar('yearID', strftime("%Y"));
-        $month 	= (int)JRequest::getVar('monthID', strftime("%m"));
-        $day = (int)JRequest::getVar('dayID', strftime("%d"));
+		//Set Meta data
+		$document->setTitle($item->title);
 
+		//Set Page title
+		$pagetitle = $params->def('page_title', $item->title);
+		$document->setTitle($pagetitle);
+		$document->setMetaData('title', $pagetitle);
 
-        $rows =  $this->get('Data');
-
-        //Set Meta data
-        $document->setTitle($item->title);
-
-        //Set Page title
-        $pagetitle = $params->def('page_title', $item->title);
-        $document->setTitle($pagetitle);
-        $document->setMetaData('title', $pagetitle);
-
-
-        $cal = new activeCalendarWeek($year,$month,$day);
+		$cal = new activeCalendarWeek($year,$month,$day);
 		$cal->enableWeekNum(JText::_('COM_JEM_WKCAL_WEEK'),null,''); // enables week number column with linkable week numbers
 		$cal->setFirstWeekDay(1);
 
@@ -102,39 +91,38 @@ class JEMViewWeekcal extends JViewLegacy
 		$this->jemsettings	= $jemsettings;
 		$this->cal			= $cal;
 
-        parent::display($tpl);
-    }
+		parent::display($tpl);
+	}
 
 	/**
-     * Creates a tooltip
-     *
-     * @access  public
-     * @param string  $tooltip The tip string
-     * @param string  $title The title of the tooltip
-     * @param string  $text The text for the tip
-     * @param string  $href An URL that will be used to create the link
-     * @param string  $class the class to use for tip.
-     * @return  string
-     *
-     */
-    function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '')
-    {
-        $tooltip = (htmlspecialchars($tooltip));
-        $title = (htmlspecialchars($title));
+	 * Creates a tooltip
+	 *
+	 * @access  public
+	 * @param string  $tooltip The tip string
+	 * @param string  $title The title of the tooltip
+	 * @param string  $text The text for the tip
+	 * @param string  $href An URL that will be used to create the link
+	 * @param string  $class the class to use for tip.
+	 * @return  string
+	 *
+	 */
+	function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '')
+	{
+		$tooltip = (htmlspecialchars($tooltip));
+		$title = (htmlspecialchars($title));
 
-        if ($title) {
-            $title = $title.'::';
-        }
+		if ($title) {
+			$title = $title.'::';
+		}
 
-        if ($href) {
-            $href = JRoute::_($href);
-            $style = '';
-            $tip = '<span class="'.$class.'" title="'.$title.$tooltip.'"><a href="'.$href.'">'.$text.'</a></span>';
-        } else {
-            $tip = '<span class="'.$class.'" title="'.$title.$tooltip.'">'.$text.'</span>';
-        }
+		if ($href) {
+			$href = JRoute::_($href);
+			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'"><a href="'.$href.'">'.$text.'</a></span>';
+		} else {
+			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'">'.$text.'</span>';
+		}
 
-        return $tip;
-    }
+		return $tip;
+	}
 }
 ?>

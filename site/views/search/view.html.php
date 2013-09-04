@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
 /**
  * HTML View class for the JEM View
@@ -24,7 +24,7 @@ class JEMViewSearch extends JViewLegacy
 	 *
 	 *
 	 */
-	function display( $tpl = null )
+	function display($tpl = null)
 	{
 		$app = JFactory::getApplication();
 
@@ -37,15 +37,13 @@ class JEMViewSearch extends JViewLegacy
 		$uri 		= JFactory::getURI();
 		$pathway 	= $app->getPathWay();
 
-
 		// add javascript
 		JHtml::_('behavior.framework');
 
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-		$document->addScript( $this->baseurl.'/media/com_jem/js/search.js' );
-
+		$document->addScript($this->baseurl.'/media/com_jem/js/search.js');
 
 		$filter_continent	= $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
 		$filter_country		= $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
@@ -55,10 +53,8 @@ class JEMViewSearch extends JViewLegacy
 		$filter_category 	= $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
 		$task				= JRequest::getWord('task');
 
-
 		//get data from model
 		$rows 	= $this->get('Data');
-		$total 	= $this->get('Total');
 
 		//are events available?
 		if (!$rows) {
@@ -68,31 +64,29 @@ class JEMViewSearch extends JViewLegacy
 		}
 
 		//params
-		$params->def( 'page_title', $item->title);
-
+		$params->def('page_title', $item->title);
 
 		//pathway
-		$pathway->setItemName( 1, $item->title );
+		$pathway->setItemName(1, $item->title);
 
-		if ( $task == 'archive' ) {
-			$pathway->addItem(JText::_( 'COM_JEM_ARCHIVE' ), JRoute::_('index.php?view=eventslist&task=archive') );
+		if ($task == 'archive') {
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=eventslist&task=archive'));
 			$print_link = JRoute::_('index.php?view=eventslist&task=archive&tmpl=component&print=1');
-			$pagetitle = $params->get('page_title').' - '.JText::_( 'COM_JEM_ARCHIVE' );
+			$pagetitle = $params->get('page_title').' - '.JText::_('COM_JEM_ARCHIVE');
 		} else {
 			$print_link = JRoute::_('index.php?view=eventslist&tmpl=component&print=1');
 			$pagetitle = $params->get('page_title');
 		}
 
 		//Set Page title
-		$document->setTitle( $pagetitle );
-		$document->setMetadata( 'title' , $pagetitle );
+		$document->setTitle($pagetitle);
+		$document->setMetadata('title' , $pagetitle);
 
 		//Check if the user has access to the form
 		$maintainer = JEMUser::ismaintainer();
-		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
+		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
-		if ($maintainer || $genaccess )
-		{
+		if ($maintainer || $genaccess) {
 			$dellink = 1;
 		} else {
 			$dellink = 0;
@@ -156,8 +150,7 @@ class JEMViewSearch extends JViewLegacy
 		unset($countries);
 
 		// city filter
-		if ($filter_country)
-		{
+		if ($filter_country) {
 			$cities = array();
 			$cities[] = JHTML::_('select.option', '', JText::_('COM_JEM_SELECT_CITY'));
 			$cities = array_merge($cities, $this->get('CityOptions'));
@@ -200,9 +193,8 @@ class JEMViewSearch extends JViewLegacy
 		}
 
 		$k = 0;
-		foreach($this->rows as $key => $row)
-		{
-			$row->odd   = $k;
+		foreach($this->rows as $key => $row) {
+			$row->odd = $k;
 
 			$this->rows[$key] = $row;
 			$k = 1 - $k;
@@ -220,17 +212,14 @@ class JEMViewSearch extends JViewLegacy
 	 */
 	function _buildSortLists()
 	{
-		$jemsettings = JEMHelper::config();
-
 		$app = JFactory::getApplication();
-		$db  		=  JFactory::getDBO();
+		$db = JFactory::getDBO();
 
 		$filter_order		= JRequest::getCmd('filter_order', 'a.dates');
 		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', 'ASC');
 
-
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.search.filter_search', 'filter_search', '', 'string' );
-		$filter 			= $db->escape( trim(JString::strtolower( $filter ) ) );
+		$filter 			= $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
+		$filter 			= $db->escape(trim(JString::strtolower($filter)));
 
 		//$filter				= $this->escape(JRequest::getString('filter'));
 		$filter_type		= JRequest::getString('filter_type');
@@ -238,7 +227,7 @@ class JEMViewSearch extends JViewLegacy
 		$sortselects = array();
 		$sortselects[]	= JHTML::_('select.option', 'title', JText::_('COM_JEM_TABLE_TITLE'));
 		$sortselects[] 	= JHTML::_('select.option', 'venue', JText::_('COM_JEM_TABLE_LOCATION'));
-		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type );
+		$sortselect 	= JHTML::_('select.genericlist', $sortselects, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
 
 		$lists['order_Dir'] 	= $filter_order_Dir;
 		$lists['order'] 		= $filter_order;

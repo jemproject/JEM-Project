@@ -20,10 +20,8 @@ jimport('joomla.html.pagination');
  */
 class JEMModelMyattending extends JModelLegacy
 {
-
 	var $_attending = null;
 	var $_total_attending = null;
-
 
 	/**
 	 * Constructor
@@ -33,11 +31,8 @@ class JEMModelMyattending extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app =  JFactory::getApplication();
-		$jemsettings =  JEMHelper::config();
-
-		// Get the paramaters of the active menu item
-		$params =  $app->getParams('com_jem');
+		$app = JFactory::getApplication();
+		$jemsettings = JEMHelper::config();
 
 		//get the number of events
 		$limit		= $app->getUserStateFromRequest('com_jem.myattending.limit', 'limit', $jemsettings->display_num, 'int');
@@ -59,23 +54,19 @@ class JEMModelMyattending extends JModelLegacy
 		$pop = JRequest::getBool('pop');
 
 		// Lets load the content if it doesn't already exist
-		if ( empty($this->_attending))
-		{
+		if (empty($this->_attending)) {
 			$query = $this->_buildQueryAttending();
 			$pagination = $this->getAttendingPagination();
 
-			if ($pop)
-			{
+			if ($pop) {
 				$this->_attending = $this->_getList($query);
-			} else
-			{
+			} else {
 				$pagination = $this->getAttendingPagination();
 				$this->_attending = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 			}
 
 			$count = count($this->_attending);
-			for($i = 0; $i < $count; $i++)
-			{
+			for($i = 0; $i < $count; $i++) {
 				$item = $this->_attending[$i];
 				$item->categories = $this->getCategories($item->eventid);
 
@@ -99,7 +90,7 @@ class JEMModelMyattending extends JModelLegacy
 	function getTotalAttending()
 	{
 		// Lets load the total nr if it doesn't already exist
-		if ( empty($this->_total_attending))
+		if (empty($this->_total_attending))
 		{
 			$query = $this->_buildQueryAttending();
 			$this->_total_attending = $this->_getListCount($query);
@@ -118,8 +109,7 @@ class JEMModelMyattending extends JModelLegacy
 	function getAttendingPagination()
 	{
 		// Lets load the content if it doesn't already exist
-		if ( empty($this->_pagination_attending))
-		{
+		if (empty($this->_pagination_attending)) {
 			jimport('joomla.html.pagination');
 			$this->_pagination_attending = new JPagination($this->getTotalAttending(), $this->getState('limitstart'), $this->getState('limit'));
 		}
@@ -167,7 +157,7 @@ class JEMModelMyattending extends JModelLegacy
 	 */
 	function _buildOrderByAttending()
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		$filter_order		= $app->getUserStateFromRequest('com_jem.myattending.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myattending.filter_order_Dir', 'filter_order_Dir', '', 'word');
@@ -193,21 +183,21 @@ class JEMModelMyattending extends JModelLegacy
 	 */
 	function _buildAttendingWhere()
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
-		$user =  JFactory::getUser();
+		$user = JFactory::getUser();
 		$nulldate = '0000-00-00';
 
 		// Get the paramaters of the active menu item
-		$params =  $app->getParams();
+		$params = $app->getParams();
 		$task = JRequest::getWord('task');
 
-		$jemsettings =  JEMHelper::config();
+		$jemsettings = JEMHelper::config();
 
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
 
-		$filter_state 	= $app->getUserStateFromRequest('com_jem.myattending.filter_state', 'filter_state', '', 'word');
+// 		$filter_state 	= $app->getUserStateFromRequest('com_jem.myattending.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.myattending.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.myattending.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
@@ -231,26 +221,23 @@ class JEMModelMyattending extends JModelLegacy
 		// then if the user is attending the event
 		$where [] = ' r.uid = '.$this->_db->Quote($user->id);
 
-		if ($jemsettings->filter)
-		{
-			if ($search && $filter == 1) {
-				$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 2) {
-				$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 3) {
-				$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 4) {
-				$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
-			}
-
-			if ($search && $filter == 5) {
-				$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
+		if ($jemsettings->filter && $search) {
+			switch($filter) {
+				case 1:
+					$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
+					break;
+				case 2:
+					$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
+					break;
+				case 3:
+					$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
+					break;
+				case 4:
+					$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
+					break;
+				case 5:
+				default:
+					$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
 			}
 		}
 
@@ -274,7 +261,7 @@ class JEMModelMyattending extends JModelLegacy
 				. ' AND c.access  <= '.$gid;
 				;
 
-		$this->_db->setQuery( $query );
+		$this->_db->setQuery($query);
 
 		$this->_cats = $this->_db->loadObjectList();
 
