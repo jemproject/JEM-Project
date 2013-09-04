@@ -76,14 +76,14 @@ class JEMController extends JControllerLegacy
 		$res = JEMAttachment::remove($id);
 		if (!$res) {
 			echo 0;
-			exit();
+			jexit();
 		}
 
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
 		echo 1;
-		exit();
+		jexit();
 	}
 }
 ?>

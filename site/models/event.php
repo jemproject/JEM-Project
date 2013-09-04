@@ -294,8 +294,6 @@ class JEMModelEvent extends JModelLegacy
 	 */
 	function userregister()
 	{
-		$app = JFactory::getApplication();
-
 		$user 		= JFactory::getUser();
 		$jemsettings = JEMHelper::config();
 

@@ -26,11 +26,6 @@ class JEMControllerUpdatecheck extends JEMController
 	function __construct()
 	{
 		parent::__construct();
-
-		// Register Extra task
-
 	}
-
-
 }
 ?>

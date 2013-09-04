@@ -18,13 +18,11 @@ jimport('joomla.application.component.controlleradmin');
  */
 class JEMControllerVenues extends JControllerAdmin
 {
-
 	/**
 	 * @var		string	The prefix to use with controller messages.
 	 *
 	 */
 	protected $text_prefix = 'COM_JEM_VENUES';
-
 
 
 	/**
@@ -47,7 +45,6 @@ class JEMControllerVenues extends JControllerAdmin
 	 */
 	function remove()
 	{
-
 		$jinput = JFactory::getApplication()->input;
 		$cid = $jinput->get('cid',  0, 'array');
 		//$cid = JRequest::getVar( 'cid', array(0), 'post', 'array' );
@@ -65,8 +62,5 @@ class JEMControllerVenues extends JControllerAdmin
 
 		$this->setRedirect( 'index.php?option=com_jem&view=venues', $msg );
 	}
-
-
-
 }
 ?>

@@ -45,10 +45,6 @@ class JEMViewSettings extends JViewLegacy {
 
 		// $document->addStyleSheet(JURI::root().'media/com_jem/bootstrap/css/bootstrap.css'); */
 
-		// Debugging
-		//var_dump($form);exit;
-		//var_dump($data);exit;
-
 		// Check for model errors.
 		if ($errors = $this->get('Errors')) {
 			JError::raiseError(500, implode('<br />', $errors));

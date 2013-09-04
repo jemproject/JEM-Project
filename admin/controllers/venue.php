@@ -36,9 +36,5 @@ class JEMControllerVenue extends JControllerForm
 	public function __construct($config = array())
 	{
 		parent::__construct($config);
-
 	}
-
-
-
 }

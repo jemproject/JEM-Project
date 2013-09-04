@@ -112,7 +112,7 @@ class JEMController extends JControllerLegacy
 	function unpublishtask()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die('Invalid Token');
+		JRequest::checkToken() or jexit('Invalid Token');
 
 
 		$app = JFactory::getApplication();
@@ -149,7 +149,7 @@ class JEMController extends JControllerLegacy
 	{
 
 		// Check for request forgeries
-		JRequest::checkToken() or die('Invalid Token');
+		JRequest::checkToken() or jexit('Invalid Token');
 
 		$app = JFactory::getApplication();
 		$menuitem = $app->getMenu()->getActive()->id;
@@ -187,7 +187,7 @@ class JEMController extends JControllerLegacy
 	{
 
 		// Check for request forgeries
-		JRequest::checkToken() or die('Invalid Token');
+		JRequest::checkToken() or jexit('Invalid Token');
 
 		$app = JFactory::getApplication();
 		$menuitem = $app->getMenu()->getActive()->id;
@@ -224,7 +224,7 @@ class JEMController extends JControllerLegacy
 	function trash()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die('Invalid Token');
+		JRequest::checkToken() or jexit('Invalid Token');
 
 		$app = JFactory::getApplication();
 		$menuitem = $app->getMenu()->getActive()->id;
@@ -306,7 +306,7 @@ class JEMController extends JControllerLegacy
 	function savevenue()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die('Invalid Token');
+		JRequest::checkToken() or jexit('Invalid Token');
 
 		//get image
 		$file 		= JRequest::getVar('userfile', '', 'files', 'array');
@@ -379,7 +379,7 @@ class JEMController extends JControllerLegacy
 	function saveevent()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die('Invalid Token');
+		JRequest::checkToken() or jexit('Invalid Token');
 
 		//get image
 		$file 		= JRequest::getVar('userfile', '', 'files', 'array');
@@ -437,7 +437,7 @@ class JEMController extends JControllerLegacy
 	function userregister()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die('Invalid Token');
+		JRequest::checkToken() or jexit('Invalid Token');
 
 		$id 	= JRequest::getInt('rdid', 0, 'post');
 
@@ -474,7 +474,7 @@ class JEMController extends JControllerLegacy
 	function delreguser()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die('Invalid Token');
+		JRequest::checkToken() or jexit('Invalid Token');
 
 		$id 	= JRequest::getInt('rdid', 0, 'post');
 
@@ -542,14 +542,14 @@ class JEMController extends JControllerLegacy
 		$res = JEMAttachment::remove($id);
 		if (!$res) {
 			echo 0;
-			exit();
+			jexit();
 		}
 
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
 		echo 1;
-		exit();
+		jexit();
 	}
 
 	/**

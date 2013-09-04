@@ -18,7 +18,6 @@ jimport('joomla.application.component.modelform');
  */
 class JEMModelSettings extends JModelForm
 {
-
 	/**
 	 * Method to get the record form.
 	 *
@@ -39,7 +38,6 @@ class JEMModelSettings extends JModelForm
 	}
 
 
-
 	/**
 	 * Loading the table data
 	 *
@@ -47,7 +45,6 @@ class JEMModelSettings extends JModelForm
 	 */
 	public function getData()
 	{
-
 		$db = JFactory::getDbo();
 
 		$query = $db->getQuery(true);
@@ -59,7 +56,6 @@ class JEMModelSettings extends JModelForm
 		$data = $db->loadObject();
 
 		return $data;
-
 	}
 
 	/**
@@ -68,7 +64,6 @@ class JEMModelSettings extends JModelForm
 	 */
 	protected function loadFormData()
 	{
-
 		// Check the session for previously entered form data.
 		$data = JFactory::getApplication()->getUserState('com_jem.edit.settings.data', array());
 
@@ -80,19 +75,12 @@ class JEMModelSettings extends JModelForm
 	}
 
 
-
-
 	/**
 	 * Saves the settings
 	 *
 	 */
 	function store($post,$post2)
 	{
-
-		// debug
-		/* var_dump($post2);exit */
-		/* var_dump($post);exit */
-
 		$settings 	= JTable::getInstance('jem_settings', '');
 		$jinput = JFactory::getApplication()->input;
 
@@ -113,37 +101,18 @@ class JEMModelSettings extends JModelForm
 			$meta_key .= $meta_keyword;
 		}
 
-
 		// binding the input fields (outside the jform)
-
 		$varlastupdate = $jinput->get('lastupdate','','');
 		$settings->lastupdate = $varlastupdate;
 
-
 		$settings->meta_keywords = $meta_key;
 		$settings->id = 1;
-
-
 
 		if (!$settings->store()) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 		}
 
-
 		return true;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

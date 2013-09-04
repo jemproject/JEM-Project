@@ -19,8 +19,6 @@ jimport('joomla.application.component.controller');
 */
 class JEMControllerPlugins extends JEMController
 {
-
-
 	/**
 	 * Constructor
 	 *
@@ -49,9 +47,7 @@ class JEMControllerPlugins extends JEMController
 
 		$db->setQuery($query);
 
-
 		$total = $db->loadResult();
-
 
 		//any plugins installed? if not redirect to installation screen
 		if ($total > 0){
@@ -63,6 +59,5 @@ class JEMControllerPlugins extends JEMController
 		}
 		$this->setRedirect($link, $msg);
 	}
-
 }
 ?>

@@ -193,19 +193,13 @@ class jemmyeventsTab extends cbTabHandler {
 		 */
 		if ($userid == $user->id)
 		 {
-			$url = "index.php?option=com_jem&view=editevent" ;
+// 			$url = "index.php?option=com_jem&view=editevent" ;
 			$query4 = "SELECT `published` FROM `#__jem_events` WHERE `created_by` = id and `published` = 1 " ;
 			$_CB_database->setQuery($query4);
 			$results4 = $_CB_database->loadObjectList();
 
-			$sum = "0";
-			if(count($results4)) {
-				foreach($results4 as $result4) { // FIXME: wtf...
-					$sum = $sum + 1;
-				}
-			}
-			if ($sum > 0) {
-				$return .="<br><br>".$sum._JEMMYEVENTS_PUB."<br>";
+			if ($results4 != null && count($results4) > 0) {
+				$return .="<br><br>".count($results4)._JEMMYEVENTS_PUB."<br>";
 			}
 		}
 
@@ -290,7 +284,7 @@ class jemmyeventsTab extends cbTabHandler {
 				// defining variables
 				$result = $results[$i];
 // 				$checked = JHTML::_('grid.id', $i, $result->id);
-				$catHref = JRoute::_(JEMHelperRoute::getCategoryRoute($result->catid));
+// 				$catHref = JRoute::_(JEMHelperRoute::getCategoryRoute($result->catid));
 // 				$cats = "\n\t\t\t<a href='{$catHref}' title='{$result->catname}'>{$result->catname}</a>";
 
 				$query = "SELECT formatShortDate FROM #__jem_settings";
@@ -529,14 +523,8 @@ class jemmyeventsTab extends cbTabHandler {
 					$_CB_database->setQuery($query4);
 					$results4 = $_CB_database->loadObjectList();
 
-					$sum = "0";
-					if(count($results4)) {
-						foreach($results4 as $result4) { // FIXME: wtf...
-							$sum = $sum + 1;
-						}
-					}
-					if ($sum > 0) {
-						$return .="<br><br>".$sum._JEMMYEVENTS_PUB."<br>";
+					if ($results4 != null && count($results4) > 0) {
+						$return .="<br><br>".count($result4)._JEMMYEVENTS_PUB."<br>";
 					}
 				}
 			}

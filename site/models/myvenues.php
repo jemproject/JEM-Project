@@ -21,7 +21,6 @@ jimport('joomla.html.pagination');
 class JEMModelMyvenues extends JModelLegacy
 {
 	var $_venues = null;
-
 	var $_total_venues = null;
 
 
@@ -36,9 +35,6 @@ class JEMModelMyvenues extends JModelLegacy
 
 		$app = JFactory::getApplication();
 		$jemsettings = JEMHelper::config();
-
-		// Get the paramaters of the active menu item
-		$params = $app->getParams('com_jem');
 
 		//get the number of events
 		$limit		= $app->getUserStateFromRequest('com_jem.myvenues.limit', 'limit', $jemsettings->display_num, 'int');

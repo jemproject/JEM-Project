@@ -49,8 +49,6 @@ class JEMControllerSettings extends JControllerLegacy
 
 		$post = JRequest::getVar('jform', array(), 'post', 'array');
 		$post2 = $jinput->getArray($_POST);
-		//var_dump($post2);exit;
-
 
 		//get model
 		$model 	= $this->getModel('settings');

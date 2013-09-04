@@ -18,13 +18,11 @@ jimport('joomla.application.component.controlleradmin');
  */
 class JEMControllerGroups extends JControllerAdmin
 {
-
 	/**
 	 * @var		string	The prefix to use with controller messages.
 	 *
 	 */
 	protected $text_prefix = 'COM_JEM_GROUPS';
-
 
 
 	/**
@@ -47,15 +45,11 @@ class JEMControllerGroups extends JControllerAdmin
 	 */
 	function remove()
 	{
-
-
 		// Check for request forgeries
-		JRequest::checkToken() or die( 'Invalid Token' );
-
+		JRequest::checkToken() or jexit( 'Invalid Token' );
 
 		$jinput = JFactory::getApplication()->input;
 		$cid = $jinput->get('cid',  0, 'array');
-
 
 		$total = count( $cid );
 
@@ -73,7 +67,5 @@ class JEMControllerGroups extends JControllerAdmin
 
 		$this->setRedirect( 'index.php?option=com_jem&view=groups', $msg );
 	}
-
-
 }
 ?>

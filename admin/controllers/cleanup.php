@@ -73,7 +73,6 @@ class JEMControllerCleanup extends JEMController
 	 */
 	function truncatecats()
 	{
-
 		$model = $this->getModel('cleanup');
 		$model->truncatecats();
 

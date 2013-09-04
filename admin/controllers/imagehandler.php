@@ -16,14 +16,14 @@ jimport('joomla.filesystem.file');
  * JEM Component Imagehandler Controller
  *
  * @package JEM
- * 
+ *
  */
 class JEMControllerImagehandler extends JEMController
 {
 	/**
 	 * Constructor
 	 *
-	 * 
+	 *
 	 */
 	function __construct() {
 		parent::__construct();
@@ -39,13 +39,13 @@ class JEMControllerImagehandler extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function uploadimage() {
 		global $app;
 
 		// Check for request forgeries
-		JSession::checkToken() or die;
+		JSession::checkToken() or jexit('Invalid token');
 
 		$jemsettings = JEMAdmin::config();
 
@@ -99,7 +99,7 @@ class JEMControllerImagehandler extends JEMController
 	 *
 	 * @access public
 	 * @return void
-	 * 
+	 *
 	 */
 	function delete() {
 		global $app;

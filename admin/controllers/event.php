@@ -38,25 +38,4 @@ class JEMControllerEvent extends JControllerForm
 		parent::__construct($config);
 
 	}
-
-
-
-	/**
-	 * Function that allows child controller access to model data after the data has been saved.
-	 *
-	 * @param   JModelLegacy  $model  The data model object.
-	 * @param   array         $validData   The validated data.
-	 *
-	 * @return  void
-	 *
-	 */
-
-	/*protected function postSaveHook($model, $validData)
-	{
-
-
-	}
-	*/
-
-
 }

@@ -28,11 +28,11 @@ class JEMViewEventslist extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
-		$mainframe = JFactory::getApplication();
+// 		$mainframe = JFactory::getApplication();
 
-		$offset = (float) $mainframe->getCfg('offset');
-		$hours = ($offset >= 0) ? floor($offset) : ceil($offset);
-		$mins = abs($offset - $hours) * 60;
+// 		$offset = (float) $mainframe->getCfg('offset');
+// 		$hours = ($offset >= 0) ? floor($offset) : ceil($offset);
+// 		$mins = abs($offset - $hours) * 60;
 // 		$utcoffset = sprintf('%+03d%02d00', $hours, $mins);
 
 		$settings = JEMHelper::config();

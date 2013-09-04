@@ -543,8 +543,6 @@ class JEMOutput {
 
 		$url1 = 'http://maps.google.'.$jemsettings->tld.'/maps?hl='.$jemsettings->lg.'&q='.str_replace(" ", "+", $data->street).', '.$data->postalCode.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.mb_ereg_replace("&", "+", $data->venue).')&ie=UTF8&z=15&iwloc=B&output=embed" ';
 
-		//var_dump($url1);exit;
-
 		//google map link or include
 		switch ($jemsettings->showmapserv)
 		{

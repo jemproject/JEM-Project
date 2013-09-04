@@ -20,12 +20,12 @@ require_once(JPATH_SITE.'/components/com_jem/classes/categories.class.php');
  *
  * @static
  * @package		JEM
- * 
+ *
  */
 abstract class JEMHelperRoute
 {
 	protected static $lookup;
-	const artificalId = 0;
+	const ARTIFICALID = 0;
 
 	/**
 	 * Determines an JEM Link
@@ -33,7 +33,7 @@ abstract class JEMHelperRoute
 	 * @param int The id of an JEM item
 	 * @param string The view
 	 * @param string The category of the item
-	 * 
+	 *
 	 *
 	 * @return string determined Link
 	 */
@@ -76,7 +76,7 @@ abstract class JEMHelperRoute
 		$link = 'index.php?option=com_jem&view=category&id='. $id;
 
 		// If no category view works try categories
-		$needles['categories'] = array(self::artificalId);
+		$needles['categories'] = array(self::ARTIFICALID);
 
 		$category = new JEMCategories($id);
 		if($category) {
@@ -129,7 +129,7 @@ abstract class JEMHelperRoute
 		$link = 'index.php?option=com_jem&view=venue&id='. $id;
 
 		// If no venue view works try venues
-		$needles['venues'] = array(self::artificalId);
+		$needles['venues'] = array(self::ARTIFICALID);
 
 		if ($item = self::_findItem($needles)) {
 			$link .= '&Itemid='.$item;
@@ -148,7 +148,7 @@ abstract class JEMHelperRoute
 	 * if not the active menuitem will be returned
 	 *
 	 * @param array The id and view
-	 * 
+	 *
 	 *
 	 * @return int Itemid
 	 */
@@ -179,7 +179,7 @@ abstract class JEMHelperRoute
 						}
 						// Some views have no ID, but we have to set one
 						else {
-							self::$lookup[$view][self::artificalId] = $item->id;
+							self::$lookup[$view][self::ARTIFICALID] = $item->id;
 						}
 					}
 				}

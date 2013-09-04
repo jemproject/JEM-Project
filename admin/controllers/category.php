@@ -46,7 +46,7 @@ class JEMControllerCategory extends JEMController
 	function save()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die('Invalid Token');
+		JRequest::checkToken() or jexit('Invalid Token');
 
 		$task = JRequest::getVar('task');
 
@@ -235,7 +235,7 @@ class JEMControllerCategory extends JEMController
 	function cancel()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or die('Invalid Token');
+		JRequest::checkToken() or jexit('Invalid Token');
 
 		$session 	= JFactory::getSession();
 		$session->clear('categoryform', 'com_jem');

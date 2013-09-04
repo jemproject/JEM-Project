@@ -402,7 +402,6 @@ class JEMModelCategory extends JModelLegacy
 	function getCategory()
 	{
 		//initialize some vars
-
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
 
@@ -415,7 +414,7 @@ class JEMModelCategory extends JModelLegacy
 
 		$this->_category = $this->_db->loadObject();
 
-		$groups = $user->getAuthorisedViewLevels();
+// 		$groups = $user->getAuthorisedViewLevels();
 // 		$allowed = in_array($this->_category->access, $groups);
 
 		//Make sure the category is published

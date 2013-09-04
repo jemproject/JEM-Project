@@ -18,13 +18,11 @@ jimport('joomla.application.component.controlleradmin');
  */
 class JEMControllerEvents extends JControllerAdmin
 {
-
 	/**
 	 * @var		string	The prefix to use with controller messages.
 	 *
 	 */
 	protected $text_prefix = 'COM_JEM_EVENTS';
-
 
 
 	/**
@@ -62,8 +60,5 @@ class JEMControllerEvents extends JControllerAdmin
 
 		$this->setRedirect( 'index.php?option=com_jem&view=events', $msg );
 	}
-
-
-
 }
 ?>
