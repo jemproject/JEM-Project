@@ -212,7 +212,7 @@ class modJEMteaserHelper
 	 *format days
 	 *
 	 */
-	public static function _format_day($row, &$params)
+	protected static function _format_day($row, &$params)
 	{
 		//Get needed timestamps and format
 		setlocale (LC_TIME, 'de_DE.UTF8');
@@ -286,9 +286,8 @@ class modJEMteaserHelper
 	 * @access public
 	 * @return string
 	 */
-	public static function _format_date($row, &$params)
+	protected static function _format_date($row, &$params)
 	{
-		setlocale (LC_TIME, 'de_DE.UTF8');
 		//Get needed timestamps and format
 		$yesterday_stamp	= mktime(0, 0, 0, date("m") , date("d")-1, date("Y"));
 		$yesterday 			= strftime("%Y-%m-%d", $yesterday_stamp);
@@ -297,7 +296,7 @@ class modJEMteaserHelper
 		$tomorrow_stamp 	= mktime(0, 0, 0, date("m") , date("d")+1, date("Y"));
 		$tomorrow 			= strftime("%Y-%m-%d", $tomorrow_stamp);
 
-		$dates_stamp		= strtotime($row->dates);
+		$dates_stamp		= $row->dates ? strtotime($row->dates) : null;
 		$enddates_stamp		= $row->enddates ? strtotime($row->enddates) : null;
 
 		//if datemethod show day difference
@@ -320,17 +319,17 @@ class modJEMteaserHelper
 
 			//the event has an enddate and it's later than today but the startdate is earlier than today
 			//means a currently running event
-			} elseif($row->enddates && $enddates_stamp > $today_stamp && $dates_stamp < $today_stamp) {
+			} elseif($row->dates && $row->enddates && $enddates_stamp > $today_stamp && $dates_stamp < $today_stamp) {
 				$days = round(($today_stamp - $dates_stamp) / 86400);
 				$result = JText::sprintf('MOD_JEM_TEASER_STARTED_DAYS_AGO', $days);
 
 			//the events date is earlier than yesterday
-			} elseif($dates_stamp < $yesterday_stamp) {
+			} elseif($row->dates && $dates_stamp < $yesterday_stamp) {
 				$days = round(($today_stamp - $dates_stamp) / 86400);
 				$result = JText::sprintf('MOD_JEM_TEASER_DAYS_AGO', $days);
 
 			//the events date is later than tomorrow
-			} elseif($dates_stamp > $tomorrow_stamp) {
+			} elseif($row->dates && $dates_stamp > $tomorrow_stamp) {
 				$days = round(($dates_stamp - $today_stamp) / 86400);
 				$result = JText::sprintf('MOD_JEM_TEASER_DAYS_AHEAD', $days);
 			}
@@ -363,33 +362,33 @@ class modJEMteaserHelper
 	 * @access public
 	 * @return string
 	 */
-	public static function _format_time($date, $time, &$params)
+	protected static function _format_time($date, $time, &$params)
 	{
 		$time = strftime($params->get('formattime', '%H:%M'), strtotime($date.' '.$time));
 		return $time;
 	}
 	/*Calendar*/
 
-	public static function _format_dayname($row)
+	protected static function _format_dayname($row)
 	{
 		setlocale (LC_TIME, 'de_DE.UTF8');
 		$date = strtotime($row->dates);
 		$result = strftime("%A", $date);
 		return $result;
 	}
-	public static function _format_daynum($row)
+	protected static function _format_daynum($row)
 	{
 		$date = strtotime($row->dates);
 		$result = strftime("%d", $date);
 		return $result;
 	}
-	public static function _format_year($row)
+	protected static function _format_year($row)
 	{
 		$date = strtotime($row->dates);
 		$result = strftime("%Y", $date);
 		return $result;
 	}
-	public static function _format_month($row)
+	protected static function _format_month($row)
 	{
 		setlocale (LC_TIME, 'de_DE.UTF8');
 		$date = strtotime($row->dates);

@@ -174,7 +174,6 @@ class modjemcalqhelper
 							$evlink = 'index.php?option=com_jem&view=event&id='. $event->slug.'&Itemid='.$FixItemID;
 							$link = JRoute::_( $evlink );
 						}
-
 					}
 					else
 					{
@@ -196,7 +195,7 @@ class modjemcalqhelper
 		// End of Toni modification
 		}
 		return $days;
-	} //End of function getdays
+	}
 }
 
 ?>

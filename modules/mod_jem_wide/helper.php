@@ -26,7 +26,7 @@ class modJEMwideHelper
 	 * @access public
 	 * @return array
 	 */
-	static function getList(&$params)
+	public static function getList(&$params)
 	{
 		$db = JFactory::getDBO();
 		$user = JFactory::getUser();
@@ -41,13 +41,13 @@ class modJEMwideHelper
 		}
 
 		//archived events only
-		if ($params->get('type') == 2) {
+		elseif ($params->get('type') == 2) {
 			$where = ' WHERE a.published = 2';
 			$order = ' ORDER BY a.dates DESC, a.times DESC';
 		}
 
 		//currently running events only
-		if ($params->get('type') == 3) {
+		elseif ($params->get('type') == 3) {
 			$where = ' WHERE a.published = 1';
 			$where .= ' AND (a.dates = CURDATE()';
 			$where .= ' OR (a.enddates >= CURDATE() AND a.dates <= CURDATE()))';
@@ -77,8 +77,7 @@ class modJEMwideHelper
 		if ($state) {
 			$rawstate = explode(',', $state);
 
-			foreach ($rawstate as $val)
-			{
+			foreach ($rawstate as $val) {
 				if ($val) {
 					$states[] = '"'.trim($db->escape($val)).'"';
 				}
@@ -179,7 +178,7 @@ class modJEMwideHelper
 	 * @access public
 	 * @return string
 	 */
-	static function _format_date($row, &$params)
+	protected static function _format_date($row, &$params)
 	{
 		//Get needed timestamps and format
 		$yesterday_stamp	= mktime(0, 0, 0, date("m") , date("d")-1, date("Y"));
@@ -227,8 +226,6 @@ class modJEMwideHelper
 				$result = JText::sprintf('MOD_JEM_WIDE_DAYS_AHEAD', $days);
 			}
 		} else {
-
-
 			//single day event
 			$date = JEMOutput::formatdate($row->dates, $params->get('formatdate', '%d.%m.%Y') );
 			$result = JText::sprintf('MOD_JEM_WIDE_ON_DATE', $date);
@@ -256,7 +253,7 @@ class modJEMwideHelper
 	 * @access public
 	 * @return string
 	 */
-	static function _format_time($date, $time, &$params)
+	protected static function _format_time($date, $time, &$params)
 	{
 		$time = strftime($params->get('formattime', '%H:%M'), strtotime($date.' '.$time));
 

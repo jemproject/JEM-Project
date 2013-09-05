@@ -109,7 +109,7 @@ class modJEMHelper
 	 * @access public
 	 * @return string
 	 */
-	static function _format_url($url)
+	protected static function _format_url($url)
 	{
 		if(!empty($url) && strtolower(substr($url, 0, 7)) != "http://") {
 			$url = 'http://'.$url;
