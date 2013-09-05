@@ -28,17 +28,16 @@ JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
 //perform cleanup if it wasn't done today (archive, delete, recurrence)
 JEMHelper::cleanup();
 
-// Require the controller
-require_once (JPATH_COMPONENT.'/controller.php');
+// import joomla controller library
+jimport('joomla.application.component.controller');
 
-
+// Get an instance of the controller
 $controller = JControllerLegacy::getInstance('Jem');
-$controller->execute(JRequest::getCmd('task'));
+
+// Perform the Request task
+$input = JFactory::getApplication()->input;
+$controller->execute($input->getCmd('task'));
+
+// Redirect if set by the controller
 $controller->redirect();
-
-
-
-
-
-
 ?>

@@ -524,7 +524,7 @@ class jemmyeventsTab extends cbTabHandler {
 					$results4 = $_CB_database->loadObjectList();
 
 					if ($results4 != null && count($results4) > 0) {
-						$return .="<br><br>".count($result4)._JEMMYEVENTS_PUB."<br>";
+						$return .="<br><br>".count($results4)._JEMMYEVENTS_PUB."<br>";
 					}
 				}
 			}
