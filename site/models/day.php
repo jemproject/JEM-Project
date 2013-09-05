@@ -285,12 +285,16 @@ class JEMModelDay extends JModelLegacy
 			switch($filter) {
 				case 1:
 					$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
+					break;
 				case 2:
 					$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
+					break;
 				case 3:
 					$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
+					break;
 				case 4:
 					$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
+					break;
 				case 5:
 				default:
 					$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
