@@ -27,7 +27,7 @@ var $cssMonthWeek="monthweek";
 */
 /*
 ********************************************************************************
-PUBLIC activeCalendarWeek() -> class constructor. Calls the main class constructor
+PUBLIC class constructor. Calls the main class constructor
 ********************************************************************************
 */
 function __construct($year=false,$month=false,$day=false,$GMTDiff="none") {
@@ -37,7 +37,7 @@ $this->GMT=$GMTDiff;
 /*
 ********************************************************************************
 PUBLIC showWeeks() -> returns the week view as html table string
-The week calendar starts on the date set in the constructor activeCalendarWeek()
+The week calendar starts on the date set in the constructor
 It generates as many rows as set in $numberOfWeeks
 ********************************************************************************
 */
@@ -65,7 +65,7 @@ $xday=1;
 		}
 	}
 	if ($this->startOnSun) $xday=$xday-1;
-$this->activeCalendarWeek($this->actyear,$this->actmonth,$xday,$this->GMT);
+$this->__construct($this->actyear,$this->actmonth,$xday,$this->GMT);
 return $this->showWeeks($numberOfWeeks);
 }
 /*
@@ -170,7 +170,7 @@ $out = $this->mkMonthRow();
 		if ($this->weekNum) $out.="<td class=\"".$this->cssWeekNum."\">".$weeknumber."</td>";
 		for ($i = 0; $i <= 6; $i++){
 		$out.=$this->mkDay($this->actday);
-		$this->activeCalendarWeek($this->actyear, $this->actmonth,$this->actday+1,$this->GMT);
+		$this->__construct($this->actyear, $this->actmonth,$this->actday+1,$this->GMT);
 		$this->resetSelectedToToday();
 		}
 		$out.="</tr>\n";
