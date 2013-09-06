@@ -59,7 +59,7 @@ class JEMViewWeekcal extends JViewLegacy
 		.eventandmore {
 			background-color:'.$eventandmorecolor .';
 		}
-		.today .daynum {
+		.selectedday .daynum {
 			background-color:'.$currentdaycolor.';
 		}';
 
