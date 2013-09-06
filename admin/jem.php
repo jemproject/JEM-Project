@@ -29,6 +29,9 @@ JTable::addIncludePath(JPATH_COMPONENT.'/tables');
 // import joomla controller library
 jimport('joomla.application.component.controller');
 
+// Require the frontend base controller
+require_once (JPATH_COMPONENT.'/controller.php');
+
 // Get an instance of the controller
 $controller = JControllerLegacy::getInstance('Jem');
 
