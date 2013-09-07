@@ -7,7 +7,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined ( '_JEXEC' ) or die;
+defined ('_JEXEC') or die;
 ?>
 <fieldset class="jem_fldst_attachments">
 <legend><?php echo JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'); ?></legend>
@@ -24,12 +24,12 @@ defined ( '_JEXEC' ) or die;
 	<tbody>
 		<?php foreach ($this->row->attachments as $file): ?>
 		<tr>
-			<td><?php echo $file->file; ?><input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/></td>
-			<td><input type="text" name="attached-name[]" style="width: 100%" value="<?php echo $file->name; ?>" /></td>
-			<td><input type="text" name="attached-desc[]" style="width: 100%" value="<?php echo $file->description; ?>" /></td>
+			<td><?php echo wordwrap($file->file, 30, "<br>", true); ?><input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/></td>
+			<td><input type="text" name="attached-name[]" value="<?php echo $file->name; ?>" /></td>
+			<td><input type="text" name="attached-desc[]" value="<?php echo $file->description; ?>" /></td>
 			<td><?php echo JHTML::_('select.genericlist', $this->access, 'attached-access[]', 'class="inputbox" size="3"', 'value', 'text', $file->access); ?></td>
-			<td><?php echo JHTML::image('administrator/images/publish_x.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT')
-			                         , array('id' => 'attach-remove'.$file->id,'class' => 'attach-remove')); ?></td>
+			<td><?php echo JHTML::image('media/com_jem/images/publish_x.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT')
+					, array('id' => 'attach-remove'.$file->id,'class' => 'attach-remove')); ?></td>
 		</tr>
 		<?php endforeach; ?>
 		<tr>
@@ -37,10 +37,10 @@ defined ( '_JEXEC' ) or die;
 				<input type="file" name="attach[]" class="attach-field" size="10"></input>
 			</td>
 			<td>
-				<input type="text" name="attach-name[]" value="" style="width: 100%" />
+				<input type="text" name="attach-name[]" value="" />
 			</td>
 			<td>
-				<input type="text" name="attach-desc[]" value="" style="width: 100%" />
+				<input type="text" name="attach-desc[]" value="" />
 			</td>
 			<td>
 				<?php echo JHTML::_('select.genericlist', $this->access, 'attach-access[]', 'class="inputbox" size="3"', 'value', 'text', 0); ?>

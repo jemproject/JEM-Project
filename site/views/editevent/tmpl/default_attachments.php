@@ -25,7 +25,7 @@ defined ('_JEXEC') or die;
 		<?php foreach ($this->row->attachments as $file): ?>
 		<tr>
 			<td><?php echo wordwrap($file->file, 30, "<br>", true); ?><input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/></td>
-			<td><input type="text" name="attached-name[]"  value="<?php echo $file->name; ?>" /></td>
+			<td><input type="text" name="attached-name[]" value="<?php echo $file->name; ?>" /></td>
 			<td><input type="text" name="attached-desc[]" value="<?php echo $file->description; ?>" /></td>
 			<td><?php echo JHTML::_('select.genericlist', $this->access, 'attached-access[]', 'class="inputbox" size="3"', 'value', 'text', $file->access); ?></td>
 			<td><?php echo JHTML::image('media/com_jem/images/publish_x.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT')
@@ -36,13 +36,13 @@ defined ('_JEXEC') or die;
 			<td>
 				<input type="file" name="attach[]" class="attach-field" size="10"></input>
 			</td>
-			<td >
+			<td>
 				<input type="text" name="attach-name[]" value="" />
 			</td>
-			<td >
+			<td>
 				<input type="text" name="attach-desc[]" value="" />
 			</td>
-			<td >
+			<td>
 				<?php echo JHTML::_('select.genericlist', $this->access, 'attach-access[]', 'class="inputbox" size="3"', 'value', 'text', 0); ?>
 			</td>
 			<td>&nbsp;</td>

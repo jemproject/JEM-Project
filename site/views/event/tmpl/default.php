@@ -114,25 +114,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 		</div>
 	<?php endif; ?>
 
-	<?php if ($this->row->attachments && count($this->row->attachments)):?>
-		<h2 class="description"><?php echo JText::_('COM_JEM_EVENT_FILES'); ?></h2>
-		<div>
-			<table class="event-file">
-				<tbody>
-					<?php foreach ($this->row->attachments as $file): ?>
-					<tr>
-						<td>
-							<span class="event-file-dl-icon hasTip" title="<?php echo JText::_('COM_JEM_DOWNLOAD').' '.$this->escape($file->file).'::'.$this->escape($file->description);?>">
-							<?php echo JHTML::link('index.php?option=com_jem&task=getfile&format=raw&file='.$file->id,
-								   JHTML::image('media/com_jem/images/download_16.png', JText::_('COM_JEM_DOWNLOAD'))); ?></span>
-						</td>
-						<td class="event-file-name"><?php echo $this->escape($file->name ? $file->name : $file->file); ?></td>
-					</tr>
-					<?php endforeach; ?>
-				</tbody>
-			</table>
-		</div>
-	<?php endif; ?>
+	<?php echo $this->loadTemplate('attachments'); ?>
 
 	<!--  	Contact  -->
 	<?php if ($this->row->conid != 0) : ?>
