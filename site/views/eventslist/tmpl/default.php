@@ -33,7 +33,7 @@ defined('_JEXEC') or die;
 	<!--table-->
 
 	<form action="<?php echo $this->action; ?>" method="post" name="adminForm" id="adminForm">
-		<?php echo $this->loadTemplate('table'); ?>
+		<?php echo $this->loadTemplate('events_table'); ?>
 
 		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
