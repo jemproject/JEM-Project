@@ -52,9 +52,7 @@ defined('_JEXEC') or die;
 	</thead>
 
 	<tbody>
-	<?php
-		$this->rows = $this->getRows();
-	?>
+	<?php $this->rows = $this->getRows(); ?>
 	<?php if (!$this->rows) : ?>
 		<tr class="no_events"><td colspan="20"><?php echo JText::_( 'COM_JEM_NO_EVENTS' ); ?></td></tr>
 	<?php else : ?>
@@ -102,7 +100,7 @@ defined('_JEXEC') or die;
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showcat == 1) : ?>
-					<td headers="jem_category_cat" align="left" valign="top">
+					<td headers="jem_category_cat<?php echo $this->categoryid; ?>" align="left" valign="top">
 					<?php
 						$nr = count($row->categories);
 						$ix = 0;

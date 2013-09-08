@@ -23,23 +23,23 @@ defined('_JEXEC') or die;
 <?php if ($this->jemsettings->filter || $this->jemsettings->display) : ?>
 	<div id="jem_filter" class="floattext">
 		<?php if ($this->jemsettings->filter) : ?>
-		<div class="jem_fleft">
-			<?php
-			echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
-			echo $this->lists['filter'].'&nbsp;';
-			?>
-			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
-			<button class="buttonfilter" type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
-			<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
-		</div>
+			<div class="jem_fleft">
+				<?php
+					echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
+					echo $this->lists['filter'].'&nbsp;';
+				?>
+				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+				<button class="buttonfilter" type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
+				<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+			</div>
 		<?php endif; ?>
 		<?php if ($this->jemsettings->display) : ?>
-		<div class="jem_fright">
-			<?php
-			echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
-			echo $this->pagination->getLimitBox();
-			?>
-		</div>
+			<div class="jem_fright">
+				<?php
+					echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
+					echo $this->pagination->getLimitBox();
+				?>
+			</div>
 		<?php endif; ?>
 	</div>
 <?php endif; ?>
@@ -66,16 +66,16 @@ defined('_JEXEC') or die;
 			<col width="<?php echo $this->jemsettings->catfrowidth; ?>" class="jem_col_category" />
 		<?php endif; ?>
 		<?php if ($this->jemsettings->showatte == 1) : ?>
-			<col width="<?php echo $this->jemsettings->attewidth; ?>" class="jem_col_atte" />
+			<col width="<?php echo $this->jemsettings->attewidth; ?>" class="jem_col_attendees" />
 		<?php endif; ?>
 	</colgroup>
 
 	<thead>
 		<tr>
-			<?php if ($this->jemsettings->showeventimage == 1) :?>
+			<?php if ($this->jemsettings->showeventimage == 1) : ?>
 				<th id="jem_eventimage" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_EVENTIMAGE'); ?></th>
 			<?php endif; ?>
-			<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+				<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<?php if ($this->jemsettings->showtitle == 1) : ?>
 				<th id="jem_title" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<?php endif; ?>
@@ -92,7 +92,7 @@ defined('_JEXEC') or die;
 				<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<?php endif; ?>
 			<?php if ($this->jemsettings->showatte == 1) : ?>
-				<th id="jem_atte" class="sectiontableheader" align="center"><?php echo JText::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
+				<th id="jem_attendees" class="sectiontableheader" align="center"><?php echo JText::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
 			<?php endif; ?>
 		</tr>
 	</thead>
@@ -101,22 +101,19 @@ defined('_JEXEC') or die;
 	<?php if ($this->noevents == 1) : ?>
 		<tr align="center"><td colspan="20"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
 	<?php else : ?>
-		<?php
-		$this->rows = $this->getRows();
-
-		foreach ($this->rows as $row) :
-		?>
+		<?php $this->rows = $this->getRows(); ?>
+		<?php foreach ($this->rows as $row) : ?>
 			<tr class="sectiontableentry<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>"
 				itemscope="itemscope" itemtype="http://schema.org/Event">
 
 				<?php if ($this->jemsettings->showeventimage == 1) : ?>
 					<td headers="jem_eventimage" align="left" valign="top">
-						<?php
-						if ($row->datimage) :
+						<?php if ($row->datimage) : ?>
+							<?php
 							$dimage = JEMImage::flyercreator($row->datimage, 'event');
 							echo JEMOutput::flyer($row, $dimage, 'event');
-						endif;
-						?>
+							?>
+						<?php endif; ?>
 					</td>
 				<?php endif; ?>
 
@@ -143,13 +140,11 @@ defined('_JEXEC') or die;
 
 				<?php if ($this->jemsettings->showlocate == 1) : ?>
 					<td headers="jem_location" align="left" valign="top">
-						<?php
-						if ($this->jemsettings->showlinkvenue == 1) :
-							echo $row->locid != 0 ? "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
-						else :
-							echo $row->locid ? $this->escape($row->venue) : '-';
-						endif;
-						?>
+						<?php if ($this->jemsettings->showlinkvenue == 1) : ?>
+							<?php echo $row->locid != 0 ? "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-'; ?>
+						<?php else : ?>
+							<?php echo $row->locid ? $this->escape($row->venue) : '-'; ?>
+						<?php endif; ?>
 					</td>
 				<?php endif; ?>
 
@@ -172,11 +167,11 @@ defined('_JEXEC') or die;
 							<a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($category->catslug)); ?>">
 								<?php echo $category->catname; ?>
 							</a>
-						<?php else: ?>
+						<?php else : ?>
 							<?php echo $category->catname; ?>
 						<?php endif; ?>
 						<?php
-						$ix++;
+							$ix++;
 						?>
 						<?php if ($ix != $nr) : ?>
 							<?php echo ', '; ?>
@@ -186,14 +181,11 @@ defined('_JEXEC') or die;
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showatte == 1) : ?>
-					<td headers="jem_atte" align="center" valign="top"><?php echo $row->regCount; ?></td>
+					<td headers="jem_attendees" align="left" valign="top">
+						<?php echo $row->regCount ? $this->escape($row->regCount) : '-'; ?></td>
 				<?php endif; ?>
 			</tr>
-
-		<?php
-		endforeach;
-	endif;
-	?>
-
+		<?php endforeach; ?>
+	<?php endif; ?>
 	</tbody>
 </table>
