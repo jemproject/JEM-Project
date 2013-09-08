@@ -17,7 +17,7 @@ jimport('joomla.application.component.controller');
  * @package JEM
  *
  */
-class JEMControllerImport extends JEMController {
+class JEMControllerImport extends JController {
 	/**
 	 * Constructor
 	 *
@@ -55,7 +55,7 @@ class JEMControllerImport extends JEMController {
 
 		$msg = '';
 		if ($file = JRequest::getVar('File'.$type, null, 'files', 'array')) {
-			$fc = iconv('windows-1250', 'utf-8', file_get_contents($file['tmp_name']));
+			$fc = iconv('windows-1252', 'utf-8', file_get_contents($file['tmp_name']));
 			file_put_contents($file['tmp_name'], $fc);
 			$handle = fopen($file['tmp_name'], 'r');
 			if(!$handle) {
@@ -132,6 +132,16 @@ class JEMControllerImport extends JEMController {
 	 */
 	function _formatcsvfield($type, $value) {
 		switch($type) {
+			case 'times':
+			case 'endtimes':
+				if($value != '' && strtoupper($value) != 'NULL') {
+					$time = strtotime($value);
+					$field = strftime('%H:%M', $time);
+				} else {
+					$field = null;
+				}
+				// var_dump($field);exit;
+			break;	
 			case 'dates':
 			case 'enddates':
 			case 'recurrence_limit_date':
