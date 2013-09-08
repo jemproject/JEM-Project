@@ -24,104 +24,102 @@ $options = array(
 ?>
 
 <script type="text/javascript">
-		window.addEvent('domready', function(){
-			document.formvalidator.setHandler('date',
-				function (value) {
-					if(value=="") {
-						return true;
-					} else {
-						timer = new Date();
-						time = timer.getTime();
-						regexp = new Array();
-						regexp[time] = new RegExp('[0-9]{4}-[0-1][0-9]-[0-3][0-9]','gi');
-						return regexp[time].test(value);
-					}
+	window.addEvent('domready', function(){
+		document.formvalidator.setHandler('date',
+			function (value) {
+				if(value=="") {
+					return true;
+				} else {
+					timer = new Date();
+					time = timer.getTime();
+					regexp = new Array();
+					regexp[time] = new RegExp('[0-9]{4}-[0-1][0-9]-[0-3][0-9]','gi');
+					return regexp[time].test(value);
 				}
-			);
-		});
-
-		function submitbutton( pressbutton ) {
-
-
-			if (pressbutton == 'cancelevent' || pressbutton == 'addvenue') {
-				elsubmitform( pressbutton );
-				return;
 			}
+		);
+	});
 
-			var form = document.getElementById('adminForm');
-			var validator = document.formvalidator;
-			var title = form.title.value;
-			title.replace(/\s/g,'');
-
-			if ( title.length==0 ) {
-				alert("<?php echo JText::_( 'COM_JEM_ADD_TITLE', true ); ?>");
-				validator.handleResponse(false,form.title);
-				return false;
-			//} else if ( validator.validate(form.locid) === false ) {
-			//	alert("<?php // echo JText::_( 'COM_JEM_SELECT_VENUE', true ); ?>");
-			//	validator.handleResponse(false,form.locid);
-			//	return false;
-				} else if ( form.cid.selectedIndex == -1 ) {
-				alert("<?php echo JText::_( 'COM_JEM_SELECT_CATEGORY', true ); ?>");
-				validator.handleResponse(false,form.cid);
-				return false;
-			} else if ( validator.validate(form.dates) === false ) {
-				alert("<?php echo JText::_( 'COM_JEM_DATE_WRONG', true ); ?>");
-				validator.handleResponse(false,form.dates);
-				return false;
-			} else if ( validator.validate(form.enddates) === false ) {
-				alert("<?php echo JText::_( 'COM_JEM_DATE_WRONG', true ); ?>");
-				validator.handleResponse(false,form.enddates);
-				return false;
-			} else {
-			<?php
-			if ($this->editoruser) {
-					// JavaScript for extracting editor text
-					echo $this->editor->save( 'datdescription' );
-			}
-			?>
-			$("meta_keywords").value = $keywords;
-			$("meta_description").value = $description;
-				submit_unlimited();
-				elsubmitform(pressbutton);
-
-				return true;
-			}
+	function submitbutton( pressbutton ) {
+		if (pressbutton == 'cancelevent' || pressbutton == 'addvenue') {
+			elsubmitform( pressbutton );
+			return;
 		}
 
-		//joomla submitform needs form name
-		function elsubmitform(pressbutton){
-			var form = document.getElementById('adminForm');
-			if (pressbutton) {
-				form.task.value=pressbutton;
-			}
-			if (typeof form.onsubmit == "function") {
-				form.onsubmit();
-			}
-			form.submit();
+		var form = document.getElementById('adminForm');
+		var validator = document.formvalidator;
+		var title = form.title.value;
+		title.replace(/\s/g,'');
+
+		if ( title.length==0 ) {
+			alert("<?php echo JText::_( 'COM_JEM_ADD_TITLE', true ); ?>");
+			validator.handleResponse(false,form.title);
+			return false;
+		//} else if ( validator.validate(form.locid) === false ) {
+		//	alert("<?php // echo JText::_( 'COM_JEM_SELECT_VENUE', true ); ?>");
+		//	validator.handleResponse(false,form.locid);
+		//	return false;
+			} else if ( form.cid.selectedIndex == -1 ) {
+			alert("<?php echo JText::_( 'COM_JEM_SELECT_CATEGORY', true ); ?>");
+			validator.handleResponse(false,form.cid);
+			return false;
+		} else if ( validator.validate(form.dates) === false ) {
+			alert("<?php echo JText::_( 'COM_JEM_DATE_WRONG', true ); ?>");
+			validator.handleResponse(false,form.dates);
+			return false;
+		} else if ( validator.validate(form.enddates) === false ) {
+			alert("<?php echo JText::_( 'COM_JEM_DATE_WRONG', true ); ?>");
+			validator.handleResponse(false,form.enddates);
+			return false;
+		} else {
+		<?php
+		if ($this->editoruser) {
+				// JavaScript for extracting editor text
+				echo $this->editor->save( 'datdescription' );
 		}
+		?>
+		$("meta_keywords").value = $keywords;
+		$("meta_description").value = $description;
+			submit_unlimited();
+			elsubmitform(pressbutton);
 
-
-		var tastendruck = false
-		function rechne(restzeichen)
-		{
-			maximum = <?php echo $this->jemsettings->datdesclimit; ?>
-
-			if (restzeichen.datdescription.value.length > maximum) {
-				restzeichen.datdescription.value = restzeichen.datdescription.value.substring(0, maximum)
-				links = 0
-			} else {
-				links = maximum - restzeichen.datdescription.value.length
-			}
-			restzeichen.zeige.value = links
+			return true;
 		}
+	}
 
-		function berechne(restzeichen)
-		{
-			tastendruck = true
-			rechne(restzeichen)
+	//joomla submitform needs form name
+	function elsubmitform(pressbutton){
+		var form = document.getElementById('adminForm');
+		if (pressbutton) {
+			form.task.value=pressbutton;
 		}
-	</script>
+		if (typeof form.onsubmit == "function") {
+			form.onsubmit();
+		}
+		form.submit();
+	}
+
+	var tastendruck = false;
+
+	function rechne(restzeichen)
+	{
+		maximum = <?php echo $this->jemsettings->datdesclimit; ?>
+
+		if (restzeichen.datdescription.value.length > maximum) {
+			restzeichen.datdescription.value = restzeichen.datdescription.value.substring(0, maximum)
+			links = 0
+		} else {
+			links = maximum - restzeichen.datdescription.value.length
+		}
+		restzeichen.zeige.value = links
+	}
+
+	function berechne(restzeichen)
+	{
+		tastendruck = true
+		rechne(restzeichen)
+	}
+</script>
 
 
 <div id="jem" class="jem_editevent">
@@ -135,26 +133,25 @@ $options = array(
 			</button>
 		</div>
 
-	<?php if ($this->params->def( 'show_page_title', 1 )) : ?>
-	<h1 class="componentheading">
-		<?php echo $this->title; ?>
-	</h1>
-	<?php endif; ?>
+		<?php if ($this->params->def( 'show_page_title', 1 )) : ?>
+		<h1 class="componentheading">
+			<?php echo $this->title; ?>
+		</h1>
+		<?php endif; ?>
 
-	<?php if ($this->params->get('showintrotext')) : ?>
-	<div class="description no_space floattext">
-		<?php echo $this->params->get('introtext'); ?>
-	</div>
-	<?php endif; ?>
+		<?php if ($this->params->get('showintrotext')) : ?>
+		<div class="description no_space floattext">
+			<?php echo $this->params->get('introtext'); ?>
+		</div>
+		<?php endif; ?>
 
-	<p>&nbsp;</p>
+		<p>&nbsp;</p>
 
-	<?php echo JHtml::_('tabs.start','event-pane',$options); ?>
-	<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_MAIN_TAB'), 'event' ); ?>
+		<?php echo JHtml::_('tabs.start','event-pane',$options); ?>
+		<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_MAIN_TAB'), 'event' ); ?>
 
-	<fieldset class="jem_fldst_details">
-
-		<legend><?php echo JText::_('COM_JEM_NORMAL_INFO'); ?></legend>
+		<fieldset class="jem_fldst_details">
+			<legend><?php echo JText::_('COM_JEM_NORMAL_INFO'); ?></legend>
 
 			<div class="jem_title floattext">
 				<label for="title">
@@ -172,9 +169,6 @@ $options = array(
 				<input type="text" id="a_name" name="venue" value="<?php echo $this->row->venue; ?>" disabled="disabled" />
 
 				<div>
-
-
-
 					<a class="flyermodal button1" title="<?php echo JText::_('COM_JEM_SELECT'); ?>" href="<?php echo JRoute::_('index.php?view=editevent&layout=choosevenue&tmpl=component'); ?>" rel="{handler: 'iframe', size: {x: 650, y: 375}}">
 						<?php echo JText::_('COM_JEM_SELECT')?>
 					</a>
@@ -193,9 +187,7 @@ $options = array(
 				<label for="cid" class="cid">
 					<?php echo JText::_( 'COM_JEM_CATEGORY' ).':';?>
 				</label>
-				<?php
-				echo $this->categories;
-				?>
+				<?php echo $this->categories; ?>
 			</div>
 
 			<div class="jem_start_date floattext">
@@ -222,36 +214,35 @@ $options = array(
 				<label for="jem_start_time">
 					<?php echo JText::_( 'COM_JEM_TIME' ).':'; ?>
 				</label>
-					<?php
-					/* <input class="inputbox validate-time" id="jem_start_time" name="times" value="<?php echo substr($this->row->times, 0, 5); ?>" size="15" maxlength="8" /> */
-					echo JEMHelper::buildtimeselect(23, 'starthours', substr( $this->row->times, 0, 2 )).' : ';
-					echo JEMHelper::buildtimeselect(59, 'startminutes', substr( $this->row->times, 3, 2 ));
-					?>
-					<?php if ( $this->jemsettings->showtime == 1 ) : ?>
-					<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_TIME_HINT'); ?>">
-						<?php echo $this->infoimage; ?>
-					</small>
-					<?php else : ?>
-					<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_ENDTIME_HINT'); ?>">
-						<?php echo $this->infoimage; ?>
-					</small>
-					<?php endif;?>
+				<?php
+				/* <input class="inputbox validate-time" id="jem_start_time" name="times" value="<?php echo substr($this->row->times, 0, 5); ?>" size="15" maxlength="8" /> */
+				echo JEMHelper::buildtimeselect(23, 'starthours', substr( $this->row->times, 0, 2 )).' : ';
+				echo JEMHelper::buildtimeselect(59, 'startminutes', substr( $this->row->times, 3, 2 ));
+				?>
+				<?php if ( $this->jemsettings->showtime == 1 ) : ?>
+				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_TIME_HINT'); ?>">
+					<?php echo $this->infoimage; ?>
+				</small>
+				<?php else : ?>
+				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_ENDTIME_HINT'); ?>">
+					<?php echo $this->infoimage; ?>
+				</small>
+				<?php endif;?>
 			</div>
 
 			<div class="jem_date jem_end_time floattext">
 				<label for="jem_end_time">
 					<?php echo JText::_( 'COM_JEM_ENDTIME' ).':'; ?>
 				</label>
-					<?php
-					/* <input class="inputbox validate-time" id="jem_end_time" name="endtimes" value="<?php echo substr($this->row->endtimes, 0, 5); ?>" size="15" maxlength="8" />&nbsp; */
-					echo JEMHelper::buildtimeselect(23, 'endhours', substr( $this->row->endtimes, 0, 2 )).' : ';
-					echo JEMHelper::buildtimeselect(59, 'endminutes', substr( $this->row->endtimes, 3, 2 ));
-					?>
-					<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_ENDTIME_HINT'); ?>">
-						<?php echo $this->infoimage; ?>
-					</small>
+				<?php
+				/* <input class="inputbox validate-time" id="jem_end_time" name="endtimes" value="<?php echo substr($this->row->endtimes, 0, 5); ?>" size="15" maxlength="8" />&nbsp; */
+				echo JEMHelper::buildtimeselect(23, 'endhours', substr( $this->row->endtimes, 0, 2 )).' : ';
+				echo JEMHelper::buildtimeselect(59, 'endminutes', substr( $this->row->endtimes, 3, 2 ));
+				?>
+				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_ENDTIME_HINT'); ?>">
+					<?php echo $this->infoimage; ?>
+				</small>
 			</div>
-
 		</fieldset>
 
 		<!--  DESCRIPTION  -->
@@ -272,14 +263,10 @@ $options = array(
 		</fieldset>
 
 
-
-
 		<!-- TAB: SECOND -->
 		<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_SECOND_TAB'), 'eventsecond' ); ?>
 
-
 		<!-- CUSTOM FIELDS -->
-
 		<fieldset>
 			<legend><?php echo JText::_('COM_JEM_CUSTOM_FIELDS'); ?></legend>
 
@@ -296,19 +283,19 @@ $options = array(
 			<?php
 			}
 			?>
-			</fieldset>
+		</fieldset>
 
-			<!-- NOT WORKING -->
-			<!-- @todo rework -->
+		<!-- NOT WORKING -->
+		<!-- @todo rework -->
 
 		<!--
-			<fieldset>
+		<fieldset>
 			<legend><?php // echo JText::_('JSTATUS'); ?></legend>
 
 			<div>
-					<label for="status"><?php // echo JText::_ ( 'JSTATUS' ) . ':'; ?></label>
-				</div>
-				<div>
+				<label for="status"><?php // echo JText::_ ( 'JSTATUS' ) . ':'; ?></label>
+			</div>
+			<div>
 				<?php
 				//$nr = array();
 				//$nr[] = JHTML::_('select.option', '0', JText::_('JUNPUBLISHED') );
@@ -318,60 +305,60 @@ $options = array(
 				//$nrpublished = JHTML::_('select.genericlist', $nr, 'published', 'size="1" class="inputbox"', 'value', 'text', $this->row->published );
 				// echo $nrpublished;
 				?>
-				</div>
-			</fieldset>
-			-->
-
-			<?php if ( $this->jemsettings->showfroregistra == 2 ) : ?>
-		<fieldset class="jem_fldst_registration">
-
-		<legend><?php echo JText::_('COM_JEM_REGISTRATION'); ?></legend>
+			</div>
+		</fieldset>
+		-->
 
 		<?php if ( $this->jemsettings->showfroregistra == 2 ) : ?>
-			<div class="floattext">
-				<p><strong><?php echo JText::_( 'COM_JEM_SUBMIT_REGISTER' ).':'; ?></strong></p>
+		<fieldset class="jem_fldst_registration">
 
-				<label for="registra0"><?php echo JText::_( 'JNO' ); ?></label>
-					<input type="radio" name="registra" id="registra0" value="0" <?php echo (!$this->row->registra) ? 'checked="checked"': ''; ?> />
+			<legend><?php echo JText::_('COM_JEM_REGISTRATION'); ?></legend>
 
-					<br class="clear" />
+			<?php if ( $this->jemsettings->showfroregistra == 2 ) : ?>
+				<div class="floattext">
+					<p><strong><?php echo JText::_( 'COM_JEM_SUBMIT_REGISTER' ).':'; ?></strong></p>
 
-				<label for="registra1"><?php echo JText::_( 'JYES' ); ?></label>
-				<input type="radio" name="registra" id="registra1" value="1" <?php echo ($this->row->registra) ? 'checked="checked"': ''; ?> />
-			</div>
+					<label for="registra0"><?php echo JText::_( 'JNO' ); ?></label>
+						<input type="radio" name="registra" id="registra0" value="0" <?php echo (!$this->row->registra) ? 'checked="checked"': ''; ?> />
 
-			<div class="floattext">
-				<label for="maxplaces"><?php echo JText::_( 'COM_JEM_MAX_PLACES' ); ?></label>
-				<input type="text" name="maxplaces" id="maxplaces" value="<?php echo $this->row->maxplaces; ?>" />
-				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_MAX_PLACES' ); ?>::<?php echo JText::_('COM_JEM_MAX_PLACES_DESC'); ?>">
-					<?php echo $this->infoimage; ?>
-				</small>
-			</div>
+						<br class="clear" />
 
-			<div class="floattext">
+					<label for="registra1"><?php echo JText::_( 'JYES' ); ?></label>
+					<input type="radio" name="registra" id="registra1" value="1" <?php echo ($this->row->registra) ? 'checked="checked"': ''; ?> />
+				</div>
+
+				<div class="floattext">
+					<label for="maxplaces"><?php echo JText::_( 'COM_JEM_MAX_PLACES' ); ?></label>
+					<input type="text" name="maxplaces" id="maxplaces" value="<?php echo $this->row->maxplaces; ?>" />
+					<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_MAX_PLACES' ); ?>::<?php echo JText::_('COM_JEM_MAX_PLACES_DESC'); ?>">
+						<?php echo $this->infoimage; ?>
+					</small>
+				</div>
+
+				<div class="floattext">
 					<p><strong><?php echo JText::_( 'COM_JEM_ENABLE_WAITINGLIST' ).':'; ?></strong></p>
-				<label for="waitinglist0"><?php echo JText::_( 'JNO' ); ?></label>
+					<label for="waitinglist0"><?php echo JText::_( 'JNO' ); ?></label>
 					<input type="radio" name="waitinglist" id="waitinglist0" value="0" <?php echo (!$this->row->waitinglist) ? 'checked="checked"': ''; ?> />
 					<br class="clear" />
-				<label for="waitinglist1"><?php echo JText::_( 'JYES' ); ?></label>
-				<input type="radio" name="waitinglist" id="waitinglist1" value="1" <?php echo ($this->row->waitinglist) ? 'checked="checked"': ''; ?> />
+					<label for="waitinglist1"><?php echo JText::_( 'JYES' ); ?></label>
+					<input type="radio" name="waitinglist" id="waitinglist1" value="1" <?php echo ($this->row->waitinglist) ? 'checked="checked"': ''; ?> />
 					<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_ENABLE_WAITINGLIST' ); ?>::<?php echo JText::_('COM_JEM_ENABLE_WAITINGLIST_DESC'); ?>">
 						<?php echo $this->infoimage; ?>
 					</small>
-			</div>
-			<?php
-			//register end
+				</div>
+				<?php
+				//register end
 			endif;
 
 			if ( $this->jemsettings->showfrounregistra == 2 ) :
 			?>
 			<div class="jem_unregister floattext">
-					<p><strong><?php echo JText::_( 'COM_JEM_SUBMIT_UNREGISTER' ).':'; ?></strong></p>
+				<p><strong><?php echo JText::_( 'COM_JEM_SUBMIT_UNREGISTER' ).':'; ?></strong></p>
 
 				<label for="unregistra0"><?php echo JText::_( 'JNO' ); ?></label>
-					<input type="radio" name="unregistra" id="unregistra0" value="0" <?php echo (!$this->row->unregistra) ? 'checked="checked"': ''; ?> />
+				<input type="radio" name="unregistra" id="unregistra0" value="0" <?php echo (!$this->row->unregistra) ? 'checked="checked"': ''; ?> />
 
-					<br class="clear" />
+				<br class="clear" />
 
 				<label for="unregistra1"><?php echo JText::_( 'JYES' ); ?></label>
 				<input type="radio" name="unregistra" id="unregistra1" value="1" <?php echo ($this->row->unregistra) ? 'checked="checked"': ''; ?> />
@@ -388,7 +375,6 @@ $options = array(
 		?>
 
 		<fieldset class="jem_fldst_recurrence">
-
 			<legend><?php echo JText::_('COM_JEM_RECURRENCE'); ?></legend>
 
 			<div class="recurrence_select floattext">
@@ -406,8 +392,8 @@ $options = array(
 				</div>
 			</div>
 
-				<input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $this->row->recurrence_number;?>" />
-				<input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->row->recurrence_byday;?>" />
+			<input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $this->row->recurrence_number;?>" />
+			<input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->row->recurrence_byday;?>" />
 
 			<script type="text/javascript">
 			<!--
@@ -431,7 +417,6 @@ $options = array(
 				start_recurrencescript();
 			-->
 			</script>
-
 		</fieldset>
 
 		<?php if (( $this->jemsettings->imageenabled == 2 ) || ($this->jemsettings->imageenabled == 1)) : ?>
@@ -454,10 +439,7 @@ $options = array(
 		</fieldset>
 		<?php endif; ?>
 
-
-
-			<!--  START META FIELDSET -->
-
+		<!--  START META FIELDSET -->
 		<fieldset class="jem_fldst_meta">
 			<legend><?php echo JText::_('COM_JEM_META_HANDLING'); ?></legend>
 			<table style="width:100%">
@@ -502,22 +484,21 @@ $options = array(
 				</td>
 			</tr>
 				<!-- include the metatags end-->
-		</table>
-		<script type="text/javascript">
-		<!--
-			starter("<?php
-			echo JText::_ ( 'COM_JEM_META_ERROR' );
-			?>");	// window.onload is already in use, call the function manualy instead
-		-->
-		</script>
+			</table>
+			<script type="text/javascript">
+			<!--
+				starter("<?php
+				echo JText::_ ( 'COM_JEM_META_ERROR' );
+				?>");	// window.onload is already in use, call the function manualy instead
+			-->
+			</script>
 
 		</fieldset>
+		<!--  END META FIELDSET -->
 
-				<!--  END META FIELDSET -->
+		<?php echo $this->loadTemplate('attachments_edit'); ?>
 
-		<?php echo $this->loadTemplate('attachments'); ?>
-
-<!--  removed to avoid double posts in ie7
+		<!--  removed to avoid double posts in ie7
 		<div class="jem_save_buttons floattext">
 			<button type="submit" class="submit" onclick="return submitbutton('saveevent')">
 				<?php echo JText::_('COM_JEM_SAVE'); ?>
@@ -526,7 +507,8 @@ $options = array(
 				<?php echo JText::_('COM_JEM_CANCEL'); ?>
 			</button>
 		</div>
--->
+		-->
+
 		<?php echo JHtml::_('tabs.end'); ?>
 		<p class="clear">
 		<input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
@@ -545,7 +527,6 @@ $options = array(
 	<p class="copyright">
 		<?php echo JEMOutput::footer( ); ?>
 	</p>
-
 </div>
 
 <?php

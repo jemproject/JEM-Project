@@ -15,22 +15,24 @@ jimport('joomla.application.component.view');
  * HTML View class for the Editevents View
  *
  * @package JEM
- * 
+ *
  */
 class JEMViewEditvenue extends JViewLegacy
 {
 	/**
 	 * Creates the output for venue submissions
 	 *
-	 * 
+	 *
 	 * @param int $tpl
 	 */
 	function display( $tpl=null )
 	{
+		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
+
 		$app = JFactory::getApplication();;
 
 		$user = JFactory::getUser();
-	
+
 		//redirect if not logged in
 		if ( !$user->get('id') ) {
 			$app->enqueueMessage(JText::_('COM_JEM_NEED_LOGGED_IN'), 'error');
@@ -61,11 +63,11 @@ class JEMViewEditvenue extends JViewLegacy
 		//$doc->addScript('http://api.mygeoposition.com/api/geopicker/api.js');
 		//$doc->addScript(JURI::root().'media/com_jem/js/geodata.js' );
 		$doc->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
-		
-		
+
+
 		// Noconflict
 		$doc->addCustomTag( '<script type="text/javascript">jQuery.noConflict();</script>' );
-		
+
 		// JQuery scripts
 		$doc->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 		$doc->addScript(JURI::root().'media/com_jem/js/jquery.geocomplete.js');

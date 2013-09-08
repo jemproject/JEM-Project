@@ -114,6 +114,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 		</div>
 	<?php endif; ?>
 
+	<?php $this->attachments = $this->row->attachments; ?>
 	<?php echo $this->loadTemplate('attachments'); ?>
 
 	<!--  	Contact  -->

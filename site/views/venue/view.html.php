@@ -24,6 +24,8 @@ class JEMViewVenue extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
+		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
+
 		$app = JFactory::getApplication();
 
 		//initialize variables
@@ -34,7 +36,7 @@ class JEMViewVenue extends JViewLegacy
 
 		//get menu information
 		$menu		= $app->getMenu();
-		$item = $menu->getActive();
+		$item 		= $menu->getActive();
 
 		$params 	= $app->getParams('com_jem');
 		$uri 		= JFactory::getURI();

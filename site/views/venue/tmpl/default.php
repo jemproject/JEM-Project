@@ -97,6 +97,7 @@ defined('_JEXEC') or die;
 		</div>
 	<?php endif; ?>
 
+	<?php $this->attachments = $this->venue->attachments; ?>
 	<?php echo $this->loadTemplate('attachments'); ?>
 
 	<!--table-->

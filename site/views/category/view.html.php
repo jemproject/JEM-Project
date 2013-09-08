@@ -27,6 +27,8 @@ class JEMViewCategory extends JViewLegacy
 	 */
 	function display($tpl=null)
 	{
+		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
+
 		//initialize variables
 		$app = JFactory::getApplication();
 		$document 		= JFactory::getDocument();

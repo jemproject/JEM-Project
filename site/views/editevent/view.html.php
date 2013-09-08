@@ -24,6 +24,8 @@ class JEMViewEditevent extends JViewLegacy
 	 */
 	function display($tpl=null)
 	{
+		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
+
 		$app 		= JFactory::getApplication();
 		$session 	= JFactory::getSession();
 		$user 		= JFactory::getUser();

@@ -10,12 +10,12 @@
 defined('_JEXEC') or die;
 ?>
 
-<?php if ($this->venue->attachments && count($this->venue->attachments)):?>
+<?php if ($this->attachments && count($this->attachments)):?>
 <div class="el-files">
 <h2 class="description"><?php echo JText::_('COM_JEM_FILES'); ?></h2>
-<table>
+<table class="event-file">
 	<tbody>
-	<?php foreach ($this->venue->attachments as $file): ?>
+	<?php foreach ($this->attachments as $file): ?>
 		<tr>
 			<td>
 				<span class="el-file-dl-icon hasTip"
