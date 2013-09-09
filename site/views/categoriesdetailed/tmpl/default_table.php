@@ -101,18 +101,8 @@ defined('_JEXEC') or die;
 
 				<?php if ($this->jemsettings->showcat == 1) : ?>
 					<td headers="jem_category_cat<?php echo $this->categoryid; ?>" align="left" valign="top">
-					<?php
-						$categoryOutput = array_map(
-							function ($category) {
-								if ($this->jemsettings->catlinklist == 1) {
-									return '<a href="'.JRoute::_(JEMHelperRoute::getCategoryRoute($category->catslug)).'">'.$category->catname.'</a>';
-								} else {
-									return $category->catname;
-								}
-							},
-							$row->categories);
-						echo implode(", ", $categoryOutput);
-					?>
+					<?php echo implode(", ",
+							JEMOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
 					</td>
 				<?php endif; ?>
 			</tr>
