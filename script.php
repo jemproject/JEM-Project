@@ -135,14 +135,22 @@ class com_jemInstallerScript
 	 */
 	function preflight($type, $parent)
 	{
-		$jversion = new JVersion();
+		// Minimum required PHP version
+		$minPhpVersion = "5.3.1";
+
+		// Abort if PHP release is older than required version
+		if(version_compare(PHP_VERSION, $minPhpVersion, '<')) {
+			Jerror::raiseWarning(100, JText::sprintf('COM_JEM_PREFLIGHT_WRONG_PHP_VERSION', $minPhpVersion, PHP_VERSION));
+			return false;
+		}
 
 		// Minimum Joomla version as per Manifest file
-		$requiredJoomlaVersion = $parent->get('manifest')->attributes()->version;
+		$minJoomlaVersion = $parent->get('manifest')->attributes()->version;
 
 		// abort if the current Joomla release is older than required version
-		if(version_compare($jversion->getShortVersion(), $requiredJoomlaVersion, 'lt')) {
-			Jerror::raiseWarning(100, JText::sprintf('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION', $requiredJoomlaVersion));
+		$jversion = new JVersion();
+		if(version_compare($jversion->getShortVersion(), $minJoomlaVersion, '<')) {
+			Jerror::raiseWarning(100, JText::sprintf('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION', $minJoomlaVersion));
 			return false;
 		}
 
