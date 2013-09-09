@@ -102,24 +102,17 @@ defined('_JEXEC') or die;
 				<?php if ($this->jemsettings->showcat == 1) : ?>
 					<td headers="jem_category_cat<?php echo $this->categoryid; ?>" align="left" valign="top">
 					<?php
-						$nr = count($row->categories);
-						$ix = 0;
+						$categoryOutput = array_map(
+							function ($category) {
+								if ($this->jemsettings->catlinklist == 1) {
+									return '<a href="'.JRoute::_(JEMHelperRoute::getCategoryRoute($category->catslug)).'">'.$category->catname.'</a>';
+								} else {
+									return $category->catname;
+								}
+							},
+							$row->categories);
+						echo implode(", ", $categoryOutput);
 					?>
-					<?php foreach ($row->categories as $key => $category) : ?>
-						<?php if ($this->jemsettings->catlinklist == 1) : ?>
-							<a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($category->catslug)); ?>">
-								<?php echo $category->catname; ?>
-							</a>
-						<?php else : ?>
-							<?php echo $category->catname; ?>
-						<?php endif; ?>
-						<?php
-							$ix++;
-						?>
-						<?php if ($ix != $nr) : ?>
-							<?php echo ', '; ?>
-						<?php endif; ?>
-					<?php endforeach; ?>
 					</td>
 				<?php endif; ?>
 			</tr>

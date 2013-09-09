@@ -861,5 +861,20 @@ class JEMOutput {
 		}
 		return $date;
 	}
+
+	static function getCategoryList($categories, $doLink) {
+		$output = array_map(
+			function ($category) use ($doLink) {
+				if ($doLink) {
+					$value = '<a href="'.JRoute::_(JEMHelperRoute::getCategoryRoute($category->catslug)).'">'.
+						$category->catname.'</a>';
+				} else {
+					$value = $category->catname;
+				}
+				return $value;
+			},
+			$categories);
+		return $output;
+	}
 }
 ?>
