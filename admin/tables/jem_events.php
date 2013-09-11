@@ -224,6 +224,7 @@ class jem_events extends JTable
 	function insertIgnore($updateNulls=false)
 	{
 		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
+		
 		if(!$ret) {
 			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
 			return false;
@@ -252,9 +253,13 @@ class jem_events extends JTable
 				continue;
 			}
 			$fields[] = $this->_db->quoteName($k);
-			$values[] = $this->_db->isQuoted($k) ? $this->_db->Quote($v) : (int) $v;
+			$values[] = $this->_db->quoteName($k) ? $this->_db->Quote($v) : (int) $v;
 		}
+		
+
 		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields) ,	implode(",", $values)));
+		
+		
 		if (!$this->_db->query()) {
 			return false;
 		}
