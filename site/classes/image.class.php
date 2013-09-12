@@ -297,8 +297,11 @@ class JEMImage {
 
 		//make a unique filename for the image and check it is not already taken
 		//if it is already taken keep trying till success
-		$now = time();
+		//$now = time();
+		
+		$now = rand();
 
+		
 		while(JFile::exists($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
 			$now++;
 		}

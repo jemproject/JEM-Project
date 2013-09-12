@@ -42,7 +42,12 @@ class JEMAttachment extends JObject {
 
 		$maxsizeinput = $jemsettings->attachments_maxsize*1024; //size in kb
 
+
+		
 		foreach ($post_files['name'] as $k => $file) {
+			
+			$post_files['name'] = JFile::makeSafe($post_files['name']);
+			
 			if (empty($file)) {
 				continue;
 			}
@@ -67,10 +72,16 @@ class JEMAttachment extends JObject {
 					return false;
 				}
 			}
+			
 
 			// TODO: Probably move this to a helper class
+			
 			$sanitizedFilename = JEMImage::sanitize($path, $file);
-			JFile::copy($post_files['tmp_name'][$k], $path.'/'.$sanitizedFilename);
+		
+
+			// Make sure that the full file path is safe.
+			$filepath = JPath::clean( $path.'/'.$sanitizedFilename);
+			JFile::upload($post_files['tmp_name'][$k], $filepath);
 
 			$table = JTable::getInstance('jem_attachments', '');
 			$table->file = $sanitizedFilename;
@@ -91,6 +102,7 @@ class JEMAttachment extends JObject {
 				JError::raiseWarning(0, JText::_('COM_JEM_ATTACHMENT_ERROR_SAVING_TO_DB').': '.$table->getError());
 			}
 		}
+		
 		return true;
 	}
 
