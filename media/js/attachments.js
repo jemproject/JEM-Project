@@ -14,9 +14,10 @@ window.addEvent('domready', function() {
 	$$('.attach-field').addEvent('change', addattach);
 	
 	$$('.attach-remove').addEvent('click', function(event){
-		event = new Event(event); // for IE !
+		// event = new Event(event); // for IE !
+		event = event || window.event;
 		
-		id = event.target.id.substr(13);
+		var id = event.target.id.substr(13);
 		var url = 'index.php?option=com_jem&task=ajaxattachremove&format=raw&id='+id;
 		var theAjax = new Request( {
 			url : url,
@@ -40,5 +41,5 @@ function addattach()
 	var rows = tbody.getElements('tr');
 	var row = rows[rows.length-1].clone();
 	row.getElement('.attach-field').addEvent('change', addattach).value = '';
-	row.injectInside(tbody);
+	row.inject(tbody);
 }
