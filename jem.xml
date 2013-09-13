@@ -19,6 +19,7 @@
 		<filename>router.php</filename>
 
 		<folder>classes</folder>
+		<folder>common</folder>
 		<folder>controllers</folder>
 		<folder>helpers</folder>
 		<folder>models</folder>
