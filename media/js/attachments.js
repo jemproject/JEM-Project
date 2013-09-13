@@ -14,8 +14,7 @@ window.addEvent('domready', function() {
 	$$('.attach-field').addEvent('change', addattach);
 	
 	$$('.attach-remove').addEvent('click', function(event){
-		// event = new Event(event); // for IE !
-		event = event || window.event;
+		var event = event || window.event;
 		
 		var id = event.target.id.substr(13);
 		var url = 'index.php?option=com_jem&task=ajaxattachremove&format=raw&id='+id;
@@ -26,10 +25,9 @@ window.addEvent('domready', function() {
 			});
 		
 		theAjax.addEvent('onSuccess', function(response) {
-			if (response == "1") {
+			if (response.indexOf('1') > -1) {
 				$(event.target).getParent().getParent().dispose();
 			}
-			//this.venue = eval('(' + response + ')');
 		}.bind(this));
 		theAjax.send();
 	});
