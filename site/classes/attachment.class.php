@@ -45,9 +45,7 @@ class JEMAttachment extends JObject {
 
 		
 		foreach ($post_files['name'] as $k => $file) {
-			
-			$post_files['name'] = JFile::makeSafe($post_files['name']);
-			
+					
 			if (empty($file)) {
 				continue;
 			}
