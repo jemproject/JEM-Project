@@ -16,6 +16,7 @@ if (! (defined('_VALID_CB') || defined('_JEXEC') || defined('_VALID_MOS')))
 }
 
 require_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/output.class.php');
 require_once (JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once (JPATH_SITE.'/components/com_jem/helpers/route.php');
