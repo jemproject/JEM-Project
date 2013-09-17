@@ -112,13 +112,15 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	 *
 	 * @return  boolean  True on success.
 	 *
+	 * @since   2.5
 	 * @throws  Exception on database error.
 	 */
 	public function onFinderAfterDelete($context, $table)
 	{
 		if ($context == 'com_jem.event')
 		{
-			$id = $table->id;
+			$tid = $table->id;
+			$id = (int)$tid;
 		}
 		elseif ($context == 'com_finder.index')
 		{
@@ -128,9 +130,12 @@ class plgFinderJEM extends FinderIndexerAdapter {
 		{
 			return true;
 		}
+		
+	
 		// Remove the items.
 		return $this->remove($id);
 	}
+
 
 	/**
 	 * Method to determine if the access level of an item changed.
@@ -272,8 +277,8 @@ class plgFinderJEM extends FinderIndexerAdapter {
 		$item->body = FinderIndexerHelper::prepareContent($item->datdescription, $item->params);
 
 		// Build the necessary route and path information.
-		$item->url = $this->getURL($item->slug, $this->extension, $this->layout).'&catid='.$item->catslug;
-		$item->route = JEMHelperRoute::getRoute($item->slug, 'event', $item->catslug);
+		$item->url = $this->getURL($item->id, $this->extension, $this->layout);
+		$item->route = JEMHelperRoute::getEventRoute($item->slug, $item->catslug);
 		$item->path = FinderIndexerHelper::getContentPath($item->route);
 
 		// Get the menu title if it exists.
@@ -357,7 +362,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 // 		$sql->select('a.publish_up AS publish_start_date, a.publish_down AS publish_end_date');
 // 		$sql->select('c.title AS category, c.published AS cat_state, c.access AS cat_access');
 
-		$sql->select('a.id, a.title, a.dates, a.enddates, a.times, a.endtimes, a.datimage');
+		$sql->select('a.id, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.datimage');
 		$sql->select('a.created AS start_date, a.created_by, a.modified, a.version');
 		$sql->select('a.published AS state, 1 AS access');
 		$sql->select('a.datdescription AS body, a.datdescription AS summary');
@@ -366,24 +371,24 @@ class plgFinderJEM extends FinderIndexerAdapter {
 		$sql->select('ct.name AS countryname');
 		$sql->select('c.catname AS category, c.published AS cat_state, c.access AS cat_access');
 
-		// Handle the alias CASE WHEN portion of the query
-		$case_when_idem_alias = ' CASE WHEN ';
-		$case_when_idem_alias .= $sql->charLength('a.alias');
-		$case_when_idem_alias .= ' THEN ';
+				// Handle the alias CASE WHEN portion of the query
+		$case_when_item_alias = ' CASE WHEN ';
+		$case_when_item_alias .= $sql->charLength('a.alias');
+		$case_when_item_alias .= ' THEN ';
 		$a_id = $sql->castAsChar('a.id');
-		$case_when_idem_alias .= $sql->concatenate(array($a_id, 'a.alias'), ':');
-		$case_when_idem_alias .= ' ELSE ';
-		$case_when_idem_alias .= $a_id.' END as slug';
-		$sql->select($case_when_idem_alias);
+		$case_when_item_alias .= $sql->concatenate(array($a_id, 'a.alias'), ':');
+		$case_when_item_alias .= ' ELSE ';
+		$case_when_item_alias .= $a_id.' END as slug';
+		$sql->select($case_when_item_alias);
 
-		$case_when_idem_alias = ' CASE WHEN ';
-		$case_when_idem_alias .= $sql->charLength('c.alias');
-		$case_when_idem_alias .= ' THEN ';
+		$case_when_category_alias = ' CASE WHEN ';
+		$case_when_category_alias .= $sql->charLength('c.alias');
+		$case_when_category_alias .= ' THEN ';
 		$c_id = $sql->castAsChar('c.id');
-		$case_when_idem_alias .= $sql->concatenate(array($c_id, 'c.alias'), ':');
-		$case_when_idem_alias .= ' ELSE ';
-		$case_when_idem_alias .= $c_id.' END as catslug';
-		$sql->select($case_when_idem_alias);
+		$case_when_category_alias .= $sql->concatenate(array($c_id, 'c.alias'), ':');
+		$case_when_category_alias .= ' ELSE ';
+		$case_when_category_alias .= $c_id.' END as catslug';
+		$sql->select($case_when_category_alias);
 
 		$case_when_venue_alias = ' CASE WHEN ';
 		$case_when_venue_alias .= $sql->charLength('l.alias');
