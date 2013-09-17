@@ -148,6 +148,9 @@ class plgFinderJEM extends FinderIndexerAdapter {
 		// We only want to handle events here
 		if ($context == 'com_jem.event' || $context == 'com_jem.form')
 		{
+			
+			$row->access = 1;
+			
 			// Check if the access levels are different
 			if (!$isNew && $this->old_access != $row->access)
 			{
