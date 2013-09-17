@@ -21,14 +21,14 @@ defined('_JEXEC') or die;
 	</div>
 	<?php if ($this->params->def('show_page_title', 1)) : ?>
 		<h1 class='componentheading'>
-			<?php echo '&nbsp'; ?>
+			<span itemprop="name"><?php echo $this->escape($this->pagetitle); ?></span>
 		</h1>
 	<?php endif; ?>
 
 	<!--Venue-->
 	<h2 class="jem">
-		<span itemprop="name"><?php echo $this->escape($this->pagetitle); ?></span>
-		<?php echo JEMOutput::editbutton($this->item->id, $this->venue->id, $this->params, $this->allowedtoeditvenue, 'editvenue' ); ?>
+			<?php echo JText::_('COM_JEM_VENUE'); ?>
+			<?php echo JEMOutput::editbutton($this->item->id, $this->venue->id, $this->params, $this->allowedtoeditvenue, 'editvenue' ); ?>
 	</h2>
 	<?php echo JEMOutput::flyer( $this->venue, $this->limage, 'venue' ); ?>
 
