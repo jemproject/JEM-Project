@@ -109,7 +109,7 @@ class plgJEMMailer extends JPlugin {
 			if ($this->params->get('reg_mail_user', '1')) {
 				$data 				= new stdClass();
 				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_USER_REG_WAITING_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_REG_WAITING_BODY', $user->name, $user->username, $event->title, $link, $this->_Sitename);
+				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_REG_WAITING_BODY', $user->name, $user->username, $event->title, $link, $this->_SiteName);
 				$data->receivers 	= $user->email;
 
 				$this->_mailer($data);
@@ -119,7 +119,7 @@ class plgJEMMailer extends JPlugin {
 			if ($this->params->get('reg_mail_admin', '0') && $this->params->get('receivers')) {
 				$data 				= new stdClass();
 				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_WAITING_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_WAITING_BODY', $user->name, $user->username, $event->title, $link, $this->_Sitename);
+				$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_WAITING_BODY', $user->name, $user->username, $event->title, $link, $this->_SiteName);
 				$data->receivers 	= $this->_receivers;
 
 				$this->_mailer($data);
@@ -129,7 +129,7 @@ class plgJEMMailer extends JPlugin {
 			if ($this->params->get('reg_mail_user', '1')) {
 				$data 				= new stdClass();
 				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_USER_REG_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_REG_BODY', $user->name, $user->username, $event->title, $link, $this->_Sitename);
+				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_REG_BODY', $user->name, $user->username, $event->title, $link, $this->_SiteName);
 				$data->receivers 	= $user->email;
 
 				$this->_mailer($data);
@@ -139,7 +139,7 @@ class plgJEMMailer extends JPlugin {
 			if ($this->params->get('reg_mail_admin', '0') && $this->params->get('receivers')) {
 				$data 				= new stdClass();
 				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_BODY', $user->name, $user->username, $event->title, $link, $this->_Sitename);
+				$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_BODY', $user->name, $user->username, $event->title, $link, $this->_SiteName);
 				$data->receivers 	= $this->_receivers;
 
 				$this->_mailer($data);
@@ -192,7 +192,7 @@ class plgJEMMailer extends JPlugin {
 			if ($this->params->get('reg_mail_user_onoff', '1')) {
 				$data 				= new stdClass();
 				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_USER_REG_ON_WAITING_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_REG_ON_WAITING_BODY', $user->name, $user->username, $details->title, $link, $this->_Sitename);
+				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_REG_ON_WAITING_BODY', $user->name, $user->username, $details->title, $link, $this->_SiteName);
 				$data->receivers 	= $user->email;
 
 				$this->_mailer($data);
@@ -202,7 +202,7 @@ class plgJEMMailer extends JPlugin {
 			if ($this->params->get('reg_mail_admin_onoff', '0') && $this->params->get('receivers')) {
 				$data 				= new stdClass();
 				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_BODY', $user->name, $user->username, $details->title, $link, $this->_Sitename);
+				$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_BODY', $user->name, $user->username, $details->title, $link, $this->_SiteName);
 				$data->receivers 	= $this->_receivers;
 
 				$this->_mailer($data);
@@ -212,7 +212,7 @@ class plgJEMMailer extends JPlugin {
 			if ($this->params->get('reg_mail_user_onoff', '1')) {
 				$data 				= new stdClass();
 				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_USER_REG_ON_ATTENDING_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_REG_ON_ATTENDING_BODY', $user->name, $user->username, $details->title, $link, $this->_Sitename);
+				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_REG_ON_ATTENDING_BODY', $user->name, $user->username, $details->title, $link, $this->_SiteName);
 				$data->receivers 	= $user->email;
 
 				$this->_mailer($data);
@@ -222,7 +222,7 @@ class plgJEMMailer extends JPlugin {
 			if ($this->params->get('reg_mail_admin_onoff', '0') && $this->params->get('receivers')) {
 				$data 				= new stdClass();
 				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_BODY', $user->name, $user->username, $details->title, $link, $this->_Sitename);
+				$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_BODY', $user->name, $user->username, $details->title, $link, $this->_SiteName);
 				$data->receivers 	= $this->_receivers;
 
 				$this->_mailer($data);
@@ -270,7 +270,7 @@ class plgJEMMailer extends JPlugin {
 		if ($this->params->get('unreg_mail_user', '1')) {
 			$data 				= new stdClass();
 			$data->subject 		= JText::sprintf('PLG_JEM_MAILER_USER_UNREG_SUBJECT', $this->_SiteName);
-			$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_UNREG_BODY', $user->name, $user->username, $event->title, $link, $this->_Sitename);
+			$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_UNREG_BODY', $user->name, $user->username, $event->title, $link, $this->_SiteName);
 			$data->receivers 	= $user->email;
 
 			$this->_mailer($data);
@@ -280,7 +280,7 @@ class plgJEMMailer extends JPlugin {
 		if ($this->params->get('unreg_mail_admin', '0') && $this->params->get('receivers')) {
 			$data 				= new stdClass();
 			$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_SUBJECT', $this->_SiteName);
-			$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_BODY', $user->name, $user->username, $event->title, $link, $this->_Sitename);
+			$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_BODY', $user->name, $user->username, $event->title, $link, $this->_SiteName);
 			$data->receivers 	= $this->_receivers;
 
 			$this->_mailer($data);
