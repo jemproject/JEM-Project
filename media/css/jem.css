@@ -247,6 +247,8 @@ div#jem .floattext
 div#jem h2 {
     font-size: normal !important;
     font-weight:normal !important;
+    margin-top:1em;
+    margin-bottom:1em;
     padding: 0.3em 0.3em;
     margin: normal;
     background: none repeat scroll 0% 0% rgb(212, 214, 178);
@@ -256,6 +258,7 @@ div#jem h2 {
 
 div#jem h2 img {
 border: none;
+margin-left:0.3em;
 }
 
 
