@@ -82,7 +82,7 @@ defined('_JEXEC') or die;
 			
 			<?php
 		for($cr = 1; $cr <= 10; $cr++) {
-			$currentRow = $this->row->{'venue'.$cr};
+			$currentRow = $this->venue->{'custom'.$cr};
 			if(substr($currentRow, 0, 7) == "http://") {
 				$currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
  			}
