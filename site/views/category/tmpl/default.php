@@ -54,8 +54,6 @@ JHTML::_('behavior.modal');
 	<?php echo $this->loadTemplate('subcategories'); ?>
 <?php endif; ?>
 
-<?php $this->attachments = $this->category->attachments; ?>
-<?php echo $this->loadTemplate('attachments'); ?>
 
 <form action="<?php echo $this->action; ?>" method="post" id="adminForm">
 	<!--table-->

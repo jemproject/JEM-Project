@@ -95,8 +95,8 @@ $options = array(
 						?>
 						</td>
 					</tr>
-				</table> <?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
-				<?php echo $this->loadTemplate('attachments'); ?> <?php echo JHtml::_('tabs.end'); ?>
+				</table> 
+				<?php echo JHtml::_('tabs.end'); ?>
 			</td>
 			<td valign="top" width="320px" style="padding: 7px 0 0 5px"><?php
 			$title2 = JText::_( 'COM_JEM_ACCESS' );
