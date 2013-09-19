@@ -79,6 +79,46 @@
 	</fieldset>
 
 
+
+
+<fieldset name="custom">
+
+
+		<field name="custom1" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD1" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom2" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD2" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom3" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD3" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom4" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD4" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom5" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD5" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom6" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD6" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom7" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD7" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom8" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD8" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom9" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD9" description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="custom10" type="text" size="20" readonly="false"
+			class="inputbox" label="COM_JEM_CUSTOM_FIELD10" description="JGLOBAL_FIELD_ID_DESC" />
+
+	</fieldset>
+
+
+
+
 <fieldset name="publish"
 		label="COM_JEM_FIELDSET_PUBLISHING"
 	>

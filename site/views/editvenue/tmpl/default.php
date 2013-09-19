@@ -382,6 +382,28 @@ defined('_JEXEC') or die;
 			<?php echo JText::_( 'COM_JEM_SELECTED_IMAGE' ); ?>-->
 		</fieldset>
 		<?php endif; ?>
+		
+		
+		<!-- CUSTOM FIELDS -->
+		<fieldset>
+			<legend><?php echo JText::_('COM_JEM_CUSTOM_FIELDS'); ?></legend>
+
+			<?php
+			for($cr = 1; $cr <= 10; $cr++) {
+				$currentRow = $this->row->{'custom'.$cr};
+			?>
+				<div class="jem_custom<?php echo $cr; ?> floattext">
+					<label for="custom<?php echo $cr; ?>">
+						<?php echo JText::_('COM_JEM_CUSTOMVENUE_FIELD'.$cr).':'; ?>
+					</label>
+					<input type="text" class="inputbox" id="custom<?php echo $cr; ?>" name="custom<?php echo $cr; ?>" value="<?php echo $this->escape($currentRow); ?>" size="65" maxlength="60" />
+				</div>
+			<?php
+			}
+			?>
+		</fieldset>
+		
+		
 
 		<fieldset class="jem_fldst_description">
 			<legend><?php echo JText::_('COM_JEM_DESCRIPTION'); ?></legend>

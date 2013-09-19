@@ -206,6 +206,24 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 					<meta itemprop="addressCountry" content="<?php echo $this->row->country; ?>" />
 				</dd>
 				<?php endif; ?>
+				
+				
+				<?php
+		for($cr = 1; $cr <= 10; $cr++) {
+			$currentRow = $this->row->{'venue'.$cr};
+			if(substr($currentRow, 0, 7) == "http://") {
+				$currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
+ 			}
+			if($currentRow) {
+		?>
+				<dt class="custom<?php echo $cr; ?>"><?php echo JText::_('COM_JEM_CUSTOMVENUE_FIELD'.$cr).':'; ?></dt>
+				<dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
+		<?php
+			}
+		}
+		?>
+				
+				
 
 				<?php if ($this->jemsettings->showmapserv == 1) : ?>
 					<?php echo JEMOutput::mapicon($this->row); ?>

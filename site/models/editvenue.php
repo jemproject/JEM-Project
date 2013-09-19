@@ -134,6 +134,16 @@ class JEMModelEditvenue extends JModelLegacy
 				$this->_venue->locimage			= '';
 				$this->_venue->meta_keywords	= '';
 				$this->_venue->meta_description	= '';
+				$this->_venue->custom1				= '';
+				$this->_venue->custom2				= '';
+				$this->_venue->custom3				= '';
+				$this->_venue->custom4				= '';
+				$this->_venue->custom5				= '';
+				$this->_venue->custom6				= '';
+				$this->_venue->custom7				= '';
+				$this->_venue->custom8				= '';
+				$this->_venue->custom9				= '';
+				$this->_venue->custom10				= '';
 				$this->_venue->attachments		= array();
 			}
 		}

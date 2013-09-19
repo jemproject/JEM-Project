@@ -75,6 +75,16 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
   `ordering` int(11) NOT NULL default '0',
   `publish_up` datetime NOT NULL,
   `publish_down` datetime NOT NULL,
+  `custom1` varchar(200) NOT NULL DEFAULT '',
+  `custom2` varchar(200) NOT NULL DEFAULT '',
+  `custom3` varchar(100) NOT NULL DEFAULT '',
+  `custom4` varchar(100) NOT NULL DEFAULT '',
+  `custom5` varchar(100) NOT NULL DEFAULT '',
+  `custom6` varchar(100) NOT NULL DEFAULT '',
+  `custom7` varchar(100) NOT NULL DEFAULT '',
+  `custom8` varchar(100) NOT NULL DEFAULT '',
+  `custom9` varchar(100) NOT NULL DEFAULT '',
+  `custom10` varchar(100) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 

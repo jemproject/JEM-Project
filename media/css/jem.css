@@ -87,8 +87,11 @@ div#jem .input
 border:1px solid grey;
 background: #B3BABA;
 cursor:pointer;
-
 }
+
+
+
+
 
 #main a
 
@@ -128,11 +131,14 @@ div#jem fieldset {
  */
 div#jem {
     overflow: hidden;
-    background: none repeat scroll 0% 0% rgb(237, 237, 235);
+    background-color: rgb(237, 244, 245);
     border: 1px solid black;
     border-radius: 5px 5px 5px 5px;
     padding: 10px;
 }
+
+
+
 
 
 
@@ -303,22 +309,10 @@ float:none;
  *
  * flyer, locations, maps, ...
  */
-div#jem .modal {
-/* float:right !important; */
-/* margin:0.3em; */
-/* position: static;*/
-/* border: 1px solid #000000 !important; */
-/* width:auto; */
-/* position: static !important; */
-/* background:transparent; */
-/* border:0px solid black; */
-/* box-shadow:none; */
-}
+
 
 div#jem .notmodal {
 float:right !important;
-/* margin:0.3em; */
-/*position: static;*/
 border: 1px solid #000000 !important;
 width:auto;
 position: static !important;
@@ -330,8 +324,6 @@ box-shadow:none;
 
 div#jem .flyerimage {
 float:right !important;
-/* margin:0.3em; */
-/*position: static;*/
 border: 1px solid #000000 !important;
 width:auto;
 position: static !important;
@@ -340,18 +332,6 @@ border:0px solid black;
 box-shadow:none;
 }
 
-
-div#jem .mapicon {
-/* float: right !important; */
-/* position:relative;	*/
-}
-
-div#jem .mapicon2 {
-/* float: right !important; */
-/* position:relative;	*/
-/* top:-60px; */
-/* right:80px; */
-}
 
 
 

@@ -290,7 +290,16 @@ function test()
 		</fieldset>
 
 
-
+		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_CUSTOMFIELDS'), 'venue-custom'); ?>
+		<fieldset class="panelform">
+			<ul class="adminformlist">
+				<?php foreach($this->form->getFieldset('custom') as $field): ?>
+				<li><?php echo $field->label; ?> <?php echo $field->input; ?>
+				</li>
+				<?php endforeach; ?>
+			</ul>
+		</fieldset>
+		
 
 		<!-- START OF PANEL IMAGE -->
 		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_IMAGE'), 'image-event'); ?>
