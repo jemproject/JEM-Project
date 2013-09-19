@@ -24,26 +24,26 @@ defined ('_JEXEC') or die;
 	<tbody>
 		<?php foreach ($this->row->attachments as $file): ?>
 		<tr>
-			<td><?php echo wordwrap($file->file, 30, "<br>", true); ?><input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/></td>
-			<td><input type="text" name="attached-name[]" value="<?php echo $file->name; ?>" /></td>
-			<td><input type="text" name="attached-desc[]" value="<?php echo $file->description; ?>" /></td>
-			<td><?php echo JHTML::_('select.genericlist', $this->access, 'attached-access[]', 'class="inputbox" size="3"', 'value', 'text', $file->access); ?></td>
+			<td><?php echo wordwrap($file->file, 30, "<br>", true); ?><input style="width:200px" type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/></td>
+			<td><input type="text" name="attached-name[]" value="<?php echo $file->name; ?>" style="width:100px" /></td>
+			<td><input type="text" name="attached-desc[]" value="<?php echo $file->description; ?>" style="width:100px" /></td>
+			<td><?php echo JHTML::_('select.genericlist', $this->access, 'attached-access[]', 'class="inputbox" style="width:100px" size="3"', 'value', 'text', $file->access); ?></td>
 			<td><?php echo JHTML::image('media/com_jem/images/publish_x.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT')
 					, array('id' => 'attach-remove'.$file->id,'class' => 'attach-remove')); ?></td>
 		</tr>
 		<?php endforeach; ?>
 		<tr>
 			<td>
-				<input type="file" name="attach[]" class="attach-field" size="10"></input>
+				<input type="file" name="attach[]" class="attach-field" size="10" style="width:200px"></input>
 			</td>
 			<td>
-				<input type="text" name="attach-name[]" value="" />
+				<input type="text" name="attach-name[]" value="" style="width:100px" />
 			</td>
 			<td>
-				<input type="text" name="attach-desc[]" value="" />
+				<input type="text" name="attach-desc[]" value="" style="width:100px" />
 			</td>
 			<td>
-				<?php echo JHTML::_('select.genericlist', $this->access, 'attach-access[]', 'class="inputbox" size="3"', 'value', 'text', 0); ?>
+				<?php echo JHTML::_('select.genericlist', $this->access, 'attach-access[]', 'class="inputbox" style="width:100px" size="3"', 'value', 'text', 0); ?>
 			</td>
 			<td>&nbsp;</td>
 		</tr>
