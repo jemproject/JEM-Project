@@ -18,7 +18,7 @@ jimport('joomla.filesystem.file');
  * @package JEM
  *
  */
-class JEMControllerImagehandler extends JEMController
+class JEMControllerImagehandler extends JControllerLegacy
 {
 	/**
 	 * Constructor

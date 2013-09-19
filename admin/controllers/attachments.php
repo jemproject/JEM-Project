@@ -17,7 +17,7 @@ jimport('joomla.application.component.controller');
  * @package JEM
  *
  */
-class JEMControllerAttachments extends JEMController
+class JEMControllerAttachments extends JControllerLegacy
 {
 	/**
 	 * Constructor
