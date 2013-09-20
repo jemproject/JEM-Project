@@ -479,7 +479,6 @@
 			label="COM_JEM_AC_EVENT_SUBMIT" description="COM_JEM_AC_EVENT_SUBMIT_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="-2">COM_JEM_ONLYADMINS</option>
-			<option value="1">COM_JEM_EVERYBODY</option>
 			<option value="-1">COM_JEM_ALLREGISTERED</option>
 		</field>
 		
@@ -494,7 +493,6 @@
 			label="COM_JEM_AUTOPUBLISH" description="COM_JEM_AUTOPUBLISH_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="-2">COM_JEM_ONLYADMINS</option>
-			<option value="1">COM_JEM_EVERYBODY</option>
 			<option value="-1">COM_JEM_ALLREGISTERED</option>
 		</field>
 		
@@ -509,7 +507,6 @@
 			label="COM_JEM_AC_EVENT_EDIT" description="COM_JEM_AC_EVENT_EDIT_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="-2">COM_JEM_ONLYADMINS</option>
-			<option value="1">COM_JEM_EVERYBODY</option>
 			<option value="-1">COM_JEM_ALLREGISTERED</option>
 		</field>
 		
@@ -541,7 +538,6 @@
 			label="COM_JEM_AC_VENUE_SUBMIT" description="COM_JEM_AC_VENUE_SUBMIT"
 			class="inputbox" default="0" required="false" >	
 			<option value="-2">COM_JEM_ONLYADMINS</option>
-			<option value="1">COM_JEM_EVERYBODY</option>
 			<option value="-1">COM_JEM_ALLREGISTERED</option>
 		</field>
 		
@@ -556,7 +552,6 @@
 			label="COM_JEM_AUTOPUBLISH" description="COM_JEM_AUTOPUBLISH_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="-2">COM_JEM_ONLYADMINS</option>
-			<option value="1">COM_JEM_EVERYBODY</option>
 			<option value="-1">COM_JEM_ALLREGISTERED</option>
 		</field>
 		
@@ -571,7 +566,6 @@
 			label="COM_JEM_AC_VENUE_EDIT" description="COM_JEM_AC_VENUE_EDIT_DESC"
 			class="inputbox" default="0" required="false" >	
 			<option value="-2">COM_JEM_ONLYADMINS</option>
-			<option value="1">COM_JEM_EVERYBODY</option>
 			<option value="-1">COM_JEM_ALLREGISTERED</option>
 		</field>
 		
