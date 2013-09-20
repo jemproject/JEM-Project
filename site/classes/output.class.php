@@ -624,7 +624,7 @@ class JEMOutput {
 
 			// Otherwise take the values for the original image specified in the settings
 		} else {
-			$output = '<img class="flyermodal" src="'.JURI::base().'/'.$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
+			$output = '<img class="notmodal" src="'.JURI::base().'/'.$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
 		}
 
 		return $output;
@@ -665,6 +665,7 @@ class JEMOutput {
 		
 		if ($check == true)
 		{
+		
 
 		jimport('joomla.utilities.date');
 		$jdate = new JDate($date);
@@ -674,13 +675,11 @@ class JEMOutput {
 		}
 
 		return $jdate->format($format);
-		
-		} else
+		} else 
 		{
-		return false;	
+			return false;
 		}
-	
-
+		
 	}
 
 	/**
