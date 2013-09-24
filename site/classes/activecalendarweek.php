@@ -229,6 +229,4 @@ $this->selectedmonth = $this->monthtoday;
 $this->selectedday = $this->daytoday;
 }
 }
-
 ?>
-
