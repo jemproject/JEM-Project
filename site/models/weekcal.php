@@ -127,8 +127,19 @@ class JEMModelWeekcal extends JModelLegacy
 				unset ($this->_data[$index]);
 			}
 		}
-
-		return $this->_data;
+		
+		
+		$items = $this->_data;
+		
+		
+		foreach ($items as $item) {
+			$time[] = $item->times;
+			$title[] = $item->title;
+		}
+		
+		array_multisort($time, SORT_ASC, $title, SORT_ASC, $items);
+		
+		return $items;
 	}
 
 	/**

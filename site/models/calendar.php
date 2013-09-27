@@ -11,6 +11,7 @@ defined('_JEXEC') or die ;
 
 jimport('joomla.application.component.model');
 
+
 /**
  * JEM Component Calendar Model
  *
@@ -118,7 +119,18 @@ class JEMModelCalendar extends JModelLegacy
 				}
 			}
 		}
-		return $this->_data;
+		
+		$items = $this->_data;
+		
+		
+		foreach ($items as $item) {
+			$time[] = $item->times;
+			$title[] = $item->title;
+		}
+		
+		array_multisort($time, SORT_ASC, $title, SORT_ASC, $items);
+		
+		return $items;
 	}
 
 	/**
@@ -216,5 +228,9 @@ class JEMModelCalendar extends JModelLegacy
 
 		return $this->_categories;
 	}
+	
+	
+
+	
 }
 ?>
