@@ -119,8 +119,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	{
 		if ($context == 'com_jem.event')
 		{
-			$tid = $table->id;
-			$id = (int)$tid;
+			$id = $table->id;
 		}
 		elseif ($context == 'com_finder.index')
 		{
@@ -130,12 +129,9 @@ class plgFinderJEM extends FinderIndexerAdapter {
 		{
 			return true;
 		}
-		
-	
 		// Remove the items.
 		return $this->remove($id);
 	}
-
 
 	/**
 	 * Method to determine if the access level of an item changed.
@@ -153,9 +149,9 @@ class plgFinderJEM extends FinderIndexerAdapter {
 		// We only want to handle events here
 		if ($context == 'com_jem.event' || $context == 'com_jem.form')
 		{
-			
+			// Set access to 1 because we don't use this variable at the moment
 			$row->access = 1;
-			
+
 			// Check if the access levels are different
 			if (!$isNew && $this->old_access != $row->access)
 			{
@@ -371,7 +367,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 		$sql->select('ct.name AS countryname');
 		$sql->select('c.catname AS category, c.published AS cat_state, c.access AS cat_access');
 
-				// Handle the alias CASE WHEN portion of the query
+		// Handle the alias CASE WHEN portion of the query
 		$case_when_item_alias = ' CASE WHEN ';
 		$case_when_item_alias .= $sql->charLength('a.alias');
 		$case_when_item_alias .= ' THEN ';
