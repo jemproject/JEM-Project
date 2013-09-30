@@ -76,24 +76,24 @@ class JEMModelCalendar extends JModelLegacy
 		$app = JFactory::getApplication();
 		$params = $app->getParams();
 
+		$items = $this->_data;
+
 		// Lets load the content if it doesn't already exist
-		if (empty($this->_data)) {
+		if (empty($items)) {
 			$query = $this->_buildQuery();
-			$this->_data = $this->_getList($query);
+			$items = $this->_getList($query);
 
 			$multi = array();
 
-			foreach($this->_data AS $item) {
+			foreach($items AS $item) {
 				$item->categories = $this->getCategories($item->id);
 
-				if (!is_null($item->enddates) && !$params->get('show_only_start', 1))
-				{
-					if ($item->enddates != $item->dates)
-					{
+				if (!is_null($item->enddates) && !$params->get('show_only_start', 1)) {
+					if ($item->enddates != $item->dates) {
 						$day = $item->start_day;
 
-						for ($counter = 0; $counter <= $item->datediff-1; $counter++)
-						{
+						for ($counter = 0; $counter <= $item->datediff-1; $counter++) {
+							//@todo sort out, multi-day events
 							$day++;
 
 							//next day:
@@ -105,7 +105,7 @@ class JEMModelCalendar extends JModelLegacy
 								$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
 
 								//add generated days to data
-								$this->_data = array_merge($this->_data, $multi);
+								$items = array_merge($items, $multi);
 							}
 							//unset temp array holding generated days before working on the next multiday event
 							unset($multi);
@@ -118,18 +118,20 @@ class JEMModelCalendar extends JModelLegacy
 					unset($item);
 				}
 			}
+
+			// Do we have events now? Return if we don't have one.
+			if(empty($items)) {
+				return $items;
+			}
+
+			foreach ($items as $item) {
+				$time[] = $item->times;
+				$title[] = $item->title;
+			}
+
+			array_multisort($time, SORT_ASC, $title, SORT_ASC, $items);
 		}
-		
-		$items = $this->_data;
-		
-		
-		foreach ($items as $item) {
-			$time[] = $item->times;
-			$title[] = $item->title;
-		}
-		
-		array_multisort($time, SORT_ASC, $title, SORT_ASC, $items);
-		
+
 		return $items;
 	}
 
@@ -228,9 +230,5 @@ class JEMModelCalendar extends JModelLegacy
 
 		return $this->_categories;
 	}
-	
-	
-
-	
 }
 ?>
