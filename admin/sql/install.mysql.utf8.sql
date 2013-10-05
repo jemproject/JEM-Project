@@ -108,10 +108,12 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_cats_event_relations` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `catid` int(11) NOT NULL default '0',
   `itemid` int(11) NOT NULL default '0',
   `ordering` tinyint(11) NOT NULL,
-  PRIMARY KEY  (`catid`,`itemid`),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `category event relation` (`catid`,`itemid`),
   KEY `catid` (`catid`),
   KEY `itemid` (`itemid`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
@@ -140,12 +142,14 @@ CREATE TABLE IF NOT EXISTS `#__jem_groups` (
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_groupmembers` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `group_id` int(11) NOT NULL DEFAULT '0',
-  `member` int(11) NOT NULL DEFAULT '0'
-) ENGINE=MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
+  `member` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_settings` (
-  `id` int(11) NOT NULL,
+  `id` int(11) unsigned NOT NULL,
   `oldevent` tinyint(4) NOT NULL,
   `minus` tinyint(4) NOT NULL,
   `showtime` tinyint(4) NOT NULL,
@@ -243,11 +247,11 @@ CREATE TABLE IF NOT EXISTS `#__jem_settings` (
   `ical_max_items` tinyint(4) NOT NULL DEFAULT '100',
   `empty_cat` tinyint(4) NOT NULL DEFAULT '1',
   `defaultCountry` varchar(10) NOT NULL,
-  UNIQUE KEY `id` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE `utf8_general_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_attachments` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `object` varchar(255) NOT NULL,
   `file` varchar(255) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
@@ -259,10 +263,10 @@ CREATE TABLE IF NOT EXISTS `#__jem_attachments` (
   `added` datetime NOT NULL default '0000-00-00 00:00:00',
   `added_by` int(11) NOT NULL default '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_countries` (
-  `id` int(11) NOT NULL auto_increment,
+  `id` int(11) unsigned NOT NULL auto_increment,
   `continent` varchar(2) NOT NULL,
   `iso2` varchar(2) NOT NULL,
   `iso3` varchar(3) NOT NULL,
@@ -270,7 +274,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_countries` (
   `name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `iso2` (`iso2`)
-) ENGINE=MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci;
+) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
 INSERT IGNORE INTO #__jem_settings VALUES
 (1, 2, 1, 1, 1, 1, 1, 1, '1', '1', '100%', '20%', '40%', '20%', '', 

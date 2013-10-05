@@ -21,9 +21,14 @@ class jem_cats_event_relations extends JTable
 	 * Primary Key
 	 * @var int
 	 */
+	var $id = null;
+	/**
+	 * Category ID
+	 * @var int
+	 */
 	var $catid = null;
 	/**
-	 * Primary Key
+	 * Event ID
 	 * @var int
 	 */
 	var $itemid = null;
@@ -35,7 +40,7 @@ class jem_cats_event_relations extends JTable
 	var $ordering = null;
 
 	function __construct(& $db) {
-		parent::__construct('#__jem_cats_event_relations', 'catid', $db);
+		parent::__construct('#__jem_cats_event_relations', 'id', $db);
 	}
 
 	/**
