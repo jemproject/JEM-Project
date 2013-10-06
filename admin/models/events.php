@@ -144,7 +144,7 @@ class JEMModelEvents extends JModelList
 		$query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');*/
 
 		// Join over the cat_relations
-		$query->select('rel.*');
+		$query->select('rel.itemid, rel.itemid, rel.ordering');
 		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid=a.id');
 
 		// Join over the categories.
