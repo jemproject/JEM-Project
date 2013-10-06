@@ -146,6 +146,31 @@ class JEMModelCleanup extends JModelLegacy
 		return true;
 	}
 
+	/**
+	 * Truncates JEM tables with exception of settings table
+	 */
+	public function truncateAllData() {
+		$tables = array("attachments",
+			"categories",
+			"cats_event_relations",
+			"events",
+			"groupmembers",
+			"groups",
+			"register",
+			"venues");
+
+		$db = JFactory::getDbo();
+
+		foreach ($tables as $table) {
+			$db->setQuery("TRUNCATE #__jem_".$table);
+
+			if(!$db->query()) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 
 	/**
 	 * Method to count the cat_relations table

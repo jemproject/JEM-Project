@@ -31,7 +31,7 @@ class JEMControllerCleanup extends JControllerLegacy
 		// Register Extra task
 		$this->registerTask('cleaneventimg', 	'delete');
 		$this->registerTask('cleanvenueimg', 	'delete');
-		$this->registerTask('cleancategoryimg', 	'delete');
+		$this->registerTask('cleancategoryimg',	'delete');
 	}
 
 	/**
@@ -78,6 +78,20 @@ class JEMControllerCleanup extends JControllerLegacy
 
 		$link = 'index.php?option=com_jem&view=cleanup';
 		$msg = JText::_('COM_JEM_CLEANUP_TRUNCATECATSEVENTREF_DONE');
+
+		$this->setRedirect($link, $msg);
+	}
+
+
+	/**
+	 * Truncates JEM tables with exception of settings table
+	 */
+	public function truncateAllData() {
+		$model = $this->getModel('cleanup');
+		$model->truncateAllData();
+
+		$link = 'index.php?option=com_jem&view=cleanup';
+		$msg = JText::_('COM_JEM_CLEANUP_TRUNCATE_ALL_DATA_DONE');
 
 		$this->setRedirect($link, $msg);
 	}
