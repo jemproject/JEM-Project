@@ -82,9 +82,10 @@ class JEMViewWeekcal extends JViewLegacy
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title', $pagetitle);
 
-		$cal = new activeCalendarWeek($year,$month,$day);
+		//$cal = new activeCalendarWeek($year,$month,$day);
+		$cal = new activeCalendarWeek();
 		$cal->enableWeekNum(JText::_('COM_JEM_WKCAL_WEEK'),null,''); // enables week number column with linkable week numbers
-		$cal->setFirstWeekDay(1);
+		
 
 		$this->rows 		= $rows;
 		$this->params		= $params;

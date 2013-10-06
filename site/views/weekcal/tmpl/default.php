@@ -163,9 +163,11 @@ defined('_JEXEC') or die;
 	endforeach;
 
 
-	$currentWeek = date("W");
+	//$currentWeek = date("W");
 	$nrweeks = $this->params->get('nrweeks', 1);
-	print $this->cal->showWeeksByID($currentWeek,$nrweeks);
+	//print $this->cal->showWeeksByID($currentWeek,$nrweeks);
+	//echo date("W");
+	print $this->cal->showWeeks($nrweeks);
 
 ?>
 </div>
