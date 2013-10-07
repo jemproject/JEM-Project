@@ -141,7 +141,7 @@ class JEMControllerImport extends JControllerLegacy {
 					$field = null;
 				}
 				// var_dump($field);exit;
-			break;	
+			break;
 			case 'dates':
 			case 'enddates':
 			case 'recurrence_limit_date':
@@ -159,5 +159,57 @@ class JEMControllerImport extends JControllerLegacy {
 		return $field;
 	}
 
+	/**
+	 * Imports data from an old Eventlist installation
+	 */
+	public function eventlistImport() {
+		$model = $this->getModel('import');
+		$size = 500;
+
+		// Handling the different names for all classes and db table names (possibly substrings)
+		$tables = new stdClass();
+		$tables->eltables = array("categories", "events", "events", "groupmembers", "groups", "register", "venues");
+		$tables->jemtables = array("categories", "events", "cats_event_relations", "groupmembers", "groups", "register", "venues");
+
+		$jinput = JFactory::getApplication()->input;
+		$current = $jinput->get->get('current', 0, 'INT');
+		$total = $jinput->get->get('total', 0, 'INT');
+		$table = $jinput->get->get('table', 0, 'INT');
+
+		// Import only if process already started or Eventlist detected
+		if($table > 0 || $model->getEventlistVersion()) {
+			// Get number of rows if it is still 0 or we have moved to the next table
+			if($total == 0 || $current == 0) {
+				$total = $model->getTableCount("#__eventlist_".$tables->eltables[$table]);
+			}
+
+			// The real work is done here:
+			// Loading from EL tables, changing data, storing in JEM tables
+			$data = $model->getEventlistData("#__eventlist_".$tables->eltables[$table], $current, $size);
+			$data = $model->transformEventlistData($tables->jemtables[$table], $data);
+			$model->storeJemData("jem_".$tables->jemtables[$table], $data);
+
+			// Proceed with next bunch of data
+			$current += $size;
+
+			// Current table is imported completely, proceed with next table
+			if($current > $total) {
+				$table++;
+				$current = 0;
+			}
+
+			// Check if import is complete
+			if($current < $total && $table < count($tables->eltables)) {
+				$link = 'index.php?option=com_jem&view=import&table='.$table.'&current='.$current.'&total='.$total;
+				$msg = JText::sprintf('COM_JEM_IMPORT_EL_IMPORT_WORKING', $tables->jemtables[$table], $current, $total);
+			} else {
+				$link = 'index.php?option=com_jem&view=import';
+				$msg = JText::_('COM_JEM_IMPORT_EL_IMPORT_FINISHED');
+			}
+			$this->setRedirect($link, $msg);
+		} else {
+			parent::display();
+		}
+	}
 }
 ?>

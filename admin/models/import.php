@@ -15,7 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component Import Model
  *
  * @package JEM
- * 
+ *
  */
 class JEMModelImport extends JModelLegacy {
 	/**
@@ -213,6 +213,282 @@ class JEMModelImport extends JModelLegacy {
 		}
 
 		return $rec;
+	}
+
+	/**
+	 * Detect an installation of Eventlist.
+	 *
+	 * @return string  The version string of the detected Eventlist component or null
+	 */
+	public function getEventlistVersion() {
+		jimport( 'joomla.registry.registry' );
+
+		$db = $this->_db;
+		$query = $db->getQuery('true');
+		$query->select("manifest_cache")
+		->from("#__extensions")
+		->where("type='component' AND (name='eventlist' AND element='com_eventlist')");
+
+		$db->setQuery($query);
+
+		$result = $db->loadObject();
+
+		// Eventlist not found in extension table
+		if(is_null($result)) {
+			return null;
+		}
+
+		$par = $result->manifest_cache;
+		$params = new JRegistry;
+		$params->loadJSON($par);
+
+		return $params->get('version', null);
+	}
+
+	/**
+	 * Returns a list of Eventlist data tables and the number of rows or null
+	 * if the table does not exist
+	 * @return array The list of tables
+	 */
+	public function getEventlistTablesCount() {
+		$tables = array("#__eventlist_categories" => "",
+			"#__eventlist_events" => "",
+			"#__eventlist_groupmembers" => "",
+			"#__eventlist_groups" => "",
+			"#__eventlist_register" => "",
+			"#__eventlist_venues" => "");
+
+		return $this->getTablesCount($tables);
+	}
+
+	/**
+	 * Returns a list of JEM data tables and the number of rows or null if the
+	 * table does not exist
+	 * @return array The list of tables
+	 */
+	public function getJemTablesCount() {
+		$tables = array("#__jem_attachments" => "",
+				"#__jem_categories" => "",
+				"#__jem_cats_event_relations" => "",
+				"#__jem_events" => "",
+				"#__jem_groupmembers" => "",
+				"#__jem_groups" => "",
+				"#__jem_register" => "",
+				"#__jem_venues" => "");
+
+		return $this->getTablesCount($tables);
+	}
+
+	/**
+	 * Returns a list of tables and the number of rows or null if the
+	 * table does not exist
+	 * @param $tables  An array of table names
+	 * @return array The list of tables
+	 */
+	public function getTablesCount($tables) {
+		$db = $this->_db;
+
+		foreach ($tables as $table => $value) {
+			$query = $db->getQuery('true');
+
+			$query->select("COUNT(*)")
+			->from($table);
+
+			$db->setQuery($query);
+
+			// Set legacy to false to be able to catch DB errors.
+			$legacyValue = JError::$legacy;
+			JError::$legacy = false;
+
+			try {
+				$tables[$table] = $db->loadResult();
+				JError::$legacy = $legacyValue;
+			} catch (Exception $e) {
+				$tables[$table] = null;
+				JError::$legacy = $legacyValue;
+			}
+		}
+
+		return $tables;
+	}
+
+	/**
+	 * Returns the number of rows of a table or null if the table dies not exist
+	 * @param $table  The name of the table
+	 * @return mixed  The number of rows or null
+	 */
+	public function getTableCount($table) {
+		$tables = array($table => "");
+		return $this->getTablesCount($tables)[$table];
+	}
+
+
+	/**
+	 * Returns the data of a table
+	 * @param string $tablename  The name of the table
+	 * @param int $limitStart  The limit start of the query
+	 * @param int $limit  The limit of the query
+	 */
+	public function getEventlistData($tablename, $limitStart = null, $limit = null) {
+		$db = $this->_db;
+		$query = $db->getQuery('true');
+
+		$query->select("*")
+			->from($tablename)
+			;
+
+		if($limitStart !== null && $limit !== null) {
+			$db->setQuery($query, $limitStart, $limit);
+		} else {
+			$db->setQuery($query);
+		}
+
+		return $db->loadObjectList();
+	}
+
+	/**
+	 * Changes old Eventlist data to fit the JEM standards
+	 * @param string $tablename  The name of the table
+	 * @param array $data  The data to work with
+	 * @return array  The changed data
+	 */
+	public function transformEventlistData($tablename, &$data) {
+		// categories
+
+		// cats_event_relations
+		if($tablename == "cats_event_relations") {
+			$dataNew = array();
+			foreach($data as $row) {
+				// Category-event relations is now stored in seperate table
+				$rowNew = new stdClass();
+				$rowNew->catid = $row->catsid;
+				$rowNew->itemid = $row->id;
+				$rowNew->ordering = 0;
+
+				$dataNew[] = $rowNew;
+			}
+			return $dataNew;
+		}
+
+		// events
+		if($tablename == "events") {
+			foreach($data as $row) {
+				// No start date is now represented by a NULL value
+				if($row->dates == "0000-00-00") {
+					$row->dates = null;
+				}
+				// Recurrence fields have changed meaning
+				if($row->recurrence_counter != "0000-00-00") {
+					$row->recurrence_limit_date = $row->recurrence_counter;
+				}
+				$row->recurrence_counter = 0;
+				// Published/state vaules have changed meaning
+				if($row->published == -1) {
+					$row->published = 2; // archive
+				}
+				// Check if author_ip contains crap
+				if(strpos($row->author_ip, "COM_EVENTLIST") === 0) {
+					$row->author_ip = "";
+				}
+			}
+		}
+
+		// groupmembers
+		// groups
+
+		// register
+		if($tablename == "register") {
+			foreach($data as $row) {
+				// Check if uip contains crap
+				if(strpos($row->uip, "COM_EVENTLIST") === 0) {
+					$row->uip = "";
+				}
+			}
+		}
+
+		// venues
+		if($tablename == "venues") {
+			foreach($data as $row) {
+				// Column name has changed
+				$row->postalCode = $row->plz;
+				// Check if author_ip contains crap
+				if(strpos($row->author_ip, "COM_EVENTLIST") === 0) {
+					$row->author_ip = "";
+				}
+				// Country changes
+				if($row->country == "AN") {
+					$row->country = "NL"; // Netherlands Antilles to Netherlands
+				}
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Saves the data to the database
+	 * @param string $tablename  The name of the table
+	 * @param array $data  The data to save
+	 */
+	public function storeJemData($tablename, &$data) {
+		$replace = false;
+
+		$ignore = array ();
+		if (!$replace) {
+			$ignore[] = 'id';
+		}
+		$rec = array ('added' => 0, 'updated' => 0);
+
+		foreach($data as $row) {
+			$object = JTable::getInstance($tablename, '');
+			$object->bind($row, $ignore);
+
+			// Make sure the data is valid
+			if (!$object->check()) {
+				$this->setError($object->getError());
+				echo JText::_('Error check: ').$object->getError()."\n";
+				continue ;
+			}
+
+			// Store it in the db
+			if ($replace) {
+				// We want to keep id from database so first we try to insert into database. if it fails,
+				// it means the record already exists, we can use store().
+				if (!$object->insertIgnore()) {
+					if (!$object->store()) {
+						echo JText::_('Error store: ').$this->_db->getErrorMsg()."\n";
+						continue ;
+					} else {
+						$rec['updated']++;
+					}
+				} else {
+					$rec['added']++;
+				}
+			} else {
+				if (!$object->store()) {
+					echo JText::_('Error store: ').$this->_db->getErrorMsg()."\n";
+					continue ;
+				} else {
+					$rec['added']++;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Returns true if the tables already contain JEM data
+	 * @return boolean  True if data exists
+	 */
+	public function getExistingJemData() {
+		$tablesCount = $this->getJemTablesCount();
+
+		foreach($tablesCount as $tableCount) {
+			if($tableCount !== null && $tableCount > 0) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
 ?>

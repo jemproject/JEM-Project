@@ -25,20 +25,32 @@ class JEMViewImport extends JViewLegacy {
 		//initialise variables
 		$document	= JFactory::getDocument();
 
+		//add css and submenu to document
+		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+
 		// Get data from the model
 		$eventfields = $this->get('EventFields');
 		$catfields   = $this->get('CategoryFields');
 		$venuefields = $this->get('VenueFields');
 		$cateventsfields = $this->get('CateventsFields');
 
-		//add css and submenu to document
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
-
 		//assign vars to the template
 		$this->eventfields 		= $eventfields;
 		$this->catfields 		= $catfields;
 		$this->venuefields 		= $venuefields;
 		$this->cateventsfields 	= $cateventsfields;
+
+		$this->eventlistVersion = $this->get('EventlistVersion');
+		$this->eventlistTables 	= $this->get('EventlistTablesCount');
+		$this->jemTables 		= $this->get('JemTablesCount');
+		$this->existingJemData 	= $this->get('ExistingJemData');
+
+		$jinput = JFactory::getApplication()->input;
+		$progress = new stdClass();
+		$progress->current 	= $jinput->get->get('current', 0, 'INT');
+		$progress->total 	= $jinput->get->get('total', 0, 'INT');
+		$progress->table 	= $jinput->get->get('table', '', 'INT');
+		$this->progress = $progress;
 
 		// add toolbar
 		$this->addToolbar();

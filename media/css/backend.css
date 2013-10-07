@@ -228,6 +228,16 @@ input#filter0.inputbox, input#filter1.inputbox, input#icons0.inputbox, input#ico
     float: none;
     display: inline;
 }
+/*align radio buttons on import page*/
+label#replace_events0-lbl, label#replace_events1-lbl, label#replace_venues0-lbl, label#replace_venues1-lbl, label#replace_categories0-lbl, label#replace_categories1-lbl, label#replace_catevents0-lbl, label#replace_catevents1-lbl{
+	float: none;
+	display: inline;
+}
+
+input#replace_events0.inputbox, input#replace_events1.inputbox, input#replace_venues0.inputbox, input#replace_venues1.inputbox, input#replace_categories0.inputbox, input#replace_categories1.inputbox, input#replace_catevents0.inputbox, input#replace_catevents1.inputbox,{
+	float: none;
+	display: inline;
+}
 
 /*align other stuff, eventpage*/
 label#published0-lbl, label#published1-lbl{
