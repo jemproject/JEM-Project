@@ -44,21 +44,18 @@ class JEMControllerCleanup extends JControllerLegacy
 	function delete()
 	{
 		$task = JRequest::getCmd('task');
+		$model = $this->getModel('cleanup');
 
 		if ($task == 'cleaneventimg') {
-			$type = JText::_('COM_JEM_EVENT');
+			$total = $model->delete($model::EVENTS);
 		} elseif ($task == 'cleanvenueimg') {
-			$type = JText::_('COM_JEM_VENUE');
+			$total = $model->delete($model::VENUES);
 		} elseif ($task == 'cleancategoryimg') {
-			$type = JText::_('COM_JEM_CATEGORY');
+			$total = $model->delete($model::CATEGORIES);
 		}
 
-		$model = $this->getModel('cleanup');
-		$total = $model->delete();
-
 		$link = 'index.php?option=com_jem&view=cleanup';
-		// TODO: Use translation with variable
-		$msg = $total.' '.$type.' '.JText::_('COM_JEM_IMAGES_DELETED');
+		$msg = JText::sprintf('COM_JEM_IMAGES_DELETED', $total);
 
 		$this->setRedirect($link, $msg);
 	}

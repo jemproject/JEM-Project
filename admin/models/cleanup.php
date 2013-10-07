@@ -21,33 +21,33 @@ jimport('joomla.filesystem.file');
  */
 class JEMModelCleanup extends JModelLegacy
 {
-	/**
-	 * target
-	 *
-	 * @var string
-	 */
-	var $_target = null;
+	const EVENTS = 1;
+	const VENUES = 2;
+	const CATEGORIES = 3;
 
 	/**
 	 * images to delete
-	 *
 	 * @var array
 	 */
-	var $_images = null;
+	private $_images = null;
 
 	/**
 	 * assigned images
-	 *
 	 * @var array
 	 */
-	var $_assigned = null;
+	private $_assigned = null;
 
 	/**
 	 * unassigned images
-	 *
 	 * @var array
 	 */
-	var $_unassigned = null;
+	private $_unassigned = null;
+
+	/**
+	 * Map logical name to folder and db names
+	 * @var stdClass
+	 */
+	private $map = null;
 
 	/**
 	 * Constructor
@@ -57,32 +57,13 @@ class JEMModelCleanup extends JModelLegacy
 	{
 		parent::__construct();
 
-		$jinput = JFactory::getApplication()->input;
-		$task = $jinput->get('task', '', 'cmd');
-
-		if ($task == 'cleaneventimg') {
-			$target = 'events';
-			$this->settarget($target);
-		} elseif ($task == 'cleanvenueimg') {
-			$target = 'venues';
-			$this->settarget($target);
-		} elseif ($task == 'cleancategoryimg') {
-			$target = 'categories';
-			$this->settarget($target);
-		}
+		$map = array();
+		$map[JEMModelCleanup::EVENTS] = array("folder" => "events", "table" => "events", "field" => "datimage");
+		$map[JEMModelCleanup::VENUES] = array("folder" => "venues", "table" => "venues", "field" => "locimage");
+		$map[JEMModelCleanup::CATEGORIES] = array("folder" => "categories", "table" => "categories", "field" => "image");
+		$this->map = $map;
 	}
 
-	/**
-	 * Method to set the target
-	 *
-	 * @access	public
-	 * @param	string the target directory
-	 */
-	function settarget($target)
-	{
-		// Set id and wipe data
-		$this->_target = $target;
-	}
 
 	/**
 	 * Method to delete the images
@@ -90,15 +71,14 @@ class JEMModelCleanup extends JModelLegacy
 	 * @access	public
 	 * @return int
 	 */
-	function delete()
-	{
+	public function delete($type) {
 		// Set FTP credentials, if given
 		jimport('joomla.client.helper');
 		JClientHelper::setCredentialsFromRequest('ftp');
 
 		// Get some data from the request
-		$images	= $this->_getImages();
-		$folder = $this->_target;
+		$images	= $this->getImages($type);
+		$folder = $this->map[$type]['folder'];
 
 		$count = count($images);
 		$fail = 0;
@@ -178,7 +158,7 @@ class JEMModelCleanup extends JModelLegacy
 	 * @access	public
 	 * @return int
 	 */
-	function getCountcats()
+	public function getCountcats()
 	{
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
@@ -193,16 +173,14 @@ class JEMModelCleanup extends JModelLegacy
 	}
 
 
-
 	/**
 	 * Method to determine the images to delete
 	 *
 	 * @access	private
 	 * @return array
 	 */
-	function _getImages()
-	{
-		$this->_images = array_diff($this->_getavailable(), $this->_getassigned());
+	private function getImages($type) {
+		$this->_images = array_diff($this->getAvailable($type), $this->getAssigned($type));
 
 		return $this->_images;
 	}
@@ -213,17 +191,8 @@ class JEMModelCleanup extends JModelLegacy
 	 * @access	private
 	 * @return array
 	 */
-	function _getassigned()
-	{
-		if ($this->_target == 'events') {
-			$field = 'datimage';
-		} elseif ($this->_target == 'venues') {
-			$field = 'locimage';
-		} elseif ($this->_target == 'categories') {
-			$field = 'image';
-		}
-
-		$query = 'SELECT '.$field.' FROM #__jem_'.$this->_target;
+	private function getAssigned($type) {
+		$query = 'SELECT '.$this->map[$type]['field'].' FROM #__jem_'.$this->map[$type]['table'];
 
 		$this->_db->setQuery($query);
 		$this->_assigned = $this->_db->loadColumn();
@@ -237,10 +206,9 @@ class JEMModelCleanup extends JModelLegacy
 	 * @access	private
 	 * @return array
 	 */
-	function _getavailable()
-	{
+	private function getAvailable($type) {
 		// Initialize variables
-		$basePath = JPATH_SITE.'/images/jem/'.$this->_target;
+		$basePath = JPATH_SITE.'/images/jem/'.$this->map[$type]['folder'];
 
 		$images = array ();
 
