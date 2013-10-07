@@ -319,7 +319,8 @@ class JEMModelImport extends JModelLegacy {
 	 */
 	public function getTableCount($table) {
 		$tables = array($table => "");
-		return $this->getTablesCount($tables)[$table];
+		$tablesCount = $this->getTablesCount($tables);
+		return $tablesCount[$table];
 	}
 
 
