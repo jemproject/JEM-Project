@@ -48,6 +48,10 @@ class JEMImage {
 		// and if there is an error, check what the error is about
 		if (!$image->resize($new_w, $new_h, ZEBRA_IMAGE_CROP_CENTER, -1)) {
 
+			//only admins will see these errors
+			if (JFactory::getUser()->authorise('core.manage')) {
+			
+			
 			// if there was an error, let's see what the error is about
 			switch ($image->error) {
 				case 1:
@@ -71,6 +75,8 @@ class JEMImage {
 				case 7:
 					echo 'GD library is not installed!';
 					break;
+			}
+			
 			}
 
 			// if no errors
