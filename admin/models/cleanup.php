@@ -119,12 +119,12 @@ class JEMModelCleanup extends JModelLegacy
 		$db = JFactory::getDbo();
 
 		$db->setQuery('DELETE cat FROM #__jem_cats_event_relations as cat'
-				.' LEFT OUTER JOIN j17_jem_events as e ON cat.itemid = e.id'
+				.' LEFT OUTER JOIN #__jem_events as e ON cat.itemid = e.id'
 				.' WHERE e.id IS NULL');
 		$db->query();
 
 		$db->setQuery('DELETE cat FROM #__jem_cats_event_relations as cat'
-				.' LEFT OUTER JOIN j17_jem_categories as c ON cat.catid = c.id'
+				.' LEFT OUTER JOIN #__jem_categories as c ON cat.catid = c.id'
 				.' WHERE c.id IS NULL');
 		$db->query();
 
