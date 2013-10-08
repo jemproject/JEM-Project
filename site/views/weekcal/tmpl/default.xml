@@ -77,12 +77,20 @@
 				<option value="1">JYES</option>
 			</field>
 			<field name="show_only_start" type="radio"
-				default="1"
+				default="0"
 				label="COM_JEM_SHOWONLYSTARTDAY"
 				description="COM_JEM_SHOWONLYSTARTDAY_DESC"
 			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
+			</field>
+			<field name="firstweekday" type="radio"
+				default="1"
+				label="COM_JEM_SELECTFIRSTWEEKDAY"
+				description="COM_JEM_SELECTFIRSTWEEKDAYDESC"
+			>
+				<option value="0">COM_JEM_SUNDAY</option>
+				<option value="1">COM_JEM_MONDAY</option>
 			</field>
 		</fieldset>
 	</fields>

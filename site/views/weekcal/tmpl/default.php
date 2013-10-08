@@ -163,7 +163,8 @@ defined('_JEXEC') or die;
 	endforeach;
 
 
-	$currentWeek = date("W");
+	//$currentWeek = date("W"); // starting from Monday
+	$currentWeek = $this->currentweek;
 	$nrweeks = $this->params->get('nrweeks', 1);
 	print $this->cal->showWeeksByID($currentWeek,$nrweeks);
 ?>
