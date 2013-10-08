@@ -268,10 +268,11 @@ class JEMModelWeekcal extends JModelLegacy
 	
 	
 	/**
-	 * Method to get the Categories
+	 * Method to get the Currentweek
+	 * 
+	 * Info MYSQL WEEK: 
+	 * http://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_week
 	 *
-	 * @access public
-	 * @return integer
 	 */
 	function getCurrentweek()
 	{
@@ -281,9 +282,9 @@ class JEMModelWeekcal extends JModelLegacy
 		
 		if ($weekday == 1)
 		{
-			$number = 3;
+			$number = 3; // Monday, with more than 3 days this year
 		} else {
-			$number = 6;
+			$number = 6; // Sunday, with more than 3 days this year
 		}
 
 		$today =  Date("Y-m-d"); 	
