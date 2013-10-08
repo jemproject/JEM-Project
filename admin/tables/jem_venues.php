@@ -176,7 +176,6 @@ class jem_venues extends JTable
 		return true;
 	}
 
-
 	/**
 	 * try to insert first, update if fails
 	 *
@@ -199,7 +198,7 @@ class jem_venues extends JTable
 	/**
 	 * Inserts a row into a table based on an objects properties, ignore if already exists
 	 *
-	 * @access	public
+	 * @access protected
 	 * @param string  The name of the table
 	 * @param object  An object whose properties match table fields
 	 * @param string  The name of the primary key. If provided the object property is updated.

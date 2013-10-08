@@ -73,7 +73,7 @@ class jem_cats_event_relations extends JTable
 	/**
 	 * Inserts a row into a table based on an objects properties, ignore if already exists
 	 *
-	 * @access  public
+	 * @access protected
 	 * @param string  The name of the table
 	 * @param object  An object whose properties match table fields
 	 * @param string  The name of the primary key. If provided the object property is updated.
@@ -91,9 +91,9 @@ class jem_cats_event_relations extends JTable
 				continue;
 			}
 			$fields[] = $this->_db->quoteName($k);
-			$values[] = $this->_db->quoteName($k) ? $this->_db->quote($v) : (int) $v;
+			$values[] = $this->_db->isQuoted($k) ? $this->_db->quote($v) : (int) $v;
 		}
-		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields) ,	implode(",", $values)));
+		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
 		if (!$this->_db->query()) {
 			return false;
 		}

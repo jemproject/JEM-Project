@@ -211,7 +211,6 @@ class jem_events extends JTable
 		return true;
 	}
 
-
 	/**
 	 * try to insert first, update if fails
 	 *
@@ -224,7 +223,6 @@ class jem_events extends JTable
 	function insertIgnore($updateNulls=false)
 	{
 		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		
 		if(!$ret) {
 			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
 			return false;
@@ -235,7 +233,7 @@ class jem_events extends JTable
 	/**
 	 * Inserts a row into a table based on an objects properties, ignore if already exists
 	 *
-	 * @access  public
+	 * @access protected
 	 * @param string  The name of the table
 	 * @param object  An object whose properties match table fields
 	 * @param string  The name of the primary key. If provided the object property is updated.
@@ -253,13 +251,9 @@ class jem_events extends JTable
 				continue;
 			}
 			$fields[] = $this->_db->quoteName($k);
-			$values[] = $this->_db->quoteName($k) ? $this->_db->Quote($v) : (int) $v;
+			$values[] = $this->_db->isQuoted($k) ? $this->_db->quote($v) : (int) $v;
 		}
-		
-
-		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields) ,	implode(",", $values)));
-		
-		
+		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
 		if (!$this->_db->query()) {
 			return false;
 		}
