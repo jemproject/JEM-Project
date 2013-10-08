@@ -67,11 +67,6 @@ class JEMViewWeekcal extends JViewLegacy
 
 		// add javascript
 		$document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
-
-		$year 	= (int)JRequest::getVar('yearID', strftime("%Y"));
-		$month 	= (int)JRequest::getVar('monthID', strftime("%m"));
-		$day = (int)JRequest::getVar('dayID', strftime("%d"));
-
 		$rows = $this->get('Data');
 
 		//Set Meta data
@@ -82,7 +77,6 @@ class JEMViewWeekcal extends JViewLegacy
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title', $pagetitle);
 
-		//$cal = new activeCalendarWeek($year,$month,$day);
 		$cal = new activeCalendarWeek();
 		$cal->enableWeekNum(JText::_('COM_JEM_WKCAL_WEEK'),null,''); // enables week number column with linkable week numbers
 		
