@@ -68,13 +68,13 @@ class JEMControllerCleanup extends JControllerLegacy
 	 * @return void
 	 *
 	 */
-	function truncatecats()
+	function cleanupCatsEventRelations()
 	{
 		$model = $this->getModel('cleanup');
-		$model->truncatecats();
+		$model->cleanupCatsEventRelations();
 
 		$link = 'index.php?option=com_jem&view=cleanup';
-		$msg = JText::_('COM_JEM_CLEANUP_TRUNCATECATSEVENTREF_DONE');
+		$msg = JText::_('COM_JEM_CLEANUP_CLEANUP_CATSEVENT_RELS_DONE');
 
 		$this->setRedirect($link, $msg);
 	}

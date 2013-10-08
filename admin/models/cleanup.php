@@ -111,16 +111,21 @@ class JEMModelCleanup extends JModelLegacy
 
 
 	/**
-	 * Method to delete the cat_relations table
-	 *
-	 * @access	public
-	 * @return int
+	 * Deletes zombie cats_event_relations with no existing event or category
+	 * @return boolean
 	 */
-	function truncatecats()
+	function cleanupCatsEventRelations()
 	{
 		$db = JFactory::getDbo();
 
-		$db->setQuery('TRUNCATE TABLE ' . $db->quoteName('#__jem_cats_event_relations'));
+		$db->setQuery('DELETE cat FROM #__jem_cats_event_relations as cat'
+				.' LEFT OUTER JOIN j17_jem_events as e ON cat.itemid = e.id'
+				.' WHERE e.id IS NULL');
+		$db->query();
+
+		$db->setQuery('DELETE cat FROM #__jem_cats_event_relations as cat'
+				.' LEFT OUTER JOIN j17_jem_categories as c ON cat.catid = c.id'
+				.' WHERE c.id IS NULL');
 		$db->query();
 
 		return true;

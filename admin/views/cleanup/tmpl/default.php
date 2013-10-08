@@ -68,15 +68,15 @@ defined('_JEXEC') or die;
 		<!-- TRUNCATE CATEGORY/EVENT REFERENCES -->
 		<td width="10%">
 			<div class="linkicon">
-				<a href="index.php?option=com_jem&amp;task=cleanup.truncatecats">
-					<?php echo JHTML::_('image', 'media/com_jem/images/icon-48-cleancategoryimg.png', JText::_('COM_JEM_CLEANUP_TRUNCATECATEVENTREF')); ?>
-					<span><?php echo JText::_('COM_JEM_CLEANUP_TRUNCATECATEVENTREF'); ?></span>
+				<a href="index.php?option=com_jem&amp;task=cleanup.cleanupCatsEventRelations">
+					<?php echo JHTML::_('image', 'media/com_jem/images/icon-48-cleancategoryimg.png', JText::_('COM_JEM_CLEANUP_CLEANUP_CATSEVENT_RELS')); ?>
+					<span><?php echo JText::_('COM_JEM_CLEANUP_CLEANUP_CATSEVENT_RELS'); ?></span>
 				</a>
 			</div>
 		</td>
 		<td width="40%" valign="middle">
-			<?php echo JText::_('COM_JEM_CLEANUP_TRUNCATECATEVENTREF_DESC'); ?><br/>
-			<?php echo JText::sprintf('COM_JEM_CLEANUP_TOTALCATEVENTREF', $this->totalcats) ?>
+			<?php echo JText::_('COM_JEM_CLEANUP_CLEANUP_CATSEVENT_RELS_DESC'); ?><br/>
+			<?php echo JText::sprintf('COM_JEM_CLEANUP_TOTAL_CATSEVENT_RELS', $this->totalcats) ?>
 		</td>
 
 		<!-- TRUNCATE ALL DATA -->
