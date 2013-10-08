@@ -52,8 +52,10 @@ defined('_JEXEC') or die;
 	<p><?php echo JText::_('COM_JEM_IMPORT_EL_MISSING_TABLES'); ?>:</p>
 	<ul>
 		<?php
+			$tableCount = 0;
 			foreach($this->eventlistTables as $table => $rows) {
 				if(is_null($rows)) {
+					$tableCount++;
 					echo "<li>".$table."</li>";
 				}
 			}

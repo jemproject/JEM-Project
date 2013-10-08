@@ -201,7 +201,7 @@ class JEMControllerImport extends JControllerLegacy {
 			// Check if import is complete
 			if($current < $total && $table < count($tables->eltables)) {
 				$link = 'index.php?option=com_jem&view=import&table='.$table.'&current='.$current.'&total='.$total;
-				$msg = JText::sprintf('COM_JEM_IMPORT_EL_IMPORT_WORKING', $tables->jemtables[$table], $current, $total);
+				$msg = JText::sprintf('COM_JEM_IMPORT_EL_IMPORT_WORKING', $tables->jemtables[$table-1], $current, $total);
 			} else {
 				$link = 'index.php?option=com_jem&view=import';
 				$msg = JText::_('COM_JEM_IMPORT_EL_IMPORT_FINISHED');

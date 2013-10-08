@@ -432,13 +432,16 @@ class JEMModelImport extends JModelLegacy {
 	 * @param array $data  The data to save
 	 */
 	public function storeJemData($tablename, &$data) {
-		$replace = false;
+		$replace = true;
+		if($tablename == "jem_groupmembers" || $tablename == "jem_cats_event_relations") {
+			$replace = false;
+		}
 
 		$ignore = array ();
-		if (!$replace) {
-			$ignore[] = 'id';
-		}
-		$rec = array ('added' => 0, 'updated' => 0);
+//		if (!$replace) {
+//			$ignore[] = 'id';
+// 		}
+		$rec = array ('added' => 0, 'updated' => 0, 'error' => 0);
 
 		foreach($data as $row) {
 			$object = JTable::getInstance($tablename, '');
@@ -458,6 +461,7 @@ class JEMModelImport extends JModelLegacy {
 				if (!$object->insertIgnore()) {
 					if (!$object->store()) {
 						echo JText::_('Error store: ').$this->_db->getErrorMsg()."\n";
+						$rec['error']++;
 						continue ;
 					} else {
 						$rec['updated']++;
@@ -468,6 +472,7 @@ class JEMModelImport extends JModelLegacy {
 			} else {
 				if (!$object->store()) {
 					echo JText::_('Error store: ').$this->_db->getErrorMsg()."\n";
+					$rec['error']++;
 					continue ;
 				} else {
 					$rec['added']++;
