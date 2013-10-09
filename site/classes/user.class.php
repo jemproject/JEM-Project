@@ -24,9 +24,9 @@ class JEMUser {
 	 * @return boolean True on success
 	 */
 	static function validate_user($recurse, $level) {
-		$user 		= JFactory::getUser();
+		$user = JFactory::getUser();
 
-		//only check when user is logged in
+		// Only check when user is logged in
 		if ( $user->get('id') ) {
 			//open for superuser or registered and thats all what is needed
 			//level = -1 all registered users
@@ -34,9 +34,8 @@ class JEMUser {
 			if ((( $level == -1 ) && ( $user->get('id') )) || (( JFactory::getUser()->authorise('core.manage') ) && ( $level == -2 ))) {
 				return true;
 			}
-		//end logged in check
 		}
-		//oh oh, user has no permissions
+		// User has no permissions
 		return false;
 	}
 
@@ -51,7 +50,7 @@ class JEMUser {
 	 * @return boolean True on success
 	 */
 	static function editaccess($allowowner, $ownerid, $recurse, $level) {
-		$user		= JFactory::getUser();
+		$user = JFactory::getUser();
 
 		$generalaccess = JEMUser::validate_user( $recurse, $level );
 
@@ -116,8 +115,7 @@ class JEMUser {
 
 	/**
 	 * Checks if the user is a maintainer of a category
-	 *
-	 * 
+	 * @return NULL|int Number of maintained categories or null
 	 */
 	static function ismaintainer() {
 		//lets look if the user is a maintainer
@@ -128,10 +126,9 @@ class JEMUser {
 				. ' FROM #__jem_groupmembers AS g'
 				. ' WHERE g.member = '.(int) $user->get('id')
 				;
-		$db->setQuery( $query );
+		$db->setQuery($query);
 
 		$catids = $db->loadColumn();
-
 
 		//no results, no maintainer
 		if (!$catids) {
@@ -144,16 +141,14 @@ class JEMUser {
 		$query = 'SELECT COUNT(id)'
 				. ' FROM #__jem_categories'
 				. ' WHERE published = 1'
-				. ' AND groupid = '.$categories
+				. ' AND (groupid = '.$categories.')'
 				;
-		$db->setQuery( $query );
+		$db->setQuery($query);
 
 		$maintainer = $db->loadResult();
 
 		return $maintainer;
 	}
-
-
 
 
 	/**
@@ -166,7 +161,6 @@ class JEMUser {
 		$db 	= JFactory::getDBO();
 		$user	= JFactory::getUser();
 
-
 		/*
 		 * just a basic check to see if the current user is in an usergroup with
 		 * access for submitting venues
@@ -175,27 +169,23 @@ class JEMUser {
 		 *
 		 * views:
 		 * venues, venue, editvenue
-		 *
 		 */
-
-				$query = 'SELECT gr.id'
+		$query = 'SELECT gr.id'
 				. ' FROM #__jem_groups AS gr'
 				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
 				. ' AND gr.addvenue = 1 '
 				. ' WHERE g.member = '.(int) $user->get('id')
 				;
-				$db->setQuery( $query );
+		$db->setQuery( $query );
 
-				$groupnumber = $db->loadResult();
+		$groupnumber = $db->loadResult();
 
-				//no results
-				if (!$groupnumber) {
-				return null;
-				}  else {
-
-				return $groupnumber;
-
-				}
+		//no results
+		if (!$groupnumber) {
+			return null;
+		} else {
+			return $groupnumber;
+		}
 	}
 
 
@@ -209,33 +199,28 @@ class JEMUser {
 		$db 	= JFactory::getDBO();
 		$user	= JFactory::getUser();
 
-
 		/*
 		 * just a basic check to see if the current user is in an usergroup with
-		* access for publishing venues
-		*
-		* if a result then return true, otherwise false
-		*
-		*/
-
+		 * access for publishing venues
+		 *
+		 * if a result then return true, otherwise false
+		 */
 		$query = 'SELECT gr.id'
 				. ' FROM #__jem_groups AS gr'
 				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
 				. ' AND gr.publishvenue = 1 '
 				. ' WHERE g.member = '.(int) $user->get('id')
 				;
-				$db->setQuery( $query );
+		$db->setQuery( $query );
 
-				$groupnumber = $db->loadResult();
+		$groupnumber = $db->loadResult();
 
-				//no results
-				if (!$groupnumber) {
-						return null;
-				}  else {
-
-				return $groupnumber;
-
-				}
+		//no results
+		if (!$groupnumber) {
+			return null;
+		} else {
+			return $groupnumber;
+		}
 	}
 
 
@@ -249,37 +234,27 @@ class JEMUser {
 		$db 	= JFactory::getDBO();
 		$user	= JFactory::getUser();
 
-
 		/*
 		 * just a basic check to see if the current user is in an usergroup with
-		* access for editing venues
-		*
-		* if a result then return true, otherwise false
-		*
+		 * access for editing venues
+		 *
+		 * if a result then return true, otherwise false
 		*/
-
 		$query = 'SELECT gr.id'
 				. ' FROM #__jem_groups AS gr'
 				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
 				. ' AND gr.editvenue = 1 '
 				. ' WHERE g.member = '.(int) $user->get('id')
 				;
-				$db->setQuery( $query );
+		$db->setQuery( $query );
 
-				$groupnumber = $db->loadResult();
+		$groupnumber = $db->loadResult();
 
-				//no results
-				if (!$groupnumber) {
-						return null;
-						}  else {
-
-				return $groupnumber;
-
-				}
+		//no results
+		if (!$groupnumber) {
+			return null;
+		} else {
+			return $groupnumber;
+		}
 	}
-
-
-
-
-
 }
