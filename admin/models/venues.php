@@ -39,6 +39,7 @@ class JEMModelVenues extends JModelList
 					'city', 'a.city',
 					'ordering', 'a.ordering',
 					'created', 'a.created',
+					'assignedevents'
 			);
 		}
 
@@ -125,7 +126,7 @@ class JEMModelVenues extends JModelList
 						'list.select',
 						'a.id, a.venue, a.alias, a.url, a.street, a.postalCode, a.city, a.state, a.country,'
 						.'a.latitude, a.longitude, a.locdescription, a.meta_keywords, a.meta_description,'
-						.'a.locimage, a.map, a.created_by, a.author_ip, a.created, a.created, a.modified,'
+						.'a.locimage, a.map, a.created_by, a.author_ip, a.created, a.modified,'
 						.'a.modified_by, a.version, a.published, a.checked_out, a.checked_out_time,'
 						.'a.ordering, a.publish_up, a.publish_down'
 				)
@@ -138,7 +139,7 @@ class JEMModelVenues extends JModelList
 
 		// Join over the users for the checked out user.
 		$query->select('uc.name AS editor');
-		$query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
+		$query->join('LEFT', '#__users AS uc ON uc.id = a.checked_out');
 
 		// Join over the asset groups.
 		/*$query->select('ag.title AS access_level');
@@ -151,14 +152,12 @@ class JEMModelVenues extends JModelList
 
 		// Join over the author & email.
 		$query->select('u.email, u.name AS author');
-		$query->join('LEFT', '#__users AS u ON u.id=a.created_by');
+		$query->join('LEFT', '#__users AS u ON u.id = a.created_by');
 
-		//
-		// Adding this line will only turn up venues with assigned events to them.
-		//
 		// Join over the assigned events
-		//$query->select('COUNT(e.locid) AS assignedevents');
-		//$query->join('LEFT', '#__jem_events AS e ON e.locid=a.id');
+		$query->select('COUNT(e.locid) AS assignedevents');
+		$query->join('LEFT OUTER', '#__jem_events AS e ON e.locid = a.id');
+		$query->group('e.locid');
 
 		// Join over the asset groups.
 		//$query->select('ag.title AS access_level');
@@ -359,42 +358,12 @@ class JEMModelVenues extends JModelList
 	}
 
 	/**
-	 * Method to get the userinformation of edited/submitted venues
-	 *
-	 * @access private
-	 * @return object
-	 *
+	 * Returns venue items
+	 * @return object  Venues
 	 */
 	public function getItems()
 	{
-
 		$items = parent::getItems();
-		/*
-		 * Get editor name
-		*/
-		$count = count($items);
-
-		for ($i=0, $n=$count; $i < $n; $i++) {
-			$query = 'SELECT name'
-					. ' FROM #__users'
-					. ' WHERE id = '.$items[$i]->modified_by
-					;
-
-			$this->_db->setQuery($query);
-			$items[$i]->editor = $this->_db->loadResult();
-
-			/*
-			* Get nr of assigned events
-			*/
-			$query = 'SELECT COUNT(id)'
-					.' FROM #__jem_events'
-					.' WHERE locid = ' . (int)$items[$i]->id
-					;
-
-			$this->_db->setQuery($query);
-			$items[$i]->assignedevents = $this->_db->loadResult();
-		}
-
 		return $items;
 	}
 }
