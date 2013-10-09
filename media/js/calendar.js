@@ -36,22 +36,28 @@ window.addEvent('domready', function(){
      }
    );
    
+   
+   /* Show all */
    $('buttonshowall').addEvent( 'click', function() {
-    $$('.jlcalendar .eventcontent').each( 
-      function(eventcat) {
-        el = eventcat.getElement('div[class^=cat]');
+	   
+    $$('.jlcalendar .eventcontent').each(  
+     function(eventcat) {
+        el = eventcat.getElements('div[class^=cat]');
         el.setStyle('display', 'block');
       });
+    
     $$('#jlcalendarlegend .eventCat').each( 
       function(eventcat) {
         eventcat.removeClass('catoff');
       });
    });
    
+   
+   /* Hide all */
    $('buttonhideall').addEvent( 'click', function() {
     $$('.jlcalendar .eventcontent').each( 
       function(eventcat) {
-        el = eventcat.getElement('div[class^=cat]');
+        el = eventcat.getElements('div[class^=cat]');
         el.setStyle('display', 'none');
       });
     $$('#jlcalendarlegend .eventCat').each( 
