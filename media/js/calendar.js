@@ -39,7 +39,7 @@ window.addEvent('domready', function(){
    $('buttonshowall').addEvent( 'click', function() {
     $$('.jlcalendar .eventcontent').each( 
       function(eventcat) {
-        el = eventcat.getElement('div[class^=cat]');
+        el = document.getElement('div[class^=cat]');
         el.setStyle('display', 'block');
       });
     $$('#jlcalendarlegend .eventCat').each( 
@@ -51,7 +51,7 @@ window.addEvent('domready', function(){
    $('buttonhideall').addEvent( 'click', function() {
     $$('.jlcalendar .eventcontent').each( 
       function(eventcat) {
-        el = eventcat.getElement('div[class^=cat]');
+        el = document.getElement('div[class^=cat]');
         el.setStyle('display', 'none');
       });
     $$('#jlcalendarlegend .eventCat').each( 
