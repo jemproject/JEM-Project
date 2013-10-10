@@ -149,7 +149,6 @@ class JEMModelVenues extends JModelList
 		/*$query->select('c.title AS category_title');
 		$query->join('LEFT', '#__categories AS c ON c.id = a.catid');*/
 
-
 		// Join over the author & email.
 		$query->select('u.email, u.name AS author');
 		$query->join('LEFT', '#__users AS u ON u.id = a.created_by');
@@ -157,7 +156,7 @@ class JEMModelVenues extends JModelList
 		// Join over the assigned events
 		$query->select('COUNT(e.locid) AS assignedevents');
 		$query->join('LEFT OUTER', '#__jem_events AS e ON e.locid = a.id');
-		$query->group('e.locid');
+		$query->group('a.id');
 
 		// Join over the asset groups.
 		//$query->select('ag.title AS access_level');
