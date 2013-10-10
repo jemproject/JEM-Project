@@ -13,40 +13,32 @@ jimport('joomla.application.component.controller');
 
 /**
  * JEM Component Sampledata Controller
- *
  * @package JEM
- *
  */
 class JEMControllerSampledata extends JControllerLegacy
 {
 	/**
 	 * Constructor
-	 *
-	 *
 	 */
 	function __construct()
 	{
 		parent::__construct();
 	}
 
- 	/**
+	/**
 	 * Process sampledata
-	 *
-	 * @access public
-	 * @return void
-	 *
 	 */
-	function load()
+	public function load()
 	{
-		//get model
-		$model 	= $this->getModel('sampledata');
-		if (!$model->loaddata()) {
-			$msg 	= JText::_( 'COM_JEM_SAMPLEDATA_FAILED' );
+		$model = $this->getModel('sampledata');
+
+		if (!$model->loadData()) {
+			$msg = JText::_('COM_JEM_SAMPLEDATA_FAILED');
 		} else {
-			$msg 	= JText::_( 'COM_JEM_SAMPLEDATA_SUCCESSFULL' );
+			$msg = JText::_('COM_JEM_SAMPLEDATA_SUCCESSFULL');
 		}
 
-		$link 	= 'index.php?option=com_jem&view=jem';
+		$link = 'index.php?option=com_jem&view=jem';
 
 		$this->setRedirect($link, $msg);
  	}
