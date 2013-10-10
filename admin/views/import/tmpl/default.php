@@ -13,7 +13,76 @@ defined('_JEXEC') or die;
 	<meta http-equiv="refresh" content="1; url=index.php?option=com_jem&amp;view=import&amp;task=import.eventlistimport&amp;table=<?php
 		echo $this->progress->table; ?>&amp;current=<?php echo $this->progress->current; ?>&amp;total=<?php echo $this->progress->total; ?>">
 <?php endif; ?>
-<?php echo JHtml::_('tabs.start', 'det-pane'); ?>
+<?php echo JHtml::_('tabs.start', 'det-pane', array('useCookie'=>1)); ?>
+
+
+<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_IMPORT_EL_TAB'), 'el-import' ); ?>
+
+<?php if(!$this->eventlistVersion) : ?>
+	<p><?php echo JText::_('COM_JEM_IMPORT_EL_NO_VERSION_DETECTED'); ?></p>
+<?php elseif($this->existingJemData && $this->progress->table == '') : ?>
+	<p><?php echo JText::_('COM_JEM_IMPORT_EL_EXISTING_JEM_DATA'); ?></p>
+	<p><?php echo JText::_('COM_JEM_IMPORT_EL_DETECTED_JEM_TABLES'); ?>:</p>
+	<ul>
+	<?php
+		foreach($this->jemTables as $table => $rows) {
+			if(!is_null($rows)) {
+				echo "<li>".JText::sprintf('COM_JEM_IMPORT_EL_DETECTED_TABLES_NUM_ROWS', $table, $rows)."</li>";
+			}
+		}
+	?>
+	</ul>
+	<p><?php echo JText::_('COM_JEM_IMPORT_EL_HOUSEKEEPING'); ?>:
+		<a href="index.php?option=com_jem&amp;view=cleanup"><?php echo JText::_('COM_JEM_CLEANUP'); ?></a>
+	</p>
+<?php else : ?>
+	<p><?php echo JText::_('COM_JEM_IMPORT_EL_VERSION_DETECTED'); ?></p>
+	<p><?php echo JText::_('COM_JEM_IMPORT_EL_TRY_IMPORT'); ?></p>
+
+	<hr/>
+	<p><?php echo JText::_('COM_JEM_IMPORT_EL_DETECTED_VERSION'); ?>: <?php echo $this->eventlistVersion; ?></p>
+	<p><?php echo JText::_('COM_JEM_IMPORT_EL_DETECTED_TABLES'); ?>:</p>
+	<ul>
+		<?php
+			foreach($this->eventlistTables as $table => $rows) {
+				if(!is_null($rows)) {
+					echo "<li>".JText::sprintf('COM_JEM_IMPORT_EL_DETECTED_TABLES_NUM_ROWS', $table, $rows)."</li>";
+				}
+			}
+		?>
+	</ul>
+	<p><?php echo JText::_('COM_JEM_IMPORT_EL_MISSING_TABLES'); ?>:</p>
+	<ul>
+		<?php
+			$tableCount = 0;
+			foreach($this->eventlistTables as $table => $rows) {
+				if(is_null($rows)) {
+					$tableCount++;
+					echo "<li>".$table."</li>";
+				}
+			}
+			if($tableCount == 0) {
+				echo "<li>".JText::_('COM_JEM_IMPORT_EL_MISSING_TABLES_NONE')."</li>";
+			}
+		?>
+	</ul>
+
+	<form action="index.php" method="post" name="adminForm-el-import" id="adminForm-el-import">
+		<div class="width-100">
+			<fieldset class="adminform">
+				<legend><?php echo JText::_('COM_JEM_IMPORT_EL_IMPORT_FROM_EL'); ?></legend>
+				<p><?php echo JText::_('COM_JEM_IMPORT_EL_ATTENTION'); ?>:</p>
+				<p><?php echo JText::_('COM_JEM_IMPORT_EL_ATTENTION_DURATION'); ?></p>
+				<input type="submit" id="eventlist-import-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>"
+					onclick="document.getElementsByName('task')[0].value='import.eventlistImport';return true;"/>
+			</fieldset>
+		</div>
+		<input type="hidden" name="option" value="com_jem" />
+		<input type="hidden" name="view" value="import" />
+		<input type="hidden" name="controller" value="import" />
+		<input type="hidden" name="task" value="" />
+	</form>
+<?php endif; ?>
 
 <?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_IMPORT_CSV_TAB'), 'csv-import' ); ?>
 
@@ -199,73 +268,7 @@ defined('_JEXEC') or die;
 	<input type="hidden" name="task" value="" />
 </form>
 
-<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_IMPORT_EL_TAB'), 'el-import' ); ?>
 
-<?php if(!$this->eventlistVersion) : ?>
-	<p><?php echo JText::_('COM_JEM_IMPORT_EL_NO_VERSION_DETECTED'); ?></p>
-<?php elseif($this->existingJemData && $this->progress->table == '') : ?>
-	<p><?php echo JText::_('COM_JEM_IMPORT_EL_EXISTING_JEM_DATA'); ?></p>
-	<p><?php echo JText::_('COM_JEM_IMPORT_EL_DETECTED_JEM_TABLES'); ?>:</p>
-	<ul>
-	<?php
-		foreach($this->jemTables as $table => $rows) {
-			if(!is_null($rows)) {
-				echo "<li>".JText::sprintf('COM_JEM_IMPORT_EL_DETECTED_TABLES_NUM_ROWS', $table, $rows)."</li>";
-			}
-		}
-	?>
-	</ul>
-	<p><?php echo JText::_('COM_JEM_IMPORT_EL_HOUSEKEEPING'); ?>:
-		<a href="index.php?option=com_jem&amp;view=cleanup"><?php echo JText::_('COM_JEM_CLEANUP'); ?></a>
-	</p>
-<?php else : ?>
-	<p><?php echo JText::_('COM_JEM_IMPORT_EL_VERSION_DETECTED'); ?></p>
-	<p><?php echo JText::_('COM_JEM_IMPORT_EL_TRY_IMPORT'); ?></p>
-
-	<hr/>
-	<p><?php echo JText::_('COM_JEM_IMPORT_EL_DETECTED_VERSION'); ?>: <?php echo $this->eventlistVersion; ?></p>
-	<p><?php echo JText::_('COM_JEM_IMPORT_EL_DETECTED_TABLES'); ?>:</p>
-	<ul>
-		<?php
-			foreach($this->eventlistTables as $table => $rows) {
-				if(!is_null($rows)) {
-					echo "<li>".JText::sprintf('COM_JEM_IMPORT_EL_DETECTED_TABLES_NUM_ROWS', $table, $rows)."</li>";
-				}
-			}
-		?>
-	</ul>
-	<p><?php echo JText::_('COM_JEM_IMPORT_EL_MISSING_TABLES'); ?>:</p>
-	<ul>
-		<?php
-			$tableCount = 0;
-			foreach($this->eventlistTables as $table => $rows) {
-				if(is_null($rows)) {
-					$tableCount++;
-					echo "<li>".$table."</li>";
-				}
-			}
-			if($tableCount == 0) {
-				echo "<li>".JText::_('COM_JEM_IMPORT_EL_MISSING_TABLES_NONE')."</li>";
-			}
-		?>
-	</ul>
-
-	<form action="index.php" method="post" name="adminForm-el-import" id="adminForm-el-import">
-		<div class="width-100">
-			<fieldset class="adminform">
-				<legend><?php echo JText::_('COM_JEM_IMPORT_EL_IMPORT_FROM_EL'); ?></legend>
-				<p><?php echo JText::_('COM_JEM_IMPORT_EL_ATTENTION'); ?>:</p>
-				<p><?php echo JText::_('COM_JEM_IMPORT_EL_ATTENTION_DURATION'); ?></p>
-				<input type="submit" id="eventlist-import-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>"
-					onclick="document.getElementsByName('task')[0].value='import.eventlistImport';return true;"/>
-			</fieldset>
-		</div>
-		<input type="hidden" name="option" value="com_jem" />
-		<input type="hidden" name="view" value="import" />
-		<input type="hidden" name="controller" value="import" />
-		<input type="hidden" name="task" value="" />
-	</form>
-<?php endif; ?>
 
 <?php echo JHtml::_('tabs.end'); ?>
 
