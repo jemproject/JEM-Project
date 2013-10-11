@@ -51,7 +51,6 @@ class JEMModelCategories extends JModelLegacy
 
 	/**
 	 * Constructor
-	 *
 	 */
 	function __construct()
 	{
@@ -189,13 +188,10 @@ class JEMModelCategories extends JModelLegacy
 		// slice out elements based on limits
 		$list = array_slice( $list, $this->_pagination->limitstart, $this->_pagination->limit );
 
-		foreach ($list as $category) {
-			$category->assignedevents = $this->_countcatevents( $category->id );
-		}
+		$this->countCatEvents($list);
 
 		return $list;
 	}
-
 
 
 	function &getPagination()
@@ -254,7 +250,6 @@ class JEMModelCategories extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 *
 	 */
 	function move($direction)
 	{
@@ -278,7 +273,6 @@ class JEMModelCategories extends JModelLegacy
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
-	 *
 	 */
 	function saveorder($cid = array(), $order)
 	{
@@ -314,19 +308,15 @@ class JEMModelCategories extends JModelLegacy
 	}
 
 	/**
-	 * Method to count the nr of assigned events to the category
-	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 *
+	 * Method to count the number of assigned events for a single category
+	 * @param int $id
+	 * @return unknown
 	 */
-	function _countcatevents($id)
+	private function countSingleCatEvents($id)
 	{
-		$query = 'SELECT COUNT(DISTINCT e.id )'
-				.' FROM #__jem_events AS e'
-				.' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = e.id'
-				.' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
-				.' WHERE rel.catid = ' . (int)$id
+		$query = 'SELECT COUNT(*)'
+				.' FROM #__jem_cats_event_relations'
+				.' WHERE catid = ' . (int)$id
 				;
 
 		$this->_db->setQuery($query);
@@ -335,13 +325,38 @@ class JEMModelCategories extends JModelLegacy
 		return $number;
 	}
 
+	/**
+	 * Method to count the number of assigned events for several categories
+	 * @param unknown $categories list of categories
+	 */
+	private function countCatEvents(&$categories)
+	{
+		// Anonymous helper function to implode category IDs
+		$ids = implode(',', array_map(function($el){ return $el->id; }, $categories));
+
+		$query = 'SELECT catid, COUNT(catid) as num'
+				.' FROM #__jem_cats_event_relations'
+				.' WHERE catid IN ('.$ids.')'
+				.' GROUP BY catid'
+				;
+
+		$this->_db->setQuery($query);
+		$result = $this->_db->loadObjectList('catid');
+
+		foreach ($categories as $category) {
+			if(array_key_exists($category->id, $result)) {
+				$category->assignedevents = $result[$category->id]->num;
+			} else {
+				$category->assignedevents = 0;
+			}
+		}
+	}
 
 	/**
 	 * Method to remove a category
 	 *
 	 * @access	public
 	 * @return	string $msg
-	 *
 	 */
 	function delete($cids)
 	{
@@ -410,7 +425,6 @@ class JEMModelCategories extends JModelLegacy
 	 * @param integer id of the category
 	 * @param integer access level
 	 * @return	boolean	True on success
-	 *
 	 */
 	function access($id, $access)
 	{
@@ -448,7 +462,6 @@ class JEMModelCategories extends JModelLegacy
 		$this->_addCategories($id, $pcids, 'parents');
 
 		foreach ($pcids as $pcid) {
-
 			if($pcid == 0 || $pcid == $id) {
 				continue;
 			}
@@ -456,7 +469,6 @@ class JEMModelCategories extends JModelLegacy
 			$category->load( (int)$pcid );
 
 			if ($category->access > $access) {
-
 				$category->access = $access;
 
 				if ( !$category->check() ) {
@@ -479,9 +491,7 @@ class JEMModelCategories extends JModelLegacy
 	 * @param int $id
 	 * @param array $list
 	 * @param string $type
-	 * @return oject
-	 *
-	 *
+	 * @return object
 	 */
 	function _addCategories($id, &$list, $type = 'children')
 	{
