@@ -36,7 +36,12 @@ class JEMViewDay extends JViewLegacy
 		$params 	= $app->getParams();
 		$db  		= JFactory::getDBO();
 		$uri 		= JFactory::getURI();
-
+		
+		// Retrieving locid
+		$jinput = JFactory::getApplication()->input;
+		$reqlocid = $jinput->get('locid', null, 'int');
+		$reqcatid = $jinput->get('catid', null, 'int');
+	
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
@@ -72,7 +77,7 @@ class JEMViewDay extends JViewLegacy
 		//params
 		$params->def('page_title', $item->title);
 
-		$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1');
+		$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&locid='.$reqlocid);
 
 		//pathway
 		$pathway->setItemName(1, $item->title);
@@ -106,16 +111,16 @@ class JEMViewDay extends JViewLegacy
 		if ($jemsettings->showtitle == 1) {
 			$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_TITLE'));
 		}
-		if ($jemsettings->showlocate == 1) {
+		if ($jemsettings->showlocate == 1 && !($reqlocid)) {
 			$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_VENUE'));
 		}
-		if ($jemsettings->showcity == 1) {
+		if ($jemsettings->showcity == 1 && !($reqlocid)) {
 			$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_CITY'));
 		}
-		if ($jemsettings->showcat == 1) {
+		if ($jemsettings->showcat == 1 && !($reqcatid)) {
 			$filters[] = JHTML::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
 		}
-		if ($jemsettings->showstate == 1) {
+		if ($jemsettings->showstate == 1 && !($reqlocid)) {
 			$filters[] = JHTML::_('select.option', '5', JText::_('COM_JEM_STATE'));
 		}
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);

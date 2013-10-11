@@ -27,6 +27,97 @@ class JEMViewCategory extends JViewLegacy
 	 */
 	function display($tpl=null)
 	{
+		if($this->getLayout() == 'calendar') {
+			$app = JFactory::getApplication();
+		
+			// Load tooltips behavior
+			JHTML::_('behavior.tooltip');
+		
+			//initialize variables
+			$document 	= JFactory::getDocument();
+			$menu 		= $app->getMenu();
+			$jemsettings = JEMHelper::config();
+			$item 		= $menu->getActive();
+			$params 	= $app->getParams();
+			$uri 		= JFactory::getURI();
+			$pathway 	= $app->getPathWay();
+		
+			//add css file
+			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendar.css');
+		
+				
+			$evlinkcolor = $params->get('eventlinkcolor');
+			$evbackgroundcolor = $params->get('eventbackgroundcolor');
+			$currentdaycolor = $params->get('currentdaycolor');
+			$eventandmorecolor = $params->get('eventandmorecolor');
+				
+				
+			$style = '
+		div[id^=\'catz\'] a {
+			color:' . $evlinkcolor . ';
+		}
+		div[id^=\'catz\'] {
+			background-color:'.$evbackgroundcolor .';
+		}
+		
+		
+		.eventandmore {
+			background-color:'.$eventandmorecolor .';
+		}
+		
+		.today .daynum {
+			background-color:'.$currentdaycolor.';
+		}';
+				
+			$document->addStyleDeclaration($style);
+		
+				
+				
+			// add javascript
+			// $document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
+		
+			$category = $this->get('Category');
+		
+			$year = (int)JRequest::getVar('yearID', strftime("%Y"));
+			$month = (int)JRequest::getVar('monthID', strftime("%m"));
+				
+			if (JRequest::getVar('id')) {
+				$catid = JRequest::getVar('id');
+			} else {
+				$catid = $params->get('id');
+			}
+		
+			//get data from model and set the month
+			$model = $this->getModel();
+			$model->setDate(mktime(0, 0, 1, $month, 1, $year));
+		
+			$rows = $this->get('Data');
+		
+			//Set Meta data
+			$document->setTitle($item->title);
+		
+			//Set Page title
+			$pagetitle = $params->def('page_title', $item->title);
+			$document->setTitle($pagetitle);
+			$document->setMetaData('title', $pagetitle);
+		
+			//init calendar
+			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
+			$cal->enableMonthNav('index.php?view=category&layout=calendar&id='. $category->slug);
+			$cal->setFirstWeekDay($params->get('firstweekday', 1));
+			//$cal->enableDayLinks(false);
+		
+			$this->rows 		= $rows;
+			$this->catid 		= $catid;
+			$this->params		= $params;
+			$this->jemsettings	= $jemsettings;
+			$this->cal			= $cal;
+		} else {
+		
+		
+		
 		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
 
 		//initialize variables
@@ -49,28 +140,7 @@ class JEMViewCategory extends JViewLegacy
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
-		$evlinkcolor = $params->get('eventlinkcolor');
-		$evbackgroundcolor = $params->get('eventbackgroundcolor');
-		$currentdaycolor = $params->get('currentdaycolor');
-		$eventandmorecolor = $params->get('eventandmorecolor');
-
-
-		$style = '
-		.eventcontent a:link, a:visited, a:active {
-			color:' . $evlinkcolor . ';
-		}
-		.eventcontent {
-			background-color:'.$evbackgroundcolor .';
-		}
-		.eventandmore {
-			background-color:'.$eventandmorecolor .';
-		}
-		.today .daynum {
-	 		 background-color:'.$currentdaycolor.';
-		}';
-
-		$document->addStyleDeclaration($style);
-
+		
 		// get variables
 		$filter_order		= $app->getUserStateFromRequest('com_jem.category.filter_order', 'filter_order', 	'a.dates', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.category.filter_order_Dir', 'filter_order_Dir',	'', 'word');
@@ -200,59 +270,7 @@ class JEMViewCategory extends JViewLegacy
 		$this->item				= $item;
 		$this->categories		= $categories;
 
-		if($this->getLayout() == 'calendar') {
-			$app = JFactory::getApplication();
-
-			// Load tooltips behavior
-			JHTML::_('behavior.tooltip');
-
-			//initialize variables
-			$document 	= JFactory::getDocument();
-			$menu 		= $app->getMenu();
-			$jemsettings = JEMHelper::config();
-			$item 		= $menu->getActive();
-			$params 	= $app->getParams();
-			$uri 		= JFactory::getURI();
-			$pathway 	= $app->getPathWay();
-
-			//add css file
-			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
-			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendar.css');
-
-			// add javascript
-			// $document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
-
-			$category = $this->get('Category');
-
-			$year = (int)JRequest::getVar('yearID', strftime("%Y"));
-			$month = (int)JRequest::getVar('monthID', strftime("%m"));
-
-			//get data from model and set the month
-			$model = $this->getModel();
-			$model->setDate(mktime(0, 0, 1, $month, 1, $year));
-
-			$rows = $this->get('Data');
-
-			//Set Meta data
-			$document->setTitle($item->title);
-
-			//Set Page title
-			$pagetitle = $params->def('page_title', $item->title);
-			$document->setTitle($pagetitle);
-			$document->setMetaData('title', $pagetitle);
-
-			//init calendar
-			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
-			$cal->enableMonthNav('index.php?view=category&layout=calendar&id='. $category->slug);
-			$cal->setFirstWeekDay($jemsettings->weekdaystart);
-			//$cal->enableDayLinks(false);
-
-			$this->rows 		= $rows;
-			$this->params		= $params;
-			$this->jemsettings	= $jemsettings;
-			$this->cal			= $cal;
-		}
+		}		
 
 		parent::display($tpl);
 	}

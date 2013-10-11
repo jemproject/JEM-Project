@@ -49,10 +49,10 @@ class JEMViewCalendar extends JViewLegacy
 		$eventandmorecolor = $params->get('eventandmorecolor');
 
 		$style = '
-		.eventcontent a:link, a:visited, a:active {
+		div[id^=\'catz\'] a {
 			color:' . $evlinkcolor . ';
 		}
-		.eventcontent {
+		div[id^=\'catz\'] {
 			background-color:'.$evbackgroundcolor .';
 		}
 		.eventandmore {

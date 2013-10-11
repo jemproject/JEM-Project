@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_JEM_CATEGORY_CALENDAR_VIEW_DEFAULT_TITLE">
+	<layout title="COM_JEM_VENUE_CALENDAR_VIEW_DEFAULT_TITLE">
 		<message>
-			<![CDATA[COM_JEM_CATEGORY_CALENDAR_VIEW_DEFAULT_DESC]]>
+			<![CDATA[COM_JEM_VENUE_CALENDAR_VIEW_DEFAULT_DESC]]>
 		</message>
 	</layout>
 
@@ -10,7 +10,8 @@
 		<fieldset name="basic"
 			addfieldpath="/administrator/components/com_jem/models/fields"
 		>
-		<field name="introtext" type="textarea"
+			
+			<field name="introtext" type="textarea"
 				filter="safehtml"
 				default=""
 				rows="8"
@@ -29,10 +30,10 @@
 			
 			
 			<field type="spacer" name="myspacer2" hr="true" />
-			<field name="id" type="categories"
-				default="0"
-				label="COM_JEM_SELECT_CATEGORY"
-				description="COM_JEM_SELECT_CATEGORY_DESC"
+			
+			<field name="id" type="modal_venue"
+				label="COM_JEM_SELECTVENUE"
+				description="COM_JEM_SELECTVENUE_DESC"
 			/>
 			<field name="eventlinkcolor" type="color"
 				default="#000000"
@@ -40,12 +41,12 @@
 				description="COM_JEM_CALENDAR_EVENTLINKCOLOR_DESC"
 			/>
 			<field name="eventbackgroundcolor" type="color"
-				default="#FFFF00"
+				default="#c8deb1"
 				label="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR"
 				description="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR_DESC"
 			/>
 			<field name="currentdaycolor" type="color"
-				default="#CCCC99"
+				default="#344280"
 				label="COM_JEM_CALENDAR_CURRENTDAYCOLOR"
 				description="COM_JEM_CALENDAR_CURRENTDAYCOLOR_DESC"
 			/>
@@ -54,6 +55,14 @@
 				label="COM_JEM_CALENDAR_EVENTANDMORECOLOR"
 				description="COM_JEM_CALENDAR_EVENTANDMORECOLOR_DESC"
 			/>
+			<field name="displayLegend" type="radio"
+				default="1"
+				label="COM_JEM_DISPLAY_LEGEND"
+				description="COM_JEM_DISPLAY_LEGEND_DESC"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
 			<field name="show_only_start" type="radio"
 				default="0"
 				label="COM_JEM_SHOWONLYSTARTDAY"

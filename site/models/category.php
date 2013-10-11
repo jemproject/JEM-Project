@@ -131,33 +131,83 @@ class JEMModelCategory extends JModelLegacy
 	 */
 	function &getData()
 	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_data)) {
-			$pagination = $this->getPagination();
+		$jinput = JFactory::getApplication()->input;
+		$layout = $jinput->get('layout', null, 'word');
+		
+		//$pop = JRequest::getBool('pop');
+		$app = JFactory::getApplication();
+		$params = $app->getParams();
+		
+		$items = $this->_data;
+		
+		if (empty($items)) {
 			$query = $this->_buildQuery();
-			$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
-		}
-
-		if ($this->_data) {
-			$this->_data = JEMHelper::getAttendeesNumbers($this->_data);
-
-			$count = count($this->_data);
-			for($i = 0; $i < $count; $i++) {
-				$item = $this->_data[$i];
-				$item->categories = $this->getCategories($item->id);
-
-				//child categories
-// 				$query	= $this->_buildChildsQuery($item->id);
-// 				$this->_db->setQuery($query);
-// 				$item->categories = $this->_db->loadObjectList();
-
-				//remove events without categories (users have no access to them)
-				if (empty($item->categories)) {
-					unset($this->_data[$i]);
+			$items = JEMHelper::getAttendeesNumbers($items);
+		
+			if ($layout == 'calendar') {
+				$items = $this->_getList($query);
+			} else {
+				$pagination = $this->getPagination();
+				$items = $this->_getList($query, $pagination->limitstart, $pagination->limit);
+			}
+		
+			$multi = array();
+		
+		
+		foreach($items AS $item) {
+			$item->categories = $this->getCategories($item->id);
+						
+			if (!is_null($item->enddates) && !$params->get('show_only_start', 1)) {
+				if ($item->enddates != $item->dates) {
+					$day = $item->start_day;
+			
+					for ($counter = 0; $counter <= $item->datediff-1; $counter++) {
+						//@todo sort out, multi-day events
+						$day++;
+			
+						//next day:
+						$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
+			
+						//ensure we only generate days of current month in this loop
+						if (strftime('%m', $this->_date) == strftime('%m', $nextday)) {
+							$multi[$counter] = clone $item;
+							$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
+			
+							//add generated days to data
+							$items = array_merge($items, $multi);
+						}
+						//unset temp array holding generated days before working on the next multiday event
+						unset($multi);
+					}
 				}
 			}
+			
+			//remove events without categories (users have no access to them)
+			if (empty($item->categories)) {
+				unset($item);
+			}
 		}
-		return $this->_data;
+		
+		
+		// Do we have events now? Return if we don't have one.
+		if(empty($items)) {
+			return $items;
+		}
+		
+		if ($layout == 'calendar') {
+			
+		foreach ($items as $item) {
+			$time[] = $item->times;
+			$title[] = $item->title;
+		}
+		
+		array_multisort($time, SORT_ASC, $title, SORT_ASC, $items);
+		
+		}
+		
+		}
+
+		return $items;
 	}
 
 	/**
@@ -209,9 +259,10 @@ class JEMModelCategory extends JModelLegacy
 		$orderby	= $this->_buildCategoryOrderBy();
 
 		//Get Events from Database
-		$query = 'SELECT DISTINCT a.id, a.datimage, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.datdescription, a.created, '
+		$query = 'SELECT DATEDIFF(a.enddates, a.dates) AS datediff, a.id, a.datimage, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.datdescription, a.created, '
 			. ' a.maxplaces, a.waitinglist, '
 			. ' l.venue, l.city, l.state, l.url, c.color, c.catname, l.street, ct.name AS countryname, '
+					.' DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month,'
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 				. ' FROM #__jem_events AS a'
@@ -297,6 +348,17 @@ class JEMModelCategory extends JModelLegacy
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access  <= '.$gid;
 
+		
+		// only select events within specified dates. (chosen month)
+		$monthstart = mktime(0, 0, 1, strftime('%m', $this->_date), 1, strftime('%Y', $this->_date));
+		$monthend = mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
+		
+		$filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', $monthstart));
+		$where[] = ' DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $this->_db->Quote('0000-00-00') .', a.enddates, a.dates), '. $filter_date_from .') >= 0';
+		$filter_date_to = $this->_db->Quote(strftime('%Y-%m-%d', $monthend));
+		$where[] = ' DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
+		
+		
 		/*
 		// get excluded categories
 		$excluded_cats = trim($params->get('excluded_cats', ''));

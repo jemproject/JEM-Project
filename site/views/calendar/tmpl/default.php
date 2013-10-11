@@ -39,6 +39,7 @@ defined('_JEXEC') or die;
 		$year = strftime('%Y', strtotime($row->dates));
 		$month = strftime('%m', strtotime($row->dates));
 		$day = strftime('%d', strtotime($row->dates));
+		
 
 		@$countperday[$year.$month.$day]++;
 		if ($countperday[$year.$month.$day] == $limit+1) {
@@ -106,7 +107,7 @@ defined('_JEXEC') or die;
 			$detaillink 	= JRoute::_( JEMHelperRoute::getRoute($row->slug));
 
 			//wrap a div for each category around the event for show hide toggler
-			$content 		.= '<div class="cat'.$category->id.'">';
+			$content 		.= '<div id="catz" class="cat'.$category->id.'">';
 			$contentend		.= '</div>';
 
 			//attach category color if any in front of the catname

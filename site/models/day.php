@@ -249,7 +249,12 @@ class JEMModelDay extends JModelLegacy
 	{
 		$app = JFactory::getApplication();
 		$jemsettings = JEMHelper::config();
-
+		
+		$jinput = JFactory::getApplication()->input;
+		$reqlocid = $jinput->get('locid', null, 'int');
+		$reqcatid = $jinput->get('catid', null, 'int');
+		
+		
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
 
@@ -269,6 +274,16 @@ class JEMModelDay extends JModelLegacy
 		// Second is to only select events of the specified day
 		$where[]= ' (\''.$this->_date.'\' BETWEEN (a.dates) AND (IF (a.enddates >= a.dates, a.enddates, a.dates)) OR \''.$this->_date.'\' = a.dates)';
 
+		if ($reqlocid)
+		{
+		$where[]= ' a.locid = '.$reqlocid;
+		}
+		
+		if ($reqcatid)
+		{
+			$where[]= ' c.id = '.$reqcatid;
+		}
+		
 		/*
 		// get excluded categories
 		$excluded_cats = trim($params->get('excluded_cats', ''));
@@ -289,15 +304,42 @@ class JEMModelDay extends JModelLegacy
 				case 2:
 					$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
 					break;
+					
+					if ($reqlocid)
+					{	
+					echo '/*';
+					}
 				case 3:
 					$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
 					break;
+					if ($reqlocid)
+					{
+						echo '*/';
+					}
+					
+					if ($reqcatid)
+					{
+						echo '/*';
+					}
 				case 4:
 					$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
 					break;
+					if ($reqcatid)
+					{
+						echo '*/';
+					}
+					
+					if ($reqlocid)
+					{
+						echo '/*';
+					}
 				case 5:
 				default:
 					$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
+					if ($reqlocid)
+					{
+						echo '*/';
+					}
 			}
 		}
 

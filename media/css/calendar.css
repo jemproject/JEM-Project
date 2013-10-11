@@ -83,7 +83,7 @@ table.month {
   height:88px;
 }
 
-.eventcontent {
+div[id^=catz] {
 	background-color:yellow;
 	margin:1px;
 	overflow:hidden;
@@ -95,8 +95,41 @@ table.month {
 	word-wrap: break-word;
 }
 
-.eventcontent a:link, a:visited {
+div[id^=catz] a {
   color: #333;
+}
+
+div[id^='venuez'] {
+	background-color:yellow;
+	margin:1px;
+	overflow:hidden;
+	padding:1px;
+	border: 1px solid grey;
+	border-radius: 2px;
+	padding: 5px;
+	margin: 2px;
+	word-wrap: break-word;
+}
+
+div[id^='venuez'] a {
+	color: #333;
+}
+
+
+div[id^='scat'] {
+	background-color:yellow;
+	margin:1px;
+	overflow:hidden;
+	padding:1px;
+	border: 1px solid grey;
+	border-radius: 2px;
+	padding: 5px;
+	margin: 2px;
+	word-wrap: break-word;
+}
+
+div[id^='scat'] {
+	color: #333;
 }
 
 .eventandmore {
