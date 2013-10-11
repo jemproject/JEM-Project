@@ -9,12 +9,10 @@
 
 defined('_JEXEC') or die;
 
-
 /**
  * View class for the JEM home screen
  *
  * @package JEM
- * 
  */
 class JEMViewJEM extends JViewLegacy {
 
@@ -24,18 +22,17 @@ class JEMViewJEM extends JViewLegacy {
 		jimport('joomla.html.pane');
 
 		//initialise variables
-		$document	=  JFactory::getDocument();
-		$user 		=  JFactory::getUser();
+		$document	= JFactory::getDocument();
+		$user 		= JFactory::getUser();
 
 		// Get data from the model
-		$events      =  $this->get( 'Eventsdata');
-		$venue       =  $this->get( 'Venuesdata');
-		$category	 =  $this->get( 'Categoriesdata' );
+		$events 	= $this->get('EventsData');
+		$venue 		= $this->get('VenuesData');
+		$category 	= $this->get('CategoriesData');
 
 		//add css and submenu to document
 		$document->addStyleSheet(JURI::root(true).'/media/com_jem/css/backend.css');
 
-	
 		//assign vars to the template
 		$this->events		= $events;
 		$this->venue		= $venue;
@@ -44,35 +41,26 @@ class JEMViewJEM extends JViewLegacy {
 
 		// add toolbar
 		$this->addToolbar();
-		
-		parent::display($tpl);
 
+		parent::display($tpl);
 	}
-	
-	
-	
-	/*
+
+	/**
 	 * Add Toolbar
 	*/
-	
 	protected function addToolbar()
 	{
-		
-		//build toolbar
-		JToolBarHelper::title( JText::_( 'COM_JEM_JEM' ), 'home' );
-		JToolBarHelper::help( 'intro', true );
-		
-		if (JFactory::getUser()->authorise('core.manage')) {
-		JToolBarhelper::preferences('com_jem');
-		}
-		
-		//Create Submenu
-		require_once JPATH_COMPONENT . '/helpers/helper.php';
+		// Build toolbar
+		JToolBarHelper::title(JText::_('COM_JEM_JEM'), 'home');
+		JToolBarHelper::help('intro', true);
 
-		
+		if (JFactory::getUser()->authorise('core.manage')) {
+			JToolBarhelper::preferences('com_jem');
+		}
+
+		// Create Submenu
+		require_once JPATH_COMPONENT . '/helpers/helper.php';
 	}
-	
-	
 
 	/**
 	 * Creates the buttons view
@@ -82,35 +70,31 @@ class JEMViewJEM extends JViewLegacy {
 	 * @param string $text image description
 	 * @param boolean $modal 1 for loading in modal
 	 */
-	function quickiconButton( $link, $image, $text, $modal = 0 )
+	function quickiconButton($link, $image, $text, $modal = 0)
 	{
-		//initialise variables
-		$lang 		=  JFactory::getLanguage();
-  		?>
+		// Initialise variables
+		$lang = JFactory::getLanguage();
+		?>
 
 		<div style="float:<?php echo ($lang->isRTL()) ? 'right' : 'left'; ?>;">
 			<div class="icon">
-				<?php
-				if ($modal == 1) {
-					JHTML::_('behavior.modal');
-				?>
-					<a href="<?php echo $link.'&amp;tmpl=component'; ?>" style="cursor:pointer" class="modal" rel="{handler: 'iframe', size: {x: 650, y: 400}}">
-				<?php
-				} else {
-				?>
+				<?php if ($modal == 1) : ?>
+					<?php JHTML::_('behavior.modal'); ?>
+					<a href="<?php echo $link.'&amp;tmpl=component'; ?>" style="cursor:pointer" class="modal"
+							rel="{handler: 'iframe', size: {x: 650, y: 400}}">
+						<?php echo JHTML::_('image', 'media/com_jem/images/'.$image, $text); ?>
+						<span><?php echo $text; ?></span>
+					</a>
+				<?php else : ?>
 					<a href="<?php echo $link; ?>">
-				<?php
-				}
-
-					echo JHTML::_('image', 'media/com_jem/images/'.$image, $text );
-				?>
-					<span><?php echo $text; ?></span>
-				</a>
+						<?php echo JHTML::_('image', 'media/com_jem/images/'.$image, $text); ?>
+						<span><?php echo $text; ?></span>
+					</a>
+				<?php endif; ?>
 			</div>
 		</div>
+
 		<?php
 	}
-
-
-}  // end of class
+}
 ?>
