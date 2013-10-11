@@ -51,28 +51,23 @@ window.addEvent('domready', function(){
 
 
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=events'); ?>" method="post" name="adminForm" id="adminForm">
-
-
-<fieldset id="filter-bar">
-	<div class="filter-search fltlft">
+	<fieldset id="filter-bar">
+		<div class="filter-search fltlft">
 			<?php echo $this->lists['filter']; ?>
 			<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo JText::_( 'COM_JEM_SEARCH' );?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>" class="text_area" onChange="document.adminForm.submit();" />
 			<button type="submit"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
 			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
 		<div class="filter-select fltrt">
-
 			<select name="filter_state" class="inputbox" onchange="this.form.submit()">
 				<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
 				<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter_state'), true);?>
 			</select>
 		</div>
+	</fieldset>
+	<div class="clr"> </div>
 
-</fieldset>
-<div class="clr"> </div>
-
-
-<table class="table table-striped" id="articleList">
+	<table class="table table-striped" id="articleList">
 		<thead>
 			<tr>
 				<th width="1%" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
@@ -93,13 +88,12 @@ window.addEvent('domready', function(){
 		</thead>
 
 		<tfoot>
-		<tr>
-			<td colspan="20">
-				<?php echo $this->pagination->getListFooter(); ?>
-			</td>
-		</tr>
-	</tfoot>
-
+			<tr>
+				<td colspan="20">
+					<?php echo $this->pagination->getListFooter(); ?>
+				</td>
+			</tr>
+		</tfoot>
 
 		<tbody id="seach_in_here">
 			<?php
@@ -117,15 +111,12 @@ window.addEvent('domready', function(){
 					$displaytime = $time.' '.$this->jemsettings->timename;
 				}
 
-
 				$ordering	= ($listOrder == 'ordering');
 				/*	$row->cat_link = JRoute::_('index.php?option=com_categories&extension=com_jem&task=edit&type=other&cid[]='. $row->catid);*/
 				$canCreate	= $user->authorise('core.create');
 				$canEdit	= $user->authorise('core.edit');
 				$canCheckin	= $user->authorise('core.manage',		'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
 				$canChange	= $user->authorise('core.edit.state') && $canCheckin;
-
-
 
 				$link 			= 'index.php?option=com_jem&amp;task=events.edit&amp;cid[]='.$row->id;
 				$venuelink 		= 'index.php?option=com_jem&amp;task=venue.edit&amp;id='.$row->locid;
@@ -147,9 +138,6 @@ window.addEvent('domready', function(){
 				</td>
 				<td><?php echo $displaytime; ?></td>
 				<td class="eventtitle">
-					<?php if ($row->checked_out) : ?>
-						<?php echo JHtml::_('jgrid.checkedout', $i, $row->editor, $row->checked_out_time, 'events.', $canCheckin); ?>
-					<?php endif; ?>
 					<?php if ($canEdit) : ?>
 						<a href="<?php echo JRoute::_('index.php?option=com_jem&task=event.edit&id='.(int) $row->id); ?>">
 							<?php echo $this->escape($row->title); ?></a>
@@ -188,45 +176,39 @@ window.addEvent('domready', function(){
 				<td class="state"><?php echo $row->state ? htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
 				<td class="category">
 				<?php
-				$nr = count($row->categories);
 				$ix = 0;
-				foreach ($row->categories as $key => $category) :
-					$catlink	= 'index.php?option=com_jem&amp;task=categories.edit&amp;cid[]='. $category->id;
+				?>
+				<?php foreach ($row->categories as $key => $category) : ?>
+					<?php
+					if ($ix) :
+						echo ', ';
+					endif;
+
+					$catlink = 'index.php?option=com_jem&amp;task=categories.edit&amp;cid[]='. $category->id;
 					$title = htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8');
 					if (JString::strlen($title) > 20) {
 						$title = JString::substr( $title , 0 , 20).'...';
 					}
 
 					$path = '';
-					$pnr = count($category->parentcats);
 					$pix = 0;
 					foreach ($category->parentcats as $key => $parentcats) :
-
-						$path .= $parentcats->catname;
-
-						$pix++;
-						if ($pix != $pnr) :
+						if ($pix) :
 							$path .= ' » ';
 						endif;
-					endforeach;
+						$path .= $parentcats->catname;
+						$pix++;
+					endforeach; ?>
 
-					if ( $category->cchecked_out && ( $category->cchecked_out != $this->user->get('id') ) ) {
-							echo $title;
-					} else {
-					?>
-						<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_CATEGORY' );?>::<?php echo $path; ?>">
-						<a href="<?php echo $catlink; ?>">
+					<?php if ( $category->cchecked_out && ( $category->cchecked_out != $this->user->get('id') ) ) : ?>
 							<?php echo $title; ?>
-						</a>
+					<?php else : ?>
+						<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_CATEGORY' );?>::<?php echo $path; ?>">
+						<a href="<?php echo $catlink; ?>"><?php echo $title; ?></a>
 						</span>
-					<?php
-					}
-					$ix++;
-					if ($ix != $nr) :
-						echo ', ';
-					endif;
-				endforeach;
-				?>
+					<?php endif; ?>
+					<?php $ix++; ?>
+				<?php endforeach; ?>
 				</td>
 				<td class="center"><?php echo $published; ?></td>
 				<td>
@@ -262,28 +244,19 @@ window.addEvent('domready', function(){
 								$count .= ' +'.$row->waiting;
 							}
 						}
-					?>
+						?>
 						<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_EVENTS_MANAGEATTENDEES'); ?>">
-						<?php echo $count; 						?>
-
+							<?php echo $count; ?>
 						</a>
-					<?php
-					}else {
-					?>
-					<?php echo JHTML::_('image', 'media/com_jem/images/publish_r.png',JText::_('COM_JEM_NOTES')); ?>
-
-
-					<?php
-					}
-					?>
+					<?php } else { ?>
+						<?php echo JHTML::_('image', 'media/com_jem/images/publish_r.png',JText::_('COM_JEM_NOTES')); ?>
+					<?php } ?>
 				</td>
 				<td class="center"><?php echo $row->id; ?></td>
 			</tr>
 			<?php endforeach; ?>
 		</tbody>
 	</table>
-
-
 
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="task" value="" />

@@ -48,8 +48,6 @@ class JEMModelEvents extends JModelList
 	 * Method to auto-populate the model state.
 	 *
 	 * Note. Calling getState in this method will result in recursion.
-	 *
-	 *
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
@@ -128,7 +126,7 @@ class JEMModelEvents extends JModelList
 
 		// Join over the users for the checked out user.
 		$query->select('loc.venue, loc.city, loc.state, loc.checked_out AS vchecked_out');
-		$query->join('LEFT', '#__jem_venues AS loc ON loc.id=a.locid');
+		$query->join('LEFT', '#__jem_venues AS loc ON loc.id = a.locid');
 
 
 		// Join over the language
@@ -137,24 +135,24 @@ class JEMModelEvents extends JModelList
 
 		// Join over the users for the checked out user.
 		$query->select('uc.name AS editor');
-		$query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
+		$query->join('LEFT', '#__users AS uc ON uc.id = a.checked_out');
 
 		// Join over the asset groups.
 		/*$query->select('ag.title AS access_level');
 		$query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');*/
 
 		// Join over the cat_relations
-		$query->select('rel.itemid, rel.itemid, rel.ordering');
-		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid=a.id');
+		$query->select('rel.itemid, rel.ordering');
+		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
 
 		// Join over the categories.
 		$query->select('c.catname, c.id AS catid');
-		$query->join('LEFT', '#__jem_categories AS c ON c.id=rel.catid');
+		$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
 
 
 		// Join over the author & email.
 		$query->select('u.email, u.name AS author');
-		$query->join('LEFT', '#__users AS u ON u.id=a.created_by');
+		$query->join('LEFT', '#__users AS u ON u.id = a.created_by');
 
 
 		// Implement View Level Access
@@ -227,12 +225,9 @@ class JEMModelEvents extends JModelList
 
 	/**
 	 * Method to (un)publish a venue
-	 *
-	 * @access	public
 	 * @return	boolean	True on success
-	 *
 	 */
-	function publish($cid = array(), $publish = 1)
+	public function publish($cid = array(), $publish = 1)
 	{
 		$user 	= JFactory::getUser();
 		$userid = $user->get('id');
@@ -258,12 +253,9 @@ class JEMModelEvents extends JModelList
 
 	/**
 	 * Method to move a venue
-	 *
-	 * @access	public
 	 * @return	boolean	True on success
-	 *
 	 */
-	function move($direction)
+	public function move($direction)
 	{
 		$row = JTable::getInstance('jem_venues', '');
 
@@ -280,15 +272,12 @@ class JEMModelEvents extends JModelList
 		return true;
 	}
 
-
 	/**
 	 * Method to remove a venue
-	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 *
+	 * @param array  cid
+	 * @return boolean  True on success
 	 */
-	function remove($cid)
+	public function remove($cid)
 	{
 		$cids = implode(',', $cid);
 
@@ -343,50 +332,31 @@ class JEMModelEvents extends JModelList
 	}
 
 	/**
-	 * Method to get the userinformation of edited/submitted venues
-	 *
-	 * @access private
+	 * Method to get the userinformation of edited/submitted events
 	 * @return object
-	 *
 	 */
 	public function getItems()
 	{
 		$items = parent::getItems();
 
-		$count = count($items);
-
-		if ($count) {
-			$items = JEMHelper::getAttendeesNumbers($items);
+		if(!count($items)) {
+			return $items;
 		}
 
-		for ($i=0, $n=$count; $i < $n; $i++) {
-			// Get editor name
-			$query = 'SELECT name'
-					. ' FROM #__users'
-					. ' WHERE id = '.$items[$i]->modified_by
-					;
+		$items = JEMHelper::getAttendeesNumbers($items);
 
-			$this->_db->setQuery($query);
-			$items[$i]->editor = $this->_db->loadResult();
-
-			$items[$i]->categories = $this->getCategories($items[$i]->id);
-
-			/*
-			 * Get nr of assigned events
-			*/
-			$query = 'SELECT COUNT(id)'
-					.' FROM #__jem_events'
-					.' WHERE locid = ' . (int)$items[$i]->id
-					;
-
-			$this->_db->setQuery($query);
-			$items[$i]->assignedevents = $this->_db->loadResult();
+		foreach ($items as $item) {
+			$item->categories = $this->getCategories($item->id);
 		}
 
 		return $items;
 	}
 
-	function getCategories($id)
+	/**
+	 * Get the categories of an event
+	 * @param unknown $id
+	 */
+	protected function getCategories($id)
 	{
 		$query = 'SELECT DISTINCT c.id, c.catname, c.checked_out AS cchecked_out'
 				. ' FROM #__jem_categories AS c'
