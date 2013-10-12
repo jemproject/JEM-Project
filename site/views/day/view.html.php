@@ -26,22 +26,26 @@ class JEMViewDay extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
+
 
 		//initialize variables
-		$document 	= JFactory::getDocument();
-		$jemsettings = JEMHelper::config();
-		$menu		= $app->getMenu();
-		$item 		= $menu->getActive();
-		$params 	= $app->getParams();
-		$db  		= JFactory::getDBO();
-		$uri 		= JFactory::getURI();
-		
+		$app 			= JFactory::getApplication();
+		$document 		= JFactory::getDocument();
+		$jemsettings 	= JEMHelper::config();
+		$menu			= $app->getMenu();
+		$item 			= $menu->getActive();
+		$params 		= $app->getParams();
+		$db  			= JFactory::getDBO();
+		$uri 			= JFactory::getURI();
+		$task 			= JRequest::getWord('task');
+		$pathway 		= $app->getPathWay();
+
 		// Retrieving locid
 		$jinput = JFactory::getApplication()->input;
-		$reqlocid = $jinput->get('locid', null, 'int');
-		$reqcatid = $jinput->get('catid', null, 'int');
-	
+		$requestVenueId = $jinput->get('locid', null, 'int');
+		$requestCategoryId = $jinput->get('catid', null, 'int');
+		$requestDate = $jinput->get('id', null, 'int');
+
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
@@ -49,7 +53,6 @@ class JEMViewDay extends JViewLegacy
 		// get variables
 		$filter_order		= $app->getUserStateFromRequest('com_jem.day.filter_order', 'filter_order', 	'a.dates', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.day.filter_order_Dir', 'filter_order_Dir',	'', 'word');
-// 		$filter_state 		= $app->getUserStateFromRequest('com_jem.day.filter_state', 'filter_state', 	'*', 'word');
 		$filter 			= $app->getUserStateFromRequest('com_jem.day.filter', 'filter', '', 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.day.filter_search', 'filter_search', '', 'string');
 		$search 			= $db->escape(trim(JString::strtolower($search)));
@@ -58,14 +61,11 @@ class JEMViewDay extends JViewLegacy
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
 
-		$task 		= JRequest::getWord('task');
-		$pathway 		= $app->getPathWay();
-
 		//get data from model
 		$rows 		= $this->get('Data');
 		$day		= $this->get('Day');
 
-		$daydate = JEMOutput::formatdate($day);
+		$daydate 	= JEMOutput::formatdate($day);
 
 		//are events available?
 		if (!$rows) {
@@ -77,7 +77,12 @@ class JEMViewDay extends JViewLegacy
 		//params
 		$params->def('page_title', $item->title);
 
-		$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&locid='.$reqlocid);
+		if ($requestVenueId){
+			$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&locid='.$requestVenueId.'&id='.$requestDate);
+		}
+		if ($requestCategoryId){
+			$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&catid='.$requestCategoryId.'&id='.$requestDate);
+		}
 
 		//pathway
 		$pathway->setItemName(1, $item->title);
@@ -111,16 +116,16 @@ class JEMViewDay extends JViewLegacy
 		if ($jemsettings->showtitle == 1) {
 			$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_TITLE'));
 		}
-		if ($jemsettings->showlocate == 1 && !($reqlocid)) {
+		if ($jemsettings->showlocate == 1 && !($requestVenueId)) {
 			$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_VENUE'));
 		}
-		if ($jemsettings->showcity == 1 && !($reqlocid)) {
+		if ($jemsettings->showcity == 1 && !($requestVenueId)) {
 			$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_CITY'));
 		}
-		if ($jemsettings->showcat == 1 && !($reqcatid)) {
+		if ($jemsettings->showcat == 1 && !($requestCategoryId)) {
 			$filters[] = JHTML::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
 		}
-		if ($jemsettings->showstate == 1 && !($reqlocid)) {
+		if ($jemsettings->showstate == 1 && !($requestVenueId)) {
 			$filters[] = JHTML::_('select.option', '5', JText::_('COM_JEM_STATE'));
 		}
 		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
@@ -139,7 +144,6 @@ class JEMViewDay extends JViewLegacy
 		$this->dellink			= $dellink;
 		$this->pagination		= $pagination;
 		$this->action			= $uri->toString();
-
 		$this->task				= $task;
 		$this->jemsettings		= $jemsettings;
 		$this->lists			= $lists;

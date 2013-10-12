@@ -57,15 +57,15 @@ class JEMModelDay extends JModelLegacy
 
 		$app = JFactory::getApplication();
 		$jemsettings = JEMHelper::config();
+		$jinput = JFactory::getApplication()->input;
 
-		//get the number of events from database
 		$limit      = $app->getUserStateFromRequest('com_jem.day.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart = $app->getUserStateFromRequest('com_jem.day.limitstart', 'limitstart', 0, 'int');
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
 
-		$rawday = JRequest::getInt('id', 0, 'request');
+		$rawday = $jinput->get('id',null,'int');
 		$this->setDate($rawday);
 	}
 
@@ -125,13 +125,8 @@ class JEMModelDay extends JModelLegacy
 		if (empty($this->_data))
 		{
 			$query = $this->_buildQuery();
-
-			if ($pop) {
-				$this->_data = $this->_getList($query);
-			} else {
-				$pagination = $this->getPagination();
-				$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
-			}
+			$pagination = $this->getPagination();
+			$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 
 			$count = count($this->_data);
 			for($i = 0; $i < $count; $i++)
@@ -249,16 +244,14 @@ class JEMModelDay extends JModelLegacy
 	{
 		$app = JFactory::getApplication();
 		$jemsettings = JEMHelper::config();
-		
+
 		$jinput = JFactory::getApplication()->input;
-		$reqlocid = $jinput->get('locid', null, 'int');
-		$reqcatid = $jinput->get('catid', null, 'int');
-		
-		
+		$requestVenueId = $jinput->get('locid', null, 'int');
+		$requestCategoryId = $jinput->get('catid', null, 'int');
+
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
 
-// 		$filter_state 	= $app->getUserStateFromRequest('com_jem.day.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.day.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.day.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
@@ -266,24 +259,21 @@ class JEMModelDay extends JModelLegacy
 		$where = array();
 
 		// First thing we need to do is to select only needed events
-
 		$where[] = ' a.published = 1';
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access  <= '.$gid;
 
+		if ($requestVenueId){
+			$where[]= ' a.locid = '.$requestVenueId;
+		}
+
+		if ($requestCategoryId){
+			$where[]= ' c.id = '.$requestCategoryId;
+		}
+
 		// Second is to only select events of the specified day
 		$where[]= ' (\''.$this->_date.'\' BETWEEN (a.dates) AND (IF (a.enddates >= a.dates, a.enddates, a.dates)) OR \''.$this->_date.'\' = a.dates)';
 
-		if ($reqlocid)
-		{
-		$where[]= ' a.locid = '.$reqlocid;
-		}
-		
-		if ($reqcatid)
-		{
-			$where[]= ' c.id = '.$reqcatid;
-		}
-		
 		/*
 		// get excluded categories
 		$excluded_cats = trim($params->get('excluded_cats', ''));
@@ -304,42 +294,15 @@ class JEMModelDay extends JModelLegacy
 				case 2:
 					$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
 					break;
-					
-					if ($reqlocid)
-					{	
-					echo '/*';
-					}
 				case 3:
 					$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
 					break;
-					if ($reqlocid)
-					{
-						echo '*/';
-					}
-					
-					if ($reqcatid)
-					{
-						echo '/*';
-					}
 				case 4:
 					$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
 					break;
-					if ($reqcatid)
-					{
-						echo '*/';
-					}
-					
-					if ($reqlocid)
-					{
-						echo '/*';
-					}
 				case 5:
 				default:
 					$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
-					if ($reqlocid)
-					{
-						echo '*/';
-					}
 			}
 		}
 
@@ -370,19 +333,20 @@ class JEMModelDay extends JModelLegacy
 	{
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
 
-		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
-				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-				. ' FROM #__jem_categories AS c'
-				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-				. ' WHERE rel.itemid = '.(int)$id
-				. ' AND c.published = 1'
-				. ' AND c.access <= '.$gid;
-				;
+		$query->select('DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
+				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug');
+		$query->from('#__jem_categories AS c');
+		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
+		$query->where('rel.itemid = '.(int)$id);
+		$query->where('c.published = 1');
+		$query->where('c.access = '.$gid);
 
-		$this->_db->setQuery($query);
+		$db->setQuery($query);
 
-		$this->_cats = $this->_db->loadObjectList();
+		$this->_cats = $db->loadObjectList();
 
 		return $this->_cats;
 	}
