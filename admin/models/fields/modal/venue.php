@@ -1,11 +1,17 @@
 <?php
-// No direct access
- defined('_JEXEC') or die('Restricted access');
+/**
+ * @version 1.9.1
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ */
+ defined('_JEXEC') or die;
 
  jimport('joomla.form.formfield');
 
  /**
-  * Book form field class
+  * Venue Select
   */
  class JFormFieldModal_Venue extends JFormField
  {
@@ -37,9 +43,7 @@
 
           // Setup variables for display
           $html = array();
-
           $link = 'index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component&amp;function=jSelectVenue_'.$this->id;
-
 
           $db = JFactory::getDbo();
           $query = $db->getQuery(true);
@@ -48,26 +52,23 @@
           $query->where('id='.(int)$this->value);
           $db->setQuery($query);
 
-
           $venue = $db->loadResult();
 
           if ($error = $db->getErrorMsg()) {
           	JError::raiseWarning(500, $error);
           }
 
-
-
           if (empty($venue)) {
                   $venue = JText::_('COM_JEM_SELECTVENUE');
           }
           $venue = htmlspecialchars($venue, ENT_QUOTES, 'UTF-8');
 
-          // The current book input field
+          // The current venue input field
           $html[] = '<div class="fltlft">';
           $html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$venue.'" disabled="disabled" size="35" />';
           $html[] = '</div>';
 
-          // The book select button
+          // The venue select button
           $html[] = '<div class="button2-left">';
           $html[] = '  <div class="blank">';
           $html[] = '    <a class="modal" title="'.JText::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
@@ -75,7 +76,7 @@
           $html[] = '  </div>';
           $html[] = '</div>';
 
-         // The active book id field
+         // The active venue id field
           if (0 == (int)$this->value) {
                   $value = '';
           } else {

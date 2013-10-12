@@ -10,10 +10,6 @@
 defined('_JEXEC') or die;
 
 $function = JRequest::getCmd('function', 'jSelectVenue');
-
-
-
-
 ?>
 
 <form action="index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
@@ -56,7 +52,7 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 	<tbody>
 		<?php foreach ($this->rows as $i => $row) : ?>
 		 <tr class="row<?php echo $i % 2; ?>">
-			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+			<td class="center"><?php echo $this->pagination->getRowOffset($i); ?></td>
 			<td align="left">
 				 <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
             </td>
