@@ -27,7 +27,6 @@ class JEMViewDay extends JViewLegacy
 	function display($tpl = null)
 	{
 
-
 		//initialize variables
 		$app 			= JFactory::getApplication();
 		$document 		= JFactory::getDocument();
@@ -82,6 +81,9 @@ class JEMViewDay extends JViewLegacy
 		}
 		if ($requestCategoryId){
 			$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&catid='.$requestCategoryId.'&id='.$requestDate);
+		}
+		if (!$requestCategoryId && !$requestVenueId){
+			$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&id='.$requestDate);
 		}
 
 		//pathway
