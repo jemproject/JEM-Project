@@ -191,6 +191,7 @@ class JEMModelDay extends JModelLegacy
 		// Get the WHERE and ORDER BY clauses for the query
 		$where		= $this->_buildWhere();
 		$orderby	= $this->_buildOrderBy();
+		$db = JFactory::getDbo();
 
 		//Get Events from Database
 		$query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription,'
@@ -205,7 +206,6 @@ class JEMModelDay extends JModelLegacy
 				. $where
 				. $orderby
 				;
-
 		return $query;
 	}
 
@@ -342,7 +342,7 @@ class JEMModelDay extends JModelLegacy
 		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
 		$query->where('rel.itemid = '.(int)$id);
 		$query->where('c.published = 1');
-		$query->where('c.access = '.$gid);
+		$query->where('c.access <= '.$gid);
 
 		$db->setQuery($query);
 
