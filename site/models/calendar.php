@@ -149,11 +149,13 @@ class JEMModelCalendar extends JModelLegacy
 		//Get Events from Database
 		$query = 'SELECT DATEDIFF(a.enddates, a.dates) AS datediff, a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.datdescription, a.created, l.venue, l.city, l.state, l.url,'
 			.' DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month,'
+			.' c.catname, c.access, c.id AS catid,'
 			.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 			.' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 			.' FROM #__jem_events AS a'
 			.' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 			.' LEFT JOIN #__jem_cats_event_relations AS r ON r.itemid = a.id '
+			.' LEFT JOIN #__jem_categories AS c ON c.id = r.catid'
 			.$where
 			.' GROUP BY a.id '
 			;
@@ -170,6 +172,8 @@ class JEMModelCalendar extends JModelLegacy
 	function _buildCategoryWhere()
 	{
 		$app = JFactory::getApplication();
+		$user = JFactory::getUser();
+		$gid = JEMHelper::getGID($user);
 
 		// Get the paramaters of the active menu item
 		$params = $app->getParams();
@@ -184,6 +188,9 @@ class JEMModelCalendar extends JModelLegacy
 		} else {
 			$where = ' WHERE a.published = 1 ';
 		}
+
+		$where .= ' AND c.published = 1';
+		$where .= ' AND c.access  <= '.$gid;
 
 		// only select events within specified dates. (chosen month)
 		$monthstart = mktime(0, 0, 1, strftime('%m', $this->_date), 1, strftime('%Y', $this->_date));
