@@ -57,14 +57,13 @@ class JEMModelVenue extends JModelLegacy
 
 		$app = JFactory::getApplication();
 		$jemsettings = JEMHelper::config();
+		$jinput = JFactory::getApplication()->input;
+		$params = $app->getParams();
 
 		$this->setdate(time());
 
-		// Get the paramaters of the active menu item
-		$params 	= $app->getParams();
-
-		if (JRequest::getVar('id')) {
-			$id = JRequest::getVar('id');
+		if ($jinput->get('id',null,'int')) {
+			$id = $jinput->get('id',null,'int');
 		} else {
 			$id = $params->get('id');
 		}
@@ -79,12 +78,12 @@ class JEMModelVenue extends JModelLegacy
 		$this->setState('limitstart', $limitstart);
 	}
 
-	
+
 	function setdate($date)
 	{
 		$this->_date = $date;
 	}
-	
+
 	/**
 	 * Method to set the venue id
 	 *
@@ -123,14 +122,14 @@ class JEMModelVenue extends JModelLegacy
 	 * @return array
 	 */
 	function &getData()
-	{	
+	{
 		$jinput = JFactory::getApplication()->input;
 		$layout = $jinput->get('layout', null, 'word');
-		
+
 		//$pop = JRequest::getBool('pop');
 		$app = JFactory::getApplication();
 		$params = $app->getParams();
-		
+
 		$items = $this->_data;
 
 		// Lets load the content if it doesn't already exist
@@ -143,28 +142,29 @@ class JEMModelVenue extends JModelLegacy
 				$pagination = $this->getPagination();
 				$items = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 			}
-		
+
 		$multi = array();
-		
+
 		foreach($items AS $item) {
 			$item->categories = $this->getCategories($item->id);
-						
+
+
 			if (!is_null($item->enddates) && !$params->get('show_only_start', 1)) {
 				if ($item->enddates != $item->dates) {
 					$day = $item->start_day;
-			
+
 					for ($counter = 0; $counter <= $item->datediff-1; $counter++) {
 						//@todo sort out, multi-day events
 						$day++;
-			
+
 						//next day:
 						$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
-			
+
 						//ensure we only generate days of current month in this loop
 						if (strftime('%m', $this->_date) == strftime('%m', $nextday)) {
 							$multi[$counter] = clone $item;
 							$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
-			
+
 							//add generated days to data
 							$items = array_merge($items, $multi);
 						}
@@ -173,30 +173,29 @@ class JEMModelVenue extends JModelLegacy
 					}
 				}
 			}
-			
+
 			//remove events without categories (users have no access to them)
 			if (empty($item->categories)) {
 				unset($item);
 			}
 		}
-		
-		
+
+
 		// Do we have events now? Return if we don't have one.
 		if(empty($items)) {
 			return $items;
 		}
-		
+
 		if ($layout == 'calendar') {
-			
+
 		foreach ($items as $item) {
 			$time[] = $item->times;
 			$title[] = $item->title;
 		}
-		
+
 		array_multisort($time, SORT_ASC, $title, SORT_ASC, $items);
-		
 		}
-		
+
 		}
 
 		return $items;
@@ -305,13 +304,12 @@ class JEMModelVenue extends JModelLegacy
 		$task 			= JRequest::getWord('task');
 		$jemsettings 	= JEMHelper::config();
 
-		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		$user 			= JFactory::getUser();
+		$gid 			= JEMHelper::getGID($user);
 
-// 		$filter_state 		= $app->getUserStateFromRequest('com_jem.venue.filter_state', 'filter_state', '', 'word');
-		$filter 			= $app->getUserStateFromRequest('com_jem.venue.filter', 'filter', '', 'int');
-		$search 			= $app->getUserStateFromRequest('com_jem.venue.filter_search', 'filter_search', '', 'string');
-		$search 			= $this->_db->escape(trim(JString::strtolower($search)));
+		$filter 		= $app->getUserStateFromRequest('com_jem.venue.filter', 'filter', '', 'int');
+		$search 		= $app->getUserStateFromRequest('com_jem.venue.filter_search', 'filter_search', '', 'string');
+		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();
 
@@ -324,17 +322,15 @@ class JEMModelVenue extends JModelLegacy
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access  <= '.$gid;
 
-		
 		// only select events within specified dates. (chosen month)
 		$monthstart = mktime(0, 0, 1, strftime('%m', $this->_date), 1, strftime('%Y', $this->_date));
 		$monthend = mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
-		
+
 		$filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', $monthstart));
 		$where[] = ' DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $this->_db->Quote('0000-00-00') .', a.enddates, a.dates), '. $filter_date_from .') >= 0';
 		$filter_date_to = $this->_db->Quote(strftime('%Y-%m-%d', $monthend));
 		$where[] = ' DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
-		
-		
+
 		/* get excluded categories
 		 $excluded_cats = trim($params->get('excluded_cats', ''));
 
@@ -381,18 +377,20 @@ class JEMModelVenue extends JModelLegacy
 	{
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
 
-		//Location holen
-		$query = 'SELECT *,'
-				.' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug'
-				.' FROM #__jem_venues'
-				.' WHERE id ='. $this->_id;
+		$query->select('id, venue, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
+				' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, '.
+				' created, locdescription, country, map, latitude, longitude, postalCode, '.
+				' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug');
+		$query->from($db->quoteName('#__jem_venues'));
+		$query->where('id = '.$this->_id);
 
-		$this->_db->setQuery($query);
+		$db->setQuery($query);
 
-		$_venue = $this->_db->loadObject();
+		$_venue = $db->loadObject();
 		$_venue->attachments = JEMAttachment::getAttachments('venue'.$_venue->id, $gid);
-
 		return $_venue;
 	}
 
@@ -402,17 +400,20 @@ class JEMModelVenue extends JModelLegacy
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
 
-		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.color, c.checked_out AS cchecked_out,'
-				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-				. ' FROM #__jem_categories AS c'
-				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-				. ' WHERE rel.itemid = '.(int)$id
-				. ' AND c.published = 1'
-				. ' AND c.access  <= '.$gid;
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
 
-		$this->_db->setQuery($query);
+		$query->select('DISTINCT c.id, c.catname, c.access, c.color, c.checked_out AS cchecked_out,'
+				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug');
+		$query->from('#__jem_categories AS c');
+		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
+		$query->where('rel.itemid = ' . (int) $id);
+		$query->where('c.published = 1');
+		$query->where('c.access <= ' . $gid);
 
-		$this->_cats = $this->_db->loadObjectList();
+		$db->setQuery($query);
+
+		$this->_cats = $db->loadObjectList();
 
 		$count = count($this->_cats);
 
@@ -424,9 +425,7 @@ class JEMModelVenue extends JModelLegacy
 
 		return $this->_cats;
 	}
-	
-	
-	
+
 	/**
 	 * Method to get the Venue
 	 *
@@ -437,19 +436,21 @@ class JEMModelVenue extends JModelLegacy
 	{
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
-	
-		//Location holen
-		$query = 'SELECT *,'
-				.' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug'
-				.' FROM #__jem_venues'
-						.' WHERE id ='. $this->_id;
-	
-		$this->_db->setQuery($query);
-	
+
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('id, venue, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
+				' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, '.
+				' created, locdescription, country, map, latitude, longitude, postalCode, '.
+				' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug');
+		$query->from($db->quoteName('#__jem_venues'));
+		$query->where('id = '.$this->_id);
+
+		$db->setQuery($query);
+
 		$_venue = $this->_db->loadObject();
-	
 		return $_venue;
 	}
-	
 }
 ?>
