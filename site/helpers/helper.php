@@ -831,5 +831,26 @@ class JEMHelper {
 		}
 		return $gid;
 	}
+
+	/**
+	 * Creates a tooltip
+	 */
+	static function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '', $time, $color) {
+		$tooltip = (htmlspecialchars($tooltip));
+		$title = (htmlspecialchars($title));
+
+		if ($title) {
+			$title = $title . '::';
+		}
+
+		if ($href) {
+			$href = JRoute::_ ($href);
+			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'"><a href="'.$href.'">'.$time.$text.'</a></span>';
+		} else {
+			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'">'.$text.'</span>';
+		}
+		return $tip;
+	}
+
 }
 ?>

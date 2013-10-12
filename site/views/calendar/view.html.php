@@ -99,35 +99,5 @@ class JEMViewCalendar extends JViewLegacy
 		parent::display($tpl);
 	}
 
-	/**
-	 * Creates a tooltip
-	 *
-	 * @access  public
-	 * @param string  $tooltip The tip string
-	 * @param string  $title The title of the tooltip
-	 * @param string  $text The text for the tip
-	 * @param string  $href An URL that will be used to create the link
-	 * @param string  $class the class to use for tip.
-	 * @return  string
-	 *
-	 */
-	function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '')
-	{
-		$tooltip = (htmlspecialchars($tooltip));
-		$title = (htmlspecialchars($title));
-
-		if ($title) {
-			$title = $title.'::';
-		}
-
-		if ($href) {
-			$href = JRoute::_($href);
-			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'"><a href="'.$href.'">'.$text.'</a></span>';
-		} else {
-			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'">'.$text.'</span>';
-		}
-
-		return $tip;
-	}
 }
 ?>

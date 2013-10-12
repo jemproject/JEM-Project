@@ -40,7 +40,7 @@ defined('_JEXEC') or die;
 		$year = strftime('%Y', strtotime($row->dates));
 		$month = strftime('%m', strtotime($row->dates));
 		$day = strftime('%d', strtotime($row->dates));
-		
+
 		@$countperday[$year.$month.$day]++;
 		if ($countperday[$year.$month.$day] == $limit+1) {
 
@@ -74,12 +74,12 @@ defined('_JEXEC') or die;
 
 		//for time in tooltip
 		$timehtml = '';
-		
+
 		if ($this->jemsettings->showtime == 1) :
-		
+
 		$start = JEMOutput::formattime($row->times);
 		$end = JEMOutput::formattime($row->endtimes);
-		
+
 		if ($start != '') :
 		$timehtml = '<div class="time">';
 		$timehtml .= $start;
@@ -134,18 +134,17 @@ defined('_JEXEC') or die;
 			endif;
 
 		endforeach;
-		
-		
+
 		//for time in calendar
 		$timetp = '';
-		
+
 		if ($this->jemsettings->showtime == 1) :
-		
+
 		$start = JEMOutput::formattime($row->times,'',false);
 		$end = JEMOutput::formattime($row->endtimes,'',false);
-		
+
 		if ($start != '') :
-		//$timetp = '<div class="button9">';	
+		//$timetp = '<div class="button9">';
 		$timetp .= $start;
 		if ($end != '') :
 		$timetp .= ' - '.$end;
@@ -154,19 +153,17 @@ defined('_JEXEC') or die;
 		//$timetp .= '</div>';
 		endif;
 		endif;
-		
-		
+
 		//wrap a div for each venue around the event for show hide toggler
 		$content 		.= '<div id="venuez" class="venue'.$row->locid.'">';
 		$contentend		.= '</div>';
-		
+
 		if (!array_key_exists($row->locid, $countvenueevents)) :
 		$countvenueevents[$row->locid] = 1;
 		else :
 		$countvenueevents[$row->locid]++;
 		endif;
-		
-		
+
 		$catname = '<div class="catname">'.$multicatname.'</div>';
 
 		$eventdate = JEMOutput::formatdate($row->dates);
@@ -187,7 +184,7 @@ defined('_JEXEC') or die;
 
 		//generate the output
 		$content .= $colorpic;
-		$content .= $this->caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
+		$content .= JEMHelper::caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
 		$content .= $contentend;
 
 		$this->cal->setEventContent($year, $month, $day, $content);

@@ -23,8 +23,6 @@ defined('_JEXEC') or die;
 	<p><p>
 <?php endif; ?>
 
-
-
 	<?php
 	$countcatevents = array ();
 
@@ -39,7 +37,7 @@ defined('_JEXEC') or die;
 		$year = strftime('%Y', strtotime($row->dates));
 		$month = strftime('%m', strtotime($row->dates));
 		$day = strftime('%d', strtotime($row->dates));
-		
+
 
 		@$countperday[$year.$month.$day]++;
 		if ($countperday[$year.$month.$day] == $limit+1) {
@@ -134,6 +132,25 @@ defined('_JEXEC') or die;
 
 		endforeach;
 
+		//for time in calendar
+		$timetp = '';
+
+		if ($this->jemsettings->showtime == 1) :
+
+		$start = JEMOutput::formattime($row->times,'',false);
+		$end = JEMOutput::formattime($row->endtimes,'',false);
+
+		if ($start != '') :
+		//$timetp = '<div class="button9">';
+		$timetp .= $start;
+		if ($end != '') :
+		$timetp .= ' - '.$end;
+		endif;
+		$timetp .= '<br>';
+		//$timetp .= '</div>';
+		endif;
+		endif;
+
 		$catname = '<div class="catname">'.$multicatname.'</div>';
 
 		$eventdate = JEMOutput::formatdate($row->dates);
@@ -154,7 +171,7 @@ defined('_JEXEC') or die;
 
 		//generate the output
 		$content .= $colorpic;
-		$content .= $this->caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip');
+		$content .= JEMHelper::caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
 		$content .= $contentend;
 
 		$this->cal->setEventContent($year, $month, $day, $content);
