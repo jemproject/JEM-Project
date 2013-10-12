@@ -83,7 +83,7 @@ table.week {
   height:88px;
 }
 
-.eventcontent {
+div[id^=catz] {
 	background-color:yellow;
 	margin:1px;
 	overflow:hidden;
@@ -95,7 +95,7 @@ table.week {
 	word-wrap: break-word;
 }
 
-.eventcontent a:link, a:visited {
+div[id^=catz] a {
   color: #333;
 }
 

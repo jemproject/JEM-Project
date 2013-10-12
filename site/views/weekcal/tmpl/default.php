@@ -189,25 +189,19 @@ defined('_JEXEC') or die;
 
 <div id="jlcalendarlegend">
 
-
 	<div id="buttonshowall">
-		<?php
-		echo JText::_('COM_JEM_SHOWALL');
-		?>
+		<?php echo JText::_('COM_JEM_SHOWALL'); ?>
 	</div>
 
 	<div id="buttonhideall">
-		<?php
-		echo JText::_('COM_JEM_HIDEALL');
-		?>
+		<?php echo JText::_('COM_JEM_HIDEALL'); ?>
 	</div>
 
 	<?php
 	//print the legend
-	if($this->params->get('displayLegend','1')) :
+	if($this->params->get('displayLegend')) :
 
 	$counter = array();
-
 
 	//walk through events
 	foreach ($this->rows as $row):
@@ -224,6 +218,7 @@ defined('_JEXEC') or die;
 				//build legend
 				if (array_key_exists($cat->id, $countcatevents)):
 				?>
+
 					<div class="eventCat" catid="<?php echo $cat->id; ?>">
 						<?php
 						if ( isset ($cat->color) && $cat->color) :
@@ -234,12 +229,13 @@ defined('_JEXEC') or die;
 					</div>
 				<?php
 				endif;
+
 			endif;
+
 		endforeach;
+
 	endforeach;
 	endif;
-
-
 	?>
 </div>
 
