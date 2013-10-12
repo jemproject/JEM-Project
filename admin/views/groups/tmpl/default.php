@@ -63,7 +63,7 @@ $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 				<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 				<td>
 					<?php if ($row->checked_out) : ?>
-						<?php echo JHtml::_('jgrid.checkedout', $i, '', $row->checked_out_time, 'groups.', $canCheckin); ?>
+						<?php echo JHtml::_('jgrid.checkedout', $i, $row->editor, $row->checked_out_time, 'groups.', $canCheckin); ?>
 					<?php endif; ?>
 					<?php if ($canEdit) : ?>
 						<a href="<?php echo $link; ?>">

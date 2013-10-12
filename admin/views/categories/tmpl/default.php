@@ -64,6 +64,9 @@ defined('_JEXEC') or die; ?>
 			<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 			<td align="left">
 				<?php echo $row->treename.' ';?>
+				<?php if ($row->checked_out) : ?>
+					<?php echo JHtml::_('jgrid.checkedout', $i, $row->editor, $row->checked_out_time, 'categories.', $canCheckin); ?>
+				<?php endif; ?>
 				<?php if ( $row->checked_out && ( $row->checked_out != $this->user->get('id') ) ) : ?>
 					<?php echo $this->escape($row->catname); ?>
 				<?php else : ?>

@@ -22,7 +22,6 @@ class JEMModelGroups extends JModelList
 	 *
 	 * @param	array	An optional associative array of configuration settings.
 	 * @see		JController
-	 *
 	 */
 	public function __construct($config = array())
 	{
@@ -39,8 +38,6 @@ class JEMModelGroups extends JModelList
 	 * Method to auto-populate the model state.
 	 *
 	 * Note. Calling getState in this method will result in recursion.
-	 *
-	 *
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
@@ -102,6 +99,10 @@ class JEMModelGroups extends JModelList
 				)
 		);
 		$query->from($db->quoteName('#__jem_groups').' AS a');
+
+		// Join over the users for the checked out user.
+		$query->select('uc.name AS editor');
+		$query->join('LEFT', '#__users AS uc ON uc.id = a.checked_out');
 
 		$search = $this->getState('filter_search');
 
@@ -168,7 +169,7 @@ class JEMModelGroups extends JModelList
 			if(!$this->_db->query()) {
 				$this->setError($this->_db->getErrorMsg());
 				return false;
-							}
+			}
 
 			$query = 'DELETE FROM #__jem_groupmembers'
 					. ' WHERE group_id IN ('. $cids .')'
@@ -177,10 +178,9 @@ class JEMModelGroups extends JModelList
 			$this->_db->setQuery($query);
 
 			if(!$this->_db->query()) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
+				$this->setError($this->_db->getErrorMsg());
+				return false;
 			}
-
 		}
 
 		return true;
