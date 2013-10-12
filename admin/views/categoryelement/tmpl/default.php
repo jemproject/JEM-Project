@@ -8,6 +8,8 @@
  */
 
 defined('_JEXEC') or die;
+
+$function = JRequest::getCmd('function', 'jSelectCategory');
 ?>
 
 <form action="index.php?option=com_jem&amp;view=categoryelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
@@ -17,8 +19,9 @@ defined('_JEXEC') or die;
 		<td width="100%">
 			<?php echo JText::_( 'COM_JEM_SEARCH' ); ?>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button class="buttonfilter" type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
-			<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+			<button type="submit"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
+			<button type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo JText::_('COM_JEM_SELECTCATEGORY') ?>');"><?php echo JText::_('COM_JEM_NOCATEGORY')?></button>
 		</td>
 		<td nowrap="nowrap"><?php  echo $this->lists['state']; ?></td>
 	</tr>
@@ -44,21 +47,14 @@ defined('_JEXEC') or die;
 
 	<tbody>
 		<?php
-		$k = 0;
-		$i = 0;
-		$n = count($this->rows);
-		foreach ($this->rows as $row) {
-
+		foreach ($this->rows as $i => $row) :
 			$access = $row->groupname;
    		?>
-		<tr class="<?php echo "row$k"; ?>">
+		 <tr class="row<?php echo $i % 2; ?>">
 			<td class="center" width="7"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td align="left">
-				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SELECT' );?>::<?php echo $row->catname; ?>">
 				<?php echo $row->treename; ?>
-				<a style="cursor:pointer" onclick="window.parent.elSelectCategory('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->catname ); ?>');">
-					<?php echo htmlspecialchars($row->catname, ENT_QUOTES, 'UTF-8'); ?>
-				</a></span>
+				<a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->catname)); ?>');"><?php echo $this->escape($row->catname); ?></a>
 			</td>
 			<td class="center"><?php echo $access; ?></td>
 			<td class="center">
@@ -69,18 +65,14 @@ defined('_JEXEC') or die;
 				<img src="../media/com_jem/images/<?php echo $img;?>" width="16" height="16" border="0" alt="<?php echo $alt;?>" />
 			</td>
 		</tr>
-		<?php
-		$k = 1 - $k;
-        $i++;
-		}
-		?>
+		<?php endforeach; ?>
 	</tbody>
 
 </table>
 
-<p class="copyright">
+<div class="copyright">
 	<?php echo JEMAdmin::footer( ); ?>
-</p>
+</div>
 
 <input type="hidden" name="task" value="">
 <input type="hidden" name="tmpl" value="component">
