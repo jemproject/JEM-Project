@@ -79,7 +79,7 @@ window.addEvent('domready', function(){
 				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $listDirn, $listOrder ); ?></th>
 				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'loc.state', $listDirn, $listOrder ); ?></th>
 				<th><?php echo JText::_( 'COM_JEM_CATEGORIES' ); ?></th>
-			    <th width="1%" class="center nowrap"><?php echo JText::_( 'JSTATUS' ); ?></th>
+				<th width="1%" class="center nowrap"><?php echo JText::_( 'JSTATUS' ); ?></th>
 				<th class="nowrap"><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
 				<th class="center"><?php echo JHTML::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $listDirn, $listOrder ); ?></th>
 				<th width="1%" class="center nowrap"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ); ?></th>
@@ -115,12 +115,12 @@ window.addEvent('domready', function(){
 				/*	$row->cat_link = JRoute::_('index.php?option=com_categories&extension=com_jem&task=edit&type=other&cid[]='. $row->catid);*/
 				$canCreate	= $user->authorise('core.create');
 				$canEdit	= $user->authorise('core.edit');
-				$canCheckin	= $user->authorise('core.manage',		'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
+				$canCheckin	= $user->authorise('core.manage', 'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
 				$canChange	= $user->authorise('core.edit.state') && $canCheckin;
 
 				$link 			= 'index.php?option=com_jem&amp;task=events.edit&amp;cid[]='.$row->id;
 				$venuelink 		= 'index.php?option=com_jem&amp;task=venue.edit&amp;id='.$row->locid;
-				$published 	= JHTML::_('jgrid.published', $row->published, $i, 'events.');
+				$published 		= JHTML::_('jgrid.published', $row->published, $i, 'events.');
 			?>
 			<tr class="row<?php echo $i % 2; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
@@ -131,46 +131,42 @@ window.addEvent('domready', function(){
 					<?php endif; ?>
 					<?php if ($canEdit) : ?>
 						<a href="<?php echo JRoute::_('index.php?option=com_jem&task=event.edit&id='.(int) $row->id); ?>">
-							<?php echo $displaydate; ?></a>
-					<?php else : ?>
 							<?php echo $displaydate; ?>
+						</a>
+					<?php else : ?>
+						<?php echo $displaydate; ?>
 					<?php endif; ?>
 				</td>
 				<td><?php echo $displaytime; ?></td>
 				<td class="eventtitle">
 					<?php if ($canEdit) : ?>
 						<a href="<?php echo JRoute::_('index.php?option=com_jem&task=event.edit&id='.(int) $row->id); ?>">
-							<?php echo $this->escape($row->title); ?></a>
-					<?php else : ?>
 							<?php echo $this->escape($row->title); ?>
+						</a>
+					<?php else : ?>
+						<?php echo $this->escape($row->title); ?>
 					<?php endif; ?>
 					<br />
-				<?php
-				if (JString::strlen($row->alias) > 25) {
-					echo JString::substr( $this->escape($row->alias), 0 , 25).'...';
-				} else {
-					echo $this->escape($row->alias);
-				}
-				?>
-
+					<?php if (JString::strlen($row->alias) > 25) : ?>
+						<?php echo JString::substr( $this->escape($row->alias), 0 , 25).'...'; ?>
+					<?php else : ?>
+						<?php echo $this->escape($row->alias); ?>
+					<?php endif; ?>
 				</td>
 				<td class="venue">
-					<?php
-					if ($row->venue) {
-						if ( $row->vchecked_out && ( $row->vchecked_out != $this->user->get('id') ) ) {
-							echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8');
-						} else {
-					?>
-						<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_VENUE' );?>::<?php echo $row->venue; ?>">
-						<a href="<?php echo $venuelink; ?>">
+					<?php if ($row->venue) : ?>
+						<?php if ( $row->vchecked_out && ( $row->vchecked_out != $this->user->get('id') ) ) : ?>
 							<?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>
-						</a></span>
-					<?php
-						}
-					} else {
-						echo '-';
-					}
-					?>
+						<?php else : ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_VENUE' );?>::<?php echo $row->venue; ?>">
+								<a href="<?php echo $venuelink; ?>">
+									<?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>
+								</a>
+							</span>
+						<?php endif; ?>
+					<?php else : ?>
+						<?php echo '-'; ?>
+					<?php endif; ?>
 				</td>
 				<td class="city"><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
 				<td class="state"><?php echo $row->state ? htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
@@ -201,7 +197,7 @@ window.addEvent('domready', function(){
 					endforeach; ?>
 
 					<?php if ( $category->cchecked_out && ( $category->cchecked_out != $this->user->get('id') ) ) : ?>
-							<?php echo $title; ?>
+						<?php echo $title; ?>
 					<?php else : ?>
 						<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_CATEGORY' );?>::<?php echo $path; ?>">
 						<a href="<?php echo $catlink; ?>"><?php echo $title; ?></a>
