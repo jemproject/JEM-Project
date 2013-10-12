@@ -62,10 +62,10 @@ class JEMViewVenue extends JViewLegacy {
 			$month = $jinput->get('monthID', strftime("%m"),'int');
 
 			// get data from model and set the month
-			$model = $this->getModel();
+			$model = $this->getModel('VenueCal');
 			$model->setDate(mktime(0, 0, 1, $month, 1, $year));
-			$rows = $this->get('Data');
-			$venue = $this->get('Venuecal');
+			$rows = $this->get('Data','VenueCal');
+			$venue = $this->get('Venuecal','VenueCal');
 
 			// detect if there are venues to display
 			if ($venue == null) {
@@ -83,7 +83,7 @@ class JEMViewVenue extends JViewLegacy {
 			// init calendar
 			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
 			$cal->enableMonthNav('index.php?view=venue&layout=calendar&id='.$venue->slug);
-			$cal->setFirstWeekDay($params->get ('firstweekday',1));
+			$cal->setFirstWeekDay($params->get('firstweekday',1));
 
 			// map variables
 			$this->rows 		= $rows;
@@ -274,6 +274,7 @@ class JEMViewVenue extends JViewLegacy {
 			$this->pagetitle			= $pagetitle;
 			$this->task					= $task;
 			$this->allowedtoeditvenue 	= $allowedtoeditvenue;
+
 		}
 
 		parent::display($tpl);
