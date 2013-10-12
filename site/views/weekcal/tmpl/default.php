@@ -108,7 +108,7 @@ defined('_JEXEC') or die;
 			$detaillink 	= JRoute::_( JEMHelperRoute::getRoute($row->slug));
 
 			//wrap a div for each category around the event for show hide toggler
-			$content 		.= '<div class="cat'.$category->id.'">';
+			$content 		.= '<div id="catz" class="cat'.$category->id.'">';
 			$contentend		.= '</div>';
 
 			//attach category color if any in front of the catname
@@ -135,6 +135,25 @@ defined('_JEXEC') or die;
 
 		endforeach;
 
+		//for time in calendar
+		$timetp = '';
+
+		if ($this->jemsettings->showtime == 1) :
+
+		$start = JEMOutput::formattime($row->times,'',false);
+		$end = JEMOutput::formattime($row->endtimes,'',false);
+
+		if ($start != '') :
+		//$timetp = '<div class="button9">';
+		$timetp .= $start;
+		if ($end != '') :
+		$timetp .= ' - '.$end;
+		endif;
+		$timetp .= '<br>';
+		//$timetp .= '</div>';
+		endif;
+		endif;
+
 		$catname = '<div class="catname">'.$multicatname.'</div>';
 
 		$eventdate = JEMOutput::formatdate($row->dates);
@@ -155,15 +174,13 @@ defined('_JEXEC') or die;
 
 		//generate the output
 		$content .= $colorpic;
-		$content .= $this->caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip');
+		$content .= JEMHelper::caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
 		$content .= $contentend;
 
 		$this->cal->setEventContent($year, $month, $day, $content);
 
 	endforeach;
 
-
-	//$currentWeek = date("W"); // starting from Monday
 	$currentWeek = $this->currentweek;
 	$nrweeks = $this->params->get('nrweeks', 1);
 	print $this->cal->showWeeksByID($currentWeek,$nrweeks);

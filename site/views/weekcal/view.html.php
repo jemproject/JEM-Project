@@ -48,18 +48,18 @@ class JEMViewWeekcal extends JViewLegacy
 		$currentdaycolor = $params->get('currentdaycolor');
 		$eventandmorecolor = $params->get('eventandmorecolor');
 
-
 		$style = '
-		.eventcontent a:link, a:visited, a:active {
+		div[id^=\'catz\'] a {
 			color:' . $evlinkcolor . ';
 		}
-		.eventcontent {
+		div[id^=\'catz\'] {
 			background-color:'.$evbackgroundcolor .';
 		}
 		.eventandmore {
 			background-color:'.$eventandmorecolor .';
 		}
-		.selectedday .daynum {
+
+		.today .daynum {
 			background-color:'.$currentdaycolor.';
 		}';
 
@@ -69,7 +69,7 @@ class JEMViewWeekcal extends JViewLegacy
 		$document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
 		$rows = $this->get('Data');
 		$currentweek 	= $this->get('Currentweek');
-		
+
 		//Set Meta data
 		$document->setTitle($item->title);
 
@@ -82,7 +82,6 @@ class JEMViewWeekcal extends JViewLegacy
 		$cal->enableWeekNum(JText::_('COM_JEM_WKCAL_WEEK'),null,''); // enables week number column with linkable week numbers
 		$cal->setFirstWeekDay($params->get('firstweekday', 0));
 
-		
 		$this->rows 		= $rows;
 		$this->params		= $params;
 		$this->jemsettings	= $jemsettings;
@@ -90,37 +89,6 @@ class JEMViewWeekcal extends JViewLegacy
 		$this->cal			= $cal;
 
 		parent::display($tpl);
-	}
-
-	/**
-	 * Creates a tooltip
-	 *
-	 * @access  public
-	 * @param string  $tooltip The tip string
-	 * @param string  $title The title of the tooltip
-	 * @param string  $text The text for the tip
-	 * @param string  $href An URL that will be used to create the link
-	 * @param string  $class the class to use for tip.
-	 * @return  string
-	 *
-	 */
-	function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '')
-	{
-		$tooltip = (htmlspecialchars($tooltip));
-		$title = (htmlspecialchars($title));
-
-		if ($title) {
-			$title = $title.'::';
-		}
-
-		if ($href) {
-			$href = JRoute::_($href);
-			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'"><a href="'.$href.'">'.$text.'</a></span>';
-		} else {
-			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'">'.$text.'</span>';
-		}
-
-		return $tip;
 	}
 }
 ?>
