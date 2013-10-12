@@ -6,293 +6,274 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
+defined ( '_JEXEC' ) or die ();
 
-defined('_JEXEC') or die;
-
-jimport('joomla.application.component.view');
+jimport ( 'joomla.application.component.view' );
 
 /**
  * HTML View class for the Venue View
- *
  * @package JEM
-*/
-class JEMViewVenue extends JViewLegacy
-{
+ *
+ */
+class JEMViewVenue extends JViewLegacy {
+
 	/**
 	 * Creates the Venue View
-	 *
 	 */
-	function display($tpl = null)
-	{
-		if($this->getLayout() == 'calendar') {
+	function display($tpl = null) {
+		if ($this->getLayout() == 'calendar') {
 			$app = JFactory::getApplication();
-		
+
 			// Load tooltips behavior
 			JHTML::_('behavior.tooltip');
-		
-			//initialize variables
-			$document 	= JFactory::getDocument();
-			$menu 		= $app->getMenu();
-			$jemsettings = JEMHelper::config();
-			$item 		= $menu->getActive();
-			$params 	= $app->getParams();
-			$uri 		= JFactory::getURI();
-			$pathway 	= $app->getPathWay();
-		
-			//add css file
+
+			// initialize variables
+			$document 		= JFactory::getDocument();
+			$menu 			= $app->getMenu();
+			$jemsettings	= JEMHelper::config();
+			$item 			= $menu->getActive();
+			$params 		= $app->getParams();
+			$uri 			= JFactory::getURI();
+			$pathway 		= $app->getPathWay();
+			$jinput 		= JFactory::getApplication()->input;
+
+			// add css file
 			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendar.css');
-		
+
 			$evlinkcolor = $params->get('eventlinkcolor');
 			$evbackgroundcolor = $params->get('eventbackgroundcolor');
 			$currentdaycolor = $params->get('currentdaycolor');
 			$eventandmorecolor = $params->get('eventandmorecolor');
-			
+
 			$style = '
-		div[id^=\'venuez\'] a {
-			color:' . $evlinkcolor . ';
-		}
-		div[id^=\'venuez\'] {
-			background-color:'.$evbackgroundcolor .';
-		}
-		.eventandmore {
-			background-color:'.$eventandmorecolor .';
-		}
-			
-		.today .daynum {
-			background-color:'.$currentdaycolor.';
-		}';
-			
-			$document->addStyleDeclaration($style);
-			
-			
+			div[id^=\'venuez\'] a {color:' . $evlinkcolor . ';}
+			div[id^=\'venuez\'] {background-color:' . $evbackgroundcolor . ';}
+			.eventandmore {background-color:' . $eventandmorecolor . ';}
+			.today .daynum {background-color:' . $currentdaycolor . ';}';
+			$document->addStyleDeclaration ($style);
+
 			// add javascript
 			$document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
-		
-			$venue = $this->get('Venuecal');
-			
-			if ($venue == null)
-			{
-				return false;
-			}
-			
-		
-			$year = (int)JRequest::getVar('yearID', strftime("%Y"));
-			$month = (int)JRequest::getVar('monthID', strftime("%m"));
-		
-			//get data from model and set the month
+
+			// Retrieve year/month variables
+			$year = $jinput->get('yearID', strftime("%Y"),'int');
+			$month = $jinput->get('monthID', strftime("%m"),'int');
+
+			// get data from model and set the month
 			$model = $this->getModel();
 			$model->setDate(mktime(0, 0, 1, $month, 1, $year));
-		
 			$rows = $this->get('Data');
-		
-			//Set Meta data
+			$venue = $this->get('Venuecal');
+
+			// detect if there are venues to display
+			if ($venue == null) {
+				return false;
+			}
+
+			// Set Meta data
 			$document->setTitle($item->title);
-		
-			//Set Page title
+
+			// Set Page title
 			$pagetitle = $params->def('page_title', $item->title);
 			$document->setTitle($pagetitle);
 			$document->setMetaData('title', $pagetitle);
-		
-			//init calendar
+
+			// init calendar
 			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
-			$cal->enableMonthNav('index.php?view=venue&layout=calendar&id='. $venue->slug);
-			$cal->setFirstWeekDay($params->get('firstweekday', 1));
-			//$cal->enableDayLinks(false);
-		
+			$cal->enableMonthNav('index.php?view=venue&layout=calendar&id='.$venue->slug);
+			$cal->setFirstWeekDay($params->get ('firstweekday',1));
+
+			// map variables
 			$this->rows 		= $rows;
-			$this->params		= $params;
-			$this->jemsettings	= $jemsettings;
-			$this->cal			= $cal;
+			$this->params 		= $params;
+			$this->jemsettings 	= $jemsettings;
+			$this->cal 			= $cal;
+
 		} else {
-		
-		
-		
-		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
 
-		$app = JFactory::getApplication();
+			// add templatepath
+			$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl' );
 
-		//initialize variables
-		$document 	= JFactory::getDocument();
-		$menu		= $app->getMenu();
-		$jemsettings = JEMHelper::config();
-		$db 		= JFactory::getDBO();
+			// initialize variables
+			$app 			= JFactory::getApplication();
+			$document 		= JFactory::getDocument();
+			$menu 			= $app->getMenu();
+			$jemsettings 	= JEMHelper::config();
+			$db 			= JFactory::getDBO();
+			$item 			= $menu->getActive();
+			$params 		= $app->getParams('com_jem');
+			$uri 			= JFactory::getURI();
+			$task 			= JRequest::getWord('task');
 
-		//get menu information
-		$menu		= $app->getMenu();
-		$item 		= $menu->getActive();
+			// add css file
+			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
-		$params 	= $app->getParams('com_jem');
-		$uri 		= JFactory::getURI();
+			// get search & user-state variables
+			$filter_order 		= $app->getUserStateFromRequest('com_jem.venue.filter_order', 'filter_order', 'a.dates', 'cmd');
+			$filter_order_Dir 	= $app->getUserStateFromRequest('com_jem.venue.filter_order_Dir', 'filter_order_Dir', '', 'word');
+			$filter 			= $app->getUserStateFromRequest('com_jem.venue.filter', 'filter', '', 'int');
+			$search 			= $app->getUserStateFromRequest('com_jem.venue.filter_search', 'filter_search', '', 'string');
+			$search 			= $db->escape(trim(JString::strtolower($search)));
 
-		//add css file
-		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+			// table ordering
+			$lists['order_Dir']	= $filter_order_Dir;
+			$lists['order']		= $filter_order;
+
+			// get data from model
+			$rows	= $this->get('Data');
+			$venue	= $this->get('Venue');
 
 
-		// get variables
-		$filter_order		= $app->getUserStateFromRequest('com_jem.venue.filter_order', 'filter_order', 	'a.dates', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.venue.filter_order_Dir', 'filter_order_Dir',	'', 'word');
-// 		$filter_state 		= $app->getUserStateFromRequest('com_jem.venue.filter_state', 'filter_state', 	'*', 'word');
-		$filter 			= $app->getUserStateFromRequest('com_jem.venue.filter', 'filter', '', 'int');
-		$search 			= $app->getUserStateFromRequest('com_jem.venue.filter_search', 'filter_search', '', 'string');
-		$search 			= $db->escape(trim(JString::strtolower($search)));
+			// does the venue exist?
+			if ($venue->id == 0) {
+				// TODO Translation
+				return JError::raiseError(404,JText::_(COM_JEM_VENUE_NOTFOUND));
+			}
 
-		$task 				= JRequest::getWord('task');
+			// are events available?
+			if (! $rows) {
+				$noevents = 1;
+			} else {
+				$noevents = 0;
+			}
 
-		// table ordering
-		$lists['order_Dir'] = $filter_order_Dir;
-		$lists['order'] = $filter_order;
+			// Get image
+			$limage = JEMImage::flyercreator($venue->locimage,'venue');
 
-		//get data from model
-		$rows 		= $this->get('Data');
-		$venue	 	= $this->get('Venue');
+			// Add feed links
+			$link = '&format=feed&id='.$venue->id.'&limitstart=';
+			$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
+			$this->document->addHeadLink(JRoute::_($link . '&type=rss'), 'alternate', 'rel', $attribs);
+			$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
+			$this->document->addHeadLink(JRoute::_($link . '&type=atom'), 'alternate', 'rel', $attribs);
 
-		//does the venue exist?
-		if ($venue->id == 0) {
-			// TODO Translation
-			return JError::raiseError(404, JText::sprintf('Venue #%d not found', $venue->id));
-		}
+			// pathway
+			$pathway = $app->getPathWay ();
+			if ($item)
+				$pathway->setItemName ( 1, $item->title );
 
-		//are events available?
-		if (!$rows) {
-			$noevents = 1;
-		} else {
-			$noevents = 0;
-		}
+			// create the pathway
+			if ($task == 'archive') {
+				$pathway->addItem (JText::_('COM_JEM_ARCHIVE').'-'.$venue->venue, JRoute::_('index.php?option=com_jem&view=venue&task=archive&id='.$venue->slug));
+				$print_link = JRoute::_('index.php?option=com_jem&view=venue&id='.$venue->slug. '&task=archive&print=1&tmpl=component');
+				$pagetitle = $venue->venue.'-'.JText::_('COM_JEM_ARCHIVE');
+			} else {
+				$pathway->addItem($venue->venue, JRoute::_('index.php?option=com_jem&view=venue&id='.$venue->slug));
+				$print_link = JRoute::_('index.php?option=com_jem&view=venue&id='.$venue->slug.'&print=1&tmpl=component');
+				$pagetitle = $venue->venue;
+			}
 
-		//Get image
-		$limage = JEMImage::flyercreator($venue->locimage, 'venue');
+			// set Page title
+			$document->setTitle($pagetitle);
+			$document->setMetaData('title', $pagetitle);
+			$document->setMetadata('keywords', $venue->meta_keywords);
+			$document->setDescription(strip_tags($venue->meta_description));
 
-		//add alternate feed link
-		$link	= '&format=feed&id='.$venue->id;
-		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
-		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
-		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
-		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
+			// Check if the user has access to the add-eventform
+			$maintainer = JEMUser::ismaintainer();
+			$genaccess = JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
-		//pathway
-		$pathway 	= $app->getPathWay();
-		if($item) $pathway->setItemName(1, $item->title);
+			if ($maintainer || $genaccess) {
+				$addeventlink = 1;
+			} else {
+				$addeventlink = 0;
+			}
 
-		//create the pathway
-		if ($task == 'archive') {
-			$pathway->addItem(JText::_('COM_JEM_ARCHIVE').' - '.$venue->venue, JRoute::_('index.php?option=com_jem&view=venue&task=archive&id='.$venue->slug));
-			$print_link = JRoute::_('index.php?option=com_jem&view=venue&id='. $venue->slug .'&task=archive&print=1&tmpl=component');
-			$pagetitle = $venue->venue.' - '.JText::_('COM_JEM_ARCHIVE');
-		} else {
-			$pathway->addItem($venue->venue, JRoute::_('index.php?option=com_jem&view=venue&id='.$venue->slug));
-			$print_link = JRoute::_('index.php?option=com_jem&view=venue&id='. $venue->slug .'&print=1&tmpl=component');
-			$pagetitle = $venue->venue;
-		}
+			// Check if the user has access to the add-venueform
+			$maintainer2 = JEMUser::addvenuegroups();
+			$genaccess2 = JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
+			if ($maintainer2 || $genaccess2) {
+				$addvenuelink = 1;
+			} else {
+				$addvenuelink = 0;
+			}
 
-		//set Page title
-		$document->setTitle($pagetitle);
-		$document->setMetaData('title' , $pagetitle);
-		$document->setMetadata('keywords', $venue->meta_keywords);
-		$document->setDescription(strip_tags($venue->meta_description));
+			// Check if the user has access to the edit-venueform
+			$maintainer3 = JEMUser::editvenuegroups();
+			$genaccess3 = JEMUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
+			if ($maintainer3 || $genaccess3) {
+				$allowedtoeditvenue = 1;
+			} else {
+				$allowedtoeditvenue = 0;
+			}
 
-		//Check if the user has access to the add-eventform
-		$maintainer = JEMUser::ismaintainer();
-		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+			// Generate Venuedescription
+			if (!$venue->locdescription == '' || !$venue->locdescription == '<br />') {
+				// execute plugins
+				$venue->text = $venue->locdescription;
+				$venue->title = $venue->venue;
+				JPluginHelper::importPlugin ('content');
+				$app->triggerEvent ('onContentPrepare', array (
+						'com_jem.venue',
+						&$venue,
+						&$params,
+						0
+				));
+				$venuedescription = $venue->text;
+			}
 
-		if ($maintainer || $genaccess) {
-			$addeventlink = 1;
-		} else {
-			$addeventlink = 0;
-		}
+			// build the url
+			if (!empty($venue->url) && strtolower (substr($venue->url, 0, 7)) != "http://") {
+				$venue->url = 'http://' . $venue->url;
+			}
 
-		//Check if the user has access to the add-venueform
-		$maintainer2 = JEMUser::addvenuegroups();
-		$genaccess2 	= JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
-		if ($maintainer2 || $genaccess2) {
-			$addvenuelink = 1;
-		} else {
-			$addvenuelink = 0;
-		}
+			// prepare the url for output
+			if (strlen(htmlspecialchars($venue->url, ENT_QUOTES)) > 35) {
+				$venue->urlclean = substr(htmlspecialchars($venue->url, ENT_QUOTES), 0, 35 ) . '...';
+			} else {
+				$venue->urlclean = htmlspecialchars($venue->url, ENT_QUOTES);
+			}
 
-		//Check if the user has access to the edit-venueform
-		$maintainer3 = JEMUser::editvenuegroups();
-		$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
-		if ($maintainer3 || $genaccess3) {
-			$allowedtoeditvenue = 1;
-		} else {
-			$allowedtoeditvenue = 0;
-		}
+			// create flag
+			if ($venue->country) {
+				$venue->countryimg = JEMOutput::getFlag($venue->country);
+			}
 
-		//Generate Venuedescription
-		if (!$venue->locdescription == '' || !$venue->locdescription == '<br />') {
-			//execute plugins
-			$venue->text	= $venue->locdescription;
-			$venue->title 	= $venue->venue;
-			JPluginHelper::importPlugin('content');
-			$app->triggerEvent('onContentPrepare', array('com_jem.venue', &$venue, &$params, 0));
-			$venuedescription = $venue->text;
-		}
+			// Create the pagination object
+			$pagination = $this->get('Pagination');
 
-		//build the url
-		if(!empty($venue->url) && strtolower(substr($venue->url, 0, 7)) != "http://") {
-			$venue->url = 'http://'.$venue->url;
-		}
+			// filters
+			$filters = array ();
 
-		//prepare the url for output
-		if (strlen(htmlspecialchars($venue->url, ENT_QUOTES)) > 35) {
-			$venue->urlclean = substr(htmlspecialchars($venue->url, ENT_QUOTES), 0 , 35).'...';
-		} else {
-			$venue->urlclean = htmlspecialchars($venue->url, ENT_QUOTES);
-		}
+			if ($jemsettings->showtitle == 1) {
+				$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_TITLE'));
+			}
+			if ($jemsettings->showlocate == 1) {
+				$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_VENUE'));
+			}
+			if ($jemsettings->showcity == 1) {
+				$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_CITY'));
+			}
+			if ($jemsettings->showcat == 1) {
+				$filters[] = JHTML::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
+			}
+			if ($jemsettings->showstate == 1) {
+				$filters[] = JHTML::_('select.option', '5', JText::_('COM_JEM_STATE'));
+			}
+			$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
+			$lists['search'] = $search;
 
-		//create flag
-		if ($venue->country) {
-			$venue->countryimg = JEMOutput::getFlag($venue->country);
-		}
-
-		// Create the pagination object
-		$pagination = $this->get('Pagination');
-
-		//search filter
-		$filters = array();
-
-		if ($jemsettings->showtitle == 1) {
-			$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_TITLE'));
-		}
-		if ($jemsettings->showlocate == 1) {
-			$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_VENUE'));
-		}
-		if ($jemsettings->showcity == 1) {
-			$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_CITY'));
-		}
-		if ($jemsettings->showcat == 1) {
-			$filters[] = JHTML::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
-		}
-		if ($jemsettings->showstate == 1) {
-			$filters[] = JHTML::_('select.option', '5', JText::_('COM_JEM_STATE'));
-		}
-		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
-
-		// search filter
-		$lists['search']= $search;
-
-		$this->lists				= $lists;
-		$this->action				= $uri->toString();
-
-		$this->rows					= $rows;
-		$this->noevents				= $noevents;
-		$this->venue				= $venue;
-		$this->print_link			= $print_link;
-		$this->params				= $params;
-		$this->addvenuelink			= $addvenuelink;
-		$this->addeventlink			= $addeventlink;
-		$this->limage				= $limage;
-		$this->venuedescription		= $venuedescription;
-		$this->pagination			= $pagination;
-		$this->jemsettings			= $jemsettings;
-		$this->item					= $item;
-		$this->pagetitle			= $pagetitle;
-		$this->task					= $task;
-		$this->allowedtoeditvenue	= $allowedtoeditvenue;
-		
+			// mapping variables
+			$this->lists 				= $lists;
+			$this->action 				= $uri->toString ();
+			$this->rows 				= $rows;
+			$this->noevents 			= $noevents;
+			$this->venue 				= $venue;
+			$this->print_link 			= $print_link;
+			$this->params 				= $params;
+			$this->addvenuelink 		= $addvenuelink;
+			$this->addeventlink 		= $addeventlink;
+			$this->limage 				= $limage;
+			$this->venuedescription		= $venuedescription;
+			$this->pagination 			= $pagination;
+			$this->jemsettings 			= $jemsettings;
+			$this->item					= $item;
+			$this->pagetitle			= $pagetitle;
+			$this->task					= $task;
+			$this->allowedtoeditvenue 	= $allowedtoeditvenue;
 		}
 
 		parent::display($tpl);
@@ -301,53 +282,56 @@ class JEMViewVenue extends JViewLegacy
 	/**
 	 * Manipulate Data
 	 */
-	function &getRows()
-	{
-		$count = count($this->rows);
+	function &getRows() {
+		$count = count ($this->rows);
 
-		if (!$count) {
+		if (! $count) {
 			return;
 		}
 
 		$k = 0;
-		foreach($this->rows as $key => $row) {
-			$row->odd   = $k;
+		foreach ($this->rows as $key => $row ) {
+			$row->odd = $k;
 
-			$this->rows[$key] = $row;
+			$this->rows [$key] = $row;
 			$k = 1 - $k;
 		}
 
 		return $this->rows;
 	}
-	
+
 	/**
 	 * Creates a tooltip
 	 *
-	 * @access  public
-	 * @param string  $tooltip The tip string
-	 * @param string  $title The title of the tooltip
-	 * @param string  $text The text for the tip
-	 * @param string  $href An URL that will be used to create the link
-	 * @param string  $class the class to use for tip.
-	 * @return  string
+	 * @access public
+	 * @param string $tooltip
+	 *        	The tip string
+	 * @param string $title
+	 *        	The title of the tooltip
+	 * @param string $text
+	 *        	The text for the tip
+	 * @param string $href
+	 *        	An URL that will be used to create the link
+	 * @param string $class
+	 *        	the class to use for tip.
+	 * @return string
 	 *
 	 */
-	function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '', $time, $color)
-	{
+	function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '', $time, $color) {
 		$tooltip = (htmlspecialchars($tooltip));
 		$title = (htmlspecialchars($title));
-	
+
 		if ($title) {
-			$title = $title.'::';
+			$title = $title . '::';
 		}
-	
+
 		if ($href) {
-			$href = JRoute::_($href);
+			$href = JRoute::_ ($href);
 			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'"><a href="'.$href.'">'.$time.$text.'</a></span>';
 		} else {
 			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'">'.$text.'</span>';
 		}
-	
+
 		return $tip;
 	}
 }
