@@ -36,7 +36,119 @@ class JEMController extends JControllerLegacy
 	 */
 	function display($cachable = false, $urlparams = false)
 	{
-		parent::display();
+	// Get the document object.
+		$document	= JFactory::getDocument();
+
+		// Set the default view name and format from the Request.
+		$vName	 = JRequest::getCmd('view', 'eventslist');
+		$vFormat = $document->getType();
+		$lName	 = JRequest::getCmd('layout', 'default');
+
+		if ($view = $this->getView($vName, $vFormat)) {
+			// Do any specific processing by view.
+			switch ($vName) {
+				case 'attendees':
+					$model = $this->getModel($vname);
+					break;
+
+				case 'calendar':
+					$model = $this->getModel($vName);
+					break;
+
+				case 'categories':
+					$model = $this->getModel($vName);
+					break;
+
+				case 'categoriesdetailed':
+					$model = $this->getModel($vName);
+					break;
+
+				case 'category':
+					$model = $this->getModel($vName);
+					break;
+
+				case 'day':
+					$model = $this->getModel($vName);
+					break;
+
+				case 'editevent':
+					$model = $this->getModel($vName);
+					break;
+
+				case 'editvenue':
+					$model = $this->getModel($vName);
+					break;
+
+				case 'event':
+					$model = $this->getModel($vName);
+					break;
+
+				case 'eventslist':
+					$model = $this->getModel($vName);
+					break;
+
+				case 'myattending':
+					$model = $this->getModel($vName);
+					break;
+
+				case 'myevents':
+					$model = $this->getModel($vName);
+					break;
+
+				case 'myvenues':
+					$model = $this->getModel($vName);
+					break;
+
+				case 'search':
+					$model = $this->getModel($vName);
+					break;
+
+				case 'venue':
+					$model = $this->getModel($vName);
+					break;
+
+				case 'venues':
+					$model = $this->getModel($vName);
+					break;
+
+				case 'weekcal':
+					$model = $this->getModel($vName);
+					break;
+
+				default:
+					$model = $this->getModel('eventslist');
+					break;
+			}
+
+			// Push the model into the view
+			if ($vName == 'venue')
+			{
+				$model1 = $this->getModel('Venue');
+				$model2 = $this->getModel('VenueCal');
+
+				$view->setModel($model1, true);
+				$view->setModel($model2);
+			}
+			elseif($vName == 'category')
+			{
+				$model1 = $this->getModel('Category');
+				$model2 = $this->getModel('CategoryCal');
+
+				$view->setModel($model1, true);
+				$view->setModel($model2);
+			}
+			else
+			{
+				$view->setModel($model, true);
+			}
+
+			$view->setLayout($lName);
+
+			// Push document object into the view.
+			$view->assignRef('document', $document);
+
+			$view->display();
+		}
 	}
 
 	/**
@@ -672,6 +784,10 @@ class JEMController extends JControllerLegacy
 
 		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$id.'&Itemid='.$fid, $msg);
 	}
+
+
+
+
 
 }
 ?>
