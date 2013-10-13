@@ -55,8 +55,8 @@ class JEMViewCategory extends JViewLegacy
 
 
 			$style = '
-			div[id^=\'catz\'] a {color:' . $evlinkcolor . ';}
-			div[id^=\'catz\'] {background-color:'.$evbackgroundcolor .';}
+			div[id^=\'scat\'] a {color:' . $evlinkcolor . ';}
+			div[id^=\'scat\'] {background-color:'.$evbackgroundcolor .';}
 			.eventandmore {background-color:'.$eventandmorecolor .';}
 			.today .daynum {background-color:'.$currentdaycolor.';}';
 			$document->addStyleDeclaration($style);
