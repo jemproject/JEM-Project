@@ -269,7 +269,7 @@ class JEMModelWeekcal extends JModelLegacy
 				$newTime = $datetime->modify('+'.$numberOfWeeks.' weeks');
 				$newTime = $datetime->format('Y-m-d') . "\n";
 			} else {
-			echo 'its not monday but monday is startdate';
+			//echo 'its not monday but monday is startdate';
 				$currentTime2 = $datetime->modify('-6 day');
 				$currentTime2 = $datetime->format('Y-m-d') . "\n";
 				$newTime = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
