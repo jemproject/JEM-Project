@@ -121,19 +121,33 @@ class JEMModelWeekcal extends JModelLegacy
 
 			foreach ($items as $index => $item) {
 				$date = $item->dates;
-				//$now = time();
-				//$check = date('Y-m-d',strtotime(date('o-\\WW')));
-				
 				$weekday = $params->get('firstweekday',1); // 1 = Monday, 0 = Sunday
-				
-				if ($weekday == 1)
-				{
-					$check = date('Y-m-d',strtotime("last Monday"));
-				} else {
-					$check = date('Y-m-d',strtotime("last Sunday"));
-				}
-				
-				if ($date < $check) {
+
+				$config = JFactory::getConfig();
+				$offset = $config->get('offset');
+				$year = date('Y');
+
+				date_default_timezone_set($offset);
+				$datetime = new DateTime();
+				$datetime->setISODate($year, $datetime->format("W"), 7);
+				$numberOfWeeks = $params->get('nrweeks', '1');
+
+				if ($weekday == 1){
+				// check 1 = startdate, 2 = enddate
+						$check1 = $datetime->modify('-7 day');
+						$check1 = $datetime->format('Y-m-d') . "\n";
+						$check2 = $datetime->modify('+'.$numberOfWeeks.' weeks');
+						$check2 = $datetime->format('Y-m-d') . "\n";
+					}
+
+				if ($weekday == 0){
+						$check1 = $datetime->modify('-1 day');
+						$check1 = $datetime->format('Y-m-d') . "\n";
+						$check2 = $datetime->modify('+'.$numberOfWeeks.' weeks');
+						$check2 = $datetime->format('Y-m-d') . "\n";
+					}
+
+				if ($date < $check1 || $date > $check2) {
 					unset ($items[$index]);
 				}
 			}
@@ -194,10 +208,12 @@ class JEMModelWeekcal extends JModelLegacy
 		$user = JFactory::getUser();
 		$app = JFactory::getApplication();
 		$gid = JEMHelper::getGID($user);
+		$db = $this->getDbo();
 
 		// Get the paramaters of the active menu item
 		$params = $app->getParams();
 
+		$weekday = $params->get('firstweekday',1);
 		$top_category = $params->get('top_category', 0);
 
 		$task = JRequest::getWord('task');
@@ -211,17 +227,19 @@ class JEMModelWeekcal extends JModelLegacy
 		$where .= ' AND c.published = 1';
 		$where .= ' AND c.access  <= '.$gid;
 
-		//$currentTime2 = date('Y-m-d',strtotime(date('o-\\WW')));
+		$config = JFactory::getConfig();
+		$offset = $config->get('offset');
+		$year = date('Y');
+		date_default_timezone_set($offset);
+		$datetime = new DateTime();
+		$datetime->setISODate($year, $datetime->format("W"), 7);
 
-		$weekday = $params->get('firstweekday',1); // 1 = Monday, 0 = Sunday
 		if ($weekday == 1)
 		{
-			$currentTime2 = date('Y-m-d',strtotime("last Monday"));
-		} else {
-			$currentTime2 = date('Y-m-d',strtotime("last Sunday"));
+		$datetime->modify('-6 day');
 		}
-		
-		
+		$currentTime2 = $datetime->format('Y-m-d') . "\n";
+
 		$numberOfWeeks = $params->get('nrweeks', '1');
 		$newTime = strtotime('+'.$numberOfWeeks.' weeks '.'- 1 day', strtotime($currentTime2));
 		$newTime = date('Y-m-d',$newTime);
@@ -238,6 +256,7 @@ class JEMModelWeekcal extends JModelLegacy
 
 		return $where;
 	}
+
 
 	/**
 	 * Method to get the Categories
@@ -264,13 +283,12 @@ class JEMModelWeekcal extends JModelLegacy
 
 		return $this->_categories;
 	}
-	
-	
-	
+
+
 	/**
 	 * Method to get the Currentweek
-	 * 
-	 * Info MYSQL WEEK: 
+	 *
+	 * Info MYSQL WEEK:
 	 * http://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_week
 	 *
 	 */
@@ -279,7 +297,7 @@ class JEMModelWeekcal extends JModelLegacy
 		$app = JFactory::getApplication();
 		$params =  $app->getParams('com_jem');
 		$weekday = $params->get('firstweekday',1); // 1 = Monday, 0 = Sunday
-		
+
 		if ($weekday == 1)
 		{
 			$number = 3; // Monday, with more than 3 days this year
@@ -287,20 +305,15 @@ class JEMModelWeekcal extends JModelLegacy
 			$number = 6; // Sunday, with more than 3 days this year
 		}
 
-		$today =  Date("Y-m-d"); 	
+		$today =  Date("Y-m-d");
 		$query = 'SELECT WEEK(\''.$today.'\','.$number.')'
 				;
 		;
-	
+
 		$this->_db->setQuery($query);
 		$this->_currentweek = $this->_db->loadResult();
-	
+
 		return $this->_currentweek;
 	}
-	
-	
-	
-	
-	
 }
 ?>
