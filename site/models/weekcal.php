@@ -76,7 +76,6 @@ class JEMModelWeekcal extends JModelLegacy
 	{
 		$app = JFactory::getApplication();
 		$params = $app->getParams();
-
 		$items = $this->_data;
 
 		// Lets load the content if it doesn't already exist
@@ -121,59 +120,62 @@ class JEMModelWeekcal extends JModelLegacy
 				}
 			}
 
-			foreach ($items as $index => $item) {
-				$date = $item->dates;
-				$weekday = $params->get('firstweekday',1); // 1 = Monday, 0 = Sunday
+		foreach ($items as $index => $item) {
+			$date = $item->dates;
+			$firstweekday = $params->get('firstweekday',1); // 1 = Monday, 0 = Sunday
 
-				$config = JFactory::getConfig();
-				$offset = $config->get('offset');
-				$year = date('Y');
+			$config = JFactory::getConfig();
+			$offset = $config->get('offset');
+			$year = date('Y');
 
-				date_default_timezone_set($offset);
-				$datetime = new DateTime();
-				$datetime->setISODate($year, $datetime->format("W"), 7);
-				$numberOfWeeks = $params->get('nrweeks', '1');
+			date_default_timezone_set($offset);
+			$datetime = new DateTime();
+			$datetime->setISODate($year, $datetime->format("W"), 7);
+			$numberOfWeeks = $params->get('nrweeks', '1');
 
-				if ($weekday == 1){
-				// check 1 = startdate, 2 = enddate
+		if ($firstweekday == 1){
 
-					if(date('N', time()) == 1) {
-						//echo 'it\'s monday and monday is startdate';
-						$check1 = $datetime->modify('-7 day');
-						$check1 = $datetime->format('Y-m-d') . "\n";
-						$check2 = $datetime->modify('+'.$numberOfWeeks.' weeks');
-						$check2 = $datetime->format('Y-m-d') . "\n";
-					} else {
-						//echo 'its not monday but monday is startdate';
-						$check1 = $datetime->modify('-7 day');
-						$check1 = $datetime->format('Y-m-d') . "\n";
-						$check2 = $datetime->modify('+'.$numberOfWeeks.' weeks');
-						$check2 = $datetime->format('Y-m-d') . "\n";
-					}
-
-					}
-
-				if ($weekday == 0)
-				{
-					if(date('N', time()) == 7)
-					{
-						//echo 'it\'s sunday and sunday is startdate';
-						$check1 = $datetime->modify('-1 day');
-						$check1 = $datetime->format('Y-m-d') . "\n";
-						$check2 = $datetime->modify('+'.$numberOfWeeks.' weeks');
-						$check2 = $datetime->format('Y-m-d') . "\n";
-					} else {
-						//echo 'it\'s not sunday and sunday is startdate';
-						$check1 = $datetime->modify('-8 day');
-						$check1 = $datetime->format('Y-m-d') . "\n";
-						$check2 = $datetime->modify('+'.$numberOfWeeks.' weeks');
-						$check2 = $datetime->format('Y-m-d') . "\n";
-					}
+		if(date('N', time()) == 1){
+			#it's monday and monday is startdate;
+				$startdate = $datetime->modify('-7 day');
+				$startdate = $datetime->format('Y-m-d') . "\n";
+				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks');
+				$enddate = $datetime->format('Y-m-d') . "\n";
+			} else {
+			#it's not monday but monday is startdate;
+				$startdate = $datetime->modify('-6 day');
+				$startdate = $datetime->format('Y-m-d') . "\n";
+				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
+				$enddate = $datetime->format('Y-m-d') . "\n";
 				}
+			}
 
-				if ($date < $check1 || $date > $check2) {
-					unset ($items[$index]);
+		if ($firstweekday == 0){
+
+		if(date('N', time()) == 7){
+			#it's sunday and sunday is startdate;
+				$startdate = $datetime->format('Y-m-d') . "\n";
+				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
+				$enddate = $datetime->format('Y-m-d') . "\n";
+				} else {
+			#it's not sunday and sunday is startdate;
+				$startdate = $datetime->modify('-7 day');
+				$startdate = $datetime->format('Y-m-d') . "\n";
+				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
+				$enddate = $datetime->format('Y-m-d') . "\n";
 				}
+			}
+
+			$check_startdate = strtotime($startdate);
+			$check_enddate = strtotime($enddate);
+			$date_timestamp = strtotime($date);
+
+			if ($date_timestamp > $check_enddate) {
+				unset ($items[$index]);
+			} elseif ($date_timestamp < $check_startdate) {
+				unset ($items[$index]);
+			}
+
 			}
 
 			// Do we still have events? Return if not.
@@ -234,12 +236,10 @@ class JEMModelWeekcal extends JModelLegacy
 		$gid = JEMHelper::getGID($user);
 		$db = $this->getDbo();
 
-		// Get the paramaters of the active menu item
 		$params = $app->getParams();
 		$numberOfWeeks = $params->get('nrweeks', '1');
-		$weekday = $params->get('firstweekday',1);
+		$firstweekday = $params->get('firstweekday',1);
 		$top_category = $params->get('top_category', 0);
-
 		$task = JRequest::getWord('task');
 
 		// First thing we need to do is to select only the published events
@@ -258,44 +258,41 @@ class JEMModelWeekcal extends JModelLegacy
 		$datetime = new DateTime();
 		$datetime->setISODate($year, $datetime->format("W"), 7);
 
+		if ($firstweekday == 1){
 
-		if ($weekday == 1){
-			// check 1 = startdate, 2 = enddate
-
-		if(date('N', time()) == 1) {
-			//echo 'it\'s monday and monday is startdate';
-				$currentTime2 = $datetime->modify('-7 day');
-				$currentTime2 = $datetime->format('Y-m-d') . "\n";
-				$newTime = $datetime->modify('+'.$numberOfWeeks.' weeks');
-				$newTime = $datetime->format('Y-m-d') . "\n";
+		if(date('N', time()) == 1){
+			#it's monday and monday is startdate;
+				$startdate = $datetime->modify('-7 day');
+				$startdate = $datetime->format('Y-m-d') . "\n";
+				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks');
+				$enddate = $datetime->format('Y-m-d') . "\n";
 			} else {
-			//echo 'its not monday but monday is startdate';
-				$currentTime2 = $datetime->modify('-6 day');
-				$currentTime2 = $datetime->format('Y-m-d') . "\n";
-				$newTime = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
-				$newTime = $datetime->format('Y-m-d') . "\n";
+			#it's not monday but monday is startdate;
+				$startdate = $datetime->modify('-6 day');
+				$startdate = $datetime->format('Y-m-d') . "\n";
+				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
+				$enddate = $datetime->format('Y-m-d') . "\n";
 				}
-
 			}
 
-		if ($weekday == 0){
-		if(date('N', time()) == 7)
-			{
-				//echo 'it\'s sunday and sunday is startdate';
-				$currentTime2 = $datetime->format('Y-m-d') . "\n";
-				$newTime = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
-				$newTime = $datetime->format('Y-m-d') . "\n";
+		if ($firstweekday == 0){
+
+		if(date('N', time()) == 7){
+			#it's sunday and sunday is startdate;
+				$startdate = $datetime->format('Y-m-d') . "\n";
+				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
+				$enddate = $datetime->format('Y-m-d') . "\n";
 				} else {
-				//echo 'it\'s not sunday and sunday is startdate';
-				$currentTime2 = $datetime->modify('-7 day');
-				$currentTime2 = $datetime->format('Y-m-d') . "\n";
-				$newTime = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
-				$newTime = $datetime->format('Y-m-d') . "\n";
+			#it's not sunday and sunday is startdate;
+				$startdate = $datetime->modify('-7 day');
+				$startdate = $datetime->format('Y-m-d') . "\n";
+				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
+				$enddate = $datetime->format('Y-m-d') . "\n";
 				}
 			}
 
-		$where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $this->_db->Quote('0000-00-00') .', a.enddates, a.dates), "'. $currentTime2 .'") >= 0';
-		$where .= ' AND DATEDIFF(a.dates, "'. $newTime .'") <= 0';
+		$where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $this->_db->Quote('0000-00-00') .', a.enddates, a.dates), "'. $startdate .'") >= 0';
+		$where .= ' AND DATEDIFF(a.dates, "'. $enddate .'") <= 0';
 
 		if ($top_category) {
 			$children = JEMCategories::getChilds($top_category);
