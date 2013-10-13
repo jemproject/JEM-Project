@@ -21,8 +21,6 @@ class JEMController extends JControllerLegacy
 {
 	/**
 	 * Constructor
-	 *
-	 *
 	 */
 	function __construct()
 	{
@@ -31,121 +29,61 @@ class JEMController extends JControllerLegacy
 
 	/**
 	 * Display the view
-	 *
-	 *
 	 */
 	function display($cachable = false, $urlparams = false)
 	{
-	// Get the document object.
 		$document	= JFactory::getDocument();
 
 		// Set the default view name and format from the Request.
-		$vName	 = JRequest::getCmd('view', 'eventslist');
-		$vFormat = $document->getType();
-		$lName	 = JRequest::getCmd('layout', 'default');
+		$viewName 		= JRequest::getCmd('view', 'eventslist');
+		$viewFormat 	= $document->getType();
+		$layoutName 	= JRequest::getCmd('layout', 'default');
 
-		if ($view = $this->getView($vName, $vFormat)) {
+		if ($view = $this->getView($viewName, $viewFormat)) {
 			// Do any specific processing by view.
-			switch ($vName) {
+			switch ($viewName) {
 				case 'attendees':
-					$model = $this->getModel($vName);
-					break;
-
 				case 'calendar':
-					$model = $this->getModel($vName);
-					break;
-
 				case 'categories':
-					$model = $this->getModel($vName);
-					break;
-
 				case 'categoriesdetailed':
-					$model = $this->getModel($vName);
-					break;
-
 				case 'category':
-					$model = $this->getModel($vName);
-					break;
-
 				case 'day':
-					$model = $this->getModel($vName);
-					break;
-
 				case 'editevent':
-					$model = $this->getModel($vName);
-					break;
-
 				case 'editvenue':
-					$model = $this->getModel($vName);
-					break;
-
 				case 'event':
-					$model = $this->getModel($vName);
-					break;
-
 				case 'eventslist':
-					$model = $this->getModel($vName);
-					break;
-
 				case 'myattending':
-					$model = $this->getModel($vName);
-					break;
-
 				case 'myevents':
-					$model = $this->getModel($vName);
-					break;
-
 				case 'myvenues':
-					$model = $this->getModel($vName);
-					break;
-
 				case 'search':
-					$model = $this->getModel($vName);
-					break;
-
 				case 'venue':
-					$model = $this->getModel($vName);
-					break;
-
 				case 'venues':
-					$model = $this->getModel($vName);
-					break;
-
 				case 'weekcal':
-					$model = $this->getModel($vName);
+					$model = $this->getModel($viewName);
 					break;
-
 				default:
 					$model = $this->getModel('eventslist');
 					break;
 			}
 
 			// Push the model into the view
-			if ($vName == 'venue')
-			{
+			if ($viewName == 'venue') {
 				$model1 = $this->getModel('Venue');
 				$model2 = $this->getModel('VenueCal');
 
 				$view->setModel($model1, true);
 				$view->setModel($model2);
-			}
-			elseif($vName == 'category')
-			{
+			} elseif($viewName == 'category') {
 				$model1 = $this->getModel('Category');
 				$model2 = $this->getModel('CategoryCal');
 
 				$view->setModel($model1, true);
 				$view->setModel($model2);
-			}
-			else
-			{
+			} else {
 				$view->setModel($model, true);
 			}
 
-
-
-
-			$view->setLayout($lName);
+			$view->setLayout($layoutName);
 
 			// Push document object into the view.
 			$view->assignRef('document', $document);
@@ -229,12 +167,11 @@ class JEMController extends JControllerLegacy
 		// Check for request forgeries
 		JRequest::checkToken() or jexit('Invalid Token');
 
-
 		$app = JFactory::getApplication();
 		$menuitem = $app->getMenu()->getActive()->id;
 		$input = $app->input;
 
-		$cid 	= $input->get('cid', array(0), 'post', 'array');
+		$cid = $input->get('cid', array(0), 'post', 'array');
 
 		$false = array_search('0', $cid);
 
@@ -262,7 +199,6 @@ class JEMController extends JControllerLegacy
 	 */
 	function unpublish()
 	{
-
 		// Check for request forgeries
 		JRequest::checkToken() or jexit('Invalid Token');
 
@@ -270,7 +206,7 @@ class JEMController extends JControllerLegacy
 		$menuitem = $app->getMenu()->getActive()->id;
 		$input = $app->input;
 
-		$cid 	= $input->get('cid', array(0), 'post', 'array');
+		$cid = $input->get('cid', array(0), 'post', 'array');
 
 		$false = array_search('0', $cid);
 
@@ -300,7 +236,6 @@ class JEMController extends JControllerLegacy
 	 */
 	function publish()
 	{
-
 		// Check for request forgeries
 		JRequest::checkToken() or jexit('Invalid Token');
 
@@ -308,7 +243,7 @@ class JEMController extends JControllerLegacy
 		$menuitem = $app->getMenu()->getActive()->id;
 		$input = $app->input;
 
-		$cid 	= $input->get('cid', array(0), 'post', 'array');
+		$cid = $input->get('cid', array(0), 'post', 'array');
 
 		$false = array_search('0', $cid);
 
@@ -334,7 +269,6 @@ class JEMController extends JControllerLegacy
 	 *
 	 * @access public
 	 * @return void
-	 *
 	 */
 	function trash()
 	{
@@ -345,7 +279,7 @@ class JEMController extends JControllerLegacy
 		$menuitem = $app->getMenu()->getActive()->id;
 		$input = $app->input;
 
-		$cid 	= $input->get('cid', array(0), 'post', 'array');
+		$cid = $input->get('cid', array(0), 'post', 'array');
 
 		$false = array_search('0', $cid);
 
@@ -368,8 +302,6 @@ class JEMController extends JControllerLegacy
 
 	/**
 	 * Logic for canceling a venue edit task
-	 *
-	 *
 	 */
 	function cancelvenue()
 	{
@@ -378,7 +310,7 @@ class JEMController extends JControllerLegacy
 
 		$mode = JRequest::getVar('mode');
 
-		$session 	= JFactory::getSession();
+		$session = JFactory::getSession();
 
 		$session->clear('venueform', 'com_jem');
 
@@ -415,8 +347,6 @@ class JEMController extends JControllerLegacy
 
 	/**
 	 * Saves the submitted venue to the database
-	 *
-	 *
 	 */
 	function savevenue()
 	{
@@ -488,8 +418,6 @@ class JEMController extends JControllerLegacy
 	 * Cleanes and saves the submitted event to the database
 	 *
 	 * TODO: Check if the user is allowed to post events assigned to this category/venue
-	 *
-	 *
 	 */
 	function saveevent()
 	{
@@ -546,8 +474,6 @@ class JEMController extends JControllerLegacy
 
 	/**
 	 * Saves the registration to the database
-	 *
-	 *
 	 */
 	function userregister()
 	{
@@ -583,15 +509,13 @@ class JEMController extends JControllerLegacy
 
 	/**
 	 * Deletes a registered user
-	 *
-	 *
 	 */
 	function delreguser()
 	{
 		// Check for request forgeries
 		JRequest::checkToken() or jexit('Invalid Token');
 
-		$id 	= JRequest::getInt('rdid', 0, 'post');
+		$id = JRequest::getInt('rdid', 0, 'post');
 
 		// Get/Create the model
 		$model = $this->getModel('Event', 'JEMModel');
@@ -787,10 +711,5 @@ class JEMController extends JControllerLegacy
 
 		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$id.'&Itemid='.$fid, $msg);
 	}
-
-
-
-
-
 }
 ?>
