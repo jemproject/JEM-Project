@@ -48,7 +48,7 @@ class JEMController extends JControllerLegacy
 			// Do any specific processing by view.
 			switch ($vName) {
 				case 'attendees':
-					$model = $this->getModel($vname);
+					$model = $this->getModel($vName);
 					break;
 
 				case 'calendar':
@@ -141,6 +141,9 @@ class JEMController extends JControllerLegacy
 			{
 				$view->setModel($model, true);
 			}
+
+
+
 
 			$view->setLayout($lName);
 
