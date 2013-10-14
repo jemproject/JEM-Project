@@ -30,6 +30,7 @@ defined('_JEXEC') or die;
 	<?php
 	$countcatevents = array ();
 
+
 	$countperday = array();
 	$limit = $this->params->get('daylimit', 10);
 	foreach ($this->rows as $row) :
@@ -72,6 +73,9 @@ defined('_JEXEC') or die;
 		} else if ($countperday[$year.$month.$day] > $limit+1) {
 			continue;
 		}
+
+		//for time printing
+		$timehtml = '';
 
 		//for time printing
 		$timehtml = '';
@@ -135,6 +139,7 @@ defined('_JEXEC') or die;
 
 		endforeach;
 
+
 		//for time in calendar
 		$timetp = '';
 
@@ -143,15 +148,40 @@ defined('_JEXEC') or die;
 		$start = JEMOutput::formattime($row->times,'',false);
 		$end = JEMOutput::formattime($row->endtimes,'',false);
 
+		$multi = new stdClass();
+		$multi->row = $parts = (isset($row->multi) ? $row->multi : 'na');
+
+
+		if ($multi->row)
+		{
+			if ($multi->row == 'first')
+			{
+				$timetp .= '|-> '.$start.' ';
+			}
+
+			if ($multi->row == 'middle')
+			{
+				$timetp .= '<-> ';
+			}
+
+			if ($multi->row == 'last')
+			{
+				$timetp .= '<-| '.$end.' ';
+			}
+		}
+
+		if ($multi->row == 'na')
+		{
+
 		if ($start != '') :
-		//$timetp = '<div class="button9">';
 		$timetp .= $start;
 		if ($end != '') :
 		$timetp .= ' - '.$end;
 		endif;
 		$timetp .= '<br>';
-		//$timetp .= '</div>';
 		endif;
+		}
+
 		endif;
 
 		$catname = '<div class="catname">'.$multicatname.'</div>';
@@ -172,9 +202,41 @@ defined('_JEXEC') or die;
 			$venue = '';
 		endif;
 
+
+		//date
+		if ($multi->row == 'first')
+		{
+		$multidaydate = '<div class="location"><span class="label">'.JText::_('COM_JEM_MULTIDATE').': </span>';
+		$multidaydate .= $row->dates.' - '. $row->enddates;
+		$multidaydate .= '</div>';
+		}
+
+		elseif ($multi->row == 'middle')
+			{
+				$multidaydate = '<div class="location"><span class="label">'.JText::_('COM_JEM_MULTIDATE').': </span>';
+				$multidaydate .= $row->multistartdate.' - '.$row->multienddate ;
+				$multidaydate .= '</div>';
+			}
+			elseif ($multi->row == 'last')
+			{
+				$multidaydate = '<div class="location"><span class="label">'.JText::_('COM_JEM_MULTIDATE').': </span>';
+				$multidaydate .= $row->multistartdate.' - '. $row->multienddate;
+				$multidaydate .= '</div>';
+			}
+
+		else
+		{
+				$multidaydate = '<div class="location"><span class="label">'.JText::_('COM_JEM_DATE').': </span>';
+				$multidaydate .= $row->dates;
+				$multidaydate .= '</div>';
+
+
+		}
+		;
+
 		//generate the output
 		$content .= $colorpic;
-		$content .= JEMHelper::caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
+		$content .= JEMHelper::caltooltip($catname.$eventname.$timehtml.$multidaydate.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
 		$content .= $contentend;
 
 		$this->cal->setEventContent($year, $month, $day, $content);

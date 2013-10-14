@@ -105,6 +105,24 @@ class JEMModelWeekcal extends JModelLegacy
 								$multi[$counter] = clone $item;
 								$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
 
+								$item->multi = 'first';
+
+								if ($multi[$counter]->dates < $item->enddates)
+								{
+									$multi[$counter]->times = '';
+									$multi[$counter]->endtimes = '';
+									$multi[$counter]->multi = 'middle';
+									$multi[$counter]->multistartdate = $item->dates;
+									$multi[$counter]->multienddate = $item->enddates;
+								} elseif ($multi[$counter]->dates = $item->enddates)
+								{
+									$multi[$counter]->times = '';
+									$multi[$counter]->multi = 'last';
+									$multi[$counter]->multistartdate = $item->dates;
+									$multi[$counter]->multienddate = $item->enddates;
+								}
+
+
 								//add generated days to data
 								$items = array_merge($items, $multi);
 							//}
@@ -119,6 +137,7 @@ class JEMModelWeekcal extends JModelLegacy
 					unset($item);
 				}
 			}
+
 
 		foreach ($items as $index => $item) {
 			$date = $item->dates;
@@ -170,6 +189,7 @@ class JEMModelWeekcal extends JModelLegacy
 			$check_enddate = strtotime($enddate);
 			$date_timestamp = strtotime($date);
 
+
 			if ($date_timestamp > $check_enddate) {
 				unset ($items[$index]);
 			} elseif ($date_timestamp < $check_startdate) {
@@ -186,10 +206,15 @@ class JEMModelWeekcal extends JModelLegacy
 			foreach ($items as $item) {
 				$time[] = $item->times;
 				$title[] = $item->title;
+				$id[] = $item->id;
+				$dates[] = $item->dates;
+				$multi[] = (isset($item->multi) ? $item->multi : 'na');
 			}
 
-			array_multisort($time, SORT_ASC, $title, SORT_ASC, $items);
+			array_multisort($multi, SORT_ASC, $time, SORT_ASC, $title, SORT_ASC, $items);
+
 		}
+
 
 		return $items;
 	}
