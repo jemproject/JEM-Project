@@ -47,9 +47,11 @@ class JEMViewImport extends JViewLegacy {
 
 		$jinput = JFactory::getApplication()->input;
 		$progress = new stdClass();
+		$progress->step 	= $jinput->get->get('step', 0, 'INT');
 		$progress->current 	= $jinput->get->get('current', 0, 'INT');
 		$progress->total 	= $jinput->get->get('total', 0, 'INT');
 		$progress->table 	= $jinput->get->get('table', '', 'INT');
+		$progress->copyImages = $jinput->get('copyImages', 0, 'INT');
 		$this->progress = $progress;
 
 		// add toolbar

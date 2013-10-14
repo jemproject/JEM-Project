@@ -172,12 +172,17 @@ class JEMControllerImport extends JControllerLegacy {
 		$tables->jemtables = array("categories", "events", "cats_event_relations", "groupmembers", "groups", "register", "venues");
 
 		$jinput = JFactory::getApplication()->input;
+		$step = $jinput->get('step', 0, 'INT');
 		$current = $jinput->get->get('current', 0, 'INT');
 		$total = $jinput->get->get('total', 0, 'INT');
 		$table = $jinput->get->get('table', 0, 'INT');
+		$copyImages = $jinput->get('copyImages', 0, 'INT');
 
-		// Import only if process already started or Eventlist detected
-		if($table > 0 || $model->getEventlistVersion()) {
+		$msg = JText::_('COM_JEM_IMPORT_EL_IMPORT_WORK_IN_PROGRESS')." ";
+
+		if($step == 0 || !$model->getEventlistVersion()) {
+			parent::display();
+		} elseif($step == 1) {
 			// Get number of rows if it is still 0 or we have moved to the next table
 			if($total == 0 || $current == 0) {
 				$total = $model->getTableCount("#__eventlist_".$tables->eltables[$table]);
@@ -198,18 +203,30 @@ class JEMControllerImport extends JControllerLegacy {
 				$current = 0;
 			}
 
-			// Check if import is complete
+			// Check if table import is complete
 			if($current < $total && $table < count($tables->eltables)) {
-				$link = 'index.php?option=com_jem&view=import&table='.$table.'&current='.$current.'&total='.$total;
-				$msg = JText::sprintf('COM_JEM_IMPORT_EL_IMPORT_WORKING', $tables->jemtables[$table-1], $current, $total);
+				$link = 'index.php?option=com_jem&view=import&step=1&table='.$table.'&current='.$current.'&total='.$total.'&copyImages='.$copyImages;
+				$msg .= JText::sprintf('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP1', $tables->jemtables[$table-1], $current, $total);
 			} else {
-				$link = 'index.php?option=com_jem&view=import';
-				$msg = JText::_('COM_JEM_IMPORT_EL_IMPORT_FINISHED');
+				$step++;
+				$link = 'index.php?option=com_jem&view=import&step='.$step.'&copyImages='.$copyImages;
 			}
-			$this->setRedirect($link, $msg);
+		} elseif($step == 2) {
+			// Copy EL images to JEM image destination?
+			if($copyImages) {
+				$model->copyImages();
+				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP2');
+			} else {
+				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP2_SKIPPED');
+			}
+			$step++;
+			$link = 'index.php?option=com_jem&view=import&step='.$step;
 		} else {
-			parent::display();
+			$link = 'index.php?option=com_jem&view=import';
+			$msg = JText::_('COM_JEM_IMPORT_EL_IMPORT_FINISHED');
 		}
+
+		$this->setRedirect($link, $msg);
 	}
 }
 ?>

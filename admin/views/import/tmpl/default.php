@@ -9,9 +9,11 @@
 
 defined('_JEXEC') or die;
 ?>
-<?php if($this->progress->table != '') : ?>
-	<meta http-equiv="refresh" content="1; url=index.php?option=com_jem&amp;view=import&amp;task=import.eventlistimport&amp;table=<?php
-		echo $this->progress->table; ?>&amp;current=<?php echo $this->progress->current; ?>&amp;total=<?php echo $this->progress->total; ?>">
+<?php if($this->progress->step > 0) : ?>
+	<meta http-equiv="refresh" content="1; url=index.php?option=com_jem&amp;view=import&amp;task=import.eventlistimport&amp;step=<?php
+		echo $this->progress->step; ?>&amp;table=<?php echo $this->progress->table; ?>&amp;current=<?php
+		echo $this->progress->current; ?>&amp;total=<?php echo $this->progress->total; ?>&amp;copyImages=<?php
+		echo $this->progress->copyImages; ?>">
 <?php endif; ?>
 <?php echo JHtml::_('tabs.start', 'det-pane', array('useCookie'=>1)); ?>
 
@@ -73,10 +75,19 @@ defined('_JEXEC') or die;
 				<legend><?php echo JText::_('COM_JEM_IMPORT_EL_IMPORT_FROM_EL'); ?></legend>
 				<p><?php echo JText::_('COM_JEM_IMPORT_EL_ATTENTION'); ?>:</p>
 				<p><?php echo JText::_('COM_JEM_IMPORT_EL_ATTENTION_DURATION'); ?></p>
+				<p>
+					<?php if($this->progress->copyImages) :?>
+						<input type="checkbox" class="inputbox" id="eventlist-copy-images" name="copyImages" value="1" checked="checked" />
+					<?php else : ?>
+						<input type="checkbox" class="inputbox" id="eventlist-copy-images" name="copyImages" value="1" />
+					<?php endif; ?>
+					<?php echo JText::_('COM_JEM_IMPORT_EL_COPY_IMAGES'); ?>
+				</p>
 				<input type="submit" id="eventlist-import-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>"
 					onclick="document.getElementsByName('task')[0].value='import.eventlistImport';return true;"/>
 			</fieldset>
 		</div>
+		<input type="hidden" name="step" value="1" />
 		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="view" value="import" />
 		<input type="hidden" name="controller" value="import" />

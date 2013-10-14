@@ -218,7 +218,7 @@ class JEMModelImport extends JModelLegacy {
 	/**
 	 * Detect an installation of Eventlist.
 	 *
-	 * @return string  The version string of the detected Eventlist component or null
+	 * @return string  The version string of the detected Eventlist component or false
 	 */
 	public function getEventlistVersion() {
 		jimport( 'joomla.registry.registry' );
@@ -235,7 +235,7 @@ class JEMModelImport extends JModelLegacy {
 
 		// Eventlist not found in extension table
 		if(is_null($result)) {
-			return null;
+			return false;
 		}
 
 		$par = $result->manifest_cache;
@@ -495,6 +495,34 @@ class JEMModelImport extends JModelLegacy {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Copies the Eventlist images to JEM folder
+	 */
+	public function copyImages() {
+		jimport('joomla.filesystem.file');
+		jimport('joomla.filesystem.folder');
+
+		$folders = array("categories", "events", "venues");
+
+		foreach ($folders as $folder) {
+			$fromFolder = JPATH_SITE.'/images/eventlist/'.$folder.'/';
+			$toFolder   = JPATH_SITE.'/images/jem/'.$folder.'/';
+
+			if (JFolder::exists($fromFolder) && JFolder::exists($toFolder)) {
+				$files = JFolder::files($fromFolder, null, false, false);
+
+				foreach ($files as $file) {
+					if(!JFile::exists($toFolder.$file)) {
+						JFile::copy($fromFolder.$file, $toFolder.$file);
+					}
+				}
+			}
+
+			// Add the thumbnail folder to the folders list that is processed right now
+			$folders[] = $folder."/small";
+		}
 	}
 }
 ?>
