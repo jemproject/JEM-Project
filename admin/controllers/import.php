@@ -180,6 +180,14 @@ class JEMControllerImport extends JControllerLegacy {
 
 		$msg = JText::_('COM_JEM_IMPORT_EL_IMPORT_WORK_IN_PROGRESS')." ";
 
+		if($jinput->get('startToken', 0, 'INT')) {
+			// Are the JEM tables empty at start? If no, stop import
+			if($model->getExistingJemData()) {
+				$this->setRedirect('index.php?option=com_jem&view=import');
+				return;
+			}
+		}
+
 		if($step == 0 || !$model->getEventlistVersion()) {
 			parent::display();
 		} elseif($step == 1) {

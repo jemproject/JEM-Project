@@ -506,6 +506,11 @@ class JEMModelImport extends JModelLegacy {
 
 		$folders = array("categories", "events", "venues");
 
+		// Add the thumbnail folders to the folders list
+		foreach ($folders as $folder) {
+			$folders[] = $folder."/small";
+		}
+
 		foreach ($folders as $folder) {
 			$fromFolder = JPATH_SITE.'/images/eventlist/'.$folder.'/';
 			$toFolder   = JPATH_SITE.'/images/jem/'.$folder.'/';
@@ -519,9 +524,6 @@ class JEMModelImport extends JModelLegacy {
 					}
 				}
 			}
-
-			// Add the thumbnail folder to the folders list that is processed right now
-			$folders[] = $folder."/small";
 		}
 	}
 }

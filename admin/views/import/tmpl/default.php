@@ -76,7 +76,7 @@ defined('_JEXEC') or die;
 				<p><?php echo JText::_('COM_JEM_IMPORT_EL_ATTENTION'); ?>:</p>
 				<p><?php echo JText::_('COM_JEM_IMPORT_EL_ATTENTION_DURATION'); ?></p>
 				<p>
-					<?php if($this->progress->copyImages) :?>
+					<?php if($this->progress->copyImages || $this->progress->step == 0) :?>
 						<input type="checkbox" class="inputbox" id="eventlist-copy-images" name="copyImages" value="1" checked="checked" />
 					<?php else : ?>
 						<input type="checkbox" class="inputbox" id="eventlist-copy-images" name="copyImages" value="1" />
@@ -87,6 +87,7 @@ defined('_JEXEC') or die;
 					onclick="document.getElementsByName('task')[0].value='import.eventlistImport';return true;"/>
 			</fieldset>
 		</div>
+		<input type="hidden" name="startToken" value="1" />
 		<input type="hidden" name="step" value="1" />
 		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="view" value="import" />
