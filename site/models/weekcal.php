@@ -57,13 +57,11 @@ class JEMModelWeekcal extends JModelLegacy
 		parent::__construct();
 
 		$this->setdate(time());
-
 	}
 
 	function setdate($date)
 	{
 		$this->_date = $date;
-
 	}
 
 	/**
@@ -107,21 +105,18 @@ class JEMModelWeekcal extends JModelLegacy
 
 								$item->multi = 'first';
 
-								if ($multi[$counter]->dates < $item->enddates)
-								{
+								if ($multi[$counter]->dates < $item->enddates) {
 									$multi[$counter]->times = '';
 									$multi[$counter]->endtimes = '';
 									$multi[$counter]->multi = 'middle';
 									$multi[$counter]->multistartdate = $item->dates;
 									$multi[$counter]->multienddate = $item->enddates;
-								} elseif ($multi[$counter]->dates = $item->enddates)
-								{
+								} elseif ($multi[$counter]->dates = $item->enddates) {
 									$multi[$counter]->times = '';
 									$multi[$counter]->multi = 'last';
 									$multi[$counter]->multistartdate = $item->dates;
 									$multi[$counter]->multienddate = $item->enddates;
 								}
-
 
 								//add generated days to data
 								$items = array_merge($items, $multi);
@@ -138,64 +133,59 @@ class JEMModelWeekcal extends JModelLegacy
 				}
 			}
 
+			foreach ($items as $index => $item) {
+				$date = $item->dates;
+				$firstweekday = $params->get('firstweekday',1); // 1 = Monday, 0 = Sunday
 
-		foreach ($items as $index => $item) {
-			$date = $item->dates;
-			$firstweekday = $params->get('firstweekday',1); // 1 = Monday, 0 = Sunday
+				$config = JFactory::getConfig();
+				$offset = $config->get('offset');
+				$year = date('Y');
 
-			$config = JFactory::getConfig();
-			$offset = $config->get('offset');
-			$year = date('Y');
+				date_default_timezone_set($offset);
+				$datetime = new DateTime();
+				$datetime->setISODate($year, $datetime->format("W"), 7);
+				$numberOfWeeks = $params->get('nrweeks', '1');
 
-			date_default_timezone_set($offset);
-			$datetime = new DateTime();
-			$datetime->setISODate($year, $datetime->format("W"), 7);
-			$numberOfWeeks = $params->get('nrweeks', '1');
-
-		if ($firstweekday == 1){
-
-		if(date('N', time()) == 1){
-			#it's monday and monday is startdate;
-				$startdate = $datetime->modify('-7 day');
-				$startdate = $datetime->format('Y-m-d') . "\n";
-				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks');
-				$enddate = $datetime->format('Y-m-d') . "\n";
-			} else {
-			#it's not monday but monday is startdate;
-				$startdate = $datetime->modify('-6 day');
-				$startdate = $datetime->format('Y-m-d') . "\n";
-				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
-				$enddate = $datetime->format('Y-m-d') . "\n";
+				if ($firstweekday == 1) {
+					if(date('N', time()) == 1) {
+					#it's monday and monday is startdate;
+						$startdate = $datetime->modify('-7 day');
+						$startdate = $datetime->format('Y-m-d') . "\n";
+						$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks');
+						$enddate = $datetime->format('Y-m-d') . "\n";
+					} else {
+					#it's not monday but monday is startdate;
+						$startdate = $datetime->modify('-6 day');
+						$startdate = $datetime->format('Y-m-d') . "\n";
+						$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
+						$enddate = $datetime->format('Y-m-d') . "\n";
+					}
 				}
-			}
 
-		if ($firstweekday == 0){
-
-		if(date('N', time()) == 7){
-			#it's sunday and sunday is startdate;
-				$startdate = $datetime->format('Y-m-d') . "\n";
-				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
-				$enddate = $datetime->format('Y-m-d') . "\n";
-				} else {
-			#it's not sunday and sunday is startdate;
-				$startdate = $datetime->modify('-7 day');
-				$startdate = $datetime->format('Y-m-d') . "\n";
-				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
-				$enddate = $datetime->format('Y-m-d') . "\n";
+				if ($firstweekday == 0) {
+					if(date('N', time()) == 7) {
+					#it's sunday and sunday is startdate;
+						$startdate = $datetime->format('Y-m-d') . "\n";
+						$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
+						$enddate = $datetime->format('Y-m-d') . "\n";
+					} else {
+					#it's not sunday and sunday is startdate;
+						$startdate = $datetime->modify('-7 day');
+						$startdate = $datetime->format('Y-m-d') . "\n";
+						$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
+						$enddate = $datetime->format('Y-m-d') . "\n";
+					}
 				}
-			}
 
-			$check_startdate = strtotime($startdate);
-			$check_enddate = strtotime($enddate);
-			$date_timestamp = strtotime($date);
+				$check_startdate = strtotime($startdate);
+				$check_enddate = strtotime($enddate);
+				$date_timestamp = strtotime($date);
 
-
-			if ($date_timestamp > $check_enddate) {
-				unset ($items[$index]);
-			} elseif ($date_timestamp < $check_startdate) {
-				unset ($items[$index]);
-			}
-
+				if ($date_timestamp > $check_enddate) {
+					unset ($items[$index]);
+				} elseif ($date_timestamp < $check_startdate) {
+					unset ($items[$index]);
+				}
 			}
 
 			// Do we still have events? Return if not.
@@ -212,9 +202,7 @@ class JEMModelWeekcal extends JModelLegacy
 			}
 
 			array_multisort($multi, SORT_ASC, $time, SORT_ASC, $title, SORT_ASC, $items);
-
 		}
-
 
 		return $items;
 	}
@@ -283,9 +271,8 @@ class JEMModelWeekcal extends JModelLegacy
 		$datetime = new DateTime();
 		$datetime->setISODate($year, $datetime->format("W"), 7);
 
-		if ($firstweekday == 1){
-
-		if(date('N', time()) == 1){
+		if ($firstweekday == 1) {
+			if(date('N', time()) == 1) {
 			#it's monday and monday is startdate;
 				$startdate = $datetime->modify('-7 day');
 				$startdate = $datetime->format('Y-m-d') . "\n";
@@ -297,24 +284,23 @@ class JEMModelWeekcal extends JModelLegacy
 				$startdate = $datetime->format('Y-m-d') . "\n";
 				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
 				$enddate = $datetime->format('Y-m-d') . "\n";
-				}
 			}
+		}
 
-		if ($firstweekday == 0){
-
-		if(date('N', time()) == 7){
+		if ($firstweekday == 0) {
+			if(date('N', time()) == 7) {
 			#it's sunday and sunday is startdate;
 				$startdate = $datetime->format('Y-m-d') . "\n";
 				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
 				$enddate = $datetime->format('Y-m-d') . "\n";
-				} else {
+			} else {
 			#it's not sunday and sunday is startdate;
 				$startdate = $datetime->modify('-7 day');
 				$startdate = $datetime->format('Y-m-d') . "\n";
 				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
 				$enddate = $datetime->format('Y-m-d') . "\n";
-				}
 			}
+		}
 
 		$where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $this->_db->Quote('0000-00-00') .', a.enddates, a.dates), "'. $startdate .'") >= 0';
 		$where .= ' AND DATEDIFF(a.dates, "'. $enddate .'") <= 0';
@@ -370,17 +356,14 @@ class JEMModelWeekcal extends JModelLegacy
 		$params =  $app->getParams('com_jem');
 		$weekday = $params->get('firstweekday',1); // 1 = Monday, 0 = Sunday
 
-		if ($weekday == 1)
-		{
+		if ($weekday == 1) {
 			$number = 3; // Monday, with more than 3 days this year
 		} else {
 			$number = 6; // Sunday, with more than 3 days this year
 		}
 
 		$today =  Date("Y-m-d");
-		$query = 'SELECT WEEK(\''.$today.'\','.$number.')'
-				;
-		;
+		$query = 'SELECT WEEK(\''.$today.'\','.$number.')' ;
 
 		$this->_db->setQuery($query);
 		$this->_currentweek = $this->_db->loadResult();

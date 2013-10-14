@@ -153,57 +153,53 @@ class JEMModelCategoryCal extends JModelLegacy
 			$multi = array();
 
 
-		foreach($items AS $item) {
-			$item->categories = $this->getCategories($item->id);
+			foreach($items AS $item) {
+				$item->categories = $this->getCategories($item->id);
 
-			if (!is_null($item->enddates) && !$params->get('show_only_start', 1)) {
-				if ($item->enddates != $item->dates) {
-					$day = $item->start_day;
+				if (!is_null($item->enddates) && !$params->get('show_only_start', 1)) {
+					if ($item->enddates != $item->dates) {
+						$day = $item->start_day;
 
-					for ($counter = 0; $counter <= $item->datediff-1; $counter++) {
-						//@todo sort out, multi-day events
-						$day++;
+						for ($counter = 0; $counter <= $item->datediff-1; $counter++) {
+							//@todo sort out, multi-day events
+							$day++;
 
-						//next day:
-						$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
+							//next day:
+							$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
 
-						//ensure we only generate days of current month in this loop
-						if (strftime('%m', $this->_date) == strftime('%m', $nextday)) {
-							$multi[$counter] = clone $item;
-							$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
+							//ensure we only generate days of current month in this loop
+							if (strftime('%m', $this->_date) == strftime('%m', $nextday)) {
+								$multi[$counter] = clone $item;
+								$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
 
-							//add generated days to data
-							$items = array_merge($items, $multi);
+								//add generated days to data
+								$items = array_merge($items, $multi);
+							}
+							//unset temp array holding generated days before working on the next multiday event
+							unset($multi);
 						}
-						//unset temp array holding generated days before working on the next multiday event
-						unset($multi);
 					}
+				}
+
+				//remove events without categories (users have no access to them)
+				if (empty($item->categories)) {
+					unset($item);
 				}
 			}
 
-			//remove events without categories (users have no access to them)
-			if (empty($item->categories)) {
-				unset($item);
+			// Do we have events now? Return if we don't have one.
+			if(empty($items)) {
+				return $items;
 			}
-		}
 
+			if ($layout == 'calendar') {
+				foreach ($items as $item) {
+					$time[] = $item->times;
+					$title[] = $item->title;
+				}
 
-		// Do we have events now? Return if we don't have one.
-		if(empty($items)) {
-			return $items;
-		}
-
-		if ($layout == 'calendar') {
-
-		foreach ($items as $item) {
-			$time[] = $item->times;
-			$title[] = $item->title;
-		}
-
-		array_multisort($time, SORT_ASC, $title, SORT_ASC, $items);
-
-		}
-
+				array_multisort($time, SORT_ASC, $title, SORT_ASC, $items);
+			}
 		}
 
 		return $items;
@@ -347,7 +343,6 @@ class JEMModelCategoryCal extends JModelLegacy
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access  <= '.$gid;
 
-
 		// only select events within specified dates. (chosen month)
 		$monthstart = mktime(0, 0, 1, strftime('%m', $this->_date), 1, strftime('%Y', $this->_date));
 		$monthend = mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
@@ -356,7 +351,6 @@ class JEMModelCategoryCal extends JModelLegacy
 		$where[] = ' DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $this->_db->Quote('0000-00-00') .', a.enddates, a.dates), '. $filter_date_from .') >= 0';
 		$filter_date_to = $this->_db->Quote(strftime('%Y-%m-%d', $monthend));
 		$where[] = ' DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
-
 
 		/*
 		// get excluded categories
