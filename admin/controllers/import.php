@@ -214,11 +214,11 @@ class JEMControllerImport extends JControllerLegacy {
 			// Check if table import is complete
 			if($current <= $total && $table < count($tables->eltables)) {
 				$link = 'index.php?option=com_jem&view=import&step=1&table='.$table.'&current='.$current.'&total='.$total.'&copyImages='.$copyImages;
-				$msg .= JText::sprintf('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP1', $tables->jemtables[$table-1], $current, $total);
 			} else {
 				$step++;
 				$link = 'index.php?option=com_jem&view=import&step='.$step.'&copyImages='.$copyImages;
 			}
+			$msg .= JText::sprintf('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP1', $tables->jemtables[$table-1], $current, $total);
 		} elseif($step == 2) {
 			// Copy EL images to JEM image destination?
 			if($copyImages) {
