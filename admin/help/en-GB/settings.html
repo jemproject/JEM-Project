@@ -7,17 +7,17 @@
 <link href="../css/help.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<h1>EventList Settings</h1>
+<h1>JEM Settings</h1>
 
 <h3>Description</h3>
 <p>
-<img src="../../assets/images/icon-48-settings.png" alt="description" width="48" height="48" align="left" />This is the heart of EventList. Here you have to decide which features you want to offer and how EventList should behave. The Settings are seperated in 4 different types. Select one of them to go directly to the regarding explanation. </p>
+<img src="/media/com_jem/images/icon-48-settings.png" alt="description" width="48" height="48" align="left" />This is the heart of JEM. Here you have to decide which features you want to offer and how JEM should behave. The Settings are seperated in 4 different types. Select one of them to go directly to the regarding explanation. </p>
 
 <br />
 
 <h3>Navigation</h3>
 <p>
-To access this screen use: <strong>Components</strong> -&gt; <strong>EventList</strong> -&gt; <strong>Settings</strong></p>
+To access this screen use: <strong>Components</strong> -&gt; <strong>JEM</strong> -&gt; <strong>Settings</strong></p>
 
 <h3>User Access Level</h3>
 
@@ -84,9 +84,9 @@ Select one of the three options. 'Delete old Events' will delete
 all Events after the number of days typed in in the box below. If
 you select 'Archive old Events' the Events will moved after the
 typed in days in the Archive. You only have access to the archive
-if you have choosen this option.<br />Note that EventList triggers this cleanup action once a 
-day after midnight server time and only if an EventList view got a visit. If you want to make sure 
-that the cleanup happens, create a cronjob pointing to an EventList component view.
+if you have choosen this option.<br />Note that JEM triggers this cleanup action once a 
+day after midnight server time and only if an JEM view got a visit. If you want to make sure 
+that the cleanup happens, create a cronjob pointing to an JEM component view.
 </p>
 
 <br />
@@ -106,7 +106,7 @@ the Frontend.
 </p>
 
 <p><strong>Enable Thumbnails:</strong><br />
-EventList can create thumbnails if the GD library version 2 is
+JEM can create thumbnails if the GD library version 2 is
 installed on your server. If it isn't available this feature will be disabled.
 In this case the above typed in hight and width values will be used to resize the
 images if they are larger than these values. Keep in mind that this method results
@@ -150,7 +150,7 @@ and the note [stripped] will be added. This affects only
 submissions from user with an Userrank lower than 'Editor'.</p>
 
 <div class="hintheader">Tip</div>
-<div class="hint">Have a look at the Group system of EventList. Grouping users will give you additional flexibility in access control</div>
+<div class="hint">Have a look at the Group system of JEM. Grouping users will give you additional flexibility in access control</div>
 <br />
 
 <h3>AC - Events</h3>
@@ -227,10 +227,10 @@ Display the Link to the Venue?</p>
 
 <p>
 <strong>Choose Mapservice:</strong><br />
-Select the google service.<br />
+Select the google or map24 service. Note: You need to enter your link2Map24-ID if you choose this service.<br />
 <br />
 Google Maps can be used without API Key.
-If this is the case, EventList will redirect to Google Maps site. If you type in the Key, the Map will
+If this is the case, JEM will redirect to Google Maps site. If you type in the Key, the Map will
 be displayed in a lightbox on your site. Note:
 The Geocoding is only available in the following <a href="http://code.google.com/support/bin/answer.py?answer=62668&topic=10946" target="_blank">countries</a>:
 France, Italy, Germany, Spain, Sweden, Luxembourg, Austria, Belgium, Switzerland, Japan, Australia, New Zealand, Canada, US, and the Netherlands.
