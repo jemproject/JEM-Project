@@ -86,7 +86,7 @@ class JEMController extends JControllerLegacy
 			$view->setLayout($layoutName);
 
 			// Push document object into the view.
-			$view->assignRef('document', $document);
+			$view->document = $document;
 
 			$view->display();
 		}

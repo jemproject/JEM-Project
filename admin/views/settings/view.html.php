@@ -77,9 +77,9 @@ class JEMViewSettings extends JViewLegacy {
 		//add css, js and submenu to document
 		//$document->addScript(JURI::root().'media/com_jem/js/settings.js');
 
-		$this->assignRef('form',	$form);
-		$this->assignRef('data',	$data);
-		$this->assignRef('jemsettings',	$jemsettings);
+		$this->form = $form;
+		$this->data = $data;
+		$this->jemsettings = $jemsettings;
 
 		// add toolbar
 		$this->addToolbar();
