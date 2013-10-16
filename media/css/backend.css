@@ -219,12 +219,12 @@ input#showtime0.inputbox, input#showtime1.inputbox, input#catlinklist0, input#ca
 }
 
 /*align radio buttons on global setting page*/
-label#filter0-lbl, label#filter1-lbl, label#icons0-lbl, label#icons1-lbl, label#display0-lbl, label#display1-lbl, label#show_print_icon1-lbl, label#show_print_icon0-lbl, label#show_archive_icon1-lbl, label#show_archive_icon0-lbl, label#show_email_icon0-lbl, label#show_email_icon1-lbl, label#events_ical0-lbl, label#events_ical1-lbl, label#displaymyevents0-lbl, label#displaymyevents1-lbl, label#discatheader0-lbl, label#discatheader1-lbl {
+label#filter0-lbl, label#filter1-lbl, label#icons0-lbl, label#icons1-lbl, label#display0-lbl, label#display1-lbl, label#show_print_icon1-lbl, label#show_print_icon0-lbl, label#show_archive_icon1-lbl, label#show_archive_icon0-lbl, label#show_email_icon0-lbl, label#show_email_icon1-lbl, label#events_ical0-lbl, label#events_ical1-lbl, label#discatheader0-lbl, label#discatheader1-lbl {
     float: none;
     display: inline;
 }
 
-input#filter0.inputbox, input#filter1.inputbox, input#icons0.inputbox, input#icons1.inputbox, input#display0.inputbox, input#display1.inputbox, input#show_print_icon1.inputbox, input#show_print_icon0.inputbox, input#show_archive_icon1.inputbox, input#show_archive_icon0.inputbox, input#show_email_icon0.inputbox, input#show_email_icon1.inputbox, input#events_ical0.inputbox, input#events_ical1.inputbox, input#displaymyevents0.inputbox, input#displaymyevents1.inputbox, input#discatheader0.inputbox, input#discatheader1.inputbox {
+input#filter0.inputbox, input#filter1.inputbox, input#icons0.inputbox, input#icons1.inputbox, input#display0.inputbox, input#display1.inputbox, input#show_print_icon1.inputbox, input#show_print_icon0.inputbox, input#show_archive_icon1.inputbox, input#show_archive_icon0.inputbox, input#show_email_icon0.inputbox, input#show_email_icon1.inputbox, input#events_ical0.inputbox, input#events_ical1.inputbox, input#discatheader0.inputbox, input#discatheader1.inputbox {
     float: none;
     display: inline;
 }
