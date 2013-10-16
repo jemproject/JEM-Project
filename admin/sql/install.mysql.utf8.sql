@@ -176,9 +176,6 @@ CREATE TABLE IF NOT EXISTS `#__jem_settings` (
   `showlinkvenue` tinyint(4) NOT NULL,
   `showdetlinkvenue` tinyint(4) NOT NULL,
   `delivereventsyes` tinyint(4) NOT NULL,
-  `mailinform` tinyint(4) NOT NULL,
-  `mailinformrec` varchar(150) NOT NULL,
-  `mailinformuser` tinyint(4) NOT NULL,
   `datdesclimit` varchar(15) NOT NULL,
   `autopubl` tinyint(4) NOT NULL,
   `deliverlocsyes` tinyint(4) NOT NULL,
@@ -277,8 +274,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_countries` (
 
 INSERT IGNORE INTO #__jem_settings VALUES
 (1, 2, 1, 1, 1, 1, 1, 1, '1', '100%', '20%', '40%', '20%', '', 
-'D, j. F Y', 'j.m.y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, 0, 
-'example@example.com', 0, '1000', -2, -2, -2, 1, '',
+'D, j. F Y', 'j.m.y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, '1000', -2, -2, -2, 1, '',
 1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, 
 '[title], [a_name], [categories], [times]', 'The event titled [title] starts on [dates]!',
 1, 0, '0', 0, 1, 0, '1364604520', '', '', 'COM', 'US', '100', '10%', '10',
