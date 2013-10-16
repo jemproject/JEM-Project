@@ -157,7 +157,6 @@ CREATE TABLE IF NOT EXISTS `#__jem_settings` (
   `showlocate` tinyint(4) NOT NULL,
   `showcity` tinyint(4) NOT NULL,
   `showmapserv` tinyint(4) NOT NULL,
-  `map24id` varchar(20) NOT NULL,
   `gmapkey` varchar(255) NOT NULL,
   `tablewidth` varchar(20) NOT NULL,
   `datewidth` varchar(20) NOT NULL,
@@ -277,7 +276,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_countries` (
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
 INSERT IGNORE INTO #__jem_settings VALUES
-(1, 2, 1, 1, 1, 1, 1, 1, '1', '1', '100%', '20%', '40%', '20%', '', 
+(1, 2, 1, 1, 1, 1, 1, 1, '1', '100%', '20%', '40%', '20%', '', 
 'D, j. F Y', 'j.m.y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, 0, 
 'example@example.com', 0, '1000', -2, -2, -2, 1, '',
 1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, 
