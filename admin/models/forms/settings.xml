@@ -252,6 +252,11 @@
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 			</field>
+			
+			<field name="meta_description" type="textarea"
+			label="COM_JEM_META_DESCRIPTION" description="COM_JEM_META_DESCRIPTION_DESC"
+			rows="3" cols="35"
+			class="inputbox" />
 	</fieldset>
 	
 	
