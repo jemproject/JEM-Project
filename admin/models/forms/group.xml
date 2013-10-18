@@ -1,44 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-
 	<fieldset name="details"
-		addfieldpath="/administrator/components/com_jem/models/fields">
-
-
-	<field name="name" type="text" class="inputbox" size="40"
-			label="COM_JEM_GROUP_NAME" description="COM_JEM_GROUP_NAME" required="true" />
-
-	
-	<field name="description" type="editor" hide="pagebreak,readmore" class="inputbox"
-			rows="3" cols="40" label="COM_JEM_GROUP_DESCRIPTION" description="COM_JEM_GROUP_DESCRIPTION_DESC" filter="safehtml" />
-
-	
-	<field name="id" type="text" default="0" readonly="true" class="readonly"
-			label="JGLOBAL_FIELD_ID_LABEL" description="JGLOBAL_FIELD_ID_DESC" />
-	
-	<field name="addvenue" type="radio"
-			label="COM_JEM_GROUP_ADDVENUE" description="COM_JEM_GROUP_ADDVENUE_DESC"
-			class="inputbox" default="0" required="false" >	
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
-	</field>
-		
-	<field name="publishvenue" type="radio"
-			label="COM_JEM_GROUP_PUBLISHVENUE" description="COM_JEM_GROUP_PUBLISHVENUE_DESC"
-			class="inputbox" default="0" required="false" >	
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
-	</field>
-
-	<field name="editvenue" type="radio"
-			label="COM_JEM_GROUP_EDITVENUE" description="COM_JEM_GROUP_EDITVENUE_DESC"
-			class="inputbox" default="0" required="false" >	
+		addfieldpath="/administrator/components/com_jem/models/fields"
+	>
+		<field name="name" type="text"
+			class="inputbox"
+			size="40"
+			label="COM_JEM_GROUP_NAME"
+			description="COM_JEM_GROUP_NAME"
+			required="true"
+		/>
+		<field name="description" type="editor"
+			hide="pagebreak,readmore"
+			class="inputbox"
+			rows="3" cols="40"
+			label="COM_JEM_GROUP_DESCRIPTION"
+			description="COM_JEM_GROUP_DESCRIPTION_DESC"
+			filter="safehtml"
+		/>
+		<field name="id" type="text"
+			default="0"
+			readonly="true"
+			class="readonly"
+			label="JGLOBAL_FIELD_ID_LABEL"
+			description="JGLOBAL_FIELD_ID_DESC"
+		/>
+		<field name="addvenue" type="radio"
+			label="COM_JEM_GROUP_ADDVENUE"
+			description="COM_JEM_GROUP_ADDVENUE_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
 			<option value="0">JHIDE</option>
 			<option value="1">JSHOW</option>
 		</field>
 
+		<field name="publishvenue" type="radio"
+			label="COM_JEM_GROUP_PUBLISHVENUE"
+			description="COM_JEM_GROUP_PUBLISHVENUE_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="0">JHIDE</option>
+			<option value="1">JSHOW</option>
+		</field>
 
-
-
-		</fieldset>
+		<field name="editvenue" type="radio"
+			label="COM_JEM_GROUP_EDITVENUE"
+			description="COM_JEM_GROUP_EDITVENUE_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="0">JHIDE</option>
+			<option value="1">JSHOW</option>
+		</field>
+	</fieldset>
 </form>
