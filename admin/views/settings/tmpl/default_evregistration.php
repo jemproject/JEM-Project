@@ -10,23 +10,15 @@
 defined('_JEXEC') or die;
 ?>
 
-
 <div class="width-100">
-<fieldset class="adminform">
-	<legend><?php echo JText::_( 'COM_JEM_REGISTRATION' ); ?></legend>
-	<ul class="adminformlist">
-			<li>
-				<?php echo $this->form->getLabel('regname'); ?> <?php echo $this->form->getInput('regname'); ?>
-			</li>
+	<fieldset class="adminform">
+		<legend><?php echo JText::_( 'COM_JEM_REGISTRATION' ); ?></legend>
+		<ul class="adminformlist">
+			<li><?php echo $this->form->getLabel('regname'); ?> <?php echo $this->form->getInput('regname'); ?></li>
 
-			<li>
-				<?php echo $this->form->getLabel('comunsolution'); ?> <?php echo $this->form->getInput('comunsolution'); ?>
-			</li>
+			<li><?php echo $this->form->getLabel('comunsolution'); ?> <?php echo $this->form->getInput('comunsolution'); ?></li>
 
-				<li id="comm1" style="display:none"><?php echo $this->form->getLabel('comunoption'); ?> <?php echo $this->form->getInput('comunoption'); ?>
-				</li>
-	</ul>
-</fieldset>
+			<li id="comm1" style="display:none"><?php echo $this->form->getLabel('comunoption'); ?> <?php echo $this->form->getInput('comunoption'); ?></li>
+		</ul>
+	</fieldset>
 </div>
-
-

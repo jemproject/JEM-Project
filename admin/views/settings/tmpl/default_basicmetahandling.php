@@ -26,9 +26,7 @@ defined('_JEXEC') or die;
 	<fieldset class="adminform">
 		<legend><?php echo JText::_( 'COM_JEM_META_HANDLING' ); ?></legend>
 		<ul class="adminformlist">
-
-			<li>
-				<label id="jform_meta_keywords-lbl" class="hasTip" title="<?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?>::<?php echo JText::_('COM_JEM_META_KEYWORDS_DESC'); ?>">
+			<li><label id="jform_meta_keywords-lbl" class="hasTip" title="<?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?>::<?php echo JText::_('COM_JEM_META_KEYWORDS_DESC'); ?>">
 					<?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?>
 				</label>
 				<div style="display: inline-block;">

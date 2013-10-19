@@ -130,8 +130,8 @@
 			<option value="1">JSHOW</option>
 		</field>
 		<field type="spacer" hr="false" />
-		<field type="spacer" name="myspacer" class="text" label="&lt;b&gt;Advanced parameters&lt;/b&gt;" />
-		<field type="spacer" name="myspacer2" hr="true" />
+		<field type="spacer" name="myspacer" class="text" label="COM_JEM_GLOBAL_PARAMETERS_ADVANCED" />
+		<field type="spacer" hr="true" />
 		<field name="ical_max_items" type="text"
 			label="COM_JEM_SETTINGS_ICAL_MAX_ITEMS"
 			description="COM_JEM_SETTINGS_ICAL_MAX_ITEMS_DESC"
