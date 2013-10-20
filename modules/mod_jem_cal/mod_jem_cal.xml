@@ -5,7 +5,7 @@
 	<authorEmail>toni@qivva.com, info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.qivva.com, http://www.joomlaeventmanager.net</authorUrl>
 	<creationDate>04 August 2013</creationDate>
-
+	<copyright></copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<version>1.9.5</version>
 	<description>MOD_JEM_CALENDAR_XML_DESCRIPTION</description>
@@ -22,81 +22,191 @@
 	<config>
 		<fields name="params">
 			<fieldset name="basic">
-				<field name="Default_Stylesheet" type="radio" default="1" label="MOD_JEM_CAL_DEFAULTSTYLESHEET" description="MOD_JEM_CAL_DEFAULTSTYLESHEET_DESC">
+				<field name="Default_Stylesheet" type="radio"
+					default="1"
+					label="MOD_JEM_CAL_DEFAULTSTYLESHEET"
+					description="MOD_JEM_CAL_DEFAULTSTYLESHEET_DESC"
+				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="User_stylesheet" type="text" default="" label="MOD_JEM_CAL_USERSTYLESHEET" description="MOD_JEM_CAL_USERSTYLESHEET_DESC" />
-				<field name="spacer1" type="spacer" label="" description="" hr="true" />
-				<field name="Show_Tooltips" type="radio" default="1" label="MOD_JEM_CAL_SHOWTOOLTIPS" description="MOD_JEM_CAL_SHOWTOOLTIPS_DESC">
+				<field name="User_stylesheet" type="text"
+					default=""
+					label="MOD_JEM_CAL_USERSTYLESHEET"
+					description="MOD_JEM_CAL_USERSTYLESHEET_DESC"
+				/>
+				<field name="spacer1" type="spacer"
+					label=""
+					description=""
+					hr="true"
+				/>
+				<field name="Show_Tooltips" type="radio"
+					default="1"
+					label="MOD_JEM_CAL_SHOWTOOLTIPS"
+					description="MOD_JEM_CAL_SHOWTOOLTIPS_DESC"
+				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="Show_Tooltips_Title" type="radio" default="1" label="MOD_JEM_CAL_SHOWTOOLTIPSTITLE" description="MOD_JEM_CAL_SHOWTOOLTIPSTITLE_DESC">
+				<field name="Show_Tooltips_Title" type="radio"
+					default="1"
+					label="MOD_JEM_CAL_SHOWTOOLTIPSTITLE"
+					description="MOD_JEM_CAL_SHOWTOOLTIPSTITLE_DESC"
+				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="cal15q_tooltips_title" type="text" default="MOD_JEM_CAL_EVENT" label="MOD_JEM_CAL_TOOLTIPSTITLE" description="MOD_JEM_CAL_TOOLTIPSTITLE_DESC" />
-				<field name="cal15q_tooltipspl_title" type="text" default="MOD_JEM_CAL_EVENTS" label="MOD_JEM_CAL_TOOLTIPSTITLEPL" description="MOD_JEM_CAL_TOOLTIPSTITLEPL_DESC" />
-				<field name="DisplayCat" type="radio" default="0" label="MOD_JEM_CAL_DISPLAYCAT" description="MOD_JEM_CAL_DISPLAYCAT_DESC">
+				<field name="cal15q_tooltips_title" type="text"
+					default="MOD_JEM_CAL_EVENT"
+					label="MOD_JEM_CAL_TOOLTIPSTITLE"
+					description="MOD_JEM_CAL_TOOLTIPSTITLE_DESC"
+				/>
+				<field name="cal15q_tooltipspl_title" type="text"
+					default="MOD_JEM_CAL_EVENTS"
+					label="MOD_JEM_CAL_TOOLTIPSTITLEPL"
+					description="MOD_JEM_CAL_TOOLTIPSTITLEPL_DESC"
+				/>
+				<field name="DisplayCat" type="radio"
+					default="0"
+					label="MOD_JEM_CAL_DISPLAYCAT"
+					description="MOD_JEM_CAL_DISPLAYCAT_DESC"
+				>
 					<option value="0">JNO</option>
 					<option value="1">JYes</option>
 				</field>
-				<field name="DisplayVenue" type="radio" default="0" label="MOD_JEM_CAL_DISPLAYVENUE" description="MOD_JEM_CAL_DISPLAYVENUE_DESC">
+				<field name="DisplayVenue" type="radio"
+					default="0"
+					label="MOD_JEM_CAL_DISPLAYVENUE"
+					description="MOD_JEM_CAL_DISPLAYVENUE_DESC"
+				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="spacer2" type="spacer" label="" description="" hr="true" />
-				<field name="UseJoomlaLanguage" type="radio" default="1" label="MOD_JEM_CAL_USEJOOMLALANGUAGE" description="MOD_JEM_CAL_USEJOOMLALANGUAGE_DESC">
+				<field name="spacer2" type="spacer"
+					label=""
+					description=""
+					hr="true"
+				/>
+				<field name="UseJoomlaLanguage" type="radio"
+					default="1"
+					label="MOD_JEM_CAL_USEJOOMLALANGUAGE"
+					description="MOD_JEM_CAL_USEJOOMLALANGUAGE_DESC"
+				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="day_name_length" type="list" default="2" label="MOD_JEM_CAL_DAYNAMELENGTH" description="MOD_JEM_CAL_DAYNAMELENGTH_DESC">
+				<field name="day_name_length" type="list"
+					default="2"
+					label="MOD_JEM_CAL_DAYNAMELENGTH"
+					description="MOD_JEM_CAL_DAYNAMELENGTH_DESC"
+				>
 					<option value="0">MOD_JEM_CAL_DONTDISPLAYDAYS</option>
 					<option value="1">MOD_JEM_CAL_ONELETTER</option>
 					<option value="2">MOD_JEM_CAL_TWOLETTERS</option>
 					<option value="3">MOD_JEM_CAL_THREELETTERS</option>
 					<option value="4">MOD_JEM_CAL_FULLNAME</option>
 				</field>
-				<field name="first_day" type="list" default="1" label="MOD_JEM_CAL_FIRSTDAY" description="MOD_JEM_CAL_FIRSTDAY_DESC">
+				<field name="first_day" type="list"
+					default="1"
+					label="MOD_JEM_CAL_FIRSTDAY"
+					description="MOD_JEM_CAL_FIRSTDAY_DESC"
+				>
 					<option value="0">Sunday</option>
 					<option value="1">Monday</option>
 				</field>
-				<field name="Year_length" type="radio" default="1" label="MOD_JEM_CAL_YEARLENGTH" description="MOD_JEM_CAL_YEARLENGTH_DESC">
+				<field name="Year_length" type="radio"
+					default="1"
+					label="MOD_JEM_CAL_YEARLENGTH"
+					description="MOD_JEM_CAL_YEARLENGTH_DESC"
+				>
 					<option value="0">MOD_JEM_CAL_TWO</option>
 					<option value="1">MOD_JEM_CAL_FOUR</option>
 				</field>
-				<field name="Month_length" type="radio" default="0" label="MOD_JEM_CAL_MONTHLENGTH" description="MOD_JEM_CAL_MONTHLENGTH_DESC">
+				<field name="Month_length" type="radio"
+					default="0"
+					label="MOD_JEM_CAL_MONTHLENGTH"
+					description="MOD_JEM_CAL_MONTHLENGTH_DESC"
+				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="Month_offset" type="text" default="0" label="MOD_JEM_CAL_MONTHOFFSET" description="MOD_JEM_CAL_MONTHOFFSET_DESC" />
-				<field name="Time_offset" type="text" default="0" label="MOD_JEM_CAL_TIMEOFFSET" description="MOD_JEM_CAL_TIMEOFFSET_DESC" />
-				<field name="spacer3" type="spacer" label="" description="" hr="true" />
-				<field name="Remember" type="radio" default="1" label="MOD_JEM_CAL_REMEMBER" description="MOD_JEM_CAL_REMEMBER_DESC">
+				<field name="Month_offset" type="text"
+					default="0"
+					label="MOD_JEM_CAL_MONTHOFFSET"
+					description="MOD_JEM_CAL_MONTHOFFSET_DESC"
+				/>
+				<field name="Time_offset" type="text"
+					default="0"
+					label="MOD_JEM_CAL_TIMEOFFSET"
+					description="MOD_JEM_CAL_TIMEOFFSET_DESC"
+				/>
+				<field name="spacer3" type="spacer"
+					label=""
+					description=""
+					hr="true"
+				/>
+				<field name="Remember" type="radio"
+					default="1"
+					label="MOD_JEM_CAL_REMEMBER"
+					description="MOD_JEM_CAL_REMEMBER_DESC"
+				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="CurrentEvents" type="radio" default="1" label="MOD_JEM_CAL_CURRENTEVENTS" description="MOD_JEM_CAL_CURRENTEVENTS_DESC">
+				<field name="CurrentEvents" type="radio"
+					default="1"
+					label="MOD_JEM_CAL_CURRENTEVENTS"
+					description="MOD_JEM_CAL_CURRENTEVENTS_DESC"
+				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="ArchivedEvents" type="radio" default="0" label="MOD_JEM_CAL_ARCHIVEDEVENTS" description="MOD_JEM_CAL_ARCHIVEDEVENTS_DESC">
+				<field name="ArchivedEvents" type="radio"
+					default="0"
+					label="MOD_JEM_CAL_ARCHIVEDEVENTS"
+					description="MOD_JEM_CAL_ARCHIVEDEVENTS_DESC"
+				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="StraightToDetails" type="radio" default="1" label="MOD_JEM_CAL_STRAIGHTTODETAILS" description="MOD_JEM_CAL_STRAIGHTTODETAILS_DESC">
+				<field name="StraightToDetails" type="radio"
+					default="1"
+					label="MOD_JEM_CAL_STRAIGHTTODETAILS"
+					description="MOD_JEM_CAL_STRAIGHTTODETAILS_DESC"
+				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="spacer4" type="spacer" label="" description="" hr="true" />
-				
-				
-				<field name="moduleclass_sfx" type="text" default="" label="MOD_JEM_CAL_MODULECLASSSFX" description="MOD_JEM_CAL_MODULECLASSSFX_DESC" />
-				<field name="locale_override" type="text" default="" label="MOD_JEM_CAL_LOCALEOVERRIDE" description="MOD_JEM_CAL_LOCALEOVERRIDE_DESC" />
-				<field name="catid" type="text" default="" label="MOD_JEM_CAL_CATID" description="MOD_JEM_CAL_CATID_DESC" />
-				<field name="venid" type="text" default="" label="MOD_JEM_CAL_VENID" description="MOD_JEM_CAL_VENID_DESC" />
-				<field name="FixItemID" type="text" default="" label="MOD_JEM_CAL_FIXEDITEMID" description="MOD_JEM_CAL_FIXEDITEMID_DESC" />
+				<field name="spacer4" type="spacer"
+					label=""
+					description=""
+					hr="true"
+				/>
+				<field name="moduleclass_sfx" type="text"
+					default=""
+					label="MOD_JEM_CAL_MODULECLASSSFX"
+					description="MOD_JEM_CAL_MODULECLASSSFX_DESC"
+				/>
+				<field name="locale_override" type="text"
+					default=""
+					label="MOD_JEM_CAL_LOCALEOVERRIDE"
+					description="MOD_JEM_CAL_LOCALEOVERRIDE_DESC"
+				/>
+				<field name="catid" type="text"
+					default=""
+					label="MOD_JEM_CAL_CATID"
+					description="MOD_JEM_CAL_CATID_DESC"
+				/>
+				<field name="venid" type="text"
+					default=""
+					label="MOD_JEM_CAL_VENID"
+					description="MOD_JEM_CAL_VENID_DESC"
+				/>
+				<field name="FixItemID" type="text"
+					default=""
+					label="MOD_JEM_CAL_FIXEDITEMID"
+					description="MOD_JEM_CAL_FIXEDITEMID_DESC"
+				/>
 			</fieldset>
 		</fields>
 	</config>
