@@ -85,19 +85,57 @@ table.week {
 
 div[id^=catz] {
 	background-color:yellow;
+	border: 1px solid black;
 	margin:1px;
 	overflow:hidden;
 	padding:1px;
-	border: 1px solid grey;
+
 	border-radius: 2px;
-	padding: 5px;
+	padding: 0px 0px 4px 0px;
 	margin: 2px;
 	word-wrap: break-word;
+	min-height:40px;
 }
 
 div[id^=catz] a {
-  color: #333;
+	color: #333;
+	text-decoration:none;
 }
+
+div#jem a .eventcontenttop{
+	text-decoration:none;
+	color: black;
+}
+
+div#jem .eventcontenttop{
+	border-bottom: solid 1px black;
+	height: 16px;
+	minheight:16px;
+	text-align:left;
+	padding-left: 4px;
+	padding-top:2px;
+	top:60px;
+}
+
+div#jem .eventtitle
+{
+	text-align:left;
+}
+
+div#jem .rowcolor{
+	border-top: solid 1px black;
+	height: 10px;
+	text-aling:right;
+}
+
+div#jem .eventtitle{
+	min-height: 30px;
+	word-wrap: break-word;
+	margin-right: 2px;
+	margin-left:2px;
+	margin-top:2px;
+}
+
 
 .eventandmore {
 	background-color:yellow;
@@ -109,24 +147,6 @@ div[id^=catz] a {
 	padding: 5px;
 	margin: 2px;
 }
-
-
-.cat1
-{
-	/*background-color:yellow;*/
-	/*border: 1px solid grey;*/
-	/*border-radius: 2px;*/
-	/*padding: 5px;*/
-	/*margin: 2px;*/
-	
-}
-
-
-/*
-.eventcontent a:link, a:visited, a:active {
-  color: #333;
-}
-*/
 
 /* for the tooltip */
 .custom-tip {
@@ -312,14 +332,3 @@ border: 1px dotted black;
 	height:90px;
 	width:90px;
 }
-
-
-
-
-
-
-
-
-
-
-

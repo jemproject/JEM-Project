@@ -47,10 +47,14 @@ class JEMViewWeekcal extends JViewLegacy
 		$evbackgroundcolor = $params->get('eventbackgroundcolor');
 		$currentdaycolor = $params->get('currentdaycolor');
 		$eventandmorecolor = $params->get('eventandmorecolor');
+		$eventtopbackgroundcolor = $params->get('eventtopbackgroundcolor');
 
 		$style = '
-		div[id^=\'catz\'] a {
-			color:' . $evlinkcolor . ';
+		div#jem a .eventtitle{
+			color: ' . $evlinkcolor . ';
+		}
+		div[id^=\'eventcontenttop\'] {
+			background-color:'.$eventtopbackgroundcolor .';
 		}
 		div[id^=\'catz\'] {
 			background-color:'.$evbackgroundcolor .';
@@ -58,7 +62,6 @@ class JEMViewWeekcal extends JViewLegacy
 		.eventandmore {
 			background-color:'.$eventandmorecolor .';
 		}
-
 		.today .daynum {
 			background-color:'.$currentdaycolor.';
 		}';
@@ -68,7 +71,7 @@ class JEMViewWeekcal extends JViewLegacy
 		// add javascript
 		$document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
 		$rows = $this->get('Data');
-		$currentweek 	= $this->get('Currentweek');
+		$currentweek = $this->get('Currentweek');
 
 		//Set Meta data
 		$document->setTitle($item->title);

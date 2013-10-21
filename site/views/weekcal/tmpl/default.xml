@@ -52,6 +52,11 @@
 				label="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR"
 				description="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR_DESC"
 			/>
+			<field name="eventtopbackgroundcolor" type="color"
+				default="#FFFF00"
+				label="COM_JEM_CALENDAR_EVENTTOPBACKGROUNDCOLOR"
+				description="COM_JEM_CALENDAR_EVENTTOPBACKGROUNDCOLOR_DESC"
+			/>
 			<field name="currentdaycolor" type="color"
 				default="#CCCC99"
 				label="COM_JEM_CALENDAR_CURRENTDAYCOLOR"
@@ -67,14 +72,6 @@
 				default="1"
 				label="COM_JEM_DISPLAY_LEGEND"
 				description="COM_JEM_DISPLAY_LEGEND_DESC"
-			>
-				<option value="0">JNO</option>
-				<option value="1">JYES</option>
-			</field>
-			<field name="show_only_start" type="radio"
-				default="0"
-				label="COM_JEM_SHOWONLYSTARTDAY"
-				description="COM_JEM_SHOWONLYSTARTDAY_DESC"
 			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>

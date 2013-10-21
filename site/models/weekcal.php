@@ -86,7 +86,7 @@ class JEMModelWeekcal extends JModelLegacy
 			foreach($items AS $item) {
 				$item->categories = $this->getCategories($item->id);
 
-				if (!is_null($item->enddates) && !$params->get('show_only_start', 1)) {
+				if (!is_null($item->enddates)) {
 					if ($item->enddates != $item->dates) {
 						// $day = $item->start_day;
 						$day = $item->start_day;
@@ -98,29 +98,38 @@ class JEMModelWeekcal extends JModelLegacy
 							//next day:
 							$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
 
-							//ensure we only generate days of current month in this loop
-							//if (strftime('%m', $this->_date) == strftime('%m', $nextday)) {
-								$multi[$counter] = clone $item;
-								$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
+							//generate days of current multi-day selection
+							$multi[$counter] = clone $item;
+							$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
 
-								$item->multi = 'first';
+							$item->multi = 'first';
+							$item->multitimes = $item->times;
+							$item->multiname = $item->title;
+							$item->sort = 'zlast';
 
-								if ($multi[$counter]->dates < $item->enddates) {
-									$multi[$counter]->times = '';
-									$multi[$counter]->endtimes = '';
-									$multi[$counter]->multi = 'middle';
-									$multi[$counter]->multistartdate = $item->dates;
-									$multi[$counter]->multienddate = $item->enddates;
-								} elseif ($multi[$counter]->dates = $item->enddates) {
-									$multi[$counter]->times = '';
-									$multi[$counter]->multi = 'last';
-									$multi[$counter]->multistartdate = $item->dates;
-									$multi[$counter]->multienddate = $item->enddates;
-								}
+							if ($multi[$counter]->dates < $item->enddates) {
+								$multi[$counter]->multi = 'middle';
+								$multi[$counter]->multistartdate = $item->dates;
+								$multi[$counter]->multienddate = $item->enddates;
+								$multi[$counter]->multitimes = $item->times;
+								$multi[$counter]->multiname = $item->title;
+								$multi[$counter]->times = $item->times;
+								$multi[$counter]->endtimes = $item->endtimes;
+								$multi[$counter]->sort = 'middle';
+							} elseif ($multi[$counter]->dates = $item->enddates) {
+								$multi[$counter]->multi = 'zlast';
+								$multi[$counter]->multistartdate = $item->dates;
+								$multi[$counter]->multienddate = $item->enddates;
+								$multi[$counter]->multitimes = $item->times;
+								$multi[$counter]->multiname = $item->title;
+								$multi[$counter]->sort = 'first';
+								$multi[$counter]->times = $item->times;
+								$multi[$counter]->endtimes = $item->endtimes;
+							}
 
-								//add generated days to data
-								$items = array_merge($items, $multi);
-							//}
+							//add generated days to data
+							$items = array_merge($items, $multi);
+
 							//unset temp array holding generated days before working on the next multiday event
 							unset($multi);
 						}
@@ -148,13 +157,13 @@ class JEMModelWeekcal extends JModelLegacy
 
 				if ($firstweekday == 1) {
 					if(date('N', time()) == 1) {
-					#it's monday and monday is startdate;
+						#it's monday and monday is startdate;
 						$startdate = $datetime->modify('-7 day');
 						$startdate = $datetime->format('Y-m-d') . "\n";
 						$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks');
 						$enddate = $datetime->format('Y-m-d') . "\n";
 					} else {
-					#it's not monday but monday is startdate;
+						#it's not monday but monday is startdate;
 						$startdate = $datetime->modify('-6 day');
 						$startdate = $datetime->format('Y-m-d') . "\n";
 						$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
@@ -164,12 +173,12 @@ class JEMModelWeekcal extends JModelLegacy
 
 				if ($firstweekday == 0) {
 					if(date('N', time()) == 7) {
-					#it's sunday and sunday is startdate;
+						#it's sunday and sunday is startdate;
 						$startdate = $datetime->format('Y-m-d') . "\n";
 						$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
 						$enddate = $datetime->format('Y-m-d') . "\n";
 					} else {
-					#it's not sunday and sunday is startdate;
+						#it's not sunday and sunday is startdate;
 						$startdate = $datetime->modify('-7 day');
 						$startdate = $datetime->format('Y-m-d') . "\n";
 						$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
@@ -198,10 +207,13 @@ class JEMModelWeekcal extends JModelLegacy
 				$title[] = $item->title;
 				$id[] = $item->id;
 				$dates[] = $item->dates;
-				$multi[] = (isset($item->multi) ? $item->multi : 'na');
+				$multi[] = (isset($item->multi) ? $item->multi : false);
+				$multitime[] = (isset($item->multitime) ? $item->multitime : false);
+				$multititle[] = (isset($item->multititle) ? $item->multititle : false);
+				$sort[] = (isset($item->sort) ? $item->sort : 'zlast');
 			}
 
-			array_multisort($multi, SORT_ASC, $time, SORT_ASC, $title, SORT_ASC, $items);
+			array_multisort($sort, SORT_ASC, $multitime, $multititle, $time, SORT_ASC, $title, $items);
 		}
 
 		return $items;
@@ -273,13 +285,13 @@ class JEMModelWeekcal extends JModelLegacy
 
 		if ($firstweekday == 1) {
 			if(date('N', time()) == 1) {
-			#it's monday and monday is startdate;
+				#it's monday and monday is startdate;
 				$startdate = $datetime->modify('-7 day');
 				$startdate = $datetime->format('Y-m-d') . "\n";
 				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks');
 				$enddate = $datetime->format('Y-m-d') . "\n";
 			} else {
-			#it's not monday but monday is startdate;
+				#it's not monday but monday is startdate;
 				$startdate = $datetime->modify('-6 day');
 				$startdate = $datetime->format('Y-m-d') . "\n";
 				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
@@ -289,12 +301,12 @@ class JEMModelWeekcal extends JModelLegacy
 
 		if ($firstweekday == 0) {
 			if(date('N', time()) == 7) {
-			#it's sunday and sunday is startdate;
+				#it's sunday and sunday is startdate;
 				$startdate = $datetime->format('Y-m-d') . "\n";
 				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
 				$enddate = $datetime->format('Y-m-d') . "\n";
 			} else {
-			#it's not sunday and sunday is startdate;
+				#it's not sunday and sunday is startdate;
 				$startdate = $datetime->modify('-7 day');
 				$startdate = $datetime->format('Y-m-d') . "\n";
 				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');

@@ -9,7 +9,6 @@
 
 defined('_JEXEC') or die;
 
-// @todo: fix legend
 ?>
 <div id="jem" class="jlcalendar">
 	<?php if ($this->params->def('show_page_title', 1)): ?>
@@ -72,25 +71,16 @@ defined('_JEXEC') or die;
 			continue;
 		}
 
-		//for time printing
-		$timehtml = '';
-
 		if ($this->jemsettings->showtime == 1) :
-			$start = JEMOutput::formattime($row->times);
-			$end = JEMOutput::formattime($row->endtimes);
+			$start = JEMOutput::formattime($row->times,'', false);
+			$end = JEMOutput::formattime($row->endtimes,'', false);
 
-			if ($start != '') :
-				$timehtml = '<div class="time"><span class="label">'.JText::_('COM_JEM_TIME').': </span>';
-				$timehtml .= $start;
-				if ($end != '') :
-					$timehtml .= ' - '.$end;
-				endif;
-				$timehtml .= '</div>';
-			endif;
+			$multi = new stdClass();
+			$multi->row = (isset($row->multi) ? $row->multi : 'na');
 		endif;
 
 		$eventname = '<div class="eventName">'.JText::_('COM_JEM_TITLE').': '.$this->escape($row->title).'</div>';
-		$detaillink 	= JRoute::_( JEMHelperRoute::getRoute($row->slug));
+		$detaillink = JRoute::_( JEMHelperRoute::getRoute($row->slug));
 		//initialize variables
 		$multicatname = '';
 		$colorpic = '';
@@ -131,6 +121,12 @@ defined('_JEXEC') or die;
 			endif;
 		endforeach;
 
+
+
+		$color = '<div id="eventcontenttop" class="eventcontenttop">';
+		$color .= $colorpic;
+		$color .= '</div>';
+
 		//for time in calendar
 		$timetp = '';
 
@@ -139,23 +135,22 @@ defined('_JEXEC') or die;
 			$end = JEMOutput::formattime($row->endtimes,'',false);
 
 			$multi = new stdClass();
-			$multi->row = $parts = (isset($row->multi) ? $row->multi : 'na');
+			$multi->row = (isset($row->multi) ? $row->multi : 'na');
 
 
 			if ($multi->row) {
 				if ($multi->row == 'first') {
-					$timetp .= '|-> '.$start.' ';
+					$timetp .= $image = JHTML::image("media/com_jem/images/arrow-left.png",'').' '.$start.' ';
 				} elseif ($multi->row == 'middle') {
-					$timetp .= '<-> ';
-				} elseif ($multi->row == 'last') {
-					$timetp .= '<-| '.$end.' ';
+					$timetp .= JHTML::image("media/com_jem/images/arrow-middle.png",'');
+				} elseif ($multi->row == 'zlast') {
+					$timetp .= JHTML::image("media/com_jem/images/arrow-right.png",'').' '.$end.' ';
 				} elseif ($multi->row == 'na') {
 					if ($start != '') :
 						$timetp .= $start;
 						if ($end != '') :
-							$timetp .= ' - '.$end;
+							$timetp .= ' - '.$end.' ';
 						endif;
-						$timetp .= '<br>';
 					endif;
 				}
 			}
@@ -173,33 +168,31 @@ defined('_JEXEC') or die;
 			else :
 				$venue .= $row->locid ? $this->escape($row->venue) : '-';
 			endif;
-				$venue .= '</div>';
+			$venue .= '</div>';
 		else:
 			$venue = '';
 		endif;
 
-		//date
+		//date in tooltip
+		$multidaydate = '<div class="location"><span class="label">'.JText::_('COM_JEM_DATE').': </span>';
 		if ($multi->row == 'first') {
-			$multidaydate = '<div class="location"><span class="label">'.JText::_('COM_JEM_MULTIDATE').': </span>';
-			$multidaydate .= $row->dates.' - '. $row->enddates;
-			$multidaydate .= '</div>';
+			$multidaydate .= JEMOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+			$multidaydate .= JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
 		} elseif ($multi->row == 'middle') {
-			$multidaydate = '<div class="location"><span class="label">'.JText::_('COM_JEM_MULTIDATE').': </span>';
-			$multidaydate .= $row->multistartdate.' - '.$row->multienddate ;
-			$multidaydate .= '</div>';
-		} elseif ($multi->row == 'last') {
-			$multidaydate = '<div class="location"><span class="label">'.JText::_('COM_JEM_MULTIDATE').': </span>';
-			$multidaydate .= $row->multistartdate.' - '. $row->multienddate;
-			$multidaydate .= '</div>';
+			$multidaydate .= JEMOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
+			$multidaydate .= JEMOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
+		} elseif ($multi->row == 'zlast') {
+			$multidaydate .= JEMOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
+			$multidaydate .= JEMOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
 		} else {
-			$multidaydate = '<div class="location"><span class="label">'.JText::_('COM_JEM_DATE').': </span>';
-			$multidaydate .= $row->dates;
-			$multidaydate .= '</div>';
+			$multidaydate .= JEMOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+			$multidaydate .= JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
 		}
+		$multidaydate .= '</div>';
 
 		//generate the output
-		$content .= $colorpic;
-		$content .= JEMHelper::caltooltip($catname.$eventname.$timehtml.$multidaydate.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
+		//$content .= $colorpic;
+		$content .= JEMHelper::caltooltip($catname.$eventname.$multidaydate.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $color);
 		$content .= $contentend;
 
 		$this->cal->setEventContent($year, $month, $day, $content);
@@ -240,7 +233,7 @@ defined('_JEXEC') or die;
 					//build legend
 					if (array_key_exists($cat->id, $countcatevents)):
 					?>
-						<div class="eventCat" catid="<?php echo $cat->id; ?>">
+						<div class="eventCat" id="cat<?php echo $cat->id; ?>">
 							<?php
 							if ( isset ($cat->color) && $cat->color) :
 								echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';
