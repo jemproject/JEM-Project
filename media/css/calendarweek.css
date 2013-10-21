@@ -58,29 +58,28 @@ table.week {
 	border-bottom: 1px solid black;
 }
 
-
 .monthday, .selectedday {
 	background-color:#F7F7F7;
 	height:88px;
 }
 
 .monthday, .today {
-  background-color:#F7F7F7;
-  height:88px;
+	background-color:#F7F7F7;
+	height:88px;
 }
 
 .selectedday .daynum {
-  background-color:#31528E;
+	background-color:#31528E;
 }
 
 .nomonthday {
-  background-color:#EEEEEE;
-  height:88px;
+	background-color:#EEEEEE;
+	height:88px;
 }
 
 .sunday, .saturday {
-  background-color:#D4D4D4;
-  height:88px;
+	background-color:#D4D4D4;
+	height:88px;
 }
 
 div[id^=catz] {
@@ -89,7 +88,6 @@ div[id^=catz] {
 	margin:1px;
 	overflow:hidden;
 	padding:1px;
-
 	border-radius: 2px;
 	padding: 0px 0px 4px 0px;
 	margin: 2px;
@@ -102,12 +100,12 @@ div[id^=catz] a {
 	text-decoration:none;
 }
 
-div#jem a .eventcontenttop{
+div#jem a .eventcontenttop {
 	text-decoration:none;
 	color: black;
 }
 
-div#jem .eventcontenttop{
+div#jem .eventcontenttop {
 	border-bottom: solid 1px black;
 	height: 16px;
 	minheight:16px;
@@ -122,20 +120,19 @@ div#jem .eventtitle
 	text-align:left;
 }
 
-div#jem .rowcolor{
+div#jem .rowcolor {
 	border-top: solid 1px black;
 	height: 10px;
 	text-aling:right;
 }
 
-div#jem .eventtitle{
+div#jem .eventtitle {
 	min-height: 30px;
 	word-wrap: break-word;
 	margin-right: 2px;
 	margin-left:2px;
 	margin-top:2px;
 }
-
 
 .eventandmore {
 	background-color:yellow;
@@ -150,41 +147,40 @@ div#jem .eventtitle{
 
 /* for the tooltip */
 .custom-tip {
-   color: #000;
-   width: 200px;
-   z-index: 13000;
-   border: 1px solid lightgrey;
+	color: #000;
+	width: 200px;
+	z-index: 13000;
+	border: 1px solid lightgrey;
 }
 
 .custom-title {
-   font-weight: bold;
-   font-size: 11px;
-   margin: 10;
-   color: white;
-   padding: 2px 5px 1px;
-   background: #7598FF;
-   text-align:left;
+	font-weight: bold;
+	font-size: 11px;
+	margin: 10;
+	color: white;
+	padding: 2px 5px 1px;
+	background: #7598FF;
+	text-align:left;
 }
 
 .custom-text {
-   font-size: 11px;
-   padding: 2px 2px 2px;
-   background: white;
+	font-size: 11px;
+	padding: 2px 2px 2px;
+	background: white;
 }
 
 .custom-tip .eventName {
-  text-align:left;
-  background: lightgrey;
-  margin: 5px 0px 5px;
+	text-align:left;
+	background: lightgrey;
+	margin: 5px 0px 5px;
 }
 
-
 .custom-tip .location {
-  text-align:left;
+	text-align:left;
 }
 
 .custom-tip .location .legend {
-  font-weight: bold;
+	font-weight: bold;
 }
 
 .colorpic {
@@ -193,7 +189,7 @@ div#jem .eventtitle{
 }
 
 #jlcalendarlegend {
-  clear: both;	
+	clear: both;
 }
 
 #jlcalendarlegend .eventCat {
@@ -203,41 +199,37 @@ div#jem .eventtitle{
 }
 
 #jlcalendarlegend .eventCat.catoff {
-  color: lightgrey;
-  font-style: italic;
+	color: lightgrey;
+	font-style: italic;
 }
 
 .daynum a {
-  color: #FBFCEF !important;
-  text-decoration:none;
-  background-color:inherit !important;
+	color: #FBFCEF !important;
+	text-decoration:none;
+	background-color:inherit !important;
 }
 
-
-.today .daynum a  {
-  color:#FFFFFF;
-  background-color:red;
-  vertical-align: top;
+.today .daynum a {
+	color:#FFFFFF;
+	background-color:red;
+	vertical-align: top;
 }
-
 
 div#buttonshowall {
-  float: left;
-  padding: 1px 5px;
-  cursor: pointer;
+	float: left;
+	padding: 1px 5px;
+	cursor: pointer;
 }
 
 div#buttonhideall {
-  float: left;
-  padding: 1px 5px;
-  cursor: pointer;
+	float: left;
+	padding: 1px 5px;
+	cursor: pointer;
 }
 
-div#jem td
-{
+div#jem td {
 border: 1px dotted black;
 }
-
 
 .weeknumtitle {
 	text-align: center;
@@ -248,7 +240,6 @@ border: 1px dotted black;
 	border-width:1px
 }
 
-
 .weeknum {
 	text-align: center;
 	font-size: 10px;
@@ -257,11 +248,13 @@ border: 1px dotted black;
 	color: #CD5C5C;
 	background-color: #FAEBD7;
 }
+
 .week {
 	border-style: none;
 	background-color: #EEDFCC;
 	text-align: center;
 }
+
 .monthweek {
 	text-align: center;
 	font-size: 10px;
@@ -291,9 +284,11 @@ border: 1px dotted black;
 	height:90px;
 	width:90px;
 }
+
 .sunday a {
 	color: #667171;
 }
+
 .saturday {
 	text-align: center;
 	vertical-align: top;
@@ -303,11 +298,10 @@ border: 1px dotted black;
 	height:90px;
 	width:90px;
 }
+
 .saturday a {
 	color: #667171;
 }
-
-
 
 .today {
 	text-align: center;
@@ -321,6 +315,7 @@ border: 1px dotted black;
 	height:90px;
 	width:90px;
 }
+
 .selectedday {
 	text-align: center;
 	vertical-align: top;

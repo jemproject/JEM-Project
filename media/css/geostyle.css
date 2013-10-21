@@ -1,44 +1,55 @@
+/**
+ * @version 1.9.5
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ */
+
+/*
 body {
-  /*color: #333;*/
+	color: #333;
 }
 
 body, input, button {
-  /*line-height: 1.4;*/
-  /*font: 13px Helvetica,arial,freesans,clean,sans-serif;*/
+	line-height: 1.4;
+	font: 13px Helvetica,arial,freesans,clean,sans-serif;
 }
 
-
 a {
-  /*color: #4183C4;*/
-  /*text-decoration: none;*/
+	color: #4183C4;
+	text-decoration: none;
 }
 
 #examples a {
-  /*text-decoration: underline;*/
+	text-decoration: underline;
+}
+*/
+
+#geocomplete {
+	width: 90%;
 }
 
-#geocomplete { width: 90%}
-
 input#geocomplete {
-	
 	height:20px;
-	
-	}
-input#find
-{
+}
+
+input#find {
 	height:18px;
 	cursor:pointer;
 	border:1px solid black;
 }
 
-.map_canvas { 
-  width: 100%; 
-  height: 200px; 
-  margin: 10px 20px 10px 0;
-  /* margin: 10px 20px 10px 0; */
+.map_canvas {
+	width: 100%;
+	height: 200px;
+	margin: 10px 20px 10px 0;
+	/* margin: 10px 20px 10px 0; */
 }
 
-#multiple li { 
-  /*cursor: pointer; */
-  /*text-decoration: underline; */
+/*
+#multiple li {
+	cursor: pointer;
+	text-decoration: underline;
 }
+*/

@@ -17,9 +17,9 @@
 .icon-48-groupedit			{ background-image: url(../images/icon-48-groupedit.png); }
 .icon-48-help 				{ background-image: url(../images/icon-48-help.png); }
 .icon-48-home 				{ background-image: url(../images/icon-48-home.png); }
-.icon-48-settings	 		{ background-image: url(../images/icon-48-settings.png); }
-.icon-48-tableexport	 	{ background-image: url(../images/icon-48-tableexport.png); }
-.icon-48-tableimport	 	{ background-image: url(../images/icon-48-tableimport.png); }
+.icon-48-settings 			{ background-image: url(../images/icon-48-settings.png); }
+.icon-48-tableexport 		{ background-image: url(../images/icon-48-tableexport.png); }
+.icon-48-tableimport 		{ background-image: url(../images/icon-48-tableimport.png); }
 .icon-48-update 			{ background-image: url(../images/icon-48-update.png); }
 .icon-48-users 				{ background-image: url(../images/icon-48-users.png); }
 .icon-48-venues 			{ background-image: url(../images/icon-48-venues.png); }
@@ -53,8 +53,15 @@ div.linkicon a:hover {
 	color: #0B55C4;
 }
 
-div.linkicon img  { padding: 10px 0; margin: 0 auto; }
-div.linkicon span { display: block; text-align: center; }
+div.linkicon img {
+	padding: 10px 0;
+	margin: 0 auto;
+}
+
+div.linkicon span {
+	display: block;
+	text-align: center;
+}
 
 /**
  * imageselect
@@ -114,7 +121,7 @@ div.imageinfo {
 }
 
 div.image {
-/*	padding-top: 10px; removed because of the button icons */
+	/* padding-top: 10px; removed because of the button icons */
 }
 
 div.pnav {
@@ -131,186 +138,169 @@ div.imghead {
 }
 
 /* Form validation */
-.invalid { border-color: #ff0000; }
-label.invalid { color: #ff0000; }
+.invalid {
+	border-color: #ff0000;
+}
 
+label.invalid {
+	color: #ff0000;
+}
 
 /* other */
-.copyright
-{ font-size: 0.85em; text-align: center; margin: 1em 0; color: #aaa; }
+.copyright {
+	font-size: 0.85em;
+	text-align: center;
+	margin: 1em 0;
+	color: #aaa;
+}
 
-
-input#jform_title
-{
+input#jform_title {
 	font-size: 0.909em !important;
 }
 
-
-div.clear
-{ border: 0; clear: both; float: none; height: 1px; line-height: 1px; }
+div.clear {
+	border: 0;
+	clear: both;
+	float: none;
+	height: 1px;
+	line-height: 1px;
+}
 
 .jem_centering {
 	text-align: center;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    padding: 0px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding: 0px;
 }
 
 div#page-parameters fieldset.adminform .el-spacer {
-  background-color:lightgrey;
-  padding:5px 0px;
+	background-color:lightgrey;
+	padding:5px 0px;
 }
-
-
 
 /* align radio buttons horizontally */
 .inputbox {
-    margin: 5px 5px 5px 5px;
-    cursor: pointer;
-}
-.inputbox:hover {
-    
+	margin: 5px 5px 5px 5px;
+	cursor: pointer;
 }
 
 /*align radio buttons on basic setting page*/
-label#storeip0-lbl, label#storeip1-lbl, label#lightbox0-lbl, label#lightbox1-lbl  {
-    float: none;
-    display: inline;
-}
-
-input#storeip0.inputbox, input#storeip1.inputbox, input#lightbox0.inputbox, input#lightbox1.inputbox  {
-    float: none;
-    display: inline;
-}
-
-/*align radio buttons on user control setting page*/
-label#evdelrec0-lbl, label#evdelrec1-lbl, label#evpubrec0-lbl, label#evpubrec1-lbl, label#eventeditrec0-lbl, label#eventeditrec1-lbl, label#eventowner0-lbl, label#eventowner1-lbl, label#locdelrec0-lbl, label#locdelrec1-lbl, label#locpubrec0-lbl, label#locpubrec1-lbl, label#venueeditrec0-lbl, label#venueeditrec1-lbl, label#venueowner0-lbl, label#venueowner1-lbl, label#eventowner0-lbl, label#eventowner1-lbl {
-   float: none;
-   display: inline;
-}
-
-input#evdelrec0.inputbox, input#evdelrec1.inputbox, input#evpubrec0.inputbox, input#evpubrec1.inputbox, input#eventeditrec0.inputbox, input#eventeditrec1.inputbox, input#eventowner0.inputbox, input#eventowner1-lbl.inputbox, input#locdelrec0.inputbox, input#locdelrec1.inputbox, input#locpubrec0.inputbox, input#locpubrec1.inputbox, input#venueeditrec0.inputbox, input#venueeditrec1.inputbox, input#venueowner0.inputbox, input#venueowner1.inputbox, input#eventowner0.inputbox, input#eventowner1.inputbox {
-   float: none;
-   display: inline;
-}
-
-
-/*align radio buttons on event setting page*/
-label#showtimedetails0-lbl, label#showtimedetails1-lbl, label#showevdescription0-lbl, label#showevdescription1-lbl, label#showdetailstitle0-lbl, label#showdetailstitle1-lbl, label#showlocdescription0-lbl, label#showlocdescription1-lbl, label#showdetailsadress0-lbl, label#showdetailsadress1-lbl {
-    float: none;
-    display: inline;
-}
-
-input#showtimedetails0.inputbox, input#showtimedetails1.inputbox, input#showevdescription0.inputbox, input#showevdescription1.inputbox, input#showdetailstitle0, input#showdetailstitle1, input#showlocdescription0, input#showlocdescription1, input#showdetailsadress0.inputbox, input#showdetailsadress1.inputbox {
-    float: none;
-    display: inline;
-}
-
-
-/*align radio buttons on layout setting page*/
-label#showtime0-lbl, label#showtime1-lbl, label#catlinklist0-lbl, label#catlinklist1-lbl, label#showlinkvenue0-lbl, label#showlinkvenue1-lbl, label#showstate0-lbl, label#showstate1-lbl, label#showcity0-lbl, label#showcity1-lbl, label#showtitle0-lbl, label#showtitle1-lbl, label#showeventimage0-lbl, label#showeventimage1-lbl, label#showatte0-lbl, label#showatte1-lbl, label#showcat0-lbl, label#showcat1-lbl, label#showlocate0-lbl, label#showlocate1-lbl {
-    float: none;
-    display: inline;
-}
-
-input#showtime0.inputbox, input#showtime1.inputbox, input#catlinklist0, input#catlinklist1, input#showlinkvenue0, input#showlinkvenue1, input#showeventimage1.inputbox, input#showeventimage0.inputbox, input#showstate1, input#showstate0, input#showcity1, input#showcity0, input#showtitle1, input#showtitle0, input#showeventimage1, input#showeventimage0, input#showatte1, input#showatte0, input#showcat1, input#showcat0, input#showlocate1, input#showlocate0  {
-    float: none;
-    display: inline;
-}
-
-/*align radio buttons on global setting page*/
-label#filter0-lbl, label#filter1-lbl, label#icons0-lbl, label#icons1-lbl, label#display0-lbl, label#display1-lbl, label#show_print_icon1-lbl, label#show_print_icon0-lbl, label#show_archive_icon1-lbl, label#show_archive_icon0-lbl, label#show_email_icon0-lbl, label#show_email_icon1-lbl, label#events_ical0-lbl, label#events_ical1-lbl, label#discatheader0-lbl, label#discatheader1-lbl {
-    float: none;
-    display: inline;
-}
-
-input#filter0.inputbox, input#filter1.inputbox, input#icons0.inputbox, input#icons1.inputbox, input#display0.inputbox, input#display1.inputbox, input#show_print_icon1.inputbox, input#show_print_icon0.inputbox, input#show_archive_icon1.inputbox, input#show_archive_icon0.inputbox, input#show_email_icon0.inputbox, input#show_email_icon1.inputbox, input#events_ical0.inputbox, input#events_ical1.inputbox, input#discatheader0.inputbox, input#discatheader1.inputbox {
-    float: none;
-    display: inline;
-}
-/*align radio buttons on import page*/
-label#replace_events0-lbl, label#replace_events1-lbl, label#replace_venues0-lbl, label#replace_venues1-lbl, label#replace_categories0-lbl, label#replace_categories1-lbl, label#replace_catevents0-lbl, label#replace_catevents1-lbl{
+label#storeip0-lbl, label#storeip1-lbl, label#lightbox0-lbl, label#lightbox1-lbl {
 	float: none;
 	display: inline;
 }
 
-input#replace_events0.inputbox, input#replace_events1.inputbox, input#replace_venues0.inputbox, input#replace_venues1.inputbox, input#replace_categories0.inputbox, input#replace_categories1.inputbox, input#replace_catevents0.inputbox, input#replace_catevents1.inputbox,{
+input#storeip0.inputbox, input#storeip1.inputbox, input#lightbox0.inputbox, input#lightbox1.inputbox {
+	float: none;
+	display: inline;
+}
+
+/*align radio buttons on user control setting page*/
+label#evdelrec0-lbl, label#evdelrec1-lbl, label#evpubrec0-lbl, label#evpubrec1-lbl, label#eventeditrec0-lbl, label#eventeditrec1-lbl, label#eventowner0-lbl, label#eventowner1-lbl, label#locdelrec0-lbl, label#locdelrec1-lbl, label#locpubrec0-lbl, label#locpubrec1-lbl, label#venueeditrec0-lbl, label#venueeditrec1-lbl, label#venueowner0-lbl, label#venueowner1-lbl, label#eventowner0-lbl, label#eventowner1-lbl {
+	float: none;
+	display: inline;
+}
+
+input#evdelrec0.inputbox, input#evdelrec1.inputbox, input#evpubrec0.inputbox, input#evpubrec1.inputbox, input#eventeditrec0.inputbox, input#eventeditrec1.inputbox, input#eventowner0.inputbox, input#eventowner1-lbl.inputbox, input#locdelrec0.inputbox, input#locdelrec1.inputbox, input#locpubrec0.inputbox, input#locpubrec1.inputbox, input#venueeditrec0.inputbox, input#venueeditrec1.inputbox, input#venueowner0.inputbox, input#venueowner1.inputbox, input#eventowner0.inputbox, input#eventowner1.inputbox {
+	float: none;
+	display: inline;
+}
+
+/*align radio buttons on event setting page*/
+label#showtimedetails0-lbl, label#showtimedetails1-lbl, label#showevdescription0-lbl, label#showevdescription1-lbl, label#showdetailstitle0-lbl, label#showdetailstitle1-lbl, label#showlocdescription0-lbl, label#showlocdescription1-lbl, label#showdetailsadress0-lbl, label#showdetailsadress1-lbl {
+	float: none;
+	display: inline;
+}
+
+input#showtimedetails0.inputbox, input#showtimedetails1.inputbox, input#showevdescription0.inputbox, input#showevdescription1.inputbox, input#showdetailstitle0, input#showdetailstitle1, input#showlocdescription0, input#showlocdescription1, input#showdetailsadress0.inputbox, input#showdetailsadress1.inputbox {
+	float: none;
+	display: inline;
+}
+
+/*align radio buttons on layout setting page*/
+label#showtime0-lbl, label#showtime1-lbl, label#catlinklist0-lbl, label#catlinklist1-lbl, label#showlinkvenue0-lbl, label#showlinkvenue1-lbl, label#showstate0-lbl, label#showstate1-lbl, label#showcity0-lbl, label#showcity1-lbl, label#showtitle0-lbl, label#showtitle1-lbl, label#showeventimage0-lbl, label#showeventimage1-lbl, label#showatte0-lbl, label#showatte1-lbl, label#showcat0-lbl, label#showcat1-lbl, label#showlocate0-lbl, label#showlocate1-lbl {
+	float: none;
+	display: inline;
+}
+
+input#showtime0.inputbox, input#showtime1.inputbox, input#catlinklist0, input#catlinklist1, input#showlinkvenue0, input#showlinkvenue1, input#showeventimage1.inputbox, input#showeventimage0.inputbox, input#showstate1, input#showstate0, input#showcity1, input#showcity0, input#showtitle1, input#showtitle0, input#showeventimage1, input#showeventimage0, input#showatte1, input#showatte0, input#showcat1, input#showcat0, input#showlocate1, input#showlocate0 {
+	float: none;
+	display: inline;
+}
+
+/*align radio buttons on global setting page*/
+label#filter0-lbl, label#filter1-lbl, label#icons0-lbl, label#icons1-lbl, label#display0-lbl, label#display1-lbl, label#show_print_icon1-lbl, label#show_print_icon0-lbl, label#show_archive_icon1-lbl, label#show_archive_icon0-lbl, label#show_email_icon0-lbl, label#show_email_icon1-lbl, label#events_ical0-lbl, label#events_ical1-lbl, label#discatheader0-lbl, label#discatheader1-lbl {
+	float: none;
+	display: inline;
+}
+
+input#filter0.inputbox, input#filter1.inputbox, input#icons0.inputbox, input#icons1.inputbox, input#display0.inputbox, input#display1.inputbox, input#show_print_icon1.inputbox, input#show_print_icon0.inputbox, input#show_archive_icon1.inputbox, input#show_archive_icon0.inputbox, input#show_email_icon0.inputbox, input#show_email_icon1.inputbox, input#events_ical0.inputbox, input#events_ical1.inputbox, input#discatheader0.inputbox, input#discatheader1.inputbox {
+	float: none;
+	display: inline;
+}
+
+/*align radio buttons on import page*/
+label#replace_events0-lbl, label#replace_events1-lbl, label#replace_venues0-lbl, label#replace_venues1-lbl, label#replace_categories0-lbl, label#replace_categories1-lbl, label#replace_catevents0-lbl, label#replace_catevents1-lbl {
+	float: none;
+	display: inline;
+}
+
+input#replace_events0.inputbox, input#replace_events1.inputbox, input#replace_venues0.inputbox, input#replace_venues1.inputbox, input#replace_categories0.inputbox, input#replace_categories1.inputbox, input#replace_catevents0.inputbox, input#replace_catevents1.inputbox {
 	float: none;
 	display: inline;
 }
 
 /*align other stuff, eventpage*/
-label#published0-lbl, label#published1-lbl{
-float: none;
-    display: inline;
+label#published0-lbl, label#published1-lbl {
+	float: none;
+	display: inline;
 }
-input#published0, input#published1{
-float: none;
-    display: inline;
+input#published0, input#published1 {
+	float: none;
+	display: inline;
 }
-
 
 input#gddisabled0, input#gddisabled1 {
-  float: none;
-    margin: 5px 5px 5px 5px;
-    display: inline;
+	float: none;
+	margin: 5px 5px 5px 5px;
+	display: inline;
 }
 
-
-
-/* other */
-.copyright
-{ font-size: 0.85em; text-align: center; margin: 1em 0; color: #aaa; }
-
-div.clear
-{ border: 0; clear: both; float: none; height: 1px; line-height: 1px; }
-
-
 table#el-attachments td {
-  padding: 0 5px;
+	padding: 0 5px;
 }
 
 table#el-attachments img {
-   cursor:pointer; 
+	cursor:pointer;
 }
 
-
-table#el-attachments img:hover {
-}
-
-
-
+table#el-attachments img:hover {}
 
 /* -------------------
-   General Pagination
+	General Pagination
 --------------------- */
 div.pagination {
-    clear: inherit;
-    float: both;
-    text-align: center !important;
-    margin: 15px 0 0 0 !important;
+	clear: inherit;
+	float: both;
+	text-align: center !important;
+	margin: 15px 0 0 0 !important;
 }
 
- 
 div.pagination p.counter {
-    font-style: italic;
+	font-style: italic;
 }
- 
+
 div.pagination ul {
-    list-style: none;
-    text-align: center !important;
-    padding: 0;
+	list-style: none;
+	text-align: center !important;
+	padding: 0;
 }
- 
+
 div.pagination ul li {
-    list-style: none;
-    display: inline;
-    padding: 0 5px 0 5px;
+	list-style: none;
+	display: inline;
+	padding: 0 5px 0 5px;
 }
-
-
-
-
 
 /* -- CONTROL PANEL STYLES ----------------------------- */
 /* ---bluestork template, J2.5-------------------------- */
@@ -319,8 +309,8 @@ div.pagination ul li {
 	margin-right: 15px;
 	float: left;
 	margin-bottom: 15px;
-
 }
+
 .cpanel div.icon a, #cpanel div.icon a {
 	background-color: #fff;
 	background-position: -30px;
@@ -332,18 +322,11 @@ div.pagination ul li {
 	vertical-align: middle;
 	text-decoration: none;
 	border: 1px solid #CCC;
-
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
-	-webkit-transition-property:
-		background-position,
-		-webkit-border-bottom-left-radius,
-		-webkit-box-shadow;
-	-moz-transition-property:
-		background-position,
-		-moz-border-radius-bottomleft,
-		-moz-box-shadow;
+	-webkit-transition-property: background-position, -webkit-border-bottom-left-radius, -webkit-box-shadow;
+	-moz-transition-property: background-position, -moz-border-radius-bottomleft, -moz-box-shadow;
 	-webkit-transition-duration: 0.8s;
 	-moz-transition-duration: 0.8s;
 }
@@ -387,15 +370,7 @@ div.cpanel-right {
 	float: right;
 }
 
-
-
-
-
-
-
-
 /* -----------ZEBRA STRIPES, J3+ Isis template -------------- */
-
 .table-striped tbody tr:nth-child(odd) td,
 .table-striped tbody tr:nth-child(odd) th {
 	background-color: #f9f9f9;
@@ -406,22 +381,21 @@ div.cpanel-right {
 	background-color: #e8f6fe;
 }
 
-
 /* ---------- TABLE, J3 Isis template -------------------------- */
-
 table {
 	max-width: 100%;
 	background-color: transparent;
 	border-collapse: seperate;
 	border-spacing: 0;
-	
 	/* font-family: Helvetica; */
 	/* font-size:1.1em; */
 }
+
 .table {
 	width: 100%;
 	margin-bottom: 18px;
 }
+
 .table th,
 .table td {
 	padding: 8px;
@@ -430,14 +404,16 @@ table {
 	vertical-align: top;
 	border-top: 1px solid #ddd;
 }
+
 .table th {
 	font-weight: bold;
 	background: #E3E0D5;
 }
+
 .table thead th {
 	vertical-align: bottom;
-
 }
+
 .table caption + thead tr:first-child th,
 .table caption + thead tr:first-child td,
 .table colgroup + thead tr:first-child th,
@@ -447,13 +423,16 @@ table {
 	border-top: 1px solid #999;
 	border-bottom: 1px solid #999;
 }
+
 .table tbody + tbody {
 	border-top: 2px solid #ddd;
 }
+
 .table-condensed th,
 .table-condensed td {
 	padding: 4px 5px;
 }
+
 .table-bordered {
 	border: 1px solid #ddd;
 	border-collapse: separate;
@@ -463,10 +442,12 @@ table {
 	-moz-border-radius: 4px;
 	border-radius: 4px;
 }
+
 .table-bordered th,
 .table-bordered td {
 	border-left: 1px solid #ddd;
 }
+
 .table-bordered caption + thead tr:first-child th,
 .table-bordered caption + tbody tr:first-child th,
 .table-bordered caption + tbody tr:first-child td,
@@ -478,18 +459,21 @@ table {
 .table-bordered tbody:first-child tr:first-child td {
 	border-top: 0;
 }
+
 .table-bordered thead:first-child tr:first-child th:first-child,
 .table-bordered tbody:first-child tr:first-child td:first-child {
 	-webkit-border-top-left-radius: 4px;
 	border-top-left-radius: 4px;
 	-moz-border-radius-topleft: 4px;
 }
+
 .table-bordered thead:first-child tr:first-child th:last-child,
 .table-bordered tbody:first-child tr:first-child td:last-child {
 	-webkit-border-top-right-radius: 4px;
 	border-top-right-radius: 4px;
 	-moz-border-radius-topright: 4px;
 }
+
 .table-bordered thead:last-child tr:last-child th:first-child,
 .table-bordered tbody:last-child tr:last-child td:first-child,
 .table-bordered tfoot:last-child tr:last-child td:first-child {
@@ -500,6 +484,7 @@ table {
 	border-bottom-left-radius: 4px;
 	-moz-border-radius-bottomleft: 4px;
 }
+
 .table-bordered thead:last-child tr:last-child th:last-child,
 .table-bordered tbody:last-child tr:last-child td:last-child,
 .table-bordered tfoot:last-child tr:last-child td:last-child {
@@ -507,6 +492,7 @@ table {
 	border-bottom-right-radius: 4px;
 	-moz-border-radius-bottomright: 4px;
 }
+
 .table-bordered caption + thead tr:first-child th:first-child,
 .table-bordered caption + tbody tr:first-child td:first-child,
 .table-bordered colgroup + thead tr:first-child th:first-child,
@@ -515,6 +501,7 @@ table {
 	border-top-left-radius: 4px;
 	-moz-border-radius-topleft: 4px;
 }
+
 .table-bordered caption + thead tr:first-child th:last-child,
 .table-bordered caption + tbody tr:first-child td:last-child,
 .table-bordered colgroup + thead tr:first-child th:last-child,
@@ -523,154 +510,183 @@ table {
 	border-top-right-radius: 4px;
 	-moz-border-right-topleft: 4px;
 }
+
 .table-striped tbody tr:nth-child(odd) td,
 .table-striped tbody tr:nth-child(odd) th {
 	background-color: #f9f9f9;
 }
+
 .table-hover tbody tr:hover td,
 .table-hover tbody tr:hover th {
 	background-color: #f5f5f5;
 }
+
 table [class*=span],
 .row-fluid table [class*=span] {
 	display: table-cell;
 	float: none;
 	margin-left: 0;
 }
+
 table .span1 {
 	float: none;
 	width: 44px;
 	margin-left: 0;
 }
+
 table .span2 {
 	float: none;
 	width: 124px;
 	margin-left: 0;
 }
+
 table .span3 {
 	float: none;
 	width: 204px;
 	margin-left: 0;
 }
+
 table .span4 {
 	float: none;
 	width: 284px;
 	margin-left: 0;
 }
+
 table .span5 {
 	float: none;
 	width: 364px;
 	margin-left: 0;
 }
+
 table .span6 {
 	float: none;
 	width: 444px;
 	margin-left: 0;
 }
+
 table .span7 {
 	float: none;
 	width: 524px;
 	margin-left: 0;
 }
+
 table .span8 {
 	float: none;
 	width: 604px;
 	margin-left: 0;
 }
+
 table .span9 {
 	float: none;
 	width: 684px;
 	margin-left: 0;
 }
+
 table .span10 {
 	float: none;
 	width: 764px;
 	margin-left: 0;
 }
+
 table .span11 {
 	float: none;
 	width: 844px;
 	margin-left: 0;
 }
+
 table .span12 {
 	float: none;
 	width: 924px;
 	margin-left: 0;
 }
+
 table .span13 {
 	float: none;
 	width: 1004px;
 	margin-left: 0;
 }
+
 table .span14 {
 	float: none;
 	width: 1084px;
 	margin-left: 0;
 }
+
 table .span15 {
 	float: none;
 	width: 1164px;
 	margin-left: 0;
 }
+
 table .span16 {
 	float: none;
 	width: 1244px;
 	margin-left: 0;
 }
+
 table .span17 {
 	float: none;
 	width: 1324px;
 	margin-left: 0;
 }
+
 table .span18 {
 	float: none;
 	width: 1404px;
 	margin-left: 0;
 }
+
 table .span19 {
 	float: none;
 	width: 1484px;
 	margin-left: 0;
 }
+
 table .span20 {
 	float: none;
 	width: 1564px;
 	margin-left: 0;
 }
+
 table .span21 {
 	float: none;
 	width: 1644px;
 	margin-left: 0;
 }
+
 table .span22 {
 	float: none;
 	width: 1724px;
 	margin-left: 0;
 }
+
 table .span23 {
 	float: none;
 	width: 1804px;
 	margin-left: 0;
 }
+
 table .span24 {
 	float: none;
 	width: 1884px;
 	margin-left: 0;
 }
+
 .table tbody tr.success td {
 	background-color: #dff0d8;
 }
+
 .table tbody tr.error td {
 	background-color: #f2dede;
 }
+
 .table tbody tr.info td {
 	background-color: #d9edf7;
 }
 
-
 table.table tfoot tr {
-    text-align: center;
-    color: rgb(51, 51, 51);
+	text-align: center;
+	color: rgb(51, 51, 51);
 }
 
 table.table tfoot tr {
@@ -696,13 +712,6 @@ table.table .pagination {
 	text-align: center;
 }
 
-
-
-
-.highlight {   background: none repeat scroll 0 0 #FFFF00; }
-
-
-
-
-
-
+.highlight {
+	background: none repeat scroll 0 0 #FFFF00;
+}

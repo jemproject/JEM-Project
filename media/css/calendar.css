@@ -58,29 +58,28 @@ table.month {
 	border-bottom: 1px solid black;
 }
 
-
 .monthday, .selectedday {
 	background-color:#F7F7F7;
 	height:88px;
 }
 
 .monthday, .today {
-  background-color:#F7F7F7;
-  height:88px;
+	background-color:#F7F7F7;
+	height:88px;
 }
 
 .selectedday .daynum {
-  background-color:#31528E;
+	background-color:#31528E;
 }
 
 .nomonthday {
-  background-color:#EEEEEE;
-  height:88px;
+	background-color:#EEEEEE;
+	height:88px;
 }
 
 .sunday, .saturday {
-  background-color:#D4D4D4;
-  height:88px;
+	background-color:#D4D4D4;
+	height:88px;
 }
 
 div[id^=catz] {
@@ -96,7 +95,7 @@ div[id^=catz] {
 }
 
 div[id^=catz] a {
-  color: #333;
+	color: #333;
 }
 
 div[id^='venuez'] {
@@ -114,7 +113,6 @@ div[id^='venuez'] {
 div[id^='venuez'] a {
 	color: #333;
 }
-
 
 div[id^='scat'] {
 	background-color:yellow;
@@ -143,61 +141,57 @@ div[id^='scat'] {
 	margin: 2px;
 }
 
-
-.cat1
-{
+.cat1 {
 	/*background-color:yellow;*/
 	/*border: 1px solid grey;*/
 	/*border-radius: 2px;*/
 	/*padding: 5px;*/
 	/*margin: 2px;*/
-	
 }
-
 
 /*
 .eventcontent a:link, a:visited, a:active {
-  color: #333;
+	color: #333;
 }
 */
 
 /* for the tooltip */
 .custom-tip {
-   color: #000;
-   width: 200px;
-   z-index: 13000;
-   border: 1px solid lightgrey;
+	color: #000;
+	width: 200px;
+	z-index: 13000;
+	border: 1px solid lightgrey;
 }
 
 .custom-title {
-   font-weight: bold;
-   font-size: 11px;
-   margin: 10;
-   color: white;
-   padding: 2px 5px 1px;
-   background: #7598FF;
-   text-align:left;
+	font-weight: bold;
+	font-size: 11px;
+	margin: 10;
+	color: white;
+	padding: 2px 5px 1px;
+	background: #7598FF;
+	text-align:left;
 }
 
 .custom-text {
-   font-size: 11px;
-   padding: 2px 2px 2px;
-   background: white;
+	font-size: 11px;
+	padding: 2px 2px 2px;
+	background: white;
 }
 
 .custom-tip .eventName {
-  text-align:left;
-  background: lightgrey;
-  margin: 5px 0px 5px;
+	text-align:left;
+	background: lightgrey;
+	margin: 5px 0px 5px;
 }
 
 
 .custom-tip .location {
-  text-align:left;
+	text-align:left;
 }
 
 .custom-tip .location .legend {
-  font-weight: bold;
+	font-weight: bold;
 }
 
 .colorpic {
@@ -206,7 +200,7 @@ div[id^='scat'] {
 }
 
 #jlcalendarlegend {
-  clear: both;	
+	clear: both;
 }
 
 #jlcalendarlegend .eventCat {
@@ -216,35 +210,35 @@ div[id^='scat'] {
 }
 
 #jlcalendarlegend .eventCat.catoff {
-  color: lightgrey;
-  font-style: italic;
+	color: lightgrey;
+	font-style: italic;
 }
 
 .daynum a {
-  color: #FBFCEF !important;
-  text-decoration:none;
-  background-color:inherit !important;
+	color: #FBFCEF !important;
+	text-decoration:none;
+	background-color:inherit !important;
 }
 
 
-.today .daynum a  {
-  color:#FFFFFF;
-  background-color:red;
+.today .daynum a {
+	color:#FFFFFF;
+	background-color:red;
 }
 
 
 div#buttonshowall {
-  float: left;
-  padding: 1px 5px;
-  cursor: pointer;
+	float: left;
+	padding: 1px 5px;
+	cursor: pointer;
 }
 
 div#buttonhideall {
-  float: left;
-  padding: 1px 5px;
-  cursor: pointer;
-  
-div#jem td
-{
-border: 1px dotted black;
+	float: left;
+	padding: 1px 5px;
+	cursor: pointer;
+}
+
+div#jem td {
+	border: 1px dotted black;
 }

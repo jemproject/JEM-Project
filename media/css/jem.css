@@ -6,8 +6,6 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-
-
 /**
  * @section reset
  *
@@ -15,153 +13,122 @@
  */
 
 /** reset all paddings/margins */
-/* div#jem * { margin: 0; padding: 0; } */
+/*
+div#jem * {
+	margin: 0;
+	padding: 0;
+}
+*/
 
 /** border (red) around the JEM component */
-/* div#jem { border: 1px solid red; } */
+/*
+div#jem {
+	border: 1px solid red;
+}
+*/
 
 /** border (blue) around all JEM elements */
-/* div#jem * { border: 1px solid blue; } */
-
+/*
+div#jem * {
+	border: 1px solid blue;
+}
+*/
 
 /* focus */
-div#jem .inputbox:focus
-{
-border:1px solid grey;
-/*background:#EFF53D; */
-background:#DDE084;
+div#jem .inputbox:focus {
+	border:1px solid grey;
+	/*background:#EFF53D; */
+	background:#DDE084;
 }
 
-div#jem .hr
-{
+div#jem .hr {
 	border:0;
-  border-top: 1px solid #E19832;
-  height: 0;
-  background: #E19832;
+	border-top: 1px solid #E19832;
+	height: 0;
+	background: #E19832;
 }
 
-
-div#jem .tabs
-{
+div#jem .tabs {
 margin:inherit;
 }
 
 input .required {
-    background-color: rgb(213, 238, 255) !important;
+	background-color: rgb(213, 238, 255) !important;
 }
 
 /* container JEM, 2 classes (inputbox + required) specified */
 div#jem .inputbox.required {
-    background-color: rgb(213, 238, 255) !important;
+	background-color: rgb(213, 238, 255) !important;
 }
 
-
-div#jem .inputbox:hover
-{
-border:1px solid grey;
-/*background:#EFF53D; */
-background:#DDE084;
+div#jem .inputbox:hover {
+	border:1px solid grey;
+	/*background:#EFF53D; */
+	background:#DDE084;
 }
 
 /*
-div#jem .inputbox2
-{
-border:1px solid grey;
-background: #B3BABA;
-cursor:pointer;
+div#jem .inputbox2 {
+	border:1px solid grey;
+	background: #B3BABA;
+	cursor:pointer;
 }
 */
 
-div#jem .inputbox
-{
-border:1px solid grey;
-/*background: #B3BABA;*/
-
-background: #C6CCBE;
-cursor:pointer;
-
+div#jem .inputbox {
+	border:1px solid grey;
+	/*background: #B3BABA;*/
+	background: #C6CCBE;
+	cursor:pointer;
 }
 
-div#jem .input
-{
-border:1px solid grey;
-background: #B3BABA;
-cursor:pointer;
+div#jem .input {
+	border:1px solid grey;
+	background: #B3BABA;
+	cursor:pointer;
 }
-
-
-
-
 
 #main a
 
-
-
-
-div#jem h1 {
-
-}
+div#jem h1 {}
 
 div#jem .jemcomponentheading {
-border-bottom: 0px !important;
-
+	border-bottom: 0px !important;
 }
 
-div#jem .event-file-dl-icon img
-{
-padding: 5px;
+div#jem .event-file-dl-icon img {
+	padding: 5px;
 }
 
-div#jc h4 {
-
-}
+div#jc h4 {}
 
 div#jem fieldset {
-    border: 1px dotted grey !important;
+	border: 1px dotted grey !important;
 }
-
-
-
-
 
 /**
  * @section clear
- *
  * clearing the float containers
  */
 div#jem {
-    overflow: hidden;
-    background-color: rgb(237, 244, 245);
-    border: 1px solid black;
-    border-radius: 5px 5px 5px 5px;
-    padding: 10px;
+	overflow: hidden;
+	background-color: rgb(237, 244, 245);
+	border: 1px solid black;
+	border-radius: 5px 5px 5px 5px;
+	padding: 10px;
 }
 
-
-
-
-
-
-   /**
-	* @section button
-	* 
-	* 
-	*/
-	
-	
-	/* Alinging the icons to the right */
-div#jem .buttons
-{ 
-	float:right; 
+/**
+* @section button
+*/
+/* Alinging the icons to the right */
+div#jem .buttons {
+	float:right;
 }
 
-
-div#jem .buttons a
-{ 
-border:1px solid grey; 
-}	
-	
-	
+div#jem .buttons a {
+border:1px solid grey;
+}
 
 /* Edit-event view */
 div#jem .button1 {
@@ -194,9 +161,7 @@ div#jem .button1:hover {
 	text-decoration:none;
 }
 
-
-/* Filter button  */
-
+/* Filter button */
 div#jem .buttonfilter {
 	-webkit-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
 	-moz-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
@@ -227,40 +192,45 @@ div#jem .buttonfilter:hover {
 	text-decoration:none;
 }
 
+div#jem .clear {
+	border: 0;
+	clear: both;
+	float: none;
+	height: 1px;
+	line-height: 1px;
+}
 
-div#jem .clear
-{ border: 0; clear: both; float: none; height: 1px; line-height: 1px; }
+/* ie fix in coditional comments (html source) */
+div#jem .floattext:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
 
-div#jem .floattext:after /* ie fix in coditional comments (html source) */
-{content: "."; display: block; height: 0; clear: both; visibility: hidden;}
-
-div#jem .floattext
-{ display:block; /* safari */ }
-
-
-
-
+div#jem .floattext {
+	display:block; /* safari */
+}
 
 /**
  * @section headlines
  */
 div#jem h2 {
-    font-size: normal !important;
-    font-weight:normal !important;
-    margin-top:1em;
-    margin-bottom:1em;
-    padding: 0.3em 0.3em;
-    margin: normal;
-    background: none repeat scroll 0% 0% rgb(212, 214, 178);
-    border: 1px solid grey;
+	font-size: normal !important;
+	font-weight:normal !important;
+	margin-top:1em;
+	margin-bottom:1em;
+	padding: 0.3em 0.3em;
+	margin: normal;
+	background: none repeat scroll 0% 0% rgb(212, 214, 178);
+	border: 1px solid grey;
 }
-
 
 div#jem h2 img {
-border: none;
-margin-left:0.3em;
+	border: none;
+	margin-left:0.3em;
 }
-
 
 /**
  * @section definitionlist
@@ -268,657 +238,646 @@ margin-left:0.3em;
  * Event
  */
 div#jem dl {
-margin: 0 5px;
+	margin: 0 5px;
 }
 
 div#jem dt { /* definition term */
-margin: 0; padding: 0.3em 0;
-float:left;
-font-size: 1em; font-weight: bold;
-width: 11em;
-background: transparent;
-border-bottom: 1px solid #ddd;
+	margin: 0;
+	padding: 0.3em 0;
+	float:left;
+	font-size: 1em;
+	font-weight: bold;
+	width: 11em;
+	background: transparent;
+	border-bottom: 1px solid #ddd;
 }
 
 div#jem dd { /* definition description */
-display: block;
-margin: 0 0 5px 12em; padding: 0.3em 0;
-font-size: 1em;
-background: transparent;
+	display: block;
+	margin: 0 0 5px 12em;
+	padding: 0.3em 0;
+	font-size: 1em;
+	background: transparent;
 }
 
-* html .floattext dd /* ie6 fix against the 3px jog bug */
-{ height: 1%; }
+* html .floattext dd /* ie6 fix against the 3px jog bug */ {
+	height: 1%;
+}
 
 div#jem div.description {
-margin: 5px 0; padding: 0 5px;
+	margin: 5px 0;
+	padding: 0 5px;
 }
 
 div#jem div.no_space,
 div#jem .no_space {
-margin: 0; padding: 0;
+	margin: 0;
+	padding: 0;
 }
 
 div#jem .copyright {
-font-size: 0.9em; text-align: center;
-margin: 1em 0;
-color: #aaa;
-float:none;
+	font-size: 0.9em;
+	text-align: center;
+	margin: 1em 0;
+	color: #aaa;
+	float:none;
 }
-
 
 /**
  * @section images
- *
  * flyer, locations, maps, ...
  */
-
-
 div#jem .notmodal {
-float:right !important;
-border: 1px solid #000000 !important;
-width:auto;
-position: static !important;
-background:transparent;
-border:0px solid black;
-box-shadow:none;
+	float:right !important;
+	border: 1px solid #000000 !important;
+	width:auto;
+	position: static !important;
+	background:transparent;
+	border:0px solid black;
+	box-shadow:none;
 }
-
 
 div#jem .flyerimage {
-float:right !important;
-border: 1px solid #000000 !important;
-width:auto;
-position: static !important;
-background:transparent;
-border:0px solid black;
-box-shadow:none;
+	float:right !important;
+	border: 1px solid #000000 !important;
+	width:auto;
+	position: static !important;
+	background:transparent;
+	border:0px solid black;
+	box-shadow:none;
 }
 
-
-
-
 /**
- * 
- *
  * maps, ...
  */
 div#jem .map {
-margin:0.3em;
-position: relative;
+	margin:0.3em;
+	position: relative;
 }
 
 div#googlemap .modal {
-border:none;
+	border:none;
 }
-
-
-
-
-
-
 
 div#jem a.modal img,
 div#jem img.modal,
 div#jem .catimg img,
 div#jem .map {
-/* padding:1px;  */
+	/* padding:1px; */
 }
-
-
 
 /**
  * @section registered user list
  */
- 
 div#jem div.register {
-margin: 5px 0; padding: 0 5px;
+	margin: 5px 0;
+	padding: 0 5px;
 }
 
 div#jem ul.user {
-margin:5px; padding:0;
-list-style:none;
-font-size:0.9em;
+	margin:5px;
+	padding:0;
+	list-style:none;
+	font-size:0.9em;
 }
 
 div#jem ul.user li {
-float:left;
-margin:5px;
-list-style:none;
+	float:left;
+	margin:5px;
+	list-style:none;
 }
 
 div#jem ul.user li img {
-border: #ddd 1px solid;
-padding:3px;
+	border: #ddd 1px solid;
+	padding:3px;
 }
 
 div#jem ul.user li span.username {
-display:block;
-text-align:center; font-weight:bold;
+	display:block;
+	text-align:center;
+	font-weight:bold;
 }
-
-
-
-
 
 /* -------------------
-   General Pagination
+	General Pagination
 --------------------- */
 div.pagination {
-    clear: both;
-    text-align: center !important;
-    margin: 15px 0 0 0 !important;
+	clear: both;
+	text-align: center !important;
+	margin: 15px 0 0 0 !important;
 }
- 
+
 div.pagination p.counter {
-    font-style: italic;
+	font-style: italic;
 }
- 
+
 div.pagination ul {
-    list-style: none;
-    text-align: center !important;
-    padding: 0;
+	list-style: none;
+	text-align: center !important;
+	padding: 0;
 }
- 
+
 div.pagination ul li {
-    list-style: none;
-    display: inline;
-    padding: 0 5px 0 5px;
+	list-style: none;
+	display: inline;
+	padding: 0 5px 0 5px;
 }
-
-
 
 /**
  * @section Categoryview
  */
 div#jem .catimg {
-margin: 0 0.5em 0.5em 0;
-float: left;
-position: relative;
+	margin: 0 0.5em 0.5em 0;
+	float: left;
+	position: relative;
 }
 
 div#jem .catimg p {
-font-size: 0.9em; line-height: 180%;
-margin: 0 0 0.5em 0;
+	font-size: 0.9em;
+	line-height: 180%;
+	margin: 0 0 0.5em 0;
 }
 
 div#jem .catdescription {
-margin: 0 0 0.5em 0;
+	margin: 0 0 0.5em 0;
 }
 
 /**
  * @section JEM Table
  */
-div#jem table.eventtable
-{ background: #DEDEDE; margin: 1em 1px; width: 100%; font-size: 1em; border-collapse:collapse; }
-
-div#jem table.eventtable th
-{ 
-background-color: #809EA8 !important; 
-color: #ffffff; 
-font-weight: bold; 
-padding: 0.4em; 
-text-align: left; 
-border:1px solid black; 
+div#jem table.eventtable {
+	background: #DEDEDE;
+	margin: 1em 1px;
+	width: 100%;
+	font-size: 1em;
+	border-collapse:collapse;
 }
 
+div#jem table.eventtable th {
+	background-color: #809EA8 !important;
+	color: #ffffff;
+	font-weight: bold;
+	padding: 0.4em;
+	text-align: left;
+	border:1px solid black;
+}
 
+div#jem table.eventtable th a {
+	color: white;
+	background-color: transparent;
+}
 
- div#jem table.eventtable th a
- {
-color: white;
-background-color: transparent;	 
- }
- 
- div#jem table.eventtable th a:hover
- {
-background-color: transparent ;	 
- }
- 
+div#jem table.eventtable th a:hover {
+	background-color: transparent ;
+}
 
-div#jem table.eventtable th img
-{ margin: 0 0 5px 5px; vertical-align: middle; border: none; }
+div#jem table.eventtable th img {
+	margin: 0 0 5px 5px;
+	vertical-align: middle;
+	border: none;
+}
 
-div#jem table.eventtable td
-{ background-color: #EAEBE1; padding: 0.4em; border:1px solid black; vertical-align: top; }
+div#jem table.eventtable td {
+	background-color: #EAEBE1;
+	padding: 0.4em;
+	border:1px solid black;
+	vertical-align: top;
+}
 
-div#jem table.eventtable tr.sectiontableentry2 td
-{ background: #EDEDED; }
+div#jem table.eventtable tr.sectiontableentry2 td {
+	background: #EDEDED;
+}
 
-div#jem table.eventtable tr:hover td
-{ background: #BACFBA }
-
-
+div#jem table.eventtable tr:hover td {
+	background: #BACFBA
+}
 
 /**
  * @section JEM Table Filter Form
  */
 div#jem #jem_filter {
-margin: 1em 0 0.5em 0; padding: 0.5em;
-border: solid 1px grey;
-background: orange;
+	margin: 1em 0 0.5em 0;
+	padding: 0.5em;
+	border: solid 1px grey;
+	background: orange;
 }
 
 div#jem .jem_fleft {
-float: left;
+	float: left;
 }
 
 div#jem .jem_fright {
-float: right;
+	float: right;
 }
-
 
 /**
  * @section Editevent Form
  */
-
 div.jem_editevent form fieldset,
 div.jem_editvenue form fieldset {
-margin: 0 0 1em 0;
-padding: 1em;
+	margin: 0 0 1em 0;
+	padding: 1em;
 }
 
-    div.jem_editevent form legend,
-    div.jem_editvenue form legend {
-    padding: 0.3em;
-    font-weight: bold;
-    background: orange;
-    border-radius:5px;
-    border:1px solid black;
-    }
+div.jem_editevent form legend,
+div.jem_editvenue form legend {
+	padding: 0.3em;
+	font-weight: bold;
+	background: orange;
+	border-radius:5px;
+	border:1px solid black;
+}
 
-    div.jem_editevent form label,
-    div.jem_editvenue form label {
-    width: 9em;
-    margin: 0; padding: 0;
-    float: left; display: block;
-    vertical-align: top;
-    }
+div.jem_editevent form label,
+div.jem_editvenue form label {
+	width: 9em;
+	margin: 0;
+	padding: 0;
+	float: left;
+	display: block;
+	vertical-align: top;
+}
 
-    div.jem_editevent form input:hover, /* event */
-    div.jem_editevent form button:hover,
-    div.jem_editevent form select:hover,
-    div.jem_editevent form textarea:hover,
-    
-    div.jem_editvenue form input:hover, /* venue */
-    div.jem_editvenue form button:hover,
-    div.jem_editvenue form select:hover,
-    div.jem_editvenue form textarea:hover {
-    margin: 0 0 0.5em 0; padding: 0.2em;
-    border: 1px solid grey;
-    cursor: pointer;
-    background:#DDE084;
-    border:1px solid grey;
-    }
-    div.jem_editevent form input:active, /* event */
-    div.jem_editevent form button:active,
-    div.jem_editevent form select:active,
-    div.jem_editevent form textarea:active,
-    
-    div.jem_editvenue form input:active, /* venue */
-    div.jem_editvenue form button:active,
-    div.jem_editvenue form select:active,
-    div.jem_editvenue form textarea:active {
-    margin: 0 0 0.5em 0; padding: 0.2em;
-    border: 1px solid grey;
-    cursor: pointer;
-    background-color: #C6CCBE;
-    }
-    div.jem_editevent form input:visited, /* event */
-    div.jem_editevent form button:visited,
-    div.jem_editevent form select:visited,
-    div.jem_editevent form textarea:visited,
-    
-    div.jem_editvenue form input:visited, /* venue */
-    div.jem_editvenue form button:visited,
-    div.jem_editvenue form select:visited,
-    div.jem_editvenue form textarea:visited {
-    margin: 0 0 0.5em 0; padding: 0.2em;
-    border: 1px solid grey;
-    cursor: pointer;
-    background-color: #C6CCBE;
-    }
-    div.jem_editevent form input:active, /* event */
-    div.jem_editevent form button:active,
-    div.jem_editevent form select:active,
-    div.jem_editevent form textarea:active,
-    
-    div.jem_editvenue form input:active, /* venue */
-    div.jem_editvenue form button:active,
-    div.jem_editvenue form select:active,
-    div.jem_editvenue form textarea:active {
-    margin: 0 0 0.5em 0; padding: 0.2em;
-    border: 1px solid grey;
-    cursor: pointer;
-    background-color: #C6CCBE;
-    }
-    
-    
-    
-    div.jem_editevent form input, /* event */
-    div.jem_editevent form button,
-    div.jem_editevent form select,
-    div.jem_editevent form textarea,
-    
-    div.jem_editvenue form input, /* venue */
-    div.jem_editvenue form button,
-    div.jem_editvenue form select,
-    div.jem_editvenue form textarea {
-    margin: 0 0 0.5em 0; padding: 0.2em;
-    border: 1px solid grey;
-    cursor: pointer;
-    background-color: #C6CCBE;
-    }
+div.jem_editevent form input:hover, /* event */
+div.jem_editevent form button:hover,
+div.jem_editevent form select:hover,
+div.jem_editevent form textarea:hover,
+div.jem_editvenue form input:hover, /* venue */
+div.jem_editvenue form button:hover,
+div.jem_editvenue form select:hover,
+div.jem_editvenue form textarea:hover {
+	margin: 0 0 0.5em 0;
+	padding: 0.2em;
+	border: 1px solid grey;
+	cursor: pointer;
+	background:#DDE084;
+	border:1px solid grey;
+}
 
-    div.jem_editevent form input#a_name {
-    float: left;
-    }
+div.jem_editevent form input:active, /* event */
+div.jem_editevent form button:active,
+div.jem_editevent form select:active,
+div.jem_editevent form textarea:active,
+div.jem_editvenue form input:active, /* venue */
+div.jem_editvenue form button:active,
+div.jem_editvenue form select:active,
+div.jem_editvenue form textarea:active {
+	margin: 0 0 0.5em 0;
+	padding: 0.2em;
+	border: 1px solid grey;
+	cursor: pointer;
+	background-color: #C6CCBE;
+}
 
-    div.jem_editevent form img,
-    div.jem_editvenue form img {
-    border: 0;
-    margin: 0;
-    /*vertical-align: baseline;*/
-    cursor: pointer;
-    }
+div.jem_editevent form input:visited, /* event */
+div.jem_editevent form button:visited,
+div.jem_editevent form select:visited,
+div.jem_editevent form textarea:visited,
+div.jem_editvenue form input:visited, /* venue */
+div.jem_editvenue form button:visited,
+div.jem_editvenue form select:visited,
+div.jem_editvenue form textarea:visited {
+	margin: 0 0 0.5em 0;
+	padding: 0.2em;
+	border: 1px solid grey;
+	cursor: pointer;
+	background-color: #C6CCBE;
+}
 
+div.jem_editevent form input:active, /* event */
+div.jem_editevent form button:active,
+div.jem_editevent form select:active,
+div.jem_editevent form textarea:active,
+div.jem_editvenue form input:active, /* venue */
+div.jem_editvenue form button:active,
+div.jem_editvenue form select:active,
+div.jem_editvenue form textarea:active {
+	margin: 0 0 0.5em 0;
+	padding: 0.2em;
+	border: 1px solid grey;
+	cursor: pointer;
+	background-color: #C6CCBE;
+}
 
+div.jem_editevent form input, /* event */
+div.jem_editevent form button,
+div.jem_editevent form select,
+div.jem_editevent form textarea,
+div.jem_editvenue form input, /* venue */
+div.jem_editvenue form button,
+div.jem_editvenue form select,
+div.jem_editvenue form textarea {
+	margin: 0 0 0.5em 0;
+	padding: 0.2em;
+	border: 1px solid grey;
+	cursor: pointer;
+	background-color: #C6CCBE;
+}
 
+div.jem_editevent form input#a_name {
+	float: left;
+}
 
-
+div.jem_editevent form img,
+div.jem_editvenue form img {
+	border: 0;
+	margin: 0;
+	/*vertical-align: baseline;*/
+	cursor: pointer;
+}
 
 /** venue select buttons */
 div.jem_editevent div.jem_buttons {
-float: left;  width: 45%;
+	float: left;
+	width: 45%;
 }
 
-    div.jem_editevent div.jem_buttons button {
-    float: right;
-    margin: 0 0 0 5px;
-    }
+div.jem_editevent div.jem_buttons button {
+	float: right;
+	margin: 0 0 0 5px;
+}
 
-    div.jem_editevent div.jem_buttons a.jem_venue_select,
-    div.jem_editevent div.jem_buttons a.jem_venue_select:hover,
-    div.jem_editevent div.jem_buttons a.jem_venue_select:active,
-    div.jem_editevent div.jem_buttons a.jem_venue_select:focus {
-    background: #fff url(../images/venue_select_btn_left.png) 0 0 no-repeat !important;
-    background-color: #fff;
-    margin: 0 5px 0 5px; padding: 0 0 0 28px;
-    font-size: 0.9em; line-height: 22px;
-    float: right;
-    color: #000;
-    border:1px solid black;
-    }
+div.jem_editevent div.jem_buttons a.jem_venue_select,
+div.jem_editevent div.jem_buttons a.jem_venue_select:hover,
+div.jem_editevent div.jem_buttons a.jem_venue_select:active,
+div.jem_editevent div.jem_buttons a.jem_venue_select:focus {
+	background: #fff url(../images/venue_select_btn_left.png) 0 0 no-repeat !important;
+	background-color: #fff;
+	margin: 0 5px 0 5px;
+	padding: 0 0 0 28px;
+	font-size: 0.9em;
+	line-height: 22px;
+	float: right;
+	color: #000;
+	border:1px solid black;
+}
 
-    div.jem_editevent div.jem_buttons a.jem_venue_select span,
-    div.jem_editevent div.jem_buttons a.jem_venue_select:hover span,
-    div.jem_editevent div.jem_buttons a.jem_venue_select:active span,
-    div.jem_editevent div.jem_buttons a.jem_venue_select:focus span {
-    background: transparent url(../images/venue_select_btn_right.png) 100% 0 no-repeat !important;
-    text-decoration:underline !important;
-    background-color: transparent;
-    display: block;
-    height: 1%; width: auto;
-    padding: 0 6px 0 0;
-    color: #000;
-    }
-
+div.jem_editevent div.jem_buttons a.jem_venue_select span,
+div.jem_editevent div.jem_buttons a.jem_venue_select:hover span,
+div.jem_editevent div.jem_buttons a.jem_venue_select:active span,
+div.jem_editevent div.jem_buttons a.jem_venue_select:focus span {
+	background: transparent url(../images/venue_select_btn_right.png) 100% 0 no-repeat !important;
+	text-decoration:underline !important;
+	background-color: transparent;
+	display: block;
+	height: 1%;
+	width: auto;
+	padding: 0 6px 0 0;
+	color: #000;
+}
 
 /** save buttons */
 div.jem_save_buttons {
-margin: 0 0 1em 0;
-float: right;
+	margin: 0 0 1em 0;
+	float: right;
 }
 
 div.right {
-margin: 0 0 1em 0;
-float: right;
+	margin: 0 0 1em 0;
+	float: right;
 }
 
-
-
-    div.jem_save_buttons button {
-    font-size: 1.5em;
-    cursor: pointer;
-line-height: 22px;
-text-align: center;
-vertical-align: middle;
-background-color: lightgrey;
-border-radius: 5px;
-border:1px solid black;
-    }
+div.jem_save_buttons button {
+	font-size: 1.5em;
+	cursor: pointer;
+	line-height: 22px;
+	text-align: center;
+	vertical-align: middle;
+	background-color: lightgrey;
+	border-radius: 5px;
+	border:1px solid black;
+}
 
 div.jem_save_buttons button.submit:hover {
-   
-background-color: lightgreen;
-    }
+	background-color: lightgreen;
+}
 
 div.jem_save_buttons button.cancel:hover {
-background-color: red;
-    }
-
-
+	background-color: red;
+}
 
 /** recurrence */
 div.jem_editevent form label#recurrence_output {
-width: auto; float: none;
-margin: 5px 0;
+	width: auto;
+	float: none;
+	margin: 5px 0;
 }
 
 /** registration */
 div.jem_editevent form div.jem_unregister,
 div.jem_editevent form div.jem_register {
-width: 35%; float: left;
-margin: 0 1em 0 0;
+	width: 35%;
+	float: left;
+	margin: 0 1em 0 0;
 }
-
 
 div.jem_box_left,
 div.jem_box_right {
-width: 45%;
-float: left;
+	width: 45%;
+	float: left;
 }
 
 div.jem_box_right {
-float: right;
+	float: right;
 }
 
 div#jem .copyright {
-    font-size: 0.9em; text-align: center;
-    margin: 1em 0;
-    color: #aaa;
+	font-size: 0.9em;
+	text-align: center;
+	margin: 1em 0;
+	color: #aaa;
 }
 
 table#el-attachments td {
-  padding: 5px;
-  border:1px solid grey;
+	padding: 5px;
+	border:1px solid grey;
 }
 
 table#search td {
-  border: none !important;
+	border: none !important;
 }
 
 table#search tr {
-  border: none !important;
-  padding: 20px !important;
+	border: none !important;
+	padding: 20px !important;
 }
 
 table#el-attachments th {
-  background:rgb(54, 105, 153);
-  color: white;
-  line-height:22px;
-  border: 1px solid black;
+	background:rgb(54, 105, 153);
+	color: white;
+	line-height:22px;
+	border: 1px solid black;
 }
-
 
 /**
  * googlemap
  */
 #googlemap {
-margin-top: 20px;
-margin-left: 20px;
-margin-bottom: 20px;
+	margin-top: 20px;
+	margin-left: 20px;
+	margin-bottom: 20px;
 }
-
 
 /** page navigation **/
-.pagination li{
-display:inline;
-padding:2px 5px;
-text-align:left;
-border:solid 0px #eee;
-margin:0 2px}
-
+.pagination li {
+	display:inline;
+	padding:2px 5px;
+	text-align:left;
+	border:solid 0px #eee;
+	margin:0 2px;
+}
 
 div.jem_editevent div.jem_buttons a.jem_venue_reset {
-    background: url("../images/venue_reset_btn_left.png") no-repeat scroll 0px 0px rgb(255, 255, 255) !important;
+	background: url("../images/venue_reset_btn_left.png") no-repeat scroll 0px 0px rgb(255, 255, 255) !important;
 }
 
-    div.jem_editevent div.jem_buttons a.jem_venue_reset,
-    div.jem_editevent div.jem_buttons a.jem_venue_reset:hover,
-    div.jem_editevent div.jem_buttons a.jem_venue_reset:active,
-    div.jem_editevent div.jem_buttons a.jem_venue_reset:focus {
-    background: #fff url(../images/venue_reset_btn_left.png) 0 0 no-repeat !important;
-    background-color: #fff;
-    margin: 0 5px 0 5px; padding: 0 0 0 28px;
-    font-size: 0.9em; line-height: 22px;
-    border: 1px solid rgb(0, 0, 0);
-    float: right;
-    cursor:pointer;
-    color: #000000 !important;
-    }
+div.jem_editevent div.jem_buttons a.jem_venue_reset,
+div.jem_editevent div.jem_buttons a.jem_venue_reset:hover,
+div.jem_editevent div.jem_buttons a.jem_venue_reset:active,
+div.jem_editevent div.jem_buttons a.jem_venue_reset:focus {
+	background: #fff url(../images/venue_reset_btn_left.png) 0 0 no-repeat !important;
+	background-color: #fff;
+	margin: 0 5px 0 5px;
+	padding: 0 0 0 28px;
+	font-size: 0.9em;
+	line-height: 22px;
+	border: 1px solid rgb(0, 0, 0);
+	float: right;
+	cursor:pointer;
+	color: #000000 !important;
+}
 
-    div.jem_editevent div.jem_buttons a.jem_venue_reset span,
-    div.jem_editevent div.jem_buttons a.jem_venue_reset:hover span,
-    div.jem_editevent div.jem_buttons a.jem_venue_reset:active span,
-    div.jem_editevent div.jem_buttons a.jem_venue_reset:focus span {
-    background: transparent url(../images/venue_select_btn_right.png) 100% 0 no-repeat !important;
-    background-color: transparent;
-    display: block;
-    height: 1%; width: auto;
-    padding: 0 6px 0 0;
-    border: 0px solid rgb(0, 0, 0);
-    cursor:pointer;
-    color: #000;
-    }
-
-
+div.jem_editevent div.jem_buttons a.jem_venue_reset span,
+div.jem_editevent div.jem_buttons a.jem_venue_reset:hover span,
+div.jem_editevent div.jem_buttons a.jem_venue_reset:active span,
+div.jem_editevent div.jem_buttons a.jem_venue_reset:focus span {
+	background: transparent url(../images/venue_select_btn_right.png) 100% 0 no-repeat !important;
+	background-color: transparent;
+	display: block;
+	height: 1%;
+	width: auto;
+	padding: 0 6px 0 0;
+	border: 0px solid rgb(0, 0, 0);
+	cursor:pointer;
+	color: #000;
+}
 
 /* Thx to http://www.bloggerswatch.com/internet/css-trick-submit-button-should-look-same-everywhere/ */
-
-.buttons a, .buttons button{
-    display:block !important;
-    float:left !important;
-    margin:0 7px 0 0 !important;
-    background-color:#f5f5f5 !important;
-    border:1px solid grey !important;
-    border-top:1px solid grey !important;
-    border-left:1px solid grey !important;
-
-    font-family:"Lucida Grande", Tahoma, Arial, Verdana, sans-serif !important;
-    font-size:12px !important;
-    line-height:130% !important;
-    text-decoration:none !important;
-    font-weight:bold !important;
-    color:#565656 !important;
-    cursor:pointer !important;
-    padding:5px 10px 6px 7px !important; /* Links */
+.buttons a, .buttons button {
+	display:block !important;
+	float:left !important;
+	margin:0 7px 0 0 !important;
+	background-color:#f5f5f5 !important;
+	border:1px solid grey !important;
+	border-top:1px solid grey !important;
+	border-left:1px solid grey !important;
+	font-family:"Lucida Grande", Tahoma, Arial, Verdana, sans-serif !important;
+	font-size:12px !important;
+	line-height:130% !important;
+	text-decoration:none !important;
+	font-weight:bold !important;
+	color:#565656 !important;
+	cursor:pointer !important;
+	padding:5px 10px 6px 7px !important; /* Links */
 }
-.buttons button{
-    width:auto !important;
-    overflow:visible !important;
-    padding:4px 10px 3px 7px !important; /* IE6 */
+
+.buttons button {
+	width:auto !important;
+	overflow:visible !important;
+	padding:4px 10px 3px 7px !important; /* IE6 */
 }
+
 .buttons button[type]{
-    padding:5px 10px 5px 7px !important; /* Firefox */
-    line-height:17px !important; /* Safari */
+	padding:5px 10px 5px 7px !important; /* Firefox */
+	line-height:17px !important; /* Safari */
 }
+
 *:first-child+html button[type]{
-    padding:4px 10px 3px 7px !important; /* IE7 */
+	padding:4px 10px 3px 7px !important; /* IE7 */
 }
-.buttons button img, .buttons a img{
-    margin:0px !important;
-    padding:0 !important;
-    border:none !important;
-    /*width:16px !important;*/
-    /*height:16px !important;*/
+
+.buttons button img, .buttons a img {
+	margin:0px !important;
+	padding:0 !important;
+	border:none !important;
+	/*width:16px !important;*/
+	/*height:16px !important;*/
 }
 
 /* STANDARD */
-
 /*
-button:hover, .buttons a:hover{
-    background-color:#dff4ff !important;
-    border:1px solid grey !important;
-    color:#336699 !important;
+button:hover, .buttons a:hover {
+	background-color:#dff4ff !important;
+	border:1px solid grey !important;
+	color:#336699 !important;
 }
-.buttons a:active{
-    background-color:#6299c5 !important;
-    border:1px solid #6299c5 !important;
-    color:#fff !important;
+.buttons a:active {
+	background-color:#6299c5 !important;
+	border:1px solid #6299c5 !important;
+	color:#fff !important;
 }
 */
 
 /* POSITIVE */
+button.positive, .buttons a.positive {
+	color:#529214 !important;
+	 border:1px solid grey !important;
+	 cursor: pointer;
+	 line-height:22px;
+}
 
-button.positive, .buttons a.positive{
-    color:#529214 !important;
-     border:1px solid grey !important;
-     cursor: pointer;
-     line-height:22px;
+.buttons a.positive:hover, button.positive:hover {
+	background-color:#E6EFC2 !important;
+	border:1px solid grey !important;
+	color:#529214 !important;
 }
-.buttons a.positive:hover, button.positive:hover{
-    background-color:#E6EFC2 !important;
-     border:1px solid grey !important;
-    color:#529214 !important;
-}
-.buttons a.positive:active{
-    background-color:#529214 !important;
-     border:1px solid grey !important;
-    color:#fff !important;
+
+.buttons a.positive:active {
+	background-color:#529214 !important;
+	 border:1px solid grey !important;
+	color:#fff !important;
 }
 
 /* NEGATIVE */
+.buttons a.negative, button.negative {
+	color:#d12f19 !important;
+	border:1px solid grey !important;
+	cursor:pointer;
+	line-height:22px;
+}
 
-.buttons a.negative, button.negative{
-    color:#d12f19 !important;
-    border:1px solid grey !important;
-    cursor:pointer;
-    line-height:22px;
+.buttons a.negative:hover, button.negative:hover {
+	background:#fbe3e4 !important;
+	border:1px solid grey !important;
+	color:#d12f19 !important;
 }
-.buttons a.negative:hover, button.negative:hover{
-    background:#fbe3e4 !important;
-    border:1px solid grey !important;
-    color:#d12f19 !important;
-}
-.buttons a.negative:active{
-    background-color:#d12f19 !important;
-    border:1px solid #d12f19 !important;
-    color:#fff !important;
-    border:1px solid grey !important;
+
+.buttons a.negative:active {
+	background-color:#d12f19 !important;
+	border:1px solid #d12f19 !important;
+	color:#fff !important;
+	border:1px solid grey !important;
 }
 
 /* REGULAR */
-
-button.regular, .buttons a.regular{
-    color:#336699 !important;
-     border:1px solid grey !important;
-     cursor:pointer;
-     line-height:22px;
-     
-}
-.buttons a.regular:hover, button.regular:hover{
-    background-color:#dff4ff !important;
-    border:1px solid grey !important;
-    color:#336699 !important;
-}
-.buttons a.regular:active{
-    background-color:#6299c5 !important;
-     border:1px solid grey !important;
-    color:#fff !important;
+button.regular, .buttons a.regular {
+	color:#336699 !important;
+	border:1px solid grey !important;
+	cursor:pointer;
+	line-height:22px;
 }
 
+.buttons a.regular:hover, button.regular:hover {
+	background-color:#dff4ff !important;
+	border:1px solid grey !important;
+	color:#336699 !important;
+}
 
+.buttons a.regular:active {
+	background-color:#6299c5 !important;
+	 border:1px solid grey !important;
+	color:#fff !important;
+}
 
 /* -- TAB STYLES ----------------------------- */
 div#jem dl.tabs {
@@ -1050,9 +1009,6 @@ div#jem dl.tabs dt h3 a {
 	background:none;
 }
 
-
-
-
 td.center,
 th.center,
 .center {
@@ -1060,9 +1016,7 @@ th.center,
 	float: none;
 }
 
-
 /* -- JGRID STYLES ----------------------------- */
-
 /* grid table elements */
 a.jgrid:hover {	text-decoration: none;}
 
@@ -1071,6 +1025,7 @@ a.jgrid:hover {	text-decoration: none;}
 	height: 16px;
 	width: 16px;
 }
+
 .jgrid span.text 					{ display:none; }
 .jgrid span.publish					{ background-image: url(../images/tick.png); }
 .jgrid span.unpublish				{ background-image: url(../images/publish_x.png); }
@@ -1089,35 +1044,26 @@ a.jgrid:hover {	text-decoration: none;}
 .jgrid span.warning					{ background-image: url(../images/admin/publish_y.png); }
 .jgrid span.protected				{ background-image: url(../images/admin/icon-16-protected.png); }
 
-
-
-
-
 @media print
-
 {
-	div#jem {
-    overflow: hidden;
-    background: none repeat scroll 0% 0% rgb(237, 237, 235);
-    border: 0px solid black;
-    border-radius: 5px 5px 5px 5px;
-    padding: 10px;
-}
-	
-	div#jem h2 {
-    font-weight: normal !important;
-    padding: 0.3em;
-    background: none repeat scroll 0% 0% rgb(212, 214, 178);
-    border: none;
-}
-	
-	div#jem .buttons {
-    float: right;
-    display: none;
-}
-	
-
+div#jem {
+	overflow: hidden;
+	background: none repeat scroll 0% 0% rgb(237, 237, 235);
+	border: 0px solid black;
+	border-radius: 5px 5px 5px 5px;
+	padding: 10px;
 }
 
+div#jem h2 {
+	font-weight: normal !important;
+	padding: 0.3em;
+	background: none repeat scroll 0% 0% rgb(212, 214, 178);
+	border: none;
+}
 
+div#jem .buttons {
+	float: right;
+	display: none;
+}
 
+}
