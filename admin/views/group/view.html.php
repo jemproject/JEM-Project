@@ -55,7 +55,7 @@ class JEMViewGroup extends JViewLegacy {
 
 		$document->addScript($url.'media/com_jem/js/recurrencebackend.js');
 		$document->addScript($url.'media/com_jem/js/unlimited.js');
-		$document->addScript($url.'media/com_jem/js/seobackend.js');
+		$document->addScript($url.'media/com_jem/js/seo.js');
 
 		$maintainers 		= $this->get('Members');
 		$available_users 	= $this->get('Available');

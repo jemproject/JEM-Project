@@ -60,7 +60,7 @@ class JEMViewEvent extends JViewLegacy {
 
 		$document->addScript($url.'media/com_jem/js/recurrencebackend.js');
 		$document->addScript($url.'media/com_jem/js/unlimited.js');
-		$document->addScript($url.'media/com_jem/js/seobackend.js');
+		$document->addScript($url.'media/com_jem/js/seo.js');
 
 		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access		= $access2;
