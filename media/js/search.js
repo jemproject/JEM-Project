@@ -8,43 +8,42 @@
  */
 
 window.addEvent('domready', function(){
-/*
-  $('filter_date').addEvent('change', function() {
-    this.form.submit();
-  });
-    */
-  if ($('filter_continent'))
-  {
-	  $('filter_continent').addEvent('change', function() {
-	    if (country = $('filter_country')) {
-	      country.selectedIndex = 0;
-	    }
-	    if (city = $('filter_city')) {
-	      city.selectedIndex = 0;
-	    }
-	    this.form.submit();
-	  });
-  }
-  if (country = $('filter_country')) {  
-    country.addEvent('change', function() {
-	    if (city = $('filter_city')) {
-	      city.selectedIndex = 0;
-	    }
-	    this.form.submit();
-	  });
-  }
-  
-  if (city = $('filter_city')) {  
-	  city.addEvent('change', function() {
-	    this.form.submit();
-	  });
-  }
-  
-  if ($('filter_category')) 
-  {
-	  $('filter_category').addEvent('change', function() {
-	    this.form.submit();
-	  });
-  }
-  
+	/*
+	$('filter_date').addEvent('change', function() {
+		this.form.submit();
+	});
+	*/
+
+	if ($('filter_continent')) {
+		$('filter_continent').addEvent('change', function() {
+			if (country = $('filter_country')) {
+				country.selectedIndex = 0;
+			}
+			if (city = $('filter_city')) {
+				city.selectedIndex = 0;
+			}
+			this.form.submit();
+		});
+	}
+
+	if (country = $('filter_country')) {
+		country.addEvent('change', function() {
+			if (city = $('filter_city')) {
+				city.selectedIndex = 0;
+			}
+			this.form.submit();
+		});
+	}
+
+	if (city = $('filter_city')) {
+		city.addEvent('change', function() {
+			this.form.submit();
+		});
+	}
+
+	if ($('filter_category')) {
+		$('filter_category').addEvent('change', function() {
+			this.form.submit();
+		});
+	}
 });

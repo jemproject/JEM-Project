@@ -12,11 +12,9 @@ var $select_value;
 
 function start_recurrencescript() {
 //window.addEvent('domready', function() {
-  $content = $("recurrence_output"); // get the object (position) of the output
-  output_recurrencescript(); // start the output
-  $("recurrence_type").addEvent('change', output_recurrencescript); // additional event handler
-
-
+	$content = $("recurrence_output"); // get the object (position) of the output
+	output_recurrencescript(); // start the output
+	$("recurrence_type").addEvent('change', output_recurrencescript); // additional event handler
 }
 
 /**
@@ -74,7 +72,6 @@ function generate_output($select_output, $select_value) {
 		if ($i == 0) {	// first iteration get an extra selectlist
 			$span.appendChild(generate_selectlist($select_value));
 		}
-
 	}
 	return $span;
 }
@@ -90,7 +87,7 @@ function generate_selectlist($select_value) {
 	var $selectlist = document.createElement("select");	// new select element
 	$selectlist.name = "recurrence_selectlist";	// add attributes
 	$selectlist.id = "recurrence_selectlist";
-        $selectlist.onchange = set_parameter;
+		$selectlist.onchange = set_parameter;
 	switch($select_value) {
 		case "1":
 			$limit = 14;	// days
@@ -127,8 +124,8 @@ function generate_selectlist($select_value) {
 			$option.value = $j + 1;
 		}
 		$selectlist.appendChild($option);	// include the option - element into the select - element
-	}	
-    return $selectlist;
+	}
+	return $selectlist;
 }
 
 /**
@@ -141,9 +138,9 @@ function generate_selectlist_weekday() {
 	var $selectlist = document.createElement("select");	// the new selectlist
 	$selectlist.name = "recurrence_selectlist_weekday";	// add attributes
 	$selectlist.id = "recurrence_selectlist_weekday";
-  $selectlist.multiple = true;
-  $selectlist.size = 7;
-  var selected = $("recurrence_byday").value.split(','); // array of selected values
+	$selectlist.multiple = true;
+	$selectlist.size = 7;
+	var selected = $("recurrence_byday").value.split(','); // array of selected values
 	for ($j = 0; $j < 7; $j++) {						// the 7 days
 		var $option = document.createElement("option");	// create the option - elements
 		$option.value = $weekday[$j][0];	// add the value
@@ -154,21 +151,19 @@ function generate_selectlist_weekday() {
 		$selectlist.appendChild($option);	// include the option - element into the select - element
 	}
 	$($selectlist).addEvent('change', function() {
-	  var result = '';
-	  var isempty = true;    
-	  for (i=0;i<this.length;i++)
-    {
-      if (this.options[i].selected) {
-        if (isempty) {
-          isempty = false;
-        }
-        else {
-          result += ',';
-        }
-        result += this.options[i].value
-      }
-    }
-    $('recurrence_byday').value = result;
+		var result = '';
+		var isempty = true;
+		for (i=0;i<this.length;i++) {
+			if (this.options[i].selected) {
+				if (isempty) {
+					isempty = false;
+				} else {
+					result += ',';
+				}
+				result += this.options[i].value
+			}
+		}
+		$('recurrence_byday').value = result;
 	});
 	return $selectlist;
 }
@@ -182,4 +177,3 @@ function set_parameter() {
 	// include the value into the recurrence_number input tag
 	$("recurrence_number").value = $("recurrence_selectlist").value;
 }
-

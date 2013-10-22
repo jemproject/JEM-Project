@@ -29,7 +29,6 @@ function starter($msg) {			// Funktion, welche beim Starten der Seite aufgerufen
 }
 
 function switchstart() {	// Diese Funktion uebergibt alle relevanten Feldern ein onchange
-
 	try {
 		if ($keyword.length > 0) {
 			for (var i=0; i < $keyword.length; i++) {
@@ -62,14 +61,14 @@ function get_keywords() {
 			$keyword[i] = $keyword[i].replace(/\[/g,"");
 			$keyword[i] = $keyword[i].replace(/\]/g,"");
 			$($keyword[i]).value;				// ein Fehler wird provoziert, falls dieses Element nicht vorhanden ist
-      	} catch (e) {
+		} catch (e) {
 			if ($manual_keywords != "") {	// das nicht verwendete Keyword wird neu abgespeichert
 				$manual_keywords += ", ";
 			}
 			$manual_keywords += $keyword[i];
 			$keyword[i] = $Nullvalue;	// Falls eine angegebene ID nicht vorhanden ist, wird diese aus dem Array entfernt
-        	continue;
-      	}
+			continue;
+		}
 	}
 	var $keyword_count = 0;
 	var $keyword_length = $keyword.length;
@@ -167,7 +166,6 @@ function include_description() {
 	$("meta_description").value = desc_output;
 }
 
-
 function insert_keyword($keyword) {
 	try {
 		var $input = $($inputbox).value;
@@ -185,7 +183,6 @@ function insert_keyword($keyword) {
 }
 
 function change_metatags() {
-
 	if ($inputbox == "meta_keywords") {
 		$keywords = $($inputbox).value;
 		get_keywords();

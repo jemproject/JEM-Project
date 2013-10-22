@@ -13,7 +13,7 @@ function changeoldMode()
 		switch (mode) {
 			case 0:
 				document.getElementById('old').style.display = 'none';
-			break;
+				break;
 			default:
 				document.getElementById('old').style.display = '';
 		}
@@ -176,27 +176,21 @@ function changeregMode()
 }
 
 document.switcher = null;
+
 if (MooTools.version == '1.11') {
-
-	Window.onDomReady(function(){
-
+	window.onDomReady(function() {
 		toggler = $('submenu');
 		element = $('elconfig-document');
 		if(element) {
 			document.switcher = new JSwitcher(toggler, element, {cookieName: toggler.getAttribute('class')});
 		}
-
 	});
-
 } else {
 	window.addEvent('domready', function() {
-
 		toggler = $('submenu');
 		element = $('elconfig-document');
 		if(element) {
 			document.switcher = new JSwitcher(toggler, element, {cookieName: toggler.getAttribute('class')});
 		}
-
 	});
-
 }

@@ -20,11 +20,11 @@ function openPicker(id, _onPick, _onCancel) {
 	}
 	if (_onCancel) {
 		onCancel = _onCancel;
-    }	
+	}
 	currentId = id;
 	removeLayer("picker");
 	Obj = document.getElementById(id);
-	
+
 	orgColor = Obj.value;
 	createLayer("picker",findPosX(Obj)+Obj.offsetWidth+20,findPosY(Obj));
 }
@@ -41,7 +41,7 @@ function createLayer(id,left,top){
 		   return;
 		}
 		var layer=document.layers[id]=new Layer(width);
-		layer.className = "picker_layer"; 
+		layer.className = "picker_layer";
 		layer.name = id;
 		layer.left=left;
 		layer.top=top;
@@ -58,7 +58,7 @@ function createLayer(id,left,top){
 		+'; left:'+left+"px"
 		+'; top:'+top+"px"
 		+'; width:'+width
-		+'; height:'+height		
+		+'; height:'+height
 		+'; visibility:visible'
 		+'; z-index:'+zindex
 		+';text-align:left">'
@@ -68,50 +68,50 @@ function createLayer(id,left,top){
 	}else if(document.getElementById){
 		var layer = document.createElement ('div');
 		layer.setAttribute ('id', id);
-		document.body.appendChild (layer); 
+		document.body.appendChild (layer);
 		var ly = document.getElementById(id);
-		ly.className = "picker_layer"; 
+		ly.className = "picker_layer";
 		ly.style.position= "absolute";
 		ly.style.left= left+"px";
-		ly.style.top= top+ "px";		
-		ly.style.width= width+ "px";		
-		ly.style.height= height+ "px";		
+		ly.style.top= top+ "px";
+		ly.style.width= width+ "px";
+		ly.style.height= height+ "px";
 		ly.style.textAlign= "left";
-		ly.innerHTML = msg;	
+		ly.innerHTML = msg;
 	}
 }
 function showClr(color){
 	Obj = document.getElementById(currentId);
 	Obj.value = color;
-	Obj.style.backgroundColor=color;	
+	Obj.style.backgroundColor=color;
 	Obj = document.getElementById("gcpicker_colorSample");
 	Obj.style.backgroundColor=color;
 	Obj = document.getElementById("gcpicker_colorCode");
 	Obj.innerHTML = color;
-	
+
 }
 function setClr(color){
 	Obj = document.getElementById(currentId);
 	Obj.value = color;
-	Obj.style.backgroundColor=color;	
+	Obj.style.backgroundColor=color;
 	currentId = "";
 	removeLayer("picker");
 	if (onPick) {
 		/*onPick();*/
-    }	
+	}
 }
 function cancel(){
 	Obj = document.getElementById(currentId);
 	Obj.value = orgColor;
-	Obj.style.backgroundColor=orgColor;	
+	Obj.style.backgroundColor=orgColor;
 	removeLayer("picker");
-    if (onCancel) {
+	if (onCancel) {
 		/*oncancel();*/
-    }
+	}
 }
 function removeLayer(id){
 	if(document.getElementById(id) ==null){
-		return;	
+		return;
 	}
 	if (document.layers && document.layers[id]) {
   		document.layers[id].visibility='hide';
@@ -131,7 +131,7 @@ function getPickerContent(){
 	content += '<table width="100%" border="0" cellpadding="0" cellspacing="1" class="color_table"><tr><td bgcolor="#CCCCCC" id="gcpicker_colorSample" width="40px" class="choosed_color_cell">&nbsp;</td><td align="center"><div id="gcpicker_colorCode">#CCCCCC</div></td><td width="60px" align="center"><input type="submit" value="" onclick="cancel()" class="default_color_btn" /></td></tr></table>';
 	content += '</td></tr><tr><td>';
 	content += colorTable()+'</td></tr></table>';
-	return content;	
+	return content;
 }
 function colorTable(){
 	var clrfix = Array("#000000","#333333","#666666","#999999","#cccccc","#ffffff","#ff0000","#00ff00","#0000ff","#ffff00","#00ffff","#ff00ff");
@@ -142,19 +142,19 @@ function colorTable(){
 		for(var i=0;i<12;i++){
 			var clr ='#000000';
 			if(j==1){
-				clr = clrfix[i];	
+				clr = clrfix[i];
 			}
 			table += '<tr><td bgcolor="'+clr+'" class="cell_color" onmouseover="showClr('+"'"+clr+"'"+')" onclick="setClr('+"'"+clr+"'"+')"></td></tr>';
 		}
-		table += '</table></td>';		
+		table += '</table></td>';
 	}
-	table +='<td><table border="0" cellpadding="0" cellspacing="0">';	
+	table +='<td><table border="0" cellpadding="0" cellspacing="0">';
 	for (var c = 0; c<6; c++) {
 		if(c==0 || c==3){
-			table +="<tr>";	
+			table +="<tr>";
 		}
 		table += "<td>";
-		
+
 		table = table+'<table border="0" cellpadding="0" cellspacing="1" class="color_table"> ';
 		for (var j = 0; j<6; j++) {
 			table +="<tr>";
@@ -165,19 +165,19 @@ function colorTable(){
 			table +="</tr>";
 		}
 		table +="</table>";
-		table += "</td>";	
+		table += "</td>";
 		if(c==2 || c==5){
-			table +="</tr>";	
-		}	
+			table +="</tr>";
+		}
 	}
-	table +='</table></td></tr></table>';	
+	table +='</table></td></tr></table>';
 	return table;
 }
 
 function findPosX(obj){
 	var curleft = 0;
 	if(obj.offsetParent)
-        while(1){
+		while(1){
 			curleft += obj.offsetLeft;
 			if(!obj.offsetParent)
 			break;
@@ -197,7 +197,7 @@ function findPosY(obj){
 			}
 			obj = obj.offsetParent;
 		}
-    }else if(obj.y){
+	}else if(obj.y){
 		curtop += obj.y;
 	}
 	return curtop;
@@ -205,10 +205,10 @@ function findPosY(obj){
 
 function rgb2hex(red, green, blue)
 {
-    var decColor = red + 256 * green + 65536 * blue;
-    var clr = decColor.toString(16);
+	var decColor = red + 256 * green + 65536 * blue;
+	var clr = decColor.toString(16);
 	for(var i =clr.length;i<6;i++){
-		clr = "0"+clr;	
+		clr = "0"+clr;
 	}
 	return "#"+clr;
 }

@@ -9,13 +9,13 @@
 /**
  * this file manages the js script for adding/removing attachements in event
  */
-window.addEvent('domready', function() {	
-	
+window.addEvent('domready', function() {
+
 	$$('.attach-field').addEvent('change', addattach);
-	
+
 	$$('.attach-remove').addEvent('click', function(event){
 		var event = event || window.event;
-		
+
 		var id = event.target.id.substr(13);
 		var url = 'index.php?option=com_jem&task=ajaxattachremove&format=raw&id='+id;
 		var theAjax = new Request( {
@@ -23,7 +23,7 @@ window.addEvent('domready', function() {
 			method: 'post',
 			postBody : ''
 			});
-		
+
 		theAjax.addEvent('onSuccess', function(response) {
 			if (response.indexOf('1') > -1) {
 				$(event.target).getParent().getParent().dispose();
