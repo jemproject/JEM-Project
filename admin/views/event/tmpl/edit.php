@@ -29,7 +29,7 @@ $params = $params->toArray();
 	});
 
 	function setbgcats()
-	{	
+	{
 		var z=document.getElementById("cid");
 
 		z.morph({
@@ -62,7 +62,7 @@ $params = $params->toArray();
 			}
 			});
 	}
-	
+
 	function testcid()
 	{
 		var x=document.getElementById("cid").selectedIndex;
@@ -300,7 +300,7 @@ $params = $params->toArray();
 				var $last = "<?php
 				echo JText::_ ( 'COM_JEM_LAST' );
 				?>";
-				start_recurrencescript();
+				start_recurrencescript("jform_recurrence_type");
 			-->
 			</script>
 		</fieldset>

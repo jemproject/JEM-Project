@@ -58,7 +58,7 @@ class JEMViewEvent extends JViewLegacy {
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 		$document->addScript(JURI::root().'media/com_jem/js/attachments.js');
 
-		$document->addScript($url.'media/com_jem/js/recurrencebackend.js');
+		$document->addScript($url.'media/com_jem/js/recurrence.js');
 		$document->addScript($url.'media/com_jem/js/unlimited.js');
 		$document->addScript($url.'media/com_jem/js/seo.js');
 

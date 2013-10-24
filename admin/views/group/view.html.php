@@ -51,11 +51,14 @@ class JEMViewGroup extends JViewLegacy {
 
 		// CSS Stylesheet
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+<<<<<<< HEAD
+=======
 		$document->addScript(JURI::root().'media/com_jem/js/attachments.js');
 
 		$document->addScript($url.'media/com_jem/js/recurrencebackend.js');
 		$document->addScript($url.'media/com_jem/js/unlimited.js');
 		$document->addScript($url.'media/com_jem/js/seo.js');
+>>>>>>> branch 'master' of https://github.com/jemproject/JEM-Project.git
 
 		$maintainers 		= $this->get('Members');
 		$available_users 	= $this->get('Available');

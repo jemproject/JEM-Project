@@ -9,12 +9,14 @@
 
 var $content;   // the content object
 var $select_value;
+var $select_element;
 
-function start_recurrencescript() {
+function start_recurrencescript(el) {
 //window.addEvent('domready', function() {
 	$content = $("recurrence_output"); // get the object (position) of the output
+	$select_element = $(el);
 	output_recurrencescript(); // start the output
-	$("recurrence_type").addEvent('change', output_recurrencescript); // additional event handler
+	$select_element.addEvent('change', output_recurrencescript); // additional event handler
 }
 
 /**
@@ -24,7 +26,7 @@ function start_recurrencescript() {
  * @access public
 **/
 function output_recurrencescript() {
-	var $select_value = $("recurrence_type").value;	// the value of the select list
+	var $select_value = $select_element.value;	// the value of the select list
 	if ($select_value != 0) {	// want the user a recurrence
 								// create an element by the generate_output function
 								// ** $select_output is an array of all sentences of each type **

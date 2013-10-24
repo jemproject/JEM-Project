@@ -414,7 +414,7 @@ $options = array(
 
 				var $before_last = "<?php echo JText::_( 'COM_JEM_BEFORE_LAST' ); ?>";
 				var $last = "<?php echo JText::_( 'COM_JEM_LAST' ); ?>";
-				start_recurrencescript();
+				start_recurrencescript("recurrence_type");
 			-->
 			</script>
 		</fieldset>
