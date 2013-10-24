@@ -21,7 +21,7 @@ window.addEvent('domready', function() {
 	$$('.eventCat').each(
 		function(item, index) {
 			item.addEvent( 'click', function() {
-				$$('.jlcalendar .cat'+item.getProperty('catid')).each(
+				$$('.jlcalendar .'+item.getProperty('id')).each(
 					function(eventcat) {
 						if ( eventcat.getStyle('display') == 'none' ) {
 							eventcat.setStyle('display', 'block');

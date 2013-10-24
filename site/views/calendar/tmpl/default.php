@@ -196,41 +196,36 @@ defined('_JEXEC') or die;
 	<?php
 	//print the legend
 	if($this->params->get('displayLegend')) :
+		$counter = array();
 
-	$counter = array();
+		//walk through events
+		foreach ($this->rows as $row):
 
-	//walk through events
-	foreach ($this->rows as $row):
+			//walk through the event categories
+			foreach ($row->categories as $cat) :
 
-		//walk through the event categories
-		foreach ($row->categories as $cat) :
+				//sort out dupes
+				if(!in_array($cat->id, $counter)):
 
-			//sort out dupes
-			if(!in_array($cat->id, $counter)):
+					//add cat id to cat counter
+					$counter[] = $cat->id;
 
-				//add cat id to cat counter
-				$counter[] = $cat->id;
-
-				//build legend
-				if (array_key_exists($cat->id, $countcatevents)):
-				?>
-
-					<div class="eventCat" catid="<?php echo $cat->id; ?>">
-						<?php
-						if ( isset ($cat->color) && $cat->color) :
-							echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';
-						endif;
-						echo $cat->catname.' ('.$countcatevents[$cat->id].')';
-						?>
-					</div>
-				<?php
+					//build legend
+					if (array_key_exists($cat->id, $countcatevents)):
+					?>
+						<div class="eventCat" id="cat<?php echo $cat->id; ?>">
+							<?php
+							if ( isset ($cat->color) && $cat->color) :
+								echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';
+							endif;
+							echo $cat->catname.' ('.$countcatevents[$cat->id].')';
+							?>
+						</div>
+					<?php
+					endif;
 				endif;
-
-			endif;
-
+			endforeach;
 		endforeach;
-
-	endforeach;
 	endif;
 	?>
 </div>

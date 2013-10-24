@@ -233,7 +233,7 @@ defined('_JEXEC') or die;
 					//build legend
 					if (array_key_exists($cat->id, $countcatevents)):
 					?>
-						<div class="eventCat" catid="<?php echo $cat->id; ?>">
+						<div class="eventCat" id="cat<?php echo $cat->id; ?>">
 							<?php
 							if ( isset ($cat->color) && $cat->color) :
 								echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';
@@ -244,7 +244,6 @@ defined('_JEXEC') or die;
 					<?php
 					endif;
 				endif;
-
 			endforeach;
 		endforeach;
 	endif;
