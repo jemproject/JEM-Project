@@ -715,3 +715,9 @@ table.table .pagination {
 .highlight {
 	background: none repeat scroll 0 0 #FFFF00;
 }
+
+
+th img
+{
+	margin-left: 3px;
+}
