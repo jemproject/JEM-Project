@@ -9,10 +9,10 @@
 
 /* Container div Width set the same as calendar width. Setting both margins to auto centres the calendar*/
 .eventcalq {
-  /*width: 154px;*/
-  max-width:300px;
-  margin-left: auto ;
-  margin-right: auto ;
+	/*width: 154px;*/
+	max-width:300px;
+	margin-left: auto ;
+	margin-right: auto ;
 }
 
 /* Overall calendar table properties */
@@ -21,7 +21,7 @@
 	padding: 0;
 	margin: 0;
 	border-left: 1px solid #A2ADBC;
-	font: normal 12px/20px "Trebuchet MS", Arial, Verdana,  Helvetica, sans-serif;
+	font: normal 12px/20px "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
 	color: #616B76;
 	text-align: center;
 	background-color: #fff;
@@ -129,9 +129,8 @@
 .eventcalq caption.mod_jemcalq_calendar-month a:link,
 .eventcalq caption.mod_jemcalq_calendar-month a:visited
 {
-color: #DFEFFF;
+	color: #DFEFFF;
 }
-
 
 /* Month heading Hover properties */
 .eventcalq caption.mod_jemcalq_calendar-month a:hover{
