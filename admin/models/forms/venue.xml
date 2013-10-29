@@ -27,7 +27,7 @@
 			class="inputbox"
 			size="40"
 			label="COM_JEM_WEBSITE"
-			description="COM_JEM_WEBSITE"
+			description="COM_JEM_WEBSITE_DESC"
 		/>
 		<field name="street" type="text"
 			id="street"
