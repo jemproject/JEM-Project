@@ -64,62 +64,85 @@ class JEMModelExport extends JModelList {
 
 
 	/********
-	*
-	*
-	*   Events
-	*
-	*
+	* Events
 	********/
-
 
 	/**
 	* Build an SQL query to load the list data.
-	*
 	* @return JDatabaseQuery
-	*
 	*/
 	protected function getListQuery() {
+		// @todo: add category hr+export
+
+		// Retrieve variables
+		$jinput 	= JFactory::getApplication()->input;
+		$startdate 	= $jinput->get('dates','','string');
+		$enddate 	= $jinput->get('enddates','','string');
+		$cats 		= $jinput->get('cid', array(), 'post', 'array');
+
 		// Create a new query object.
-		$db = $this->getDbo();
-		$query = $db->getQuery(true);
+		$db 		= $this->getDbo();
+		$query 		= $db->getQuery(true);
 
 		// Select the required fields from the table.
 		$query->select('a.*');
 		$query->from('`#__jem_events` AS a');
+		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
+		$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
 
-		// Filtering form_type
-		$filter_form_type = $this->getState("filter.form_type");
-
-		if ($filter_form_type) {
-			$query->where("a.form_type = '{$filter_form_type}'");
+		// check if startdate + enddate are set.
+		if (!empty($startdate) && !empty($enddate))
+		{
+		$query->where('DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $db->Quote('0000-00-00') .', a.enddates, a.dates), "'. $startdate .'") >= 0');
+		$query->where('DATEDIFF(a.dates, "'. $enddate .'") <= 0');
 		}
 
-		$filter_start_date = (string) $this->getState("filter.start_date");
-		$filter_end_date = (string) $this->getState("filter.end_date");
-
-		// Filtering start_date
-		if ($filter_start_date !== '') {
-			$query->where("a.created_time >= '{$filter_start_date} 00:00:00'");
+		// check if specific category's have been selected
+		if (!empty($cats)) {
+			$query->where('  (c.id=' . implode(' OR c.id=', $cats) . ')');
 		}
 
-		// Filtering end_date
-		if ($filter_end_date !== '') {
-			$query->where("a.created_time <= '{$filter_end_date} 23:59:59'");
-		}
+		// Group the query
+		$query->group('a.id');
 
 		return $query;
 	}
 
+
 	public function getCsv() {
 		$this->populateState();
 
+		$jinput = JFactory::getApplication()->input;
+		$includecategories = $jinput->get('categorycolumn', 0, 'int');
+
 		$csv = fopen('php://output', 'w');
 		$db = $this->getDbo();
+
+		if ($includecategories == 1)
+		{
 		$header = array();
-		$header = array_keys($db->getTableColumns('#__jem_events'));
+		$events = array_keys($db->getTableColumns('#__jem_events'));
+		$categories = array();
+		$categories[] = "categories";
+		$header = array_merge($events,$categories);
+
 		fputcsv($csv, $header, ';');
 
-		$items = $db->setQuery($this->getListQuery())->loadObjectList();
+		$query = $this->getListQuery();
+		$items = $this->_getList($query);
+
+		foreach($items AS $item) {
+			$item->categories = $this->getCatEvent($item->id);
+		}
+
+
+		} else {
+			$header = array_keys($db->getTableColumns('#__jem_events'));
+			fputcsv($csv, $header, ';');
+			$query = $this->getListQuery();
+			$items = $this->_getList($query);
+		}
+
 
 		foreach ($items as $lines) {
 			foreach ($lines as &$line) {
@@ -131,21 +154,13 @@ class JEMModelExport extends JModelList {
 		return fclose($csv);
 	}
 
-
 	/********
-	*
-	*
-	*   Categories
-	*
-	*
+	* Categories
 	********/
-
 
 	/**
 	* Build an SQL query to load the list data.
-	*
 	* @return JDatabaseQuery
-	*
 	*/
 	protected function getListQuerycats() {
 		// Create a new query object.
@@ -155,26 +170,6 @@ class JEMModelExport extends JModelList {
 		// Select the required fields from the table.
 		$query->select('a.*');
 		$query->from('#__jem_categories AS a');
-
-		// Filtering form_type
-		$filter_form_type = $this->getState("filter.form_type");
-
-		if ($filter_form_type) {
-			$query->where("a.form_type = '{$filter_form_type}'");
-		}
-
-		$filter_start_date = (string) $this->getState("filter.start_date");
-		$filter_end_date = (string) $this->getState("filter.end_date");
-
-		// Filtering start_date
-		if ($filter_start_date !== '') {
-			$query->where("a.created_time >= '{$filter_start_date} 00:00:00'");
-		}
-
-		// Filtering end_date
-		if ($filter_end_date !== '') {
-			$query->where("a.created_time <= '{$filter_end_date} 23:59:59'");
-		}
 
 		return $query;
 	}
@@ -202,19 +197,12 @@ class JEMModelExport extends JModelList {
 
 
 	/********
-	*
-	*
-	*   Venues
-	*
-	*
+	* Venues
 	********/
-
 
 	/**
 	* Build an SQL query to load the list data.
-	*
 	* @return JDatabaseQuery
-	*
 	*/
 	protected function getListQueryvenues() {
 		// Create a new query object.
@@ -224,26 +212,6 @@ class JEMModelExport extends JModelList {
 		// Select the required fields from the table.
 		$query->select('a.*');
 		$query->from('#__jem_venues AS a');
-
-		// Filtering form_type
-		$filter_form_type = $this->getState("filter.form_type");
-
-		if ($filter_form_type) {
-			$query->where("a.form_type = '{$filter_form_type}'");
-		}
-
-		$filter_start_date = (string) $this->getState("filter.start_date");
-		$filter_end_date = (string) $this->getState("filter.end_date");
-
-		// Filtering start_date
-		if ($filter_start_date !== '') {
-			$query->where("a.created_time >= '{$filter_start_date} 00:00:00'");
-		}
-
-		// Filtering end_date
-		if ($filter_end_date !== '') {
-			$query->where("a.created_time <= '{$filter_end_date} 23:59:59'");
-		}
 
 		return $query;
 	}
@@ -269,21 +237,13 @@ class JEMModelExport extends JModelList {
 		return fclose($csv);
 	}
 
-
 	/********
-	*
-	*
-	*   CATS_EVENTS
-	*
-	*
+	* CATS_EVENTS
 	********/
-
 
 	/**
 	* Build an SQL query to load the list data.
-	*
 	* @return JDatabaseQuery
-	*
 	*/
 	protected function getListQuerycatsevents() {
 		// Create a new query object.
@@ -293,26 +253,6 @@ class JEMModelExport extends JModelList {
 		// Select the required fields from the table.
 		$query->select('a.*');
 		$query->from('#__jem_cats_event_relations AS a');
-
-		// Filtering form_type
-		$filter_form_type = $this->getState("filter.form_type");
-
-		if ($filter_form_type) {
-			$query->where("a.form_type = '{$filter_form_type}'");
-		}
-
-		$filter_start_date = (string) $this->getState("filter.start_date");
-		$filter_end_date = (string) $this->getState("filter.end_date");
-
-		// Filtering start_date
-		if ($filter_start_date !== '') {
-			$query->where("a.created_time >= '{$filter_start_date} 00:00:00'");
-		}
-
-		// Filtering end_date
-		if ($filter_end_date !== '') {
-			$query->where("a.created_time <= '{$filter_end_date} 23:59:59'");
-		}
 
 		return $query;
 	}
@@ -337,4 +277,123 @@ class JEMModelExport extends JModelList {
 
 		return fclose($csv);
 	}
+
+	/**
+	 * logic to get the categories
+	 *
+	 * @access public
+	 * @return void
+	 */
+	function getCategories()
+	{
+		// @todo alter function
+
+		$user		= JFactory::getUser();
+		$jemsettings = JEMHelper::config();
+		$userid		= (int) $user->get('id');
+		$superuser	= JEMUser::superuser();
+
+		$gid = JEMHelper::getGID($user);
+
+		$where = ' WHERE c.published = 1 AND c.access <= '.$gid;
+
+		//only check for maintainers if we don't have an edit action
+		//if(!$this->_id) {
+			//get the ids of the categories the user maintaines
+		$query = 'SELECT g.group_id'
+				. ' FROM #__jem_groupmembers AS g'
+				. ' WHERE g.member = '.$userid
+				;
+		$this->_db->setQuery( $query );
+		$catids = $this->_db->loadColumn();
+
+		$categories = implode(' OR c.groupid = ', $catids);
+
+			//build ids query
+		if ($categories) {
+			//check if user is allowed to submit events in general, if yes allow to submit into categories
+			//which aren't assigned to a group. Otherwise restrict submission into maintained categories only
+			if (JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes)) {
+				$where .= ' AND c.groupid = 0 OR c.groupid = '.$categories;
+			} else {
+				$where .= ' AND c.groupid = '.$categories;
+					}
+			} else {
+				$where .= ' AND c.groupid = 0';
+					}
+
+		//}
+
+		//administrators or superadministrators have access to all categories, also maintained ones
+		if($superuser) {
+			$where = ' WHERE c.published = 1';
+		}
+
+		//get the maintained categories and the categories whithout any group
+		//or just get all if somebody have edit rights
+		$query = 'SELECT c.*'
+				. ' FROM #__jem_categories AS c'
+				. $where
+				. ' ORDER BY c.ordering'
+				;
+		$this->_db->setQuery( $query );
+
+		//	$this->_category = array();
+		//	$this->_category[] = JHTML::_('select.option', '0', JText::_( 'COM_JEM_SELECT_CATEGORY' ) );
+		//	$this->_categories = array_merge( $this->_category, $this->_db->loadObjectList() );
+
+		$rows = $this->_db->loadObjectList();
+
+		//set depth limit
+		$levellimit = 10;
+
+		//get children
+		$children = array();
+			foreach ($rows as $child) {
+				$parent = $child->parent_id;
+				$list = @$children[$parent] ? $children[$parent] : array();
+				array_push($list, $child);
+				$children[$parent] = $list;
+				}
+		//get list of the items
+		$this->_categories = JEMCategories::treerecurse(0, '', array(), $children, true, max(0, $levellimit-1));
+
+		return $this->_categories;
+	}
+
+
+	function getCatEvent($catid) {
+
+		// Create a new query object.
+		$db = $this->getDbo();
+		$query = $db->getQuery(true);
+
+		// Select the required fields from the table.
+		$query->select('catid');
+		$query->from('#__jem_cats_event_relations');
+		$query->where('itemid = '.$catid);
+
+		$db->setQuery($query);
+		$catidlist = $db->loadObjectList();
+
+		if (count($catidlist)) {
+
+			$catidarray;
+			foreach($catidlist as $obj){
+				$catidarray[] = $obj->catid;
+			}
+
+			$catids = implode(',',$catidarray);
+		} else
+		{
+			$catids = false;
+		}
+
+		return $catids;
+	}
+
+
+
+
+
 }

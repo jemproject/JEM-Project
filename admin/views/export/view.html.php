@@ -26,8 +26,17 @@ class JEMViewExport extends JViewLegacy {
 		//initialise variables
 		$document	= JFactory::getDocument();
 
-		//add css and submenu to document
+		//add css to document
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+
+		//Cause of group limits we can't use class here to build the categories tree
+		$categories = $this->get('Categories');
+
+		//build selectlists
+		$categories = JEMCategories::buildcatselect($categories, 'cid[]', null, 0, 'multiple="multiple" size="8 class="inputbox"');
+
+		$this->categories		= $categories;
+
 
 		// add toolbar
 		$this->addToolbar();
