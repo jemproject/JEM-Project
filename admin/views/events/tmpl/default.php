@@ -18,7 +18,6 @@ $saveOrder	= $listOrder=='ordering';
 
 $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 
-
 /*
 Call the highlight function with the text to highlight.
 http://johannburkard.de/blog/programming/javascript/highlight-javascript-text-higlighting-jquery-plugin.html
@@ -49,9 +48,8 @@ window.addEvent('domready', function(){
 });
 </script>
 
-
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=events'); ?>" method="post" name="adminForm" id="adminForm">
-	<fieldset id="filter-bar">
+		<fieldset id="filter-bar">
 		<div class="filter-search fltlft">
 			<?php echo $this->lists['filter']; ?>
 			<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo JText::_( 'COM_JEM_SEARCH' );?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>" class="text_area" onChange="document.adminForm.submit();" />
@@ -59,9 +57,15 @@ window.addEvent('domready', function(){
 			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
 		<div class="filter-select fltrt">
+			<label class="filter-hide-lbl" for="filter_begin"><?php echo JText::_('COM_JEM_EVENTS_FILTER_STARTDATE'); ?></label>
+			<?php echo JHtml::_('calendar', $this->state->get('filter_begin'), 'filter_begin', 'filter_begin', '%Y-%m-%d' , array('size'=>10, 'onchange'=>"this.form.fireEvent('submit');this.form.submit()"));?>
+
+			<label class="filter-hide-lbl" for="filter_end"><?php echo JText::_('COM_JEM_EVENTS_FILTER_ENDDATE'); ?></label>
+			<?php echo JHtml::_('calendar', $this->state->get('filter_end'), 'filter_end', 'filter_end', '%Y-%m-%d' , array('size'=>10, 'onchange'=>"this.form.fireEvent('submit');this.form.submit()"));?>
+
 			<select name="filter_state" class="inputbox" onchange="this.form.submit()">
-				<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
-				<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter_state'), true);?>
+			<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
+			<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter_state'), true);?>
 			</select>
 		</div>
 	</fieldset>
