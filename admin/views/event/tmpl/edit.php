@@ -9,6 +9,20 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+$options = array(
+		'onActive' => 'function(title, description){
+        description.setStyle("display", "block");
+        title.addClass("open").removeClass("closed");
+    }',
+		'onBackground' => 'function(title, description){
+        description.setStyle("display", "none");
+        title.addClass("closed").removeClass("open");
+    }',
+		'opacityTransition' => true,
+		'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
+		'useCookie' => true, // this must not be a string. Don't use quotes.
+);
+
 
 JHtml::_('behavior.tooltip');
 JHtml::_('behavior.formvalidation');
@@ -169,7 +183,7 @@ $params = $params->toArray();
 	<div class="width-40 fltrt">
 
 		<!-- START OF SLIDERS -->
-		<?php echo JHtml::_('sliders.start', 'venue-sliders-'.$this->item->id, array('useCookie'=>1)); ?>
+		<?php echo JHtml::_('sliders.start', 'event-sliders-'.$this->item->id, $options); ?>
 
 
 		<!-- START OF PANEL PUBLISHING -->
