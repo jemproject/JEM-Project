@@ -41,7 +41,7 @@ $options = array(
 	});
 
 	function submitbutton( pressbutton ) {
-		if (pressbutton == 'cancelevent' || pressbutton == 'addvenue') {
+		if (pressbutton == 'editevent.cancelevent' || pressbutton == 'editevent.addvenue') {
 			elsubmitform( pressbutton );
 			return;
 		}
@@ -125,10 +125,10 @@ $options = array(
 <div id="jem" class="jem_editevent">
 	<form enctype="multipart/form-data" id="adminForm" action="<?php echo JRoute::_('index.php') ?>" method="post" class="form-validate">
 		<div class="buttons">
-			<button type="submit" class="positive" onclick="return submitbutton('saveevent')">
+			<button type="submit" class="positive" onclick="return submitbutton('editevent.saveevent')">
 				<?php echo JText::_('COM_JEM_SAVE'); ?>
 			</button>
-			<button type="reset" class="negative" onclick="submitbutton('cancelevent')">
+			<button type="reset" class="negative" onclick="submitbutton('editevent.cancelevent')">
 				<?php echo JText::_('COM_JEM_CANCEL'); ?>
 			</button>
 		</div>
@@ -285,29 +285,6 @@ $options = array(
 			?>
 		</fieldset>
 
-		<!-- NOT WORKING -->
-		<!-- @todo rework -->
-
-		<!--
-		<fieldset>
-			<legend><?php // echo JText::_('JSTATUS'); ?></legend>
-
-			<div>
-				<label for="status"><?php // echo JText::_ ( 'JSTATUS' ) . ':'; ?></label>
-			</div>
-			<div>
-				<?php
-				//$nr = array();
-				//$nr[] = JHTML::_('select.option', '0', JText::_('JUNPUBLISHED') );
-				//$nr[] = JHTML::_('select.option', '1', JText::_('JPUBLISHED') );
-				//$nr[] = JHTML::_('select.option', '2', JText::_('JARCHIVED') );
-				//$nr[] = JHTML::_('select.option', '-2', JText::_('JTRASHED') );
-				//$nrpublished = JHTML::_('select.genericlist', $nr, 'published', 'size="1" class="inputbox"', 'value', 'text', $this->row->published );
-				// echo $nrpublished;
-				?>
-			</div>
-		</fieldset>
-		-->
 
 		<?php if ( $this->jemsettings->showfroregistra == 2 ) : ?>
 		<fieldset class="jem_fldst_registration">
@@ -498,16 +475,6 @@ $options = array(
 
 		<?php echo $this->loadTemplate('attachments_edit'); ?>
 
-		<!--  removed to avoid double posts in ie7
-		<div class="jem_save_buttons floattext">
-			<button type="submit" class="submit" onclick="return submitbutton('saveevent')">
-				<?php echo JText::_('COM_JEM_SAVE'); ?>
-			</button>
-			<button type="reset" class="button cancel" onclick="submitbutton('cancelevent')">
-				<?php echo JText::_('COM_JEM_CANCEL'); ?>
-			</button>
-		</div>
-		-->
 
 		<?php echo JHtml::_('tabs.end'); ?>
 		<p class="clear">
@@ -524,9 +491,9 @@ $options = array(
 		</p>
 	</form>
 
-	<p class="copyright">
+	<div class="copyright">
 		<?php echo JEMOutput::footer( ); ?>
-	</p>
+	</div>
 </div>
 
 <?php

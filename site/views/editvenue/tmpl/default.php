@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -124,7 +124,7 @@ defined('_JEXEC') or die;
 	}
 
 	function submitbutton( pressbutton ) {
-		if (pressbutton == 'cancelvenue') {
+		if (pressbutton == 'editvenue.cancelvenue') {
 			elsubmitform( pressbutton );
 			return;
 		}
@@ -252,10 +252,10 @@ defined('_JEXEC') or die;
 <div id="jem" class="jem_editvenue">
 	<form enctype="multipart/form-data" id="adminForm" action="<?php echo JRoute::_('index.php') ?>" method="post" class="form-validate">
 		<div class="buttons">
-			<button type="button" class="positive" onclick="return submitbutton('savevenue')">
+			<button type="button" class="positive" onclick="return submitbutton('editvenue.savevenue')">
 				<?php echo JText::_('COM_JEM_SAVE'); ?>
 			</button>
-			<button type="reset" class="negative" onclick="return submitbutton('cancelvenue')">
+			<button type="reset" class="negative" onclick="return submitbutton('editvenue.cancelvenue')">
 				<?php echo JText::_('COM_JEM_CANCEL'); ?>
 			</button>
 		</div>
@@ -382,8 +382,8 @@ defined('_JEXEC') or die;
 			<?php echo JText::_( 'COM_JEM_SELECTED_IMAGE' ); ?>-->
 		</fieldset>
 		<?php endif; ?>
-		
-		
+
+
 		<!-- CUSTOM FIELDS -->
 		<fieldset>
 			<legend><?php echo JText::_('COM_JEM_CUSTOM_FIELDS'); ?></legend>
@@ -402,8 +402,8 @@ defined('_JEXEC') or die;
 			}
 			?>
 		</fieldset>
-		
-		
+
+
 
 		<fieldset class="jem_fldst_description">
 			<legend><?php echo JText::_('COM_JEM_DESCRIPTION'); ?></legend>
