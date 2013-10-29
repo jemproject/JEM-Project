@@ -721,3 +721,9 @@ th img
 {
 	margin-left: 3px;
 }
+
+img.calendar
+{
+	cursor: pointer;
+}
+
