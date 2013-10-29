@@ -28,10 +28,10 @@ $options = array(
 <table style="width:100%">
 	<tr>
 		<td valign="top">
-			<table class="adminlist">
+			<table>
 				<tr>
 					<td>
-					<div id="cpanel">
+					<div class="cpanel">
 						<?php
 						$link = 'index.php?option=com_jem&amp;view=events';
 						JEMViewJEM::quickiconButton($link, 'icon-48-events.png', JText::_('COM_JEM_EVENTS'));
