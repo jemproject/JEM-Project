@@ -18,6 +18,7 @@ $options = array(
         description.setStyle("display", "none");
         title.addClass("closed").removeClass("open");
     }',
+	'opacityTransition' => true,
     'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
     'useCookie' => true, // this must not be a string. Don't use quotes.
 );
@@ -53,17 +54,10 @@ $options = array(
 		</td>
 	</tr>
 </table>
-
-<table style="width:100%" class="adminlist">
-	<tr valign="top">
-		<td align="left">
-
-			<?php
-			echo JHtml::_('sliders.start', 'det-pane', $options);
-
-			$title2 = JText::_( 'COM_JEM_SCREEN_HELP' );
-			echo JHtml::_('sliders.panel', $title2, 'help');
-			?>
+<div class="clr"> </div>
+	<div id="treecellhelp" class="width-20 fltleft">
+		<?php echo JHtml::_('sliders.start', 'det-pane', $options); ?>
+		<?php echo JHtml::_('sliders.panel', JText::_( 'COM_JEM_SCREEN_HELP' ), 'help'); ?>
 			<table class="adminlist">
 				<?php
 				foreach ($this->toc as $k=>$v) {
@@ -75,25 +69,21 @@ $options = array(
 				}
 				?>
 			</table>
-
-			<?php
-			echo JHtml::_('sliders.end');
-		  	?>
-		</td>
-		<td width="75%">
-			<iframe name="helpFrame" src="<?php echo 'components/com_jem/help/'.$this->langTag.'/intro.html'; ?>" class="helpFrame"></iframe>
-		</td>
-	</tr>
-</table>
+		<?php echo JHtml::_('sliders.end');?>
+	</div>
+	<div id="datacellhelp" class="width-80 fltrt">
+		<fieldset title="<?php echo JText::_('COM_JEM_HELP_VIEW'); ?>">
+			<legend>
+				<?php echo JText::_('COM_JEM_HELP_VIEW'); ?>
+			</legend>
+				<iframe name="helpFrame" src="<?php echo 'components/com_jem/help/'.$this->langTag.'/intro.html'; ?>" class="helpFrame"></iframe>
+		</fieldset>
+	</div>
 <input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="view" value="help" />
 <input type="hidden" name="task" value="" />
 
 </form>
-
-<p class="copyright">
-	<?php echo JEMAdmin::footer( ); ?>
-</p>
 
 <?php
 //keep session alive
