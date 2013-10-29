@@ -8,6 +8,8 @@
  */
 
 defined('_JEXEC') or die;
+
+$gdv = JEMImage::gdVersion();
 ?>
 
 <div class="width-100">
@@ -24,7 +26,7 @@ defined('_JEXEC') or die;
 				</span>
 			</li>
 
-			<?php if ($gdv = JEMImage::gdVersion() && $gdv >= 2) : //is the gd library installed on the server and its version > 2? ?>
+			<?php if ($gdv && $gdv >= 2) : //is the gd library installed on the server and its version > 2? ?>
 				<li><?php echo $this->form->getLabel('gddisabled'); ?> <?php echo $this->form->getInput('gddisabled'); ?></li>
 			<?php endif; ?>
 
