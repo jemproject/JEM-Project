@@ -276,10 +276,10 @@ class JEMModelEvent extends JModelAdmin
 
 		// attachments
 		// new ones first
-		$attachments = $fileFilter->get('attach', null, 'array');
-		$attachments['customname'] = $jinput->post->get('attach-name', null, 'array');
-		$attachments['description'] = $jinput->post->get('attach-desc', null, 'array');
-		$attachments['access'] = $jinput->post->get('attach-access', null, 'array');
+		$attachments = $fileFilter->get('attach', array(), 'array');
+		$attachments['customname'] = $jinput->post->get('attach-name', array(), 'array');
+		$attachments['description'] = $jinput->post->get('attach-desc', array(), 'array');
+		$attachments['access'] = $jinput->post->get('attach-access', array(), 'array');
 		JEMAttachment::postUpload($attachments, 'event'.$table->id);
 
 		// and update old ones
