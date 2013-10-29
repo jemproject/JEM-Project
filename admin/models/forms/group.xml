@@ -32,8 +32,8 @@
 			default="0"
 			required="false"
 		>
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 
 		<field name="publishvenue" type="radio"
@@ -43,8 +43,8 @@
 			default="0"
 			required="false"
 		>
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 
 		<field name="editvenue" type="radio"
@@ -54,8 +54,8 @@
 			default="0"
 			required="false"
 		>
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 	</fieldset>
 </form>
