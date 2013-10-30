@@ -198,7 +198,7 @@ class JEMViewDay extends JViewLegacy
 		$this->document->setTitle($title);
 
 		// TODO: Metadata
-		$this->document->setMetadata('keywords' , "gaga". $this->params->get('page_title'));
+		$this->document->setMetadata('keywords', $this->params->get('page_title'));
 	}
 }
 ?>
