@@ -26,28 +26,26 @@ class JEMViewDay extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
-
-		//initialize variables
+		// Initialize variables
 		$app 			= JFactory::getApplication();
-		$document 		= JFactory::getDocument();
 		$jemsettings 	= JEMHelper::config();
-		$menu			= $app->getMenu();
+		$menu 			= $app->getMenu();
 		$item 			= $menu->getActive();
 		$params 		= $app->getParams();
-		$db  			= JFactory::getDBO();
+		$db 			= JFactory::getDBO();
 		$uri 			= JFactory::getURI();
 		$task 			= JRequest::getWord('task');
 		$pathway 		= $app->getPathWay();
+		$jinput 		= $app->input;
 
-		// Retrieving locid
-		$jinput = JFactory::getApplication()->input;
+		// Retrieving data
 		$requestVenueId = $jinput->get('locid', null, 'int');
 		$requestCategoryId = $jinput->get('catid', null, 'int');
 		$requestDate = $jinput->get('id', null, 'int');
 
-		//add css file
-		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		// Add css file
+		$this->document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		$this->document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		// get variables
 		$filter_order		= $app->getUserStateFromRequest('com_jem.day.filter_order', 'filter_order', 	'a.dates', 'cmd');
@@ -60,21 +58,18 @@ class JEMViewDay extends JViewLegacy
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
 
-		//get data from model
+		// Get data from model
 		$rows 		= $this->get('Data');
 		$day		= $this->get('Day');
 
 		$daydate 	= JEMOutput::formatdate($day);
 
-		//are events available?
+		// Are events available?
 		if (!$rows) {
 			$noevents = 1;
 		} else {
 			$noevents = 0;
 		}
-
-		//params
-		$params->def('page_title', $item->title);
 
 		if ($requestVenueId){
 			$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&locid='.$requestVenueId.'&id='.$requestDate);
@@ -86,13 +81,8 @@ class JEMViewDay extends JViewLegacy
 			$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&id='.$requestDate);
 		}
 
-		//pathway
-		$pathway->setItemName(1, $item->title);
-
-		//Set Page title
-		if (!$item->title) {
-			$document->setTitle($params->get('page_title'));
-			$document->setMetadata('keywords' , $params->get('page_title'));
+		if($item) {
+			$pathway->setItemName(1, $item->title);
 		}
 
 		//Check if the user has access to the form
@@ -108,9 +98,9 @@ class JEMViewDay extends JViewLegacy
 		//add alternate feed link
 		$link    = 'index.php?option=com_jem&view=day&format=feed&id=' . date('Ymd', strtotime($this->get('Day')));
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
-		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
+		$this->document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
-		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
+		$this->document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
 
 		//search filter
 		$filters = array();
@@ -151,6 +141,8 @@ class JEMViewDay extends JViewLegacy
 		$this->lists			= $lists;
 		$this->daydate			= $daydate;
 
+		$this->prepareDocument();
+
 		parent::display($tpl);
 	}
 
@@ -180,5 +172,33 @@ class JEMViewDay extends JViewLegacy
 		return $this->rows;
 	}
 
+	/**
+	 * Prepares the document.
+	 */
+	protected function prepareDocument() {
+		$app 		= JFactory::getApplication();
+		$menus		= $app->getMenu();
+		$menu 		= $menus->getActive();
+
+		if ($menu) {
+			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
+		} else {
+			$this->params->def('page_heading', JText::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY'));
+		}
+
+		$title = $this->params->get('page_title', '');
+
+		if (empty($title)) {
+			$title = $app->getCfg('sitename');
+		} elseif ($app->getCfg('sitename_pagetitles', 0) == 1) {
+			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
+		} elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
+		}
+		$this->document->setTitle($title);
+
+		// TODO: Metadata
+		$this->document->setMetadata('keywords' , "gaga". $this->params->get('page_title'));
+	}
 }
 ?>
