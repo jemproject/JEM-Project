@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -17,7 +17,7 @@ jimport('joomla.application.component.view');
 class JEMViewMyvenues extends JViewLegacy
 {
 	/**
-	 * Creates the My-Events View
+	 * Creates the Myvenues View
 	 */
 	function display($tpl = null)
 	{
@@ -47,7 +47,7 @@ class JEMViewMyvenues extends JViewLegacy
 		$venues = $this->get('Venues');
 		$venues_pagination = $this->get('VenuesPagination');
 
-		//are events available?
+		//are venues available?
 		if (!$venues) {
 			$novenues = 1;
 		} else {
@@ -112,33 +112,6 @@ class JEMViewMyvenues extends JViewLegacy
 		$this->novenues				= $novenues;
 
 		parent::display($tpl);
-	}
-
-
-	/**
-	 * Manipulate Data
-	 *
-	 * @access public
-	 * @return object $rows
-	 *
-	 */
-	function &getRows()
-	{
-		$count = count($this->venues);
-
-		if (!$count) {
-			return;
-		}
-
-		$k = 0;
-		foreach($this->venues as $key => $row) {
-			$row->odd = $k;
-
-			$this->venues[$key] = $row;
-			$k = 1 - $k;
-		}
-
-		return $this->venues;
 	}
 }
 ?>

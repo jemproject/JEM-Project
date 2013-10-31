@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -9,7 +9,8 @@
 
 defined('_JEXEC') or die;
 
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
+require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
 /**
  * HTML View class for the JEM View
@@ -17,7 +18,7 @@ jimport( 'joomla.application.component.view');
  * @package JEM
  *
 */
-class JEMViewEventslist extends JViewLegacy
+class JEMViewEventslist extends JEMView
 {
 	/**
 	 * Creates the Simple List View
@@ -39,7 +40,7 @@ class JEMViewEventslist extends JViewLegacy
 		$params 	= $app->getParams();
 		$uri 		= JFactory::getURI();
 		$pathway 	= $app->getPathWay();
-		$db 		=  JFactory::getDBO();
+		$db 		= JFactory::getDBO();
 
 		//add css file
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
@@ -144,33 +145,6 @@ class JEMViewEventslist extends JViewLegacy
 		$this->pagetitle		= $pagetitle;
 
 		parent::display($tpl);
-	}
-
-	/**
-	 * Manipulate Data
-	 *
-	 * @access public
-	 * @return object $rows
-	 *
-	 */
-	function &getRows()
-	{
-		$count = count($this->rows);
-
-		if (!$count) {
-			return;
-		}
-
-		$k = 0;
-		foreach($this->rows as $key => $row)
-		{
-			$row->odd   = $k;
-
-			$this->rows[$key] = $row;
-			$k = 1 - $k;
-		}
-
-		return $this->rows;
 	}
 }
 ?>

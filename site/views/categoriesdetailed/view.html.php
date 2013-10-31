@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
+require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
 /**
  * HTML View class for the Categoriesdetailed View
@@ -17,7 +18,7 @@ jimport('joomla.application.component.view');
  * @package JEM
  *
  */
-class JEMViewCategoriesdetailed extends JViewLegacy
+class JEMViewCategoriesdetailed extends JEMView
 {
 	/**
 	 * Creates the Categoriesdetailed View
@@ -53,7 +54,9 @@ class JEMViewCategoriesdetailed extends JViewLegacy
 		$params->def('page_title', $item->title);
 
 		//pathway
-		if($item) $pathway->setItemName(1, $item->title);
+		if($item) {
+			$pathway->setItemName(1, $item->title);
+		}
 
 		if ($task == 'archive') {
 			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=categoriesdetailed&task=archive'));
@@ -101,31 +104,6 @@ class JEMViewCategoriesdetailed extends JViewLegacy
 		$this->pagetitle		= $pagetitle;
 
 		parent::display($tpl);
-	}
-
-	/**
-	 * Manipulate Data
-	 *
-	 *
-	 */
-	function getRows()
-	{
-		$count = count($this->rows);
-
-		if (!$count) {
-			return;
-		}
-
-		$k = 0;
-		foreach($this->rows as $key => $row)
-		{
-			$row->odd = $k;
-
-			$this->rows[$key] = $row;
-			$k = 1 - $k;
-		}
-
-		return $this->rows;
 	}
 }
 ?>

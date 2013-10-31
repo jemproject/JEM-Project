@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -17,7 +17,7 @@ jimport('joomla.application.component.view');
 class JEMViewMyattending extends JViewLegacy
 {
 	/**
-	 * Creates the My-Events View
+	 * Creates the Myattending View
 	 */
 	function display($tpl = null)
 	{
@@ -48,7 +48,7 @@ class JEMViewMyattending extends JViewLegacy
 		$attending 	= $this->get('Attending');
 		$attending_pagination 	= $this->get('AttendingPagination');
 
-		//are events available?
+		//are attendences available?
 		if (!$attending) {
 			$noattending = 1;
 		} else {
@@ -113,33 +113,6 @@ class JEMViewMyattending extends JViewLegacy
 		$this->noattending				= $noattending;
 
 		parent::display($tpl);
-	}
-
-
-	/**
-	 * Manipulate Data
-	 *
-	 * @access public
-	 * @return object $rows
-	 *
-	 */
-	function &getRows()
-	{
-		$count = count($this->events);
-
-		if (!$count) {
-			return;
-		}
-
-		$k = 0;
-		foreach($this->events as $key => $row) {
-			$row->odd   = $k;
-
-			$this->events[$key] = $row;
-			$k = 1 - $k;
-		}
-
-		return $this->events;
 	}
 }
 ?>

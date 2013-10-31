@@ -1,21 +1,22 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-defined ( '_JEXEC' ) or die ();
+defined('_JEXEC') or die ();
 
-jimport ( 'joomla.application.component.view' );
+jimport('joomla.application.component.view');
+require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
 /**
  * HTML View class for the Venue View
  * @package JEM
  *
  */
-class JEMViewVenue extends JViewLegacy {
+class JEMViewVenue extends JEMView {
 
 	/**
 	 * Creates the Venue View
@@ -279,27 +280,5 @@ class JEMViewVenue extends JViewLegacy {
 
 		parent::display($tpl);
 	}
-
-	/**
-	 * Manipulate Data
-	 */
-	function &getRows() {
-		$count = count ($this->rows);
-
-		if (! $count) {
-			return;
-		}
-
-		$k = 0;
-		foreach ($this->rows as $key => $row ) {
-			$row->odd = $k;
-
-			$this->rows [$key] = $row;
-			$k = 1 - $k;
-		}
-
-		return $this->rows;
-	}
-
 }
 ?>

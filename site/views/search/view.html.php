@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
+require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
 /**
  * HTML View class for the JEM View
@@ -17,7 +18,7 @@ jimport('joomla.application.component.view');
  * @package JEM
  *
  */
-class JEMViewSearch extends JViewLegacy
+class JEMViewSearch extends JEMView
 {
 	/**
 	 * Creates the Simple List View
@@ -54,7 +55,7 @@ class JEMViewSearch extends JViewLegacy
 		$task				= JRequest::getWord('task');
 
 		//get data from model
-		$rows 	= $this->get('Data');
+		$rows = $this->get('Data');
 
 		//are events available?
 		if (!$rows) {
@@ -175,32 +176,6 @@ class JEMViewSearch extends JViewLegacy
 		$this->document			= $document;
 
 		parent::display($tpl);
-	}
-
-	/**
-	 * Manipulate Data
-	 *
-	 * @access public
-	 * @return object $rows
-	 *
-	 */
-	function &getRows()
-	{
-		$count = count($this->rows);
-
-		if (!$count) {
-			return;
-		}
-
-		$k = 0;
-		foreach($this->rows as $key => $row) {
-			$row->odd = $k;
-
-			$this->rows[$key] = $row;
-			$k = 1 - $k;
-		}
-
-		return $this->rows;
 	}
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
-
+require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
 /**
  * HTML View class for the Category View
@@ -18,7 +18,7 @@ jimport('joomla.application.component.view');
  * @package JEM
  *
 */
-class JEMViewCategory extends JViewLegacy
+class JEMViewCategory extends JEMView
 {
 	/**
 	 * Creates the Category View
@@ -256,30 +256,5 @@ class JEMViewCategory extends JViewLegacy
 
 		parent::display($tpl);
 	}
-
-	/**
-	 * Manipulate Data
-	 *
-	 *
-	 */
-	function &getRows()
-	{
-		$count = count($this->rows);
-
-		if (!$count) {
-			return;
-		}
-
-		$k = 0;
-		foreach($this->rows as $key => $row) {
-			$row->odd = $k;
-
-			$this->rows[$key] = $row;
-			$k = 1 - $k;
-		}
-
-		return $this->rows;
-	}
-
 }
 ?>
