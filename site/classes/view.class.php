@@ -26,10 +26,8 @@ class JEMView extends JViewLegacy {
 		}
 
 		$k = 0;
-		foreach($this->$rowname as $key => $row) {
+		foreach($this->$rowname as $row) {
 			$row->odd = $k;
-
-			$this->$rowname[$key] = $row;
 			$k = 1 - $k;
 		}
 
