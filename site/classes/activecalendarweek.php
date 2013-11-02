@@ -46,6 +46,7 @@ $out=$this->mkWeeksHead();
 $out.=$this->mkWeekDayz();
 $out.=$this->mkWeeksBody($numberOfWeeks);
 $out.=$this->mkWeeksFoot();
+
 return $out;
 }
 /*

@@ -158,12 +158,12 @@ class JEMModelWeekcal extends JModelLegacy
 				if ($firstweekday == 1) {
 					if(date('N', time()) == 1) {
 						#it's monday and monday is startdate;
-						$startdate = $datetime->modify('-7 day');
+						$startdate = $datetime->modify('-6 day');
 						$startdate = $datetime->format('Y-m-d') . "\n";
-						$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks');
+						$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
 						$enddate = $datetime->format('Y-m-d') . "\n";
 					} else {
-						#it's not monday but monday is startdate;
+						#it's not monday but monday is startdate;..
 						$startdate = $datetime->modify('-6 day');
 						$startdate = $datetime->format('Y-m-d') . "\n";
 						$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
@@ -242,7 +242,6 @@ class JEMModelWeekcal extends JModelLegacy
 			.$where
 			.' GROUP BY a.id '
 			;
-
 		return $query;
 	}
 
@@ -286,12 +285,12 @@ class JEMModelWeekcal extends JModelLegacy
 		if ($firstweekday == 1) {
 			if(date('N', time()) == 1) {
 				#it's monday and monday is startdate;
-				$startdate = $datetime->modify('-7 day');
+				$startdate = $datetime->modify('-6 day');
 				$startdate = $datetime->format('Y-m-d') . "\n";
-				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks');
+				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
 				$enddate = $datetime->format('Y-m-d') . "\n";
 			} else {
-				#it's not monday but monday is startdate;
+				# it's not monday but monday is startdate;
 				$startdate = $datetime->modify('-6 day');
 				$startdate = $datetime->format('Y-m-d') . "\n";
 				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
@@ -309,7 +308,7 @@ class JEMModelWeekcal extends JModelLegacy
 				#it's not sunday and sunday is startdate;
 				$startdate = $datetime->modify('-7 day');
 				$startdate = $datetime->format('Y-m-d') . "\n";
-				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
+				$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks');
 				$enddate = $datetime->format('Y-m-d') . "\n";
 			}
 		}

@@ -32,16 +32,16 @@ class JEMViewWeekcal extends JViewLegacy
 		JHTML::_('behavior.tooltip');
 
 		//initialize variables
-		$document 	= JFactory::getDocument();
+		//$document 	= JFactory::getDocument();
 		$menu 		= $app->getMenu();
 		$jemsettings = JEMHelper::config();
 		$item 		= $menu->getActive();
 		$params 	= $app->getParams();
 
 		//add css file
-		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendarweek.css');
+		$this->document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		$this->document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		$this->document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendarweek.css');
 
 		$evlinkcolor = $params->get('eventlinkcolor');
 		$evbackgroundcolor = $params->get('eventbackgroundcolor');
@@ -66,22 +66,24 @@ class JEMViewWeekcal extends JViewLegacy
 			background-color:'.$currentdaycolor.';
 		}';
 
-		$document->addStyleDeclaration($style);
+		$this->document->addStyleDeclaration($style);
 
 		// add javascript
-		$document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
+		$this->document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
 		$rows = $this->get('Data');
 		$currentweek = $this->get('Currentweek');
+		$currentyear =  Date("Y");
 
 		//Set Meta data
-		$document->setTitle($item->title);
+		$this->document->setTitle($item->title);
 
 		//Set Page title
 		$pagetitle = $params->def('page_title', $item->title);
-		$document->setTitle($pagetitle);
-		$document->setMetaData('title', $pagetitle);
+		$this->document->setTitle($pagetitle);
+		$this->document->setMetaData('title', $pagetitle);
 
-		$cal = new activeCalendarWeek();
+
+		$cal = new activeCalendarWeek($currentyear,1,1);
 		$cal->enableWeekNum(JText::_('COM_JEM_WKCAL_WEEK'),null,''); // enables week number column with linkable week numbers
 		$cal->setFirstWeekDay($params->get('firstweekday', 0));
 
