@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -23,14 +23,10 @@ class JEMOutput {
 	static function footer()
 	{
 		$app = JFactory::getApplication();
-// 		$params = $app->getParams();
 
 		if ($app->input->get('print','','int')) {
-			//button in popup
 		} else {
-			// if ($params->get('copyright') == 1) {
 			echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
-			// }
 		}
 	}
 
@@ -49,7 +45,7 @@ class JEMOutput {
 			JHTML::_('behavior.tooltip');
 
 			if ($settings->icons) {
-				$image = JHTML::image("media/com_jem/images/submitevent.png",JText::_('COM_JEM_DELIVER_NEW_EVENT'));
+				$image = JHtml::_('image', 'com_jem/submitevent.png', JText::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
 			} else {
 				$image = JText::_('COM_JEM_DELIVER_NEW_EVENT');
 			}
@@ -87,7 +83,7 @@ class JEMOutput {
 			JHTML::_('behavior.tooltip');
 
 			if ($settings->icons) {
-				$image = JHTML::image("media/com_jem/images/addvenue.png",JText::_('COM_JEM_DELIVER_NEW_VENUE'));
+				$image = JHtml::_('image', 'com_jem/addvenue.png', JText::_('COM_JEM_DELIVER_NEW_VENUE'), NULL, true);
 			} else {
 				$image = JText::_('COM_JEM_DELIVER_NEW_VENUE');
 			}
@@ -130,7 +126,7 @@ class JEMOutput {
 
 				if ($task == 'archive') {
 					if ($settings->icons) {
-						$image = JHTML::image("media/com_jem/images/el.png",JText::_('COM_JEM_SHOW_EVENTS'));
+						$image = JHtml::_('image', 'com_jem/el.png', JText::_('COM_JEM_SHOW_EVENTS'), NULL, true);
 					} else {
 						$image = JText::_('COM_JEM_SHOW_EVENTS');
 					}
@@ -144,7 +140,7 @@ class JEMOutput {
 					}
 				} else {
 					if ($settings->icons) {
-						$image = JHTML::image("media/com_jem/images/archive_front.png",JText::_('COM_JEM_SHOW_ARCHIVE'));
+						$image = JHtml::_('image', 'com_jem/archive_front.png', JText::_('COM_JEM_SHOW_ARCHIVE'), NULL, true);
 					} else {
 						$image = JText::_('COM_JEM_SHOW_ARCHIVE');
 					}
@@ -192,7 +188,7 @@ class JEMOutput {
 			{
 				case 'editevent':
 					if ($settings->icons) {
-						$image = JHTML::image("media/com_jem/images/calendar_edit.png",JText::_('COM_JEM_EDIT_EVENT'));
+						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_EVENT'), NULL, true);
 					} else {
 						$image = JText::_('COM_JEM_EDIT_EVENT');
 					}
@@ -202,7 +198,7 @@ class JEMOutput {
 
 				case 'editvenue':
 					if ($settings->icons) {
-						$image = JHTML::image("media/com_jem/images/calendar_edit.png",JText::_('COM_JEM_EDIT_EVENT'));
+						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_VENUE'), NULL, true);
 					} else {
 						$image = JText::_('COM_JEM_EDIT_VENUE');
 					}
@@ -237,7 +233,7 @@ class JEMOutput {
 			$status = 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no';
 
 			if ($settings->icons) {
-				$image = JHTML::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), NULL, true);
+				$image = JHtml::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), NULL, true);
 			} else {
 				$image = JText::_('COM_JEM_PRINT');
 			}
@@ -247,7 +243,7 @@ class JEMOutput {
 				$overlib = JText::_('COM_JEM_PRINT_DESC');
 				$text = JText::_('COM_JEM_PRINT');
 				$title = 'title='.JText::_('JGLOBAL_PRINT');
-				$pimage = JHTML::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), $title, true);
+				$pimage = JHtml::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), $title, true);
 				$output = '<a href="#" onclick="window.print();return false;">'.$pimage.'</a>';
 			} else {
 				//button in view
@@ -289,7 +285,7 @@ class JEMOutput {
 			$status = 'width=400,height=300,menubar=yes,resizable=yes';
 
 			if ($settings->icons) {
-				$image = JHTML::_('image','system/emailButton.png', JText::_('JGLOBAL_EMAIL'), NULL, true);
+				$image = JHtml::_('image','system/emailButton.png', JText::_('JGLOBAL_EMAIL'), NULL, true);
 			} else {
 				$image = JText::_('COM_JEM_EMAIL');
 			}
@@ -321,7 +317,7 @@ class JEMOutput {
 			JHTML::_('behavior.tooltip');
 
 			if ($settings->icons) {
-				$image = JHTML::image("media/com_jem/images/iCal2.0.png",JText::_('COM_JEM_EXPORT_ICS'));
+				$image = JHtml::_('image', 'com_jem/iCal2.0.png', JText::_('COM_JEM_EXPORT_ICS'), NULL, true);
 			} else {
 				$image = JText::_('COM_JEM_EXPORT_ICS');
 			}
@@ -355,7 +351,7 @@ class JEMOutput {
 
 		JHTML::_('behavior.tooltip');
 
-		$image = JHTML::image("media/com_jem/images/publish.png",JText::_('COM_JEM_PUBLISH'));
+		$image = JHtml::_('image', 'com_jem/publish.png', JText::_('COM_JEM_PUBLISH'), NULL, true);
 
 		if ($app->input->get('print','','int')) {
 			//button in popup
@@ -384,9 +380,7 @@ class JEMOutput {
 
 		JHTML::_('behavior.tooltip');
 
-		// checks template image directory for image, if none found default are loaded
-
-		$image = JHTML::image("media/com_jem/images/trash.png",JText::_('COM_JEM_TRASH'));
+		$image = JHtml::_('image', 'com_jem/trash.png', JText::_('COM_JEM_TRASH'), NULL, true);
 
 		if ($app->input->get('print','','int')) {
 			//button in popup
@@ -415,9 +409,7 @@ class JEMOutput {
 
 		JHTML::_('behavior.tooltip');
 
-		// checks template image directory for image, if none found default are loaded
-
-		$image = JHTML::image("media/com_jem/images/unpublish.png",JText::_('COM_JEM_UNPUBLISH'));
+		$image = JHtml::_('image', 'com_jem/unpublish.png', JText::_('COM_JEM_UNPUBLISH'), NULL, true);
 
 		if ($app->input->get('print','','int')) {
 			//button in popup
@@ -458,9 +450,7 @@ class JEMOutput {
 
 		JHTML::_('behavior.tooltip');
 
-		// checks template image directory for image, if none found default are loaded
-
-		$image = JHTML::image("media/com_jem/images/export_excel.png",JText::_('COM_JEM_EXPORT'));
+		$image = JHtml::_('image', 'com_jem/export_excel.png', JText::_('COM_JEM_EXPORT'), NULL, true);
 
 		if ($app->input->get('print','','int')) {
 			//button in popup
@@ -492,9 +482,7 @@ class JEMOutput {
 
 		JHTML::_('behavior.tooltip');
 
-		// checks template image directory for image, if none found default are loaded
-
-		$image = JHTML::image("media/com_jem/images/icon-16-back.png",JText::_('COM_JEM_BACK'));
+		$image = JHtml::_('image', 'com_jem/icon-16-back.png', JText::_('COM_JEM_BACK'), NULL, true);
 
 		if ($app->input->get('print','','int')) {
 			//button in popup
@@ -521,7 +509,7 @@ class JEMOutput {
 		$jemsettings = JEMHelper::config();
 
 		//Link to map
-		$mapimage = JHTML::image("media/com_jem/images/map_icon.png",JText::_('COM_JEM_MAP'));
+		$mapimage = JHtml::_('image', 'com_jem/map_icon.png', JText::_('COM_JEM_MAP'), NULL, true);
 
 		//set var
 		$output = null;
@@ -660,12 +648,12 @@ class JEMOutput {
 	static function formatdate($date, $format = "")
 	{
 		$settings = JEMHelper::config();
-		
+
 		$check = JEMHelper::isValidDate($date);
-		
+
 		if ($check == true)
 		{
-		
+
 
 		jimport('joomla.utilities.date');
 		$jdate = new JDate($date);
@@ -675,11 +663,11 @@ class JEMOutput {
 		}
 
 		return $jdate->format($format);
-		} else 
+		} else
 		{
 			return false;
 		}
-		
+
 	}
 
 	/**
