@@ -21,9 +21,8 @@ class JEMViewUpdatecheck extends JViewLegacy {
 
 	public function display($tpl = null)
 	{
-
 		//Get data from the model
-		$updatedata      = $this->get( 'Updatedata');
+		$updatedata      	= $this->get('Updatedata');
 
 		//assign data to template
 		$this->updatedata	= $updatedata;
@@ -40,15 +39,10 @@ class JEMViewUpdatecheck extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
-
-
 		//create the toolbar
-		JToolBarHelper::title( JText::_( 'COM_JEM_UPDATE_CHECK' ), 'settings' );
-		JToolBarHelper::help( 'update', true );
-
+		JToolBarHelper::title(JText::_('COM_JEM_UPDATE_CHECK'), 'settings');
+		JToolBarHelper::help('update', true);
 		JToolBarHelper::back();
-
-		//JToolBarHelper::help( 'updatecheck', true );
 	}
 
 }

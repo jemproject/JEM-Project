@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -43,9 +43,6 @@ if ($this->updatedata->failed == 0) {
 		</table>
 
 		<br />
-
-
-
 			<table style="width:100%" class="adminlist">
 			<tr>
 		  		<td><b><?php echo JText::_( 'COM_JEM_VERSION' ).':'; ?></b></td>
@@ -101,13 +98,9 @@ if ($this->updatedata->failed == 0) {
 		  		</td>
 			</tr>
 			</table>
-
-
-
 <?php
 } else {
 ?>
-
 		<table style="width:100%" class="adminlist">
 			<tr>
 		  		<td>
