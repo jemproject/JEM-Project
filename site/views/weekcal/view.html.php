@@ -47,14 +47,10 @@ class JEMViewWeekcal extends JViewLegacy
 		$evbackgroundcolor = $params->get('eventbackgroundcolor');
 		$currentdaycolor = $params->get('currentdaycolor');
 		$eventandmorecolor = $params->get('eventandmorecolor');
-		$eventtopbackgroundcolor = $params->get('eventtopbackgroundcolor');
 
 		$style = '
 		div#jem a .eventtitle{
 			color: ' . $evlinkcolor . ';
-		}
-		div[id^=\'eventcontenttop\'] {
-			background-color:'.$eventtopbackgroundcolor .';
 		}
 		div[id^=\'catz\'] {
 			background-color:'.$evbackgroundcolor .';

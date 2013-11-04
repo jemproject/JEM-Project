@@ -52,11 +52,6 @@
 				label="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR"
 				description="COM_JEM_CALENDAR_EVENTBACKGROUNDCOLOR_DESC"
 			/>
-			<field name="eventtopbackgroundcolor" type="color"
-				default="#FFFF00"
-				label="COM_JEM_CALENDAR_EVENTTOPBACKGROUNDCOLOR"
-				description="COM_JEM_CALENDAR_EVENTTOPBACKGROUNDCOLOR_DESC"
-			/>
 			<field name="currentdaycolor" type="color"
 				default="#CCCC99"
 				label="COM_JEM_CALENDAR_CURRENTDAYCOLOR"
