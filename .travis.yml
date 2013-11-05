@@ -9,6 +9,9 @@ php:
 env:
     - DB=mysql
 
+notifications:
+  email: false
+
 before_script:
     - pear config-set auto_discover 1
     - pear install PHP_CodeSniffer
