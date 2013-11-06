@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
   `enddates` date NULL default NULL,
   `times` time NULL default NULL,
   `endtimes` time NULL default NULL,
-  `title` varchar(100) NOT NULL default '',
-  `alias` varchar(100) NOT NULL default '',
+  `title` varchar(255) NOT NULL default '',
+  `alias` varchar(255) NOT NULL default '',
   `created_by` int(11) unsigned NOT NULL default '0',
   `modified` datetime NOT NULL,
   `modified_by` int(11) unsigned NOT NULL default '0',
@@ -89,21 +89,33 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
 CREATE TABLE IF NOT EXISTS `#__jem_categories` (
-  `id` int(11) unsigned NOT NULL auto_increment,
-  `parent_id` int(11) unsigned NOT NULL default '0',
-  `catname` varchar(100) NOT NULL default '',
-  `alias` varchar(100) NOT NULL default '',
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `parent_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `catname` varchar(100) NOT NULL DEFAULT '',
+  `alias` varchar(100) NOT NULL DEFAULT '',
   `catdescription` mediumtext NOT NULL,
   `meta_keywords` text NOT NULL,
   `meta_description` text NOT NULL,
-  `image` varchar(100) NOT NULL default '',
-  `color` varchar(20) NOT NULL default '',
-  `published` tinyint(1) NOT NULL default '0',
-  `checked_out` int(11) NOT NULL default '0',
-  `checked_out_time` datetime NOT NULL default '0000-00-00 00:00:00',
-  `access` int(11) unsigned NOT NULL default '0',
-  `groupid` int(11) NOT NULL default '0',
-  `ordering` int(11) NOT NULL default '0',
+  `image` varchar(100) NOT NULL DEFAULT '',
+  `color` varchar(20) NOT NULL DEFAULT '',
+  `published` tinyint(1) NOT NULL DEFAULT '0',
+  `checked_out` int(11) NOT NULL DEFAULT '0',
+  `checked_out_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `access` int(11) unsigned NOT NULL DEFAULT '0',
+  `groupid` int(11) NOT NULL DEFAULT '0',
+  `ordering` int(11) NOT NULL DEFAULT '0',
+  `title` varchar(255) NOT NULL,
+  `note` varchar(255) NOT NULL,
+  `lft` int(11) NOT NULL DEFAULT '0',
+  `rgt` int(11) NOT NULL DEFAULT '0',
+  `level` int(10) unsigned NOT NULL DEFAULT '1',
+  `language` varchar(7) NOT NULL,
+  `created_user_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `created_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `path` varchar(255) NOT NULL,
+  `metadata` varchar(2048) NOT NULL,
+  `modified_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified_user_id` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
@@ -532,3 +544,10 @@ INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, 
 (249, 'NA', 'SX', 'SXM', 534, 'Sint Maarten'),
 (250, 'AF', 'SS', 'SSD', 728, 'South Sudan, Republic of'),
 (251, 'EU', 'XK', 'XKX', '',  'Kosovo, Republic of');
+
+INSERT IGNORE INTO `#__jem_categories` (`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`,`alias`,`access`,`path`) VALUES
+(1, '0', '0', '1', '0', 'root','root','1','');
+;
+
+
+
