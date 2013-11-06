@@ -1,10 +1,13 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * 
+ * @todo add function to truncate the table categories before loading sample-data
+ * this way we unsure that the correct mapping is done.
  */
 
 defined('_JEXEC') or die;
@@ -58,6 +61,8 @@ class JEMModelSampledata extends JModelLegacy
 			return false;
 		}
 
+		$this->truncateAllData();
+		
 		$scriptfile = $this->sampleDataDir.'sampledata.sql';
 
 		//load sql file
@@ -219,6 +224,7 @@ class JEMModelSampledata extends JModelLegacy
 
 		$query->select("id");
 		$query->from('#__jem_categories');
+		$query->where('catname NOT LIKE "root"');
 		$this->_db->setQuery($query);
 		$result = $this->_db->loadResult();
 
@@ -227,5 +233,35 @@ class JEMModelSampledata extends JModelLegacy
 		}
 		return true;
 	}
+	
+	/**
+	 * Truncates JEM tables with exception of settings table
+	 */
+	public function truncateAllData() {
+	    $tables = array(
+	        "attachments",
+	        "categories",
+	        "cats_event_relations",
+	        "events",
+	        "groupmembers",
+	        "groups",
+	        "register",
+	        "venues"
+	    );
+	    
+	    $db = JFactory::getDbo();
+	   
+	    foreach ($tables as $table) {
+	        $db->setQuery("TRUNCATE #__jem_".$table);
+	    
+	        if(!$db->query()) {
+	            return false;
+	        }
+	    }
+	    
+	    return true;
+	    
+	}
+	
 }
 ?>
