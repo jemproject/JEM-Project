@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -48,7 +48,7 @@ $options = array(
 						$link = 'index.php?option=com_jem&amp;view=categories';
 						JEMViewJEM::quickiconButton($link, 'icon-48-categories.png', JText::_('COM_JEM_CATEGORIES'));
 
-						$link = 'index.php?option=com_jem&amp;view=category';
+						$link = 'index.php?option=com_jem&amp;task=category.add';
 						JEMViewJEM::quickiconButton($link, 'icon-48-categoriesedit.png', JText::_('COM_JEM_ADD_CATEGORY'));
 
 						$link = 'index.php?option=com_jem&amp;view=groups';
@@ -138,6 +138,14 @@ $options = array(
 				<tr>
 					<td><?php echo JText::_('COM_JEM_CATEGORIES_UNPUBLISHED').': '; ?></td>
 					<td><b><?php echo $this->category->unpublished; ?> </b></td>
+				</tr>
+				<tr>
+					<td><?php echo JText::_('COM_JEM_MAIN_CATEGORIES_ARCHIVED').': '; ?></td>
+					<td><b><?php echo $this->category->archived; ?> </b></td>
+				</tr>
+				<tr>
+					<td><?php echo JText::_('COM_JEM_MAIN_CATEGORIES_TRASHED').': '; ?></td>
+					<td><b><?php echo $this->category->trashed; ?> </b></td>
 				</tr>
 				<tr>
 					<td><?php echo JText::_('COM_JEM_CATEGORIES_TOTAL').': '; ?></td>

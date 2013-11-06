@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -44,8 +44,12 @@ class JEMModelJEM extends JModelLegacy
 		$query = $db->getQuery(true);
 		$query->select(array('published', 'COUNT(published) as num'));
 		$query->from($tablename);
+		if ($tablename == "#__jem_categories")
+		{
+		    $query->where('catname NOT LIKE "root"');
+		}
 		$query->group('published');
-
+		
 		$db->setQuery($query);
 		$result = $db->loadObjectList("published");
 
