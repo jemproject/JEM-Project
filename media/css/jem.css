@@ -6,33 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-/**
- * @section reset
- *
- * if you have problems with your layout, activate this 'reset command' for "debugging".
- */
 
-/** reset all paddings/margins */
-/*
-div#jem * {
-	margin: 0;
-	padding: 0;
-}
-*/
-
-/** border (red) around the JEM component */
-/*
-div#jem {
-	border: 1px solid red;
-}
-*/
-
-/** border (blue) around all JEM elements */
-/*
-div#jem * {
-	border: 1px solid blue;
-}
-*/
 
 /* focus */
 div#jem .inputbox:focus {
@@ -67,14 +41,6 @@ div#jem .inputbox:hover {
 	background:#DDE084;
 }
 
-/*
-div#jem .inputbox2 {
-	border:1px solid grey;
-	background: #B3BABA;
-	cursor:pointer;
-}
-*/
-
 div#jem .inputbox {
 	border:1px solid grey;
 	/*background: #B3BABA;*/
@@ -88,9 +54,13 @@ div#jem .input {
 	cursor:pointer;
 }
 
-#main a
+#main a{
+	
+}
 
-div#jem h1 {}
+div#jem h1 {
+	
+}
 
 div#jem .jemcomponentheading {
 	border-bottom: 0px !important;
@@ -100,21 +70,22 @@ div#jem .event-file-dl-icon img {
 	padding: 5px;
 }
 
-div#jc h4 {}
+div#jc h4 {
+	/* you can define things here for the Joomla Comments section */
+}
 
 div#jem fieldset {
 	border: 1px dotted grey !important;
 }
 
-/**
- * @section clear
- * clearing the float containers
- */
+/* -------------------
+	JEM FORM
+--------------------- */
 div#jem {
 	overflow: hidden;
-	background-color: rgb(237, 244, 245);
+	background-color: #EDF4F5; /*color background main form*/
 	border: 1px solid black;
-	border-radius: 5px 5px 5px 5px;
+	border-radius: 5px 5px 5px 5px; /* for the corners */
 	padding: 10px;
 }
 
@@ -143,7 +114,6 @@ div#jem .button1 {
 	padding:2px 6px;
 	margin: 2px;
 	cursor:pointer;
-	/*height:28px;*/
 	color:#000000;
 	position: relative;
 	text-decoration:none;
@@ -172,9 +142,7 @@ div#jem .buttonfilter {
 	font-size:12px;
 	font-weight:700;
 	padding:2px 6px;
-	/* margin: 2px; */
 	cursor:pointer;
-	/* height:28px; */
 	color:#000000;
 	position: relative;
 	text-decoration:none;
@@ -319,12 +287,6 @@ div#googlemap .modal {
 	border:none;
 }
 
-div#jem a.modal img,
-div#jem img.modal,
-div#jem .catimg img,
-div#jem .map {
-	/* padding:1px; */
-}
 
 /**
  * @section registered user list
@@ -452,14 +414,15 @@ div#jem table.eventtable tr:hover td {
 	background: #BACFBA
 }
 
-/**
- * @section JEM Table Filter Form
- */
+
+/* -------------------
+	FILTER SECTION
+--------------------- */
 div#jem #jem_filter {
 	margin: 1em 0 0.5em 0;
 	padding: 0.5em;
 	border: solid 1px grey;
-	background: orange;
+	background: #FFA500; /* background color filter-box */
 }
 
 div#jem .jem_fleft {
@@ -470,9 +433,9 @@ div#jem .jem_fright {
 	float: right;
 }
 
-/**
- * @section Editevent Form
- */
+/* -------------------
+	EDITEVENT FORM
+--------------------- */
 div.jem_editevent form fieldset,
 div.jem_editvenue form fieldset {
 	margin: 0 0 1em 0;
