@@ -1,91 +1,119 @@
 <?php
 /**
- * @version 1.9.1
- * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @version     1.9.5
+ * @package     JEM
+ * @copyright   Copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2005-2009 Christoph Lukes
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-
 /**
- * View class for the JEM categories screen
+ *  View class for the JEM Categories screen
  *
- *
-*/
-class JEMViewCategories extends JViewLegacy {
+ * @package		Joomla
+ * @subpackage	JEM
+ */
+class JEMViewCategories extends JViewLegacy
+{
+	protected $items;
+	protected $pagination;
+	protected $state;
 
+	/**
+	 * Display the view
+	 */
 	public function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
+		$this->state		= $this->get('State');
+		$this->items		= $this->get('Items');
+		$this->pagination	= $this->get('Pagination');
 
-		//initialise variables
-		$user 		= JFactory::getUser();
-		$db  		= JFactory::getDBO();
-		$document	= JFactory::getDocument();
-
-		JHTML::_('behavior.tooltip');
-
-		//get vars
-		$filter_order		= $app->getUserStateFromRequest('com_jem.categories.filter_order',		'filter_order', 	'c.catname', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.categories.filter_order_Dir',	'filter_order_Dir',	'', 'word');
-		$filter_state 		= $app->getUserStateFromRequest('com_jem.categories.filter_state', 	'filter_state', 	'', 'string');
-		$search 			= $app->getUserStateFromRequest('com_jem.categories.filter_search', 	'filter_search', 	'', 'string');
-		$search 			= $db->escape(trim(JString::strtolower($search)));
+		// Check for errors.
+		if (count($errors = $this->get('Errors'))) {
+			JError::raiseError(500, implode("\n", $errors));
+			return false;
+		}
 
 		//add css and submenu to document
+		$document	= JFactory::getDocument();
 		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
 
-		//Get data from the model
-		$rows = $this->get('Data');
-		$pagination = $this->get('Pagination');
+		// Preprocess the list of items to find ordering divisions.
+		foreach ($this->items as &$item) {
+			$this->ordering[$item->parent_id][] = $item->id;
+		}
 
-		//publish unpublished filter
-		$lists['state']	= $filter_state;
-		// search filter
-		$lists['search']= $search;
+		// Levels filter.
+		$options	= array();
+		$options[]	= JHtml::_('select.option', '1', JText::_('J1'));
+		$options[]	= JHtml::_('select.option', '2', JText::_('J2'));
+		$options[]	= JHtml::_('select.option', '3', JText::_('J3'));
+		$options[]	= JHtml::_('select.option', '4', JText::_('J4'));
+		$options[]	= JHtml::_('select.option', '5', JText::_('J5'));
+		$options[]	= JHtml::_('select.option', '6', JText::_('J6'));
+		$options[]	= JHtml::_('select.option', '7', JText::_('J7'));
+		$options[]	= JHtml::_('select.option', '8', JText::_('J8'));
+		$options[]	= JHtml::_('select.option', '9', JText::_('J9'));
+		$options[]	= JHtml::_('select.option', '10', JText::_('J10'));
 
-		// table ordering
-		$lists['order_Dir'] = $filter_order_Dir;
-		$lists['order'] = $filter_order;
+		$this->f_levels = $options;
 
-		$ordering = ($lists['order'] == 'c.ordering');
-
-		//assign data to template
-		$this->lists 		= $lists;
-		$this->rows 		= $rows;
-		$this->pagination 	= $pagination;
-		$this->ordering 	= $ordering;
-		$this->user 		= $user;
-
-		// add toolbar
 		$this->addToolbar();
-
 		parent::display($tpl);
 	}
 
-
 	/**
-	 * Add Toolbar
+	 * Add the page title and toolbar.
 	 */
 	protected function addToolbar()
 	{
-		require_once JPATH_COMPONENT . '/helpers/helper.php';
 
-		//create the toolbar
+		// Initialise variables.
+		$canDo		= null;
+		$user		= JFactory::getUser();
+
+ 		// Load the category helper.
+		require_once JPATH_COMPONENT.'/helpers/helper.php';
+
+		// Get the results for each action.
+		$canDo = JEMHelperBackend::getActions(0);
+
 		JToolBarHelper::title(JText::_('COM_JEM_CATEGORIES'), 'elcategories');
 
-		JToolBarHelper::addNew('categories.add');
-		JToolBarHelper::spacer();
-		JToolBarHelper::editList('categories.edit');
-		JToolBarHelper::publishList('categories.publish');
-		JToolBarHelper::unpublishList('categories.unpublish');
-		JToolBarHelper::divider();
-		JToolBarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'categories.remove', 'JACTION_DELETE');
+		if ($canDo->get('core.create')) {
+			 JToolBarHelper::addNew('category.add');
+		}
 
-		JToolBarHelper::help('listcategories', true);
+		if ($canDo->get('core.edit' ) || $canDo->get('core.edit.own')) {
+			JToolBarHelper::editList('category.edit');
+			JToolBarHelper::divider();
+		}
+
+		if ($canDo->get('core.edit.state')) {
+			JToolBarHelper::publish('categories.publish', 'JTOOLBAR_PUBLISH', true);
+			JToolBarHelper::unpublish('categories.unpublish', 'JTOOLBAR_UNPUBLISH', true);
+			JToolBarHelper::divider();
+			JToolBarHelper::archiveList('categories.archive');
+		}
+
+		if (JFactory::getUser()->authorise('core.admin')) {
+			JToolBarHelper::checkin('categories.checkin');
+		}
+
+		if ($this->state->get('filter.published') == -2 && $canDo->get('core.delete')) {
+			JToolBarHelper::deleteList('', 'categories.delete', 'JTOOLBAR_EMPTY_TRASH');
+		}
+		elseif ($canDo->get('core.edit.state')) {
+			JToolBarHelper::trash('categories.trash');
+			JToolBarHelper::divider();
+		}
+
+		if ($canDo->get('core.admin')) {
+			JToolBarHelper::custom('categories.rebuild', 'refresh.png', 'refresh_f2.png', 'JTOOLBAR_REBUILD', false);
+			JToolBarHelper::divider();
+		}
+
 	}
 }
-?>

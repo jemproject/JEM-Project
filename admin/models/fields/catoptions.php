@@ -1,10 +1,10 @@
 <?php
 /**
- * @version 1.9.1
- * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @version     1.9.5
+ * @package     JEM
+ * @copyright   Copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2005-2009 Christoph Lukes
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('JPATH_BASE') or die;
@@ -17,7 +17,7 @@ jimport('joomla.form.formfield');
 require_once dirname(__FILE__) . '/../../helpers/helper.php';
 
 /**
- * CountryOptions Field class.
+ * CatOptions Field class.
  *
  *
  */
@@ -47,15 +47,10 @@ class JFormFieldCatOptions extends JFormField
 		// Initialize JavaScript field attributes.
 		$attr .= $this->element['onchange'] ? ' onchange="'.(string) $this->element['onchange'].'"' : '';
 
-		//$attr .= $this->element['required'] ? ' class="required modal-value"' : "";
-
-// 		if ($this->required) {
-// 			$class = ' class="required modal-value"';
-// 		}
-
 		// Output
 		$currentid = JFactory::getApplication()->input->getInt('id');
-		$categories = JEMCategories::getCategoriesTree(1);
+		$categories = JEMCategories::getCategoriesTree();
+
 
 		$db		= JFactory::getDbo();
 		$query	= $db->getQuery(true);

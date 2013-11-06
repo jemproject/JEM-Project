@@ -121,43 +121,72 @@ class JEMCategories
 	}
 
 
+
 	/**
 	 * Get the categorie tree
+	 * Based on Joomla/html/menu.php
+	 *
+	 * @todo alter this function as the published value is set to false
 	 *
 	 * @return array
 	 */
-	static function getCategoriesTree($published)
+	static function getCategoriesTree($published=false)
 	{
 		$db = JFactory::getDBO();
+		$state = array(0,1);
 
 		if ($published) {
-			$where = ' WHERE published = 1';
+			$where = ' WHERE published = '.$published;
 		} else {
-			$where = '';
+			$where = ' WHERE published IN (' . implode(',', $state) . ')';
+			$where .= ' AND catname NOT LIKE "root"';
 		}
 
 		$query = 'SELECT *, id AS value, catname AS text' . ' FROM #__jem_categories' . $where . ' ORDER BY parent_id, ordering';
-
 		$db->setQuery($query);
+		$mitems = $db->loadObjectList();
 
-		$rows = $db->loadObjectList();
-
-		//set depth limit
-		$levellimit = 10;
-
-		//get children
-		$children = array();
-		foreach ($rows as $child) {
-			$parent = $child->parent_id;
-			$list = @$children[$parent] ? $children[$parent] : array();
-			array_push($list, $child);
-			$children[$parent] = $list;
+		// Check for a database error.
+		if ($db->getErrorNum())
+		{
+			JError::raiseNotice(500, $db->getErrorMsg());
 		}
+
+		if (!$mitems)
+		{
+			$mitems = array();
+			$children = array();
+
+			$parentid = $mitems;
+		}
+		else
+		{
+
+		$mitems_temp = $mitems;
+
+
+		$children = array();
+		// First pass - collect children
+		foreach ($mitems as $v)
+		{
+			$pt = $v->parent_id;
+			$list = @$children[$pt] ? $children[$pt] : array();
+			array_push($list, $v);
+			$children[$pt] = $list;
+		}
+
+		$parentid = intval($mitems[0]->parent_id);
+
+		}
+
+
 		//get list of the items
-		$list = JEMCategories::treerecurse(0, '', array(), $children, true, max(0, $levellimit - 1));
+		$list = JEMCategories::treerecurse($parentid, '', array(), $children, 9999, 0, 0);
 
 		return $list;
 	}
+
+
 
 	/**
 	 * Get the categorie tree
@@ -166,39 +195,33 @@ class JEMCategories
 	 * @access public
 	 * @return array
 	 */
-	static function treerecurse($id, $indent, $list, &$children, $title, $maxlevel = 9999, $level = 0, $type = 1)
+	static function treerecurse($id, $indent, $list, &$children, $maxlevel=9999, $level=0, $type=1)
 	{
-		if (@$children[$id] && $level <= $maxlevel) {
-			foreach ($children[$id] as $v) {
-				$id = $v->id;
+		        if (@$children[$id] && $level <= $maxlevel)
+        {
+                foreach ($children[$id] as $v)
+                {
+                        $id = $v->id;
 
-				if ($type) {
-					$pre = '&nbsp;|_&nbsp;';
-					$spacer = '&nbsp;&nbsp;&nbsp;';
-				} else {
-					$pre = '- ';
-					$spacer = '&nbsp;&nbsp;';
-				}
+                        if ($type) {
+                                $pre    = '<sup>|_</sup>&nbsp;';
+                                $spacer = '.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+                        } else {
+                                $pre    = '- ';
+                                $spacer = '&nbsp;&nbsp;';
+                        }
 
-				if ($title) {
-					if ($v->parent_id == 0) {
-						$txt = '' . $v->catname;
-					} else {
-						$txt = $pre . $v->catname;
-					}
-				} else {
-					if ($v->parent_id == 0) {
-						$txt = '';
-					} else {
-						$txt = $pre;
-					}
-				}
+                        if ($v->parent_id == 0) {
+                                $txt    = $v->catname;
+                        } else {
+                                $txt    = $pre . $v->catname;
+                        }
+                        $pt = $v->parent_id;
+                        $list[$id] = $v;
+                        $list[$id]->treename = "$indent$txt";
+                        $list[$id]->children = count(@$children[$id]);
 
-				$list[$id] = $v;
-				$list[$id]->treename = "$indent$txt";
-				$list[$id]->children = count(@$children[$id]);
-
-				$list = JEMCategories::treerecurse($id, $indent . $spacer, $list, $children, $title, $maxlevel, $level + 1, $type);
+                 $list = JEMCategories::treerecurse($id, $indent . $spacer, $list, $children, $maxlevel, $level+1, $type);
 			}
 		}
 		return $list;
@@ -241,12 +264,9 @@ class JEMCategories
 	{
 		$catlist = array();
 
-		// if (is_array($list))
-		// {
 		foreach ($list as $item) {
 			$catlist[] = JHTML::_('select.option', $item->id, $item->treename);
 		}
-		// }
 
 		return $catlist;
 	}

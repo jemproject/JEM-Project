@@ -9,13 +9,15 @@
 
 defined('_JEXEC') or die;
 
+jimport('joomla.database.tablenested');
+
 /**
  * JEM categories Model class
  *
  * @package JEM
  *
  */
-class jem_categories extends JTable
+class jem_categories extends JTableNested
 {
 	/**
 	 * Primary Key

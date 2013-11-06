@@ -1,541 +1,261 @@
 <?php
 /**
- * @version 1.9.1
- * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @version     1.9.5
+ * @package     JEM
+ * @copyright   Copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2005-2009 Christoph Lukes
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
+jimport('joomla.application.component.modellist');
 
 /**
- * JEM Component Categories Model
- *
- * @package JEM
+ * Categories Model
  *
  */
-class JEMModelCategories extends JModelLegacy
+class JEMModelCategories extends JModelList
 {
-
 	/**
-	 * Category data array
+	 * Constructor.
 	 *
-	 * @var array
+	 * @param	array	An optional associative array of configuration settings.
+	 * @see		JController
 	 */
-	var $_data = null;
-
-	/**
-	 * Category total
-	 *
-	 * @var integer
-	 */
-	var $_total = null;
-
-
-	/**
-	 * Pagination object
-	 *
-	 * @var object
-	 */
-	var $_pagination = null;
-
-	/**
-	 * Categorie id
-	 *
-	 * @var int
-	 */
-	var $_id = null;
-
-	/**
-	 * Constructor
-	 */
-	function __construct()
+	public function __construct($config = array())
 	{
-		parent::__construct();
-
-		$jinput = JFactory::getApplication()->input;
-		$array = $jinput->get('cid',  0, 'array');
-
-		/* @todo Cleanup
-		 *
-		 *  $array = JRequest::getVar('cid', 0, '', 'array'); */
-		$this->setId((int)$array[0]);
-
-	}
-
-	/**
-	 * Method to set the category identifier
-	 *
-	 * @access	public
-	 * @param	int Category identifier
-	 */
-	function setId($id)
-	{
-		// Set id
-		$this->_id = $id;
-	}
-
-	/**
-	 * Method to get categories item data
-	 *
-	 * @access public
-	 * @return array
-	 */
-	function getData()
-	{
-		$app = JFactory::getApplication();
-
-		static $items;
-
-		if (isset($items)) {
-			return $items;
+		if (empty($config['filter_fields'])) {
+			$config['filter_fields'] = array(
+				'id', 'a.id',
+				'title', 'a.catname',
+				'alias', 'a.alias',
+				'published', 'a.published',
+				'access', 'a.access', 'access_level',
+				'language', 'a.language',
+				'checked_out', 'a.checked_out',
+				'checked_out_time', 'a.checked_out_time',
+				'created_time', 'a.created_time',
+				'created_user_id', 'a.created_user_id',
+				'lft', 'a.lft',
+				'rgt', 'a.rgt',
+				'level', 'a.level',
+				'path', 'a.path',
+			);
 		}
 
-		$limit				= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
-		$limitstart 		= $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.categories.filter_order', 'filter_order', 'c.ordering', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.categories.filter_order_Dir', 'filter_order_Dir', '', 'word' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.categories.filter_state', 'filter_state', '', 'string' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.categories.filter_search', 'filter_search', '', 'string' );
-		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
+		parent::__construct($config);
+	}
 
-		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+	/**
+	 * Method to auto-populate the model state.
+	 *
+	 * Note. Calling getState in this method will result in recursion.
+	 *
+	 * @param	string	An optional ordering field.
+	 * @param	string	An optional direction (asc|desc).
+	 *
+	 * @return	void
+	 */
+	protected function populateState($ordering = null, $direction = null)
+	{
+		// Initialise variables.
+		$app		= JFactory::getApplication();
+		$context	= $this->context;
 
-		$orderby = ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', c.ordering';
+		$extension = $app->getUserStateFromRequest('com_jem.categories.filter.extension', 'extension', 'com_jem', 'cmd');
 
-		$where = array();
+		$this->setState('filter.extension', $extension);
+		$parts = explode('.', $extension);
+
+		// extract the component name
+		$this->setState('filter.component', $parts[0]);
+
+		// extract the optional section name
+		$this->setState('filter.section', (count($parts) > 1) ? $parts[1] : null);
+
+		$search = $this->getUserStateFromRequest($context.'.search', 'filter_search');
+		$this->setState('filter.search', $search);
+
+		$level = $this->getUserStateFromRequest($context.'.filter.level', 'filter_level', 0, 'int');
+		$this->setState('filter.level', $level);
+
+		$access = $this->getUserStateFromRequest($context.'.filter.access', 'filter_access', 0, 'int');
+		$this->setState('filter.access', $access);
+
+		$published = $this->getUserStateFromRequest($context.'.filter.published', 'filter_published', '');
+		$this->setState('filter.published', $published);
+
+		$language = $this->getUserStateFromRequest($context.'.filter.language', 'filter_language', '');
+		$this->setState('filter.language', $language);
+
+		// List state information.
+		parent::populateState('a.lft', 'asc');
+	}
+
+	/**
+	 * Method to get a store id based on model configuration state.
+	 *
+	 * This is necessary because the model is used by the component and
+	 * different modules that might need different sets of data or different
+	 * ordering requirements.
+	 *
+	 * @param	string		$id	A prefix for the store id.
+	 *
+	 * @return	string		A store id.
+	 */
+	protected function getStoreId($id = '')
+	{
+		// Compile the store id.
+		$id	.= ':'.$this->getState('filter.search');
+		$id	.= ':'.$this->getState('filter.extension');
+		$id	.= ':'.$this->getState('filter.published');
+		$id	.= ':'.$this->getState('filter.language');
+
+		return parent::getStoreId($id);
+	}
+
+	/**
+	 * @return	string
+	 */
+	function getListQuery()
+	{
+		// Create a new query object.
+		$db		= $this->getDbo();
+		$query	= $db->getQuery(true);
+		$user	= JFactory::getUser();
+
+		// Select the required fields from the table.
+		$query->select(
+			$this->getState(
+				'list.select',
+				'a.id, a.catname, a.color, a.alias, a.note, a.published, a.access' .
+				', a.checked_out, a.groupid, a.checked_out_time, a.created_user_id' .
+				', a.path, a.parent_id, a.level, a.lft, a.rgt' .
+				', a.language'
+			)
+		);
+		$query->from('#__jem_categories AS a');
+
+		// Join over the language
+		$query->select('l.title AS language_title');
+		$query->join('LEFT', $db->quoteName('#__languages').' AS l ON l.lang_code = a.language');
+
+		// Join over the users for the checked out user.
+		$query->select('uc.name AS editor');
+		$query->join('LEFT', '#__users AS uc ON uc.id=a.checked_out');
+
+		// Join over the asset groups.
+		$query->select('ag.title AS access_level');
+		$query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');
+
+		// Join over the users for the author.
+		$query->select('ua.name AS author_name');
+		$query->join('LEFT', '#__users AS ua ON ua.id = a.created_user_id');
+
+		// Join over the groups
+		$query->select('gr.name AS catgroup');
+		$query->join('LEFT', '#__jem_groups AS gr ON gr.id = a.groupid');
+
+		// Filter on the level.
+		if ($level = $this->getState('filter.level')) {
+			$query->where('a.level <= '.(int) $level);
+		}
+
+		// Filter by access level.
+		if ($access = $this->getState('filter.access')) {
+			$query->where('a.access = ' . (int) $access);
+		}
+
+		// Implement View Level Access
+		if (!$user->authorise('core.admin'))
+		{
+		    $groups	= implode(',', $user->getAuthorisedViewLevels());
+			$query->where('a.access IN ('.$groups.')');
+		}
 
 		// Filter by published state
-		$published = $filter_state;
+		$published = $this->getState('filter.published');
 		if (is_numeric($published)) {
-			$where[] = 'c.published = '.(int) $published;
-		} elseif ($published === '') {
-			$where[] = '(c.published = 0 OR c.published = 1)';
+			$query->where('a.published = ' . (int) $published);
+		}
+		elseif ($published === '') {
+			$query->where('(a.published IN (0, 1))');
 		}
 
-		$where = ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
 
-		//select the records
-		//note, since this is a tree we have to do the limits code-side
-		if ($search) {
-			$query = 'SELECT c.id'
-					. ' FROM #__jem_categories AS c'
-					. $where
-					. ($where == '' ? ' WHERE ' : ' AND ')
-					. ' LOWER(c.catname) LIKE '.$this->_db->Quote( '%'.$this->_db->escape( $search, true ).'%', false )
-					;
-			$this->_db->setQuery( $query );
-			$search_rows = $this->_db->loadColumn();
-		}
+		$query->where('(a.catname NOT LIKE "root")');
 
-		$query = 'SELECT c.*, c.catname AS name, c.parent_id AS parent, u.name AS editor, g.title AS groupname, gr.name AS catgroup'
-				. ' FROM #__jem_categories AS c'
-				. ' LEFT JOIN #__viewlevels AS g ON g.id = c.access'
-				. ' LEFT JOIN #__users AS u ON u.id = c.checked_out'
-				. ' LEFT JOIN #__jem_groups AS gr ON gr.id = c.groupid'
-				. $where
-				. $orderby
-				;
-		$this->_db->setQuery( $query );
-		$rows = $this->_db->loadObjectList();
-
-		//establish the hierarchy of the categories
-		$children = array();
-
-		//set depth limit
-		$levellimit = 10;
-
-		//first pass - collect children
-		if (is_array($rows))
-		{
-			foreach ($rows as $child) {
-				$parent = $child->parent_id;
-				$list 	= @$children[$parent] ? $children[$parent] : array();
-				array_push($list, $child);
-				$children[$parent] = $list;
+		// Filter by search in title
+		$search = $this->getState('filter.search');
+		if (!empty($search)) {
+			if (stripos($search, 'id:') === 0) {
+				$query->where('a.id = '.(int) substr($search, 3));
+			}
+			elseif (stripos($search, 'author:') === 0) {
+				$search = $db->Quote('%'.$db->escape(substr($search, 7), true).'%');
+				$query->where('(ua.name LIKE '.$search.' OR ua.username LIKE '.$search.')');
+			}
+			else {
+				$search = $db->Quote('%'.$db->escape($search, true).'%');
+				$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR a.note LIKE '.$search.')');
 			}
 		}
 
-		//second pass - get an indent list of the items
-		$list = JEMCategories::treerecurse(0, '', array(), $children, false, max(0, $levellimit-1));
-
-		//eventually only pick out the searched items.
-		if ($search) {
-			$list1 = array();
-
-			foreach ($search_rows as $sid )
-			{
-				foreach ($list as $item)
-				{
-					if ($item->id == $sid) {
-						$list1[] = $item;
-					}
-				}
-			}
-			// replace full list with found items
-			$list = $list1;
+		// Filter on the language.
+		if ($language = $this->getState('filter.language')) {
+			$query->where('a.language = '.$db->quote($language));
 		}
 
-		$total = count( $list );
-
-		jimport('joomla.html.pagination');
-		$this->_pagination = new JPagination( $total, $limitstart, $limit );
-
-		// slice out elements based on limits
-		$list = array_slice( $list, $this->_pagination->limitstart, $this->_pagination->limit );
-
-		$this->countCatEvents($list);
-
-		return $list;
-	}
-
-
-	function &getPagination()
-	{
-		if ($this->_pagination == null) {
-			$this->getItems();
+		// Add the list ordering clause
+		$listOrdering = $this->getState('list.ordering', 'a.lft');
+		$listDirn = $db->escape($this->getState('list.direction', 'ASC'));
+		if ($listOrdering == 'a.access') {
+			$query->order('a.access '.$listDirn.', a.lft '.$listDirn);
+		} else {
+			$query->order($db->escape($listOrdering).' '.$listDirn);
 		}
-		return $this->_pagination;
+
+		//echo nl2br(str_replace('#__','jos_',$query));
+		return $query;
+		
+		echo $query;
+		
 	}
+
 
 	/**
-	 * Method to (un)publish a category
-	 *
-	 * @access	public
-	 * @return	boolean	True on success
 	 *
 	 */
-	function publish($cid = array(), $publish = 1)
+	public function getItems()
 	{
-		$user 	= JFactory::getUser();
+		$items	= parent::getItems();
+		$app	= JFactory::getApplication();
 
-		if (count( $cid ))
-		{
-			if (!$publish) {
-				// Add all children to the list
-				foreach ($cid as $id)
-				{
-					$this->_addCategories($id, $cid);
-				}
-			} else {
-				// Add all parents to the list
-				foreach ($cid as $id)
-				{
-					$this->_addCategories($id, $cid, 'parents');
-				}
-			}
-
-			$cids = implode( ',', $cid );
-
-			$query = 'UPDATE #__jem_categories'
-				. ' SET published = ' . (int) $publish
-				. ' WHERE id IN ('. $cids .')'
-				. ' AND ( checked_out = 0 OR ( checked_out = ' . (int) $user->get('id'). ' ) )'
-			;
-			$this->_db->setQuery( $query );
-			if (!$this->_db->query()) {
-				$this->setError($this->_db->getErrorMsg());
-				return false;
-			}
+		foreach ($items as $item) {
+			$item->assignedevents = $this->countCatEvents($item->id);
 		}
-		return true;
+
+		return $items;
 	}
 
-	/**
-	 * Method to move a category
-	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 */
-	function move($direction)
+
+	private function countCatEvents($id)
 	{
-		$row = JTable::getInstance('jem_categories', '');
+		$db		= $this->getDbo();
+		$query	= $db->getQuery(true);
 
-		if (!$row->load( $this->_id ) ) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
-		}
-
-		if (!$row->move( $direction, 'parent_id = '.$row->parent_id )) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Method to order categories
-	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 */
-	function saveorder($cid = array(), $order)
-	{
-		$row = JTable::getInstance('jem_categories', '');
-
-		$groupings = array();
-
-		// update ordering values
-		for( $i=0; $i < count($cid); $i++ )
-		{
-			$row->load( (int) $cid[$i] );
-
-			// track categories
-			$groupings[] = $row->parent_id;
-
-			if ($row->ordering != $order[$i])
-			{
-				$row->ordering = $order[$i];
-				if (!$row->store()) {
-					$this->setError($this->_db->getErrorMsg());
-					return false;
-				}
-			}
-		}
-
-		// execute updateOrder for each parent group
-		$groupings = array_unique( $groupings );
-		foreach ($groupings as $group){
-			$row->reorder('parent_id = '.$group);
-		}
-
-		return true;
-	}
-
-	/**
-	 * Method to count the number of assigned events for a single category
-	 * @param int $id
-	 * @return unknown
-	 */
-	private function countSingleCatEvents($id)
-	{
-		$query = 'SELECT COUNT(*)'
+		$query = 'SELECT COUNT(catid) as num'
 				.' FROM #__jem_cats_event_relations'
-				.' WHERE catid = ' . (int)$id
-				;
-
-		$this->_db->setQuery($query);
-		$number = $this->_db->loadResult();
-
-		return $number;
-	}
-
-	/**
-	 * Method to count the number of assigned events for several categories
-	 * @param unknown $categories list of categories
-	 */
-	private function countCatEvents(&$categories)
-	{
-		// Anonymous helper function to implode category IDs
-		$ids = implode(',', array_map(function($el){ return $el->id; }, $categories));
-
-		$query = 'SELECT catid, COUNT(catid) as num'
-				.' FROM #__jem_cats_event_relations'
-				.' WHERE catid IN ('.$ids.')'
+				.' WHERE catid = '.(int)$id
 				.' GROUP BY catid'
 				;
 
-		$this->_db->setQuery($query);
-		$result = $this->_db->loadObjectList('catid');
+		$db->setQuery($query);
+		$result = $db->loadResult('catid');
 
-		foreach ($categories as $category) {
-			if(array_key_exists($category->id, $result)) {
-				$category->assignedevents = $result[$category->id]->num;
-			} else {
-				$category->assignedevents = 0;
-			}
-		}
+		return $result;
 	}
 
-	/**
-	 * Method to remove a category
-	 *
-	 * @access	public
-	 * @return	string $msg
-	 */
-	function delete($cids)
-	{
-		// Add all children to the list
-		foreach ($cids as $id)
-		{
-			$this->_addCategories($id, $cids);
-		}
 
-		$cids = implode( ',', $cids );
-
-		$query = 'SELECT c.id, c.catname, COUNT( e.catid ) AS numcat'
-				. ' FROM #__jem_categories AS c'
-				. ' LEFT JOIN #__jem_cats_event_relations AS e ON e.catid = c.id'
-				. ' WHERE c.id IN ('. $cids .')'
-				. ' GROUP BY c.id'
-				;
-		$this->_db->setQuery( $query );
-
-		if (!($rows = $this->_db->loadObjectList())) {
-			JError::raiseError( 500, $this->_db->stderr() );
-			return false;
-		}
-
-		$err = array();
-		$cid = array();
-
-		//TODO: Categories and its childs without assigned items will not be deleted if another tree has any item entry
-		foreach ($rows as $row) {
-			if ($row->numcat == 0) {
-				$cid[] = $row->id;
-			} else {
-				$err[] = $row->catname;
-			}
-		}
-
-		if (count( $cid ) && count($err) == 0)
-		{
-			$cids = implode( ',', $cid );
-			$query = 'DELETE FROM #__jem_categories'
-					. ' WHERE id IN ('. $cids .')';
-
-			$this->_db->setQuery( $query );
-
-			if(!$this->_db->query()) {
-				$this->setError($this->_db->getErrorMsg());
-				return false;
-			}
-		}
-
-		if (count( $err )) {
-			$cids 	= implode( ', ', $err );
-			$msg 	= JText::sprintf( 'COM_JEM_EVENT_ASSIGNED_CATEGORY', $cids );
-			return $msg;
-		} else {
-			$total 	= count( $cid );
-			$msg 	= $total.' '.JText::_('COM_JEM_CATEGORIES_DELETED');
-			return $msg;
-		}
-	}
-
-	/**
-	 * Method to set the access level of the category
-	 *
-	 * @access	public
-	 * @param integer id of the category
-	 * @param integer access level
-	 * @return	boolean	True on success
-	 */
-	function access($id, $access)
-	{
-		$category = $this->getTable('jem_categories', '');
-
-		//handle childs
-		$cids = array();
-		$cids[] = $id;
-		$this->_addCategories($id, $cids);
-
-		foreach ($cids as $cid) {
-
-			$category->load( (int)$cid );
-
-			if ($category->access < $access) {
-				$category->access = $access;
-			} else {
-				$category->load( $id );
-				$category->access = $access;
-			}
-
-			if ( !$category->check() ) {
-				$this->setError($this->_db->getErrorMsg());
-				return false;
-			}
-			if ( !$category->store() ) {
-				$this->setError($this->_db->getErrorMsg());
-				return false;
-			}
-
-		}
-
-		//handle parents
-		$pcids = array();
-		$this->_addCategories($id, $pcids, 'parents');
-
-		foreach ($pcids as $pcid) {
-			if($pcid == 0 || $pcid == $id) {
-				continue;
-			}
-
-			$category->load( (int)$pcid );
-
-			if ($category->access > $access) {
-				$category->access = $access;
-
-				if ( !$category->check() ) {
-					$this->setError($this->_db->getErrorMsg());
-					return false;
-				}
-				if ( !$category->store() ) {
-					$this->setError($this->_db->getErrorMsg());
-					return false;
-				}
-
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Method to add children/parents to a specific category
-	 *
-	 * @param int $id
-	 * @param array $list
-	 * @param string $type
-	 * @return object
-	 */
-	function _addCategories($id, &$list, $type = 'children')
-	{
-		// Initialize variables
-		$return = true;
-
-		if ($type == 'children') {
-			$get = 'id';
-			$source = 'parent_id';
-		} else {
-			$get = 'parent_id';
-			$source = 'id';
-		}
-
-		// Get all rows with parent of $id
-		$query = 'SELECT '.$get.
-				' FROM #__jem_categories' .
-				' WHERE '.$source.' = '.(int) $id;
-		$this->_db->setQuery( $query );
-		$rows = $this->_db->loadObjectList();
-
-		// Make sure there aren't any errors
-		if ($this->_db->getErrorNum()) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
-		}
-
-		// Recursively iterate through all children
-		foreach ($rows as $row)
-		{
-			$found = false;
-			foreach ($list as $idx)
-			{
-				if ($idx == $row->$get) {
-					$found = true;
-					break;
-				}
-			}
-			if (!$found) {
-				$list[] = $row->$get;
-			}
-			$return = $this->_addCategories($row->$get, $list, $type);
-		}
-		return $return;
-	}
 }
-?>

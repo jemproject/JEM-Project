@@ -1,304 +1,161 @@
 <?php
 /**
- * @version 1.9.1
- * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
- * @copyright (C) 2005-2009 Christoph Lukes
- * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * @version     1.9.5
+ * @package     JEM
+ * @copyright   Copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2005-2009 Christoph Lukes
+ * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ *
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controller');
+jimport('joomla.application.component.controllerform');
 
 /**
- * JEM Component Category Controller
- *
- * @package JEM
+ * Category Controller
  *
  */
-class JEMControllerCategory extends JControllerLegacy
+class JEMControllerCategory extends JControllerForm
 {
 	/**
-	 * Constructor
+	 * The extension for which the categories apply.
 	 *
-	 *
+	 * @var    string
 	 */
-	function __construct()
-	{
-		parent::__construct();
+	protected $text_prefix = 'COM_JEM_CATEGORY';
 
-		// Register Extra task
-		$this->registerTask('add'  ,		 	'edit');
-		$this->registerTask('apply', 			'save');
-		$this->registerTask('accesspublic', 	'access');
-		$this->registerTask('accessregistered','access');
-		$this->registerTask('accessspecial', 	'access');
+	/**
+	 * Constructor.
+	 *
+	 * @param  array  $config  An optional associative array of configuration settings.
+	 *
+	 * @see    JController
+	 */
+	public function __construct($config = array())
+	{
+		parent::__construct($config);
 	}
 
 	/**
-	 * Logic to save a category
+	 * Method to check if you can add a new record.
 	 *
-	 * @access public
-	 * @return void
+	 * @param   array  $data  An array of input data.
+	 *
+	 * @return  boolean
 	 *
 	 */
-	function save()
+	protected function allowAddDisabled($data = array())
 	{
-		// Check for request forgeries
-		JRequest::checkToken() or jexit('Invalid Token');
+		$user = JFactory::getUser();
+		return ($user->authorise('core.create', $this->extension) || count($user->getAuthorisedCategories($this->extension, 'core.create')));
+	}
 
-		$task = JRequest::getVar('task');
+	/**
+	 * Method to check if you can edit a record.
+	 *
+	 * @param   array   $data  An array of input data.
+	 * @param   string  $key   The name of the key for the primary key.
+	 *
+	 * @return  boolean
+	 *
+	 */
+	protected function allowEditDisabled($data = array(), $key = 'parent_id')
+	{
+		// Initialise variables.
+		$recordId = (int) isset($data[$key]) ? $data[$key] : 0;
+		$user = JFactory::getUser();
+		$userId = $user->get('id');
 
-		//Sanitize
-		$post = JRequest::get('post');
-		$post['catdescription'] = JRequest::getVar('catdescription', '', 'post', 'string', JREQUEST_ALLOWRAW);
-		$post['catdescription']	= str_replace('<br>', '<br />', $post['catdescription']);
+		// Check general edit permission first.
+		if ($user->authorise('core.edit', $this->extension))
+		{
+			return true;
+		}
 
-		//sticky forms
-		$session = JFactory::getSession();
-		$session->set('categoryform', $post, 'com_jem');
+		// Check specific edit permission.
+		if ($user->authorise('core.edit', $this->extension . '.category.' . $recordId))
+		{
+			return true;
+		}
 
-		$model = $this->getModel('category');
-
-		if ($returnid = $model->store($post)) {
-			switch ($task)
+		// Fallback on edit.own.
+		// First test if the permission is available.
+		if ($user->authorise('core.edit.own', $this->extension . '.category.' . $recordId) || $user->authorise('core.edit.own', $this->extension))
+		{
+			// Now test the owner is the user.
+			$ownerId = (int) isset($data['created_user_id']) ? $data['created_user_id'] : 0;
+			if (empty($ownerId) && $recordId)
 			{
-				case 'apply' :
-					$link = 'index.php?option=com_jem&view=category&cid[]='.$returnid;
-					break;
+				// Need to do a lookup from the model.
+				$record = $this->getModel()->getItem($recordId);
 
-				default :
-					$link = 'index.php?option=com_jem&view=categories';
-					break;
+				if (empty($record))
+				{
+					return false;
+				}
+
+				$ownerId = $record->created_user_id;
 			}
-			$msg = JText::_('COM_JEM_CATEGORY_SAVED');
 
-			$cache = JFactory::getCache('com_jem');
-			$cache->clean();
-
-			$session->clear('categoryform', 'com_jem');
-		} else {
-			$msg 	= '';
-			$link 	= 'index.php?option=com_jem&view=category';
+			// If the owner matches 'me' then do the test.
+			if ($ownerId == $userId)
+			{
+				return true;
+			}
 		}
-
-		$model->checkin();
-
-		$this->setRedirect($link, $msg);
+		return false;
 	}
 
 	/**
-	 * Logic to publish categories
+	 * Method to run batch operations.
 	 *
-	 * @access public
-	 * @return void
+	 * @param   object  $model  The model.
+	 *
+	 * @return  boolean	 True if successful, false otherwise and internal error is set.
 	 *
 	 */
-	function publish()
+	public function batchDisabled($model = null)
 	{
-		$cid 	= JRequest::getVar('cid', array(0), 'post', 'array');
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		if (!is_array($cid) || count($cid) < 1) {
-			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_PUBLISH'));
-		}
+		// Set the model
+		$model = $this->getModel('Category');
 
-		$model = $this->getModel('categories');
+		// Preset the redirect
+		$this->setRedirect('index.php?option=com_jem&view=categories&extension=' . $this->extension);
 
-		if(!$model->publish($cid, 1)) {
-			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
-		}
-
-		JPluginHelper::importPlugin('finder');
-		$dispatcher = JDispatcher::getInstance();
-		$dispatcher->trigger('onFinderCategoryChangeState', array('com_jem', $cid, 1));
-
-		$total = count($cid);
-		$msg = $total.' '.JText::_('COM_JEM_CATEGORY_PUBLISHED');
-
-		$this->setRedirect('index.php?option=com_jem&view=categories', $msg);
+		return parent::batch($model);
 	}
 
 	/**
-	 * Logic to unpublish categories
+	 * Gets the URL arguments to append to an item redirect.
 	 *
-	 * @access public
-	 * @return void
+	 * @param   integer  $recordId  The primary key id for the item.
+	 * @param   string   $urlVar    The name of the URL variable for the id.
+	 *
+	 * @return  string  The arguments to append to the redirect URL.
 	 *
 	 */
-	function unpublish()
+	protected function getRedirectToItemAppendDisabled($recordId = null, $urlVar = 'id')
 	{
-		$cid = JRequest::getVar('cid', array(0), 'post', 'array');
+		$append = parent::getRedirectToItemAppend($recordId);
+		$append .= '&extension=' . $this->extension;
 
-		if (!is_array($cid) || count($cid) < 1) {
-			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_UNPUBLISH'));
-		}
-
-		$model = $this->getModel('categories');
-
-		if(!$model->publish($cid, 0)) {
-			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
-		}
-
-		JPluginHelper::importPlugin('finder');
-		$dispatcher = JDispatcher::getInstance();
-		$dispatcher->trigger('onFinderCategoryChangeState', array('com_jem', $cid, 1));
-
-		$total = count($cid);
-		$msg = $total.' '.JText::_('COM_JEM_CATEGORY_UNPUBLISHED');
-
-		$this->setRedirect('index.php?option=com_jem&view=categories', $msg);
+		return $append;
 	}
 
 	/**
-	 * Logic to orderup a category
+	 * Gets the URL arguments to append to a list redirect.
 	 *
-	 * @access public
-	 * @return void
-	 *
-	 */
-	function orderup()
-	{
-		$model = $this->getModel('categories');
-		$model->move(-1);
-
-		$this->setRedirect('index.php?option=com_jem&view=categories');
-	}
-
-	/**
-	 * Logic to orderdown a category
-	 *
-	 * @access public
-	 * @return void
+	 * @return  string  The arguments to append to the redirect URL.
 	 *
 	 */
-	function orderdown()
+	protected function getRedirectToListAppendDisabled()
 	{
-		$model = $this->getModel('categories');
-		$model->move(1);
+		$append = parent::getRedirectToListAppend();
+		$append .= '&extension=' . $this->extension;
 
-		$this->setRedirect('index.php?option=com_jem&view=categories');
-	}
-
-	/**
-	 * Logic to mass ordering categories
-	 *
-	 * @access public
-	 * @return void
-	 *
-	 */
-	function saveordercat()
-	{
-		$cid 	= JRequest::getVar('cid', array(0), 'post', 'array');
-		$order 	= JRequest::getVar('order', array(0), 'post', 'array');
-		JArrayHelper::toInteger($order, array(0));
-
-		$model = $this->getModel('categories');
-		$model->saveorder($cid, $order);
-
-		$msg = 'New ordering saved';
-		$this->setRedirect('index.php?option=com_jem&view=categories', $msg);
-	}
-
-	/**
-	 * Logic to delete categories
-	 *
-	 * @access public
-	 * @return void
-	 *
-	 */
-	function remove()
-	{
-		$cid = JRequest::getVar('cid', array(0), 'post', 'array');
-
-		if (!is_array($cid) || count($cid) < 1) {
-			JError::raiseWarning(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
-		}
-
-		$model = $this->getModel('categories');
-
-		$msg = $model->delete($cid);
-
-		$cache = JFactory::getCache('com_jem');
-		$cache->clean();
-
-		$this->setRedirect('index.php?option=com_jem&view=categories', $msg);
-	}
-
-	/**
-	 * logic for cancel an action
-	 *
-	 * @access public
-	 * @return void
-	 *
-	 */
-	function cancel()
-	{
-		// Check for request forgeries
-		JRequest::checkToken() or jexit('Invalid Token');
-
-		$session 	= JFactory::getSession();
-		$session->clear('categoryform', 'com_jem');
-
-		$category = JTable::getInstance('jem_categories', '');
-		$category->bind(JRequest::get('post'));
-		$category->checkin();
-
-		$this->setRedirect('index.php?option=com_jem&view=categories');
-	}
-
-	/**
-	 * Logic to set the category access level
-	 *
-	 * @access public
-	 * @return void
-	 *
-	 */
-	function access()
-	{
-		// Check for request forgeries
-		JRequest::checkToken() or jexit('Invalid Token');
-
-		$cid		= JRequest::getVar('cid', array(0), 'post', 'array');
-		$id			= (int)$cid[0];
-		$task		= JRequest::getVar('task');
-
-		if ($task == 'accesspublic') {
-			$access = 0;
-		} elseif ($task == 'accessregistered') {
-			$access = 1;
-		} else {
-			$access = 2;
-		}
-
-		$model = $this->getModel('categories');
-		$model->access($id, $access);
-
-		$this->setRedirect('index.php?option=com_jem&view=categories');
-	}
-
-	/**
-	 * Logic to create the view for the edit categoryscreen
-	 *
-	 * @access public
-	 * @return void
-	 *
-	 */
-	function edit()
-	{
-		JRequest::setVar('view', 'category');
-		JRequest::setVar('hidemainmenu', 1);
-
-		$model 	= $this->getModel('category');
-		$user	= JFactory::getUser();
-
-		// Error if checkedout by another administrator
-		if ($model->isCheckedOut($user->get('id'))) {
-			$this->setRedirect('index.php?option=com_jem&view=categories', JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
-		}
-
-		$model->checkout();
-
-		parent::display();
+		return $append;
 	}
 }
