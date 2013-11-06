@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -229,6 +229,7 @@ class JEMModelEditevent extends JModelLegacy
 	 */
 	function getCategories( )
 	{
+	    $db = JFactory::getDBO();
 		$user		= JFactory::getUser();
 		$jemsettings = JEMHelper::config();
 		$userid		= (int) $user->get('id');
@@ -245,8 +246,8 @@ class JEMModelEditevent extends JModelLegacy
 					. ' FROM #__jem_groupmembers AS g'
 					. ' WHERE g.member = '.$userid
 					;
-			$this->_db->setQuery( $query );
-			$catids = $this->_db->loadColumn();
+			$db->setQuery( $query );
+			$catids = $db->loadColumn();
 
 			$categories = implode(' OR c.groupid = ', $catids);
 
@@ -277,29 +278,49 @@ class JEMModelEditevent extends JModelLegacy
 				. $where
 				. ' ORDER BY c.ordering'
 				;
-		$this->_db->setQuery( $query );
+		$db->setQuery( $query );
 
-	//	$this->_category = array();
-	//	$this->_category[] = JHTML::_('select.option', '0', JText::_( 'COM_JEM_SELECT_CATEGORY' ) );
-	//	$this->_categories = array_merge( $this->_category, $this->_db->loadObjectList() );
+	
+		$mitems = $db->loadObjectList();
 
-		$rows = $this->_db->loadObjectList();
-
-		//set depth limit
-		$levellimit = 10;
-
-		//get children
-		$children = array();
-		foreach ($rows as $child) {
-			$parent = $child->parent_id;
-			$list = @$children[$parent] ? $children[$parent] : array();
-			array_push($list, $child);
-			$children[$parent] = $list;
+		// Check for a database error.
+		if ($db->getErrorNum())
+		{
+			JError::raiseNotice(500, $db->getErrorMsg());
 		}
-		//get list of the items
-		$this->_categories = JEMCategories::treerecurse(0, '', array(), $children, true, max(0, $levellimit-1));
 
-		return $this->_categories;
+		if (!$mitems)
+		{
+			$mitems = array();
+			$children = array();
+
+			$parentid = $mitems;
+		}
+		else
+		{
+
+		$mitems_temp = $mitems;
+
+
+		$children = array();
+		// First pass - collect children
+		foreach ($mitems as $v)
+		{
+			$pt = $v->parent_id;
+			$list = @$children[$pt] ? $children[$pt] : array();
+			array_push($list, $v);
+			$children[$pt] = $list;
+		}
+
+		$parentid = intval($mitems[0]->parent_id);
+
+		}
+
+
+		//get list of the items
+		$list = JEMCategories::treerecurse($parentid, '', array(), $children, 9999, 0, 0);
+
+		return $list;
 	}
 
 	/**
