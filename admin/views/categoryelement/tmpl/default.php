@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -21,7 +21,7 @@ $function = JRequest::getCmd('function', 'jSelectCategory');
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
 			<button type="submit"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
 			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
-			<button type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo JText::_('COM_JEM_SELECTCATEGORY') ?>');"><?php echo JText::_('COM_JEM_NOCATEGORY')?></button>
+			<button type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo JText::_('COM_JEM_SELECT_CATEGORY') ?>');"><?php echo JText::_('COM_JEM_NOCATEGORY')?></button>
 		</td>
 		<td nowrap="nowrap"><?php  echo $this->lists['state']; ?></td>
 	</tr>
@@ -76,6 +76,7 @@ $function = JRequest::getCmd('function', 'jSelectCategory');
 
 <input type="hidden" name="task" value="">
 <input type="hidden" name="tmpl" value="component">
+<input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 <input type="hidden" name="filter_order_Dir" value="" />
 </form>
