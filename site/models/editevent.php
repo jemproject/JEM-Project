@@ -63,7 +63,7 @@ class JEMModelEditevent extends JModelLegacy
 	 *
 	 * @return object
 	 */
-	function &getEvent(  )
+	function &getEvent()
 	{
 		$app = JFactory::getApplication();
 
@@ -179,7 +179,7 @@ class JEMModelEditevent extends JModelLegacy
 	 * @access private
 	 * @return object
 	 */
-	function _loadEvent(  )
+	function _loadEvent()
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_event))
@@ -196,14 +196,12 @@ class JEMModelEditevent extends JModelLegacy
 			return (boolean) $this->_event;
 		}
 
-
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('venue');
 		$query->from('#__jem_venues');
 		$query->where('id='.(int)$this->_event->locid);
 		$db->setQuery($query);
-
 
 		$venue = $db->loadResult();
 
@@ -213,10 +211,6 @@ class JEMModelEditevent extends JModelLegacy
 		if (empty($venue)) {
 			$this->_event->venue = JText::_('COM_JEM_SELECTVENUE');
 		}
-
-
-
-
 
 		return true;
 	}
@@ -229,7 +223,7 @@ class JEMModelEditevent extends JModelLegacy
 	 */
 	function getCategories( )
 	{
-	    $db = JFactory::getDBO();
+		$db = JFactory::getDBO();
 		$user		= JFactory::getUser();
 		$jemsettings = JEMHelper::config();
 		$userid		= (int) $user->get('id');
@@ -280,7 +274,6 @@ class JEMModelEditevent extends JModelLegacy
 				;
 		$db->setQuery( $query );
 
-	
 		$mitems = $db->loadObjectList();
 
 		// Check for a database error.
@@ -289,33 +282,26 @@ class JEMModelEditevent extends JModelLegacy
 			JError::raiseNotice(500, $db->getErrorMsg());
 		}
 
-		if (!$mitems)
-		{
+		if (!$mitems) {
 			$mitems = array();
 			$children = array();
 
 			$parentid = $mitems;
+		} else {
+			$mitems_temp = $mitems;
+
+			$children = array();
+			// First pass - collect children
+			foreach ($mitems as $v)
+			{
+				$pt = $v->parent_id;
+				$list = @$children[$pt] ? $children[$pt] : array();
+				array_push($list, $v);
+				$children[$pt] = $list;
+			}
+
+			$parentid = intval($mitems[0]->parent_id);
 		}
-		else
-		{
-
-		$mitems_temp = $mitems;
-
-
-		$children = array();
-		// First pass - collect children
-		foreach ($mitems as $v)
-		{
-			$pt = $v->parent_id;
-			$list = @$children[$pt] ? $children[$pt] : array();
-			array_push($list, $v);
-			$children[$pt] = $list;
-		}
-
-		$parentid = intval($mitems[0]->parent_id);
-
-		}
-
 
 		//get list of the items
 		$list = JEMCategories::treerecurse($parentid, '', array(), $children, 9999, 0, 0);
@@ -350,8 +336,8 @@ class JEMModelEditevent extends JModelLegacy
 
 		$params 	= $app->getParams();
 
-		$where		= $this->_buildVenuesWhere(  );
-		$orderby	= $this->_buildVenuesOrderBy(  );
+		$where		= $this->_buildVenuesWhere();
+		$orderby	= $this->_buildVenuesOrderBy();
 
 		$limit		= $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $params->def('display_num', 0), 'int');
 		$limitstart	= JRequest::getInt('limitstart');
@@ -390,8 +376,8 @@ class JEMModelEditevent extends JModelLegacy
 
 		$this->_venues = $this->_db->loadObjectList();
 
-	return $this->_venues;
-}
+		return $this->_venues;
+	}
 
 	/**
 	 * Method to build the ordering
@@ -422,7 +408,7 @@ class JEMModelEditevent extends JModelLegacy
 	 * @access private
 	 * @return array
 	 */
-	function _buildVenuesWhere(  )
+	function _buildVenuesWhere()
 	{
 		$jemsettings = JEMHelper::config();
 		$filter_type = JRequest::getInt('filter_type');
@@ -497,7 +483,7 @@ class JEMModelEditevent extends JModelLegacy
 		return false;
 	}
 
-		/**
+	/**
 	 * Method to checkout/lock the item
 	 *
 	 * @access	public
@@ -700,11 +686,11 @@ class JEMModelEditevent extends JModelLegacy
 			return false;
 		}
 
-		if ( ( $jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1 ) && ( !empty($file['name'])  ) )  {
+		if ( ( $jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1 ) && ( !empty($file['name']) )) {
 
 			jimport('joomla.filesystem.file');
 
-			$base_Dir 		= JPATH_SITE.'/images/jem/events/';
+			$base_Dir = JPATH_SITE.'/images/jem/events/';
 
 			//check the image
 			$check = JEMImage::check($file, $jemsettings);
@@ -726,7 +712,7 @@ class JEMModelEditevent extends JModelLegacy
 		} else {
 			//keep image if edited and left blank
 			$row->datimage = $curimage;
-		}//end image if
+		}
 
 		$editoruser = JEMUser::editoruser();
 
