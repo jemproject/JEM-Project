@@ -5,16 +5,13 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- * 
- * @todo add function to truncate the table categories before loading sample-data
- * this way we unsure that the correct mapping is done.
+ *
  */
-
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
 
-//TODO: Improve error handling
+// TODO: Improve error handling
 
 /**
  * JEM Component Sampledata Model
@@ -24,244 +21,229 @@ jimport('joomla.application.component.model');
  */
 class JEMModelSampledata extends JModelLegacy
 {
-	/**
-	 * Sample data directory
-	 * @var string
-	 */
-	private $sampleDataDir = null;
-	/**
-	 * Files data array
-	 * @var array
-	 */
-	private $filelist = array();
 
-	/**
-	 * Constructor
-	 */
-	function __construct()
-	{
-		parent::__construct();
+    /**
+     * Sample data directory
+     *
+     * @var string
+     */
+    private $sampleDataDir = null;
 
-		if ($this->checkForJemData()) {
-			return false;
-		}
+    /**
+     * Files data array
+     *
+     * @var array
+     */
+    private $filelist = array();
 
-		$this->sampleDataDir = JPATH_COMPONENT_ADMINISTRATOR.'/assets/';
-		$this->filelist = $this->unpack();
-	}
+    /**
+     * Constructor
+     */
+    function __construct()
+    {
+        parent::__construct();
 
-	/**
-	 * Process sampledata
-	 * @return boolean  True on success
-	 */
-	public function loadData()
-	{
-		if ($this->checkForJemData()) {
-			JError::raiseWarning(100, JText::_('COM_JEM_DATA_ALREADY_INSTALLED'));
-			return false;
-		}
+        if ($this->checkForJemData()) {
+            return false;
+        }
 
-		$this->truncateAllData();
-		
-		$scriptfile = $this->sampleDataDir.'sampledata.sql';
+        $this->sampleDataDir = JPATH_COMPONENT_ADMINISTRATOR . '/assets/';
+        $this->filelist = $this->unpack();
+    }
 
-		//load sql file
-		//if(!($buffer = file_get_contents($this->filelist['folder'].'/'.$scriptfile))) {
-		if(!($buffer = file_get_contents($scriptfile))) {
-			return false;
-		}
+    /**
+     * Process sampledata
+     *
+     * @return boolean True on success
+     */
+    public function loadData()
+    {
+        if ($this->checkForJemData()) {
+            JError::raiseWarning(100, JText::_('COM_JEM_DATA_ALREADY_INSTALLED'));
+            return false;
+        }
 
-		//extract queries out of sql file
-		$queries = $this->splitSql($buffer);
+        $cleanup_model = JModel::getInstance('cleanup', 'JEMModel');
+        $cleanup_model->truncateAllData();
 
-		//Process queries
-		foreach ($queries as $query) {
-			$query = trim($query);
-			if ($query != '' && $query {0} != '#') {
-				$this->_db->setQuery($query);
-				$this->_db->query();
-			}
-		}
+        $scriptfile = $this->sampleDataDir . 'sampledata.sql';
 
-		//move images in proper directory
-		$this->moveImages();
+        // load sql file
+        // if(!($buffer = file_get_contents($this->filelist['folder'].'/'.$scriptfile))) {
+        if (! ($buffer = file_get_contents($scriptfile))) {
+            return false;
+        }
 
-		//delete temporary extraction folder
-		if(!$this->deleteTmpFolder()) {
-			JError::raiseWarning('SOME ERROR CODE', JText::_('COM_JEM_UNABLE_TO_DELETE_TMP_FOLDER'));
-		}
+        // extract queries out of sql file
+        $queries = $this->splitSql($buffer);
 
-		return true;
-	}
+        // Process queries
+        foreach ($queries as $query) {
+            $query = trim($query);
+            if ($query != '' && $query{0} != '#') {
+                $this->_db->setQuery($query);
+                $this->_db->query();
+            }
+        }
 
-	/**
-	 * Unpack archive and build array of files
-	 * @return boolean|Ambigous <string, mixed>
-	 */
-	private function unpack()
-	{
-		jimport('joomla.filesystem.archive');
+        // move images in proper directory
+        $this->moveImages();
 
-		$archive 	= $this->sampleDataDir.'sampledata.zip';
+        // delete temporary extraction folder
+        if (! $this->deleteTmpFolder()) {
+            JError::raiseWarning('SOME ERROR CODE', JText::_('COM_JEM_UNABLE_TO_DELETE_TMP_FOLDER'));
+        }
 
-		// Temporary folder to extract the archive into
-		$tmpdir = uniqid('sample_');
+        return true;
+    }
 
-		// Clean the paths to use for archive extraction
-		$extractdir = JPath::clean(JPATH_ROOT.'/tmp/'.$tmpdir);
-		$archive 	= JPath::clean($archive);
+    /**
+     * Unpack archive and build array of files
+     *
+     * @return boolean Ambigous mixed>
+     */
+    private function unpack()
+    {
+        jimport('joomla.filesystem.archive');
 
-		//extract archive
-		$result = JArchive::extract($archive, $extractdir);
+        $archive = $this->sampleDataDir . 'sampledata.zip';
 
-		if ($result === false) {
-			JError::raiseWarning('SOME ERROR CODE', JText::_('COM_JEM_UNABLE_TO_EXTRACT_ARCHIVE'));
-			return false;
-		}
+        // Temporary folder to extract the archive into
+        $tmpdir = uniqid('sample_');
 
-		//return the files found in the extract folder and also folder name
-		$files = array();
+        // Clean the paths to use for archive extraction
+        $extractdir = JPath::clean(JPATH_ROOT . '/tmp/' . $tmpdir);
+        $archive = JPath::clean($archive);
 
-		if ($handle = opendir($extractdir)) {
-			while (false !== ($file = readdir($handle))) {
-				if ($file != "." && $file != "..") {
-					$files[] = $file;
-					continue;
-				}
-			}
-			closedir($handle);
-		}
-		$filelist['files'] 	= $files;
-		$filelist['folder'] = $extractdir;
+        // extract archive
+        $result = JArchive::extract($archive, $extractdir);
 
-		return $filelist;
-	}
+        if ($result === false) {
+            JError::raiseWarning('SOME ERROR CODE', JText::_('COM_JEM_UNABLE_TO_EXTRACT_ARCHIVE'));
+            return false;
+        }
 
-	/**
-	 * Split sql to single queries
-	 * @return array
-	 */
-	private function splitSql($sql) {
-		$sql 		= trim($sql);
-		$sql 		= preg_replace("/\n\#[^\n]*/", '', "\n".$sql);
-		$buffer 	= array();
-		$ret 		= array();
-		$in_string 	= false;
+        // return the files found in the extract folder and also folder name
+        $files = array();
 
-		for ($i = 0; $i < strlen($sql) - 1; $i++) {
-			if ($sql[$i] == ";" && !$in_string) {
-				$ret[] = substr($sql, 0, $i);
-				$sql = substr($sql, $i +1);
-				$i = 0;
-			}
+        if ($handle = opendir($extractdir)) {
+            while (false !== ($file = readdir($handle))) {
+                if ($file != "." && $file != "..") {
+                    $files[] = $file;
+                    continue;
+                }
+            }
+            closedir($handle);
+        }
+        $filelist['files'] = $files;
+        $filelist['folder'] = $extractdir;
 
-			if ($in_string && ($sql[$i] == $in_string) && $buffer[1] != "\\") {
-				$in_string = false;
-			} elseif (!$in_string && ($sql[$i] == '"' || $sql[$i] == "'") && (!isset ($buffer[0]) || $buffer[0] != "\\")) {
-				$in_string = $sql[$i];
-			}
-			if (isset ($buffer[1])) {
-				$buffer[0] = $buffer[1];
-			}
-			$buffer[1] = $sql[$i];
-		}
+        return $filelist;
+    }
 
-		if (!empty ($sql)) {
-			$ret[] = $sql;
-		}
-		return ($ret);
-	}
+    /**
+     * Split sql to single queries
+     *
+     * @return array
+     */
+    private function splitSql($sql)
+    {
+        $sql = trim($sql);
+        $sql = preg_replace("/\n\#[^\n]*/", '', "\n" . $sql);
+        $buffer = array();
+        $ret = array();
+        $in_string = false;
 
-	/**
-	 * Copy images into the venues/events folder
-	 * @return boolean  True on success
-	 */
-	private function moveImages() {
-		$imagebase = JPATH_ROOT.'/images/jem';
+        for ($i = 0; $i < strlen($sql) - 1; $i ++) {
+            if ($sql[$i] == ";" && ! $in_string) {
+                $ret[] = substr($sql, 0, $i);
+                $sql = substr($sql, $i + 1);
+                $i = 0;
+            }
 
-		foreach ($this->filelist['files'] as $file) {
-			$subDirectory = "/";
-			if(strpos($file, "event") !== false) {
-				$subDirectory .= "events/";
-			} elseif(strpos($file, "venue") !== false) {
-				$subDirectory .= "venues/";
-			} elseif(strpos($file, "category") !== false) {
-				$subDirectory .= "categories/";
-			} else {
-				// Nothing matched. Skip this file
-				continue;
-			}
-			if(strpos($file, "thumb") !== false) {
-				$subDirectory .= "small/";
-			}
+            if ($in_string && ($sql[$i] == $in_string) && $buffer[1] != "\\") {
+                $in_string = false;
+            } elseif (! $in_string && ($sql[$i] == '"' || $sql[$i] == "'") && (! isset($buffer[0]) || $buffer[0] != "\\")) {
+                $in_string = $sql[$i];
+            }
+            if (isset($buffer[1])) {
+                $buffer[0] = $buffer[1];
+            }
+            $buffer[1] = $sql[$i];
+        }
 
-			JFile::copy($this->filelist['folder'].'/'.$file, $imagebase.$subDirectory.$file);
-		}
-		return true;
-	}
+        if (! empty($sql)) {
+            $ret[] = $sql;
+        }
+        return ($ret);
+    }
 
-	/**
-	 * Delete temporary folder
-	 * @return boolean  True on success
-	 */
-	private function deleteTmpFolder() {
-		if ($this->filelist['folder']) {
-			if (!JFolder::delete($this->filelist['folder'])) {
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}
+    /**
+     * Copy images into the venues/events folder
+     *
+     * @return boolean True on success
+     */
+    private function moveImages()
+    {
+        $imagebase = JPATH_ROOT . '/images/jem';
 
-	/**
-	 * Checks if JEM data already exists
-	 * @return boolean  True if data exists
-	 */
-	private function checkForJemData() {
-		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
+        foreach ($this->filelist['files'] as $file) {
+            $subDirectory = "/";
+            if (strpos($file, "event") !== false) {
+                $subDirectory .= "events/";
+            } elseif (strpos($file, "venue") !== false) {
+                $subDirectory .= "venues/";
+            } elseif (strpos($file, "category") !== false) {
+                $subDirectory .= "categories/";
+            } else {
+                // Nothing matched. Skip this file
+                continue;
+            }
+            if (strpos($file, "thumb") !== false) {
+                $subDirectory .= "small/";
+            }
 
-		$query->select("id");
-		$query->from('#__jem_categories');
-		$query->where('catname NOT LIKE "root"');
-		$this->_db->setQuery($query);
-		$result = $this->_db->loadResult();
+            JFile::copy($this->filelist['folder'] . '/' . $file, $imagebase . $subDirectory . $file);
+        }
+        return true;
+    }
 
-		if($result == null) {
-			return false;
-		}
-		return true;
-	}
-	
-	/**
-	 * Truncates JEM tables with exception of settings table
-	 */
-	public function truncateAllData() {
-	    $tables = array(
-	        "attachments",
-	        "categories",
-	        "cats_event_relations",
-	        "events",
-	        "groupmembers",
-	        "groups",
-	        "register",
-	        "venues"
-	    );
-	    
-	    $db = JFactory::getDbo();
-	   
-	    foreach ($tables as $table) {
-	        $db->setQuery("TRUNCATE #__jem_".$table);
-	    
-	        if(!$db->query()) {
-	            return false;
-	        }
-	    }
-	    
-	    return true;
-	    
-	}
-	
+    /**
+     * Delete temporary folder
+     *
+     * @return boolean True on success
+     */
+    private function deleteTmpFolder()
+    {
+        if ($this->filelist['folder']) {
+            if (! JFolder::delete($this->filelist['folder'])) {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if JEM data already exists
+     *
+     * @return boolean True if data exists
+     */
+    private function checkForJemData()
+    {
+        $db = JFactory::getDbo();
+        $query = $db->getQuery(true);
+
+        $query->select("id");
+        $query->from('#__jem_categories');
+        $query->where('catname NOT LIKE "root"');
+        $this->_db->setQuery($query);
+        $result = $this->_db->loadResult();
+
+        if ($result == null) {
+            return false;
+        }
+        return true;
+    }
 }
 ?>
