@@ -56,10 +56,10 @@ class JEMTableCategory extends JTableNested
 		$query = $db->getQuery(true);
 
 		// Insert columns.
-		$columns = array('parent_id','lft','rgt','level','catname','alias','access','path');
+		$columns = array('parent_id', 'lft','rgt', 'level', 'catname', 'alias', 'access');
 
 		// Insert values.
-		$values = array(0,0,3,0, $db->quote('root'),$db->quote('root'),1,$db->quote(''));
+		$values = array(0, 0, 1, 0, $db->quote('root'), $db->quote('root'), 1);
 
 		// Prepare the insert query.
 		$query
