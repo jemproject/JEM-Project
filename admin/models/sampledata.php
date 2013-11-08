@@ -39,12 +39,11 @@ class JEMModelSampledata extends JModelLegacy
 	/**
 	 * Constructor
 	 */
-	function __construct ()
+	function __construct()
 	{
 		parent::__construct();
 		
-		if ($this->checkForJemData())
-		{
+		if ($this->checkForJemData()) {
 			return false;
 		}
 		
@@ -57,10 +56,9 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @return boolean True on success
 	 */
-	public function loadData ()
+	public function loadData()
 	{
-		if ($this->checkForJemData())
-		{
+		if ($this->checkForJemData()) {
 			JError::raiseWarning(100, 
 					JText::_('COM_JEM_DATA_ALREADY_INSTALLED'));
 			return false;
@@ -74,8 +72,7 @@ class JEMModelSampledata extends JModelLegacy
 		// load sql file
 		// if(!($buffer =
 		// file_get_contents($this->filelist['folder'].'/'.$scriptfile))) {
-		if (! ($buffer = file_get_contents($scriptfile)))
-		{
+		if (! ($buffer = file_get_contents($scriptfile))) {
 			return false;
 		}
 		
@@ -83,11 +80,9 @@ class JEMModelSampledata extends JModelLegacy
 		$queries = $this->splitSql($buffer);
 		
 		// Process queries
-		foreach ($queries as $query)
-		{
+		foreach ($queries as $query) {
 			$query = trim($query);
-			if ($query != '' && $query{0} != '#')
-			{
+			if ($query != '' && $query{0} != '#') {
 				$this->_db->setQuery($query);
 				$this->_db->query();
 			}
@@ -97,8 +92,7 @@ class JEMModelSampledata extends JModelLegacy
 		$this->moveImages();
 		
 		// delete temporary extraction folder
-		if (! $this->deleteTmpFolder())
-		{
+		if (! $this->deleteTmpFolder()) {
 			JError::raiseWarning('SOME ERROR CODE', 
 					JText::_('COM_JEM_UNABLE_TO_DELETE_TMP_FOLDER'));
 		}
@@ -111,7 +105,7 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @return boolean Ambigous mixed>
 	 */
-	private function unpack ()
+	private function unpack()
 	{
 		jimport('joomla.filesystem.archive');
 		
@@ -127,8 +121,7 @@ class JEMModelSampledata extends JModelLegacy
 		// extract archive
 		$result = JArchive::extract($archive, $extractdir);
 		
-		if ($result === false)
-		{
+		if ($result === false) {
 			JError::raiseWarning('SOME ERROR CODE', 
 					JText::_('COM_JEM_UNABLE_TO_EXTRACT_ARCHIVE'));
 			return false;
@@ -137,12 +130,9 @@ class JEMModelSampledata extends JModelLegacy
 		// return the files found in the extract folder and also folder name
 		$files = array();
 		
-		if ($handle = opendir($extractdir))
-		{
-			while (false !== ($file = readdir($handle)))
-			{
-				if ($file != "." && $file != "..")
-				{
+		if ($handle = opendir($extractdir)) {
+			while (false !== ($file = readdir($handle))) {
+				if ($file != "." && $file != "..") {
 					$files[] = $file;
 					continue;
 				}
@@ -160,7 +150,7 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @return array
 	 */
-	private function splitSql ($sql)
+	private function splitSql($sql)
 	{
 		$sql = trim($sql);
 		$sql = preg_replace("/\n\#[^\n]*/", '', "\n" . $sql);
@@ -168,33 +158,27 @@ class JEMModelSampledata extends JModelLegacy
 		$ret = array();
 		$in_string = false;
 		
-		for ($i = 0; $i < strlen($sql) - 1; $i ++)
-		{
-			if ($sql[$i] == ";" && ! $in_string)
-			{
+		for ($i = 0; $i < strlen($sql) - 1; $i ++) {
+			if ($sql[$i] == ";" && ! $in_string) {
 				$ret[] = substr($sql, 0, $i);
 				$sql = substr($sql, $i + 1);
 				$i = 0;
 			}
 			
-			if ($in_string && ($sql[$i] == $in_string) && $buffer[1] != "\\")
-			{
+			if ($in_string && ($sql[$i] == $in_string) && $buffer[1] != "\\") {
 				$in_string = false;
 			}
 			elseif (! $in_string && ($sql[$i] == '"' || $sql[$i] == "'") &&
-					 (! isset($buffer[0]) || $buffer[0] != "\\"))
-			{
+					 (! isset($buffer[0]) || $buffer[0] != "\\")) {
 				$in_string = $sql[$i];
 			}
-			if (isset($buffer[1]))
-			{
+			if (isset($buffer[1])) {
 				$buffer[0] = $buffer[1];
 			}
 			$buffer[1] = $sql[$i];
 		}
 		
-		if (! empty($sql))
-		{
+		if (! empty($sql)) {
 			$ret[] = $sql;
 		}
 		return ($ret);
@@ -205,32 +189,26 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @return boolean True on success
 	 */
-	private function moveImages ()
+	private function moveImages()
 	{
 		$imagebase = JPATH_ROOT . '/images/jem';
 		
-		foreach ($this->filelist['files'] as $file)
-		{
+		foreach ($this->filelist['files'] as $file) {
 			$subDirectory = "/";
-			if (strpos($file, "event") !== false)
-			{
+			if (strpos($file, "event") !== false) {
 				$subDirectory .= "events/";
 			}
-			elseif (strpos($file, "venue") !== false)
-			{
+			elseif (strpos($file, "venue") !== false) {
 				$subDirectory .= "venues/";
 			}
-			elseif (strpos($file, "category") !== false)
-			{
+			elseif (strpos($file, "category") !== false) {
 				$subDirectory .= "categories/";
 			}
-			else
-			{
+			else {
 				// Nothing matched. Skip this file
 				continue;
 			}
-			if (strpos($file, "thumb") !== false)
-			{
+			if (strpos($file, "thumb") !== false) {
 				$subDirectory .= "small/";
 			}
 			
@@ -245,12 +223,10 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @return boolean True on success
 	 */
-	private function deleteTmpFolder ()
+	private function deleteTmpFolder()
 	{
-		if ($this->filelist['folder'])
-		{
-			if (! JFolder::delete($this->filelist['folder']))
-			{
+		if ($this->filelist['folder']) {
+			if (! JFolder::delete($this->filelist['folder'])) {
 				return false;
 			}
 			return true;
@@ -263,7 +239,7 @@ class JEMModelSampledata extends JModelLegacy
 	 *
 	 * @return boolean True if data exists
 	 */
-	private function checkForJemData ()
+	private function checkForJemData()
 	{
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
@@ -274,8 +250,7 @@ class JEMModelSampledata extends JModelLegacy
 		$this->_db->setQuery($query);
 		$result = $this->_db->loadResult();
 		
-		if ($result == null)
-		{
+		if ($result == null) {
 			return false;
 		}
 		return true;
