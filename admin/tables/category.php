@@ -22,14 +22,6 @@ class JEMTableCategory extends JTableNested
 	function __construct(&$db)
 	{
 		parent::__construct('#__jem_categories', 'id', $db);
-
-		$rootId = self::getRootId();
-
-		if ($rootId === false) {
-   		 $rootId = self::addRoot();
-		}
-
-
 	}
 
 
@@ -52,121 +44,33 @@ class JEMTableCategory extends JTableNested
 	/**
 	 * Add the root node to an empty table.
 	 *
-	 * @return    integer  The id of the new root node.
+	 * @return  integer  The id of the new root node.
 	 */
 	public function addRoot()
 	{
+		if (self::getRootId() !== false) {
+			return;
+		}
+
 		$db = JFactory::getDbo();
-		$query = $db->getQuery();
+		$query = $db->getQuery(true);
 
 		// Insert columns.
 		$columns = array('parent_id','lft','rgt','level','catname','alias','access','path');
 
 		// Insert values.
-		$values = array(0,0,1,0, $db->quote('root'),$db->quote('root'),1,$db->quote(''));
+		$values = array(0,0,3,0, $db->quote('root'),$db->quote('root'),1,$db->quote(''));
 
 		// Prepare the insert query.
 		$query
-		->insert($db->quoteName('#__jem_categories'))
-		->columns($db->quoteName($columns))
-		->values(implode(',', $values));
+			->insert($db->quoteName('#__jem_categories'))
+			->columns($db->quoteName($columns))
+			->values(implode(',', $values));
 
 		$db->setQuery($query);
 		$db->query();
 
 		return $db->insertid();
-	}
-
-
-	/**
-	 * Gets the ID of the root item in the tree
-	 *
-	 * @return  mixed  The ID of the root row, or false and the internal error is set.
-	 *
-	 */
-	public function getRootId()
-	{
-		// Get the root item.
-		$k = $this->_tbl_key;
-
-		// Test for a unique record with parent_id = 0
-		$query = $this->_db->getQuery(true);
-		$query->select($k);
-		$query->from($this->_tbl);
-		$query->where('parent_id = 0');
-		$this->_db->setQuery($query);
-
-		$result = $this->_db->loadColumn();
-
-		if ($this->_db->getErrorNum())
-		{
-			$e = new JException(JText::sprintf('JLIB_DATABASE_ERROR_GETROOTID_FAILED', get_class($this), $this->_db->getErrorMsg()));
-			$this->setError($e);
-			return false;
-		}
-
-		if (count($result) == 1)
-		{
-			$parentId = $result[0];
-		}
-		else
-		{
-			// Test for a unique record with lft = 0
-			$query = $this->_db->getQuery(true);
-			$query->select($k);
-			$query->from($this->_tbl);
-			$query->where('lft = 0');
-			$this->_db->setQuery($query);
-
-			$result = $this->_db->loadColumn();
-			if ($this->_db->getErrorNum())
-			{
-				$e = new JException(JText::sprintf('JLIB_DATABASE_ERROR_GETROOTID_FAILED', get_class($this), $this->_db->getErrorMsg()));
-				$this->setError($e);
-				return false;
-			}
-
-			if (count($result) == 1)
-			{
-				$parentId = $result[0];
-			}
-			elseif (property_exists($this, 'alias'))
-			{
-				// Test for a unique record alias = root
-				$query = $this->_db->getQuery(true);
-				$query->select($k);
-				$query->from($this->_tbl);
-				$query->where('alias = ' . $this->_db->quote('root'));
-				$this->_db->setQuery($query);
-
-				$result = $this->_db->loadColumn();
-				if ($this->_db->getErrorNum())
-				{
-					$e = new JException(JText::sprintf('JLIB_DATABASE_ERROR_GETROOTID_FAILED', get_class($this), $this->_db->getErrorMsg()));
-					$this->setError($e);
-					return false;
-				}
-
-				if (count($result) == 1)
-				{
-					$parentId = $result[0];
-				}
-				else
-				{
-					$e = new JException(JText::_('JLIB_DATABASE_ERROR_ROOT_NODE_NOT_FOUND'));
-					$this->setError($e);
-					return false;
-				}
-			}
-			else
-			{
-				$e = new JException(JText::_('JLIB_DATABASE_ERROR_ROOT_NODE_NOT_FOUND'));
-				$this->setError($e);
-				return false;
-			}
-		}
-
-		return $parentId;
 	}
 
 

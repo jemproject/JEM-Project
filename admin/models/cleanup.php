@@ -154,6 +154,17 @@ class JEMModelCleanup extends JModelLegacy
 			}
 		}
 
+// 		// Insert extension ID and old release version number into schemas table
+// 		$query = 'INSERT INTO #__jem_cats_event_relations (`catid`, `itemid`) VALUES('.$cat.','.$object->id.')';
+// 		$query = 'INSERT IGNORE INTO `#__jem_categories`'
+// 				.' (`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`) VALUES'
+// 				.' (1, 0, 0, 1, 0, "root", "root", 1)';
+// 		$db->setQuery($query);
+// 		$db->query();
+
+		$categoryTable = $this->getTable('category', 'JEMTable');
+		$categoryTable->addRoot();
+
 		return true;
 	}
 

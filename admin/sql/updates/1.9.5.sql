@@ -27,5 +27,5 @@ ALTER TABLE `#__jem_categories`
 	ADD `modified_user_id` int(10) unsigned NOT NULL DEFAULT '0';
 	
 INSERT IGNORE INTO `#__jem_categories`
-	(`parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`, `path`)
-	VALUES ('0', '0', '1', '0', 'root','root','1','');
+	(`parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`)
+	VALUES (0, 0, 1, 0, 'root', 'root', 1);

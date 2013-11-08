@@ -17,7 +17,7 @@ jimport('joomla.application.component.model');
  * JEM Component Sampledata Model
  *
  * @package JEM
- *         
+ *
  */
 class JEMModelSampledata extends JModelLegacy
 {
@@ -42,11 +42,11 @@ class JEMModelSampledata extends JModelLegacy
 	function __construct()
 	{
 		parent::__construct();
-		
+
 		if ($this->checkForJemData()) {
 			return false;
 		}
-		
+
 		$this->sampleDataDir = JPATH_COMPONENT_ADMINISTRATOR . '/assets/';
 		$this->filelist = $this->unpack();
 	}
@@ -59,26 +59,23 @@ class JEMModelSampledata extends JModelLegacy
 	public function loadData()
 	{
 		if ($this->checkForJemData()) {
-			JError::raiseWarning(100, 
+			JError::raiseWarning(100,
 					JText::_('COM_JEM_DATA_ALREADY_INSTALLED'));
 			return false;
 		}
-		
-		$cleanup_model = JModel::getInstance('cleanup', 'JEMModel');
-		$cleanup_model->truncateAllData();
-		
+
 		$scriptfile = $this->sampleDataDir . 'sampledata.sql';
-		
+
 		// load sql file
 		// if(!($buffer =
 		// file_get_contents($this->filelist['folder'].'/'.$scriptfile))) {
 		if (! ($buffer = file_get_contents($scriptfile))) {
 			return false;
 		}
-		
+
 		// extract queries out of sql file
 		$queries = $this->splitSql($buffer);
-		
+
 		// Process queries
 		foreach ($queries as $query) {
 			$query = trim($query);
@@ -87,16 +84,16 @@ class JEMModelSampledata extends JModelLegacy
 				$this->_db->query();
 			}
 		}
-		
+
 		// move images in proper directory
 		$this->moveImages();
-		
+
 		// delete temporary extraction folder
 		if (! $this->deleteTmpFolder()) {
-			JError::raiseWarning('SOME ERROR CODE', 
+			JError::raiseWarning('SOME ERROR CODE',
 					JText::_('COM_JEM_UNABLE_TO_DELETE_TMP_FOLDER'));
 		}
-		
+
 		return true;
 	}
 
@@ -108,28 +105,28 @@ class JEMModelSampledata extends JModelLegacy
 	private function unpack()
 	{
 		jimport('joomla.filesystem.archive');
-		
+
 		$archive = $this->sampleDataDir . 'sampledata.zip';
-		
+
 		// Temporary folder to extract the archive into
 		$tmpdir = uniqid('sample_');
-		
+
 		// Clean the paths to use for archive extraction
 		$extractdir = JPath::clean(JPATH_ROOT . '/tmp/' . $tmpdir);
 		$archive = JPath::clean($archive);
-		
+
 		// extract archive
 		$result = JArchive::extract($archive, $extractdir);
-		
+
 		if ($result === false) {
-			JError::raiseWarning('SOME ERROR CODE', 
+			JError::raiseWarning('SOME ERROR CODE',
 					JText::_('COM_JEM_UNABLE_TO_EXTRACT_ARCHIVE'));
 			return false;
 		}
-		
+
 		// return the files found in the extract folder and also folder name
 		$files = array();
-		
+
 		if ($handle = opendir($extractdir)) {
 			while (false !== ($file = readdir($handle))) {
 				if ($file != "." && $file != "..") {
@@ -141,7 +138,7 @@ class JEMModelSampledata extends JModelLegacy
 		}
 		$filelist['files'] = $files;
 		$filelist['folder'] = $extractdir;
-		
+
 		return $filelist;
 	}
 
@@ -157,14 +154,14 @@ class JEMModelSampledata extends JModelLegacy
 		$buffer = array();
 		$ret = array();
 		$in_string = false;
-		
+
 		for ($i = 0; $i < strlen($sql) - 1; $i ++) {
 			if ($sql[$i] == ";" && ! $in_string) {
 				$ret[] = substr($sql, 0, $i);
 				$sql = substr($sql, $i + 1);
 				$i = 0;
 			}
-			
+
 			if ($in_string && ($sql[$i] == $in_string) && $buffer[1] != "\\") {
 				$in_string = false;
 			}
@@ -177,7 +174,7 @@ class JEMModelSampledata extends JModelLegacy
 			}
 			$buffer[1] = $sql[$i];
 		}
-		
+
 		if (! empty($sql)) {
 			$ret[] = $sql;
 		}
@@ -192,7 +189,7 @@ class JEMModelSampledata extends JModelLegacy
 	private function moveImages()
 	{
 		$imagebase = JPATH_ROOT . '/images/jem';
-		
+
 		foreach ($this->filelist['files'] as $file) {
 			$subDirectory = "/";
 			if (strpos($file, "event") !== false) {
@@ -211,8 +208,8 @@ class JEMModelSampledata extends JModelLegacy
 			if (strpos($file, "thumb") !== false) {
 				$subDirectory .= "small/";
 			}
-			
-			JFile::copy($this->filelist['folder'] . '/' . $file, 
+
+			JFile::copy($this->filelist['folder'] . '/' . $file,
 					$imagebase . $subDirectory . $file);
 		}
 		return true;
@@ -243,13 +240,13 @@ class JEMModelSampledata extends JModelLegacy
 	{
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		
+
 		$query->select("id");
 		$query->from('#__jem_categories');
 		$query->where('catname NOT LIKE "root"');
 		$this->_db->setQuery($query);
 		$result = $this->_db->loadResult();
-		
+
 		if ($result == null) {
 			return false;
 		}
