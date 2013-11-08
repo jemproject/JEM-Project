@@ -547,7 +547,3 @@ INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, 
 
 INSERT IGNORE INTO `#__jem_categories` (`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`,`alias`,`access`,`path`) VALUES
 (1, '0', '0', '1', '0', 'root','root','1','');
-;
-
-
-
