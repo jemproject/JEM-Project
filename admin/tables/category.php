@@ -22,6 +22,10 @@ class JEMTableCategory extends JTableNested
 	function __construct(&$db)
 	{
 		parent::__construct('#__jem_categories', 'id', $db);
+		
+		if (self::addRoot() !== false) {
+			return;
+		}
 
 		/* @todo check code. Not sure where this one is for
 		 * $this->access = (int) JFactory::getConfig()->get('access');*/
