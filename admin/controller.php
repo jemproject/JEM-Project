@@ -40,7 +40,6 @@ class JEMController extends JControllerLegacy
 		// if no view found then refert to jem
 
 		JEMHelperBackend::addSubmenu(JRequest::getCmd('view', 'jem'));
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		parent::display();
 		return $this;
