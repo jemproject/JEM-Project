@@ -79,6 +79,9 @@ $options = array(
 
 							$link = 'index.php?option=com_jem&amp;view=export';
 							JEMViewJEM::quickiconButton($link, 'icon-48-tableexport.png', JText::_('COM_JEM_EXPORT_DATA'));
+							
+							$link = 'index.php?option=com_jem&amp;view=cssmanager';
+							JEMViewJEM::quickiconButton( $link, 'icon-48-cssmanager.png', JText::_( 'COM_JEM_CSSMANAGER_TITLE' ) );
 						}
 
 						$link = 'index.php?option=com_jem&amp;view=help';

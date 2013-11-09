@@ -1,0 +1,57 @@
+<?php
+/**
+ * @version 1.9.5
+ * @package JEM
+ * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ */
+
+defined('_JEXEC') or die;
+
+JHtml::_('behavior.tooltip');
+JHtml::_('behavior.modal');
+$canDo	= JEMHelperBackend::getActions();
+
+?>
+
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=cssmanager'); ?>" method="post" name="adminForm" id="adminForm">
+
+<div class="width-50 fltlft">
+		<fieldset class="adminform">
+			<legend><?php echo JText::_('COM_JEM_CSSMANAGER_DESCRIPTION');?></legend>
+			<?php //echo JHtml::_('templates.thumb', $this->template->element, $this->template->client_id); ?>
+		</fieldset>
+	<div class="clr"></div>
+</div>
+	
+<div class="width-50 fltrt">
+		<fieldset class="adminform">
+			<legend><?php echo JText::_('COM_JEM_CSSMANAGER_FILENAMES');?></legend>
+
+			<?php if (!empty($this->files['css'])) : ?>
+			<ul>
+				<?php foreach ($this->files['css'] as $file) : ?>
+				<li>
+					<?php if ($canDo->get('core.edit')) : ?>
+					<a href="<?php echo JRoute::_('index.php?option=com_jem&task=source.edit&id='.$file->id);?>">
+					<?php endif; ?>
+						<?php echo JText::sprintf('COM_JEM_CSSMANAGER_EDIT_CSS', $file->name);?>
+					<?php if ($canDo->get('core.edit')) : ?>
+					</a>
+					<?php endif; ?>
+				</li>
+				<?php endforeach; ?>
+			</ul>
+			<?php endif; ?>
+		</fieldset>
+		<div class="clr"></div>
+		<input type="hidden" name="task" value="" />
+</div>
+	<?php echo JHtml::_('form.token'); ?>		
+</form>
+		
+<?php
+//keep session alive while editing
+JHTML::_('behavior.keepalive');
+?>
