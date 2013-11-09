@@ -60,8 +60,6 @@ class JEMViewEditvenue extends JViewLegacy
 		$doc->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		$doc->addScript('media/com_jem/js/attachments.js' );
-		//$doc->addScript('http://api.mygeoposition.com/api/geopicker/api.js');
-		//$doc->addScript(JURI::root().'media/com_jem/js/geodata.js' );
 		$doc->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
 
 
@@ -99,7 +97,7 @@ class JEMViewEditvenue extends JViewLegacy
 		$limage = JEMImage::flyercreator($row->locimage, 'venue');
 
 		//Set the info image
-		$infoimage = JHTML::_('image', 'media/com_jem/images/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
+		$infoimage = JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
 
 		// country list
 		$countries = array();

@@ -107,7 +107,7 @@ class JEMViewEditevent extends JViewLegacy
 		$dimage = JEMImage::flyercreator($row->datimage, 'event');
 
 		//Set the info image
-		$infoimage = JHTML::_('image', 'media/com_jem/images/icon-16-hint.png', JText::_('COM_JEM_NOTES'));
+		$infoimage = JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_('COM_JEM_NOTES'));
 
 		$js = "
 		function elSelectVenue(id, venue) {

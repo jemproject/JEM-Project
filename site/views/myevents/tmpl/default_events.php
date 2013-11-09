@@ -189,7 +189,7 @@ defined('_JEXEC') or die;
 							echo $count;
 						}
 					} else {
-						echo JHTML::_('image', 'media/com_jem/images/publish_r.png',JText::_('COM_JEM_NOTES'));
+						echo JHtml::_('image', 'com_jem/publish_r.png',JText::_('COM_JEM_NOTES'));
 					}
 					?>
 				</td>

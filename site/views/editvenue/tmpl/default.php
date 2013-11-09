@@ -368,7 +368,7 @@ defined('_JEXEC') or die;
 			if ($this->row->locimage) :
 				echo JEMOutput::flyer( $this->row, $this->limage, 'venue' );
 			else :
-				echo JHTML::_('image', 'media/com_jem/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'));
+				echo JHtml::_('image', 'com_jem/noimage.png', JText::_('COM_JEM_NO_IMAGE'));
 			endif;
 			?>
 
@@ -457,17 +457,6 @@ defined('_JEXEC') or die;
 		</fieldset>
 
 		<?php echo $this->loadTemplate('attachments_edit'); ?>
-
-		<!--  removed to avoid double posts in ie7
-		<div class="jem_save_buttons floattext">
-			<button type="button" onclick="return submitbutton('savevenue')">
-				<?php echo JText::_('COM_JEM_SAVE'); ?>
-			</button>
-			<button type="reset" onclick="return submitbutton('cancelvenue')">
-				<?php echo JText::_('COM_JEM_CANCEL'); ?>
-			</button>
-		</div>
-		-->
 
 		<p class="clear">
 		<input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />

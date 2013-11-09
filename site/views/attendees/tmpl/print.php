@@ -16,7 +16,7 @@ defined('_JEXEC') or die; ?>
 		</font></td>
 		<td><div class="button2-left">
 				<div class="blank">
-					<a href="#" onclick="window.print();return false;"><?php echo JHTML::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), JText::_('JGLOBAL_PRINT'), true); ?>
+					<a href="#" onclick="window.print();return false;"><?php echo JHtml::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), JText::_('JGLOBAL_PRINT'), true); ?>
 					</a>
 				</div>
 			</div></td>

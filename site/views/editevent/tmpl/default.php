@@ -403,7 +403,7 @@ $options = array(
 			if ($this->row->datimage) :
 				echo JEMOutput::flyer( $this->row, $this->dimage, 'event' );
 			else :
-				echo JHTML::_('image', 'media/com_jem/images/noimage.png', JText::_('COM_JEM_NO_IMAGE'));
+				echo JHtml::_('image', 'com_jem/noimage.png', JText::_('COM_JEM_NO_IMAGE'));
 			endif;
 			?>
 			<label for="userfile"><?php echo JText::_('COM_JEM_IMAGE'); ?></label>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,7 +15,7 @@ defined('_JEXEC') or die;
 		<td width="10%">
 			<div class="linkicon">
 				<a href="index.php?option=com_jem&amp;task=cleanup.cleaneventimg">
-					<?php echo JHTML::_('image', 'media/com_jem/images/icon-48-cleaneventimg.png', JText::_('COM_JEM_CLEANUP_EVENT_IMG')); ?>
+					<?php echo JHtml::_('image', 'com_jem/icon-48-cleaneventimg.png', JText::_('COM_JEM_CLEANUP_EVENT_IMG'), NULL, true); ?>
 					<span><?php echo JText::_('COM_JEM_CLEANUP_EVENT_IMG'); ?></span>
 				</a>
 			</div>
@@ -28,7 +28,7 @@ defined('_JEXEC') or die;
 		<td width="10%">
 			<div class="linkicon">
 				<a href="index.php?option=com_jem&amp;task=cleanup.cleanvenueimg">
-					<?php echo JHTML::_('image', 'media/com_jem/images/icon-48-cleanvenueimg.png', JText::_('COM_JEM_CLEANUP_VENUE_IMG')); ?>
+					<?php echo JHtml::_('image', 'com_jem/icon-48-cleanvenueimg.png', JText::_('COM_JEM_CLEANUP_VENUE_IMG'), NULL, true); ?>
 					<span><?php echo JText::_('COM_JEM_CLEANUP_VENUE_IMG'); ?></span>
 				</a>
 			</div>
@@ -42,7 +42,7 @@ defined('_JEXEC') or die;
 		<td width="10%">
 			<div class="linkicon">
 				<a href="index.php?option=com_jem&amp;task=cleanup.cleancategoryimg">
-					<?php echo JHTML::_('image', 'media/com_jem/images/icon-48-cleancategoryimg.png', JText::_('COM_JEM_CLEANUP_CATEGORY_IMG')); ?>
+					<?php echo JHtml::_('image', 'com_jem/icon-48-cleancategoryimg.png', JText::_('COM_JEM_CLEANUP_CATEGORY_IMG'), NULL, true); ?>
 					<span><?php echo JText::_('COM_JEM_CLEANUP_CATEGORY_IMG'); ?></span>
 				</a>
 			</div>
@@ -55,7 +55,7 @@ defined('_JEXEC') or die;
 		<td width="10%">
 			<div class="linkicon">
 				<a href="index.php?option=com_jem&amp;task=cleanup.triggerarchive">
-					<?php echo JHTML::_('image', 'media/com_jem/images/icon-48-archive.png', JText::_('COM_JEM_CLEANUP_TRIGGER_AUTOARCHIVE')); ?>
+					<?php echo JHtml::_('image', 'com_jem/icon-48-archive.png', JText::_('COM_JEM_CLEANUP_TRIGGER_AUTOARCHIVE'), NULL, true); ?>
 					<span><?php echo JText::_('COM_JEM_CLEANUP_TRIGGER_AUTOARCHIVE'); ?></span>
 				</a>
 			</div>
@@ -69,7 +69,7 @@ defined('_JEXEC') or die;
 		<td width="10%">
 			<div class="linkicon">
 				<a href="index.php?option=com_jem&amp;task=cleanup.cleanupCatsEventRelations">
-					<?php echo JHTML::_('image', 'media/com_jem/images/icon-48-cleancategoryimg.png', JText::_('COM_JEM_CLEANUP_CLEANUP_CATSEVENT_RELS')); ?>
+					<?php echo JHtml::_('image', 'com_jem/icon-48-cleancategoryimg.png', JText::_('COM_JEM_CLEANUP_CATSEVENT_RELS'), NULL, true); ?>
 					<span><?php echo JText::_('COM_JEM_CLEANUP_CLEANUP_CATSEVENT_RELS'); ?></span>
 				</a>
 			</div>
@@ -83,7 +83,7 @@ defined('_JEXEC') or die;
 		<td width="10%">
 			<div class="linkicon">
 				<a href="index.php?option=com_jem&amp;task=cleanup.truncateAllData" onclick="javascript:return confirm('<?php echo JText::_('COM_JEM_CLEANUP_TRUNCATE_ALL_DATA_CONFIRM'); ?>');">
-					<?php echo JHTML::_('image', 'media/com_jem/images/icon-48-truncatealldata.png', JText::_('COM_JEM_CLEANUP_TRUNCATE_ALL_DATA')); ?>
+					<?php echo JHtml::_('image', 'com_jem/icon-48-truncatealldata.png', JText::_('COM_JEM_CLEANUP_TRUNCATE_ALL_DATA'), NULL, true); ?>
 					<span><?php echo JText::_('COM_JEM_CLEANUP_TRUNCATE_ALL_DATA'); ?></span>
 				</a>
 			</div>

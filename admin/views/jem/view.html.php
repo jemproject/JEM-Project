@@ -82,12 +82,12 @@ class JEMViewJEM extends JViewLegacy {
 					<?php JHTML::_('behavior.modal'); ?>
 					<a href="<?php echo $link.'&amp;tmpl=component'; ?>" style="cursor:pointer" class="modal"
 							rel="{handler: 'iframe', size: {x: 650, y: 400}}">
-						<?php echo JHTML::_('image', 'media/com_jem/images/'.$image, $text); ?>
+						<?php echo JHtml::_('image', 'com_jem/'.$image, $text, NULL, true); ?>
 						<span><?php echo $text; ?></span>
 					</a>
 				<?php else : ?>
 					<a href="<?php echo $link; ?>">
-						<?php echo JHTML::_('image', 'media/com_jem/images/'.$image, $text); ?>
+						<?php echo JHtml::_('image', 'com_jem/'.$image, $text, NULL, true); ?>
 						<span><?php echo $text; ?></span>
 					</a>
 				<?php endif; ?>

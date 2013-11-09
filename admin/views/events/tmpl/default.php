@@ -249,7 +249,7 @@ window.addEvent('domready', function(){
 							<?php echo $count; ?>
 						</a>
 					<?php } else { ?>
-						<?php echo JHTML::_('image', 'media/com_jem/images/publish_r.png',JText::_('COM_JEM_NOTES')); ?>
+						<?php echo JHtml::_('image', 'com_jem/publish_r.png', JText::_('COM_JEM_NOTES'), NULL, true); ?>
 					<?php } ?>
 				</td>
 				<td class="center"><?php echo $row->id; ?></td>
