@@ -383,11 +383,16 @@ class JEMModelCategory extends JModelAdmin
 			$data['alias'] = $alias;
 		}
 
-
 		$groupid = $jinput->get('groupid','','int');
 		$table->groupid = $groupid;
 
-
+		$color = $jinput->get('color','','html');
+		
+		if(!preg_match('/^#[0-9A-Fa-f]{6}$/',$color))
+		{
+			$color = '';
+		}
+		$table->color = $color;
 
 		// Bind the data.
 		if (!$table->bind($data))

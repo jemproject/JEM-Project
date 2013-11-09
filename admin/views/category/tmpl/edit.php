@@ -17,6 +17,7 @@ JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 JHtml::_('behavior.tooltip');
 JHtml::_('behavior.formvalidation');
 JHtml::_('behavior.keepalive');
+JHtml::_('behavior.colorpicker');
 ?>
 
 <script type="text/javascript">
@@ -58,7 +59,12 @@ JHtml::_('behavior.keepalive');
 
 				<li><?php echo $this->form->getLabel('color'); ?>
 				<?php echo $this->form->getInput('color'); ?></li>
-
+				
+				<li>
+				<label></label>
+				<input type="text" name="color" id="color" 
+      class="input-colorpicker" value="" size="10" />
+				</li>
 				<li><?php echo $this->form->getLabel('id'); ?>
 				<?php echo $this->form->getInput('id'); ?></li>
 			</ul>
