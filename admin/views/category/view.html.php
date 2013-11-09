@@ -29,6 +29,9 @@ class JEMViewCategory extends JViewLegacy
 		$this->state	= $this->get('State');
 		$this->canDo	= JEMHelperBackend::getActions($this->state->get('category.component'));
 
+		
+		$document	= JFactory::getDocument();
+		
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {
 			JError::raiseError(500, implode("\n", $errors));
@@ -37,6 +40,10 @@ class JEMViewCategory extends JViewLegacy
 		
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		JHtml::_('stylesheet', 'com_jem/colorpicker.css', array(), true);
+		
+		// Load Script
+		$document->addScript(JURI::root().'media/com_jem/js/colorpicker.js');
 
 		// build grouplist
 		// @todo: make a form-field for this one

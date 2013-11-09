@@ -5,6 +5,8 @@
  * @copyright   Copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * 
+ * @todo make custom colorfield so it can be used within xml
  */
 
 // no direct access
@@ -17,7 +19,6 @@ JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 JHtml::_('behavior.tooltip');
 JHtml::_('behavior.formvalidation');
 JHtml::_('behavior.keepalive');
-JHtml::_('behavior.colorpicker');
 ?>
 
 <script type="text/javascript">
@@ -56,15 +57,11 @@ JHtml::_('behavior.colorpicker');
 
 				<li><?php echo $this->form->getLabel('access'); ?>
 				<?php echo $this->form->getInput('access'); ?></li>
-
-				<li><?php echo $this->form->getLabel('color'); ?>
-				<?php echo $this->form->getInput('color'); ?></li>
 				
-				<li>
-				<label></label>
-				<input type="text" name="color" id="color" 
-      class="input-colorpicker" value="" size="10" />
-				</li>
+				<li><label><?php echo JText::_('COM_JEM_CATEGORY_COLOR'); ?></label>
+				<input class="inputbox" type="text" style="background: <?php echo ( $this->item->color == '' )?"transparent":$this->item->color; ?>;"
+                   name="color" id="color" size="10" maxlength="20" value="<?php echo $this->item->color; ?>" />                   
+            <input type="button" class="button" value="<?php echo JText::_('JSELECT'); ?>" onclick="openPicker('color', -200, 20);" /> 
 				<li><?php echo $this->form->getLabel('id'); ?>
 				<?php echo $this->form->getInput('id'); ?></li>
 			</ul>
@@ -76,22 +73,20 @@ JHtml::_('behavior.colorpicker');
 	</div>
 
 	<div class="width-40 fltrt">
-
 		<?php echo JHtml::_('sliders.start', 'categories-sliders-'.$this->item->id, array('useCookie'=>1)); ?>
 			<?php echo $this->loadTemplate('options'); ?>
 			<div class="clr"></div>
 
-			<?php echo JHtml::_('sliders.panel', JText::_( 'COM_JEM_GROUP' ), 'group'); ?>
+			<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_GROUP'), 'group'); ?>
 				<table>
 					<tr>
-						<td><label for="groups"> <?php echo JText::_( 'COM_JEM_GROUP' ).':'; ?>
+						<td><label for="groups"> <?php echo JText::_('COM_JEM_GROUP').':'; ?>
 						</label>
 						</td>
 						<td><?php echo $this->Lists['groups']; ?>
 						</td>
 					</tr>
 				</table>
-
 
 			<?php echo JHtml::_('sliders.panel', JText::_('JGLOBAL_FIELDSET_METADATA_OPTIONS'), 'meta-options'); ?>
 			<fieldset class="panelform">
@@ -119,8 +114,6 @@ JHtml::_('behavior.colorpicker');
 	<?php echo JHtml::_('sliders.end'); ?>
 	</div>
 	<div class="clr"></div>
-
-
 	<div>
 		<input type="hidden" name="task" value="" />
 		<?php echo JHtml::_('form.token'); ?>
