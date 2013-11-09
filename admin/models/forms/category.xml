@@ -3,8 +3,6 @@
 	<fieldset name="details"
 		addfieldpath="/administrator/components/com_jem/models/fields"
 	>
-		
-		
 		<field
 		name="id"
 		type="text"
@@ -31,7 +29,7 @@
 			class="inputbox" size="20"
 			label="COM_JEM_ALIAS"
 			description="COM_JEM_ALIAS"
-			required="true"
+			required="false"
 		/>
 		<field name="catdescription" type="editor"
 			hide="pagebreak,readmore"
