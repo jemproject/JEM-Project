@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="2.5" type="plugin" group="content">
+	<name>plg_content_jem</name>
+	<author>JEM Community</author>
+	<creationDate>October 2013</creationDate>
+	<copyright>Copyright (C) 2013 JEM. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>info@joomlaeventmanager.net</authorEmail>
+	<authorUrl>www.joomlaeventmanager.net</authorUrl>
+	<version>2.5.0</version>
+	<description>PLG_CONTENT_JEM_XML_DESCRIPTION</description>
+
+	<files>
+		<filename plugin="jem">jem.php</filename>
+		<filename>index.html</filename>
+	</files>
+	<languages>
+		<language tag="en-GB">language/en-GB/en-GB.plg_content_jem.ini</language>
+		<language tag="en-GB">language/en-GB/en-GB.plg_content_jem.sys.ini</language>
+	</languages>
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field name="check_categories"
+					type="radio"
+					default="1"
+					description="PLG_CONTENT_JEM_FIELD_CHECK_CATEGORIES_DESC"
+					label="PLG_CONTENT_JEM_FIELD_CHECK_CATEGORIES_LABEL">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+
+</extension>
