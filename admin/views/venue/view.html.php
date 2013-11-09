@@ -10,7 +10,6 @@
 defined('_JEXEC') or die;
 
 
-
 /**
  * View class Venue
  *
@@ -48,11 +47,12 @@ class JEMViewVenue extends JViewLegacy {
 		$task		= JRequest::getVar('task');
 		$this->task 		= $task;
 
-		// CSS Stylesheet
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/geostyle.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		JHtml::_('stylesheet', 'com_jem/geostyle.css', array(), true);
+		
+		// Load Scripts
 		$document->addScript(JURI::root().'media/com_jem/js/attachments.js');
-		//$document->addScript(JURI::root().'media/com_jem/js/geodata.js');
 		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
 
 		// Noconflict

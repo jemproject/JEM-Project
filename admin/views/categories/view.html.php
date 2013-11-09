@@ -35,11 +35,10 @@ class JEMViewCategories extends JViewLegacy
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
-
-		//add css and submenu to document
-		$document	= JFactory::getDocument();
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
-
+		
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		
 		// Preprocess the list of items to find ordering divisions.
 		foreach ($this->items as &$item) {
 			$this->ordering[$item->parent_id][] = $item->id;

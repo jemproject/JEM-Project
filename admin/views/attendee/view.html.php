@@ -23,8 +23,6 @@ class JEMViewAttendee extends JViewLegacy {
 	{
 		//initialise variables
 		$document	= JFactory::getDocument();
-// 		$user 		= JFactory::getUser();
-// 		$app 		= JFactory::getApplication();
 
 		// Load the form validation behavior
 		JHTML::_('behavior.formvalidation');
@@ -32,20 +30,11 @@ class JEMViewAttendee extends JViewLegacy {
 		//get vars
 		$event_id = JRequest::getInt('id');
 
-		//add css to document
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		//Get data from the model
-// 		$model		= $this->getModel();
 		$row		= $this->get('Data');
-
-		// fail if checked out not by 'me'
-		if ($row->id) {
-//			if ($model->isCheckedOut($user->get('id'))) {
-//				JError::raiseWarning('SOME_ERROR_CODE', $row->catname.' '.JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
-//				$app->redirect('index.php?option=com_jem&view=attendees&id='.$event_id);
-//			}
-		}
 
 		//build selectlists
 		$lists = array();

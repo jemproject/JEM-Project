@@ -24,14 +24,13 @@ class JEMViewHelp extends JViewLegacy {
 		jimport('joomla.filesystem.folder');
 
 		//initialise variables
-		$document		= JFactory::getDocument();
 		$lang 			= JFactory::getLanguage();
 
 		//get vars
 		$helpsearch 	= JRequest::getString('filter_search');
 
-		//add css and submenu to document
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		// Check for files in the actual language
 		$langTag = $lang->getTag();

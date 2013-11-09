@@ -54,10 +54,11 @@ class JEMViewEvent extends JViewLegacy {
 		$Lists = array();
 		$Lists['category'] = JEMCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8"');
 
-		// CSS Stylesheet
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		
+		// Load scripts
 		$document->addScript(JURI::root().'media/com_jem/js/attachments.js');
-
 		$document->addScript($url.'media/com_jem/js/recurrence.js');
 		$document->addScript($url.'media/com_jem/js/unlimited.js');
 		$document->addScript($url.'media/com_jem/js/seo.js');

@@ -30,20 +30,15 @@ class JEMViewSettings extends JViewLegacy {
 
 		$jemsettings = $this->get('Data');
 		$document 	= JFactory::getDocument();
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+		
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		$style = '
 		    div.current fieldset.radio input {
 		        cursor: pointer;
 		    }';
-
 		$document->addStyleDeclaration($style);
-
-		/* Bootstrap Css
-		 * - Toolbar icons will be moved due to the background-position (icons)
-		 */
-
-		// $document->addStyleSheet(JURI::root().'media/com_jem/bootstrap/css/bootstrap.css'); */
 
 		// Check for model errors.
 		if ($errors = $this->get('Errors')) {
@@ -68,14 +63,13 @@ class JEMViewSettings extends JViewLegacy {
 
 		$app = JFactory::getApplication();
 
-		//only admins have access to this view
+		// only admins have access to this view
 		if (!JFactory::getUser()->authorise('core.manage')) {
 			JError::raiseWarning('SOME_ERROR_CODE', JText::_('COM_JEM_ALERTNOTAUTH'));
 			$app->redirect('index.php?option=com_jem&view=jem');
 		}
 
-		//add css, js and submenu to document
-		//$document->addScript(JURI::root().'media/com_jem/js/settings.js');
+		// mapping variables
 
 		$this->form = $form;
 		$this->data = $data;
@@ -95,7 +89,7 @@ class JEMViewSettings extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
-		//Create Submenu
+		// Create Submenu
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
 
 		JToolBarHelper::title(JText::_('COM_JEM_SETTINGS'), 'settings');

@@ -24,6 +24,9 @@ class JEMViewUpdatecheck extends JViewLegacy {
 		//Get data from the model
 		$updatedata      	= $this->get('Updatedata');
 
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		
 		//assign data to template
 		$this->updatedata	= $updatedata;
 

@@ -21,10 +21,7 @@ class JEMViewCleanup extends JViewLegacy {
 	public function display($tpl = null) {
 
 		$app = JFactory::getApplication();
-
-		//initialise variables
-		$document		= JFactory::getDocument();
-
+		
 		$this->totalcats = $this->get('Countcats');
 
 		//only admins have access to this view
@@ -33,8 +30,8 @@ class JEMViewCleanup extends JViewLegacy {
 			$app->redirect('index.php?option=com_jem&view=jem');
 		}
 
-		//add css and submenu to document
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		// add toolbar
 		$this->addToolbar();

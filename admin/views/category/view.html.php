@@ -34,10 +34,12 @@ class JEMViewCategory extends JViewLegacy
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
-
+		
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		// build grouplist
-		// todo: make a form-field for this one
+		// @todo: make a form-field for this one
 		$groups 	= $this->get('Groups');
 
 		$grouplist		= array();

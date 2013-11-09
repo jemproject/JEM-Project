@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -27,7 +27,6 @@ class JEMViewImagehandler extends JViewLegacy {
 	function display($tpl = null) {
 		$app 		= JFactory::getApplication();
 		$option 	= JRequest::getString('option');
-		$document 	= JFactory::getDocument();
 
 		if($this->getLayout() == 'uploadimage') {
 			$this->_displayuploadimage($tpl);
@@ -58,8 +57,8 @@ class JEMViewImagehandler extends JViewLegacy {
 		// Do not allow cache
 		JResponse::allowCache(false);
 
-		//add css
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		//get images
 		$images = $this->get('images');
@@ -99,15 +98,14 @@ class JEMViewImagehandler extends JViewLegacy {
 	 */
 	function _displayuploadimage($tpl = null) {
 		//initialise variables
-		$document		= JFactory::getDocument();
 		$uri 			= JFactory::getURI()->toString();
 		$jemsettings	= JEMAdmin::config();
 
 		//get vars
 		$task 			= JRequest::getVar('task');
 
-		//add css
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		jimport('joomla.client.helper');
 		$ftp = JClientHelper::setCredentialsFromRequest('ftp');

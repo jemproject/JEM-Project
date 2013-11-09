@@ -10,7 +10,6 @@
 defined('_JEXEC') or die;
 
 
-
 /**
  * View class Group
  *
@@ -49,8 +48,8 @@ class JEMViewGroup extends JViewLegacy {
 		$this->task = $task;
 		$url 		= JURI::root();
 
-		// CSS Stylesheet
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		$maintainers 		= $this->get('Members');
 		$available_users 	= $this->get('Available');

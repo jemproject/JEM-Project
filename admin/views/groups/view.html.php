@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -28,8 +28,6 @@ defined('_JEXEC') or die;
 	public function display($tpl = null)
 	{
 		$user 		= JFactory::getUser();
-		$document	= JFactory::getDocument();
-
 		$jemsettings = JEMAdmin::config();
 
 		// Initialise variables.
@@ -40,14 +38,13 @@ defined('_JEXEC') or die;
 		// loading Mootools
 		JHtml::_('behavior.framework');
 
-		//add css and submenu to document
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
-		//add style to description of the tooltip (hastip)
+		// add style to description of the tooltip (hastip)
 		JHTML::_('behavior.tooltip');
 
-		//assign data to template
-		//$this->lists		= $lists;
+		// assign data to template
 		$this->user			= $user;
 		$this->jemsettings  = $jemsettings;
 
@@ -87,45 +84,9 @@ defined('_JEXEC') or die;
 			JToolBarHelper::editList('group.edit');
 		}
 
-		/* state */
-		/*
-		if ($canDo->get('core.edit.state'))
-		{
-
-			if ($this->state->get('filter_state') != 2)
-			{
-				JToolBarHelper::publishList('groups.publish', 'JTOOLBAR_PUBLISH', true);
-				JToolBarHelper::unpublishList('groups.unpublish', 'JTOOLBAR_UNPUBLISH', true);
-			}
-
-			if ($this->state->get('filter_state') != -1)
-			{
-				JToolBarHelper::divider();
-				if ($this->state->get('filter_state') != 2)
-				{
-					JToolBarHelper::archiveList('groups.archive');
-				}
-				elseif ($this->state->get('filter_state') == 2)
-				{
-					JToolBarHelper::unarchiveList('groups.publish');
-				}
-			}
-		}
-		*/
-
 		if ($canDo->get('core.edit.state')) {
 			JToolBarHelper::checkin('groups.checkin');
 		}
-
-		/*
-		if ($this->state->get('filter_state') == -2 && $canDo->get('core.delete')) {
-			JToolBarHelper::deleteList('', 'events.delete', 'JTOOLBAR_EMPTY_TRASH');
-			JToolBarHelper::divider();
-		} elseif ($canDo->get('core.edit.state')) {
-			JToolBarHelper::trash('events.trash');
-			JToolBarHelper::divider();
-		}
-		*/
 
 		JToolBarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'groups.remove', 'JACTION_DELETE');
 		JToolBarHelper::spacer();

@@ -28,7 +28,6 @@ class JEMViewAttendees extends JViewLegacy {
 
 		//initialise variables
 		$db			= JFactory::getDBO();
-		$document	= JFactory::getDocument();
 
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest('com_jem.attendees.filter_order', 'filter_order', 'u.username', 'cmd');
@@ -38,9 +37,8 @@ class JEMViewAttendees extends JViewLegacy {
 		$search 			= $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
 		$search 			= $db->escape(trim(JString::strtolower($search)));
 
-		//add css and submenu to document
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
-
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		// Get data from the model
 		$rows 		= $this->get('Data');

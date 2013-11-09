@@ -10,7 +10,6 @@
 defined('_JEXEC') or die;
 
 
-
 /**
  * View class Export
  *
@@ -26,8 +25,8 @@ class JEMViewExport extends JViewLegacy {
 		//initialise variables
 		$document	= JFactory::getDocument();
 
-		//add css to document
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		//Cause of group limits we can't use class here to build the categories tree
 		$categories = $this->get('Categories');

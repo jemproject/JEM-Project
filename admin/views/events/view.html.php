@@ -55,8 +55,10 @@ defined('_JEXEC') or die;
 		// loading Mootools
 		JHtml::_('behavior.framework');
 
-		//add css and submenu to document
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+
+		// Load Scripts
 		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 		$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
 
