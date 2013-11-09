@@ -84,12 +84,6 @@
 		type="hidden"
 		filter="unset"/>
 		
-	<field name="color" type="color"
-				default="#FFFF00"
-				label="COM_JEM_COLOR"
-				description="COM_JEM_CATEGORY_COLOR_DESC"
-			/>	
-
 	<field
 		name="path"
 		type="text"
