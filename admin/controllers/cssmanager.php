@@ -29,6 +29,7 @@ class JEMControllerCssmanager extends JControllerAdmin
 	}
 
 	/**
+	 *
 	 */
 	public function cancel()
 	{

@@ -5,11 +5,10 @@
  * @copyright   Copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- * 
+ *
  * @todo make custom colorfield so it can be used within xml
  */
 
-// no direct access
 defined('_JEXEC') or die;
 
 // Include the component HTML helpers.
@@ -57,11 +56,11 @@ JHtml::_('behavior.keepalive');
 
 				<li><?php echo $this->form->getLabel('access'); ?>
 				<?php echo $this->form->getInput('access'); ?></li>
-				
+
 				<li><label><?php echo JText::_('COM_JEM_CATEGORY_COLOR'); ?></label>
-				<input class="inputbox" type="text" style="background: <?php echo ( $this->item->color == '' )?"transparent":$this->item->color; ?>;"
-                   name="color" id="color" size="10" maxlength="20" value="<?php echo $this->item->color; ?>" />                   
-            <input type="button" class="button" value="<?php echo JText::_('JSELECT'); ?>" onclick="openPicker('color', -200, 20);" /> 
+					<input class="inputbox" type="text" style="background: <?php echo ( $this->item->color == '' )?"transparent":$this->item->color; ?>;"
+					name="color" id="color" size="10" maxlength="20" value="<?php echo $this->item->color; ?>" />
+					<input type="button" class="button" value="<?php echo JText::_('JSELECT'); ?>" onclick="openPicker('color', -200, 20);" />
 				<li><?php echo $this->form->getLabel('id'); ?>
 				<?php echo $this->form->getInput('id'); ?></li>
 			</ul>

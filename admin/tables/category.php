@@ -7,7 +7,6 @@
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// No direct access
 defined('_JEXEC') or die;
 
 jimport('joomla.database.tablenested');
@@ -22,7 +21,7 @@ class JEMTableCategory extends JTableNested
 	function __construct(&$db)
 	{
 		parent::__construct('#__jem_categories', 'id', $db);
-		
+
 		if (self::addRoot() !== false) {
 			return;
 		}
@@ -57,8 +56,8 @@ class JEMTableCategory extends JTableNested
 	{
 		if (self::getRootId() !== false) {
 			return;
-		}	
-		
+		}
+
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
 
@@ -134,7 +133,7 @@ class JEMTableCategory extends JTableNested
 		return $this->_db->getAffectedRows();
 	}
 
-	
+
 	/**
 	 * Override check function
 	 *
@@ -156,16 +155,16 @@ class JEMTableCategory extends JTableNested
 		{
 			$this->alias = $this->catname;
 		}
-	
+
 		$this->alias = JApplication::stringURLSafe($this->alias);
 		if (trim(str_replace('-', '', $this->alias)) == '')
 		{
 			$this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
 		}
-	
+
 		return true;
 	}
-	
+
 	/**
 	 * Overloaded bind function.
 	 *
@@ -186,24 +185,24 @@ class JEMTableCategory extends JTableNested
 			$registry->loadArray($array['params']);
 			$array['params'] = (string) $registry;
 		}
-	
+
 		if (isset($array['metadata']) && is_array($array['metadata']))
 		{
 			$registry = new JRegistry;
 			$registry->loadArray($array['metadata']);
 			$array['metadata'] = (string) $registry;
 		}
-	
+
 		// Bind the rules.
 		if (isset($array['rules']) && is_array($array['rules']))
 		{
 			$rules = new JAccessRules($array['rules']);
 			$this->setRules($rules);
 		}
-	
+
 		return parent::bind($array, $ignore);
 	}
-	
+
 	/**
 	 * Overridden JTable::store to set created/modified and user id.
 	 *
@@ -217,7 +216,7 @@ class JEMTableCategory extends JTableNested
 	{
 		$date = JFactory::getDate();
 		$user = JFactory::getUser();
-	
+
 		if ($this->id)
 		{
 			// Existing category
@@ -235,7 +234,7 @@ class JEMTableCategory extends JTableNested
 		if ($table->load(array('alias' => $this->alias, 'parent_id' => $this->parent_id))
 		&& ($table->id != $this->id || $this->id == 0))
 		{
-	
+
 			$this->setError(JText::_('JLIB_DATABASE_ERROR_CATEGORY_UNIQUE_ALIAS'));
 			return false;
 		}

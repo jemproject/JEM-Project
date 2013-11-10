@@ -19,24 +19,24 @@ class JEMViewCssmanager extends JViewLegacy
 	function display($tpl = null)
 	{
 		$this->files = $this->get('Files');
-		
+
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
-		
+
 		$app = JFactory::getApplication();
-		
+
 		// initialise variables
 		$document = JFactory::getDocument();
 		$user = JFactory::getUser();
-		
+
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-		
+
 		$this->addToolbar();
-		
+
 		parent::display($tpl);
 	}
 
@@ -49,9 +49,9 @@ class JEMViewCssmanager extends JViewLegacy
 		JRequest::setVar('hidemainmenu', true);
 		$user = JFactory::getUser();
 		$canDo = JEMHelperBackend::getActions(0);
-		
+
 		JToolBarHelper::title(JText::_('COM_JEM_CSSMANAGER_TITLE'), 'thememanager');
-		
+
 		JToolBarHelper::cancel('cssmanager.cancel', 'JTOOLBAR_CLOSE');
 	}
 }

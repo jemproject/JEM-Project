@@ -7,7 +7,6 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// No direct access.
 defined('_JEXEC') or die;
 
 JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
@@ -32,8 +31,6 @@ JHtml::_('behavior.keepalive');
 		<?php echo $this->loadTemplate('ftp'); ?>
 	<?php endif; ?>
 	<fieldset class="adminform">
-	
-
 		<legend><?php echo JText::sprintf('COM_JEM_CSSMANAGER_FILENAME', $this->source->filename); ?></legend>
 
 		<?php echo $this->form->getLabel('source'); ?>
@@ -46,5 +43,4 @@ JHtml::_('behavior.keepalive');
 	</fieldset>
 
 	<?php echo $this->form->getInput('filename'); ?>
-
 </form>

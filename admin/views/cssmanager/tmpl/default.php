@@ -12,20 +12,18 @@ defined('_JEXEC') or die;
 JHtml::_('behavior.tooltip');
 JHtml::_('behavior.modal');
 $canDo	= JEMHelperBackend::getActions();
-
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=cssmanager'); ?>" method="post" name="adminForm" id="adminForm">
-
-<div class="width-50 fltlft">
+	<div class="width-50 fltlft">
 		<fieldset class="adminform">
 			<legend><?php echo JText::_('COM_JEM_CSSMANAGER_DESCRIPTION');?></legend>
 			<?php //echo JHtml::_('templates.thumb', $this->template->element, $this->template->client_id); ?>
 		</fieldset>
-	<div class="clr"></div>
-</div>
-	
-<div class="width-50 fltrt">
+		<div class="clr"></div>
+	</div>
+
+	<div class="width-50 fltrt">
 		<fieldset class="adminform">
 			<legend><?php echo JText::_('COM_JEM_CSSMANAGER_FILENAMES');?></legend>
 
@@ -47,10 +45,10 @@ $canDo	= JEMHelperBackend::getActions();
 		</fieldset>
 		<div class="clr"></div>
 		<input type="hidden" name="task" value="" />
-</div>
-	<?php echo JHtml::_('form.token'); ?>		
+	</div>
+	<?php echo JHtml::_('form.token'); ?>
 </form>
-		
+
 <?php
 //keep session alive while editing
 JHTML::_('behavior.keepalive');
