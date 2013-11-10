@@ -302,6 +302,10 @@ class JEMModelImport extends JModelLegacy {
 
 			try {
 				$tables[$table] = $db->loadResult();
+				// Don't count the root category
+				if($table == "#__jem_categories") {
+					$tables[$table]--;
+				}
 				JError::$legacy = $legacyValue;
 			} catch (Exception $e) {
 				$tables[$table] = null;
@@ -355,6 +359,13 @@ class JEMModelImport extends JModelLegacy {
 	 */
 	public function transformEventlistData($tablename, &$data) {
 		// categories
+		if($tablename == "categories") {
+			foreach($data as $row) {
+				// JEM now has a root category, so we shift IDs by 1
+				$row->id++;
+				$row->parent_id++;
+			}
+		}
 
 		// cats_event_relations
 		if($tablename == "cats_event_relations") {
@@ -368,6 +379,9 @@ class JEMModelImport extends JModelLegacy {
 
 				$dataNew[] = $rowNew;
 			}
+			// JEM now has a root category, so we shift IDs by 1
+			$dataNew->catid++;
+
 			return $dataNew;
 		}
 

@@ -218,14 +218,21 @@ class JEMControllerImport extends JControllerLegacy {
 				$step++;
 				$link = 'index.php?option=com_jem&view=import&step='.$step.'&copyImages='.$copyImages;
 			}
-			$msg .= JText::sprintf('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP1', $tables->jemtables[$table-1], $current, $total);
+			$msg .= JText::sprintf('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_DB', $tables->jemtables[$table-1], $current, $total);
 		} elseif($step == 2) {
+			JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+			$categoryTable = JTable::getInstance('Category', 'JEMTable');
+			$categoryTable->rebuild();
+			$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_REBUILD');
+			$step++;
+			$link = 'index.php?option=com_jem&view=import&step='.$step.'&copyImages='.$copyImages;
+		} elseif($step == 3) {
 			// Copy EL images to JEM image destination?
 			if($copyImages) {
 				$model->copyImages();
-				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP2');
+				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_IMAGES');
 			} else {
-				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP2_SKIPPED');
+				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_IMAGES_SKIPPED');
 			}
 			$step++;
 			$link = 'index.php?option=com_jem&view=import&step='.$step;
