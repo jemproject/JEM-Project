@@ -9,14 +9,24 @@
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<version>1.9.5</version>
 	<description>JEM Quick Icon</description>
+	
 	<files>
 		<filename plugin="jemquickicon">jemquickicon.php</filename>
 	</files>
+	
 	<config>
 		<fields name="params">
 			<fieldset name="basic">
-				<field name="context" type="text" default="mod_quickicon" description="The group of this plugin (this value is compared with the group value used in Quick Icons modules to inject icons)" label="Group" />
-				<field name="displayedtext" type="text" default="" description="Text displayed below the icon" label="Icon legend" />
+				<field type="text" name="context"
+					default="mod_quickicon"
+					description="The group of this plugin (this value is compared with the group value used in Quick Icons modules to inject icons)"
+					label="Group"
+				/>
+				<field type="text" name="displayedtext"
+					default=""
+					description="Text displayed below the icon"
+					label="Icon legend"
+				/>
 			</fieldset>
 		</fields>
 	</config>
