@@ -18,6 +18,9 @@ jimport('joomla.filesystem.folder');
 */
 class com_jemInstallerScript
 {
+	private $oldRelease = "";
+	private $newRelease = "";
+
 	/**
 	 * Method to install the component
 	 *
@@ -165,18 +168,18 @@ class com_jemInstallerScript
 		// abort if the release being installed is not newer than the currently installed version
 		if ($type == 'update') {
 			// Installed component version
-			$oldRelease = $this->getParam('version');
+			$this->oldRelease = $this->getParam('version');
 
 			// Installing component version as per Manifest file
-			$newRelease = $parent->get('manifest')->version;
+			$this->newRelease = $parent->get('manifest')->version;
 
-			if (version_compare($newRelease, $oldRelease, 'lt')) {
-				Jerror::raiseWarning(100, JText::sprintf('COM_JEM_PREFLIGHT_INCORRECT_VERSION_SEQUENCE', $oldRelease, $newRelease));
+			if (version_compare($this->newRelease, $this->oldRelease, 'lt')) {
+				Jerror::raiseWarning(100, JText::sprintf('COM_JEM_PREFLIGHT_INCORRECT_VERSION_SEQUENCE', $this->oldRelease, $this->newRelease));
 				return false;
 			}
 
 			// Initialize schema table if necessary
-			$this->initializeSchema($oldRelease);
+			$this->initializeSchema($this->oldRelease);
 		}
 
 		// $type is the type of change (install, update or discover_install)
@@ -192,6 +195,15 @@ class com_jemInstallerScript
 	{
 		// $type is the type of change (install, update or discover_install)
 		echo '<p>' . JText::_('COM_JEM_POSTFLIGHT_' . $type . '_TEXT') . '</p>';
+
+		if ($type == 'update') {
+			// Category changes between 1.9.4 -> 1.9.5
+			if (version_compare($this->oldRelease, '1.9.5', 'lt') && version_compare($this->newRelease, '1.9.4', 'gt')) {
+				JTable::addIncludePath(JPATH_ROOT.'/administrator/components/com_jem/tables');
+				$categoryTable = JTable::getInstance('Category', 'JEMTable');
+				$categoryTable->rebuild();
+			}
+		}
 	}
 
 	/**
