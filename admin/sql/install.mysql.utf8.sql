@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
   `parent_id` int(11) unsigned NOT NULL DEFAULT '0',
   `catname` varchar(100) NOT NULL DEFAULT '',
   `alias` varchar(100) NOT NULL DEFAULT '',
-  `catdescription` mediumtext NOT NULL,
+  `description` mediumtext NOT NULL,
   `meta_keywords` text NOT NULL,
   `meta_description` text NOT NULL,
   `image` varchar(100) NOT NULL DEFAULT '',

@@ -27,6 +27,9 @@ ALTER TABLE `#__jem_categories`
 	ADD `modified_user_id` int(10) unsigned NOT NULL DEFAULT '0';
 
 ALTER TABLE `#__jem_categories`
+	CHANGE `catdescription` `description` MEDIUMTEXT NOT NULL;
+	
+ALTER TABLE `#__jem_categories`
 	DROP PRIMARY KEY,
 	CHANGE `id` `id` INT(11);
 

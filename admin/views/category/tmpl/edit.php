@@ -25,7 +25,7 @@ JHtml::_('behavior.keepalive');
 	{
 		if (task == 'category.cancel' || document.formvalidator.isValid(document.id('item-form'))) {
 			<?php
-			echo $this->form->getField('catdescription')->save();
+			echo $this->form->getField('description')->save();
 			?>
 			Joomla.submitform(task, document.getElementById('item-form'));
 		} else {
@@ -65,9 +65,9 @@ JHtml::_('behavior.keepalive');
 				<?php echo $this->form->getInput('id'); ?></li>
 			</ul>
 			<div class="clr"></div>
-			<?php echo $this->form->getLabel('catdescription'); ?>
+			<?php echo $this->form->getLabel('description'); ?>
 			<div class="clr"></div>
-			<?php echo $this->form->getInput('catdescription'); ?>
+			<?php echo $this->form->getInput('description'); ?>
 		</fieldset>
 	</div>
 

@@ -253,7 +253,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 				$text 		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
 				$wheres2 	= array();
 				$wheres2[] 	= 'LOWER(catname) LIKE '.$text;
-				$wheres2[] 	= 'LOWER(catdescription) LIKE '.$text;
+				$wheres2[] 	= 'LOWER(description) LIKE '.$text;
 				$wheres2[] 	= 'LOWER(meta_keywords) LIKE '.$text;
 				$wheres2[] 	= 'LOWER(meta_description) LIKE '.$text;
 				$where 		= '(' . implode( ') OR (', $wheres2 ) . ')';
@@ -268,7 +268,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 					$word 		= $db->Quote( '%'.$db->escape( $word, true ).'%', false );
 					$wheres2 	= array();
 					$wheres2[] 	= 'LOWER(catname) LIKE '.$word;
-					$wheres2[] 	= 'LOWER(catdescription) LIKE '.$word;
+					$wheres2[] 	= 'LOWER(description) LIKE '.$word;
 					$wheres2[] 	= 'LOWER(meta_keywords) LIKE '.$word;
 					$wheres2[] 	= 'LOWER(meta_description) LIKE '.$word;
 					$wheres[] 	= implode( ' OR ', $wheres2 );
@@ -278,7 +278,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		}
 
 		$query = 'SELECT catname AS title,'
-		. ' catdescription AS text,'
+		. ' description AS text,'
 		. ' "" AS created,'
 		. ' "2" AS browsernav,'
 		. ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug, '

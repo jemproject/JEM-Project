@@ -31,7 +31,7 @@
 			description="COM_JEM_ALIAS"
 			required="false"
 		/>
-		<field name="catdescription" type="editor"
+		<field name="description" type="editor"
 			hide="pagebreak,readmore"
 			class="inputbox"
 			width="100%"

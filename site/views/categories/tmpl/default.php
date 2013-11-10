@@ -62,8 +62,8 @@ defined('_JEXEC') or die;
 		</div>
 		<?php } ?>
 
-		<div class="catdescription cat<?php echo $row->id; ?>">
-			<?php echo $row->catdescription ; ?>
+		<div class="description cat<?php echo $row->id; ?>">
+			<?php echo $row->description ; ?>
 			<p>
 				<?php
 				echo JHTML::_('link', JRoute::_($row->linktarget), $row->linktext);

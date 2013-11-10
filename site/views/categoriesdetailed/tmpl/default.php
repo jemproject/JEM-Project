@@ -58,7 +58,7 @@ foreach($this->categories as $category) :
 
 
 
-	<div class="catdescription"><?php echo $category->catdescription; ?>
+	<div class="description"><?php echo $category->description; ?>
 		<p>
 			<?php
 				echo JHTML::_('link', JRoute::_($category->linktarget), $category->linktext);

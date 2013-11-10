@@ -31,7 +31,7 @@ class jem_categories extends JTableNested
 	/** @var string */
 	var $alias	 			= '';
 	/** @var string */
-	var $catdescription 	= null;
+	var $description 		= null;
 	/** @var string */
 	var $meta_description 	= '';
 	/** @var string */

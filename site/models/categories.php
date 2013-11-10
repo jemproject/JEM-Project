@@ -124,15 +124,15 @@ class JEMModelCategories extends JModelLegacy
 				}
 
 				//Generate description
-				if (empty ($category->catdescription)) {
-					$category->catdescription = JText::_('COM_JEM_NO_DESCRIPTION');
+				if (empty ($category->description)) {
+					$category->description = JText::_('COM_JEM_NO_DESCRIPTION');
 				} else {
 					//execute plugins
-					$category->text 	= $category->catdescription;
+					$category->text 	= $category->description;
 					$category->title 	= $category->catname;
 					JPluginHelper::importPlugin('content');
 					$app->triggerEvent('onContentPrepare', array('com_jem.categories', &$category, &$params, 0));
-					$category->catdescription = $category->text;
+					$category->description = $category->text;
 				}
 
 				//create target link

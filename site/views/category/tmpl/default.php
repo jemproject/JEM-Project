@@ -43,8 +43,8 @@ JHTML::_('behavior.modal');
 		</div>
 	<?php endif; ?>
 
-	<div class="catdescription">
-		<p><?php echo $this->catdescription; ?></p>
+	<div class="description">
+		<p><?php echo $this->description; ?></p>
 	</div>
 </div>
 

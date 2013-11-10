@@ -222,15 +222,15 @@ class JEMViewCategory extends JEMView
 		$pagination = $this->get('Pagination');
 
 		//Generate Categorydescription
-		if (empty ($category->catdescription)) {
-			$catdescription = JText::_('COM_JEM_NO_DESCRIPTION');
+		if (empty ($category->description)) {
+			$description = JText::_('COM_JEM_NO_DESCRIPTION');
 		} else {
 			//execute plugins
-			$category->text	= $category->catdescription;
+			$category->text	= $category->description;
 			$category->title 	= $category->catname;
 			JPluginHelper::importPlugin('content');
 			$app->triggerEvent('onContentPrepare', array('com_jem.category', &$category, &$params, 0));
-			$catdescription = $category->text;
+			$description = $category->text;
 		}
 
 		$cimage = JEMImage::flyercreator($category->image,'category');
@@ -246,7 +246,7 @@ class JEMViewCategory extends JEMView
 		$this->params			= $params;
 		$this->dellink			= $dellink;
 		$this->task				= $task;
-		$this->catdescription	= $catdescription;
+		$this->description		= $description;
 		$this->pagination		= $pagination;
 		$this->jemsettings		= $jemsettings;
 		$this->item				= $item;
