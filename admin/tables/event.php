@@ -49,7 +49,7 @@ class JEMTableEvent extends JTable
 		// Check begin date is before end date
 
 		// Check if end date is set
-		if($this->enddates == '0000-00-00' || $this->enddates == null) {
+		if($this->enddates == null) {
 			// Check if end time is set
 			if($this->endtimes == null) {
 				// Compare is not needed, but make sure the check passes

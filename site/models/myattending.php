@@ -186,7 +186,6 @@ class JEMModelMyattending extends JModelLegacy
 		$app = JFactory::getApplication();
 
 		$user = JFactory::getUser();
-		$nulldate = '0000-00-00';
 
 		// Get the paramaters of the active menu item
 		$params = $app->getParams();
@@ -215,7 +214,7 @@ class JEMModelMyattending extends JModelLegacy
 
 		//limit output so only future events the user attends will be shown
 		if ($params->get('filtermyregs')) {
-			$where [] = ' DATE_SUB(NOW(), INTERVAL '.(int)$params->get('myregspast').' DAY) < (IF (a.enddates <> '.$nulldate.', a.enddates, a.dates))';
+			$where [] = ' DATE_SUB(NOW(), INTERVAL '.(int)$params->get('myregspast').' DAY) < (IF (a.enddates IS NOT NULL, a.enddates, a.dates))';
 		}
 
 		// then if the user is attending the event

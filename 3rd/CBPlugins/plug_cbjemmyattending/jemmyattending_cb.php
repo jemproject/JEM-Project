@@ -146,7 +146,8 @@ class jemmyattendingTab extends cbTabHandler {
 				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid '
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
 				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
-				. ' WHERE a.published = 1 AND c.published = 1 AND DATE_SUB(NOW(), INTERVAL 1 DAY) < (IF (a.enddates <> 0000-00-00, a.enddates, a.dates)) AND r.uid = '.$userid.' AND c.access <= '.$gid
+				. ' WHERE a.published = 1 AND c.published = 1 AND r.uid = '.$userid.' AND c.access <= '.$gid
+				.	 'AND DATE_SUB(NOW(), INTERVAL 1 DAY) < (IF (a.enddates IS NOT NULL, a.enddates, a.dates))'
 				. ' ORDER BY a.dates'
 				;
 		$_CB_database->setQuery($query);

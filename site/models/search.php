@@ -222,13 +222,12 @@ class JEMModelSearch extends JModelLegacy
 		}
 
 		// filter date
-		$nulldate = '0000-00-00';
 		if ($params->get('date_filter_type', 0) == 1) // match on all events dates (between start and end)
 		{
 			if ($filter_date_from && strtotime($filter_date_from))
 			{
 				$filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', strtotime($filter_date_from)));
-				$where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $this->_db->Quote($nulldate) .', a.enddates, a.dates), '. $filter_date_from .') >= 0';
+				$where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), '. $filter_date_from .') >= 0';
 			}
 			if ($filter_date_to && strtotime($filter_date_to))
 			{

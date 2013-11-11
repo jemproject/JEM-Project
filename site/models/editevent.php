@@ -594,7 +594,7 @@ class JEMModelEditevent extends JModelLegacy
 		// Check begin date is before end date
 
 		// Check if end date is set
-		if($row->enddates == '0000-00-00' || $row->enddates == null) {
+		if($row->enddates == null) {
 			// Check if end time is set
 			if($row->endtimes == null) {
 				// Compare is not needed, but make sure the check passes

@@ -126,7 +126,7 @@ class JEMHelper {
 			//delete outdated events
 			if ($jemsettings->oldevent == 1) {
 				$query = 'DELETE FROM #__jem_events WHERE dates > 0 AND '
-						.' DATE_SUB(NOW(), INTERVAL '.$jemsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates))';
+						.' DATE_SUB(NOW(), INTERVAL '.$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates))';
 				$db->SetQuery($query);
 				$db->Query();
 			}
@@ -134,7 +134,7 @@ class JEMHelper {
 			//Set state archived of outdated events
 			if ($jemsettings->oldevent == 2) {
 				$query = 'UPDATE #__jem_events SET published = 2 WHERE dates > 0 AND '
-						.' DATE_SUB(NOW(), INTERVAL '.$jemsettings->minus.' DAY) > (IF (enddates <> '.$nulldate.', enddates, dates)) '
+						.' DATE_SUB(NOW(), INTERVAL '.$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
 						.' AND published = 1';
 				$db->SetQuery($query);
 				$db->Query();

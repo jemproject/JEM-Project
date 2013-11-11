@@ -313,7 +313,7 @@ class JEMModelWeekcal extends JModelLegacy
 			}
 		}
 
-		$where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $this->_db->Quote('0000-00-00') .', a.enddates, a.dates), "'. $startdate .'") >= 0';
+		$where .= ' AND DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "'. $startdate .'") >= 0';
 		$where .= ' AND DATEDIFF(a.dates, "'. $enddate .'") <= 0';
 
 		if ($top_category) {

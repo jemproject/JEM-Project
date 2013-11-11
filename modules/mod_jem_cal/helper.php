@@ -74,7 +74,7 @@ class modjemcalqhelper
 		$days = array();
 		foreach ($events as $event) {
 			// Cope with no end date set i.e. set it to same as start date
-			if (($event->enddates == '0000-00-00') or (is_null($event->enddates))) {
+			if (is_null($event->enddates)) {
 				$eyear = $event->created_year;
 				$emonth = $event->created_month;
 				$eday = $event->created_day;

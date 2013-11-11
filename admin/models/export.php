@@ -90,7 +90,7 @@ class JEMModelExport extends JModelList
 
 		// check if startdate + enddate are set.
 		if (! empty($startdate) && ! empty($enddate)) {
-			$query->where('DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> ' . $db->Quote('0000-00-00') . ', a.enddates, a.dates), "' . $startdate . '") >= 0');
+			$query->where('DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "' . $startdate . '") >= 0');
 			$query->where('DATEDIFF(a.dates, "' . $enddate . '") <= 0');
 		}
 

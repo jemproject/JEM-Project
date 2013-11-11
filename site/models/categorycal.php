@@ -348,7 +348,7 @@ class JEMModelCategoryCal extends JModelLegacy
 		$monthend = mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
 
 		$filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', $monthstart));
-		$where[] = ' DATEDIFF(IF (a.enddates IS NOT NULL AND a.enddates <> '. $this->_db->Quote('0000-00-00') .', a.enddates, a.dates), '. $filter_date_from .') >= 0';
+		$where[] = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), '. $filter_date_from .') >= 0';
 		$filter_date_to = $this->_db->Quote(strftime('%Y-%m-%d', $monthend));
 		$where[] = ' DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
 
