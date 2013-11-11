@@ -46,7 +46,7 @@ class JEMModelJEM extends JModelLegacy
 		$query->from($tablename);
 		if ($tablename == "#__jem_categories")
 		{
-		    $query->where('catname NOT LIKE "root"');
+		    $query->where('alias NOT LIKE "root"');
 		}
 		$query->group('published');
 		
