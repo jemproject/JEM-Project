@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -90,9 +90,9 @@ defined('_JEXEC') or die;
 				</td>
 				<td>
 				<?php echo $this->categories; ?>
-				<input class="button" name="selectall" value="<?php echo JText::_('COM_JEM_SELECT_ALL_CATEGORIES'); ?>" onclick="selectAll();">
+				<input class="button" name="selectall" value=<?php echo JText::_('COM_JEM_EXPORT_SELECT_ALL_CATEGORIES'); ?> onclick="selectAll();">
 				<br>
-				<input class="button" name="unselectall" value="<?php echo JText::_('COM_JEM_UNSELECT_ALL_CATEGORIES'); ?>" onclick="unselectAll();">
+				<input class="button" name="unselectall" value=<?php echo JText::_('COM_JEM_EXPORT_UNSELECT_ALL_CATEGORIES'); ?> onclick="unselectAll();">
 			</td>
 			</tr>
 			<tr>
