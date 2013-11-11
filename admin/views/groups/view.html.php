@@ -60,14 +60,7 @@ defined('_JEXEC') or die;
 	 */
 	protected function addToolbar()
 	{
-		/* submenu */
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
-
-		/* Adding title + icon
-		 *
-		 * the icon is mapped within backend.css
-		 * The word 'venues' is referring to the venues icon
-		 * */
 		JToolBarHelper::title(JText::_('COM_JEM_GROUPS'), 'groups');
 
 		/* retrieving the allowed actions for the user */
@@ -79,9 +72,9 @@ defined('_JEXEC') or die;
 		}
 
 		/* edit */
-		JToolBarHelper::spacer();
 		if (($canDo->get('core.edit'))) {
 			JToolBarHelper::editList('group.edit');
+			JToolBarHelper::divider();
 		}
 
 		if ($canDo->get('core.edit.state')) {

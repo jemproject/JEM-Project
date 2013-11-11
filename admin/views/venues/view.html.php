@@ -93,18 +93,9 @@ defined('_JEXEC') or die;
 	 */
 	protected function addToolbar()
 	{
-		/* submenu */
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
-
-		/*
-		 * Adding title + icon
-		 *
-		 * the icon is mapped within backend.css
-		 * The word 'venues' is referring to the venues icon
-		 */
 		JToolBarHelper::title(JText::_('COM_JEM_VENUES'), 'venues');
 
-		/* retrieving the allowed actions for the user */
 		$canDo = JEMHelperBackend::getActions(0);
 
 		/* create */
@@ -113,9 +104,9 @@ defined('_JEXEC') or die;
 		}
 
 		/* edit */
-		JToolBarHelper::spacer();
 		if (($canDo->get('core.edit'))) {
 			JToolBarHelper::editList('venue.edit');
+			JToolBarHelper::divider();
 		}
 
 		/* state */
@@ -124,18 +115,6 @@ defined('_JEXEC') or die;
 				JToolBarHelper::publishList('venues.publish');
 				JToolBarHelper::unpublishList('venues.unpublish');
 			}
-
-			/*
-			if ($this->lists['state'] != -1) {
-				JToolBarHelper::divider();
-				if ($this->lists['state'] != 2) {
-					JToolBarHelper::archiveList('venues.archive');
-				} elseif ($this->lists['state'] == 2) {
-					JToolBarHelper::unarchiveList('venues.unarchive');
-				}
-			}
-			*/
-
 		}
 
 		/* delete-trash */
@@ -143,22 +122,7 @@ defined('_JEXEC') or die;
 			JToolBarHelper::divider();
 			JToolBarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'venues.remove', 'JACTION_DELETE');
 		}
-		/*elseif ($canDo->get('core.edit.state'))
-		{
-			JToolBarHelper::trash('venues.trash');
-			JToolBarHelper::divider();
-		}
-		*/
-
-		/* copy */
-		//JToolBarHelper::divider();
-		//JToolBarHelper::spacer();
-		//JToolBarHelper::custom('venues.copy', 'copy.png', 'copy_f2.png', 'COM_JEM_COPY');
-		//JToolBarHelper::spacer();
-
-		/* Reference to help-page located in the folder help.
-		 * The variable 'true' is saying to look in the component directory
-		 */
+		
 		JToolBarHelper::help('listvenues', true);
 	}
 }

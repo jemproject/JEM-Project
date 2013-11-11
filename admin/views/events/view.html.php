@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -101,15 +101,7 @@ defined('_JEXEC') or die;
 	 */
 	protected function addToolbar()
 	{
-		/* submenu */
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
-
-		/*
-		 * Adding title + icon
-		 *
-		 * the icon is mapped within backend.css
-		 * The word 'venues' is referring to the venues icon
-		 */
 		JToolBarHelper::title(JText::_('COM_JEM_EVENTS'), 'events');
 
 		/* retrieving the allowed actions for the user */
@@ -121,9 +113,9 @@ defined('_JEXEC') or die;
 		}
 
 		/* edit */
-		JToolBarHelper::spacer();
 		if (($canDo->get('core.edit'))) {
 			JToolBarHelper::editList('event.edit');
+			JToolBarHelper::divider();
 		}
 
 		/* state */
