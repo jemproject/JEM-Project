@@ -13,6 +13,7 @@
 			<field name="id" type="modal_venue"
 				label="COM_JEM_SELECTVENUE"
 				description="COM_JEM_SELECTVENUE_DESC"
+				required="true"
 			/>
 		</fieldset>
 	</fields>

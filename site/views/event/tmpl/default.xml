@@ -13,6 +13,7 @@
 			<field name="id" type="event"
 				label="COM_JEM_SELECT_EVENT"
 				description="COM_JEM_SELECT_EVENT_DESC"
+				required="true"
 			/>
 		</fieldset>
 	</fields>

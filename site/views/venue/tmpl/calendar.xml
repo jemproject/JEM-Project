@@ -31,6 +31,7 @@
 			<field name="id" type="modal_venue"
 				label="COM_JEM_SELECTVENUE"
 				description="COM_JEM_SELECTVENUE_DESC"
+				required="true"
 			/>
 			<field name="eventlinkcolor" type="color"
 				default="#000000"
