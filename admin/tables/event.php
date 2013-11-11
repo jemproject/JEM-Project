@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -20,8 +20,9 @@ class JEMTableEvent extends JTable
 		parent::__construct('#__jem_events', 'id', $db);
 	}
 
-
-	// overloaded check function
+	/**
+	 * overloaded check function
+	 */ 
 	function check()
 	{
 		$jinput = JFactory::getApplication()->input;
@@ -70,7 +71,6 @@ class JEMTableEvent extends JTable
 			}
 		}
 
-
 		if (empty($this->enddates)) {
 			$this->enddates = NULL;
 		}
@@ -93,30 +93,18 @@ class JEMTableEvent extends JTable
 		return true;
 	}
 
-
 	/**
-	 * Overload the store method for the Venue table.
-	 *
+	 * Overloaded store method for the Event table.
 	 */
 	public function store($updateNulls = false)
 	{
-		// Verify that the alias is unique
-// 		$table = JTable::getInstance('Event', 'JEMTable');
-
-		// @todo alter error reporting
-
-		/*
-		if ($table->load(array('alias'=>$this->alias, 'catid'=>$this->catid)) && ($table->id != $this->id || $this->id==0)) {
-		if ($table->load(array('alias'=>$this->alias)) && ($table->id != $this->id || $this->id==0)) {
-			$this->setError(JText::_('COM_JEM_ERROR_UNIQUE_ALIAS'));
-			return false;
-		}
-		*/
 
 		return parent::store($updateNulls);
 	}
-
-
+	
+	/**
+	 * Overloaded bind method for the Event table.
+	 */
 	public function bind($array, $ignore = '')
 	{
 		// in here we are checking for the empty value of the checkbox
@@ -134,7 +122,59 @@ class JEMTableEvent extends JTable
 		return parent::bind($array, $ignore);
 	}
 
-
+	/**
+	 * try to insert first, update if fails
+	 *
+	 * Can be overloaded/supplemented by the child class
+	 *
+	 * @access public
+	 * @param boolean If false, null object variables are not updated
+	 * @return null|string null if successful otherwise returns and error message
+	 */
+	function insertIgnore($updateNulls=false)
+	{
+		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
+		if(!$ret) {
+			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Inserts a row into a table based on an objects properties, ignore if already exists
+	 *
+	 * @access protected
+	 * @param string  The name of the table
+	 * @param object  An object whose properties match table fields
+	 * @param string  The name of the primary key. If provided the object property is updated.
+	 * @return int number of affected row
+	 */
+	function _insertIgnoreObject($table, &$object, $keyName = NULL)
+	{
+		$fmtsql = 'INSERT IGNORE INTO '.$this->_db->quoteName($table).' (%s) VALUES (%s) ';
+		$fields = array();
+		foreach (get_object_vars($object) as $k => $v) {
+			if (is_array($v) or is_object($v) or $v === NULL) {
+				continue;
+			}
+			if ($k[0] == '_') { // internal field
+				continue;
+			}
+			$fields[] = $this->_db->quoteName($k);
+			$values[] = $this->_db->isQuoted($k) ? $this->_db->quote($v) : (int) $v;
+		}
+		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
+		if (!$this->_db->query()) {
+			return false;
+		}
+		$id = $this->_db->insertid();
+		if ($keyName && $id) {
+			$object->$keyName = $id;
+		}
+		return $this->_db->getAffectedRows();
+	}
+	
 	/**
 	 * Method to set the publishing state for a row or list of rows in the database
 	 * table. The method respects checked out rows by other users and will attempt

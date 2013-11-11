@@ -13,7 +13,6 @@ jimport('joomla.database.tablenested');
 
 /**
  * Category Table
- *
  */
 class JEMTableCategory extends JTableNested
 {
@@ -25,11 +24,7 @@ class JEMTableCategory extends JTableNested
 		if (self::addRoot() !== false) {
 			return;
 		}
-
-		/* @todo check code. Not sure where this one is for
-		 * $this->access = (int) JFactory::getConfig()->get('access');*/
 	}
-
 
 	/**
 	 * Method to delete a node and, optionally, its child nodes from the table.
@@ -45,7 +40,6 @@ class JEMTableCategory extends JTableNested
 	{
 		return parent::delete($pk, $children);
 	}
-
 
 	/**
 	 * Add the root node to an empty table.
@@ -79,7 +73,6 @@ class JEMTableCategory extends JTableNested
 		return $db->insertid();
 	}
 
-
 	/**
 	 * try to insert first, update if fails
 	 *
@@ -92,7 +85,7 @@ class JEMTableCategory extends JTableNested
 	function insertIgnore($updateNulls=false)
 	{
 		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if(!$ret) {
+		if(!$ret){
 			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
 			return false;
 		}
@@ -113,29 +106,28 @@ class JEMTableCategory extends JTableNested
 		$fmtsql = 'INSERT IGNORE INTO '.$this->_db->quoteName($table).' (%s) VALUES (%s) ';
 		$fields = array();
 		foreach (get_object_vars($object) as $k => $v) {
-			if (is_array($v) or is_object($v) or $v === NULL) {
+			if (is_array($v) or is_object($v) or $v === NULL){
 				continue;
 			}
-			if ($k[0] == '_') { // internal field
+			if ($k[0] == '_'){ // internal field
 				continue;
 			}
 			$fields[] = $this->_db->quoteName($k);
 			$values[] = $this->_db->isQuoted($k) ? $this->_db->quote($v) : (int) $v;
 		}
 		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
-		if (!$this->_db->query()) {
+		if (!$this->_db->query()){
 			return false;
 		}
 		$id = $this->_db->insertid();
-		if ($keyName && $id) {
+		if ($keyName && $id){
 			$object->$keyName = $id;
 		}
 		return $this->_db->getAffectedRows();
 	}
 
-
 	/**
-	 * Override check function
+	 * Overloaded check function
 	 *
 	 * @return  boolean
 	 *
@@ -145,20 +137,17 @@ class JEMTableCategory extends JTableNested
 	public function check()
 	{
 		// Check for a title.
-		if (trim($this->catname) == '')
-		{
+		if (trim($this->catname) == ''){
 			$this->setError(JText::_('JLIB_DATABASE_ERROR_MUSTCONTAIN_A_TITLE_CATEGORY'));
 			return false;
 		}
 		$this->alias = trim($this->alias);
-		if (empty($this->alias))
-		{
+		if (empty($this->alias)){
 			$this->alias = $this->catname;
 		}
 
 		$this->alias = JApplication::stringURLSafe($this->alias);
-		if (trim(str_replace('-', '', $this->alias)) == '')
-		{
+		if (trim(str_replace('-', '', $this->alias)) == ''){
 			$this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
 		}
 
@@ -179,23 +168,19 @@ class JEMTableCategory extends JTableNested
 	 */
 	public function bind($array, $ignore = '')
 	{
-		if (isset($array['params']) && is_array($array['params']))
-		{
+		if (isset($array['params']) && is_array($array['params'])){
 			$registry = new JRegistry;
 			$registry->loadArray($array['params']);
 			$array['params'] = (string) $registry;
 		}
 
-		if (isset($array['metadata']) && is_array($array['metadata']))
-		{
+		if (isset($array['metadata']) && is_array($array['metadata'])){
 			$registry = new JRegistry;
 			$registry->loadArray($array['metadata']);
 			$array['metadata'] = (string) $registry;
 		}
 
-		// Bind the rules.
-		if (isset($array['rules']) && is_array($array['rules']))
-		{
+		if (isset($array['rules']) && is_array($array['rules'])){
 			$rules = new JAccessRules($array['rules']);
 			$this->setRules($rules);
 		}
@@ -204,27 +189,21 @@ class JEMTableCategory extends JTableNested
 	}
 
 	/**
-	 * Overridden JTable::store to set created/modified and user id.
+	 * Overloaded JTable::store to set created/modified and user id.
 	 *
 	 * @param   boolean  $updateNulls  True to update fields even if they are null.
-	 *
 	 * @return  boolean  True on success.
-	 *
-	 * @since   11.1
 	 */
 	public function store($updateNulls = false)
 	{
 		$date = JFactory::getDate();
 		$user = JFactory::getUser();
 
-		if ($this->id)
-		{
+		if ($this->id){
 			// Existing category
 			$this->modified_time = $date->toSql();
 			$this->modified_user_id = $user->get('id');
-		}
-		else
-		{
+		} else {
 			// New category
 			$this->created_time = $date->toSql();
 			$this->created_user_id = $user->get('id');
@@ -232,12 +211,50 @@ class JEMTableCategory extends JTableNested
 		// Verify that the alias is unique
 		$table = JTable::getInstance('Category', 'JEMTable', array('dbo' => $this->getDbo()));
 		if ($table->load(array('alias' => $this->alias, 'parent_id' => $this->parent_id))
-		&& ($table->id != $this->id || $this->id == 0))
-		{
+		&& ($table->id != $this->id || $this->id == 0)) {
 
 			$this->setError(JText::_('JLIB_DATABASE_ERROR_CATEGORY_UNIQUE_ALIAS'));
 			return false;
 		}
+		
 		return parent::store($updateNulls);
+	}
+	
+	/**
+	 * Check Csv Import
+	 * @todo: add validation
+	 */
+	function checkCsvImport()
+	{
+		return true;
+	}
+	
+	/**
+	 * Store Csv Import
+	 */
+	function storeCsvImport($updateNulls = false)
+	{
+		// Initialise variables.
+		$k = $this->_tbl_key;
+			
+		// If a primary key exists update the object, otherwise insert it.
+		if ($this->$k){
+			$stored = $this->_db->updateObject($this->_tbl, $this, $this->_tbl_key, $updateNulls);
+		} else {
+			$stored = $this->_db->insertObject($this->_tbl, $this, $this->_tbl_key);
+		}
+	
+		// If the store failed return false.
+		if (!$stored){
+			$e = new JException(JText::sprintf('JLIB_DATABASE_ERROR_STORE_FAILED', get_class($this), $this->_db->getErrorMsg()));
+			$this->setError($e);
+			return false;
+		}
+	
+		if ($this->_locked){
+			$this->_unlock();
+		}
+		
+		return true;
 	}
 }

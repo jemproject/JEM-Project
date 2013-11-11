@@ -116,6 +116,9 @@ class JEMControllerImport extends JControllerLegacy {
 				$result = $model->{$type.'import'}($fields, $records, $replace);
 				$msg .= "<p>".JText::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_ADDED', $result['added'])."</p>\n";
 				$msg .= "<p>".JText::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_UPDATED', $result['updated'])."</p>\n";
+				if ($result['ignored']){
+					$msg .= "<p>".JText::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_IGNORED', $result['ignored'])."</p>\n";
+				}
 			}
 			$this->setRedirect('index.php?option=com_jem&view=import', $msg);
 		} else {

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -13,14 +13,11 @@ jimport('joomla.application.component.model');
 
 /**
  * JEM Component Import Model
- *
  * @package JEM
- *
  */
 class JEMModelImport extends JModelLegacy {
 	/**
 	 * Constructor
-	 *
 	 */
 	function __construct() {
 		parent::__construct();
@@ -28,7 +25,7 @@ class JEMModelImport extends JModelLegacy {
 
 	/**
 	 * Get the table fields of the events table
-	 *
+	 * 
 	 * @return  array  An array with the fields of the events table
 	 */
 	function getEventFields() {
@@ -66,7 +63,7 @@ class JEMModelImport extends JModelLegacy {
 	 * Helper function to return table fields of a given table
 	 *
 	 * @param   string  $tablename  The name of the table we want to get fields from
-	 *
+
 	 * @return  array  An array with the fields of the table
 	 */
 	private function getFields($tablename) {
@@ -83,7 +80,7 @@ class JEMModelImport extends JModelLegacy {
 	 * @return  array  Number of records inserted and updated
 	 */
 	function eventsimport($fieldsname, & $data, $replace = true) {
-		return $this->import('jem_events', $fieldsname, $data, $replace);
+		return $this->import('Event', 'JEMTable', $fieldsname, $data, $replace);
 	}
 
 	/**
@@ -96,7 +93,7 @@ class JEMModelImport extends JModelLegacy {
 	 * @return  array  Number of records inserted and updated
 	 */
 	function categoriesimport($fieldsname, & $data, $replace = true) {
-		return $this->import('jem_categories', $fieldsname, $data, $replace);
+		return $this->import('Category', 'JEMTable', $fieldsname, $data, $replace);
 	}
 
 	/**
@@ -109,7 +106,7 @@ class JEMModelImport extends JModelLegacy {
 	 * @return  array  Number of records inserted and updated
 	 */
 	function cateventsimport($fieldsname, & $data, $replace = true) {
-		return $this->import('jem_cats_event_relations', $fieldsname, $data, $replace);
+		return $this->import('jem_cats_event_relations', '', $fieldsname, $data, $replace);
 	}
 
 	/**
@@ -122,96 +119,196 @@ class JEMModelImport extends JModelLegacy {
 	 * @return  array  Number of records inserted and updated
 	 */
 	function venuesimport($fieldsname, & $data, $replace = true) {
-		return $this->import('jem_venues', $fieldsname, $data, $replace);
+		return $this->import('Venue', 'JEMTable', $fieldsname, $data, $replace);
 	}
 
 	/**
 	 * Import data corresponding to fieldsname into events table
 	 *
-	 * @param   string  $tablename  Name of the table where to add the data
-	 * @param   array   $fieldsname  Name of the fields
-	 * @param   array  $data  The records
-	 * @param   boolean  $replace Replace if ID already exists
-	 *
-	 * @return  array  Number of records inserted and updated
+	 * @param string $tablename Name of the table where to add the data
+	 * @param array $fieldsname Name of the fields
+	 * @param array $data The records
+	 * @param boolean $replace Replace if ID already exists
+	 *       
+	 * @return array Number of records inserted and updated
 	 */
-	private function import($tablename, $fieldsname, & $data, $replace = true) {
-		$ignore = array ();
+	private function import($tablename, $prefix, $fieldsname, & $data, $replace = true, $appendCsv = false)
+	{
+		$db = JFactory::getDbo();
+		
+		$ignore = array();
 		if (!$replace) {
 			$ignore[] = 'id';
 		}
-		$rec = array ('added' => 0, 'updated' => 0);
-
+		$rec = array(
+				'added' => 0,
+				'updated' => 0,
+				'ignored' => 0
+		);
+		
 		// parse each row
-		foreach ($data AS $row) {
-			$values = array ();
+		foreach ($data as $row) {
+			$values = array();
 			// parse each specified field and retrieve corresponding value for the record
-			foreach ($fieldsname AS $k => $field) {
+			foreach ($fieldsname as $k => $field) {
 				$values[$field] = $row[$k];
 			}
-
-			$object = JTable::getInstance($tablename, '');
-
-			$object->bind($values, $ignore);
-
-			// Make sure the data is valid
-			if (!$object->check()) {
-				$this->setError($object->getError());
-				echo JText::_('Error check: ').$object->getError()."\n";
-				continue ;
+			
+			// retrieve the specified table
+			$object = JTable::getInstance($tablename, $prefix);
+			$objectname = get_class($object);
+			
+			if ($objectname == "JEMTableCategory") {
+				
+				// check if column "parent_id" exists
+				if (array_key_exists('parent_id', $values)) {
+					if ($values['parent_id'] == null || $values['parent_id'] == 0) {
+						$values['parent_id'] = 1;
+						$parentid = $values['parent_id'];
+					}
+					else {
+						$parentid = $values['parent_id'];
+					}
+				}
+				else {
+					$rootkey = $this->_rootkey();
+					$values['parent_id'] = $rootkey;
+					$parentid = $values['parent_id'];
+				}
+				
+				// check if column "alias" exists
+				if (array_key_exists('alias', $values)) {
+					if ($values['alias'] == 'root') {
+						$values['alias'] = '';
+					}
+				}
+				
+				// check if column "lft" exists
+				if (array_key_exists('lft', $values)) {
+					if ($values['lft'] == '0') {
+						$values['lft'] = '';
+					}
+				}
 			}
-
-			// Store it in the db
-			if ($replace) {
-				// We want to keep id from database so first we try to insert into database. if it fails,
-				// it means the record already exists, we can use store().
-				if (!$object->insertIgnore()) {
-					if (!$object->store()) {
-						echo JText::_('Error store: ').$this->_db->getErrorMsg()."\n";
-						continue ;
+			
+			// Bind the data
+			$object->bind($values, $ignore);
+			
+			// check/store function for the Category Table
+			if ($objectname == "JEMTableCategory") {
+				// Make sure the data is valid
+				if (!$object->checkCsvImport()) {
+					$this->setError($object->getError());
+					echo JText::_('COM_JEM_IMPORT_ERROR_CHECK') . $object->getError() . "\n";
+					continue;
+				}
+				
+				// Store it in the db
+				if ($replace) {
+					
+					if ($values['id'] != '1' && $objectname == "JEMTableCategory") {
+						// We want to keep id from database so first we try to insert into database. 
+						// if it fails, it means the record already exists, we can use store().
+						if (!$object->insertIgnore()) {
+							if (!$object->storeCsvImport()) {
+								echo JText::_('COM_JEM_IMPORT_ERROR_STORE') . $this->_db->getErrorMsg() . "\n";
+								continue;
+							} else {
+								$rec['updated']++;
+							}
+						} else {
+							$rec['added']++;
+						}
 					} else {
-						$rec['updated']++;
+						// category with id=1 detected but it's not added or updated
+						$rec['ignored']++;
 					}
 				} else {
-					$rec['added']++;
+					if (!$object->storeCsvImport()) {
+						echo JText::_('COM_JEM_IMPORT_ERROR_STORE') . $this->_db->getErrorMsg() . "\n";
+						continue;
+					} else {
+						$rec['added']++;
+					}
 				}
 			} else {
-				if (!$object->store()) {
-					echo JText::_('Error store: ').$this->_db->getErrorMsg()."\n";
-					continue ;
+				
+				// Check/Store of tables other then Category
+				
+				// Make sure the data is valid
+				if (!$object->check()) {
+					$this->setError($object->getError());
+					echo JText::_('COM_JEM_IMPORT_ERROR_CHECK') . $object->getError() . "\n";
+					continue;
+				}
+				
+				// Store it in the db
+				if ($replace) {
+					// We want to keep id from database so first we try to insert into database.
+					// if it fails, it means the record already exists, we can use store().
+					if (!$object->insertIgnore()) {
+						if (!$object->store()) {
+							echo JText::_('COM_JEM_IMPORT_ERROR_STORE') . $this->_db->getErrorMsg() . "\n";
+							continue;
+						} else {
+							$rec['updated']++;
+						}
+					} else {
+						$rec['added']++;
+					}
 				} else {
-					$rec['added']++;
+					if (!$object->store()) {
+						echo JText::_('COM_JEM_IMPORT_ERROR_STORE') . $this->_db->getErrorMsg() . "\n";
+						continue;
+					} else {	
+						$rec['added']++;
+					}
 				}
 			}
-
-			if($tablename == "jem_events") {
-				// we need to update the categories-events table too
-				// store cat relation
-				$query = 'DELETE FROM #__jem_cats_event_relations WHERE itemid = '.$object->id;
-				$this->_db->setQuery($query);
-				$this->_db->query();
-
-				if ( isset ($values['categories'])) {
+			
+		if ($objectname == "JEMTableEvent") {
+			// we need to update the categories-events table too
+			// store cat relation
+			$query = $db->getQuery(true);
+			$query->delete($db->quoteName('#__jem_cats_event_relations'));
+			$query->where('itemid = '.$object->id);
+			$db->setQuery($query);
+			$db->query();
+				if (isset($values['categories'])) {
 					$cats = explode(',', $values['categories']);
 					if (count($cats)) {
-						foreach ($cats as $cat) {
-							$query = 'INSERT INTO #__jem_cats_event_relations (`catid`, `itemid`) VALUES('.$cat.','.$object->id.')';
-							$this->_db->setQuery($query);
-							$this->_db->query();
-						}
+						foreach($cats as $cat)
+						{
+							$db = JFactory::getDbo();
+							$query = $db->getQuery(true);
+							$columns = array('catid', 'itemid');
+							$values = array($cat, $object->id);
+							$query
+							->insert($db->quoteName('#__jem_cats_event_relations'))
+							->columns($db->quoteName($columns))
+							->values(implode(',', $values));
+							$db->setQuery($query);
+							$db->query();
+						}	
 					}
 				}
 			}
 		}
-
-		if($tablename == "jem_events") {
+		
+		// Specific actions outside the foreach loop
+		
+		if ($objectname == "JEMTableCategory") {
+			$object->rebuild();
+		}
+		
+		if ($objectname == "JEMTableEvent") {
 			// force the cleanup to update the imported events status
 			$settings = JTable::getInstance('jem_settings', '');
 			$settings->load(1);
 			$settings->lastupdate = 0;
 			$settings->store();
 		}
-
+		
 		return $rec;
 	}
 
@@ -464,7 +561,7 @@ class JEMModelImport extends JModelLegacy {
 			// Make sure the data is valid
 			if (!$object->check()) {
 				$this->setError($object->getError());
-				echo JText::_('Error check: ').$object->getError()."\n";
+				echo JText::_('COM_JEM_IMPORT_ERROR_CHECK').$object->getError()."\n";
 				continue ;
 			}
 
@@ -474,7 +571,7 @@ class JEMModelImport extends JModelLegacy {
 				// it means the record already exists, we can use store().
 				if (!$object->insertIgnore()) {
 					if (!$object->store()) {
-						echo JText::_('Error store: ').$this->_db->getErrorMsg()."\n";
+						echo JText::_('COM_JEM_IMPORT_ERROR_STORE').$this->_db->getErrorMsg()."\n";
 						$rec['error']++;
 						continue ;
 					} else {
@@ -485,7 +582,7 @@ class JEMModelImport extends JModelLegacy {
 				}
 			} else {
 				if (!$object->store()) {
-					echo JText::_('Error store: ').$this->_db->getErrorMsg()."\n";
+					echo JText::_('COM_JEM_IMPORT_ERROR_STORE').$this->_db->getErrorMsg()."\n";
 					$rec['error']++;
 					continue ;
 				} else {
@@ -538,6 +635,29 @@ class JEMModelImport extends JModelLegacy {
 					}
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Get id of root-category
+	 */
+	private function _rootkey()
+	{
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('c.id');
+		$query->from('#__jem_categories AS c');
+		$query->where('c.alias LIKE "root"');
+		$db->setQuery($query);
+		$key = $db->loadResult();
+	
+		// Check for DB error.
+		if ($error = $db->getErrorMsg()) {
+			JError::raiseWarning(500, $error);
+			return false;
+		}
+		else {
+			return $key;
 		}
 	}
 }
