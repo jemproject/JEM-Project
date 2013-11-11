@@ -132,7 +132,7 @@ class JEMModelImport extends JModelLegacy {
 	 *       
 	 * @return array Number of records inserted and updated
 	 */
-	private function import($tablename, $prefix, $fieldsname, & $data, $replace = true, $appendCsv = false)
+	private function import($tablename, $prefix, $fieldsname, & $data, $replace = true)
 	{
 		$db = JFactory::getDbo();
 		
@@ -157,21 +157,29 @@ class JEMModelImport extends JModelLegacy {
 			// retrieve the specified table
 			$object = JTable::getInstance($tablename, $prefix);
 			$objectname = get_class($object);
+			$rootkey = $this->_rootkey();
 			
 			if ($objectname == "JEMTableCategory") {
 				
 				// check if column "parent_id" exists
 				if (array_key_exists('parent_id', $values)) {
+					
+					// when not in replace mode the parent_id is set to the rootkey
+					if (!$replace){
+						$values['parent_id'] = $rootkey;
+					} else {
+					// when replacing and value is null or 0 the rootkey is assigned
 					if ($values['parent_id'] == null || $values['parent_id'] == 0) {
-						$values['parent_id'] = 1;
+						$values['parent_id'] = $rootkey;
 						$parentid = $values['parent_id'];
-					}
-					else {
+					} else {
+					// in replace mode and value
 						$parentid = $values['parent_id'];
+							}
 					}
-				}
-				else {
-					$rootkey = $this->_rootkey();
+					
+				} else {
+					// column parent_id is not detected
 					$values['parent_id'] = $rootkey;
 					$parentid = $values['parent_id'];
 				}
