@@ -99,157 +99,155 @@ class JEMViewCategory extends JEMView
 
 		} else {
 
-		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
+			$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
 
-		//initialize variables
-		$app = JFactory::getApplication();
-		$document 		= JFactory::getDocument();
-		$menu			= $app->getMenu();
-		$jemsettings 	= JEMHelper::config();
-		$db  			= JFactory::getDBO();
+			//initialize variables
+			$app = JFactory::getApplication();
+			$document 		= JFactory::getDocument();
+			$menu			= $app->getMenu();
+			$jemsettings 	= JEMHelper::config();
+			$db  			= JFactory::getDBO();
 
-		JHTML::_('behavior.tooltip');
+			JHTML::_('behavior.tooltip');
 
-		//get menu information
-		$menu			= $app->getMenu();
-		$item 			= $menu->getActive();
-		$params 		= $app->getParams();
-		$uri 			= JFactory::getURI();
-		$pathway 		= $app->getPathWay();
+			//get menu information
+			$menu			= $app->getMenu();
+			$item 			= $menu->getActive();
+			$params 		= $app->getParams();
+			$uri 			= JFactory::getURI();
+			$pathway 		= $app->getPathWay();
 
-		//add css file
-		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+			//add css file
+			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
+			// get variables
+			$filter_order		= $app->getUserStateFromRequest('com_jem.category.filter_order', 'filter_order', 	'a.dates', 'cmd');
+			$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.category.filter_order_Dir', 'filter_order_Dir',	'', 'word');
+			$filter 			= $app->getUserStateFromRequest('com_jem.category.filter', 'filter', '', 'int');
+			$search 			= $app->getUserStateFromRequest('com_jem.category.filter_search', 'filter_search', '', 'string');
+			$search 			= $db->escape(trim(JString::strtolower($search)));
+			$task 				= JRequest::getWord('task');
 
-		// get variables
-		$filter_order		= $app->getUserStateFromRequest('com_jem.category.filter_order', 'filter_order', 	'a.dates', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.category.filter_order_Dir', 'filter_order_Dir',	'', 'word');
-		$filter 			= $app->getUserStateFromRequest('com_jem.category.filter', 'filter', '', 'int');
-		$search 			= $app->getUserStateFromRequest('com_jem.category.filter_search', 'filter_search', '', 'string');
-		$search 			= $db->escape(trim(JString::strtolower($search)));
-		$task 				= JRequest::getWord('task');
+			// table ordering
+			$lists['order_Dir'] = $filter_order_Dir;
+			$lists['order'] 	= $filter_order;
 
-		// table ordering
-		$lists['order_Dir'] = $filter_order_Dir;
-		$lists['order'] 	= $filter_order;
+			//search filter
+			$filters = array();
 
-		//search filter
-		$filters = array();
+			if ($jemsettings->showtitle == 1) {
+				$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_TITLE'));
+			}
+			if ($jemsettings->showlocate == 1) {
+				$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_VENUE'));
+			}
+			if ($jemsettings->showcity == 1) {
+				$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_CITY'));
+			}
+			if ($jemsettings->showcat == 1) {
+				$filters[] = JHTML::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
+			}
+			if ($jemsettings->showstate == 1) {
+				$filters[] = JHTML::_('select.option', '5', JText::_('COM_JEM_STATE'));
+			}
+			$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
 
-		if ($jemsettings->showtitle == 1) {
-			$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_TITLE'));
-		}
-		if ($jemsettings->showlocate == 1) {
-			$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_VENUE'));
-		}
-		if ($jemsettings->showcity == 1) {
-			$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_CITY'));
-		}
-		if ($jemsettings->showcat == 1) {
-			$filters[] = JHTML::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
-		}
-		if ($jemsettings->showstate == 1) {
-			$filters[] = JHTML::_('select.option', '5', JText::_('COM_JEM_STATE'));
-		}
-		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
+			// search filter
+			$lists['search']= $search;
 
-		// search filter
-		$lists['search']= $search;
+			//get data from model
+			$rows 		= $this->get('Data');
+			$category 	= $this->get('Category');
+			$categories	= $this->get('Childs');
 
-		//get data from model
-		$rows 		= $this->get('Data');
-		$category 	= $this->get('Category');
-		$categories	= $this->get('Childs');
+			//are events available?
+			if (!$rows) {
+				$noevents = 1;
+			} else {
+				$noevents = 0;
+			}
 
-		//are events available?
-		if (!$rows) {
-			$noevents = 1;
-		} else {
-			$noevents = 0;
-		}
+			//does the category exist
+			if ($category->id == 0)
+			{
+				// TODO Translation
+				return JError::raiseError(404, JText::sprintf('Category #%d not found', $category->id));
+			}
 
-		//does the category exist
-		if ($category->id == 0)
-		{
-			// TODO Translation
-			return JError::raiseError(404, JText::sprintf('Category #%d not found', $category->id));
-		}
+			//Set Meta data
+			$document->setTitle($item->title.' - '.$category->catname);
+			$document->setMetadata('keywords', $category->meta_keywords);
+			$document->setDescription(strip_tags($category->meta_description));
 
-		//Set Meta data
-		$document->setTitle($item->title.' - '.$category->catname);
-		$document->setMetadata('keywords', $category->meta_keywords);
-		$document->setDescription(strip_tags($category->meta_description));
+			// Add feed links
+			$link = '&format=feed&id='.$category->id.'&limitstart=';
+			$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
+			$this->document->addHeadLink(JRoute::_($link . '&type=rss'), 'alternate', 'rel', $attribs);
+			$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
+			$this->document->addHeadLink(JRoute::_($link . '&type=atom'), 'alternate', 'rel', $attribs);
 
-		// Add feed links
-		$link = '&format=feed&id='.$category->id.'&limitstart=';
-		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
-		$this->document->addHeadLink(JRoute::_($link . '&type=rss'), 'alternate', 'rel', $attribs);
-		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
-		$this->document->addHeadLink(JRoute::_($link . '&type=atom'), 'alternate', 'rel', $attribs);
+			//create the pathway
+			$cats		= new JEMCategories($category->id);
+			$parents	= $cats->getParentlist();
 
-		//create the pathway
-		$cats		= new JEMCategories($category->id);
-		$parents	= $cats->getParentlist();
+			foreach($parents as $parent) {
+				$pathway->addItem($this->escape($parent->catname), JRoute::_(JEMHelperRoute::getCategoryRoute($parent->categoryslug)) );
+			}
 
-		foreach($parents as $parent) {
-			$pathway->addItem($this->escape($parent->catname), JRoute::_(JEMHelperRoute::getCategoryRoute($parent->categoryslug)) );
-		}
+			if ($task == 'archive') {
+				$pathway->addItem(JText::_('COM_JEM_ARCHIVE').' - '.$category->catname, JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug).'&task=archive'));
+				$print_link = JRoute::_(JEMHelperRoute::getCategoryRoute($category->id) .'&task=archive&print=1&tmpl=component');
+				$pagetitle = $category->catname.' - '.JText::_('COM_JEM_ARCHIVE');
+			} else {
+				$pathway->addItem($category->catname, JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug)) );
+				$print_link = JRoute::_(JEMHelperRoute::getCategoryRoute($category->id) .'&print=1&tmpl=component');
+				$pagetitle = $category->catname;
+			}
 
-		if ($task == 'archive') {
-			$pathway->addItem(JText::_('COM_JEM_ARCHIVE').' - '.$category->catname, JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug).'&task=archive'));
-			$print_link = JRoute::_(JEMHelperRoute::getCategoryRoute($category->id) .'&task=archive&print=1&tmpl=component');
-			$pagetitle = $category->catname.' - '.JText::_('COM_JEM_ARCHIVE');
-		} else {
-			$pathway->addItem($category->catname, JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug)) );
-			$print_link = JRoute::_(JEMHelperRoute::getCategoryRoute($category->id) .'&print=1&tmpl=component');
-			$pagetitle = $category->catname;
-		}
+			//Check if the user has access to the form
+			$maintainer = JEMUser::ismaintainer();
+			$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
-		//Check if the user has access to the form
-		$maintainer = JEMUser::ismaintainer();
-		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+			if ($maintainer || $genaccess) {
+				$dellink = 1;
+			} else {
+				$dellink = 0;
+			}
 
-		if ($maintainer || $genaccess) {
-			$dellink = 1;
-		} else {
-			$dellink = 0;
-		}
+			// Create the pagination object
+			$pagination = $this->get('Pagination');
 
-		// Create the pagination object
-		$pagination = $this->get('Pagination');
+			//Generate Categorydescription
+			if (empty ($category->description)) {
+				$description = JText::_('COM_JEM_NO_DESCRIPTION');
+			} else {
+				//execute plugins
+				$category->text	= $category->description;
+				$category->title 	= $category->catname;
+				JPluginHelper::importPlugin('content');
+				$app->triggerEvent('onContentPrepare', array('com_jem.category', &$category, &$params, 0));
+				$description = $category->text;
+			}
 
-		//Generate Categorydescription
-		if (empty ($category->description)) {
-			$description = JText::_('COM_JEM_NO_DESCRIPTION');
-		} else {
-			//execute plugins
-			$category->text	= $category->description;
-			$category->title 	= $category->catname;
-			JPluginHelper::importPlugin('content');
-			$app->triggerEvent('onContentPrepare', array('com_jem.category', &$category, &$params, 0));
-			$description = $category->text;
-		}
+			$cimage = JEMImage::flyercreator($category->image,'category');
 
-		$cimage = JEMImage::flyercreator($category->image,'category');
-
-		//create select lists
-		$this->lists			= $lists;
-		$this->action			= $uri->toString();
-		$this->cimage			= $cimage;
-		$this->rows				= $rows;
-		$this->noevents			= $noevents;
-		$this->category			= $category;
-		$this->print_link		= $print_link;
-		$this->params			= $params;
-		$this->dellink			= $dellink;
-		$this->task				= $task;
-		$this->description		= $description;
-		$this->pagination		= $pagination;
-		$this->jemsettings		= $jemsettings;
-		$this->item				= $item;
-		$this->categories		= $categories;
-
+			//create select lists
+			$this->lists			= $lists;
+			$this->action			= $uri->toString();
+			$this->cimage			= $cimage;
+			$this->rows				= $rows;
+			$this->noevents			= $noevents;
+			$this->category			= $category;
+			$this->print_link		= $print_link;
+			$this->params			= $params;
+			$this->dellink			= $dellink;
+			$this->task				= $task;
+			$this->description		= $description;
+			$this->pagination		= $pagination;
+			$this->jemsettings		= $jemsettings;
+			$this->item				= $item;
+			$this->categories		= $categories;
 		}
 
 		parent::display($tpl);
