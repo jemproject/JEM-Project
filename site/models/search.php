@@ -349,7 +349,7 @@ class JEMModelSearch extends JModelLegacy
 
 		// Get the paramaters of the active menu item
 		$params 	= $app->getParams('com_jem');
-		$top_id = $params->get('top_category', 0);
+		$top_id = $params->get('top_category', 1);
 
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
@@ -379,7 +379,7 @@ class JEMModelSearch extends JModelLegacy
 		}
 
 		//get list of the items
-		return JEMCategories::treerecurse($top_id, '', array(), $children, true, max(0, $levellimit-1));
+		return JEMCategories::treerecurse($top_id, '', array(), $children, max(0, $levellimit-1));
 	}
 }
 ?>
