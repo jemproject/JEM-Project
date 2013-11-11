@@ -26,9 +26,7 @@ class JEMControllerEditevent extends JControllerLegacy
 	function __construct()
 	{
 		parent::__construct();
-
 	}
-
 
 
 	/**
@@ -148,8 +146,5 @@ class JEMControllerEditevent extends JControllerLegacy
 
 		$this->setRedirect($link, $msg);
 	}
-
-
-
 }
 ?>

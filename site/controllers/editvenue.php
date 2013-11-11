@@ -26,7 +26,6 @@ class JEMControllerEditvenue extends JControllerLegacy
 	function __construct()
 	{
 		parent::__construct();
-
 	}
 
 
@@ -144,6 +143,5 @@ class JEMControllerEditvenue extends JControllerLegacy
 		}
 		$this->setRedirect($link, $msg);
 	}
-
 }
 ?>

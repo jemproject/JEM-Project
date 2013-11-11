@@ -15,7 +15,7 @@ jimport('joomla.application.component.controller');
  * JEM Component Attendees Controller
  *
  * @package JEM
- * 
+ *
  */
 class JEMControllerAttendees extends JControllerLegacy
 {
@@ -26,22 +26,19 @@ class JEMControllerAttendees extends JControllerLegacy
 	function __construct()
 	{
 		parent::__construct();
-
 	}
 
 
 	/**
 	 * redirect to events page
 	 */
-  function back()
-  {
-  	$fid = JRequest::getInt('Itemid');
-  	$link = 'index.php?option=com_jem&view=myevents&Itemid='.$fid;
+	function back()
+	{
+		$fid = JRequest::getInt('Itemid');
+		$link = 'index.php?option=com_jem&view=myevents&Itemid='.$fid;
 
-    $this->setRedirect( $link );
-    $this->redirect();
-  }
-
-
+		$this->setRedirect( $link );
+		$this->redirect();
+	}
 }
 ?>
