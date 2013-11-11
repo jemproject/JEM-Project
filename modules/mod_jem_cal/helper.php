@@ -147,7 +147,7 @@ class modjemcalqhelper
 							$link = JRoute::_(JEMHelperRoute::getRoute($event->slug));
 						} else {
 							//Create the link - copied from Jroute
-							$evlink = 'index.php?option=com_jem&view=event&id='. $event->slug.'&Itemid='.$FixItemID;
+							$evlink = JEMHelperRoute::getEventRoute($event->slug).'&Itemid='.$FixItemID;
 							$link = JRoute::_($evlink);
 						}
 					} else {
