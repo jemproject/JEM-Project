@@ -121,7 +121,6 @@ class JEMCategories
 	}
 
 
-
 	/**
 	 * Get the categorie tree
 	 * Based on Joomla/html/menu.php
@@ -161,31 +160,26 @@ class JEMCategories
 		}
 		else
 		{
+			$mitems_temp = $mitems;
 
-		$mitems_temp = $mitems;
+			$children = array();
+			// First pass - collect children
+			foreach ($mitems as $v)
+			{
+				$pt = $v->parent_id;
+				$list = @$children[$pt] ? $children[$pt] : array();
+				array_push($list, $v);
+				$children[$pt] = $list;
+			}
 
-
-		$children = array();
-		// First pass - collect children
-		foreach ($mitems as $v)
-		{
-			$pt = $v->parent_id;
-			$list = @$children[$pt] ? $children[$pt] : array();
-			array_push($list, $v);
-			$children[$pt] = $list;
+			$parentid = intval($mitems[0]->parent_id);
 		}
-
-		$parentid = intval($mitems[0]->parent_id);
-
-		}
-
 
 		//get list of the items
 		$list = JEMCategories::treerecurse($parentid, '', array(), $children, 9999, 0, 0);
 
 		return $list;
 	}
-
 
 
 	/**
@@ -197,31 +191,31 @@ class JEMCategories
 	 */
 	static function treerecurse($id, $indent, $list, &$children, $maxlevel=9999, $level=0, $type=1)
 	{
-		        if (@$children[$id] && $level <= $maxlevel)
-        {
-                foreach ($children[$id] as $v)
-                {
-                        $id = $v->id;
+		if (@$children[$id] && $level <= $maxlevel)
+		{
+			foreach ($children[$id] as $v)
+			{
+				$id = $v->id;
 
-                        if ($type) {
-                                $pre    = '<sup>|_</sup>&nbsp;';
-                                $spacer = '.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-                        } else {
-                                $pre    = '- ';
-                                $spacer = '&nbsp;&nbsp;';
-                        }
+				if ($type) {
+						$pre	= '<sup>|_</sup>&nbsp;';
+						$spacer = '.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				} else {
+						$pre	= '- ';
+						$spacer = '&nbsp;&nbsp;';
+				}
 
-                        if ($v->parent_id == 0) {
-                                $txt    = $v->catname;
-                        } else {
-                                $txt    = $pre . $v->catname;
-                        }
-                        $pt = $v->parent_id;
-                        $list[$id] = $v;
-                        $list[$id]->treename = "$indent$txt";
-                        $list[$id]->children = count(@$children[$id]);
+				if ($v->parent_id == 0) {
+						$txt = $v->catname;
+				} else {
+						$txt = $pre . $v->catname;
+				}
+				$pt = $v->parent_id;
+				$list[$id] = $v;
+				$list[$id]->treename = "$indent$txt";
+				$list[$id]->children = count(@$children[$id]);
 
-                 $list = JEMCategories::treerecurse($id, $indent . $spacer, $list, $children, $maxlevel, $level+1, $type);
+				$list = JEMCategories::treerecurse($id, $indent . $spacer, $list, $children, $maxlevel, $level+1, $type);
 			}
 		}
 		return $list;
