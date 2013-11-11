@@ -53,14 +53,12 @@ class JEMViewCategory extends JEMView
 			$currentdaycolor = $params->get('currentdaycolor');
 			$eventandmorecolor = $params->get('eventandmorecolor');
 
-
 			$style = '
 			div[id^=\'scat\'] a {color:' . $evlinkcolor . ';}
 			div[id^=\'scat\'] {background-color:'.$evbackgroundcolor .';}
 			.eventandmore {background-color:'.$eventandmorecolor .';}
 			.today .daynum {background-color:'.$currentdaycolor.';}';
 			$document->addStyleDeclaration($style);
-
 
 			// Retrieve date variables
 			$year = (int)JRequest::getVar('yearID', strftime("%Y"));
@@ -89,7 +87,7 @@ class JEMViewCategory extends JEMView
 
 			//init calendar
 			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
-			$cal->enableMonthNav('index.php?view=category&layout=calendar&id='. $category->slug);
+			$cal->enableMonthNav(JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug).'&layout=calendar'));
 			$cal->setFirstWeekDay($params->get('firstweekday', 1));
 			//$cal->enableDayLinks(false);
 
@@ -195,16 +193,16 @@ class JEMViewCategory extends JEMView
 		$parents	= $cats->getParentlist();
 
 		foreach($parents as $parent) {
-			$pathway->addItem($this->escape($parent->catname), JRoute::_('index.php?view=category&id='.$parent->categoryslug));
+			$pathway->addItem($this->escape($parent->catname), JRoute::_(JEMHelperRoute::getCategoryRoute($parent->categoryslug)) );
 		}
 
 		if ($task == 'archive') {
-			$pathway->addItem(JText::_('COM_JEM_ARCHIVE').' - '.$category->catname, JRoute::_('index.php?option=com_jem&view=category&task=archive&id='.$category->slug));
-			$print_link = JRoute::_('index.php?option=com_jem&view=category&id='. $category->id .'&task=archive&print=1&tmpl=component');
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE').' - '.$category->catname, JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug).'&task=archive'));
+			$print_link = JRoute::_(JEMHelperRoute::getCategoryRoute($category->id) .'&task=archive&print=1&tmpl=component');
 			$pagetitle = $category->catname.' - '.JText::_('COM_JEM_ARCHIVE');
 		} else {
-			$pathway->addItem($category->catname, JRoute::_('index.php?option=com_jem&view=category&id='.$category->slug));
-			$print_link = JRoute::_('index.php?option=com_jem&view=category&id='. $category->id .'&print=1&tmpl=component');
+			$pathway->addItem($category->catname, JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug)) );
+			$print_link = JRoute::_(JEMHelperRoute::getCategoryRoute($category->id) .'&print=1&tmpl=component');
 			$pagetitle = $category->catname;
 		}
 
