@@ -731,3 +731,11 @@ table.adminlist
 {
 	border: 1px solid #999999;
 }
+
+input#csvexport{
+    background:#CCCCCC url('../images/export_excel.png') no-repeat left;
+    padding-left:20px;
+    border:1px solid #808080;
+    height:20px;
+    cursor:pointer;
+}
