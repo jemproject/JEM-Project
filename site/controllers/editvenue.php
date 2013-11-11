@@ -109,8 +109,7 @@ class JEMControllerEditvenue extends JControllerLegacy
 		if ($returnid = $model->store($post, $file)) {
 			$msg 	= JText::_('COM_JEM_VENUE_SAVED');
 
-			$link = JRoute::_(JEMHelperRoute::getVenueRoute($returnid), false) ;
-			//$link = 'index.php?option=com_jem&view=venue&id='.$returnid.'&Itemid='.$Itemid;
+			$link = JRoute::_(JEMHelperRoute::getVenueRoute($returnid).'&Itemid='.$Itemid, false);
 
 			JPluginHelper::importPlugin('jem');
 			$dispatcher = JDispatcher::getInstance();

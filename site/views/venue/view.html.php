@@ -83,7 +83,7 @@ class JEMViewVenue extends JEMView {
 
 			// init calendar
 			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
-			$cal->enableMonthNav('index.php?view=venue&layout=calendar&id='.$venue->slug);
+			$cal->enableMonthNav(JEMHelperRoute::getVenueRoute($venue->slug) .'&layout=calendar');
 			$cal->setFirstWeekDay($params->get('firstweekday',1));
 
 			// map variables
@@ -158,12 +158,12 @@ class JEMViewVenue extends JEMView {
 
 			// create the pathway
 			if ($task == 'archive') {
-				$pathway->addItem (JText::_('COM_JEM_ARCHIVE').'-'.$venue->venue, JRoute::_('index.php?option=com_jem&view=venue&task=archive&id='.$venue->slug));
-				$print_link = JRoute::_('index.php?option=com_jem&view=venue&id='.$venue->slug. '&task=archive&print=1&tmpl=component');
+				$pathway->addItem (JText::_('COM_JEM_ARCHIVE').'-'.$venue->venue, JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug).'&task=archive'));
+				$print_link = JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug).'&task=archive&print=1&tmpl=component');
 				$pagetitle = $venue->venue.'-'.JText::_('COM_JEM_ARCHIVE');
 			} else {
-				$pathway->addItem($venue->venue, JRoute::_('index.php?option=com_jem&view=venue&id='.$venue->slug));
-				$print_link = JRoute::_('index.php?option=com_jem&view=venue&id='.$venue->slug.'&print=1&tmpl=component');
+				$pathway->addItem($venue->venue, JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug)));
+				$print_link = JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
 				$pagetitle = $venue->venue;
 			}
 
