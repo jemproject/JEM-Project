@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -138,7 +138,7 @@ class JEMCategories
 			$where = ' WHERE published = '.$published;
 		} else {
 			$where = ' WHERE published IN (' . implode(',', $state) . ')';
-			$where .= ' AND catname NOT LIKE "root"';
+			$where .= ' AND alias NOT LIKE "root"';
 		}
 
 		$query = 'SELECT *, id AS value, catname AS text' . ' FROM #__jem_categories' . $where . ' ORDER BY parent_id, ordering';

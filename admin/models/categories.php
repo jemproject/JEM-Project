@@ -184,7 +184,7 @@ class JEMModelCategories extends JModelList
 		}
 
 
-		$query->where('(a.catname NOT LIKE "root")');
+		$query->where('(a.alias NOT LIKE "root")');
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');

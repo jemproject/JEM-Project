@@ -241,7 +241,7 @@ class JEMModelSampledata extends JModelLegacy
 
 		$query->select("id");
 		$query->from('#__jem_categories');
-		$query->where('catname NOT LIKE "root"');
+		$query->where('alias NOT LIKE "root"');
 		$this->_db->setQuery($query);
 		$result = $this->_db->loadResult();
 

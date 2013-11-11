@@ -94,16 +94,16 @@ class JEMModelCategoryelement extends JModelLegacy
 			} else {
 				if ($filter_state == 'U') {
 					$where = ' WHERE c.published = 0';
-					$where .= ' AND c.catname NOT LIKE "root"';
+					$where .= ' AND c.alias NOT LIKE "root"';
 				}
 			}
 		} else {
 			$where = ' WHERE c.published IN (' . implode(',', $state) . ')';
-			$where .= ' AND c.catname NOT LIKE "root"';
+			$where .= ' AND c.alias NOT LIKE "root"';
 		}
 
 		$where2 = ' AND c.published IN (' . implode(',', $state) . ')';
-		$where2 .= ' AND c.catname NOT LIKE "root"';
+		$where2 .= ' AND c.alias NOT LIKE "root"';
 
 		// select the records
 		// note, since this is a tree we have to do the limits code-side
