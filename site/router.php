@@ -168,9 +168,9 @@ function jemParseRoute($segments)
 			}
 		} break;
 
-		case 'myattending':
+		case 'myattendances':
 		{
-			$vars['view'] = 'myattending';
+			$vars['view'] = 'myattendances';
 		} break;
 
 		case 'myevents':

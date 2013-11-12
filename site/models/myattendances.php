@@ -18,7 +18,7 @@ jimport('joomla.html.pagination');
  * @package JEM
  *
  */
-class JEMModelMyattending extends JModelLegacy
+class JEMModelMyattendances extends JModelLegacy
 {
 	var $_attending = null;
 	var $_total_attending = null;
@@ -35,8 +35,8 @@ class JEMModelMyattending extends JModelLegacy
 		$jemsettings = JEMHelper::config();
 
 		//get the number of events
-		$limit		= $app->getUserStateFromRequest('com_jem.myattending.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart = $app->getUserStateFromRequest('com_jem.myattending.limitstart', 'limitstart', 0, 'int');
+		$limit		= $app->getUserStateFromRequest('com_jem.myattendances.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart = $app->getUserStateFromRequest('com_jem.myattendances.limitstart', 'limitstart', 0, 'int');
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -159,8 +159,8 @@ class JEMModelMyattending extends JModelLegacy
 	{
 		$app = JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest('com_jem.myattending.filter_order', 'filter_order', 'a.dates', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myattending.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		$filter_order		= $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myattendances.filter_order_Dir', 'filter_order_Dir', '', 'word');
 
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
@@ -196,9 +196,9 @@ class JEMModelMyattending extends JModelLegacy
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
 
-// 		$filter_state 	= $app->getUserStateFromRequest('com_jem.myattending.filter_state', 'filter_state', '', 'word');
-		$filter 		= $app->getUserStateFromRequest('com_jem.myattending.filter', 'filter', '', 'int');
-		$search 		= $app->getUserStateFromRequest('com_jem.myattending.filter_search', 'filter_search', '', 'string');
+// 		$filter_state 	= $app->getUserStateFromRequest('com_jem.myattendances.filter_state', 'filter_state', '', 'word');
+		$filter 		= $app->getUserStateFromRequest('com_jem.myattendances.filter', 'filter', '', 'int');
+		$search 		= $app->getUserStateFromRequest('com_jem.myattendances.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();

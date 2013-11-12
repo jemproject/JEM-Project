@@ -20,7 +20,7 @@ defined('_JEXEC') or die;
 <!--table-->
 
 <?php
-	echo $this->loadTemplate('attending');
+	echo $this->loadTemplate('attendances');
 ?>
 
 <!--footer-->

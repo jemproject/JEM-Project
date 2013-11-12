@@ -52,7 +52,7 @@ class JEMController extends JControllerLegacy
 				case 'editvenue':
 				case 'event':
 				case 'eventslist':
-				case 'myattending':
+				case 'myattendances':
 				case 'myevents':
 				case 'myvenues':
 				case 'search':

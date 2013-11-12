@@ -164,7 +164,7 @@ abstract class JEMHelperRoute
 
 	public static function getMyAttendancesRoute()
 	{
-		return self::getRouteWithoutId('myattending');
+		return self::getRouteWithoutId('myattendances');
 	}
 
 	public static function getMyEventsRoute()

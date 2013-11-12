@@ -14,10 +14,10 @@ jimport('joomla.application.component.view');
 /**
  * HTML View class for the JEM View
  */
-class JEMViewMyattending extends JViewLegacy
+class JEMViewMyattendances extends JViewLegacy
 {
 	/**
-	 * Creates the Myattending View
+	 * Creates the Myattendances View
 	 */
 	function display($tpl = null)
 	{
@@ -55,11 +55,11 @@ class JEMViewMyattending extends JViewLegacy
 			$noattending = 0;
 		}
 		// get variables
-		$filter_order		= $app->getUserStateFromRequest('com_jem.myattending.filter_order', 'filter_order', 	'a.dates', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myattending.filter_order_Dir', 'filter_order_Dir',	'', 'word');
-// 		$filter_state 		= $app->getUserStateFromRequest('com_jem.myattending.filter_state', 'filter_state', 	'*', 'word');
-		$filter 			= $app->getUserStateFromRequest('com_jem.myattending.filter', 'filter', '', 'int');
-		$search 			= $app->getUserStateFromRequest('com_jem.myattending.filter_search', 'filter_search', '', 'string');
+		$filter_order		= $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', 	'a.dates', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myattendances.filter_order_Dir', 'filter_order_Dir',	'', 'word');
+// 		$filter_state 		= $app->getUserStateFromRequest('com_jem.myattendances.filter_state', 'filter_state', 	'*', 'word');
+		$filter 			= $app->getUserStateFromRequest('com_jem.myattendances.filter', 'filter', '', 'int');
+		$search 			= $app->getUserStateFromRequest('com_jem.myattendances.filter_search', 'filter_search', '', 'string');
 		$search 			= $db->escape(trim(JString::strtolower($search)));
 
 		$task 				= JRequest::getWord('task');
