@@ -53,7 +53,7 @@ class JEMControllerEditevent extends JControllerLegacy
 			$row->load($id);
 			$row->checkin();
 
-			$this->setRedirect(JRoute::_(JEMHelperRoute::getRoute($id), false));
+			$this->setRedirect(JRoute::_(JEMHelperRoute::getEventRoute($id), false));
 		} else {
 			$link = JRequest::getString('referer', JURI::base(), 'post');
 			$this->setRedirect($link);
@@ -124,7 +124,7 @@ class JEMControllerEditevent extends JControllerLegacy
 		if ($returnid = $model->store($post, $file)) {
 			$row->id = $returnid;
 			$msg 	= JText::_('COM_JEM_EVENT_SAVED');
-			$link 	= JRoute::_(JEMHelperRoute::getRoute($returnid), false) ;
+			$link 	= JRoute::_(JEMHelperRoute::getEventRoute($returnid), false) ;
 
 			JPluginHelper::importPlugin('jem');
 			$res = $dispatcher->trigger('onEventEdited', array($returnid, $isNew));

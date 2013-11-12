@@ -33,12 +33,15 @@ abstract class JEMHelperRoute
 	 * @param int The id of an JEM item
 	 * @param string The view
 	 * @param string The category of the item
-	 *
+	 * @deprecated Use specific Route methods instead!
 	 *
 	 * @return string determined Link
 	 */
 	public static function getRoute($id, $view = 'event', $category = null)
 	{
+		// Deprecation warning.
+		JLog::add('JEMHelperRoute::getRoute() is deprecated, use specific route methods instead.', JLog::WARNING, 'deprecated');
+
 		$needles = array(
 			$view => array((int) $id)
 		);

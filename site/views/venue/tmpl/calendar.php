@@ -91,7 +91,7 @@ defined('_JEXEC') or die;
 		endif;
 
 		$eventname = '<div class="eventName">'.JText::_('COM_JEM_TITLE').': '.$this->escape($row->title).'</div>';
-		$detaillink 	= JRoute::_( JEMHelperRoute::getRoute($row->slug));
+		$detaillink 	= JRoute::_( JEMHelperRoute::getEventRoute($row->slug));
 		//initialize variables
 		$multicatname = '';
 		$colorpic = '';
@@ -104,7 +104,7 @@ defined('_JEXEC') or die;
 		foreach($row->categories AS $category) :
 
 			//Currently only one id possible...so simply just pick one up...
-			$detaillink 	= JRoute::_( JEMHelperRoute::getRoute($row->slug));
+			$detaillink 	= JRoute::_( JEMHelperRoute::getEventRoute($row->slug));
 
 			//wrap a div for each category around the event for show hide toggler
 			$content 		.= '<div class="cat'.$category->id.'">';

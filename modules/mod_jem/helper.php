@@ -91,12 +91,12 @@ class modJEMHelper
 			}
 
 			$lists[$i] = new stdClass;
-			$lists[$i]->link		= JRoute::_(JEMHelperRoute::getRoute($row->slug));
+			$lists[$i]->link		= JRoute::_(JEMHelperRoute::getEventRoute($row->slug));
 			$lists[$i]->dateinfo 	= JEMOutput::formatShortDateTime($row->dates, $row->times,
 						$row->enddates, $row->endtimes);
 			$lists[$i]->text		= $params->get('showtitloc', 0) ? $row->title : htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->city		= htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->venueurl 	= !empty($row->venueslug) ? JRoute::_(JEMHelperRoute::getRoute($row->venueslug, 'venue')) : null;
+			$lists[$i]->venueurl 	= !empty($row->venueslug) ? JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : null;
 			$i++;
 		}
 

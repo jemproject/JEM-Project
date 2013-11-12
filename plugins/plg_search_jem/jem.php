@@ -170,7 +170,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		$list = $db->loadObjectList();
 
 		foreach((array) $list as $key => $row) {
-			$list[$key]->href = JEMHelperRoute::getRoute($row->slug);
+			$list[$key]->href = JEMHelperRoute::getEventRoute($row->slug);
 		}
 
 		$rows[] = $list;
@@ -240,7 +240,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		$list2 = $db->loadObjectList();
 
 		foreach((array) $list2 as $key => $row) {
-			$list2[$key]->href = JEMHelperRoute::getRoute($row->slug, 'venue');
+			$list2[$key]->href = JEMHelperRoute::getVenueRoute($row->slug);
 		}
 
 		$rows[] = $list2;
@@ -293,7 +293,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		$list3 = $db->loadObjectList();
 
 		foreach((array) $list3 as $key => $row) {
-			$list3[$key]->href = JEMHelperRoute::getRoute($row->slug, 'category');
+			$list3[$key]->href = JEMHelperRoute::getCategoryRoute($row->slug);
 		}
 
 		$rows[] = $list3;

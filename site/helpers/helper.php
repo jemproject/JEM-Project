@@ -759,7 +759,7 @@ class JEMHelper {
 		$description = $event->title.'\\n';
 		$description .= JText::_('COM_JEM_CATEGORY').': '.implode(', ', $categories).'\\n';
 
-		$link = JURI::base().JEMHelperRoute::getRoute($event->slug);
+		$link = JURI::base().JEMHelperRoute::getEventRoute($event->slug);
 		$link = JRoute::_($link);
 		$description .= JText::_('COM_JEM_ICS_LINK').': '.$link.'\\n';
 

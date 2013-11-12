@@ -101,7 +101,7 @@ class plgJEMMailer extends JPlugin {
 		}
 
 		//create link to event
-		$link = JRoute::_(JURI::base().JEMHelperRoute::getRoute($event->slug), false);
+		$link = JRoute::_(JURI::base().JEMHelperRoute::getEventRoute($event->slug), false);
 
 		if ($event->waiting) // registered to the waiting list
 		{
@@ -184,7 +184,7 @@ class plgJEMMailer extends JPlugin {
 		$user 	= JFactory::getUser($details->uid);
 		//create link to event
 		$url = JURI::root();
-		$link =JRoute::_($url. JEMHelperRoute::getRoute($details->slug), false);
+		$link =JRoute::_($url. JEMHelperRoute::getEventRoute($details->slug), false);
 
 		if ($details->waiting) // added to the waiting list
 		{
@@ -264,7 +264,7 @@ class plgJEMMailer extends JPlugin {
 		}
 
 		//create link to event
-		$link = JRoute::_(JURI::base().JEMHelperRoute::getRoute($event->slug), false);
+		$link = JRoute::_(JURI::base().JEMHelperRoute::getEventRoute($event->slug), false);
 
 		//handle usermail
 		if ($this->params->get('unreg_mail_user', '1')) {
@@ -325,7 +325,7 @@ class plgJEMMailer extends JPlugin {
 		}
 
 		//link for event
-		$link = JRoute::_(JURI::base().JEMHelperRoute::getRoute($event->slug), false);
+		$link = JRoute::_(JURI::base().JEMHelperRoute::getEventRoute($event->slug), false);
 
 		//strip description from tags / scripts, etc...
 		$text_description = JFilterOutput::cleanText($event->datdescription);

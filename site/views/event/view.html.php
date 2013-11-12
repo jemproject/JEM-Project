@@ -77,7 +77,7 @@ class JEMViewEvent extends JViewLegacy
 		}
 
 
-		$print_link = JRoute::_(JEMHelperRoute::getRoute($row->slug).'&print=1&tmpl=component');
+		$print_link = JRoute::_(JEMHelperRoute::getEventRoute($row->slug).'&print=1&tmpl=component');
 
 		//pathway
 		$cats		= new JEMCategories($cid);
@@ -87,7 +87,7 @@ class JEMViewEvent extends JViewLegacy
 		foreach($parents as $parent) {
 			$pathway->addItem($this->escape($parent->catname), JRoute::_(JEMHelperRoute::getCategoryRoute($parent->categoryslug)));
 		}
-		$pathway->addItem($this->escape($row->title), JRoute::_(JEMHelperRoute::getRoute($row->slug)));
+		$pathway->addItem($this->escape($row->title), JRoute::_(JEMHelperRoute::getEventRoute($row->slug)));
 
 		//Get images
 		$dimage = JEMImage::flyercreator($row->datimage, 'event');

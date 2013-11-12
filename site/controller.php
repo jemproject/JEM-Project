@@ -256,7 +256,7 @@ class JEMController extends JControllerLegacy
 		if (!$register_id)
 		{
 			$msg = $model->getError();
-			$this->setRedirect(JRoute::_(JEMHelperRoute::getRoute($id), false), $msg, 'error');
+			$this->setRedirect(JRoute::_(JEMHelperRoute::getEventRoute($id), false), $msg, 'error');
 			$this->redirect();
 			return;
 		}
@@ -270,7 +270,7 @@ class JEMController extends JControllerLegacy
 
 		$msg = JText::_('COM_JEM_REGISTERED_SUCCESSFULL');
 
-		$this->setRedirect(JRoute::_(JEMHelperRoute::getRoute($id), false), $msg);
+		$this->setRedirect(JRoute::_(JEMHelperRoute::getEventRoute($id), false), $msg);
 	}
 
 	/**
@@ -299,7 +299,7 @@ class JEMController extends JControllerLegacy
 		$cache->clean();
 
 		$msg = JText::_('COM_JEM_UNREGISTERED_SUCCESSFULL');
-		$this->setRedirect(JRoute::_(JEMHelperRoute::getRoute($id), false), $msg);
+		$this->setRedirect(JRoute::_(JEMHelperRoute::getEventRoute($id), false), $msg);
 	}
 
 	/**

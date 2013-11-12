@@ -80,10 +80,10 @@ class plgJEMComments extends JPlugin {
 				$res .= JHtml::_('comments.share', substr($_SERVER['REQUEST_URI'], 1), $event_title);
 
 				// display ratings
-				$res .= JHtml::_('comments.rating', 'jem', $event_id, JEMHelperRoute::getRoute($event_id), substr($_SERVER['REQUEST_URI'], 1), $event_title);
+				$res .= JHtml::_('comments.rating', 'jem', $event_id, JEMHelperRoute::getEventRoute($event_id), substr($_SERVER['REQUEST_URI'], 1), $event_title);
 
 				// display comments
-				$res .= JHtml::_('comments.comments', 'jem', $event_id, JEMHelperRoute::getRoute($event_id), substr($_SERVER['REQUEST_URI'], 1), $event_title);
+				$res .= JHtml::_('comments.comments', 'jem', $event_id, JEMHelperRoute::getEventRoute($event_id), substr($_SERVER['REQUEST_URI'], 1), $event_title);
 				$res .= '<style type="text/css">';
 				$res .= 'div#respond-container dt { float: none;border-bottom: medium none;padding: 0;width: auto;}';
 				$res .= '</style>';

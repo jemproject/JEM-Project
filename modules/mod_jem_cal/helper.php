@@ -144,7 +144,7 @@ class modjemcalqhelper
 					}
 					if (($StraightToDetails == 1) and ($stod == 1)) {
 						if ($FixItemID == 0) {
-							$link = JRoute::_(JEMHelperRoute::getRoute($event->slug));
+							$link = JRoute::_(JEMHelperRoute::getEventRoute($event->slug));
 						} else {
 							//Create the link - copied from Jroute
 							$evlink = JEMHelperRoute::getEventRoute($event->slug).'&Itemid='.$FixItemID;
