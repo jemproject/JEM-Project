@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -143,6 +143,40 @@ abstract class JEMHelperRoute
 
 		return $link;
 	}
+
+	protected static function getRouteWithoutId($my)
+	{
+		$needles = array();
+		$needles[$my] = array(self::ARTIFICALID);
+
+		// Create the link
+		$link = 'index.php?option=com_jem&view='.$my;
+
+		if ($item = self::_findItem($needles)) {
+			$link .= '&Itemid='.$item;
+		}
+		elseif ($item = self::_findItem()) {
+			$link .= '&Itemid='.$item;
+		}
+
+		return $link;
+	}
+
+	public static function getMyAttendancesRoute()
+	{
+		return self::getRouteWithoutId('myattending');
+	}
+
+	public static function getMyEventsRoute()
+	{
+		return self::getRouteWithoutId('myevents');
+	}
+
+	public static function getMyVenuesRoute()
+	{
+		return self::getRouteWithoutId('myvenues');
+	}
+
 
 	/**
 	 * Determines the Itemid
