@@ -36,8 +36,6 @@ class jem_settings extends JTable
 	var $showcity 			= "1";
 	/** @var int */
 	var $showmapserv 		= "0";
-	/** @var int */
-	var $gmapkey			= null;
 	/** @var string */
 	var $tablewidth 		= null;
 	/** @var string */
@@ -142,8 +140,6 @@ class jem_settings extends JTable
 	var $regname			= null;
 	/** @var int */
 	var $storeip			= null;
-	/** @var int */
-	var $commentsystem		= 0;
 	/** @var string */
 	var $lastupdate 		= null;
 	/** @var int */
@@ -152,10 +148,7 @@ class jem_settings extends JTable
 	var $checked_out_time 	= 0;
 	/** @var string */
 	var $tld 	= 0;
-	/** @var string */
-	var $icslimit			= 0;
 	/** @var int */
-
 	var $display_num		= 0;
 	var $cat_num			= 0;
 	var $filter				= 0;

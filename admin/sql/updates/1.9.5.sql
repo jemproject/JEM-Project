@@ -3,7 +3,12 @@ ALTER TABLE `#__jem_settings`
 	DROP `mailinform`,
 	DROP `mailinformrec`,
 	DROP `mailinformuser`,
-	DROP `displaymyevents`;
+	DROP `displaymyevents`,
+	DROP `gmapkey`,
+	DROP `commentsystem`,
+	DROP `icslimit`,
+	DROP `sortorder`,
+	DROP `repeat_window`;
 
 DELETE FROM `#__menu`
 	WHERE `type`='component' AND `title`='COM_JEM_MENU_ARCHIVE';
