@@ -157,11 +157,11 @@ window.addEvent('domready', function() {
 				<td align="right">
 					<?php
 						/* @todo fix ordering  */
-						echo $this->pagination->orderUpIcon( $i, true, 'orderup', 'Move Up', $ordering );
+						echo $this->pagination->orderUpIcon( $i, true, 'orderup', 'JLIB_HTML_MOVE_UP', $ordering );
 					?>
 				</td>
 				<td align="left">
-					<?php echo $this->pagination->orderDownIcon( $i,$this->pagination->total, true, 'orderdown', 'Move Down', $ordering ); ?>
+					<?php echo $this->pagination->orderDownIcon( $i,$this->pagination->total, true, 'orderdown', 'JLIB_HTML_MOVE_DOWN', $ordering ); ?>
 				</td>
 				<td class="center"><?php echo $row->id; ?></td>
 			</tr>
