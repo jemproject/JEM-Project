@@ -642,46 +642,24 @@ class JEMCalendar {
 			$linkstr= $var;
 		}
 
+		$linktext = $this->dayLinks ? $linkstr : $var;
 		if ($this->isEvent($var)) {
 			if ($this->eventUrl) {
-				$out="<td class=\"".$this->eventID."\"><div class=\"daynum\"><a href=\"".$this->eventUrl."\">".$var."</div></a>".$eventContent."</td>";
+				$out="<td class=\"".$this->eventID."\"><div class=\"daynum\"><a href=\"".$this->eventUrl."\">".$var."</a></div>".$eventContent."</td>";
 				$this->eventUrl=false;
-			} else if (!$this->dayLinks) {
-				$out="<td class=\"".$this->eventID."\"><div class=\"daynum\">".$var.'</div>'.$eventContent."</td>";
 			} else {
-				$out="<td class=\"".$this->eventID."\"><div class=\"daynum\">".$linkstr.'</div>'.$eventContent."</td>";
+				$out="<td class=\"".$this->eventID."\"><div class=\"daynum\">".$linktext.'</div>'.$eventContent."</td>";
 			}
 		} else if ($var==$this->selectedday && $this->actmonth==$this->selectedmonth && $this->actyear==$this->selectedyear) {
-			if (!$this->dayLinks) {
-				$out="<td class=\"".$this->cssSelecDay."\"><div class=\"daynum\">".$var.'</div>'.$eventContent."</td>";
-			}
-			else {
-				$out="<td class=\"".$this->cssSelecDay."\"><div class=\"daynum\">".$linkstr.'</div>'.$eventContent."</td>";
-			}
+			$out="<td class=\"".$this->cssSelecDay."\"><div class=\"daynum\">".$linktext.'</div>'.$eventContent."</td>";
 		} else if ($var==$this->daytoday && $this->actmonth==$this->monthtoday && $this->actyear==$this->yeartoday) {
-			if (!$this->dayLinks) {
-				$out="<td class=\"".$this->cssToday."\"><div class=\"daynum\">".$var.'</div>'.$eventContent."</td>";
-			} else {
-				$out="<td class=\"".$this->cssToday."\"><div class=\"daynum\">".$linkstr.'</div>'.$eventContent."</td>";
-			}
+			$out="<td class=\"".$this->cssToday.   "\"><div class=\"daynum\">".$linktext.'</div>'.$eventContent."</td>";
 		} else if ($this->getWeekday($var)==0 && $this->crSunClass) {
-			if (!$this->dayLinks) {
-				$out="<td class=\"".$this->cssSunday."\"><div class=\"daynum\">".$var.'</div>'.$eventContent."</td>";
-			} else {
-				$out="<td class=\"".$this->cssSunday."\"><div class=\"daynum\">".$linkstr.'</div>'.$eventContent."</td>";
-			}
+			$out="<td class=\"".$this->cssSunday.  "\"><div class=\"daynum\">".$linktext.'</div>'.$eventContent."</td>";
 		} else if ($this->getWeekday($var)==6 && $this->crSatClass) {
-			if (!$this->dayLinks) {
-				$out="<td class=\"".$this->cssSaturday."\"><div class=\"daynum\">".$var.'</div>'.$eventContent."</td>";
-			} else {
-				$out="<td class=\"".$this->cssSaturday."\"><div class=\"daynum\">".$linkstr.'</div>'.$eventContent."</td>";
-			}
+			$out="<td class=\"".$this->cssSaturday."\"><div class=\"daynum\">".$linktext.'</div>'.$eventContent."</td>";
 		} else {
-			if (!$this->dayLinks) {
-				$out="<td class=\"".$this->cssMonthDay."\"><div class=\"daynum\">".$var.'</div>'.$eventContent."</td>";
-			} else {
-				$out="<td class=\"".$this->cssMonthDay."\"><div class=\"daynum\">".$linkstr.'</div>'.$eventContent."</td>";
-			}
+			$out="<td class=\"".$this->cssMonthDay."\"><div class=\"daynum\">".$linktext.'</div>'.$eventContent."</td>";
 		}
 		return $out;
 	}

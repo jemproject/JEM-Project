@@ -63,8 +63,8 @@ table.month {
 	height:88px;
 }
 
-.monthday, .today {
-	background-color:#F7F7F7;
+.today {
+	background-color:#BBCCFF;
 	height:88px;
 }
 
