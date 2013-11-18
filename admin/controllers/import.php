@@ -54,7 +54,16 @@ class JEMControllerImport extends JControllerLegacy {
 		}
 
 		$msg = '';
-		if ($file = JRequest::getVar('File'.$type, null, 'files', 'array')) {
+		$file = JRequest::getVar('File'.$type, NULL, 'files', 'array');
+		
+		if ($file['name'] == false)
+		{
+			$msg = JText::_('COM_JEM_IMPORT_SELECT_FILE');
+			$this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
+			return;
+		}
+		
+		if ($file['name']) {
 			$fc = iconv('windows-1252', 'utf-8', file_get_contents($file['tmp_name']));
 			file_put_contents($file['tmp_name'], $fc);
 			$handle = fopen($file['tmp_name'], 'r');
