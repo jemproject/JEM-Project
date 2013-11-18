@@ -32,6 +32,9 @@ class JEMViewCleanup extends JViewLegacy {
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		
+		// Load Script
+		JHtml::_('behavior.mootools');
 
 		// add toolbar
 		$this->addToolbar();
