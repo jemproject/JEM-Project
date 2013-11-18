@@ -40,15 +40,15 @@ class JEMViewEvent extends JViewLegacy {
 		JHtml::_('behavior.formvalidation');
 
 		//initialise variables
-		$jemsettings = JEMHelper::config();
-		$document	= JFactory::getDocument();
+		$jemsettings 	= JEMHelper::config();
+		$document		= JFactory::getDocument();
 		$this->settings	= JEMAdmin::config();
-		$task		= JRequest::getVar('task');
-		$this->task 		= $task;
-		$url 		= JURI::root();
+		$task			= JRequest::getVar('task');
+		$this->task 	= $task;
+		$url 			= JURI::root();
 
-		$categories = JEMCategories::getCategoriesTree(1);
-		$selectedcats = $this->get('Catsselected');
+		$categories 	= JEMCategories::getCategoriesTree(1);
+		$selectedcats 	= $this->get('Catsselected');
 
 		$Lists = array();
 		$Lists['category'] = JEMCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8"');
@@ -57,10 +57,10 @@ class JEMViewEvent extends JViewLegacy {
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 		
 		// Load scripts
-		$document->addScript($url.'media/com_jem/js/attachments.js');
-		$document->addScript($url.'media/com_jem/js/recurrence.js');
-		$document->addScript($url.'media/com_jem/js/unlimited.js');
-		$document->addScript($url.'media/com_jem/js/seo.js');
+		JHtml::_('script', 'com_jem/attachments.js', false, true);
+		JHtml::_('script', 'com_jem/recurrence.js', false, true);
+		JHtml::_('script', 'com_jem/unlimited.js', false, true);
+		JHtml::_('script', 'com_jem/seo.js', false, true);
 
 		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access		= $access2;
