@@ -195,7 +195,7 @@ $options = array(
 					<?php echo JText::_( 'COM_JEM_DATE' ).':'; ?>
 				</label>
 				<?php echo JHTML::_('calendar', $this->row->dates, 'dates', 'dates', '%Y-%m-%d', array('class' => 'inputbox required validate-date')); ?>
-				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_DATE_HINT'); ?>">
+				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_DATE_HINT' ); ?>::<?php echo JText::_('COM_JEM_DATE_HINT'); ?>">
 					<?php echo $this->infoimage; ?>
 				</small>
 			</div>
@@ -205,7 +205,7 @@ $options = array(
 					<?php echo JText::_( 'COM_JEM_ENDDATE' ).':'; ?>
 				</label>
 				<?php echo JHTML::_('calendar', $this->row->enddates, 'enddates', 'enddates', '%Y-%m-%d', array('class' => 'inputbox validate-date')); ?>
-				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_DATE_HINT'); ?>">
+				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_DATE_HINT' ); ?>::<?php echo JText::_('COM_JEM_DATE_HINT'); ?>">
 					<?php echo $this->infoimage; ?>
 				</small>
 			</div>
@@ -220,11 +220,11 @@ $options = array(
 				echo JEMHelper::buildtimeselect(59, 'startminutes', substr( $this->row->times, 3, 2 ));
 				?>
 				<?php if ( $this->jemsettings->showtime == 1 ) : ?>
-				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_TIME_HINT'); ?>">
+				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_TIME_HINT' ); ?>::<?php echo JText::_('COM_JEM_TIME_HINT'); ?>">
 					<?php echo $this->infoimage; ?>
 				</small>
 				<?php else : ?>
-				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_ENDTIME_HINT'); ?>">
+				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_ENDTIME_HINT' ); ?>::<?php echo JText::_('COM_JEM_ENDTIME_HINT'); ?>">
 					<?php echo $this->infoimage; ?>
 				</small>
 				<?php endif;?>
@@ -239,7 +239,7 @@ $options = array(
 				echo JEMHelper::buildtimeselect(23, 'endhours', substr( $this->row->endtimes, 0, 2 )).' : ';
 				echo JEMHelper::buildtimeselect(59, 'endminutes', substr( $this->row->endtimes, 3, 2 ));
 				?>
-				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_ENDTIME_HINT'); ?>">
+				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_ENDTIME_HINT' ); ?>::<?php echo JText::_('COM_JEM_ENDTIME_HINT'); ?>">
 					<?php echo $this->infoimage; ?>
 				</small>
 			</div>

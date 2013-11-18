@@ -97,7 +97,7 @@ class JEMViewEditvenue extends JViewLegacy
 		$limage = JEMImage::flyercreator($row->locimage, 'venue');
 
 		//Set the info image
-		$infoimage = JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
+		$infoimage = JHtml::_('image', 'com_jem/icon-16-hint.png',NULL,NULL,true);
 
 		// country list
 		$countries = array();
