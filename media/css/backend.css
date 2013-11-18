@@ -662,3 +662,8 @@ input#csvexport{
     height:20px;
     cursor:pointer;
 }
+
+.select_country
+{
+	max-width:210px;
+}
