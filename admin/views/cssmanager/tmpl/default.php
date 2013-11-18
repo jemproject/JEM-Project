@@ -17,8 +17,8 @@ $canDo	= JEMHelperBackend::getActions();
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=cssmanager'); ?>" method="post" name="adminForm" id="adminForm">
 	<div class="width-50 fltlft">
 		<fieldset class="adminform">
-			<legend><?php echo JText::_('COM_JEM_CSSMANAGER_DESCRIPTION');?></legend>
-			<?php //echo JHtml::_('templates.thumb', $this->template->element, $this->template->client_id); ?>
+			<legend><?php echo JText::_('COM_JEM_CSSMANAGER_DESCRIPTION_LEGEND');?></legend>
+			<?php echo JText::_('COM_JEM_CSSMANAGER_DESCRIPTION');?>
 		</fieldset>
 		<div class="clr"></div>
 	</div>

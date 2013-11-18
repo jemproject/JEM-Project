@@ -10,7 +10,6 @@
 defined('_JEXEC') or die;
 
 
-
 /**
  * View class Event
  *

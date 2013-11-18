@@ -19,10 +19,10 @@ $function = JRequest::getCmd('function', 'jSelectCategory');
 <table class="adminform">
 	<tr>
 		<td width="100%">
-			<?php echo JText::_( 'COM_JEM_SEARCH' ); ?>
+			<?php echo JText::_('COM_JEM_SEARCH'); ?>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button type="submit"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
-			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_( 'COM_JEM_RESET' ); ?></button>
+			<button type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
+			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('COM_JEM_RESET'); ?></button>
 			<button type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo JText::_('COM_JEM_SELECT_CATEGORY') ?>');"><?php echo JText::_('COM_JEM_NOCATEGORY')?></button>
 		</td>
 		<td nowrap="nowrap"><?php  echo $this->lists['state']; ?></td>
@@ -32,10 +32,10 @@ $function = JRequest::getCmd('function', 'jSelectCategory');
 <table class="table table-striped" id="articleList">
 	<thead>
 		<tr>
-			<th width="7" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th width="7" class="center"><?php echo JText::_('COM_JEM_NUM'); ?></th>
 			<th align="left" class="title"><?php echo JHtml::_('grid.sort','COM_JEM_CATEGORY','catname',$this->lists['order_Dir'],$this->lists['order'],'categoryelement'); ?></th>
-			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_ACCESS' ); ?></th>
-			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
+			<th width="1%" nowrap="nowrap"><?php echo JText::_('COM_JEM_ACCESS'); ?></th>
+			<th width="1%" nowrap="nowrap"><?php echo JText::_('COM_JEM_PUBLISHED'); ?></th>
 		</tr>
 	</thead>
 

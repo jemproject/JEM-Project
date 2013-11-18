@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -30,15 +30,15 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&task=attendee.selectuser&
 		var validator = document.formvalidator;
 
 		if (pressbutton == 'cancel') {
-			submitform( pressbutton );
+			submitform(pressbutton);
 			return;
 		}
 
-		if ( validator.validate(form.uid) === false ) {
-   			alert("<?php echo JText::_( 'COM_JEM_SELECT_AN_USER', true ); ?>");
+		if (validator.validate(form.uid) === false) {
+   			alert("<?php echo JText::_('COM_JEM_SELECT_AN_USER', true); ?>");
    			return false;
    		} else {
-			submitform( pressbutton );
+			submitform(pressbutton);
    		}
 
 	}
@@ -51,7 +51,7 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&task=attendee.selectuser&
 		<tr>
 			<td class="key" width="150">
 				<label for="uid">
-					<?php echo JText::_( 'COM_JEM_USER' ).':'; ?>
+					<?php echo JText::_('COM_JEM_USER').':'; ?>
 				</label>
 			</td>
 			<td>
@@ -78,16 +78,13 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&task=attendee.selectuser&
 	</fieldset>
 
 <?php
-echo JHtml::_( 'form.token' );
+echo JHtml::_('form.token');
 ?>
 <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
 <input type="hidden" name="event" value="<?php echo ($this->row->event ? $this->row->event : $this->event); ?>" />
 <input type="hidden" name="task" value="" />
 </form>
 
-<p class="copyright">
-	<?php echo JEMAdmin::footer( ); ?>
-</p>
 
 <?php
 //keep session alive while editing

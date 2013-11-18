@@ -161,6 +161,3 @@ $options = array(
 </table>
 
 </form>
-<p class="copyright">
-	<?php echo JEMAdmin::footer(); ?>
-</p>
