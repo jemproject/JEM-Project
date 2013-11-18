@@ -116,13 +116,11 @@ window.addEvent('domready', function(){
 				}
 
 				$ordering	= ($listOrder == 'ordering');
-				/*	$row->cat_link = JRoute::_('index.php?option=com_categories&extension=com_jem&task=edit&type=other&cid[]='. $row->catid);*/
 				$canCreate	= $user->authorise('core.create');
 				$canEdit	= $user->authorise('core.edit');
 				$canCheckin	= $user->authorise('core.manage', 'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
 				$canChange	= $user->authorise('core.edit.state') && $canCheckin;
 
-				$link 			= 'index.php?option=com_jem&amp;task=events.edit&amp;cid[]='.$row->id;
 				$venuelink 		= 'index.php?option=com_jem&amp;task=venue.edit&amp;id='.$row->locid;
 				$published 		= JHtml::_('jgrid.published', $row->published, $i, 'events.');
 			?>

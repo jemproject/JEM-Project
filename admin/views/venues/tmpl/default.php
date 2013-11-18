@@ -83,7 +83,6 @@ window.addEvent('domready', function() {
 		<?php foreach ($this->items as $i => $row) : ?>
 			<?php
 			$ordering	= ($listOrder == 'ordering');
-		/*	$row->cat_link = JRoute::_('index.php?option=com_categories&extension=com_jem&task=edit&type=other&cid[]='. $row->catid);*/
 			$canCreate	= $user->authorise('core.create');
 			$canEdit	= $user->authorise('core.edit');
 			$canCheckin	= $user->authorise('core.manage',		'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
@@ -169,9 +168,6 @@ window.addEvent('domready', function() {
 	</tbody>
 </table>
 
-<p class="copyright">
-	<?php echo JEMAdmin::footer( ); ?>
-</p>
 <div>
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="task" value="" />
