@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -26,6 +26,9 @@ class JEMViewUpdatecheck extends JViewLegacy {
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		
+		// Load script
+		JHtml::_('behavior.mootools');
 		
 		//assign data to template
 		$this->updatedata	= $updatedata;
