@@ -31,7 +31,7 @@ class JEMViewUpdatecheck extends JViewLegacy {
 		$this->updatedata	= $updatedata;
 
 		// add toolbar
-		$this->addToolbar(); 
+		$this->addToolbar();
 
 		parent::display($tpl);
 	}
@@ -46,7 +46,6 @@ class JEMViewUpdatecheck extends JViewLegacy {
 		JToolBarHelper::title(JText::_('COM_JEM_UPDATE_CHECK'), 'settings');
 		JToolBarHelper::back();
 		JToolBarHelper::help('update', true);
-
 	}
 
 }

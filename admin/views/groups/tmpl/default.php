@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -34,7 +34,7 @@ $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 			<tr>
 			<th width="5" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 			<th width="5" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-			<th width="30%" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_GROUP_NAME', 'name', $listDirn, $listOrder ); ?></th>
+			<th width="30%" class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_GROUP_NAME', 'name', $listDirn, $listOrder ); ?></th>
 			<th><?php echo JText::_( 'COM_JEM_DESCRIPTION' ); ?></th>
 			</tr>
 		</thead>

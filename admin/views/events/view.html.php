@@ -72,17 +72,17 @@ defined('_JEXEC') or die;
 		}
 
 		//add style to description of the tooltip (hastip)
-		JHTML::_('behavior.tooltip');
+		JHtml::_('behavior.tooltip');
 
 		// add filter selection for the search
 		$filters = array();
-		$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_EVENT_TITLE'));
-		$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_CITY'));
-		$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_STATE'));
-		$filters[] = JHTML::_('select.option', '4', JText::_('COM_JEM_COUNTRY'));
-		$filters[] = JHTML::_('select.option', '5', JText::_('COM_JEM_CATEGORY'));
-		$filters[] = JHTML::_('select.option', '6', JText::_('JALL'));
-		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $this->state->get('filter'));
+		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_EVENT_TITLE'));
+		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_CITY'));
+		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_STATE'));
+		$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_COUNTRY'));
+		$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_CATEGORY'));
+		$filters[] = JHtml::_('select.option', '6', JText::_('JALL'));
+		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $this->state->get('filter'));
 
 		//assign data to template
 		$this->lists		= $lists;

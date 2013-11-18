@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-JHTML::_('behavior.modal', 'a.usermodal');
+JHtml::_('behavior.modal', 'a.usermodal');
 
 $selectuser_link = JRoute::_('index.php?option=com_jem&task=attendee.selectuser&tmpl=component');
 ?>
@@ -78,7 +78,7 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&task=attendee.selectuser&
 	</fieldset>
 
 <?php
-echo JHTML::_( 'form.token' );
+echo JHtml::_( 'form.token' );
 ?>
 <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
 <input type="hidden" name="event" value="<?php echo ($this->row->event ? $this->row->event : $this->event); ?>" />
@@ -91,5 +91,5 @@ echo JHTML::_( 'form.token' );
 
 <?php
 //keep session alive while editing
-JHTML::_('behavior.keepalive');
+JHtml::_('behavior.keepalive');
 ?>

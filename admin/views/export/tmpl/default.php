@@ -42,14 +42,14 @@ defined('_JEXEC') or die;
 		<?php echo JText::_('COM_JEM_EXPORT_ADD_CATEGORYCOLUMN'); ?></label>
 		<?php
 				$categorycolumn = array();
-				$categorycolumn[] = JHTML::_('select.option', '0', JText::_( 'JNO' ) );
-				$categorycolumn[] = JHTML::_('select.option', '1', JText::_( 'JYES' ) );
-				$categorycolumn = JHTML::_('select.genericlist', $categorycolumn, 'categorycolumn', 'size="1" class="inputbox"', 'value', 'text', '1');
+				$categorycolumn[] = JHtml::_('select.option', '0', JText::_( 'JNO' ) );
+				$categorycolumn[] = JHtml::_('select.option', '1', JText::_( 'JYES' ) );
+				$categorycolumn = JHtml::_('select.genericlist', $categorycolumn, 'categorycolumn', 'size="1" class="inputbox"', 'value', 'text', '1');
 				echo $categorycolumn;?></li>
 		<li><label for="dates"><?php echo JText::_( 'COM_JEM_DATE' ).':'; ?></label>
-		<?php echo JHTML::_('calendar', date("Y-m-d"), 'dates', 'dates', '%Y-%m-%d', array('class' => 'inputbox validate-date')); ?></li>
+		<?php echo JHtml::_('calendar', date("Y-m-d"), 'dates', 'dates', '%Y-%m-%d', array('class' => 'inputbox validate-date')); ?></li>
 		<li><label for="enddates"><?php echo JText::_( 'COM_JEM_ENDDATE' ).':'; ?></label>
-		<?php echo JHTML::_('calendar', date("Y-m-d"), 'enddates', 'enddates', '%Y-%m-%d', array('class' => 'inputbox validate-date')); ?></li>
+		<?php echo JHtml::_('calendar', date("Y-m-d"), 'enddates', 'enddates', '%Y-%m-%d', array('class' => 'inputbox validate-date')); ?></li>
 		
 		<li><label for="cid"><?php echo JText::_( 'COM_JEM_CATEGORY' ).':'; ?></label>
 		<?php echo $this->categories; ?>

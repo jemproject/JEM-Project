@@ -121,7 +121,7 @@ defined('_JEXEC') or die;
 	<span id="upload-clear"></span><br /><br/>
 	
 	<label for="replace_events"><?php echo JText::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label>
-	<?php echo JHTML::_('select.booleanlist', 'replace_events', 'class="inputbox"', 0); ?>
+	<?php echo JHtml::_('select.booleanlist', 'replace_events', 'class="inputbox"', 0); ?>
 	</fieldset>
 	
 	
@@ -141,7 +141,7 @@ defined('_JEXEC') or die;
 	<span id="upload-clear"></span><br /><br/>
 	
 	<label for="replace_catevents"><?php echo JText::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label>
-	<?php echo JHTML::_('select.booleanlist', 'replace_catevents', 'class="inputbox"', 0); ?>
+	<?php echo JHtml::_('select.booleanlist', 'replace_catevents', 'class="inputbox"', 0); ?>
 	</fieldset>
 	
 	<div class="clr"></div>
@@ -165,7 +165,7 @@ defined('_JEXEC') or die;
 	<span id="upload-clear"></span><br /><br/>
 	
 	<label for="replace_venues"><?php echo JText::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label>
-	<?php echo JHTML::_('select.booleanlist', 'replace_venues', 'class="inputbox"', 0); ?>
+	<?php echo JHtml::_('select.booleanlist', 'replace_venues', 'class="inputbox"', 0); ?>
 	</fieldset>
 
 	<fieldset class="adminform">
@@ -184,7 +184,7 @@ defined('_JEXEC') or die;
 	<span id="upload-clear"></span><br /><br/>
 	
 	<label for="replace_categories"><?php echo JText::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label>
-	<?php echo JHTML::_('select.booleanlist', 'replace_categories', 'class="inputbox"', 0); ?>
+	<?php echo JHtml::_('select.booleanlist', 'replace_categories', 'class="inputbox"', 0); ?>
 	</fieldset>
 	
 	<div class="clr"></div>

@@ -47,7 +47,7 @@ $options = array(
 						|
 						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/credits.html'; ?>" target='helpFrame'><?php echo JText::_( 'COM_JEM_CREDITS' ); ?></a>
 						|
-						<?php echo JHTML::_('link', 'http://www.gnu.org/licenses/gpl-2.0.html', JText::_( 'COM_JEM_LICENSE' ), array('target' => 'helpFrame')) ?>
+						<?php echo JHtml::_('link', 'http://www.gnu.org/licenses/gpl-2.0.html', JText::_( 'COM_JEM_LICENSE' ), array('target' => 'helpFrame')) ?>
 					</td>
 				</tr>
 			</table>
@@ -63,7 +63,7 @@ $options = array(
 				foreach ($this->toc as $k=>$v) {
 					echo '<tr>';
 					echo '<td>';
-					echo JHTML::Link('components/com_jem/help/'.$this->langTag.'/'.$k, $v, array('target' => 'helpFrame'));
+					echo JHtml::Link('components/com_jem/help/'.$this->langTag.'/'.$k, $v, array('target' => 'helpFrame'));
 					echo '</td>';
 					echo '</tr>';
 				}
@@ -87,5 +87,5 @@ $options = array(
 
 <?php
 //keep session alive
-JHTML::_('behavior.keepalive');
+JHtml::_('behavior.keepalive');
 ?>

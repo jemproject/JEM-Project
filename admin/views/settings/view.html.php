@@ -56,10 +56,10 @@ class JEMViewSettings extends JViewLegacy {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
-		JHTML::_('behavior.modal', 'a.modal');
-		JHTML::_('behavior.tooltip');
-		JHTML::_('behavior.formvalidation');
-		JHTML::_('behavior.framework');
+		JHtml::_('behavior.modal', 'a.modal');
+		JHtml::_('behavior.tooltip');
+		JHtml::_('behavior.formvalidation');
+		JHtml::_('behavior.framework');
 
 		$app = JFactory::getApplication();
 

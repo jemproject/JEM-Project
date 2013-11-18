@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 ?>
+<form name="adminForm" method="post" id="adminForm">
+
 <table style="width:100%">
 	<tr>
 		<!-- CLEAN EVENT IMG -->
@@ -93,3 +95,4 @@ defined('_JEXEC') or die;
 		</td>
 	</tr>
 </table>
+</form>

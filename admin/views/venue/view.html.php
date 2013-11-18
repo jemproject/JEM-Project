@@ -37,9 +37,9 @@ class JEMViewVenue extends JViewLegacy {
 		}
 
 		JHtml::_('behavior.framework');
-		JHTML::_('behavior.modal', 'a.modal');
-		JHTML::_('behavior.tooltip');
-		JHTML::_('behavior.formvalidation');
+		JHtml::_('behavior.modal', 'a.modal');
+		JHtml::_('behavior.tooltip');
+		JHtml::_('behavior.formvalidation');
 
 		//initialise variables
 		$document	= JFactory::getDocument();

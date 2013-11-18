@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 
 JHtml::_('behavior.tooltip');
 JHtml::_('behavior.formvalidation');
-JHTML::_('behavior.keepalive');
+JHtml::_('behavior.keepalive');
 
 // Create shortcut to parameters.
 $params = $this->state->get('params');
@@ -373,7 +373,7 @@ function test()
 
 
 				<!--  END RIGHT DIV -->
-				<?php echo JHTML::_( 'form.token' ); ?>
+				<?php echo JHtml::_( 'form.token' ); ?>
 				</div>
 
 

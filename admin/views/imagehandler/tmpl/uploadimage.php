@@ -141,7 +141,7 @@ defined('_JEXEC') or die;
 
 <?php } ?>
 
-<?php echo JHTML::_('form.token'); ?>
+<?php echo JHtml::_('form.token'); ?>
 <input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="task" value="<?php echo $this->task;?>" />
 </form>

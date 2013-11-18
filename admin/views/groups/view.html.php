@@ -42,7 +42,7 @@ defined('_JEXEC') or die;
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		// add style to description of the tooltip (hastip)
-		JHTML::_('behavior.tooltip');
+		JHtml::_('behavior.tooltip');
 
 		// assign data to template
 		$this->user			= $user;

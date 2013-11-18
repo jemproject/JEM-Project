@@ -30,11 +30,11 @@ defined('_JEXEC') or die;
 	<thead>
 		<tr>
 			<th class="center" width="5"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
-			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
-			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_START', 'a.times', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
-			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
-			<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
+			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
+			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
+			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_START', 'a.times', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
+			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
+			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo JText::_('COM_JEM_CATEGORY'); ?></th>
 		    <th class="center" width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 		</tr>
@@ -119,8 +119,10 @@ defined('_JEXEC') or die;
 				endforeach;
 				?></td>
 			<td class="center">
-				<?php $img = $row->published ? 'tick.png' : 'publish_x.png'; ?>
-				<img src="../media/com_jem/images/<?php echo $img;?>" width="16" height="16" border="0" alt="" />
+				<?php 
+				$img = $row->published ? 'tick.png' : 'publish_x.png';
+				echo JHtml::_('image','com_jem/'.$img,NULL,NULL,true); 
+				?>
 			</td>
 		</tr>
 			<?php endforeach; ?>

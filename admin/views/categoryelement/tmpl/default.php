@@ -5,6 +5,8 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * 
+ * @todo change "ALT" of publish/unpublish to text-strings
  */
 
 defined('_JEXEC') or die;
@@ -31,7 +33,7 @@ $function = JRequest::getCmd('function', 'jSelectCategory');
 	<thead>
 		<tr>
 			<th width="7" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_CATEGORY', 'catname', $this->lists['order_Dir'], $this->lists['order'], 'categoryelement' ); ?></th>
+			<th align="left" class="title"><?php echo JHtml::_('grid.sort','COM_JEM_CATEGORY','catname',$this->lists['order_Dir'],$this->lists['order'],'categoryelement'); ?></th>
 			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_ACCESS' ); ?></th>
 			<th width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 		</tr>
@@ -61,8 +63,8 @@ $function = JRequest::getCmd('function', 'jSelectCategory');
 				<?php
 				$img = $row->published ? 'tick.png' : 'publish_x.png';
 				$alt = $row->published ? 'Published' : 'Unpublished';
+				echo JHtml::_('image','com_jem/'.$img,$alt,NULL,true); 
 				?>
-				<img src="../media/com_jem/images/<?php echo $img;?>" width="16" height="16" border="0" alt="<?php echo $alt;?>" />
 			</td>
 		</tr>
 		<?php endforeach; ?>

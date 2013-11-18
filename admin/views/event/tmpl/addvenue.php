@@ -1,10 +1,12 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * 
+ * @todo add/change/remove this code
  */
 
 defined('_JEXEC') or die;
@@ -41,7 +43,7 @@ defined('_JEXEC') or die;
 
 <?php
 //Set the info image
-$infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', JText::_( 'COM_JEM_NOTES' ) );
+$infoimage = JHtml::_('image', 'com_jem/icon-16-hint.png', NULL, NULL, true);
 ?>
 
 <form action="<?php echo $this->request_url; ?>" method="post" name="adminForm" id="adminForm">
@@ -103,7 +105,7 @@ $infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', 
     		<td><?php echo JText::_( 'COM_JEM_WEBSITE' ).':'; ?></td>
     		<td>
     			<input name="url" value="" size="55" maxlength="50" />&nbsp;
-    			<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_NOTES'); ?>::<?php echo JText::_( 'COM_JEM_WEBSITE_HINT' ); ?>">
+    			<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_WEBSITE_HINT'); ?>::<?php echo JText::_( 'COM_JEM_WEBSITE_HINT' ); ?>">
 					<?php echo $infoimage; ?>
 				</span>
     		</td>
@@ -117,10 +119,10 @@ $infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', 
 			</td>
 			<td>
 				<?php
-          			echo JHTML::_('select.booleanlist', 'map', 'class="inputbox"', 0 );
+          			echo JHtml::_('select.booleanlist', 'map', 'class="inputbox"', 0 );
           		?>
           		&nbsp;
-          		<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_ADDRESS_NOTICE'); ?>">
+          		<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_ADDRESS_NOTICE'); ?>::<?php echo JText::_('COM_JEM_ADDRESS_NOTICE'); ?>">
 					<?php echo $infoimage; ?>
 				</span>
 			</td>
@@ -133,7 +135,7 @@ $infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', 
       </td>
       <td>
         <input class="inputbox" name="latitude" id="latitude" value="" size="14" maxlength="25" />
-              <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_LATITUDE_HINT'); ?>">
+              <span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_LATITUDE_HINT'); ?>::<?php echo JText::_('COM_JEM_LATITUDE_HINT'); ?>">
           <?php echo $infoimage; ?>
         </span>
       </td>
@@ -146,7 +148,7 @@ $infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', 
       </td>
       <td>
         <input class="inputbox" name="longitude" id="longitude" value="" size="14" maxlength="25" />
-              <span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_LONGITUDE_HINT'); ?>">
+              <span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_LONGITUDE_HINT'); ?>::<?php echo JText::_('COM_JEM_LONGITUDE_HINT'); ?>">
           <?php echo $infoimage; ?>
         </span>
       </td>
@@ -168,7 +170,7 @@ $infoimage = JHTML::image(JURI::root().'media/com_jem/images/icon-16-hint.png', 
 		</td>
 		<td>
 			<?php
-			$html = JHTML::_('select.booleanlist', 'published', 'class="inputbox"', $this->published );
+			$html = JHtml::_('select.booleanlist', 'published', 'class="inputbox"', $this->published );
 			echo $html;
 			?>
 		</td>
@@ -238,7 +240,7 @@ if ( $this->jemsettings->showmapserv == 0 ) { ?>
 <?php
 }
 ?>
-<?php echo JHTML::_( 'form.token' ); ?>
+<?php echo JHtml::_('form.token'); ?>
 <input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="id" value="" />
 <input type="hidden" name="task" value="" />

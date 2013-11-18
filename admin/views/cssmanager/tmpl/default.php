@@ -51,5 +51,5 @@ $canDo	= JEMHelperBackend::getActions();
 
 <?php
 //keep session alive while editing
-JHTML::_('behavior.keepalive');
+JHtml::_('behavior.keepalive');
 ?>

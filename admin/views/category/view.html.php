@@ -50,10 +50,10 @@ class JEMViewCategory extends JViewLegacy
 		$groups 	= $this->get('Groups');
 
 		$grouplist		= array();
-		$grouplist[] 	= JHTML::_('select.option', '0', JText::_('COM_JEM_CATEGORY_NO_GROUP'));
+		$grouplist[] 	= JHtml::_('select.option', '0', JText::_('COM_JEM_CATEGORY_NO_GROUP'));
 		$grouplist 		= array_merge($grouplist, $groups);
 
-		$Lists['groups']	= JHTML::_('select.genericlist', $grouplist, 'groupid', 'size="1" class="inputbox"', 'value', 'text', $this->item->groupid);
+		$Lists['groups']	= JHtml::_('select.genericlist', $grouplist, 'groupid', 'size="1" class="inputbox"', 'value', 'text', $this->item->groupid);
 		$this->Lists 		= $Lists;
 
 

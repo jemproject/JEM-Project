@@ -61,7 +61,7 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 				<th width="5%" nowrap="nowrap">
 					<?php echo JText::_( 'COM_JEM_COLOR' ); ?>
 				</th>
-				<th width="15%"><?php echo JHTML::_('grid.sort', 'COM_JEM_GROUP', 'gr.name', $listDirn, $listOrder ); ?></th>
+				<th width="15%"><?php echo JHtml::_('grid.sort', 'COM_JEM_GROUP', 'gr.name', $listDirn, $listOrder ); ?></th>
 				<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_EVENTS' ); ?></th>
 				<th width="5%">
 					<?php echo JHtml::_('grid.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>

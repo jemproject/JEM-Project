@@ -25,7 +25,7 @@ class JEMViewAttendee extends JViewLegacy {
 		$document	= JFactory::getDocument();
 
 		// Load the form validation behavior
-		JHTML::_('behavior.formvalidation');
+		JHtml::_('behavior.formvalidation');
 
 		//get vars
 		$event_id = JRequest::getInt('id');
@@ -38,7 +38,7 @@ class JEMViewAttendee extends JViewLegacy {
 
 		//build selectlists
 		$lists = array();
-		$lists['users'] = JHTML::_('list.users', 'uid', $row->uid, false, NULL, 'name', 0);
+		$lists['users'] = JHtml::_('list.users', 'uid', $row->uid, false, NULL, 'name', 0);
 
 		//assign data to template
 		$this->lists 	= $lists;

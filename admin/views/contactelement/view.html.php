@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -26,8 +26,8 @@ class JEMViewContactelement extends JViewLegacy {
 		$db			= JFactory::getDBO();
 		$document	= JFactory::getDocument();
 
-		JHTML::_('behavior.tooltip');
-		JHTML::_('behavior.modal');
+		JHtml::_('behavior.tooltip');
+		JHtml::_('behavior.modal');
 
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest('com_jem.contactelement.filter_order', 'filter_order', 'con.name', 'cmd');
@@ -48,7 +48,7 @@ class JEMViewContactelement extends JViewLegacy {
 		$pagination = $this->get('Pagination');
 
 		//publish unpublished filter
-		$lists['state'] = JHTML::_('grid.state', $filter_state);
+		$lists['state'] = JHtml::_('grid.state', $filter_state);
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
@@ -56,11 +56,11 @@ class JEMViewContactelement extends JViewLegacy {
 
 		//Build search filter
 		$filters = array();
-		$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_NAME'));
-		$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_ADDRESS'));
-		$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_CITY'));
-		$filters[] = JHTML::_('select.option', '4', JText::_('COM_JEM_STATE'));
-		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
+		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME'));
+		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_ADDRESS'));
+		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_CITY'));
+		$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_STATE'));
+		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
 
 		// search filter
 		$lists['search']= $search;

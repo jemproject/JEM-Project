@@ -76,18 +76,18 @@ window.addEvent('domready', function(){
 			<tr>
 				<th width="1%" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 				<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-				<th class="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $listDirn, $listOrder ); ?></th>
-				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TIME', 'a.times', $listDirn, $listOrder ); ?></th>
-				<th class="nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $listDirn, $listOrder ); ?></th>
-				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $listDirn, $listOrder ); ?></th>
-				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $listDirn, $listOrder ); ?></th>
-				<th><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'loc.state', $listDirn, $listOrder ); ?></th>
+				<th class="nowrap"><?php echo JHtml::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $listDirn, $listOrder ); ?></th>
+				<th><?php echo JHtml::_('grid.sort', 'COM_JEM_EVENT_TIME', 'a.times', $listDirn, $listOrder ); ?></th>
+				<th class="nowrap"><?php echo JHtml::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $listDirn, $listOrder ); ?></th>
+				<th><?php echo JHtml::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $listDirn, $listOrder ); ?></th>
+				<th><?php echo JHtml::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $listDirn, $listOrder ); ?></th>
+				<th><?php echo JHtml::_('grid.sort', 'COM_JEM_STATE', 'loc.state', $listDirn, $listOrder ); ?></th>
 				<th><?php echo JText::_( 'COM_JEM_CATEGORIES' ); ?></th>
 				<th width="1%" class="center nowrap"><?php echo JText::_( 'JSTATUS' ); ?></th>
 				<th class="nowrap"><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
-				<th class="center"><?php echo JHTML::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $listDirn, $listOrder ); ?></th>
+				<th class="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $listDirn, $listOrder ); ?></th>
 				<th width="1%" class="center nowrap"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ); ?></th>
-				<th width="1%" class="center nowrap"><?php echo JHTML::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?></th>
+				<th width="1%" class="center nowrap"><?php echo JHtml::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?></th>
 			</tr>
 		</thead>
 
@@ -124,7 +124,7 @@ window.addEvent('domready', function(){
 
 				$link 			= 'index.php?option=com_jem&amp;task=events.edit&amp;cid[]='.$row->id;
 				$venuelink 		= 'index.php?option=com_jem&amp;task=venue.edit&amp;id='.$row->locid;
-				$published 		= JHTML::_('jgrid.published', $row->published, $i, 'events.');
+				$published 		= JHtml::_('jgrid.published', $row->published, $i, 'events.');
 			?>
 			<tr class="row<?php echo $i % 2; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
@@ -215,10 +215,10 @@ window.addEvent('domready', function(){
 					<?php echo JText::_( 'COM_JEM_AUTHOR' ).': '; ?><a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>"><?php echo $row->author; ?></a><br />
 					<?php echo JText::_( 'COM_JEM_EMAIL' ).': '; ?><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a><br />
 					<?php
-					$created	 	= JHTML::Date( $row->created, JText::_( 'DATE_FORMAT_LC2' ) );
-					$edited 		= JHTML::Date( $row->modified, JText::_( 'DATE_FORMAT_LC2' ) );
+					$created	 	= JHtml::_('date',$row->created,JText::_('DATE_FORMAT_LC2'));
+					$edited 		= JHtml::_('date',$row->modified,JText::_('DATE_FORMAT_LC2') );
 					$ip				= $row->author_ip == 'COM_JEM_DISABLED' ? JText::_( 'COM_JEM_DISABLED' ) : $row->author_ip;
-					$image 			= JHTML::image('media/com_jem/images/icon-16-info.png', JText::_('COM_JEM_NOTES') );
+					$image 			= JHtml::_('image','com_jem/icon-16-info.png',NULL,NULL,true );
 					$overlib 		= JText::_( 'COM_JEM_CREATED_AT' ).': '.$created.'<br />';
 					$overlib		.= JText::_( 'COM_JEM_WITH_IP' ).': '.$ip.'<br />';
 					if ($row->modified != '0000-00-00 00:00:00') {
@@ -249,7 +249,7 @@ window.addEvent('domready', function(){
 							<?php echo $count; ?>
 						</a>
 					<?php } else { ?>
-						<?php echo JHtml::_('image', 'com_jem/publish_r.png', JText::_('COM_JEM_NOTES'), NULL, true); ?>
+						<?php echo JHtml::_('image', 'com_jem/publish_r.png', NULL, NULL, true); ?>
 					<?php } ?>
 				</td>
 				<td class="center"><?php echo $row->id; ?></td>

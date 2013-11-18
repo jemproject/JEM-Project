@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -36,9 +36,9 @@ class JEMViewEvent extends JViewLegacy {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
-		JHTML::_('behavior.modal', 'a.modal');
-		JHTML::_('behavior.tooltip');
-		JHTML::_('behavior.formvalidation');
+		JHtml::_('behavior.modal', 'a.modal');
+		JHtml::_('behavior.tooltip');
+		JHtml::_('behavior.formvalidation');
 
 		//initialise variables
 		$jemsettings = JEMHelper::config();
@@ -58,7 +58,7 @@ class JEMViewEvent extends JViewLegacy {
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 		
 		// Load scripts
-		$document->addScript(JURI::root().'media/com_jem/js/attachments.js');
+		$document->addScript($url.'media/com_jem/js/attachments.js');
 		$document->addScript($url.'media/com_jem/js/recurrence.js');
 		$document->addScript($url.'media/com_jem/js/unlimited.js');
 		$document->addScript($url.'media/com_jem/js/seo.js');

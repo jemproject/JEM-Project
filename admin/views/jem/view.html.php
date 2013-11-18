@@ -79,7 +79,7 @@ class JEMViewJEM extends JViewLegacy {
 		<div style="float:<?php echo ($lang->isRTL()) ? 'right' : 'left'; ?>;">
 			<div class="icon">
 				<?php if ($modal == 1) : ?>
-					<?php JHTML::_('behavior.modal'); ?>
+					<?php JHtml::_('behavior.modal'); ?>
 					<a href="<?php echo $link.'&amp;tmpl=component'; ?>" style="cursor:pointer" class="modal"
 							rel="{handler: 'iframe', size: {x: 650, y: 400}}">
 						<?php echo JHtml::_('image', 'com_jem/'.$image, $text, NULL, true); ?>

@@ -34,10 +34,10 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 	<thead>
 		<tr>
 			<th width="7" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_ADDRESS', 'con.address', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'con.suburb', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-			<th align="left" class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'con.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th align="left" class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th align="left" class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_ADDRESS', 'con.address', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th align="left" class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_CITY', 'con.suburb', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+			<th align="left" class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATE', 'con.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th align="left" class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
 			<th align="left" class="title"><?php echo JText::_( 'COM_JEM_TELEPHONE' ); ?></th>
 			<th class="title center"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
@@ -67,8 +67,8 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 			<td align="left"><?php echo htmlspecialchars($row->email_to, ENT_QUOTES, 'UTF-8'); ?></td>
 			<td align="left"><?php echo htmlspecialchars($row->telephone, ENT_QUOTES, 'UTF-8'); ?></td>
 			<td class="center">
-				<?php $img = $row->published ? 'tick.png' : 'publish_x.png'; ?>
-				<img src="../media/com_jem/images/<?php echo $img;?>" width="16" height="16" border="0" alt="" />
+				<?php $img = $row->published ? 'tick.png' : 'publish_x.png'; 
+				echo JHtml::_('image','com_jem/'.$img, NULL, NULL, true); ?>
 			</td>
 		</tr>
 

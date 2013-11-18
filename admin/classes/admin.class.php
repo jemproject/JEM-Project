@@ -46,16 +46,16 @@ class JEMAdmin {
 	static function buildtimeselect($max, $name, $selected, $class = 'class="inputbox"')
 	{
 		$timelist = array();
-		$timelist[0] = JHTML::_('select.option', '', '');
+		$timelist[0] = JHtml::_('select.option', '', '');
 
 		foreach(range(0, $max) as $value) {
 			if($value >= 10) {
-				$timelist[] = JHTML::_('select.option', $value, $value);
+				$timelist[] = JHtml::_('select.option', $value, $value);
 			} else {
-				$timelist[] = JHTML::_('select.option', '0'.$value, '0'.$value);
+				$timelist[] = JHtml::_('select.option', '0'.$value, '0'.$value);
 			}
 		}
-		return JHTML::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
+		return JHtml::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
 	}
 }
 

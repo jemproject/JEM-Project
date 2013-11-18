@@ -52,7 +52,7 @@ defined('_JEXEC') or die; ?>
 				<td><?php echo $row->username; ?></td>
 				<td><?php echo $row->email; ?></td>
 				<td><?php echo $row->uip; ?></td>
-				<td><?php echo JHTML::Date( $row->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ); ?></td>
+				<td><?php echo JHtml::_('date',$row->uregdate,JText::_('DATE_FORMAT_LC2')); ?></td>
 				<td class="center"><?php echo $row->uid; ?></td>
 			</tr>
 			<?php $k = 1 - $k;  } ?>

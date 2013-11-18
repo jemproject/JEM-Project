@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -123,7 +123,7 @@ defined('_JEXEC') or die;
 						</td>
 						<td>
 						<?php 
-				echo JHTML::_('select.booleanlist', 'addvenue', 'class="inputbox"', $this->row->addvenue, 'JYES', 'JNO' );
+				echo JHtml::_('select.booleanlist', 'addvenue', 'class="inputbox"', $this->row->addvenue, 'JYES', 'JNO' );
 						?>
 						</td>
 					</tr>
@@ -133,7 +133,7 @@ defined('_JEXEC') or die;
 						</td>
 						<td>
 						<?php 
-				echo JHTML::_('select.booleanlist', 'publishvenue', 'class="inputbox"', $this->row->publishvenue, 'JYES', 'JNO' );
+				echo JHtml::_('select.booleanlist', 'publishvenue', 'class="inputbox"', $this->row->publishvenue, 'JYES', 'JNO' );
 						?>
 						</td>
 					</tr>
@@ -143,7 +143,7 @@ defined('_JEXEC') or die;
 						</td>
 						<td>
 						<?php 
-				echo JHTML::_('select.booleanlist', 'editvenue', 'class="inputbox"', $this->row->editvenue, 'JYES', 'JNO' );
+				echo JHtml::_('select.booleanlist', 'editvenue', 'class="inputbox"', $this->row->editvenue, 'JYES', 'JNO' );
 						?>
 						</td>
 					</tr>
@@ -157,7 +157,7 @@ defined('_JEXEC') or die;
 	</tr>
 </table>
 
-<?php echo JHTML::_( 'form.token' ); ?>
+<?php echo JHtml::_( 'form.token' ); ?>
 <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
 <input type="hidden" name="task" value="" />
 </form>
@@ -168,5 +168,5 @@ defined('_JEXEC') or die;
 
 <?php
 //keep session alive while editing
-JHTML::_('behavior.keepalive');
+JHtml::_('behavior.keepalive');
 ?>

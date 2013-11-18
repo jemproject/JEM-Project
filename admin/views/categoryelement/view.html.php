@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -26,8 +26,8 @@ class JEMViewCategoryelement extends JViewLegacy {
 		$db			= JFactory::getDBO();
 		$app 		= JFactory::getApplication();
 
-		JHTML::_('behavior.tooltip');
-		JHTML::_('behavior.modal');
+		JHtml::_('behavior.tooltip');
+		JHtml::_('behavior.modal');
 
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest('com_jem.categoryelement.filter_order', 'filter_order', 'c.ordering', 'cmd');
@@ -47,7 +47,7 @@ class JEMViewCategoryelement extends JViewLegacy {
 		$pagination = $this->get('Pagination');
 
 		//publish unpublished filter
-		$lists['state'] = JHTML::_('grid.state', $filter_state);
+		$lists['state'] = JHtml::_('grid.state', $filter_state);
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
