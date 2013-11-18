@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -184,7 +184,7 @@ window.addEvent('domready', function(){
 						echo ', ';
 					endif;
 
-					$catlink = 'index.php?option=com_jem&amp;task=categories.edit&amp;cid[]='. $category->id;
+					$catlink = 'index.php?option=com_jem&amp;task=category.edit&amp;id='. $category->id;
 					$title = htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8');
 					if (JString::strlen($title) > 20) {
 						$title = JString::substr( $title , 0 , 20).'...';
