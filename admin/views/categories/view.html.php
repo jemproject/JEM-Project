@@ -113,6 +113,6 @@ class JEMViewCategories extends JViewLegacy
 			JToolBarHelper::custom('categories.rebuild', 'refresh.png', 'refresh_f2.png', 'JTOOLBAR_REBUILD', false);
 			JToolBarHelper::divider();
 		}
-
+		JToolBarHelper::help('listcategories', true);
 	}
 }

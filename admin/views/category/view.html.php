@@ -111,7 +111,7 @@ class JEMViewCategory extends JViewLegacy
 		else {
 			JToolBarHelper::cancel('category.cancel', 'JTOOLBAR_CLOSE');
 		}
-
 		JToolBarHelper::divider();
+		JToolBarHelper::help('editcategories', true);
 	}
 }
