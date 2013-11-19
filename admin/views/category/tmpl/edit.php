@@ -86,11 +86,22 @@ JHtml::_('behavior.keepalive');
 						</td>
 					</tr>
 				</table>
+				
+		<!-- START OF PANEL IMAGE -->
+		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_IMAGE'), 'category-image'); ?>
 
-			<?php echo JHtml::_('sliders.panel', JText::_('JGLOBAL_FIELDSET_METADATA_OPTIONS'), 'meta-options'); ?>
-			<fieldset class="panelform">
-				<?php echo $this->loadTemplate('metadata'); ?>
-			</fieldset>
+		<fieldset class="panelform">
+			<ul class="adminformlist">
+				<li><?php echo $this->form->getLabel('image'); ?> <?php echo $this->form->getInput('image'); ?>
+				</li>
+			</ul>
+		</fieldset>
+				
+
+		<?php echo JHtml::_('sliders.panel', JText::_('JGLOBAL_FIELDSET_METADATA_OPTIONS'), 'meta-options'); ?>
+		<fieldset class="panelform">
+			<?php echo $this->loadTemplate('metadata'); ?>
+		</fieldset>
 
 		<?php  $fieldSets = $this->form->getFieldsets('attribs'); ?>
 		<?php foreach ($fieldSets as $name => $fieldSet) : ?>
