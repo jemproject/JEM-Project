@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -39,7 +39,7 @@ class JFormFieldImageselectevent extends JFormFieldList
 
 		// Build the script.
 		$script = array();
-		$script[] = '	function elSelectImage(image, imagename) {';
+		$script[] = '	function SelectImage(image, imagename) {';
 		$script[] = '		document.getElementById(\'a_image\').value = image';
 		$script[] = '		document.getElementById(\'a_imagename\').value = imagename';
 		$script[] = '		document.getElementById(\'imagelib\').src = \'../images/jem/events/\' + image';
@@ -61,7 +61,7 @@ class JFormFieldImageselectevent extends JFormFieldList
 
 		$html[] = "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_UPLOAD')."\" href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_UPLOAD')."</a></div></div>\n";
 		$html[] = "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_SELECTIMAGE')."\" href=\"$link2\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_SELECTIMAGE')."</a></div></div>\n";
-		$html[] = "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"elSelectImage('', '".JText::_('COM_JEM_SELECTIMAGE')."');\" value=\"".JText::_('COM_JEM_RESET')."\" />";
+		$html[] = "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"SelectImage('', '".JText::_('COM_JEM_SELECTIMAGE')."');\" value=\"".JText::_('COM_JEM_RESET')."\" />";
 
 		$html[] = "\n<input type=\"hidden\" id=\"a_image\" name=\"$this->name\" value=\"$this->value\" />";
 
