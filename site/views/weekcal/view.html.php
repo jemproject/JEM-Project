@@ -29,7 +29,7 @@ class JEMViewWeekcal extends JViewLegacy
 		$app = JFactory::getApplication();
 
 		// Load tooltips behavior
-		JHTML::_('behavior.tooltip');
+		JHtml::_('behavior.tooltip');
 
 		//initialize variables
 		//$document 	= JFactory::getDocument();

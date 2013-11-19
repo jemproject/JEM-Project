@@ -67,21 +67,21 @@ class JEMViewMyvenues extends JViewLegacy
 		$filters = array();
 
 		//if ($jemsettings->showtitle == 1) {
-		//	$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_TITLE'));
+		//	$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_TITLE'));
 		//}
 		if ($jemsettings->showlocate == 1) {
-			$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_VENUE'));
+			$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_VENUE'));
 		}
 		if ($jemsettings->showcity == 1) {
-			$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_CITY'));
+			$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_CITY'));
 		}
 		//if ($jemsettings->showcat == 1) {
-		//	$filters[] = JHTML::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
+		//	$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
 		//}
 		if ($jemsettings->showstate == 1) {
-			$filters[] = JHTML::_('select.option', '5', JText::_('COM_JEM_STATE'));
+			$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
 		}
-		$lists['filter'] = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
+		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
 
 		// search filter
 		$lists['search']= $search;
