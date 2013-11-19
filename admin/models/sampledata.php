@@ -279,6 +279,14 @@ class JEMModelSampledata extends JModelLegacy
 				' WHERE created_by = 62'
 			);
 		$db->query();
+		
+		$query = $db->getQuery(true);
+		$db->setQuery(
+				'UPDATE #__jem_venues' .
+				' SET created_by = '.(int) $result.
+				' WHERE created_by = 62'
+		);
+		$db->query();
 
 		return true;
 	}
