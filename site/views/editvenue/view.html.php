@@ -51,8 +51,8 @@ class JEMViewEditvenue extends JViewLegacy
 		JFilterOutput::objectHTMLSafe( $row, ENT_QUOTES, 'locdescription' );
 
 		JHtml::_('behavior.framework');
-		JHTML::_('behavior.formvalidation');
-		JHTML::_('behavior.tooltip');
+		JHtml::_('behavior.formvalidation');
+		JHtml::_('behavior.tooltip');
 
 		//add css file
 		$doc->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
@@ -101,10 +101,10 @@ class JEMViewEditvenue extends JViewLegacy
 
 		// country list
 		$countries = array();
-		$countries[] = JHTML::_('select.option', '', JText::_('COM_JEM_SELECT_COUNTRY'));
+		$countries[] = JHtml::_('select.option', '', JText::_('COM_JEM_SELECT_COUNTRY'));
 		$countries = array_merge($countries, JEMHelper::getCountryOptions());
 		$selectedCountry = ($row->id) ? $row->country : $jemsettings->defaultCountry;
-		$lists['countries'] = JHTML::_('select.genericlist', $countries, 'country', 'class="inputbox"', 'value', 'text', $selectedCountry);
+		$lists['countries'] = JHtml::_('select.genericlist', $countries, 'country', 'class="inputbox"', 'value', 'text', $selectedCountry);
 		unset($countries);
 
 		$this->row				= $row;

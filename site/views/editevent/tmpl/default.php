@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -194,7 +194,7 @@ $options = array(
 				<label for="dates">
 					<?php echo JText::_( 'COM_JEM_DATE' ).':'; ?>
 				</label>
-				<?php echo JHTML::_('calendar', $this->row->dates, 'dates', 'dates', '%Y-%m-%d', array('class' => 'inputbox required validate-date')); ?>
+				<?php echo JHtml::_('calendar', $this->row->dates, 'dates', 'dates', '%Y-%m-%d', array('class' => 'inputbox required validate-date')); ?>
 				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_DATE_HINT' ); ?>::<?php echo JText::_('COM_JEM_DATE_HINT'); ?>">
 					<?php echo $this->infoimage; ?>
 				</small>
@@ -204,7 +204,7 @@ $options = array(
 				<label for="enddates">
 					<?php echo JText::_( 'COM_JEM_ENDDATE' ).':'; ?>
 				</label>
-				<?php echo JHTML::_('calendar', $this->row->enddates, 'enddates', 'enddates', '%Y-%m-%d', array('class' => 'inputbox validate-date')); ?>
+				<?php echo JHtml::_('calendar', $this->row->enddates, 'enddates', 'enddates', '%Y-%m-%d', array('class' => 'inputbox validate-date')); ?>
 				<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_DATE_HINT' ); ?>::<?php echo JText::_('COM_JEM_DATE_HINT'); ?>">
 					<?php echo $this->infoimage; ?>
 				</small>
@@ -363,7 +363,7 @@ $options = array(
 				<label id="recurrence_output">&nbsp;</label>
 				<div id="counter_row" style="display:none;">
 					<label for="recurrence_limit_date"><?php echo JText::_( 'COM_JEM_RECURRENCE_COUNTER' ); ?>:</label>
-					<div class="jem_date>"><?php echo JHTML::_('calendar', ($this->row->recurrence_limit_date <> 0000-00-00) ? $this->row->recurrence_limit_date : JText::_( 'COM_JEM_UNLIMITED' ), "recurrence_limit_date", "recurrence_limit_date"); ?>
+					<div class="jem_date>"><?php echo JHtml::_('calendar', ($this->row->recurrence_limit_date <> 0000-00-00) ? $this->row->recurrence_limit_date : JText::_( 'COM_JEM_UNLIMITED' ), "recurrence_limit_date", "recurrence_limit_date"); ?>
 						<a href="#" onclick="include_unlimited('<?php echo JText::_( 'COM_JEM_UNLIMITED' ); ?>'); return false;"><img src="media/com_jem/images/unlimited.png" width="16" height="16" alt="<?php echo JText::_( 'COM_JEM_UNLIMITED' ); ?>" /></a>
 					</div>
 				</div>
@@ -486,7 +486,7 @@ $options = array(
 		<input type="hidden" name="curimage" value="<?php echo $this->row->datimage; ?>" />
 		<input type="hidden" name="version" value="<?php echo $this->row->version; ?>" />
 		<input type="hidden" name="hits" value="<?php echo $this->row->hits; ?>" />
-		<?php echo JHTML::_( 'form.token' ); ?>
+		<?php echo JHtml::_('form.token'); ?>
 		<input type="hidden" name="task" value="" />
 		</p>
 	</form>
@@ -498,5 +498,5 @@ $options = array(
 
 <?php
 //keep session alive while editing
-JHTML::_('behavior.keepalive');
+JHtml::_('behavior.keepalive');
 ?>

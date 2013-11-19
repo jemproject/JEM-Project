@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -21,8 +21,7 @@ defined('_JEXEC') or die;
 				<span class="el-file-dl-icon hasTip"
 					title="<?php echo JText::_('COM_JEM_DOWNLOAD').' '.$this->escape($file->file).'::'.$this->escape($file->description);?>">
 					<?php
-						echo JHTML::link('index.php?option=com_jem&task=getfile&format=raw&file='.$file->id,
-							JHTML::image('media/com_jem/images/download_16.png', JText::_('COM_JEM_DOWNLOAD')));
+						echo JHtml::_('link','index.php?option=com_jem&task=getfile&format=raw&file='.$file->id,JHtml::_('image','com_jem/download_16.png', JText::_('COM_JEM_DOWNLOAD'),NULL,true));
 					?>
 				</span>
 			</td>

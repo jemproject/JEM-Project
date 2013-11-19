@@ -69,9 +69,9 @@ class JEMViewEditevent extends JViewLegacy
 		//Clean output
 		JFilterOutput::objectHTMLSafe($row, ENT_QUOTES, 'datdescription');
 
-		JHTML::_('behavior.formvalidation');
-		JHTML::_('behavior.tooltip');
-		JHTML::_('behavior.modal', 'a.flyermodal');
+		JHtml::_('behavior.formvalidation');
+		JHtml::_('behavior.tooltip');
+		JHtml::_('behavior.modal', 'a.flyermodal');
 		jimport('joomla.html.pane');
 
 		//add css file
@@ -132,22 +132,22 @@ class JEMViewEditevent extends JViewLegacy
 
 		// recurrence type
 		$rec_type = array();
-		$rec_type[] = JHTML::_('select.option', 0, JText::_ ('COM_JEM_NOTHING'));
-		$rec_type[] = JHTML::_('select.option', 1, JText::_ ('COM_JEM_DAYLY'));
-		$rec_type[] = JHTML::_('select.option', 2, JText::_ ('COM_JEM_WEEKLY'));
-		$rec_type[] = JHTML::_('select.option', 3, JText::_ ('COM_JEM_MONTHLY'));
-		$rec_type[] = JHTML::_('select.option', 4, JText::_ ('COM_JEM_WEEKDAY'));
-		$lists['recurrence_type'] = JHTML::_('select.genericlist', $rec_type, 'recurrence_type', '', 'value', 'text', $row->recurrence_type);
+		$rec_type[] = JHtml::_('select.option', 0, JText::_ ('COM_JEM_NOTHING'));
+		$rec_type[] = JHtml::_('select.option', 1, JText::_ ('COM_JEM_DAYLY'));
+		$rec_type[] = JHtml::_('select.option', 2, JText::_ ('COM_JEM_WEEKLY'));
+		$rec_type[] = JHtml::_('select.option', 3, JText::_ ('COM_JEM_MONTHLY'));
+		$rec_type[] = JHtml::_('select.option', 4, JText::_ ('COM_JEM_WEEKDAY'));
+		$lists['recurrence_type'] = JHtml::_('select.genericlist', $rec_type, 'recurrence_type', '', 'value', 'text', $row->recurrence_type);
 
 		//if only owned events are allowed
 		if ($jemsettings->ownedvenuesonly) {
 			$venues 		= $this->get('UserVenues');
 			//build list
 			$venuelist  	= array();
-			$venuelist[]	= JHTML::_('select.option', '0', JText::_('COM_JEM_NO_VENUE'));
+			$venuelist[]	= JHtml::_('select.option', '0', JText::_('COM_JEM_NO_VENUE'));
 			$venuelist  	= array_merge($venuelist, $venues);
 
-			$lists['venueselect'] = JHTML::_('select.genericlist', $venuelist, 'locid', 'size="1" class="inputbox"', 'value', 'text', $row->locid);
+			$lists['venueselect'] = JHtml::_('select.genericlist', $venuelist, 'locid', 'size="1" class="inputbox"', 'value', 'text', $row->locid);
 		}
 
 		$this->row				= $row;
@@ -191,7 +191,7 @@ class JEMViewEditevent extends JViewLegacy
 		$rows 	= $this->get('Venues');
 		$total 	= $this->get('Countitems');
 
-		JHTML::_('behavior.modal', 'a.flyermodal');
+		JHtml::_('behavior.modal', 'a.flyermodal');
 
 		// Create the pagination object
 		jimport('joomla.html.pagination');
@@ -205,10 +205,10 @@ class JEMViewEditevent extends JViewLegacy
 		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
 
 		$filters = array();
-		$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_VENUE'));
-		$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_CITY'));
-		$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_STATE'));
-		$searchfilter = JHTML::_('select.genericlist', $filters, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
+		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_VENUE'));
+		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_CITY'));
+		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_STATE'));
+		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
 
 		$this->rows				= $rows;
 		$this->searchfilter		= $searchfilter;

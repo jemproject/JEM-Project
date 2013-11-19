@@ -60,9 +60,9 @@ defined('_JEXEC') or die;
 	<thead>
 		<tr>
 			<th width="7" class="sectiontableheader" align="left"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
-			<th align="left" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
-			<th align="left" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
-			<th align="left" class="sectiontableheader" align="left"><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+			<th align="left" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
+			<th align="left" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
+			<th align="left" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<th align="left" class="sectiontableheader" align="left"><?php echo JText::_( 'COM_JEM_COUNTRY' ); ?></th>
 		</tr>
 	</thead>

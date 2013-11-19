@@ -536,7 +536,7 @@ class JEMHelperCountries
 		$options = array();
 		foreach ($countries as $country) {
 			$name = explode(',', $country['name']);
-			$options[] = JHTML::_('select.option', $country['iso2'], JText::_($name[0]), $value_tag, $text_tag);
+			$options[] = JHtml::_('select.option', $country['iso2'], JText::_($name[0]), $value_tag, $text_tag);
 		}
 		return $options;
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -29,7 +29,7 @@ class JEMViewCalendar extends JViewLegacy
 		$app = JFactory::getApplication();
 
 		// Load tooltips behavior
-		JHTML::_('behavior.tooltip');
+		JHtml::_('behavior.tooltip');
 
 		//initialize variables
 		$document 	= JFactory::getDocument();
@@ -37,11 +37,12 @@ class JEMViewCalendar extends JViewLegacy
 		$jemsettings = JEMHelper::config();
 		$item 		= $menu->getActive();
 		$params 	= $app->getParams();
-
-		//add css file
-		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
+		JHtml::_('stylesheet', 'com_jem/calendar.css', array(), true);
+				
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendar.css');
 
 		$evlinkcolor = $params->get('eventlinkcolor');
 		$evbackgroundcolor = $params->get('eventbackgroundcolor');
@@ -66,7 +67,7 @@ class JEMViewCalendar extends JViewLegacy
 		$document->addStyleDeclaration($style);
 
 		// add javascript
-		$document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
+		JHtml::_('script', 'com_jem/calendar.js', false, true);
 
 		$year 	= (int)JRequest::getVar('yearID', strftime("%Y"));
 		$month 	= (int)JRequest::getVar('monthID', strftime("%m"));

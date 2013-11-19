@@ -19,18 +19,18 @@ defined('_JEXEC') or die;
 	?>
 </div>
 
-<?php if ($this->params->get('show_page_title')) : ?>
+
 
 <h1 class="componentheading">
 <?php echo $this->escape($this->pagetitle); ?>
 </h1>
 
-<?php endif;
+<?php 
 
 foreach($this->categories as $category) :
 ?>
 	<h2 class="jem cat<?php echo $category->id; ?>">
-		<?php echo JHTML::_('link', JRoute::_($category->linktarget), $this->escape($category->catname)); ?>
+		<?php echo JHtml::_('link', JRoute::_($category->linktarget), $this->escape($category->catname)); ?>
 	</h2>
 
 <div class="cat<?php echo $category->id; ?> floattext">
@@ -46,7 +46,7 @@ foreach($this->categories as $category) :
     $imgattribs['width'] = $jemsettings->imagewidth;
     $imgattribs['height'] = $jemsettings->imagehight;
 
-	echo  JHTML::image('media/com_jem/images/noimage.png', $category->catname, $imgattribs);
+	echo  JHtml::_('image','com_jem/noimage.png', $category->catname, $imgattribs,true);
 	}else{
 
 	$cimage = JEMImage::flyercreator($category->image, 'category');
@@ -61,7 +61,7 @@ foreach($this->categories as $category) :
 	<div class="description"><?php echo $category->description; ?>
 		<p>
 			<?php
-				echo JHTML::_('link', JRoute::_($category->linktarget), $category->linktext);
+				echo JHtml::_('link', JRoute::_($category->linktarget), $category->linktext);
 			?>
 			(<?php echo $category->assignedevents ? $category->assignedevents : '0';?>)
 		</p>

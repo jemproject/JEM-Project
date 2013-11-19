@@ -77,6 +77,11 @@ div#jem .buttons {
 	float:right;
 }
 
+div#jem button
+{
+	cursor:pointer;
+}
+
 div#jem .buttons a {
 	border:1px solid #808080;
 }

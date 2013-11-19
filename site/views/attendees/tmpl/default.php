@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-JHTML::_('behavior.tooltip');
+JHtml::_('behavior.tooltip');
 $colspan = ($this->event->waitinglist ? 10 : 9);
 
 $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this->event->alias));
@@ -68,9 +68,7 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 
 		  </tr>
 	</table>
-
 	<br />
-
 	<div id="jem_filter" class="floattext">
 		<div class="jem_fleft">
 			 	<?php echo JText::_( 'COM_JEM_SEARCH' ).' '.$this->lists['filter']; ?>
@@ -90,31 +88,26 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 			echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
 			echo $this->pagination->getLimitBox();
 			?>
-		</div>
-		</div>
-
-
+		</div></div>
 	<table class="eventtable" style="width:100%" id="articleList">
 		<thead>
 			<tr>
 				<th width="1%" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
 				<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_USERNAME', 'u.username', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_USERNAME', 'u.username', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 
 				<?php if ($this->enableemailaddress == 1) {?>
 				<th class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
 				<?php } ?>
 
 
-				<th class="title"><?php echo JHTML::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php if ($this->event->waitinglist): ?>
-				<th class="center"><?php echo JHTML::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+				<th class="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php endif;?>
 				<th class="center"><?php echo JText::_( 'COM_JEM_REMOVE_USER' ); ?></th>
 			</tr>
 		</thead>
-
-
 
 		<tbody>
 			<?php
@@ -132,26 +125,23 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 				<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
 				<?php } ?>
 
-				<td><?php echo JHTML::Date( $row->uregdate, JText::_( 'DATE_FORMAT_LC2' ) ); ?></td>
+				<td><?php echo JHtml::_('date',$row->uregdate,JText::_('DATE_FORMAT_LC2')); ?></td>
 				<?php if ($this->event->waitinglist): ?>
 				<td class="hasTip center" title="<?php echo ($row->waiting ? JText::_('COM_JEM_ON_WAITINGLIST') : JText::_('COM_JEM_ATTENDEES_ATTENDING')).'::'; ?>">
 					<?php if ($row->waiting):?>
-						<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendeetoggle&id='.$row->id),
-						                        JHTML::image('media/com_jem/images/publish_y.png', JText::_('COM_JEM_ON_WAITINGLIST'))); ?>
+						<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendeetoggle&id='.$row->id),JHtml::_('image','com_jem/publish_y.png',JText::_('COM_JEM_ON_WAITINGLIST'),NULL,true)); ?>
 					<?php else: ?>
-						<?php echo JHTML::link( JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendeetoggle&id='.$row->id),
-						                        JHTML::image('media/com_jem/images/tick.png', JText::_('COM_JEM_ATTENDEES_ATTENDING'))); ?>
+						<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendeetoggle&id='.$row->id),JHtml::_('image','com_jem/tick.png', JText::_('COM_JEM_ATTENDEES_ATTENDING'),NULL,true)); ?>
 					<?php endif;?>
 				</td>
 				<?php endif;?>
 				<td class="center"><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendeeremove')"><?php echo
-						                        JHTML::image('media/com_jem/images/publish_x.png', JText::_('COM_JEM_ATTENDEES_DELETE')); ?></a></td>
+						                        JHtml::_('image','com_jem/publish_x.png',JText::_('COM_JEM_ATTENDEES_DELETE'),NULL,true); ?></a></td>
 			</tr>
 			<?php endforeach; ?>
 		</tbody>
-
 	</table>
-		<?php echo JHTML::_( 'form.token' ); ?>
+		<?php echo JHtml::_( 'form.token' ); ?>
 		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="task" value="" />
@@ -161,14 +151,13 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 		<input type="hidden" name="enableemailaddress" value="<?php echo $this->enableemailaddress; ?>" />
-
 </form>
 <div class="pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 
 <div class="copyright">
-<?php echo JEMOutput::footer( ); ?>
+<?php echo JEMOutput::footer(); ?>
 </div>
 
 </div>

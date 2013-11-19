@@ -42,7 +42,7 @@ class JEMOutput {
 		$app = JFactory::getApplication();
 
 		if ($dellink == 1) {
-			JHTML::_('behavior.tooltip');
+			JHtml::_('behavior.tooltip');
 
 			if ($settings->icons) {
 				$image = JHtml::_('image', 'com_jem/submitevent.png', JText::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
@@ -80,7 +80,7 @@ class JEMOutput {
 		$app = JFactory::getApplication();
 
 		if ($addvenuelink == 1) {
-			JHTML::_('behavior.tooltip');
+			JHtml::_('behavior.tooltip');
 
 			if ($settings->icons) {
 				$image = JHtml::_('image', 'com_jem/addvenue.png', JText::_('COM_JEM_DELIVER_NEW_VENUE'), NULL, true);
@@ -120,7 +120,7 @@ class JEMOutput {
 		if ($settings->show_archive_icon) {
 			if ($settings->oldevent == 2) {
 
-				JHTML::_('behavior.tooltip');
+				JHtml::_('behavior.tooltip');
 
 				$view = JRequest::getWord('view');
 
@@ -182,7 +182,7 @@ class JEMOutput {
 		$settings = JEMHelper::config();
 
 		if ($allowedtoedit) {
-			JHTML::_('behavior.tooltip');
+			JHtml::_('behavior.tooltip');
 
 			switch ($view)
 			{
@@ -228,7 +228,7 @@ class JEMOutput {
 		$app = JFactory::getApplication();
 		$settings = JEMHelper::config();
 		if ($settings->show_print_icon) {
-			JHTML::_('behavior.tooltip');
+			JHtml::_('behavior.tooltip');
 
 			$status = 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no';
 
@@ -273,7 +273,7 @@ class JEMOutput {
 		$settings = JEMHelper::config();
 
 		if ($settings->show_email_icon) {
-			JHTML::_('behavior.tooltip');
+			JHtml::_('behavior.tooltip');
 			require_once JPATH_SITE . '/components/com_mailto/helpers/mailto.php';
 
 			$uri = JURI::getInstance();
@@ -314,7 +314,7 @@ class JEMOutput {
 		$app = JFactory::getApplication();
 		$settings = JEMHelper::config();
 		if ($settings->events_ical == 1) {
-			JHTML::_('behavior.tooltip');
+			JHtml::_('behavior.tooltip');
 
 			if ($settings->icons) {
 				$image = JHtml::_('image', 'com_jem/iCal2.0.png', JText::_('COM_JEM_EXPORT_ICS'), NULL, true);
@@ -349,7 +349,7 @@ class JEMOutput {
 	{
 		$app = JFactory::getApplication();
 
-		JHTML::_('behavior.tooltip');
+		JHtml::_('behavior.tooltip');
 
 		$image = JHtml::_('image', 'com_jem/publish.png', JText::_('COM_JEM_PUBLISH'), NULL, true);
 
@@ -378,7 +378,7 @@ class JEMOutput {
 	{
 		$app = JFactory::getApplication();
 
-		JHTML::_('behavior.tooltip');
+		JHtml::_('behavior.tooltip');
 
 		$image = JHtml::_('image', 'com_jem/trash.png', JText::_('COM_JEM_TRASH'), NULL, true);
 
@@ -407,7 +407,7 @@ class JEMOutput {
 	{
 		$app = JFactory::getApplication();
 
-		JHTML::_('behavior.tooltip');
+		JHtml::_('behavior.tooltip');
 
 		$image = JHtml::_('image', 'com_jem/unpublish.png', JText::_('COM_JEM_UNPUBLISH'), NULL, true);
 
@@ -448,7 +448,7 @@ class JEMOutput {
 			$emailaddress = '';
 		}
 
-		JHTML::_('behavior.tooltip');
+		JHtml::_('behavior.tooltip');
 
 		$image = JHtml::_('image', 'com_jem/export_excel.png', JText::_('COM_JEM_EXPORT'), NULL, true);
 
@@ -480,7 +480,7 @@ class JEMOutput {
 		$id = JRequest::getInt('id');
 		$fid = JRequest::getInt('Itemid');
 
-		JHTML::_('behavior.tooltip');
+		JHtml::_('behavior.tooltip');
 
 		$image = JHtml::_('image', 'com_jem/icon-16-back.png', JText::_('COM_JEM_BACK'), NULL, true);
 
@@ -602,7 +602,7 @@ class JEMOutput {
 				$url = '#';
 				$attributes = 'class="notmodal" onclick="window.open(\''.JURI::base().'/'.$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
 			} else {
-				JHTML::_('behavior.modal', 'a.flyermodal');
+				JHtml::_('behavior.modal', 'a.flyermodal');
 				$url = JURI::base().'/'.$image['original'];
 				$attributes = 'class="flyermodal" title="'.$info.'"';
 			}

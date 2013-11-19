@@ -103,17 +103,7 @@ class JEMModelCategories extends JModelLegacy
 
 			foreach($this->_categories as $category)
 			{
-				/*
-				if ($category->image != '') {
-					$attribs['width'] = $jemsettings->imagewidth;
-					$attribs['height'] = $jemsettings->imagehight;
-
-					$category->image = JHTML::image('images/jem/categories/'.$category->image, $category->catname, $attribs);
-				} else {
-					$category->image = JHTML::image('media/com_jem/images/noimage.png', $category->catname);
-				}
-				*/
-
+				
 				if ($params->get('usecat',1)) {
 					//child categories
 					$query = $this->_buildQuerySubCategories($category->id);

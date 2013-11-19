@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -8,7 +8,7 @@
  */
 
 defined('_JEXEC') or die;
-JHTML::_('behavior.modal');
+JHtml::_('behavior.modal');
 ?>
 <div id="jem" class="jem_category">
 <div class="buttons">
@@ -35,7 +35,7 @@ JHTML::_('behavior.modal');
 				$imgattribs['width'] = $jemsettings->imagewidth;
 				$imgattribs['height'] = $jemsettings->imagehight;
 
-				echo JHTML::image('media/com_jem/images/noimage.png', $this->category->catname, $imgattribs);
+				echo JHtml::_('image','com_jem/noimage.png', $this->category->catname, $imgattribs,true);
 			} else {
 				echo JEMOutput::flyer( $this->category, $this->cimage, 'category' );
 			}

@@ -27,9 +27,8 @@ defined ('_JEXEC') or die;
 			<td><?php echo wordwrap($file->file, 30, "<br>", true); ?><input style="width:200px" type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/></td>
 			<td><input type="text" name="attached-name[]" value="<?php echo $file->name; ?>" style="width:100px" /></td>
 			<td><input type="text" name="attached-desc[]" value="<?php echo $file->description; ?>" style="width:100px" /></td>
-			<td><?php echo JHTML::_('select.genericlist', $this->access, 'attached-access[]', 'class="inputbox" style="width:100px" size="3"', 'value', 'text', $file->access); ?></td>
-			<td><?php echo JHTML::image('media/com_jem/images/publish_x.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT')
-					, array('id' => 'attach-remove'.$file->id,'class' => 'attach-remove')); ?></td>
+			<td><?php echo JHtml::_('select.genericlist', $this->access, 'attached-access[]', 'class="inputbox" style="width:100px" size="3"', 'value', 'text', $file->access); ?></td>
+			<td><?php echo JHtml::_('image','com_jem/publish_x.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id,'class' => 'attach-remove'),true); ?></td>
 		</tr>
 		<?php endforeach; ?>
 		<tr>
@@ -43,7 +42,7 @@ defined ('_JEXEC') or die;
 				<input type="text" name="attach-desc[]" value="" style="width:100px" />
 			</td>
 			<td>
-				<?php echo JHTML::_('select.genericlist', $this->access, 'attach-access[]', 'class="inputbox" style="width:100px" size="3"', 'value', 'text', 0); ?>
+				<?php echo JHtml::_('select.genericlist', $this->access, 'attach-access[]', 'class="inputbox" style="width:100px" size="3"', 'value', 'text', 0); ?>
 			</td>
 			<td>&nbsp;</td>
 		</tr>
