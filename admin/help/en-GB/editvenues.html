@@ -1,7 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en_US" xml:lang=
-"en_US">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en_GB" xml:lang="en_GB">
 <head>
 <title>Edit Venue</title>
 <link href="../css/help.css" rel="stylesheet" type="text/css" />
@@ -11,18 +10,20 @@
 
 <h3>Description</h3>
 <p>
-<img src="../../assets/images/icon-48-venuesedit.png" alt="description" width="48" height="48" align="left" />Edit your venue items or add new ones from that screen.</p>
+<img src="/media/com_jem/images/icon-48-venuesedit.png" alt="description" width="48" height="48" align="left" />Edit your venue items or add new ones from this screen.</p>
 
 <br /><br />
 
+<!--
 <div class="hintheader">Tip</div>
-<div class="hint">Use Plugins to add additional functionality to EventList. You can connect your events for example with a reservationsystem like &quot;akreservations' or Galleries with the help of Plugins. </div>
+<div class="hint">Use Plugins to add additional functionality to JEM. You can connect your events for example with a reservationsystem like &quot;akreservations' or Galleries with the help of Plugins. </div>
+-->
 
 <br />
 
 <h3>Navigation</h3>
 <p>
-To access this screen use: <strong>Components</strong> -&gt; <strong>EventList</strong> -&gt; <strong>Add Venue </strong> or by <strong>clicking a venue in the overview</strong></p>
+To access this screen use: <strong>Components</strong> -&gt; <strong>JEM</strong> -&gt; <strong>Add Venue </strong> or by <strong>clicking a venue in the overview</strong></p>
 
 <h3>User Access Level</h3>
 
@@ -32,13 +33,12 @@ To access this screen use: <strong>Components</strong> -&gt; <strong>EventList</
 
 <h3>Toolbar Icons</h3>
 
-<p><img src="toolbars/asch.png" alt="toolbar" width="233" height="51" /></p>
-<p><strong>Apply:</strong> Saves the venue and returns to the current view.</p>
-<p>
-<strong>Save:</strong> Saves the venue and returns to the overview.</p>
-<p>
-<strong>Cancel:</strong> Cancels the action. Any modification is lost. If an item is opened to
-edit, the venue Item remains checked-in.</p>
+<p><img src="toolbars/ss-cs-ns-cc.png" alt="toolbar" /></p>
+<p><strong>Save:</strong> Saves the venue and stays in the current view.</p>
+<p><strong>Save & Close:</strong> Saves the venue and returns to the overview.</p>
+<p><strong>Save & New:</strong> Saves the venue and opens a new clean Edit screen.</p>
+<p><strong>Save as Copy:</strong> Saves the venue as a new instance and stays in this Venue view.</p>
+<p><strong>Cancel:</strong> Cancels the action. Any modification is lost.</p>
 <p><strong>Help:</strong> Opens this help screen.</p>
 <br />
 
@@ -52,34 +52,38 @@ edit, the venue Item remains checked-in.</p>
 Enter or edit (if needed) the alias of the Venue here. The alias is used in the url, only use url safe characters here.
 Leave this field blanc if you want that JEM creates it automatically.</p>
 
-<p>
-<strong>Published: </strong>Select Yes to publish the venue or No to unpublish. Published venues are displayed on the Frontend and you can assign events to them.</p>
+<p><strong>Address:</strong> Enter street name and house number, city, zip and select the country code. 
+</p>
 
 <p>
 <strong>Textfield:</strong> This is for the Venue description. You can use Plugins
 in this field.</p>
 
+
 <h3>Advanced publishing area</h3>
 
-<p><strong>Address:</strong> Type here the street, city, zip and the country
-code. These informations are required if you enable any map service.
-The countrycode needs to be a two letters one defined in the
-<a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" target="_blank" title="ISO 3166-1">ISO 3166-1 alpha-2</a>
-specification. Examples are GB for United Kingdom, AU for Australia and US for the USA. The countrycode will be replaced
-by EventList on the Frontend with the corresponding flag of the country.
-</p>
 <p>
-If you have enabled a mapservice in the settings, you can activate the map in this screen. Keep in mind that the map requires the address of the venue.
+<strong>Published: </strong>Select Yes to publish the venue or No to unpublish. Published venues are displayed on the Frontend and you can assign events to them.</p>
+
+
+<p><strong>Custom Fields:</strong> You can enter up to 10 custom fields here. 
 </p>
 
-<p><strong>Image:</strong> Choose an image for this venue (flyer) or upload it.</p>
+<p><strong>Image:</strong> Choose an image for this venue (flyer) or upload it.
+</p>
 
 <p>
 <strong>Metadata information: </strong>Enter or edit (if needed) the Meta Description and the Meta Keywords of the venue here.
 </p>
 
-<br />
+<p><strong>Geodata:</strong> Enter the address here to let JEM find the longitude / latitude values for the Venue. 
+If you want JEM to display a map in the Frontend, then check the 'add a map link' checkbox.
+</p>
 
+
+<br />
+<div align="center" style="margin-top: 30px; margin-bottom: 30px;"> <a href="#" onclick="javascript:window.close();"><span class="small">Close Window</span></a>
+</div>
 
 </body>
 </html>

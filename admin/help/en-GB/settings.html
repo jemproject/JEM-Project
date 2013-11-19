@@ -1,23 +1,25 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en_GB" xml:lang=
-"en_GB">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en_GB" xml:lang="en_GB">
 <head>
 <title>Settings</title>
 <link href="../css/help.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<h1>EventList Settings</h1>
+<h1>JEM Settings</h1>
 
 <h3>Description</h3>
 <p>
-<img src="../../assets/images/icon-48-settings.png" alt="description" width="48" height="48" align="left" />This is the heart of EventList. Here you have to decide which features you want to offer and how EventList should behave. The Settings are seperated in 4 different types. Select one of them to go directly to the regarding explanation. </p>
+<img src="/media/com_jem/images/icon-48-settings.png" alt="description" width="48" height="48" align="left" />
+This is the heart of the JEM component. Here you have to decide which features you want to offer and how JEM 
+should behave. The Settings are seperated in 4 different types. Select one of them to go directly to the 
+regarding explanation. </p>
 
 <br />
 
 <h3>Navigation</h3>
 <p>
-To access this screen use: <strong>Components</strong> -&gt; <strong>EventList</strong> -&gt; <strong>Settings</strong></p>
+To access this screen use: <strong>Components</strong> -&gt; <strong>JEM</strong> -&gt; <strong>Settings</strong></p>
 
 <h3>User Access Level</h3>
 
@@ -37,27 +39,25 @@ To access this screen use: <strong>Components</strong> -&gt; <strong>EventList</
 
 <ul>
 <li><a href="#basicsettings">Basic Settings</a></li>
-
+<li><a href="#detailspage">Event Page</a></li>
+<li><a href="#layout">Layout</a></li>
+<li><a href="#params">Global Parameters</a></li>
 <li><a href="#access">User Control</a></li>
 
-<li><a href="#detailspage">Detailspage Tab</a></li>
-
-<li><a href="#layout">Layout Tab</a></li>
-
-<li><a href="#params">Global Parameters</a></li>
 </ul>
+
 
 <h2>Basic Settings:<a name="basicsettings" id="basicsettings"></a></h2>
 
 <h3>Display - Settings</h3>
 
 <p><strong>Show Link to detail page:</strong><br />
-Select if you wish to link to the detail page through icons or the
-title of the event. Link on title only works if showtitle is yes,
-icons only if you had set the width at the layout settings.</p>
+Select if you wish to link to the detail page through the
+title of the event. Link on title only works if the title is displayed 
+in the layout settings.</p>
 
 <p><strong>Format date:</strong><br />
-Use here the php strftime syntax to format the date. For example
+Use the php strftime syntax to format the date. For example
 the following code '%d.%m.%Y' shows '25.05.2006'. More Information
 <a href="http://www.php.net/strftime" target="_blank">php strftime
 manual</a>.
@@ -81,12 +81,11 @@ In some countries it isn't permitted to store the IP address of your visitors. Y
 
 <p><strong>Handle old Events:</strong><br />
 Select one of the three options. 'Delete old Events' will delete
-all Events after the number of days typed in in the box below. If
-you select 'Archive old Events' the Events will moved after the
-typed in days in the Archive. You only have access to the archive
-if you have choosen this option.<br />Note that EventList triggers this cleanup action once a 
-day after midnight server time and only if an EventList view got a visit. If you want to make sure 
-that the cleanup happens, create a cronjob pointing to an EventList component view.
+all Events after the number of days entered in in the box below. If
+you select 'Archive old Events' the Events will get the 'Archived' status after the
+number of days.<br /> Please note that JEM triggers this cleanup action once a 
+day after midnight server time and only if a JEM view got a visitor in the Frontend. If you want to make sure 
+that the cleanup happens, create a cronjob pointing to a JEM component view.
 </p>
 
 <br />
@@ -94,7 +93,7 @@ that the cleanup happens, create a cronjob pointing to an EventList component vi
 <h3>Image handling:</h3>
 
 <p><strong>Max. imagefilesize:</strong><br />
-Type in the maximum size in kb for the imagefile.</p>
+Enter the maximum size in kb for the imagefile.</p>
 
 <p><strong>Max. height of thumbnailimage:</strong><br />
 Type in the maximum height of the image. This value is also used on
@@ -106,12 +105,17 @@ the Frontend.
 </p>
 
 <p><strong>Enable Thumbnails:</strong><br />
-EventList can create thumbnails if the GD library version 2 is
+JEM can create thumbnails if the GD library version 2 is
 installed on your server. If it isn't available this feature will be disabled.
-In this case the above typed in hight and width values will be used to resize the
+In this case the above entered valus for hight and width will be used to resize the
 images if they are larger than these values. Keep in mind that this method results
 in a much lower quality than using the GD library. Also the filesize of the images aren't reduced.
 </p>
+
+<p><strong>Lightbox effect:</strong><br />
+Enable a nice lightbox effect to enlarge images from tumbnail to maximum size.
+</p>
+
 
 <div class="attentionheader">Attention</div>
 <div class="attention">If you define an imagewidth of more than the width of 20% of the contentarea you have to modify the jem.css accordingly.</div>
@@ -134,121 +138,44 @@ automatically.</p>
 
 <br />
 
-<h2><a name="access" id="access">User Control :</a></h2>
-
-
-<h3>Image uploads</h3>
-<p>
-Select if imageuploads for frontend submissions are optional,
-required or forbidden.</p>
-
-<h3>Description - Length</h3>
-
-<p>Max. length of the event- and locationdescription. If the length
-of the description is too long, the description will be stripped
-and the note [stripped] will be added. This affects only
-submissions from user with an Userrank lower than 'Editor'.</p>
-
-<div class="hintheader">Tip</div>
-<div class="hint">Have a look at the Group system of EventList. Grouping users will give you additional flexibility in access control</div>
-<br />
-
-<h3>AC - Events</h3>
-
-<p><strong>New Events from Users:</strong><br />
-Select here the required Access Level to submit new Events from the
-Frontpage.</p>
-
-<p><strong>Autopublish:</strong><br />
-Select here the required Access Level for Users when Events should
-be immediately published. Otherwise they have to be published in
-the backend after reviewing manually.</p>
-
-<p><strong>Frontend Events editing:</strong><br />
-Select here the required Access Level to edit Events from the
-Frontpage.</p>
-
-<p><strong>Inherit:</strong><br />
-Allow parent groups access as well? If No access is restricted to
-the selected group only. Note: Administrators always have
-access.</p>
-
-<p><strong>Allow to edit owned events:</strong><br />
-Allow user to edit his submitted events even if he hasn't the required access level for editing events.</p>
-
-<h3>Registration</h3>
-
-<p>
-Select here if Frontendusers are allowed to set during the
-submission process if an user can register or unregister to the
-submitted events.
-</p>
-
-<h3>AC - Venues</h3>
-
-<p><strong>New Venues from Users:</strong><br />
-Select here the required Access Level to submit new Venues from the
-Frontpage.</p>
-
-<p><strong>Autopublish:</strong><br />
-Select here the required Access Level for Users when Venues should
-be immediately published. Otherwise they have to be published in
-the backend after reviewing manually.</p>
-
-<p><strong>Frontend Venues editing:</strong><br />
-Select here the required Access Level to edit Venues from the
-Frontpage.</p>
-
-<p><strong>Inherit:</strong><br />
-Allow parent groups access as well? If No access is restricted to
-the selected group only. Note: Administrators always have
-access.</p>
-
-<p><strong>Allow to edit owned venues:</strong><br />
-Allow user to edit his submitted venues even if he hasn't the required access level for editing venues.</p>
-
-<br />
-
-<h2>Detailspage:<a name="detailspage" id="detailspage"></a></h2>
+<h2>Event Page:<a name="detailspage" id="detailspage"></a></h2>
 
 <h3>Venues</h3>
 
 <p><strong>Display Venuedescription:</strong><br />
 Choose if you want to display the
-description.</p>
+description of the venue.</p>
 
 <p>
 <strong>Display address of the Venue:</strong><br />
-Show the address of the Venue?</p>
+Choose if you want to display the
+address of the venue.</p>
 
 <p>
-<strong>Show link to the Venue:</strong><br />
-Display the Link to the Venue?</p>
+<strong>Display link to the Venue:</strong><br />
+No Link, a link to the url of the venue (if entered) 
+and a link to the venue view.</p>
 
 <p>
-<strong>Choose Mapservice:</strong><br />
-Select the google or map24 service. Note: You need to enter your link2Map24-ID if you choose this service.<br />
+<strong>Choose map service:</strong><br />
+Choose between the following options:<br />
+No map service - displays no map<br />
+Display link to Google Maps - will display a Google Map as a popup (after click)<br />
+Display a Google map - will show a map directly when viewing the event.<br />
 <br />
-Google Maps can be used without API Key.
-If this is the case, EventList will redirect to Google Maps site. If you type in the Key, the Map will
-be displayed in a lightbox on your site. Note:
-The Geocoding is only available in the following <a href="http://code.google.com/support/bin/answer.py?answer=62668&topic=10946" target="_blank">countries</a>:
-France, Italy, Germany, Spain, Sweden, Luxembourg, Austria, Belgium, Switzerland, Japan, Australia, New Zealand, Canada, US, and the Netherlands.
-The accuracy of geocoded locations may vary per country and this can cause errors on the map.
-</p>
 
 <h3>Events</h3>
 
 <p>
 <strong>Show time:</strong><br />
-Show the time of the event on the
+Choose if you want to show the time of the event on the
 detailspage.
 </p>
 
 <p>
 <strong>Display Eventdescription:</strong><br />
-Choose if you want to display the
-description.
+Choose if you want to display the description on the
+detailspage.
 </p>
 
 <p>
@@ -257,20 +184,21 @@ Choose if you want to display the title
 of the event on the detailspage
 </p>
 
-<h3>Integrate other Components at the registration</h3>
+<h3>Registration</h3>
+
+<p>
+<strong>Display Username / Name:</strong><br />
+Choose of the username or the name of attendees 
+should be displayed.
+</p>
 
 <p><strong>Select Community Solution:</strong><br />
 Currently its only the Community Builder and the Community Builder
-Enhanced available. If you use one of it select it if you wish to
-have one of the oprtunities mentioned below.</p>
-
-<p><strong>Select integration options:</strong><br />
-Three options. None for no integration, only per
-Link if you want to generate a link to the profile of the
-registered user or select the next option if you like to show
-additional the regarding avatar of the user.</p>
+Enhanced available. Further settings should be made in the plugin.
+</p>
 
 <br />
+
 
 <h2>Layout:<a name="layout" id="layout"></a></h2>
 
@@ -278,30 +206,36 @@ additional the regarding avatar of the user.</p>
 
 <p>
 <strong>Show time:</strong><br />
-Show the time on the Frontpage or not.
+Show the time on the Frontend view or not.
 </p>
 
 <p>
 <strong>Table width in %:</strong><br />
 Type in the maximum width in percent for the table
-layout on the Frontpage. Take care that the columns below have
-together at the end 100%.
+layout on the Frontend. Please keep in mind that the columns below 
+total up to 100% all together.
 </p>
 
 <h3>Columns</h3>
+
+<p>
+<strong>City column:</strong><br />
+Choose if you want to show the City column. If yes, type in the
+width of the column and the name of it. The name will be displayed
+at the head of the column.
+</p>
+
+<p>
+<strong>Attendee column:</strong><br />
+Choose if you want to show the attendee column.
+</p>
+
 
 <p>
 <strong>Title column:</strong><br />
 Choose if you want to show the title column. If yes, type in the
 width of the column and the name of it. The name will be displayed
 at the head of the column.
-</p>
-
-<p>
-<strong>Date column:</strong><br />
-Type in the width of the column and the name of it. The name
-will be displayed at the head of the column. This column is
-required.
 </p>
 
 <p>
@@ -312,6 +246,23 @@ displayed at the head of the column.
 </p>
 
 <p>
+<strong>State column:</strong><br />
+Choose if you want to show the State column. If yes, type in
+the width of the column and the name of it. The name will be
+displayed at the head of the column.
+</p>
+
+
+<!--
+<p>
+<strong>Date column:</strong><br />
+Type in the width of the column and the name of it. The name
+will be displayed at the head of the column. This column is
+required.
+</p>
+-->
+
+<p>
 <strong>Category column:</strong><br />
 Choose if you want to show the Category column. If yes, type in
 the width of the column and the name of it. The name will be
@@ -319,47 +270,219 @@ displayed at the head of the column.
 </p>
 
 <p>
-<strong>City column:</strong><br />
-Choose if you want to show the City column. If yes, type in the
-width of the column and the name of it. The name will be displayed
-at the head of the column.
+<strong>Show Eventimage in Simplelist:</strong><br />
+Choose if you want to show the Event image in the list view in the Frontend.
 </p>
+
 
 <h2>Global Parameters:<a name="params" id="params"></a></h2>
 
+<h3>Global Parameters:</h3>
+
 <p>
-The Global Parameters are used to assign basic settings to the views. These parameters can be changed for each few when creating a new menuitem.
+The Global Parameters are used to assign basic settings to the views. 
+These parameters can be changed for each few when creating a new menuitem.
 </p>
 
-<p><strong>Number of Events on the Frontpage:</strong><br />
-Number of events to display on the frontpage.
+
+<p>
+<strong>Filter:</strong><br />
+Choose if you want to show the Filter options on top of the list views.
 </p>
 
-<p><strong>Categories displayed:</strong><br />
-Number of Categories displayed
+<p>
+<strong>Display Select:</strong><br />
+Choose if you want to show the Select dropdown on top of the list views.
 </p>
 
-<p><strong>Filter:</strong><br />
-Show/Hide the Filter ability
+<p>
+<strong>Show Icons:</strong><br />
+Choose if you want to show the Prinm / Email / Archive icons 
+in events list and event layout. en top of the list views.
 </p>
 
-<p><strong>Display Select:</strong><br />
-Show/Hide the Display Select dropdown
+<p>
+<strong>Print Icon:</strong><br />
+Choose if you want to show a Print icon in events list and event layout.
 </p>
 
-<p><strong>Show Icons:</strong><br />
-Show the icons or use alternative text
+<p>
+<strong>Archive Icon:</strong><br />
+Choose if you want to show an Archive icon in events list and event layout.
 </p>
 
-<p><strong>Print Icon:</strong><br />
-Show/Hide the print icon
+<p>
+<strong>Email Icon:</strong><br />
+Choose if you want to show an Email icon in events list and event layout.
 </p>
 
-<p><strong>Email Icon:</strong><br />
-Show/Hide the email icon
+<p>
+<strong>Show ICS in button:</strong><br />
+Choose if you want to show an ICS export button in events list and event layout.
 </p>
+
+<h3>Advanced Parameters:</h3>
+
+
+<p>
+<strong>Max ICS events:</strong><br />
+Enter the maximum number of events you want to export when making an ICS export.
+</p>
+
+<p><strong>Number of Events on the Frontend views:</strong><br />
+Enter the number of events to display on the Frontend views.
+</p>
+
+<p><strong>Show Category images:</strong><br />
+Choose if you want to show the Category images in the Frontend.
+</p>
+
+<p><strong>Generate events up to (days):</strong><br />
+Enter the maximum amount of days that JEM should auto-create recurring events in the future. 
+This is called the 'anticipation window'. 
+This setting has effect when you create recurring events. If the enddate you choose for a specific 
+recurring event (the 'By the end of' date) will exeed the anticipation set here, the number of recurring events that JEM
+creates will be limited by this setting. 
+You set the 'By the end of' date in the Repeating Events setion of the Event edit screen, 
+or when submitting an event from the Frontend.
+</p>
+
+<p><strong>Timezone handling:</strong><br />
+You can select how the dates will be exported. If you chose 'float', when imported, 
+all dates will appear as being in the same timezone as the user 
+(e.g: if the event is at 2pm in the US, and the user is in France, 
+it will appear as being held at 2pm in France too).<br/>
+If you use 'Joomla' timezone, the dates will be associated to the timezone 
+set in joomla configuration.
+</p>
+
+<p><strong>First day of the week:</strong><br />
+Choose if Sunday or Monday is the first day of the week. 
+This setting has an impact on the Calendar display.
+</p>
+
+<p><strong>Attachment folder path:</strong><br />
+You can specify the path of the attachments here. 
+Default is media/com_jem/attachments
+</p>
+
+<p><strong>Max size:</strong><br />
+Specify the maximum size of attachments in kb. (1 mb is 1000 kb)
+</p>
+
+<p><strong>Default country:</strong><br />
+You can set a default country for venues in this field. 
+When entering a new venue the country is then set to the default chosen here, 
+to save handling.
+</p>
+<br />
+
+<h2><a name="access" id="access">User Control :</a></h2>
+
+
+<h3>User Control</h3>
+
+<p><strong>Max length of the descriptions:</strong><br />
+<p>Max. length of the event- and locationdescription. If the length
+of the description is too long, the description will be stripped
+and the note [stripped] will be added. This affects only
+submissions from user with an Userrank lower than 'Editor'.
+</p>
+
+<h3>Image uploads</h3>
+<p>
+Select if imageuploads for frontend submissions are optional,
+required or forbidden.</p>
+
+
+<h3>AC - Events</h3>
+
+<p><strong>New Events from Users:</strong><br />
+Select here the required Access Level to submit new Events from the
+Frontend.</p>
+
+<p><strong>Recursive:</strong><br />
+Allow parent groups access as well? If No access is restricted to
+the selected group only. Note: Administrators always have
+access.
+</p>
+
+<p><strong>Autopublish:</strong><br />
+Select here the required Access Level for Users when Events should
+be immediately published. Otherwise they have to be published in
+the backend after reviewing manually.</p>
+
+<p><strong>Recursive:</strong><br />
+Allow parent groups access as well? If No access is restricted to
+the selected group only. Note: Administrators always have
+access.
+</p>
+
+<p><strong>Frontend Events editing:</strong><br />
+Select here the required Access Level to edit Events from the
+Frontend.</p>
+
+<p><strong>Recursive:</strong><br />
+Allow parent groups access as well? If No access is restricted to
+the selected group only. Note: Administrators always have
+access.
+</p>
+
+<p><strong>Allow to edit owned events:</strong><br />
+Allow user to edit his submitted events even if he hasn't 
+the required access level for editing events.</p>
+
+
+<h3>Registration</h3>
+
+<p><strong>Allow event registration:</strong><br />
+Select if Frontend users are allowed to register to an event.
+</p>
+
+<p><strong>Allow event registration cancellation:</strong><br />
+Select if Frontend users are allowed to unregister to an event.
+</p>
+
+<h3>AC - Venues</h3>
+
+<p><strong>Allow users to create venues:</strong><br />
+Select the required Access Level to submit new Venues from the
+Frontend.</p>
+
+<p><strong>Recursive:</strong><br />
+Allow parent groups access as well? If No access is restricted to
+the selected group only. Note: Administrators always have
+access.
+</p>
+
+
+<p><strong>Autopublish:</strong><br />
+Select here the required Access Level for Users when Venues should
+be immediately published. Otherwise they have to be published in
+the backend after reviewing manually.</p>
+
+<p><strong>Recursive:</strong><br />
+Allow parent groups access as well? If No access is restricted to
+the selected group only. Note: Administrators always have
+access.
+</p>
+
+<p><strong>Allow users to edit Venues:</strong><br />
+Select here the required Access Level to edit Venues from the
+Frontend.</p>
+
+<p><strong>Recursive:</strong><br />
+Allow parent groups access as well? If No access is restricted to
+the selected group only. Note: Administrators always have
+access.
+</p>
+
+<p><strong>Allow to edit owned venues:</strong><br />
+Allow user to edit his submitted venues even if he hasn't the 
+required access level for editing venues.</p>
 
 <br />
+
 
 
 </body>
