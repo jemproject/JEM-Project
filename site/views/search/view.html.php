@@ -41,11 +41,12 @@ class JEMViewSearch extends JEMView
 		// add javascript
 		JHtml::_('behavior.framework');
 
-		//add css file
-		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-		$document->addScript($this->baseurl.'/media/com_jem/js/search.js');
-
+		
+		JHtml::_('script', 'com_jem/search.js', false, true);
+		
 		$filter_continent	= $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
 		$filter_country		= $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
 		$filter_city		= $app->getUserStateFromRequest('com_jem.search.filter_city', 'filter_city', '', 'string');

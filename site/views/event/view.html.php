@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -60,8 +60,8 @@ class JEMViewEvent extends JViewLegacy
 
 		$cid		= JRequest::getInt('cid', 0);
 
-		//add css file
-		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 
@@ -72,7 +72,7 @@ class JEMViewEvent extends JViewLegacy
 
 		if ($print) {
 			$document = JFactory::getDocument();
-			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/print.css');
+			JHtml::_('stylesheet', 'com_jem/print.css', array(), true);			
 			$document->setMetaData('robots', 'noindex, nofollow');
 		}
 

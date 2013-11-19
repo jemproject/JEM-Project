@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -42,8 +42,6 @@ defined('_JEXEC') or die;
 
 		@$countperday[$year.$month.$day]++;
 		if ($countperday[$year.$month.$day] == $limit+1) {
-			// $this->cal->setEventContent($year, $month, $day, JText::_('COM_JEM_AND_MORE'));
-
 			$var1a = JRoute::_( 'index.php?view=day&id='.$year.$month.$day );
 			$var1b = JText::_('COM_JEM_AND_MORE');
 			$var1c = "<a href=\"".$var1a."\">".$var1b."</a>";
@@ -140,11 +138,11 @@ defined('_JEXEC') or die;
 
 			if ($multi->row) {
 				if ($multi->row == 'first') {
-					$timetp .= $image = JHTML::image("media/com_jem/images/arrow-left.png",'').' '.$start.' ';
+					$timetp .= $image = JHtml::_("image","com_jem/arrow-left.png",'',NULL,true).' '.$start.' ';
 				} elseif ($multi->row == 'middle') {
-					$timetp .= JHTML::image("media/com_jem/images/arrow-middle.png",'');
+					$timetp .= JHtml::_("image","com_jem/arrow-middle.png",'',NULL,true);
 				} elseif ($multi->row == 'zlast') {
-					$timetp .= JHTML::image("media/com_jem/images/arrow-right.png",'').' '.$end.' ';
+					$timetp .= JHtml::_("image","com_jem/arrow-right.png",'',NULL,true).' '.$end.' ';
 				} elseif ($multi->row == 'na') {
 					if ($start != '') :
 						$timetp .= $start;

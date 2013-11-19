@@ -47,8 +47,8 @@ class JEMViewCategoriesdetailed extends JEMView
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
 
-		//add css file
-		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		$params->def('page_title', $item->title);

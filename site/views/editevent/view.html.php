@@ -74,10 +74,12 @@ class JEMViewEditevent extends JViewLegacy
 		JHtml::_('behavior.modal', 'a.flyermodal');
 		jimport('joomla.html.pane');
 
-		//add css file
-		$doc->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		$doc->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-		$doc->addScript($url.'media/com_jem/js/seo.js');
+		
+		// Load Script
+		JHtml::_('script', 'com_jem/seo.js', false, true);
 
 		//Set page title
 		$id ? $title = JText::_('COM_JEM_EDIT_EVENT') : $title = JText::_('COM_JEM_ADD_EVENT');
@@ -121,12 +123,11 @@ class JEMViewEditevent extends JViewLegacy
 		}";
 
 		$doc->addScriptDeclaration($js);
-		// include the recurrence script
-		$doc->addScript($url.'media/com_jem/js/recurrence.js');
-		// include the unlimited script
-		$doc->addScript($url.'media/com_jem/js/unlimited.js');
 
-		$doc->addScript('media/com_jem/js/attachments.js');
+	
+		JHtml::_('script', 'com_jem/recurrence.js', false, true);
+		JHtml::_('script', 'com_jem/unlimited.js', false, true);
+		JHtml::_('script', 'com_jem/attachments.js', false, true);
 
 		$lists = array();
 
@@ -202,7 +203,9 @@ class JEMViewEditevent extends JViewLegacy
 		$lists['order'] 	= $filter_order;
 
 		$document->setTitle(JText::_('COM_JEM_SELECTVENUE'));
-		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 
 		$filters = array();
 		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_VENUE'));

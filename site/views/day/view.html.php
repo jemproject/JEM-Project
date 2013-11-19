@@ -44,8 +44,8 @@ class JEMViewDay extends JEMView
 		$requestCategoryId = $jinput->get('catid', null, 'int');
 		$requestDate = $jinput->get('id', null, 'int');
 
-		// Add css file
-		$this->document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		$this->document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		// get variables

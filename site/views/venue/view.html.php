@@ -38,10 +38,11 @@ class JEMViewVenue extends JEMView {
 			$pathway 		= $app->getPathWay();
 			$jinput 		= JFactory::getApplication()->input;
 
-			// add css file
-			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+			// Load css
+			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
+			JHtml::_('stylesheet', 'com_jem/calendar.css', array(), true);
+			
 			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendar.css');
 
 			$evlinkcolor = $params->get('eventlinkcolor');
 			$evbackgroundcolor = $params->get('eventbackgroundcolor');
@@ -55,8 +56,8 @@ class JEMViewVenue extends JEMView {
 			.today .daynum {background-color:' . $currentdaycolor . ';}';
 			$document->addStyleDeclaration ($style);
 
-			// add javascript
-			$document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
+			// add javascript			
+			JHtml::_('script', 'com_jem/calendar.js', false, true);
 
 			// Retrieve year/month variables
 			$year = $jinput->get('yearID', strftime("%Y"),'int');
@@ -108,8 +109,8 @@ class JEMViewVenue extends JEMView {
 			$uri 			= JFactory::getURI();
 			$task 			= JRequest::getWord('task');
 
-			// add css file
-			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+			// Load css
+			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 			// get search & user-state variables

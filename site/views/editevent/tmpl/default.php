@@ -408,11 +408,11 @@ $options = array(
 			?>
 			<label for="userfile"><?php echo JText::_('COM_JEM_IMAGE'); ?></label>
 			<input class="inputbox <?php echo $this->jemsettings->imageenabled == 2 ? 'required' : ''; ?>" name="userfile" id="userfile" type="file" />
-			<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->jemsettings->sizelimit.' kb'; ?>">
+			<small class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE'); ?>::<?php echo JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->jemsettings->sizelimit.' kb'; ?>">
 				<?php echo $this->infoimage; ?>
 			</small>
-			<!--<div class="jem_current_image"><?php echo JText::_( 'COM_JEM_CURRENT_IMAGE' ); ?></div>
-			<div class="jem_selected_image"><?php echo JText::_( 'COM_JEM_SELECTED_IMAGE' ); ?></div>-->
+			<!--<div class="jem_current_image"><?php echo JText::_('COM_JEM_CURRENT_IMAGE'); ?></div>
+			<div class="jem_selected_image"><?php echo JText::_('COM_JEM_SELECTED_IMAGE'); ?></div>-->
 		</fieldset>
 		<?php endif; ?>
 

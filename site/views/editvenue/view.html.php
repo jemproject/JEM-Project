@@ -54,12 +54,13 @@ class JEMViewEditvenue extends JViewLegacy
 		JHtml::_('behavior.formvalidation');
 		JHtml::_('behavior.tooltip');
 
-		//add css file
-		$doc->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
-		$doc->addStyleSheet(JURI::root().'media/com_jem/css/geostyle.css');
-		$doc->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
+		JHtml::_('stylesheet', 'com_jem/geostyle.css', array(), true);
 
-		$doc->addScript('media/com_jem/js/attachments.js' );
+		$doc->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		
+		JHtml::_('script', 'com_jem/attachments.js', false, true);
 		$doc->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
 
 
@@ -68,7 +69,7 @@ class JEMViewEditvenue extends JViewLegacy
 
 		// JQuery scripts
 		$doc->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
-		$doc->addScript(JURI::root().'media/com_jem/js/jquery.geocomplete.js');
+		JHtml::_('script', 'com_jem/jquery.geocomplete.js', false, true);
 
 		// Get the menu object of the active menu item
 		$menu		= $app->getMenu();

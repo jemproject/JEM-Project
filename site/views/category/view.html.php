@@ -42,11 +42,11 @@ class JEMViewCategory extends JEMView
 			$uri 		= JFactory::getURI();
 			$pathway 	= $app->getPathWay();
 
-			//add css file
-			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+			// Load css
+			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
+			JHtml::_('stylesheet', 'com_jem/calendar.css', array(), true);
+			
 			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendar.css');
-
 
 			$evlinkcolor = $params->get('eventlinkcolor');
 			$evbackgroundcolor = $params->get('eventbackgroundcolor');
@@ -117,8 +117,8 @@ class JEMViewCategory extends JEMView
 			$uri 			= JFactory::getURI();
 			$pathway 		= $app->getPathWay();
 
-			//add css file
-			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+			// Load css
+			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 			// get variables

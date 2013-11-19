@@ -38,11 +38,11 @@ class JEMViewWeekcal extends JViewLegacy
 		$item 		= $menu->getActive();
 		$params 	= $app->getParams();
 
-		//add css file
-		$this->document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		// Load css
+		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
+		JHtml::_('stylesheet', 'com_jem/calendarweek.css', array(), true);
 		$this->document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-		$this->document->addStyleSheet($this->baseurl.'/media/com_jem/css/calendarweek.css');
-
+		
 		$evlinkcolor = $params->get('eventlinkcolor');
 		$evbackgroundcolor = $params->get('eventbackgroundcolor');
 		$currentdaycolor = $params->get('currentdaycolor');
@@ -65,7 +65,8 @@ class JEMViewWeekcal extends JViewLegacy
 		$this->document->addStyleDeclaration($style);
 
 		// add javascript
-		$this->document->addScript($this->baseurl.'/media/com_jem/js/calendar.js');
+		JHtml::_('script', 'com_jem/calendar.js', false, true);
+		
 		$rows = $this->get('Data');
 		$currentweek = $this->get('Currentweek');
 		$currentyear =  Date("Y");
