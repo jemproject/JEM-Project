@@ -18,13 +18,13 @@ class JEMOutput {
 
 	/**
 	 * Writes footer.
-	 *
 	 */
 	static function footer()
 	{
 		$app = JFactory::getApplication();
 
 		if ($app->input->get('print','','int')) {
+			return;
 		} else {
 			echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
 		}
@@ -36,33 +36,32 @@ class JEMOutput {
 	 * @param int $dellink Access of user
 	 * @param array $params needed params
 	 **/
-	static function submitbutton($dellink, &$params)
+	static function submitbutton($dellink, $params)
 	{
+		if ($dellink){
 		$settings = JEMHelper::config();
+		$uri = JFactory::getURI();
 		$app = JFactory::getApplication();
+		
+		if ($app->input->get('print','','int')) {
+			return;
+		}
+		
+		JHtml::_('behavior.tooltip');
 
-		if ($dellink == 1) {
-			JHtml::_('behavior.tooltip');
-
-			if ($settings->icons) {
-				$image = JHtml::_('image', 'com_jem/submitevent.png', JText::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
-			} else {
-				$image = JText::_('COM_JEM_DELIVER_NEW_EVENT');
-			}
-
-			if ($app->input->get('print','','int')) {
-				//button in popup
-				$output = '';
-			} else {
-				$link = 'index.php?view=editevent';
-				$overlib = JText::_('COM_JEM_SUBMIT_EVENT_DESC');
-				$output = '<a href="'.JRoute::_($link).'" class="editlinktip hasTip" title="'.JText::_('COM_JEM_DELIVER_NEW_EVENT')
-				.'::'.$overlib.'">'.$image.'</a>';
-			}
-			return $output;
+		if ($settings->icons) {
+			$image = JHtml::_('image', 'com_jem/submitevent.png', JText::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
+		} else {
+			$image = JText::_('COM_JEM_DELIVER_NEW_EVENT');
 		}
 
-		return;
+		$url = 'index.php?option=com_jem&view=editevent';
+		$overlib = JText::_('COM_JEM_SUBMIT_EVENT_DESC');
+		$button = JHtml::_('link', JRoute::_($url), $image);
+		$output = '<span class="hasTip" title="'.JText::_('COM_JEM_DELIVER_NEW_EVENT').' :: '.$overlib.'">'.$button.'</span>';
+	
+		return $output;
+		}
 	}
 
 	/**
@@ -77,30 +76,28 @@ class JEMOutput {
 	 **/
 	static function addvenuebutton($addvenuelink, $params, $settings)
 	{
+		if ($addvenuelink){
 		$app = JFactory::getApplication();
 
-		if ($addvenuelink == 1) {
-			JHtml::_('behavior.tooltip');
+		if ($app->input->get('print','','int')) {
+			return;
+		}
+		
+		JHtml::_('behavior.tooltip');
 
-			if ($settings->icons) {
-				$image = JHtml::_('image', 'com_jem/addvenue.png', JText::_('COM_JEM_DELIVER_NEW_VENUE'), NULL, true);
-			} else {
-				$image = JText::_('COM_JEM_DELIVER_NEW_VENUE');
-			}
-
-			if ($app->input->get('print','','int')) {
-				//button in popup
-				$output = '';
-			} else {
-				$link = 'index.php?view=editvenue';
-				$overlib = JText::_('COM_JEM_DELIVER_NEW_VENUE_DESC');
-				$output = '<a href="'.JRoute::_($link).'" class="editlinktip hasTip" title="'.JText::_('COM_JEM_DELIVER_NEW_VENUE')
-				.'::'.$overlib.'">'.$image.'</a>';
-			}
-			return $output;
+		if ($settings->icons) {
+			$image = JHtml::_('image', 'com_jem/addvenue.png', JText::_('COM_JEM_DELIVER_NEW_VENUE'), NULL, true);
+		} else {
+			$image = JText::_('COM_JEM_DELIVER_NEW_VENUE');
 		}
 
-		return;
+		$url = 'index.php?view=editvenue';
+		$overlib = JText::_('COM_JEM_DELIVER_NEW_VENUE_DESC');
+		$button = JHtml::_('link', JRoute::_($url), $image);
+		$output = '<span class="hasTip" title="'.JText::_('COM_JEM_DELIVER_NEW_VENUE').' :: '.$overlib.'">'.$button.'</span>';
+			
+		return $output;
+		}
 	}
 
 	/**
@@ -112,56 +109,61 @@ class JEMOutput {
 	 * Views:
 	 * Categories, Categoriesdetailed, Category, Eventslist, Search, Venue, Venues
 	 */
-	static function archivebutton(&$params, $task = NULL, $id = NULL)
+	static function archivebutton($params, $task = NULL, $id = NULL)
 	{
-		$app = JFactory::getApplication();
+		
 		$settings = JEMHelper::config();
-
+		$app = JFactory::getApplication();
+		
 		if ($settings->show_archive_icon) {
-			if ($settings->oldevent == 2) {
+		
+		if ($app->input->get('print','','int')) {
+			return;
+		}
+		
+		if ($settings->oldevent == 2) {
 
-				JHtml::_('behavior.tooltip');
+			JHtml::_('behavior.tooltip');
+			$view = JRequest::getWord('view');
 
-				$view = JRequest::getWord('view');
-
-				if ($task == 'archive') {
-					if ($settings->icons) {
-						$image = JHtml::_('image', 'com_jem/el.png', JText::_('COM_JEM_SHOW_EVENTS'), NULL, true);
-					} else {
-						$image = JText::_('COM_JEM_SHOW_EVENTS');
-					}
-					$overlib = JText::_('COM_JEM_SHOW_EVENTS_DESC');
-					$title = JText::_('COM_JEM_SHOW_EVENTS');
-
-					if ($id) {
-						$link = JRoute::_('index.php?view='.$view.'&id='.$id);
-					} else {
-						$link = JRoute::_('index.php');
-					}
+			if ($task == 'archive') {
+				if ($settings->icons) {
+					$image = JHtml::_('image', 'com_jem/el.png', JText::_('COM_JEM_SHOW_EVENTS'), NULL, true);
 				} else {
-					if ($settings->icons) {
-						$image = JHtml::_('image', 'com_jem/archive_front.png', JText::_('COM_JEM_SHOW_ARCHIVE'), NULL, true);
-					} else {
-						$image = JText::_('COM_JEM_SHOW_ARCHIVE');
-					}
-					$overlib = JText::_('COM_JEM_SHOW_ARCHIVE_DESC');
-					$title = JText::_('COM_JEM_SHOW_ARCHIVE');
-
-					if ($id) {
-						$link = JRoute::_('index.php?view='.$view.'&id='.$id.'&task=archive');
-					} else {
-						$link = JRoute::_('index.php?view='.$view.'&task=archive');
-					}
+					$image = JText::_('COM_JEM_SHOW_EVENTS');
 				}
+				
+				$overlib = JText::_('COM_JEM_SHOW_EVENTS_DESC');
+				$title = JText::_('COM_JEM_SHOW_EVENTS');
 
-				if ($app->input->get('print','','int')) {
-					//button in popup
-				} else{
-					return '<a href="'.$link.'" class="editlinktip hasTip" title="'.$title.'::'.$overlib.'">'.$image.'</a>';
+				if ($id) {
+					$url = JRoute::_('index.php?view='.$view.'&id='.$id);
+				} else {
+					$url = JRoute::_('index.php');
+				}
+			} else {
+				if ($settings->icons) {
+					$image = JHtml::_('image', 'com_jem/archive_front.png', JText::_('COM_JEM_SHOW_ARCHIVE'), NULL, true);
+				} else {
+					$image = JText::_('COM_JEM_SHOW_ARCHIVE');
+				}
+				$overlib = JText::_('COM_JEM_SHOW_ARCHIVE_DESC');
+				$title = JText::_('COM_JEM_SHOW_ARCHIVE');
+
+				if ($id) {
+					$url = JRoute::_('index.php?option=com_jem&view='.$view.'&id='.$id.'&task=archive');
+				} else {
+					$url = JRoute::_('index.php?option=com_jem&view='.$view.'&task=archive');
 				}
 			}
 		}
-		return;
+
+		$button = JHtml::_('link', JRoute::_($url), $image);
+		$output = '<span class="hasTip" title="'.$title.' :: '.$overlib.'">'.$button.'</span>';
+			
+		return $output;
+		}
+	
 	}
 
 	/**
@@ -178,10 +180,16 @@ class JEMOutput {
 	 */
 	static function editbutton($Itemid, $id, &$params, $allowedtoedit, $view)
 	{
-		$app = JFactory::getApplication();
-		$settings = JEMHelper::config();
-
+		
 		if ($allowedtoedit) {
+
+			$app = JFactory::getApplication();
+			
+			if ($app->input->get('print','','int')) {
+				return;
+			}
+			
+			$settings = JEMHelper::config();
 			JHtml::_('behavior.tooltip');
 
 			switch ($view)
@@ -207,14 +215,13 @@ class JEMOutput {
 					break;
 			}
 
-		if ($app->input->get('print','','int')) {
-				//button in popup
-			} else {
-				$link = 'index.php?view='.$view.'&id='.$id.'&returnid='.$Itemid;
-				return '<a href="'.JRoute::_($link).'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
-			}
+			
+				$url = 'index.php?view='.$view.'&id='.$id.'&returnid='.$Itemid;
+				$button = JHtml::_('link', JRoute::_($url), $image);
+				$output = '<span class="hasTip" title="'.$text.' :: '.$overlib.'">'.$button.'</span>';
+				
+				return $output;
 		}
-		return;
 	}
 
 	/**
@@ -249,7 +256,7 @@ class JEMOutput {
 				//button in view
 				$overlib = JText::_('COM_JEM_PRINT_DESC');
 				$text = JText::_('COM_JEM_PRINT');
-				$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" onclick="window.open(this.href,\'win2\',\''.$status.'\'); return false;" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
+				$output	= '<a href="'. JRoute::_($print_link) .'" class="hasTip" onclick="window.open(this.href,\'win2\',\''.$status.'\'); return false;" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 			}
 
 			return $output;
@@ -273,16 +280,21 @@ class JEMOutput {
 		$settings = JEMHelper::config();
 
 		if ($settings->show_email_icon) {
+			
+			if ($app->input->get('print','','int')) {
+				return;
+			}
+			
 			JHtml::_('behavior.tooltip');
 			require_once JPATH_SITE . '/components/com_mailto/helpers/mailto.php';
 
 			$uri = JURI::getInstance();
 			$base = $uri->toString(array('scheme', 'host', 'port'));
 			$template = JFactory::getApplication()->getTemplate();
-			$link = $base.JRoute::_('index.php?view='.$view.'&id='.$slug, false);
+			$link = $base.JRoute::_('index.php?option=com_jem&view='.$view.'&id='.$slug, false);
 
 			$url = 'index.php?option=com_mailto&tmpl=component&template='.$template.'&link='.MailToHelper::addLink($link);
-			$status = 'width=400,height=300,menubar=yes,resizable=yes';
+			$status = 'width=400,height=350,menubar=yes,resizable=yes';
 
 			if ($settings->icons) {
 				$image = JHtml::_('image','system/emailButton.png', JText::_('JGLOBAL_EMAIL'), NULL, true);
@@ -290,17 +302,13 @@ class JEMOutput {
 				$image = JText::_('COM_JEM_EMAIL');
 			}
 
-			if ($app->input->get('print','','int')) {
-				//button in popup
-			} else {
-				//button in view
-				$overlib = JText::_('COM_JEM_EMAIL_DESC');
-				$text = JText::_('COM_JEM_EMAIL');
-				return '<a href="'. JRoute::_($url) .'" class="editlinktip hasTip" onclick="window.open(this.href,\'win2\',\''.$status.'\'); return false;" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
-			}
+			$overlib = JText::_('COM_JEM_EMAIL_DESC');
+			$text = JText::_('COM_JEM_EMAIL');
+			
+			$output = '<a href="'. JRoute::_($url) .'" class="hasTip" onclick="window.open(this.href,\'win2\',\''.$status.'\'); return false;" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
+			return $output;
 
 		}
-		return;
 	}
 
 	/**
@@ -314,6 +322,11 @@ class JEMOutput {
 		$app = JFactory::getApplication();
 		$settings = JEMHelper::config();
 		if ($settings->events_ical == 1) {
+			
+			if ($app->input->get('print','','int')) {
+				return;
+			}
+			
 			JHtml::_('behavior.tooltip');
 
 			if ($settings->icons) {
@@ -322,21 +335,15 @@ class JEMOutput {
 				$image = JText::_('COM_JEM_EXPORT_ICS');
 			}
 
-			if ($app->input->get('print','','int')) {
-				//button in popup
-				$output = '';
-			} else {
-				//button in view
-				$overlib = JText::_('COM_JEM_ICAL_DESC');
-				$text = JText::_('COM_JEM_ICAL');
+			$overlib = JText::_('COM_JEM_ICAL_DESC');
+			$text = JText::_('COM_JEM_ICAL');
 
-				$print_link = 'index.php?view='.$view.'&id='.$slug.'&format=raw&layout=ics';
-				$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
-			}
+			$url = 'index.php?option=com_jem&view='.$view.'&id='.$slug.'&format=raw&layout=ics';
+			$button = JHtml::_('link', JRoute::_($url), $image);
+			$output = '<span class="hasTip" title="'.$text.' :: '.$overlib.'">'.$button.'</span>';
 
 			return $output;
 		}
-		return;
 	}
 
 	/**
