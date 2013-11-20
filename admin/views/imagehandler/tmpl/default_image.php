@@ -19,7 +19,7 @@ defined('_JEXEC') or die;
 	</div>
 	<div class="controls">
 		<?php echo $this->_tmp_img->size; ?> -
-		<a class="delete-item" href="index.php?option=com_jem&amp;task=delete&amp;controller=imagehandler&amp;tmpl=component&amp;folder=<?php echo $this->folder; ?>&amp;rm[]=<?php echo $this->_tmp_img->name; ?>">
+		<a class="delete-item" href="index.php?option=com_jem&amp;task=imagehandler.delete&amp;tmpl=component&amp;folder=<?php echo $this->folder; ?>&amp;rm[]=<?php echo $this->_tmp_img->name; ?>">
 			<?php echo JHtml::_('image','com_jem/publish_x.png',JText::_('COM_JEM_DELETE_IMAGE'),NULL,true); ?>
 		</a>
 	</div>
