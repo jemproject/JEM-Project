@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,10 +15,10 @@ defined('_JEXEC') or die;
  * @package JEM
  */
 class JEMUser {
+	
 	/**
 	 * Checks access permissions of the user regarding on the groupid
-	 *
-	 *
+	 * 
 	 * @param int $recurse
 	 * @param int $level
 	 * @return boolean True on success
@@ -156,105 +156,34 @@ class JEMUser {
 	 * if the group is allowed to add-venues
 	 *
 	 */
-	static function addvenuegroups() {
+	static function venuegroups($action) {
 		//lets look if the user is a maintainer
 		$db 	= JFactory::getDBO();
 		$user	= JFactory::getUser();
 
 		/*
 		 * just a basic check to see if the current user is in an usergroup with
-		 * access for submitting venues
+		 * access for submitting venues. if a result then return true, otherwise false
+		 * 
+		 * Actions: addvenue, publishvenue, editvenue
 		 *
-		 * if a result then return true, otherwise false
-		 *
-		 * views:
-		 * venues, venue, editvenue
+		 * views: venues, venue, editvenue
 		 */
 		$query = 'SELECT gr.id'
 				. ' FROM #__jem_groups AS gr'
 				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
-				. ' AND gr.addvenue = 1 '
+				. ' AND gr.'.$action.'venue = 1 '
 				. ' WHERE g.member = '.(int) $user->get('id')
 				;
-		$db->setQuery( $query );
+		$db->setQuery($query);
 
 		$groupnumber = $db->loadResult();
-
+		
 		//no results
 		if (!$groupnumber) {
-			return null;
+			return false;
 		} else {
-			return $groupnumber;
-		}
-	}
-
-
-	/**
-	 * Checks if an user is a groupmember and if so
-	 * if the group is allowed to publish-venues
-	 *
-	 */
-		static function publishvenuegroups() {
-		//lets look if the user is a maintainer
-		$db 	= JFactory::getDBO();
-		$user	= JFactory::getUser();
-
-		/*
-		 * just a basic check to see if the current user is in an usergroup with
-		 * access for publishing venues
-		 *
-		 * if a result then return true, otherwise false
-		 */
-		$query = 'SELECT gr.id'
-				. ' FROM #__jem_groups AS gr'
-				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
-				. ' AND gr.publishvenue = 1 '
-				. ' WHERE g.member = '.(int) $user->get('id')
-				;
-		$db->setQuery( $query );
-
-		$groupnumber = $db->loadResult();
-
-		//no results
-		if (!$groupnumber) {
-			return null;
-		} else {
-			return $groupnumber;
-		}
-	}
-
-
-	/**
-	 * Checks if an user is a groupmember and if so
-	 * if the group is allowed to edit-venues
-	 *
-	 */
-	static function editvenuegroups() {
-		//lets look if the user is a maintainer
-		$db 	= JFactory::getDBO();
-		$user	= JFactory::getUser();
-
-		/*
-		 * just a basic check to see if the current user is in an usergroup with
-		 * access for editing venues
-		 *
-		 * if a result then return true, otherwise false
-		*/
-		$query = 'SELECT gr.id'
-				. ' FROM #__jem_groups AS gr'
-				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
-				. ' AND gr.editvenue = 1 '
-				. ' WHERE g.member = '.(int) $user->get('id')
-				;
-		$db->setQuery( $query );
-
-		$groupnumber = $db->loadResult();
-
-		//no results
-		if (!$groupnumber) {
-			return null;
-		} else {
-			return $groupnumber;
+			return true;
 		}
 	}
 }

@@ -185,7 +185,7 @@ class JEMViewVenue extends JEMView {
 			}
 
 			// Check if the user has access to the add-venueform
-			$maintainer2 = JEMUser::addvenuegroups();
+			$maintainer2 = JEMUser::venuegroups('add');
 			$genaccess2 = JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
 			if ($maintainer2 || $genaccess2) {
 				$addvenuelink = 1;
@@ -194,7 +194,7 @@ class JEMViewVenue extends JEMView {
 			}
 
 			// Check if the user has access to the edit-venueform
-			$maintainer3 = JEMUser::editvenuegroups();
+			$maintainer3 = JEMUser::venuegroups('edit');
 			$genaccess3 = JEMUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
 			if ($maintainer3 || $genaccess3) {
 				$allowedtoeditvenue = 1;

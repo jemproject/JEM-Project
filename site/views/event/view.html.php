@@ -98,7 +98,7 @@ class JEMViewEvent extends JViewLegacy
 		$allowedtoeditevent = JEMUser::editaccess($jemsettings->eventowner, $row->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
 
 		//Check if the user has access to the edit-venueform
-		$maintainer3 = JEMUser::editvenuegroups();
+		$maintainer3 = JEMUser::venuegroups('edit');
 		$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $row->venueowner, $jemsettings->venueeditrec, $jemsettings->venueedit);
 		if ($maintainer3 || $genaccess3 )
 		{

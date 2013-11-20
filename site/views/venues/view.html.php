@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -78,7 +78,7 @@ class JEMViewVenues extends JViewLegacy
 		}
 
 		//Check if the user has access to the add-venueform
-		$maintainer2 = JEMUser::addvenuegroups();
+		$maintainer2 = JEMUser::venuegroups('add');
 		$genaccess2 	= JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
 		if ($maintainer2 || $genaccess2) {
 			$addvenuelink = 1;

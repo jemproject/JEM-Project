@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -78,7 +78,7 @@ class JEMModelEditvenue extends JModelLegacy
 			}
 
 			//access check
-			$maintainer3 = JEMUser::editvenuegroups();
+			$maintainer3 = JEMUser::venuegroups('edit');
 			$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $this->_venue->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 			if ($maintainer3 || $genaccess3) {
 // 				$allowedtoeditvenue = 1;
@@ -89,7 +89,7 @@ class JEMModelEditvenue extends JModelLegacy
 		// ID does not exist => add
 		} else {
 			//access checks
-			$maintainer2 = JEMUser::addvenuegroups();
+			$maintainer2 = JEMUser::venuegroups('add');
 			$delloclink = JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
 
 			if ($maintainer2 || $delloclink) {
@@ -219,7 +219,7 @@ class JEMModelEditvenue extends JModelLegacy
 			//check if user is allowed to edit venues
 
 			//access check
-			$maintainer3 = JEMUser::editvenuegroups();
+			$maintainer3 = JEMUser::venuegroups('edit');
 			$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $row->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 			if ($maintainer3 || $genaccess3) {
 // 				$allowedtoeditvenue = 1;
@@ -241,7 +241,7 @@ class JEMModelEditvenue extends JModelLegacy
 		} else {
 			//check if user is allowed to submit new venues
 
-			$maintainer2 = JEMUser::addvenuegroups();
+			$maintainer2 = JEMUser::venuegroups('add');
 			$delloclink = JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
 
 			if ($maintainer2 || $delloclink) {
@@ -266,7 +266,7 @@ class JEMModelEditvenue extends JModelLegacy
 
 		//Autopublish
 		//check if the user has the required rank for autopublish
-		$autopublgroups = JEMUser::publishvenuegroups();
+		$autopublgroups = JEMUser::venuegroups('publish');
 
 		$autopublloc = JEMUser::validate_user($jemsettings->locpubrec, $jemsettings->autopublocate);
 		if ($autopublloc || $owneredit || $autopublgroups) {
