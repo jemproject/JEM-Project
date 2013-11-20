@@ -37,26 +37,45 @@ class JFormFieldImageselect extends JFormFieldList
 		// Load the modal behavior script.
 		JHtml::_('behavior.modal', 'a.modal');
 
+		// ImageType
+		$imagetype = $this->element['imagetype'];
+		
 		// Build the script.
 		$script = array();
 		$script[] = '	function SelectImage(image, imagename) {';
 		$script[] = '		document.getElementById(\'a_image\').value = image';
 		$script[] = '		document.getElementById(\'a_imagename\').value = imagename';
-		$script[] = '		document.getElementById(\'imagelib\').src = \'../images/jem/venues/\' + image';
+		$script[] = '		document.getElementById(\'imagelib\').src = \'../images/jem/'.$imagetype.'/\' + image';
 		$script[] = '		window.parent.SqueezeBox.close()';
 		$script[] = '	}';
-
+		
+		switch ($imagetype)
+		{
+			case 'categories':
+				$task 		= 'categoriesimg';
+				$taskselect = 'selectcategoriesimg';
+				break;
+			case 'events':
+				$task 		= 'eventimg';
+				$taskselect = 'selecteventimg';
+				break;	
+			case 'venues':
+				$task 		= 'venueimg';
+				$taskselect = 'selectvenueimg';
+				break;	
+		}
+		
 		// Add the script to the document head.
 		JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));
 
 		// Setup variables for display.
 		$html = array();
-		$link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task=venueimg&amp;tmpl=component';
-		$link2 = 'index.php?option=com_jem&amp;view=imagehandler&amp;task=selectvenueimg&amp;tmpl=component';
+		$link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task='.$task.'&amp;tmpl=component';
+		$link2 = 'index.php?option=com_jem&amp;view=imagehandler&amp;task='.$taskselect.'&amp;tmpl=component';
 
 		//
 		$html[] = "<div class=\"fltlft\">";
-		$html[] = "<input style=\"background: #ffffff;\" type=\"text\" id=\"a_imagename\" value=\"$this->value\" disabled=\"disabled\" onchange=\"javascript:if (document.forms[0].a_imagename.value!='') {document.imagelib.src='../images/jem/venues/' + document.forms[0].a_imagename.value} else {document.imagelib.src='../images/blank.png'}\"; />";
+		$html[] = "<input style=\"background: #ffffff;\" type=\"text\" id=\"a_imagename\" value=\"$this->value\" disabled=\"disabled\" onchange=\"javascript:if (document.forms[0].a_imagename.value!='') {document.imagelib.src='../images/jem/$imagetype/' + document.forms[0].a_imagename.value} else {document.imagelib.src='../media/system/images/blank.png'}\"; />";
 		$html[] = "</div>";
 
 		$html[] = "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".JText::_('COM_JEM_UPLOAD')."\" href=\"$link\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".JText::_('COM_JEM_UPLOAD')."</a></div></div>\n";
@@ -69,7 +88,7 @@ class JFormFieldImageselect extends JFormFieldList
 		$html [] = "<script type=\"text/javascript\">";
 		$html [] = "if (document.forms[0].a_imagename.value!='') {";
 		$html [] = "var imname = document.forms[0].a_imagename.value;";
-		$html [] = "jsimg='../images/jem/venues/' + imname;";
+		$html [] = "jsimg='../images/jem/$imagetype/' + imname;";
 		$html [] = "document.getElementById('imagelib').src= jsimg;";
 		$html [] = "}";
 		$html [] = "</script>";

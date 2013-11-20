@@ -86,6 +86,7 @@
 		<field name="locimage" type="imageselect"
 			class="inputbox"
 			size="40"
+			imagetype="venues"
 			label="COM_JEM_IMAGESELECT"
 			description="COM_JEM_IMAGESELECT"
 		/>

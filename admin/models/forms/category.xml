@@ -116,11 +116,11 @@
 	<fieldset name="image"
 		label="COM_JEM_IMAGE"
 	>
-		<field name="image" type="imageselectcategory"
+		<field name="image" type="imageselect"
 			class="inputbox"
 			size="40"
 			label="COM_JEM_IMAGESELECT"
-			description="COM_JEM_IMAGESELECT"
+			imagetype="categories" description="COM_JEM_IMAGESELECT"
 		/>
 	</fieldset>
 

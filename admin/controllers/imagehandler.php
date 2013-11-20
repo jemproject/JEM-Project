@@ -88,7 +88,7 @@ class JEMControllerImagehandler extends JControllerLegacy
 			echo "<script> alert('".JText::_('COM_JEM_UPLOAD_FAILED')."'); window.history.go(-1); </script>\n";
 			$app->close();
 		} else {
-			echo "<script> alert('".JText::_('COM_JEM_UPLOAD_COMPLETE')."'); window.history.go(-1); window.parent.elSelectImage('$filename', '$filename'); </script>\n";
+			echo "<script> alert('".JText::_('COM_JEM_UPLOAD_COMPLETE')."'); window.history.go(-1); window.parent.SelectImage('$filename', '$filename'); </script>\n";
 			$app->close();
 		}
 
