@@ -19,7 +19,7 @@ class JEMView extends JViewLegacy {
 	 *
 	 * @return object $rows
 	 */
-	public function &getRows($rowname = "rows")
+	public function getRows($rowname = "rows")
 	{
 		if (!isset($this->$rowname) || !count($this->$rowname)) {
 			return;
