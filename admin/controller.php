@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -19,7 +19,7 @@ class JEMController extends JControllerLegacy
 	 * @var		string	The default view.
 	 *
 	 */
-	protected $default_view = 'jem';
+	protected $default_view = 'main';
 
 
 	function __construct()
@@ -39,7 +39,7 @@ class JEMController extends JControllerLegacy
 		// Load the submenu.
 		// if no view found then refert to jem
 
-		JEMHelperBackend::addSubmenu(JRequest::getCmd('view', 'jem'));
+		JEMHelperBackend::addSubmenu(JRequest::getCmd('view', 'main'));
 
 		parent::display();
 		return $this;

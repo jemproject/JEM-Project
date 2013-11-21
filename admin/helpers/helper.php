@@ -31,9 +31,9 @@ class JEMHelperBackend
 	public static function addSubmenu($vName)
 	{
 		JSubMenuHelper::addEntry(
-			JText::_('COM_JEM_JEM'),
-			'index.php?option=com_jem&view=jem',
-			$vName == 'jem'
+			JText::_('COM_JEM_SUBMENU_MAIN'),
+			'index.php?option=com_jem&view=main',
+			$vName == 'main'
 		);
 
 		JSubMenuHelper::addEntry(
