@@ -27,7 +27,7 @@ class JEMViewCleanup extends JViewLegacy {
 		//only admins have access to this view
 		if (!JFactory::getUser()->authorise('core.manage')) {
 			JError::raiseWarning('SOME_ERROR_CODE', JText::_('COM_JEM_ALERTNOTAUTH'));
-			$app->redirect('index.php?option=com_jem&view=jem');
+			$app->redirect('index.php?option=com_jem&view=main');
 		}
 
 		// Load css

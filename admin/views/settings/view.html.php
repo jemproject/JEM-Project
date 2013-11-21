@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -66,7 +66,7 @@ class JEMViewSettings extends JViewLegacy {
 		// only admins have access to this view
 		if (!JFactory::getUser()->authorise('core.manage')) {
 			JError::raiseWarning('SOME_ERROR_CODE', JText::_('COM_JEM_ALERTNOTAUTH'));
-			$app->redirect('index.php?option=com_jem&view=jem');
+			$app->redirect('index.php?option=com_jem&view=main');
 		}
 
 		// mapping variables

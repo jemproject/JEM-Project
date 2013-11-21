@@ -33,6 +33,6 @@ class JEMControllerCssmanager extends JControllerAdmin
 	 */
 	public function cancel()
 	{
-		$this->setRedirect('index.php?option=com_jem&view=jem');
+		$this->setRedirect('index.php?option=com_jem&view=main');
 	}
 }
