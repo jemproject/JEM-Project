@@ -234,69 +234,7 @@ class JEMController extends JControllerLegacy
 	}
 
 
-	/**
-	 * Saves the registration to the database
-	 */
-	function userregister()
-	{
-		// Check for request forgeries
-		JRequest::checkToken() or jexit('Invalid Token');
-
-		$id 	= JRequest::getInt('rdid', 0, 'post');
-
-		// Get the model
-		$model = $this->getModel('Event', 'JEMModel');
-
-		$model->setId($id);
-		$register_id = $model->userregister();
-		if (!$register_id)
-		{
-			$msg = $model->getError();
-			$this->setRedirect(JRoute::_(JEMHelperRoute::getEventRoute($id), false), $msg, 'error');
-			$this->redirect();
-			return;
-		}
-
-		JPluginHelper::importPlugin('jem');
-		$dispatcher = JDispatcher::getInstance();
-		$dispatcher->trigger('onEventUserRegistered', array($register_id));
-
-		$cache = JFactory::getCache('com_jem');
-		$cache->clean();
-
-		$msg = JText::_('COM_JEM_REGISTERED_SUCCESSFULL');
-
-		$this->setRedirect(JRoute::_(JEMHelperRoute::getEventRoute($id), false), $msg);
-	}
-
-	/**
-	 * Deletes a registered user
-	 */
-	function delreguser()
-	{
-		// Check for request forgeries
-		JRequest::checkToken() or jexit('Invalid Token');
-
-		$id = JRequest::getInt('rdid', 0, 'post');
-
-		// Get/Create the model
-		$model = $this->getModel('Event', 'JEMModel');
-
-		$model->setId($id);
-		$model->delreguser();
-
-		JEMHelper::updateWaitingList($id);
-
-		JPluginHelper::importPlugin('jem');
-		$dispatcher = JDispatcher::getInstance();
-		$dispatcher->trigger('onEventUserUnregistered', array($id));
-
-		$cache = JFactory::getCache('com_jem');
-		$cache->clean();
-
-		$msg = JText::_('COM_JEM_UNREGISTERED_SUCCESSFULL');
-		$this->setRedirect(JRoute::_(JEMHelperRoute::getEventRoute($id), false), $msg);
-	}
+	
 
 	/**
 	 * for attachment downloads
@@ -406,72 +344,8 @@ class JEMController extends JControllerLegacy
 		$app->close();
 	}
 
-	/**
-	 * toggletask
-	 * view: attendees
-	 */
-	function attendeetoggle()
-	{
-		$id = JRequest::getInt('id');
-		$fid = JRequest::getInt('Itemid');
+	
 
-		$model = $this->getModel('attendee');
-		$model->setId($id);
 
-		$attendee = $model->getData();
-		$res = $model->toggle();
-
-		$type = 'message';
-
-		if ($res)
-		{
-			JPluginHelper::importPlugin('jem');
-			$dispatcher = JDispatcher::getInstance();
-			$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($id));
-
-			if ($attendee->waiting) {
-				$msg = JText::_('COM_JEM_ADDED_TO_ATTENDING');
-			} else {
-				$msg = JText::_('COM_JEM_ADDED_TO_WAITING');
-			}
-		}
-		else
-		{
-			$msg = JText::_('COM_JEM_WAITINGLIST_TOGGLE_ERROR').': '.$model->getError();
-			$type = 'error';
-		}
-
-		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$attendee->event.'&Itemid='.$fid, $msg, $type);
-		$this->redirect();
-	}
-
-	/**
-	 * removetask
-	 * view=attendees
-	 */
-	function attendeeremove()
-	{
-		$cid = JRequest::getVar('cid', array(0), 'post', 'array');
-		$id  = JRequest::getInt('id');
-		$fid = JRequest::getInt('Itemid');
-		$total = count($cid);
-
-		$model = $this->getModel('attendees');
-
-		if (!is_array($cid) || count($cid) < 1) {
-			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
-		}
-
-		if(!$model->remove($cid)) {
-			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
-		}
-
-		$cache = JFactory::getCache('com_jem');
-		$cache->clean();
-
-		$msg = $total.' '.JText::_('COM_JEM_REGISTERED_USERS_DELETED');
-
-		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$id.'&Itemid='.$fid, $msg);
-	}
 }
 ?>
