@@ -18,6 +18,19 @@ class JEMControllerCssmanager extends JControllerAdmin
 {
 
 	/**
+	 * Constructor
+	 */
+	function __construct()
+	{
+		parent::__construct();
+	
+		// Register Extra task
+		$this->registerTask('setlinenumber', 		'linenumber');
+		$this->registerTask('disablelinenumber', 	'linenumber');
+	}
+	
+	
+	/**
 	 * Proxy for getModel.
 	 */
 	public function getModel($name = 'Cssmanager', $prefix = 'JEMModel', $config = array())
@@ -35,4 +48,28 @@ class JEMControllerCssmanager extends JControllerAdmin
 	{
 		$this->setRedirect('index.php?option=com_jem&view=main');
 	}
+	
+	/**
+	 *
+	 */
+	public function linenumber()
+	{
+		$task 	= JRequest::getVar('task');
+		$model = $this->getModel();
+		
+		switch ($task)
+		{
+			case 'setlinenumber' :
+				$model->setStatusLinenumber(1);
+				break;
+		
+			default :
+				$model->setStatusLinenumber(0);
+				break;
+		}
+		
+		$this->setRedirect('index.php?option=com_jem&view=cssmanager');
+		
+	}
+	
 }

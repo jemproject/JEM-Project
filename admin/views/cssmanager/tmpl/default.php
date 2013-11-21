@@ -20,13 +20,32 @@ $canDo	= JEMHelperBackend::getActions();
 			<legend><?php echo JText::_('COM_JEM_CSSMANAGER_DESCRIPTION_LEGEND');?></legend>
 			<?php echo JText::_('COM_JEM_CSSMANAGER_DESCRIPTION');?>
 		</fieldset>
+		
+		<fieldset class="adminform">
+			<legend><?php echo JText::_('COM_JEM_CSSMANAGER_LINENUMBER_LEGEND');?></legend>
+			<?php 
+			echo JText::_('COM_JEM_CSSMANAGER_LINENUMBER_DESCRIPTION');
+			
+			if ($this->statusLinenumber) {
+				echo JText::_('COM_JEM_CSSMANAGER_LINENUMBER_ENABLED');
+				?>
+				<br /><a href="<?php echo JRoute::_('index.php?option=com_jem&amp;task=cssmanager.disablelinenumber');?>">Click here to disable</a>
+			<?php
+			} else {
+				echo JText::_('COM_JEM_CSSMANAGER_LINENUMBER_DISABLED');
+				?>
+				<br /><a href="<?php echo JRoute::_('index.php?option=com_jem&amp;task=cssmanager.setlinenumber');?>">Click here to enable</a>
+				<?php 
+			}
+			?>
+		</fieldset>
+		
 		<div class="clr"></div>
 	</div>
 
 	<div class="width-50 fltrt">
 		<fieldset class="adminform">
 			<legend><?php echo JText::_('COM_JEM_CSSMANAGER_FILENAMES');?></legend>
-
 			<?php if (!empty($this->files['css'])) : ?>
 			<ul>
 				<?php foreach ($this->files['css'] as $file) : ?>

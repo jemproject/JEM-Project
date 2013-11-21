@@ -19,7 +19,8 @@ class JEMViewCssmanager extends JViewLegacy
 	function display($tpl = null)
 	{
 		$this->files = $this->get('Files');
-
+		$this->statusLinenumber = $this->get('StatusLinenumber');
+		
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {
 			JError::raiseError(500, implode("\n", $errors));
