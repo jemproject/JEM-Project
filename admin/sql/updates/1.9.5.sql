@@ -13,6 +13,10 @@ ALTER TABLE `#__jem_settings`
 DELETE FROM `#__menu`
 	WHERE `type`='component' AND `title`='COM_JEM_MENU_ARCHIVE';
 
+UPDATE `#__menu` 
+SET `link` = 'index.php?option=com_jem&view=main' 
+WHERE `#__menu`.`title` ='COM_JEM_MENU_MAINMENU';
+
 ALTER TABLE `#__jem_events`
 	MODIFY `title` VARCHAR(255),
 	MODIFY `alias` VARCHAR(255);
