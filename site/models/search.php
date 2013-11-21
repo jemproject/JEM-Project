@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -345,6 +345,7 @@ class JEMModelSearch extends JModelLegacy
 	function getCategoryTree()
 	{
 		$app = JFactory::getApplication();
+		$db = JFactory::getDBO();
 
 		// Get the paramaters of the active menu item
 		$params 	= $app->getParams('com_jem');
@@ -362,23 +363,40 @@ class JEMModelSearch extends JModelLegacy
 			. $where
 			. ' ORDER BY c.ordering'
 			;
-		$this->_db->setQuery($query);
-		$rows = $this->_db->loadObjectList();
+		$db->setQuery($query);
+		$mitems = $db->loadObjectList();
 
-		//set depth limit
-		$levellimit = 10;
+		// Check for a database error.
+		if ($db->getErrorNum())
+		{
+			JError::raiseNotice(500, $db->getErrorMsg());
+		}
 
-		//get children
-		$children = array();
-		foreach ($rows as $child) {
-			$parent = $child->parent_id;
-			$list = @$children[$parent] ? $children[$parent] : array();
-			array_push($list, $child);
-			$children[$parent] = $list;
+		if (!$mitems) {
+			$mitems = array();
+			$children = array();
+
+			$parentid = $mitems;
+		} else {
+			$mitems_temp = $mitems;
+
+			$children = array();
+			// First pass - collect children
+			foreach ($mitems as $v)
+			{
+				$pt = $v->parent_id;
+				$list = @$children[$pt] ? $children[$pt] : array();
+				array_push($list, $v);
+				$children[$pt] = $list;
+			}
+
+			$parentid = intval($mitems[0]->parent_id);
 		}
 
 		//get list of the items
-		return JEMCategories::treerecurse($top_id, '', array(), $children, max(0, $levellimit-1));
+		$list = JEMCategories::treerecurse($top_id, '', array(), $children, 9999, 0, 0);
+		
+		return $list;
 	}
 }
 ?>
