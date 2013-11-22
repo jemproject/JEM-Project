@@ -82,56 +82,57 @@ class JEMModelCssmanager extends JModelLegacy
 		$params	= JComponentHelper::getParams('com_jem');
 		$this->setState('params', $params);
 	}
-	
-	
+
+
 	/**
-	 * Detect if option linenumbers is enabled 
+	 * Detect if option linenumbers is enabled
 	 * plugin: codemirror
 	 */
-	function getStatusLinenumber() {	
-	$db = $this->getDbo();
-	$query = $db->getQuery(true);
-	$query->select('params');
-	$query->from('#__extensions');
-	$query->where(array("type = 'plugin'", "element = 'codemirror'"));
-	$db->setQuery($query);
-	$manifest = json_decode($db->loadResult(), true);
-	return $manifest['linenumbers'];
+	function getStatusLinenumber() {
+		$db = $this->getDbo();
+		$query = $db->getQuery(true);
+		$query->select('params');
+		$query->from('#__extensions');
+		$query->where(array("type = 'plugin'", "element = 'codemirror'"));
+		$db->setQuery($query);
+		$manifest = json_decode($db->loadResult(), true);
+		return $manifest['linenumbers'];
 	}
 
-	
+
 	/**
 	 * Sets parameter values in the component's row of the extension table
 	 *
 	 * @param $param_array  An array holding the params to store
 	 */
 	function setStatusLinenumber($status) {
-		 
-		
-		//	$param_array = array('linenumbers','0');
-				
-			// read the existing component value(s)
-			$db = JFactory::getDbo();
-			$query = $db->getQuery(true);
-			$query->select('params')->from('#__extensions')->where(array("type = 'plugin'", "element = 'codemirror'"));
-			$db->setQuery($query);
-			$params = json_decode($db->loadResult(), true);
-			$params['linenumbers'] = $status;
-			
-			// add the new variable(s) to the existing one(s)
-			//foreach ($param_array as $name => $value) {
-			//	$params[(string) $name] = (string) $value;
-			//}
-	
-			// store the combined new and existing values back as a JSON string
-			$paramsString = json_encode($params);
-			$query = $db->getQuery(true);
-			$query->update('#__extensions')
-			->set('params = '.$db->quote($paramsString))
-			->where(array("type = 'plugin'", "element = 'codemirror'"));
-			
-			$db->setQuery($query);
-			$db->query();
-		}
+// 		$param_array = array('linenumbers','0');
+
+		// read the existing component value(s)
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('params')
+		->from('#__extensions')
+		->where(array("type = 'plugin'", "element = 'codemirror'"));
+
+		$db->setQuery($query);
+		$params = json_decode($db->loadResult(), true);
+		$params['linenumbers'] = $status;
+
+		// add the new variable(s) to the existing one(s)
+// 		foreach ($param_array as $name => $value) {
+// 			$params[(string) $name] = (string) $value;
+// 		}
+
+		// store the combined new and existing values back as a JSON string
+		$paramsString = json_encode($params);
+		$query = $db->getQuery(true);
+		$query->update('#__extensions')
+		->set('params = '.$db->quote($paramsString))
+		->where(array("type = 'plugin'", "element = 'codemirror'"));
+
+		$db->setQuery($query);
+		$db->query();
+	}
 }
 ?>

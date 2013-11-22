@@ -11,35 +11,37 @@ defined('_JEXEC') or die;
 
 JHtml::_('behavior.tooltip');
 JHtml::_('behavior.modal');
-$canDo	= JEMHelperBackend::getActions();
+$canDo = JEMHelperBackend::getActions();
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=cssmanager'); ?>" method="post" name="adminForm" id="adminForm">
 	<div class="width-50 fltlft">
 		<fieldset class="adminform">
 			<legend><?php echo JText::_('COM_JEM_CSSMANAGER_DESCRIPTION_LEGEND');?></legend>
-			<?php echo JText::_('COM_JEM_CSSMANAGER_DESCRIPTION');?>
+			<p><?php echo JText::_('COM_JEM_CSSMANAGER_DESCRIPTION');?></p>
 		</fieldset>
-		
+
 		<fieldset class="adminform">
 			<legend><?php echo JText::_('COM_JEM_CSSMANAGER_LINENUMBER_LEGEND');?></legend>
-			<?php 
-			echo JText::_('COM_JEM_CSSMANAGER_LINENUMBER_DESCRIPTION');
-			
-			if ($this->statusLinenumber) {
-				echo JText::_('COM_JEM_CSSMANAGER_LINENUMBER_ENABLED');
-				?>
-				<br /><a href="<?php echo JRoute::_('index.php?option=com_jem&amp;task=cssmanager.disablelinenumber');?>">Click here to disable</a>
-			<?php
-			} else {
-				echo JText::_('COM_JEM_CSSMANAGER_LINENUMBER_DISABLED');
-				?>
-				<br /><a href="<?php echo JRoute::_('index.php?option=com_jem&amp;task=cssmanager.setlinenumber');?>">Click here to enable</a>
-				<?php 
-			}
-			?>
+			<p><?php echo JText::_('COM_JEM_CSSMANAGER_LINENUMBER_DESCRIPTION'); ?></p>
+			<h3><?php echo JText::_('COM_JEM_CSSMANAGER_LINENUMBER_STATUS'); ?></h3>
+			<p>
+			<?php if ($this->statusLinenumber) : ?>
+				<?php echo JText::_('COM_JEM_CSSMANAGER_LINENUMBER_ENABLED'); ?>
+				<br />
+				<a href="<?php echo JRoute::_('index.php?option=com_jem&amp;task=cssmanager.disablelinenumber');?>">
+					<?php echo JText::_('COM_JEM_CSSMANAGER_LINENUMBER_DISABLE'); ?>
+				</a>
+			<?php else: ?>
+				<?php echo JText::_('COM_JEM_CSSMANAGER_LINENUMBER_DISABLED'); ?>
+				<br />
+				<a href="<?php echo JRoute::_('index.php?option=com_jem&amp;task=cssmanager.setlinenumber');?>">
+					<?php echo JText::_('COM_JEM_CSSMANAGER_LINENUMBER_ENABLE'); ?>
+				</a>
+			<?php endif; ?>
+			</p>
 		</fieldset>
-		
+
 		<div class="clr"></div>
 	</div>
 
@@ -47,19 +49,19 @@ $canDo	= JEMHelperBackend::getActions();
 		<fieldset class="adminform">
 			<legend><?php echo JText::_('COM_JEM_CSSMANAGER_FILENAMES');?></legend>
 			<?php if (!empty($this->files['css'])) : ?>
-			<ul>
+				<ul>
 				<?php foreach ($this->files['css'] as $file) : ?>
-				<li>
+					<li>
 					<?php if ($canDo->get('core.edit')) : ?>
-					<a href="<?php echo JRoute::_('index.php?option=com_jem&task=source.edit&id='.$file->id);?>">
+						<a href="<?php echo JRoute::_('index.php?option=com_jem&task=source.edit&id='.$file->id);?>">
 					<?php endif; ?>
-						<?php echo JText::sprintf('COM_JEM_CSSMANAGER_EDIT_CSS', $file->name);?>
+					<?php echo JText::sprintf('COM_JEM_CSSMANAGER_EDIT_CSS', $file->name);?>
 					<?php if ($canDo->get('core.edit')) : ?>
-					</a>
+						</a>
 					<?php endif; ?>
-				</li>
+					</li>
 				<?php endforeach; ?>
-			</ul>
+				</ul>
 			<?php endif; ?>
 		</fieldset>
 		<div class="clr"></div>
