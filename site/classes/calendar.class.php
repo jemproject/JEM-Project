@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -19,26 +19,6 @@
  * Support, feature requests and bug reports please at : http://www.micronetwork.de/activecalendar/
  * Special thanks to Corissia S.A (http://www.corissia.com) for the permission to publish the source code
  * Thanks to Maik Lindner (http://nifox.com) for his help developing this class
-
- * -------- You may remove all comments below to reduce file size -------- *
-
- * This class generates calendars as a html table (XHTML Valid)
- * Supported views: month and year view
- * Supported dates:
- * 1. Using PHP native date functions (default): 1902-2037 (UNIX) or 1971-2037 (Windows)
- * 2. Using ADOdb Date Library : 100-3000 and later [limited by the computation time of adodb_mktime()].
- * You can find the ADOdb Date Library at http://phplens.com/phpeverywhere/adodb_date_library
- * To use the ADOdb Date Library just include it in your main script. The Active Calendar class will use the library functions automatically.
- * Supported features:
- * 1. Static calendar without any links
- * 2. Calendar with month's or year's view navigation controls
- * 3. Calendar with linkable days (url or javascript)
- * 4. Calendar with a date picker (year or month mode)
- * 5. Calendar with event days (css configutation) and event links
- * 6. Calendar with optionally linkable event contents
- * 7. Calendar with week number column optionally linked
- * The layout of can be configured using css, as the class generates various html classes
- * Please read the readme.html first and check the examples included in this package
  */
 defined('_JEXEC') or die;
 
