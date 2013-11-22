@@ -88,7 +88,7 @@ defined('_JEXEC') or die;
 			endif;
 			$multi = new stdClass();
 			$multi->row = (isset($row->multi) ? $row->multi : 'na');
-			endif;
+		endif;
 
 		$eventname = '<div class="eventName">'.JText::_('COM_JEM_TITLE').': '.$this->escape($row->title).'</div>';
 		$detaillink 	= JRoute::_( JEMHelperRoute::getEventRoute($row->slug));
@@ -136,29 +136,24 @@ defined('_JEXEC') or die;
 
 		$color = '<div id="eventcontenttop" class="eventcontenttop">';
 		$color .= $colorpic;
-		$color .= '</div>';		//for time in calendar
+		$color .= '</div>';
+		//for time in calendar
 		$timetp = '';
 
-		if ($this->jemsettings->showtime == 1) :
-
-		$start = JEMOutput::formattime($row->times,'',false);
-		$end = JEMOutput::formattime($row->endtimes,'',false);
-
-
+		if ($this->jemsettings->showtime == 1) {
+			$start = JEMOutput::formattime($row->times,'',false);
+			$end = JEMOutput::formattime($row->endtimes,'',false);
 
 			$multi = new stdClass();
 			$multi->row = (isset($row->multi) ? $row->multi : 'na');
 
-
-
-
 			if ($multi->row) {
 				if ($multi->row == 'first') {
 					$timetp .= $image = JHTML::image("media/com_jem/images/arrow-left.png",'').' '.$start.' ';
-				$timetp .= '<br>';
+					$timetp .= '<br>';
 				} elseif ($multi->row == 'middle') {
 					$timetp .= JHTML::image("media/com_jem/images/arrow-middle.png",'');
-				$timetp .= '<br>';
+					$timetp .= '<br>';
 				} elseif ($multi->row == 'zlast') {
 					$timetp .= JHTML::image("media/com_jem/images/arrow-right.png",'').' '.$end.' ';
 				} elseif ($multi->row == 'na') {
@@ -169,13 +164,11 @@ defined('_JEXEC') or die;
 							$timetp .= ' - '.$end.' ';
 						endif;
 
-
 						$timetp .= '<br>';
-
 					endif;
 				}
 			}
-		endif;
+		}
 
 		$catname = '<div class="catname">'.$multicatname.'</div>';
 
@@ -210,7 +203,7 @@ defined('_JEXEC') or die;
 			$multidaydate .= JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
 		}
 		$multidaydate .= '</div>';
-		
+
 		//generate the output
 		$content .= $colorpic;
 		$content .= JEMHelper::caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
