@@ -179,7 +179,8 @@ class ActiveCalendarWeek extends JEMCalendar {
 	function resetSelectedToToday() {
 		$this->selectedyear = $this->yeartoday;
 		$this->selectedmonth = $this->monthtoday;
-		$this->selectedday = $this->daytoday;
+		// Setting to an invalid day to prevent selection
+		$this->selectedday = -2; // $this->daytoday;
 	}
 }
 ?>

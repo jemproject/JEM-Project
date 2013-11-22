@@ -84,10 +84,10 @@ table.month {
 
 div[id^=catz] {
 	background-color:yellow;
+	border: 1px solid grey;
 	margin:1px;
 	overflow:hidden;
 	padding:1px;
-	border: 1px solid grey;
 	border-radius: 2px;
 	padding: 5px;
 	margin: 2px;
@@ -185,7 +185,6 @@ div[id^='scat'] {
 	margin: 5px 0px 5px;
 }
 
-
 .custom-tip .location {
 	text-align:left;
 }
@@ -220,12 +219,10 @@ div[id^='scat'] {
 	background-color:inherit !important;
 }
 
-
 .today .daynum a {
 	color:#FFFFFF;
 	background-color:red;
 }
-
 
 div#buttonshowall {
 	float: left;

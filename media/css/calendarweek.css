@@ -63,8 +63,8 @@ table.week {
 	height:88px;
 }
 
-.monthday, .today {
-	background-color:#F7F7F7;
+.today {
+	background-color:#BBCCFF;
 	height:88px;
 }
 
@@ -228,7 +228,7 @@ div#buttonhideall {
 }
 
 div#jem td {
-border: 1px dotted black;
+	border: 1px dotted black;
 }
 
 .weeknumtitle {
@@ -310,7 +310,7 @@ border: 1px dotted black;
 	font-weight: bold;
 	border-width: 1px;
 	border-style: solid;
-	background-color: #ffffff;
+	/*background-color: #ffffff;*/
 	color: #000000;
 	height:90px;
 	width:90px;
