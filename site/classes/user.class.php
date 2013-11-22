@@ -15,10 +15,10 @@ defined('_JEXEC') or die;
  * @package JEM
  */
 class JEMUser {
-	
+
 	/**
 	 * Checks access permissions of the user regarding on the groupid
-	 * 
+	 *
 	 * @param int $recurse
 	 * @param int $level
 	 * @return boolean True on success
@@ -164,7 +164,7 @@ class JEMUser {
 		/*
 		 * just a basic check to see if the current user is in an usergroup with
 		 * access for submitting venues. if a result then return true, otherwise false
-		 * 
+		 *
 		 * Actions: addvenue, publishvenue, editvenue
 		 *
 		 * views: venues, venue, editvenue
@@ -172,13 +172,13 @@ class JEMUser {
 		$query = 'SELECT gr.id'
 				. ' FROM #__jem_groups AS gr'
 				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
-				. ' AND gr.'.$action.'venue = 1 '
+				. ' AND '.$db->quoteName('gr.'.$action.'venue').' = 1 '
 				. ' WHERE g.member = '.(int) $user->get('id')
 				;
 		$db->setQuery($query);
 
 		$groupnumber = $db->loadResult();
-		
+
 		//no results
 		if (!$groupnumber) {
 			return false;
