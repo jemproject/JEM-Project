@@ -96,7 +96,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
  			}
 			if($currentRow) {
 		?>
-				<dt class="custom<?php echo $cr; ?>"><?php echo JText::_('COM_JEM_CUSTOM_FIELD'.$cr).':'; ?></dt>
+				<dt class="custom<?php echo $cr; ?>"><?php echo JText::_('COM_JEM_EVENT_CUSTOM_FIELD'.$cr).':'; ?></dt>
 				<dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
 		<?php
 			}
@@ -206,8 +206,8 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 					<meta itemprop="addressCountry" content="<?php echo $this->row->country; ?>" />
 				</dd>
 				<?php endif; ?>
-				
-				
+
+
 				<?php
 		for($cr = 1; $cr <= 10; $cr++) {
 			$currentRow = $this->row->{'venue'.$cr};
@@ -216,14 +216,14 @@ JHTML::_('behavior.modal', 'a.flyermodal');
  			}
 			if($currentRow) {
 		?>
-				<dt class="custom<?php echo $cr; ?>"><?php echo JText::_('COM_JEM_CUSTOMVENUE_FIELD'.$cr).':'; ?></dt>
+				<dt class="custom<?php echo $cr; ?>"><?php echo JText::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr).':'; ?></dt>
 				<dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
 		<?php
 			}
 		}
 		?>
-				
-				
+
+
 
 				<?php if ($this->jemsettings->showmapserv == 1) : ?>
 					<?php echo JEMOutput::mapicon($this->row); ?>

@@ -394,7 +394,7 @@ defined('_JEXEC') or die;
 			?>
 				<div class="jem_custom<?php echo $cr; ?> floattext">
 					<label for="custom<?php echo $cr; ?>">
-						<?php echo JText::_('COM_JEM_CUSTOMVENUE_FIELD'.$cr).':'; ?>
+						<?php echo JText::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr).':'; ?>
 					</label>
 					<input type="text" class="inputbox" id="custom<?php echo $cr; ?>" name="custom<?php echo $cr; ?>" value="<?php echo $this->escape($currentRow); ?>" size="65" maxlength="60" />
 				</div>
