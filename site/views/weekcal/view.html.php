@@ -40,9 +40,9 @@ class JEMViewWeekcal extends JViewLegacy
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-		JHtml::_('stylesheet', 'com_jem/calendarweek.css', array(), true);
+		JHtml::_('stylesheet', 'com_jem/calendar.css', array(), true);
 		$this->document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-		
+
 		$evlinkcolor = $params->get('eventlinkcolor');
 		$evbackgroundcolor = $params->get('eventbackgroundcolor');
 		$currentdaycolor = $params->get('currentdaycolor');
@@ -66,7 +66,7 @@ class JEMViewWeekcal extends JViewLegacy
 
 		// add javascript
 		JHtml::_('script', 'com_jem/calendar.js', false, true);
-		
+
 		$rows = $this->get('Data');
 		$currentweek = $this->get('Currentweek');
 		$currentyear =  Date("Y");

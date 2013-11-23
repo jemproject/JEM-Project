@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-table.month {
+table.month, table.week {
 	background-color:#FFFFFF;
 	border:2px solid #000000;
 	table-layout:fixed;
@@ -29,7 +29,7 @@ table.month {
 }
 
 .dayname {
-	color:#FFFFFF;
+	color:#FFFFFF; /* calendarweek: #667171 */
 	font-family:Geneva,Verdana,Arial,sans-serif;
 	font-size:10px;
 	font-weight:bold;
@@ -58,16 +58,6 @@ table.month {
 	border-bottom: 1px solid black;
 }
 
-.monthday, .selectedday {
-	background-color:#F7F7F7;
-	height:88px;
-}
-
-.today {
-	background-color:#BBCCFF;
-	height:88px;
-}
-
 .selectedday .daynum {
 	background-color:#31528E;
 }
@@ -77,25 +67,22 @@ table.month {
 	height:88px;
 }
 
-.sunday, .saturday {
-	background-color:#D4D4D4;
-	height:88px;
-}
-
 div[id^=catz] {
 	background-color:yellow;
-	border: 1px solid grey;
+	border: 1px solid grey; /* calendarweek: black */
 	margin:1px;
 	overflow:hidden;
 	padding:1px;
 	border-radius: 2px;
-	padding: 5px;
+	padding: 5px; /* calendarweek: 0px 0px 4px 0px */
 	margin: 2px;
 	word-wrap: break-word;
+	/* calendarweek: min-height:40px; */
 }
 
 div[id^=catz] a {
 	color: #333;
+	/* text-decoration:none; */
 }
 
 div[id^='venuez'] {
@@ -130,6 +117,42 @@ div[id^='scat'] {
 	color: #333;
 }
 
+/* *** CALENDAR WEEK ADDITIONS START *** */
+div#jem a .eventcontenttop {
+	text-decoration:none;
+	color: black;
+}
+
+div#jem .eventcontenttop {
+	border-bottom: solid 1px black;
+	height: 16px;
+	minheight:16px;
+	text-align:left;
+	padding-left: 4px;
+	padding-top:2px;
+	top:60px;
+}
+
+div#jem .eventtitle
+{
+	text-align:left;
+}
+
+div#jem .rowcolor {
+	border-top: solid 1px black;
+	height: 10px;
+	text-aling:right;
+}
+
+div#jem .eventtitle {
+	min-height: 30px;
+	word-wrap: break-word;
+	margin-right: 2px;
+	margin-left:2px;
+	margin-top:2px;
+}
+/* *** CALENDAR WEEK ADDITIONS END *** */
+
 .eventandmore {
 	background-color:yellow;
 	margin:1px;
@@ -140,20 +163,6 @@ div[id^='scat'] {
 	padding: 5px;
 	margin: 2px;
 }
-
-.cat1 {
-	/*background-color:yellow;*/
-	/*border: 1px solid grey;*/
-	/*border-radius: 2px;*/
-	/*padding: 5px;*/
-	/*margin: 2px;*/
-}
-
-/*
-.eventcontent a:link, a:visited, a:active {
-	color: #333;
-}
-*/
 
 /* for the tooltip */
 .custom-tip {
@@ -222,6 +231,7 @@ div[id^='scat'] {
 .today .daynum a {
 	color:#FFFFFF;
 	background-color:red;
+	/* calendarweek: vertical-align: top; */
 }
 
 div#buttonshowall {
@@ -239,3 +249,89 @@ div#buttonhideall {
 div#jem td {
 	border: 1px dotted black;
 }
+
+/* *** CALENDAR WEEK ADDITIONS START *** */
+.weeknumtitle {
+	text-align: center;
+	font-size: 10px;
+	font-weight: bold;
+	color: #ffffff; /* calendarweek: #667171 */
+	border-style: none;
+	border-width:1px
+}
+
+.weeknum {
+	text-align: center;
+	font-size: 10px;
+	height:90px;
+	width:90px;
+	color: #CD5C5C;
+	background-color: #FAEBD7;
+}
+
+.week {
+	border-style: none;
+	background-color: #EEDFCC;
+	text-align: center;
+}
+
+.monthweek {
+	text-align: center;
+	font-size: 10px;
+	font-weight: bold;
+	color: #667171;
+	border-style: solid;
+	border-width:1px
+}
+
+.monthday {
+	text-align: center;
+	vertical-align: top;
+	font-size: 11px;
+	font-weight: bold;
+	background-color: #ffffff;
+	color: #000000;
+	height:90px;
+	width:90px;
+}
+
+.saturday, .sunday {
+	text-align: center;
+	vertical-align: top;
+	font-size: 11px;
+	font-weight: bold;
+	background-color:#D4D4D4;
+	color: #667171;
+	height:90px;
+	width:90px;
+}
+
+.sunday a, .saturday a {
+	color: #667171;
+}
+
+.today {
+	text-align: center;
+	vertical-align: top;
+	font-size: 11px;
+	font-weight: bold;
+	border-width: 1px;
+	border-style: solid;
+	background-color: #BBCCFF;
+	color: #000000;
+	height:90px;
+	width:90px;
+}
+
+.selectedday {
+	text-align: center;
+	vertical-align: top;
+	font-size: 11px;
+	font-weight: bold;
+	border-width: 1px;
+	border-style: outset;
+	background-color: #ffffff;
+	height:90px;
+	width:90px;
+}
+/* *** CALENDAR WEEK ADDITIONS END *** */
