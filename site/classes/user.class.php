@@ -125,6 +125,7 @@ class JEMUser {
 		$query = 'SELECT g.group_id'
 				. ' FROM #__jem_groupmembers AS g'
 				. ' WHERE g.member = '.(int) $user->get('id')
+				. ' AND g.member NOT LIKE 0';
 				;
 		$db->setQuery($query);
 
@@ -174,6 +175,7 @@ class JEMUser {
 				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
 				. ' AND '.$db->quoteName('gr.'.$action.'venue').' = 1 '
 				. ' WHERE g.member = '.(int) $user->get('id')
+				. ' AND g.member NOT LIKE 0';
 				;
 		$db->setQuery($query);
 
