@@ -115,8 +115,8 @@ class JEMOutput {
 		$settings = JEMHelper::globalattribs();
 		$settings2 = JEMHelper::config();
 		$app = JFactory::getApplication();
-
-		if ($settings->get('show_archive_icon')==1) {
+		
+		if ($settings->get('global_show_archive_icon')==1) {
 			if ($app->input->get('print','','int')) {
 				return;
 			}
