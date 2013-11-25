@@ -19,7 +19,17 @@ WHERE `#__menu`.`title` ='COM_JEM_MENU_MAINMENU';
 
 ALTER TABLE `#__jem_events`
 	MODIFY `title` VARCHAR(255),
-	MODIFY `alias` VARCHAR(255);
+	MODIFY `alias` VARCHAR(255),
+	ADD	`fulltext` mediumtext NOT NULL,
+	ADD	`introtext` mediumtext NOT NULL,
+	ADD	`created_by_alias` varchar(255) NOT NULL,
+	ADD	`access` int(10) NOT NULL DEFAULT '0',
+	ADD	`metadata` text NOT NULL,
+	ADD	`featured` tinyint(3) unsigned NOT NULL DEFAULT '0',
+	ADD	`attribs` varchar(5120) NOT NULL;
+	
+ALTER TABLE `#__jem_settings`
+	ADD `globalattribs` varchar(5120) NOT NULL;	
 
 ALTER TABLE `#__jem_categories`
 	ADD `title` varchar(255) NOT NULL,

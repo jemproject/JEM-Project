@@ -33,8 +33,8 @@ class JFormFieldEndtime extends JFormField
 	public function getInput()
 	{
 		
-		$endhours = JEMAdmin::buildtimeselect(23, 'endhours', substr( $this->value, 0, 2 ));
-		$endminutes = JEMAdmin::buildtimeselect(59, 'endminutes', substr($this->value, 3, 2 ));
+		$endhours = JEMHelper::buildtimeselect(23, 'endhours', substr( $this->value, 0, 2 ));
+		$endminutes = JEMHelper::buildtimeselect(59, 'endminutes', substr($this->value, 3, 2 ));
 		
 		$var2 = $endhours.$endminutes;
 	

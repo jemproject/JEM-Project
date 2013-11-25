@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -39,11 +39,10 @@ class JEMModelSettings extends JModelForm
 
 	/**
 	 * Loading the table data
-	 *
-	 *
 	 */
 	public function getData()
 	{
+		
 		$db = JFactory::getDbo();
 
 		$query = $db->getQuery(true);
@@ -53,10 +52,17 @@ class JEMModelSettings extends JModelForm
 
 		$db->setQuery($query);
 		$data = $db->loadObject();
-
+		
+		
+		// Convert the params field to an array.
+		$registry = new JRegistry;
+		$registry->loadString($data->globalattribs);
+		$data->globalattribs = $registry->toArray();
+		
 		return $data;
 	}
-
+	
+	
 	/**
 	 * Method to get the data that should be injected in the form.
 	 *
@@ -78,17 +84,17 @@ class JEMModelSettings extends JModelForm
 	 * Saves the settings
 	 *
 	 */
-	function store($post,$post2)
-	{
-		$settings 	= JTable::getInstance('jem_settings', '');
+	function store($data)
+	{		
+		$settings 	= JTable::getInstance('Settings', 'JEMTable');
 		$jinput = JFactory::getApplication()->input;
-
+		
 		// Bind the form fields to the table
-		if (!$settings->bind($post)) {
+		if (!$settings->bind($data,'')) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 		}
-
+		
 		$varmetakey = $jinput->get('meta_keywords','','');
 		$settings->meta_keywords = $varmetakey;
 
@@ -114,4 +120,23 @@ class JEMModelSettings extends JModelForm
 
 		return true;
 	}
+	
+	
+	/**
+	 * Method to auto-populate the model state.
+	 *
+	 * Note. Calling getState in this method will result in recursion.
+	 *
+	 * @since	1.6
+	 */
+	protected function populateState()
+	{
+		$app = JFactory::getApplication();
+	
+		// Load the parameters.
+		$params = JComponentHelper::getParams('com_jem');
+		$this->setState('params', $params);
+	}
+	
+	
 }

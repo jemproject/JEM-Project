@@ -7,7 +7,7 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die;
 
 $options = array(
 		'onActive' => 'function(title, description){
@@ -23,7 +23,6 @@ $options = array(
 		'useCookie' => true, // this must not be a string. Don't use quotes.
 );
 
-
 JHtml::_('behavior.tooltip');
 JHtml::_('behavior.formvalidation');
 JHtml::_('behavior.keepalive');
@@ -31,7 +30,6 @@ JHtml::_('behavior.keepalive');
 // Create shortcut to parameters.
 $params = $this->state->get('params');
 $params = $params->toArray();
-
 ?>
 
 <script type="text/javascript">
@@ -174,6 +172,10 @@ $params = $params->toArray();
 
 <?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
 				<?php echo $this->loadTemplate('attachments'); ?>
+				
+				<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_SETTINGS_TAB'), 'event-settings' ); ?>
+		<?php echo $this->loadTemplate('settings'); ?>
+				
 				<?php echo JHtml::_('tabs.end'); ?>
 		<!-- END OF LEFT DIV -->
 	</div>

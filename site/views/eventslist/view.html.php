@@ -35,6 +35,7 @@ class JEMViewEventslist extends JEMView
 		$document 	= JFactory::getDocument();
 
 		$jemsettings = JEMHelper::config();
+		$settings 	= JEMHelper::globalattribs();
 		$menu		= $app->getMenu();
 		$item		= $menu->getActive();
 		$params 	= $app->getParams();
@@ -90,7 +91,7 @@ class JEMViewEventslist extends JEMView
 
 		//Check if the user has access to the form
 		$maintainer = JEMUser::ismaintainer();
-		$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
+		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess ) {
 			$dellink = 1;
@@ -142,6 +143,7 @@ class JEMViewEventslist extends JEMView
 		$this->dellink			= $dellink;
 		$this->pagination		= $pagination;
 		$this->jemsettings		= $jemsettings;
+		$this->settings			= $settings;
 		$this->pagetitle		= $pagetitle;
 
 		parent::display($tpl);

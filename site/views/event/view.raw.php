@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -26,9 +26,11 @@ class JEMViewEvent extends JViewLegacy
 	function display($tpl = null)
 	{
 		// Get data from the model
-		$row = $this->get('Event');
-		$row->categories = $this->get('Categories');
-		$row->id = $row->did;
+		$row 				= $this->get('Item');
+		$row->categories 	= $this->get('Categories');
+		$row->id 			= $row->did;
+		$row->slug			= $row->alias ? ($row->id.':'.$row->alias) : $row->id;
+		
 
 		// initiate new CALENDAR
 		$vcal = JEMHelper::getCalendarTool();

@@ -21,6 +21,7 @@ require_once (JPATH_COMPONENT_SITE.'/classes/categories.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/Zebra_Image.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/calendar.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/activecalendarweek.php');
+require_once (JPATH_COMPONENT_SITE.'/helpers/category.php');
 
 // Set the table directory
 JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');

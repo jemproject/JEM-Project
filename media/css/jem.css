@@ -6,6 +6,30 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
  
+ div#jem h1.componentheading
+ {
+ margin-bottom:6px;
+ margin-top: 6px;
+ }
+  
+ div#jem .formelm-buttons
+{
+	margin-bottom: 0px;
+	float: right;
+}
+
+ul.adminformlist,
+ul.adminformlist li {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+div#jem_editevent dt
+{
+	width: none;
+}
+ 
 div#jem .inputbox:focus {
 	border:1px solid #808080;
 	background-color:#DDE084;
@@ -16,10 +40,6 @@ div#jem .hr {
 	border-top:1px solid #E19832;
 	height:0;
 	background-color:#E19832;
-}
-
-div#jem .tabs {
-	margin:inherit;
 }
 
 input .required {
@@ -66,8 +86,9 @@ div#jem {
 	overflow:hidden;
 	background-color:#EDF4F5;
 	border:1px solid #000000;
-	border-radius:5px 5px 5px 5px;
+	border-radius:5px;
 	padding:10px;
+	max-width:660px;
 }
 
 /**
@@ -75,11 +96,6 @@ div#jem {
 */
 div#jem .buttons {
 	float:right;
-}
-
-div#jem button
-{
-	cursor:pointer;
 }
 
 div#jem .buttons a {
@@ -167,7 +183,7 @@ div#jem .floattext {
 }
 
 /**
- * @section headlines
+ * @section headers
  */
 div#jem h2 {
 	font-size:normal !important;
@@ -189,13 +205,14 @@ div#jem .jemcomponentheading {
 	border-bottom:0px !important;
 }
 
+
 /**
  * @section definitionlist
  *
  * Event
  */
 div#jem dl {
-	margin:0 5px 12px;
+	margin:0 5px;
 }
 
 div#jem dt { /* definition term */
@@ -394,11 +411,15 @@ div#jem table.eventtable td {
 }
 
 div#jem table.eventtable tr.sectiontableentry2 td {
-	background:#EDEDED;
+	background-color:#F0F0EE;
 }
 
 div#jem table.eventtable tr:hover td {
-	background:#BACFBA
+	background-color:#BACFBA;
+}
+
+div#jem table.eventtable tr.featured td{
+	background-color: #B6B6B4;
 }
 
 /* -------------------
@@ -520,7 +541,7 @@ div.jem_editvenue form textarea {
 	padding:0.2em;
 	border:1px solid #808080;
 	cursor:pointer;
-	background-color:#C6CCBE;
+	/*background-color:#C6CCBE;*/
 }
 
 div.jem_editevent form input#a_name {
@@ -636,12 +657,13 @@ Thx to http://www.bloggerswatch.com/internet/css-trick-submit-button-should-look
 }
 
 /* POSITIVE */
-button.positive,
+div#jem button.positive,
 .buttons a.positive {
 	color:#529214 !important;
 	border:1px solid #808080 !important;
 	cursor:pointer;
 	line-height:22px;
+	padding:0px;
 }
 
 .buttons a.positive:hover,
@@ -658,12 +680,12 @@ button.positive:hover {
 }
 
 /* NEGATIVE */
-.buttons a.negative,
-button.negative {
+div#jem button.negative, .buttons a.negative {
 	color:#D12F19 !important;
 	border:1px solid #808080 !important;
 	cursor:pointer;
 	line-height:22px;
+	padding:0px;
 }
 
 .buttons a.negative:hover,
@@ -714,20 +736,33 @@ div#jem dl.tabs dt {
 	padding:4px 10px;
 	border:1px solid #CCCCCC;
 	margin-left:3px;
-	background:#E9E9E9;
 	color:#666666;
+	border-top-left-radius:6px;
+	border-top-right-radius:6px;
+	background-color:#999999;
+	border-top:1px solid #808080;
+	border-left:1px solid #808080;
+	border-right:1px solid #808080;	
+	border-bottom:1px dotted #808080;
+	width: inherit;
 }
 
 div#jem dl.tabs dt.open {
-	background:#F9F9F9;
+	background-color:silver;
 	border-bottom:1px solid #F9F9F9;
 	z-index:100;
 	color:#000000;
+	border-top-left-radius:6px;
+	border-top-right-radius:6px;
+	border-top:1px solid #808080;
+	border-left:1px solid #808080;
+	border-right:1px solid #808080;	
+	border-bottom:1px dotted #808080;
 }
 
 div#jem div.current {
 	clear:both;
-	border:1px solid #CCCCCC;
+	border:1px solid #808080;
 	padding:10px 10px;
 }
 
@@ -740,14 +775,6 @@ div#jem dl#content-pane.tabs {
 	margin:1px 0 0 0;
 }
 
-div#jem div.current label,
-div#jem div.current span.faux-label {
-	display:block;
-	min-width:150px;
-	float:left;
-	clear:left;
-	margin-top:8px;
-}
 
 div#jem div.current fieldset {
 	border:none 0;
@@ -793,17 +820,7 @@ div#jem div.current fieldset.checkboxes label {
 	margin:3px 0 0 5px;
 }
 
-div#jem div.current input,
-div#jem div.current textarea,
-div#jem div.current select {
-	clear:none;
-	float:left;
-	margin:3px 0 0 2px;
-}
 
-div#jem div.current select {
-	margin-bottom:15px;
-}
 
 div#jem p.tab-description {
 	font-size:1.091em;

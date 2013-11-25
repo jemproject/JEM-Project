@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -202,7 +202,7 @@ class JEMModelVenue extends JModelLegacy
 
 		//Get Events from Database
 		$query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.datdescription, a.created, '
-				. ' l.venue, l.city, l.state, l.url, l.street, l.custom1, l.custom2, l.custom3, l.custom4, l.custom5, l.custom6, l.custom7, l.custom8, l.custom9, l.custom10, c.catname, ct.name AS countryname, '
+				. ' l.venue, l.published AS published, l.city, l.state, l.url, l.street, l.custom1, l.custom2, l.custom3, l.custom4, l.custom5, l.custom6, l.custom7, l.custom8, l.custom9, l.custom10, c.catname, ct.name AS countryname, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 				. ' FROM #__jem_events AS a'
@@ -323,7 +323,7 @@ class JEMModelVenue extends JModelLegacy
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
 
-		$query->select('id, venue, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
+		$query->select('id, venue, published, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
 				' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, '.
 				' created, locdescription, country, map, latitude, longitude, postalCode, '.
 				' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug');

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -74,9 +74,9 @@ window.addEvent('domready', function(){
 		lbon();
 	}
 
-	$("jform_showmapserv").addEvent('change', testmap);
+	$("jform_globalattribs_showmapserv").addEvent('change', testmap);
 
-	var mapserv = $("jform_showmapserv");
+	var mapserv = $("jform_globalattribs_showmapserv");
 	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
 
 	if (nrmapserv == 1 || nrmapserv == 2) {
@@ -96,9 +96,9 @@ window.addEvent('domready', function(){
 		evhandleroff();
 	}
 
-	$('jform_comunsolution').addEvent('change', testcomm);
+	$('jform_globalattribs_comunsolution').addEvent('change', testcomm);
 
-	var commhandler = $("jform_comunsolution");
+	var commhandler = $("jform_globalattribs_comunsolution");
 	var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
 
 	if (nrcommhandler == 1) {
@@ -110,7 +110,7 @@ window.addEvent('domready', function(){
 
 function testcomm()
 {
-	var commhandler = $("jform_comunsolution");
+	var commhandler = $("jform_globalattribs_comunsolution");
 	var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
 
 	if (nrcommhandler == 1) {
@@ -122,7 +122,7 @@ function testcomm()
 
 function testmap()
 {
-	var mapserv = $("jform_showmapserv");
+	var mapserv = $("jform_globalattribs_showmapserv");
 	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
 
 	if (nrmapserv == 1 || nrmapserv == 2) {

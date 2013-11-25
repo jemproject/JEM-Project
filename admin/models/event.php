@@ -122,6 +122,18 @@ class JEMModelEvent extends JModelAdmin
 		$jemsettings = JEMAdmin::config();
 
 		if ($item = parent::getItem($pk)) {
+			// Convert the params field to an array.
+			$registry = new JRegistry;
+			$registry->loadString($item->attribs);
+			$item->attribs = $registry->toArray();
+				
+			// Convert the metadata field to an array.
+			$registry = new JRegistry;
+			$registry->loadString($item->metadata);
+			$item->metadata = $registry->toArray();
+				
+			$item->articletext = trim($item->fulltext) != '' ? $item->introtext . "<hr id=\"system-readmore\" />" . $item->fulltext : $item->introtext;
+			
 			$db = JFactory::getDbo();
 
 			$query = $db->getQuery(true);
@@ -192,19 +204,39 @@ class JEMModelEvent extends JModelAdmin
 		 *
 		 */
 
-		$jinput = JFactory::getApplication()->input;
-		$user	= JFactory::getUser();
+		$jinput 		= JFactory::getApplication()->input;
+		$user			= JFactory::getUser();
+		$jemsettings 	= JEMHelper::config();
 
 		if ($table->id) {
 			// Existing item
 			$table->modified	= $date->toSql();
 			$table->modified_by	= $user->get('id');
-
 			$table->recurrence_first_id = '';
+			
+			// Need for front-editing		
+			$editaccess  = JEMUser::editaccess($jemsettings->eventowner, $table->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+			$maintainer = JEMUser::ismaintainer();
+
+ 			if ($maintainer || $editaccess ) $allowedtoeditevent = 1;
+
+ 			if (!$allowedtoeditevent) {
+ 			JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
+			}
+
+			
+			
 		} else {
 			// New Event. An event created and created_by field can be set by the user,
 			// so we don't touch either of these if they are set.
 
+			$maintainer 	= JEMUser::ismaintainer();
+			$genaccess		= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
+				
+			if (!($maintainer || $genaccess)){
+				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
+			}
+			
 			if (!intval($table->created)) {
 				$table->created = $date->toSql();
 			}
@@ -212,13 +244,16 @@ class JEMModelEvent extends JModelAdmin
 			if (empty($this->created_by)) {
 				$table->created_by = $user->get('id');
 			}
+			
+			//Set owneredit to false
+			$owneredit = 0;
+			
 		}
 
 		// Bind the form fields to the table
 		//if (!$table->bind(JRequest::get('post'))) {
 		//return JError::raiseWarning(500, $table->getError());
 		//}
-
 
 		$cats = $jinput->get('cid', array(), 'post', 'array');
 

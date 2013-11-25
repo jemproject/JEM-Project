@@ -111,6 +111,43 @@ class com_jemInstallerScript
 				<b><?php echo JText::_('COM_JEM_INSTALL_INSTALLATION_SUCCESSFUL'); ?></b>
 			</p> <?php
 		}
+		
+		
+		$param_array = array(
+				"event_show_author"=>"1",
+				"event_link_author"=>"1",
+				"event_show_contact"=>"1",
+				"event_link_contact"=>"1",
+				"event_show_hits"=>"0",
+				"event_show_print_icon"=>"0",
+				"event_show_email_icon"=>"0",
+				"event_show_ical_icon"=>"0",
+				"editevent_show_meta_option"=>"0",
+				"editevent_show_attachment_tab"=>"0",
+				"editevent_show_other_tab"=>"0",
+				"filter"=>"1",
+				"display"=>"1",
+				"global_show_icons"=>"1",
+				"global_show_print_icon"=>"1",
+				"global_show_archive_icon"=>"1",
+				"global_show_email_icon"=>"1",
+				"global_show_ical_icon"=>"1",
+				"showtimedetails"=>"0",
+				"showevdescription"=>"0",
+				"showdetailstitle"=>"0",
+				"showlocdescription"=>"1",
+				"showdetailsadress"=>"1",
+				"showdetlinkvenue"=>"0",
+				"showmapserv"=>"0",
+				"tld"=>"",
+				"lg"=>"",
+				"regname"=>"0",
+				"comunsolution"=>"1",
+				"comunoption"=>"0"
+		);
+		
+		$this->setGlobalAttribs($param_array);
+		
 	}
 
 	/**
@@ -247,6 +284,36 @@ class com_jemInstallerScript
 			$query->update('#__extensions')
 				->set('params = '.$db->quote($paramsString))
 				->where(array("type = 'component'", "element = 'com_jem'"));
+			$db->setQuery($query);
+			$db->query();
+		}
+	}
+	
+	
+	/**
+	 * Sets parameter values in the component's row of the extension table
+	 *
+	 * @param $param_array  An array holding the params to store
+	 */
+	private function setGlobalAttribs($param_array) {
+		if (count($param_array) > 0) {
+			// read the existing component value(s)
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
+			$query->select('globalattribs')->from('#__jem_settings');
+			$db->setQuery($query);
+			$params = json_decode($db->loadResult(), true);
+	
+			// add the new variable(s) to the existing one(s)
+			foreach ($param_array as $name => $value) {
+				$params[(string) $name] = (string) $value;
+			}
+	
+			// store the combined new and existing values back as a JSON string
+			$paramsString = json_encode($params);
+			$query = $db->getQuery(true);
+			$query->update('#__jem_settings')
+			->set('globalattribs = '.$db->quote($paramsString));
 			$db->setQuery($query);
 			$db->query();
 		}

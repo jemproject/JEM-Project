@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -38,6 +38,31 @@ class JEMHelper {
 		return $config;
 	}
 
+	
+	/**
+	 * Pulls settings from database and stores in an static object
+	 *
+	 * @return object
+	 *
+	 */
+	static function globalattribs()
+	{
+		static $globalattribs;
+	
+		if (!is_object($globalattribs)) {
+			$db = JFactory::getDBO();
+			$sql = 'SELECT globalattribs FROM #__jem_settings WHERE id = 1';
+			$db->setQuery($sql);
+			$globalattribs = $db->loadResult();
+		}
+	
+		$globalregistry = new JRegistry;
+		$globalregistry->loadString($globalattribs);
+		
+		return $globalregistry;
+	}
+	
+	
 	/**
 	 * Performs daily scheduled cleanups
 	 *

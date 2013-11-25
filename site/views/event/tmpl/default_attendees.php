@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -13,19 +13,19 @@ defined('_JEXEC') or die;
 <div class="register">
 <dl class="floattext">
 
-<?php if ($this->row->maxplaces > 0 ) {?>
+<?php if ($this->item->maxplaces > 0 ) {?>
 <dt class="register"><?php echo JText::_ ( 'COM_JEM_MAX_PLACES' ) . ':';?></dt>
-<dd class="register"><?php echo $this->row->maxplaces; ?></dd>
+<dd class="register"><?php echo $this->item->maxplaces; ?></dd>
 
 <dt class="register"><?php echo JText::_ ( 'COM_JEM_BOOKED_PLACES' ) . ':';?></dt>
-<dd class="register"><?php echo $this->row->booked; ?></dd>
+<dd class="register"><?php echo $this->item->booked; ?></dd>
 
 <?php } ?>
 
-<?php if ($this->row->maxplaces > 0): ?>
+<?php if ($this->item->maxplaces > 0): ?>
 <dt class="register"><?php echo JText::_ ( 'COM_JEM_AVAILABLE_PLACES' ) . ':';?></dt>
 <dd>
-<?php echo ($this->row->maxplaces-$this->row->booked); ?>
+<?php echo ($this->item->maxplaces-$this->item->booked); ?>
 </dd>
 
 	<?php
@@ -48,7 +48,7 @@ foreach ($this->registers as $register) :
 	$text = '';
 	// is a plugin catching this ?
 	//TODO: remove markup..the plugin should handle this to improve flexibility
-	if ($res = $this->dispatcher->trigger( 'onAttendeeDisplay', array( $register->uid, &$text ))) :
+	if ($res = $this->dispatcher->trigger('onAttendeeDisplay', array( $register->uid, &$text ))) :
 
 		echo '<li>'.$text.'</li>';
 	endif;

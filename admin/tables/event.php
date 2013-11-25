@@ -118,6 +118,37 @@ class JEMTableEvent extends JTable
 		if (!isset($array['waitinglist']))
 			$array['waitinglist'] = 0 ;
 
+		// Search for the {readmore} tag and split the text up accordingly.
+		if (isset($array['articletext']))
+		{
+			$pattern = '#<hr\s+id=("|\')system-readmore("|\')\s*\/*>#i';
+			$tagPos = preg_match($pattern, $array['articletext']);
+		
+			if ($tagPos == 0)
+			{
+				$this->introtext = $array['articletext'];
+				$this->fulltext = '';
+			}
+			else
+			{
+				list ($this->introtext, $this->fulltext) = preg_split($pattern, $array['articletext'], 2);
+			}
+		}
+		
+		if (isset($array['attribs']) && is_array($array['attribs']))
+		{
+			$registry = new JRegistry;
+			$registry->loadArray($array['attribs']);
+			$array['attribs'] = (string) $registry;
+		}
+		
+		if (isset($array['metadata']) && is_array($array['metadata']))
+		{
+			$registry = new JRegistry;
+			$registry->loadArray($array['metadata']);
+			$array['metadata'] = (string) $registry;
+		}
+		
 		//don't override without calling base class
 		return parent::bind($array, $ignore);
 	}

@@ -43,6 +43,13 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
   `custom8` varchar(100) NOT NULL DEFAULT '',
   `custom9` varchar(100) NOT NULL DEFAULT '',
   `custom10` varchar(100) NOT NULL DEFAULT '',
+  `fulltext` mediumtext NOT NULL,
+  `introtext` mediumtext NOT NULL,
+  `created_by_alias` varchar(255) NOT NULL,
+  `access` int(10) NOT NULL DEFAULT '0',
+  `metadata` text NOT NULL,
+  `featured` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `attribs` varchar(5120) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
@@ -249,6 +256,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_settings` (
   `ical_max_items` tinyint(4) NOT NULL DEFAULT '100',
   `empty_cat` tinyint(4) NOT NULL DEFAULT '1',
   `defaultCountry` varchar(10) NOT NULL,
+  `globalattribs` varchar(5120) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE `utf8_general_ci`;
 
@@ -286,7 +294,7 @@ INSERT IGNORE INTO #__jem_settings VALUES
 1, 0, '0', 0, 1, '1364604520', '', '', 'COM', 'US', '10%', '10',
 0, 1, 1, 1, 1, 1, 1, 1, 0, '10%', 1, 1, 1, 'media/com_jem/attachments', '1000',
 'txt,csv,htm,html,xml,css,doc,xls,zip,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,tar.gz',
-0, '365', 100, 1, '');
+0, '365', 100, 1, '', '');
 
 INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, `name`) VALUES
 (1, 'AS', 'AF', 'AFG', 4, 'Afghanistan, Islamic Republic of'),

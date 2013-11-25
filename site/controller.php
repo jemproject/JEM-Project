@@ -33,11 +33,21 @@ class JEMController extends JControllerLegacy
 	function display($cachable = false, $urlparams = false)
 	{
 		$document	= JFactory::getDocument();
+		$user = JFactory::getUser();
 
 		// Set the default view name and format from the Request.
+		$id				= JRequest::getInt('a_id');
 		$viewName 		= JRequest::getCmd('view', 'eventslist');
 		$viewFormat 	= $document->getType();
-		$layoutName 	= JRequest::getCmd('layout', 'default');
+		$layoutName 	= JRequest::getCmd('layout', 'edit');
+
+		
+		// Check for edit form.
+		if ($viewName == 'editevent' && !$this->checkEditId('com_jem.edit.event', $id)) {
+			// Somehow the person just went to the form - we don't allow that.
+			return JError::raiseError(403, JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id));
+		}
+		
 
 		if ($view = $this->getView($viewName, $viewFormat)) {
 			// Do any specific processing by view.

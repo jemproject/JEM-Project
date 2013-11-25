@@ -26,6 +26,7 @@ class JEMViewMyevents extends JViewLegacy
 		//initialize variables
 		$document 		= JFactory::getDocument();
 		$jemsettings 	= JEMHelper::config();
+		$settings 		= JEMHelper::globalattribs();
 		$menu 			= $app->getMenu();
 		$item 			= $menu->getActive();
 		$params 		= $app->getParams();
@@ -115,6 +116,7 @@ class JEMViewMyevents extends JViewLegacy
 		$this->params					= $params;
 		$this->events_pagination		= $events_pagination;
 		$this->jemsettings				= $jemsettings;
+		$this->settings					= $settings;
 		$this->pagetitle				= $pagetitle;
 		$this->lists 					= $lists;
 		$this->noevents					= $noevents;

@@ -7,321 +7,160 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined('_JEXEC') or die;
+// No direct access
+defined('_JEXEC') or die();
 
-jimport('joomla.application.component.model');
+// Base this model on the backend version.
+require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/event.php';
 
 /**
- * JEM Component Editevent Model
- *
- * @package JEM
- *
+ * Editevent Model
  */
-class JEMModelEditevent extends JModelLegacy
+class JEMModelEditevent extends JEMModelEvent
 {
-	/**
-	 * Event data in Event array
-	 *
-	 * @var array
-	 */
-	var $_event = null;
 
 	/**
-	 * Category data in category array
+	 * Method to auto-populate the model state.
 	 *
-	 * @var array
+	 * Note. Calling getState in this method will result in recursion.
 	 */
-	var $_categories = null;
-
-	/**
-	 * Constructor
-	 *
-	 */
-	function __construct()
-	{
-		parent::__construct();
-
-		$id = JRequest::getInt('id');
-		$this->setId($id);
-	}
-
-	/**
-	 * Method to set the event id
-	 *
-	 * @access	public Event
-	 */
-	function setId($id)
-	{
-		// Set new event ID
-		$this->_id = $id;
-	}
-
-	/**
-	 * logic to get the event
-	 *
-	 * @access public
-	 *
-	 * @return object
-	 */
-	function &getEvent()
+	protected function populateState()
 	{
 		$app = JFactory::getApplication();
-
-		// Initialize variables
-		$user		= JFactory::getUser();
-		$jemsettings = JEMHelper::config();
-
-		$view		= JRequest::getWord('view');
-
-		// ID exists => edit
-		if ($this->_id) {
-
-			// Load the Event data
-			$this->_loadEvent();
-
-			// Error if allready checked out otherwise check event out
-			if ($this->isCheckedOut( $user->get('id') )) {
-				$app->redirect( 'index.php?view='.$view, JText::_( 'COM_JEM_THE_EVENT' ).': '.$this->_event->title.' '.JText::_( 'COM_JEM_EDITED_BY_ANOTHER_ADMIN' ) );
-			} else {
-				$this->checkout( $user->get('id') );
-			}
-
-			// access check
-			$editaccess	= JEMUser::editaccess($jemsettings->eventowner, $this->_event->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
-			$maintainer = JEMUser::ismaintainer();
-
-			if ($maintainer || $editaccess ) $allowedtoeditevent = 1;
-
-			if ($allowedtoeditevent == 0) {
-				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
-			}
-
-		// ID does not exist => add
-		} else {
-
-			//Check if the user has access to the form
-			$maintainer = JEMUser::ismaintainer();
-			$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
-
-			if ( !($maintainer || $genaccess )) {
-				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
-			}
-
-			//sticky forms
-			$session = JFactory::getSession();
-			if ($session->has('eventform', 'com_jem')) {
-
-				$eventform 		= $session->get('eventform', 0, 'com_jem');
-				$this->_event 	= JTable::getInstance('jem_events', '');
-
-				if (!$this->_event->bind($eventform)) {
-					JError::raiseError( 500, $this->_db->stderr() );
-					return false;
-				}
-
-				$query = 'SELECT venue'
-					. ' FROM #__jem_venues'
-					. ' WHERE id = '.(int)$eventform['locid']
-					;
-				$this->_db->setQuery($query);
-				$this->_event->venue = $this->_db->loadResult();
-
-			} else {
-				//prepare output
-				$this->_event = new stdClass();
-				$this->_event->id					= 0;
-				$this->_event->locid				= '';
-				$this->_event->dates				= null;
-				$this->_event->enddates				= null;
-				$this->_event->title				= '';
-				$this->_event->times				= null;
-				$this->_event->endtimes				= null;
-				$this->_event->created				= null;
-				$this->_event->author_ip			= null;
-				$this->_event->created_by			= null;
-				$this->_event->datdescription		= '';
-				$this->_event->registra				= 0;
-				$this->_event->unregistra			= 0;
-				$this->_event->recurrence_number	= 0;
-				$this->_event->recurrence_type		= 0;
-				$this->_event->recurrence_limit_date= '0000-00-00';
-				$this->_event->recurrence_limit		= 0;
-				$this->_event->recurrence_byday 	= '';
-				$this->_event->sendername			= '';
-				$this->_event->sendermail			= '';
-				$this->_event->datimage				= '';
-				$this->_event->hits					= 0;
-				$this->_event->version				= 0;
-				$this->_event->ownedvenuesonly		= 0;
-				$this->_event->attachments			= array();
-				$this->_event->maxplaces			= 0;
-				$this->_event->waitinglist			= 0;
-				$this->_event->custom1				= '';
-				$this->_event->custom2				= '';
-				$this->_event->custom3				= '';
-				$this->_event->custom4				= '';
-				$this->_event->custom5				= '';
-				$this->_event->custom6				= '';
-				$this->_event->custom7				= '';
-				$this->_event->custom8				= '';
-				$this->_event->custom9				= '';
-				$this->_event->custom10				= '';
-				$this->_event->venue				= JText::_('COM_JEM_SELECTVENUE');
-			}
-		}
-
-		return $this->_event;
+		
+		// Load state from the request.
+		$pk = JRequest::getInt('a_id');
+		$this->setState('event.id', $pk);
+		
+		$this->setState('event.catid', JRequest::getInt('catid'));
+		
+		$return = JRequest::getVar('return', null, 'default', 'base64');
+		$this->setState('return_page', urldecode(base64_decode($return)));
+		
+		// Load the parameters.
+		$params = $app->getParams();
+		$this->setState('params', $params);
+		
+		$this->setState('layout', JRequest::getCmd('layout'));
 	}
 
 	/**
-	 * logic to get the event
+	 * Method to get event data.
 	 *
-	 * @access private
-	 * @return object
+	 * @param integer	The id of the article.
+	 *       
+	 * @return mixed item data object on success, false on failure.
 	 */
-	function _loadEvent()
+	public function getItem($itemId = null)
 	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_event))
-		{
-			$query = 'SELECT e.*, v.venue'
-					. ' FROM #__jem_events AS e'
-					. ' LEFT JOIN #__jem_venues AS v ON v.id = e.locid'
-					. ' WHERE e.id = '.(int)$this->_id
-					;
-			$this->_db->setQuery($query);
-			$this->_event = $this->_db->loadObject();
-			$this->_event->attachments = JEMAttachment::getAttachments('event'.$this->_event->id);
-
-			return (boolean) $this->_event;
+		// $jemsettings = JEMAdmin::config();
+		
+		// Initialise variables.
+		$itemId = (int) (!empty($itemId)) ? $itemId : $this->getState('event.id');
+		
+		// Get a row instance.
+		$table = $this->getTable();
+		
+		// Attempt to load the row.
+		$return = $table->load($itemId);
+		
+		// Check for a table object error.
+		if ($return === false && $table->getError()) {
+			$this->setError($table->getError());
+			return false;
 		}
-
+		
+		$properties = $table->getProperties(1);
+		$value = JArrayHelper::toObject($properties, 'JObject');
+		
+		// Convert attrib field to Registry.
+		$registry = new JRegistry();
+		$registry->loadString($value->attribs);
+		
+		$globalsettings = JEMHelper::globalattribs();
+		$globalregistry = new JRegistry();
+		$globalregistry->loadString($globalsettings);
+		
+		$value->params = clone $globalregistry;
+		$value->params->merge($registry);
+		
+		// Compute selected asset permissions.
+		$user = JFactory::getUser();
+		$userId = $user->get('id');
+		$asset = 'com_jem.event.' . $value->id;
+		
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select('venue');
-		$query->from('#__jem_venues');
-		$query->where('id='.(int)$this->_event->locid);
+		$query->select(array(
+				'count(id)'
+		));
+		$query->from('#__jem_register');
+		$query->where(array(
+				'event= ' . $db->quote($itemId),
+				'waiting= 0'
+		));
+		
 		$db->setQuery($query);
-
-		$venue = $db->loadResult();
-
-		if ($error = $db->getErrorMsg()) {
-			JError::raiseWarning(500, $error);
+		$res = $db->loadResult();
+		$value->booked = $res;
+		
+		$files = JEMAttachment::getAttachments('event' . $itemId);
+		$value->attachments = $files;
+		
+		// Check general edit permission first.
+		if ($user->authorise('core.edit', $asset)) {
+			$value->params->set('access-edit', true);
 		}
-		if (empty($venue)) {
-			$this->_event->venue = JText::_('COM_JEM_SELECTVENUE');
+		// Now check if edit.own is available.
+		elseif (!empty($userId) && $user->authorise('core.edit.own', $asset)) {
+			// Check for a valid user and that they are the owner.
+			if ($userId == $value->created_by) {
+				$value->params->set('access-edit', true);
+			}
 		}
+		
+		// Check edit state permission.
+		if ($itemId) {
+			// Existing item
+			$value->params->set('access-change', $user->authorise('core.edit.state', $asset));
+		}
+		else {
+			// New item.
+			$catId = (int) $this->getState('event.catid');
+			
+			if ($catId) {
+				$value->params->set('access-change', $user->authorise('core.edit.state', 'com_jem.category.' . $catId));
+				$value->catid = $catId;
+			}
+			else {
+				$value->params->set('access-change', $user->authorise('core.edit.state', 'com_jem'));
+			}
+		}
+		
+		$value->articletext = $value->introtext;
+		if (!empty($value->fulltext)) {
+			$value->articletext .= '<hr id="system-readmore" />' . $value->fulltext;
+		}
+		
+		return $value;
+	}
 
-		return true;
+	protected function loadForm($name, $source = null, $options = array(), $clear = false, $xpath = false)
+	{
+		JForm::addFieldPath(JPATH_COMPONENT_ADMINISTRATOR . '/models/fields');
+		
+		return parent::loadForm($name, $source, $options, $clear, $xpath);
 	}
 
 	/**
-	 * logic to get the categories
+	 * Get the return URL.
 	 *
-	 * @access public
-	 * @return void
+	 * @return string return URL.
+	 *        
 	 */
-	function getCategories( )
+	public function getReturnPage()
 	{
-		$db = JFactory::getDBO();
-		$user		= JFactory::getUser();
-		$jemsettings = JEMHelper::config();
-		$userid		= (int) $user->get('id');
-		$superuser	= JEMUser::superuser();
-
-		$gid = JEMHelper::getGID($user);
-
-		$where = ' WHERE c.published = 1 AND c.access <= '.$gid;
-
-		//only check for maintainers if we don't have an edit action
-		if(!$this->_id) {
-			//get the ids of the categories the user maintaines
-			$query = 'SELECT g.group_id'
-					. ' FROM #__jem_groupmembers AS g'
-					. ' WHERE g.member = '.$userid
-					;
-			$db->setQuery( $query );
-			$catids = $db->loadColumn();
-
-			$categories = implode(' OR c.groupid = ', $catids);
-
-			//build ids query
-			if ($categories) {
-				//check if user is allowed to submit events in general, if yes allow to submit into categories
-				//which aren't assigned to a group. Otherwise restrict submission into maintained categories only
-				if (JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes)) {
-					$where .= ' AND c.groupid = 0 OR c.groupid = '.$categories;
-				} else {
-					$where .= ' AND c.groupid = '.$categories;
-				}
-			} else {
-				$where .= ' AND c.groupid = 0';
-			}
-
-		}
-
-		//administrators or superadministrators have access to all categories, also maintained ones
-		if($superuser) {
-			$where = ' WHERE c.published = 1';
-		}
-
-		//get the maintained categories and the categories whithout any group
-		//or just get all if somebody have edit rights
-		$query = 'SELECT c.*'
-				. ' FROM #__jem_categories AS c'
-				. $where
-				. ' ORDER BY c.ordering'
-				;
-		$db->setQuery( $query );
-
-		$mitems = $db->loadObjectList();
-
-		// Check for a database error.
-		if ($db->getErrorNum())
-		{
-			JError::raiseNotice(500, $db->getErrorMsg());
-		}
-
-		if (!$mitems) {
-			$mitems = array();
-			$children = array();
-
-			$parentid = $mitems;
-		} else {
-			$mitems_temp = $mitems;
-
-			$children = array();
-			// First pass - collect children
-			foreach ($mitems as $v)
-			{
-				$pt = $v->parent_id;
-				$list = @$children[$pt] ? $children[$pt] : array();
-				array_push($list, $v);
-				$children[$pt] = $list;
-			}
-
-			$parentid = intval($mitems[0]->parent_id);
-		}
-
-		//get list of the items
-		$list = JEMCategories::treerecurse($parentid, '', array(), $children, 9999, 0, 0);
-
-		return $list;
-	}
-
-	/**
-	 * Method to get the categories an item is assigned to
-	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 *
-	 */
-	function getCatsselected()
-	{
-		$query = 'SELECT DISTINCT catid FROM #__jem_cats_event_relations WHERE itemid = ' . (int)$this->_id;
-		$this->_db->setQuery($query);
-		$used = $this->_db->loadColumn();
-		return $used;
+		return base64_encode(urlencode($this->getState('return_page')));
 	}
 
 	/**
@@ -330,27 +169,23 @@ class JEMModelEditevent extends JModelLegacy
 	 * @access public
 	 * @return array
 	 */
-	function getVenues( )
+	function getVenues()
 	{
 		$app = JFactory::getApplication();
-
-		$params 	= $app->getParams();
-
-		$where		= $this->_buildVenuesWhere();
-		$orderby	= $this->_buildVenuesOrderBy();
-
-		$limit		= $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $params->def('display_num', 0), 'int');
-		$limitstart	= JRequest::getInt('limitstart');
-
-		$query = 'SELECT l.id, l.venue, l.state, l.city, l.country, l.published'
-				.' FROM #__jem_venues AS l'
-				. $where
-				. $orderby
-				;
-
-		$this->_db->setQuery( $query, $limitstart, $limit );
+		
+		$params = $app->getParams();
+		
+		$where = $this->_buildVenuesWhere();
+		$orderby = $this->_buildVenuesOrderBy();
+		
+		$limit = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limitstart = JRequest::getInt('limitstart');
+		
+		$query = 'SELECT l.id, l.venue, l.state, l.city, l.country, l.published' . ' FROM #__jem_venues AS l' . $where . $orderby;
+		
+		$this->_db->setQuery($query, $limitstart, $limit);
 		$rows = $this->_db->loadObjectList();
-
+		
 		return $rows;
 	}
 
@@ -364,18 +199,16 @@ class JEMModelEditevent extends JModelLegacy
 	{
 		$user = JFactory::getUser();
 		$userid = $user->get('id');
-
-		$query = 'SELECT id AS value, venue AS text'
-				. ' FROM #__jem_venues'
-				. ' WHERE created_by = '. (int)$userid
-				. ' AND published = 1'
-				. ' ORDER BY venue'
-		;
-
-		$this->_db->setQuery( $query );
-
+		
+		$query = 'SELECT id AS value, venue AS text' 
+				. ' FROM #__jem_venues' 
+				. ' WHERE created_by = ' 
+				. (int) $userid 
+				. ' AND published = 1' 
+				. ' ORDER BY venue';
+		$this->_db->setQuery($query);
 		$this->_venues = $this->_db->loadObjectList();
-
+		
 		return $this->_venues;
 	}
 
@@ -385,20 +218,19 @@ class JEMModelEditevent extends JModelLegacy
 	 * @access private
 	 * @return array
 	 */
-	function _buildVenuesOrderBy( )
+	function _buildVenuesOrderBy()
 	{
-		$filter_order		= JRequest::getCmd('filter_order');
-		$filter_order_Dir	= JRequest::getCmd('filter_order_Dir');
-
+		$filter_order = JRequest::getCmd('filter_order');
+		$filter_order_Dir = JRequest::getCmd('filter_order_Dir');
+		
 		$orderby = ' ORDER BY ';
-
-		if ($filter_order && $filter_order_Dir)
-		{
-			$orderby .= $filter_order.' '.$filter_order_Dir.', ';
+		
+		if ($filter_order && $filter_order_Dir) {
+			$orderby .= $filter_order . ' ' . $filter_order_Dir . ', ';
 		}
-
+		
 		$orderby .= 'l.ordering';
-
+		
 		return $orderby;
 	}
 
@@ -412,34 +244,144 @@ class JEMModelEditevent extends JModelLegacy
 	{
 		$jemsettings = JEMHelper::config();
 		$filter_type = JRequest::getInt('filter_type');
-		$filter 	 = JRequest::getString('filter_search');
-		$filter 	 = $this->_db->escape( trim(JString::strtolower( $filter ) ) );
-
+		$filter = JRequest::getString('filter_search');
+		$filter = $this->_db->escape(trim(JString::strtolower($filter)));
+		
 		$where = array();
-
+		
 		$where[] = 'l.published = 1';
-
+		
 		if ($filter && $filter_type == 1) {
-			$where[] = 'LOWER(l.venue) LIKE "%'.$filter.'%"';
+			$where[] = 'LOWER(l.venue) LIKE "%' . $filter . '%"';
 		}
-
+		
 		if ($filter && $filter_type == 2) {
-			$where[] = 'LOWER(l.city) LIKE "%'.$filter.'%"';
+			$where[] = 'LOWER(l.city) LIKE "%' . $filter . '%"';
 		}
-
+		
 		if ($filter && $filter_type == 3) {
-			$where[] = 'LOWER(l.state) LIKE "%'.$filter.'%"';
+			$where[] = 'LOWER(l.state) LIKE "%' . $filter . '%"';
 		}
-
-		if ($jemsettings->ownedvenuesonly)
-		{
+		
+		if ($jemsettings->ownedvenuesonly) {
 			$user = JFactory::getUser();
 			$userid = $user->get('id');
-			$where[] = ' created_by = '. (int)$userid;
+			$where[] = ' created_by = ' . (int) $userid;
 		}
+		
+		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
+		
+		return $where;
+	}
 
-		$where = ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '');
+	/**
+	 * Method to build the query for the venues
+	 *
+	 * @access private
+	 * @return string
+	 */
+	function getContact()
+	{
+		// Get the WHERE and ORDER BY clauses for the query
+		$where = $this->_buildContentWhere();
+		$orderby = $this->_buildContentOrderBy();
+		
+		$query = 'SELECT con.*' 
+				. ' FROM #__contact_details AS con' 
+				. $where 
+				. $orderby;
+		$this->_db->setQuery($query);
+		$contacts = $this->_db->loadObjectList();
+		
+		return $contacts;
+	}
 
+	/**
+	 * Method to build the orderby clause of the query for the venues
+	 *
+	 * @access private
+	 * @return string
+	 */
+	function _buildContentOrderBy()
+	{
+		$app = JFactory::getApplication();
+		
+		$filter_order = $app->getUserStateFromRequest('com_jem.contactelement.filter_order', 'filter_order', 'con.ordering', 'cmd');
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.contactelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		
+		$filter_order = JFilterInput::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+		
+		if ($filter_order != '') {
+			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
+		}
+		else {
+			$orderby = ' ORDER BY con.name ';
+		}
+		
+		return $orderby;
+	}
+
+	/**
+	 * Method to build the where clause of the query for the venues
+	 *
+	 * @access private
+	 * @return string
+	 */
+	function _buildContentWhere()
+	{
+		$app = JFactory::getApplication();
+		
+		$filter = $app->getUserStateFromRequest('com_jem.contactelement.filter', 'filter', '', 'int');
+		$filter_state = $app->getUserStateFromRequest('com_jem.contactelement.filter_state', 'filter_state', '', 'word');
+		$search = $app->getUserStateFromRequest('com_jem.contactelement.filter_search', 'filter_search', '', 'string');
+		$search = $this->_db->escape(trim(JString::strtolower($search)));
+		
+		$where = array();
+		
+		/*
+		 * Filter state
+		 */
+		if ($filter_state) {
+			if ($filter_state == 'P') {
+				$where[] = 'con.published = 1';
+			}
+			else 
+				if ($filter_state == 'U') {
+					$where[] = 'con.published = 0';
+				}
+		}
+		
+		/*
+		 * Search venues
+		 */
+		if ($search && $filter == 1) {
+			$where[] = ' LOWER(con.name) LIKE \'%' . $search . '%\' ';
+		}
+		
+		/*
+		 * Search address
+		 */
+		if ($search && $filter == 2) {
+			$where[] = ' LOWER(con.address) LIKE \'%' . $search . '%\' ';
+		}
+		
+		/*
+		 * Search city
+		 */
+		if ($search && $filter == 3) {
+			$where[] = ' LOWER(con.suburb) LIKE \'%' . $search . '%\' ';
+		}
+		
+		/*
+		 * Search state
+		 */
+		if ($search && $filter == 4) {
+			$where[] = ' LOWER(con.state) LIKE \'%' . $search . '%\' ';
+		}
+		
+		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
+		
 		return $where;
 	}
 
@@ -449,379 +391,35 @@ class JEMModelEditevent extends JModelLegacy
 	 * @access public
 	 * @return integer
 	 */
-	function getCountitems ()
+	function getCountitems()
 	{
 		// Initialize variables
 		$where = $this->_buildVenuesWhere();
-
-		$query = 'SELECT count(*)'
-				. ' FROM #__jem_venues AS l'
-				. $where
-				;
+		
+		$query = 'SELECT count(*)' 
+				. ' FROM #__jem_venues AS l' 
+				. $where;
 		$this->_db->SetQuery($query);
-
+		
 		return $this->_db->loadResult();
 	}
 
 	/**
-	 * Method to checkin/unlock the item
+	 * Method to get the total number
 	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 *
+	 * @access public
+	 * @return integer
 	 */
-	function checkin()
+	function getCountContactitems()
 	{
-		if ($this->_id)
-		{
-			$item = $this->getTable('jem_events', '');
-			if(! $item->checkin($this->_id)) {
-				$this->setError($this->_db->getErrorMsg());
-				return false;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Method to checkout/lock the item
-	 *
-	 * @access	public
-	 * @param	int	$uid	User ID of the user checking the item out
-	 * @return	boolean	True on success
-	 *
-	 */
-	function checkout($uid = null)
-	{
-		if ($this->_id)
-		{
-			// Make sure we have a user id to checkout the article with
-			if (is_null($uid)) {
-				$user	= JFactory::getUser();
-				$uid	= $user->get('id');
-			}
-			// Lets get to it and checkout the thing...
-			$item = $this->getTable('jem_events', '');
-			if(!$item->checkout($uid, $this->_id)) {
-				$this->setError($this->_db->getErrorMsg());
-				return false;
-			}
-
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Tests if the event is checked out
-	 *
-	 * @access	public
-	 * @param	int	A user id
-	 * @return	boolean	True if checked out
-	 *
-	 */
-	function isCheckedOut( $uid=0 )
-	{
-		if ($this->_loadEvent())
-		{
-			if ($uid) {
-				return ($this->_event->checked_out && $this->_event->checked_out != $uid);
-			} else {
-				return $this->_event->checked_out;
-			}
-		}
-	}
-
-	/**
-	 * Method to store the event
-	 *
-	 * @access	public
-	 * @return	id
-	 *
-	 */
-	function store($data, $file)
-	{
-		$app = JFactory::getApplication();
-
-		$user 		= JFactory::getUser();
-		$jemsettings = JEMHelper::config();
-
-		$cats 		= JRequest::getVar( 'cid', array(), 'post', 'array');
-		$row 		= JTable::getInstance('jem_events', '');
-
-		//Sanitize
-		$data['datdescription'] = JRequest::getVar( 'datdescription', '', 'post','string', JREQUEST_ALLOWRAW );
-
-
-		// Check the metatags
-		if (JString::strlen($row->meta_description) > 255) {
-			$row->meta_description = JString::substr($row->meta_description, 0, 254);
-		}
-
-		if (JString::strlen($row->meta_keywords) > 200) {
-			$row->meta_keywords = JString::substr($row->meta_keywords, 0, 199);
-		}
-
-
-		$curimage = JRequest::getVar( 'curimage', '', 'post','string' );
-
-		//bind it to the table
-		if (!$row->bind($data)) {
-			JError::raiseError( 500, $this->_db->stderr() );
-			return false;
-		}
-
-		//get values from time selectlist and concatenate them accordingly
-		$starthours		= JRequest::getCmd( 'starthours');
-		$startminutes	= JRequest::getCmd( 'startminutes');
-		$endhours		= JRequest::getCmd( 'endhours');
-		$endminutes		= JRequest::getCmd( 'endminutes');
-
-		// Emtpy time values are allowed and are stored as null values
-		if ($starthours != '') {
-			if ($startminutes == '') {
-				$startminutes = '00';
-			}
-			$row->times = $starthours.':'.$startminutes;
-			if ($endhours != '') {
-				if ($endminutes == '') {
-					$endminutes = '00';
-				}
-				$row->endtimes = $endhours.':'.$endminutes;
-			}
-		}
-
-		// Check begin date is before end date
-
-		// Check if end date is set
-		if($row->enddates == null) {
-			// Check if end time is set
-			if($row->endtimes == null) {
-				// Compare is not needed, but make sure the check passes
-				$date1 = new DateTime('00:00');
-				$date2 = new DateTime('00:00');
-			} else {
-				$date1 = new DateTime($row->times);
-				$date2 = new DateTime($row->endtimes);
-			}
-		} else {
-			// Check if end time is set
-			if($row->endtimes == null) {
-				$date1 = new DateTime($row->dates);
-				$date2 = new DateTime($row->enddates);
-			} else {
-				$date1 = new DateTime($row->dates.' '.$row->times);
-				$date2 = new DateTime($row->enddates.' '.$row->endtimes);
-			}
-		}
-		if($date1 > $date2) {
-			JError::raiseWarning('SOME_ERROR_CODE', JText::_('COM_JEM_ERROR_END_BEFORE_START'));
-			return false;
-		}
-
-		//Are we saving from an item edit?
-		if ($row->id) {
-
-			//check if user is allowed to edit events
-			$editaccess	= JEMUser::editaccess($jemsettings->eventowner, $row->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
-			$maintainer = JEMUser::ismaintainer();
-
-			if ($maintainer || $editaccess ) $allowedtoeditevent = 1;
-
-			if ($allowedtoeditevent == 0) {
-				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
-			}
-
-			$row->modified 		= gmdate('Y-m-d H:i:s');
-			$row->modified_by 	= $user->get('id');
-
-			/*
-			* Is editor the owner of the event
-			* This extra Check is needed to make it possible
-			* that the venue is published after an edit from an owner
-			*/
-			if ($jemsettings->venueowner == 1 && $row->created_by == $user->get('id')) {
-				$owneredit = 1;
-			} else {
-				$owneredit = 0;
-			}
-
-		} else {
-
-			//check if user is allowed to submit new events
-			$maintainer = JEMUser::ismaintainer();
-			$genaccess 	= JEMUser::validate_user( $jemsettings->evdelrec, $jemsettings->delivereventsyes );
-
-			if ( !($maintainer || $genaccess) ){
-				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
-			}
-
-			//get IP, time and userid
-			$row->created 		= gmdate('Y-m-d H:i:s');
-
-			$row->author_ip 	= $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
-			$row->created_by 	= $user->get('id');
-
-			//Set owneredit to false
-			$owneredit = 0;
-		}
-
-		/*
-		* Autopublish
-		* check if the user has the required rank for autopublish
-		*/
-		$autopubev = JEMUser::validate_user( $jemsettings->evpubrec, $jemsettings->autopubl );
-		if ($autopubev || $owneredit) {
-				$row->published = 1 ;
-			} else {
-				$row->published = 0 ;
-		}
-
-		//Image upload
-
-		//If image upload is required we will stop here if no file was attached
-		if ( empty($file['name']) && $jemsettings->imageenabled == 2 ) {
-
-			$this->setError( JText::_( 'COM_JEM_IMAGE_EMPTY' ) );
-			return false;
-		}
-
-		if ( ( $jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1 ) && ( !empty($file['name']) )) {
-
-			jimport('joomla.filesystem.file');
-
-			$base_Dir = JPATH_SITE.'/images/jem/events/';
-
-			//check the image
-			$check = JEMImage::check($file, $jemsettings);
-
-			if ($check === false) {
-				$app->redirect($_SERVER['HTTP_REFERER']);
-			}
-
-			//sanitize the image filename
-			$filename = JEMImage::sanitize($base_Dir, $file['name']);
-			$filepath = $base_Dir . $filename;
-
-			if (!JFile::upload($file['tmp_name'], $filepath)) {
-				$this->setError( JText::_( 'COM_JEM_UPLOAD_FAILED' ) );
-				return false;
-			} else {
-				$row->datimage = $filename;
-			}
-		} else {
-			//keep image if edited and left blank
-			$row->datimage = $curimage;
-		}
-
-		$editoruser = JEMUser::editoruser();
-
-		if (!$editoruser) {
-			//check datdescription --> wipe out code
-			$row->datdescription = strip_tags($row->datdescription, '<br><br/>');
-
-			//convert the linux \n (Mac \r, Win \r\n) to <br /> linebreaks
-			$row->datdescription = str_replace(array("\r\n", "\r", "\n"), "<br />", $row->datdescription);
-
-			// cut too long words
-			$row->datdescription = wordwrap($row->datdescription, 75, ' ', 1);
-
-			//check length
-			$length = JString::strlen($row->datdescription);
-			if ($length > $jemsettings->datdesclimit) {
-				//too long then shorten datdescription
-				$row->datdescription = JString::substr($row->datdescription, 0, $jemsettings->datdesclimit);
-				//add ...
-				$row->datdescription = $row->datdescription.'...';
-			}
-		}
-
-		//set registration regarding the jem settings
-		switch ($jemsettings->showfroregistra) {
-			case 0:
-				$row->registra = 0;
-				break;
-			case 1:
-				$row->registra = 1;
-				break;
-			case 2:
-				$row->registra = $row->registra ;
-				break;
-		}
-
-		switch ($jemsettings->showfrounregistra) {
-			case 0:
-				$row->unregistra = 0;
-				break;
-			case 1:
-				$row->unregistra = 1;
-				break;
-			case 2:
-				if ($jemsettings->showfroregistra >= 1) {
-					$row->unregistra = $row->unregistra;
-				} else {
-					$row->unregistra = 0;
-				}
-				break;
-		}
-
-		$row->version++;
-
-		//Make sure the table is valid
-		if (!$row->check($jemsettings)) {
-			$this->setError($row->getError());
-			return false;
-		}
-
-		//store it in the db
-		if (!$row->store(true)) {
-			JError::raiseError( 500, $this->_db->stderr() );
-			return false;
-		}
-
-		//store cat relation
-		$query = 'DELETE FROM #__jem_cats_event_relations WHERE itemid = '.$row->id;
-		$this->_db->setQuery($query);
-		$this->_db->query();
-
-		foreach($cats as $cat)
-		{
-			$query = 'INSERT INTO #__jem_cats_event_relations (`catid`, `itemid`) VALUES(' . $cat . ',' . $row->id . ')';
-			$this->_db->setQuery($query);
-			$this->_db->query();
-		}
-
-		// attachments
-		// new ones first
-		$attachments = JRequest::getVar( 'attach', array(), 'files', 'array' );
-		$attachments['customname'] = JRequest::getVar( 'attach-name', array(), 'post', 'array' );
-		$attachments['description'] = JRequest::getVar( 'attach-desc', array(), 'post', 'array' );
-		$attachments['access'] = JRequest::getVar( 'attach-access', array(), 'post', 'array' );
-		JEMAttachment::postUpload($attachments, 'event'.$row->id);
-
-		// and update old ones
-		$attachments = array();
-		$old['id'] = JRequest::getVar( 'attached-id', array(), 'post', 'array' );
-		$old['name'] = JRequest::getVar( 'attached-name', array(), 'post', 'array' );
-		$old['description'] = JRequest::getVar( 'attached-desc', array(), 'post', 'array' );
-		$old['access'] = JRequest::getVar( 'attached-access', array(), 'post', 'array' );
-		foreach ($old['id'] as $k => $id)
-		{
-			$attach = array();
-			$attach['id'] = $id;
-			$attach['name'] = $old['name'][$k];
-			$attach['description'] = $old['description'][$k];
-			$attach['access'] = $old['access'][$k];
-			JEMAttachment::update($attach);
-		}
-
-		// check for recurrence, when filled it will perform the cleanup function
-		if ($row->recurrence_number > 0)
-		{
-			JEMHelper::cleanup(1);
-		}
-
-		return $row->id;
+		// Initialize variables
+		$where = $this->_buildVenuesWhere();
+		
+		$query = 'SELECT count(*)' 
+				. ' FROM #__contact_details AS con' 
+				. $where;
+		$this->_db->SetQuery($query);
+		
+		return $this->_db->loadResult();
 	}
 }
-?>

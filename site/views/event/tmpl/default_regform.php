@@ -12,32 +12,32 @@ defined('_JEXEC') or die;
 //the user is not registered allready -> display registration form
 ?>
 <?php
-if ($this->row->registra == 1)
+if ($this->item->registra == 1)
 {
 
 if ($this->print == 0) {
 
 
-if ($this->row->maxplaces && count($this->registers) >= $this->row->maxplaces && !$this->row->waitinglist):
+if ($this->item->maxplaces && count($this->registers) >= $this->item->maxplaces && !$this->item->waitinglist):
 ?>
 	<p class="el-event-full">
-		<?php echo JText::_('COM_JEM_EVENT_FULL_NOTICE'); ?>
+		<?php echo JText::_( 'COM_JEM_EVENT_FULL_NOTICE' ); ?>
 	</p>
 <?php else: ?>
-<form id="JEM" action="<?php echo JRoute::_('index.php'); ?>" method="post">
+<form id="JEM" action="<?php echo JRoute::_('index.php?option=com_jem&view=event&id='.(int) $this->item->id); ?>"  name="adminForm" id="adminForm" method="post">
 	<p>
-		<?php if ($this->row->maxplaces && count($this->registers) >= $this->row->maxplaces): // full event ?>
-			<?php echo JText::_('COM_JEM_EVENT_FULL_REGISTER_TO_WAITING_LIST').': '; ?>
+		<?php if ($this->item->maxplaces && count($this->registers) >= $this->item->maxplaces): // full event ?>
+			<?php echo JText::_( 'COM_JEM_EVENT_FULL_REGISTER_TO_WAITING_LIST' ).': '; ?>
 		<?php else: ?>
-			<?php echo JText::_('COM_JEM_I_WILL_GO').': '; ?>
+			<?php echo JText::_( 'COM_JEM_I_WILL_GO' ).': '; ?>
 		<?php endif; ?>
 		<input type="checkbox" name="reg_check" onclick="check(this, document.getElementById('jem_send_attend'))" />
 	</p>
 <p>
-	<input class="button1" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo JText::_('COM_JEM_REGISTER'); ?>" disabled="disabled" />
+	<input class="button1" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo JText::_( 'COM_JEM_REGISTER' ); ?>" disabled="disabled" />
 </p>
 <p>
-	<input type="hidden" name="rdid" value="<?php echo $this->row->did; ?>" />
+	<input type="hidden" name="rdid" value="<?php echo $this->item->did; ?>" />
 	<?php echo JHTML::_( 'form.token' ); ?>
 	<input type="hidden" name="task" value="event.userregister" />
 </p>

@@ -26,6 +26,7 @@ class JEMViewMyattendances extends JViewLegacy
 		//initialize variables
 		$document 		= JFactory::getDocument();
 		$jemsettings 	= JEMHelper::config();
+		$settings 		= JEMHelper::globalattribs();
 		$menu 			= $app->getMenu();
 		$item 			= $menu->getActive();
 		$params 		= $app->getParams();
@@ -108,6 +109,7 @@ class JEMViewMyattendances extends JViewLegacy
 		$this->params					= $params;
 		$this->attending_pagination 	= $attending_pagination;
 		$this->jemsettings				= $jemsettings;
+		$this->settings					= $settings;
 		$this->pagetitle				= $pagetitle;
 		$this->lists 					= $lists;
 		$this->noattending				= $noattending;

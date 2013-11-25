@@ -37,8 +37,9 @@ class JEMOutput {
 	 * @param array $params needed params
 	 **/
 	static function submitbutton($dellink, $params)
-	{
-		if ($dellink) {
+	{	
+		if ($dellink)
+		{
 			$settings = JEMHelper::config();
 			$uri = JFactory::getURI();
 			$app = JFactory::getApplication();
@@ -55,7 +56,7 @@ class JEMOutput {
 				$image = JText::_('COM_JEM_DELIVER_NEW_EVENT');
 			}
 
-			$url = 'index.php?option=com_jem&view=editevent';
+			$url = 'index.php?option=com_jem&task=event.add&return='.base64_encode(urlencode($uri)).'&a_id=0';
 			$overlib = JText::_('COM_JEM_SUBMIT_EVENT_DESC');
 			$button = JHtml::_('link', JRoute::_($url), $image);
 			$output = '<span class="hasTip" title="'.JText::_('COM_JEM_DELIVER_NEW_EVENT').' :: '.$overlib.'">'.$button.'</span>';
@@ -111,20 +112,21 @@ class JEMOutput {
 	 */
 	static function archivebutton($params, $task = NULL, $id = NULL)
 	{
-		$settings = JEMHelper::config();
+		$settings = JEMHelper::globalattribs();
+		$settings2 = JEMHelper::config();
 		$app = JFactory::getApplication();
 
-		if ($settings->show_archive_icon) {
+		if ($settings->get('show_archive_icon')==1) {
 			if ($app->input->get('print','','int')) {
 				return;
 			}
 
-			if ($settings->oldevent == 2) {
+			if ($settings2->oldevent == 2) {
 				JHtml::_('behavior.tooltip');
 				$view = JRequest::getWord('view');
 
 				if ($task == 'archive') {
-					if ($settings->icons) {
+					if ($settings->get('global_show_icons')==1) {
 						$image = JHtml::_('image', 'com_jem/el.png', JText::_('COM_JEM_SHOW_EVENTS'), NULL, true);
 					} else {
 						$image = JText::_('COM_JEM_SHOW_EVENTS');
@@ -139,7 +141,7 @@ class JEMOutput {
 						$url = JRoute::_('index.php');
 					}
 				} else {
-					if ($settings->icons) {
+					if ($settings->get('global_show_icons')==1) {
 						$image = JHtml::_('image', 'com_jem/archive_front.png', JText::_('COM_JEM_SHOW_ARCHIVE'), NULL, true);
 					} else {
 						$image = JText::_('COM_JEM_SHOW_ARCHIVE');
@@ -175,7 +177,7 @@ class JEMOutput {
 	 * Views:
 	 * Event, Venue
 	 */
-	static function editbutton($Itemid, $id, &$params, $allowedtoedit, $view)
+	static function editbutton($item, $params, $attribs, $allowedtoedit, $view)
 	{
 		if ($allowedtoedit) {
 			$app = JFactory::getApplication();
@@ -183,34 +185,60 @@ class JEMOutput {
 			if ($app->input->get('print','','int')) {
 				return;
 			}
+			
+			// Ignore if the state is negative (trashed).
+			if ($item->published < 0) {
+				return;
+			}
 
-			$settings = JEMHelper::config();
+			// Initialise variables.
+			$user	= JFactory::getUser();
+			$app = JFactory::getApplication();
+			$userId	= $user->get('id');
+			$uri	= JFactory::getURI();
+
+			$settings = JEMHelper::globalattribs();
 			JHtml::_('behavior.tooltip');
 
 			switch ($view)
 			{
 				case 'editevent':
-					if ($settings->icons) {
+					if ($settings->get('global_show_icons','0')==1) {
 						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_EVENT'), NULL, true);
 					} else {
 						$image = JText::_('COM_JEM_EDIT_EVENT');
 					}
+					$id = $item->did;
 					$overlib = JText::_('COM_JEM_EDIT_EVENT_DESC');
 					$text = JText::_('COM_JEM_EDIT_EVENT');
+					$url = 'index.php?option=com_jem&task=event.edit&a_id='.$id.'&return='.base64_encode(urlencode($uri));
 					break;
 
 				case 'editvenue':
-					if ($settings->icons) {
+					if ($settings->get('global_show_icons','0')==1) {
 						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_VENUE'), NULL, true);
 					} else {
 						$image = JText::_('COM_JEM_EDIT_VENUE');
 					}
+					$id = $item->locid;
 					$overlib = JText::_('COM_JEM_EDIT_VENUE_DESC');
 					$text = JText::_('COM_JEM_EDIT_VENUE');
+					$url = 'index.php?option=com_jem&view='.$view.'&id='.$id;
+					break;
+					
+				case 'venue':
+					if ($settings->get('global_show_icons','0')==1) {
+						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_VENUE'), NULL, true);
+					} else {
+						$image = JText::_('COM_JEM_EDIT_VENUE');
+					}
+					$id = $item->id;
+					$overlib = JText::_('COM_JEM_EDIT_VENUE_DESC');
+					$text = JText::_('COM_JEM_EDIT_VENUE');
+					$url = 'index.php?option=com_jem&view=editvenue&id='.$id;
 					break;
 			}
-
-			$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&returnid='.$Itemid;
+			
 			$button = JHtml::_('link', JRoute::_($url), $image);
 			$output = '<span class="hasTip" title="'.$text.' :: '.$overlib.'">'.$button.'</span>';
 
@@ -227,14 +255,14 @@ class JEMOutput {
 	static function printbutton($print_link, &$params)
 	{
 		$app = JFactory::getApplication();
-		$settings = JEMHelper::config();
+		$settings = JEMHelper::globalattribs();
 
-		if ($settings->show_print_icon) {
+		if ($settings->get('global_show_print_icon','0')==1) {
 			JHtml::_('behavior.tooltip');
 
 			$status = 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no';
 
-			if ($settings->icons) {
+			if ($settings->get('global_show_icons','0')==1) {
 				$image = JHtml::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), NULL, true);
 			} else {
 				$image = JText::_('COM_JEM_PRINT');
@@ -272,9 +300,9 @@ class JEMOutput {
 	static function mailbutton($slug, $view, $params)
 	{
 		$app = JFactory::getApplication();
-		$settings = JEMHelper::config();
+		$settings = JEMHelper::globalattribs();
 
-		if ($settings->show_email_icon) {
+		if ($settings->get('global_show_email_icon')) {
 			if ($app->input->get('print','','int')) {
 				return;
 			}
@@ -290,7 +318,7 @@ class JEMOutput {
 			$url = 'index.php?option=com_mailto&tmpl=component&template='.$template.'&link='.MailToHelper::addLink($link);
 			$status = 'width=400,height=350,menubar=yes,resizable=yes';
 
-			if ($settings->icons) {
+			if ($settings->get('global_show_icons')) {
 				$image = JHtml::_('image','system/emailButton.png', JText::_('JGLOBAL_EMAIL'), NULL, true);
 			} else {
 				$image = JText::_('COM_JEM_EMAIL');
@@ -313,16 +341,16 @@ class JEMOutput {
 	static function icalbutton($slug, $view)
 	{
 		$app = JFactory::getApplication();
-		$settings = JEMHelper::config();
-
-		if ($settings->events_ical == 1) {
+		$settings = JEMHelper::globalattribs();
+		
+		if ($settings->get('global_show_ical_icon','0')==1) {
 			if ($app->input->get('print','','int')) {
 				return;
 			}
-
+			
 			JHtml::_('behavior.tooltip');
 
-			if ($settings->icons) {
+			if ($settings->get('global_show_icons','0')==1) {
 				$image = JHtml::_('image', 'com_jem/iCal2.0.png', JText::_('COM_JEM_EXPORT_ICS'), NULL, true);
 			} else {
 				$image = JText::_('COM_JEM_EXPORT_ICS');

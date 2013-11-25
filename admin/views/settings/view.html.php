@@ -10,7 +10,6 @@
 defined('_JEXEC') or die;
 
 
-
 /**
  * View class for the JEM Settings screen
  *
@@ -27,6 +26,8 @@ class JEMViewSettings extends JViewLegacy {
 	public function display($tpl = null) {
 		$form	= $this->get('Form');
 		$data	= $this->get('Data');
+		$state	= $this->get('State');
+		
 
 		$jemsettings = $this->get('Data');
 		$document 	= JFactory::getDocument();
@@ -73,6 +74,7 @@ class JEMViewSettings extends JViewLegacy {
 
 		$this->form = $form;
 		$this->data = $data;
+		$this->state = $state;
 		$this->jemsettings = $jemsettings;
 
 		// add toolbar

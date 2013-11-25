@@ -30,6 +30,7 @@ class JEMViewDay extends JEMView
 		// Initialize variables
 		$app 			= JFactory::getApplication();
 		$jemsettings 	= JEMHelper::config();
+		$settings 		= JEMHelper::globalattribs();
 		$menu 			= $app->getMenu();
 		$item 			= $menu->getActive();
 		$params 		= $app->getParams();
@@ -139,6 +140,7 @@ class JEMViewDay extends JEMView
 		$this->action			= $uri->toString();
 		$this->task				= $task;
 		$this->jemsettings		= $jemsettings;
+		$this->settings			= $settings;
 		$this->lists			= $lists;
 		$this->daydate			= $daydate;
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -12,11 +12,11 @@ defined('_JEXEC') or die;
 <div id="jem" class="jem_venue" itemscope="itemscope" itemtype="http://schema.org/Place">
 	<div class="buttons">
 		<?php
-			echo JEMOutput::addvenuebutton( $this->addvenuelink, $this->params, $this->jemsettings );
-			echo JEMOutput::submitbutton( $this->addeventlink, $this->params );
-			echo JEMOutput::archivebutton( $this->params, $this->task, $this->venue->slug );
-			echo JEMOutput::mailbutton( $this->venue->slug, 'venue', $this->params );
-			echo JEMOutput::printbutton( $this->print_link, $this->params );
+			echo JEMOutput::addvenuebutton($this->addvenuelink, $this->params, $this->jemsettings);
+			echo JEMOutput::submitbutton($this->addeventlink, $this->params);
+			echo JEMOutput::archivebutton($this->params, $this->task, $this->venue->slug);
+			echo JEMOutput::mailbutton($this->venue->slug, 'venue', $this->params);
+			echo JEMOutput::printbutton($this->print_link, $this->params);
 		?>
 	</div>
 	<?php if ($this->params->def('show_page_title', 1)) : ?>
@@ -28,7 +28,7 @@ defined('_JEXEC') or die;
 	<!--Venue-->
 	<h2 class="jem">
 			<?php echo JText::_('COM_JEM_VENUE'); ?>
-			<?php echo JEMOutput::editbutton($this->item->id, $this->venue->id, $this->params, $this->allowedtoeditvenue, 'editvenue' ); ?>
+			<?php echo JEMOutput::editbutton($this->venue, $this->params, NULL, $this->allowedtoeditvenue, 'venue' ); ?>
 	</h2>
 	<?php echo JEMOutput::flyer( $this->venue, $this->limage, 'venue' ); ?>
 

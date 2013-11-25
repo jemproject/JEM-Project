@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_JEM_FORM_VIEW_DEFAULT_TITLE" option="COM_JEM_FORM_VIEW_DEFAULT_OPTION">
+		<help
+			key = "JHELP_MENUS_MENU_ITEM_ARTICLE_CREATE"
+		/>
+		<message>
+			<![CDATA[COM_JEM_FORM_VIEW_DEFAULT_DESC]]>
+		</message>
+	</layout>
+	<fields name="params">
+
+	</fields>
+</metadata>

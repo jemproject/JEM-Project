@@ -146,7 +146,7 @@ class JEMUser {
 				;
 		$db->setQuery($query);
 
-		$maintainer = $db->loadResult();
+		$maintainer = $db->loadColumn();
 
 		return $maintainer;
 	}

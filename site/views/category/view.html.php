@@ -34,13 +34,13 @@ class JEMViewCategory extends JEMView
 			JHtml::_('behavior.tooltip');
 
 			//initialize variables
-			$document 	= JFactory::getDocument();
-			$menu 		= $app->getMenu();
-			$jemsettings = JEMHelper::config();
-			$item 		= $menu->getActive();
-			$params 	= $app->getParams();
-			$uri 		= JFactory::getURI();
-			$pathway 	= $app->getPathWay();
+			$document 		= JFactory::getDocument();
+			$menu 			= $app->getMenu();
+			$jemsettings 	= JEMHelper::config();
+			$item 			= $menu->getActive();
+			$params 		= $app->getParams();
+			$uri 			= JFactory::getURI();
+			$pathway 		= $app->getPathWay();
 
 			// Load css
 			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
@@ -106,6 +106,7 @@ class JEMViewCategory extends JEMView
 			$document 		= JFactory::getDocument();
 			$menu			= $app->getMenu();
 			$jemsettings 	= JEMHelper::config();
+			$settings 		= JEMHelper::globalattribs();
 			$db  			= JFactory::getDBO();
 
 			JHtml::_('behavior.tooltip');
@@ -246,6 +247,7 @@ class JEMViewCategory extends JEMView
 			$this->description		= $description;
 			$this->pagination		= $pagination;
 			$this->jemsettings		= $jemsettings;
+			$this->settings			= $settings;
 			$this->item				= $item;
 			$this->categories		= $categories;
 		}

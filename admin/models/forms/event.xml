@@ -304,4 +304,200 @@
 			rows="3" cols="30"
 		/>
 	</fieldset>
+	
+	
+	<fields name="attribs">
+		<fieldset name="basic" label="COM_JEM_EVENT_ATTRIBS_FIELDSET_LABEL">
+			<field
+				name="event_show_author"
+				type="list"
+				label="COM_JEM_EVENT_FIELD_SHOW_AUTHOR_LABEL"
+				description="COM_JEM_EVENT_FIELD_SHOW_AUTHOR_DESC">
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+
+			<field
+				name="event_link_author"
+				type="list"
+				label="COM_JEM_EVENT_FIELD_LINK_AUTHOR_LABEL"
+				description="COM_JEM_EVENT_FIELD_LINK_AUTHOR_DESC">
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JNO</option>
+				<option	value="1">JYES</option>
+			</field>
+			
+			<field
+				name="event_show_contact"
+				type="list"
+				label="COM_JEM_EVENT_FIELD_SHOW_CONTACT_LABEL"
+				description="COM_JEM_EVENT_FIELD_SHOW_CONTACT_DESC">
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+
+			<field
+				name="event_link_contact"
+				type="list"
+				label="COM_JEM_EVENT_FIELD_LINK_CONTACT_LABEL"
+				description="COM_JEM_EVENT_FIELD_LINK_CONTACT_DESC">
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JNO</option>
+				<option	value="1">JYES</option>
+			</field>
+			
+			<field
+				name="event_show_hits"
+				type="list"
+				label="COM_JEM_EVENT_FIELD_SHOW_HITS_LABEL"
+				description="COM_JEM_EVENT_FIELD_SHOW_HITS_DESC">
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+			<field
+				name="event_show_print_icon"
+				type="list"
+				label="JGLOBAL_SHOW_PRINT_ICON_LABEL"
+				description="JGLOBAL_SHOW_PRINT_ICON_DESC">
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+
+			<field
+				name="event_show_email_icon"
+				type="list"
+				label="JGLOBAL_SHOW_EMAIL_ICON_LABEL"
+				description="JGLOBAL_SHOW_EMAIL_ICON_DESC">
+				<option	value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>
+			
+			<field
+				name="event_show_ical_icon"
+				type="list"
+				label="COM_JEM_EVENT_FIELD_SHOW_ICAL_ICON"
+				description="COM_JEM_EVENT_FIELD_SHOW_ICAL_ICON_DESC">
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option	value="0">JHIDE</option>
+				<option	value="1">JSHOW</option>
+			</field>	
+	</fieldset>
+			<fieldset name="evevents"
+		label="COM_JEM_EVENTS"
+	>
+		<field name="showevdescription" type="list"
+			label="COM_JEM_DISPLAY_EVENT_DESCRIPT"
+			description="COM_JEM_DISPLAY_EVENT_DESCRIPT_DESC"
+			class="inputbox"
+			required="false"
+		>
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="0">JHIDE</option>
+			<option value="1">JSHOW</option>
+		</field>
+	</fieldset>	
+			<fieldset name="evvenues"
+		label="COM_JEM_VENUES"
+	>
+		<field name="showlocdescription" type="list"
+			label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
+			description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="0">JHIDE</option>
+			<option value="1">JSHOW</option>
+		</field>
+		<field name="showdetailsadress" type="radio"
+			label="COM_JEM_DISPLAY_ADDRESS"
+			description="COM_JEM_DISPLAY_ADDRESS_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="0">JHIDE</option>
+			<option value="1">JSHOW</option>
+		</field>
+		<field name="showdetlinkvenue" type="list"
+			label="COM_JEM_DISPLAY_ADDRESS"
+			description="COM_JEM_DISPLAY_ADDRESS_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="0">COM_JEM_NO_LINK</option>
+			<option value="1">COM_JEM_LINK_TO_URL</option>
+			<option value="2">COM_JEM_LINK_TO_VENUEVIEW</option>
+		</field>
+		<field name="showmapserv" type="list"
+			label="COM_JEM_DISPLAY_LINK_TO_MAP"
+			description="COM_JEM_DISPLAY_LINK_TO_MAP_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="0">COM_JEM_NO_MAP_SERVICE</option>
+			<option value="1">COM_JEM_GOOGLE_MAP_LINK</option>
+			<option value="2">COM_JEM_GOOGLE_MAP_DISP</option>
+		</field>
+		<field name="tld" type="text"
+			label="COM_JEM_GOOGLE_MAP_TLD"
+			description="COM_JEM_GOOGLE_MAP_TLD_DESC"
+			class="inputbox"
+			size="10"
+			maxlength="10"
+			required="false"
+		/>
+		<field name="lg" type="text"
+			label="COM_JEM_GOOGLE_MAP_LG"
+			description="COM_JEM_GOOGLE_MAP_LG_DESC"
+			class="inputbox"
+			size="10"
+			maxlength="10"
+			required="false"
+		/>
+	</fieldset>
+			<fieldset name="evregistration"
+		label="COM_JEM_REGISTRATION">
+		<field name="regname" type="list"
+			label="COM_JEM_TYPE_REG_NAME"
+			description="COM_JEM_TYPE_REG_NAME_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="0">COM_JEM_USERNAME</option>
+			<option value="1">COM_JEM_NAME</option>
+		</field>
+		<field name="comunsolution" type="list"
+			label="COM_JEM_COM_SOL"
+			description="COM_JEM_COM_SOL_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="0">COM_JEM_DONT_USE_COM_SOL</option>
+			<option value="1">COM_JEM_COMBUILDER</option>
+		</field>
+		<field name="comunoption" type="list"
+			label="COM_JEM_TYPE_COM_INTEGRATION"
+			description="COM_JEM_TYPE_COM_INTEGRATION_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="0">COM_JEM_LINK_PROFILE</option>
+			<option value="1">COM_JEM_LINK_AVATAR</option>
+		</field>
+	</fieldset>		
+	</fields>
+	
+	
 </form>

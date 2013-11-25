@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -14,9 +14,9 @@ defined('_JEXEC') or die;
 
 <form action="<?php echo $this->action; ?>" method="post" id="adminForm" name="adminForm">
 
-<?php if ($this->jemsettings->filter || $this->jemsettings->display) : ?>
+<?php if ($this->settings->get('filter') || $this->settings->get('display')) : ?>
 <div id="jem_filter" class="floattext">
-	<?php if ($this->jemsettings->filter) : ?>
+	<?php if ($this->settings->get('filter')) : ?>
 	<div class="jem_fleft">
 		<?php
 		echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
@@ -27,7 +27,7 @@ defined('_JEXEC') or die;
 		<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 	</div>
 	<?php endif; ?>
-	<?php if ($this->jemsettings->display) : ?>
+	<?php if ($this->settings->get('display')) : ?>
 	<div class="jem_fright">
 		<?php
 		echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
