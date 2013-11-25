@@ -9,14 +9,10 @@
 defined('_JEXEC') or die();
 
 /**
- * HTML View class for the EditeventView
- *
- * @package JEM
- *         
+ * Editevent-View         
  */
 class JEMViewEditevent extends JViewLegacy
 {
-
 	protected $form;
 	protected $item;
 	protected $return_page;
@@ -34,10 +30,9 @@ class JEMViewEditevent extends JViewLegacy
 			return;
 		}
 		
-		
 		// Initialise variables.
 		$app = JFactory::getApplication();
-		$jemsettings		= JEMHelper::config();
+		$jemsettings	= JEMHelper::config();
 		$user = JFactory::getUser();
 		$document = JFactory::getDocument();
 		$url = JURI::root();
@@ -56,8 +51,6 @@ class JEMViewEditevent extends JViewLegacy
 			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
 			return false;
 		}
-		
-		
 		
 		// Merge event params. If this is single-event view, menu params override event params
 		// Otherwise, event params override menu item params
@@ -236,7 +229,7 @@ class JEMViewEditevent extends JViewLegacy
 		$rows = $this->get('Venues');
 		$total = $this->get('Countitems');
 		
-		JHTML::_('behavior.modal', 'a.flyermodal');
+		JHtml::_('behavior.modal', 'a.flyermodal');
 		
 		// Create the pagination object
 		jimport('joomla.html.pagination');
@@ -250,10 +243,10 @@ class JEMViewEditevent extends JViewLegacy
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		
 		$filters = array();
-		$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_VENUE'));
-		$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_CITY'));
-		$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_STATE'));
-		$searchfilter = JHTML::_('select.genericlist', $filters, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
+		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_VENUE'));
+		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_CITY'));
+		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_STATE'));
+		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
 		
 		$this->rows = $rows;
 		$this->searchfilter = $searchfilter;
@@ -279,8 +272,9 @@ class JEMViewEditevent extends JViewLegacy
 		$db			= JFactory::getDBO();
 		$document	= JFactory::getDocument();
 
-		JHTML::_('behavior.tooltip');
-		JHTML::_('behavior.modal');
+		JHtml::_('behavior.tooltip');
+		JHtml::_('behavior.modal');
+		JHtml::_('behavior.modal', 'a.flyermodal');
 
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest('com_jem.contactelement.filter_order', 'filter_order', 'con.name', 'cmd');
@@ -305,16 +299,12 @@ class JEMViewEditevent extends JViewLegacy
 		$rows = $this->get('Contact');
 		$total = $this->get('CountContactitems');
 		
-		
-		
-		JHTML::_('behavior.modal', 'a.flyermodal');
-		
 		// Create the pagination object
 		jimport('joomla.html.pagination');
 		$pagination = new JPagination($total, $limitstart, $limit);
 		
 		//publish unpublished filter
-		$lists['state'] = JHTML::_('grid.state', $filter_state);
+		$lists['state'] = JHtml::_('grid.state', $filter_state);
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
@@ -322,11 +312,11 @@ class JEMViewEditevent extends JViewLegacy
 
 		//Build search filter
 		$filters = array();
-		$filters[] = JHTML::_('select.option', '1', JText::_('COM_JEM_NAME'));
-		$filters[] = JHTML::_('select.option', '2', JText::_('COM_JEM_ADDRESS'));
-		$filters[] = JHTML::_('select.option', '3', JText::_('COM_JEM_CITY'));
-		$filters[] = JHTML::_('select.option', '4', JText::_('COM_JEM_STATE'));
-		$searchfilter = JHTML::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
+		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME'));
+		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_ADDRESS'));
+		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_CITY'));
+		$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_STATE'));
+		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
 
 		// search filter
 		$lists['search']= $search;
