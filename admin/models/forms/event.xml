@@ -390,7 +390,7 @@
 			<fieldset name="evevents"
 		label="COM_JEM_EVENTS"
 	>
-		<field name="showevdescription" type="list"
+		<field name="event_show_evdescription" type="list"
 			label="COM_JEM_DISPLAY_EVENT_DESCRIPT"
 			description="COM_JEM_DISPLAY_EVENT_DESCRIPT_DESC"
 			class="inputbox"
@@ -404,7 +404,7 @@
 			<fieldset name="evvenues"
 		label="COM_JEM_VENUES"
 	>
-		<field name="showlocdescription" type="list"
+		<field name="event_showlocdescription" type="list"
 			label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
 			description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
 			class="inputbox"
@@ -415,7 +415,7 @@
 			<option value="0">JHIDE</option>
 			<option value="1">JSHOW</option>
 		</field>
-		<field name="showdetailsadress" type="radio"
+		<field name="event_showdetailsadress" type="radio"
 			label="COM_JEM_DISPLAY_ADDRESS"
 			description="COM_JEM_DISPLAY_ADDRESS_DESC"
 			class="inputbox"
@@ -425,7 +425,7 @@
 			<option value="0">JHIDE</option>
 			<option value="1">JSHOW</option>
 		</field>
-		<field name="showdetlinkvenue" type="list"
+		<field name="event_showdetlinkvenue" type="list"
 			label="COM_JEM_DISPLAY_ADDRESS"
 			description="COM_JEM_DISPLAY_ADDRESS_DESC"
 			class="inputbox"
@@ -436,7 +436,7 @@
 			<option value="1">COM_JEM_LINK_TO_URL</option>
 			<option value="2">COM_JEM_LINK_TO_VENUEVIEW</option>
 		</field>
-		<field name="showmapserv" type="list"
+		<field name="event_showmapserv" type="list"
 			label="COM_JEM_DISPLAY_LINK_TO_MAP"
 			description="COM_JEM_DISPLAY_LINK_TO_MAP_DESC"
 			class="inputbox"
@@ -447,7 +447,7 @@
 			<option value="1">COM_JEM_GOOGLE_MAP_LINK</option>
 			<option value="2">COM_JEM_GOOGLE_MAP_DISP</option>
 		</field>
-		<field name="tld" type="text"
+		<field name="event_tld" type="text"
 			label="COM_JEM_GOOGLE_MAP_TLD"
 			description="COM_JEM_GOOGLE_MAP_TLD_DESC"
 			class="inputbox"
@@ -455,7 +455,7 @@
 			maxlength="10"
 			required="false"
 		/>
-		<field name="lg" type="text"
+		<field name="event_lg" type="text"
 			label="COM_JEM_GOOGLE_MAP_LG"
 			description="COM_JEM_GOOGLE_MAP_LG_DESC"
 			class="inputbox"
@@ -464,7 +464,7 @@
 			required="false"
 		/>
 	</fieldset>
-			<fieldset name="evregistration"
+			<fieldset name="event_evregistration"
 		label="COM_JEM_REGISTRATION">
 		<field name="regname" type="list"
 			label="COM_JEM_TYPE_REG_NAME"
@@ -476,7 +476,7 @@
 			<option value="0">COM_JEM_USERNAME</option>
 			<option value="1">COM_JEM_NAME</option>
 		</field>
-		<field name="comunsolution" type="list"
+		<field name="event_comunsolution" type="list"
 			label="COM_JEM_COM_SOL"
 			description="COM_JEM_COM_SOL_DESC"
 			class="inputbox"
@@ -486,7 +486,7 @@
 			<option value="0">COM_JEM_DONT_USE_COM_SOL</option>
 			<option value="1">COM_JEM_COMBUILDER</option>
 		</field>
-		<field name="comunoption" type="list"
+		<field name="event_comunoption" type="list"
 			label="COM_JEM_TYPE_COM_INTEGRATION"
 			description="COM_JEM_TYPE_COM_INTEGRATION_DESC"
 			class="inputbox"
@@ -498,6 +498,4 @@
 		</field>
 	</fieldset>		
 	</fields>
-	
-	
 </form>

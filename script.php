@@ -133,7 +133,7 @@ class com_jemInstallerScript
 				"global_show_email_icon"=>"1",
 				"global_show_ical_icon"=>"1",
 				"showtimedetails"=>"1",
-				"showevdescription"=>"1",
+				"event_show_evdescription"=>"1",
 				"showdetailstitle"=>"1",
 				"showlocdescription"=>"1",
 				"showdetailsadress"=>"1",

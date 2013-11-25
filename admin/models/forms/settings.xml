@@ -711,7 +711,34 @@
 				description="COM_JEM_SETTINGS_EVENT_FIELD_SHOW_ICAL_ICON_DESC">
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
-			</field>			
+			</field>
+			<field
+				name="event_show_noauth"
+				type="list"
+				label="JGLOBAL_SHOW_UNAUTH_LINKS_LABEL"
+				description="JGLOBAL_SHOW_UNAUTH_LINKS_DESC">
+						<option value="0">JNO</option>
+						<option value="1">JYES</option>
+			</field>
+			<field
+			name="event_show_readmore"
+			type="radio"
+			label="JGLOBAL_SHOW_READMORE_LABEL"
+			description="JGLOBAL_SHOW_READMORE_DESC"
+			default="1">
+			<option
+				value="0">JHIDE</option>
+			<option
+				value="1">JSHOW</option>
+		</field>
+			<field name="event_show_intro" type="list"
+				description="COM_JEM_EVENT_FIELD_SHOW_INTRO_DESC"
+				label="COM_JEM_EVENT_FIELD_SHOW_INTRO_LABEL"
+				>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+						
 		</fieldset>
 			<fieldset name="globalparam"
 		label="COM_JEM_GLOBAL_PARAMETERS"
@@ -801,7 +828,7 @@
 			<option value="0">JHIDE</option>
 			<option value="1">JSHOW</option>
 		</field>
-		<field name="showevdescription" type="radio"
+		<field name="event_show_evdescription" type="radio"
 			label="COM_JEM_DISPLAY_EVENT_DESCRIPT"
 			description="COM_JEM_DISPLAY_EVENT_DESCRIPT_DESC"
 			class="inputbox"
