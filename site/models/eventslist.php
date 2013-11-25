@@ -45,7 +45,6 @@ class JEMModelEventslist extends JModelLegacy
 		$jemsettings = JEMHelper::config();
 
 		//get the number of events from database
-		//$limit		= $app->getUserStateFromRequest('com_jem.eventslist.limit', 'limit', $params->def('display_num', 0), 'int');
 		$limit		= $app->getUserStateFromRequest('com_jem.eventslist.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart = $app->getUserStateFromRequest('com_jem.eventslist.limitstart', 'limitstart', 0, 'int');
 
@@ -165,7 +164,7 @@ class JEMModelEventslist extends JModelLegacy
 		$orderby	= $this->_buildOrderBy();
 
 		// Get Events from Database ...
-		$query = ' SELECT a.id, a.dates, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription, a.maxplaces, a.waitinglist, '
+		$query = ' SELECT a.id, a.dates, a.featured, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription, a.maxplaces, a.waitinglist, '
 				. ' l.venue, l.city, l.state, l.url, l.street, ct.name AS countryname, '
 				. ' c.catname, c.id AS catid,'
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'

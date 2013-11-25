@@ -9,6 +9,7 @@
 
 defined('_JEXEC') or die;
 
+JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 $user		= JFactory::getUser();
 $userId		= $user->get('id');
 $listOrder	= $this->escape($this->state->get('list.ordering'));
@@ -52,8 +53,8 @@ window.addEvent('domready', function(){
 		<fieldset id="filter-bar">
 		<div class="filter-search fltlft">
 			<?php echo $this->lists['filter']; ?>
-			<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo JText::_( 'COM_JEM_SEARCH' );?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button type="submit"><?php echo JText::_( 'COM_JEM_GO' ); ?></button>
+			<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo JText::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>" class="text_area" onChange="document.adminForm.submit();" />
+			<button type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
 			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
 		<div class="filter-select fltrt">
@@ -74,7 +75,7 @@ window.addEvent('domready', function(){
 	<table class="table table-striped" id="articleList">
 		<thead>
 			<tr>
-				<th width="1%" class="center"><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+				<th width="1%" class="center"><?php echo JText::_('COM_JEM_NUM'); ?></th>
 				<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 				<th class="nowrap"><?php echo JHtml::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $listDirn, $listOrder ); ?></th>
 				<th><?php echo JHtml::_('grid.sort', 'COM_JEM_EVENT_TIME', 'a.times', $listDirn, $listOrder ); ?></th>
@@ -82,11 +83,14 @@ window.addEvent('domready', function(){
 				<th><?php echo JHtml::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $listDirn, $listOrder ); ?></th>
 				<th><?php echo JHtml::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $listDirn, $listOrder ); ?></th>
 				<th><?php echo JHtml::_('grid.sort', 'COM_JEM_STATE', 'loc.state', $listDirn, $listOrder ); ?></th>
-				<th><?php echo JText::_( 'COM_JEM_CATEGORIES' ); ?></th>
-				<th width="1%" class="center nowrap"><?php echo JText::_( 'JSTATUS' ); ?></th>
-				<th class="nowrap"><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
+				<th><?php echo JText::_('COM_JEM_CATEGORIES'); ?></th>
+				<th width="1%" class="center nowrap"><?php echo JText::_('JSTATUS'); ?></th>
+				<th width="5%">
+					<?php echo JHtml::_('grid.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder, NULL, 'desc'); ?>
+				</th>
+				<th class="nowrap"><?php echo JText::_('COM_JEM_CREATION'); ?></th>
 				<th class="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $listDirn, $listOrder ); ?></th>
-				<th width="1%" class="center nowrap"><?php echo JText::_( 'COM_JEM_REGISTERED_USERS' ); ?></th>
+				<th width="1%" class="center nowrap"><?php echo JText::_('COM_JEM_REGISTERED_USERS'); ?></th>
 				<th width="1%" class="center nowrap"><?php echo JHtml::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?></th>
 			</tr>
 		</thead>
@@ -209,6 +213,9 @@ window.addEvent('domready', function(){
 				<?php endforeach; ?>
 				</td>
 				<td class="center"><?php echo $published; ?></td>
+				<td class="center">
+					<?php echo JHtml::_('jemhtml.featured', $row->featured, $i, $canChange); ?>
+				</td>
 				<td>
 					<?php echo JText::_( 'COM_JEM_AUTHOR' ).': '; ?><a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>"><?php echo $row->author; ?></a><br />
 					<?php echo JText::_( 'COM_JEM_EMAIL' ).': '; ?><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a><br />

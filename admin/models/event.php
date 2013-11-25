@@ -374,4 +374,91 @@ class JEMModelEvent extends JModelAdmin
 			JEMHelper::cleanup(1);
 		}
 	}
+	
+	/**
+	 * Method to toggle the featured setting of articles.
+	 *
+	 * @param	array	The ids of the items to toggle.
+	 * @param	int		The value to toggle to.
+	 *
+	 * @return	boolean	True on success.
+	 */
+	public function featured($pks, $value = 0)
+	{
+		// Sanitize the ids.
+		$pks = (array) $pks;
+		JArrayHelper::toInteger($pks);
+	
+		if (empty($pks)) {
+			$this->setError(JText::_('COM_JEM_EVENTS_NO_ITEM_SELECTED'));
+			return false;
+		}
+	
+		$table = $this->getTable('Featured', 'JEMTable');
+	
+		try {
+			$db = $this->getDbo();
+	
+			$db->setQuery(
+					'UPDATE #__jem_events' .
+					' SET featured = '.(int) $value.
+					' WHERE id IN ('.implode(',', $pks).')'
+			);
+			if (!$db->query()) {
+				throw new Exception($db->getErrorMsg());
+			}
+	
+			if ((int)$value == 0) {
+				// Adjust the mapping table.
+				// Clear the existing features settings.
+				$db->setQuery(
+						'DELETE FROM #__jem_featured' .
+						' WHERE event_id IN ('.implode(',', $pks).')'
+				);
+				if (!$db->query()) {
+					throw new Exception($db->getErrorMsg());
+				}
+			} else {
+				// first, we find out which of our new featured articles are already featured.
+				$query = $db->getQuery(true);
+				$query->select('f.event_id');
+				$query->from('#__jem_featured AS f');
+				$query->where('event_id IN ('.implode(',', $pks).')');
+				//echo $query;
+				$db->setQuery($query);
+	
+				if (!is_array($old_featured = $db->loadColumn())) {
+					throw new Exception($db->getErrorMsg());
+				}
+	
+				// we diff the arrays to get a list of the articles that are newly featured
+				$new_featured = array_diff($pks, $old_featured);
+	
+				// Featuring.
+				$tuples = array();
+				foreach ($new_featured as $pk) {
+					$tuples[] = '('.$pk.', 0)';
+				}
+				if (count($tuples)) {
+					$db->setQuery(
+							'INSERT INTO #__jem_featured ('.$db->quoteName('event_id').', '.$db->quoteName('ordering').')' .
+							' VALUES '.implode(',', $tuples)
+					);
+					if (!$db->query()) {
+						$this->setError($db->getErrorMsg());
+						return false;
+					}
+				}
+			}
+	
+		} catch (Exception $e) {
+			$this->setError($e->getMessage());
+			return false;
+		}
+	
+		$table->reorder();	
+		$this->cleanCache();
+	
+		return true;
+	}
 }

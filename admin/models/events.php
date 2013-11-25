@@ -38,6 +38,7 @@ class JEMModelEvents extends JModelList
 					'hits', 'a.hits',
 					'id', 'a.id',
 					'catname', 'c.catname',
+					'featured', 'a.featured',
 			);
 		}
 

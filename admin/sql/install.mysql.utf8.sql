@@ -53,6 +53,12 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
+CREATE TABLE IF NOT EXISTS `#__jem_featured` (
+  `event_id` int(11) NOT NULL DEFAULT '0',
+  `ordering` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`event_id`)
+) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
+
 CREATE TABLE IF NOT EXISTS `#__jem_venues` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `venue` varchar(50) NOT NULL default '',

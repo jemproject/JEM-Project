@@ -12,11 +12,7 @@ defined('_JEXEC') or die;
 
 
 /**
- * View class for the JEM Events screen
- *
- * @package Joomla
- * @subpackage JEM
- *
+ * Events-View
  */
 
  class JEMViewEvents extends JViewLegacy {
@@ -123,6 +119,7 @@ defined('_JEXEC') or die;
 			if ($this->state->get('filter_state') != 2) {
 				JToolBarHelper::publishList('events.publish', 'JTOOLBAR_PUBLISH', true);
 				JToolBarHelper::unpublishList('events.unpublish', 'JTOOLBAR_UNPUBLISH', true);
+				JToolBarHelper::custom('events.featured', 'featured.png', 'featured_f2.png', 'JFEATURED', true);
 			}
 
 			if ($this->state->get('filter_state') != -1) {
