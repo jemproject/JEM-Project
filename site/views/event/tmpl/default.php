@@ -13,6 +13,7 @@ JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
 
 // Create shortcuts to some parameters.
 $params		= $this->item->params;
+
 $images 	= json_decode($this->item->datimage);
 $canEdit	= $this->item->params->get('access-edit');
 $user		= JFactory::getUser();
@@ -131,7 +132,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 
 	<!-- AUTHOR -->
 		<?php if ($params->get('event_show_author') && !empty($this->item->author)) : ?>
-		<dt class="createdby"><?php echo JText::_('COM_JEM_EVENT_WRITTEN_BY_LABEL'); ?></dt>
+		<dt class="createdby"><?php echo JText::_('COM_JEM_EVENT_CREATED_BY_LABEL'); ?></dt>
 		<dd class="createdby">
 		<?php $author = $this->item->created_by_alias ? $this->item->created_by_alias : $this->item->author; ?>
 		<?php if (!empty($this->item->contactid2) && $params->get('event_link_author') == true): ?>
@@ -141,18 +142,15 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 		$item = $menu->getItems('link', $needle, true);
 		$cntlink = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
 		?>
-		<?php echo JText::sprintf('COM_JEM_EVENT_WRITTEN_BY', JHtml::_('link', JRoute::_($cntlink), $author)); ?>
+		<?php echo JText::sprintf('COM_JEM_EVENT_CREATED_BY', JHtml::_('link', JRoute::_($cntlink), $author)); ?>
 		<?php else: ?>
-		<?php echo JText::sprintf('COM_JEM_EVENT_WRITTEN_BY', $author); ?>
+		<?php echo JText::sprintf('COM_JEM_EVENT_CREATED_BY', $author); ?>
 		<?php endif; ?>
 		</dd>
 		<?php endif; ?>
 		</dl>
-
-		
 	<!-- DESCRIPTION -->
-		<?php if ($params->get('event_showevdescription')) { ?>
-
+		<?php if ($params->get('event_show_evdescription')) { ?>
 		<h2 class="description"><?php echo JText::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
 		<div class="description event_desc" itemprop="description">
 			
@@ -207,9 +205,9 @@ JHTML::_('behavior.modal', 'a.flyermodal');
         $cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
         ?>
         			<?php
-			echo JText::sprintf('COM_JEM_EVENT_WRITTEN_BY', JHtml::_('link', JRoute::_($cntlink2), $contact));
+			echo JText::sprintf('COM_JEM_EVENT_CONTACT', JHtml::_('link', JRoute::_($cntlink2), $contact));
  			else: 
-			echo JText::sprintf('COM_JEM_EVENT_WRITTEN_BY', $contact);
+			echo JText::sprintf('COM_JEM_EVENT_CONTACT', $contact);
 			endif;
  			?>
  		</dd>
