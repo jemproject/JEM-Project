@@ -220,7 +220,7 @@ class JEMModelCategory extends JModelLegacy
 		$orderby	= $this->_buildCategoryOrderBy();
 
 		//Get Events from Database
-		$query = 'SELECT DISTINCT a.id, a.featured, a.datimage, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.datdescription, a.created, '
+		$query = 'SELECT DISTINCT a.id, a.featured, a.datimage, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.created, '
 				. ' a.maxplaces, a.waitinglist, '
 				. ' l.venue, l.city, l.state, l.url, c.color, c.catname, l.street, ct.name AS countryname, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'

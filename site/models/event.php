@@ -89,7 +89,7 @@ class JEMModelEvent extends JModelItem
 										// In this case, the state is set to 0
 										// to indicate Unpublished (even if the
 										// event state is Published)
-										'a.created, a.unregistra, a.published, a.datdescription, a.created_by, ' .
+										'a.created, a.unregistra, a.published, a.created_by, ' .
 										// use created if modified is 0
 										'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, ' . 'a.modified_by, a.checked_out, a.checked_out_time, ' . 'a.datimage,  a.version, ' .
 										 'a.meta_keywords, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.waitinglist, a.meta_description, a.hits'));

@@ -98,6 +98,8 @@ $params = $params->toArray();
 		if (task == 'event.cancel' || document.formvalidator.isValid(document.id('event-form'))) {
 			Joomla.submitform(task, document.getElementById('event-form'));
 
+			<?php echo $this->form->getField('articletext')->save(); ?>
+
 			$("meta_keywords").value = $keywords;
 			$("meta_description").value = $description;
 		}
@@ -161,11 +163,10 @@ $params = $params->toArray();
 
 			<fieldset class="adminform">
 
-			<div>
-				<?php echo $this->form->getLabel('datdescription'); ?>
-				<div class="clr"></div>
-				<?php echo $this->form->getInput('datdescription'); ?>
-			</div>
+			<div class="clr"></div>
+			<?php echo $this->form->getLabel('articletext'); ?>
+			<div class="clr"></div>
+			<?php echo $this->form->getInput('articletext'); ?>
 
 			<!-- END OF FIELDSET -->
 		</fieldset>

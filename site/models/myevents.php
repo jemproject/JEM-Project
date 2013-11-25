@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -183,7 +183,7 @@ class JEMModelMyevents extends JModelLegacy
 		$orderby = $this->_buildOrderBy();
 
 		//Get Events from Database
-		$query = 'SELECT DISTINCT a.id as eventid, a.id, a.dates, a.enddates, a.published, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription,a.registra, a.maxplaces, a.waitinglist,'
+		$query = 'SELECT DISTINCT a.id as eventid, a.id, a.dates, a.enddates, a.published, a.times, a.endtimes, a.title, a.created, a.locid,a.registra, a.maxplaces, a.waitinglist,'
 				. ' l.venue, l.city, l.state, l.url,'
 				. ' c.catname, c.id AS catid,'
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'

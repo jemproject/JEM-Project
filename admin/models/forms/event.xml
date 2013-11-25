@@ -3,6 +3,18 @@
 	<fieldset name="details"
 		addfieldpath="/administrator/components/com_jem/models/fields"
 	>
+		<field name="articletext" type="editor" class="inputbox"
+			label="COM_JEM_EVENT_FIELD_ARTICLETEXT_LABEL" description="COM_JEM_EVENT_FIELD_ARTICLETEXT_DESC"
+			filter="JComponentHelper::filterText" buttons="true" />
+		
+		<field name="featured" type="list"
+			label="JFEATURED"
+			description="COM_CONTENT_FIELD_FEATURED_DESC"
+			default="0"
+		>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
 		<field name="title" type="text"
 			class="inputbox"
 			size="40"

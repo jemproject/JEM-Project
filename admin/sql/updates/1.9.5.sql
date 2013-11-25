@@ -26,7 +26,8 @@ ALTER TABLE `#__jem_events`
 	ADD	`access` int(10) NOT NULL DEFAULT '0',
 	ADD	`metadata` text NOT NULL,
 	ADD	`featured` tinyint(3) unsigned NOT NULL DEFAULT '0',
-	ADD	`attribs` varchar(5120) NOT NULL;
+	ADD	`attribs` varchar(5120) NOT NULL,
+	CHANGE `datdescription` `fulltext` mediumtext NOT NULL;
 	
 ALTER TABLE `#__jem_settings`
 	ADD `globalattribs` varchar(5120) NOT NULL;	
