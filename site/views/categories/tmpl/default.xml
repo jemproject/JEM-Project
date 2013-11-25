@@ -14,6 +14,7 @@
 				default="0"
 				label="COM_JEM_SELECTTOPCAT"
 				description="COM_JEM_SELECTTOPCATDESC"
+				required="true"
 			/>
 			<field name="usecat" type="radio"
 				default="1"
