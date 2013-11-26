@@ -8,18 +8,19 @@ ALTER TABLE `#__jem_settings`
 	DROP `commentsystem`,
 	DROP `icslimit`,
 	DROP `sortorder`,
-	DROP `repeat_window`;
+	DROP `repeat_window`,
+	ADD `globalattribs` varchar(5120) NOT NULL;
 
 DELETE FROM `#__menu`
 	WHERE `type`='component' AND `title`='COM_JEM_MENU_ARCHIVE';
 
-UPDATE `#__menu` 
-SET `link` = 'index.php?option=com_jem&view=main' 
-WHERE `#__menu`.`title` ='COM_JEM_MENU_MAINMENU';
+UPDATE `#__menu`
+	SET `link` = 'index.php?option=com_jem&view=main'
+	WHERE `title` = 'COM_JEM_MENU_MAINMENU';
 
 ALTER TABLE `#__jem_events`
-	MODIFY `title` VARCHAR(255),
-	MODIFY `alias` VARCHAR(255),
+	MODIFY `title` varchar(255),
+	MODIFY `alias` varchar(255),
 	ADD	`fulltext` mediumtext NOT NULL,
 	ADD	`introtext` mediumtext NOT NULL,
 	ADD	`created_by_alias` varchar(255) NOT NULL,
@@ -28,9 +29,6 @@ ALTER TABLE `#__jem_events`
 	ADD	`featured` tinyint(3) unsigned NOT NULL DEFAULT '0',
 	ADD	`attribs` varchar(5120) NOT NULL,
 	CHANGE `datdescription` `fulltext` mediumtext NOT NULL;
-	
-ALTER TABLE `#__jem_settings`
-	ADD `globalattribs` varchar(5120) NOT NULL;	
 
 ALTER TABLE `#__jem_categories`
 	ADD `title` varchar(255) NOT NULL,
@@ -44,11 +42,9 @@ ALTER TABLE `#__jem_categories`
 	ADD `path` varchar(255) NOT NULL,
 	ADD `metadata` varchar(2048) NOT NULL,
 	ADD `modified_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-	ADD `modified_user_id` int(10) unsigned NOT NULL DEFAULT '0';
-
-ALTER TABLE `#__jem_categories`
+	ADD `modified_user_id` int(10) unsigned NOT NULL DEFAULT '0',
 	CHANGE `catdescription` `description` MEDIUMTEXT NOT NULL;
-	
+
 ALTER TABLE `#__jem_categories`
 	DROP PRIMARY KEY,
 	CHANGE `id` `id` INT(11);
@@ -65,9 +61,9 @@ UPDATE `#__jem_cats_event_relations`
 INSERT IGNORE INTO `#__jem_categories`
 	(`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`)
 	VALUES (1, 0, 0, 1, 0, 'root', 'root', 1);
-	
+
 CREATE TABLE IF NOT EXISTS `#__jem_featured` (
-  `event_id` int(11) NOT NULL DEFAULT '0',
-  `ordering` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`event_id`)
+	`event_id` int(11) NOT NULL DEFAULT '0',
+	`ordering` int(11) NOT NULL DEFAULT '0',
+	PRIMARY KEY (`event_id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
