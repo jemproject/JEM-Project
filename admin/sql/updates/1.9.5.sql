@@ -61,9 +61,3 @@ UPDATE `#__jem_cats_event_relations`
 INSERT IGNORE INTO `#__jem_categories`
 	(`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`)
 	VALUES (1, 0, 0, 1, 0, 'root', 'root', 1);
-
-CREATE TABLE IF NOT EXISTS `#__jem_featured` (
-	`event_id` int(11) NOT NULL DEFAULT '0',
-	`ordering` int(11) NOT NULL DEFAULT '0',
-	PRIMARY KEY (`event_id`)
-) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;

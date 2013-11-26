@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -394,8 +394,6 @@ class JEMModelEvent extends JModelAdmin
 			return false;
 		}
 	
-		$table = $this->getTable('Featured', 'JEMTable');
-	
 		try {
 			$db = $this->getDbo();
 	
@@ -408,55 +406,11 @@ class JEMModelEvent extends JModelAdmin
 				throw new Exception($db->getErrorMsg());
 			}
 	
-			if ((int)$value == 0) {
-				// Adjust the mapping table.
-				// Clear the existing features settings.
-				$db->setQuery(
-						'DELETE FROM #__jem_featured' .
-						' WHERE event_id IN ('.implode(',', $pks).')'
-				);
-				if (!$db->query()) {
-					throw new Exception($db->getErrorMsg());
-				}
-			} else {
-				// first, we find out which of our new featured articles are already featured.
-				$query = $db->getQuery(true);
-				$query->select('f.event_id');
-				$query->from('#__jem_featured AS f');
-				$query->where('event_id IN ('.implode(',', $pks).')');
-				//echo $query;
-				$db->setQuery($query);
-	
-				if (!is_array($old_featured = $db->loadColumn())) {
-					throw new Exception($db->getErrorMsg());
-				}
-	
-				// we diff the arrays to get a list of the articles that are newly featured
-				$new_featured = array_diff($pks, $old_featured);
-	
-				// Featuring.
-				$tuples = array();
-				foreach ($new_featured as $pk) {
-					$tuples[] = '('.$pk.', 0)';
-				}
-				if (count($tuples)) {
-					$db->setQuery(
-							'INSERT INTO #__jem_featured ('.$db->quoteName('event_id').', '.$db->quoteName('ordering').')' .
-							' VALUES '.implode(',', $tuples)
-					);
-					if (!$db->query()) {
-						$this->setError($db->getErrorMsg());
-						return false;
-					}
-				}
-			}
-	
 		} catch (Exception $e) {
 			$this->setError($e->getMessage());
 			return false;
 		}
 	
-		$table->reorder();	
 		$this->cleanCache();
 	
 		return true;
