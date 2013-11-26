@@ -22,11 +22,6 @@ function jemBuildRoute(&$query)
 		unset($query['id']);
 	};
 	
-	if (isset($query['returnid'])) {
-		$segments[] = $query['returnid'];
-		unset($query['returnid']);
-	};
-	
 	return $segments;
 }
 
@@ -72,13 +67,15 @@ function jemParseRoute($segments)
 		
 		case 'editvenue':
 			{
-				$count = count($segments);
-				
 				$vars['view'] = 'editvenue';
 				
-				if ($count == 3) {
+				$count = count($segments);
+				if ($count == 1) {			
+					$vars['id'] = $segments[0];
+				}
+
+				if ($count == 2) {
 					$vars['id'] = $segments[1];
-					$vars['returnid'] = $segments[2];
 				}
 			}
 			break;
