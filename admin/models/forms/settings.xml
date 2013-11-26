@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-
-<fieldset name="globalparam2"
+	<fieldset name="globalparam2"
 		label="COM_JEM_GLOBAL_PARAMETERS"
 	>
 		<field type="spacer" hr="true" />
@@ -140,8 +139,6 @@
 			<option value="1">JYES</option>
 		</field>
 	</fieldset>
-
-
 
 	<fieldset name="usercontrol"
 		label="COM_JEM_USER_CONTROL"
@@ -642,309 +639,298 @@
 		</field>
 	</fieldset>
 
-	
-	
 	<fields name="globalattribs">
-		<fieldset name="basic" label="COM_JEM_EVENT_ATTRIBS_FIELDSET_LABEL">
-			<field
-				name="event_show_author"
-				type="list"
+		<fieldset name="basic"
+			label="COM_JEM_EVENT_ATTRIBS_FIELDSET_LABEL"
+		>
+			<field name="event_show_author" type="list"
 				label="COM_JEM_EVENT_FIELD_SHOW_AUTHOR_LABEL"
-				description="COM_JEM_EVENT_FIELD_SHOW_AUTHOR_DESC">
+				description="COM_JEM_EVENT_FIELD_SHOW_AUTHOR_DESC"
+			>
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
 			</field>
-			<field
-				name="event_link_author"
-				type="list"
+			<field name="event_link_author" type="list"
 				label="COM_JEM_EVENT_FIELD_LINK_AUTHOR_LABEL"
-				description="COM_JEM_EVENT_FIELD_LINK_AUTHOR_DESC">
+				description="COM_JEM_EVENT_FIELD_LINK_AUTHOR_DESC"
+			>
 				<option	value="0">JNO</option>
 				<option	value="1">JYES</option>
 			</field>
-			<field
-				name="event_show_contact"
-				type="list"
+			<field name="event_show_contact" type="list"
 				label="COM_JEM_EVENT_FIELD_SHOW_CONTACT_LABEL"
-				description="COM_JEM_EVENT_FIELD_SHOW_CONTACT_DESC">
+				description="COM_JEM_EVENT_FIELD_SHOW_CONTACT_DESC"
+			>
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
 			</field>
-			<field
-				name="event_link_contact"
-				type="list"
+			<field name="event_link_contact" type="list"
 				label="COM_JEM_EVENT_FIELD_LINK_CONTACT_LABEL"
-				description="COM_JEM_EVENT_FIELD_LINK_CONTACT_DESC">
+				description="COM_JEM_EVENT_FIELD_LINK_CONTACT_DESC"
+			>
 				<option	value="0">JNO</option>
 				<option	value="1">JYES</option>
 			</field>
-			<field
-				name="event_show_hits"
-				type="list"
+			<field name="event_show_hits" type="list"
 				label="COM_JEM_EVENT_FIELD_SHOW_HITS_LABEL"
-				description="COM_JEM_EVENT_FIELD_SHOW_HITS_DESC">
+				description="COM_JEM_EVENT_FIELD_SHOW_HITS_DESC"
+			>
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
 			</field>
-	
-			<field
-				name="event_show_print_icon"
-				type="list"
+			<field name="event_show_print_icon" type="list"
 				label="JGLOBAL_SHOW_PRINT_ICON_LABEL"
-				description="JGLOBAL_SHOW_PRINT_ICON_DESC">
+				description="JGLOBAL_SHOW_PRINT_ICON_DESC"
+			>
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
 			</field>
-
-			<field
-				name="event_show_email_icon"
-				type="list"
+			<field name="event_show_email_icon" type="list"
 				label="JGLOBAL_SHOW_EMAIL_ICON_LABEL"
-				description="JGLOBAL_SHOW_EMAIL_ICON_DESC">
+				description="JGLOBAL_SHOW_EMAIL_ICON_DESC"
+			>
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
 			</field>
-			<field
-				name="event_show_ical_icon"
-				type="list"
+			<field name="event_show_ical_icon" type="list"
 				label="COM_JEM_SETTINGS_EVENT_FIELD_SHOW_ICAL_ICON"
-				description="COM_JEM_SETTINGS_EVENT_FIELD_SHOW_ICAL_ICON_DESC">
+				description="COM_JEM_SETTINGS_EVENT_FIELD_SHOW_ICAL_ICON_DESC"
+			>
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
 			</field>
-			<field
-				name="event_show_noauth"
-				type="list"
+			<field name="event_show_noauth" type="list"
 				label="JGLOBAL_SHOW_UNAUTH_LINKS_LABEL"
-				description="JGLOBAL_SHOW_UNAUTH_LINKS_DESC">
-						<option value="0">JNO</option>
-						<option value="1">JYES</option>
+				description="JGLOBAL_SHOW_UNAUTH_LINKS_DESC"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
-			<field
-			name="event_show_readmore"
-			type="radio"
-			label="JGLOBAL_SHOW_READMORE_LABEL"
-			description="JGLOBAL_SHOW_READMORE_DESC"
-			default="1">
-			<option
-				value="0">JHIDE</option>
-			<option
-				value="1">JSHOW</option>
-		</field>
-			<field name="event_show_intro" type="list"
-				description="COM_JEM_EVENT_FIELD_SHOW_INTRO_DESC"
-				label="COM_JEM_EVENT_FIELD_SHOW_INTRO_LABEL"
-				>
+			<field name="event_show_readmore" type="radio"
+				label="JGLOBAL_SHOW_READMORE_LABEL"
+				description="JGLOBAL_SHOW_READMORE_DESC"
+				default="1"
+			>
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
-						
+			<field name="event_show_intro" type="list"
+				description="COM_JEM_EVENT_FIELD_SHOW_INTRO_DESC"
+				label="COM_JEM_EVENT_FIELD_SHOW_INTRO_LABEL"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
 		</fieldset>
-			<fieldset name="globalparam"
-		label="COM_JEM_GLOBAL_PARAMETERS"
-	>
-		<field name="filter" type="radio"
-			label="COM_JEM_FILTER"
-			description="COM_JEM_FILTER_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
+		
+		<fieldset name="globalparam"
+			label="COM_JEM_GLOBAL_PARAMETERS"
 		>
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
-		</field>
-		<field name="display" type="radio"
-			label="COM_JEM_DISPLAY_SELECT"
-			description="COM_JEM_DISPLAY_SELECT_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
-		</field>
-		<field name="global_show_icons" type="radio"
-			label="COM_JEM_SHOW_ICONS"
-			description="COM_JEM_SHOW_ICONS_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
-		</field>
-		<field name="global_show_print_icon" type="radio"
-			label="COM_JEM_PRINT_ICON"
-			description="COM_JEM_PRINT_ICON_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
-		</field>
-		<field name="global_show_archive_icon" type="radio"
-			label="COM_JEM_ARCHIVE_ICON"
-			description="COM_JEM_ARCHIVE_ICON_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
-		</field>
-		<field name="global_show_email_icon" type="radio"
-			label="COM_JEM_EMAIL_ICON"
-			description="COM_JEM_EMAIL_ICON_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
-		</field>
-		<field name="global_show_ical_icon" type="radio"
-			label="COM_JEM_SETTINGS_SHOW_EVENTS_ICAL"
-			description="COM_JEM_SETTINGS_SHOW_EVENTS_ICAL_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
-		</field>
-	</fieldset>
-			
+			<field name="filter" type="radio"
+				label="COM_JEM_FILTER"
+				description="COM_JEM_FILTER_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			<field name="display" type="radio"
+				label="COM_JEM_DISPLAY_SELECT"
+				description="COM_JEM_DISPLAY_SELECT_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			<field name="global_show_icons" type="radio"
+				label="COM_JEM_SHOW_ICONS"
+				description="COM_JEM_SHOW_ICONS_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			<field name="global_show_print_icon" type="radio"
+				label="COM_JEM_PRINT_ICON"
+				description="COM_JEM_PRINT_ICON_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			<field name="global_show_archive_icon" type="radio"
+				label="COM_JEM_ARCHIVE_ICON"
+				description="COM_JEM_ARCHIVE_ICON_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			<field name="global_show_email_icon" type="radio"
+				label="COM_JEM_EMAIL_ICON"
+				description="COM_JEM_EMAIL_ICON_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			<field name="global_show_ical_icon" type="radio"
+				label="COM_JEM_SETTINGS_SHOW_EVENTS_ICAL"
+				description="COM_JEM_SETTINGS_SHOW_EVENTS_ICAL_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+		</fieldset>
+
 		<fieldset name="evevents"
-		label="COM_JEM_EVENTS"
-	>
-		<field name="showtimedetails" type="radio"
-			label="COM_JEM_DISPLAY_TIME"
-			description="COM_JEM_DISPLAY_TIME_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
+			label="COM_JEM_EVENTS"
 		>
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
-		</field>
-		<field name="event_show_evdescription" type="radio"
-			label="COM_JEM_DISPLAY_EVENT_DESCRIPT"
-			description="COM_JEM_DISPLAY_EVENT_DESCRIPT_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
+			<field name="showtimedetails" type="radio"
+				label="COM_JEM_DISPLAY_TIME"
+				description="COM_JEM_DISPLAY_TIME_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			<field name="event_show_evdescription" type="radio"
+				label="COM_JEM_DISPLAY_EVENT_DESCRIPT"
+				description="COM_JEM_DISPLAY_EVENT_DESCRIPT_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			<field name="showdetailstitle" type="radio"
+				label="COM_JEM_DISPLAY_EVENT_TITLE"
+				description="COM_JEM_DISPLAY_EVENT_TITLE_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+		</fieldset>
+
+		<fieldset name="evvenues"
+			label="COM_JEM_VENUES"
 		>
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
-		</field>
-		<field name="showdetailstitle" type="radio"
-			label="COM_JEM_DISPLAY_EVENT_TITLE"
-			description="COM_JEM_DISPLAY_EVENT_TITLE_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
+			<field name="showlocdescription" type="radio"
+				label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
+				description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			<field name="showdetailsadress" type="radio"
+				label="COM_JEM_DISPLAY_ADDRESS"
+				description="COM_JEM_DISPLAY_ADDRESS_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			<field name="showdetlinkvenue" type="list"
+				label="COM_JEM_DISPLAY_ADDRESS"
+				description="COM_JEM_DISPLAY_ADDRESS_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">COM_JEM_NO_LINK</option>
+				<option value="1">COM_JEM_LINK_TO_URL</option>
+				<option value="2">COM_JEM_LINK_TO_VENUEVIEW</option>
+			</field>
+			<field name="showmapserv" type="list"
+				label="COM_JEM_DISPLAY_LINK_TO_MAP"
+				description="COM_JEM_DISPLAY_LINK_TO_MAP_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">COM_JEM_NO_MAP_SERVICE</option>
+				<option value="1">COM_JEM_GOOGLE_MAP_LINK</option>
+				<option value="2">COM_JEM_GOOGLE_MAP_DISP</option>
+			</field>
+			<field name="tld" type="text"
+				label="COM_JEM_GOOGLE_MAP_TLD"
+				description="COM_JEM_GOOGLE_MAP_TLD_DESC"
+				class="inputbox"
+				size="10"
+				maxlength="10"
+				required="false"
+			/>
+			<field name="lg" type="text"
+				label="COM_JEM_GOOGLE_MAP_LG"
+				description="COM_JEM_GOOGLE_MAP_LG_DESC"
+				class="inputbox"
+				size="10"
+				maxlength="10"
+				required="false"
+			/>
+		</fieldset>
+
+		<fieldset name="evregistration"
+			label="COM_JEM_REGISTRATION"
 		>
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
-		</field>
-	</fieldset>	
-			<fieldset name="evvenues"
-		label="COM_JEM_VENUES"
-	>
-		<field name="showlocdescription" type="radio"
-			label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
-			description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
-		</field>
-		<field name="showdetailsadress" type="radio"
-			label="COM_JEM_DISPLAY_ADDRESS"
-			description="COM_JEM_DISPLAY_ADDRESS_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
-		</field>
-		<field name="showdetlinkvenue" type="list"
-			label="COM_JEM_DISPLAY_ADDRESS"
-			description="COM_JEM_DISPLAY_ADDRESS_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">COM_JEM_NO_LINK</option>
-			<option value="1">COM_JEM_LINK_TO_URL</option>
-			<option value="2">COM_JEM_LINK_TO_VENUEVIEW</option>
-		</field>
-		<field name="showmapserv" type="list"
-			label="COM_JEM_DISPLAY_LINK_TO_MAP"
-			description="COM_JEM_DISPLAY_LINK_TO_MAP_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">COM_JEM_NO_MAP_SERVICE</option>
-			<option value="1">COM_JEM_GOOGLE_MAP_LINK</option>
-			<option value="2">COM_JEM_GOOGLE_MAP_DISP</option>
-		</field>
-		<field name="tld" type="text"
-			label="COM_JEM_GOOGLE_MAP_TLD"
-			description="COM_JEM_GOOGLE_MAP_TLD_DESC"
-			class="inputbox"
-			size="10"
-			maxlength="10"
-			required="false"
-		/>
-		<field name="lg" type="text"
-			label="COM_JEM_GOOGLE_MAP_LG"
-			description="COM_JEM_GOOGLE_MAP_LG_DESC"
-			class="inputbox"
-			size="10"
-			maxlength="10"
-			required="false"
-		/>
-	</fieldset>
-			<fieldset name="evregistration"
-		label="COM_JEM_REGISTRATION">
-		<field name="regname" type="list"
-			label="COM_JEM_TYPE_REG_NAME"
-			description="COM_JEM_TYPE_REG_NAME_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">COM_JEM_USERNAME</option>
-			<option value="1">COM_JEM_NAME</option>
-		</field>
-		<field name="comunsolution" type="list"
-			label="COM_JEM_COM_SOL"
-			description="COM_JEM_COM_SOL_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">COM_JEM_DONT_USE_COM_SOL</option>
-			<option value="1">COM_JEM_COMBUILDER</option>
-		</field>
-		<field name="comunoption" type="list"
-			label="COM_JEM_TYPE_COM_INTEGRATION"
-			description="COM_JEM_TYPE_COM_INTEGRATION_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">COM_JEM_LINK_PROFILE</option>
-			<option value="1">COM_JEM_LINK_AVATAR</option>
-		</field>
-	</fieldset>
-			
+			<field name="regname" type="list"
+				label="COM_JEM_TYPE_REG_NAME"
+				description="COM_JEM_TYPE_REG_NAME_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">COM_JEM_USERNAME</option>
+				<option value="1">COM_JEM_NAME</option>
+			</field>
+			<field name="comunsolution" type="list"
+				label="COM_JEM_COM_SOL"
+				description="COM_JEM_COM_SOL_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">COM_JEM_DONT_USE_COM_SOL</option>
+				<option value="1">COM_JEM_COMBUILDER</option>
+			</field>
+			<field name="comunoption" type="list"
+				label="COM_JEM_TYPE_COM_INTEGRATION"
+				description="COM_JEM_TYPE_COM_INTEGRATION_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">COM_JEM_LINK_PROFILE</option>
+				<option value="1">COM_JEM_LINK_AVATAR</option>
+			</field>
+		</fieldset>
+
 		<fieldset name="advanced" label="LABEL2">
 			<field name="show_something" type="list"
 				description="SOMETHING"

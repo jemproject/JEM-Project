@@ -120,7 +120,8 @@
 			class="inputbox"
 			size="40"
 			label="COM_JEM_IMAGESELECT"
-			imagetype="categories" description="COM_JEM_IMAGESELECT"
+			imagetype="categories"
+			description="COM_JEM_IMAGESELECT"
 		/>
 	</fieldset>
 

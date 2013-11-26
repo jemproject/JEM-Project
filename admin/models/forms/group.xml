@@ -35,7 +35,6 @@
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>
-
 		<field name="publishvenue" type="radio"
 			label="COM_JEM_GROUP_PUBLISHVENUE"
 			description="COM_JEM_GROUP_PUBLISHVENUE_DESC"
@@ -46,7 +45,6 @@
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>
-
 		<field name="editvenue" type="radio"
 			label="COM_JEM_GROUP_EDITVENUE"
 			description="COM_JEM_GROUP_EDITVENUE_DESC"
