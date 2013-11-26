@@ -289,9 +289,8 @@ class com_jemInstallerScript
 		}
 	}
 	
-	
 	/**
-	 * Sets parameter values in the component's row of the extension table
+	 * Sets globalattrib values in the settings table
 	 *
 	 * @param $param_array  An array holding the params to store
 	 */
