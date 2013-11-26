@@ -68,12 +68,7 @@ function jemParseRoute($segments)
 		case 'editvenue':
 			{
 				$vars['view'] = 'editvenue';
-				
 				$count = count($segments);
-				if ($count == 1) {			
-					$vars['id'] = $segments[0];
-				}
-
 				if ($count == 2) {
 					$vars['id'] = $segments[1];
 				}
