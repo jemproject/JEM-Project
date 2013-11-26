@@ -117,7 +117,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
  			}
 			if($currentRow) {
 		?>
-				<dt class="custom<?php echo $cr; ?>"><?php echo JText::_('COM_JEM_CUSTOM_FIELD'.$cr).':'; ?></dt>
+				<dt class="custom<?php echo $cr; ?>"><?php echo JText::_('COM_JEM_EVENT_CUSTOM_FIELD'.$cr).':'; ?></dt>
 		<dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
 		<?php
 			}
