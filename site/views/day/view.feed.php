@@ -70,7 +70,7 @@ class JEMViewDay extends JViewLegacy
 			$description .= JText::_('COM_JEM_VENUE').': '.$row->venue.' / '.$row->city.'<br />';
 			$description .= JText::_('COM_JEM_CATEGORY').': '.$category.'<br />';
 			$description .= JText::_('COM_JEM_DATE').': '.$displaydate.'<br />';
-			$description .= JText::_('COM_JEM_DESCRIPTION').': '.$row->datdescription;
+			$description .= JText::_('COM_JEM_DESCRIPTION').': '.$row->fulltext;
 
 			@$created = ($row->created ? date('r', strtotime($row->created)) : '');
 

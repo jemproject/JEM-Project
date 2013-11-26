@@ -194,7 +194,7 @@ class JEMModelDay extends JModelLegacy
 		$db = JFactory::getDbo();
 
 		//Get Events from Database
-		$query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid,'
+		$query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.fulltext,'
 				. ' l.venue, l.city, l.state, l.url, l.street, ct.name as countryname, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
