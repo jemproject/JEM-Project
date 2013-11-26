@@ -88,7 +88,7 @@ class modJEMteaserHelper
 		}
 
 		//perform select query
-		$query = 'SELECT a.title, a.dates, a.enddates, a.times, a.endtimes, a.datdescription, a.datimage, l.venue, l.state, l.locimage, l.city, l.locdescription, c.catname,'
+		$query = 'SELECT a.title, a.dates, a.enddates, a.times, a.endtimes, a.fulltext, a.datimage, l.venue, l.state, l.locimage, l.city, l.locdescription, c.catname,'
 				.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				.' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug,'
 				.' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as categoryslug'
@@ -180,7 +180,7 @@ class modJEMteaserHelper
 
 			//strip html tags but leave <br /> tags
 			//entferne html tags bis auf Zeilenumbrüche
-			$description = strip_tags($row->datdescription, "<br>");
+			$description = strip_tags($row->fulltext, "<br>");
 
 			//switch <br /> tags to space character
 			//wandle zeilenumbrüche in leerzeichen um

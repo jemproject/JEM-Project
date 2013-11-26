@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @subpackage JEM Wide Module
  * @copyright (C) 2013-2013 joomlaeventmanager.net
@@ -88,7 +88,7 @@ class modJEMwideHelper
 		}
 
 		//perform select query
-		$query = 'SELECT a.title, a.dates, a.enddates, a.times, a.endtimes, a.datdescription, a.datimage, l.venue, l.state, l.locimage, l.city, l.locdescription, c.catname,'
+		$query = 'SELECT a.title, a.dates, a.enddates, a.times, a.endtimes, a.datimage, a.fulltext, l.venue, l.state, l.locimage, l.city, l.locdescription, c.catname,'
 				.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				.' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug,'
 				.' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as categoryslug'
@@ -164,7 +164,7 @@ class modJEMwideHelper
 				$lists[$i]->venueimage		= JURI::base(true).'/'.$limage['thumb'];
 				$lists[$i]->venueimageorig	= JURI::base(true).'/'.$limage['original'];
 			}
-			$lists[$i]->eventdescription= strip_tags($row->datdescription);
+			$lists[$i]->eventdescription= strip_tags($row->fulltext);
 			$lists[$i]->venuedescription= strip_tags($row->locdescription);
 			$i++;
 		}
