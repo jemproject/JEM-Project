@@ -31,14 +31,6 @@
 			description="COM_JEM_EDITEVENT_FIELD_ALIAS"
 			required="false"
 		/>
-		<field name="datdescription" type="editor"
-			hide="pagebreak"
-			class="inputbox"
-			rows="3" cols="40"
-			label="COM_JEM_EDITEVENT_FIELD_DESCRIPTION"
-			description="COM_JEM_EDITEVENT_FIELD_DESCRIPTION_DESC"
-			filter="safehtml"
-		/>
 		<field name="dates" type="calendar"
 			label="COM_JEM_EDITEVENT_FIELD_DATE"
 			description="COM_JEM_EDITEVENT_FIELD_DATE_DESC"

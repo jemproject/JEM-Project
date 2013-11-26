@@ -47,8 +47,6 @@ class jem_events extends JTable
 	/** @var int */
 	var $version	 		= 0;
 	/** @var string */
-	var $datdescription 	= null;
-	/** @var string */
 	var $meta_description 	= '';
 	/** @var string */
 	var $meta_keywords		= '';

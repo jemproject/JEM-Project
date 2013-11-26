@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -254,10 +254,10 @@ class JEMModelCategoryCal extends JModelLegacy
 		$orderby	= $this->_buildCategoryOrderBy();
 
 		//Get Events from Database
-		$query = 'SELECT DATEDIFF(a.enddates, a.dates) AS datediff, a.id, a.datimage, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.datdescription, a.created, '
+		$query = 'SELECT DATEDIFF(a.enddates, a.dates) AS datediff, a.id, a.datimage, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.created, '
 			. ' a.maxplaces, a.waitinglist, '
 			. ' l.venue, l.city, l.state, l.url, c.color, c.catname, l.street, ct.name AS countryname, '
-					.' DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month,'
+				.' DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month,'
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 				. ' FROM #__jem_events AS a'
