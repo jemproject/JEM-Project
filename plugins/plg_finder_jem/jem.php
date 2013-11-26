@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @subpackage JEM Finder Plugin
  * @copyright (C) 2013-2013 joomlaeventmanager.net
@@ -270,7 +270,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 
 		// Trigger the onContentPrepare event.
 		$item->summary = FinderIndexerHelper::prepareContent($item->summary, $item->params);
-		$item->body = FinderIndexerHelper::prepareContent($item->datdescription, $item->params);
+		$item->body = FinderIndexerHelper::prepareContent($item->fulltext, $item->params);
 
 		// Build the necessary route and path information.
 		$item->url = $this->getURL($item->id, $this->extension, $this->layout);
@@ -361,7 +361,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 		$sql->select('a.id, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.datimage');
 		$sql->select('a.created AS start_date, a.created_by, a.modified, a.version');
 		$sql->select('a.published AS state, 1 AS access');
-		$sql->select('a.datdescription AS body, a.datdescription AS summary');
+		$sql->select('a.fulltext AS body, a.fulltext AS summary');
 		$sql->select('l.venue, l.city, l.state as loc_state, l.url, l.street');
 		$sql->select('l.published AS loc_published');
 		$sql->select('ct.name AS countryname');

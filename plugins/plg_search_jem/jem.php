@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @subpackage JEM Search Plugin
  * @copyright (C) 2013-2013 joomlaeventmanager.net
@@ -94,7 +94,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 				$text 		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
 				$wheres2 	= array();
 				$wheres2[] 	= 'LOWER(a.title) LIKE '.$text;
-				$wheres2[] 	= 'LOWER(a.datdescription) LIKE '.$text;
+				$wheres2[] 	= 'LOWER(a.fulltext) LIKE '.$text;
 				$wheres2[] 	= 'LOWER(a.meta_keywords) LIKE '.$text;
 				$wheres2[] 	= 'LOWER(a.meta_description) LIKE '.$text;
 				$where 		= '(' . implode( ') OR (', $wheres2 ) . ')';
@@ -109,7 +109,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 					$word 		= $db->Quote( '%'.$db->escape( $word, true ).'%', false );
 					$wheres2 	= array();
 					$wheres2[] 	= 'LOWER(a.title) LIKE '.$word;
-					$wheres2[] 	= 'LOWER(a.datdescription) LIKE '.$word;
+					$wheres2[] 	= 'LOWER(a.fulltext) LIKE '.$word;
 					$wheres2[] 	= 'LOWER(a.meta_keywords) LIKE '.$word;
 					$wheres2[] 	= 'LOWER(a.meta_description) LIKE '.$word;
 					$wheres[] 	= implode( ' OR ', $wheres2 );
@@ -118,7 +118,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 				break;
 		}
 
-		switch ( $ordering ) {
+		switch ($ordering) {
 			case 'oldest':
 				$order = 'a.dates, a.times ASC';
 				break;
@@ -150,7 +150,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 
 
 		$query = 'SELECT a.id, a.title AS title,'
-		. ' a.datdescription AS text,'
+		. ' a.fulltext AS text,'
 		. ' a.dates AS created,'
 		. ' "2" AS browsernav,'
 		. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '

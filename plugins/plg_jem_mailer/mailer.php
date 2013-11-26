@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @subpackage JEM Mailer Plugin
  * @copyright (C) 2013-2013 joomlaeventmanager.net
@@ -309,7 +309,7 @@ class plgJEMMailer extends JPlugin {
 		$db 	= JFactory::getDBO();
 		$user 	= JFactory::getUser();
 
-		$query = ' SELECT a.id, a.title, a.dates, a.times, a.datdescription, a.locid, a.published, a.created, a.modified,'
+		$query = ' SELECT a.id, a.title, a.dates, a.times, a.fulltext, a.locid, a.published, a.created, a.modified,'
 				. ' v.venue, v.city,'
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug'
 				. ' FROM #__jem_events AS a '
@@ -328,7 +328,7 @@ class plgJEMMailer extends JPlugin {
 		$link = JRoute::_(JURI::base().JEMHelperRoute::getEventRoute($event->slug), false);
 
 		//strip description from tags / scripts, etc...
-		$text_description = JFilterOutput::cleanText($event->datdescription);
+		$text_description = JFilterOutput::cleanText($event->fulltext);
 
 		$modified_ip 	= getenv('REMOTE_ADDR');
 		$edited 		= JHTML::Date( $event->modified, JText::_( 'DATE_FORMAT_LC2' ) );
