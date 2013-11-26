@@ -70,19 +70,6 @@ function jemParseRoute($segments)
 			}
 			break;
 		
-		case 'editevent':
-			{
-				$count = count($segments);
-				
-				$vars['view'] = 'editevent';
-				
-				if ($count == 3) {
-					$vars['id'] = $segments[1];
-					$vars['returnid'] = $segments[2];
-				}
-			}
-			break;
-		
 		case 'editvenue':
 			{
 				$count = count($segments);
