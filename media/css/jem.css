@@ -254,6 +254,7 @@ div#jem .copyright {
 	text-align:center;
 	margin:1em 0;
 	color:#AAAAAA;
+	float:none;
 }
 
 /**
@@ -453,6 +454,7 @@ div.jem_editvenue form legend {
 	background-color:#FFA500;
 	border-radius:5px;
 	border:1px solid #000000;
+	line-height:22px;
 }
 
 div.jem_editevent form label,
