@@ -24,7 +24,7 @@ ALTER TABLE `#__jem_events`
 	ADD	`fulltext` mediumtext NOT NULL,
 	ADD	`introtext` mediumtext NOT NULL,
 	ADD	`created_by_alias` varchar(255) NOT NULL,
-	ADD	`access` int(10) NOT NULL DEFAULT '0',
+	ADD	`access` int(10) NOT NULL DEFAULT '1',
 	ADD	`metadata` text NOT NULL,
 	ADD	`featured` tinyint(3) unsigned NOT NULL DEFAULT '0',
 	ADD	`attribs` varchar(5120) NOT NULL,
