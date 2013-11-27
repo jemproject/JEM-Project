@@ -66,7 +66,7 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 			<th align="left" class="sectiontableheader"><?php echo JHTML::_('grid.sort', 'COM_JEM_STATE', 'con.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th align="left" class="sectiontableheader"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
 			<th align="left" class="sectiontableheader"><?php echo JText::_( 'COM_JEM_TELEPHONE' ); ?></th>
-			<th class="title center"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
+			<th class="title center"><?php echo JText::_( 'JPUBLISHED' ); ?></th>
 		</tr>
 	</thead>
 
