@@ -259,7 +259,7 @@ class JEMViewEditevent extends JViewLegacy
 	
 	
 	/**
-	 * Creates the output for the venue select listing
+	 * Creates the output for the contact select listing
 	 */
 	function _displaychoosecontact($tpl)
 	{
@@ -273,7 +273,6 @@ class JEMViewEditevent extends JViewLegacy
 		$document	= JFactory::getDocument();
 
 		JHtml::_('behavior.tooltip');
-		JHtml::_('behavior.modal');
 		JHtml::_('behavior.modal', 'a.flyermodal');
 
 		//get vars
@@ -286,9 +285,6 @@ class JEMViewEditevent extends JViewLegacy
 		
 		$limitstart = $jinput->get('limitstart', '0', 'int');
 		$limit = $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
-
-		//prepare document
-		$document->setTitle(JText::_('COM_JEM_SELECTVENUE'));
 		
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
