@@ -325,6 +325,11 @@ div#jem ul.user li span.username {
 	font-weight:bold;
 }
 
+div#jem span.username {
+	color: black;
+	text-decoration:underline;
+}
+
 /* -------------------
 	General Pagination
 --------------------- */

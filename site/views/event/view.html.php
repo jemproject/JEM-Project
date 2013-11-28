@@ -33,19 +33,19 @@ class JEMViewEvent extends JViewLegacy
 		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
 
 		$jemsettings		= JEMHelper::config();
+		$settings			= JEMHelper::globalattribs();
 		$app				= JFactory::getApplication();
 		$user				= JFactory::getUser();
 		$userId				= $user->get('id');
 		$dispatcher			= JDispatcher::getInstance();
 		$document 			= JFactory::getDocument();
 		
-		
 		$this->item			= $this->get('Item');
 		$this->print		= JRequest::getBool('print');
 		$this->state		= $this->get('State');
 		$this->user			= $user;
 		$this->jemsettings	= $jemsettings;
-
+		$this->settings		= $settings;
 		
 		$categories			= $this->get('Categories');
 		$this->categories	= $categories;
@@ -145,7 +145,7 @@ class JEMViewEvent extends JViewLegacy
 		// Process the content plugins.
 		//
 		JPluginHelper::importPlugin('content');
-		$results = $dispatcher->trigger('onContentPrepare', array ('com_jem.event', &$item, &$this->params, $offset));
+		$results = $dispatcher->trigger('onContentPrepare', array ('com_jem.event', &$item, &$this->params, $offset));	
 		
 		$item->event = new stdClass();
 		$results = $dispatcher->trigger('onContentAfterTitle', array('com_jem.event', &$item, &$this->params, $offset));
@@ -166,8 +166,6 @@ class JEMViewEvent extends JViewLegacy
 		//Escape strings for HTML output
 		$this->pageclass_sfx = htmlspecialchars($this->item->params->get('pageclass_sfx'));
 		
-		
-	
 		if ($this->print) {
 			//$document = JFactory::getDocument();
 			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/print.css');
@@ -175,7 +173,6 @@ class JEMViewEvent extends JViewLegacy
 		}
 		
 		$this->print_link = JRoute::_(JEMHelperRoute::getRoute($item->slug).'&print=1&tmpl=component');
-		
 		
 		//Get images
 		$this->dimage = JEMImage::flyercreator($item->datimage, 'event');
@@ -280,8 +277,7 @@ class JEMViewEvent extends JViewLegacy
 			$document->setDescription(strip_tags($description_content));
 		}
 		
-		
-		// load dispatcher for plugins
+		// load dispatcher for plugins (comments)
 		JPluginHelper::importPlugin('jem');
 		$item->pluginevent = new stdClass();
 		$results = $dispatcher->trigger('onEventEnd', array ($item->did, $this->escape($item->title)));
@@ -293,7 +289,7 @@ class JEMViewEvent extends JViewLegacy
 		}
 		
 		$this->isregistered			= $isregistered;
-		$this->dispatcher                        = $dispatcher;
+		$this->dispatcher            = $dispatcher;
 		
 		$this->_prepareDocument();
 		
