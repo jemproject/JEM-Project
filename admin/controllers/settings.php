@@ -159,7 +159,7 @@ class JEMControllerSettings extends JControllerLegacy
 				$app->setUserState($context . '.data', null);
 				
 				// Redirect to the list screen.
-				$this->setRedirect(JRoute::_('index.php?option=com_jem&view=settings', false));
+				$this->setRedirect(JRoute::_('index.php?option=com_jem&view=main', false));
 				break;
 		}
 	}
