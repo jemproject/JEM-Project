@@ -76,6 +76,7 @@ class JEMModelEvent extends JModelItem
 		if (!isset($this->_item[$pk])) {
 			
 			try {
+				$settings = JEMHelper::globalattribs();
 				
 				$db = $this->getDbo();
 				$query = $db->getQuery(true);
@@ -102,7 +103,8 @@ class JEMModelEvent extends JModelItem
 				$query->join('LEFT', '#__jem_categories AS c on c.id = rel.catid');
 				
 				// Join on user table.
-				$query->select('u.name AS author');
+				$name = $settings->get('regname') ? 'u.name' : 'u.username';
+				$query->select($name.' AS author');
 				$query->join('LEFT', '#__users AS u on u.id = a.created_by');
 				
 				// Join on contact-user table.
@@ -259,7 +261,6 @@ class JEMModelEvent extends JModelItem
 			}
 		}
 		
-		
 		// Define Attachments
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
@@ -285,16 +286,10 @@ class JEMModelEvent extends JModelItem
 		return $this->_item[$pk];
 	}
 
-
-	
-	
 	/**
 	 * Increment the hit counter for the event.
 	 * 
-	 * @todo check this code
-	 *      
-	 * @param int		Optional primary key of the article to increment.
-	 *       
+	 * @param int		Optional primary key of the article to increment.   
 	 * @return boolean if successful; false otherwise and internal error set.
 	 */
 	public function hit($pk = 0)
