@@ -23,11 +23,8 @@ class JEMModelMyvenues extends JModelLegacy
 	var $_venues = null;
 	var $_total_venues = null;
 
-
 	/**
 	 * Constructor
-	 *
-	 *
 	 */
 	function __construct()
 	{
@@ -43,7 +40,6 @@ class JEMModelMyvenues extends JModelLegacy
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
 	}
-
 
 	/**
 	 * Method to get the Events user is attending
@@ -71,7 +67,6 @@ class JEMModelMyvenues extends JModelLegacy
 		return $this->_venues;
 	}
 
-
 	/**
 	 * Total nr of events
 	 *
@@ -88,7 +83,6 @@ class JEMModelMyvenues extends JModelLegacy
 
 		return $this->_total_venues;
 	}
-
 
 	/**
 	 * Method to get a pagination object for the attending events
@@ -107,7 +101,6 @@ class JEMModelMyvenues extends JModelLegacy
 
 		return $this->_pagination_venues;
 	}
-
 
 	/**
 	 * Build the query
@@ -131,7 +124,6 @@ class JEMModelMyvenues extends JModelLegacy
 
 		return $query;
 	}
-
 
 	/**
 	 * Build the order clause
@@ -158,7 +150,6 @@ class JEMModelMyvenues extends JModelLegacy
 		return $orderby;
 	}
 
-
 	/**
 	 * Build the where clause
 	 *
@@ -167,27 +158,23 @@ class JEMModelMyvenues extends JModelLegacy
 	 */
 	function _buildVenuesWhere()
 	{
-		$app = JFactory::getApplication();
-		$user = JFactory::getUser();
+		$app 			= JFactory::getApplication();
+		$user 			= JFactory::getUser();
+		$settings 		= JEMHelper::globalattribs();
+		$user 			= JFactory::getUser();
 
-		// Get the paramaters of the active menu item
-		$jemsettings = JEMHelper::config();
-
-		$user = JFactory::getUser();
-
-// 		$filter_state 	= $app->getUserStateFromRequest('com_jem.myvenues.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();
-
+		
 		$where[] = ' l.published = 1';
 
 		// then if the user is attending the event
 		$where [] = ' l.created_by = '.$this->_db->Quote($user->id);
 
-		if ($jemsettings->filter && $search) {
+		if ($settings->get('global_show_filter') && $search) {
 			switch($filter) {
 				case 1:
 // 					$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';

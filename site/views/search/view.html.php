@@ -32,6 +32,7 @@ class JEMViewSearch extends JEMView
 		//initialize variables
 		$document 	= JFactory::getDocument();
 		$jemsettings = JEMHelper::config();
+		$settings 	= JEMHelper::globalattribs();
 		$menu		= $app->getMenu();
 		$item		= $menu->getActive();
 		$params 	= $app->getParams();
@@ -171,6 +172,7 @@ class JEMViewSearch extends JEMView
 		$this->dellink			= $dellink;
 		$this->pagination		= $pagination;
 		$this->jemsettings		= $jemsettings;
+		$this->settings			= $settings;
 		$this->pagetitle		= $pagetitle;
 		$this->filter_continent	= $filter_continent;
 		$this->filter_country	= $filter_country;

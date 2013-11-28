@@ -220,7 +220,7 @@ class JEMModelEventslist extends JModelLegacy
 		$app = JFactory::getApplication();
 		$task 		= JRequest::getWord('task');
 		$params 	= $app->getParams();
-		$jemsettings = JEMHelper::config();
+		$settings 	= JEMHelper::globalattribs();
 
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
@@ -264,7 +264,7 @@ class JEMModelEventslist extends JModelLegacy
 		}
 		// === END Excluded categories add === //
 
-		if ($jemsettings->filter && $search) {
+		if ($settings->get('global_show_filter') && $search) {
 			switch($filter) {
 				case 1:
 					$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';

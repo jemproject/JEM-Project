@@ -26,6 +26,7 @@ class JEMViewMyvenues extends JViewLegacy
 		//initialize variables
 		$document 		= JFactory::getDocument();
 		$jemsettings 	= JEMHelper::config();
+		$settings	 	= JEMHelper::globalattribs();
 		$menu 			= $app->getMenu();
 		$item 			= $menu->getActive();
 		$params 		= $app->getParams();
@@ -107,6 +108,7 @@ class JEMViewMyvenues extends JViewLegacy
 		$this->params				= $params;
 		$this->venues_pagination 	= $venues_pagination;
 		$this->jemsettings			= $jemsettings;
+		$this->settings				= $settings;
 		$this->pagetitle			= $pagetitle;
 		$this->lists 				= $lists;
 		$this->novenues				= $novenues;

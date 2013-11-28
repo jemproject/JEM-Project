@@ -243,7 +243,6 @@ class JEMModelVenue extends JModelLegacy
 		return $orderby;
 	}
 
-
 	/**
 	 * Method to build the WHERE clause
 	 *
@@ -254,8 +253,7 @@ class JEMModelVenue extends JModelLegacy
 	{
 		$app 			= JFactory::getApplication();
 		$task 			= JRequest::getWord('task');
-		$jemsettings 	= JEMHelper::config();
-
+		$settings	 	= JEMHelper::globalattribs();
 		$user 			= JFactory::getUser();
 		$gid 			= JEMHelper::getGID($user);
 
@@ -284,7 +282,7 @@ class JEMModelVenue extends JModelLegacy
 		// === END Excluded categories add === //
 		*/
 
-		if ($jemsettings->filter && $search) {
+		if ($settings->get('global_show_filter') && $search) {
 			switch($filter) {
 				case 1:
 					$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
@@ -308,7 +306,6 @@ class JEMModelVenue extends JModelLegacy
 
 		return $where;
 	}
-
 
 	/**
 	 * Method to get the Venue
@@ -369,6 +366,5 @@ class JEMModelVenue extends JModelLegacy
 
 		return $this->_cats;
 	}
-
 }
 ?>

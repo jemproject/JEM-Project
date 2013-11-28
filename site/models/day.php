@@ -242,8 +242,8 @@ class JEMModelDay extends JModelLegacy
 	 */
 	function _buildWhere()
 	{
-		$app = JFactory::getApplication();
-		$jemsettings = JEMHelper::config();
+		$app 		= JFactory::getApplication();
+		$settings 	= JEMHelper::globalattribs();
 
 		$jinput = JFactory::getApplication()->input;
 		$requestVenueId = $jinput->get('locid', null, 'int');
@@ -285,7 +285,7 @@ class JEMModelDay extends JModelLegacy
 		// === END Excluded categories add === //
 		*/
 
-		if ($jemsettings->filter && $search)
+		if ($settings->get('global_show_filter') && $search)
 		{
 			switch($filter) {
 				case 1:

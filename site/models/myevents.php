@@ -102,7 +102,6 @@ class JEMModelMyevents extends JModelLegacy
 		return $this->_events;
 	}
 
-
 	/**
 	 * Method to (un)publish a event
 	 *
@@ -133,7 +132,6 @@ class JEMModelMyevents extends JModelLegacy
 		}
 	}
 
-
 	/**
 	 * Total nr of events
 	 *
@@ -151,7 +149,6 @@ class JEMModelMyevents extends JModelLegacy
 		return $this->_total_events;
 	}
 
-
 	/**
 	 * Method to get a pagination object for the events
 	 *
@@ -168,7 +165,6 @@ class JEMModelMyevents extends JModelLegacy
 
 		return $this->_pagination_events;
 	}
-
 
 	/**
 	 * Build the query
@@ -200,7 +196,6 @@ class JEMModelMyevents extends JModelLegacy
 		return $query;
 	}
 
-
 	/**
 	 * Build the order clause
 	 *
@@ -226,7 +221,6 @@ class JEMModelMyevents extends JModelLegacy
 		return $orderby;
 	}
 
-
 	/**
 	 * Build the where clause
 	 *
@@ -235,17 +229,13 @@ class JEMModelMyevents extends JModelLegacy
 	 */
 	function _buildWhere()
 	{
-		$app = JFactory::getApplication();
-		$task = JRequest::getWord('task');
-		// Get the paramaters of the active menu item
-		$params = $app->getParams();
-
-		$jemsettings = JEMHelper::config();
-
-		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
-
-// 		$filter_state 	= $app->getUserStateFromRequest('com_jem.myevents.filter_state', 'filter_state', '', 'word');
+		$app 		= JFactory::getApplication();
+		$task 		= JRequest::getWord('task');
+		$params 	= $app->getParams();
+		$settings 	= JEMHelper::globalattribs();
+		$user 		= JFactory::getUser();
+		$gid 		= JEMHelper::getGID($user);
+		
 		$filter 		= $app->getUserStateFromRequest('com_jem.myevents.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.myevents.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
@@ -273,7 +263,7 @@ class JEMModelMyevents extends JModelLegacy
 		}
 		// === END Excluded categories add === //
 
-		if ($jemsettings->filter && $search) {
+		if ($settings->get('global_show_filter') && $search) {
 			switch($filter) {
 				case 1:
 					$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
@@ -297,7 +287,6 @@ class JEMModelMyevents extends JModelLegacy
 
 		return $where;
 	}
-
 
 	function getCategories($id)
 	{

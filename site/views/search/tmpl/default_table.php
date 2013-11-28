@@ -20,7 +20,7 @@ defined('_JEXEC') or die;
 	}
 </script>
 
-<?php if ($this->jemsettings->filter || $this->jemsettings->display) : ?>
+<?php if ($this->settings->get('global_show_filter') || $this->settings->get('global_display')) : ?>
 <div id="jem_filter" class="floattext">
 	<div class="jem_fleft">
 		<table>
@@ -86,7 +86,7 @@ defined('_JEXEC') or die;
 		</tr>
 		</table>
 	</div>
-	<?php if ($this->jemsettings->display) : ?>
+	<?php if ($this->settings->get('global_display')) : ?>
 	<div class="jem_fright">
 	<?php
 		echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';

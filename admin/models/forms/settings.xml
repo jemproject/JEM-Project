@@ -726,21 +726,21 @@
 		<fieldset name="globalparam"
 			label="COM_JEM_GLOBAL_PARAMETERS"
 		>
-			<field name="filter" type="radio"
+			<field name="global_show_filter" type="radio"
 				label="COM_JEM_FILTER"
 				description="COM_JEM_FILTER_DESC"
 				class="inputbox"
-				default="0"
+				default="1"
 				required="false"
 			>
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
-			<field name="display" type="radio"
+			<field name="global_display" type="radio"
 				label="COM_JEM_DISPLAY_SELECT"
 				description="COM_JEM_DISPLAY_SELECT_DESC"
 				class="inputbox"
-				default="0"
+				default="1"
 				required="false"
 			>
 				<option value="0">JHIDE</option>

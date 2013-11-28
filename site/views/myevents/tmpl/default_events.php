@@ -24,9 +24,9 @@ defined('_JEXEC') or die;
 </script>
 
 <form action="<?php echo $this->action; ?>" method="post" name="adminForm" id="adminForm">
-<?php if ($this->settings->get('filter') || $this->settings->get('display')) : ?>
+<?php if ($this->settings->get('global_show_filter') || $this->settings->get('global_display')) : ?>
 <div id="jem_filter" class="floattext">
-	<?php if ($this->settings->get('filter')) : ?>
+	<?php if ($this->settings->get('global_show_filter')) : ?>
 	<div class="jem_fleft">
 		<?php
 		echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
@@ -37,7 +37,7 @@ defined('_JEXEC') or die;
 		<button class="" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 	</div>
 	<?php endif; ?>
-	<?php if ($this->settings->get('display')) : ?>
+	<?php if ($this->settings->get('global_display')) : ?>
 	<div class="jem_fright">
 		<?php
 		echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
@@ -77,7 +77,7 @@ defined('_JEXEC') or die;
 
 	<thead>
 		<tr>
-			<th ><?php echo JText::_( 'COM_JEM_NUM' ); ?></th>
+			<th ><?php echo JText::_('COM_JEM_NUM'); ?></th>
 			<th><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 			<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<?php if ($this->jemsettings->showtitle == 1) : ?>
@@ -212,7 +212,6 @@ defined('_JEXEC') or die;
 <input type="hidden" name="task" value="" />
 <input type="hidden" name="option" value="com_jem" />
 <?php echo JHtml::_('form.token'); ?>
-
 </form>
 
 <div class="pagination">

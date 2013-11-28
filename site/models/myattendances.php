@@ -191,12 +191,11 @@ class JEMModelMyattendances extends JModelLegacy
 		$params = $app->getParams();
 		$task = JRequest::getWord('task');
 
-		$jemsettings = JEMHelper::config();
+		$settings = JEMHelper::globalattribs();
 
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
 
-// 		$filter_state 	= $app->getUserStateFromRequest('com_jem.myattendances.filter_state', 'filter_state', '', 'word');
 		$filter 		= $app->getUserStateFromRequest('com_jem.myattendances.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.myattendances.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
@@ -220,7 +219,7 @@ class JEMModelMyattendances extends JModelLegacy
 		// then if the user is attending the event
 		$where [] = ' r.uid = '.$this->_db->Quote($user->id);
 
-		if ($jemsettings->filter && $search) {
+		if ($settings->get('global_show_filter') && $search) {
 			switch($filter) {
 				case 1:
 					$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
