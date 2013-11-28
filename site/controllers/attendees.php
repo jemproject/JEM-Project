@@ -34,7 +34,7 @@ class JEMControllerAttendees extends JControllerLegacy
 	 */
 	function back()
 	{
-		$this->setRedirect(JEMHelperRoute::getMyEventsRoute());
+		$this->setRedirect(JRoute::_(JEMHelperRoute::getMyEventsRoute()));
 		$this->redirect();
 	}
 	
@@ -63,7 +63,7 @@ class JEMControllerAttendees extends JControllerLegacy
 	
 		$msg = $total.' '.JText::_('COM_JEM_REGISTERED_USERS_DELETED');
 	
-		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$id.'&Itemid='.$fid, $msg);
+		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&id='.$id.'&Itemid='.$fid), $msg);
 	}
 	
 	
@@ -101,7 +101,7 @@ class JEMControllerAttendees extends JControllerLegacy
 			$type = 'error';
 		}
 	
-		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$attendee->event.'&Itemid='.$fid, $msg, $type);
+		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&id='.$attendee->event.'&Itemid='.$fid), $msg, $type);
 		$this->redirect();
 	}
 }
