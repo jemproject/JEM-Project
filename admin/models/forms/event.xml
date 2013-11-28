@@ -117,6 +117,9 @@
 			label="JGLOBAL_FIELD_CREATED_BY_LABEL"
 			description="JGLOBAL_FIELD_CREATED_BY_Desc"
 		/>
+		<field name="created_by_alias" type="text"
+			label="COM_JEM_FIELD_CREATED_BY_ALIAS_LABEL" description="COM_JEM_FIELD_CREATED_BY_ALIAS_DESC"
+			class="inputbox" size="20" />
 		<field name="published" type="list"
 			label="JSTATUS"
 			description="COM_JEM_PUBLISHED_DESC"
