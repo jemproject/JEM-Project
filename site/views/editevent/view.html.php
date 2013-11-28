@@ -94,11 +94,10 @@ class JEMViewEditevent extends JViewLegacy
 				$this->setLayout($layout);
 			}
 		}
+
 		
-		
-		/*
 		if (empty($this->item->id)) {
-			$authorised = $user->authorise('core.create') || (count($user->getAuthorisedCategories('com_jem', 'core.create')));
+			$authorised = $user->authorise('core.create','com_jem') || (count($user->getAuthorisedCategories('com_jem', 'core.create')));
 		}
 		else {
 			$authorised = $this->item->params->get('access-edit');
@@ -108,7 +107,7 @@ class JEMViewEditevent extends JViewLegacy
 			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
 			return false;
 		}
-		*/
+		
 		
 		if (!empty($this->item) && isset($this->item->id)) {
 			// $this->item->images = json_decode($this->item->images);
