@@ -28,6 +28,7 @@ ALTER TABLE `#__jem_events`
 	ADD	`metadata` text NOT NULL,
 	ADD	`featured` tinyint(3) unsigned NOT NULL DEFAULT '0',
 	ADD	`attribs` varchar(5120) NOT NULL,
+	ADD `language` char(7) NOT NULL,
 	CHANGE `datdescription` `fulltext` mediumtext NOT NULL;
 
 ALTER TABLE `#__jem_categories`

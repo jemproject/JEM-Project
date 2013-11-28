@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
   `metadata` text NOT NULL,
   `featured` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `attribs` varchar(5120) NOT NULL,
+  `language` char(7) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
