@@ -150,7 +150,7 @@ JHTML::_('behavior.modal', 'a.flyermodal');
 		<?php endif; ?>
 		</dl>
 	<!-- DESCRIPTION -->
-		<?php if ($params->get('event_show_evdescription')) { ?>
+		<?php if ($params->get('event_show_evdescription') && ($this->item->fulltext != '' && $this->item->fulltext != '<br />' || $this->item->introtext != '' && $this->item->introtext != '<br />')) { ?>
 		<h2 class="description"><?php echo JText::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
 		<div class="description event_desc" itemprop="description">
 			
