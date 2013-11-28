@@ -92,7 +92,7 @@ class JEMModelEvent extends JModelItem
 										'a.created, a.unregistra, a.published, a.created_by, ' .
 										// use created if modified is 0
 										'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, ' . 'a.modified_by, a.checked_out, a.checked_out_time, ' . 'a.datimage,  a.version, ' .
-										 'a.meta_keywords, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.waitinglist, a.meta_description, a.hits'));
+										 'a.meta_keywords, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.waitinglist, a.meta_description, a.hits, a.language'));
 				$query->from('#__jem_events AS a');
 				
 				$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
@@ -374,21 +374,26 @@ class JEMModelEvent extends JModelItem
 	function getRegisters()
 	{
 		// avatars should be displayed
-		$jemsettings = JEMHelper::config();
+		$settings = JEMHelper::globalattribs();
 	
 		$avatar = '';
 		$join = '';
 	
-		if ($jemsettings->comunoption == 1 && $jemsettings->comunsolution == 1) {
+		if ($settings->get('comunoption') == 1 && $settings->get('comunsolution') == 1) {
 			$avatar = ', c.avatar';
 			$join = ' LEFT JOIN #__comprofiler as c ON c.user_id = r.uid';
 		}
 	
-		$name = $jemsettings->regname ? 'u.name' : 'u.username';
+		$name = $settings->get('regname') ? 'u.name' : 'u.username';
 	
 		// Get registered users
-		$query = 'SELECT ' . $name . ' AS name, r.uid' . $avatar . ' FROM #__jem_register AS r' . ' LEFT JOIN #__users AS u ON u.id = r.uid' . $join . ' WHERE event = ' . $this->getState('event.id') .
-		'   AND waiting = 0 ';
+		$query = 'SELECT ' 
+				. $name . ' AS name, r.uid' . $avatar 
+				. ' FROM #__jem_register AS r' 
+				. ' LEFT JOIN #__users AS u ON u.id = r.uid' 
+				. $join . ' WHERE event = ' 
+				. $this->getState('event.id') 
+				. '   AND waiting = 0 ';
 		$this->_db->setQuery($query);
 	
 		$this->_registers = $this->_db->loadObjectList();
