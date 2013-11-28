@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 function jemBuildRoute(&$query)
 {
 	$segments = array();
-	
+		
 	if (isset($query['view'])) {
 		$segments[] = $query['view'];
 		unset($query['view']);
@@ -29,6 +29,9 @@ function jemParseRoute($segments)
 {
 	$vars = array();
 	
+	// Count segments
+	$count = count($segments);
+	
 	// Handle View and Identifier
 	switch ($segments[0])
 	{
@@ -37,11 +40,6 @@ function jemParseRoute($segments)
 				$id = explode(':', $segments[1]);
 				$vars['id'] = $id[0];
 				$vars['view'] = 'category';
-				
-				$count = count($segments);
-				if ($count > 2) {
-					$vars['task'] = $segments[2];
-				}
 			}
 			break;
 		
@@ -58,17 +56,12 @@ function jemParseRoute($segments)
 				$id = explode(':', $segments[1]);
 				$vars['id'] = $id[0];
 				$vars['view'] = 'venue';
-				$count = count($segments);
-				if ($count > 2) {
-					$vars['task'] = $segments[2];
-				}
 			}
 			break;
 		
 		case 'editvenue':
 			{
 				$vars['view'] = 'editvenue';
-				$count = count($segments);
 				if ($count == 2) {
 					$vars['id'] = $segments[1];
 				}
@@ -78,11 +71,6 @@ function jemParseRoute($segments)
 		case 'eventslist':
 			{
 				$vars['view'] = 'eventslist';
-				
-				$count = count($segments);
-				if ($count == 2) {
-					$vars['task'] = $segments[1];
-				}
 			}
 			break;
 		
@@ -95,22 +83,12 @@ function jemParseRoute($segments)
 		case 'categoriesdetailed':
 			{
 				$vars['view'] = 'categoriesdetailed';
-				
-				$count = count($segments);
-				if ($count == 2) {
-					$vars['task'] = $segments[1];
-				}
 			}
 			break;
 		
 		case 'categories':
 			{
 				$vars['view'] = 'categories';
-				
-				$count = count($segments);
-				if ($count == 2) {
-					$vars['task'] = $segments[1];
-				}
 			}
 			break;
 		
@@ -119,30 +97,18 @@ function jemParseRoute($segments)
 				// $id = explode(':', $segments[1]);
 				// $vars['id'] = $id[0];
 				$vars['view'] = 'calendar';
-				
-				$count = count($segments);
-				if ($count > 2) {
-					$vars['task'] = $segments[2];
-				}
 			}
 			break;
 		
 		case 'venues':
 			{
 				$vars['view'] = 'venues';
-				
-				$count = count($segments);
-				if ($count == 2) {
-					$vars['task'] = $segments[1];
-				}
 			}
 			break;
 		
 		case 'day':
 			{
 				$vars['view'] = 'day';
-				
-				$count = count($segments);
 				if ($count == 2) {
 					$vars['id'] = $segments[1];
 				}
@@ -172,17 +138,6 @@ function jemParseRoute($segments)
 				$id = explode(':', $segments[1]);
 				$vars['id'] = $id[0];
 				$vars['view'] = 'attendees';
-				$count = count($segments);
-				if ($count > 2) {
-					$vars['task'] = $segments[2];
-				}
-			}
-			break;
-		
-		// some tasks !
-		case 'getfile':
-			{
-				$vars['task'] = 'getfile';
 			}
 			break;
 		
@@ -192,7 +147,6 @@ function jemParseRoute($segments)
 			}
 			break;
 	}
-	
 	return $vars;
 }
 ?>
