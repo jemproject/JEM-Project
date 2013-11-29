@@ -42,19 +42,19 @@ defined('_JEXEC') or die;
 		<?php echo JText::_('COM_JEM_EXPORT_ADD_CATEGORYCOLUMN'); ?></label>
 		<?php
 				$categorycolumn = array();
-				$categorycolumn[] = JHtml::_('select.option', '0', JText::_( 'JNO' ) );
-				$categorycolumn[] = JHtml::_('select.option', '1', JText::_( 'JYES' ) );
+				$categorycolumn[] = JHtml::_('select.option', '0', JText::_('JNO'));
+				$categorycolumn[] = JHtml::_('select.option', '1', JText::_('JYES'));
 				$categorycolumn = JHtml::_('select.genericlist', $categorycolumn, 'categorycolumn', 'size="1" class="inputbox"', 'value', 'text', '1');
 				echo $categorycolumn;?></li>
-		<li><label for="dates"><?php echo JText::_( 'COM_JEM_DATE' ).':'; ?></label>
+		<li><label for="dates"><?php echo JText::_('COM_JEM_DATE').':'; ?></label>
 		<?php echo JHtml::_('calendar', date("Y-m-d"), 'dates', 'dates', '%Y-%m-%d', array('class' => 'inputbox validate-date')); ?></li>
-		<li><label for="enddates"><?php echo JText::_( 'COM_JEM_ENDDATE' ).':'; ?></label>
+		<li><label for="enddates"><?php echo JText::_('COM_JEM_ENDDATE').':'; ?></label>
 		<?php echo JHtml::_('calendar', date("Y-m-d"), 'enddates', 'enddates', '%Y-%m-%d', array('class' => 'inputbox validate-date')); ?></li>
 		
-		<li><label for="cid"><?php echo JText::_( 'COM_JEM_CATEGORY' ).':'; ?></label>
+		<li><label for="cid"><?php echo JText::_('COM_JEM_CATEGORY').':'; ?></label>
 		<?php echo $this->categories; ?>
-		<input class="button" name="selectall" value=<?php echo JText::_('COM_JEM_EXPORT_SELECT_ALL_CATEGORIES'); ?> onclick="selectAll();"><br />
-		<input class="button" name="unselectall" value=<?php echo JText::_('COM_JEM_EXPORT_UNSELECT_ALL_CATEGORIES'); ?> onclick="unselectAll();"></li>
+		<input class="button" name="selectall" value="<?php echo JText::_('COM_JEM_EXPORT_SELECT_ALL_CATEGORIES'); ?>" onclick="selectAll();"><br />
+		<input class="button" name="unselectall" value="<?php echo JText::_('COM_JEM_EXPORT_UNSELECT_ALL_CATEGORIES'); ?>" onclick="unselectAll();"></li>
 
 		<li><label></label>
 		<input type="submit" id="csvexport" value="<?php echo JText::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.export';return true;"></input></li>
