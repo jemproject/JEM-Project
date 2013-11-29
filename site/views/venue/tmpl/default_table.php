@@ -88,12 +88,14 @@ defined('_JEXEC') or die;
 	<tbody>
 	<?php if ($this->noevents == 1) : ?>
 		<tr align="center"><td colspan="20"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
-	<?php else : ?>
+	<?php else : ?>		
 		<?php $this->rows = $this->getRows(); ?>
 		<?php foreach ($this->rows as $row) : ?>
-			<tr class="sectiontableentry<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>"
-				itemprop="event" itemscope itemtype="http://schema.org/Event">
-
+        <?php if ($row->featured != 0 ) :   ?>
+            <tr class="featured featured<?php echo $row->id.$this->params->get( 'pageclass_sfx' ); ?>" itemprop="event" itemscope="itemscope" itemtype="http://schema.org/Event" >
+        <?php else : ?>
+            <tr class="sectiontableentry<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemprop="event" itemscope="itemscope" itemtype="http://schema.org/Event" >
+        <?php endif; ?>		
 				<td headers="jem_date" align="left">
 					<?php
 						echo JEMOutput::formatShortDateTime($row->dates, $row->times,
@@ -102,7 +104,6 @@ defined('_JEXEC') or die;
 							$row->enddates, $row->endtimes);
 					?>
 				</td>
-
 				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
 					<td headers="jem_title" align="left" valign="top">
 						<a href="<?php echo JRoute::_(JEMHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
