@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -19,8 +19,6 @@ defined('_JEXEC') or die;
 		form.submit(view);
 	}
 </script>
-
-<?php if ($this->settings->get('global_show_filter') || $this->settings->get('global_display')) : ?>
 <div id="jem_filter" class="floattext">
 	<div class="jem_fleft">
 		<table>
@@ -86,19 +84,14 @@ defined('_JEXEC') or die;
 		</tr>
 		</table>
 	</div>
-	<?php if ($this->settings->get('global_display')) : ?>
 	<div class="jem_fright">
 	<?php
 		echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
 		echo $this->pagination->getLimitBox();
 	?>
 	</div>
-	<?php endif; ?>
 </div>
-<?php endif; ?>
-
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
-
 	<colgroup>
 		<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 		<?php if ($this->jemsettings->showtitle == 1) : ?>
@@ -117,7 +110,6 @@ defined('_JEXEC') or die;
 			<col width="<?php echo $this->jemsettings->catfrowidth; ?>" class="jem_col_category" />
 		<?php endif; ?>
 	</colgroup>
-
 	<thead>
 		<tr>
 				<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
@@ -138,7 +130,6 @@ defined('_JEXEC') or die;
 			<?php endif; ?>
 		</tr>
 	</thead>
-
 	<tbody>
 	<?php if ($this->noevents == 1) : ?>
 		<tr align="center"><td colspan="0"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
@@ -154,7 +145,6 @@ defined('_JEXEC') or die;
 							$row->enddates, $row->endtimes);
 					?>
 				</td>
-
 				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
 					<td headers="jem_title" align="left" valign="top">
 						<a href="<?php echo JRoute::_(JEMHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
@@ -162,7 +152,6 @@ defined('_JEXEC') or die;
 						</a>
 					</td>
 				<?php endif; ?>
-
 				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
 					<td headers="jem_title" align="left" valign="top" itemprop="name"><?php echo $this->escape($row->title); ?></td>
 				<?php endif; ?>
@@ -176,15 +165,12 @@ defined('_JEXEC') or die;
 						<?php endif; ?>
 					</td>
 				<?php endif; ?>
-
 				<?php if ($this->jemsettings->showcity == 1) : ?>
 					<td headers="jem_city" align="left" valign="top"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
 				<?php endif; ?>
-
 				<?php if ($this->jemsettings->showstate == 1) : ?>
 					<td headers="jem_state" align="left" valign="top"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
 				<?php endif; ?>
-
 				<?php if ($this->jemsettings->showcat == 1) : ?>
 					<td headers="jem_category" align="left" valign="top">
 					<?php echo implode(", ",
