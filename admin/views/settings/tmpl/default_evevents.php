@@ -23,8 +23,6 @@ $params['show_urls_images_backend'] = '0';
 $params['show_urls_images_frontend'] = '0';
 endif;
 
-
-
 defined('_JEXEC') or die;
 ?>
 
@@ -36,12 +34,6 @@ defined('_JEXEC') or die;
 				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
 			<?php endforeach; ?>
 		</ul>
-	</fieldset>
-</div>
-
-<div class="width-100">
-	<fieldset class="adminform">
-		<legend><?php echo JText::_('COM_JEM_EVENTS'); ?></legend>
 		<ul class="adminformlist">
 			<?php foreach ($this->form->getFieldset('basic') as $field): ?>
 				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
@@ -49,16 +41,3 @@ defined('_JEXEC') or die;
 		</ul>
 	</fieldset>
 </div>
-
-<div class="width-100">
-	<fieldset class="adminform">
-		<legend><?php echo JText::_('COM_JEM_SETTINGS_EDITEVENT_ATTRIBS'); ?></legend>
-		<ul class="adminformlist">
-			<?php foreach ($this->form->getFieldset('editevent') as $field): ?>
-				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
-			<?php endforeach; ?>
-		</ul>
-	</fieldset>
-</div>
-
-
