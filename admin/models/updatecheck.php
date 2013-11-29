@@ -51,7 +51,7 @@ class JEMModelUpdatecheck extends JModelLegacy
 		$snoopy = new Snoopy();
 
 		//set the source file
-		$file = 'http://www.joomlaeventmanager.com/updatecheck/update.csv';
+		$file = 'http://www.joomlaeventmanager.net/updatecheck/update.csv';
 
 		$snoopy->read_timeout 	= 30;
 		$snoopy->agent 			= "Mozilla/5.0 (compatible; Konqueror/3.2; Linux 2.6.2) (KHTML, like Gecko)";
