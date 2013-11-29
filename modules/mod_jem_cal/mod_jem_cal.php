@@ -22,7 +22,7 @@ require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 
 
 // include mootools tooltip
-JHTML::_('behavior.tooltip');
+JHtml::_('behavior.tooltip');
 
 // Parameters
 $app = JFactory::getApplication();

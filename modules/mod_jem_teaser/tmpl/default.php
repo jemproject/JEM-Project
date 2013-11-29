@@ -9,7 +9,7 @@
  */
 
 defined('_JEXEC') or die;
-JHTML::_('behavior.modal', 'a.flyermodal');
+JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
 
 <div id="jemmoduleteaser">

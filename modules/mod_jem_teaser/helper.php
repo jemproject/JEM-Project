@@ -110,7 +110,7 @@ class modJEMteaserHelper
 		$rows = $db->loadObjectList();
 
 		if ($params->get('use_modal', 0)) {
-			JHTML::_('behavior.modal');
+			JHtml::_('behavior.modal');
 		}
 
 		//Loop through the result rows and prepare data

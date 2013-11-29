@@ -284,7 +284,7 @@ class jemmyeventsTab extends cbTabHandler {
 
 				// defining variables
 				$result = $results[$i];
-// 				$checked = JHTML::_('grid.id', $i, $result->id);
+// 				$checked = JHtml::_('grid.id', $i, $result->id);
 // 				$catHref = JRoute::_(JEMHelperRoute::getCategoryRoute($result->catid));
 // 				$cats = "\n\t\t\t<a href='{$catHref}' title='{$result->catname}'>{$result->catname}</a>";
 
@@ -605,7 +605,7 @@ class jemmyeventsTab extends cbTabHandler {
 
 					// defining variables
 					$result = $results[$i];
-// 					$checked = JHTML::_('grid.id', $i, $result->id);
+// 					$checked = JHtml::_('grid.id', $i, $result->id);
 					$catHref = JRoute::_(JEMHelperRoute::getCategoryRoute($result->catid));
 					$cat = "\n\t\t\t<a href='{$catHref}' title='{$result->catname}'>{$result->catname}</a>";
 

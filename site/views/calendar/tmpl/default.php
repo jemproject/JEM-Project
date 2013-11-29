@@ -149,13 +149,13 @@ defined('_JEXEC') or die;
 
 			if ($multi->row) {
 				if ($multi->row == 'first') {
-					$timetp .= $image = JHTML::image("media/com_jem/images/arrow-left.png",'').' '.$start.' ';
+					$timetp .= $image = JHtml::image("media/com_jem/images/arrow-left.png",'').' '.$start.' ';
 					$timetp .= '<br>';
 				} elseif ($multi->row == 'middle') {
-					$timetp .= JHTML::image("media/com_jem/images/arrow-middle.png",'');
+					$timetp .= JHtml::image("media/com_jem/images/arrow-middle.png",'');
 					$timetp .= '<br>';
 				} elseif ($multi->row == 'zlast') {
-					$timetp .= JHTML::image("media/com_jem/images/arrow-right.png",'').' '.$end.' ';
+					$timetp .= JHtml::image("media/com_jem/images/arrow-right.png",'').' '.$end.' ';
 				} elseif ($multi->row == 'na') {
 					if ($start != '') :
 

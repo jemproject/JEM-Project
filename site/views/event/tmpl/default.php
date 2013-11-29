@@ -19,7 +19,7 @@ $canEdit	= $this->item->params->get('access-edit');
 $user		= JFactory::getUser();
 $attribs 	= json_decode($this->item->attribs);
 
-JHTML::_('behavior.modal', 'a.flyermodal');
+JHtml::_('behavior.modal', 'a.flyermodal');
 
 ?>
 <?php if ($params->get('access-view')){?>

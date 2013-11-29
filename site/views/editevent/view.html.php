@@ -125,9 +125,9 @@ class JEMViewEditevent extends JViewLegacy
 			return false;
 		}
 		
-		JHTML::_('behavior.formvalidation');
-		JHTML::_('behavior.tooltip');
-		JHTML::_('behavior.modal', 'a.flyermodal');
+		JHtml::_('behavior.formvalidation');
+		JHtml::_('behavior.tooltip');
+		JHtml::_('behavior.modal', 'a.flyermodal');
 		
 		// Create a shortcut to the parameters.
 		$params = &$this->state->params;

@@ -208,7 +208,7 @@ for($day = 1, $days_in_month = gmdate('t', $uxtime_first_of_month); $day <= $day
 					$tip .= trim($t) . '<br />';
 				}
 
-				$calendar .= JHTML::tooltip($tip, $tipTitle, 'tooltip.png', $space.$day, $link);
+				$calendar .= JHtml::tooltip($tip, $tipTitle, 'tooltip.png', $space.$day, $link);
 			}
 
 			$calendar .= '</td>';

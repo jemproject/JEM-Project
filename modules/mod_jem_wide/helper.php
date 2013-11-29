@@ -110,7 +110,7 @@ class modJEMwideHelper
 		$rows = $db->loadObjectList();
 
 		if ($params->get('use_modal', 0)) {
-			JHTML::_('behavior.modal', 'a.flyermodal');
+			JHtml::_('behavior.modal', 'a.flyermodal');
 		}
 
 		//Loop through the result rows and prepare data
