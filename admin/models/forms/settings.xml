@@ -750,7 +750,7 @@
 				label="COM_JEM_SHOW_ICONS"
 				description="COM_JEM_SHOW_ICONS_DESC"
 				class="inputbox"
-				default="0"
+				default="1"
 				required="false"
 			>
 				<option value="0">JHIDE</option>
@@ -760,7 +760,7 @@
 				label="COM_JEM_PRINT_ICON"
 				description="COM_JEM_PRINT_ICON_DESC"
 				class="inputbox"
-				default="0"
+				default="1"
 				required="false"
 			>
 				<option value="0">JHIDE</option>
@@ -770,7 +770,7 @@
 				label="COM_JEM_ARCHIVE_ICON"
 				description="COM_JEM_ARCHIVE_ICON_DESC"
 				class="inputbox"
-				default="0"
+				default="1"
 				required="false"
 			>
 				<option value="0">JHIDE</option>
@@ -780,7 +780,7 @@
 				label="COM_JEM_EMAIL_ICON"
 				description="COM_JEM_EMAIL_ICON_DESC"
 				class="inputbox"
-				default="0"
+				default="1"
 				required="false"
 			>
 				<option value="0">JHIDE</option>
@@ -790,7 +790,17 @@
 				label="COM_JEM_SETTINGS_SHOW_EVENTS_ICAL"
 				description="COM_JEM_SETTINGS_SHOW_EVENTS_ICAL_DESC"
 				class="inputbox"
-				default="0"
+				default="1"
+				required="false"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			<field name="global_show_timedetails" type="radio"
+				label="COM_JEM_DISPLAY_TIME"
+				description="COM_JEM_DISPLAY_TIME_DESC"
+				class="inputbox"
+				default="1"
 				required="false"
 			>
 				<option value="0">JHIDE</option>
@@ -801,16 +811,6 @@
 		<fieldset name="evevents"
 			label="COM_JEM_EVENTS"
 		>
-			<field name="showtimedetails" type="radio"
-				label="COM_JEM_DISPLAY_TIME"
-				description="COM_JEM_DISPLAY_TIME_DESC"
-				class="inputbox"
-				default="0"
-				required="false"
-			>
-				<option value="0">JHIDE</option>
-				<option value="1">JSHOW</option>
-			</field>
 			<field name="event_show_evdescription" type="radio"
 				label="COM_JEM_DISPLAY_EVENT_DESCRIPT"
 				description="COM_JEM_DISPLAY_EVENT_DESCRIPT_DESC"

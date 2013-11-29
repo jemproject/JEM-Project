@@ -132,7 +132,7 @@ class com_jemInstallerScript
 				"global_show_ical_icon"=>"1",
 				"global_show_icons"=>"1",
 				"global_show_print_icon"=>"1",
-				"showtimedetails"=>"1",
+				"global_show_timedetails"=>"1",
 				"event_show_evdescription"=>"1",
 				"showdetailstitle"=>"1",
 				"showlocdescription"=>"1",

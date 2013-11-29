@@ -518,7 +518,7 @@ class JEMOutput {
 			$overlib = JText::_('COM_JEM_BACK');
 			$text = JText::_('COM_JEM_BACK');
 
-			$link = 'index.php?option=com_jem&amp;view='.$view.'&amp;task=attendees.back&id='.$id.'&Itemid='.$fid;
+			$link = 'index.php?option=com_jem&amp;view='.$view.'&id='.$id.'&Itemid='.$fid.'&amp;task=attendees.back';
 			$output	= '<a href="'. JRoute::_($link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 		}
 
@@ -733,13 +733,13 @@ class JEMOutput {
 	 */
 	static function formatDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "", $format = "")
 	{
-		$settings = JEMHelper::config();
+		$settings = JEMHelper::globalattribs();
 		$output = "";
 
 		if(JEMHelper::isValidDate($dateStart)) {
 			$output .= self::formatdate($dateStart, $format);
 
-			if($settings->showtimedetails && $timeStart) {
+			if($settings->get('global_show_timedetails') && $timeStart) {
 				$output .= ', '.self::formattime($timeStart);
 			}
 
@@ -750,14 +750,14 @@ class JEMOutput {
 			}
 
 			// Display end time only when both times are set
-			if($settings->showtimedetails && $timeStart && $timeEnd) {
+			if($settings->get('global_show_timedetails') && $timeStart && $timeEnd) {
 				$output .= $displayDateEnd ? ', ' : ' - ';
 				$output .= self::formattime($timeEnd);
 			}
 		} else {
 			$output .= JText::_('COM_JEM_OPEN_DATE');
 
-			if($settings->showtimedetails) {
+			if($settings->get('global_show_timedetails')) {
 				if($timeStart) {
 					$output .= ', '.self::formattime($timeStart);
 				}
@@ -798,7 +798,7 @@ class JEMOutput {
 	 */
 	static function formatShortDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "")
 	{
-		$settings = JEMHelper::config();
+		$settings = JEMHelper::globalattribs();
 
 		// Use format saved in settings if specified or format in language file otherwise
 		if(isset($settings->formatShortDate) && $settings->formatShortDate) {
@@ -810,7 +810,7 @@ class JEMOutput {
 	}
 
 	static function formatSchemaOrgDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "") {
-		$settings = JEMHelper::config();
+		$settings = JEMHelper::globalattribs();
 		$output = "";
 		$formatD = "Y-m-d";
 		$formatT = "%H:%M";
@@ -818,7 +818,7 @@ class JEMOutput {
 		if(JEMHelper::isValidDate($dateStart)) {
 			$content = self::formatdate($dateStart, $formatD);
 
-			if($settings->showtimedetails && $timeStart) {
+			if($settings->get('global_show_timedetails') && $timeStart) {
 				$content .= 'T'.self::formattime($timeStart, $formatT, false);
 			}
 			$output .= '<meta itemprop="startDate" content="'.$content.'" />';
@@ -826,7 +826,7 @@ class JEMOutput {
 			if(JEMHelper::isValidDate($dateEnd)) {
 				$content = self::formatdate($dateEnd, $formatD);
 
-				if($settings->showtimedetails && $timeEnd) {
+				if($settings->get('global_show_timedetails') && $timeEnd) {
 					$content .= 'T'.self::formattime($timeEnd, $formatT, false);
 				}
 				$output .= '<meta itemprop="endDate" content="'.$content.'" />';
@@ -834,7 +834,7 @@ class JEMOutput {
 		} else {
 			// Open date
 
-			if($settings->showtimedetails) {
+			if($settings->get('global_show_timedetails')) {
 				if($timeStart) {
 					$content = self::formattime($timeStart, $formatT, false);
 					$output .= '<meta itemprop="startDate" content="'.$content.'" />';
