@@ -123,4 +123,30 @@ class JEMControllerCategories extends JControllerAdmin
 
  		$this->setRedirect(JRoute::_('index.php?option=' . $this->option . '&extension=' . $extension, false));
  	}
+ 	
+ 	/**
+ 	 * Logic to delete categories
+ 	 *
+ 	 * @access public
+ 	 * @return void
+ 	 *
+ 	 */
+ 	function remove()
+ 	{
+ 		$cid= JRequest::getVar('cid', array(0), 'post', 'array');
+ 	
+ 		if (!is_array($cid) || count($cid) < 1) {
+ 			JError::raiseWarning(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
+ 		}
+ 	
+ 		$model = $this->getModel('category');
+ 	
+ 		$msg = $model->delete($cid);
+ 	
+ 		$cache = JFactory::getCache('com_jem');
+ 		$cache->clean();
+ 	
+ 		$this->setRedirect('index.php?option=com_jem&view=categories', $msg);
+ 	}
+ 	
 }
