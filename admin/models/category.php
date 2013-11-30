@@ -870,14 +870,14 @@ class JEMModelCategory extends JModelAdmin
 	 * Method to get the group data
 	 *
 	 * @access public
-	 * @return boolean on success
-	 *        
-	 *        
+	 * @return boolean on success   
 	 */
 	function getGroups()
 	{
 		$db = $this->getDbo();
-		$query = 'SELECT id AS value, name AS text' . ' FROM #__jem_groups' . ' ORDER BY name';
+		$query = 'SELECT id AS value, name AS text' 
+				. ' FROM #__jem_groups' 
+				. ' ORDER BY name';
 		$db->setQuery($query);
 		
 		$groups = $db->loadObjectList();
@@ -887,7 +887,10 @@ class JEMModelCategory extends JModelAdmin
 
 	/**
 	 * Method to remove a category
-	 *
+	 * 
+	 * @todo: check if finder-plugin is being triggered
+	 * move to Candelete function
+	 * 
 	 * @access public
 	 * @return string $msg
 	 */
@@ -900,8 +903,10 @@ class JEMModelCategory extends JModelAdmin
 		
 		$cids = implode(',', $cids);
 		
-		$query = 'SELECT c.id, c.catname, COUNT( e.catid ) AS numcat' . ' FROM #__jem_categories AS c' . ' LEFT JOIN #__jem_cats_event_relations AS e ON e.catid = c.id' . ' WHERE c.id IN (' . $cids .
-				 ')' . ' GROUP BY c.id';
+		$query = 'SELECT c.id, c.catname, COUNT( e.catid ) AS numcat' 
+				. ' FROM #__jem_categories AS c' 
+				. ' LEFT JOIN #__jem_cats_event_relations AS e ON e.catid = c.id' 
+				. ' WHERE c.id IN (' . $cids .')' . ' GROUP BY c.id';
 		$this->_db->setQuery($query);
 		
 		if (!($rows = $this->_db->loadObjectList())) {
@@ -925,7 +930,8 @@ class JEMModelCategory extends JModelAdmin
 		
 		if (count($cid) && count($err) == 0) {
 			$cids = implode(',', $cid);
-			$query = 'DELETE FROM #__jem_categories' . ' WHERE id IN (' . $cids . ')';
+			$query = 'DELETE FROM #__jem_categories' 
+					. ' WHERE id IN (' . $cids . ')';
 			
 			$this->_db->setQuery($query);
 			
@@ -942,11 +948,10 @@ class JEMModelCategory extends JModelAdmin
 		}
 		else {
 			$total = count($cid);
-			$msg = $total . ' ' . JText::_('COM_JEM_CATEGORIES_DELETED');
+			$msg = JText::plural('COM_JEM_CATEGORIES_N_ITEMS_DELETED', $total);
 			return $msg;
 		}
 	}
-	
 	
 	/**
 	 * Method to add children/parents to a specific category
@@ -999,6 +1004,5 @@ class JEMModelCategory extends JModelAdmin
 			$return = $this->_addCategories($row->$get, $list, $type);
 		}
 		return $return;
-	}
-	
+	}	
 }
