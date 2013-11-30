@@ -29,7 +29,7 @@ class JFormFieldModal_Contact extends JFormField
 	protected function getInput()
 	{
 		// Load modal behavior
-		JHtml::_('behavior.modal', 'a.modal');
+		JHtml::_('behavior.modal', 'a.flyermodal');
 
 		// Build the script
 		$script = array();
