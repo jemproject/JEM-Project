@@ -152,7 +152,6 @@ class JEMControllerImport extends JControllerLegacy {
 				} else {
 					$field = null;
 				}
-				// var_dump($field);exit;
 			break;
 			case 'dates':
 			case 'enddates':
