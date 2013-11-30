@@ -87,7 +87,8 @@ class JEMModelEditevent extends JEMModelEvent
 		// Compute selected asset permissions.
 		$user = JFactory::getUser();
 		$userId = $user->get('id');
-		$asset = 'com_jem.event.' . $value->id;
+		//$asset = 'com_jem.event.' . $value->id;
+		$asset = 'com_jem';
 		
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);

@@ -55,5 +55,38 @@
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>
+		<field type="spacer" name="spacer" hr="true" />
+		<field name="addevent" type="radio"
+			label="COM_JEM_GROUP_ADDEVENT"
+			description="COM_JEM_GROUP_ADDEVENT_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+
+		<field name="publishevent" type="radio"
+			label="COM_JEM_GROUP_PUBLISHEVENT"
+			description="COM_JEM_GROUP_PUBLISHEVENT_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+
+		<field name="editevent" type="radio"
+			label="COM_JEM_GROUP_EDITEVENT"
+			description="COM_JEM_GROUP_EDITEVENT_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
 	</fieldset>
 </form>

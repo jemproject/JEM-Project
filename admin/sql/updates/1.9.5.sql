@@ -55,6 +55,10 @@ UPDATE `#__jem_categories`
 
 ALTER TABLE `#__jem_categories`
 	CHANGE `id` `id` INT(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT;
+	
+ALTER TABLE `#__jem_groups`
+	ADD publishevent int(11) NOT NULL,
+	ADD editevent int(11) NOT NULL;
 
 UPDATE `#__jem_cats_event_relations`
 	SET catid = catid+1;

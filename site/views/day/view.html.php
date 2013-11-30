@@ -88,10 +88,10 @@ class JEMViewDay extends JEMView
 		}
 
 		//Check if the user has access to the form
-		$maintainer = JEMUser::ismaintainer();
+		$maintainer = JEMUser::ismaintainer('add');
 		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
-		if ($maintainer || $genaccess) {
+		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
 			$dellink = 1;
 		} else {
 			$dellink = 0;

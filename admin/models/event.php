@@ -216,25 +216,31 @@ class JEMModelEvent extends JModelAdmin
 			
 			// Need for front-editing		
 			$editaccess  = JEMUser::editaccess($jemsettings->eventowner, $table->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
-			$maintainer = JEMUser::ismaintainer();
-
- 			if ($maintainer || $editaccess ) $allowedtoeditevent = 1;
-
- 			if (!$allowedtoeditevent) {
- 			JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
+			$maintainer = JEMUser::ismaintainer('edit',$table->id);
+ 			if (!($maintainer || $editaccess || $user->authorise('core.edit','com_jem'))) {
+ 			JError::raiseError( 403, JText::_('COM_JEM_NO_ACCESS'));
+			}
+			
+			/*
+			 * Is editor the owner of the event
+			* This extra Check is needed to make it possible
+			* that the venue is published after an edit from an owner
+			*/
+			if ($jemsettings->venueowner == 1 && $table->created_by == $user->get('id')) {
+				$owneredit = 1;
+			} else {
+				$owneredit = 0;
 			}
 
-			
-			
 		} else {
 			// New Event. An event created and created_by field can be set by the user,
 			// so we don't touch either of these if they are set.
 
-			$maintainer 	= JEMUser::ismaintainer();
+			$maintainer 	= JEMUser::ismaintainer('add');
 			$genaccess		= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
 				
 			if (!($maintainer || $genaccess)){
-				JError::raiseError( 403, JText::_( 'COM_JEM_NO_ACCESS' ) );
+				JError::raiseError( 403, JText::_('COM_JEM_NO_ACCESS'));
 			}
 			
 			if (!intval($table->created)) {
@@ -247,9 +253,21 @@ class JEMModelEvent extends JModelAdmin
 			
 			//Set owneredit to false
 			$owneredit = 0;
-			
 		}
-
+		
+		
+		/*
+		 * Autopublish
+		* check if the user has the required rank for autopublish
+		*/
+		$maintainer = JEMUser::ismaintainer('publish');
+		$autopubev = JEMUser::validate_user($jemsettings->evpubrec, $jemsettings->autopubl);
+		if ($autopubev || $owneredit || $maintainer || $user->authorise('core.edit.state','com_jem')) {
+			$table->published = 1 ;
+		} else {
+			$table->published = 0 ;
+		}
+		
 		// Bind the form fields to the table
 		//if (!$table->bind(JRequest::get('post'))) {
 		//return JError::raiseWarning(500, $table->getError());

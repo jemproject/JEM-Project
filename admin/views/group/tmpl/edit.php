@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -19,16 +19,10 @@ $params = $this->state->get('params');
 $params = $params->toArray();
 
 ?>
-
 <script type="text/javascript">
 	window.addEvent('domready', function(){
-
-
-
 	});
-
-
-
+	
 	// moves elements from one select box to another one
 	function moveOptions(from,to) {
 		// Move them over
@@ -50,15 +44,6 @@ $params = $params->toArray();
 		to.selectedIndex = -1;
 	}
 
-	/*
-	function allSelected(element) {
-
-		for (var i=0; i<element.options.length; i++) {
-			var o = element.options[i];
-			o.selected = true;
-		}
-	}
-*/
 	function selectAll()
     {
         selectBox = document.getElementById("maintainers");
@@ -68,43 +53,29 @@ $params = $params->toArray();
              selectBox.options[i].selected = true;
         }
     }
-
-
 </script>
-
 <script type="text/javascript">
 	Joomla.submitbutton = function(task)
 	{
 		selectAll();
 		if (task == 'group.cancel' || document.formvalidator.isValid(document.id('adminForm'))) {
 			Joomla.submitform(task, document.getElementById('adminForm'));
-
-			//allSelected(document.adminForm['maintainers[]']);
-
 		}
 	}
-
 </script>
-
-
 
 <form
 	action="<?php echo JRoute::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>"
 	class="form-validate" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
 
-
 	<!-- START OF LEFT DIV -->
 	<div class="width-55 fltlft">
-
-<?php echo JHtml::_('tabs.start', 'det-pane'); ?>
+		<?php echo JHtml::_('tabs.start', 'det-pane'); ?>
 		<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_GROUP_INFO_TAB'), 'group-info' ); ?>
-
-		<!-- START OF LEFT FIELDSET -->
 		<fieldset class="adminform">
 			<legend>
 				<?php echo empty($this->item->id) ? JText::_('COM_JEM_NEW_GROUP') : JText::sprintf('COM_JEM_GROUP_DETAILS', $this->item->id); ?>
 			</legend>
-
 			<ul class="adminformlist">
 				<li><?php echo $this->form->getLabel('name');?> <?php echo $this->form->getInput('name'); ?>
 				</li>
@@ -112,16 +83,14 @@ $params = $params->toArray();
 				</li>
 				<li><?php echo $this->form->getLabel('maintainers2');?> <?php echo $this->form->getInput('maintainers2'); ?>
 				</li>
-
 			</ul>
 		</fieldset>
-
 		<fieldset class="adminform">
 			<table class="adminform">
 				<tr>
-					<td><b><?php echo JText::_( 'COM_JEM_AVAILABLE_USERS' ).':'; ?></b></td>
+					<td><b><?php echo JText::_('COM_JEM_AVAILABLE_USERS').':'; ?></b></td>
 					<td>&nbsp;</td>
-					<td><b><?php echo JText::_( 'COM_JEM_MAINTAINERS' ).':'; ?></b></td>
+					<td><b><?php echo JText::_('COM_JEM_MAINTAINERS').':'; ?></b></td>
 				</tr>
 				<tr>
 					<td width="260px"><?php echo $this->lists['available_users']; ?></td>
@@ -134,65 +103,43 @@ $params = $params->toArray();
 				</tr>
 			</table>
 		</fieldset>
-
-
-
-
 			<fieldset class="adminform">
-
 			<div>
 				<?php echo $this->form->getLabel('description'); ?>
 				<div class="clr"></div>
 				<?php echo $this->form->getInput('description'); ?>
 			</div>
-
-
 		</fieldset>
-
-		<!-- END OF FIELDSET -->
-
 		<!-- END OF LEFT DIV -->
 	</div>
 
-
 	<!--  START RIGHT DIV -->
 	<div class="width-40 fltrt">
-
 		<!-- START OF SLIDERS -->
 		<?php echo JHtml::_('sliders.start', 'group-sliders-'.$this->item->id, array('useCookie'=>1)); ?>
-
-
 		<!-- START OF PANEL PUBLISHING -->
 		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_GROUP_PERMISSIONS'), 'group-permission'); ?>
-
-
 		<!-- RETRIEVING OF FIELDSET PUBLISHING -->
 		<fieldset class="panelform">
 			<ul class="adminformlist">
-
-				<li><?php echo $this->form->getLabel('addvenue'); ?> <?php echo $this->form->getInput('addvenue'); ?>
-				</li>
-
-				<li><?php echo $this->form->getLabel('publishvenue'); ?> <?php echo $this->form->getInput('publishvenue'); ?>
-				</li>
-
-				<li><?php echo $this->form->getLabel('editvenue'); ?> <?php echo $this->form->getInput('editvenue'); ?>
-				</li>
-
-
+				<li><?php echo $this->form->getLabel('addvenue'); ?> 
+				<?php echo $this->form->getInput('addvenue'); ?></li>
+				<li><?php echo $this->form->getLabel('publishvenue'); ?> 
+				<?php echo $this->form->getInput('publishvenue'); ?></li>
+				<li><?php echo $this->form->getLabel('editvenue'); ?> 
+				<?php echo $this->form->getInput('editvenue'); ?></li>
+				<li><?php echo $this->form->getLabel('addevent'); ?> 
+				<?php echo $this->form->getInput('addevent'); ?></li>
+				<li><?php echo $this->form->getLabel('publishevent'); ?> 
+				<?php echo $this->form->getInput('publishevent'); ?></li>
+				<li><?php echo $this->form->getLabel('editevent'); ?> 
+				<?php echo $this->form->getInput('editevent'); ?></li>
 			</ul>
 		</fieldset>
-
-
 	<?php echo JHtml::_('sliders.end'); ?>
-
-<input type="hidden" name="task" value="" />
-
+		<input type="hidden" name="task" value="" />
 				<!--  END RIGHT DIV -->
 				<?php echo JHtml::_( 'form.token' ); ?>
 				</div>
-
 		<div class="clr"></div>
-
 </form>
-

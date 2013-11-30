@@ -157,6 +157,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_groups` (
   `addevent` int(11) NOT NULL,
   `publishvenue` int(11) NOT NULL,
   `editvenue` int(11) NOT NULL,
+  `publishevent` int(11) NOT NULL,
+  `editevent` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 

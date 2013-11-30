@@ -42,6 +42,7 @@ class JEMViewEventslist extends JEMView
 		$uri 		= JFactory::getURI();
 		$pathway 	= $app->getPathWay();
 		$db 		= JFactory::getDBO();
+		$user		= JFactory::getUser();
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
@@ -50,7 +51,6 @@ class JEMViewEventslist extends JEMView
 		// get variables
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_order', 'filter_order', 	'a.dates', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
-// 		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_state', 'filter_state', 	'*', 'word' );
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.eventslist.filter', 'filter', '', 'int' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_search', 'filter_search', '', 'string' );
 		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
@@ -90,10 +90,10 @@ class JEMViewEventslist extends JEMView
 		$document->setMetaData( 'title' , $pagetitle );
 
 		//Check if the user has access to the form
-		$maintainer = JEMUser::ismaintainer();
+		$maintainer = JEMUser::ismaintainer('add');
 		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
-		if ($maintainer || $genaccess ) {
+		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
 			$dellink = 1;
 		} else {
 			$dellink = 0;

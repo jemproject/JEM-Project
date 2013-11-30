@@ -60,7 +60,7 @@ class JEMControllerEvent extends JControllerForm
 		}
 		
 		$jemsettings	= JEMHelper::config();
-		$maintainer		= JEMUser::ismaintainer();
+		$maintainer		= JEMUser::ismaintainer('add');
 		$genaccess		= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 		
 		if ($maintainer || $genaccess) {
@@ -121,18 +121,15 @@ class JEMControllerEvent extends JControllerForm
 			}
 		}
 		
+		$record			= $this->getModel()->getItem($recordId);
+		$jemsettings 	= JEMHelper::config();
+		$editaccess		= JEMUser::editaccess($jemsettings->eventowner, $record->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
 		
-		$record		= $this->getModel()->getItem($recordId);
+		$maintainer 	= JEMUser::ismaintainer('edit',$record->id);
 		
-		$jemsettings = JEMHelper::config();
-		$editaccess	= JEMUser::editaccess($jemsettings->eventowner, $record->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
-		
-		
-		$maintainer = JEMUser::ismaintainer();
 		
 		if ($maintainer || $editaccess)
 		{
-			$allowedtoeditevent = 1;
 			return true;
 		}
 		

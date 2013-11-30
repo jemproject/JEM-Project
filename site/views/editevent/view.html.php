@@ -48,7 +48,7 @@ class JEMViewEditevent extends JViewLegacy
 		
 		// check for guest
 		if ($user->id == 0 || $user == false) {
-			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
+			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
 		
@@ -95,19 +95,36 @@ class JEMViewEditevent extends JViewLegacy
 			}
 		}
 
-		
 		if (empty($this->item->id)) {
-			$authorised = $user->authorise('core.create','com_jem') || (count($user->getAuthorisedCategories('com_jem', 'core.create')));
-		}
-		else {
-			$authorised = $this->item->params->get('access-edit');
+			// Check if the user has access to the form
+			$maintainer = JEMUser::ismaintainer('add');
+			$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
+			
+			if ($maintainer || $genaccess ) {
+				$dellink = true;
+			} else {
+				$dellink = false;
+			}
+			$authorised = $user->authorise('core.create','com_jem') || (count($user->getAuthorisedCategories('com_jem', 'core.create')) || $dellink);			
+		} else {
+			// Check if user can edit
+			$maintainer5 = JEMUser::ismaintainer('edit',$this->item->id);
+			$genaccess5 = JEMUser::editaccess($jemsettings->eventowner, $this->item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+	
+			if ($maintainer5 || $genaccess5 )
+			{
+				$allowedtoeditevent = true;
+			} else {
+				$allowedtoeditevent = false;
+			}
+			
+			$authorised = $this->item->params->get('access-edit') || $allowedtoeditevent ;
 		}
 		
 		if ($authorised !== true) {
-			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
+			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
-		
 		
 		if (!empty($this->item) && isset($this->item->id)) {
 			// $this->item->images = json_decode($this->item->images);
@@ -179,10 +196,10 @@ class JEMViewEditevent extends JViewLegacy
 			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
 		}
 		else {
-			$this->params->def('page_heading', JText::_('COM_CONTENT_FORM_EDIT_ARTICLE'));
+			$this->params->def('page_heading', JText::_('COM_JEM_EDITEVENT_EDIT_EVENT'));
 		}
 		
-		$title = $this->params->def('page_title', JText::_('COM_CONTENT_FORM_EDIT_ARTICLE'));
+		$title = $this->params->def('page_title', JText::_('COM_JEM_EDITEVENT_EDIT_EVENT'));
 		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
 			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
 		}

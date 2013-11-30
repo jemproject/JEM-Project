@@ -18,7 +18,6 @@ defined('_JEXEC') or die;
  */
 class JEMViewEvent extends JViewLegacy
 {
-	
 	protected $item;
 	protected $params;
 	protected $print;
@@ -124,11 +123,8 @@ class JEMViewEvent extends JViewLegacy
 		
 		// Check the view access to the event (the model has already computed the values).
 		if ($item->params->get('access-view') != true && (($item->params->get('show_noauth') != true &&  $user->get('guest') ))) {
-		
 			JError::raiseWarning(403, JText::_('JERROR_ALERTNOAUTHOR'));
-		
 			return;
-		
 		}
 		
 		if ($item->params->get('show_intro', '1')=='1') {
@@ -179,15 +175,15 @@ class JEMViewEvent extends JViewLegacy
 		$this->limage = JEMImage::flyercreator($item->locimage, 'venue');
 		
 		
-		//Check user if the user can edit
-		$geneditaccess = JEMUser::editaccess($jemsettings->eventowner, $item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
-		$maintaintereditaccess = JEMUser::ismaintainer($item->catid);
-		
-		if ($geneditaccess || count($maintaintereditaccess))
+		// Check if user can edit
+		$maintainer5 = JEMUser::ismaintainer('edit',$item->did);
+		$genaccess5 = JEMUser::editaccess($jemsettings->eventowner, $item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+
+		if ($maintainer5 || $genaccess5 || $user->authorise('core.edit','com_jem'))
 		{
-		$this->allowedtoeditevent = 1;
+			$this->allowedtoeditevent = 1;
 		} else {
-		$this->allowedtoeditevent = 0;
+			$this->allowedtoeditevent = 0;
 		}
 		
 		//Check if the user has access to the edit-venueform

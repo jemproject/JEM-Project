@@ -115,40 +115,57 @@ class JEMUser {
 
 	/**
 	 * Checks if the user is a maintainer of a category
-	 * @return NULL|int Number of maintained categories or null
+	 * 
+	 * @return NULL int of maintained categories or null
 	 */
-	static function ismaintainer() {
-		//lets look if the user is a maintainer
-		$db 	= JFactory::getDBO();
-		$user	= JFactory::getUser();
-
-		$query = 'SELECT g.group_id'
-				. ' FROM #__jem_groupmembers AS g'
-				. ' WHERE g.member = '.(int) $user->get('id')
+	static function ismaintainer($action, $eventid = false)
+	{
+		
+		// lets look if the user is a maintainer
+		$db = JFactory::getDBO();
+		$user = JFactory::getUser();
+		
+		$query = 'SELECT gr.id' . ' FROM #__jem_groups AS gr' 
+				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id' 
+				. ' WHERE g.member = ' . (int) $user->get('id') 
+				. ' AND ' .$db->quoteName('gr.' . $action . 'event') . ' = 1 ' 
 				. ' AND g.member NOT LIKE 0';
-				;
 		$db->setQuery($query);
-
-		$catids = $db->loadColumn();
-
-		//no results, no maintainer
-		if (!$catids) {
-			return null;
+		$groupnumber = $db->loadColumn();
+		
+		// no results, the user is not within a group with the required right
+		if (!$groupnumber) {
+			return false;
 		}
-
-		$categories = implode(' OR groupid = ', $catids);
-
-		//count the maintained categories
-		$query = 'SELECT COUNT(id)'
-				. ' FROM #__jem_categories'
-				. ' WHERE published = 1'
-				. ' AND (groupid = '.$categories.')'
-				;
-		$db->setQuery($query);
-
-		$maintainer = $db->loadColumn();
-
-		return $maintainer;
+		
+		// the user is in a group with the required right but is there a
+		// published category where he is allowed to post in?
+		
+		$categories = implode(' OR groupid = ', $groupnumber);
+		
+		if ($action == 'edit') {
+			$query = 'SELECT a.catid' . ' FROM #__jem_cats_event_relations AS a' 
+					. ' LEFT JOIN #__jem_categories AS c ON c.id = a.catid' 
+					. ' WHERE c.published = 1' 
+					. ' AND (c.groupid = ' . $categories . ')' 
+					. ' AND a.itemid = ' . $eventid;
+			$db->setQuery($query);
+		}
+		else {
+			$query = 'SELECT id' . ' FROM #__jem_categories' 
+					. ' WHERE published = 1' 
+					. ' AND (groupid = ' . $categories . ')';
+			$db->setQuery($query);
+		}
+		
+		$maintainer = $db->loadResult();
+		
+		if (!$maintainer) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 
 
