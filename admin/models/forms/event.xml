@@ -391,7 +391,7 @@
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
 			</field>
-			<field name="event_show_detailstitle" type="radio"
+			<field name="event_show_detailstitle" type="list"
 				label="COM_JEM_DISPLAY_EVENT_TITLE"
 				description="COM_JEM_DISPLAY_EVENT_TITLE_DESC"
 				class="inputbox"
