@@ -391,12 +391,22 @@
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
 			</field>
+			<field name="event_show_detailstitle" type="radio"
+				label="COM_JEM_DISPLAY_EVENT_TITLE"
+				description="COM_JEM_DISPLAY_EVENT_TITLE_DESC"
+				class="inputbox"
+				required="false"
+			>
+				<option value="">JGLOBAL_USE_GLOBAL</option>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
 		</fieldset>
 
 		<fieldset name="evevents"
 			label="COM_JEM_EVENTS"
 		>
-			<field name="event_show_evdescription" type="list"
+			<field name="event_show_description" type="list"
 				label="COM_JEM_DISPLAY_EVENT_DESCRIPT"
 				description="COM_JEM_DISPLAY_EVENT_DESCRIPT_DESC"
 				class="inputbox"
@@ -411,11 +421,10 @@
 		<fieldset name="evvenues"
 			label="COM_JEM_VENUES"
 		>
-			<field name="event_showlocdescription" type="list"
+			<field name="event_show_locdescription" type="list"
 				label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
 				description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
 				class="inputbox"
-				default="0"
 				required="false"
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>

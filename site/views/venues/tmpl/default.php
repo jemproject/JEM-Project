@@ -111,7 +111,7 @@ defined('_JEXEC') or die;
 			<?php endif; ?>
 		<?php endif; ?>
 
-		<?php if ($this->jemsettings->showlocdescription == 1 && $row->locdescription != '' && $row->locdescription != '<br />') : ?>
+		<?php if ($this->settings->get('global_show_locdescription','1') && $row->locdescription != '' && $row->locdescription != '<br />') : ?>
 			<h2 class="description">
 				<?php echo JText::_( 'COM_JEM_VENUE_DESCRIPTION' ).':'; ?>
 			</h2>

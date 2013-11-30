@@ -806,26 +806,36 @@
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
-		</fieldset>
-
-		<fieldset name="evevents"
-			label="COM_JEM_EVENTS"
-		>
-			<field name="event_show_evdescription" type="radio"
-				label="COM_JEM_DISPLAY_EVENT_DESCRIPT"
-				description="COM_JEM_DISPLAY_EVENT_DESCRIPT_DESC"
+			<field name="global_show_locdescription" type="radio"
+				label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
+				description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
 				class="inputbox"
-				default="0"
+				default="1"
 				required="false"
 			>
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
-			<field name="showdetailstitle" type="radio"
+		</fieldset>
+
+		<fieldset name="evevents"
+			label="COM_JEM_EVENTS"
+		>
+			<field name="event_show_description" type="radio"
+				label="COM_JEM_DISPLAY_EVENT_DESCRIPT"
+				description="COM_JEM_DISPLAY_EVENT_DESCRIPT_DESC"
+				class="inputbox"
+				default="1"
+				required="false"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			<field name="event_show_detailstitle" type="radio"
 				label="COM_JEM_DISPLAY_EVENT_TITLE"
 				description="COM_JEM_DISPLAY_EVENT_TITLE_DESC"
 				class="inputbox"
-				default="0"
+				default="1"
 				required="false"
 			>
 				<option value="0">JHIDE</option>
@@ -836,11 +846,11 @@
 		<fieldset name="evvenues"
 			label="COM_JEM_VENUES"
 		>
-			<field name="showlocdescription" type="radio"
+			<field name="event_show_locdescription" type="radio"
 				label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
 				description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
 				class="inputbox"
-				default="0"
+				default="1"
 				required="false"
 			>
 				<option value="0">JHIDE</option>

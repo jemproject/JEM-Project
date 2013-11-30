@@ -13,9 +13,9 @@ $group = 'globalattribs';
 
 <div class="width-100">
 	<fieldset class="adminform">
-		<legend><?php echo JText::_( 'COM_JEM_VENUES' ); ?></legend>
+		<legend><?php echo JText::_('COM_JEM_VENUES'); ?></legend>
 		<ul class="adminformlist">
-			<li><?php echo $this->form->getLabel('showlocdescription',$group); ?> <?php echo $this->form->getInput('showlocdescription',$group); ?></li>
+			<li><?php echo $this->form->getLabel('event_show_locdescription',$group); ?> <?php echo $this->form->getInput('event_show_locdescription',$group); ?></li>
 			<li><?php echo $this->form->getLabel('showdetailsadress',$group); ?> <?php echo $this->form->getInput('showdetailsadress',$group); ?></li>
 			<li><?php echo $this->form->getLabel('showdetlinkvenue',$group); ?> <?php echo $this->form->getInput('showdetlinkvenue',$group); ?></li>
 			<li><?php echo $this->form->getLabel('showmapserv',$group); ?> <?php echo $this->form->getInput('showmapserv',$group); ?></li>

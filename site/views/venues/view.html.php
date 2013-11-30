@@ -26,8 +26,9 @@ class JEMViewVenues extends JViewLegacy
 	{
 		$app = JFactory::getApplication();
 
-		$document 	 = JFactory::getDocument();
-		$jemsettings = JEMHelper::config();
+		$document		= JFactory::getDocument();
+		$jemsettings	= JEMHelper::config();
+		$settings 		= JEMHelper::globalattribs();
 
 		//get menu information
 		$menu		= $app->getMenu();
@@ -97,6 +98,7 @@ class JEMViewVenues extends JViewLegacy
 		$this->pagination		= $pagination;
 		$this->item				= $item;
 		$this->jemsettings		= $jemsettings;
+		$this->settings			= $settings;
 		$this->task				= $task;
 		$this->pagetitle		= $pagetitle;
 

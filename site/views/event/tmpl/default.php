@@ -20,7 +20,6 @@ $user		= JFactory::getUser();
 $attribs 	= json_decode($this->item->attribs);
 
 JHtml::_('behavior.modal', 'a.flyermodal');
-
 ?>
 <?php if ($params->get('access-view')){?>
 <div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event"
@@ -57,7 +56,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 	<?php echo JEMOutput::flyer($this->item, $this->dimage, 'event'); ?>
 
 	<dl class="event_info floattext">
-		<?php if ($this->jemsettings->showdetailstitle == 1) : ?>
+		<?php if ($params->get('event_show_detailstitle','1')) : ?>
 			<dt class="title"><?php echo JText::_('COM_JEM_TITLE').':'; ?></dt>
 		<dd class="title" itemprop="name"><?php echo $this->escape($this->item->title); ?></dd>
 		<?php
@@ -150,7 +149,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		<?php endif; ?>
 		</dl>
 	<!-- DESCRIPTION -->
-		<?php if ($params->get('event_show_evdescription') && ($this->item->fulltext != '' && $this->item->fulltext != '<br />' || $this->item->introtext != '' && $this->item->introtext != '<br />')) { ?>
+		<?php if ($params->get('event_show_description','1') && ($this->item->fulltext != '' && $this->item->fulltext != '<br />' || $this->item->introtext != '' && $this->item->introtext != '<br />')) { ?>
 		<h2 class="description"><?php echo JText::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
 		<div class="description event_desc" itemprop="description">
 			
@@ -321,7 +320,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		<?php endif; ?>
 
 
-		<?php if ($this->jemsettings->showlocdescription == 1 && $this->item->locdescription != ''
+		<?php if ($params->get('event_show_locdescription','1') && $this->item->locdescription != ''
 			&& $this->item->locdescription != '<br />') : ?>
 
 			<h2 class="location_desc"><?php echo JText::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
