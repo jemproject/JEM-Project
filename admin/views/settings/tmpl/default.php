@@ -96,9 +96,9 @@ window.addEvent('domready', function(){
 		evhandleroff();
 	}
 
-	$('jform_globalattribs_comunsolution').addEvent('change', testcomm);
+	$('jform_globalattribs_event_comunsolution').addEvent('change', testcomm);
 
-	var commhandler = $("jform_globalattribs_comunsolution");
+	var commhandler = $("jform_globalattribs_event_comunsolution");
 	var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
 
 	if (nrcommhandler == 1) {
@@ -110,7 +110,7 @@ window.addEvent('domready', function(){
 
 function testcomm()
 {
-	var commhandler = $("jform_globalattribs_comunsolution");
+	var commhandler = $("jform_globalattribs_event_comunsolution");
 	var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
 
 	if (nrcommhandler == 1) {

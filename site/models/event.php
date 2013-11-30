@@ -374,7 +374,7 @@ class JEMModelEvent extends JModelItem
 		$avatar = '';
 		$join = '';
 	
-		if ($settings->get('comunoption') == 1 && $settings->get('comunsolution') == 1) {
+		if ($settings->get('event_comunoption','0') == 1 && $settings->get('event_comunsolution','0') == 1) {
 			$avatar = ', c.avatar';
 			$join = ' LEFT JOIN #__comprofiler as c ON c.user_id = r.uid';
 		}

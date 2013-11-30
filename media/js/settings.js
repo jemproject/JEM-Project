@@ -23,7 +23,7 @@ function changeoldMode()
 function changeintegrateMode()
 {
 	if(document.getElementById) {
-		mode = window.document.adminForm.comunsolution.selectedIndex;
+		mode = window.document.adminForm.event_comunsolution.selectedIndex;
 		switch (mode) {
 			case 0:
 				document.getElementById('integrate').style.display = 'none';

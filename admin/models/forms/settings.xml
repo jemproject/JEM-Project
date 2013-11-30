@@ -919,7 +919,7 @@
 		<fieldset name="evregistration"
 			label="COM_JEM_REGISTRATION"
 		>
-			<field name="comunsolution" type="list"
+			<field name="event_comunsolution" type="list"
 				label="COM_JEM_COM_SOL"
 				description="COM_JEM_COM_SOL_DESC"
 				class="inputbox"
@@ -929,7 +929,7 @@
 				<option value="0">COM_JEM_DONT_USE_COM_SOL</option>
 				<option value="1">COM_JEM_COMBUILDER</option>
 			</field>
-			<field name="comunoption" type="list"
+			<field name="event_comunoption" type="list"
 				label="COM_JEM_TYPE_COM_INTEGRATION"
 				description="COM_JEM_TYPE_COM_INTEGRATION_DESC"
 				class="inputbox"
