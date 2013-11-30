@@ -739,7 +739,7 @@ class JEMOutput {
 		if(JEMHelper::isValidDate($dateStart)) {
 			$output .= self::formatdate($dateStart, $format);
 
-			if($settings->get('global_show_timedetails') && $timeStart) {
+			if($settings->get('global_show_timedetails','1') && $timeStart) {
 				$output .= ', '.self::formattime($timeStart);
 			}
 
@@ -750,14 +750,14 @@ class JEMOutput {
 			}
 
 			// Display end time only when both times are set
-			if($settings->get('global_show_timedetails') && $timeStart && $timeEnd) {
+			if($settings->get('global_show_timedetails','1') && $timeStart && $timeEnd) {
 				$output .= $displayDateEnd ? ', ' : ' - ';
 				$output .= self::formattime($timeEnd);
 			}
 		} else {
 			$output .= JText::_('COM_JEM_OPEN_DATE');
 
-			if($settings->get('global_show_timedetails')) {
+			if($settings->get('global_show_timedetails','1')) {
 				if($timeStart) {
 					$output .= ', '.self::formattime($timeStart);
 				}
@@ -818,7 +818,7 @@ class JEMOutput {
 		if(JEMHelper::isValidDate($dateStart)) {
 			$content = self::formatdate($dateStart, $formatD);
 
-			if($settings->get('global_show_timedetails') && $timeStart) {
+			if($settings->get('global_show_timedetails','1') && $timeStart) {
 				$content .= 'T'.self::formattime($timeStart, $formatT, false);
 			}
 			$output .= '<meta itemprop="startDate" content="'.$content.'" />';
@@ -826,7 +826,7 @@ class JEMOutput {
 			if(JEMHelper::isValidDate($dateEnd)) {
 				$content = self::formatdate($dateEnd, $formatD);
 
-				if($settings->get('global_show_timedetails') && $timeEnd) {
+				if($settings->get('global_show_timedetails','1') && $timeEnd) {
 					$content .= 'T'.self::formattime($timeEnd, $formatT, false);
 				}
 				$output .= '<meta itemprop="endDate" content="'.$content.'" />';
@@ -834,7 +834,7 @@ class JEMOutput {
 		} else {
 			// Open date
 
-			if($settings->get('global_show_timedetails')) {
+			if($settings->get('global_show_timedetails','1')) {
 				if($timeStart) {
 					$content = self::formattime($timeStart, $formatT, false);
 					$output .= '<meta itemprop="startDate" content="'.$content.'" />';
