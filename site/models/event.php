@@ -103,7 +103,7 @@ class JEMModelEvent extends JModelItem
 				$query->join('LEFT', '#__jem_categories AS c on c.id = rel.catid');
 				
 				// Join on user table.
-				$name = $settings->get('regname') ? 'u.name' : 'u.username';
+				$name = $settings->get('global_regname','1') ? 'u.name' : 'u.username';
 				$query->select($name.' AS author');
 				$query->join('LEFT', '#__users AS u on u.id = a.created_by');
 				
@@ -379,7 +379,7 @@ class JEMModelEvent extends JModelItem
 			$join = ' LEFT JOIN #__comprofiler as c ON c.user_id = r.uid';
 		}
 	
-		$name = $settings->get('regname') ? 'u.name' : 'u.username';
+		$name = $settings->get('global_regname','1') ? 'u.name' : 'u.username';
 	
 		// Get registered users
 		$query = 'SELECT ' 

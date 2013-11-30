@@ -816,6 +816,16 @@
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
+			<field name="global_regname" type="list"
+				label="COM_JEM_TYPE_REG_NAME"
+				description="COM_JEM_TYPE_REG_NAME_DESC"
+				class="inputbox"
+				default="1"
+				required="false"
+			>
+				<option value="0">COM_JEM_USERNAME</option>
+				<option value="1">COM_JEM_NAME</option>
+			</field>
 		</fieldset>
 
 		<fieldset name="evevents"
@@ -909,16 +919,6 @@
 		<fieldset name="evregistration"
 			label="COM_JEM_REGISTRATION"
 		>
-			<field name="regname" type="list"
-				label="COM_JEM_TYPE_REG_NAME"
-				description="COM_JEM_TYPE_REG_NAME_DESC"
-				class="inputbox"
-				default="0"
-				required="false"
-			>
-				<option value="0">COM_JEM_USERNAME</option>
-				<option value="1">COM_JEM_NAME</option>
-			</field>
 			<field name="comunsolution" type="list"
 				label="COM_JEM_COM_SOL"
 				description="COM_JEM_COM_SOL_DESC"

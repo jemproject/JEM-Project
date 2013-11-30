@@ -15,10 +15,7 @@ $group = 'globalattribs';
 	<fieldset class="adminform">
 		<legend><?php echo JText::_('COM_JEM_REGISTRATION'); ?></legend>
 		<ul class="adminformlist">
-			<li><?php echo $this->form->getLabel('regname',$group); ?> <?php echo $this->form->getInput('regname',$group); ?></li>
-
 			<li><?php echo $this->form->getLabel('comunsolution',$group); ?> <?php echo $this->form->getInput('comunsolution',$group); ?></li>
-
 			<li id="comm1" style="display:none"><?php echo $this->form->getLabel('comunoption',$group); ?> <?php echo $this->form->getInput('comunoption',$group); ?></li>
 		</ul>
 	</fieldset>
