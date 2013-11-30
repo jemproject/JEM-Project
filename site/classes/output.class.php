@@ -798,7 +798,7 @@ class JEMOutput {
 	 */
 	static function formatShortDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "")
 	{
-		$settings = JEMHelper::globalattribs();
+		$settings = JEMHelper::config();
 
 		// Use format saved in settings if specified or format in language file otherwise
 		if(isset($settings->formatShortDate) && $settings->formatShortDate) {
