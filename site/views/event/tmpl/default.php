@@ -254,7 +254,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			<?php endif; ?>
 			</dd>
 		</dl>
-		<?php if ($this->jemsettings->showdetailsadress == 1) : ?>
+		<?php if ($params->get('show_detailsadress','1')) : ?>
 			<dl class="location floattext" itemprop="address" itemscope
 			itemtype="http://schema.org/PostalAddress">
 				<?php if ($this->item->street) : ?>
@@ -310,12 +310,12 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		}
 		?>
 				
-				<?php if ($this->jemsettings->showmapserv == 1) : ?>
-					<?php echo JEMOutput::mapicon($this->item); ?>
+				<?php if ($params->get('event_show_mapserv')== 1) : ?>
+					<?php echo JEMOutput::mapicon($this->item,'event'); ?>
 				<?php endif; ?>
 			</dl>
-			<?php if ($this->jemsettings->showmapserv == 2) : ?>
-				<?php echo JEMOutput::mapicon($this->item); ?>
+			<?php if ($params->get('event_show_mapserv')== 2) : ?>
+				<?php echo JEMOutput::mapicon($this->item,'event'); ?>
 			<?php endif; ?>
 		<?php endif; ?>
 

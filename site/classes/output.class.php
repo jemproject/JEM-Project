@@ -530,21 +530,32 @@ class JEMOutput {
 	 *
 	 * @param obj $data
 	 */
-	static function mapicon($data)
+	static function mapicon($data,$view=false)
 	{
-		$jemsettings = JEMHelper::config();
+		$settings = JEMHelper::globalattribs();
 
+		//stop if disabled
+		if (!$data->map) {
+			return;
+		}
+		
+		if ($view == 'event')
+		{
+			$tld		= 'event_tld';
+			$lg			= 'event_lg';
+			$mapserv	= 'event_show_mapserv';
+		} else {
+			$tld		= 'global_tld';
+			$lg			= 'global_lg';
+			$mapserv	= 'global_show_mapserv';
+		}
+		
 		//Link to map
 		$mapimage = JHtml::_('image', 'com_jem/map_icon.png', JText::_('COM_JEM_MAP'), NULL, true);
 
 		//set var
 		$output = null;
 		$attributes = null;
-
-		//stop if disabled
-		if (!$data->map) {
-			return $output;
-		}
 
 		$data->country = JString::strtoupper($data->country);
 
@@ -555,14 +566,14 @@ class JEMOutput {
 			$data->longitude = null;
 		}
 
-		$url1 = 'http://maps.google.'.$jemsettings->tld.'/maps?hl='.$jemsettings->lg.'&q='.str_replace(" ", "+", $data->street).', '.$data->postalCode.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.mb_ereg_replace("&", "+", $data->venue).')&ie=UTF8&z=15&iwloc=B&output=embed" ';
+		$url1 = 'http://maps.google.'.$settings->get($tld).'/maps?hl='.$settings->get($lg).'&q='.str_replace(" ", "+", $data->street).', '.$data->postalCode.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.mb_ereg_replace("&", "+", $data->venue).')&ie=UTF8&z=15&iwloc=B&output=embed" ';
 
 		//google map link or include
-		switch ($jemsettings->showmapserv)
+		switch ($settings->get($mapserv))
 		{
 			case 1:
 				// link
-				$url2 = 'http://maps.google.'.$jemsettings->tld.'/maps?hl='.$jemsettings->lg.'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
+				$url2 = 'http://maps.google.'.$settings->get($tld).'/maps?hl='.$settings->get($lg).'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
 
 				$url = ($data->latitude && $data->longitude) ? $url2 : $url1;
 

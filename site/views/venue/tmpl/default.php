@@ -34,45 +34,45 @@ defined('_JEXEC') or die;
 
 	<?php if (($this->jemsettings->showdetlinkvenue == 1) && (!empty($this->venue->url))) : ?>
 		<dl class="location">
-			<dt class="venue"><?php echo JText::_( 'COM_JEM_WEBSITE' ).':'; ?></dt>
+			<dt class="venue"><?php echo JText::_('COM_JEM_WEBSITE').':'; ?></dt>
 			<dd class="venue">
 				<a href="<?php echo $this->venue->url; ?>" target="_blank"><?php echo $this->venue->urlclean; ?></a>
 			</dd>
 		</dl>
 	<?php endif; ?>
 
-	<?php if ( $this->jemsettings->showdetailsadress == 1 ) : ?>
+	<?php if ($this->settings->get('global_show_detailsadress') == 1) : ?>
 		<dl class="location floattext" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
 			<?php if ( $this->venue->street ) : ?>
-			<dt class="venue_street"><?php echo JText::_( 'COM_JEM_STREET' ).':'; ?></dt>
+			<dt class="venue_street"><?php echo JText::_('COM_JEM_STREET').':'; ?></dt>
 			<dd class="venue_street" itemprop="streetAddress">
 				<?php echo $this->escape($this->venue->street); ?>
 			</dd>
 			<?php endif; ?>
 
 			<?php if ( $this->venue->postalCode ) : ?>
-			<dt class="venue_postalCode"><?php echo JText::_( 'COM_JEM_ZIP' ).':'; ?></dt>
+			<dt class="venue_postalCode"><?php echo JText::_('COM_JEM_ZIP').':'; ?></dt>
 			<dd class="venue_postalCode" itemprop="postalCode">
 				<?php echo $this->escape($this->venue->postalCode); ?>
 			</dd>
 			<?php endif; ?>
 
 			<?php if ( $this->venue->city ) : ?>
-			<dt class="venue_city"><?php echo JText::_( 'COM_JEM_CITY' ).':'; ?></dt>
+			<dt class="venue_city"><?php echo JText::_('COM_JEM_CITY').':'; ?></dt>
 			<dd class="venue_city" itemprop="addressLocality">
 				<?php echo $this->escape($this->venue->city); ?>
 			</dd>
 			<?php endif; ?>
 
 			<?php if ( $this->venue->state ) : ?>
-			<dt class="venue_state"><?php echo JText::_( 'COM_JEM_STATE' ).':'; ?></dt>
+			<dt class="venue_state"><?php echo JText::_('COM_JEM_STATE').':'; ?></dt>
 			<dd class="venue_state" itemprop="addressRegion">
 				<?php echo $this->escape($this->venue->state); ?>
 			</dd>
 			<?php endif; ?>
 
 			<?php if ( $this->venue->country ) : ?>
-			<dt class="venue_country"><?php echo JText::_( 'COM_JEM_COUNTRY' ).':'; ?></dt>
+			<dt class="venue_country"><?php echo JText::_('COM_JEM_COUNTRY').':'; ?></dt>
 			<dd class="venue_country">
 				<?php echo $this->venue->countryimg ? $this->venue->countryimg : $this->venue->country; ?>
 				<meta itemprop="addressCountry" content="<?php echo $this->venue->country; ?>" />
@@ -95,11 +95,11 @@ defined('_JEXEC') or die;
 		}
 		?>
 
-			<?php if ($this->jemsettings->showmapserv == 1) : ?>
+			<?php if ($this->settings->get('global_showmapser')== 1) : ?>
 				<?php echo JEMOutput::mapicon($this->venue); ?>
 			<?php endif; ?>
 		</dl>
-		<?php if ($this->jemsettings->showmapserv == 2) : ?>
+		<?php if ($this->settings->get('global_show_mapserv')== 2) : ?>
 			<?php echo JEMOutput::mapicon($this->venue); ?>
 		<?php endif; ?>
 	<?php endif; ?>
@@ -107,7 +107,7 @@ defined('_JEXEC') or die;
 	<?php if ($this->settings->get('global_show_locdescription','1') && $this->venuedescription != ''
  		&& $this->venuedescription != '<br />') : ?>
 
-		<h2 class="description"><?php echo JText::_( 'COM_JEM_VENUE_DESCRIPTION' ); ?></h2>
+		<h2 class="description"><?php echo JText::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
 		<div class="description no_space floattext" itemprop="description">
 			<?php echo $this->venuedescription; ?>
 		</div>
@@ -134,9 +134,7 @@ defined('_JEXEC') or die;
 	<div class="pagination">
 		<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
-
 	<?php echo JEMOutput::icalbutton($this->venue->id, 'venue'); ?>
-
 	<!--copyright-->
 	<div class="copyright">
 		<?php echo JEMOutput::footer( ); ?>

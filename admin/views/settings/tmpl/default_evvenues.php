@@ -16,11 +16,11 @@ $group = 'globalattribs';
 		<legend><?php echo JText::_('COM_JEM_VENUES'); ?></legend>
 		<ul class="adminformlist">
 			<li><?php echo $this->form->getLabel('event_show_locdescription',$group); ?> <?php echo $this->form->getInput('event_show_locdescription',$group); ?></li>
-			<li><?php echo $this->form->getLabel('showdetailsadress',$group); ?> <?php echo $this->form->getInput('showdetailsadress',$group); ?></li>
-			<li><?php echo $this->form->getLabel('showdetlinkvenue',$group); ?> <?php echo $this->form->getInput('showdetlinkvenue',$group); ?></li>
-			<li><?php echo $this->form->getLabel('showmapserv',$group); ?> <?php echo $this->form->getInput('showmapserv',$group); ?></li>
-			<li id="map1" style="display:none"><?php echo $this->form->getLabel('tld',$group); ?> <?php echo $this->form->getInput('tld',$group); ?></li>
-			<li id="map2" style="display:none"><?php echo $this->form->getLabel('lg',$group); ?> <?php echo $this->form->getInput('lg',$group); ?></li>
+			<li><?php echo $this->form->getLabel('event_show_detailsadress',$group); ?> <?php echo $this->form->getInput('event_show_detailsadress',$group); ?></li>
+			<li><?php echo $this->form->getLabel('event_show_detlinkvenue',$group); ?> <?php echo $this->form->getInput('event_show_detlinkvenue',$group); ?></li>
+			<li><?php echo $this->form->getLabel('event_show_mapserv',$group); ?> <?php echo $this->form->getInput('event_show_mapserv',$group); ?></li>
+			<li id="eventmap1" style="display:none"><?php echo $this->form->getLabel('event_tld',$group); ?> <?php echo $this->form->getInput('event_tld',$group); ?></li>
+			<li id="eventmap2" style="display:none"><?php echo $this->form->getLabel('event_lg',$group); ?> <?php echo $this->form->getInput('event_lg',$group); ?></li>
 		</ul>
 	</fieldset>
 </div>

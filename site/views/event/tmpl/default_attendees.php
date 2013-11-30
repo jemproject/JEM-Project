@@ -5,6 +5,8 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * 
+ * @todo add check if CB does exists and if so perform action
  */
 
 defined('_JEXEC') or die;
@@ -44,9 +46,9 @@ foreach ($this->registers as $register) :
 		echo '<li>'.$text.'</li>';
 	endif;
 	//if CB
-	if ($this->settings->get('comunsolution')==1) :
+	if ($this->settings->get('event_comunsolution','0')==1) :
 	
-		if ($this->settings->get('comunoption')==1) :
+		if ($this->settings->get('event_comunoption','0')==1) :
 			//User has avatar
 			if(!empty($register->avatar)) :
 				$avatarname = $register->avatar;
@@ -68,7 +70,7 @@ foreach ($this->registers as $register) :
 		endif;
 
 		//only show the username with link to profile
-		if ($this->settings->get('comunoption')==0) :
+		if ($this->settings->get('event_comunoption','0')==0) :
 			echo "<li><span class='username'><a href='".JRoute::_( 'index.php?option=com_comprofiler&amp;task=userProfile&amp;user='.$register->uid )."'>".$register->name." </a></span></li>";
 		endif;
 
@@ -76,7 +78,7 @@ foreach ($this->registers as $register) :
 	endif;
 
 	//no communitycomponent is set so only show the username
-	if ($this->settings->get('comunsolution')==0) :
+	if ($this->settings->get('event_comunsolution','0')==0) :
 		echo "<li><span class='username'>".$register->name."</span></li>";
 	endif;
 

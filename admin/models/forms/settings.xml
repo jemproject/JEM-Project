@@ -806,16 +806,6 @@
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
-			<field name="global_show_locdescription" type="radio"
-				label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
-				description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
-				class="inputbox"
-				default="1"
-				required="false"
-			>
-				<option value="0">JHIDE</option>
-				<option value="1">JSHOW</option>
-			</field>
 			<field name="global_regname" type="list"
 				label="COM_JEM_TYPE_REG_NAME"
 				description="COM_JEM_TYPE_REG_NAME_DESC"
@@ -827,7 +817,70 @@
 				<option value="1">COM_JEM_NAME</option>
 			</field>
 		</fieldset>
-
+		
+		<fieldset name="venues"
+			label="COM_JEM_VENUES"
+		>
+			<field name="global_show_locdescription" type="radio"
+				label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
+				description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
+				class="inputbox"
+				default="1"
+				required="false"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			<field name="global_show_detailsadress" type="radio"
+				label="COM_JEM_DISPLAY_ADDRESS"
+				description="COM_JEM_DISPLAY_ADDRESS_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			<field name="global_show_detlinkvenue" type="list"
+				label="COM_JEM_DISPLAY_ADDRESS"
+				description="COM_JEM_DISPLAY_ADDRESS_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">COM_JEM_NO_LINK</option>
+				<option value="1">COM_JEM_LINK_TO_URL</option>
+				<option value="2">COM_JEM_LINK_TO_VENUEVIEW</option>
+			</field>
+			<field name="global_show_mapserv" type="list"
+				label="COM_JEM_DISPLAY_LINK_TO_MAP"
+				description="COM_JEM_DISPLAY_LINK_TO_MAP_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">COM_JEM_NO_MAP_SERVICE</option>
+				<option value="1">COM_JEM_GOOGLE_MAP_LINK</option>
+				<option value="2">COM_JEM_GOOGLE_MAP_DISP</option>
+			</field>
+			<field name="global_tld" type="text"
+				label="COM_JEM_GOOGLE_MAP_TLD"
+				description="COM_JEM_GOOGLE_MAP_TLD_DESC"
+				class="inputbox"
+				size="10"
+				maxlength="10"
+				required="false"
+			/>
+			<field name="global_lg" type="text"
+				label="COM_JEM_GOOGLE_MAP_LG"
+				description="COM_JEM_GOOGLE_MAP_LG_DESC"
+				class="inputbox"
+				size="10"
+				maxlength="10"
+				required="false"
+			/>
+		</fieldset>
+		
 		<fieldset name="evevents"
 			label="COM_JEM_EVENTS"
 		>
@@ -866,17 +919,17 @@
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
-			<field name="showdetailsadress" type="radio"
+			<field name="event_show_detailsadress" type="radio"
 				label="COM_JEM_DISPLAY_ADDRESS"
 				description="COM_JEM_DISPLAY_ADDRESS_DESC"
 				class="inputbox"
-				default="0"
+				default="1"
 				required="false"
 			>
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
-			<field name="showdetlinkvenue" type="list"
+			<field name="event_show_detlinkvenue" type="list"
 				label="COM_JEM_DISPLAY_ADDRESS"
 				description="COM_JEM_DISPLAY_ADDRESS_DESC"
 				class="inputbox"
@@ -887,7 +940,7 @@
 				<option value="1">COM_JEM_LINK_TO_URL</option>
 				<option value="2">COM_JEM_LINK_TO_VENUEVIEW</option>
 			</field>
-			<field name="showmapserv" type="list"
+			<field name="event_show_mapserv" type="list"
 				label="COM_JEM_DISPLAY_LINK_TO_MAP"
 				description="COM_JEM_DISPLAY_LINK_TO_MAP_DESC"
 				class="inputbox"
@@ -898,7 +951,7 @@
 				<option value="1">COM_JEM_GOOGLE_MAP_LINK</option>
 				<option value="2">COM_JEM_GOOGLE_MAP_DISP</option>
 			</field>
-			<field name="tld" type="text"
+			<field name="event_tld" type="text"
 				label="COM_JEM_GOOGLE_MAP_TLD"
 				description="COM_JEM_GOOGLE_MAP_TLD_DESC"
 				class="inputbox"
@@ -906,7 +959,7 @@
 				maxlength="10"
 				required="false"
 			/>
-			<field name="lg" type="text"
+			<field name="event_lg" type="text"
 				label="COM_JEM_GOOGLE_MAP_LG"
 				description="COM_JEM_GOOGLE_MAP_LG_DESC"
 				class="inputbox"

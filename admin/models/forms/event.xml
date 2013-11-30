@@ -431,7 +431,7 @@
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
-			<field name="event_showdetailsadress" type="radio"
+			<field name="event_show_detailsadress" type="radio"
 				label="COM_JEM_DISPLAY_ADDRESS"
 				description="COM_JEM_DISPLAY_ADDRESS_DESC"
 				class="inputbox"
@@ -441,7 +441,7 @@
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
-			<field name="event_showdetlinkvenue" type="list"
+			<field name="event_show_detlinkvenue" type="list"
 				label="COM_JEM_DISPLAY_ADDRESS"
 				description="COM_JEM_DISPLAY_ADDRESS_DESC"
 				class="inputbox"
@@ -452,7 +452,7 @@
 				<option value="1">COM_JEM_LINK_TO_URL</option>
 				<option value="2">COM_JEM_LINK_TO_VENUEVIEW</option>
 			</field>
-			<field name="event_showmapserv" type="list"
+			<field name="event_show_mapserv" type="list"
 				label="COM_JEM_DISPLAY_LINK_TO_MAP"
 				description="COM_JEM_DISPLAY_LINK_TO_MAP_DESC"
 				class="inputbox"

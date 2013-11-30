@@ -74,17 +74,28 @@ window.addEvent('domready', function(){
 		lbon();
 	}
 
-	$("jform_globalattribs_showmapserv").addEvent('change', testmap);
+	$("jform_globalattribs_event_show_mapserv").addEvent('change', testmap);
 
-	var mapserv = $("jform_globalattribs_showmapserv");
+	var mapserv = $("jform_globalattribs_event_show_mapserv");
 	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
 
 	if (nrmapserv == 1 || nrmapserv == 2) {
-		mapon();
+		eventmapon();
 	} else {
-		mapoff();
+		eventmapoff();
 	}
 
+	$("jform_globalattribs_global_show_mapserv").addEvent('change', testmap);
+
+	var mapserv = $("jform_globalattribs_global_show_mapserv");
+	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
+
+	if (nrmapserv == 1 || nrmapserv == 2) {
+		globalmapon();
+	} else {
+		globalmapoff();
+	}
+	
 	$("jform_oldevent").addEvent('change', testevhandler);
 
 	var evhandler = $("jform_oldevent");
@@ -122,15 +133,23 @@ function testcomm()
 
 function testmap()
 {
-	var mapserv = $("jform_globalattribs_showmapserv");
+	var mapserv = $("jform_globalattribs_event_show_mapserv");
 	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
 
 	if (nrmapserv == 1 || nrmapserv == 2) {
-		mapon();
+		eventmapon();
 	} else {
-		mapoff();
+		eventmapoff();
 	}
 
+	var mapserv2 = $("jform_globalattribs_global_show_mapserv");
+	var nrmapserv2 = mapserv2.options[mapserv2.selectedIndex].value;
+
+	if (nrmapserv2 == 1 || nrmapserv2 == 2) {
+		globalmapon();
+	} else {
+		globalmapoff();
+	}
 }
 
 function testevhandler()
@@ -243,17 +262,30 @@ function lboff()
 	document.getElementById('lb1').style.display = 'none';
 }
 
-function mapon()
+function eventmapon()
 {
-	document.getElementById('map1').style.display = '';
-	document.getElementById('map2').style.display = '';
+	document.getElementById('eventmap1').style.display = '';
+	document.getElementById('eventmap2').style.display = '';
 }
 
-function mapoff()
+function eventmapoff()
 {
-	document.getElementById('map1').style.display = 'none';
-	document.getElementById('map2').style.display = 'none';
+	document.getElementById('eventmap1').style.display = 'none';
+	document.getElementById('eventmap2').style.display = 'none';
 }
+
+function globalmapon()
+{
+	document.getElementById('globalmap1').style.display = '';
+	document.getElementById('globalmap2').style.display = '';
+}
+
+function globalmapoff()
+{
+	document.getElementById('globalmap1').style.display = 'none';
+	document.getElementById('globalmap2').style.display = 'none';
+}
+
 
 function evhandleron()
 {
