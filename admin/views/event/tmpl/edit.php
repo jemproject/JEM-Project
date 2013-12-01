@@ -5,6 +5,8 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * 
+ * @todo: move js to a file
  */
 
 defined('_JEXEC') or die;
@@ -34,10 +36,34 @@ $params = $params->toArray();
 
 <script type="text/javascript">
 	window.addEvent('domready', function(){
-
 	setbgcats();
 	seteventcats();
 	checkmaxplaces();
+
+
+	$("jform_attribs_event_show_mapserv").addEvent('change', testmap);
+
+	var mapserv = $("jform_attribs_event_show_mapserv");
+	var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
+
+	if (nrmapserv == 1 || nrmapserv == 2) {
+		eventmapon();
+	} else {
+		eventmapoff();
+	}
+
+
+	$('jform_attribs_event_comunsolution').addEvent('change', testcomm);
+
+	var commhandler = $("jform_alattribs_event_comunsolution");
+	var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
+
+	if (nrcommhandler == 1) {
+		common();
+	} else {
+		commoff();
+	}
+	
 	});
 
 	function setbgcats()
@@ -88,6 +114,52 @@ $params = $params->toArray();
 		{
 			z2.removeClass('invalid');
 		}
+	}
+
+	function testcomm()
+	{
+		var commhandler = $("jform_attribs_event_comunsolution");
+		var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
+
+		if (nrcommhandler == 1) {
+			common();
+		} else {
+			commoff();
+		}
+	}
+
+	function testmap()
+	{
+		var mapserv = $("jform_attribs_event_show_mapserv");
+		var nrmapserv = mapserv.options[mapserv.selectedIndex].value;
+
+		if (nrmapserv == 1 || nrmapserv == 2) {
+			eventmapon();
+		} else {
+			eventmapoff();
+		}
+	}	
+
+	function eventmapon()
+	{
+		document.getElementById('eventmap1').style.display = '';
+		document.getElementById('eventmap2').style.display = '';
+	}
+
+	function eventmapoff()
+	{
+		document.getElementById('eventmap1').style.display = 'none';
+		document.getElementById('eventmap2').style.display = 'none';
+	}
+
+	function common()
+	{
+		document.getElementById('comm1').style.display = '';
+	}
+
+	function commoff()
+	{
+		document.getElementById('comm1').style.display = 'none';
 	}
 </script>
 
