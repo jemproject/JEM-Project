@@ -20,9 +20,10 @@ class modjemcalqhelper
 {
 	static function getdays ($greq_year, $greq_month, &$params)
 	{
-		$db		= JFactory::getDBO();
-		$user	= JFactory::getUser();
-		$gid 	= JEMHelper::getGID($user);
+		$db			= JFactory::getDBO();
+		$user		= JFactory::getUser();
+		$gid 		= JEMHelper::getGID($user);
+		$settings 	= JEMHelper::globalattribs();
 
 		$catid 				= trim($params->get('catid'));
 		$venid 				= trim($params->get('venid'));
@@ -32,6 +33,7 @@ class modjemcalqhelper
 		$ArchivedEvents		= $params->get('ArchivedEvents', '0');
 		$CurrentEvents		= $params->get('CurrentEvents', '1');
 		$FixItemID			= $params->get('FixItemID', '0');
+		$defaultItemid	 	= $settings->get('default_Itemid','');
 
 		//Get eventdates
 		if ($catid) {
@@ -153,7 +155,9 @@ class modjemcalqhelper
 					} else {
 						// @todo fix the getroute link
 						if ($FixItemID == 0) {
-							$link = JEMHelperRoute::getRoute($tdate, 'day');
+							$evlink = 'index.php?option=com_jem&view=day&id='. $tdate.'&Itemid='.$defaultItemid;
+							$link = JRoute::_($evlink);
+							//$link = JEMHelperRoute::getRoute($tdate, 'day');
 						} else {
 							//Create the link - copied from Jroute
 							$evlink = 'index.php?option=com_jem&view=day&id='. $tdate.'&Itemid='.$FixItemID;

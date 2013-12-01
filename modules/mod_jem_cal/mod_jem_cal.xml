@@ -203,7 +203,6 @@
 					description="MOD_JEM_CAL_VENID_DESC"
 				/>
 				<field name="FixItemID" type="text"
-					default=""
 					label="MOD_JEM_CAL_FIXEDITEMID"
 					description="MOD_JEM_CAL_FIXEDITEMID_DESC"
 				/>
