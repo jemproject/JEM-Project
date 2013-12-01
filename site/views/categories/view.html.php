@@ -23,8 +23,9 @@ class JEMViewCategories extends JViewLegacy
 	{
 		$app = JFactory::getApplication();
 
-		$document = JFactory::getDocument();
-		$jemsettings = JEMHelper::config();
+		$document 		= JFactory::getDocument();
+		$jemsettings 	= JEMHelper::config();
+		$user			= JFactory::getUser();
 
 		$rows = $this->get('Data');
 		$pagination = $this->get('Pagination');

@@ -33,6 +33,7 @@ class JEMViewDay extends JEMView
 		$settings 		= JEMHelper::globalattribs();
 		$menu 			= $app->getMenu();
 		$item 			= $menu->getActive();
+		$user			= JFactory::getUser();
 		$params 		= $app->getParams();
 		$db 			= JFactory::getDBO();
 		$uri 			= JFactory::getURI();

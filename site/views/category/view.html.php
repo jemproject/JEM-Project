@@ -108,6 +108,7 @@ class JEMViewCategory extends JEMView
 			$jemsettings 	= JEMHelper::config();
 			$settings 		= JEMHelper::globalattribs();
 			$db  			= JFactory::getDBO();
+			$user			= JFactory::getUser();
 
 			JHtml::_('behavior.tooltip');
 

@@ -38,6 +38,7 @@ class JEMViewSearch extends JEMView
 		$params 	= $app->getParams();
 		$uri 		= JFactory::getURI();
 		$pathway 	= $app->getPathWay();
+		$user		= JFactory::getUser();
 
 		// add javascript
 		JHtml::_('behavior.framework');

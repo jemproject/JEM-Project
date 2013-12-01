@@ -29,6 +29,7 @@ class JEMViewVenues extends JViewLegacy
 		$document		= JFactory::getDocument();
 		$jemsettings	= JEMHelper::config();
 		$settings 		= JEMHelper::globalattribs();
+		$user			= JFactory::getUser();
 
 		//get menu information
 		$menu		= $app->getMenu();

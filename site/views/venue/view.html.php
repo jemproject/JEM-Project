@@ -109,6 +109,7 @@ class JEMViewVenue extends JEMView {
 			$params 		= $app->getParams('com_jem');
 			$uri 			= JFactory::getURI();
 			$task 			= JRequest::getWord('task');
+			$user			= JFactory::getUser();
 
 			// Load css
 			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -54,7 +54,7 @@ defined('_JEXEC') or die;
 	<tbody>
 	<?php $this->rows = $this->getRows(); ?>
 	<?php if (!$this->rows) : ?>
-		<tr class="no_events"><td colspan="20"><?php echo JText::_( 'COM_JEM_NO_EVENTS' ); ?></td></tr>
+		<tr class="no_events"><td colspan="20"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
 	<?php else : ?>
 		<?php foreach ($this->rows as $row) : ?>
 			<tr class="sectiontableentry<?php echo ($row->odd +1 ) . $this->params->get( 'pageclass_sfx' ); ?>"
