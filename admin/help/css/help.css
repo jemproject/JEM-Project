@@ -66,15 +66,15 @@ pre
 {
 	border-left-width: 6px;
 	border-left-style: solid;
-	border-left-color: #FFFFCF;
+	border-left-color: #ffa909;
 	border-right-width: 1px;
 	border-right-style: solid;
 	border-right-color: #e7e7e7;
 	border-top-width: 1px;
 	border-top-style: solid;
-	border-top-color: #e7e7e7;
+	border-top-color: #ffa909;
 	padding-right: 3px;
-	padding-left: 3px;
+	padding-left: 36px;
 	padding-bottom: 3px;
 	padding-top: 3px;
 	font-weight: bold;
@@ -84,10 +84,7 @@ pre
 	margin-bottom: 0px;
 	margin-left: auto;
 	color: #000000;
-	background-position: right;
-	background-image: url(../images/icon-16-hint.png);
-	background-repeat: no-repeat;
-	background-color: #FFFFDF;
+	background-color: #ffa909;
 	width: 80%;
 }
 
@@ -95,7 +92,7 @@ pre
 {
 	border-left-width: 6px;
 	border-left-style: solid;
-	border-left-color: #FFFFCF;
+	border-left-color: #ffa909;
 	border-right-width: 1px;
 	border-right-style: solid;
 	border-right-color: #e7e7e7;
@@ -103,14 +100,17 @@ pre
 	border-bottom-style: solid;
 	border-bottom-color: #e7e7e7;
 	padding-right: 3px;
-	padding-left: 3px;
-	padding-bottom: 3px;
+	padding-left: 36px;
+	padding-bottom: 20px;
 	padding-top: 3px;
 	margin-top: 0px;
 	margin-right: auto;
 	margin-bottom: 8px;
 	margin-left: auto;
 	color: #465584;
+	background-position: left;
+	background-image: url(../images/icon-32-hint.png);
+	background-repeat: no-repeat;
 	background-color: #ffffff;
 	font-size: 12px;
 	width: 80%;
@@ -126,9 +126,9 @@ pre
 	border-right-color: #e7e7e7;
 	border-top-width: 1px;
 	border-top-style: solid;
-	border-top-color: #e7e7e7;
+	border-top-color: #FE8282;
 	padding-right: 3px;
-	padding-left: 3px;
+	padding-left: 36px;
 	padding-bottom: 3px;
 	padding-top: 3px;
 	font-weight: bold;
@@ -138,9 +138,6 @@ pre
 	margin-bottom: 0px;
 	margin-left: auto;
 	color: #000000;
-	background-position: right;
-	background-image: url(../images/icon-16-attention.png);
-	background-repeat: no-repeat;
 	background-color: #FE8C8C;
 	width: 80%;
 }
@@ -157,14 +154,17 @@ pre
 	border-bottom-style: solid;
 	border-bottom-color: #e7e7e7;
 	padding-right: 3px;
-	padding-left: 3px;
-	padding-bottom: 3px;
+	padding-left: 36px;
+	padding-bottom: 20px;
 	padding-top: 3px;
 	margin-top: 0px;
 	margin-right: auto;
 	margin-bottom: 8px;
 	margin-left: auto;
 	color: #465584;
+	background-position: left;
+	background-image: url(../images/icon-32-attention.png);
+	background-repeat: no-repeat;
 	background-color: #ffffff;
 	font-size: 12px;
 	width: 80%;
