@@ -73,13 +73,13 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		</dd>
 		<?php if ($this->item->locid != 0) : ?>
 			<dt class="where"><?php echo JText::_('COM_JEM_WHERE').':'; ?></dt>
-		<dd class="where">
-				<?php if (($this->jemsettings->showdetlinkvenue == 1) && (!empty($this->item->url))) : ?>
+		<dd class="where">	
+				<?php if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) : ?>
 					<a target="_blank" href="<?php echo $this->item->url; ?>"><?php echo $this->escape($this->item->venue); ?></a> -
-				<?php elseif ($this->jemsettings->showdetlinkvenue == 2) : ?>
+				<?php elseif ($params->get('event_show_detlinkvenue') == 2) : ?>
 					<a
 				href="<?php echo JRoute::_(JEMHelperRoute::getVenueRoute($this->item->venueslug)); ?>"><?php echo $this->item->venue; ?></a> -
-				<?php elseif ($this->jemsettings->showdetlinkvenue == 0) :
+				<?php elseif ($params->get('event_show_detlinkvenue') == 0) :
 					echo $this->escape($this->item->venue).' - ';
 				endif;
 

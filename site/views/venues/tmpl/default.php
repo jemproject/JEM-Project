@@ -38,7 +38,7 @@ defined('_JEXEC') or die;
 
 		<!--  -->
 		<dl class="location">
-			<?php if (($this->jemsettings->showdetlinkvenue == 1) && (!empty($row->url))) : ?>
+			<?php if (($this->settings->get('global_show_detlinkvenue') == 1) && (!empty($row->url))) : ?>
 			<dt class="venue_website">
 				<?php echo JText::_('COM_JEM_WEBSITE').':'; ?>
 			</dt>

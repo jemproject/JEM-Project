@@ -32,7 +32,7 @@ defined('_JEXEC') or die;
 	</h2>
 	<?php echo JEMOutput::flyer( $this->venue, $this->limage, 'venue' ); ?>
 
-	<?php if (($this->jemsettings->showdetlinkvenue == 1) && (!empty($this->venue->url))) : ?>
+	<?php if (($this->settings->get('global_show_detlinkvenue') == 1) && (!empty($this->venue->url))) : ?>
 		<dl class="location">
 			<dt class="venue"><?php echo JText::_('COM_JEM_WEBSITE').':'; ?></dt>
 			<dd class="venue">
