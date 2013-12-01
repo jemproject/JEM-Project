@@ -262,9 +262,7 @@ class JEMModelEvent extends JModelAdmin
 		*/
 		$maintainer = JEMUser::ismaintainer('publish');
 		$autopubev = JEMUser::validate_user($jemsettings->evpubrec, $jemsettings->autopubl);
-		if ($autopubev || $owneredit || $maintainer || $user->authorise('core.edit','com_jem')) {
-			$table->published = 1 ;
-		} else {
+		if (!($autopubev || $owneredit || $maintainer || $user->authorise('core.edit','com_jem'))) {
 			$table->published = 0 ;
 		}
 		
