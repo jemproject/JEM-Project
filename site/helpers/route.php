@@ -71,6 +71,9 @@ abstract class JEMHelperRoute
 
 	public static function getCategoryRoute($id)
 	{
+		$settings 		= JEMHelper::globalattribs();
+		$defaultItemid 	= $settings->get('default_Itemid');
+		
 		$needles = array(
 			'category' => array((int) $id)
 		);
@@ -89,15 +92,23 @@ abstract class JEMHelperRoute
 		if ($item = self::_findItem($needles)) {
 			$link .= '&Itemid='.$item;
 		}
-		elseif ($item = self::_findItem()) {
-			$link .= '&Itemid='.$item;
+		elseif ($item = self::_findItem()) {	
+			if (isset($defaultItemid))
+				{
+					$link .= '&Itemid='.$defaultItemid;
+				} else {
+					$link .= '&Itemid='.$item;
+				}
 		}
-
+		
 		return $link;
 	}
 
 	public static function getEventRoute($id, $catid = null)
 	{
+		$settings 		= JEMHelper::globalattribs();
+		$defaultItemid 	= $settings->get('default_Itemid');
+		
 		$needles = array(
 			'event' => array((int) $id)
 		);
@@ -115,8 +126,13 @@ abstract class JEMHelperRoute
 		if ($item = self::_findItem($needles)) {
 			$link .= '&Itemid='.$item;
 		}
-		elseif ($item = self::_findItem()) {
-			$link .= '&Itemid='.$item;
+		elseif ($item = self::_findItem()) {	
+			if (isset($defaultItemid))
+				{
+					$link .= '&Itemid='.$defaultItemid;
+				} else {
+					$link .= '&Itemid='.$item;
+				}
 		}
 
 		return $link;
@@ -124,6 +140,9 @@ abstract class JEMHelperRoute
 
 	public static function getVenueRoute($id)
 	{
+		$settings 		= JEMHelper::globalattribs();
+		$defaultItemid 	= $settings->get('default_Itemid');
+		
 		$needles = array(
 			'venue' => array((int) $id)
 		);
@@ -137,15 +156,23 @@ abstract class JEMHelperRoute
 		if ($item = self::_findItem($needles)) {
 			$link .= '&Itemid='.$item;
 		}
-		elseif ($item = self::_findItem()) {
-			$link .= '&Itemid='.$item;
+		elseif ($item = self::_findItem()) {	
+			if (isset($defaultItemid))
+				{
+					$link .= '&Itemid='.$defaultItemid;
+				} else {
+					$link .= '&Itemid='.$item;
+				}
 		}
-
+		
 		return $link;
 	}
 
 	protected static function getRouteWithoutId($my)
 	{
+		$settings 		= JEMHelper::globalattribs();
+		$defaultItemid 	= $settings->get('default_Itemid');
+		
 		$needles = array();
 		$needles[$my] = array(self::ARTIFICALID);
 
@@ -155,10 +182,15 @@ abstract class JEMHelperRoute
 		if ($item = self::_findItem($needles)) {
 			$link .= '&Itemid='.$item;
 		}
-		elseif ($item = self::_findItem()) {
-			$link .= '&Itemid='.$item;
+		elseif ($item = self::_findItem()) {	
+			if (isset($defaultItemid))
+				{
+					$link .= '&Itemid='.$defaultItemid;
+				} else {
+					$link .= '&Itemid='.$item;
+				}
 		}
-
+		
 		return $link;
 	}
 
