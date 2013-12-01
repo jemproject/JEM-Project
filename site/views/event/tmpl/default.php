@@ -220,13 +220,8 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		</dl>
         <?php endif ?>
 	
-	
-
 	<?php $this->attachments = $this->item->attachments; ?>
 	<?php echo $this->loadTemplate('attachments'); ?>
-
-
-	
 	<!--  	Venue  -->
 	<?php if ($this->item->locid != 0) : ?>
 	<p></p>
@@ -254,7 +249,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			<?php endif; ?>
 			</dd>
 		</dl>
-		<?php if ($params->get('show_detailsadress','1')) : ?>
+		<?php if ($params->get('event_show_detailsadress','1')) : ?>
 			<dl class="location floattext" itemprop="address" itemscope
 			itemtype="http://schema.org/PostalAddress">
 				<?php if ($this->item->street) : ?>
