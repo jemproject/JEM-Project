@@ -90,6 +90,14 @@ class JEMTableEvent extends JTable
 			$this->alias = JApplication::stringURLSafe($this->title);
 		}
 
+		
+		if (trim($this->introtext) == '' && trim($this->fulltext) == '')
+		{
+			$this->setError(JText::_('COM_JEM_GLOBAL_MUST_HAVE_TEXT'));
+			return false;
+		}
+		
+		
 		return true;
 	}
 
