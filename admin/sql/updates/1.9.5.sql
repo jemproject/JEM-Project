@@ -22,14 +22,13 @@ ALTER TABLE `#__jem_events`
 	MODIFY `title` varchar(255),
 	MODIFY `alias` varchar(255),
 	ADD	`fulltext` mediumtext NOT NULL,
-	ADD	`introtext` mediumtext NOT NULL,
 	ADD	`created_by_alias` varchar(255) NOT NULL,
 	ADD	`access` int(10) NOT NULL DEFAULT '1',
 	ADD	`metadata` text NOT NULL,
 	ADD	`featured` tinyint(3) unsigned NOT NULL DEFAULT '0',
 	ADD	`attribs` varchar(5120) NOT NULL,
 	ADD `language` char(7) NOT NULL,
-	CHANGE `datdescription` `fulltext` mediumtext NOT NULL;
+	CHANGE `datdescription` `introtext` mediumtext NOT NULL;
 
 ALTER TABLE `#__jem_categories`
 	ADD `title` varchar(255) NOT NULL,
