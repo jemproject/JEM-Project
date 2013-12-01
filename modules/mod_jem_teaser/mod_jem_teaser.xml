@@ -133,6 +133,17 @@
 					label="MOD_JEM_TEASER_MODULE_CLASS_SUFFIX"
 					description="MOD_JEM_TEASER_MODULE_CLASS_SUFFIX_DESC"
 				/>
+				<field
+					name="readmore"
+					type="list"
+					default="0"
+					label="MOD_JEM_TEASER_FIELD_READMORE_LABEL"
+					description="MOD_JEM_TEASER_FIELD_READMORE_DESC">
+					<option
+						value="0">JHIDE</option>
+					<option
+						value="1">JSHOW</option>
+				</field>
 			</fieldset>
 
 			<fieldset name="advanced">

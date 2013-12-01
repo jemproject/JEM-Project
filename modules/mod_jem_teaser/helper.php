@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.3
+ * @version 1.9.5
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2013 joomlaeventmanager.net
@@ -19,7 +19,6 @@ defined('_JEXEC') or die;
  */
 class modJEMteaserHelper
 {
-
 	/**
 	 * Method to get the events
 	 *
@@ -31,7 +30,12 @@ class modJEMteaserHelper
 		$db = JFactory::getDBO();
 		$user = JFactory::getUser();
 		$gid = JEMHelper::getGID($user);
+		$settings 	= JEMHelper::globalattribs();
 
+		//$access = !JComponentHelper::getParams('com_jem')->get('show_noauth');
+		$access = !$settings->get('show_noauth','0');
+		$authorised = JAccess::getAuthorisedViewLevels(JFactory::getUser()->get('id'));
+		
 		//all upcoming events//all upcoming events
 		if ($params->get('type') == 1) {
 			$where = " WHERE (TIMEDIFF(CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00')),NOW()) > 1";
@@ -88,7 +92,7 @@ class modJEMteaserHelper
 		}
 
 		//perform select query
-		$query = 'SELECT a.title, a.dates, a.enddates, a.times, a.endtimes, a.fulltext, a.datimage, l.venue, l.state, l.locimage, l.city, l.locdescription, c.catname,'
+		$query = 'SELECT a.title, a.access, a.dates, a.enddates, a.times, a.endtimes, a.fulltext, a.introtext, a.datimage, l.venue, l.state, l.locimage, l.city, l.locdescription, c.catname,'
 				.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				.' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug,'
 				.' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as categoryslug'
@@ -139,6 +143,18 @@ class modJEMteaserHelper
 			}
 
 			$lists[$i] = new stdClass();
+			
+			if ($access || in_array($row->access, $authorised))
+			{
+				// We know that user has the privilege to view the article
+				$lists[$i]->link = JRoute::_(JEMHelperRoute::getEventRoute($row->slug));
+				$lists[$i]->linkText = JText::_('MOD_JEM_TEASER_READMORE');
+			}
+			else {
+				$lists[$i]->link = JRoute::_('index.php?option=com_users&view=login');
+				$lists[$i]->linkText = JText::_('MOD_JEM_TEASER_READMORE_REGISTER');
+			}
+			
 			$lists[$i]->title			= htmlspecialchars($row->title, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->venue			= htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->catname			= htmlspecialchars($row->catname, ENT_COMPAT, 'UTF-8');
@@ -148,13 +164,11 @@ class modJEMteaserHelper
 			$lists[$i]->venuelink		= $params->get('linkvenue', 1) ? JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : '';
 			$lists[$i]->categorylink	= $params->get('linkcategory', 1) ? JRoute::_(JEMHelperRoute::getCategoryRoute($row->categoryslug)) : '';
 			$lists[$i]->date			= modJEMteaserHelper::_format_date($row, $params);
-
 			$lists[$i]->day 			= modJEMteaserHelper::_format_day($row, $params);
 			$lists[$i]->dayname			= modJEMteaserHelper::_format_dayname($row);
 			$lists[$i]->daynum 			= modJEMteaserHelper::_format_daynum($row);
 			$lists[$i]->month 			= modJEMteaserHelper::_format_month($row);
 			$lists[$i]->year 			= modJEMteaserHelper::_format_year($row);
-
 			$lists[$i]->time 			= $row->times ? modJEMteaserHelper::_format_time($row->dates, $row->times, $params) : '' ;
 
 			if ($dimage == null) {
@@ -173,18 +187,18 @@ class modJEMteaserHelper
 				$lists[$i]->venueimageorig	= JURI::base(true).'/'.$limage['original'];
 			}
 
-			$length = $params->get( 'descriptionlength' );
+			$length = $params->get('descriptionlength');
 			$length2 = 1;
 			$etc = '...';
-			$etc2 = "Keine Beschreibung";
+			$etc2 = "No Description";
 
 			//strip html tags but leave <br /> tags
 			//entferne html tags bis auf Zeilenumbrüche
-			$description = strip_tags($row->fulltext, "<br>");
+			$description = strip_tags($row->introtext, "<br>");
 
 			//switch <br /> tags to space character
 			//wandle zeilenumbrüche in leerzeichen um
-			if ($params->get( 'br' ) == 0) {
+			if ($params->get('br') == 0) {
 			 $description = str_replace('<br />',' ',$description);
 			}
 			//
@@ -202,6 +216,8 @@ class modJEMteaserHelper
 			} else {
 				$lists[$i]->eventdescription	= $description;
 			}
+			
+			$lists[$i]->readmore = strlen(trim($row->fulltext));
 
 			$i++;
 		}
@@ -228,11 +244,11 @@ class modJEMteaserHelper
 
 		//check if today or tomorrow or yesterday and no current running multiday event
 		if($row->dates == $today && empty($enddates_stamp)) {
-			$result = JText::_( 'TODAY' );
+			$result = JText::_('TODAY');
 		} elseif($row->dates == $tomorrow) {
-			$result = JText::_( 'TOMORROW' );
+			$result = JText::_('TOMORROW');
 		} elseif($row->dates == $yesterday) {
-			$result = JText::_( 'YESTERDAY' );
+			$result = JText::_('YESTERDAY');
 		} else {
 			//if daymethod show day
 			if($params->get('daymethod', 1) == 1) {
@@ -257,23 +273,23 @@ class modJEMteaserHelper
 				//the event has an enddate and it's earlier than yesterday
 				if ($row->enddates && $enddates_stamp < $yesterday_stamp) {
 					$days = round( ($today_stamp - $enddates_stamp) / 86400 );
-					$result = JText::sprintf( 'ENDED DAYS AGO', $days );
+					$result = JText::sprintf('ENDED DAYS AGO', $days);
 
 				//the event has an enddate and it's later than today but the startdate is today or earlier than today
 				//means a currently running event with startdate = today
 				} elseif($row->enddates && $enddates_stamp > $today_stamp && $dates_stamp <= $today_stamp) {
 					$days = round( ($enddates_stamp - $today_stamp) / 86400 );
-					$result = JText::sprintf( 'DAYS LEFT', $days );
+					$result = JText::sprintf('DAYS LEFT', $days);
 
 				//the events date is earlier than yesterday
 				} elseif($dates_stamp < $yesterday_stamp) {
 					$days = round( ($today_stamp - $dates_stamp) / 86400 );
-					$result = JText::sprintf( 'DAYS AGO', $days );
+					$result = JText::sprintf('DAYS AGO', $days );
 
 				//the events date is later than tomorrow
 				} elseif($dates_stamp > $tomorrow_stamp) {
 					$days = round( ($dates_stamp - $today_stamp) / 86400 );
-					$result = JText::sprintf( 'DAYS AHEAD', $days );
+					$result = JText::sprintf('DAYS AHEAD', $days);
 				}
 			}
 		}
@@ -352,7 +368,6 @@ class modJEMteaserHelper
 				$result = JText::sprintf('MOD_JEM_TEASER_UNTIL', $result);
 			}
 		}
-
 		return $result;
 	}
 
@@ -367,7 +382,6 @@ class modJEMteaserHelper
 		$time = strftime($params->get('formattime', '%H:%M'), strtotime($date.' '.$time));
 		return $time;
 	}
-	/*Calendar*/
 
 	protected static function _format_dayname($row)
 	{

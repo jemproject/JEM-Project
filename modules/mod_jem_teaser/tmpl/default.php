@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.3
+ * @version 1.9.5
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2013 joomlaeventmanager.net
@@ -66,6 +66,10 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 				</div>
 				<div>
 					<?php echo $item->eventdescription; ?>
+					<?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
+						echo '<a class="readmore" href="'.$item->link.'">'.$item->linkText.'</a>';
+						endif; 
+					?>
 				</div>
 			</div>
 		</td>
