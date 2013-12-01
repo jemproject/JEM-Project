@@ -17,11 +17,12 @@ $canOrder	= $user->authorise('core.edit.state', 'com_jem.category');
 $saveOrder	= $listOrder=='ordering';
 
 $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
+$settings	= $this->settings;
 ?>
 
 <script>
 window.addEvent('domready', function() {
-	var h = <?php echo $params->get('highlight','0'); ?>;
+	var h = <?php echo $settings->get('highlight','0'); ?>;
 
 	switch(h)
 	{

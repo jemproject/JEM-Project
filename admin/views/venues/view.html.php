@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -30,16 +30,18 @@ defined('_JEXEC') or die;
 		$user 		= JFactory::getUser();
 		$document	= JFactory::getDocument();
 		$url 		= JURI::root();
+		$settings 	= JEMHelper::globalattribs();
 
 		// Initialise variables.
 		$this->items		= $this->get('Items');
 		$this->pagination	= $this->get('Pagination');
 		$this->state		= $this->get('State');
+		$this->settings		= $settings;
 
 		$params = $this->state->get('params');
 
 		// highlighter
-		$highlighter = $params->get('highlight','0');
+		$highlighter = $settings->get('highlight','0');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {

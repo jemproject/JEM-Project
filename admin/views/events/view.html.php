@@ -25,6 +25,7 @@ defined('_JEXEC') or die;
 	{
 		$user 		= JFactory::getUser();
 		$document	= JFactory::getDocument();
+		$settings 	= JEMHelper::globalattribs();
 
 		$jemsettings = JEMAdmin::config();
 		$url 		= JURI::root();
@@ -38,8 +39,7 @@ defined('_JEXEC') or die;
 		$params = $this->state->get('params');
 
 		// highlighter
-		$highlighter = $params->get('highlight','0');
-
+		$highlighter = $settings->get('highlight','0');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -84,6 +84,7 @@ defined('_JEXEC') or die;
 		$this->lists		= $lists;
 		$this->user			= $user;
 		$this->jemsettings  = $jemsettings;
+		$this->settings		= $settings;
 
 		// add toolbar
 		$this->addToolbar();
