@@ -147,11 +147,8 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	public function onFinderAfterSave($context, $row, $isNew)
 	{
 		// We only want to handle events here
-		if ($context == 'com_jem.event' || $context == 'com_jem.form')
+		if ($context == 'com_jem.event' || $context == 'com_jem.editevent')
 		{
-			// Set access to 1 because we don't use this variable at the moment
-			$row->access = 1;
-
 			// Check if the access levels are different
 			if (!$isNew && $this->old_access != $row->access)
 			{
@@ -162,7 +159,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 			// Reindex the item
 			$this->reindex($row->id);
 		}
-/*
+		
 		// Check for access changes in the category
 		if ($context == 'com_jem.category')
 		{
@@ -172,7 +169,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 				$this->categoryAccessChange($row);
 			}
 		}
-*/
+		
 		return true;
 	}
 
@@ -192,7 +189,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	public function onFinderBeforeSave($context, $row, $isNew)
 	{
 		// We only want to handle articles here
-		if ($context == 'com_jem.event' || $context == 'com_jem.form')
+		if ($context == 'com_jem.event' || $context == 'com_jem.editevent')
 		{
 			// Query the database for the old access level if the item isn't new
 			if (!$isNew)
@@ -200,7 +197,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 				$this->checkItemAccess($row);
 			}
 		}
-/*
+
 		// Check for access levels from the category
 		if ($context == 'com_jem.category')
 		{
@@ -210,7 +207,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 				$this->checkCategoryAccess($row);
 			}
 		}
-*/
+
 		return true;
 	}
 
@@ -229,7 +226,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	public function onFinderChangeState($context, $pks, $value)
 	{
 		// We only want to handle articles here
-		if ($context == 'com_jem.event' || $context == 'com_jem.form')
+		if ($context == 'com_jem.event' || $context == 'com_jem.editevent')
 		{
 			$this->itemStateChange($pks, $value);
 		}
@@ -360,7 +357,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 
 		$sql->select('a.id, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.datimage');
 		$sql->select('a.created AS start_date, a.created_by, a.modified, a.version');
-		$sql->select('a.published AS state, 1 AS access');
+		$sql->select('a.published AS state');
 		$sql->select('a.fulltext AS body, a.fulltext AS summary');
 		$sql->select('l.venue, l.city, l.state as loc_state, l.url, l.street');
 		$sql->select('l.published AS loc_published');
