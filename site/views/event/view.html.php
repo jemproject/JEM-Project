@@ -217,7 +217,6 @@ class JEMViewEvent extends JViewLegacy
 			$formhandler = 4;
 		}
 		
-		
 		if ($formhandler >= 3) {
 			$js = "function check(checkbox, send) {
 				if(checkbox.checked==true){
@@ -228,8 +227,7 @@ class JEMViewEvent extends JViewLegacy
 			$document->addScriptDeclaration($js);
 		}
 		$this->formhandler			= $formhandler;
-		
-		
+			
 		// generate Metatags
 		$meta_keywords_content = "";
 		if (!empty($this->item->meta_keywords)) {
@@ -253,8 +251,7 @@ class JEMViewEvent extends JViewLegacy
 			
 			$document->setMetadata('keywords', $meta_keywords_content);
 		}
-		
-		
+			
 		if (!empty($this->item->meta_description)) {
 			$description = explode("[",$this->item->meta_description);
 			$description_content = "";
@@ -269,9 +266,10 @@ class JEMViewEvent extends JViewLegacy
 			}
 		} else {
 			$description_content = "";
-			
-			$document->setDescription(strip_tags($description_content));
 		}
+		
+		$document->setDescription(strip_tags($description_content));
+		
 		
 		// load dispatcher for plugins (comments)
 		JPluginHelper::importPlugin('jem');
@@ -292,170 +290,6 @@ class JEMViewEvent extends JViewLegacy
 		parent::display($tpl);
 		}
 		
-		
-		//get menu information
-		//$menu			= $app->getMenu();
-		//$item			= $menu->getActive();
-
-		//Check if the id exists
-		//if ($row->did == 0) {
-		//	// TODO Translation
-		//	return JError::raiseError(404, JText::sprintf('Event #%d not found', $row->did));
-		//}
-
-		//Check if user has access to the event
-		//if ($jemsettings->showdetails == 0) {
-		//	return JError::raiseError(403, JText::_('COM_JEM_NO_ACCESS'));
-		//}
-
-		//$cid		= JRequest::getInt('cid', 0);
-
-		//add css file
-		//$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
-		//$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-
-
-		//$params->def('page_title', JText::_('COM_JEM_EVENT'));
-
-		/*
-
-		$print	= JRequest::getBool('print');
-
-		if ($print) {
-			$document = JFactory::getDocument();
-			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/print.css');
-			$document->setMetaData('robots', 'noindex, nofollow');
-		}
-
-
-		$print_link = JRoute::_(JEMHelperRoute::getRoute($row->slug).'&print=1&tmpl=component');
-
-		//pathway
-		$cats		= new JEMCategories($cid);
-		$parents	= $cats->getParentlist();
-		$pathway 	= $app->getPathWay();
-
-		foreach($parents as $parent) {
-			$pathway->addItem($this->escape($parent->catname), JRoute::_(JEMHelperRoute::getCategoryRoute($parent->categoryslug)));
-		}
-		$pathway->addItem($this->escape($row->title), JRoute::_(JEMHelperRoute::getRoute($row->slug)));
-
-		//Get images
-		$dimage = JEMImage::flyercreator($row->datimage, 'event');
-		$limage = JEMImage::flyercreator($row->locimage, 'venue');
-
-		//Check user if he can edit
-
-		$allowedtoeditevent = JEMUser::editaccess($jemsettings->eventowner, $row->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
-
-		//Check if the user has access to the edit-venueform
-		$maintainer3 = JEMUser::editvenuegroups();
-		$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $row->venueowner, $jemsettings->venueeditrec, $jemsettings->venueedit);
-		if ($maintainer3 || $genaccess3 )
-		{
-			$allowedtoeditvenue = 1;
-		} else {
-			$allowedtoeditvenue = 0;
-		}
-
-		//Timecheck for registration
-		$now = strtotime(date("Y-m-d"));
-		$date = strtotime($row->dates);
-		$timecheck = $now - $date;
-
-		//let's build the registration handling
-		$formhandler = 0;
-
-		//is the user allready registered at the event
-		if ($isregistered) {
-			$formhandler = 3;
-		} else if ($timecheck > 0 && !is_null($row->dates)) { //check if it is too late to register and overwrite $formhandler
-			$formhandler = 1;
-		} else if (!$user->get('id')) { //is the user registered at joomla and overwrite $formhandler if not
-			$formhandler = 2;
-		} else {
-			$formhandler = 4;
-		}
-
-
-		if ($formhandler >= 3) {
-			$js = "function check(checkbox, send) {
-				if(checkbox.checked==true){
-					send.disabled = false;
-				} else {
-					send.disabled = true;
-				}}";
-			$document->addScriptDeclaration($js);
-		}
-
-		//Generate Eventdescription
-		if ((!$row->datdescription == '') || (!$row->datdescription == '<br />')) {
-			//Execute Plugins
-			$row->text	= $row->datdescription;
-
-			JPluginHelper::importPlugin('content');
-			$results = $dispatcher->trigger('onContentPrepare', array ('com_jem.detail', & $row, & $params, 0));
-			$row->datdescription = $row->text;
-		}
-
-		//Generate Venuedescription
-		if ((!$row->locdescription == '') || (!$row->locdescription == '<br />')) {
-			//execute plugins
-			$row->text	=	$row->locdescription;
-
-			JPluginHelper::importPlugin('content');
-			$results = $dispatcher->trigger('onContentPrepare', array ('com_jem.detail', & $row, & $params, 0));
-			$row->locdescription = $row->text;
-		}
-
-		
-
-		//set page title and meta stuff
-		$document->setTitle($row->title);
-		$document->setMetadata('keywords', $meta_keywords_content);
-		$document->setDescription(strip_tags($description_content));
-
-		//build the url
-		if(!empty($row->url) && strtolower(substr($row->url, 0, 7)) != "http://") {
-			$row->url = 'http://'.$row->url;
-		}
-
-		//create flag
-		if ($row->country) {
-			$row->countryimg = JEMOutput::getFlag($row->country);
-		}
-
-		// load dispatcher for plugins
-		JPluginHelper::importPlugin('jem');
-		$row->pluginevent = new stdClass();
-		$results = $dispatcher->trigger('onEventEnd', array ($row->did, $this->escape($row->title)));
-		$row->pluginevent->onEventEnd = trim(implode("\n", $results));
-
-		//assign vars to jview
-		$this->print				= $print;
-		$this->row					= $row;
-		$this->categories			= $categories;
-		$this->params				= $params;
-		$this->allowedtoeditevent	= $allowedtoeditevent;
-		$this->allowedtoeditvenue	= $allowedtoeditvenue;
-		$this->dimage				= $dimage;
-		$this->limage				= $limage;
-		$this->print_link			= $print_link;
-		$this->registers			= $registers;
-		$this->isregistered			= $isregistered;
-		$this->formhandler			= $formhandler;
-		$this->jemsettings			= $jemsettings;
-		$this->item					= $item;
-		$this->user					= $user;
-		$this->dispatcher			= $dispatcher;
-
-		parent::display($tpl);
-		
-		*/
-		
-		
-	//}
-
 	/**
 	 * structures the keywords
 	 *
@@ -570,6 +404,7 @@ class JEMViewEvent extends JViewLegacy
 		$this->document->setTitle($title);
 	
 		
+		/*
 		if ($this->item->meta_description)
 		{
 			$this->document->setDescription($this->item->meta_description);
@@ -587,7 +422,7 @@ class JEMViewEvent extends JViewLegacy
 		{
 			$this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
 		}
-
+		*/
 	
 		if ($this->params->get('robots'))
 		{
@@ -619,8 +454,6 @@ class JEMViewEvent extends JViewLegacy
 		{
 			$this->document->setMetaData('robots', 'noindex, nofollow');
 		}
-	
 	}
-	
 }
 ?>
