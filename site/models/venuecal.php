@@ -157,6 +157,31 @@ class JEMModelVenueCal extends JModelLegacy
 								$multi[$counter] = clone $item;
 								$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
 
+							$item->multi = 'first';
+							$item->multitimes = $item->times;
+							$item->multiname = $item->title;
+							$item->sort = 'zlast';
+
+							if ($multi[$counter]->dates < $item->enddates) {
+								$multi[$counter]->multi = 'middle';
+								$multi[$counter]->multistartdate = $item->dates;
+								$multi[$counter]->multienddate = $item->enddates;
+								$multi[$counter]->multitimes = $item->times;
+								$multi[$counter]->multiname = $item->title;
+								$multi[$counter]->times = $item->times;
+								$multi[$counter]->endtimes = $item->endtimes;
+								$multi[$counter]->sort = 'middle';
+							} elseif ($multi[$counter]->dates = $item->enddates) {
+								$multi[$counter]->multi = 'zlast';
+								$multi[$counter]->multistartdate = $item->dates;
+								$multi[$counter]->multienddate = $item->enddates;
+								$multi[$counter]->multitimes = $item->times;
+								$multi[$counter]->multiname = $item->title;
+								$multi[$counter]->sort = 'first';
+								$multi[$counter]->times = $item->times;
+								$multi[$counter]->endtimes = $item->endtimes;
+							}	
+
 								//add generated days to data
 								$items = array_merge($items, $multi);
 							}
