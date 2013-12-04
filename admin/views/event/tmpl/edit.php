@@ -275,7 +275,7 @@ $params = $params->toArray();
 				<li><?php echo $this->form->getLabel('created_by'); ?> <?php echo $this->form->getInput('created_by'); ?>
 				</li>
 
-				<li><label><?php echo JText::_ ( 'COM_JEM_HITS' );	?></label>
+				<li><label><?php echo JText::_ ('COM_JEM_HITS');	?></label>
 				<input class="inputbox" name="hits" value="<?php echo $this->item->hits; ?>" size="10" maxlength="10" id="a_hits" />
 				<?php echo $this->resethits; ?>
 				</li>
@@ -312,11 +312,11 @@ $params = $params->toArray();
 				<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?>
 				</li>
 
-				<li><label><?php echo JText::_ ( 'COM_JEM_BOOKED_PLACES' ) . ':';?></label><input id="event-booked" class="readonly" type="text"  value="<?php echo $this->item->booked; ?>" />
+				<li><label><?php echo JText::_ ('COM_JEM_BOOKED_PLACES') . ':';?></label><input id="event-booked" class="readonly" type="text"  value="<?php echo $this->item->booked; ?>" />
 				</li>
 
 				<?php if ($this->item->maxplaces): ?>
-				<li><label><?php echo JText::_ ( 'COM_JEM_AVAILABLE_PLACES' ) . ':';?></label><input id="event-available" class="readonly" type="text"  value="<?php echo ($this->item->maxplaces-$this->item->booked); ?>" />
+				<li><label><?php echo JText::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label><input id="event-available" class="readonly" type="text"  value="<?php echo ($this->item->maxplaces-$this->item->booked); ?>" />
 				</li>
 				<?php
 				endif;
@@ -362,32 +362,32 @@ $params = $params->toArray();
 			<!--
 				var $select_output = new Array();
 				$select_output[1] = "<?php
-				echo JText::_ ( 'COM_JEM_OUTPUT_DAY' );
+				echo JText::_ ('COM_JEM_OUTPUT_DAY');
 				?>";
 				$select_output[2] = "<?php
-				echo JText::_ ( 'COM_JEM_OUTPUT_WEEK' );
+				echo JText::_ ('COM_JEM_OUTPUT_WEEK');
 				?>";
 				$select_output[3] = "<?php
-				echo JText::_ ( 'COM_JEM_OUTPUT_MONTH' );
+				echo JText::_ ('COM_JEM_OUTPUT_MONTH');
 				?>";
 				$select_output[4] = "<?php
-				echo JText::_ ( 'COM_JEM_OUTPUT_WEEKDAY' );
+				echo JText::_ ('COM_JEM_OUTPUT_WEEKDAY');
 				?>";
 
 				var $weekday = new Array();
-				$weekday[0] = new Array("MO", "<?php echo JText::_ ( 'COM_JEM_MONDAY' ); ?>");
-				$weekday[1] = new Array("TU", "<?php echo JText::_ ( 'COM_JEM_TUESDAY' ); ?>");
-				$weekday[2] = new Array("WE", "<?php echo JText::_ ( 'COM_JEM_WEDNESDAY' ); ?>");
-				$weekday[3] = new Array("TH", "<?php echo JText::_ ( 'COM_JEM_THURSDAY' ); ?>");
-				$weekday[4] = new Array("FR", "<?php echo JText::_ ( 'COM_JEM_FRIDAY' ); ?>");
-				$weekday[5] = new Array("SA", "<?php echo JText::_ ( 'COM_JEM_SATURDAY' ); ?>");
-				$weekday[6] = new Array("SU", "<?php echo JText::_ ( 'COM_JEM_SUNDAY' ); ?>");
+				$weekday[0] = new Array("MO", "<?php echo JText::_ ('COM_JEM_MONDAY'); ?>");
+				$weekday[1] = new Array("TU", "<?php echo JText::_ ('COM_JEM_TUESDAY'); ?>");
+				$weekday[2] = new Array("WE", "<?php echo JText::_ ('COM_JEM_WEDNESDAY'); ?>");
+				$weekday[3] = new Array("TH", "<?php echo JText::_ ('COM_JEM_THURSDAY'); ?>");
+				$weekday[4] = new Array("FR", "<?php echo JText::_ ('COM_JEM_FRIDAY'); ?>");
+				$weekday[5] = new Array("SA", "<?php echo JText::_ ('COM_JEM_SATURDAY'); ?>");
+				$weekday[6] = new Array("SU", "<?php echo JText::_ ('COM_JEM_SUNDAY'); ?>");
 
 				var $before_last = "<?php
-				echo JText::_ ( 'COM_JEM_BEFORE_LAST' );
+				echo JText::_ ('COM_JEM_BEFORE_LAST');
 				?>";
 				var $last = "<?php
-				echo JText::_ ( 'COM_JEM_LAST' );
+				echo JText::_ ('COM_JEM_LAST');
 				?>";
 				start_recurrencescript("jform_recurrence_type");
 			-->
@@ -416,7 +416,7 @@ $params = $params->toArray();
 
 			<br />
 						<label for="meta_keywords">
-						<?php echo JText::_ ( 'COM_JEM_META_KEYWORDS' ) . ':';?>
+						<?php echo JText::_ ('COM_JEM_META_KEYWORDS') . ':';?>
 					</label>
 					<br />
 						<?php
@@ -427,11 +427,8 @@ $params = $params->toArray();
 						}
 						?>
 					<textarea class="inputbox" name="meta_keywords" id="meta_keywords" rows="5" cols="40" maxlength="150" onfocus="get_inputbox('meta_keywords')" onblur="change_metatags()"><?php echo $meta_keywords; ?></textarea>
-
-
-
 			<label for="meta_description">
-						<?php echo JText::_ ( 'COM_JEM_META_DESCRIPTION' ) . ':';?>
+						<?php echo JText::_ ('COM_JEM_META_DESCRIPTION') . ':';?>
 					</label>
 					<br />
 					<?php
@@ -451,19 +448,11 @@ $params = $params->toArray();
 			?>");	// window.onload is already in use, call the function manualy instead
 		-->
 		</script>
-
-
 	<?php echo JHtml::_('sliders.end'); ?>
-
 <input type="hidden" name="task" value="" />
 <input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
-				</li>
-
 				<!--  END RIGHT DIV -->
 				<?php echo JHtml::_('form.token'); ?>
 				</div>
-
 		<div class="clr"></div>
-
 </form>
-
