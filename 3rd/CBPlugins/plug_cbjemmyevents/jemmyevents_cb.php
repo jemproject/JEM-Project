@@ -169,7 +169,7 @@ class jemmyeventsTab extends cbTabHandler {
 		 * Retrieval of the data
 		 * Keep it inline with the my-events view
 		 */
-		$query = 'SELECT DISTINCT a.id AS eventid, a.id, a.dates, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription, a.published,a.registra, a.maxplaces, a.waitinglist,'
+		$query = 'SELECT DISTINCT a.id AS eventid, a.id, a.dates, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.fulltext, a.published,a.registra, a.maxplaces, a.waitinglist,'
 			. ' l.id, l.venue, l.city, l.state, l.url,'
 			. ' c.catname, c.id AS catid,'
 			. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
@@ -496,7 +496,7 @@ class jemmyeventsTab extends cbTabHandler {
 			* Retrieval of the data
 			* Keep it inline with the my-events view
 			*/
-			$query = 'SELECT DISTINCT a.id AS eventid, a.id, a.dates, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription, a.published,a.registra, a.maxplaces, a.waitinglist,'
+			$query = 'SELECT DISTINCT a.id AS eventid, a.id, a.dates, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.fulltext, a.published,a.registra, a.maxplaces, a.waitinglist,'
 				. ' l.id, l.venue, l.city, l.state, l.url,'
 				. ' c.catname, c.id AS catid,'
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
