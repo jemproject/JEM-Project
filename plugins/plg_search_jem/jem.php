@@ -20,14 +20,6 @@ class plgSearchJEM extends JPlugin
 {
 
 
-
-
-//Load the Plugin language file out of the administration
-// JPlugin::loadLanguage( 'plg_search_jem', JPATH_ADMINISTRATOR);
-
-
-
-
 function __construct(& $subject, $config)
     {
             parent::__construct($subject, $config);
@@ -61,6 +53,10 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 {
 	$db		= JFactory::getDBO();
 	$user	= JFactory::getUser();
+	$app	= JFactory::getApplication();
+	$user	= JFactory::getUser();
+	$groups	= implode(',', $user->getAuthorisedViewLevels());
+	$tag = JFactory::getLanguage()->getTag();
 
 	require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 
@@ -74,26 +70,28 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 
 	// load plugin params info
 	$plugin = JPluginHelper::getPlugin('search', 'jem');
-	$pluginParams = new JRegistry( $plugin->params );
+	$pluginParams = new JRegistry($plugin->params);
 
-	$limit = $pluginParams->def( 'search_limit', 50 );
+	$limit = $pluginParams->def('search_limit', 50);
 
 	$text = trim( $text );
 	if ( $text == '' ) {
 		return array();
 	}
 
-	$searchJEM = $db->Quote(JText::_( 'PLG_JEM_SEARCH_JEM' ));
+	$searchJEM = $db->Quote(JText::_('PLG_JEM_SEARCH_JEM'));
 
 	$rows = array();
+	$query	= $db->getQuery(true);
 
-	if(in_array('elevents', $areas)) {
+	if(in_array('elevents', $areas) && $limit > 0) {
 
 		switch ($phrase) {
 			case 'exact':
 				$text 		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
 				$wheres2 	= array();
 				$wheres2[] 	= 'LOWER(a.title) LIKE '.$text;
+				$wheres2[]	= 'LOWER(a.introtext) LIKE '.$text;
 				$wheres2[] 	= 'LOWER(a.fulltext) LIKE '.$text;
 				$wheres2[] 	= 'LOWER(a.meta_keywords) LIKE '.$text;
 				$wheres2[] 	= 'LOWER(a.meta_description) LIKE '.$text;
@@ -109,6 +107,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 					$word 		= $db->Quote( '%'.$db->escape( $word, true ).'%', false );
 					$wheres2 	= array();
 					$wheres2[] 	= 'LOWER(a.title) LIKE '.$word;
+					$wheres2[]	= 'LOWER(a.introtext) LIKE '.$word;
 					$wheres2[] 	= 'LOWER(a.fulltext) LIKE '.$word;
 					$wheres2[] 	= 'LOWER(a.meta_keywords) LIKE '.$word;
 					$wheres2[] 	= 'LOWER(a.meta_description) LIKE '.$word;
@@ -136,8 +135,6 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 				$order = 'a.dates, a.times DESC';
 		}
 
-
-
 		if (JFactory::getUser()->authorise('core.manage')) {
            $gid = (int) 3;
             } else {
@@ -147,36 +144,57 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
                    $gid = (int) 1;
                 }
             }
+		
+		$query->clear();
+		//sqlsrv changes
+		$case_when = ' CASE WHEN ';
+		$case_when .= $query->charLength('a.alias');
+		$case_when .= ' THEN ';
+		$a_id = $query->castAsChar('a.id');
+		$case_when .= $query->concatenate(array($a_id, 'a.alias'), ':');
+		$case_when .= ' ELSE ';
+		$case_when .= $a_id.' END as slug';
+           
+ 		$case_when1 = ' CASE WHEN ';
+ 		$case_when1 .= $query->charLength('c.alias');
+ 		$case_when1 .= ' THEN ';
+ 		$c_id = $query->castAsChar('c.id');
+  		$case_when1 .= $query->concatenate(array($c_id, 'c.alias'), ':');
+ 		$case_when1 .= ' ELSE ';
+		$case_when1 .= $c_id.' END as catslug';
+            
+		$query->select('a.title AS title, a.meta_description, a.meta_keywords, a.created AS created');
+		$query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
+		$query->select('c.catname AS section, '.$case_when.','.$case_when1.', '.'\'2\' AS browsernav');
+		$query->select('rel.catid');
+            
+		$query->from('#__jem_events AS a');
+		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
+		$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
+		$query->where('('. $where .')' . ' AND a.published=1 AND c.published = 1 AND a.access IN ('.$groups.') '
+				.'AND c.access IN ('.$groups.') '
+				 );
+		$query->group('a.id, a.title, a.meta_description, a.meta_keywords, a.created, a.introtext, a.fulltext, c.catname, a.alias, c.alias, c.id');
+		$query->order($order);
 
-
-		$query = 'SELECT a.id, a.title AS title,'
-		. ' a.fulltext AS text,'
-		. ' a.dates AS created,'
-		. ' "2" AS browsernav,'
-		. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
-		. ' CONCAT_WS( " / ", '. $searchJEM .', c.catname, a.title ) AS section'
-		. ' FROM #__jem_events AS a'
-		. ' INNER JOIN #__jem_categories AS c'
-		. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-		. ' WHERE ( '.$where.' )'
-		. ' AND rel.itemid = a.id'
-		. ' AND a.published = 1'
-		. ' AND c.published = 1'
-		. ' AND c.access <= '.(int) $gid
-		. ' GROUP BY a.id '
-		. ' ORDER BY '. $order
-		;
+		
+		echo $query;
 		$db->setQuery( $query, 0, $limit );
 		$list = $db->loadObjectList();
+		$limit -= count($list);
 
-		foreach((array) $list as $key => $row) {
-			$list[$key]->href = JEMHelperRoute::getEventRoute($row->slug);
+		if (isset($list))
+		{
+			foreach($list as $key => $row)
+			{
+				$list[$key]->href = JEMHelperRoute::getEventRoute($row->slug);
+			}
 		}
-
+		
 		$rows[] = $list;
 	}
 
-	if(in_array('elvenues', $areas)) {
+	if(in_array('elvenues', $areas) && $limit > 0) {
 
 		switch ($phrase) {
 			case 'exact':
@@ -246,7 +264,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		$rows[] = $list2;
 	}
 
-	if(in_array('elcategories', $areas)) {
+	if(in_array('elcategories', $areas) && $limit > 0) {
 
 		switch ($phrase) {
 			case 'exact':
