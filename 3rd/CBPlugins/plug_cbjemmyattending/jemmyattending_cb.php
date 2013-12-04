@@ -1,12 +1,12 @@
 <?php
 /**
  * @package My Attending
- * @version JEM v1.9.1 & CB 1.9
+ * @version JEM v1.9.5 & CB 1.9
  * @author JEM Community
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  *
  * Just a note:
- * Keep the query code inline with my-events view
+ * Keep the query code inline with my-attendances view
  *
  */
 
@@ -137,7 +137,7 @@ class jemmyattendingTab extends cbTabHandler {
 		 */
 
 		// get events
-		$query = 'SELECT DISTINCT a.id AS eventid, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.datdescription, a.published,'
+		$query = 'SELECT DISTINCT a.id AS eventid, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, CONCAT(a.introtext,a.fulltext) AS text, a.published,'
 				. ' l.id, l.venue, l.city, l.state, l.url, '
 				. ' c.catname, c.id AS catid, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
@@ -147,8 +147,8 @@ class jemmyattendingTab extends cbTabHandler {
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
 				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
 				. ' WHERE a.published = 1 AND c.published = 1 AND r.uid = '.$userid.' AND c.access <= '.$gid
-				.	 'AND DATE_SUB(NOW(), INTERVAL 1 DAY) < (IF (a.enddates IS NOT NULL, a.enddates, a.dates))'
-				. ' ORDER BY a.dates'
+				. ' AND DATE_SUB(NOW(), INTERVAL 1 DAY) < (IF (a.enddates IS NOT NULL, a.enddates, a.dates))'
+				. ' ORDER BY a.dates, a.times'
 				;
 		$_CB_database->setQuery($query);
 		$results = $_CB_database->loadObjectList();
@@ -255,7 +255,7 @@ class jemmyattendingTab extends cbTabHandler {
 				 * the (...) is being added behind the description, also with small descriptions
 				 */
 				if ($event_description==1) {
-					$description = substr($result->datdescription,0,150);
+					$description = substr($result->text,0,150);
 					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableDesc'>";
 					$return .= "\n\t\t\t\t{$description} (...)";
 					$return .= "\n\t\t\t</td>";
