@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -21,20 +21,18 @@ defined('_JEXEC') or die;
 	<div class="description no_space floattext">
 		<?php echo $this->params->get('introtext'); ?>
 	</div>
-	<p><p>
-<?php endif; ?>
+	<?php endif; ?>
 
-<?php
+	<?php
 	$countcatevents = array ();
 
 	$countperday = array();
 	$limit = $this->params->get('daylimit', 10);
-	foreach ($this->rows as $row) :
 
+	foreach ($this->rows as $row) :
 		if (!JEMHelper::isValidDate($row->dates)) {
 			continue; // skip, open date !
 		}
-
 
 		//get event date
 		$year = strftime('%Y', strtotime($row->dates));
@@ -52,10 +50,8 @@ defined('_JEXEC') or die;
 			/**
 			 * $cal->setEventContent($year,$month,$day,$content,[$contentUrl,$id])
 			 *
-
 			 * Info from: http://www.micronetwork.de/activecalendar/demo/doc/doc_en.html
 			 *
-
 			 * Call this method, if you want the class to create a new HTML table within the date specified by the parameters $year, $month, $day.
 			 * The parameter $content can be a string or an array.
 			 * If $content is a string, then the new generated table will contain one row with the value of $content.
@@ -63,11 +59,7 @@ defined('_JEXEC') or die;
 			 * The parameter $contentUrl is optional: If you set a $contentUrl, an event content specific link (..href='$contentUrl'..) will be generated
 			 * in the 'event content' table row(s), even if the method $cal->enableDayLinks($link) was not called.
 			 * The parameter $id is optional as well: if you set an $id, a HTML class='$id' will be generated for each event content (default: 'eventcontent').
-			 *
-			 *
-
-
-			 * */
+			 */
 
 			$this->cal->setEventContent($year, $month, $day, $var1c,null, $id);
 			continue;
@@ -76,12 +68,10 @@ defined('_JEXEC') or die;
 			continue;
 		}
 
-
 		//for time printing
 		$timehtml = '';
 
 		if ($this->jemsettings->showtime == 1) :
-
 			$start = JEMOutput::formattime($row->times);
 			$end = JEMOutput::formattime($row->endtimes);
 
@@ -95,7 +85,7 @@ defined('_JEXEC') or die;
 			endif;
 			$multi = new stdClass();
 			$multi->row = (isset($row->multi) ? $row->multi : 'na');
-			endif;
+		endif;
 
 		$eventname = '<div class="eventName">'.JText::_('COM_JEM_TITLE').': '.$this->escape($row->title).'</div>';
 		$detaillink 	= JRoute::_( JEMHelperRoute::getEventRoute($row->slug));
@@ -109,7 +99,6 @@ defined('_JEXEC') or die;
 
 		//walk through categories assigned to an event
 		foreach($row->categories AS $category) :
-
 			//Currently only one id possible...so simply just pick one up...
 			$detaillink 	= JRoute::_( JEMHelperRoute::getEventRoute($row->slug));
 
@@ -139,24 +128,17 @@ defined('_JEXEC') or die;
 			else :
 				$countcatevents[$category->id]++;
 			endif;
-
 		endforeach;
 
 		//for time in calendar
 		$timetp = '';
 
 		if ($this->jemsettings->showtime == 1) :
-
-		$start = JEMOutput::formattime($row->times,'',false);
-		$end = JEMOutput::formattime($row->endtimes,'',false);
-
-
+			$start = JEMOutput::formattime($row->times,'',false);
+			$end = JEMOutput::formattime($row->endtimes,'',false);
 
 			$multi = new stdClass();
 			$multi->row = (isset($row->multi) ? $row->multi : 'na');
-
-
-
 
 			if ($multi->row) {
 				if ($multi->row == 'first') {
@@ -169,21 +151,14 @@ defined('_JEXEC') or die;
 					$timetp .= JHTML::image("media/com_jem/images/arrow-right.png",'').' '.$end.' ';
 				} elseif ($multi->row == 'na') {
 					if ($start != '') :
-
-
-
 						$timetp .= $start;
 						if ($end != '') :
 							$timetp .= ' - '.$end;
 						endif;
 						$timetp .= '<br>';
-
-
 					endif;
-                }
-            }
-
-
+				}
+			}
 		endif;
 
 		$catname = '<div class="catname">'.$multicatname.'</div>';
@@ -197,7 +172,7 @@ defined('_JEXEC') or die;
 			if ($this->jemsettings->showlinkvenue == 1 && 0) :
 				$venue .= $row->locid != 0 ? "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
 			else :
-			 	$venue .= $row->locid ? $this->escape($row->venue) : '-';
+				$venue .= $row->locid ? $this->escape($row->venue) : '-';
 			endif;
 				$venue .= '</div>';
 		else:
@@ -226,11 +201,9 @@ defined('_JEXEC') or die;
 		$content .= $contentend;
 
 		$this->cal->setEventContent($year, $month, $day, $content);
-
 	endforeach;
 
 	// print the calendar
 	print ($this->cal->showMonth());
-
-?>
+	?>
 </div>
