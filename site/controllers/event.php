@@ -254,7 +254,12 @@ class JEMControllerEvent extends JControllerForm
 		
 	$task = $this->getTask();
 	if ($task == 'save') {
-		//$this->setRedirect(JRoute::_('index.php?option=com_jem&view=category&id='.$validData['catid'], false));
+		$isNew 	= ($validData['id']) ? false : true;
+		$id 	= $validData['id'];
+
+		JPluginHelper::importPlugin('jem');
+		$dispatcher = JDispatcher::getInstance();
+		$dispatcher->trigger('onEventEdited', array($id, $isNew));
 		}
 
 	}
@@ -348,6 +353,4 @@ class JEMControllerEvent extends JControllerForm
 		$msg = JText::_('COM_JEM_UNREGISTERED_SUCCESSFULL');
 		$this->setRedirect(JRoute::_(JEMHelperRoute::getEventRoute($id), false), $msg);
 	}
-	
-	
 }
