@@ -77,7 +77,7 @@ class plgJEMMailer extends JPlugin {
 	 *
 	 */
 	public function onEventUserRegistered($register_id)
-	{
+	{	
 		//simple, skip if processing not needed
 		if (!$this->params->get('reg_mail_user', '1') && !$this->params->get('reg_mail_admin', '0')) {
 			return true;
@@ -299,7 +299,7 @@ class plgJEMMailer extends JPlugin {
 	 *
 	 */
 	public function onEventEdited($event_id, $edited)
-	{
+	{		
 		//simple, skip if processing not needed
 		if (!$this->params->get('newevent_mail_user', '1') && !$this->params->get('newevent_mail_admin', '0')
 			&& !$this->params->get('editevent_mail_user', '1') && !$this->params->get('editevent_mail_admin', '0')) {
@@ -309,7 +309,7 @@ class plgJEMMailer extends JPlugin {
 		$db 	= JFactory::getDBO();
 		$user 	= JFactory::getUser();
 
-		$query = ' SELECT a.id, a.title, a.dates, a.times, a.fulltext, a.locid, a.published, a.created, a.modified,'
+		$query = ' SELECT a.id, a.title, a.dates, a.times, CONCAT(a.introtext,a.fulltext) AS text, a.locid, a.published, a.created, a.modified,'
 				. ' v.venue, v.city,'
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug'
 				. ' FROM #__jem_events AS a '
@@ -328,8 +328,8 @@ class plgJEMMailer extends JPlugin {
 		$link = JRoute::_(JURI::base().JEMHelperRoute::getEventRoute($event->slug), false);
 
 		//strip description from tags / scripts, etc...
-		$text_description = JFilterOutput::cleanText($event->fulltext);
-
+		$text_description = JFilterOutput::cleanText($event->text);		
+		
 		$modified_ip 	= getenv('REMOTE_ADDR');
 		$edited 		= JHtml::Date( $event->modified, JText::_( 'DATE_FORMAT_LC2' ) );
 
@@ -395,7 +395,7 @@ class plgJEMMailer extends JPlugin {
 	 *
 	 */
 	public function onVenueEdited($venue_id, $edited)
-	{
+	{	
 		//simple, skip if processing not needed
 		if (!$this->params->get('newvenue_mail_user', '1') && !$this->params->get('newvenue_mail_admin', '0')
 			&& !$this->params->get('editvenue_mail_user', '1') && !$this->params->get('editvenue_mail_admin', '0')) {
