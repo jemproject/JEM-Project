@@ -288,7 +288,7 @@ class JEMModelVenueCal extends JModelLegacy
 	{
 		$app = JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest('com_jem.venue.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$filter_order		= $app->getUserStateFromRequest('com_jem.venue.filter_order', 'filter_order', '', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.venue.filter_order_Dir', 'filter_order_Dir', '', 'word');
 
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
