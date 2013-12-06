@@ -190,7 +190,7 @@ class modJEMteaserHelper
 			$length = $params->get('descriptionlength');
 			$length2 = 1;
 			$etc = '...';
-			$etc2 = "No Description";
+			$etc2 = JText::_('MOD_JEM_TEASER_NO_DESCRIPTION');
 
 			//strip html tags but leave <br /> tags
 			//entferne html tags bis auf Zeilenumbrüche
@@ -244,18 +244,18 @@ class modJEMteaserHelper
 
 		//check if today or tomorrow or yesterday and no current running multiday event
 		if($row->dates == $today && empty($enddates_stamp)) {
-			$result = JText::_('TODAY');
+			$result = JText::_('MOD_JEM_TEASER_TODAY');
 		} elseif($row->dates == $tomorrow) {
-			$result = JText::_('TOMORROW');
+			$result = JText::_('MOD_JEM_TEASER_TOMORROW');
 		} elseif($row->dates == $yesterday) {
-			$result = JText::_('YESTERDAY');
+			$result = JText::_('MOD_JEM_TEASER_YESTERDAY');
 		} else {
 			//if daymethod show day
 			if($params->get('daymethod', 1) == 1) {
 
 				//single day event
 				$date = strftime('%A', strtotime( $row->dates ));
-				$result = JText::sprintf('ON DATE', $date);
+				$result = JText::sprintf('MOD_JEM_TEASER_ON_DATE', $date);
 
 				//Upcoming multidayevent (From 16.10.2010 Until 18.10.2010)
 				if($dates_stamp > $tomorrow_stamp && $enddates_stamp) {
@@ -267,29 +267,29 @@ class modJEMteaserHelper
 				if( $row->enddates && $enddates_stamp > $today_stamp && $dates_stamp <= $today_stamp ) {
 				//format date
 				$result = strftime('%A', strtotime( $row->enddates ));
-				$result = JText::sprintf('UNTIL', $result);
+				$result = JText::sprintf('MOD_JEM_TEASER_UNTIL', $result);
 				}
 			} else { // show day difference
 				//the event has an enddate and it's earlier than yesterday
 				if ($row->enddates && $enddates_stamp < $yesterday_stamp) {
 					$days = round( ($today_stamp - $enddates_stamp) / 86400 );
-					$result = JText::sprintf('ENDED DAYS AGO', $days);
+					$result = JText::sprintf('MOD_JEM_TEASER_ENDED_DAYS_AGO', $days);
 
 				//the event has an enddate and it's later than today but the startdate is today or earlier than today
 				//means a currently running event with startdate = today
 				} elseif($row->enddates && $enddates_stamp > $today_stamp && $dates_stamp <= $today_stamp) {
 					$days = round( ($enddates_stamp - $today_stamp) / 86400 );
-					$result = JText::sprintf('DAYS LEFT', $days);
+					$result = JText::sprintf('MOD_JEM_TEASER_DAYS_LEFT', $days);
 
 				//the events date is earlier than yesterday
 				} elseif($dates_stamp < $yesterday_stamp) {
 					$days = round( ($today_stamp - $dates_stamp) / 86400 );
-					$result = JText::sprintf('DAYS AGO', $days );
+					$result = JText::sprintf('MOD_JEM_TEASER_DAYS_AGO', $days );
 
 				//the events date is later than tomorrow
 				} elseif($dates_stamp > $tomorrow_stamp) {
 					$days = round( ($dates_stamp - $today_stamp) / 86400 );
-					$result = JText::sprintf('DAYS AHEAD', $days);
+					$result = JText::sprintf('MOD_JEM_TEASER_DAYS_AHEAD', $days);
 				}
 			}
 		}
