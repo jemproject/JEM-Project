@@ -69,19 +69,15 @@ class JEMUser {
 	 * @return boolean True on success
 	 */
 	static function superuser() {
-		$user 		= JFactory::getUser();
-		$userGroups = $user->getAuthorisedGroups();
-
-		$group_ids = array(
-					7, //administrator
-					8  //super administrator
-					);
-
-		foreach ($userGroups as $gid) {
-			if (in_array($gid, $group_ids)) return true;
-		}
-
-		return false;
+		
+		$user = JFactory::getUser();
+    	
+    	if($user->authorise('core.manage', 'com_jem')) {
+    		return true;
+    	} else {
+    		return false;
+    	}
+    	
 	}
 
 	/**
