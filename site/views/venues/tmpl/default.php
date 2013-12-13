@@ -12,10 +12,10 @@ defined('_JEXEC') or die;
 <div id="jem" class="jem_venues_view">
 	<div class="buttons">
 		<?php
-		echo JEMOutput::addvenuebutton( $this->addvenuelink, $this->params, $this->jemsettings );
+		echo JEMOutput::addvenuebutton($this->addvenuelink, $this->params, $this->jemsettings);
 		echo JEMOutput::archivebutton($this->params, $this->task);
-		echo JEMOutput::submitbutton( $this->addeventlink, $this->params );
-		echo JEMOutput::printbutton( $this->print_link, $this->params );
+		echo JEMOutput::submitbutton($this->addeventlink, $this->params);
+		echo JEMOutput::printbutton($this->print_link, $this->params);
 		?>
 	</div>
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -129,10 +129,11 @@ class JEMModelCategories extends JModelLegacy
 				$task = JRequest::getWord('task');
 
 				$category->linktext = $task == 'archive' ? JText::_('COM_JEM_SHOW_ARCHIVE') : JText::_('COM_JEM_SHOW_EVENTS');
-
-				$category->linktarget = JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug));
+				
 				if ($task == 'archive') {
-					$category->linktarget .= '&task=archive';
+					$category->linktarget = JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug.'&task=archive'));
+				} else {
+					$category->linktarget = JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug));
 				}
 			}
 		}

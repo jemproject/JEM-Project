@@ -113,9 +113,10 @@ class JEMModelVenues extends JModelLegacy
 				//create target link
 				$task 	= JRequest::getVar('task', '', '', 'string');
 
-				$venue->targetlink = JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug));
 				if ($task == 'archive') {
-					$venue->targetlink .= '&task=archive';
+					$venue->targetlink = JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug.'&task=archive'));
+				} else {
+					$venue->targetlink = JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug));
 				}
 			}
 
