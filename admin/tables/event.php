@@ -32,21 +32,27 @@ class JEMTableEvent extends JTable
 		$startminutes	= $jinput->get('startminutes','','cmd');
 		$endhours		= $jinput->get('endhours','','cmd');
 		$endminutes		= $jinput->get('endminutes','','cmd');
-
-		// Emtpy time values are allowed and are stored as null values
-		if ($starthours != '') {
-			if ($startminutes == '') {
-				$startminutes = '00';
-			}
-			$this->times = $starthours.':'.$startminutes;
-			if ($endhours != '') {
-				if ($endminutes == '') {
-					$endminutes = '00';
-				}
-				$this->endtimes = $endhours.':'.$endminutes;
-			}
+		
+		if ($startminutes == '') {
+			$startminutes = '00';
 		}
-
+		
+		if ($endminutes == '') {
+			$endminutes = '00';
+		}
+		
+		if ($starthours == '') {
+			$starthours = '00';
+		}
+		
+		if ($endhours == '') {
+			$endhours = '00';
+		}
+			
+		$this->times = $starthours.':'.$startminutes;
+		$this->endtimes = $endhours.':'.$endminutes;
+		
+	
 		// Check begin date is before end date
 
 		// Check if end date is set
@@ -90,14 +96,15 @@ class JEMTableEvent extends JTable
 			$this->alias = JApplication::stringURLSafe($this->title);
 		}
 
-/*		
+		/*		
 		if (trim($this->introtext) == '' && trim($this->fulltext) == '')
 		{
 			$this->setError(JText::_('COM_JEM_GLOBAL_MUST_HAVE_TEXT'));
 			return false;
 		}
 		
-*/		
+		*/	
+			
 		return true;
 	}
 
