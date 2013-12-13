@@ -55,7 +55,7 @@ $params = $params->toArray();
 
 	$('jform_attribs_event_comunsolution').addEvent('change', testcomm);
 
-	var commhandler = $("jform_alattribs_event_comunsolution");
+	var commhandler = $("jform_attribs_event_comunsolution");
 	var nrcommhandler = commhandler.options[commhandler.selectedIndex].value;
 
 	if (nrcommhandler == 1) {
@@ -229,6 +229,10 @@ $params = $params->toArray();
 				</li>
 				<li><?php echo $this->form->getLabel('published'); ?> <?php echo $this->form->getInput('published'); ?>
 				</li>
+				<li><?php echo $this->form->getLabel('featured'); ?> <?php echo $this->form->getInput('featured'); ?>
+				</li>
+				<li><?php echo $this->form->getLabel('access'); ?> <?php echo $this->form->getInput('access'); ?>
+				</li>
 			</ul>
 		</fieldset>
 
@@ -394,11 +398,8 @@ $params = $params->toArray();
 			</script>
 		</fieldset>
 
-
-
 		<!-- START OF PANEL META -->
 		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_METADATA_INFORMATION'), 'meta-event'); ?>
-
 
 		<!-- RETRIEVING OF FIELDSET META -->
 		<fieldset class="panelform">
@@ -449,8 +450,8 @@ $params = $params->toArray();
 		-->
 		</script>
 	<?php echo JHtml::_('sliders.end'); ?>
-<input type="hidden" name="task" value="" />
-<input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
+	<input type="hidden" name="task" value="" />
+	<input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
 				<!--  END RIGHT DIV -->
 				<?php echo JHtml::_('form.token'); ?>
 				</div>
