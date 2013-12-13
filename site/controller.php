@@ -353,9 +353,5 @@ class JEMController extends JControllerLegacy
 
 		$app->close();
 	}
-
-	
-
-
 }
 ?>

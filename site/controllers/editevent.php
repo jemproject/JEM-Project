@@ -259,5 +259,4 @@ class JEMControllerEditevent extends JControllerForm
 
 		return $result;
 	}
-
 }

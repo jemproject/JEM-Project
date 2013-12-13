@@ -261,10 +261,8 @@ class JEMControllerEvent extends JControllerForm
 		$dispatcher = JDispatcher::getInstance();
 		$dispatcher->trigger('onEventEdited', array($id, $isNew));
 		}
-
 	}
 	
-
 	/**
 	 * Method to save a record.
 	 *
@@ -287,7 +285,6 @@ class JEMControllerEvent extends JControllerForm
 
 		return $result;
 	}
-
 	
 	/**
 	 * Saves the registration to the database

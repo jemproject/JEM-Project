@@ -66,7 +66,6 @@ class JEMControllerAttendees extends JControllerLegacy
 		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&id='.$id.'&Itemid='.$fid), $msg);
 	}
 	
-	
 	/**
 	 * toggletask
 	 */

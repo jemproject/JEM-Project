@@ -104,7 +104,7 @@ defined('_JEXEC') or die;
 		<?php $this->rows = $this->getRows(); ?>
 		<?php foreach ($this->rows as $row) : ?>
         <?php if ($row->featured != 0 ) :   ?>
-            <tr class="featured featured<?php echo $row->id.$this->params->get( 'pageclass_sfx' ); ?>" itemscope="itemscope" itemtype="http://schema.org/Event" >
+            <tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="http://schema.org/Event" >
         <?php else : ?>
             <tr class="sectiontableentry<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="http://schema.org/Event" >
         <?php endif; ?>

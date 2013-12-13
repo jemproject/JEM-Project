@@ -74,7 +74,6 @@ class JEMControllerEditvenue extends JControllerLegacy
 		$this->setRedirect($link);
 	}
 
-
 	/**
 	 * Saves the submitted venue to the database
 	 */
