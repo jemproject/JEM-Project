@@ -92,7 +92,7 @@ defined('_JEXEC') or die;
 		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="view" value="import" />
 		<input type="hidden" name="controller" value="import" />
-		<input type="hidden" name="task" value="" />
+		<input type="hidden" name="task" id="task0" value="" />
 	</form>
 <?php endif; ?>
 
@@ -117,7 +117,7 @@ defined('_JEXEC') or die;
 
 	<label for="file"><?php echo JText::_('COM_JEM_IMPORT_SELECTCSV').':'; ?></label>
 	<input type="file" id="event-file-upload" accept="text/*" name="Fileevents" />
-	<input type="submit" id="event-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='import.csveventimport';return true;"/>
+	<input type="submit" id="event-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementById('task1').value='import.csveventimport';return true;"/>
 	<span id="upload-clear"></span><br /><br/>
 	
 	<label for="replace_events"><?php echo JText::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label>
@@ -137,7 +137,7 @@ defined('_JEXEC') or die;
 
 	<label for="file"><?php echo JText::_('COM_JEM_IMPORT_SELECTCSV').':'; ?></label>
 	<input type="file" id="catevents-file-upload" accept="text/*" name="Filecatevents" />
-	<input type="submit" id="catevents-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='import.csvcateventsimport';return true;"/>
+	<input type="submit" id="catevents-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementById('task1').value='import.csvcateventsimport';return true;"/>
 	<span id="upload-clear"></span><br /><br/>
 	
 	<label for="replace_catevents"><?php echo JText::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label>
@@ -161,7 +161,7 @@ defined('_JEXEC') or die;
 
 	<label for="file"><?php echo JText::_('COM_JEM_IMPORT_SELECTCSV').':'; ?></label>
 	<input type="file" id="venue-file-upload" accept="text/*" name="Filevenues" />
-	<input type="submit" id="venue-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='import.csvvenuesimport';return true;"/>
+	<input type="submit" id="venue-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementById('task1').value='import.csvvenuesimport';return true;"/>
 	<span id="upload-clear"></span><br /><br/>
 	
 	<label for="replace_venues"><?php echo JText::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label>
@@ -180,7 +180,7 @@ defined('_JEXEC') or die;
 
 	<label for="file"><?php echo JText::_('COM_JEM_IMPORT_SELECTCSV').':'; ?></label>
 	<input type="file" id="cat-file-upload" accept="text/*" name="Filecategories" />
-	<input type="submit" id="cat-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementsByName('task')[0].value='import.csvcategoriesimport';return true;"/>
+	<input type="submit" id="cat-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementById('task1').value='import.csvcategoriesimport';return true;"/>
 	<span id="upload-clear"></span><br /><br/>
 	
 	<label for="replace_categories"><?php echo JText::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label>
@@ -198,6 +198,6 @@ defined('_JEXEC') or die;
 	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="view" value="import" />
 	<input type="hidden" name="controller" value="import" />
-	<input type="hidden" name="task" value="" />
+	<input type="hidden" name="task" id="task1" value="" />
 </form>
 <?php echo JHtml::_('tabs.end'); ?>
