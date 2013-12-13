@@ -195,52 +195,56 @@ class JEMModelEvent extends JModelAdmin
 	 */
 	protected function prepareTable(&$table)
 	{
-		$date = JFactory::getDate();
-
-		/* JInput
-		 *
-		 * Example: $foo = $jinput->get('varname', 'default_value', 'filter');
-		 * Possible filters: http://docs.joomla.org/Retrieving_request_data_using_JInput
-		 *
-		 */
-
+		$date 			= JFactory::getDate();
 		$jinput 		= JFactory::getApplication()->input;
 		$user			= JFactory::getUser();
 		$jemsettings 	= JEMHelper::config();
-
+		$app 			= JFactory::getApplication();
+		
+		// Check if we're in the front or back
+		if($app->isAdmin())
+			$backend = true;
+		else
+			$backend = false;
+		
+		
 		if ($table->id) {
 			// Existing item
 			$table->modified	= $date->toSql();
 			$table->modified_by	= $user->get('id');
 			$table->recurrence_first_id = '';
+				
+			if (!$backend) {
+				$editaccess  = JEMUser::editaccess($jemsettings->eventowner, $table->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+				$maintainer = JEMUser::ismaintainer('edit',$table->id);
+ 				if (!($maintainer || $editaccess || $user->authorise('core.edit','com_jem'))) {
+ 				JError::raiseError( 403, JText::_('COM_JEM_NO_ACCESS'));
+				}
 			
-			// Need for front-editing		
-			$editaccess  = JEMUser::editaccess($jemsettings->eventowner, $table->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
-			$maintainer = JEMUser::ismaintainer('edit',$table->id);
- 			if (!($maintainer || $editaccess || $user->authorise('core.edit','com_jem'))) {
- 			JError::raiseError( 403, JText::_('COM_JEM_NO_ACCESS'));
-			}
-			
-			/*
-			 * Is editor the owner of the event
-			* This extra Check is needed to make it possible
-			* that the venue is published after an edit from an owner
-			*/
-			if ($jemsettings->venueowner == 1 && $table->created_by == $user->get('id')) {
-				$owneredit = 1;
-			} else {
-				$owneredit = 0;
+				/*
+				* Is editor the owner of the event
+				* This extra Check is needed to make it possible
+				* that the venue is published after an edit from an owner
+				*/
+				if ($jemsettings->venueowner == 1 && $table->created_by == $user->get('id')) {
+					$owneredit = 1;
+				} else {
+					$owneredit = 0;
+				}
 			}
 
 		} else {
 			// New Event. An event created and created_by field can be set by the user,
 			// so we don't touch either of these if they are set.
 
-			$maintainer 	= JEMUser::ismaintainer('add');
-			$genaccess		= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
-				
-			if (!($maintainer || $genaccess)){
+			if (!$backend) {
+				$maintainer 	= JEMUser::ismaintainer('add');
+				$genaccess		= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );	
+				if (!($maintainer || $genaccess)){
 				JError::raiseError( 403, JText::_('COM_JEM_NO_ACCESS'));
+				}
+				//Set owneredit to false
+				$owneredit = 0;
 			}
 			
 			if (!intval($table->created)) {
@@ -250,20 +254,16 @@ class JEMModelEvent extends JModelAdmin
 			if (empty($this->created_by)) {
 				$table->created_by = $user->get('id');
 			}
-			
-			//Set owneredit to false
-			$owneredit = 0;
 		}
 		
 		
-		/*
-		 * Autopublish
-		* check if the user has the required rank for autopublish
-		*/
-		$maintainer = JEMUser::ismaintainer('publish');
-		$autopubev = JEMUser::validate_user($jemsettings->evpubrec, $jemsettings->autopubl);
-		if (!($autopubev || $owneredit || $maintainer || $user->authorise('core.edit','com_jem'))) {
-			$table->published = 0 ;
+		if (!$backend) {
+			/* check if the user has the required rank for autopublish	*/			
+			$maintainer = JEMUser::ismaintainer('publish');
+			$autopubev = JEMUser::validate_user($jemsettings->evpubrec, $jemsettings->autopubl);
+			if (!($autopubev || $owneredit || $maintainer || $user->authorise('core.edit','com_jem'))) {
+				$table->published = 0 ;
+			}
 		}
 		
 		// Bind the form fields to the table
