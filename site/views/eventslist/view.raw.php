@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.5
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -28,13 +28,6 @@ class JEMViewEventslist extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
-// 		$mainframe = JFactory::getApplication();
-
-// 		$offset = (float) $mainframe->getCfg('offset');
-// 		$hours = ($offset >= 0) ? floor($offset) : ceil($offset);
-// 		$mins = abs($offset - $hours) * 60;
-// 		$utcoffset = sprintf('%+03d%02d00', $hours, $mins);
-
 		$settings = JEMHelper::config();
 
 		// Get data from the model
@@ -45,7 +38,6 @@ class JEMViewEventslist extends JViewLegacy
 
 		// initiate new CALENDAR
 		$vcal = JEMHelper::getCalendarTool();
-// 		$vcal->setProperty('unique_id', 'allevents@'.$mainframe->getCfg('sitename'));
 		$vcal->setConfig("filename", "events.ics");
 
 		foreach ($rows as $row) {

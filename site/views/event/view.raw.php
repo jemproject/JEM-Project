@@ -31,10 +31,8 @@ class JEMViewEvent extends JViewLegacy
 		$row->id 			= $row->did;
 		$row->slug			= $row->alias ? ($row->id.':'.$row->alias) : $row->id;
 		
-
 		// initiate new CALENDAR
 		$vcal = JEMHelper::getCalendarTool();
-// 		$vcal->setProperty('unique_id', 'event'.$row->did.'@'.$mainframe->getCfg('sitename'));
 		$vcal->setConfig( "filename", "event".$row->did.".ics" );
 
 		JEMHelper::icalAddEvent($vcal, $row);
