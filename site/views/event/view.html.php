@@ -9,7 +9,6 @@
 
 defined('_JEXEC') or die;
 
-
 /**
  * HTML Event View class of the JEM component
  *
@@ -55,7 +54,6 @@ class JEMViewEvent extends JViewLegacy
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {
 			JError::raiseWarning(500, implode("\n", $errors));
-		
 			return false;
 		}
 		
@@ -120,7 +118,6 @@ class JEMViewEvent extends JViewLegacy
 		
 		$offset = $this->state->get('list.offset');
 		
-		
 		// Check the view access to the event (the model has already computed the values).
 		if ($item->params->get('access-view') != true && (($item->params->get('show_noauth') != true &&  $user->get('guest') ))) {
 			JError::raiseWarning(403, JText::_('JERROR_ALERTNOAUTHOR'));
@@ -137,9 +134,7 @@ class JEMViewEvent extends JViewLegacy
 			$item->text = $item->introtext;
 		}
 		
-		//
-		// Process the content plugins.
-		//
+		// Process the content plugins //
 		JPluginHelper::importPlugin('content');
 		$results = $dispatcher->trigger('onContentPrepare', array ('com_jem.event', &$item, &$this->params, $offset));	
 		
@@ -167,13 +162,11 @@ class JEMViewEvent extends JViewLegacy
 			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/print.css');
 			$document->setMetaData('robots', 'noindex, nofollow');
 		}
-		
 		$this->print_link = JRoute::_(JEMHelperRoute::getRoute($item->slug).'&print=1&tmpl=component');
 		
 		//Get images
 		$this->dimage = JEMImage::flyercreator($item->datimage, 'event');
 		$this->limage = JEMImage::flyercreator($item->locimage, 'venue');
-		
 		
 		// Check if user can edit
 		$maintainer5 = JEMUser::ismaintainer('edit',$item->did);
@@ -195,8 +188,6 @@ class JEMViewEvent extends JViewLegacy
 		} else {
 			$this->allowedtoeditvenue = 0;
 		}
-		
-		
 		
 		//Timecheck for registration
 		$now = strtotime(date("Y-m-d"));
@@ -269,7 +260,6 @@ class JEMViewEvent extends JViewLegacy
 		}
 		
 		$document->setDescription(strip_tags($description_content));
-		
 		
 		// load dispatcher for plugins (comments)
 		JPluginHelper::importPlugin('jem');
@@ -402,27 +392,6 @@ class JEMViewEvent extends JViewLegacy
 			$title = $this->item->title;
 		}
 		$this->document->setTitle($title);
-	
-		
-		/*
-		if ($this->item->meta_description)
-		{
-			$this->document->setDescription($this->item->meta_description);
-		}
-		elseif (!$this->item->meta_description && $this->params->get('menu-meta_description'))
-		{
-			$this->document->setDescription($this->params->get('menu-meta_description'));
-		}
-	
-		if ($this->item->meta_keywords)
-		{
-			$this->document->setMetadata('keywords', $this->item->meta_keywords);
-		}
-		elseif (!$this->item->meta_keywords && $this->params->get('menu-meta_keywords'))
-		{
-			$this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
-		}
-		*/
 	
 		if ($this->params->get('robots'))
 		{
