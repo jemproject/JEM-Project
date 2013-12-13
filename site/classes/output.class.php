@@ -389,7 +389,7 @@ class JEMOutput {
 			$overlib = JText::_('COM_JEM_PUBLISH_DESC');
 			$text = JText::_('COM_JEM_PUBLISH');
 
-			$print_link = "javascript:void(Joomla.submitbutton('publish'));";
+			$print_link = "javascript:void(Joomla.submitbutton('myevents.publish'));";
 			$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 		}
 
@@ -418,7 +418,7 @@ class JEMOutput {
 			$overlib = JText::_('COM_JEM_TRASH_DESC');
 			$text = JText::_('COM_JEM_TRASH');
 
-			$print_link = "javascript:void(Joomla.submitbutton('trash'));";
+			$print_link = "javascript:void(Joomla.submitbutton('myevents.trash'));";
 			$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 		}
 
@@ -447,7 +447,7 @@ class JEMOutput {
 			$overlib = JText::_('COM_JEM_UNPUBLISH_DESC');
 			$text = JText::_('COM_JEM_UNPUBLISH');
 
-			$print_link = "javascript:void(Joomla.submitbutton('unpublish'));";
+			$print_link = "javascript:void(Joomla.submitbutton('myevents.unpublish'));";
 			$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 		}
 
@@ -486,7 +486,7 @@ class JEMOutput {
 			$overlib = JText::_('COM_JEM_EXPORT_DESC');
 			$text = JText::_('COM_JEM_EXPORT');
 
-			$print_link = 'index.php?option=com_jem&amp;view=attendees&amp;task=attendeeexport&amp;tmpl=raw&amp;id='.$eventid.$emailaddress;
+			$print_link = 'index.php?option=com_jem&amp;view=attendees&amp;task=attendees.export&amp;tmpl=raw&amp;id='.$eventid.$emailaddress;
 			$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 		}
 

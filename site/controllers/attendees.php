@@ -103,5 +103,57 @@ class JEMControllerAttendees extends JControllerLegacy
 		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&id='.$attendee->event.'&Itemid='.$fid), $msg, $type);
 		$this->redirect();
 	}
+	
+	/**
+	 * Exporttask
+	 * view: attendees
+	 */
+	function export()
+	{
+		$app = JFactory::getApplication();
+	
+		$jinput = JFactory::getApplication()->input;
+		$enableemailadress = $jinput->get('em','','int');
+	
+		$model = $this->getModel('attendees');
+	
+		$datas = $model->getData();
+	
+		header('Content-Type: text/x-csv');
+		header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+		header('Content-Disposition: attachment; filename=attendees.csv');
+		header('Pragma: no-cache');
+	
+		$export = '';
+		$col = array();
+	
+		for($i=0; $i < count($datas); $i++)
+		{
+		$data = $datas[$i];
+	
+		$col[] = str_replace("\"", "\"\"", $data->username);
+		if ($enableemailadress == 1)
+		{
+		$col[] = str_replace("\"", "\"\"", $data->email);
+		}
+		$col[] = str_replace("\"", "\"\"", JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2')));
+		
+			for($j = 0; $j < count($col); $j++)
+				{
+				$export .= "\"" . $col[$j] . "\"";
+	
+				if($j != count($col)-1)
+				{
+				$export .= ";";
+				}
+				}
+				$export .= "\r\n";
+				$col = '';
+		}
+	
+				echo $export;
+	
+				$app->close();
+	}
 }
 ?>
