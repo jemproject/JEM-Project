@@ -72,6 +72,9 @@ function highlightevents() {
 		var filter = 'country';
 		break;
 	case '5':
+		var filter = 'category';
+		break;
+	case '6':
 		alleventfilters();
 		break;
 	}
@@ -90,6 +93,7 @@ function alleventfilters() {
 	var city = 'city';
 	var state = 'state';
 	var country = 'country';
+	var category = 'category';
 
 	var titlekeyword = $('filter_search').value;
 	var titleparameter = "td."+ title +":contains(" + titlekeyword + ")";
@@ -110,6 +114,11 @@ function alleventfilters() {
 	var countryparameter = "td."+ country +":contains(" + countrykeyword + ")";
 	elements.getElements(countryparameter).addClass('red');
 	jQuery(elements.getElements(countryparameter)).highlight(countrykeyword);
+	
+	var categorykeyword = $('filter_search').value;
+	var categoryparameter = "td."+ category +":contains(" + categorykeyword + ")";
+	elements.getElements(categoryparameter).addClass('red');
+	jQuery(elements.getElements(categoryparameter)).highlight(categorykeyword);
 }
 
 
