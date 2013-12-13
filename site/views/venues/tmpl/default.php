@@ -14,7 +14,6 @@ defined('_JEXEC') or die;
 		<?php
 		echo JEMOutput::addvenuebutton( $this->addvenuelink, $this->params, $this->jemsettings );
 		echo JEMOutput::submitbutton( $this->addeventlink, $this->params );
-		echo JEMOutput::archivebutton( $this->params, $this->task );
 		echo JEMOutput::printbutton( $this->print_link, $this->params );
 		?>
 	</div>
