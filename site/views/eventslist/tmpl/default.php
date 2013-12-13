@@ -37,7 +37,6 @@ defined('_JEXEC') or die;
 
 		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-
 		<input type="hidden" name="task" value="<?php echo $this->task; ?>" />
 		<input type="hidden" name="view" value="eventslist" />
 	</form>
@@ -47,11 +46,9 @@ defined('_JEXEC') or die;
 	<div class="pagination">
 		<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
-
-	<div>
+	<div id="iCal" class="iCal">
 	<?php echo JEMOutput::icalbutton('', 'eventslist'); ?>
 	</div>
-	
 	<div class="copyright">
 		<?php echo JEMOutput::footer( ); ?>
 	</div>
