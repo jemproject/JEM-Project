@@ -894,7 +894,7 @@ class JEMModelCategory extends JModelAdmin
 	 * @access public
 	 * @return string $msg
 	 */
-	function delete($cids)
+	function delete(&$cids)
 	{
 		// Add all children to the list
 		foreach ($cids as $id) {
