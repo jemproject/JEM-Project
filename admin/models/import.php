@@ -461,6 +461,8 @@ class JEMModelImport extends JModelLegacy {
 	 * @param string $tablename  The name of the table
 	 * @param array $data  The data to work with
 	 * @return array  The changed data
+	 * 
+	 * @todo: increment catid when catid=1 exists.
 	 */
 	public function transformEventlistData($tablename, &$data) {
 		// categories
@@ -469,6 +471,11 @@ class JEMModelImport extends JModelLegacy {
 				// JEM now has a root category, so we shift IDs by 1
 				$row->id++;
 				$row->parent_id++;
+				
+				// Description field has been renamed
+				if($row->catdescription) {
+					$row->description = $row->catdescription;
+				}
 			}
 		}
 
@@ -481,12 +488,14 @@ class JEMModelImport extends JModelLegacy {
 				$rowNew->catid = $row->catsid;
 				$rowNew->itemid = $row->id;
 				$rowNew->ordering = 0;
+				
+				// JEM now has a root category, so we shift IDs by 1
+				$rowNew->catid++;
 
 				$dataNew[] = $rowNew;
+			
 			}
-			// JEM now has a root category, so we shift IDs by 1
-			$dataNew->catid++;
-
+			
 			return $dataNew;
 		}
 
@@ -510,7 +519,12 @@ class JEMModelImport extends JModelLegacy {
 				if(strpos($row->author_ip, "COM_EVENTLIST") === 0) {
 					$row->author_ip = "";
 				}
+				// Description field has been renamed
+				if($row->datdescription) {
+					$row->introtext = $row->datdescription; 
+				}
 			}
+			
 		}
 
 		// groupmembers
