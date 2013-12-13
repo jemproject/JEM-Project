@@ -22,6 +22,10 @@ div#jem h2 {
 	border: none;
 }
 
+div#jem .flyerimage {
+    border: none !important;
+}
+
 a[href]:after {
 	content: none !important;
 }
@@ -48,6 +52,11 @@ a[href^="#"]:after {
 
 a:link:after, a:visited:after {
 	content: none;
+}
+
+
+div#jem .flyerimage {
+    border: none;
 }
 
 }
