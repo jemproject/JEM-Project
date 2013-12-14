@@ -81,7 +81,7 @@ defined('_JEXEC') or die;
 	</thead>
 	<tbody>
 	<?php if (count((array)$this->attending) == 0) : ?>
-		<tr align="center"><td colspan="0"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
+		<tr align="center"><td colspan="20"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
 	<?php else : ?>
 		<?php foreach ($this->attending as $i => $row) : ?>
 			<tr class="row<?php echo $i % 2; ?>">
