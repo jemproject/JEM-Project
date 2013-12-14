@@ -58,7 +58,7 @@ class JEMViewEvent extends JViewLegacy
 		}
 		
 		//add css file
-		$document->addStyleSheet($this->baseurl.'/media/com_jem/css/jem.css');
+		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 	
 		// Create a shortcut for $item.
@@ -159,7 +159,7 @@ class JEMViewEvent extends JViewLegacy
 		
 		if ($this->print) {
 			//$document = JFactory::getDocument();
-			$document->addStyleSheet($this->baseurl.'/media/com_jem/css/print.css');
+			JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
 			$document->setMetaData('robots', 'noindex, nofollow');
 		}
 		$this->print_link = JRoute::_(JEMHelperRoute::getRoute($item->slug).'&print=1&tmpl=component');

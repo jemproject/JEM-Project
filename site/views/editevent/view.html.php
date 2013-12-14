@@ -154,7 +154,7 @@ class JEMViewEditevent extends JViewLegacy
 		$this->access = $access2;
 		
 		// add css file
-		$document->addStyleSheet($this->baseurl . '/media/com_jem/css/jem.css');
+		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		
 		// Load scripts
 		$document->addScript(JURI::root() . 'media/com_jem/js/attachments.js');
