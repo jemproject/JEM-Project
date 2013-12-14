@@ -50,9 +50,8 @@ JHtml::_('behavior.modal');
 	</div>
 
 	<!--subcategories-->
-<?php
-
-if (count($this->categories) && $this->category->id > 0) :
+	<?php
+	if (count($this->categories) && $this->category->id > 0) :
 	// only show this part if subcategries are available	?>
 	<?php echo $this->loadTemplate('subcategories'); ?>
 	<?php endif; ?>
@@ -66,7 +65,6 @@ if (count($this->categories) && $this->category->id > 0) :
 	<input type="hidden" name="view" value="category" /> 
 	<input type="hidden" name="task" value="<?php echo $this->task; ?>" /> 
 	<input type="hidden" name="id" value="<?php echo $this->category->id; ?>" />
-	<input type="hidden" name="Itemid" value="<?php echo $this->item->id;?>" />
 	</form>
 
 	<!--pagination-->

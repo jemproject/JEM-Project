@@ -350,17 +350,17 @@ class JEMViewEvent extends JViewLegacy
 		}
 		else
 		{
-			$this->params->def('page_heading', JText::_('JGLOBAL_ARTICLES'));
+			$this->params->def('page_heading', JText::_('JGLOBAL_JEM_EVENT'));
 		}
 	
 		$title = $this->params->get('page_title', '');
 	
 		$id = (int) @$menu->query['id'];
 	
-		// if the menu item does not concern this article
+		// if the menu item does not concern this event
 		if ($menu && ($menu->query['option'] != 'com_jem' || $menu->query['view'] != 'event' || $id != $this->item->id))
 		{
-			// If this is not a single article menu item, set the page title to the article title
+			// If this is not a single event menu item, set the page title to the event title
 			if ($this->item->title) {
 				$title = $this->item->title;
 			}

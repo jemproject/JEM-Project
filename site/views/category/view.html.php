@@ -102,9 +102,8 @@ class JEMViewCategory extends JEMView
 			$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
 
 			//initialize variables
-			$app = JFactory::getApplication();
+			$app 			= JFactory::getApplication();
 			$document 		= JFactory::getDocument();
-			$menu			= $app->getMenu();
 			$jemsettings 	= JEMHelper::config();
 			$settings 		= JEMHelper::globalattribs();
 			$db  			= JFactory::getDBO();
@@ -113,11 +112,12 @@ class JEMViewCategory extends JEMView
 			JHtml::_('behavior.tooltip');
 
 			//get menu information
-			$menu			= $app->getMenu();
-			$item 			= $menu->getActive();
 			$params 		= $app->getParams();
 			$uri 			= JFactory::getURI();
 			$pathway 		= $app->getPathWay();
+			$menus			= $app->getMenu();
+			$pathway		= $app->getPathway();
+			$title 			= null;
 
 			// Load css
 			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
@@ -178,7 +178,49 @@ class JEMViewCategory extends JEMView
 			}
 
 			//Set Meta data
-			$document->setTitle($item->title.' - '.$category->catname);
+			
+			// Because the application sets a default page title,
+			// we need to get it from the menu item itself
+			$menu = $menus->getActive();
+			
+			if ($menu)
+			{
+				$params->def('page_heading', $params->get('page_title', $menu->title));
+			}
+			else
+			{
+				$params->def('page_heading', JText::_('JGLOBAL_JEM_CATEGORY'));
+			}
+			
+			$title = $params->get('page_title', '');
+			
+			$id = (int) @$menu->query['id'];
+			
+			// if the menu item does not concern this article
+			if ($menu && ($menu->query['option'] != 'com_jem' || $menu->query['view'] != 'category' || $id != $category->id))
+			{
+				// If this is not a single category menu item, set the page title to the category title
+				if ($category->catname) {
+					$title = $category->catname;
+				}
+			}
+			
+			// Check for empty title and add site name if param is set
+			if (empty($title)) {
+				$title = $app->getCfg('sitename');
+			}
+			elseif ($app->getCfg('sitename_pagetitles', 0) == 1) {
+				$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
+			}
+			elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+				$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
+			}
+			if (empty($title)) {
+				$title = $category->catname;
+			}
+			$this->document->setTitle($title);
+			
+			//$document->setTitle($item->title.' - '.$category->catname);
 			$document->setMetadata('keywords', $category->meta_keywords);
 			$document->setDescription(strip_tags($category->meta_description));
 
@@ -249,7 +291,6 @@ class JEMViewCategory extends JEMView
 			$this->pagination		= $pagination;
 			$this->jemsettings		= $jemsettings;
 			$this->settings			= $settings;
-			$this->item				= $item;
 			$this->categories		= $categories;
 		}
 
