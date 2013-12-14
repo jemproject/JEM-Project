@@ -8,7 +8,7 @@
  */
 
 
-defined ( '_JEXEC' ) or die;
+defined ('_JEXEC') or die;
 ?>
 
 <table class="adminform" id="el-attachments">

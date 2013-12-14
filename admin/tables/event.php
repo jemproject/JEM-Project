@@ -51,7 +51,6 @@ class JEMTableEvent extends JTable
 			
 		$this->times = $starthours.':'.$startminutes;
 		$this->endtimes = $endhours.':'.$endminutes;
-		
 	
 		// Check begin date is before end date
 
