@@ -836,7 +836,27 @@ class JEMHelper {
 		}
 		return true;
 	}
-
+	
+	/**
+	 * return true is a time is valid (not null, or 00:00:00...)
+	 *
+	 * @param string $time
+	 * @return boolean
+	 */
+	static function isValidTime($time)
+	{
+		if (is_null($time)) {
+			return false;
+		}
+		if ($time == '00:00:00') {
+			return false;
+		}
+		if (!strtotime($time)) {
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * Get the Group ID of a specific user or the current user
 	 * @param JUser $user The user object

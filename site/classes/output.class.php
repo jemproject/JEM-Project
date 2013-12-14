@@ -712,11 +712,7 @@ class JEMOutput {
 	static function formattime($time, $format = "", $addSuffix = true)
 	{
 		$settings = JEMHelper::config();
-
-		if(!$time) {
-			return;
-		}
-
+		
 		if(!$format) {
 			// If no format set, use settings format as standard
 			$format = $settings->formattime;
@@ -750,7 +746,7 @@ class JEMOutput {
 		if(JEMHelper::isValidDate($dateStart)) {
 			$output .= self::formatdate($dateStart, $format);
 
-			if($settings->get('global_show_timedetails','1') && $timeStart) {
+			if($settings->get('global_show_timedetails','1') && JEMHelper::isValidTime($timeStart)) {
 				$output .= ', '.self::formattime($timeStart);
 			}
 
@@ -761,7 +757,8 @@ class JEMOutput {
 			}
 
 			// Display end time only when both times are set
-			if($settings->get('global_show_timedetails','1') && $timeStart && $timeEnd) {
+			if($settings->get('global_show_timedetails','1') && JEMHelper::isValidTime($timeStart) && JEMHelper::isValidTime($timeEnd)) 
+			{				
 				$output .= $displayDateEnd ? ', ' : ' - ';
 				$output .= self::formattime($timeEnd);
 			}
@@ -769,11 +766,11 @@ class JEMOutput {
 			$output .= JText::_('COM_JEM_OPEN_DATE');
 
 			if($settings->get('global_show_timedetails','1')) {
-				if($timeStart) {
+				if(JEMHelper::isValidTime($timeStart)) {
 					$output .= ', '.self::formattime($timeStart);
 				}
 				// Display end time only when both times are set
-				if($timeStart && $timeEnd) {
+				if(JEMHelper::isValidTime($timeStart) && JEMHelper::isValidTime($timeEnd)) {
 					$output .= ' - '.self::formattime($timeEnd);
 				}
 			}
