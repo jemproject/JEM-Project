@@ -10,6 +10,9 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE.'/components/com_jem/helpers/route.php';
+
+
 /**
  * JEM Modulewide helper
  *
@@ -17,7 +20,7 @@ defined('_JEXEC') or die;
  * @subpackage JEM Wide Module
  *
  */
-class modJEMwideHelper
+abstract class modJEMwideHelper
 {
 
 	/**

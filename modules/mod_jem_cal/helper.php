@@ -155,7 +155,12 @@ class modjemcalqhelper
 					} else {
 						// @todo fix the getroute link
 						if ($FixItemID == 0) {
-							$evlink = 'index.php?option=com_jem&view=day&id='. $tdate.'&Itemid='.$defaultItemid;
+							if ($defaultItemid)
+							{
+								$evlink = 'index.php?option=com_jem&view=day&id='. $tdate.'&Itemid='.$defaultItemid;
+							} else {
+								$evlink = 'index.php?option=com_jem&view=day&id='. $tdate;
+							}
 							$link = JRoute::_($evlink);
 							//$link = JEMHelperRoute::getRoute($tdate, 'day');
 						} else {
