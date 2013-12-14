@@ -8,7 +8,7 @@
 			label="COM_JEM_EVENT_FIELD_ARTICLETEXT_LABEL"
 			description="COM_JEM_EVENT_FIELD_ARTICLETEXT_DESC"
 			filter="JComponentHelper::filterText"
-			buttons="true"
+			hide="pagebreak"
 		/>
 		<field name="featured" type="list"
 			label="JFEATURED"
