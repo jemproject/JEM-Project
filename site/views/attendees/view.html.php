@@ -56,9 +56,6 @@ class JEMViewAttendees extends JViewLegacy {
 		$search 			= $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
 		$search 			= $db->escape(trim(JString::strtolower($search)));
 
-		//add css and submenu to document
-		$document->addStyleSheet(JURI::root().'media/com_jem/css/backend.css');
-
 		// Get data from the model
 		$rows      	= $this->get('Data');
 		$pagination = $this->get('Pagination');
