@@ -96,9 +96,7 @@ abstract class JEMHelperRoute
 			if (isset($defaultItemid))
 				{
 					$link .= '&Itemid='.$defaultItemid;
-				} else {
-					$link .= '&Itemid='.$item;
-				}
+				} 
 		}
 		
 		return $link;
@@ -130,9 +128,7 @@ abstract class JEMHelperRoute
 			if (isset($defaultItemid))
 				{
 					$link .= '&Itemid='.$defaultItemid;
-				} else {
-					$link .= '&Itemid='.$item;
-				}
+				} 
 		}
 
 		return $link;
@@ -160,8 +156,6 @@ abstract class JEMHelperRoute
 			if (isset($defaultItemid))
 				{
 					$link .= '&Itemid='.$defaultItemid;
-				} else {
-					$link .= '&Itemid='.$item;
 				}
 		}
 		
