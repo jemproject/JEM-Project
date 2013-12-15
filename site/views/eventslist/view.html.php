@@ -71,15 +71,15 @@ class JEMViewEventslist extends JEMView
 		}
 
 		//params
-		$params->def( 'page_title', $item->title);
+		$params->def('page_title', $item->title);
 
 		//pathway
 		$pathway->setItemName( 1, $item->title );
 
 		if ( $task == 'archive' ) {
-			$pathway->addItem(JText::_( 'COM_JEM_ARCHIVE' ), JRoute::_('index.php?view=eventslist&task=archive') );
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=eventslist&task=archive') );
 			$print_link = JRoute::_('index.php?view=eventslist&task=archive&tmpl=component&print=1');
-			$pagetitle = $params->get('page_title').' - '.JText::_( 'COM_JEM_ARCHIVE' );
+			$pagetitle = $params->get('page_title').' - '.JText::_('COM_JEM_ARCHIVE');
 		} else {
 			$print_link = JRoute::_('index.php?view=eventslist&tmpl=component&print=1');
 			$pagetitle = $params->get('page_title');
@@ -87,7 +87,7 @@ class JEMViewEventslist extends JEMView
 
 		//Set Page title
 		$document->setTitle($pagetitle);
-		$document->setMetaData( 'title' , $pagetitle );
+		$document->setMetaData('title' , $pagetitle);
 
 		//Check if the user has access to the form
 		$maintainer = JEMUser::ismaintainer('add');
@@ -146,7 +146,54 @@ class JEMViewEventslist extends JEMView
 		$this->settings			= $settings;
 		$this->pagetitle		= $pagetitle;
 
+		$this->_prepareDocument();
 		parent::display($tpl);
+	}
+	
+	/**
+	 * Prepares the document
+	 */
+	protected function _prepareDocument()
+	{
+		$app	= JFactory::getApplication();
+		$menus	= $app->getMenu();
+		$title	= null;
+	
+		// Because the application sets a default page title,
+		// we need to get it from the menu item itself
+		$menu = $menus->getActive();
+		if ($menu)
+		{
+			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
+		} else {
+			$this->params->def('page_heading', JText::_('COM_JEM_EVENTSLIST'));
+		}
+		$title = $this->params->get('page_title', '');
+		if (empty($title)) {
+			$title = $app->getCfg('sitename');
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 1) {
+			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
+		}
+		$this->document->setTitle($title);
+	
+		if ($this->params->get('menu-meta_description'))
+		{
+			$this->document->setDescription($this->params->get('menu-meta_description'));
+		}
+	
+		if ($this->params->get('menu-meta_keywords'))
+		{
+			$this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
+		}
+	
+		if ($this->params->get('robots'))
+		{
+			$this->document->setMetadata('robots', $this->params->get('robots'));
+		}		
 	}
 }
 ?>
