@@ -85,7 +85,9 @@ class JEMHelper {
 		$nrdaysupdate = floor($lastupdate / 86400);
 
 		if ($nrdaysnow > $nrdaysupdate || $forced) {
-			$db = JFactory::getDBO();
+			
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
 
 			// get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
 			$nulldate = '0000-00-00';
@@ -105,9 +107,17 @@ class JEMHelper {
 			foreach($recurrence_array as $recurrence_row)
 			{
 				// get the info of reference event for the duplicates
-				$ref_event = JTable::getInstance('jem_events', '');
+				$ref_event = JTable::getInstance('Event', 'JEMTable');
 				$ref_event->load($recurrence_row['id']);
 
+				$db = JFactory::getDbo();
+				$query = $db->getQuery(true);
+				$query->select('*');
+				$query->from($db->quoteName('#__jem_events').' AS a');
+				$query->where('id = '.$recurrence_row['id']);
+				$db->setQuery($query);
+				$reference = $db->loadAssoc();
+					
 				// the first day of the week is used for certain rules
 				$recurrence_row['weekstart'] = $weekstart;
 
@@ -119,8 +129,8 @@ class JEMHelper {
 						|| strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
 						&& strtotime($recurrence_row['dates']) <= time() + 86400*$anticipation)
 				{
-					$new_event = JTable::getInstance('jem_events', '');
-					$new_event->bind($ref_event, array('id', 'hits', 'dates', 'enddates','checked_out_time','checked_out'));
+					$new_event = JTable::getInstance('Event', 'JEMTable');
+					$new_event->bind($reference, array('id', 'hits', 'dates', 'enddates','checked_out_time','checked_out'));
 					$new_event->recurrence_first_id = $recurrence_row['first_id'];
 					$new_event->recurrence_counter = $recurrence_row['counter'] + 1;
 					$new_event->dates = $recurrence_row['dates'];
