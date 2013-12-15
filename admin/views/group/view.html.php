@@ -85,7 +85,7 @@ class JEMViewGroup extends JViewLegacy {
 		$checkedOut	= !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
 		$canDo		= JEMHelperBackend::getActions();
 
-		JToolBarHelper::title($isNew ? JText::_('COM_JEM_ADD_GROUP') : JText::_('COM_JEM_EDIT_GROUP'), 'groupedit');
+		JToolBarHelper::title($isNew ? JText::_('COM_JEM_GROUP_ADD') : JText::_('COM_JEM_GROUP_EDIT'), 'groupedit');
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit')||$canDo->get('core.create'))) {

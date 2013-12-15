@@ -88,9 +88,9 @@ $params = $params->toArray();
 		<fieldset class="adminform">
 			<table class="adminform">
 				<tr>
-					<td><b><?php echo JText::_('COM_JEM_AVAILABLE_USERS').':'; ?></b></td>
+					<td><b><?php echo JText::_('COM_JEM_GROUP_AVAILABLE_USERS').':'; ?></b></td>
 					<td>&nbsp;</td>
-					<td><b><?php echo JText::_('COM_JEM_MAINTAINERS').':'; ?></b></td>
+					<td><b><?php echo JText::_('COM_JEM_GROUP_MAINTAINERS').':'; ?></b></td>
 				</tr>
 				<tr>
 					<td width="260px"><?php echo $this->lists['available_users']; ?></td>

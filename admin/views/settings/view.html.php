@@ -94,7 +94,7 @@ class JEMViewSettings extends JViewLegacy {
 		// Create Submenu
 		require_once JPATH_COMPONENT . '/helpers/helper.php';
 
-		JToolBarHelper::title(JText::_('COM_JEM_SETTINGS'), 'settings');
+		JToolBarHelper::title(JText::_('COM_JEM_SETTINGS_TITLE'), 'settings');
 		JToolBarHelper::apply('settings.apply');
 		JToolBarHelper::save('settings.save');
 		JToolBarHelper::divider();

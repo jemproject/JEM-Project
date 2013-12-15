@@ -55,7 +55,7 @@ $options = array(
 						$this->quickiconButton($link, 'icon-48-groups.png', JText::_('COM_JEM_GROUPS'));
 
 						$link = 'index.php?option=com_jem&amp;task=group.add';
-						$this->quickiconButton($link, 'icon-48-groupedit.png', JText::_('COM_JEM_ADD_GROUP'));
+						$this->quickiconButton($link, 'icon-48-groupedit.png', JText::_('COM_JEM_GROUP_ADD'));
 
 						$link = 'index.php?option=com_jem&amp;task=plugins.plugins';
 						$this->quickiconButton($link, 'icon-48-plugins.png', JText::_('COM_JEM_MANAGE_PLUGINS'));
@@ -63,16 +63,16 @@ $options = array(
 						//only admins should be able to see this items
 						if (JFactory::getUser()->authorise('core.manage')) {
 							$link = 'index.php?option=com_jem&amp;view=settings';
-							$this->quickiconButton($link, 'icon-48-settings.png', JText::_('COM_JEM_SETTINGS'));
+							$this->quickiconButton($link, 'icon-48-settings.png', JText::_('COM_JEM_SETTINGS_TITLE'));
 
 							$link = 'index.php?option=com_jem&amp;view=cleanup';
 							$this->quickiconButton($link, 'icon-48-housekeeping.png', JText::_('COM_JEM_CLEANUP'));
 
 							$link = 'index.php?option=com_jem&amp;task=sampledata.load';
-							$this->quickiconButton($link, 'icon-48-sampledata.png', JText::_('COM_JEM_LOAD_SAMPLE_DATA'));
+							$this->quickiconButton($link, 'icon-48-sampledata.png', JText::_('COM_JEM_MAIN_LOAD_SAMPLE_DATA'));
 
 							$link = 'index.php?option=com_jem&amp;view=updatecheck';
-							$this->quickiconButton($link, 'icon-48-update.png', JText::_('COM_JEM_UPDATE_CHECK'));
+							$this->quickiconButton($link, 'icon-48-update.png', JText::_('COM_JEM_UPDATECHECK_TITLE'));
 
 							$link = 'index.php?option=com_jem&amp;view=import';
 							$this->quickiconButton($link, 'icon-48-tableimport.png', JText::_('COM_JEM_IMPORT_DATA'));

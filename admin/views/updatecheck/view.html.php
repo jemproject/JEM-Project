@@ -46,9 +46,8 @@ class JEMViewUpdatecheck extends JViewLegacy {
 	protected function addToolbar()
 	{
 		//create the toolbar
-		JToolBarHelper::title(JText::_('COM_JEM_UPDATE_CHECK'), 'settings');
+		JToolBarHelper::title(JText::_('COM_JEM_UPDATECHECK_TITLE'), 'settings');
 		JToolBarHelper::back();
 		JToolBarHelper::help('update', true);
 	}
-
 }

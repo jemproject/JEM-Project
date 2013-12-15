@@ -31,11 +31,11 @@ if ($this->updatedata->failed == 0) {
 		  		<td>
 		  		<?php
 		  			if ($this->updatedata->current == 0) {
-		  				echo '<b><font color="green">'.JText::_('COM_JEM_LATEST_VERSION').'</font></b>';
+		  				echo '<b><font color="green">'.JText::_('COM_JEM_UPDATECHECK_LATEST_VERSION').'</font></b>';
 		  			} elseif( $this->updatedata->current == -1 ) {
-		  				echo '<b><font color="red">'.JText::_('COM_JEM_OLD_VERSION').'</font></b>';
+		  				echo '<b><font color="red">'.JText::_('COM_JEM_UPDATECHECK_OLD_VERSION').'</font></b>';
 		  			} else {
-		  				echo '<b><font color="orange">'.JText::_('COM_JEM_NEWER_VERSION').'</font></b>';
+		  				echo '<b><font color="orange">'.JText::_('COM_JEM_UPDATECHECK_NEWER_VERSION').'</font></b>';
 		  			}
 		  		?>
 		  		</td>
@@ -45,21 +45,21 @@ if ($this->updatedata->failed == 0) {
 		<br />
 			<table style="width:100%" class="adminlist">
 			<tr>
-		  		<td><b><?php echo JText::_('COM_JEM_VERSION').':'; ?></b></td>
+		  		<td><b><?php echo JText::_('COM_JEM_UPDATECHECK_VERSION').':'; ?></b></td>
 		  		<td><?php
 					echo $this->updatedata->versiondetail;
 					?>
 		  		</td>
 			</tr>
 			<tr>
-		  		<td><b><?php echo JText::_('COM_JEM_RELEASE_DATE').':'; ?></b></td>
+		  		<td><b><?php echo JText::_('COM_JEM_UPDATECHECK_RELEASE_DATE').':'; ?></b></td>
 		  		<td><?php
 					echo $this->updatedata->date;
 					?>
 		  		</td>
 			</tr>
 			<tr>
-		  		<td><b><?php echo JText::_('COM_JEM_CHANGES').':'; ?></b></td>
+		  		<td><b><?php echo JText::_('COM_JEM_UPDATECHECK_CHANGES').':'; ?></b></td>
 		  		<td><ul>
 		  			<?php
 					foreach ($this->updatedata->changes as $change) {
@@ -70,19 +70,19 @@ if ($this->updatedata->failed == 0) {
 		  		</td>
 			</tr>
 			<tr>
-		  		<td><b><?php echo JText::_('COM_JEM_INFORMATION').':'; ?></b></td>
+		  		<td><b><?php echo JText::_('COM_JEM_UPDATECHECK_INFORMATION').':'; ?></b></td>
 		  		<td>
 					<a href="<?php echo $this->updatedata->info; ?>" target="_blank"><?php echo JText::_('COM_JEM_UPDATECHECK_INFORMATION'); ?></a>
 		  		</td>
 			</tr>
 			<tr>
-		  		<td><b><?php echo JText::_('COM_JEM_FILES').':'; ?></b></td>
+		  		<td><b><?php echo JText::_('COM_JEM_UPDATECHECK_FILES').':'; ?></b></td>
 		  		<td>
 					<a href="<?php echo $this->updatedata->download; ?>" target="_blank"><?php echo JText::_('COM_JEM_UPDATECHECK_DOWNLOAD'); ?></a>
 		  		</td>
 			</tr>
 			<tr>
-		  		<td><b><?php echo JText::_('COM_JEM_NOTES').':'; ?></b></td>
+		  		<td><b><?php echo JText::_('COM_JEM_UPDATECHECK_NOTES').':'; ?></b></td>
 		  		<td><?php
 					echo $this->updatedata->notes;
 					?>
@@ -93,7 +93,7 @@ if ($this->updatedata->failed == 0) {
 		<br />
 		<table style="width:200px;" class="adminlist">
 			<tr>
-		  		<td><b><?php echo JText::_('COM_JEM_INSTALLED_VERSION').':'; ?></b></td>
+		  		<td><b><?php echo JText::_('COM_JEM_UPDATECHECK_INSTALLED_VERSION').':'; ?></b></td>
 		  		<td><?php echo $this->updatedata->installedversion; ?>
 		  		</td>
 			</tr>
@@ -110,7 +110,7 @@ if ($this->updatedata->failed == 0) {
 		  		</td>
 		  		<td>
 		  		<?php
-		  			echo '<b><font color="red">'.JText::_('COM_JEM_CONNECTION_FAILED').'</font></b>';
+		  			echo '<b><font color="red">'.JText::_('COM_JEM_UPDATECHECK_CONNECTION_FAILED').'</font></b>';
 		  		?>
 		  		</td>
 			</tr>

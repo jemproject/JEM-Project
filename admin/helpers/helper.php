@@ -68,7 +68,7 @@ class JEMHelperBackend
 
 		if (JFactory::getUser()->authorise('core.manage')) {
 			JSubMenuHelper::addEntry(
-			JText::_('COM_JEM_SETTINGS'),
+			JText::_('COM_JEM_SETTINGS_TITLE'),
 			'index.php?option=com_jem&view=settings',
 			$vName == 'settings'
 					);
