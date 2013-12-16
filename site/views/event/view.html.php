@@ -37,6 +37,7 @@ class JEMViewEvent extends JViewLegacy
 		$userId				= $user->get('id');
 		$dispatcher			= JDispatcher::getInstance();
 		$document 			= JFactory::getDocument();
+		$model 				= $this->getModel();
 		
 		$this->item			= $this->get('Item');
 		$this->print		= JRequest::getBool('print');
@@ -48,7 +49,7 @@ class JEMViewEvent extends JViewLegacy
 		$categories			= $this->get('Categories');
 		$this->categories	= $categories;
 		
-		$this->registers		= $this->get('Registers');
+		$this->registers	= $model->getRegisters($this->state->get('event.id'));
 		$isregistered		= $this->get('UserIsRegistered');
 		
 		// Check for errors.
@@ -306,7 +307,7 @@ class JEMViewEvent extends JViewLegacy
 			case "endtimes":
 				$content = '';
 				if ($row->$keyword) {
-					$content = strftime($formattime ,strtotime($row->$keyword));
+					$content = JEMOutput::formattime($row->$keyword);
 				}
 				break;
 			case "dates":

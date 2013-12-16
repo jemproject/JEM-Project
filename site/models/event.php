@@ -17,13 +17,15 @@ jimport('joomla.application.component.modelitem');
  */
 class JEMModelEvent extends JModelItem
 {
-
+	
 	/**
 	 * Model context string.
 	 *
 	 * @var string
 	 */
 	protected $_context = 'com_jem.event';
+	
+	var $_registers = null;
 
 	/**
 	 * Method to auto-populate the model state.
@@ -326,9 +328,12 @@ class JEMModelEvent extends JModelItem
 		
 		$pk = (!empty($pk)) ? $pk : (int) $this->getState('event.id');
 		
-		$query = 'SELECT DISTINCT c.id, c.catname,' . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as slug' . ' FROM #__jem_categories AS c' .
-				 ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id' . ' WHERE rel.itemid = ' . (int) $pk . '  AND c.published = 1' . ' AND c.access  <= ' . $gid;
-		
+		$query = 'SELECT DISTINCT c.id, c.catname,' 
+				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as slug' 
+				. ' FROM #__jem_categories AS c' 
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id' 
+				. ' WHERE rel.itemid = ' . (int) $pk 
+				. '  AND c.published = 1' . ' AND c.access  <= ' . $gid;
 		$this->_db->setQuery($query);
 		
 		$this->_cats = $this->_db->loadObjectList();
@@ -354,7 +359,9 @@ class JEMModelEvent extends JModelItem
 		// usercheck
 		$query = 'SELECT waiting+1' . 		// 1 if user is registered, 2 if on waiting
 				// list
-		' FROM #__jem_register' . ' WHERE uid = ' . $userid . ' AND event = ' . $this->getState('event.id');
+		' FROM #__jem_register' 
+		. ' WHERE uid = ' . $userid 
+		. ' AND event = ' . $this->getState('event.id');
 		$this->_db->setQuery($query);
 		return $this->_db->loadResult();
 	}
@@ -366,7 +373,7 @@ class JEMModelEvent extends JModelItem
 	 * @return object
 	 *
 	 */
-	function getRegisters()
+	function getRegisters($event = false)
 	{
 		// avatars should be displayed
 		$settings = JEMHelper::globalattribs();
@@ -382,18 +389,21 @@ class JEMModelEvent extends JModelItem
 		$name = $settings->get('global_regname','1') ? 'u.name' : 'u.username';
 	
 		// Get registered users
+		$db = $this->getDbo();
+		$query = $db->getQuery(true);
 		$query = 'SELECT ' 
 				. $name . ' AS name, r.uid' . $avatar 
 				. ' FROM #__jem_register AS r' 
 				. ' LEFT JOIN #__users AS u ON u.id = r.uid' 
-				. $join . ' WHERE event = ' 
-				. $this->getState('event.id') 
+				. $join 
+				. ' WHERE event = '. $event
 				. '   AND waiting = 0 ';
-		$this->_db->setQuery($query);
+		$db->setQuery($query);
 	
-		$this->_registers = $this->_db->loadObjectList();
+		$registered = $db->loadObjectList();
 	
-		return $this->_registers;
+		//var_dump($this->_registers);exit;
+		return $registered;
 	}
 	
 	
@@ -431,9 +441,9 @@ class JEMModelEvent extends JModelItem
 		$event2 = $this->getItem($pk = $this->_registerid);
 	
 		if ($event2->maxplaces > 0) 		// there is a max
-		{
+		{		
 			// check if the user should go on waiting list
-			$attendees = $this->getRegisters();
+			$attendees = self::getRegisters($event);
 			if (count($attendees) >= $event2->maxplaces) {
 				if (!$event2->waitinglist) {
 					$this->setError(JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'));
