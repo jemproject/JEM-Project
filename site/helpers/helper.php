@@ -858,9 +858,7 @@ class JEMHelper {
 		if (is_null($time)) {
 			return false;
 		}
-		if ($time == '00:00:00') {
-			return false;
-		}
+		
 		if (!strtotime($time)) {
 			return false;
 		}

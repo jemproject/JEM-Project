@@ -33,32 +33,56 @@ class JEMTableEvent extends JTable
 		$endhours		= $jinput->get('endhours','','cmd');
 		$endminutes		= $jinput->get('endminutes','','cmd');
 		
-		if ($startminutes == '') {
-			$startminutes = '00';
+		// StartTime
+		if ($starthours != '' && $startminutes != '') {
+			$this->times = $starthours.':'.$startminutes;
+		} else if ($starthours != '' && $startminutes == '') {
+			$startminutes = "00";
+			$this->times = $starthours.':'.$startminutes;
+		} else if ($starthours == '' && $startminutes != '') {
+			$starthours = "00";
+			$this->times = $starthours.':'.$startminutes;
+		} else {
+			$this->times = NULL;
 		}
 		
-		if ($endminutes == '') {
-			$endminutes = '00';
+		// EndTime 
+		if ($endhours != '' && $endminutes != '') {
+			$this->endtimes = $endhours.':'.$endminutes;
+		} else if ($endhours != '' && $endminutes == '') {
+			$endminutes = "00";
+			$this->endtimes = $endhours.':'.$endminutes;
+		} else if ($endhours == '' && $endminutes != '') {
+			$endhours = "00";
+			$this->endtimes = $endhours.':'.$endminutes;
+		} else {
+			$this->endtimes = NULL;
 		}
 		
-		if ($starthours == '') {
-			$starthours = '00';
+		// Dates
+		if (empty($this->enddates)) {
+			$this->enddates = NULL;
 		}
 		
-		if ($endhours == '') {
-			$endhours = '00';
+		if (empty($this->dates)) {
+			$this->dates = NULL;
+		}
+		
+		// check startDate
+		if ($this->dates == NULL)
+		{
+			$this->times = NULL;
+			$this->enddates = NULL;
+			$this->endtimes = NULL;
 		}
 			
-		$this->times = $starthours.':'.$startminutes;
-		$this->endtimes = $endhours.':'.$endminutes;
 	
 		// Check begin date is before end date
-
+		
 		// Check if end date is set
 		if($this->enddates == null) {
 			// Check if end time is set
 			if($this->endtimes == null) {
-				// Compare is not needed, but make sure the check passes
 				$date1 = new DateTime('00:00');
 				$date2 = new DateTime('00:00');
 			} else {
@@ -75,20 +99,13 @@ class JEMTableEvent extends JTable
 				$date2 = new DateTime($this->enddates.' '.$this->endtimes);
 			}
 		}
-
-		if (empty($this->enddates)) {
-			$this->enddates = NULL;
-		}
-
-		if (empty($this->dates)) {
-			$this->dates = NULL;
-		}
-
+		
 		if($date1 > $date2) {
 			$this->setError(JText::_('COM_JEM_ERROR_END_BEFORE_START'));
 			return false;
 		}
-
+		
+	
 		// Set alias
 		$this->alias = JApplication::stringURLSafe($this->alias);
 		if (empty($this->alias)) {

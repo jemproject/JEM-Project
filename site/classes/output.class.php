@@ -713,6 +713,13 @@ class JEMOutput {
 	{
 		$settings = JEMHelper::config();
 		
+		$check = JEMHelper::isValidTime($time);
+		
+		if (!$check)
+		{
+			return;
+		}
+		
 		if(!$format) {
 			// If no format set, use settings format as standard
 			$format = $settings->formattime;

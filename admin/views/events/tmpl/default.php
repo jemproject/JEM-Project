@@ -116,8 +116,7 @@ window.addEvent('domready', function(){
 				if (!$row->times) {
 					$displaytime = '-';
 				} else {
-					$time = strftime( $this->jemsettings->formattime, strtotime( $row->times ));
-					$displaytime = $time.' '.$this->jemsettings->timename;
+					$displaytime = JEMOutput::formattime($row->times);
 				}
 
 				$ordering	= ($listOrder == 'ordering');
