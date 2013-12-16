@@ -311,7 +311,7 @@ class JEMModelImport extends JModelLegacy {
 		
 		if ($objectname == "JEMTableEvent") {
 			// force the cleanup to update the imported events status
-			$settings = JTable::getInstance('jem_settings', '');
+			$settings = JTable::getInstance('Settings', 'JEMTable');
 			$settings->load(1);
 			$settings->lastupdate = 0;
 			$settings->store();
