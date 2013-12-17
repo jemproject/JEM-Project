@@ -41,12 +41,13 @@ class JEMModelEventslist extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app = JFactory::getApplication();
-		$jemsettings = JEMHelper::config();
-
+		$app 			= JFactory::getApplication();
+		$jemsettings 	= JEMHelper::config();
+		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		
 		//get the number of events from database
-		$limit		= $app->getUserStateFromRequest('com_jem.eventslist.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart = $app->getUserStateFromRequest('com_jem.eventslist.limitstart', 'limitstart', 0, 'int');
+		$limit		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -164,7 +165,7 @@ class JEMModelEventslist extends JModelLegacy
 		$orderby	= $this->_buildOrderBy();
 
 		// Get Events from Database ...
-		$query = ' SELECT a.id, a.dates, a.featured, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.maxplaces, a.waitinglist, a.fulltext, '
+		$query = ' SELECT a.id, a.dates, a.registra, a.featured, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.maxplaces, a.waitinglist, a.fulltext, '
 				. ' l.venue, l.city, l.state, l.url, l.street, ct.name AS countryname, '
 				. ' c.catname, c.id AS catid,'
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
@@ -191,11 +192,14 @@ class JEMModelEventslist extends JModelLegacy
 
 	function _buildOrderBy()
 	{
-		$app = JFactory::getApplication();
-
-		$filter_order		= $app->getUserStateFromRequest('com_jem.eventslist.filter_order', 'filter_order', '', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.eventslist.filter_order_Dir', 'filter_order_Dir', '', 'word');
-
+		$app 			= JFactory::getApplication();
+		$jinput 		= JFactory::getApplication()->input;
+		$task 			= $jinput->get('task','','cmd');	
+		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+	
+		$filter_order		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', '', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
@@ -206,7 +210,6 @@ class JEMModelEventslist extends JModelLegacy
 		}
 
 		return $orderby;
-
 	}
 
 	/**
@@ -217,19 +220,19 @@ class JEMModelEventslist extends JModelLegacy
 	 */
 	function _buildWhere()
 	{
-		$app = JFactory::getApplication();
-		$task 		= JRequest::getWord('task');
-		$params 	= $app->getParams();
-		$settings 	= JEMHelper::globalattribs();
+		$app 			= JFactory::getApplication();
+		$jinput 		= JFactory::getApplication()->input;
+		$task 			= $jinput->get('task','','cmd');
+		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		
+		$params 		= $app->getParams();
+		$settings 		= JEMHelper::globalattribs();
+		$user 			= JFactory::getUser();
+		$gid 			= JEMHelper::getGID($user);
+		$catswitch 		= $params->get('categoryswitch', '0');
 
-		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
-
-		$catswitch = $params->get('categoryswitch', '0');
-
-// 		$filter_state 	= $app->getUserStateFromRequest('com_jem.eventslist.filter_state', 'filter_state', '', 'word');
-		$filter 		= $app->getUserStateFromRequest('com_jem.eventslist.filter', 'filter', '', 'int');
-		$search 		= $app->getUserStateFromRequest('com_jem.eventslist.filter_search', 'filter_search', '', 'string');
+		$filter 		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter', 'filter', '', 'int');
+		$search 		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();

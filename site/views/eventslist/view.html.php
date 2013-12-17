@@ -43,17 +43,18 @@ class JEMViewEventslist extends JEMView
 		$pathway 	= $app->getPathWay();
 		$db 		= JFactory::getDBO();
 		$user		= JFactory::getUser();
+		$itemid 	= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		// get variables
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_order', 'filter_order', 	'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_order_Dir', 'filter_order_Dir',	'', 'word' );
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.eventslist.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.eventslist.filter_search', 'filter_search', '', 'string' );
-		$search 			= $db->escape( trim(JString::strtolower( $search ) ) );
+		$filter_order		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', 	'a.dates', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir',	'', 'word');
+		$filter 			= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter', 'filter', '', 'int');
+		$search 			= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+		$search 			= $db->escape(trim(JString::strtolower($search)));
 		$task 				= JRequest::getWord('task');
 
 		// table ordering
@@ -74,9 +75,9 @@ class JEMViewEventslist extends JEMView
 		$params->def('page_title', $item->title);
 
 		//pathway
-		$pathway->setItemName( 1, $item->title );
+		$pathway->setItemName(1, $item->title);
 
-		if ( $task == 'archive' ) {
+		if ($task == 'archive') {
 			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=eventslist&task=archive') );
 			$print_link = JRoute::_('index.php?view=eventslist&task=archive&tmpl=component&print=1');
 			$pagetitle = $params->get('page_title').' - '.JText::_('COM_JEM_ARCHIVE');
@@ -110,19 +111,19 @@ class JEMViewEventslist extends JEMView
 		$filters = array();
 
 		if ($jemsettings->showtitle == 1) {
-			$filters[] = JHtml::_('select.option', '1', JText::_( 'COM_JEM_TITLE' ) );
+			$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_TITLE'));
 		}
 		if ($jemsettings->showlocate == 1) {
-			$filters[] = JHtml::_('select.option', '2', JText::_( 'COM_JEM_VENUE' ) );
+			$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_VENUE'));
 		}
 		if ($jemsettings->showcity == 1) {
-			$filters[] = JHtml::_('select.option', '3', JText::_( 'COM_JEM_CITY' ) );
+			$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_CITY'));
 		}
 		if ($jemsettings->showcat == 1) {
-			$filters[] = JHtml::_('select.option', '4', JText::_( 'COM_JEM_CATEGORY' ) );
+			$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
 		}
 		if ($jemsettings->showstate == 1) {
-			$filters[] = JHtml::_('select.option', '5', JText::_( 'COM_JEM_STATE' ) );
+			$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
 		}
 		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
 
