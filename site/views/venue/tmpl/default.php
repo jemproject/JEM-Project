@@ -32,7 +32,7 @@ defined('_JEXEC') or die;
 	</h2>
 	<?php echo JEMOutput::flyer( $this->venue, $this->limage, 'venue' ); ?>
 
-	<?php if (($this->settings->get('global_show_detlinkvenue') == 1) && (!empty($this->venue->url))) : ?>
+	<?php if (($this->settings->get('global_show_detlinkvenue',1)) && (!empty($this->venue->url))) : ?>
 		<dl class="location">
 			<dt class="venue"><?php echo JText::_('COM_JEM_WEBSITE').':'; ?></dt>
 			<dd class="venue">
@@ -41,7 +41,7 @@ defined('_JEXEC') or die;
 		</dl>
 	<?php endif; ?>
 
-	<?php if ($this->settings->get('global_show_detailsadress') == 1) : ?>
+	<?php if ($this->settings->get('global_show_detailsadress',1)) : ?>
 		<dl class="location floattext" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
 			<?php if ( $this->venue->street ) : ?>
 			<dt class="venue_street"><?php echo JText::_('COM_JEM_STREET').':'; ?></dt>
@@ -104,7 +104,7 @@ defined('_JEXEC') or die;
 		<?php endif; ?>
 	<?php endif; ?>
 
-	<?php if ($this->settings->get('global_show_locdescription','1') && $this->venuedescription != ''
+	<?php if ($this->settings->get('global_show_locdescription',1) && $this->venuedescription != ''
  		&& $this->venuedescription != '<br />') : ?>
 
 		<h2 class="description"><?php echo JText::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>

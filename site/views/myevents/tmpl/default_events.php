@@ -24,9 +24,9 @@ defined('_JEXEC') or die;
 </script>
 
 <form action="<?php echo $this->action; ?>" method="post" name="adminForm" id="adminForm">
-<?php if ($this->settings->get('global_show_filter') || $this->settings->get('global_display')) : ?>
+<?php if ($this->settings->get('global_show_filter',1) || $this->settings->get('global_display',1)) : ?>
 <div id="jem_filter" class="floattext">
-	<?php if ($this->settings->get('global_show_filter')) : ?>
+	<?php if ($this->settings->get('global_show_filter',1)) : ?>
 	<div class="jem_fleft">
 		<?php
 		echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
@@ -37,7 +37,7 @@ defined('_JEXEC') or die;
 		<button class="" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 	</div>
 	<?php endif; ?>
-	<?php if ($this->settings->get('global_display')) : ?>
+	<?php if ($this->settings->get('global_display',1)) : ?>
 	<div class="jem_fright">
 		<?php
 		echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';

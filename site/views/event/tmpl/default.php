@@ -27,13 +27,13 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 	<div class="buttons">
 	
 		<?php 
-		if ($params->get('event_show_email_icon')) {
+		if ($params->get('event_show_email_icon',1)) {
 		echo JEMOutput::mailbutton($this->item->slug, 'event', $this->params);
 		}
-		if ($params->get('event_show_print_icon')) {
+		if ($params->get('event_show_print_icon',1)) {
 		echo JEMOutput::printbutton($this->print_link, $this->params); 
 		}
-		if ($params->get('event_show_ical_icon')) {
+		if ($params->get('event_show_ical_icon',1)) {
 		echo JEMOutput::icalbutton($this->item->slug, 'event');
 		} 
 		?>
@@ -56,7 +56,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 	<?php echo JEMOutput::flyer($this->item, $this->dimage, 'event'); ?>
 
 	<dl class="event_info floattext">
-		<?php if ($params->get('event_show_detailstitle','1')) : ?>
+		<?php if ($params->get('event_show_detailstitle',1)) : ?>
 			<dt class="title"><?php echo JText::_('COM_JEM_TITLE').':'; ?></dt>
 		<dd class="title" itemprop="name"><?php echo $this->escape($this->item->title); ?></dd>
 		<?php

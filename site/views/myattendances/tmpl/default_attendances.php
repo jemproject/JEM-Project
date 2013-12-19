@@ -14,9 +14,9 @@ defined('_JEXEC') or die;
 
 <form action="<?php echo $this->action; ?>" method="post" id="adminForm" name="adminForm">
 
-<?php if ($this->settings->get('global_show_filter') || $this->settings->get('global_display')) : ?>
+<?php if ($this->settings->get('global_show_filter',1) || $this->settings->get('global_display',1)) : ?>
 <div id="jem_filter" class="floattext">
-	<?php if ($this->settings->get('global_show_filter')) : ?>
+	<?php if ($this->settings->get('global_show_filter',1)) : ?>
 	<div class="jem_fleft">
 		<?php
 		echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
@@ -27,7 +27,7 @@ defined('_JEXEC') or die;
 		<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 	</div>
 	<?php endif; ?>
-	<?php if ($this->settings->get('global_display')) : ?>
+	<?php if ($this->settings->get('global_display',1)) : ?>
 	<div class="jem_fright">
 		<?php
 		echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
@@ -141,7 +141,6 @@ defined('_JEXEC') or die;
 <input type="hidden" name="boxchecked" value="0" />
 <input type="hidden" name="task" value="" />
 <input type="hidden" name="option" value="com_jem" />
-
 </form>
 
 <div class="pagination">

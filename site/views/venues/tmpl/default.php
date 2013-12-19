@@ -38,7 +38,7 @@ defined('_JEXEC') or die;
 
 		<!--  -->
 		<dl class="location">
-			<?php if (($this->settings->get('global_show_detlinkvenue') == 1) && (!empty($row->url))) : ?>
+			<?php if (($this->settings->get('global_show_detlinkvenue',1)) && (!empty($row->url))) : ?>
 			<dt class="venue_website">
 				<?php echo JText::_('COM_JEM_WEBSITE').':'; ?>
 			</dt>
@@ -54,7 +54,7 @@ defined('_JEXEC') or die;
 				<a href="<?php echo $row->targetlink; ?>"><?php echo $row->assignedevents; ?></a>
 			</dd>
 		</dl>
-		<?php if ( $this->settings->get('global_show_detailsadress') == 1 ) : ?>
+		<?php if ( $this->settings->get('global_show_detailsadress',1)) : ?>
 			<dl class="location floattext" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
 				<?php if ( $row->street ) : ?>
 				<dt class="venue_street">
@@ -111,7 +111,7 @@ defined('_JEXEC') or die;
 			<?php endif; ?>
 		<?php endif; ?>
 
-		<?php if ($this->settings->get('global_show_locdescription','1') && $row->locdescription != '' && $row->locdescription != '<br />') : ?>
+		<?php if ($this->settings->get('global_show_locdescription',1) && $row->locdescription != '' && $row->locdescription != '<br />') : ?>
 			<h2 class="description">
 				<?php echo JText::_('COM_JEM_VENUE_DESCRIPTION').':'; ?>
 			</h2>

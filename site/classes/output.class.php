@@ -40,7 +40,9 @@ class JEMOutput {
 	{	
 		if ($dellink)
 		{
-			$settings = JEMHelper::config();
+			$settings = JEMHelper::globalattribs();
+			$settings2 = JEMHelper::config();
+			
 			$uri = JFactory::getURI();
 			$app = JFactory::getApplication();
 
@@ -50,7 +52,7 @@ class JEMOutput {
 
 			JHtml::_('behavior.tooltip');
 
-			if ($settings->icons) {
+			if ($settings->get('global_show_icons',1)) {
 				$image = JHtml::_('image', 'com_jem/submitevent.png', JText::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
 			} else {
 				$image = JText::_('COM_JEM_DELIVER_NEW_EVENT');
@@ -75,10 +77,11 @@ class JEMOutput {
 	 * Active in views:
 	 * venue, venues
 	 **/
-	static function addvenuebutton($addvenuelink, $params, $settings)
+	static function addvenuebutton($addvenuelink, $params, $settings2)
 	{
 		if ($addvenuelink) {
-			$app = JFactory::getApplication();
+			$app 		= JFactory::getApplication();
+			$settings 	= JEMHelper::globalattribs();
 
 			if ($app->input->get('print','','int')) {
 				return;
@@ -86,7 +89,7 @@ class JEMOutput {
 
 			JHtml::_('behavior.tooltip');
 
-			if ($settings->icons) {
+			if ($settings->get('global_show_icons',1)) {
 				$image = JHtml::_('image', 'com_jem/addvenue.png', JText::_('COM_JEM_DELIVER_NEW_VENUE'), NULL, true);
 			} else {
 				$image = JText::_('COM_JEM_DELIVER_NEW_VENUE');
@@ -116,7 +119,7 @@ class JEMOutput {
 		$settings2 = JEMHelper::config();
 		$app = JFactory::getApplication();
 		
-		if ($settings->get('global_show_archive_icon')==1) {
+		if ($settings->get('global_show_archive_icon',1)) {
 			if ($app->input->get('print','','int')) {
 				return;
 			}
@@ -126,7 +129,7 @@ class JEMOutput {
 				$view = JRequest::getWord('view');
 
 				if ($task == 'archive') {
-					if ($settings->get('global_show_icons')==1) {
+					if ($settings->get('global_show_icons',1)) {
 						$image = JHtml::_('image', 'com_jem/el.png', JText::_('COM_JEM_SHOW_EVENTS'), NULL, true);
 					} else {
 						$image = JText::_('COM_JEM_SHOW_EVENTS');
@@ -141,7 +144,7 @@ class JEMOutput {
 						$url = JRoute::_('index.php');
 					}
 				} else {
-					if ($settings->get('global_show_icons')==1) {
+					if ($settings->get('global_show_icons',1)) {
 						$image = JHtml::_('image', 'com_jem/archive_front.png', JText::_('COM_JEM_SHOW_ARCHIVE'), NULL, true);
 					} else {
 						$image = JText::_('COM_JEM_SHOW_ARCHIVE');
@@ -203,7 +206,7 @@ class JEMOutput {
 			switch ($view)
 			{
 				case 'editevent':
-					if ($settings->get('global_show_icons','0')==1) {
+					if ($settings->get('global_show_icons',1)) {
 						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_EVENT'), NULL, true);
 					} else {
 						$image = JText::_('COM_JEM_EDIT_EVENT');
@@ -215,7 +218,7 @@ class JEMOutput {
 					break;
 
 				case 'editvenue':
-					if ($settings->get('global_show_icons','0')==1) {
+					if ($settings->get('global_show_icons',1)) {
 						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_VENUE'), NULL, true);
 					} else {
 						$image = JText::_('COM_JEM_EDIT_VENUE');
@@ -227,7 +230,7 @@ class JEMOutput {
 					break;
 					
 				case 'venue':
-					if ($settings->get('global_show_icons','0')==1) {
+					if ($settings->get('global_show_icons',1)) {
 						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_VENUE'), NULL, true);
 					} else {
 						$image = JText::_('COM_JEM_EDIT_VENUE');
@@ -257,12 +260,12 @@ class JEMOutput {
 		$app = JFactory::getApplication();
 		$settings = JEMHelper::globalattribs();
 
-		if ($settings->get('global_show_print_icon','0')==1) {
+		if ($settings->get('global_show_print_icon',0)) {
 			JHtml::_('behavior.tooltip');
 
 			$status = 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no';
 
-			if ($settings->get('global_show_icons','0')==1) {
+			if ($settings->get('global_show_icons',1)) {
 				$image = JHtml::_('image','system/printButton.png', JText::_('JGLOBAL_PRINT'), NULL, true);
 			} else {
 				$image = JText::_('COM_JEM_PRINT');
