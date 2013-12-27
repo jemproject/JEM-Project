@@ -221,6 +221,9 @@ class com_jemInstallerScript
 				return false;
 			}
 
+			// Remove obsolete files and folder
+			$this->deleteObsoleteFiles();
+
 			// Initialize schema table if necessary
 			$this->initializeSchema($this->oldRelease);
 		}
@@ -245,6 +248,12 @@ class com_jemInstallerScript
 				JTable::addIncludePath(JPATH_ROOT.'/administrator/components/com_jem/tables');
 				$categoryTable = JTable::getInstance('Category', 'JEMTable');
 				$categoryTable->rebuild();
+
+				// change category ids in menu items
+				$this->updateJemMenuItems195();
+
+				// change category ids in modules
+				$this->updateJemModules195();
 			}
 		}
 	}
@@ -365,4 +374,296 @@ class com_jemInstallerScript
 		$db->setQuery($query);
 		$db->query();
 	}
+
+	/**
+	 * Remove all obsolete files and folders of previous versions.
+	 *
+	 * Todo: Enhance the lists on each new version.
+	 *
+	 * @return void
+	 */
+	private function deleteObsoleteFiles()
+	{
+		$files = array(
+			// obsolete since JEM 1.9.1
+			//   ??? (don't have 1.9.0)
+			// obsolete since JEM 1.9.2
+			'/administrator/components/com_jem/controllers/archive.php',
+			'/administrator/components/com_jem/models/archive.php',
+			'/administrator/components/com_jem/views/archive/view.html.php',
+			'/administrator/components/com_jem/views/archive/tmpl/default.php',
+			'/components/com_jem/views/calendar/metadata.xml',
+			'/components/com_jem/views/categories/metadata.xml',
+			'/components/com_jem/views/categoriesdetailed/metadata.xml',
+			'/components/com_jem/views/category/metadata.xml',
+			'/components/com_jem/views/day/metadata.xml',
+			'/components/com_jem/views/editevent/metadata.xml',
+			'/components/com_jem/views/editvenue/metadata.xml',
+			'/components/com_jem/views/event/metadata.xml',
+			'/components/com_jem/views/eventlist/metadata.xml',
+			'/components/com_jem/views/myattending/metadata.xml',
+			'/components/com_jem/views/myevents/metadata.xml',
+			'/components/com_jem/views/myvenues/metadata.xml',
+			'/components/com_jem/views/search/metadata.xml',
+			'/components/com_jem/views/venue/metadata.xml',
+			'/components/com_jem/views/venues/metadata.xml',
+			// obsolete since JEM 1.9.3
+			'/components/com_jem/views/category/tmpl/default_attachments.php',
+			'/components/com_jem/views/category/tmpl/default_table.php',
+			'/components/com_jem/views/editevent/tmpl/default_attachments.php',
+			'/components/com_jem/views/editvenue/tmpl/default_attachments.php',
+			'/components/com_jem/views/eventslist/tmpl/default_table.php',
+			'/components/com_jem/views/venue/tmpl/default_attachments.php',
+			'/components/com_jem/views/weekcal/tmpl/default.xml.disabled',
+			// obsolete since JEM 1.9.4
+			// obsolete since JEM 1.9.5
+			'/administrator/components/com_jem/help/en-GB/archive.html',
+			'/administrator/components/com_jem/help/en-GB/toolbars/apunedch.png',
+			'/administrator/components/com_jem/help/en-GB/toolbars/asch.png',
+			'/administrator/components/com_jem/help/en-GB/toolbars/asuch.png',
+			'/administrator/components/com_jem/help/en-GB/toolbars/dbh.png',
+			'/administrator/components/com_jem/help/en-GB/toolbars/nedh.png',
+			'/administrator/components/com_jem/help/en-GB/toolbars/punedh.png',
+			'/administrator/components/com_jem/help/en-GB/toolbars/udh.png',
+			'/administrator/components/com_jem/help/images/icon-16-attention.png',
+			'/administrator/components/com_jem/help/images/icon-16-hint.png',
+			'/administrator/components/com_jem/models/jem.php',
+			'/administrator/components/com_jem/models/fields/imageselectevent.php',
+			'/administrator/components/com_jem/views/category/tmpl/default.php',
+			'/administrator/components/com_jem/views/category/tmpl/default_attachments.php',
+			'/administrator/components/com_jem/views/event/tmpl/addvenue.php',
+			'/administrator/components/com_jem/views/group/tmpl/default.php',
+			'/administrator/components/com_jem/views/jem/view.html.php',
+			'/administrator/components/com_jem/views/jem/tmpl/default.php',
+			'/administrator/components/com_jem/views/settings/tmpl/default_basic.php',
+			'/administrator/components/com_jem/views/settings/tmpl/default_eventpage.php',
+			'/administrator/components/com_jem/views/settings/tmpl/default_navigation.php',
+			'/components/com_jem/models/myattending.php',
+			'/components/com_jem/views/editevent/tmpl/default.xml',
+			'/components/com_jem/views/myattending/view.html.php',
+			'/components/com_jem/views/myattending/tmpl/default.php',
+			'/components/com_jem/views/myattending/tmpl/default.xml',
+			'/components/com_jem/views/myattending/tmpl/default_attending.php',
+			'/media/css/calendarweek.css',
+			'/media/css/gmapsoverlay.css',
+			'/media/css/picker.css',
+			'/media/images/evlogo.png',
+			'/media/js/gmapsoverlay.js',
+			'/media/js/picker.js',
+			'/media/js/recurrencebackend.js',
+			'/media/js/seobackend.js',
+		);
+
+		// TODO There is an issue while deleting folders using the ftp mode
+		$folders = array(
+			// obsolete since JEM 1.9.1
+			//   ??? (don't have 1.9.0)
+			// obsolete since JEM 1.9.2
+			'/administrator/components/com_jem/views/archive/tmpl',
+			'/administrator/components/com_jem/views/archive',
+			// obsolete since JEM 1.9.3
+			// obsolete since JEM 1.9.4
+			// obsolete since JEM 1.9.5
+			'/administrator/components/com_jem/views/jem/tmpl',
+			'/administrator/components/com_jem/views/jem',
+			'/components/com_jem/views/myattending/tmpl',
+			'/components/com_jem/views/myattending',
+		);
+
+		foreach ($files as $file) {
+			if (JFile::exists(JPATH_ROOT . $file) && !JFile::delete(JPATH_ROOT . $file)) {
+				echo JText::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $file).'<br />';
+			}
+		}
+
+		foreach ($folders as $folder) {
+			if (JFolder::exists(JPATH_ROOT . $folder) && !JFolder::delete(JPATH_ROOT . $folder)) {
+				echo JText::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $folder).'<br />';
+			}
+		}
+	} // deleteObsoleteFiles()
+
+	/**
+	 * Increment category ids in params of menu items related to com_jem.
+	 * (required when updating from 1.9.4 or below to 1.9.5 or newer)
+	 *
+	 * @return void
+	 */
+	private function updateJemMenuItems195()
+	{
+		// get all "cod_jem..." frontned entries
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('id, link, params');
+		$query->from('#__menu');
+		$query->where(array("client_id = 0", "link LIKE 'index.php?option=com_jem&view=%'"));
+		$query->order('id');
+		$db->setQuery($query);
+		$items = $db->loadObjectList();
+
+		foreach ($items as $item) {
+			// Decode the item params
+			$reg = new JRegistry;
+			$reg->loadString($item->params);
+
+			// get view
+			preg_match('/view=([^&]+)/', $item->link, $matches);
+			$view = $matches[1];
+
+			$modified = false;
+
+			switch ($view) {
+				/* case A: single category, 0 is valid */
+				case 'calendar':
+				case 'search':
+					// top_category - empty or 0: ok, >0: increment
+					$id = (int)$reg->get('top_category', 0);
+					if ($id > 0) {
+						$reg->set('top_category', $id + 1);
+						$modified = true;
+					}
+					break;
+				case 'category':
+					// id - empty or 0: ok, >0: increment
+					// id exists on calendar layout only where it must be greater zero (a real category)
+					// on default layout it's part of 'link' which is changed in 1.9.5.sql
+					$id = (int)$reg->get('id', 0);
+					if ($id > 0) {
+						$reg->set('id', $id + 1);
+						$modified = true;
+					}
+					break;
+
+				/* case B: single category, 0 becomes invalid and must be set to 1 (root) */
+				case 'categories':
+					// catid - empty or 0: 1, >0: increment
+					$id = (int)$reg->get('catid', 0);
+					$reg->set('catid', ($id > 0) ? $id + 1 : 1);
+					$modified = true;
+					break;
+				case 'categoriesdetailed':
+					// id - empty or 0: 1, >0: increment
+					$id = (int)$reg->get('id', 0);
+					$reg->set('id', ($id > 0) ? $id + 1 : 1);
+					$modified = true;
+					break;
+
+				/* case C: list of categories (invalid IDs are removed) or empty */
+				case 'eventslist':
+					// categoryswitchcats - empty: ok, list of ids >0: increment each
+					$catids = $reg->get('categoryswitchcats');
+					$newids = array();
+					if (!empty($catids) && is_string($catids)) {
+						$catids = explode(',', $catids);
+						foreach ($catids as $id) {
+							$id = (int)trim($id);
+							if ($id > 0) {
+								$newids[] = $id + 1;
+							}
+						}
+					}
+					if (!empty($newids)) {
+						$reg->set('categoryswitchcats', implode(',', $newids));
+						$modified = true;
+					}
+					break;
+
+				/* case D: no reference to categories - nothings to do */
+				case 'day':
+				case 'editevent':
+				case 'editvenue':
+				case 'event':
+				case 'myattendances':
+				case 'myevents':
+				case 'myvenues':
+				case 'venue':
+				case 'venues':
+				case 'weekcal':
+					// nothings to do
+					break;
+
+				default:
+					//echo 'Oops - ' . $view . ' on ' . $item->id . '<br />';
+					break;
+			} // switch ($view)
+
+			// write back
+			if ($modified) {
+				// write changed params back into DB
+				$query = $db->getQuery(true);
+				$query->update('#__menu');
+				$query->set('params = '.$db->quote((string)$reg));
+				$query->where(array('id = '.$db->quote($item->id)));
+				$db->setQuery($query);
+				$db->query();
+			}
+		} // foreach($items as $item)
+	} // updateJemMenuItems195()
+
+	/**
+	 * Increment category ids in params of JEM modules.
+	 * (required when updating from 1.9.4 or below to 1.9.5 or newer)
+	 *
+	 * @return void
+	 */
+	private function updateJemModules195()
+	{
+		// get all "mod_jem..." entries
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('id, module, params');
+		$query->from('#__modules');
+		$query->where(array("client_id = 0", "module LIKE 'mod_jem%'"));
+		$query->order('id');
+		$db->setQuery($query);
+		$items = $db->loadObjectList();
+
+		foreach ($items as $item) {
+			// Decode the item params
+			$reg = new JRegistry;
+			$reg->loadString($item->params);
+
+			$modified = false;
+
+			switch ($item->module) {
+				/* case C: list of categories (invalid IDs are removed) or empty */
+				case 'mod_jem':
+				case 'mod_jem_cal':
+				case 'mod_jem_teaser':
+				case 'mod_jem_wide':
+					// catid - empty: ok, list of ids >0: increment each
+					$catids = $reg->get('catid');
+					$newids = array();
+					if (!empty($catids) && is_string($catids)) {
+						$catids = explode(',', $catids);
+						foreach ($catids as $id) {
+							$id = (int)trim($id);
+							if ($id > 0) {
+								$newids[] = $id + 1;
+							}
+						}
+					}
+					if (!empty($newids)) {
+						$reg->set('catid', implode(',', $newids));
+						$modified = true;
+					}
+					break;
+
+				default:
+					//echo 'Oops - ' . $item->module . ' on ' . $item->id . '<br />';
+					break;
+			} // switch ($item->module)
+
+			// write back
+			if ($modified) {
+				// write changed params back into DB
+				$query = $db->getQuery(true);
+				$query->update('#__modules');
+				$query->set('params = '.$db->quote((string)$reg));
+				$query->where(array('id = '.$db->quote($item->id)));
+				$db->setQuery($query);
+				$db->query();
+			}
+		} // foreach($items as $item)
+	} // updateJemModules195()
 }
