@@ -65,3 +65,14 @@ UPDATE `#__jem_cats_event_relations`
 INSERT IGNORE INTO `#__jem_categories`
 	(`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`)
 	VALUES (1, 0, 0, 1, 0, 'root', 'root', 1);
+
+--  change (frontend) menu item myattending to myattendances
+UPDATE `#__menu`
+	SET `link` = 'index.php?option=com_jem&view=myattendances'
+	WHERE `client_id` = 0 AND `link` = 'index.php?option=com_jem&view=myattending';
+
+--  increment category id in (frontend) menu item "index.php?option=com_jem&view=category&id="
+--  (note: on category calendar id is stored in 'params' and not in 'link' so it is changed in script.php)
+UPDATE `#__menu`
+	SET `link` = CONCAT(LEFT(`link`, LENGTH(`link`) - LOCATE('=', REVERSE(`link`)) + 1), RIGHT(`link`, LOCATE('=', REVERSE(`link`)) - 1) + 1)
+	WHERE `client_id` = 0 AND `link` LIKE 'index.php?option=com_jem&view=category&id=%'; 

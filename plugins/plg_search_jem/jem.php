@@ -30,9 +30,9 @@ function __construct(& $subject, $config)
  */
 function onContentSearchAreas()
 	{
-		static $areas = array(	'elevents' => 'PLG_JEM_SEARCH_EVENTS',
-								'elvenues' => 'PLG_JEM_SEARCH_VENUES',
-								'elcategories' => 'PLG_JEM_SEARCH_JEM_CATEGORIES'
+		static $areas = array(	'jemevents' => 'PLG_JEM_SEARCH_EVENTS',
+								'jemvenues' => 'PLG_JEM_SEARCH_VENUES',
+								'jemcategories' => 'PLG_JEM_SEARCH_JEM_CATEGORIES'
 							  );
 
 			return $areas;
@@ -52,7 +52,6 @@ function onContentSearchAreas()
 function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 {
 	$db		= JFactory::getDBO();
-	$user	= JFactory::getUser();
 	$app	= JFactory::getApplication();
 	$user	= JFactory::getUser();
 	$groups	= implode(',', $user->getAuthorisedViewLevels());
@@ -84,7 +83,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 	$rows = array();
 	$query	= $db->getQuery(true);
 
-	if(in_array('elevents', $areas) && $limit > 0) {
+	if (in_array('jemevents', $areas) && $limit > 0) {
 
 		switch ($phrase) {
 			case 'exact':
@@ -194,7 +193,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		$rows[] = $list;
 	}
 
-	if(in_array('elvenues', $areas) && $limit > 0) {
+	if (in_array('jemvenues', $areas) && $limit > 0) {
 
 		switch ($phrase) {
 			case 'exact':
@@ -264,7 +263,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		$rows[] = $list2;
 	}
 
-	if(in_array('elcategories', $areas) && $limit > 0) {
+	if (in_array('jemcategories', $areas) && $limit > 0) {
 
 		switch ($phrase) {
 			case 'exact':
