@@ -177,7 +177,7 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		$query->order($order);
 
 		
-		echo $query;
+		
 		$db->setQuery( $query, 0, $limit );
 		$list = $db->loadObjectList();
 		$limit -= count($list);
