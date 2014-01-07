@@ -176,8 +176,6 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		$query->group('a.id, a.title, a.meta_description, a.meta_keywords, a.created, a.introtext, a.fulltext, c.catname, a.alias, c.alias, c.id');
 		$query->order($order);
 
-		
-		echo $query;
 		$db->setQuery( $query, 0, $limit );
 		$list = $db->loadObjectList();
 		$limit -= count($list);
