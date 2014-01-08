@@ -869,6 +869,9 @@ class JEMHelper {
 	 * Get the Group ID of a specific user or the current user
 	 * @param JUser $user The user object
 	 * @return int The Group ID
+	 *
+	 * Should become obsolete.
+	 * Support Joomla access levels instead of single group id
 	 */
 	static function getGID($user = null) {
 		if(is_null($user)) {
@@ -888,7 +891,7 @@ class JEMHelper {
 	/**
 	 * Creates a tooltip
 	 */
-	static function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '', $time, $color) {
+	static function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '', $time = '', $color = '') {
 		$tooltip = (htmlspecialchars($tooltip));
 		$title = (htmlspecialchars($title));
 

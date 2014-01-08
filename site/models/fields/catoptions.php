@@ -77,9 +77,10 @@ class JFormFieldCatOptions extends JFormField
 		$userid		= (int) $user->get('id');
 		$superuser	= JEMUser::superuser();
 	
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 			
-		$where = ' WHERE c.published = 1 AND c.access <= '.$gid;
+		$where = ' WHERE c.published = 1 AND c.access IN (' . implode(',', $levels) . ')';
 	
 			//get the ids of the categories the user maintaines
 			$db		= JFactory::getDbo();

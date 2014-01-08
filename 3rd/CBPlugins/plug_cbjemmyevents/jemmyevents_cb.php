@@ -153,15 +153,9 @@ class jemmyeventsTab extends cbTabHandler {
 		// retrieval user parameters
 		$userid = $user->id;
 
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;             //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;      //viewlevel Registered
-			} else {
-				$gid = (int) 1;      //viewlevel Public
-			}
-		}
+		// Support Joomla access levels instead of single group id
+		$juser = JFactory::getUser($userid);
+		$levels = $juser->getAuthorisedViewLevels();
 
 		/*
 		 * Query
@@ -179,7 +173,7 @@ class jemmyeventsTab extends cbTabHandler {
 			. ' LEFT JOIN `#__jem_venues` AS l ON l.id = a.locid '
 			. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
 			. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
-			. ' WHERE a.published = 1 AND c.published = 1 AND a.created_by = '.$userid.' AND c.access <= '.$gid
+			. ' WHERE a.published = 1 AND c.published = 1 AND a.created_by = '.$userid.' AND c.access IN (' . implode(',', $levels) . ')'
 			. ' GROUP BY a.id'
 			. ' ORDER BY a.dates'
 			;
@@ -481,15 +475,9 @@ class jemmyeventsTab extends cbTabHandler {
 			// retrieval user parameters
 			$userid = $user->id;
 
-			if (JFactory::getUser()->authorise('core.manage')) {
-				$gid = (int) 3;             //viewlevel Special
-			} else {
-				if($user->get('id')) {
-					$gid = (int) 2;      //viewlevel Registered
-				} else {
-					$gid = (int) 1;      //viewlevel Public
-				}
-			}
+		// Support Joomla access levels instead of single group id
+		$juser = JFactory::getUser($userid);
+		$levels = $juser->getAuthorisedViewLevels();
 
 			/* Query
 		 	*
@@ -506,7 +494,7 @@ class jemmyeventsTab extends cbTabHandler {
 				. ' LEFT JOIN `#__jem_venues` AS l ON l.id = a.locid '
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
 				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
-				. ' WHERE (a.published = 1 OR a.published = 0) AND c.published = 1 AND a.created_by = '.$userid.' AND c.access <= '.$gid
+				. ' WHERE (a.published = 1 OR a.published = 0) AND c.published = 1 AND a.created_by = '.$userid.' AND c.access IN (' . implode(',', $levels) . ')'
 				. ' GROUP BY a.id'
 				. ' ORDER BY a.dates'
 				;
@@ -517,7 +505,7 @@ class jemmyeventsTab extends cbTabHandler {
 
 			//	$user_type=$results[0]->gid ;
 			if ($userid == $user->id) {
-				if ($user->gid == 8) {
+				if ($user->gid == 8) { // Hoffi: Dangerous. $user->authorise('core.manage'); would be more secure (but is true on Administrator (7) too)
 					$url = "index.php?option=com_jem&view=editevent&Itemid=$S_Itemid1" ;
 					$return .= "<a href='".JRoute::_($url)."' class='eventCBAddLink'>". _JEMMYEVENTS_ADDNEW. "</a>";
 					$query4 = "SELECT `published` FROM `#__jem_events` WHERE `created_by` = $userid and `published` = 0 " ;

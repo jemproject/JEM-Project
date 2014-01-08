@@ -110,9 +110,7 @@ class JEMController extends JControllerLegacy
 	{
 		$id = JRequest::getInt('file');
 
-		$gid = JEMHelper::getGID();
-
-		$path = JEMAttachment::getAttachmentPath($id, $gid);
+		$path = JEMAttachment::getAttachmentPath($id);
 
 		$mime = JEMHelper::getMimeType($path);
 

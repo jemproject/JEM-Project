@@ -134,16 +134,6 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 				$order = 'a.dates, a.times DESC';
 		}
 
-		if (JFactory::getUser()->authorise('core.manage')) {
-           $gid = (int) 3;
-            } else {
-                if($user->get('id')) {
-                   $gid = (int) 2;
-                } else {
-                   $gid = (int) 1;
-                }
-            }
-		
 		$query->clear();
 		//sqlsrv changes
 		$case_when = ' CASE WHEN ';
