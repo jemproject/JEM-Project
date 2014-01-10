@@ -228,7 +228,9 @@ class JEMModelEventslist extends JModelLegacy
 		$params 		= $app->getParams();
 		$settings 		= JEMHelper::globalattribs();
 		$user 			= JFactory::getUser();
-		$gid 			= JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
+
 		$catswitch 		= $params->get('categoryswitch', '0');
 
 		$filter 		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter', 'filter', '', 'int');
@@ -244,7 +246,7 @@ class JEMModelEventslist extends JModelLegacy
 			$where[] = ' a.published = 1';
 		}
 		$where[] = ' c.published = 1';
-		$where[] = ' c.access  <= '.$gid;
+		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
 
 		// get included categories
 		if ($catswitch == 1) {
@@ -295,7 +297,8 @@ class JEMModelEventslist extends JModelLegacy
 	function getCategories($id)
 	{
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$where		= $this->_buildWhere2();
 
@@ -305,7 +308,7 @@ class JEMModelEventslist extends JModelLegacy
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				. ' AND c.published = 1'
-				. ' AND c.access  <= '.$gid
+				. ' AND c.access IN (' . implode(',', $levels) . ')'
 				. $where
 				;
 

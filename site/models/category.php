@@ -277,7 +277,8 @@ class JEMModelCategory extends JModelLegacy
 		$settings 	= JEMHelper::globalattribs();
 
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$filter 		= $app->getUserStateFromRequest('com_jem.category.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.category.filter_search', 'filter_search', '', 'string');
@@ -305,7 +306,7 @@ class JEMModelCategory extends JModelLegacy
 		}
 
 		$where[] = ' c.published = 1';
-		$where[] = ' c.access  <= '.$gid;
+		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
 
 		/*
 		// get excluded categories
@@ -365,15 +366,15 @@ class JEMModelCategory extends JModelLegacy
 	function _buildChildsQuery()
 	{
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$ordering = 'c.ordering ASC';
 
 		//build where clause
 		$where = ' WHERE cc.published = 1';
 		$where .= ' AND cc.parent_id = '.(int)$this->_id;
-		$where .= ' AND cc.access <= '.$gid;
-		//$where .= ' AND cc.access IN ('.$gid.')';
+		$where .= ' AND cc.access IN (' . implode(',', $levels) . ')';
 
 		//TODO: Make option for categories without events to be invisible in list
 		//check archive task and ensure that only categories get selected if they contain a published/archived event
@@ -413,7 +414,8 @@ class JEMModelCategory extends JModelLegacy
 	{
 		//initialize some vars
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$query = 'SELECT *,'
 				.' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug'
@@ -437,7 +439,7 @@ class JEMModelCategory extends JModelLegacy
 
 		//check whether category access level allows access
 		//additional check
-		if ($this->_category->access > $gid)
+		if (!in_array($this->_category->access, $levels))
 		{
 			return JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
 		}
@@ -454,7 +456,8 @@ class JEMModelCategory extends JModelLegacy
 	function getCategories($id)
 	{
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$query = 'SELECT DISTINCT c.id, c.catname, c.color, c.access, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
@@ -462,7 +465,7 @@ class JEMModelCategory extends JModelLegacy
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				. ' AND c.published = 1'
-				. ' AND c.access  <= '.$gid;
+				. ' AND c.access IN (' . implode(',', $levels) . ')'
 				;
 
 		$this->_db->setQuery($query);

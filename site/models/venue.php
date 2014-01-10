@@ -255,7 +255,8 @@ class JEMModelVenue extends JModelLegacy
 		$task 			= JRequest::getWord('task');
 		$settings	 	= JEMHelper::globalattribs();
 		$user 			= JFactory::getUser();
-		$gid 			= JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels 		= $user->getAuthorisedViewLevels();
 
 		$filter 		= $app->getUserStateFromRequest('com_jem.venue.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.venue.filter_search', 'filter_search', '', 'string');
@@ -270,7 +271,7 @@ class JEMModelVenue extends JModelLegacy
 			$where[] = ' a.published = 1 && a.locid = '.$this->_id;
 		}
 		$where[] = ' c.published = 1';
-		$where[] = ' c.access  <= '.$gid;
+		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
 
 		/* get excluded categories
 		 $excluded_cats = trim($params->get('excluded_cats', ''));
@@ -315,9 +316,9 @@ class JEMModelVenue extends JModelLegacy
 	 */
 	function getVenue()
 	{
-		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
-		$db = JFactory::getDbo();
+		$user  = JFactory::getUser();
+
+		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
 
 		$query->select('id, venue, published, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
@@ -330,7 +331,7 @@ class JEMModelVenue extends JModelLegacy
 		$db->setQuery($query);
 
 		$_venue = $db->loadObject();
-		$_venue->attachments = JEMAttachment::getAttachments('venue'.$_venue->id, $gid);
+		$_venue->attachments = JEMAttachment::getAttachments('venue'.$_venue->id);
 		return $_venue;
 	}
 
@@ -338,7 +339,8 @@ class JEMModelVenue extends JModelLegacy
 	function getCategories($id)
 	{
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
@@ -349,7 +351,7 @@ class JEMModelVenue extends JModelLegacy
 		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
 		$query->where('rel.itemid = ' . (int) $id);
 		$query->where('c.published = 1');
-		$query->where('c.access <= ' . $gid);
+		$query->where('c.access IN (' . implode(',', $levels) . ')');
 		$query->group('c.id');
 
 		$db->setQuery($query);
