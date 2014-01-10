@@ -29,7 +29,8 @@ class modJEMteaserHelper
 	{
 		$db = JFactory::getDBO();
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 		$settings 	= JEMHelper::globalattribs();
 
 		//$access = !JComponentHelper::getParams('com_jem')->get('show_noauth');
@@ -101,7 +102,7 @@ class modJEMteaserHelper
 				.' INNER JOIN #__jem_categories AS c ON c.id = rel.catid'
 				.' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 				. $where
-				.' AND c.access <= '.$gid
+				.' AND c.access IN (' . implode(',', $levels) . ')'
 				.' AND c.published = 1'
 				.($catid ? $categories : '')
 				.($venid ? $venues : '')

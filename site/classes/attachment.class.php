@@ -133,8 +133,8 @@ class JEMAttachment extends JObject {
 		$jemsettings = JEMHelper::config();
 
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
-
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$object;
 
@@ -158,9 +158,7 @@ class JEMAttachment extends JObject {
 			   . ' FROM #__jem_attachments '
 			   . ' WHERE file IN ('. implode(',', $fnames) .')'
 			   . '   AND object = '. $db->Quote($object);
-		if (!is_null($gid)) {
-			$query .= ' AND access <= '.$db->Quote($gid);
-		}
+		$query .= ' AND access IN (' . implode(',', $levels) . ')';
 		$query .= ' ORDER BY ordering ASC ';
 
 		$db->setQuery($query);
@@ -178,7 +176,8 @@ class JEMAttachment extends JObject {
 		$jemsettings = JEMHelper::config();
 
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$db = JFactory::getDBO();
 		$query = ' SELECT * '
@@ -190,7 +189,7 @@ class JEMAttachment extends JObject {
 			JError::raiseError(404, JText::_('COM_JEM_FILE_UNKNOWN'));
 		}
 
-		if (!is_null($gid) && $res->access > $gid) {
+		if (!in_array($res->access, $levels)) {
 			JError::raiseError(403, JText::_('COM_JEM_YOU_DONT_HAVE_ACCESS_TO_THIS_FILE'));
 		}
 

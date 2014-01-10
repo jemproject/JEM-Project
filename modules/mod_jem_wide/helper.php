@@ -33,7 +33,8 @@ abstract class modJEMwideHelper
 	{
 		$db = JFactory::getDBO();
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		//all upcoming events//all upcoming events
 		if ($params->get('type') == 1) {
@@ -100,7 +101,7 @@ abstract class modJEMwideHelper
 				.' INNER JOIN #__jem_categories AS c ON c.id = rel.catid'
 				.' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 				. $where
-				.' AND c.access <= '.$gid
+				.' AND c.access IN (' . implode(',', $levels) . ')'
 				.' AND c.published = 1'
 				.($catid ? $categories : '')
 				.($venid ? $venues : '')

@@ -257,7 +257,9 @@ class JEMModelWeekcal extends JModelLegacy
 	{
 		$user = JFactory::getUser();
 		$app = JFactory::getApplication();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
+
 		$db = $this->getDbo();
 
 		$params = $app->getParams();
@@ -273,7 +275,7 @@ class JEMModelWeekcal extends JModelLegacy
 			$where = ' WHERE a.published = 1 ';
 		}
 		$where .= ' AND c.published = 1';
-		$where .= ' AND c.access  <= '.$gid;
+		$where .= ' AND c.access IN (' . implode(',', $levels) . ')';
 
 		$config = JFactory::getConfig();
 		$offset = $config->get('offset');
@@ -336,7 +338,8 @@ class JEMModelWeekcal extends JModelLegacy
 	function getCategories($id)
 	{
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$query = 'SELECT c.id, c.catname, c.access, c.color, c.published, c.checked_out AS cchecked_out,'
 			. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
@@ -344,7 +347,7 @@ class JEMModelWeekcal extends JModelLegacy
 			. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 			. ' WHERE rel.itemid = '.(int)$id
 			. ' AND c.published = 1'
-			. ' AND c.access <= '.$gid;
+			. ' AND c.access IN (' . implode(',', $levels) . ')'
 			;
 
 		$this->_db->setQuery($query);

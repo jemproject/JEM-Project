@@ -265,9 +265,8 @@ class JEMModelEvent extends JModelItem
 		
 		// Define Attachments
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
 			
-		$this->_item[$pk]->attachments = JEMAttachment::getAttachments('event' . $this->_item[$pk]->did, $gid);
+		$this->_item[$pk]->attachments = JEMAttachment::getAttachments('event' . $this->_item[$pk]->did);
 			
 		// Define Booked
 		$db = $this->getDbo();
@@ -324,7 +323,8 @@ class JEMModelEvent extends JModelItem
 	function getCategories($pk = 0)
 	{
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 		
 		$pk = (!empty($pk)) ? $pk : (int) $this->getState('event.id');
 		
@@ -333,7 +333,7 @@ class JEMModelEvent extends JModelItem
 				. ' FROM #__jem_categories AS c' 
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id' 
 				. ' WHERE rel.itemid = ' . (int) $pk 
-				. '  AND c.published = 1' . ' AND c.access  <= ' . $gid;
+				. '  AND c.published = 1' . ' AND c.access IN (' . implode(',', $levels) . ')';
 		$this->_db->setQuery($query);
 		
 		$this->_cats = $this->_db->loadObjectList();
@@ -402,7 +402,6 @@ class JEMModelEvent extends JModelItem
 	
 		$registered = $db->loadObjectList();
 	
-		//var_dump($this->_registers);exit;
 		return $registered;
 	}
 	

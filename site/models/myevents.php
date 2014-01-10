@@ -234,7 +234,8 @@ class JEMModelMyevents extends JModelLegacy
 		$params 	= $app->getParams();
 		$settings 	= JEMHelper::globalattribs();
 		$user 		= JFactory::getUser();
-		$gid 		= JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 		
 		$filter 		= $app->getUserStateFromRequest('com_jem.myevents.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.myevents.filter_search', 'filter_search', '', 'string');
@@ -249,7 +250,7 @@ class JEMModelMyevents extends JModelLegacy
 			$where[] = ' (a.published = 1 OR a.published = 0)';
 		}
 		$where[] = ' c.published = 1';
-		$where[] = ' c.access  <= '.$gid;
+		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
 
 		// then if the user is the owner of the event
 		$where[] = ' a.created_by = '.$this->_db->Quote($user->id);
@@ -291,7 +292,8 @@ class JEMModelMyevents extends JModelLegacy
 	function getCategories($id)
 	{
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
@@ -299,7 +301,7 @@ class JEMModelMyevents extends JModelLegacy
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				. ' AND c.published = 1'
-				. ' AND c.access  <= '.$gid;
+				. ' AND c.access IN (' . implode(',', $levels) . ')'
 		;
 
 		$this->_db->setQuery( $query );
