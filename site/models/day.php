@@ -250,7 +250,8 @@ class JEMModelDay extends JModelLegacy
 		$requestCategoryId = $jinput->get('catid', null, 'int');
 
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$filter 		= $app->getUserStateFromRequest('com_jem.day.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.day.filter_search', 'filter_search', '', 'string');
@@ -261,7 +262,7 @@ class JEMModelDay extends JModelLegacy
 		// First thing we need to do is to select only needed events
 		$where[] = ' a.published = 1';
 		$where[] = ' c.published = 1';
-		$where[] = ' c.access  <= '.$gid;
+		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
 
 		if ($requestVenueId){
 			$where[]= ' a.locid = '.$requestVenueId;
@@ -332,7 +333,9 @@ class JEMModelDay extends JModelLegacy
 	function getCategories($id)
 	{
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
+
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
 
@@ -342,7 +345,7 @@ class JEMModelDay extends JModelLegacy
 		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
 		$query->where('rel.itemid = '.(int)$id);
 		$query->where('c.published = 1');
-		$query->where('c.access <= '.$gid);
+		$query->where('c.access IN (' . implode(',', $levels) . ')');
 
 		$db->setQuery($query);
 

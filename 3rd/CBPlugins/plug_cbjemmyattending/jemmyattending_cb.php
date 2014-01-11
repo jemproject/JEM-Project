@@ -119,15 +119,9 @@ class jemmyattendingTab extends cbTabHandler {
 		// retrieval user parameters
 		$userid = $user->id;
 
-		if (JFactory::getUser()->authorise('core.manage')) {
-			$gid = (int) 3;             //viewlevel Special
-		} else {
-			if($user->get('id')) {
-				$gid = (int) 2;      //viewlevel Registered
-			} else {
-				$gid = (int) 1;      //viewlevel Public
-			}
-		}
+		// Support Joomla access levels instead of single group id
+		$juser = JFactory::getUser($userid);
+		$levels = $juser->getAuthorisedViewLevels();
 
 		/*
 		 * Query
@@ -146,7 +140,7 @@ class jemmyattendingTab extends cbTabHandler {
 				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid '
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
 				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
-				. ' WHERE a.published = 1 AND c.published = 1 AND r.uid = '.$userid.' AND c.access <= '.$gid
+				. ' WHERE a.published = 1 AND c.published = 1 AND r.uid = '.$userid.' AND c.access IN (' . implode(',', $levels) . ')'
 				. ' AND DATE_SUB(NOW(), INTERVAL 1 DAY) < (IF (a.enddates IS NOT NULL, a.enddates, a.dates))'
 				. ' ORDER BY a.dates, a.times'
 				;

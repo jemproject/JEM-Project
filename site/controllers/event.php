@@ -254,8 +254,11 @@ class JEMControllerEvent extends JControllerForm
 		
 	$task = $this->getTask();
 	if ($task == 'save') {
-		$isNew 	= ($validData['id']) ? false : true;
-		$id 	= $validData['id'];
+		// doesn't work on new events - get values from model instead
+		//$isNew 	= ($validData['id']) ? false : true;
+		//$id 	= $validData['id'];
+		$isNew = $model->getState('editevent.new');
+		$id    = $model->getState('editevent.id');
 
 		JPluginHelper::importPlugin('jem');
 		$dispatcher = JDispatcher::getInstance();

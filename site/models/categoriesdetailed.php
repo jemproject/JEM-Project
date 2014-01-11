@@ -198,7 +198,8 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 	function _buildDataQuery($id)
 	{
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$id = (int)$id;
 
@@ -212,7 +213,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 		}
 
 		// Second is to only select events assigned to category the user has access to
-		$where .= ' AND c.access <= '.$gid;
+		$where .= ' AND c.access IN (' . implode(',', $levels) . ')';
 
 		$query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.created, l.venue, l.city, l.state, l.url,'
 		.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
@@ -231,7 +232,8 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 	function getCategories($id)
 	{
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
 		.' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
@@ -239,7 +241,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 		.' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 		.' WHERE rel.itemid = '.(int)$id
 		.' AND c.published = 1'
-		.' AND c.access <= '.$gid;
+		.' AND c.access IN (' . implode(',', $levels) . ')'
 		;
 
 		$this->_db->setQuery($query);
@@ -284,7 +286,8 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 		}
 
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$ordering = 'c.ordering ASC';
 
@@ -295,7 +298,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 		} else {
 			$where_sub .= ' AND cc.parent_id = '.(int) $parent_id;
 		}
-		$where_sub .= ' AND cc.access <= '.$gid;
+		$where_sub .= ' AND cc.access IN (' . implode(',', $levels) . ')';
 
 		// check archive task and ensure that only categories get selected
 		// if they contain a published/archived event
@@ -327,7 +330,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 				.' FROM #__jem_categories AS c'
 				.' WHERE c.published = 1'
 				.' AND '.$parentCategoryQuery
-				.' AND c.access <= '.$gid
+				.' AND c.access IN (' . implode(',', $levels) . ')'
 				.' GROUP BY c.id '.$empty
 				.' ORDER BY '.$ordering
 				;
@@ -350,7 +353,8 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 		$params = $app->getParams('com_jem');
 
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$query = 'SELECT DISTINCT c.id'
 			.' FROM #__jem_categories AS c';
@@ -362,7 +366,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 		}
 		$query .= ' WHERE c.published = 1'
 			.' AND c.parent_id = '.(int)$this->_id
-			.' AND c.access <= '.$gid
+			.' AND c.access IN (' . implode(',', $levels) . ')'
 			;
 		if (!$params->get('empty_cat'))
 		{

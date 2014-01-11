@@ -317,7 +317,8 @@ class JEMModelVenueCal extends JModelLegacy
 		$jemsettings 	= JEMHelper::config();
 
 		$user 			= JFactory::getUser();
-		$gid 			= JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels 		= $user->getAuthorisedViewLevels();
 
 		$filter 		= $app->getUserStateFromRequest('com_jem.venue.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.venue.filter_search', 'filter_search', '', 'string');
@@ -332,7 +333,7 @@ class JEMModelVenueCal extends JModelLegacy
 			$where[] = ' a.published = 1 && a.locid = '.$this->_id;
 		}
 		$where[] = ' c.published = 1';
-		$where[] = ' c.access  <= '.$gid;
+		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
 
 		// only select events within specified dates. (chosen month)
 		$monthstart = mktime(0, 0, 1, strftime('%m', $this->_date), 1, strftime('%Y', $this->_date));
@@ -367,7 +368,8 @@ class JEMModelVenueCal extends JModelLegacy
 	function getCategories($id)
 	{
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
@@ -378,7 +380,7 @@ class JEMModelVenueCal extends JModelLegacy
 		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
 		$query->where('rel.itemid = ' . (int) $id);
 		$query->where('c.published = 1');
-		$query->where('c.access <= ' . $gid);
+		$query->where('c.access IN (' . implode(',', $levels) . ')');
 		$query->group('c.id');
 
 		$db->setQuery($query);
@@ -405,7 +407,6 @@ class JEMModelVenueCal extends JModelLegacy
 	function getVenuecal()
 	{
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
 
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);

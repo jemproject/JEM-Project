@@ -22,7 +22,8 @@ class modjemcalqhelper
 	{
 		$db			= JFactory::getDBO();
 		$user		= JFactory::getUser();
-		$gid 		= JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels		= $user->getAuthorisedViewLevels();
 		$settings 	= JEMHelper::globalattribs();
 
 		$catid 				= trim($params->get('catid'));
@@ -39,22 +40,24 @@ class modjemcalqhelper
 		if ($catid) {
 			$ids = explode(',', $catid);
 			JArrayHelper::toInteger($ids);
-			$categories = ' AND (c.id=' . implode(' OR c.id=', $ids) . ')';
+			$categories = ' AND c.id IN (' . implode(',', $ids) . ')';
 		}
 		if ($venid) {
 			$ids = explode(',', $venid);
 			JArrayHelper::toInteger($ids);
-			$venues = ' AND (l.id=' . implode(' OR l.id=', $ids) . ')';
+			$venues = ' AND l.id IN (' . implode(',', $ids) . ')';
 		}
 		if ($CurrentEvents == 1) {
-			$wherestr = ' WHERE a.published = 1';
+			$wherestr = ' WHERE ( a.published = 1';
 		} else {
-			$wherestr = ' WHERE a.published = 0';
+			$wherestr = ' WHERE ( a.published = 0';
 		}
 
 		if ($ArchivedEvents == 1) {
 			$wherestr = $wherestr. ' OR a.published = -1';
 		}
+
+		$wherestr .= ' )';  // Parentheses are important here
 
 		$query = 'SELECT a.*, l.venue, DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,c.id AS mcatid,c.catname,l.id AS mlocid,l.venue,'
 				.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug'
@@ -63,7 +66,7 @@ class modjemcalqhelper
 				.' INNER JOIN #__jem_categories AS c ON c.id = rel.catid'
 				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 				. $wherestr
-				. ' AND c.access  <= '.$gid
+				. ' AND c.access IN (' . implode(',', $levels) . ')'
 				.($catid ? $categories : '')
 				.($venid ? $venues : '')
 				. ' GROUP BY a.id'
