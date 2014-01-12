@@ -96,6 +96,7 @@ class JEMModelContactelement extends JModelLegacy
 			$query = $this->_buildQuery();
 			$this->_total = $this->_getListCount($query);
 		}
+
 		return $this->_total;
 	}
 
@@ -150,16 +151,12 @@ class JEMModelContactelement extends JModelLegacy
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.contactelement.filter_order', 'filter_order', 'con.ordering', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.contactelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 
-
 		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
-	if ($filter_order != '')
-		{
+		if ($filter_order != '') {
 			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
-		}
-		else
-		{
+		} else {
 			$orderby = ' ORDER BY con.name ';
 		}
 
@@ -222,10 +219,7 @@ class JEMModelContactelement extends JModelLegacy
 			$where[] = ' LOWER(con.state) LIKE \'%'.$search.'%\' ';
 		}
 
-
-
-
-		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+		$where = ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
 
 		return $where;
 	}
