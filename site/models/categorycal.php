@@ -307,16 +307,16 @@ class JEMModelCategoryCal extends JModelLegacy
 	{
 		$app = JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest('com_jem.category.filter_order', 'filter_order', '', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.category.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		$filter_order		= $app->getUserStateFromRequest('com_jem.category.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.category.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
 
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
-		if ($filter_order != '') {
-			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
+		if ($filter_order == 'a.dates') {
+			$orderby = ' ORDER BY a.dates, a.times ' . $filter_order_Dir;
 		} else {
-			$orderby = ' ORDER BY a.dates, a.times ';
+			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
 		}
 
 		return $orderby;
