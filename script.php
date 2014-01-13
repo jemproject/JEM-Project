@@ -111,13 +111,13 @@ class com_jemInstallerScript
 				<b><?php echo JText::_('COM_JEM_INSTALL_INSTALLATION_SUCCESSFUL'); ?></b>
 			</p> <?php
 		}
-		
-		
+
+
 		$param_array = array(
 				"event_comunoption"=>"0",
 				"event_comunsolution"=>"0",
 				"event_show_author"=>"1",
-				"event_lg"=>"",			
+				"event_lg"=>"",
 				"event_link_author"=>"1",
 				"event_show_contact"=>"1",
 				"event_link_contact"=>"1",
@@ -151,9 +151,8 @@ class com_jemInstallerScript
 				"global_tld"=>"",
 				"global_lg"=>""
 		);
-		
+
 		$this->setGlobalAttribs($param_array);
-		
 	}
 
 	/**
@@ -303,7 +302,7 @@ class com_jemInstallerScript
 			$db->query();
 		}
 	}
-	
+
 	/**
 	 * Sets globalattrib values in the settings table
 	 *
@@ -317,12 +316,12 @@ class com_jemInstallerScript
 			$query->select('globalattribs')->from('#__jem_settings');
 			$db->setQuery($query);
 			$params = json_decode($db->loadResult(), true);
-	
+
 			// add the new variable(s) to the existing one(s)
 			foreach ($param_array as $name => $value) {
 				$params[(string) $name] = (string) $value;
 			}
-	
+
 			// store the combined new and existing values back as a JSON string
 			$paramsString = json_encode($params);
 			$query = $db->getQuery(true);
@@ -333,14 +332,22 @@ class com_jemInstallerScript
 		}
 	}
 
+	/**
+	 * Helper method that outputs a short JEM header with logo and text
+	 */
 	private function getHeader() {
 		?>
 		<img src="../media/com_jem/images/jemlogo.png" alt="" style="float:left; padding-right:20px;" />
 		<h1><?php echo JText::_('COM_JEM'); ?></h1>
-	 	<p class="small"><?php echo JText::_('COM_JEM_INSTALLATION_HEADER'); ?></p>
+		<p class="small"><?php echo JText::_('COM_JEM_INSTALLATION_HEADER'); ?></p>
 		<?php
 	}
 
+	/**
+	 * Checks if component is already registered in Joomlas schema table and adds an entry if
+	 * neccessary
+	 * @param string $versionId The JEM version to add to the schema table
+	 */
 	private function initializeSchema($versionId) {
 		$db = JFactory::getDbo();
 
@@ -385,8 +392,6 @@ class com_jemInstallerScript
 	private function deleteObsoleteFiles()
 	{
 		$files = array(
-			// obsolete since JEM 1.9.1
-			//   ??? (don't have 1.9.0)
 			// obsolete since JEM 1.9.2
 			'/administrator/components/com_jem/controllers/archive.php',
 			'/administrator/components/com_jem/models/archive.php',
@@ -400,7 +405,7 @@ class com_jemInstallerScript
 			'/components/com_jem/views/editevent/metadata.xml',
 			'/components/com_jem/views/editvenue/metadata.xml',
 			'/components/com_jem/views/event/metadata.xml',
-			'/components/com_jem/views/eventlist/metadata.xml',
+			'/components/com_jem/views/eventslist/metadata.xml',
 			'/components/com_jem/views/myattending/metadata.xml',
 			'/components/com_jem/views/myevents/metadata.xml',
 			'/components/com_jem/views/myvenues/metadata.xml',
@@ -429,6 +434,7 @@ class com_jemInstallerScript
 			'/administrator/components/com_jem/help/images/icon-16-hint.png',
 			'/administrator/components/com_jem/models/jem.php',
 			'/administrator/components/com_jem/models/fields/imageselectevent.php',
+			'/administrator/components/com_jem/tables/jem_events.php',
 			'/administrator/components/com_jem/views/category/tmpl/default.php',
 			'/administrator/components/com_jem/views/category/tmpl/default_attachments.php',
 			'/administrator/components/com_jem/views/event/tmpl/addvenue.php',
@@ -456,8 +462,6 @@ class com_jemInstallerScript
 
 		// TODO There is an issue while deleting folders using the ftp mode
 		$folders = array(
-			// obsolete since JEM 1.9.1
-			//   ??? (don't have 1.9.0)
 			// obsolete since JEM 1.9.2
 			'/administrator/components/com_jem/views/archive/tmpl',
 			'/administrator/components/com_jem/views/archive',
@@ -481,7 +485,7 @@ class com_jemInstallerScript
 				echo JText::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $folder).'<br />';
 			}
 		}
-	} // deleteObsoleteFiles()
+	}
 
 	/**
 	 * Increment category ids in params of menu items related to com_jem.
@@ -491,7 +495,7 @@ class com_jemInstallerScript
 	 */
 	private function updateJemMenuItems195()
 	{
-		// get all "cod_jem..." frontned entries
+		// get all "com_jem..." frontend entries
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('id, link, params');
@@ -583,9 +587,10 @@ class com_jemInstallerScript
 					break;
 
 				default:
+					// Default case should not be triggered
 					//echo 'Oops - ' . $view . ' on ' . $item->id . '<br />';
 					break;
-			} // switch ($view)
+			}
 
 			// write back
 			if ($modified) {
@@ -597,8 +602,8 @@ class com_jemInstallerScript
 				$db->setQuery($query);
 				$db->query();
 			}
-		} // foreach($items as $item)
-	} // updateJemMenuItems195()
+		}
+	}
 
 	/**
 	 * Increment category ids in params of JEM modules.
@@ -650,9 +655,10 @@ class com_jemInstallerScript
 					break;
 
 				default:
+					// Default case should not be triggered
 					//echo 'Oops - ' . $item->module . ' on ' . $item->id . '<br />';
 					break;
-			} // switch ($item->module)
+			}
 
 			// write back
 			if ($modified) {
@@ -664,6 +670,6 @@ class com_jemInstallerScript
 				$db->setQuery($query);
 				$db->query();
 			}
-		} // foreach($items as $item)
-	} // updateJemModules195()
+		}
+	}
 }
