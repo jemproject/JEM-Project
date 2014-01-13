@@ -434,7 +434,6 @@ class com_jemInstallerScript
 			'/administrator/components/com_jem/help/images/icon-16-hint.png',
 			'/administrator/components/com_jem/models/jem.php',
 			'/administrator/components/com_jem/models/fields/imageselectevent.php',
-			'/administrator/components/com_jem/tables/jem_events.php',
 			'/administrator/components/com_jem/views/category/tmpl/default.php',
 			'/administrator/components/com_jem/views/category/tmpl/default_attachments.php',
 			'/administrator/components/com_jem/views/event/tmpl/addvenue.php',
