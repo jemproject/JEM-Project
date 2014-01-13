@@ -26,7 +26,7 @@ h1 {
 }
 
 h2 {
-	padding: 0px;
+	margin: 30px 0 10px;
 	font-family: Helvetica,Arial,sans-serif;
 	font-size: 1.4em;
 	font-weight: bold;
@@ -36,7 +36,7 @@ h2 {
 }
 
 h3 {
-	margin-top: 0px 0px 10px;
+	margin: 20px 0px 10px;
 	font-family: Helvetica,Arial,sans-serif;
 	font-size: 1em;
 	font-weight: bold;
@@ -51,11 +51,25 @@ pre {
 	padding: 5px;
 }
 
+.clear {
+	clear: both;
+}
+
+img.left {
+	float: left;
+	padding-right: 4px;
+}
+
+.box {
+	clear: both;
+	padding: 1px 0;
+}
+
 .hintheader {
 	border-left: 6px solid #ffa909;
 	border-right: 1px solid #e7e7e7;
 	border-top: 1px solid #ffa909;
-	padding: 3px 3px 3px 36px;
+	padding: 3px 3px 3px 40px;
 	font-weight: bold;
 	font-size: 13px;
 	margin: 8px auto 0px;
@@ -68,10 +82,10 @@ pre {
 	border-left: 6px solid #ffa909;
 	border-right: 1px solid #e7e7e7;
 	border-bottom: 1px solid #e7e7e7;
-	padding: 3px 3px 20px 36px;
+	padding: 3px 3px 20px 40px;
 	margin: 0px auto 8px;
 	color: #465584;
-	background: #ffffff url(../images/icon-32-hint.png) no-repeat 3px 3px;
+	background: #ffffff url(../images/icon-32-hint.png) no-repeat 4px 4px;
 	font-size: 12px;
 	width: 80%;
 }
@@ -80,7 +94,7 @@ pre {
 	border-left: 6px solid #FE8282;
 	border-right: 1px solid #e7e7e7;
 	border-top: 1px solid #FE8282;
-	padding: 3px 3px 3px 36px;
+	padding: 3px 3px 3px 40px;
 	font-weight: bold;
 	font-size: 13px;
 	margin: 8px auto 0px;
@@ -93,10 +107,10 @@ pre {
 	border-left: 6px solid #FE8282;
 	border-right: 1px solid #e7e7e7;
 	border-bottom: 1px solid #e7e7e7;
-	padding: 3px 3px 20px 36px;
+	padding: 3px 3px 20px 40px;
 	margin: 0px auto 8px;
 	color: #465584;
-	background: #ffffff url(../images/icon-32-attention.png) no-repeat 3px 3px;
+	background: #ffffff url(../images/icon-32-attention.png) no-repeat 4px 4px;
 	font-size: 12px;
 	width: 80%;
 }
@@ -131,4 +145,9 @@ table.help th {
 table.help td {
 	padding: 3px;
 	text-align: left;
+}
+
+.close {
+	text-align: center;
+	margin: 30px 0;
 }
