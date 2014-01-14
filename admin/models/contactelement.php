@@ -65,7 +65,7 @@ class JEMModelContactelement extends JModelLegacy
 	}
 
 	/**
-	 * Method to get categories item data
+	 * Method to get contactelement item data
 	 *
 	 * @access public
 	 * @return array
@@ -83,7 +83,7 @@ class JEMModelContactelement extends JModelLegacy
 	}
 
 	/**
-	 * Total nr of venues
+	 * Total nr of contactelement
 	 *
 	 * @access public
 	 * @return integer
@@ -101,7 +101,7 @@ class JEMModelContactelement extends JModelLegacy
 	}
 
 	/**
-	 * Method to get a pagination object for the venues
+	 * Method to get a pagination object for the contactelement
 	 *
 	 * @access public
 	 * @return integer
@@ -119,7 +119,7 @@ class JEMModelContactelement extends JModelLegacy
 	}
 
 	/**
-	 * Method to build the query for the venues
+	 * Method to build the query for the contactelement
 	 *
 	 * @access private
 	 * @return string
@@ -139,7 +139,7 @@ class JEMModelContactelement extends JModelLegacy
 	}
 
 	/**
-	 * Method to build the orderby clause of the query for the venues
+	 * Method to build the orderby clause of the query for the contactelement
 	 *
 	 * @access private
 	 * @return string
@@ -164,7 +164,7 @@ class JEMModelContactelement extends JModelLegacy
 	}
 
 	/**
-	 * Method to build the where clause of the query for the venues
+	 * Method to build the where clause of the query for the contactelement
 	 *
 	 * @access private
 	 * @return string
@@ -192,7 +192,7 @@ class JEMModelContactelement extends JModelLegacy
 		}
 
 		/*
-		* Search venues
+		* Search names
 		*/
 		if ($search && $filter == 1) {
 			$where[] = ' LOWER(con.name) LIKE \'%'.$search.'%\' ';
