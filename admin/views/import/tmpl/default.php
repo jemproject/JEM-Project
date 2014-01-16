@@ -10,56 +10,15 @@
 defined('_JEXEC') or die;
 ?>
 <?php if($this->progress->step > 0) : ?>
-	<meta http-equiv="refresh" content="3; url=index.php?option=com_jem&amp;view=import&amp;task=import.eventlistimport&amp;step=<?php
-		echo $this->progress->step; ?>&amp;table=<?php echo $this->progress->table; ?>&amp;prefix=<?php echo $this->progress->prefix; ?>&amp;current=<?php
+	<meta http-equiv="refresh" content="1; url=index.php?option=com_jem&amp;view=import&amp;task=import.eventlistimport&amp;step=<?php
+		echo $this->progress->step; ?>&amp;table=<?php echo $this->progress->table; ?>&amp;current=<?php
 		echo $this->progress->current; ?>&amp;total=<?php echo $this->progress->total; ?>&amp;copyImages=<?php
 		echo $this->progress->copyImages; ?>">
-<?php else: ?>
-
+<?php endif; ?>
 <?php echo JHtml::_('tabs.start', 'det-pane', array('useCookie'=>1)); ?>
 
 
 <?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_IMPORT_EL_TAB'), 'el-import' ); ?>
-
-
-
-<?php if($this->progress->step == -1): ?>
-	<p><?php echo JText::_('COM_JEM_IMPORT_EL_DETECTED_TABLES'); ?>:</p>
-	<ul>
-		<?php
-			foreach($this->eventlistTables as $table => $rows) {
-				if(!is_null($rows)) {
-					echo "<li>".JText::sprintf('COM_JEM_IMPORT_EL_DETECTED_TABLES_NUM_ROWS', $table, $rows)."</li>";
-				}
-			}
-		?>
-	</ul>
-	<p><?php echo JText::_('COM_JEM_IMPORT_EL_MISSING_TABLES'); ?>:</p>
-	<ul>
-		<?php
-			$tableCount = 0;
-			foreach($this->eventlistTables as $table => $rows) {
-				if(is_null($rows)) {
-					$tableCount++;
-					echo "<li>".$table."</li>";
-				}
-			}
-			if($tableCount == 0) {
-				echo "<li>".JText::_('COM_JEM_IMPORT_EL_MISSING_TABLES_NONE')."</li>";
-			}
-		?>
-	</ul>
-<form action="index.php" method="post" name="adminForm-el-import-prefix" id="adminForm-el-import-prefix">
-<p>You can specify a custom table prefix. Leave field empty to use Joomla's standard prefix.</p>
-	<input type="hidden" name="task" id="task00" value="import.display" />
-	<input type="hidden" name="option" value="com_jem" />
-	<input type="hidden" name="view" value="import" />
-	<input type="text" name="prefix" value=""/> <input type="submit" value="Check"/>
-</form>
-<hr/>
-<p>Prefix: "<?php echo $this->progress->prefix;?>"</p>
-<hr/>
-<?php endif; ?>
 
 <?php if(!$this->eventlistVersion) : ?>
 	<p><?php echo JText::_('COM_JEM_IMPORT_EL_NO_VERSION_DETECTED'); ?></p>
@@ -124,12 +83,8 @@ defined('_JEXEC') or die;
 					<?php endif; ?>
 					<?php echo JText::_('COM_JEM_IMPORT_EL_COPY_IMAGES'); ?>
 				</p>
-				<p>
-					<input type="text" class="inputbox" id="eventlist-prefix" name="prefix" value="" />
-					<?php echo JText::_('COM_JEM_IMPORT_EL_PREFIX'); ?>
-				</p>
 				<input type="submit" id="eventlist-import-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>"
-					onclick="document.getElementById('task0').value='import.eventlistImport';return true;"/>
+					onclick="document.getElementsByName('task')[0].value='import.eventlistImport';return true;"/>
 			</fieldset>
 		</div>
 		<input type="hidden" name="startToken" value="1" />
@@ -144,18 +99,18 @@ defined('_JEXEC') or die;
 <?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_IMPORT_CSV_TAB'), 'csv-import' ); ?>
 
 <form action="index.php" method="post" name="adminForm" enctype="multipart/form-data" id="adminForm">
-
+	
 	<table style="width:100%">
 	<tr>
 	<td>
 	<div class="width-50 fltlft">
-
+	
 	<fieldset class="adminform">
 		<legend><?php echo JText::_('COM_JEM_IMPORT_EVENTS');?></legend>
 	<?php echo JText::_('COM_JEM_IMPORT_INSTRUCTIONS') ?><br /><br />
 	<?php echo JText::_("COM_JEM_IMPORT_COLUMNNAMESEVENTS"); ?><br />
 	<?php echo JText::_("COM_JEM_IMPORT_FIRSTROW"); ?><br />
-
+	
 	<?php echo JText::_("COM_JEM_IMPORT_CATEGORIES_DESC"); ?><br /><br />
 	<?php echo JText::_("COM_JEM_IMPORT_POSSIBLECOLUMNS");?><br />
 	<div style="background-color:silver;border:1px solid #808080"><?php echo 'categories, ' . implode(", ",$this->eventfields); ?></div><br />
@@ -164,18 +119,18 @@ defined('_JEXEC') or die;
 	<input type="file" id="event-file-upload" accept="text/*" name="Fileevents" />
 	<input type="submit" id="event-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementById('task1').value='import.csveventimport';return true;"/>
 	<span id="upload-clear"></span><br /><br/>
-
+	
 	<label for="replace_events"><?php echo JText::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label>
 	<?php echo JHtml::_('select.booleanlist', 'replace_events', 'class="inputbox"', 0); ?>
 	</fieldset>
-
-
+	
+	
 	<fieldset class="adminform">
 		<legend><?php echo JText::_('COM_JEM_IMPORT_CAT_EVENTS');?></legend>
 	<?php echo JText::_('COM_JEM_IMPORT_INSTRUCTIONS') ?><br /><br />
 	<?php echo JText::_("COM_JEM_IMPORT_COLUMNNAMESCATEVENTS"); ?><br />
 	<?php echo JText::_("COM_JEM_IMPORT_FIRSTROW"); ?><br />
-
+	
 	<?php echo JText::_("COM_JEM_IMPORT_CATEGORIES_DESC"); ?><br /><br />
 	<?php echo JText::_("COM_JEM_IMPORT_POSSIBLECOLUMNS");?><br />
 	<div style="background-color:silver;border:1px solid #808080"><?php echo implode(", ",$this->cateventsfields); ?></div><br />
@@ -184,22 +139,22 @@ defined('_JEXEC') or die;
 	<input type="file" id="catevents-file-upload" accept="text/*" name="Filecatevents" />
 	<input type="submit" id="catevents-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementById('task1').value='import.csvcateventsimport';return true;"/>
 	<span id="upload-clear"></span><br /><br/>
-
+	
 	<label for="replace_catevents"><?php echo JText::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label>
 	<?php echo JHtml::_('select.booleanlist', 'replace_catevents', 'class="inputbox"', 0); ?>
 	</fieldset>
-
+	
 	<div class="clr"></div>
 	</div>
-
+	
 	<div class="width-50 fltrt">
-
+	
 	<fieldset class="adminform">
 		<legend><?php echo JText::_('COM_JEM_IMPORT_VENUES');?></legend>
 	<?php echo JText::_('COM_JEM_IMPORT_INSTRUCTIONS') ?><br /><br />
 	<?php echo JText::_("COM_JEM_IMPORT_COLUMNNAMESVENUES"); ?><br />
 	<?php echo JText::_("COM_JEM_IMPORT_FIRSTROW"); ?><br />
-
+	
 	<?php echo JText::_("COM_JEM_IMPORT_CATEGORIES_DESC"); ?><br /><br />
 	<?php echo JText::_("COM_JEM_IMPORT_POSSIBLECOLUMNS");?><br />
 	<div style="background-color:silver;border:1px solid #808080"><?php echo implode(", ",$this->venuefields); ?></div><br />
@@ -208,7 +163,7 @@ defined('_JEXEC') or die;
 	<input type="file" id="venue-file-upload" accept="text/*" name="Filevenues" />
 	<input type="submit" id="venue-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementById('task1').value='import.csvvenuesimport';return true;"/>
 	<span id="upload-clear"></span><br /><br/>
-
+	
 	<label for="replace_venues"><?php echo JText::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label>
 	<?php echo JHtml::_('select.booleanlist', 'replace_venues', 'class="inputbox"', 0); ?>
 	</fieldset>
@@ -218,7 +173,7 @@ defined('_JEXEC') or die;
 	<?php echo JText::_('COM_JEM_IMPORT_INSTRUCTIONS') ?><br /><br />
 	<?php echo JText::_("COM_JEM_IMPORT_COLUMNNAMESCATEGORIES"); ?><br />
 	<?php echo JText::_("COM_JEM_IMPORT_FIRSTROW"); ?><br />
-
+	
 	<?php echo JText::_("COM_JEM_IMPORT_CATEGORIES_DESC"); ?><br /><br />
 	<?php echo JText::_("COM_JEM_IMPORT_POSSIBLECOLUMNS");?><br />
 	<div style="background-color:silver;border:1px solid #808080"><?php echo implode(", ",$this->catfields); ?></div><br />
@@ -227,23 +182,22 @@ defined('_JEXEC') or die;
 	<input type="file" id="cat-file-upload" accept="text/*" name="Filecategories" />
 	<input type="submit" id="cat-file-upload-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>" onclick="document.getElementById('task1').value='import.csvcategoriesimport';return true;"/>
 	<span id="upload-clear"></span><br /><br/>
-
+	
 	<label for="replace_categories"><?php echo JText::_('COM_JEM_IMPORT_REPLACEIFEXISTS').':'; ?></label>
 	<?php echo JHtml::_('select.booleanlist', 'replace_categories', 'class="inputbox"', 0); ?>
 	</fieldset>
-
+	
 	<div class="clr"></div>
 	</div>
-
+	
 
 	</td>
 	</tr>
 	</table>
-
+		
 	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="view" value="import" />
 	<input type="hidden" name="controller" value="import" />
 	<input type="hidden" name="task" id="task1" value="" />
 </form>
 <?php echo JHtml::_('tabs.end'); ?>
-<?php endif; ?>
