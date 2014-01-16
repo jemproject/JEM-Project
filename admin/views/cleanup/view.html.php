@@ -21,7 +21,7 @@ class JEMViewCleanup extends JViewLegacy {
 	public function display($tpl = null) {
 
 		$app = JFactory::getApplication();
-		
+
 		$this->totalcats = $this->get('Countcats');
 
 		//only admins have access to this view
@@ -32,7 +32,7 @@ class JEMViewCleanup extends JViewLegacy {
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-		
+
 		// Load Script
 		JHtml::_('behavior.mootools');
 
@@ -48,11 +48,10 @@ class JEMViewCleanup extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
-		require_once JPATH_COMPONENT . '/helpers/helper.php';
-
-		//create the toolbar
-		JToolBarHelper::back();
 		JToolBarHelper::title(JText::_('COM_JEM_CLEANUP'), 'housekeeping');
+
+		JToolBarHelper::back();
+		JToolBarHelper::divider();
 		JToolBarHelper::help('cleanup', true);
 	}
 }

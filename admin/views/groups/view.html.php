@@ -82,7 +82,8 @@ defined('_JEXEC') or die;
 		}
 
 		JToolBarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'groups.remove', 'JACTION_DELETE');
-		JToolBarHelper::spacer();
+
+		JToolBarHelper::divider();
 		JToolBarHelper::help('listgroups', true);
 	}
 }

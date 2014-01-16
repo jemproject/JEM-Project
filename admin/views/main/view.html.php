@@ -50,16 +50,17 @@ class JEMViewMain extends JViewLegacy {
 	*/
 	protected function addToolbar()
 	{
-		// Build toolbar
+		// Load the category helper.
+		require_once JPATH_COMPONENT.'/helpers/helper.php';
+
 		JToolBarHelper::title(JText::_('COM_JEM_MAIN_TITLE'), 'home');
-		JToolBarHelper::help('intro', true);
 
 		if (JFactory::getUser()->authorise('core.manage')) {
-			JToolBarhelper::preferences('com_jem');
+			JToolBarHelper::preferences('com_jem');
+			JToolbarHelper::divider();
 		}
 
-		// Create Submenu
-		require_once JPATH_COMPONENT . '/helpers/helper.php';
+		JToolBarHelper::help('intro', true);
 	}
 
 	/**
