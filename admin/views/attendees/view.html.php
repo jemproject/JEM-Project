@@ -116,15 +116,15 @@ class JEMViewAttendees extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
-		//add toolbar
 		JToolBarHelper::title(JText::_('COM_JEM_REGISTERED_USERS'), 'users');
+
 		JToolBarHelper::addNew('attendees.add');
 		JToolBarHelper::editList('attendees.edit');
 		JToolBarHelper::spacer();
 		JToolBarHelper::deleteList('', 'attendees.remove', 'COM_JEM_ATTENDEES_DELETE');
 		JToolBarHelper::spacer();
 		JToolBarHelper::custom('attendees.back', 'back', 'back', JText::_('COM_JEM_ATT_BACK'), false);
-		JToolBarHelper::spacer();
+		JToolBarHelper::divider();
 		JToolBarHelper::help('registereduser', true);
 	}
 }

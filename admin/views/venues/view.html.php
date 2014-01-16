@@ -116,15 +116,20 @@ defined('_JEXEC') or die;
 			if ($this->state->get('filter.state') != 2) {
 				JToolBarHelper::publishList('venues.publish');
 				JToolBarHelper::unpublishList('venues.unpublish');
+				JToolBarHelper::divider();
 			}
+		}
+
+		if ($canDo->get('core.edit.state')) {
+			JToolBarHelper::checkin('venues.checkin');
 		}
 
 		/* delete-trash */
 		if ($canDo->get('core.delete')) {
-			JToolBarHelper::divider();
 			JToolBarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'venues.remove', 'JACTION_DELETE');
 		}
-		
+
+		JToolBarHelper::divider();
 		JToolBarHelper::help('listvenues', true);
 	}
 }

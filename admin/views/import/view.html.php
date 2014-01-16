@@ -27,7 +27,7 @@ class JEMViewImport extends JViewLegacy {
 
 		// Load script
 		JHtml::_('behavior.mootools');
-		
+
 		// Get data from the model
 		$eventfields = $this->get('EventFields');
 		$catfields   = $this->get('CategoryFields');
@@ -66,14 +66,11 @@ class JEMViewImport extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
-		//build toolbar
-		JToolBarHelper::back();
 		JToolBarHelper::title(JText::_('COM_JEM_IMPORT'), 'tableimport');
-		/* @todo make import helpfile */
-		//JToolBarHelper::help('import', true);
 
-		//Create Submenu
-		require_once JPATH_COMPONENT . '/helpers/helper.php';
+		JToolBarHelper::back();
+		JToolBarHelper::divider();
+		JToolBarHelper::help('import', true);
 	}
 }
 ?>

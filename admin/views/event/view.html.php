@@ -55,7 +55,7 @@ class JEMViewEvent extends JViewLegacy {
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-		
+
 		// Load scripts
 		JHtml::_('script', 'com_jem/attachments.js', false, true);
 		JHtml::_('script', 'com_jem/recurrence.js', false, true);
@@ -116,6 +116,7 @@ class JEMViewEvent extends JViewLegacy {
 			JToolBarHelper::cancel('event.cancel', 'JTOOLBAR_CLOSE');
 		}
 
+		JToolBarHelper::divider();
 		JToolBarHelper::help('editevents', true);
 	}
 }
