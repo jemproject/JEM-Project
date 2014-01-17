@@ -60,7 +60,7 @@ class JEMViewMain extends JViewLegacy {
 			JToolbarHelper::divider();
 		}
 
-		JToolBarHelper::help('intro', true);
+		JToolBarHelper::help('home', true);
 	}
 
 	/**
