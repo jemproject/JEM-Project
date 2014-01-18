@@ -27,11 +27,10 @@ class JEMViewSettings extends JViewLegacy {
 		$form	= $this->get('Form');
 		$data	= $this->get('Data');
 		$state	= $this->get('State');
-		
 
 		$jemsettings = $this->get('Data');
 		$document 	= JFactory::getDocument();
-		
+
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
@@ -91,14 +90,11 @@ class JEMViewSettings extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
-		// Create Submenu
-		require_once JPATH_COMPONENT . '/helpers/helper.php';
-
 		JToolBarHelper::title(JText::_('COM_JEM_SETTINGS_TITLE'), 'settings');
 		JToolBarHelper::apply('settings.apply');
 		JToolBarHelper::save('settings.save');
-		JToolBarHelper::divider();
 		JToolBarHelper::cancel('settings.cancel');
+
 		JToolBarHelper::divider();
 		JToolBarHelper::help('settings', true);
 	}

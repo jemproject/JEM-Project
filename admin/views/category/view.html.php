@@ -29,19 +29,19 @@ class JEMViewCategory extends JViewLegacy
 		$this->state	= $this->get('State');
 		$this->canDo	= JEMHelperBackend::getActions($this->state->get('category.component'));
 
-		
+
 		$document	= JFactory::getDocument();
-		
+
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
-		
+
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 		JHtml::_('stylesheet', 'com_jem/colorpicker.css', array(), true);
-		
+
 		// Load Script
 		$document->addScript(JURI::root().'media/com_jem/js/colorpicker.js');
 
@@ -107,10 +107,10 @@ class JEMViewCategory extends JViewLegacy
 
 		if (empty($this->item->id))  {
 			JToolBarHelper::cancel('category.cancel');
-		}
-		else {
+		} else {
 			JToolBarHelper::cancel('category.cancel', 'JTOOLBAR_CLOSE');
 		}
+
 		JToolBarHelper::divider();
 		JToolBarHelper::help('editcategories', true);
 	}

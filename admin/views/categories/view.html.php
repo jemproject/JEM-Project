@@ -35,10 +35,10 @@ class JEMViewCategories extends JViewLegacy
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
-		
+
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-		
+
 		// Preprocess the list of items to find ordering divisions.
 		foreach ($this->items as &$item) {
 			$this->ordering[$item->parent_id][] = $item->id;
@@ -107,13 +107,14 @@ class JEMViewCategories extends JViewLegacy
 		}
 		elseif ($canDo->get('core.edit.state')) {
 			JToolBarHelper::trash('categories.trash');
-			JToolBarHelper::divider();
 		}
 
 		if ($canDo->get('core.admin')) {
-			JToolBarHelper::custom('categories.rebuild', 'refresh.png', 'refresh_f2.png', 'JTOOLBAR_REBUILD', false);
 			JToolBarHelper::divider();
+			JToolBarHelper::custom('categories.rebuild', 'refresh.png', 'refresh_f2.png', 'JTOOLBAR_REBUILD', false);
 		}
+
+		JToolBarHelper::divider();
 		JToolBarHelper::help('listcategories', true);
 	}
 }

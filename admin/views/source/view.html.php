@@ -62,6 +62,8 @@ class JEMViewSource extends JViewLegacy
 			JToolBarHelper::save('source.save');
 		}
 
-		JToolBarHelper::cancel('source.cancel');
+		JToolBarHelper::cancel('source.cancel', 'JTOOLBAR_CLOSE');
+		JToolBarHelper::divider();
+		JToolBarHelper::help('editcss', true);
 	}
 }

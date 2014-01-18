@@ -48,11 +48,11 @@ class JEMViewExport extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
-		require_once JPATH_COMPONENT . '/helpers/helper.php';
-
-		//build toolbar
-		JToolBarHelper::back();
 		JToolBarHelper::title(JText::_('COM_JEM_EXPORT'), 'tableexport');
+
+		JToolBarHelper::back();
+		JToolBarHelper::divider();
+		JToolBarHelper::help('export', true);
 	}
 }
 ?>
