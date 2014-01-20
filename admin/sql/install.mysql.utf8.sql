@@ -550,5 +550,5 @@ INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, 
 (250, 'AF', 'SS', 'SSD', 728, 'South Sudan, Republic of'),
 (251, 'EU', 'XK', 'XKX', '',  'Kosovo, Republic of');
 
-INSERT IGNORE INTO `#__jem_categories` (`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`) VALUES
-(1, 0, 0, 1, 0, 'root', 'root', 1);
+INSERT IGNORE INTO `#__jem_categories` (`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`, `published`) VALUES
+(1, 0, 0, 1, 0, 'root', 'root', 1, 1);
