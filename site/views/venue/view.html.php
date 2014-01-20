@@ -37,12 +37,16 @@ class JEMViewVenue extends JEMView {
 			$uri 			= JFactory::getURI();
 			$pathway 		= $app->getPathWay();
 			$jinput 		= JFactory::getApplication()->input;
+			$print			= JRequest::getBool('print');
 
 			// Load css
 			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 			JHtml::_('stylesheet', 'com_jem/calendar.css', array(), true);
-			
 			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+			if ($print) {
+				JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+				$document->setMetaData('robots', 'noindex, nofollow');
+			}
 
 			$evlinkcolor = $params->get('eventlinkcolor');
 			$evbackgroundcolor = $params->get('eventbackgroundcolor');
@@ -56,7 +60,7 @@ class JEMViewVenue extends JEMView {
 			.today .daynum {background-color:' . $currentdaycolor . ';}';
 			$document->addStyleDeclaration ($style);
 
-			// add javascript			
+			// add javascript
 			JHtml::_('script', 'com_jem/calendar.js', false, true);
 
 			// Retrieve year/month variables
