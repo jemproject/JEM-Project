@@ -368,7 +368,7 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 			.' AND c.parent_id = '.(int)$this->_id
 			.' AND c.access IN (' . implode(',', $levels) . ')'
 			;
-		if (!$params->get('empty_cat'))
+		if (!$params->get('empty_cat', 1))
 		{
 			$task = JRequest::getWord('task');
 			if($task == 'archive') {
