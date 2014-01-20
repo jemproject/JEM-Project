@@ -300,7 +300,6 @@ class JEMModelEvent extends JModelAdmin
 		// Check if image was selected
 		jimport('joomla.filesystem.file');
 		$image_dir = JPATH_SITE.'/images/jem/events/';
-		$format    = JFile::getExt($image_dir.$table->datimage);
 		$allowable = array ('gif', 'jpg', 'png');
 
 		// get image (frontend)
@@ -323,6 +322,7 @@ class JEMModelEvent extends JModelAdmin
 			} // end image if
 		} // if (!backend)
 
+		$format    = JFile::getExt($image_dir.$table->datimage);
 		if (!in_array($format, $allowable)) {
 			$table->datimage = '';
 		}

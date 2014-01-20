@@ -37,10 +37,9 @@ class JEMViewCategoriesdetailed extends JEMView
 		$item			= $menu->getActive();
 		$params 		= $app->getParams();
 		$user			= JFactory::getUser();
-
-		//get vars
 		$pathway 		= $app->getPathWay();
 		$task 			= JRequest::getWord('task');
+		$print			= JRequest::getBool('print');
 
 		//Get data from the model
 		$categories		= $this->get('Data');
@@ -51,6 +50,10 @@ class JEMViewCategoriesdetailed extends JEMView
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		if ($print) {
+			JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+			$document->setMetaData('robots', 'noindex, nofollow');
+		}
 
 		$params->def('page_title', $item->title);
 

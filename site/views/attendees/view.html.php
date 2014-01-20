@@ -43,7 +43,7 @@ class JEMViewAttendees extends JViewLegacy {
 			$app->enqueueMessage(JText::_('COM_JEM_NEED_LOGGED_IN'), 'error');
 			return false;
 		}
-		
+
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
@@ -128,11 +128,13 @@ class JEMViewAttendees extends JViewLegacy {
 	public function _displayprint($tpl = null)
 	{
 		$document	= JFactory::getDocument();
-		
+
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+		$document->setMetaData('robots', 'noindex, nofollow');
 
 		// Emailaddress
 		$jinput = JFactory::getApplication()->input;

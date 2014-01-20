@@ -30,6 +30,7 @@ class JEMViewVenues extends JViewLegacy
 		$jemsettings	= JEMHelper::config();
 		$settings 		= JEMHelper::globalattribs();
 		$user			= JFactory::getUser();
+		$print			= JRequest::getBool('print');
 
 		//get menu information
 		$menu		= $app->getMenu();
@@ -39,6 +40,10 @@ class JEMViewVenues extends JViewLegacy
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		if ($print) {
+			JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+			$document->setMetaData('robots', 'noindex, nofollow');
+		}
 
 		// Request variables
 		$task 	= JRequest::getWord('task');
