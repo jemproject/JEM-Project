@@ -41,10 +41,17 @@ class JEMView extends JViewLegacy {
 		$app 		= JFactory::getApplication();
 		$menus		= $app->getMenu();
 		$menu 		= $menus->getActive();
+		$print		= JRequest::getBool('print');
+
+		if ($print) {
+			JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+			$this->document->setMetaData('robots', 'noindex, nofollow');
+		}
 
 		if ($menu) {
 			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
 		} else {
+			// TODO
 			$this->params->def('page_heading', JText::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY'));
 		}
 
