@@ -14,12 +14,9 @@ jimport('joomla.application.component.model');
 // TODO: Improve error handling
 
 /**
- * JEM Component Sampledata Model
- *
- * @package JEM
- *
+ * Sampledata Model
  */
-class JEMModelSampledata extends JModelLegacy
+class JemModelSampledata extends JModelLegacy
 {
 
 	/**
@@ -66,8 +63,6 @@ class JEMModelSampledata extends JModelLegacy
 		$scriptfile = $this->sampleDataDir . 'sampledata.sql';
 
 		// load sql file
-		// if(!($buffer =
-		// file_get_contents($this->filelist['folder'].'/'.$scriptfile))) {
 		if (!($buffer = file_get_contents($scriptfile))) {
 			return false;
 		}
@@ -77,6 +72,7 @@ class JEMModelSampledata extends JModelLegacy
 
 		// Process queries
 		foreach ($queries as $query) {
+			$query = iconv('windows-1252', 'utf-8', $query);
 			$query = trim($query);
 			if ($query != '' && $query{0} != '#') {
 				$this->_db->setQuery($query);
@@ -279,7 +275,7 @@ class JEMModelSampledata extends JModelLegacy
 				' WHERE created_by = 62'
 			);
 		$db->query();
-		
+
 		$query = $db->getQuery(true);
 		$db->setQuery(
 				'UPDATE #__jem_venues' .
