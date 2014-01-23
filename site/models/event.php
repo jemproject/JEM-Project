@@ -133,9 +133,11 @@ class JEMModelEvent extends JModelItem
 				$query->select('(' . $subQuery . ') as contactid2');
 				
 				// Filter by language
+				/* commented out yet because it's incomplete
 				if ($this->getState('filter.language')) {
 					$query->where('a.language in (' . $db->quote(JFactory::getLanguage()->getTag()) . ',' . $db->quote('*') . ')');
 				}
+				*/
 				
 				// Join over the categories to get parent category titles
 				$query->select('parent.catname as parent_title, parent.id as parent_id, parent.path as parent_route, parent.alias as parent_alias');
