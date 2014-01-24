@@ -140,13 +140,14 @@ class JEMOutput {
 						$image = JText::_('COM_JEM_SHOW_EVENTS');
 					}
 
+					// TODO: Title and overlib just fit to events view
 					$overlib = JText::_('COM_JEM_SHOW_EVENTS_DESC');
 					$title = JText::_('COM_JEM_SHOW_EVENTS');
 
 					if ($id) {
 						$url = 'index.php?option=com_jem&view='.$view.'&id='.$id;
 					} else {
-						$url = 'index.php';
+						$url = 'index.php?option=com_jem&view='.$view;
 					}
 				} else {
 					if ($settings->get('global_show_icons',1)) {
