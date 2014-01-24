@@ -37,12 +37,12 @@ class JEMOutput {
 	 * @param array $params needed params
 	 **/
 	static function submitbutton($dellink, $params)
-	{	
+	{
 		if ($dellink)
 		{
 			$settings = JEMHelper::globalattribs();
 			$settings2 = JEMHelper::config();
-			
+
 			$uri = JFactory::getURI();
 			$app = JFactory::getApplication();
 
@@ -119,7 +119,7 @@ class JEMOutput {
 		$settings = JEMHelper::globalattribs();
 		$settings2 = JEMHelper::config();
 		$app = JFactory::getApplication();
-		
+
 		if ($settings->get('global_show_archive_icon',1)) {
 			if ($app->input->get('print','','int')) {
 				return;
@@ -193,7 +193,7 @@ class JEMOutput {
 			if ($app->input->get('print','','int')) {
 				return;
 			}
-			
+
 			// Ignore if the state is negative (trashed).
 			if ($item->published < 0) {
 				return;
@@ -233,7 +233,7 @@ class JEMOutput {
 					$text = JText::_('COM_JEM_EDIT_VENUE');
 					$url = 'index.php?option=com_jem&view='.$view.'&id='.$id;
 					break;
-					
+
 				case 'venue':
 					if ($settings->get('global_show_icons',1)) {
 						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_VENUE'), NULL, true);
@@ -246,11 +246,11 @@ class JEMOutput {
 					$url = 'index.php?option=com_jem&view=editvenue&id='.$id;
 					break;
 			}
-			
+
 			if (!$url) {
 				return; // we need at least url to generate useful output
 			}
-		
+
 			$button = JHtml::_('link', JRoute::_($url), $image);
 			$output = '<span class="hasTip" title="'.$text.' :: '.$overlib.'">'.$button.'</span>';
 
@@ -354,12 +354,12 @@ class JEMOutput {
 	{
 		$app = JFactory::getApplication();
 		$settings = JEMHelper::globalattribs();
-		
+
 		if ($settings->get('global_show_ical_icon','0')==1) {
 			if ($app->input->get('print','','int')) {
 				return;
 			}
-			
+
 			JHtml::_('behavior.tooltip');
 
 			if ($settings->get('global_show_icons','0')==1) {
@@ -550,9 +550,8 @@ class JEMOutput {
 		if (!$data->map) {
 			return;
 		}
-		
-		if ($view == 'event')
-		{
+
+		if ($view == 'event') {
 			$tld		= 'event_tld';
 			$lg			= 'event_lg';
 			$mapserv	= 'event_show_mapserv';
@@ -561,7 +560,7 @@ class JEMOutput {
 			$lg			= 'global_lg';
 			$mapserv	= 'global_show_mapserv';
 		}
-		
+
 		//Link to map
 		$mapimage = JHtml::_('image', 'com_jem/map_icon.png', JText::_('COM_JEM_MAP'), NULL, true);
 
@@ -578,16 +577,16 @@ class JEMOutput {
 			$data->longitude = null;
 		}
 
-		$url1 = 'http://maps.google.'.$settings->get($tld).'/maps?hl='.$settings->get($lg).'&q='.str_replace(" ", "+", $data->street).', '.$data->postalCode.' '.str_replace(" ", "+", $data->city).', '.$data->country.'+ ('.mb_ereg_replace("&", "+", $data->venue).')&ie=UTF8&z=15&iwloc=B&output=embed" ';
+		$url = 'http://maps.google.'.$settings->get($tld).'/maps?hl='.$settings->get($lg).'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
 
 		//google map link or include
 		switch ($settings->get($mapserv))
 		{
 			case 1:
 				// link
-				$url2 = 'http://maps.google.'.$settings->get($tld).'/maps?hl='.$settings->get($lg).'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
-
-				$url = ($data->latitude && $data->longitude) ? $url2 : $url1;
+				if($data->latitude && $data->longitude) {
+					$url = 'http://maps.google.'.$settings->get($tld).'/maps?hl='.$settings->get($lg).'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
+				}
 
 				$message = JText::_('COM_JEM_MAP').':';
 				$attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
@@ -596,11 +595,11 @@ class JEMOutput {
 
 			case 2:
 				// include
-				$url2 = 'https://maps.google.com/maps?q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
+				if($data->latitude && $data->longitude) {
+					$url = 'https://maps.google.com/maps?q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
+				}
 
-				$url = ($data->latitude && $data->longitude) ? $url2 : $url1;
-
-				$output = '<div style="border: 1px solid #000;width:500px;" color="black"><iframe width="500" height="250" src="'.$url.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
+				$output = '<div style="border: 1px solid #000;width:500px;"><iframe width="500" height="250" src="'.$url.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
 				break;
 		}
 
@@ -712,7 +711,6 @@ class JEMOutput {
 		} else {
 			return false;
 		}
-
 	}
 
 	/**
@@ -724,14 +722,14 @@ class JEMOutput {
 	static function formattime($time, $format = "", $addSuffix = true)
 	{
 		$settings = JEMHelper::config();
-		
+
 		$check = JEMHelper::isValidTime($time);
-		
+
 		if (!$check)
 		{
 			return;
 		}
-		
+
 		if(!$format) {
 			// If no format set, use settings format as standard
 			$format = $settings->formattime;
@@ -776,8 +774,8 @@ class JEMOutput {
 			}
 
 			// Display end time only when both times are set
-			if($settings->get('global_show_timedetails','1') && JEMHelper::isValidTime($timeStart) && JEMHelper::isValidTime($timeEnd)) 
-			{				
+			if($settings->get('global_show_timedetails','1') && JEMHelper::isValidTime($timeStart) && JEMHelper::isValidTime($timeEnd))
+			{
 				$output .= $displayDateEnd ? ', ' : ' - ';
 				$output .= self::formattime($timeEnd);
 			}
