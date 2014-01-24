@@ -65,12 +65,14 @@ class JEMModelCategoryCal extends JModelLegacy
 		$app = JFactory::getApplication();
 		$jemsettings = JEMHelper::config();
 		$jinput = JFactory::getApplication()->input;
-		$params 	= $app->getParams();
 
 		$this->setdate(time());
 
-		if ($jinput->get('id',null,'int')) {
-			$id = $jinput->get('id',null,'int');
+		// Get the parameters of the active menu item
+		$params 	= $app->getParams();
+
+		if ($jinput->get('id', null, 'int')) {
+			$id = $jinput->get('id', null, 'int');
 		} else {
 			$id = $params->get('id');
 		}

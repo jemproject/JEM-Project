@@ -56,7 +56,6 @@ class JEMModelCategory extends JModelLegacy
 
 	/**
 	 * Constructor
-	 *
 	 */
 	function __construct()
 	{
@@ -67,13 +66,13 @@ class JEMModelCategory extends JModelLegacy
 
 		$this->setdate(time());
 
-		// Get the paramaters of the active menu item
+		// Get the parameters of the active menu item
 		$params 	= $app->getParams();
 
-		if (JRequest::getVar('id')) {
-			$id = JRequest::getVar('id');
+		if (JRequest::getInt('id')) {
+			$id = JRequest::getInt('id');
 		} else {
-			$id = $params->get('id');
+			$id = $params->get('id', 1);
 		}
 
 		$this->setId((int)$id);
@@ -84,7 +83,6 @@ class JEMModelCategory extends JModelLegacy
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
-
 	}
 
 	function setdate($date)

@@ -6,16 +6,21 @@
 		</message>
 	</layout>
 
-	<fields name="params">
-		<fieldset name="basic"
+	<fields name="request">
+		<fieldset name="request"
 			addfieldpath="/administrator/components/com_jem/models/fields"
 		>
-			<field name="catid" type="categories"
-				default="0"
+			<field name="id" type="categories"
+				default="1"
 				label="COM_JEM_SELECTTOPCAT"
 				description="COM_JEM_SELECTTOPCATDESC"
 				required="true"
 			/>
+		</fieldset>
+	</fields>
+
+	<fields name="params">
+		<fieldset name="basic">
 			<field name="usecat" type="radio"
 				default="1"
 				label="COM_JEM_DISPLAYCHILDS"
