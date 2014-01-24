@@ -247,7 +247,7 @@ class JEMOutput {
 					break;
 			}
 			
-			if (!url) {
+			if (!$url) {
 				return; // we need at least url to generate useful output
 			}
 		
