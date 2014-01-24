@@ -253,7 +253,7 @@ class JEMModelCategory extends JModelLegacy
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
 		if ($filter_order == 'a.dates') {
-			$orderby = ' ORDER BY a.dates, a.times ' . $filter_order_Dir;
+			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir;
 		} else {
 			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
 		}
