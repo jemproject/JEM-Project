@@ -188,7 +188,7 @@ class JEMModelSearch extends JModelLegacy
 		// Get the paramaters of the active menu item
 		$params 	= $app->getParams();
 
-		$top_category = $params->get('top_category', 0);
+		$top_category = $params->get('top_category', 1);
 
 		$task 		= JRequest::getWord('task');
 
@@ -200,7 +200,7 @@ class JEMModelSearch extends JModelLegacy
 		}
 
 		//$filter            = JRequest::getString('filter', '', 'request');
-		$filter 		= $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
+		$filter            = $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
 		$filter_type       = JRequest::getWord('filter_type', '', 'request');
 		$filter_continent  = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
 		$filter_country    = $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');

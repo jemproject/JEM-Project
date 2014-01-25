@@ -117,7 +117,7 @@ class JEMViewSearch extends JEMView
 		//Cause of group limits we can't use class here to build the categories tree
 		$categories   = $this->get('CategoryTree');
 		$catoptions   = array();
-		$catoptions[] = JHtml::_('select.option', '0', JText::_('COM_JEM_SELECT_CATEGORY'));
+		$catoptions[] = JHtml::_('select.option', '1', JText::_('COM_JEM_SELECT_CATEGORY'));
 		$catoptions   = array_merge($catoptions, JEMCategories::getcatselectoptions($categories));
 		$selectedcats = ($filter_category) ? array($filter_category) : array();
 
