@@ -134,16 +134,6 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 				$order = 'a.dates, a.times DESC';
 		}
 
-		if (JFactory::getUser()->authorise('core.manage')) {
-           $gid = (int) 3;
-            } else {
-                if($user->get('id')) {
-                   $gid = (int) 2;
-                } else {
-                   $gid = (int) 1;
-                }
-            }
-		
 		$query->clear();
 		//sqlsrv changes
 		$case_when = ' CASE WHEN ';
@@ -176,8 +166,6 @@ function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
 		$query->group('a.id, a.title, a.meta_description, a.meta_keywords, a.created, a.introtext, a.fulltext, c.catname, a.alias, c.alias, c.id');
 		$query->order($order);
 
-		
-		echo $query;
 		$db->setQuery( $query, 0, $limit );
 		$list = $db->loadObjectList();
 		$limit -= count($list);

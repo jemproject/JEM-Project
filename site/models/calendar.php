@@ -197,7 +197,8 @@ class JEMModelCalendar extends JModelLegacy
 	{
 		$app = JFactory::getApplication();
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		// Get the paramaters of the active menu item
 		$params = $app->getParams();
@@ -214,7 +215,7 @@ class JEMModelCalendar extends JModelLegacy
 		}
 
 		$where .= ' AND c.published = 1';
-		$where .= ' AND c.access  <= '.$gid;
+		$where .= ' AND c.access IN (' . implode(',', $levels) . ')';
 
 		// only select events within specified dates. (chosen month)
 		$monthstart = mktime(0, 0, 1, strftime('%m', $this->_date), 1, strftime('%Y', $this->_date));
@@ -244,7 +245,8 @@ class JEMModelCalendar extends JModelLegacy
 	function getCategories($id)
 	{
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$query = 'SELECT c.id, c.catname, c.access, c.color, c.published, c.checked_out AS cchecked_out,'
 			. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
@@ -252,7 +254,7 @@ class JEMModelCalendar extends JModelLegacy
 			. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 			. ' WHERE rel.itemid = '.(int)$id
 			. ' AND c.published = 1'
-			. ' AND c.access <= '.$gid;
+			. ' AND c.access IN (' . implode(',', $levels) . ')'
 			;
 
 		$this->_db->setQuery($query);

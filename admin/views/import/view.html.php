@@ -27,7 +27,7 @@ class JEMViewImport extends JViewLegacy {
 
 		// Load script
 		JHtml::_('behavior.mootools');
-		
+
 		// Get data from the model
 		$eventfields = $this->get('EventFields');
 		$catfields   = $this->get('CategoryFields');
@@ -47,12 +47,20 @@ class JEMViewImport extends JViewLegacy {
 
 		$jinput = JFactory::getApplication()->input;
 		$progress = new stdClass();
-		$progress->step 	= $jinput->get->get('step', 0, 'INT');
+		$progress->step 	= $jinput->get('step', 0, 'INT');
 		$progress->current 	= $jinput->get->get('current', 0, 'INT');
 		$progress->total 	= $jinput->get->get('total', 0, 'INT');
 		$progress->table 	= $jinput->get->get('table', '', 'INT');
+		$progress->prefix 	= $jinput->get('prefix', '', 'CMD');
 		$progress->copyImages = $jinput->get('copyImages', 0, 'INT');
 		$this->progress = $progress;
+
+		// Do not show default prefix #__ but its replacement value
+		$this->prefixToShow = $progress->prefix;
+		if($this->prefixToShow == "#__" || $this->prefixToShow == "") {
+			$app = JFactory::getApplication();
+			$this->prefixToShow = $app->getCfg('dbprefix');
+		}
 
 		// add toolbar
 		$this->addToolbar();
@@ -66,14 +74,11 @@ class JEMViewImport extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
-		//build toolbar
-		JToolBarHelper::back();
 		JToolBarHelper::title(JText::_('COM_JEM_IMPORT'), 'tableimport');
-		/* @todo make import helpfile */
-		//JToolBarHelper::help('import', true);
 
-		//Create Submenu
-		require_once JPATH_COMPONENT . '/helpers/helper.php';
+		JToolBarHelper::back();
+		JToolBarHelper::divider();
+		JToolBarHelper::help('import', true);
 	}
 }
 ?>

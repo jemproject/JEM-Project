@@ -106,6 +106,7 @@ class JEMViewGroup extends JViewLegacy {
 			JToolBarHelper::cancel('group.cancel', 'JTOOLBAR_CLOSE');
 		}
 
+		JToolBarHelper::divider();
 		JToolBarHelper::help('editgroup', true);
 	}
 }

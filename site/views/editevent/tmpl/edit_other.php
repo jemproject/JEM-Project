@@ -71,6 +71,7 @@ defined('_JEXEC') or die;
 		
 		
 		<fieldset class="panelform">
+			<legend><?php echo JText::_('COM_JEM_RECURRENCE'); ?></legend>
 			<ul class="adminformlist">
 				<li><?php echo $this->form->getLabel('recurrence_type'); ?> <?php echo $this->form->getInput('recurrence_type'); ?>
 				</li>

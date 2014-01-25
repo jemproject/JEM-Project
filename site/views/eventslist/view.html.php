@@ -44,10 +44,15 @@ class JEMViewEventslist extends JEMView
 		$db 		= JFactory::getDBO();
 		$user		= JFactory::getUser();
 		$itemid 	= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		$print		= JRequest::getBool('print');
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		if ($print) {
+			JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+			$document->setMetaData('robots', 'noindex, nofollow');
+		}
 
 		// get variables
 		$filter_order		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', 	'a.dates', 'cmd');
@@ -150,16 +155,18 @@ class JEMViewEventslist extends JEMView
 		$this->_prepareDocument();
 		parent::display($tpl);
 	}
-	
+
 	/**
 	 * Prepares the document
 	 */
 	protected function _prepareDocument()
 	{
+		// TODO: Refactor with parent _prepareDocument() function
+
 		$app	= JFactory::getApplication();
 		$menus	= $app->getMenu();
 		$title	= null;
-	
+
 		// Because the application sets a default page title,
 		// we need to get it from the menu item itself
 		$menu = $menus->getActive();
@@ -180,21 +187,21 @@ class JEMViewEventslist extends JEMView
 			$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
 		}
 		$this->document->setTitle($title);
-	
+
 		if ($this->params->get('menu-meta_description'))
 		{
 			$this->document->setDescription($this->params->get('menu-meta_description'));
 		}
-	
+
 		if ($this->params->get('menu-meta_keywords'))
 		{
 			$this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
 		}
-	
+
 		if ($this->params->get('robots'))
 		{
 			$this->document->setMetadata('robots', $this->params->get('robots'));
-		}		
+		}
 	}
 }
 ?>

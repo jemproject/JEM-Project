@@ -1,49 +1,57 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en_GB" xml:lang="en_GB">
 <head>
-<title>Settings</title>
-<link href="../css/help.css" rel="stylesheet" type="text/css" />
+	<title>Settings</title>
+	<link href="../css/help.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <h1>JEM Settings</h1>
 
 <h3>Description</h3>
-<p>
-<img src="/media/com_jem/images/icon-48-settings.png" alt="description" width="48" height="48" align="left" />
-This is the heart of the JEM component. Here you have to decide which features you want to offer and how JEM 
-should behave. The Settings are seperated in 4 different types. Select one of them to go directly to the 
-regarding explanation. </p>
 
-<br />
+<div>
+	<p><img src="../../../../../media/com_jem/images/icon-48-settings.png" alt="" class="left" /> 
+		This is the heart of the JEM component. Here you have to decide which features you want to offer and how JEM 
+		should behave. The Settings are separated in 4 different types. Select one of them to go directly to the 
+		regarding explanation.</p>
+	<div class="clear"></div>
+</div>
+
 
 <h3>Navigation</h3>
-<p>
-To access this screen use: <strong>Components</strong> -&gt; <strong>JEM</strong> -&gt; <strong>Settings</strong></p>
+
+<p>To access this screen use: 
+	<strong>Components</strong> &rarr; <strong>JEM</strong> &rarr; <strong>Settings</strong></p>
+
 
 <h3>User Access Level</h3>
 
 <p><img src="../images/super_administrator.gif" alt="Super Administrator" /> Super Administrator</p>
 
+
 <h3>Toolbar Icons</h3>
 
-<img src="toolbars/asch.png" alt="toolbar" width="233" height="51" />
-<p><strong>Apply:</strong> Click the 'Apply' icon to save your changes and return to this screen. </p>
-<p><strong>Save:</strong> Click the 'Save' icon to save your changes and leave the screen. </p>
-<p><strong>Cancel:</strong> Click the 'Cancel' icon to leave the screen without saving any changes. </p>
-<p><strong>Help:</strong> Click the Help icon to access a relevant Help Screen.</p>
+<p><img src="toolbars/asch.png" alt="toolbar" /></p>
 
-<br />
+<p><strong>Apply:</strong> 
+	Click the 'Apply' icon to save your changes and return to this screen.</p>
+<p><strong>Save:</strong> 
+	Click the 'Save' icon to save your changes and leave the screen.</p>
+<p><strong>Cancel:</strong> 
+	Click the 'Cancel' icon to leave the screen without saving any changes.</p>
+<p><strong>Help:</strong> 
+	Click the Help icon to access a relevant Help Screen.</p>
+
 
 <h2><strong>Settings:</strong></h2>
 
 <ul>
-<li><a href="#basicsettings">Basic Settings</a></li>
-<li><a href="#detailspage">Event Page</a></li>
-<li><a href="#layout">Layout</a></li>
-<li><a href="#params">Global Parameters</a></li>
-<li><a href="#access">User Control</a></li>
-
+	<li><a href="#basicsettings">Basic Settings</a></li>
+	<li><a href="#detailspage">Event Page</a></li>
+	<li><a href="#layout">Layout</a></li>
+	<li><a href="#params">Global Parameters</a></li>
+	<li><a href="#access">User Control</a></li>
 </ul>
 
 
@@ -52,438 +60,343 @@ To access this screen use: <strong>Components</strong> -&gt; <strong>JEM</strong
 <h3>Display - Settings</h3>
 
 <p><strong>Show Link to detail page:</strong><br />
-Select if you wish to link to the detail page through the
-title of the event. Link on title only works if the title is displayed 
-in the layout settings.</p>
+	Select if you wish to link to the detail page through the
+	title of the event. Link on title only works if the title is displayed 
+	in the layout settings.</p>
 
 <p><strong>Format date:</strong><br />
-Use the php strftime syntax to format the date. For example
-the following code '%d.%m.%Y' shows '25.05.2006'. More Information
-<a href="http://www.php.net/strftime" target="_blank">php strftime
-manual</a>.
-Keep in mind, that not all parameters might be available on your server.
-</p>
+	Use the php strftime syntax to format the date. For example
+	the following code '%d.%m.%Y' shows '25.05.2006'. More Information
+	<a href="http://www.php.net/strftime" target="_blank">php strftime manual</a>.
+	Keep in mind, that not all parameters might be available on your server.</p>
 
 <p><strong>Format time:</strong><br />
- Use here the php strftime syntax to format the time. For example
-the following code '%H.%M' shows '16.00'. More Information <a href=
-"http://www.php.net/strftime" target="_blank">php strftime
-manual</a>.</p>
+	Use here the php strftime syntax to format the time. For example
+	the following code '%H.%M' shows '16.00'. More Information <a href=
+	"http://www.php.net/strftime" target="_blank">php strftime
+	manual</a>.</p>
 
 <p><strong>Name:</strong><br />
-Fill in "h" or "Uhr" for example. This will be displayed behind the
-time on the frontend. Leave blank if you don't need it.</p>
+	Fill in "h" or "Uhr" for example. This will be displayed behind the
+	time on the frontend. Leave blank if you don't need it.</p>
 
 <p><strong>Store IP:</strong><br />
-In some countries it isn't permitted to store the IP address of your visitors. You can disable it here.</p>
+	In some countries it isn't permitted to store the IP address of your visitors. You can disable it here.</p>
+
 
 <h3>Event handling</h3>
 
 <p><strong>Handle old Events:</strong><br />
-Select one of the three options. 'Delete old Events' will delete
-all Events after the number of days entered in in the box below. If
-you select 'Archive old Events' the Events will get the 'Archived' status after the
-number of days.<br /> Please note that JEM triggers this cleanup action once a 
-day after midnight server time and only if a JEM view got a visitor in the Frontend. If you want to make sure 
-that the cleanup happens, create a cronjob pointing to a JEM component view.
-</p>
+	Select one of the three options. 'Delete old Events' will delete
+	all Events after the number of days entered in in the box below. If
+	you select 'Archive old Events' the Events will get the 'Archived' status after the
+	number of days.<br /> Please note that JEM triggers this cleanup action once a 
+	day after midnight server time and only if a JEM view got a visitor in the Frontend. If you want to make sure 
+	that the cleanup happens, create a cronjob pointing to a JEM component view.</p>
 
-<br />
 
 <h3>Image handling:</h3>
 
 <p><strong>Max. imagefilesize:</strong><br />
-Enter the maximum size in kb for the imagefile.</p>
+	Enter the maximum size in kb for the image file.</p>
 
 <p><strong>Max. height of thumbnailimage:</strong><br />
-Type in the maximum height of the image. This value is also used on
-the Frontend.</p>
+	Type in the maximum height of the image. This value is also used on the Frontend.</p>
 
 <p><strong>Max. width of thumbnailimage:</strong><br />
-Type in the maximum width of the image. This value is also used on
-the Frontend.
-</p>
+	Type in the maximum width of the image. This value is also used on the Frontend.</p>
 
 <p><strong>Enable Thumbnails:</strong><br />
-JEM can create thumbnails if the GD library version 2 is
-installed on your server. If it isn't available this feature will be disabled.
-In this case the above entered valus for hight and width will be used to resize the
-images if they are larger than these values. Keep in mind that this method results
-in a much lower quality than using the GD library. Also the filesize of the images aren't reduced.
-</p>
+	JEM can create thumbnails if the GD library version 2 is
+	installed on your server. If it isn't available this feature will be disabled.
+	In this case the above entered values for hight and width will be used to resize the
+	images if they are larger than these values. Keep in mind that this method results
+	in a much lower quality than using the GD library. Also the file size of the images aren't reduced.</p>
 
 <p><strong>Lightbox effect:</strong><br />
-Enable a nice lightbox effect to enlarge images from tumbnail to maximum size.
-</p>
+	Enable a nice lightbox effect to enlarge images from thumbnail to maximum size.</p>
 
 
-<div class="attentionheader">Attention</div>
-<div class="attention">If you define an imagewidth of more than the width of 20% of the contentarea you have to modify the jem.css accordingly.</div>
+<div class="box">
+	<p class="attentionheader">Attention</p>
+	<p class="attention">If you define an image width of more than the width of 20% of the content area, you have to modify the jem.css accordingly.</p>
+</div>
 
-<br />
 
 <h3>Meta options</h3>
 
 <p><strong>Edit Keywords:</strong><br />
-Select in the box multiple keywords.
-</p>
+	Select in the box multiple keywords.</p>
 
 <p><strong>Edit Description:</strong><br />
-In the textbox you can create your own custom metadescription. Use the suggest button for a hint.
-The description is created in the Event edit screen and within the Event submission process from the Frontend
-automatically.</p>
+	In the textbox you can create your own custom meta description. Use the suggest button for a hint.
+	The description is created in the Event edit screen and within the Event submission process from the Frontend
+	automatically.</p>
 
-<div class="attentionheader">Attention</div>
-<div class="attention">Don't use inverted commas or quotation marks in the description, because this will cause HTML errors</div>
+<div class="box">
+	<p class="attentionheader">Attention</p>
+	<p class="attention">Don't use inverted commas or quotation marks in the description, because this will cause HTML errors</p>
+</div>
 
-<br />
 
 <h2>Event Page:<a name="detailspage" id="detailspage"></a></h2>
 
 <h3>Venues</h3>
 
-<p><strong>Display Venuedescription:</strong><br />
-Choose if you want to display the
-description of the venue.</p>
+<p><strong>Display Venue description:</strong><br />
+	Choose if you want to display the description of the venue.</p>
 
-<p>
-<strong>Display address of the Venue:</strong><br />
-Choose if you want to display the
-address of the venue.</p>
+<p><strong>Display address of the Venue:</strong><br />
+	Choose if you want to display the address of the venue.</p>
 
-<p>
-<strong>Display link to the Venue:</strong><br />
-No Link, a link to the url of the venue (if entered) 
-and a link to the venue view.</p>
+<p><strong>Display link to the Venue:</strong><br />
+	No Link, a link to the url of the venue (if entered) and a link to the venue view.</p>
 
-<p>
-<strong>Choose map service:</strong><br />
-Choose between the following options:<br />
-No map service - displays no map<br />
-Display link to Google Maps - will display a Google Map as a popup (after click)<br />
-Display a Google map - will show a map directly when viewing the event.<br />
-<br />
+<p><strong>Choose map service:</strong><br />
+	Choose between the following options:<br />
+	No map service - displays no map<br />
+	Display link to Google Maps - will display a Google Map as a popup (after click)<br />
+	Display a Google map - will show a map directly when viewing the event.</p>
+
 
 <h3>Events</h3>
 
-<p>
-<strong>Show time:</strong><br />
-Choose if you want to show the time of the event on the
-detailspage.
-</p>
+<p><strong>Show time:</strong><br />
+	Choose if you want to show the time of the event on the detailspage.</p>
 
-<p>
-<strong>Display Eventdescription:</strong><br />
-Choose if you want to display the description on the
-detailspage.
-</p>
+<p><strong>Display Event description:</strong><br />
+	Choose if you want to display the description on the detailspage.</p>
 
-<p>
-<strong>Display Eventtitle:</strong><br />
-Choose if you want to display the title
-of the event on the detailspage
-</p>
+<p><strong>Display Event title:</strong><br />
+	Choose if you want to display the title of the event on the detailspage</p>
+
 
 <h3>Registration</h3>
 
-<p>
-<strong>Display Username / Name:</strong><br />
-Choose of the username or the name of attendees 
-should be displayed.
-</p>
+<p><strong>Display Username / Name:</strong><br />
+	Choose of the username or the name of attendees should be displayed.</p>
 
 <p><strong>Select Community Solution:</strong><br />
-Currently its only the Community Builder and the Community Builder
-Enhanced available. Further settings should be made in the plugin.
-</p>
-
-<br />
+	Currently its only the Community Builder and the Community Builder
+	Enhanced available. Further settings should be made in the plugin.</p>
 
 
 <h2>Layout:<a name="layout" id="layout"></a></h2>
 
 <h3>General Layout Settings:</h3>
 
-<p>
-<strong>Show time:</strong><br />
-Show the time on the Frontend view or not.
-</p>
+<p><strong>Show time:</strong><br />
+	Show the time on the Frontend view or not.</p>
 
-<p>
-<strong>Table width in %:</strong><br />
-Type in the maximum width in percent for the table
-layout on the Frontend. Please keep in mind that the columns below 
-total up to 100% all together.
-</p>
+<p><strong>Table width in %:</strong><br />
+	Type in the maximum width in percent for the table
+	layout on the Frontend. Please keep in mind that the columns below total up to 100% all together.</p>
+
 
 <h3>Columns</h3>
 
-<p>
-<strong>City column:</strong><br />
-Choose if you want to show the City column. If yes, type in the
-width of the column and the name of it. The name will be displayed
-at the head of the column.
-</p>
+<p><strong>City column:</strong><br />
+	Choose if you want to show the City column. If yes, type in the
+	width of the column and the name of it. The name will be displayed
+	at the head of the column.</p>
 
-<p>
-<strong>Attendee column:</strong><br />
-Choose if you want to show the attendee column.
-</p>
+<p><strong>Attendee column:</strong><br />
+	Choose if you want to show the attendee column.</p>
 
 
-<p>
-<strong>Title column:</strong><br />
-Choose if you want to show the title column. If yes, type in the
-width of the column and the name of it. The name will be displayed
-at the head of the column.
-</p>
+<p><strong>Title column:</strong><br />
+	Choose if you want to show the title column. If yes, type in the
+	width of the column and the name of it. The name will be displayed
+	at the head of the column.</p>
 
-<p>
-<strong>Venue column:</strong><br />
-Choose if you want to show the Location column. If yes, type in
-the width of the column and the name of it. The name will be
-displayed at the head of the column.
-</p>
+<p><strong>Venue column:</strong><br />
+	Choose if you want to show the Location column. If yes, type in
+	the width of the column and the name of it. The name will be
+	displayed at the head of the column.</p>
 
-<p>
-<strong>State column:</strong><br />
-Choose if you want to show the State column. If yes, type in
-the width of the column and the name of it. The name will be
-displayed at the head of the column.
-</p>
-
+<p><strong>State column:</strong><br />
+	Choose if you want to show the State column. If yes, type in
+	the width of the column and the name of it. The name will be
+	displayed at the head of the column.</p>
 
 <!--
-<p>
-<strong>Date column:</strong><br />
-Type in the width of the column and the name of it. The name
-will be displayed at the head of the column. This column is
-required.
-</p>
+<p><strong>Date column:</strong><br />
+	Type in the width of the column and the name of it. The name
+	will be displayed at the head of the column. This column is
+	required.</p>
 -->
 
-<p>
-<strong>Category column:</strong><br />
-Choose if you want to show the Category column. If yes, type in
-the width of the column and the name of it. The name will be
-displayed at the head of the column.
-</p>
+<p><strong>Category column:</strong><br />
+	Choose if you want to show the Category column. If yes, type in
+	the width of the column and the name of it. The name will be
+	displayed at the head of the column.</p>
 
-<p>
-<strong>Show Eventimage in Simplelist:</strong><br />
-Choose if you want to show the Event image in the list view in the Frontend.
-</p>
+<p><strong>Show Event image in Simplelist:</strong><br />
+	Choose if you want to show the Event image in the list view in the Frontend.</p>
 
 
 <h2>Global Parameters:<a name="params" id="params"></a></h2>
 
 <h3>Global Parameters:</h3>
 
-<p>
-The Global Parameters are used to assign basic settings to the views. 
-These parameters can be changed for each few when creating a new menuitem.
-</p>
+<p>The Global Parameters are used to assign basic settings to the views. 
+	These parameters can be changed for each few when creating a new menu item.</p>
 
+<p><strong>Filter:</strong><br />
+	Choose if you want to show the Filter options on top of the list views.</p>
 
-<p>
-<strong>Filter:</strong><br />
-Choose if you want to show the Filter options on top of the list views.
-</p>
+<p><strong>Display Select:</strong><br />
+	Choose if you want to show the Select dropdown on top of the list views.</p>
 
-<p>
-<strong>Display Select:</strong><br />
-Choose if you want to show the Select dropdown on top of the list views.
-</p>
+<p><strong>Show Icons:</strong><br />
+	Choose if you want to show the Print / Email / Archive icons 
+	in events list and event layout. en top of the list views.</p>
 
-<p>
-<strong>Show Icons:</strong><br />
-Choose if you want to show the Prinm / Email / Archive icons 
-in events list and event layout. en top of the list views.
-</p>
+<p><strong>Print Icon:</strong><br />
+	Choose if you want to show a Print icon in events list and event layout.</p>
 
-<p>
-<strong>Print Icon:</strong><br />
-Choose if you want to show a Print icon in events list and event layout.
-</p>
+<p><strong>Archive Icon:</strong><br />
+	Choose if you want to show an Archive icon in events list and event layout.</p>
 
-<p>
-<strong>Archive Icon:</strong><br />
-Choose if you want to show an Archive icon in events list and event layout.
-</p>
+<p><strong>Email Icon:</strong><br />
+	Choose if you want to show an Email icon in events list and event layout.</p>
 
-<p>
-<strong>Email Icon:</strong><br />
-Choose if you want to show an Email icon in events list and event layout.
-</p>
+<p><strong>Show ICS in button:</strong><br />
+	Choose if you want to show an ICS export button in events list and event layout.</p>
 
-<p>
-<strong>Show ICS in button:</strong><br />
-Choose if you want to show an ICS export button in events list and event layout.
-</p>
 
 <h3>Advanced Parameters:</h3>
 
-
-<p>
-<strong>Max ICS events:</strong><br />
-Enter the maximum number of events you want to export when making an ICS export.
-</p>
+<p><strong>Max ICS events:</strong><br />
+	Enter the maximum number of events you want to export when making an ICS export.</p>
 
 <p><strong>Number of Events on the Frontend views:</strong><br />
-Enter the number of events to display on the Frontend views.
-</p>
+	Enter the number of events to display on the Frontend views.</p>
 
 <p><strong>Show Category images:</strong><br />
-Choose if you want to show the Category images in the Frontend.
-</p>
+	Choose if you want to show the Category images in the Frontend.</p>
 
 <p><strong>Generate events up to (days):</strong><br />
-Enter the maximum amount of days that JEM should auto-create recurring events in the future. 
-This is called the 'anticipation window'. 
-This setting has effect when you create recurring events. If the enddate you choose for a specific 
-recurring event (the 'By the end of' date) will exeed the anticipation set here, the number of recurring events that JEM
-creates will be limited by this setting. 
-You set the 'By the end of' date in the Repeating Events setion of the Event edit screen, 
-or when submitting an event from the Frontend.
-</p>
+	Enter the maximum amount of days that JEM should auto-create recurring events in the future. 
+	This is called the 'anticipation window'. 
+	This setting has effect when you create recurring events. If the enddate you choose for a specific 
+	recurring event (the 'By the end of' date) will exceed the anticipation set here, the number of recurring events that JEM
+	creates will be limited by this setting. 
+	You set the 'By the end of' date in the Repeating Events section of the Event edit screen, 
+	or when submitting an event from the Frontend.</p>
 
 <p><strong>Timezone handling:</strong><br />
-You can select how the dates will be exported. If you chose 'float', when imported, 
-all dates will appear as being in the same timezone as the user 
-(e.g: if the event is at 2pm in the US, and the user is in France, 
-it will appear as being held at 2pm in France too).<br/>
-If you use 'Joomla' timezone, the dates will be associated to the timezone 
-set in joomla configuration.
-</p>
+	You can select how the dates will be exported. If you chose 'float', when imported, 
+	all dates will appear as being in the same timezone as the user 
+	(e.g: if the event is at 2pm in the US, and the user is in France, 
+	it will appear as being held at 2pm in France too).<br/>
+	If you use 'Joomla' timezone, the dates will be associated to the timezone 
+	set in Joomla configuration.</p>
 
 <p><strong>First day of the week:</strong><br />
-Choose if Sunday or Monday is the first day of the week. 
-This setting has an impact on the Calendar display.
-</p>
+	Choose if Sunday or Monday is the first day of the week. 
+	This setting has an impact on the Calendar display.</p>
 
 <p><strong>Attachment folder path:</strong><br />
-You can specify the path of the attachments here. 
-Default is media/com_jem/attachments
-</p>
+	You can specify the path of the attachments here. 
+	Default is media/com_jem/attachments</p>
 
 <p><strong>Max size:</strong><br />
-Specify the maximum size of attachments in kb. (1 mb is 1000 kb)
-</p>
+	Specify the maximum size of attachments in kb. (1 mb is 1000 kb)</p>
 
 <p><strong>Default country:</strong><br />
-You can set a default country for venues in this field. 
-When entering a new venue the country is then set to the default chosen here, 
-to save handling.
-</p>
-<br />
+	You can set a default country for venues in this field. 
+	When entering a new venue the country is then set to the default chosen here, to save handling.</p>
+
 
 <h2><a name="access" id="access">User Control :</a></h2>
-
 
 <h3>User Control</h3>
 
 <p><strong>Max length of the descriptions:</strong><br />
-<p>Max. length of the event- and locationdescription. If the length
-of the description is too long, the description will be stripped
-and the note [stripped] will be added. This affects only
-submissions from user with an Userrank lower than 'Editor'.
-</p>
+	Max. length of the event- and location description. If the length
+	of the description is too long, the description will be stripped
+	and the note [stripped] will be added. This affects only
+	submissions from user with an Userrank lower than 'Editor'.</p>
+
 
 <h3>Image uploads</h3>
-<p>
-Select if imageuploads for frontend submissions are optional,
-required or forbidden.</p>
+
+<p>Select if image uploads for frontend submissions are optional, required or forbidden.</p>
 
 
 <h3>AC - Events</h3>
 
 <p><strong>New Events from Users:</strong><br />
-Select here the required Access Level to submit new Events from the
-Frontend.</p>
+	Select here the required Access Level to submit new Events from the Frontend.</p>
 
 <p><strong>Recursive:</strong><br />
-Allow parent groups access as well? If No access is restricted to
-the selected group only. Note: Administrators always have
-access.
-</p>
+	Allow parent groups access as well? If No access is restricted to
+	the selected group only. Note: Administrators always have access.</p>
 
 <p><strong>Autopublish:</strong><br />
-Select here the required Access Level for Users when Events should
-be immediately published. Otherwise they have to be published in
-the backend after reviewing manually.</p>
+	Select here the required Access Level for Users when Events should
+	be immediately published. Otherwise they have to be published in
+	the backend after reviewing manually.</p>
 
 <p><strong>Recursive:</strong><br />
-Allow parent groups access as well? If No access is restricted to
-the selected group only. Note: Administrators always have
-access.
-</p>
+	Allow parent groups access as well? If No access is restricted to
+	the selected group only. Note: Administrators always have access.</p>
 
 <p><strong>Frontend Events editing:</strong><br />
-Select here the required Access Level to edit Events from the
-Frontend.</p>
+	Select here the required Access Level to edit Events from the Frontend.</p>
 
 <p><strong>Recursive:</strong><br />
-Allow parent groups access as well? If No access is restricted to
-the selected group only. Note: Administrators always have
-access.
-</p>
+	Allow parent groups access as well? If No access is restricted to
+	the selected group only. Note: Administrators always have access.</p>
 
 <p><strong>Allow to edit owned events:</strong><br />
-Allow user to edit his submitted events even if he hasn't 
-the required access level for editing events.</p>
+	Allow user to edit his submitted events even if he hasn't 
+	the required access level for editing events.</p>
 
 
 <h3>Registration</h3>
 
 <p><strong>Allow event registration:</strong><br />
-Select if Frontend users are allowed to register to an event.
-</p>
+	Select if Frontend users are allowed to register to an event.</p>
 
 <p><strong>Allow event registration cancellation:</strong><br />
-Select if Frontend users are allowed to unregister to an event.
-</p>
+	Select if Frontend users are allowed to unregister to an event.</p>
+
 
 <h3>AC - Venues</h3>
 
 <p><strong>Allow users to create venues:</strong><br />
-Select the required Access Level to submit new Venues from the
-Frontend.</p>
+	Select the required Access Level to submit new Venues from the Frontend.</p>
 
 <p><strong>Recursive:</strong><br />
-Allow parent groups access as well? If No access is restricted to
-the selected group only. Note: Administrators always have
-access.
-</p>
-
+	Allow parent groups access as well? If No access is restricted to
+	the selected group only. Note: Administrators always have access.</p>
 
 <p><strong>Autopublish:</strong><br />
-Select here the required Access Level for Users when Venues should
-be immediately published. Otherwise they have to be published in
-the backend after reviewing manually.</p>
+	Select here the required Access Level for Users when Venues should
+	be immediately published. Otherwise they have to be published in
+	the backend after reviewing manually.</p>
 
 <p><strong>Recursive:</strong><br />
-Allow parent groups access as well? If No access is restricted to
-the selected group only. Note: Administrators always have
-access.
-</p>
+	Allow parent groups access as well? If No access is restricted to
+	the selected group only. Note: Administrators always have access.</p>
 
 <p><strong>Allow users to edit Venues:</strong><br />
-Select here the required Access Level to edit Venues from the
-Frontend.</p>
+	Select here the required Access Level to edit Venues from the Frontend.</p>
 
 <p><strong>Recursive:</strong><br />
-Allow parent groups access as well? If No access is restricted to
-the selected group only. Note: Administrators always have
-access.
-</p>
+	Allow parent groups access as well? If No access is restricted to
+	the selected group only. Note: Administrators always have access.</p>
 
 <p><strong>Allow to edit owned venues:</strong><br />
-Allow user to edit his submitted venues even if he hasn't the 
-required access level for editing venues.</p>
-
-<br />
+	Allow user to edit his submitted venues even if he hasn't the 
+	required access level for editing venues.</p>
 
 
+<div class="close">
+	<a href="#" onclick="javascript:window.close();">Close window</a>
+</div>
 
 </body>
 </html>

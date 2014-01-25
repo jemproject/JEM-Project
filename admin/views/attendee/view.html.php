@@ -60,17 +60,22 @@ class JEMViewAttendee extends JViewLegacy {
 		//get vars
 		$cid = JRequest::getVar('cid');
 
-		//create the toolbar
 		if ($cid) {
 			JToolBarHelper::title(JText::_('COM_JEM_EDIT_ATTENDEE'), 'users');
 		} else {
 			JToolBarHelper::title(JText::_('COM_JEM_ADD_ATTENDEE'), 'users');
 		}
+
 		JToolBarHelper::apply('attendee.apply');
 		JToolBarHelper::save('attendee.save');
-		JToolBarHelper::spacer();
-		JToolBarHelper::cancel('attendee.cancel');
-		JToolBarHelper::spacer();
+
+		if (!$cid) {
+			JToolBarHelper::cancel('attendee.cancel');
+		} else {
+			JToolBarHelper::cancel('attendee.cancel', 'JTOOLBAR_CLOSE');
+		}
+
+		JToolBarHelper::divider();
 		JToolBarHelper::help('editattendee', true);
 	}
 }

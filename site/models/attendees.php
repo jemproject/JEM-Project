@@ -215,7 +215,8 @@ class JEMModelAttendees extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$filter 			= $app->getUserStateFromRequest( 'com_jem.attendees.filter', 'filter', '', 'int' );
 		$search 			= $app->getUserStateFromRequest( 'com_jem.attendees.filter_search', 'filter_search', '', 'string' );
@@ -233,7 +234,7 @@ class JEMModelAttendees extends JModelLegacy
 		// First thing we need to do is to select only needed events
 		$where[] = ' a.published = 1';
 		$where[] = ' c.published = 1';
-		$where[] = ' c.access  <= '.$gid;
+		$where[] = ' c.access  IN (' . implode(',', $levels) . ')';
 
 		// then if the user is the owner of the event
 		$where[] = ' a.created_by = '.$this->_db->Quote($user->id);

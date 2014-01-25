@@ -299,12 +299,31 @@ class JEMModelEvent extends JModelAdmin
 
 		// Check if image was selected
 		jimport('joomla.filesystem.file');
-		$format 	= JFile::getExt(JPATH_SITE.'/images/jem/events/'.$table->datimage);
+		$image_dir = JPATH_SITE.'/images/jem/events/';
+		$allowable = array ('gif', 'jpg', 'png');
 
-		$allowable 	= array ('gif', 'jpg', 'png');
-		if (in_array($format, $allowable)) {
-			$table->datimage = $table->datimage;
-		} else {
+		// get image (frontend)
+		if (!$backend) {
+			$file = JRequest::getVar('userfile', '', 'files', 'array');
+			if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1) && (!empty($file['name']))) {
+
+				//check the image
+				$check = JEMImage::check($file, $jemsettings);
+
+				if ($check !== false) {
+					//sanitize the image filename
+					$filename = JEMImage::sanitize($image_dir, $file['name']);
+					$filepath = $image_dir . $filename;
+
+					if (JFile::upload($file['tmp_name'], $filepath)) {
+						$table->datimage = $filename;
+        			}
+				}
+			} // end image if
+		} // if (!backend)
+
+		$format    = JFile::getExt($image_dir.$table->datimage);
+		if (!in_array($format, $allowable)) {
 			$table->datimage = '';
 		}
 

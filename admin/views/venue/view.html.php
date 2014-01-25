@@ -50,7 +50,7 @@ class JEMViewVenue extends JViewLegacy {
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 		JHtml::_('stylesheet', 'com_jem/geostyle.css', array(), true);
-		
+
 		// Load Scripts
 		$document->addScript(JURI::root().'media/com_jem/js/attachments.js');
 		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
@@ -104,6 +104,7 @@ class JEMViewVenue extends JViewLegacy {
 			JToolBarHelper::cancel('venue.cancel', 'JTOOLBAR_CLOSE');
 		}
 
+		JToolBarHelper::divider();
 		JToolBarHelper::help('editvenues', true);
 	}
 }

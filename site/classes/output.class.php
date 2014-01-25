@@ -108,7 +108,8 @@ class JEMOutput {
 	 * Writes Archivebutton
 	 *
 	 * @param array $params needed params
-	 * @param string $task The current task
+	 * @param string $task The current task (optional)
+	 * @param int $id id of category/event/venue if useful (optional)
 	 *
 	 * Views:
 	 * Categories, Categoriesdetailed, Category, Eventslist, Search, Venue, Venues
@@ -128,6 +129,10 @@ class JEMOutput {
 				JHtml::_('behavior.tooltip');
 				$view = JRequest::getWord('view');
 
+				if (empty($view)) {
+					return; // there must be a view - just to be sure...
+				}
+
 				if ($task == 'archive') {
 					if ($settings->get('global_show_icons',1)) {
 						$image = JHtml::_('image', 'com_jem/el.png', JText::_('COM_JEM_SHOW_EVENTS'), NULL, true);
@@ -139,9 +144,9 @@ class JEMOutput {
 					$title = JText::_('COM_JEM_SHOW_EVENTS');
 
 					if ($id) {
-						$url = JRoute::_('index.php?option=com_jem&view='.$view.'&id='.$id);
+						$url = 'index.php?option=com_jem&view='.$view.'&id='.$id;
 					} else {
-						$url = JRoute::_('index.php');
+						$url = 'index.php';
 					}
 				} else {
 					if ($settings->get('global_show_icons',1)) {
@@ -154,17 +159,17 @@ class JEMOutput {
 					$title = JText::_('COM_JEM_SHOW_ARCHIVE');
 
 					if ($id) {
-						$url = JRoute::_('index.php?option=com_jem&view='.$view.'&id='.$id.'&task=archive');
+						$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&task=archive';
 					} else {
-						$url = JRoute::_('index.php?option=com_jem&view='.$view.'&task=archive');
+						$url = 'index.php?option=com_jem&view='.$view.'&task=archive';
 					}
 				}
+
+				$button = JHtml::_('link', JRoute::_($url), $image);
+				$output = '<span class="hasTip" title="'.$title.' :: '.$overlib.'">'.$button.'</span>';
+
+				return $output;
 			}
-
-			$button = JHtml::_('link', JRoute::_($url), $image);
-			$output = '<span class="hasTip" title="'.$title.' :: '.$overlib.'">'.$button.'</span>';
-
-			return $output;
 		}
 	}
 
@@ -242,6 +247,10 @@ class JEMOutput {
 					break;
 			}
 			
+			if (!url) {
+				return; // we need at least url to generate useful output
+			}
+		
 			$button = JHtml::_('link', JRoute::_($url), $image);
 			$output = '<span class="hasTip" title="'.$text.' :: '.$overlib.'">'.$button.'</span>';
 

@@ -13,15 +13,16 @@ defined('_JEXEC') or die;
 		<?php
 		echo JEMOutput::submitbutton($this->dellink, $this->params);
 		echo JEMOutput::archivebutton($this->params, $this->task);
+		echo JEMOutput::printbutton( $this->print_link, $this->params );
 		?>
 	</div>
-	
+
 	<?php if ($this->params->def('show_page_title',1)) : ?>
 	<h1 class="componentheading">
 		<?php echo $this->escape($this->pagetitle); ?>
 	</h1>
 	<?php endif; ?>
-	
+
 	<?php foreach ($this->rows as $row) : ?>
 	<div class="floattext">
 		<h2 class="jem cat<?php echo $row->id; ?>">
@@ -30,18 +31,18 @@ defined('_JEXEC') or die;
 
 		<?php if ($this->jemsettings->discatheader) {  ?>
 		<div class="catimg">
-			<?php 
+			<?php
 			// flyer
-			
+
 			if (empty($row->image)) {
 				$jemsettings = JEMHelper::config();
 				$imgattribs['width'] = $jemsettings->imagewidth;
 				$imgattribs['height'] = $jemsettings->imagehight;
-				
+
 				echo JHtml::_('image', 'com_jem/noimage.png', $row->catname, true);
 			}
 			else {
-				
+
 				$cimage = JEMImage::flyercreator($row->image, 'category');
 				echo JEMOutput::flyer($row, $cimage, 'category');
 			}
@@ -84,7 +85,7 @@ defined('_JEXEC') or die;
 		$i++;
 		if ($i != $n) :
 			echo ',';
-		endif;	
+		endif;
 		endif;
 		endforeach;
 		?>

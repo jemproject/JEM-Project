@@ -22,7 +22,7 @@ class JEMTableEvent extends JTable
 
 	/**
 	 * overloaded check function
-	 */ 
+	 */
 	function check()
 	{
 		$jinput = JFactory::getApplication()->input;
@@ -32,7 +32,7 @@ class JEMTableEvent extends JTable
 		$startminutes	= $jinput->get('startminutes','','cmd');
 		$endhours		= $jinput->get('endhours','','cmd');
 		$endminutes		= $jinput->get('endminutes','','cmd');
-		
+
 		// StartTime
 		if ($starthours != '' && $startminutes != '') {
 			$this->times = $starthours.':'.$startminutes;
@@ -45,8 +45,8 @@ class JEMTableEvent extends JTable
 		} else {
 			$this->times = NULL;
 		}
-		
-		// EndTime 
+
+		// EndTime
 		if ($endhours != '' && $endminutes != '') {
 			$this->endtimes = $endhours.':'.$endminutes;
 		} else if ($endhours != '' && $endminutes == '') {
@@ -58,27 +58,25 @@ class JEMTableEvent extends JTable
 		} else {
 			$this->endtimes = NULL;
 		}
-		
+
 		// Dates
 		if (empty($this->enddates)) {
 			$this->enddates = NULL;
 		}
-		
+
 		if (empty($this->dates)) {
 			$this->dates = NULL;
 		}
-		
+
 		// check startDate
-		if ($this->dates == NULL)
-		{
+		if ($this->dates == NULL) {
 			$this->times = NULL;
 			$this->enddates = NULL;
 			$this->endtimes = NULL;
 		}
-			
-	
+
 		// Check begin date is before end date
-		
+
 		// Check if end date is set
 		if($this->enddates == null) {
 			// Check if end time is set
@@ -99,28 +97,18 @@ class JEMTableEvent extends JTable
 				$date2 = new DateTime($this->enddates.' '.$this->endtimes);
 			}
 		}
-		
+
 		if($date1 > $date2) {
 			$this->setError(JText::_('COM_JEM_ERROR_END_BEFORE_START'));
 			return false;
 		}
-		
-	
+
 		// Set alias
 		$this->alias = JApplication::stringURLSafe($this->alias);
 		if (empty($this->alias)) {
 			$this->alias = JApplication::stringURLSafe($this->title);
 		}
 
-		/*		
-		if (trim($this->introtext) == '' && trim($this->fulltext) == '')
-		{
-			$this->setError(JText::_('COM_JEM_GLOBAL_MUST_HAVE_TEXT'));
-			return false;
-		}
-		
-		*/	
-			
 		return true;
 	}
 
@@ -129,10 +117,9 @@ class JEMTableEvent extends JTable
 	 */
 	public function store($updateNulls = false)
 	{
-
 		return parent::store($updateNulls);
 	}
-	
+
 	/**
 	 * Overloaded bind method for the Event table.
 	 */
@@ -140,46 +127,43 @@ class JEMTableEvent extends JTable
 	{
 		// in here we are checking for the empty value of the checkbox
 
-		if (!isset($array['registra']))
+		if (!isset($array['registra'])) {
 			$array['registra'] = 0 ;
+		}
 
-		if (!isset($array['unregistra']))
+		if (!isset($array['unregistra'])) {
 			$array['unregistra'] = 0 ;
+		}
 
-		if (!isset($array['waitinglist']))
+		if (!isset($array['waitinglist'])) {
 			$array['waitinglist'] = 0 ;
+		}
 
 		// Search for the {readmore} tag and split the text up accordingly.
-		if (isset($array['articletext']))
-		{
+		if (isset($array['articletext'])) {
 			$pattern = '#<hr\s+id=("|\')system-readmore("|\')\s*\/*>#i';
 			$tagPos = preg_match($pattern, $array['articletext']);
-		
-			if ($tagPos == 0)
-			{
+
+			if ($tagPos == 0) {
 				$this->introtext = $array['articletext'];
 				$this->fulltext = '';
-			}
-			else
-			{
+			} else {
 				list ($this->introtext, $this->fulltext) = preg_split($pattern, $array['articletext'], 2);
 			}
 		}
-		
-		if (isset($array['attribs']) && is_array($array['attribs']))
-		{
+
+		if (isset($array['attribs']) && is_array($array['attribs'])) {
 			$registry = new JRegistry;
 			$registry->loadArray($array['attribs']);
 			$array['attribs'] = (string) $registry;
 		}
-		
-		if (isset($array['metadata']) && is_array($array['metadata']))
-		{
+
+		if (isset($array['metadata']) && is_array($array['metadata'])) {
 			$registry = new JRegistry;
 			$registry->loadArray($array['metadata']);
 			$array['metadata'] = (string) $registry;
 		}
-		
+
 		//don't override without calling base class
 		return parent::bind($array, $ignore);
 	}
@@ -202,7 +186,7 @@ class JEMTableEvent extends JTable
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Inserts a row into a table based on an objects properties, ignore if already exists
 	 *
@@ -216,6 +200,7 @@ class JEMTableEvent extends JTable
 	{
 		$fmtsql = 'INSERT IGNORE INTO '.$this->_db->quoteName($table).' (%s) VALUES (%s) ';
 		$fields = array();
+
 		foreach (get_object_vars($object) as $k => $v) {
 			if (is_array($v) or is_object($v) or $v === NULL) {
 				continue;
@@ -226,6 +211,7 @@ class JEMTableEvent extends JTable
 			$fields[] = $this->_db->quoteName($k);
 			$values[] = $this->_db->isQuoted($k) ? $this->_db->quote($v) : (int) $v;
 		}
+
 		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
 		if (!$this->_db->query()) {
 			return false;
@@ -234,9 +220,10 @@ class JEMTableEvent extends JTable
 		if ($keyName && $id) {
 			$object->$keyName = $id;
 		}
+
 		return $this->_db->getAffectedRows();
 	}
-	
+
 	/**
 	 * Method to set the publishing state for a row or list of rows in the database
 	 * table. The method respects checked out rows by other users and will attempt
@@ -248,8 +235,6 @@ class JEMTableEvent extends JTable
 	 * @param   integer  $userId  The user id of the user performing the operation. [optional]
 	 *
 	 * @return  boolean  True on success.
-	 *
-	 *
 	 */
 	function publish($pks = null, $state = 1, $userId = 0)
 	{
