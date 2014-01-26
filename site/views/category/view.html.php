@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -35,9 +35,9 @@ class JEMViewCategory extends JEMView
 
 			//initialize variables
 			$document 		= JFactory::getDocument();
-			$menu 			= $app->getMenu();
 			$jemsettings 	= JEMHelper::config();
-			$item 			= $menu->getActive();
+			$menu 			= $app->getMenu();
+			$menuitem		= $menu->getActive();
 			$params 		= $app->getParams();
 			$uri 			= JFactory::getURI();
 			$pathway 		= $app->getPathWay();
@@ -81,11 +81,18 @@ class JEMViewCategory extends JEMView
 			$category	= $this->get('Category', 'CategoryCal');
 			$rows		= $this->get('Data', 'CategoryCal');
 
-			//Set Meta data
-			$document->setTitle($item->title);
-
 			//Set Page title
-			$pagetitle = $params->def('page_title', $item->title);
+			$pagetitle   = $params->def('page_title', $menuitem->title);
+			$pageheading = $params->def('page_heading', $params->get('page_title'));
+
+			// Add site name to title if param is set
+			if ($app->getCfg('sitename_pagetitles', 0) == 1) {
+				$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+			}
+			elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+				$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+			}
+
 			$document->setTitle($pagetitle);
 			$document->setMetaData('title', $pagetitle);
 
@@ -100,6 +107,7 @@ class JEMViewCategory extends JEMView
 			$this->params		= $params;
 			$this->jemsettings	= $jemsettings;
 			$this->cal			= $cal;
+			$this->pageheading	= $pageheading;
 
 		} else {
 
@@ -119,9 +127,8 @@ class JEMViewCategory extends JEMView
 			$params 		= $app->getParams();
 			$uri 			= JFactory::getURI();
 			$pathway 		= $app->getPathWay();
-			$menus			= $app->getMenu();
-			$pathway		= $app->getPathway();
-			$title 			= null;
+			$menu			= $app->getMenu();
+			$menuitem		= $menu->getActive();
 
 			// Load css
 			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
@@ -182,46 +189,6 @@ class JEMViewCategory extends JEMView
 			}
 
 			//Set Meta data
-
-			// Because the application sets a default page title,
-			// we need to get it from the menu item itself
-			$menu = $menus->getActive();
-
-			if ($menu) {
-				$params->def('page_heading', $params->get('page_title', $menu->title));
-			} else {
-				$params->def('page_heading', JText::_('JGLOBAL_JEM_CATEGORY'));
-			}
-
-			$title = $params->get('page_title', '');
-
-			$id = (int) @$menu->query['id'];
-
-			// if the menu item does not concern this article
-			if ($menu && ($menu->query['option'] != 'com_jem' || $menu->query['view'] != 'category' || $id != $category->id))
-			{
-				// If this is not a single category menu item, set the page title to the category title
-				if ($category->catname) {
-					$title = $category->catname;
-				}
-			}
-
-			// Check for empty title and add site name if param is set
-			if (empty($title)) {
-				$title = $app->getCfg('sitename');
-			}
-			elseif ($app->getCfg('sitename_pagetitles', 0) == 1) {
-				$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
-			}
-			elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-				$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
-			}
-			if (empty($title)) {
-				$title = $category->catname;
-			}
-			$this->document->setTitle($title);
-
-			//$document->setTitle($item->title.' - '.$category->catname);
 			$document->setMetadata('keywords', $category->meta_keywords);
 			$document->setDescription(strip_tags($category->meta_description));
 
@@ -231,6 +198,19 @@ class JEMViewCategory extends JEMView
 			$this->document->addHeadLink(JRoute::_($link . '&type=rss'), 'alternate', 'rel', $attribs);
 			$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 			$this->document->addHeadLink(JRoute::_($link . '&type=atom'), 'alternate', 'rel', $attribs);
+
+			// Show page heading specified on menu item or category title as heading - idea taken from com_content.
+			//
+			// Check to see which parameters should take priority
+			// If the current view is the active menuitem and an category view for this category, then the menu item params take priority
+			if ($menuitem && ($menuitem->query['option'] == 'com_jem' && $menuitem->query['view'] == 'category' && $menuitem->query['id'] == $category->id)) {
+
+				$pagetitle   = $params->get('page_title', $category->catname);
+				$pageheading = $params->get('page_heading', $pagetitle);
+			} else {
+				$pagetitle   = $category->catname;
+				$pageheading = $pagetitle;
+			}
 
 			//create the pathway
 			$cats		= new JEMCategories($category->id);
@@ -243,12 +223,22 @@ class JEMViewCategory extends JEMView
 			if ($task == 'archive') {
 				$pathway->addItem(JText::_('COM_JEM_ARCHIVE').' - '.$category->catname, JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug).'&task=archive'));
 				$print_link = JRoute::_(JEMHelperRoute::getCategoryRoute($category->id) .'&task=archive&print=1&tmpl=component');
-				$pagetitle = $category->catname.' - '.JText::_('COM_JEM_ARCHIVE');
+				$pagetitle   .= ' - '.JText::_('COM_JEM_ARCHIVE');
+				$pageheading .= ' - '.JText::_('COM_JEM_ARCHIVE');
 			} else {
 				$pathway->addItem($category->catname, JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug)) );
 				$print_link = JRoute::_(JEMHelperRoute::getCategoryRoute($category->id) .'&print=1&tmpl=component');
-				$pagetitle = $category->catname;
 			}
+
+			// Add site name to title if param is set
+			if ($app->getCfg('sitename_pagetitles', 0) == 1) {
+				$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+			}
+			elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+				$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+			}
+
+			$this->document->setTitle($pagetitle);
 
 			//Check if the user has access to the form
 			$maintainer = JEMUser::ismaintainer('add');
@@ -293,6 +283,7 @@ class JEMViewCategory extends JEMView
 			$this->jemsettings		= $jemsettings;
 			$this->settings			= $settings;
 			$this->categories		= $categories;
+			$this->pageheading		= $pageheading;
 		}
 
 		parent::display($tpl);

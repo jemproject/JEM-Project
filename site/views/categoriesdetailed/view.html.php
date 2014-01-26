@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -34,7 +34,7 @@ class JEMViewCategoriesdetailed extends JEMView
 		$jemsettings 	= JEMHelper::config();
 		$model 			= $this->getModel();
 		$menu			= $app->getMenu();
-		$item			= $menu->getActive();
+		$menuitem		= $menu->getActive();
 		$params 		= $app->getParams();
 		$user			= JFactory::getUser();
 		$pathway 		= $app->getPathWay();
@@ -55,20 +55,29 @@ class JEMViewCategoriesdetailed extends JEMView
 			$document->setMetaData('robots', 'noindex, nofollow');
 		}
 
-		$params->def('page_title', $item->title);
+		$pagetitle   = $params->def('page_title', $menuitem->title);
+		$pageheading = $params->def('page_heading', $params->get('page_title'));
 
 		//pathway
-		if($item) {
-			$pathway->setItemName(1, $item->title);
+		if($menuitem) {
+			$pathway->setItemName(1, $menuitem->title);
 		}
 
 		if ($task == 'archive') {
 			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=categoriesdetailed&task=archive'));
 			$print_link = JRoute::_('index.php?option=com_jem&view=categoriesdetailed&task=archive&print=1&tmpl=component');
-			$pagetitle = $params->get('page_title').' - '.JText::_('COM_JEM_ARCHIVE');
+			$pagetitle   .= ' - '.JText::_('COM_JEM_ARCHIVE');
+			$pageheading .= ' - '.JText::_('COM_JEM_ARCHIVE');
 		} else {
 			$print_link = JRoute::_('index.php?option=com_jem&view=categoriesdetailed&print=1&tmpl=component');
-			$pagetitle = $params->get('page_title');
+		}
+
+		// Add site name to title if param is set
+		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 		}
 
 		//set Page title
@@ -100,12 +109,13 @@ class JEMViewCategoriesdetailed extends JEMView
 		$this->print_link		= $print_link;
 		$this->params			= $params;
 		$this->dellink			= $dellink;
-		$this->item				= $item;
+		$this->item				= $menuitem;
 		$this->model			= $model;
 		$this->pagination		= $pagination;
 		$this->jemsettings		= $jemsettings;
 		$this->task				= $task;
 		$this->pagetitle		= $pagetitle;
+		$this->pageheading	= $pageheading;
 
 		parent::display($tpl);
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -10,9 +10,9 @@
 defined('_JEXEC') or die;
 ?>
 <div id="jem" class="jlcalendar">
-	<?php if ($this->params->def('show_page_title', 1)): ?>
+	<?php if ($this->params->get('show_page_heading', 1)): ?>
 		<h1 class="componentheading">
-			<?php echo $this->escape($this->params->get('page_title')); ?>
+			<?php echo $this->escape($this->pageheading); ?>
 		</h1>
 	<?php endif; ?>
 
@@ -20,7 +20,7 @@ defined('_JEXEC') or die;
 	<div class="description no_space floattext">
 		<?php echo $this->params->get('introtext'); ?>
 	</div>
-	<p><p>
+	<p> </p>
 <?php endif; ?>
 
 	<?php
@@ -112,7 +112,7 @@ defined('_JEXEC') or die;
 
 			//attach category color if any in front of the catname
 			if ($category->color):
-				$multicatname .= '<span class="colorpic" style="width:6px; background: '.$category->color.';"></span>'.$category->catname;
+				$multicatname .= '<span class="colorpic" style="width:6px; background-color: '.$category->color.';"></span>&nbsp'.$category->catname;
 			else:
 				$multicatname 	.= $category->catname;
 			endif;
@@ -123,7 +123,7 @@ defined('_JEXEC') or die;
 
 			//attach category color if any in front of the event title in the calendar overview
 			if ( isset ($category->color) && $category->color) :
-				$colorpic .= '<span class="colorpic" style="width:6px; background: '.$category->color.';"></span>';
+				$colorpic .= '<span class="colorpic" style="width:6px; background-color: '.$category->color.';"></span>';
 			endif;
 			//count occurence of the category
 			if (!array_key_exists($category->id, $countcatevents)) :
@@ -164,7 +164,7 @@ defined('_JEXEC') or die;
 							$timetp .= ' - '.$end.' ';
 						endif;
 
-						$timetp .= '<br>';
+						$timetp .= '<br />';
 					endif;
 				}
 			}

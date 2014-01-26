@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -19,9 +19,9 @@ JHtml::_('behavior.modal');
 	?>
 </div>
 
-<?php if ($this->params->def( 'show_page_title', 1 )) : ?>
+	<?php if ($this->params->get('show_page_heading', 1)) : ?>
 	<h1 class='componentheading'>
-		<?php echo $this->task == 'archive' ? $this->escape($this->category->catname.' - '.JText::_('COM_JEM_ARCHIVE')) : $this->escape($this->category->catname); ?>
+		<?php echo $this->escape($this->pageheading); ?>
 	</h1>
 <?php endif; ?>
 
@@ -51,10 +51,11 @@ JHtml::_('behavior.modal');
 
 	<!--subcategories-->
 	<?php
-	if (count($this->categories) && $this->category->id > 0) :
-	// only show this part if subcategries are available	?>
-	<?php echo $this->loadTemplate('subcategories'); ?>
-	<?php endif; ?>
+	if (count($this->categories) && $this->category->id > 0) {
+	// only show this part if subcategries are available
+		echo $this->loadTemplate('subcategories');
+	}
+	?>
 
 	<form action="<?php echo $this->action; ?>" method="post" id="adminForm">
 	<!--table-->
@@ -71,10 +72,12 @@ JHtml::_('behavior.modal');
 	<div class="pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
+
 	<!-- iCal -->
 	<div id="iCal" class="iCal">
 	<?php echo JEMOutput::icalbutton($this->category->id, 'category'); ?>
 	</div>
+
 	<!-- copyright -->
 	<div class="copyright">
 	<?php echo JEMOutput::footer( ); ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -34,7 +34,7 @@ class JEMViewAttendees extends JViewLegacy {
 		$user		= JFactory::getUser();
 		$params 	= $app->getParams();
 		$menu		= $app->getMenu();
-		$item		= $menu->getActive();
+		$menuitem	= $menu->getActive();
 		$user		= JFactory::getUser();
 		$uri 		= JFactory::getURI();
 
@@ -61,19 +61,32 @@ class JEMViewAttendees extends JViewLegacy {
 		$pagination = $this->get('Pagination');
 		$event 		= $this->get('Event');
 
-		$params->def('page_title', $event->title);
-		$pagetitle = $params->get('page_title');
+		// Merge params.
+		// Because this view is not useable for menu item $params is never used.
+		$pagetitle = JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES') . ' - ' . $event->title;
+		$pageheading = JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); // event title is shown separate
+		//$params->set('show_page_heading', 1); // always show
+
+		// Add site name to title if param is set
+		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+		}
+
+		$document->setTitle($pagetitle);
 
 		$pathway = $app->getPathWay();
-		if($item) {
-			$pathway->setItemName(1, $item->title);
+		if($menuitem) {
+			$pathway->setItemName(1, $menuitem->title);
 		}
 		$pathway->addItem('Att:'.$event->title);
 
 		// Emailaddress
-		$jinput = JFactory::getApplication()->input;
-		$enableemailaddress = $jinput->get('em','','int');
+		$enableemailaddress = $params->get('enableemailaddress', 0);
 
+		// TODO: can be removed
 		if ($enableemailaddress == 1) {
 			$emailaddress = '&em='.$enableemailaddress;
 		}else {
@@ -111,10 +124,11 @@ class JEMViewAttendees extends JViewLegacy {
 		$this->pagination 	= $pagination;
 		$this->event 		= $event;
 		$this->pagetitle	= $pagetitle;
+		$this->pageheading	= $pageheading;
 		$this->backlink		= $backlink;
 		$this->view			= $view;
 		$this->print_link	= $print_link;
-		$this->item			= $item;
+		$this->item			= $menuitem;
 		$this->action		= $uri->toString();
 
 		parent::display($tpl);
@@ -128,6 +142,8 @@ class JEMViewAttendees extends JViewLegacy {
 	public function _displayprint($tpl = null)
 	{
 		$document	= JFactory::getDocument();
+		$app      = JFactory::getApplication();
+		$params   = $app->getParams();
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
@@ -137,8 +153,7 @@ class JEMViewAttendees extends JViewLegacy {
 		$document->setMetaData('robots', 'noindex, nofollow');
 
 		// Emailaddress
-		$jinput = JFactory::getApplication()->input;
-		$enableemailaddress = $jinput->get('em','','int');
+		$enableemailaddress = $params->get('enableemailaddress', 0);
 
 		$rows  	= $this->get('Data');
 		$event 	= $this->get('Event');

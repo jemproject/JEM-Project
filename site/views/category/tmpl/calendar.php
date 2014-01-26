@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -11,9 +11,9 @@
 defined('_JEXEC') or die;
 ?>
 <div id="jem" class="jlcalendar">
-	<?php if ($this->params->def('show_page_title', 1)): ?>
+	<?php if ($this->params->get('show_page_heading', 1)): ?>
 		<h1 class="componentheading">
-			<?php echo $this->escape($this->params->get('page_title')); ?>
+			<?php echo $this->escape($this->pageheading); ?>
 		</h1>
 	<?php endif; ?>
 
@@ -108,9 +108,9 @@ defined('_JEXEC') or die;
 
 			//attach category color if any in front of the catname
 			if ($category->color):
-				$multicatname .= '<span class="colorpic" style="background-color: '.$category->color.';"></span>'.$category->catname;
+				$multicatname .= '<span class="colorpic" style="background-color: '.$category->color.';"></span>&nbsp;'.$category->catname;
 			else:
-				$multicatname 	.= JText::_('COM_JEM_CATEGORY').': '.$category->catname;
+				$multicatname 	.= /*JText::_('COM_JEM_CATEGORY').': '.*/ $category->catname;
 			endif;
 			$ix++;
 			if ($ix != $nr) :
@@ -143,19 +143,20 @@ defined('_JEXEC') or die;
 			if ($multi->row) {
 				if ($multi->row == 'first') {
 					$timetp .= $image = JHTML::image("media/com_jem/images/arrow-left.png",'').' '.$start.' ';
-					$timetp .= '<br>';
+					$timetp .= '<br />';
 				} elseif ($multi->row == 'middle') {
 					$timetp .= JHTML::image("media/com_jem/images/arrow-middle.png",'');
-					$timetp .= '<br>';
+					$timetp .= '<br />';
 				} elseif ($multi->row == 'zlast') {
 					$timetp .= JHTML::image("media/com_jem/images/arrow-right.png",'').' '.$end.' ';
+					$timetp .= '<br />';
 				} elseif ($multi->row == 'na') {
 					if ($start != '') :
 						$timetp .= $start;
 						if ($end != '') :
 							$timetp .= ' - '.$end;
 						endif;
-						$timetp .= '<br>';
+						$timetp .= '<br />';
 					endif;
 				}
 			}

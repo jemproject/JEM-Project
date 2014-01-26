@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -32,7 +32,7 @@ class JEMViewDay extends JEMView
 		$jemsettings 	= JEMHelper::config();
 		$settings 		= JEMHelper::globalattribs();
 		$menu 			= $app->getMenu();
-		$item 			= $menu->getActive();
+		$menuitem 		= $menu->getActive();
 		$user			= JFactory::getUser();
 		$params 		= $app->getParams();
 		$db 			= JFactory::getDBO();
@@ -66,6 +66,36 @@ class JEMViewDay extends JEMView
 		$day		= $this->get('Day');
 
 		$daydate 	= JEMOutput::formatdate($day);
+		$showdaydate = true; // show by default
+
+		// Show page heading specified on menu item or TODAY as heading - idea taken from com_content.
+		//
+		// Check to see which parameters should take priority
+		// If the current view is the active menuitem and an category view for this category, then the menu item params take priority
+		if ($menuitem && ($menuitem->query['option'] == 'com_jem' && $menuitem->query['view'] == 'day' && !isset($menuitem->query['id']))) {
+
+			$pagetitle   = $params->get('page_title', $menu->title);
+			$pageheading = $params->get('page_heading', $pagetitle);
+			$pathway->setItemName(1, $menuitem->title);
+//			if ($menuitem && ($menuitem->query['option'] == 'com_jem')) {
+//				$pathway->addItem($pagetitle);
+//			}
+		} else {
+			// TODO: If we can integrate $daydate into $pageheading we should set $showdaydate to false.
+			$pagetitle   = JText::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY');
+			$pageheading = $pagetitle;
+			$pathway->addItem($pagetitle);
+		}
+
+		// Add site name to title if param is set
+		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+		}
+
+		$this->document->setTitle($pagetitle);
 
 		// Are events available?
 		if (!$rows) {
@@ -77,15 +107,11 @@ class JEMViewDay extends JEMView
 		if ($requestVenueId){
 			$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&locid='.$requestVenueId.'&id='.$requestDate);
 		}
-		if ($requestCategoryId){
+		elseif ($requestCategoryId){
 			$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&catid='.$requestCategoryId.'&id='.$requestDate);
 		}
-		if (!$requestCategoryId && !$requestVenueId){
+		else /*(!$requestCategoryId && !$requestVenueId)*/ {
 			$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&id='.$requestDate);
-		}
-
-		if($item) {
-			$pathway->setItemName(1, $item->title);
 		}
 
 		//Check if the user has access to the form
@@ -144,8 +170,11 @@ class JEMViewDay extends JEMView
 		$this->settings			= $settings;
 		$this->lists			= $lists;
 		$this->daydate			= $daydate;
+		$this->showdaydate		= $showdaydate; // if true daydate will be shown as h2 sub heading
+		$this->pageheading		= $pageheading;
 
-		$this->prepareDocument();
+		// Doesn't really help - each view has less or more specific needs.
+		//$this->prepareDocument();
 
 		parent::display($tpl);
 	}
