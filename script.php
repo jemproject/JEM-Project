@@ -197,6 +197,12 @@ class com_jemInstallerScript
 			return false;
 		}
 
+		// Abort if Magic Quotes are enabled
+		if(get_magic_quotes_gpc()) {
+			Jerror::raiseWarning(100, JText::_('COM_JEM_PREFLIGHT_MAGIC_QUOTES_ENABLED'));
+			return false;
+		}
+
 		// Minimum Joomla version as per Manifest file
 		$minJoomlaVersion = $parent->get('manifest')->attributes()->version;
 
