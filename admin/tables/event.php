@@ -6,26 +6,21 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 /**
  * JEM Event Table
- *
  */
 class JEMTableEvent extends JTable
 {
-	function __construct(&$db)
-	{
+	function __construct(&$db){
 		parent::__construct('#__jem_events', 'id', $db);
 	}
-
 
 	/**
 	 * Overloaded bind method for the Event table.
 	 */
-	public function bind($array, $ignore = '')
-	{
+	public function bind($array, $ignore = ''){
 		// in here we are checking for the empty value of the checkbox
 
 		if (!isset($array['registra'])) {
@@ -95,6 +90,7 @@ class JEMTableEvent extends JTable
 
 		$this->alias = JApplication::stringURLSafe($this->alias);
 
+		/* todo: Datetime check needs to be fixed
 		//get values from time selectlist and concatenate them accordingly
 		$starthours		= $jinput->get('starthours','','cmd');
 		$startminutes	= $jinput->get('startminutes','','cmd');
@@ -129,11 +125,11 @@ class JEMTableEvent extends JTable
 
 		// Dates
 		if (empty($this->enddates)) {
-			$this->enddates = NULL;
+			$this->enddates = null;
 		}
 
 		if (empty($this->dates)) {
-			$this->dates = NULL;
+			$this->dates = null;
 		}
 
 		// check startDate
@@ -170,6 +166,7 @@ class JEMTableEvent extends JTable
 			$this->setError(JText::_('COM_JEM_ERROR_END_BEFORE_START'));
 			return false;
 		}
+		*/
 
 		return true;
 	}
