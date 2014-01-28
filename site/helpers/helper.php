@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -38,7 +38,7 @@ class JEMHelper {
 		return $config;
 	}
 
-	
+
 	/**
 	 * Pulls settings from database and stores in an static object
 	 *
@@ -48,21 +48,21 @@ class JEMHelper {
 	static function globalattribs()
 	{
 		static $globalattribs;
-	
+
 		if (!is_object($globalattribs)) {
 			$db = JFactory::getDBO();
 			$sql = 'SELECT globalattribs FROM #__jem_settings WHERE id = 1';
 			$db->setQuery($sql);
 			$globalattribs = $db->loadResult();
 		}
-	
+
 		$globalregistry = new JRegistry;
 		$globalregistry->loadString($globalattribs);
-		
+
 		return $globalregistry;
 	}
-	
-	
+
+
 	/**
 	 * Performs daily scheduled cleanups
 	 *
@@ -85,7 +85,7 @@ class JEMHelper {
 		$nrdaysupdate = floor($lastupdate / 86400);
 
 		if ($nrdaysnow > $nrdaysupdate || $forced) {
-			
+
 			$db = JFactory::getDbo();
 			$query = $db->getQuery(true);
 
@@ -117,7 +117,7 @@ class JEMHelper {
 				$query->where('id = '.$recurrence_row['id']);
 				$db->setQuery($query);
 				$reference = $db->loadAssoc();
-					
+
 				// the first day of the week is used for certain rules
 				$recurrence_row['weekstart'] = $weekstart;
 
@@ -721,7 +721,7 @@ class JEMHelper {
 			$categories[] = $c->catname;
 		}
 
-		if (!$event->dates) {
+		if (!$event->dates || $event->dates == '0000-00-00') {
 			// no start date...
 			return false;
 		}
@@ -846,7 +846,7 @@ class JEMHelper {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * return true is a time is valid (not null, or 00:00:00...)
 	 *
@@ -858,13 +858,13 @@ class JEMHelper {
 		if (is_null($time)) {
 			return false;
 		}
-		
+
 		if (!strtotime($time)) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Get the Group ID of a specific user or the current user
 	 * @param JUser $user The user object
