@@ -6,14 +6,13 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
- div#jem h1.componentheading
- {
+
+div#jem h1.componentheading{
  margin-bottom:6px;
  margin-top: 6px;
- }
+}
 
- div#jem .formelm-buttons
-{
+div#jem .formelm-buttons{
 	margin-bottom: 0px;
 	float: right;
 }
@@ -454,6 +453,10 @@ div#jem .jem_fright {
 /* -------------------
 	EDIT FORM
 --------------------- */
+div.jem_editevent ul.adminformlist label {
+	min-width:160px;
+}
+
 div.jem_editevent form fieldset,
 div.jem_editvenue form fieldset {
 	margin:0 0 1em 0;
