@@ -456,6 +456,9 @@ div#jem .jem_fright {
 div.jem_editevent ul.adminformlist label {
 	min-width:160px;
 }
+div.jem_editvenue label {
+	min-width:160px;
+}
 
 div.jem_editevent form fieldset,
 div.jem_editvenue form fieldset {
