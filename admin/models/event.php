@@ -1,19 +1,17 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modeladmin');
 
 /**
- * JEM Component Event model.
- *
+ * Event model.
  */
 class JEMModelEvent extends JModelAdmin
 {
@@ -126,14 +124,14 @@ class JEMModelEvent extends JModelAdmin
 			$registry = new JRegistry;
 			$registry->loadString($item->attribs);
 			$item->attribs = $registry->toArray();
-				
+
 			// Convert the metadata field to an array.
 			$registry = new JRegistry;
 			$registry->loadString($item->metadata);
 			$item->metadata = $registry->toArray();
-				
+
 			$item->articletext = trim($item->fulltext) != '' ? $item->introtext . "<hr id=\"system-readmore\" />" . $item->fulltext : $item->introtext;
-			
+
 			$db = JFactory::getDbo();
 
 			$query = $db->getQuery(true);
@@ -149,9 +147,10 @@ class JEMModelEvent extends JModelAdmin
 			$item->attachments = $files;
 		}
 
+		/* todo: alter
 		if ($item->id)
 		{
-				$item->recurrence_type == '0';
+				$item->recurrence_type == '';
 				$item->recurrence_number = '';
 				$item->recurrence_byday = '';
 				$item->recurrence_counter = '';
@@ -160,6 +159,7 @@ class JEMModelEvent extends JModelAdmin
 				$item->recurrence_limit = '';
 				$item->recurrence_limit_date = '';
 		}
+		*/
 
 		$item->author_ip = $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
 
@@ -190,226 +190,158 @@ class JEMModelEvent extends JModelAdmin
 	/**
 	 * Prepare and sanitise the table data prior to saving.
 	 *
-	 * With $table you can call a table name
-	 *
+	 * @param $table JTable-object.
 	 */
 	protected function prepareTable(&$table)
 	{
-		$date 			= JFactory::getDate();
-		$jinput 		= JFactory::getApplication()->input;
-		$user			= JFactory::getUser();
-		$jemsettings 	= JEMHelper::config();
-		$app 			= JFactory::getApplication();
-		
-		// Check if we're in the front or back
-		if($app->isAdmin())
-			$backend = true;
-		else
-			$backend = false;
-		
-		
-		if ($table->id) {
-			// Existing item
-			$table->modified	= $date->toSql();
-			$table->modified_by	= $user->get('id');
-			$table->recurrence_first_id = '';
-				
-			if (!$backend) {
-				$editaccess  = JEMUser::editaccess($jemsettings->eventowner, $table->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
-				$maintainer = JEMUser::ismaintainer('edit',$table->id);
- 				if (!($maintainer || $editaccess || $user->authorise('core.edit','com_jem'))) {
- 				JError::raiseError( 403, JText::_('COM_JEM_NO_ACCESS'));
-				}
-			
-				/*
-				* Is editor the owner of the event
-				* This extra Check is needed to make it possible
-				* that the venue is published after an edit from an owner
-				*/
-				if ($jemsettings->venueowner == 1 && $table->created_by == $user->get('id')) {
-					$owneredit = 1;
-				} else {
-					$owneredit = 0;
-				}
-			}
-
-		} else {
-			// New Event. An event created and created_by field can be set by the user,
-			// so we don't touch either of these if they are set.
-
-			if (!$backend) {
-				$maintainer 	= JEMUser::ismaintainer('add');
-				$genaccess		= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );	
-				if (!($maintainer || $genaccess)){
-				JError::raiseError( 403, JText::_('COM_JEM_NO_ACCESS'));
-				}
-				//Set owneredit to false
-				$owneredit = 0;
-			}
-			
-			if (!intval($table->created)) {
-				$table->created = $date->toSql();
-			}
-
-			if (empty($this->created_by)) {
-				$table->created_by = $user->get('id');
-			}
-		}
-		
-		
-		if (!$backend) {
-			/* check if the user has the required rank for autopublish	*/			
-			$maintainer = JEMUser::ismaintainer('publish');
-			$autopubev = JEMUser::validate_user($jemsettings->evpubrec, $jemsettings->autopubl);
-			if (!($autopubev || $owneredit || $maintainer || $user->authorise('core.edit','com_jem'))) {
-				$table->published = 0 ;
-			}
-		}
-		
-		// Bind the form fields to the table
-		//if (!$table->bind(JRequest::get('post'))) {
-		//return JError::raiseWarning(500, $table->getError());
-		//}
-
-		$cats = $jinput->get('cid', array(), 'post', 'array');
-
-		$recurrencenumber = $jinput->get('recurrence_number','','int');
-		$recurrencebyday = $jinput->get('recurrence_byday','','string');
-
-		$metakeywords = $jinput->get('meta_keywords','','');
-		$metadescription = $jinput->get('meta_description','','');
-
-		$hits = $jinput->get('hits','','int');
-		$table->hits = $hits;
-
-		if($table->dates == null || $table->recurrence_type == '0') {
-			$table->recurrence_number = '';
-			$table->recurrence_byday = '';
-			$table->recurrence_counter = '';
-			$table->recurrence_type = '';
-			$table->recurrence_limit = '';
-			$table->recurrence_limit_date = '';
-		} else {
-			$table->recurrence_number = $recurrencenumber;
-			$table->recurrence_byday = $recurrencebyday;
-		}
-
-		$table->meta_keywords = $metakeywords;
-		$table->meta_description = $metadescription;
-
-		// Check if image was selected
-		jimport('joomla.filesystem.file');
-		$image_dir = JPATH_SITE.'/images/jem/events/';
-		$allowable = array ('gif', 'jpg', 'png');
-
-		// get image (frontend)
-		if (!$backend) {
-			$file = JRequest::getVar('userfile', '', 'files', 'array');
-			if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1) && (!empty($file['name']))) {
-
-				//check the image
-				$check = JEMImage::check($file, $jemsettings);
-
-				if ($check !== false) {
-					//sanitize the image filename
-					$filename = JEMImage::sanitize($image_dir, $file['name']);
-					$filepath = $image_dir . $filename;
-
-					if (JFile::upload($file['tmp_name'], $filepath)) {
-						$table->datimage = $filename;
-        			}
-				}
-			} // end image if
-		} // if (!backend)
-
-		$format    = JFile::getExt($image_dir.$table->datimage);
-		if (!in_array($format, $allowable)) {
-			$table->datimage = '';
-		}
-
+		// Set the publish date to now
+		$db = $this->getDbo();
 		$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
 
 		// Increment the content version number.
-		$table->version++;
+		$table->version ++;
+	}
 
-		// Make sure the data is valid
-		if (!$table->check()) {
-			$this->setError($table->getError());
-			return false;
-		}
+	/**
+	 * Method to save the form data.
+	 *
+	 * @param $data array
+	 */
+	public function save($data)
+	{
+		// Variables
+		$date 			= JFactory::getDate();
+		$jinput 		= JFactory::getApplication()->input;
+		$user 			= JFactory::getUser();
+		$jemsettings 	= JEMHelper::config();
+		$app 			= JFactory::getApplication();
+		$fileFilter 	= new JInput($_FILES);
+		$table 			= $this->getTable();
 
-		if (!$table->store(true)) {
-			JError::raiseError(500, $table->getError());
-		}
+		// Check if we're in the front or back
+		if ($app->isAdmin())
+			$backend = true;
+		else
+			$backend = false;
 
-		$fileFilter = new JInput($_FILES);
+		// Variables
+		$cats 				= $jinput->get('cid', array(), 'post', 'array');
+		$recurrencenumber 	= $jinput->get('recurrence_number', '', 'int');
+		$recurrencebyday 	= $jinput->get('recurrence_byday', '', 'string');
+		$metakeywords 		= $jinput->get('meta_keywords', '', '');
+		$metadescription 	= $jinput->get('meta_description', '', '');
 
-		// attachments
-		// new ones first
-		$attachments = $fileFilter->get('attach', array(), 'array');
-		$attachments['customname'] = $jinput->post->get('attach-name', array(), 'array');
-		$attachments['description'] = $jinput->post->get('attach-desc', array(), 'array');
-		$attachments['access'] = $jinput->post->get('attach-access', array(), 'array');
-		JEMAttachment::postUpload($attachments, 'event'.$table->id);
+		$hits 				= $jinput->get('hits', '', 'int');
+		$data['hits'] 		= $hits;
 
-		// and update old ones
-		$attachments = array();
-		$old['id'] = $jinput->post->get('attached-id', array(), 'array');
-		$old['name'] = $jinput->post->get('attached-name', array(), 'array');
-		$old['description'] = $jinput->post->get('attached-desc', array(), 'array');
-		$old['access'] = $jinput->post->get('attached-access', array(), 'array');
-
-		foreach ($old['id'] as $k => $id)
+		if ($data['dates'] == null || $data['recurrence_type'] == '0')
 		{
-			$attach = array();
-			$attach['id'] = $id;
-			$attach['name'] = $old['name'][$k];
-			$attach['description'] = $old['description'][$k];
-			$attach['access'] = $old['access'][$k];
-			JEMAttachment::update($attach);
+			$data['recurrence_number'] = '';
+			$data['recurrence_byday'] = '';
+			$data['recurrence_counter'] = '';
+			$data['recurrence_type'] = '';
+			$data['recurrence_limit'] = '';
+			$data['recurrence_limit_date'] = '';
+			$data['recurrence_first_id'] = '';
+		}
+		else
+		{
+			$data['recurrence_number'] = $recurrencenumber;
+			$data['recurrence_byday'] = $recurrencebyday;
 		}
 
-		$db = JFactory::getDbo();
+		$data['meta_keywords'] = $metakeywords;
+		$data['meta_description'] = $metadescription;
 
-		$query = $db->getQuery(true);
-		$query->delete($db->quoteName('#__jem_cats_event_relations'));
-		$query->where('itemid = '.$table->id);
-
-		$db->setQuery($query);
-		$db->query();
-
-		foreach($cats as $cat)
+		if (parent::save($data))
 		{
-			// Get a db connection.
-			$db = JFactory::getDbo();
+			// At this point we do have an id.
+			// retrievable by: $this->getState($this->getName() . '.id'
 
-			// Create a new query object.
-			$query = $db->getQuery(true);
+			$pk = $this->getState($this->getName() . '.id');
 
-			// Insert columns.
-			$columns = array('catid', 'itemid');
+			if (isset($data['featured']))
+			{
+				$this->featured($this->getState($this->getName() . '.id'), $data['featured']);
+			}
 
-			// Insert values.
-			$values = array($cat, $table->id);
+			// attachments, new ones first
+			$attachments 				= array();
+			$attachments 				= $fileFilter->get('attach', array(), 'array');
+			$attachments['customname']	= $jinput->post->get('attach-name', array(), 'array');
+			$attachments['description'] = $jinput->post->get('attach-desc', array(), 'array');
+			$attachments['access'] 		= $jinput->post->get('attach-access', array(), 'array');
+			JEMAttachment::postUpload($attachments, 'event' . $pk);
 
-			// Prepare the insert query.
-			$query
-				->insert($db->quoteName('#__jem_cats_event_relations'))
+			// and update old ones
+			$old				= array();
+			$old['id'] 			= $jinput->post->get('attached-id', array(), 'array');
+			$old['name'] 		= $jinput->post->get('attached-name', array(), 'array');
+			$old['description'] = $jinput->post->get('attached-desc', array(), 'array');
+			$old['access'] 		= $jinput->post->get('attached-access', array(), 'array');
+
+			foreach ($old['id'] as $k => $id)
+			{
+				$attach 				= array();
+				$attach['id'] 			= $id;
+				$attach['name'] 		= $old['name'][$k];
+				$attach['description'] 	= $old['description'][$k];
+				$attach['access'] 		= $old['access'][$k];
+				JEMAttachment::update($attach);
+			}
+
+			// Store cats
+			$cats	= $jinput->get('cid', array(), 'post', 'array');
+			$db 	= $this->getDbo();
+			$query 	= $db->getQuery(true);
+			$query->delete($db->quoteName('#__jem_cats_event_relations'));
+			$query->where('itemid = ' . $pk);
+			$db->setQuery($query);
+			$db->query();
+
+			foreach ($cats as $cat)
+			{
+				$db 	= $this->getDbo();
+				$query	= $db->getQuery(true);
+
+				// Insert columns.
+				$columns = array(
+						'catid',
+						'itemid'
+				);
+
+				// Insert values.
+				$values = array(
+						$cat,
+						$pk
+				);
+
+				// Prepare the insert query.
+				$query->insert($db->quoteName('#__jem_cats_event_relations'))
 				->columns($db->quoteName($columns))
 				->values(implode(',', $values));
 
-			// Reset the query using our newly populated query object.
-			$db->setQuery($query);
-			$db->query();
+				// Reset the query using our newly populated query object.
+				$db->setQuery($query);
+				$db->query();
+			}
+
+			// check for recurrence
+			// when filled it will perform the cleanup function
+			// @todo: move (after the store function)
+
+			$table->load($pk);
+			if ($table->recurrence_number > 0 && !$table->dates == null)
+			{
+				JEMHelper::cleanup(1);
+			}
+
+			return true;
 		}
 
-		// check for recurrence, when filled it will perform the cleanup function
-		if ($table->recurrence_number > 0 && !$table->dates == null)
-		{
-			JEMHelper::cleanup(1);
-		}
+		return false;
 	}
-	
+
 	/**
 	 * Method to toggle the featured setting of articles.
 	 *
@@ -423,15 +355,15 @@ class JEMModelEvent extends JModelAdmin
 		// Sanitize the ids.
 		$pks = (array) $pks;
 		JArrayHelper::toInteger($pks);
-	
+
 		if (empty($pks)) {
 			$this->setError(JText::_('COM_JEM_EVENTS_NO_ITEM_SELECTED'));
 			return false;
 		}
-	
+
 		try {
 			$db = $this->getDbo();
-	
+
 			$db->setQuery(
 					'UPDATE #__jem_events' .
 					' SET featured = '.(int) $value.
@@ -440,14 +372,14 @@ class JEMModelEvent extends JModelAdmin
 			if (!$db->query()) {
 				throw new Exception($db->getErrorMsg());
 			}
-	
+
 		} catch (Exception $e) {
 			$this->setError($e->getMessage());
 			return false;
 		}
-	
+
 		$this->cleanCache();
-	
+
 		return true;
 	}
 }
