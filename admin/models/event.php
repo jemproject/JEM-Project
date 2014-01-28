@@ -25,13 +25,13 @@ class JEMModelEvent extends JModelAdmin
 	protected function canDelete($record)
 	{
 		if (!empty($record->id)) {
-			if ($record->published != -2) {
+			if ($record->published != -2){
 				return ;
 			}
 
 			$user = JFactory::getUser();
 
-			if (!empty($record->catid)) {
+			if (!empty($record->catid)){
 				$db = JFactory::getDbo();
 
 				$query = $db->getQuery(true);
@@ -68,7 +68,7 @@ class JEMModelEvent extends JModelAdmin
 	{
 		$user = JFactory::getUser();
 
-		if (!empty($record->catid)) {
+		if (!empty($record->catid)){
 			return $user->authorise('core.edit.state', 'com_jem.category.'.(int) $record->catid);
 		} else {
 			return $user->authorise('core.edit.state', 'com_jem');
@@ -119,7 +119,7 @@ class JEMModelEvent extends JModelAdmin
 	{
 		$jemsettings = JEMAdmin::config();
 
-		if ($item = parent::getItem($pk)) {
+		if ($item = parent::getItem($pk)){
 			// Convert the params field to an array.
 			$registry = new JRegistry;
 			$registry->loadString($item->attribs);
@@ -147,9 +147,7 @@ class JEMModelEvent extends JModelAdmin
 			$item->attachments = $files;
 		}
 
-		/* todo: alter
-		if ($item->id)
-		{
+		if ($item->id){
 				$item->recurrence_type == '';
 				$item->recurrence_number = '';
 				$item->recurrence_byday = '';
@@ -159,11 +157,10 @@ class JEMModelEvent extends JModelAdmin
 				$item->recurrence_limit = '';
 				$item->recurrence_limit_date = '';
 		}
-		*/
 
 		$item->author_ip = $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
 
-		if (empty($item->id)) {
+		if (empty($item->id)){
 			$item->country = $jemsettings->defaultCountry;
 		}
 
@@ -176,11 +173,10 @@ class JEMModelEvent extends JModelAdmin
 	 */
 	protected function loadFormData()
 	{
-
 		// Check the session for previously entered form data.
 		$data = JFactory::getApplication()->getUserState('com_jem.edit.event.data', array());
 
-		if (empty($data)) {
+		if (empty($data)){
 			$data = $this->getItem();
 		}
 
@@ -236,33 +232,27 @@ class JEMModelEvent extends JModelAdmin
 
 		if ($data['dates'] == null || $data['recurrence_type'] == '0')
 		{
-			$data['recurrence_number'] = '';
-			$data['recurrence_byday'] = '';
-			$data['recurrence_counter'] = '';
-			$data['recurrence_type'] = '';
-			$data['recurrence_limit'] = '';
-			$data['recurrence_limit_date'] = '';
-			$data['recurrence_first_id'] = '';
-		}
-		else
-		{
-			$data['recurrence_number'] = $recurrencenumber;
-			$data['recurrence_byday'] = $recurrencebyday;
+			$data['recurrence_number']		= '';
+			$data['recurrence_byday']		= '';
+			$data['recurrence_counter'] 	= '';
+			$data['recurrence_type']		= '';
+			$data['recurrence_limit']		= '';
+			$data['recurrence_limit_date']	= '';
+			$data['recurrence_first_id']	= '';
+		}else{
+			$data['recurrence_number']		= $recurrencenumber;
+			$data['recurrence_byday']		= $recurrencebyday;
 		}
 
-		$data['meta_keywords'] = $metakeywords;
-		$data['meta_description'] = $metadescription;
+		$data['meta_keywords'] 		= $metakeywords;
+		$data['meta_description']	= $metadescription;
 
-		if (parent::save($data))
-		{
+		if (parent::save($data)){
 			// At this point we do have an id.
-			// retrievable by: $this->getState($this->getName() . '.id'
-
 			$pk = $this->getState($this->getName() . '.id');
 
-			if (isset($data['featured']))
-			{
-				$this->featured($this->getState($this->getName() . '.id'), $data['featured']);
+			if (isset($data['featured'])){
+				$this->featured($pk, $data['featured']);
 			}
 
 			// attachments, new ones first
@@ -280,8 +270,7 @@ class JEMModelEvent extends JModelAdmin
 			$old['description'] = $jinput->post->get('attached-desc', array(), 'array');
 			$old['access'] 		= $jinput->post->get('attached-access', array(), 'array');
 
-			foreach ($old['id'] as $k => $id)
-			{
+			foreach ($old['id'] as $k => $id){
 				$attach 				= array();
 				$attach['id'] 			= $id;
 				$attach['name'] 		= $old['name'][$k];
@@ -294,27 +283,21 @@ class JEMModelEvent extends JModelAdmin
 			$cats	= $jinput->get('cid', array(), 'post', 'array');
 			$db 	= $this->getDbo();
 			$query 	= $db->getQuery(true);
+
 			$query->delete($db->quoteName('#__jem_cats_event_relations'));
 			$query->where('itemid = ' . $pk);
 			$db->setQuery($query);
 			$db->query();
 
-			foreach ($cats as $cat)
-			{
+			foreach ($cats as $cat){
 				$db 	= $this->getDbo();
 				$query	= $db->getQuery(true);
 
 				// Insert columns.
-				$columns = array(
-						'catid',
-						'itemid'
-				);
+				$columns = array('catid','itemid');
 
 				// Insert values.
-				$values = array(
-						$cat,
-						$pk
-				);
+				$values = array($cat,$pk);
 
 				// Prepare the insert query.
 				$query->insert($db->quoteName('#__jem_cats_event_relations'))
@@ -328,11 +311,9 @@ class JEMModelEvent extends JModelAdmin
 
 			// check for recurrence
 			// when filled it will perform the cleanup function
-			// @todo: move (after the store function)
 
 			$table->load($pk);
-			if ($table->recurrence_number > 0 && !$table->dates == null)
-			{
+			if ($table->recurrence_number > 0 && !$table->dates == null){
 				JEMHelper::cleanup(1);
 			}
 
