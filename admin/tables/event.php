@@ -90,7 +90,6 @@ class JEMTableEvent extends JTable
 
 		$this->alias = JApplication::stringURLSafe($this->alias);
 
-		/* todo: Datetime check needs to be fixed
 		//get values from time selectlist and concatenate them accordingly
 		$starthours		= $jinput->get('starthours','','cmd');
 		$startminutes	= $jinput->get('startminutes','','cmd');
@@ -166,7 +165,7 @@ class JEMTableEvent extends JTable
 			$this->setError(JText::_('COM_JEM_ERROR_END_BEFORE_START'));
 			return false;
 		}
-		*/
+
 
 		return true;
 	}
@@ -174,13 +173,14 @@ class JEMTableEvent extends JTable
 	/**
 	 * store method for the Event table.
 	 */
-	public function store($updateNulls = false)
+	public function store($updateNulls = true)
 	{
 		$date 			= JFactory::getDate();
 		$user 			= JFactory::getUser();
 		$jinput 		= JFactory::getApplication()->input;
 		$app 			= JFactory::getApplication();
 		$jemsettings 	= JEMHelper::config();
+
 
 		// Check if we're in the front or back
 		if ($app->isAdmin())
@@ -212,7 +212,6 @@ class JEMTableEvent extends JTable
 				'jpg',
 				'png'
 		);
-
 
 		// Check if image was selected
 		jimport('joomla.filesystem.file');
