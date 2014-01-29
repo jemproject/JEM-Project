@@ -1,18 +1,15 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 /**
  * Holds the logic for all output related things
- *
- * @package JEM
  */
 class JEMOutput {
 
@@ -82,6 +79,7 @@ class JEMOutput {
 		if ($addvenuelink) {
 			$app 		= JFactory::getApplication();
 			$settings 	= JEMHelper::globalattribs();
+			$uri 		= JFactory::getURI();
 
 			if ($app->input->get('print','','int')) {
 				return;
@@ -95,10 +93,12 @@ class JEMOutput {
 				$image = JText::_('COM_JEM_DELIVER_NEW_VENUE');
 			}
 
-			$url = 'index.php?option=com_jem&view=editvenue';
+			$url = 'index.php?option=com_jem&task=venue.add&return='.base64_encode(urlencode($uri)).'&a_id=0';
 			$overlib = JText::_('COM_JEM_DELIVER_NEW_VENUE_DESC');
 			$button = JHtml::_('link', JRoute::_($url), $image);
 			$output = '<span class="hasTip" title="'.JText::_('COM_JEM_DELIVER_NEW_VENUE').' :: '.$overlib.'">'.$button.'</span>';
+
+
 
 			return $output;
 		}
@@ -232,7 +232,7 @@ class JEMOutput {
 					$id = $item->locid;
 					$overlib = JText::_('COM_JEM_EDIT_VENUE_DESC');
 					$text = JText::_('COM_JEM_EDIT_VENUE');
-					$url = 'index.php?option=com_jem&view='.$view.'&id='.$id;
+					$url = 'index.php?option=com_jem&task=venue.edit&a_id='.$id.'&return='.base64_encode(urlencode($uri));
 					break;
 
 				case 'venue':
@@ -244,7 +244,7 @@ class JEMOutput {
 					$id = $item->id;
 					$overlib = JText::_('COM_JEM_EDIT_VENUE_DESC');
 					$text = JText::_('COM_JEM_EDIT_VENUE');
-					$url = 'index.php?option=com_jem&view=editvenue&id='.$id;
+					$url = 'index.php?option=com_jem&task=venue.edit&a_id='.$id.'&return='.base64_encode(urlencode($uri));
 					break;
 			}
 
