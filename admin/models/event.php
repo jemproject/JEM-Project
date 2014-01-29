@@ -148,14 +148,14 @@ class JEMModelEvent extends JModelAdmin
 		}
 
 		if ($item->id){
-				$item->recurrence_type == '';
-				$item->recurrence_number = '';
-				$item->recurrence_byday = '';
-				$item->recurrence_counter = '';
-				$item->recurrence_first_id = '';
-				$item->recurrence_type = '';
-				$item->recurrence_limit = '';
-				$item->recurrence_limit_date = '';
+			$item->recurrence_type 			= '';
+			$item->recurrence_number 		= '';
+			$item->recurrence_byday 		= '';
+			$item->recurrence_counter 		= '';
+			$item->recurrence_first_id 		= '';
+			$item->recurrence_type 			= '';
+			$item->recurrence_limit 		= '';
+			$item->recurrence_limit_date	= '';
 		}
 
 		$item->author_ip = $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
@@ -190,11 +190,10 @@ class JEMModelEvent extends JModelAdmin
 	 */
 	protected function prepareTable(&$table)
 	{
-		// Set the publish date to now
 		$db = $this->getDbo();
 		$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
 
-		// Increment the content version number.
+		// Increment version number.
 		$table->version ++;
 	}
 
@@ -226,9 +225,6 @@ class JEMModelEvent extends JModelAdmin
 		$recurrencebyday 	= $jinput->get('recurrence_byday', '', 'string');
 		$metakeywords 		= $jinput->get('meta_keywords', '', '');
 		$metadescription 	= $jinput->get('meta_description', '', '');
-
-		$hits 				= $jinput->get('hits', '', 'int');
-		$data['hits'] 		= $hits;
 
 		if ($data['dates'] == null || $data['recurrence_type'] == '0')
 		{
