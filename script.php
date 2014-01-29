@@ -464,6 +464,8 @@ class com_jemInstallerScript
 			'/media/js/seobackend.js',
 			// obsolete since JEM 1.9.6
 			'/components/com_jem/views/editevent/tmpl/default.php',
+			'/components/com_jem/views/editvenue/tmpl/default.php',
+			'/components/com_jem/views/editvenue/tmpl/default.xml',
 		);
 
 		// TODO There is an issue while deleting folders using the ftp mode
