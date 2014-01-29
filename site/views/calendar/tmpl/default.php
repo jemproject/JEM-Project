@@ -219,15 +219,19 @@ defined('_JEXEC') or die;
 </div>
 
 <div id="jlcalendarlegend">
-
-	<div id="buttonshowall">
-		<?php echo JText::_('COM_JEM_SHOWALL'); ?>
+	<div class="calendarButtons">
+		<div class="calendarButtonsToggle">
+			<div id="buttonshowall" class="button">
+				<?php echo JText::_('COM_JEM_SHOWALL'); ?>
+			</div>
+			<div id="buttonhideall" class="button">
+				<?php echo JText::_('COM_JEM_HIDEALL'); ?>
+			</div>
+		</div>
 	</div>
 
-	<div id="buttonhideall">
-		<?php echo JText::_('COM_JEM_HIDEALL'); ?>
-	</div>
-
+	<div class="clr"></div>
+	<div class="calendarLegends">
 	<?php
 	//print the legend
 	if($this->params->get('displayLegend')) :
@@ -263,6 +267,6 @@ defined('_JEXEC') or die;
 		endforeach;
 	endif;
 	?>
-</div>
+</div></div>
 
 <div class="clr"/></div>

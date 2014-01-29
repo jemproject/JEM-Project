@@ -1,5 +1,5 @@
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -209,17 +209,66 @@ div#jem .eventtitle {
 
 #jlcalendarlegend {
 	clear: both;
+	margin-top:4px;
+}
+
+#jlcalendarlegend .calendarButtons {
+	margin-top:4px;
+	margin-left:2px;
+	margin-bottom:4px;
+	height:30px;
+}
+
+#jlcalendarlegend .calendarButtonsToggle{
+	width:280px;
+	display:inline-flex;
+	vertical-align:middle;
+}
+
+#jlcalendarlegend .calendarLegends {
+
 }
 
 #jlcalendarlegend .eventCat {
 	float: left;
 	padding: 1px 5px;
 	cursor: pointer;
+	box-shadow: 2px 2px 2px #888888;
+	border: 1px solid black;
+	margin-left:4px;
+	margin-right:4px;
+	margin-bottom:6px;
+	line-height:20px;
+}
+
+#jlcalendarlegend .legendb {
+	display:inline-block;
+	background-color:green;
+	line-height:10px;
+	margin-right:4px;
 }
 
 #jlcalendarlegend .eventCat.catoff {
 	color: lightgrey;
 	font-style: italic;
+}
+
+div#buttonshowall {
+	float: left;
+	padding-top:3px;
+	padding-left:4px;
+	cursor: pointer;
+	border:1px solid black;
+	width: 80px;
+}
+
+div#buttonhideall {
+	float: right;
+	padding-top:3px;
+	padding-left:4px;
+	cursor: pointer;
+	border:1px solid black;
+	width:80px;
 }
 
 .daynum a {
@@ -232,18 +281,6 @@ div#jem .eventtitle {
 	color:#FFFFFF;
 	background-color:red;
 	/* calendarweek: vertical-align: top; */
-}
-
-div#buttonshowall {
-	float: left;
-	padding: 1px 5px;
-	cursor: pointer;
-}
-
-div#buttonhideall {
-	float: left;
-	padding: 1px 5px;
-	cursor: pointer;
 }
 
 div#jem td {
@@ -335,3 +372,30 @@ div#jem td {
 	width:90px;
 }
 /* *** CALENDAR WEEK ADDITIONS END *** */
+
+
+.button {
+   background-image: -webkit-linear-gradient(top, rgba(230,230,230,1) 0%,rgba(200,200,200,1) 100%);
+   background-image:    -moz-linear-gradient(top, rgba(230,230,230,1) 0%,rgba(200,200,200,1) 100%);
+   background-image:     -ms-linear-gradient(top, rgba(230,230,230,1) 0%,rgba(200,200,200,1) 100%);
+   background-image:      -o-linear-gradient(top, rgba(230,230,230,1) 0%,rgba(200,200,200,1) 100%);
+   background-image:         linear-gradient(top, rgba(230,230,230,1) 0%,rgba(200,200,200,1) 100%);
+   -webkit-box-shadow: 0px 0px 2px 0px rgba(0,0,0,1);
+      -moz-box-shadow: 0px 0px 2px 0px rgba(0,0,0,1);
+           box-shadow: 0px 0px 2px 0px rgba(0,0,0,1);
+   border: solid 2px rgba(31,31,31,1);
+   -webkit-border-radius: 6px;
+      -moz-border-radius: 6px;
+           border-radius: 6px;
+   width: 48px;
+   height: 20px;
+   margin: 1px;
+   padding: 1px;
+   display: inline-block;
+   text-align: center;
+   color: rgba(0,0,0,1);
+}
+.button:hover {
+}
+.button:active {
+}
