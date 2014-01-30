@@ -117,7 +117,7 @@ class JEMViewEditvenue extends JViewLegacy
 		} else {
 			// Check if user can edit
 			$maintainer 	= JEMUser::venuegroups('edit');
-			$genaccess 		= JEMUser::editaccess($jemsettings->venueowner, $row->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
+			$genaccess 		= JEMUser::editaccess($jemsettings->venueowner, $this->item->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 			if ($maintainer || $genaccess) {
 				$edit = true;
 			} else {

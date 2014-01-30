@@ -115,7 +115,7 @@ class JEMControllerVenue extends JControllerForm
 		$record			= $this->getModel()->getItem($recordId);
 		$jemsettings 	= JEMHelper::config();
 		$maintainer 	= JEMUser::venuegroups('edit');
-		$genaccess 		= JEMUser::editaccess($jemsettings->venueowner, $row->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
+		$genaccess 		= JEMUser::editaccess($jemsettings->venueowner, $record->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 		if ($maintainer || $genaccess) {
 			return true;
 		}
