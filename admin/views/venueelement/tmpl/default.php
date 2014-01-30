@@ -55,14 +55,14 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 			<td class="center"><?php echo $this->pagination->getRowOffset($i); ?></td>
 			<td align="left">
 				 <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
-            </td>
-			<td align="left"><?php echo htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8'); ?></td>
-			<td align="left"><?php echo htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8'); ?></td>
-			<td class="center"><?php echo htmlspecialchars($row->country, ENT_QUOTES, 'UTF-8'); ?></td>
+			</td>
+			<td align="left"><?php echo $this->escape($row->city); ?></td>
+			<td align="left"><?php echo $this->escape($row->state); ?></td>
+			<td class="center"><?php echo $this->escape($row->country); ?></td>
 			<td class="center">
-				<?php 
-				$img = $row->published ? 'tick.png' : 'publish_x.png'; 
-				echo JHtml::_('image','com_jem/'.$img,NULL,NULL,true); 
+				<?php
+				$img = $row->published ? 'tick.png' : 'publish_x.png';
+				echo JHtml::_('image','com_jem/'.$img,NULL,NULL,true);
 				?>
 			</td>
 		</tr>
