@@ -56,10 +56,10 @@ class JEMTableCategory extends JTableNested
 		$query = $db->getQuery(true);
 
 		// Insert columns.
-		$columns = array('parent_id', 'lft','rgt', 'level', 'catname', 'alias', 'access');
+		$columns = array('parent_id', 'lft','rgt', 'level', 'catname', 'alias', 'access', 'published');
 
 		// Insert values.
-		$values = array(0, 0, 1, 0, $db->quote('root'), $db->quote('root'), 1);
+		$values = array(0, 0, 1, 0, $db->quote('root'), $db->quote('root'), 1, 1);
 
 		// Prepare the insert query.
 		$query
@@ -216,10 +216,10 @@ class JEMTableCategory extends JTableNested
 			$this->setError(JText::_('JLIB_DATABASE_ERROR_CATEGORY_UNIQUE_ALIAS'));
 			return false;
 		}
-		
+
 		return parent::store($updateNulls);
 	}
-	
+
 	/**
 	 * Check Csv Import
 	 * @todo: add validation
@@ -228,7 +228,7 @@ class JEMTableCategory extends JTableNested
 	{
 		return true;
 	}
-	
+
 	/**
 	 * Store Csv Import
 	 */
@@ -236,25 +236,25 @@ class JEMTableCategory extends JTableNested
 	{
 		// Initialise variables.
 		$k = $this->_tbl_key;
-			
+
 		// If a primary key exists update the object, otherwise insert it.
 		if ($this->$k){
 			$stored = $this->_db->updateObject($this->_tbl, $this, $this->_tbl_key, $updateNulls);
 		} else {
 			$stored = $this->_db->insertObject($this->_tbl, $this, $this->_tbl_key);
 		}
-	
+
 		// If the store failed return false.
 		if (!$stored){
 			$e = new JException(JText::sprintf('JLIB_DATABASE_ERROR_STORE_FAILED', get_class($this), $this->_db->getErrorMsg()));
 			$this->setError($e);
 			return false;
 		}
-	
+
 		if ($this->_locked){
 			$this->_unlock();
 		}
-		
+
 		return true;
 	}
 }

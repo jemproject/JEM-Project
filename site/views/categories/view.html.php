@@ -26,6 +26,7 @@ class JEMViewCategories extends JViewLegacy
 		$document 		= JFactory::getDocument();
 		$jemsettings 	= JEMHelper::config();
 		$user			= JFactory::getUser();
+		$print			= JRequest::getBool('print');
 
 		$rows = $this->get('Data');
 		$pagination = $this->get('Pagination');
@@ -33,6 +34,10 @@ class JEMViewCategories extends JViewLegacy
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		if ($print) {
+			JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+			$document->setMetaData('robots', 'noindex, nofollow');
+		}
 
 		//get menu information
 		$menu		= $app->getMenu();
@@ -52,8 +57,10 @@ class JEMViewCategories extends JViewLegacy
 
 		if ($task == 'archive') {
 			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=categories&task=archive'));
+			$print_link = JRoute::_('index.php?option=com_jem&view=categories&task=archive&print=1&tmpl=component');
 			$pagetitle = $params->get('page_title').' - '.JText::_('COM_JEM_ARCHIVE');
 		} else {
+			$print_link = JRoute::_('index.php?option=com_jem&view=categories&print=1&tmpl=component');
 			$pagetitle = $params->get('page_title');
 		}
 
@@ -86,6 +93,7 @@ class JEMViewCategories extends JViewLegacy
 		$this->item				= $item;
 		$this->jemsettings		= $jemsettings;
 		$this->pagetitle		= $pagetitle;
+		$this->print_link		= $print_link;
 
 		parent::display($tpl);
 	}

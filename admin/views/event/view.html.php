@@ -1,21 +1,16 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 
 /**
- * View class Event
- *
- * @package Joomla
- * @subpackage JEM
- *
+ * Event View
  */
 class JEMViewEvent extends JViewLegacy {
 
@@ -35,6 +30,7 @@ class JEMViewEvent extends JViewLegacy {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
+		JHtml::_('behavior.framework');
 		JHtml::_('behavior.modal', 'a.modal');
 		JHtml::_('behavior.tooltip');
 		JHtml::_('behavior.formvalidation');
@@ -55,36 +51,30 @@ class JEMViewEvent extends JViewLegacy {
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-		
+
 		// Load scripts
 		JHtml::_('script', 'com_jem/attachments.js', false, true);
 		JHtml::_('script', 'com_jem/recurrence.js', false, true);
 		JHtml::_('script', 'com_jem/unlimited.js', false, true);
 		JHtml::_('script', 'com_jem/seo.js', false, true);
 
+		// JQuery noConflict
+		//$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
+		//$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+		//$document->addScript('http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js');
+
 		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access		= $access2;
 		$this->jemsettings		= $jemsettings;
 		$this->Lists 		= $Lists;
 
-		$js = "
-		function jResetHits(id) {
-			document.getElementById('a_hits').value = id;
-		}";
-
-		$document->addScriptDeclaration($js);
-
-		$this->resethits = "\n&nbsp;<input class=\"inputbox\" type=\"button\" onclick=\"jResetHits(0, '".JText::_('COM_JEM_NO_HITS')."');\" value=\"".JText::_('COM_JEM_NO_HITS')."\" onblur=\"seo_switch()\" />";
-
 		$this->addToolbar();
 		parent::display($tpl);
-
 	}
 
 
 	/**
 	 * Add the page title and toolbar.
-	 *
 	 */
 	protected function addToolbar()
 	{
@@ -116,6 +106,7 @@ class JEMViewEvent extends JViewLegacy {
 			JToolBarHelper::cancel('event.cancel', 'JTOOLBAR_CLOSE');
 		}
 
+		JToolBarHelper::divider();
 		JToolBarHelper::help('editevents', true);
 	}
 }

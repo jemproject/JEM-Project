@@ -1,12 +1,11 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 ?>
 <div id="jem" class="jlcalendar">
@@ -219,15 +218,19 @@ defined('_JEXEC') or die;
 </div>
 
 <div id="jlcalendarlegend">
-
-	<div id="buttonshowall">
-		<?php echo JText::_('COM_JEM_SHOWALL'); ?>
+	<div class="calendarButtons">
+		<div class="calendarButtonsToggle">
+			<div id="buttonshowall" class="calendarButton">
+				<?php echo JText::_('COM_JEM_SHOWALL'); ?>
+			</div>
+			<div id="buttonhideall" class="calendarButton">
+				<?php echo JText::_('COM_JEM_HIDEALL'); ?>
+			</div>
+		</div>
 	</div>
 
-	<div id="buttonhideall">
-		<?php echo JText::_('COM_JEM_HIDEALL'); ?>
-	</div>
-
+	<div class="clr"></div>
+	<div class="calendarLegends">
 	<?php
 	//print the legend
 	if($this->params->get('displayLegend')) :
@@ -263,6 +266,5 @@ defined('_JEXEC') or die;
 		endforeach;
 	endif;
 	?>
-</div>
-
+</div></div>
 <div class="clr"/></div>

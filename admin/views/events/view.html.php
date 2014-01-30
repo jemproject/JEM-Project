@@ -139,12 +139,11 @@ defined('_JEXEC') or die;
 
 		if ($this->state->get('filter_state') == -2 && $canDo->get('core.delete')) {
 			JToolBarHelper::deleteList('', 'events.delete', 'JTOOLBAR_EMPTY_TRASH');
-			JToolBarHelper::divider();
 		} elseif ($canDo->get('core.edit.state')) {
 			JToolBarHelper::trash('events.trash');
-			JToolBarHelper::divider();
 		}
 
+		JToolBarHelper::divider();
 		JToolBarHelper::help('listevents', true);
 	}
 }

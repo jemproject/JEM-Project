@@ -41,12 +41,16 @@ class JEMViewCategory extends JEMView
 			$params 		= $app->getParams();
 			$uri 			= JFactory::getURI();
 			$pathway 		= $app->getPathWay();
+			$print			= JRequest::getBool('print');
 
 			// Load css
 			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 			JHtml::_('stylesheet', 'com_jem/calendar.css', array(), true);
-			
 			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+			if ($print) {
+				JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+				$document->setMetaData('robots', 'noindex, nofollow');
+			}
 
 			$evlinkcolor = $params->get('eventlinkcolor');
 			$evbackgroundcolor = $params->get('eventbackgroundcolor');
@@ -178,24 +182,21 @@ class JEMViewCategory extends JEMView
 			}
 
 			//Set Meta data
-			
+
 			// Because the application sets a default page title,
 			// we need to get it from the menu item itself
 			$menu = $menus->getActive();
-			
-			if ($menu)
-			{
+
+			if ($menu) {
 				$params->def('page_heading', $params->get('page_title', $menu->title));
-			}
-			else
-			{
+			} else {
 				$params->def('page_heading', JText::_('JGLOBAL_JEM_CATEGORY'));
 			}
-			
+
 			$title = $params->get('page_title', '');
-			
+
 			$id = (int) @$menu->query['id'];
-			
+
 			// if the menu item does not concern this article
 			if ($menu && ($menu->query['option'] != 'com_jem' || $menu->query['view'] != 'category' || $id != $category->id))
 			{
@@ -204,7 +205,7 @@ class JEMViewCategory extends JEMView
 					$title = $category->catname;
 				}
 			}
-			
+
 			// Check for empty title and add site name if param is set
 			if (empty($title)) {
 				$title = $app->getCfg('sitename');
@@ -219,7 +220,7 @@ class JEMViewCategory extends JEMView
 				$title = $category->catname;
 			}
 			$this->document->setTitle($title);
-			
+
 			//$document->setTitle($item->title.' - '.$category->catname);
 			$document->setMetadata('keywords', $category->meta_keywords);
 			$document->setDescription(strip_tags($category->meta_description));

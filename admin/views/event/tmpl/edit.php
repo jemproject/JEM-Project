@@ -1,14 +1,13 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- * 
+ *
  * @todo: move js to a file
  */
-
 defined('_JEXEC') or die;
 
 $options = array(
@@ -63,7 +62,7 @@ $params = $params->toArray();
 	} else {
 		commoff();
 	}
-	
+
 	});
 
 	function setbgcats()
@@ -138,7 +137,7 @@ $params = $params->toArray();
 		} else {
 			eventmapoff();
 		}
-	}	
+	}
 
 	function eventmapon()
 	{
@@ -162,7 +161,6 @@ $params = $params->toArray();
 		document.getElementById('comm1').style.display = 'none';
 	}
 </script>
-
 <script type="text/javascript">
 	Joomla.submitbutton = function(task)
 	{
@@ -177,8 +175,6 @@ $params = $params->toArray();
 		}
 	}
 </script>
-
-
 
 <form
 	action="<?php echo JRoute::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>"
@@ -249,10 +245,10 @@ $params = $params->toArray();
 
 <?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
 				<?php echo $this->loadTemplate('attachments'); ?>
-				
+
 				<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_SETTINGS_TAB'), 'event-settings' ); ?>
 		<?php echo $this->loadTemplate('settings'); ?>
-				
+
 				<?php echo JHtml::_('tabs.end'); ?>
 		<!-- END OF LEFT DIV -->
 	</div>
@@ -279,9 +275,7 @@ $params = $params->toArray();
 				<li><?php echo $this->form->getLabel('created_by'); ?> <?php echo $this->form->getInput('created_by'); ?>
 				</li>
 
-				<li><label><?php echo JText::_ ('COM_JEM_HITS');	?></label>
-				<input class="inputbox" name="hits" value="<?php echo $this->item->hits; ?>" size="10" maxlength="10" id="a_hits" />
-				<?php echo $this->resethits; ?>
+				<li><?php echo $this->form->getLabel('hits'); ?> <?php echo $this->form->getInput('hits'); ?>
 				</li>
 
 				<li><?php echo $this->form->getLabel('created'); ?> <?php echo $this->form->getInput('created'); ?>

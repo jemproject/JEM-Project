@@ -62,9 +62,10 @@ ALTER TABLE `#__jem_groups`
 UPDATE `#__jem_cats_event_relations`
 	SET catid = catid+1;
 
+--  insert root category
 INSERT IGNORE INTO `#__jem_categories`
-	(`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`)
-	VALUES (1, 0, 0, 1, 0, 'root', 'root', 1);
+	(`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`, `published`)
+	VALUES (1, 0, 0, 1, 0, 'root', 'root', 1, 1);
 
 --  change (frontend) menu item myattending to myattendances
 UPDATE `#__menu`

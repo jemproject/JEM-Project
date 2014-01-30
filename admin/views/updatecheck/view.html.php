@@ -26,10 +26,10 @@ class JEMViewUpdatecheck extends JViewLegacy {
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-		
+
 		// Load script
 		JHtml::_('behavior.mootools');
-		
+
 		//assign data to template
 		$this->updatedata	= $updatedata;
 
@@ -45,9 +45,10 @@ class JEMViewUpdatecheck extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
-		//create the toolbar
 		JToolBarHelper::title(JText::_('COM_JEM_UPDATECHECK_TITLE'), 'settings');
+
 		JToolBarHelper::back();
+		JToolBarHelper::divider();
 		JToolBarHelper::help('update', true);
 	}
 }

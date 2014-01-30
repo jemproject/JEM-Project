@@ -1,19 +1,18 @@
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
- 
- div#jem h1.componentheading
- {
+
+
+div#jem h1.componentheading{
  margin-bottom:6px;
  margin-top: 6px;
- }
-  
- div#jem .formelm-buttons
-{
+}
+
+div#jem .formelm-buttons{
 	margin-bottom: 0px;
 	float: right;
 }
@@ -29,7 +28,7 @@ div#jem_editevent dt
 {
 	width: none;
 }
- 
+
 div#jem .inputbox:focus {
 	border:1px solid #808080;
 	background-color:#DDE084;
@@ -72,7 +71,7 @@ div#jem .event-file-dl-icon img {
 }
 
 div#jc h4 {
-	
+
 }
 
 div#jem fieldset {
@@ -80,7 +79,7 @@ div#jem fieldset {
 }
 
 /* -------------------
-	GENERAL	
+	GENERAL
 --------------------- */
 div#jem {
 	overflow:hidden;
@@ -88,7 +87,6 @@ div#jem {
 	border:1px solid #000000;
 	border-radius:5px;
 	padding:10px;
-	max-width:660px;
 }
 
 /**
@@ -180,6 +178,11 @@ div#jem .floattext:after {
 
 div#jem .floattext {
 	display:block; /* safari */
+}
+
+/* used in venue select popup */
+div#jem .pointer {
+	cursor:pointer;
 }
 
 /**
@@ -430,7 +433,7 @@ div#jem table.eventtable tr.featured td{
 }
 
 /* -------------------
-	FILTER 
+	FILTER
 --------------------- */
 div#jem #jem_filter {
 	margin:1em 0 0.5em 0;
@@ -450,6 +453,13 @@ div#jem .jem_fright {
 /* -------------------
 	EDIT FORM
 --------------------- */
+div.jem_editevent ul.adminformlist label {
+	min-width:160px;
+}
+div.jem_editvenue label {
+	min-width:160px;
+}
+
 div.jem_editevent form fieldset,
 div.jem_editvenue form fieldset {
 	margin:0 0 1em 0;
@@ -620,8 +630,8 @@ table#el-attachments th {
 	margin:20px 0px 20px 20px;
 }
 
-/* 
-Thx to http://www.bloggerswatch.com/internet/css-trick-submit-button-should-look-same-everywhere/ 
+/*
+Thx to http://www.bloggerswatch.com/internet/css-trick-submit-button-should-look-same-everywhere/
 */
 .buttons a,
 .buttons button {
@@ -750,7 +760,7 @@ div#jem dl.tabs dt {
 	background-color:#999999;
 	border-top:1px solid #808080;
 	border-left:1px solid #808080;
-	border-right:1px solid #808080;	
+	border-right:1px solid #808080;
 	border-bottom:1px dotted #808080;
 	width: inherit;
 }
@@ -764,7 +774,7 @@ div#jem dl.tabs dt.open {
 	border-top-right-radius:6px;
 	border-top:1px solid #808080;
 	border-left:1px solid #808080;
-	border-right:1px solid #808080;	
+	border-right:1px solid #808080;
 	border-bottom:1px dotted #808080;
 }
 
@@ -945,7 +955,7 @@ a.jgrid:hover {
 }
 
 @media print {
-	
+
 div#jem {
 	overflow:hidden;
 	background:none repeat scroll 0% 0% #EDEDEB;

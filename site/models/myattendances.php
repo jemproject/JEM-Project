@@ -159,16 +159,16 @@ class JEMModelMyattendances extends JModelLegacy
 	{
 		$app = JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', '', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myattendances.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		$filter_order		= $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myattendances.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
 
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
-		if ($filter_order != '') {
-			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
+		if ($filter_order == 'a.dates') {
+			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir;
 		} else {
-			$orderby = ' ORDER BY a.dates, a.times ';
+			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
 		}
 
 		return $orderby;
@@ -194,7 +194,8 @@ class JEMModelMyattendances extends JModelLegacy
 		$settings = JEMHelper::globalattribs();
 
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$filter 		= $app->getUserStateFromRequest('com_jem.myattendances.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.myattendances.filter_search', 'filter_search', '', 'string');
@@ -209,7 +210,7 @@ class JEMModelMyattendances extends JModelLegacy
 			$where[] = ' a.published = 1';
 		}
 		$where[] = ' c.published = 1';
-		$where[] = ' c.access  <= '.$gid;
+		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
 
 		//limit output so only future events the user attends will be shown
 		if ($params->get('filtermyregs')) {
@@ -248,7 +249,8 @@ class JEMModelMyattendances extends JModelLegacy
 	function getCategories($id)
 	{
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
@@ -256,7 +258,7 @@ class JEMModelMyattendances extends JModelLegacy
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				. ' AND c.published = 1'
-				. ' AND c.access  <= '.$gid;
+				. ' AND c.access IN (' . implode(',', $levels) . ')'
 				;
 
 		$this->_db->setQuery($query);

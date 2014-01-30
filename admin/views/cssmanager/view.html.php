@@ -20,7 +20,7 @@ class JEMViewCssmanager extends JViewLegacy
 	{
 		$this->files = $this->get('Files');
 		$this->statusLinenumber = $this->get('StatusLinenumber');
-		
+
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {
 			JError::raiseError(500, implode("\n", $errors));
@@ -48,11 +48,11 @@ class JEMViewCssmanager extends JViewLegacy
 	protected function addToolbar()
 	{
 		JRequest::setVar('hidemainmenu', true);
-		$user = JFactory::getUser();
-		$canDo = JEMHelperBackend::getActions(0);
 
 		JToolBarHelper::title(JText::_('COM_JEM_CSSMANAGER_TITLE'), 'thememanager');
 
 		JToolBarHelper::cancel('cssmanager.cancel', 'JTOOLBAR_CLOSE');
+		JToolBarHelper::divider();
+		JToolBarHelper::help('editcss', true);
 	}
 }

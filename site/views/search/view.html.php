@@ -46,9 +46,9 @@ class JEMViewSearch extends JEMView
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-		
+
 		JHtml::_('script', 'com_jem/search.js', false, true);
-		
+
 		$filter_continent	= $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
 		$filter_country		= $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
 		$filter_city		= $app->getUserStateFromRequest('com_jem.search.filter_city', 'filter_city', '', 'string');
@@ -74,11 +74,9 @@ class JEMViewSearch extends JEMView
 		$pathway->setItemName(1, $item->title);
 
 		if ($task == 'archive') {
-			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=eventslist&task=archive'));
-			$print_link = JRoute::_('index.php?view=eventslist&task=archive&tmpl=component&print=1');
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=search&task=archive'));
 			$pagetitle = $params->get('page_title').' - '.JText::_('COM_JEM_ARCHIVE');
 		} else {
-			$print_link = JRoute::_('index.php?view=eventslist&tmpl=component&print=1');
 			$pagetitle = $params->get('page_title');
 		}
 
@@ -97,7 +95,7 @@ class JEMViewSearch extends JEMView
 		}
 
 		//add alternate feed link
-		$link    = 'index.php?option=com_jem&view=eventslist&format=feed';
+		$link    = 'index.php?option=com_jem&view=search&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -119,7 +117,7 @@ class JEMViewSearch extends JEMView
 		//Cause of group limits we can't use class here to build the categories tree
 		$categories   = $this->get('CategoryTree');
 		$catoptions   = array();
-		$catoptions[] = JHtml::_('select.option', '0', JText::_('COM_JEM_SELECT_CATEGORY'));
+		$catoptions[] = JHtml::_('select.option', '1', JText::_('COM_JEM_SELECT_CATEGORY'));
 		$catoptions   = array_merge($catoptions, JEMCategories::getcatselectoptions($categories));
 		$selectedcats = ($filter_category) ? array($filter_category) : array();
 
@@ -168,7 +166,6 @@ class JEMViewSearch extends JEMView
 		$this->rows				= $rows;
 		$this->task				= $task;
 		$this->noevents			= $noevents;
-		$this->print_link		= $print_link;
 		$this->params			= $params;
 		$this->dellink			= $dellink;
 		$this->pagination		= $pagination;
@@ -193,9 +190,15 @@ class JEMViewSearch extends JEMView
 	{
 		$app = JFactory::getApplication();
 		$db = JFactory::getDBO();
+		$task = JRequest::getWord('task');
 
 		$filter_order		= JRequest::getCmd('filter_order', 'a.dates');
-		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', 'ASC');
+		$filter_order_DirDefault = 'ASC';
+		// Reverse default order for dates in archive mode
+		if($task == 'archive' && $filter_order == 'a.dates') {
+			$filter_order_DirDefault = 'DESC';
+		}
+		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', $filter_order_DirDefault);
 
 		$filter 			= $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
 		$filter 			= $db->escape(trim(JString::strtolower($filter)));

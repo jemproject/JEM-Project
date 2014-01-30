@@ -67,6 +67,9 @@ class JEMViewMyvenues extends JViewLegacy
 		//search filter
 		$filters = array();
 
+		// Workaround issue #557: Show venue name always.
+		$jemsettings->showlocate = 1;
+
 		//if ($jemsettings->showtitle == 1) {
 		//	$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_TITLE'));
 		//}

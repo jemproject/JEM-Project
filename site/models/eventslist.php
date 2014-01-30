@@ -44,7 +44,7 @@ class JEMModelEventslist extends JModelLegacy
 		$app 			= JFactory::getApplication();
 		$jemsettings 	= JEMHelper::config();
 		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
-		
+
 		//get the number of events from database
 		$limit		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
@@ -194,19 +194,24 @@ class JEMModelEventslist extends JModelLegacy
 	{
 		$app 			= JFactory::getApplication();
 		$jinput 		= JFactory::getApplication()->input;
-		$task 			= $jinput->get('task','','cmd');	
+		$task 			= $jinput->get('task','','cmd');
 		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
-	
-		$filter_order		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', '', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', '', 'word');
-		
+
+		$filter_order		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$filter_order_DirDefault = 'ASC';
+		// Reverse default order for dates in archive mode
+		if($task == 'archive' && $filter_order == 'a.dates') {
+			$filter_order_DirDefault = 'DESC';
+		}
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
+
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
-		if ($filter_order != '') {
-			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
+		if ($filter_order == 'a.dates') {
+			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir;
 		} else {
-			$orderby = ' ORDER BY a.dates, a.times ';
+			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
 		}
 
 		return $orderby;
@@ -224,11 +229,13 @@ class JEMModelEventslist extends JModelLegacy
 		$jinput 		= JFactory::getApplication()->input;
 		$task 			= $jinput->get('task','','cmd');
 		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
-		
+
 		$params 		= $app->getParams();
 		$settings 		= JEMHelper::globalattribs();
 		$user 			= JFactory::getUser();
-		$gid 			= JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
+
 		$catswitch 		= $params->get('categoryswitch', '0');
 
 		$filter 		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter', 'filter', '', 'int');
@@ -244,7 +251,7 @@ class JEMModelEventslist extends JModelLegacy
 			$where[] = ' a.published = 1';
 		}
 		$where[] = ' c.published = 1';
-		$where[] = ' c.access  <= '.$gid;
+		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
 
 		// get included categories
 		if ($catswitch == 1) {
@@ -295,7 +302,8 @@ class JEMModelEventslist extends JModelLegacy
 	function getCategories($id)
 	{
 		$user = JFactory::getUser();
-		$gid = JEMHelper::getGID($user);
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
 
 		$where		= $this->_buildWhere2();
 
@@ -305,7 +313,7 @@ class JEMModelEventslist extends JModelLegacy
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
 				. ' WHERE rel.itemid = '.(int)$id
 				. ' AND c.published = 1'
-				. ' AND c.access  <= '.$gid
+				. ' AND c.access IN (' . implode(',', $levels) . ')'
 				. $where
 				;
 
