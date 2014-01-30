@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -10,7 +10,10 @@
 defined('_JEXEC') or die;
 ?>
 
+<?php if (!$this->params->get('show_page_heading', 1)) :
+           /* hide this if page heading is shown */     ?>
 <h2><?php echo JText::_('COM_JEM_MY_EVENTS'); ?></h2>
+<?php endif; ?>
 
 <script type="text/javascript">
 	function tableOrdering(order, dir, view)

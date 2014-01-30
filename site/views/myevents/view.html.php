@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -28,7 +28,7 @@ class JEMViewMyevents extends JViewLegacy
 		$jemsettings 	= JEMHelper::config();
 		$settings 		= JEMHelper::globalattribs();
 		$menu 			= $app->getMenu();
-		$item 			= $menu->getActive();
+		$menuitem		= $menu->getActive();
 		$params 		= $app->getParams();
 		$uri 			= JFactory::getURI();
 		$user			= JFactory::getUser();
@@ -91,14 +91,37 @@ class JEMViewMyevents extends JViewLegacy
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
 
-		//params
-		$params->def('page_title', $item->title);
-
 		//pathway
-		if($item) $pathway->setItemName(1, $item->title);
+		if($menuitem) {
+			$pathway->setItemName(1, $menuitem->title);
+		}
 
 		//Set Page title
-		$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_EVENTS'));
+		$pagetitle = JText::_('COM_JEM_MY_EVENTS');
+		$pageheading = $pagetitle;
+
+		// Check to see which parameters should take priority
+		if ($menuitem) {
+			$currentLink = $menuitem->link;
+			// If the current view is the active menuitem and an myevents view, then the menu item params take priority
+			if (strpos($currentLink, 'view=myevents')) {
+				// Menu item params take priority
+				$params->def('page_title', $menuitem->title);
+				$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_EVENTS'));
+				$pageheading = $params->get('page_heading', $pagetitle);
+			}
+		}
+
+		$params->set('page_heading', $pageheading);
+
+		// Add site name to title if param is set
+		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+		}
+
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title', $pagetitle);
 

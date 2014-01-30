@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -32,7 +32,7 @@ class JEMViewDay extends JEMView
 		$jemsettings 	= JEMHelper::config();
 		$settings 		= JEMHelper::globalattribs();
 		$menu 			= $app->getMenu();
-		$item 			= $menu->getActive();
+		$menuitem 		= $menu->getActive();
 		$user			= JFactory::getUser();
 		$params 		= $app->getParams();
 		$db 			= JFactory::getDBO();
@@ -40,6 +40,11 @@ class JEMViewDay extends JEMView
 		$task 			= JRequest::getWord('task');
 		$pathway 		= $app->getPathWay();
 		$jinput 		= $app->input;
+
+		// Decide which parameters should take priority
+		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
+		                                && $menuitem->query['view'] == 'day'
+		                                && !isset($menuitem->query['id']));
 
 		// Retrieving data
 		$requestVenueId = $jinput->get('locid', null, 'int');
@@ -66,6 +71,29 @@ class JEMViewDay extends JEMView
 		$day		= $this->get('Day');
 
 		$daydate 	= JEMOutput::formatdate($day);
+		$showdaydate = true; // show by default
+
+		// Show page heading specified on menu item or TODAY as heading - idea taken from com_content.
+		if ($useMenuItemParams) {
+			$pagetitle   = $params->get('page_title', $menu->title);
+			$params->def('page_heading', $pagetitle);
+			$pathway->setItemName(1, $menuitem->title);
+		} else {
+			// TODO: If we can integrate $daydate into page_heading we should set $showdaydate to false.
+			$pagetitle   = JText::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY');
+			$params->set('page_heading', $pagetitle);
+			$pathway->addItem($pagetitle);
+		}
+
+		// Add site name to title if param is set
+		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+		}
+
+		$this->document->setTitle($pagetitle);
 
 		// Are events available?
 		if (!$rows) {
@@ -77,15 +105,11 @@ class JEMViewDay extends JEMView
 		if ($requestVenueId){
 			$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&locid='.$requestVenueId.'&id='.$requestDate);
 		}
-		if ($requestCategoryId){
+		elseif ($requestCategoryId){
 			$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&catid='.$requestCategoryId.'&id='.$requestDate);
 		}
-		if (!$requestCategoryId && !$requestVenueId){
+		else /*(!$requestCategoryId && !$requestVenueId)*/ {
 			$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&id='.$requestDate);
-		}
-
-		if($item) {
-			$pathway->setItemName(1, $item->title);
 		}
 
 		//Check if the user has access to the form
@@ -98,8 +122,8 @@ class JEMViewDay extends JEMView
 			$dellink = 0;
 		}
 
-		//add alternate feed link
-		$link    = 'index.php?option=com_jem&view=day&format=feed&id=' . date('Ymd', strtotime($this->get('Day')));
+		//add alternate feed link (w/o specific date)
+		$link    = 'index.php?option=com_jem&view=day&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$this->document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -144,8 +168,10 @@ class JEMViewDay extends JEMView
 		$this->settings			= $settings;
 		$this->lists			= $lists;
 		$this->daydate			= $daydate;
+		$this->showdaydate		= $showdaydate; // if true daydate will be shown as h2 sub heading
 
-		$this->prepareDocument();
+		// Doesn't really help - each view has less or more specific needs.
+		//$this->prepareDocument();
 
 		parent::display($tpl);
 	}

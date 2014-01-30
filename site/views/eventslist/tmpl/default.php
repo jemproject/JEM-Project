@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -18,9 +18,9 @@ defined('_JEXEC') or die;
 		?>
 	</div>
 
-	<?php if ($this->params->def( 'show_page_title', 1 )) : ?>
+	<?php if ($this->params->get('show_page_heading', 1)) : ?>
 		<h1 class="componentheading">
-			<?php echo $this->escape($this->pagetitle); ?>
+			<?php echo $this->escape($this->params->get('page_heading')); ?>
 		</h1>
 	<?php endif; ?>
 

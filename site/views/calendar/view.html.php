@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -34,8 +34,8 @@ class JEMViewCalendar extends JViewLegacy
 		//initialize variables
 		$document 	= JFactory::getDocument();
 		$menu 		= $app->getMenu();
+		$menuitem	= $menu->getActive();
 		$jemsettings = JEMHelper::config();
-		$item 		= $menu->getActive();
 		$params 	= $app->getParams();
 		
 		// Load css
@@ -78,11 +78,18 @@ class JEMViewCalendar extends JViewLegacy
 
 		$rows = $this->get('Data');
 
-		//Set Meta data
-		$document->setTitle($item->title);
-
 		//Set Page title
-		$pagetitle = $params->def('page_title', $item->title);
+		$pagetitle   = $params->def('page_title', $menuitem->title);
+		$params->def('page_heading', $pagetitle);
+
+		// Add site name to title if param is set
+		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+		}
+
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title', $pagetitle);
 
@@ -92,10 +99,10 @@ class JEMViewCalendar extends JViewLegacy
 		$cal->setFirstWeekDay($params->get('firstweekday', 1));
 		$cal->enableDayLinks(false);
 
-		$this->rows 		= $rows;
-		$this->params		= $params;
-		$this->jemsettings	= $jemsettings;
-		$this->cal			= $cal;
+		$this->rows        = $rows;
+		$this->params      = $params;
+		$this->jemsettings = $jemsettings;
+		$this->cal         = $cal;
 
 		parent::display($tpl);
 	}

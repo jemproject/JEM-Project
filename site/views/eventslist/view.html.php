@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -37,7 +37,7 @@ class JEMViewEventslist extends JEMView
 		$jemsettings = JEMHelper::config();
 		$settings 	= JEMHelper::globalattribs();
 		$menu		= $app->getMenu();
-		$item		= $menu->getActive();
+		$menuitem	= $menu->getActive();
 		$params 	= $app->getParams();
 		$uri 		= JFactory::getURI();
 		$pathway 	= $app->getPathWay();
@@ -82,18 +82,30 @@ class JEMViewEventslist extends JEMView
 		}
 
 		//params
-		$params->def('page_title', $item->title);
+		$pagetitle   = $params->def('page_title', $menuitem ? $menuitem->title : COM_JEM_EVENTS);
+		$pageheading = $params->def('page_heading', $params->get('page_title'));
 
 		//pathway
-		$pathway->setItemName(1, $item->title);
+		if ($menuitem) {
+			$pathway->setItemName(1, $menuitem->title);
+		}
 
 		if ($task == 'archive') {
 			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=eventslist&task=archive') );
 			$print_link = JRoute::_('index.php?view=eventslist&task=archive&tmpl=component&print=1');
-			$pagetitle = $params->get('page_title').' - '.JText::_('COM_JEM_ARCHIVE');
+			$pagetitle   .= ' - ' . JText::_('COM_JEM_ARCHIVE');
+			$pageheading .= ' - ' . JText::_('COM_JEM_ARCHIVE');
+			$params->set('page_heading', $pageheading);
 		} else {
 			$print_link = JRoute::_('index.php?view=eventslist&tmpl=component&print=1');
-			$pagetitle = $params->get('page_title');
+		}
+
+		// Add site name to title if param is set
+		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 		}
 
 		//Set Page title
@@ -171,27 +183,6 @@ class JEMViewEventslist extends JEMView
 		$app	= JFactory::getApplication();
 		$menus	= $app->getMenu();
 		$title	= null;
-
-		// Because the application sets a default page title,
-		// we need to get it from the menu item itself
-		$menu = $menus->getActive();
-		if ($menu)
-		{
-			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
-		} else {
-			$this->params->def('page_heading', JText::_('COM_JEM_EVENTSLIST'));
-		}
-		$title = $this->params->get('page_title', '');
-		if (empty($title)) {
-			$title = $app->getCfg('sitename');
-		}
-		elseif ($app->getCfg('sitename_pagetitles', 0) == 1) {
-			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
-		}
-		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-			$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
-		}
-		$this->document->setTitle($title);
 
 		if ($this->params->get('menu-meta_description'))
 		{

@@ -9,9 +9,9 @@
 defined('_JEXEC') or die;
 ?>
 <div id="jem" class="jlcalendar">
-	<?php if ($this->params->def('show_page_title', 1)): ?>
+	<?php if ($this->params->get('show_page_heading', 1)): ?>
 		<h1 class="componentheading">
-			<?php echo $this->escape($this->params->get('page_title')); ?>
+			<?php echo $this->escape($this->params->get('page_heading')); ?>
 		</h1>
 	<?php endif; ?>
 
@@ -19,7 +19,7 @@ defined('_JEXEC') or die;
 	<div class="description no_space floattext">
 		<?php echo $this->params->get('introtext'); ?>
 	</div>
-	<p><p>
+	<p> </p>
 <?php endif; ?>
 
 	<?php
@@ -111,7 +111,7 @@ defined('_JEXEC') or die;
 
 			//attach category color if any in front of the catname
 			if ($category->color):
-				$multicatname .= '<span class="colorpic" style="width:6px; background: '.$category->color.';"></span>'.$category->catname;
+				$multicatname .= '<span class="colorpic" style="width:6px; background-color: '.$category->color.';"></span>&nbsp'.$category->catname;
 			else:
 				$multicatname 	.= $category->catname;
 			endif;
@@ -122,7 +122,7 @@ defined('_JEXEC') or die;
 
 			//attach category color if any in front of the event title in the calendar overview
 			if ( isset ($category->color) && $category->color) :
-				$colorpic .= '<span class="colorpic" style="width:6px; background: '.$category->color.';"></span>';
+				$colorpic .= '<span class="colorpic" style="width:6px; background-color: '.$category->color.';"></span>';
 			endif;
 			//count occurence of the category
 			if (!array_key_exists($category->id, $countcatevents)) :
@@ -163,7 +163,7 @@ defined('_JEXEC') or die;
 							$timetp .= ' - '.$end.' ';
 						endif;
 
-						$timetp .= '<br>';
+						$timetp .= '<br />';
 					endif;
 				}
 			}
@@ -231,40 +231,41 @@ defined('_JEXEC') or die;
 
 	<div class="clr"></div>
 	<div class="calendarLegends">
-	<?php
-	//print the legend
-	if($this->params->get('displayLegend')) :
-		$counter = array();
+		<?php
+		//print the legend
+		if($this->params->get('displayLegend')) :
+			$counter = array();
 
-		//walk through events
-		foreach ($this->rows as $row):
+			//walk through events
+			foreach ($this->rows as $row):
 
-			//walk through the event categories
-			foreach ($row->categories as $cat) :
+				//walk through the event categories
+				foreach ($row->categories as $cat) :
 
-				//sort out dupes
-				if(!in_array($cat->id, $counter)):
+					//sort out dupes
+					if(!in_array($cat->id, $counter)):
 
-					//add cat id to cat counter
-					$counter[] = $cat->id;
+						//add cat id to cat counter
+						$counter[] = $cat->id;
 
-					//build legend
-					if (array_key_exists($cat->id, $countcatevents)):
-					?>
-						<div class="eventCat" id="cat<?php echo $cat->id; ?>">
-							<?php
-							if ( isset ($cat->color) && $cat->color) :
-								echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';
-							endif;
-							echo $cat->catname.' ('.$countcatevents[$cat->id].')';
-							?>
-						</div>
-					<?php
+						//build legend
+						if (array_key_exists($cat->id, $countcatevents)):
+						?>
+							<div class="eventCat" id="cat<?php echo $cat->id; ?>">
+								<?php
+								if ( isset ($cat->color) && $cat->color) :
+									echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';
+								endif;
+								echo $cat->catname.' ('.$countcatevents[$cat->id].')';
+								?>
+							</div>
+						<?php
+						endif;
 					endif;
-				endif;
+				endforeach;
 			endforeach;
-		endforeach;
-	endif;
-	?>
-</div></div>
+		endif;
+		?>
+	</div>
+</div>
 <div class="clr"/></div>
