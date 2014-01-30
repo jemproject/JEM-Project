@@ -1,382 +1,166 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
+// Base this model on the backend version.
+require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/venue.php';
 
 /**
- * JEM Component Editvenue Model
- *
- * @package JEM
- *
+ * Editvenue Model
  */
-class JEMModelEditvenue extends JModelLegacy
+class JemModelEditvenue extends JemModelVenue
 {
-	/**
-	 * Venue data in Venue array
-	 *
-	 * @var array
-	 */
-	var $_venue = null;
 
 	/**
-	 * Constructor
+	 * Model typeAlias string. Used for version history.
 	 *
+	 * @var        string
 	 */
-	function __construct()
-	{
-		parent::__construct();
+	public $typeAlias = 'com_jem.venue';
 
-		$id = JRequest::getInt('id');
-		$this->setId($id);
-	}
 
 	/**
-	 * Method to set the Venue id
+	 * Method to auto-populate the model state.
 	 *
-	 * @access	public
-	 * @param	int	Venue ID number
+	 * Note. Calling getState in this method will result in recursion.
 	 */
-	function setId($id)
-	{
-		// Set new venue ID
-		$this->_id = $id;
-	}
-
-	/**
-	 * Logic to get the venue
-	 *
-	 * @return array
-	 */
-	function &getVenue()
+	protected function populateState()
 	{
 		$app = JFactory::getApplication();
 
-		// Initialize variables
-		$user		= JFactory::getUser();
-		$jemsettings = JEMHelper::config();
+		// Load state from the request.
+		$pk = JRequest::getInt('a_id');
+		$this->setState('venue.id', $pk);
 
-		$view		= JRequest::getWord('view');
+		//$this->setState('event.catid', JRequest::getInt('catid'));
 
-		// ID exists => edit
-		if ($this->_id) {
-			// Load the Event data
-			$this->_loadVenue();
+		$return = JRequest::getVar('return', null, 'default', 'base64');
+		$this->setState('return_page', urldecode(base64_decode($return)));
 
-			// Error if allready checked out
-			if ($this->_venue->isCheckedOut($user->get('id'))) {
-				$app->redirect('index.php?view='.$view, JText::_('COM_JEM_THE_VENUE').' '.$this->_venue->venue.' '.JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
-			} else {
-				$this->_venue->checkout($user->get('id'));
-			}
+		// Load the parameters.
+		$params = $app->getParams();
+		$this->setState('params', $params);
 
-			//access check
-			$maintainer3 = JEMUser::venuegroups('edit');
-			$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $this->_venue->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
-			if ($maintainer3 || $genaccess3) {
-// 				$allowedtoeditvenue = 1;
-			} else {
-				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
-			}
-
-		// ID does not exist => add
-		} else {
-			//access checks
-			$maintainer2 = JEMUser::venuegroups('add');
-			$delloclink = JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
-
-			if ($maintainer2 || $delloclink) {
-				$addvenuelink = 1;
-			} else {
-				$addvenuelink = 0;
-			}
-
-			if ($addvenuelink == 0) {
-				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
-			}
-
-			//sticky forms
-			$session = JFactory::getSession();
-			if ($session->has('venueform', 'com_jem')) {
-				$venueform 		= $session->get('venueform', 0, 'com_jem');
-				$this->_venue 	= JTable::getInstance('jem_venues', '');
-
-				if (!$this->_venue->bind($venueform)) {
-					JError::raiseError(500, $this->_db->stderr());
-					return false;
-				}
-			} else {
-				//prepare output
-				$this->_venue = new stdClass();
-				$this->_venue->id				= '';
-				$this->_venue->venue			= '';
-				$this->_venue->url				= '';
-				$this->_venue->street			= '';
-				$this->_venue->postalCode		= '';
-				$this->_venue->locdescription	= '';
-				$this->_venue->city				= '';
-				$this->_venue->state			= '';
-				$this->_venue->country			= '';
-				$this->_venue->latitude			= '';
-				$this->_venue->longitude		= '';
-				$this->_venue->map				= $jemsettings->showmapserv ? 1 : 0;
-				$this->_venue->created			= '';
-				$this->_venue->created_by		= '';
-				$this->_venue->version			= 0;
-				$this->_venue->author_ip		= '';
-				$this->_venue->locimage			= '';
-				$this->_venue->meta_keywords	= '';
-				$this->_venue->meta_description	= '';
-				$this->_venue->custom1				= '';
-				$this->_venue->custom2				= '';
-				$this->_venue->custom3				= '';
-				$this->_venue->custom4				= '';
-				$this->_venue->custom5				= '';
-				$this->_venue->custom6				= '';
-				$this->_venue->custom7				= '';
-				$this->_venue->custom8				= '';
-				$this->_venue->custom9				= '';
-				$this->_venue->custom10				= '';
-				$this->_venue->attachments		= array();
-			}
-		}
-
-		return $this->_venue;
+		$this->setState('layout', JRequest::getCmd('layout'));
 	}
 
 	/**
-	 * logic to get the venue
+	 * Method to get venue data.
 	 *
-	 * @access private
-	 * @return array
+	 * @param integer	The id of the article.
+	 *
+	 * @return mixed item data object on success, false on failure.
 	 */
-	function _loadVenue()
+	public function getItem($itemId = null)
 	{
-		if (empty($this->_venue)) {
+		// $jemsettings = JEMAdmin::config();
 
-			$this->_venue = JTable::getInstance('jem_venues', '');
-			$this->_venue->load($this->_id);
-			$this->_venue->attachments = JEMAttachment::getAttachments('venue'.$this->_venue->id);
+		// Initialise variables.
+		$itemId = (int) (!empty($itemId)) ? $itemId : $this->getState('venue.id');
 
-			return $this->_venue;
+		// Get a row instance.
+		$table = $this->getTable();
+
+		// Attempt to load the row.
+		$return = $table->load($itemId);
+
+		// Check for a table object error.
+		if ($return === false && $table->getError()) {
+			$this->setError($table->getError());
+			return false;
 		}
-		return true;
-	}
 
-	/**
-	 * Method to checkin/unlock the item
-	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 *
-	 */
-	function checkin()
-	{
-		if ($this->_id)
+		$properties = $table->getProperties(1);
+		$value = JArrayHelper::toObject($properties, 'JObject');
+
+		// Convert attrib field to Registry.
+		//$registry = new JRegistry();
+		//$registry->loadString($value->attribs);
+
+		$globalsettings = JemHelper::globalattribs();
+		$globalregistry = new JRegistry();
+		$globalregistry->loadString($globalsettings);
+
+		$value->params = clone $globalregistry;
+		//$value->params->merge($registry);
+
+		// Compute selected asset permissions.
+		$user = JFactory::getUser();
+		$userId = $user->get('id');
+		$asset = 'com_jem.venue.' . $value->id;
+
+
+		// Check general edit permission first.
+		if ($user->authorise('core.edit', $asset)) {
+			$value->params->set('access-edit', true);
+		}
+		// Now check if edit.own is available.
+		elseif (!empty($userId) && $user->authorise('core.edit.own', $asset)) {
+			// Check for a valid user and that they are the owner.
+			if ($userId == $value->created_by) {
+				$value->params->set('access-edit', true);
+			}
+		}
+
+		// Check edit state permission.
+		if ($itemId) {
+			// Existing item
+			$value->params->set('access-change', $user->authorise('core.edit.state', $asset));
+		}
+		else {
+			$value->params->set('access-change', $user->authorise('core.edit.state', 'com_jem'));
+			// New item.
+			//$catId = (int) $this->getState('event.catid');
+
+			//if ($catId) {
+			//	$value->params->set('access-change', $user->authorise('core.edit.state', 'com_jem.category.' . $catId));
+			//	$value->catid = $catId;
+			//}
+			//else {
+
+			//}
+		}
+
+		$files = JemAttachment::getAttachments('venue' . $itemId);
+		$value->attachments = $files;
+
+		/*
+		$value->articletext = $value->introtext;
+		if (!empty($value->fulltext)) {
+			$value->articletext .= '<hr id="system-readmore" />' . $value->fulltext;
+		}
+
+		if ($itemId)
 		{
-			$item = $this->getTable('jem_venues', '');
-			if(! $item->checkin($this->_id)) {
-				$this->setError($this->_db->getErrorMsg());
-				return false;
-			}
+			$value->tags = new JHelperTags;
+			$value->tags->getTagIds($value->id, 'com_jem.venue');
+			$value->metadata['tags'] = $value->tags;
 		}
-		return false;
+		*/
+
+		return $value;
+	}
+
+	protected function loadForm($name, $source = null, $options = array(), $clear = false, $xpath = false)
+	{
+		JForm::addFieldPath(JPATH_COMPONENT_ADMINISTRATOR . '/models/fields');
+
+		return parent::loadForm($name, $source, $options, $clear, $xpath);
 	}
 
 	/**
-	 * Method to store the venue
-	 *
-	 * @access	public
-	 * @return	id
-	 *
+	 * Get the return URL.
+	 * @return string return URL.
 	 */
-	function store($data, $file)
+	public function getReturnPage()
 	{
-		$app = JFactory::getApplication();
-
-		$user 		= JFactory::getUser();
-		$jemsettings = JEMHelper::config();
-
-		$row 		= JTable::getInstance('jem_venues', '');
-
-		$curimage = JRequest::getVar('curimage', '', 'post','string');
-
-		//bind it to the table
-		if (!$row->bind($data)) {
-			JError::raiseError(500, $this->_db->stderr());
-			return false;
-		}
-
-		//Are we saving from an item edit?
-		if ($row->id) {
-			//check if user is allowed to edit venues
-
-			//access check
-			$maintainer3 = JEMUser::venuegroups('edit');
-			$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $row->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
-			if ($maintainer3 || $genaccess3) {
-// 				$allowedtoeditvenue = 1;
-			} else {
-				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
-			}
-
-			$row->modified 		= gmdate('Y-m-d H:i:s');
-			$row->modified_by 	= $user->get('id');
-
-			//Is editor the owner of the venue
-			//This extra Check is needed to make it possible
-			//that the venue is published after an edit from an owner
-			if ($jemsettings->venueowner == 1 && $row->created_by == $user->get('id')) {
-				$owneredit = 1;
-			} else {
-				$owneredit = 0;
-			}
-		} else {
-			//check if user is allowed to submit new venues
-
-			$maintainer2 = JEMUser::venuegroups('add');
-			$delloclink = JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
-
-			if ($maintainer2 || $delloclink) {
-				$addvenuelink = 1;
-			} else {
-				$addvenuelink = 0;
-			}
-
-			if ($addvenuelink == 0) {
-				throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'),403);
-			}
-
-			//get IP, time and userid
-			$row->created 			= gmdate('Y-m-d H:i:s');
-
-			$row->author_ip 		= $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
-			$row->created_by		= $user->get('id');
-
-			//set owneredit to false
-			$owneredit = 0;
-		}
-
-		//Autopublish
-		//check if the user has the required rank for autopublish
-		$autopublgroups = JEMUser::venuegroups('publish');
-
-		$autopublloc = JEMUser::validate_user($jemsettings->locpubrec, $jemsettings->autopublocate);
-		if ($autopublloc || $owneredit || $autopublgroups) {
-			$row->published = 1 ;
-		} else {
-			$row->published = 0 ;
-		}
-
-		//Image upload
-
-		//If image upload is required we will stop here if no file was attached
-		if (empty($file['name']) && $jemsettings->imageenabled == 2) {
-			$this->setError(JText::_('COM_JEM_IMAGE_EMPTY'));
-			return false;
-		}
-
-		if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1) && (!empty($file['name']))) {
-
-			jimport('joomla.filesystem.file');
-
-			$base_Dir 	= JPATH_SITE.'/images/jem/venues/';
-
-			//check the image
-			$check = JEMImage::check($file, $jemsettings);
-
-			if ($check === false) {
-				$app->redirect($_SERVER['HTTP_REFERER']);
-			}
-
-			//sanitize the image filename
-			$filename = JEMImage::sanitize($base_Dir, $file['name']);
-			$filepath = $base_Dir . $filename;
-
-			if (!JFile::upload($file['tmp_name'], $filepath)) {
-				$this->setError(JText::_('COM_JEM_UPLOAD_FAILED'));
-				return false;
-			} else {
-				$row->locimage = $filename;
-			}
-		} else {
-			//keep image if edited and left blank
-			$row->locimage = $curimage;
-		}
-
-		//Check description
-		$editoruser = JEMUser::editoruser();
-
-		if (!$editoruser) {
-			//check description --> wipe out code
-			$row->locdescription = strip_tags($row->locdescription, '<br><br/>');
-
-			//convert the linux \n (Mac \r, Win \r\n) to <br /> linebreaks
-			$row->locdescription = str_replace(array("\r\n", "\r", "\n"), "<br />", $row->locdescription);
-
-			//cut too long words
-			$row->locdescription = wordwrap($row->locdescription, 75, " ", 1);
-
-			//check length
-			$length = JString::strlen($row->locdescription);
-			if ($length > $jemsettings->datdesclimit) {
-
-				// if required shorten it
-				$row->locdescription = JString::substr($row->locdescription, 0, $jemsettings->datdesclimit);
-				//if shortened add ...
-				$row->locdescription = $row->locdescription.'...';
-			}
-		}
-
-		$row->version++;
-
-		//Make sure the data is valid
-		if (!$row->check($jemsettings)) {
-			$this->setError($row->getError());
-			return false;
-		}
-
-		//store it in the db
-		if (!$row->store()) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
-		}
-
-		// attachments
-		// new ones first
-		$attachments = JRequest::getVar('attach', array(), 'files', 'array');
-		$attachments['customname'] = JRequest::getVar('attach-name', array(), 'post', 'array');
-		$attachments['description'] = JRequest::getVar('attach-desc', array(), 'post', 'array');
-		$attachments['access'] = JRequest::getVar('attach-access', array(), 'post', 'array');
-		JEMAttachment::postUpload($attachments, 'venue'.$row->id);
-
-		// and update old ones
-		$attachments = array();
-		$old['id'] = JRequest::getVar('attached-id', array(), 'post', 'array');
-		$old['name'] = JRequest::getVar('attached-name', array(), 'post', 'array');
-		$old['description'] = JRequest::getVar('attached-desc', array(), 'post', 'array');
-		$old['access'] = JRequest::getVar('attached-access', array(), 'post', 'array');
-		foreach ($old['id'] as $k => $id)
-		{
-			$attach = array();
-			$attach['id'] = $id;
-			$attach['name'] = $old['name'][$k];
-			$attach['description'] = $old['description'][$k];
-			$attach['access'] = $old['access'][$k];
-			JEMAttachment::update($attach);
-		}
-
-		//update item order
-		$row->reorder();
-
-		return $row->id;
+		return base64_encode(urlencode($this->getState('return_page')));
 	}
+
 }
-?>

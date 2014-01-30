@@ -55,12 +55,17 @@ class JEMViewEventslist extends JEMView
 		}
 
 		// get variables
-		$filter_order		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', 	'a.dates', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir',	'', 'word');
+		$task 				= JRequest::getWord('task', '');
+		$filter_order		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$filter_order_DirDefault = 'ASC';
+		// Reverse default order for dates in archive mode
+		if($task == 'archive' && $filter_order == 'a.dates') {
+			$filter_order_DirDefault = 'DESC';
+		}
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
 		$filter 			= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter', 'filter', '', 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 		$search 			= $db->escape(trim(JString::strtolower($search)));
-		$task 				= JRequest::getWord('task');
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;

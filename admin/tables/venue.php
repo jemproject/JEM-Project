@@ -1,12 +1,11 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 /**
@@ -14,19 +13,33 @@ defined('_JEXEC') or die;
  */
 class JEMTableVenue extends JTable
 {
-	
-	function __construct(&$db)
-	{
+
+	function __construct(&$db){
 		parent::__construct('#__jem_venues', 'id', $db);
+	}
+
+
+	/**
+	 * Overloaded bind method for the Venue table.
+	 */
+	public function bind($array, $ignore = ''){
+		// in here we are checking for the empty value of the checkbox
+
+		if (!isset($array['map']))
+			$array['map'] = 0 ;
+
+		//don't override without calling base class
+		return parent::bind($array, $ignore);
 	}
 
 	/**
 	 * overloaded check function
 	 */
-	function check()
-	{
-		// not typed in a venue name
-		if(!trim($this->venue)) {
+	function check(){
+
+		$jinput = JFactory::getApplication()->input;
+
+		if (trim($this->venue) == ''){
 			$this->setError(JText::_('COM_JEM_ADD_VENUE'));
 			return false;
 		}
@@ -104,24 +117,80 @@ class JEMTableVenue extends JTable
 	 */
 	public function store($updateNulls = false)
 	{
-		
+		$date 			= JFactory::getDate();
+		$user 			= JFactory::getUser();
+		$app 			= JFactory::getApplication();
+		$jinput 		= JFactory::getApplication()->input;
+		$jemsettings 	= JEMHelper::config();
+
+		// Check if we're in the front or back
+		if ($app->isAdmin())
+			$backend = true;
+		else
+			$backend = false;
+
+
+		if ($this->id) {
+			// Existing event
+			$this->modified = $date->toSql();
+			$this->modified_by = $user->get('id');
+		}
+		else
+		{
+			// New event
+			if (!intval($this->created)){
+				$this->created = $date->toSql();
+			}
+			if (empty($this->created_by)){
+				$this->created_by = $user->get('id');
+			}
+		}
+
+
+		// Image check
+		jimport('joomla.filesystem.file');
+		$image_dir = JPATH_SITE . '/images/jem/venues/';
+		$allowable = array(
+				'gif',
+				'jpg',
+				'png'
+		);
+
+		// Check if image was selected
+		jimport('joomla.filesystem.file');
+		$image_dir = JPATH_SITE.'/images/jem/venues/';
+		$allowable = array ('gif', 'jpg', 'png');
+
+		// get image (frontend)
+		if (!$backend) {
+			$file = JRequest::getVar('userfile', '', 'files', 'array');
+			if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1) && (!empty($file['name']))) {
+
+				//check the image
+				$check = JEMImage::check($file, $jemsettings);
+
+				if ($check !== false) {
+					//sanitize the image filename
+					$filename = JEMImage::sanitize($image_dir, $file['name']);
+					$filepath = $image_dir . $filename;
+
+					if (JFile::upload($file['tmp_name'], $filepath)) {
+						$this->locimage = $filename;
+					}
+				}
+			} // end image if
+		} // if (!backend)
+
+		$format = JFile::getExt($image_dir . $this->locimage);
+		if (!in_array($format, $allowable))
+		{
+			$this->locimage = '';
+		}
+
 		return parent::store($updateNulls);
 	}
-	
-	/**
-	 * Overloaded bind method for the Venue table.
-	 */
-	public function bind($array, $ignore = '')
-	{
-		// in here we are checking for the empty value of the checkbox
 
-		if (!isset($array['map']))
-			$array['map'] = 0 ;
 
-		//don't override without calling base class
-		return parent::bind($array, $ignore);
-	}
-	
 	/**
 	 * try to insert first, update if fails
 	 *
@@ -140,7 +209,7 @@ class JEMTableVenue extends JTable
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Inserts a row into a table based on an objects properties, ignore if already exists
 	 *
@@ -174,7 +243,7 @@ class JEMTableVenue extends JTable
 		}
 		return $this->_db->getAffectedRows();
 	}
-	
+
 	/**
 	 * Method to set the publishing state for a row or list of rows in the database
 	 * table. The method respects checked out rows by other users and will attempt

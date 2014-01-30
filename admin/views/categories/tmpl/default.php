@@ -56,7 +56,7 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 					<input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
 				</th>
 				<th>
-					<?php echo JHtml::_('grid.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
+					<?php echo JHtml::_('grid.sort', 'JGLOBAL_TITLE', 'a.catname', $listDirn, $listOrder); ?>
 				</th>
 				<th width="5%" nowrap="nowrap">
 					<?php echo JText::_( 'COM_JEM_COLOR' ); ?>
@@ -73,7 +73,7 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 					<?php endif; ?>
 				</th>
 				<th class="center" width="10%">
-					<?php echo JHtml::_('grid.sort',  'JGRID_HEADING_ACCESS', 'a.title', $listDirn, $listOrder); ?>
+					<?php echo JHtml::_('grid.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
 				</th>
 				<th width="1%" class="nowrap">
 					<?php echo JHtml::_('grid.sort',  'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
@@ -99,14 +99,11 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 
 				$grouplink 	= 'index.php?option=com_jem&amp;task=group.edit&amp;id='. $item->groupid;
 
-				if ($item->level > 0)
-				{
-				$repeat = $item->level-1;
-				} else
-					{
+				if ($item->level > 0) {
+					$repeat = $item->level-1;
+				} else {
 					$repeat = 0;
 				}
-
 			?>
 				<tr class="row<?php echo $i % 2; ?>">
 					<td class="center">
@@ -137,20 +134,18 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 						</div>
 					</td>
 					<td class="center">
-				<?php if ($item->catgroup) :	?>
-					<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_GROUP' );?>::<?php echo $item->catgroup; ?>">
-					<a href="<?php echo $grouplink; ?>">
-						<?php echo htmlspecialchars($item->catgroup, ENT_QUOTES, 'UTF-8'); ?>
-					</a></span>
-				<?php else : ?>
-					<?php echo '-'; ?>
-				<?php endif; ?>
-			</td>
-			<td class="center">
-				<?php
-			echo $item->assignedevents;
-			?>
-			</td>
+						<?php if ($item->catgroup) : ?>
+							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_GROUP' );?>::<?php echo $item->catgroup; ?>">
+							<a href="<?php echo $grouplink; ?>">
+								<?php echo htmlspecialchars($item->catgroup, ENT_QUOTES, 'UTF-8'); ?>
+							</a></span>
+						<?php else : ?>
+							<?php echo '-'; ?>
+						<?php endif; ?>
+					</td>
+					<td class="center">
+						<?php echo $item->assignedevents; ?>
+					</td>
 					<td class="center">
 						<?php echo JHtml::_('jgrid.published', $item->published, $i, 'categories.', $canChange);?>
 					</td>
@@ -164,21 +159,20 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 							<input type="text" name="order[]" size="5" value="<?php echo $orderkey + 1;?>" <?php echo $disabled ?> class="text-area-order" />
 							<?php $originalOrders[] = $orderkey + 1; ?>
 						<?php else : ?>
-							<?php echo $orderkey + 1;?>
+							<?php echo $orderkey + 1; ?>
 						<?php endif; ?>
 					</td>
 					<td class="center">
 						<?php echo $this->escape($item->access_level); ?>
 					</td>
 					<td class="center">
-						<span title="<?php echo sprintf('%d-%d', $item->lft, $item->rgt);?>">
+						<span title="<?php echo sprintf('%d-%d', $item->lft, $item->rgt); ?>">
 							<?php echo (int) $item->id; ?></span>
 					</td>
 				</tr>
 			<?php endforeach; ?>
 		</tbody>
 	</table>
-
 
 	<div>
 		<input type="hidden" name="task" value="" />
