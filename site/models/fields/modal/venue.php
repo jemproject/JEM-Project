@@ -44,7 +44,7 @@ class JFormFieldModal_Venue extends JFormField
 
 		// Setup variables for display
 		$html = array();
-		$link = 'index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&amp;function=jSelectVenue_'.$this->id;
+		$link = 'index.php?option=com_jem&amp;view=editevent&amp;layout=choosevenue&amp;tmpl=component&amp;function=jSelectVenue_'.$this->id;
 
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);

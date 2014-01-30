@@ -109,27 +109,27 @@ window.addEvent('domready', function() {
 				</td>
 				<td>
 					<?php if (JString::strlen($row->alias) > 25) : ?>
-						<?php echo JString::substr($this->escape($row->alias), 0 , 25).'...'; ?>
+						<?php echo $this->escape(JString::substr($row->alias, 0 , 25)).'...'; ?>
 					<?php else : ?>
 						<?php echo $this->escape($row->alias); ?>
 					<?php endif; ?>
 				</td>
 				<td align="left">
 					<?php if ($row->url) : ?>
-						<a href="<?php echo htmlspecialchars($row->url, ENT_QUOTES, 'UTF-8'); ?>" target="_blank">
+						<a href="<?php echo $this->escape($row->url); ?>" target="_blank">
 							<?php if (JString::strlen($row->url) > 25) : ?>
-								<?php echo JString::substr( htmlspecialchars($row->url, ENT_QUOTES, 'UTF-8'), 0 , 25).'...'; ?>
+								<?php echo $this->escape(JString::substr($row->url, 0 , 25)).'...'; ?>
 							<?php else : ?>
-								<?php echo htmlspecialchars($row->url, ENT_QUOTES, 'UTF-8'); ?>
+								<?php echo $this->escape($row->url); ?>
 							<?php endif; ?>
 						</a>
 					<?php else : ?>
 						-
 					<?php endif; ?>
 				</td>
-				<td align="left" class="city"><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
-				<td align="left" class="state"><?php echo $row->state ? htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
-				<td class="country"><?php echo $row->country ? htmlspecialchars($row->country, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+				<td align="left" class="city"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
+				<td align="left" class="state"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
+				<td class="country"><?php echo $row->country ? $this->escape($row->country) : '-'; ?></td>
 				<td class="center"><?php echo $published; ?></td>
 				<td>
 					<?php echo JText::_( 'COM_JEM_AUTHOR' ).': '; ?>

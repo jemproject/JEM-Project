@@ -499,7 +499,7 @@ class JEMOutput {
 			$overlib = JText::_('COM_JEM_EXPORT_DESC');
 			$text = JText::_('COM_JEM_EXPORT');
 
-			$print_link = 'index.php?option=com_jem&amp;view=attendees&amp;task=attendees.export&amp;tmpl=raw&amp;id='.$eventid.$emailaddress;
+			$print_link = 'index.php?option=com_jem&view=attendees&task=attendees.export&tmpl=raw&id='.$eventid.$emailaddress;
 			$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 		}
 
@@ -531,7 +531,7 @@ class JEMOutput {
 			$overlib = JText::_('COM_JEM_BACK');
 			$text = JText::_('COM_JEM_BACK');
 
-			$link = 'index.php?option=com_jem&amp;view='.$view.'&id='.$id.'&Itemid='.$fid.'&amp;task=attendees.back';
+			$link = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&Itemid='.$fid.'&task=attendees.back';
 			$output	= '<a href="'. JRoute::_($link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 		}
 

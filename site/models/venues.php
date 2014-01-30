@@ -99,10 +99,11 @@ class JEMModelVenues extends JModelLegacy
 				}
 
 				//prepare the url for output
-				if (strlen(htmlspecialchars($venue->url, ENT_QUOTES)) > 35) {
-					$venue->urlclean = substr(htmlspecialchars($venue->url, ENT_QUOTES), 0 , 35).'...';
+				// TODO: Should be part of view! Then use $this->escape()
+				if (strlen($venue->url) > 35) {
+					$venue->urlclean = htmlspecialchars(substr($venue->url, 0 , 35)).'...';
 				} else {
-					$venue->urlclean = htmlspecialchars($venue->url, ENT_QUOTES);
+					$venue->urlclean = htmlspecialchars($venue->url);
 				}
 
 				//create flag
@@ -169,24 +170,24 @@ class JEMModelVenues extends JModelLegacy
 	{
 		$user = JFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
-		
+
 		//check archive task
 		$task 	= JRequest::getVar('task', '', '', 'string');
-		
-		
+
+
 		$where = array();
-		
-		
+
+
 		if($task == 'archive') {
 			$where[] = ' a.published = 2';
 		} else {
 			$where[] = ' a.published = 1';
 		}
-		
+
 		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
 		$where[] = ' c.published = 1';
 		$where[] = ' l.published = 1';
-		
+
 		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
 
 		//get categories
@@ -197,7 +198,7 @@ class JEMModelVenues extends JModelLegacy
 				. ' FROM #__jem_events as a'
 				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'					
+				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
 				. $where
 				. ' GROUP BY l.id'
 				. ' ORDER BY l.venue'

@@ -15,28 +15,28 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=attendees'); ?>"  method="post" name="adminForm" id="adminForm">
 	<table class="adminlist">
 		<tr>
-		  	<td width="80%">
+			<td width="80%">
 				<b><?php echo JText::_( 'COM_JEM_DATE' ).':'; ?></b>&nbsp;<?php echo $this->event->dates; ?><br />
-				<b><?php echo JText::_( 'COM_JEM_EVENT_TITLE' ).':'; ?></b>&nbsp;<?php echo htmlspecialchars($this->event->title, ENT_QUOTES, 'UTF-8'); ?>
+				<b><?php echo JText::_( 'COM_JEM_EVENT_TITLE' ).':'; ?></b>&nbsp;<?php echo $this->escape($this->event->title); ?>
 			</td>
 			<td width="20%">
 				<div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_JEM_PRINT'); ?>" onclick="window.open('index.php?option=com_jem&amp;view=attendees&amp;layout=print&amp;tmpl=component&amp;id=<?php echo $this->event->id; ?>', 'popup', 'width=750,height=400,scrollbars=yes,toolbar=no,status=no,resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><?php echo JText::_('COM_JEM_PRINT'); ?></a></div></div>
 				<div class="button2-left"><div class="blank"><a title="<?php echo JText::_('COM_JEM_CSV_EXPORT'); ?>" onclick="window.open('index.php?option=com_jem&amp;task=attendees.export&amp;tmpl=raw&amp;id=<?php echo $this->event->id; ?>')"><?php echo JText::_('COM_JEM_CSV_EXPORT'); ?></a></div></div>
 			</td>
-		  </tr>
+		</tr>
 	</table>
 	<br />
 	<table class="adminform">
 		<tr>
-			 <td width="100%">
-			 	<?php echo JText::_('COM_JEM_SEARCH').' '.$this->lists['filter']; ?>
+			<td width="100%">
+				<?php echo JText::_('COM_JEM_SEARCH').' '.$this->lists['filter']; ?>
 				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
 			<button class="buttonfilter" type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
 			<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 			</td>
 			<?php if ($this->event->waitinglist): ?>
-			 <td style="text-align:right; white-space:nowrap;">
-			 	<?php echo JText::_('COM_JEM_STATUS').' '.$this->lists['waiting']; ?>
+			<td style="text-align:right; white-space:nowrap;">
+				<?php echo JText::_('COM_JEM_STATUS').' '.$this->lists['waiting']; ?>
 			</td>
 			<?php endif; ?>
 		</tr>
@@ -65,7 +65,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 		</tfoot>
 		<tbody>
 			<?php
-   		foreach ($this->rows as $i => $row) :
+		foreach ($this->rows as $i => $row) :
 			?>
 			<tr class="row<?php echo $i % 2; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
@@ -82,10 +82,10 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 				<td class="hasTip" title="<?php echo ($row->waiting ? JText::_('COM_JEM_ON_WAITINGLIST') : JText::_('COM_JEM_ATTENDING')).'::'; ?>">
 					<?php if ($row->waiting):?>
 						<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&task=attendees.toggle&id='.$row->id),
-						                        JHtml::_('image','com_jem/publish_y.png',JText::_('COM_JEM_ON_WAITINGLIST'),NULL,true)); ?>
+							JHtml::_('image','com_jem/publish_y.png',JText::_('COM_JEM_ON_WAITINGLIST'),NULL,true)); ?>
 					<?php else: ?>
 						<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&task=attendees.toggle&id='.$row->id),
-						                        JHtml::_('image','com_jem/tick.png',JText::_('COM_JEM_ATTENDING'),NULL,true)); ?>
+							JHtml::_('image','com_jem/tick.png',JText::_('COM_JEM_ATTENDING'),NULL,true)); ?>
 					<?php endif;?>
 				</td>
 				<?php endif;?>

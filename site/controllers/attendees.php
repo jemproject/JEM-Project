@@ -34,10 +34,10 @@ class JEMControllerAttendees extends JControllerLegacy
 	 */
 	function back()
 	{
-		$this->setRedirect(JRoute::_(JEMHelperRoute::getMyEventsRoute()));
+		$this->setRedirect(JRoute::_(JEMHelperRoute::getMyEventsRoute(), false));
 		$this->redirect();
 	}
-	
+
 	/**
 	 * removetask
 	 */
@@ -47,25 +47,25 @@ class JEMControllerAttendees extends JControllerLegacy
 		$id  = JRequest::getInt('id');
 		$fid = JRequest::getInt('Itemid');
 		$total = count($cid);
-	
+
 		$model = $this->getModel('attendees');
-	
+
 		if (!is_array($cid) || count($cid) < 1) {
 			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
 		}
-	
+
 		if(!$model->remove($cid)) {
 			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
 		}
-	
+
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
-	
+
 		$msg = $total.' '.JText::_('COM_JEM_REGISTERED_USERS_DELETED');
-	
-		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&id='.$id.'&Itemid='.$fid), $msg);
+
+		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&id='.$id.'&Itemid='.$fid, false), $msg);
 	}
-	
+
 	/**
 	 * toggletask
 	 */
@@ -73,21 +73,21 @@ class JEMControllerAttendees extends JControllerLegacy
 	{
 		$id = JRequest::getInt('id');
 		$fid = JRequest::getInt('Itemid');
-	
+
 		$model = $this->getModel('attendee');
 		$model->setId($id);
-	
+
 		$attendee = $model->getData();
 		$res = $model->toggle();
-	
+
 		$type = 'message';
-	
+
 		if ($res)
 		{
 			JPluginHelper::importPlugin('jem');
 			$dispatcher = JDispatcher::getInstance();
 			$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($id));
-	
+
 			if ($attendee->waiting) {
 				$msg = JText::_('COM_JEM_ADDED_TO_ATTENDING');
 			} else {
@@ -99,11 +99,11 @@ class JEMControllerAttendees extends JControllerLegacy
 			$msg = JText::_('COM_JEM_WAITINGLIST_TOGGLE_ERROR').': '.$model->getError();
 			$type = 'error';
 		}
-	
-		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&id='.$attendee->event.'&Itemid='.$fid), $msg, $type);
+
+		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&id='.$attendee->event.'&Itemid='.$fid, false), $msg, $type);
 		$this->redirect();
 	}
-	
+
 	/**
 	 * Exporttask
 	 * view: attendees
@@ -111,37 +111,37 @@ class JEMControllerAttendees extends JControllerLegacy
 	function export()
 	{
 		$app = JFactory::getApplication();
-	
+
 		$jinput = JFactory::getApplication()->input;
 		$enableemailadress = $jinput->get('em','','int');
-	
+
 		$model = $this->getModel('attendees');
-	
+
 		$datas = $model->getData();
-	
+
 		header('Content-Type: text/x-csv');
 		header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 		header('Content-Disposition: attachment; filename=attendees.csv');
 		header('Pragma: no-cache');
-	
+
 		$export = '';
 		$col = array();
-	
+
 		for($i=0; $i < count($datas); $i++)
 		{
 		$data = $datas[$i];
-	
+
 		$col[] = str_replace("\"", "\"\"", $data->username);
 		if ($enableemailadress == 1)
 		{
 		$col[] = str_replace("\"", "\"\"", $data->email);
 		}
 		$col[] = str_replace("\"", "\"\"", JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2')));
-		
+
 			for($j = 0; $j < count($col); $j++)
 				{
 				$export .= "\"" . $col[$j] . "\"";
-	
+
 				if($j != count($col)-1)
 				{
 				$export .= ";";
@@ -150,9 +150,9 @@ class JEMControllerAttendees extends JControllerLegacy
 				$export .= "\r\n";
 				$col = '';
 		}
-	
+
 				echo $export;
-	
+
 				$app->close();
 	}
 }

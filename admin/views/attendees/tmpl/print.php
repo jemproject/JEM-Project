@@ -7,22 +7,22 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-defined('_JEXEC') or die; 
+defined('_JEXEC') or die;
 ?>
 	<table style="width:100%" class="adminlist">
 		<tr>
-		  	<td class="sectionname" width="100%"><font style="color: #C24733; font-size : 18px; font-weight: bold;"><?php echo JText::_('COM_JEM_REGISTERED_USER'); ?></font></td>
-		  	<td><div class="button2-left"><div class="blank"><a href="#" onclick="window.print();return false;"><?php echo JText::_('COM_JEM_PRINT'); ?></a></div></div></td>
+			<td class="sectionname" width="100%"><font style="color: #C24733; font-size : 18px; font-weight: bold;"><?php echo JText::_('COM_JEM_REGISTERED_USER'); ?></font></td>
+			<td><div class="button2-left"><div class="blank"><a href="#" onclick="window.print();return false;"><?php echo JText::_('COM_JEM_PRINT'); ?></a></div></div></td>
 		</tr>
 	</table>
 	<br />
 	<table class="adminlist">
 		<tr>
-		  	<td align="left">
+			<td align="left">
 				<b><?php echo JText::_('COM_JEM_DATE').':'; ?></b>&nbsp;<?php echo $this->event->dates; ?><br />
-				<b><?php echo JText::_('COM_JEM_EVENT_TITLE').':'; ?></b>&nbsp;<?php echo htmlspecialchars($this->event->title, ENT_QUOTES, 'UTF-8'); ?>
+				<b><?php echo JText::_('COM_JEM_EVENT_TITLE').':'; ?></b>&nbsp;<?php echo $this->escape($this->event->title); ?>
 			</td>
-		  </tr>
+		</tr>
 	</table>
 	<br />
 	<table class="table table-striped" id="articleList">
@@ -41,7 +41,7 @@ defined('_JEXEC') or die;
 			$k = 0;
 			for($i=0, $n=count( $this->rows ); $i < $n; $i++) {
 				$row = $this->rows[$i];
-   			?>
+			?>
 			<tr class="<?php echo "row$k"; ?>">
 				<td><?php echo $row->name; ?></td>
 				<td><?php echo $row->username; ?></td>
@@ -50,6 +50,6 @@ defined('_JEXEC') or die;
 				<td><?php echo JHtml::_('date',$row->uregdate,JText::_('DATE_FORMAT_LC2')); ?></td>
 				<td class="center"><?php echo $row->uid; ?></td>
 			</tr>
-			<?php $k = 1 - $k;  } ?>
+			<?php $k = 1 - $k; } ?>
 		</tbody>
 	</table>

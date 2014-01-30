@@ -36,7 +36,7 @@ defined('_JEXEC') or die;
 			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo JText::_('COM_JEM_CATEGORY'); ?></th>
-		    <th class="center" width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
+			<th class="center" width="1%" nowrap="nowrap"><?php echo JText::_( 'COM_JEM_PUBLISHED' ); ?></th>
 		</tr>
 	</thead>
 
@@ -55,7 +55,7 @@ defined('_JEXEC') or die;
 			<td>
 				<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_SELECT' );?>::<?php echo $row->title; ?>">
 				<a style="cursor:pointer" onclick="window.parent.elSelectEvent('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->title ); ?>');">
-					<?php echo htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8'); ?>
+					<?php echo $this->escape($row->title); ?>
 				</a></span>
 			</td>
 			<td>
@@ -76,16 +76,16 @@ defined('_JEXEC') or die;
 					echo $displaytime;
 				?>
 			</td>
-			<td><?php echo $row->venue ? htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
-			<td><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+			<td><?php echo $row->venue ? $this->escape($row->venue) : '-'; ?></td>
+			<td><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
 			<td><?php
 				$nr = count($row->categories);
 				$ix = 0;
 				foreach ($row->categories as $key => $category) :
 					$catlink	= 'index.php?option=com_jem&amp;controller=categories&amp;task=edit&amp;cid[]='. $category->id;
-					$title = htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8');
-					if (JString::strlen($title) > 20) {
-						$title = JString::substr( $title , 0 , 20).'...';
+					$title = $this->escape($category->catname);
+					if (JString::strlen($category->catname) > 20) {
+						$title = $this->escape(JString::substr($category->catname , 0 , 20)).'...';
 					}
 
 					$path = '';
@@ -101,16 +101,11 @@ defined('_JEXEC') or die;
 						endif;
 					endforeach;
 
-					if ( $category->cchecked_out && ( $category->cchecked_out != $this->user->get('id') ) ) {
-							echo $title;
+					// TODO: WTF? Some functionality missing here?
+					if ($category->cchecked_out && ( $category->cchecked_out != $this->user->get('id'))) {
+						echo $title;
 					} else {
-					?>
-
-
-							<?php echo $title; ?>
-
-
-					<?php
+						echo $title;
 					}
 					$ix++;
 					if ($ix != $nr) :
@@ -119,9 +114,9 @@ defined('_JEXEC') or die;
 				endforeach;
 				?></td>
 			<td class="center">
-				<?php 
+				<?php
 				$img = $row->published ? 'tick.png' : 'publish_x.png';
-				echo JHtml::_('image','com_jem/'.$img,NULL,NULL,true); 
+				echo JHtml::_('image','com_jem/'.$img,NULL,NULL,true);
 				?>
 			</td>
 		</tr>
