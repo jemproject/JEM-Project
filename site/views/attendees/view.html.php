@@ -79,7 +79,7 @@ class JEMViewAttendees extends JViewLegacy {
 		}else {
 			$emailaddress = '';
 		}
-		$print_link = JRoute::_('index.php?option=com_jem&amp;view=attendees&amp;layout=print&amp;task=print&amp;tmpl=component&amp;id='.$event->id.$emailaddress);
+		$print_link = 'index.php?option=com_jem&view=attendees&layout=print&task=print&tmpl=component&id='.$event->id.$emailaddress;
 		$backlink = 'attendees';
 		$view = 'attendees';
 

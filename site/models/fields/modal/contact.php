@@ -41,11 +41,10 @@ class JFormFieldModal_Contact extends JFormField
 
 		// Add to document head
 		JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));
-		
+
 		// Setup variables for display
 		$html = array();
-		
-		$link = 'index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component&amp;function=jSelectContact_'.$this->id;
+		$link = 'index.php?option=com_jem&amp;view=editevent&amp;layout=choosecontact&amp;tmpl=component&amp;function=jSelectContact_'.$this->id;
 
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
