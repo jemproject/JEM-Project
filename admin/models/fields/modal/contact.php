@@ -73,20 +73,20 @@ class JFormFieldModal_Contact extends JFormField
 		$query->where('id='.(int)$this->value);
 		$db->setQuery($query);
 
-		$contactid = $db->loadResult();
+		$contact = $db->loadResult();
 
 		if ($error = $db->getErrorMsg()) {
 			JError::raiseWarning(500, $error);
 		}
 
-		if (empty($contactid)) {
-			$contactid = JText::_('COM_JEM_SELECTCONTACT');
+		if (empty($contact)) {
+			$contact = JText::_('COM_JEM_SELECTCONTACT');
 		}
-		$contactid = htmlspecialchars($contactid, ENT_QUOTES, 'UTF-8');
+		$contact = htmlspecialchars($contact, ENT_QUOTES, 'UTF-8');
 
 		// The current contact input field
 		$html[] = '<div class="fltlft">';
-		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$contactid.'" disabled="disabled" size="35" />';
+		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$contact.'" disabled="disabled" size="35" />';
 		$html[] = '</div>';
 
 		// The contact select button

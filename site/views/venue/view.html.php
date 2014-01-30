@@ -229,10 +229,10 @@ class JEMViewVenue extends JEMView {
 			}
 
 			// prepare the url for output
-			if (strlen(htmlspecialchars($venue->url, ENT_QUOTES)) > 35) {
-				$venue->urlclean = substr(htmlspecialchars($venue->url, ENT_QUOTES), 0, 35 ) . '...';
+			if (strlen($venue->url) > 35) {
+				$venue->urlclean = $this->escape(substr($venue->url, 0, 35 )) . '...';
 			} else {
-				$venue->urlclean = htmlspecialchars($venue->url, ENT_QUOTES);
+				$venue->urlclean = $this->escape($venue->url);
 			}
 
 			// create flag

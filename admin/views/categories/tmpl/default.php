@@ -137,7 +137,7 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 						<?php if ($item->catgroup) : ?>
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_GROUP' );?>::<?php echo $item->catgroup; ?>">
 							<a href="<?php echo $grouplink; ?>">
-								<?php echo htmlspecialchars($item->catgroup, ENT_QUOTES, 'UTF-8'); ?>
+								<?php echo $this->escape($item->catgroup); ?>
 							</a></span>
 						<?php else : ?>
 							<?php echo '-'; ?>

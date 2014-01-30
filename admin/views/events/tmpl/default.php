@@ -24,7 +24,7 @@ $settings	= $this->settings;
 Call the highlight function with the text to highlight.
 http://johannburkard.de/blog/programming/javascript/highlight-javascript-text-higlighting-jquery-plugin.html
 
-To highlight all occurrances of �bla� (case insensitive) in all li elements, use the following code:
+To highlight all occurrances of "bla" (case insensitive) in all li elements, use the following code:
 	$('li').highlight('bla');
 
 Remove highlighting
@@ -162,11 +162,11 @@ window.addEvent('domready', function(){
 				<td class="venue">
 					<?php if ($row->venue) : ?>
 						<?php if ( $row->vchecked_out && ( $row->vchecked_out != $this->user->get('id') ) ) : ?>
-							<?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>
+							<?php echo $this->escape($row->venue); ?>
 						<?php else : ?>
 							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_VENUE' );?>::<?php echo $row->venue; ?>">
 								<a href="<?php echo $venuelink; ?>">
-									<?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>
+									<?php echo $this->escape($row->venue); ?>
 								</a>
 							</span>
 						<?php endif; ?>
@@ -174,8 +174,8 @@ window.addEvent('domready', function(){
 						<?php echo '-'; ?>
 					<?php endif; ?>
 				</td>
-				<td class="city"><?php echo $row->city ? htmlspecialchars($row->city, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
-				<td class="state"><?php echo $row->state ? htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+				<td class="city"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
+				<td class="state"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
 				<td class="category">
 				<?php
 				$ix = 0;
@@ -187,9 +187,9 @@ window.addEvent('domready', function(){
 					endif;
 
 					$catlink = 'index.php?option=com_jem&amp;task=category.edit&amp;id='. $category->id;
-					$title = htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8');
-					if (JString::strlen($title) > 20) {
-						$title = JString::substr( $title , 0 , 20).'...';
+					$title = $this->escape($category->catname);
+					if (JString::strlen($category->catname) > 20) {
+						$title = $this->escape(JString::substr($category->catname , 0 , 20)).'...';
 					}
 
 					$path = '';

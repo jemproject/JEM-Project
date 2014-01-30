@@ -36,11 +36,9 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 </div>
 
 <?php if ($this->params->def( 'show_page_title', 1 )) : ?>
-
-    <h1 class="componentheading">
+	<h1 class="componentheading">
 		<?php echo $this->escape($this->pagetitle); ?>
 	</h1>
-
 <?php endif; ?>
 
 
@@ -50,37 +48,38 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 	</div>
 <?php endif; ?>
 
-<h2><?php echo htmlspecialchars($this->event->title, ENT_QUOTES, 'UTF-8'); ?></h2>
+<h2><?php echo $this->escape($this->event->title); ?></h2>
 
 <form action="<?php echo $this->action; ?>"  method="post" name="adminForm" id="adminForm">
 
 	<table class="adminlist">
 		<tr>
-		  	<td width="80%">
+			<td width="80%">
 
-				<b><?php echo JText::_( 'COM_JEM_TITLE' ).':'; ?></b>&nbsp;<a href="<?php echo $detaillink ; ?>"><?php echo htmlspecialchars($this->event->title, ENT_QUOTES, 'UTF-8'); ?></a>
+				<b><?php echo JText::_( 'COM_JEM_TITLE' ).':'; ?></b>&nbsp;
+				<a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a>
 				<br />
 				<b><?php echo JText::_( 'COM_JEM_DATE' ).':'; ?></b>&nbsp;
 
 				<?php echo JEMOutput::formatLongDateTime($this->event->dates, $this->event->times,
-				$this->event->enddates, $this->event->endtimes); ?>
+					$this->event->enddates, $this->event->endtimes); ?>
 			</td>
 
-		  </tr>
+		</tr>
 	</table>
 	<br />
 	<div id="jem_filter" class="floattext">
 		<div class="jem_fleft">
-			 	<?php echo JText::_( 'COM_JEM_SEARCH' ).' '.$this->lists['filter']; ?>
+				<?php echo JText::_( 'COM_JEM_SEARCH' ).' '.$this->lists['filter']; ?>
 				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
 				<button class="buttonfilter" type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
 			<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 			</div>
 			<?php if ($this->event->waitinglist): ?>
-			 <div style="text-align:right; white-space:nowrap;">
-			 	<?php echo JText::_( 'COM_JEM_STATUS' ).' '.$this->lists['waiting'];
-			 	echo '&nbsp;';
-			 	?>
+			<div style="text-align:right; white-space:nowrap;">
+				<?php echo JText::_( 'COM_JEM_STATUS' ).' '.$this->lists['waiting'];
+				echo '&nbsp;';
+				?>
 			</div>
 			<?php endif; ?>
 			<div class="jem_fright">
@@ -100,7 +99,6 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 				<th class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
 				<?php } ?>
 
-
 				<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 				<?php if ($this->event->waitinglist): ?>
 				<th class="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
@@ -110,16 +108,11 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 		</thead>
 
 		<tbody>
-			<?php
-   		foreach ($this->rows as $i => $row) :
-			?>
+			<?php foreach ($this->rows as $i => $row) : ?>
 			<tr class="row<?php echo $i % 2; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 				<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
-				<td>
-					<?php echo $row->username; ?>
-				</td>
-
+				<td><?php echo $row->username; ?></td>
 
 				<?php if ($this->enableemailaddress == 1) {?>
 				<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
@@ -136,7 +129,7 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 				</td>
 				<?php endif;?>
 				<td class="center"><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendees.attendeeremove')"><?php echo
-						                        JHtml::_('image','com_jem/publish_x.png',JText::_('COM_JEM_ATTENDEES_DELETE'),NULL,true); ?></a></td>
+						JHtml::_('image','com_jem/publish_x.png',JText::_('COM_JEM_ATTENDEES_DELETE'),NULL,true); ?></a></td>
 			</tr>
 			<?php endforeach; ?>
 		</tbody>
@@ -157,7 +150,7 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 </div>
 
 <div class="copyright">
-<?php echo JEMOutput::footer(); ?>
+	<?php echo JEMOutput::footer(); ?>
 </div>
 
 </div>
