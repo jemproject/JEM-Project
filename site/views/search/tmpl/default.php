@@ -16,13 +16,12 @@ defined('_JEXEC') or die;
 	<?php
 		echo JEMOutput::submitbutton( $this->dellink, $this->params );
 		echo JEMOutput::archivebutton( $this->params, $this->task );
-		echo JEMOutput::printbutton( $this->print_link, $this->params );
 	?>
 </div>
 
 <?php if ($this->params->def( 'show_page_title', 1 )) : ?>
 
-    <h1 class="componentheading">
+	<h1 class="componentheading">
 		<?php echo $this->escape($this->pagetitle); ?>
 	</h1>
 

@@ -56,8 +56,6 @@ class JEMModelCategories extends JModelLegacy
 
 	/**
 	 * Constructor
-	 *
-	 *
 	 */
 	function __construct()
 	{
@@ -65,15 +63,20 @@ class JEMModelCategories extends JModelLegacy
 
 		$app = JFactory::getApplication();
 
-		// Get the paramaters of the active menu item
+		// Get the parameters of the active menu item
 		$params = $app->getParams('com_jem');
+
+		if (JRequest::getInt('id')) {
+			$id = JRequest::getInt('id');
+		} else {
+			$id = $params->get('id', 1);
+		}
+
+		$this->_id = $id;
 
 		//get	the number of events from database
 		$limit 		= JRequest::getInt('limit', $params->get('cat_num'));
 		$limitstart = JRequest::getInt('limitstart');
-
-		$id = $params->get('catid',0);
-		$this->_id = $id;
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -103,7 +106,7 @@ class JEMModelCategories extends JModelLegacy
 
 			foreach($this->_categories as $category)
 			{
-				
+
 				if ($params->get('usecat',1)) {
 					//child categories
 					$query = $this->_buildQuerySubCategories($category->id);
@@ -129,7 +132,7 @@ class JEMModelCategories extends JModelLegacy
 				$task = JRequest::getWord('task');
 
 				$category->linktext = $task == 'archive' ? JText::_('COM_JEM_SHOW_ARCHIVE') : JText::_('COM_JEM_SHOW_EVENTS');
-				
+
 				if ($task == 'archive') {
 					$category->linktarget = JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug.'&task=archive'));
 				} else {

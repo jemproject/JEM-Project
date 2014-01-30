@@ -7,16 +7,15 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-
 jimport('joomla.application.component.controllerform');
 
 /**
- * Event Controller
+ * Venue Controller
  */
-class JEMControllerEvent extends JControllerForm
+class JEMControllerVenue extends JControllerForm
 {
-	protected $view_item = 'editevent';
-	protected $view_list = 'eventslist';
+	protected $view_item = 'editvenue';
+	protected $view_list = 'venues';
 
 	/**
 	 * Method to add a new record.
@@ -42,17 +41,17 @@ class JEMControllerEvent extends JControllerForm
 	{
 		// Initialise variables.
 		$user		= JFactory::getUser();
-		$categoryId	= JArrayHelper::getValue($data, 'catid', JRequest::getInt('catid'), 'int');
+		//$categoryId	= JArrayHelper::getValue($data, 'catid', JRequest::getInt('catid'), 'int');
 		$allow		= null;
 
-		if ($categoryId) {
-			// If the category has been passed in the data or URL check it.
-			$allow	= $user->authorise('core.create', 'com_jem.category.'.$categoryId);
-		}
+		//if ($categoryId) {
+		//	// If the category has been passed in the data or URL check it.
+		//	$allow	= $user->authorise('core.create', 'com_jem.category.'.$categoryId);
+		//}
 
-		$jemsettings	= JEMHelper::config();
-		$maintainer		= JEMUser::ismaintainer('add');
-		$genaccess		= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+		$jemsettings	= JemHelper::config();
+		$maintainer		= JemUser::ismaintainer('add');
+		$genaccess		= JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
 		if ($maintainer || $genaccess) {
 			return true;
@@ -79,11 +78,13 @@ class JEMControllerEvent extends JControllerForm
 	 */
 	protected function allowEdit($data = array(), $key = 'id')
 	{
+
+
 		// Initialise variables.
 		$recordId	= (int) isset($data[$key]) ? $data[$key] : 0;
 		$user		= JFactory::getUser();
 		$userId		= $user->get('id');
-		$asset		= 'com_jem.event.'.$recordId;
+		$asset		= 'com_jem.venue.'.$recordId;
 
 		// Check general edit permission first.
 		if ($user->authorise('core.edit', $asset)) {
@@ -93,6 +94,9 @@ class JEMControllerEvent extends JControllerForm
 		// Fallback on edit.own.
 		// First test if the permission is available.
 		if ($user->authorise('core.edit.own', $asset)) {
+
+
+
 			// Now test the owner is the user.
 			$ownerId	= (int) isset($data['created_by']) ? $data['created_by'] : 0;
 			if (empty($ownerId) && $recordId) {
@@ -112,15 +116,19 @@ class JEMControllerEvent extends JControllerForm
 			}
 		}
 
+		/*
 		$record			= $this->getModel()->getItem($recordId);
 		$jemsettings 	= JEMHelper::config();
 		$editaccess		= JEMUser::editaccess($jemsettings->eventowner, $record->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+
 		$maintainer 	= JEMUser::ismaintainer('edit',$record->id);
+
 
 		if ($maintainer || $editaccess)
 		{
 			return true;
 		}
+		*/
 
 		// Since there is no asset tracking, revert to the component permissions.
 		return parent::allowEdit($data, $key);
@@ -151,6 +159,7 @@ class JEMControllerEvent extends JControllerForm
 	 */
 	public function edit($key = null, $urlVar = 'a_id')
 	{
+
 		$result = parent::edit($key, $urlVar);
 
 		return $result;
@@ -166,7 +175,7 @@ class JEMControllerEvent extends JControllerForm
 	 * @return	object	The model.
 	 *
 	 */
-	public function getModel($name = 'editevent', $prefix = '', $config = array('ignore_request' => true))
+	public function getModel($name = 'editvenue', $prefix = '', $config = array('ignore_request' => true))
 	{
 		$model = parent::getModel($name, $prefix, $config);
 
@@ -201,15 +210,15 @@ class JEMControllerEvent extends JControllerForm
 
 		$itemId	= JRequest::getInt('Itemid');
 		$return	= $this->getReturnPage();
-		$catId = JRequest::getInt('catid', null, 'get');
+		//$catId = JRequest::getInt('catid', null, 'get');
 
 		if ($itemId) {
 			$append .= '&Itemid='.$itemId;
 		}
 
-		if($catId) {
-			$append .= '&catid='.$catId;
-		}
+		//if($catId) {
+		//	$append .= '&catid='.$catId;
+		//}
 
 		if ($return) {
 			$append .= '&return='.base64_encode(urlencode($return));
@@ -243,15 +252,6 @@ class JEMControllerEvent extends JControllerForm
 
 	$task = $this->getTask();
 	if ($task == 'save') {
-		// doesn't work on new events - get values from model instead
-		//$isNew 	= ($validData['id']) ? false : true;
-		//$id 	= $validData['id'];
-		$isNew = $model->getState('editevent.new');
-		$id    = $model->getState('editevent.id');
-
-		JPluginHelper::importPlugin('jem');
-		$dispatcher = JDispatcher::getInstance();
-		$dispatcher->trigger('onEventEdited', array($id, $isNew));
 		}
 	}
 
@@ -276,70 +276,5 @@ class JEMControllerEvent extends JControllerForm
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Saves the registration to the database
-	 */
-	function userregister()
-	{
-
-		// Check for request forgeries
-		JRequest::checkToken() or jexit('Invalid Token');
-
-		$id 	= JRequest::getInt('rdid', 0, 'post');
-
-		// Get the model
-		$model = $this->getModel('Event', 'JEMModel');
-		$model->setId($id);
-		$register_id = $model->userregister();
-
-		if (!$register_id)
-		{
-			$msg = $model->getError();
-			$this->setRedirect(JRoute::_(JEMHelperRoute::getEventRoute($id), false), $msg, 'error');
-			$this->redirect();
-			return;
-		}
-
-		JPluginHelper::importPlugin('jem');
-		$dispatcher = JDispatcher::getInstance();
-		$dispatcher->trigger('onEventUserRegistered', array($register_id));
-
-		$cache = JFactory::getCache('com_jem');
-		$cache->clean();
-
-		$msg = JText::_('COM_JEM_REGISTERED_SUCCESSFULL');
-
-		$this->setRedirect(JRoute::_(JEMHelperRoute::getEventRoute($id), false), $msg);
-	}
-
-	/**
-	 * Deletes a registered user
-	 */
-	function delreguser()
-	{
-		// Check for request forgeries
-		JRequest::checkToken() or jexit('Invalid Token');
-
-		$id = JRequest::getInt('rdid', 0, 'post');
-
-		// Get/Create the model
-		$model = $this->getModel('Event', 'JEMModel');
-
-		$model->setId($id);
-		$model->delreguser();
-
-		JEMHelper::updateWaitingList($id);
-
-		JPluginHelper::importPlugin('jem');
-		$dispatcher = JDispatcher::getInstance();
-		$dispatcher->trigger('onEventUserUnregistered', array($id));
-
-		$cache = JFactory::getCache('com_jem');
-		$cache->clean();
-
-		$msg = JText::_('COM_JEM_UNREGISTERED_SUCCESSFULL');
-		$this->setRedirect(JRoute::_(JEMHelperRoute::getEventRoute($id), false), $msg);
 	}
 }

@@ -1,130 +1,26 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 /**
  * JEM Event Table
- *
  */
 class JEMTableEvent extends JTable
 {
-	function __construct(&$db)
-	{
+	function __construct(&$db){
 		parent::__construct('#__jem_events', 'id', $db);
-	}
-
-	/**
-	 * overloaded check function
-	 */
-	function check()
-	{
-		$jinput = JFactory::getApplication()->input;
-
-		//get values from time selectlist and concatenate them accordingly
-		$starthours		= $jinput->get('starthours','','cmd');
-		$startminutes	= $jinput->get('startminutes','','cmd');
-		$endhours		= $jinput->get('endhours','','cmd');
-		$endminutes		= $jinput->get('endminutes','','cmd');
-
-		// StartTime
-		if ($starthours != '' && $startminutes != '') {
-			$this->times = $starthours.':'.$startminutes;
-		} else if ($starthours != '' && $startminutes == '') {
-			$startminutes = "00";
-			$this->times = $starthours.':'.$startminutes;
-		} else if ($starthours == '' && $startminutes != '') {
-			$starthours = "00";
-			$this->times = $starthours.':'.$startminutes;
-		} else {
-			$this->times = NULL;
-		}
-
-		// EndTime
-		if ($endhours != '' && $endminutes != '') {
-			$this->endtimes = $endhours.':'.$endminutes;
-		} else if ($endhours != '' && $endminutes == '') {
-			$endminutes = "00";
-			$this->endtimes = $endhours.':'.$endminutes;
-		} else if ($endhours == '' && $endminutes != '') {
-			$endhours = "00";
-			$this->endtimes = $endhours.':'.$endminutes;
-		} else {
-			$this->endtimes = NULL;
-		}
-
-		// Dates
-		if (empty($this->enddates)) {
-			$this->enddates = NULL;
-		}
-
-		if (empty($this->dates)) {
-			$this->dates = NULL;
-		}
-
-		// check startDate
-		if ($this->dates == NULL) {
-			$this->times = NULL;
-			$this->enddates = NULL;
-			$this->endtimes = NULL;
-		}
-
-		// Check begin date is before end date
-
-		// Check if end date is set
-		if($this->enddates == null) {
-			// Check if end time is set
-			if($this->endtimes == null) {
-				$date1 = new DateTime('00:00');
-				$date2 = new DateTime('00:00');
-			} else {
-				$date1 = new DateTime($this->times);
-				$date2 = new DateTime($this->endtimes);
-			}
-		} else {
-			// Check if end time is set
-			if($this->endtimes == null) {
-				$date1 = new DateTime($this->dates);
-				$date2 = new DateTime($this->enddates);
-			} else {
-				$date1 = new DateTime($this->dates.' '.$this->times);
-				$date2 = new DateTime($this->enddates.' '.$this->endtimes);
-			}
-		}
-
-		if($date1 > $date2) {
-			$this->setError(JText::_('COM_JEM_ERROR_END_BEFORE_START'));
-			return false;
-		}
-
-		// Set alias
-		$this->alias = JApplication::stringURLSafe($this->alias);
-		if (empty($this->alias)) {
-			$this->alias = JApplication::stringURLSafe($this->title);
-		}
-
-		return true;
-	}
-
-	/**
-	 * Overloaded store method for the Event table.
-	 */
-	public function store($updateNulls = false)
-	{
-		return parent::store($updateNulls);
 	}
 
 	/**
 	 * Overloaded bind method for the Event table.
 	 */
-	public function bind($array, $ignore = '')
-	{
+	public function bind($array, $ignore = ''){
 		// in here we are checking for the empty value of the checkbox
 
 		if (!isset($array['registra'])) {
@@ -164,8 +60,201 @@ class JEMTableEvent extends JTable
 			$array['metadata'] = (string) $registry;
 		}
 
-		//don't override without calling base class
+		// Bind the rules.
+		/*
+		if (isset($array['rules']) && is_array($array['rules'])) {
+			$rules = new JAccessRules($array['rules']);
+			$this->setRules($rules);
+		}
+		*/
+
 		return parent::bind($array, $ignore);
+	}
+
+
+	/**
+	 * overloaded check function
+	 */
+	function check()
+	{
+		$jinput = JFactory::getApplication()->input;
+
+		if (trim($this->title) == ''){
+			$this->setError(JText::_('COM_JEM_PROVIDE_TITLE'));
+			return false;
+		}
+
+		if (trim($this->alias) == ''){
+			$this->alias = $this->title;
+		}
+
+		$this->alias = JApplication::stringURLSafe($this->alias);
+
+		//get values from time selectlist and concatenate them accordingly
+		$starthours		= $jinput->get('starthours','','cmd');
+		$startminutes	= $jinput->get('startminutes','','cmd');
+		$endhours		= $jinput->get('endhours','','cmd');
+		$endminutes		= $jinput->get('endminutes','','cmd');
+
+		// StartTime
+		if ($starthours != '' && $startminutes != '') {
+			$this->times = $starthours.':'.$startminutes;
+		} else if ($starthours != '' && $startminutes == '') {
+			$startminutes = "00";
+			$this->times = $starthours.':'.$startminutes;
+		} else if ($starthours == '' && $startminutes != '') {
+			$starthours = "00";
+			$this->times = $starthours.':'.$startminutes;
+		} else {
+			$this->times = NULL;
+		}
+
+		// EndTime
+		if ($endhours != '' && $endminutes != '') {
+			$this->endtimes = $endhours.':'.$endminutes;
+		} else if ($endhours != '' && $endminutes == '') {
+			$endminutes = "00";
+			$this->endtimes = $endhours.':'.$endminutes;
+		} else if ($endhours == '' && $endminutes != '') {
+			$endhours = "00";
+			$this->endtimes = $endhours.':'.$endminutes;
+		} else {
+			$this->endtimes = NULL;
+		}
+
+		// Dates
+		if (empty($this->enddates)) {
+			$this->enddates = null;
+		}
+
+		if (empty($this->dates)) {
+			$this->dates = null;
+		}
+
+		// check startDate
+		if ($this->dates == NULL) {
+			$this->times = NULL;
+			$this->enddates = NULL;
+			$this->endtimes = NULL;
+		}
+
+		// Check begin date is before end date
+
+		// Check if end date is set
+		if($this->enddates == null) {
+			// Check if end time is set
+			if($this->endtimes == null) {
+				$date1 = new DateTime('00:00');
+				$date2 = new DateTime('00:00');
+			} else {
+				$date1 = new DateTime($this->times);
+				$date2 = new DateTime($this->endtimes);
+			}
+		} else {
+			// Check if end time is set
+			if($this->endtimes == null) {
+				$date1 = new DateTime($this->dates);
+				$date2 = new DateTime($this->enddates);
+			} else {
+				$date1 = new DateTime($this->dates.' '.$this->times);
+				$date2 = new DateTime($this->enddates.' '.$this->endtimes);
+			}
+		}
+
+		if($date1 > $date2) {
+			$this->setError(JText::_('COM_JEM_ERROR_END_BEFORE_START'));
+			return false;
+		}
+
+
+		return true;
+	}
+
+	/**
+	 * store method for the Event table.
+	 */
+	public function store($updateNulls = true)
+	{
+		$date 			= JFactory::getDate();
+		$user 			= JFactory::getUser();
+		$jinput 		= JFactory::getApplication()->input;
+		$app 			= JFactory::getApplication();
+		$jemsettings 	= JEMHelper::config();
+
+
+		// Check if we're in the front or back
+		if ($app->isAdmin())
+			$backend = true;
+		else
+			$backend = false;
+
+		if ($this->id) {
+			// Existing event
+			$this->modified = $date->toSql();
+			$this->modified_by = $user->get('id');
+		}
+		else
+		{
+			// New event
+			if (!intval($this->created)){
+				$this->created = $date->toSql();
+			}
+			if (empty($this->created_by)){
+				$this->created_by = $user->get('id');
+			}
+		}
+
+		// Image check
+		jimport('joomla.filesystem.file');
+		$image_dir = JPATH_SITE . '/images/jem/events/';
+		$allowable = array(
+				'gif',
+				'jpg',
+				'png'
+		);
+
+		// Check if image was selected
+		jimport('joomla.filesystem.file');
+		$image_dir = JPATH_SITE.'/images/jem/events/';
+		$allowable = array ('gif', 'jpg', 'png');
+
+		// get image (frontend)
+		if (!$backend) {
+			$file = JRequest::getVar('userfile', '', 'files', 'array');
+			if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1) && (!empty($file['name']))) {
+
+				//check the image
+				$check = JEMImage::check($file, $jemsettings);
+
+				if ($check !== false) {
+					//sanitize the image filename
+					$filename = JEMImage::sanitize($image_dir, $file['name']);
+					$filepath = $image_dir . $filename;
+
+					if (JFile::upload($file['tmp_name'], $filepath)) {
+						$this->datimage = $filename;
+					}
+				}
+			} // end image if
+		} // if (!backend)
+
+		$format = JFile::getExt($image_dir . $this->datimage);
+		if (!in_array($format, $allowable))
+		{
+			$this->datimage = '';
+		}
+
+
+		if (!$backend) {
+			/*	check if the user has the required rank for autopublish	*/
+			$maintainer = JEMUser::ismaintainer('publish');
+			$autopubev = JEMUser::validate_user($jemsettings->evpubrec, $jemsettings->autopubl);
+			if (!($autopubev || $maintainer || $user->authorise('core.edit','com_jem'))) {
+				$this->published = 0 ;
+			}
+		}
+
+		return parent::store($updateNulls);
 	}
 
 	/**

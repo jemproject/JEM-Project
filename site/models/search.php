@@ -59,8 +59,17 @@ class JEMModelSearch extends JModelLegacy
 		$this->setState('limitstart', $limitstart);
 
 		// Get the filter request variables
-		$this->setState('filter_order', JRequest::getCmd('filter_order', 'a.dates'));
-		$this->setState('filter_order_dir', JRequest::getCmd('filter_order_Dir', 'ASC'));
+		$filter_order = JRequest::getCmd('filter_order', 'a.dates');
+		$this->setState('filter_order', $filter_order);
+
+		$filter_order_DirDefault = 'ASC';
+		// Reverse default order for dates in archive mode
+		$task = JRequest::getWord('task', '');
+		if($task == 'archive' && $filter_order == 'a.dates') {
+			$filter_order_DirDefault = 'DESC';
+		}
+
+		$this->setState('filter_order_Dir', JRequest::getCmd('filter_order_Dir', $filter_order_DirDefault));
 	}
 
 	/**
@@ -155,9 +164,13 @@ class JEMModelSearch extends JModelLegacy
 	function _buildOrderBy()
 	{
 		$filter_order		= $this->getState('filter_order');
-		$filter_order_dir	= $this->getState('filter_order_dir');
+		$filter_order_Dir	= $this->getState('filter_order_Dir');
 
-		$orderby 	= ' ORDER BY '.$filter_order.' '.$filter_order_dir.', a.dates, a.times';
+		if ($filter_order == 'a.dates') {
+			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir;
+		} else {
+			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir .', a.dates DESC, a.times DESC';
+		}
 
 		return $orderby;
 	}
@@ -175,7 +188,7 @@ class JEMModelSearch extends JModelLegacy
 		// Get the paramaters of the active menu item
 		$params 	= $app->getParams();
 
-		$top_category = $params->get('top_category', 0);
+		$top_category = $params->get('top_category', 1);
 
 		$task 		= JRequest::getWord('task');
 
@@ -187,7 +200,7 @@ class JEMModelSearch extends JModelLegacy
 		}
 
 		//$filter            = JRequest::getString('filter', '', 'request');
-		$filter 		= $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
+		$filter            = $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
 		$filter_type       = JRequest::getWord('filter_type', '', 'request');
 		$filter_continent  = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
 		$filter_country    = $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
@@ -397,7 +410,7 @@ class JEMModelSearch extends JModelLegacy
 
 		//get list of the items
 		$list = JEMCategories::treerecurse($top_id, '', array(), $children, 9999, 0, 0);
-		
+
 		return $list;
 	}
 }

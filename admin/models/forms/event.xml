@@ -79,6 +79,11 @@
 			description="COM_JEM_FIELD_CATEGORIES"
 			required="false"
 		/>
+		<field name="hits" type="hits"
+			default="0"
+			label="COM_JEM_EVENT_FIELD_HITS_LABEL"
+			description="COM_JEM_EVENT_FIELD_HITS_DESC"
+		/>
 	</fieldset>
 
 	<fieldset name="publish">
@@ -466,7 +471,7 @@
 				maxlength="10"
 				required="false"
 			/>
-		</fieldset>	
+		</fieldset>
 		<fieldset name="evregistration"
 			label="COM_JEM_REGISTRATION"
 		>

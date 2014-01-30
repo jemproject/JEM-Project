@@ -1,12 +1,11 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 $db = JFactory::getDBO();
@@ -194,6 +193,12 @@ class com_jemInstallerScript
 		// Abort if PHP release is older than required version
 		if(version_compare(PHP_VERSION, $minPhpVersion, '<')) {
 			Jerror::raiseWarning(100, JText::sprintf('COM_JEM_PREFLIGHT_WRONG_PHP_VERSION', $minPhpVersion, PHP_VERSION));
+			return false;
+		}
+
+		// Abort if Magic Quotes are enabled
+		if(get_magic_quotes_gpc()) {
+			Jerror::raiseWarning(100, JText::_('COM_JEM_PREFLIGHT_MAGIC_QUOTES_ENABLED'));
 			return false;
 		}
 
@@ -457,6 +462,10 @@ class com_jemInstallerScript
 			'/media/js/picker.js',
 			'/media/js/recurrencebackend.js',
 			'/media/js/seobackend.js',
+			// obsolete since JEM 1.9.6
+			'/components/com_jem/views/editevent/tmpl/default.php',
+			'/components/com_jem/views/editvenue/tmpl/default.php',
+			'/components/com_jem/views/editvenue/tmpl/default.xml',
 		);
 
 		// TODO There is an issue while deleting folders using the ftp mode

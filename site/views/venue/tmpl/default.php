@@ -8,6 +8,7 @@
  */
 
 defined('_JEXEC') or die;
+
 ?>
 <div id="jem" class="jem_venue" itemscope="itemscope" itemtype="http://schema.org/Place">
 	<div class="buttons">
@@ -95,7 +96,7 @@ defined('_JEXEC') or die;
 		}
 		?>
 
-			<?php if ($this->settings->get('global_showmapser')== 1) : ?>
+			<?php if ($this->settings->get('global_show_mapserv')== 1) : ?>
 				<?php echo JEMOutput::mapicon($this->venue); ?>
 			<?php endif; ?>
 		</dl>

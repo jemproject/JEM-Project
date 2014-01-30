@@ -56,7 +56,6 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 
 	/**
 	 * Constructor
-	 *
 	 */
 	function __construct()
 	{
@@ -64,15 +63,15 @@ class JEMModelCategoriesdetailed extends JModelLegacy
 
 		$app = JFactory::getApplication();
 
-		// Get the paramaters of the active menu item
+		// Get the parameters of the active menu item
 		$params = $app->getParams('com_jem');
 
-		$id = $params->get('id');
+		if (JRequest::getInt('id')) {
+			$id = JRequest::getInt('id');
+		} else {
+			$id = $params->get('id', 1);
+		}
 
-		// $jinput = JFactory::getApplication()->input;
-		// $id = $jinput->get('id');
-
-		// $id = JRequest::getInt('id');
 		$this->_id = $id;
 
 		//get the number of events from database
