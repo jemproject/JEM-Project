@@ -50,10 +50,10 @@ class JEMControllerVenue extends JControllerForm
 		//}
 
 		$jemsettings	= JemHelper::config();
-		$maintainer		= JemUser::ismaintainer('add');
-		$genaccess		= JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+		$maintainer 	= JEMUser::venuegroups('add');
+		$delloclink 	= JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
 
-		if ($maintainer || $genaccess) {
+		if ($maintainer || $delloclink) {
 			return true;
 		}
 
@@ -78,8 +78,6 @@ class JEMControllerVenue extends JControllerForm
 	 */
 	protected function allowEdit($data = array(), $key = 'id')
 	{
-
-
 		// Initialise variables.
 		$recordId	= (int) isset($data[$key]) ? $data[$key] : 0;
 		$user		= JFactory::getUser();
@@ -94,8 +92,6 @@ class JEMControllerVenue extends JControllerForm
 		// Fallback on edit.own.
 		// First test if the permission is available.
 		if ($user->authorise('core.edit.own', $asset)) {
-
-
 
 			// Now test the owner is the user.
 			$ownerId	= (int) isset($data['created_by']) ? $data['created_by'] : 0;
@@ -116,19 +112,13 @@ class JEMControllerVenue extends JControllerForm
 			}
 		}
 
-		/*
 		$record			= $this->getModel()->getItem($recordId);
 		$jemsettings 	= JEMHelper::config();
-		$editaccess		= JEMUser::editaccess($jemsettings->eventowner, $record->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
-
-		$maintainer 	= JEMUser::ismaintainer('edit',$record->id);
-
-
-		if ($maintainer || $editaccess)
-		{
+		$maintainer 	= JEMUser::venuegroups('edit');
+		$genaccess 		= JEMUser::editaccess($jemsettings->venueowner, $row->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
+		if ($maintainer || $genaccess) {
 			return true;
 		}
-		*/
 
 		// Since there is no asset tracking, revert to the component permissions.
 		return parent::allowEdit($data, $key);
