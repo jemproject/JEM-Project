@@ -187,6 +187,17 @@ class JEMTableVenue extends JTable
 			$this->locimage = '';
 		}
 
+		if (!$backend) {
+			/*	check if the user has the required rank for autopublish	*/
+			$autopublgroups = JEMUser::venuegroups('publish');
+			$autopublloc 	= JEMUser::validate_user($jemsettings->locpubrec, $jemsettings->autopublocate);
+			if (!($autopublloc || $autopublgroups || $user->authorise('core.edit','com_jem'))) {
+				$this->published = 0;
+			} else {
+				$this->published = 1;
+			}
+		}
+
 		return parent::store($updateNulls);
 	}
 

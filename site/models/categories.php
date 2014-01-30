@@ -74,7 +74,7 @@ class JEMModelCategories extends JModelLegacy
 
 		$this->_id = $id;
 
-		//get	the number of events from database
+		//get the number of events from database
 		$limit 		= JRequest::getInt('limit', $params->get('cat_num'));
 		$limitstart = JRequest::getInt('limitstart');
 
@@ -99,14 +99,12 @@ class JEMModelCategories extends JModelLegacy
 			$parentCategory = $this->_getList($this->_buildQueryParentCategory());
 			$query = $this->_buildQuerySubCategories();
 			$pagination = $this->getPagination();
-			$this->_categories = $this->_getList($query, $pagination->limitstart,  $pagination->limit);
+			$this->_categories = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 
 			// Include parent category itself
 			$this->_categories = array_merge($parentCategory, $this->_categories);
 
-			foreach($this->_categories as $category)
-			{
-
+			foreach($this->_categories as $category) {
 				if ($params->get('usecat',1)) {
 					//child categories
 					$query = $this->_buildQuerySubCategories($category->id);
@@ -163,6 +161,97 @@ class JEMModelCategories extends JModelLegacy
 	}
 
 	/**
+	 * Method to get the Categories events
+	 *
+	 * @access public
+	 * @return array
+	 */
+	function & getEventdata($id)
+	{
+		$app = JFactory::getApplication();
+
+		$params = $app->getParams('com_jem');
+
+		// Lets load the content
+		$query = $this->_buildDataQuery($id);
+		$this->_data = $this->_getList($query, 0, $params->get('detcat_nr'));
+
+		$count = count($this->_data);
+		for ($i = 0; $i < $count; $i++) {
+			$item = $this->_data[$i];
+			$item->categories = $this->getCategories($item->id);
+
+			//remove events without categories (users have no access to them)
+			if (empty($item->categories)) {
+				unset ($this->_data[$i]);
+			}
+		}
+
+		return $this->_data;
+	}
+
+	/**
+	 * Method get the event query
+	 *
+	 * @access private
+	 * @return array
+	 */
+	function _buildDataQuery($id)
+	{
+		$user = JFactory::getUser();
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
+
+		$id = (int)$id;
+
+		$task = JRequest::getWord('task');
+
+		// First thing we need to do is to select only the requested events
+		if ($task == 'archive') {
+			$where = ' WHERE a.published = 2 && rel.catid = '.$id;
+		} else {
+			$where = ' WHERE a.published = 1 && rel.catid = '.$id;
+		}
+
+		// Second is to only select events assigned to category the user has access to
+		$where .= ' AND c.access IN (' . implode(',', $levels) . ')';
+
+		$query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.created, l.venue, l.city, l.state, l.url,'
+			.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
+			.' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
+			.' FROM #__jem_events AS a'
+			.' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+			.' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+			.' LEFT JOIN #__jem_categories AS c ON c.id = '.$id
+			.$where
+			.' ORDER BY a.dates, a.times'
+		;
+
+		return $query;
+	}
+
+	function getCategories($id)
+	{
+		$user = JFactory::getUser();
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
+
+		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
+			.' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
+			.' FROM #__jem_categories AS c'
+			.' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
+			.' WHERE rel.itemid = '.(int)$id
+			.' AND c.published = 1'
+			.' AND c.access IN (' . implode(',', $levels) . ')'
+		;
+
+		$this->_db->setQuery($query);
+
+		$this->_cats = $this->_db->loadObjectList();
+		return $this->_cats;
+	}
+
+	/**
 	 * Method to get the subcategories query
 	 * @param string $parent_id Parent ID of the subcategories
 	 * @return string The query string
@@ -191,7 +280,7 @@ class JEMModelCategories extends JModelLegacy
 	{
 		$app = JFactory::getApplication();
 
-		// Get the paramaters of the active menu item
+		// Get the parameters of the active menu item
 		$params = $app->getParams('com_jem');
 
 		if (is_null($parent_id)) {
@@ -273,8 +362,7 @@ class JEMModelCategories extends JModelLegacy
 		$query = 'SELECT DISTINCT c.id'
 			. ' FROM #__jem_categories AS c';
 
-		if (!$params->get('empty_cat', 1))
-		{
+		if (!$params->get('empty_cat', 1)) {
 			$query .= ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id '
 					. ' INNER JOIN #__jem_events AS e ON e.id = rel.itemid ';
 		}
@@ -282,8 +370,7 @@ class JEMModelCategories extends JModelLegacy
 			. ' AND c.parent_id = ' . (int) $this->_id
 			. ' AND c.access IN (' . implode(',', $levels) . ')'
 			;
-		if (!$params->get('empty_cat', 1))
-		{
+		if (!$params->get('empty_cat', 1)) {
 			$task = JRequest::getWord('task');
 			if($task == 'archive') {
 				$query .= ' AND e.published = 2';
@@ -304,8 +391,7 @@ class JEMModelCategories extends JModelLegacy
 	function getPagination()
 	{
 		// Lets load the content if it doesn't already exist
-		if (empty($this->_pagination))
-		{
+		if (empty($this->_pagination)) {
 			jimport('joomla.html.pagination');
 			$this->_pagination = new JPagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
 		}

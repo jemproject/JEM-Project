@@ -220,7 +220,6 @@ div#jem .eventtitle {
 }
 
 #jlcalendarlegend .calendarButtonsToggle{
-	width:280px;
 	display:inline-flex;
 	vertical-align:middle;
 }
@@ -257,18 +256,20 @@ div#buttonshowall {
 	float: left;
 	padding-top:3px;
 	padding-left:4px;
+	padding-right:4px;
 	cursor: pointer;
 	border:1px solid black;
-	width: 80px;
+	width: auto;
 }
 
 div#buttonhideall {
 	float: right;
 	padding-top:3px;
 	padding-left:4px;
+	padding-right:4px;
 	cursor: pointer;
 	border:1px solid black;
-	width:80px;
+	width:auto;
 }
 
 .daynum a {
