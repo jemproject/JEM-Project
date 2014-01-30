@@ -436,6 +436,20 @@ $params = $params->toArray();
 					<textarea class="inputbox" name="meta_description" id="meta_description" rows="5" cols="40" maxlength="200"	onfocus="get_inputbox('meta_description')" onblur="change_metatags()"><?php echo $meta_description;?></textarea>
 		</fieldset>
 
+		<fieldset class="panelform">
+		<ul class="adminformlist">
+		<?php foreach($this->form->getGroup('metadata') as $field): ?>
+	<li>
+		<?php if (!$field->hidden): ?>
+			<?php echo $field->label; ?>
+		<?php endif; ?>
+		<?php echo $field->input; ?>
+	</li>
+<?php endforeach; ?>
+</ul>
+</fieldset>
+
+
 		<script type="text/javascript">
 		<!--
 			starter("<?php
