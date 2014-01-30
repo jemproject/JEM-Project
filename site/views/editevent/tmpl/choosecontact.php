@@ -78,11 +78,11 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 				<a style="cursor:pointer;" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');"><?php echo $this->escape($row->name); ?></a>
 				</span>
 			</td>
-			<td align="left"><?php echo htmlspecialchars($row->address, ENT_QUOTES, 'UTF-8'); ?></td>
-			<td align="left"><?php echo htmlspecialchars($row->suburb, ENT_QUOTES, 'UTF-8'); ?></td>
-			<td align="left"><?php echo htmlspecialchars($row->state, ENT_QUOTES, 'UTF-8'); ?></td>
-			<td align="left"><?php echo htmlspecialchars($row->email_to, ENT_QUOTES, 'UTF-8'); ?></td>
-			<td align="left"><?php echo htmlspecialchars($row->telephone, ENT_QUOTES, 'UTF-8'); ?></td>
+			<td align="left"><?php echo $this->escape($row->address); ?></td>
+			<td align="left"><?php echo $this->escape(($row->suburb); ?></td>
+			<td align="left"><?php echo $this->escape($row->state); ?></td>
+			<td align="left"><?php echo $this->escape($row->email_to); ?></td>
+			<td align="left"><?php echo $this->escape($row->telephone); ?></td>
 			<td class="center">
 				<?php $img = $row->published ? 'tick.png' : 'publish_x.png'; ?>
 				<?php echo JHtml::_('image', 'com_jem/'.$img, NULL, NULL, true); ?>
@@ -103,6 +103,6 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 <div class="copyright">
-<?php echo JEMOutput::footer();	?>
+	<?php echo JEMOutput::footer();	?>
 </div>
 </div>

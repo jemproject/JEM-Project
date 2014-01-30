@@ -53,7 +53,7 @@ JHtml::_('behavior.tooltip');
 			<td>
 				<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_SELECT');?>::<?php echo $row->name; ?>">
 				<a style="cursor:pointer" onclick="window.parent.elSelectUser('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->username ); ?>');">
-					<?php echo htmlspecialchars($row->name, ENT_QUOTES, 'UTF-8'); ?>
+					<?php echo $this->escape($row->name); ?>
 				</a></span>
 			</td>
 			<td><?php echo $row->username; ?></td>

@@ -41,11 +41,10 @@ class JFormFieldModal_Contact extends JFormField
 
 		// Add to document head
 		JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));
-		
+
 		// Setup variables for display
 		$html = array();
-		
-		$link = 'index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component&amp;function=jSelectContact_'.$this->id;
+		$link = 'index.php?option=com_jem&amp;view=editevent&amp;layout=choosecontact&amp;tmpl=component&amp;function=jSelectContact_'.$this->id;
 
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
@@ -54,19 +53,19 @@ class JFormFieldModal_Contact extends JFormField
 		$query->where('id='.(int)$this->value);
 		$db->setQuery($query);
 
-		$contactid = $db->loadResult();
+		$contact = $db->loadResult();
 
 		if ($error = $db->getErrorMsg()) {
 			JError::raiseWarning(500, $error);
 		}
 
-		if (empty($contactid)) {
-			$contactid = JText::_('COM_JEM_SELECT_CONTACT');
+		if (empty($contact)) {
+			$contact = JText::_('COM_JEM_SELECT_CONTACT');
 		}
-		$contactid = htmlspecialchars($contactid, ENT_QUOTES, 'UTF-8');
+		$contact = htmlspecialchars($contact, ENT_QUOTES, 'UTF-8');
 
 		// The current contact input field
-		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$contactid.'" disabled="disabled" size="35" />';
+		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$contact.'" disabled="disabled" size="35" />';
 
 		// The contact select button
 		$html[] = '    <a class="flyermodal" title="'.JText::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
