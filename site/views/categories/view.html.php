@@ -65,6 +65,7 @@ class JEMViewCategories extends JEMView
 			$print_link = JRoute::_('index.php?option=com_jem&view=categories&id='.$id.'&task=archive&print=1&tmpl=component');
 			$pagetitle   .= ' - '.JText::_('COM_JEM_ARCHIVE');
 			$pageheading .= ' - '.JText::_('COM_JEM_ARCHIVE');
+			$params->set('page_heading', $pageheading);
 		} else {
 			$print_link = JRoute::_('index.php?option=com_jem&view=categories&id='.$id.'&print=1&tmpl=component');
 		}
@@ -106,7 +107,6 @@ class JEMViewCategories extends JEMView
 		$this->item				= $menuitem;
 		$this->jemsettings		= $jemsettings;
 		$this->pagetitle		= $pagetitle;
-		$this->pageheading = $pageheading;
 		$this->print_link		= $print_link;
 		$this->model			= $model;
 		$this->id				= $id;

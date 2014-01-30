@@ -41,6 +41,11 @@ class JEMViewDay extends JEMView
 		$pathway 		= $app->getPathWay();
 		$jinput 		= $app->input;
 
+		// Decide which parameters should take priority
+		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
+		                                && $menuitem->query['view'] == 'day'
+		                                && !isset($menuitem->query['id']));
+
 		// Retrieving data
 		$requestVenueId = $jinput->get('locid', null, 'int');
 		$requestCategoryId = $jinput->get('catid', null, 'int');
@@ -69,21 +74,14 @@ class JEMViewDay extends JEMView
 		$showdaydate = true; // show by default
 
 		// Show page heading specified on menu item or TODAY as heading - idea taken from com_content.
-		//
-		// Check to see which parameters should take priority
-		// If the current view is the active menuitem and an category view for this category, then the menu item params take priority
-		if ($menuitem && ($menuitem->query['option'] == 'com_jem' && $menuitem->query['view'] == 'day' && !isset($menuitem->query['id']))) {
-
+		if ($useMenuItemParams) {
 			$pagetitle   = $params->get('page_title', $menu->title);
-			$pageheading = $params->get('page_heading', $pagetitle);
+			$params->def('page_heading', $pagetitle);
 			$pathway->setItemName(1, $menuitem->title);
-//			if ($menuitem && ($menuitem->query['option'] == 'com_jem')) {
-//				$pathway->addItem($pagetitle);
-//			}
 		} else {
-			// TODO: If we can integrate $daydate into $pageheading we should set $showdaydate to false.
+			// TODO: If we can integrate $daydate into page_heading we should set $showdaydate to false.
 			$pagetitle   = JText::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY');
-			$pageheading = $pagetitle;
+			$params->set('page_heading', $pagetitle);
 			$pathway->addItem($pagetitle);
 		}
 
@@ -124,8 +122,8 @@ class JEMViewDay extends JEMView
 			$dellink = 0;
 		}
 
-		//add alternate feed link
-		$link    = 'index.php?option=com_jem&view=day&format=feed&id=' . date('Ymd', strtotime($this->get('Day')));
+		//add alternate feed link (w/o specific date)
+		$link    = 'index.php?option=com_jem&view=day&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$this->document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -171,7 +169,6 @@ class JEMViewDay extends JEMView
 		$this->lists			= $lists;
 		$this->daydate			= $daydate;
 		$this->showdaydate		= $showdaydate; // if true daydate will be shown as h2 sub heading
-		$this->pageheading		= $pageheading;
 
 		// Doesn't really help - each view has less or more specific needs.
 		//$this->prepareDocument();

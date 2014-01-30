@@ -62,10 +62,10 @@ class JEMViewAttendees extends JViewLegacy {
 		$event 		= $this->get('Event');
 
 		// Merge params.
-		// Because this view is not useable for menu item $params is never used.
+		// Because this view is not useable for menu item we always overwrite $params.
 		$pagetitle = JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES') . ' - ' . $event->title;
-		$pageheading = JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); // event title is shown separate
-		//$params->set('show_page_heading', 1); // always show
+		$params->set('page_heading', JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES')); // event title is shown separate
+		//$params->set('show_page_heading', 1); // always show?
 
 		// Add site name to title if param is set
 		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
@@ -124,7 +124,6 @@ class JEMViewAttendees extends JViewLegacy {
 		$this->pagination 	= $pagination;
 		$this->event 		= $event;
 		$this->pagetitle	= $pagetitle;
-		$this->pageheading	= $pageheading;
 		$this->backlink		= $backlink;
 		$this->view			= $view;
 		$this->print_link	= $print_link;

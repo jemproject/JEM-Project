@@ -37,7 +37,7 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 
 <?php if ($this->params->get('show_page_heading', 1)) : ?>
 	<h1 class="componentheading">
-		<?php echo $this->escape($this->pageheading); ?>
+		<?php echo $this->escape($this->params->get('page_heading')); ?>
 	</h1>
 <?php endif; ?>
 

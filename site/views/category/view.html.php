@@ -83,7 +83,7 @@ class JEMViewCategory extends JEMView
 
 			//Set Page title
 			$pagetitle   = $params->def('page_title', $menuitem->title);
-			$pageheading = $params->def('page_heading', $params->get('page_title'));
+			$params->def('page_heading', $params->get('page_title'));
 
 			// Add site name to title if param is set
 			if ($app->getCfg('sitename_pagetitles', 0) == 1) {
@@ -107,7 +107,6 @@ class JEMViewCategory extends JEMView
 			$this->params		= $params;
 			$this->jemsettings	= $jemsettings;
 			$this->cal			= $cal;
-			$this->pageheading	= $pageheading;
 
 		} else {
 
@@ -230,6 +229,8 @@ class JEMViewCategory extends JEMView
 				$print_link = JRoute::_(JEMHelperRoute::getCategoryRoute($category->id) .'&print=1&tmpl=component');
 			}
 
+			$params->set('page_heading', $pageheading);
+
 			// Add site name to title if param is set
 			if ($app->getCfg('sitename_pagetitles', 0) == 1) {
 				$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
@@ -283,7 +284,6 @@ class JEMViewCategory extends JEMView
 			$this->jemsettings		= $jemsettings;
 			$this->settings			= $settings;
 			$this->categories		= $categories;
-			$this->pageheading		= $pageheading;
 		}
 
 		parent::display($tpl);
