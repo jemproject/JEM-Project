@@ -174,7 +174,7 @@ class JEMModelAttendees extends JModelLegacy
 		. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
 		. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
 		. $where
-		. ' GROUP BY a.id'
+		. ' GROUP BY r.id'
 		. $orderby
 		;
 
