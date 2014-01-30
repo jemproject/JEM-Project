@@ -471,6 +471,11 @@ class com_jemInstallerScript
 			'/components/com_jem/views/editevent/tmpl/default.php',
 			'/components/com_jem/views/editvenue/tmpl/default.php',
 			'/components/com_jem/views/editvenue/tmpl/default.xml',
+			'/components/com_jem/models/categoriesdetailed.php',
+			'/components/com_jem/views/categoriesdetailed/tmpl/default.php',
+			'/components/com_jem/views/categoriesdetailed/tmpl/default.xml',
+			'/components/com_jem/views/categoriesdetailed/tmpl/default_table.php',
+			'/components/com_jem/views/categoriesdetailed/view.html.php',
 		);
 
 		// TODO There is an issue while deleting folders using the ftp mode
@@ -485,6 +490,9 @@ class com_jemInstallerScript
 			'/administrator/components/com_jem/views/jem',
 			'/components/com_jem/views/myattending/tmpl',
 			'/components/com_jem/views/myattending',
+			// obsolete since JEM 1.9.6
+			'/components/com_jem/views/categoriesdetailed/tmpl',
+			'/components/com_jem/views/categoriesdetailed',
 		);
 
 		foreach ($files as $file) {
