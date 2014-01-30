@@ -1,21 +1,16 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 /**
  * JEM Moduleteaser helper
- *
- * @package Joomla
- * @subpackage JEM Teaser Module
- * @since 1.0
  */
 class modJEMteaserHelper
 {
@@ -36,7 +31,7 @@ class modJEMteaserHelper
 		//$access = !JComponentHelper::getParams('com_jem')->get('show_noauth');
 		$access = !$settings->get('show_noauth','0');
 		$authorised = JAccess::getAuthorisedViewLevels(JFactory::getUser()->get('id'));
-		
+
 		//all upcoming events//all upcoming events
 		if ($params->get('type') == 1) {
 			$where = " WHERE (TIMEDIFF(CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00')),NOW()) > 1";
@@ -114,10 +109,6 @@ class modJEMteaserHelper
 		$db->setQuery($query);
 		$rows = $db->loadObjectList();
 
-		if ($params->get('use_modal', 0)) {
-			JHtml::_('behavior.modal');
-		}
-
 		//Loop through the result rows and prepare data
 		$i		= 0;
 		$lists	= array();
@@ -144,7 +135,7 @@ class modJEMteaserHelper
 			}
 
 			$lists[$i] = new stdClass();
-			
+
 			if ($access || in_array($row->access, $authorised))
 			{
 				// We know that user has the privilege to view the article
@@ -155,7 +146,7 @@ class modJEMteaserHelper
 				$lists[$i]->link = JRoute::_('index.php?option=com_users&view=login');
 				$lists[$i]->linkText = JText::_('MOD_JEM_TEASER_READMORE_REGISTER');
 			}
-			
+
 			$lists[$i]->title			= htmlspecialchars($row->title, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->venue			= htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->catname			= htmlspecialchars($row->catname, ENT_COMPAT, 'UTF-8');
@@ -164,6 +155,8 @@ class modJEMteaserHelper
 			$lists[$i]->eventlink		= $params->get('linkevent', 1) ? JRoute::_(JEMHelperRoute::getEventRoute($row->slug)) : '';
 			$lists[$i]->venuelink		= $params->get('linkvenue', 1) ? JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : '';
 			$lists[$i]->categorylink	= $params->get('linkcategory', 1) ? JRoute::_(JEMHelperRoute::getCategoryRoute($row->categoryslug)) : '';
+
+
 			$lists[$i]->date			= modJEMteaserHelper::_format_date($row, $params);
 			$lists[$i]->day 			= modJEMteaserHelper::_format_day($row, $params);
 			$lists[$i]->dayname			= modJEMteaserHelper::_format_dayname($row);
@@ -194,11 +187,9 @@ class modJEMteaserHelper
 			$etc2 = JText::_('MOD_JEM_TEASER_NO_DESCRIPTION');
 
 			//strip html tags but leave <br /> tags
-			//entferne html tags bis auf Zeilenumbrüche
 			$description = strip_tags($row->introtext, "<br>");
 
 			//switch <br /> tags to space character
-			//wandle zeilenumbrüche in leerzeichen um
 			if ($params->get('br') == 0) {
 			 $description = str_replace('<br />',' ',$description);
 			}
@@ -217,7 +208,7 @@ class modJEMteaserHelper
 			} else {
 				$lists[$i]->eventdescription	= $description;
 			}
-			
+
 			$lists[$i]->readmore = strlen(trim($row->fulltext));
 
 			$i++;
@@ -227,12 +218,11 @@ class modJEMteaserHelper
 
 	/**
 	 *format days
-	 *
 	 */
 	protected static function _format_day($row, &$params)
 	{
 		//Get needed timestamps and format
-		setlocale (LC_TIME, 'de_DE.UTF8');
+		//setlocale (LC_TIME, 'de_DE.UTF8');
 		$yesterday_stamp	= mktime(0, 0, 0, date("m") , date("d")-1, date("Y"));
 		$yesterday 			= strftime("%Y-%m-%d", $yesterday_stamp);
 		$today_stamp		= mktime(0, 0, 0, date("m") , date("d"), date("Y"));
@@ -386,28 +376,26 @@ class modJEMteaserHelper
 
 	protected static function _format_dayname($row)
 	{
-		setlocale (LC_TIME, 'de_DE.UTF8');
-		$date = strtotime($row->dates);
-		$result = strftime("%A", $date);
-		return $result;
+		$jdate	 = new JDate($row->dates);
+		$dayname = $jdate->format('l',false,true);
+		return $dayname;
 	}
 	protected static function _format_daynum($row)
 	{
-		$date = strtotime($row->dates);
-		$result = strftime("%d", $date);
-		return $result;
+		$jdate	= new JDate($row->dates);
+		$day	= $jdate->format('d',false,true);
+		return $day;
 	}
 	protected static function _format_year($row)
 	{
-		$date = strtotime($row->dates);
-		$result = strftime("%Y", $date);
-		return $result;
+		$jdate	= new JDate($row->dates);
+		$year	= $jdate->format('Y',false,true);
+		return $year;
 	}
 	protected static function _format_month($row)
 	{
-		setlocale (LC_TIME, 'de_DE.UTF8');
-		$date = strtotime($row->dates);
-		$result = strftime("%B", $date);
-		return $result;
+		$jdate	= new JDate($row->dates);
+		$month	= $jdate->format('F',false,true);
+		return $month;
 	}
 }

@@ -247,7 +247,7 @@ class com_jemInstallerScript
 		echo '<p>' . JText::_('COM_JEM_POSTFLIGHT_' . $type . '_TEXT') . '</p>';
 
 		if ($type == 'update') {
-			// Category changes between 1.9.4 -> 1.9.5
+			// Changes between 1.9.4 -> 1.9.5
 			if (version_compare($this->oldRelease, '1.9.5', 'lt') && version_compare($this->newRelease, '1.9.4', 'gt')) {
 				JTable::addIncludePath(JPATH_ROOT.'/administrator/components/com_jem/tables');
 				$categoryTable = JTable::getInstance('Category', 'JEMTable');
@@ -258,6 +258,11 @@ class com_jemInstallerScript
 
 				// change category ids in modules
 				$this->updateJemModules195();
+			}
+			// Changes between 1.9.5 -> 1.9.6
+			if (version_compare($this->oldRelease, '1.9.6', 'lt') && version_compare($this->newRelease, '1.9.5', 'gt')) {
+				// change categoriesdetailed view name in menu items
+				$this->updateJemMenuItems196();
 			}
 		}
 	}
@@ -466,6 +471,13 @@ class com_jemInstallerScript
 			'/components/com_jem/views/editevent/tmpl/default.php',
 			'/components/com_jem/views/editvenue/tmpl/default.php',
 			'/components/com_jem/views/editvenue/tmpl/default.xml',
+			'/components/com_jem/models/categoriesdetailed.php',
+			'/components/com_jem/views/categoriesdetailed/tmpl/default.php',
+			'/components/com_jem/views/categoriesdetailed/tmpl/default.xml',
+			'/components/com_jem/views/categoriesdetailed/tmpl/default_table.php',
+			'/components/com_jem/views/categoriesdetailed/view.html.php',
+			'/components/com_jem/controllers/editevent.php',
+			'/components/com_jem/controllers/editvenue.php',
 		);
 
 		// TODO There is an issue while deleting folders using the ftp mode
@@ -480,6 +492,9 @@ class com_jemInstallerScript
 			'/administrator/components/com_jem/views/jem',
 			'/components/com_jem/views/myattending/tmpl',
 			'/components/com_jem/views/myattending',
+			// obsolete since JEM 1.9.6
+			'/components/com_jem/views/categoriesdetailed/tmpl',
+			'/components/com_jem/views/categoriesdetailed',
 		);
 
 		foreach ($files as $file) {
@@ -678,6 +693,39 @@ class com_jemInstallerScript
 				$db->setQuery($query);
 				$db->query();
 			}
+		}
+	}
+
+	/**
+	 * Change categoriesdetailed view to categories view in menu items related to com_jem.
+	 * (required when updating from 1.9.5 or below to 1.9.6 or newer)
+	 *
+	 * @return void
+	 */
+	private function updateJemMenuItems196()
+	{
+		// get all "com_jem..." frontend entries
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('id, link');
+		$query->from('#__menu');
+		$query->where("link LIKE 'index.php?option=com_jem&view=categoriesdetailed%'");
+		$db->setQuery($query);
+		$items = $db->loadObjectList();
+
+		foreach ($items as $item) {
+			$link = $item->link;
+
+			// replace view name
+			$link = str_replace("&view=categoriesdetailed", "&view=categories", $link);
+
+			// write changed link back into DB
+			$query = $db->getQuery(true);
+			$query->update('#__menu');
+			$query->set('link = '.$db->quote((string)$link));
+			$query->where(array('id = '.$db->quote($item->id)));
+			$db->setQuery($query);
+			$db->query();
 		}
 	}
 }

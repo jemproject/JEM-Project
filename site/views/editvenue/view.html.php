@@ -54,30 +54,14 @@ class JEMViewEditvenue extends JViewLegacy
 			$authorised = $this->item->params->get('access-edit');
 		}
 
-		if ($authorised !== true){
-			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
+		// check for guest
+		if ($user->id == 0 || $user == false) {
+			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
 
-		if (!empty($this->item) && isset($this->item->id))
-		{
-			//$this->item->images = json_decode($this->item->images);
-			//$this->item->urls = json_decode($this->item->urls);
-
-			$tmp = new stdClass;
-			//$tmp->images = $this->item->images;
-			//$tmp->urls = $this->item->urls;
-			$this->form->bind($tmp);
-		}
-
-		// Check for errors.
-		if (count($errors = $this->get('Errors'))){
-			JError::raiseWarning(500, implode("\n", $errors));
-			return false;
-		}
-
-		// Merge event params. If this is single-event view, menu params override event params
-		// Otherwise, event params override menu item params
+		// Merge venue params. If this is single-venue view, menu params override venue params
+		// Otherwise, venue params override menu item params
 		$this->params	= $this->state->get('params');
 		$active	= $app->getMenu()->getActive();
 		$temp	= clone ($this->params);
@@ -85,9 +69,9 @@ class JEMViewEditvenue extends JViewLegacy
 		// Check to see which parameters should take priority
 		if ($active) {
 			$currentLink = $active->link;
-			// If the current view is the active item and an event view for this event, then the menu item params take priority
+			// If the current view is the active item and an venue view for this event, then the menu item params take priority
 			if (strpos($currentLink, 'view=editvenue')) {
-				// $item->params are the article params, $temp are the menu item params
+				// $item->params are the venue params, $temp are the menu item params
 				// Merge so that the menu item params take priority
 				$item->params->merge($temp);
 				// Load layout from active query (in case it is an alternative menu item)
@@ -96,27 +80,71 @@ class JEMViewEditvenue extends JViewLegacy
 				//}
 			}
 			else {
-				// Current view is not a single event, so the event params take priority here
-				// Merge the menu item params with the event params so that the event params take priority
+				// Current view is not a single venue, so the venue params take priority here
+				// Merge the menu item params with the venue params so that the venue params take priority
 				$temp->merge($item->params);
 				$item->params = $temp;
 
-				// Check for alternative layouts (since we are not in a single-event menu item)
-				// Single-event menu item layout takes priority over alt layout for an event
+				// Check for alternative layouts (since we are not in a single-venue menu item)
+				// Single-venue menu item layout takes priority over alt layout for an venue
 				if ($layout = $item->params->get('venue_layout')) {
 					$this->setLayout($layout);
 				}
 			}
 		}
 		else {
-			// Merge so that event params take priority
+			// Merge so that venue params take priority
 			$temp->merge($item->params);
 			$item->params = $temp;
-			// Check for alternative layouts (since we are not in a single-event menu item)
-			// Single-event menu item layout takes priority over alt layout for an event
+			// Check for alternative layouts (since we are not in a single-venue menu item)
+			// Single-venue menu item layout takes priority over alt layout for an venue
 			if ($layout = $item->params->get('venue_layout')) {
 				$this->setLayout($layout);
 			}
+		}
+
+		if (empty($this->item->id)) {
+			$maintainer 	= JEMUser::venuegroups('add');
+			$delloclink 	= JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
+
+			if ($maintainer || $delloclink) {
+				$dellink = true;
+			} else {
+				$dellink = false;
+			}
+			$authorised = $user->authorise('core.create','com_jem') || $dellink;
+
+		} else {
+			// Check if user can edit
+			$maintainer 	= JEMUser::venuegroups('edit');
+			$genaccess 		= JEMUser::editaccess($jemsettings->venueowner, $this->item->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
+			if ($maintainer || $genaccess) {
+				$edit = true;
+			} else {
+				$edit = false;
+			}
+			$authorised = $this->item->params->get('access-edit') || $edit;
+		}
+
+		if ($authorised !== true) {
+			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
+			return false;
+		}
+
+		if (!empty($this->item) && isset($this->item->id)) {
+			// $this->item->images = json_decode($this->item->images);
+			// $this->item->urls = json_decode($this->item->urls);
+
+			$tmp = new stdClass();
+			// $tmp->images = $this->item->images;
+			// $tmp->urls = $this->item->urls;
+			$this->form->bind($tmp);
+		}
+
+		// Check for errors.
+		if (count($errors = $this->get('Errors'))) {
+			JError::raiseWarning(500, implode("\n", $errors));
+			return false;
 		}
 
 		JHtml::_('behavior.framework');
@@ -126,13 +154,11 @@ class JEMViewEditvenue extends JViewLegacy
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		JHtml::_('stylesheet', 'com_jem/geostyle.css', array(), true);
-		//JHtml::_('stylesheet', 'jui/icomoon.css', array(), true);
 
 		$doc->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		JHtml::_('script', 'com_jem/attachments.js', false, true);
 		$doc->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
-
 
 		// Noconflict
 		$doc->addCustomTag( '<script type="text/javascript">jQuery.noConflict();</script>' );
@@ -145,7 +171,6 @@ class JEMViewEditvenue extends JViewLegacy
 		$menu		= $app->getMenu();
 		$item		= $menu->getActive();
 		$params 	= $app->getParams('com_jem');
-
 
 		$this->pageclass_sfx	= htmlspecialchars($params->get('pageclass_sfx'));
 		$this->jemsettings		= $jemsettings;

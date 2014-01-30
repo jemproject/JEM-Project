@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
+require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
 /**
  * HTML View class for the Categories View
@@ -17,8 +18,11 @@ jimport('joomla.application.component.view');
  * @package JEM
  *
  */
-class JEMViewCategories extends JViewLegacy
+class JEMViewCategories extends JEMView
 {
+	/**
+	 * Creates the Categories View
+	 */
 	function display($tpl=null)
 	{
 		$app = JFactory::getApplication();
@@ -27,8 +31,11 @@ class JEMViewCategories extends JViewLegacy
 		$jemsettings 	= JEMHelper::config();
 		$user			= JFactory::getUser();
 		$print			= JRequest::getBool('print');
+		$task			= JRequest::getWord('task');
+		$model 			= $this->getModel();
+		$id 			= JRequest::getInt('id', 1);
 
-		$rows = $this->get('Data');
+		$rows 		= $this->get('Data');
 		$pagination = $this->get('Pagination');
 
 		// Load css
@@ -44,10 +51,7 @@ class JEMViewCategories extends JViewLegacy
 		$menuitem	= $menu->getActive();
 		$params 	= $app->getParams('com_jem');
 
-		// Request variables
-		$task		= JRequest::getWord('task');
-
-		$pagetitle   = $params->def('page_title', $menuitem->title);
+		$pagetitle = $params->def('page_title', $menuitem->title);
 		$pageheading = $params->def('page_heading', $params->get('page_title'));
 
 		//pathway
@@ -57,9 +61,12 @@ class JEMViewCategories extends JViewLegacy
 		}
 
 		if ($task == 'archive') {
-			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=categories&task=archive'));
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=categories&id='.$id.'&task=archive'));
+			$print_link = JRoute::_('index.php?option=com_jem&view=categories&id='.$id.'&task=archive&print=1&tmpl=component');
 			$pagetitle   .= ' - '.JText::_('COM_JEM_ARCHIVE');
 			$pageheading .= ' - '.JText::_('COM_JEM_ARCHIVE');
+		} else {
+			$print_link = JRoute::_('index.php?option=com_jem&view=categories&id='.$id.'&print=1&tmpl=component');
 		}
 
 		// Add site name to title if param is set
@@ -75,7 +82,7 @@ class JEMViewCategories extends JViewLegacy
 		$document->setMetaData('title' , $pagetitle);
 
 		//add alternate feed link
-		$link    = 'index.php?option=com_jem&view=eventslist&format=feed';
+		$link    = 'index.php?option=com_jem&view=categories&id='.$id.'&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -91,16 +98,18 @@ class JEMViewCategories extends JViewLegacy
 			$dellink = 0;
 		}
 
-		$this->rows        = $rows;
-		$this->task        = $task;
-		$this->params      = $params;
-		$this->dellink     = $dellink;
-		$this->pagination  = $pagination;
-		$this->item        = $menuitem;
-		$this->jemsettings = $jemsettings;
-		$this->pagetitle   = $pagetitle;
+		$this->rows				= $rows;
+		$this->task				= $task;
+		$this->params			= $params;
+		$this->dellink			= $dellink;
+		$this->pagination		= $pagination;
+		$this->item				= $menuitem;
+		$this->jemsettings		= $jemsettings;
+		$this->pagetitle		= $pagetitle;
 		$this->pageheading = $pageheading;
-		$this->print_link  = $print_link;
+		$this->print_link		= $print_link;
+		$this->model			= $model;
+		$this->id				= $id;
 
 		parent::display($tpl);
 	}

@@ -63,7 +63,7 @@ class JEMViewDay extends JViewLegacy
 
 			// url link to article
 			// & used instead of &amp; as this is converted by feed creator
-			$link = JRoute::_(JEMHelperRoute::getEventRoute($row->eventid));
+			$link = JRoute::_(JEMHelperRoute::getEventRoute($row->id));
 
 			// feed item description text
 			$description = JText::_('COM_JEM_TITLE').': '.$title.'<br />';
