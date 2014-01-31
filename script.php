@@ -478,6 +478,9 @@ class com_jemInstallerScript
 			'/components/com_jem/views/categoriesdetailed/view.html.php',
 			'/components/com_jem/controllers/editevent.php',
 			'/components/com_jem/controllers/editvenue.php',
+			'/media/js/eventscreen.js',
+			'/media/js/geodata.js',
+			'/media/js/jquery.geocomplete.min.js',
 		);
 
 		// TODO There is an issue while deleting folders using the ftp mode
