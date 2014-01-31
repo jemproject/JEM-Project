@@ -19,7 +19,6 @@ class JemModelEditvenue extends JemModelVenue
 
 	/**
 	 * Model typeAlias string. Used for version history.
-	 *
 	 * @var        string
 	 */
 	public $typeAlias = 'com_jem.venue';
@@ -27,7 +26,6 @@ class JemModelEditvenue extends JemModelVenue
 
 	/**
 	 * Method to auto-populate the model state.
-	 *
 	 * Note. Calling getState in this method will result in recursion.
 	 */
 	protected function populateState()
@@ -37,8 +35,6 @@ class JemModelEditvenue extends JemModelVenue
 		// Load state from the request.
 		$pk = JRequest::getInt('a_id');
 		$this->setState('venue.id', $pk);
-
-		//$this->setState('event.catid', JRequest::getInt('catid'));
 
 		$return = JRequest::getVar('return', null, 'default', 'base64');
 		$this->setState('return_page', urldecode(base64_decode($return)));
@@ -54,12 +50,11 @@ class JemModelEditvenue extends JemModelVenue
 	 * Method to get venue data.
 	 *
 	 * @param integer	The id of the article.
-	 *
 	 * @return mixed item data object on success, false on failure.
 	 */
 	public function getItem($itemId = null)
 	{
-		// $jemsettings = JEMAdmin::config();
+		$jemsettings = JEMHelper::config();
 
 		// Initialise variables.
 		$itemId = (int) (!empty($itemId)) ? $itemId : $this->getState('venue.id');
@@ -95,7 +90,6 @@ class JemModelEditvenue extends JemModelVenue
 		$userId = $user->get('id');
 		$asset = 'com_jem.venue.' . $value->id;
 
-
 		// Check general edit permission first.
 		if ($user->authorise('core.edit', $asset)) {
 			$value->params->set('access-edit', true);
@@ -115,34 +109,14 @@ class JemModelEditvenue extends JemModelVenue
 		}
 		else {
 			$value->params->set('access-change', $user->authorise('core.edit.state', 'com_jem'));
-			// New item.
-			//$catId = (int) $this->getState('event.catid');
-
-			//if ($catId) {
-			//	$value->params->set('access-change', $user->authorise('core.edit.state', 'com_jem.category.' . $catId));
-			//	$value->catid = $catId;
-			//}
-			//else {
-
-			//}
 		}
 
 		$files = JemAttachment::getAttachments('venue' . $itemId);
 		$value->attachments = $files;
 
-		/*
-		$value->articletext = $value->introtext;
-		if (!empty($value->fulltext)) {
-			$value->articletext .= '<hr id="system-readmore" />' . $value->fulltext;
+		if (empty($itemId)) {
+			$value->country = $jemsettings->defaultCountry;
 		}
-
-		if ($itemId)
-		{
-			$value->tags = new JHelperTags;
-			$value->tags->getTagIds($value->id, 'com_jem.venue');
-			$value->metadata['tags'] = $value->tags;
-		}
-		*/
 
 		return $value;
 	}
