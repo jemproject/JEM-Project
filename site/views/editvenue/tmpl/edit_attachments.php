@@ -6,7 +6,7 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-defined ( '_JEXEC' ) or die;
+defined ('_JEXEC') or die;
 ?>
 
 <table class="adminform" id="el-attachments">
@@ -34,10 +34,10 @@ defined ( '_JEXEC' ) or die;
 				<input type="file" name="attach[]" class="attach-field"></input>
 			</td>
 			<td>
-				<input type="text" name="attach-name[]" value="" style="width: 100%" />
+				<input type="text" name="attach-name[]" value="" />
 			</td>
 			<td>
-				<input type="text" name="attach-desc[]" value="" style="width: 100%" />
+				<input type="text" name="attach-desc[]" value="" />
 			</td>
 			<td>
 				<?php echo JHtml::_('select.genericlist', $this->access, 'attach-access[]', 'class="inputbox" size="3"', 'value', 'text', 0); ?>

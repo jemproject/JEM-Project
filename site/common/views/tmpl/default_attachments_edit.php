@@ -36,10 +36,10 @@ defined ('_JEXEC') or die;
 				<input type="file" name="attach[]" class="attach-field" size="10" style="width:200px"></input>
 			</td>
 			<td>
-				<input type="text" name="attach-name[]" value="" style="width:100px" />
+				<input type="text" name="attach-name[]" value="" />
 			</td>
 			<td>
-				<input type="text" name="attach-desc[]" value="" style="width:100px" />
+				<input type="text" name="attach-desc[]" value="" />
 			</td>
 			<td>
 				<?php echo JHtml::_('select.genericlist', $this->access, 'attach-access[]', 'class="inputbox" style="width:100px" size="3"', 'value', 'text', 0); ?>
