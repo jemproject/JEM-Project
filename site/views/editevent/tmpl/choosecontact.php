@@ -79,7 +79,7 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 				</span>
 			</td>
 			<td align="left"><?php echo $this->escape($row->address); ?></td>
-			<td align="left"><?php echo $this->escape(($row->suburb); ?></td>
+			<td align="left"><?php echo $this->escape($row->suburb); ?></td>
 			<td align="left"><?php echo $this->escape($row->state); ?></td>
 			<td align="left"><?php echo $this->escape($row->email_to); ?></td>
 			<td align="left"><?php echo $this->escape($row->telephone); ?></td>
