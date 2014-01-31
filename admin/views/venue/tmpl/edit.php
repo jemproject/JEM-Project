@@ -1,14 +1,12 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
-
 
 JHtml::_('behavior.tooltip');
 JHtml::_('behavior.formvalidation');
@@ -17,11 +15,7 @@ JHtml::_('behavior.keepalive');
 // Create shortcut to parameters.
 $params = $this->state->get('params');
 $params = $params->toArray();
-
 ?>
-
-
-
 
 <script type="text/javascript">
 	Joomla.submitbutton = function(task)
@@ -31,8 +25,6 @@ $params = $params->toArray();
 		}
 	}
 </script>
-
-
 <script type="text/javascript">
 	window.addEvent('domready', function(){
 		var form = document.getElementById('venue-form');
@@ -51,54 +43,37 @@ $params = $params->toArray();
 	});
 
 
-	function setAttribute()
-	{
+	function setAttribute(){
+		var postalCode = document.getElementById("jform_postalCode");
+	    postalCode.setAttribute("geo-data", "postal_code");
 
-		var attribute = document.createAttribute("geo-data");
-	    attribute.nodeValue = "postal_code"
-	    document.getElementById("jform_postalCode").setAttributeNode(attribute);
+	    var locality = document.getElementById("jform_city");
+	    locality.setAttribute("geo-data", "locality");
 
-	    var attribute = document.createAttribute("geo-data");
-	    attribute.nodeValue = "locality"
-	    document.getElementById("jform_city").setAttributeNode(attribute);
+	    var state = document.getElementById("jform_state");
+	    state.setAttribute("geo-data", "administrative_area_level_1");
 
-	    var attribute = document.createAttribute("geo-data");
-	    attribute.nodeValue = "administrative_area_level_1"
-	    document.getElementById("jform_state").setAttributeNode(attribute);
+	    var street = document.getElementById("jform_street");
+	    street.setAttribute("geo-data", "street_address");
 
-	    var attribute = document.createAttribute("geo-data");
-	    attribute.nodeValue = "street_address"
-	    document.getElementById("jform_street").setAttributeNode(attribute);
+	    var lat = document.getElementById("jform_latitude");
+	    lat.setAttribute("geo-data", "lat");
 
-	    var attribute = document.createAttribute("geo-data");
-	    attribute.nodeValue = "lat"
-	    document.getElementById("jform_latitude").setAttributeNode(attribute);
+	    var lng = document.getElementById("jform_longitude");
+	    lng.setAttribute("geo-data", "lng");
+	}
 
-	    var attribute = document.createAttribute("geo-data");
-	    attribute.nodeValue = "lng"
-	    document.getElementById("jform_longitude").setAttributeNode(attribute);
-
-
-
+	function meta(){
+		var f	=	document.getElementById('venue-form');
+		f.jform_meta_keywords.value=f.jform_venue.value+', '+f.jform_city.value+f.jform_meta_keywords.value;
 	}
 
 
+	function test(){
+	 	var handler = function(e) {
 
-
-function meta()
-{
-	f=document.getElementById('venue-form');
-	f.jform_meta_keywords.value=f.jform_venue.value+', '+f.jform_city.value+f.jform_meta_keywords.value;
-}
-
-
-function test()
-{
-	 var handler = function(e) {
-
-		 var form = document.getElementById('venue-form');
+		 	var form = document.getElementById('venue-form');
 			var map = $('jform_map');
-
 			var streetcheck = $(form.jform_street).hasClass('required');
 
 		 if(map && map.checked == true) {
@@ -157,13 +132,13 @@ function test()
     <script>
       jQuery(function(){
     	  jQuery("#geocomplete").geocomplete({
-          map: ".map_canvas",
-          /* location: "default address", */
-          details: "form ",
-          detailsAttribute: "geo-data",
-          types: ['establishment', 'geocode'],
-          markerOptions: {
-            draggable: true
+			map: ".map_canvas",
+			/*location: "defaultaddress",*/
+			details: "form ",
+			detailsAttribute: "geo-data",
+			types: ['establishment', 'geocode'],
+			markerOptions: {
+			draggable: true
           }
         });
 
@@ -174,8 +149,6 @@ function test()
     		 /* option to show the reset-link */
     		 /* jQuery("#reset").show();*/
         });
-
-
 
     	  jQuery("#geocomplete").bind("geocode:result", function(event, result){
     	  		var country = document.getElementById("country").value;
@@ -204,7 +177,7 @@ function test()
 
 	<!-- START OF LEFT DIV -->
 	<div class="width-55 fltlft">
-	
+
 	<?php echo JHtml::_('tabs.start', 'det-pane'); ?>
 	<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_VENUE_INFO_TAB'), 'info' ); ?>
 		<fieldset class="adminform">
@@ -213,28 +186,28 @@ function test()
 			</legend>
 
 			<ul class="adminformlist">
-				<li><?php echo $this->form->getLabel('venue');?> 
+				<li><?php echo $this->form->getLabel('venue');?>
 				<?php echo $this->form->getInput('venue'); ?></li>
 
-				<li><?php echo $this->form->getLabel('alias'); ?> 
+				<li><?php echo $this->form->getLabel('alias'); ?>
 				<?php echo $this->form->getInput('alias'); ?></li>
 
-				<li><?php echo $this->form->getLabel('street'); ?> 
+				<li><?php echo $this->form->getLabel('street'); ?>
 				<?php echo $this->form->getInput('street'); ?></li>
 
-				<li><?php echo $this->form->getLabel('postalCode'); ?> 
+				<li><?php echo $this->form->getLabel('postalCode'); ?>
 				<?php echo $this->form->getInput('postalCode'); ?></li>
 
-				<li><?php echo $this->form->getLabel('city'); ?> 
+				<li><?php echo $this->form->getLabel('city'); ?>
 				<?php echo $this->form->getInput('city'); ?></li>
 
-				<li><?php echo $this->form->getLabel('state'); ?> 
+				<li><?php echo $this->form->getLabel('state'); ?>
 				<?php echo $this->form->getInput('state'); ?></li>
 
-				<li><?php echo $this->form->getLabel('country'); ?> 
+				<li><?php echo $this->form->getLabel('country'); ?>
 				<?php echo $this->form->getInput('country'); ?></li>
 
-				<li><?php echo $this->form->getLabel('url'); ?> 
+				<li><?php echo $this->form->getLabel('url'); ?>
 				<?php echo $this->form->getInput('url'); ?></li>
 			</ul>
 				<div>
@@ -246,7 +219,7 @@ function test()
 	<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
 	<?php echo $this->loadTemplate('attachments'); ?>
 	<?php echo JHtml::_('tabs.end'); ?>
-		
+
 	<!-- END OF LEFT DIV -->
 	</div>
 
@@ -257,12 +230,12 @@ function test()
 	<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_FIELDSET_PUBLISHING'), 'publishing-details'); ?>
 		<fieldset class="panelform">
 			<ul class="adminformlist">
-				<li><?php echo $this->form->getLabel('id'); ?> 
+				<li><?php echo $this->form->getLabel('id'); ?>
 				<?php echo $this->form->getInput('id'); ?></li>
-				
-				<li><?php echo $this->form->getLabel('published'); ?> 
+
+				<li><?php echo $this->form->getLabel('published'); ?>
 				<?php echo $this->form->getInput('published'); ?></li>
-				
+
 				<?php foreach($this->form->getFieldset('publish') as $field): ?>
 				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
 				<?php endforeach; ?>
@@ -280,7 +253,7 @@ function test()
 	<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_IMAGE'), 'image-event'); ?>
 		<fieldset class="panelform">
 			<ul class="adminformlist">
-				<li><?php echo $this->form->getLabel('locimage'); ?> 
+				<li><?php echo $this->form->getLabel('locimage'); ?>
 				<?php echo $this->form->getInput('locimage'); ?></li>
 			</ul>
 		</fieldset>
@@ -298,19 +271,19 @@ function test()
 		<fieldset class="adminform" id="geodata">
 			<input id="geocomplete" type="text" placeholder="<?php echo JText::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
       		<input id="find" type="button" value="find" />
-      		<br><br>
+      		<div class="clr"></div>
  			<div class="map_canvas"></div>
       		<a id="reset" href="#" style="display:none;">Reset Marker</a>
 		</fieldset>
 		<fieldset class="adminform">
 			<ul class="adminformlist">
-				<li><?php echo $this->form->getLabel('latitude'); ?> 
+				<li><?php echo $this->form->getLabel('latitude'); ?>
 				<?php echo $this->form->getInput('latitude'); ?></li>
-				
-				<li><?php echo $this->form->getLabel('longitude'); ?> 
+
+				<li><?php echo $this->form->getLabel('longitude'); ?>
 				<?php echo $this->form->getInput('longitude'); ?></li>
-				
-				<li><?php echo $this->form->getLabel('map'); ?> 
+
+				<li><?php echo $this->form->getLabel('map'); ?>
 				<?php echo $this->form->getInput('map'); ?></li>
 			</ul>
 			<div class="clr"></div>
