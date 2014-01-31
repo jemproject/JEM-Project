@@ -43,7 +43,7 @@ class jem_attachments extends JTable
 	/** @var int */
 	var $added_by 		= 0;
 
-	function __construct(& $db) {
+	public function __construct(& $db) {
 		parent::__construct('#__jem_attachments', 'id', $db);
 	}
 

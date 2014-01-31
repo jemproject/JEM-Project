@@ -32,7 +32,7 @@ class JEMModelImagehandler extends JModelLegacy
 	 * Constructor
 	 *
 	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 
 		$app 		= JFactory::getApplication();
@@ -179,7 +179,7 @@ class JEMModelImagehandler extends JModelLegacy
 	 * @return array width and height
 	 *
 	 */
-	function _imageResize($width, $height, $target) {
+	protected function _imageResize($width, $height, $target) {
 		//takes the larger size of the width and height and applies the
 		//formula accordingly...this is so this script will work
 		//dynamically with any size image
@@ -202,7 +202,7 @@ class JEMModelImagehandler extends JModelLegacy
 	 * @return string size of image
 	 *
 	 */
-	function _parseSize($size) {
+	protected function _parseSize($size) {
 		if ($size < 1024) {
 			return $size . ' bytes';
 		} else {

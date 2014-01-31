@@ -51,7 +51,7 @@ class JEMModelVenueCal extends JModelLegacy
 	 * Constructor
 	 *
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -253,7 +253,7 @@ class JEMModelVenueCal extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildQuery()
+	protected function _buildQuery()
 	{
 		// Get the WHERE and ORDER BY clauses for the query
 		$where		= $this->_buildWhere();
@@ -284,7 +284,7 @@ class JEMModelVenueCal extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildOrderBy()
+	protected function _buildOrderBy()
 	{
 		$app = JFactory::getApplication();
 
@@ -310,7 +310,7 @@ class JEMModelVenueCal extends JModelLegacy
 	 * @access private
 	 * @return array
 	 */
-	function _buildWhere()
+	protected function _buildWhere()
 	{
 		$app 			= JFactory::getApplication();
 		$task 			= JRequest::getWord('task');

@@ -43,7 +43,7 @@ class JEMModelVenues extends JModelLegacy
 	/**
 	 * Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -166,7 +166,7 @@ class JEMModelVenues extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildQuery()
+	protected function _buildQuery()
 	{
 		$user = JFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();

@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
 class JEMTableVenue extends JTable
 {
 
-	function __construct(&$db){
+	public function __construct(&$db) {
 		parent::__construct('#__jem_venues', 'id', $db);
 	}
 
@@ -230,7 +230,7 @@ class JEMTableVenue extends JTable
 	 * @param string  The name of the primary key. If provided the object property is updated.
 	 * @return int number of affected row
 	 */
-	function _insertIgnoreObject($table, &$object, $keyName = NULL)
+	protected function _insertIgnoreObject($table, &$object, $keyName = NULL)
 	{
 		$fmtsql = 'INSERT IGNORE INTO '.$this->_db->quoteName($table).' (%s) VALUES (%s) ';
 		$fields = array();

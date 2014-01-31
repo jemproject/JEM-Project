@@ -23,7 +23,7 @@ class JEMControllerImport extends JControllerLegacy {
 	 *
 	 *
 	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 	}
 
@@ -142,7 +142,7 @@ class JEMControllerImport extends JControllerLegacy {
 	 * @param string $value
 	 * @return string
 	 */
-	function _formatcsvfield($type, $value) {
+	protected function _formatcsvfield($type, $value) {
 		switch($type) {
 			case 'times':
 			case 'endtimes':

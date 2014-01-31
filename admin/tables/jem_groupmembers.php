@@ -27,7 +27,7 @@ class jem_groupmembers extends JTable
 	/** @var int */
 	var $member		= null;
 
-	function __construct(& $db) {
+	public function __construct(& $db) {
 		parent::__construct('#__jem_groupmembers', 'id', $db);
 	}
 }

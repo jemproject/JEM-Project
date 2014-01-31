@@ -38,7 +38,7 @@ class JEMCategories
 	 *
 	 * @param int category id
 	 */
-	function __construct($cid)
+	public function __construct($cid)
 	{
 		$this->id = $cid;
 	}
@@ -296,7 +296,7 @@ class JEMCategories
 	 * @param array children indexed by parent id
 	 * @return array of category descendants
 	 */
-	static function _getChildsRecurse($id, $childs)
+	protected static function _getChildsRecurse($id, $childs)
 	{
 		$result = array(
 			$id

@@ -36,7 +36,7 @@ class JemModelSampledata extends JModelLegacy
 	/**
 	 * Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 

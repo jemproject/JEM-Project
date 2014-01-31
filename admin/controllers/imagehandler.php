@@ -25,7 +25,7 @@ class JEMControllerImagehandler extends JControllerLegacy
 	 *
 	 *
 	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 
 		// Register Extra task

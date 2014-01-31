@@ -57,7 +57,7 @@ class JEMModelCategories extends JModelLegacy
 	/**
 	 * Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -196,7 +196,7 @@ class JEMModelCategories extends JModelLegacy
 	 * @access private
 	 * @return array
 	 */
-	function _buildDataQuery($id)
+	protected function _buildDataQuery($id)
 	{
 		$user = JFactory::getUser();
 		// Support Joomla access levels instead of single group id
@@ -256,7 +256,7 @@ class JEMModelCategories extends JModelLegacy
 	 * @param string $parent_id Parent ID of the subcategories
 	 * @return string The query string
 	 */
-	function _buildQuerySubCategories($parent_id = null) {
+	protected function _buildQuerySubCategories($parent_id = null) {
 		return $this->_buildQuery($parent_id);
 	}
 
@@ -265,7 +265,7 @@ class JEMModelCategories extends JModelLegacy
 	 * @param string $parent_id ID of the parent category
 	 * @return string The query string
 	 */
-	function _buildQueryParentCategory($parent_id = null) {
+	protected function _buildQueryParentCategory($parent_id = null) {
 		return $this->_buildQuery($parent_id, true);
 	}
 
@@ -276,7 +276,7 @@ class JEMModelCategories extends JModelLegacy
 	 * @param string $parentCategory
 	 * @return string The query string
 	 */
-	function _buildQuery($parent_id = null, $parentCategory = false)
+	protected function _buildQuery($parent_id = null, $parentCategory = false)
 	{
 		$app = JFactory::getApplication();
 
@@ -348,7 +348,7 @@ class JEMModelCategories extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildQueryTotal()
+	protected function _buildQueryTotal()
 	{
 		$app = JFactory::getApplication();
 

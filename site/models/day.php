@@ -51,7 +51,7 @@ class JEMModelDay extends JModelLegacy
 	 * Constructor
 	 *
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -186,7 +186,7 @@ class JEMModelDay extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildQuery()
+	protected function _buildQuery()
 	{
 		// Get the WHERE and ORDER BY clauses for the query
 		$where		= $this->_buildWhere();
@@ -215,7 +215,7 @@ class JEMModelDay extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildOrderBy()
+	protected function _buildOrderBy()
 	{
 		$app = JFactory::getApplication();
 
@@ -240,7 +240,7 @@ class JEMModelDay extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildWhere()
+	protected function _buildWhere()
 	{
 		$app 		= JFactory::getApplication();
 		$settings 	= JEMHelper::globalattribs();

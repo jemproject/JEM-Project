@@ -17,7 +17,7 @@ defined('_JEXEC') or die;
  */
 class JEMTableGroup extends JTable
 {
-	function __construct(&$db)
+	public function __construct(&$db)
 	{
 		parent::__construct('#__jem_groups', 'id', $db);
 	}

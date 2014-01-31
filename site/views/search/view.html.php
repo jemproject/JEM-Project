@@ -186,7 +186,7 @@ class JEMViewSearch extends JEMView
 	 * @return array
 	 *
 	 */
-	function _buildSortLists()
+	protected function _buildSortLists()
 	{
 		$app = JFactory::getApplication();
 		$db = JFactory::getDBO();

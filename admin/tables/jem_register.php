@@ -33,7 +33,7 @@ class jem_register extends JTable
 	/** @var int */
 	var $waiting 	= 0;
 
-	function __construct(& $db) {
+	public function __construct(& $db) {
 		parent::__construct('#__jem_register', 'id', $db);
 	}
 
@@ -65,7 +65,7 @@ class jem_register extends JTable
 	 * @param string  The name of the primary key. If provided the object property is updated.
 	 * @return int number of affected row
 	 */
-	function _insertIgnoreObject($table, &$object, $keyName = NULL)
+	protected function _insertIgnoreObject($table, &$object, $keyName = NULL)
 	{
 		$fmtsql = 'INSERT IGNORE INTO '.$this->_db->quoteName($table).' (%s) VALUES (%s) ';
 		$fields = array();

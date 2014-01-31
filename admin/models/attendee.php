@@ -37,7 +37,7 @@ class JEMModelAttendee extends JModelLegacy
 	 * Constructor
 	 *
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -83,7 +83,7 @@ class JEMModelAttendee extends JModelLegacy
 	 * @return	boolean	True on success
 	 *
 	 */
-	function _loadData()
+	protected function _loadData()
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
@@ -113,7 +113,7 @@ class JEMModelAttendee extends JModelLegacy
 	 * @return	boolean	True on success
 	 *
 	 */
-	function _initData()
+	protected function _initData()
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))

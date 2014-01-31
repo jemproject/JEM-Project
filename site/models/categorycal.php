@@ -58,7 +58,7 @@ class JEMModelCategoryCal extends JModelLegacy
 	 * Constructor
 	 *
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -273,7 +273,7 @@ class JEMModelCategoryCal extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildQuery()
+	protected function _buildQuery()
 	{
 		// Get the WHERE and ORDER BY clauses for the query
 		$where		= $this->_buildCategoryWhere();
@@ -305,7 +305,7 @@ class JEMModelCategoryCal extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildCategoryOrderBy()
+	protected function _buildCategoryOrderBy()
 	{
 		$app = JFactory::getApplication();
 
@@ -330,7 +330,7 @@ class JEMModelCategoryCal extends JModelLegacy
 	 * @access private
 	 * @return array
 	 */
-	function _buildCategoryWhere()
+	protected function _buildCategoryWhere()
 	{
 		$app = JFactory::getApplication();
 		$task 		= JRequest::getWord('task');
@@ -414,7 +414,7 @@ class JEMModelCategoryCal extends JModelLegacy
 	 * @access private
 	 * @return array
 	 */
-	function _buildChildsQuery()
+	protected function _buildChildsQuery()
 	{
 		$user = JFactory::getUser();
 		// Support Joomla access levels instead of single group id

@@ -52,7 +52,7 @@ class JEMModelWeekcal extends JModelLegacy
 	 *
 	 *
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -225,7 +225,7 @@ class JEMModelWeekcal extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildQuery()
+	protected function _buildQuery()
 	{
 		// Get the WHERE clauses for the query
 		$where = $this->_buildCategoryWhere();
@@ -253,7 +253,7 @@ class JEMModelWeekcal extends JModelLegacy
 	 * @access private
 	 * @return array
 	 */
-	function _buildCategoryWhere()
+	protected function _buildCategoryWhere()
 	{
 		$user = JFactory::getUser();
 		$app = JFactory::getApplication();

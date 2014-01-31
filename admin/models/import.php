@@ -22,7 +22,7 @@ class JEMModelImport extends JModelLegacy {
 	/**
 	 * Constructor
 	 */
-	function __construct() {
+	public function __construct() {
 		$jinput = JFactory::getApplication()->input;
 		$this->prefix = $jinput->get('prefix', '#__', 'CMD');
 		if($this->prefix == "") {

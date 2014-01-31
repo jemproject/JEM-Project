@@ -53,7 +53,7 @@ class JEMModelCalendar extends JModelLegacy
 	 *
 	 *
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -165,7 +165,7 @@ class JEMModelCalendar extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildQuery()
+	protected function _buildQuery()
 	{
 		// Get the WHERE clauses for the query
 		$where = $this->_buildCategoryWhere();
@@ -193,7 +193,7 @@ class JEMModelCalendar extends JModelLegacy
 	 * @access private
 	 * @return array
 	 */
-	function _buildCategoryWhere()
+	protected function _buildCategoryWhere()
 	{
 		$app = JFactory::getApplication();
 		$user = JFactory::getUser();

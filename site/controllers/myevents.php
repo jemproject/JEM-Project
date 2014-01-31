@@ -23,7 +23,7 @@ class JEMControllerMyevents extends JControllerLegacy
 	 * Constructor
 	 *
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 	}

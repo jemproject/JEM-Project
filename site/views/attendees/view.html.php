@@ -138,11 +138,11 @@ class JEMViewAttendees extends JViewLegacy {
 	 *
 	 * @param $tpl
 	 */
-	public function _displayprint($tpl = null)
+	protected function _displayprint($tpl = null)
 	{
 		$document	= JFactory::getDocument();
-		$app      = JFactory::getApplication();
-		$params   = $app->getParams();
+		$app		= JFactory::getApplication();
+		$params		= $app->getParams();
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);

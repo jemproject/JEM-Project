@@ -38,7 +38,7 @@ class ActiveCalendarWeek extends JEMCalendar {
 	PUBLIC class constructor. Calls the main class constructor
 	********************************************************************************
 	*/
-	function __construct($year=false, $month=false, $day=false, $GMTDiff="none") {
+	public function __construct($year=false, $month=false, $day=false, $GMTDiff="none") {
 		parent::__construct($year, $month, $day, $GMTDiff);
 		$this->GMT=$GMTDiff;
 	}

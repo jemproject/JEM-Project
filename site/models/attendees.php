@@ -58,7 +58,7 @@ class JEMModelAttendees extends JModelLegacy
 	 * Constructor
 	 *
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -160,7 +160,7 @@ class JEMModelAttendees extends JModelLegacy
 	 * @return integer
 	 *
 	 */
-	function _buildQuery()
+	protected function _buildQuery()
 	{
 		// Get the ORDER BY clause for the query
 		$orderby	= $this->_buildContentOrderBy();
@@ -188,7 +188,7 @@ class JEMModelAttendees extends JModelLegacy
 	 * @return integer
 	 *
 	 */
-	function _buildContentOrderBy()
+	protected function _buildContentOrderBy()
 	{
 		$app =  JFactory::getApplication();
 
@@ -211,7 +211,7 @@ class JEMModelAttendees extends JModelLegacy
 	 * @return string
 	 *
 	 */
-	function _buildContentWhere()
+	protected function _buildContentWhere()
 	{
 		$app =  JFactory::getApplication();
 		$user = JFactory::getUser();

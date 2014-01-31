@@ -96,7 +96,7 @@ class JEMViewImagehandler extends JViewLegacy {
 	 * @param $tpl
 	 *
 	 */
-	function _displayuploadimage($tpl = null) {
+	protected function _displayuploadimage($tpl = null) {
 		//initialise variables
 		$uri 			= JFactory::getURI()->toString();
 		$jemsettings	= JEMAdmin::config();

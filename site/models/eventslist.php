@@ -37,7 +37,7 @@ class JEMModelEventslist extends JModelLegacy
 	 * Constructor
 	 *
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -158,7 +158,7 @@ class JEMModelEventslist extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildQuery()
+	protected function _buildQuery()
 	{
 		// Get the WHERE and ORDER BY clauses for the query
 		$where		= $this->_buildWhere();
@@ -190,7 +190,7 @@ class JEMModelEventslist extends JModelLegacy
 	 * @return string
 	 */
 
-	function _buildOrderBy()
+	protected function _buildOrderBy()
 	{
 		$app 			= JFactory::getApplication();
 		$jinput 		= JFactory::getApplication()->input;
@@ -223,7 +223,7 @@ class JEMModelEventslist extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildWhere()
+	protected function _buildWhere()
 	{
 		$app 			= JFactory::getApplication();
 		$jinput 		= JFactory::getApplication()->input;
@@ -323,7 +323,7 @@ class JEMModelEventslist extends JModelLegacy
 		return $this->_cats;
 	}
 
-	function _buildWhere2()
+	protected function _buildWhere2()
 	{
 		$app = JFactory::getApplication();
 

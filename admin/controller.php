@@ -22,7 +22,7 @@ class JEMController extends JControllerLegacy
 	protected $default_view = 'main';
 
 
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 	}

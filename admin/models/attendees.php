@@ -58,7 +58,7 @@ class JEMModelAttendees extends JModelLegacy
 	 * Constructor
 	 *
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -161,7 +161,7 @@ class JEMModelAttendees extends JModelLegacy
 	 * @return integer
 	 *
 	 */
-	function _buildQuery()
+	protected function _buildQuery()
 	{
 
 		$app =  JFactory::getApplication();

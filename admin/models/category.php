@@ -961,7 +961,7 @@ class JEMModelCategory extends JModelAdmin
 	 * @param string $type
 	 * @return object
 	 */
-	function _addCategories($id, &$list, $type = 'children')
+	protected function _addCategories($id, &$list, $type = 'children')
 	{
 		// Initialize variables
 		$return = true;

@@ -44,7 +44,7 @@ class JEMModelSearch extends JModelLegacy
 	 * Constructor
 	 *
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -131,7 +131,7 @@ class JEMModelSearch extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildQuery()
+	protected function _buildQuery()
 	{
 		if (empty($this->_query)) {
 			// Get the WHERE and ORDER BY clauses for the query
@@ -161,7 +161,7 @@ class JEMModelSearch extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildOrderBy()
+	protected function _buildOrderBy()
 	{
 		$filter_order		= $this->getState('filter_order');
 		$filter_order_Dir	= $this->getState('filter_order_Dir');
@@ -181,7 +181,7 @@ class JEMModelSearch extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildWhere()
+	protected function _buildWhere()
 	{
 		$app = JFactory::getApplication();
 

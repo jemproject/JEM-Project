@@ -221,7 +221,7 @@ class JEMModelGroup extends JModelAdmin
 	 * @return	string
 	 *
 	 */
-	function _members()
+	protected function _members()
 	{
 		$item = parent::getItem();
 

@@ -31,7 +31,7 @@ class jem_groups extends JTable
 	/** @var date */
 	var $checked_out_time	= 0;
 
-	function __construct(& $db) {
+	public function __construct(& $db) {
 		parent::__construct('#__jem_groups', 'id', $db);
 	}
 
@@ -86,7 +86,7 @@ class jem_groups extends JTable
 	 * @param string  The name of the primary key. If provided the object property is updated.
 	 * @return int number of affected row
 	 */
-	function _insertIgnoreObject($table, &$object, $keyName = NULL)
+	protected function _insertIgnoreObject($table, &$object, $keyName = NULL)
 	{
 		$fmtsql = 'INSERT IGNORE INTO '.$this->_db->quoteName($table).' (%s) VALUES (%s) ';
 		$fields = array();

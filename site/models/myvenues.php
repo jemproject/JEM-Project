@@ -26,7 +26,7 @@ class JEMModelMyvenues extends JModelLegacy
 	/**
 	 * Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -108,7 +108,7 @@ class JEMModelMyvenues extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildQueryVenues()
+	protected function _buildQueryVenues()
 	{
 		// Get the WHERE and ORDER BY clauses for the query
 		$where = $this->_buildVenuesWhere();
@@ -131,7 +131,7 @@ class JEMModelMyvenues extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildOrderByVenues()
+	protected function _buildOrderByVenues()
 	{
 		$app = JFactory::getApplication();
 
@@ -156,7 +156,7 @@ class JEMModelMyvenues extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildVenuesWhere()
+	protected function _buildVenuesWhere()
 	{
 		$app 			= JFactory::getApplication();
 		$user 			= JFactory::getUser();

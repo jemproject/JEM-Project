@@ -18,313 +18,313 @@ jimport('joomla.html.parameter');
 
 class plgSearchJEM extends JPlugin
 {
+	public function __construct(& $subject, $config)
+	{
+		parent::__construct($subject, $config);
+		JPlugin::loadLanguage( 'plg_search_jem', JPATH_ADMINISTRATOR);
+	}
 
 
-function __construct(& $subject, $config)
-    {
-            parent::__construct($subject, $config);
-            JPlugin::loadLanguage( 'plg_search_jem', JPATH_ADMINISTRATOR);
-    }
-/**
- * @return array An array of search areas
- */
-function onContentSearchAreas()
+	/**
+	 * @return array An array of search areas
+	 */
+	function onContentSearchAreas()
 	{
 		static $areas = array(	'jemevents' => 'PLG_JEM_SEARCH_EVENTS',
 								'jemvenues' => 'PLG_JEM_SEARCH_VENUES',
 								'jemcategories' => 'PLG_JEM_SEARCH_JEM_CATEGORIES'
-							  );
+							);
 
-			return $areas;
+		return $areas;
 	}
 
-/**
- * Categories Search method
- *
- * The sql must return the following fields that are
- * used in a common display routine: href, title, section, created, text,
- * browsernav
- * @param string Target search string
- * @param string mathcing option, exact|any|all
- * @param string ordering option, newest|oldest|popular|alpha|category
- * @param mixed An array if restricted to areas, null if search all
- */
-function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
-{
-	$db		= JFactory::getDBO();
-	$app	= JFactory::getApplication();
-	$user	= JFactory::getUser();
-	$groups	= implode(',', $user->getAuthorisedViewLevels());
-	$tag = JFactory::getLanguage()->getTag();
+	/**
+	 * Categories Search method
+	 *
+	 * The sql must return the following fields that are
+	 * used in a common display routine: href, title, section, created, text,
+	 * browsernav
+	 * @param string Target search string
+	 * @param string mathcing option, exact|any|all
+	 * @param string ordering option, newest|oldest|popular|alpha|category
+	 * @param mixed An array if restricted to areas, null if search all
+	 */
+	function onContentSearch( $text, $phrase='', $ordering='', $areas=null )
+	{
+		$db		= JFactory::getDBO();
+		$app	= JFactory::getApplication();
+		$user	= JFactory::getUser();
+		$groups	= implode(',', $user->getAuthorisedViewLevels());
+		$tag = JFactory::getLanguage()->getTag();
 
-	require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
+		require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 
-	if (is_array( $areas )) {
-		if (!array_intersect( $areas, array_keys( $this->onContentSearchAreas() ) )) {
+		if (is_array( $areas )) {
+			if (!array_intersect( $areas, array_keys( $this->onContentSearchAreas() ) )) {
+				return array();
+			}
+		} else {
+			$areas = array_keys( $this->onContentSearchAreas() );
+		}
+
+		// load plugin params info
+		$plugin = JPluginHelper::getPlugin('search', 'jem');
+		$pluginParams = new JRegistry($plugin->params);
+
+		$limit = $pluginParams->def('search_limit', 50);
+
+		$text = trim( $text );
+		if ( $text == '' ) {
 			return array();
 		}
-	} else {
-		$areas = array_keys( $this->onContentSearchAreas() );
-	}
 
-	// load plugin params info
-	$plugin = JPluginHelper::getPlugin('search', 'jem');
-	$pluginParams = new JRegistry($plugin->params);
+		$searchJEM = $db->Quote(JText::_('PLG_JEM_SEARCH_JEM'));
 
-	$limit = $pluginParams->def('search_limit', 50);
+		$rows = array();
+		$query	= $db->getQuery(true);
 
-	$text = trim( $text );
-	if ( $text == '' ) {
-		return array();
-	}
+		if (in_array('jemevents', $areas) && $limit > 0) {
 
-	$searchJEM = $db->Quote(JText::_('PLG_JEM_SEARCH_JEM'));
-
-	$rows = array();
-	$query	= $db->getQuery(true);
-
-	if (in_array('jemevents', $areas) && $limit > 0) {
-
-		switch ($phrase) {
-			case 'exact':
-				$text 		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
-				$wheres2 	= array();
-				$wheres2[] 	= 'LOWER(a.title) LIKE '.$text;
-				$wheres2[]	= 'LOWER(a.introtext) LIKE '.$text;
-				$wheres2[] 	= 'LOWER(a.fulltext) LIKE '.$text;
-				$wheres2[] 	= 'LOWER(a.meta_keywords) LIKE '.$text;
-				$wheres2[] 	= 'LOWER(a.meta_description) LIKE '.$text;
-				$where 		= '(' . implode( ') OR (', $wheres2 ) . ')';
-				break;
-
-			case 'all':
-			case 'any':
-			default:
-				$words = explode( ' ', $text );
-				$wheres = array();
-				foreach ($words as $word) {
-					$word 		= $db->Quote( '%'.$db->escape( $word, true ).'%', false );
+			switch ($phrase) {
+				case 'exact':
+					$text 		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
 					$wheres2 	= array();
-					$wheres2[] 	= 'LOWER(a.title) LIKE '.$word;
-					$wheres2[]	= 'LOWER(a.introtext) LIKE '.$word;
-					$wheres2[] 	= 'LOWER(a.fulltext) LIKE '.$word;
-					$wheres2[] 	= 'LOWER(a.meta_keywords) LIKE '.$word;
-					$wheres2[] 	= 'LOWER(a.meta_description) LIKE '.$word;
-					$wheres[] 	= implode( ' OR ', $wheres2 );
-				}
-				$where = '(' . implode( ($phrase == 'all' ? ') AND (' : ') OR ('), $wheres ) . ')';
-				break;
-		}
+					$wheres2[] 	= 'LOWER(a.title) LIKE '.$text;
+					$wheres2[]	= 'LOWER(a.introtext) LIKE '.$text;
+					$wheres2[] 	= 'LOWER(a.fulltext) LIKE '.$text;
+					$wheres2[] 	= 'LOWER(a.meta_keywords) LIKE '.$text;
+					$wheres2[] 	= 'LOWER(a.meta_description) LIKE '.$text;
+					$where 		= '(' . implode( ') OR (', $wheres2 ) . ')';
+					break;
 
-		switch ($ordering) {
-			case 'oldest':
-				$order = 'a.dates, a.times ASC';
-				break;
-
-			case 'alpha':
-				$order = 'a.title ASC';
-				break;
-
-			case 'category':
-				$order = 'c.catname ASC, a.title ASC';
-				break;
-
-			case 'newest':
-			default:
-				$order = 'a.dates, a.times DESC';
-		}
-
-		$query->clear();
-		//sqlsrv changes
-		$case_when = ' CASE WHEN ';
-		$case_when .= $query->charLength('a.alias');
-		$case_when .= ' THEN ';
-		$a_id = $query->castAsChar('a.id');
-		$case_when .= $query->concatenate(array($a_id, 'a.alias'), ':');
-		$case_when .= ' ELSE ';
-		$case_when .= $a_id.' END as slug';
-           
- 		$case_when1 = ' CASE WHEN ';
- 		$case_when1 .= $query->charLength('c.alias');
- 		$case_when1 .= ' THEN ';
- 		$c_id = $query->castAsChar('c.id');
-  		$case_when1 .= $query->concatenate(array($c_id, 'c.alias'), ':');
- 		$case_when1 .= ' ELSE ';
-		$case_when1 .= $c_id.' END as catslug';
-            
-		$query->select('a.title AS title, a.meta_description, a.meta_keywords, a.created AS created');
-		$query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
-		$query->select('c.catname AS section, '.$case_when.','.$case_when1.', '.'\'2\' AS browsernav');
-		$query->select('rel.catid');
-            
-		$query->from('#__jem_events AS a');
-		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
-		$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
-		$query->where('('. $where .')' . ' AND a.published=1 AND c.published = 1 AND a.access IN ('.$groups.') '
-				.'AND c.access IN ('.$groups.') '
-				 );
-		$query->group('a.id, a.title, a.meta_description, a.meta_keywords, a.created, a.introtext, a.fulltext, c.catname, a.alias, c.alias, c.id');
-		$query->order($order);
-
-		$db->setQuery( $query, 0, $limit );
-		$list = $db->loadObjectList();
-		$limit -= count($list);
-
-		if (isset($list))
-		{
-			foreach($list as $key => $row)
-			{
-				$list[$key]->href = JEMHelperRoute::getEventRoute($row->slug);
+				case 'all':
+				case 'any':
+				default:
+					$words = explode( ' ', $text );
+					$wheres = array();
+					foreach ($words as $word) {
+						$word 		= $db->Quote( '%'.$db->escape( $word, true ).'%', false );
+						$wheres2 	= array();
+						$wheres2[] 	= 'LOWER(a.title) LIKE '.$word;
+						$wheres2[]	= 'LOWER(a.introtext) LIKE '.$word;
+						$wheres2[] 	= 'LOWER(a.fulltext) LIKE '.$word;
+						$wheres2[] 	= 'LOWER(a.meta_keywords) LIKE '.$word;
+						$wheres2[] 	= 'LOWER(a.meta_description) LIKE '.$word;
+						$wheres[] 	= implode( ' OR ', $wheres2 );
+					}
+					$where = '(' . implode( ($phrase == 'all' ? ') AND (' : ') OR ('), $wheres ) . ')';
+					break;
 			}
-		}
-		
-		$rows[] = $list;
-	}
 
-	if (in_array('jemvenues', $areas) && $limit > 0) {
+			switch ($ordering) {
+				case 'oldest':
+					$order = 'a.dates, a.times ASC';
+					break;
 
-		switch ($phrase) {
-			case 'exact':
-				$text 		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
-				$wheres2 	= array();
-				$wheres2[] 	= 'LOWER(venue) LIKE '.$text;
-				$wheres2[] 	= 'LOWER(locdescription) LIKE '.$text;
-				$wheres2[] 	= 'LOWER(city) LIKE '.$text;
-				$wheres2[] 	= 'LOWER(meta_keywords) LIKE '.$text;
-				$wheres2[] 	= 'LOWER(meta_description) LIKE '.$text;
-				$where 		= '(' . implode( ') OR (', $wheres2 ) . ')';
-				break;
+				case 'alpha':
+					$order = 'a.title ASC';
+					break;
 
-			case 'all':
-			case 'any':
-			default:
-				$words = explode( ' ', $text );
-				$wheres = array();
-				foreach ($words as $word) {
-					$word 		= $db->Quote( '%'.$db->escape( $word, true ).'%', false );
-					$wheres2 	= array();
-					$wheres2[] 	= 'LOWER(venue) LIKE '.$word;
-					$wheres2[] 	= 'LOWER(locdescription) LIKE '.$word;
-					$wheres2[] 	= 'LOWER(city) LIKE '.$word;
-					$wheres2[] 	= 'LOWER(meta_keywords) LIKE '.$word;
-					$wheres2[] 	= 'LOWER(meta_description) LIKE '.$word;
-					$wheres[] 	= implode( ' OR ', $wheres2 );
+				case 'category':
+					$order = 'c.catname ASC, a.title ASC';
+					break;
+
+				case 'newest':
+				default:
+					$order = 'a.dates, a.times DESC';
+			}
+
+			$query->clear();
+			//sqlsrv changes
+			$case_when = ' CASE WHEN ';
+			$case_when .= $query->charLength('a.alias');
+			$case_when .= ' THEN ';
+			$a_id = $query->castAsChar('a.id');
+			$case_when .= $query->concatenate(array($a_id, 'a.alias'), ':');
+			$case_when .= ' ELSE ';
+			$case_when .= $a_id.' END as slug';
+
+	 		$case_when1 = ' CASE WHEN ';
+	 		$case_when1 .= $query->charLength('c.alias');
+	 		$case_when1 .= ' THEN ';
+	 		$c_id = $query->castAsChar('c.id');
+	  		$case_when1 .= $query->concatenate(array($c_id, 'c.alias'), ':');
+	 		$case_when1 .= ' ELSE ';
+			$case_when1 .= $c_id.' END as catslug';
+
+			$query->select('a.title AS title, a.meta_description, a.meta_keywords, a.created AS created');
+			$query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
+			$query->select('c.catname AS section, '.$case_when.','.$case_when1.', '.'\'2\' AS browsernav');
+			$query->select('rel.catid');
+
+			$query->from('#__jem_events AS a');
+			$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
+			$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
+			$query->where('('. $where .')' . ' AND a.published=1 AND c.published = 1 AND a.access IN ('.$groups.') '
+					.'AND c.access IN ('.$groups.') '
+					 );
+			$query->group('a.id, a.title, a.meta_description, a.meta_keywords, a.created, a.introtext, a.fulltext, c.catname, a.alias, c.alias, c.id');
+			$query->order($order);
+
+			$db->setQuery( $query, 0, $limit );
+			$list = $db->loadObjectList();
+			$limit -= count($list);
+
+			if (isset($list))
+			{
+				foreach($list as $key => $row)
+				{
+					$list[$key]->href = JEMHelperRoute::getEventRoute($row->slug);
 				}
-				$where = '(' . implode( ($phrase == 'all' ? ') AND (' : ') OR ('), $wheres ) . ')';
-				break;
+			}
+
+			$rows[] = $list;
 		}
 
-		switch ( $ordering ) {
-			case 'oldest':
-				$order = 'created DESC';
-				break;
+		if (in_array('jemvenues', $areas) && $limit > 0) {
 
-			case 'alpha':
-				$order = 'venue ASC';
-				break;
-
-			case 'newest':
-				$order = 'created ASC';
-				break;
-			default:
-				$order = 'venue ASC';
-		}
-
-		$query = 'SELECT venue AS title,'
-		. ' locdescription AS text,'
-		. ' created,'
-		. ' "2" AS browsernav,'
-		. ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug, '
-		. ' CONCAT_WS( " / ", '. $searchJEM .', venue )AS section'
-		. ' FROM #__jem_venues'
-		. ' WHERE ( '.$where.')'
-		. ' AND published = 1'
-		. ' ORDER BY '. $order
-		;
-		$db->setQuery( $query, 0, $limit );
-		$list2 = $db->loadObjectList();
-
-		foreach((array) $list2 as $key => $row) {
-			$list2[$key]->href = JEMHelperRoute::getVenueRoute($row->slug);
-		}
-
-		$rows[] = $list2;
-	}
-
-	if (in_array('jemcategories', $areas) && $limit > 0) {
-
-		switch ($phrase) {
-			case 'exact':
-				$text 		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
-				$wheres2 	= array();
-				$wheres2[] 	= 'LOWER(catname) LIKE '.$text;
-				$wheres2[] 	= 'LOWER(description) LIKE '.$text;
-				$wheres2[] 	= 'LOWER(meta_keywords) LIKE '.$text;
-				$wheres2[] 	= 'LOWER(meta_description) LIKE '.$text;
-				$where 		= '(' . implode( ') OR (', $wheres2 ) . ')';
-				break;
-
-			case 'all':
-			case 'any':
-			default:
-				$words = explode( ' ', $text );
-				$wheres = array();
-				foreach ($words as $word) {
-					$word 		= $db->Quote( '%'.$db->escape( $word, true ).'%', false );
+			switch ($phrase) {
+				case 'exact':
+					$text 		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
 					$wheres2 	= array();
-					$wheres2[] 	= 'LOWER(catname) LIKE '.$word;
-					$wheres2[] 	= 'LOWER(description) LIKE '.$word;
-					$wheres2[] 	= 'LOWER(meta_keywords) LIKE '.$word;
-					$wheres2[] 	= 'LOWER(meta_description) LIKE '.$word;
-					$wheres[] 	= implode( ' OR ', $wheres2 );
-				}
-				$where = '(' . implode( ($phrase == 'all' ? ') AND (' : ') OR ('), $wheres ) . ')';
-				break;
+					$wheres2[] 	= 'LOWER(venue) LIKE '.$text;
+					$wheres2[] 	= 'LOWER(locdescription) LIKE '.$text;
+					$wheres2[] 	= 'LOWER(city) LIKE '.$text;
+					$wheres2[] 	= 'LOWER(meta_keywords) LIKE '.$text;
+					$wheres2[] 	= 'LOWER(meta_description) LIKE '.$text;
+					$where 		= '(' . implode( ') OR (', $wheres2 ) . ')';
+					break;
+
+				case 'all':
+				case 'any':
+				default:
+					$words = explode( ' ', $text );
+					$wheres = array();
+					foreach ($words as $word) {
+						$word 		= $db->Quote( '%'.$db->escape( $word, true ).'%', false );
+						$wheres2 	= array();
+						$wheres2[] 	= 'LOWER(venue) LIKE '.$word;
+						$wheres2[] 	= 'LOWER(locdescription) LIKE '.$word;
+						$wheres2[] 	= 'LOWER(city) LIKE '.$word;
+						$wheres2[] 	= 'LOWER(meta_keywords) LIKE '.$word;
+						$wheres2[] 	= 'LOWER(meta_description) LIKE '.$word;
+						$wheres[] 	= implode( ' OR ', $wheres2 );
+					}
+					$where = '(' . implode( ($phrase == 'all' ? ') AND (' : ') OR ('), $wheres ) . ')';
+					break;
+			}
+
+			switch ( $ordering ) {
+				case 'oldest':
+					$order = 'created DESC';
+					break;
+
+				case 'alpha':
+					$order = 'venue ASC';
+					break;
+
+				case 'newest':
+					$order = 'created ASC';
+					break;
+				default:
+					$order = 'venue ASC';
+			}
+
+			$query = 'SELECT venue AS title,'
+			. ' locdescription AS text,'
+			. ' created,'
+			. ' "2" AS browsernav,'
+			. ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug, '
+			. ' CONCAT_WS( " / ", '. $searchJEM .', venue )AS section'
+			. ' FROM #__jem_venues'
+			. ' WHERE ( '.$where.')'
+			. ' AND published = 1'
+			. ' ORDER BY '. $order
+			;
+			$db->setQuery( $query, 0, $limit );
+			$list2 = $db->loadObjectList();
+
+			foreach((array) $list2 as $key => $row) {
+				$list2[$key]->href = JEMHelperRoute::getVenueRoute($row->slug);
+			}
+
+			$rows[] = $list2;
 		}
 
-		$query = 'SELECT catname AS title,'
-		. ' description AS text,'
-		. ' "" AS created,'
-		. ' "2" AS browsernav,'
-		. ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug, '
-		. ' CONCAT_WS( " / ", '. $searchJEM .', catname )AS section'
-		. ' FROM #__jem_categories'
-		. ' WHERE ( '.$where.' )'
-		. ' AND published = 1'
-		. ' AND access <= '.(int) $user->get('aid')
-		. ' ORDER BY catname'
-		;
-		$db->setQuery( $query, 0, $limit );
-		$list3 = $db->loadObjectList();
+		if (in_array('jemcategories', $areas) && $limit > 0) {
 
-		foreach((array) $list3 as $key => $row) {
-			$list3[$key]->href = JEMHelperRoute::getCategoryRoute($row->slug);
+			switch ($phrase) {
+				case 'exact':
+					$text 		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
+					$wheres2 	= array();
+					$wheres2[] 	= 'LOWER(catname) LIKE '.$text;
+					$wheres2[] 	= 'LOWER(description) LIKE '.$text;
+					$wheres2[] 	= 'LOWER(meta_keywords) LIKE '.$text;
+					$wheres2[] 	= 'LOWER(meta_description) LIKE '.$text;
+					$where 		= '(' . implode( ') OR (', $wheres2 ) . ')';
+					break;
+
+				case 'all':
+				case 'any':
+				default:
+					$words = explode( ' ', $text );
+					$wheres = array();
+					foreach ($words as $word) {
+						$word 		= $db->Quote( '%'.$db->escape( $word, true ).'%', false );
+						$wheres2 	= array();
+						$wheres2[] 	= 'LOWER(catname) LIKE '.$word;
+						$wheres2[] 	= 'LOWER(description) LIKE '.$word;
+						$wheres2[] 	= 'LOWER(meta_keywords) LIKE '.$word;
+						$wheres2[] 	= 'LOWER(meta_description) LIKE '.$word;
+						$wheres[] 	= implode( ' OR ', $wheres2 );
+					}
+					$where = '(' . implode( ($phrase == 'all' ? ') AND (' : ') OR ('), $wheres ) . ')';
+					break;
+			}
+
+			$query = 'SELECT catname AS title,'
+			. ' description AS text,'
+			. ' "" AS created,'
+			. ' "2" AS browsernav,'
+			. ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug, '
+			. ' CONCAT_WS( " / ", '. $searchJEM .', catname )AS section'
+			. ' FROM #__jem_categories'
+			. ' WHERE ( '.$where.' )'
+			. ' AND published = 1'
+			. ' AND access <= '.(int) $user->get('aid')
+			. ' ORDER BY catname'
+			;
+			$db->setQuery( $query, 0, $limit );
+			$list3 = $db->loadObjectList();
+
+			foreach((array) $list3 as $key => $row) {
+				$list3[$key]->href = JEMHelperRoute::getCategoryRoute($row->slug);
+			}
+
+			$rows[] = $list3;
 		}
 
-		$rows[] = $list3;
+		$count = count( $rows );
+		if ( $count > 1 ) {
+			switch ( $count ) {
+				case 2:
+					$results = array_merge( (array) $rows[0], (array) $rows[1] );
+					break;
+
+				case 3:
+					$results = array_merge( (array) $rows[0], (array) $rows[1], (array) $rows[2] );
+					break;
+
+				case 4:
+				default:
+					$results = array_merge( (array) $rows[0], (array) $rows[1], (array) $rows[2], (array) $rows[3] );
+					break;
+			}
+
+			return $results;
+		} else if ( $count == 1 ) {
+			return $rows[0];
+		}
 	}
-
-	$count = count( $rows );
-	if ( $count > 1 ) {
-		switch ( $count ) {
-			case 2:
-				$results = array_merge( (array) $rows[0], (array) $rows[1] );
-				break;
-
-			case 3:
-				$results = array_merge( (array) $rows[0], (array) $rows[1], (array) $rows[2] );
-				break;
-
-			case 4:
-			default:
-				$results = array_merge( (array) $rows[0], (array) $rows[1], (array) $rows[2], (array) $rows[3] );
-				break;
-		}
-
-		return $results;
-	} else if ( $count == 1 ) {
-		return $rows[0];
-	}
-}
 }
 ?>

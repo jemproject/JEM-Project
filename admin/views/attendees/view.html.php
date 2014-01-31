@@ -89,7 +89,7 @@ class JEMViewAttendees extends JViewLegacy {
 	 *
 	 *
 	 */
-	public function _displayprint($tpl = null)
+	protected function _displayprint($tpl = null)
 	{
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);

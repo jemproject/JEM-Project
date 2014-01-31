@@ -162,7 +162,7 @@ class jem_settings extends JTable
 	var $defaultCountry		= null;
 
 
-	function __construct(& $db) {
+	public function __construct(& $db) {
 		parent::__construct('#__jem_settings', 'id', $db);
 	}
 }

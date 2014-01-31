@@ -27,7 +27,7 @@ class JEMModelMyattendances extends JModelLegacy
 	 * Constructor
 	 *
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -124,7 +124,7 @@ class JEMModelMyattendances extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildQueryAttending()
+	protected function _buildQueryAttending()
 	{
 		// Get the WHERE and ORDER BY clauses for the query
 		$where = $this->_buildAttendingWhere();
@@ -155,7 +155,7 @@ class JEMModelMyattendances extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildOrderByAttending()
+	protected function _buildOrderByAttending()
 	{
 		$app = JFactory::getApplication();
 
@@ -181,7 +181,7 @@ class JEMModelMyattendances extends JModelLegacy
 	 * @access private
 	 * @return string
 	 */
-	function _buildAttendingWhere()
+	protected function _buildAttendingWhere()
 	{
 		$app = JFactory::getApplication();
 

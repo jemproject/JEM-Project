@@ -219,7 +219,7 @@ class JEMModelEditevent extends JEMModelEvent
 	 * @access private
 	 * @return array
 	 */
-	function _buildVenuesOrderBy()
+	protected function _buildVenuesOrderBy()
 	{
 		$filter_order = JRequest::getCmd('filter_order');
 		$filter_order_Dir = JRequest::getCmd('filter_order_Dir');
@@ -241,7 +241,7 @@ class JEMModelEditevent extends JEMModelEvent
 	 * @access private
 	 * @return array
 	 */
-	function _buildVenuesWhere()
+	protected function _buildVenuesWhere()
 	{
 		$jemsettings = JEMHelper::config();
 		$filter_type = JRequest::getInt('filter_type');
@@ -303,7 +303,7 @@ class JEMModelEditevent extends JEMModelEvent
 	 * @access private
 	 * @return string
 	 */
-	function _buildContactOrderBy()
+	protected function _buildContactOrderBy()
 	{
 		$app = JFactory::getApplication();
 
@@ -329,7 +329,7 @@ class JEMModelEditevent extends JEMModelEvent
 	 * @access private
 	 * @return string
 	 */
-	function _buildContactWhere()
+	protected function _buildContactWhere()
 	{
 		$app = JFactory::getApplication();
 

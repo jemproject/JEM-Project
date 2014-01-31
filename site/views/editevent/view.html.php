@@ -227,7 +227,7 @@ class JEMViewEditevent extends JViewLegacy
 	/**
 	 * Creates the output for the venue select listing
 	 */
-	function _displaychoosevenue($tpl)
+	protected function _displaychoosevenue($tpl)
 	{
 		$app = JFactory::getApplication();
 		$jemsettings = JEMHelper::config();
@@ -277,7 +277,7 @@ class JEMViewEditevent extends JViewLegacy
 	/**
 	 * Creates the output for the contact select listing
 	 */
-	function _displaychoosecontact($tpl)
+	protected function _displaychoosecontact($tpl)
 	{
 		
 		$app = JFactory::getApplication();

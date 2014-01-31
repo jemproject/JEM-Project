@@ -15,7 +15,7 @@ defined('_JEXEC') or die;
  */
 class JEMTableSettings extends JTable
 {
-	function __construct(&$db)
+	public function __construct(&$db)
 	{
 		parent::__construct('#__jem_settings', 'id', $db);
 	}
@@ -26,7 +26,6 @@ class JEMTableSettings extends JTable
 	 */
 	function check()
 	{
-		
 		return true;
 	}
 
@@ -49,10 +48,9 @@ class JEMTableSettings extends JTable
 			$registry->loadArray($array['globalattribs']);
 			$array['globalattribs'] = (string) $registry;
 		}
-		
+
 		//don't override without calling base class
 		return parent::bind($array, $ignore);
 	}
-
 }
 ?>

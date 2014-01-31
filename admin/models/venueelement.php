@@ -51,7 +51,7 @@ class JEMModelVenueelement extends JModelLegacy
 	 * Constructor
 	 *
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -126,7 +126,7 @@ class JEMModelVenueelement extends JModelLegacy
 	 * @return string
 	 *
 	 */
-	function _buildQuery()
+	protected function _buildQuery()
 	{
 		// Get the WHERE and ORDER BY clauses for the query
 		$where		= $this->_buildContentWhere();
@@ -148,7 +148,7 @@ class JEMModelVenueelement extends JModelLegacy
 	 * @return string
 	 *
 	 */
-	function _buildContentOrderBy()
+	protected function _buildContentOrderBy()
 	{
 		$app =  JFactory::getApplication();
 
@@ -171,7 +171,7 @@ class JEMModelVenueelement extends JModelLegacy
 	 * @return string
 	 *
 	 */
-	function _buildContentWhere()
+	protected function _buildContentWhere()
 	{
 		$app =  JFactory::getApplication();
 
