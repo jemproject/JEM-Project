@@ -6,7 +6,6 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 /**
@@ -14,7 +13,7 @@ defined('_JEXEC') or die;
  *
  * @package JEM
  */
-class JEMHelper {
+class JemHelper {
 
 	/**
 	 * Pulls settings from database and stores in an static object
@@ -28,8 +27,13 @@ class JEMHelper {
 
 		if (!is_object($config)) {
 			$db = JFactory::getDBO();
-			$sql = 'SELECT * FROM #__jem_settings WHERE id = 1';
-			$db->setQuery($sql);
+			$query = $db->getQuery(true);
+
+			$query->select('*');
+			$query->from('#__jem_settings');
+			$query->where('id = 1');
+
+			$db->setQuery($query);
 			$config = $db->loadObject();
 
 			$config->params = JComponentHelper::getParams('com_jem');
@@ -51,8 +55,13 @@ class JEMHelper {
 
 		if (!is_object($globalattribs)) {
 			$db = JFactory::getDBO();
-			$sql = 'SELECT globalattribs FROM #__jem_settings WHERE id = 1';
-			$db->setQuery($sql);
+			$query = $db->getQuery(true);
+
+			$query->select('globalattribs');
+			$query->from('#__jem_settings');
+			$query->where('id = 1');
+
+			$db->setQuery($query);
 			$globalattribs = $db->loadResult();
 		}
 
@@ -73,9 +82,9 @@ class JEMHelper {
 	 */
 	static function cleanup($forced = 0)
 	{
-		$jemsettings = JEMHelper::config();
-		$weekstart = $jemsettings->weekdaystart;
-		$anticipation = $jemsettings->recurrence_anticipation;
+		$jemsettings	= JemHelper::config();
+		$weekstart 		= $jemsettings->weekdaystart;
+		$anticipation	= $jemsettings->recurrence_anticipation;
 
 		$now = time();
 		$lastupdate = $jemsettings->lastupdate;
@@ -122,7 +131,7 @@ class JEMHelper {
 				$recurrence_row['weekstart'] = $weekstart;
 
 				// calculate next occurence date
-				$recurrence_row = JEMHelper::calculate_recurrence($recurrence_row);
+				$recurrence_row = JemHelper::calculate_recurrence($recurrence_row);
 
 				// add events as long as we are under the interval and under the limit, if specified.
 				while (($recurrence_row['recurrence_limit_date'] == $nulldate
@@ -154,7 +163,7 @@ class JEMHelper {
 						}
 					}
 
-					$recurrence_row = JEMHelper::calculate_recurrence($recurrence_row);
+					$recurrence_row = JemHelper::calculate_recurrence($recurrence_row);
 				}
 			}
 
@@ -193,7 +202,7 @@ class JEMHelper {
 
 		$day_time = 86400;	// 60s * 60min * 24h
 		$week_time = $day_time * 7;
-		$date_array = JEMHelper::generate_date($recurrence_row['dates'], $recurrence_row['enddates']);
+		$date_array = JemHelper::generate_date($recurrence_row['dates'], $recurrence_row['enddates']);
 
 		switch($recurrence_type) {
 			case "1":
@@ -221,7 +230,7 @@ class JEMHelper {
 				break;
 			case "4": // weekday
 				// the selected weekdays
-				$selected = JEMHelper::convert2CharsDaysToInt(explode(',', $recurrence_row['recurrence_byday']), 0);
+				$selected = JemHelper::convert2CharsDaysToInt(explode(',', $recurrence_row['recurrence_byday']), 0);
 				$days_names = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
 				$litterals = array('first', 'second', 'third', 'fourth');
 				if (count($selected) == 0)
@@ -686,7 +695,7 @@ class JEMHelper {
 		$mainframe = JFactory::getApplication();
 
 		$offset = (float) $mainframe->getCfg('offset');
-		$timezone_name = JEMHelper::getTimeZone($offset);
+		$timezone_name = JemHelper::getTimeZone($offset);
 
 		$vcal = new vcalendar();
 		if (!file_exists(JPATH_SITE.'/cache/com_jem')) {
@@ -694,7 +703,6 @@ class JEMHelper {
 			JFolder::create(JPATH_SITE.'/cache/com_jem');
 		}
 		$vcal->setConfig('directory', JPATH_SITE.'/cache/com_jem');
-	//	$vcal->setProperty('unique_id', 'events@'.$mainframe->getCfg('sitename'));
 		$vcal->setProperty("calscale", "GREGORIAN");
 		$vcal->setProperty('method', 'PUBLISH');
 		if ($timezone_name) {
@@ -707,13 +715,10 @@ class JEMHelper {
 	{
 		require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
 		$mainframe = JFactory::getApplication();
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 
 		$offset = (float) $mainframe->getCfg('offset');
-		$timezone_name = JEMHelper::getTimeZone($offset);
-//		$hours = ($offset >= 0) ? floor($offset) : ceil($offset);
-//		$mins = abs($offset - $hours) * 60;
-//		$utcoffset = sprintf('%+03d%02d00', $hours, $mins);
+		$timezone_name = JemHelper::getTimeZone($offset);
 
 		// get categories names
 		$categories = array();
@@ -721,8 +726,10 @@ class JEMHelper {
 			$categories[] = $c->catname;
 		}
 
-		if (!$event->dates || $event->dates == '0000-00-00') {
-			// no start date...
+		// no start date...
+		$validdate = JemHelper::isValidDate($event->dates);
+
+		if (!$event->dates || !$validdate) {
 			return false;
 		}
 		// make end date same as start date if not set
@@ -794,7 +801,7 @@ class JEMHelper {
 		$description = $event->title.'\\n';
 		$description .= JText::_('COM_JEM_CATEGORY').': '.implode(', ', $categories).'\\n';
 
-		$link = JURI::base().JEMHelperRoute::getEventRoute($event->slug);
+		$link = JURI::base().JemHelperRoute::getEventRoute($event->slug);
 		$link = JRoute::_($link);
 		$description .= JText::_('COM_JEM_ICS_LINK').': '.$link.'\\n';
 
@@ -870,7 +877,7 @@ class JEMHelper {
 	 * @param JUser $user The user object
 	 * @return int The Group ID
 	 *
-	 * Should become obsolete.
+	 * @todo:alter, Should become obsolete.
 	 * Support Joomla access levels instead of single group id
 	 */
 	static function getGID($user = null) {
