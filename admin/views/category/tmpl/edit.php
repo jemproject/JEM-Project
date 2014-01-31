@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     1.9.5
+ * @version     1.9.6
  * @package     JEM
  * @copyright   Copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
@@ -8,7 +8,6 @@
  *
  * @todo make custom colorfield so it can be used within xml
  */
-
 defined('_JEXEC') or die;
 
 // Include the component HTML helpers.
@@ -77,16 +76,13 @@ JHtml::_('behavior.keepalive');
 			<div class="clr"></div>
 
 			<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_GROUP'), 'group'); ?>
-				<table>
-					<tr>
-						<td><label for="groups"> <?php echo JText::_('COM_JEM_GROUP').':'; ?>
-						</label>
-						</td>
-						<td><?php echo $this->Lists['groups']; ?>
-						</td>
-					</tr>
-				</table>
-				
+			<fieldset class="panelform">
+				<ul class="adminformlist">
+					<li><label for="groups"> <?php echo JText::_('COM_JEM_GROUP').':'; ?></label>
+					<?php echo $this->Lists['groups']; ?></li>
+				</ul>
+			</fieldset>
+
 		<!-- START OF PANEL IMAGE -->
 		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_IMAGE'), 'category-image'); ?>
 
@@ -96,7 +92,7 @@ JHtml::_('behavior.keepalive');
 				</li>
 			</ul>
 		</fieldset>
-				
+
 
 		<?php echo JHtml::_('sliders.panel', JText::_('JGLOBAL_FIELDSET_METADATA_OPTIONS'), 'meta-options'); ?>
 		<fieldset class="panelform">
