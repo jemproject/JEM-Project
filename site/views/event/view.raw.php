@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -12,12 +12,12 @@ defined('_JEXEC') or die;
 jimport( 'joomla.application.component.view');
 
 /**
- * RAW Event View class of the JEM component
+ * ICS-View
  *
  * @package JEM
  *
  */
-class JEMViewEvent extends JViewLegacy
+class JemViewEvent extends JViewLegacy
 {
 	/**
 	 * Creates the output for the event view
@@ -30,12 +30,12 @@ class JEMViewEvent extends JViewLegacy
 		$row->categories 	= $this->get('Categories');
 		$row->id 			= $row->did;
 		$row->slug			= $row->alias ? ($row->id.':'.$row->alias) : $row->id;
-		
+
 		// initiate new CALENDAR
-		$vcal = JEMHelper::getCalendarTool();
+		$vcal = JemHelper::getCalendarTool();
 		$vcal->setConfig( "filename", "event".$row->did.".ics" );
 
-		JEMHelper::icalAddEvent($vcal, $row);
+		JemHelper::icalAddEvent($vcal, $row);
 
 		// generate and redirect output to user browser
 		$vcal->returnCalendar();

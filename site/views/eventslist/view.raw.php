@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -14,12 +14,12 @@ require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
 jimport('joomla.application.component.view');
 
 /**
- * ICS events list View
+ * ICS-View
  *
  * @package JEM
  *
  */
-class JEMViewEventslist extends JViewLegacy
+class JemViewEventslist extends JViewLegacy
 {
 	/**
 	 * Creates the output for the Eventslist view
@@ -28,24 +28,31 @@ class JEMViewEventslist extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
-		$settings = JEMHelper::config();
+		$settings 	= JemHelper::config();
+		$settings2	= JemHelper::globalattribs();
 
-		// Get data from the model
-		$model = $this->getModel();
-		$model->setLimit($settings->ical_max_items);
-		$model->setLimitstart(0);
-		$rows = $model->getData();
+		if ($settings2->get('global_show_ical_icon','0')==1) {
 
-		// initiate new CALENDAR
-		$vcal = JEMHelper::getCalendarTool();
-		$vcal->setConfig("filename", "events.ics");
+			// Get data from the model
+			$model = $this->getModel();
+			$model->setLimit($settings->ical_max_items);
+			$model->setLimitstart(0);
+			$rows = $model->getData();
 
-		foreach ($rows as $row) {
-			JEMHelper::icalAddEvent($vcal, $row);
+			// initiate new CALENDAR
+			$vcal = JemHelper::getCalendarTool();
+			$vcal->setConfig("filename", "events.ics");
+
+			foreach ($rows as $row) {
+				JemHelper::icalAddEvent($vcal, $row);
+			}
+			// generate and redirect output to user browser
+			$vcal->returnCalendar();
+			echo $vcal->createCalendar(); // debug
+
+		} else {
+			return;
 		}
-		// generate and redirect output to user browser
-		$vcal->returnCalendar();
-		echo $vcal->createCalendar(); // debug
 	}
 }
 ?>

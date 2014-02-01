@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -11,12 +11,12 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.view');
 
 /**
- * HTML View class for the Category View
+ * ICS-View
  *
  * @package JEM
- *         
+ *
  */
-class JEMViewCategory extends JViewLegacy
+class JemViewCategory extends JViewLegacy
 {
 
 	/**
@@ -24,26 +24,35 @@ class JEMViewCategory extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
-		$settings = JEMHelper::config();
-		
-		// Get data from the model
-		$model = $this->getModel();
-		$model->setLimit($settings->ical_max_items);
-		$model->setLimitstart(0);
-		$rows = $model->getData();
-		
-		$catid = JRequest::getInt('id');
-		
-		// initiate new CALENDAR
-		$vcal = JEMHelper::getCalendarTool();
-		$vcal->setConfig("filename", "category" . $catid . ".ics");
-		
-		foreach ($rows as $row) {
-			JEMHelper::icalAddEvent($vcal, $row);
+		$settings	= JemHelper::config();
+		$settings2	= JemHelper::globalattribs();
+		$app 		= JFactory::getApplication();
+		$jinput 	= JFactory::getApplication()->input;
+
+		if ($settings2->get('global_show_ical_icon','0')==1) {
+
+			// Get data from the model
+			$model = $this->getModel();
+			$model->setLimit($settings->ical_max_items);
+			$model->setLimitstart(0);
+			$rows = $model->getData();
+			$catid = $jinput->getInt('id');
+
+			// initiate new CALENDAR
+			$vcal = JemHelper::getCalendarTool();
+			$vcal->setConfig("filename", "category" . $catid . ".ics");
+
+			foreach ($rows as $row) {
+				JemHelper::icalAddEvent($vcal, $row);
+			}
+			// generate and redirect output to user browser
+			$vcal->returnCalendar();
+			echo $vcal->createCalendar(); // debug
+
+		} else {
+			return;
 		}
-		// generate and redirect output to user browser
-		$vcal->returnCalendar();
-		echo $vcal->createCalendar(); // debug
+
 	}
 }
 ?>
