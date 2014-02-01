@@ -246,16 +246,16 @@
 		<field name="registra" type="checkbox"
 			size="20"
 			class="inputbox"
-			label="COM_JEM_ENABLE_REGISTRATION"
-			description="COM_JEM_ENABLE_REGISTRATION_DESC"
+			label="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION"
+			description="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION_DESC"
 			value="1"
 			default="0"
 		/>
 		<field name="unregistra" type="checkbox"
 			size="20"
 			class="inputbox"
-			label="COM_JEM_ENABLE_UNREGISTRATION"
-			description="COM_JEM_ENABLE_UNREGISTRATION_DESC"
+			label="COM_JEM_EVENT_FIELD_ENABLE_UNREGISTRATION"
+			description="COM_JEM_EVENT_FIELD_ENABLE_UNREGISTRATION_DESC"
 			value="1"
 			default="0"
 		/>
@@ -331,7 +331,7 @@
 	</fieldset>
 	<fields name="attribs">
 		<fieldset name="basic"
-			label="COM_JEM_EVENT_ATTRIBS_FIELDSET_LABEL"
+			label="COM_JEM_EVENT_FIELDSET_ATTRIBS_LABEL"
 		>
 			<field name="event_show_author" type="list"
 				label="COM_JEM_EVENT_FIELD_SHOW_AUTHOR_LABEL"

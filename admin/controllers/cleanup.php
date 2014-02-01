@@ -55,7 +55,7 @@ class JEMControllerCleanup extends JControllerLegacy
 		}
 
 		$link = 'index.php?option=com_jem&view=cleanup';
-		$msg = JText::sprintf('COM_JEM_IMAGES_DELETED', $total);
+		$msg = JText::sprintf('COM_JEM_CLEANUP_IMAGES_DELETED', $total);
 
 		$this->setRedirect($link, $msg);
 	}
