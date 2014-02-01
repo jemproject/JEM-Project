@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,7 +15,7 @@ jimport('joomla.application.component.modellist');
  * JEM Component Events Model
  *
  **/
-class JEMModelEvents extends JModelList
+class JemModelEvents extends JModelList
 {
 	/**
 	 * Constructor.
@@ -156,7 +156,7 @@ class JEMModelEvents extends JModelList
 		// @todo test with multi-day
 		$end = $this->getState('filter_end');
 		if (!empty($end)) {
-			$query->where('a.enddates <= '.$db->Quote($end));
+			$query->where('a.dates <= '.$db->Quote($end));
 		}
 
 		// Filter by search in title
