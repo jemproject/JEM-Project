@@ -1,12 +1,11 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 /**
@@ -15,7 +14,7 @@ defined('_JEXEC') or die;
  * @subpackage	com_jem
  *
  */
-class JEMHelperBackend
+class JemHelperBackend
 {
 
 	public static $extension = 'com_jem';
@@ -114,7 +113,7 @@ class JEMHelperBackend
 	{
 
 		$options = array();
-		$options = array_merge(JEMHelper::getCountryOptions(),$options);
+		$options = array_merge(JEMHelperCountries::getCountryOptions(),$options);
 
 		array_unshift($options, JHtml::_('select.option', '0', JText::_('COM_JEM_SELECT_COUNTRY')));
 

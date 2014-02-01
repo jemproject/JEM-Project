@@ -24,7 +24,7 @@ class JEMHelperCountries
 	 *
 	 * @return array
 	 */
-	function getCountries()
+	static function getCountries()
 	{
 		$country["AFG"] = array("iso2" => "AF", "name" => "Afghanistan, Islamic Republic of");
 		$country["ALA"] = array("iso2" => "AX", "name" => "Aland Islands");
@@ -530,7 +530,7 @@ class JEMHelperCountries
 		return $countrycoord;
 	}
 
-	function getCountryOptions($value_tag = 'value', $text_tag = 'text')
+	static function getCountryOptions($value_tag = 'value', $text_tag = 'text')
 	{
 		$countries = self::getCountries();
 		$options = array();
