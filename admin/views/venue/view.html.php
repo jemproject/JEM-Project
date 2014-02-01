@@ -52,7 +52,7 @@ class JEMViewVenue extends JViewLegacy {
 		JHtml::_('stylesheet', 'com_jem/geostyle.css', array(), true);
 
 		// Load Scripts
-		$document->addScript(JURI::root().'media/com_jem/js/attachments.js');
+		JHtml::_('script', 'com_jem/attachments.js', false, true);
 		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
 
 		// Noconflict
@@ -60,7 +60,7 @@ class JEMViewVenue extends JViewLegacy {
 
 		// JQuery scripts
 		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
-		$document->addScript(JURI::root().'media/com_jem/js/jquery.geocomplete.js');
+		JHtml::_('script', 'com_jem/jquery.geocomplete.js', false, true);
 
 		$access2 = JEMHelper::getAccesslevelOptions();
 		$this->access		= $access2;
