@@ -77,8 +77,6 @@ class JemHelper {
 	 *
 	 * Currently it archives and removes outdated events
 	 * and takes care of the recurrence of events
-	 *
-	 *
 	 */
 	static function cleanup($forced = 0)
 	{
@@ -113,6 +111,7 @@ class JemHelper {
 			$db->SetQuery($query);
 			$recurrence_array = $db->loadAssocList();
 
+			// If there are results we will be doing something with it
 			foreach($recurrence_array as $recurrence_row)
 			{
 				// get the info of reference event for the duplicates
@@ -308,13 +307,15 @@ class JemHelper {
 	 * @access public
 	 */
 	static function generate_date($startdate, $enddate) {
+		$validEnddate = JemHelper::isValidDate($enddate);
+
 		$startdate = explode("-",$startdate);
 		$date_array = array("year" => $startdate[0],
 							"month" => $startdate[1],
 							"day" => $startdate[2],
 							"weekday" => date("w",mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0])),
 							"unixtime" => mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0]));
-		if ($enddate) {
+		if ($validEnddate) {
 			$enddate = explode("-", $enddate);
 			$day_diff = (mktime(1,0,0,$enddate[1],$enddate[2],$enddate[0]) - mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0]));
 			$date_array["day_diff"] = $day_diff;
@@ -364,18 +365,10 @@ class JemHelper {
 		return $result;
 	}
 
-	/**
-	 * transforms <br /> and <br> back to \r\n
-	 *
-	 * @param string $string
-	 * @return string
-	 */
-	static function br2break($string) {
-		return preg_replace("=<br(>|([\s/][^>]*)>)\r?\n?=i", "\r\n", $string);
-	}
 
 	/**
 	 * use only some importent keys of the jem_events - database table for the where query
+	 * @todo: alter, where is this used for?
 	 *
 	 * @param string $key
 	 * @return boolean
@@ -410,19 +403,6 @@ class JemHelper {
 		return JHtml::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
 	}
 
-	/**
-	 * return country options from the database
-	 *
-	 * @return unknown
-	 */
-	static function getCountryOptions()
-	{
-		$db = JFactory::getDBO();
-		$sql = 'SELECT iso2 AS value, name AS text FROM #__jem_countries ORDER BY name';
-		$db->setQuery($sql);
-
-		return $db->loadObjectList();
-	}
 
 	/**
 	* Build the select list for access level
@@ -801,7 +781,7 @@ class JemHelper {
 		$description = $event->title.'\\n';
 		$description .= JText::_('COM_JEM_CATEGORY').': '.implode(', ', $categories).'\\n';
 
-		$link = JURI::base().JemHelperRoute::getEventRoute($event->slug);
+		$link = JURI::root().JemHelperRoute::getEventRoute($event->slug);
 		$link = JRoute::_($link);
 		$description .= JText::_('COM_JEM_ICS_LINK').': '.$link.'\\n';
 
@@ -914,6 +894,5 @@ class JemHelper {
 		}
 		return $tip;
 	}
-
 }
 ?>
