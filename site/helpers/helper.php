@@ -609,59 +609,18 @@ class JemHelper {
 	}
 
 	/**
-	 * returns array of timezones indexed by offset
-	 *
-	 * @return array
+	 * returns timezone name
 	 */
-	static function getTimeZones()
-	{
-		$timezones = array(
-			'-12'=>'Pacific/Kwajalein',
-			'-11'=>'Pacific/Samoa',
-			'-10'=>'Pacific/Honolulu',
-			'-9'=>'America/Juneau',
-			'-8'=>'America/Los_Angeles',
-			'-7'=>'America/Denver',
-			'-6'=>'America/Mexico_City',
-			'-5'=>'America/New_York',
-			'-4'=>'America/Caracas',
-			'-3.5'=>'America/St_Johns',
-			'-3'=>'America/Argentina/Buenos_Aires',
-			'-2'=>'Atlantic/Azores', // no cities here so just picking an hour ahead
-			'-1'=>'Atlantic/Azores',
-			'0'=>'Europe/London',
-			'1'=>'Europe/Paris',
-			'2'=>'Europe/Helsinki',
-			'3'=>'Europe/Moscow',
-			'3.5'=>'Asia/Tehran',
-			'4'=>'Asia/Baku',
-			'4.5'=>'Asia/Kabul',
-			'5'=>'Asia/Karachi',
-			'5.5'=>'Asia/Calcutta',
-			'6'=>'Asia/Colombo',
-			'7'=>'Asia/Bangkok',
-			'8'=>'Asia/Singapore',
-			'9'=>'Asia/Tokyo',
-			'9.5'=>'Australia/Darwin',
-			'10'=>'Pacific/Guam',
-			'11'=>'Asia/Magadan',
-			'12'=>'Asia/Kamchatka'
-		);
-	return $timezones;
-	}
+	public static function getTimeZoneName() {
+		$userTz = JFactory::getUser()->getParam('timezone');
+		$timeZone = JFactory::getConfig()->get('offset');
 
-	/**
-	 * returns timezone name from offset
-	 * @param string $offset
-	 * @return string
-	 */
-	static function getTimeZone($offset)
-	{
-		$tz = self::getTimeZones();
-		if (isset($tz[$offset])) {
-			return $tz[$offset];
+		/* disabled for now
+		if($userTz) {
+			$timeZone = $userTz;
 		}
-		return false;
+		*/
+		return $timeZone;
 	}
 
 	/**
@@ -672,10 +631,7 @@ class JemHelper {
 	static function getCalendarTool()
 	{
 		require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
-		$mainframe = JFactory::getApplication();
-
-		$offset = (float) $mainframe->getCfg('offset');
-		$timezone_name = JemHelper::getTimeZone($offset);
+		$timezone_name = JemHelper::getTimeZoneName();
 
 		$vcal = new vcalendar();
 		if (!file_exists(JPATH_SITE.'/cache/com_jem')) {
@@ -694,11 +650,10 @@ class JemHelper {
 	static function icalAddEvent(&$calendartool, $event)
 	{
 		require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
-		$mainframe = JFactory::getApplication();
-		$jemsettings = JemHelper::config();
-
-		$offset = (float) $mainframe->getCfg('offset');
-		$timezone_name = JemHelper::getTimeZone($offset);
+		$jemsettings	= JemHelper::config();
+		$timezone_name	= JemHelper::getTimeZoneName();
+		$config			= JFactory::getConfig();
+		$sitename		= $config->get('sitename');
 
 		// get categories names
 		$categories = array();
@@ -809,7 +764,7 @@ class JemHelper {
 		$e->setProperty('description', $description);
 		$e->setProperty('location', $location);
 		$e->setProperty('url', $link);
-		$e->setProperty('uid', 'event'.$event->id.'@'.$mainframe->getCfg('sitename'));
+		$e->setProperty('uid', 'event'.$event->id.'@'.$sitename);
 		$calendartool->addComponent($e); // add component to calendar
 		return true;
 	}

@@ -37,8 +37,8 @@ class JEMOutput {
 	{
 		if ($dellink)
 		{
-			$settings 	= JEMHelper::globalattribs();
-			$settings2	= JEMHelper::config();
+			$settings 	= JemHelper::globalattribs();
+			$settings2	= JemHelper::config();
 
 			$uri = JFactory::getURI();
 			$app = JFactory::getApplication();
@@ -78,7 +78,7 @@ class JEMOutput {
 	{
 		if ($addvenuelink) {
 			$app 		= JFactory::getApplication();
-			$settings 	= JEMHelper::globalattribs();
+			$settings 	= JemHelper::globalattribs();
 			$uri 		= JFactory::getURI();
 
 			if ($app->input->get('print','','int')) {
@@ -114,9 +114,9 @@ class JEMOutput {
 	 */
 	static function archivebutton($params, $task = NULL, $id = NULL)
 	{
-		$settings = JEMHelper::globalattribs();
-		$settings2 = JEMHelper::config();
-		$app = JFactory::getApplication();
+		$settings	= JemHelper::globalattribs();
+		$settings2	= JemHelper::config();
+		$app		= JFactory::getApplication();
 
 		if ($settings->get('global_show_archive_icon',1)) {
 			if ($app->input->get('print','','int')) {
@@ -205,7 +205,7 @@ class JEMOutput {
 			$userId	= $user->get('id');
 			$uri	= JFactory::getURI();
 
-			$settings = JEMHelper::globalattribs();
+			$settings = JemHelper::globalattribs();
 			JHtml::_('behavior.tooltip');
 
 			switch ($view)
@@ -266,8 +266,8 @@ class JEMOutput {
 	 */
 	static function printbutton($print_link, &$params)
 	{
-		$app = JFactory::getApplication();
-		$settings = JEMHelper::globalattribs();
+		$app 		= JFactory::getApplication();
+		$settings	= JemHelper::globalattribs();
 
 		if ($settings->get('global_show_print_icon',0)) {
 			JHtml::_('behavior.tooltip');
@@ -311,8 +311,8 @@ class JEMOutput {
 	 */
 	static function mailbutton($slug, $view, $params)
 	{
-		$app = JFactory::getApplication();
-		$settings = JEMHelper::globalattribs();
+		$app 		= JFactory::getApplication();
+		$settings	= JemHelper::globalattribs();
 
 		if ($settings->get('global_show_email_icon')) {
 			if ($app->input->get('print','','int')) {
@@ -353,7 +353,7 @@ class JEMOutput {
 	static function icalbutton($slug, $view)
 	{
 		$app = JFactory::getApplication();
-		$settings = JEMHelper::globalattribs();
+		$settings = JemHelper::globalattribs();
 
 		if ($settings->get('global_show_ical_icon','0')==1) {
 			if ($app->input->get('print','','int')) {
@@ -677,13 +677,13 @@ class JEMOutput {
 	 */
 	static function formatdate($date, $format = "")
 	{
-		$settings = JEMHelper::config();
-
-		$check = JEMHelper::isValidDate($date);
+		$settings 	= JemHelper::config();
+		$check 		= JemHelper::isValidDate($date);
+		//$timezone	= JemHelper::getTimeZoneName();
+		$timezone	= null;
 
 		if ($check == true) {
-			jimport('joomla.utilities.date');
-			$jdate = new JDate($date);
+			$jdate = new JDate($date,$timezone);
 			if (!$format) {
 				// If no format set, use long format as standard
 				$format = JText::_($settings->formatdate);
@@ -703,9 +703,8 @@ class JEMOutput {
 	 */
 	static function formattime($time, $format = "", $addSuffix = true)
 	{
-		$settings = JEMHelper::config();
-
-		$check = JEMHelper::isValidTime($time);
+		$settings	= JemHelper::config();
+		$check 		= JemHelper::isValidTime($time);
 
 		if (!$check)
 		{
@@ -739,24 +738,24 @@ class JEMOutput {
 	 */
 	static function formatDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "", $format = "")
 	{
-		$settings = JEMHelper::globalattribs();
+		$settings = JemHelper::globalattribs();
 		$output = "";
 
-		if(JEMHelper::isValidDate($dateStart)) {
+		if(JemHelper::isValidDate($dateStart)) {
 			$output .= self::formatdate($dateStart, $format);
 
-			if($settings->get('global_show_timedetails','1') && JEMHelper::isValidTime($timeStart)) {
+			if($settings->get('global_show_timedetails','1') && JemHelper::isValidTime($timeStart)) {
 				$output .= ', '.self::formattime($timeStart);
 			}
 
 			// Display end date only when it differs from start date
-			$displayDateEnd = JEMHelper::isValidDate($dateEnd) && $dateEnd != $dateStart;
+			$displayDateEnd = JemHelper::isValidDate($dateEnd) && $dateEnd != $dateStart;
 			if($displayDateEnd) {
 				$output .= ' - '.self::formatdate($dateEnd, $format);
 			}
 
 			// Display end time only when both times are set
-			if($settings->get('global_show_timedetails','1') && JEMHelper::isValidTime($timeStart) && JEMHelper::isValidTime($timeEnd))
+			if($settings->get('global_show_timedetails','1') && JemHelper::isValidTime($timeStart) && JemHelper::isValidTime($timeEnd))
 			{
 				$output .= $displayDateEnd ? ', ' : ' - ';
 				$output .= self::formattime($timeEnd);
@@ -765,11 +764,11 @@ class JEMOutput {
 			$output .= JText::_('COM_JEM_OPEN_DATE');
 
 			if($settings->get('global_show_timedetails','1')) {
-				if(JEMHelper::isValidTime($timeStart)) {
+				if(JemHelper::isValidTime($timeStart)) {
 					$output .= ', '.self::formattime($timeStart);
 				}
 				// Display end time only when both times are set
-				if(JEMHelper::isValidTime($timeStart) && JEMHelper::isValidTime($timeEnd)) {
+				if(JemHelper::isValidTime($timeStart) && JemHelper::isValidTime($timeEnd)) {
 					$output .= ' - '.self::formattime($timeEnd);
 				}
 			}
@@ -805,7 +804,7 @@ class JEMOutput {
 	 */
 	static function formatShortDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "")
 	{
-		$settings = JEMHelper::config();
+		$settings = JemHelper::config();
 
 		// Use format saved in settings if specified or format in language file otherwise
 		if(isset($settings->formatShortDate) && $settings->formatShortDate) {
@@ -817,12 +816,12 @@ class JEMOutput {
 	}
 
 	static function formatSchemaOrgDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "") {
-		$settings = JEMHelper::globalattribs();
+		$settings = JemHelper::globalattribs();
 		$output = "";
 		$formatD = "Y-m-d";
 		$formatT = "%H:%M";
 
-		if(JEMHelper::isValidDate($dateStart)) {
+		if(JemHelper::isValidDate($dateStart)) {
 			$content = self::formatdate($dateStart, $formatD);
 
 			if($settings->get('global_show_timedetails','1') && $timeStart) {
@@ -830,7 +829,7 @@ class JEMOutput {
 			}
 			$output .= '<meta itemprop="startDate" content="'.$content.'" />';
 
-			if(JEMHelper::isValidDate($dateEnd)) {
+			if(JemHelper::isValidDate($dateEnd)) {
 				$content = self::formatdate($dateEnd, $formatD);
 
 				if($settings->get('global_show_timedetails','1') && $timeEnd) {
@@ -902,7 +901,7 @@ class JEMOutput {
 		$output = array_map(
 			function ($category) use ($doLink) {
 				if ($doLink) {
-					$value = '<a href="'.JRoute::_(JEMHelperRoute::getCategoryRoute($category->catslug)).'">'.
+					$value = '<a href="'.JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)).'">'.
 						$category->catname.'</a>';
 				} else {
 					$value = $category->catname;
