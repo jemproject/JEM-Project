@@ -541,7 +541,7 @@ class JEMHelperCountries
 		return $options;
 	}
 
-	function convertIso2to3($iso_code_2)
+	static function convertIso2to3($iso_code_2)
 	{
 		$convert2to3["AF"] = "AFG";
 		$convert2to3["AX"] = "ALA";
@@ -802,7 +802,7 @@ class JEMHelperCountries
 		}
 	}
 
-	function convertIso3to2($iso_code_3)
+	static function convertIso3to2($iso_code_3)
 	{
 		$convert3to2["AFG"] = "AF";
 		$convert3to2["ALA"] = "AX";
@@ -1072,7 +1072,7 @@ class JEMHelperCountries
 	 *
 	 * @param $iso_code
 	 */
-	function getIsoFlag($iso_code)
+	static function getIsoFlag($iso_code)
 	{
 		if (strlen($iso_code) == 3) {
 			$iso_code = self::convertIso3to2($iso_code);
@@ -1094,7 +1094,7 @@ class JEMHelperCountries
 	 * @param string: additional html attributes for the img tag
 	 * @return string: html code for the flag image
 	 */
-	function getCountryFlag($countrycode, $attributes = '')
+	static function getCountryFlag($countrycode, $attributes = '')
 	{
 		$src = self::getIsoFlag($countrycode);
 		if (!$src) {
@@ -1109,7 +1109,7 @@ class JEMHelperCountries
 	 * @param string: an iso country code, e.g AUT
 	 * @return string: a country name
 	 */
-	function getCountryName($iso)
+	static function getCountryName($iso)
 	{
 		if (strlen($iso) == 2) {
 			$iso = self::convertIso2to3($iso);
@@ -1126,7 +1126,7 @@ class JEMHelperCountries
 	 * @param string: an iso3 country code, e.g AUT
 	 * @return string: a country full name
 	 */
-	function getCountryFullName($iso)
+	static function getCountryFullName($iso)
 	{
 		if (strlen($iso) == 2) {
 			$iso = self::convertIso2to3($iso);
@@ -1140,7 +1140,7 @@ class JEMHelperCountries
 	 * @param string: an iso3 country code, e.g AUT
 	 * @return string: a country name, short form
 	 */
-	function getShortCountryName($iso)
+	static function getShortCountryName($iso)
 	{
 		if (strlen($iso) == 2) {
 			$iso = self::convertIso2to3($iso);
