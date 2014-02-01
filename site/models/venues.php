@@ -108,7 +108,7 @@ class JEMModelVenues extends JModelLegacy
 
 				//create flag
 				if ($venue->country) {
-					$venue->countryimg = JEMOutput::getFlag($venue->country);
+					$venue->countryimg = JemHelperCountries::getCountryFlag($venue->country);
 				}
 
 				//create target link

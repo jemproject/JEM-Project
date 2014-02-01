@@ -260,7 +260,7 @@ class JEMViewEvent extends JViewLegacy
 
 		//create flag
 		if ($item->country) {
-			$item->countryimg = JEMOutput::getFlag($item->country);
+			$item->countryimg = JemHelperCountries::getCountryFlag($item->country);
 		}
 
 		$this->isregistered			= $isregistered;
