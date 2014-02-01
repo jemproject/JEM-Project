@@ -37,8 +37,8 @@ class JEMOutput {
 	{
 		if ($dellink)
 		{
-			$settings = JEMHelper::globalattribs();
-			$settings2 = JEMHelper::config();
+			$settings 	= JEMHelper::globalattribs();
+			$settings2	= JEMHelper::config();
 
 			$uri = JFactory::getURI();
 			$app = JFactory::getApplication();
@@ -98,8 +98,6 @@ class JEMOutput {
 			$button = JHtml::_('link', JRoute::_($url), $image);
 			$output = '<span class="hasTip" title="'.JText::_('COM_JEM_DELIVER_NEW_VENUE').' :: '.$overlib.'">'.$button.'</span>';
 
-
-
 			return $output;
 		}
 	}
@@ -127,7 +125,8 @@ class JEMOutput {
 
 			if ($settings2->oldevent == 2) {
 				JHtml::_('behavior.tooltip');
-				$view = JRequest::getWord('view');
+
+				$view = $app->input->getWord('view');
 
 				if (empty($view)) {
 					return; // there must be a view - just to be sure...
@@ -514,10 +513,11 @@ class JEMOutput {
 	 */
 	static function backbutton($backlink, $view)
 	{
-		$app = JFactory::getApplication();
+		$app 	= JFactory::getApplication();
+		$jinput = JFactory::getApplication()->input;
 
-		$id = JRequest::getInt('id');
-		$fid = JRequest::getInt('Itemid');
+		$id 	= $jinput->getInt('id');
+		$fid 	= $jinput->getInt('Itemid');
 
 		JHtml::_('behavior.tooltip');
 
@@ -545,7 +545,7 @@ class JEMOutput {
 	 */
 	static function mapicon($data,$view=false)
 	{
-		$settings = JEMHelper::globalattribs();
+		$settings = JemHelper::globalattribs();
 
 		//stop if disabled
 		if (!$data->map) {
@@ -616,7 +616,7 @@ class JEMOutput {
 	 */
 	static function flyer($data, $image, $type)
 	{
-		$settings = JEMHelper::config();
+		$settings = JemHelper::config();
 
 		switch($type) {
 			case 'event':
@@ -667,25 +667,6 @@ class JEMOutput {
 		return $output;
 	}
 
-	/**
-	 * Creates the country flag
-	 *
-	 * @param string $country
-	 */
-	static function getFlag($country)
-	{
-		$country = JString::strtolower($country);
-
-		jimport('joomla.filesystem.file');
-
-		if (JFile::exists(JPATH_BASE.'/media/com_jem/images/flags/'.$country.'.gif')) {
-			$countryimg = '<img src="'.JURI::base(true).'/media/com_jem/images/flags/'.$country.'.gif" alt="'.JText::_('COM_JEM_COUNTRY').': '.$country.'" width="16" height="11" />';
-
-			return $countryimg;
-		}
-
-		return null;
-	}
 
 	/**
 	 * Formats date
@@ -877,6 +858,8 @@ class JEMOutput {
 
 	/**
 	 * Returns an array for ical formatting
+	 * @todo alter, where is this used for?
+	 *
 	 * @param string date
 	 * @param string time
 	 * @return array
