@@ -710,22 +710,59 @@ class com_jemInstallerScript
 		// get all "com_jem..." frontend entries
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select('id, link');
+		$query->select('id, link, params');
 		$query->from('#__menu');
-		$query->where("link LIKE 'index.php?option=com_jem&view=categoriesdetailed%'");
+		$query->where(array("client_id = 0", "link LIKE 'index.php?option=com_jem&view=categories%'"));
 		$db->setQuery($query);
 		$items = $db->loadObjectList();
 
 		foreach ($items as $item) {
 			$link = $item->link;
+			// Decode the item params
+			$reg = new JRegistry;
+			$reg->loadString($item->params);
 
 			// replace view name
 			$link = str_replace("&view=categoriesdetailed", "&view=categories", $link);
 
-			// write changed link back into DB
+			// add "&id=..." if required
+			if (strpos($link, '&id=') === false) {
+				$link .= '&id=' . max(1, (int)$reg->get('catid', $reg->get('id', 1)));
+			}
+
+			// change params as required
+			$params = array();
+			foreach ($reg->toArray() as $k => $v) {
+				switch ($k) {
+				case 'id':
+					// remove 'id' but add 'usecat' there
+					$params['usecat'] = '1';
+					break;
+				case 'catid':
+					// remove 'catid'
+					break;
+				case 'empty_cat':
+					// rename
+					$params['showemptychilds'] = $v;
+					break;
+				case 'showemptychilds';
+					$params[$k] = $v;
+					// insert 'detcat_nr' and 'cat_num' there
+					$params['detcat_nr'] = '0';
+					$params['cat_num'] = '4';
+					break;
+				default:
+					$params[$k] = $v;
+				}
+			}
+			$reg = new JRegistry;
+			$reg->loadArray($params);
+
+			// write changed entry back into DB
 			$query = $db->getQuery(true);
 			$query->update('#__menu');
 			$query->set('link = '.$db->quote((string)$link));
+			$query->set('params = '.$db->quote((string)$reg));
 			$query->where(array('id = '.$db->quote($item->id)));
 			$db->setQuery($query);
 			$db->query();
