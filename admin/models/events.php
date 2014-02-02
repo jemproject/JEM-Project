@@ -145,18 +145,19 @@ class JemModelEvents extends JModelList
 			$query->where('(a.published IN (0, 1))');
 		}
 
-		// Filter by begin date
-		// @todo test with multi-day
-		$begin = $this->getState('filter_begin');
-		if (!empty($begin)) {
-			$query->where('a.dates >= '.$db->Quote($begin));
-		}
-
-		// Filter by end date
-		// @todo test with multi-day
-		$end = $this->getState('filter_end');
-		if (!empty($end)) {
-			$query->where('a.dates <= '.$db->Quote($end));
+		// Filter by Date
+		$startDate	= $this->getState('filter_begin');
+		$endDate 	= $this->getState('filter_end');
+		if (!empty($startDate) && !empty($endDate)) {
+			$query->where('DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "' . $startDate . '") >= 0');
+			$query->where('DATEDIFF(a.dates, "' . $endDate . '") <= 0');
+		} else {
+			if (!empty($startDate)) {
+				$query->where('a.dates >= '.$db->Quote($startDate));
+			}
+			if (!empty($endDate)) {
+				$query->where('a.dates <= '.$db->Quote($endDate));
+			}
 		}
 
 		// Filter by search in title
