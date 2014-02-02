@@ -564,11 +564,11 @@ div.jem_editvenue form textarea {
 
 table#el-attachments input{
 	width: 100%;
-    margin: 0px 0px 0.5em;
+	margin: 0px 0px 0.5em;
 	padding: 0.2em;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
 }
 
 div.jem_editevent form input#a_name {

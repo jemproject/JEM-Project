@@ -50,9 +50,9 @@ class JEMViewVenue extends JViewLegacy
 			$vcal->returnCalendar();
 			echo $vcal->createCalendar(); // debug
 
-			} else {
-				return;
-			}
+		} else {
+			return;
+		}
 	}
 }
 ?>
