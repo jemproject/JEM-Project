@@ -24,6 +24,8 @@ defined('_JEXEC') or die;
 		</h1>
 	<?php endif; ?>
 
+	<div class="clr"></div>
+
 	<?php foreach ($this->rows as $row) : ?>
 		<h2 class="jem cat<?php echo $row->id; ?>">
 			<?php echo JHtml::_('link', JRoute::_($row->linktarget), $this->escape($row->catname)); ?>
@@ -55,37 +57,26 @@ defined('_JEXEC') or die;
 			</div>
 		</div>
 
-		<?php if (count($row->subcats)) : ?>
+		<?php if ($i = count($row->subcats)) : ?>
 			<div class="subcategories">
 				<?php echo JText::_('COM_JEM_SUBCATEGORIES'); ?>
 			</div>
-			<?php
-				$i = 0;
-			?>
 			<div class="subcategorieslist">
 				<?php foreach ($row->subcats as $sub) : ?>
-					<?php if ($this->params->get('showemptychilds', 1) || $sub->assignedevents) : ?>
-						<?php
-							if ($i) echo ', ';
-							$i++;
-						?>
-						<strong>
-							<a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($sub->slug)); ?>">
-								<?php echo $this->escape($sub->catname); ?>
-							</a>
-						</strong> (<?php echo $sub->assignedevents != null ? $sub->assignedevents : 0; ?>)
-					<?php endif; ?>
+					<strong>
+						<a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($sub->slug)); ?>">
+							<?php echo $this->escape($sub->catname); ?></a>
+					</strong> <?php echo '(' . ($sub->assignedevents != null ? $sub->assignedevents : 0) . (--$i ? '),' : ')'); ?>
 				<?php endforeach; ?>
 			</div>
 		<?php endif; ?>
 
 		<!--table-->
 		<?php
-			//TODO: move out of template
-			$this->rows = $this->model->getEventdata($row->id);
-			$this->categoryid = $row->id;
-
-			echo $this->loadTemplate('table');
+			if ($this->params->get('detcat_nr', 0) > 0) {
+				$this->catrow = $row;
+				echo $this->loadTemplate('table');
+			}
 		?>
 	<?php endforeach; ?>
 

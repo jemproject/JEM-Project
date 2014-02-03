@@ -99,6 +99,13 @@ class JEMViewCategories extends JEMView
 			$dellink = 0;
 		}
 
+		// Get events if requested
+		if ($params->get('detcat_nr', 0) > 0) {
+			foreach($rows as $row) {
+				$row->events = $model->getEventdata($row->id);
+			}
+		}
+
 		$this->rows				= $rows;
 		$this->task				= $task;
 		$this->params			= $params;

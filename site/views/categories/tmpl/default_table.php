@@ -52,11 +52,10 @@ defined('_JEXEC') or die;
 	</thead>
 
 	<tbody>
-	<?php $this->rows = $this->getRows(); ?>
-	<?php if (!$this->rows) : ?>
+	<?php if (empty($this->catrow->events)) : ?>
 		<tr class="no_events"><td colspan="20"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
 	<?php else : ?>
-		<?php foreach ($this->rows as $row) : ?>
+		<?php foreach ($this->catrow->events as $row) : ?>
 			<tr class="sectiontableentry<?php echo ($row->odd +1 ) . $this->params->get( 'pageclass_sfx' ); ?>"
 				itemscope="itemscope" itemtype="http://schema.org/Event">
 

@@ -21,6 +21,26 @@
 
 	<fields name="params">
 		<fieldset name="basic">
+			<field name="showemptycats" type="radio"
+				default="1"
+				label="COM_JEM_SHOWEMPTYCATS"
+				description="COM_JEM_SHOWEMPTYCATSDESC"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="cat_num" type="text"
+				size="2"
+				default="4"
+				label="COM_JEM_CAT_DISPLAY"
+				description="COM_JEM_CAT_DISPLAY_DESC"
+			/>
+			<field name="detcat_nr" type="text"
+				size="1"
+				default="3"
+				label="COM_JEM_DET_CATEGORIES_PREVIEW"
+				description="COM_JEM_DET_CATEGORIES_PREVIEW_DESC"
+			/>
 			<field name="usecat" type="radio"
 				default="1"
 				label="COM_JEM_DISPLAYCHILDS"
@@ -29,18 +49,6 @@
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
-			<field name="detcat_nr" type="text"
-				size="1"
-				default="3"
-				label="COM_JEM_DET_CATEGORIES_PREVIEW"
-				description="COM_JEM_DET_CATEGORIES_PREVIEW_DESC"
-			/>
-			<field name="cat_num" type="text"
-				size="2"
-				default="4"
-				label="COM_JEM_CAT_DISPLAY"
-				description="COM_JEM_CAT_DISPLAY_DESC"
-			/>
 			<field name="showemptychilds" type="radio"
 				default="1"
 				label="COM_JEM_SHOWEMPTYCHILD"

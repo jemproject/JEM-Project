@@ -730,29 +730,25 @@ class com_jemInstallerScript
 				$link .= '&id=' . max(1, (int)$reg->get('catid', $reg->get('id', 1)));
 			}
 
-			// change params as required
-			$params = array();
+			// change params as required (order and defaults matching xml)
+			$params = array('showemptycats' => $reg->get('showemptychilds', 1),
+			                'cat_num' => 4,
+			                'detcat_nr' => 3,
+			                'usecat' => 1,
+			                'showemptychilds' => $reg->get('empty_cats', 1));
 			foreach ($reg->toArray() as $k => $v) {
 				switch ($k) {
 				case 'id':
-					// remove 'id' but add 'usecat' there
-					$params['usecat'] = '1';
-					break;
 				case 'catid':
-					// remove 'catid'
+					// remove 'id' and 'catid'
 					break;
 				case 'empty_cat':
 					// rename
-					$params['showemptychilds'] = $v;
-					break;
-				case 'showemptychilds';
-					$params[$k] = $v;
-					// insert 'detcat_nr' and 'cat_num' there
-					$params['detcat_nr'] = '0';
-					$params['cat_num'] = '4';
+					$params['showemptycats'] = $v;
 					break;
 				default:
 					$params[$k] = $v;
+					break;
 				}
 			}
 			$reg = new JRegistry;
