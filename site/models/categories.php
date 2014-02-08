@@ -55,6 +55,27 @@ class JEMModelCategories extends JModelLegacy
 	var $_pagination = null;
 
 	/**
+	 * Show empty categories in list
+	 *
+	 * @var bool
+	 */
+	protected $_showemptycats    = false;
+
+	/**
+	 * Show subcategories
+	 *
+	 * @var bool
+	 */
+	protected $_showsubcats      = false;
+
+	/**
+	 * Show empty subcategories
+	 *
+	 * @var bool
+	 */
+	protected $_showemptysubcats = false;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct()
@@ -73,6 +94,10 @@ class JEMModelCategories extends JModelLegacy
 		}
 
 		$this->_id = $id;
+
+		$this->_showemptycats    = (bool)$params->get('showemptycats', 1);
+		$this->_showsubcats      = (bool)$params->get('usecat', 1);
+		$this->_showemptysubcats = (bool)$params->get('showemptychilds', 1);
 
 		//get the number of events from database
 		$limit 		= JRequest::getInt('limit', $params->get('cat_num'));
@@ -96,8 +121,9 @@ class JEMModelCategories extends JModelLegacy
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_categories))
 		{
-			$parentCategory = $this->_getList($this->_buildQueryParentCategory());
-			$query = $this->_buildQuerySubCategories();
+			// include category itself but not if it's the root category
+			$parentCategory = ($this->_id > 1) ? $this->_getList($this->_buildQueryParentCategory(true)) : array();
+			$query = $this->_buildQuerySubCategories($this->_showemptycats);
 			$pagination = $this->getPagination();
 			$this->_categories = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 
@@ -105,9 +131,11 @@ class JEMModelCategories extends JModelLegacy
 			$this->_categories = array_merge($parentCategory, $this->_categories);
 
 			foreach($this->_categories as $category) {
-				if ($params->get('usecat',1)) {
+				if ($this->_showsubcats) {
 					//child categories
-					$query = $this->_buildQuerySubCategories($category->id);
+					// ensure parent shows at least all categories also shown in list
+					$showempty = $this->_showemptysubcats | ($category->id == $this->_id ? $this->_showemptycats : false);
+					$query = $this->_buildQuerySubCategories($showempty, $category->id);
 					$this->_db->setQuery($query);
 					$category->subcats = $this->_db->loadObjectList();
 				} else {
@@ -127,13 +155,13 @@ class JEMModelCategories extends JModelLegacy
 				}
 
 				//create target link
+				// TODO: Move to view?
 				$task = JRequest::getWord('task');
-
-				$category->linktext = $task == 'archive' ? JText::_('COM_JEM_SHOW_ARCHIVE') : JText::_('COM_JEM_SHOW_EVENTS');
-
 				if ($task == 'archive') {
+					$category->linktext   = JText::_('COM_JEM_SHOW_ARCHIVE');
 					$category->linktarget = JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug.'&task=archive'));
 				} else {
+					$category->linktext   = JText::_('COM_JEM_SHOW_EVENTS');
 					$category->linktarget = JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug));
 				}
 			}
@@ -253,36 +281,34 @@ class JEMModelCategories extends JModelLegacy
 
 	/**
 	 * Method to get the subcategories query
+	 * @param bool   $emptycat include empty categories
 	 * @param string $parent_id Parent ID of the subcategories
 	 * @return string The query string
 	 */
-	protected function _buildQuerySubCategories($parent_id = null) {
-		return $this->_buildQuery($parent_id);
+	protected function _buildQuerySubCategories($emptycat, $parent_id = null) {
+		return $this->_buildQuery($emptycat, $parent_id);
 	}
 
 	/**
 	 * Method to get the parent category query
+	 * @param bool   $emptycat include empty categories
 	 * @param string $parent_id ID of the parent category
 	 * @return string The query string
 	 */
-	protected function _buildQueryParentCategory($parent_id = null) {
-		return $this->_buildQuery($parent_id, true);
+	protected function _buildQueryParentCategory($emptycat, $parent_id = null) {
+		return $this->_buildQuery($emptycat, $parent_id, true);
 	}
 
 
 	/**
-	 * Method get the categories query
+	 * Method to get the categories query
+	 * @param bool   $emptycat include empty categories
 	 * @param string $parent_id
-	 * @param string $parentCategory
+	 * @param bool   $parentCategory
 	 * @return string The query string
 	 */
-	protected function _buildQuery($parent_id = null, $parentCategory = false)
+	protected function _buildQuery($emptycat, $parent_id = null, $parentCategory = false)
 	{
-		$app = JFactory::getApplication();
-
-		// Get the parameters of the active menu item
-		$params = $app->getParams('com_jem');
-
 		if (is_null($parent_id)) {
 			$parent_id = $this->_id;
 		}
@@ -313,7 +339,7 @@ class JEMModelCategories extends JModelLegacy
 		$where_sub .= ' AND c.id = cc.id';
 
 		// show/hide empty categories
-		$empty = $params->get('empty_cat') ? '' : ' HAVING assignedevents > 0';
+		$empty = $emptycat ? '' : ' HAVING assignedevents > 0';
 
 		// Parent category itself or its sub categories
 		$parentCategoryQuery = $parentCategory ? 'c.id='.(int)$parent_id : 'c.parent_id='.(int)$parent_id;
@@ -350,11 +376,6 @@ class JEMModelCategories extends JModelLegacy
 	 */
 	protected function _buildQueryTotal()
 	{
-		$app = JFactory::getApplication();
-
-		// Get the paramaters of the active menu item
-		$params = $app->getParams('com_jem');
-
 		$user = JFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
@@ -362,15 +383,17 @@ class JEMModelCategories extends JModelLegacy
 		$query = 'SELECT DISTINCT c.id'
 			. ' FROM #__jem_categories AS c';
 
-		if (!$params->get('empty_cat', 1)) {
+		if (!$this->_showemptycats) {
 			$query .= ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id '
 					. ' INNER JOIN #__jem_events AS e ON e.id = rel.itemid ';
 		}
+
 		$query .= ' WHERE c.published = 1'
 			. ' AND c.parent_id = ' . (int) $this->_id
 			. ' AND c.access IN (' . implode(',', $levels) . ')'
 			;
-		if (!$params->get('empty_cat', 1)) {
+
+		if (!$this->_showemptycats) {
 			$task = JRequest::getWord('task');
 			if($task == 'archive') {
 				$query .= ' AND e.published = 2';

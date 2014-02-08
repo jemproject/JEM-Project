@@ -710,22 +710,55 @@ class com_jemInstallerScript
 		// get all "com_jem..." frontend entries
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select('id, link');
+		$query->select('id, link, params');
 		$query->from('#__menu');
-		$query->where("link LIKE 'index.php?option=com_jem&view=categoriesdetailed%'");
+		$query->where(array("client_id = 0", "link LIKE 'index.php?option=com_jem&view=categories%'"));
 		$db->setQuery($query);
 		$items = $db->loadObjectList();
 
 		foreach ($items as $item) {
 			$link = $item->link;
+			// Decode the item params
+			$reg = new JRegistry;
+			$reg->loadString($item->params);
 
 			// replace view name
 			$link = str_replace("&view=categoriesdetailed", "&view=categories", $link);
 
-			// write changed link back into DB
+			// add "&id=..." if required
+			if (strpos($link, '&id=') === false) {
+				$link .= '&id=' . max(1, (int)$reg->get('catid', $reg->get('id', 1)));
+			}
+
+			// change params as required (order and defaults matching xml)
+			$params = array('showemptycats' => $reg->get('showemptychilds', 1),
+			                'cat_num' => 4,
+			                'detcat_nr' => 3,
+			                'usecat' => 1,
+			                'showemptychilds' => $reg->get('empty_cats', 1));
+			foreach ($reg->toArray() as $k => $v) {
+				switch ($k) {
+				case 'id':
+				case 'catid':
+					// remove 'id' and 'catid'
+					break;
+				case 'empty_cat':
+					// rename
+					$params['showemptycats'] = $v;
+					break;
+				default:
+					$params[$k] = $v;
+					break;
+				}
+			}
+			$reg = new JRegistry;
+			$reg->loadArray($params);
+
+			// write changed entry back into DB
 			$query = $db->getQuery(true);
 			$query->update('#__menu');
 			$query->set('link = '.$db->quote((string)$link));
+			$query->set('params = '.$db->quote((string)$reg));
 			$query->where(array('id = '.$db->quote($item->id)));
 			$db->setQuery($query);
 			$db->query();
