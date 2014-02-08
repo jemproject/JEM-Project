@@ -75,7 +75,7 @@ class JEMViewDay extends JEMView
 
 		// Show page heading specified on menu item or TODAY as heading - idea taken from com_content.
 		if ($useMenuItemParams) {
-			$pagetitle   = $params->get('page_title', $menu->title);
+			$pagetitle   = $params->get('page_title', $menuitem->title);
 			$params->def('page_heading', $pagetitle);
 			$pathway->setItemName(1, $menuitem->title);
 		} else {
