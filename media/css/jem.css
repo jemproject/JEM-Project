@@ -646,7 +646,7 @@ Thx to http://www.bloggerswatch.com/internet/css-trick-submit-button-should-look
 .buttons button {
 	display:block !important;
 	float:left !important;
-	margin:0 7px 0 0 !important;
+	margin:0 0 0 7px !important;
 	background-color:#F5F5F5 !important;
 	border:1px solid #808080 !important;
 	border-top:1px solid #808080 !important;

@@ -22,6 +22,8 @@ defined('_JEXEC') or die;
 </h1>
 <?php endif; ?>
 
+<div class="clr"> </div>
+
 <?php if (isset($this->showdaydate)) : ?>
 <h2 class="jem">
 	<?php echo $this->daydate; ?>

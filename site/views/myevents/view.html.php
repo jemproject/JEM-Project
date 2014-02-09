@@ -41,6 +41,10 @@ class JEMViewMyevents extends JViewLegacy
 			return false;
 		}
 
+		// Decide which parameters should take priority
+		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
+		                                && $menuitem->query['view'] == 'myevents');
+
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
@@ -54,6 +58,7 @@ class JEMViewMyevents extends JViewLegacy
 		} else {
 			$noevents = 0;
 		}
+
 		// get variables
 		$filter_order		= $app->getUserStateFromRequest('com_jem.myevents.filter_order', 'filter_order', 	'a.dates', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myevents.filter_order_Dir', 'filter_order_Dir',	'', 'word');
@@ -101,15 +106,11 @@ class JEMViewMyevents extends JViewLegacy
 		$pageheading = $pagetitle;
 
 		// Check to see which parameters should take priority
-		if ($menuitem) {
-			$currentLink = $menuitem->link;
-			// If the current view is the active menuitem and an myevents view, then the menu item params take priority
-			if (strpos($currentLink, 'view=myevents')) {
-				// Menu item params take priority
-				$params->def('page_title', $menuitem->title);
-				$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_EVENTS'));
-				$pageheading = $params->get('page_heading', $pagetitle);
-			}
+		if ($useMenuItemParams) {
+			// Menu item params take priority
+			$params->def('page_title', $menuitem->title);
+			$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_EVENTS'));
+			$pageheading = $params->get('page_heading', $pagetitle);
 		}
 
 		$params->set('page_heading', $pageheading);

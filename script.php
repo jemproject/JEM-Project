@@ -476,6 +476,7 @@ class com_jemInstallerScript
 			'/components/com_jem/views/categoriesdetailed/tmpl/default.xml',
 			'/components/com_jem/views/categoriesdetailed/tmpl/default_table.php',
 			'/components/com_jem/views/categoriesdetailed/view.html.php',
+			'/components/com_jem/views/venues/view.feed.php',
 			'/components/com_jem/controllers/editevent.php',
 			'/components/com_jem/controllers/editvenue.php',
 			'/media/js/eventscreen.js',

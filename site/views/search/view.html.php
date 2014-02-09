@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -34,11 +34,15 @@ class JEMViewSearch extends JEMView
 		$jemsettings = JEMHelper::config();
 		$settings 	= JEMHelper::globalattribs();
 		$menu		= $app->getMenu();
-		$item		= $menu->getActive();
+		$menuitem	= $menu->getActive();
 		$params 	= $app->getParams();
 		$uri 		= JFactory::getURI();
 		$pathway 	= $app->getPathWay();
 		$user		= JFactory::getUser();
+
+		// Decide which parameters should take priority
+		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
+		                                && $menuitem->query['view'] == 'search');
 
 		// add javascript
 		JHtml::_('behavior.framework');
@@ -67,17 +71,32 @@ class JEMViewSearch extends JEMView
 			$noevents = 0;
 		}
 
-		//params
-		$params->def('page_title', $item->title);
-
-		//pathway
-		$pathway->setItemName(1, $item->title);
+		// Check to see which parameters should take priority
+		if ($useMenuItemParams) {
+			// Menu item params take priority
+			$pagetitle = $params->def('page_title', $menuitem ? $menuitem->title : JText::_('COM_JEM_SEARCH'));
+			$pageheading = $params->def('page_heading', $pagetitle);
+			$pathway->setItemName(1, $menuitem->title);
+		} else {
+			$pagetitle = JText::_('COM_JEM_SEARCH');
+			$pageheading = $pagetitle;
+			$pathway->addItem(1, $pagetitle);
+		}
 
 		if ($task == 'archive') {
 			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=search&task=archive'));
-			$pagetitle = $params->get('page_title').' - '.JText::_('COM_JEM_ARCHIVE');
-		} else {
-			$pagetitle = $params->get('page_title');
+			$pagetitle   .= ' - ' . JText::_('COM_JEM_ARCHIVE');
+			$pageheading .= ' - ' . JText::_('COM_JEM_ARCHIVE');
+		}
+
+		$params->set('page_heading', $pageheading);
+
+		// Add site name to title if param is set
+		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 		}
 
 		//Set Page title
@@ -93,13 +112,6 @@ class JEMViewSearch extends JEMView
 		} else {
 			$dellink = 0;
 		}
-
-		//add alternate feed link
-		$link    = 'index.php?option=com_jem&view=search&format=feed';
-		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
-		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
-		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
-		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
 
 		//create select lists
 		$lists	= $this->_buildSortLists();

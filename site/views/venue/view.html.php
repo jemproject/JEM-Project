@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -31,12 +31,12 @@ class JEMViewVenue extends JEMView {
 			// initialize variables
 			$document 		= JFactory::getDocument();
 			$menu 			= $app->getMenu();
+			$menuitem		= $menu->getActive();
 			$jemsettings	= JEMHelper::config();
-			$item 			= $menu->getActive();
 			$params 		= $app->getParams();
 			$uri 			= JFactory::getURI();
 			$pathway 		= $app->getPathWay();
-			$jinput 		= JFactory::getApplication()->input;
+			$jinput 		= $app->input;
 			$print			= JRequest::getBool('print');
 
 			// Load css
@@ -60,8 +60,8 @@ class JEMViewVenue extends JEMView {
 			.today .daynum {background-color:' . $currentdaycolor . ';}';
 			$document->addStyleDeclaration ($style);
 
-			// add javascript
-			JHtml::_('script', 'com_jem/calendar.js', false, true);
+			// add javascript (using full path - see issue #590)
+			JHtml::_('script', 'media/com_jem/js/calendar.js');
 
 			// Retrieve year/month variables
 			$year = $jinput->get('yearID', strftime("%Y"),'int');
@@ -78,11 +78,18 @@ class JEMViewVenue extends JEMView {
 				return false;
 			}
 
-			// Set Meta data
-			$document->setTitle($item->title);
-
 			// Set Page title
-			$pagetitle = $params->def('page_title', $item->title);
+			$pagetitle = $params->def('page_title', $menuitem->title);
+			$params->def('page_heading', $params->get('page_title'));
+
+			// Add site name to title if param is set
+			if ($app->getCfg('sitename_pagetitles', 0) == 1) {
+				$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+			}
+			elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+				$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+			}
+
 			$document->setTitle($pagetitle);
 			$document->setMetaData('title', $pagetitle);
 
@@ -106,11 +113,12 @@ class JEMViewVenue extends JEMView {
 			$app 			= JFactory::getApplication();
 			$document 		= JFactory::getDocument();
 			$menu 			= $app->getMenu();
+			$menuitem		= $menu->getActive();
 			$jemsettings 	= JEMHelper::config();
 			$settings 		= JEMHelper::globalattribs();
 			$db 			= JFactory::getDBO();
-			$item 			= $menu->getActive();
 			$params 		= $app->getParams('com_jem');
+			$pathway 		= $app->getPathWay ();
 			$uri 			= JFactory::getURI();
 			$task 			= JRequest::getWord('task');
 			$user			= JFactory::getUser();
@@ -118,6 +126,28 @@ class JEMViewVenue extends JEMView {
 			// Load css
 			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+
+			// get data from model
+			$rows	= $this->get('Data');
+			$venue	= $this->get('Venue');
+
+			// are events available?
+			if (! $rows) {
+				$noevents = 1;
+			} else {
+				$noevents = 0;
+			}
+
+			// does the venue exist?
+			if ($venue->id == 0) {
+				// TODO Translation
+				return JError::raiseError(404,JText::_(COM_JEM_VENUE_NOTFOUND));
+			}
+
+			// Decide which parameters should take priority
+			$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
+			                                && $menuitem->query['view']   == 'venue'
+			                                && $menuitem->query['id']     == $venue->id);
 
 			// get search & user-state variables
 			$filter_order 		= $app->getUserStateFromRequest('com_jem.venue.filter_order', 'filter_order', 'a.dates', 'cmd');
@@ -130,24 +160,6 @@ class JEMViewVenue extends JEMView {
 			$lists['order_Dir']	= $filter_order_Dir;
 			$lists['order']		= $filter_order;
 
-			// get data from model
-			$rows	= $this->get('Data');
-			$venue	= $this->get('Venue');
-
-
-			// does the venue exist?
-			if ($venue->id == 0) {
-				// TODO Translation
-				return JError::raiseError(404,JText::_(COM_JEM_VENUE_NOTFOUND));
-			}
-
-			// are events available?
-			if (! $rows) {
-				$noevents = 1;
-			} else {
-				$noevents = 0;
-			}
-
 			// Get image
 			$limage = JEMImage::flyercreator($venue->locimage,'venue');
 
@@ -158,23 +170,39 @@ class JEMViewVenue extends JEMView {
 			$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 			$this->document->addHeadLink(JRoute::_($link . '&type=atom'), 'alternate', 'rel', $attribs);
 
-			// pathway
-			$pathway = $app->getPathWay ();
-			if ($item)
-				$pathway->setItemName ( 1, $item->title );
+			// pathway, page title, page heading
+			if ($useMenuItemParams) {
+				$pagetitle   = $params->get('page_title', $menuitem->title ? $menuitem->title : $venue->venue);
+				$pageheading = $params->get('page_heading', $pagetitle);
+				$pathway->setItemName(1, $menuitem->title);
+			} else {
+				$pagetitle   = $venue->venue;
+				$pageheading = $pagetitle;
+				$pathway->addItem($pagetitle, JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug)));
+			}
 
 			// create the pathway
 			if ($task == 'archive') {
-				$pathway->addItem (JText::_('COM_JEM_ARCHIVE').'-'.$venue->venue, JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug).'&task=archive'));
+				$pathway->addItem (JText::_('COM_JEM_ARCHIVE'), JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug).'&task=archive'));
 				$print_link = JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug).'&task=archive&print=1&tmpl=component');
-				$pagetitle = $venue->venue.'-'.JText::_('COM_JEM_ARCHIVE');
+				$pagetitle   .= ' - ' . JText::_('COM_JEM_ARCHIVE');
+				$pageheading .= ' - ' . JText::_('COM_JEM_ARCHIVE');
 			} else {
-				$pathway->addItem($venue->venue, JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug)));
+				//$pathway->addItem($venue->venue, JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug)));
 				$print_link = JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
-				$pagetitle = $venue->venue;
 			}
 
-			// set Page title
+			$params->set('page_heading', $pageheading);
+
+			// Add site name to title if param is set
+			if ($app->getCfg('sitename_pagetitles', 0) == 1) {
+				$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+			}
+			elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+				$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+			}
+
+			// set Page title & Meta data
 			$document->setTitle($pagetitle);
 			$document->setMetaData('title', $pagetitle);
 			$document->setMetadata('keywords', $venue->meta_keywords);
@@ -224,6 +252,7 @@ class JEMViewVenue extends JEMView {
 			}
 
 			// build the url
+			// TODO: What's about "https://"?
 			if (!empty($venue->url) && strtolower (substr($venue->url, 0, 7)) != "http://") {
 				$venue->url = 'http://' . $venue->url;
 			}
@@ -279,7 +308,7 @@ class JEMViewVenue extends JEMView {
 			$this->pagination 			= $pagination;
 			$this->jemsettings 			= $jemsettings;
 			$this->settings				= $settings;
-			$this->item					= $item;
+			$this->item					= $menuitem;
 			$this->pagetitle			= $pagetitle;
 			$this->task					= $task;
 			$this->allowedtoeditvenue 	= $allowedtoeditvenue;
