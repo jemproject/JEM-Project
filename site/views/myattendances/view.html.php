@@ -41,6 +41,10 @@ class JEMViewMyattendances extends JViewLegacy
 			return false;
 		}
 
+		// Decide which parameters should take priority
+		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
+		                                && $menuitem->query['view'] == 'myattendances');
+
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
@@ -103,15 +107,11 @@ class JEMViewMyattendances extends JViewLegacy
 		$pageheading = $pagetitle;
 
 		// Check to see which parameters should take priority
-		if ($menuitem) {
-			$currentLink = $menuitem->link;
-			// If the current view is the active menuitem and an myattendances view, then the menu item params take priority
-			if (strpos($currentLink, 'view=myattendances')) {
-				// Menu item params take priority
-				$params->def('page_title', $menuitem->title);
-				$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_ATTENDANCES'));
-				$pageheading = $params->get('page_heading', $pagetitle);
-			}
+		if ($useMenuItemParams) {
+			// Menu item params take priority
+			$params->def('page_title', $menuitem->title);
+			$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_ATTENDANCES'));
+			$pageheading = $params->get('page_heading', $pagetitle);
 		}
 
 		$params->set('page_heading', $pageheading);

@@ -17,7 +17,7 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
  *
  * @package JEM
  *
-*/
+ */
 class JEMViewCategory extends JEMView
 {
 	/**
@@ -133,6 +133,30 @@ class JEMViewCategory extends JEMView
 			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
+			//get data from model
+			$rows 		= $this->get('Data');
+			$category 	= $this->get('Category');
+			$categories	= $this->get('Childs');
+
+			//are events available?
+			if (!$rows) {
+				$noevents = 1;
+			} else {
+				$noevents = 0;
+			}
+
+			//does the category exist
+			if ($category->id == 0)
+			{
+				// TODO Translation
+				return JError::raiseError(404, JText::sprintf('Category #%d not found', $category->id));
+			}
+
+			// Decide which parameters should take priority
+			$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
+			                                && $menuitem->query['view']   == 'category'
+			                                && $menuitem->query['id']     == $category->id);
+
 			// get variables
 			$filter_order		= $app->getUserStateFromRequest('com_jem.category.filter_order', 'filter_order', 	'a.dates', 'cmd');
 			$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.category.filter_order_Dir', 'filter_order_Dir',	'', 'word');
@@ -168,29 +192,6 @@ class JEMViewCategory extends JEMView
 			// search filter
 			$lists['search']= $search;
 
-			//get data from model
-			$rows 		= $this->get('Data');
-			$category 	= $this->get('Category');
-			$categories	= $this->get('Childs');
-
-			//are events available?
-			if (!$rows) {
-				$noevents = 1;
-			} else {
-				$noevents = 0;
-			}
-
-			//does the category exist
-			if ($category->id == 0)
-			{
-				// TODO Translation
-				return JError::raiseError(404, JText::sprintf('Category #%d not found', $category->id));
-			}
-
-			//Set Meta data
-			$document->setMetadata('keywords', $category->meta_keywords);
-			$document->setDescription(strip_tags($category->meta_description));
-
 			// Add feed links
 			$link = '&format=feed&id='.$category->id.'&limitstart=';
 			$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
@@ -198,34 +199,34 @@ class JEMViewCategory extends JEMView
 			$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 			$this->document->addHeadLink(JRoute::_($link . '&type=atom'), 'alternate', 'rel', $attribs);
 
-			// Show page heading specified on menu item or category title as heading - idea taken from com_content.
-			//
-			// Check to see which parameters should take priority
-			// If the current view is the active menuitem and an category view for this category, then the menu item params take priority
-			if ($menuitem && ($menuitem->query['option'] == 'com_jem' && $menuitem->query['view'] == 'category' && $menuitem->query['id'] == $category->id)) {
-
-				$pagetitle   = $params->get('page_title', $category->catname);
-				$pageheading = $params->get('page_heading', $pagetitle);
-			} else {
-				$pagetitle   = $category->catname;
-				$pageheading = $pagetitle;
-			}
-
 			//create the pathway
 			$cats		= new JEMCategories($category->id);
 			$parents	= $cats->getParentlist();
 
 			foreach($parents as $parent) {
-				$pathway->addItem($this->escape($parent->catname), JRoute::_(JEMHelperRoute::getCategoryRoute($parent->categoryslug)) );
+				$pathway->addItem($this->escape($parent->catname), JRoute::_(JEMHelperRoute::getCategoryRoute($parent->slug)) );
+			}
+
+			// Show page heading specified on menu item or category title as heading - idea taken from com_content.
+			//
+			// Check to see which parameters should take priority
+			// If the current view is the active menuitem and an category view for this category, then the menu item params take priority
+			if ($useMenuItemParams) {
+				$pagetitle   = $params->get('page_title', $menuitem->title ? $menuitem->title : $category->catname);
+				$pageheading = $params->get('page_heading', $pagetitle);
+				$pathway->setItemName(1, $menuitem->title);
+			} else {
+				$pagetitle   = $category->catname;
+				$pageheading = $pagetitle;
+				$pathway->addItem($category->catname, JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug)) );
 			}
 
 			if ($task == 'archive') {
-				$pathway->addItem(JText::_('COM_JEM_ARCHIVE').' - '.$category->catname, JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug).'&task=archive'));
+				$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug).'&task=archive'));
 				$print_link = JRoute::_(JEMHelperRoute::getCategoryRoute($category->id) .'&task=archive&print=1&tmpl=component');
 				$pagetitle   .= ' - '.JText::_('COM_JEM_ARCHIVE');
 				$pageheading .= ' - '.JText::_('COM_JEM_ARCHIVE');
 			} else {
-				$pathway->addItem($category->catname, JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug)) );
 				$print_link = JRoute::_(JEMHelperRoute::getCategoryRoute($category->id) .'&print=1&tmpl=component');
 			}
 
@@ -239,7 +240,11 @@ class JEMViewCategory extends JEMView
 				$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 			}
 
+			//Set Page title & Meta data
 			$this->document->setTitle($pagetitle);
+			$document->setMetaData('title', $pagetitle);
+			$document->setMetadata('keywords', $category->meta_keywords);
+			$document->setDescription(strip_tags($category->meta_description));
 
 			//Check if the user has access to the form
 			$maintainer = JEMUser::ismaintainer('add');

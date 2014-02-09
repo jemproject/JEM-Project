@@ -10,29 +10,32 @@
 defined('_JEXEC') or die;
 ?>
 <div id="jem" class="jem_jem">
-<div class="buttons">
-	<?php
+	<div class="buttons">
+		<?php
 		echo JEMOutput::publishbutton();
 		echo JEMOutput::unpublishbutton();
 		echo JEMOutput::trashbutton();
-	?>
-</div>
-<?php if ($this->params->get('show_page_heading', 1)) : ?>
+		?>
+	</div>
+
+	<?php if ($this->params->get('show_page_heading', 1)) : ?>
 	<h1 class="componentheading">
 		<?php echo $this->escape($this->params->get('page_heading')); ?>
 	</h1>
-<?php endif; ?>
+	<?php endif; ?>
 
-<!--table-->
+	<div class="clr"></div>
 
-<?php
+	<!--table-->
+
+	<?php
 	echo $this->loadTemplate('events');
-?>
+	?>
 
-<!--footer-->
+	<!--footer-->
 
-<div class="copyright">
-	<?php echo JEMOutput::footer( ); ?>
-</div>
+	<div class="copyright">
+		<?php echo JEMOutput::footer( ); ?>
+	</div>
 
 </div>

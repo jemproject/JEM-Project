@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -20,11 +20,14 @@ defined('_JEXEC') or die;
 			echo JEMOutput::printbutton($this->print_link, $this->params);
 		?>
 	</div>
-	<?php if ($this->params->def('show_page_title', 1)) : ?>
+
+	<?php if ($this->params->get('show_page_heading', 1)) : ?>
 		<h1 class='componentheading'>
-			<span itemprop="name"><?php echo $this->escape($this->pagetitle); ?></span>
+			<span itemprop="name"><?php echo $this->escape($this->params->get('page_heading')); ?></span>
 		</h1>
 	<?php endif; ?>
+
+	<div class="crl"> </div>
 
 	<!--Venue-->
 	<h2 class="jem">
@@ -82,31 +85,35 @@ defined('_JEXEC') or die;
 
 
 			<?php
-		for($cr = 1; $cr <= 10; $cr++) {
-			$currentRow = $this->venue->{'custom'.$cr};
-			if(substr($currentRow, 0, 7) == "http://") {
-				$currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
- 			}
-			if($currentRow) {
-		?>
+			for($cr = 1; $cr <= 10; $cr++) {
+				$currentRow = $this->venue->{'custom'.$cr};
+				if(substr($currentRow, 0, 7) == "http://") {
+					$currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
+	 			}
+				if($currentRow) {
+				?>
 				<dt class="custom<?php echo $cr; ?>"><?php echo JText::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr).':'; ?></dt>
 				<dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
-		<?php
+				<?php
+				}
 			}
+			?>
+
+			<?php
+			if ($this->settings->get('global_show_mapserv')== 1) {
+				echo JEMOutput::mapicon($this->venue);
+			}
+			?>
+		</dl>
+		<?php
+		if ($this->settings->get('global_show_mapserv')== 2) {
+			echo JEMOutput::mapicon($this->venue);
 		}
 		?>
-
-			<?php if ($this->settings->get('global_show_mapserv')== 1) : ?>
-				<?php echo JEMOutput::mapicon($this->venue); ?>
-			<?php endif; ?>
-		</dl>
-		<?php if ($this->settings->get('global_show_mapserv')== 2) : ?>
-			<?php echo JEMOutput::mapicon($this->venue); ?>
-		<?php endif; ?>
 	<?php endif; ?>
 
-	<?php if ($this->settings->get('global_show_locdescription',1) && $this->venuedescription != ''
- 		&& $this->venuedescription != '<br />') : ?>
+	<?php if ($this->settings->get('global_show_locdescription',1) && $this->venuedescription != '' &&
+	          $this->venuedescription != '<br />') : ?>
 
 		<h2 class="description"><?php echo JText::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
 		<div class="description no_space floattext" itemprop="description">
@@ -134,7 +141,9 @@ defined('_JEXEC') or die;
 	<div class="pagination">
 		<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
+
 	<?php echo JEMOutput::icalbutton($this->venue->id, 'venue'); ?>
+
 	<!--copyright-->
 	<div class="copyright">
 		<?php echo JEMOutput::footer( ); ?>

@@ -82,13 +82,6 @@ class JEMViewCategories extends JEMView
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title' , $pagetitle);
 
-		//add alternate feed link
-		$link    = 'index.php?option=com_jem&view=categories&id='.$id.'&format=feed';
-		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
-		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
-		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
-		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
-
 		//Check if the user has access to the form
 		$maintainer = JEMUser::ismaintainer('add');
 		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);

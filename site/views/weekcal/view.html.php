@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -34,8 +34,8 @@ class JEMViewWeekcal extends JViewLegacy
 		//initialize variables
 		//$document 	= JFactory::getDocument();
 		$menu 		= $app->getMenu();
+		$menuitem 	= $menu->getActive();
 		$jemsettings = JEMHelper::config();
-		$item 		= $menu->getActive();
 		$params 	= $app->getParams();
 
 		// Load css
@@ -64,18 +64,25 @@ class JEMViewWeekcal extends JViewLegacy
 
 		$this->document->addStyleDeclaration($style);
 
-		// add javascript
-		JHtml::_('script', 'com_jem/calendar.js', false, true);
+		// add javascript (using full path - see issue #590)
+		JHtml::_('script', 'media/com_jem/js/calendar.js');
 
 		$rows = $this->get('Data');
 		$currentweek = $this->get('Currentweek');
 		$currentyear =  Date("Y");
 
-		//Set Meta data
-		$this->document->setTitle($item->title);
-
 		//Set Page title
-		$pagetitle = $params->def('page_title', $item->title);
+		$pagetitle = $params->def('page_title', $menuitem->title);
+		$params->def('page_heading', $pagetitle);
+
+		// Add site name to title if param is set
+		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
+		}
+
 		$this->document->setTitle($pagetitle);
 		$this->document->setMetaData('title', $pagetitle);
 

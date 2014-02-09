@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -34,7 +34,7 @@ class JEMViewVenues extends JViewLegacy
 
 		//get menu information
 		$menu		= $app->getMenu();
-		$item 		= $menu->getActive();
+		$menuitem	= $menu->getActive();
 		$params 	= $app->getParams();
 
 		// Load css
@@ -49,24 +49,29 @@ class JEMViewVenues extends JViewLegacy
 		$task 	= JRequest::getWord('task');
 		$rows 	= $this->get('Data');
 
-		//add alternate feed link
-		$link    = '&format=feed';
-		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
-		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
-		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
-		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
+		$pagetitle = $params->def('page_title', $menuitem->title);
+		$pageheading = $params->def('page_heading', $params->get('page_title'));
 
 		//pathway
 		$pathway 	= $app->getPathWay();
-		if($item) $pathway->setItemName(1, $item->title);
+		if($menuitem) $pathway->setItemName(1, $menuitem->title);
 
 		if ($task == 'archive') {
 			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=venues&task=archive'));
-			$pagetitle = $params->get('page_title').' - '.JText::_('COM_JEM_ARCHIVE');
 			$print_link = JRoute::_('index.php?view=venues&task=archive&print=1&tmpl=component');
+			$pagetitle   .= ' - '.JText::_('COM_JEM_ARCHIVE');
+			$pageheading .= ' - '.JText::_('COM_JEM_ARCHIVE');
+			$params->set('page_heading', $pageheading);
 		} else {
-			$pagetitle = $params->get('page_title');
 			$print_link = JRoute::_('index.php?view=venues&print=1&tmpl=component');
+		}
+
+		// Add site name to title if param is set
+		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $pagetitle);
+		}
+		elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 		}
 
 		//Set Page title
@@ -102,7 +107,7 @@ class JEMViewVenues extends JViewLegacy
 		$this->addvenuelink		= $addvenuelink;
 		$this->addeventlink		= $addeventlink;
 		$this->pagination		= $pagination;
-		$this->item				= $item;
+		$this->item				= $menuitem;
 		$this->jemsettings		= $jemsettings;
 		$this->settings			= $settings;
 		$this->task				= $task;

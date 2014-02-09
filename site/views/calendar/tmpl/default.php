@@ -16,17 +16,17 @@ defined('_JEXEC') or die;
 	<?php endif; ?>
 
 	<?php if ($this->params->get('showintrotext')) : ?>
-	<div class="description no_space floattext">
-		<?php echo $this->params->get('introtext'); ?>
-	</div>
-	<p> </p>
-<?php endif; ?>
+		<div class="description no_space floattext">
+			<?php echo $this->params->get('introtext'); ?>
+		</div>
+		<p> </p>
+	<?php endif; ?>
 
 	<?php
 	$countcatevents = array ();
-
 	$countperday = array();
 	$limit = $this->params->get('daylimit', 10);
+
 	foreach ($this->rows as $row) :
 		if (!JEMHelper::isValidDate($row->dates)) {
 			continue; // skip, open date !
@@ -37,11 +37,8 @@ defined('_JEXEC') or die;
 		$month = strftime('%m', strtotime($row->dates));
 		$day = strftime('%d', strtotime($row->dates));
 
-
 		@$countperday[$year.$month.$day]++;
 		if ($countperday[$year.$month.$day] == $limit+1) {
-			// $this->cal->setEventContent($year, $month, $day, JText::_('COM_JEM_AND_MORE'));
-
 			$var1a = JRoute::_( 'index.php?view=day&id='.$year.$month.$day );
 			$var1b = JText::_('COM_JEM_AND_MORE');
 			$var1c = "<a href=\"".$var1a."\">".$var1b."</a>";
@@ -59,38 +56,37 @@ defined('_JEXEC') or die;
 			 * The parameter $contentUrl is optional: If you set a $contentUrl, an event content specific link (..href='$contentUrl'..) will be generated
 			 * in the 'event content' table row(s), even if the method $cal->enableDayLinks($link) was not called.
 			 * The parameter $id is optional as well: if you set an $id, a HTML class='$id' will be generated for each event content (default: 'eventcontent').
-			 *
-			 *
-			 * */
+			 */
 
-			$this->cal->setEventContent($year, $month, $day, $var1c,null, $id);
+			$this->cal->setEventContent($year, $month, $day, $var1c, null, $id);
 			continue;
-		} else if ($countperday[$year.$month.$day] > $limit+1) {
+		} elseif ($countperday[$year.$month.$day] > $limit+1) {
 			continue;
 		}
 
 		//for time printing
 		$timehtml = '';
 
-		if ($this->jemsettings->showtime == 1) :
-
+		if ($this->jemsettings->showtime == 1) {
 			$start = JEMOutput::formattime($row->times);
 			$end = JEMOutput::formattime($row->endtimes);
 
-			if ($start != '') :
+			if ($start != '') {
 				$timehtml = '<div class="time"><span class="label">'.JText::_('COM_JEM_TIME').': </span>';
 				$timehtml .= $start;
-				if ($end != '') :
+				if ($end != '') {
 					$timehtml .= ' - '.$end;
-				endif;
+				}
 				$timehtml .= '</div>';
-			endif;
+			}
+
 			$multi = new stdClass();
 			$multi->row = (isset($row->multi) ? $row->multi : 'na');
-		endif;
+		}
 
 		$eventname = '<div class="eventName">'.JText::_('COM_JEM_TITLE').': '.$this->escape($row->title).'</div>';
-		$detaillink 	= JRoute::_( JEMHelperRoute::getEventRoute($row->slug));
+		$detaillink = JRoute::_( JEMHelperRoute::getEventRoute($row->slug));
+
 		//initialize variables
 		$multicatname = '';
 		$colorpic = '';
@@ -100,8 +96,7 @@ defined('_JEXEC') or die;
 		$contentend = '';
 
 		//walk through categories assigned to an event
-		foreach($row->categories AS $category) :
-
+		foreach($row->categories AS $category) {
 			//Currently only one id possible...so simply just pick one up...
 			$detaillink 	= JRoute::_( JEMHelperRoute::getEventRoute($row->slug));
 
@@ -110,32 +105,34 @@ defined('_JEXEC') or die;
 			$contentend		.= '</div>';
 
 			//attach category color if any in front of the catname
-			if ($category->color):
-				$multicatname .= '<span class="colorpic" style="width:6px; background-color: '.$category->color.';"></span>&nbsp'.$category->catname;
-			else:
-				$multicatname 	.= $category->catname;
-			endif;
+			if ($category->color) {
+				$multicatname .= '<span class="colorpic" style="width:6px; background-color: '.$category->color.';"></span>&nbsp;'.$category->catname;
+			} else {
+				$multicatname .= $category->catname;
+			}
+
 			$ix++;
-			if ($ix != $nr) :
+			if ($ix != $nr) {
 				$multicatname .= ', ';
-			endif;
+			}
 
 			//attach category color if any in front of the event title in the calendar overview
-			if ( isset ($category->color) && $category->color) :
+			if (isset($category->color) && $category->color) {
 				$colorpic .= '<span class="colorpic" style="width:6px; background-color: '.$category->color.';"></span>';
-			endif;
-			//count occurence of the category
-			if (!array_key_exists($category->id, $countcatevents)) :
-				$countcatevents[$category->id] = 1;
-			else :
-				$countcatevents[$category->id]++;
-			endif;
+			}
 
-		endforeach;
+			//count occurence of the category
+			if (!array_key_exists($category->id, $countcatevents)) {
+				$countcatevents[$category->id] = 1;
+			} else {
+				$countcatevents[$category->id]++;
+			}
+		}
 
 		$color = '<div id="eventcontenttop" class="eventcontenttop">';
 		$color .= $colorpic;
 		$color .= '</div>';
+
 		//for time in calendar
 		$timetp = '';
 
@@ -148,23 +145,22 @@ defined('_JEXEC') or die;
 
 			if ($multi->row) {
 				if ($multi->row == 'first') {
-					$timetp .= $image = JHtml::image("media/com_jem/images/arrow-left.png",'').' '.$start.' ';
-					$timetp .= '<br>';
+					$timetp .= $image = JHtml::_("image","com_jem/arrow-left.png",'', NULL, true).' '.$start;
+					$timetp .= '<br />';
 				} elseif ($multi->row == 'middle') {
-					$timetp .= JHtml::image("media/com_jem/images/arrow-middle.png",'');
-					$timetp .= '<br>';
+					$timetp .= JHtml::_("image","com_jem/arrow-middle.png",'', NULL, true);
+					$timetp .= '<br />';
 				} elseif ($multi->row == 'zlast') {
-					$timetp .= JHtml::image("media/com_jem/images/arrow-right.png",'').' '.$end.' ';
+					$timetp .= JHtml::_("image","com_jem/arrow-right.png",'', NULL, true).' '.$end;
+					$timetp .= '<br />';
 				} elseif ($multi->row == 'na') {
-					if ($start != '') :
-
+					if ($start != '') {
 						$timetp .= $start;
-						if ($end != '') :
-							$timetp .= ' - '.$end.' ';
-						endif;
-
+						if ($end != '') {
+							$timetp .= ' - '.$end;
+						}
 						$timetp .= '<br />';
-					endif;
+					}
 				}
 			}
 		}
@@ -174,18 +170,20 @@ defined('_JEXEC') or die;
 		$eventdate = JEMOutput::formatdate($row->dates);
 
 		//venue
-		if ($this->jemsettings->showlocate == 1) :
+		if ($this->jemsettings->showlocate == 1) {
 			$venue = '<div class="location"><span class="label">'.JText::_('COM_JEM_VENUE').': </span>';
 
-			if ($this->jemsettings->showlinkvenue == 1 && 0) :
+			if ($this->jemsettings->showlinkvenue == 1 && 0) {
 				$venue .= $row->locid != 0 ? "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
-			else :
+			} else {
 				$venue .= $row->locid ? $this->escape($row->venue) : '-';
-			endif;
-				$venue .= '</div>';
-		else:
+			}
+
+			$venue .= '</div>';
+		} else {
 			$venue = '';
-		endif;
+		}
+
 		//date in tooltip
 		$multidaydate = '<div class="location"><span class="label">'.JText::_('COM_JEM_DATE').': </span>';
 		if ($multi->row == 'first') {
@@ -209,63 +207,59 @@ defined('_JEXEC') or die;
 		$content .= $contentend;
 
 		$this->cal->setEventContent($year, $month, $day, $content);
-
 	endforeach;
 
 	// print the calendar
-	print ($this->cal->showMonth());
-?>
-</div>
+	echo $this->cal->showMonth();
+	?>
 
-<div id="jlcalendarlegend">
-	<div class="calendarButtons">
-		<div class="calendarButtonsToggle">
-			<div id="buttonshowall" class="calendarButton">
-				<?php echo JText::_('COM_JEM_SHOWALL'); ?>
-			</div>
-			<div id="buttonhideall" class="calendarButton">
-				<?php echo JText::_('COM_JEM_HIDEALL'); ?>
+	<div id="jlcalendarlegend">
+		<div class="calendarButtons">
+			<div class="calendarButtonsToggle">
+				<div id="buttonshowall" class="calendarButton">
+					<?php echo JText::_('COM_JEM_SHOWALL'); ?>
+				</div>
+				<div id="buttonhideall" class="calendarButton">
+					<?php echo JText::_('COM_JEM_HIDEALL'); ?>
+				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="clr"></div>
-	<div class="calendarLegends">
-		<?php
-		//print the legend
-		if($this->params->get('displayLegend')) :
-			$counter = array();
+		<div class="clr"></div>
+		<div class="calendarLegends">
+			<?php
+			//print the legend
+			if ($this->params->get('displayLegend')) {
+				$counter = array();
 
-			//walk through events
-			foreach ($this->rows as $row):
+				//walk through events
+				foreach ($this->rows as $row) {
+					//walk through the event categories
+					foreach ($row->categories as $cat) {
+						//sort out dupes
+						if (!in_array($cat->id, $counter)) {
+							//add cat id to cat counter
+							$counter[] = $cat->id;
 
-				//walk through the event categories
-				foreach ($row->categories as $cat) :
-
-					//sort out dupes
-					if(!in_array($cat->id, $counter)):
-
-						//add cat id to cat counter
-						$counter[] = $cat->id;
-
-						//build legend
-						if (array_key_exists($cat->id, $countcatevents)):
-						?>
-							<div class="eventCat" id="cat<?php echo $cat->id; ?>">
-								<?php
-								if ( isset ($cat->color) && $cat->color) :
-									echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';
-								endif;
-								echo $cat->catname.' ('.$countcatevents[$cat->id].')';
-								?>
-							</div>
-						<?php
-						endif;
-					endif;
-				endforeach;
-			endforeach;
-		endif;
-		?>
+							//build legend
+							if (array_key_exists($cat->id, $countcatevents)) {
+							?>
+								<div class="eventCat" id="cat<?php echo $cat->id; ?>">
+									<?php
+									if ( isset ($cat->color) && $cat->color) {
+										echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';
+									}
+									echo $cat->catname.' ('.$countcatevents[$cat->id].')';
+									?>
+								</div>
+							<?php
+							}
+						}
+					}
+				}
+			}
+			?>
+		</div>
 	</div>
 </div>
-<div class="clr"/></div>
+<div class="clr"></div>

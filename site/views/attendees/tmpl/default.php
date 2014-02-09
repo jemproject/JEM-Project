@@ -41,6 +41,7 @@ $detaillink = JRoute::_(JEMHelperRoute::getEventRoute($this->event->id.':'.$this
 	</h1>
 <?php endif; ?>
 
+<div class="clr"></div>
 
 <?php if ($this->params->get('showintrotext')) : ?>
 	<div class="description no_space floattext">

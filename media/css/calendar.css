@@ -213,7 +213,7 @@ div#jem .eventtitle {
 }
 
 #jlcalendarlegend .calendarButtons {
-	margin-top:4px;
+	margin-top:8px;
 	margin-left:2px;
 	margin-bottom:4px;
 	height:30px;
@@ -252,24 +252,16 @@ div#jem .eventtitle {
 	font-style: italic;
 }
 
-div#buttonshowall {
+div#buttonshowall,
+div#buttonhideall {
 	float: left;
 	padding-top:3px;
 	padding-left:4px;
 	padding-right:4px;
+	margin-right: 6px;
 	cursor: pointer;
 	border:1px solid black;
 	width: auto;
-}
-
-div#buttonhideall {
-	float: right;
-	padding-top:3px;
-	padding-left:4px;
-	padding-right:4px;
-	cursor: pointer;
-	border:1px solid black;
-	width:auto;
 }
 
 .daynum a {
