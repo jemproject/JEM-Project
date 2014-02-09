@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -93,20 +93,45 @@ class JEMCategories
 	static function buildParentCats($cid)
 	{
 		$db = JFactory::getDBO();
-
-		$query = 'SELECT parent_id FROM #__jem_categories WHERE id = ' . (int) $cid;
-		$db->setQuery($query);
-
 		$parentcats = array();
 
-		if ($cid != 0) {
-			array_push($parentcats, $cid);
+		// start with parent
+		$query = 'SELECT parent_id FROM #__jem_categories WHERE id = ' . (int) $cid;
+		$db->setQuery($query);
+		$cid = (int)$db->loadResult();
+
+		while ($cid > 1) { // 'root' has id 1
+			$query = $db->getQuery(true);
+
+			$query->select('id, parent_id, catname');
+
+			// Handle the alias CASE WHEN portion of the query
+			$case_when_cat_alias = ' CASE WHEN ';
+			$case_when_cat_alias .= $query->charLength('alias');
+			$case_when_cat_alias .= ' THEN ';
+			$cat_id = $query->castAsChar('id');
+			$case_when_cat_alias .= $query->concatenate(array($cat_id, 'alias'), ':');
+			$case_when_cat_alias .= ' ELSE ';
+			$case_when_cat_alias .= $cat_id.' END AS slug';
+			$query->select($case_when_cat_alias);
+
+			$query->from('#__jem_categories');
+			$query->where('id = ' . (int) $cid);
+			$query->where('published = 1');
+
+			$db->setQuery($query);
+			$row = $db->loadObject();
+
+			if($row && $row->id > 1) {
+				$parentcats[] = $row;
+				$cid = $row->parent_id;
+			} else {
+				$cid = 0;
+			}
 		}
 
-		//if we still have results
-		if (sizeof($db->loadResult()) != 0) {
-			$db->loadResult();
-		}
+		$parentcats = array_reverse($parentcats);
+		return $parentcats;
 	}
 
 	/**
@@ -114,10 +139,15 @@ class JEMCategories
 	 *
 	 * @return array
 	 */
-	static function getParentlist()
+	function getParentlist()
 	{
-		$category = array();
-		return $category;
+		$categories = array();
+
+		if ($this->id) {
+			$categories = self::buildParentCats($this->id);
+		}
+
+		return $categories;
 	}
 
 
