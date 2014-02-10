@@ -27,7 +27,7 @@ defined('_JEXEC') or die;
 		</h1>
 	<?php endif; ?>
 
-	<div class="crl"> </div>
+	<div class="clr"> </div>
 
 	<!--Venue-->
 	<h2 class="jem">
