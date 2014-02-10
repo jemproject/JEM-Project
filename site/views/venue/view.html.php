@@ -178,6 +178,7 @@ class JEMViewVenue extends JEMView {
 			} else {
 				$pagetitle   = $venue->venue;
 				$pageheading = $pagetitle;
+				$params->set('show_page_heading', 1); // ensure page heading is shown
 				$pathway->addItem($pagetitle, JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug)));
 			}
 
