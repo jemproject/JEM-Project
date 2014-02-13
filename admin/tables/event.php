@@ -90,9 +90,10 @@ class JEMTableEvent extends JTable
 
 		$this->alias = JApplication::stringURLSafe($this->alias);
 
-		if (($app->isAdmin()) && ($jinput->get('option','','cmd') == 'com_jem')
-		                      && ($jinput->get('view','','cmd') == 'import')
-		                      && ($jinput->get('controller','','cmd') == 'import')) {
+		if ((JFactory::getApplication()->isAdmin()) &&
+		    ($jinput->get('option','','cmd') == 'com_jem') &&
+		    ($jinput->get('view','','cmd') == 'import') &&
+		    ($jinput->get('controller','','cmd') == 'import')) {
 			// we are on Import page in backend so no data is given on url
 			if (empty($this->times)) {
 				$this->times = NULL;
