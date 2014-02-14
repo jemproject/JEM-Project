@@ -46,8 +46,10 @@ class JEMTableVenue extends JTable
 
 		// Set alias
 		$this->alias = JApplication::stringURLSafe($this->alias);
-		if (empty($this->alias)) {
-			$this->alias = JApplication::stringURLSafe($this->venue);
+	
+		if (trim(str_replace('-', '', $this->alias)) == '')
+		{
+			$this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
 		}
 
 		if ($this->map) {
