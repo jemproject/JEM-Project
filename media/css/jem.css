@@ -167,6 +167,10 @@ div#jem .clear {
 	line-height:1px;
 }
 
+div#jem div.clr {
+	clear:both;
+}
+
 /* ie fix in coditional comments (html source) */
 div#jem .floattext:after {
 	content:".";
