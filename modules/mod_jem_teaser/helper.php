@@ -112,6 +112,8 @@ class modJEMteaserHelper
 		//Loop through the result rows and prepare data
 		$i		= 0;
 		$lists	= array();
+		
+		mb_internal_encoding('UTF-8');
 		foreach ((array) $rows as $row)
 		{
 			//create thumbnails if needed and receive imagedata
@@ -127,10 +129,10 @@ class modJEMteaserHelper
 			}
 
 			//cut titel
-			$length = strlen(htmlspecialchars($row->title));
+			$length = mb_strlen($row->title);
 
 			if ($length > $params->get('cuttitle', '25')) {
-				$row->title = substr($row->title, 0, $params->get('cuttitle', '18'));
+				$row->title = mb_substr($row->title, 0, $params->get('cuttitle', '18'));
 				$row->title = $row->title.'...';
 			}
 

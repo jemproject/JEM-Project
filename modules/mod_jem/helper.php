@@ -81,14 +81,16 @@ class modJEMHelper
 
 		$i		= 0;
 		$lists	= array();
+		
+		mb_internal_encoding('UTF-8');
 		foreach ($rows as $row)
 		{
 			//cut titel
-			$length = strlen(htmlspecialchars($row->title));
+			$length = mb_strlen($row->title);
 
 			if ($length > $params->get('cuttitle', '18')) {
-				$row->title = substr($row->title, 0, $params->get('cuttitle', '18'));
-				$row->title = htmlspecialchars($row->title.'...', ENT_COMPAT, 'UTF-8');
+				$row->title = mb_substr($row->title, 0, $params->get('cuttitle', '18'));
+				$row->title = $row->title.'...';
 			}
 
 			$lists[$i] = new stdClass;
