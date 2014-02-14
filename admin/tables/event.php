@@ -89,10 +89,11 @@ class JEMTableEvent extends JTable
 		}
 
 		$this->alias = JApplication::stringURLSafe($this->alias);
-		
-		if (trim(str_replace('-', '', $this->alias)) == '')
-		{
-			$this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
+		if (empty($this->alias)) {
+			$this->alias = JApplication::stringURLSafe($this->title);
+			if (trim(str_replace('-', '', $this->alias)) == ''){
+				$this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
+			}
 		}
 		
 		if ((JFactory::getApplication()->isAdmin()) &&
