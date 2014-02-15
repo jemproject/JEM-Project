@@ -190,11 +190,45 @@ class JEMModelEvent extends JModelAdmin
 	 */
 	protected function prepareTable(&$table)
 	{
+		$jinput 		= JFactory::getApplication()->input;
+		
 		$db = $this->getDbo();
 		$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
 
 		// Increment version number.
 		$table->version ++;
+		
+		//get time-values from time selectlist and combine them accordingly
+		$starthours		= $jinput->get('starthours','','cmd');
+		$startminutes	= $jinput->get('startminutes','','cmd');
+		$endhours		= $jinput->get('endhours','','cmd');
+		$endminutes		= $jinput->get('endminutes','','cmd');
+		
+		// StartTime
+		if ($starthours != '' && $startminutes != '') {
+			$table->times = $starthours.':'.$startminutes;
+		} else if ($starthours != '' && $startminutes == '') {
+			$startminutes = "00";
+			$table->times = $starthours.':'.$startminutes;
+		} else if ($starthours == '' && $startminutes != '') {
+			$starthours = "00";
+			$table->times = $starthours.':'.$startminutes;
+		} else {
+			$table->times = "";
+		}
+		
+		// EndTime
+		if ($endhours != '' && $endminutes != '') {
+			$table->endtimes = $endhours.':'.$endminutes;
+		} else if ($endhours != '' && $endminutes == '') {
+			$endminutes = "00";
+			$table->endtimes = $endhours.':'.$endminutes;
+		} else if ($endhours == '' && $endminutes != '') {
+			$endhours = "00";
+			$table->endtimes = $endhours.':'.$endminutes;
+		} else {
+			$table->endtimes = "";
+		}	
 	}
 
 	/**

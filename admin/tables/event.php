@@ -96,50 +96,15 @@ class JEMTableEvent extends JTable
 			}
 		}
 		
-		if ((JFactory::getApplication()->isAdmin()) &&
-		    ($jinput->get('option','','cmd') == 'com_jem') &&
-		    ($jinput->get('view','','cmd') == 'import') &&
-		    ($jinput->get('controller','','cmd') == 'import')) {
-			// we are on Import page in backend so no data is given on url
-			if (empty($this->times)) {
-				$this->times = NULL;
-			}
-			if (empty($this->endtimes)) {
-				$this->endtimes = NULL;
-			}
-		} else {
-			//get values from time selectlist and concatenate them accordingly
-			$starthours		= $jinput->get('starthours','','cmd');
-			$startminutes	= $jinput->get('startminutes','','cmd');
-			$endhours		= $jinput->get('endhours','','cmd');
-			$endminutes		= $jinput->get('endminutes','','cmd');
-
-			// StartTime
-			if ($starthours != '' && $startminutes != '') {
-				$this->times = $starthours.':'.$startminutes;
-			} else if ($starthours != '' && $startminutes == '') {
-				$startminutes = "00";
-				$this->times = $starthours.':'.$startminutes;
-			} else if ($starthours == '' && $startminutes != '') {
-				$starthours = "00";
-				$this->times = $starthours.':'.$startminutes;
-			} else {
-				$this->times = NULL;
-			}
-
-			// EndTime
-			if ($endhours != '' && $endminutes != '') {
-				$this->endtimes = $endhours.':'.$endminutes;
-			} else if ($endhours != '' && $endminutes == '') {
-				$endminutes = "00";
-				$this->endtimes = $endhours.':'.$endminutes;
-			} else if ($endhours == '' && $endminutes != '') {
-				$endhours = "00";
-				$this->endtimes = $endhours.':'.$endminutes;
-			} else {
-				$this->endtimes = NULL;
-			}
+		
+		if (empty($this->times)) {
+			$this->times = null;
 		}
+		
+		if (empty($this->endtimes)) {
+			$this->endtimes = null;
+		}
+		
 
 		// Dates
 		if (empty($this->enddates)) {
