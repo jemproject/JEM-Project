@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -72,6 +72,7 @@ class JEMModelExport extends JModelList
 	 */
 	protected function getListQuery()
 	{
+		
 		// Retrieve variables
 		$jinput = JFactory::getApplication()->input;
 		$startdate = $jinput->get('dates', '', 'string');
@@ -87,7 +88,7 @@ class JEMModelExport extends JModelList
 		$query->from('`#__jem_events` AS a');
 		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
 		$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
-
+		
 		// check if startdate + enddate are set.
 		if (! empty($startdate) && ! empty($enddate)) {
 			$query->where('DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "' . $startdate . '") >= 0');
@@ -119,6 +120,8 @@ class JEMModelExport extends JModelList
 		$csv = fopen('php://output', 'w');
 		$db = $this->getDbo();
 
+		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+		
 		if ($includecategories == 1) {
 			$header = array();
 			$events = array_keys($db->getTableColumns('#__jem_events'));
@@ -131,23 +134,20 @@ class JEMModelExport extends JModelList
 			$query = $this->getListQuery();
 			$items = $this->_getList($query);
 
-			foreach ($items as $item) {
+			foreach ($items as $item) {			
 				$item->categories = $this->getCatEvent($item->id);
 			}
 		} else {
 			$header = array_keys($db->getTableColumns('#__jem_events'));
 			fputcsv($csv, $header, ';');
 			$query = $this->getListQuery();
-			$items = $this->_getList($query);
+			$items = $this->_getList($query);		
 		}
 
-		foreach ($items as $lines) {
-			foreach ($lines as &$line) {
-				$line = mb_convert_encoding($line, 'Windows-1252', 'auto');
-			}
+		foreach ($items as $lines) {	
 			fputcsv($csv, (array) $lines, ';', '"');
 		}
-
+		
 		return fclose($csv);
 	}
 
@@ -179,6 +179,8 @@ class JEMModelExport extends JModelList
 		$this->populateState();
 
 		$csv = fopen('php://output', 'w');
+		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+		
 		$db = $this->getDbo();
 		$header = array();
 		$header = array_keys($db->getTableColumns('#__jem_categories'));
@@ -188,9 +190,6 @@ class JEMModelExport extends JModelList
 			->loadObjectList();
 
 		foreach ($items as $lines) {
-			foreach ($lines as &$line) {
-				$line = mb_convert_encoding($line, 'Windows-1252', 'auto');
-			}
 			fputcsv($csv, (array) $lines, ';', '"');
 		}
 
@@ -225,6 +224,7 @@ class JEMModelExport extends JModelList
 		$this->populateState();
 
 		$csv = fopen('php://output', 'w');
+		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		$db = $this->getDbo();
 		$header = array();
 		$header = array_keys($db->getTableColumns('#__jem_venues'));
@@ -234,9 +234,6 @@ class JEMModelExport extends JModelList
 			->loadObjectList();
 
 		foreach ($items as $lines) {
-			foreach ($lines as &$line) {
-				$line = mb_convert_encoding($line, 'Windows-1252', 'auto');
-			}
 			fputcsv($csv, (array) $lines, ';', '"');
 		}
 
@@ -271,6 +268,7 @@ class JEMModelExport extends JModelList
 		$this->populateState();
 
 		$csv = fopen('php://output', 'w');
+		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		$db = $this->getDbo();
 		$header = array();
 		$header = array_keys($db->getTableColumns('#__jem_cats_event_relations'));
@@ -280,9 +278,6 @@ class JEMModelExport extends JModelList
 			->loadObjectList();
 
 		foreach ($items as $lines) {
-			foreach ($lines as &$line) {
-				$line = mb_convert_encoding($line, 'Windows-1252', 'auto');
-			}
 			fputcsv($csv, (array) $lines, ';', '"');
 		}
 
