@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -64,8 +64,6 @@ class JEMControllerImport extends JControllerLegacy {
 		}
 
 		if ($file['name']) {
-			$fc = iconv('windows-1252', 'utf-8', file_get_contents($file['tmp_name']));
-			file_put_contents($file['tmp_name'], $fc);
 			$handle = fopen($file['tmp_name'], 'r');
 			if(!$handle) {
 				$msg = JText::_('COM_JEM_IMPORT_OPEN_FILE_ERROR');
@@ -73,9 +71,23 @@ class JEMControllerImport extends JControllerLegacy {
 				return;
 			}
 
+			// search for bom - then it is utf-8
+			$bom = pack('CCC', 0xEF, 0xBB, 0xBF);
+			$convert = false;
+			$fc = fgets($handle, 1000);
+
+			if (strncmp($fc, $bom, 3) === 0) {
+				// utf-8 bom found - remove and don't convert
+				$header = substr($fc, 3);
+			} else {
+				// no bom - convert line by line
+				$convert = true;
+				$header = iconv('windows-1252', 'utf-8', $fc);
+			}
+
 			// get fields, on first row of the file
 			$fields = array();
-			if(($data = fgetcsv($handle, 1000, ';')) !== FALSE) {
+			if(($data = str_getcsv($header, ';')) !== false) {
 				$numfields = count($data);
 				for($c=0; $c < $numfields; $c++) {
 					// here, we make sure that the field match one of the fields of jem_venues table or special fields,
@@ -101,7 +113,9 @@ class JEMControllerImport extends JControllerLegacy {
 			// Now get the records, meaning the rest of the rows.
 			$records = array();
 			$row = 1;
-			while(($data = fgetcsv($handle, 10000, ';')) !== FALSE) {
+
+			while(($line = fgets($handle, 10000)) !== FALSE) {
+				$data = str_getcsv($convert ? iconv('windows-1252', 'utf-8', $line) : $line, ';');
 				$num = count($data);
 
 				if($numfields != $num) {
@@ -116,6 +130,7 @@ class JEMControllerImport extends JControllerLegacy {
 				}
 				$row++;
 			}
+
 			fclose($handle);
 			$msg .= "<p>".JText::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_FOUND', count($records))."</p>\n";
 
