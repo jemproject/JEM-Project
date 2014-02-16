@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -39,11 +39,13 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		?>
 	</div>
 
-	<?php if ($this->params->def('show_page_title', 1)) : ?>
+	<?php if ($this->params->get('show_page_haeding', 1)) : ?>
 		<h1 class="componentheading">
-			<?php echo $this->escape($this->item->title); ?>
+			<?php echo $this->escape($this->params->get('page_heading')); ?>
 		</h1>
 	<?php endif; ?>
+
+	<div class="clr"> </div>
 
 	<!-- Event -->
 	<h2 class="jem">
