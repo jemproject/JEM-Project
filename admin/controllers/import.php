@@ -11,6 +11,11 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.controller');
 
+// helper callback function to convert all elements of an array
+function jem_convert_ansi2utf8(&$value, $key) {
+	$value = iconv('windows-1252', 'utf-8', $value);
+}
+
 /**
  * JEM Component Import Controller
  *
@@ -73,22 +78,23 @@ class JEMControllerImport extends JControllerLegacy {
 
 			// search for bom - then it is utf-8
 			$bom = pack('CCC', 0xEF, 0xBB, 0xBF);
-			$convert = false;
-			$fc = fgets($handle, 1000);
-
-			if (strncmp($fc, $bom, 3) === 0) {
-				// utf-8 bom found - remove and don't convert
-				$header = substr($fc, 3);
-			} else {
-				// no bom - convert line by line
-				$convert = true;
-				$header = iconv('windows-1252', 'utf-8', $fc);
+			$fc = fread($handle, 3);
+			$convert = strncmp($fc, $bom, 3) !== 0;
+			if ($convert) {
+				// no bom - rewind file
+				fseek($handle, 0);
 			}
 
 			// get fields, on first row of the file
 			$fields = array();
-			if(($data = str_getcsv($header, ';')) !== false) {
+			if(($data = fgetcsv($handle, 1000, ';')) !== false) {
 				$numfields = count($data);
+
+				// convert from ansi to utf-8 if required
+				if ($convert) {
+					array_walk($data, 'jem_convert_ansi2utf8');
+				}
+
 				for($c=0; $c < $numfields; $c++) {
 					// here, we make sure that the field match one of the fields of jem_venues table or special fields,
 					// otherwise, we don't add it
@@ -114,13 +120,18 @@ class JEMControllerImport extends JControllerLegacy {
 			$records = array();
 			$row = 1;
 
-			while(($line = fgets($handle, 10000)) !== FALSE) {
-				$data = str_getcsv($convert ? iconv('windows-1252', 'utf-8', $line) : $line, ';');
+			while(($data = fgetcsv($handle, 10000, ';')) !== FALSE) {
 				$num = count($data);
 
 				if($numfields != $num) {
 					$msg .= "<p>".JText::sprintf('COM_JEM_IMPORT_NUMBER_OF_FIELDS_COUNT_ERROR', $num, $row)."</p>\n";
 				} else {
+
+					// convert from ansi to utf-8 if required
+					if ($convert) {
+						array_walk($data, 'jem_convert_ansi2utf8');
+					}
+
 					$r = array();
 					// only extract columns with validated header, from previous step.
 					foreach($fields as $k => $v) {
