@@ -114,8 +114,8 @@ class JEMModelEvent extends JModelItem
 				$query->join('LEFT', '#__contact_details AS con ON con.id = a.contactid');
 
 				// Join on user table.
-				$query->select(
-						'l.custom1 AS venue1, l.alias, l.custom2 AS venue2, l.custom3 AS venue3, l.custom4 AS venue4, l.custom5 AS venue5, l.custom6 AS venue6, l.custom7 AS venue7, l.custom8 AS venue8, l.custom9 AS venue9, l.custom10 AS venue10, l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, l.city, l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude');
+				$query->select('l.custom1 AS venue1, l.custom2 AS venue2, l.custom3 AS venue3, l.custom4 AS venue4, l.custom5 AS venue5, l.custom6 AS venue6, l.custom7 AS venue7, l.custom8 AS venue8, l.custom9 AS venue9, l.custom10 AS venue10, ' .
+				               'l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, l.city, l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude');
 				$query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
 
 				// Get contact id
