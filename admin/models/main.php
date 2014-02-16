@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -55,17 +55,21 @@ class JEMModelMain extends JModelLegacy
 
 		$data = new stdClass();
 		$data->total = 0;
-
+		
 		foreach ($map as $key => $value) {
-			// Check whether we have the current state in the DB result
-			if(array_key_exists($value, $result)) {
-				$data->$key = $result[$value]->num;
-				$data->total += $data->$key;
+			if ($result) {
+				// Check whether we have the current state in the DB result
+				if(array_key_exists($value, $result)) {
+					$data->$key = $result[$value]->num;
+					$data->total += $data->$key;
+				} else {
+					$data->$key = 0;
+				} 
 			} else {
 				$data->$key = 0;
 			}
 		}
-
+		
 		return $data;
 	}
 
