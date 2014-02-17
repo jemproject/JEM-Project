@@ -39,7 +39,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		?>
 	</div>
 
-	<?php if ($this->params->get('show_page_haeding', 1)) : ?>
+	<?php if ($this->params->get('show_page_heading', 1)) : ?>
 		<h1 class="componentheading">
 			<?php echo $this->escape($this->params->get('page_heading')); ?>
 		</h1>
