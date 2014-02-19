@@ -6,10 +6,8 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 ?>
-
 <div class="width-100">
 	<fieldset class="adminform">
 		<legend><?php echo JText::_( 'COM_JEM_EVENT_HANDLING' ); ?></legend>

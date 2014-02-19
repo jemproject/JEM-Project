@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 ?>
-
+<div class="width-50 fltlft">
 <div class="width-100">
 	<fieldset class="adminform">
 		<legend><?php echo JText::_( 'COM_JEM_GENERAL_LAYOUT_SETTINGS' ); ?></legend>
@@ -54,7 +54,7 @@ defined('_JEXEC') or die;
 	</ul>
 </fieldset>
 </div>
-
+</div><div class="width-50 fltrt">
 <div class="width-100">
 	<fieldset class="adminform">
 		<legend><?php echo JText::_( 'COM_JEM_VENUE_COLUMN' ); ?></legend>
@@ -101,3 +101,4 @@ defined('_JEXEC') or die;
 		</ul>
 	</fieldset>
 </div>
+</div><div class="clr"></div>

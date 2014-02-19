@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 ?>
-
+<div class="width-50 fltlft">
 <div class="width-100">
 	<fieldset class="adminform">
 		<legend><?php echo JText::_('COM_JEM_USER_CONTROL'); ?></legend>
@@ -30,6 +30,7 @@ defined('_JEXEC') or die;
 		</ul>
 	</fieldset>
 </div>
+</div><div class="width-50 fltrt">
 <div class="width-100">
 	<fieldset class="adminform">
 		<legend><?php echo JText::_('COM_JEM_REGISTRATION'); ?></legend>
@@ -50,3 +51,4 @@ defined('_JEXEC') or die;
 		</ul>
 	</fieldset>
 </div>
+</div><div class="clr"></div>
