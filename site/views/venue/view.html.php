@@ -94,8 +94,11 @@ class JEMViewVenue extends JEMView {
 			$document->setMetaData('title', $pagetitle);
 
 			// init calendar
+			$itemid = JRequest::getInt('Itemid');
+			$partItemid = ($itemid > 0) ? '&Itemid='.$itemid : '';
+			$partVenid = ($venue->id > 0) ? '&id=' . $venue->id : '';
 			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
-			$cal->enableMonthNav(JEMHelperRoute::getVenueRoute($venue->slug) .'&layout=calendar');
+			$cal->enableMonthNav('index.php?view=venue&layout=calendar'.$partVenid.$partItemid);
 			$cal->setFirstWeekDay($params->get('firstweekday',1));
 
 			// map variables
