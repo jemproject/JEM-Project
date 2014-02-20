@@ -10,9 +10,9 @@
 $group = 'globalattribs';
 defined('_JEXEC') or die;
 ?>
-
+<div class="width-50 fltlft">
 <div class="width-100">
-<fieldset class="adminform">
+	<fieldset class="adminform">
 		<legend><?php echo JText::_('COM_JEM_GLOBAL_PARAMETERS'); ?></legend>
 		<ul class="adminformlist">
 			<?php foreach ($this->form->getFieldset('globalparam') as $field): ?>
@@ -20,7 +20,9 @@ defined('_JEXEC') or die;
 			<?php endforeach; ?>
 		</ul>
 	</fieldset>
-
+</div>
+</div><div class="width-50 fltrt">
+<div class="width-100">
 	<fieldset class="adminform">
 		<legend><?php echo JText::_('COM_JEM_GLOBAL_PARAMETERS'); ?></legend>
 		<ul class="adminformlist">
@@ -29,8 +31,8 @@ defined('_JEXEC') or die;
 			<?php endforeach; ?>
 		</ul>
 	</fieldset>
-	
-	<div class="width-100">
+</div>
+<div class="width-100">
 	<fieldset class="adminform">
 		<legend><?php echo JText::_('COM_JEM_VENUES'); ?></legend>
 		<ul class="adminformlist">
@@ -43,4 +45,4 @@ defined('_JEXEC') or die;
 		</ul>
 	</fieldset>
 </div>
-</div>
+</div><div class="clr"></div>
