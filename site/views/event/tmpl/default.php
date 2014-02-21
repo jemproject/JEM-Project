@@ -157,7 +157,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		<?php if ($params->get('event_show_noauth') == true and  $user->get('guest') ) { ?>
 		
 		<?php echo $this->item->introtext; ?>
-		<?php //Optional link to let them register to see the whole article. ?>
+		<?php //Optional link to let them register to see the whole event. ?>
 		<?php if ($params->get('event_show_readmore') && $this->item->fulltext != null) {
 		$link1 = JRoute::_('index.php?option=com_users&view=login');
 		$link = new JURI($link1);?>

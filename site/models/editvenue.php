@@ -49,7 +49,7 @@ class JemModelEditvenue extends JemModelVenue
 	/**
 	 * Method to get venue data.
 	 *
-	 * @param integer	The id of the article.
+	 * @param integer	The id of the venue.
 	 * @return mixed item data object on success, false on failure.
 	 */
 	public function getItem($itemId = null)

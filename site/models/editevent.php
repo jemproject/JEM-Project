@@ -47,7 +47,7 @@ class JEMModelEditevent extends JEMModelEvent
 	/**
 	 * Method to get event data.
 	 *
-	 * @param integer	The id of the article.
+	 * @param integer	The id of the event.
 	 *
 	 * @return mixed item data object on success, false on failure.
 	 */

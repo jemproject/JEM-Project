@@ -60,8 +60,7 @@ class JEMViewVenue extends JViewLegacy
 			$displaydate = JEMOutput::formatLongDateTime($row->dates, $row->times,
 				$row->enddates, $row->endtimes);
 
-			// url link to article
-			// & used instead of &amp; as this is converted by feed creator
+			// url link to event
 			$link = JRoute::_(JEMHelperRoute::getEventRoute($row->id));
 
 			// feed item description text
@@ -71,7 +70,7 @@ class JEMViewVenue extends JViewLegacy
 			$description .= JText::_('COM_JEM_DATE').': '.$displaydate.'<br />';
 			$description .= JText::_('COM_JEM_DESCRIPTION').': '.$row->fulltext;
 
-			@$created = ($row->created ? date('r', strtotime($row->created)) : '');
+			$created = ($row->created ? date('r', strtotime($row->created)) : '');
 
 			// load individual item creator class
 			$item = new JFeedItem();

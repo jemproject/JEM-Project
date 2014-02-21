@@ -54,8 +54,7 @@ class JEMViewEventslist extends JViewLegacy
 			$displaydate = JEMOutput::formatLongDateTime($row->dates, $row->times,
 				$row->enddates, $row->endtimes);
 
-			// url link to article
-			// & used instead of &amp; as this is converted by feed creator
+			// url link to event
 			$link = JRoute::_(JEMHelperRoute::getEventRoute($row->id));
 
 			// feed item description text

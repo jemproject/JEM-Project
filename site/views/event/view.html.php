@@ -81,7 +81,7 @@ class JEMViewEvent extends JViewLegacy
 			$currentLink = $active->link;
 			// If the current view is the active item and an event view for this event, then the menu item params take priority
 			if (strpos($currentLink, 'view=event') && (strpos($currentLink, '&id='.(string) $item->id))) {
-				// $item->params are the article params, $temp are the menu item params
+				// $item->params are the event params, $temp are the menu item params
 				// Merge so that the menu item params take priority
 				$item->params->merge($temp);
 				// Load layout from active query (in case it is an alternative menu item)
@@ -144,7 +144,7 @@ class JEMViewEvent extends JViewLegacy
 		$results = $dispatcher->trigger('onContentAfterDisplay', array('com_jem.event', &$item, &$this->params, $offset));
 		$item->event->afterDisplayContent = trim(implode("\n", $results));
 
-		// Increment the hit counter of the article.
+		// Increment the hit counter of the event.
 		if (!$this->params->get('intro_only') && $offset == 0) {
 			$model = $this->getModel();
 			$model->hit();

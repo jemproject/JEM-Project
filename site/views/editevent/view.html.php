@@ -63,7 +63,7 @@ class JEMViewEditevent extends JViewLegacy
 			$currentLink = $active->link;
 			// If the current view is the active item and an event view for this event, then the menu item params take priority
 			if (strpos($currentLink, 'view=editevent')) {
-				// $item->params are the article params, $temp are the menu item params
+				// $item->params are the event params, $temp are the menu item params
 				// Merge so that the menu item params take priority
 				$item->params->merge($temp);
 				// Load layout from active query (in case it is an alternative menu item)

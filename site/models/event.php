@@ -292,7 +292,7 @@ class JEMModelEvent extends JModelItem
 	/**
 	 * Increment the hit counter for the event.
 	 *
-	 * @param int		Optional primary key of the article to increment.
+	 * @param int		Optional primary key of the event to increment.
 	 * @return boolean if successful; false otherwise and internal error set.
 	 */
 	public function hit($pk = 0)
