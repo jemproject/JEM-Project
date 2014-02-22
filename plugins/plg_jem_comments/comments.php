@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.1
+ * @version 1.9.6
  * @package JEM
  * @subpackage JEM Comments Plugin
  * @copyright (C) 2013-2014 joomlaeventmanager.net
