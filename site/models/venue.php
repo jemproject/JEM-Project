@@ -6,16 +6,12 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
 
 /**
- * JEM Component Venue Model
- *
- * @package JEM
- *
+ * Venue-Model
 */
 class JEMModelVenue extends JModelLegacy
 {
@@ -55,10 +51,11 @@ class JEMModelVenue extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app = JFactory::getApplication();
-		$jemsettings = JEMHelper::config();
-		$jinput = JFactory::getApplication()->input;
-		$params = $app->getParams();
+		$app 			= JFactory::getApplication();
+		$jemsettings	= JemHelper::config();
+		$jinput			= JFactory::getApplication()->input;
+		$params			= $app->getParams();
+		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
 
 		$this->setdate(time());
 
@@ -71,8 +68,8 @@ class JEMModelVenue extends JModelLegacy
 		$this->setId((int)$id);
 
 		//get the number of events from database
-		$limit		= $app->getUserStateFromRequest('com_jem.venue.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart = $app->getUserStateFromRequest('com_jem.venue.limitstart', 'limitstart', 0, 'int');
+		$limit		= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -226,10 +223,18 @@ class JEMModelVenue extends JModelLegacy
 	 */
 	protected function _buildOrderBy()
 	{
-		$app = JFactory::getApplication();
+		$app 			= JFactory::getApplication();
+		$jinput 		= JFactory::getApplication()->input;
+		$task 			= $jinput->get('task','','cmd');
+		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
 
-		$filter_order		= $app->getUserStateFromRequest('com_jem.venue.filter_order', 'filter_order', 'a.dates', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.venue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+		$filter_order		= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$filter_order_DirDefault = 'ASC';
+		// Reverse default order for dates in archive mode
+		if($task == 'archive' && $filter_order == 'a.dates') {
+			$filter_order_DirDefault = 'DESC';
+		}
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
 
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
@@ -255,11 +260,11 @@ class JEMModelVenue extends JModelLegacy
 		$task 			= JRequest::getWord('task');
 		$settings	 	= JEMHelper::globalattribs();
 		$user 			= JFactory::getUser();
-		// Support Joomla access levels instead of single group id
 		$levels 		= $user->getAuthorisedViewLevels();
+		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
 
-		$filter 		= $app->getUserStateFromRequest('com_jem.venue.filter', 'filter', '', 'int');
-		$search 		= $app->getUserStateFromRequest('com_jem.venue.filter_search', 'filter_search', '', 'string');
+		$filter 		= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter', 'filter', '', 'int');
+		$search 		= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();
