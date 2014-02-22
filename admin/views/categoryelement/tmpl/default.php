@@ -37,7 +37,7 @@ $function = JRequest::getCmd('function', 'jSelectCategory');
 			<th width="7" class="center"><?php echo JText::_('COM_JEM_NUM'); ?></th>
 			<th align="left" class="title"><?php echo JHtml::_('grid.sort','COM_JEM_CATEGORY','c.catname',$this->lists['order_Dir'],$this->lists['order']); ?></th>
 			<th width="1%" nowrap="nowrap"><?php echo JText::_('COM_JEM_ACCESS'); ?></th>
-			<th width="1%" nowrap="nowrap"><?php echo JText::_('COM_JEM_PUBLISHED'); ?></th>
+			<th width="1%" nowrap="nowrap"><?php echo JText::_('JSTATUS'); ?></th>
 		</tr>
 	</thead>
 

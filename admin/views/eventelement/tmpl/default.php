@@ -38,7 +38,7 @@ defined('_JEXEC') or die;
 			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_CITY', 'loc.city', $this->lists['order_Dir'], $this->lists['order'], 'eventelement' ); ?></th>
 			<th class="title"><?php echo JText::_('COM_JEM_CATEGORY'); ?></th>
-			<th class="center" width="1%" nowrap="nowrap"><?php echo JText::_('COM_JEM_PUBLISHED'); ?></th>
+			<th class="center" width="1%" nowrap="nowrap"><?php echo JText::_('JSTATUS'); ?></th>
 		</tr>
 	</thead>
 
