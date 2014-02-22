@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 	<div class="imghead">
 		<?php echo JText::_('COM_JEM_SEARCH').' '; ?>
 		<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->search; ?>" class="text_area" onChange="document.adminForm.submit();" />
-		<button class="buttonfilter" type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
+		<button class="buttonfilter" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
 		<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 	</div>
 

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -29,7 +29,7 @@ defined('_JEXEC') or die;
 					echo $this->lists['filter'].'&nbsp;';
 				?>
 				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
-				<button class="buttonfilter" type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
+				<button class="buttonfilter" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
 				<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 			</div>
 		<?php endif; ?>
@@ -112,8 +112,8 @@ defined('_JEXEC') or die;
 					<td headers="jem_eventimage" align="left" valign="top">
 						<?php if ($row->datimage) : ?>
 							<?php
-							$dimage = JEMImage::flyercreator($row->datimage, 'event');
-							echo JEMOutput::flyer($row, $dimage, 'event');
+							$dimage = JemImage::flyercreator($row->datimage, 'event');
+							echo JemOutput::flyer($row, $dimage, 'event');
 							?>
 						<?php endif; ?>
 					</td>
@@ -121,9 +121,9 @@ defined('_JEXEC') or die;
 
 				<td headers="jem_date" align="left">
 					<?php
-						echo JEMOutput::formatShortDateTime($row->dates, $row->times,
+						echo JemOutput::formatShortDateTime($row->dates, $row->times,
 							$row->enddates, $row->endtimes);
-						echo JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times,
+						echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
 							$row->enddates, $row->endtimes);
 					?>
 				</td>
@@ -143,7 +143,7 @@ defined('_JEXEC') or die;
 				<?php if ($this->jemsettings->showlocate == 1) : ?>
 					<td headers="jem_location" align="left" valign="top">
 						<?php if ($this->jemsettings->showlinkvenue == 1) : ?>
-							<?php echo $row->locid != 0 ? "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-'; ?>
+							<?php echo $row->locid != 0 ? "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-'; ?>
 						<?php else : ?>
 							<?php echo $row->locid ? $this->escape($row->venue) : '-'; ?>
 						<?php endif; ?>
@@ -161,7 +161,7 @@ defined('_JEXEC') or die;
 				<?php if ($this->jemsettings->showcat == 1) : ?>
 					<td headers="jem_category" align="left" valign="top">
 					<?php echo implode(", ",
-							JEMOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
+							JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
 					</td>
 				<?php endif; ?>
 

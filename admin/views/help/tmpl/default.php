@@ -1,12 +1,11 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 $options = array(
@@ -22,21 +21,19 @@ $options = array(
     'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
     'useCookie' => true, // this must not be a string. Don't use quotes.
 );
-
-
 ?>
-<form action="index.php" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=help'); ?>" method="post" name="adminForm" id="adminForm">
 <table border="1" class="adminform">
 	<tr>
 		<td colspan="2">
 			<table style="width:100%">
 				<tr>
 					<td>
-						<strong><?php echo JText::_( 'COM_JEM_SEARCH' ); ?></strong>
+						<strong><?php echo JText::_('COM_JEM_SEARCH'); ?></strong>
 						<input class="text_area" type="hidden" name="option" value="com_jem" />
 						<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->helpsearch;?>" class="inputbox" />
-						<input type="submit" value="<?php echo JText::_( 'COM_JEM_GO' ); ?>" class="button" />
-						<input type="button" value="<?php echo JText::_( 'COM_JEM_RESET' ); ?>" class="button" onclick="f=document.adminForm;f.filter_search.value='';f.submit()" />
+						<input type="submit" value="<?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?>" class="button" />
+						<input type="button" value="<?php echo JText::_('COM_JEM_RESET'); ?>" class="button" onclick="f=document.adminForm;f.filter_search.value='';f.submit()" />
 					</td>
 					<td style="text-align:right">
 						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/intro.html'; ?>" target='helpFrame'><?php echo JText::_( 'COM_JEM_HOME' ); ?></a>
@@ -57,7 +54,7 @@ $options = array(
 <div class="clr"> </div>
 	<div id="treecellhelp" class="width-20 fltleft">
 		<?php echo JHtml::_('sliders.start', 'det-pane', $options); ?>
-		<?php echo JHtml::_('sliders.panel', JText::_( 'COM_JEM_SCREEN_HELP' ), 'help'); ?>
+		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_SCREEN_HELP'), 'help'); ?>
 			<table class="adminlist">
 				<?php
 				foreach ($this->toc as $k=>$v) {
