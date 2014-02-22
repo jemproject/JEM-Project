@@ -33,18 +33,18 @@ $options = array(
 						<input class="text_area" type="hidden" name="option" value="com_jem" />
 						<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->helpsearch;?>" class="inputbox" />
 						<input type="submit" value="<?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?>" class="button" />
-						<input type="button" value="<?php echo JText::_('COM_JEM_RESET'); ?>" class="button" onclick="f=document.adminForm;f.filter_search.value='';f.submit()" />
+						<input type="button" value="<?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?>" class="button" onclick="f=document.adminForm;f.filter_search.value='';f.submit()" />
 					</td>
 					<td style="text-align:right">
-						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/intro.html'; ?>" target='helpFrame'><?php echo JText::_( 'COM_JEM_HOME' ); ?></a>
+						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/intro.html'; ?>" target='helpFrame'><?php echo JText::_('COM_JEM_HOME'); ?></a>
 						|
-						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/gethelp.html'; ?>" target='helpFrame'><?php echo JText::_( 'COM_JEM_GET_HELP' ); ?></a>
+						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/gethelp.html'; ?>" target='helpFrame'><?php echo JText::_('COM_JEM_GET_HELP'); ?></a>
 						|
-						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/givehelp.html'; ?>" target='helpFrame'><?php echo JText::_( 'COM_JEM_GIVE_HELP' ); ?></a>
+						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/givehelp.html'; ?>" target='helpFrame'><?php echo JText::_('COM_JEM_GIVE_HELP'); ?></a>
 						|
-						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/credits.html'; ?>" target='helpFrame'><?php echo JText::_( 'COM_JEM_CREDITS' ); ?></a>
+						<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/credits.html'; ?>" target='helpFrame'><?php echo JText::_('COM_JEM_CREDITS'); ?></a>
 						|
-						<?php echo JHtml::_('link', 'http://www.gnu.org/licenses/gpl-2.0.html', JText::_( 'COM_JEM_LICENSE' ), array('target' => 'helpFrame')) ?>
+						<?php echo JHtml::_('link', 'http://www.gnu.org/licenses/gpl-2.0.html', JText::_('COM_JEM_LICENSE'), array('target' => 'helpFrame')) ?>
 					</td>
 				</tr>
 			</table>
