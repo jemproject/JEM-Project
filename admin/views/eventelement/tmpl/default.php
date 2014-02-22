@@ -22,7 +22,7 @@ defined('_JEXEC') or die;
 		<td nowrap="nowrap">
 			<select name="filter_state" class="inputbox" onchange="this.form.submit()">
 			<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
-			<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->filter_state, true);?>
+			<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions',array('all' => 0, 'unpublished' => 0,'archived' => 0, 'trash' => 0)), 'value', 'text', $this->filter_state, true);?>
 			</select>
 		</td>
 	</tr>

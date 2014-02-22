@@ -202,7 +202,7 @@ class JemModelEventelement extends JModelLegacy
 		if (is_numeric($published)) {
 			$where[] = 'a.published = '.(int) $published;
 		} elseif ($published === '') {
-			$where[] = '(a.published IN (0, 1))';
+			$where[] = '(a.published IN (1))';
 		}
 		
 		$where[] = ' c.published = 1';
