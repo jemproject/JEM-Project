@@ -1,23 +1,19 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
 
 /**
- * JEM Component Eventelement Model
- *
- * @package JEM
- *
+ * Eventelement Model
  */
-class JEMModelEventelement extends JModelLegacy
+class JemModelEventelement extends JModelLegacy
 {
 	/**
 	 * Events data array
@@ -80,6 +76,22 @@ class JEMModelEventelement extends JModelLegacy
 				}
 			}
 		}
+		
+		
+		if($this->_data)
+		{	
+			$count = count($this->_data);
+			for($i = 0; $i < $count; $i++){
+				$item = $this->_data[$i];
+				$item->categories = $this->getCategories($item->id);
+		
+				//remove events without categories (users have no access to them)
+				if (empty($item->categories)) {
+					unset($this->_data[$i]);
+				}
+			}
+		}
+		
 
 		return $this->_data;
 	}
@@ -132,11 +144,13 @@ class JEMModelEventelement extends JModelLegacy
 		$where		= $this->_buildContentWhere();
 		$orderby	= $this->_buildContentOrderBy();
 
-		$query = 'SELECT a.*, loc.venue, loc.city'
+		$query = 'SELECT a.*, loc.venue, loc.city,c.catname'
 					. ' FROM #__jem_events AS a'
 					. ' LEFT JOIN #__jem_venues AS loc ON loc.id = a.locid'
-				//	. ' LEFT JOIN #__jem_categories AS cat ON cat.id = a.catsid'
+					. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+					. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
 					. $where
+					. ' GROUP BY a.id'
 					. $orderby
 					;
 
@@ -172,42 +186,43 @@ class JEMModelEventelement extends JModelLegacy
 	 */
 	protected function _buildContentWhere()
 	{
-		$app =  JFactory::getApplication();
+		$app			= JFactory::getApplication();
+		$user 			= JFactory::getUser();
+		$levels			= $user->getAuthorisedViewLevels();
+		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
 
-		$filter_state 	= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_state', 'filter_state', '', 'word' );
-		$filter 		= $app->getUserStateFromRequest( 'com_jem.eventelement.filter', 'filter', '', 'int' );
-		$search 		= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_search', 'filter_search', '', 'string' );
-		$search 		= $this->_db->escape( trim(JString::strtolower( $search ) ) );
-
+		$published 		= $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_state', 'filter_state', '', 'string');
+		$filter 		= $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter', 'filter', '', 'int');
+		$search 		= $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
+		
 		$where = array();
-
-		if ( $filter_state ) {
-			if ( $filter_state == 'P' ) {
-				$where[] = 'a.published = 1';
-			} else if ($filter_state == 'U' ) {
-				$where[] = 'a.published = 0';
-			}
-		} else {
-			$where[] = 'a.published >= 0';
+			
+		// Filter by published state
+		if (is_numeric($published)) {
+			$where[] = 'a.published = '.(int) $published;
+		} elseif ($published === '') {
+			$where[] = '(a.published IN (0, 1))';
 		}
-
-		if ($search && $filter == 1) {
-			$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
+		
+		$where[] = ' c.published = 1';
+		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
+		
+		switch($filter) {
+			case 1:
+				$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
+				break;
+			case 2:
+				$where[] = ' LOWER(loc.venue) LIKE \'%'.$search.'%\' ';
+				break;
+			case 3:
+				$where[] = ' LOWER(loc.city) LIKE \'%'.$search.'%\' ';
+				break;
+			case 4:
+				$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
+				break;
 		}
-
-		if ($search && $filter == 2) {
-			$where[] = ' LOWER(loc.venue) LIKE \'%'.$search.'%\' ';
-		}
-
-		if ($search && $filter == 3) {
-			$where[] = ' LOWER(loc.city) LIKE \'%'.$search.'%\' ';
-		}
-/*
-		if ($search && $filter == 4) {
-			$where[] = ' LOWER(cat.catname) LIKE \'%'.$search.'%\' ';
-		}
-*/
-
+		
 		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
 
 		return $where;
