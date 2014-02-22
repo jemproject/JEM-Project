@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @subpackage JEM Calendar Module
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2008 Toni Smillie www.qivva.com
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
