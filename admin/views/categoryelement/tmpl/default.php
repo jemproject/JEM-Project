@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -8,7 +8,6 @@
  * 
  * @todo change "ALT" of publish/unpublish to text-strings
  */
-
 defined('_JEXEC') or die;
 
 $function = JRequest::getCmd('function', 'jSelectCategory');
@@ -21,8 +20,8 @@ $function = JRequest::getCmd('function', 'jSelectCategory');
 		<td width="100%">
 			<?php echo JText::_('COM_JEM_SEARCH'); ?>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
-			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('COM_JEM_RESET'); ?></button>
+			<button type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 			<button type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo JText::_('COM_JEM_SELECT_CATEGORY') ?>');"><?php echo JText::_('COM_JEM_NOCATEGORY')?></button>
 		</td>
 		<td nowrap="nowrap"><?php  echo $this->lists['state']; ?></td>
@@ -73,7 +72,7 @@ $function = JRequest::getCmd('function', 'jSelectCategory');
 </table>
 
 <div class="copyright">
-	<?php echo JEMAdmin::footer( ); ?>
+	<?php echo JemAdmin::footer( ); ?>
 </div>
 
 <input type="hidden" name="task" value="">

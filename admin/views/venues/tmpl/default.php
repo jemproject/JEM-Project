@@ -1,12 +1,11 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 $user		= JFactory::getUser();
@@ -41,7 +40,7 @@ window.addEvent('domready', function() {
 	<div class="filter-search fltlft">
 		<?php echo $this->lists['filter']; ?>
 		<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo JText::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>" class="text_area" onChange="document.adminForm.submit();" />
-		<button type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
+		<button type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
 		<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 	</div>
 	<div class="filter-select fltrt">
@@ -60,7 +59,7 @@ window.addEvent('domready', function() {
 			<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 			<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_VENUE', 'a.venue', $listDirn, $listOrder ); ?></th>
 			<th width="20%"><?php echo JHtml::_('grid.sort', 'COM_JEM_ALIAS', 'a.alias', $listDirn, $listOrder ); ?></th>
-			<th><?php echo JText::_( 'COM_JEM_WEBSITE' ); ?></th>
+			<th><?php echo JText::_('COM_JEM_WEBSITE'); ?></th>
 			<th><?php echo JHtml::_('grid.sort', 'COM_JEM_CITY', 'a.city', $listDirn, $listOrder ); ?></th>
 			<th><?php echo JHtml::_('grid.sort', 'COM_JEM_STATE', 'a.state', $listDirn, $listOrder ); ?></th>
 			<th width="1%"><?php echo JHtml::_('grid.sort', 'COM_JEM_COUNTRY', 'a.country', $listDirn, $listOrder ); ?></th>
@@ -132,7 +131,7 @@ window.addEvent('domready', function() {
 				<td class="country"><?php echo $row->country ? $this->escape($row->country) : '-'; ?></td>
 				<td class="center"><?php echo $published; ?></td>
 				<td>
-					<?php echo JText::_( 'COM_JEM_AUTHOR' ).': '; ?>
+					<?php echo JText::_('COM_JEM_AUTHOR').': '; ?>
 					<a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>">
 						<?php echo $row->author; ?>
 					</a><br />
