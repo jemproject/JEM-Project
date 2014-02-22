@@ -5,8 +5,6 @@
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- * 
- * @todo change "ALT" of publish/unpublish to text-strings
  */
 defined('_JEXEC') or die;
 
@@ -24,7 +22,12 @@ $function = JRequest::getCmd('function', 'jSelectCategory');
 			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 			<button type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo JText::_('COM_JEM_SELECT_CATEGORY') ?>');"><?php echo JText::_('COM_JEM_NOCATEGORY')?></button>
 		</td>
-		<td nowrap="nowrap"><?php  echo $this->lists['state']; ?></td>
+		<td nowrap="nowrap">
+			<select name="filter_state" class="inputbox" onchange="this.form.submit()">
+			<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
+			<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions',array('all' => 0, 'unpublished' => 0,'archived' => 0, 'trash' => 0)), 'value', 'text', $this->filter_state, true);?>
+			</select>
+		</td>
 	</tr>
 </table>
 
@@ -32,7 +35,7 @@ $function = JRequest::getCmd('function', 'jSelectCategory');
 	<thead>
 		<tr>
 			<th width="7" class="center"><?php echo JText::_('COM_JEM_NUM'); ?></th>
-			<th align="left" class="title"><?php echo JHtml::_('grid.sort','COM_JEM_CATEGORY','catname',$this->lists['order_Dir'],$this->lists['order'],'categoryelement'); ?></th>
+			<th align="left" class="title"><?php echo JHtml::_('grid.sort','COM_JEM_CATEGORY','c.catname',$this->lists['order_Dir'],$this->lists['order']); ?></th>
 			<th width="1%" nowrap="nowrap"><?php echo JText::_('COM_JEM_ACCESS'); ?></th>
 			<th width="1%" nowrap="nowrap"><?php echo JText::_('COM_JEM_PUBLISHED'); ?></th>
 		</tr>
@@ -54,16 +57,11 @@ $function = JRequest::getCmd('function', 'jSelectCategory');
 		 <tr class="row<?php echo $i % 2; ?>">
 			<td class="center" width="7"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td align="left">
-				<?php echo $row->treename; ?>
-				<a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->catname)); ?>');"><?php echo $this->escape($row->catname); ?></a>
+				<a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->catname)); ?>');"><?php echo htmlspecialchars_decode($this->escape($row->treename)); ?></a>
 			</td>
 			<td class="center"><?php echo $access; ?></td>
 			<td class="center">
-				<?php
-				$img = $row->published ? 'tick.png' : 'publish_x.png';
-				$alt = $row->published ? 'Published' : 'Unpublished';
-				echo JHtml::_('image','com_jem/'.$img,$alt,NULL,true); 
-				?>
+				<?php echo JHtml::_('jgrid.published', $row->published, $i,'',false); ?>
 			</td>
 		</tr>
 		<?php endforeach; ?>
@@ -79,5 +77,5 @@ $function = JRequest::getCmd('function', 'jSelectCategory');
 <input type="hidden" name="tmpl" value="component">
 <input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-<input type="hidden" name="filter_order_Dir" value="" />
+<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 </form>

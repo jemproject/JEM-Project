@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
  * @copyright (C) 2013-2013 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -9,14 +9,10 @@
 defined('_JEXEC') or die();
 
 jimport('joomla.application.component.model');
-
 /**
- * JEM Component Categoryelement Model
- *
- * @package JEM
- *
+ * Categoryelement-Model
  */
-class JEMModelCategoryelement extends JModelLegacy
+class JemModelCategoryelement extends JModelLegacy
 {
 	/**
 	 * Pagination object
@@ -65,8 +61,9 @@ class JEMModelCategoryelement extends JModelLegacy
 	 */
 	function getData()
 	{
-		$app = JFactory::getApplication();
-		$db = JFactory::getDBO();
+		$app	= JFactory::getApplication();
+		$db		= JFactory::getDBO();
+		$itemid = JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
 
 		static $items;
 
@@ -74,29 +71,23 @@ class JEMModelCategoryelement extends JModelLegacy
 			return $items;
 		}
 
-		$limit = $app->getUserStateFromRequest('com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
-		$limitstart = $app->getUserStateFromRequest('com_jem.limitstart', 'limitstart', 0, 'int');
-		$filter_order = $app->getUserStateFromRequest('com_jem.categoryelement.filter_order', 'filter_order', 'c.ordering', 'cmd');
-		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.categoryelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
-		$filter_state = $app->getUserStateFromRequest('com_jem.categoryelement.filter_state', 'filter_state', '', 'word');
-		$search = $app->getUserStateFromRequest('com_jem.categoryelement.filter_search', 'filter_search', '', 'string');
-		$search = $db->escape(trim(JString::strtolower($search)));
+		$limit				= $app->getUserStateFromRequest('com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limitstart 		= $app->getUserStateFromRequest('com_jem.limitstart', 'limitstart', 0, 'int');
+		$filter_order		= $app->getUserStateFromRequest('com_jem.categoryelement.filter_order', 'filter_order', 'c.lft', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.categoryelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		$filter_state		= $app->getUserStateFromRequest('com_jem.categoryelement.'.$itemid.'.filter_state', 'filter_state', '', 'string');
+		$search				= $app->getUserStateFromRequest('com_jem.categoryelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+		$search				= $db->escape(trim(JString::strtolower($search)));
 
-		$filter_order = JFilterInput::getinstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
-		$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir . ', c.ordering';
-		$state = array(0,1);
+		$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
+		
+		$state = array(1);
 
-		if ($filter_state) {
-			if ($filter_state == 'P') {
-				$where = ' WHERE c.published = 1';
-			} else {
-				if ($filter_state == 'U') {
-					$where = ' WHERE c.published = 0';
-					//$where .= ' AND c.alias NOT LIKE "root"';
-				}
-			}
+		if (is_numeric($filter_state)) {
+				$where = ' WHERE c.published = '.(int) $filter_state;
 		} else {
 			$where = ' WHERE c.published IN (' . implode(',', $state) . ')';
 			//$where .= ' AND c.alias NOT LIKE "root"';
@@ -115,11 +106,13 @@ class JEMModelCategoryelement extends JModelLegacy
 		}
 
 		$query = 'SELECT c.*, u.name AS editor, g.title AS groupname, gr.name AS catgroup'
-			 . ' FROM #__jem_categories AS c' . ' LEFT JOIN #__viewlevels AS g ON g.id = c.access'
-			 . ' LEFT JOIN #__users AS u ON u.id = c.checked_out'
-			 . ' LEFT JOIN #__jem_groups AS gr ON gr.id = c.groupid'
-			 . $where
-			 . ' ORDER BY c.parent_id, c.ordering';
+				. ' FROM #__jem_categories AS c' . ' LEFT JOIN #__viewlevels AS g ON g.id = c.access'
+				. ' LEFT JOIN #__users AS u ON u.id = c.checked_out'
+				. ' LEFT JOIN #__jem_groups AS gr ON gr.id = c.groupid'
+				. $where
+				// . ' ORDER BY c.parent_id, c.ordering';
+				. $orderby;	
+		
 		$db->setQuery($query);
 		$mitems = $db->loadObjectList();
 
