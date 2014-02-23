@@ -493,6 +493,10 @@ class com_jemInstallerScript
 			'/media/js/eventscreen.js',
 			'/media/js/geodata.js',
 			'/media/js/jquery.geocomplete.min.js',
+			'/administrator/components/com_jem/views/cleanup/tmpl/default.php',
+			'/administrator/components/com_jem/views/cleanup/view.html.php',
+			'/administrator/components/com_jem/models/cleanup.php',
+			'/administrator/components/com_jem/controllers/cleanup.php',
 		);
 
 		// TODO There is an issue while deleting folders using the ftp mode
@@ -510,6 +514,8 @@ class com_jemInstallerScript
 			// obsolete since JEM 1.9.6
 			'/components/com_jem/views/categoriesdetailed/tmpl',
 			'/components/com_jem/views/categoriesdetailed',
+			'/administrator/components/com_jem/views/cleanup/tmpl',
+			'/administrator/components/com_jem/views/cleanup/',
 		);
 
 		foreach ($files as $file) {

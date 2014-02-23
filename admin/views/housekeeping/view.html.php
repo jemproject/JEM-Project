@@ -6,17 +6,13 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 
 /**
- * View class for the JEM Cleanup screen
- *
- * @package JEM
- *
+ * Housekeeping-View
  */
-class JEMViewCleanup extends JViewLegacy {
+class JemViewHousekeeping extends JViewLegacy {
 
 	public function display($tpl = null) {
 
@@ -48,11 +44,11 @@ class JEMViewCleanup extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
-		JToolBarHelper::title(JText::_('COM_JEM_CLEANUP'), 'housekeeping');
+		JToolBarHelper::title(JText::_('COM_JEM_HOUSEKEEPING'), 'housekeeping');
 
 		JToolBarHelper::back();
 		JToolBarHelper::divider();
-		JToolBarHelper::help('cleanup', true);
+		JToolBarHelper::help('housekeeping', true);
 	}
 }
 ?>

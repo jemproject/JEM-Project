@@ -65,8 +65,8 @@ $options = array(
 							$link = 'index.php?option=com_jem&amp;view=settings';
 							$this->quickiconButton($link, 'icon-48-settings.png', JText::_('COM_JEM_SETTINGS_TITLE'));
 
-							$link = 'index.php?option=com_jem&amp;view=cleanup';
-							$this->quickiconButton($link, 'icon-48-housekeeping.png', JText::_('COM_JEM_CLEANUP'));
+							$link = 'index.php?option=com_jem&amp;view=housekeeping';
+							$this->quickiconButton($link, 'icon-48-housekeeping.png', JText::_('COM_JEM_HOUSEKEEPING'));
 
 							$link = 'index.php?option=com_jem&amp;task=sampledata.load';
 							$this->quickiconButton($link, 'icon-48-sampledata.png', JText::_('COM_JEM_MAIN_LOAD_SAMPLE_DATA'));
