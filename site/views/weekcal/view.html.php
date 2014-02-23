@@ -8,7 +8,6 @@
  */
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
 
 /**
  * Weekcal-View
@@ -25,7 +24,7 @@ class JemViewWeekcal extends JViewLegacy
 		// Load tooltips behavior
 		JHtml::_('behavior.tooltip');
 
-		// initialize variables
+		//initialize variables
 		$menu 		= $app->getMenu();
 		$menuitem 	= $menu->getActive();
 		$jemsettings = JEMHelper::config();
@@ -64,7 +63,7 @@ class JemViewWeekcal extends JViewLegacy
 		$currentweek = $this->get('Currentweek');
 		$currentyear =  Date("Y");
 
-		// set Pagetitle
+		//Set Page title
 		$pagetitle = $params->def('page_title', $menuitem->title);
 		$params->def('page_heading', $pagetitle);
 

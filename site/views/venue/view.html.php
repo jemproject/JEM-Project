@@ -8,15 +8,11 @@
  */
 defined('_JEXEC') or die ();
 
-jimport('joomla.application.component.view');
 require JPATH_COMPONENT_SITE.'/classes/view.class.php';
-
 /**
- * HTML View class for the Venue View
- * @package JEM
- *
+ * Venue-View
  */
-class JEMViewVenue extends JEMView {
+class JemViewVenue extends JEMView {
 
 	/**
 	 * Creates the Venue View
@@ -117,8 +113,8 @@ class JEMViewVenue extends JEMView {
 			$document 		= JFactory::getDocument();
 			$menu 			= $app->getMenu();
 			$menuitem		= $menu->getActive();
-			$jemsettings 	= JEMHelper::config();
-			$settings 		= JEMHelper::globalattribs();
+			$jemsettings 	= JemHelper::config();
+			$settings 		= JemHelper::globalattribs();
 			$db 			= JFactory::getDBO();
 			$params 		= $app->getParams('com_jem');
 			$pathway 		= $app->getPathWay ();
@@ -170,7 +166,7 @@ class JEMViewVenue extends JEMView {
 			$lists['order']		= $filter_order;
 
 			// Get image
-			$limage = JEMImage::flyercreator($venue->locimage,'venue');
+			$limage = JemImage::flyercreator($venue->locimage,'venue');
 
 			// Add feed links
 			$link = '&format=feed&id='.$venue->id.'&limitstart=';
@@ -188,18 +184,18 @@ class JEMViewVenue extends JEMView {
 				$pagetitle   = $venue->venue;
 				$pageheading = $pagetitle;
 				$params->set('show_page_heading', 1); // ensure page heading is shown
-				$pathway->addItem($pagetitle, JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug)));
+				$pathway->addItem($pagetitle, JRoute::_(JemHelperRoute::getVenueRoute($venue->slug)));
 			}
 
 			// create the pathway
 			if ($task == 'archive') {
-				$pathway->addItem (JText::_('COM_JEM_ARCHIVE'), JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug).'&task=archive'));
+				$pathway->addItem (JText::_('COM_JEM_ARCHIVE'), JRoute::_(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive'));
 				$print_link = JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug).'&task=archive&print=1&tmpl=component');
 				$pagetitle   .= ' - ' . JText::_('COM_JEM_ARCHIVE');
 				$pageheading .= ' - ' . JText::_('COM_JEM_ARCHIVE');
 			} else {
 				//$pathway->addItem($venue->venue, JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug)));
-				$print_link = JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
+				$print_link = JRoute::_(JemHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
 			}
 
 			$params->set('page_heading', $pageheading);

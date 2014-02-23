@@ -6,18 +6,14 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
+
 /**
- * View class for the JEM attendees screen
+ * Attendees-view
  * @todo fix view
- *
- * @package JEM
- *
  */
-class JEMViewAttendees extends JViewLegacy {
+class JemViewAttendees extends JViewLegacy {
 
 	public function display($tpl = null)
 	{
@@ -51,7 +47,7 @@ class JEMViewAttendees extends JViewLegacy {
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest('com_jem.attendees.filter_order', 'filter_order', 'u.username', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.attendees.filter_order_Dir',	'filter_order_Dir',	'', 'word');
-		$filter_waiting	= $app->getUserStateFromRequest('com_jem.attendees.waiting',	'filter_waiting',	0, 'int');
+		$filter_waiting		= $app->getUserStateFromRequest('com_jem.attendees.waiting',	'filter_waiting',	0, 'int');
 		$filter 			= $app->getUserStateFromRequest('com_jem.attendees.filter', 'filter', '', 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
 		$search 			= $db->escape(trim(JString::strtolower($search)));

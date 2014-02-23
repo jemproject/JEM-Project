@@ -6,16 +6,12 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 /**
- * HTML Event View class of the JEM component
- *
- * @package JEM
- *
+ * Event-View
  */
-class JEMViewEvent extends JViewLegacy
+class JemViewEvent extends JViewLegacy
 {
 	protected $item;
 	protected $params;
@@ -68,7 +64,7 @@ class JEMViewEvent extends JViewLegacy
 		$item->venueslug	= $item->alias ? ($item->locid.':'.$item->localias) : $item->locid;
 
 		// TODO: Change based on shownoauth
-		$item->readmore_link = JRoute::_(JEMHelperRoute::getEventRoute($item->slug, $item->catslug));
+		$item->readmore_link = JRoute::_(JemHelperRoute::getEventRoute($item->slug, $item->catslug));
 
 		// Merge event params. If this is single-event view, menu params override event params
 		// Otherwise, event params override menu item params
@@ -153,15 +149,15 @@ class JEMViewEvent extends JViewLegacy
 		//Escape strings for HTML output
 		$this->pageclass_sfx = htmlspecialchars($this->item->params->get('pageclass_sfx'));
 
-		$this->print_link = JRoute::_(JEMHelperRoute::getRoute($item->slug).'&print=1&tmpl=component');
+		$this->print_link = JRoute::_(JemHelperRoute::getRoute($item->slug).'&print=1&tmpl=component');
 
 		//Get images
-		$this->dimage = JEMImage::flyercreator($item->datimage, 'event');
-		$this->limage = JEMImage::flyercreator($item->locimage, 'venue');
+		$this->dimage = JemImage::flyercreator($item->datimage, 'event');
+		$this->limage = JemImage::flyercreator($item->locimage, 'venue');
 
 		// Check if user can edit
-		$maintainer5 = JEMUser::ismaintainer('edit',$item->did);
-		$genaccess5 = JEMUser::editaccess($jemsettings->eventowner, $item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+		$maintainer5	= JemUser::ismaintainer('edit',$item->did);
+		$genaccess5		= JemUser::editaccess($jemsettings->eventowner, $item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
 
 		if ($maintainer5 || $genaccess5 || $user->authorise('core.edit','com_jem'))
 		{
@@ -171,8 +167,8 @@ class JEMViewEvent extends JViewLegacy
 		}
 
 		//Check if the user has access to the edit-venueform
-		$maintainer3 = JEMUser::venuegroups('edit');
-		$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $item->venueowner, $jemsettings->venueeditrec, $jemsettings->venueedit);
+		$maintainer3	= JemUser::venuegroups('edit');
+		$genaccess3		= JemUser::editaccess($jemsettings->venueowner, $item->venueowner, $jemsettings->venueeditrec, $jemsettings->venueedit);
 		if ($maintainer3 || $genaccess3 )
 		{
 			$this->allowedtoeditvenue = 1;
@@ -297,15 +293,14 @@ class JEMViewEvent extends JViewLegacy
 			case "endtimes":
 				$content = '';
 				if ($row->$keyword) {
-					$content = JEMOutput::formattime($row->$keyword);
+					$content = JemOutput::formattime($row->$keyword);
 				}
 				break;
 			case "dates":
-				$content = JEMOutput::formatdate($row->dates);
+				$content = JemOutput::formatdate($row->dates);
 				break;
 			case "enddates":
-				//$content = strftime($formatdate ,strtotime($row->$keyword));
-				$content = JEMOutput::formatdate($row->enddates);
+				$content = JemOutput::formatdate($row->enddates);
 				break;
 			case "title":
 				$content = $row->title;
@@ -351,7 +346,7 @@ class JEMViewEvent extends JViewLegacy
 
 		$title = $this->params->get('page_title', '');
 
-		$id = (int) @$menu->query['id'];
+		$id = $menu->query['id'];
 
 		// if the menu item does not concern this event
 		if ($menu && ($menu->query['option'] != 'com_jem' || $menu->query['view'] != 'event' || $id != $this->item->id)) {
@@ -363,7 +358,7 @@ class JEMViewEvent extends JViewLegacy
 			$category = JCategories::getInstance('JEM2')->get($this->item->catid);
 			while ($category && ($menu->query['option'] != 'com_jem' || $menu->query['view'] == 'event'
 					|| $id != $category->id) && $category->id > 1) {
-				$path[] = array('title' => $category->catname, 'link' => JEMHelperRoute::getCategoryRoute($category->id));
+				$path[] = array('title' => $category->catname, 'link' => JemHelperRoute::getCategoryRoute($category->id));
 				$category = $category->getParent();
 			}
 			$path = array_reverse($path);

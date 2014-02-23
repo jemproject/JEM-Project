@@ -8,7 +8,6 @@
  */
 defined('_JEXEC') or die;
 
-jimport( 'joomla.application.component.view');
 
 /**
  * Event-Raw
@@ -37,7 +36,6 @@ class JemViewEvent extends JViewLegacy
 				$vcal = JemHelper::getCalendarTool();
 				$vcal->setConfig( "filename", "event".$row->did.".ics" );
 				JemHelper::icalAddEvent($vcal, $row);
-
 				// generate and redirect output to user browser
 				$vcal->returnCalendar();
 			} else {

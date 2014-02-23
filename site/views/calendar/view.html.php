@@ -6,23 +6,16 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
 
 /**
- * HTML View class for the Calendar View
- *
- * @package JEM
- *
+ * Calendar-View
  */
-class JEMViewCalendar extends JViewLegacy
+class JemViewCalendar extends JViewLegacy
 {
 	/**
 	 * Creates the Calendar View
-	 *
-	 *
 	 */
 	function display($tpl = null)
 	{
@@ -35,7 +28,7 @@ class JEMViewCalendar extends JViewLegacy
 		$document 	= JFactory::getDocument();
 		$menu 		= $app->getMenu();
 		$menuitem	= $menu->getActive();
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 		$params 	= $app->getParams();
 		
 		// Load css
@@ -106,6 +99,5 @@ class JEMViewCalendar extends JViewLegacy
 
 		parent::display($tpl);
 	}
-
 }
 ?>

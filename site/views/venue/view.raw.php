@@ -8,10 +8,8 @@
  */
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
-
 /**
- * Venue-Raw
+ * Venue-Raw 
  */
 class JemViewVenue extends JViewLegacy
 {

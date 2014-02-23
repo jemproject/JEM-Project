@@ -8,14 +8,10 @@
  */
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
 require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
 /**
  * Eventslist-View
- *
- * @package JEM
- *
 */
 class JemViewEventslist extends JEMView
 {
@@ -26,22 +22,20 @@ class JemViewEventslist extends JEMView
 	{
 		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
 
-		$app = JFactory::getApplication();
-
 		//initialize variables
-		$document 	= JFactory::getDocument();
-
-		$jemsettings = JEMHelper::config();
-		$settings 	= JEMHelper::globalattribs();
-		$menu		= $app->getMenu();
-		$menuitem	= $menu->getActive();
-		$params 	= $app->getParams();
-		$uri 		= JFactory::getURI();
-		$pathway 	= $app->getPathWay();
-		$db 		= JFactory::getDBO();
-		$user		= JFactory::getUser();
-		$itemid 	= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
-		$print		= JRequest::getBool('print');
+		$document 		= JFactory::getDocument();
+		$app 			= JFactory::getApplication();
+		$jemsettings	= JemHelper::config();
+		$settings 		= JemHelper::globalattribs();
+		$menu			= $app->getMenu();
+		$menuitem		= $menu->getActive();
+		$params 		= $app->getParams();
+		$uri 			= JFactory::getURI();
+		$pathway 		= $app->getPathWay();
+		$db 			= JFactory::getDBO();
+		$user			= JFactory::getUser();
+		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		$print			= JRequest::getBool('print');
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
@@ -154,7 +148,6 @@ class JemViewEventslist extends JEMView
 
 		$this->lists			= $lists;
 		$this->action			= $uri->toString();
-
 		$this->rows				= $rows;
 		$this->task				= $task;
 		$this->noevents			= $noevents;

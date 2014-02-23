@@ -6,31 +6,25 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
+
 require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
 /**
- * HTML View class for the Day View
- *
- * @package JEM
- *
+ * Day-View
  */
-class JEMViewDay extends JEMView
+class JemViewDay extends JEMView
 {
 	/**
 	 * Creates the Day View
-	 *
-	 *
 	 */
 	function display($tpl = null)
 	{
 		// Initialize variables
 		$app 			= JFactory::getApplication();
-		$jemsettings 	= JEMHelper::config();
-		$settings 		= JEMHelper::globalattribs();
+		$jemsettings 	= JemHelper::config();
+		$settings 		= JemHelper::globalattribs();
 		$menu 			= $app->getMenu();
 		$menuitem 		= $menu->getActive();
 		$user			= JFactory::getUser();
@@ -70,7 +64,7 @@ class JEMViewDay extends JEMView
 		$rows 		= $this->get('Data');
 		$day		= $this->get('Day');
 
-		$daydate 	= JEMOutput::formatdate($day);
+		$daydate 	= JemOutput::formatdate($day);
 		$showdaydate = true; // show by default
 
 		// Show page heading specified on menu item or TODAY as heading - idea taken from com_content.
@@ -113,8 +107,8 @@ class JEMViewDay extends JEMView
 		}
 
 		//Check if the user has access to the form
-		$maintainer = JEMUser::ismaintainer('add');
-		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+		$maintainer = JemUser::ismaintainer('add');
+		$genaccess 	= JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
 		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
 			$dellink = 1;

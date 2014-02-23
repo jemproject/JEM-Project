@@ -8,7 +8,6 @@
  */
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
 
 /**
  * Venues-View
@@ -17,15 +16,14 @@ class JemViewVenues extends JViewLegacy
 {
 	/**
 	 * Creates the Venuesview
-	 *
 	 */
 	function display($tpl = null)
 	{
 		$app = JFactory::getApplication();
 
 		$document		= JFactory::getDocument();
-		$jemsettings	= JemHelper::config();
-		$settings 		= JemHelper::globalattribs();
+		$jemsettings	= JEMHelper::config();
+		$settings 		= JEMHelper::globalattribs();
 		$user			= JFactory::getUser();
 		$print			= JRequest::getBool('print');
 
@@ -87,8 +85,8 @@ class JemViewVenues extends JViewLegacy
 		}
 
 		//Check if the user has access to the add-venueform
-		$maintainer2 = JemUser::venuegroups('add');
-		$genaccess2 	= JemUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
+		$maintainer2	= JemUser::venuegroups('add');
+		$genaccess2		= JemUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
 		if ($maintainer2 || $genaccess2) {
 			$addvenuelink = 1;
 		} else {

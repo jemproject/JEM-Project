@@ -8,7 +8,6 @@
  */
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
 
 /**
  * Eventslist-Feed
@@ -47,8 +46,7 @@ class JemViewEventslist extends JViewLegacy
 			}
 
 			//Format date and time
-			$displaydate = JemOutput::formatLongDateTime($row->dates, $row->times,
-				$row->enddates, $row->endtimes);
+			$displaydate = JemOutput::formatLongDateTime($row->dates, $row->times,$row->enddates, $row->endtimes);
 
 			// url link to event
 			$link = JRoute::_(JemHelperRoute::getEventRoute($row->id));

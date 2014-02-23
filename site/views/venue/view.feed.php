@@ -8,12 +8,11 @@
  */
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
 
 /**
  * Venue-Feed
  */
-class JEMViewVenue extends JViewLegacy
+class JemViewVenue extends JViewLegacy
 {
 	/**
 	 * Creates the Event Feed of the Venue
@@ -39,7 +38,7 @@ class JEMViewVenue extends JViewLegacy
 					$category[] = $category2->catname;
 				}
 
-				// adding the , to the list when there are multiple category's
+				// ading the , to the list when there are multiple category's
 				$category = $this->escape(implode(', ', $category));
 				$category = html_entity_decode($category);
 			} else {
@@ -47,8 +46,7 @@ class JEMViewVenue extends JViewLegacy
 			}
 
 			//Format date and time
-			$displaydate = JemOutput::formatLongDateTime($row->dates, $row->times,
-				$row->enddates, $row->endtimes);
+			$displaydate = JemOutput::formatLongDateTime($row->dates, $row->times,$row->enddates, $row->endtimes);
 
 			// url link to event
 			$link = JRoute::_(JemHelperRoute::getEventRoute($row->id));

@@ -6,24 +6,17 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
 require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
 /**
- * HTML View class for the Category View
- *
- * @package JEM
- *
+ * Category-View
  */
-class JEMViewCategory extends JEMView
+class JemViewCategory extends JEMView
 {
 	/**
 	 * Creates the Category View
-	 *
-	 *
 	 */
 	function display($tpl=null)
 	{
@@ -35,7 +28,7 @@ class JEMViewCategory extends JEMView
 
 			//initialize variables
 			$document 		= JFactory::getDocument();
-			$jemsettings 	= JEMHelper::config();
+			$jemsettings 	= JemHelper::config();
 			$menu 			= $app->getMenu();
 			$menuitem		= $menu->getActive();
 			$params 		= $app->getParams();
@@ -118,8 +111,8 @@ class JEMViewCategory extends JEMView
 			//initialize variables
 			$app 			= JFactory::getApplication();
 			$document 		= JFactory::getDocument();
-			$jemsettings 	= JEMHelper::config();
-			$settings 		= JEMHelper::globalattribs();
+			$jemsettings 	= JemHelper::config();
+			$settings 		= JemHelper::globalattribs();
 			$db  			= JFactory::getDBO();
 			$user			= JFactory::getUser();
 
@@ -207,7 +200,7 @@ class JEMViewCategory extends JEMView
 			$parents	= $cats->getParentlist();
 
 			foreach($parents as $parent) {
-				$pathway->addItem($this->escape($parent->catname), JRoute::_(JEMHelperRoute::getCategoryRoute($parent->slug)) );
+				$pathway->addItem($this->escape($parent->catname), JRoute::_(JemHelperRoute::getCategoryRoute($parent->slug)) );
 			}
 
 			// Show page heading specified on menu item or category title as heading - idea taken from com_content.
@@ -221,16 +214,16 @@ class JEMViewCategory extends JEMView
 			} else {
 				$pagetitle   = $category->catname;
 				$pageheading = $pagetitle;
-				$pathway->addItem($category->catname, JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug)) );
+				$pathway->addItem($category->catname, JRoute::_(JemHelperRoute::getCategoryRoute($category->slug)) );
 			}
 
 			if ($task == 'archive') {
-				$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug).'&task=archive'));
-				$print_link = JRoute::_(JEMHelperRoute::getCategoryRoute($category->id) .'&task=archive&print=1&tmpl=component');
+				$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_(JemHelperRoute::getCategoryRoute($category->slug).'&task=archive'));
+				$print_link = JRoute::_(JemHelperRoute::getCategoryRoute($category->id) .'&task=archive&print=1&tmpl=component');
 				$pagetitle   .= ' - '.JText::_('COM_JEM_ARCHIVE');
 				$pageheading .= ' - '.JText::_('COM_JEM_ARCHIVE');
 			} else {
-				$print_link = JRoute::_(JEMHelperRoute::getCategoryRoute($category->id) .'&print=1&tmpl=component');
+				$print_link = JRoute::_(JemHelperRoute::getCategoryRoute($category->id) .'&print=1&tmpl=component');
 			}
 
 			$params->set('page_heading', $pageheading);
@@ -250,8 +243,8 @@ class JEMViewCategory extends JEMView
 			$document->setDescription(strip_tags($category->meta_description));
 
 			//Check if the user has access to the form
-			$maintainer = JEMUser::ismaintainer('add');
-			$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+			$maintainer = JemUser::ismaintainer('add');
+			$genaccess 	= JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
 			if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
 				$dellink = 1;
@@ -274,7 +267,7 @@ class JEMViewCategory extends JEMView
 				$description = $category->text;
 			}
 
-			$cimage = JEMImage::flyercreator($category->image,'category');
+			$cimage = JemImage::flyercreator($category->image,'category');
 
 			//create select lists
 			$this->lists			= $lists;

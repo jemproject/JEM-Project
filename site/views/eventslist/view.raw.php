@@ -8,9 +8,6 @@
  */
 defined('_JEXEC') or die;
 
-require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
-jimport('joomla.application.component.view');
-
 /**
  * Eventslist-Raw
  */
@@ -18,8 +15,6 @@ class JemViewEventslist extends JViewLegacy
 {
 	/**
 	 * Creates the output for the Eventslist view
-	 *
- 	 *
 	 */
 	function display($tpl = null)
 	{
