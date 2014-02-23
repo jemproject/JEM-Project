@@ -364,6 +364,25 @@ class JemHelper {
 	}
 
 
+	
+	/**
+	 * Build the select list for access level
+	 */
+	static function getAccesslevelOptions()
+	{
+		$db = JFactory::getDBO();
+	
+		$query = 'SELECT id AS value, title AS text'
+				. ' FROM #__viewlevels'
+				. ' ORDER BY id'
+				;
+		$db->setQuery($query);
+		$groups = $db->loadObjectList();
+	
+		return $groups;
+	}
+	
+
 	static function buildtimeselect($max, $name, $selected, $class = 'class="inputbox"')
 	{
 		$timelist = array();
