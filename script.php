@@ -2,7 +2,7 @@
 /**
  * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -187,6 +187,13 @@ class com_jemInstallerScript
 	 */
 	function preflight($type, $parent)
 	{
+		// Are we installing in J2.5?
+		$jversion = new JVersion();
+		if ($jversion->RELEASE != '2.5' || $jversion->RELEASE == '2.5' && $jversion->DEV_LEVEL < '6') {
+			Jerror::raiseWarning(100, JText::_('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION'));
+			return false;
+		}
+		
 		// Minimum required PHP version
 		$minPhpVersion = "5.3.1";
 
@@ -212,7 +219,7 @@ class com_jemInstallerScript
 		// abort if the current Joomla release is older than required version
 		$jversion = new JVersion();
 		if(version_compare($jversion->getShortVersion(), $minJoomlaVersion, '<')) {
-			Jerror::raiseWarning(100, JText::sprintf('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION', $minJoomlaVersion));
+			Jerror::raiseWarning(100, JText::sprintf('COM_JEM_PREFLIGHT_OLD_JOOMLA_VERSION', $minJoomlaVersion));
 			return false;
 		}
 

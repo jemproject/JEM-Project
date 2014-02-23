@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -55,7 +55,7 @@ window.addEvent('domready', function(){
 		<div class="filter-search fltlft">
 			<?php echo $this->lists['filter']; ?>
 			<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo JText::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
+			<button type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
 			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 		</div>
 		<div class="filter-select fltrt">
@@ -108,7 +108,7 @@ window.addEvent('domready', function(){
 			<?php
 			foreach ($this->items as $i => $row) :
 				//Prepare date
-				$displaydate = JEMOutput::formatLongDateTime($row->dates, null, $row->enddates, null);
+				$displaydate = JemOutput::formatLongDateTime($row->dates, null, $row->enddates, null);
 				// Insert a break between date and enddate if possible
 				$displaydate = str_replace(" - ", " -<br />", $displaydate);
 
@@ -116,7 +116,7 @@ window.addEvent('domready', function(){
 				if (!$row->times) {
 					$displaytime = '-';
 				} else {
-					$displaytime = JEMOutput::formattime($row->times);
+					$displaytime = JemOutput::formattime($row->times);
 				}
 
 				$ordering	= ($listOrder == 'ordering');
@@ -231,7 +231,7 @@ window.addEvent('domready', function(){
 						$overlib 	.= JText::_( 'COM_JEM_EDITED_FROM' ).': '.$row->editor.'<br />';
 					}
 					?>
-					<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_EVENT_STATS'); ?>::<?php echo $overlib; ?>">
+					<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_EVENTS_STATS'); ?>::<?php echo $overlib; ?>">
 						<?php echo $image; ?>
 					</span>
 				</td>

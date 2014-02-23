@@ -42,8 +42,8 @@
 			class="inputbox"
 			rows="3" cols="20"
 			width="100%"
-			label="COM_JEM_VENUE_DESCRIPTION"
-			description="COM_JEM_VENUE_DESCRIPTION_DESC"
+			label="COM_JEM_VENUE_FIELD_DESCRIPTION"
+			description="COM_JEM_VENUE_FIELD_DESCRIPTION_DESC"
 		/>
 		<field name="latitude" type="text"
 			class="inputbox"
@@ -92,7 +92,7 @@
 		/>
 		<field name="published" type="list"
 			label="JSTATUS"
-			description="COM_JEM_PUBLISHED"
+			description="JFIELD_PUBLISHED_DESC"
 			class="inputbox"
 			filter="intval"
 			size="1"
@@ -102,8 +102,8 @@
 			<option value="0">JUNPUBLISHED</option>
 		</field>
 		<field name="country" type="countryoptions"
-			label="COM_JEM_COUNTRY"
-			description="COM_JEM_COUNTRY_DESC"
+			label="COM_JEM_GLOBAL_FIELD_COUNTRY"
+			description="COM_JEM_GLOBAL_FIELD_COUNTRY_DESC"
 			class="select_country"
 		/>
 	</fieldset>
@@ -215,7 +215,6 @@
 		/>
 		<field name="modified_by" type="user"
 			label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"
-			description="JGLOBAL_FIELD_MODIFIED_BY_LABEL_DESC"
 			class="readonly"
 			readonly="true"
 			filter="unset"

@@ -2,7 +2,7 @@
 /**
  * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -94,8 +94,11 @@ class JEMViewVenue extends JEMView {
 			$document->setMetaData('title', $pagetitle);
 
 			// init calendar
+			$itemid = JRequest::getInt('Itemid');
+			$partItemid = ($itemid > 0) ? '&Itemid='.$itemid : '';
+			$partVenid = ($venue->id > 0) ? '&id=' . $venue->id : '';
 			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
-			$cal->enableMonthNav(JEMHelperRoute::getVenueRoute($venue->slug) .'&layout=calendar');
+			$cal->enableMonthNav('index.php?view=venue&layout=calendar'.$partVenid.$partItemid);
 			$cal->setFirstWeekDay($params->get('firstweekday',1));
 
 			// map variables
@@ -122,6 +125,7 @@ class JEMViewVenue extends JEMView {
 			$uri 			= JFactory::getURI();
 			$task 			= JRequest::getWord('task');
 			$user			= JFactory::getUser();
+			$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
 
 			// Load css
 			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
@@ -150,10 +154,15 @@ class JEMViewVenue extends JEMView {
 			                                && $menuitem->query['id']     == $venue->id);
 
 			// get search & user-state variables
-			$filter_order 		= $app->getUserStateFromRequest('com_jem.venue.filter_order', 'filter_order', 'a.dates', 'cmd');
-			$filter_order_Dir 	= $app->getUserStateFromRequest('com_jem.venue.filter_order_Dir', 'filter_order_Dir', '', 'word');
-			$filter 			= $app->getUserStateFromRequest('com_jem.venue.filter', 'filter', '', 'int');
-			$search 			= $app->getUserStateFromRequest('com_jem.venue.filter_search', 'filter_search', '', 'string');
+			$filter_order 		= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
+			$filter_order_DirDefault = 'ASC';
+			// Reverse default order for dates in archive mode
+			if($task == 'archive' && $filter_order == 'a.dates') {
+				$filter_order_DirDefault = 'DESC';
+			}
+			$filter_order_Dir 	= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
+			$filter 			= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter', 'filter', '', 'int');
+			$search 			= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 			$search 			= $db->escape(trim(JString::strtolower($search)));
 
 			// table ordering

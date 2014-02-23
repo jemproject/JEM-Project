@@ -12,7 +12,7 @@
 		/>
 		<field name="featured" type="list"
 			label="JFEATURED"
-			description="COM_CONTENT_FIELD_FEATURED_DESC"
+			description="COM_JEM_EVENT_FIELD_FEATURED_DESC"
 			default="0"
 		>
 			<option value="0">JNO</option>
@@ -129,7 +129,7 @@
 			class="inputbox" size="20" />
 		<field name="published" type="list"
 			label="JSTATUS"
-			description="COM_JEM_PUBLISHED_DESC"
+			description="JFIELD_PUBLISHED_DESC"
 			class="inputbox"
 			size="1"
 			default="1"

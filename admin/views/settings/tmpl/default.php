@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  * 
@@ -322,28 +322,32 @@ function commoff()
 <form action="index.php" method="post" id="settings-form" name="adminForm" class="form-validate">
 	<?php echo JHtml::_('tabs.start', 'settings-pane', array('useCookie'=>1)); ?>
 	<?php echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_BASIC_SETTINGS' ), 'settings-basic'); ?>
-
+	
+	<div class="width-50 fltlft">
 	<?php echo $this->loadTemplate('basicdisplay'); ?>
 	<?php echo $this->loadTemplate('basiceventhandling'); ?>
+	</div><div class="width-50 fltrt">
 	<?php echo $this->loadTemplate('basicimagehandling'); ?>
 	<?php echo $this->loadTemplate('basicmetahandling'); ?>
+	</div><div class="clr"></div>
 
 	<?php echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_EVENT_PAGE' ), 'layout2'); ?>
 
-	<?php echo $this->loadTemplate('evvenues'); ?>
+	<div class="width-50 fltlft">
 	<?php echo $this->loadTemplate('evevents'); ?>
+	</div><div class="width-50 fltrt">
+	<?php echo $this->loadTemplate('evvenues'); ?>
 	<?php echo $this->loadTemplate('evregistration'); ?>
-
+	</div><div class="clr"></div>
+	
+	
 	<?php echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_LAYOUT' ), 'layout'); ?>
-
 	<?php echo $this->loadTemplate('layout'); ?>
 
 	<?php echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_GLOBAL_PARAMETERS' ), 'parameters'); ?>
-
 	<?php echo $this->loadTemplate('parameters'); ?>
 
 	<?php echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_USER_CONTROL' ), 'usercontrol'); ?>
-
 	<?php echo $this->loadTemplate('usercontrol'); ?>
 
 	<?php echo JHtml::_('tabs.end'); ?>

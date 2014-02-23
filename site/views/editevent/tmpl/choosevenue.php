@@ -1,19 +1,17 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 $function = JRequest::getCmd('function', 'jSelectVenue');
 ?>
 
 <script type="text/javascript">
-
 	function tableOrdering( order, dir, view )
 	{
 		var form = document.getElementById("adminForm");
@@ -43,8 +41,8 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 			echo $this->searchfilter.'&nbsp;';
 			?>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->filter;?>" class="inputbox" onchange="document.adminForm.submit();" />
-			<button type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
-			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('COM_JEM_RESET'); ?></button>
+			<button type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 			<button type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo JText::_('COM_JEM_SELECT_VENUE') ?>');"><?php echo JText::_('COM_JEM_NOVENUE')?></button>
 		</div>
 		<div class="jem_fright">
@@ -92,6 +90,6 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 <div class="copyright">
-<?php echo JEMOutput::footer();	?>
+<?php echo JemOutput::footer();	?>
 </div>
 </div>

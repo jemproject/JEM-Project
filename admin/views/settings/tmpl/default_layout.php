@@ -1,15 +1,15 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
 ?>
-
+<div class="width-50 fltlft">
 <div class="width-100">
 	<fieldset class="adminform">
 		<legend><?php echo JText::_( 'COM_JEM_GENERAL_LAYOUT_SETTINGS' ); ?></legend>
@@ -54,7 +54,7 @@ defined('_JEXEC') or die;
 	</ul>
 </fieldset>
 </div>
-
+</div><div class="width-50 fltrt">
 <div class="width-100">
 	<fieldset class="adminform">
 		<legend><?php echo JText::_( 'COM_JEM_VENUE_COLUMN' ); ?></legend>
@@ -101,3 +101,4 @@ defined('_JEXEC') or die;
 		</ul>
 	</fieldset>
 </div>
+</div><div class="clr"></div>

@@ -2,7 +2,7 @@
 /**
  * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -292,7 +292,7 @@ class JEMModelEvent extends JModelItem
 	/**
 	 * Increment the hit counter for the event.
 	 *
-	 * @param int		Optional primary key of the article to increment.
+	 * @param int		Optional primary key of the event to increment.
 	 * @return boolean if successful; false otherwise and internal error set.
 	 */
 	public function hit($pk = 0)

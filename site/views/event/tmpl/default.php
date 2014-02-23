@@ -2,7 +2,7 @@
 /**
  * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -159,7 +159,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		<?php if ($params->get('event_show_noauth') == true and  $user->get('guest') ) { ?>
 		
 		<?php echo $this->item->introtext; ?>
-		<?php //Optional link to let them register to see the whole article. ?>
+		<?php //Optional link to let them register to see the whole event. ?>
 		<?php if ($params->get('event_show_readmore') && $this->item->fulltext != null) {
 		$link1 = JRoute::_('index.php?option=com_users&view=login');
 		$link = new JURI($link1);?>

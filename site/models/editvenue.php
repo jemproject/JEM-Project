@@ -2,7 +2,7 @@
 /**
  * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -49,7 +49,7 @@ class JemModelEditvenue extends JemModelVenue
 	/**
 	 * Method to get venue data.
 	 *
-	 * @param integer	The id of the article.
+	 * @param integer	The id of the venue.
 	 * @return mixed item data object on success, false on failure.
 	 */
 	public function getItem($itemId = null)

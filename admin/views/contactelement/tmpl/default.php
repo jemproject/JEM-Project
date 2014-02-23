@@ -1,12 +1,11 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 $function = JRequest::getCmd('function', 'jSelectContact');
@@ -19,8 +18,8 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 		<td width="100%">
 			<?php echo JText::_('COM_JEM_SEARCH').' '.$this->lists['filter']; ?>
 			<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="text_area" onChange="document.adminForm.submit();" />
-			<button class="buttonfilter" type="submit"><?php echo JText::_('COM_JEM_GO'); ?></button>
-			<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('COM_JEM_RESET'); ?></button>
+			<button class="buttonfilter" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+			<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 			<button class="buttonfilter" type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo JText::_('COM_JEM_SELECTCONTACT') ?>');"><?php echo JText::_('COM_JEM_NOCONTACT')?></button>
 		</td>
 		<td nowrap="nowrap">
@@ -39,7 +38,7 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 			<th align="left" class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATE', 'con.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th align="left" class="title"><?php echo JText::_('COM_JEM_EMAIL'); ?></th>
 			<th align="left" class="title"><?php echo JText::_('COM_JEM_TELEPHONE'); ?></th>
-			<th class="title center"><?php echo JText::_('COM_JEM_PUBLISHED'); ?></th>
+			<th class="title center"><?php echo JText::_('JSTATUS'); ?></th>
 		</tr>
 	</thead>
 

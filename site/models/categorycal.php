@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -142,7 +142,7 @@ class JEMModelCategoryCal extends JModelLegacy
 
 		if (empty($items)) {
 			$query = $this->_buildQuery();
-			$items = JEMHelper::getAttendeesNumbers($items);
+		//	$items = JEMHelper::getAttendeesNumbers($items);
 
 			if ($layout == 'calendar') {
 				$items = $this->_getList($query);
@@ -152,7 +152,6 @@ class JEMModelCategoryCal extends JModelLegacy
 			}
 
 			$multi = array();
-
 
 			foreach($items AS $item) {
 				$item->categories = $this->getCategories($item->id);
@@ -390,7 +389,7 @@ class JEMModelCategoryCal extends JModelLegacy
 		// === END Excluded categories add === //
 		 */
 
-		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
+		$where = (count($where) ? ' WHERE (' . implode(') AND (', $where) . ')' : '');
 
 		return $where;
 	}

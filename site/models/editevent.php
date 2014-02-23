@@ -2,7 +2,7 @@
 /**
  * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -47,7 +47,7 @@ class JEMModelEditevent extends JEMModelEvent
 	/**
 	 * Method to get event data.
 	 *
-	 * @param integer	The id of the article.
+	 * @param integer	The id of the event.
 	 *
 	 * @return mixed item data object on success, false on failure.
 	 */

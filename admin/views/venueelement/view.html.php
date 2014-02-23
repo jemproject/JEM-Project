@@ -1,22 +1,18 @@
 <?php
 /**
- * @version 1.9.5
+ * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 
 /**
- * View class for the JEM venueselect screen
- *
- * @package JEM
- *
+ * Venueselect-View
  */
-class JEMViewVenueelement extends JViewLegacy {
+class JemViewVenueelement extends JViewLegacy {
 
 	public function display($tpl = null)
 	{
@@ -25,6 +21,7 @@ class JEMViewVenueelement extends JViewLegacy {
 		//initialise variables
 		$db			= JFactory::getDBO();
 		$document	= JFactory::getDocument();
+		$itemid 	= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
 
 		JHtml::_('behavior.tooltip');
 		JHtml::_('behavior.modal');
@@ -32,9 +29,9 @@ class JEMViewVenueelement extends JViewLegacy {
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest('com_jem.venueelement.filter_order', 'filter_order', 'l.ordering', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.venueelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
-		$filter 			= $app->getUserStateFromRequest('com_jem.venueelement.filter', 'filter', '', 'int');
-		$filter_state 		= $app->getUserStateFromRequest('com_jem.venueelement.filter_state', 'filter_state', '*', 'word');
-		$search 			= $app->getUserStateFromRequest('com_jem.venueelement.filter_search', 'filter_search', '', 'string');
+		$filter 			= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter', 'filter', '', 'int');
+		$filter_state 		= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_state', 'filter_state', '', 'string');
+		$search 			= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 		$search 			= $db->escape(trim(JString::strtolower($search)));
 
 		//prepare document
@@ -68,6 +65,7 @@ class JEMViewVenueelement extends JViewLegacy {
 
 		//assign data to template
 		$this->lists		= $lists;
+		$this->filter_state = $filter_state;
 		$this->rows			= $rows;
 		$this->pagination	= $pagination;
 

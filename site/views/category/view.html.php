@@ -2,7 +2,7 @@
 /**
  * @version 1.9.6
  * @package JEM
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -97,8 +97,11 @@ class JEMViewCategory extends JEMView
 			$document->setMetaData('title', $pagetitle);
 
 			//init calendar
+			$itemid = JRequest::getInt('Itemid');
+			$partItemid = ($itemid > 0) ? '&Itemid='.$itemid : '';
+			$partCatid = ($catid > 0) ? '&id=' . $catid : '';
 			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
-			$cal->enableMonthNav(JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug).'&layout=calendar'));
+			$cal->enableMonthNav('index.php?option=com_jem&view=category&layout=calendar' . $partCatid . $partItemid);
 			$cal->setFirstWeekDay($params->get('firstweekday', 1));
 			//$cal->enableDayLinks(false);
 
