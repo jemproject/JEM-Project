@@ -7,7 +7,6 @@
  */
 
 #geocomplete {
-	width:	90%;
 }
 
 input#geocomplete {
@@ -21,8 +20,6 @@ input#find {
 }
 
 .map_canvas {
-	max-width:	none;
-	width:	auto;
 	height:	200px;
 	margin:	10px 20px 10px 0px;
 }
