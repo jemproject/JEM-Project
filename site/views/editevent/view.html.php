@@ -149,10 +149,6 @@ class JemViewEditevent extends JViewLegacy
 		// Create a shortcut to the parameters.
 		$params = &$this->state->params;
 
-		//
-		$access2 = JemHelper::getAccesslevelOptions();
-		$this->access = $access2;
-
 		// add css file
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 
