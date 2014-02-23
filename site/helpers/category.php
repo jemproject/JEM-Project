@@ -13,11 +13,6 @@ jimport('joomla.application.categories');
 
 /**
  * Content Component Category Tree
- *
- * @static
- * @package		Joomla.Site
- * @subpackage	com_content
- * @since 1.6
  */
 class JEM2Categories extends JCategories
 {

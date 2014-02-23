@@ -7,7 +7,6 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
  */
-
 defined('_JEXEC') or die;
 
 
@@ -80,6 +79,7 @@ defined('_JEXEC') or die;
 		$filters[] = JHtml::_('select.option', '6', JText::_('JALL'));
 		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $this->state->get('filter'));
 
+		
 		//assign data to template
 		$this->lists		= $lists;
 		$this->user			= $user;

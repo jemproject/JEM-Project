@@ -149,10 +149,6 @@ class JemViewEditevent extends JViewLegacy
 		// Create a shortcut to the parameters.
 		$params = &$this->state->params;
 
-		//
-		$access2 = JemHelper::getAccesslevelOptions();
-		$this->access = $access2;
-
 		// add css file
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 
@@ -175,6 +171,11 @@ class JemViewEditevent extends JViewLegacy
 			$this->form->setFieldAttribute('catid', 'default', $params->get('catid', 1));
 			$this->form->setFieldAttribute('catid', 'readonly', 'true');
 		}
+		
+		
+		$access2 		= JEMHelper::getAccesslevelOptions();
+		$this->access	= $access2;
+		
 		$this->_prepareDocument();
 		parent::display($tpl);
 	}

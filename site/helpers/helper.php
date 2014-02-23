@@ -363,7 +363,6 @@ class JemHelper {
 		return $result;
 	}
 
-
 	
 	/**
 	 * Build the select list for access level
