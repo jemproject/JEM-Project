@@ -81,6 +81,7 @@ class JEMViewVenue extends JEMView {
 			// Set Page title
 			$pagetitle = $params->def('page_title', $menuitem->title);
 			$params->def('page_heading', $params->get('page_title'));
+			$pageclass_sfx = $params->get('pageclass_sfx');
 
 			// Add site name to title if param is set
 			if ($app->getCfg('sitename_pagetitles', 0) == 1) {
@@ -102,10 +103,11 @@ class JEMViewVenue extends JEMView {
 			$cal->setFirstWeekDay($params->get('firstweekday',1));
 
 			// map variables
-			$this->rows 		= $rows;
-			$this->params 		= $params;
-			$this->jemsettings 	= $jemsettings;
-			$this->cal 			= $cal;
+			$this->rows 			= $rows;
+			$this->params 			= $params;
+			$this->jemsettings 		= $jemsettings;
+			$this->cal 				= $cal;
+			$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
 
 		} else {
 
@@ -190,6 +192,7 @@ class JEMViewVenue extends JEMView {
 				$params->set('show_page_heading', 1); // ensure page heading is shown
 				$pathway->addItem($pagetitle, JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug)));
 			}
+			$pageclass_sfx = $params->get('pageclass_sfx');
 
 			// create the pathway
 			if ($task == 'archive') {
@@ -322,7 +325,7 @@ class JEMViewVenue extends JEMView {
 			$this->pagetitle			= $pagetitle;
 			$this->task					= $task;
 			$this->allowedtoeditvenue 	= $allowedtoeditvenue;
-
+			$this->pageclass_sfx		= htmlspecialchars($pageclass_sfx);
 		}
 
 		parent::display($tpl);

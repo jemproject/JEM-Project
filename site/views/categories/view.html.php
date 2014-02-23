@@ -53,6 +53,7 @@ class JEMViewCategories extends JEMView
 
 		$pagetitle = $params->def('page_title', $menuitem->title);
 		$pageheading = $params->def('page_heading', $params->get('page_title'));
+		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		//pathway
 		$pathway = $app->getPathWay();
@@ -110,6 +111,7 @@ class JEMViewCategories extends JEMView
 		$this->print_link		= $print_link;
 		$this->model			= $model;
 		$this->id				= $id;
+		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);
 	}

@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 ?>
-<div id="jem" class="jem_venues_view">
+<div id="jem" class="jem_venues<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
 		echo JEMOutput::addvenuebutton($this->addvenuelink, $this->params, $this->jemsettings);

@@ -74,6 +74,7 @@ class JEMViewWeekcal extends JViewLegacy
 		//Set Page title
 		$pagetitle = $params->def('page_title', $menuitem->title);
 		$params->def('page_heading', $pagetitle);
+		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		// Add site name to title if param is set
 		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
@@ -91,11 +92,12 @@ class JEMViewWeekcal extends JViewLegacy
 		$cal->enableWeekNum(JText::_('COM_JEM_WKCAL_WEEK'),null,''); // enables week number column with linkable week numbers
 		$cal->setFirstWeekDay($params->get('firstweekday', 0));
 
-		$this->rows 		= $rows;
-		$this->params		= $params;
-		$this->jemsettings	= $jemsettings;
-		$this->currentweek	= $currentweek;
-		$this->cal			= $cal;
+		$this->rows 		 = $rows;
+		$this->params		 = $params;
+		$this->jemsettings	 = $jemsettings;
+		$this->currentweek	 = $currentweek;
+		$this->cal			 = $cal;
+		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);
 	}

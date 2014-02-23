@@ -51,6 +51,7 @@ class JEMViewVenues extends JViewLegacy
 
 		$pagetitle = $params->def('page_title', $menuitem->title);
 		$pageheading = $params->def('page_heading', $params->get('page_title'));
+		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		//pathway
 		$pathway 	= $app->getPathWay();
@@ -112,6 +113,7 @@ class JEMViewVenues extends JViewLegacy
 		$this->settings			= $settings;
 		$this->task				= $task;
 		$this->pagetitle		= $pagetitle;
+		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);
 	}

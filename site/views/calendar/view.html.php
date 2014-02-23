@@ -81,6 +81,7 @@ class JEMViewCalendar extends JViewLegacy
 		//Set Page title
 		$pagetitle   = $params->def('page_title', $menuitem->title);
 		$params->def('page_heading', $pagetitle);
+		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		// Add site name to title if param is set
 		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
@@ -103,6 +104,7 @@ class JEMViewCalendar extends JViewLegacy
 		$this->params      = $params;
 		$this->jemsettings = $jemsettings;
 		$this->cal         = $cal;
+		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);
 	}

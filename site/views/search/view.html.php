@@ -82,6 +82,7 @@ class JEMViewSearch extends JEMView
 			$pageheading = $pagetitle;
 			$pathway->addItem(1, $pagetitle);
 		}
+		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		if ($task == 'archive') {
 			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=search&task=archive'));
@@ -187,6 +188,7 @@ class JEMViewSearch extends JEMView
 		$this->filter_continent	= $filter_continent;
 		$this->filter_country	= $filter_country;
 		$this->document			= $document;
+		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);
 	}

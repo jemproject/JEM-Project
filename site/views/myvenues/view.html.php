@@ -114,6 +114,7 @@ class JEMViewMyvenues extends JViewLegacy
 			$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_VENUES'));
 			$pageheading = $params->get('page_heading', $pagetitle);
 		}
+		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		$params->set('page_heading', $pageheading);
 
@@ -138,6 +139,7 @@ class JEMViewMyvenues extends JViewLegacy
 		$this->pagetitle			= $pagetitle;
 		$this->lists 				= $lists;
 		$this->novenues				= $novenues;
+		$this->pageclass_sfx		= htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);
 	}

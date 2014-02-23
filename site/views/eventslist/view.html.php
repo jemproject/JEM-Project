@@ -82,8 +82,9 @@ class JEMViewEventslist extends JEMView
 		}
 
 		//params
-		$pagetitle   = $params->def('page_title', $menuitem ? $menuitem->title : COM_JEM_EVENTS);
-		$pageheading = $params->def('page_heading', $params->get('page_title'));
+		$pagetitle     = $params->def('page_title', $menuitem ? $menuitem->title : COM_JEM_EVENTS);
+		$pageheading   = $params->def('page_heading', $params->get('page_title'));
+		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		//pathway
 		if ($menuitem) {
@@ -168,6 +169,7 @@ class JEMViewEventslist extends JEMView
 		$this->jemsettings		= $jemsettings;
 		$this->settings			= $settings;
 		$this->pagetitle		= $pagetitle;
+		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
 
 		$this->_prepareDocument();
 		parent::display($tpl);

@@ -111,6 +111,7 @@ class JEMViewMyevents extends JViewLegacy
 			$params->def('page_title', $menuitem->title);
 			$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_EVENTS'));
 			$pageheading = $params->get('page_heading', $pagetitle);
+			$pageclass_sfx = $params->get('pageclass_sfx');
 		}
 
 		$params->set('page_heading', $pageheading);
@@ -144,6 +145,7 @@ class JEMViewMyevents extends JViewLegacy
 		$this->pagetitle				= $pagetitle;
 		$this->lists 					= $lists;
 		$this->noevents					= $noevents;
+		$this->pageclass_sfx 			= htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);
 	}

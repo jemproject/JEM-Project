@@ -22,7 +22,7 @@ $attribs 	= json_decode($this->item->attribs);
 JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
 <?php if ($params->get('access-view')){?>
-<div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event"
+<div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event<?php echo $this->pageclass_sfx;?>"
 	itemscope="itemscope" itemtype="http://schema.org/Event">
 	<div class="buttons">
 	

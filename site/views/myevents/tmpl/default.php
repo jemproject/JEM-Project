@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 ?>
-<div id="jem" class="jem_jem">
+<div id="jem" class="jem_myevents<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
 		echo JEMOutput::publishbutton();

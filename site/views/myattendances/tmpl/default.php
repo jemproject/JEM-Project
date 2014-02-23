@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 ?>
-<div id="jem" class="jem_jem">
+<div id="jem" class="jem_myattendances<?php echo $this->pageclass_sfx;?>">
 
 <?php if ($this->params->get('show_page_heading', 1)) : ?>
 	<h1 class="componentheading">

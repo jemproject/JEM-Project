@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 ?>
-<div id="jem" class="jem_venue" itemscope="itemscope" itemtype="http://schema.org/Place">
+<div id="jem" class="jem_venue<?php echo $this->pageclass_sfx;?>" itemscope="itemscope" itemtype="http://schema.org/Place">
 	<div class="buttons">
 		<?php
 			echo JEMOutput::addvenuebutton($this->addvenuelink, $this->params, $this->jemsettings);

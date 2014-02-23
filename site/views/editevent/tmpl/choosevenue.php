@@ -90,6 +90,6 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 	<?php echo $this->pagination->getPagesLinks(); ?>
 </div>
 <div class="copyright">
-<?php echo JemOutput::footer();	?>
+	<?php echo JemOutput::footer();	?>
 </div>
 </div>
