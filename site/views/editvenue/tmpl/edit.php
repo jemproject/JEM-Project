@@ -234,7 +234,7 @@ $options = array(
 	<!-- VENUE-GEODATA-->
 	<fieldset class="adminform" id="geodata">
 	<legend><?php echo JText::_('COM_JEM_GEODATA'); ?></legend>
-		<input id="geocomplete" type="text" placeholder="<?php echo JText::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
+		<input id="geocomplete" type="text" size="40" placeholder="<?php echo JText::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
       	<input id="find" type="button" value="find" />
       	<br><br>
  		<div class="map_canvas"></div>
