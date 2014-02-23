@@ -11,16 +11,12 @@ defined('_JEXEC') or die;
 jimport( 'joomla.application.component.view');
 
 /**
- * ICS-View
- *
- * @package JEM
- *
+ * Event-Raw
  */
 class JemViewEvent extends JViewLegacy
 {
 	/**
 	 * Creates the output for the event view
-	 *
 	 */
 	function display($tpl = null)
 	{
@@ -28,7 +24,6 @@ class JemViewEvent extends JViewLegacy
 
 		// check iCal global setting
 		if ($settings->get('global_show_ical_icon','0')==1) {
-
 			// Get data from the model
 			$row 				= $this->get('Item');
 			$row->categories 	= $this->get('Categories');
@@ -45,7 +40,6 @@ class JemViewEvent extends JViewLegacy
 
 				// generate and redirect output to user browser
 				$vcal->returnCalendar();
-				echo $vcal->createCalendar(); // debug
 			} else {
 				return;
 			}

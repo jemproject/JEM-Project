@@ -6,24 +6,21 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
 /**
- * HTML View class for the JEM View
+ * Eventslist-View
  *
  * @package JEM
  *
 */
-class JEMViewEventslist extends JEMView
+class JemViewEventslist extends JEMView
 {
 	/**
 	 * Creates the Simple List View
-	 *
-	 *
 	 */
 	function display( $tpl = null )
 	{

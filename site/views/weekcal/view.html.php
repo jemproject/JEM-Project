@@ -6,23 +6,17 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 
 /**
- * HTML View class for the Calendar View
- *
- * @package JEM
- *
+ * Weekcal-View
  */
-class JEMViewWeekcal extends JViewLegacy
+class JemViewWeekcal extends JViewLegacy
 {
 	/**
 	 * Creates the Calendar View
-	 *
-	 *
 	 */
 	function display($tpl = null)
 	{
@@ -31,8 +25,7 @@ class JEMViewWeekcal extends JViewLegacy
 		// Load tooltips behavior
 		JHtml::_('behavior.tooltip');
 
-		//initialize variables
-		//$document 	= JFactory::getDocument();
+		// initialize variables
 		$menu 		= $app->getMenu();
 		$menuitem 	= $menu->getActive();
 		$jemsettings = JEMHelper::config();
@@ -71,7 +64,7 @@ class JEMViewWeekcal extends JViewLegacy
 		$currentweek = $this->get('Currentweek');
 		$currentyear =  Date("Y");
 
-		//Set Page title
+		// set Pagetitle
 		$pagetitle = $params->def('page_title', $menuitem->title);
 		$params->def('page_heading', $pagetitle);
 
