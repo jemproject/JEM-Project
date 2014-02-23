@@ -62,6 +62,9 @@ class JEMViewVenue extends JViewLegacy {
 		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 		JHtml::_('script', 'com_jem/jquery.geocomplete.js', false, true);
 
+		$access2 = JEMHelper::getAccesslevelOptions();
+		$this->access		= $access2;
+
 		$this->addToolbar();
 		parent::display($tpl);
 	}

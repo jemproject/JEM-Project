@@ -63,6 +63,8 @@ class JEMViewEvent extends JViewLegacy {
 		//$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 		//$document->addScript('http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js');
 
+		$access2 = JEMHelper::getAccesslevelOptions();
+		$this->access		= $access2;
 		$this->jemsettings		= $jemsettings;
 		$this->Lists 		= $Lists;
 

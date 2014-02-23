@@ -179,6 +179,9 @@ class JemViewEditvenue extends JViewLegacy
 		$this->user = $user;
 		$this->_prepareDocument();
 
+		$access2 		= JemHelper::getAccesslevelOptions();
+		$this->access	= $access2;
+
 		parent::display($tpl);
 	}
 
