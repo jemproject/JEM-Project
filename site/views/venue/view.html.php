@@ -9,6 +9,7 @@
 defined('_JEXEC') or die ();
 
 require JPATH_COMPONENT_SITE.'/classes/view.class.php';
+
 /**
  * Venue-View
  */
@@ -77,6 +78,7 @@ class JemViewVenue extends JEMView {
 			// Set Page title
 			$pagetitle = $params->def('page_title', $menuitem->title);
 			$params->def('page_heading', $params->get('page_title'));
+			$pageclass_sfx = $params->get('pageclass_sfx');
 
 			// Add site name to title if param is set
 			if ($app->getCfg('sitename_pagetitles', 0) == 1) {
@@ -98,10 +100,11 @@ class JemViewVenue extends JEMView {
 			$cal->setFirstWeekDay($params->get('firstweekday',1));
 
 			// map variables
-			$this->rows 		= $rows;
-			$this->params 		= $params;
-			$this->jemsettings 	= $jemsettings;
-			$this->cal 			= $cal;
+			$this->rows 			= $rows;
+			$this->params 			= $params;
+			$this->jemsettings 		= $jemsettings;
+			$this->cal 				= $cal;
+			$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
 
 		} else {
 
@@ -186,6 +189,7 @@ class JemViewVenue extends JEMView {
 				$params->set('show_page_heading', 1); // ensure page heading is shown
 				$pathway->addItem($pagetitle, JRoute::_(JemHelperRoute::getVenueRoute($venue->slug)));
 			}
+			$pageclass_sfx = $params->get('pageclass_sfx');
 
 			// create the pathway
 			if ($task == 'archive') {
@@ -215,8 +219,8 @@ class JemViewVenue extends JEMView {
 			$document->setDescription(strip_tags($venue->meta_description));
 
 			// Check if the user has access to the add-eventform
-			$maintainer = JEMUser::ismaintainer('add');
-			$genaccess = JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+			$maintainer = JemUser::ismaintainer('add');
+			$genaccess = JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
 			if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
 				$addeventlink = 1;
@@ -225,8 +229,8 @@ class JemViewVenue extends JEMView {
 			}
 
 			// Check if the user has access to the add-venueform
-			$maintainer2 = JEMUser::venuegroups('add');
-			$genaccess2 = JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
+			$maintainer2 = JemUser::venuegroups('add');
+			$genaccess2 = JemUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
 			if ($maintainer2 || $genaccess2) {
 				$addvenuelink = 1;
 			} else {
@@ -234,8 +238,8 @@ class JemViewVenue extends JEMView {
 			}
 
 			// Check if the user has access to the edit-venueform
-			$maintainer3 = JEMUser::venuegroups('edit');
-			$genaccess3 = JEMUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
+			$maintainer3 = JemUser::venuegroups('edit');
+			$genaccess3 = JemUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
 			if ($maintainer3 || $genaccess3) {
 				$allowedtoeditvenue = 1;
 			} else {
@@ -318,7 +322,7 @@ class JemViewVenue extends JEMView {
 			$this->pagetitle			= $pagetitle;
 			$this->task					= $task;
 			$this->allowedtoeditvenue 	= $allowedtoeditvenue;
-
+			$this->pageclass_sfx		= htmlspecialchars($pageclass_sfx);
 		}
 
 		parent::display($tpl);

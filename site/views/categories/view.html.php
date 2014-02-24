@@ -16,7 +16,7 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 class JemViewCategories extends JEMView
 {
 	/**
-	 * Creates the Categories View
+	 * Categories-View
 	 */
 	function display($tpl=null)
 	{
@@ -46,8 +46,9 @@ class JemViewCategories extends JEMView
 		$menuitem	= $menu->getActive();
 		$params 	= $app->getParams('com_jem');
 
-		$pagetitle = $params->def('page_title', $menuitem->title);
-		$pageheading = $params->def('page_heading', $params->get('page_title'));
+		$pagetitle		= $params->def('page_title', $menuitem->title);
+		$pageheading	= $params->def('page_heading', $params->get('page_title'));
+		$pageclass_sfx	= $params->get('pageclass_sfx');
 
 		//pathway
 		$pathway = $app->getPathWay();
@@ -105,6 +106,7 @@ class JemViewCategories extends JEMView
 		$this->print_link		= $print_link;
 		$this->model			= $model;
 		$this->id				= $id;
+		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);
 	}

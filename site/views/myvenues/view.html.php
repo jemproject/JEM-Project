@@ -6,15 +6,13 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
 
 /**
- * HTML View class for the JEM View
+ * MyVenues-View
  */
-class JEMViewMyvenues extends JViewLegacy
+class JemViewMyvenues extends JViewLegacy
 {
 	/**
 	 * Creates the Myvenues View
@@ -25,8 +23,8 @@ class JEMViewMyvenues extends JViewLegacy
 
 		//initialize variables
 		$document 		= JFactory::getDocument();
-		$jemsettings 	= JEMHelper::config();
-		$settings	 	= JEMHelper::globalattribs();
+		$jemsettings 	= JemHelper::config();
+		$settings	 	= JemHelper::globalattribs();
 		$menu 			= $app->getMenu();
 		$menuitem 		= $menu->getActive();
 		$params 		= $app->getParams();
@@ -114,6 +112,7 @@ class JEMViewMyvenues extends JViewLegacy
 			$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_VENUES'));
 			$pageheading = $params->get('page_heading', $pagetitle);
 		}
+		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		$params->set('page_heading', $pageheading);
 
@@ -138,6 +137,7 @@ class JEMViewMyvenues extends JViewLegacy
 		$this->pagetitle			= $pagetitle;
 		$this->lists 				= $lists;
 		$this->novenues				= $novenues;
+		$this->pageclass_sfx		= htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);
 	}

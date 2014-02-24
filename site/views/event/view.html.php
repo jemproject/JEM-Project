@@ -51,39 +51,38 @@ class JemViewEvent extends JViewLegacy
 
 		$this->registers	= $model->getRegisters($this->state->get('event.id'));
 		$isregistered		= $this->get('UserIsRegistered');
-
+		
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {
 			JError::raiseWarning(500, implode("\n", $errors));
 			return false;
 		}
-
+		
 		// Create a shortcut for $item and params.
 		$item   = $this->item;
 		$params = $this->params;
-
+		
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
-		                                && $menuitem->query['view']   == 'event'
-		                                && $menuitem->query['id']     == $item->id);
-
+				&& $menuitem->query['view']   == 'event'
+				&& $menuitem->query['id']     == $item->id);
+		
 		// Add router helpers.
 		$item->slug			= $item->alias ? ($item->id.':'.$item->alias) : $item->id;
 		$item->catslug		= $item->category_alias ? ($item->catid.':'.$item->category_alias) : $item->catid;
 		$item->parent_slug	= $item->category_alias ? ($item->parent_id.':'.$item->parent_alias) : $item->parent_id;
 		$item->venueslug	= $item->alias ? ($item->locid.':'.$item->localias) : $item->locid;
-
+		
 		// TODO: Change based on shownoauth
 		$item->readmore_link = JRoute::_(JemHelperRoute::getEventRoute($item->slug, $item->catslug));
-
+		
 		// Check to see which parameters should take priority
 		if ($useMenuItemParams) {
-			// If the current view is the active item and an event view for this event, then the menu item params take priority
 			// Merge so that the menu item params take priority
 			$pagetitle = $params->def('page_title', $menuitem->title ? $menuitem->title : $item->title);
 			$params->def('page_heading', $pagetitle);
 			$pathway->setItemName(1, $menuitem->title);
-
+		
 			// Load layout from active query (in case it is an alternative menu item)
 			if (isset($menuitem->query['layout'])) {
 				$this->setLayout($menuitem->query['layout']);
@@ -92,25 +91,29 @@ class JemViewEvent extends JViewLegacy
 			if ($layout = $item->params->get('event_layout')) {
 				$this->setLayout($layout);
 			}
+		
+			$item->params->merge($params);
 		} else {
-			// Current view is not a single event, so the event params take priority here
 			// Merge the menu item params with the event params so that the event params take priority
-
 			$pagetitle = $item->title;
 			$params->set('page_title', $pagetitle);
 			$params->set('page_heading', $pagetitle);
 			$params->set('show_page_heading', 1); // ensure page heading is shown
 			$pathway->addItem($pagetitle, JRoute::_(JemHelperRoute::getEventRoute($item->slug)));
-
+		
 			// Check for alternative layouts (since we are not in a single-event menu item)
 			// Single-event menu item layout takes priority over alt layout for an event
 			if ($layout = $item->params->get('event_layout')) {
 				$this->setLayout($layout);
 			}
+		
+			$temp = clone($params);
+			$temp->merge($item->params);
+			$item->params = $temp;
 		}
-
+		
 		$offset = $this->state->get('list.offset');
-
+		
 		// Check the view access to the event (the model has already computed the values).
 		if (!$item->params->get('access-view') && !$item->params->get('show_noauth') &&  $user->get('guest')) {
 			JError::raiseWarning(403, JText::_('JERROR_ALERTNOAUTHOR'));
@@ -264,6 +267,7 @@ class JemViewEvent extends JViewLegacy
 
 		$this->isregistered			= $isregistered;
 		$this->dispatcher			= $dispatcher;
+		$this->pageclass_sfx 		= htmlspecialchars($item->params->get('pageclass_sfx'));
 
 		$this->_prepareDocument();
 
@@ -335,8 +339,40 @@ class JemViewEvent extends JViewLegacy
 			$this->document->setMetaData('robots', 'noindex, nofollow');
 		}
 
-		$title = $this->params->get('page_title', '');
+	/*
+		// Because the application sets a default page title,
+		// we need to get it from the menu item itself
+		$menu = $menus->getActive();
 
+		if ($menu) {
+			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
+		} else {
+			$this->params->def('page_heading', JText::_('JGLOBAL_JEM_EVENT'));
+		}
+	*/
+		$title = $this->params->get('page_title', '');
+	/*
+		$id = (int) @$menu->query['id'];
+
+		// if the menu item does not concern this event
+		if ($menu && ($menu->query['option'] != 'com_jem' || $menu->query['view'] != 'event' || $id != $this->item->id)) {
+			// If this is not a single event menu item, set the page title to the event title
+			if ($this->item->title) {
+				$title = $this->item->title;
+			}
+			$path = array(array('title' => $this->item->title, 'link' => ''));
+			$category = JCategories::getInstance('JEM2')->get($this->item->catid);
+			while ($category && ($menu->query['option'] != 'com_jem' || $menu->query['view'] == 'event'
+					|| $id != $category->id) && $category->id > 1) {
+				$path[] = array('title' => $category->catname, 'link' => JEMHelperRoute::getCategoryRoute($category->id));
+				$category = $category->getParent();
+			}
+			$path = array_reverse($path);
+			foreach($path as $item) {
+				$pathway->addItem($item['title'], $item['link']);
+			}
+		}
+	*/
 		// Check for empty title and add site name if param is set
 		if (empty($title)) {
 			$title = $app->getCfg('sitename');

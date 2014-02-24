@@ -77,6 +77,7 @@ class JemViewCategory extends JEMView
 			//Set Page title
 			$pagetitle   = $params->def('page_title', $menuitem->title);
 			$params->def('page_heading', $params->get('page_title'));
+			$pageclass_sfx = $params->get('pageclass_sfx');
 
 			// Add site name to title if param is set
 			if ($app->getCfg('sitename_pagetitles', 0) == 1) {
@@ -98,11 +99,12 @@ class JemViewCategory extends JEMView
 			$cal->setFirstWeekDay($params->get('firstweekday', 1));
 			//$cal->enableDayLinks(false);
 
-			$this->rows 		= $rows;
-			$this->catid 		= $catid;
-			$this->params		= $params;
-			$this->jemsettings	= $jemsettings;
-			$this->cal			= $cal;
+			$this->rows 			= $rows;
+			$this->catid 			= $catid;
+			$this->params			= $params;
+			$this->jemsettings		= $jemsettings;
+			$this->cal				= $cal;
+			$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
 
 		} else {
 
@@ -216,6 +218,7 @@ class JemViewCategory extends JEMView
 				$pageheading = $pagetitle;
 				$pathway->addItem($category->catname, JRoute::_(JemHelperRoute::getCategoryRoute($category->slug)) );
 			}
+			$pageclass_sfx = $params->get('pageclass_sfx');
 
 			if ($task == 'archive') {
 				$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_(JemHelperRoute::getCategoryRoute($category->slug).'&task=archive'));
@@ -285,6 +288,7 @@ class JemViewCategory extends JEMView
 			$this->jemsettings		= $jemsettings;
 			$this->settings			= $settings;
 			$this->categories		= $categories;
+			$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
 		}
 
 		parent::display($tpl);

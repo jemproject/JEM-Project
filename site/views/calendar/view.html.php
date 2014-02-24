@@ -15,7 +15,7 @@ defined('_JEXEC') or die;
 class JemViewCalendar extends JViewLegacy
 {
 	/**
-	 * Creates the Calendar View
+	 * Calendar-View
 	 */
 	function display($tpl = null)
 	{
@@ -23,6 +23,7 @@ class JemViewCalendar extends JViewLegacy
 
 		// Load tooltips behavior
 		JHtml::_('behavior.tooltip');
+		JHtml::_('behavior.framework');
 
 		//initialize variables
 		$document 	= JFactory::getDocument();
@@ -74,6 +75,7 @@ class JemViewCalendar extends JViewLegacy
 		//Set Page title
 		$pagetitle   = $params->def('page_title', $menuitem->title);
 		$params->def('page_heading', $pagetitle);
+		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		// Add site name to title if param is set
 		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
@@ -96,6 +98,7 @@ class JemViewCalendar extends JViewLegacy
 		$this->params      = $params;
 		$this->jemsettings = $jemsettings;
 		$this->cal         = $cal;
+		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);
 	}

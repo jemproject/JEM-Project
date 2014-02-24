@@ -22,8 +22,8 @@ class JemViewVenues extends JViewLegacy
 		$app = JFactory::getApplication();
 
 		$document		= JFactory::getDocument();
-		$jemsettings	= JEMHelper::config();
-		$settings 		= JEMHelper::globalattribs();
+		$jemsettings	= JemHelper::config();
+		$settings 		= JemHelper::globalattribs();
 		$user			= JFactory::getUser();
 		$print			= JRequest::getBool('print');
 
@@ -46,6 +46,7 @@ class JemViewVenues extends JViewLegacy
 
 		$pagetitle = $params->def('page_title', $menuitem->title);
 		$pageheading = $params->def('page_heading', $params->get('page_title'));
+		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		//pathway
 		$pathway 	= $app->getPathWay();
@@ -107,6 +108,7 @@ class JemViewVenues extends JViewLegacy
 		$this->settings			= $settings;
 		$this->task				= $task;
 		$this->pagetitle		= $pagetitle;
+		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);
 	}

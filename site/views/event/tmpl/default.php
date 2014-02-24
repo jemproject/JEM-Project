@@ -21,10 +21,9 @@ $attribs 	= json_decode($this->item->attribs);
 JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
 <?php if ($params->get('access-view')){?>
-<div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event"
+<div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event<?php echo $this->pageclass_sfx;?>"
 	itemscope="itemscope" itemtype="http://schema.org/Event">
 	<div class="buttons">
-	
 		<?php 
 		if ($params->get('event_show_email_icon',1)) {
 		echo JemOutput::mailbutton($this->item->slug, 'event', $this->params);
@@ -66,10 +65,8 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		<dt class="when"><?php echo JText::_('COM_JEM_WHEN').':'; ?></dt>
 		<dd class="when">
 			<?php
-				echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times,
-					$this->item->enddates, $this->item->endtimes);
-				echo JemOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times,
-					$this->item->enddates, $this->item->endtimes);
+				echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
+				echo JemOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
 			?>
 		</dd>
 		<?php if ($this->item->locid != 0) : ?>

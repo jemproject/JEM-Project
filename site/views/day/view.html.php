@@ -78,6 +78,7 @@ class JemViewDay extends JEMView
 			$params->set('page_heading', $pagetitle);
 			$pathway->addItem($pagetitle);
 		}
+		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		// Add site name to title if param is set
 		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
@@ -163,6 +164,7 @@ class JemViewDay extends JEMView
 		$this->lists			= $lists;
 		$this->daydate			= $daydate;
 		$this->showdaydate		= $showdaydate; // if true daydate will be shown as h2 sub heading
+		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
 
 		// Doesn't really help - each view has less or more specific needs.
 		//$this->prepareDocument();

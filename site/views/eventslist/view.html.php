@@ -22,7 +22,7 @@ class JemViewEventslist extends JEMView
 	{
 		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
 
-		//initialize variables
+		// initialize variables
 		$document 		= JFactory::getDocument();
 		$app 			= JFactory::getApplication();
 		$jemsettings	= JemHelper::config();
@@ -62,21 +62,22 @@ class JemViewEventslist extends JEMView
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
 
-		//get data from model
+		// get data from model
 		$rows 	= $this->get('Data');
 
-		//are events available?
+		// are events available?
 		if (!$rows) {
 			$noevents = 1;
 		} else {
 			$noevents = 0;
 		}
 
-		//params
-		$pagetitle   = $params->def('page_title', $menuitem ? $menuitem->title : COM_JEM_EVENTS);
-		$pageheading = $params->def('page_heading', $params->get('page_title'));
+		// params
+		$pagetitle		= $params->def('page_title', $menuitem ? $menuitem->title : COM_JEM_EVENTS);
+		$pageheading 	= $params->def('page_heading', $params->get('page_title'));
+		$pageclass_sfx	= $params->get('pageclass_sfx');
 
-		//pathway
+		// pathway
 		if ($menuitem) {
 			$pathway->setItemName(1, $menuitem->title);
 		}
@@ -99,13 +100,13 @@ class JemViewEventslist extends JEMView
 			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 		}
 
-		//Set Page title
+		// Set Page title
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title' , $pagetitle);
 
-		//Check if the user has access to the form
-		$maintainer = JEMUser::ismaintainer('add');
-		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
+		// Check if the user has access to the form
+		$maintainer = JemUser::ismaintainer('add');
+		$genaccess 	= JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
 			$dellink = 1;
@@ -113,14 +114,14 @@ class JemViewEventslist extends JEMView
 			$dellink = 0;
 		}
 
-		//add alternate feed link
+		// add alternate feed link
 		$link	= 'index.php?option=com_jem&view=eventslist&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
 
-		//search filter
+		// search filter
 		$filters = array();
 
 		if ($jemsettings->showtitle == 1) {
@@ -139,8 +140,6 @@ class JemViewEventslist extends JEMView
 			$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
 		}
 		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter );
-
-		// search filter
 		$lists['search']= $search;
 
 		// Create the pagination object
@@ -158,6 +157,7 @@ class JemViewEventslist extends JEMView
 		$this->jemsettings		= $jemsettings;
 		$this->settings			= $settings;
 		$this->pagetitle		= $pagetitle;
+		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
 
 		$this->_prepareDocument();
 		parent::display($tpl);

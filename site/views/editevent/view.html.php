@@ -8,6 +8,7 @@
  */
 defined('_JEXEC') or die();
 
+
 /**
  * Editevent-View
  */
@@ -31,18 +32,25 @@ class JemViewEditevent extends JViewLegacy
 		}
 
 		// Initialise variables.
-		$app			= JFactory::getApplication();
-		$jemsettings	= JemHelper::config();
-		$user			= JFactory::getUser();
-		$document		= JFactory::getDocument();
-		$url			= JURI::root();
+		$jemsettings = JEMHelper::config();
+		$app = JFactory::getApplication();
+		$user = JFactory::getUser();
+		$document = JFactory::getDocument();
+		$model = $this->getModel();
+		$menu = $app->getMenu();
+		$menuitem = $menu->getActive();
+		$pathway = $app->getPathway();
+		$url = JURI::root();
 
 		// Get model data.
 		$this->state = $this->get('State');
 		$this->item = $this->get('Item');
+		$this->params = $this->state->get('params');
 
 		// Create a shortcut for $item.
-		$item = &$this->item;
+		$item = $this->item;
+		$params = $this->params;
+		
 		$this->form = $this->get('Form');
 		$this->return_page = $this->get('ReturnPage');
 
@@ -50,49 +58,6 @@ class JemViewEditevent extends JViewLegacy
 		if ($user->id == 0 || $user == false) {
 			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
-		}
-
-		// Merge event params. If this is single-event view, menu params override event params
-		// Otherwise, event params override menu item params
-		$this->params	= $this->state->get('params');
-		$active	= $app->getMenu()->getActive();
-		$temp	= clone ($this->params);
-
-		// Check to see which parameters should take priority
-		if ($active) {
-			$currentLink = $active->link;
-			// If the current view is the active item and an event view for this event, then the menu item params take priority
-			if (strpos($currentLink, 'view=editevent')) {
-				// $item->params are the event params, $temp are the menu item params
-				// Merge so that the menu item params take priority
-				$item->params->merge($temp);
-				// Load layout from active query (in case it is an alternative menu item)
-				//if (isset($active->query['layout'])) {
-				//	$this->setLayout($active->query['layout']);
-				//}
-			}
-			else {
-				// Current view is not a single event, so the event params take priority here
-				// Merge the menu item params with the event params so that the event params take priority
-				$temp->merge($item->params);
-				$item->params = $temp;
-
-				// Check for alternative layouts (since we are not in a single-event menu item)
-				// Single-event menu item layout takes priority over alt layout for an event
-				if ($layout = $item->params->get('event_layout')) {
-					$this->setLayout($layout);
-				}
-			}
-		}
-		else {
-			// Merge so that event params take priority
-			$temp->merge($item->params);
-			$item->params = $temp;
-			// Check for alternative layouts (since we are not in a single-event menu item)
-			// Single-event menu item layout takes priority over alt layout for an event
-			if ($layout = $item->params->get('event_layout')) {
-				$this->setLayout($layout);
-			}
 		}
 
 		if (empty($this->item->id)) {
@@ -126,10 +91,50 @@ class JemViewEditevent extends JViewLegacy
 			return false;
 		}
 
+		// Decide which parameters should take priority
+		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
+				&& $menuitem->query['view']   == 'editevent'
+				&& 0 == $item->id); // menu item is always for new event
+		
+		$title = ($item->id == 0) ? JText::_('COM_JEM_EDITEVENT_ADD_EVENT')
+		: JText::sprintf('COM_JEM_EDITEVENT_EDIT_EVENT', $item->title);
+		
+		if ($useMenuItemParams) {
+			$pagetitle = $menuitem->title ? $menuitem->title : $title;
+			$params->def('page_title', $pagetitle);
+			$params->def('page_heading', $pagetitle);
+			$pathway->setItemName(1, $pagetitle);
+		
+			// Load layout from menu item if one is set else from event if there is one set
+			if (isset($menuitem->query['layout'])) {
+				$this->setLayout($menuitem->query['layout']);
+			} elseif ($layout = $item->params->get('event_layout')) {
+				$this->setLayout($layout);
+			}
+		
+			$item->params->merge($params);
+		} else {
+			$pagetitle = $title;
+			$params->set('page_title', $pagetitle);
+			$params->set('page_heading', $pagetitle);
+			$params->set('show_page_heading', 1); // ensure page heading is shown
+			$pathway->addItem($pagetitle, JRoute::_(JEMHelperRoute::getEventRoute($item->slug)));
+		
+			// Check for alternative layouts (since we are not in a edit-event menu item)
+			// Load layout from event if one is set
+			if ($layout = $item->params->get('event_layout')) {
+				$this->setLayout($layout);
+			}
+		
+			$temp = clone($params);
+			$temp->merge($item->params);
+			$item->params = $temp;
+		}
+		
 		if (!empty($this->item) && isset($this->item->id)) {
 			// $this->item->images = json_decode($this->item->images);
 			// $this->item->urls = json_decode($this->item->urls);
-
+		
 			$tmp = new stdClass();
 			// $tmp->images = $this->item->images;
 			// $tmp->urls = $this->item->urls;
@@ -142,12 +147,12 @@ class JemViewEditevent extends JViewLegacy
 			return false;
 		}
 
+		$access2 		= JEMHelper::getAccesslevelOptions();
+		$this->access	= $access2;
+		
 		JHtml::_('behavior.formvalidation');
 		JHtml::_('behavior.tooltip');
 		JHtml::_('behavior.modal', 'a.flyermodal');
-
-		// Create a shortcut to the parameters.
-		$params = &$this->state->params;
 
 		// add css file
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
@@ -159,12 +164,11 @@ class JemViewEditevent extends JViewLegacy
 		JHtml::_('script', 'com_jem/unlimited.js', false, true);
 
 		// Escape strings for HTML output
-		$this->pageclass_sfx = htmlspecialchars($params->get('pageclass_sfx'));
+		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));
 		$this->dimage = JemImage::flyercreator($this->item->datimage, 'event');
 		$this->jemsettings = $jemsettings;
 		$this->infoimage = JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_('COM_JEM_NOTES'), NULL, true);
 
-		$this->params = $params;
 		$this->user = $user;
 
 		if ($params->get('enable_category') == 1) {
@@ -172,35 +176,19 @@ class JemViewEditevent extends JViewLegacy
 			$this->form->setFieldAttribute('catid', 'readonly', 'true');
 		}
 		
-		
-		$access2 		= JEMHelper::getAccesslevelOptions();
-		$this->access	= $access2;
-		
 		$this->_prepareDocument();
 		parent::display($tpl);
 	}
 
+	
 	/**
 	 * Prepares the document
 	 */
 	protected function _prepareDocument()
 	{
 		$app = JFactory::getApplication();
-		$menus = $app->getMenu();
-		$pathway = $app->getPathway();
-		$title = null;
 
-		// Because the application sets a default page title,
-		// we need to get it from the menu item itself
-		$menu = $menus->getActive();
-		if ($menu) {
-			$this->params->def('page_heading', $this->params->get('page_title', $menu->title));
-		}
-		else {
-			$this->params->def('page_heading', JText::_('COM_JEM_EDITEVENT_EDIT_EVENT'));
-		}
-
-		$title = $this->params->def('page_title', JText::_('COM_JEM_EDITEVENT_EDIT_EVENT'));
+		$title = $this->params->get('page_title');
 		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
 			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
 		}
@@ -209,9 +197,8 @@ class JemViewEditevent extends JViewLegacy
 		}
 		$this->document->setTitle($title);
 
-		$pathway = $app->getPathWay();
-		$pathway->addItem($title, '');
-
+		// TODO: Is it useful to have meta data in an edit view?
+		//       Also shouldn't be "robots" set to "noindex, nofollow"?
 		if ($this->params->get('menu-meta_description')) {
 			$this->document->setDescription($this->params->get('menu-meta_description'));
 		}
@@ -224,7 +211,8 @@ class JemViewEditevent extends JViewLegacy
 			$this->document->setMetadata('robots', $this->params->get('robots'));
 		}
 	}
-
+	
+	
 	/**
 	 * Creates the output for the venue select listing
 	 */
@@ -280,7 +268,6 @@ class JemViewEditevent extends JViewLegacy
 	 */
 	protected function _displaychoosecontact($tpl)
 	{
-
 		$app			= JFactory::getApplication();
 		$jinput			= JFactory::getApplication()->input;
 		$jemsettings	= JemHelper::config();
@@ -338,6 +325,5 @@ class JemViewEditevent extends JViewLegacy
 
 		parent::display($tpl);
 	}
-
 }
 ?>

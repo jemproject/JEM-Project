@@ -62,6 +62,7 @@ class JemViewAttendees extends JViewLegacy {
 		$pagetitle = JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES') . ' - ' . $event->title;
 		$params->set('page_heading', JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES')); // event title is shown separate
 		//$params->set('show_page_heading', 1); // always show?
+		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		// Add site name to title if param is set
 		if ($app->getCfg('sitename_pagetitles', 0) == 1) {
@@ -125,6 +126,7 @@ class JemViewAttendees extends JViewLegacy {
 		$this->print_link	= $print_link;
 		$this->item			= $menuitem;
 		$this->action		= $uri->toString();
+		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);
 	}

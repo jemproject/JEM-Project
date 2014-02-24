@@ -6,15 +6,16 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
+
+
 ?>
-<div id="jem" class="jem_categories_view">
+<div id="jem" class="jem_categories<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
-			echo JEMOutput::submitbutton($this->dellink, $this->params);
-			echo JEMOutput::archivebutton($this->params, $this->task, $this->id);
-			echo JEMOutput::printbutton($this->print_link, $this->params);
+			echo JemOutput::submitbutton($this->dellink, $this->params);
+			echo JemOutput::archivebutton($this->params, $this->task, $this->id);
+			echo JemOutput::printbutton($this->print_link, $this->params);
 		?>
 	</div>
 
@@ -36,14 +37,14 @@ defined('_JEXEC') or die;
 				<div class="catimg">
 					<?php // flyer
 						if (empty($row->image)) {
-							$jemsettings = JEMHelper::config();
+							$jemsettings = JemHelper::config();
 							$imgattribs['width'] = $jemsettings->imagewidth;
 							$imgattribs['height'] = $jemsettings->imagehight;
 
 							echo JHtml::_('image', 'com_jem/noimage.png', $row->catname, $imgattribs, true);
 						} else {
-							$cimage = JEMImage::flyercreator($row->image, 'category');
-							echo JEMOutput::flyer($row, $cimage, 'category');
+							$cimage = JemImage::flyercreator($row->image, 'category');
+							echo JemOutput::flyer($row, $cimage, 'category');
 						}
 					?>
 				</div>
@@ -64,7 +65,7 @@ defined('_JEXEC') or die;
 			<div class="subcategorieslist">
 				<?php foreach ($row->subcats as $sub) : ?>
 					<strong>
-						<a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($sub->slug)); ?>">
+						<a href="<?php echo JRoute::_(JemHelperRoute::getCategoryRoute($sub->slug)); ?>">
 							<?php echo $this->escape($sub->catname); ?></a>
 					</strong> <?php echo '(' . ($sub->assignedevents != null ? $sub->assignedevents : 0) . (--$i ? '),' : ')'); ?>
 				<?php endforeach; ?>
@@ -87,6 +88,6 @@ defined('_JEXEC') or die;
 
 	<!--copyright-->
 	<div class="copyright">
-		<?php echo JEMOutput::footer( ); ?>
+		<?php echo JemOutput::footer( ); ?>
 	</div>
 </div>

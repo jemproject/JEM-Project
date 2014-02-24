@@ -7,15 +7,16 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
+
 JHtml::_('behavior.modal');
 ?>
-<div id="jem" class="jem_category">
+<div id="jem" class="jem_category<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
-		echo JEMOutput::submitbutton($this->dellink, $this->params);
-		echo JEMOutput::archivebutton($this->params, $this->task, $this->category->slug);
-		echo JEMOutput::mailbutton($this->category->slug, 'category', $this->params);
-		echo JEMOutput::printbutton($this->print_link, $this->params);
+		echo JemOutput::submitbutton($this->dellink, $this->params);
+		echo JemOutput::archivebutton($this->params, $this->task, $this->category->slug);
+		echo JemOutput::mailbutton($this->category->slug, 'category', $this->params);
+		echo JemOutput::printbutton($this->print_link, $this->params);
 		?>
 	</div>
 
@@ -40,7 +41,7 @@ JHtml::_('behavior.modal');
 			echo JHtml::_('image', 'com_jem/noimage.png', $this->category->catname, $imgattribs, true);
 		}
 		else {
-			echo JEMOutput::flyer($this->category, $this->cimage, 'category');
+			echo JemOutput::flyer($this->category, $this->cimage, 'category');
 		}
 		?>
 		</div>
@@ -77,11 +78,11 @@ JHtml::_('behavior.modal');
 
 	<!-- iCal -->
 	<div id="iCal" class="iCal">
-		<?php echo JEMOutput::icalbutton($this->category->id, 'category'); ?>
+		<?php echo JemOutput::icalbutton($this->category->id, 'category'); ?>
 	</div>
 
 	<!-- copyright -->
 	<div class="copyright">
-		<?php echo JEMOutput::footer( ); ?>
+		<?php echo JemOutput::footer( ); ?>
 	</div>
 </div>
