@@ -8,7 +8,7 @@
  */
 defined('_JEXEC') or die;
 ?>
-<div id="jem" class="jem_calendar<?php echo $this->pageclass_sfx;?>">
+<div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">
 	<?php if ($this->params->get('show_page_heading', 1)): ?>
 		<h1 class="componentheading">
 			<?php echo $this->escape($this->params->get('page_heading')); ?>
