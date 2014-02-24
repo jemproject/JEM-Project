@@ -1,97 +1,121 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en_GB" xml:lang="en_GB">
 <head>
-<title>Edit Venue</title>
-<link href="../css/help.css" rel="stylesheet" type="text/css" />
+	<title>Edit Venue</title>
+	<link href="../css/help.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <h1>Edit Venue</h1>
 
 <h3>Description</h3>
-<p>
-<img src="/media/com_jem/images/icon-48-venuesedit.png" alt="description" width="48" height="48" align="left" />Edit your venue items or add new ones from this screen.</p>
 
-<br /><br />
+<div>
+	<p><img src="../../../../../media/com_jem/images/icon-48-venuesedit.png" alt="" class="left" /> 
+		Edit your venue items or add new ones from this screen.</p>
+	<div style="clear:both;"></div>
+</div>
 
 <!--
-<div class="hintheader">Tip</div>
-<div class="hint">Use Plugins to add additional functionality to JEM. You can connect your events for example with a reservationsystem like &quot;akreservations' or Galleries with the help of Plugins. </div>
+<div class="box">
+	<p class="hintheader">Tip</p>
+	<p class="hint">Use Plugins to add additional functionality to JEM. You can connect your events for example with a 
+		reservationsystem like &quot;akreservations' or Galleries with the help of Plugins.</p>
+</div>
 -->
 
-<br />
 
 <h3>Navigation</h3>
-<p>
-To access this screen use: <strong>Components</strong> -&gt; <strong>JEM</strong> -&gt; <strong>Add Venue </strong> or by <strong>clicking a venue in the overview</strong></p>
-
-<h3>User Access Level</h3>
 
 <p>
-<img src="../images/super_administrator.gif" alt="Super Administrator" /> Super Administrator <img src="../images/administrator.gif" alt="Administrator" /> Administrator <img src="../images/manager.png" alt="Manager" /> Manager
+	To access this screen use: 
+	<strong>Components</strong> &rarr; <strong>JEM</strong> &rarr; <strong>Add Venue</strong> or by <strong>clicking a venue in the overview</strong>
 </p>
 
 <h3>Toolbar Icons</h3>
 
-<p><img src="toolbars/ss-cs-ns-cc.png" alt="toolbar" /></p>
-<p><strong>Save:</strong> Saves the venue and stays in the current view.</p>
-<p><strong>Save & Close:</strong> Saves the venue and returns to the overview.</p>
-<p><strong>Save & New:</strong> Saves the venue and opens a new clean Edit screen.</p>
-<p><strong>Save as Copy:</strong> Saves the venue as a new instance and stays in this Venue view.</p>
-<p><strong>Cancel:</strong> Cancels the action. Any modification is lost.</p>
-<p><strong>Help:</strong> Opens this help screen.</p>
-<br />
-
-<h3>Main publishing area </h3>
-
 <p>
-<strong>Venue:</strong> Enter or edit (if needed) the title of the venue here.</p>
-
-<p>
-<strong>Alias:</strong>
-Enter or edit (if needed) the alias of the Venue here. The alias is used in the url, only use url safe characters here.<br />
-Leave this field blank if you want JEM to create it automatically.</p>
-
-<p><strong>Address:</strong> Enter street name and house number, city, zip and select the country code. 
+	<div class="toolbar-list">
+		<ul>
+			<li>
+				<span class="icon-32-apply"> </span>
+				Save
+			</li>
+			<li>
+				<span class="icon-32-save"> </span>
+				Save & Close
+			</li>
+			<li>
+				<span class="icon-32-save-new"> </span>
+				Save & New
+			</li>
+			<li>
+				<span class="icon-32-save-copy"> </span>
+				Save as Copy
+			</li>			
+			<li>
+				<span class="icon-32-cancel"> </span>
+				Close
+			</li>		
+			<li>
+				<span class="icon-32-help"> </span>
+				Help
+			</li>			
+		</ul>
+	</div>
+	<div class="clear"> </div>
 </p>
 
-<p>
-<strong>Textfield:</strong> This is for the Venue description. You can use Plugins
-in this field.</p>
+<p><strong>Save:</strong> 
+	Saves the venue and remains in the current view.</p>
+<p><strong>Save &amp; Close:</strong> 
+	Saves the venue and returns to the overview.</p>
+<p><strong>Save &amp; New:</strong> 
+	Saves the venue and opens a new clean Edit screen.</p>
+<p><strong>Save as Copy:</strong> 
+	Saves the venue as a new instance and stays in this Venue view.</p>
+<p><strong>Close:</strong> 
+	Cancels this operation and returns to the Venues list screen.</p>
+<p><strong>Help:</strong> 
+	Opens this help screen.</p>
+
+	
+<h3>Main publishing area </h3>
+
+<p><strong>Venue:</strong> 
+	Enter or edit (if needed) the title of the venue here.</p>
+<p><strong>Alias:</strong> 
+	Enter or edit (if needed) the alias of the Venue here. The alias is used in the url, only use url safe characters here.<br />
+	Leave this field blank if you want JEM to create it automatically.</p>
+<p><strong>Address:</strong> 
+	Enter street name and house number, city, zip and select the country code.</p>
+<p><strong>Text field:</strong> 
+	This is for the Venue description. You can use Plugins in this field.</p>
 
 
 <h3>Advanced publishing area</h3>
 
-<p>
-<strong>Published: </strong>Select Yes to publish the venue or No to unpublish. Published venues are displayed on the Frontend and you can assign events to them.</p>
+<p><strong>Published:</strong> 
+	Select Yes to publish the venue or No to unpublish. Published venues are displayed on the Frontend and you can 
+	assign events to them.</p>
+<p><strong>Custom Fields:</strong> 
+	You can enter up to 10 custom fields here. Here you can enter a maximum of 10 custom fields for a venue. <br />
+	Empty fields are not displayed in the frontend. You can give the fields specific names using language overrides. <br />
+	If you want to do that, proceed as follows:<br />
+	Go to Extensions &rarr; Languages &rarr; Overrides. Choose 'Administrator' in the select-box on the right hand side of the screen.<br />
+	The key for the event custom fields are COM_JEM_VENUE_CUSTOM_FIELD1 to COM_JEM_VENUE_CUSTOM_FIELD10.<br />
+	If you want to use the language string for both backend and frontend, then don't forget to click the 'for both locations' checkbox.</p>
+<p><strong>Image:</strong> 
+	Choose an image for this venue (flyer) or upload it.</p>
+<p><strong>Metadata information:</strong> 
+	Enter or edit (if needed) the Meta Description and the Meta Keywords of the venue here.</p>
+<p><strong>Geodata:</strong> 
+	Enter the address here to let JEM find the longitude / latitude values for the Venue. <br />
+	If you want JEM to display a map in the Frontend, then check the 'add a map link' checkbox.</p>
 
 
-<p><strong>Custom Fields:</strong> You can enter up to 10 custom fields here. 
-
-Here you can enter a maximum of 10 custom fields for a venue. <br />
-
-Empty fields are not displayed in the frontend. You can give the fields specific names using language overrides. <br />
-If you wan to do that, proceed as follows:<br />
-Go to Extensions -> Languages -> Overrides. Choose 'Administrator' in the select-box on the right hand sode of the screen.<br />
-The key for the event custom fields are COM_JEM_VENUE_CUSTOM_FIELD1 to COM_JEM_VENUE_CUSTOM_FIELD10.<br />
-If you wan to use the language string for both backend and frontend, then don't forget to click the 'for both locations' checkbox.
-
-</p>
-
-<p><strong>Image:</strong> Choose an image for this venue (flyer) or upload it.
-</p>
-
-<p>
-<strong>Metadata information: </strong>Enter or edit (if needed) the Meta Description and the Meta Keywords of the venue here.
-</p>
-
-<p><strong>Geodata:</strong> Enter the address here to let JEM find the longitude / latitude values for the Venue. <br />
-If you want JEM to display a map in the Frontend, then check the 'add a map link' checkbox.
-</p>
-
-
-<br />
-<div align="center" style="margin-top: 30px; margin-bottom: 30px;"> <a href="#" onclick="javascript:window.close();"><span class="small">Close Window</span></a>
+<div class="close">
+	<a href="#" onclick="javascript:window.close();">Close window</a>
 </div>
 
 </body>
