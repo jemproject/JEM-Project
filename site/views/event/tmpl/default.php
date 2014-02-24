@@ -45,6 +45,8 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		</h1>
 	<?php endif; ?>
 
+	<div class="clr"> </div>
+
 	<!-- Event -->
 	<h2 class="jem">
 	<?php 

@@ -132,48 +132,45 @@ $options = array(
 		$(form.jform_country).removeClass('required');
 	}
 	</script>
-    <script>
-    jQuery(function(){
-    	  jQuery("#geocomplete").geocomplete({
-          map: ".map_canvas",
-          /* location: "default address", */
-          details: "form ",
-          detailsAttribute: "geo-data",
-          types: ['establishment', 'geocode'],
-          markerOptions: {
-            draggable: true
-          }
-        });
+	<script>
+	jQuery(function(){
+		jQuery("#geocomplete").geocomplete({
+			map: ".map_canvas",
+			/* location: "default address", */
+			details: "form ",
+			detailsAttribute: "geo-data",
+			types: ['establishment', 'geocode'],
+			markerOptions: {
+				draggable: true
+			}
+		});
 
-    	  jQuery("#geocomplete").bind("geocode:dragged", function(event, latLng){
-    		  jQuery("input[id=jform_latitude]").val(latLng.lat());
-    		  jQuery("input[id=jform_longitude]").val(latLng.lng());
-    		  jQuery("#geocomplete").geocomplete("find", latLng.toString());
-    		 /* option to show the reset-link */
-    		 /* jQuery("#reset").show();*/
-        });
+		  jQuery("#geocomplete").bind("geocode:dragged", function(event, latLng){
+			  jQuery("input[id=jform_latitude]").val(latLng.lat());
+			  jQuery("input[id=jform_longitude]").val(latLng.lng());
+			  jQuery("#geocomplete").geocomplete("find", latLng.toString());
+			 /* option to show the reset-link */
+			 /* jQuery("#reset").show();*/
+		});
 
+		  jQuery("#geocomplete").bind("geocode:result", function(event, result){
+		  		var country = document.getElementById("country").value;
+		  		document.getElementById("jform_country").value = country;
+		});
 
+		/* option to attach a reset function to the reset-link
+			jQuery("#reset").click(function(){
+				jQuery("#geocomplete").geocomplete("resetMarker");
+				jQuery("#reset").hide();
+					return false;
+			});
+		*/
 
-    	  jQuery("#geocomplete").bind("geocode:result", function(event, result){
-    	  		var country = document.getElementById("country").value;
-    	  		document.getElementById("jform_country").value = country;
-        });
-
-
-        /* option to attach a reset function to the reset-link
-    	  jQuery("#reset").click(function(){
-   		  jQuery("#geocomplete").geocomplete("resetMarker");
-   		  jQuery("#reset").hide();
-          return false;
-        });
-     	*/
-
-     	jQuery("#find").click(function(){
-     		jQuery("#geocomplete").trigger("geocode");
-        }).click();
-      });
-    </script>
+		jQuery("#find").click(function(){
+			jQuery("#geocomplete").trigger("geocode");
+		}).click();
+	});
+	</script>
 
 <div id="jem" class="jem_editvenue<?php echo $this->pageclass_sfx; ?>">
 	<div class="edit item-page">
@@ -197,7 +194,7 @@ $options = array(
 			<p>&nbsp;</p>
 
 			<?php echo JHtml::_('tabs.start', 'venueTab', $options); ?>
-	
+
 			<!--  VENUE-DETAILS TAB -->
 			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EDITVENUE_INFO_TAB'), 'venue-details'); ?>
 
@@ -224,13 +221,13 @@ $options = array(
 			<!-- VENUE-GEODATA-->
 			<fieldset class="adminform" id="geodata">
 				<legend><?php echo JText::_('COM_JEM_GEODATA'); ?></legend>
-					<input id="geocomplete" type="text" size="40" placeholder="<?php echo JText::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
-      				<input id="find" type="button" value="find" />
-      				<br><br>
- 					<div class="map_canvas"></div>
-      				<a id="reset" href="#" style="display:none;">Reset Marker</a>
+				<input id="geocomplete" type="text" size="40" placeholder="<?php echo JText::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
+				<input id="find" type="button" value="find" />
+				<br><br>
+				<div class="map_canvas"></div>
+				<a id="reset" href="#" style="display:none;">Reset Marker</a>
 			</fieldset>
-	
+
 			<fieldset class="adminform">
 				<div class="control-group">
 					<div class="control-label"><?php echo $this->form->getLabel('latitude'); ?></div>
@@ -261,11 +258,11 @@ $options = array(
 			<!-- ATTACHMENTS TAB -->
 			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EDITVENUE_ATTACHMENTS_TAB'), 'venue-attachments'); ?>
 			<?php echo $this->loadTemplate('attachments'); ?>
-	
+
 			<!-- OTHER TAB -->
 			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EDITVENUE_OTHER_TAB'), 'venue-other' ); ?>
 			<?php echo $this->loadTemplate('other'); ?>
-	
+
 			<?php echo JHtml::_('tabs.end'); ?>
 
 			<div class="clearfix"></div>

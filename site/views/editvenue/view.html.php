@@ -26,32 +26,29 @@ class JemViewEditvenue extends JViewLegacy
 	{
 		// Initialise variables.
 		$jemsettings = JemHelper::config();
-		$app = JFactory::getApplication();
-		$user = JFactory::getUser();
-		$document = JFactory::getDocument();
-		$model = $this->getModel();
-		$menu = $app->getMenu();
-		$menuitem = $menu->getActive();
-		$pathway = $app->getPathway();
-		$url = JURI::root();
-
-		// Get requests
-		$id				= JRequest::getInt('id');
+		$app         = JFactory::getApplication();
+		$user        = JFactory::getUser();
+		$document    = JFactory::getDocument();
+		$model       = $this->getModel();
+		$menu        = $app->getMenu();
+		$menuitem    = $menu->getActive();
+		$pathway     = $app->getPathway();
+		$url         = JURI::root();
 
 		// Get model data.
 		$this->state 	= $this->get('State');
 		$this->item 	= $this->get('Item');
 		$this->params = $this->state->get('params');
 
-		// Create a shortcut for $item.
+		// Create a shortcut for $item and params.
 		$item = $this->item;
 		$params = $this->params;
 		
 		$this->form = $this->get('Form');
 		$this->return_page = $this->get('ReturnPage');
-		
+
 		// check for guest
-		if ($user->id == 0 || $user == false) {
+		if (!$user || $user->id == 0) {
 			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
@@ -149,7 +146,7 @@ class JemViewEditvenue extends JViewLegacy
 
 		$access2 		= JemHelper::getAccesslevelOptions();
 		$this->access	= $access2;
-		
+
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 		JHtml::_('stylesheet', 'com_jem/geostyle.css', array(), true);
@@ -170,9 +167,9 @@ class JemViewEditvenue extends JViewLegacy
 		$this->jemsettings		= $jemsettings;
 		$this->limage 			= JemImage::flyercreator($this->item->locimage, 'venue');
 		$this->infoimage		= JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_('COM_JEM_NOTES'), NULL, true);
-		
+
 		$this->user = $user;
-		
+
 		$this->_prepareDocument();
 		parent::display($tpl);
 	}
@@ -208,5 +205,5 @@ class JemViewEditvenue extends JViewLegacy
 			$this->document->setMetadata('robots', $this->params->get('robots'));
 		}
 	}
-} // closing tag
+}
 ?>

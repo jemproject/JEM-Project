@@ -100,7 +100,7 @@ $settings	= json_decode($this->item->attribs);
 				<div class="clr"><br></div>
 				<?php echo $this->form->getInput('articletext'); ?>
 			</fieldset>
-		
+
 			<fieldset class="adminform">
 				<ul class="adminformlist">
 					<li><?php echo $this->form->getLabel('locid'); ?> <?php echo $this->form->getInput('locid'); ?></li>
@@ -109,7 +109,7 @@ $settings	= json_decode($this->item->attribs);
 			</fieldset>
 
 			<!-- START META FIELDSET -->
-	`		<fieldset class="">
+			<fieldset class="">
 				<legend><?php echo JText::_('COM_JEM_META_HANDLING'); ?></legend>
 					<div class="formelm-area">
 						<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_ ( 'COM_JEM_TITLE' );	?>" />

@@ -29,7 +29,7 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 		?>
 	</h1>
 	<div class="clr"></div>
-	
+
 	<form action="index.php?option=com_jem&amp;view=editevent&amp;layout=choosevenue&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
 		<div id="jem_filter" class="floattext">
 			<div class="jem_fleft">
@@ -66,7 +66,7 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 				<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 				<td align="left">
 					 <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
-            	</td>
+				</td>
 				<td align="left"><?php echo $this->escape($row->city); ?></td>
 				<td align="left"><?php echo $this->escape($row->state); ?></td>
 				<td align="left"><?php echo $this->escape($row->country); ?></td>
@@ -87,7 +87,7 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 	<div class="pagination">
 		<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
-	
+
 	<div class="copyright">
 		<?php echo JemOutput::footer();	?>
 	</div>

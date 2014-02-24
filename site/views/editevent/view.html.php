@@ -8,7 +8,6 @@
  */
 defined('_JEXEC') or die();
 
-
 /**
  * Editevent-View
  */
@@ -47,7 +46,7 @@ class JemViewEditevent extends JViewLegacy
 		$this->item = $this->get('Item');
 		$this->params = $this->state->get('params');
 
-		// Create a shortcut for $item.
+		// Create a shortcut for $item and params.
 		$item = $this->item;
 		$params = $this->params;
 		
@@ -55,7 +54,7 @@ class JemViewEditevent extends JViewLegacy
 		$this->return_page = $this->get('ReturnPage');
 
 		// check for guest
-		if ($user->id == 0 || $user == false) {
+		if (!$user || $user->id == 0) {
 			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
@@ -63,21 +62,21 @@ class JemViewEditevent extends JViewLegacy
 		if (empty($this->item->id)) {
 			// Check if the user has access to the form
 			$maintainer = JemUser::ismaintainer('add');
-			$genaccess 	= JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
+			$genaccess  = JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 			if ($maintainer || $genaccess ) {
 				$dellink = true;
 			} else {
 				$dellink = false;
 			}
+
 			$authorised = $user->authorise('core.create','com_jem') || (count($user->getAuthorisedCategories('com_jem', 'core.create')) || $dellink);
 		} else {
 			// Check if user can edit
 			$maintainer5 = JemUser::ismaintainer('edit',$this->item->id);
-			$genaccess5 = JemUser::editaccess($jemsettings->eventowner, $this->item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+			$genaccess5  = JemUser::editaccess($jemsettings->eventowner, $this->item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
 
-			if ($maintainer5 || $genaccess5 )
-			{
+			if ($maintainer5 || $genaccess5 ) {
 				$allowedtoeditevent = true;
 			} else {
 				$allowedtoeditevent = false;
@@ -147,9 +146,9 @@ class JemViewEditevent extends JViewLegacy
 			return false;
 		}
 
-		$access2 		= JEMHelper::getAccesslevelOptions();
-		$this->access	= $access2;
-		
+		$access2      = JEMHelper::getAccesslevelOptions();
+		$this->access = $access2;
+
 		JHtml::_('behavior.formvalidation');
 		JHtml::_('behavior.tooltip');
 		JHtml::_('behavior.modal', 'a.flyermodal');
@@ -175,12 +174,12 @@ class JemViewEditevent extends JViewLegacy
 			$this->form->setFieldAttribute('catid', 'default', $params->get('catid', 1));
 			$this->form->setFieldAttribute('catid', 'readonly', 'true');
 		}
-		
+
 		$this->_prepareDocument();
 		parent::display($tpl);
 	}
 
-	
+
 	/**
 	 * Prepares the document
 	 */
@@ -211,19 +210,19 @@ class JemViewEditevent extends JViewLegacy
 			$this->document->setMetadata('robots', $this->params->get('robots'));
 		}
 	}
-	
-	
+
+
 	/**
 	 * Creates the output for the venue select listing
 	 */
 	protected function _displaychoosevenue($tpl)
 	{
 		$app			= JFactory::getApplication();
-		$jemsettings	= JemHelper::config();
-		$document		= JFactory::getDocument();
-		$jinput			= JFactory::getApplication()->input;
-		$limitstart		= $jinput->get('limitstart', '0', 'int');
-		$limit			= $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
+		$jemsettings = JemHelper::config();
+		$document    = JFactory::getDocument();
+		$jinput      = JFactory::getApplication()->input;
+		$limitstart  = $jinput->get('limitstart', '0', 'int');
+		$limit       = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
 
 		$filter_order 		= $jinput->get('filter_order', 'l.venue', 'cmd');
 		$filter_order_Dir	= $jinput->get('filter_order_Dir', 'ASC', 'word');
@@ -268,11 +267,11 @@ class JemViewEditevent extends JViewLegacy
 	 */
 	protected function _displaychoosecontact($tpl)
 	{
-		$app			= JFactory::getApplication();
-		$jinput			= JFactory::getApplication()->input;
-		$jemsettings	= JemHelper::config();
-		$db				= JFactory::getDBO();
-		$document		= JFactory::getDocument();
+		$app         = JFactory::getApplication();
+		$jinput      = JFactory::getApplication()->input;
+		$jemsettings = JemHelper::config();
+		$db          = JFactory::getDBO();
+		$document    = JFactory::getDocument();
 
 		$filter_order		= $app->getUserStateFromRequest('com_jem.contactelement.filter_order', 'filter_order', 'con.name', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.contactelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
@@ -285,7 +284,7 @@ class JemViewEditevent extends JViewLegacy
 
 		JHtml::_('behavior.tooltip');
 		JHtml::_('behavior.modal', 'a.flyermodal');
-		
+
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
 

@@ -62,7 +62,7 @@ $detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this
 			</tr>
 		</table>
 		<br />
-		
+
 		<div id="jem_filter" class="floattext">
 			<div class="jem_fleft">
 				<?php echo JText::_('COM_JEM_SEARCH').' '.$this->lists['filter']; ?>
@@ -84,7 +84,7 @@ $detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this
 			?>
 			</div>
 		</div>
-	
+
 		<table class="eventtable" style="width:100%" id="articleList">
 			<thead>
 				<tr>
@@ -126,6 +126,7 @@ $detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this
 				<?php endforeach; ?>
 			</tbody>
 		</table>
+
 		<?php echo JHtml::_('form.token'); ?>
 		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="boxchecked" value="0" />

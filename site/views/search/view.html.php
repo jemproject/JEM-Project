@@ -75,6 +75,7 @@ class JemViewSearch extends JEMView
 			$pageheading = $pagetitle;
 			$pathway->addItem(1, $pagetitle);
 		}
+		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		if ($task == 'archive') {
 			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=search&task=archive'));

@@ -37,7 +37,7 @@ class JemViewEvent extends JViewLegacy
 		$menu 				= $app->getMenu();
 		$menuitem			= $menu->getActive();
 		$pathway 			= $app->getPathway();
-		
+
 		$this->params		= $app->getParams('com_jem');
 		$this->item			= $this->get('Item');
 		$this->print		= JRequest::getBool('print');
@@ -57,32 +57,32 @@ class JemViewEvent extends JViewLegacy
 			JError::raiseWarning(500, implode("\n", $errors));
 			return false;
 		}
-		
+
 		// Create a shortcut for $item and params.
 		$item   = $this->item;
 		$params = $this->params;
-		
+
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
 				&& $menuitem->query['view']   == 'event'
 				&& $menuitem->query['id']     == $item->id);
-		
+
 		// Add router helpers.
 		$item->slug			= $item->alias ? ($item->id.':'.$item->alias) : $item->id;
 		$item->catslug		= $item->category_alias ? ($item->catid.':'.$item->category_alias) : $item->catid;
 		$item->parent_slug	= $item->category_alias ? ($item->parent_id.':'.$item->parent_alias) : $item->parent_id;
 		$item->venueslug	= $item->alias ? ($item->locid.':'.$item->localias) : $item->locid;
-		
+
 		// TODO: Change based on shownoauth
 		$item->readmore_link = JRoute::_(JemHelperRoute::getEventRoute($item->slug, $item->catslug));
-		
+
 		// Check to see which parameters should take priority
 		if ($useMenuItemParams) {
 			// Merge so that the menu item params take priority
 			$pagetitle = $params->def('page_title', $menuitem->title ? $menuitem->title : $item->title);
 			$params->def('page_heading', $pagetitle);
 			$pathway->setItemName(1, $menuitem->title);
-		
+
 			// Load layout from active query (in case it is an alternative menu item)
 			if (isset($menuitem->query['layout'])) {
 				$this->setLayout($menuitem->query['layout']);
@@ -91,7 +91,7 @@ class JemViewEvent extends JViewLegacy
 			if ($layout = $item->params->get('event_layout')) {
 				$this->setLayout($layout);
 			}
-		
+
 			$item->params->merge($params);
 		} else {
 			// Merge the menu item params with the event params so that the event params take priority
@@ -100,20 +100,20 @@ class JemViewEvent extends JViewLegacy
 			$params->set('page_heading', $pagetitle);
 			$params->set('show_page_heading', 1); // ensure page heading is shown
 			$pathway->addItem($pagetitle, JRoute::_(JemHelperRoute::getEventRoute($item->slug)));
-		
+
 			// Check for alternative layouts (since we are not in a single-event menu item)
 			// Single-event menu item layout takes priority over alt layout for an event
 			if ($layout = $item->params->get('event_layout')) {
 				$this->setLayout($layout);
 			}
-		
+
 			$temp = clone($params);
 			$temp->merge($item->params);
 			$item->params = $temp;
 		}
-		
+
 		$offset = $this->state->get('list.offset');
-		
+
 		// Check the view access to the event (the model has already computed the values).
 		if (!$item->params->get('access-view') && !$item->params->get('show_noauth') &&  $user->get('guest')) {
 			JError::raiseWarning(403, JText::_('JERROR_ALERTNOAUTHOR'));
@@ -160,21 +160,19 @@ class JemViewEvent extends JViewLegacy
 		$this->limage = JemImage::flyercreator($item->locimage, 'venue');
 
 		// Check if user can edit
-		$maintainer5	= JemUser::ismaintainer('edit',$item->did);
-		$genaccess5		= JemUser::editaccess($jemsettings->eventowner, $item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+		$maintainer5 = JemUser::ismaintainer('edit',$item->did);
+		$genaccess5  = JemUser::editaccess($jemsettings->eventowner, $item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
 
-		if ($maintainer5 || $genaccess5 || $user->authorise('core.edit','com_jem'))
-		{
+		if ($maintainer5 || $genaccess5 || $user->authorise('core.edit','com_jem')) {
 			$this->allowedtoeditevent = 1;
 		} else {
 			$this->allowedtoeditevent = 0;
 		}
 
 		//Check if the user has access to the edit-venueform
-		$maintainer3	= JemUser::venuegroups('edit');
-		$genaccess3		= JemUser::editaccess($jemsettings->venueowner, $item->venueowner, $jemsettings->venueeditrec, $jemsettings->venueedit);
-		if ($maintainer3 || $genaccess3 )
-		{
+		$maintainer3 = JemUser::venuegroups('edit');
+		$genaccess3  = JemUser::editaccess($jemsettings->venueowner, $item->venueowner, $jemsettings->venueeditrec, $jemsettings->venueedit);
+		if ($maintainer3 || $genaccess3 ) {
 			$this->allowedtoeditvenue = 1;
 		} else {
 			$this->allowedtoeditvenue = 0;
