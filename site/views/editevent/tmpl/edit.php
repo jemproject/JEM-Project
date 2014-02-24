@@ -82,7 +82,7 @@ $settings	= json_decode($this->item->attribs);
 
 			<fieldset>
 				<legend><?php echo JText::_('COM_JEM_EDITEVENT_DETAILS_LEGEND'); ?></legend>
-				<ul class="adminformlist">
+					<ul class="adminformlist">
 					<li><?php echo $this->form->getLabel('title'); ?><?php echo $this->form->getInput('title'); ?></li>
 					<?php if (is_null($this->item->id)):?>
 					<li><?php echo $this->form->getLabel('alias'); ?><?php echo $this->form->getInput('alias'); ?></li>
@@ -97,7 +97,7 @@ $settings	= json_decode($this->item->attribs);
 				</ul>
 				<div class="clr"></div>
 				<?php echo $this->form->getLabel('articletext'); ?>
-				<div class="clr"><br /></div>
+				<div class="clr"><br></div>
 				<?php echo $this->form->getInput('articletext'); ?>
 			</fieldset>
 
@@ -111,59 +111,60 @@ $settings	= json_decode($this->item->attribs);
 			<!-- START META FIELDSET -->
 			<fieldset class="">
 				<legend><?php echo JText::_('COM_JEM_META_HANDLING'); ?></legend>
-				<div class="formelm-area">
-					<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_ ( 'COM_JEM_TITLE' );	?>" />
-					<input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php	echo JText::_ ( 'COM_JEM_VENUE' );?>" />
-					<input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php	echo JText::_ ( 'COM_JEM_CATEGORIES' );?>" />
-					<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_ ( 'COM_JEM_DATE' );?>" />
-					<input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo JText::_ ( 'COM_JEM_TIME' );?>" />
-					<input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo JText::_ ( 'COM_JEM_ENDDATE' );?>" />
-					<input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo JText::_ ( 'COM_JEM_ENDTIME' );?>" />
-					<br />
-					<label for="meta_keywords">
-						<?php echo JText::_('COM_JEM_META_KEYWORDS').':';?>
-					</label>
-					<br />
-					<?php
-					if (! empty ( $this->item->meta_keywords )) {
-						$meta_keywords = $this->item->meta_keywords;
-					} else {
-						$meta_keywords = $this->jemsettings->meta_keywords;
-					}
-					?>
-					<textarea class="inputbox" name="meta_keywords" id="meta_keywords" rows="5" cols="40" maxlength="150" onfocus="get_inputbox('meta_keywords')" onblur="change_metatags()"><?php echo $meta_keywords; ?></textarea>
-				</div>
-				<div class="formelm-area">
-					<label for="meta_description">
-						<?php echo JText::_ ( 'COM_JEM_META_DESCRIPTION' ) . ':';?>
-					</label>
-					<br />
-					<?php
-					if (! empty ( $this->item->meta_description )) {
-						$meta_description = $this->item->meta_description;
-					} else {
-						$meta_description = $this->jemsettings->meta_description;
-					}
-					?>
-					<textarea class="inputbox" name="meta_description" id="meta_description" rows="5" cols="40" maxlength="200"	onfocus="get_inputbox('meta_description')" onblur="change_metatags()"><?php echo $meta_description;?></textarea>
-				</div>
-				<!-- include the metatags end-->
-
-				<script type="text/javascript">
-				<!--
-					starter("<?php
-					echo JText::_ ( 'COM_JEM_META_ERROR' );
-					?>");	// window.onload is already in use, call the function manualy instead
-				-->
-				</script>
+					<div class="formelm-area">
+						<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_ ( 'COM_JEM_TITLE' );	?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php	echo JText::_ ( 'COM_JEM_VENUE' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php	echo JText::_ ( 'COM_JEM_CATEGORIES' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_ ( 'COM_JEM_DATE' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo JText::_ ( 'COM_JEM_TIME' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo JText::_ ( 'COM_JEM_ENDDATE' );?>" />
+						<input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo JText::_ ( 'COM_JEM_ENDTIME' );?>" />
+						<br />
+						<label for="meta_keywords">
+							<?php echo JText::_('COM_JEM_META_KEYWORDS').':';?>
+						</label>
+						<br />
+						<?php
+						if (! empty ( $this->item->meta_keywords )) {
+							$meta_keywords = $this->item->meta_keywords;
+						} else {
+							$meta_keywords = $this->jemsettings->meta_keywords;
+						}
+						?>
+						<textarea class="inputbox" name="meta_keywords" id="meta_keywords" rows="5" cols="40" maxlength="150" onfocus="get_inputbox('meta_keywords')" onblur="change_metatags()"><?php echo $meta_keywords; ?></textarea>
+					</div>
+					<div class="formelm-area">
+						<label for="meta_description">
+							<?php echo JText::_ ( 'COM_JEM_META_DESCRIPTION' ) . ':';?>
+						</label>
+						<br />
+						<?php
+						if (! empty ( $this->item->meta_description )) {
+							$meta_description = $this->item->meta_description;
+						} else {
+							$meta_description = $this->jemsettings->meta_description;
+						}
+						?>
+						<textarea class="inputbox" name="meta_description" id="meta_description" rows="5" cols="40" maxlength="200"	onfocus="get_inputbox('meta_description')" onblur="change_metatags()"><?php echo $meta_description;?></textarea>
+					</div>
+					<!-- include the metatags end-->
+				
+					<script type="text/javascript">
+					<!--
+						starter("<?php
+						echo JText::_ ( 'COM_JEM_META_ERROR' );
+						?>");	// window.onload is already in use, call the function manualy instead
+					-->
+					</script>
 			</fieldset>
 			<!--  END META FIELDSET -->
 
 			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event-attachments' ); ?>
 			<?php echo $this->loadTemplate('attachments'); ?>
-
+		
 			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_OTHER_TAB'), 'event-other' ); ?>
 			<?php echo $this->loadTemplate('other'); ?>
+		
 			<?php echo JHtml::_('tabs.end'); ?>
 
 			<input type="hidden" name="task" value="" />

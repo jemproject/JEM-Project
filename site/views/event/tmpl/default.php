@@ -6,7 +6,6 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
@@ -25,19 +24,20 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 <div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event<?php echo $this->pageclass_sfx;?>"
 	itemscope="itemscope" itemtype="http://schema.org/Event">
 	<div class="buttons">
-	
 		<?php 
 		if ($params->get('event_show_email_icon',1)) {
-		echo JEMOutput::mailbutton($this->item->slug, 'event', $this->params);
+		echo JemOutput::mailbutton($this->item->slug, 'event', $this->params);
 		}
 		if ($params->get('event_show_print_icon',1)) {
-		echo JEMOutput::printbutton($this->print_link, $this->params); 
+		echo JemOutput::printbutton($this->print_link, $this->params); 
 		}
 		if ($params->get('event_show_ical_icon',1)) {
-		echo JEMOutput::icalbutton($this->item->slug, 'event');
+		echo JemOutput::icalbutton($this->item->slug, 'event');
 		} 
 		?>
 	</div>
+	
+	<div class="clr"> </div>
 
 	<?php if ($this->params->get('show_page_heading', 1)) : ?>
 		<h1 class="componentheading">
@@ -51,11 +51,11 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 	<h2 class="jem">
 	<?php 
 		echo JText::_('COM_JEM_EVENT');
-		echo '&nbsp;'.JEMOutput::editbutton($this->item, $params, $attribs, $this->allowedtoeditevent, 'editevent');
+		echo '&nbsp;'.JemOutput::editbutton($this->item, $params, $attribs, $this->allowedtoeditevent, 'editevent');
 		?>
 	</h2>
 
-	<?php echo JEMOutput::flyer($this->item, $this->dimage, 'event'); ?>
+	<?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
 
 	<dl class="event_info floattext">
 		<?php if ($params->get('event_show_detailstitle',1)) : ?>
@@ -67,10 +67,8 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		<dt class="when"><?php echo JText::_('COM_JEM_WHEN').':'; ?></dt>
 		<dd class="when">
 			<?php
-				echo JEMOutput::formatLongDateTime($this->item->dates, $this->item->times,
-					$this->item->enddates, $this->item->endtimes);
-				echo JEMOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times,
-					$this->item->enddates, $this->item->endtimes);
+				echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
+				echo JemOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
 			?>
 		</dd>
 		<?php if ($this->item->locid != 0) : ?>
@@ -80,7 +78,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 					<a target="_blank" href="<?php echo $this->item->url; ?>"><?php echo $this->escape($this->item->venue); ?></a> -
 				<?php elseif ($params->get('event_show_detlinkvenue') == 2) : ?>
 					<a
-				href="<?php echo JRoute::_(JEMHelperRoute::getVenueRoute($this->item->venueslug)); ?>"><?php echo $this->item->venue; ?></a> -
+				href="<?php echo JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)); ?>"><?php echo $this->item->venue; ?></a> -
 				<?php elseif ($params->get('event_show_detlinkvenue') == 0) :
 					echo $this->escape($this->item->venue).' - ';
 				endif;
@@ -98,7 +96,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			foreach ($this->categories as $category) :
 			?>
 				<a
-				href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug)); ?>">
+				href="<?php echo JRoute::_(JemHelperRoute::getCategoryRoute($category->slug)); ?>">
 					<?php echo $this->escape($category->catname); ?>
 				</a>
 			<?php
@@ -235,15 +233,15 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			<?php
 			echo JText::_('COM_JEM_VENUE') ;
 			$itemid = $this->item ? $this->item->id : 0 ;
-			echo JEMOutput::editbutton($this->item, $params, $attribs, $this->allowedtoeditvenue, 'editvenue');
+			echo JemOutput::editbutton($this->item, $params, $attribs, $this->allowedtoeditvenue, 'editvenue');
 			?>
 		</h2>
-		<?php echo JEMOutput::flyer($this->item, $this->limage, 'venue'); ?>
+		<?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
 
 		<dl class="location">
 			<dt class="venue"><?php echo JText::_('COM_JEM_LOCATION').':'; ?></dt>
 			<dd class="venue">
-			<?php echo "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($this->item->venueslug))."'>".$this->escape($this->item->venue)."</a>"; ?>
+			<?php echo "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug))."'>".$this->escape($this->item->venue)."</a>"; ?>
 
 			<?php if (!empty($this->item->url)) : ?>
 				&nbsp; - &nbsp;
@@ -308,11 +306,11 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		?>
 				
 				<?php if ($params->get('event_show_mapserv')== 1) : ?>
-					<?php echo JEMOutput::mapicon($this->item,'event'); ?>
+					<?php echo JemOutput::mapicon($this->item,'event'); ?>
 				<?php endif; ?>
 			</dl>
 			<?php if ($params->get('event_show_mapserv')== 2) : ?>
-				<?php echo JEMOutput::mapicon($this->item,'event'); ?>
+				<?php echo JemOutput::mapicon($this->item,'event'); ?>
 			<?php endif; ?>
 		<?php endif; ?>
 
@@ -337,7 +335,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 	<?php echo $this->item->pluginevent->onEventEnd; ?>
 
 	<div class="copyright">
-		<?php echo JEMOutput::footer(); ?>
+		<?php echo JemOutput::footer(); ?>
 	</div>
 </div>
 

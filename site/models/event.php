@@ -11,11 +11,9 @@ defined('_JEXEC') or die();
 jimport('joomla.application.component.modelitem');
 
 /**
- * JEM Component Event Model
- *
- * @package JEM
+ * Event-Model
  */
-class JEMModelEvent extends JModelItem
+class JemModelEvent extends JModelItem
 {
 
 	/**

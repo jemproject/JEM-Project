@@ -269,7 +269,7 @@ $params = $params->toArray();
 		</fieldset>
 	<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_FIELDSET_GEODATA'), 'venue-geodata'); ?>
 		<fieldset class="adminform" id="geodata">
-			<input id="geocomplete" type="text" placeholder="<?php echo JText::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
+			<input id="geocomplete" type="text" size="40" placeholder="<?php echo JText::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
 			<input id="find" type="button" value="find" />
 			<div class="clr"></div>
 			<div class="map_canvas"></div>

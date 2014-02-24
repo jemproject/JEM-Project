@@ -6,23 +6,17 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.controller');
 
 /**
- * JEM Component Cleanup Controller
- *
- * @package JEM
- *
+ * Housekeeping-Controller
  */
-class JEMControllerCleanup extends JControllerLegacy
+class JemControllerHousekeeping extends JControllerLegacy
 {
 	/**
 	 * Constructor
-	 *
-	 *
 	 */
 	public function __construct()
 	{
@@ -44,7 +38,7 @@ class JEMControllerCleanup extends JControllerLegacy
 	function delete()
 	{
 		$task = JRequest::getCmd('task');
-		$model = $this->getModel('cleanup');
+		$model = $this->getModel('housekeeping');
 
 		if ($task == 'cleaneventimg') {
 			$total = $model->delete($model::EVENTS);
@@ -54,8 +48,8 @@ class JEMControllerCleanup extends JControllerLegacy
 			$total = $model->delete($model::CATEGORIES);
 		}
 
-		$link = 'index.php?option=com_jem&view=cleanup';
-		$msg = JText::sprintf('COM_JEM_CLEANUP_IMAGES_DELETED', $total);
+		$link = 'index.php?option=com_jem&view=housekeeping';
+		$msg = JText::sprintf('COM_JEM_HOUSEKEEPING_IMAGES_DELETED', $total);
 
 		$this->setRedirect($link, $msg);
 	}
@@ -70,11 +64,11 @@ class JEMControllerCleanup extends JControllerLegacy
 	 */
 	function cleanupCatsEventRelations()
 	{
-		$model = $this->getModel('cleanup');
+		$model = $this->getModel('housekeeping');
 		$model->cleanupCatsEventRelations();
 
-		$link = 'index.php?option=com_jem&view=cleanup';
-		$msg = JText::_('COM_JEM_CLEANUP_CLEANUP_CATSEVENT_RELS_DONE');
+		$link = 'index.php?option=com_jem&view=housekeeping';
+		$msg = JText::_('COM_JEM_HOUSEKEEPING_CLEANUP_CATSEVENT_RELS_DONE');
 
 		$this->setRedirect($link, $msg);
 	}
@@ -84,11 +78,11 @@ class JEMControllerCleanup extends JControllerLegacy
 	 * Truncates JEM tables with exception of settings table
 	 */
 	public function truncateAllData() {
-		$model = $this->getModel('cleanup');
+		$model = $this->getModel('housekeeping');
 		$model->truncateAllData();
 
-		$link = 'index.php?option=com_jem&view=cleanup';
-		$msg = JText::_('COM_JEM_CLEANUP_TRUNCATE_ALL_DATA_DONE');
+		$link = 'index.php?option=com_jem&view=housekeeping';
+		$msg = JText::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_DONE');
 
 		$this->setRedirect($link, $msg);
 	}
@@ -105,8 +99,8 @@ class JEMControllerCleanup extends JControllerLegacy
 	{
 		JEMHelper::cleanup(1);
 
-		$link = 'index.php?option=com_jem&view=cleanup';
-		$msg = JText::_('COM_JEM_AUTOARCHIVE_DONE');
+		$link = 'index.php?option=com_jem&view=housekeeping';
+		$msg = JText::_('COM_JEM_HOUSEKEEPING_AUTOARCHIVE_DONE');
 
 		$this->setRedirect($link, $msg);
 	}

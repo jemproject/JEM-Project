@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en_GB" xml:lang="en_GB">
+<head>
+	<title>Housekeeping</title>
+	<link href="../css/help.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<h1>Housekeeping</h1>
+
+<h3>Description</h3>
+
+<div>
+	<p><img src="../../../../../media/com_jem/images/icon-48-housekeeping.png" alt="" class="left" /> 
+		This screen offers a set of tools to keep your database clean from unused data and images, and to 
+		trigger the Autoarchive function.</p>
+	<div class="clear"></div>
+</div>
+
+<div class="box">
+	<p class="hintheader">Tip</p>
+	<p class="hint">Remove unnecessary images regularly.</p>
+</div>
+
+
+<h3>Navigation</h3>
+
+<p>To access this screen use: 
+	<strong>Components</strong> &rarr; <strong>JEM</strong> &rarr; <strong>Housekeeping</strong></p>
+
+
+<h3>User Access Level</h3>
+
+<p><img src="../images/super_administrator.gif" alt="Super Administrator" /> Super Administrator</p>
+
+
+<h3>Toolbar Icons</h3>
+
+<p><img src="toolbars/bh.png" alt="toolbar" /></p>
+
+<p><strong>Back:</strong> 
+	Takes you back to the JEM Main menu.</p>
+<p><strong>Help:</strong> 
+	Clicking the Help icon opens a related help screen.</p>
+
+
+<h3>Main area</h3>
+
+<p>
+	<img src="../../../../../media/com_jem/images/icon-48-cleaneventimg.png" alt="" align="left" />
+	<strong>Cleanup Event Image:</strong> 
+	Here you can clean up the images in your database with a simple click of the icon. 
+	This action extracts all used images from the database and then compares the result with all available images. 
+	Images which are not used are deleted immediately. Note that this feature should 
+	be used only if the JEM images are not used elsewhere (such as content items in other articles). 
+	If you are using your JEM images in other areas, you can also use the Joomla! Media Manager or the JEM
+	image selection to selectively delete individual images. 
+</p>
+
+<p>
+	<img src="../../../../../media/com_jem/images/icon-48-cleancategoryimg.png" alt="" align="left" />
+	<strong>Cleanup Category Images:</strong> 
+	Here you can clean up unused Category images in your database with a simple click of the icon. 
+	This action extracts all used images from the database and then compares the result with all available images. 
+	Images which are not used are deleted immediately. Note that this feature should 
+	be used only if the JEM images are not used elsewhere (such as content items in other articles). 
+	If you are using your JEM images in other areas, you can also use the Joomla! Media Manager or the JEM
+	image selection to selectively delete individual images. 
+</p>
+
+<p>
+	<img src="../../../../../media/com_jem/images/icon-48-cleancategoryimg.png" alt="" align="left" />
+	<strong>Delete Zombie Cat/Event references:</strong> 
+	Deletes all useless (zombie) Category-Event References: Deletes all relations from Events to Categories that do not exits in the Category table anymore. 
+	These references are useless because they do not refer to an existing Category.
+	Also zombie relations from Categories to Events that do not exist anymore are deleted.
+</p>
+
+<p>
+	<img src="../../../../../media/com_jem/images/icon-48-cleanvenueimg.png" alt="" align="left" />
+	<strong>Cleanup Venue Images:</strong> 
+	Here you can clean up the unused Venue images in your database with a simple click of the icon. 
+	This action extracts all used images from the database and then compares the result with all available images. 
+	Images which are not used are deleted immediately. Note that this feature should 
+	be used only if the JEM images are not used elsewhere (such as content items in other articles). 
+	If you are using your JEM images in other areas, you can also use the Joomla! Media Manager or the JEM
+	image selection to selectively delete individual images. 
+</p>
+
+<p>
+	<img src="../../../../../media/com_jem/images/icon-48-archive.png" alt="" align="left" />
+	<strong>Trigger Autoarchive:</strong> 
+	Normally the Auto-archive function is triggered when the date changes to a new day <strong>and</strong> a Frontend 
+	visitor visits a JEM view.<br />
+	The Auto-archive function performs 2 actions:<br />
+	1. The past events are archived or deleted, according what rule is set in Settings &rarr; Basis Settings &rarr; Event handling.
+	2. The recurring events are auto-created if a new instance of the recurring event fits in the 'anticipation window' <strong>and</strong>
+	 the 'By the end of' date in the event has not yet expired. JEM calculates if it needs to auto-create a new event by <strong>first</strong> 
+	 looking at the Settings &rarr; Global Parameters &rarr; Advanced Parameters: Generate events up to (days). 
+	 The number of days here is the default 'anticipation window': The amount of days JEM looks ahead for creating 
+	 new recurring events automatically. <br />
+	As a second step, JEM looks if a 'By the end of' date is set in the event (under 'Repeating Events'). 
+	If this end date is before the anticipation window, less events will be created. If it is after the anticipation window, 
+	the anticipation window is leading. 
+	
+	You can perform these 2 actions here by hitting the 'Trigger Autoarchive" button.
+</p>
+
+<p>
+	<img src="../../../../../media/com_jem/images/icon-48-truncatealldata.png" alt="" align="left" />
+	<strong>Delete all JEM data:</strong> 
+	Deletes <strong>all</strong> JEM data in the Database, including events, venues, categories etc. You can use this 
+	feature for instance when you have installed the sample data at installation to test JEM before 
+	using it, or when you have entered your own data to get acquainted to the system first, before actually using it.
+</p>
+
+
+<div class="close">
+	<a href="#" onclick="javascript:window.close();">Close window</a>
+</div>
+
+</body>
+</html>

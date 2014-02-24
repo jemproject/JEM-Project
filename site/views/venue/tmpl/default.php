@@ -6,18 +6,18 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
+
 
 ?>
 <div id="jem" class="jem_venue<?php echo $this->pageclass_sfx;?>" itemscope="itemscope" itemtype="http://schema.org/Place">
 	<div class="buttons">
 		<?php
-			echo JEMOutput::addvenuebutton($this->addvenuelink, $this->params, $this->jemsettings);
-			echo JEMOutput::submitbutton($this->addeventlink, $this->params);
-			echo JEMOutput::archivebutton($this->params, $this->task, $this->venue->slug);
-			echo JEMOutput::mailbutton($this->venue->slug, 'venue', $this->params);
-			echo JEMOutput::printbutton($this->print_link, $this->params);
+			echo JemOutput::addvenuebutton($this->addvenuelink, $this->params, $this->jemsettings);
+			echo JemOutput::submitbutton($this->addeventlink, $this->params);
+			echo JemOutput::archivebutton($this->params, $this->task, $this->venue->slug);
+			echo JemOutput::mailbutton($this->venue->slug, 'venue', $this->params);
+			echo JemOutput::printbutton($this->print_link, $this->params);
 		?>
 	</div>
 
@@ -32,9 +32,9 @@ defined('_JEXEC') or die;
 	<!--Venue-->
 	<h2 class="jem">
 			<?php echo JText::_('COM_JEM_VENUE'); ?>
-			<?php echo JEMOutput::editbutton($this->venue, $this->params, NULL, $this->allowedtoeditvenue, 'venue' ); ?>
+			<?php echo JemOutput::editbutton($this->venue, $this->params, NULL, $this->allowedtoeditvenue, 'venue'); ?>
 	</h2>
-	<?php echo JEMOutput::flyer( $this->venue, $this->limage, 'venue' ); ?>
+	<?php echo JemOutput::flyer($this->venue, $this->limage, 'venue'); ?>
 
 	<?php if (($this->settings->get('global_show_detlinkvenue',1)) && (!empty($this->venue->url))) : ?>
 		<dl class="location">
@@ -47,35 +47,35 @@ defined('_JEXEC') or die;
 
 	<?php if ($this->settings->get('global_show_detailsadress',1)) : ?>
 		<dl class="location floattext" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
-			<?php if ( $this->venue->street ) : ?>
+			<?php if ($this->venue->street) : ?>
 			<dt class="venue_street"><?php echo JText::_('COM_JEM_STREET').':'; ?></dt>
 			<dd class="venue_street" itemprop="streetAddress">
 				<?php echo $this->escape($this->venue->street); ?>
 			</dd>
 			<?php endif; ?>
 
-			<?php if ( $this->venue->postalCode ) : ?>
+			<?php if ($this->venue->postalCode) : ?>
 			<dt class="venue_postalCode"><?php echo JText::_('COM_JEM_ZIP').':'; ?></dt>
 			<dd class="venue_postalCode" itemprop="postalCode">
 				<?php echo $this->escape($this->venue->postalCode); ?>
 			</dd>
 			<?php endif; ?>
 
-			<?php if ( $this->venue->city ) : ?>
+			<?php if ($this->venue->city) : ?>
 			<dt class="venue_city"><?php echo JText::_('COM_JEM_CITY').':'; ?></dt>
 			<dd class="venue_city" itemprop="addressLocality">
 				<?php echo $this->escape($this->venue->city); ?>
 			</dd>
 			<?php endif; ?>
 
-			<?php if ( $this->venue->state ) : ?>
+			<?php if ($this->venue->state) : ?>
 			<dt class="venue_state"><?php echo JText::_('COM_JEM_STATE').':'; ?></dt>
 			<dd class="venue_state" itemprop="addressRegion">
 				<?php echo $this->escape($this->venue->state); ?>
 			</dd>
 			<?php endif; ?>
 
-			<?php if ( $this->venue->country ) : ?>
+			<?php if ($this->venue->country) : ?>
 			<dt class="venue_country"><?php echo JText::_('COM_JEM_COUNTRY').':'; ?></dt>
 			<dd class="venue_country">
 				<?php echo $this->venue->countryimg ? $this->venue->countryimg : $this->venue->country; ?>
@@ -101,13 +101,13 @@ defined('_JEXEC') or die;
 
 			<?php
 			if ($this->settings->get('global_show_mapserv')== 1) {
-				echo JEMOutput::mapicon($this->venue);
+				echo JemOutput::mapicon($this->venue);
 			}
 			?>
 		</dl>
 		<?php
 		if ($this->settings->get('global_show_mapserv')== 2) {
-			echo JEMOutput::mapicon($this->venue);
+			echo JemOutput::mapicon($this->venue);
 		}
 		?>
 	<?php endif; ?>
@@ -131,7 +131,7 @@ defined('_JEXEC') or die;
 		<p>
 		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 		<input type="hidden" name="view" value="venue" />
 		<input type="hidden" name="id" value="<?php echo $this->venue->id; ?>" />
 		</p>
@@ -142,10 +142,10 @@ defined('_JEXEC') or die;
 		<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
 
-	<?php echo JEMOutput::icalbutton($this->venue->id, 'venue'); ?>
+	<?php echo JemOutput::icalbutton($this->venue->id, 'venue'); ?>
 
 	<!--copyright-->
 	<div class="copyright">
-		<?php echo JEMOutput::footer( ); ?>
+		<?php echo JemOutput::footer( ); ?>
 	</div>
 </div>

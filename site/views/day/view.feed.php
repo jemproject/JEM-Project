@@ -6,32 +6,24 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
 
 /**
- * HTML View class for the JEM View
- *
- * @package JEM
- *
+ * Day-Feed
  */
-class JEMViewDay extends JViewLegacy
+class JemViewDay extends JViewLegacy
 {
 	/**
 	 * Creates the Event Feed
-	 *
-	 *
 	 */
 	function display()
 	{
-		$mainframe = JFactory::getApplication();
-
+		$app = JFactory::getApplication();
 		$doc = JFactory::getDocument();
 
 		// Get some data from the model
-		JRequest::setVar('limit', $mainframe->getCfg('feed_limit'));
+		JRequest::setVar('limit', $app->getCfg('feed_limit'));
 		$rows = $this->get('Data');
 
 		foreach ($rows as $row) {
@@ -40,10 +32,6 @@ class JEMViewDay extends JViewLegacy
 			$title = html_entity_decode($title);
 
 			// strip html from feed item category
-			/*
-			$category = $this->escape($row->catname);
-			$category = html_entity_decode($category);
-			*/
 			if (!empty($row->categories)) {
 				$category = array();
 				foreach ($row->categories AS $category2) {
@@ -57,15 +45,14 @@ class JEMViewDay extends JViewLegacy
 				$category = '';
 			}
 
-			//Format date and time
-			$displaydate = JEMOutput::formatLongDateTime($row->dates, $row->times,
-				$row->enddates, $row->endtimes);
+			// Format date and time
+			$displaydate = JemOutput::formatLongDateTime($row->dates, $row->times,$row->enddates, $row->endtimes);
 
 			// url link to event
-			$link = JRoute::_(JEMHelperRoute::getEventRoute($row->id));
+			$link = JRoute::_(JemHelperRoute::getEventRoute($row->id));
 
 			// feed item description text
-			$description = JText::_('COM_JEM_TITLE').': '.$title.'<br />';
+			$description  = JText::_('COM_JEM_TITLE').': '.$title.'<br />';
 			$description .= JText::_('COM_JEM_VENUE').': '.$row->venue.' / '.$row->city.'<br />';
 			$description .= JText::_('COM_JEM_CATEGORY').': '.$category.'<br />';
 			$description .= JText::_('COM_JEM_DATE').': '.$displaydate.'<br />';

@@ -6,39 +6,32 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
 require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
 /**
- * HTML View class for the JEM View
- *
- * @package JEM
- *
+ * Search-View
  */
-class JEMViewSearch extends JEMView
+class JemViewSearch extends JEMView
 {
 	/**
 	 * Creates the Simple List View
-	 *
-	 *
 	 */
 	function display($tpl = null)
 	{
 		$app = JFactory::getApplication();
 
 		//initialize variables
-		$document 	= JFactory::getDocument();
-		$jemsettings = JEMHelper::config();
-		$settings 	= JEMHelper::globalattribs();
-		$menu		= $app->getMenu();
-		$menuitem	= $menu->getActive();
-		$params 	= $app->getParams();
-		$uri 		= JFactory::getURI();
-		$pathway 	= $app->getPathWay();
-		$user		= JFactory::getUser();
+		$document		= JFactory::getDocument();
+		$jemsettings	= JemHelper::config();
+		$settings 		= JemHelper::globalattribs();
+		$menu			= $app->getMenu();
+		$menuitem		= $menu->getActive();
+		$params 		= $app->getParams();
+		$uri 			= JFactory::getURI();
+		$pathway 		= $app->getPathWay();
+		$user			= JFactory::getUser();
 
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
@@ -89,6 +82,7 @@ class JEMViewSearch extends JEMView
 			$pagetitle   .= ' - ' . JText::_('COM_JEM_ARCHIVE');
 			$pageheading .= ' - ' . JText::_('COM_JEM_ARCHIVE');
 		}
+		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		$params->set('page_heading', $pageheading);
 
@@ -105,8 +99,8 @@ class JEMViewSearch extends JEMView
 		$document->setMetadata('title' , $pagetitle);
 
 		//Check if the user has access to the form
-		$maintainer = JEMUser::ismaintainer('add');
-		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+		$maintainer = JemUser::ismaintainer('add');
+		$genaccess 	= JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
 		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
 			$dellink = 1;
@@ -131,7 +125,7 @@ class JEMViewSearch extends JEMView
 		$categories   = $this->get('CategoryTree');
 		$catoptions   = array();
 		$catoptions[] = JHtml::_('select.option', '1', JText::_('COM_JEM_SELECT_CATEGORY'));
-		$catoptions   = array_merge($catoptions, JEMCategories::getcatselectoptions($categories));
+		$catoptions   = array_merge($catoptions, JemCategories::getcatselectoptions($categories));
 		$selectedcats = ($filter_category) ? array($filter_category) : array();
 
 		//build selectlists

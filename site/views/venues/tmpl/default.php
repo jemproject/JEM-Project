@@ -6,16 +6,17 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
+
+
 ?>
 <div id="jem" class="jem_venues<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
-		echo JEMOutput::addvenuebutton($this->addvenuelink, $this->params, $this->jemsettings);
-		echo JEMOutput::archivebutton($this->params, $this->task);
-		echo JEMOutput::submitbutton($this->addeventlink, $this->params);
-		echo JEMOutput::printbutton($this->print_link, $this->params);
+		echo JemOutput::addvenuebutton($this->addvenuelink, $this->params, $this->jemsettings);
+		echo JemOutput::archivebutton($this->params, $this->task);
+		echo JemOutput::submitbutton($this->addeventlink, $this->params);
+		echo JemOutput::printbutton($this->print_link, $this->params);
 		?>
 	</div>
 
@@ -36,7 +37,7 @@ defined('_JEXEC') or die;
 		</h2>
 
 		<!-- FLYER -->
-		<?php echo JEMOutput::flyer( $row, $row->limage, 'venue' ); ?>
+		<?php echo JemOutput::flyer( $row, $row->limage, 'venue' ); ?>
 
 		<!--  -->
 		<dl class="location">
@@ -58,7 +59,7 @@ defined('_JEXEC') or die;
 		</dl>
 		<?php if ( $this->settings->get('global_show_detailsadress',1)) : ?>
 			<dl class="location floattext" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
-				<?php if ( $row->street ) : ?>
+				<?php if ($row->street) : ?>
 				<dt class="venue_street">
 					<?php echo JText::_('COM_JEM_STREET').':'; ?>
 				</dt>
@@ -67,7 +68,7 @@ defined('_JEXEC') or die;
 				</dd>
 				<?php endif; ?>
 
-				<?php if ( $row->postalCode ) : ?>
+				<?php if ($row->postalCode) : ?>
 				<dt class="venue_postalCode">
 					<?php echo JText::_('COM_JEM_ZIP').':'; ?>
 				</dt>
@@ -76,7 +77,7 @@ defined('_JEXEC') or die;
 				</dd>
 				<?php endif; ?>
 
-				<?php if ( $row->city ) : ?>
+				<?php if ($row->city) : ?>
 				<dt class="venue_city">
 					<?php echo JText::_('COM_JEM_CITY').':'; ?>
 				</dt>
@@ -85,7 +86,7 @@ defined('_JEXEC') or die;
 				</dd>
 				<?php endif; ?>
 
-				<?php if ( $row->state ) : ?>
+				<?php if ($row->state) : ?>
 				<dt class="venue_state">
 					<?php echo JText::_('COM_JEM_STATE').':'; ?>
 				</dt>
@@ -94,7 +95,7 @@ defined('_JEXEC') or die;
 				</dd>
 				<?php endif; ?>
 
-				<?php if ( $row->country ) : ?>
+				<?php if ($row->country) : ?>
 				<dt class="venue_country">
 					<?php echo JText::_('COM_JEM_COUNTRY').':'; ?>
 				</dt>
@@ -105,11 +106,11 @@ defined('_JEXEC') or die;
 				<?php endif; ?>
 
 				<?php if ($this->settings->get('global_show_mapserv') == 1) : ?>
-					<?php echo JEMOutput::mapicon($row); ?>
+					<?php echo JemOutput::mapicon($row); ?>
 				<?php endif; ?>
 			</dl>
 			<?php if ($this->settings->get('global_show_mapserv') == 2) : ?>
-				<?php echo JEMOutput::mapicon($row); ?>
+				<?php echo JemOutput::mapicon($row); ?>
 			<?php endif; ?>
 		<?php endif; ?>
 
@@ -131,6 +132,6 @@ defined('_JEXEC') or die;
 
 	<!--copyright-->
 	<div class="copyright">
-		<?php echo JEMOutput::footer( ); ?>
+		<?php echo JemOutput::footer( ); ?>
 	</div>
 </div>

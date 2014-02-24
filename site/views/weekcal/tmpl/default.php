@@ -8,7 +8,8 @@
  */
 defined('_JEXEC') or die;
 ?>
-<div id="jem" class="jem_calendar<?php echo $this->pageclass_sfx;?>">
+
+<div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">
 	<?php if ($this->params->get('show_page_heading', 1)): ?>
 		<h1 class="componentheading">
 			<?php echo $this->escape($this->params->get('page_heading')); ?>
@@ -28,7 +29,7 @@ defined('_JEXEC') or die;
 	$limit = $this->params->get('daylimit', 10);
 
 	foreach ($this->rows as $row) :
-		if (!JEMHelper::isValidDate($row->dates)) {
+		if (!JemHelper::isValidDate($row->dates)) {
 			continue; // skip, open date !
 		}
 
@@ -65,15 +66,15 @@ defined('_JEXEC') or die;
 		}
 
 		if ($this->jemsettings->showtime == 1) {
-			$start = JEMOutput::formattime($row->times,'', false);
-			$end = JEMOutput::formattime($row->endtimes,'', false);
+			$start = JemOutput::formattime($row->times,'', false);
+			$end = JemOutput::formattime($row->endtimes,'', false);
 
 			$multi = new stdClass();
 			$multi->row = (isset($row->multi) ? $row->multi : 'na');
 		}
 
 		$eventname = '<div class="eventName">'.JText::_('COM_JEM_TITLE').': '.$this->escape($row->title).'</div>';
-		$detaillink = JRoute::_( JEMHelperRoute::getEventRoute($row->slug));
+		$detaillink = JRoute::_(JemHelperRoute::getEventRoute($row->slug));
 
 		//initialize variables
 		$multicatname = '';
@@ -86,7 +87,7 @@ defined('_JEXEC') or die;
 		//walk through categories assigned to an event
 		foreach($row->categories AS $category) {
 			//Currently only one id possible...so simply just pick one up...
-			$detaillink 	= JRoute::_( JEMHelperRoute::getEventRoute($row->slug));
+			$detaillink 	= JRoute::_(JemHelperRoute::getEventRoute($row->slug));
 
 			//wrap a div for each category around the event for show hide toggler
 			$content 		.= '<div id="catz" class="cat'.$category->id.'">';
@@ -125,8 +126,8 @@ defined('_JEXEC') or die;
 		$timetp = '';
 
 		if ($this->jemsettings->showtime == 1) {
-			$start = JEMOutput::formattime($row->times,'',false);
-			$end = JEMOutput::formattime($row->endtimes,'',false);
+			$start = JemOutput::formattime($row->times,'',false);
+			$end = JemOutput::formattime($row->endtimes,'',false);
 
 			$multi = new stdClass();
 			$multi->row = (isset($row->multi) ? $row->multi : 'na');
@@ -155,14 +156,14 @@ defined('_JEXEC') or die;
 
 		$catname = '<div class="catname">'.$multicatname.'</div>';
 
-		$eventdate = JEMOutput::formatdate($row->dates);
+		$eventdate = JemOutput::formatdate($row->dates);
 
 		//venue
 		if ($this->jemsettings->showlocate == 1) {
 			$venue = '<div class="location"><span class="label">'.JText::_('COM_JEM_VENUE').': </span>';
 
 			if ($this->jemsettings->showlinkvenue == 1 && 0) {
-				$venue .= $row->locid != 0 ? "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
+				$venue .= $row->locid != 0 ? "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
 			} else {
 				$venue .= $row->locid ? $this->escape($row->venue) : '-';
 			}
@@ -175,23 +176,23 @@ defined('_JEXEC') or die;
 		//date in tooltip
 		$multidaydate = '<div class="location"><span class="label">'.JText::_('COM_JEM_DATE').': </span>';
 		if ($multi->row == 'first') {
-			$multidaydate .= JEMOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
-			$multidaydate .= JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+			$multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+			$multidaydate .= JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
 		} elseif ($multi->row == 'middle') {
-			$multidaydate .= JEMOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
-			$multidaydate .= JEMOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
+			$multidaydate .= JemOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
+			$multidaydate .= JemOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
 		} elseif ($multi->row == 'zlast') {
-			$multidaydate .= JEMOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
-			$multidaydate .= JEMOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
+			$multidaydate .= JemOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
+			$multidaydate .= JemOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
 		} else {
-			$multidaydate .= JEMOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
-			$multidaydate .= JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+			$multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+			$multidaydate .= JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
 		}
 		$multidaydate .= '</div>';
 
 		//generate the output
 		//$content .= $colorpic;
-		$content .= JEMHelper::caltooltip($catname.$eventname.$multidaydate.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $color);
+		$content .= JemHelper::caltooltip($catname.$eventname.$multidaydate.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $color);
 		$content .= $contentend;
 
 		$this->cal->setEventContent($year, $month, $day, $content);

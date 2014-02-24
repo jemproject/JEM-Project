@@ -273,7 +273,6 @@ abstract class JEMHelperRoute
 		return null;
 
 // 		$user = JFactory::getUser();
-// 		$gid = JEMHelper::getGID($user);
 
 // 		//false if there exists no menu item at all
 // 		if (!$items) {
@@ -284,7 +283,7 @@ abstract class JEMHelperRoute
 // 			{
 // 				foreach($items as $item)
 // 				{
-// 					if ((@$item->query['view'] == $needle) && (@$item->query['id'] == $id) && ($item->access <= $gid)) {
+// 					if (($item->query['view'] == $needle) && ($item->query['id'] == $id)) {
 // 						return $item;
 // 					}
 // 				}

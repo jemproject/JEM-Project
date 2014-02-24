@@ -3,7 +3,6 @@
 	<fieldset name="globalparam2"
 		label="COM_JEM_GLOBAL_PARAMETERS"
 	>
-		<field type="spacer" hr="true" />
 		<field name="ical_max_items" type="text"
 			label="COM_JEM_SETTINGS_ICAL_MAX_ITEMS"
 			description="COM_JEM_SETTINGS_ICAL_MAX_ITEMS_DESC"
@@ -727,8 +726,8 @@
 			label="COM_JEM_GLOBAL_PARAMETERS"
 		>
 			<field name="global_show_filter" type="radio"
-				label="COM_JEM_FILTER"
-				description="COM_JEM_FILTER_DESC"
+				label="COM_JEM_SETTINGS_FIELD_SHOW_FILTER"
+				description="COM_JEM_SETTINGS_FIELD_SHOW_FILTER_DESC"
 				class="inputbox"
 				default="1"
 				required="false"
@@ -737,8 +736,8 @@
 				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_display" type="radio"
-				label="COM_JEM_DISPLAY_SELECT"
-				description="COM_JEM_DISPLAY_SELECT_DESC"
+				label="COM_JEM_SETTINGS_FIELD_SHOW_LIMITBOX"
+				description="COM_JEM_SETTINGS_FIELD_SHOW_LIMITBOX_DESC"
 				class="inputbox"
 				default="1"
 				required="false"
@@ -757,8 +756,8 @@
 				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_show_print_icon" type="radio"
-				label="COM_JEM_PRINT_ICON"
-				description="COM_JEM_PRINT_ICON_DESC"
+				label="COM_JEM_SETTINGS_FIELD_SHOW_PRINT_ICON"
+				description="COM_JEM_SETTINGS_FIELD_SHOW_PRINT_ICON_DESC"
 				class="inputbox"
 				default="1"
 				required="false"
@@ -767,8 +766,8 @@
 				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_show_archive_icon" type="radio"
-				label="COM_JEM_ARCHIVE_ICON"
-				description="COM_JEM_ARCHIVE_ICON_DESC"
+				label="COM_JEM_SETTINGS_FIELD_SHOW_ARCHIVE_ICON"
+				description="COM_JEM_SETTINGS_FIELD_SHOW_ARCHIVE_ICON_DESC"
 				class="inputbox"
 				default="1"
 				required="false"
@@ -777,8 +776,8 @@
 				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_show_email_icon" type="radio"
-				label="COM_JEM_EMAIL_ICON"
-				description="COM_JEM_EMAIL_ICON_DESC"
+				label="COM_JEM_SETTINGS_FIELD_SHOW_EMAIL_ICON"
+				description="COM_JEM_SETTINGS_FIELD_SHOW_EMAIL_ICON_DESC"
 				class="inputbox"
 				default="1"
 				required="false"
@@ -787,8 +786,8 @@
 				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_show_ical_icon" type="radio"
-				label="COM_JEM_SETTINGS_SHOW_EVENTS_ICAL"
-				description="COM_JEM_SETTINGS_SHOW_EVENTS_ICAL_DESC"
+				label="COM_JEM_SETTINGS_FIELD_SHOW_ICAL_ICON"
+				description="COM_JEM_SETTINGS_FIELD_SHOW_ICAL_ICON_DESC"
 				class="inputbox"
 				default="1"
 				required="false"
@@ -797,8 +796,8 @@
 				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_show_timedetails" type="radio"
-				label="COM_JEM_DISPLAY_TIME"
-				description="COM_JEM_DISPLAY_TIME_DESC"
+				label="COM_JEM_SETTINGS_FIELD_SHOW_TIME"
+				description="COM_JEM_SETTINGS_FIELD_SHOW_TIME_DESC"
 				class="inputbox"
 				default="1"
 				required="false"
@@ -806,9 +805,14 @@
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
+			<field
+				name="spacer1"
+				type="spacer"
+				hr="true"
+			/>
 			<field name="global_regname" type="list"
-				label="COM_JEM_TYPE_REG_NAME"
-				description="COM_JEM_TYPE_REG_NAME_DESC"
+				label="COM_JEM_SETTINGS_FIELD_REGNAME"
+				description="COM_JEM_SETTINGS_FIELD_REGNAME_DESC"
 				class="inputbox"
 				default="1"
 				required="false"

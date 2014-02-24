@@ -33,7 +33,7 @@ defined('_JEXEC') or die;
 	?>
 	</ul>
 	<p><?php echo JText::_('COM_JEM_IMPORT_EL_HOUSEKEEPING'); ?>:
-		<a href="index.php?option=com_jem&amp;view=cleanup"><?php echo JText::_('COM_JEM_CLEANUP'); ?></a>
+		<a href="index.php?option=com_jem&amp;view=housekeeping"><?php echo JText::_('COM_JEM_HOUSEKEEPING'); ?></a>
 	</p>
 <?php elseif($this->progress->step == 0) : ?>
 	<?php if(!$this->eventlistVersion) : ?>

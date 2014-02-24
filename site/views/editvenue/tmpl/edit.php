@@ -17,7 +17,6 @@ jimport( 'joomla.html.html.tabs' );
 $params		= $this->item->params;
 //$settings = json_decode($this->item->attribs);
 
-
 $options = array(
 		'onActive' => 'function(title, description){
         description.setStyle("display", "block");
@@ -133,70 +132,63 @@ $options = array(
 		$(form.jform_country).removeClass('required');
 	}
 	</script>
-    <script>
-    jQuery(function(){
-    	  jQuery("#geocomplete").geocomplete({
-          map: ".map_canvas",
-          /* location: "default address", */
-          details: "form ",
-          detailsAttribute: "geo-data",
-          types: ['establishment', 'geocode'],
-          markerOptions: {
-            draggable: true
-          }
-        });
+	<script>
+	jQuery(function(){
+		jQuery("#geocomplete").geocomplete({
+			map: ".map_canvas",
+			/* location: "default address", */
+			details: "form ",
+			detailsAttribute: "geo-data",
+			types: ['establishment', 'geocode'],
+			markerOptions: {
+				draggable: true
+			}
+		});
 
-    	  jQuery("#geocomplete").bind("geocode:dragged", function(event, latLng){
-    		  jQuery("input[id=jform_latitude]").val(latLng.lat());
-    		  jQuery("input[id=jform_longitude]").val(latLng.lng());
-    		  jQuery("#geocomplete").geocomplete("find", latLng.toString());
-    		 /* option to show the reset-link */
-    		 /* jQuery("#reset").show();*/
-        });
+		  jQuery("#geocomplete").bind("geocode:dragged", function(event, latLng){
+			  jQuery("input[id=jform_latitude]").val(latLng.lat());
+			  jQuery("input[id=jform_longitude]").val(latLng.lng());
+			  jQuery("#geocomplete").geocomplete("find", latLng.toString());
+			 /* option to show the reset-link */
+			 /* jQuery("#reset").show();*/
+		});
 
+		  jQuery("#geocomplete").bind("geocode:result", function(event, result){
+		  		var country = document.getElementById("country").value;
+		  		document.getElementById("jform_country").value = country;
+		});
 
+		/* option to attach a reset function to the reset-link
+			jQuery("#reset").click(function(){
+				jQuery("#geocomplete").geocomplete("resetMarker");
+				jQuery("#reset").hide();
+					return false;
+			});
+		*/
 
-    	  jQuery("#geocomplete").bind("geocode:result", function(event, result){
-    	  		var country = document.getElementById("country").value;
-    	  		document.getElementById("jform_country").value = country;
-        });
-
-
-        /* option to attach a reset function to the reset-link
-    	  jQuery("#reset").click(function(){
-   		  jQuery("#geocomplete").geocomplete("resetMarker");
-   		  jQuery("#reset").hide();
-          return false;
-        });
-     	*/
-
-     	jQuery("#find").click(function(){
-     		jQuery("#geocomplete").trigger("geocode");
-        }).click();
-      });
-    </script>
+		jQuery("#find").click(function(){
+			jQuery("#geocomplete").trigger("geocode");
+		}).click();
+	});
+	</script>
 
 <div id="jem" class="jem_editvenue<?php echo $this->pageclass_sfx; ?>">
 	<div class="edit item-page">
 		<?php if ($params->get('show_page_heading')) : ?>
 		<h1>
-			<?php echo $this->escape($params->get('page_heading')); ?>
+		<?php echo $this->escape($params->get('page_heading')); ?>
 		</h1>
 		<?php endif; ?>
 
 		<form action="<?php echo JRoute::_('index.php?option=com_jem&a_id='.(int) $this->item->id); ?>" class="form-validate" method="post" name="adminForm" id="venue-form" enctype="multipart/form-data">
 			<div class="buttons btn-group">
-				<button type="button" class="positive" onclick="Joomla.submitbutton('venue.save')">
-					<?php echo JText::_('JSAVE') ?>
-				</button>
-				<button type="button" class="negative" onclick="Joomla.submitbutton('venue.cancel')">
-					<?php echo JText::_('JCANCEL') ?>
-				</button>
+				<button type="button" class="positive" onclick="Joomla.submitbutton('venue.save')"><?php echo JText::_('JSAVE') ?></button>
+				<button type="button" class="negative" onclick="Joomla.submitbutton('venue.cancel')"><?php echo JText::_('JCANCEL') ?></button>
 			</div>
 
 			<?php if ($this->params->get('showintrotext')) : ?>
 			<div class="description no_space floattext">
-			<?php echo $this->params->get('introtext'); ?>
+				<?php echo $this->params->get('introtext'); ?>
 			</div>
 			<?php endif; ?>
 			<p>&nbsp;</p>
@@ -208,30 +200,30 @@ $options = array(
 
 			<fieldset>
 				<legend><?php echo JText::_('COM_JEM_EDITVENUE_DETAILS_LEGEND'); ?></legend>
-				<ul class="adminformlist">
-					<li><?php echo $this->form->getLabel('venue');?><?php echo $this->form->getInput('venue'); ?></li>
-					<?php if (is_null($this->item->id)):?>
-					<li><?php echo $this->form->getLabel('alias'); ?><?php echo $this->form->getInput('alias'); ?></li>
-					<?php endif; ?>
-					<li><?php echo $this->form->getLabel('street'); ?><?php echo $this->form->getInput('street'); ?></li>
-					<li><?php echo $this->form->getLabel('postalCode'); ?><?php echo $this->form->getInput('postalCode'); ?></li>
-					<li><?php echo $this->form->getLabel('city'); ?><?php echo $this->form->getInput('city'); ?></li>
-					<li><?php echo $this->form->getLabel('state'); ?><?php echo $this->form->getInput('state'); ?></li>
-					<li><?php echo $this->form->getLabel('country'); ?><?php echo $this->form->getInput('country'); ?></li>
-					<li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
-				</ul>
-				<div class="clr"></div>
-				<?php echo $this->form->getLabel('locdescription'); ?>
-				<div class="clr"><br /></div>
-				<?php echo $this->form->getInput('locdescription'); ?>
+					<ul class="adminformlist">
+						<li><?php echo $this->form->getLabel('venue');?><?php echo $this->form->getInput('venue'); ?></li>
+						<?php if (is_null($this->item->id)):?>
+						<li><?php echo $this->form->getLabel('alias'); ?><?php echo $this->form->getInput('alias'); ?></li>
+						<?php endif; ?>
+						<li><?php echo $this->form->getLabel('street'); ?><?php echo $this->form->getInput('street'); ?></li>
+						<li><?php echo $this->form->getLabel('postalCode'); ?><?php echo $this->form->getInput('postalCode'); ?></li>
+						<li><?php echo $this->form->getLabel('city'); ?><?php echo $this->form->getInput('city'); ?></li>
+						<li><?php echo $this->form->getLabel('state'); ?><?php echo $this->form->getInput('state'); ?></li>
+						<li><?php echo $this->form->getLabel('country'); ?><?php echo $this->form->getInput('country'); ?></li>
+						<li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
+					</ul>
+					<div class="clr"></div>
+					<?php echo $this->form->getLabel('locdescription'); ?>
+					<div class="clr"><br /></div>
+					<?php echo $this->form->getInput('locdescription'); ?>
 			</fieldset>
 
 			<!-- VENUE-GEODATA-->
 			<fieldset class="adminform" id="geodata">
 				<legend><?php echo JText::_('COM_JEM_GEODATA'); ?></legend>
-				<input id="geocomplete" type="text" placeholder="<?php echo JText::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
+				<input id="geocomplete" type="text" size="40" placeholder="<?php echo JText::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
 				<input id="find" type="button" value="find" />
-				<br />
+				<br><br>
 				<div class="map_canvas"></div>
 				<a id="reset" href="#" style="display:none;">Reset Marker</a>
 			</fieldset>
@@ -254,13 +246,13 @@ $options = array(
 			<!-- META -->
 			<fieldset class="">
 				<legend><?php echo JText::_('COM_JEM_META_HANDLING'); ?></legend>
-				<input type="button" class="button" value="<?php echo JText::_( 'COM_JEM_ADD_VENUE_CITY' ); ?>" onclick="meta()" />
-				<?php foreach($this->form->getFieldset('meta') as $field): ?>
-				<div class="control-group">
-					<div class="control-label"><?php echo $field->label; ?></div>
-					<div class="controls"><?php echo $field->input; ?></div>
-				</div>
-				<?php endforeach; ?>
+					<input type="button" class="button" value="<?php echo JText::_('COM_JEM_ADD_VENUE_CITY'); ?>" onclick="meta()" />
+					<?php foreach($this->form->getFieldset('meta') as $field): ?>
+					<div class="control-group">
+						<div class="control-label"><?php echo $field->label; ?></div>
+						<div class="controls"><?php echo $field->input; ?></div>
+					</div>
+					<?php endforeach; ?>
 			</fieldset>
 
 			<!-- ATTACHMENTS TAB -->
@@ -270,9 +262,8 @@ $options = array(
 			<!-- OTHER TAB -->
 			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EDITVENUE_OTHER_TAB'), 'venue-other' ); ?>
 			<?php echo $this->loadTemplate('other'); ?>
-			<?php echo JHtml::_('tabs.end'); ?>
 
-			<?php echo JHtml::_('form.token'); ?>
+			<?php echo JHtml::_('tabs.end'); ?>
 
 			<div class="clearfix"></div>
 			<input id="country" name="country" geo-data="country_short" type="hidden" value="">

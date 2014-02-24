@@ -6,28 +6,20 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
 
 /**
- * JEM Component Category Feed
- *
- * @package JEM
- *
+ * Category-Feed
  */
-class JEMViewCategory extends JViewLegacy
+class JemViewCategory extends JViewLegacy
 {
 	/**
 	 * Creates the Event Feed of the Category
-	 *
-	 *
 	 */
 	function display()
 	{
 		$app = JFactory::getApplication();
-
 		$doc = JFactory::getDocument();
 
 		// Get some data from the model
@@ -41,18 +33,13 @@ class JEMViewCategory extends JViewLegacy
 			$title = html_entity_decode($title);
 
 			// strip html from feed item category
-			/*
-			$category = $this->escape($row->catname);
-			$category = html_entity_decode($category);
-			*/
-
 			if (!empty($row->categories)) {
 				$category = array();
 				foreach ($row->categories AS $category2) {
 					$category[] = $category2->catname;
 				}
 
-				// ading the , to the list when there are multiple category's
+				// adding the , to the list when there are multiple category's
 				$category = $this->escape(implode(', ', $category));
 				$category = html_entity_decode($category);
 			} else {
@@ -60,14 +47,13 @@ class JEMViewCategory extends JViewLegacy
 			}
 
 			//Format date and time
-			$displaydate = JEMOutput::formatLongDateTime($row->dates, $row->times,
-				$row->enddates, $row->endtimes);
+			$displaydate = JemOutput::formatLongDateTime($row->dates, $row->times,$row->enddates, $row->endtimes);
 
 			// url link to event
-			$link = JRoute::_(JEMHelperRoute::getEventRoute($row->id));
+			$link = JRoute::_(JemHelperRoute::getEventRoute($row->id));
 
 			// feed item description text
-			$description = JText::_('COM_JEM_TITLE').': '.$title.'<br />';
+			$description  = JText::_('COM_JEM_TITLE').': '.$title.'<br />';
 			$description .= JText::_('COM_JEM_VENUE').': '.$row->venue.' / '.$row->city.'<br />';
 			$description .= JText::_('COM_JEM_CATEGORY').': '.$category.'<br />';
 			$description .= JText::_('COM_JEM_DATE').': '.$displaydate.'<br />';

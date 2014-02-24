@@ -8,17 +8,12 @@
  */
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
 
 /**
- * ICS-View
- *
- * @package JEM
- *
+ * Category-Raw
  */
 class JemViewCategory extends JViewLegacy
 {
-
 	/**
 	 * Creates the output for the Category view
 	 */
@@ -30,7 +25,6 @@ class JemViewCategory extends JViewLegacy
 		$jinput 	= JFactory::getApplication()->input;
 
 		if ($settings2->get('global_show_ical_icon','0')==1) {
-
 			// Get data from the model
 			$model = $this->getModel();
 			$model->setLimit($settings->ical_max_items);
@@ -47,8 +41,6 @@ class JemViewCategory extends JViewLegacy
 			}
 			// generate and redirect output to user browser
 			$vcal->returnCalendar();
-			echo $vcal->createCalendar(); // debug
-
 		} else {
 			return;
 		}

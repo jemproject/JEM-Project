@@ -10,8 +10,6 @@ defined('_JEXEC') or die;
 
 /**
  * Holds some usefull functions to keep the code a bit cleaner
- *
- * @package JEM
  */
 class JemHelper {
 
@@ -365,28 +363,24 @@ class JemHelper {
 		return $result;
 	}
 
-
+	
 	/**
-	 * use only some importent keys of the jem_events - database table for the where query
-	 * @todo: alter, where is this used for?
-	 *
-	 * @param string $key
-	 * @return boolean
+	 * Build the select list for access level
 	 */
-	static function where_table_rows($key) {
-		if ($key == 'locid' ||
-			//$key == 'catsid' ||
-			$key == 'dates' ||
-			$key == 'enddates' ||
-			$key == 'times' ||
-			$key == 'endtimes' ||
-			$key == 'alias' ||
-			$key == 'created_by') {
-			return true;
-		} else {
-			return false;
-		}
+	static function getAccesslevelOptions()
+	{
+		$db = JFactory::getDBO();
+	
+		$query = 'SELECT id AS value, title AS text'
+				. ' FROM #__viewlevels'
+				. ' ORDER BY id'
+				;
+		$db->setQuery($query);
+		$groups = $db->loadObjectList();
+	
+		return $groups;
 	}
+	
 
 	static function buildtimeselect($max, $name, $selected, $class = 'class="inputbox"')
 	{
@@ -403,23 +397,6 @@ class JemHelper {
 		return JHtml::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
 	}
 
-
-	/**
-	* Build the select list for access level
-	*/
-	static function getAccesslevelOptions()
-	{
-		$db = JFactory::getDBO();
-
-		$query = 'SELECT id AS value, title AS text'
-		. ' FROM #__viewlevels'
-		. ' ORDER BY id'
-		;
-		$db->setQuery($query);
-		$groups = $db->loadObjectList();
-
-		return $groups;
-	}
 
 	/**
 	 * returns mime type of a file
@@ -805,29 +782,6 @@ class JemHelper {
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Get the Group ID of a specific user or the current user
-	 * @param JUser $user The user object
-	 * @return int The Group ID
-	 *
-	 * @todo:alter, Should become obsolete.
-	 * Support Joomla access levels instead of single group id
-	 */
-	static function getGID($user = null) {
-		if(is_null($user)) {
-			$user = JFactory::getUser();
-		}
-
-		if($user->authorise('core.manage')) {
-			$gid = 3;	// viewlevel Special
-		} elseif($user->get('id')) {
-			$gid = 2;	// viewlevel Registered
-		} else {
-			$gid = 1;	// viewlevel Public
-		}
-		return $gid;
 	}
 
 	/**

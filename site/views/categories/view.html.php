@@ -6,29 +6,24 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
 require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
 /**
- * HTML View class for the Categories View
- *
- * @package JEM
- *
+ * Categories-View
  */
-class JEMViewCategories extends JEMView
+class JemViewCategories extends JEMView
 {
 	/**
-	 * Creates the Categories View
+	 * Categories-View
 	 */
 	function display($tpl=null)
 	{
 		$app = JFactory::getApplication();
 
 		$document 		= JFactory::getDocument();
-		$jemsettings 	= JEMHelper::config();
+		$jemsettings 	= JemHelper::config();
 		$user			= JFactory::getUser();
 		$print			= JRequest::getBool('print');
 		$task			= JRequest::getWord('task');
@@ -51,9 +46,9 @@ class JEMViewCategories extends JEMView
 		$menuitem	= $menu->getActive();
 		$params 	= $app->getParams('com_jem');
 
-		$pagetitle = $params->def('page_title', $menuitem->title);
-		$pageheading = $params->def('page_heading', $params->get('page_title'));
-		$pageclass_sfx = $params->get('pageclass_sfx');
+		$pagetitle		= $params->def('page_title', $menuitem->title);
+		$pageheading	= $params->def('page_heading', $params->get('page_title'));
+		$pageclass_sfx	= $params->get('pageclass_sfx');
 
 		//pathway
 		$pathway = $app->getPathWay();
@@ -84,8 +79,8 @@ class JEMViewCategories extends JEMView
 		$document->setMetaData('title' , $pagetitle);
 
 		//Check if the user has access to the form
-		$maintainer = JEMUser::ismaintainer('add');
-		$genaccess 	= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+		$maintainer = JemUser::ismaintainer('add');
+		$genaccess 	= JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
 		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
 			$dellink = 1;

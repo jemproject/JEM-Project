@@ -57,12 +57,12 @@
 					<option value="1">JYES</option>
 				</field>
 				<field name="cal15q_tooltips_title" type="text"
-					default="MOD_JEM_CAL_EVENT"
+					default=""
 					label="MOD_JEM_CAL_TOOLTIPSTITLE"
 					description="MOD_JEM_CAL_TOOLTIPSTITLE_DESC"
 				/>
 				<field name="cal15q_tooltipspl_title" type="text"
-					default="MOD_JEM_CAL_EVENTS"
+					default=""
 					label="MOD_JEM_CAL_TOOLTIPSTITLEPL"
 					description="MOD_JEM_CAL_TOOLTIPSTITLEPL_DESC"
 				/>

@@ -8,15 +8,12 @@
  */
 defined('_JEXEC') or die ();
 
-jimport('joomla.application.component.view');
 require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
 /**
- * HTML View class for the Venue View
- * @package JEM
- *
+ * Venue-View
  */
-class JEMViewVenue extends JEMView {
+class JemViewVenue extends JEMView {
 
 	/**
 	 * Creates the Venue View
@@ -119,8 +116,8 @@ class JEMViewVenue extends JEMView {
 			$document 		= JFactory::getDocument();
 			$menu 			= $app->getMenu();
 			$menuitem		= $menu->getActive();
-			$jemsettings 	= JEMHelper::config();
-			$settings 		= JEMHelper::globalattribs();
+			$jemsettings 	= JemHelper::config();
+			$settings 		= JemHelper::globalattribs();
 			$db 			= JFactory::getDBO();
 			$params 		= $app->getParams('com_jem');
 			$pathway 		= $app->getPathWay ();
@@ -172,7 +169,7 @@ class JEMViewVenue extends JEMView {
 			$lists['order']		= $filter_order;
 
 			// Get image
-			$limage = JEMImage::flyercreator($venue->locimage,'venue');
+			$limage = JemImage::flyercreator($venue->locimage,'venue');
 
 			// Add feed links
 			$link = '&format=feed&id='.$venue->id.'&limitstart=';
@@ -190,19 +187,19 @@ class JEMViewVenue extends JEMView {
 				$pagetitle   = $venue->venue;
 				$pageheading = $pagetitle;
 				$params->set('show_page_heading', 1); // ensure page heading is shown
-				$pathway->addItem($pagetitle, JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug)));
+				$pathway->addItem($pagetitle, JRoute::_(JemHelperRoute::getVenueRoute($venue->slug)));
 			}
 			$pageclass_sfx = $params->get('pageclass_sfx');
 
 			// create the pathway
 			if ($task == 'archive') {
-				$pathway->addItem (JText::_('COM_JEM_ARCHIVE'), JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug).'&task=archive'));
+				$pathway->addItem (JText::_('COM_JEM_ARCHIVE'), JRoute::_(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive'));
 				$print_link = JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug).'&task=archive&print=1&tmpl=component');
 				$pagetitle   .= ' - ' . JText::_('COM_JEM_ARCHIVE');
 				$pageheading .= ' - ' . JText::_('COM_JEM_ARCHIVE');
 			} else {
 				//$pathway->addItem($venue->venue, JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug)));
-				$print_link = JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
+				$print_link = JRoute::_(JemHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
 			}
 
 			$params->set('page_heading', $pageheading);
@@ -222,8 +219,8 @@ class JEMViewVenue extends JEMView {
 			$document->setDescription(strip_tags($venue->meta_description));
 
 			// Check if the user has access to the add-eventform
-			$maintainer = JEMUser::ismaintainer('add');
-			$genaccess = JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+			$maintainer = JemUser::ismaintainer('add');
+			$genaccess = JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
 			if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
 				$addeventlink = 1;
@@ -232,8 +229,8 @@ class JEMViewVenue extends JEMView {
 			}
 
 			// Check if the user has access to the add-venueform
-			$maintainer2 = JEMUser::venuegroups('add');
-			$genaccess2 = JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
+			$maintainer2 = JemUser::venuegroups('add');
+			$genaccess2 = JemUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
 			if ($maintainer2 || $genaccess2) {
 				$addvenuelink = 1;
 			} else {
@@ -241,8 +238,8 @@ class JEMViewVenue extends JEMView {
 			}
 
 			// Check if the user has access to the edit-venueform
-			$maintainer3 = JEMUser::venuegroups('edit');
-			$genaccess3 = JEMUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
+			$maintainer3 = JemUser::venuegroups('edit');
+			$genaccess3 = JemUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
 			if ($maintainer3 || $genaccess3) {
 				$allowedtoeditvenue = 1;
 			} else {

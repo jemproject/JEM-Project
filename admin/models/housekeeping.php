@@ -14,12 +14,9 @@ jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
 
 /**
- * JEM Component Cleanup Model
- *
- * @package JEM
- *
+ * Housekeeping-Model
  */
-class JEMModelCleanup extends JModelLegacy
+class JemModelHousekeeping extends JModelLegacy
 {
 	const EVENTS = 1;
 	const VENUES = 2;
@@ -58,9 +55,9 @@ class JEMModelCleanup extends JModelLegacy
 		parent::__construct();
 
 		$map = array();
-		$map[JEMModelCleanup::EVENTS] = array("folder" => "events", "table" => "events", "field" => "datimage");
-		$map[JEMModelCleanup::VENUES] = array("folder" => "venues", "table" => "venues", "field" => "locimage");
-		$map[JEMModelCleanup::CATEGORIES] = array("folder" => "categories", "table" => "categories", "field" => "image");
+		$map[JemModelHousekeeping::EVENTS] = array("folder" => "events", "table" => "events", "field" => "datimage");
+		$map[JemModelHousekeeping::VENUES] = array("folder" => "venues", "table" => "venues", "field" => "locimage");
+		$map[JemModelHousekeeping::CATEGORIES] = array("folder" => "categories", "table" => "categories", "field" => "image");
 		$this->map = $map;
 	}
 

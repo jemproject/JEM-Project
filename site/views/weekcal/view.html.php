@@ -6,23 +6,16 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
 
 /**
- * HTML View class for the Calendar View
- *
- * @package JEM
- *
+ * Weekcal-View
  */
-class JEMViewWeekcal extends JViewLegacy
+class JemViewWeekcal extends JViewLegacy
 {
 	/**
 	 * Creates the Calendar View
-	 *
-	 *
 	 */
 	function display($tpl = null)
 	{
@@ -32,10 +25,9 @@ class JEMViewWeekcal extends JViewLegacy
 		JHtml::_('behavior.tooltip');
 
 		//initialize variables
-		//$document 	= JFactory::getDocument();
 		$menu 		= $app->getMenu();
 		$menuitem 	= $menu->getActive();
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 		$params 	= $app->getParams();
 
 		// Load css
@@ -92,11 +84,11 @@ class JEMViewWeekcal extends JViewLegacy
 		$cal->enableWeekNum(JText::_('COM_JEM_WKCAL_WEEK'),null,''); // enables week number column with linkable week numbers
 		$cal->setFirstWeekDay($params->get('firstweekday', 0));
 
-		$this->rows 		 = $rows;
-		$this->params		 = $params;
-		$this->jemsettings	 = $jemsettings;
-		$this->currentweek	 = $currentweek;
-		$this->cal			 = $cal;
+		$this->rows 		= $rows;
+		$this->params		= $params;
+		$this->jemsettings	= $jemsettings;
+		$this->currentweek	= $currentweek;
+		$this->cal			= $cal;
 		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);

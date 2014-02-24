@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 /**
  * Event View
  */
-class JEMViewEvent extends JViewLegacy {
+class JemViewEvent extends JViewLegacy {
 
 	protected $form;
 	protected $item;
@@ -36,18 +36,19 @@ class JEMViewEvent extends JViewLegacy {
 		JHtml::_('behavior.formvalidation');
 
 		//initialise variables
-		$jemsettings 	= JEMHelper::config();
+		$jemsettings 	= JemHelper::config();
 		$document		= JFactory::getDocument();
-		$this->settings	= JEMAdmin::config();
+		$user 			= JFactory::getUser();
+		$this->settings	= JemAdmin::config();
 		$task			= JRequest::getVar('task');
 		$this->task 	= $task;
 		$url 			= JURI::root();
-
-		$categories 	= JEMCategories::getCategoriesTree(1);
+		
+		$categories 	= JemCategories::getCategoriesTree(1);
 		$selectedcats 	= $this->get('Catsselected');
 
 		$Lists = array();
-		$Lists['category'] = JEMCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8"');
+		$Lists['category'] = JemCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8"');
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
@@ -63,9 +64,9 @@ class JEMViewEvent extends JViewLegacy {
 		//$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 		//$document->addScript('http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js');
 
-		$access2 = JEMHelper::getAccesslevelOptions();
+		$access2 			= JemHelper::getAccesslevelOptions();
 		$this->access		= $access2;
-		$this->jemsettings		= $jemsettings;
+		$this->jemsettings	= $jemsettings;
 		$this->Lists 		= $Lists;
 
 		$this->addToolbar();
@@ -83,7 +84,7 @@ class JEMViewEvent extends JViewLegacy {
 		$user		= JFactory::getUser();
 		$isNew		= ($this->item->id == 0);
 		$checkedOut	= !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
-		$canDo		= JEMHelperBackend::getActions();
+		$canDo		= JemHelperBackend::getActions();
 
 		JToolBarHelper::title($isNew ? JText::_('COM_JEM_ADD_EVENT') : JText::_('COM_JEM_EDIT_EVENT'), 'eventedit');
 

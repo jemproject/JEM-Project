@@ -57,8 +57,7 @@ $detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this
 					<a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a>
 					<br />
 					<b><?php echo JText::_('COM_JEM_DATE').':'; ?></b>&nbsp;
-					<?php echo JemOutput::formatLongDateTime($this->event->dates, $this->event->times,
-						$this->event->enddates, $this->event->endtimes); ?>
+					<?php echo JemOutput::formatLongDateTime($this->event->dates, $this->event->times,$this->event->enddates, $this->event->endtimes); ?>
 				</td>
 			</tr>
 		</table>
@@ -105,24 +104,24 @@ $detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this
 			<tbody>
 				<?php foreach ($this->rows as $i => $row) : ?>
 				<tr class="row<?php echo $i % 2; ?>">
-					<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-					<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
-					<td><?php echo $row->username; ?></td>
-					<?php if ($this->enableemailaddress == 1) {?>
-					<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
-					<?php } ?>
-					<td><?php echo JHtml::_('date',$row->uregdate,JText::_('DATE_FORMAT_LC2')); ?></td>
-					<?php if ($this->event->waitinglist): ?>
-					<td class="hasTip center" title="<?php echo ($row->waiting ? JText::_('COM_JEM_ON_WAITINGLIST') : JText::_('COM_JEM_ATTENDEES_ATTENDING')).'::'; ?>">
-						<?php if ($row->waiting):?>
-							<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$row->id),JHtml::_('image','com_jem/publish_y.png',JText::_('COM_JEM_ON_WAITINGLIST'),NULL,true)); ?>
-						<?php else: ?>
-							<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$row->id),JHtml::_('image','com_jem/tick.png', JText::_('COM_JEM_ATTENDEES_ATTENDING'),NULL,true)); ?>
-						<?php endif;?>
-					</td>
+				<td class="center"><?php echo $this->pagination->getRowOffset($i); ?></td>
+				<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
+				<td><?php echo $row->username; ?></td>
+				<?php if ($this->enableemailaddress == 1) {?>
+				<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
+				<?php } ?>
+				<td><?php echo JHtml::_('date',$row->uregdate,JText::_('DATE_FORMAT_LC2')); ?></td>
+				<?php if ($this->event->waitinglist): ?>
+				<td class="hasTip center" title="<?php echo ($row->waiting ? JText::_('COM_JEM_ON_WAITINGLIST') : JText::_('COM_JEM_ATTENDEES_ATTENDING')).'::'; ?>">
+					<?php if ($row->waiting):?>
+						<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$row->id),JHtml::_('image','com_jem/publish_y.png',JText::_('COM_JEM_ON_WAITINGLIST'),NULL,true)); ?>
+					<?php else: ?>
+						<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$row->id),JHtml::_('image','com_jem/tick.png', JText::_('COM_JEM_ATTENDEES_ATTENDING'),NULL,true)); ?>
 					<?php endif;?>
-					<td class="center"><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendees.attendeeremove')"><?php echo
-							JHtml::_('image','com_jem/publish_x.png',JText::_('COM_JEM_ATTENDEES_DELETE'),NULL,true); ?></a></td>
+				</td>
+				<?php endif;?>
+				<td class="center"><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendees.attendeeremove')"><?php echo
+						JHtml::_('image','com_jem/publish_x.png',JText::_('COM_JEM_ATTENDEES_DELETE'),NULL,true); ?></a></td>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>
@@ -141,10 +140,10 @@ $detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this
 	</form>
 
 	<div class="pagination">
-		<?php echo $this->pagination->getPagesLinks(); ?>
+	<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
 
 	<div class="copyright">
-		<?php echo JemOutput::footer(); ?>
+	<?php echo JemOutput::footer(); ?>
 	</div>
 </div>

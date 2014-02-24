@@ -6,16 +6,12 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 /**
- * HTML Event View class of the JEM component
- *
- * @package JEM
- *
+ * Event-View
  */
-class JEMViewEvent extends JViewLegacy
+class JemViewEvent extends JViewLegacy
 {
 	protected $item;
 	protected $params;
@@ -30,8 +26,8 @@ class JEMViewEvent extends JViewLegacy
 	{
 		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
 
-		$jemsettings		= JEMHelper::config();
-		$settings			= JEMHelper::globalattribs();
+		$jemsettings		= JemHelper::config();
+		$settings			= JemHelper::globalattribs();
 		$app				= JFactory::getApplication();
 		$user				= JFactory::getUser();
 		$userId				= $user->get('id');
@@ -55,7 +51,7 @@ class JEMViewEvent extends JViewLegacy
 
 		$this->registers	= $model->getRegisters($this->state->get('event.id'));
 		$isregistered		= $this->get('UserIsRegistered');
-
+		
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {
 			JError::raiseWarning(500, implode("\n", $errors));
@@ -68,8 +64,8 @@ class JEMViewEvent extends JViewLegacy
 
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
-		                                && $menuitem->query['view']   == 'event'
-		                                && $menuitem->query['id']     == $item->id);
+				&& $menuitem->query['view']   == 'event'
+				&& $menuitem->query['id']     == $item->id);
 
 		// Add router helpers.
 		$item->slug			= $item->alias ? ($item->id.':'.$item->alias) : $item->id;
@@ -78,7 +74,7 @@ class JEMViewEvent extends JViewLegacy
 		$item->venueslug	= $item->alias ? ($item->locid.':'.$item->localias) : $item->locid;
 
 		// TODO: Change based on shownoauth
-		$item->readmore_link = JRoute::_(JEMHelperRoute::getEventRoute($item->slug, $item->catslug));
+		$item->readmore_link = JRoute::_(JemHelperRoute::getEventRoute($item->slug, $item->catslug));
 
 		// Check to see which parameters should take priority
 		if ($useMenuItemParams) {
@@ -103,7 +99,7 @@ class JEMViewEvent extends JViewLegacy
 			$params->set('page_title', $pagetitle);
 			$params->set('page_heading', $pagetitle);
 			$params->set('show_page_heading', 1); // ensure page heading is shown
-			$pathway->addItem($pagetitle, JRoute::_(JEMHelperRoute::getEventRoute($item->slug)));
+			$pathway->addItem($pagetitle, JRoute::_(JemHelperRoute::getEventRoute($item->slug)));
 
 			// Check for alternative layouts (since we are not in a single-event menu item)
 			// Single-event menu item layout takes priority over alt layout for an event
@@ -157,15 +153,15 @@ class JEMViewEvent extends JViewLegacy
 		//Escape strings for HTML output
 		$this->pageclass_sfx = htmlspecialchars($this->item->params->get('pageclass_sfx'));
 
-		$this->print_link = JRoute::_(JEMHelperRoute::getRoute($item->slug).'&print=1&tmpl=component');
+		$this->print_link = JRoute::_(JemHelperRoute::getRoute($item->slug).'&print=1&tmpl=component');
 
 		//Get images
-		$this->dimage = JEMImage::flyercreator($item->datimage, 'event');
-		$this->limage = JEMImage::flyercreator($item->locimage, 'venue');
+		$this->dimage = JemImage::flyercreator($item->datimage, 'event');
+		$this->limage = JemImage::flyercreator($item->locimage, 'venue');
 
 		// Check if user can edit
-		$maintainer5 = JEMUser::ismaintainer('edit',$item->did);
-		$genaccess5 = JEMUser::editaccess($jemsettings->eventowner, $item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+		$maintainer5 = JemUser::ismaintainer('edit',$item->did);
+		$genaccess5  = JemUser::editaccess($jemsettings->eventowner, $item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
 
 		if ($maintainer5 || $genaccess5 || $user->authorise('core.edit','com_jem')) {
 			$this->allowedtoeditevent = 1;
@@ -174,8 +170,8 @@ class JEMViewEvent extends JViewLegacy
 		}
 
 		//Check if the user has access to the edit-venueform
-		$maintainer3 = JEMUser::venuegroups('edit');
-		$genaccess3 	= JEMUser::editaccess($jemsettings->venueowner, $item->venueowner, $jemsettings->venueeditrec, $jemsettings->venueedit);
+		$maintainer3 = JemUser::venuegroups('edit');
+		$genaccess3  = JemUser::editaccess($jemsettings->venueowner, $item->venueowner, $jemsettings->venueeditrec, $jemsettings->venueedit);
 		if ($maintainer3 || $genaccess3 ) {
 			$this->allowedtoeditvenue = 1;
 		} else {
@@ -267,19 +263,17 @@ class JEMViewEvent extends JViewLegacy
 			$item->countryimg = JemHelperCountries::getCountryFlag($item->country);
 		}
 
-		$this->isregistered		= $isregistered;
-		$this->dispatcher		= $dispatcher;
-		$this->pageclass_sfx 	= htmlspecialchars($item->params->get('pageclass_sfx'));
+		$this->isregistered			= $isregistered;
+		$this->dispatcher			= $dispatcher;
+		$this->pageclass_sfx 		= htmlspecialchars($item->params->get('pageclass_sfx'));
 
 		$this->_prepareDocument();
 
 		parent::display($tpl);
-	}
+		}
 
 	/**
 	 * structures the keywords
-	 *
- 	 *
 	 */
 	function keyword_switcher($keyword, $row, $categories, $formattime, $formatdate) {
 		switch ($keyword) {
@@ -302,15 +296,14 @@ class JEMViewEvent extends JViewLegacy
 			case "endtimes":
 				$content = '';
 				if ($row->$keyword) {
-					$content = JEMOutput::formattime($row->$keyword);
+					$content = JemOutput::formattime($row->$keyword);
 				}
 				break;
 			case "dates":
-				$content = JEMOutput::formatdate($row->dates);
+				$content = JemOutput::formatdate($row->dates);
 				break;
 			case "enddates":
-				//$content = strftime($formatdate ,strtotime($row->$keyword));
-				$content = JEMOutput::formatdate($row->enddates);
+				$content = JemOutput::formatdate($row->enddates);
 				break;
 			case "title":
 				$content = $row->title;

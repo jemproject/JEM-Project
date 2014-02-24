@@ -62,8 +62,6 @@ class JEMViewGroup extends JViewLegacy {
 		$lists['maintainers']		= JHtml::_('select.genericlist', $maintainers, 'maintainers[]', 'class="inputbox" size="20" onDblClick="moveOptions(document.adminForm[\'maintainers[]\'], document.adminForm[\'available_users\'])" multiple="multiple" style="padding: 6px; width: 250px;"', 'value', 'text');
 		$lists['available_users']	= JHtml::_('select.genericlist', $available_users, 'available_users', 'class="inputbox" size="20" onDblClick="moveOptions(document.adminForm[\'available_users\'], document.adminForm[\'maintainers[]\'])" multiple="multiple" style="padding: 6px; width: 250px;"', 'value', 'text');
 
-		// $access2 = JEMHelper::getAccesslevelOptions();
-		//$this->access		= $access2;
 		$this->jemsettings		= $jemsettings;
 		$this->lists 		= $lists;
 

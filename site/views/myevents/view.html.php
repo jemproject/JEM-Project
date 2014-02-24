@@ -6,15 +6,13 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
 
 /**
- * HTML View class for the JEM View
+ * Myevents-View
  */
-class JEMViewMyevents extends JViewLegacy
+class JemViewMyevents extends JViewLegacy
 {
 	/**
 	 * Creates the Myevents View
@@ -25,8 +23,8 @@ class JEMViewMyevents extends JViewLegacy
 
 		//initialize variables
 		$document 		= JFactory::getDocument();
-		$jemsettings 	= JEMHelper::config();
-		$settings 		= JEMHelper::globalattribs();
+		$jemsettings 	= JemHelper::config();
+		$settings 		= JemHelper::globalattribs();
 		$menu 			= $app->getMenu();
 		$menuitem		= $menu->getActive();
 		$params 		= $app->getParams();

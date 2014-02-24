@@ -6,15 +6,16 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
+
+
 ?>
 <div id="jem" class="jem_eventslist<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
-			echo JEMOutput::submitbutton( $this->dellink, $this->params );
-			echo JEMOutput::archivebutton( $this->params, $this->task );
-			echo JEMOutput::printbutton( $this->print_link, $this->params );
+			echo JemOutput::submitbutton($this->dellink, $this->params);
+			echo JemOutput::archivebutton($this->params, $this->task);
+			echo JemOutput::printbutton($this->print_link, $this->params);
 		?>
 	</div>
 
@@ -49,9 +50,9 @@ defined('_JEXEC') or die;
 		<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
 	<div id="iCal" class="iCal">
-	<?php echo JEMOutput::icalbutton('', 'eventslist'); ?>
+	<?php echo JemOutput::icalbutton('', 'eventslist'); ?>
 	</div>
 	<div class="copyright">
-		<?php echo JEMOutput::footer( ); ?>
+		<?php echo JemOutput::footer( ); ?>
 	</div>
 </div>

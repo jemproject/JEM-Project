@@ -6,22 +6,24 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-defined('_JEXEC') or die();
+defined('_JEXEC') or die;
+
 
 /**
- * Editevents View
+ * Editvenue-View
  */
-class JEMViewEditvenue extends JViewLegacy
+class JemViewEditvenue extends JViewLegacy
 {
 	protected $form;
 	protected $item;
 	protected $return_page;
 	protected $state;
 
-	public function display($tpl = null)
+	/**
+	 * Editvenue-View
+	 */
+	public function display($tpl=null)
 	{
-		//$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
-
 		// Initialise variables.
 		$jemsettings = JemHelper::config();
 		$app         = JFactory::getApplication();
@@ -34,14 +36,14 @@ class JEMViewEditvenue extends JViewLegacy
 		$url         = JURI::root();
 
 		// Get model data.
-		$this->state  = $this->get('State');
-		$this->item   = $this->get('Item');
+		$this->state 	= $this->get('State');
+		$this->item 	= $this->get('Item');
 		$this->params = $this->state->get('params');
 
 		// Create a shortcut for $item and params.
-		$item   = $this->item;
+		$item = $this->item;
 		$params = $this->params;
-
+		
 		$this->form = $this->get('Form');
 		$this->return_page = $this->get('ReturnPage');
 
@@ -53,8 +55,8 @@ class JEMViewEditvenue extends JViewLegacy
 
 		if (empty($this->item->id)) {
 			// Check if the user has access to the form
-			$maintainer = JEMUser::venuegroups('add');
-			$delloclink = JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
+			$maintainer = JemUser::venuegroups('add');
+			$delloclink = JemUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
 
 			if ($maintainer || $delloclink) {
 				$dellink = true;
@@ -65,8 +67,8 @@ class JEMViewEditvenue extends JViewLegacy
 			$authorised = $user->authorise('core.create','com_jem') || $dellink;
 		} else {
 			// Check if user can edit
-			$maintainer = JEMUser::venuegroups('edit');
-			$genaccess  = JEMUser::editaccess($jemsettings->venueowner, $this->item->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
+			$maintainer = JemUser::venuegroups('edit');
+			$genaccess  = JemUser::editaccess($jemsettings->venueowner, $this->item->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 
 			if ($maintainer || $genaccess) {
 				$edit = true;
@@ -109,7 +111,7 @@ class JEMViewEditvenue extends JViewLegacy
 			$params->set('page_title', $pagetitle);
 			$params->set('page_heading', $pagetitle);
 			$params->set('show_page_heading', 1); // ensure page heading is shown
-			$pathway->addItem($pagetitle, JRoute::_(JEMHelperRoute::getEventRoute($item->slug)));
+			$pathway->addItem($pagetitle, JRoute::_(JemHelperRoute::getEventRoute($item->slug)));
 
 			// Check for alternative layouts (since we are not in an edit-venue menu item)
 			// Load layout from venue if one is set
@@ -163,7 +165,7 @@ class JEMViewEditvenue extends JViewLegacy
 
 		$this->pageclass_sfx	= htmlspecialchars($item->params->get('pageclass_sfx'));
 		$this->jemsettings		= $jemsettings;
-		$this->limage 			= JEMImage::flyercreator($this->item->locimage, 'venue');
+		$this->limage 			= JemImage::flyercreator($this->item->locimage, 'venue');
 		$this->infoimage		= JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_('COM_JEM_NOTES'), NULL, true);
 
 		$this->user = $user;
@@ -171,6 +173,7 @@ class JEMViewEditvenue extends JViewLegacy
 		$this->_prepareDocument();
 		parent::display($tpl);
 	}
+
 
 	/**
 	 * Prepares the document
@@ -202,6 +205,5 @@ class JEMViewEditvenue extends JViewLegacy
 			$this->document->setMetadata('robots', $this->params->get('robots'));
 		}
 	}
-
 }
 ?>

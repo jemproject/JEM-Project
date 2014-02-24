@@ -6,18 +6,13 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
 
 /**
- * HTML View class for the JEM View
- *
- * @package JEM
- *
+ * Eventslist-Feed
  */
-class JEMViewEventslist extends JViewLegacy
+class JemViewEventslist extends JViewLegacy
 {
 	/**
 	 * Creates the Event Feed
@@ -51,20 +46,19 @@ class JEMViewEventslist extends JViewLegacy
 			}
 
 			//Format date and time
-			$displaydate = JEMOutput::formatLongDateTime($row->dates, $row->times,
-				$row->enddates, $row->endtimes);
+			$displaydate = JemOutput::formatLongDateTime($row->dates, $row->times,$row->enddates, $row->endtimes);
 
 			// url link to event
-			$link = JRoute::_(JEMHelperRoute::getEventRoute($row->id));
+			$link = JRoute::_(JemHelperRoute::getEventRoute($row->id));
 
 			// feed item description text
-			$description = JText::_('COM_JEM_TITLE').': '.$title.'<br />';
+			$description  = JText::_('COM_JEM_TITLE').': '.$title.'<br />';
 			$description .= JText::_('COM_JEM_VENUE').': '.$row->venue.' / '.$row->city.'<br />';
 			$description .= JText::_('COM_JEM_CATEGORY').': '.$category.'<br />';
 			$description .= JText::_('COM_JEM_DATE').': '.$displaydate.'<br />';
 			$description .= JText::_('COM_JEM_DESCRIPTION').': '.$row->fulltext;
 
-			@$created = ($row->created ? date('r', strtotime($row->created)) : '');
+			$created = ($row->created ? date('r', strtotime($row->created)) : '');
 
 			// load individual item creator class
 			$item = new JFeedItem();
