@@ -29,43 +29,74 @@
 <p>To access this screen use: 
 	<strong>Components</strong> &rarr; <strong>JEM</strong> &rarr; <strong>Events</strong></p>
 
-
-<h3>User Access Level</h3>
-
-<p>
-	<img src="../images/super_administrator.gif" alt="Super Administrator" /> Super Administrator 
-	<img src="../images/administrator.gif" alt="Administrator" /> Administrator 
-	<img src="../images/manager.png" alt="Manager" /> Manager
-</p>
-
-
 <h3>Toolbar Icons</h3>
 
-<img src="toolbars/apunedch.png" alt="toolbar" />
+<p>
+	<div class="toolbar-list">
+		<ul>
+			<li>
+				<span class="icon-32-new"> </span>
+				New
+			</li>
+			<li>
+				<span class="icon-32-edit"> </span>
+				Edit
+			</li>
+			<li>
+				<span class="icon-32-publish"> </span>
+				Publish
+			</li>			
+			<li>
+				<span class="icon-32-unpublish"> </span>
+				Unpublish
+			</li>		
+			<li>
+				<span class="icon-32-featured"> </span>
+				Featured
+			</li>
+			<li>
+				<span class="icon-32-archive"> </span>
+				Archive
+			</li>			
+			<li>
+				<span class="icon-32-checkin"> </span>
+				Check In
+			</li>		
+			<li>
+				<span class="icon-32-trash"> </span>
+				Trash
+			</li>				
+			<li>
+				<span class="icon-32-help"> </span>
+				Help
+			</li>			
+		</ul>
+	</div>
+	<div class="clear"> </div>
+</p>
 
 <p><em>Select Event(s) by clicking the checkbox(es) at the beginning of each row.</em></p>
 
+<p><strong>New:</strong> 
+	Click the 'New' icon to create a new event.</p>	
+<p><strong>Edit:</strong> 
+	Click the 'Edit' icon to change the selected event item. You can also do this by clicking the name of the event.</p>		
+<p><strong>Publish:</strong> 
+	Click the 'Publish' icon to publish the selected event items. If you have published an event it is
+	visible in the Frontend.</p>
+<p><strong>Unpublish:</strong> 
+	Click the 'Unpublish' icon to unpublish the selected event items. If you have
+	unpublished an event it is not longer visible in the Frontend.</p>	
+<p><strong>Featured:</strong> 
+	Click the 'Featured' icon to mark the selected event as a featured event. In the Frontend, the featured event will 
+	be especially marked or highlighted to distinguish it from other events.</p>		
 <p><strong>Archive:</strong> 
 	Click the 'Archive' icon to put the selected Events into an archived state. They are still accessible via this 
 	events list if you select the 'Archived' status in the selectbox on the right hand top of the list.</p>
-<p><strong>Publish and Unpublish:</strong> 
-	Click the 'Publish' or 'Unpublish' icons to publish or unpublish the selected event items. If you have
-	unpublished an event it is not longer visible in the Frontend.</p>
-<p><strong>New:</strong> 
-	Click the 'New' icon to create a new event.</p>
-<p><strong>Edit:</strong> 
-	Click the 'Edit' icon to change the selected event item. You can also do this by clicking the name of the event.</p>
-<p><strong>Move to Trash Bin:</strong> 
+<p><strong>Check In:</strong> 
+	Click the 'Check In' icon to ..........................?</p>
+	<p><strong>Trash:</strong> 
 	Click the 'Trash' icon to move the selected event Items to the Trash Bin.</p>
-<p><strong>Permanently delete from Trash Bin:</strong> 
-	First select the status 'Trashed' in the selectbox on the right hand top of the list. This will take you to the 
-	list of Trashed events. Then select the event(s) you want to remove permanently and click the 'Trash' icon to 
-	permanently remove the selected event items from the database.</p>
-<p><strong>Copy:</strong> 
-	Click to open an event. Make your changes and then hit the 'Save as Copy' button.</p>
-<p><strong>Featured:</strong> 
-	Click the 'Featured' icon to mark the selected event as a featured event. In the Frontend, the featured event will 
-	be especially marked or highlighted to distinguish it from other events.</p>
 <p><strong>Help:</strong> 
 	Click the Help icon to access a related Help screen.</p>
 
@@ -73,7 +104,7 @@
 <h3>Columns:</h3>
 
 <p><strong>#:</strong> 
-	The number of the entry in the list.</p>
+	The line number of the entry in the list that is currently displayed.</p>
 <p><strong>Checkbox:</strong> 
 	Select the item or items to be edited or deleted by clicking in this box.</p>
 <p><strong>Date:</strong> 
@@ -84,9 +115,9 @@
 	It must be checked back by an administrator. The administrator navigates to the menu item Tools &rarr; Global Checkin 
 	in the Menu bar. It can also be checked back in by the User who has checked the item out by clicking the 'Edit' icon of 
 	the Event item and then clicking either the 'Save' or 'Cancel' icon.</p>
-<p><strong>Event Time:</strong> 
+<p><strong>Start:</strong> 
 	This is the Time when the Event starts.</p>
-<p><strong>Title:</strong> 
+<p><strong>Event Title:</strong> 
 	This is the title of the Event item.</p>
 <p><strong>Venue:</strong> 
 	This is the venue location where the Event will be held.</p>
@@ -97,8 +128,13 @@
 <p><strong>Categories:</strong> 
 	This is the category / are the categories the Event belongs to.</p>
 <p><strong>Status:</strong> 
-	This shows whether the Event item is published(<img src="../images/tick.png" alt="publish" />) or unpublished 
-	(<img src="../images/publish_x.png" alt="unpublish" />). Click the icon to change the state.</p>
+	This shows whether the Event item is published (<img src="../../../../../media/com_jem/images/tick.png" alt="published" />)or unpublished 
+	(<img src="../../../../../media/com_jem/images/publish_x.png" alt="unpublished" />). 
+	Click the icon to change the state.</p>
+<p><strong>Featured:</strong> 
+	This column shows if the Event item is Featured (<img src="../../../../../media/com_jem/images/featured.png" alt="featured" />)or not 
+	(<img src="../../../../../media/com_jem/images/disabled.png" alt="unfeatured" />). 
+	Click the icon to change the state.</p>		
 <p><strong>Creation:</strong> 
 	This column shows the details of the user that has created the event.</p>
 <p><strong>Hits:</strong> 
@@ -106,7 +142,8 @@
 <p><strong>Reg. Users:</strong> 
 	This shows the number of Users who have registered for an event, as well as the number of available places. Click 
 	the number if you are interested in more detailed information about them or you want to change or remove any of them.</p>
-
+<p><strong>ID:</strong> 
+	The number of the entry in the database. This number is generated by JEM sequentially for every new entry.</p>
 
 <h3>Other Functions</h3>
 
