@@ -497,6 +497,7 @@ class com_jemInstallerScript
 			'/administrator/components/com_jem/views/cleanup/view.html.php',
 			'/administrator/components/com_jem/models/cleanup.php',
 			'/administrator/components/com_jem/controllers/cleanup.php',
+			'/administrator/components/com_jem/help/en-GB/cleanup.html',
 		);
 
 		// TODO There is an issue while deleting folders using the ftp mode
@@ -516,6 +517,7 @@ class com_jemInstallerScript
 			'/components/com_jem/views/categoriesdetailed',
 			'/administrator/components/com_jem/views/cleanup/tmpl',
 			'/administrator/components/com_jem/views/cleanup/',
+			'/administrator/components/com_jem/help/en-GB/toolbars',
 		);
 
 		foreach ($files as $file) {
