@@ -416,8 +416,6 @@ class com_jemInstallerScript
 			// obsolete since JEM 1.9.2
 			'/administrator/components/com_jem/controllers/archive.php',
 			'/administrator/components/com_jem/models/archive.php',
-			'/administrator/components/com_jem/views/archive/view.html.php',
-			'/administrator/components/com_jem/views/archive/tmpl/default.php',
 			'/components/com_jem/views/calendar/metadata.xml',
 			'/components/com_jem/views/categories/metadata.xml',
 			'/components/com_jem/views/categoriesdetailed/metadata.xml',
@@ -459,63 +457,46 @@ class com_jemInstallerScript
 			'/administrator/components/com_jem/views/category/tmpl/default_attachments.php',
 			'/administrator/components/com_jem/views/event/tmpl/addvenue.php',
 			'/administrator/components/com_jem/views/group/tmpl/default.php',
-			'/administrator/components/com_jem/views/jem/view.html.php',
-			'/administrator/components/com_jem/views/jem/tmpl/default.php',
 			'/administrator/components/com_jem/views/settings/tmpl/default_basic.php',
 			'/administrator/components/com_jem/views/settings/tmpl/default_eventpage.php',
 			'/administrator/components/com_jem/views/settings/tmpl/default_navigation.php',
 			'/components/com_jem/models/myattending.php',
 			'/components/com_jem/views/editevent/tmpl/default.xml',
-			'/components/com_jem/views/myattending/view.html.php',
-			'/components/com_jem/views/myattending/tmpl/default.php',
-			'/components/com_jem/views/myattending/tmpl/default.xml',
-			'/components/com_jem/views/myattending/tmpl/default_attending.php',
-			'/media/css/calendarweek.css',
-			'/media/css/gmapsoverlay.css',
-			'/media/css/picker.css',
-			'/media/images/evlogo.png',
-			'/media/js/gmapsoverlay.js',
-			'/media/js/picker.js',
-			'/media/js/recurrencebackend.js',
-			'/media/js/seobackend.js',
+			'/media/com_jem/css/calendarweek.css',
+			'/media/com_jem/css/gmapsoverlay.css',
+			'/media/com_jem/css/picker.css',
+			'/media/com_jem/images/evlogo.png',
+			'/media/com_jem/js/gmapsoverlay.js',
+			'/media/com_jem/js/picker.js',
+			'/media/com_jem/js/recurrencebackend.js',
+			'/media/com_jem/js/seobackend.js',
 			// obsolete since JEM 1.9.6
-			'/components/com_jem/views/editevent/tmpl/default.php',
-			'/components/com_jem/views/editvenue/tmpl/default.php',
-			'/components/com_jem/views/editvenue/tmpl/default.xml',
-			'/components/com_jem/models/categoriesdetailed.php',
-			'/components/com_jem/views/categoriesdetailed/tmpl/default.php',
-			'/components/com_jem/views/categoriesdetailed/tmpl/default.xml',
-			'/components/com_jem/views/categoriesdetailed/tmpl/default_table.php',
-			'/components/com_jem/views/categoriesdetailed/view.html.php',
-			'/components/com_jem/views/venues/view.feed.php',
-			'/components/com_jem/controllers/editevent.php',
-			'/components/com_jem/controllers/editvenue.php',
-			'/media/js/eventscreen.js',
-			'/media/js/geodata.js',
-			'/media/js/jquery.geocomplete.min.js',
-			'/administrator/components/com_jem/views/cleanup/tmpl/default.php',
-			'/administrator/components/com_jem/views/cleanup/view.html.php',
 			'/administrator/components/com_jem/models/cleanup.php',
 			'/administrator/components/com_jem/controllers/cleanup.php',
 			'/administrator/components/com_jem/help/en-GB/cleanup.html',
+			'/components/com_jem/controllers/editevent.php',
+			'/components/com_jem/controllers/editvenue.php',
+			'/components/com_jem/models/categoriesdetailed.php',
+			'/components/com_jem/views/editevent/tmpl/default.php',
+			'/components/com_jem/views/editvenue/tmpl/default.php',
+			'/components/com_jem/views/editvenue/tmpl/default.xml',
+			'/components/com_jem/views/venues/view.feed.php',
+			'/media/com_jem/js/eventscreen.js',
+			'/media/com_jem/js/geodata.js',
+			'/media/com_jem/js/jquery.geocomplete.min.js',
 		);
 
 		// TODO There is an issue while deleting folders using the ftp mode
 		$folders = array(
 			// obsolete since JEM 1.9.2
-			'/administrator/components/com_jem/views/archive/tmpl',
 			'/administrator/components/com_jem/views/archive',
 			// obsolete since JEM 1.9.3
 			// obsolete since JEM 1.9.4
 			// obsolete since JEM 1.9.5
-			'/administrator/components/com_jem/views/jem/tmpl',
 			'/administrator/components/com_jem/views/jem',
-			'/components/com_jem/views/myattending/tmpl',
 			'/components/com_jem/views/myattending',
 			// obsolete since JEM 1.9.6
-			'/components/com_jem/views/categoriesdetailed/tmpl',
 			'/components/com_jem/views/categoriesdetailed',
-			'/administrator/components/com_jem/views/cleanup/tmpl',
 			'/administrator/components/com_jem/views/cleanup/',
 			'/administrator/components/com_jem/help/en-GB/toolbars',
 		);
@@ -732,7 +713,7 @@ class com_jemInstallerScript
 		$query = $db->getQuery(true);
 		$query->select('id, link, params');
 		$query->from('#__menu');
-		$query->where(array("client_id = 0", "link LIKE 'index.php?option=com_jem&view=categories%'"));
+		$query->where(array("client_id = 0", "link LIKE 'index.php?option=com_jem&view=categor%'"));
 		$db->setQuery($query);
 		$items = $db->loadObjectList();
 
@@ -742,37 +723,68 @@ class com_jemInstallerScript
 			$reg = new JRegistry;
 			$reg->loadString($item->params);
 
-			// replace view name
-			$link = str_replace("&view=categoriesdetailed", "&view=categories", $link);
+			// get view
+			preg_match('/view=([^&]+)/', $item->link, $matches);
+			$view = $matches[1];
 
-			// add "&id=..." if required
-			if (strpos($link, '&id=') === false) {
-				$link .= '&id=' . max(1, (int)$reg->get('catid', $reg->get('id', 1)));
-			}
-
-			// change params as required (order and defaults matching xml)
-			$params = array('showemptycats' => $reg->get('showemptychilds', 1),
-			                'cat_num' => 4,
-			                'detcat_nr' => 3,
-			                'usecat' => 1,
-			                'showemptychilds' => $reg->get('empty_cats', 1));
-			foreach ($reg->toArray() as $k => $v) {
-				switch ($k) {
-				case 'id':
-				case 'catid':
-					// remove 'id' and 'catid'
-					break;
-				case 'empty_cat':
-					// rename
-					$params['showemptycats'] = $v;
-					break;
-				default:
-					$params[$k] = $v;
-					break;
+			switch ($view) {
+			case 'categoriesdetailed':
+				// replace view name
+				$link = str_replace("&view=categoriesdetailed", "&view=categories", $link);
+				// fall through
+			case 'categories':
+				// add "&id=..." if required
+				if (strpos($link, '&id=') === false) {
+					$link .= '&id=' . max(1, (int)$reg->get('catid', $reg->get('id', 1)));
 				}
+
+				// change params as required (order and defaults matching xml)
+				$params = array('showemptycats' => $reg->get('showemptychilds', 1),
+				                'cat_num' => 4,
+				                'detcat_nr' => 3,
+				                'usecat' => 1,
+				                'showemptychilds' => $reg->get('empty_cats', 1));
+				foreach ($reg->toArray() as $k => $v) {
+					switch ($k) {
+					case 'id':
+					case 'catid':
+						// remove 'id' and 'catid'
+						break;
+					case 'empty_cat':
+						// rename
+						$params['showemptycats'] = $v;
+						break;
+					default:
+						$params[$k] = $v;
+						break;
+					}
+				}
+				$reg = new JRegistry;
+				$reg->loadArray($params);
+				break;
+
+			case 'category':
+				// add "&id=..." if required
+				if (strpos($link, '&id=') === false) {
+					$link .= '&id=' . max(1, (int)$reg->get('id', 1));
+
+					// and remove from params
+					$params = array();
+					foreach ($reg->toArray() as $k => $v) {
+						switch ($k) {
+						case 'id':
+							// remove 'id'
+							break;
+						default:
+							$params[$k] = $v;
+							break;
+						}
+					}
+					$reg = new JRegistry;
+					$reg->loadArray($params);
+				}
+				break;
 			}
-			$reg = new JRegistry;
-			$reg->loadArray($params);
 
 			// write changed entry back into DB
 			$query = $db->getQuery(true);
