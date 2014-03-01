@@ -84,7 +84,7 @@ class JFormFieldImageselect extends JFormFieldList
 
 		$html[] = "\n<input type=\"hidden\" id=\"a_image\" name=\"$this->name\" value=\"$this->value\" />";
 
-		$html [] = "<br /><img src=\"../media/system/images/blank.png\" name=\"imagelib\" id=\"imagelib\" width=\"80\" height=\"80\" border=\"2\" alt=\"Preview\" />";
+		$html [] = "<img src=\"../media/system/images/blank.png\" name=\"imagelib\" id=\"imagelib\" border=\"2\" alt=\"Preview\" />";
 		$html [] = "<script type=\"text/javascript\">";
 		$html [] = "if (document.forms[0].a_imagename.value!='') {";
 		$html [] = "var imname = document.forms[0].a_imagename.value;";

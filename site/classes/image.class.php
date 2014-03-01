@@ -34,19 +34,19 @@ class JEMImage {
 		$image->target_path = $filename;
 
 		// since in this example we're going to have a jpeg file, let's set the output
-		// image's quality
-		$image->jpeg_quality = 100;
+		// image's quality (95% has no visible effect but saves some bytes)
+		$image->jpeg_quality = 95;
 
 		// some additional properties that can be set
 		// read about them in the documentation
 		$image->preserve_aspect_ratio = true;
-		$image->enlarge_smaller_images = true;
+		$image->enlarge_smaller_images = false;
 		$image->preserve_time = true;
 
-		// resize the image to exactly 100x100 pixels by using the "crop from center" method
+		// resize the image to at best 100x100 pixels by using the "not boxed" method
 		// (read more in the overview section or in the documentation)
 		// and if there is an error, check what the error is about
-		if (!$image->resize($new_w, $new_h, ZEBRA_IMAGE_CROP_CENTER, -1)) {
+		if (!$image->resize($new_w, $new_h, ZEBRA_IMAGE_NOT_BOXED, -1)) {
 
 			//only admins will see these errors
 			if (JFactory::getUser()->authorise('core.manage')) {

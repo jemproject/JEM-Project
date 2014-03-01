@@ -270,7 +270,7 @@ div#jem .copyright {
  */
 div#jem .notmodal {
 	float:right !important;
-	border:1px solid #000000 !important;
+/*	border:1px solid #000000 !important;*/
 	width:auto;
 	position:static !important;
 	background:transparent;
@@ -278,9 +278,10 @@ div#jem .notmodal {
 	box-shadow:none;
 }
 
-div#jem .flyerimage {
+div#jem .flyermodal {
 	float:right !important;
-	border:1px solid #000000;
+/*	border:1px solid #000000;*/
+	border:0px solid #000000;
 	width:auto;
 	position:static !important;
 	background:transparent;

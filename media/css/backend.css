@@ -295,6 +295,13 @@ div.cpanel-right {
 	float:right;
 }
 
+img#imagelib {
+	max-width:80px;
+	max-height:80px;
+	display:block;
+	clear:left;
+}
+
 /* -----------ZEBRA STRIPES, J3+ Isis template -------------- */
 .table-striped tbody tr:nth-child(odd) td,
 .table-striped tbody tr:nth-child(odd) th {
