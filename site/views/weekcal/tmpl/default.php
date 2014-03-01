@@ -65,15 +65,24 @@ defined('_JEXEC') or die;
 			continue;
 		}
 
-		if ($this->jemsettings->showtime == 1) {
-			$start = JemOutput::formattime($row->times,'', false);
-			$end = JemOutput::formattime($row->endtimes,'', false);
+		//for time in tooltip
+		$timehtml = '';
 
-			$multi = new stdClass();
-			$multi->row = (isset($row->multi) ? $row->multi : 'na');
+		if ($this->jemsettings->showtime == 1) {
+			$start = JemOutput::formattime($row->times);
+			$end = JemOutput::formattime($row->endtimes);
+
+			if ($start != '') {
+				$timehtml = '<div class="time"><span class="label">'.JText::_('COM_JEM_TIME_SHORT').': </span>';
+				$timehtml .= $start;
+				if ($end != '') {
+					$timehtml .= ' - '.$end;
+				}
+				$timehtml .= '</div>';
+			}
 		}
 
-		$eventname = '<div class="eventName">'.JText::_('COM_JEM_TITLE').': '.$this->escape($row->title).'</div>';
+		$eventname  = '<div class="eventName">'.JText::_('COM_JEM_TITLE_SHORT').': '.$this->escape($row->title).'</div>';
 		$detaillink = JRoute::_(JemHelperRoute::getEventRoute($row->slug));
 
 		//initialize variables
@@ -87,11 +96,11 @@ defined('_JEXEC') or die;
 		//walk through categories assigned to an event
 		foreach($row->categories AS $category) {
 			//Currently only one id possible...so simply just pick one up...
-			$detaillink 	= JRoute::_(JemHelperRoute::getEventRoute($row->slug));
+			$detaillink = JRoute::_(JemHelperRoute::getEventRoute($row->slug));
 
 			//wrap a div for each category around the event for show hide toggler
-			$content 		.= '<div id="catz" class="cat'.$category->id.'">';
-			$contentend		.= '</div>';
+			$content    .= '<div id="catz" class="cat'.$category->id.'">';
+			$contentend .= '</div>';
 
 			//attach category color if any in front of the catname
 			if ($category->color) {
@@ -118,7 +127,7 @@ defined('_JEXEC') or die;
 			}
 		}
 
-		$color = '<div id="eventcontenttop" class="eventcontenttop">';
+		$color  = '<div id="eventcontenttop" class="eventcontenttop">';
 		$color .= $colorpic;
 		$color .= '</div>';
 
@@ -127,7 +136,7 @@ defined('_JEXEC') or die;
 
 		if ($this->jemsettings->showtime == 1) {
 			$start = JemOutput::formattime($row->times,'',false);
-			$end = JemOutput::formattime($row->endtimes,'',false);
+			$end   = JemOutput::formattime($row->endtimes,'',false);
 
 			$multi = new stdClass();
 			$multi->row = (isset($row->multi) ? $row->multi : 'na');
@@ -156,17 +165,17 @@ defined('_JEXEC') or die;
 
 		$catname = '<div class="catname">'.$multicatname.'</div>';
 
-		$eventdate = JemOutput::formatdate($row->dates);
+		$eventdate = $row->multistartdate ? JemOutput::formatdate($row->multistartdate) : JemOutput::formatdate($row->dates);
+		if ($row->multienddate) {
+			$eventdate .= ' - ' . JemOutput::formatdate($row->multienddate);
+		} else if ($row->enddates && $row->dates < $row->enddates) {
+			$eventdate .= ' - ' . JemOutput::formatdate($row->enddates);
+		}
 
 		//venue
 		if ($this->jemsettings->showlocate == 1) {
-			$venue = '<div class="location"><span class="label">'.JText::_('COM_JEM_VENUE').': </span>';
-
-			if ($this->jemsettings->showlinkvenue == 1 && 0) {
-				$venue .= $row->locid != 0 ? "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
-			} else {
-				$venue .= $row->locid ? $this->escape($row->venue) : '-';
-			}
+			$venue  = '<div class="location"><span class="label">'.JText::_('COM_JEM_VENUE_SHORT').': </span>';
+			$venue .= $row->locid ? $this->escape($row->venue) : '-';
 
 			$venue .= '</div>';
 		} else {
@@ -192,7 +201,7 @@ defined('_JEXEC') or die;
 
 		//generate the output
 		//$content .= $colorpic;
-		$content .= JemHelper::caltooltip($catname.$eventname.$multidaydate.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $color);
+		$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $color);
 		$content .= $contentend;
 
 		$this->cal->setEventContent($year, $month, $day, $content);
@@ -217,38 +226,38 @@ defined('_JEXEC') or die;
 
 		<div class="clr"></div>
 		<div class="calendarLegends">
-		<?php
-		//print the legend
-		if ($this->params->get('displayLegend')) {
-			$counter = array();
+			<?php
+			//print the legend
+			if ($this->params->get('displayLegend')) {
+				$counter = array();
 
-			//walk through events
-			foreach ($this->rows as $row) {
-				//walk through the event categories
-				foreach ($row->categories as $cat) {
-					//sort out dupes
-					if (!in_array($cat->id, $counter)) {
-						//add cat id to cat counter
-						$counter[] = $cat->id;
+				//walk through events
+				foreach ($this->rows as $row) {
+					//walk through the event categories
+					foreach ($row->categories as $cat) {
+						//sort out dupes
+						if (!in_array($cat->id, $counter)) {
+							//add cat id to cat counter
+							$counter[] = $cat->id;
 
-						//build legend
-						if (array_key_exists($cat->id, $countcatevents)) {
-						?>
-							<div class="eventCat" id="cat<?php echo $cat->id; ?>">
-								<?php
-								if (isset($cat->color) && $cat->color) {
-									echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';
-								}
-								echo $cat->catname.' ('.$countcatevents[$cat->id].')';
-								?>
-							</div>
-						<?php
+							//build legend
+							if (array_key_exists($cat->id, $countcatevents)) {
+							?>
+								<div class="eventCat" id="cat<?php echo $cat->id; ?>">
+									<?php
+									if (isset($cat->color) && $cat->color) {
+										echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';
+									}
+									echo $cat->catname.' ('.$countcatevents[$cat->id].')';
+									?>
+								</div>
+							<?php
+							}
 						}
 					}
 				}
 			}
-		}
-		?>
+			?>
 		</div>
 	</div>
 </div>

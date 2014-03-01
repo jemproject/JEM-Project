@@ -171,7 +171,7 @@ class JEMModelVenueCal extends JModelLegacy
 									$multi[$counter]->times = $item->times;
 									$multi[$counter]->endtimes = $item->endtimes;
 									$multi[$counter]->sort = 'middle';
-								} elseif ($multi[$counter]->dates = $item->enddates) {
+								} elseif ($multi[$counter]->dates == $item->enddates) {
 									$multi[$counter]->multi = 'zlast';
 									$multi[$counter]->multistartdate = $item->dates;
 									$multi[$counter]->multienddate = $item->enddates;
