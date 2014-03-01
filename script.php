@@ -741,7 +741,7 @@ class com_jemInstallerScript
 				// change params as required (order and defaults matching xml)
 				$params = array('showemptycats' => $reg->get('showemptychilds', 1),
 				                'cat_num' => 4,
-				                'detcat_nr' => 3,
+				                'detcat_nr' => 0, // will be overwritten if aleady set
 				                'usecat' => 1,
 				                'showemptychilds' => $reg->get('empty_cats', 1));
 				foreach ($reg->toArray() as $k => $v) {
