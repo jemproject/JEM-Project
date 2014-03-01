@@ -73,7 +73,7 @@ defined('_JEXEC') or die;
 			$end = JemOutput::formattime($row->endtimes);
 
 			if ($start != '') {
-				$timehtml = '<div class="time"><span class="label">'.JText::_('COM_JEM_TIME_SHORT').': </span>';
+				$timehtml = '<div class="time"><span class="text-label">'.JText::_('COM_JEM_TIME_SHORT').': </span>';
 				$timehtml .= $start;
 				if ($end != '') {
 					$timehtml .= ' - '.$end;
@@ -174,7 +174,7 @@ defined('_JEXEC') or die;
 
 		//venue
 		if ($this->jemsettings->showlocate == 1) {
-			$venue  = '<div class="location"><span class="label">'.JText::_('COM_JEM_VENUE_SHORT').': </span>';
+			$venue  = '<div class="location"><span class="text-label">'.JText::_('COM_JEM_VENUE_SHORT').': </span>';
 			$venue .= $row->locid ? $this->escape($row->venue) : '-';
 
 			$venue .= '</div>';
@@ -183,7 +183,7 @@ defined('_JEXEC') or die;
 		}
 
 		//date in tooltip
-		$multidaydate = '<div class="location"><span class="label">'.JText::_('COM_JEM_DATE').': </span>';
+		$multidaydate = '<div class="time"><span class="text-label">'.JText::_('COM_JEM_DATE').': </span>';
 		if ($multi->row == 'first') {
 			$multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
 			$multidaydate .= JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
