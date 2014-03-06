@@ -94,7 +94,8 @@ class JemHelper {
 			$db = JFactory::getDbo();
 			$query = $db->getQuery(true);
 
-			// get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
+			// Get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
+			// Ignore published field to prevent duplicate events.
 			$nulldate = '0000-00-00';
 			$query = ' SELECT id, CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id, '
 					. ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, '
@@ -103,7 +104,6 @@ class JemHelper {
 					. ' WHERE recurrence_type <> "0" '
 					. ' AND CASE recurrence_limit_date WHEN '.$nulldate.' THEN 1 ELSE NOW() < recurrence_limit_date END '
 					. ' AND recurrence_number <> "0" '
-					. ' AND published = 1 '
 					. ' GROUP BY first_id'
 					. ' ORDER BY dates DESC';
 			$db->SetQuery($query);
