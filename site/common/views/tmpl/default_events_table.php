@@ -111,7 +111,7 @@ defined('_JEXEC') or die;
 
 				<?php if ($this->jemsettings->showeventimage == 1) : ?>
 					<td headers="jem_eventimage" align="left" valign="top">
-						<?php if ($row->datimage) : ?>
+						<?php if (!empty($row->datimage)) : ?>
 							<?php
 							$dimage = JemImage::flyercreator($row->datimage, 'event');
 							echo JemOutput::flyer($row, $dimage, 'event');
@@ -146,9 +146,9 @@ defined('_JEXEC') or die;
 				<?php if ($this->jemsettings->showlocate == 1) : ?>
 					<td headers="jem_location" align="left" valign="top">
 						<?php if ($this->jemsettings->showlinkvenue == 1) : ?>
-							<?php echo $row->locid != 0 ? "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-'; ?>
+							<?php echo !empty($row->locid) ? "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-'; ?>
 						<?php else : ?>
-							<?php echo $row->locid ? $this->escape($row->venue) : '-'; ?>
+							<?php echo !empty($row->locid) ? $this->escape($row->venue) : '-'; ?>
 						<?php endif; ?>
 					</td>
 				<?php endif; ?>
@@ -173,7 +173,7 @@ defined('_JEXEC') or die;
 
 				<?php if ($this->jemsettings->showatte == 1) : ?>
 					<td headers="jem_attendees" align="left" valign="top">
-						<?php echo $row->regCount ? $this->escape($row->regCount) : '-'; ?>
+						<?php echo !empty($row->regCount) ? $this->escape($row->regCount) : '-'; ?>
 					</td>
 				<?php endif; ?>
 				</tr>

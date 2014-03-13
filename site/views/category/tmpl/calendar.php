@@ -161,8 +161,8 @@ defined('_JEXEC') or die;
 
 		$catname = '<div class="catname">'.$multicatname.'</div>';
 
-		$eventdate = $row->multistartdate ? JemOutput::formatdate($row->multistartdate) : JemOutput::formatdate($row->dates);
-		if ($row->multienddate) {
+		$eventdate = !empty($row->multistartdate) ? JemOutput::formatdate($row->multistartdate) : JemOutput::formatdate($row->dates);
+		if (!empty($row->multienddate)) {
 			$eventdate .= ' - ' . JemOutput::formatdate($row->multienddate);
 		} else if ($row->enddates && $row->dates < $row->enddates) {
 			$eventdate .= ' - ' . JemOutput::formatdate($row->enddates);
