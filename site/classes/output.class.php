@@ -608,6 +608,30 @@ class JEMOutput {
 	}
 
 	/**
+	 * Creates the recurrence icon
+	 *
+	 * @param obj  $event
+	 * @param bool $showinline Add css class to scale icon to fit text height
+	 * @param bool $showtitle  Add title (tooltip)
+	 */
+	static function recurrenceicon($event, $showinline = true, $showtitle = true)
+	{
+		$settings = JemHelper::globalattribs();
+
+		//stop if disabled
+		if (!$event->recurrence_type) {
+			return;
+		}
+
+		$attr_class = $showinline ? ('class="icon-inline" ') : '';
+		$attr_title = $showtitle  ? ('title="' . JText::_('COM_JEM_RECURRING_EVENT_DESC') . '"') : '';
+		$output = JHtml::_('image', 'com_jem/icon-32-recurrence.png', JText::_('COM_JEM_RECURRING_EVENT'),
+		                   $attr_class . $attr_title, true);
+
+		return $output;
+	}
+
+	/**
 	 * Creates the flyer
 	 *
 	 * @param obj $data

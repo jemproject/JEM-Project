@@ -49,7 +49,7 @@ class JemViewEditevent extends JViewLegacy
 		// Create a shortcut for $item and params.
 		$item = $this->item;
 		$params = $this->params;
-		
+
 		$this->form = $this->get('Form');
 		$this->return_page = $this->get('ReturnPage');
 
@@ -94,23 +94,23 @@ class JemViewEditevent extends JViewLegacy
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
 				&& $menuitem->query['view']   == 'editevent'
 				&& 0 == $item->id); // menu item is always for new event
-		
+
 		$title = ($item->id == 0) ? JText::_('COM_JEM_EDITEVENT_ADD_EVENT')
-		: JText::sprintf('COM_JEM_EDITEVENT_EDIT_EVENT', $item->title);
-		
+		                          : JText::sprintf('COM_JEM_EDITEVENT_EDIT_EVENT', $item->title);
+
 		if ($useMenuItemParams) {
 			$pagetitle = $menuitem->title ? $menuitem->title : $title;
 			$params->def('page_title', $pagetitle);
 			$params->def('page_heading', $pagetitle);
 			$pathway->setItemName(1, $pagetitle);
-		
+
 			// Load layout from menu item if one is set else from event if there is one set
 			if (isset($menuitem->query['layout'])) {
 				$this->setLayout($menuitem->query['layout']);
 			} elseif ($layout = $item->params->get('event_layout')) {
 				$this->setLayout($layout);
 			}
-		
+
 			$item->params->merge($params);
 		} else {
 			$pagetitle = $title;
@@ -118,23 +118,30 @@ class JemViewEditevent extends JViewLegacy
 			$params->set('page_heading', $pagetitle);
 			$params->set('show_page_heading', 1); // ensure page heading is shown
 			$pathway->addItem($pagetitle, JRoute::_(JEMHelperRoute::getEventRoute($item->slug)));
-		
+
 			// Check for alternative layouts (since we are not in a edit-event menu item)
 			// Load layout from event if one is set
 			if ($layout = $item->params->get('event_layout')) {
 				$this->setLayout($layout);
 			}
-		
+
 			$temp = clone($params);
 			$temp->merge($item->params);
 			$item->params = $temp;
 		}
-		
+
 		if (!empty($this->item) && isset($this->item->id)) {
 			// $this->item->images = json_decode($this->item->images);
 			// $this->item->urls = json_decode($this->item->urls);
-		
+
 			$tmp = new stdClass();
+
+			// check for recurrence
+			if (($this->item->recurrence_type != 0) || ($this->item->recurrence_first_id != 0)) {
+				$tmp->recurrence_type = 0;
+				$tmp->recurrence_first_id = 0;
+			}
+
 			// $tmp->images = $this->item->images;
 			// $tmp->urls = $this->item->urls;
 			$this->form->bind($tmp);

@@ -219,7 +219,7 @@ class JEMModelCategory extends JModelLegacy
 
 		//Get Events from Database
 		$query = 'SELECT DISTINCT a.id, a.featured, a.datimage, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.created, '
-				. ' a.maxplaces, a.waitinglist, a.fulltext, '
+				. ' a.maxplaces, a.waitinglist, a.fulltext, a.recurrence_type, a.recurrence_first_id, '
 				. ' l.venue, l.city, l.state, l.url, c.color, c.catname, l.street, ct.name AS countryname, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'

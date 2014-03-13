@@ -180,6 +180,7 @@ class JEMModelMyevents extends JModelLegacy
 
 		//Get Events from Database
 		$query = 'SELECT DISTINCT a.id as eventid, a.id, a.dates, a.enddates, a.published, a.times, a.endtimes, a.title, a.created, a.locid,a.registra, a.maxplaces, a.waitinglist,'
+				. ' a.recurrence_type, a.recurrence_first_id,'
 				. ' l.venue, l.city, l.state, l.url,'
 				. ' c.catname, c.id AS catid,'
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
