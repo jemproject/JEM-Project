@@ -260,6 +260,11 @@ class JEMModelEvent extends JModelAdmin
 		$metakeywords 		= $jinput->get('meta_keywords', '', '');
 		$metadescription 	= $jinput->get('meta_description', '', '');
 
+		// event maybe first of recurrence set -> dissolve complete set
+		if (JemHelper::dissolve_recurrence($data['id'])) {
+			$this->cleanCache();
+		}
+
 		if ($data['dates'] == null || $data['recurrence_type'] == '0')
 		{
 			$data['recurrence_number']		= '';
@@ -270,6 +275,13 @@ class JEMModelEvent extends JModelAdmin
 			$data['recurrence_limit_date']	= '';
 			$data['recurrence_first_id']	= '';
 		}else{
+			if ($data['id']) {
+				// edited event maybe part of a recurrence set
+				// -> drop event from set
+				$data['recurrence_first_id']	= '';
+				$data['recurrence_counter'] 	= '';
+			}
+
 			$data['recurrence_number']		= $recurrencenumber;
 			$data['recurrence_byday']		= $recurrencebyday;
 		}

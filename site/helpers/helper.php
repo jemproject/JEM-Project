@@ -298,6 +298,40 @@ class JemHelper {
 	}
 
 	/**
+	 * Method to dissolve recurrence of given id.
+	 *
+	 * @param	int		The id to clear as recurrence first id.
+	 *
+	 * @return	boolean	True on success.
+	 */
+	static function dissolve_recurrence($first_id)
+	{
+		// Sanitize the id.
+		$first_id = (int)$first_id;
+
+		if (empty($first_id)) {
+			return false;
+		}
+
+		try {
+			$db = JFactory::getDbo();
+			$nulldate = explode(' ', $db->getNullDate());
+			$db->setQuery('UPDATE #__jem_events'
+			            . ' SET recurrence_first_id = 0, recurrence_type = 0'
+			            . '   , recurrence_counter = 0, recurrence_number = 0'
+			            . '   , recurrence_limit = 0, recurrence_limit_date = ' . $db->quote($nulldate[0])
+			            . '   , recurrence_byday = ' . $db->quote('')
+			            . ' WHERE recurrence_first_id = ' . $first_id
+			             );
+			$db->query();
+		} catch (Exception $e) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * this method generate the date string to a date array
 	 *
 	 * @var string the date string
