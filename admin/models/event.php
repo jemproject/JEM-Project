@@ -149,11 +149,10 @@ class JEMModelEvent extends JModelAdmin
 
 		if ($item->id){
 			$item->recurrence_type 			= '';
-			$item->recurrence_number 		= '';
+		//	$item->recurrence_number 		= ''; // we need something to detect recurrence in editview
 			$item->recurrence_byday 		= '';
 			$item->recurrence_counter 		= '';
 			$item->recurrence_first_id 		= '';
-			$item->recurrence_type 			= '';
 			$item->recurrence_limit 		= '';
 			$item->recurrence_limit_date	= '';
 		}

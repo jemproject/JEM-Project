@@ -674,3 +674,9 @@ input#csvexport{
 {
 	max-width:210px;
 }
+/* scale icon to fit text height */
+.icon-inline {
+	height: 1.2em;
+	margin-left: 0.3em;
+}
+
