@@ -45,8 +45,8 @@ class JEMViewImagehandler extends JViewLegacy {
 			$redi	= 'selecteventimg';
 		} else if ($task == 'selectvenueimg') {
 			$folder = 'venues';
-			$task 	= 'eventimg';
-			$redi	= 'selecteventimg';
+			$task   = 'venueimg';
+			$redi   = 'selectvenueimg';
 		} else if ($task == 'selectcategoriesimg') {
 			$folder = 'categories';
 			$task 	= 'categoriesimg';
