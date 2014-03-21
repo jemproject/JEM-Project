@@ -619,7 +619,7 @@ class JEMOutput {
 		$settings = JemHelper::globalattribs();
 
 		//stop if disabled
-		if (!$event->recurrence_number) {
+		if (empty($event->recurrence_number)) {
 			return;
 		}
 
