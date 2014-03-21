@@ -79,6 +79,7 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 		<input type="hidden" name="task" value="selectvenue" />
 		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="tmpl" value="component" />
+		<input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
 		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 		<input type="hidden" name="filter_order_Dir" value="" />
 		</p>
