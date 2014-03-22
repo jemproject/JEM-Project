@@ -76,7 +76,13 @@ $settings	= json_decode($this->item->attribs);
 					<?php echo JemOutput::recurrenceicon($this->item, false, false); ?>
 				</div>
 				<div class="floattext" style="margin-left:36px;">
-					<?php echo JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE'); ?>
+					<?php
+						if (!empty($this->item->recurrence_type) && empty($this->item->recurrence_first_id)) {
+							echo JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_FIRST');
+						} else {
+							echo JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE');
+						}
+					?>
 				</div>
 			</div>
 			<?php endif; ?>

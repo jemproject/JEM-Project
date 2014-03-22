@@ -180,13 +180,20 @@ $params = $params->toArray();
 	action="<?php echo JRoute::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>"
 	class="form-validate" method="post" name="adminForm" id="event-form" enctype="multipart/form-data">
 
-	<?php if ($this->item->recurrence_number > 0) : ?>
+	<?php $recurr = empty($this->item->recurr_bak) ? $this->item : $this->item->recurr_bak; ?>
+	<?php if (!empty($recurr->recurrence_number) || !empty($recurr->recurrence_type)) : ?>
 	<div class="description">
 		<div style="float:left;">
-			<?php echo JemOutput::recurrenceicon($this->item, false, false); ?>
+			<?php echo JemOutput::recurrenceicon($recurr, false, false); ?>
 		</div>
 		<div class="floattext" style="margin-left:36px;">
-			<?php echo JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE'); ?>
+			<?php
+				if (!empty($recurr->recurrence_type) && empty($recurr->recurrence_first_id)) {
+					echo JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_FIRST');
+				} else {
+					echo JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE');
+				}
+			?>
 		</div>
 	</div>
 	<div class="clear"></div>

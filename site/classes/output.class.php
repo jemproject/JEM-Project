@@ -617,16 +617,18 @@ class JEMOutput {
 	static function recurrenceicon($event, $showinline = true, $showtitle = true)
 	{
 		$settings = JemHelper::globalattribs();
+		$item = empty($event->recurr_bak) ? $event : $event->recurr_bak;
 
 		//stop if disabled
-		if (empty($event->recurrence_number) && empty($event->recurrence_type)) {
+		if (empty($item->recurrence_number) && empty($item->recurrence_type)) {
 			return;
 		}
 
+		$first = !empty($item->recurrence_type) && empty($item->recurrence_first_id);
+		$image = $first ? 'com_jem/icon-32-recurrence-first.png' : 'com_jem/icon-32-recurrence.png';
 		$attr_class = $showinline ? ('class="icon-inline" ') : '';
-		$attr_title = $showtitle  ? ('title="' . JText::_('COM_JEM_RECURRING_EVENT_DESC') . '"') : '';
-		$output = JHtml::_('image', 'com_jem/icon-32-recurrence.png', JText::_('COM_JEM_RECURRING_EVENT'),
-		                   $attr_class . $attr_title, true);
+		$attr_title = $showtitle  ? ('title="' . JText::_($first ? 'COM_JEM_RECURRING_FIRST_EVENT_DESC' : 'COM_JEM_RECURRING_EVENT_DESC') . '"') : '';
+		$output = JHtml::_('image', $image, JText::_('COM_JEM_RECURRING_EVENT'), $attr_class . $attr_title, true);
 
 		return $output;
 	}

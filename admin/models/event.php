@@ -148,8 +148,16 @@ class JEMModelEvent extends JModelAdmin
 		}
 
 		if ($item->id){
+			// Store current recurrence values
+			$item->recurr_bak = new stdClass;
+			foreach (get_object_vars($item) as $k => $v) {
+				if (strncmp('recurrence_', $k, 11) === 0) {
+					$item->recurr_bak->$k = $v;
+				}
+			}
+
 			$item->recurrence_type 			= '';
-		//	$item->recurrence_number 		= ''; // we need something to detect recurrence in editview
+			$item->recurrence_number 		= '';
 			$item->recurrence_byday 		= '';
 			$item->recurrence_counter 		= '';
 			$item->recurrence_first_id 		= '';
