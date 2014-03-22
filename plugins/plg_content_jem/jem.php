@@ -21,7 +21,7 @@ defined('_JEXEC') or die;
 class plgContentJem extends JPlugin
 {
 	/**
-	 * Dissolve recurrence sets where deleted event is refered to as first.
+	 * Dissolve recurrence sets where deleted event is referred to as first.
 	 *
 	 * @param	string	The context for the content passed to the plugin.
 	 * @param	object	The data relating to the content that was deleted.
