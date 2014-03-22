@@ -30,6 +30,7 @@ class Pkg_JemInstallerScript {
 			'0' => '5.5' // Preferred version
 			),
 		'Joomla!' => array (
+			'3.0' => '', // Not supported
 			'2.5' => '2.5.6',
 			'0' => '2.5.19' // Preferred version
 			)
@@ -123,12 +124,16 @@ class Pkg_JemInstallerScript {
 		$major = $minor = 0;
 		foreach ($this->versions[$name] as $major=>$minor) {
 			if (!$major || version_compare($version, $major, '<')) continue;
-			if (version_compare($version, $minor, '>=')) return true;
+			if ($minor && version_compare($version, $minor, '>=')) return true;
 			break;
 		}
 		if (!$major) $minor = reset($this->versions[$name]);
 		$recommended = end($this->versions[$name]);
-		$app->enqueueMessage(sprintf("%s %s is not supported. Minimum required version is %s %s, but it is higly recommended to use %s %s or later.", $name, $version, $name, $minor, $name, $recommended), 'notice');
+		if ($minor) {
+			$app->enqueueMessage(sprintf("%s %s is not supported. Minimum required version is %s %s, but it is higly recommended to use %s %s or later.", $name, $version, $name, $minor, $name, $recommended), 'notice');
+		} else {
+			$app->enqueueMessage(sprintf("%s %s is not supported. It is higly recommended to use %s %s or later.", $name, $version, $name, $recommended), 'notice');
+		}
 		return false;
 	}
 
