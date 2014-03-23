@@ -187,11 +187,13 @@ $params = $params->toArray();
 			<?php echo JemOutput::recurrenceicon($recurr, false, false); ?>
 		</div>
 		<div class="floattext" style="margin-left:36px;">
+			<strong><?php echo JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_TITLE'); ?></strong>
+			<br>
 			<?php
 				if (!empty($recurr->recurrence_type) && empty($recurr->recurrence_first_id)) {
-					echo JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_FIRST');
+					echo nl2br(JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_FIRST_TEXT'));
 				} else {
-					echo JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE');
+					echo nl2br(JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_TEXT'));
 				}
 			?>
 		</div>
