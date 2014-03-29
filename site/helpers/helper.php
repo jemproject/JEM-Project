@@ -124,6 +124,12 @@ class JemHelper {
 				$db->setQuery($query);
 				$reference = $db->loadAssoc();
 
+				// if reference event is "unpublished"(0) new event is "unpublished" too
+				// but on "archived"(2) and "trashed"(-2) reference events create "published"(1) event
+				if ($reference['published'] != 0) {
+					$reference['published'] = 1;
+				}
+
 				// the first day of the week is used for certain rules
 				$recurrence_row['weekstart'] = $weekstart;
 
