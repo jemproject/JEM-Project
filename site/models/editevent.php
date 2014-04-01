@@ -73,6 +73,16 @@ class JEMModelEditevent extends JEMModelEvent
 		$properties = $table->getProperties(1);
 		$value = JArrayHelper::toObject($properties, 'JObject');
 
+		// Backup current recurrence values
+		if ($value->id){
+			$value->recurr_bak = new stdClass;
+			foreach (get_object_vars($value) as $k => $v) {
+				if (strncmp('recurrence_', $k, 11) === 0) {
+					$value->recurr_bak->$k = $v;
+				}
+			}
+		}
+
 		// Convert attrib field to Registry.
 		$registry = new JRegistry();
 		$registry->loadString($value->attribs);

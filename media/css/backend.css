@@ -674,9 +674,18 @@ input#csvexport{
 {
 	max-width:210px;
 }
+
 /* scale icon to fit text height */
 .icon-inline {
 	height: 1.2em;
 	margin-left: 0.3em;
 }
 
+/* prevent problem with Bluestork */
+#recurrence_output select,
+select#jform_recurrence_type {
+	float: none;
+}
+input#jform_recurrence_limit_date {
+	margin-left: 0;
+}
