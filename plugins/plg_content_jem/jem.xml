@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="2.5" type="plugin" group="content" method="upgrade">
+	<name>plg_content_jem</name>
+	<author>JEM Community</author>
+	<authorEmail>info@joomlaeventmanager.net</authorEmail>
+	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
+	<creationDate>19 March 2014</creationDate>
+	<copyright>copyright (C) 2013-2014 joomlaeventmanager.net</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<version>1.9.6</version>
+	<description>PLG_CONTENT_JEM_XML_DESCRIPTION</description>
+
+	<files>
+		<filename plugin="jem">jem.php</filename>
+		<filename>index.html</filename>
+	</files>
+
+	<languages>
+		<language tag="en-GB">language/en-GB/en-GB.plg_content_jem.ini</language>
+		<language tag="en-GB">language/en-GB/en-GB.plg_content_jem.sys.ini</language>
+	</languages>
+
+</extension>

@@ -132,17 +132,18 @@ class JEMModelMyattendances extends JModelLegacy
 
 		//Get Events from Database
 		$query = 'SELECT DISTINCT a.id AS eventid, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.published, '
-			.' l.id, l.venue, l.city, l.state, l.url,'
+			. ' a.recurrence_type, a.recurrence_first_id,'
+			. ' l.id, l.venue, l.city, l.state, l.url,'
 			. ' c.catname, c.id AS catid,'
-			.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
-			.' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-			.' FROM #__jem_events AS a'
-			.' LEFT JOIN #__jem_register AS r ON r.event = a.id'
-			.' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+			. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
+			. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
+			. ' FROM #__jem_events AS a'
+			. ' LEFT JOIN #__jem_register AS r ON r.event = a.id'
+			. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
 			. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
 			. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
-			.$where
-			.$orderby
+			. $where
+			. $orderby
 			;
 
 		return $query;

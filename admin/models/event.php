@@ -148,12 +148,19 @@ class JEMModelEvent extends JModelAdmin
 		}
 
 		if ($item->id){
+			// Store current recurrence values
+			$item->recurr_bak = new stdClass;
+			foreach (get_object_vars($item) as $k => $v) {
+				if (strncmp('recurrence_', $k, 11) === 0) {
+					$item->recurr_bak->$k = $v;
+				}
+			}
+
 			$item->recurrence_type 			= '';
 			$item->recurrence_number 		= '';
 			$item->recurrence_byday 		= '';
 			$item->recurrence_counter 		= '';
 			$item->recurrence_first_id 		= '';
-			$item->recurrence_type 			= '';
 			$item->recurrence_limit 		= '';
 			$item->recurrence_limit_date	= '';
 		}
@@ -260,6 +267,11 @@ class JEMModelEvent extends JModelAdmin
 		$metakeywords 		= $jinput->get('meta_keywords', '', '');
 		$metadescription 	= $jinput->get('meta_description', '', '');
 
+		// event maybe first of recurrence set -> dissolve complete set
+		if (JemHelper::dissolve_recurrence($data['id'])) {
+			$this->cleanCache();
+		}
+
 		if ($data['dates'] == null || $data['recurrence_type'] == '0')
 		{
 			$data['recurrence_number']		= '';
@@ -270,6 +282,13 @@ class JEMModelEvent extends JModelAdmin
 			$data['recurrence_limit_date']	= '';
 			$data['recurrence_first_id']	= '';
 		}else{
+			if ($data['id']) {
+				// edited event maybe part of a recurrence set
+				// -> drop event from set
+				$data['recurrence_first_id']	= '';
+				$data['recurrence_counter'] 	= '';
+			}
+
 			$data['recurrence_number']		= $recurrencenumber;
 			$data['recurrence_byday']		= $recurrencebyday;
 		}
