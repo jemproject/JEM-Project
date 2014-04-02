@@ -15,13 +15,18 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 */
 class JemViewEventslist extends JEMView
 {
+	function __construct($config = array()) {
+		parent::__construct($config);
+
+		// additional path for common templates + corresponding override path
+		$this->addCommonTemplatePath();
+	}
+
 	/**
 	 * Creates the Simple List View
 	 */
 	function display( $tpl = null )
 	{
-		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
-
 		// initialize variables
 		$document 		= JFactory::getDocument();
 		$app 			= JFactory::getApplication();

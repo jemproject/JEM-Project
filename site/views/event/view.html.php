@@ -8,10 +8,12 @@
  */
 defined('_JEXEC') or die;
 
+require JPATH_COMPONENT_SITE.'/classes/view.class.php';
+
 /**
  * Event-View
  */
-class JemViewEvent extends JViewLegacy
+class JemViewEvent extends JEMView
 {
 	protected $item;
 	protected $params;
@@ -19,13 +21,18 @@ class JemViewEvent extends JViewLegacy
 	protected $state;
 	protected $user;
 
+	function __construct($config = array()) {
+		parent::__construct($config);
+
+		// additional path for common templates + corresponding override path
+		$this->addCommonTemplatePath();
+	}
+
 	/**
 	 * Creates the output for the Event view
 	 */
 	function display($tpl = null)
 	{
-		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
-
 		$jemsettings		= JemHelper::config();
 		$settings			= JemHelper::globalattribs();
 		$app				= JFactory::getApplication();
@@ -64,8 +71,8 @@ class JemViewEvent extends JViewLegacy
 
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
-				&& $menuitem->query['view']   == 'event'
-				&& $menuitem->query['id']     == $item->id);
+		                                && $menuitem->query['view']   == 'event'
+		                                && $menuitem->query['id']     == $item->id);
 
 		// Add router helpers.
 		$item->slug			= $item->alias ? ($item->id.':'.$item->alias) : $item->id;
@@ -146,7 +153,6 @@ class JemViewEvent extends JViewLegacy
 
 		// Increment the hit counter of the event.
 		if (!$this->params->get('intro_only') && $offset == 0) {
-			$model = $this->getModel();
 			$model->hit();
 		}
 
@@ -270,7 +276,7 @@ class JemViewEvent extends JViewLegacy
 		$this->_prepareDocument();
 
 		parent::display($tpl);
-		}
+	}
 
 	/**
 	 * structures the keywords

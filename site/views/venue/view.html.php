@@ -15,6 +15,13 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
  */
 class JemViewVenue extends JEMView {
 
+	function __construct($config = array()) {
+		parent::__construct($config);
+
+		// additional path for common templates + corresponding override path
+		$this->addCommonTemplatePath();
+	}
+
 	/**
 	 * Creates the Venue View
 	 */
@@ -107,9 +114,6 @@ class JemViewVenue extends JEMView {
 			$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
 
 		} else {
-
-			// add templatepath
-			$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl' );
 
 			// initialize variables
 			$app 			= JFactory::getApplication();
