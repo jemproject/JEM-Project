@@ -117,6 +117,8 @@ class JemViewEditevent extends JViewLegacy
 			$params->set('page_title', $pagetitle);
 			$params->set('page_heading', $pagetitle);
 			$params->set('show_page_heading', 1); // ensure page heading is shown
+			$params->set('introtext', ''); // there is definitely no introtext.
+			$params->set('show_introtext', 0);
 			$pathway->addItem($pagetitle, ''); // link not required here so '' is ok
 
 			// Check for alternative layouts (since we are not in a edit-event menu item)
