@@ -98,16 +98,17 @@ defined('_JEXEC') or die;
 	</thead>
 
 	<tbody>
-	<?php if ($this->noevents == 1) : ?>
-		<tr align="center"><td colspan="20"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
-	<?php else : ?>
-		<?php $this->rows = $this->getRows(); ?>
-		<?php foreach ($this->rows as $row) : ?>
-        <?php if ($row->featured != 0 ) :   ?>
-            <tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="http://schema.org/Event" >
-        <?php else : ?>
-            <tr class="sectiontableentry<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="http://schema.org/Event" >
-        <?php endif; ?>
+		<?php if ($this->noevents == 1) : ?>
+			<tr align="center"><td colspan="20"><?php echo JText::_('COM_JEM_NO_EVENTS'); ?></td></tr>
+		<?php else : ?>
+			<?php $this->rows = $this->getRows(); ?>
+			<?php foreach ($this->rows as $row) : ?>
+				<?php if (!empty($row->featured)) :   ?>
+				<tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="http://schema.org/Event" >
+				<?php else : ?>
+				<tr class="sectiontableentry<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="http://schema.org/Event" >
+				<?php endif; ?>
+
 				<?php if ($this->jemsettings->showeventimage == 1) : ?>
 					<td headers="jem_eventimage" align="left" valign="top">
 						<?php if (!empty($row->datimage)) : ?>
@@ -130,14 +131,16 @@ defined('_JEXEC') or die;
 
 				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
 					<td headers="jem_title" align="left" valign="top">
-						<a href="<?php echo JRoute::_(JEMHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
-							<span itemprop="name"><?php echo $this->escape($row->title); ?></span>
+						<a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
+							<span itemprop="name"><?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?></span>
 						</a>
 					</td>
 				<?php endif; ?>
 
 				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
-					<td headers="jem_title" align="left" valign="top" itemprop="name"><?php echo $this->escape($row->title); ?></td>
+					<td headers="jem_title" align="left" valign="top" itemprop="name">
+						<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
+					</td>
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showlocate == 1) : ?>
@@ -151,26 +154,30 @@ defined('_JEXEC') or die;
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showcity == 1) : ?>
-					<td headers="jem_city" align="left" valign="top"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
+					<td headers="jem_city" align="left" valign="top">
+						<?php echo !empty($row->city) ? $this->escape($row->city) : '-'; ?>
+					</td>
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showstate == 1) : ?>
-					<td headers="jem_state" align="left" valign="top"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
+					<td headers="jem_state" align="left" valign="top">
+						<?php echo !empty($row->state) ? $this->escape($row->state) : '-'; ?>
+					</td>
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showcat == 1) : ?>
 					<td headers="jem_category" align="left" valign="top">
-					<?php echo implode(", ",
-							JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
+						<?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
 					</td>
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showatte == 1) : ?>
 					<td headers="jem_attendees" align="left" valign="top">
-						<?php echo !empty($row->regCount) ? $this->escape($row->regCount) : '-'; ?></td>
+						<?php echo !empty($row->regCount) ? $this->escape($row->regCount) : '-'; ?>
+					</td>
 				<?php endif; ?>
-			</tr>
-		<?php endforeach; ?>
-	<?php endif; ?>
+				</tr>
+			<?php endforeach; ?>
+		<?php endif; ?>
 	</tbody>
 </table>

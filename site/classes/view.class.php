@@ -35,6 +35,15 @@ class JEMView extends JViewLegacy {
 	}
 
 	/**
+	 * Add path for common templates.
+	 */
+	protected function addCommonTemplatePath() {
+		// additional path for list part + corresponding override path
+		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
+		$this->addTemplatePath(JPATH_THEMES . '/' . JFactory::getApplication()->getTemplate() . '/html/com_jem/common');
+	}
+
+	/**
 	 * Prepares the document.
 	 */
 	protected function prepareDocument() {

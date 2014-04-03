@@ -73,6 +73,8 @@ class JemViewSearch extends JEMView
 		} else {
 			$pagetitle = JText::_('COM_JEM_SEARCH');
 			$pageheading = $pagetitle;
+			$params->set('introtext', ''); // there is no introtext in that case
+			$params->set('showintrotext', 0);
 			$pathway->addItem(1, $pagetitle);
 		}
 		$pageclass_sfx = $params->get('pageclass_sfx');

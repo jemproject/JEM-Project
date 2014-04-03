@@ -182,8 +182,7 @@ defined('_JEXEC') or die;
 		//venue
 		if ($this->jemsettings->showlocate == 1) {
 			$venue  = '<div class="location"><span class="text-label">'.JText::_('COM_JEM_VENUE_SHORT').': </span>';
-			$venue .= $row->locid ? $this->escape($row->venue) : '-';
-
+			$venue .=     $row->locid ? $this->escape($row->venue) : '-';
 			$venue .= '</div>';
 		} else {
 			$venue = '';

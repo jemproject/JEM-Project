@@ -70,6 +70,25 @@ $settings	= json_decode($this->item->attribs);
 				<button type="button" class="negative" onclick="Joomla.submitbutton('event.cancel')"><?php echo JText::_('JCANCEL') ?></button>
 			</div>
 
+			<?php if ($this->item->recurrence_type > 0) : ?>
+			<div class="description">
+				<div style="float:left;">
+					<?php echo JemOutput::recurrenceicon($this->item, false, false); ?>
+				</div>
+				<div class="floattext" style="margin-left:36px;">
+					<strong><?php echo JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_TITLE'); ?></strong>
+					<br>
+					<?php
+						if (!empty($this->item->recurrence_type) && empty($this->item->recurrence_first_id)) {
+							echo nl2br(JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_FIRST_TEXT'));
+						} else {
+							echo nl2br(JText::_('COM_JEM_EDITEVENT_WARN_RECURRENCE_TEXT'));
+						}
+					?>
+				</div>
+			</div>
+			<?php endif; ?>
+
 			<?php if ($this->params->get('showintrotext')) : ?>
 			<div class="description no_space floattext">
 				<?php echo $this->params->get('introtext'); ?>

@@ -16,6 +16,13 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
  */
 class JemViewDay extends JEMView
 {
+	function __construct($config = array()) {
+		parent::__construct($config);
+
+		// additional path for common templates + corresponding override path
+		$this->addCommonTemplatePath();
+	}
+
 	/**
 	 * Creates the Day View
 	 */

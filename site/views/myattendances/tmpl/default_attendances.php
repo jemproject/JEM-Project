@@ -93,13 +93,15 @@ defined('_JEXEC') or die;
 				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
 					<td headers="jem_title" align="left" valign="top">
 						<a href="<?php echo JRoute::_(JEMHelperRoute::getEventRoute($row->slug)); ?>">
-							<?php echo $this->escape($row->title); ?>
+							<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
 						</a>
 					</td>
 				<?php endif; ?>
 
 				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
-					<td headers="jem_title" align="left" valign="top"><?php echo $this->escape($row->title); ?></td>
+					<td headers="jem_title" align="left" valign="top">
+						<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
+					</td>
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showlocate == 1) : ?>

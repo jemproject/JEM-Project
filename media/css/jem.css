@@ -288,6 +288,12 @@ div#jem .flyermodal {
 	box-shadow:none;
 }
 
+/* scale icon to fit text height */
+div#jem .icon-inline {
+	height: 1em;
+	margin-left: 0.3em;
+}
+
 /**
  * maps, ...
  */

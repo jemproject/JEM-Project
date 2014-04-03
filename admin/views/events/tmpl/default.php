@@ -147,10 +147,10 @@ window.addEvent('domready', function(){
 				<td class="eventtitle">
 					<?php if ($canEdit) : ?>
 						<a href="<?php echo JRoute::_('index.php?option=com_jem&task=event.edit&id='.(int) $row->id); ?>">
-							<?php echo $this->escape($row->title); ?>
+							<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
 						</a>
 					<?php else : ?>
-						<?php echo $this->escape($row->title); ?>
+						<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
 					<?php endif; ?>
 					<br />
 					<?php if (JString::strlen($row->alias) > 25) : ?>
