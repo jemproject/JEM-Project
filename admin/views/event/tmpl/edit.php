@@ -412,6 +412,76 @@ $params = $params->toArray();
 			</script>
 		</fieldset>
 
+		<?php /* show "old" recurrence settings for information */
+		if (!empty($this->item->recurr_bak->recurrence_type)) {
+			$recurr_type = '';
+			$recurr_limit_date = str_ireplace('0000-00-00', JText::_('COM_JEM_UNLIMITED'),
+			                                  $this->item->recurr_bak->recurrence_limit_date);
+
+			switch ($this->item->recurr_bak->recurrence_type) {
+			case 1: 
+				$recurr_type = JText::_('COM_JEM_DAYLY');
+				$recurr_info = str_ireplace('[placeholder]',
+				                            $this->item->recurr_bak->recurrence_number,
+				                            JText::_('COM_JEM_OUTPUT_DAY'));
+				break;
+			case 2:
+				$recurr_type = JText::_('COM_JEM_WEEKLY');
+				$recurr_info = str_ireplace('[placeholder]',
+				                            $this->item->recurr_bak->recurrence_number,
+				                            JText::_('COM_JEM_OUTPUT_WEEK'));
+				break;
+			case 3:
+				$recurr_type = JText::_('COM_JEM_MONTHLY');
+				$recurr_info = str_ireplace('[placeholder]',
+				                            $this->item->recurr_bak->recurrence_number,
+				                            JText::_('COM_JEM_OUTPUT_MONTH'));
+				break;
+			case 4:
+				$recurr_type = JText::_('COM_JEM_WEEKDAY');
+				$recurr_byday = preg_replace('/(,)([^ ,]+)/', '$1 $2', $this->item->recurr_bak->recurrence_byday);
+				$recurr_days = str_ireplace(array('MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SO'),
+				                            array(JText::_('COM_JEM_MONDAY'), JText::_('COM_JEM_TUESDAY'),
+				                                  JText::_('COM_JEM_WEDNESDAY'), JText::_('COM_JEM_THURSDAY'),
+				                                  JText::_('COM_JEM_FRIDAY'), JText::_('COM_JEM_SATURDAY'),
+				                                  JText::_('COM_JEM_SUNDAY')),
+				                            $recurr_byday);
+				$recurr_num  = str_ireplace(array('5', '6'),
+				                            array(JText::_('COM_JEM_LAST'), JText::_('COM_JEM_BEFORE_LAST')),
+				                            $this->item->recurr_bak->recurrence_number);
+				$recurr_info = str_ireplace(array('[placeholder]', '[placeholder_weekday]'),
+				                            array($recurr_num, $recurr_days),
+				                            JText::_('COM_JEM_OUTPUT_WEEKDAY'));
+				break;
+			default:
+				break;
+			}
+
+			if (!empty($recurr_type)) {
+		 ?>
+				<hr>
+				<fieldset class="panelform">
+					<p><strong><?php echo JText::_('COM_JEM_RECURRING_INFO_TITLE'); ?></strong></p>
+					<ul>
+						<li>
+							<label><?php echo JText::_('COM_JEM_RECURRENCE'); ?></label>
+							<input type="text" class="readonly" readonly="readonly" value="<?php echo $recurr_type; ?>">
+						</li>
+						<li>
+							<div class="clear"></div>
+							<label> </label>
+							<?php echo $recurr_info; ?>
+						</li>
+						<li>
+							<label><?php echo JText::_('COM_JEM_RECURRENCE_COUNTER'); ?></label>
+							<input type="text" class="readonly" readonly="readonly" value="<?php echo $recurr_limit_date; ?>">
+						</li>
+					</ul>
+				</fieldset>
+		<?php
+			}
+		} ?>
+
 		<!-- START OF PANEL META -->
 		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_METADATA_INFORMATION'), 'meta-event'); ?>
 
