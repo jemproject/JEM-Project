@@ -173,7 +173,7 @@ class JemModelEvents extends JModelList
 				if($search) {
 					switch($filter) {
 						case 1:
-							/* search venue or alias */
+							/* search event-title or alias */
 							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.')');
 							break;
 						case 2:
