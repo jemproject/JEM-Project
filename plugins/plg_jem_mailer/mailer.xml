@@ -18,7 +18,7 @@
 
 	<config>
 		<fields name="params">
-			<fieldset name="basic">
+			<fieldset name="basic" label="PLG_JEM_MAILER_USER_NOTIFICATIONS">
 				<field type="radio" name="reg_mail_user"
 					label="PLG_JEM_MAILER_USER_REG"
 					default="1"
@@ -35,6 +35,7 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
+				<field type="spacer"/>
 				<field type="radio" name="reg_mail_user_onoff"
 					label="PLG_JEM_MAILER_SETTINGS_USER_REG_ONOFF"
 					default="1"
@@ -51,6 +52,7 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
+				<field type="spacer"/>
 				<field type="radio" name="unreg_mail_user"
 					label="PLG_JEM_MAILER_USER_UNREG"
 					default="1"
@@ -67,7 +69,9 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
+			</fieldset>
 
+			<fieldset name="event_notifications" label="PLG_JEM_MAILER_EVENT_NOTIFICATIONS">
 				<field type="radio" name="newevent_mail_user"
 					label="PLG_JEM_MAILER_USER_NEW_EVENT"
 					default="0"
@@ -84,7 +88,8 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-					<field type="radio" name="editevent_mail_user"
+				<field type="spacer"/>
+				<field type="radio" name="editevent_mail_user"
 					label="PLG_JEM_MAILER_USER_EDIT_EVENT"
 					default="0"
 					description="PLG_JEM_MAILER_USER_EDIT_EVENT_DESC"
@@ -100,7 +105,16 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-					<field type="radio" name="newvenue_mail_user"
+				<field type="radio" name="editevent_mail_registered"
+					label="PLG_JEM_MAILER_REGISTERED_EDIT_EVENT"
+					default="0"
+					description="PLG_JEM_MAILER_REGISTERED_EDIT_EVENT_DESC"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field type="spacer"/>
+				<field type="radio" name="newvenue_mail_user"
 					label="PLG_JEM_MAILER_USER_NEW_VENUE"
 					default="0"
 					description="PLG_JEM_MAILER_USER_NEW_VENUE_DESC"
@@ -116,7 +130,8 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-					<field type="radio" name="editvenue_mail_user"
+				<field type="spacer"/>
+				<field type="radio" name="editvenue_mail_user"
 					label="PLG_JEM_MAILER_USER_EDIT_VENUE"
 					default="0"
 					description="PLG_JEM_MAILER_USER_EDIT_VENUE_DESC"
@@ -132,6 +147,9 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
+			</fieldset>
+
+			<fieldset name="global_options" label="PLG_JEM_MAILER_GLOBAL_OPTIONS">
 				<field type="radio" name="fetch_admin_mails"
 					label="PLG_JEM_MAILER_ALL_ADMINS"
 					default="0"
@@ -145,6 +163,14 @@
 					default=""
 					description="PLG_JEM_MAILER_ADDITIONAL_MAIL_RECEIVERS_DESC"
 				/>
+				<field type="radio" name="notify_category"
+					label="PLG_JEM_MAILER_NOTIFY_CATEGORY"
+					default="0"
+					description="PLG_JEM_MAILER_NOTIFY_CATEGORY_DESC"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
 			</fieldset>
 		</fields>
 	</config>

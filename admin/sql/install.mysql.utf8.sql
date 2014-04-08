@@ -123,6 +123,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
   `metadata` varchar(2048) NOT NULL,
   `modified_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modified_user_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `email` varchar(200) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 

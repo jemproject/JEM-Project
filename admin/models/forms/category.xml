@@ -113,6 +113,15 @@
 		/>
 	</fieldset>
 
+	<fieldset name="confemail" label="COM_JEM_CATEGORY_FIELDSET_EMAIL">
+		<field name="email" type="text"
+			size="20"
+			readonly="false"
+			class="inputbox"
+			label="COM_JEM_CATEGORY_INPUT_EMAIL"
+		/>
+	</fieldset>
+
 	<fieldset name="image"
 		label="COM_JEM_IMAGE"
 	>
