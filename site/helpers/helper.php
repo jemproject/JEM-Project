@@ -157,10 +157,10 @@ class JemHelper {
 								. ' WHERE itemid = ' . $db->Quote($ref_event->id);
 						$db->setQuery($query);
 
-						$user = JFactory::getUser();
-
-						if($user->authorise('core.manage')) {
-							if (!$db->query()) {
+						if (!$db->query()) {
+							// run query always but don't show error message to "normal" users
+							$user = JFactory::getUser();
+							if($user->authorise('core.manage')) {
 								echo JText::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
 							}
 						}

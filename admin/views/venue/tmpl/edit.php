@@ -300,3 +300,18 @@ $params = $params->toArray();
 	<div class="clr"></div>
 	<input id="country" name="country" geo-data="country_short" type="hidden" value="">
 </form>
+
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		jQuery("#venue-geodata").on("click", function() {
+			if (jQuery("#venue-geodata").hasClass("pane-toggler-down")) {
+				var map = jQuery("#geocomplete").geocomplete("map");
+				zoom = map.getZoom();
+				center = map.getCenter();
+				google.maps.event.trigger(map, 'resize');
+				map.setZoom(zoom);
+				map.setCenter(center);
+			}
+		});
+	});
+</script>

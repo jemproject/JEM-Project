@@ -280,8 +280,8 @@
 		label="COM_JEM_GENERAL_LAYOUT_SETTINGS"
 	>
 		<field name="showtime" type="radio"
-			label="COM_JEM_DISPLAY_TIME"
-			description="COM_JEM_DISPLAY_TIME_FRONT_DESC"
+			label="COM_JEM_SETTINGS_FIELD_SHOW_TIME"
+			description="COM_JEM_SETTINGS_FIELD_SHOW_TIME_DESC"
 			class="inputbox"
 			default="0"
 			required="false"
@@ -721,7 +721,7 @@
 				<option value="1">JSHOW</option>
 			</field>
 		</fieldset>
-		
+
 		<fieldset name="globalparam"
 			label="COM_JEM_GLOBAL_PARAMETERS"
 		>
@@ -851,7 +851,7 @@
 				required="false"
 			/>
 		</fieldset>
-		
+
 		<fieldset name="venues"
 			label="COM_JEM_VENUES"
 		>
@@ -914,7 +914,7 @@
 				required="false"
 			/>
 		</fieldset>
-		
+
 		<fieldset name="evevents"
 			label="COM_JEM_EVENTS"
 		>

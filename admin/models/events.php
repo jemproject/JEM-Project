@@ -173,26 +173,30 @@ class JemModelEvents extends JModelList
 				if($search) {
 					switch($filter) {
 						case 1:
-							/* search venue or alias */
+							/* search event-title or alias */
 							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.')');
 							break;
 						case 2:
+							/* search venue */
+							$query->where('loc.venue LIKE '.$search);
+							break;
+						case 3:
 							/* search city */
 							$query->where('loc.city LIKE '.$search);
 							break;
-						case 3:
+						case 4:
 							/* search state */
 							$query->where('loc.state LIKE '.$search);
 							break;
-						case 4:
+						case 5:
 							/* search country */
 							$query->where('loc.country LIKE '.$search);
 							break;
-						case 5:
+						case 6:
 							/* search category */
 							$query->where('c.catname LIKE '.$search);
 							break;
-						case 6:
+						case 7:
 						default:
 							/* search all */
 							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR c.catname LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR loc.country LIKE '.$search.')');

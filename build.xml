@@ -25,12 +25,15 @@
 		<mkdir dir="${cfg.buildVersionDir}/plugins" />
 		<mkdir dir="${cfg.buildVersionDir}/modules" />
 		<mkdir dir="${cfg.buildVersionDir}/components" />
+		<mkdir dir="${cfg.buildVersionDir}/3rd" />
 	</target>
 
 	<target name="build_package" depends="build_plugins, build_modules, build_component" description="packages the final package file">
 		<zip destfile="${cfg.buildVersionDir}/pkg_${cfg.name}_v${cfg.version}.zip">
 			<zipfileset dir="${cfg.buildVersionDir}/components" prefix="packages" />
-			<zipfileset dir="${cfg.buildVersionDir}/plugins" prefix="packages" />
+			<zipfileset dir="${cfg.buildVersionDir}/plugins" prefix="packages">
+				<exclude name="plg_quickicon_jem.zip" />
+			</zipfileset>
 			<zipfileset dir="${cfg.buildVersionDir}/modules" prefix="packages" />
 			<zipfileset dir="package" />
 		</zip>
@@ -53,6 +56,8 @@
 		<!-- add all plugin directories here -->
 		<zip destfile="${cfg.buildVersionDir}/plugins/plg_search_${cfg.name}.zip" basedir="plugins/plg_search_${cfg.name}" />
 		<zip destfile="${cfg.buildVersionDir}/plugins/plg_finder_${cfg.name}.zip" basedir="plugins/plg_finder_${cfg.name}" />
+		<zip destfile="${cfg.buildVersionDir}/plugins/plg_content_${cfg.name}.zip" basedir="plugins/plg_content_${cfg.name}" />
+		<zip destfile="${cfg.buildVersionDir}/plugins/plg_quickicon_${cfg.name}.zip" basedir="plugins/plg_quickicon_${cfg.name}" />
 		<zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_comments.zip" basedir="plugins/plg_${cfg.name}_comments" />
 		<zip destfile="${cfg.buildVersionDir}/plugins/plg_${cfg.name}_mailer.zip" basedir="plugins/plg_${cfg.name}_mailer" />
 	</target>
@@ -63,6 +68,12 @@
 		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_wide.zip" basedir="modules/mod_${cfg.name}_wide" />
 		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_cal.zip" basedir="modules/mod_${cfg.name}_cal" />
 		<zip destfile="${cfg.buildVersionDir}/modules/mod_${cfg.name}_teaser.zip" basedir="modules/mod_${cfg.name}_teaser" />
+	</target>
+
+	<target name="build_3rd" description="packages any 3rd party plugins">
+		<!-- add all 3rd party plugins directories here -->
+		<zip destfile="${cfg.buildVersionDir}/3rd/plg_cb_${cfg.name}_myattending.zip" basedir="3rd/CBPlugins/plug_cb${cfg.name}myattending" />
+		<zip destfile="${cfg.buildVersionDir}/3rd/plg_cb_${cfg.name}_myevents.zip" basedir="3rd/CBPlugins/plug_cb${cfg.name}myevents" />
 	</target>
 
 	<!--
