@@ -75,6 +75,16 @@ JHtml::_('behavior.keepalive');
 			<?php echo $this->loadTemplate('options'); ?>
 			<div class="clr"></div>
 
+			<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_CATEGORY_FIELDSET_EMAIL'), 'confemail'); ?>
+			<fieldset class="panelform">
+				<ul class="adminformlist">
+					<li>
+						<?php echo $this->form->getLabel('email'); ?>
+						<?php echo $this->form->getInput('email'); ?>
+					</li>
+				</ul>
+			</fieldset>
+
 			<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_GROUP'), 'group'); ?>
 			<fieldset class="panelform">
 				<ul class="adminformlist">
