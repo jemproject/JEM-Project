@@ -1,22 +1,19 @@
 <?php
 /**
- * @version     1.9.5
+ * @version     1.9.6
  * @package     JEM
  * @copyright   Copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- *
  */
-
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.controlleradmin');
 
 /**
  * Categories Controller
- *
  */
-class JEMControllerCategories extends JControllerAdmin
+class JemControllerCategories extends JControllerAdmin
 {
 
 	protected $text_prefix = 'COM_JEM_CATEGORIES';
@@ -84,7 +81,7 @@ class JEMControllerCategories extends JControllerAdmin
 			return true;
 		}
 	}
-	
+
 	/** Deletes and returns correctly.
  	 *
  	 * @return	void
@@ -123,7 +120,7 @@ class JEMControllerCategories extends JControllerAdmin
 
  		$this->setRedirect(JRoute::_('index.php?option=' . $this->option . '&extension=' . $extension, false));
  	}
- 	
+
  	/**
  	 * Logic to delete categories
  	 *
@@ -134,19 +131,19 @@ class JEMControllerCategories extends JControllerAdmin
  	function remove()
  	{
  		$cid= JRequest::getVar('cid', array(0), 'post', 'array');
- 	
+
  		if (!is_array($cid) || count($cid) < 1) {
  			JError::raiseWarning(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
  		}
- 	
+
  		$model = $this->getModel('category');
- 	
+
  		$msg = $model->delete($cid);
- 	
+
  		$cache = JFactory::getCache('com_jem');
  		$cache->clean();
- 	
+
  		$this->setRedirect('index.php?option=com_jem&view=categories', $msg);
  	}
- 	
+
 }

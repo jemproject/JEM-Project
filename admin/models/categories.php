@@ -1,12 +1,11 @@
 <?php
 /**
- * @version     1.9.5
+ * @version     1.9.6
  * @package     JEM
  * @copyright   Copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modellist');
@@ -15,7 +14,7 @@ jimport('joomla.application.component.modellist');
  * Categories Model
  *
  */
-class JEMModelCategories extends JModelList
+class JemModelCategories extends JModelList
 {
 	/**
 	 * Constructor.
@@ -218,9 +217,9 @@ class JEMModelCategories extends JModelList
 
 		//echo nl2br(str_replace('#__','jos_',$query));
 		return $query;
-		
+
 		echo $query;
-		
+
 	}
 
 
