@@ -1,21 +1,17 @@
 <?php
 /**
- * @version     1.9.5
+ * @version     1.9.6
  * @package     JEM
  * @copyright   Copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 /**
  *  View class for the JEM Categories screen
- *
- * @package		Joomla
- * @subpackage	JEM
  */
-class JEMViewCategories extends JViewLegacy
+class JemViewCategories extends JViewLegacy
 {
 	protected $items;
 	protected $pagination;
