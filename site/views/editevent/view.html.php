@@ -170,6 +170,7 @@ class JemViewEditevent extends JViewLegacy
 		JHtml::_('script', 'com_jem/recurrence.js', false, true);
 		JHtml::_('script', 'com_jem/seo.js', false, true);
 		JHtml::_('script', 'com_jem/unlimited.js', false, true);
+		JHtml::_('script', 'com_jem/other.js', false, true);
 
 		// Escape strings for HTML output
 		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));

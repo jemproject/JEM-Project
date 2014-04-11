@@ -154,5 +154,57 @@ class JEMController extends JControllerLegacy
 		echo 1;
 		jexit();
 	}
+
+	function ajaximageremove()
+	{
+		$id = JRequest::getVar('id', null, 'request', 'int');
+		if (!$id) {
+			echo 0;
+			jexit();
+		}
+		$folder = JRequest::getVar('type', null, 'request', 'string');
+
+		if ($folder == 'events') {
+			$getquery = ' SELECT datimage FROM #__jem_events WHERE id = '.(int)$id;
+			$updatequery = ' UPDATE #__jem_events SET datimage=\'\' WHERE id = '.(int)$id;
+		} else if ($folder == 'venues') {
+			$getquery = ' SELECT locimage FROM #__jem_venues WHERE id = '.(int)$id;
+			$updatequery = ' UPDATE #__jem_venues SET locimage=\'\' WHERE id = '.(int)$id;
+		} else {
+			echo 0;
+			jexit();
+		}
+
+		$db = JFactory::getDBO();
+		$db->setQuery($getquery);
+		if (!$image_obj = $db->loadObject()) {
+			echo 0;
+			jexit();
+		}
+
+		if ($folder == 'events') {
+			$image = $image_obj->datimage;
+		} else if ($folder == 'venues') {
+			$image = $image_obj->locimage;
+		}
+
+		$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
+		$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
+		if (is_file($fullPath)) {
+			$db->setQuery($updatequery);
+			if (!$db->query()) {
+				echo 0;
+				jexit();
+			}
+			
+			JFile::delete($fullPath);
+			if (JFile::exists($fullPaththumb)) {
+				JFile::delete($fullPaththumb);
+			}
+		}
+
+		echo 1;
+		jexit();
+	}
 }
 ?>

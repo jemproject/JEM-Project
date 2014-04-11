@@ -24,14 +24,17 @@ defined('_JEXEC') or die;
 	<legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
 		<?php
 		if ($this->item->locimage) :
-			echo JEMOutput::flyer($this->item, $this->limage, 'venue');
+			echo JEMOutput::flyer($this->item, $this->limage, 'venue', 'datimage');
 		endif;
 		?>
 		<ul class="adminformlist">
-			<li><label for="userfile"><?php echo JText::_('COM_JEM_IMAGE'); ?></label>
-            <input class="inputbox <?php echo $this->jemsettings->imageenabled == 2 ? 'required' : ''; ?>" name="userfile" id="userfile" type="file" />
-			<small class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_NOTES'); ?>::<?php echo JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->jemsettings->sizelimit.' kb'; ?>">
-				<?php echo $this->infoimage; ?>
-			</small></li>
+			<li>
+				<label for="userfile"><?php echo JText::_('COM_JEM_IMAGE'); ?></label>
+            	<input class="inputbox <?php echo $this->jemsettings->imageenabled == 2 ? 'required' : ''; ?>" name="userfile" id="userfile" type="file" />
+				<small class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_NOTES'); ?>::<?php echo JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->jemsettings->sizelimit.' kb'; ?>">
+					<?php echo $this->infoimage; ?>
+				</small>
+				<?php echo JHtml::image('media/com_jem/images/publish_x.png', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'venues')); ?>
+			</li>
 		</ul>
 	</fieldset>

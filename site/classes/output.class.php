@@ -640,8 +640,10 @@ class JEMOutput {
 	 * @param array $image
 	 * @param string $type
 	 */
-	static function flyer($data, $image, $type)
+	static function flyer($data, $image, $type, $id = null)
 	{
+		$id_attr = $id ? 'id="'.$id.'"' : '';
+
 		$settings = JemHelper::config();
 
 		switch($type) {
@@ -679,7 +681,7 @@ class JEMOutput {
 			} else {
 				JHtml::_('behavior.modal', 'a.flyermodal');
 				$url = JURI::base().'/'.$image['original'];
-				$attributes = 'class="flyermodal" title="'.$info.'"';
+				$attributes = $id_attr.' class="flyermodal" title="'.$info.'"';
 			}
 
 			$icon = '<img src="'.JURI::base().'/'.$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
@@ -687,7 +689,7 @@ class JEMOutput {
 
 			// Otherwise take the values for the original image specified in the settings
 		} else {
-			$output = '<img class="notmodal" src="'.JURI::base().'/'.$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
+			$output = '<img '.$id_attr.' class="notmodal" src="'.JURI::base().'/'.$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
 		}
 
 		return $output;
