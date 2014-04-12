@@ -43,7 +43,7 @@ class JemViewEditvenue extends JViewLegacy
 		// Create a shortcut for $item and params.
 		$item = $this->item;
 		$params = $this->params;
-		
+
 		$this->form = $this->get('Form');
 		$this->return_page = $this->get('ReturnPage');
 

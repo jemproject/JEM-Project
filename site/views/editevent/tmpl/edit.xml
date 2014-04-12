@@ -20,7 +20,8 @@
 				type="radio"
 				default="0"
 				label="COM_JEM_DISPLAY_INTROTEXT"
-				description="COM_JEM_DISPLAY_INTROTEXT_DESC">
+				description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+			>
 				<option value="0">COM_JEM_HIDE</option>
 				<option value="1">COM_JEM_SHOW</option>
 			</field>
