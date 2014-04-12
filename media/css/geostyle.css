@@ -13,13 +13,12 @@ input#geocomplete {
 	height:	20px;
 }
 
-input#find {
-	height:	18px;
+input.geobutton {
+	height:	24px;
 	cursor:	pointer;
-	border:	1px solid #000000;
 }
 
 .map_canvas {
-	height:	200px;
+	height:	250px;
 	margin:	10px 20px 10px 0px;
 }
