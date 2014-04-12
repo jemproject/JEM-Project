@@ -59,7 +59,7 @@ ALTER TABLE `#__jem_groups`
 	ADD publishevent int(11) NOT NULL,
 	ADD editevent int(11) NOT NULL;
 
--- increment catid; ensure to increment highest id first
+-- increment catid, ensure to increment highest id first
 UPDATE `#__jem_cats_event_relations`
 	SET catid = catid+1
 	ORDER BY catid DESC;
