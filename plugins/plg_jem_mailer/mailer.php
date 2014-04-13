@@ -342,7 +342,7 @@ class plgJEMMailer extends JPlugin {
 			$admin_receivers = array_filter(explode(',', trim($this->params->get('admin_receivers'))));
 		}
 
-		if ($send_to['register']) {
+		if ($send_to['registered']) {
 			$query = ' SELECT u.email'
 					. ' FROM #__users AS u'
 					. ' INNER JOIN #__jem_register AS reg ON reg.uid = u.id'
