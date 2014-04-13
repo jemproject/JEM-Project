@@ -403,24 +403,24 @@ class JemHelper {
 		return $result;
 	}
 
-	
+
 	/**
 	 * Build the select list for access level
 	 */
 	static function getAccesslevelOptions()
 	{
 		$db = JFactory::getDBO();
-	
+
 		$query = 'SELECT id AS value, title AS text'
 				. ' FROM #__viewlevels'
 				. ' ORDER BY id'
 				;
 		$db->setQuery($query);
 		$groups = $db->loadObjectList();
-	
+
 		return $groups;
 	}
-	
+
 
 	static function buildtimeselect($max, $name, $selected, $class = 'class="inputbox"')
 	{
@@ -671,6 +671,7 @@ class JemHelper {
 		$timezone_name	= JemHelper::getTimeZoneName();
 		$config			= JFactory::getConfig();
 		$sitename		= $config->get('sitename');
+		$encode_title 	= htmlentities($event->title);
 
 		// get categories names
 		$categories = array();
@@ -750,7 +751,7 @@ class JemHelper {
 		}
 
 		// item description text
-		$description = $event->title.'\\n';
+		$description = html_entity_decode($encode_title,ENT_COMPAT,'ISO-8859-1').'\\n';
 		$description .= JText::_('COM_JEM_CATEGORY').': '.implode(', ', $categories).'\\n';
 
 		$link = JURI::root().JemHelperRoute::getEventRoute($event->slug);
@@ -758,13 +759,31 @@ class JemHelper {
 		$description .= JText::_('COM_JEM_ICS_LINK').': '.$link.'\\n';
 
 		// location
-		$location = array($event->venue);
+		$encode_venue	= htmlentities($event->venue);
+		$venue 			= html_entity_decode($encode_venue,ENT_COMPAT,'ISO-8859-1');
+
+		$location = array($venue);
 		if (isset($event->street) && !empty($event->street)) {
-			$location[] = $event->street;
+			$encode_street = htmlentities($event->street);
+			$location[] = html_entity_decode($encode_street,ENT_COMPAT,'ISO-8859-1');
 		}
-		if (isset($event->city) && !empty($event->city)) {
-			$location[] = $event->city;
+
+		if (isset($event->postalCode) && !empty($event->postalCode) && isset($event->city) && !empty($event->city)) {
+			$encode_city = htmlentities($event->city);
+			$encode_postalCode = htmlentities($event->postalCode);
+			$location[] = html_entity_decode($encode_postalCode,ENT_COMPAT,'ISO-8859-1').' '.html_entity_decode($encode_city,ENT_COMPAT,'ISO-8859-1');
+		} else {
+
+			if (isset($event->postalCode) && !empty($event->postalCode)) {
+				$encode_postalCode = htmlentities($event->postalCode);
+				$location[] = html_entity_decode($encode_postalCode,ENT_COMPAT,'ISO-8859-1');
+			}
+			if (isset($event->city) && !empty($event->city)) {
+				$encode_city = htmlentities($event->city);
+				$location[] = html_entity_decode($encode_city,ENT_COMPAT,'ISO-8859-1');
+			}
 		}
+
 		if (isset($event->countryname) && !empty($event->countryname)) {
 			$exp = explode(",",$event->countryname);
 			$location[] = $exp[0];
@@ -772,7 +791,7 @@ class JemHelper {
 		$location = implode(",", $location);
 
 		$e = new vevent();
-		$e->setProperty('summary', $event->title);
+		$e->setProperty('summary', html_entity_decode($encode_title,ENT_COMPAT,'ISO-8859-1'));
 		$e->setProperty('categories', implode(', ', $categories));
 		$e->setProperty('dtstart', $date, $dateparam);
 		if (count($date_end)) {
