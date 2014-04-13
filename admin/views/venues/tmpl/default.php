@@ -148,7 +148,7 @@ window.addEvent('domready', function() {
 						$overlib 	.= JText::_('COM_JEM_EDITED_FROM').': '.$row->editor.'<br />';
 					}
 					?>
-					<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_VENUE_STATS'); ?>::<?php echo $overlib; ?>">
+					<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_VENUES_STATS'); ?>::<?php echo $overlib; ?>">
 						<?php echo $image; ?>
 					</span>
 				</td>
