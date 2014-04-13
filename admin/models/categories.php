@@ -217,9 +217,6 @@ class JemModelCategories extends JModelList
 
 		//echo nl2br(str_replace('#__','jos_',$query));
 		return $query;
-
-		echo $query;
-
 	}
 
 
