@@ -156,6 +156,7 @@ class JemViewEditvenue extends JViewLegacy
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		JHtml::_('script', 'com_jem/attachments.js', false, true);
+		JHtml::_('script', 'com_jem/other.js', false, true);
 		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
 
 		// Noconflict
