@@ -83,7 +83,7 @@ class JemModelCategoryelement extends JModelLegacy
 		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
 		$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
-		
+
 		$state = array(1);
 
 		if (is_numeric($filter_state)) {
@@ -101,7 +101,6 @@ class JemModelCategoryelement extends JModelLegacy
 		if ($search) {
 			$query = 'SELECT c.id FROM #__jem_categories AS c' . ' WHERE LOWER(c.catname) LIKE ' . $db->Quote('%' . $this->_db->escape($search, true) . '%', false) . $where2;
 			$db->setQuery($query);
-			echo $query;
 			$search_rows = $db->loadColumn();
 		}
 
@@ -111,8 +110,8 @@ class JemModelCategoryelement extends JModelLegacy
 				. ' LEFT JOIN #__jem_groups AS gr ON gr.id = c.groupid'
 				. $where
 				// . ' ORDER BY c.parent_id, c.ordering';
-				. $orderby;	
-		
+				. $orderby;
+
 		$db->setQuery($query);
 		$mitems = $db->loadObjectList();
 
