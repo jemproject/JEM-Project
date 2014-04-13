@@ -8,9 +8,9 @@
  */
 defined('_JEXEC') or die;
 
+JHtml::_('behavior.keepalive');
 //JHtml::_('behavior.tooltip');
 JHtml::_('behavior.formvalidation');
-JHtml::_('behavior.keepalive');
 jimport( 'joomla.html.html.tabs' );
 
 // Create shortcut to parameters.
@@ -200,22 +200,22 @@ $options = array(
 
 			<fieldset>
 				<legend><?php echo JText::_('COM_JEM_EDITVENUE_DETAILS_LEGEND'); ?></legend>
-					<ul class="adminformlist">
-						<li><?php echo $this->form->getLabel('venue');?><?php echo $this->form->getInput('venue'); ?></li>
-						<?php if (is_null($this->item->id)):?>
-						<li><?php echo $this->form->getLabel('alias'); ?><?php echo $this->form->getInput('alias'); ?></li>
+				<ul class="adminformlist">
+					<li><?php echo $this->form->getLabel('venue');?><?php echo $this->form->getInput('venue'); ?></li>
+					<?php if (is_null($this->item->id)):?>
+					<li><?php echo $this->form->getLabel('alias'); ?><?php echo $this->form->getInput('alias'); ?></li>
 						<?php endif; ?>
-						<li><?php echo $this->form->getLabel('street'); ?><?php echo $this->form->getInput('street'); ?></li>
-						<li><?php echo $this->form->getLabel('postalCode'); ?><?php echo $this->form->getInput('postalCode'); ?></li>
-						<li><?php echo $this->form->getLabel('city'); ?><?php echo $this->form->getInput('city'); ?></li>
-						<li><?php echo $this->form->getLabel('state'); ?><?php echo $this->form->getInput('state'); ?></li>
-						<li><?php echo $this->form->getLabel('country'); ?><?php echo $this->form->getInput('country'); ?></li>
-						<li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
-					</ul>
-					<div class="clr"></div>
-					<?php echo $this->form->getLabel('locdescription'); ?>
-					<div class="clr"><br /></div>
-					<?php echo $this->form->getInput('locdescription'); ?>
+					<li><?php echo $this->form->getLabel('street'); ?><?php echo $this->form->getInput('street'); ?></li>
+					<li><?php echo $this->form->getLabel('postalCode'); ?><?php echo $this->form->getInput('postalCode'); ?></li>
+					<li><?php echo $this->form->getLabel('city'); ?><?php echo $this->form->getInput('city'); ?></li>
+					<li><?php echo $this->form->getLabel('state'); ?><?php echo $this->form->getInput('state'); ?></li>
+					<li><?php echo $this->form->getLabel('country'); ?><?php echo $this->form->getInput('country'); ?></li>
+					<li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
+				</ul>
+				<div class="clr"></div>
+				<?php echo $this->form->getLabel('locdescription'); ?>
+				<div class="clr"><br /></div>
+				<?php echo $this->form->getInput('locdescription'); ?>
 			</fieldset>
 
 			<!-- VENUE-GEODATA-->
@@ -243,7 +243,7 @@ $options = array(
 				</div>
 			</fieldset>
 
-			<!-- META -->
+			<!-- START META FIELDSET -->
 			<fieldset class="">
 				<legend><?php echo JText::_('COM_JEM_META_HANDLING'); ?></legend>
 					<input type="button" class="button" value="<?php echo JText::_('COM_JEM_ADD_VENUE_CITY'); ?>" onclick="meta()" />
@@ -254,7 +254,8 @@ $options = array(
 					</div>
 					<?php endforeach; ?>
 			</fieldset>
-
+			<!-- END META FIELDSET -->
+			
 			<!-- ATTACHMENTS TAB -->
 			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EDITVENUE_ATTACHMENTS_TAB'), 'venue-attachments'); ?>
 			<?php echo $this->loadTemplate('attachments'); ?>

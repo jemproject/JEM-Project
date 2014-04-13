@@ -13,10 +13,9 @@ defined('_JEXEC') or die;
 	<fieldset class="panelform">
 	<legend><?php echo JText::_('COM_JEM_EVENT_CUSTOMFIELDS_LEGEND') ?></legend>
 		<ul class="adminformlist">
-				<?php foreach($this->form->getFieldset('custom') as $field): ?>
-				<li><?php echo $field->label; ?> <?php echo $field->input; ?>
-				</li>
-				<?php endforeach; ?>
+			<?php foreach($this->form->getFieldset('custom') as $field): ?>
+			<li><?php echo $field->label; ?><?php echo $field->input; ?></li>
+			<?php endforeach; ?>
 		</ul>
 	</fieldset>
 
@@ -42,15 +41,18 @@ defined('_JEXEC') or die;
 	<legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
 		<?php
 		if ($this->item->datimage) :
-			echo JEMOutput::flyer( $this->item, $this->dimage, 'event' );
+			echo JEMOutput::flyer($this->item, $this->dimage, 'event', 'datimage');
 		endif;
 		?>
 		<ul class="adminformlist">
-			<li><label for="userfile"><?php echo JText::_('COM_JEM_IMAGE'); ?></label>
-            <input class="inputbox <?php echo $this->jemsettings->imageenabled == 2 ? 'required' : ''; ?>" name="userfile" id="userfile" type="file" />
-			<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->jemsettings->sizelimit.' kb'; ?>">
-				<?php echo $this->infoimage; ?>
-			</small></li>
+			<li>
+				<label for="userfile"><?php echo JText::_('COM_JEM_IMAGE'); ?></label>
+	            <input class="inputbox <?php echo $this->jemsettings->imageenabled == 2 ? 'required' : ''; ?>" name="userfile" id="userfile" type="file" />
+				<small class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_NOTES'); ?>::<?php echo JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->jemsettings->sizelimit.' kb'; ?>">
+					<?php echo $this->infoimage; ?>
+				</small>
+				<?php echo JHtml::image('media/com_jem/images/publish_x.png', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'events')); ?>
+			</li>
 		</ul>
 	</fieldset>
 

@@ -43,7 +43,7 @@ class JemViewEditvenue extends JViewLegacy
 		// Create a shortcut for $item and params.
 		$item = $this->item;
 		$params = $this->params;
-		
+
 		$this->form = $this->get('Form');
 		$this->return_page = $this->get('ReturnPage');
 
@@ -156,6 +156,7 @@ class JemViewEditvenue extends JViewLegacy
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		JHtml::_('script', 'com_jem/attachments.js', false, true);
+		JHtml::_('script', 'com_jem/other.js', false, true);
 		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
 
 		// Noconflict

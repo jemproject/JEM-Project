@@ -63,13 +63,13 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 			<tbody>
 				<?php foreach ($this->rows as $i => $row) : ?>
 				<tr class="row<?php echo $i % 2; ?>">
-				<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-				<td align="left">
-					 <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
-				</td>
-				<td align="left"><?php echo $this->escape($row->city); ?></td>
-				<td align="left"><?php echo $this->escape($row->state); ?></td>
-				<td align="left"><?php echo $this->escape($row->country); ?></td>
+					<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+					<td align="left">
+						 <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
+					</td>
+					<td align="left"><?php echo $this->escape($row->city); ?></td>
+					<td align="left"><?php echo $this->escape($row->state); ?></td>
+					<td align="left"><?php echo $this->escape($row->country); ?></td>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>

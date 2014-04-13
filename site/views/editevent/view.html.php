@@ -6,7 +6,7 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-defined('_JEXEC') or die();
+defined('_JEXEC') or die;
 
 /**
  * Editevent-View
@@ -18,7 +18,7 @@ class JemViewEditevent extends JViewLegacy
 	protected $return_page;
 	protected $state;
 
-	public function display($tpl = null)
+	public function display($tpl=null)
 	{
 		if ($this->getLayout() == 'choosevenue') {
 			$this->_displaychoosevenue($tpl);
@@ -31,20 +31,20 @@ class JemViewEditevent extends JViewLegacy
 		}
 
 		// Initialise variables.
-		$jemsettings = JEMHelper::config();
-		$app = JFactory::getApplication();
-		$user = JFactory::getUser();
-		$document = JFactory::getDocument();
-		$model = $this->getModel();
-		$menu = $app->getMenu();
-		$menuitem = $menu->getActive();
-		$pathway = $app->getPathway();
-		$url = JURI::root();
+		$jemsettings = JemHelper::config();
+		$app         = JFactory::getApplication();
+		$user        = JFactory::getUser();
+		$document    = JFactory::getDocument();
+		$model       = $this->getModel();
+		$menu        = $app->getMenu();
+		$menuitem    = $menu->getActive();
+		$pathway     = $app->getPathway();
+		$url         = JURI::root();
 
 		// Get model data.
-		$this->state = $this->get('State');
-		$this->item = $this->get('Item');
-		$this->params = $this->state->get('params');
+		$this->state 	= $this->get('State');
+		$this->item 	= $this->get('Item');
+		$this->params   = $this->state->get('params');
 
 		// Create a shortcut for $item and params.
 		$item = $this->item;
@@ -73,16 +73,16 @@ class JemViewEditevent extends JViewLegacy
 			$authorised = $user->authorise('core.create','com_jem') || (count($user->getAuthorisedCategories('com_jem', 'core.create')) || $dellink);
 		} else {
 			// Check if user can edit
-			$maintainer5 = JemUser::ismaintainer('edit',$this->item->id);
-			$genaccess5  = JemUser::editaccess($jemsettings->eventowner, $this->item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+			$maintainer = JemUser::ismaintainer('edit',$this->item->id);
+			$genaccess  = JemUser::editaccess($jemsettings->eventowner, $this->item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
 
-			if ($maintainer5 || $genaccess5 ) {
-				$allowedtoeditevent = true;
+			if ($maintainer || $genaccess) {
+				$edit = true;
 			} else {
-				$allowedtoeditevent = false;
+				$edit = false;
 			}
 
-			$authorised = $this->item->params->get('access-edit') || $allowedtoeditevent ;
+			$authorised = $this->item->params->get('access-edit') || $edit;
 		}
 
 		if ($authorised !== true) {
@@ -92,8 +92,8 @@ class JemViewEditevent extends JViewLegacy
 
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
-				&& $menuitem->query['view']   == 'editevent'
-				&& 0 == $item->id); // menu item is always for new event
+										&& $menuitem->query['view']   == 'editevent'
+										&& 0 == $item->id); // menu item is always for new event
 
 		$title = ($item->id == 0) ? JText::_('COM_JEM_EDITEVENT_ADD_EVENT')
 		                          : JText::sprintf('COM_JEM_EDITEVENT_EDIT_EVENT', $item->title);
@@ -117,11 +117,11 @@ class JemViewEditevent extends JViewLegacy
 			$params->set('page_title', $pagetitle);
 			$params->set('page_heading', $pagetitle);
 			$params->set('show_page_heading', 1); // ensure page heading is shown
-			$params->set('introtext', ''); // there is definitely no introtext.
+			$params->set('introtext', ''); // there is no introtext in that case
 			$params->set('show_introtext', 0);
 			$pathway->addItem($pagetitle, ''); // link not required here so '' is ok
 
-			// Check for alternative layouts (since we are not in a edit-event menu item)
+			// Check for alternative layouts (since we are not in an edit-event menu item)
 			// Load layout from event if one is set
 			if ($layout = $item->params->get('event_layout')) {
 				$this->setLayout($layout);
@@ -170,6 +170,7 @@ class JemViewEditevent extends JViewLegacy
 		JHtml::_('script', 'com_jem/recurrence.js', false, true);
 		JHtml::_('script', 'com_jem/seo.js', false, true);
 		JHtml::_('script', 'com_jem/unlimited.js', false, true);
+		JHtml::_('script', 'com_jem/other.js', false, true);
 
 		// Escape strings for HTML output
 		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));

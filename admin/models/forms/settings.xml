@@ -508,7 +508,7 @@
 			default="0"
 			required="false"
 		>
-			<option value="0">JHIDE</option>
+			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>
 		<field name="autopubl" type="list"

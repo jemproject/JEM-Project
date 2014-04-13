@@ -101,11 +101,11 @@ $settings	= json_decode($this->item->attribs);
 
 			<fieldset>
 				<legend><?php echo JText::_('COM_JEM_EDITEVENT_DETAILS_LEGEND'); ?></legend>
-					<ul class="adminformlist">
+				<ul class="adminformlist">
 					<li><?php echo $this->form->getLabel('title'); ?><?php echo $this->form->getInput('title'); ?></li>
-					<?php if (is_null($this->item->id)):?>
+						<?php if (is_null($this->item->id)):?>
 					<li><?php echo $this->form->getLabel('alias'); ?><?php echo $this->form->getInput('alias'); ?></li>
-					<?php endif; ?>
+						<?php endif; ?>
 					<li><?php echo $this->form->getLabel('dates'); ?><?php echo $this->form->getInput('dates'); ?></li>
 					<li><?php echo $this->form->getLabel('enddates'); ?><?php echo $this->form->getInput('enddates'); ?></li>
 					<li><?php echo $this->form->getLabel('times'); ?><?php echo $this->form->getInput('times'); ?></li>
@@ -116,7 +116,7 @@ $settings	= json_decode($this->item->attribs);
 				</ul>
 				<div class="clr"></div>
 				<?php echo $this->form->getLabel('articletext'); ?>
-				<div class="clr"><br></div>
+				<div class="clr"><br /></div>
 				<?php echo $this->form->getInput('articletext'); ?>
 			</fieldset>
 
@@ -176,7 +176,7 @@ $settings	= json_decode($this->item->attribs);
 					-->
 					</script>
 			</fieldset>
-			<!--  END META FIELDSET -->
+			<!-- END META FIELDSET -->
 
 			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event-attachments' ); ?>
 			<?php echo $this->loadTemplate('attachments'); ?>
