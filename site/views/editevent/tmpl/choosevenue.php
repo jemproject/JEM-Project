@@ -24,13 +24,12 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 
 <div id="jem" class="jem_select_venue">
 	<h1 class='componentheading'>
-		<?php
-		echo JText::_('COM_JEM_SELECT_VENUE');
-		?>
+		<?php echo JText::_('COM_JEM_SELECT_VENUE'); ?>
 	</h1>
+
 	<div class="clr"></div>
 
-	<form action="index.php?option=com_jem&amp;view=editevent&amp;layout=choosevenue&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
+	<form action="<?php echo JRoute::_('index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&function='.$this->escape($function).'&'.JSession::getFormToken().'=1&filter_order='.$this->lists['order'].'&filter_order_Dir='.$this->lists['order_Dir']); ?>" method="post" name="adminForm" id="adminForm">
 		<div id="jem_filter" class="floattext">
 			<div class="jem_fleft">
 				<?php
@@ -81,7 +80,7 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 		<input type="hidden" name="tmpl" value="component" />
 		<input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
 		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 		</p>
 	</form>
 

@@ -183,13 +183,12 @@ class JEMModelEditevent extends JEMModelEvent
 	function getVenues()
 	{
 		$app = JFactory::getApplication();
-
-		$params = $app->getParams();
+		$jemsettings = JemHelper::config();
 
 		$where = $this->_buildVenuesWhere();
 		$orderby = $this->_buildVenuesOrderBy();
 
-		$limit = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart = JRequest::getInt('limitstart');
 
 		$query = 'SELECT l.id, l.venue, l.state, l.city, l.country, l.published' . ' FROM #__jem_venues AS l' . $where . $orderby;
@@ -231,8 +230,11 @@ class JEMModelEditevent extends JEMModelEvent
 	 */
 	protected function _buildVenuesOrderBy()
 	{
-		$filter_order = JRequest::getCmd('filter_order');
-		$filter_order_Dir = JRequest::getCmd('filter_order_Dir');
+		$filter_order = JRequest::getCmd('filter_order', 'l.venue');
+		$filter_order_Dir = JRequest::getCmd('filter_order_Dir', 'ASC');
+		if (strtoupper($filter_order_Dir) !== 'DESC') {
+			$filter_order_Dir = 'ASC';
+		}
 
 		$orderby = ' ORDER BY ';
 
@@ -293,15 +295,21 @@ class JEMModelEditevent extends JEMModelEvent
 	 */
 	function getContact()
 	{
+		$app = JFactory::getApplication();
+		$jemsettings = JemHelper::config();
+
 		// Get the WHERE and ORDER BY clauses for the query
 		$where = $this->_buildContactWhere();
 		$orderby = $this->_buildContactOrderBy();
+
+		$limit = $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart = JRequest::getInt('limitstart');
 
 		$query = 'SELECT con.*'
 				. ' FROM #__contact_details AS con'
 				. $where
 				. $orderby;
-		$this->_db->setQuery($query);
+		$this->_db->setQuery($query, $limitstart, $limit);
 		$contacts = $this->_db->loadObjectList();
 
 		return $contacts;
@@ -323,12 +331,16 @@ class JEMModelEditevent extends JEMModelEvent
 		$filter_order = JFilterInput::getinstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
+		// ensure it's a valid order direction (asc, desc or empty)
+		if (!empty($filter_order_Dir) && strtoupper($filter_order_Dir !== 'DESC')) {
+			$filter_order_Dir = 'ASC';
+		}
+
 		if ($filter_order != '') {
-			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
+			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir . ', ';
 		}
-		else {
-			$orderby = ' ORDER BY con.name ';
-		}
+
+		$orderby .= ' ORDER BY con.name '; // in case of city or state we should have a useful second ordering
 
 		return $orderby;
 	}
