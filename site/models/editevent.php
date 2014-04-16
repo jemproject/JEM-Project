@@ -337,10 +337,13 @@ class JEMModelEditevent extends JEMModelEvent
 		}
 
 		if ($filter_order != '') {
-			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir . ', ';
+			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
+			if ($filter_order != 'con.name') {
+				$orderby .= ', con.name '; // in case of city or state we should have a useful second ordering
+			}
+		} else {
+			$orderby = ' ORDER BY con.name ';
 		}
-
-		$orderby .= ' ORDER BY con.name '; // in case of city or state we should have a useful second ordering
 
 		return $orderby;
 	}
