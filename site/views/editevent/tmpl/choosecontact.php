@@ -54,34 +54,46 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 				<tr>
 					<th width="7" class="sectiontableheader"><?php echo JText::_('COM_JEM_NUM'); ?></th>
 					<th align="left" class="sectiontableheader"><?php echo JHtml::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-					<th align="left" class="sectiontableheader"><?php echo JHtml::_('grid.sort', 'COM_JEM_ADDRESS', 'con.address', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+					<?php if (0) : /* removed because it maybe forbidden to show */ ?>
+						<th align="left" class="sectiontableheader"><?php echo JHtml::_('grid.sort', 'COM_JEM_ADDRESS', 'con.address', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+					<?php endif; ?>
 					<th align="left" class="sectiontableheader"><?php echo JHtml::_('grid.sort', 'COM_JEM_CITY', 'con.suburb', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 					<th align="left" class="sectiontableheader"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATE', 'con.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-					<th align="left" class="sectiontableheader"><?php echo JText::_('COM_JEM_EMAIL'); ?></th>
-					<th align="left" class="sectiontableheader"><?php echo JText::_('COM_JEM_TELEPHONE'); ?></th>
-					<th class="title center"><?php echo JText::_('JPUBLISHED'); ?></th>
+					<?php if (0) : /* removed because it maybe forbidden to show */ ?>
+						<th align="left" class="sectiontableheader"><?php echo JText::_('COM_JEM_EMAIL'); ?></th>
+						<th align="left" class="sectiontableheader"><?php echo JText::_('COM_JEM_TELEPHONE'); ?></th>
+					<?php endif; ?>
+					<th width="7" class="title center"><?php echo JText::_('JPUBLISHED'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
-				<?php foreach ($this->rows as $i => $row) : ?>
-				<tr class="row<?php echo $i % 2; ?>">
-					<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-					<td align="left">
-						<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_SELECT');?>::<?php echo $row->name; ?>">
-							<a class="pointer;" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');"><?php echo $this->escape($row->name); ?></a>
-						</span>
-					</td>
-					<td align="left"><?php echo $this->escape($row->address); ?></td>
-					<td align="left"><?php echo $this->escape($row->suburb); ?></td>
-					<td align="left"><?php echo $this->escape($row->state); ?></td>
-					<td align="left"><?php echo $this->escape($row->email_to); ?></td>
-					<td align="left"><?php echo $this->escape($row->telephone); ?></td>
-					<td class="center">
-						<?php $img = $row->published ? 'tick.png' : 'publish_x.png'; ?>
-						<?php echo JHtml::_('image', 'com_jem/'.$img, NULL, NULL, true); ?>
-					</td>
-				</tr>
-				<?php endforeach; ?>
+				<?php if (empty($this->rows)) : ?>
+					<tr align="center"><td colspan="0"><?php echo JText::_('COM_JEM_NOCONTACTS'); ?></td></tr>
+				<?php else :?>
+					<?php foreach ($this->rows as $i => $row) : ?>
+					<tr class="row<?php echo $i % 2; ?>">
+						<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+						<td align="left">
+							<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_SELECT');?>::<?php echo $row->name; ?>">
+								<a class="pointer;" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');"><?php echo $this->escape($row->name); ?></a>
+							</span>
+						</td>
+						<?php if (0) : /* removed because it maybe forbidden to show */ ?>
+							<td align="left"><?php echo $this->escape($row->address); ?></td>
+						<?php endif; ?>
+						<td align="left"><?php echo $this->escape($row->suburb); ?></td>
+						<td align="left"><?php echo $this->escape($row->state); ?></td>
+						<?php if (0) : /* removed because it maybe forbidden to show */ ?>
+							<td align="left"><?php echo $this->escape($row->email_to); ?></td>
+							<td align="left"><?php echo $this->escape($row->telephone); ?></td>
+						<?php endif; ?>
+						<td class="center">
+							<?php $img = $row->published ? 'tick.png' : 'publish_x.png'; ?>
+							<?php echo JHtml::_('image', 'com_jem/'.$img, NULL, NULL, true); ?>
+						</td>
+					</tr>
+					<?php endforeach; ?>
+				<?php endif; ?>
 			</tbody>
 		</table>
 
@@ -95,9 +107,5 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 
 	<div class="pagination">
 		<?php echo $this->pagination->getPagesLinks(); ?>
-	</div>
-
-	<div class="copyright">
-		<?php echo JemOutput::footer();	?>
 	</div>
 </div>

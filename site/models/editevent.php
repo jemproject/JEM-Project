@@ -230,8 +230,14 @@ class JEMModelEditevent extends JEMModelEvent
 	 */
 	protected function _buildVenuesOrderBy()
 	{
-		$filter_order = JRequest::getCmd('filter_order', 'l.venue');
-		$filter_order_Dir = JRequest::getCmd('filter_order_Dir', 'ASC');
+		$app = JFactory::getApplication();
+
+		$filter_order = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+
+		$filter_order = JFilterInput::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+
 		if (strtoupper($filter_order_Dir) !== 'DESC') {
 			$filter_order_Dir = 'ASC';
 		}
@@ -242,7 +248,7 @@ class JEMModelEditevent extends JEMModelEvent
 			$orderby .= $filter_order . ' ' . $filter_order_Dir . ', ';
 		}
 
-		$orderby .= 'l.ordering';
+		$orderby .= 'l.ordering, l.venue'; // l.ordering seems to be always zero, so use venue as fallback
 
 		return $orderby;
 	}
@@ -332,7 +338,7 @@ class JEMModelEditevent extends JEMModelEvent
 		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
 		// ensure it's a valid order direction (asc, desc or empty)
-		if (!empty($filter_order_Dir) && strtoupper($filter_order_Dir !== 'DESC')) {
+		if (!empty($filter_order_Dir) && strtoupper($filter_order_Dir) !== 'DESC') {
 			$filter_order_Dir = 'ASC';
 		}
 

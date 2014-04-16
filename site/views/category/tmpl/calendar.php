@@ -205,4 +205,8 @@ defined('_JEXEC') or die;
 	// print the calendar
 	echo $this->cal->showMonth();
 	?>
+
+	<div class="copyright">
+		<?php echo JemOutput::footer(); ?>
+	</div>
 </div>
