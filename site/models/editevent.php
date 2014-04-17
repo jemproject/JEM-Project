@@ -261,25 +261,29 @@ class JEMModelEditevent extends JEMModelEvent
 	 */
 	protected function _buildVenuesWhere()
 	{
-		$jemsettings = JEMHelper::config();
-		$filter_type = JRequest::getInt('filter_type');
-		$filter = JRequest::getString('filter_search');
-		$filter = $this->_db->escape(trim(JString::strtolower($filter)));
+		$app = JFactory::getApplication();
+		$jemsettings = JemHelper::config();
+
+		$filter_type = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', '', 'int');
+		$search      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
+		$search      = $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();
 
 		$where[] = 'l.published = 1';
 
-		if ($filter && $filter_type == 1) {
-			$where[] = 'LOWER(l.venue) LIKE "%' . $filter . '%"';
-		}
-
-		if ($filter && $filter_type == 2) {
-			$where[] = 'LOWER(l.city) LIKE "%' . $filter . '%"';
-		}
-
-		if ($filter && $filter_type == 3) {
-			$where[] = 'LOWER(l.state) LIKE "%' . $filter . '%"';
+		/* something to search for? (we like to search for "0" too) */
+		if ($search || ($search === "0")) {
+			switch ($filter_type) {
+			case 1: /* Search venues */
+				$where[] = 'LOWER(l.venue) LIKE "%' . $search . '%"';
+				break;
+			case 2: // Search city
+				$where[] = 'LOWER(l.city) LIKE "%' . $search . '%"';
+				break;
+			case 3: // Search state
+				$where[] = 'LOWER(l.state) LIKE "%' . $search . '%"';
+			}
 		}
 
 		if ($jemsettings->ownedvenuesonly) {
@@ -364,10 +368,10 @@ class JEMModelEditevent extends JEMModelEvent
 	{
 		$app = JFactory::getApplication();
 
-		$filter = $app->getUserStateFromRequest('com_jem.contactelement.filter', 'filter', '', 'int');
-		$filter_state = $app->getUserStateFromRequest('com_jem.contactelement.filter_state', 'filter_state', '', 'word');
-		$search = $app->getUserStateFromRequest('com_jem.contactelement.filter_search', 'filter_search', '', 'string');
-		$search = $this->_db->escape(trim(JString::strtolower($search)));
+		$filter       = $app->getUserStateFromRequest('com_jem.selectcontact.filter', 'filter', '', 'int');
+		$filter_state = $app->getUserStateFromRequest('com_jem.selectcontact.filter_state', 'filter_state', '', 'word');
+		$search       = $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
+		$search       = $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();
 
@@ -378,38 +382,27 @@ class JEMModelEditevent extends JEMModelEvent
 			if ($filter_state == 'P') {
 				$where[] = 'con.published = 1';
 			}
-			else
-				if ($filter_state == 'U') {
-					$where[] = 'con.published = 0';
-				}
+			elseif ($filter_state == 'U') {
+				$where[] = 'con.published = 0';
+			}
 		}
 
-		/*
-		 * Search venues
-		 */
-		if ($search && $filter == 1) {
-			$where[] = ' LOWER(con.name) LIKE \'%' . $search . '%\' ';
-		}
-
-		/*
-		 * Search address
-		 */
-		if ($search && $filter == 2) {
-			$where[] = ' LOWER(con.address) LIKE \'%' . $search . '%\' ';
-		}
-
-		/*
-		 * Search city
-		 */
-		if ($search && $filter == 3) {
-			$where[] = ' LOWER(con.suburb) LIKE \'%' . $search . '%\' ';
-		}
-
-		/*
-		 * Search state
-		 */
-		if ($search && $filter == 4) {
-			$where[] = ' LOWER(con.state) LIKE \'%' . $search . '%\' ';
+		/* something to search for? (we like to search for "0" too) */
+		if ($search || ($search === "0")) {
+			switch ($filter) {
+			case 1: /* Search name */
+				$where[] = ' LOWER(con.name) LIKE \'%' . $search . '%\' ';
+				break;
+			case 2: /* Search address (not supported yet, privacy) */
+				//$where[] = ' LOWER(con.address) LIKE \'%' . $search . '%\' ';
+				break;
+			case 3: // Search city
+				$where[] = ' LOWER(con.suburb) LIKE \'%' . $search . '%\' ';
+				break;
+			case 4: // Search state
+				$where[] = ' LOWER(con.state) LIKE \'%' . $search . '%\' ';
+				break;
+			}
 		}
 
 		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
