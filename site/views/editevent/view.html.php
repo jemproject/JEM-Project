@@ -234,7 +234,7 @@ class JemViewEditevent extends JViewLegacy
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
-		$filter           = $app->getUserStateFromRequest('com_jem.selectvenue.filter', 'filter', '', 'int');
+		$filter_type      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', '', 'int');
 		$filter_state     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_state', 'filter_state', '*', 'word');
 		$search           = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
 		$search           = $db->escape(trim(JString::strtolower($search)));
@@ -265,7 +265,7 @@ class JemViewEditevent extends JViewLegacy
 		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_VENUE'));
 		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_CITY'));
 		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_STATE'));
-		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter);
+		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
 
 		$this->rows         = $rows;
 		$this->searchfilter = $searchfilter;
