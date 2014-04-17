@@ -24,13 +24,12 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 
 <div id="jem" class="jem_select_venue">
 	<h1 class='componentheading'>
-		<?php
-		echo JText::_('COM_JEM_SELECT_VENUE');
-		?>
+		<?php echo JText::_('COM_JEM_SELECT_VENUE'); ?>
 	</h1>
+
 	<div class="clr"></div>
 
-	<form action="index.php?option=com_jem&amp;view=editevent&amp;layout=choosevenue&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
+	<form action="<?php echo JRoute::_('index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&function='.$this->escape($function).'&'.JSession::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
 		<div id="jem_filter" class="floattext">
 			<div class="jem_fleft">
 				<?php
@@ -61,17 +60,21 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 				</tr>
 			</thead>
 			<tbody>
-				<?php foreach ($this->rows as $i => $row) : ?>
-				<tr class="row<?php echo $i % 2; ?>">
-				<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-				<td align="left">
-					 <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
-				</td>
-				<td align="left"><?php echo $this->escape($row->city); ?></td>
-				<td align="left"><?php echo $this->escape($row->state); ?></td>
-				<td align="left"><?php echo $this->escape($row->country); ?></td>
-				</tr>
-				<?php endforeach; ?>
+				<?php if (empty($this->rows)) : ?>
+					<tr align="center"><td colspan="0"><?php echo JText::_('COM_JEM_NOVENUES'); ?></td></tr>
+				<?php else :?>
+					<?php foreach ($this->rows as $i => $row) : ?>
+					<tr class="row<?php echo $i % 2; ?>">
+						<td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+						<td align="left">
+							<a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
+						</td>
+						<td align="left"><?php echo $this->escape($row->city); ?></td>
+						<td align="left"><?php echo $this->escape($row->state); ?></td>
+						<td align="left"><?php echo $this->escape($row->country); ?></td>
+					</tr>
+					<?php endforeach; ?>
+				<?php endif; ?>
 			</tbody>
 		</table>
 
@@ -81,15 +84,11 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 		<input type="hidden" name="tmpl" value="component" />
 		<input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
 		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-		<input type="hidden" name="filter_order_Dir" value="" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 		</p>
 	</form>
 
 	<div class="pagination">
 		<?php echo $this->pagination->getPagesLinks(); ?>
-	</div>
-
-	<div class="copyright">
-		<?php echo JemOutput::footer();	?>
 	</div>
 </div>

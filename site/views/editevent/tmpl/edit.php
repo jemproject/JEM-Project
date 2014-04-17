@@ -194,4 +194,8 @@ $settings	= json_decode($this->item->attribs);
 			<?php echo JHtml::_('form.token'); ?>
 		</form>
 	</div>
+
+	<div class="copyright">
+		<?php echo JemOutput::footer(); ?>
+	</div>
 </div>
