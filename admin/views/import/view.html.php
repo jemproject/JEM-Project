@@ -26,7 +26,7 @@ class JEMViewImport extends JViewLegacy {
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		// Load script
-		JHtml::_('behavior.mootools');
+		JHtml::_('behavior.framework');
 
 		// Get data from the model
 		$eventfields = $this->get('EventFields');
