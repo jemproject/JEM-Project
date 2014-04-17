@@ -228,7 +228,7 @@ div#jem dt { /* definition term */
 	float:left;
 	font-size:1em;
 	font-weight:bold;
-	width:11em;
+	width:150px;
 	background:transparent;
 	border-bottom:1px solid #DDDDDD;
 }
@@ -239,6 +239,7 @@ div#jem dd { /* definition description */
 	padding:0.3em 0;
 	font-size:1em;
 	background:transparent;
+	margin-left: 160px;
 }
 
 * html .floattext dd /* ie6 fix against the 3px jog bug */ {
