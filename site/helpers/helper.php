@@ -671,7 +671,6 @@ class JemHelper {
 		$timezone_name	= JemHelper::getTimeZoneName();
 		$config			= JFactory::getConfig();
 		$sitename		= $config->get('sitename');
-		$encode_title 	= htmlentities($event->title);
 
 		// get categories names
 		$categories = array();
@@ -751,7 +750,7 @@ class JemHelper {
 		}
 
 		// item description text
-		$description = html_entity_decode($encode_title,ENT_COMPAT,'ISO-8859-1').'\\n';
+		$description = $event->title.'\\n';
 		$description .= JText::_('COM_JEM_CATEGORY').': '.implode(', ', $categories).'\\n';
 
 		$link = JURI::root().JemHelperRoute::getEventRoute($event->slug);
@@ -759,28 +758,19 @@ class JemHelper {
 		$description .= JText::_('COM_JEM_ICS_LINK').': '.$link.'\\n';
 
 		// location
-		$encode_venue	= htmlentities($event->venue);
-		$venue 			= html_entity_decode($encode_venue,ENT_COMPAT,'ISO-8859-1');
-
-		$location = array($venue);
+		$location = array($event->venue);
 		if (isset($event->street) && !empty($event->street)) {
-			$encode_street = htmlentities($event->street);
-			$location[] = html_entity_decode($encode_street,ENT_COMPAT,'ISO-8859-1');
+			$location[] = $event->street;
 		}
 
 		if (isset($event->postalCode) && !empty($event->postalCode) && isset($event->city) && !empty($event->city)) {
-			$encode_city = htmlentities($event->city);
-			$encode_postalCode = htmlentities($event->postalCode);
-			$location[] = html_entity_decode($encode_postalCode,ENT_COMPAT,'ISO-8859-1').' '.html_entity_decode($encode_city,ENT_COMPAT,'ISO-8859-1');
+			$location[] = $event->postalCode.' '.$event->city;
 		} else {
-
 			if (isset($event->postalCode) && !empty($event->postalCode)) {
-				$encode_postalCode = htmlentities($event->postalCode);
-				$location[] = html_entity_decode($encode_postalCode,ENT_COMPAT,'ISO-8859-1');
+				$location[] = $event->postalCode;
 			}
 			if (isset($event->city) && !empty($event->city)) {
-				$encode_city = htmlentities($event->city);
-				$location[] = html_entity_decode($encode_city,ENT_COMPAT,'ISO-8859-1');
+				$location[] = $event->city;
 			}
 		}
 
@@ -791,7 +781,7 @@ class JemHelper {
 		$location = implode(",", $location);
 
 		$e = new vevent();
-		$e->setProperty('summary', html_entity_decode($encode_title,ENT_COMPAT,'ISO-8859-1'));
+		$e->setProperty('summary', $event->title);
 		$e->setProperty('categories', implode(', ', $categories));
 		$e->setProperty('dtstart', $date, $dateparam);
 		if (count($date_end)) {
