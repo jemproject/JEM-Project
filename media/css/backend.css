@@ -642,6 +642,21 @@ table.table .pagination {
 	text-align:center;
 }
 
+.table td.order {
+    text-align: center;
+    white-space: nowrap;
+    width: 200px;
+}
+
+.table td.order span {
+    float: left;
+    width: 20px;
+    text-align: center;
+    background-repeat: no-repeat;
+    height: 13px;
+}
+
+
 .highlight {
 	background:none repeat scroll 0 0 #FFFF00;
 }
