@@ -77,7 +77,7 @@ class JFormFieldCategories extends JFormFieldList
 		$html[] = '  </div>';
 		$html[] = '</div>';
 
-		// The active article id field.
+		// The active category-id field.
 		if (0 == (int)$this->value) {
 			$value = '';
 		} else {
