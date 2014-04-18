@@ -80,7 +80,7 @@ class JEMTableEvent extends JTable
 		$jinput = JFactory::getApplication()->input;
 
 		if (trim($this->title) == ''){
-			$this->setError(JText::_('COM_JEM_PROVIDE_TITLE'));
+			$this->setError(JText::_('COM_JEM_EVENT_ERROR_NAME'));
 			return false;
 		}
 
@@ -95,16 +95,16 @@ class JEMTableEvent extends JTable
 				$this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
 			}
 		}
-		
-		
+
+
 		if (empty($this->times)) {
 			$this->times = null;
 		}
-		
+
 		if (empty($this->endtimes)) {
 			$this->endtimes = null;
 		}
-		
+
 
 		// Dates
 		if (empty($this->enddates)) {
@@ -146,10 +146,9 @@ class JEMTableEvent extends JTable
 		}
 
 		if($date1 > $date2) {
-			$this->setError(JText::_('COM_JEM_ERROR_END_BEFORE_START'));
+			$this->setError(JText::_('COM_JEM_EVENT_ERROR_END_BEFORE_START'));
 			return false;
 		}
-
 
 		return true;
 	}
