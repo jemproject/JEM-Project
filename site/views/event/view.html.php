@@ -153,6 +153,7 @@ class JemViewEvent extends JEMView
 
 		// Increment the hit counter of the event.
 		if (!$this->params->get('intro_only') && $offset == 0) {
+			$model = $this->getModel();
 			$model->hit();
 		}
 
