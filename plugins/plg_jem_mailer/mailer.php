@@ -785,10 +785,11 @@ class plgJEMMailer extends JPlugin {
 				}
 				$mail->setBody($data->body);
 				$mail->addRecipient($receivers);
-				$sent = $mail->send();
-				return $sent;
+				$mail->send();
 			}
 		}
+
+		return true;
 	}
 
 	/**
