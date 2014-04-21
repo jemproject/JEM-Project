@@ -6,26 +6,38 @@
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ *
+ * @todo: change onEventUserRegistered
+ * there is a check for the waitinglist and that one is looking
+ * at the option "reg_email_to". The onEventUnregistered function
+ * has no check for the waitinglist.
+ *
+ * @todo: apply setting for sending username/name
+ * within the settings-view (component) we do have the setting
+ * "Display name". The mailer can take a look at that setting
+ * or use an option in the plugin.
+ *
+ * @todo: check output time/date
+ * it's possible that there is no time or date for an event.
+ * add check for global time/date format. At the moment the output
+ * format is not respecting the global-setting
  */
-
 defined('_JEXEC') or die;
 
 // Import library dependencies
 jimport('joomla.event.plugin');
 jimport('joomla.utilities.mail');
 
-//Load the Plugin language file out of the administration
-//JPlugin::loadLanguage( 'plg_jem_mailer', JPATH_ADMINISTRATOR);
-$lang = JFactory::getLanguage();
-$lang->load('plg_jem_mailer', JPATH_ADMINISTRATOR);
 
 include_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
+include_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 
 class plgJEMMailer extends JPlugin {
 
 	private $_SiteName = '';
 	private $_MailFrom = '';
 	private $_FromName = '';
+	private $_AdminDBList = '';
 
 	/**
 	 * Constructor
@@ -40,9 +52,13 @@ class plgJEMMailer extends JPlugin {
 		$this->loadLanguage();
 
 		$app = JFactory::getApplication();
+		$jemsettings = JemHelper::globalattribs();
+
 		$this->_SiteName 	= $app->getCfg('sitename');
 		$this->_MailFrom	= $app->getCfg('mailfrom');
 		$this->_FromName 	= $app->getCfg('fromname');
+		$this->_AdminDBList = self::Adminlist();
+
 	}
 
 	/**
@@ -54,72 +70,93 @@ class plgJEMMailer extends JPlugin {
 	 *
 	 */
 	public function onEventUserRegistered($register_id)
-	{	
-		//simple, skip if processing not needed
+	{
+		// skip if processing not needed
 		if (!$this->params->get('reg_mail_user', '1') && !$this->params->get('reg_mail_admin', '0')) {
 			return true;
 		}
 
-		$db 	= JFactory::getDBO();
 		$user 	= JFactory::getUser();
 
-		$query = ' SELECT a.id, a.title, r.waiting, '
-				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug '
-				. ' FROM  #__jem_register AS r '
-				. ' INNER JOIN #__jem_events AS a ON r.event = a.id '
-				. ' WHERE r.id = ' . (int)$register_id;
-		$db->setQuery($query);
+		// get data
+		$db 	= JFactory::getDBO();
+		$query = $db->getQuery(true);
 
-		if (!$event = $db->loadObject()) {
-			if ($db->getErrorNum()) {
-				JError::raiseWarning('0', $db->getErrorMsg());
-			}
-			return false;
-		}
+		$case_when = ' CASE WHEN ';
+		$case_when .= $query->charLength('a.alias');
+		$case_when .= ' THEN ';
+		$id = $query->castAsChar('a.id');
+		$case_when .= $query->concatenate(array($id, 'a.alias'), ':');
+		$case_when .= ' ELSE ';
+		$case_when .= $id.' END as slug';
+
+		$query->select(array('a.id','a.title','r.waiting',$case_when));
+		$query->from($db->quoteName('#__jem_register').' AS r');
+		$query->join('INNER', '#__jem_events AS a ON r.event = a.id');
+		$query->where(array('r.id= '.$db->quote($register_id)));
+
+		$db->setQuery($query);
+		if (is_null($event = $db->loadObject())) return false;
 
 		//create link to event
 		$link = JRoute::_(JURI::base().JEMHelperRoute::getEventRoute($event->slug), false);
 
+
+		############################
+		## SENDMAIL - WAITINGLIST ##
+		############################
+
 		if ($event->waiting) // registered to the waiting list
 		{
-			//handle usermail
+			###################################
+			## SENDMAIL - WAITINGLIST - USER ##
+			###################################
 			if ($this->params->get('reg_mail_user', '1')) {
 				$data 				= new stdClass();
 				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_USER_REG_WAITING_SUBJECT', $this->_SiteName);
 				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_REG_WAITING_BODY', $user->name, $user->username, $event->title, $link, $this->_SiteName);
 				$data->receivers 	= $user->email;
-
 				$this->_mailer($data);
 			}
 
-			//handle adminmail
-			if ($this->params->get('reg_mail_admin', '0') && $this->_receivers) {
-				$data 				= new stdClass();
-				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_WAITING_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_WAITING_BODY', $user->name, $user->username, $event->title, $link, $this->_SiteName);
-				$data->receivers 	= $this->_receivers;
-
-				$this->_mailer($data);
+			####################################
+			## SENDMAIL - WAITINGLIST - ADMIN ##
+			####################################
+			if ($this->params->get('reg_mail_admin', '0')) {
+				# check if we've something in the Adminlist
+				if ($this->_AdminDBList){
+					$data 				= new stdClass();
+					$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_WAITING_SUBJECT', $this->_SiteName);
+					$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_WAITING_BODY', $user->name, $user->username, $event->title, $link, $this->_SiteName);
+					$data->receivers 	= $this->_AdminDBList;
+					$this->_mailer($data);
+				}
 			}
 		} else {
-			//handle usermail
+			#####################
+			## SENDMAIL - USER ##
+			#####################
 			if ($this->params->get('reg_mail_user', '1')) {
 				$data 				= new stdClass();
 				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_USER_REG_SUBJECT', $this->_SiteName);
 				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_REG_BODY', $user->name, $user->username, $event->title, $link, $this->_SiteName);
 				$data->receivers 	= $user->email;
-
 				$this->_mailer($data);
 			}
 
-			//handle adminmail
-			if ($this->params->get('reg_mail_admin', '0') && $this->_receivers) {
-				$data 				= new stdClass();
-				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_BODY', $user->name, $user->username, $event->title, $link, $this->_SiteName);
-				$data->receivers 	= $this->_receivers;
+			######################
+			## SENDMAIL - ADMIN ##
+			######################
+			if ($this->params->get('reg_mail_admin', '0')) {
 
-				$this->_mailer($data);
+				# check if we've something in the Adminlist
+				if ($this->_AdminDBList){
+					$data 				= new stdClass();
+					$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_SUBJECT', $this->_SiteName);
+					$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_BODY', $user->name, $user->username, $event->title, $link, $this->_SiteName);
+					$data->receivers 	= $this->_AdminDBList;
+					$this->_mailer($data);
+				}
 			}
 		}
 
@@ -136,78 +173,83 @@ class plgJEMMailer extends JPlugin {
 	 */
 	public function onUserOnOffWaitinglist($register_id)
 	{
-		//simple, skip if processing not needed
+		// skip if processing not needed
 		if (!$this->params->get('reg_mail_user_onoff', '1') && !$this->params->get('reg_mail_admin_onoff', '0')) {
 			return true;
 		}
 
+		// get data
 		$db 	= JFactory::getDBO();
+		$query = $db->getQuery(true);
 
-		$query = ' SELECT a.id, a.title, waiting, uid, '
-				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug '
-				. ' FROM  #__jem_register AS r '
-				. ' INNER JOIN #__jem_events AS a ON r.event = a.id '
-				. ' WHERE r.id = ' . (int)$register_id;
+		$case_when = ' CASE WHEN ';
+		$case_when .= $query->charLength('a.alias');
+		$case_when .= ' THEN ';
+		$id = $query->castAsChar('a.id');
+		$case_when .= $query->concatenate(array($id, 'a.alias'), ':');
+		$case_when .= ' ELSE ';
+		$case_when .= $id.' END as slug';
+
+		$query->select(array('a.id','a.title','r.waiting','r.uid',$case_when));
+		$query->from($db->quoteName('#__jem_register').' AS r');
+		$query->join('INNER', '#__jem_events AS a ON r.event = a.id');
+		$query->where(array('r.id= '.$db->quote($register_id)));
+
 		$db->setQuery($query);
+		if (is_null($details = $db->loadObject())) return false;
 
-		if (!$details = $db->loadObject())
-		{
-			if ($db->getErrorNum()) {
-				JError::raiseWarning('0', $db->getErrorMsg());
-			}
-			return false;
-		}
 
 		$user 	= JFactory::getUser($details->uid);
-		//create link to event
+		// create link to event
 		$url = JURI::root();
 		$link =JRoute::_($url. JEMHelperRoute::getEventRoute($details->slug), false);
 
 		if ($details->waiting) // added to the waiting list
 		{
-			//handle usermail
+			// handle usermail
 			if ($this->params->get('reg_mail_user_onoff', '1')) {
 				$data 				= new stdClass();
 				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_USER_REG_ON_WAITING_SUBJECT', $this->_SiteName);
 				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_REG_ON_WAITING_BODY', $user->name, $user->username, $details->title, $link, $this->_SiteName);
 				$data->receivers 	= $user->email;
-
 				$this->_mailer($data);
 			}
 
-			//handle adminmail
-			if ($this->params->get('reg_mail_admin_onoff', '0') && $this->_receivers) {
-				$data 				= new stdClass();
-				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_BODY', $user->name, $user->username, $details->title, $link, $this->_SiteName);
-				$data->receivers 	= array($this->_receivers);
-
-				$this->_mailer($data);
+			// handle adminmail
+			if ($this->params->get('reg_mail_admin_onoff', '0')) {
+				if ($this->_AdminDBList){
+					$data 				= new stdClass();
+					$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_SUBJECT', $this->_SiteName);
+					$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_BODY', $user->name, $user->username, $details->title, $link, $this->_SiteName);
+					$data->receivers 	= $this->_AdminDBList;
+					$this->_mailer($data);
+				}
 			}
 		} else { // bumped from waiting list to attending list
-			//handle usermail
+			// handle usermail
 			if ($this->params->get('reg_mail_user_onoff', '1')) {
 				$data 				= new stdClass();
 				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_USER_REG_ON_ATTENDING_SUBJECT', $this->_SiteName);
 				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_REG_ON_ATTENDING_BODY', $user->name, $user->username, $details->title, $link, $this->_SiteName);
 				$data->receivers 	= $user->email;
-
 				$this->_mailer($data);
 			}
 
-			//handle adminmail
-			if ($this->params->get('reg_mail_admin_onoff', '0') && $this->_receivers) {
-				$data 				= new stdClass();
-				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_BODY', $user->name, $user->username, $details->title, $link, $this->_SiteName);
-				$data->receivers 	= $this->_receivers;
-
-				$this->_mailer($data);
+			// handle adminmail
+			if ($this->params->get('reg_mail_admin_onoff', '0')) {
+				if ($this->_AdminDBList){
+					$data 				= new stdClass();
+					$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_SUBJECT', $this->_SiteName);
+					$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_BODY', $user->name, $user->username, $details->title, $link, $this->_SiteName);
+					$data->receivers 	= $this->_AdminDBList;
+					$this->_mailer($data);
+				}
 			}
 		}
 
 		return true;
 	}
+
 
 	/**
 	 * This method handles any mailings triggered by an event unregister action
@@ -219,31 +261,39 @@ class plgJEMMailer extends JPlugin {
 	 */
 	public function onEventUserUnregistered($event_id)
 	{
-		//simple, skip if processing not needed
+		// skip if processing not needed
 		if (!$this->params->get('unreg_mail_user', '1') && !$this->params->get('unreg_mail_admin', '0')) {
 			return true;
 		}
 
-		$db 	= JFactory::getDBO();
 		$user 	= JFactory::getUser();
 
-		$query = ' SELECT a.id, a.title, '
-				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug '
-				. ' FROM #__jem_events AS a '
-				. ' WHERE a.id = ' . (int)$event_id;
+		// get data
+		$db 	= JFactory::getDBO();
+		$query	= $db->getQuery(true);
+
+		$case_when = ' CASE WHEN ';
+		$case_when .= $query->charLength('a.alias');
+		$case_when .= ' THEN ';
+		$id = $query->castAsChar('a.id');
+		$case_when .= $query->concatenate(array($id, 'a.alias'), ':');
+		$case_when .= ' ELSE ';
+		$case_when .= $id.' END as slug';
+
+		$query->select(array('a.id','a.title',$case_when));
+		$query->from($db->quoteName('#__jem_events').' AS a');
+		$query->where(array('a.id= '.$db->quote($event_id)));
+
 		$db->setQuery($query);
+		if (is_null($event = $db->loadObject())) return false;
 
-		if (!$event = $db->loadObject()) {
-			if ($db->getErrorNum()) {
-				JError::raiseWarning('0', $db->getErrorMsg());
-			}
-			return false;
-		}
 
-		//create link to event
+		// create link to event
 		$link = JRoute::_(JURI::base().JEMHelperRoute::getEventRoute($event->slug), false);
 
-		//handle usermail
+		#####################
+		## SENDMAIL - USER ##
+		#####################
 		if ($this->params->get('unreg_mail_user', '1')) {
 			$data 				= new stdClass();
 			$data->subject 		= JText::sprintf('PLG_JEM_MAILER_USER_UNREG_SUBJECT', $this->_SiteName);
@@ -253,14 +303,18 @@ class plgJEMMailer extends JPlugin {
 			$this->_mailer($data);
 		}
 
-		//handle adminmail
-		if ($this->params->get('unreg_mail_admin', '0') && $this->_receivers) {
-			$data 				= new stdClass();
-			$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_SUBJECT', $this->_SiteName);
-			$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_BODY', $user->name, $user->username, $event->title, $link, $this->_SiteName);
-			$data->receivers 	= $this->_receivers;
+		######################
+		## SENDMAIL - ADMIN ##
+		######################
+		if ($this->params->get('unreg_mail_admin', '0')) {
+			if ($this->_AdminDBList){
+				$data 				= new stdClass();
+				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_SUBJECT', $this->_SiteName);
+				$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_BODY', $user->name, $user->username, $event->title, $link, $this->_SiteName);
+				$data->receivers 	= $this->_AdminDBList;
 
-			$this->_mailer($data);
+				$this->_mailer($data);
+			}
 		}
 
 		return true;
@@ -268,14 +322,20 @@ class plgJEMMailer extends JPlugin {
 
 	/**
 	* This method handles any mailings triggered by an event store action
-	* 
+	*
 	* @access public
 	* @param int $event_id Event identifier
 	* @param int $is_new Event new or edited
 	* @return  boolean
-	* 
+	*
 	*/
-	public function onEventEdited($event_id, $is_new) {
+	public function onEventEdited($event_id, $is_new)
+	{
+
+		####################
+		## DEFINING ARRAY ##
+		####################
+
 		$send_to = array(
 			'user' => $is_new ? $this->params->get('newevent_mail_user', '1') : $this->params->get('editevent_mail_user', '1'),
 			'admin' => $is_new ? $this->params->get('newevent_mail_admin', '0') : $this->params->get('editevent_mail_admin', '0'),
@@ -284,143 +344,281 @@ class plgJEMMailer extends JPlugin {
 			'group' => $is_new ? $this->params->get('newevent_mail_group', '0') : $this->params->get('editevent_mail_group', '0'),
 		);
 
-		// Simple, skip if processing not needed
+		// skip if processing not needed
 		if (!array_filter($send_to)) return true;
 
-
-		$db 	= JFactory::getDBO();
 		$user 	= JFactory::getUser();
 
+		// get data
+		$db 	= JFactory::getDBO();
+		$query	= $db->getQuery(true);
 
-		// Get event data
-		$query = ' SELECT a.id, a.title, a.dates, a.times, CONCAT(a.introtext,a.fulltext) AS text, a.locid, a.published, a.created, a.modified,'
-				. ' v.venue, v.city,'
-				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug'
-				. ' FROM #__jem_events AS a '
-				. ' LEFT JOIN #__jem_venues AS v ON v.id = a.locid'
-				. ' WHERE a.id = ' . (int)$event_id;
+		$case_when = ' CASE WHEN ';
+		$case_when .= $query->charLength('a.alias');
+		$case_when .= ' THEN ';
+		$id = $query->castAsChar('a.id');
+		$case_when .= $query->concatenate(array($id, 'a.alias'), ':');
+		$case_when .= ' ELSE ';
+		$case_when .= $id.' END as slug';
+
+		$query->select(array('a.id','a.title','a.dates','a.times','a.locid','a.published','a.created','a.modified'));
+		$query->select($query->concatenate(array('a.introtext', 'a.fulltext')));
+		$query->select(array('v.venue','v.city'));
+		$query->select($case_when);
+		$query->from($db->quoteName('#__jem_events').' AS a');
+		$query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
+		$query->where(array('a.id= '.$db->quote($event_id)));
+
 		$db->setQuery($query);
-		if(is_null($event = $db->loadObject())) return false;
-
+		if (is_null($event = $db->loadObject())) return false;
 
 		// Link for event
 		$link = JRoute::_(JURI::base().JEMHelperRoute::getEventRoute($event->slug), false);
 
-		// Strip description from tags / scripts, etc...
-		$text_description = JFilterOutput::cleanText($event->text);		
-		
-		// Get user IP		
-		if (getenv('HTTP_CLIENT_IP')) {
-			$modified_ip =getenv('HTTP_CLIENT_IP');
-		} elseif (getenv('HTTP_X_FORWARDED_FOR')) {
-		    $modified_ip =getenv('HTTP_X_FORWARDED_FOR');
-		} elseif (getenv('HTTP_X_FORWARDED')) {
-			$modified_ip =getenv('HTTP_X_FORWARDED');
-		} elseif (getenv('HTTP_FORWARDED_FOR')) {
-		    $modified_ip =getenv('HTTP_FORWARDED_FOR');
-		} elseif (getenv('HTTP_FORWARDED')) {
-			$modified_ip = getenv('HTTP_FORWARDED');
-		} else {
-		    $modified_ip = $_SERVER['REMOTE_ADDR'];
-		}
+		// Strip tags/scripts, etc. from description
+		$text_description = JFilterOutput::cleanText($event->text);
 
-		// Get published-state message
-		if ($event->published > 0) {
+		// Define published-state message
+		switch ($event->published) {
+		case 1:
 			$adminstate = JText::sprintf('PLG_JEM_MAILER_EVENT_PUBLISHED', $link);
 			$userstate = JText::sprintf('PLG_JEM_MAILER_USER_MAIL_EVENT_PUBLISHED', $link);
-		} else if ($event->published == -2) {
+			break;
+		case -2:
 			$adminstate = JText::_('PLG_JEM_MAILER_EVENT_TRASHED');
 			$userstate = JText::_('PLG_JEM_MAILER_USER_MAIL_EVENT_TRASHED');
-		} else {
+			break;
+		case 0:
 			$adminstate = JText::_('PLG_JEM_MAILER_EVENT_UNPUBLISHED');
 			$userstate = JText::_('PLG_JEM_MAILER_USER_MAIL_EVENT_UNPUBLISHED');
+			break;
+		case 2:
+			$adminstate = JText::_('PLG_JEM_MAILER_EVENT_ARCHIVED');
+			$userstate = JText::_('PLG_JEM_MAILER_USER_MAIL_EVENT_ARCHIVED');
+			break;
+		default: /* TODO: fallback unknown / undefined */
+			$adminstate = JText::_('PLG_JEM_MAILER_EVENT_UNKNOWN');
+			$userstate = JText::_('PLG_JEM_MAILER_USER_MAIL_EVENT_UNKNOWN');
+			break;
 		}
 
+		#######################
+		## RECEIVERS - ADMIN ##
+		#######################
 
-		// Get receivers
+		# in here we selected the option to send to admin.
+		# we selected admin so we can use the adminDBList.
+
 		if ($send_to['admin']) {
-			$admin_receivers = array_filter(explode(',', trim($this->params->get('admin_receivers'))));
+			$admin_receivers = $this->_AdminDBList;
+		} else {
+			$admin_receivers = false;
 		}
 
-		if ($send_to['register']) {
-			$query = ' SELECT u.email'
-					. ' FROM #__users AS u'
-					. ' INNER JOIN #__jem_register AS reg ON reg.uid = u.id'
-					. ' WHERE reg.event = ' . (int)$event_id;
+
+		############################
+		## RECEIVERS - REGISTERED ##
+		############################
+
+		# in here we selected the option to send an email to all people registered to the event.
+		# there is no check for the waitinglist
+
+		# $registered_receivers is defined in here
+		if ($send_to['registered']) {
+
+			// get data
+			$query = $db->getQuery(true);
+			$query->select(array('u.email'));
+			$query->from($db->quoteName('#__users').' AS u');
+			$query->join('INNER', '#__jem_register AS reg ON reg.uid = u.id');
+			$query->where(array('reg.event= '.$db->quote($event_id)));
+
 			$db->setQuery($query);
-			if(is_null($registered_receivers = $db->loadColumn(0))) return false;
+			if (is_null($registered_receivers = $db->loadColumn(0))) return false;
+
+		} else {
+			$registered_receivers = false;
 		}
+
+
+		############################
+		## RECEIVERS - CATEGORY ##
+		############################
+
+		# in here we selected the option to send an email to the email-address
+		# that's filled in the category-view.
+
+		# the data within categoryDBList needs to be validated.
+		# if the categoryDBList is empty we shoudln't send an email
+
+		# $category_receivers is defined in here
 
 		if ($send_to['category']) {
-			$query = ' SELECT c.email'
-					. ' FROM #__jem_categories AS c'
-					. ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-					. ' WHERE rel.itemid = ' . (int)$event_id;
+			// get data
+			$query = $db->getQuery(true);
+			$query->select(array('c.email'));
+			$query->from($db->quoteName('#__jem_categories').' AS c');
+			$query->join('INNER', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
+			$query->where(array('rel.itemid= '.$db->quote($event_id)));
+
 			$db->setQuery($query);
-			if(is_null($category_receivers = $db->loadColumn(0))) return false;
+			if (is_null($category_receivers = $db->loadColumn(0))) {
+				return false;
+			} else {
+				$category_receivers = self::categoryDBList($category_receivers);
+			}
+		} else {
+			$category_receivers = false;
 		}
+
+
+		#######################
+		## RECEIVERS - GROUP ##
+		#######################
+
+		# in here we selected the option to send an email to the email-address
+		# of the users within the maintainer-group of the category where
+		# the event is assigned too.
+
+		# $group_receivers is defined in here
 
 		if ($send_to['group']) {
-			$query = 'SELECT u.email'
-					. ' FROM #__users AS u'
-					. ' INNER JOIN #__jem_groupmembers AS gm ON gm.member = u.id'
-					. ' INNER JOIN #__jem_categories AS c ON c.groupid = gm.group_id'
-					. ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-					. ' WHERE rel.itemid = ' . (int)$event_id;
+			// get data
+			$query = $db->getQuery(true);
+			$query->select(array('u.email'));
+			$query->from($db->quoteName('#__users').' AS u');
+			$query->join('INNER', '#__jem_groupmembers AS gm ON gm.member = u.id');
+			$query->join('INNER', '#__jem_categories AS c ON c.groupid = gm.group_id');
+			$query->join('INNER', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
+			$query->where(array('rel.itemid= '.$db->quote($event_id)));
+
 			$db->setQuery($query);
-			if(is_null($group_receivers = $db->loadColumn(0))) return false;
+			if (is_null($group_receivers = $db->loadColumn(0))) return false;
+
+		} else {
+			$group_receivers = false;
 		}
 
 
-		// Send emails
+		######################
+		## RECEIVERS - USER ##
+		######################
+
+		# in here we selected the option to send an email to the logged-in user
+
+		# $user_receiver is defined in here
+
 		if ($send_to['user']) {
+			$user_receiver = $user->email;
+		} else {
+			$user_receiver = false;
+		}
+
+
+		##############################
+		## SENDMAIL: $user_receiver ##
+		##############################
+
+		if ($user_receiver) {
 			$data = new stdClass();
 
 			if ($is_new) {
-				$created = JHtml::Date( $event->created, JText::_( 'DATE_FORMAT_LC2' ) );
+				$created = JHtml::Date($event->created, JText::_('DATE_FORMAT_LC2'));
 				$data->body = JText::sprintf('PLG_JEM_MAILER_USER_MAIL_NEW_EVENT', $user->name, $user->username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $userstate);
 				$data->subject = JText::sprintf( 'PLG_JEM_MAILER_NEW_USER_EVENT_MAIL', $this->_SiteName );
 			} else {
-				$modified = JHtml::Date( $event->modified, JText::_( 'DATE_FORMAT_LC2' ) );
+				$modified = JHtml::Date($event->modified, JText::_('DATE_FORMAT_LC2'));
 				$data->body = JText::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_EVENT', $user->name, $user->username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $userstate);
 				$data->subject = JText::sprintf( 'PLG_JEM_MAILER_EDIT_USER_EVENT_MAIL', $this->_SiteName );
 			}
 
-			$data->receivers = $user->email;
+			$data->receivers = $user_receiver;
 			$this->_mailer($data);
 		}
 
-		if ($admin_receivers || $group_receivers) {
+
+		################################
+		## SENDMAIL: $admin_receivers ##
+		################################
+
+		if ($admin_receivers) {
 			$data = new stdClass();
 
 			if ($is_new) {
-				$created = JHtml::Date( $event->created, JText::_( 'DATE_FORMAT_LC2' ) );
+				$created = JHtml::Date($event->created, JText::_('DATE_FORMAT_LC2'));
 				$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_MAIL', $this->_SiteName);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT', $user->name, $user->username, $user->email, $event->author_ip, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT', $user->name, $user->username, $user->email, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			} else {
-				$modified = JHtml::Date( $event->modified, JText::_( 'DATE_FORMAT_LC2' ) );
+				$modified = JHtml::Date($event->modified, JText::_('DATE_FORMAT_LC2'));
 				$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_MAIL', $this->_SiteName);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT', $user->name, $user->username, $user->email, $modified_ip, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT', $user->name, $user->username, $user->email, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			}
 
-			$data->receivers = array_unique(array_merge((array) $admin_receivers, (array) $group_receivers));
+			$data->receivers = $admin_receivers;
 			$this->_mailer($data);
 		}
-		
-		if ($registered_receivers || $category_receivers) {
+
+
+		################################
+		## SENDMAIL: $group_receivers ##
+		################################
+
+		if ($group_receivers) {
 			$data = new stdClass();
-			
+
 			if ($is_new) {
-				$created = JHtml::Date( $event->created, JText::_( 'DATE_FORMAT_LC2' ) );
+				$created = JHtml::Date($event->created, JText::_('DATE_FORMAT_LC2'));
+				$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_MAIL', $this->_SiteName);
+				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT', $user->name, $user->username, $user->email, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+			} else {
+				$modified = JHtml::Date($event->modified, JText::_('DATE_FORMAT_LC2'));
+				$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_MAIL', $this->_SiteName);
+				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT', $user->name, $user->username, $user->email, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+			}
+
+			$data->receivers = array_unique($group_receivers);
+			$this->_mailer($data);
+		}
+
+		#####################################
+		## SENDMAIL: $registered_receivers ##
+		#####################################
+
+		if ($registered_receivers) {
+			$data = new stdClass();
+
+			if ($is_new) {
+				$created = JHtml::Date($event->created, JText::_('DATE_FORMAT_LC2'));
 				$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_MAIL', $this->_SiteName);
 				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_CAT_NOTIFY', $user->name, $user->username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			} else {
-				$modified = JHtml::Date( $event->modified, JText::_( 'DATE_FORMAT_LC2' ) );
+				$modified = JHtml::Date($event->modified, JText::_('DATE_FORMAT_LC2'));
 				$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_MAIL', $this->_SiteName);
 				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_CAT_NOTIFY', $user->name, $user->username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			}
-			
-			$data->receivers = array_unique(array_merge((array) $registered_receivers, (array) $category_receivers));
+
+			$data->receivers = array_unique($registered_receivers);
+			$this->_mailer($data);
+		}
+
+		###################################
+		## SENDMAIL: $category_receivers ##
+		###################################
+
+		if ($category_receivers) {
+			$data			= new stdClass();
+
+			if ($is_new) {
+				$created = JHtml::Date($event->created, JText::_('DATE_FORMAT_LC2'));
+				$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_MAIL', $this->_SiteName);
+				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_CAT_NOTIFY', $user->name, $user->username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+			} else {
+				$modified = JHtml::Date($event->modified, JText::_('DATE_FORMAT_LC2'));
+				$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_MAIL', $this->_SiteName);
+				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_CAT_NOTIFY', $user->name, $user->username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+			}
+
+			$data->receivers = $category_receivers;
 			$this->_mailer($data);
 		}
 
@@ -438,70 +636,102 @@ class plgJEMMailer extends JPlugin {
 	 */
 	public function onVenueEdited($venue_id, $is_new)
 	{
+		// Sendto
 		$send_to = array(
 			'user' => $is_new ? $this->params->get('newvenue_mail_user', '1') : $this->params->get('editvenue_mail_user', '0'),
 			'admin' => $is_new ? $this->params->get('newvenue_mail_admin', '1') : $this->params->get('editvenue_mail_admin', '0'),
 		);
 
-		// Simple, skip if processing not needed
+		// Skip if processing not needed
 		if (!array_filter($send_to)) return true;
 
 
-		$db 	= JFactory::getDBO();
 		$user 	= JFactory::getUser();
 
+		// get data
+		$db 	= JFactory::getDBO();
+		$query	= $db->getQuery(true);
 
-		// Get event data
-		$query = ' SELECT v.id, v.published, v.venue, v.city, v.street, v.postalCode, v.url, v.country, v.locdescription, v.created, v.modified,'
-				. ' CASE WHEN CHAR_LENGTH(v.alias) THEN CONCAT_WS(\':\', v.id, v.alias) ELSE v.id END as slug'
-				. ' FROM #__jem_venues AS v'
-				. ' WHERE v.id = ' . (int)$venue_id;
+		$case_when = ' CASE WHEN ';
+		$case_when .= $query->charLength('alias');
+		$case_when .= ' THEN ';
+		$id = $query->castAsChar('id');
+		$case_when .= $query->concatenate(array($id, 'alias'), ':');
+		$case_when .= ' ELSE ';
+		$case_when .= $id.' END as slug';
+
+		$query->select(array('id','published','venue','city','street','postalCode','url','country','locdescription','created','modified',$case_when));
+		$query->from('#__jem_venues');
+		$query->where(array('id= '.$db->quote($venue_id)));
+
 		$db->setQuery($query);
 		if (is_null($venue = $db->loadObject())) return false;
 
+		# at this point we do have a result
 
-		// Link for venue
+		// Define link for venue
 		$link = JRoute::_(JURI::base().JEMHelperRoute::getVenueRoute($venue->slug), false);
 
-		// Strip description from tags / scripts, etc...
-		$text_description = JFilterOutput::cleanText($venue->locdescription);
-
-		// Get user IP		
-		if (getenv('HTTP_CLIENT_IP')) {
-			$modified_ip =getenv('HTTP_CLIENT_IP');
-		} elseif (getenv('HTTP_X_FORWARDED_FOR')) {
-		    $modified_ip =getenv('HTTP_X_FORWARDED_FOR');
-		} elseif (getenv('HTTP_X_FORWARDED')) {
-			$modified_ip =getenv('HTTP_X_FORWARDED');
-		} elseif (getenv('HTTP_FORWARDED_FOR')) {
-		    $modified_ip =getenv('HTTP_FORWARDED_FOR');
-		} elseif (getenv('HTTP_FORWARDED')) {
-			$modified_ip = getenv('HTTP_FORWARDED');
-		} else {
-		    $modified_ip = $_SERVER['REMOTE_ADDR'];
-		}
-
-		// Get published-state message
+		// Define published-state message
 		$adminstate = $venue->published ? JText::sprintf('PLG_JEM_MAILER_VENUE_PUBLISHED', $link) : JText::_('PLG_JEM_MAILER_VENUE_UNPUBLISHED');
 		$userstate = $venue->published ? JText::sprintf('PLG_JEM_MAILER_USER_MAIL_VENUE_PUBLISHED', $link) : JText::_('PLG_JEM_MAILER_USER_MAIL_VENUE_UNPUBLISHED');
-	
 
-		// Get receivers
+		// Strip tags/scripts,etc from description
+		$text_description = JFilterOutput::cleanText($venue->locdescription);
+
+
+		#######################
+		## RECEIVERS - ADMIN ##
+		#######################
+
+		# in here we selected the option to send to admin.
+		# we selected admin so we can use the adminDBList.
+		# if the adminDBList is empty mailing should stop!
+
 		if ($send_to['admin']) {
-			$admin_receivers = array_filter(explode(',', trim($this->params->get('admin_receivers'))));
+
+			$admin_receivers = $this->_AdminDBList;
+
+			if ($admin_receivers) {
+				$data = new stdClass();
+
+				# is the venue new or edited?
+				if ($is_new) {
+					# the venue is new and we send a mail to adminDBList
+					$created = JHtml::Date($venue->created, JText::_('DATE_FORMAT_LC2'));
+					$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_VENUE_MAIL', $this->_SiteName);
+					$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_VENUE', $user->name, $user->username, $user->email, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
+				} else {
+					# the venue is edited and we send a mail to adminDBList
+					$modified = JHtml::Date($venue->modified, JText::_('DATE_FORMAT_LC2'));
+					$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_VENUE_MAIL', $this->_SiteName);
+					$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_VENUE', $user->name, $user->username, $user->email, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
+				}
+				$data->receivers = $admin_receivers;
+
+				$this->_mailer($data);
+			} else {
+				return false;
+			}
 		}
 
+		######################
+		## RECEIVERS - USER ##
+		######################
 
-		// Send emails
+		# here we selected the option to send to a logged in user
+		# we make a selection between added/edited venue
+		# -> here we don't specify an extra variable
+
 		if ($send_to['user']) {
 			$data = new stdClass();
 
 			if ($is_new) {
-				$created = JHtml::Date( $venue->created, JText::_( 'DATE_FORMAT_LC2' ) );
+				$created = JHtml::Date($venue->created, JText::_('DATE_FORMAT_LC2'));
 				$data->body = JText::sprintf('PLG_JEM_MAILER_USER_MAIL_NEW_VENUE', $user->name, $user->username, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $userstate);
 				$data->subject = JText::sprintf( 'PLG_JEM_MAILER_NEW_USER_VENUE_MAIL', $this->_SiteName );
 			} else {
-				$modified = JHtml::Date( $venue->modified, JText::_( 'DATE_FORMAT_LC2' ) );
+				$modified = JHtml::Date($venue->modified, JText::_('DATE_FORMAT_LC2'));
 				$data->body = JText::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_VENUE', $user->name, $user->username, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $userstate);
 				$data->subject = JText::sprintf( 'PLG_JEM_MAILER_EDIT_USER_VENUE_MAIL', $this->_SiteName );
 			}
@@ -510,50 +740,112 @@ class plgJEMMailer extends JPlugin {
 			$this->_mailer($data);
 		}
 
-		if ($admin_receivers) {
-			$data = new stdClass();
+		return true;
+	}
 
-			if ($is_new) {
-				$created = JHtml::Date( $venue->created, JText::_( 'DATE_FORMAT_LC2' ) );
-				$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_VENUE_MAIL', $this->_SiteName);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_VENUE', $user->name, $user->username, $user->email, $venue->author_ip, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
-			} else {
-				$modified = JHtml::Date( $venue->modified, JText::_( 'DATE_FORMAT_LC2' ) );
-				$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_VENUE_MAIL', $this->_SiteName);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_VENUE', $user->name, $user->username, $user->email, $modified_ip, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
+
+	/**
+	 * This method executes and send the mail
+	 * info: http://docs.joomla.org/Sending_email_from_extensions
+	 *
+	 * @access	private
+	 * @param   object 	$data 	 mail data object
+	 * @return	boolean
+	 */
+	private function _mailer($data)
+	{
+		$receivers = is_array($data->receivers) ? $data->receivers : array($data->receivers);
+
+		// validate the $receivers-array
+		$receivers	= filter_var_array($receivers,FILTER_VALIDATE_EMAIL);
+		$receivers	= array_filter($receivers);
+		$receivers	= array_unique($receivers);
+
+		if ($receivers) {
+			foreach ($receivers as $receiver) {
+				$mail = JFactory::getMailer();
+				$mail->setSender( array( $this->_MailFrom, $this->_FromName ) );
+				$mail->setSubject( $data->subject );
+
+				# check if we did select the option to output html mail
+				if ($this->params->get('send_html','0')== 1) {
+					$mail->isHTML(true);
+					$mail->Encoding = 'base64';
+					$body_html = nl2br ($data->body);
+					$mail->setBody($body_html);
+				} else {
+					$mail->setBody($data->body);
+				}
+				$mail->addRecipient($receiver);
+				$mail->send();
 			}
-
-			$data->receivers = array_unique($admin_receivers);
-			$this->_mailer($data);
 		}
 
 		return true;
 	}
 
 	/**
-	 * This method executes and send the mail
-	 *
-	 * @access	private
-	 * @param   object 	$data 	 mail data object
-	 * @return	boolean
-	 *
+	 * This method assembles the adminDBList
 	 */
-	private function _mailer($data)
+	private function Adminlist()
 	{
-		$receivers = is_array($data->receivers) ? $data->receivers : array($data->receivers);
+		$additional_mails	= array_filter(explode(',', trim($this->params->get('admin_receivers'))));
+		// remove whitespaces around each entry, then check if valid email address
+		foreach ($additional_mails as $k => $v) {
+			$additional_mails[$k] = filter_var(trim($v), FILTER_VALIDATE_EMAIL);
+		}
+		$additional_mails	= array_filter($additional_mails);
 
-		foreach ($receivers as $receiver) {
-			$mail = JFactory::getMailer();
+		if( $this->params->get('fetch_admin_mails', '0') ) {
 
-			$mail->setSender( array( $this->_MailFrom, $this->_FromName ) );
-			$mail->setSubject( $data->subject );
-			$mail->setBody( $data->body );
+			// get data
+			$db 	= JFactory::getDBO();
+			$query	= $db->getQuery(true);
 
-			$mail->addRecipient($receiver);
-			$mail->send();
+			$query->select(array('u.id','u.email','u.name'));
+			$query->from($db->quoteName('#__users').' AS u');
+			$query->where(array('u.sendEmail = 1'));
+
+			$db->setQuery($query);
+
+			if (!$db->query()) {
+				JError::raiseError( 500, $db->stderr(true));
+				return;
+			}
+
+			$admin_mails = $db->loadColumn(1);
+			$AdminList   = array_merge($admin_mails, $additional_mails);
+			$AdminList   = array_unique($AdminList);
+		} else {
+			$AdminList	= array_unique($additional_mails);
 		}
 
-		return true;
+		return $AdminList;
+	}
+
+
+	/**
+	 * This method checks the categoryDBList
+	 */
+	private function categoryDBlist($list)
+	{
+		if ($list) {
+			// maybe event has multiple categories - merge them
+			if (is_array($list)) {
+				$list = implode(',', $list);
+			}
+			$CategoryDBList	= array_filter(explode(',', trim($list)));
+			// remove whitespaces around each entry, then check if valid email address
+			foreach ($CategoryDBList as $k => $v) {
+				$CategoryDBList[$k] = filter_var(trim($v), FILTER_VALIDATE_EMAIL);
+			}
+			$CategoryDBList = array_unique($CategoryDBList);
+			$CategoryDBList = array_filter($CategoryDBList);
+		} else {
+			$CategoryDBList = '';
+		}
+
+		return $CategoryDBList;
 	}
 }
 ?>

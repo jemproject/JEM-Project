@@ -12,41 +12,36 @@
 
 	<files>
 		<filename plugin="mailer">mailer.php</filename>
-
 		<folder>language</folder>
 	</files>
 
 	<config>
 		<fields name="params">
 			<fieldset name="basic" label="PLG_JEM_MAILER_USER_NOTIFICATIONS">
-				
-				<field type="radio"	label="PLG_JEM_MAILER_REGISTRATION"
-					
-				></field>
-				
+				<field type="spacer" label="PLG_JEM_MAILER_REGISTRATION"></field>
+
 				<field type="radio" name="reg_mail_user"
-					label="PLG_JEM_MAILER_USER_LABEL"
+					label="PLG_JEM_MAILER_GLOBAL_FIELD_USER_LABEL"
 					default="1"
-					description="PLG_JEM_MAILER_USER_REG_DESC"
+					description="PLG_JEM_MAILER_FIELD_REGNOTE_REGISTRATION_USER_DESC"
 				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
 				<field type="radio" name="reg_mail_admin"
-					label="PLG_JEM_MAILER_ADMIN_LABEL"
+					label="PLG_JEM_MAILER_GLOBAL_FIELD_ADMIN_LABEL"
 					default="0"
-					description="PLG_JEM_MAILER_ADMIN_REG_DESC"
+					description="PLG_JEM_MAILER_FIELD_REGNOTE_REGISTRATION_ADMIN_DESC"
 				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
+
 				<field type="spacer"/>
-				
-				<field type="radio"	label="PLG_JEM_MAILER_WAITINGLIST"
-					
-				></field>
+				<field type="spacer" label="PLG_JEM_MAILER_WAITINGLIST"></field>
+
 				<field type="radio" name="reg_mail_user_onoff"
-					label="PLG_JEM_MAILER_USER_LABEL"
+					label="PLG_JEM_MAILER_GLOBAL_FIELD_USER_LABEL"
 					default="1"
 					description="PLG_JEM_MAILER_SETTINGS_USER_REG_ONOFF_DESC"
 				>
@@ -54,20 +49,19 @@
 					<option value="1">JYES</option>
 				</field>
 				<field type="radio" name="reg_mail_admin_onoff"
-					label="PLG_JEM_MAILER_ADMIN_LABEL"
+					label="PLG_JEM_MAILER_GLOBAL_FIELD_ADMIN_LABEL"
 					default="0"
 					description="PLG_JEM_MAILER_SETTINGS_ADMIN_REG_ONOFF_DESC"
 				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
+
 				<field type="spacer"/>
-				
-				<field type="radio"	label="PLG_JEM_MAILER_UNREGISTRATION"
-					
-				></field>
+				<field type="spacer" label="PLG_JEM_MAILER_UNREGISTRATION"></field>
+
 				<field type="radio" name="unreg_mail_user"
-					label="PLG_JEM_MAILER_USER_LABEL"
+					label="PLG_JEM_MAILER_GLOBAL_FIELD_USER_LABEL"
 					default="1"
 					description="PLG_JEM_MAILER_USER_UNREG_DESC"
 				>
@@ -75,7 +69,7 @@
 					<option value="1">JYES</option>
 				</field>
 				<field type="radio" name="unreg_mail_admin"
-					label="PLG_JEM_MAILER_ADMIN_LABEL"
+					label="PLG_JEM_MAILER_GLOBAL_FIELD_ADMIN_LABEL"
 					default="0"
 					description="PLG_JEM_MAILER_ADMIN_UNREG_DESC"
 				>
@@ -85,29 +79,24 @@
 			</fieldset>
 
 			<fieldset name="event_notifications" label="PLG_JEM_MAILER_EVENT_NOTIFICATIONS">
-				
-					<field type="radio" label="PLG_JEM_MAILER_NEW_EVENT_TITLE">
-					</field>
-					
-					<field type="radio" name="newevent_mail_user"
-						label="PLG_JEM_MAILER_USER_LABEL"
-						default="0"
-						description="PLG_JEM_MAILER_USER_NEW_EVENT_DESC"
-					>
-						<option value="0">JNO</option>
-						<option value="1">JYES</option>
-					</field>
-				
-				
+				<field type="spacer" label="PLG_JEM_MAILER_NEW_EVENT_TITLE"></field>
+
+				<field type="radio" name="newevent_mail_user"
+					label="PLG_JEM_MAILER_GLOBAL_FIELD_USER_LABEL"
+					default="0"
+					description="PLG_JEM_MAILER_USER_NEW_EVENT_DESC"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
 				<field type="radio" name="newevent_mail_admin"
-					label="PLG_JEM_MAILER_ADMIN_LABEL"
+					label="PLG_JEM_MAILER_GLOBAL_FIELD_ADMIN_LABEL"
 					default="0"
 					description="PLG_JEM_MAILER_ADMIN_NEW_EVENT_DESC"
 				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				
 				<field type="radio" name="newevent_mail_category"
 					label="PLG_JEM_MAILER_CATEGORY_LABEL"
 					default="0"
@@ -116,7 +105,6 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				
 				<field type="radio" name="newevent_mail_group"
 					label="PLG_JEM_MAILER_GROUP_LABEL"
 					default="0"
@@ -125,14 +113,12 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-					
-				
+
 				<field type="spacer"/>
-				<field type="radio" label="PLG_JEM_MAILER_EDIT_EVENT_TITLE">
-				</field>
-				
+				<field type="spacer" label="PLG_JEM_MAILER_EDIT_EVENT_TITLE"></field>
+
 				<field type="radio" name="editevent_mail_user"
-					label="PLG_JEM_MAILER_USER_LABEL"
+					label="PLG_JEM_MAILER_GLOBAL_FIELD_USER_LABEL"
 					default="0"
 					description="PLG_JEM_MAILER_USER_EDIT_EVENT_DESC"
 				>
@@ -140,7 +126,7 @@
 					<option value="1">JYES</option>
 				</field>
 				<field type="radio" name="editevent_mail_admin"
-					label="PLG_JEM_MAILER_ADMIN_LABEL"
+					label="PLG_JEM_MAILER_GLOBAL_FIELD_ADMIN_LABEL"
 					default="0"
 					description="PLG_JEM_MAILER_ADMIN_EDIT_EVENT_DESC"
 				>
@@ -155,7 +141,7 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				
+
 				<field type="radio" name="editevent_mail_category"
 					label="PLG_JEM_MAILER_CATEGORY_LABEL"
 					default="0"
@@ -164,7 +150,6 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				
 				<field type="radio" name="editevent_mail_group"
 					label="PLG_JEM_MAILER_GROUP_LABEL"
 					default="0"
@@ -173,17 +158,13 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				
-				
 			</fieldset>
-			
+
 			<fieldset name="venue_notifications" label="PLG_JEM_MAILER_VENUE_NOTIFICATIONS">
-				
-				<field type="radio" label="PLG_JEM_MAILER_NEW_VENUE_TITLE">
-				</field>
-				
+				<field type="spacer" label="PLG_JEM_MAILER_NEW_VENUE_TITLE"></field>
+
 				<field type="radio" name="newvenue_mail_user"
-					label="PLG_JEM_MAILER_USER_LABEL"
+					label="PLG_JEM_MAILER_GLOBAL_FIELD_USER_LABEL"
 					default="0"
 					description="PLG_JEM_MAILER_USER_NEW_VENUE_DESC"
 				>
@@ -191,19 +172,19 @@
 					<option value="1">JYES</option>
 				</field>
 				<field type="radio" name="newvenue_mail_admin"
-					label="PLG_JEM_MAILER_ADMIN_LABEL"
+					label="PLG_JEM_MAILER_GLOBAL_FIELD_ADMIN_LABEL"
 					default="0"
 					description="PLG_JEM_MAILER_ADMIN_NEW_VENUE_DESC"
 				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
+
 				<field type="spacer"/>
-				
-				<field type="radio" label="PLG_JEM_MAILER_EDIT_VENUE_TITLE">
-				</field>
+				<field type="spacer" label="PLG_JEM_MAILER_EDIT_VENUE_TITLE"></field>
+
 				<field type="radio" name="editvenue_mail_user"
-					label="PLG_JEM_MAILER_USER_LABEL"
+					label="PLG_JEM_MAILER_GLOBAL_FIELD_USER_LABEL"
 					default="0"
 					description="PLG_JEM_MAILER_USER_EDIT_VENUE_DESC"
 				>
@@ -211,25 +192,39 @@
 					<option value="1">JYES</option>
 				</field>
 				<field type="radio" name="editvenue_mail_admin"
-					label="PLG_JEM_MAILER_ADMIN_LABEL"
+					label="PLG_JEM_MAILER_GLOBAL_FIELD_ADMIN_LABEL"
 					default="0"
 					description="PLG_JEM_MAILER_ADMIN_EDIT_VENUE_DESC"
 				>
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-			
 			</fieldset>
-			
 
 			<fieldset name="admin_options" label="PLG_JEM_MAILER_ADMIN_OPTIONS">
-
-				<field type="text" name="admin_receivers"
+				<field type="radio" name="fetch_admin_mails"
+					label="PLG_JEM_MAILER_ALL_ADMINS"
+					default="0"
+					description="PLG_JEM_MAILER_ALL_ADMINS_DESC"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field type="textarea" name="admin_receivers"
 					label="PLG_JEM_MAILER_ADMIN_MAIL_RECEIVERS"
 					default=""
 					description="PLG_JEM_MAILER_ADMIN_MAIL_RECEIVERS_DESC"
+					rows="5"
+					cols="20"
 				/>
-
+				<field type="radio" name="send_html"
+					label="PLG_JEM_MAILER_SENDHTML"
+					default="0"
+					description="PLG_JEM_MAILER_SENDHTML_DESC"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
 			</fieldset>
 		</fields>
 	</config>
