@@ -8,7 +8,6 @@
  */
 defined('_JEXEC') or die;
 
-
 /**
  * Editvenue-View
  */
@@ -22,7 +21,7 @@ class JemViewEditvenue extends JViewLegacy
 	/**
 	 * Editvenue-View
 	 */
-	public function display($tpl=null)
+	public function display($tpl = null)
 	{
 		// Initialise variables.
 		$jemsettings = JemHelper::config();
@@ -38,7 +37,7 @@ class JemViewEditvenue extends JViewLegacy
 		// Get model data.
 		$this->state 	= $this->get('State');
 		$this->item 	= $this->get('Item');
-		$this->params = $this->state->get('params');
+		$this->params 	= $this->state->get('params');
 
 		// Create a shortcut for $item and params.
 		$item = $this->item;
@@ -65,14 +64,16 @@ class JemViewEditvenue extends JViewLegacy
 			}
 
 			$authorised = $user->authorise('core.create','com_jem') || $dellink;
-		} else {
+		} 
+		else {
 			// Check if user can edit
 			$maintainer = JemUser::venuegroups('edit');
 			$genaccess  = JemUser::editaccess($jemsettings->venueowner, $this->item->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 
 			if ($maintainer || $genaccess) {
 				$edit = true;
-			} else {
+			} 
+			else {
 				$edit = false;
 			}
 
@@ -101,12 +102,14 @@ class JemViewEditvenue extends JViewLegacy
 			// Load layout from menu item if one is set else from venue if there is one set
 			if (isset($menuitem->query['layout'])) {
 				$this->setLayout($menuitem->query['layout']);
-			} elseif ($layout = $item->params->get('venue_layout')) {
+			} 
+			elseif ($layout = $item->params->get('venue_layout')) {
 				$this->setLayout($layout);
 			}
 
 			$item->params->merge($params);
-		} else {
+		} 
+		else {
 			$pagetitle = $title;
 			$params->set('page_title', $pagetitle);
 			$params->set('page_heading', $pagetitle);
@@ -155,7 +158,9 @@ class JemViewEditvenue extends JViewLegacy
 
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
+		// Load scripts
 		JHtml::_('script', 'com_jem/attachments.js', false, true);
+		JHtml::_('script', 'com_jem/other.js', false, true);
 		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
 
 		// Noconflict
