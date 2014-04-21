@@ -329,7 +329,8 @@ class plgJEMMailer extends JPlugin {
 	* @return  boolean
 	*
 	*/
-	public function onEventEdited($event_id, $is_new) {
+	public function onEventEdited($event_id, $is_new)
+	{
 
 		####################
 		## DEFINING ARRAY ##
@@ -378,24 +379,27 @@ class plgJEMMailer extends JPlugin {
 		$text_description = JFilterOutput::cleanText($event->text);
 
 		// Define published-state message
-		if ($event->published == 1) {
+		switch ($event->published) {
+		case 1:
 			$adminstate = JText::sprintf('PLG_JEM_MAILER_EVENT_PUBLISHED', $link);
 			$userstate = JText::sprintf('PLG_JEM_MAILER_USER_MAIL_EVENT_PUBLISHED', $link);
-		}
-
-		if ($event->published == -2) {
+			break;
+		case -2:
 			$adminstate = JText::_('PLG_JEM_MAILER_EVENT_TRASHED');
 			$userstate = JText::_('PLG_JEM_MAILER_USER_MAIL_EVENT_TRASHED');
-		}
-
-		if ($event->published == 0) {
+			break;
+		case 0:
 			$adminstate = JText::_('PLG_JEM_MAILER_EVENT_UNPUBLISHED');
 			$userstate = JText::_('PLG_JEM_MAILER_USER_MAIL_EVENT_UNPUBLISHED');
-		}
-
-		if ($event->published == 2) {
+			break;
+		case 2:
 			$adminstate = JText::_('PLG_JEM_MAILER_EVENT_ARCHIVED');
 			$userstate = JText::_('PLG_JEM_MAILER_USER_MAIL_EVENT_ARCHIVED');
+			break;
+		default: /* TODO: fallback unknown / undefined */
+			$adminstate = JText::_('PLG_JEM_MAILER_EVENT_UNKNOWN');
+			$userstate = JText::_('PLG_JEM_MAILER_USER_MAIL_EVENT_UNKNOWN');
+			break;
 		}
 
 		#######################
@@ -458,8 +462,11 @@ class plgJEMMailer extends JPlugin {
 			$query->where(array('rel.itemid= '.$db->quote($event_id)));
 
 			$db->setQuery($query);
-			if (is_null($category_receivers = $db->loadResult())) return false;
-
+			if (is_null($category_receivers = $db->loadColumn(0))) {
+				return false;
+			} else {
+				$category_receivers = self::categoryDBList($category_receivers);
+			}
 		} else {
 			$category_receivers = false;
 		}
@@ -502,7 +509,7 @@ class plgJEMMailer extends JPlugin {
 		# $user_receiver is defined in here
 
 		if ($send_to['user']) {
-			$user_receiver = true;
+			$user_receiver = $user->email;
 		} else {
 			$user_receiver = false;
 		}
@@ -525,7 +532,7 @@ class plgJEMMailer extends JPlugin {
 				$data->subject = JText::sprintf( 'PLG_JEM_MAILER_EDIT_USER_EVENT_MAIL', $this->_SiteName );
 			}
 
-			$data->receivers = $user->email;
+			$data->receivers = $user_receiver;
 			$this->_mailer($data);
 		}
 
@@ -607,24 +614,20 @@ class plgJEMMailer extends JPlugin {
 		###################################
 
 		if ($category_receivers) {
-			$categoryDBList = self::categoryDBList($category_receivers);
+			$data			= new stdClass();
 
-			if ($categoryDBList) {
-				$data			= new stdClass();
-
-				if ($is_new) {
-					$created = JHtml::Date($event->created, JText::_('DATE_FORMAT_LC2'));
-					$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_MAIL', $this->_SiteName);
-					$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_CAT_NOTIFY', $user->name, $user->username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
-				} else {
-					$modified = JHtml::Date($event->modified, JText::_('DATE_FORMAT_LC2'));
-					$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_MAIL', $this->_SiteName);
-					$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_CAT_NOTIFY', $user->name, $user->username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
-				}
-
-				$data->receivers = $category_receivers;
-				$this->_mailer($data);
+			if ($is_new) {
+				$created = JHtml::Date($event->created, JText::_('DATE_FORMAT_LC2'));
+				$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_MAIL', $this->_SiteName);
+				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_CAT_NOTIFY', $user->name, $user->username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+			} else {
+				$modified = JHtml::Date($event->modified, JText::_('DATE_FORMAT_LC2'));
+				$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_MAIL', $this->_SiteName);
+				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_CAT_NOTIFY', $user->name, $user->username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			}
+
+			$data->receivers = $category_receivers;
+			$this->_mailer($data);
 		}
 
 		return true;
@@ -776,15 +779,16 @@ class plgJEMMailer extends JPlugin {
 				$mail->setSender( array( $this->_MailFrom, $this->_FromName ) );
 				$mail->setSubject( $data->subject );
 
-				if ($this->params->get('send_html','0')== 1) {
 				# check if we did select the option to output html mail
+				if ($this->params->get('send_html','0')== 1) {
 					$mail->isHTML(true);
 					$mail->Encoding = 'base64';
 					$body_html = nl2br ($data->body);
 					$mail->setBody($body_html);
+				} else {
+					$mail->setBody($data->body);
 				}
-				$mail->setBody($data->body);
-				$mail->addRecipient($receivers);
+				$mail->addRecipient($receiver);
 				$mail->send();
 			}
 		}
@@ -798,7 +802,10 @@ class plgJEMMailer extends JPlugin {
 	private function Adminlist()
 	{
 		$additional_mails	= array_filter(explode(',', trim($this->params->get('admin_receivers'))));
-		$additional_mails	= filter_var_array($additional_mails,FILTER_VALIDATE_EMAIL);
+		// remove whitespaces around each entry, then check if valid email address
+		foreach ($additional_mails as $k => $v) {
+			$additional_mails[$k] = filter_var(trim($v), FILTER_VALIDATE_EMAIL);
+		}
 		$additional_mails	= array_filter($additional_mails);
 
 		if( $this->params->get('fetch_admin_mails', '0') ) {
@@ -835,8 +842,15 @@ class plgJEMMailer extends JPlugin {
 	private function categoryDBlist($list)
 	{
 		if ($list) {
+			// maybe event has multiple categories - merge them
+			if (is_array($list)) {
+				$list = implode(',', $list);
+			}
 			$CategoryDBList	= array_filter(explode(',', trim($list)));
-			$CategoryDBList	= filter_var_array($CategoryDBList,FILTER_VALIDATE_EMAIL);
+			// remove whitespaces around each entry, then check if valid email address
+			foreach ($CategoryDBList as $k => $v) {
+				$CategoryDBList[$k] = filter_var(trim($v), FILTER_VALIDATE_EMAIL);
+			}
 			$CategoryDBList = array_unique($CategoryDBList);
 			$CategoryDBList = array_filter($CategoryDBList);
 		} else {
