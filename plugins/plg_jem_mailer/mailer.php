@@ -361,7 +361,7 @@ class plgJEMMailer extends JPlugin {
 		$case_when .= ' ELSE ';
 		$case_when .= $id.' END as slug';
 
-		$query->select(array('a.id','a.title','a.dates','a.times','a.author_ip','a.locid','a.published','a.created','a.modified'));
+		$query->select(array('a.id','a.title','a.dates','a.times','a.locid','a.published','a.created','a.modified'));
 		$query->select($query->concatenate(array('a.introtext', 'a.fulltext')));
 		$query->select(array('v.venue','v.city'));
 		$query->select($case_when);
@@ -545,17 +545,13 @@ class plgJEMMailer extends JPlugin {
 			$data = new stdClass();
 
 			if ($is_new) {
-				$author_ip = self::show_ip($event->author_ip);
-
 				$created = JHtml::Date($event->created, JText::_('DATE_FORMAT_LC2'));
 				$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_MAIL', $this->_SiteName);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT', $user->name, $user->username, $user->email, $author_ip, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT', $user->name, $user->username, $user->email, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			} else {
-				$modified_ip = self::show_ip(JemHelper::retrieveIP());
-
 				$modified = JHtml::Date($event->modified, JText::_('DATE_FORMAT_LC2'));
 				$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_MAIL', $this->_SiteName);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT', $user->name, $user->username, $user->email, $modified_ip, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT', $user->name, $user->username, $user->email, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			}
 
 			$data->receivers = $admin_receivers;
@@ -571,17 +567,13 @@ class plgJEMMailer extends JPlugin {
 			$data = new stdClass();
 
 			if ($is_new) {
-				$author_ip = self::show_ip($event->author_ip);
-
 				$created = JHtml::Date($event->created, JText::_('DATE_FORMAT_LC2'));
 				$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_MAIL', $this->_SiteName);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT', $user->name, $user->username, $user->email, $author_ip, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT', $user->name, $user->username, $user->email, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			} else {
-				$modified_ip = self::show_ip(JemHelper::retrieveIP());
-
 				$modified = JHtml::Date($event->modified, JText::_('DATE_FORMAT_LC2'));
 				$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_MAIL', $this->_SiteName);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT', $user->name, $user->username, $user->email, $modified_ip, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT', $user->name, $user->username, $user->email, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			}
 
 			$data->receivers = array_unique($group_receivers);
@@ -668,7 +660,7 @@ class plgJEMMailer extends JPlugin {
 		$case_when .= ' ELSE ';
 		$case_when .= $id.' END as slug';
 
-		$query->select(array('id','published','venue','city','street','postalCode','url','country','locdescription','created','author_ip','modified',$case_when));
+		$query->select(array('id','published','venue','city','street','postalCode','url','country','locdescription','created','modified',$case_when));
 		$query->from('#__jem_venues');
 		$query->where(array('id= '.$db->quote($venue_id)));
 
@@ -705,19 +697,15 @@ class plgJEMMailer extends JPlugin {
 
 				# is the venue new or edited?
 				if ($is_new) {
-					$author_ip = self::show_ip($venue->author_ip);
-
 					# the venue is new and we send a mail to adminDBList
 					$created = JHtml::Date($venue->created, JText::_('DATE_FORMAT_LC2'));
 					$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_VENUE_MAIL', $this->_SiteName);
-					$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_VENUE', $user->name, $user->username, $user->email, $author_ip, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
+					$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_VENUE', $user->name, $user->username, $user->email, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
 				} else {
-					$modified_ip = self::show_ip(JemHelper::retrieveIP());
-
 					# the venue is edited and we send a mail to adminDBList
 					$modified = JHtml::Date($venue->modified, JText::_('DATE_FORMAT_LC2'));
 					$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_VENUE_MAIL', $this->_SiteName);
-					$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_VENUE', $user->name, $user->username, $user->email, $modified_ip, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
+					$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_VENUE', $user->name, $user->username, $user->email, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
 				}
 				$data->receivers = $admin_receivers;
 
@@ -858,22 +846,6 @@ class plgJEMMailer extends JPlugin {
 		}
 
 		return $CategoryDBList;
-	}
-
-	/**
-	 * This method detects if the IP should be shown or not.
-	 */
-	private function show_ip($inputIP)
-	{
-		if ($this->params->get('show_ip','0')== '0') {
-			$ip = JText::_('PLG_JEM_MAILER_IP_DISABLED');
-		} elseif ($inputIP == '' || $inputIP == '127.0.0.1' || $inputIP == '::1') {
-			$ip = JText::_('PLG_JEM_MAILER_IP_UNKNOWN');
-		} else {
-			$ip = $inputIP;
-		}
-
-		return $ip;
 	}
 }
 ?>

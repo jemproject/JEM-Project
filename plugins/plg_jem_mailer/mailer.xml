@@ -210,14 +210,13 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field type="radio" name="show_ip"
-					label="PLG_JEM_MAILER_SHOWIP"
-					default="0"
-					description="PLG_JEM_MAILER_SHOWIP_DESC"
-				>
-					<option value="0">JNO</option>
-					<option value="1">JYES</option>
-				</field>
+				<field type="textarea" name="admin_receivers"
+					label="PLG_JEM_MAILER_ADMIN_MAIL_RECEIVERS"
+					default=""
+					description="PLG_JEM_MAILER_ADMIN_MAIL_RECEIVERS_DESC"
+					rows="5"
+					cols="20"
+				/>
 				<field type="radio" name="send_html"
 					label="PLG_JEM_MAILER_SENDHTML"
 					default="0"
@@ -226,13 +225,6 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field type="textarea" name="admin_receivers"
-					label="PLG_JEM_MAILER_ADMIN_MAIL_RECEIVERS"
-					default=""
-					description="PLG_JEM_MAILER_ADMIN_MAIL_RECEIVERS_DESC"
-					rows="5"
-					cols="20"
-				/>
 			</fieldset>
 		</fields>
 	</config>
