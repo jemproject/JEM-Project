@@ -63,7 +63,6 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 						<th align="left" class="sectiontableheader"><?php echo JText::_('COM_JEM_EMAIL'); ?></th>
 						<th align="left" class="sectiontableheader"><?php echo JText::_('COM_JEM_TELEPHONE'); ?></th>
 					<?php endif; ?>
-					<th width="7" class="title center"><?php echo JText::_('JPUBLISHED'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -87,10 +86,6 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 							<td align="left"><?php echo $this->escape($row->email_to); ?></td>
 							<td align="left"><?php echo $this->escape($row->telephone); ?></td>
 						<?php endif; ?>
-						<td class="center">
-							<?php $img = $row->published ? 'tick.png' : 'publish_x.png'; ?>
-							<?php echo JHtml::_('image', 'com_jem/'.$img, NULL, NULL, true); ?>
-						</td>
 					</tr>
 					<?php endforeach; ?>
 				<?php endif; ?>
