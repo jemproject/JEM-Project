@@ -243,36 +243,6 @@ class JEMModelVenues extends JModelList
 		return $query;
 	}
 
-	/**
-	 * Method to (un)publish a venue
-	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 *
-	 */
-	function publish($cid = array(), $publish = 1)
-	{
-		$user 	= JFactory::getUser();
-		$userid = $user->get('id');
-
-		if (count($cid))
-		{
-			$cids = implode(',', $cid);
-
-			$query = 'UPDATE #__jem_venues'
-					. ' SET published = '. (int) $publish
-					. ' WHERE id IN ('. $cids .')'
-					. ' AND (checked_out = 0 OR (checked_out = ' .$userid. '))'
-					;
-
-			$this->_db->setQuery($query);
-
-			if (!$this->_db->query()) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
-			}
-		}
-	}
 
 	/**
 	 * Method to remove a venue
