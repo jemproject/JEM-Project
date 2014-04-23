@@ -484,6 +484,8 @@ class com_jemInstallerScript
 			'/media/com_jem/js/eventscreen.js',
 			'/media/com_jem/js/geodata.js',
 			'/media/com_jem/js/jquery.geocomplete.min.js',
+			// obsolete since JEM 1.9.7
+			'/administrator/components/com_jem/classes/Snoopy.class.php',
 		);
 
 		// TODO There is an issue while deleting folders using the ftp mode
