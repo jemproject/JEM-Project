@@ -148,8 +148,8 @@ class JEMModelEditevent extends JEMModelEvent
 			}
 		}
 		
-		$value->author_ip = $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
-
+		$value->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
+		
 		$value->articletext = $value->introtext;
 		if (!empty($value->fulltext)) {
 			$value->articletext .= '<hr id="system-readmore" />' . $value->fulltext;

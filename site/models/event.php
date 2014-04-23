@@ -454,7 +454,7 @@ class JemModelEvent extends JModelItem
 		}
 
 		// IP
-		$uip = $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
+		$uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
 		$obj = new stdClass();
 		$obj->event = (int) $event;

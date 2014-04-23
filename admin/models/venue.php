@@ -104,7 +104,7 @@ class JEMModelVenue extends JModelAdmin
 			$item->attachments = $files;
 		}
 
-		$item->author_ip = $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
+		$item->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
 		if (empty($item->id)) {
 			$item->country = $jemsettings->defaultCountry;
