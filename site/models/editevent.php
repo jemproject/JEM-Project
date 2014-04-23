@@ -53,7 +53,7 @@ class JEMModelEditevent extends JEMModelEvent
 	 */
 	public function getItem($itemId = null)
 	{
-		// $jemsettings = JEMAdmin::config();
+		$jemsettings = JemHelper::config();
 
 		// Initialise variables.
 		$itemId = (int) (!empty($itemId)) ? $itemId : $this->getState('event.id');
@@ -174,172 +174,201 @@ class JEMModelEditevent extends JEMModelEvent
 		return base64_encode(urlencode($this->getState('return_page')));
 	}
 
+	############
+	## VENUES ##
+	############
+
 	/**
-	 * logic to get the venueslist
-	 *
-	 * @access public
-	 * @return array
+	 * Get venues-data
 	 */
 	function getVenues()
 	{
-		$app = JFactory::getApplication();
-		$jemsettings = JemHelper::config();
+		$query 		= $this->buildQueryVenues();
+		$pagination = $this->getVenuesPagination();
 
-		$where = $this->_buildVenuesWhere();
-		$orderby = $this->_buildVenuesOrderBy();
-
-		$limit = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart = JRequest::getInt('limitstart');
-
-		$query = 'SELECT l.id, l.venue, l.state, l.city, l.country, l.published' . ' FROM #__jem_venues AS l' . $where . $orderby;
-
-		$this->_db->setQuery($query, $limitstart, $limit);
-		$rows = $this->_db->loadObjectList();
+		$rows 		= $this->_getList($query, $pagination->limitstart, $pagination->limit);
 
 		return $rows;
 	}
 
-	/**
-	 * logic to get the venueslist but limited to the user owned venues
-	 *
-	 * @access public
-	 * @return array
-	 */
-	function getUserVenues()
-	{
-		$user = JFactory::getUser();
-		$userid = $user->get('id');
-
-		$query = 'SELECT id AS value, venue AS text'
-				. ' FROM #__jem_venues'
-				. ' WHERE created_by = '
-				. (int) $userid
-				. ' AND published = 1'
-				. ' ORDER BY venue';
-		$this->_db->setQuery($query);
-		$this->_venues = $this->_db->loadObjectList();
-
-		return $this->_venues;
-	}
 
 	/**
-	 * Method to build the ordering
-	 *
-	 * @access private
-	 * @return array
+	 * venues-query
 	 */
-	protected function _buildVenuesOrderBy()
+	function buildQueryVenues()
 	{
-		$app = JFactory::getApplication();
+		$app 				= JFactory::getApplication();
+		$jemsettings 		= JemHelper::config();
 
-		$filter_order = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
-		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+		$filter_order 		= $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
 
-		$filter_order = JFilterInput::getinstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+		$filter_order 		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir 	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
-		if (strtoupper($filter_order_Dir) !== 'DESC') {
-			$filter_order_Dir = 'ASC';
-		}
+		$filter_type 		= $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', '', 'int');
+		$search      		= $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
+		$search      		= $this->_db->escape(trim(JString::strtolower($search)));
 
-		$orderby = ' ORDER BY ';
+		// Query
+		$db 	= JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select(array('l.id','l.state','l.city','l.country','l.published','l.venue','l.ordering'));
+		$query->from('#__jem_venues as l');
 
-		if ($filter_order && $filter_order_Dir) {
-			$orderby .= $filter_order . ' ' . $filter_order_Dir . ', ';
-		}
-
-		$orderby .= 'l.ordering, l.venue'; // l.ordering seems to be always zero, so use venue as fallback
-
-		return $orderby;
-	}
-
-	/**
-	 * Method to build the WHERE clause
-	 *
-	 * @access private
-	 * @return array
-	 */
-	protected function _buildVenuesWhere()
-	{
-		$app = JFactory::getApplication();
-		$jemsettings = JemHelper::config();
-
-		$filter_type = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', '', 'int');
-		$search      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
-		$search      = $this->_db->escape(trim(JString::strtolower($search)));
-
+		// where
 		$where = array();
-
 		$where[] = 'l.published = 1';
 
 		/* something to search for? (we like to search for "0" too) */
 		if ($search || ($search === "0")) {
 			switch ($filter_type) {
-			case 1: /* Search venues */
-				$where[] = 'LOWER(l.venue) LIKE "%' . $search . '%"';
-				break;
-			case 2: // Search city
-				$where[] = 'LOWER(l.city) LIKE "%' . $search . '%"';
-				break;
-			case 3: // Search state
-				$where[] = 'LOWER(l.state) LIKE "%' . $search . '%"';
+				case 1: /* Search venues */
+					$where[] = 'LOWER(l.venue) LIKE "%' . $search . '%"';
+					break;
+				case 2: // Search city
+					$where[] = 'LOWER(l.city) LIKE "%' . $search . '%"';
+					break;
+				case 3: // Search state
+					$where[] = 'LOWER(l.state) LIKE "%' . $search . '%"';
 			}
 		}
 
+		// @todo: alter setting
 		if ($jemsettings->ownedvenuesonly) {
 			$user = JFactory::getUser();
 			$userid = $user->get('id');
 			$where[] = ' created_by = ' . (int) $userid;
 		}
 
-		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
+		$query->where($where);
 
-		return $where;
+		if (strtoupper($filter_order_Dir) !== 'DESC') {
+			$filter_order_Dir = 'ASC';
+		}
+
+		// ordering
+		$orderby = '';
+
+		if ($filter_order && $filter_order_Dir) {
+			$orderby .= $filter_order . ' ' . $filter_order_Dir;
+		} else {
+			$orderby .= array('l.venue ASC','l.ordering ASC');
+		}
+		$query->order($orderby);
+
+		return $query;
 	}
 
-	/**
-	 * Method to build the query for the contacts
-	 *
-	 * @access private
-	 * @return string
-	 */
-	function getContact()
-	{
-		$app = JFactory::getApplication();
-		$jemsettings = JemHelper::config();
+    /**
+     * venues-Pagination
+     **/
+	function getVenuesPagination() {
 
-		// Get the WHERE and ORDER BY clauses for the query
-		$where = $this->_buildContactWhere();
-		$orderby = $this->_buildContactOrderBy();
+		$jemsettings 		= JemHelper::config();
+		$app 				= JFactory::getApplication();
+		$limit 				= $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart 		= JRequest::getInt('limitstart');
 
-		$limit = $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart = JRequest::getInt('limitstart');
+		$query = $this->buildQueryVenues();
+		$total = $this->_getListCount($query);
 
-		$query = 'SELECT con.*'
-				. ' FROM #__contact_details AS con'
-				. $where
-				. $orderby;
-		$this->_db->setQuery($query, $limitstart, $limit);
-		$contacts = $this->_db->loadObjectList();
+		// Create the pagination object
+		jimport('joomla.html.pagination');
+		$pagination = new JPagination($total, $limitstart, $limit);
 
-		return $contacts;
+		return $pagination;
 	}
 
+
+	##############
+	## CONTACTS ##
+	##############
+
 	/**
-	 * Method to build the orderby clause of the query for the contacts
-	 *
-	 * @access private
-	 * @return string
+	 * Get contacts-data
 	 */
-	protected function _buildContactOrderBy()
+	function getContacts()
 	{
-		$app = JFactory::getApplication();
+		$query 		= $this->buildQueryContacts();
+		$pagination = $this->getContactsPagination();
 
-		$filter_order = $app->getUserStateFromRequest('com_jem.contactelement.filter_order', 'filter_order', 'con.ordering', 'cmd');
-		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.contactelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		$rows 		= $this->_getList($query, $pagination->limitstart, $pagination->limit);
 
-		$filter_order = JFilterInput::getinstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+		return $rows;
+	}
+
+
+	/**
+	 * contacts-Pagination
+	 **/
+	function getContactsPagination() {
+
+		$jemsettings 		= JemHelper::config();
+		$app 				= JFactory::getApplication();
+		$limit 				= $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart 		= JRequest::getInt('limitstart');
+
+		$query = $this->buildQueryContacts();
+		$total = $this->_getListCount($query);
+
+		// Create the pagination object
+		jimport('joomla.html.pagination');
+		$pagination = new JPagination($total, $limitstart, $limit);
+
+		return $pagination;
+	}
+
+
+	/**
+	 * contacts-query
+	 */
+	function buildQueryContacts()
+	{
+		$app		  		= JFactory::getApplication();
+		$jemsettings  		= JemHelper::config();
+
+		$filter_order 		= $app->getUserStateFromRequest('com_jem.selectcontact.filter_order', 'filter_order', 'con.ordering', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.selectcontact.filter_order_Dir', 'filter_order_Dir', '', 'word');
+
+		$filter_order 		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+
+		$filter_type   		= $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', '', 'int');
+		$search       		= $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
+		$search       		= $this->_db->escape(trim(JString::strtolower($search)));
+
+		// Query
+		$db 	= JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select(array('con.*'));
+		$query->from('#__contact_details As con');
+		
+		// where
+		$where = array();
+		$where[] = 'con.published = 1';
+
+		/* something to search for? (we like to search for "0" too) */
+		if ($search || ($search === "0")) {
+			switch ($filter_type) {
+				case 1: /* Search name */
+					$where[] = ' LOWER(con.name) LIKE \'%' . $search . '%\' ';
+					break;
+				case 2: /* Search address (not supported yet, privacy) */
+					//$where[] = ' LOWER(con.address) LIKE \'%' . $search . '%\' ';
+					break;
+				case 3: // Search city
+					$where[] = ' LOWER(con.suburb) LIKE \'%' . $search . '%\' ';
+					break;
+				case 4: // Search state
+					$where[] = ' LOWER(con.state) LIKE \'%' . $search . '%\' ';
+					break;
+			}
+		}
+		$query->where($where);
+
+		// ordering
+		$orderby = '';
 
 		// ensure it's a valid order direction (asc, desc or empty)
 		if (!empty($filter_order_Dir) && strtoupper($filter_order_Dir) !== 'DESC') {
@@ -347,104 +376,15 @@ class JEMModelEditevent extends JEMModelEvent
 		}
 
 		if ($filter_order != '') {
-			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
+			$orderby = $filter_order . ' ' . $filter_order_Dir;
 			if ($filter_order != 'con.name') {
-				$orderby .= ', con.name '; // in case of city or state we should have a useful second ordering
+				$orderby = array($orderby, 'con.name'); // in case of city or state we should have a useful second ordering
 			}
 		} else {
-			$orderby = ' ORDER BY con.name ';
+			$orderby = 'con.name';
 		}
-
-		return $orderby;
-	}
-
-	/**
-	 * Method to build the where clause of the query for the contacts
-	 *
-	 * @access private
-	 * @return string
-	 */
-	protected function _buildContactWhere()
-	{
-		$app = JFactory::getApplication();
-
-		$filter       = $app->getUserStateFromRequest('com_jem.selectcontact.filter', 'filter', '', 'int');
-		$filter_state = $app->getUserStateFromRequest('com_jem.selectcontact.filter_state', 'filter_state', '', 'word');
-		$search       = $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
-		$search       = $this->_db->escape(trim(JString::strtolower($search)));
-
-		$where = array();
-
-		/*
-		 * Filter state
-		 */
-		if ($filter_state) {
-			if ($filter_state == 'P') {
-				$where[] = 'con.published = 1';
-			}
-			elseif ($filter_state == 'U') {
-				$where[] = 'con.published = 0';
-			}
-		}
-
-		/* something to search for? (we like to search for "0" too) */
-		if ($search || ($search === "0")) {
-			switch ($filter) {
-			case 1: /* Search name */
-				$where[] = ' LOWER(con.name) LIKE \'%' . $search . '%\' ';
-				break;
-			case 2: /* Search address (not supported yet, privacy) */
-				//$where[] = ' LOWER(con.address) LIKE \'%' . $search . '%\' ';
-				break;
-			case 3: // Search city
-				$where[] = ' LOWER(con.suburb) LIKE \'%' . $search . '%\' ';
-				break;
-			case 4: // Search state
-				$where[] = ' LOWER(con.state) LIKE \'%' . $search . '%\' ';
-				break;
-			}
-		}
-
-		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
-
-		return $where;
-	}
-
-	/**
-	 * Method to get the total number
-	 *
-	 * @access public
-	 * @return integer
-	 */
-	function getCountitems()
-	{
-		// Initialize variables
-		$where = $this->_buildVenuesWhere();
-
-		$query = 'SELECT count(*)'
-				. ' FROM #__jem_venues AS l'
-				. $where;
-		$this->_db->SetQuery($query);
-
-		return $this->_db->loadResult();
-	}
-
-	/**
-	 * Method to get the total number of contacts
-	 *
-	 * @access public
-	 * @return integer
-	 */
-	function getCountContactitems()
-	{
-		// Initialize variables
-		$where = $this->_buildContactWhere();
-
-		$query = 'SELECT count(*)'
-				. ' FROM #__contact_details AS con'
-				. $where;
-		$this->_db->SetQuery($query);
-
-		return $this->_db->loadResult();
+		$query->order($orderby);
+		
+		return $query;
 	}
 }
