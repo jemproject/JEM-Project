@@ -142,15 +142,16 @@ window.addEvent('domready', function() {
 					</a><br />
 					<?php echo JText::_('COM_JEM_EMAIL').': '; ?><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a><br />
 					<?php
-					$delivertime 	= JHtml::_('date',$row->created,JText::_('DATE_FORMAT_LC2'));
-					$edittime 		= JHtml::_('date',$row->modified,JText::_('DATE_FORMAT_LC2'));
+					$created 	= JHtml::_('date',$row->created,JText::_('DATE_FORMAT_LC2'));
+					$modified 		= JHtml::_('date',$row->modified,JText::_('DATE_FORMAT_LC2'));
 					$ip				= $row->author_ip == 'COM_JEM_DISABLED' ? JText::_('COM_JEM_DISABLED') : $row->author_ip;
 					$image 			= JHtml::_('image','com_jem/icon-16-info.png', NULL,NULL,true);
-					$overlib 		= JText::_('COM_JEM_CREATED_AT').': '.$delivertime.'<br />';
+					
+					$overlib 		= JText::_('COM_JEM_CREATED_AT').': '.$created.'<br />';
 					$overlib		.= JText::_('COM_JEM_WITH_IP').': '.$ip.'<br />';
 					if ($row->modified != '0000-00-00 00:00:00') {
-						$overlib 	.= JText::_('COM_JEM_EDITED_AT').': '.$edittime.'<br />';
-						$overlib 	.= JText::_('COM_JEM_EDITED_FROM').': '.$row->editor.'<br />';
+						$overlib 	.= JText::_('COM_JEM_EDITED_AT').': '.$modified.'<br />';
+						$overlib 	.= JText::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$row->modified_by.'<br />';
 					}
 					?>
 					<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_VENUES_STATS'); ?>::<?php echo $overlib; ?>">
