@@ -222,11 +222,12 @@ window.addEvent('domready', function(){
 					<?php
 					$created	 	= JHtml::_('date',$row->created,JText::_('DATE_FORMAT_LC2'));
 					$modified 		= JHtml::_('date',$row->modified,JText::_('DATE_FORMAT_LC2') );
-					$ip				= $row->author_ip == 'COM_JEM_DISABLED' ? JText::_('COM_JEM_DISABLED') : $row->author_ip;
 					$image 			= JHtml::_('image','com_jem/icon-16-info.png',NULL,NULL,true );
 					
 					$overlib 		= JText::_('COM_JEM_CREATED_AT').': '.$created.'<br />';
-					$overlib		.= JText::_('COM_JEM_WITH_IP').': '.$ip.'<br />';
+					if ($row->author_ip != '::1' && $row->author_ip != '127.0.0.1' && $row->author_ip != '') {
+						$overlib		.= JText::_('COM_JEM_WITH_IP').': '.$row->author_ip.'<br />';
+					}
 					if ($row->modified != '0000-00-00 00:00:00') {
 						$overlib 	.= JText::_('COM_JEM_EDITED_AT').': '.$modified.'<br />';
 						$overlib 	.= JText::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$row->modified_by.'<br />';
