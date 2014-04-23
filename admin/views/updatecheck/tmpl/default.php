@@ -89,15 +89,6 @@ if ($this->updatedata->failed == 0) {
 		  		</td>
 			</tr>
 		</table>
-
-		<br />
-		<table style="width:200px;" class="adminlist">
-			<tr>
-		  		<td><b><?php echo JText::_('COM_JEM_UPDATECHECK_INSTALLED_VERSION').':'; ?></b></td>
-		  		<td><?php echo $this->updatedata->installedversion; ?>
-		  		</td>
-			</tr>
-			</table>
 <?php
 } else {
 ?>
@@ -118,6 +109,15 @@ if ($this->updatedata->failed == 0) {
 <?php
 }
 ?>
+<br />
+		<table style="width:200px;" class="adminlist">
+			<tr>
+		  		<td><b><?php echo JText::_('COM_JEM_UPDATECHECK_INSTALLED_VERSION').':'; ?></b></td>
+		  		<td><?php echo $this->updatedata->installedversion; ?>
+		  		</td>
+			</tr>
+			</table>
+
 <input type="hidden" name="task" value="" />
 <?php echo JHtml::_('form.token'); ?>
 </form>
