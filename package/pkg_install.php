@@ -43,7 +43,6 @@ class Pkg_JemInstallerScript {
 	protected $extensions = array ('gd', 'json', 'pcre'
 			, 'iconv' /* import */
 			, 'ctype', 'SimpleXML' /* iCalCreator */
-			, 'sockets', 'curl' /* Snoopy */
 		);
 
 	public function install($parent) {
