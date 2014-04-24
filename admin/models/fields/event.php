@@ -15,10 +15,10 @@ jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
 
 /**
- * Renders an venue element
+ * Renders an event element
  *
  * @package JEM
- * 
+ *
  */
 class JFormFieldEvent extends JFormFieldList
 {
@@ -28,7 +28,7 @@ class JFormFieldEvent extends JFormFieldList
 	 * Method to get the field input markup.
 	 *
 	 * @return	string	The field input markup.
-	 * 
+	 *
 	 */
 	protected function getInput()
 	{
@@ -79,7 +79,7 @@ class JFormFieldEvent extends JFormFieldList
 		$html[] = '  </div>';
 		$html[] = '</div>';
 
-		// The active article id field.
+		// The active event-id field.
 		if (0 == (int)$this->value) {
 			$value = '';
 		} else {

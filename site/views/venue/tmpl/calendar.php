@@ -265,5 +265,10 @@ defined('_JEXEC') or die;
 			?>
 		</div>
 	</div>
+
+	<div class="clr"></div>
+
+	<div class="copyright">
+		<?php echo JemOutput::footer(); ?>
+	</div>
 </div>
-<div class="clr"></div>

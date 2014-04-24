@@ -273,4 +273,8 @@ $options = array(
 			<?php echo JHtml::_('form.token'); ?>
 		</form>
 	</div>
+
+	<div class="copyright">
+		<?php echo JemOutput::footer(); ?>
+	</div>
 </div>

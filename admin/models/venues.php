@@ -6,7 +6,6 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modellist');
@@ -269,30 +268,6 @@ class JEMModelVenues extends JModelList
 			return false;
 			}
 		}
-	}
-
-	/**
-	 * Method to move a venue
-	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 *
-	 */
-	function move($direction)
-	{
-		$row = JTable::getInstance('jem_venues', '');
-
-		if (!$row->load($this->_id)) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
-		}
-
-		if (!$row->move($direction)) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
-		}
-
-		return true;
 	}
 
 	/**

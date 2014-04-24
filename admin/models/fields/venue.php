@@ -18,7 +18,7 @@ JFormHelper::loadFieldClass('list');
  * Renders an venue element
  *
  * @package JEM
- * 
+ *
  */
 class JFormFieldVenue extends JFormFieldList
 {
@@ -28,7 +28,7 @@ class JFormFieldVenue extends JFormFieldList
 	 * Method to get the field input markup.
 	 *
 	 * @return	string	The field input markup.
-	 * 
+	 *
 	 */
 	protected function getInput()
 	{
@@ -72,14 +72,14 @@ class JFormFieldVenue extends JFormFieldList
 		$html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$title.'" disabled="disabled" size="35" />';
 		$html[] = '</div>';
 
-		// 
+		//
 		$html[] = '<div class="button2-left">';
 		$html[] = '  <div class="blank">';
 		$html[] = '	<a class="modal" title="'.JText::_('COM_JEM_SELECT_VENUE').'"  href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}">'.JText::_('COM_JEM_SELECT_VENUE').'</a>';
 		$html[] = '  </div>';
 		$html[] = '</div>';
 
-		// The active article id field.
+		// The active venue-id field.
 		if (0 == (int)$this->value) {
 			$value = '';
 		} else {

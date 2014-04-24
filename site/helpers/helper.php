@@ -403,24 +403,24 @@ class JemHelper {
 		return $result;
 	}
 
-	
+
 	/**
 	 * Build the select list for access level
 	 */
 	static function getAccesslevelOptions()
 	{
 		$db = JFactory::getDBO();
-	
+
 		$query = 'SELECT id AS value, title AS text'
 				. ' FROM #__viewlevels'
 				. ' ORDER BY id'
 				;
 		$db->setQuery($query);
 		$groups = $db->loadObjectList();
-	
+
 		return $groups;
 	}
-	
+
 
 	static function buildtimeselect($max, $name, $selected, $class = 'class="inputbox"')
 	{
@@ -762,9 +762,18 @@ class JemHelper {
 		if (isset($event->street) && !empty($event->street)) {
 			$location[] = $event->street;
 		}
-		if (isset($event->city) && !empty($event->city)) {
-			$location[] = $event->city;
+
+		if (isset($event->postalCode) && !empty($event->postalCode) && isset($event->city) && !empty($event->city)) {
+			$location[] = $event->postalCode.' '.$event->city;
+		} else {
+			if (isset($event->postalCode) && !empty($event->postalCode)) {
+				$location[] = $event->postalCode;
+			}
+			if (isset($event->city) && !empty($event->city)) {
+				$location[] = $event->city;
+			}
 		}
+
 		if (isset($event->countryname) && !empty($event->countryname)) {
 			$exp = explode(",",$event->countryname);
 			$location[] = $exp[0];
@@ -842,6 +851,41 @@ class JemHelper {
 			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'">'.$text.'</span>';
 		}
 		return $tip;
+	}
+
+	/**
+	 * Function to retrieve IP
+	 * @author: https://gist.github.com/cballou/2201933
+	 */
+	static function retrieveIP() {
+		$ip_keys = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR');
+		foreach ($ip_keys as $key) {
+			if (array_key_exists($key, $_SERVER) === true) {
+				foreach (explode(',', $_SERVER[$key]) as $ip) {
+					// trim for safety measures
+					$ip = trim($ip);
+					// attempt to validate IP
+					if (self::validate_ip($ip)) {
+						return $ip;
+					}
+				}
+			}
+		}
+		return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : false;
+	}
+
+	/**
+	 * Ensures an ip address is both a valid IP and does not fall within
+	 * a private network range.
+	 *
+	 * @author: https://gist.github.com/cballou/2201933
+	 */
+	static function validate_ip($ip)
+	{
+		if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+			return false;
+		}
+		return true;
 	}
 }
 ?>

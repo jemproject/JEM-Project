@@ -28,7 +28,7 @@ class JEMViewUpdatecheck extends JViewLegacy {
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		// Load script
-		JHtml::_('behavior.mootools');
+		JHtml::_('behavior.framework');
 
 		//assign data to template
 		$this->updatedata	= $updatedata;

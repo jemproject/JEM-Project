@@ -30,7 +30,7 @@ class JemViewHousekeeping extends JViewLegacy {
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		// Load Script
-		JHtml::_('behavior.mootools');
+		JHtml::_('behavior.framework');
 
 		// add toolbar
 		$this->addToolbar();

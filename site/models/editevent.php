@@ -183,13 +183,12 @@ class JEMModelEditevent extends JEMModelEvent
 	function getVenues()
 	{
 		$app = JFactory::getApplication();
-
-		$params = $app->getParams();
+		$jemsettings = JemHelper::config();
 
 		$where = $this->_buildVenuesWhere();
 		$orderby = $this->_buildVenuesOrderBy();
 
-		$limit = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $params->def('display_num', 0), 'int');
+		$limit = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart = JRequest::getInt('limitstart');
 
 		$query = 'SELECT l.id, l.venue, l.state, l.city, l.country, l.published' . ' FROM #__jem_venues AS l' . $where . $orderby;
@@ -231,8 +230,17 @@ class JEMModelEditevent extends JEMModelEvent
 	 */
 	protected function _buildVenuesOrderBy()
 	{
-		$filter_order = JRequest::getCmd('filter_order');
-		$filter_order_Dir = JRequest::getCmd('filter_order_Dir');
+		$app = JFactory::getApplication();
+
+		$filter_order = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+
+		$filter_order = JFilterInput::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+
+		if (strtoupper($filter_order_Dir) !== 'DESC') {
+			$filter_order_Dir = 'ASC';
+		}
 
 		$orderby = ' ORDER BY ';
 
@@ -240,7 +248,7 @@ class JEMModelEditevent extends JEMModelEvent
 			$orderby .= $filter_order . ' ' . $filter_order_Dir . ', ';
 		}
 
-		$orderby .= 'l.ordering';
+		$orderby .= 'l.ordering, l.venue'; // l.ordering seems to be always zero, so use venue as fallback
 
 		return $orderby;
 	}
@@ -253,25 +261,29 @@ class JEMModelEditevent extends JEMModelEvent
 	 */
 	protected function _buildVenuesWhere()
 	{
-		$jemsettings = JEMHelper::config();
-		$filter_type = JRequest::getInt('filter_type');
-		$filter = JRequest::getString('filter_search');
-		$filter = $this->_db->escape(trim(JString::strtolower($filter)));
+		$app = JFactory::getApplication();
+		$jemsettings = JemHelper::config();
+
+		$filter_type = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', '', 'int');
+		$search      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
+		$search      = $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();
 
 		$where[] = 'l.published = 1';
 
-		if ($filter && $filter_type == 1) {
-			$where[] = 'LOWER(l.venue) LIKE "%' . $filter . '%"';
-		}
-
-		if ($filter && $filter_type == 2) {
-			$where[] = 'LOWER(l.city) LIKE "%' . $filter . '%"';
-		}
-
-		if ($filter && $filter_type == 3) {
-			$where[] = 'LOWER(l.state) LIKE "%' . $filter . '%"';
+		/* something to search for? (we like to search for "0" too) */
+		if ($search || ($search === "0")) {
+			switch ($filter_type) {
+			case 1: /* Search venues */
+				$where[] = 'LOWER(l.venue) LIKE "%' . $search . '%"';
+				break;
+			case 2: // Search city
+				$where[] = 'LOWER(l.city) LIKE "%' . $search . '%"';
+				break;
+			case 3: // Search state
+				$where[] = 'LOWER(l.state) LIKE "%' . $search . '%"';
+			}
 		}
 
 		if ($jemsettings->ownedvenuesonly) {
@@ -293,15 +305,21 @@ class JEMModelEditevent extends JEMModelEvent
 	 */
 	function getContact()
 	{
+		$app = JFactory::getApplication();
+		$jemsettings = JemHelper::config();
+
 		// Get the WHERE and ORDER BY clauses for the query
 		$where = $this->_buildContactWhere();
 		$orderby = $this->_buildContactOrderBy();
+
+		$limit = $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart = JRequest::getInt('limitstart');
 
 		$query = 'SELECT con.*'
 				. ' FROM #__contact_details AS con'
 				. $where
 				. $orderby;
-		$this->_db->setQuery($query);
+		$this->_db->setQuery($query, $limitstart, $limit);
 		$contacts = $this->_db->loadObjectList();
 
 		return $contacts;
@@ -323,10 +341,17 @@ class JEMModelEditevent extends JEMModelEvent
 		$filter_order = JFilterInput::getinstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
+		// ensure it's a valid order direction (asc, desc or empty)
+		if (!empty($filter_order_Dir) && strtoupper($filter_order_Dir) !== 'DESC') {
+			$filter_order_Dir = 'ASC';
+		}
+
 		if ($filter_order != '') {
 			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
-		}
-		else {
+			if ($filter_order != 'con.name') {
+				$orderby .= ', con.name '; // in case of city or state we should have a useful second ordering
+			}
+		} else {
 			$orderby = ' ORDER BY con.name ';
 		}
 
@@ -343,10 +368,10 @@ class JEMModelEditevent extends JEMModelEvent
 	{
 		$app = JFactory::getApplication();
 
-		$filter = $app->getUserStateFromRequest('com_jem.contactelement.filter', 'filter', '', 'int');
-		$filter_state = $app->getUserStateFromRequest('com_jem.contactelement.filter_state', 'filter_state', '', 'word');
-		$search = $app->getUserStateFromRequest('com_jem.contactelement.filter_search', 'filter_search', '', 'string');
-		$search = $this->_db->escape(trim(JString::strtolower($search)));
+		$filter       = $app->getUserStateFromRequest('com_jem.selectcontact.filter', 'filter', '', 'int');
+		$filter_state = $app->getUserStateFromRequest('com_jem.selectcontact.filter_state', 'filter_state', '', 'word');
+		$search       = $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
+		$search       = $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();
 
@@ -357,38 +382,27 @@ class JEMModelEditevent extends JEMModelEvent
 			if ($filter_state == 'P') {
 				$where[] = 'con.published = 1';
 			}
-			else
-				if ($filter_state == 'U') {
-					$where[] = 'con.published = 0';
-				}
+			elseif ($filter_state == 'U') {
+				$where[] = 'con.published = 0';
+			}
 		}
 
-		/*
-		 * Search venues
-		 */
-		if ($search && $filter == 1) {
-			$where[] = ' LOWER(con.name) LIKE \'%' . $search . '%\' ';
-		}
-
-		/*
-		 * Search address
-		 */
-		if ($search && $filter == 2) {
-			$where[] = ' LOWER(con.address) LIKE \'%' . $search . '%\' ';
-		}
-
-		/*
-		 * Search city
-		 */
-		if ($search && $filter == 3) {
-			$where[] = ' LOWER(con.suburb) LIKE \'%' . $search . '%\' ';
-		}
-
-		/*
-		 * Search state
-		 */
-		if ($search && $filter == 4) {
-			$where[] = ' LOWER(con.state) LIKE \'%' . $search . '%\' ';
+		/* something to search for? (we like to search for "0" too) */
+		if ($search || ($search === "0")) {
+			switch ($filter) {
+			case 1: /* Search name */
+				$where[] = ' LOWER(con.name) LIKE \'%' . $search . '%\' ';
+				break;
+			case 2: /* Search address (not supported yet, privacy) */
+				//$where[] = ' LOWER(con.address) LIKE \'%' . $search . '%\' ';
+				break;
+			case 3: // Search city
+				$where[] = ' LOWER(con.suburb) LIKE \'%' . $search . '%\' ';
+				break;
+			case 4: // Search state
+				$where[] = ' LOWER(con.state) LIKE \'%' . $search . '%\' ';
+				break;
+			}
 		}
 
 		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');

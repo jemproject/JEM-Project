@@ -63,6 +63,7 @@ class JEMModelUpdatecheck extends JModelLegacy
 		if ($snoopy->status != 200 || $snoopy->error) {
 			$_updatedata = new stdClass();
 			$_updatedata->failed = 1;
+			$_updatedata->installedversion = $installedversion;
 		} else {
 			$data = explode('|', $snoopy->results);
 

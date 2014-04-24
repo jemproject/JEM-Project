@@ -13,7 +13,7 @@ $userId		= $user->get('id');
 $listOrder	= $this->escape($this->state->get('list.ordering'));
 $listDirn	= $this->escape($this->state->get('list.direction'));
 $canOrder	= $user->authorise('core.edit.state', 'com_jem.category');
-$saveOrder	= $listOrder=='ordering';
+$saveOrder	= $listOrder=='a.ordering';
 
 $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 $settings	= $this->settings;
@@ -64,9 +64,14 @@ window.addEvent('domready', function() {
 			<th><?php echo JHtml::_('grid.sort', 'COM_JEM_STATE', 'a.state', $listDirn, $listOrder ); ?></th>
 			<th width="1%"><?php echo JHtml::_('grid.sort', 'COM_JEM_COUNTRY', 'a.country', $listDirn, $listOrder ); ?></th>
 			<th width="1%" class="center" nowrap="nowrap"><?php echo JText::_('JSTATUS'); ?></th>
-			<th><?php echo JText::_( 'COM_JEM_CREATION' ); ?></th>
+			<th><?php echo JText::_('COM_JEM_CREATION'); ?></th>
 			<th width="1%" class="center" nowrap="nowrap"><?php echo JHtml::_('grid.sort', 'COM_JEM_EVENTS', 'assignedevents', $listDirn, $listOrder ); ?></th>
-			<th width="8%" colspan="2"><?php echo JHtml::_('grid.sort', 'COM_JEM_REORDER', 'a.ordering', $listDirn, $listOrder ); ?></th>
+			<th width="10%">
+				<?php echo JHtml::_('grid.sort', 'JGRID_HEADING_ORDERING', 'a.ordering', $listDirn, $listOrder ); ?>
+				<?php if ($saveOrder) :?>
+					<?php echo JHtml::_('grid.order',  $this->items, 'filesave.png', 'venues.saveorder'); ?>
+				<?php endif; ?>
+			</th>
 			<th width="1%" class="center" nowrap="nowrap"><?php echo JHtml::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?></th>
 		</tr>
 	</thead>
@@ -82,7 +87,7 @@ window.addEvent('domready', function() {
 	<tbody id="seach_in_here">
 		<?php foreach ($this->items as $i => $row) : ?>
 			<?php
-			$ordering	= ($listOrder == 'ordering');
+			$ordering	= ($listOrder == 'a.ordering');
 			$canCreate	= $user->authorise('core.create');
 			$canEdit	= $user->authorise('core.edit');
 			$canCheckin	= $user->authorise('core.manage',		'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
@@ -148,19 +153,29 @@ window.addEvent('domready', function() {
 						$overlib 	.= JText::_('COM_JEM_EDITED_FROM').': '.$row->editor.'<br />';
 					}
 					?>
-					<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_VENUE_STATS'); ?>::<?php echo $overlib; ?>">
+					<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_VENUES_STATS'); ?>::<?php echo $overlib; ?>">
 						<?php echo $image; ?>
 					</span>
 				</td>
 				<td class="center"><?php echo $row->assignedevents; ?></td>
-				<td align="right">
-					<?php
-						/* @todo fix ordering  */
-						echo $this->pagination->orderUpIcon( $i, true, 'orderup', 'JLIB_HTML_MOVE_UP', $ordering );
-					?>
-				</td>
-				<td align="left">
-					<?php echo $this->pagination->orderDownIcon( $i,$this->pagination->total, true, 'orderdown', 'JLIB_HTML_MOVE_DOWN', $ordering ); ?>
+				<td class="order">
+					<?php if ($canChange) : ?>
+						<?php if ($saveOrder) :?>
+							<?php if ($listDirn == 'asc') : ?>
+					<span><?php echo $this->pagination->orderUpIcon( $i, true, 'venues.orderup', 'JLIB_HTML_MOVE_UP', $ordering ); ?></span>
+					<span><?php echo $this->pagination->orderDownIcon( $i,$this->pagination->total, true, 'venues.orderdown', 'JLIB_HTML_MOVE_DOWN', $ordering ); ?></span>
+					<?php elseif ($listDirn == 'desc') : ?>
+					<span><?php echo $this->pagination->orderUpIcon( $i, true, 'venues.orderdown', 'JLIB_HTML_MOVE_UP', $ordering ); ?></span>
+					<span><?php echo $this->pagination->orderDownIcon( $i,$this->pagination->total, true, 'venues.orderup', 'JLIB_HTML_MOVE_DOWN', $ordering ); ?></span>
+						<?php endif; ?>
+						<?php endif; ?>
+
+					<?php $disabled = $saveOrder ?  '' : 'disabled="disabled"'; ?>
+					<input type="text" name="order[]" size="5" value="<?php echo $row->ordering;?>" <?php echo $disabled ?> class="text-area-order" />
+				<?php else : ?>
+						<?php echo $item->ordering; ?>
+					<?php endif; ?>
+
 				</td>
 				<td class="center"><?php echo $row->id; ?></td>
 			</tr>

@@ -226,20 +226,23 @@ class JemViewEditevent extends JViewLegacy
 	 */
 	protected function _displaychoosevenue($tpl)
 	{
-		$app			= JFactory::getApplication();
-		$jemsettings = JemHelper::config();
-		$document    = JFactory::getDocument();
+		$app         = JFactory::getApplication();
 		$jinput      = JFactory::getApplication()->input;
-		$limitstart  = $jinput->get('limitstart', '0', 'int');
-		$limit       = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
+		$jemsettings = JemHelper::config();
+		$db          = JFactory::getDBO();
+		$document    = JFactory::getDocument();
 
-		$filter_order 		= $jinput->get('filter_order', 'l.venue', 'cmd');
-		$filter_order_Dir	= $jinput->get('filter_order_Dir', 'ASC', 'word');
-		$filter				= $jinput->get('filter_search', '', 'string');
-		$filter_type		= $jinput->get('filter_type', '', 'int');
+		$filter_order     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+		$filter_type      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', '', 'int');
+		$filter_state     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_state', 'filter_state', '*', 'word');
+		$search           = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
+		$search           = $db->escape(trim(JString::strtolower($search)));
+		$limitstart       = $jinput->get('limitstart', '0', 'int');
+		$limit            = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
 
 		// Get/Create the model
-		$rows = $this->get('Venues');
+		$rows  = $this->get('Venues');
 		$total = $this->get('Countitems');
 
 		JHtml::_('behavior.modal', 'a.flyermodal');
@@ -248,9 +251,12 @@ class JemViewEditevent extends JViewLegacy
 		jimport('joomla.html.pagination');
 		$pagination = new JPagination($total, $limitstart, $limit);
 
+		//publish unpublished filter
+		$lists['state'] = JHtml::_('grid.state', $filter_state);
+
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
-		$lists['order']		= $filter_order;
+		$lists['order']     = $filter_order;
 
 		$document->setTitle(JText::_('COM_JEM_SELECT_VENUE'));
 		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
@@ -261,11 +267,11 @@ class JemViewEditevent extends JViewLegacy
 		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_STATE'));
 		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
 
-		$this->rows = $rows;
+		$this->rows         = $rows;
 		$this->searchfilter = $searchfilter;
-		$this->pagination = $pagination;
-		$this->lists = $lists;
-		$this->filter = $filter;
+		$this->pagination   = $pagination;
+		$this->lists        = $lists;
+		$this->filter       = $search;
 
 		parent::display($tpl);
 	}
@@ -282,14 +288,14 @@ class JemViewEditevent extends JViewLegacy
 		$db          = JFactory::getDBO();
 		$document    = JFactory::getDocument();
 
-		$filter_order		= $app->getUserStateFromRequest('com_jem.contactelement.filter_order', 'filter_order', 'con.name', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.contactelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
-		$filter 			= $app->getUserStateFromRequest('com_jem.contactelement.filter', 'filter', '', 'int');
-		$filter_state 		= $app->getUserStateFromRequest('com_jem.contactelement.filter_state', 'filter_state', '*', 'word');
-		$search 			= $app->getUserStateFromRequest('com_jem.contactelement.filter_search', 'filter_search', '', 'string');
-		$search 			= $db->escape(trim(JString::strtolower($search)));
-		$limitstart 		= $jinput->get('limitstart', '0', 'int');
-		$limit				= $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
+		$filter_order     = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order', 'filter_order', 'con.name', 'cmd');
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		$filter           = $app->getUserStateFromRequest('com_jem.selectcontact.filter', 'filter', '', 'int');
+		$filter_state     = $app->getUserStateFromRequest('com_jem.selectcontact.filter_state', 'filter_state', '*', 'word');
+		$search           = $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
+		$search           = $db->escape(trim(JString::strtolower($search)));
+		$limitstart       = $jinput->get('limitstart', '0', 'int');
+		$limit            = $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
 
 		JHtml::_('behavior.tooltip');
 		JHtml::_('behavior.modal', 'a.flyermodal');
@@ -300,8 +306,8 @@ class JemViewEditevent extends JViewLegacy
 		$document->setTitle(JText::_('COM_JEM_SELECT_CONTACT'));
 
 		// Get/Create the model
-		$rows	= $this->get('Contact');
-		$total	= $this->get('CountContactitems');
+		$rows  = $this->get('Contact');
+		$total = $this->get('CountContactitems');
 
 		// Create the pagination object
 		jimport('joomla.html.pagination');
@@ -312,12 +318,12 @@ class JemViewEditevent extends JViewLegacy
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
-		$lists['order']		= $filter_order;
+		$lists['order']     = $filter_order;
 
 		//Build search filter
 		$filters = array();
 		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME'));
-		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_ADDRESS'));
+	/*	$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_ADDRESS')); */ // data security
 		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_CITY'));
 		$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_STATE'));
 		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
@@ -327,9 +333,9 @@ class JemViewEditevent extends JViewLegacy
 
 		//assign data to template
 		$this->searchfilter = $searchfilter;
-		$this->lists		= $lists;
-		$this->rows			= $rows;
-		$this->pagination	= $pagination;
+		$this->lists        = $lists;
+		$this->rows         = $rows;
+		$this->pagination   = $pagination;
 
 		parent::display($tpl);
 	}
