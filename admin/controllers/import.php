@@ -216,18 +216,20 @@ class JEMControllerImport extends JControllerLegacy {
 		$prefix = $jinput->get('prefix', '#__', 'CMD');
 		$copyImages = $jinput->get('copyImages', 0, 'INT');
 
+		$link = 'index.php?option=com_jem&view=import';
 		$msg = JText::_('COM_JEM_IMPORT_EL_IMPORT_WORK_IN_PROGRESS')." ";
 
 		if($jinput->get('startToken', 0, 'INT')) {
 			// Are the JEM tables empty at start? If no, stop import
 			if($model->getExistingJemData()) {
-				$this->setRedirect('index.php?option=com_jem&view=import');
+				$this->setRedirect($link);
 				return;
 			}
 		}
 
 		if($step <= 1) {
 			parent::display();
+			return;
 		} elseif($step == 2) {
 			// Get number of rows if it is still 0 or we have moved to the next table
 			if($total == 0 || $current == 0) {
@@ -262,11 +264,11 @@ class JEMControllerImport extends JControllerLegacy {
 					$prefix = "";
 				}
 
-				$link = 'index.php?option=com_jem&view=import&step='.$step
-						.'&table='.$table.'&prefix='.$prefix.'&current='.$current.'&total='.$total.'&copyImages='.$copyImages;
+				$link .= '&step='.$step.'&copyImages='.$copyImages
+						.'&table='.$table.'&prefix='.$prefix.'&current='.$current.'&total='.$total;
 			} else {
 				$step++;
-				$link = 'index.php?option=com_jem&view=import&step='.$step.'&copyImages='.$copyImages;
+				$link .= '&step='.$step.'&copyImages='.$copyImages;
 			}
 			$msg .= JText::sprintf('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_DB', $tables->jemtables[$table-1], $current, $total);
 		} elseif($step == 3) {
@@ -276,7 +278,7 @@ class JEMControllerImport extends JControllerLegacy {
 			$categoryTable->rebuild();
 			$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_REBUILD');
 			$step++;
-			$link = 'index.php?option=com_jem&view=import&step='.$step.'&copyImages='.$copyImages;
+			$link .= '&step='.$step.'&copyImages='.$copyImages;
 		} elseif($step == 4) {
 			// Copy EL images to JEM image destination?
 			if($copyImages) {
@@ -286,9 +288,8 @@ class JEMControllerImport extends JControllerLegacy {
 				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_IMAGES_SKIPPED');
 			}
 			$step++;
-			$link = 'index.php?option=com_jem&view=import&step='.$step;
+			$link .= '&step='.$step;
 		} else {
-			$link = 'index.php?option=com_jem&view=import';
 			$msg = JText::_('COM_JEM_IMPORT_EL_IMPORT_FINISHED');
 		}
 
