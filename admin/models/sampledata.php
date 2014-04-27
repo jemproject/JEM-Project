@@ -237,8 +237,8 @@ class JemModelSampledata extends JModelLegacy
 		$query->select("id");
 		$query->from('#__jem_categories');
 		$query->where('alias NOT LIKE "root"');
-		$this->_db->setQuery($query);
-		$result = $this->_db->loadResult();
+		$db->setQuery($query);
+		$result = $db->loadResult();
 
 		if ($result == null) {
 			return false;
@@ -260,8 +260,8 @@ class JemModelSampledata extends JModelLegacy
 		$query->select("id");
 		$query->from('#__users');
 		$query->where('name LIKE "Super User"');
-		$this->_db->setQuery($query);
-		$result = $this->_db->loadResult();
+		$db->setQuery($query);
+		$result = $db->loadResult();
 
 		if ($result == null) {
 			return false;
