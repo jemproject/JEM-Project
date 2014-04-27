@@ -268,21 +268,19 @@ class JemModelSampledata extends JModelLegacy
 		}
 
 		$query = $db->getQuery(true);
-		$db->setQuery(
-				'UPDATE #__jem_events' .
-				' SET created_by = '.(int) $result.
-				' WHERE created_by = 62'
-			);
+		$query->update('#__jem_events');
+		$query->set('created_by = '.$db->quote((int)$result));
+		$query->where(array('created_by = 62'));
+		$db->setQuery($query);
 		$db->query();
-
+		
 		$query = $db->getQuery(true);
-		$db->setQuery(
-				'UPDATE #__jem_venues' .
-				' SET created_by = '.(int) $result.
-				' WHERE created_by = 62'
-		);
+		$query->update('#__jem_venues');
+		$query->set('created_by = '.$db->quote((int)$result));
+		$query->where(array('created_by = 62'));
+		$db->setQuery($query);
 		$db->query();
-
+		
 		return true;
 	}
 }
