@@ -10,11 +10,11 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modellist');
 
+
 /**
- * JEM Component Venues Model
- *
+ * Venues-Model
  **/
-class JEMModelVenues extends JModelList
+class JemModelVenues extends JModelList
 {
 	/**
 	 * Constructor.
@@ -253,47 +253,53 @@ class JEMModelVenues extends JModelList
 	 */
 	function remove($cid)
 	{
-		$cids = implode(',', $cid);
-
-		$query = 'SELECT v.id, v.venue, COUNT(e.locid) AS numcat'
-				. ' FROM #__jem_venues AS v'
-				. ' LEFT JOIN #__jem_events AS e ON e.locid = v.id'
-				. ' WHERE v.id IN ('. $cids .')'
-				. ' GROUP BY v.id'
-				;
-		$this->_db->setQuery($query);
-
-		if (!($rows = $this->_db->loadObjectList())) {
-			JError::raiseError(500, $this->_db->stderr());
+		$cids	= implode(',', $cid);
+		
+		$db		= $this->getDbo();
+		$query	= $db->getQuery(true);
+		
+		$query->select(array('v.id','v.venue'));
+		$query->select(array('COUNT(e.locid) as AssignedEvents'));
+		$query->from($db->quoteName('#__jem_venues').' AS v');
+		$query->join('LEFT', '#__jem_events AS e ON e.locid = v.id');
+		$query->where(array('v.id IN ('.$cids.')'));
+		$query->group('v.id');
+		$db->setQuery($query);
+		
+		if (!($rows = $db->loadObjectList())) {
+			JError::raiseError(500, $db->stderr());
 			return false;
 		}
-
+		
+		
 		$err = array();
 		$cid = array();
 		foreach ($rows as $row) {
-			if ($row->numcat == 0) {
+			if ($row->AssignedEvents == 0) {
 				$cid[] = $row->id;
 			} else {
 				$err[] = $row->venue;
 			}
 		}
 
+		// Assigned-events
 		if (count($cid))
 		{
-			$cids = implode(',', $cid);
-
-			$query = 'DELETE FROM #__jem_venues'
-					. ' WHERE id IN ('. $cids .')'
-					;
-
-			$this->_db->setQuery($query);
-
-			if(!$this->_db->query()) {
-				$this->setError($this->_db->getErrorMsg());
+			$cids	= implode(',', $cid);
+			$db 	= JFactory::getDbo();
+			$query	= $db->getQuery(true);
+			
+			$query->delete($db->quoteName('#__jem_venues'));
+			$query->where(array('id IN ('.$cids.')'));
+			$db->setQuery($query);
+			
+			if(!$db->query()) {
+				$this->setError($db->getErrorMsg());
 				return false;
 			}
 		}
 
+		// Errors occurred
 		if (count($err)) {
 			$cids 	= implode(', ', $err);
 			$msg 	= JText::sprintf('COM_JEM_VENUE_ASSIGNED_EVENT', $cids);
