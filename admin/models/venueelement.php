@@ -12,22 +12,19 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.model');
 
 /**
- * JEM Component Venueelement Model
- *
- * @package JEM
- *
+ * Venueelement-Model
  */
-class JEMModelVenueelement extends JModelLegacy
+class JemModelVenueelement extends JModelLegacy
 {
 	/**
-	 * Category data array
+	 * data array
 	 *
 	 * @var array
 	 */
 	var $_data = null;
 
 	/**
-	 * Category total
+	 * total
 	 *
 	 * @var integer
 	 */
@@ -41,7 +38,7 @@ class JEMModelVenueelement extends JModelLegacy
 	var $_pagination = null;
 
 	/**
-	 * Categorie id
+	 * id
 	 *
 	 * @var int
 	 */
@@ -49,176 +46,108 @@ class JEMModelVenueelement extends JModelLegacy
 
 	/**
 	 * Constructor
-	 *
 	 */
 	public function __construct()
 	{
 		parent::__construct();
 
-		$app =  JFactory::getApplication();
-
-		$limit		= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
-		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 'int' );
-
+		$app			= JFactory::getApplication();
+		$jemsettings	= JemHelper::config();
+		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		
+		$limit 			= $app->getUserStateFromRequest('com_jem.venueelement.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart 	= JRequest::getInt('limitstart');
+		
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
 	}
 
 	/**
-	 * Method to get categories item data
-	 *
-	 * @access public
-	 * @return array
+	 * Get venue-data
 	 */
 	function getData()
 	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_data))
-		{
-			$query = $this->_buildQuery();
-			$this->_data = $this->_getList($query, $this->getState('limitstart'), $this->getState('limit'));
-		}
-
-		return $this->_data;
+		$query 		= $this->buildQuery();
+		$pagination = $this->getPagination();
+	
+		$rows 		= $this->_getList($query, $pagination->limitstart, $pagination->limit);
+		
+		return $rows;
 	}
-
+	
 	/**
-	 * Total nr of venues
-	 *
-	 * @access public
-	 * @return integer
-	 *
+	 * venue-query
 	 */
-	function getTotal()
-	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_total))
-		{
-			$query = $this->_buildQuery();
-			$this->_total = $this->_getListCount($query);
+	function buildQuery() {
+		
+		$app 				= JFactory::getApplication();
+		$jemsettings 		= JemHelper::config();
+		$itemid 			= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+
+		$filter_order		= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_order', 'filter_order', 'l.ordering', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', '', 'word' );
+		
+		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+		
+		$filter_type 		= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_type', 'filter_type', '', 'int' );
+		$search 			= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_search', 'filter_search', '', 'string' );
+		$search 			= $this->_db->escape(trim(JString::strtolower($search)));
+		
+		// Query
+		$db 	= JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select(array('l.id','l.state','l.city','l.country','l.published','l.venue','l.ordering'));
+		$query->from('#__jem_venues as l');
+		
+		// where
+		$where = array();
+		$where[] = 'l.published = 1';
+		
+		/* something to search for? (we like to search for "0" too) */
+		if ($search || ($search === "0")) {
+			switch ($filter_type) {
+				case 1: /* Search venues */
+					$where[] = 'LOWER(l.venue) LIKE "%' . $search . '%"';
+					break;
+				case 2: // Search city
+					$where[] = 'LOWER(l.city) LIKE "%' . $search . '%"';
+					break;
+				case 3: // Search state
+					$where[] = 'LOWER(l.state) LIKE "%' . $search . '%"';
+			}
 		}
+		
+		$query->where($where);
 
-		return $this->_total;
+		$orderby 	= array($filter_order.' '.$filter_order_Dir,'l.ordering ASC');
+		$query->order($orderby);
+		
+		return $query;		
 	}
-
+	
 	/**
-	 * Method to get a pagination object for the venues
+	 * Method to get a pagination object
 	 *
 	 * @access public
 	 * @return integer
 	 */
 	function getPagination()
 	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_pagination))
-		{
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
-		}
-
-		return $this->_pagination;
-	}
-
-	/**
-	 * Method to build the query for the venues
-	 *
-	 * @access private
-	 * @return string
-	 *
-	 */
-	protected function _buildQuery()
-	{
-		// Get the WHERE and ORDER BY clauses for the query
-		$where		= $this->_buildContentWhere();
-		$orderby	= $this->_buildContentOrderBy();
-
-		$query = 'SELECT l.*'
-				. ' FROM #__jem_venues AS l'
-				. $where
-				. $orderby
-				;
-
-		return $query;
-	}
-
-	/**
-	 * Method to build the orderby clause of the query for the venues
-	 *
-	 * @access private
-	 * @return string
-	 *
-	 */
-	protected function _buildContentOrderBy()
-	{
-		$app =  JFactory::getApplication();
-
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_order', 'filter_order', 'l.ordering', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
-
-
-		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
-
-		$orderby 	= ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', l.ordering';
-
-		return $orderby;
-	}
-
-	/**
-	 * Method to build the where clause of the query for the venues
-	 *
-	 * @access private
-	 * @return string
-	 *
-	 */
-	protected function _buildContentWhere()
-	{
-		$app =  JFactory::getApplication();
-
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.venueelement.filter', 'filter', '', 'int' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_state', 'filter_state', '', 'word' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.venueelement.filter_search', 'filter_search', '', 'string' );
-		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
-
-		$where = array();
-
-		/*
-		* Filter state
-		*/
-		if ( $filter_state ) {
-			if ( $filter_state == 'P' ) {
-				$where[] = 'l.published = 1';
-			} else if ($filter_state == 'U' ) {
-				$where[] = 'l.published = 0';
-			}
-		}
-
-		/*
-		* Search venues
-		*/
-		if ($search && $filter == 1) {
-			$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
-		}
-
-		/*
-		* Search city
-		*/
-		if ($search && $filter == 2) {
-			$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
-		}
-
-
-		/*
-		 * Search state
-		*/
-		if ($search && $filter == 3) {
-			$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
-		}
-
-
-		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
-
-		return $where;
+		$jemsettings	= JemHelper::config();
+		$app 			= JFactory::getApplication();
+		
+		$limit 			= $this->getState('limit');
+		$limitstart 	= $this->getState('limitstart');
+		
+		$query 			= $this->buildQuery();
+		$total 			= $this->_getListCount($query);
+		
+		// Create the pagination object
+		jimport('joomla.html.pagination');
+		$pagination 	= new JPagination($total, $limitstart, $limit);
+		
+		return $pagination;
 	}
 }
 ?>
