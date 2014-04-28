@@ -63,35 +63,62 @@ class JemModelUserelement extends JModelLegacy
 	 */
 	function getData()
 	{
-		// Lets load the data if it doesn't already exist
-		if (empty($this->_data))
-		{
-			$query = $this->_buildQuery();
-			$this->_data = $this->_getList($query, $this->getState('limitstart'), $this->getState('limit'));
-		}
-
-		return $this->_data;
+		$query 		= $this->buildQuery();
+		$pagination = $this->getPagination();
+		
+		$rows 		= $this->_getList($query, $pagination->limitstart, $pagination->limit);
+		
+		return $rows;
 	}
 
 	/**
-	 * Total nr of users
-	 *
-	 * @access public
-	 * @return integer
-	 *
+	 * Query
 	 */
-	function getTotal()
-	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_total))
-		{
-			$query = $this->_buildQuery();
-			$this->_total = $this->_getListCount($query);
+	
+	function buildQuery() {
+		
+		$app 				= JFactory::getApplication();
+		$jemsettings 		= JemHelper::config();
+		
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.userelement.filter_order', 'filter_order', 'u.name', 'cmd' );
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.userelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
+		
+		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		
+		$search 			= $app->getUserStateFromRequest('com_jem.userelement.filter_search', 'filter_search', '', 'string' );
+		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
+		
+		// start query
+		$db 	= JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select(array('u.id','u.name','u.username','u.email'));
+		$query->from('#__users as u');
+		
+		// where
+		$where = array();
+		$where[] = 'u.block = 0';
+		
+		/*
+		 * Search name
+		**/
+		if ($search) {
+			$where[] = ' LOWER(u.name) LIKE \'%'.$search.'%\' ';
 		}
-
-		return $this->_total;
+		
+		$query->where($where);
+		
+		// ordering
+		$orderby 	= '';
+		$orderby 	= $filter_order.' '.$filter_order_Dir;
+		
+		$query->order($orderby);
+		
+		return $query;
+		
 	}
-
+	
+	
 	/**
 	 * Method to get a pagination object
 	 *
@@ -100,87 +127,20 @@ class JemModelUserelement extends JModelLegacy
 	 */
 	function getPagination()
 	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_pagination))
-		{
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
-		}
-
-		return $this->_pagination;
-	}
-
-	/**
-	 * Method to build the query
-	 *
-	 * @access private
-	 * @return string
-	 *
-	 */
-	protected function _buildQuery()
-	{
-		// Get the WHERE and ORDER BY clauses for the query
-		$where		= $this->_buildContentWhere();
-		$orderby	= $this->_buildContentOrderBy();
-
-		$query = 'SELECT u.id, u.name, u.username, u.email '
-				. ' FROM #__users AS u '
-				. $where
-				. $orderby
-				;
-
-		return $query;
-	}
-
-	/**
-	 * Method to build the orderby clause
-	 *
-	 * @access private
-	 * @return string
-	 *
-	 */
-	protected function _buildContentOrderBy()
-	{
-		$app =  JFactory::getApplication();
-
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.userelement.filter_order', 'filter_order', 'u.name', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.userelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
-
-		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
-
-
-		$orderby 	= ' ORDER BY '.$filter_order.' '.$filter_order_Dir;
-
-		return $orderby;
-	}
-
-	/**
-	 * Method to build the where clause
-	 *
-	 * @access private
-	 * @return string
-	 *
-	 */
-	protected function _buildContentWhere()
-	{
-		$app =  JFactory::getApplication();
-
-		$search 			= $app->getUserStateFromRequest( 'com_jem.users.filter_search', 'filter_search', '', 'string' );
-		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
-
-		$where = array();
-
-		/*
-		 * Search name
-		 **/
-		if ($search) {
-			$where[] = ' LOWER(u.name) LIKE \'%'.$search.'%\' ';
-		}
-
-		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
-
-		return $where;
+		$app 				= JFactory::getApplication();
+		$jemsettings 		= JemHelper::config();
+		
+		$limit 				= $app->getUserStateFromRequest('com_jem.userelement.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart 		= JRequest::getInt('limitstart');
+		
+		$query = $this->buildQuery();
+		$total = $this->_getListCount($query);
+		
+		// Create the pagination object
+		jimport('joomla.html.pagination');
+		$pagination = new JPagination($total, $limitstart, $limit);
+		
+		return $pagination;
 	}
 }
 ?>
