@@ -11,13 +11,11 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
 
+
 /**
- * JEM Component Userelement Model
- *
- * @package JEM
- *
+ * Userelement-Model
  */
-class JEMModelUserelement extends JModelLegacy
+class JemModelUserelement extends JModelLegacy
 {
 	/**
 	 * data array
@@ -48,7 +46,6 @@ class JEMModelUserelement extends JModelLegacy
 	{
 		parent::__construct();
 
-
 		$app =  JFactory::getApplication();
 
 		$limit		= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
@@ -59,14 +56,14 @@ class JEMModelUserelement extends JModelLegacy
 	}
 
 	/**
-	 * Method to get venues item data
+	 * Method to get data
 	 *
 	 * @access public
 	 * @return array
 	 */
 	function getData()
 	{
-		// Lets load the venues if they doesn't already exist
+		// Lets load the data if it doesn't already exist
 		if (empty($this->_data))
 		{
 			$query = $this->_buildQuery();
@@ -77,7 +74,7 @@ class JEMModelUserelement extends JModelLegacy
 	}
 
 	/**
-	 * Total nr of venues
+	 * Total nr of users
 	 *
 	 * @access public
 	 * @return integer
@@ -114,7 +111,7 @@ class JEMModelUserelement extends JModelLegacy
 	}
 
 	/**
-	 * Method to build the query for the venues
+	 * Method to build the query
 	 *
 	 * @access private
 	 * @return string
@@ -136,7 +133,7 @@ class JEMModelUserelement extends JModelLegacy
 	}
 
 	/**
-	 * Method to build the orderby clause of the query for the venues
+	 * Method to build the orderby clause
 	 *
 	 * @access private
 	 * @return string
@@ -159,7 +156,7 @@ class JEMModelUserelement extends JModelLegacy
 	}
 
 	/**
-	 * Method to build the where clause of the query for the venues
+	 * Method to build the where clause
 	 *
 	 * @access private
 	 * @return string
@@ -175,8 +172,8 @@ class JEMModelUserelement extends JModelLegacy
 		$where = array();
 
 		/*
-		* Search venues
-		*/
+		 * Search name
+		 **/
 		if ($search) {
 			$where[] = ' LOWER(u.name) LIKE \'%'.$search.'%\' ';
 		}
