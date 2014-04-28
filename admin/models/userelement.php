@@ -93,7 +93,7 @@ class JemModelUserelement extends JModelLegacy
 	}
 
 	/**
-	 * Method to get a pagination object for the venues
+	 * Method to get a pagination object
 	 *
 	 * @access public
 	 * @return integer
