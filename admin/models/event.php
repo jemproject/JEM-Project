@@ -165,7 +165,7 @@ class JEMModelEvent extends JModelAdmin
 			$item->recurrence_limit_date	= '';
 		}
 
-		$item->author_ip = $jemsettings->storeip ? getenv('REMOTE_ADDR') : 'DISABLED';
+		$item->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
 		if (empty($item->id)){
 			$item->country = $jemsettings->defaultCountry;
@@ -266,7 +266,8 @@ class JEMModelEvent extends JModelAdmin
 		$recurrencebyday 	= $jinput->get('recurrence_byday', '', 'string');
 		$metakeywords 		= $jinput->get('meta_keywords', '', '');
 		$metadescription 	= $jinput->get('meta_description', '', '');
-
+		$author_ip 			= $jinput->get('author_ip', '', '');
+		
 		// event maybe first of recurrence set -> dissolve complete set
 		if (JemHelper::dissolve_recurrence($data['id'])) {
 			$this->cleanCache();
@@ -295,6 +296,7 @@ class JEMModelEvent extends JModelAdmin
 
 		$data['meta_keywords'] 		= $metakeywords;
 		$data['meta_description']	= $metadescription;
+		$data['author_ip']			= $author_ip;
 
 		if (parent::save($data)){
 			// At this point we do have an id.

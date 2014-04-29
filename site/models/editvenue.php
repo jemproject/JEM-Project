@@ -111,6 +111,8 @@ class JemModelEditvenue extends JemModelVenue
 			$value->params->set('access-change', $user->authorise('core.edit.state', 'com_jem'));
 		}
 
+		$value->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
+		
 		$files = JemAttachment::getAttachments('venue' . $itemId);
 		$value->attachments = $files;
 

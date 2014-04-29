@@ -16,7 +16,7 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&task=attendee.selectuser&
 
 <script type="text/javascript">
 
-	function elSelectUser(id, username)
+	function modalSelectUser(id, username)
 	{
 		$('uid').value = id;
 		$('username').value = username;

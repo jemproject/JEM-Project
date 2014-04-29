@@ -10,11 +10,11 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modellist');
 
+
 /**
- * JEM Component Venues Model
- *
+ * Venues-Model
  **/
-class JEMModelVenues extends JModelList
+class JemModelVenues extends JModelList
 {
 	/**
 	 * Constructor.
@@ -54,12 +54,8 @@ class JEMModelVenues extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		// Load the filter state.
 		$search = $this->getUserStateFromRequest($this->context.'.filter_search', 'filter_search');
 		$this->setState('filter_search', $search);
-
-		//	$accessId = $this->getUserStateFromRequest($this->context.'.filter.access', 'filter_access', null, 'int');
-		//	$this->setState('filter.access', $accessId);
 
 		$published = $this->getUserStateFromRequest($this->context.'.filter_state', 'filter_state', '', 'string');
 		$this->setState('filter_state', $published);
@@ -67,18 +63,9 @@ class JEMModelVenues extends JModelList
 		$filterfield = $this->getUserStateFromRequest($this->context.'.filter', 'filter', '', 'int');
 		$this->setState('filter', $filterfield);
 
-		//	$categoryId = $this->getUserStateFromRequest($this->context.'.filter.category_id', 'filter_category_id', '');
-		//	$this->setState('filter.category_id', $categoryId);
-
-		//	$language = $this->getUserStateFromRequest($this->context.'.filter.language', 'filter_language', '');
-		//	$this->setState('filter.language', $language);
-
-
-		// Load the parameters.
 		$params = JComponentHelper::getParams('com_jem');
 		$this->setState('params', $params);
 
-		// List state information.
 		parent::populateState('a.venue', 'asc');
 	}
 
@@ -97,11 +84,8 @@ class JEMModelVenues extends JModelList
 	{
 		// Compile the store id.
 		$id.= ':' . $this->getState('filter_search');
-		//$id.= ':' . $this->getState('filter.access');
 		$id.= ':' . $this->getState('filter_published');
 		$id.= ':' . $this->getState('filter');
-		//$id.= ':' . $this->getState('filter.category_id');
-		//$id.= ':' . $this->getState('filter.language');
 
 		return parent::getStoreId($id);
 	}
@@ -117,7 +101,6 @@ class JEMModelVenues extends JModelList
 		// Create a new query object.
 		$db		= $this->getDbo();
 		$query	= $db->getQuery(true);
-// 		$user	= JFactory::getUser();
 
 		// Select the required fields from the table.
 		$query->select(
@@ -132,21 +115,13 @@ class JEMModelVenues extends JModelList
 		);
 		$query->from($db->quoteName('#__jem_venues').' AS a');
 
-		// Join over the language
-		//$query->select('l.title AS language_title');
-		//$query->join('LEFT', $db->quoteName('#__languages').' AS l ON l.lang_code = a.language');
-
 		// Join over the users for the checked out user.
 		$query->select('uc.name AS editor');
 		$query->join('LEFT', '#__users AS uc ON uc.id = a.checked_out');
-
-		// Join over the asset groups.
-		/*$query->select('ag.title AS access_level');
-		$query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');*/
-
-		// Join over the categories.
-		/*$query->select('c.title AS category_title');
-		$query->join('LEFT', '#__categories AS c ON c.id = a.catid');*/
+		
+		// Join over the user who modified the event.
+		$query->select('um.name AS modified_by');
+		$query->join('LEFT', '#__users AS um ON um.id = a.modified_by');
 
 		// Join over the author & email.
 		$query->select('u.email, u.name AS author');
@@ -157,26 +132,6 @@ class JEMModelVenues extends JModelList
 		$query->join('LEFT OUTER', '#__jem_events AS e ON e.locid = a.id');
 		$query->group('a.id');
 
-		// Join over the asset groups.
-		//$query->select('ag.title AS access_level');
-		//$query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');
-
-		// Join over the categories.
-		//$query->select('c.title AS category_title');
-		//$query->join('LEFT', '#__categories AS c ON c.id = a.catid');
-
-		// Filter by access level.
-		//if ($access = $this->getState('filter.access')) {
-		//	$query->where('a.access = '.(int) $access);
-		//}
-
-		// Implement View Level Access
-		//if (!$user->authorise('core.admin'))
-		//{
-		//	$groups	= implode(',', $user->getAuthorisedViewLevels());
-		//	$query->where('a.access IN ('.$groups.')');
-		//}
-
 		// Filter by published state
 		$published = $this->getState('filter_state');
 		if (is_numeric($published)) {
@@ -184,12 +139,6 @@ class JEMModelVenues extends JModelList
 		} elseif ($published === '') {
 			$query->where('(a.published IN (0, 1))');
 		}
-
-		// Filter by category.
-		//$categoryId = $this->getState('filter.category_id');
-		//if (is_numeric($categoryId)) {
-		//	$query->where('a.catid = '.(int) $categoryId);
-		//}
 
 		// Filter by search in title
 		$filter = $this->getState('filter');
@@ -231,44 +180,12 @@ class JEMModelVenues extends JModelList
 		// Add the list ordering clause.
 		$orderCol	= $this->state->get('list.ordering');
 		$orderDirn	= $this->state->get('list.direction');
-		//if ($orderCol == 'a.ordering' || $orderCol == 'category_title') {
-		//	$orderCol = 'c.title '.$orderDirn.', a.ordering';
-		//}
+
 		$query->order($db->escape($orderCol.' '.$orderDirn));
-		//echo nl2br(str_replace('#__','jos_',$query));
+
 		return $query;
 	}
 
-	/**
-	 * Method to (un)publish a venue
-	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 *
-	 */
-	function publish($cid = array(), $publish = 1)
-	{
-		$user 	= JFactory::getUser();
-		$userid = $user->get('id');
-
-		if (count($cid))
-		{
-			$cids = implode(',', $cid);
-
-			$query = 'UPDATE #__jem_venues'
-					. ' SET published = '. (int) $publish
-					. ' WHERE id IN ('. $cids .')'
-					. ' AND (checked_out = 0 OR (checked_out = ' .$userid. '))'
-					;
-
-			$this->_db->setQuery($query);
-
-			if (!$this->_db->query()) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
-			}
-		}
-	}
 
 	/**
 	 * Method to remove a venue
@@ -279,47 +196,53 @@ class JEMModelVenues extends JModelList
 	 */
 	function remove($cid)
 	{
-		$cids = implode(',', $cid);
-
-		$query = 'SELECT v.id, v.venue, COUNT(e.locid) AS numcat'
-				. ' FROM #__jem_venues AS v'
-				. ' LEFT JOIN #__jem_events AS e ON e.locid = v.id'
-				. ' WHERE v.id IN ('. $cids .')'
-				. ' GROUP BY v.id'
-				;
-		$this->_db->setQuery($query);
-
-		if (!($rows = $this->_db->loadObjectList())) {
-			JError::raiseError(500, $this->_db->stderr());
+		$cids	= implode(',', $cid);
+		
+		$db		= $this->getDbo();
+		$query	= $db->getQuery(true);
+		
+		$query->select(array('v.id','v.venue'));
+		$query->select(array('COUNT(e.locid) as AssignedEvents'));
+		$query->from($db->quoteName('#__jem_venues').' AS v');
+		$query->join('LEFT', '#__jem_events AS e ON e.locid = v.id');
+		$query->where(array('v.id IN ('.$cids.')'));
+		$query->group('v.id');
+		$db->setQuery($query);
+		
+		if (!($rows = $db->loadObjectList())) {
+			JError::raiseError(500, $db->stderr());
 			return false;
 		}
-
+		
+		
 		$err = array();
 		$cid = array();
 		foreach ($rows as $row) {
-			if ($row->numcat == 0) {
+			if ($row->AssignedEvents == 0) {
 				$cid[] = $row->id;
 			} else {
 				$err[] = $row->venue;
 			}
 		}
 
+		// Assigned-events
 		if (count($cid))
 		{
-			$cids = implode(',', $cid);
-
-			$query = 'DELETE FROM #__jem_venues'
-					. ' WHERE id IN ('. $cids .')'
-					;
-
-			$this->_db->setQuery($query);
-
-			if(!$this->_db->query()) {
-				$this->setError($this->_db->getErrorMsg());
+			$cids	= implode(',', $cid);
+			$db 	= JFactory::getDbo();
+			$query	= $db->getQuery(true);
+			
+			$query->delete($db->quoteName('#__jem_venues'));
+			$query->where(array('id IN ('.$cids.')'));
+			$db->setQuery($query);
+			
+			if(!$db->query()) {
+				$this->setError($db->getErrorMsg());
 				return false;
 			}
 		}
 
+		// Errors occurred
 		if (count($err)) {
 			$cids 	= implode(', ', $err);
 			$msg 	= JText::sprintf('COM_JEM_VENUE_ASSIGNED_EVENT', $cids);

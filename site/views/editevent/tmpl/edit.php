@@ -186,8 +186,10 @@ $settings	= json_decode($this->item->attribs);
 		
 			<?php echo JHtml::_('tabs.end'); ?>
 
+					
 			<input type="hidden" name="task" value="" />
 			<input type="hidden" name="return" value="<?php echo $this->return_page;?>" />
+			<input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
 			<?php if($this->params->get('enable_category', 0) == 1) :?>
 			<input type="hidden" name="jform[catid]" value="<?php echo $this->params->get('catid', 1);?>"/>
 			<?php endif;?>

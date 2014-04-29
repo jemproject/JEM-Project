@@ -98,8 +98,7 @@ class JemViewCategories extends JViewLegacy
 		}
 
 		if ($this->state->get('filter.published') == -2 && $canDo->get('core.delete')) {
-			/*JToolBarHelper::deleteList('', 'categories.delete', 'JTOOLBAR_EMPTY_TRASH');*/
-			JToolBarHelper::deleteList('', 'categories.remove', 'JTOOLBAR_EMPTY_TRASH');
+			JToolBarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'categories.remove', 'JTOOLBAR_EMPTY_TRASH');
 		}
 		elseif ($canDo->get('core.edit.state')) {
 			JToolBarHelper::trash('categories.trash');

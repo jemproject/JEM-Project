@@ -27,10 +27,9 @@ class JemViewVenueelement extends JViewLegacy {
 		JHtml::_('behavior.modal');
 
 		//get vars
-		$filter_order		= $app->getUserStateFromRequest('com_jem.venueelement.filter_order', 'filter_order', 'l.ordering', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.venueelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
-		$filter 			= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter', 'filter', '', 'int');
-		$filter_state 		= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_state', 'filter_state', '', 'string');
+		$filter_order		= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_order', 'filter_order', 'l.ordering', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		$filter_type 		= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_type', 'filter_type', '', 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 		$search 			= $db->escape(trim(JString::strtolower($search)));
 
@@ -46,9 +45,6 @@ class JemViewVenueelement extends JViewLegacy {
 		// add pagination
 		$pagination = $this->get('Pagination');
 
-		//publish unpublished filter
-		$lists['state']	= JHtml::_('grid.state', $filter_state);
-
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
@@ -58,14 +54,13 @@ class JemViewVenueelement extends JViewLegacy {
 		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_VENUE'));
 		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_CITY'));
 		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_STATE'));
-		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
+		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
 
 		// search filter
 		$lists['search']= $search;
 
 		//assign data to template
 		$this->lists		= $lists;
-		$this->filter_state = $filter_state;
 		$this->rows			= $rows;
 		$this->pagination	= $pagination;
 

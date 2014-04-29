@@ -124,6 +124,10 @@ class JemModelEvents extends JModelList
 		// Join over the users for the checked out user.
 		$query->select('uc.name AS editor');
 		$query->join('LEFT', '#__users AS uc ON uc.id = a.checked_out');
+		
+		// Join over the user who modified the event.
+		$query->select('um.name AS modified_by');
+		$query->join('LEFT', '#__users AS um ON um.id = a.modified_by');
 
 		// Join over the cat_relations
 		$query->select('rel.itemid, rel.ordering');

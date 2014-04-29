@@ -40,10 +40,9 @@ class Pkg_JemInstallerScript {
 	 * List of required PHP extensions.
 	 * @var array
 	 */
-	protected $extensions = array ('gd', 'json', 'pcre'
+	protected $extensions = array ('curl','gd', 'json', 'pcre'
 			, 'iconv' /* import */
 			, 'ctype', 'SimpleXML' /* iCalCreator */
-			, 'sockets', 'curl' /* Snoopy */
 		);
 
 	public function install($parent) {

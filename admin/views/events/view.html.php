@@ -139,7 +139,7 @@ defined('_JEXEC') or die;
 		}
 
 		if ($this->state->get('filter_state') == -2 && $canDo->get('core.delete')) {
-			JToolBarHelper::deleteList('', 'events.delete', 'JTOOLBAR_EMPTY_TRASH');
+			JToolBarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'events.delete', 'JTOOLBAR_EMPTY_TRASH');
 		} elseif ($canDo->get('core.edit.state')) {
 			JToolBarHelper::trash('events.trash');
 		}
