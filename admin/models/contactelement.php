@@ -6,18 +6,15 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
 
+
 /**
- * JEM Component Contactelement Model
- *
- * @package JEM
- *
+ * Contactelement-Model
  */
-class JEMModelContactelement extends JModelLegacy
+class JemModelContactelement extends JModelLegacy
 {
 	/**
 	 * Category data array
@@ -64,40 +61,83 @@ class JEMModelContactelement extends JModelLegacy
 		$this->setState('limitstart', $limitstart);
 	}
 
+	
 	/**
-	 * Method to get contactelement item data
-	 *
-	 * @access public
-	 * @return array
+	 * Method to get data
 	 */
 	function getData()
 	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_data))
-		{
-			$query = $this->_buildQuery();
-			$this->_data = $this->_getList($query, $this->getState('limitstart'), $this->getState('limit'));
-		}
-
-		return $this->_data;
+		$query 		= $this->buildQuery();
+		$pagination = $this->getPagination();
+	
+		$rows 		= $this->_getList($query, $pagination->limitstart, $pagination->limit);
+	
+		return $rows;
 	}
-
+	
+	
 	/**
-	 * Total nr of contactelement
-	 *
-	 * @access public
-	 * @return integer
+	 * Query
 	 */
-	function getTotal()
-	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_total))
-		{
-			$query = $this->_buildQuery();
-			$this->_total = $this->_getListCount($query);
+	
+	function buildQuery() {
+	
+		$app 				= JFactory::getApplication();
+		$jemsettings 		= JemHelper::config();
+	
+		$filter_order		= $app->getUserStateFromRequest( 'com_jem.contactelement.filter_order','filter_order','con.ordering','cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.contactelement.filter_order_Dir','filter_order_Dir','','word' );
+		
+		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+		
+		$filter_type 		= $app->getUserStateFromRequest('com_jem.contactelement.filter_type','filter_type','','int');
+		$search 			= $app->getUserStateFromRequest('com_jem.contactelement.filter_search','filter_search','','string');
+		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
+		
+		// start query
+		$db 	= JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select(array('con.*'));
+		$query->from('#__contact_details as con');
+		
+		// where
+		$where = array();
+		$where[] = 'con.published = 1';
+		
+		
+		// search
+		if ($search) {
+			switch ($filter_type) {
+				case 1: /* name */
+					$where[] = 'LOWER(con.name) LIKE \'%'.$search.'%\' ';
+					break;
+				case 2: /* address */
+					$where[] = 'LOWER(con.address) LIKE \'%'.$search.'%\' ';
+					break;
+				case 3: /* city */
+					$where[] = 'LOWER(con.suburb) LIKE \'%'.$search.'%\' ';
+					break;
+				case 4: /* state */
+					$where[] = 'LOWER(con.state) LIKE \'%'.$search.'%\' ';
+					break;
+			}
 		}
-
-		return $this->_total;
+		
+		$query->where($where);
+		
+		
+		// order
+		if ($filter_order != '') {
+			$orderby = $filter_order . ' ' . $filter_order_Dir;
+		} else {
+			$orderby = 'con.name';
+		}
+		
+		$query->order($orderby);
+		
+		return $query;
+		
 	}
 
 	/**
@@ -108,120 +148,22 @@ class JEMModelContactelement extends JModelLegacy
 	 */
 	function getPagination()
 	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_pagination))
-		{
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination( $this->getTotal(), $this->getState('limitstart'), $this->getState('limit') );
-		}
-
-		return $this->_pagination;
+		$app 				= JFactory::getApplication();
+		$jemsettings 		= JemHelper::config();
+		
+		$limit 				= $this->getState('limit');
+		$limitstart 		= $this->getState('limitstart');
+		
+		$query = $this->buildQuery();
+		$total = $this->_getListCount($query);
+		
+		// Create the pagination object
+		jimport('joomla.html.pagination');
+		$pagination = new JPagination($total, $limitstart, $limit);
+		
+		return $pagination;
 	}
 
-	/**
-	 * Method to build the query for the contactelement
-	 *
-	 * @access private
-	 * @return string
-	 */
-	protected function _buildQuery()
-	{
-		// Get the WHERE and ORDER BY clauses for the query
-		$where		= $this->_buildContentWhere();
-		$orderby	= $this->_buildContentOrderBy();
-
-		$query = 'SELECT con.*'
-				. ' FROM #__contact_details AS con'
-				. $where
-				. $orderby
-				;
-		return $query;
-	}
-
-	/**
-	 * Method to build the orderby clause of the query for the contactelement
-	 *
-	 * @access private
-	 * @return string
-	 */
-	protected function _buildContentOrderBy()
-	{
-		$app =  JFactory::getApplication();
-
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.contactelement.filter_order', 'filter_order', 'con.ordering', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.contactelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
-
-		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
-
-		if ($filter_order != '') {
-			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
-		} else {
-			$orderby = ' ORDER BY con.name ';
-		}
-
-		return $orderby;
-	}
-
-	/**
-	 * Method to build the where clause of the query for the contactelement
-	 *
-	 * @access private
-	 * @return string
-	 */
-	protected function _buildContentWhere()
-	{
-		$app =  JFactory::getApplication();
-
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.contactelement.filter', 'filter', '', 'int' );
-		$filter_state 		= $app->getUserStateFromRequest( 'com_jem.contactelement.filter_state', 'filter_state', '', 'word' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.contactelement.filter_search', 'filter_search', '', 'string' );
-		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
-
-		$where = array();
-
-		/*
-		* Filter state
-		*/
-		if ( $filter_state ) {
-			if ( $filter_state == 'P' ) {
-				$where[] = 'con.published = 1';
-			} else if ($filter_state == 'U' ) {
-				$where[] = 'con.published = 0';
-			}
-		}
-
-		/*
-		* Search names
-		*/
-		if ($search && $filter == 1) {
-			$where[] = ' LOWER(con.name) LIKE \'%'.$search.'%\' ';
-		}
-
-		/*
-		* Search address
-		*/
-		if ($search && $filter == 2) {
-			$where[] = ' LOWER(con.address) LIKE \'%'.$search.'%\' ';
-		}
-
-		/*
-		 * Search city
-		*/
-		if ($search && $filter == 3) {
-			$where[] = ' LOWER(con.suburb) LIKE \'%'.$search.'%\' ';
-		}
-
-		/*
-		 * Search state
-		*/
-		if ($search && $filter == 4) {
-			$where[] = ' LOWER(con.state) LIKE \'%'.$search.'%\' ';
-		}
-
-		$where = ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
-
-		return $where;
-	}
+	
 }
 ?>
