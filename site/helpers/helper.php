@@ -779,7 +779,7 @@ class JemHelper {
 			$location[] = $exp[0];
 		}
 		$location = implode(",", $location);
-
+		
 		$e = new vevent();
 		$e->setProperty('summary', $event->title);
 		$e->setProperty('categories', implode(', ', $categories));
@@ -788,7 +788,9 @@ class JemHelper {
 			$e->setProperty('dtend', $date_end, $dateendparam);
 		}
 		$e->setProperty('description', $description);
-		$e->setProperty('location', $location);
+		if ($location != '') {
+			$e->setProperty('location', $location);
+		}
 		$e->setProperty('url', $link);
 		$e->setProperty('uid', 'event'.$event->id.'@'.$sitename);
 		$calendartool->addComponent($e); // add component to calendar
