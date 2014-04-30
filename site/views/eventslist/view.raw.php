@@ -23,10 +23,10 @@ class JemViewEventslist extends JViewLegacy
 
 		if ($settings2->get('global_show_ical_icon','0')==1) {
 			// Get data from the model
-			$model = $this->getModel();
+			$model = $this->getModel();			
 			$model->setLimit($settings->ical_max_items);
 			$model->setLimitstart(0);
-			$rows = $model->getData();
+			$rows = $model->getItems();
 
 			// initiate new CALENDAR
 			$vcal = JemHelper::getCalendarTool();
