@@ -225,7 +225,7 @@ window.addEvent('domready', function(){
 					$image 			= JHtml::_('image','com_jem/icon-16-info.png',NULL,NULL,true );
 					
 					$overlib 		= JText::_('COM_JEM_CREATED_AT').': '.$created.'<br />';
-					if ($row->author_ip != '::1' && $row->author_ip != '127.0.0.1' && $row->author_ip != '') {
+					if ($row->author_ip != '') {
 						$overlib		.= JText::_('COM_JEM_WITH_IP').': '.$row->author_ip.'<br />';
 					}
 					if ($row->modified != '0000-00-00 00:00:00') {
