@@ -15,6 +15,10 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 */
 class JemViewEventslist extends JEMView
 {
+	protected $items;
+	protected $pagination;
+	protected $state;
+	
 	function __construct($config = array()) {
 		parent::__construct($config);
 
@@ -53,11 +57,13 @@ class JemViewEventslist extends JEMView
 		// get variables
 		$task 				= JRequest::getWord('task', '');
 		$filter_order		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
+		
 		$filter_order_DirDefault = 'ASC';
 		// Reverse default order for dates in archive mode
 		if($task == 'archive' && $filter_order == 'a.dates') {
 			$filter_order_DirDefault = 'DESC';
 		}
+		
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
 		$filter 			= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter', 'filter', '', 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
@@ -68,7 +74,7 @@ class JemViewEventslist extends JEMView
 		$lists['order'] = $filter_order;
 
 		// get data from model
-		$rows 	= $this->get('Data');
+		$rows 	= $this->get('Items');
 
 		// are events available?
 		if (!$rows) {
