@@ -22,12 +22,6 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 			<button type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo JText::_('COM_JEM_SELECTVENUE') ?>');"><?php echo JText::_('COM_JEM_NOVENUE')?></button>
 		</td>
-		<td nowrap="nowrap">
-			 <select name="filter_state" class="inputbox" onchange="this.form.submit()">
-			<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
-			<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions',array('all' => 0, 'unpublished' => 0,'archived' => 0, 'trash' => 0)), 'value', 'text', $this->filter_state, true);?>
-			</select>
-		</td>
 	</tr>
 </table>
 
@@ -39,7 +33,6 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 			<th align="left" class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'venueelement' ); ?></th>
 			<th align="left" class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<th align="left" class="title center"><?php echo JText::_('COM_JEM_COUNTRY'); ?></th>
-			<th class="title center"><?php echo JText::_('JSTATUS'); ?></th>
 		</tr>
 	</thead>
 
@@ -61,9 +54,6 @@ $function = JRequest::getCmd('function', 'jSelectVenue');
 			<td align="left"><?php echo $this->escape($row->city); ?></td>
 			<td align="left"><?php echo $this->escape($row->state); ?></td>
 			<td class="center"><?php echo $this->escape($row->country); ?></td>
-			<td class="center">
-				<?php echo JHtml::_('jgrid.published', $row->published, $i,'',false); ?>
-			</td>
 		</tr>
 
 		<?php endforeach; ?>

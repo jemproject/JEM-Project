@@ -22,9 +22,6 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 			<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 			<button class="buttonfilter" type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo JText::_('COM_JEM_SELECTCONTACT') ?>');"><?php echo JText::_('COM_JEM_NOCONTACT')?></button>
 		</td>
-		<td nowrap="nowrap">
-			 <?php echo $this->lists['state']; ?>
-		</td>
 	</tr>
 </table>
 
@@ -38,7 +35,6 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 			<th align="left" class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATE', 'con.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 			<th align="left" class="title"><?php echo JText::_('COM_JEM_EMAIL'); ?></th>
 			<th align="left" class="title"><?php echo JText::_('COM_JEM_TELEPHONE'); ?></th>
-			<th class="title center"><?php echo JText::_('JSTATUS'); ?></th>
 		</tr>
 	</thead>
 
@@ -64,10 +60,6 @@ $function = JRequest::getCmd('function', 'jSelectContact');
 			<td align="left"><?php echo $this->escape($row->state); ?></td>
 			<td align="left"><?php echo $this->escape($row->email_to); ?></td>
 			<td align="left"><?php echo $this->escape($row->telephone); ?></td>
-			<td class="center">
-				<?php $img = $row->published ? 'tick.png' : 'publish_x.png';
-				echo JHtml::_('image','com_jem/'.$img, NULL, NULL, true); ?>
-			</td>
 		</tr>
 		<?php endforeach; ?>
 	</tbody>
