@@ -23,6 +23,7 @@ require_once (JPATH_COMPONENT_SITE.'/classes/user.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/attachment.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/categories.class.php');
 require_once (JPATH_COMPONENT_ADMINISTRATOR.'/classes/admin.class.php');
+require_once (JPATH_COMPONENT_ADMINISTRATOR.'/helpers/helper.php');
 
 // Set the table directory
 JTable::addIncludePath(JPATH_COMPONENT.'/tables');
