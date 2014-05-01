@@ -412,7 +412,7 @@
 		<fieldset name="evvenues"
 			label="COM_JEM_VENUES"
 		>
-			<field name="event_show_locdescription" type="radio"
+			<field name="event_show_locdescription" type="list"
 				label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
 				description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
 				class="inputbox"
@@ -422,7 +422,7 @@
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
-			<field name="event_show_detailsadress" type="radio"
+			<field name="event_show_detailsadress" type="list"
 				label="COM_JEM_DISPLAY_ADDRESS"
 				description="COM_JEM_DISPLAY_ADDRESS_DESC"
 				class="inputbox"
