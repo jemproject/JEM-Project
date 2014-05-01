@@ -18,9 +18,8 @@ $saveOrder	= $listOrder=='a.ordering';
 $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 $settings	= $this->settings;
 ?>
-
 <script>
-window.addEvent('domready', function() {
+$(document).ready(function() {
 	var h = <?php echo $settings->get('highlight','0'); ?>;
 
 	switch(h)
@@ -84,7 +83,7 @@ window.addEvent('domready', function() {
 		</tr>
 	</tfoot>
 
-	<tbody id="seach_in_here">
+	<tbody id="search_in_here">
 		<?php foreach ($this->items as $i => $row) : ?>
 			<?php
 			$ordering	= ($listOrder == 'a.ordering');

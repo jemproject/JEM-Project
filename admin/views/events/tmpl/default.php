@@ -6,7 +6,6 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
@@ -15,28 +14,13 @@ $userId		= $user->get('id');
 $listOrder	= $this->escape($this->state->get('list.ordering'));
 $listDirn	= $this->escape($this->state->get('list.direction'));
 $canOrder	= $user->authorise('core.edit.state', 'com_jem.category');
-$saveOrder	= $listOrder=='ordering';
+$saveOrder	= $listOrder=='a.ordering';
 
 $params		= (isset($this->state->params)) ? $this->state->params : new JObject();
 $settings	= $this->settings;
-
-/*
-Call the highlight function with the text to highlight.
-http://johannburkard.de/blog/programming/javascript/highlight-javascript-text-higlighting-jquery-plugin.html
-
-To highlight all occurrances of "bla" (case insensitive) in all li elements, use the following code:
-	$('li').highlight('bla');
-
-Remove highlighting
-	The highlight can be removed from any element with the removeHighlight function.
-	In this example, all highlights under the element with the ID highlight-plugin are removed.
-
-	$('#highlight-plugin').removeHighlight();
-*/
 ?>
-
 <script>
-window.addEvent('domready', function(){
+$(document).ready(function() {
 	var h = <?php echo $settings->get('highlight','0'); ?>;
 
 	switch(h)
@@ -104,7 +88,7 @@ window.addEvent('domready', function(){
 			</tr>
 		</tfoot>
 
-		<tbody id="seach_in_here">
+		<tbody id="search_in_here">
 			<?php
 			foreach ($this->items as $i => $row) :
 				//Prepare date

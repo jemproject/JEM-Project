@@ -49,14 +49,11 @@ defined('_JEXEC') or die;
 			return false;
 		}
 
-		JHtml::_('behavior.framework');
-
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		// Add Scripts
 		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
-		$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
 
 		if ($highlighter) {
 			$document->addScript($url.'media/com_jem/js/highlighter.js');

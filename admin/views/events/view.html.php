@@ -47,15 +47,11 @@ defined('_JEXEC') or die;
 			return false;
 		}
 
-		// loading Mootools
-		JHtml::_('behavior.framework');
-
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		// Load Scripts
 		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
-		$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
 
 		if ($highlighter) {
 			$document->addScript($url.'media/com_jem/js/highlighter.js');
@@ -80,7 +76,6 @@ defined('_JEXEC') or die;
 		$filters[] = JHtml::_('select.option', '7', JText::_('JALL'));
 		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $this->state->get('filter'));
 
-		
 		//assign data to template
 		$this->lists		= $lists;
 		$this->user			= $user;
