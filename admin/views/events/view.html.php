@@ -99,7 +99,6 @@ defined('_JEXEC') or die;
 	 */
 	protected function addToolbar()
 	{
-		require_once JPATH_COMPONENT . '/helpers/helper.php';
 		JToolBarHelper::title(JText::_('COM_JEM_EVENTS'), 'events');
 
 		/* retrieving the allowed actions for the user */

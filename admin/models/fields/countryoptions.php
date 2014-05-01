@@ -11,7 +11,7 @@ defined('JPATH_BASE') or die;
 
 JFormHelper::loadFieldClass('list');
 
-require_once dirname(__FILE__) . '/../../helpers/helper.php';
+
 
 /**
  * CountryOptions Field class.

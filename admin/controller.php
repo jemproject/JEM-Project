@@ -34,8 +34,6 @@ class JEMController extends JControllerLegacy
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
-		require_once JPATH_COMPONENT.'/helpers/helper.php';
-
 		// Load the submenu.
 		// if no view found then refert to main
 

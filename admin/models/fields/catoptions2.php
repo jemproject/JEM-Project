@@ -14,7 +14,7 @@ defined('JPATH_BASE') or die;
 jimport('joomla.html.html');
 jimport('joomla.form.formfield');
 
-require_once dirname(__FILE__) . '/../../helpers/helper.php';
+
 
 /**
  * CountryOptions Field class.

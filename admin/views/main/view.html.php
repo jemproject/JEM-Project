@@ -50,9 +50,6 @@ class JEMViewMain extends JViewLegacy {
 	*/
 	protected function addToolbar()
 	{
-		// Load the category helper.
-		require_once JPATH_COMPONENT.'/helpers/helper.php';
-
 		JToolBarHelper::title(JText::_('COM_JEM_MAIN_TITLE'), 'home');
 
 		if (JFactory::getUser()->authorise('core.manage')) {

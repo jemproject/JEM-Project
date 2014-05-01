@@ -72,9 +72,6 @@ class JemViewCategory extends JViewLegacy
 		$isNew		= ($this->item->id == 0);
 		$checkedOut	= !($this->item->checked_out == 0 || $this->item->checked_out == $userId);
 
-		// Load the category helper.
-		require_once JPATH_COMPONENT.'/helpers/helper.php';
-
 		// Get the results for each action.
 		$canDo = JEMHelperBackend::getActions();
 

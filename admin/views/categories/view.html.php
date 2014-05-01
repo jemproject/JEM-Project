@@ -69,9 +69,6 @@ class JemViewCategories extends JViewLegacy
 		$canDo		= null;
 		$user		= JFactory::getUser();
 
- 		// Load the category helper.
-		require_once JPATH_COMPONENT.'/helpers/helper.php';
-
 		// Get the results for each action.
 		$canDo = JEMHelperBackend::getActions(0);
 

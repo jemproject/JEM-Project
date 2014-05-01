@@ -95,7 +95,6 @@ defined('_JEXEC') or die;
 	 */
 	protected function addToolbar()
 	{
-		require_once JPATH_COMPONENT . '/helpers/helper.php';
 		JToolBarHelper::title(JText::_('COM_JEM_VENUES'), 'venues');
 
 		$canDo = JEMHelperBackend::getActions(0);

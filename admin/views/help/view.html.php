@@ -98,9 +98,6 @@ class JEMViewHelp extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
-		//Create Submenu
-		require_once JPATH_COMPONENT . '/helpers/helper.php';
-
 		//create the toolbar
 		JToolBarHelper::title(JText::_('COM_JEM_HELP'), 'help');
 	}
