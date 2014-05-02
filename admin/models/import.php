@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -143,17 +143,41 @@ class JEMModelImport extends JModelLegacy {
 	 */
 	private function import($tablename, $prefix, $fieldsname, & $data, $replace = true)
 	{
+		// cats_event_relations table requires different handling
+		if ($tablename == 'jem_cats_event_relations') {
+			$events = array();
+			$itemidx = $catidx = $orderidx = false;
+
+			foreach ($fieldsname as $k => $field) {
+				switch ($field) {
+				case 'itemid':   $itemidx  = $k; break;
+				case 'catid':    $catidx   = $k; break;
+				case 'ordering': $orderidx = $k; break;
+				}
+			}
+			if (($itemidx === false) || ($catidx === false)) {
+				echo JText::_('COM_JEM_IMPORT_PARSE_ERROR') . "\n";
+				return $rec;
+			}
+
+			// parse each row
+			foreach ($data as $row) {
+				// collect categories for each event; we get array( itemid => array( catid => ordering ) )
+				$events[$row[$itemidx]][$row[$catidx]] = ($orderidx !== false) ? $row[$orderidx] : 0;
+			}
+
+			// store data
+			return $this->storeCatsEventRelations($events, $replace);
+		}
+
 		$db = JFactory::getDbo();
 
 		$ignore = array();
 		if (!$replace) {
 			$ignore[] = 'id';
 		}
-		$rec = array(
-				'added' => 0,
-				'updated' => 0,
-				'ignored' => 0
-		);
+		$rec = array('added' => 0, 'updated' => 0, 'ignored' => 0);
+		$events = array(); // collects cat event relations
 
 		// parse each row
 		foreach ($data as $row) {
@@ -177,14 +201,14 @@ class JEMModelImport extends JModelLegacy {
 					if (!$replace){
 						$values['parent_id'] = $rootkey;
 					} else {
-					// when replacing and value is null or 0 the rootkey is assigned
-					if ($values['parent_id'] == null || $values['parent_id'] == 0) {
-						$values['parent_id'] = $rootkey;
-						$parentid = $values['parent_id'];
-					} else {
-					// in replace mode and value
-						$parentid = $values['parent_id'];
-							}
+						// when replacing and value is null or 0 the rootkey is assigned
+						if ($values['parent_id'] == null || $values['parent_id'] == 0) {
+							$values['parent_id'] = $rootkey;
+							$parentid = $values['parent_id'];
+						} else {
+						// in replace mode and value
+							$parentid = $values['parent_id'];
+						}
 					}
 
 				} else {
@@ -283,34 +307,18 @@ class JEMModelImport extends JModelLegacy {
 				}
 			}
 
-		if ($objectname == "JEMTableEvent") {
-			// we need to update the categories-events table too
-			// store cat relation
-			$query = $db->getQuery(true);
-			$query->delete($db->quoteName('#__jem_cats_event_relations'));
-			$query->where('itemid = '.$object->id);
-			$db->setQuery($query);
-			$db->query();
+			if ($objectname == "JEMTableEvent") {
+				// we need to update the categories-events table too
+				// store cat relations
 				if (isset($values['categories'])) {
 					$cats = explode(',', $values['categories']);
-					if (count($cats)) {
-						foreach($cats as $cat)
-						{
-							$db = JFactory::getDbo();
-							$query = $db->getQuery(true);
-							$columns = array('catid', 'itemid');
-							$values = array($cat, $object->id);
-							$query
-							->insert($db->quoteName('#__jem_cats_event_relations'))
-							->columns($db->quoteName($columns))
-							->values(implode(',', $values));
-							$db->setQuery($query);
-							$db->query();
-						}
+					foreach ($cats as $cat) {
+						// collect categories for each event; we get array( itemid => array( catid => 0 ) )
+						$events[$object->id][$cat] = 0;
 					}
 				}
 			}
-		}
+		} // foreach
 
 		// Specific actions outside the foreach loop
 
@@ -319,6 +327,11 @@ class JEMModelImport extends JModelLegacy {
 		}
 
 		if ($objectname == "JEMTableEvent") {
+			// store cat event relations
+			if (!empty($events)) {
+				$this->storeCatsEventRelations($events, $replace);
+			}
+
 			// force the cleanup to update the imported events status
 			$settings = JTable::getInstance('Settings', 'JEMTable');
 			$settings->load(1);
@@ -327,6 +340,82 @@ class JEMModelImport extends JModelLegacy {
 		}
 
 		return $rec;
+	}
+
+	/**
+	 * Stores category event relations in cats_event_relations table
+	 *
+	 * @param array   $events  event ids with categories and ordering
+	 *                         format: array( itemid => array( catid => ordering ) )
+	 * @param boolean $replace Replace if event-cat pair already exists
+	 *
+	 * @return array Number of records inserted and updated
+	 */
+	private function storeCatsEventRelations(array $events, $replace = true)
+	{
+		$db = JFactory::getDbo();
+		$columns = array('catid', 'itemid', 'ordering');
+		$result = array('added' => 0, 'updated' => 0, 'ignored' => 0);
+
+		// store data
+		foreach ($events as $itemid => $cats) {
+			// remove "old", unneeded relations of this event
+			$query = $db->getQuery(true);
+			$query->delete($db->quoteName('#__jem_cats_event_relations'));
+			$query->where($db->quoteName('itemid') . '=' . $db->quote($itemid));
+			if ($replace && count($cats)) { // keep records we can update
+				$query->where('NOT catid IN ('.implode(',',array_keys($cats)).')');
+			}
+			$db->setQuery($query);
+			$db->query();
+
+			if (count($cats)) {
+				$values = array();
+				foreach($cats as $catid => $order)
+				{
+					if ($replace) { // search for record to update
+						$query_id = $db->getQuery(true);
+						$query_id->select($db->quoteName('id'));
+						$query_id->from($db->quoteName('#__jem_cats_event_relations'));
+						$query_id->where($db->quoteName('itemid') . '=' . $db->quote($itemid));
+						$query_id->where($db->quoteName('catid') . '=' . $db->quote($catid));
+						$db->setQuery($query_id);
+						$id = $db->loadResult();
+					} else { // all records are deleted so always insert new records
+						$id = 0;
+					}
+
+					if ($id > 0) {
+						// record found: update
+						$query_upd = $db->getQuery(true);
+						$query_upd->update($db->quoteName('#__jem_cats_event_relations'));
+						$query_upd->set($db->quoteName('ordering') . '=' . $db->quote($order));
+						$query_upd->where($db->quoteName('id') . '=' . $db->quote($id));
+						$db->setQuery($query_upd);
+						if ($db->query()) {
+							$result['updated']++;
+						}
+					} else {
+						// not found: add new record
+						$values[] = implode(',', array($catid, $itemid, $order));
+					}
+				}
+
+				// some new records to add?
+				if (count($values)) {
+					$query = $db->getQuery(true);
+					$query->insert($db->quoteName('#__jem_cats_event_relations'));
+					$query->columns($db->quoteName($columns));
+					$query->values($values);
+					$db->setQuery($query);
+					if ($db->query()) {
+						$result['added'] += count($values);
+					}
+				}
+			}
+		}
+
+		return $result;
 	}
 
 	/**
