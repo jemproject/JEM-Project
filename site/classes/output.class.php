@@ -207,10 +207,18 @@ class JEMOutput {
 
 			$settings = JemHelper::globalattribs();
 			JHtml::_('behavior.tooltip');
-
+			
 			switch ($view)
 			{
 				case 'editevent':
+					if (property_exists($item, 'checked_out') && property_exists($item, 'checked_out_time') && $item->checked_out > 0 && $item->checked_out != $user->get('id')) {
+						$checkoutUser = JFactory::getUser($item->checked_out);
+						$button = JHtml::_('image', 'system/checked_out.png', NULL, NULL, true);
+						$date = JHtml::_('date', $item->checked_out_time);
+						$tooltip = JText::_('JLIB_HTML_CHECKED_OUT').' :: '.JText::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name).' <br /> '.$date;
+						return '<span class="hasTip" title="'.htmlspecialchars($tooltip, ENT_COMPAT, 'UTF-8').'">'.$button.'</span>';
+					}
+					
 					if ($settings->get('global_show_icons',1)) {
 						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_EVENT'), NULL, true);
 					} else {
@@ -223,6 +231,14 @@ class JEMOutput {
 					break;
 
 				case 'editvenue':
+					if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $user->get('id')) {
+						$checkoutUser = JFactory::getUser($item->vChecked_out);
+						$button = JHtml::_('image', 'system/checked_out.png', NULL, NULL, true);
+						$date = JHtml::_('date', $item->vChecked_out_time);
+						$tooltip = JText::_('JLIB_HTML_CHECKED_OUT').' :: '.JText::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name).' <br /> '.$date;
+						return '<span class="hasTip" title="'.htmlspecialchars($tooltip, ENT_COMPAT, 'UTF-8').'">'.$button.'</span>';
+					}
+					
 					if ($settings->get('global_show_icons',1)) {
 						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_VENUE'), NULL, true);
 					} else {
@@ -235,6 +251,14 @@ class JEMOutput {
 					break;
 
 				case 'venue':
+					if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $user->get('id')) {
+						$checkoutUser = JFactory::getUser($item->vChecked_out);
+						$button = JHtml::_('image', 'system/checked_out.png', NULL, NULL, true);
+						$date = JHtml::_('date', $item->vChecked_out_time);
+						$tooltip = JText::_('JLIB_HTML_CHECKED_OUT').' :: '.JText::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name).' <br /> '.$date;
+						return '<span class="hasTip" title="'.htmlspecialchars($tooltip, ENT_COMPAT, 'UTF-8').'">'.$button.'</span>';
+					}
+					
 					if ($settings->get('global_show_icons',1)) {
 						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_VENUE'), NULL, true);
 					} else {
