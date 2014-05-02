@@ -94,7 +94,7 @@ function highlightevents() {
 	var newtext = $("#filter_search").val();	
 	var newtext2 = "td."+ filter +":contains(" + newtext + ")";
 	
-	if (filter) {
+	if (filter && newtext) {
 		searcharea.find(newtext2).addClass('red');
 		$(searcharea.find(newtext2)).highlight(newtext);
 	}
@@ -104,6 +104,7 @@ function alleventfilters() {
 	var searcharea 	= $("#search_in_here");
 	var keyword		= $("#filter_search").val();
 	var title		= 'eventtitle';
+	var venue		= 'venue';
 	var city		= 'city';
 	var state		= 'state';
 	var country		= 'country';
@@ -113,6 +114,10 @@ function alleventfilters() {
 		var titleparameter	= "td."+ title +":contains(" + keyword + ")";
 		searcharea.find(titleparameter).addClass('red');
 		$(searcharea.find(titleparameter)).highlight(keyword);
+		
+		var venueparameter = "td."+ venue +":contains(" + keyword + ")";
+		searcharea.find(venueparameter).addClass('red');
+		$(searcharea.find(venueparameter)).highlight(keyword);
 	
 		var cityparameter	= "td."+ city +":contains(" + keyword + ")";
 		searcharea.find(cityparameter).addClass('red');
@@ -162,7 +167,7 @@ function highlightvenues() {
 	var newtext = $("#filter_search").val();
 	var newtext2 = "td."+ filter +":contains(" + newtext + ")";
 
-	if (filter) {
+	if (filter && newtext) {
 		searcharea.find(newtext2).addClass('red');
 		$(searcharea.find(newtext2)).highlight(newtext);
 	}
