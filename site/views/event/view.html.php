@@ -256,10 +256,12 @@ class JemViewEvent extends JEMView
 
 		$document->setDescription(strip_tags($description_content));
 
-		// load dispatcher for plugins (comments)
-		if (!$this->print) {
-			JPluginHelper::importPlugin('jem');
-			$item->pluginevent = new stdClass();
+		// load dispatcher for JEM plugins (comments)
+		$item->pluginevent = new stdClass();
+		if ($this->print) {
+			$item->pluginevent->onEventEnd = false;
+		} else {
+			JPluginHelper::importPlugin('jem','comments');
 			$results = $dispatcher->trigger('onEventEnd', array ($item->did, $this->escape($item->title)));
 			$item->pluginevent->onEventEnd = trim(implode("\n", $results));
 		}
