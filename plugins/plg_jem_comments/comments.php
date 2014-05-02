@@ -49,47 +49,16 @@ class plgJEMComments extends JPlugin {
 
 		$res = '';
 
-		//jomcomment integration
-		if ($this->params->get('commentsystem') == 1) {
-			if (file_exists(JPATH_SITE.'/plugins/content/jom_comment_bot.php')) {
-				require_once(JPATH_SITE.'/plugins/content/jom_comment_bot.php');
-				$res	.= '<div class="elcomments">';
-				$res 	.= jomcomment($event_id, 'com_jem');
-				$res 	.= '</div>';
-			}
-		}
-
 		//jcomments integration
-		if ($this->params->get('commentsystem') == 2) {
+		if ($this->params->get('commentsystem') == 1) {
 			if (file_exists(JPATH_SITE.'/components/com_jcomments/jcomments.php')) {
 				require_once(JPATH_SITE.'/components/com_jcomments/jcomments.php');
-				$res .= '<div class="elcomments">';
+				$res .= '<div class="jcomments">';
 				$res .= JComments::showComments($event_id, 'com_jem', $event_title);
 				$res .= '</div>';
 			}
 		}
 
-		//JXtended Comments integration
-		if ($this->params->get('commentsystem') == 3) {
-			if (file_exists(JPATH_SITE.'/components/com_comments/helpers/html/comments.php')) {
-				require_once(JPATH_SITE.'/components/com_comments/helpers/html/comments.php');
-
-				$res .= '<div class="elcomments">';
-
-				// display sharing
-				$res .= JHtml::_('comments.share', substr($_SERVER['REQUEST_URI'], 1), $event_title);
-
-				// display ratings
-				$res .= JHtml::_('comments.rating', 'jem', $event_id, JEMHelperRoute::getEventRoute($event_id), substr($_SERVER['REQUEST_URI'], 1), $event_title);
-
-				// display comments
-				$res .= JHtml::_('comments.comments', 'jem', $event_id, JEMHelperRoute::getEventRoute($event_id), substr($_SERVER['REQUEST_URI'], 1), $event_title);
-				$res .= '<style type="text/css">';
-				$res .= 'div#respond-container dt { float: none;border-bottom: medium none;padding: 0;width: auto;}';
-				$res .= '</style>';
-				$res .= '</div>';
-			}
-		}
 		return $res;
 	}
 }
