@@ -921,6 +921,16 @@
 				maxlength="10"
 				required="false"
 			/>
+			<field name="global_show_ownedvenuesonly" type="list"
+				label="COM_JEM_SETTINGS_FIELD_SHOW_OWNEDVENUESONLY"
+				description="COM_JEM_SETTINGS_FIELD_SHOW_OWNEDVENUESONLY_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
 		</fieldset>
 
 		<fieldset name="evevents"
