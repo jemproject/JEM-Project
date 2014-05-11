@@ -261,7 +261,7 @@ class JEMCategories
 	 * @param string $class
 	 * @return void
 	 */
-	static function buildcatselect($list, $name, $selected, $top, $class = 'class="inputbox"')
+	static function buildcatselect($list, $name, $selected, $top, $class = array('class'=>'inputbox'))
 	{
 		$catlist = array();
 

@@ -55,7 +55,7 @@ class JEMViewAttendees extends JViewLegacy {
 		$filters = array();
 		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME'));
 		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_USERNAME'));
-		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
+		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter);
 
 		// search filter
 		$lists['search'] = $search;
@@ -64,7 +64,7 @@ class JEMViewAttendees extends JViewLegacy {
 		$options = array(JHtml::_('select.option', 0, JText::_('COM_JEM_ATT_FILTER_ALL')),
 		                  JHtml::_('select.option', 1, JText::_('COM_JEM_ATT_FILTER_ATTENDING')),
 		                  JHtml::_('select.option', 2, JText::_('COM_JEM_ATT_FILTER_WAITING'))) ;
-		$lists['waiting'] = JHtml::_('select.genericlist', $options, 'filter_waiting', 'onChange="this.form.submit();"', 'value', 'text', $filter_waiting);
+		$lists['waiting'] = JHtml::_('select.genericlist', $options, 'filter_waiting', array('onChange'=>'this.form.submit();'), 'value', 'text', $filter_waiting);
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;

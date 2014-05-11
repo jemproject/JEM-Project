@@ -261,7 +261,7 @@ class JemViewEditevent extends JViewLegacy
 		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_VENUE'));
 		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_CITY'));
 		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_STATE'));
-		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
+		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 		$this->rows         = $rows;
 		$this->searchfilter = $searchfilter;
@@ -314,7 +314,7 @@ class JemViewEditevent extends JViewLegacy
 	/*	$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_ADDRESS')); */ // data security
 		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_CITY'));
 		$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_STATE'));
-		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
+		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 		// search filter
 		$lists['search']= $search;

@@ -43,7 +43,7 @@ class JEMAdmin {
 		return $config;
 	}
 
-	static function buildtimeselect($max, $name, $selected, $class = 'class="inputbox"')
+	static function buildtimeselect($max, $name, $selected, $class = array('class'=>'inputbox'))
 	{
 		$timelist = array();
 		$timelist[0] = JHtml::_('select.option', '', '');

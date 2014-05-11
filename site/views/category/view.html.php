@@ -191,7 +191,7 @@ class JemViewCategory extends JEMView
 			if ($jemsettings->showstate == 1) {
 				$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
 			}
-			$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
+			$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter);
 
 			// search filter
 			$lists['search']= $search;
