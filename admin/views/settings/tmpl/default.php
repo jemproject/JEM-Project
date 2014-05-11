@@ -86,6 +86,7 @@ window.addEvent('domready', function(){
 	} else {
 		eventmapoff();
 	}
+	
 
 	$("jform_globalattribs_global_show_mapserv").addEvent('change', testmap);
 
@@ -274,6 +275,8 @@ function eventmapoff()
 {
 	document.getElementById('eventmap1').style.display = 'none';
 	document.getElementById('eventmap2').style.display = 'none';
+	document.getElementById('jform_globalattribs_event_tld').value = '';
+	document.getElementById('jform_globalattribs_event_lg').value = '';
 }
 
 function globalmapon()
@@ -286,6 +289,8 @@ function globalmapoff()
 {
 	document.getElementById('globalmap1').style.display = 'none';
 	document.getElementById('globalmap2').style.display = 'none';
+	document.getElementById('jform_globalattribs_global_tld').value = '';
+	document.getElementById('jform_globalattribs_global_lg').value = '';
 }
 
 
