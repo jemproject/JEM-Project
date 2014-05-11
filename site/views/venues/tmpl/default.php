@@ -106,11 +106,11 @@ defined('_JEXEC') or die;
 				<?php endif; ?>
 
 				<?php if ($this->settings->get('global_show_mapserv') == 1) : ?>
-					<?php echo JemOutput::mapicon($row); ?>
+					<?php echo JemOutput::mapicon($row,null,$this->settings); ?>
 				<?php endif; ?>
 			</dl>
 			<?php if ($this->settings->get('global_show_mapserv') == 2) : ?>
-				<?php echo JemOutput::mapicon($row); ?>
+				<?php echo JemOutput::mapicon($row,null,$this->settings); ?>
 			<?php endif; ?>
 		<?php endif; ?>
 
