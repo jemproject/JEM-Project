@@ -66,14 +66,6 @@ div#jem .input {
 	cursor:pointer;
 }
 
-div#jem .event-file-dl-icon img {
-	padding:5px;
-}
-
-div#jc h4 {
-
-}
-
 div#jem fieldset {
 	border:1px dotted #808080 !important;
 }
@@ -210,6 +202,10 @@ div#jem h2 img {
 
 div#jem .jemcomponentheading {
 	border-bottom:0px !important;
+}
+
+div#jc h4 {
+
 }
 
 
