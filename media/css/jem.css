@@ -972,6 +972,22 @@ a.jgrid:hover {
 	background-image:url(../images/admin/icon-16-protected.png);
 }
 
+
+div#jem a.file-name:link,
+div#jem a.file-name:active,
+div#jem a.file-name:visited
+ {
+	text-decoration:none;
+	color: #000000;
+	background-color:transparent;
+}
+
+div#jem .file td{
+	padding:3px;
+}
+
+
+
 @media print {
 
 div#jem {
