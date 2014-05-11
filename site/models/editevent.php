@@ -200,8 +200,8 @@ class JEMModelEditevent extends JEMModelEvent
 	function buildQueryVenues()
 	{
 		$app 				= JFactory::getApplication();
-		$jemsettings 		= JemHelper::config();
-
+		$params		 		= JemHelper::globalattribs();
+		
 		$filter_order 		= $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
 
@@ -235,9 +235,8 @@ class JEMModelEditevent extends JEMModelEvent
 					$where[] = 'LOWER(l.state) LIKE "%' . $search . '%"';
 			}
 		}
-
-		// @todo: alter setting
-		if ($jemsettings->ownedvenuesonly) {
+		
+		if ($params->get('global_show_ownedvenuesonly')) {
 			$user = JFactory::getUser();
 			$userid = $user->get('id');
 			$where[] = ' created_by = ' . (int) $userid;
