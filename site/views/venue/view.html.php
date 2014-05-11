@@ -139,16 +139,10 @@ class JemViewVenue extends JEMView {
 			$venue	= $this->get('Venue');
 
 			// are events available?
-			if (! $rows) {
+			if (!$rows) {
 				$noevents = 1;
 			} else {
 				$noevents = 0;
-			}
-
-			// does the venue exist?
-			if ($venue->id == 0) {
-				// TODO Translation
-				return JError::raiseError(404,JText::_(COM_JEM_VENUE_NOTFOUND));
 			}
 
 			// Decide which parameters should take priority

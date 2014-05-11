@@ -326,6 +326,7 @@ class JEMModelVenue extends JModelLegacy
 
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
+		$_venue = array();
 
 		$query->select('id, venue, published, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
 				' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, '.
@@ -335,9 +336,14 @@ class JEMModelVenue extends JModelLegacy
 		$query->where('id = '.$this->_id);
 
 		$db->setQuery($query);
-
 		$_venue = $db->loadObject();
+		
+		if (empty($_venue)) {
+			return JError::raiseError(404, JText::_('COM_JEM_VENUE_NOTFOUND'));
+		}
+		
 		$_venue->attachments = JEMAttachment::getAttachments('venue'.$_venue->id);
+				
 		return $_venue;
 	}
 
