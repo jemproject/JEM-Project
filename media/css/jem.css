@@ -269,19 +269,16 @@ div#jem .copyright {
  * @section images
  * flyer, locations, maps, ...
  */
-div#jem .notmodal {
+div#jem .flyerimage {
 	float:right !important;
-/*	border:1px solid #000000 !important;*/
+	border:0px solid #000000;
 	width:auto;
 	position:static !important;
 	background:transparent;
-	border:0px solid #000000;
 	box-shadow:none;
 }
 
-div#jem .flyermodal {
-	float:right !important;
-/*	border:1px solid #000000;*/
+div#jem .googlemap {
 	border:0px solid #000000;
 	width:auto;
 	position:static !important;

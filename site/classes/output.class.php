@@ -567,10 +567,10 @@ class JEMOutput {
 	 *
 	 * @param obj $data
 	 */
-	static function mapicon($data,$view=false)
+	static function mapicon($data,$view=false,$params)
 	{
-		$settings = JemHelper::globalattribs();
-
+		$global = JemHelper::globalattribs();
+		
 		//stop if disabled
 		if (!$data->map) {
 			return;
@@ -585,10 +585,10 @@ class JEMOutput {
 			$lg			= 'global_lg';
 			$mapserv	= 'global_show_mapserv';
 		}
-
+		
 		//Link to map
 		$mapimage = JHtml::_('image', 'com_jem/map_icon.png', JText::_('COM_JEM_MAP'), NULL, true);
-
+		
 		//set var
 		$output = null;
 		$attributes = null;
@@ -602,30 +602,47 @@ class JEMOutput {
 			$data->longitude = null;
 		}
 
-		$url = 'http://maps.google.'.$settings->get($tld).'/maps?hl='.$settings->get($lg).'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
+		$url = 'http://maps.google.'.$params->get($tld).'/maps?hl='.$params->get($lg).'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
 
-		//google map link or include
-		switch ($settings->get($mapserv))
+		
+		// google map link or include
+		switch ($params->get($mapserv))
 		{
 			case 1:
 				// link
 				if($data->latitude && $data->longitude) {
-					$url = 'http://maps.google.'.$settings->get($tld).'/maps?hl='.$settings->get($lg).'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
+					$url = 'http://maps.google.'.$params->get($tld).'/maps?hl='.$params->get($lg).'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
 				}
 
 				$message = JText::_('COM_JEM_MAP').':';
 				$attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
-				$output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal" title="'.JText::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'</a></dd>';
+				$output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal mapicon" title="'.JText::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'</a></dd>';
 				break;
 
 			case 2:
-				// include
+				// include iframe
 				if($data->latitude && $data->longitude) {
 					$url = 'https://maps.google.com/maps?q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
 				}
-
+				
 				$output = '<div style="border: 1px solid #000;width:500px;"><iframe width="500" height="250" src="'.$url.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
 				break;
+				
+			case 3:
+				// include - Google API3
+				# https://developers.google.com/maps/documentation/javascript/tutorial
+				$api		= trim($params->get('global_googleapi'));
+				
+				$document 	= JFactory::getDocument();
+				$document->addScript('https://maps.googleapis.com/maps/api/js?key='.$api.'&sensor=false');
+				
+				JHtml::_('stylesheet', 'com_jem/googlemap.css', array(), true);
+				JHtml::_('script', 'com_jem/infobox.js', false, true);
+				JHtml::_('script', 'com_jem/googlemap.js', false, true);
+			
+				$output = '<div id="map-canvas" class="map_canvas"/></div>';
+				break;
+				
 		}
 
 		return $output;
@@ -699,11 +716,11 @@ class JEMOutput {
 		if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
 			if ($settings->lightbox == 0) {
 				$url = '#';
-				$attributes = 'class="notmodal" onclick="window.open(\''.JURI::base().'/'.$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
+				$attributes = 'class="flyerimage" onclick="window.open(\''.JURI::base().'/'.$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
 			} else {
 				JHtml::_('behavior.modal', 'a.flyermodal');
 				$url = JURI::base().'/'.$image['original'];
-				$attributes = 'class="flyermodal" title="'.$info.'"';
+				$attributes = 'class="flyermodal flyerimage" title="'.$info.'"';
 			}
 
 			$icon = '<img src="'.JURI::base().'/'.$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';

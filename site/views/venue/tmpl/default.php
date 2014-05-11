@@ -8,7 +8,6 @@
  */
 defined('_JEXEC') or die;
 
-
 ?>
 <div id="jem" class="jem_venue<?php echo $this->pageclass_sfx;?>" itemscope="itemscope" itemtype="http://schema.org/Place">
 	<div class="buttons">
@@ -101,16 +100,29 @@ defined('_JEXEC') or die;
 
 			<?php
 			if ($this->settings->get('global_show_mapserv')== 1) {
-				echo JemOutput::mapicon($this->venue);
+				echo JemOutput::mapicon($this->venue,null,$this->params);
 			}
 			?>
 		</dl>
 		<?php
 		if ($this->settings->get('global_show_mapserv')== 2) {
-			echo JemOutput::mapicon($this->venue);
+			echo JemOutput::mapicon($this->venue,null,$this->params);
 		}
 		?>
 	<?php endif; ?>
+	
+	<?php if ($this->settings->get('global_show_mapserv')== 3) : ?>			
+			<input type="hidden" id="latitude" value="<?php echo $this->venue->latitude;?>">
+			<input type="hidden" id="longitude" value="<?php echo $this->venue->longitude;?>">
+			
+			<input type="hidden" id="venue" value="<?php echo $this->venue->venue;?>">
+			<input type="hidden" id="street" value="<?php echo $this->venue->street;?>">
+			<input type="hidden" id="city" value="<?php echo $this->venue->city;?>">
+			<input type="hidden" id="state" value="<?php echo $this->venue->state;?>">
+			<input type="hidden" id="postalCode" value="<?php echo $this->venue->postalCode;?>">
+		<?php echo JemOutput::mapicon($this->venue,null,$this->settings); ?>			
+	<?php endif; ?>
+	
 
 	<?php if ($this->settings->get('global_show_locdescription',1) && $this->venuedescription != '' &&
 	          $this->venuedescription != '<br />') : ?>
