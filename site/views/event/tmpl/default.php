@@ -341,6 +341,13 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 				<?php echo $this->item->locdescription; ?>
 			</div>
 		<?php endif; ?>
+		
+		
+		<?php $this->attachments = $this->item->vattachments; ?>
+	<?php echo $this->loadTemplate('attachments'); ?>
+		
+		
+		
 		</div>
 	<?php endif; ?>
 

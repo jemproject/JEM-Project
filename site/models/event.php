@@ -266,8 +266,10 @@ class JemModelEvent extends JModelItem
 
 		// Define Attachments
 		$user = JFactory::getUser();
-
 		$this->_item[$pk]->attachments = JEMAttachment::getAttachments('event' . $this->_item[$pk]->did);
+		
+		// Define Venue-Attachments
+		$this->_item[$pk]->vattachments = JEMAttachment::getAttachments('venue' . $this->_item[$pk]->locid);
 
 		// Define Booked
 		$db = $this->getDbo();
