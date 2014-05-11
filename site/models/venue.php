@@ -136,6 +136,9 @@ class JEMModelVenue extends JModelLegacy
 				$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 			}
 		}
+		
+		
+		$this->_data = JEMHelper::getAttendeesNumbers($this->_data);
 
 		$count = count($this->_data);
 		for($i = 0; $i < $count; $i++) {
@@ -199,7 +202,7 @@ class JEMModelVenue extends JModelLegacy
 
 		//Get Events from Database
 		$query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.created, a.fulltext, a.featured, '
-				. ' a.recurrence_type, a.recurrence_first_id,'
+				. ' a.recurrence_type, a.recurrence_first_id, a.datimage, a.maxplaces, a.waitinglist,'
 				. ' l.venue, l.published AS published, l.city, l.state, l.url, l.street, l.custom1, l.custom2, l.custom3, l.custom4, l.custom5, l.custom6, l.custom7, l.custom8, l.custom9, l.custom10, l.checked_out, l.checked_out_time, c.catname, ct.name AS countryname, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'

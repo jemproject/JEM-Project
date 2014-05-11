@@ -46,6 +46,9 @@ defined('_JEXEC') or die;
 
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 	<colgroup>
+		<?php if ($this->jemsettings->showeventimage == 1) : ?>
+			<col width="<?php echo $this->jemsettings->tableeventimagewidth; ?>" class="jem_col_event_image" />
+		<?php endif; ?>
 			<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 		<?php if ($this->jemsettings->showtitle == 1) : ?>
 			<col width="<?php echo $this->jemsettings->titlewidth; ?>" class="jem_col_title" />
@@ -62,10 +65,16 @@ defined('_JEXEC') or die;
 		<?php if ($this->jemsettings->showcat == 1) :	?>
 			<col width="<?php echo $this->jemsettings->catfrowidth; ?>" class="jem_col_category" />
 		<?php endif; ?>
+		<?php if ($this->jemsettings->showatte == 1) : ?>
+			<col width="<?php echo $this->jemsettings->attewidth; ?>" class="jem_col_attendees" />
+		<?php endif; ?>
 	</colgroup>
 
 	<thead>
 		<tr>
+			<?php if ($this->jemsettings->showeventimage == 1) : ?>
+				<th id="jem_eventimage" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_TABLE_EVENTIMAGE'); ?></th>
+			<?php endif; ?>
 				<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<?php if ($this->jemsettings->showtitle == 1) : ?>
 				<th id="jem_title" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></th>
@@ -82,6 +91,9 @@ defined('_JEXEC') or die;
 			<?php if ($this->jemsettings->showcat == 1) : ?>
 				<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<?php endif; ?>
+			<?php if ($this->jemsettings->showatte == 1) : ?>
+				<th id="jem_attendees" class="sectiontableheader" align="center"><?php echo JText::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
+			<?php endif; ?>
 		</tr>
 	</thead>
 
@@ -96,6 +108,18 @@ defined('_JEXEC') or die;
         <?php else : ?>
             <tr class="sectiontableentry<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemprop="event" itemscope="itemscope" itemtype="http://schema.org/Event" >
         <?php endif; ?>		
+        
+        <?php if ($this->jemsettings->showeventimage == 1) : ?>
+					<td headers="jem_eventimage" align="left" valign="top">
+						<?php if (!empty($row->datimage)) : ?>
+							<?php
+							$dimage = JemImage::flyercreator($row->datimage, 'event');
+							echo JemOutput::flyer($row, $dimage, 'event');
+							?>
+						<?php endif; ?>
+					</td>
+				<?php endif; ?>
+       
 				<td headers="jem_date" align="left">
 					<?php
 						echo JemOutput::formatShortDateTime($row->dates, $row->times,
@@ -142,6 +166,13 @@ defined('_JEXEC') or die;
 							JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
 					</td>
 				<?php endif; ?>
+				
+				<?php if ($this->jemsettings->showatte == 1) : ?>
+					<td headers="jem_attendees" align="left" valign="top">
+						<?php echo !empty($row->regCount) ? $this->escape($row->regCount) : '-'; ?>
+					</td>
+				<?php endif; ?>
+				
 			</tr>
 		<?php endforeach; ?>
 	<?php endif; ?>
