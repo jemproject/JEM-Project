@@ -62,7 +62,7 @@ class JemModelUpdatecheck extends JModelLegacy
 			$updatedata->failed 			= 1;
 			$updatedata->installedversion	= $installedversion;
 		}
-
+		
 		return $updatedata;
 	}
 
@@ -73,7 +73,7 @@ class JemModelUpdatecheck extends JModelLegacy
 	function CheckFile($filename) {
 		$ext =  JFile::getExt($filename);
 		if ($ext == 'xml') {
-			if(@file_get_contents($file,0,null,0,1)){
+			if(@file_get_contents($filename,0,null,0,1)){
 				return true;
 			} else {
 				return false;
