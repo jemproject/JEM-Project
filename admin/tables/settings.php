@@ -48,6 +48,14 @@ class JEMTableSettings extends JTable
 			$registry->loadArray($array['globalattribs']);
 			$array['globalattribs'] = (string) $registry;
 		}
+		
+		if (isset($array['css']) && is_array($array['css']))
+		{
+			$registrycss = new JRegistry;
+			$registrycss->loadArray($array['css']);
+			$array['css'] = (string) $registrycss;
+		}
+		
 
 		//don't override without calling base class
 		return parent::bind($array, $ignore);

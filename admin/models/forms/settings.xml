@@ -1057,4 +1057,113 @@
 			</field>
 		</fieldset>
 	</fields>
+	
+	<fields name="css">
+		<fieldset name="stylesheet" label="Stylesheet">
+			<field name="css_backend_usecustom" type="list"
+				description="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_USECUSTOM_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_USECUSTOM"
+				>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="css_backend_customfile" type="text"
+				description="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_CUSTOMFILE_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_CUSTOMFILE"
+				class="inputbox"
+				size="50"
+				required="false"
+			/>
+			<field type="spacer" name="spacer1" hr="true" />
+			<field name="css_calendar_usecustom" type="list"
+				description="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_USECUSTOM_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_USECUSTOM"
+				>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="css_calendar_customfile" type="text"
+				description="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_CUSTOMFILE_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_CUSTOMFILE"
+				class="inputbox"
+				size="50"
+				required="false"
+			/>
+			<field type="spacer" name="spacer2" hr="true" />
+			<field name="css_colorpicker_usecustom" type="list"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_USECUSTOM_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_USECUSTOM"
+				>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="css_colorpicker_customfile" type="text"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_CUSTOMFILE_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_CUSTOMFILE"
+				class="inputbox"
+				size="50"
+				required="false"
+			/>
+			<field type="spacer" name="spacer3" hr="true" />
+			<field name="css_geostyle_usecustom" type="list"
+				description="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_USECUSTOM_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_USECUSTOM"
+				>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="css_geostyle_customfile" type="text"
+				description="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_CUSTOMFILE_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_CUSTOMFILE"
+				class="inputbox"
+				size="50"
+				required="false"
+			/>
+			<field type="spacer" name="spacer4" hr="true" />
+			<field name="css_googlemap_usecustom" type="list"
+				description="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_USECUSTOM_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_USECUSTOM"
+				>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="css_googlemap_customfile" type="text"
+				description="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_CUSTOMFILE_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_CUSTOMFILE"
+				class="inputbox"
+				size="50"
+				required="false"
+			/>
+			<field type="spacer" name="spacer5" hr="true" />
+			<field name="css_jem_usecustom" type="list"
+				description="COM_JEM_SETTINGS_FIELD_CSS_JEM_USECUSTOM_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_JEM_USECUSTOM"
+				>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="css_jem_customfile" type="text"
+				description="COM_JEM_SETTINGS_FIELD_CSS_JEM_CUSTOMFILE_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_JEM_CUSTOMFILE"
+				class="inputbox"
+				size="50"
+				required="false"
+			/>
+			<field type="spacer" name="spacer6" hr="true" />
+			<field name="css_print_usecustom" type="list"
+				description="COM_JEM_SETTINGS_FIELD_CSS_PRINT_USECUSTOM_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_PRINT_USECUSTOM"
+				>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="css_print_customfile" type="text"
+				description="COM_JEM_SETTINGS_FIELD_CSS_PRINT_CUSTOMFILE_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_PRINT_CUSTOMFILE"
+				class="inputbox"
+				size="50"
+				required="false"
+			/>
+		</fieldset>
+	</fields>
 </form>

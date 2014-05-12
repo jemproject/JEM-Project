@@ -59,6 +59,11 @@ class JEMModelSettings extends JModelForm
 		$registry->loadString($data->globalattribs);
 		$data->globalattribs = $registry->toArray();
 		
+		// Convert Css settings to an array
+		$registryCss = new JRegistry;
+		$registryCss->loadString($data->css);
+		$data->css = $registryCss->toArray();
+	
 		return $data;
 	}
 	
