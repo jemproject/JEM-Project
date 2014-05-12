@@ -240,7 +240,7 @@ class JEMTableVenue extends JTable
 				continue;
 			}
 			$fields[] = $this->_db->quoteName($k);
-			$values[] = $this->_db->isQuoted($k) ? $this->_db->quote($v) : (int) $v;
+			$values[] = $this->_db->quote($v);
 		}
 		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
 		if (!$this->_db->query()) {
