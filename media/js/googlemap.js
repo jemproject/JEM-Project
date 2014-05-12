@@ -13,7 +13,7 @@ function initialize() {
 	var myLatlng = new google.maps.LatLng(lat,long);
 	
 	var myMapOptions = {
-			 zoom: 15
+			 zoom: 16
 			,center: myLatlng
 			,mapTypeId: google.maps.MapTypeId.HYBRID
 			,disableDefaultUI: true
