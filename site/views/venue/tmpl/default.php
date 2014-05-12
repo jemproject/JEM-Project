@@ -100,13 +100,13 @@ defined('_JEXEC') or die;
 
 			<?php
 			if ($this->settings->get('global_show_mapserv')== 1) {
-				echo JemOutput::mapicon($this->venue,null,$this->params);
+				echo JemOutput::mapicon($this->venue,null,$this->settings);
 			}
 			?>
 		</dl>
 		<?php
 		if ($this->settings->get('global_show_mapserv')== 2) {
-			echo JemOutput::mapicon($this->venue,null,$this->params);
+			echo JemOutput::mapicon($this->venue,null,$this->settings);
 		}
 		?>
 	<?php endif; ?>
