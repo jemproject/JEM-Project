@@ -76,10 +76,20 @@ function initialize() {
 	} else {
 				
 		geocoder = new google.maps.Geocoder();
-		var address = title+","+street+","+postalCode+","+city;
+		var address = street+","+postalCode+","+city;
 		
 		geocoder.geocode( { 'address': address}, function(results, status) {
 		      if (status == google.maps.GeocoderStatus.OK) {
+		    	  
+		    	  // exact results
+		    	  /*
+		    	  if (results[0].geometry.location_type == google.maps.GeocoderLocationType.ROOFTOP){
+		    		  
+		    	  } else {
+		    		  
+		    	  }
+		    	  */
+		    	  
 		        //In this case it creates a marker, but you can get the lat and lng from the location.LatLng
 		        map.setCenter(results[0].geometry.location);
 		        
