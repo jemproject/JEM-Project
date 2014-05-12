@@ -80,57 +80,53 @@ function initialize() {
 		
 		geocoder.geocode( { 'address': address}, function(results, status) {
 		      if (status == google.maps.GeocoderStatus.OK) {
+		    	  // Geocoding-status is ok, but we want to retrieve an exact address
 		    	  
-		    	  // exact results
-		    	  /*
 		    	  if (results[0].geometry.location_type == google.maps.GeocoderLocationType.ROOFTOP){
+		    		 // we're searching for an exact/valid-address
 		    		  
-		    	  } else {
-		    		  
-		    	  }
-		    	  */
-		    	  
-		        //In this case it creates a marker, but you can get the lat and lng from the location.LatLng
-		        map.setCenter(results[0].geometry.location);
-		        
-		        var marker = new google.maps.Marker({
-		            map: map, 
-		            position: results[0].geometry.location,
-		            icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter_withshadow&chld=•|3491FF|000000"
-		        });
-		        
-		        var boxText = document.createElement("div");
-		        boxText.style.cssText = "border: 1px solid black; margin-top: 8px; background: yellow; padding: 5px;";
-		        boxText.innerHTML = "<b>"+title+"</b><br>"+street+"<br>"+postalCode+"<br>"+city;
-		    	
-		    	var myOptions = {
-		    			content: boxText
-		    			,disableAutoPan: false
-		    			,maxWidth: 0
-		    			,pixelOffset: new google.maps.Size(-140, -120)
-		    			,zIndex: null
-		    			,boxStyle: { 
-		    			  background: "url('tipbox.gif') no-repeat"
-		    			  ,opacity: 0.75
-		    			  ,width: "280px"
-		    			 }
-		    			,closeBoxMargin: "10px 2px 2px 2px"
-		    			,closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif"
-		    			,infoBoxClearance: new google.maps.Size(1, 1)
-		    			,isHidden: false
-		    			,pane: "floatPane"
-		    			,enableEventPropagation: false
-		    	};
-		     
-		    	
-		    	google.maps.event.addListener(marker, "click", function (e) {
-		    		ib.open(map, this);
-		    	});
+		    		  	//In this case it creates a marker, but you can get the lat and lng from the location.LatLng
+				        map.setCenter(results[0].geometry.location);
+				        
+				        var marker = new google.maps.Marker({
+				            map: map, 
+				            position: results[0].geometry.location,
+				            icon: "http://chart.apis.google.com/chart?chst=d_map_pin_letter_withshadow&chld=•|3491FF|000000"
+				        });
+				        
+				        var boxText = document.createElement("div");
+				        boxText.style.cssText = "border: 1px solid black; margin-top: 8px; background: yellow; padding: 5px;";
+				        boxText.innerHTML = "<b>"+title+"</b><br>"+street+"<br>"+postalCode+"<br>"+city;
+				    	
+				    	var myOptions = {
+				    			content: boxText
+				    			,disableAutoPan: false
+				    			,maxWidth: 0
+				    			,pixelOffset: new google.maps.Size(-140, -120)
+				    			,zIndex: null
+				    			,boxStyle: { 
+				    			  background: "url('tipbox.gif') no-repeat"
+				    			  ,opacity: 0.75
+				    			  ,width: "280px"
+				    			 }
+				    			,closeBoxMargin: "10px 2px 2px 2px"
+				    			,closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif"
+				    			,infoBoxClearance: new google.maps.Size(1, 1)
+				    			,isHidden: false
+				    			,pane: "floatPane"
+				    			,enableEventPropagation: false
+				    	};
+				     
+				    	
+				    	google.maps.event.addListener(marker, "click", function (e) {
+				    		ib.open(map, this);
+				    	});
 
-		    	var ib = new InfoBox(myOptions);
-		    	ib.open(map, marker);
-		        
-		        
+				    	var ib = new InfoBox(myOptions);
+				    	ib.open(map, marker);
+		    	  } else {
+		    		  error();
+		    	  }
 		      } else {
 		        /*alert("Geocode was not successful for the following reason: " + status);*/
 		    	error();
