@@ -579,11 +579,22 @@ class JEMOutput {
 		if ($view == 'event') {
 			$tld		= 'event_tld';
 			$lg			= 'event_lg';
-			$mapserv	= 'event_show_mapserv';
+			$mapserv	= $params->get('event_show_mapserv');
+		} else if ($view == 'venues') {
+			$mapserv	= $params->get('global_show_mapserv');
+			if ($mapserv == 3) {
+				$tld		= 'global_tld';
+				$lg			= 'global_lg';
+				$mapserv	= 2;
+			} else {	
+				$tld		= 'global_tld';
+				$lg			= 'global_lg';
+				$mapserv	= $params->get('global_show_mapserv');	
+			}		
 		} else {
 			$tld		= 'global_tld';
 			$lg			= 'global_lg';
-			$mapserv	= 'global_show_mapserv';
+			$mapserv	= $params->get('global_show_mapserv');
 		}
 		
 		//Link to map
@@ -602,11 +613,11 @@ class JEMOutput {
 			$data->longitude = null;
 		}
 
-		$url = 'http://maps.google.'.$params->get($tld).'/maps?hl='.$params->get($lg).'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
+		$url = 'http://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'com').'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
 
 		
 		// google map link or include
-		switch ($params->get($mapserv))
+		switch ($mapserv)
 		{
 			case 1:
 				// link
