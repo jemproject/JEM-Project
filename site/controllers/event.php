@@ -249,10 +249,16 @@ class JEMControllerEvent extends JControllerForm
 		$isNew = $model->getState('editevent.new');
 		$id    = $model->getState('editevent.id');
 
-		JPluginHelper::importPlugin('jem');
-		$dispatcher = JDispatcher::getInstance();
-		$dispatcher->trigger('onEventEdited', array($id, $isNew));
+		
+		if (JPluginHelper::importPlugin('jem','mailer')) {
+			JPluginHelper::importPlugin('jem','mailer');
+			$dispatcher = JDispatcher::getInstance();
+			$dispatcher->trigger('onEventEdited', array($id, $isNew));
+		} else {
+			JError::raiseNotice(100,JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'));
 		}
+	}
+	
 	}
 
 	/**
