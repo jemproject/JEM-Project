@@ -41,7 +41,7 @@ class JemViewAttendees extends JViewLegacy {
 		}
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
+		JemHelper::loadCss('jem');
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		//get vars
@@ -145,10 +145,11 @@ class JemViewAttendees extends JViewLegacy {
 		$params		= $app->getParams();
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		JemHelper::loadCss('backend');
+		JemHelper::loadCss('jem');
+		JemHelper::loadCss('print');
+		
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-		JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
 		$document->setMetaData('robots', 'noindex, nofollow');
 
 		// Emailaddress

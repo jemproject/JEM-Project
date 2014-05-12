@@ -337,11 +337,11 @@ class JemViewEvent extends JEMView
 		$pathway = $app->getPathway();
 		$title = null;
 
-		//add css file
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
+		// add css file
+		JemHelper::loadCss('jem');
 		$this->document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 		if ($this->print) {
-			JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+			JemHelper::loadCss('print');
 			$this->document->setMetaData('robots', 'noindex, nofollow');
 		}
 

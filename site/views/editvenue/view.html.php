@@ -150,11 +150,12 @@ class JemViewEditvenue extends JViewLegacy
 		$this->access	= $access2;
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-		JHtml::_('stylesheet', 'com_jem/geostyle.css', array(), true);
-
+		JemHelper::loadCss('geostyle');
+		JemHelper::loadCss('jem');
+		
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
+		// Load script
 		JHtml::_('script', 'com_jem/attachments.js', false, true);
 		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
 

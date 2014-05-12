@@ -53,7 +53,8 @@ class JemViewDay extends JEMView
 		$requestDate = $jinput->get('id', null, 'int');
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
+		JemHelper::loadCss('jem');
+		
 		$this->document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		// get variables

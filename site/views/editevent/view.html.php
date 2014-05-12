@@ -163,7 +163,7 @@ class JemViewEditevent extends JViewLegacy
 		JHtml::_('behavior.modal', 'a.flyermodal');
 
 		// add css file
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
+		JemHelper::loadCss('jem');
 
 		// Load scripts
 		JHtml::_('script', 'com_jem/attachments.js', false, true);
@@ -255,7 +255,7 @@ class JemViewEditevent extends JViewLegacy
 		$lists['order']     = $filter_order;
 
 		$document->setTitle(JText::_('COM_JEM_SELECT_VENUE'));
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
+		JemHelper::loadCss('jem');
 
 		$filters = array();
 		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_VENUE'));
@@ -296,7 +296,7 @@ class JemViewEditevent extends JViewLegacy
 		JHtml::_('behavior.modal', 'a.flyermodal');
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
+		JemHelper::loadCss('jem');
 
 		$document->setTitle(JText::_('COM_JEM_SELECT_CONTACT'));
 

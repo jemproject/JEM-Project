@@ -34,10 +34,11 @@ class JemViewCategories extends JEMView
 		$pagination = $this->get('Pagination');
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
+		JemHelper::loadCss('jem');
+		
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 		if ($print) {
-			JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+			JemHelper::loadCss('print');			
 			$document->setMetaData('robots', 'noindex, nofollow');
 		}
 

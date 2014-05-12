@@ -33,8 +33,8 @@ class JemViewCalendar extends JViewLegacy
 		$params 	= $app->getParams();
 		
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-		JHtml::_('stylesheet', 'com_jem/calendar.css', array(), true);
+		JemHelper::loadCss('jem');
+		JemHelper::loadCss('calendar');
 				
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 

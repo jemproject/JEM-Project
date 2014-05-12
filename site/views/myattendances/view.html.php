@@ -44,7 +44,8 @@ class JemViewMyattendances extends JViewLegacy
 		                                && $menuitem->query['view'] == 'myattendances');
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
+		JemHelper::loadCss('jem');
+		
 		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 

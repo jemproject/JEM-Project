@@ -647,7 +647,7 @@ class JEMOutput {
 				$document 	= JFactory::getDocument();
 				$document->addScript('https://maps.googleapis.com/maps/api/js?key='.$api.'&sensor=false');
 				
-				JHtml::_('stylesheet', 'com_jem/googlemap.css', array(), true);
+				JemHelper::loadCss('googlemap');
 				JHtml::_('script', 'com_jem/infobox.js', false, true);
 				JHtml::_('script', 'com_jem/googlemap.js', false, true);
 			

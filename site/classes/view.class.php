@@ -53,7 +53,7 @@ class JEMView extends JViewLegacy {
 		$print		= JRequest::getBool('print');
 
 		if ($print) {
-			JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+			JemHelper::loadCss('print');
 			$this->document->setMetaData('robots', 'noindex, nofollow');
 		}
 

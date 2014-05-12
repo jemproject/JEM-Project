@@ -31,8 +31,9 @@ class JemViewWeekcal extends JViewLegacy
 		$params 	= $app->getParams();
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-		JHtml::_('stylesheet', 'com_jem/calendar.css', array(), true);
+		JemHelper::loadCss('calendar');
+		JemHelper::loadCss('jem');
+		
 		$this->document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 
 		$evlinkcolor = $params->get('eventlinkcolor');
