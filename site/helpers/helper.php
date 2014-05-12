@@ -71,6 +71,32 @@ class JemHelper {
 
 
 	/**
+	 * Retrieves the CSS-settings from database and stores in an static object
+	 */
+	static function retrieveCss()
+	{
+		static $css;
+	
+		if (!is_object($css)) {
+			$db = JFactory::getDBO();
+			$query = $db->getQuery(true);
+	
+			$query->select('css');
+			$query->from('#__jem_settings');
+			$query->where('id = 1');
+	
+			$db->setQuery($query);
+			$css = $db->loadResult();
+		}
+	
+		$registryCSS = new JRegistry;
+		$registryCSS->loadString($css);
+	
+		return $registryCSS;
+	}
+	
+	
+	/**
 	 * Performs daily scheduled cleanups
 	 *
 	 * Currently it archives and removes outdated events
@@ -889,5 +915,48 @@ class JemHelper {
 		}
 		return true;
 	}
+	
+	
+	static function loadCss($css) {
+		
+		$settings = self::retrieveCss();
+		
+		if($settings->get('css_'.$css.'_usecustom','0')) {
+			
+			# we want to use custom so now check if we've a file
+			$file = $settings->get('css_'.$css.'_customfile');
+			$filename = false;
+
+			
+			# something was filled, now check if we've a valid file
+			if ($file) {
+				$filename	= JPATH_SITE.'/'.$file;			
+				$filename	= JFile::exists($file);
+				
+				if ($filename) {
+					# at this point we do have a valid file but let's check the extension too.
+					$ext =  JFile::getExt($file);
+					if ($ext != 'css') {
+						# the file is valid but the extension not so let's return false
+						$filename = false;
+					}
+				}
+			}
+	
+			if ($filename) {
+				# we do have a valid file so we will use it.
+				$css = JHtml::_('stylesheet', $file, array(), false);
+			} else {
+				# unfortunately we don't have a valid file so we're looking at the default
+				$css = JHtml::_('stylesheet', 'com_jem/'.$css.'.css', array(), true);
+			}		
+		} else {
+			# here we want to use the normal css
+			$css = JHtml::_('stylesheet', 'com_jem/'.$css.'.css', array(), true);
+		}
+		
+		return $css;
+	}
+	
 }
 ?>
