@@ -643,9 +643,21 @@ class JEMOutput {
 				// include - Google API3
 				# https://developers.google.com/maps/documentation/javascript/tutorial
 				$api		= trim($params->get('global_googleapi'));
+				$clientid	= trim($params->get('global_googleclientid'));
 				
 				$document 	= JFactory::getDocument();
-				$document->addScript('https://maps.googleapis.com/maps/api/js?key='.$api.'&sensor=false');
+			
+				# do we have a client-ID?
+				if ($clientid) {
+					$document->addScript('http://maps.googleapis.com/maps/api/js?client='.$clientid.'&sensor=false&v=3.15');
+				} else {
+					# do we have an api-key?
+					if ($api) {
+						$document->addScript('https://maps.googleapis.com/maps/api/js?key='.$api.'&sensor=false');
+					} else {
+						$document->addScript('https://maps.googleapis.com/maps/api/js?sensor=false');
+					}
+				}
 				
 				JemHelper::loadCss('googlemap');
 				JHtml::_('script', 'com_jem/infobox.js', false, true);
