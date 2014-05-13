@@ -53,14 +53,5 @@ defined('_JEXEC') or die;
 		</ul>
 	</fieldset>
 </div>
-<div class="width-100">
-	<fieldset class="adminform">
-		<legend><?php echo JText::_('COM_JEM_SETTINGS_LEGEND_CSS'); ?></legend>
-		<ul class="adminformlist">
-			<?php foreach ($this->form->getFieldset('stylesheet') as $field): ?>
-				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
-			<?php endforeach; ?>
-		</ul>
-	</fieldset>
-</div>
+
 </div><div class="clr"></div>
