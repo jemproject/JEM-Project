@@ -849,10 +849,19 @@
 				required="false"
 			/>
 			<field 
-				name="googleapi" 
+				name="global_googleapi" 
 				type="text"
 				label="COM_JEM_SETTINGS_FIELD_GOOGLEAPIKEY"
 				description="COM_JEM_SETTINGS_FIELD_GOOGLEAPIKEY_DESC"
+				class="inputbox"
+				size="50"
+				required="false"
+			/>
+			<field 
+				name="global_googleclientid" 
+				type="text"
+				label="COM_JEM_SETTINGS_FIELD_GOOGLECLIENTID"
+				description="COM_JEM_SETTINGS_FIELD_GOOGLECLIENTID_DESC"
 				class="inputbox"
 				size="50"
 				required="false"
