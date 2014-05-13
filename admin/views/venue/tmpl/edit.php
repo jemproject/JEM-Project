@@ -15,6 +15,10 @@ JHtml::_('behavior.keepalive');
 // Create shortcut to parameters.
 $params = $this->state->get('params');
 $params = $params->toArray();
+
+
+# defining values for centering default-map
+$location = JemHelper::defineCenterMap($this->form);
 ?>
 
 <script type="text/javascript">
@@ -46,6 +50,9 @@ $params = $params->toArray();
 		document.getElementById("tmp_form_country").setAttribute("geo-data", "country_short");
 		document.getElementById("tmp_form_latitude").setAttribute("geo-data", "lat");
 		document.getElementById("tmp_form_longitude").setAttribute("geo-data", "lng");
+
+		document.getElementById("tmp_form_venue").setAttribute("geo-data", "name");
+		
 	}
 
 	function meta(){
@@ -112,7 +119,7 @@ $params = $params->toArray();
 	jQuery(function() {
 		jQuery("#geocomplete").geocomplete({
 			map: ".map_canvas",
-			location: [<?php echo $this->form->getValue('latitude'); ?>, <?php echo $this->form->getValue('longitude'); ?>],
+			<?php echo $location; ?>
 			details: "form ",
 			detailsAttribute: "geo-data",
 			types: ['establishment', 'geocode'],
@@ -122,9 +129,8 @@ $params = $params->toArray();
 		});
 
 		jQuery("#geocomplete").bind("geocode:dragged", function(event, latLng){
-			jQuery("#geocomplete").geocomplete("find", latLng.toString());
-			/* option to show the reset-link */
-			/* jQuery("#reset").show();*/
+			jQuery("#tmp_form_latitude").val(latLng.lat());
+			jQuery("#tmp_form_longitude").val(latLng.lng());
 		});
 
 		/* option to attach a reset function to the reset-link
@@ -155,6 +161,11 @@ $params = $params->toArray();
 			document.getElementById("jform_state").value = document.getElementById("tmp_form_state").value;
 			document.getElementById("jform_street").value = document.getElementById("tmp_form_street").value;
 			document.getElementById("jform_country").value = document.getElementById("tmp_form_country").value;
+		});
+
+
+		jQuery("#cp-venue").click(function() {
+			document.getElementById("jform_venue").value = document.getElementById("tmp_form_venue").value;
 		});
 
 		jQuery("#cp-all").click(function() {
@@ -290,7 +301,6 @@ $params = $params->toArray();
 			<div class="clr"></div>
 			<div id="mapdiv">
 				<input id="geocomplete" type="text" size="55" placeholder="<?php echo JText::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
-				<input id="find" class="geobutton" type="button" value="find" style="margin-right: 3em;"/>
 				<input id="find-left" class="geobutton" type="button" value="Find by venue data" />
 				<div class="clr"></div>
 				<div class="map_canvas"></div>
@@ -307,6 +317,9 @@ $params = $params->toArray();
 
 					<li><label><?php echo JText::_('COM_JEM_STATE'); ?></label>
 						<input type="text" class="readonly" id="tmp_form_state" readonly="readonly" /></li>
+						
+					<li><label><?php echo JText::_('COM_JEM_VENUE'); ?></label>
+						<input type="text" class="readonly" id="tmp_form_venue" readonly="readonly" /></li>
 
 					<li><label><?php echo JText::_('COM_JEM_COUNTRY'); ?></label>
 						<input type="text" class="readonly" id="tmp_form_country" readonly="readonly" /></li>
@@ -320,6 +333,7 @@ $params = $params->toArray();
 				<div class="clr"></div>
 				<input id="cp-all" class="geobutton" type="button" value="Copy data" style="margin-right: 3em;" />
 				<input id="cp-address" class="geobutton" type="button" value="Copy address only" />
+				<input id="cp-venue" class="geobutton" type="button" value="Copy venue only" />
 				<input id="cp-latlong" class="geobutton" type="button" value="Copy coordinates only" />
 			</div>
 		</fieldset>

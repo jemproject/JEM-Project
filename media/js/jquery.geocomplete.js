@@ -346,8 +346,10 @@
       });
 
       // Add properties of the places details.
-      $.each(placesDetails, function(index, key){
-        data[key] = result[key];
+      $.each(placesDetails, function(index, key){  
+    	  if(result.hasOwnProperty("opening_hours")) {
+    		data[key] = result[key];
+    	  }
       });
 
       // Add infos about the address and geometry.

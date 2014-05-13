@@ -958,5 +958,41 @@ class JemHelper {
 		return $css;
 	}
 	
+	static function defineCenterMap($data = false) {
+		# retrieve venue
+		$venue		= $data->getValue('venue');
+	
+		if ($venue) {
+			# latitude/longitude
+			$lat 	= $data->getValue('latitude');
+			$long	= $data->getValue('longitude');
+	
+			if ($lat == 0.000000) {
+				$lat = null;
+			}
+	
+			if ($long == 0.000000) {
+				$long = null;
+			}
+	
+			if ($lat && $long) {
+				$location = '['.$data->getValue('latitude').','.$data->getValue('longitude').']';
+			} else {
+				# retrieve address-info
+				$postalCode = $data->getValue('postalCode');
+				$city		= $data->getValue('city');
+				$street		= $data->getValue('street');
+	
+				$address = '"'.$street.' '.$postalCode.' '.$city.'"';
+				$location = $address;
+			}
+			$location = 'location:'.$location.',';
+		} else {
+			$location = '';
+		}
+		
+		return $location;
+	}
+
 }
 ?>
