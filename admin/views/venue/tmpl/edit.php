@@ -34,12 +34,6 @@ $location = JemHelper::defineCenterMap($this->form);
 		var map = $('jform_map');
 		setAttribute();
 		test();
-
-		if(map && map.checked == true) {
-			addrequired();
-		} else {
-			removerequired();
-		}
 	});
 
 
