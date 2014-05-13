@@ -123,9 +123,14 @@ $location = JemHelper::defineCenterMap($this->form);
 			details: "form ",
 			detailsAttribute: "geo-data",
 			types: ['establishment', 'geocode'],
+			mapOptions: {
+			      zoom: 16,
+			      mapTypeId: "hybrid"
+			    },
 			markerOptions: {
 				draggable: true
 			}
+			
 		});
 
 		jQuery("#geocomplete").bind("geocode:dragged", function(event, latLng){
@@ -140,10 +145,6 @@ $location = JemHelper::defineCenterMap($this->form);
 			return false;
 		});
 		*/
-
-		jQuery("#find").click(function() {
-			jQuery("#geocomplete").trigger("geocode");
-		}).click();
 
 		jQuery("#find-left").click(function() {
 			jQuery("#geocomplete").val(jQuery("#jform_street").val() + ", " + jQuery("#jform_postalCode").val() + " " + jQuery("#jform_city").val());
