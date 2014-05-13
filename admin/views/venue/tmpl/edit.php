@@ -349,10 +349,10 @@ $location = JemHelper::defineCenterMap($this->form);
 						<input type="text" class="readonly" id="tmp_form_longitude" readonly="readonly" /></li>
 				</ul>
 				<div class="clr"></div>
-				<input id="cp-all" class="geobutton" type="button" value="Copy data" style="margin-right: 3em;" />
-				<input id="cp-address" class="geobutton" type="button" value="Copy address only" />
-				<input id="cp-venue" class="geobutton" type="button" value="Copy venue only" />
-				<input id="cp-latlong" class="geobutton" type="button" value="Copy coordinates only" />
+				<input id="cp-all" class="geobutton" type="button" value="<?php echo JText::_('COM_JEM_VENUE_COPY_DATA'); ?>" style="margin-right: 3em;" />
+				<input id="cp-address" class="geobutton" type="button" value="<?php echo JText::_('COM_JEM_VENUE_COPY_ADDRESS'); ?>" />
+				<input id="cp-venue" class="geobutton" type="button" value="<?php echo JText::_('COM_JEM_VENUE_COPY_VENUE'); ?>" />
+				<input id="cp-latlong" class="geobutton" type="button" value="<?php echo JText::_('COM_JEM_VENUE_COPY_COORDINATES'); ?>" />
 			</div>
 		</fieldset>
 	<?php echo JHtml::_('sliders.end'); ?>
