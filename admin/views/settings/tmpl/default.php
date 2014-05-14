@@ -122,7 +122,35 @@ window.addEvent('domready', function(){
 	} else {
 		commoff();
 	}
+
+
+	var ObjArray = $$('input.colorpicker').get('id').sort();  
+
+	var arrayLength = ObjArray.length;
+	for (var i = 0; i < arrayLength; i++) {
+	    var Obj 	= $(ObjArray[i]); 
+		var color = testcolor(Obj.value);
+		if (color) {
+			Obj.style.color = color;
+		}
+	}
 });
+
+
+function testcolor(color) {
+	if(color.length==7)
+	{
+		color=color.substring(1);
+	}
+	var R = parseInt(color.substring(0,2),16);
+	var G = parseInt(color.substring(2,4),16);
+	var B = parseInt(color.substring(4,6),16);
+	var x = Math.sqrt(R * R * .299 + G * G * .587 + B * B * .114);
+	
+	var sColorText = x < 130 ? '#FFFFFF' : '#000000'; 
+	
+	return sColorText;
+	}
 
 function testcomm()
 {
