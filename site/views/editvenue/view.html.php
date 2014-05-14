@@ -152,6 +152,7 @@ class JemViewEditvenue extends JViewLegacy
 		// Load css
 		JemHelper::loadCss('geostyle');
 		JemHelper::loadCss('jem');
+		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 		
 		// Load script
