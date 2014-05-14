@@ -798,6 +798,7 @@ div#jem div.current {
 	clear:both;
 	border:1px solid #808080;
 	padding:10px 10px;
+	background-color:white;
 }
 
 div#jem div.current dd {
