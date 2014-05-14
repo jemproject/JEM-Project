@@ -61,7 +61,6 @@ class JEMViewVenue extends JViewLegacy {
 		
 		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places&language='.$language);
 		
-
 		// Noconflict
 		$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
 

@@ -159,7 +159,10 @@ $location = JemHelper::defineCenterMap($this->form);
 		});
 
 		jQuery("#cp-venue").click(function() {
-			document.getElementById("jform_venue").value = document.getElementById("tmp_form_venue").value;
+			var venue = document.getElementById("tmp_form_venue").value;
+			if (venue) {
+				document.getElementById("jform_venue").value = venue;
+			}
 		});
 
 		jQuery("#cp-all").click(function() {
