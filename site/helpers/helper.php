@@ -958,6 +958,7 @@ class JemHelper {
 		return $css;
 	}
 	
+	
 	static function defineCenterMap($data = false) {
 		# retrieve venue
 		$venue		= $data->getValue('venue');
@@ -993,6 +994,99 @@ class JemHelper {
 		
 		return $location;
 	}
-
+	
+	/**
+	 * Load Custom CSS
+	 * 
+	 * @return boolean
+	 */
+	static function loadCustomCss() {
+	
+		$settings = self::retrieveCss();
+				
+		$style = "";
+		
+		# background-colors
+		$bg_filter			= $settings->get('css_color_bg_filter');
+		$bg_jem				= $settings->get('css_color_bg_jem');
+		$bg_table_th		= $settings->get('css_color_bg_table_th');
+		$bg_table_td		= $settings->get('css_color_bg_table_td');
+		$bg_table_tr_entry2	= $settings->get('css_color_bg_table_tr_entry2');
+		$bg_table_tr_hover 	= $settings->get('css_color_bg_table_tr_hover');
+		
+		if ($bg_filter) {
+			$style .= "div#jem #jem_filter {background-color:" . $bg_filter . ";}";
+		}
+		
+		if ($bg_jem) {
+			$style .= "div#jem {background-color:" . $bg_jem . ";}";
+		}
+		
+		if ($bg_table_th) {
+			$style .= "div#jem table.eventtable th {background-color:" . $bg_table_th . ";}";
+		}
+		
+		if ($bg_table_td) {
+			$style .= "div#jem table.eventtable td {background-color:" . $bg_table_td . ";}";
+		}
+		
+		if ($bg_table_tr_entry2) {
+			$style .= "div#jem table.eventtable tr.sectiontableentry2 td {background-color:" . $bg_table_tr_entry2 . ";}";
+		}
+			
+		if ($bg_table_tr_hover) {
+			$style .= "div#jem table.eventtable tr:hover td {background-color:" . $bg_table_tr_hover . ";}";
+		}
+	
+		# border-colors
+		$border_filter		= $settings->get('css_color_border_filter');
+		$border_table_th	= $settings->get('css_color_border_table_th');
+		$border_table_td	= $settings->get('css_color_border_table_td');
+	
+		if ($border_filter) {
+			$style .= "div#jem #jem_filter {border-color:" . $border_filter . ";}";
+		}
+		if ($border_table_th) {
+			$style .= "div#jem table.eventtable th {border-color:" . $border_table_th . ";}";
+		}
+		if ($border_table_td) {
+			$style .= "div#jem table.eventtable td {border-color:" . $border_table_td . ";}";
+		}
+		
+		# font-color
+		$font_table_td		= $settings->get('css_color_font_table_td');
+		$font_table_td_a	= $settings->get('css_color_font_table_td_a');
+		
+		if ($font_table_td) {
+			$style .= "div#jem table.eventtable td {color:" . $font_table_td . ";}";
+		}
+		
+		if ($font_table_td_a) {
+			$style .= "div#jem table.eventtable td a {color:" . $font_table_td_a . ";}";
+		}
+		
+		$document 	= JFactory::getDocument();
+		$document->addStyleDeclaration($style);
+		
+		return true;
+	}
+	
+	/**
+	 * Loads Custom Tags
+	 * 
+	 * @return boolean
+	 */
+	
+	static function loadCustomTag() {
+	
+		$document 	= JFactory::getDocument();
+		$tag = "";
+		$tag .= "<!--[if IE]><style type='text/css'>.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->";
+		
+		$document->addCustomTag($tag);		
+	
+		return true;
+	}
+	
 }
 ?>
