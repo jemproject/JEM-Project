@@ -222,7 +222,7 @@ $options = array(
 			<fieldset class="adminform" id="geodata">
 				<legend><?php echo JText::_('COM_JEM_GEODATA'); ?></legend>
 				<input id="geocomplete" type="text" size="40" placeholder="<?php echo JText::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
-				<input id="find" type="button" value="find" />
+				<input id="find" type="button" value="<?php echo JText::_( 'COM_JEM_VENUE_FIND' ); ?>" />
 				<br><br>
 				<div class="map_canvas"></div>
 				<a id="reset" href="#" style="display:none;">Reset Marker</a>
