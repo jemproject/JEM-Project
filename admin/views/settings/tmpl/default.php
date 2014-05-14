@@ -15,6 +15,8 @@ defined('_JEXEC') or die;
 JHtml::_('behavior.formvalidation');
 JHtml::_('behavior.switcher');
 JHtml::_('behavior.tooltip');
+
+
 ?>
 
 <script>
@@ -324,7 +326,7 @@ function commoff()
 	}
 </script>
 
-<form action="index.php" method="post" id="settings-form" name="adminForm" class="form-validate">
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=settings'); ?>" method="post" id="settings-form" name="adminForm" class="form-validate">
 	<?php echo JHtml::_('tabs.start', 'settings-pane', array('useCookie'=>1)); ?>
 	<?php echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_BASIC_SETTINGS' ), 'settings-basic'); ?>
 	
