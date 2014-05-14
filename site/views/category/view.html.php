@@ -46,8 +46,9 @@ class JemViewCategory extends JEMView
 			// Load css
 			JemHelper::loadCss('jem');
 			JemHelper::loadCss('calendar');
+			JemHelper::loadCustomCss();
+			JemHelper::loadCustomTag();
 			
-			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 			if ($print) {
 				JemHelper::loadCss('print');
 				$document->setMetaData('robots', 'noindex, nofollow');
@@ -135,9 +136,9 @@ class JemViewCategory extends JEMView
 
 			// Load css
 			JemHelper::loadCss('jem');
+			JemHelper::loadCustomCss();
+			JemHelper::loadCustomTag();
 			
-			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-
 			//get data from model
 			$rows 		= $this->get('Data');
 			$category 	= $this->get('Category');

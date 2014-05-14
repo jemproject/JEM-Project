@@ -54,9 +54,8 @@ class JemViewDay extends JEMView
 
 		// Load css
 		JemHelper::loadCss('jem');
+		JemHelper::loadCustomTag();
 		
-		$this->document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-
 		// get variables
 		$filter_order		= $app->getUserStateFromRequest('com_jem.day.filter_order', 'filter_order', 	'a.dates', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.day.filter_order_Dir', 'filter_order_Dir',	'', 'word');

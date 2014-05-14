@@ -339,7 +339,9 @@ class JemViewEvent extends JEMView
 
 		// add css file
 		JemHelper::loadCss('jem');
-		$this->document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		JemHelper::loadCustomCss();
+		JemHelper::loadCustomTag();
+
 		if ($this->print) {
 			JemHelper::loadCss('print');
 			$this->document->setMetaData('robots', 'noindex, nofollow');

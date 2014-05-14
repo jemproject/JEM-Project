@@ -45,10 +45,8 @@ class JemViewMyattendances extends JViewLegacy
 
 		// Load css
 		JemHelper::loadCss('jem');
+		JemHelper::loadCustomTag();
 		
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-
-
 		$attending 	= $this->get('Attending');
 		$attending_pagination 	= $this->get('AttendingPagination');
 

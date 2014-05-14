@@ -42,9 +42,9 @@ class JemViewSearch extends JEMView
 
 		// Load css
 		JemHelper::loadCss('jem');
+		JemHelper::loadCustomTag();
 		
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-
+		// Load Script
 		JHtml::_('script', 'com_jem/search.js', false, true);
 
 		$filter_continent	= $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');

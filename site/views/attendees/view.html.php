@@ -42,7 +42,7 @@ class JemViewAttendees extends JViewLegacy {
 
 		// Load css
 		JemHelper::loadCss('jem');
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		JemHelper::loadCustomTag();
 
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest('com_jem.attendees.filter_order', 'filter_order', 'u.username', 'cmd');
@@ -148,8 +148,8 @@ class JemViewAttendees extends JViewLegacy {
 		JemHelper::loadCss('backend');
 		JemHelper::loadCss('jem');
 		JemHelper::loadCss('print');
+		JemHelper::loadCustomTag();
 		
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 		$document->setMetaData('robots', 'noindex, nofollow');
 
 		// Emailaddress

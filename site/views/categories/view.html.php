@@ -35,8 +35,8 @@ class JemViewCategories extends JEMView
 
 		// Load css
 		JemHelper::loadCss('jem');
+		JemHelper::loadCustomTag();
 		
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
 		if ($print) {
 			JemHelper::loadCss('print');			
 			$document->setMetaData('robots', 'noindex, nofollow');
