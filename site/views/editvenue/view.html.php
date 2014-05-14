@@ -34,6 +34,11 @@ class JemViewEditvenue extends JViewLegacy
 		$menuitem    = $menu->getActive();
 		$pathway     = $app->getPathway();
 		$url         = JURI::root();
+		
+		$language = JFactory::getLanguage();
+		$language = $language->getTag();
+		$language = substr($language, 0,2);
+		
 
 		// Get model data.
 		$this->state 	= $this->get('State');
@@ -157,7 +162,7 @@ class JemViewEditvenue extends JViewLegacy
 		
 		// Load script
 		JHtml::_('script', 'com_jem/attachments.js', false, true);
-		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
+		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places&language='.$language);
 
 		// Noconflict
 		$document->addCustomTag( '<script type="text/javascript">jQuery.noConflict();</script>' );
