@@ -919,6 +919,8 @@ class JemHelper {
 	
 	static function loadCss($css) {
 		
+		jimport('joomla.filesystem.file');
+		
 		$settings = self::retrieveCss();
 		
 		if($settings->get('css_'.$css.'_usecustom','0')) {
@@ -1103,6 +1105,7 @@ class JemHelper {
 	
 		return true;
 	}
+	
 	
 }
 ?>
