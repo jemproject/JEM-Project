@@ -16,7 +16,6 @@ JHtml::_('behavior.keepalive');
 $params = $this->state->get('params');
 $params = $params->toArray();
 
-
 # defining values for centering default-map
 $location = JemHelper::defineCenterMap($this->form);
 ?>
@@ -29,14 +28,10 @@ $location = JemHelper::defineCenterMap($this->form);
 		}
 	}
 
-	window.addEvent('domready', function() {
-		var form = document.getElementById('venue-form');
-		var map = $('jform_map');
+	window.addEvent('domready', function() {		
 		setAttribute();
 		test();
 	});
-
-	
 
 	function setAttribute(){
 		document.getElementById("tmp_form_postalCode").setAttribute("geo-data", "postal_code");
@@ -163,7 +158,6 @@ $location = JemHelper::defineCenterMap($this->form);
 			document.getElementById("jform_country").value = document.getElementById("tmp_form_country").value;
 		});
 
-
 		jQuery("#cp-venue").click(function() {
 			document.getElementById("jform_venue").value = document.getElementById("tmp_form_venue").value;
 		});
@@ -171,9 +165,8 @@ $location = JemHelper::defineCenterMap($this->form);
 		jQuery("#cp-all").click(function() {
 			jQuery("#cp-address").click();
 			jQuery("#cp-latlong").click();
+			jQuery("#cp-venue").click();
 		});	
-
-
 
 		jQuery('#jform_map').on('keyup keypress blur change', function() {
 		    test();
@@ -321,32 +314,32 @@ $location = JemHelper::defineCenterMap($this->form);
 
 				<ul class="adminformlist">
 					<li><label><?php echo JText::_('COM_JEM_STREET'); ?></label>
-						<input type="text" class="readonly" id="tmp_form_street" readonly="readonly" />
+						<input type="text" disabled="disabled" class="readonly" id="tmp_form_street" />
 					
 						<input type="hidden" class="readonly" id="tmp_form_streetnumber" readonly="readonly" />
 						<input type="hidden" class="readonly" id="tmp_form_route" readonly="readonly" />
 						</li>
 
 					<li><label><?php echo JText::_('COM_JEM_ZIP'); ?></label>
-						<input type="text" class="readonly" id="tmp_form_postalCode" readonly="readonly" /></li>
+						<input type="text" disabled="disabled" class="readonly" id="tmp_form_postalCode" /></li>
 
 					<li><label><?php echo JText::_('COM_JEM_CITY'); ?></label>
-						<input type="text" class="readonly" id="tmp_form_city" readonly="readonly" /></li>
+						<input type="text" disabled="disabled" class="readonly" id="tmp_form_city"/></li>
 
 					<li><label><?php echo JText::_('COM_JEM_STATE'); ?></label>
-						<input type="text" class="readonly" id="tmp_form_state" readonly="readonly" /></li>
+						<input type="text" disabled="disabled" class="readonly" id="tmp_form_state" /></li>
 						
 					<li><label><?php echo JText::_('COM_JEM_VENUE'); ?></label>
-						<input type="text" class="readonly" id="tmp_form_venue" readonly="readonly" /></li>
+						<input type="text" disabled="disabled" class="readonly" id="tmp_form_venue" /></li>
 
 					<li><label><?php echo JText::_('COM_JEM_COUNTRY'); ?></label>
-						<input type="text" class="readonly" id="tmp_form_country" readonly="readonly" /></li>
+						<input type="text" disabled="disabled" class="readonly" id="tmp_form_country" /></li>
 
 					<li><label><?php echo JText::_('COM_JEM_LATITUDE'); ?></label>
-						<input type="text" class="readonly" id="tmp_form_latitude" readonly="readonly" /></li>
+						<input type="text" disabled="disabled" class="readonly" id="tmp_form_latitude" /></li>
 
 					<li><label><?php echo JText::_('COM_JEM_LONGITUDE'); ?></label>
-						<input type="text" class="readonly" id="tmp_form_longitude" readonly="readonly" /></li>
+						<input type="text" disabled="disabled" class="readonly" id="tmp_form_longitude" /></li>
 				</ul>
 				<div class="clr"></div>
 				<input id="cp-all" class="geobutton" type="button" value="<?php echo JText::_('COM_JEM_VENUE_COPY_DATA'); ?>" style="margin-right: 3em;" />
