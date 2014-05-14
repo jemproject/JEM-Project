@@ -1008,6 +1008,7 @@ class JemHelper {
 		
 		# background-colors
 		$bg_filter			= $settings->get('css_color_bg_filter');
+		$bg_h2				= $settings->get('css_color_bg_h2');
 		$bg_jem				= $settings->get('css_color_bg_jem');
 		$bg_table_th		= $settings->get('css_color_bg_table_th');
 		$bg_table_td		= $settings->get('css_color_bg_table_td');
@@ -1015,11 +1016,15 @@ class JemHelper {
 		$bg_table_tr_hover 	= $settings->get('css_color_bg_table_tr_hover');
 		
 		if ($bg_filter) {
-			$style .= "div#jem #jem_filter {background-color:" . $bg_filter . ";}";
+			$style .= "div#jem #jem_filter {background-color:".$bg_filter.";}";
+		}
+		
+		if ($bg_h2) {
+			$style .= "div#jem h2 {background-color:".$bg_h2.";}";
 		}
 		
 		if ($bg_jem) {
-			$style .= "div#jem {background-color:" . $bg_jem . ";}";
+			$style .= "div#jem {background-color:".$bg_jem.";}";
 		}
 		
 		if ($bg_table_th) {
@@ -1040,12 +1045,18 @@ class JemHelper {
 	
 		# border-colors
 		$border_filter		= $settings->get('css_color_border_filter');
+		$border_h2			= $settings->get('css_color_border_h2');
 		$border_table_th	= $settings->get('css_color_border_table_th');
 		$border_table_td	= $settings->get('css_color_border_table_td');
 	
 		if ($border_filter) {
 			$style .= "div#jem #jem_filter {border-color:" . $border_filter . ";}";
 		}
+		
+		if ($border_h2) {
+			$style .= "div#jem h2 {border-color:".$border_h2.";}";
+		}
+		
 		if ($border_table_th) {
 			$style .= "div#jem table.eventtable th {border-color:" . $border_table_th . ";}";
 		}
@@ -1054,8 +1065,13 @@ class JemHelper {
 		}
 		
 		# font-color
+		$font_table_h2		= $settings->get('css_color_font_h2');
 		$font_table_td		= $settings->get('css_color_font_table_td');
 		$font_table_td_a	= $settings->get('css_color_font_table_td_a');
+		
+		if ($font_table_h2) {
+			$style .= "div#jem h2 {color:" . $font_table_h2 . ";}";
+		}
 		
 		if ($font_table_td) {
 			$style .= "div#jem table.eventtable td {color:" . $font_table_td . ";}";
