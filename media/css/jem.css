@@ -395,7 +395,7 @@ div#jem table.eventtable {
 }
 
 div#jem table.eventtable th {
-	background-color:#809EA8 !important;
+	background-color:#809EA8;
 	color:#FFFFFF;
 	font-weight:bold;
 	padding:0.4em;
@@ -408,9 +408,6 @@ div#jem table.eventtable th a {
 	background-color:transparent;
 }
 
-div#jem table.eventtable th a:hover {
-	background-color:transparent;
-}
 
 div#jem table.eventtable th img {
 	margin:0 0 5px 5px;
@@ -423,6 +420,11 @@ div#jem table.eventtable td {
 	padding:0.4em;
 	border:1px solid #000000;
 	vertical-align:top;
+}
+
+div#jem table.eventtable td a{
+	background-color:transparent;
+	color:#0000EE;
 }
 
 div#jem table.eventtable tr.sectiontableentry2 td {

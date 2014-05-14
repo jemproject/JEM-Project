@@ -107,4 +107,34 @@ defined('_JEXEC') or die;
 		</ul>
 	</fieldset>
 </div>
+<div class="width-100">
+	<fieldset class="adminform">
+		<legend><?php echo JText::_('COM_JEM_SETTINGS_LEGEND_CSS_COLOR_BACKGROUND'); ?></legend>
+		<ul class="adminformlist">
+			<?php foreach ($this->form->getFieldset('css_color') as $field): ?>
+				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+			<?php endforeach; ?>
+		</ul>
+	</fieldset>
+</div>
+<div class="width-100">
+	<fieldset class="adminform">
+		<legend><?php echo JText::_('COM_JEM_SETTINGS_LEGEND_CSS_COLOR_BORDER'); ?></legend>
+		<ul class="adminformlist">
+			<?php foreach ($this->form->getFieldset('css_color_border') as $field): ?>
+				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+			<?php endforeach; ?>
+		</ul>
+	</fieldset>
+</div>
+<div class="width-100">
+	<fieldset class="adminform">
+		<legend><?php echo JText::_('COM_JEM_SETTINGS_LEGEND_CSS_COLOR_FONT'); ?></legend>
+		<ul class="adminformlist">
+			<?php foreach ($this->form->getFieldset('css_color_font') as $field): ?>
+				<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
+			<?php endforeach; ?>
+		</ul>
+	</fieldset>
+</div>
 </div><div class="clr"></div>

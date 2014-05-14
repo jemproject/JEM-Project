@@ -33,6 +33,7 @@ class JEMViewSettings extends JViewLegacy {
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		JHtml::_('stylesheet', 'com_jem/colorpicker.css', array(), true);
 
 		$style = '
 		    div.current fieldset.radio input {
@@ -56,10 +57,16 @@ class JEMViewSettings extends JViewLegacy {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
+		
+		// Load Script
+		$document->addScript(JURI::root().'media/com_jem/js/colorpicker.js');
+		
 		JHtml::_('behavior.modal', 'a.modal');
 		JHtml::_('behavior.tooltip');
 		JHtml::_('behavior.formvalidation');
 		JHtml::_('behavior.framework');
+		
+		
 
 		$app = JFactory::getApplication();
 
