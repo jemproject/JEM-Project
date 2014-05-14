@@ -36,6 +36,7 @@ $location = JemHelper::defineCenterMap($this->form);
 		test();
 	});
 
+	
 
 	function setAttribute(){
 		document.getElementById("tmp_form_postalCode").setAttribute("geo-data", "postal_code");
@@ -185,7 +186,6 @@ $location = JemHelper::defineCenterMap($this->form);
 		jQuery('#jform_longitude').on('keyup keypress blur change', function() {
 		    test();
 		});
-		
 	});
 
 	jQuery(document).ready(function() {
@@ -199,7 +199,7 @@ $location = JemHelper::defineCenterMap($this->form);
 				map.setCenter(center);
 			}
 		});
-	});
+	});	
 </script>
 
 <form
@@ -315,7 +315,7 @@ $location = JemHelper::defineCenterMap($this->form);
 			<div class="clr"></div>
 			<div id="mapdiv">
 				<input id="geocomplete" type="text" size="55" placeholder="<?php echo JText::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
-				<input id="find-left" class="geobutton" type="button" value="Find by venue data" />
+				<input id="find-left" class="geobutton" type="button" value="<?php echo JText::_('COM_JEM_VENUE_ADDR_FINDVENUEDATA');?>" />
 				<div class="clr"></div>
 				<div class="map_canvas"></div>
 
