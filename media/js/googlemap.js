@@ -16,7 +16,7 @@ function initialize() {
 			 zoom: 16
 			,center: myLatlng
 			,mapTypeId: google.maps.MapTypeId.HYBRID
-			,disableDefaultUI: true
+			,disableDefaultUI: false
 		};
 	
 	var map = new google.maps.Map(document.getElementById('map-canvas'), myMapOptions);
