@@ -34,6 +34,7 @@ class JemViewVenues extends JViewLegacy
 
 		// Load css
 		JemHelper::loadCss('jem');
+		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 		
 		if ($print) {

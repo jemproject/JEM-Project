@@ -42,6 +42,7 @@ class JemViewSearch extends JEMView
 
 		// Load css
 		JemHelper::loadCss('jem');
+		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 		
 		// Load Script

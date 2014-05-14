@@ -45,6 +45,7 @@ class JemViewMyevents extends JViewLegacy
 
 		// Load css
 		JemHelper::loadCss('jem');
+		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 		
 		$events 	= $this->get('Events');

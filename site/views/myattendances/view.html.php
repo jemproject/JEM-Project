@@ -45,6 +45,7 @@ class JemViewMyattendances extends JViewLegacy
 
 		// Load css
 		JemHelper::loadCss('jem');
+		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 		
 		$attending 	= $this->get('Attending');

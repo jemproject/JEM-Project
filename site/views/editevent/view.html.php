@@ -164,6 +164,7 @@ class JemViewEditevent extends JViewLegacy
 
 		// add css file
 		JemHelper::loadCss('jem');
+		JemHelper::loadCustomCss();
 
 		// Load scripts
 		JHtml::_('script', 'com_jem/attachments.js', false, true);
