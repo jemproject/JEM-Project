@@ -77,13 +77,12 @@ class JemModelEventslist extends JModelList
 		$filtertype = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_type', 'filter_type', '', 'int');
 		$this->setState('filter.filter_type', $filtertype);
 	
-			# publish state
+		# publish state
 		if ($task == 'archive') {
-			$this->setState('filter.archived', 2);
+			$this->setState('filter.archived', 'a.published = 2');
 		} else {
-		$this->setState('filter.published', 1);
+			$this->setState('filter.published', 'a.published = 1');
 		}
-	
 	
 		$params = $app->getParams();
 		$this->setState('params', $params);
@@ -346,11 +345,12 @@ class JemModelEventslist extends JModelList
 		$archived	= $this->getState('filter.archived');
 		
 		if ($published) {
-			$query->where('a.published = 1');
+			$query->where($published);
+			
 		}
 		
 		if ($archived) {
-			$query->where('a.published = 2');
+			$query->where($archived);
 		}
 		
 		$query->where('c.published = 1');
