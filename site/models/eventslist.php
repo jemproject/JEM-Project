@@ -119,8 +119,8 @@ class JemModelEventslist extends JModelLegacy
 		$itemid 			= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
 
 		//get the number of events from database
-		$limit				= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart 		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
+		$limit				= $this->getState('limit');
+		$limitstart 		= $this->getState('limitstart');
 		
 		$query 				= $this->_buildQuery();
 		$total				= $this->_getListCount($query);
@@ -276,6 +276,11 @@ class JemModelEventslist extends JModelLegacy
 	}
 
 
+	/**
+	 * Retrieve Categories
+	 * 
+	 * Due to multi-cat this function is needed
+	 */
 
 	function getCategories($id)
 	{
