@@ -138,7 +138,7 @@ class JemViewVenue extends JEMView {
 			JemHelper::loadCustomTag();
 		
 			// get data from model
-			$rows	= $this->get('Data');
+			$rows	= $this->get('Items');
 			$venue	= $this->get('Venue');
 
 			// are events available?
