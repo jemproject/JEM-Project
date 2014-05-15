@@ -6,18 +6,15 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
+
 
 jimport('joomla.application.component.model');
 
 /**
- * JEM Component Venues Model
- *
- * @package JEM
- *
+ * Model-Venues
  */
-class JEMModelVenues extends JModelLegacy
+class JemModelVenues extends JModelLegacy
 {
 	/**
 	 * Venues data array
@@ -72,7 +69,8 @@ class JEMModelVenues extends JModelLegacy
 		$params = $app->getParams('com_jem');
 
 		// Lets load the content if it doesn't already exist
-		if (empty($this->_data)) {
+		if (empty($this->_data)) 
+		{
 			$query = $this->_buildQuery();
 			$pagination = $this->getPagination();
 			$this->_data = $this->_getList($query, $pagination->limitstart,  $pagination->limit);
@@ -80,7 +78,7 @@ class JEMModelVenues extends JModelLegacy
 			for($i = 0; $i < count($this->_data); $i++) {
 				$venue = $this->_data[$i];
 
-				//Create image information
+				// Create image information
 				$venue->limage = JEMImage::flyercreator($venue->locimage, 'venue');
 
 				//Generate Venuedescription
@@ -126,22 +124,6 @@ class JEMModelVenues extends JModelLegacy
 		return $this->_data;
 	}
 
-	/**
-	 * Total nr of Venues
-	 *
-	 * @access public
-	 * @return integer
-	 */
-	function getTotal()
-	{
-		// Lets load the total nr if it doesn't already exist
-		if (empty($this->_total)) {
-			$query = $this->_buildQuery();
-			$this->_total = $this->_getListCount($query);
-		}
-
-		return $this->_total;
-	}
 
 	/**
 	 * Method to get a pagination object for the events
@@ -151,10 +133,21 @@ class JEMModelVenues extends JModelLegacy
 	 */
 	function getPagination()
 	{
+		$jemsettings 		= JemHelper::config();
+		$app 				= JFactory::getApplication();
+		$itemid 			= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		$params 			= $app->getParams('com_jem');
+		
+		$query 				= $this->_buildQuery();
+		$total				= $this->_getListCount($query);
+		$limit				= JRequest::getInt('limit', $params->get('display_venues_num'));
+		$limitstart			= JRequest::getInt('limitstart');
+		
+		
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_pagination)) {
 			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
+			$this->_pagination = new JPagination($total, $limitstart, $limit);
 		}
 
 		return $this->_pagination;
@@ -168,41 +161,47 @@ class JEMModelVenues extends JModelLegacy
 	 */
 	protected function _buildQuery()
 	{
-		$user = JFactory::getUser();
+		$user 	= JFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
-
-		//check archive task
 		$task 	= JRequest::getVar('task', '', '', 'string');
 
-
+		// Query
+		$db 	= JFactory::getDBO();
+		$query	= $db->getQuery(true);
+		
+		$case_when_l = ' CASE WHEN ';
+		$case_when_l .= $query->charLength('l.alias');
+		$case_when_l .= ' THEN ';
+		$id_l = $query->castAsChar('l.id');
+		$case_when_l .= $query->concatenate(array($id_l, 'l.alias'), ':');
+		$case_when_l .= ' ELSE ';
+		$case_when_l .= $id_l.' END as slug';
+		
+		$query->select(array('l.locimage','l.locdescription','l.url','l.venue','l.street','l.city','l.country','l.postalCode','l.state','l.map','l.latitude','l.longitude'));
+		$query->select(array('CASE WHEN a.id IS NULL THEN 0 ELSE COUNT(a.id) END AS assignedevents',$case_when_l));
+		$query->from('#__jem_events as a');
+		$query->join('LEFT', '#__jem_venues AS l ON l.id = a.locid');
+		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
+		$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
+		
+		// where
 		$where = array();
-
-
+		
 		if($task == 'archive') {
 			$where[] = ' a.published = 2';
 		} else {
 			$where[] = ' a.published = 1';
 		}
-
+				
 		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
 		$where[] = ' c.published = 1';
 		$where[] = ' l.published = 1';
-
-		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
-
-		//get categories
-		$query = 'SELECT'
-				. ' l.locimage,l.locdescription,l.url,l.venue,l.street,l.city,l.country,l.postalCode,l.state,l.map,l.latitude,l.longitude,'
-				. ' CASE WHEN a.id IS NULL THEN 0 ELSE COUNT(a.id) END AS assignedevents,'
-				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as slug'
-				. ' FROM #__jem_events as a'
-				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
-				. $where
-				. ' GROUP BY l.id'
-				. ' ORDER BY l.venue'
-				;
+				
+		
+		$query->where($where);
+		$query->group(array('l.id','l.venue'));
+		
+	
 		return $query;
 	}
 }
