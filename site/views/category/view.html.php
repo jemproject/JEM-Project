@@ -151,13 +151,6 @@ class JemViewCategory extends JEMView
 				$noevents = 0;
 			}
 
-			//does the category exist
-			if ($category->id == 0)
-			{
-				// TODO Translation
-				return JError::raiseError(404, JText::sprintf('Category #%d not found', $category->id));
-			}
-
 			// Decide which parameters should take priority
 			$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
 			                                && $menuitem->query['view']   == 'category'

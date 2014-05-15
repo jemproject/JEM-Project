@@ -424,6 +424,12 @@ class JEMModelCategory extends JModelLegacy
 
 		$this->_category = $this->_db->loadObject();
 
+		if (count($this->_category) == 0)
+		{
+			return JError::raiseError(404, JText::sprintf('COM_JEM_CATEGORY_ERROR_404', $category->id));
+		}
+		
+		
 // 		$groups = $user->getAuthorisedViewLevels();
 // 		$allowed = in_array($this->_category->access, $groups);
 
@@ -431,7 +437,7 @@ class JEMModelCategory extends JModelLegacy
 		if (!$this->_category->published)
 		{
 			// TODO Translation
-			JError::raiseError(404, JText::sprintf('CATEGORY #%d NOT FOUND', $this->_id));
+			JError::raiseError(404, JText::sprintf('COM_JEM_CATEGORY_ERROR_404', $this->_id));
 			return false;
 		}
 
@@ -441,7 +447,7 @@ class JEMModelCategory extends JModelLegacy
 		{
 			return JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
 		}
-
+		
 		return $this->_category;
 	}
 
