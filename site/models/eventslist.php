@@ -145,6 +145,8 @@ class JemModelEventslist extends JModelList
 		}
 		
 		$this->setState('filter.access', true);
+		
+		$this->setState('filter.groupby',array('a.id'));
 	
 		//parent::populateState('a.dates', 'ASC');
 	}
@@ -277,7 +279,7 @@ class JemModelEventslist extends JModelList
 		$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
 		
 		# the rest
-		$query->select(array($case_when_e, $case_when_l));
+		$query->select(array($case_when_e, $case_when_l,'CASE WHEN a.id IS NULL THEN 0 ELSE COUNT(a.id) END AS assignedevents'));
 		
 		
 		#############
@@ -392,7 +394,10 @@ class JemModelEventslist extends JModelList
 		}
 		
 		// Group
-		$query->group('a.id');
+		$group = $this->getState('filter.groupby');
+		if ($group) {
+			$query->group($group);
+		} 
 		
 		// ordering
 		if ($filter_order == 'a.dates') {
