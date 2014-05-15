@@ -9,199 +9,130 @@
 defined('_JEXEC') or die;
 
 
-jimport('joomla.application.component.model');
-
+require_once dirname(__FILE__) . '/eventslist.php';
 /**
  * Model-Venues
  */
-class JemModelVenues extends JModelLegacy
+class JemModelVenues extends JemModelEventslist
 {
+	
 	/**
-	 * Venues data array
-	 *
-	 * @var array
+	 * Method to auto-populate the model state.
 	 */
-	var $_data = null;
-
-	/**
-	 * Venues total
-	 *
-	 * @var integer
-	 */
-	var $_total = null;
-
-	/**
-	 * Pagination object
-	 *
-	 * @var object
-	 */
-	var $_pagination = null;
-
-	/**
-	 * Constructor
-	 */
-	public function __construct()
+	protected function populateState($ordering = null, $direction = null)
 	{
-		parent::__construct();
-
-		$app = JFactory::getApplication();
-
-		// Get the paramaters of the active menu item
-		$params = $app->getParams('com_jem');
-
-		//get the number of events from database
+		// parent::populateState($ordering, $direction);
+	
+		$app 			= JFactory::getApplication();
+		$jemsettings	= JemHelper::config();
+		$jinput			= JFactory::getApplication()->input;
+		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		$params 		= $app->getParams();
+		$task           = $jinput->get('task','','cmd');
+		
+		// List state information
+		$limitstart = JRequest::getInt('limitstart');
+		$this->setState('list.start', $limitstart);
+	
 		$limit		= JRequest::getInt('limit', $params->get('display_venues_num'));
-		$limitstart	= JRequest::getInt('limitstart');
+		$this->setState('list.limit', $limit);
+	
+		# params
+		$this->setState('params', $params);
+		
+		if ($task == 'archive') {
+			$archived = array('a.published = 2');
+			$this->setState('filter.archived',$archived);
+		} else {
+			$published = array('a.published = 1');
+			$this->setState('filter.published',$published);
+		}
+		
+		$this->setState('filter.groupby',array('l.id','l.venue'));
 
-		$this->setState('limit', $limit);
-		$this->setState('limitstart', $limitstart);
 	}
-
+	
 	/**
-	 * Method to get the Venues
-	 *
-	 * @access public
-	 * @return array
+	 * Method to get a list of events.
 	 */
-	function &getData()
+	public function getItems()
 	{
+		$params = clone $this->getState('params');
+		$items	= parent::getItems();
+	
+		
 		$app = JFactory::getApplication();
 		$params = $app->getParams('com_jem');
-
+		
 		// Lets load the content if it doesn't already exist
-		if (empty($this->_data)) 
-		{
-			$query = $this->_buildQuery();
-			$pagination = $this->getPagination();
-			$this->_data = $this->_getList($query, $pagination->limitstart,  $pagination->limit);
-
-			for($i = 0; $i < count($this->_data); $i++) {
-				$venue = $this->_data[$i];
-
+		if ($items) { 
+			
+			foreach ($items as $item) {
+		
 				// Create image information
-				$venue->limage = JEMImage::flyercreator($venue->locimage, 'venue');
-
+				$item->limage = JEMImage::flyercreator($item->locimage, 'venue');
+		
 				//Generate Venuedescription
-				if (!$venue->locdescription == '' || !$venue->locdescription == '<br />') {
+				if (!$item->locdescription == '' || !$item->locdescription == '<br />') {
 					//execute plugins
-					$venue->text	= $venue->locdescription;
-					$venue->title 	= $venue->venue;
+					$item->text	= $item->locdescription;
+					$item->title 	= $item->venue;
 					JPluginHelper::importPlugin('content');
-					$app->triggerEvent('onContentPrepare', array('com_jem.venue', &$venue, &$params, 0));
-					$venue->locdescription = $venue->text;
+					$app->triggerEvent('onContentPrepare', array('com_jem.venue', &$item, &$params, 0));
+					$item->locdescription = $item->text;
 				}
-
+		
 				//build the url
-				if(!empty($venue->url) && strtolower(substr($venue->url, 0, 7)) != "http://") {
-					$venue->url = 'http://'.$venue->url;
+				if(!empty($item->url) && strtolower(substr($item->url, 0, 7)) != "http://") {
+					$item->url = 'http://'.$item->url;
 				}
+		
 
 				//prepare the url for output
 				// TODO: Should be part of view! Then use $this->escape()
-				if (strlen($venue->url) > 35) {
-					$venue->urlclean = htmlspecialchars(substr($venue->url, 0 , 35)).'...';
+				if (strlen($item->url) > 35) {
+					$item->urlclean = htmlspecialchars(substr($item->url, 0 , 35)).'...';
 				} else {
-					$venue->urlclean = htmlspecialchars($venue->url);
+					$item->urlclean = htmlspecialchars($item->url);
 				}
-
+		
 				//create flag
-				if ($venue->country) {
-					$venue->countryimg = JemHelperCountries::getCountryFlag($venue->country);
+				if ($item->country) {
+					$item->countryimg = JemHelperCountries::getCountryFlag($item->country);
 				}
-
+		
 				//create target link
 				$task 	= JRequest::getVar('task', '', '', 'string');
-
+		
 				if ($task == 'archive') {
-					$venue->targetlink = JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug.'&task=archive'));
+					$item->targetlink = JRoute::_(JEMHelperRoute::getVenueRoute($item->slug.'&task=archive'));
 				} else {
-					$venue->targetlink = JRoute::_(JEMHelperRoute::getVenueRoute($venue->slug));
+					$item->targetlink = JRoute::_(JEMHelperRoute::getVenueRoute($item->slug));
+		
 				}
-			}
-
+			
 		}
-
-		return $this->_data;
-	}
-
-
-	/**
-	 * Method to get a pagination object for the events
-	 *
-	 * @access public
-	 * @return integer
-	 */
-	function getPagination()
-	{
-		$jemsettings 		= JemHelper::config();
-		$app 				= JFactory::getApplication();
-		$itemid 			= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
-		$params 			= $app->getParams('com_jem');
 		
-		$query 				= $this->_buildQuery();
-		$total				= $this->_getListCount($query);
-		$limit				= JRequest::getInt('limit', $params->get('display_venues_num'));
-		$limitstart			= JRequest::getInt('limitstart');
-		
-		
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_pagination)) {
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination($total, $limitstart, $limit);
-		}
-
-		return $this->_pagination;
-	}
-
-	/**
-	 * Build the query
-	 *
-	 * @access private
-	 * @return string
-	 */
-	protected function _buildQuery()
-	{
-		$user 	= JFactory::getUser();
-		$levels = $user->getAuthorisedViewLevels();
-		$task 	= JRequest::getVar('task', '', '', 'string');
-
-		// Query
-		$db 	= JFactory::getDBO();
-		$query	= $db->getQuery(true);
-		
-		$case_when_l = ' CASE WHEN ';
-		$case_when_l .= $query->charLength('l.alias');
-		$case_when_l .= ' THEN ';
-		$id_l = $query->castAsChar('l.id');
-		$case_when_l .= $query->concatenate(array($id_l, 'l.alias'), ':');
-		$case_when_l .= ' ELSE ';
-		$case_when_l .= $id_l.' END as slug';
-		
-		$query->select(array('l.locimage','l.locdescription','l.url','l.venue','l.street','l.city','l.country','l.postalCode','l.state','l.map','l.latitude','l.longitude'));
-		$query->select(array('CASE WHEN a.id IS NULL THEN 0 ELSE COUNT(a.id) END AS assignedevents',$case_when_l));
-		$query->from('#__jem_events as a');
-		$query->join('LEFT', '#__jem_venues AS l ON l.id = a.locid');
-		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
-		$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
-		
-		// where
-		$where = array();
-		
-		if($task == 'archive') {
-			$where[] = ' a.published = 2';
-		} else {
-			$where[] = ' a.published = 1';
 		}
 				
-		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
-		$where[] = ' c.published = 1';
-		$where[] = ' l.published = 1';
-				
-		
-		$query->where($where);
-		$query->group(array('l.id','l.venue'));
-		
+		return $items;
+	}
 	
+
+	/**
+	 * @return	JDatabaseQuery
+	 */
+	function getListQuery()
+	{
+		// Create a new query object.
+		$query	= parent::getListQuery();
+		$jinput	= JFactory::getApplication()->input;
+		$task	= $jinput->get('task','','cmd');
+		$user = JFactory::getUser();
+		$levels = $user->getAuthorisedViewLevels();
+			
+		$query->where(' l.published = 1');
+		
 		return $query;
 	}
 }

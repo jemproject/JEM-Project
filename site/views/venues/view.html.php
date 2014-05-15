@@ -44,7 +44,7 @@ class JemViewVenues extends JViewLegacy
 
 		// Request variables
 		$task 	= JRequest::getWord('task');
-		$rows 	= $this->get('Data');
+		$rows 	= $this->get('Items');
 
 		$pagetitle = $params->def('page_title', $menuitem->title);
 		$pageheading = $params->def('page_heading', $params->get('page_title'));
