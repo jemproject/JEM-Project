@@ -79,6 +79,8 @@ class JemModelVenue extends JemModelEventslist
 			$published = array('a.published = 1', 'a.locid = '.$this->_id);
 			$this->setState('filter.published',$published);
 		}
+		
+		$this->setState('filter.groupby',array('a.id'));
 	}
 	
 	
