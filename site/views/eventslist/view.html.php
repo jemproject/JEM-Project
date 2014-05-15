@@ -61,7 +61,7 @@ class JemViewEventslist extends JEMView
 			$filter_order_DirDefault = 'DESC';
 		}
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
-		$filter 			= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter', 'filter', '', 'int');
+		$filter_type		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_type', 'filter_type', '', 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 		$search 			= $db->escape(trim(JString::strtolower($search)));
 
@@ -70,7 +70,7 @@ class JemViewEventslist extends JEMView
 		$lists['order'] = $filter_order;
 
 		// get data from model
-		$rows 	= $this->get('Data');
+		$rows 	= $this->get('Items');
 
 		// are events available?
 		if (!$rows) {
@@ -146,7 +146,7 @@ class JemViewEventslist extends JEMView
 		if ($jemsettings->showstate == 1) {
 			$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
 		}
-		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter );
+		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type );
 		$lists['search']= $search;
 
 		// Create the pagination object

@@ -26,7 +26,7 @@ class JemViewEventslist extends JViewLegacy
 			$model = $this->getModel();
 			$model->setLimit($settings->ical_max_items);
 			$model->setLimitstart(0);
-			$rows = $model->getData();
+			$rows = $model->getItems();
 
 			// initiate new CALENDAR
 			$vcal = JemHelper::getCalendarTool();
