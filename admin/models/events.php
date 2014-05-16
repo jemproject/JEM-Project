@@ -124,7 +124,7 @@ class JemModelEvents extends JModelList
 		// Join over the users for the checked out user.
 		$query->select('uc.name AS editor');
 		$query->join('LEFT', '#__users AS uc ON uc.id = a.checked_out');
-		
+
 		// Join over the user who modified the event.
 		$query->select('um.name AS modified_by');
 		$query->join('LEFT', '#__users AS um ON um.id = a.modified_by');
@@ -153,14 +153,14 @@ class JemModelEvents extends JModelList
 		$startDate	= $this->getState('filter_begin');
 		$endDate 	= $this->getState('filter_end');
 		if (!empty($startDate) && !empty($endDate)) {
-			$query->where('DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "' . $startDate . '") >= 0');
-			$query->where('DATEDIFF(a.dates, "' . $endDate . '") <= 0');
+			$query->where('(a.dates >= '.$db->Quote($startDate).')');
+			$query->where('(a.enddates <= '.$db->Quote($endDate).')');
 		} else {
 			if (!empty($startDate)) {
-				$query->where('a.dates >= '.$db->Quote($startDate));
+				$query->where('(a.dates IS NULL OR a.dates >= '.$db->Quote($startDate).')');
 			}
 			if (!empty($endDate)) {
-				$query->where('a.dates <= '.$db->Quote($endDate));
+				$query->where('(a.enddates IS NULL OR a.enddates <= '.$db->Quote($endDate).')');
 			}
 		}
 
@@ -215,6 +215,7 @@ class JemModelEvents extends JModelList
 		$orderDirn	= $this->state->get('list.direction');
 
 		$query->order($db->escape($orderCol.' '.$orderDirn));
+
 		return $query;
 	}
 
