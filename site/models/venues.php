@@ -105,9 +105,9 @@ class JemModelVenues extends JemModelEventslist
 				$task 	= JRequest::getVar('task', '', '', 'string');
 		
 				if ($task == 'archive') {
-					$item->targetlink = JRoute::_(JEMHelperRoute::getVenueRoute($item->slug.'&task=archive'));
+					$item->targetlink = JRoute::_(JEMHelperRoute::getVenueRoute($item->venueslug.'&task=archive'));
 				} else {
-					$item->targetlink = JRoute::_(JEMHelperRoute::getVenueRoute($item->slug));
+					$item->targetlink = JRoute::_(JEMHelperRoute::getVenueRoute($item->venueslug));
 		
 				}
 			
