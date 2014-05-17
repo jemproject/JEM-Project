@@ -45,20 +45,6 @@ defined('_JEXEC') or die;
 			$var1c = "<a href=\"".$var1a."\">".$var1b."</a>";
 			$id = 'eventandmore';
 
-			/**
-			 * $cal->setEventContent($year,$month,$day,$content,[$contentUrl,$id])
-			 *
-			 * Info from: http://www.micronetwork.de/activecalendar/demo/doc/doc_en.html
-			 *
-			 * Call this method, if you want the class to create a new HTML table within the date specified by the parameters $year, $month, $day.
-			 * The parameter $content can be a string or an array.
-			 * If $content is a string, then the new generated table will contain one row with the value of $content.
-			 * If it is an array, the generated table will contain as many rows as the array length and each row will contain the value of each array item.
-			 * The parameter $contentUrl is optional: If you set a $contentUrl, an event content specific link (..href='$contentUrl'..) will be generated
-			 * in the 'event content' table row(s), even if the method $cal->enableDayLinks($link) was not called.
-			 * The parameter $id is optional as well: if you set an $id, a HTML class='$id' will be generated for each event content (default: 'eventcontent').
-			 */
-
 			$this->cal->setEventContent($year, $month, $day, $var1c, null, $id);
 			continue;
 		} elseif ($countperday[$year.$month.$day] > $limit+1) {
@@ -120,10 +106,21 @@ defined('_JEXEC') or die;
 			}
 
 			//count occurence of the category
-			if (!array_key_exists($category->id, $countcatevents)) {
-				$countcatevents[$category->id] = 1;
+
+			if (isset($row->multi)) {
+				if ($row->multi == 'first') {
+					if (!array_key_exists($category->id, $countcatevents)) {
+						$countcatevents[$category->id] = 1;
+					} else {
+						$countcatevents[$category->id]++;
+					}
+				}
 			} else {
-				$countcatevents[$category->id]++;
+				if (!array_key_exists($category->id, $countcatevents)) {
+					$countcatevents[$category->id] = 1;
+				} else {
+					$countcatevents[$category->id]++;
+				}
 			}
 		}
 
@@ -212,6 +209,8 @@ defined('_JEXEC') or die;
 	?>
 
 	<div id="jlcalendarlegend">
+
+	<!-- Calendar buttons -->
 		<div class="calendarButtons">
 			<div class="calendarButtonsToggle">
 				<div id="buttonshowall" class="calendarButton">
@@ -222,24 +221,30 @@ defined('_JEXEC') or die;
 				</div>
 			</div>
 		</div>
-
 		<div class="clr"></div>
+
+	<!-- Calendar Legend -->
 		<div class="calendarLegends">
 			<?php
-			//print the legend
 			if ($this->params->get('displayLegend')) {
-				$counter = array();
 
-				//walk through events
+				##############
+				## FOR EACH ##
+				##############
+
+				$counter	= array();
+				$cats		= array();
+
+				# walk through events
 				foreach ($this->rows as $row) {
-					//walk through the event categories
 					foreach ($row->categories as $cat) {
-						//sort out dupes
+
+						# sort out dupes for the counter (catid-legend)
 						if (!in_array($cat->id, $counter)) {
-							//add cat id to cat counter
+							# add cat id to cat counter
 							$counter[] = $cat->id;
 
-							//build legend
+							# build legend
 							if (array_key_exists($cat->id, $countcatevents)) {
 							?>
 								<div class="eventCat" id="cat<?php echo $cat->id; ?>">
