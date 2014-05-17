@@ -31,13 +31,13 @@ class JemViewCalendar extends JViewLegacy
 		$menuitem	= $menu->getActive();
 		$jemsettings = JemHelper::config();
 		$params 	= $app->getParams();
-		
+
 		// Load css
 		JemHelper::loadCss('jem');
 		JemHelper::loadCss('calendar');
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
-				
+
 		$evlinkcolor = $params->get('eventlinkcolor');
 		$evbackgroundcolor = $params->get('eventbackgroundcolor');
 		$currentdaycolor = $params->get('currentdaycolor');
@@ -70,7 +70,7 @@ class JemViewCalendar extends JViewLegacy
 		$model = $this->getModel();
 		$model->setDate(mktime(0, 0, 1, $month, 1, $year));
 
-		$rows = $this->get('Data');
+		$rows = $this->get('Items');
 
 		//Set Page title
 		$pagetitle   = $params->def('page_title', $menuitem->title);
