@@ -62,6 +62,7 @@ class JemViewVenue extends JEMView {
 			$style = '
 			div[id^=\'venuez\'] a {color:' . $evlinkcolor . ';}
 			div[id^=\'venuez\'] {background-color:' . $evbackgroundcolor . ';}
+			.eventcontent {background-color:'.$evbackgroundcolor .';}
 			.eventandmore {background-color:' . $eventandmorecolor . ';}
 			.today .daynum {background-color:' . $currentdaycolor . ';}';
 			$document->addStyleDeclaration ($style);

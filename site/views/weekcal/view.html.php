@@ -48,6 +48,9 @@ class JemViewWeekcal extends JViewLegacy
 		div[id^=\'catz\'] {
 			background-color:'.$evbackgroundcolor .';
 		}
+		.eventcontent {
+			background-color:'.$evbackgroundcolor .';
+		}
 		.eventandmore {
 			background-color:'.$eventandmorecolor .';
 		}
