@@ -46,7 +46,7 @@ class JemViewEventslist extends JEMView
 		JemHelper::loadCss('jem');
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
-		
+
 		if ($print) {
 			JemHelper::loadCss('print');
 			$document->setMetaData('robots', 'noindex, nofollow');

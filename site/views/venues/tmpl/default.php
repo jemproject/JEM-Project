@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
 	<div class="buttons">
 		<?php
 		echo JemOutput::addvenuebutton($this->addvenuelink, $this->params, $this->jemsettings);
-		echo JemOutput::archivebutton($this->params, $this->task);
+		/*echo JemOutput::archivebutton($this->params, $this->task);*/
 		echo JemOutput::submitbutton($this->addeventlink, $this->params);
 		echo JemOutput::printbutton($this->print_link, $this->params);
 		?>
@@ -113,21 +113,21 @@ defined('_JEXEC') or die;
 				<?php echo JemOutput::mapicon($row,null,$this->settings); ?>
 			<?php endif; ?>
 		<?php endif; ?>
-		
-		
-		<?php if ($this->settings->get('global_show_mapserv')== 3) : ?>			
+
+
+		<?php if ($this->settings->get('global_show_mapserv')== 3) : ?>
 			<input type="hidden" id="latitude" value="<?php echo $row->latitude;?>">
 			<input type="hidden" id="longitude" value="<?php echo $row->longitude;?>">
-			
+
 			<input type="hidden" id="venue" value="<?php echo $row->venue;?>">
 			<input type="hidden" id="street" value="<?php echo $row->street;?>">
 			<input type="hidden" id="city" value="<?php echo $row->city;?>">
 			<input type="hidden" id="state" value="<?php echo $row->state;?>">
 			<input type="hidden" id="postalCode" value="<?php echo $row->postalCode;?>">
-		<?php echo JemOutput::mapicon($row,'venues',$this->settings); ?>			
+		<?php echo JemOutput::mapicon($row,'venues',$this->settings); ?>
 	<?php endif; ?>
-		
-		
+
+
 		<?php if ($this->settings->get('global_show_locdescription',1) && $row->locdescription != '' && $row->locdescription != '<br />') : ?>
 			<h2 class="description">
 				<?php echo JText::_('COM_JEM_VENUE_DESCRIPTION').':'; ?>
