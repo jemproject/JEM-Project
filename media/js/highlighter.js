@@ -61,7 +61,7 @@ $.fn.removeHighlight = function() {
 
 function highlightevents() {
 	var searcharea = $("#search_in_here");
-	var g 		   = $("#filter option:selected"); // selected option	
+	var g 		   = $("#filter option:selected"); // selected option
 	var indexnr	   = g.index(); // shows nr of filter
 	var indextext  = g.text(); // reads text of filter
 	var lowerCase  = g.text().toLowerCase();
@@ -78,22 +78,22 @@ function highlightevents() {
 		var filter = 'city';
 		break;
 	case 3:
-		var filter = 'state';
+		var filter = 'category';
 		break;
 	case 4:
-		var filter = 'country';
+		var filter = 'state';
 		break;
 	case 5:
-		var filter = 'category';
+		var filter = 'country';
 		break;
 	case 6:
 		alleventfilters();
 		break;
 	}
 
-	var newtext = $("#filter_search").val();	
+	var newtext = $("#filter_search").val();
 	var newtext2 = "td."+ filter +":contains(" + newtext + ")";
-	
+
 	if (filter && newtext) {
 		searcharea.find(newtext2).addClass('red');
 		$(searcharea.find(newtext2)).highlight(newtext);
@@ -109,16 +109,16 @@ function alleventfilters() {
 	var state		= 'state';
 	var country		= 'country';
 	var category	= 'category';
-	
+
 	if (keyword) {
 		var titleparameter	= "td."+ title +":contains(" + keyword + ")";
 		searcharea.find(titleparameter).addClass('red');
 		$(searcharea.find(titleparameter)).highlight(keyword);
-		
+
 		var venueparameter = "td."+ venue +":contains(" + keyword + ")";
 		searcharea.find(venueparameter).addClass('red');
 		$(searcharea.find(venueparameter)).highlight(keyword);
-	
+
 		var cityparameter	= "td."+ city +":contains(" + keyword + ")";
 		searcharea.find(cityparameter).addClass('red');
 		$(searcharea.find(cityparameter)).highlight(keyword);
@@ -130,7 +130,7 @@ function alleventfilters() {
 		var countryparameter = "td."+ country +":contains(" + keyword + ")";
 		searcharea.find(countryparameter).addClass('red');
 		$(searcharea.find(countryparameter)).highlight(keyword);
-		
+
 		var categoryparameter = "td."+ category +":contains(" + keyword + ")";
 		searcharea.find(categoryparameter).addClass('red');
 		$(searcharea.find(categoryparameter)).highlight(keyword);
@@ -144,7 +144,7 @@ function highlightvenues() {
 	var indexnr	   = g.index(); // shows nr of filter
 	var indextext  = g.text(); // reads text of filter
 	var lowerCase  = g.text().toLowerCase();
-	
+
 	switch(indexnr)
 	{
 	case 0:
@@ -163,7 +163,7 @@ function highlightvenues() {
 		allvenuefilters();
 		break;
 	}
-	
+
 	var newtext = $("#filter_search").val();
 	var newtext2 = "td."+ filter +":contains(" + newtext + ")";
 
