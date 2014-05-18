@@ -48,7 +48,7 @@ class JemViewVenue extends JEMView {
 			JemHelper::loadCss('calendar');
 			JemHelper::loadCustomCss();
 			JemHelper::loadCustomTag();
-			
+
 			if ($print) {
 				JemHelper::loadCss('print');
 				$document->setMetaData('robots', 'noindex, nofollow');
@@ -76,13 +76,7 @@ class JemViewVenue extends JEMView {
 			// get data from model and set the month
 			$model = $this->getModel('VenueCal');
 			$model->setDate(mktime(0, 0, 1, $month, 1, $year));
-			$rows = $this->get('Data','VenueCal');
-			$venue = $this->get('Venuecal','VenueCal');
-
-			// detect if there are venues to display
-			if ($venue == null) {
-				return false;
-			}
+			$rows = $this->get('Items','VenueCal');
 
 			// Set Page title
 			$pagetitle = $params->def('page_title', $menuitem->title);
@@ -102,11 +96,14 @@ class JemViewVenue extends JEMView {
 
 			// init calendar
 			$itemid = JRequest::getInt('Itemid');
+			$venueID = $params->get('id');
+
 			$partItemid = ($itemid > 0) ? '&Itemid='.$itemid : '';
-			$partVenid = ($venue->id > 0) ? '&id=' . $venue->id : '';
+			$partVenid = ($venueID > 0) ? '&id=' . $venueID : '';
 			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
 			$cal->enableMonthNav('index.php?view=venue&layout=calendar'.$partVenid.$partItemid);
 			$cal->setFirstWeekDay($params->get('firstweekday',1));
+			/*$cal->enableDayLinks(false);*/
 
 			// map variables
 			$this->rows 			= $rows;
@@ -136,7 +133,7 @@ class JemViewVenue extends JEMView {
 			JemHelper::loadCss('jem');
 			JemHelper::loadCustomCss();
 			JemHelper::loadCustomTag();
-		
+
 			// get data from model
 			$rows	= $this->get('Items');
 			$venue	= $this->get('Venue');
