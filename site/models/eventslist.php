@@ -126,7 +126,7 @@ class JemModelEventslist extends JModelList
 		$included_cats = trim($params->get('categoryswitchcats', ''));
 		if ($included_cats) {
 			$included_cats = explode(",", $included_cats);
-					$this->setState('filter.category_id', $included_cats);
+			$this->setState('filter.category_id', $included_cats);
 			$this->setState('filter.category_id.include', true);
 
 		}
@@ -188,6 +188,8 @@ class JemModelEventslist extends JModelList
 		$id .= ':' . $this->getState('filter.category_top');
 		$id .= ':' . $this->getState('filter.calendar_multiday');
 		$id .= ':' . $this->getState('filter.calendar_startdayonly');
+		$id .= ':' . $this->getState('filter.req_venid');
+		$id .= ':' . $this->getState('filter.req_catid');
 
 		return parent::getStoreId($id);
 	}
@@ -524,6 +526,13 @@ class JemModelEventslist extends JModelList
 		$type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
 		$query->where('c.id '.$type.' ('.$categoryId.')');
 		}
+
+		# filter set by day-view
+		$requestCategoryId = $this->getState('filter.req_catid');
+		if ($requestCategoryId) {
+			$query->where('c.id = '.$requestCategoryId);
+		}
+
 
 		###################
 		## FILTER-SEARCH ##
