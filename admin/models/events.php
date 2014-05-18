@@ -6,7 +6,6 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modellist');
@@ -18,10 +17,6 @@ class JemModelEvents extends JModelList
 {
 	/**
 	 * Constructor.
-	 *
-	 * @param	array	An optional associative array of configuration settings.
-	 * @see		JController
-	 *
 	 */
 	public function __construct($config = array())
 	{
@@ -242,7 +237,13 @@ class JemModelEvents extends JModelList
 
 		$items = JEMHelper::getAttendeesNumbers($items);
 
-		return $items;
+
+		if ($items) {
+			return $items;
+		}
+
+		return array();
+
 	}
 
 	/**
@@ -259,7 +260,7 @@ class JemModelEvents extends JModelList
 		$app 			= JFactory::getApplication();
 		$settings 		= JemHelper::globalattribs();
 
-		// Query
+		# Query
 		$db 	= JFactory::getDBO();
 		$query = $db->getQuery(true);
 
@@ -279,8 +280,6 @@ class JemModelEvents extends JModelList
 		$query->join('LEFT','#__jem_events AS a ON a.id = rel.itemid');
 
 		$query->where('rel.itemid ='.(int)$id);
-		//$query->where('c.published = 1');
-
 
 		###################
 		## FILTER-ACCESS ##
@@ -293,7 +292,6 @@ class JemModelEvents extends JModelList
 			$groups = implode(',', $user->getAuthorisedViewLevels());
 			$query->where('c.access IN ('.$groups.')');
 		}
-
 
 		###################
 		## FILTER-SEARCH ##
@@ -322,6 +320,4 @@ class JemModelEvents extends JModelList
 
 		return $cats;
 	}
-
-
 }
