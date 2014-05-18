@@ -48,7 +48,7 @@ class JFormFieldModal_Contact extends JFormField
 		$query = $db->getQuery(true);
 		$query->select('name');
 		$query->from('#__contact_details');
-		$query->where('id='.(int)$this->value,'published =1');
+		$query->where(array('id='.(int)$this->value));
 		$db->setQuery($query);
 
 		$contact = $db->loadResult();
