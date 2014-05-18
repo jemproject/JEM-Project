@@ -987,12 +987,24 @@ class JEMOutput {
 	 * @param boolean $doLink Link the categories to the respective Category View
 	 * @return string|multitype:
 	 */
-	static function getCategoryList($categories, $doLink) {
+	static function getCategoryList($categories, $doLink,$backend=false) {
 		$output = array_map(
-			function ($category) use ($doLink) {
+			function ($category) use ($doLink,$backend) {
 				if ($doLink) {
-					$value = '<a href="'.JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)).'">'.
-						$category->catname.'</a>';
+
+					if ($backend) {
+
+						$path = $category->path;
+						$path = str_replace('/',' &#187; ',$path);
+
+						$value = '<span class="editlinktip hasTip" title="'.JText::_( 'COM_JEM_EDIT_CATEGORY' ).'::'.$path.'">';
+						$value .= '<a href="index.php?option=com_jem&amp;task=category.edit&amp;id='. $category->id.'">'.
+								$category->catname.'</a>';
+						$value .= '</span>';
+					} else {
+						$value = '<a href="'.JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)).'">'.
+								$category->catname.'</a>';
+					}
 				} else {
 					$value = $category->catname;
 				}
