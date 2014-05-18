@@ -60,9 +60,6 @@ class JemModelEvent extends JModelItem
 	 *
 	 * @param integer	The id of the event.
 	 * @return mixed item data object on success, false on failure.
-	 *
-	 * @todo: alter badcats
-	 *
 	 */
 	public function &getItem($pk = null)
 	{
@@ -84,24 +81,11 @@ class JemModelEvent extends JModelItem
 				$query->select(
 						$this->getState('item.select',
 								'a.id, a.access, a.attribs, a.metadata, a.registra, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.times, a.endtimes, a.dates, a.enddates, a.id AS did, a.title, a.alias, ' .
-										// If badcats is not null, this means
-										// that the event is inside an
-										// unpublished category
-										// In this case, the state is set to 0
-										// to indicate Unpublished (even if the
-										// event state is Published)
 										'a.created, a.unregistra, a.published, a.created_by, ' .
-										// use created if modified is 0
 										'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, ' . 'a.modified_by, a.checked_out, a.checked_out_time, ' . 'a.datimage,  a.version, ' .
 										'a.meta_keywords, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.waitinglist, a.meta_description, a.hits, a.language, ' .
 										'a.recurrence_type, a.recurrence_first_id'));
 				$query->from('#__jem_events AS a');
-
-				$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
-
-				// Join on category table.
-				$query->select('c.catname AS category_title, c.id AS catid, c.alias AS category_alias, c.access AS category_access');
-				$query->join('LEFT', '#__jem_categories AS c on c.id = rel.catid');
 
 				// Join on user table.
 				$name = $settings->get('global_regname','1') ? 'u.name' : 'u.username';
@@ -138,10 +122,6 @@ class JemModelEvent extends JModelItem
 				}
 				*/
 
-				// Join over the categories to get parent category titles
-				$query->select('parent.catname as parent_title, parent.id as parent_id, parent.path as parent_route, parent.alias as parent_alias');
-				$query->join('LEFT', '#__jem_categories as parent ON parent.id = c.parent_id');
-
 				$query->where('a.id = ' . (int) $pk);
 
 				// Filter by start and end dates.
@@ -150,10 +130,6 @@ class JemModelEvent extends JModelItem
 
 				$nowDate = $db->Quote($date->toSql());
 
-				$subquery = ' (SELECT cat.id as id FROM #__jem_categories AS cat JOIN #__jem_categories AS parent ';
-				$subquery .= 'ON cat.lft BETWEEN parent.lft AND parent.rgt ';
-				$subquery .= 'WHERE parent.published <= 0 GROUP BY cat.id)';
-				$query->join('LEFT OUTER', $subquery . ' AS badcats ON badcats.id = c.id');
 
 				// Filter by published state.
 				$published = $this->getState('filter.published');
@@ -165,7 +141,6 @@ class JemModelEvent extends JModelItem
 				}
 
 				//$query->group('a.id');
-				//echo $query;
 				$db->setQuery($query);
 
 				$data = $db->loadObject();
@@ -179,13 +154,6 @@ class JemModelEvent extends JModelItem
 					return JError::raiseError(404, JText::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
 				}
 
-				// Check for published state if filter set.
-
-				/*
-				if (((is_numeric($published)) || (is_numeric($archived))) && (($data->published != $published) && ($data->published != $archived))) {
-					return JError::raiseError(404, JText::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
-				}
-				*/
 
 				// Convert parameter fields to objects.
 
@@ -232,22 +200,19 @@ class JemModelEvent extends JModelItem
 					$data->params->set('access-view', true);
 				}
 				else {
-					// If no access filter is set, the layout takes some
-					// responsibility for display of limited information.
+
+					# retrieve category's that the user is able to see
+					# if there is no category the event should not be displayed
+
 					$user = JFactory::getUser();
 					$groups = $user->getAuthorisedViewLevels();
 
-					if ($data->catid == 0 || $data->category_access === null)
-				 {
-					 $data->params->set('access-view', in_array($data->access,
-				 $groups));
-					 }
-					 else {
-					 $data->params->set('access-view', in_array($data->access,
-				 $groups) && in_array($data->category_access, $groups));
+					$category_viewable = $this->getCategories($pk);
+
+					if ($category_viewable) {
+						$data->params->set('access-view', true);
 					}
 				}
-
 
 				$this->_item[$pk] = $data;
 			}
@@ -267,7 +232,7 @@ class JemModelEvent extends JModelItem
 		// Define Attachments
 		$user = JFactory::getUser();
 		$this->_item[$pk]->attachments = JEMAttachment::getAttachments('event' . $this->_item[$pk]->did);
-		
+
 		// Define Venue-Attachments
 		$this->_item[$pk]->vattachments = JEMAttachment::getAttachments('venue' . $this->_item[$pk]->locid);
 
@@ -316,6 +281,7 @@ class JemModelEvent extends JModelItem
 		return true;
 	}
 
+
 	/**
 	 * Method to get the categories
 	 *
@@ -326,7 +292,6 @@ class JemModelEvent extends JModelItem
 	function getCategories($pk = 0)
 	{
 		$user = JFactory::getUser();
-		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
 		$pk = (!empty($pk)) ? $pk : (int) $this->getState('event.id');
