@@ -1016,6 +1016,7 @@ class JemHelper {
 		$bg_table_td		= $settings->get('css_color_bg_table_td');
 		$bg_table_tr_entry2	= $settings->get('css_color_bg_table_tr_entry2');
 		$bg_table_tr_hover 	= $settings->get('css_color_bg_table_tr_hover');
+		$bg_table_tr_featured = $settings->get('css_color_bg_table_tr_featured');
 
 		if ($bg_filter) {
 			$style .= "div#jem #jem_filter {background-color:".$bg_filter.";}";
@@ -1043,6 +1044,10 @@ class JemHelper {
 
 		if ($bg_table_tr_hover) {
 			$style .= "div#jem table.eventtable tr:hover td {background-color:" . $bg_table_tr_hover . ";}";
+		}
+
+		if ($bg_table_tr_featured) {
+			$style .= "div#jem table.eventtable tr.featured td {background-color:" . $bg_table_tr_featured . ";}";
 		}
 
 		# border-colors
