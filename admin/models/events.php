@@ -186,6 +186,8 @@ class JemModelEvents extends JModelList
 							/* search all */
 							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR loc.country LIKE '.$search.')');
 							break;
+						default:
+							/* nothing, in case of cat-search it will limit the results */;
 					}
 				}
 			}
