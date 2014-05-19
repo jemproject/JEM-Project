@@ -40,11 +40,7 @@ class JemModelVenues extends JemModelEventslist
 		# params
 		$this->setState('params', $params);
 
-		if ($settings->get('global_show_archive_icon',1)) {
-			$this->setState('filter.published',array(1,2));
-		} else {
-			$this->setState('filter.published',1);
-		}
+		$this->setState('filter.published',1);
 
 		$this->setState('filter.groupby',array('l.id','l.venue'));
 
