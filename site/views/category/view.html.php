@@ -114,7 +114,7 @@ class JemViewCategory extends JEMView
 			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
 			$cal->enableMonthNav('index.php?option=com_jem&view=category&layout=calendar' . $partCatid . $partItemid);
 			$cal->setFirstWeekDay($params->get('firstweekday', 1));
-			//$cal->enableDayLinks(false);
+			$cal->enableDayLinks(false);
 
 			$this->rows 			= $rows;
 			$this->catid 			= $catid;
