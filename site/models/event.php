@@ -52,6 +52,7 @@ class JemModelEvent extends JModelItem
 			$this->setState('filter.archived', 2);
 		}
 
+		$this->setState('filter.access', true);
 		$this->setState('filter.language', JLanguageMultilang::isEnabled());
 	}
 
