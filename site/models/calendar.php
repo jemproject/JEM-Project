@@ -93,7 +93,7 @@ class JemModelCalendar extends JemModelEventslist
 		} else {
 			$startday = false;
 		}
-
+		$this->setState('filter.groupby',array('a.id'));
 		$this->setState('filter.calendar_startdayonly',$startday);
 
 	}
