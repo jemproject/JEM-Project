@@ -106,6 +106,11 @@ class JemModelDay extends JemModelEventslist
 			$this->setstate('filter.filter_locid',$locid);
 		}
 
+		$cal_category_catid = $app->getUserState('com_jem.categorycal.catid'.$item);
+		if ($cal_category_catid) {
+			$this->setState('filter.req_catid',$cal_category_catid);
+		}
+
 		# limit/start
 		$limitstart = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
 		$this->setState('list.start', $limitstart);
