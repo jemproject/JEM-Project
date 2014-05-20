@@ -138,6 +138,9 @@ class JemModelDay extends JemModelEventslist
 			$this->setState('filter.req_catid',$requestCategoryId);
 		}
 
+		# access
+		$this->setState('filter.access', true);
+
 		# groupby
 		$this->setState('filter.groupby',array('a.id'));
 	}
