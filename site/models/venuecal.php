@@ -107,6 +107,10 @@ class JemModelVenueCal extends JemModelEventslist
 
 		$this->setState('filter.calendar_startdayonly',$startday);
 
+		$this->setState('filter.filter_locid',$this->_id);
+		# groupby
+		$this->setState('filter.groupby',array('a.id'));
+
 	}
 
 	/**
@@ -141,7 +145,7 @@ class JemModelVenueCal extends JemModelEventslist
 
 		$query->select('DATEDIFF(a.enddates, a.dates) AS datesdiff,DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month');
 
-		$query->where('a.locid = '.$this->_id);
+		//$query->where('a.locid = '.$this->_id);
 
 		// here we can extend the query of the Eventslist model
 		return $query;
