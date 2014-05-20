@@ -70,6 +70,7 @@ class JemViewCategory extends JEMView
 			$style = '
 			div[id^=\'scat\'] a {color:' . $evlinkcolor . ';}
 			div[id^=\'scat\'] {background-color:'.$evbackgroundcolor .';}
+			.eventcontent {background-color:'.$evbackgroundcolor .';}
 			.eventandmore {background-color:'.$eventandmorecolor .';}
 			.today .daynum {background-color:'.$currentdaycolor.';}';
 			$document->addStyleDeclaration($style);
