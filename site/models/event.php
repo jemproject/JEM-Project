@@ -101,6 +101,10 @@ class JemModelEvent extends JModelItem
 				               'l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, l.city, l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude, l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time');
 				$query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
 
+				# join over the category-tables
+				$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
+				$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
+
 				// Get contact id
 				$subQuery = $db->getQuery(true);
 				$subQuery->select('MAX(contact.id) AS id');
@@ -140,11 +144,17 @@ class JemModelEvent extends JModelItem
 					$query->where('(a.published = ' . (int) $published . ' OR a.published =' . (int) $archived . ')');
 				}
 
+
+				#####################
+				### FILTER - BYCAT ##
+				#####################
+
+				$cats = $this->getCategories('all');
+				$query->where('c.id  IN (' . implode(',', $cats) . ')');
+
 				//$query->group('a.id');
 				$db->setQuery($query);
-
 				$data = $db->loadObject();
-
 
 				if ($error = $db->getErrorMsg()) {
 					throw new Exception($error);
@@ -154,9 +164,7 @@ class JemModelEvent extends JModelItem
 					return JError::raiseError(404, JText::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
 				}
 
-
 				// Convert parameter fields to objects.
-
 				$registry = new JRegistry;
 				$registry->loadString($data->attribs);
 
@@ -283,30 +291,153 @@ class JemModelEvent extends JModelItem
 
 
 	/**
-	 * Method to get the categories
+	 * Retrieve Categories
 	 *
-	 * @access public
-	 * @return object
-	 *
+	 * Due to multi-cat this function is needed
+	 * filter-index (4) is pointing to the cats
 	 */
-	function getCategories($pk = 0)
+
+	function getCategories($id = 0)
 	{
-		$user = JFactory::getUser();
-		$levels = $user->getAuthorisedViewLevels();
 
-		$pk = (!empty($pk)) ? $pk : (int) $this->getState('event.id');
+		$id = (!empty($id)) ? $id : (int) $this->getState('event.id');
 
-		$query = 'SELECT DISTINCT c.id, c.catname,'
-				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as slug'
-				. ' FROM #__jem_categories AS c'
-				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-				. ' WHERE rel.itemid = ' . (int) $pk
-				. '  AND c.published = 1' . ' AND c.access IN (' . implode(',', $levels) . ')';
-		$this->_db->setQuery($query);
+		$user 			= JFactory::getUser();
+		$userid			= (int) $user->get('id');
+		$levels 		= $user->getAuthorisedViewLevels();
+		$app 			= JFactory::getApplication();
+		$params 		= $app->getParams();
+		$catswitch 		= $params->get('categoryswitch', '0');
+		$settings 		= JemHelper::globalattribs();
 
-		$this->_cats = $this->_db->loadObjectList();
+		// Query
+		$db 	= JFactory::getDBO();
+		$query = $db->getQuery(true);
 
-		return $this->_cats;
+		$case_when_c = ' CASE WHEN ';
+		$case_when_c .= $query->charLength('c.alias');
+		$case_when_c .= ' THEN ';
+		$id_c = $query->castAsChar('c.id');
+		$case_when_c .= $query->concatenate(array($id_c, 'c.alias'), ':');
+		$case_when_c .= ' ELSE ';
+		$case_when_c .= $id_c.' END as catslug';
+
+		$query->select(array('DISTINCT c.id','c.catname','c.access','c.checked_out AS cchecked_out','c.color',$case_when_c));
+		$query->from('#__jem_categories as c');
+		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
+
+		$query->select(array('a.id AS multi'));
+		$query->join('LEFT','#__jem_events AS a ON a.id = rel.itemid');
+
+		if ($id != 'all'){
+			$query->where('rel.itemid ='.(int)$id);
+		}
+
+		$query->where('c.published = 1');
+
+
+		###################
+		## FILTER-ACCESS ##
+		###################
+
+		# Filter by access level.
+		$access = $this->getState('filter.access');
+
+
+		###################################
+		## FILTER - MAINTAINER/JEM GROUP ##
+		###################################
+
+		# as maintainter someone who is registered can see a category that has special rights
+		# let's see if the user has access to this category.
+
+
+		$query3	= $db->getQuery(true);
+		$query3 = 'SELECT gr.id'
+				. ' FROM #__jem_groups AS gr'
+				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
+				. ' WHERE g.member = ' . (int) $user->get('id')
+				//. ' AND ' .$db->quoteName('gr.addevent') . ' = 1 '
+				. ' AND g.member NOT LIKE 0';
+		$db->setQuery($query3);
+		$groupnumber = $db->loadColumn();
+
+		if ($access){
+			$groups = implode(',', $user->getAuthorisedViewLevels());
+			$jemgroups = implode(',',$groupnumber);
+
+			if ($jemgroups) {
+				$query->where('(c.access IN ('.$groups.') OR c.groupid IN ('.$jemgroups.'))');
+			} else {
+				$query->where('(c.access IN ('.$groups.'))');
+			}
+		}
+
+
+		#######################
+		## FILTER - CATEGORY ##
+		#######################
+
+		# set filter for top_category
+		$top_cat = $this->getState('filter.category_top');
+
+		if ($top_cat) {
+			$query->where($top_cat);
+		}
+
+		# Filter by a single or group of categories.
+		$categoryId = $this->getState('filter.category_id');
+
+		if (is_numeric($categoryId)) {
+		$type = $this->getState('filter.category_id.include', true) ? '= ' : '<> ';
+				$query->where('c.id '.$type.(int) $categoryId);
+		}
+		elseif (is_array($categoryId)) {
+		JArrayHelper::toInteger($categoryId);
+		$categoryId = implode(',', $categoryId);
+		$type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
+		$query->where('c.id '.$type.' ('.$categoryId.')');
+		}
+
+		# filter set by day-view
+		$requestCategoryId = $this->getState('filter.req_catid');
+
+		if ($requestCategoryId) {
+			$query->where('c.id = '.$requestCategoryId);
+		}
+
+		###################
+		## FILTER-SEARCH ##
+		###################
+
+		# define variables
+		$filter = $this->getState('filter.filter_type');
+		$search = $this->getState('filter.filter_search');
+
+		if (!empty($search)) {
+			if (stripos($search, 'id:') === 0) {
+				$query->where('c.id = '.(int) substr($search, 3));
+			} else {
+				$search = $db->Quote('%'.$db->escape($search, true).'%');
+
+				if($search && $settings->get('global_show_filter')) {
+					if ($filter == 4) {
+							$query->where('c.catname LIKE '.$search);
+					}
+				}
+			}
+		}
+
+		$db->setQuery($query);
+
+		if ($id == 'all'){
+			$cats = $db->loadColumn(0);
+			$cats = array_unique($cats);
+			return ($cats);
+		} else {
+			$cats = $db->loadObjectList();
+		}
+		return $cats;
 	}
 
 	/**

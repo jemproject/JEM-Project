@@ -33,7 +33,7 @@ defined('_JEXEC') or die;
 	<?php foreach($this->rows as $row) : ?>
 	<div itemscope itemtype="http://schema.org/Place">
 		<h2 class="jem">
-			<a href="<?php echo $row->targetlink; ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->venue); ?></span></a>
+			<a href="<?php echo $row->linkEventsPublished; ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->venue); ?></span></a>
 		</h2>
 
 		<!-- FLYER -->
@@ -49,13 +49,6 @@ defined('_JEXEC') or die;
 				<a href="<?php echo $row->url; ?>" target="_blank"> <?php echo $row->urlclean; ?></a>
 			</dd>
 			<?php endif; ?>
-
-			<dt class="venue_assignedevents">
-				<?php echo JText::_('COM_JEM_EVENTS').':'; ?>
-			</dt>
-			<dd class="venue_assignedevents">
-				<a href="<?php echo $row->targetlink; ?>"><?php echo $row->assignedevents; ?></a>
-			</dd>
 		</dl>
 		<?php if ( $this->settings->get('global_show_detailsadress',1)) : ?>
 			<dl class="location floattext" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
@@ -109,6 +102,26 @@ defined('_JEXEC') or die;
 					<?php echo JemOutput::mapicon($row,null,$this->settings); ?>
 				<?php endif; ?>
 			</dl>
+			<dl>
+
+			<dt class="venue_eventspublished">
+				<?php echo JText::_('COM_JEM_VENUES_EVENTS_PUBLISHED').':'; ?>
+			</dt>
+			<dd class="venue_eventspublished">
+				<a href="<?php echo $row->linkEventsPublished; ?>"><?php echo $row->EventsPublished; ?></a>
+			</dd>
+			<dt class="venue_archivedevents">
+				<?php echo JText::_('COM_JEM_VENUES_EVENTS_ARCHIVED').':'; ?>
+			</dt>
+			<dd class="venue_archivedevents">
+				<a href="<?php echo $row->linkEventsArchived; ?>"><?php echo $row->EventsArchived; ?></a>
+			</dd>
+
+			</dl>
+
+
+
+
 			<?php if ($this->settings->get('global_show_mapserv') == 2) : ?>
 				<?php echo JemOutput::mapicon($row,null,$this->settings); ?>
 			<?php endif; ?>

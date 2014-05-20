@@ -229,6 +229,127 @@ class JemModelEventslist extends JModelList
 		$case_when_l .= ' ELSE ';
 		$case_when_l .= $id_l.' END as venueslug';
 
+
+
+		// Query
+		$db 	= JFactory::getDBO();
+		$cquery = $db->getQuery(true);
+
+		$case_when_c = ' CASE WHEN ';
+		$case_when_c .= $cquery->charLength('c.alias');
+		$case_when_c .= ' THEN ';
+		$id_c = $cquery->castAsChar('c.id');
+		$case_when_c .= $query->concatenate(array($id_c, 'c.alias'), ':');
+		$case_when_c .= ' ELSE ';
+		$case_when_c .= $id_c.' END as catslug';
+
+		$cquery->select(array('DISTINCT c.id','c.catname','c.access','c.checked_out AS cchecked_out','c.color',$case_when_c));
+		$cquery->from('#__jem_categories as c');
+		$cquery->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
+
+		$cquery->select(array('a.id AS multi'));
+		$cquery->join('LEFT','#__jem_events AS a ON a.id = rel.itemid');
+
+		//$cquery->where('rel.itemid ='.(int)$id);
+		$cquery->where('c.published = 1');
+
+
+		###################
+		## FILTER-ACCESS ##
+		###################
+
+		# Filter by access level.
+		$access = $this->getState('filter.access');
+
+
+		###################################
+		## FILTER - MAINTAINER/JEM GROUP ##
+		###################################
+
+		# as maintainter someone who is registered can see a category that has special rights
+		# let's see if the user has access to this category.
+
+
+		$query3	= $db->getQuery(true);
+		$query3 = 'SELECT gr.id'
+				. ' FROM #__jem_groups AS gr'
+				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
+						. ' WHERE g.member = ' . (int) $user->get('id')
+						//. ' AND ' .$db->quoteName('gr.addevent') . ' = 1 '
+		. ' AND g.member NOT LIKE 0';
+		$db->setQuery($query3);
+		$groupnumber = $db->loadColumn();
+
+		if ($access){
+			$groups = implode(',', $user->getAuthorisedViewLevels());
+			$jemgroups = implode(',',$groupnumber);
+
+			if ($jemgroups) {
+				$cquery->where('(c.access IN ('.$groups.') OR c.groupid IN ('.$jemgroups.'))');
+			} else {
+				$cquery->where('(c.access IN ('.$groups.'))');
+			}
+		}
+
+
+		#######################
+		## FILTER - CATEGORY ##
+		#######################
+
+		# set filter for top_category
+		$top_cat = $this->getState('filter.category_top');
+
+		if ($top_cat) {
+				$cquery->where($top_cat);
+				}
+
+				# Filter by a single or group of categories.
+				$categoryId = $this->getState('filter.category_id');
+
+		if (is_numeric($categoryId)) {
+				$type = $this->getState('filter.category_id.include', true) ? '= ' : '<> ';
+						$cquery->where('c.id '.$type.(int) $categoryId);
+				}
+				elseif (is_array($categoryId)) {
+				JArrayHelper::toInteger($categoryId);
+				$categoryId = implode(',', $categoryId);
+				$type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
+						$cquery->where('c.id '.$type.' ('.$categoryId.')');
+				}
+
+				# filter set by day-view
+				$requestCategoryId = $this->getState('filter.req_catid');
+
+		if ($requestCategoryId) {
+				$cquery->where('c.id = '.$requestCategoryId);
+				}
+
+				###################
+				## FILTER-SEARCH ##
+				###################
+
+				# define variables
+				$filter = $this->getState('filter.filter_type');
+		$search = $this->getState('filter.filter_search');
+
+		if (!empty($search)) {
+				if (stripos($search, 'id:') === 0) {
+				$cquery->where('c.id = '.(int) substr($search, 3));
+				} else {
+				$search = $db->Quote('%'.$db->escape($search, true).'%');
+
+				if($search && $settings->get('global_show_filter')) {
+					if ($filter == 4) {
+							$cquery->where('c.catname LIKE '.$search);
+					}
+							}
+							}
+							}
+
+							$db->setQuery($cquery);
+							$cats = $db->loadColumn(0);
+							$cats = array_unique($cats);
+
 		# event
 		$query->select(
 				$this->getState(
@@ -252,6 +373,11 @@ class JemModelEventslist extends JModelList
 
 		# the rest
 		$query->select(array($case_when_e, $case_when_l));
+
+
+		# join over the category-tables
+		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
+		$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
 
 
 		#############
@@ -318,6 +444,13 @@ class JemModelEventslist extends JModelList
 		if ($cal_to) {
 			$query->where($cal_to);
 		}
+
+		#####################
+		### FILTER - BYCAT ##
+		#####################
+
+		$cats = $this->getCategories('all');
+		$query->where('c.id  IN (' . implode(',', $cats) . ')');
 
 		###################
 		## FILTER-SEARCH ##
@@ -447,7 +580,7 @@ class JemModelEventslist extends JModelList
 
 		}
 
-		return $items;
+		return parent::getItems();
 	}
 
 
@@ -461,6 +594,7 @@ class JemModelEventslist extends JModelList
 	function getCategories($id)
 	{
 		$user 			= JFactory::getUser();
+		$userid			= (int) $user->get('id');
 		$levels 		= $user->getAuthorisedViewLevels();
 		$app 			= JFactory::getApplication();
 		$params 		= $app->getParams();
@@ -486,7 +620,10 @@ class JemModelEventslist extends JModelList
 		$query->select(array('a.id AS multi'));
 		$query->join('LEFT','#__jem_events AS a ON a.id = rel.itemid');
 
-		$query->where('rel.itemid ='.(int)$id);
+		if ($id != 'all'){
+			$query->where('rel.itemid ='.(int)$id);
+		}
+
 		$query->where('c.published = 1');
 
 
@@ -497,10 +634,36 @@ class JemModelEventslist extends JModelList
 		# Filter by access level.
 		$access = $this->getState('filter.access');
 
+
+		###################################
+		## FILTER - MAINTAINER/JEM GROUP ##
+		###################################
+
+		# as maintainter someone who is registered can see a category that has special rights
+		# let's see if the user has access to this category.
+
+
+		$query3	= $db->getQuery(true);
+		$query3 = 'SELECT gr.id'
+				. ' FROM #__jem_groups AS gr'
+				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
+				. ' WHERE g.member = ' . (int) $user->get('id')
+				//. ' AND ' .$db->quoteName('gr.addevent') . ' = 1 '
+				. ' AND g.member NOT LIKE 0';
+		$db->setQuery($query3);
+		$groupnumber = $db->loadColumn();
+
 		if ($access){
 			$groups = implode(',', $user->getAuthorisedViewLevels());
-			$query->where('c.access IN ('.$groups.')');
+			$jemgroups = implode(',',$groupnumber);
+
+			if ($jemgroups) {
+				$query->where('(c.access IN ('.$groups.') OR c.groupid IN ('.$jemgroups.'))');
+			} else {
+				$query->where('(c.access IN ('.$groups.'))');
+			}
 		}
+
 
 		#######################
 		## FILTER - CATEGORY ##
@@ -529,10 +692,10 @@ class JemModelEventslist extends JModelList
 
 		# filter set by day-view
 		$requestCategoryId = $this->getState('filter.req_catid');
+
 		if ($requestCategoryId) {
 			$query->where('c.id = '.$requestCategoryId);
 		}
-
 
 		###################
 		## FILTER-SEARCH ##
@@ -557,8 +720,14 @@ class JemModelEventslist extends JModelList
 		}
 
 		$db->setQuery($query);
-		$cats = $db->loadObjectList();
 
+		if ($id == 'all'){
+			$cats = $db->loadColumn(0);
+			$cats = array_unique($cats);
+			return ($cats);
+		} else {
+			$cats = $db->loadObjectList();
+		}
 		return $cats;
 	}
 
