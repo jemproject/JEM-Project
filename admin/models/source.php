@@ -41,6 +41,8 @@ class JEMModelSource extends JModelForm
 		$temp = (base64_decode($id));
 		$fileName = $temp;
 
+
+
 		$this->setState('filename', $fileName);
 
 		// Save the syntax for later use
@@ -109,14 +111,30 @@ class JEMModelSource extends JModelForm
 	public function &getSource()
 	{
 		$item = new stdClass;
+		$item->custom = false;
+
 		$fileName	= $this->getState('filename');
-		$filePath	= JPath::clean(JPATH_ROOT.'/media/com_jem/'.$fileName);
+		$custom		= stripos($fileName, 'custom#:');
+
+		$filePath	= JPath::clean(JPATH_ROOT.'/media/com_jem/css/'.$fileName);
+
+		# custom file?
+		if ($custom !== false) {
+			$file = str_replace('custom#:', '', $fileName);
+			$filePath	= JPath::clean(JPATH_SITE.'/'.$file);
+		}
 
 		if (file_exists($filePath)) {
 			jimport('joomla.filesystem.file');
 			$item->filename = $this->getState('filename');
+			if ($custom !== false) {
+				$item->filename = $file;
+				$item->custom	= true;
+			}
 			$item->source = JFile::read($filePath);
-		} else {
+		}
+
+		if (empty($item->source)) {
 			$this->setError(JText::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
 		}
 
@@ -136,7 +154,16 @@ class JEMModelSource extends JModelForm
 
 		$dispatcher = JDispatcher::getInstance();
 		$fileName	= $this->getState('filename');
-		$filePath	= JPath::clean(JPATH_ROOT.'/media/com_jem/'.$fileName);
+		$custom		= stripos($fileName, 'custom#:');
+
+		$filePath	= JPath::clean(JPATH_ROOT.'/media/com_jem/css/'.$fileName);
+
+		# custom file?
+		if ($custom !== false) {
+			$file = str_replace('custom#:', '', $fileName);
+			$filePath	= JPath::clean(JPATH_SITE.'/'.$file);
+		}
+
 
 		// Include the extension plugins for the save events.
 		JPluginHelper::importPlugin('extension');
