@@ -838,8 +838,8 @@
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
-			<field 
-				name="default_Itemid" 
+			<field
+				name="default_Itemid"
 				type="text"
 				label="COM_JEM_SETTINGS_FIELD_DEFAULTITEMID"
 				description="COM_JEM_SETTINGS_FIELD_DEFAULTITEMID_DESC"
@@ -848,8 +848,8 @@
 				maxlength="10"
 				required="false"
 			/>
-			<field 
-				name="global_googleapi" 
+			<field
+				name="global_googleapi"
 				type="text"
 				label="COM_JEM_SETTINGS_FIELD_GOOGLEAPIKEY"
 				description="COM_JEM_SETTINGS_FIELD_GOOGLEAPIKEY_DESC"
@@ -857,8 +857,8 @@
 				size="50"
 				required="false"
 			/>
-			<field 
-				name="global_googleclientid" 
+			<field
+				name="global_googleclientid"
 				type="text"
 				label="COM_JEM_SETTINGS_FIELD_GOOGLECLIENTID"
 				description="COM_JEM_SETTINGS_FIELD_GOOGLECLIENTID_DESC"
@@ -1066,7 +1066,7 @@
 			</field>
 		</fieldset>
 	</fields>
-	
+
 	<fields name="css">
 		<fieldset name="stylesheet" label="Stylesheet">
 			<field name="css_backend_usecustom" type="list"
@@ -1174,109 +1174,116 @@
 				required="false"
 			/>
 		</fieldset>
-		<fieldset name="css_color">	
-			<field 
-				name="css_color_bg_filter" 
-				type="customcolor" 
+		<fieldset name="css_color">
+			<field
+				name="css_color_bg_filter"
+				type="customcolor"
 				default=""
 				size="8"
         		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_FILTER"
         		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_FILTER_DESC" />
-        	<field 
-        		name="css_color_bg_h2" 
-        		type="customcolor" 
+        	<field
+        		name="css_color_bg_h2"
+        		type="customcolor"
         		default=""
         		size="8"
         		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_H2"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_H2_DESC" />	
-        	<field 
-        		name="css_color_bg_jem" 
-        		type="customcolor" 
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_H2_DESC" />
+        	<field
+        		name="css_color_bg_jem"
+        		type="customcolor"
         		default=""
         		size="8"
         		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_JEM"
         		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_JEM_DESC" />
-        	<field 
-        		name="css_color_bg_table_th" 
-        		type="customcolor" 
+        	<field
+        		name="css_color_bg_table_th"
+        		type="customcolor"
         		default=""
         		size="8"
         		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TH"
         		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TH_DESC" />
-        	<field 
-        		name="css_color_bg_table_td" 
-        		type="customcolor" 
+        	<field
+        		name="css_color_bg_table_td"
+        		type="customcolor"
         		default=""
         		size="8"
         		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TD"
         		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TD_DESC" />
-        	<field 
-        		name="css_color_bg_table_tr_entry2" 
-        		type="customcolor" 
+        	<field
+        		name="css_color_bg_table_tr_entry2"
+        		type="customcolor"
         		default=""
         		size="8"
         		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_ENTRY2"
         		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_ENTRY2_DESC" />
-        	<field 
-        		name="css_color_bg_table_tr_hover" 
-        		type="customcolor" 
+        	<field
+        		name="css_color_bg_table_tr_hover"
+        		type="customcolor"
         		default=""
         		size="8"
         		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_HOVER"
         		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_HOVER_DESC" />
+        	<field
+        		name="css_color_bg_table_tr_featured"
+        		type="customcolor"
+        		default=""
+        		size="8"
+        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_FEATURED"
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_FEATURED_DESC" />
 		</fieldset>
-		<fieldset name="css_color_border">	
-			<field 
-				name="css_color_border_filter" 
-				type="customcolor" 
+		<fieldset name="css_color_border">
+			<field
+				name="css_color_border_filter"
+				type="customcolor"
 				default=""
 				size="8"
         		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_FILTER"
         		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_FILTER_DESC" />
-        	<field 
-				name="css_color_border_h2" 
-				type="customcolor" 
+        	<field
+				name="css_color_border_h2"
+				type="customcolor"
 				default=""
 				size="8"
         		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_H2"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_H2_DESC" />	
-        	<field 
-        		name="css_color_border_table_td" 
-        		type="customcolor" 
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_H2_DESC" />
+        	<field
+        		name="css_color_border_table_td"
+        		type="customcolor"
         		default=""
         		size="8"
         		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TD"
         		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TD_DESC" />
-        	<field 
-				name="css_color_border_table_th" 
-				type="customcolor" 
+        	<field
+				name="css_color_border_table_th"
+				type="customcolor"
 				default=""
         		size="8"
         		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TH"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TH_DESC" />	
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TH_DESC" />
 		</fieldset>
 		<fieldset name="css_color_font">
-			<field 
-				name="css_color_font_h2" 
-				type="customcolor" 
+			<field
+				name="css_color_font_h2"
+				type="customcolor"
 				default=""
 				size="8"
         		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_H2"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_H2_DESC" />		
-			<field 
-				name="css_color_font_table_td" 
-				type="customcolor" 
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_H2_DESC" />
+			<field
+				name="css_color_font_table_td"
+				type="customcolor"
 				default=""
 				size="8"
         		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD_DESC" />	
-        	<field 
-				name="css_color_font_table_td_a" 
-				type="customcolor" 
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD_DESC" />
+        	<field
+				name="css_color_font_table_td_a"
+				type="customcolor"
 				default=""
 				size="8"
         		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD_A"
-        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD_A_DESC" />	
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD_A_DESC" />
 		</fieldset>
 	</fields>
 </form>

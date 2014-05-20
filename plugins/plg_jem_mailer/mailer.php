@@ -364,7 +364,7 @@ class plgJEMMailer extends JPlugin {
 		$case_when .= $id.' END as slug';
 
 		$query->select(array('a.id','a.title','a.dates','a.times','a.locid','a.published','a.created','a.modified'));
-		$query->select($query->concatenate(array('a.introtext', 'a.fulltext')));
+		$query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
 		$query->select(array('v.venue','v.city'));
 		$query->select($case_when);
 		$query->from($db->quoteName('#__jem_events').' AS a');

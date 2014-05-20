@@ -70,9 +70,9 @@ defined('_JEXEC') or die;
 		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_EVENT_TITLE'));
 		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_VENUE'));
 		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_CITY'));
-		$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_STATE'));
-		$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_COUNTRY'));
-		$filters[] = JHtml::_('select.option', '6', JText::_('COM_JEM_CATEGORY'));
+		$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
+		$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
+		$filters[] = JHtml::_('select.option', '6', JText::_('COM_JEM_COUNTRY'));
 		$filters[] = JHtml::_('select.option', '7', JText::_('JALL'));
 		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $this->state->get('filter'));
 
