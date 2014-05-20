@@ -452,6 +452,16 @@ class JemModelEventslist extends JModelList
 		$cats = $this->getCategories('all');
 		$query->where('c.id  IN (' . implode(',', $cats) . ')');
 
+
+		####################
+		## FILTER - BYLOC ##
+		####################
+		$filter_locid = $this->getState('filter.filter_locid');
+		if ($filter_locid) {
+			$query->where('a.locid = '.$filter_locid);
+		}
+
+
 		###################
 		## FILTER-SEARCH ##
 		###################

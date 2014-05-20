@@ -94,10 +94,17 @@ class JemModelDay extends JemModelEventslist
 		$jemsettings		= JemHelper::config();
 		$jinput				= JFactory::getApplication()->input;
 		$itemid 			= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+
 		$params 			= $app->getParams();
 		$task           	= $jinput->getCmd('task',null);
 		$requestVenueId		= $jinput->getInt('locid',null);
 		$requestCategoryId	= $jinput->getInt('catid',null);
+
+		$item = JRequest::getInt('Itemid');
+		$locid = $app->getUserState('com_jem.venuecal.locid'.$item);
+		if ($locid) {
+			$this->setstate('filter.filter_locid',$locid);
+		}
 
 		# limit/start
 		$limitstart = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.limitstart', 'limitstart', 0, 'int');

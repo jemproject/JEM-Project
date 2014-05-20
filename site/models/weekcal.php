@@ -120,6 +120,7 @@ class JemModelWeekcal extends JemModelEventslist
 			$startday = false;
 		}
 
+
 		$this->setState('filter.calendar_startdayonly',$startday);
 	}
 

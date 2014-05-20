@@ -103,7 +103,7 @@ class JemViewVenue extends JEMView {
 			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
 			$cal->enableMonthNav('index.php?view=venue&layout=calendar'.$partVenid.$partItemid);
 			$cal->setFirstWeekDay($params->get('firstweekday',1));
-			/*$cal->enableDayLinks(false);*/
+			$cal->enableDayLinks(false);
 
 			// map variables
 			$this->rows 			= $rows;

@@ -108,6 +108,11 @@ class JemModelVenueCal extends JemModelEventslist
 		$this->setState('filter.calendar_startdayonly',$startday);
 
 		$this->setState('filter.filter_locid',$this->_id);
+
+
+		$item = JRequest::getInt('Itemid');
+		$app->setUserState('com_jem.venuecal.locid'.$item, $this->_id);
+
 		# groupby
 		$this->setState('filter.groupby',array('a.id'));
 
