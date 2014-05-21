@@ -1111,6 +1111,51 @@ class JemHelper {
 		return true;
 	}
 
+	/**
+	 * get a variable from the manifest file (actually, from the manifest cache).
+	 *
+	 * $column = manifest_cache(1),params(2)
+	 * $setting = name of setting to retrieve
+	 * $type = compononent(1), plugin(2)
+	 * $name = name to search in column name
+	 */
+	static function getParam($column,$setting,$type,$name) {
 
+		switch($column) {
+			case 1:
+				$column = 'manifest_cache';
+				break;
+			case 2:
+				$column = 'params';
+				break;
+		}
+
+		switch($type) {
+			case 1:
+				$type = 'component';
+				break;
+			case 2:
+				$type = 'plugin';
+				break;
+			case 3:
+				$type = 'module';
+				break;
+		}
+
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select(array($column));
+		$query->from('#__extensions');
+		$query->where(array('name = '.$db->quote($name),'type = '.$db->quote($type)));
+		$db->setQuery($query);
+
+		$manifest = json_decode($db->loadResult(), true);
+		$result = $manifest[ $setting ];
+
+		if (empty($result)) {
+			$result = 'N/A';
+		}
+		return $result;
+	}
 }
 ?>

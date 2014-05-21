@@ -49,13 +49,13 @@ class JEMModelMain extends JModelLegacy
 		    $query->where('alias NOT LIKE "root"');
 		}
 		$query->group('published');
-		
+
 		$db->setQuery($query);
 		$result = $db->loadObjectList("published");
 
 		$data = new stdClass();
 		$data->total = 0;
-		
+
 		foreach ($map as $key => $value) {
 			if ($result) {
 				// Check whether we have the current state in the DB result
@@ -64,12 +64,12 @@ class JEMModelMain extends JModelLegacy
 					$data->total += $data->$key;
 				} else {
 					$data->$key = 0;
-				} 
+				}
 			} else {
 				$data->$key = 0;
 			}
 		}
-		
+
 		return $data;
 	}
 
@@ -98,6 +98,28 @@ class JEMModelMain extends JModelLegacy
 	public function getCategoriesData()
 	{
 		return $this->getStateData('#__jem_categories');
+	}
+
+
+	/**
+	 * Return config information
+	 */
+	public function getConfigInfo()
+	{
+		if(get_magic_quotes_gpc()){
+			$quote = "enabled";
+		}else{
+			$quote = "disabled";
+		}
+
+		$config 					= new stdClass();
+		$config->vs_component		= JemHelper::getParam(1,'version',1,'com_jem');
+		$config->vs_plg_mailer		= JemHelper::getParam(1,'version',2,'plg_jem_mailer');
+		$config->vs_mod_cal			= JemHelper::getParam(1,'version',3,'mod_jem_cal');
+		$config->vs_php				= phpversion();
+		$config->vs_php_magicquotes	= $quote;
+
+		return $config;
 	}
 }
 ?>
