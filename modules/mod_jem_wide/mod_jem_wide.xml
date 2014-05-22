@@ -82,11 +82,6 @@
 					label="MOD_JEM_WIDE_VENUE_ID"
 					description="MOD_JEM_WIDE_VENUE_ID_DESC"
 				/>
-				<field name="stateloc" type="text"
-					default=""
-					label="MOD_JEM_WIDE_STATE"
-					description="MOD_JEM_WIDE_STATE_DESC"
-				/>
 				<field name="datemethod" type="list"
 					default="1"
 					label="MOD_JEM_WIDE_SHOW_DATE_OR_DAY_DIFFERENCE"
