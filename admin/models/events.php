@@ -174,6 +174,9 @@ class JemModelEvents extends JModelList
 							/* search city */
 							$query->where('loc.city LIKE '.$search);
 							break;
+						case 4:
+							/* search category */
+							break;
 						case 5:
 							/* search state */
 							$query->where('loc.state LIKE '.$search);
@@ -187,7 +190,7 @@ class JemModelEvents extends JModelList
 							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR loc.country LIKE '.$search.')');
 							break;
 						default:
-							/* nothing, in case of cat-search it will limit the results */;
+							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR loc.country LIKE '.$search.')');
 					}
 				}
 			}
