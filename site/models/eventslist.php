@@ -229,133 +229,12 @@ class JemModelEventslist extends JModelList
 		$case_when_l .= ' ELSE ';
 		$case_when_l .= $id_l.' END as venueslug';
 
-
-
-		// Query
-		$db 	= JFactory::getDBO();
-		$cquery = $db->getQuery(true);
-
-		$case_when_c = ' CASE WHEN ';
-		$case_when_c .= $cquery->charLength('c.alias');
-		$case_when_c .= ' THEN ';
-		$id_c = $cquery->castAsChar('c.id');
-		$case_when_c .= $query->concatenate(array($id_c, 'c.alias'), ':');
-		$case_when_c .= ' ELSE ';
-		$case_when_c .= $id_c.' END as catslug';
-
-		$cquery->select(array('DISTINCT c.id','c.catname','c.access','c.checked_out AS cchecked_out','c.color',$case_when_c));
-		$cquery->from('#__jem_categories as c');
-		$cquery->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
-
-		$cquery->select(array('a.id AS multi'));
-		$cquery->join('LEFT','#__jem_events AS a ON a.id = rel.itemid');
-
-		//$cquery->where('rel.itemid ='.(int)$id);
-		$cquery->where('c.published = 1');
-
-
-		###################
-		## FILTER-ACCESS ##
-		###################
-
-		# Filter by access level.
-		$access = $this->getState('filter.access');
-
-
-		###################################
-		## FILTER - MAINTAINER/JEM GROUP ##
-		###################################
-
-		# as maintainter someone who is registered can see a category that has special rights
-		# let's see if the user has access to this category.
-
-
-		$query3	= $db->getQuery(true);
-		$query3 = 'SELECT gr.id'
-				. ' FROM #__jem_groups AS gr'
-				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
-						. ' WHERE g.member = ' . (int) $user->get('id')
-						//. ' AND ' .$db->quoteName('gr.addevent') . ' = 1 '
-		. ' AND g.member NOT LIKE 0';
-		$db->setQuery($query3);
-		$groupnumber = $db->loadColumn();
-
-		if ($access){
-			$groups = implode(',', $user->getAuthorisedViewLevels());
-			$jemgroups = implode(',',$groupnumber);
-
-			if ($jemgroups) {
-				$cquery->where('(c.access IN ('.$groups.') OR c.groupid IN ('.$jemgroups.'))');
-			} else {
-				$cquery->where('(c.access IN ('.$groups.'))');
-			}
-		}
-
-
-		#######################
-		## FILTER - CATEGORY ##
-		#######################
-
-		# set filter for top_category
-		$top_cat = $this->getState('filter.category_top');
-
-		if ($top_cat) {
-				$cquery->where($top_cat);
-				}
-
-				# Filter by a single or group of categories.
-				$categoryId = $this->getState('filter.category_id');
-
-		if (is_numeric($categoryId)) {
-				$type = $this->getState('filter.category_id.include', true) ? '= ' : '<> ';
-						$cquery->where('c.id '.$type.(int) $categoryId);
-				}
-				elseif (is_array($categoryId)) {
-				JArrayHelper::toInteger($categoryId);
-				$categoryId = implode(',', $categoryId);
-				$type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
-						$cquery->where('c.id '.$type.' ('.$categoryId.')');
-				}
-
-				# filter set by day-view
-				$requestCategoryId = $this->getState('filter.req_catid');
-
-		if ($requestCategoryId) {
-				$cquery->where('c.id = '.$requestCategoryId);
-				}
-
-				###################
-				## FILTER-SEARCH ##
-				###################
-
-				# define variables
-				$filter = $this->getState('filter.filter_type');
-		$search = $this->getState('filter.filter_search');
-
-		if (!empty($search)) {
-				if (stripos($search, 'id:') === 0) {
-				$cquery->where('c.id = '.(int) substr($search, 3));
-				} else {
-				$search = $db->Quote('%'.$db->escape($search, true).'%');
-
-				if($search && $settings->get('global_show_filter')) {
-					if ($filter == 4) {
-							$cquery->where('c.catname LIKE '.$search);
-					}
-							}
-							}
-							}
-
-							$db->setQuery($cquery);
-							$cats = $db->loadColumn(0);
-							$cats = array_unique($cats);
-
 		# event
 		$query->select(
 				$this->getState(
 				'list.select',
 				'a.access,a.alias,a.attribs,a.author_ip,a.checked_out,a.checked_out_time,a.contactid,a.created,a.created_by,a.created_by_alias,a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10,a.dates,a.datimage,a.enddates,a.endtimes,a.featured,' .
-				'a.fulltext,a.hits,a.id,a.introtext,a.language,a.locid,a.maxplaces,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.unregistra,a.waitinglist,' .
+				'a.fulltext,a.hits,a.id,a.introtext,a.language,a.locid,a.maxplaces,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.unregistra,a.waitinglist,DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
 				'a.recurrence_byday,a.recurrence_counter,a.recurrence_first_id,a.recurrence_limit,a.recurrence_limit_date,a.recurrence_number, a.recurrence_type,a.version'
 			)
 		);
@@ -706,6 +585,26 @@ class JemModelEventslist extends JModelList
 		if ($requestCategoryId) {
 			$query->where('c.id = '.$requestCategoryId);
 		}
+
+
+		####################
+		## FILTER - VENUE ##
+		####################
+
+		$venueId = $this->getState('filter.venue_id');
+
+		if (is_numeric($venueId)) {
+			$type = $this->getState('filter.venue_id.include', true) ? '= ' : '<> ';
+			$query->where('l.id '.$type.(int) $venueId);
+		}
+		elseif (is_array($venueId)) {
+			JArrayHelper::toInteger($venueId);
+			$venueId = implode(',', $venueId);
+			$type = $this->getState('filter.venue_id.include', true) ? 'IN' : 'NOT IN';
+			$query->where('l.id '.$type.' ('.$venueId.')');
+		}
+
+
 
 		###################
 		## FILTER-SEARCH ##
