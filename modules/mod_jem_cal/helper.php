@@ -96,10 +96,7 @@ abstract class modjemcalqhelper
 		$days = array();
 
 		foreach ($events as $index => $event) {
-
 			# adding categories
-			$event->categories = $model->getCategories($event->id);
-
 			$nr 		= count($event->categories);
 			$catname 	= '';
 			$ix 		= 0;
