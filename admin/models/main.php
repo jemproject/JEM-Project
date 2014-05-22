@@ -115,7 +115,10 @@ class JEMModelMain extends JModelLegacy
 		$config 					= new stdClass();
 		$config->vs_component		= JemHelper::getParam(1,'version',1,'com_jem');
 		$config->vs_plg_mailer		= JemHelper::getParam(1,'version',2,'plg_jem_mailer');
-		$config->vs_mod_cal			= JemHelper::getParam(1,'version',3,'mod_jem_cal');
+		$config->vs_mod_jem_cal		= JemHelper::getParam(1,'version',3,'mod_jem_cal');
+		$config->vs_mod_jem			= JemHelper::getParam(1,'version',3,'mod_jem');
+		$config->vs_mod_jem_wide	= JemHelper::getParam(1,'version',3,'mod_jem_wide');
+		$config->vs_mod_jem_teaser	= JemHelper::getParam(1,'version',3,'mod_jem_teaser');
 		$config->vs_php				= phpversion();
 		$config->vs_php_magicquotes	= $quote;
 		$config->vs_gd				= gd_info()['GD Version'];

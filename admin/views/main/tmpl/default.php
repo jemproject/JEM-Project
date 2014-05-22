@@ -166,8 +166,20 @@ $options = array(
 					<td><b><?php echo $this->config->vs_plg_mailer; ?> </b></td>
 				</tr>
 				<tr>
-					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_MOD_CAL').': '; ?></td>
-					<td><b><?php echo $this->config->vs_mod_cal; ?> </b></td>
+					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_MOD_JEM_CAL').': '; ?></td>
+					<td><b><?php echo $this->config->vs_mod_jem_cal; ?> </b></td>
+				</tr>
+				<tr>
+					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_MOD_JEM').': '; ?></td>
+					<td><b><?php echo $this->config->vs_mod_jem; ?> </b></td>
+				</tr>
+				<tr>
+					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_MOD_JEM_WIDE').': '; ?></td>
+					<td><b><?php echo $this->config->vs_mod_jem_wide; ?> </b></td>
+				</tr>
+				<tr>
+					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_MOD_JEM_TEASER').': '; ?></td>
+					<td><b><?php echo $this->config->vs_mod_jem_teaser; ?> </b></td>
 				</tr>
 				<tr>
 					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_PHP').': '; ?></td>
@@ -176,6 +188,10 @@ $options = array(
 				<tr>
 					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_PHP_MAGICQUOTES').': '; ?></td>
 					<td><b><?php echo $this->config->vs_php_magicquotes; ?> </b></td>
+				</tr>
+				<tr>
+					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_GD').': '; ?></td>
+					<td><b><?php echo $this->config->vs_gd; ?> </b></td>
 				</tr>
 			</table>
 			<?php echo JHtml::_('tabs.end'); ?>
