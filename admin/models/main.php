@@ -118,6 +118,7 @@ class JEMModelMain extends JModelLegacy
 		$config->vs_mod_cal			= JemHelper::getParam(1,'version',3,'mod_jem_cal');
 		$config->vs_php				= phpversion();
 		$config->vs_php_magicquotes	= $quote;
+		$config->vs_gd				= gd_info()['GD Version'];
 
 		return $config;
 	}
