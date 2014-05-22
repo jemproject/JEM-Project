@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<view
+		title="Venue">
+		<message><![CDATA[COM_JEM_VENUE_VIEW_LAYOUT_DESC]]></message>
+	</view>
+</metadata>
