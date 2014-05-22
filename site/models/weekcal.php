@@ -121,6 +121,7 @@ class JemModelWeekcal extends JemModelEventslist
 		}
 
 
+		$this->setState('filter.groupby','a.id');
 		$this->setState('filter.calendar_startdayonly',$startday);
 	}
 
