@@ -155,45 +155,6 @@ $options = array(
 					<td><b><?php echo $this->category->total; ?> </b></td>
 				</tr>
 			</table>
-			<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_MAIN_CONFIGINFO'), 'configinfo'); ?>
-			<table class="adminlist">
-				<tr>
-					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_COMPONENT').': '; ?></td>
-					<td><b><?php echo $this->config->vs_component; ?> </b></td>
-				</tr>
-				<tr>
-					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_PLG_MAILER').': '; ?></td>
-					<td><b><?php echo $this->config->vs_plg_mailer; ?> </b></td>
-				</tr>
-				<tr>
-					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_MOD_JEM_CAL').': '; ?></td>
-					<td><b><?php echo $this->config->vs_mod_jem_cal; ?> </b></td>
-				</tr>
-				<tr>
-					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_MOD_JEM').': '; ?></td>
-					<td><b><?php echo $this->config->vs_mod_jem; ?> </b></td>
-				</tr>
-				<tr>
-					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_MOD_JEM_WIDE').': '; ?></td>
-					<td><b><?php echo $this->config->vs_mod_jem_wide; ?> </b></td>
-				</tr>
-				<tr>
-					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_MOD_JEM_TEASER').': '; ?></td>
-					<td><b><?php echo $this->config->vs_mod_jem_teaser; ?> </b></td>
-				</tr>
-				<tr>
-					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_PHP').': '; ?></td>
-					<td><b><?php echo $this->config->vs_php; ?> </b></td>
-				</tr>
-				<tr>
-					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_PHP_MAGICQUOTES').': '; ?></td>
-					<td><b><?php echo $this->config->vs_php_magicquotes; ?> </b></td>
-				</tr>
-				<tr>
-					<td><?php echo JText::_('COM_JEM_MAIN_CONFIG_VS_GD').': '; ?></td>
-					<td><b><?php echo $this->config->vs_gd; ?> </b></td>
-				</tr>
-			</table>
 			<?php echo JHtml::_('tabs.end'); ?>
 		</td>
 	</tr>

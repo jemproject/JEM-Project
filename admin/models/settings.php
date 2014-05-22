@@ -42,7 +42,7 @@ class JEMModelSettings extends JModelForm
 	 */
 	public function getData()
 	{
-		
+
 		$db = JFactory::getDbo();
 
 		$query = $db->getQuery(true);
@@ -52,22 +52,22 @@ class JEMModelSettings extends JModelForm
 
 		$db->setQuery($query);
 		$data = $db->loadObject();
-		
-		
+
+
 		// Convert the params field to an array.
 		$registry = new JRegistry;
 		$registry->loadString($data->globalattribs);
 		$data->globalattribs = $registry->toArray();
-		
+
 		// Convert Css settings to an array
 		$registryCss = new JRegistry;
 		$registryCss->loadString($data->css);
 		$data->css = $registryCss->toArray();
-	
+
 		return $data;
 	}
-	
-	
+
+
 	/**
 	 * Method to get the data that should be injected in the form.
 	 *
@@ -90,16 +90,16 @@ class JEMModelSettings extends JModelForm
 	 *
 	 */
 	function store($data)
-	{		
+	{
 		$settings 	= JTable::getInstance('Settings', 'JEMTable');
 		$jinput = JFactory::getApplication()->input;
-		
+
 		// Bind the form fields to the table
 		if (!$settings->bind($data,'')) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 		}
-		
+
 		$varmetakey = $jinput->get('meta_keywords','','');
 		$settings->meta_keywords = $varmetakey;
 
@@ -125,8 +125,8 @@ class JEMModelSettings extends JModelForm
 
 		return true;
 	}
-	
-	
+
+
 	/**
 	 * Method to auto-populate the model state.
 	 *
@@ -137,11 +137,36 @@ class JEMModelSettings extends JModelForm
 	protected function populateState()
 	{
 		$app = JFactory::getApplication();
-	
+
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_jem');
 		$this->setState('params', $params);
 	}
-	
-	
+
+
+	/**
+	 * Return config information
+	 */
+	public function getConfigInfo()
+	{
+		if(get_magic_quotes_gpc()){
+			$quote = "enabled";
+		}else{
+			$quote = "disabled";
+		}
+
+		$config 					= new stdClass();
+		$config->vs_component		= JemHelper::getParam(1,'version',1,'com_jem');
+		$config->vs_plg_mailer		= JemHelper::getParam(1,'version',2,'plg_jem_mailer');
+		$config->vs_mod_jem_cal		= JemHelper::getParam(1,'version',3,'mod_jem_cal');
+		$config->vs_mod_jem			= JemHelper::getParam(1,'version',3,'mod_jem');
+		$config->vs_mod_jem_wide	= JemHelper::getParam(1,'version',3,'mod_jem_wide');
+		$config->vs_mod_jem_teaser	= JemHelper::getParam(1,'version',3,'mod_jem_teaser');
+		$config->vs_php				= phpversion();
+		$config->vs_php_magicquotes	= $quote;
+		$config->vs_gd				= gd_info()['GD Version'];
+
+		return $config;
+	}
+
 }
