@@ -27,9 +27,9 @@ abstract class modjemcalqhelper
 		$model = JModelLegacy::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
 
 		# Set params for the model
-		$app = JFactory::getApplication();
-		$appParams = $app->getParams();
-		$model->setState('params', $appParams);
+		//$app = JFactory::getApplication();
+		//$appParams = $app->getParams('com_jem');
+		$model->setState('params', $params);
 
 		# Access filter
 		$model->setState('filter.access', true);
@@ -95,7 +95,25 @@ abstract class modjemcalqhelper
 		# create an array to catch days
 		$days = array();
 
-		foreach ($events as $event) {
+		foreach ($events as $index => $event) {
+
+			# adding categories
+			$event->categories = $model->getCategories($event->id);
+
+			$nr 		= count($event->categories);
+			$catname 	= '';
+			$ix 		= 0;
+
+			# walk through categories assigned to an event
+			foreach($event->categories AS $category) {
+				$catname .= htmlspecialchars($category->catname);
+
+				$ix++;
+				if ($ix != $nr) {
+					$catname .= ', ';
+				}
+			}
+
 			// Cope with no end date set i.e. set it to same as start date
 			if (is_null($event->enddates)) {
 				$eyear = $event->created_year;
@@ -142,7 +160,7 @@ abstract class modjemcalqhelper
 					if (empty($days[$count][1])) {
 						$title = htmlspecialchars($event->title);
 						if ($DisplayCat == 1) {
-							$title = $title . '&nbsp;(' . htmlspecialchars($event->catname) . ')';
+							$title = $title . '&nbsp;(' . $catname . ')';
 						}
 						if ($DisplayVenue == 1) {
 							if (isset($event->venue)) {
@@ -154,7 +172,7 @@ abstract class modjemcalqhelper
 						$tt = $days[$count][1];
 						$title = $tt . '+%+%+' . htmlspecialchars($event->title);
 						if ($DisplayCat == 1) {
-							$title = $title . '&nbsp;(' . htmlspecialchars($event->catname) . ')';
+							$title = $title . '&nbsp;(' . $catname . ')';
 						}
 						if ($DisplayVenue == 1) {
 							if (isset($event->venue)) {
@@ -192,7 +210,13 @@ abstract class modjemcalqhelper
 				}
 			}
 		// End of Toni modification
-		}
+
+
+			# check if the item-categories is empty, if so the user has no access to that event at all.
+			if (empty($event->categories)) {
+				unset ($events[$index]);
+			}
+		} // end foreach
 		return $days;
 	}
 }
