@@ -65,13 +65,21 @@ abstract class modJEMteaserHelper
 			$model->setState('filter.orderby',array('a.dates ASC','a.times ASC'));
 			$cal_from = " (a.dates = CURDATE() OR (a.enddates >= CURDATE() AND a.dates <= CURDATE()))";
 		}
-
+		
+		# featured
+		elseif ($params->get('type') == 4) {
+			$model->setState('filter.featured',1);
+			$model->setState('filter.orderby',array('a.dates ASC','a.times ASC'));
+			$cal_from = "(TIMEDIFF(CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00')),NOW()) > 1 OR (a.enddates AND TIMEDIFF(CONCAT(a.enddates,' ',IFNULL(a.times,'00:00:00')),NOW())) > 1) ";
+		}
+		
 		$model->setState('filter.calendar_from',$cal_from);
 		$model->setState('filter.groupby','a.id');
 
 		# clean parameter data
 		$catid = trim($params->get('catid'));
 		$venid = trim($params->get('venid'));
+		$eventid = trim($params->get('eventid'));
 
 		# filter category's
 		if ($catid) {
@@ -88,6 +96,14 @@ abstract class modJEMteaserHelper
 			$model->setState('filter.venue_id',$ids);
 			$model->setState('filter.venue_id.include',true);
 		}
+		
+		# filter event id's
+		if ($eventid) {
+			$ids = explode(',', $eventid);
+			$ids = JArrayHelper::toInteger($ids);
+			$model->setState('filter.event_id',$ids);
+			$model->setState('filter.event_id.include',true);
+		}
 
 		# count
 		$count = $params->get('count', '2');
@@ -97,7 +113,8 @@ abstract class modJEMteaserHelper
 		}
 
 		$model->setState('list.limit',$count);
-
+		
+		
 		# Retrieve the available Events
 		$events = $model->getItems();
 
