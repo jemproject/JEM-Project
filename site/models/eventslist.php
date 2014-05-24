@@ -175,7 +175,7 @@ class JemModelEventslist extends JModelList
 		$id .= ':' . $this->getState('filter.access');
 		$id .= ':' . $this->getState('filter.opendate');
 		$id .= ':' . $this->getState('filter.featured');
-		$id .= ':' . $this->getState('filter.event_id');
+		$id .= ':' . serialize($this->getState('filter.event_id'));
 		$id .= ':' . $this->getState('filter.event_id.include');
 		$id .= ':' . serialize('filter.category_id');
 		$id .= ':' . $this->getState('filter.category_id.include');
@@ -269,7 +269,7 @@ class JemModelEventslist extends JModelList
 
 		# Filter by a single or group of events.
 		$eventId = $this->getState('filter.event_id');
-
+		
 		if (is_numeric($eventId)) {
 			$type = $this->getState('filter.event_id.include', true) ? '= ' : '<> ';
 			$query->where('a.id '.$type.(int) $eventId);
@@ -309,6 +309,25 @@ class JemModelEventslist extends JModelList
 			$published = implode(',', $published);
 			$query->where('a.published IN ('.$published.')');
 		}
+		
+		
+		
+		####################
+		## FILTER-FEATURED ##
+		####################
+		
+		# Filter by published state.
+		$featured = $this->getState('filter.featured');
+		
+		if (is_numeric($featured)) {
+			$query->where('a.featured = ' . (int) $featured);
+		}
+		elseif (is_array($featured)) {
+			JArrayHelper::toInteger($featured);
+			$featured = implode(',', $featured);
+			$query->where('a.featured IN ('.$featured.')');
+		}
+		
 
 		#############################
 		## FILTER - CALENDAR_DATES ##
@@ -469,7 +488,7 @@ class JemModelEventslist extends JModelList
 
 		}
 
-		return parent::getItems();
+		return $items;
 	}
 
 
@@ -642,7 +661,9 @@ class JemModelEventslist extends JModelList
 
 	function calendarMultiday($items) {
 
-		$startdayonly = $this->getState('filter.calendar_startdayonly');
+		$app 			= JFactory::getApplication();
+		$params 		= $app->getParams();
+		$startdayonly	= $this->getState('filter.calendar_startdayonly');
 
 		foreach($items AS $item) {
 			if (!is_null($item->enddates) && $startdayonly) {
@@ -700,7 +721,7 @@ class JemModelEventslist extends JModelList
 		}
 
 		array_multisort($time, SORT_ASC, $title, SORT_ASC, $items);
-
+		
 		return $items;
 	}
 }
