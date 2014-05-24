@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 
 /**
- * JEM Moduleteaser helper
+ * Module-Teaser
  */
 abstract class modJEMteaserHelper
 {
@@ -173,7 +173,6 @@ abstract class modJEMteaserHelper
 			$lists[$i]->city			= htmlspecialchars( $row->city, ENT_COMPAT, 'UTF-8' );
 			$lists[$i]->eventlink		= $params->get('linkevent', 1) ? JRoute::_(JEMHelperRoute::getEventRoute($row->slug)) : '';
 			$lists[$i]->venuelink		= $params->get('linkvenue', 1) ? JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : '';
-			//$lists[$i]->categorylink	= $params->get('linkcategory', 1) ? JRoute::_(JEMHelperRoute::getCategoryRoute($row->categoryslug)) : '';
 
 			# time/date
 			$lists[$i]->date			= modJEMteaserHelper::_format_date($row, $params);

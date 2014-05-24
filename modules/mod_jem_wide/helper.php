@@ -11,12 +11,8 @@ defined('_JEXEC') or die;
 
 JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 
-require_once JPATH_SITE.'/components/com_jem/helpers/route.php';
-require_once JPATH_SITE.'/components/com_jem/classes/output.class.php';
-
-
 /**
- * JEM Modulewide helper
+ * Module-Wide
  */
 abstract class modJEMwideHelper
 {
