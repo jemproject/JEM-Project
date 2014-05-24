@@ -16,24 +16,11 @@ $class = ' class="first"';
 <?php //echo JText::_('COM_JEM_SUBCATEGORIES'); ?>
 </div>
 
-<?php
-
-//var_Dump($this->children);
-
-?>
-
 <?php if (count($this->children[$this->category->id]) > 0) : ?>
 
 
 	<ul>
 	<?php foreach($this->children[$this->category->id] as $id => $child) : ?>
-
-	<?php
-	//$var2 = 'foobar';
-
-	//var_Dump($var2);
-	?>
-
 
 		<?php
 		//if ($this->params->get('show_empty_categories') || $child->getNumItems(true) || count($child->getChildren())) :
