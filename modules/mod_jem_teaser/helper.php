@@ -80,7 +80,7 @@ abstract class modJEMteaserHelper
 		$catid = trim($params->get('catid'));
 		$venid = trim($params->get('venid'));
 		$eventid = trim($params->get('eventid'));
-
+		
 		# filter category's
 		if ($catid) {
 			$ids = explode(',', $catid);
@@ -99,8 +99,7 @@ abstract class modJEMteaserHelper
 		
 		# filter event id's
 		if ($eventid) {
-			$ids = explode(',', $eventid);
-			$ids = JArrayHelper::toInteger($ids);
+			$ids = explode(',', $eventid);			
 			$model->setState('filter.event_id',$ids);
 			$model->setState('filter.event_id.include',true);
 		}
