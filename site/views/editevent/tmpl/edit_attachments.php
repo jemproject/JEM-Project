@@ -62,7 +62,7 @@ defined ('_JEXEC') or die;
 				<td>
 					<div>
 						<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_ACCESS'); ?></div>
-						<?php echo JHtml::_('select.genericlist', $this->access, 'attach-access[]', array('class'=>'inputbox', 'size'='7'), 'value', 'text', 0); ?>
+						<?php echo JHtml::_('select.genericlist', $this->access, 'attach-access[]', array('class'=>'inputbox', 'size'=>'7'), 'value', 'text', 0); ?>
 					</div>
 				</td>
 				<td>&nbsp;</td>
