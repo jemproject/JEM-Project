@@ -8,7 +8,6 @@
  */
 defined('_JEXEC') or die;
 
-
 /**
  * Editvenue-View
  */
@@ -22,7 +21,7 @@ class JemViewEditvenue extends JViewLegacy
 	/**
 	 * Editvenue-View
 	 */
-	public function display($tpl=null)
+	public function display($tpl = null)
 	{
 		// Initialise variables.
 		$jemsettings = JemHelper::config();
@@ -34,21 +33,20 @@ class JemViewEditvenue extends JViewLegacy
 		$menuitem    = $menu->getActive();
 		$pathway     = $app->getPathway();
 		$url         = JURI::root();
-		
-		$language = JFactory::getLanguage();
-		$language = $language->getTag();
-		$language = substr($language, 0,2);
-		
+
+		$language    = JFactory::getLanguage();
+		$language    = $language->getTag();
+		$language    = substr($language, 0,2);
 
 		// Get model data.
-		$this->state 	= $this->get('State');
-		$this->item 	= $this->get('Item');
+		$this->state  = $this->get('State');
+		$this->item   = $this->get('Item');
 		$this->params = $this->state->get('params');
 
 		// Create a shortcut for $item and params.
 		$item = $this->item;
 		$params = $this->params;
-		
+
 		$this->form = $this->get('Form');
 		$this->return_page = $this->get('ReturnPage');
 
@@ -159,9 +157,10 @@ class JemViewEditvenue extends JViewLegacy
 		JemHelper::loadCss('jem');
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
-		
+
 		// Load script
 		JHtml::_('script', 'com_jem/attachments.js', false, true);
+		JHtml::_('script', 'com_jem/other.js', false, true);
 		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places&language='.$language);
 
 		// Noconflict

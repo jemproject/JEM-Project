@@ -144,14 +144,65 @@ class JEMController extends JControllerLegacy
 
 		$res = JEMAttachment::remove($id);
 		if (!$res) {
-			echo 0;
 			jexit();
 		}
 
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
-		echo 1;
+		jexit();
+	}
+	
+	/**
+	 * Remove image
+	 */
+	function ajaximageremove()
+	{
+		$id = JRequest::getVar('id', null, 'request', 'int');
+		if (!$id) {
+			jexit();
+		}
+		$folder = JRequest::getVar('type', null, 'request', 'string');
+
+		if ($folder == 'events') {
+			$getquery = ' SELECT datimage FROM #__jem_events WHERE id = '.(int)$id;
+			$updatequery = ' UPDATE #__jem_events SET datimage=\'\' WHERE id = '.(int)$id;
+		} else if ($folder == 'venues') {
+			$getquery = ' SELECT locimage FROM #__jem_venues WHERE id = '.(int)$id;
+			$updatequery = ' UPDATE #__jem_venues SET locimage=\'\' WHERE id = '.(int)$id;
+		} else {
+			jexit();
+		}
+
+		$db = JFactory::getDBO();
+		$db->setQuery($getquery);
+		if (!$image_obj = $db->loadObject()) {
+			jexit();
+		}
+
+		if ($folder == 'events') {
+			$image = $image_obj->datimage;
+		} else if ($folder == 'venues') {
+			$image = $image_obj->locimage;
+		}
+
+		$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
+		$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
+		if (is_file($fullPath)) {
+			$db->setQuery($updatequery);
+			if (!$db->query()) {
+				jexit();
+			}
+
+			/* Hoffi, 14-06-01:
+			 * That's dangerous. Backend allows "reuse" so it could be required somewhere else.
+			 */
+			JFile::delete($fullPath);
+			if (JFile::exists($fullPaththumb)) {
+				JFile::delete($fullPaththumb);
+			}
+		}
+
 		jexit();
 	}
 }

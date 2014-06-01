@@ -76,26 +76,26 @@ class JemHelper {
 	static function retrieveCss()
 	{
 		static $css;
-	
+
 		if (!is_object($css)) {
 			$db = JFactory::getDBO();
 			$query = $db->getQuery(true);
-	
+
 			$query->select('css');
 			$query->from('#__jem_settings');
 			$query->where('id = 1');
-	
+
 			$db->setQuery($query);
 			$css = $db->loadResult();
 		}
-	
+
 		$registryCSS = new JRegistry;
 		$registryCSS->loadString($css);
-	
+
 		return $registryCSS;
 	}
-	
-	
+
+
 	/**
 	 * Performs daily scheduled cleanups
 	 *
@@ -805,7 +805,7 @@ class JemHelper {
 			$location[] = $exp[0];
 		}
 		$location = implode(",", $location);
-		
+
 		$e = new vevent();
 		$e->setProperty('summary', $event->title);
 		$e->setProperty('categories', implode(', ', $categories));
@@ -915,26 +915,26 @@ class JemHelper {
 		}
 		return true;
 	}
-	
-	
+
+
 	static function loadCss($css) {
-		
+
 		jimport('joomla.filesystem.file');
-		
+
 		$settings = self::retrieveCss();
-		
+
 		if($settings->get('css_'.$css.'_usecustom','0')) {
-			
+
 			# we want to use custom so now check if we've a file
 			$file = $settings->get('css_'.$css.'_customfile');
 			$filename = false;
 
-			
+
 			# something was filled, now check if we've a valid file
 			if ($file) {
 				$filename	= JPATH_SITE.'/'.$file;			
 				$filename	= JFile::exists($file);
-				
+
 				if ($filename) {
 					# at this point we do have a valid file but let's check the extension too.
 					$ext =  JFile::getExt($file);
@@ -944,7 +944,7 @@ class JemHelper {
 					}
 				}
 			}
-	
+
 			if ($filename) {
 				# we do have a valid file so we will use it.
 				$css = JHtml::_('stylesheet', $file, array(), false);
@@ -956,28 +956,28 @@ class JemHelper {
 			# here we want to use the normal css
 			$css = JHtml::_('stylesheet', 'com_jem/'.$css.'.css', array(), true);
 		}
-		
+
 		return $css;
 	}
-	
-	
+
+
 	static function defineCenterMap($data = false) {
 		# retrieve venue
 		$venue		= $data->getValue('venue');
-	
+
 		if ($venue) {
 			# latitude/longitude
 			$lat 	= $data->getValue('latitude');
 			$long	= $data->getValue('longitude');
-	
+
 			if ($lat == 0.000000) {
 				$lat = null;
 			}
-	
+
 			if ($long == 0.000000) {
 				$long = null;
 			}
-	
+
 			if ($lat && $long) {
 				$location = '['.$data->getValue('latitude').','.$data->getValue('longitude').']';
 			} else {
@@ -985,7 +985,7 @@ class JemHelper {
 				$postalCode = $data->getValue('postalCode');
 				$city		= $data->getValue('city');
 				$street		= $data->getValue('street');
-	
+
 				$address = '"'.$street.' '.$postalCode.' '.$city.'"';
 				$location = $address;
 			}
@@ -993,21 +993,21 @@ class JemHelper {
 		} else {
 			$location = '';
 		}
-		
+
 		return $location;
 	}
-	
+
 	/**
 	 * Load Custom CSS
 	 * 
 	 * @return boolean
 	 */
 	static function loadCustomCss() {
-	
+
 		$settings = self::retrieveCss();
-				
+
 		$style = "";
-		
+
 		# background-colors
 		$bg_filter			= $settings->get('css_color_bg_filter');
 		$bg_h2				= $settings->get('css_color_bg_h2');
@@ -1016,96 +1016,95 @@ class JemHelper {
 		$bg_table_td		= $settings->get('css_color_bg_table_td');
 		$bg_table_tr_entry2	= $settings->get('css_color_bg_table_tr_entry2');
 		$bg_table_tr_hover 	= $settings->get('css_color_bg_table_tr_hover');
-		
+
 		if ($bg_filter) {
 			$style .= "div#jem #jem_filter {background-color:".$bg_filter.";}";
 		}
-		
+
 		if ($bg_h2) {
 			$style .= "div#jem h2 {background-color:".$bg_h2.";}";
 		}
-		
+
 		if ($bg_jem) {
 			$style .= "div#jem {background-color:".$bg_jem.";}";
 		}
-		
+
 		if ($bg_table_th) {
 			$style .= "div#jem table.eventtable th {background-color:" . $bg_table_th . ";}";
 		}
-		
+
 		if ($bg_table_td) {
 			$style .= "div#jem table.eventtable td {background-color:" . $bg_table_td . ";}";
 		}
-		
+
 		if ($bg_table_tr_entry2) {
 			$style .= "div#jem table.eventtable tr.sectiontableentry2 td {background-color:" . $bg_table_tr_entry2 . ";}";
 		}
-			
+
 		if ($bg_table_tr_hover) {
 			$style .= "div#jem table.eventtable tr:hover td {background-color:" . $bg_table_tr_hover . ";}";
 		}
-	
+
 		# border-colors
 		$border_filter		= $settings->get('css_color_border_filter');
 		$border_h2			= $settings->get('css_color_border_h2');
 		$border_table_th	= $settings->get('css_color_border_table_th');
 		$border_table_td	= $settings->get('css_color_border_table_td');
-	
+
 		if ($border_filter) {
 			$style .= "div#jem #jem_filter {border-color:" . $border_filter . ";}";
 		}
-		
+
 		if ($border_h2) {
 			$style .= "div#jem h2 {border-color:".$border_h2.";}";
 		}
-		
+
 		if ($border_table_th) {
 			$style .= "div#jem table.eventtable th {border-color:" . $border_table_th . ";}";
 		}
 		if ($border_table_td) {
 			$style .= "div#jem table.eventtable td {border-color:" . $border_table_td . ";}";
 		}
-		
+
 		# font-color
 		$font_table_h2		= $settings->get('css_color_font_h2');
 		$font_table_td		= $settings->get('css_color_font_table_td');
 		$font_table_td_a	= $settings->get('css_color_font_table_td_a');
-		
+
 		if ($font_table_h2) {
 			$style .= "div#jem h2 {color:" . $font_table_h2 . ";}";
 		}
-		
+
 		if ($font_table_td) {
 			$style .= "div#jem table.eventtable td {color:" . $font_table_td . ";}";
 		}
-		
+
 		if ($font_table_td_a) {
 			$style .= "div#jem table.eventtable td a {color:" . $font_table_td_a . ";}";
 		}
-		
+
 		$document 	= JFactory::getDocument();
 		$document->addStyleDeclaration($style);
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Loads Custom Tags
 	 * 
 	 * @return boolean
 	 */
-	
+
 	static function loadCustomTag() {
-	
+
 		$document 	= JFactory::getDocument();
 		$tag = "";
 		$tag .= "<!--[if IE]><style type='text/css'>.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->";
-		
+
 		$document->addCustomTag($tag);		
-	
+
 		return true;
 	}
-	
-	
+
 }
 ?>
