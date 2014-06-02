@@ -739,7 +739,7 @@ class JEMOutput {
 		if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
 			if ($settings->lightbox == 0) {
 				$url = '#';
-				$attributes = 'class="flyerimage" onclick="window.open(\''.JURI::base().'/'.$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
+				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.JURI::base().'/'.$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
 			} else {
 				JHtml::_('behavior.modal', 'a.flyermodal');
 				$url = JURI::base().'/'.$image['original'];
