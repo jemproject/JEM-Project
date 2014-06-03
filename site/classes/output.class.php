@@ -207,7 +207,7 @@ class JEMOutput {
 
 			$settings = JemHelper::globalattribs();
 			JHtml::_('behavior.tooltip');
-			
+
 			switch ($view)
 			{
 				case 'editevent':
@@ -596,10 +596,10 @@ class JEMOutput {
 			$lg			= 'global_lg';
 			$mapserv	= $params->get('global_show_mapserv');
 		}
-		
+
 		//Link to map
 		$mapimage = JHtml::_('image', 'com_jem/map_icon.png', JText::_('COM_JEM_MAP'), NULL, true);
-		
+
 		//set var
 		$output = null;
 		$attributes = null;
@@ -615,7 +615,6 @@ class JEMOutput {
 
 		$url = 'http://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'com').'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
 
-		
 		// google map link or include
 		switch ($mapserv)
 		{
@@ -635,18 +634,18 @@ class JEMOutput {
 				if($data->latitude && $data->longitude) {
 					$url = 'https://maps.google.com/maps?q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
 				}
-				
+
 				$output = '<div style="border: 1px solid #000;width:500px;"><iframe width="500" height="250" src="'.$url.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
 				break;
-				
+
 			case 3:
 				// include - Google API3
 				# https://developers.google.com/maps/documentation/javascript/tutorial
 				$api		= trim($params->get('global_googleapi'));
 				$clientid	= trim($params->get('global_googleclientid'));
-				
+
 				$document 	= JFactory::getDocument();
-			
+
 				# do we have a client-ID?
 				if ($clientid) {
 					$document->addScript('http://maps.googleapis.com/maps/api/js?client='.$clientid.'&sensor=false&v=3.15');
@@ -658,14 +657,13 @@ class JEMOutput {
 						$document->addScript('https://maps.googleapis.com/maps/api/js?sensor=false');
 					}
 				}
-				
+
 				JemHelper::loadCss('googlemap');
 				JHtml::_('script', 'com_jem/infobox.js', false, true);
 				JHtml::_('script', 'com_jem/googlemap.js', false, true);
-			
+
 				$output = '<div id="map-canvas" class="map_canvas"/></div>';
 				break;
-				
 		}
 
 		return $output;
@@ -704,8 +702,10 @@ class JEMOutput {
 	 * @param array $image
 	 * @param string $type
 	 */
-	static function flyer($data, $image, $type)
+	static function flyer($data, $image, $type, $id = null)
 	{
+		$id_attr = $id ? 'id="'.$id.'"' : '';
+
 		$settings = JemHelper::config();
 
 		switch($type) {
@@ -739,11 +739,11 @@ class JEMOutput {
 		if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
 			if ($settings->lightbox == 0) {
 				$url = '#';
-				$attributes = 'class="flyerimage" onclick="window.open(\''.JURI::base().'/'.$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
+				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.JURI::base().'/'.$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
 			} else {
 				JHtml::_('behavior.modal', 'a.flyermodal');
 				$url = JURI::base().'/'.$image['original'];
-				$attributes = 'class="flyermodal flyerimage" title="'.$info.'"';
+				$attributes = $id_attr.' class="flyermodal flyerimage" title="'.$info.'"';
 			}
 
 			$icon = '<img src="'.JURI::base().'/'.$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
@@ -751,7 +751,7 @@ class JEMOutput {
 
 			// Otherwise take the values for the original image specified in the settings
 		} else {
-			$output = '<img class="notmodal" src="'.JURI::base().'/'.$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
+			$output = '<img '.$id_attr.' class="notmodal" src="'.JURI::base().'/'.$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
 		}
 
 		return $output;

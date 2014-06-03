@@ -6,13 +6,12 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-
-div#jem h1.componentheading{
+div#jem h1.componentheading {
  margin-bottom:6px;
  margin-top: 6px;
 }
 
-div#jem .formelm-buttons{
+div#jem .formelm-buttons {
 	margin-bottom: 0px;
 	float: right;
 }
@@ -24,8 +23,7 @@ ul.adminformlist li {
 	list-style: none;
 }
 
-div#jem_editevent dt
-{
+div#jem_editevent dt {
 	width: none;
 }
 
@@ -464,7 +462,7 @@ div.jem_editevent ul.adminformlist label {
 	min-width:160px;
 }
 div.jem_editvenue label {
-	min-width:160px;
+	min-width:150px;
 }
 
 div.jem_editevent form fieldset,
@@ -569,7 +567,7 @@ div.jem_editvenue form textarea {
 	/*background-color:#C6CCBE;*/
 }
 
-table#el-attachments input{
+table#el-attachments input {
 	width: 100%;
 	margin: 0px 0px 0.5em;
 	padding: 0.2em;
@@ -639,6 +637,7 @@ table#el-attachments th {
 	color:#FFFFFF;
 	line-height:22px;
 	border:1px solid #000000;
+	text-align:center;
 }
 
 /** googlemap **/

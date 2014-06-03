@@ -292,7 +292,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_countries` (
 
 INSERT IGNORE INTO #__jem_settings VALUES
 (1, 2, 1, 1, 1, 1, 1, 1, '100%', '20%', '40%', '20%', '', 
-'D, j. F Y', 'd.m.y', '%H.%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, '1000', -2, -2, -2, 1, '',
+'D, j. F Y', 'd.m.y', '%H:%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, '1000', -2, -2, -2, 1, '',
 1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, 
 '[title], [a_name], [categories], [times]', 'The event titled [title] starts on [dates]!',
 1, 0, '0', 0, 0, '1364604520', '', '', 'COM', 'US', '10%', '10',
