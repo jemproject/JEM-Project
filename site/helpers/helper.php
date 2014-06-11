@@ -364,6 +364,64 @@ class JemHelper {
 	}
 
 	/**
+	 * This method deletes an image file if unused.
+	 *
+	 * @param string $type one of 'event', 'venue', 'category', 'events', 'venues', 'categories'
+	 * @param mixed  $filename filename as stored in db, or null
+	 * @todo Empty $filename is not supported yet. In that case all unused files should be deleted.
+	 * 
+	 * @return bool true on success, false on error
+	 * @access public
+	 */
+	static function delete_unused_image_files($type, $filename = null) {
+		if (empty($filename)) { // not supported yet
+			return false;
+		}
+
+		switch ($type) {
+		case 'event':
+		case 'events':
+			$folder = 'events';
+			$countquery_tmpl = ' SELECT id FROM #__jem_events WHERE datimage = ';
+			break;
+		case 'venue':
+		case 'venues':
+			$folder = 'venues';
+			$countquery_tmpl = ' SELECT id FROM #__jem_venues WHERE locimage = ';
+			break;
+		case 'category':
+		case 'categories':
+			$folder = 'categories';
+			$countquery_tmpl = ' SELECT id FROM #__jem_categories WHERE image = ';
+			break;
+		default;
+			return false;
+		}
+
+		$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$filename);
+		$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$filename);
+		if (is_file($fullPath)) {
+			// Count usage and don't delete if used elsewhere.
+			$db = JFactory::getDBO();
+			$db->setQuery($countquery_tmpl . $db->quote($filename));
+			if (null === ($usage = $db->loadObjectList())) {
+				return false;
+			}
+			if (empty($usage)) {
+				JFile::delete($fullPath);
+				if (JFile::exists($fullPaththumb)) {
+					JFile::delete($fullPaththumb);
+				}
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	}
 	 * this method generate the date string to a date array
 	 *
 	 * @var string the date string
