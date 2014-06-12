@@ -7,7 +7,7 @@
 	<creationDate>04 August 2013</creationDate>
 	<copyright>copyright (C) 2013-2014 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>1.9.6</version>
+	<version>1.9.7</version>
 	<description>MOD_JEM_WIDE_XML_DESCRIPTION</description>
 
 	<files>
@@ -81,11 +81,6 @@
 					default=""
 					label="MOD_JEM_WIDE_VENUE_ID"
 					description="MOD_JEM_WIDE_VENUE_ID_DESC"
-				/>
-				<field name="stateloc" type="text"
-					default=""
-					label="MOD_JEM_WIDE_STATE"
-					description="MOD_JEM_WIDE_STATE_DESC"
 				/>
 				<field name="datemethod" type="list"
 					default="1"

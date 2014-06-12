@@ -990,7 +990,7 @@ class JemHelper {
 
 			# something was filled, now check if we've a valid file
 			if ($file) {
-				$filename	= JPATH_SITE.'/'.$file;			
+				$filename	= JPATH_SITE.'/'.$file;
 				$filename	= JFile::exists($file);
 
 				if ($filename) {
@@ -1009,7 +1009,7 @@ class JemHelper {
 			} else {
 				# unfortunately we don't have a valid file so we're looking at the default
 				$css = JHtml::_('stylesheet', 'com_jem/'.$css.'.css', array(), true);
-			}		
+			}
 		} else {
 			# here we want to use the normal css
 			$css = JHtml::_('stylesheet', 'com_jem/'.$css.'.css', array(), true);
@@ -1057,7 +1057,7 @@ class JemHelper {
 
 	/**
 	 * Load Custom CSS
-	 * 
+	 *
 	 * @return boolean
 	 */
 	static function loadCustomCss() {
@@ -1067,13 +1067,14 @@ class JemHelper {
 		$style = "";
 
 		# background-colors
-		$bg_filter			= $settings->get('css_color_bg_filter');
-		$bg_h2				= $settings->get('css_color_bg_h2');
-		$bg_jem				= $settings->get('css_color_bg_jem');
-		$bg_table_th		= $settings->get('css_color_bg_table_th');
-		$bg_table_td		= $settings->get('css_color_bg_table_td');
-		$bg_table_tr_entry2	= $settings->get('css_color_bg_table_tr_entry2');
-		$bg_table_tr_hover 	= $settings->get('css_color_bg_table_tr_hover');
+		$bg_filter            = $settings->get('css_color_bg_filter');
+		$bg_h2                = $settings->get('css_color_bg_h2');
+		$bg_jem               = $settings->get('css_color_bg_jem');
+		$bg_table_th          = $settings->get('css_color_bg_table_th');
+		$bg_table_td          = $settings->get('css_color_bg_table_td');
+		$bg_table_tr_entry2   = $settings->get('css_color_bg_table_tr_entry2');
+		$bg_table_tr_hover    = $settings->get('css_color_bg_table_tr_hover');
+		$bg_table_tr_featured = $settings->get('css_color_bg_table_tr_featured');
 
 		if ($bg_filter) {
 			$style .= "div#jem #jem_filter {background-color:".$bg_filter.";}";
@@ -1101,6 +1102,10 @@ class JemHelper {
 
 		if ($bg_table_tr_hover) {
 			$style .= "div#jem table.eventtable tr:hover td {background-color:" . $bg_table_tr_hover . ";}";
+		}
+
+		if ($bg_table_tr_featured) {
+			$style .= "div#jem table.eventtable tr.featured td {background-color:" . $bg_table_tr_featured . ";}";
 		}
 
 		# border-colors
@@ -1149,20 +1154,66 @@ class JemHelper {
 
 	/**
 	 * Loads Custom Tags
-	 * 
+	 *
 	 * @return boolean
 	 */
 
 	static function loadCustomTag() {
 
-		$document 	= JFactory::getDocument();
+		$document = JFactory::getDocument();
 		$tag = "";
 		$tag .= "<!--[if IE]><style type='text/css'>.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->";
 
-		$document->addCustomTag($tag);		
+		$document->addCustomTag($tag);
 
 		return true;
 	}
 
+	/**
+	 * get a variable from the manifest file (actually, from the manifest cache).
+	 *
+	 * $column = manifest_cache(1),params(2)
+	 * $setting = name of setting to retrieve
+	 * $type = compononent(1), plugin(2)
+	 * $name = name to search in column name
+	 */
+	static function getParam($column,$setting,$type,$name) {
+
+		switch ($column) {
+			case 1:
+				$column = 'manifest_cache';
+				break;
+			case 2:
+				$column = 'params';
+				break;
+		}
+
+		switch ($type) {
+			case 1:
+				$type = 'component';
+				break;
+			case 2:
+				$type = 'plugin';
+				break;
+			case 3:
+				$type = 'module';
+				break;
+		}
+
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select(array($column));
+		$query->from('#__extensions');
+		$query->where(array('name = '.$db->quote($name),'type = '.$db->quote($type)));
+		$db->setQuery($query);
+
+		$manifest = json_decode($db->loadResult(), true);
+		$result = $manifest[ $setting ];
+
+		if (empty($result)) {
+			$result = 'N/A';
+		}
+		return $result;
+	}
 }
 ?>

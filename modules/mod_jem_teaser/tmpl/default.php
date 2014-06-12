@@ -100,13 +100,7 @@ if ($params->get('use_modal', 0)) {
 				<?php endif; ?>
 			</div>
 			<div class="category">
-				<?php if ($item->categorylink) : ?>
-					<a href="<?php echo $item->categorylink; ?>" title="<?php echo $item->catname; ?>">
-				<?php endif; ?>
 				<?php echo $item->catname; ?>
-				<?php if ($item->categorylink) : ?>
-				</a>
-				<?php endif; ?>
 			</div>
 		</td>
 	</tr>

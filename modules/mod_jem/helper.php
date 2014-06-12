@@ -1,23 +1,20 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @subpackage JEM Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
+JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
+
 /**
- * JEM Module helper
- *
- * @package Joomla
- * @subpackage JEM Module
- *
+ * Module-Basic
  */
-class modJEMHelper
+abstract class modJEMHelper
 {
 
 	/**
@@ -26,24 +23,45 @@ class modJEMHelper
 	 * @access public
 	 * @return array
 	 */
-	static function getList(&$params)
+	public static function getList(&$params)
 	{
-		$db = JFactory::getDBO();
-		$user = JFactory::getUser();
-		// Support Joomla access levels instead of single group id
+		mb_internal_encoding('UTF-8');
+
+		$db		= JFactory::getDBO();
+		$user	= JFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 
-		if ($params->get('type', '0') == 0) {
-			$where = ' WHERE a.published = 1';
-			if ($params->get('event_after', '0')) {
-				$limit_date = strftime('%Y-%m-%d', time() + $params->get('event_after', '0') * 86400);
-				$where .= ' AND a.dates >= ' . $db->Quote($limit_date);
-			}
-			$order = ' ORDER BY a.dates, a.times';
-		} else {
-			$where = ' WHERE a.published = 2';
-			$order = ' ORDER BY a.dates DESC, a.times DESC';
+		# Retrieve Eventslist model for the data
+		$model = JModelLegacy::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
+
+		# Set params for the model
+		# has to go before the getItems function
+		$model->setState('params', $params);
+		$model->setState('filter.access',true);
+
+		# filter published
+		#  0: unpublished
+		#  1: published
+		#  2: archived
+		# -2: trashed
+
+		# upcoming events
+		if ($params->get('type')==0) {
+			$model->setState('filter.published',1);
+			$model->setState('filter.orderby',array('a.dates ASC','a.times ASC'));
+
+			$cal_from = "(TIMEDIFF(CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00')),NOW()) > 1 OR (a.enddates AND TIMEDIFF(CONCAT(a.enddates,' ',IFNULL(a.times,'00:00:00')),NOW())) > 1) ";
 		}
+
+		# archived events
+		if ($params->get('type')==1) {
+			$model->setState('filter.published',2);
+			$model->setState('filter.orderby',array('a.dates DESC','a.times DESC'));
+			$cal_from = "";
+		}
+
+		$model->setState('filter.calendar_from',$cal_from);
+		$model->setState('filter.groupby','a.id');
 
 		$catid 	= trim($params->get('catid'));
 		$venid 	= trim($params->get('venid'));
@@ -59,31 +77,19 @@ class modJEMHelper
 			$venues = ' AND (l.id=' . implode(' OR l.id=', $ids) . ')';
 		}
 
-		//get $params->get('count', '2') nr of datasets
-		$query = 'SELECT DISTINCT a.*, l.venue, l.city, l.url,'
-				.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
-				.' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug'
-				.' FROM #__jem_events AS a'
-				.' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-				.' INNER JOIN #__jem_categories AS c ON c.id = rel.catid'
-				.' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-				. $where
-				.' AND c.access IN (' . implode(',', $levels) . ')'
-				.' AND c.published = 1'
-				.($catid ? $categories : '')
-				.($venid ? $venues : '')
-				. $order
-				.' LIMIT '.(int)$params->get('count', '2')
-				;
+		# count
+		$count = $params->get('count', '2');
 
-		$db->setQuery($query);
-		$rows = $db->loadObjectList();
+		$model->setState('list.limit',$count);
 
+		# Retrieve the available Events
+		$events = $model->getItems();
+
+		# Loop through the result rows and prepare data
 		$i		= 0;
 		$lists	= array();
-		
-		mb_internal_encoding('UTF-8');
-		foreach ($rows as $row)
+
+		foreach ($events as $row)
 		{
 			//cut titel
 			$length = mb_strlen($row->title);

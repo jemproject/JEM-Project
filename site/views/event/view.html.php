@@ -58,7 +58,7 @@ class JemViewEvent extends JEMView
 
 		$this->registers	= $model->getRegisters($this->state->get('event.id'));
 		$isregistered		= $this->get('UserIsRegistered');
-		
+
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {
 			JError::raiseWarning(500, implode("\n", $errors));
@@ -76,12 +76,7 @@ class JemViewEvent extends JEMView
 
 		// Add router helpers.
 		$item->slug			= $item->alias ? ($item->id.':'.$item->alias) : $item->id;
-		$item->catslug		= $item->category_alias ? ($item->catid.':'.$item->category_alias) : $item->catid;
-		$item->parent_slug	= $item->category_alias ? ($item->parent_id.':'.$item->parent_alias) : $item->parent_id;
-		$item->venueslug	= $item->alias ? ($item->locid.':'.$item->localias) : $item->locid;
-
-		// TODO: Change based on shownoauth
-		$item->readmore_link = JRoute::_(JemHelperRoute::getEventRoute($item->slug, $item->catslug));
+		$item->venueslug	= $item->localias ? ($item->locid.':'.$item->localias) : $item->locid;
 
 		// Check to see which parameters should take priority
 		if ($useMenuItemParams) {

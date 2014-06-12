@@ -17,14 +17,14 @@ class JemViewDay extends JViewLegacy
 	/**
 	 * Creates the Event Feed
 	 */
-	function display()
+	function display($cachable = false, $urlparams = false)
 	{
 		$app = JFactory::getApplication();
 		$doc = JFactory::getDocument();
 
 		// Get some data from the model
 		JRequest::setVar('limit', $app->getCfg('feed_limit'));
-		$rows = $this->get('Data');
+		$rows = $this->get('Items');
 
 		foreach ($rows as $row) {
 			// strip html from feed item title

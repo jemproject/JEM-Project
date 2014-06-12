@@ -585,12 +585,12 @@ class JEMOutput {
 			if ($mapserv == 3) {
 				$tld		= 'global_tld';
 				$lg			= 'global_lg';
-				$mapserv	= 2;
-			} else {	
+				$mapserv	= 0;
+			} else {
 				$tld		= 'global_tld';
 				$lg			= 'global_lg';
-				$mapserv	= $params->get('global_show_mapserv');	
-			}		
+				$mapserv	= $params->get('global_show_mapserv');
+			}
 		} else {
 			$tld		= 'global_tld';
 			$lg			= 'global_lg';
@@ -987,14 +987,23 @@ class JEMOutput {
 	 * Get a category names list
 	 * @param unknown $categories Category List
 	 * @param boolean $doLink Link the categories to the respective Category View
+	 * @param boolean $backend Used for backend (true) or frontend (false, default)
 	 * @return string|multitype:
 	 */
-	static function getCategoryList($categories, $doLink) {
+	static function getCategoryList($categories, $doLink, $backend = false) {
 		$output = array_map(
-			function ($category) use ($doLink) {
+			function ($category) use ($doLink, $backend) {
 				if ($doLink) {
-					$value = '<a href="'.JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)).'">'.
-						$category->catname.'</a>';
+					if ($backend) {
+						$path = $category->path;
+						$path = str_replace('/', ' &#187; ', $path);
+						$value  = '<span class="editlinktip hasTip" title="'.JText::_( 'COM_JEM_EDIT_CATEGORY' ).'::'.$path.'">';
+						$value .= '<a href="index.php?option=com_jem&amp;task=category.edit&amp;id='. $category->id.'">'.
+						              $category->catname.'</a>';
+						$value .= '</span>';
+					} else {
+						$value  = '<a href="'.JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)).'">'.
+						              $category->catname.'</a>';
 				} else {
 					$value = $category->catname;
 				}

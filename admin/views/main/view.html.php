@@ -30,6 +30,7 @@ class JEMViewMain extends JViewLegacy {
 		$venue 		= $this->get('VenuesData');
 		$category 	= $this->get('CategoriesData');
 
+
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
@@ -38,6 +39,7 @@ class JEMViewMain extends JViewLegacy {
 		$this->venue		= $venue;
 		$this->category		= $category;
 		$this->user			= $user;
+
 
 		// add toolbar
 		$this->addToolbar();
