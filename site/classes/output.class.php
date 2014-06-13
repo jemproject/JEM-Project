@@ -1004,6 +1004,7 @@ class JEMOutput {
 					} else {
 						$value  = '<a href="'.JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)).'">'.
 						              $category->catname.'</a>';
+					}
 				} else {
 					$value = $category->catname;
 				}
