@@ -27,6 +27,7 @@ class JEMViewSettings extends JViewLegacy {
 		$form	= $this->get('Form');
 		$data	= $this->get('Data');
 		$state	= $this->get('State');
+		$config = $this->get('ConfigInfo');
 
 		$jemsettings = $this->get('Data');
 		$document 	= JFactory::getDocument();
@@ -57,16 +58,16 @@ class JEMViewSettings extends JViewLegacy {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
-		
+
 		// Load Script
 		$document->addScript(JURI::root().'media/com_jem/js/colorpicker.js');
-		
+
 		JHtml::_('behavior.modal', 'a.modal');
 		JHtml::_('behavior.tooltip');
 		JHtml::_('behavior.formvalidation');
 		JHtml::_('behavior.framework');
-		
-		
+
+
 
 		$app = JFactory::getApplication();
 
@@ -82,6 +83,7 @@ class JEMViewSettings extends JViewLegacy {
 		$this->data = $data;
 		$this->state = $state;
 		$this->jemsettings = $jemsettings;
+		$this->config		= $config;
 
 		// add toolbar
 		$this->addToolbar();

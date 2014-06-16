@@ -35,7 +35,7 @@ class JemViewWeekcal extends JViewLegacy
 		JemHelper::loadCss('jem');
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
-		
+
 		$evlinkcolor = $params->get('eventlinkcolor');
 		$evbackgroundcolor = $params->get('eventbackgroundcolor');
 		$currentdaycolor = $params->get('currentdaycolor');
@@ -63,7 +63,7 @@ class JemViewWeekcal extends JViewLegacy
 		// add javascript (using full path - see issue #590)
 		JHtml::_('script', 'media/com_jem/js/calendar.js');
 
-		$rows = $this->get('Data');
+		$rows = $this->get('Items');
 		$currentweek = $this->get('Currentweek');
 		$currentyear =  Date("Y");
 

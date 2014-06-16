@@ -85,13 +85,7 @@ class JemViewAttendees extends JViewLegacy {
 		// Emailaddress
 		$enableemailaddress = $params->get('enableemailaddress', 0);
 
-		// TODO: can be removed
-		if ($enableemailaddress == 1) {
-			$emailaddress = '&em='.$enableemailaddress;
-		}else {
-			$emailaddress = '';
-		}
-		$print_link = 'index.php?option=com_jem&view=attendees&layout=print&task=print&tmpl=component&id='.$event->id.$emailaddress;
+		$print_link = 'index.php?option=com_jem&view=attendees&layout=print&task=print&tmpl=component&id='.$event->id;
 		$backlink = 'attendees';
 		$view = 'attendees';
 

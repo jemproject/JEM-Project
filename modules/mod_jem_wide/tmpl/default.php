@@ -56,15 +56,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		</td>
 		<td>
 			<span class="category">
-				<?php if ($item->categorylink) : ?>
-				<a href="<?php echo $item->categorylink; ?>" title="<?php echo $item->catname; ?>">
-				<?php endif; ?>
-
 					<?php echo $item->catname; ?>
-
-				<?php if ($item->categorylink) : ?>
-				</a>
-				<?php endif; ?>
 			</span>
 		</td>
 		<td>

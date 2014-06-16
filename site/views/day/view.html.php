@@ -48,20 +48,21 @@ class JemViewDay extends JEMView
 		                                && !isset($menuitem->query['id']));
 
 		// Retrieving data
-		$requestVenueId = $jinput->get('locid', null, 'int');
-		$requestCategoryId = $jinput->get('catid', null, 'int');
-		$requestDate = $jinput->get('id', null, 'int');
+		$requestVenueId = $jinput->getInt('locid', null);
+		$requestCategoryId = $jinput->getInt('catid', null);
+		$requestDate = $jinput->getInt('id', null);
 
 		// Load css
 		JemHelper::loadCss('jem');
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
-		
+
 		// get variables
-		$filter_order		= $app->getUserStateFromRequest('com_jem.day.filter_order', 'filter_order', 	'a.dates', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.day.filter_order_Dir', 'filter_order_Dir',	'', 'word');
-		$filter 			= $app->getUserStateFromRequest('com_jem.day.filter', 'filter', '', 'int');
-		$search 			= $app->getUserStateFromRequest('com_jem.day.filter_search', 'filter_search', '', 'string');
+		$itemid 			= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		$filter_order		= $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_order', 'filter_order', 	'a.dates', 'cmd');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_order_Dir', 'filter_order_Dir',	'', 'word');
+		$filter_type		= $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_type', 'filter_type', '', 'int');
+		$search 			= $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 		$search 			= $db->escape(trim(JString::strtolower($search)));
 
 		// table ordering
@@ -69,7 +70,7 @@ class JemViewDay extends JEMView
 		$lists['order'] = $filter_order;
 
 		// Get data from model
-		$rows 		= $this->get('Data');
+		$rows 		= $this->get('Items');
 		$day		= $this->get('Day');
 
 		$daydate 	= JemOutput::formatdate($day);
@@ -150,7 +151,7 @@ class JemViewDay extends JEMView
 		if ($jemsettings->showstate == 1 && !($requestVenueId)) {
 			$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
 		}
-		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter);
+		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 		// search filter
 		$lists['search']= $search;

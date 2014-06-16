@@ -5,6 +5,10 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
+ 
+ 
+ div#jem a {
+ }
 
 div#jem h1.componentheading {
  margin-bottom:6px;
@@ -385,6 +389,9 @@ div#jem .catimg p {
 	margin:0 0 0.5em 0;
 }
 
+div#jem .cat-children ul li {
+	list-style: none;
+}
 
 /* -------------------
 	TABLE
@@ -427,7 +434,7 @@ div#jem table.eventtable td {
 
 div#jem table.eventtable td a{
 	background-color:transparent;
-	color:#0000EE;
+ /*	color:#095197; */
 }
 
 div#jem table.eventtable tr.sectiontableentry2 td {

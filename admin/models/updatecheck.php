@@ -13,20 +13,14 @@ jimport('joomla.filesystem.file');
 
 
 /**
- * Updatecheck-Model
+ * Model-Updatecheck
  */
 class JemModelUpdatecheck extends JModelLegacy
 {
-	/**
-	 * Events data in array
-	 *
-	 * @var array
-	 */
-	var $_updatedata = null;
+	protected $_updatedata = null;
 
 	/**
 	 * Constructor
-	 *
 	 */
 	public function __construct()
 	{
@@ -38,7 +32,7 @@ class JemModelUpdatecheck extends JModelLegacy
 	 */
 	function getUpdatedata()
 	{
-		$installedversion	= self::getParam('version');
+		$installedversion	= JemHelper::getParam(1,'version',1,'com_jem');
 		$updateFile			= "http://www.joomlaeventmanager.net/updatecheck/update.xml";
 		$checkFile			= self::CheckFile($updateFile);
 		$updatedata 		= new stdClass();
@@ -63,10 +57,9 @@ class JemModelUpdatecheck extends JModelLegacy
 			$updatedata->failed 			= 1;
 			$updatedata->installedversion	= $installedversion;
 		}
-		
+
 		return $updatedata;
 	}
-
 
 	/**
 	 * Check to see if update-file exists
@@ -82,23 +75,6 @@ class JemModelUpdatecheck extends JModelLegacy
 		} else {
 			return false;
 		}
-	}
-
-	/**
-	 * get a variable from the manifest file (actually, from the manifest cache).
-	 * in this case it will be the installed version of jem
-	 */
-	function getParam($name) {
-		$db = JFactory::getDbo();
-
-		$query = $db->getQuery(true);
-		$query->select(array('manifest_cache'));
-		$query->from('#__extensions');
-		$query->where(array('name = '.$db->quote('com_jem')));
-		$db->setQuery($query);
-
-		$manifest = json_decode($db->loadResult(), true);
-		return $manifest[ $name ];
 	}
 }
 ?>

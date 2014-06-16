@@ -49,13 +49,13 @@ class JEMModelMain extends JModelLegacy
 		    $query->where('alias NOT LIKE "root"');
 		}
 		$query->group('published');
-		
+
 		$db->setQuery($query);
 		$result = $db->loadObjectList("published");
 
 		$data = new stdClass();
 		$data->total = 0;
-		
+
 		foreach ($map as $key => $value) {
 			if ($result) {
 				// Check whether we have the current state in the DB result
@@ -64,12 +64,12 @@ class JEMModelMain extends JModelLegacy
 					$data->total += $data->$key;
 				} else {
 					$data->$key = 0;
-				} 
+				}
 			} else {
 				$data->$key = 0;
 			}
 		}
-		
+
 		return $data;
 	}
 
@@ -99,5 +99,6 @@ class JEMModelMain extends JModelLegacy
 	{
 		return $this->getStateData('#__jem_categories');
 	}
+
 }
 ?>

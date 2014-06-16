@@ -24,7 +24,7 @@ class JemViewCategory extends JViewLegacy
 
 		// Get some data from the model
 		JRequest::setVar('limit', $app->getCfg('feed_limit'));
-		$rows = $this->get('Data');
+		$rows = $this->get('Items');
 
 		foreach ($rows as $row)
 		{

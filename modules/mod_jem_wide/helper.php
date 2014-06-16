@@ -1,24 +1,18 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @subpackage JEM Wide Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-require_once JPATH_SITE.'/components/com_jem/helpers/route.php';
-
+JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 
 /**
- * JEM Modulewide helper
- *
- * @package Joomla
- * @subpackage JEM Wide Module
- *
+ * Module-Wide
  */
 abstract class modJEMwideHelper
 {
@@ -31,98 +25,95 @@ abstract class modJEMwideHelper
 	 */
 	public static function getList(&$params)
 	{
-		$db = JFactory::getDBO();
-		$user = JFactory::getUser();
-		// Support Joomla access levels instead of single group id
+		mb_internal_encoding('UTF-8');
+
+		$db		= JFactory::getDBO();
+		$user	= JFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 
-		//all upcoming events//all upcoming events
+		# Retrieve Eventslist model for the data
+		$model = JModelLegacy::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
+
+		# Set params for the model
+		# has to go before the getItems function
+		$model->setState('params', $params);
+		$model->setState('filter.access',true);
+
+		# filter published
+		#  0: unpublished
+		#  1: published
+		#  2: archived
+		# -2: trashed
+
+		# all upcoming events//all upcoming events
 		if ($params->get('type') == 1) {
-			$where = " WHERE (TIMEDIFF(CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00')),NOW()) > 1";
-			$where .= " OR (a.enddates AND TIMEDIFF(CONCAT(a.enddates,' ',IFNULL(a.times,'00:00:00')),NOW())) > 1) ";
-			$where .= ' AND a.published = 1';
-			$order = " ORDER BY a.dates, a.times";
+			$model->setState('filter.published',1);
+			$model->setState('filter.orderby',array('a.dates ASC','a.times ASC'));
+
+			$cal_from = "(TIMEDIFF(CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00')),NOW()) > 1 OR (a.enddates AND TIMEDIFF(CONCAT(a.enddates,' ',IFNULL(a.times,'00:00:00')),NOW())) > 1) ";
 		}
 
-		//archived events only
+		# archived events only
 		elseif ($params->get('type') == 2) {
-			$where = ' WHERE a.published = 2';
-			$order = ' ORDER BY a.dates DESC, a.times DESC';
+			$model->setState('filter.published',2);
+			$model->setState('filter.orderby',array('a.dates DESC','a.times DESC'));
+			$cal_from = "";
 		}
 
-		//currently running events only
+		# currently running events only
 		elseif ($params->get('type') == 3) {
-			$where = ' WHERE a.published = 1';
-			$where .= ' AND (a.dates = CURDATE()';
-			$where .= ' OR (a.enddates >= CURDATE() AND a.dates <= CURDATE()))';
-			$order = ' ORDER BY a.dates, a.times';
+			$model->setState('filter.published',1);
+			$model->setState('filter.orderby',array('a.dates ASC','a.times ASC'));
+
+			$cal_from = " (a.dates = CURDATE() OR (a.enddates >= CURDATE() AND a.dates <= CURDATE()))";
 		}
 
-		//clean parameter data
+		$model->setState('filter.calendar_from',$cal_from);
+		$model->setState('filter.groupby','a.id');
+
+		# clean parameter data
 		$catid = trim($params->get('catid'));
 		$venid = trim($params->get('venid'));
-		$state = JString::strtolower(trim($params->get('stateloc')));
 
-		//Build category selection query statement
+		# filter category's
 		if ($catid) {
 			$ids = explode(',', $catid);
-			JArrayHelper::toInteger($ids);
-			$categories = ' AND (c.id=' . implode(' OR c.id=', $ids) . ')';
+			$ids = JArrayHelper::toInteger($ids);
+			$model->setState('filter.category_id',$ids);
+			$model->setState('filter.category_id.include',true);
 		}
 
-		//Build venue selection query statement
+		# filter venue's
 		if ($venid) {
 			$ids = explode(',', $venid);
-			JArrayHelper::toInteger($ids);
-			$venues = ' AND (l.id=' . implode(' OR l.id=', $ids) . ')';
+			$ids = JArrayHelper::toInteger($ids);
+			$model->setState('filter.venue_id',$ids);
+			$model->setState('filter.venue_id.include',true);
 		}
 
-		//Build state selection query statement
-		if ($state) {
-			$rawstate = explode(',', $state);
-
-			foreach ($rawstate as $val) {
-				if ($val) {
-					$states[] = '"'.trim($db->escape($val)).'"';
-				}
-			}
-
-			JArrayHelper::toString($states);
-			$stat = ' AND (LOWER(l.state)='.implode(' OR LOWER(l.state)=',$states).')';
-		}
-
-		//perform select query
-		$query = 'SELECT a.title, a.dates, a.enddates, a.times, a.endtimes, a.datimage, a.fulltext, l.venue, l.state, l.locimage, l.city, l.locdescription, c.catname,'
-				.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
-				.' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug,'
-				.' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as categoryslug'
-				.' FROM #__jem_events AS a'
-				.' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-				.' INNER JOIN #__jem_categories AS c ON c.id = rel.catid'
-				.' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-				. $where
-				.' AND c.access IN (' . implode(',', $levels) . ')'
-				.' AND c.published = 1'
-				.($catid ? $categories : '')
-				.($venid ? $venues : '')
-				.($state ? $stat : '')
-				. $order
-				.' LIMIT '.(int)$params->get('count', '2')
-				;
-
-		$db->setQuery($query);
-		$rows = $db->loadObjectList();
+		# count
+		$count = $params->get('count', '2');
 
 		if ($params->get('use_modal', 0)) {
 			JHtml::_('behavior.modal', 'a.flyermodal');
 		}
 
-		//Loop through the result rows and prepare data
-		$i		= 0;
+		$model->setState('list.limit',$count);
+
+		# Retrieve the available Events
+		$events = $model->getItems();
+
+		# define list-array
+		# in here we collect the row information
 		$lists	= array();
-		
-		mb_internal_encoding('UTF-8');
-		foreach ((array) $rows as $row)
+		$i = 0;
+
+
+		#####################
+		### DEFINE FOREACH ##
+		#####################
+
+		foreach ($events as $row)
 		{
 			//create thumbnails if needed and receive imagedata
 			if ($row->datimage) {
@@ -147,13 +138,14 @@ abstract class modJEMwideHelper
 			$lists[$i] = new stdClass();
 			$lists[$i]->title			= htmlspecialchars($row->title, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->venue			= htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->catname			= htmlspecialchars($row->catname, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->state			= htmlspecialchars($row->state, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->eventlink		= $params->get('linkevent', 1) ? JRoute::_(JEMHelperRoute::getEventRoute($row->slug)) : '';
 			$lists[$i]->venuelink		= $params->get('linkvenue', 1) ? JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : '';
-			$lists[$i]->categorylink	= $params->get('linkcategory', 1) ? JRoute::_(JEMHelperRoute::getCategoryRoute($row->categoryslug)) : '';
 			$lists[$i]->date 			= modJEMwideHelper::_format_date($row, $params);
-			$lists[$i]->time 			= $row->times ? modJEMwideHelper::_format_time($row->dates, $row->times, $params) : '' ;
+			$lists[$i]->time 			= $row->times ? JEMOutput::formattime($row->times,null,false) : '' ;
+
+			# walk through categories assigned to an event
+			$lists[$i]->catname			= implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
 
 			if ($dimage == null) {
 				$lists[$i]->eventimage		= JURI::base(true).'/media/system/images/blank.png';
@@ -177,6 +169,7 @@ abstract class modJEMwideHelper
 
 		return $lists;
 	}
+
 
 	/**
 	 * Method to format date information

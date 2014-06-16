@@ -5,7 +5,7 @@
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- * 
+ *
  * * @todo: move js to a file
  */
 
@@ -88,7 +88,7 @@ window.addEvent('domready', function(){
 	} else {
 		eventmapoff();
 	}
-	
+
 
 	$("jform_globalattribs_global_show_mapserv").addEvent('change', testmap);
 
@@ -100,7 +100,7 @@ window.addEvent('domready', function(){
 	} else {
 		globalmapoff();
 	}
-	
+
 	$("jform_oldevent").addEvent('change', testevhandler);
 
 	var evhandler = $("jform_oldevent");
@@ -124,11 +124,11 @@ window.addEvent('domready', function(){
 	}
 
 
-	var ObjArray = $$('input.colorpicker').get('id').sort();  
+	var ObjArray = $$('input.colorpicker').get('id').sort();
 
 	var arrayLength = ObjArray.length;
 	for (var i = 0; i < arrayLength; i++) {
-	    var Obj 	= $(ObjArray[i]); 
+	    var Obj 	= $(ObjArray[i]);
 		var color = testcolor(Obj.value);
 		if (color) {
 			Obj.style.color = color;
@@ -146,9 +146,9 @@ function testcolor(color) {
 	var G = parseInt(color.substring(2,4),16);
 	var B = parseInt(color.substring(4,6),16);
 	var x = Math.sqrt(R * R * .299 + G * G * .587 + B * B * .114);
-	
-	var sColorText = x < 130 ? '#FFFFFF' : '#000000'; 
-	
+
+	var sColorText = x < 130 ? '#FFFFFF' : '#000000';
+
 	return sColorText;
 	}
 
@@ -357,7 +357,7 @@ function commoff()
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=settings'); ?>" method="post" id="settings-form" name="adminForm" class="form-validate">
 	<?php echo JHtml::_('tabs.start', 'settings-pane', array('useCookie'=>1)); ?>
 	<?php echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_BASIC_SETTINGS' ), 'settings-basic'); ?>
-	
+
 	<div class="width-50 fltlft">
 	<?php echo $this->loadTemplate('basicdisplay'); ?>
 	<?php echo $this->loadTemplate('basiceventhandling'); ?>
@@ -374,8 +374,8 @@ function commoff()
 	<?php echo $this->loadTemplate('evvenues'); ?>
 	<?php echo $this->loadTemplate('evregistration'); ?>
 	</div><div class="clr"></div>
-	
-	
+
+
 	<?php echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_LAYOUT' ), 'layout'); ?>
 	<?php echo $this->loadTemplate('layout'); ?>
 
@@ -384,6 +384,8 @@ function commoff()
 
 	<?php echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_USER_CONTROL' ), 'usercontrol'); ?>
 	<?php echo $this->loadTemplate('usercontrol'); ?>
+	<?php echo JHtml::_('tabs.panel', JText::_( 'COM_JEM_SETTINGS_TAB_CONFIGINFO' ), 'configinfo'); ?>
+	<?php echo $this->loadTemplate('configinfo'); ?>
 
 	<?php echo JHtml::_('tabs.end'); ?>
 
