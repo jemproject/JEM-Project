@@ -106,16 +106,7 @@ defined('_JEXEC') or die;
 			}
 
 			//count occurence of the category
-
-			if (isset($row->multi)) {
-				if ($row->multi == 'first') {
-					if (!array_key_exists($category->id, $countcatevents)) {
-						$countcatevents[$category->id] = 1;
-					} else {
-						$countcatevents[$category->id]++;
-					}
-				}
-			} else {
+			if (!isset($row->multi) || ($row->multi == 'first')) {
 				if (!array_key_exists($category->id, $countcatevents)) {
 					$countcatevents[$category->id] = 1;
 				} else {

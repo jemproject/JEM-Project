@@ -54,17 +54,17 @@ JHtml::_('behavior.modal');
 
 	<!--subcategories-->
 	<?php
-	if (!empty($this->children[$this->category->id])&& $this->maxLevel != 0) {
-?>
-		<div class="cat-children">
+	if ($this->maxLevel != 0 && !empty($this->category->id) && !empty($this->children[$this->category->id])) :
+	?>
+	<div class="cat-children">
 		<?php if ($this->params->get('show_category_heading_title_text', 1) == 1) : ?>
 		<h3>
 			<?php echo JTEXT::_('JGLOBAL_SUBCATEGORIES'); ?>
 		</h3>
 		<?php endif; ?>
 		<?php echo $this->loadTemplate('subcategories'); ?>
-		</div>
-		<?php };?>
+	</div>
+	<?php endif; ?>
 
 
 	<form action="<?php echo $this->action; ?>" method="post" id="adminForm">

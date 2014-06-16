@@ -160,15 +160,9 @@ defined('_JEXEC') or die;
 				<?php if ($this->params->get('displayattendeecolumn') == 1) : ?>
 					<td headers="jem_atte" align="center" valign="top">
 					<?php if ($row->registra == 1) {
-						if ($this->enableemailaddress == 1) {
-							$emailaddress = '&em='.$this->enableemailaddress;
-						} else {
-							$emailaddress = '';
-						}
-
 						$app = JFactory::getApplication();
 						$menuitem = $app->getMenu()->getActive()->id;
-						$linkreg 	= 'index.php?option=com_jem&amp;view=attendees&amp;id='.$row->id.'&Itemid='.$menuitem.$emailaddress;
+						$linkreg 	= 'index.php?option=com_jem&amp;view=attendees&amp;id='.$row->id.'&Itemid='.$menuitem;
 						$count = $row->regCount;
 						if ($row->maxplaces)
 						{

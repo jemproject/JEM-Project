@@ -107,15 +107,7 @@ defined('_JEXEC') or die;
 
 			//count occurence of the category
 
-			if (isset($row->multi)) {
-				if ($row->multi == 'first') {
-					if (!array_key_exists($category->id, $countcatevents)) {
-						$countcatevents[$category->id] = 1;
-					} else {
-						$countcatevents[$category->id]++;
-					}
-				}
-			} else {
+			if (!isset($row->multi) || ($row->multi == 'first')) {
 				if (!array_key_exists($category->id, $countcatevents)) {
 					$countcatevents[$category->id] = 1;
 				} else {
@@ -173,7 +165,6 @@ defined('_JEXEC') or die;
 		if ($this->jemsettings->showlocate == 1) {
 			$venue  = '<div class="location"><span class="text-label">'.JText::_('COM_JEM_VENUE_SHORT').': </span>';
 			$venue .= $row->locid ? $this->escape($row->venue) : '-';
-
 			$venue .= '</div>';
 		} else {
 			$venue = '';

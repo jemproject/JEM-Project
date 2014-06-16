@@ -88,16 +88,8 @@ class JemModelVenue extends JemModelEventslist
 	 */
 	public function getItems()
 	{
-		$params = clone $this->getState('params');
 		$items	= parent::getItems();
-
-		if ($items) {
-			foreach ($items as &$item)
-			{
-
-			}
-		}
-
+		/* no additional things to do yet - place holder */
 		return $items;
 	}
 

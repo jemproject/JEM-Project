@@ -177,14 +177,14 @@ class JemModelEventslist extends JModelList
 		$id .= ':' . $this->getState('filter.featured');
 		$id .= ':' . serialize($this->getState('filter.event_id'));
 		$id .= ':' . $this->getState('filter.event_id.include');
-		$id .= ':' . serialize('filter.category_id');
+		$id .= ':' . serialize($this->getState('filter.category_id'));
 		$id .= ':' . $this->getState('filter.category_id.include');
 		$id .= ':' . $this->getState('filter.filter_search');
 		$id .= ':' . $this->getState('filter.filter_type');
 		$id .= ':' . $this->getState('list.start');
 		$id .= ':' . $this->getState('list.limit');
-		$id .= ':' . serialize('filter.groupby');
-		$id .= ':' . serialize('filter.orderby');
+		$id .= ':' . serialize($this->getState('filter.groupby'));
+		$id .= ':' . serialize($this->getState('filter.orderby'));
 		$id .= ':' . $this->getState('filter.category_top');
 		$id .= ':' . $this->getState('filter.calendar_multiday');
 		$id .= ':' . $this->getState('filter.calendar_startdayonly');

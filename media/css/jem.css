@@ -389,6 +389,9 @@ div#jem .catimg p {
 	margin:0 0 0.5em 0;
 }
 
+div#jem .cat-children ul li {
+	list-style: none;
+}
 
 /* -------------------
 	TABLE
@@ -431,7 +434,7 @@ div#jem table.eventtable td {
 
 div#jem table.eventtable td a{
 	background-color:transparent;
-	color:#095197;
+ /*	color:#095197; */
 }
 
 div#jem table.eventtable tr.sectiontableentry2 td {

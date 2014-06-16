@@ -200,10 +200,10 @@ class JEMOutput {
 			}
 
 			// Initialise variables.
-			$user	= JFactory::getUser();
-			$app = JFactory::getApplication();
-			$userId	= $user->get('id');
-			$uri	= JFactory::getURI();
+			$user   = JFactory::getUser();
+			$app    = JFactory::getApplication();
+			$userId = $user->get('id');
+			$uri    = JFactory::getURI();
 
 			$settings = JemHelper::globalattribs();
 			JHtml::_('behavior.tooltip');
@@ -211,7 +211,7 @@ class JEMOutput {
 			switch ($view)
 			{
 				case 'editevent':
-					if (property_exists($item, 'checked_out') && property_exists($item, 'checked_out_time') && $item->checked_out > 0 && $item->checked_out != $user->get('id')) {
+					if (property_exists($item, 'checked_out') && property_exists($item, 'checked_out_time') && $item->checked_out > 0 && $item->checked_out != $userId) {
 						$checkoutUser = JFactory::getUser($item->checked_out);
 						$button = JHtml::_('image', 'system/checked_out.png', NULL, NULL, true);
 						$date = JHtml::_('date', $item->checked_out_time);
@@ -231,7 +231,7 @@ class JEMOutput {
 					break;
 
 				case 'editvenue':
-					if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $user->get('id')) {
+					if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $userId) {
 						$checkoutUser = JFactory::getUser($item->vChecked_out);
 						$button = JHtml::_('image', 'system/checked_out.png', NULL, NULL, true);
 						$date = JHtml::_('date', $item->vChecked_out_time);
@@ -251,7 +251,7 @@ class JEMOutput {
 					break;
 
 				case 'venue':
-					if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $user->get('id')) {
+					if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $userId) {
 						$checkoutUser = JFactory::getUser($item->vChecked_out);
 						$button = JHtml::_('image', 'system/checked_out.png', NULL, NULL, true);
 						$date = JHtml::_('date', $item->vChecked_out_time);
@@ -500,16 +500,6 @@ class JEMOutput {
 	{
 		$app = JFactory::getApplication();
 
-		// Emailaddress
-		$jinput = JFactory::getApplication()->input;
-		$enableemailaddress = $jinput->get('em','','int');
-
-		if ($enableemailaddress == 1) {
-			$emailaddress = '&em='.$enableemailaddress;
-		} else {
-			$emailaddress = '';
-		}
-
 		JHtml::_('behavior.tooltip');
 
 		$image = JHtml::_('image', 'com_jem/export_excel.png', JText::_('COM_JEM_EXPORT'), NULL, true);
@@ -522,7 +512,7 @@ class JEMOutput {
 			$overlib = JText::_('COM_JEM_EXPORT_DESC');
 			$text = JText::_('COM_JEM_EXPORT');
 
-			$print_link = 'index.php?option=com_jem&view=attendees&task=attendees.export&tmpl=raw&id='.$eventid.$emailaddress;
+			$print_link = 'index.php?option=com_jem&view=attendees&task=attendees.export&tmpl=raw&id='.$eventid;
 			$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 		}
 
@@ -538,7 +528,7 @@ class JEMOutput {
 	static function backbutton($backlink, $view)
 	{
 		$app 	= JFactory::getApplication();
-		$jinput = JFactory::getApplication()->input;
+		$jinput = $app->input;
 
 		$id 	= $jinput->getInt('id');
 		$fid 	= $jinput->getInt('Itemid');
@@ -547,7 +537,7 @@ class JEMOutput {
 
 		$image = JHtml::_('image', 'com_jem/icon-16-back.png', JText::_('COM_JEM_BACK'), NULL, true);
 
-		if ($app->input->get('print','','int')) {
+		if ($jinput->get('print','','int')) {
 			//button in popup
 			$output = '';
 		} else {
@@ -567,7 +557,7 @@ class JEMOutput {
 	 *
 	 * @param obj $data
 	 */
-	static function mapicon($data,$view=false,$params)
+	static function mapicon($data, $view = false, $params)
 	{
 		$global = JemHelper::globalattribs();
 
@@ -581,15 +571,11 @@ class JEMOutput {
 			$lg			= 'event_lg';
 			$mapserv	= $params->get('event_show_mapserv');
 		} else if ($view == 'venues') {
+			$tld		= 'global_tld';
+			$lg			= 'global_lg';
 			$mapserv	= $params->get('global_show_mapserv');
 			if ($mapserv == 3) {
-				$tld		= 'global_tld';
-				$lg			= 'global_lg';
-				$mapserv	= 0;
-			} else {
-				$tld		= 'global_tld';
-				$lg			= 'global_lg';
-				$mapserv	= $params->get('global_show_mapserv');
+				$mapserv = 0;
 			}
 		} else {
 			$tld		= 'global_tld';

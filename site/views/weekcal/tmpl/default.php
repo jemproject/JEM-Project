@@ -105,15 +105,7 @@ defined('_JEXEC') or die;
 				$colorpic .= '<span class="colorpic" style="width:6px; background-color: '.$category->color.';"></span>';
 			}
 
-			if (isset($row->multi)) {
-				if ($row->multi == 'first') {
-					if (!array_key_exists($category->id, $countcatevents)) {
-						$countcatevents[$category->id] = 1;
-					} else {
-						$countcatevents[$category->id]++;
-					}
-				}
-			} else {
+			if (!isset($row->multi) || ($row->multi == 'first')) {
 				if (!array_key_exists($category->id, $countcatevents)) {
 					$countcatevents[$category->id] = 1;
 				} else {
