@@ -27,6 +27,8 @@ defined('_JEXEC') or die;
 	$countcatevents = array ();
 	$countperday = array();
 	$limit = $this->params->get('daylimit', 10);
+	$currentWeek = $this->currentweek;
+	$firstDate = strftime("%Y-%m-%d", $this->cal->getFirstDayTimeOfWeek($currentWeek));
 
 	foreach ($this->rows as $row) :
 		if (!JemHelper::isValidDate($row->dates)) {
@@ -105,7 +107,8 @@ defined('_JEXEC') or die;
 				$colorpic .= '<span class="colorpic" style="width:6px; background-color: '.$category->color.';"></span>';
 			}
 
-			if (!isset($row->multi) || ($row->multi == 'first')) {
+			/* count if not multiday or first of multiday or first visible of multiday */
+			if (!isset($row->multi) || ($row->multi == 'first') || ($row->dates == $firstDate)) {
 				if (!array_key_exists($category->id, $countcatevents)) {
 					$countcatevents[$category->id] = 1;
 				} else {
@@ -193,10 +196,10 @@ defined('_JEXEC') or die;
 		$this->cal->setEventContent($year, $month, $day, $content);
 	endforeach;
 
-		# output of calendar
-		$currentWeek = $this->currentweek;
-		$nrweeks = $this->params->get('nrweeks', 1);
-	echo $this->cal->showWeeksByID($currentWeek,$nrweeks);
+	# output of calendar
+	$currentWeek = $this->currentweek;
+	$nrweeks = $this->params->get('nrweeks', 1);
+	echo $this->cal->showWeeksByID($currentWeek, $nrweeks);
 	?>
 
 	<div id="jlcalendarlegend">
