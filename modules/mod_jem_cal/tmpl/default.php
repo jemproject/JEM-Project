@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @subpackage JEM Calendar Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -217,7 +217,7 @@ for($day = 1, $days_in_month = gmdate('t', $uxtime_first_of_month); $day <= $day
 			// Remove htmlspecialchars from link otherwise it changes &'s to &amp; in the URL
 		}
 	} else {
-		$calendar .= '<td class="'.$tdbaseclass.'">'.$space.$day.'</td>';
+		$calendar .= '<td class="'.$tdbaseclass.'"><span class="nolink">'.$space.$day.'</span></td>';
 	}
 }
 

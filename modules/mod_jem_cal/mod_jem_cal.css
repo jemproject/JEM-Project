@@ -1,5 +1,5 @@
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @subpackage JEM Calendar Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -38,7 +38,7 @@
 	background-color: #F0F8FF;
 }
 
-/* Today cell preperties */
+/* Today cell properties */
 .eventcalq td.mod_jemcalq_caltoday
 {
 	font: bold 11px/20px "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
@@ -55,24 +55,24 @@
 .eventcalq td.mod_jemcalq_caltodaylink a:link,
 .eventcalq td.mod_jemcalq_caltodaylink a:visited{
 	text-decoration: none;
-	width: 19px;
-	height: 18px;
+/*	width: 19px;
+	height: 18px; */
 	font-weight: bold;
 	display: block;
 	color: #608194;
-	border: 1px solid #DF9496;
+	border: 2px solid #DF9496;
 }
 
 /* Today Event day cell hover */
 .eventcalq td.mod_jemcalq_caltodaylink a:hover {
 	text-decoration: none;
-	width: 19px;
-	height: 18px;
+/*	width: 19px;
+	height: 18px; */
 	font-weight: bold;
 	display: block;
 	color: #FFFFFF;
 	background-color: #0066FF;
-	border: 1px solid #DF9496;
+	border: 2px solid #DF9496;
 }
 
 /* Non event day cell preperties */
@@ -84,6 +84,11 @@
 	height: 20px;
 	text-align: center;
 	background-color: #EFEFEF;
+}
+
+.eventcalq td.mod_jemcalq_calday span.nolink {
+	border: 2px solid transparent; /* to get always same cell size */
+	display: block;
 }
 
 /* Event day cell properties */
@@ -106,6 +111,7 @@
 	display: block;
 	color: #608194;
 	background-color: #CCE0FF;
+	border: 2px solid transparent; /* to get always same cell size */
 }
 
 /* Event day cell hover */
@@ -115,7 +121,9 @@
 	display: block;
 	color: #FFFFFF;
 	background-color: #0066FF;
+	border: 2px solid transparent; /* to get always same cell size */
 }
+
 /* Month heading properies */
 .eventcalq caption.mod_jemcalq_calendar-month {
 	font: bold 12px/20px "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
@@ -134,8 +142,8 @@
 
 /* Month heading Hover properties */
 .eventcalq caption.mod_jemcalq_calendar-month a:hover{
-color: #990000;
-text-decoration: none;
+	color: #990000;
+	text-decoration: none;
 }
 
 /* Day of week heading properties*/
@@ -172,4 +180,8 @@ text-decoration: none;
 	font-size: 100%;
 	margin: 0;
 	color: #000000;
+}
+/* prevent problems with some site templates */
+.eventcalq table.mod_jemcalq_calendar span.hasTip {
+	margin: 0;
 }
