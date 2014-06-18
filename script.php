@@ -275,6 +275,11 @@ class com_jemInstallerScript
 				// change categoriesdetailed view name in menu items
 				$this->updateJemMenuItems196();
 			}
+			// Changes between 1.9.6 -> 1.9.7
+			if (version_compare($this->oldRelease, '1.9.7', 'lt') && version_compare($this->newRelease, '1.9.6', 'gt')) {
+				// add layout to edit menu items' urls (forgotten in 1.9.6, fix it now)
+				$this->updateJemMenuItems197();
+			}
 		}
 	}
 
@@ -501,6 +506,7 @@ class com_jemInstallerScript
 			'/components/com_jem/views/categoriesdetailed',
 			'/administrator/components/com_jem/views/cleanup/',
 			'/administrator/components/com_jem/help/en-GB/toolbars',
+			// obsolete since JEM 1.9.7
 		);
 
 		foreach ($files as $file) {
@@ -798,4 +804,41 @@ class com_jemInstallerScript
 			$db->query();
 		}
 	}
+
+	/**
+	 * Add layout param to edit view in menu items related to com_jem.
+	 * (required when updating from 1.9.6 or below to 1.9.7 or newer, was missed in 1.9.6)
+	 *
+	 * @return void
+	 */
+	private function updateJemMenuItems197()
+	{
+		// get all "com_jem..." frontend entries
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('id, link, params');
+		$query->from('#__menu');
+		$query->where(array("client_id = 0", "link LIKE 'index.php?option=com_jem&view=edit%'"));
+		$db->setQuery($query);
+		$items = $db->loadObjectList();
+
+		foreach ($items as $item) {
+			// check uri
+			$uri = JFactory::getURI($item->link); // with a little help of JUri
+			$layout = $uri->getVar('layout', '');
+			if ($layout != 'edit') {              // if layout is not set to 'edit'
+				$uri->setVar('layout', 'edit');   //   set it
+				$link = (string)$uri;             //   and convert back to string
+
+				// write changed entry back into DB
+				$query = $db->getQuery(true);
+				$query->update('#__menu');
+				$query->set('link = '.$db->quote($link));
+				$query->where(array('id = '.$db->quote($item->id)));
+				$db->setQuery($query);
+				$db->query();
+			}
+		}
+	}
+
 }
