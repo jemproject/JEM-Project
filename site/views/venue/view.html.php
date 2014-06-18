@@ -60,8 +60,8 @@ class JemViewVenue extends JEMView {
 			$eventandmorecolor = $params->get('eventandmorecolor');
 
 			$style = '
-			div[id^=\'venuez\'] a {color:' . $evlinkcolor . ';}
-			div[id^=\'venuez\'] {background-color:' . $evbackgroundcolor . ';}
+			div[id^=\'catz\'] a {color:' . $evlinkcolor . ';}
+			div[id^=\'catz\'] {background-color:' . $evbackgroundcolor . ';}
 			.eventcontent {background-color:'.$evbackgroundcolor .';}
 			.eventandmore {background-color:' . $eventandmorecolor . ';}
 			.today .daynum {background-color:' . $currentdaycolor . ';}';
