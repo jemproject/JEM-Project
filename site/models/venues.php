@@ -74,18 +74,25 @@ class JemModelVenues extends JemModelEventslist
 
 		$query->select(array('l.id AS locid','l.locimage','l.locdescription','l.url','l.venue','l.street','l.city','l.country','l.postalCode','l.state','l.map','l.latitude','l.longitude'));
 		$query->select(array($case_when_l));
-		$query->from('#__jem_events as a');
-		$query->join('LEFT', '#__jem_venues AS l ON l.id = a.locid');
+		$query->from('#__jem_venues as l');
+		$query->join('LEFT', '#__jem_events AS a ON l.id = a.locid');
 		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
 		$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
 
 		// where
 		$where = array();
-		$where[] = ' l.published = 1';
+		// if published or the user is creator of the event
+		if (empty($user->id)) {
+			$where[] = ' l.published = 1';
+		}
+		// TODO: no limit if user can publish or edit foreign venues
+		else {
+			$where[] = ' (l.published = 1 OR l.created_by = ' . $this->_db->Quote($user->id) . ')';
+		}
 
 		$query->where($where);
 		$query->group(array('l.id','l.venue'));
-
+		$query->order(array('l.ordering', 'l.venue'));
 
 		return $query;
 	}

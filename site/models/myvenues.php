@@ -169,9 +169,9 @@ class JEMModelMyvenues extends JModelLegacy
 
 		$where = array();
 		
-		$where[] = ' l.published = 1';
+	//	$where[] = ' l.published = 1';
 
-		// then if the user is attending the event
+		// then if the user is creator of the event
 		$where [] = ' l.created_by = '.$this->_db->Quote($user->id);
 
 		if ($settings->get('global_show_filter') && $search) {
