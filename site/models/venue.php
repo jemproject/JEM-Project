@@ -69,6 +69,13 @@ class JemModelVenue extends JemModelEventslist
 		$listOrder = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
 		$this->setState('filter.filter_direction', $listOrder);
 
+		if ($orderCol == 'a.dates') {
+			$orderby = array('a.dates ' . $listOrder, 'a.times ' . $listOrder);
+		} else {
+			$orderby = $orderCol . ' ' . $listOrder;
+		}
+		$this->setState('filter.orderby', $orderby);
+
 		# params
 		$this->setState('params', $params);
 
