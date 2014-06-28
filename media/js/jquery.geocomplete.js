@@ -1,5 +1,5 @@
 /**
- * jQuery Geocoding and Places Autocomplete Plugin - V 1.4.1
+ * jQuery Geocoding and Places Autocomplete Plugin - V 1.5.0
  *
  * @author Martin Kleppe <kleppe@ubilabs.net>, 2012
  * @author Ubilabs http://ubilabs.net, 2012
@@ -7,12 +7,12 @@
  */
 
 // # $.geocomplete()
-// ## jQuery Geocoding and Places Autocomplete Plugin - V 1.4.1
+// ## jQuery Geocoding and Places Autocomplete Plugin - V 1.5.0
 //
 // * https://github.com/ubilabs/geocomplete/
 // * by Martin Kleppe <kleppe@ubilabs.net>
 
-;(function($, window, document, undefined){
+(function($, window, document, undefined){
 
   // ## Options
   // The default options for this plugin.
@@ -21,6 +21,7 @@
   // * `details` - The container that should be populated with data. Defaults to `false` which ignores the setting.
   // * `location` - Location to initialize the map on. Might be an address `string` or an `array` with [latitude, longitude] or a `google.maps.LatLng`object. Default is `false` which shows a blank map.
   // * `bounds` - Whether to snap geocode search to map bounds. Default: `true` if false search globally. Alternatively pass a custom `LatLngBounds object.
+  // * `autoselect` - Automatically selects the highlighted item or the first item from the suggestions list on Enter.  
   // * `detailsAttribute` - The attribute's name to use as an indicator. Default: `"name"`
   // * `mapOptions` - Options to pass to the `google.maps.Map` constructor. See the full list [here](http://code.google.com/apis/maps/documentation/javascript/reference.html#MapOptions).
   // * `mapOptions.zoom` - The inital zoom level. Default: `14`
@@ -38,6 +39,7 @@
     map: false,
     details: false,
     detailsAttribute: "name",
+    autoselect: true,
     location: false,
 
     mapOptions: {
@@ -116,6 +118,12 @@
         'click',
         $.proxy(this.mapClicked, this)
       );
+      
+      google.maps.event.addListener(
+    	this.map,
+    	'zoom_changed',
+    	$.proxy(this.mapZoomed, this)
+      	);
     },
 
     // Add a marker with the provided `markerOptions` but only
@@ -128,7 +136,7 @@
       if (options.disabled){ return; }
 
       this.marker = new google.maps.Marker(options);
-
+      
       google.maps.event.addListener(
         this.marker,
         'dragend',
@@ -147,7 +155,7 @@
       };
 
       if (this.options.country){
-        options.componentRestrictions = {country: this.options.country}
+        options.componentRestrictions = {country: this.options.country};
       }
 
       this.autocomplete = new google.maps.places.Autocomplete(
@@ -156,7 +164,7 @@
 
       this.geocoder = new google.maps.Geocoder();
 
-      // Bind autocomplete to map bounds but only if there is a map
+      // Bind autocomplete to map  but only if there is a map
       // and `options.bindToMap` is set to true.
       if (this.map && this.options.bounds === true){
         this.autocomplete.bindTo('bounds', this.map);
@@ -236,7 +244,7 @@
       if (location instanceof google.maps.LatLng){
         latLng = location;
       }
-
+     
       if (latLng){
         if (this.map){ this.map.setCenter(latLng); }
         if (this.marker){ this.marker.setPosition(latLng); }
@@ -268,6 +276,32 @@
 
       this.geocoder.geocode(request, $.proxy(this.handleGeocode, this));
     },
+
+	// Get the selected result. If no result is selected on the list, then get
+	// the first result from the list.
+	    selectFirstResult: function() {
+	      //$(".pac-container").hide();
+	    	
+	      var selected = '';
+	      // Check if any result is selected.
+	      if ($(".pac-item-selected")['0']) {
+	        selected = '-selected';
+	      }
+	      
+	      // Get the first suggestion's text.
+	      var $span1 = $(".pac-container .pac-item" + selected + ":first span:nth-child(2)").text();
+	      var $span2 = $(".pac-container .pac-item" + selected + ":first span:nth-child(3)").text();
+	      
+	      // Adds the additional information, if available.
+	      var firstResult = $span1;
+	      if ($span2) {
+	        firstResult += " - " + $span2;
+	      }
+	      
+	      this.$input.val(firstResult);
+	      
+	      return firstResult;
+	    },
 
     // Handles the geocode response. If more than one results was found
     // it triggers the "geocode:multiple" events. If there was an error
@@ -302,14 +336,19 @@
         if (this.map.getZoom() > this.options.maxZoom){
           this.map.setZoom(this.options.maxZoom);
         }
-      } else {
-        this.map.setZoom(this.options.maxZoom);
-        this.map.setCenter(geometry.location);
-      }
+      } 
 
       if (this.marker){
         this.marker.setPosition(geometry.location);
         this.marker.setAnimation(this.options.markerOptions.animation);
+        
+        var latLng = this.marker.getPosition(); // returns LatLng object
+           
+        google.maps.event.trigger(this.map, 'resize');
+        if (this.map.getZoom() > this.options.maxZoom){
+            this.map.setZoom(this.options.maxZoom);
+          }
+ 	   this.map.setCenter(latLng);   
       }
     },
 
@@ -410,6 +449,10 @@
     mapClicked: function(event) {
         this.trigger("geocode:click", event.latLng);
     },
+    
+	mapZoomed: function(event) {
+	     this.trigger("geocode:zoom", this.map.getZoom());
+    },
 
     // Restore the old position of the marker to the last now location.
     resetMarker: function(){
@@ -423,9 +466,15 @@
     placeChanged: function(){
       var place = this.autocomplete.getPlace();
 
-      if (!place.geometry){
-        this.find(place.name);
+	if (!place || !place.geometry){
+		if (this.options.autoselect) {
+			// Automatically selects the highlighted item or the first item from the
+			// suggestions list.
+			var autoSelection = this.selectFirstResult();
+			this.find(autoSelection);
+    	  }
       } else {
+    	// Use the input text if it already gives geometry.
         this.update(place);
       }
     }
@@ -460,7 +509,7 @@
         // Prevent against multiple instantiations.
         var instance = $.data(this, attribute);
         if (!instance) {
-          instance = new GeoComplete( this, options )
+          instance = new GeoComplete( this, options );
           $.data(this, attribute, instance);
         }
       });
