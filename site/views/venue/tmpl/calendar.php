@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -24,12 +24,11 @@ defined('_JEXEC') or die;
 	<?php endif; ?>
 
 	<?php
-	$countvenueevents = array ();
 	$countcatevents = array ();
 	$countperday = array();
 	$limit = $this->params->get('daylimit', 10);
 
-	foreach ($this->rows as $row) {
+	foreach ($this->rows as $row) :
 		if (!JemHelper::isValidDate($row->dates)) {
 			continue; // skip, open date !
 		}
@@ -41,24 +40,10 @@ defined('_JEXEC') or die;
 
 		@$countperday[$year.$month.$day]++;
 		if ($countperday[$year.$month.$day] == $limit+1) {
-			$var1a = JRoute::_( 'index.php?view=day&id='.$year.$month.$day.'&locid='.$row->locid);
+			$var1a = JRoute::_( 'index.php?view=day&id='.$year.$month.$day );
 			$var1b = JText::_('COM_JEM_AND_MORE');
 			$var1c = "<a href=\"".$var1a."\">".$var1b."</a>";
 			$id = 'eventandmore';
-
-			/**
-			 * $cal->setEventContent($year,$month,$day,$content,[$contentUrl,$id])
-			 *
-			 * Info from: http://www.micronetwork.de/activecalendar/demo/doc/doc_en.html
-			 *
-			 * Call this method, if you want the class to create a new HTML table within the date specified by the parameters $year, $month, $day.
-			 * The parameter $content can be a string or an array.
-			 * If $content is a string, then the new generated table will contain one row with the value of $content.
-			 * If it is an array, the generated table will contain as many rows as the array length and each row will contain the value of each array item.
-			 * The parameter $contentUrl is optional: If you set a $contentUrl, an event content specific link (..href='$contentUrl'..) will be generated
-			 * in the 'event content' table row(s), even if the method $cal->enableDayLinks($link) was not called.
-			 * The parameter $id is optional as well: if you set an $id, a HTML class='$id' will be generated for each event content (default: 'eventcontent').
-			 */
 
 			$this->cal->setEventContent($year, $month, $day, $var1c, null, $id);
 			continue;
@@ -100,12 +85,12 @@ defined('_JEXEC') or die;
 			$detaillink = JRoute::_(JemHelperRoute::getEventRoute($row->slug));
 
 			//wrap a div for each category around the event for show hide toggler
-			$content    .= '<div class="cat'.$category->id.'">';
+			$content    .= '<div id="catz" class="cat'.$category->id.'">';
 			$contentend .= '</div>';
 
 			//attach category color if any in front of the catname
 			if ($category->color) {
-				$multicatname .= '<span class="colorpic" style="background-color: '.$category->color.';"></span>&nbsp;'.$category->catname;
+				$multicatname .= '<span class="colorpic" style="width:6px; background-color: '.$category->color.';"></span>&nbsp;'.$category->catname;
 			} else {
 				$multicatname .= $category->catname;
 			}
@@ -117,16 +102,23 @@ defined('_JEXEC') or die;
 
 			//attach category color if any in front of the event title in the calendar overview
 			if (isset($category->color) && $category->color) {
-				$colorpic .= '<span class="colorpic" style="background-color: '.$category->color.';"></span>';
+				$colorpic .= '<span class="colorpic" style="width:6px; background-color: '.$category->color.';"></span>';
 			}
 
 			//count occurence of the category
-			if (!array_key_exists($category->id, $countcatevents)) {
-				$countcatevents[$category->id] = 1;
-			} else {
-				$countcatevents[$category->id]++;
+
+			if (!isset($row->multi) || ($row->multi == 'first')) {
+				if (!array_key_exists($category->id, $countcatevents)) {
+					$countcatevents[$category->id] = 1;
+				} else {
+					$countcatevents[$category->id]++;
+				}
 			}
 		}
+
+		$color  = '<div id="eventcontenttop" class="eventcontenttop">';
+		$color .= $colorpic;
+		$color .= '</div>';
 
 		//for time in calendar
 		$timetp = '';
@@ -160,16 +152,6 @@ defined('_JEXEC') or die;
 			}
 		}
 
-		//wrap a div for each venue around the event for show hide toggler
-		$content    .= '<div id="venuez" class="venue'.$row->locid.'">';
-		$contentend .= '</div>';
-
-		if (!array_key_exists($row->locid, $countvenueevents)) {
-			$countvenueevents[$row->locid] = 1;
-		} else {
-			$countvenueevents[$row->locid]++;
-		}
-
 		$catname = '<div class="catname">'.$multicatname.'</div>';
 
 		$eventdate = !empty($row->multistartdate) ? JemOutput::formatdate($row->multistartdate) : JemOutput::formatdate($row->dates);
@@ -182,7 +164,7 @@ defined('_JEXEC') or die;
 		//venue
 		if ($this->jemsettings->showlocate == 1) {
 			$venue  = '<div class="location"><span class="text-label">'.JText::_('COM_JEM_VENUE_SHORT').': </span>';
-			$venue .=     $row->locid ? $this->escape($row->venue) : '-';
+			$venue .= $row->locid ? $this->escape($row->venue) : '-';
 			$venue .= '</div>';
 		} else {
 			$venue = '';
@@ -211,13 +193,15 @@ defined('_JEXEC') or die;
 		$content .= $contentend;
 
 		$this->cal->setEventContent($year, $month, $day, $content);
-	}
+	endforeach;
 
 	// print the calendar
 	echo $this->cal->showMonth();
 	?>
 
 	<div id="jlcalendarlegend">
+
+	<!-- Calendar buttons -->
 		<div class="calendarButtons">
 			<div class="calendarButtonsToggle">
 				<div id="buttonshowall" class="calendarButton">
@@ -228,24 +212,30 @@ defined('_JEXEC') or die;
 				</div>
 			</div>
 		</div>
-
 		<div class="clr"></div>
+
+	<!-- Calendar Legend -->
 		<div class="calendarLegends">
 			<?php
-			//print the legend
 			if ($this->params->get('displayLegend')) {
-				$counter = array();
 
-				//walk through events
+				##############
+				## FOR EACH ##
+				##############
+
+				$counter	= array();
+				$cats		= array();
+
+				# walk through events
 				foreach ($this->rows as $row) {
-					//walk through the event categories
 					foreach ($row->categories as $cat) {
-						//sort out dupes
+
+						# sort out dupes for the counter (catid-legend)
 						if (!in_array($cat->id, $counter)) {
-							//add cat id to cat counter
+							# add cat id to cat counter
 							$counter[] = $cat->id;
 
-							//build legend
+							# build legend
 							if (array_key_exists($cat->id, $countcatevents)) {
 							?>
 								<div class="eventCat" id="cat<?php echo $cat->id; ?>">

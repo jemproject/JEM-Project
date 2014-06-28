@@ -1,13 +1,12 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-
 
 /**
  * Editvenue-View
@@ -22,7 +21,7 @@ class JemViewEditvenue extends JViewLegacy
 	/**
 	 * Editvenue-View
 	 */
-	public function display($tpl=null)
+	public function display($tpl = null)
 	{
 		// Initialise variables.
 		$jemsettings = JemHelper::config();
@@ -35,15 +34,19 @@ class JemViewEditvenue extends JViewLegacy
 		$pathway     = $app->getPathway();
 		$url         = JURI::root();
 
+		$language    = JFactory::getLanguage();
+		$language    = $language->getTag();
+		$language    = substr($language, 0,2);
+
 		// Get model data.
-		$this->state 	= $this->get('State');
-		$this->item 	= $this->get('Item');
+		$this->state  = $this->get('State');
+		$this->item   = $this->get('Item');
 		$this->params = $this->state->get('params');
 
 		// Create a shortcut for $item and params.
 		$item = $this->item;
 		$params = $this->params;
-		
+
 		$this->form = $this->get('Form');
 		$this->return_page = $this->get('ReturnPage');
 
@@ -150,13 +153,15 @@ class JemViewEditvenue extends JViewLegacy
 		$this->access	= $access2;
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-		JHtml::_('stylesheet', 'com_jem/geostyle.css', array(), true);
+		JemHelper::loadCss('geostyle');
+		JemHelper::loadCss('jem');
+		JemHelper::loadCustomCss();
+		JemHelper::loadCustomTag();
 
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-
+		// Load script
 		JHtml::_('script', 'com_jem/attachments.js', false, true);
-		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
+		JHtml::_('script', 'com_jem/other.js', false, true);
+		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places&language='.$language);
 
 		// Noconflict
 		$document->addCustomTag( '<script type="text/javascript">jQuery.noConflict();</script>' );

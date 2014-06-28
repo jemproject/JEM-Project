@@ -7,21 +7,23 @@
 	</layout>
 	<fields name="params">
 		<fieldset name="basic">
-			<field name="introtext" type="textarea"
-			filter="safehtml"
-			default=""
-			rows="8"
-			cols="30"
-			label="COM_JEM_INTROTEXT_FIELD"
-			description="COM_JEM_INTROTEXT_FIELD_DESC"
+			<field  name="introtext"
+				type="textarea"
+				filter="safehtml"
+				default=""
+				rows="8"
+				cols="30"
+				label="COM_JEM_INTROTEXT_FIELD"
+				description="COM_JEM_INTROTEXT_FIELD_DESC"
 			/>
-			<field name="showintrotext" type="radio"
-			default="0"
-			label="COM_JEM_DISPLAY_INTROTEXT"
-			description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+			<field  name="showintrotext"
+				type="radio"
+				default="0"
+				label="COM_JEM_DISPLAY_INTROTEXT"
+				description="COM_JEM_DISPLAY_INTROTEXT_DESC"
 			>
-			<option value="0">COM_JEM_HIDE</option>
-			<option value="1">COM_JEM_SHOW</option>
+				<option value="0">COM_JEM_HIDE</option>
+				<option value="1">COM_JEM_SHOW</option>
 			</field>
 		</fieldset>
 	</fields>

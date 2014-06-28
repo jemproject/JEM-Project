@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -31,7 +31,13 @@ JHtml::_('behavior.keepalive');
 		<?php echo $this->loadTemplate('ftp'); ?>
 	<?php endif; ?>
 	<fieldset class="adminform">
-		<legend><?php echo JText::sprintf('COM_JEM_CSSMANAGER_FILENAME', $this->source->filename); ?></legend>
+		<legend><?php
+		if ($this->source->custom) {
+			echo JText::sprintf('COM_JEM_CSSMANAGER_FILENAME_CUSTOM', $this->source->filename);
+		} else {
+			echo JText::sprintf('COM_JEM_CSSMANAGER_FILENAME', $this->source->filename);
+		}
+		?></legend>
 
 		<?php echo $this->form->getLabel('source'); ?>
 		<div class="clr"></div>

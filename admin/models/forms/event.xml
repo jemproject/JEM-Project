@@ -453,6 +453,7 @@
 				<option value="0">COM_JEM_NO_MAP_SERVICE</option>
 				<option value="1">COM_JEM_GOOGLE_MAP_LINK</option>
 				<option value="2">COM_JEM_GOOGLE_MAP_DISP</option>
+				<option value="3">COM_JEM_GOOGLE_MAP_DISP_API</option>
 			</field>
 			<field name="event_tld" type="text"
 				label="COM_JEM_GOOGLE_MAP_TLD"

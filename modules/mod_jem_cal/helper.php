@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @subpackage JEM Calendar Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -13,16 +13,28 @@
  * see example at http://keithdevens.com/weblog
  * License: http://keithdevens.com/software/license
  */
-
 defined('_JEXEC') or die;
 
-class modjemcalqhelper
+JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
+
+abstract class modjemcalqhelper
 {
-	static function getdays ($greq_year, $greq_month, &$params)
+	public static function getdays ($greq_year, $greq_month, &$params)
 	{
 		$db			= JFactory::getDBO();
+
+		# Retrieve Eventslist model for the data
+		$model = JModelLegacy::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
+
+		# Set params for the model
+		//$app = JFactory::getApplication();
+		//$appParams = $app->getParams('com_jem');
+		$model->setState('params', $params);
+
+		# Access filter
+		$model->setState('filter.access', true);
+
 		$user		= JFactory::getUser();
-		// Support Joomla access levels instead of single group id
 		$levels		= $user->getAuthorisedViewLevels();
 		$settings 	= JEMHelper::globalattribs();
 
@@ -36,48 +48,69 @@ class modjemcalqhelper
 		$FixItemID			= $params->get('FixItemID', '0');
 		$defaultItemid	 	= $settings->get('default_Itemid','');
 
-		//Get eventdates
+		# filter category's
 		if ($catid) {
 			$ids = explode(',', $catid);
-			JArrayHelper::toInteger($ids);
-			$categories = ' AND c.id IN (' . implode(',', $ids) . ')';
+			$ids = JArrayHelper::toInteger($ids);
+			//$categories = ' AND c.id IN (' . implode(',', $ids) . ')';
+			$model->setState('filter.category_id',$ids);
+			$model->setState('filter.category_id.include',true);
 		}
+
+		# filter venue's
 		if ($venid) {
 			$ids = explode(',', $venid);
-			JArrayHelper::toInteger($ids);
-			$venues = ' AND l.id IN (' . implode(',', $ids) . ')';
+			$ids = JArrayHelper::toInteger($ids);
+			/*$venues = ' AND l.id IN (' . implode(',', $ids) . ')';*/
+			$model->setState('filter.venue_id',$ids);
+			$model->setState('filter.venue_id.include',true);
 		}
-		if ($CurrentEvents == 1) {
-			$wherestr = ' WHERE ( a.published = 1';
+
+		# filter published
+		#  0: unpublished
+		#  1: published
+		#  2: archived
+		# -2: trashed
+
+		if ($CurrentEvents && $ArchivedEvents) {
+			$model->setState('filter.published',array(1,2));
 		} else {
-			$wherestr = ' WHERE ( a.published = 0';
+			if ($CurrentEvents == 1) {
+				/*$wherestr = ' WHERE a.published = 1';*/
+				$model->setState('filter.published',1);
+			}
+
+			# filter archived
+			if ($ArchivedEvents == 1) {
+			/*$wherestr = ' WHERE a.published = 2';*/
+				$model->setState('filter.published',2);
+			}
 		}
 
-		if ($ArchivedEvents == 1) {
-			$wherestr = $wherestr. ' OR a.published = -1';
-		}
+		$model->setState('filter.groupby','a.id');
 
-		$wherestr .= ' )';  // Parentheses are important here
+		# Retrieve the available Items
+		$events = $model->getItems();
 
-		$query = 'SELECT a.*, l.venue, DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,c.id AS mcatid,c.catname,l.id AS mlocid,l.venue,'
-				.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug'
-				. ' FROM #__jem_events AS a'
-				.' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-				.' INNER JOIN #__jem_categories AS c ON c.id = rel.catid'
-				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-				. $wherestr
-				. ' AND c.access IN (' . implode(',', $levels) . ')'
-				.($catid ? $categories : '')
-				.($venid ? $venues : '')
-				. ' GROUP BY a.id'
-				;
-
-
-		$db->setQuery($query);
-		$events = $db->loadObjectList();
-
+		# create an array to catch days
 		$days = array();
-		foreach ($events as $event) {
+
+		foreach ($events as $index => $event) {
+			# adding categories
+			$nr 		= count($event->categories);
+			$catname 	= '';
+			$ix 		= 0;
+
+			# walk through categories assigned to an event
+			foreach($event->categories AS $category) {
+				$catname .= htmlspecialchars($category->catname);
+
+				$ix++;
+				if ($ix != $nr) {
+					$catname .= ', ';
+				}
+			}
+
 			// Cope with no end date set i.e. set it to same as start date
 			if (is_null($event->enddates)) {
 				$eyear = $event->created_year;
@@ -118,15 +151,13 @@ class modjemcalqhelper
 					$uxdate = mktime(0, 0, 0, $greq_month, $count, $greq_year);
 					$tdate = strftime('%Y%m%d',$uxdate);// Toni change Joomla 1.5
 // 					$created_day = $count;
-
 // 					$tt = $days[$count][1];
-
 // 					if (strlen($tt) == 0)
 
 					if (empty($days[$count][1])) {
 						$title = htmlspecialchars($event->title);
 						if ($DisplayCat == 1) {
-							$title = $title . '&nbsp;(' . htmlspecialchars($event->catname) . ')';
+							$title = $title . '&nbsp;(' . $catname . ')';
 						}
 						if ($DisplayVenue == 1) {
 							if (isset($event->venue)) {
@@ -138,7 +169,7 @@ class modjemcalqhelper
 						$tt = $days[$count][1];
 						$title = $tt . '+%+%+' . htmlspecialchars($event->title);
 						if ($DisplayCat == 1) {
-							$title = $title . '&nbsp;(' . htmlspecialchars($event->catname) . ')';
+							$title = $title . '&nbsp;(' . $catname . ')';
 						}
 						if ($DisplayVenue == 1) {
 							if (isset($event->venue)) {
@@ -176,7 +207,13 @@ class modjemcalqhelper
 				}
 			}
 		// End of Toni modification
-		}
+
+
+			# check if the item-categories is empty, if so the user has no access to that event at all.
+			if (empty($event->categories)) {
+				unset ($events[$index]);
+			}
+		} // end foreach
 		return $days;
 	}
 }

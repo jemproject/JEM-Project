@@ -332,22 +332,31 @@
     // This will lookup all elements that has an attribute with the given
     // component type.
     fillDetails: function(result){
-
+   	
       var data = {},
         geometry = result.geometry,
         viewport = geometry.viewport,
         bounds = geometry.bounds;
 
       // Create a simplified version of the address components.
-      $.each(result.address_components, function(index, object){
+      $.each(result.address_components, function(index, object){ 
         var name = object.types[0];
         data[name] = object.long_name;
         data[name + "_short"] = object.short_name;
       });
 
       // Add properties of the places details.
-      $.each(placesDetails, function(index, key){
-        data[key] = result[key];
+      $.each(placesDetails, function(index, key){  
+    	  
+    	  var street	= result.hasOwnProperty("formatted_address");
+    	  var name		= result.hasOwnProperty("name");
+    	  var streetval	= result["formatted_address"];
+    	  var nameval	= result["name"];    	 
+    	  var x 		= streetval.indexOf(nameval);
+
+    	  if ( x === -1 ){
+    		data[key] = result[key];
+    	  }
       });
 
       // Add infos about the address and geometry.
@@ -363,6 +372,8 @@
         lat: geometry.location.lat(),
         lng: geometry.location.lng()
       });
+      
+     
 
       // Set the values for all details.
       $.each(this.details, $.proxy(function(key, $detail){

@@ -128,7 +128,7 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 							<?php endif; ?></p>
 					</td>
 					<td class="center">
-						<div class="colorpreview" style="width: 20px; background-color: <?php echo ( $item->color == '' )?"transparent":$item->color; ?>;" title="<?php echo $item->color; ?>">
+						<div class="colorpreview" style="width: 20px; cursor:default;background-color: <?php echo ( $item->color == '' )?"transparent":$item->color; ?>;" title="<?php echo $item->color; ?>">
 							&nbsp;
 						</div>
 					</td>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -44,9 +44,9 @@ class JemViewMyvenues extends JViewLegacy
 		                                && $menuitem->query['view'] == 'myvenues');
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-
+		JemHelper::loadCss('jem');
+		JemHelper::loadCustomTag();
+			
 		$venues = $this->get('Venues');
 		$venues_pagination = $this->get('VenuesPagination');
 
@@ -87,7 +87,7 @@ class JemViewMyvenues extends JViewLegacy
 		if ($jemsettings->showstate == 1) {
 			$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
 		}
-		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
+		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter);
 
 		// search filter
 		$lists['search']= $search;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -31,9 +31,10 @@ class JemViewWeekcal extends JViewLegacy
 		$params 	= $app->getParams();
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-		JHtml::_('stylesheet', 'com_jem/calendar.css', array(), true);
-		$this->document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		JemHelper::loadCss('calendar');
+		JemHelper::loadCss('jem');
+		JemHelper::loadCustomCss();
+		JemHelper::loadCustomTag();
 
 		$evlinkcolor = $params->get('eventlinkcolor');
 		$evbackgroundcolor = $params->get('eventbackgroundcolor');
@@ -45,6 +46,9 @@ class JemViewWeekcal extends JViewLegacy
 			color: ' . $evlinkcolor . ';
 		}
 		div[id^=\'catz\'] {
+			background-color:'.$evbackgroundcolor .';
+		}
+		.eventcontent {
 			background-color:'.$evbackgroundcolor .';
 		}
 		.eventandmore {
@@ -59,7 +63,7 @@ class JemViewWeekcal extends JViewLegacy
 		// add javascript (using full path - see issue #590)
 		JHtml::_('script', 'media/com_jem/js/calendar.js');
 
-		$rows = $this->get('Data');
+		$rows = $this->get('Items');
 		$currentweek = $this->get('Currentweek');
 		$currentyear =  Date("Y");
 

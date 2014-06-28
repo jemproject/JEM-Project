@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,6 +15,14 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
  */
 class JemViewCategory extends JEMView
 {
+
+	protected $state;
+	protected $items;
+	protected $category;
+	protected $children;
+	protected $pagination;
+
+
 	function __construct($config = array()) {
 		parent::__construct($config);
 
@@ -44,11 +52,13 @@ class JemViewCategory extends JEMView
 			$print			= JRequest::getBool('print');
 
 			// Load css
-			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-			JHtml::_('stylesheet', 'com_jem/calendar.css', array(), true);
-			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+			JemHelper::loadCss('jem');
+			JemHelper::loadCss('calendar');
+			JemHelper::loadCustomCss();
+			JemHelper::loadCustomTag();
+
 			if ($print) {
-				JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+				JemHelper::loadCss('print');
 				$document->setMetaData('robots', 'noindex, nofollow');
 			}
 
@@ -60,6 +70,7 @@ class JemViewCategory extends JEMView
 			$style = '
 			div[id^=\'scat\'] a {color:' . $evlinkcolor . ';}
 			div[id^=\'scat\'] {background-color:'.$evbackgroundcolor .';}
+			.eventcontent {background-color:'.$evbackgroundcolor .';}
 			.eventandmore {background-color:'.$eventandmorecolor .';}
 			.today .daynum {background-color:'.$currentdaycolor.';}';
 			$document->addStyleDeclaration($style);
@@ -104,7 +115,7 @@ class JemViewCategory extends JEMView
 			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
 			$cal->enableMonthNav('index.php?option=com_jem&view=category&layout=calendar' . $partCatid . $partItemid);
 			$cal->setFirstWeekDay($params->get('firstweekday', 1));
-			//$cal->enableDayLinks(false);
+			$cal->enableDayLinks(false);
 
 			$this->rows 			= $rows;
 			$this->catid 			= $catid;
@@ -133,26 +144,29 @@ class JemViewCategory extends JEMView
 			$menuitem		= $menu->getActive();
 
 			// Load css
-			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+			JemHelper::loadCss('jem');
+			JemHelper::loadCustomCss();
+			JemHelper::loadCustomTag();
 
 			//get data from model
-			$rows 		= $this->get('Data');
-			$category 	= $this->get('Category');
-			$categories	= $this->get('Childs');
+			$state		= $this->get('State');
+			$params		= $state->params;
+			$items		= $this->get('Items');
+			$category	= $this->get('Category');
+			$children	= $this->get('Children');
+			$parent		= $this->get('Parent');
+			$pagination = $this->get('Pagination');
+
+			if ($category == false)
+			{
+				return JError::raiseError(404, JText::_('JGLOBAL_CATEGORY_NOT_FOUND'));
+			}
 
 			//are events available?
-			if (!$rows) {
+			if (!$items) {
 				$noevents = 1;
 			} else {
 				$noevents = 0;
-			}
-
-			//does the category exist
-			if ($category->id == 0)
-			{
-				// TODO Translation
-				return JError::raiseError(404, JText::sprintf('Category #%d not found', $category->id));
 			}
 
 			// Decide which parameters should take priority
@@ -162,10 +176,13 @@ class JemViewCategory extends JEMView
 			                                && $menuitem->query['id']     == $category->id);
 
 			// get variables
-			$filter_order		= $app->getUserStateFromRequest('com_jem.category.filter_order', 'filter_order', 	'a.dates', 'cmd');
-			$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.category.filter_order_Dir', 'filter_order_Dir',	'', 'word');
-			$filter 			= $app->getUserStateFromRequest('com_jem.category.filter', 'filter', '', 'int');
-			$search 			= $app->getUserStateFromRequest('com_jem.category.filter_search', 'filter_search', '', 'string');
+			$itemid				= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+
+
+			$filter_order		= $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order', 'filter_order', 	'a.dates', 'cmd');
+			$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order_Dir', 'filter_order_Dir',	'', 'word');
+			$filter_type		= $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_filtertype', 'filter_type', '', 'int');
+			$search 			= $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 			$search 			= $db->escape(trim(JString::strtolower($search)));
 			$task 				= JRequest::getWord('task');
 
@@ -191,7 +208,7 @@ class JemViewCategory extends JEMView
 			if ($jemsettings->showstate == 1) {
 				$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
 			}
-			$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
+			$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 			// search filter
 			$lists['search']= $search;
@@ -279,13 +296,13 @@ class JemViewCategory extends JEMView
 
 			$cimage = JemImage::flyercreator($category->image,'category');
 
-			//create select lists
+			$children = array($category->id => $children);
+
 			$this->lists			= $lists;
 			$this->action			= $uri->toString();
 			$this->cimage			= $cimage;
-			$this->rows				= $rows;
+			$this->rows				= $items;
 			$this->noevents			= $noevents;
-			$this->category			= $category;
 			$this->print_link		= $print_link;
 			$this->params			= $params;
 			$this->dellink			= $dellink;
@@ -294,8 +311,12 @@ class JemViewCategory extends JEMView
 			$this->pagination		= $pagination;
 			$this->jemsettings		= $jemsettings;
 			$this->settings			= $settings;
-			$this->categories		= $categories;
 			$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
+			$this->maxLevel			= $params->get('maxLevel', -1);
+			$this->category			= $category;
+			$this->children			= $children;
+			$this->parent			= $parent;
+			$this->user				= $user;
 		}
 
 		parent::display($tpl);

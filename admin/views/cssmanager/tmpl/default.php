@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -63,6 +63,24 @@ $canDo = JEMHelperBackend::getActions();
 				<?php endforeach; ?>
 				</ul>
 			<?php endif; ?>
+			<br>
+<legend><?php echo JText::_('COM_JEM_CSSMANAGER_FILENAMES_CUSTOM');?></legend>
+			<?php if (!empty($this->files['custom'])) : ?>
+				<ul>
+				<?php foreach ($this->files['custom'] as $file) : ?>
+					<li>
+					<?php if ($canDo->get('core.edit')) : ?>
+						<a href="<?php echo JRoute::_('index.php?option=com_jem&task=source.edit&id='.$file->id);?>">
+					<?php endif; ?>
+					<?php echo JText::sprintf('COM_JEM_CSSMANAGER_EDIT_CSS', $file->name);?>
+					<?php if ($canDo->get('core.edit')) : ?>
+						</a>
+					<?php endif; ?>
+					</li>
+				<?php endforeach; ?>
+				</ul>
+			<?php endif; ?>
+
 		</fieldset>
 		<div class="clr"></div>
 		<input type="hidden" name="task" value="" />

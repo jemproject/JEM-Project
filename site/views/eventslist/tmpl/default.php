@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -44,6 +44,13 @@ defined('_JEXEC') or die;
 		<input type="hidden" name="view" value="eventslist" />
 	</form>
 
+	
+	
+	<?php if ($this->params->get('showfootertext')) : ?>
+		<div class="description no_space floattext">
+			<?php echo $this->params->get('footertext'); ?>
+		</div>
+	<?php endif; ?>
 	<!--footer-->
 
 	<div class="pagination">

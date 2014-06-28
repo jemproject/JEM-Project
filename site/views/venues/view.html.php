@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -33,16 +33,18 @@ class JemViewVenues extends JViewLegacy
 		$params 	= $app->getParams();
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		JemHelper::loadCss('jem');
+		JemHelper::loadCustomCss();
+		JemHelper::loadCustomTag();
+		
 		if ($print) {
-			JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+			JemHelper::loadCss('print');
 			$document->setMetaData('robots', 'noindex, nofollow');
 		}
 
 		// Request variables
 		$task 	= JRequest::getWord('task');
-		$rows 	= $this->get('Data');
+		$rows 	= $this->get('Items');
 
 		$pagetitle = $params->def('page_title', $menuitem->title);
 		$pageheading = $params->def('page_heading', $params->get('page_title'));

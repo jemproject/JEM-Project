@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -67,6 +67,32 @@ class JemHelper {
 		$globalregistry->loadString($globalattribs);
 
 		return $globalregistry;
+	}
+
+
+	/**
+	 * Retrieves the CSS-settings from database and stores in an static object
+	 */
+	static function retrieveCss()
+	{
+		static $css;
+
+		if (!is_object($css)) {
+			$db = JFactory::getDBO();
+			$query = $db->getQuery(true);
+
+			$query->select('css');
+			$query->from('#__jem_settings');
+			$query->where('id = 1');
+
+			$db->setQuery($query);
+			$css = $db->loadResult();
+		}
+
+		$registryCSS = new JRegistry;
+		$registryCSS->loadString($css);
+
+		return $registryCSS;
 	}
 
 
@@ -338,6 +364,64 @@ class JemHelper {
 	}
 
 	/**
+	 * This method deletes an image file if unused.
+	 *
+	 * @param string $type one of 'event', 'venue', 'category', 'events', 'venues', 'categories'
+	 * @param mixed  $filename filename as stored in db, or null
+	 * @todo Empty $filename is not supported yet. In that case all unused files should be deleted.
+	 * 
+	 * @return bool true on success, false on error
+	 * @access public
+	 */
+	static function delete_unused_image_files($type, $filename = null) {
+		if (empty($filename)) { // not supported yet
+			return false;
+		}
+
+		switch ($type) {
+		case 'event':
+		case 'events':
+			$folder = 'events';
+			$countquery_tmpl = ' SELECT id FROM #__jem_events WHERE datimage = ';
+			break;
+		case 'venue':
+		case 'venues':
+			$folder = 'venues';
+			$countquery_tmpl = ' SELECT id FROM #__jem_venues WHERE locimage = ';
+			break;
+		case 'category':
+		case 'categories':
+			$folder = 'categories';
+			$countquery_tmpl = ' SELECT id FROM #__jem_categories WHERE image = ';
+			break;
+		default;
+			return false;
+		}
+
+		$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$filename);
+		$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$filename);
+		if (is_file($fullPath)) {
+			// Count usage and don't delete if used elsewhere.
+			$db = JFactory::getDBO();
+			$db->setQuery($countquery_tmpl . $db->quote($filename));
+			if (null === ($usage = $db->loadObjectList())) {
+				return false;
+			}
+			if (empty($usage)) {
+				JFile::delete($fullPath);
+				if (JFile::exists($fullPaththumb)) {
+					JFile::delete($fullPaththumb);
+				}
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	}
 	 * this method generate the date string to a date array
 	 *
 	 * @var string the date string
@@ -422,7 +506,7 @@ class JemHelper {
 	}
 
 
-	static function buildtimeselect($max, $name, $selected, $class = 'class="inputbox"')
+	static function buildtimeselect($max, $name, $selected, $class = array('class'=>'inputbox'))
 	{
 		$timelist = array();
 		$timelist[0] = JHtml::_('select.option', '', '');
@@ -779,7 +863,7 @@ class JemHelper {
 			$location[] = $exp[0];
 		}
 		$location = implode(",", $location);
-		
+
 		$e = new vevent();
 		$e->setProperty('summary', $event->title);
 		$e->setProperty('categories', implode(', ', $categories));
@@ -888,6 +972,248 @@ class JemHelper {
 			return false;
 		}
 		return true;
+	}
+
+
+	static function loadCss($css) {
+
+		jimport('joomla.filesystem.file');
+
+		$settings = self::retrieveCss();
+
+		if($settings->get('css_'.$css.'_usecustom','0')) {
+
+			# we want to use custom so now check if we've a file
+			$file = $settings->get('css_'.$css.'_customfile');
+			$filename = false;
+
+
+			# something was filled, now check if we've a valid file
+			if ($file) {
+				$filename	= JPATH_SITE.'/'.$file;
+				$filename	= JFile::exists($file);
+
+				if ($filename) {
+					# at this point we do have a valid file but let's check the extension too.
+					$ext =  JFile::getExt($file);
+					if ($ext != 'css') {
+						# the file is valid but the extension not so let's return false
+						$filename = false;
+					}
+				}
+			}
+
+			if ($filename) {
+				# we do have a valid file so we will use it.
+				$css = JHtml::_('stylesheet', $file, array(), false);
+			} else {
+				# unfortunately we don't have a valid file so we're looking at the default
+				$css = JHtml::_('stylesheet', 'com_jem/'.$css.'.css', array(), true);
+			}
+		} else {
+			# here we want to use the normal css
+			$css = JHtml::_('stylesheet', 'com_jem/'.$css.'.css', array(), true);
+		}
+
+		return $css;
+	}
+
+
+	static function defineCenterMap($data = false) {
+		# retrieve venue
+		$venue		= $data->getValue('venue');
+
+		if ($venue) {
+			# latitude/longitude
+			$lat 	= $data->getValue('latitude');
+			$long	= $data->getValue('longitude');
+
+			if ($lat == 0.000000) {
+				$lat = null;
+			}
+
+			if ($long == 0.000000) {
+				$long = null;
+			}
+
+			if ($lat && $long) {
+				$location = '['.$data->getValue('latitude').','.$data->getValue('longitude').']';
+			} else {
+				# retrieve address-info
+				$postalCode = $data->getValue('postalCode');
+				$city		= $data->getValue('city');
+				$street		= $data->getValue('street');
+
+				$address = '"'.$street.' '.$postalCode.' '.$city.'"';
+				$location = $address;
+			}
+			$location = 'location:'.$location.',';
+		} else {
+			$location = '';
+		}
+
+		return $location;
+	}
+
+	/**
+	 * Load Custom CSS
+	 *
+	 * @return boolean
+	 */
+	static function loadCustomCss() {
+
+		$settings = self::retrieveCss();
+
+		$style = "";
+
+		# background-colors
+		$bg_filter            = $settings->get('css_color_bg_filter');
+		$bg_h2                = $settings->get('css_color_bg_h2');
+		$bg_jem               = $settings->get('css_color_bg_jem');
+		$bg_table_th          = $settings->get('css_color_bg_table_th');
+		$bg_table_td          = $settings->get('css_color_bg_table_td');
+		$bg_table_tr_entry2   = $settings->get('css_color_bg_table_tr_entry2');
+		$bg_table_tr_hover    = $settings->get('css_color_bg_table_tr_hover');
+		$bg_table_tr_featured = $settings->get('css_color_bg_table_tr_featured');
+
+		if ($bg_filter) {
+			$style .= "div#jem #jem_filter {background-color:".$bg_filter.";}";
+		}
+
+		if ($bg_h2) {
+			$style .= "div#jem h2 {background-color:".$bg_h2.";}";
+		}
+
+		if ($bg_jem) {
+			$style .= "div#jem {background-color:".$bg_jem.";}";
+		}
+
+		if ($bg_table_th) {
+			$style .= "div#jem table.eventtable th {background-color:" . $bg_table_th . ";}";
+		}
+
+		if ($bg_table_td) {
+			$style .= "div#jem table.eventtable td {background-color:" . $bg_table_td . ";}";
+		}
+
+		if ($bg_table_tr_entry2) {
+			$style .= "div#jem table.eventtable tr.sectiontableentry2 td {background-color:" . $bg_table_tr_entry2 . ";}";
+		}
+
+		if ($bg_table_tr_hover) {
+			$style .= "div#jem table.eventtable tr:hover td {background-color:" . $bg_table_tr_hover . ";}";
+		}
+
+		if ($bg_table_tr_featured) {
+			$style .= "div#jem table.eventtable tr.featured td {background-color:" . $bg_table_tr_featured . ";}";
+		}
+
+		# border-colors
+		$border_filter		= $settings->get('css_color_border_filter');
+		$border_h2			= $settings->get('css_color_border_h2');
+		$border_table_th	= $settings->get('css_color_border_table_th');
+		$border_table_td	= $settings->get('css_color_border_table_td');
+
+		if ($border_filter) {
+			$style .= "div#jem #jem_filter {border-color:" . $border_filter . ";}";
+		}
+
+		if ($border_h2) {
+			$style .= "div#jem h2 {border-color:".$border_h2.";}";
+		}
+
+		if ($border_table_th) {
+			$style .= "div#jem table.eventtable th {border-color:" . $border_table_th . ";}";
+		}
+		if ($border_table_td) {
+			$style .= "div#jem table.eventtable td {border-color:" . $border_table_td . ";}";
+		}
+
+		# font-color
+		$font_table_h2		= $settings->get('css_color_font_h2');
+		$font_table_td		= $settings->get('css_color_font_table_td');
+		$font_table_td_a	= $settings->get('css_color_font_table_td_a');
+
+		if ($font_table_h2) {
+			$style .= "div#jem h2 {color:" . $font_table_h2 . ";}";
+		}
+
+		if ($font_table_td) {
+			$style .= "div#jem table.eventtable td {color:" . $font_table_td . ";}";
+		}
+
+		if ($font_table_td_a) {
+			$style .= "div#jem table.eventtable td a {color:" . $font_table_td_a . ";}";
+		}
+
+		$document 	= JFactory::getDocument();
+		$document->addStyleDeclaration($style);
+
+		return true;
+	}
+
+	/**
+	 * Loads Custom Tags
+	 *
+	 * @return boolean
+	 */
+
+	static function loadCustomTag() {
+
+		$document = JFactory::getDocument();
+		$tag = "";
+		$tag .= "<!--[if IE]><style type='text/css'>.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->";
+
+		$document->addCustomTag($tag);
+
+		return true;
+	}
+
+	/**
+	 * get a variable from the manifest file (actually, from the manifest cache).
+	 *
+	 * $column = manifest_cache(1),params(2)
+	 * $setting = name of setting to retrieve
+	 * $type = compononent(1), plugin(2)
+	 * $name = name to search in column name
+	 */
+	static function getParam($column,$setting,$type,$name) {
+
+		switch ($column) {
+			case 1:
+				$column = 'manifest_cache';
+				break;
+			case 2:
+				$column = 'params';
+				break;
+		}
+
+		switch ($type) {
+			case 1:
+				$type = 'component';
+				break;
+			case 2:
+				$type = 'plugin';
+				break;
+			case 3:
+				$type = 'module';
+				break;
+		}
+
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select(array($column));
+		$query->from('#__extensions');
+		$query->where(array('name = '.$db->quote($name),'type = '.$db->quote($type)));
+		$db->setQuery($query);
+
+		$manifest = json_decode($db->loadResult(), true);
+		$result = $manifest[ $setting ];
+
+		if (empty($result)) {
+			$result = 'N/A';
+		}
+		return $result;
 	}
 }
 ?>

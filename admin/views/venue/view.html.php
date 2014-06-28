@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -53,8 +53,14 @@ class JEMViewVenue extends JViewLegacy {
 
 		// Load Scripts
 		JHtml::_('script', 'com_jem/attachments.js', false, true);
-		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
+		//$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
 
+		$language = JFactory::getLanguage();
+		$language = $language->getTag();
+		$language = substr($language, 0,2);
+		
+		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places&language='.$language);
+		
 		// Noconflict
 		$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
 

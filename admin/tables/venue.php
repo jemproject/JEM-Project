@@ -145,36 +145,37 @@ class JEMTableVenue extends JTable
 		}
 
 
-		// Image check
-		jimport('joomla.filesystem.file');
-		$image_dir = JPATH_SITE . '/images/jem/venues/';
-		$allowable = array(
-				'gif',
-				'jpg',
-				'png'
-		);
-
 		// Check if image was selected
 		jimport('joomla.filesystem.file');
 		$image_dir = JPATH_SITE.'/images/jem/venues/';
 		$allowable = array ('gif', 'jpg', 'png');
+		$image_to_delete = false;
 
-		// get image (frontend)
+		// get image (frontend) - allow "removal on save" (Hoffi, 2014-06-07)
 		if (!$backend) {
-			$file = JRequest::getVar('userfile', '', 'files', 'array');
-			if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1) && (!empty($file['name']))) {
+			if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1)) {
+				$file = JRequest::getVar('userfile', '', 'files', 'array');
+				$removeimage = JRequest::getVar('removeimage', '', 'default', 'int');
 
-				//check the image
-				$check = JEMImage::check($file, $jemsettings);
+				if (!empty($file['name'])) {
+					//check the image
+					$check = JEMImage::check($file, $jemsettings);
 
-				if ($check !== false) {
-					//sanitize the image filename
-					$filename = JEMImage::sanitize($image_dir, $file['name']);
-					$filepath = $image_dir . $filename;
+					if ($check !== false) {
+						//sanitize the image filename
+						$filename = JEMImage::sanitize($image_dir, $file['name']);
+						$filepath = $image_dir . $filename;
 
-					if (JFile::upload($file['tmp_name'], $filepath)) {
-						$this->locimage = $filename;
+						if (JFile::upload($file['tmp_name'], $filepath)) {
+							$image_to_delete = $this->locimage; // delete previous image
+							$this->locimage = $filename;
+						}
 					}
+				} elseif (!empty($removeimage)) {
+					// if removeimage is non-zero remove image from venue
+					// (file will be deleted later (e.g. housekeeping) if unused)
+					$image_to_delete = $this->locimage;
+					$this->locimage = '';
 				}
 			} // end image if
 		} // if (!backend)
@@ -196,7 +197,13 @@ class JEMTableVenue extends JTable
 			}
 		}
 
-		return parent::store($updateNulls);
+		// item must be stored BEFORE image deletion
+		$ret = parent::store($updateNulls);
+		if ($ret && $image_to_delete) {
+			JemHelper::delete_unused_image_files('venue', $image_to_delete);
+		}
+
+		return $ret;
 	}
 
 

@@ -1,28 +1,22 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modellist');
 
 /**
- * JEM Component Events Model
- *
+ * Model-Events
  **/
 class JemModelEvents extends JModelList
 {
 	/**
 	 * Constructor.
-	 *
-	 * @param	array	An optional associative array of configuration settings.
-	 * @see		JController
-	 *
 	 */
 	public function __construct($config = array())
 	{
@@ -124,18 +118,10 @@ class JemModelEvents extends JModelList
 		// Join over the users for the checked out user.
 		$query->select('uc.name AS editor');
 		$query->join('LEFT', '#__users AS uc ON uc.id = a.checked_out');
-		
+
 		// Join over the user who modified the event.
 		$query->select('um.name AS modified_by');
 		$query->join('LEFT', '#__users AS um ON um.id = a.modified_by');
-
-		// Join over the cat_relations
-		$query->select('rel.itemid, rel.ordering');
-		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
-
-		// Join over the categories.
-		$query->select('c.catname, c.id AS catid');
-		$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
 
 		// Join over the author & email.
 		$query->select('u.email, u.name AS author');
@@ -153,14 +139,14 @@ class JemModelEvents extends JModelList
 		$startDate	= $this->getState('filter_begin');
 		$endDate 	= $this->getState('filter_end');
 		if (!empty($startDate) && !empty($endDate)) {
-			$query->where('DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "' . $startDate . '") >= 0');
-			$query->where('DATEDIFF(a.dates, "' . $endDate . '") <= 0');
+			$query->where('(a.dates >= '.$db->Quote($startDate).')');
+			$query->where('(a.enddates <= '.$db->Quote($endDate).')');
 		} else {
 			if (!empty($startDate)) {
-				$query->where('a.dates >= '.$db->Quote($startDate));
+				$query->where('(a.dates IS NULL OR a.dates >= '.$db->Quote($startDate).')');
 			}
 			if (!empty($endDate)) {
-				$query->where('a.dates <= '.$db->Quote($endDate));
+				$query->where('(a.enddates IS NULL OR a.enddates <= '.$db->Quote($endDate).')');
 			}
 		}
 
@@ -189,21 +175,22 @@ class JemModelEvents extends JModelList
 							$query->where('loc.city LIKE '.$search);
 							break;
 						case 4:
+							/* search category */
+							break;
+						case 5:
 							/* search state */
 							$query->where('loc.state LIKE '.$search);
 							break;
-						case 5:
+						case 6:
 							/* search country */
 							$query->where('loc.country LIKE '.$search);
 							break;
-						case 6:
-							/* search category */
-							$query->where('c.catname LIKE '.$search);
-							break;
 						case 7:
-						default:
 							/* search all */
-							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR c.catname LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR loc.country LIKE '.$search.')');
+							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR loc.country LIKE '.$search.')');
+							break;
+						default:
+							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR loc.country LIKE '.$search.')');
 					}
 				}
 			}
@@ -215,6 +202,7 @@ class JemModelEvents extends JModelList
 		$orderDirn	= $this->state->get('list.direction');
 
 		$query->order($db->escape($orderCol.' '.$orderDirn));
+
 		return $query;
 	}
 
@@ -227,43 +215,114 @@ class JemModelEvents extends JModelList
 	{
 		$items = parent::getItems();
 
-		if(!count($items)) {
-			return $items;
+		$user	= JFactory::getUser();
+		$userId	= $user->get('id');
+		$guest	= $user->get('guest');
+		$groups = $user->getAuthorisedViewLevels();
+		$input	= JFactory::getApplication()->input;
+
+
+		$filter = $this->getState('filter');
+		$search = $this->getState('filter_search');
+
+		foreach ($items as $index => $item) {
+			$item->categories = $this->getCategories($item->id);
+
+			# check if the item-categories is empty
+			# in case of filtering we will unset the items without the reqeusted category
+
+			if($search) {
+				if ($filter == 4) {
+					if (empty($item->categories)) {
+						unset ($items[$index]);
+					}
+				}
+			}
 		}
 
 		$items = JEMHelper::getAttendeesNumbers($items);
 
-		foreach ($items as $item) {
-			$item->categories = $this->getCategories($item->id);
+
+		if ($items) {
+			return $items;
 		}
 
-		return $items;
+		return array();
+
 	}
 
 	/**
-	 * Get the categories of an event
-	 * @param unknown $id
+	 * Retrieve Categories
+	 *
+	 * Due to multi-cat this function is needed
+	 * filter-index (4) is pointing to the cats
 	 */
-	protected function getCategories($id)
+
+	function getCategories($id)
 	{
-		$query = 'SELECT DISTINCT c.id, c.catname, c.checked_out AS cchecked_out'
-				. ' FROM #__jem_categories AS c'
-				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-				. ' WHERE rel.itemid = '.(int)$id
-				;
+		$user 			= JFactory::getUser();
+		$levels 		= $user->getAuthorisedViewLevels();
+		$app 			= JFactory::getApplication();
+		$settings 		= JemHelper::globalattribs();
 
-		$this->_db->setQuery($query);
+		# Query
+		$db 	= JFactory::getDBO();
+		$query = $db->getQuery(true);
 
-		$this->_cats = $this->_db->loadObjectList();
+		$case_when_c = ' CASE WHEN ';
+		$case_when_c .= $query->charLength('c.alias');
+		$case_when_c .= ' THEN ';
+		$id_c = $query->castAsChar('c.id');
+		$case_when_c .= $query->concatenate(array($id_c, 'c.alias'), ':');
+		$case_when_c .= ' ELSE ';
+		$case_when_c .= $id_c.' END as catslug';
 
-		$count = count($this->_cats);
-		for($i = 0; $i < $count; $i++)
-		{
-			$item = $this->_cats[$i];
-			$cats = new JEMCategories($item->id);
-			$item->parentcats = $cats->getParentlist();
+		$query->select(array('DISTINCT c.id','c.catname','c.access','c.path','c.checked_out AS cchecked_out','c.color',$case_when_c));
+		$query->from('#__jem_categories as c');
+		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
+
+		$query->select(array('a.id AS multi'));
+		$query->join('LEFT','#__jem_events AS a ON a.id = rel.itemid');
+
+		$query->where('rel.itemid ='.(int)$id);
+
+		###################
+		## FILTER-ACCESS ##
+		###################
+
+		# Filter by access level.
+		$access = $this->getState('filter.access');
+
+		if ($access){
+			$groups = implode(',', $user->getAuthorisedViewLevels());
+			$query->where('c.access IN ('.$groups.')');
 		}
 
-		return $this->_cats;
+		###################
+		## FILTER-SEARCH ##
+		###################
+
+		# define variables
+		$filter = $this->getState('filter');
+		$search = $this->getState('filter_search');
+
+		if (!empty($search)) {
+			if (stripos($search, 'id:') === 0) {
+				$query->where('c.id = '.(int) substr($search, 3));
+			} else {
+				$search = $db->Quote('%'.$db->escape($search, true).'%');
+
+				if($search) {
+					if ($filter == 4) {
+							$query->where('c.catname LIKE '.$search);
+					}
+				}
+			}
+		}
+
+		$db->setQuery($query);
+		$cats = $db->loadObjectList();
+
+		return $cats;
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -56,7 +56,7 @@ class JEMViewContactelement extends JViewLegacy {
 		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_ADDRESS'));
 		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_CITY'));
 		$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_STATE'));
-		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
+		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 		// search filter
 		$lists['search']= $search;

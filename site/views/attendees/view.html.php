@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -41,8 +41,8 @@ class JemViewAttendees extends JViewLegacy {
 		}
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		JemHelper::loadCss('jem');
+		JemHelper::loadCustomTag();
 
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest('com_jem.attendees.filter_order', 'filter_order', 'u.username', 'cmd');
@@ -85,13 +85,7 @@ class JemViewAttendees extends JViewLegacy {
 		// Emailaddress
 		$enableemailaddress = $params->get('enableemailaddress', 0);
 
-		// TODO: can be removed
-		if ($enableemailaddress == 1) {
-			$emailaddress = '&em='.$enableemailaddress;
-		}else {
-			$emailaddress = '';
-		}
-		$print_link = 'index.php?option=com_jem&view=attendees&layout=print&task=print&tmpl=component&id='.$event->id.$emailaddress;
+		$print_link = 'index.php?option=com_jem&view=attendees&layout=print&task=print&tmpl=component&id='.$event->id;
 		$backlink = 'attendees';
 		$view = 'attendees';
 
@@ -100,7 +94,7 @@ class JemViewAttendees extends JViewLegacy {
 		$filters = array();
 		/* $filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME')); */
 		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_USERNAME'));
-		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
+		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter);
 
 		// search filter
 		$lists['search'] = $search;
@@ -109,7 +103,7 @@ class JemViewAttendees extends JViewLegacy {
 		$options = array(JHtml::_('select.option', 0, JText::_('COM_JEM_ATT_FILTER_ALL')),
 		                 JHtml::_('select.option', 1, JText::_('COM_JEM_ATT_FILTER_ATTENDING')),
 		                 JHtml::_('select.option', 2, JText::_('COM_JEM_ATT_FILTER_WAITING'))) ;
-		$lists['waiting'] = JHtml::_('select.genericlist', $options, 'filter_waiting', 'class="inputbox" onChange="this.form.submit();"', 'value', 'text', $filter_waiting);
+		$lists['waiting'] = JHtml::_('select.genericlist', $options, 'filter_waiting', array('class'=>'inputbox','onChange'=>'this.form.submit();'), 'value', 'text', $filter_waiting);
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
@@ -145,10 +139,11 @@ class JemViewAttendees extends JViewLegacy {
 		$params		= $app->getParams();
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
-		JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+		JemHelper::loadCss('backend');
+		JemHelper::loadCss('jem');
+		JemHelper::loadCss('print');
+		JemHelper::loadCustomTag();
+		
 		$document->setMetaData('robots', 'noindex, nofollow');
 
 		// Emailaddress

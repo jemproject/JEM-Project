@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -248,10 +248,14 @@ class JEMControllerVenue extends JControllerForm
 		$isNew = $model->getState('editvenue.new');
 		$id    = $model->getState('editvenue.id');
 
-		JPluginHelper::importPlugin('jem');
-		$dispatcher = JDispatcher::getInstance();
-		$dispatcher->trigger('onVenueEdited', array($id, $isNew));
+		if (JPluginHelper::importPlugin('jem','mailer')) {
+			JPluginHelper::importPlugin('jem');
+			$dispatcher = JDispatcher::getInstance();
+			$dispatcher->trigger('onVenueEdited', array($id, $isNew));
+		} else {
+			JError::raiseNotice(100,JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'));
 		}
+	}
 	}
 
 	/**

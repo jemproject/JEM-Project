@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -10,44 +10,64 @@ defined ('_JEXEC') or die;
 ?>
 
 <fieldset>
-		<legend><?php echo JText::_('COM_JEM_ATTACHMENTS_LEGEND'); ?></legend>
+	<legend><?php echo JText::_('COM_JEM_ATTACHMENTS_LEGEND'); ?></legend>
 
-<table class="adminform" id="el-attachments">
-	<thead>
-		<tr>
-			<th style="width:25%"><?php echo JText::_('COM_JEM_ATTACHMENT_FILE'); ?></th>
-			<th style="width:15%"><?php echo JText::_('COM_JEM_ATTACHMENT_NAME'); ?></th>
-			<th style="width:40%"><?php echo JText::_('COM_JEM_ATTACHMENT_DESCRIPTION'); ?></th>
-			<th style="width:15%"><?php echo JText::_('COM_JEM_ATTACHMENT_ACCESS'); ?></th>
-			<th style="width:5%">&nbsp;</th>
-		</tr>
-	</thead>
-	<tbody>
-		<?php foreach ($this->item->attachments as $file): ?>
-		<tr>
-			<td><input class="readonly" type="text" readonly="readonly" value="<?php echo $file->file; ?>"></input><input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>"/></td>
-			<td><input type="text" name="attached-name[]" style="width: 100%" value="<?php echo $file->name; ?>" /></td>
-			<td><input type="text" name="attached-desc[]" style="width: 100%" value="<?php echo $file->description; ?>" /></td>
-			<td><?php echo JHtml::_('select.genericlist', $this->access, 'attached-access[]', 'class="inputbox" size="3"', 'value', 'text', $file->access); ?></td>
-			<td><?php echo JHtml::image('media/com_jem/images/publish_x.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT')
-			                         , array('id' => 'attach-remove'.$file->id,'class' => 'attach-remove')); ?></td>
-		</tr>
-		<?php endforeach; ?>
-		<tr>
-			<td>
-				<input type="file" name="attach[]" class="attach-field"></input>
-			</td>
-			<td>
-				<input type="text" name="attach-name[]" value="" />
-			</td>
-			<td>
-				<input type="text" name="attach-desc[]" value="" />
-			</td>
-			<td>
-				<?php echo JHtml::_('select.genericlist', $this->access, 'attach-access[]', 'class="inputbox" size="3"', 'value', 'text', 0); ?>
-			</td>
-			<td>&nbsp;</td>
-		</tr>
-	</tbody>
-</table>
+	<table class="adminform" id="el-attachments">
+		<tbody>
+			<?php foreach ($this->item->attachments as $file): ?>
+			<tr>
+				<td>
+					<div>
+						<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_FILE');?></div>
+						<input class="readonly" type="text" readonly="readonly" value="<?php echo $file->file; ?>" />
+						<input type="hidden" name="attached-id[]" value="<?php echo $file->id; ?>" />
+					</div>
+					<div>
+						<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_NAME'); ?></div>
+						<input type="text" name="attached-name[]" style="width: 100%" value="<?php echo $file->name; ?>" />
+					</div>
+					<div>
+						<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_DESCRIPTION'); ?></div>
+						<input type="text" name="attached-desc[]" style="width: 100%" value="<?php echo $file->description; ?>" />
+					</div>
+				</td>
+				<td>
+					<div>
+						<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_ACCESS'); ?></div>
+						<?php echo JHtml::_('select.genericlist', $this->access, 'attached-access[]', array('class'=>'inputbox', 'size'=>'7'), 'value', 'text', $file->access); ?>
+					</div>
+				</td>
+				<td>
+					<?php echo JHtml::image('media/com_jem/images/publish_r.png', JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id,'class' => 'attach-remove','title'=>JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'))); ?>
+				</td>
+			</tr>
+			<?php endforeach; ?>
+			<tr>
+				<td width="100%">
+					<div>
+						<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_FILE'); ?></div>
+						<input type="file" name="attach[]" class="attach-field" />
+						<?php /* see attachments.js for button's onclick function */ ?>
+						<button type="button" class="clear-attach-field button3 formelm-buttons"><?php echo JText::_('JSEARCH_FILTER_CLEAR') ?></button>
+					</div>
+					<div>
+						<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_NAME'); ?></div>
+						<input type="text" name="attach-name[]" class="attach-name" value="" />
+					</div>
+					<div>
+						<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_DESCRIPTION'); ?></div>
+						<input type="text" name="attach-desc[]" class="attach-desc" value="" />
+					</div>
+				</td>			
+				<td>
+					<div>
+						<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_ACCESS'); ?></div>
+						<?php echo JHtml::_('select.genericlist', $this->access, 'attach-access[]', array('class'=>'inputbox', 'size'=>'7'), 'value', 'text', 0); ?>
+					</div>
+				</td>
+				<td>&nbsp;</td>
+			</tr>
+		</tbody>
+	</table>
 </fieldset>
+

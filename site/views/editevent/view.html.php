@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -18,6 +18,9 @@ class JemViewEditevent extends JViewLegacy
 	protected $return_page;
 	protected $state;
 
+	/**
+	 * Editevent-View
+	 */
 	public function display($tpl = null)
 	{
 		if ($this->getLayout() == 'choosevenue') {
@@ -31,7 +34,7 @@ class JemViewEditevent extends JViewLegacy
 		}
 
 		// Initialise variables.
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 		$app = JFactory::getApplication();
 		$user = JFactory::getUser();
 		$document = JFactory::getDocument();
@@ -64,7 +67,7 @@ class JemViewEditevent extends JViewLegacy
 			$maintainer = JemUser::ismaintainer('add');
 			$genaccess  = JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
-			if ($maintainer || $genaccess ) {
+			if ($maintainer || $genaccess) {
 				$dellink = true;
 			} else {
 				$dellink = false;
@@ -73,10 +76,10 @@ class JemViewEditevent extends JViewLegacy
 			$authorised = $user->authorise('core.create','com_jem') || (count($user->getAuthorisedCategories('com_jem', 'core.create')) || $dellink);
 		} else {
 			// Check if user can edit
-			$maintainer5 = JemUser::ismaintainer('edit',$this->item->id);
-			$genaccess5  = JemUser::editaccess($jemsettings->eventowner, $this->item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+			$maintainer = JemUser::ismaintainer('edit',$this->item->id);
+			$genaccess  = JemUser::editaccess($jemsettings->eventowner, $this->item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
 
-			if ($maintainer5 || $genaccess5 ) {
+			if ($maintainer || $genaccess) {
 				$allowedtoeditevent = true;
 			} else {
 				$allowedtoeditevent = false;
@@ -118,10 +121,10 @@ class JemViewEditevent extends JViewLegacy
 			$params->set('page_heading', $pagetitle);
 			$params->set('show_page_heading', 1); // ensure page heading is shown
 			$params->set('introtext', ''); // there is definitely no introtext.
-			$params->set('show_introtext', 0);
+			$params->set('showintrotext', 0);
 			$pathway->addItem($pagetitle, ''); // link not required here so '' is ok
 
-			// Check for alternative layouts (since we are not in a edit-event menu item)
+			// Check for alternative layouts (since we are not in an edit-event menu item)
 			// Load layout from event if one is set
 			if ($layout = $item->params->get('event_layout')) {
 				$this->setLayout($layout);
@@ -162,14 +165,16 @@ class JemViewEditevent extends JViewLegacy
 		JHtml::_('behavior.tooltip');
 		JHtml::_('behavior.modal', 'a.flyermodal');
 
-		// add css file
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
+		// Load css
+		JemHelper::loadCss('jem');
+		JemHelper::loadCustomCss();
 
 		// Load scripts
 		JHtml::_('script', 'com_jem/attachments.js', false, true);
 		JHtml::_('script', 'com_jem/recurrence.js', false, true);
 		JHtml::_('script', 'com_jem/seo.js', false, true);
 		JHtml::_('script', 'com_jem/unlimited.js', false, true);
+		JHtml::_('script', 'com_jem/other.js', false, true);
 
 		// Escape strings for HTML output
 		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));
@@ -242,7 +247,7 @@ class JemViewEditevent extends JViewLegacy
 		$limit            = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
 
 		// Get/Create the model
-		$rows  		= $this->get('Venues');
+		$rows       = $this->get('Venues');
 		$pagination = $this->get('VenuesPagination');
 
 		JHtml::_('behavior.modal', 'a.flyermodal');
@@ -255,13 +260,13 @@ class JemViewEditevent extends JViewLegacy
 		$lists['order']     = $filter_order;
 
 		$document->setTitle(JText::_('COM_JEM_SELECT_VENUE'));
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
+		JemHelper::loadCss('jem');
 
 		$filters = array();
 		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_VENUE'));
 		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_CITY'));
 		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_STATE'));
-		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
+		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 		$this->rows         = $rows;
 		$this->searchfilter = $searchfilter;
@@ -296,12 +301,12 @@ class JemViewEditevent extends JViewLegacy
 		JHtml::_('behavior.modal', 'a.flyermodal');
 
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
+		JemHelper::loadCss('jem');
 
 		$document->setTitle(JText::_('COM_JEM_SELECT_CONTACT'));
 
 		// Get/Create the model
-		$rows  		= $this->get('Contacts');
+		$rows       = $this->get('Contacts');
 		$pagination = $this->get('ContactsPagination');
 
 		// table ordering
@@ -314,7 +319,7 @@ class JemViewEditevent extends JViewLegacy
 	/*	$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_ADDRESS')); */ // data security
 		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_CITY'));
 		$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_STATE'));
-		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', 'size="1" class="inputbox"', 'value', 'text', $filter_type);
+		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 		// search filter
 		$lists['search']= $search;

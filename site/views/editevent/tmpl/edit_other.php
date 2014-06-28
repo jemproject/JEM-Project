@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -13,10 +13,9 @@ defined('_JEXEC') or die;
 	<fieldset class="panelform">
 	<legend><?php echo JText::_('COM_JEM_EVENT_CUSTOMFIELDS_LEGEND') ?></legend>
 		<ul class="adminformlist">
-				<?php foreach($this->form->getFieldset('custom') as $field): ?>
-				<li><?php echo $field->label; ?> <?php echo $field->input; ?>
-				</li>
-				<?php endforeach; ?>
+			<?php foreach($this->form->getFieldset('custom') as $field): ?>
+				<li><?php echo $field->label; ?><?php echo $field->input; ?></li>
+			<?php endforeach; ?>
 		</ul>
 	</fieldset>
 
@@ -42,16 +41,27 @@ defined('_JEXEC') or die;
 	<legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
 		<?php
 		if ($this->item->datimage) :
-			echo JEMOutput::flyer( $this->item, $this->dimage, 'event' );
+			echo JEMOutput::flyer($this->item, $this->dimage, 'event', 'datimage');
 		endif;
 		?>
 		<ul class="adminformlist">
-			<li><label for="userfile"><?php echo JText::_('COM_JEM_IMAGE'); ?></label>
-            <input class="inputbox <?php echo $this->jemsettings->imageenabled == 2 ? 'required' : ''; ?>" name="userfile" id="userfile" type="file" />
-			<small class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_NOTES' ); ?>::<?php echo JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->jemsettings->sizelimit.' kb'; ?>">
-				<?php echo $this->infoimage; ?>
-			</small></li>
+			<li>
+				<label for="userfile">
+					<?php echo JText::_('COM_JEM_IMAGE'); ?>
+					<small class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_NOTES'); ?>::<?php echo JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->jemsettings->sizelimit.' kb'; ?>">
+						<?php echo $this->infoimage; ?>
+					</small>
+				</label>
+				<input class="inputbox <?php echo $this->jemsettings->imageenabled == 2 ? 'required' : ''; ?>" name="userfile" id="userfile" type="file" />
+				<button type="button" class="button3" onclick="document.getElementById('userfile').value = ''"><?php echo JText::_('JSEARCH_FILTER_CLEAR') ?></button>
+				<?php
+				if ($this->item->datimage) :
+					echo JHtml::image('media/com_jem/images/publish_r.png', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'events', 'title' => JText::_('COM_JEM_REMOVE_IMAGE')));
+				endif;
+				?>
+			</li>
 		</ul>
+		<input type="hidden" name="removeimage" id="removeimage" value="0" />
 	</fieldset>
 
 	<!-- Recurrence -->

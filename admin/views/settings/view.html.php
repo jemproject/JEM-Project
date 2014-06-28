@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -27,12 +27,14 @@ class JEMViewSettings extends JViewLegacy {
 		$form	= $this->get('Form');
 		$data	= $this->get('Data');
 		$state	= $this->get('State');
+		$config = $this->get('ConfigInfo');
 
 		$jemsettings = $this->get('Data');
 		$document 	= JFactory::getDocument();
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		JHtml::_('stylesheet', 'com_jem/colorpicker.css', array(), true);
 
 		$style = '
 		    div.current fieldset.radio input {
@@ -56,10 +58,16 @@ class JEMViewSettings extends JViewLegacy {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
+
+		// Load Script
+		$document->addScript(JURI::root().'media/com_jem/js/colorpicker.js');
+
 		JHtml::_('behavior.modal', 'a.modal');
 		JHtml::_('behavior.tooltip');
 		JHtml::_('behavior.formvalidation');
 		JHtml::_('behavior.framework');
+
+
 
 		$app = JFactory::getApplication();
 
@@ -75,6 +83,7 @@ class JEMViewSettings extends JViewLegacy {
 		$this->data = $data;
 		$this->state = $state;
 		$this->jemsettings = $jemsettings;
+		$this->config		= $config;
 
 		// add toolbar
 		$this->addToolbar();

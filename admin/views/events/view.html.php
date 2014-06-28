@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -70,11 +70,11 @@ defined('_JEXEC') or die;
 		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_EVENT_TITLE'));
 		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_VENUE'));
 		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_CITY'));
-		$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_STATE'));
-		$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_COUNTRY'));
-		$filters[] = JHtml::_('select.option', '6', JText::_('COM_JEM_CATEGORY'));
+		$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_CATEGORY'));
+		$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
+		$filters[] = JHtml::_('select.option', '6', JText::_('COM_JEM_COUNTRY'));
 		$filters[] = JHtml::_('select.option', '7', JText::_('JALL'));
-		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $this->state->get('filter'));
+		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $this->state->get('filter'));
 
 		//assign data to template
 		$this->lists		= $lists;

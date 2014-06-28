@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -28,7 +28,7 @@ class JemViewVenue extends JViewLegacy
 			$model = $this->getModel();
 			$model->setLimit($settings->ical_max_items);
 			$model->setLimitstart(0);
-			$rows = $model->getData();
+			$rows = $model->getItems();
 			$venueid = $jinput->getInt('id');
 
 			// initiate new CALENDAR

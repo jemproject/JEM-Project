@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -22,6 +22,7 @@ require_once (JPATH_COMPONENT_SITE.'/classes/Zebra_Image.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/calendar.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/activecalendarweek.php');
 require_once (JPATH_COMPONENT_SITE.'/helpers/category.php');
+require_once (JPATH_COMPONENT_ADMINISTRATOR.'/helpers/helper.php');
 
 // Set the table directory
 JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');

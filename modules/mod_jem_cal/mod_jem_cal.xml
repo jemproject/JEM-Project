@@ -7,8 +7,8 @@
 	<creationDate>04 August 2013</creationDate>
 	<copyright></copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>1.9.6</version>
-	<description>MOD_JEM_CALENDAR_XML_DESCRIPTION</description>
+	<version>1.9.7</version>
+	<description>MOD_JEM_CAL_XML_DESCRIPTION</description>
 
 	<files>
 		<filename module="mod_jem_cal">mod_jem_cal.php</filename>

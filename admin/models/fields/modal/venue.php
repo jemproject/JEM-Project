@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -50,7 +50,7 @@ class JFormFieldModal_Venue extends JFormField
 		$query = $db->getQuery(true);
 		$query->select('venue');
 		$query->from('#__jem_venues');
-		$query->where('id='.(int)$this->value);
+		$query->where(array('id='.(int)$this->value));
 		$db->setQuery($query);
 
 		$venue = $db->loadResult();

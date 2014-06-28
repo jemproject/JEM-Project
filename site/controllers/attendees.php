@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -112,8 +112,8 @@ class JEMControllerAttendees extends JControllerLegacy
 	{
 		$app = JFactory::getApplication();
 
-		$jinput = JFactory::getApplication()->input;
-		$enableemailadress = $jinput->get('em','','int');
+		$params = $app->getParams();
+		$enableemailadress = $params->get('enableemailaddress', 0);
 
 		$model = $this->getModel('attendees');
 
@@ -125,35 +125,33 @@ class JEMControllerAttendees extends JControllerLegacy
 		header('Pragma: no-cache');
 
 		$export = '';
-		$col = array();
 
-		for($i=0; $i < count($datas); $i++)
+		for ($i=0; $i < count($datas); $i++)
 		{
-		$data = $datas[$i];
+			$col = array();
+			$data = $datas[$i];
 
-		$col[] = str_replace("\"", "\"\"", $data->username);
-		if ($enableemailadress == 1)
-		{
-		$col[] = str_replace("\"", "\"\"", $data->email);
-		}
-		$col[] = str_replace("\"", "\"\"", JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2')));
+			$col[] = str_replace("\"", "\"\"", $data->username);
+			if ($enableemailadress == 1)
+			{
+				$col[] = str_replace("\"", "\"\"", $data->email);
+			}
+			$col[] = str_replace("\"", "\"\"", JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2')));
 
-			for($j = 0; $j < count($col); $j++)
-				{
+			for ($j = 0; $j < count($col); $j++)
+			{
 				$export .= "\"" . $col[$j] . "\"";
 
-				if($j != count($col)-1)
+				if ($j != count($col)-1)
 				{
-				$export .= ";";
+					$export .= ";";
 				}
-				}
-				$export .= "\r\n";
-				$col = '';
+			}
+			$export .= "\r\n";
 		}
 
-				echo $export;
-
-				$app->close();
+		echo $export;
+		$app->close();
 	}
 }
 ?>

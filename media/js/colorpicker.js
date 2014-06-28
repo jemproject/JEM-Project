@@ -6,6 +6,10 @@
  *  Gchats color picker is freely distributable under the terms of GPL license.
  *  Please visit: http://www.gchats.com for updates
  *  @Version 1.2
+ *  
+ *  The code in function testcolor is based upon:
+ *  http://www.nbdtech.com/Blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
+ *  
  *--------------------------------------------------------------------------*/
 // JavaScript Document
 var layerWidth = 218;
@@ -24,7 +28,7 @@ function openPicker(id, _onPick, _onCancel) {
 	currentId = id;
 	removeLayer("picker");
 	Obj = document.getElementById(id);
-
+	
 	orgColor = Obj.value;
 	createLayer("picker",findPosX(Obj)+Obj.offsetWidth+20,findPosY(Obj));
 }
@@ -97,7 +101,8 @@ function setClr(color){
 	currentId = "";
 	removeLayer("picker");
 	if (onPick) {
-		/*onPick();*/
+		var fontcolor = testcolor(color);
+		Obj.style.color=fontcolor;
 	}
 }
 function cancel(){
@@ -106,7 +111,6 @@ function cancel(){
 	Obj.style.backgroundColor=orgColor;
 	removeLayer("picker");
 	if (onCancel) {
-		/*oncancel();*/
 	}
 }
 function removeLayer(id){
@@ -128,7 +132,7 @@ function removeLayer(id){
 }
 function getPickerContent(){
 	var content = 	'<table width="222" border="0" cellpadding="0" cellspacing="1"><tr><td>';
-	content += '<table width="100%" border="0" cellpadding="0" cellspacing="1" class="color_table"><tr><td bgcolor="#CCCCCC" id="gcpicker_colorSample" width="40px" class="choosed_color_cell">&nbsp;</td><td align="center"><div id="gcpicker_colorCode">#CCCCCC</div></td><td width="60px" align="center"><input type="submit" value="" onclick="cancel()" class="default_color_btn" /></td></tr></table>';
+	content += '<table width="100%" border="0" cellpadding="0" cellspacing="1" class="color_table"><tr><td bgcolor="'+orgColor+'" id="gcpicker_colorSample" width="40px" class="choosed_color_cell">&nbsp;</td><td align="center"><div id="gcpicker_colorCode">'+orgColor+'</div></td><td width="60px" align="center"><input type="submit" value="" onclick="cancel()" class="default_color_btn" /></td></tr></table>';
 	content += '</td></tr><tr><td>';
 	content += colorTable()+'</td></tr></table>';
 	return content;
@@ -212,3 +216,17 @@ function rgb2hex(red, green, blue)
 	}
 	return "#"+clr;
 }
+
+function testcolor(color) {
+	if(color.length==7)
+	{
+		color=color.substring(1);
+	}
+	var R = parseInt(color.substring(0,2),16);
+	var G = parseInt(color.substring(2,4),16);
+	var B = parseInt(color.substring(4,6),16);
+	var x = Math.sqrt(R * R * .299 + G * G * .587 + B * B * .114);	
+	var sColorText = x < 130 ? '#FFFFFF' : '#000000'; 
+	
+	return sColorText;
+}	

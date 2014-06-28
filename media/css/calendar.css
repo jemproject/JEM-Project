@@ -1,5 +1,5 @@
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -67,17 +67,33 @@ table.month, table.week {
 	height:88px;
 }
 
+.eventcontent {
+	background-color:yellow;
+	border: 1px solid grey;
+	border-radius: 2px;
+	padding: 5px;
+	margin: 2px;
+/* use this onlyif you eally want a break at any position
+ -ms-word-break: break-all;
+     word-break: break-all;
+ */
+     /* Non standard for webkit */
+     word-break: break-word;
+
+-webkit-hyphens: auto;
+   -moz-hyphens: auto;
+    -ms-hyphens: auto;
+        hyphens: auto;
+
+}
+
 div[id^=catz] {
 	background-color:yellow;
-	border: 1px solid grey; /* calendarweek: black */
-	margin:1px;
 	overflow:hidden;
-	padding:1px;
-	border-radius: 2px;
-	padding: 5px; /* calendarweek: 0px 0px 4px 0px */
-	margin: 2px;
 	word-wrap: break-word;
-	/* calendarweek: min-height:40px; */
+	border: none;
+	margin: 0;
+	padding: 0;
 }
 
 div[id^=catz] a {
@@ -87,14 +103,11 @@ div[id^=catz] a {
 
 div[id^='venuez'] {
 	background-color:yellow;
-	margin:1px;
 	overflow:hidden;
-	padding:1px;
-	border: 1px solid grey;
-	border-radius: 2px;
-	padding: 5px;
-	margin: 2px;
 	word-wrap: break-word;
+	border: none;
+	margin: 0;
+	padding: 0;
 }
 
 div[id^='venuez'] a {
@@ -103,14 +116,11 @@ div[id^='venuez'] a {
 
 div[id^='scat'] {
 	background-color:yellow;
-	margin:1px;
 	overflow:hidden;
-	padding:1px;
-	border: 1px solid grey;
-	border-radius: 2px;
-	padding: 5px;
-	margin: 2px;
 	word-wrap: break-word;
+	border: none;
+	margin: 0;
+	padding: 0;
 }
 
 div[id^='scat'] {

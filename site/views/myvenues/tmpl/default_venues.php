@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -52,6 +52,7 @@ defined('_JEXEC') or die;
 		<?php if ($this->jemsettings->showstate == 1) :	?>
 			<col width="<?php echo $this->jemsettings->statewidth; ?>" class="jem_col_state" />
 		<?php endif; ?>
+			<col width="1%" class="jem_col_status" />
 	</colgroup>
 
 	<thead>
@@ -65,6 +66,7 @@ defined('_JEXEC') or die;
 			<?php if ($this->jemsettings->showstate == 1) : ?>
 			<th id="jem_state" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<?php endif; ?>
+			<th id="jem_status" class="sectiontableheader" align="center" nowrap="nowrap"><?php echo JText::_('JSTATUS'); ?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -91,6 +93,8 @@ defined('_JEXEC') or die;
 				<?php if ($this->jemsettings->showstate == 1) : ?>
 					<td headers="jem_state" align="left" valign="top"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
 				<?php endif; ?>
+
+				<td class="center"><?php echo JHtml::_('jgrid.published', $row->published, $i,'myvenues.'); ?></td>
 			</tr>
 			<?php
 				$i = 1 - $i;

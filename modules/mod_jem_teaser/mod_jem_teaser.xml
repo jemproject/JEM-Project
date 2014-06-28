@@ -29,6 +29,7 @@
 					<option value="1">MOD_JEM_TEASER_UPCOMING_EVENTS</option>
 					<option value="2">MOD_JEM_TEASER_ARCHIVED_EVENTS</option>
 					<option value="3">MOD_JEM_TEASER_CURRENT_EVENTS</option>
+					<option value="4">MOD_JEM_TEASER_FEATURED_EVENTS</option>
 				</field>
 				<field name="color" type="list"
 					default="1"
@@ -105,6 +106,11 @@
 					label="MOD_JEM_TEASER_VENUE_ID"
 					description="MOD_JEM_TEASER_VENUE_ID_DESC"
 				/>
+				<field name="eventid" type="text"
+					default=""
+					label="MOD_JEM_TEASER_EVENT_ID"
+					description="MOD_JEM_TEASER_EVENT_ID_DESC"
+				/>
 				<field name="stateloc" type="text"
 					default=""
 					label="MOD_JEM_TEASER_STATE"
@@ -123,17 +129,6 @@
 					label="MOD_JEM_TEASER_MODULE_CLASS_SUFFIX"
 					description="MOD_JEM_TEASER_MODULE_CLASS_SUFFIX_DESC"
 				/>
-				<field
-					name="readmore"
-					type="list"
-					default="0"
-					label="MOD_JEM_TEASER_FIELD_READMORE_LABEL"
-					description="MOD_JEM_TEASER_FIELD_READMORE_DESC">
-					<option
-						value="0">JHIDE</option>
-					<option
-						value="1">JSHOW</option>
-				</field>
 			</fieldset>
 
 			<fieldset name="advanced">

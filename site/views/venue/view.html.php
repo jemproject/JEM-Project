@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -44,11 +44,13 @@ class JemViewVenue extends JEMView {
 			$print			= JRequest::getBool('print');
 
 			// Load css
-			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-			JHtml::_('stylesheet', 'com_jem/calendar.css', array(), true);
-			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+			JemHelper::loadCss('jem');
+			JemHelper::loadCss('calendar');
+			JemHelper::loadCustomCss();
+			JemHelper::loadCustomTag();
+
 			if ($print) {
-				JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+				JemHelper::loadCss('print');
 				$document->setMetaData('robots', 'noindex, nofollow');
 			}
 
@@ -58,8 +60,9 @@ class JemViewVenue extends JEMView {
 			$eventandmorecolor = $params->get('eventandmorecolor');
 
 			$style = '
-			div[id^=\'venuez\'] a {color:' . $evlinkcolor . ';}
-			div[id^=\'venuez\'] {background-color:' . $evbackgroundcolor . ';}
+			div[id^=\'catz\'] a {color:' . $evlinkcolor . ';}
+			div[id^=\'catz\'] {background-color:' . $evbackgroundcolor . ';}
+			.eventcontent {background-color:'.$evbackgroundcolor .';}
 			.eventandmore {background-color:' . $eventandmorecolor . ';}
 			.today .daynum {background-color:' . $currentdaycolor . ';}';
 			$document->addStyleDeclaration ($style);
@@ -74,13 +77,7 @@ class JemViewVenue extends JEMView {
 			// get data from model and set the month
 			$model = $this->getModel('VenueCal');
 			$model->setDate(mktime(0, 0, 1, $month, 1, $year));
-			$rows = $this->get('Data','VenueCal');
-			$venue = $this->get('Venuecal','VenueCal');
-
-			// detect if there are venues to display
-			if ($venue == null) {
-				return false;
-			}
+			$rows = $this->get('Items','VenueCal');
 
 			// Set Page title
 			$pagetitle = $params->def('page_title', $menuitem->title);
@@ -100,11 +97,14 @@ class JemViewVenue extends JEMView {
 
 			// init calendar
 			$itemid = JRequest::getInt('Itemid');
+			$venueID = $params->get('id');
+
 			$partItemid = ($itemid > 0) ? '&Itemid='.$itemid : '';
-			$partVenid = ($venue->id > 0) ? '&id=' . $venue->id : '';
+			$partVenid = ($venueID > 0) ? '&id=' . $venueID : '';
 			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
 			$cal->enableMonthNav('index.php?view=venue&layout=calendar'.$partVenid.$partItemid);
 			$cal->setFirstWeekDay($params->get('firstweekday',1));
+			$cal->enableDayLinks(false);
 
 			// map variables
 			$this->rows 			= $rows;
@@ -131,24 +131,19 @@ class JemViewVenue extends JEMView {
 			$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
 
 			// Load css
-			JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-			$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+			JemHelper::loadCss('jem');
+			JemHelper::loadCustomCss();
+			JemHelper::loadCustomTag();
 
 			// get data from model
-			$rows	= $this->get('Data');
+			$rows	= $this->get('Items');
 			$venue	= $this->get('Venue');
 
 			// are events available?
-			if (! $rows) {
+			if (!$rows) {
 				$noevents = 1;
 			} else {
 				$noevents = 0;
-			}
-
-			// does the venue exist?
-			if ($venue->id == 0) {
-				// TODO Translation
-				return JError::raiseError(404,JText::_(COM_JEM_VENUE_NOTFOUND));
 			}
 
 			// Decide which parameters should take priority
@@ -305,7 +300,7 @@ class JemViewVenue extends JEMView {
 			if ($jemsettings->showstate == 1) {
 				$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
 			}
-			$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', 'size="1" class="inputbox"', 'value', 'text', $filter);
+			$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter);
 			$lists['search'] = $search;
 
 			// mapping variables

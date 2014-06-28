@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -66,7 +66,9 @@ class ActiveCalendarWeek extends JEMCalendar {
 	*/
 	function showWeeksByID($weekID=1, $numberOfWeeks=1) {
 		$xday=1;
-		for ($day=1; $day<358; $day++) {
+		$from = ($weekID-2) * 7;
+		$to   = ($weekID+1) * 7;
+		for ($day = $from; $day < $to; $day++) {
 			$tmp=parent::getWeekNum($day);
 			if ($tmp==$weekID) {
 				$xday=$day;
@@ -76,6 +78,27 @@ class ActiveCalendarWeek extends JEMCalendar {
 		if ($this->startOnSun) $xday=$xday-1;
 		$this->__construct($this->actyear, $this->actmonth, $xday, $this->GMT);
 		return $this->showWeeks($numberOfWeeks);
+	}
+
+	/*
+	********************************************************************************
+	PUBLIC getFirstDayTime() -> returns the first day of given week as unixtime
+	********************************************************************************
+	*/
+	function getFirstDayTimeOfWeek($weekID = 1) {
+		$unixdate = false;
+		/* There should be an inverse function but for now trying some days is ok */
+		$from = ($weekID-2) * 7;
+		$to   = ($weekID+1) * 7;
+		for ($day = $from; $day < $to; $day++) {
+			$tmp = parent::getWeekNum($day);
+			if ($tmp == $weekID) {
+				$xday = ($this->startOnSun) ? $day - 1 : $day;
+				$unixdate = $this->mkActiveTime(0, 0, 1, $this->actmonth, $xday, $this->actyear);
+				break;
+			}
+		}
+		return $unixdate;
 	}
 
 	/*

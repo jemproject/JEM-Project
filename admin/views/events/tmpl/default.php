@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -161,40 +161,7 @@ $(document).ready(function() {
 				<td class="city"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
 				<td class="state"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
 				<td class="category">
-				<?php
-				$ix = 0;
-				?>
-				<?php foreach ($row->categories as $key => $category) : ?>
-					<?php
-					if ($ix) :
-						echo ', ';
-					endif;
-
-					$catlink = 'index.php?option=com_jem&amp;task=category.edit&amp;id='. $category->id;
-					$title = $this->escape($category->catname);
-					if (JString::strlen($category->catname) > 20) {
-						$title = $this->escape(JString::substr($category->catname , 0 , 20)).'...';
-					}
-
-					$path = '';
-					$pix = 0;
-					foreach ($category->parentcats as $key => $parentcats) :
-						if ($pix) :
-							$path .= ' » ';
-						endif;
-						$path .= $parentcats->catname;
-						$pix++;
-					endforeach; ?>
-
-					<?php if ( $category->cchecked_out && ( $category->cchecked_out != $this->user->get('id') ) ) : ?>
-						<?php echo $title; ?>
-					<?php else : ?>
-						<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_CATEGORY' );?>::<?php echo $path; ?>">
-						<a href="<?php echo $catlink; ?>"><?php echo $title; ?></a>
-						</span>
-					<?php endif; ?>
-					<?php $ix++; ?>
-				<?php endforeach; ?>
+				<?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist,true)); ?>
 				</td>
 				<td class="center"><?php echo $published; ?></td>
 				<td class="center">
@@ -207,7 +174,7 @@ $(document).ready(function() {
 					$created	 	= JHtml::_('date',$row->created,JText::_('DATE_FORMAT_LC2'));
 					$modified 		= JHtml::_('date',$row->modified,JText::_('DATE_FORMAT_LC2') );
 					$image 			= JHtml::_('image','com_jem/icon-16-info.png',NULL,NULL,true );
-					
+
 					$overlib 		= JText::_('COM_JEM_CREATED_AT').': '.$created.'<br />';
 					if ($row->author_ip != '') {
 						$overlib		.= JText::_('COM_JEM_WITH_IP').': '.$row->author_ip.'<br />';

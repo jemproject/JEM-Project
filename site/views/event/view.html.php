@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -58,7 +58,7 @@ class JemViewEvent extends JEMView
 
 		$this->registers	= $model->getRegisters($this->state->get('event.id'));
 		$isregistered		= $this->get('UserIsRegistered');
-		
+
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {
 			JError::raiseWarning(500, implode("\n", $errors));
@@ -76,12 +76,7 @@ class JemViewEvent extends JEMView
 
 		// Add router helpers.
 		$item->slug			= $item->alias ? ($item->id.':'.$item->alias) : $item->id;
-		$item->catslug		= $item->category_alias ? ($item->catid.':'.$item->category_alias) : $item->catid;
-		$item->parent_slug	= $item->category_alias ? ($item->parent_id.':'.$item->parent_alias) : $item->parent_id;
-		$item->venueslug	= $item->alias ? ($item->locid.':'.$item->localias) : $item->locid;
-
-		// TODO: Change based on shownoauth
-		$item->readmore_link = JRoute::_(JemHelperRoute::getEventRoute($item->slug, $item->catslug));
+		$item->venueslug	= $item->localias ? ($item->locid.':'.$item->localias) : $item->locid;
 
 		// Check to see which parameters should take priority
 		if ($useMenuItemParams) {
@@ -337,11 +332,13 @@ class JemViewEvent extends JEMView
 		$pathway = $app->getPathway();
 		$title = null;
 
-		//add css file
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-		$this->document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		// add css file
+		JemHelper::loadCss('jem');
+		JemHelper::loadCustomCss();
+		JemHelper::loadCustomTag();
+
 		if ($this->print) {
-			JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+			JemHelper::loadCss('print');
 			$this->document->setMetaData('robots', 'noindex, nofollow');
 		}
 

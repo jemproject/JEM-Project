@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -31,13 +31,13 @@ JHtml::_('behavior.modal');
 	<div class="floattext">
 		<?php if ($this->jemsettings->discatheader) : ?>
 		<div class="catimg">
-		<?php 
+		<?php
 		// flyer
 		if (empty($this->category->image)) {
 			$jemsettings = JEMHelper::config();
 			$imgattribs['width'] = $jemsettings->imagewidth;
 			$imgattribs['height'] = $jemsettings->imagehight;
-			
+
 			echo JHtml::_('image', 'com_jem/noimage.png', $this->category->catname, $imgattribs, true);
 		}
 		else {
@@ -54,20 +54,27 @@ JHtml::_('behavior.modal');
 
 	<!--subcategories-->
 	<?php
-	if (count($this->categories) && $this->category->id > 0) {
-		// only show this part if subcategries are available
-		echo $this->loadTemplate('subcategories');
-	}
+	if ($this->maxLevel != 0 && !empty($this->category->id) && !empty($this->children[$this->category->id])) :
 	?>
+	<div class="cat-children">
+		<?php if ($this->params->get('show_category_heading_title_text', 1) == 1) : ?>
+		<h3>
+			<?php echo JTEXT::_('JGLOBAL_SUBCATEGORIES'); ?>
+		</h3>
+		<?php endif; ?>
+		<?php echo $this->loadTemplate('subcategories'); ?>
+	</div>
+	<?php endif; ?>
+
 
 	<form action="<?php echo $this->action; ?>" method="post" id="adminForm">
 	<!--table-->
 		<?php echo $this->loadTemplate('events_table'); ?>
-		<input type="hidden" name="option" value="com_jem" /> 
-		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" /> 
-		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" /> 
-		<input type="hidden" name="view" value="category" /> 
-		<input type="hidden" name="task" value="<?php echo $this->task; ?>" /> 
+		<input type="hidden" name="option" value="com_jem" />
+		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+		<input type="hidden" name="view" value="category" />
+		<input type="hidden" name="task" value="<?php echo $this->task; ?>" />
 		<input type="hidden" name="id" value="<?php echo $this->category->id; ?>" />
 	</form>
 

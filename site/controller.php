@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -41,13 +41,13 @@ class JEMController extends JControllerLegacy
 		$viewFormat 	= $document->getType();
 		$layoutName 	= JRequest::getCmd('layout', 'edit');
 
-		
+
 		// Check for edit form.
 		if ($viewName == 'editevent' && !$this->checkEditId('com_jem.edit.event', $id)) {
 			// Somehow the person just went to the form - we don't allow that.
 			return JError::raiseError(403, JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id));
 		}
-		
+
 
 		if ($view = $this->getView($viewName, $viewFormat)) {
 			// Do any specific processing by view.
@@ -144,14 +144,57 @@ class JEMController extends JControllerLegacy
 
 		$res = JEMAttachment::remove($id);
 		if (!$res) {
-			echo 0;
+			echo 0; // The caller expects an answer!
 			jexit();
 		}
 
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
-		echo 1;
+		echo 1; // The caller expects an answer!
+		jexit();
+	}
+
+	/**
+	 * Remove image
+	 * @deprecated since version 1.9.7
+	 */
+	function ajaximageremove()
+	{
+		$id = JRequest::getVar('id', null, 'request', 'int');
+		if (!$id) {
+			jexit();
+		}
+		$folder = JRequest::getVar('type', null, 'request', 'string');
+
+		if ($folder == 'events') {
+			$getquery = ' SELECT datimage AS image FROM #__jem_events WHERE id = '.(int)$id;
+			$updatequery = ' UPDATE #__jem_events SET datimage=\'\' WHERE id = '.(int)$id;
+		} else if ($folder == 'venues') {
+			$getquery = ' SELECT locimage AS image FROM #__jem_venues WHERE id = '.(int)$id;
+			$updatequery = ' UPDATE #__jem_venues SET locimage=\'\' WHERE id = '.(int)$id;
+		} else {
+			jexit();
+		}
+
+		$db = JFactory::getDBO();
+		$db->setQuery($getquery);
+		if (!$image_obj = $db->loadObject()) {
+			jexit();
+		}
+
+		$image = $image_obj->image;
+
+		$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
+		if (is_file($fullPath)) {
+			$db->setQuery($updatequery);
+			if (!$db->query()) {
+				jexit();
+			}
+
+			JemHelper::delete_unused_image_files($folder, $image);
+		}
+
 		jexit();
 	}
 }

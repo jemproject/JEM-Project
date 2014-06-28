@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -31,12 +31,12 @@ class JemViewCalendar extends JViewLegacy
 		$menuitem	= $menu->getActive();
 		$jemsettings = JemHelper::config();
 		$params 	= $app->getParams();
-		
+
 		// Load css
-		JHtml::_('stylesheet', 'com_jem/jem.css', array(), true);
-		JHtml::_('stylesheet', 'com_jem/calendar.css', array(), true);
-				
-		$document->addCustomTag('<!--[if IE]><style type="text/css">.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->');
+		JemHelper::loadCss('jem');
+		JemHelper::loadCss('calendar');
+		JemHelper::loadCustomCss();
+		JemHelper::loadCustomTag();
 
 		$evlinkcolor = $params->get('eventlinkcolor');
 		$evbackgroundcolor = $params->get('eventbackgroundcolor');
@@ -48,6 +48,9 @@ class JemViewCalendar extends JViewLegacy
 			color:' . $evlinkcolor . ';
 		}
 		div[id^=\'catz\'] {
+			background-color:'.$evbackgroundcolor .';
+		}
+		.eventcontent {
 			background-color:'.$evbackgroundcolor .';
 		}
 		.eventandmore {
@@ -70,7 +73,7 @@ class JemViewCalendar extends JViewLegacy
 		$model = $this->getModel();
 		$model->setDate(mktime(0, 0, 1, $month, 1, $year));
 
-		$rows = $this->get('Data');
+		$rows = $this->get('Items');
 
 		//Set Page title
 		$pagetitle   = $params->def('page_title', $menuitem->title);

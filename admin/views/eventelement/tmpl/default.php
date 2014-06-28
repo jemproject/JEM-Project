@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -22,7 +22,7 @@ defined('_JEXEC') or die;
 		<td nowrap="nowrap">
 			<select name="filter_state" class="inputbox" onchange="this.form.submit()">
 			<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
-			<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions',array('all' => 0, 'unpublished' => 0,'archived' => 0, 'trash' => 0)), 'value', 'text', $this->filter_state, true);?>
+			<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions',array('all' => 0, 'trash' => 0)), 'value', 'text', $this->filter_state, true);?>
 			</select>
 		</td>
 	</tr>
@@ -81,9 +81,9 @@ defined('_JEXEC') or die;
 			<td><?php echo $row->venue ? $this->escape($row->venue) : '-'; ?></td>
 			<td><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
 			<td>
-			<?php 
+			<?php
 			# we're referring to the helper due to the multi-cat feature
-			echo implode(", ",JemOutput::getCategoryList($row->categories, false)); 
+			echo implode(", ",JemOutput::getCategoryList($row->categories, false));
 			?>
 			</td>
 			<td class="center">

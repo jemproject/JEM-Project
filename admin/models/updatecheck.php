@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -9,23 +9,18 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.model');
+jimport('joomla.filesystem.file');
 
 
 /**
- * Updatecheck-Model
+ * Model-Updatecheck
  */
 class JemModelUpdatecheck extends JModelLegacy
 {
-	/**
-	 * Events data in array
-	 *
-	 * @var array
-	 */
-	var $_updatedata = null;
+	protected $_updatedata = null;
 
 	/**
 	 * Constructor
-	 *
 	 */
 	public function __construct()
 	{
@@ -37,7 +32,7 @@ class JemModelUpdatecheck extends JModelLegacy
 	 */
 	function getUpdatedata()
 	{
-		$installedversion	= self::getParam('version');
+		$installedversion	= JemHelper::getParam(1,'version',1,'com_jem');
 		$updateFile			= "http://www.joomlaeventmanager.net/updatecheck/update.xml";
 		$checkFile			= self::CheckFile($updateFile);
 		$updatedata 		= new stdClass();
@@ -66,14 +61,13 @@ class JemModelUpdatecheck extends JModelLegacy
 		return $updatedata;
 	}
 
-
 	/**
 	 * Check to see if update-file exists
 	 */
 	function CheckFile($filename) {
 		$ext =  JFile::getExt($filename);
 		if ($ext == 'xml') {
-			if(@file_get_contents($file,0,null,0,1)){
+			if(@file_get_contents($filename,0,null,0,1)){
 				return true;
 			} else {
 				return false;
@@ -81,23 +75,6 @@ class JemModelUpdatecheck extends JModelLegacy
 		} else {
 			return false;
 		}
-	}
-
-	/**
-	 * get a variable from the manifest file (actually, from the manifest cache).
-	 * in this case it will be the installed version of jem
-	 */
-	function getParam($name) {
-		$db = JFactory::getDbo();
-
-		$query = $db->getQuery(true);
-		$query->select(array('manifest_cache'));
-		$query->from('#__extensions');
-		$query->where(array('name = '.$db->quote('com_jem')));
-		$db->setQuery($query);
-
-		$manifest = json_decode($db->loadResult(), true);
-		return $manifest[ $name ];
 	}
 }
 ?>

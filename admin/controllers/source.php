@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -100,6 +100,7 @@ class JEMControllerSource extends JControllerLegacy
 		$recordId	= JRequest::getVar('id');
 		$context	= 'com_jem.edit.source';
 
+
 		if (preg_match('#\.\.#', base64_decode($recordId))) {
 			return JError::raiseError(500, JText::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
 		}
@@ -152,6 +153,14 @@ class JEMControllerSource extends JControllerLegacy
 		$task		= $this->getTask();
 		$model		= $this->getModel();
 
+		$file 		= $model->getState('filename');
+		$custom		= stripos($file, 'custom#:');
+
+		# custom file?
+		if ($custom !== false) {
+			$file = str_replace('custom#:', '', $file);
+		}
+
 		// Access check.
 		if (!$this->allowSave()) {
 			return JError::raiseWarning(403, JText::_('JERROR_SAVE_NOT_PERMITTED'));
@@ -161,8 +170,8 @@ class JEMControllerSource extends JControllerLegacy
 		if (empty($data['filename'])) {
 			return JError::raiseError(500, JText::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_ID_FILENAME_MISMATCH'));
 		}
-	
-		elseif ($data['filename'] != $model->getState('filename')) {
+
+		elseif ($data['filename'] != $file) {
 			return JError::raiseError(500, JText::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_ID_FILENAME_MISMATCH'));
 		}
 

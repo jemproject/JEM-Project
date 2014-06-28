@@ -508,7 +508,7 @@
 			default="0"
 			required="false"
 		>
-			<option value="0">JHIDE</option>
+			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>
 		<field name="autopubl" type="list"
@@ -821,33 +821,49 @@
 				<option value="1">COM_JEM_NAME</option>
 			</field>
 			<field
-			name="show_noauth"
-			type="list"
-			default="0"
-			label="JGLOBAL_SHOW_UNAUTH_LINKS_LABEL"
-			description="JGLOBAL_SHOW_UNAUTH_LINKS_DESC">
-			<option
-				value="0">JNO</option>
-			<option
-				value="1">JYES</option>
-		</field>
-		<field
-			name="highlight"
-			type="list"
-			default="0"
-			label="COM_JEM_SETTINGS_FIELD_ENABLE_HIGHLIGHT"
-			description="COM_JEM_SETTINGS_FIELD_ENABLE_HIGHLIGHT_DESC">
-			<option
-				value="0">JNO</option>
-			<option
-				value="1">JYES</option>
-		</field>
-		<field name="default_Itemid" type="text"
+				name="show_noauth"
+				type="list"
+				default="0"
+				label="JGLOBAL_SHOW_UNAUTH_LINKS_LABEL"
+				description="JGLOBAL_SHOW_UNAUTH_LINKS_DESC">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field
+				name="highlight"
+				type="list"
+				default="0"
+				label="COM_JEM_SETTINGS_FIELD_ENABLE_HIGHLIGHT"
+				description="COM_JEM_SETTINGS_FIELD_ENABLE_HIGHLIGHT_DESC">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field
+				name="default_Itemid"
+				type="text"
 				label="COM_JEM_SETTINGS_FIELD_DEFAULTITEMID"
 				description="COM_JEM_SETTINGS_FIELD_DEFAULTITEMID_DESC"
 				class="inputbox"
 				size="10"
 				maxlength="10"
+				required="false"
+			/>
+			<field
+				name="global_googleapi"
+				type="text"
+				label="COM_JEM_SETTINGS_FIELD_GOOGLEAPIKEY"
+				description="COM_JEM_SETTINGS_FIELD_GOOGLEAPIKEY_DESC"
+				class="inputbox"
+				size="50"
+				required="false"
+			/>
+			<field
+				name="global_googleclientid"
+				type="text"
+				label="COM_JEM_SETTINGS_FIELD_GOOGLECLIENTID"
+				description="COM_JEM_SETTINGS_FIELD_GOOGLECLIENTID_DESC"
+				class="inputbox"
+				size="50"
 				required="false"
 			/>
 		</fieldset>
@@ -896,6 +912,7 @@
 				<option value="0">COM_JEM_NO_MAP_SERVICE</option>
 				<option value="1">COM_JEM_GOOGLE_MAP_LINK</option>
 				<option value="2">COM_JEM_GOOGLE_MAP_DISP</option>
+				<option value="3">COM_JEM_GOOGLE_MAP_DISP_API</option>
 			</field>
 			<field name="global_tld" type="text"
 				label="COM_JEM_GOOGLE_MAP_TLD"
@@ -913,6 +930,16 @@
 				maxlength="10"
 				required="false"
 			/>
+			<field name="global_show_ownedvenuesonly" type="list"
+				label="COM_JEM_SETTINGS_FIELD_SHOW_OWNEDVENUESONLY"
+				description="COM_JEM_SETTINGS_FIELD_SHOW_OWNEDVENUESONLY_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
 		</fieldset>
 
 		<fieldset name="evevents"
@@ -984,6 +1011,7 @@
 				<option value="0">COM_JEM_NO_MAP_SERVICE</option>
 				<option value="1">COM_JEM_GOOGLE_MAP_LINK</option>
 				<option value="2">COM_JEM_GOOGLE_MAP_DISP</option>
+				<option value="3">COM_JEM_GOOGLE_MAP_DISP_API</option>
 			</field>
 			<field name="event_tld" type="text"
 				label="COM_JEM_GOOGLE_MAP_TLD"
@@ -1036,6 +1064,226 @@
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
+		</fieldset>
+	</fields>
+
+	<fields name="css">
+		<fieldset name="stylesheet" label="Stylesheet">
+			<field name="css_backend_usecustom" type="list"
+				description="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_USECUSTOM_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_USECUSTOM"
+				>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="css_backend_customfile" type="text"
+				description="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_CUSTOMFILE_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_CUSTOMFILE"
+				class="inputbox"
+				size="50"
+				required="false"
+			/>
+			<field type="spacer" name="spacer1" hr="true" />
+			<field name="css_calendar_usecustom" type="list"
+				description="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_USECUSTOM_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_USECUSTOM"
+				>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="css_calendar_customfile" type="text"
+				description="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_CUSTOMFILE_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_CUSTOMFILE"
+				class="inputbox"
+				size="50"
+				required="false"
+			/>
+			<field type="spacer" name="spacer2" hr="true" />
+			<field name="css_colorpicker_usecustom" type="list"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_USECUSTOM_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_USECUSTOM"
+				>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="css_colorpicker_customfile" type="text"
+				description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_CUSTOMFILE_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_CUSTOMFILE"
+				class="inputbox"
+				size="50"
+				required="false"
+			/>
+			<field type="spacer" name="spacer3" hr="true" />
+			<field name="css_geostyle_usecustom" type="list"
+				description="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_USECUSTOM_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_USECUSTOM"
+				>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="css_geostyle_customfile" type="text"
+				description="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_CUSTOMFILE_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_CUSTOMFILE"
+				class="inputbox"
+				size="50"
+				required="false"
+			/>
+			<field type="spacer" name="spacer4" hr="true" />
+			<field name="css_googlemap_usecustom" type="list"
+				description="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_USECUSTOM_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_USECUSTOM"
+				>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="css_googlemap_customfile" type="text"
+				description="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_CUSTOMFILE_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_CUSTOMFILE"
+				class="inputbox"
+				size="50"
+				required="false"
+			/>
+			<field type="spacer" name="spacer5" hr="true" />
+			<field name="css_jem_usecustom" type="list"
+				description="COM_JEM_SETTINGS_FIELD_CSS_JEM_USECUSTOM_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_JEM_USECUSTOM"
+				>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="css_jem_customfile" type="text"
+				description="COM_JEM_SETTINGS_FIELD_CSS_JEM_CUSTOMFILE_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_JEM_CUSTOMFILE"
+				class="inputbox"
+				size="50"
+				required="false"
+			/>
+			<field type="spacer" name="spacer6" hr="true" />
+			<field name="css_print_usecustom" type="list"
+				description="COM_JEM_SETTINGS_FIELD_CSS_PRINT_USECUSTOM_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_PRINT_USECUSTOM"
+				>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field name="css_print_customfile" type="text"
+				description="COM_JEM_SETTINGS_FIELD_CSS_PRINT_CUSTOMFILE_DESC"
+				label="COM_JEM_SETTINGS_FIELD_CSS_PRINT_CUSTOMFILE"
+				class="inputbox"
+				size="50"
+				required="false"
+			/>
+		</fieldset>
+		<fieldset name="css_color">
+			<field
+				name="css_color_bg_filter"
+				type="customcolor"
+				default=""
+				size="8"
+        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_FILTER"
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_FILTER_DESC" />
+        	<field
+        		name="css_color_bg_h2"
+        		type="customcolor"
+        		default=""
+        		size="8"
+        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_H2"
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_H2_DESC" />
+        	<field
+        		name="css_color_bg_jem"
+        		type="customcolor"
+        		default=""
+        		size="8"
+        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_JEM"
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_JEM_DESC" />
+        	<field
+        		name="css_color_bg_table_th"
+        		type="customcolor"
+        		default=""
+        		size="8"
+        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TH"
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TH_DESC" />
+        	<field
+        		name="css_color_bg_table_td"
+        		type="customcolor"
+        		default=""
+        		size="8"
+        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TD"
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TD_DESC" />
+        	<field
+        		name="css_color_bg_table_tr_entry2"
+        		type="customcolor"
+        		default=""
+        		size="8"
+        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_ENTRY2"
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_ENTRY2_DESC" />
+        	<field
+        		name="css_color_bg_table_tr_hover"
+        		type="customcolor"
+        		default=""
+        		size="8"
+        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_HOVER"
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_HOVER_DESC" />
+        	<field
+        		name="css_color_bg_table_tr_featured"
+        		type="customcolor"
+        		default=""
+        		size="8"
+        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_FEATURED"
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_TABLE_TR_FEATURED_DESC" />
+		</fieldset>
+		<fieldset name="css_color_border">
+			<field
+				name="css_color_border_filter"
+				type="customcolor"
+				default=""
+				size="8"
+        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_FILTER"
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_FILTER_DESC" />
+        	<field
+				name="css_color_border_h2"
+				type="customcolor"
+				default=""
+				size="8"
+        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_H2"
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_H2_DESC" />
+        	<field
+        		name="css_color_border_table_td"
+        		type="customcolor"
+        		default=""
+        		size="8"
+        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TD"
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TD_DESC" />
+        	<field
+				name="css_color_border_table_th"
+				type="customcolor"
+				default=""
+        		size="8"
+        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TH"
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BORDER_TABLE_TH_DESC" />
+		</fieldset>
+		<fieldset name="css_color_font">
+			<field
+				name="css_color_font_h2"
+				type="customcolor"
+				default=""
+				size="8"
+        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_H2"
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_H2_DESC" />
+			<field
+				name="css_color_font_table_td"
+				type="customcolor"
+				default=""
+				size="8"
+        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD"
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD_DESC" />
+        	<field
+				name="css_color_font_table_td_a"
+				type="customcolor"
+				default=""
+				size="8"
+        		label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD_A"
+        		description="COM_JEM_SETTINGS_FIELD_CSS_COLOR_FONT_TABLE_TD_A_DESC" />
 		</fieldset>
 	</fields>
 </form>

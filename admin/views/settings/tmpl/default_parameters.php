@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -45,4 +45,13 @@ defined('_JEXEC') or die;
 		</ul>
 	</fieldset>
 </div>
+<div class="width-100">
+	<fieldset class="adminform">
+		<legend><?php echo JText::_('COM_JEM_SETTINGS_LEGEND_VIEW_EDITEVENT'); ?></legend>
+		<ul class="adminformlist">
+			<li><?php echo $this->form->getLabel('global_show_ownedvenuesonly',$group); ?> <?php echo $this->form->getInput('global_show_ownedvenuesonly',$group); ?></li>
+		</ul>
+	</fieldset>
+</div>
+
 </div><div class="clr"></div>

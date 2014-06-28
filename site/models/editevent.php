@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -200,8 +200,8 @@ class JEMModelEditevent extends JEMModelEvent
 	function buildQueryVenues()
 	{
 		$app 				= JFactory::getApplication();
-		$jemsettings 		= JemHelper::config();
-
+		$params		 		= JemHelper::globalattribs();
+		
 		$filter_order 		= $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
 
@@ -235,9 +235,8 @@ class JEMModelEditevent extends JEMModelEvent
 					$where[] = 'LOWER(l.state) LIKE "%' . $search . '%"';
 			}
 		}
-
-		// @todo: alter setting
-		if ($jemsettings->ownedvenuesonly) {
+		
+		if ($params->get('global_show_ownedvenuesonly')) {
 			$user = JFactory::getUser();
 			$userid = $user->get('id');
 			$where[] = ' created_by = ' . (int) $userid;
@@ -250,12 +249,10 @@ class JEMModelEditevent extends JEMModelEvent
 		}
 
 		// ordering
-		$orderby = '';
-
 		if ($filter_order && $filter_order_Dir) {
-			$orderby .= $filter_order . ' ' . $filter_order_Dir;
+			$orderby = $filter_order . ' ' . $filter_order_Dir;
 		} else {
-			$orderby .= array('l.venue ASC','l.ordering ASC');
+			$orderby = array('l.venue ASC','l.ordering ASC');
 		}
 		$query->order($orderby);
 
@@ -370,8 +367,7 @@ class JEMModelEditevent extends JEMModelEvent
 		$query->where($where);
 
 		// ordering
-		$orderby = '';
-
+	
 		// ensure it's a valid order direction (asc, desc or empty)
 		if (!empty($filter_order_Dir) && strtoupper($filter_order_Dir) !== 'DESC') {
 			$filter_order_Dir = 'ASC';

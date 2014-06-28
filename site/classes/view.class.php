@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
@@ -53,7 +53,7 @@ class JEMView extends JViewLegacy {
 		$print		= JRequest::getBool('print');
 
 		if ($print) {
-			JHtml::_('stylesheet', 'com_jem/print.css', array(), true);
+			JemHelper::loadCss('print');
 			$this->document->setMetaData('robots', 'noindex, nofollow');
 		}
 

@@ -1,71 +1,34 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
+require_once dirname(__FILE__) . '/eventslist.php';
 
 /**
- * JEM Component Day Model
- *
- * @package JEM
- *
+ * Model-Day
  */
-class JEMModelDay extends JModelLegacy
+class JemModelDay extends JemModelEventslist
 {
-	/**
-	 * Events data array
-	 *
-	 * @var array
-	 */
-	var $_data = null;
-
-	/**
-	 * Events total
-	 *
-	 * @var integer
-	 */
-	var $_total = null;
-
-	/**
-	 * Date
-	 *
-	 * @var string
-	 */
 	var $_date = null;
 
 	/**
-	 * Pagination object
-	 *
-	 * @var object
-	 */
-	var $_pagination = null;
-
-	/**
 	 * Constructor
-	 *
 	 */
 	public function __construct()
 	{
 		parent::__construct();
 
 		$app = JFactory::getApplication();
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 		$jinput = JFactory::getApplication()->input;
 
-		$limit      = $app->getUserStateFromRequest('com_jem.day.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart = $app->getUserStateFromRequest('com_jem.day.limitstart', 'limitstart', 0, 'int');
-
-		$this->setState('limit', $limit);
-		$this->setState('limitstart', $limitstart);
-
-		$rawday = $jinput->get('id',null,'int');
+		$rawday = $jinput->getInt('id', null);
 		$this->setDate($rawday);
 	}
 
@@ -79,16 +42,16 @@ class JEMModelDay extends JModelLegacy
 	{
 		$app = JFactory::getApplication();
 
-		// Get the paramaters of the active menu item
+		# Get the params of the active menu item
 		$params = $app->getParams('com_jem');
 
-		//0 means we have a direct request from a menuitem and without any parameters (eg: calendar module)
+		# 0 means we have a direct request from a menuitem and without any params (eg: calendar module)
 		if ($date == 0) {
 			$dayoffset	= $params->get('days');
 			$timestamp	= mktime(0, 0, 0, date("m"), date("d") + $dayoffset, date("Y"));
 			$date		= strftime('%Y-%m-%d', $timestamp);
 
-		//a valid date  has 8 characters
+		# a valid date has 8 characters (ymd)
 		} elseif (strlen($date) == 8) {
 			$year 	= substr($date, 0, -4);
 			$month	= substr($date, 4, -2);
@@ -112,212 +75,7 @@ class JEMModelDay extends JModelLegacy
 	}
 
 	/**
-	 * Method to get the Events
-	 *
-	 * @access public
-	 * @return array
-	 */
-	function &getData()
-	{
-		$pop = JRequest::getBool('pop');
-
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_data))
-		{
-			$query = $this->_buildQuery();
-			$pagination = $this->getPagination();
-			$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
-
-			$count = count($this->_data);
-			for($i = 0; $i < $count; $i++)
-			{
-				$item = $this->_data[$i];
-				$item->categories = $this->getCategories($item->id);
-
-				//remove events without categories (users have no access to them)
-				if (empty($item->categories)) {
-					unset($this->_data[$i]);
-				}
-			}
-		}
-
-		return $this->_data;
-	}
-
-	/**
-	 * Total nr of events
-	 *
-	 * @access public
-	 * @return integer
-	 */
-	function getTotal()
-	{
-		// Lets load the total nr if it doesn't already exist
-		if (empty($this->_total))
-		{
-			$query = $this->_buildQuery();
-			$this->_total = $this->_getListCount($query);
-		}
-
-		return $this->_total;
-	}
-
-	/**
-	 * Method to get a pagination object for the events
-	 *
-	 * @access public
-	 * @return integer
-	 */
-	function getPagination()
-	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_pagination))
-		{
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
-		}
-
-		return $this->_pagination;
-	}
-
-	/**
-	 * Build the query
-	 *
-	 * @access private
-	 * @return string
-	 */
-	protected function _buildQuery()
-	{
-		// Get the WHERE and ORDER BY clauses for the query
-		$where		= $this->_buildWhere();
-		$orderby	= $this->_buildOrderBy();
-		$db = JFactory::getDbo();
-
-		//Get Events from Database
-		$query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.fulltext,'
-				. ' a.recurrence_type, a.recurrence_first_id, '
-				. ' l.venue, l.city, l.state, l.url, l.street, ct.name as countryname, '
-				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
-				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-				. ' FROM #__jem_events AS a'
-				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-				. ' LEFT JOIN #__jem_countries AS ct ON ct.iso2 = l.country '
-				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
-				. $where
-				. $orderby
-				;
-		return $query;
-	}
-
-	/**
-	 * Build the order clause
-	 *
-	 * @access private
-	 * @return string
-	 */
-	protected function _buildOrderBy()
-	{
-		$app = JFactory::getApplication();
-
-		$filter_order		= $app->getUserStateFromRequest('com_jem.day.filter_order', 'filter_order', 'a.dates', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.day.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
-
-		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
-
-		if ($filter_order == 'a.dates') {
-			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir;
-		} else {
-			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
-		}
-
-		return $orderby;
-	}
-
-	/**
-	 * Build the where clause
-	 *
-	 * @access private
-	 * @return string
-	 */
-	protected function _buildWhere()
-	{
-		$app 		= JFactory::getApplication();
-		$settings 	= JEMHelper::globalattribs();
-
-		$jinput = JFactory::getApplication()->input;
-		$requestVenueId = $jinput->get('locid', null, 'int');
-		$requestCategoryId = $jinput->get('catid', null, 'int');
-
-		$user = JFactory::getUser();
-		// Support Joomla access levels instead of single group id
-		$levels = $user->getAuthorisedViewLevels();
-
-		$filter 		= $app->getUserStateFromRequest('com_jem.day.filter', 'filter', '', 'int');
-		$search 		= $app->getUserStateFromRequest('com_jem.day.filter_search', 'filter_search', '', 'string');
-		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
-
-		$where = array();
-
-		// First thing we need to do is to select only needed events
-		$where[] = ' a.published = 1';
-		$where[] = ' c.published = 1';
-		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
-
-		if ($requestVenueId){
-			$where[]= ' a.locid = '.$requestVenueId;
-		}
-
-		if ($requestCategoryId){
-			$where[]= ' c.id = '.$requestCategoryId;
-		}
-
-		// Second is to only select events of the specified day
-		$where[]= ' (\''.$this->_date.'\' BETWEEN (a.dates) AND (IF (a.enddates >= a.dates, a.enddates, a.dates)) OR \''.$this->_date.'\' = a.dates)';
-
-		/*
-		// get excluded categories
-		$excluded_cats = trim($params->get('excluded_cats', ''));
-
-		if ($excluded_cats != '') {
-			$cats_excluded = explode(',', $excluded_cats);
-			$where [] = '  (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
-		}
-		// === END Excluded categories add === //
-		*/
-
-		if ($settings->get('global_show_filter') && $search)
-		{
-			switch($filter) {
-				case 1:
-					$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
-					break;
-				case 2:
-					$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
-					break;
-				case 3:
-					$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
-					break;
-				case 4:
-					$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
-					break;
-				case 5:
-				default:
-					$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
-			}
-		}
-
-		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
-
-		return $where;
-	}
-
-	/**
 	 * Return date
-	 *
-	 * @access public
-	 * @return string
 	 */
 	function getDay()
 	{
@@ -326,33 +84,126 @@ class JEMModelDay extends JModelLegacy
 
 
 	/**
-	 * get event categories
-	 *
-	 * @param int event id
-	 * @return array
+	 * Method to auto-populate the model state.
 	 */
-	function getCategories($id)
+	protected function populateState($ordering = null, $direction = null)
 	{
-		$user = JFactory::getUser();
-		// Support Joomla access levels instead of single group id
-		$levels = $user->getAuthorisedViewLevels();
+		# parent::populateState($ordering, $direction);
 
-		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
+		$app 				= JFactory::getApplication();
+		$jemsettings		= JemHelper::config();
+		$jinput				= JFactory::getApplication()->input;
+		$itemid 			= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
 
-		$query->select('DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
-				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug');
-		$query->from('#__jem_categories AS c');
-		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
-		$query->where('rel.itemid = '.(int)$id);
-		$query->where('c.published = 1');
-		$query->where('c.access IN (' . implode(',', $levels) . ')');
+		$params 			= $app->getParams();
+		$task           	= $jinput->getCmd('task',null);
+		$requestVenueId		= $jinput->getInt('locid',null);
+		$requestCategoryId	= $jinput->getInt('catid',null);
 
-		$db->setQuery($query);
+		$item = JRequest::getInt('Itemid');
+		$locid = $app->getUserState('com_jem.venuecal.locid'.$item);
+		if ($locid) {
+			$this->setstate('filter.filter_locid',$locid);
+		}
 
-		$this->_cats = $db->loadObjectList();
+		$cal_category_catid = $app->getUserState('com_jem.categorycal.catid'.$item);
+		if ($cal_category_catid) {
+			$this->setState('filter.req_catid',$cal_category_catid);
+		}
 
-		return $this->_cats;
+		# limit/start
+		$limitstart = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
+		$this->setState('list.start', $limitstart);
+
+		$limit		= $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
+		$this->setState('list.limit', $limit);
+
+		# Search
+		$search = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+		$this->setState('filter.filter_search', $search);
+
+		# FilterType
+		$filtertype = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_type', 'filter_type', '', 'int');
+		$this->setState('filter.filter_type', $filtertype);
+
+		# filter_order
+		$orderCol = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$this->setState('filter.filter_ordering', $orderCol);
+
+		# filter_direction
+		$listOrder = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+		$this->setState('filter.filter_direction', $listOrder);
+
+		if ($orderCol == 'a.dates') {
+			$orderby = array('a.dates ' . $listOrder, 'a.times ' . $listOrder);
+		} else {
+			$orderby = $orderCol . ' ' . $listOrder;
+		}
+		$this->setState('filter.orderby', $orderby);
+
+		# params
+		$this->setState('params', $params);
+
+		# published
+		$this->setState('filter.published',1);
+
+		# request venue-id
+		if ($requestVenueId) {
+			$this->setState('filter.req_venid',$requestVenueId);
+		}
+
+		# request cat-id
+		if ($requestCategoryId) {
+			$this->setState('filter.req_catid',$requestCategoryId);
+		}
+
+		# access
+		$this->setState('filter.access', true);
+
+		# groupby
+		$this->setState('filter.groupby',array('a.id'));
+	}
+
+	/**
+	 * Method to get a list of events.
+	 */
+	public function getItems()
+	{
+		$params = clone $this->getState('params');
+		$items	= parent::getItems();
+
+		if ($items) {
+			foreach ($items as &$item)
+			{
+
+			}
+		}
+
+		return $items;
+	}
+
+	/**
+	 * @return	JDatabaseQuery
+	 */
+	function getListQuery()
+	{
+		$params  = $this->state->params;
+		$jinput  = JFactory::getApplication()->input;
+		$task    = $jinput->get('task','','cmd');
+
+		$requestVenueId 	= $this->getState('filter.req_venid');
+
+		// Create a new query object.
+		$query = parent::getListQuery();
+
+		if ($requestVenueId){
+			$query->where(' a.locid = '.$requestVenueId);
+		}
+
+		// Second is to only select events of the specified day
+		$query->where('(\''.$this->_date.'\' BETWEEN (a.dates) AND (IF (a.enddates >= a.dates, a.enddates, a.dates)) OR \''.$this->_date.'\' = a.dates)');
+
+		return $query;
 	}
 }
 ?>

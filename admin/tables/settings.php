@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -48,6 +48,14 @@ class JEMTableSettings extends JTable
 			$registry->loadArray($array['globalattribs']);
 			$array['globalattribs'] = (string) $registry;
 		}
+		
+		if (isset($array['css']) && is_array($array['css']))
+		{
+			$registrycss = new JRegistry;
+			$registrycss->loadArray($array['css']);
+			$array['css'] = (string) $registrycss;
+		}
+		
 
 		//don't override without calling base class
 		return parent::bind($array, $ignore);

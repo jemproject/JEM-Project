@@ -1,20 +1,24 @@
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
+ 
+ 
+ div#jem a {
+ }
 
-
-div#jem h1.componentheading{
+div#jem h1.componentheading {
  margin-bottom:6px;
  margin-top: 6px;
 }
 
-div#jem .formelm-buttons{
+div#jem .formelm-buttons {
 	margin-bottom: 0px;
 	float: right;
+	cursor:pointer;
 }
 
 ul.adminformlist,
@@ -24,8 +28,7 @@ ul.adminformlist li {
 	list-style: none;
 }
 
-div#jem_editevent dt
-{
+div#jem_editevent dt {
 	width: none;
 }
 
@@ -64,14 +67,6 @@ div#jem .input {
 	border:1px solid #808080;
 	background-color:#B3BABA;
 	cursor:pointer;
-}
-
-div#jem .event-file-dl-icon img {
-	padding:5px;
-}
-
-div#jc h4 {
-
 }
 
 div#jem fieldset {
@@ -121,6 +116,10 @@ div#jem .button1 {
 	border-radius:5px;
 	-moz-border-radius:5px;
 	-webkit-border-radius:5px
+}
+
+div#jem .button3 {
+	cursor:pointer;
 }
 
 /* Edit-event view, hover */
@@ -212,6 +211,10 @@ div#jem .jemcomponentheading {
 	border-bottom:0px !important;
 }
 
+div#jc h4 {
+
+}
+
 
 /**
  * @section definitionlist
@@ -269,19 +272,16 @@ div#jem .copyright {
  * @section images
  * flyer, locations, maps, ...
  */
-div#jem .notmodal {
+div#jem .flyerimage {
 	float:right !important;
-/*	border:1px solid #000000 !important;*/
+	border:0px solid #000000;
 	width:auto;
 	position:static !important;
 	background:transparent;
-	border:0px solid #000000;
 	box-shadow:none;
 }
 
-div#jem .flyermodal {
-	float:right !important;
-/*	border:1px solid #000000;*/
+div#jem .googlemap {
 	border:0px solid #000000;
 	width:auto;
 	position:static !important;
@@ -389,6 +389,9 @@ div#jem .catimg p {
 	margin:0 0 0.5em 0;
 }
 
+div#jem .cat-children ul li {
+	list-style: none;
+}
 
 /* -------------------
 	TABLE
@@ -402,7 +405,7 @@ div#jem table.eventtable {
 }
 
 div#jem table.eventtable th {
-	background-color:#809EA8 !important;
+	background-color:#809EA8;
 	color:#FFFFFF;
 	font-weight:bold;
 	padding:0.4em;
@@ -415,9 +418,6 @@ div#jem table.eventtable th a {
 	background-color:transparent;
 }
 
-div#jem table.eventtable th a:hover {
-	background-color:transparent;
-}
 
 div#jem table.eventtable th img {
 	margin:0 0 5px 5px;
@@ -430,6 +430,11 @@ div#jem table.eventtable td {
 	padding:0.4em;
 	border:1px solid #000000;
 	vertical-align:top;
+}
+
+div#jem table.eventtable td a{
+	background-color:transparent;
+ /*	color:#095197; */
 }
 
 div#jem table.eventtable tr.sectiontableentry2 td {
@@ -469,7 +474,7 @@ div.jem_editevent ul.adminformlist label {
 	min-width:160px;
 }
 div.jem_editvenue label {
-	min-width:160px;
+	min-width:150px;
 }
 
 div.jem_editevent form fieldset,
@@ -498,12 +503,13 @@ div.jem_editvenue form label {
 	vertical-align:top;
 }
 
+/* Hoffi: Don't style buttons. They should be styled same as file select button. */
 div.jem_editevent form input:hover, /* event */
-div.jem_editevent form button:hover,
+/*div.jem_editevent form button:hover,*/
 div.jem_editevent form select:hover,
 div.jem_editevent form textarea:hover,
 div.jem_editvenue form input:hover, /* venue */
-div.jem_editvenue form button:hover,
+/*div.jem_editvenue form button:hover,*/
 div.jem_editvenue form select:hover,
 div.jem_editvenue form textarea:hover {
 	margin:0 0 0.5em 0;
@@ -515,11 +521,11 @@ div.jem_editvenue form textarea:hover {
 }
 
 div.jem_editevent form input:active, /* event */
-div.jem_editevent form button:active,
+/*div.jem_editevent form button:active,*/
 div.jem_editevent form select:active,
 div.jem_editevent form textarea:active,
 div.jem_editvenue form input:active, /* venue */
-div.jem_editvenue form button:active,
+/*div.jem_editvenue form button:active,*/
 div.jem_editvenue form select:active,
 div.jem_editvenue form textarea:active {
 	margin:0 0 0.5em 0;
@@ -530,11 +536,11 @@ div.jem_editvenue form textarea:active {
 }
 
 div.jem_editevent form input:visited, /* event */
-div.jem_editevent form button:visited,
+/*div.jem_editevent form button:visited,*/
 div.jem_editevent form select:visited,
 div.jem_editevent form textarea:visited,
 div.jem_editvenue form input:visited, /* venue */
-div.jem_editvenue form button:visited,
+/*div.jem_editvenue form button:visited,*/
 div.jem_editvenue form select:visited,
 div.jem_editvenue form textarea:visited {
 	margin:0 0 0.5em 0;
@@ -545,11 +551,11 @@ div.jem_editvenue form textarea:visited {
 }
 
 div.jem_editevent form input:active, /* event */
-div.jem_editevent form button:active,
+/*div.jem_editevent form button:active,*/
 div.jem_editevent form select:active,
 div.jem_editevent form textarea:active,
 div.jem_editvenue form input:active, /* venue */
-div.jem_editvenue form button:active,
+/*div.jem_editvenue form button:active,*/
 div.jem_editvenue form select:active,
 div.jem_editvenue form textarea:active {
 	margin:0 0 0.5em 0;
@@ -560,11 +566,11 @@ div.jem_editvenue form textarea:active {
 }
 
 div.jem_editevent form input, /* event */
-div.jem_editevent form button,
+/*div.jem_editevent form button,*/
 div.jem_editevent form select,
 div.jem_editevent form textarea,
 div.jem_editvenue form input, /* venue */
-div.jem_editvenue form button,
+/*div.jem_editvenue form button,*/
 div.jem_editvenue form select,
 div.jem_editvenue form textarea {
 	margin:0 0 0.5em 0;
@@ -574,8 +580,21 @@ div.jem_editvenue form textarea {
 	/*background-color:#C6CCBE;*/
 }
 
-table#el-attachments input{
+table#el-attachments .title {
+	padding: 4px 0;
+}
+
+table#el-attachments input {
 	width: 100%;
+	margin: 0px 0px 0.5em;
+	padding: 0.2em;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+table#el-attachments input.attach-field {
+	width: auto; /* to put the Clear button right beside */
 	margin: 0px 0px 0.5em;
 	padding: 0.2em;
 	box-sizing: border-box;
@@ -592,6 +611,11 @@ div.jem_editvenue form img {
 	border:0;
 	margin:0;
 	cursor:pointer;
+}
+
+div.jem_editevent #userfile-remove,
+div.jem_editvenue #userfile-remove {
+	float: right;
 }
 
 /** save buttons */
@@ -644,6 +668,7 @@ table#el-attachments th {
 	color:#FFFFFF;
 	line-height:22px;
 	border:1px solid #000000;
+	text-align:center;
 }
 
 /** googlemap **/
@@ -803,6 +828,7 @@ div#jem div.current {
 	clear:both;
 	border:1px solid #808080;
 	padding:10px 10px;
+	background-color:white;
 }
 
 div#jem div.current dd {
@@ -974,6 +1000,22 @@ a.jgrid:hover {
 .jgrid span.protected {
 	background-image:url(../images/admin/icon-16-protected.png);
 }
+
+
+div#jem a.file-name:link,
+div#jem a.file-name:active,
+div#jem a.file-name:visited
+ {
+	text-decoration:none;
+	color: #000000;
+	background-color:transparent;
+}
+
+div#jem .file td{
+	padding:3px;
+}
+
+
 
 @media print {
 

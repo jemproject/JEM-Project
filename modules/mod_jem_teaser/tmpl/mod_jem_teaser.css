@@ -10,9 +10,15 @@
 div#jemmoduleteaser {
 	width: 100%;
 }
-div#jemmoduleteaser .teaser-jem {
 
+
+div#jemmoduleteaser .teaser-jem a,
+div#jemmoduleteaser .venue-title a
+ {
+ background-color: transparent;
+ color:#095197;
 }
+
 #jemmoduleteaser .calendar {
 
 background-repeat: no-repeat;
@@ -40,6 +46,7 @@ color: white;
 text-transform:uppercase;
 font-weight:bold;
 text-shadow: #666 1px 1px 1px;
+height:20px;
 }
 
 #jemmoduleteaser .calendar .dayteaser{

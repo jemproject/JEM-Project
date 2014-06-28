@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -200,25 +200,25 @@ class JEMOutput {
 			}
 
 			// Initialise variables.
-			$user	= JFactory::getUser();
-			$app = JFactory::getApplication();
-			$userId	= $user->get('id');
-			$uri	= JFactory::getURI();
+			$user   = JFactory::getUser();
+			$app    = JFactory::getApplication();
+			$userId = $user->get('id');
+			$uri    = JFactory::getURI();
 
 			$settings = JemHelper::globalattribs();
 			JHtml::_('behavior.tooltip');
-			
+
 			switch ($view)
 			{
 				case 'editevent':
-					if (property_exists($item, 'checked_out') && property_exists($item, 'checked_out_time') && $item->checked_out > 0 && $item->checked_out != $user->get('id')) {
+					if (property_exists($item, 'checked_out') && property_exists($item, 'checked_out_time') && $item->checked_out > 0 && $item->checked_out != $userId) {
 						$checkoutUser = JFactory::getUser($item->checked_out);
 						$button = JHtml::_('image', 'system/checked_out.png', NULL, NULL, true);
 						$date = JHtml::_('date', $item->checked_out_time);
 						$tooltip = JText::_('JLIB_HTML_CHECKED_OUT').' :: '.JText::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name).' <br /> '.$date;
 						return '<span class="hasTip" title="'.htmlspecialchars($tooltip, ENT_COMPAT, 'UTF-8').'">'.$button.'</span>';
 					}
-					
+
 					if ($settings->get('global_show_icons',1)) {
 						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_EVENT'), NULL, true);
 					} else {
@@ -231,14 +231,14 @@ class JEMOutput {
 					break;
 
 				case 'editvenue':
-					if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $user->get('id')) {
+					if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $userId) {
 						$checkoutUser = JFactory::getUser($item->vChecked_out);
 						$button = JHtml::_('image', 'system/checked_out.png', NULL, NULL, true);
 						$date = JHtml::_('date', $item->vChecked_out_time);
 						$tooltip = JText::_('JLIB_HTML_CHECKED_OUT').' :: '.JText::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name).' <br /> '.$date;
 						return '<span class="hasTip" title="'.htmlspecialchars($tooltip, ENT_COMPAT, 'UTF-8').'">'.$button.'</span>';
 					}
-					
+
 					if ($settings->get('global_show_icons',1)) {
 						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_VENUE'), NULL, true);
 					} else {
@@ -251,14 +251,14 @@ class JEMOutput {
 					break;
 
 				case 'venue':
-					if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $user->get('id')) {
+					if (property_exists($item, 'vChecked_out') && property_exists($item, 'vChecked_out_time') && $item->vChecked_out > 0 && $item->vChecked_out != $userId) {
 						$checkoutUser = JFactory::getUser($item->vChecked_out);
 						$button = JHtml::_('image', 'system/checked_out.png', NULL, NULL, true);
 						$date = JHtml::_('date', $item->vChecked_out_time);
 						$tooltip = JText::_('JLIB_HTML_CHECKED_OUT').' :: '.JText::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name).' <br /> '.$date;
 						return '<span class="hasTip" title="'.htmlspecialchars($tooltip, ENT_COMPAT, 'UTF-8').'">'.$button.'</span>';
 					}
-					
+
 					if ($settings->get('global_show_icons',1)) {
 						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_VENUE'), NULL, true);
 					} else {
@@ -500,16 +500,6 @@ class JEMOutput {
 	{
 		$app = JFactory::getApplication();
 
-		// Emailaddress
-		$jinput = JFactory::getApplication()->input;
-		$enableemailaddress = $jinput->get('em','','int');
-
-		if ($enableemailaddress == 1) {
-			$emailaddress = '&em='.$enableemailaddress;
-		} else {
-			$emailaddress = '';
-		}
-
 		JHtml::_('behavior.tooltip');
 
 		$image = JHtml::_('image', 'com_jem/export_excel.png', JText::_('COM_JEM_EXPORT'), NULL, true);
@@ -522,7 +512,7 @@ class JEMOutput {
 			$overlib = JText::_('COM_JEM_EXPORT_DESC');
 			$text = JText::_('COM_JEM_EXPORT');
 
-			$print_link = 'index.php?option=com_jem&view=attendees&task=attendees.export&tmpl=raw&id='.$eventid.$emailaddress;
+			$print_link = 'index.php?option=com_jem&view=attendees&task=attendees.export&tmpl=raw&id='.$eventid;
 			$output	= '<a href="'. JRoute::_($print_link) .'" class="editlinktip hasTip" title="'.$text.'::'.$overlib.'">'.$image.'</a>';
 		}
 
@@ -538,7 +528,7 @@ class JEMOutput {
 	static function backbutton($backlink, $view)
 	{
 		$app 	= JFactory::getApplication();
-		$jinput = JFactory::getApplication()->input;
+		$jinput = $app->input;
 
 		$id 	= $jinput->getInt('id');
 		$fid 	= $jinput->getInt('Itemid');
@@ -547,7 +537,7 @@ class JEMOutput {
 
 		$image = JHtml::_('image', 'com_jem/icon-16-back.png', JText::_('COM_JEM_BACK'), NULL, true);
 
-		if ($app->input->get('print','','int')) {
+		if ($jinput->get('print','','int')) {
 			//button in popup
 			$output = '';
 		} else {
@@ -567,9 +557,9 @@ class JEMOutput {
 	 *
 	 * @param obj $data
 	 */
-	static function mapicon($data,$view=false)
+	static function mapicon($data, $view = false, $params)
 	{
-		$settings = JemHelper::globalattribs();
+		$global = JemHelper::globalattribs();
 
 		//stop if disabled
 		if (!$data->map) {
@@ -579,11 +569,18 @@ class JEMOutput {
 		if ($view == 'event') {
 			$tld		= 'event_tld';
 			$lg			= 'event_lg';
-			$mapserv	= 'event_show_mapserv';
+			$mapserv	= $params->get('event_show_mapserv');
+		} else if ($view == 'venues') {
+			$tld		= 'global_tld';
+			$lg			= 'global_lg';
+			$mapserv	= $params->get('global_show_mapserv');
+			if ($mapserv == 3) {
+				$mapserv = 0;
+			}
 		} else {
 			$tld		= 'global_tld';
 			$lg			= 'global_lg';
-			$mapserv	= 'global_show_mapserv';
+			$mapserv	= $params->get('global_show_mapserv');
 		}
 
 		//Link to map
@@ -602,29 +599,56 @@ class JEMOutput {
 			$data->longitude = null;
 		}
 
-		$url = 'http://maps.google.'.$settings->get($tld).'/maps?hl='.$settings->get($lg).'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
+		$url = 'http://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'com').'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
 
-		//google map link or include
-		switch ($settings->get($mapserv))
+		// google map link or include
+		switch ($mapserv)
 		{
 			case 1:
 				// link
 				if($data->latitude && $data->longitude) {
-					$url = 'http://maps.google.'.$settings->get($tld).'/maps?hl='.$settings->get($lg).'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
+					$url = 'http://maps.google.'.$params->get($tld).'/maps?hl='.$params->get($lg).'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
 				}
 
 				$message = JText::_('COM_JEM_MAP').':';
 				$attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
-				$output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal" title="'.JText::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'</a></dd>';
+				$output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal mapicon" title="'.JText::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'</a></dd>';
 				break;
 
 			case 2:
-				// include
+				// include iframe
 				if($data->latitude && $data->longitude) {
 					$url = 'https://maps.google.com/maps?q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
 				}
 
 				$output = '<div style="border: 1px solid #000;width:500px;"><iframe width="500" height="250" src="'.$url.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
+				break;
+
+			case 3:
+				// include - Google API3
+				# https://developers.google.com/maps/documentation/javascript/tutorial
+				$api		= trim($params->get('global_googleapi'));
+				$clientid	= trim($params->get('global_googleclientid'));
+
+				$document 	= JFactory::getDocument();
+
+				# do we have a client-ID?
+				if ($clientid) {
+					$document->addScript('http://maps.googleapis.com/maps/api/js?client='.$clientid.'&sensor=false&v=3.15');
+				} else {
+					# do we have an api-key?
+					if ($api) {
+						$document->addScript('https://maps.googleapis.com/maps/api/js?key='.$api.'&sensor=false');
+					} else {
+						$document->addScript('https://maps.googleapis.com/maps/api/js?sensor=false');
+					}
+				}
+
+				JemHelper::loadCss('googlemap');
+				JHtml::_('script', 'com_jem/infobox.js', false, true);
+				JHtml::_('script', 'com_jem/googlemap.js', false, true);
+
+				$output = '<div id="map-canvas" class="map_canvas"/></div>';
 				break;
 		}
 
@@ -664,8 +688,10 @@ class JEMOutput {
 	 * @param array $image
 	 * @param string $type
 	 */
-	static function flyer($data, $image, $type)
+	static function flyer($data, $image, $type, $id = null)
 	{
+		$id_attr = $id ? 'id="'.$id.'"' : '';
+
 		$settings = JemHelper::config();
 
 		switch($type) {
@@ -698,20 +724,22 @@ class JEMOutput {
 		// Does a thumbnail exist?
 		if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
 			if ($settings->lightbox == 0) {
-				$url = '#';
-				$attributes = 'class="notmodal" onclick="window.open(\''.JURI::base().'/'.$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
+				//$url = '#';  // Hoffi, 2014-06-07: '#' doesn't work, it opend "Add event" page - don't use <a, onclick works fine with <img :-)
+				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.JURI::base().'/'.$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
+
+				$icon = '<img '.$attributes.' src="'.JURI::base().'/'.$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$output = '<div class="flyerimage">'.$icon.'</div>';
 			} else {
 				JHtml::_('behavior.modal', 'a.flyermodal');
 				$url = JURI::base().'/'.$image['original'];
-				$attributes = 'class="flyermodal" title="'.$info.'"';
+				$attributes = $id_attr.' class="flyermodal flyerimage" title="'.$info.'"';
+
+				$icon = '<img src="'.JURI::base().'/'.$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
 			}
-
-			$icon = '<img src="'.JURI::base().'/'.$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
-			$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
-
-			// Otherwise take the values for the original image specified in the settings
+		// Otherwise take the values for the original image specified in the settings
 		} else {
-			$output = '<img class="notmodal" src="'.JURI::base().'/'.$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
+			$output = '<img '.$id_attr.' class="notmodal" src="'.JURI::base().'/'.$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
 		}
 
 		return $output;
@@ -945,14 +973,24 @@ class JEMOutput {
 	 * Get a category names list
 	 * @param unknown $categories Category List
 	 * @param boolean $doLink Link the categories to the respective Category View
+	 * @param boolean $backend Used for backend (true) or frontend (false, default)
 	 * @return string|multitype:
 	 */
-	static function getCategoryList($categories, $doLink) {
+	static function getCategoryList($categories, $doLink, $backend = false) {
 		$output = array_map(
-			function ($category) use ($doLink) {
+			function ($category) use ($doLink, $backend) {
 				if ($doLink) {
-					$value = '<a href="'.JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)).'">'.
-						$category->catname.'</a>';
+					if ($backend) {
+						$path = $category->path;
+						$path = str_replace('/', ' &#187; ', $path);
+						$value  = '<span class="editlinktip hasTip" title="'.JText::_( 'COM_JEM_EDIT_CATEGORY' ).'::'.$path.'">';
+						$value .= '<a href="index.php?option=com_jem&amp;task=category.edit&amp;id='. $category->id.'">'.
+						              $category->catname.'</a>';
+						$value .= '</span>';
+					} else {
+						$value  = '<a href="'.JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)).'">'.
+						              $category->catname.'</a>';
+					}
 				} else {
 					$value = $category->catname;
 				}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -30,6 +30,7 @@ class JEMViewMain extends JViewLegacy {
 		$venue 		= $this->get('VenuesData');
 		$category 	= $this->get('CategoriesData');
 
+
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
@@ -38,6 +39,7 @@ class JEMViewMain extends JViewLegacy {
 		$this->venue		= $venue;
 		$this->category		= $category;
 		$this->user			= $user;
+
 
 		// add toolbar
 		$this->addToolbar();

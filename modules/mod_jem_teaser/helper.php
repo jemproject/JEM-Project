@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -9,10 +9,12 @@
  */
 defined('_JEXEC') or die;
 
+JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
+
 /**
- * JEM Moduleteaser helper
+ * Module-Teaser
  */
-class modJEMteaserHelper
+abstract class modJEMteaserHelper
 {
 	/**
 	 * Method to get the events
@@ -22,101 +24,108 @@ class modJEMteaserHelper
 	 */
 	public static function getList(&$params)
 	{
-		$db = JFactory::getDBO();
-		$user = JFactory::getUser();
-		// Support Joomla access levels instead of single group id
+		mb_internal_encoding('UTF-8');
+
+		$db		= JFactory::getDBO();
+		$user	= JFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
-		$settings 	= JEMHelper::globalattribs();
 
-		//$access = !JComponentHelper::getParams('com_jem')->get('show_noauth');
-		$access = !$settings->get('show_noauth','0');
-		$authorised = JAccess::getAuthorisedViewLevels(JFactory::getUser()->get('id'));
+		# Retrieve Eventslist model for the data
+		$model = JModelLegacy::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
 
-		//all upcoming events//all upcoming events
+		# Set params for the model
+		# has to go before the getItems function
+		$model->setState('params', $params);
+		$model->setState('filter.access',true);
+
+		# filter published
+		#  0: unpublished
+		#  1: published
+		#  2: archived
+		# -2: trashed
+
+		# all upcoming events//all upcoming events
 		if ($params->get('type') == 1) {
-			$where = " WHERE (TIMEDIFF(CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00')),NOW()) > 1";
-			$where .= " OR (a.enddates AND TIMEDIFF(CONCAT(a.enddates,' ',IFNULL(a.times,'00:00:00')),NOW())) > 1) ";
-			$where .= ' AND a.published = 1';
-			$order = " ORDER BY a.dates, a.times";
+			$model->setState('filter.published',1);
+			$model->setState('filter.orderby',array('a.dates ASC','a.times ASC'));
+
+			$cal_from = "(TIMEDIFF(CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00')),NOW()) > 1 OR (a.enddates AND TIMEDIFF(CONCAT(a.enddates,' ',IFNULL(a.times,'00:00:00')),NOW())) > 1) ";
 		}
 
-		//archived events only
+		# archived events only
 		elseif ($params->get('type') == 2) {
-			$where = ' WHERE a.published = 2';
-			$order = ' ORDER BY a.dates DESC, a.times DESC';
+			$model->setState('filter.published',2);
+			$model->setState('filter.orderby',array('a.dates DESC','a.times DESC'));
+			$cal_from = "";
 		}
 
-		//currently running events only
+		# currently running events only
 		elseif ($params->get('type') == 3) {
-			$where = ' WHERE a.published = 1';
-			$where .= ' AND (a.dates = CURDATE()';
-			$where .= ' OR (a.enddates >= CURDATE() AND a.dates <= CURDATE()))';
-			$order = ' ORDER BY a.dates, a.times';
+			$model->setState('filter.published',1);
+			$model->setState('filter.orderby',array('a.dates ASC','a.times ASC'));
+			$cal_from = " (a.dates = CURDATE() OR (a.enddates >= CURDATE() AND a.dates <= CURDATE()))";
 		}
+		
+		# featured
+		elseif ($params->get('type') == 4) {
+			$model->setState('filter.featured',1);
+			$model->setState('filter.orderby',array('a.dates ASC','a.times ASC'));
+			$cal_from = "(TIMEDIFF(CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00')),NOW()) > 1 OR (a.enddates AND TIMEDIFF(CONCAT(a.enddates,' ',IFNULL(a.times,'00:00:00')),NOW())) > 1) ";
+		}
+		
+		$model->setState('filter.calendar_from',$cal_from);
+		$model->setState('filter.groupby','a.id');
 
-		//clean parameter data
+		# clean parameter data
 		$catid = trim($params->get('catid'));
 		$venid = trim($params->get('venid'));
-		$state = JString::strtolower(trim($params->get('stateloc')));
-
-		//Build category selection query statement
+		$eventid = trim($params->get('eventid'));
+		
+		# filter category's
 		if ($catid) {
 			$ids = explode(',', $catid);
-			JArrayHelper::toInteger($ids);
-			$categories = ' AND (c.id=' . implode(' OR c.id=', $ids) . ')';
+			$ids = JArrayHelper::toInteger($ids);
+			$model->setState('filter.category_id',$ids);
+			$model->setState('filter.category_id.include',true);
 		}
 
-		//Build venue selection query statement
+		# filter venue's
 		if ($venid) {
 			$ids = explode(',', $venid);
-			JArrayHelper::toInteger($ids);
-			$venues = ' AND (l.id=' . implode(' OR l.id=', $ids) . ')';
+			$ids = JArrayHelper::toInteger($ids);
+			$model->setState('filter.venue_id',$ids);
+			$model->setState('filter.venue_id.include',true);
+		}
+		
+		# filter event id's
+		if ($eventid) {
+			$ids = explode(',', $eventid);			
+			$model->setState('filter.event_id',$ids);
+			$model->setState('filter.event_id.include',true);
 		}
 
-		//Build state selection query statement
-		if ($state) {
-			$rawstate = explode(',', $state);
+		# count
+		$count = $params->get('count', '2');
 
-			foreach ($rawstate as $val) {
-				if ($val) {
-					$states[] = '"'.trim($db->escape($val)).'"';
-				}
-			}
-
-			JArrayHelper::toString($states);
-			$stat = ' AND (LOWER(l.state)='.implode(' OR LOWER(l.state)=',$states).')';
+		if ($params->get('use_modal', 0)) {
+		JHtml::_('behavior.modal', 'a.flyermodal');
 		}
 
-		//perform select query
-		$query = 'SELECT a.title, a.access, a.dates, a.enddates, a.times, a.endtimes, a.fulltext, a.introtext, a.datimage, l.venue, l.state, l.locimage, l.city, l.locdescription, c.catname,'
-				.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
-				.' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug,'
-				.' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as categoryslug'
-				.' FROM #__jem_events AS a'
-				.' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-				.' INNER JOIN #__jem_categories AS c ON c.id = rel.catid'
-				.' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-				. $where
-				.' AND c.access IN (' . implode(',', $levels) . ')'
-				.' AND c.published = 1'
-				.($catid ? $categories : '')
-				.($venid ? $venues : '')
-				.($state ? $stat : '')
-				. $order
-				.' LIMIT '.(int)$params->get('count', '2')
-				;
+		$model->setState('list.limit',$count);
+		
+		
+		# Retrieve the available Events
+		$events = $model->getItems();
 
-		$db->setQuery($query);
-		$rows = $db->loadObjectList();
 
-		//Loop through the result rows and prepare data
+		# Loop through the result rows and prepare data
 		$i		= 0;
 		$lists	= array();
-		
-		mb_internal_encoding('UTF-8');
-		foreach ((array) $rows as $row)
+
+
+		foreach ($events as $row)
 		{
-			//create thumbnails if needed and receive imagedata
+			# create thumbnails if needed and receive imagedata
 			if ($row->datimage) {
 				$dimage = JEMImage::flyercreator($row->datimage, 'event');
 			} else {
@@ -128,7 +137,7 @@ class modJEMteaserHelper
 				$limage = null;
 			}
 
-			//cut titel
+			# cut titel
 			$length = mb_strlen($row->title);
 
 			if ($length > $params->get('cuttitle', '25')) {
@@ -136,11 +145,19 @@ class modJEMteaserHelper
 				$row->title = $row->title.'...';
 			}
 
+			#################
+			## DEFINE LIST ##
+			#################
+
+			$settings	= JEMHelper::globalattribs();
+			$access		= !$settings->get('show_noauth','0');
+			$authorised = JAccess::getAuthorisedViewLevels(JFactory::getUser()->get('id'));
+
 			$lists[$i] = new stdClass();
 
 			if ($access || in_array($row->access, $authorised))
 			{
-				// We know that user has the privilege to view the article
+				# We know that user has the privilege to view the event
 				$lists[$i]->link = JRoute::_(JEMHelperRoute::getEventRoute($row->slug));
 				$lists[$i]->linkText = JText::_('MOD_JEM_TEASER_READMORE');
 			}
@@ -151,14 +168,13 @@ class modJEMteaserHelper
 
 			$lists[$i]->title			= htmlspecialchars($row->title, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->venue			= htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->catname			= htmlspecialchars($row->catname, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->catname			= implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
 			$lists[$i]->state			= htmlspecialchars($row->state, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->city			= htmlspecialchars( $row->city, ENT_COMPAT, 'UTF-8' );
 			$lists[$i]->eventlink		= $params->get('linkevent', 1) ? JRoute::_(JEMHelperRoute::getEventRoute($row->slug)) : '';
 			$lists[$i]->venuelink		= $params->get('linkvenue', 1) ? JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : '';
-			$lists[$i]->categorylink	= $params->get('linkcategory', 1) ? JRoute::_(JEMHelperRoute::getCategoryRoute($row->categoryslug)) : '';
 
-
+			# time/date
 			$lists[$i]->date			= modJEMteaserHelper::_format_date($row, $params);
 			$lists[$i]->day 			= modJEMteaserHelper::_format_day($row, $params);
 			$lists[$i]->dayname			= modJEMteaserHelper::_format_dayname($row);
@@ -215,6 +231,8 @@ class modJEMteaserHelper
 
 			$i++;
 		}
+
+
 		return $lists;
 	}
 

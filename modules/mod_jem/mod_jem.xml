@@ -34,11 +34,6 @@
 					<option value="0">MOD_JEM_UPCOMING_EVENTS</option>
 					<option value="1">MOD_JEM_ARCHIVED_EVENTS</option>
 				</field>
-				<field name="event_after" type="text"
-					default=""
-					label="MOD_JEM_OCCURING_IN"
-					description="MOD_JEM_OCCURING_IN_DESC"
-				/>
 				<field name="showtitloc" type="list"
 					default="1"
 					label="MOD_JEM_TITLE_OR_VENUE"

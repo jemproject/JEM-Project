@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -8,84 +8,122 @@
  */
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.model');
+require_once dirname(__FILE__) . '/eventslist.php';
 
 /**
  * Venue-Model
 */
-class JEMModelVenue extends JModelLegacy
+class JemModelVenue extends JemModelEventslist
 {
-	/**
-	 * Events data array
-	 *
-	 * @var array
-	 */
-	var $_data = null;
-
-	/**
-	 * venue data array
-	 *
-	 * @var array
-	 */
-	var $_venue = null;
-
-	/**
-	 * Events total
-	 *
-	 * @var integer
-	 */
-	var $_total = null;
-
-	/**
-	 * Pagination object
-	 *
-	 * @var object
-	 */
-	var $_pagination = null;
-
-	/**
-	 * Constructor
-	 *
-	 */
 	public function __construct()
 	{
-		parent::__construct();
-
 		$app 			= JFactory::getApplication();
-		$jemsettings	= JemHelper::config();
-		$jinput			= JFactory::getApplication()->input;
+		$jinput			= $app->input;
 		$params			= $app->getParams();
-		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
 
-		$this->setdate(time());
-
+		# determing the id to load
 		if ($jinput->get('id',null,'int')) {
 			$id = $jinput->get('id',null,'int');
 		} else {
 			$id = $params->get('id');
 		}
-
 		$this->setId((int)$id);
 
-		//get the number of events from database
-		$limit		= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
-
-		$this->setState('limit', $limit);
-		$this->setState('limitstart', $limitstart);
+		parent::__construct();
 	}
 
-
-	function setdate($date)
+	/**
+	 * Method to auto-populate the model state.
+	 */
+	protected function populateState($ordering = null, $direction = null)
 	{
-		$this->_date = $date;
+		// parent::populateState($ordering, $direction);
+
+		$app 			= JFactory::getApplication();
+		$jemsettings	= JemHelper::config();
+		$jinput			= JFactory::getApplication()->input;
+		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		$params 		= $app->getParams();
+		$task           = $jinput->get('task','','cmd');
+
+		// List state information
+		$limitstart = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
+		$this->setState('list.start', $limitstart);
+
+		$limit		= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
+		$this->setState('list.limit', $limit);
+
+		# Search
+		$search = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+		$this->setState('filter.filter_search', $search);
+
+		# FilterType
+		$filtertype = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_type', 'filter_type', '', 'int');
+		$this->setState('filter.filter_type', $filtertype);
+
+		# filter_order
+		$orderCol = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$this->setState('filter.filter_ordering', $orderCol);
+
+		# filter_direction
+		$listOrder = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+		$this->setState('filter.filter_direction', $listOrder);
+
+		if ($orderCol == 'a.dates') {
+			$orderby = array('a.dates ' . $listOrder, 'a.times ' . $listOrder);
+		} else {
+			$orderby = $orderCol . ' ' . $listOrder;
+		}
+		$this->setState('filter.orderby', $orderby);
+
+		# params
+		$this->setState('params', $params);
+
+		if ($task == 'archive') {
+			$this->setState('filter.published',2);
+		} else {
+			$this->setState('filter.published',1);
+		}
+
+		$this->setState('filter.access', true);
+		$this->setState('filter.groupby',array('a.id'));
 	}
+
+
+	/**
+	 * Method to get a list of events.
+	 */
+	public function getItems()
+	{
+		$items	= parent::getItems();
+		/* no additional things to do yet - place holder */
+		return $items;
+	}
+
+
+	/**
+	 * @return	JDatabaseQuery
+	 */
+	function getListQuery()
+	{
+		$params  = $this->state->params;
+		$jinput  = JFactory::getApplication()->input;
+		$task    = $jinput->get('task','','cmd');
+
+		// Create a new query object.
+		$query = parent::getListQuery();
+
+		$query->where('a.locid = '.$this->_id);
+
+		// here we can extend the query of the Eventslist model
+		return $query;
+	}
+
 
 	/**
 	 * Method to set the venue id
 	 *
-	 * @access	public
-	 * @param	int	venue ID number
+	 * The venue-id can be set by a menu-parameter
 	 */
 	function setId($id)
 	{
@@ -113,209 +151,7 @@ class JEMModelVenue extends JModelLegacy
 	}
 
 	/**
-	 * Method to get the events
-	 *
-	 * @access public
-	 * @return array
-	 */
-	function &getData()
-	{
-		$jinput = JFactory::getApplication()->input;
-		$layout = $jinput->get('layout', null, 'word');
-
-		$pop = JRequest::getBool('pop');
-
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_data)) {
-			$query = $this->_buildQuery();
-
-			if ($pop) {
-				$this->_data = $this->_getList($query);
-			} else {
-				$pagination = $this->getPagination();
-				$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
-			}
-		}
-
-		$count = count($this->_data);
-		for($i = 0; $i < $count; $i++) {
-			$item = $this->_data[$i];
-			$item->categories = $this->getCategories($item->id);
-
-			//remove events without categories (users have no access to them)
-			if (empty($item->categories)) {
-				unset($this->_data[$i]);
-			}
-		}
-
-		return $this->_data;
-	}
-
-	/**
-	 * Total nr of events
-	 *
-	 * @access public
-	 * @return integer
-	 */
-	function getTotal()
-	{
-		// Lets load the total nr if it doesn't already exist
-		if (empty($this->_total)) {
-			$query = $this->_buildQuery();
-			$this->_total = $this->_getListCount($query);
-		}
-
-		return $this->_total;
-	}
-
-	/**
-	 * Method to get a pagination object for the events
-	 *
-	 * @access public
-	 * @return integer
-	 */
-	function getPagination()
-	{
-		// Lets load the content if it doesn't already exist
-		if (empty($this->_pagination)) {
-			jimport('joomla.html.pagination');
-			$this->_pagination = new JPagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
-		}
-
-		return $this->_pagination;
-	}
-
-	/**
-	 * Build the query
-	 *
-	 * @access private
-	 * @return string
-	 */
-	protected function _buildQuery()
-	{
-		// Get the WHERE and ORDER BY clauses for the query
-		$where		= $this->_buildWhere();
-		$orderby	= $this->_buildOrderBy();
-
-		//Get Events from Database
-		$query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.created, a.fulltext, a.featured, '
-				. ' a.recurrence_type, a.recurrence_first_id,'
-				. ' l.venue, l.published AS published, l.city, l.state, l.url, l.street, l.custom1, l.custom2, l.custom3, l.custom4, l.custom5, l.custom6, l.custom7, l.custom8, l.custom9, l.custom10, l.checked_out, l.checked_out_time, c.catname, ct.name AS countryname, '
-				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
-				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-				. ' FROM #__jem_events AS a'
-				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
-				. ' LEFT JOIN #__jem_countries AS ct ON ct.iso2 = l.country '
-				. $where
-				. ' GROUP BY a.id'
-				. $orderby
-				;
-
-		return $query;
-	}
-
-	/**
-	 * Build the order clause
-	 *
-	 * @access private
-	 * @return string
-	 */
-	protected function _buildOrderBy()
-	{
-		$app 			= JFactory::getApplication();
-		$jinput 		= JFactory::getApplication()->input;
-		$task 			= $jinput->get('task','','cmd');
-		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
-
-		$filter_order		= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
-		$filter_order_DirDefault = 'ASC';
-		// Reverse default order for dates in archive mode
-		if($task == 'archive' && $filter_order == 'a.dates') {
-			$filter_order_DirDefault = 'DESC';
-		}
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
-
-		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
-
-		if ($filter_order == 'a.dates') {
-			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir;
-		} else {
-			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
-		}
-
-		return $orderby;
-	}
-
-	/**
-	 * Method to build the WHERE clause
-	 *
-	 * @access private
-	 * @return array
-	 */
-	protected function _buildWhere()
-	{
-		$app 			= JFactory::getApplication();
-		$task 			= JRequest::getWord('task');
-		$settings	 	= JEMHelper::globalattribs();
-		$user 			= JFactory::getUser();
-		$levels 		= $user->getAuthorisedViewLevels();
-		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
-
-		$filter 		= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter', 'filter', '', 'int');
-		$search 		= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
-
-		$where = array();
-
-		// First thing we need to do is to select only needed events
-		if ($task == 'archive') {
-			$where[] = ' a.published = 2 && a.locid = '.$this->_id;
-		} else {
-			$where[] = ' a.published = 1 && a.locid = '.$this->_id;
-		}
-		$where[] = ' c.published = 1';
-		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
-
-		/* get excluded categories
-		 $excluded_cats = trim($params->get('excluded_cats', ''));
-
-		if ($excluded_cats != '') {
-		$cats_excluded = explode(',', $excluded_cats);
-		$where [] = '  (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
-		}
-		// === END Excluded categories add === //
-		*/
-
-		if ($settings->get('global_show_filter') && $search) {
-			switch($filter) {
-				case 1:
-					$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
-					break;
-				case 2:
-					$where[] = ' LOWER(l.venue) LIKE \'%'.$search.'%\' ';
-					break;
-				case 3:
-					$where[] = ' LOWER(l.city) LIKE \'%'.$search.'%\' ';
-					break;
-				case 4:
-					$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
-					break;
-				case 5:
-				default:
-					$where[] = ' LOWER(l.state) LIKE \'%'.$search.'%\' ';
-			}
-		}
-
-		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
-
-		return $where;
-	}
-
-	/**
-	 * Method to get the Venue
+	 * Method to get a specific Venue
 	 *
 	 * @access public
 	 * @return array
@@ -326,6 +162,7 @@ class JEMModelVenue extends JModelLegacy
 
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
+		$_venue = array();
 
 		$query->select('id, venue, published, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
 				' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, '.
@@ -335,44 +172,15 @@ class JEMModelVenue extends JModelLegacy
 		$query->where('id = '.$this->_id);
 
 		$db->setQuery($query);
-
 		$_venue = $db->loadObject();
-		$_venue->attachments = JEMAttachment::getAttachments('venue'.$_venue->id);
-		return $_venue;
-	}
 
-
-	function getCategories($id)
-	{
-		$user = JFactory::getUser();
-		// Support Joomla access levels instead of single group id
-		$levels = $user->getAuthorisedViewLevels();
-
-		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
-
-		$query->select('DISTINCT c.id, c.catname, c.access, c.color, c.checked_out AS cchecked_out,'
-				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug');
-		$query->from('#__jem_categories AS c');
-		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
-		$query->where('rel.itemid = ' . (int) $id);
-		$query->where('c.published = 1');
-		$query->where('c.access IN (' . implode(',', $levels) . ')');
-		$query->group('c.id');
-
-		$db->setQuery($query);
-
-		$this->_cats = $db->loadObjectList();
-
-		$count = count($this->_cats);
-
-		for($i = 0; $i < $count; $i++) {
-			$item = $this->_cats[$i];
-			$cats = new JEMCategories($item->id);
-			$item->parentcats = $cats->getParentlist();
+		if (empty($_venue)) {
+			return JError::raiseError(404, JText::_('COM_JEM_VENUE_NOTFOUND'));
 		}
 
-		return $this->_cats;
+		$_venue->attachments = JEMAttachment::getAttachments('venue'.$_venue->id);
+
+		return $_venue;
 	}
 }
 ?>

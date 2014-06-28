@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -96,7 +96,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			foreach ($this->categories as $category) :
 			?>
 				<a
-				href="<?php echo JRoute::_(JemHelperRoute::getCategoryRoute($category->slug)); ?>">
+				href="<?php echo JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)); ?>">
 					<?php echo $this->escape($category->catname); ?>
 				</a>
 			<?php
@@ -306,11 +306,29 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		?>
 
 				<?php if ($params->get('event_show_mapserv')== 1) : ?>
-					<?php echo JemOutput::mapicon($this->item,'event'); ?>
+					<?php echo JemOutput::mapicon($this->item,'event',$params); ?>
 				<?php endif; ?>
 			</dl>
 			<?php if ($params->get('event_show_mapserv')== 2) : ?>
-				<?php echo JemOutput::mapicon($this->item,'event'); ?>
+				<?php echo JemOutput::mapicon($this->item,'event',$params); ?>
+			<?php endif; ?>
+
+			<?php if ($params->get('event_show_mapserv')== 3) : ?>
+
+			<input type="hidden" id="latitude" value="<?php echo $this->item->latitude;?>">
+			<input type="hidden" id="longitude" value="<?php echo $this->item->longitude;?>">
+
+			<input type="hidden" id="venue" value="<?php echo $this->item->venue;?>">
+			<input type="hidden" id="street" value="<?php echo $this->item->street;?>">
+			<input type="hidden" id="city" value="<?php echo $this->item->city;?>">
+			<input type="hidden" id="state" value="<?php echo $this->item->state;?>">
+			<input type="hidden" id="postalCode" value="<?php echo $this->item->postalCode;?>">
+
+
+				<?php echo JemOutput::mapicon($this->item,'event',$params); ?>
+
+
+
 			<?php endif; ?>
 		<?php endif; ?>
 
@@ -323,6 +341,13 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 				<?php echo $this->item->locdescription; ?>
 			</div>
 		<?php endif; ?>
+
+
+		<?php $this->attachments = $this->item->vattachments; ?>
+	<?php echo $this->loadTemplate('attachments'); ?>
+
+
+
 		</div>
 	<?php endif; ?>
 
