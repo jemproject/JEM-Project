@@ -231,6 +231,10 @@ abstract class JEMHelperRoute
 				foreach ($items as $item)
 				{
 					if (isset($item->query) && isset($item->query['view'])) {
+						if (isset($item->query['layout']) && ($item->query['layout'] == 'calendar')) {
+							continue; // skip calendars
+						}
+
 						$view = $item->query['view'];
 
 						if (!isset(self::$lookup[$view])) {
