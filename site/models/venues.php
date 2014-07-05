@@ -198,7 +198,9 @@ class JemModelVenues extends JemModelEventslist
 		#####################
 
 		$cats = $this->getCategories('all');
-		$query->where('c.id  IN (' . implode(',', $cats) . ')');
+		if (!empty($cats)) {
+			$query->where('c.id  IN (' . implode(',', $cats) . ')');
+		}
 
 
 		$db->setQuery($query);
@@ -277,10 +279,10 @@ class JemModelVenues extends JemModelEventslist
 		$query3	= $db->getQuery(true);
 		$query3 = 'SELECT gr.id'
 				. ' FROM #__jem_groups AS gr'
-						. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
-								. ' WHERE g.member = ' . (int) $user->get('id')
-								//. ' AND ' .$db->quoteName('gr.addevent') . ' = 1 '
-		. ' AND g.member NOT LIKE 0';
+				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
+				. ' WHERE g.member = ' . (int) $user->get('id')
+			//	. ' AND ' .$db->quoteName('gr.addevent') . ' = 1 '
+				. ' AND g.member NOT LIKE 0';
 		$db->setQuery($query3);
 		$groupnumber = $db->loadColumn();
 
@@ -304,24 +306,24 @@ class JemModelVenues extends JemModelEventslist
 		$top_cat = $this->getState('filter.category_top');
 
 		if ($top_cat) {
-		$query->where($top_cat);
+			$query->where($top_cat);
 		}
 
 		# Filter by a single or group of categories.
 		$categoryId = $this->getState('filter.category_id');
 
-				if (is_numeric($categoryId)) {
-				$type = $this->getState('filter.category_id.include', true) ? '= ' : '<> ';
-						$query->where('c.id '.$type.(int) $categoryId);
-				}
-				elseif (is_array($categoryId)) {
-				JArrayHelper::toInteger($categoryId);
-				$categoryId = implode(',', $categoryId);
-				$type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
-				$query->where('c.id '.$type.' ('.$categoryId.')');
-				}
+		if (is_numeric($categoryId)) {
+			$type = $this->getState('filter.category_id.include', true) ? '= ' : '<> ';
+			$query->where('c.id '.$type.(int) $categoryId);
+		}
+		elseif (is_array($categoryId) && count($categoryId)) {
+			JArrayHelper::toInteger($categoryId);
+			$categoryId = implode(',', $categoryId);
+			$type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
+			$query->where('c.id '.$type.' ('.$categoryId.')');
+		}
 
-				# filter set by day-view
+		# filter set by day-view
 		$requestCategoryId = $this->getState('filter.req_catid');
 
 		if ($requestCategoryId) {
@@ -337,32 +339,30 @@ class JemModelVenues extends JemModelEventslist
 		$search = $this->getState('filter.filter_search');
 
 		if (!empty($search)) {
-		if (stripos($search, 'id:') === 0) {
-		$query->where('c.id = '.(int) substr($search, 3));
-		} else {
-		$search = $db->Quote('%'.$db->escape($search, true).'%');
+			if (stripos($search, 'id:') === 0) {
+				$query->where('c.id = '.(int) substr($search, 3));
+			} else {
+				$search = $db->Quote('%'.$db->escape($search, true).'%');
 
-		if($search && $settings->get('global_show_filter')) {
+				if ($search && $settings->get('global_show_filter')) {
 					if ($filter == 4) {
 						$query->where('c.catname LIKE '.$search);
-		}
-		}
-		}
+					}
+				}
+			}
 		}
 
 		$db->setQuery($query);
 
-		if ($id == 'all'){
-		$cats = $db->loadColumn(0);
+		if ($id == 'all') {
+			$cats = $db->loadColumn(0);
 			$cats = array_unique($cats);
-			return ($cats);
 		} else {
 			$cats = $db->loadObjectList();
-			}
-			return $cats;
-			}
+		}
 
-
+		return $cats;
+	}
 
 }
 ?>

@@ -186,7 +186,9 @@ class JEMCategories
 		#####################
 
 		//$cats = $this->getCategories('all');
-		//$query->where('c.id  IN (' . implode(',', $cats) . ')');
+		//if (!empty($cats)) {
+		//	$query->where('c.id  IN (' . implode(',', $cats) . ')');
+		//}
 
 		$query->order('c.lft');
 

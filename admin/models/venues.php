@@ -197,10 +197,15 @@ class JemModelVenues extends JModelList
 	function remove($cid)
 	{
 		$cids	= implode(',', $cid);
-		
+
+		if (strlen($cids) == 0) {
+			JError::raiseError(500, $db->stderr());
+			return false;
+		}
+
 		$db		= $this->getDbo();
 		$query	= $db->getQuery(true);
-		
+
 		$query->select(array('v.id','v.venue'));
 		$query->select(array('COUNT(e.locid) as AssignedEvents'));
 		$query->from($db->quoteName('#__jem_venues').' AS v');
@@ -208,13 +213,13 @@ class JemModelVenues extends JModelList
 		$query->where(array('v.id IN ('.$cids.')'));
 		$query->group('v.id');
 		$db->setQuery($query);
-		
+
 		if (!($rows = $db->loadObjectList())) {
 			JError::raiseError(500, $db->stderr());
 			return false;
 		}
-		
-		
+
+
 		$err = array();
 		$cid = array();
 		foreach ($rows as $row) {
@@ -231,11 +236,11 @@ class JemModelVenues extends JModelList
 			$cids	= implode(',', $cid);
 			$db 	= JFactory::getDbo();
 			$query	= $db->getQuery(true);
-			
+
 			$query->delete($db->quoteName('#__jem_venues'));
 			$query->where(array('id IN ('.$cids.')'));
 			$db->setQuery($query);
-			
+
 			if(!$db->query()) {
 				$this->setError($db->getErrorMsg());
 				return false;

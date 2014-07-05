@@ -88,7 +88,7 @@ class JFormFieldCategoryEdit extends JFormFieldList
 		{
 			$query->where('a.published = ' . (int) $published);
 		}
-		elseif (is_array($published))
+		elseif (is_array($published) && count($published))
 		{
 			JArrayHelper::toInteger($published);
 			$query->where('a.published IN (' . implode(',', $published) . ')');

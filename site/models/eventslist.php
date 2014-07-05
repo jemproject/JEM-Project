@@ -274,7 +274,7 @@ class JemModelEventslist extends JModelList
 			$type = $this->getState('filter.event_id.include', true) ? '= ' : '<> ';
 			$query->where('a.id '.$type.(int) $eventId);
 		}
-		elseif (is_array($eventId)) {
+		elseif (is_array($eventId) && !empty($eventId)) {
 			JArrayHelper::toInteger($eventId);
 			$eventId = implode(',', $eventId);
 			$type = $this->getState('filter.event_id.include', true) ? 'IN' : 'NOT IN';
@@ -304,7 +304,7 @@ class JemModelEventslist extends JModelList
 		if (is_numeric($published)) {
 			$query->where('a.published = ' . (int) $published);
 		}
-		elseif (is_array($published)) {
+		elseif (is_array($published) && !empty($published)) {
 			JArrayHelper::toInteger($published);
 			$published = implode(',', $published);
 			$query->where('a.published IN ('.$published.')');
@@ -322,7 +322,7 @@ class JemModelEventslist extends JModelList
 		if (is_numeric($featured)) {
 			$query->where('a.featured = ' . (int) $featured);
 		}
-		elseif (is_array($featured)) {
+		elseif (is_array($featured) && !empty($featured)) {
 			JArrayHelper::toInteger($featured);
 			$featured = implode(',', $featured);
 			$query->where('a.featured IN ('.$featured.')');
@@ -348,8 +348,9 @@ class JemModelEventslist extends JModelList
 		#####################
 
 		$cats = $this->getCategories('all');
-		$query->where('c.id  IN (' . implode(',', $cats) . ')');
-
+		if (!empty($cats)) {
+			$query->where('c.id  IN (' . implode(',', $cats) . ')');
+		}
 
 		####################
 		## FILTER - BYLOC ##
@@ -588,14 +589,14 @@ class JemModelEventslist extends JModelList
 		$categoryId = $this->getState('filter.category_id');
 
 		if (is_numeric($categoryId)) {
-		$type = $this->getState('filter.category_id.include', true) ? '= ' : '<> ';
-				$query->where('c.id '.$type.(int) $categoryId);
+			$type = $this->getState('filter.category_id.include', true) ? '= ' : '<> ';
+			$query->where('c.id '.$type.(int) $categoryId);
 		}
-		elseif (is_array($categoryId)) {
-		JArrayHelper::toInteger($categoryId);
-		$categoryId = implode(',', $categoryId);
-		$type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
-		$query->where('c.id '.$type.' ('.$categoryId.')');
+		elseif (is_array($categoryId) && !empty($categoryId)) {
+			JArrayHelper::toInteger($categoryId);
+			$categoryId = implode(',', $categoryId);
+			$type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
+			$query->where('c.id '.$type.' ('.$categoryId.')');
 		}
 
 		# filter set by day-view
@@ -616,7 +617,7 @@ class JemModelEventslist extends JModelList
 			$type = $this->getState('filter.venue_id.include', true) ? '= ' : '<> ';
 			$query->where('l.id '.$type.(int) $venueId);
 		}
-		elseif (is_array($venueId)) {
+		elseif (is_array($venueId) && !empty($venueId)) {
 			JArrayHelper::toInteger($venueId);
 			$venueId = implode(',', $venueId);
 			$type = $this->getState('filter.venue_id.include', true) ? 'IN' : 'NOT IN';
