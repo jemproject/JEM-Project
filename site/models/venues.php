@@ -168,8 +168,8 @@ class JemModelVenues extends JemModelEventslist
 	}
 
 
-	function AssignedEvents($id,$state=1) {
-
+	function AssignedEvents($id,$state=1)
+	{
 		$db 	= JFactory::getDBO();
 		$query	= $db->getQuery(true);
 
