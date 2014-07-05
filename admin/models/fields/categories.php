@@ -9,6 +9,7 @@
 defined('_JEXEC') or die();
 
 jimport('joomla.form.formfield');
+JFormHelper::loadFieldClass('list');
 
 /**
  * Category select
