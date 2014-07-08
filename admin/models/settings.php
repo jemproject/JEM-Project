@@ -149,7 +149,7 @@ class JEMModelSettings extends JModelForm
 	 */
 	public function getConfigInfo()
 	{
-		if (function_exists('get_magic_quotes') && get_magic_quotes_gpc()) {
+		if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
 			$quote = "enabled";
 		} else {
 			$quote = "disabled";
