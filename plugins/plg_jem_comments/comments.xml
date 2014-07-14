@@ -25,7 +25,7 @@
 					description="PLG_JEM_COMMENTS_COMMENTSYSTEM_DESC"
 				>
 					<option value="0">PLG_JEM_COMMENTS_NONE</option>
-					<option value="1">PLG_JEM_COMMENTS_JCOMMENTS</option>
+					<option value="2">PLG_JEM_COMMENTS_JCOMMENTS</option>
 				</field>
 			</fieldset>
 		</fields>
