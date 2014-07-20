@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     1.9.6
+ * @version     1.9.7
  * @package     JEM
  * @copyright   Copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
@@ -88,7 +88,7 @@ class JFormFieldCategoryEdit extends JFormFieldList
 		{
 			$query->where('a.published = ' . (int) $published);
 		}
-		elseif (is_array($published))
+		elseif (is_array($published) && count($published))
 		{
 			JArrayHelper::toInteger($published);
 			$query->where('a.published IN (' . implode(',', $published) . ')');

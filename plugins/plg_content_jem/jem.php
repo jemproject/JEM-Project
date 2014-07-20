@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL

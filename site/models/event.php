@@ -151,7 +151,9 @@ class JemModelEvent extends JModelItem
 				#####################
 
 				$cats = $this->getCategories('all');
-				$query->where('c.id  IN (' . implode(',', $cats) . ')');
+				if (!empty($cats)) {
+					$query->where('c.id  IN (' . implode(',', $cats) . ')');
+				}
 
 				//$query->group('a.id');
 				$db->setQuery($query);
@@ -386,25 +388,25 @@ class JemModelEvent extends JModelItem
 			$query->where($top_cat);
 		}
 
-		# Filter by a single or group of categories.
-		$categoryId = $this->getState('filter.category_id');
-
-		if (is_numeric($categoryId)) {
-		$type = $this->getState('filter.category_id.include', true) ? '= ' : '<> ';
-				$query->where('c.id '.$type.(int) $categoryId);
-		}
-		elseif (is_array($categoryId)) {
-		JArrayHelper::toInteger($categoryId);
-		$categoryId = implode(',', $categoryId);
-		$type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
-		$query->where('c.id '.$type.' ('.$categoryId.')');
-		}
-
 		# filter set by day-view
 		$requestCategoryId = $this->getState('filter.req_catid');
 
 		if ($requestCategoryId) {
 			$query->where('c.id = '.$requestCategoryId);
+		}
+
+		# Filter by a single or group of categories.
+		$categoryId = $this->getState('filter.category_id');
+
+		if (is_numeric($categoryId)) {
+			$type = $this->getState('filter.category_id.include', true) ? '= ' : '<> ';
+			$query->where('c.id '.$type.(int) $categoryId);
+		}
+		elseif (is_array($categoryId) && count($categoryId)) {
+			JArrayHelper::toInteger($categoryId);
+			$categoryId = implode(',', $categoryId);
+			$type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
+			$query->where('c.id '.$type.' ('.$categoryId.')');
 		}
 
 		###################
@@ -434,7 +436,6 @@ class JemModelEvent extends JModelItem
 		if ($id == 'all'){
 			$cats = $db->loadColumn(0);
 			$cats = array_unique($cats);
-			return ($cats);
 		} else {
 			$cats = $db->loadObjectList();
 		}

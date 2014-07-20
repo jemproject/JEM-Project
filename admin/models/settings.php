@@ -149,10 +149,33 @@ class JEMModelSettings extends JModelForm
 	 */
 	public function getConfigInfo()
 	{
-		if(get_magic_quotes_gpc()){
+		if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
 			$quote = "enabled";
-		}else{
+		} else {
 			$quote = "disabled";
+		}
+
+		// Get GD version.
+		$gd_version = '?';
+		if (function_exists('gd_info')) {
+			$gd_info = gd_info();
+			if (array_key_exists('GD Version', $gd_info)) {
+				$gd_version = $gd_info['GD Version'];
+			}
+		} else {
+			ob_start();
+			if (phpinfo(INFO_MODULES)) {
+				$info = strip_tags(ob_get_contents());
+			}
+			ob_end_clean();
+			preg_match('/gd support\w*(.*)/i', $info, $gd_sup);
+			preg_match('/gd version\w*(.*)/i', $info, $gd_ver);
+			if (count($gd_ver) > 0) {
+				$gd_version = trim($gd_ver[1]);
+			}
+			if (count($gd_sup) > 0) {
+				$gd_version .= ' (' . trim($gd_sup[1]) . ')';
+			}
 		}
 
 		$config 					= new stdClass();
@@ -164,7 +187,7 @@ class JEMModelSettings extends JModelForm
 		$config->vs_mod_jem_teaser	= JemHelper::getParam(1,'version',3,'mod_jem_teaser');
 		$config->vs_php				= phpversion();
 		$config->vs_php_magicquotes	= $quote;
-		$config->vs_gd				= gd_info()['GD Version'];
+		$config->vs_gd				= $gd_version;
 
 		return $config;
 	}

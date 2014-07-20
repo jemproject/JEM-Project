@@ -2,7 +2,7 @@
 /**
  * JComments plugin for JEM
  * 
- * @version 1.9.6
+ * @version 1.9.7
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * 

@@ -985,25 +985,25 @@ class JemHelper {
 
 			# we want to use custom so now check if we've a file
 			$file = $settings->get('css_'.$css.'_customfile');
-			$filename = false;
+			$is_file = false;
 
 
 			# something was filled, now check if we've a valid file
 			if ($file) {
-				$filename	= JPATH_SITE.'/'.$file;
-				$filename	= JFile::exists($file);
+				$file = preg_replace('%^/([^/]*)%', '$1', $file); // remove leading single slash
+				$is_file = JFile::exists(JPATH_SITE.'/'.$file);
 
-				if ($filename) {
+				if ($is_file) {
 					# at this point we do have a valid file but let's check the extension too.
 					$ext =  JFile::getExt($file);
 					if ($ext != 'css') {
 						# the file is valid but the extension not so let's return false
-						$filename = false;
+						$is_file = false;
 					}
 				}
 			}
 
-			if ($filename) {
+			if ($is_file) {
 				# we do have a valid file so we will use it.
 				$css = JHtml::_('stylesheet', $file, array(), false);
 			} else {

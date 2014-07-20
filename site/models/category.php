@@ -86,7 +86,6 @@ class JemModelCategory extends JemModelEventslist
 	}
 
 
-
 	/**
 	 * Method to auto-populate the model state.
 	 */
@@ -173,16 +172,15 @@ class JemModelCategory extends JemModelEventslist
 	 */
 	function getItems()
 	{
-
-		$params = clone $this->getState('params');
+		//$params = clone $this->getState('params');
 		$items	= parent::getItems();
 
 		if ($items) {
-			foreach ($items as &$item)
+		 /*	foreach ($items as &$item)
 			{
 
 			}
-
+		  */
 			return $items;
 		}
 

@@ -107,9 +107,9 @@ class JemModelWeekcal extends JemModelEventslist
 
 		if ($top_category) {
 			$children = JEMCategories::getChilds($top_category);
-		if (count($children)) {
-			$where = 'rel.catid IN ('. implode(',', $children) .')';
-			$this->setState('filter.category_top', $where);
+			if (count($children)) {
+				$where = 'rel.catid IN ('. implode(',', $children) .')';
+				$this->setState('filter.category_top', $where);
 			}
 		}
 

@@ -2,14 +2,14 @@
 <extension type="package" version="2.5" method="upgrade">
 	<name>pkg_jem</name>
 	<packagename>jem</packagename>
-	<creationDate>March 2014</creationDate>
+	<creationDate>July 2014</creationDate>
 	<copyright>Copyright (C) 2013-2014 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
 
-	<version>1.9.6</version>
+	<version>1.9.7</version>
 	<description>PKG_JEM_INSTALLATION_DESCRIPTION</description>
 	<url>http://www.joomlaeventmanager.net/</url>
 	<packager>JEM Community</packager>
