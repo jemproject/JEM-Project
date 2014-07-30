@@ -78,7 +78,6 @@ abstract class modJEMwideHelper
 		# filter category's
 		if ($catid) {
 			$ids = explode(',', $catid);
-			$ids = JArrayHelper::toInteger($ids);
 			$model->setState('filter.category_id',$ids);
 			$model->setState('filter.category_id.include',true);
 		}
@@ -86,7 +85,6 @@ abstract class modJEMwideHelper
 		# filter venue's
 		if ($venid) {
 			$ids = explode(',', $venid);
-			$ids = JArrayHelper::toInteger($ids);
 			$model->setState('filter.venue_id',$ids);
 			$model->setState('filter.venue_id.include',true);
 		}

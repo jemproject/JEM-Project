@@ -68,12 +68,10 @@ abstract class modJEMHelper
 
 		if ($catid) {
 			$ids = explode(',', $catid);
-			JArrayHelper::toInteger($ids);
 			$categories = ' AND (c.id=' . implode(' OR c.id=', $ids) . ')';
 		}
 		if ($venid) {
 			$ids = explode(',', $venid);
-			JArrayHelper::toInteger($ids);
 			$venues = ' AND (l.id=' . implode(' OR l.id=', $ids) . ')';
 		}
 

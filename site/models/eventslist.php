@@ -359,7 +359,24 @@ class JemModelEventslist extends JModelList
 		if ($filter_locid) {
 			$query->where('a.locid = '.$filter_locid);
 		}
+		
+		
+		####################
+		## FILTER - VENUE ##
+		####################
 
+		$venueId = $this->getState('filter.venue_id');
+
+		if (is_numeric($venueId)) {
+			$type = $this->getState('filter.venue_id.include', true) ? '= ' : '<> ';
+			$query->where('l.id '.$type.(int) $venueId);
+		}
+		elseif (is_array($venueId) && !empty($venueId)) {
+			JArrayHelper::toInteger($venueId);
+			$venueId = implode(',', $venueId);
+			$type = $this->getState('filter.venue_id.include', true) ? 'IN' : 'NOT IN';
+			$query->where('l.id '.$type.' ('.$venueId.')');
+		}
 
 		###################
 		## FILTER-SEARCH ##
@@ -605,26 +622,6 @@ class JemModelEventslist extends JModelList
 		if ($requestCategoryId) {
 			$query->where('c.id = '.$requestCategoryId);
 		}
-
-
-		####################
-		## FILTER - VENUE ##
-		####################
-
-		$venueId = $this->getState('filter.venue_id');
-
-		if (is_numeric($venueId)) {
-			$type = $this->getState('filter.venue_id.include', true) ? '= ' : '<> ';
-			$query->where('l.id '.$type.(int) $venueId);
-		}
-		elseif (is_array($venueId) && !empty($venueId)) {
-			JArrayHelper::toInteger($venueId);
-			$venueId = implode(',', $venueId);
-			$type = $this->getState('filter.venue_id.include', true) ? 'IN' : 'NOT IN';
-			$query->where('l.id '.$type.' ('.$venueId.')');
-		}
-
-
 
 		###################
 		## FILTER-SEARCH ##
