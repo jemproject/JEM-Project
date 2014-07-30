@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @subpackage JEM Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -45,19 +45,24 @@ abstract class modJEMHelper
 		#  2: archived
 		# -2: trashed
 
-		# upcoming events
-		if ($params->get('type')==0) {
-			$model->setState('filter.published',1);
-			$model->setState('filter.orderby',array('a.dates ASC','a.times ASC'));
-
-			$cal_from = "(TIMEDIFF(CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00')),NOW()) > 1 OR (a.enddates AND TIMEDIFF(CONCAT(a.enddates,' ',IFNULL(a.times,'00:00:00')),NOW())) > 1) ";
-		}
+		$type = $params->get('type');
 
 		# archived events
-		if ($params->get('type')==1) {
+		if ($type == 2) {
 			$model->setState('filter.published',2);
 			$model->setState('filter.orderby',array('a.dates DESC','a.times DESC'));
 			$cal_from = "";
+		}
+
+		# upcoming or running events, on mistake default to upcoming events
+		else {
+			$model->setState('filter.published',1);
+			$model->setState('filter.orderby',array('a.dates ASC','a.times ASC'));
+
+			$offset_minutes = 60 * $params->get('offset_hours', 0);
+
+			$cal_from = "((TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
+			$cal_from .= ($type == 1) ? " OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) " : ") ";
 		}
 
 		$model->setState('filter.calendar_from',$cal_from);
