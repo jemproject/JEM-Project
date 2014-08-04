@@ -45,12 +45,18 @@ abstract class modJEMwideHelper
 		#  2: archived
 		# -2: trashed
 
-		# all upcoming events//all upcoming events
-		if ($params->get('type') == 1) {
+		$type = $params->get('type');
+		$offset_hourss = $params->get('offset_hours', 0);
+
+		# all upcoming or unfinished events
+		if (($type == 0) || ($type == 1)) {
+			$offset_minutes = $offset_hourss * 60;
+
 			$model->setState('filter.published',1);
 			$model->setState('filter.orderby',array('a.dates ASC','a.times ASC'));
 
-			$cal_from = "(TIMEDIFF(CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00')),NOW()) > 1 OR (a.enddates AND TIMEDIFF(CONCAT(a.enddates,' ',IFNULL(a.times,'00:00:00')),NOW())) > 1) ";
+			$cal_from = "((TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
+			$cal_from .= ($type == 1) ? " OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) " : ") ";
 		}
 
 		# archived events only
@@ -60,12 +66,14 @@ abstract class modJEMwideHelper
 			$cal_from = "";
 		}
 
-		# currently running events only
+		# currently running events only (today + offset is inbetween start and end date of event)
 		elseif ($params->get('type') == 3) {
+			$offset_days = (int)round($offset_hourss / 24);
+
 			$model->setState('filter.published',1);
 			$model->setState('filter.orderby',array('a.dates ASC','a.times ASC'));
 
-			$cal_from = " (a.dates = CURDATE() OR (a.enddates >= CURDATE() AND a.dates <= CURDATE()))";
+			$cal_from = " ((DATEDIFF(a.dates, CURDATE()) <= $offset_days) AND (DATEDIFF(IFNULL(a.enddates,a.dates), CURDATE()) >= $offset_days))";
 		}
 
 		$model->setState('filter.calendar_from',$cal_from);

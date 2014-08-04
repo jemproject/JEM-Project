@@ -31,10 +31,16 @@
 					label="MOD_JEM_WIDE_UPCOMING_ARCHIVED_OR_CURRENT"
 					description="MOD_JEM_WIDE_UPCOMING_ARCHIVED_OR_CURRENT_DESC"
 				>
-					<option value="1">MOD_JEM_WIDE_UPCOMING_EVENTS</option>
+					<option value="0">MOD_JEM_WIDE_UPCOMING_EVENTS</option>
+					<option value="1">MOD_JEM_WIDE_UNFINISHED_EVENTS</option>
 					<option value="2">MOD_JEM_WIDE_ARCHIVED_EVENTS</option>
 					<option value="3">MOD_JEM_WIDE_CURRENT_EVENTS</option>
 				</field>
+				<field name="offset_hours" type="text"
+					default=""
+					label="MOD_JEM_WIDE_OFFSET_HOURS"
+					description="MOD_JEM_WIDE_OFFSET_HOURS_DESC"
+				/>
 				<field name="cuttitle" type="text"
 					default="18"
 					label="MOD_JEM_WIDE_MAX_TITLE_LENGTH"
