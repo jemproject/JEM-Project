@@ -60,14 +60,14 @@ abstract class modJEMwideHelper
 		}
 
 		# archived events only
-		elseif ($params->get('type') == 2) {
+		elseif ($type == 2) {
 			$model->setState('filter.published',2);
 			$model->setState('filter.orderby',array('a.dates DESC','a.times DESC'));
 			$cal_from = "";
 		}
 
 		# currently running events only (today + offset is inbetween start and end date of event)
-		elseif ($params->get('type') == 3) {
+		elseif ($type == 3) {
 			$offset_days = (int)round($offset_hourss / 24);
 
 			$model->setState('filter.published',1);
