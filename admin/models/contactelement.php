@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -56,6 +56,7 @@ class JemModelContactelement extends JModelLegacy
 
 		$limit		= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 'int' );
+		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);

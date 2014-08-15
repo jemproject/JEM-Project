@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -57,7 +57,8 @@ class JemModelVenueelement extends JModelLegacy
 		
 		$limit 			= $app->getUserStateFromRequest('com_jem.venueelement.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart 	= JRequest::getInt('limitstart');
-		
+		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
 	}
