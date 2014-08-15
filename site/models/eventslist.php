@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -64,11 +64,13 @@ class JemModelEventslist extends JModelList
 		$itemid				= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
 
 		# limit/start
-		$value	= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
-		$this->setState('list.limit', $value);
+		$limit	= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
+		$this->setState('list.limit', $limit);
 
-		$value = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
-		$this->setState('list.start', $value);
+		$limitstart = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
+		// correct start value if required
+		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+		$this->setState('list.start', $limitstart);
 
 		# Search - variables
 		$search = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
@@ -703,15 +705,16 @@ class JemModelEventslist extends JModelList
 								$multi[$counter]->times = $item->times;
 								$multi[$counter]->endtimes = $item->endtimes;
 							}
-							# add generated days to data
-							$items = array_merge($items, $multi);
 						}
-						# unset temp array holding generated days before working on the next multiday event
-						unset($multi);
-					}
+					} // for
+
+					# add generated days to data
+					$items = array_merge($items, $multi);
+					# unset temp array holding generated days before working on the next multiday event
+					unset($multi);
 				}
 			}
-		}
+		} // foreach
 
 		foreach ($items as $item) {
 			$time[] = $item->times;

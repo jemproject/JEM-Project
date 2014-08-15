@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -264,10 +264,12 @@ class JEMModelEditevent extends JEMModelEvent
      **/
 	function getVenuesPagination() {
 
-		$jemsettings 		= JemHelper::config();
-		$app 				= JFactory::getApplication();
-		$limit 				= $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart 		= JRequest::getInt('limitstart');
+		$jemsettings = JemHelper::config();
+		$app         = JFactory::getApplication();
+		$limit       = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart  = JRequest::getInt('limitstart');
+		// correct start value if required
+		$limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
 		$query = $this->buildQueryVenues();
 		$total = $this->_getListCount($query);
@@ -303,10 +305,12 @@ class JEMModelEditevent extends JEMModelEvent
 	 **/
 	function getContactsPagination() {
 
-		$jemsettings 		= JemHelper::config();
-		$app 				= JFactory::getApplication();
-		$limit 				= $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart 		= JRequest::getInt('limitstart');
+		$jemsettings = JemHelper::config();
+		$app         = JFactory::getApplication();
+		$limit       = $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart  = JRequest::getInt('limitstart');
+		// correct start value if required
+		$limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
 		$query = $this->buildQueryContacts();
 		$total = $this->_getListCount($query);
