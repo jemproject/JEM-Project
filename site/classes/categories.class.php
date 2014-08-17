@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -574,7 +574,7 @@ class JEMCategories
 			$where .= ' AND alias NOT LIKE "root"';
 		}
 
-		$query = 'SELECT *, id AS value, catname AS text' . ' FROM #__jem_categories' . $where . ' ORDER BY parent_id, ordering';
+		$query = 'SELECT *, id AS value, catname AS text' . ' FROM #__jem_categories' . $where . ' ORDER BY parent_id, lft';
 		$db->setQuery($query);
 		$mitems = $db->loadObjectList();
 
@@ -626,29 +626,29 @@ class JEMCategories
 	{
 		if (@$children[$id] && $level <= $maxlevel)
 		{
+			if ($type) {
+				$pre	= '<sup>|_</sup>&nbsp;';
+				$spacer = '.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			} else {
+				$pre	= '-&nbsp;';
+				$spacer = '-&nbsp;';
+			}
+
 			foreach ($children[$id] as $v)
 			{
 				$id = $v->id;
 
-				if ($type) {
-						$pre	= '<sup>|_</sup>&nbsp;';
-						$spacer = '.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-				} else {
-						$pre	= '- ';
-						$spacer = '&nbsp;&nbsp;';
-				}
-
-				if ($v->parent_id == 0) {
+				if ($level == 0) {
 						$txt = $v->catname;
 				} else {
 						$txt = $pre . $v->catname;
 				}
 				$pt = $v->parent_id;
 				$list[$id] = $v;
-				$list[$id]->treename = "$indent$txt";
+				$list[$id]->treename = $indent . $txt;
 				$list[$id]->children = count(@$children[$id]);
 
-				$list = JEMCategories::treerecurse($id, $indent . $spacer, $list, $children, $maxlevel, $level+1, $type);
+				$list = JEMCategories::treerecurse($id, ($level ? $indent . $spacer : $indent), $list, $children, $maxlevel, $level+1, $type);
 			}
 		}
 		return $list;

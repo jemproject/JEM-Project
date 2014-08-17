@@ -320,7 +320,7 @@ class JEMModelCategories extends JModelLegacy
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
-		$ordering = 'c.ordering ASC';
+		$ordering = 'c.lft ASC';
 
 		// build where clause
 		$where_sub = ' WHERE cc.published = 1';

@@ -127,8 +127,6 @@ class JemModelCategoryelement extends JModelLegacy
 
 			$parentid = $mitems;
 		} else {
-			$mitems_temp = $mitems;
-
 			$children = array();
 			// First pass - collect children
 			foreach ($mitems as $v) {
@@ -138,7 +136,8 @@ class JemModelCategoryelement extends JModelLegacy
 				$children[$pt] = $list;
 			}
 
-			$parentid = intval($mitems[0]->parent_id);
+			// list childs of "root" which has no parent and normally id 1
+			$parentid = intval(@isset($children[0][0]->id) ? $children[0][0]->id : 1);
 		}
 
 		// get list of the items

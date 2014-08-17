@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -300,7 +300,7 @@ class JEMModelExport extends JModelList
 
 		$where = ' WHERE c.published = 1';
 
-		$query = 'SELECT c.* FROM #__jem_categories AS c' . $where . ' ORDER BY parent_id, c.ordering';
+		$query = 'SELECT c.* FROM #__jem_categories AS c' . $where . ' ORDER BY parent_id, c.lft';
 		$db->setQuery($query);
 
 		$mitems = $db->loadObjectList();
@@ -310,25 +310,23 @@ class JEMModelExport extends JModelList
 			JError::raiseNotice(500, $db->getErrorMsg());
 		}
 
-		if (!$mitems){
+		if (!$mitems) {
 			$mitems = array();
 			$children = array();
 
-			$parentid = $mitems;
-		}else{
+			$parentid = 0;
+		} else {
+			$children = array();
+			// First pass - collect children
+			foreach ($mitems as $v) {
+				$pt = $v->parent_id;
+				$list = @$children[$pt] ? $children[$pt] : array();
+				array_push($list, $v);
+				$children[$pt] = $list;
+			}
 
-		$mitems_temp = $mitems;
-
-		$children = array();
-		// First pass - collect children
-		foreach ($mitems as $v){
-			$pt = $v->parent_id;
-			$list = @$children[$pt] ? $children[$pt] : array();
-			array_push($list, $v);
-			$children[$pt] = $list;
-		}
-
-		$parentid = intval($mitems[0]->parent_id);
+			// list childs of "root" which has no parent and normally id 1
+			$parentid = intval(@isset($children[0][0]->id) ? $children[0][0]->id : 1);
 		}
 
 		//get list of the items

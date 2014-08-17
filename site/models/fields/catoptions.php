@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     1.9.5
+ * @version     1.9.8
  * @package     JEM
  * @copyright   Copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
@@ -101,20 +101,20 @@ class JFormFieldCatOptions extends JFormField
 					. ' AND g.member NOT LIKE 0';
 			$db->setQuery($query);
 			$groupnumber = $db->loadColumn();	
-			$categories = implode(' OR c.groupid = ', $groupnumber);
+			$categories = implode(',', $groupnumber);
 	
 			//build ids query
 			if ($categories) {
 				//check if user is allowed to submit events in general, if yes allow to submit into categories
 				//which aren't assigned to a group. Otherwise restrict submission into maintained categories only
 				if (JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes)) {
-					$where .= ' AND c.groupid = 0 OR c.groupid = '.$categories;
+					$where .= ' AND c.groupid IN (0,'.$categories.')';
 				} else {
-					$where .= ' AND c.groupid = '.$categories;
-						}
-				} else {
-					$where .= ' AND c.groupid = 0';
+					$where .= ' AND c.groupid IN ('.$categories.')';
 				}
+			} else {
+					$where .= ' AND c.groupid = 0';
+			}
 	
 		//administrators or superadministrators have access to all categories, also maintained ones
 		if($superuser) {
@@ -128,7 +128,7 @@ class JFormFieldCatOptions extends JFormField
 		$query = 'SELECT c.*'
 				. ' FROM #__jem_categories AS c'
 				. $where
-				. ' ORDER BY c.ordering'
+				. ' ORDER BY c.lft'
 				;
 		$db->setQuery($query);
 	
@@ -149,12 +149,10 @@ class JFormFieldCatOptions extends JFormField
 			$mitems = array();
 			$children = array();
 
-			$parentid = $mitems;
+			$parentid = 0;
 		}
 		else
 		{
-			$mitems_temp = $mitems;
-
 			$children = array();
 			// First pass - collect children
 			foreach ($mitems as $v)
@@ -165,7 +163,8 @@ class JFormFieldCatOptions extends JFormField
 				$children[$pt] = $list;
 			}
 
-			$parentid = intval($mitems[0]->parent_id);
+			// list childs of "root" which has no parent and normally id 1
+			$parentid = intval(@isset($children[0][0]->id) ? $children[0][0]->id : 1);
 		}
 
 		//get list of the items
