@@ -91,9 +91,11 @@ class JemModelEventslist extends JModelList
 
 		$user = JFactory::getUser();
 
-		if ($params->get('showopendates') == 1) {
-			$this->setState('filter.opendate',1);
-		}
+		###############
+		## opendates ##
+		###############
+		
+		$this->setState('filter.opendates', $params->get('showopendates', 0));
 
 		###########
 		## ORDER ##
@@ -175,7 +177,7 @@ class JemModelEventslist extends JModelList
 		// Compile the store id.
 		$id .= ':' . serialize($this->getState('filter.published'));
 		$id .= ':' . $this->getState('filter.access');
-		$id .= ':' . $this->getState('filter.opendate');
+		$id .= ':' . $this->getState('filter.opendates');
 		$id .= ':' . $this->getState('filter.featured');
 		$id .= ':' . serialize($this->getState('filter.event_id'));
 		$id .= ':' . $this->getState('filter.event_id.include');
@@ -334,8 +336,8 @@ class JemModelEventslist extends JModelList
 		#############################
 		## FILTER - CALENDAR_DATES ##
 		#############################
-		$cal_from	= $this->setState('filter.calendar_from');
-		$cal_to		= $this->setState('filter.calendar_to');
+		$cal_from	= $this->getState('filter.calendar_from');
+		$cal_to		= $this->getState('filter.calendar_to');
 
 		if ($cal_from) {
 			$query->where($cal_from);
@@ -343,6 +345,23 @@ class JemModelEventslist extends JModelList
 
 		if ($cal_to) {
 			$query->where($cal_to);
+		}
+
+		#############################
+		## FILTER - OPEN_DATES     ##
+		#############################
+		$opendates	= $this->getState('filter.opendates');
+
+		switch ($opendates) {
+		case 0: // don't show events without start date
+		default:
+			$query->where('a.dates IS NOT NULL');
+			break;
+		case 1: // show all events, with or without start date
+			break;
+		case 2: // show only events without startdate
+			$query->where('a.dates IS NULL');
+			break;
 		}
 
 		#####################
