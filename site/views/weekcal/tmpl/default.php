@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -189,7 +189,7 @@ defined('_JEXEC') or die;
 		$multidaydate .= '</div>';
 
 		//generate the output
-		//$content .= $colorpic;
+		$content .= $colorpic;
 		$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $color);
 		$content .= $contentend;
 

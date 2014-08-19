@@ -198,16 +198,23 @@ class JemModelCategory extends JemModelEventslist
 	public function getCategory()
 	{
 		if (!is_object($this->_item)) {
+			$options = array();
+
 			if( isset( $this->state->params ) ) {
 				$params = $this->state->params;
-				$options = array();
-				$options['countItems'] = $params->get('show_cat_num_articles', 1) || !$params->get('show_empty_categories_cat', 0);
+				$options['countItems'] = ($params->get('show_cat_num_articles', 1) || !$params->get('show_empty_categories_cat', 0)) ? 1 : 0;
 			}
 			else {
 				$options['countItems'] = 0;
 			}
 
-			$categories = new JEMCategories($this->getState('category.id', 'root'));
+			if (isset($this->state->task) && ($this->state->task == 'archive')) {
+				$options['published'] = 2; // archived
+			} else {
+				$options['published'] = 1; // published
+			}
+
+			$categories = new JEMCategories($this->getState('category.id', 'root'), $options);
 			$this->_item = $categories->get($this->getState('category.id', 'root'));
 
 			// Compute selected asset permissions.

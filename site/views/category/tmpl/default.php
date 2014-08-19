@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -54,16 +54,26 @@ JHtml::_('behavior.modal');
 
 	<!--subcategories-->
 	<?php
-	if ($this->maxLevel != 0 && !empty($this->category->id) && !empty($this->children[$this->category->id])) :
-	?>
-	<div class="cat-children">
-		<?php if ($this->params->get('show_category_heading_title_text', 1) == 1) : ?>
-		<h3>
-			<?php echo JTEXT::_('JGLOBAL_SUBCATEGORIES'); ?>
-		</h3>
+	if ($this->showsubcats && $this->maxLevel != 0 && !empty($this->category->id) && !empty($this->children[$this->category->id])) :
+		$countsubcats = 0;
+		foreach ($this->children[$this->category->id] as $id => $child) :
+			// Do we have any non-empty subcategory or should generally show empty subcategories?
+			// Note: We also show empty subcategories if they have at least one non-empty subsubcategory.
+			if ($this->showemptychilds || ($child->getNumItems(true) > 0)) :
+				++$countsubcats;
+			endif;
+		endforeach;
+		if ($countsubcats) :
+		?>
+		<div class="cat-children">
+			<?php if ($this->params->get('show_category_heading_title_text', 1) == 1) : ?>
+			<h3>
+				<?php echo JTEXT::_('JGLOBAL_SUBCATEGORIES'); ?>
+			</h3>
+			<?php endif; ?>
+			<?php echo $this->loadTemplate('subcategories'); ?>
+		</div>
 		<?php endif; ?>
-		<?php echo $this->loadTemplate('subcategories'); ?>
-	</div>
 	<?php endif; ?>
 
 

@@ -666,7 +666,7 @@ class JemModelEventslist extends JModelList
 		$startdayonly	= $this->getState('filter.calendar_startdayonly');
 
 		foreach($items AS $item) {
-			if (!is_null($item->enddates) && $startdayonly) {
+			if (!is_null($item->enddates) && !$startdayonly) {
 				if ($item->enddates != $item->dates) {
 					$day = $item->start_day;
 

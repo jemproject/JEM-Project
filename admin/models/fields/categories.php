@@ -38,7 +38,7 @@ class JFormFieldCategories extends JFormFieldList
 		$script[] = '		document.id("'.$this->id.'_id").value = id;';
 		$script[] = '		document.id("'.$this->id.'_name").value = category;';
 		$script[] = '		SqueezeBox.close();';
-		$script[] = '	}';
+		$script[] = '	};';
 
 		// Add the script to the document head.
 		JFactory::getDocument()->addScriptDeclaration(implode("\n", $script));

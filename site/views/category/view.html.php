@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -74,6 +74,9 @@ class JemViewCategory extends JEMView
 			.eventandmore {background-color:'.$eventandmorecolor .';}
 			.today .daynum {background-color:'.$currentdaycolor.';}';
 			$document->addStyleDeclaration($style);
+
+			// add javascript (using full path - see issue #590)
+			JHtml::_('script', 'media/com_jem/js/calendar.js');
 
 			// Retrieve date variables
 			$year = (int)JRequest::getVar('yearID', strftime("%Y"));
@@ -178,6 +181,8 @@ class JemViewCategory extends JEMView
 			// get variables
 			$itemid				= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
 
+			$this->showsubcats      = (bool)$params->get('usecat', 1);
+			$this->showemptysubcats = (bool)$params->get('showemptychilds', 1);
 
 			$filter_order		= $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order', 'filter_order', 	'a.dates', 'cmd');
 			$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order_Dir', 'filter_order_Dir',	'', 'word');

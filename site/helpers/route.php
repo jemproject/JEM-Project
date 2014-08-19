@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -69,7 +69,7 @@ abstract class JEMHelperRoute
 		return $link;
 	}
 
-	public static function getCategoryRoute($id)
+	public static function getCategoryRoute($id, $task = '')
 	{
 		$settings 		= JEMHelper::globalattribs();
 		$defaultItemid 	= $settings->get('default_Itemid');
@@ -87,6 +87,10 @@ abstract class JEMHelperRoute
 		$category = new JEMCategories($id);
 		if($category) {
 			$needles['categories'] = array_reverse($category->getPath());
+		}
+
+		if (!empty($task)) {
+			$link .= '&task='.$task;
 		}
 
 		if ($item = self::_findItem($needles)) {

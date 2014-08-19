@@ -69,6 +69,7 @@ class JEMCategories
 	public function __construct($cid,$options=false)
 	{
 		$this->id = $cid;
+		$this->_options = $options;
 	}
 
 
@@ -213,18 +214,26 @@ class JEMCategories
 		// @todo: alter
 		if (isset($this->_options['countItems']) && $this->_options['countItems'] == 1)
 		{
-			if ($this->_options['published'] == 1)
+			$published = array();
+			if (isset($this->_options['published']))
 			{
-				$query->leftJoin(
-						$db->quoteName($this->_table) . ' AS i ON i.' . $db->quoteName($this->_field) . ' = c.id AND i.' . $this->_statefield . ' = 1'
-				);
+				$publ = $this->_options['published'];
+				if (is_int($publ)) {
+					$published = array($publ);
+				} elseif (is_array($publ)) {
+					foreach ($publ as $val) {
+						if (is_int($val)) {
+							$published[] = $val;
+						}
+					}
+				}
 			}
-			else
-			{
-				$query->leftJoin($db->quoteName($this->_table) . ' AS i ON i.' . $db->quoteName($this->_field) . ' = c.id');
+			if (empty($published)) {
+				$published = array(1); // default to published events
 			}
 
-			$query->select('COUNT(i.' . $db->quoteName($this->_key) . ') AS numitems');
+			$query->leftJoin('#__jem_events AS i ON rel.itemid = i.id AND i.published IN ('.implode(',', $published).')');
+			$query->select('COUNT(i.id) AS numitems');
 		}
 
 
@@ -232,8 +241,7 @@ class JEMCategories
 		## GROUPBY ##
 		#############
 
-		$query->group('c.id, c.access, c.alias, c.level,
-		 	c.lft, c.parent_id, c.path, c.published, c.rgt, c.catname');
+		$query->group('c.id, c.access, c.alias, c.level, c.lft, c.parent_id, c.path, c.published, c.rgt, c.catname');
 
 
 		// Get the results

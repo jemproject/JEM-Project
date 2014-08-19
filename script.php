@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -279,6 +279,11 @@ class com_jemInstallerScript
 			if (version_compare($this->oldRelease, '1.9.7', 'lt') && version_compare($this->newRelease, '1.9.6', 'gt')) {
 				// add layout to edit menu items' urls (forgotten in 1.9.6, fix it now)
 				$this->updateJemMenuItems197();
+			}
+			// Changes between 1.9.7 -> 1.9.8
+			if (version_compare($this->oldRelease, '1.9.8', 'lt') && version_compare($this->newRelease, '1.9.7', 'gt')) {
+				// move id from params to link for venuecal menu items
+				$this->updateJemMenuItems198();
 			}
 		}
 	}
@@ -838,6 +843,68 @@ class com_jemInstallerScript
 				$db->setQuery($query);
 				$db->query();
 			}
+		}
+	}
+
+	/**
+	 * Move id from params to link on venuecal menu items.
+	 * (required when updating from 1.9.7 or below to 1.9.8 or newer)
+	 *
+	 * @return void
+	 */
+	private function updateJemMenuItems198()
+	{
+		// get all "com_jem..." frontend entries
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('id, link, params');
+		$query->from('#__menu');
+		$query->where(array("client_id = 0", "link LIKE 'index.php?option=com_jem&view=venue&layout=calendar%'"));
+		$db->setQuery($query);
+		$items = $db->loadObjectList();
+
+		foreach ($items as $item) {
+			$link = $item->link;
+			// Decode the item params
+			$reg = new JRegistry;
+			$reg->loadString($item->params);
+
+			// get view
+			preg_match('/view=([^&]+)/', $item->link, $matches);
+			$view = $matches[1];
+
+			switch ($view) {
+			case 'venue':
+				// add "&id=..." if required
+				if (strpos($link, '&id=') === false) {
+					$link .= '&id=' . (int)$reg->get('id', 0); // 0 is forbidden but we have no default
+
+					// and remove from params
+					$params = array();
+					foreach ($reg->toArray() as $k => $v) {
+						switch ($k) {
+						case 'id':
+							// remove 'id'
+							break;
+						default:
+							$params[$k] = $v;
+							break;
+						}
+					}
+					$reg = new JRegistry;
+					$reg->loadArray($params);
+				}
+				break;
+			}
+
+			// write changed entry back into DB
+			$query = $db->getQuery(true);
+			$query->update('#__menu');
+			$query->set('link = '.$db->quote((string)$link));
+			$query->set('params = '.$db->quote((string)$reg));
+			$query->where(array('id = '.$db->quote($item->id)));
+			$db->setQuery($query);
+			$db->query();
 		}
 	}
 

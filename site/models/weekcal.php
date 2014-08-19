@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -113,16 +113,9 @@ class JemModelWeekcal extends JemModelEventslist
 			}
 		}
 
-		# set startdayonly
-		if ($startdayonly == '0') {
-			$startday = true;
-		} else {
-			$startday = false;
-		}
-
-
+		# set filter
+		$this->setState('filter.calendar_startdayonly',(bool)$startdayonly);
 		$this->setState('filter.groupby','a.id');
-		$this->setState('filter.calendar_startdayonly',$startday);
 	}
 
 
@@ -168,11 +161,12 @@ class JemModelWeekcal extends JemModelEventslist
 	function calendarMultiday($items) {
 		$app 			= JFactory::getApplication();
 		$params 		= $app->getParams();
+		$startdayonly	= $this->getState('filter.calendar_startdayonly');
 
 		foreach($items AS $item) {
 			$item->categories = $this->getCategories($item->id);
 
-			if (!is_null($item->enddates)) {
+			if (!is_null($item->enddates) && !$startdayonly) {
 				if ($item->enddates != $item->dates) {
 					// $day = $item->start_day;
 					$day = $item->start_day;
@@ -211,13 +205,13 @@ class JemModelWeekcal extends JemModelEventslist
 							$multi[$counter]->times = $item->times;
 							$multi[$counter]->endtimes = $item->endtimes;
 						}
+					} // for
 
-						//add generated days to data
-						$items = array_merge($items, $multi);
+					//add generated days to data
+					$items = array_merge($items, $multi);
 
-						//unset temp array holding generated days before working on the next multiday event
-						unset($multi);
-					}
+					//unset temp array holding generated days before working on the next multiday event
+					unset($multi);
 				}
 			}
 
@@ -225,7 +219,7 @@ class JemModelWeekcal extends JemModelEventslist
 			if (empty($item->categories)) {
 				unset($item);
 			}
-		}
+		} // foreach
 
 		foreach ($items as $index => $item) {
 			$date = $item->dates;

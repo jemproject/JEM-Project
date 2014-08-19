@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -65,7 +65,7 @@ defined('_JEXEC') or die;
 			<div class="subcategorieslist">
 				<?php foreach ($row->subcats as $sub) : ?>
 					<strong>
-						<a href="<?php echo JRoute::_(JemHelperRoute::getCategoryRoute($sub->slug)); ?>">
+						<a href="<?php echo JRoute::_(JemHelperRoute::getCategoryRoute($sub->slug, $this->task)); ?>">
 							<?php echo $this->escape($sub->catname); ?></a>
 					</strong> <?php echo '(' . ($sub->assignedevents != null ? $sub->assignedevents : 0) . (--$i ? '),' : ')'); ?>
 				<?php endforeach; ?>

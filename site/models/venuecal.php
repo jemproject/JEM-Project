@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -96,26 +96,16 @@ class JemModelVenueCal extends JemModelEventslist
 		$where = ' DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
 		$this->setState('filter.calendar_to',$where);
 
-		# set filter multiday
+		# set filter
 		$this->setState('filter.calendar_multiday',true);
-
-		if ($startdayonly == '0') {
-			$startday = true;
-		} else {
-			$startday = false;
-		}
-
-		$this->setState('filter.calendar_startdayonly',$startday);
-
+		$this->setState('filter.calendar_startdayonly',(bool)$startdayonly);
 		$this->setState('filter.filter_locid',$this->_id);
-
 
 		$item = JRequest::getInt('Itemid');
 		$app->setUserState('com_jem.venuecal.locid'.$item, $this->_id);
 
 		# groupby
 		$this->setState('filter.groupby',array('a.id'));
-
 	}
 
 	/**

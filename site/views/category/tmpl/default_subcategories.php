@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -19,13 +19,25 @@ $class = ' class="first"';
  */ ?>
 
 <?php if (count($this->children[$this->category->id]) > 0) : ?>
+	<?php
+	$lastid = 0;
+	foreach ($this->children[$this->category->id] as $id => $child) :
+		if ($this->params->get('showemptychilds', 1) || ($child->getNumItems(true) > 0)) :
+			$lastid = $id;
+		endif;
+	endforeach;
+	?>
 
 	<ul>
-	<?php foreach($this->children[$this->category->id] as $id => $child) : ?>
+	<?php foreach ($this->children[$this->category->id] as $id => $child) : ?>
 
 		<?php
-		//if ($this->params->get('show_empty_categories') || $child->getNumItems(true) || count($child->getChildren())) :
-		if (!isset($this->children[$this->category->id][$id + 1])) :
+		// Note: We don't skip empty subcategories if they have at least one non-empty subsubcategory.
+		if (!$this->params->get('showemptychilds', 1) && ($child->getNumItems(true) <= 0)) :
+			continue; // skip this subcat
+		endif;
+
+		if ($id == $lastid) :
 			$class = ' class="last"';
 		endif;
 		?>
@@ -33,7 +45,7 @@ $class = ' class="first"';
 		<li<?php echo $class; ?>>
 			<?php $class = ''; ?>
 			<span class="item-title">
-				<a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($child->id)); ?>">
+				<a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($child->id, $this->task)); ?>">
 					<?php echo $this->escape($child->catname); ?>
 				</a>
 			</span>
@@ -43,17 +55,19 @@ $class = ' class="first"';
 					<?php echo JHtml::_('content.prepare', $child->description, '', 'com_content.category'); ?>
 				</div>
 				<?php endif; ?>
+				<?php if ( $this->params->get('show_cat_num_articles', 1)) : ?>
+				<dl>
+					<dt>
+						<?php echo JText::_('COM_CONTENT_NUM_ITEMS') ; ?>
+					</dt>
+					<dd>
+						<?php echo $child->getNumItems(false); /* count direct events only, not recursive */ ?>
+					</dd>
+				</dl>
+				<?php endif; ?>
+			<?php elseif ($this->params->get('show_cat_num_articles', 1)) : ?>
+				<?php echo ' (' . $child->getNumItems(false) . ')';  /* count direct events only, not recursive */ ?>
 			<?php endif; ?>
-			<?php if ( $this->params->get('show_cat_num_articles', 0)) : ?>
-			<dl>
-				<dt>
-					<?php echo JText::_('COM_CONTENT_NUM_ITEMS') ; ?>
-				</dt>
-				<dd>
-					<?php echo $child->getNumItems(false); ?>
-				</dd>
-			</dl>
-			<?php endif ; ?>
 
 			<?php if (count($child->getChildren()) > 0 ) :
 				$this->children[$child->id] = $child->getChildren();
