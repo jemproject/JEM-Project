@@ -14,7 +14,7 @@
 				default="1"
 				label="COM_JEM_SELECTTOPCAT"
 				description="COM_JEM_SELECTTOPCATDESC"
-				required="true"
+				required="false"
 			/>
 		</fieldset>
 	</fields>
