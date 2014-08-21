@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -208,6 +208,9 @@ class JEMOutput {
 			$settings = JemHelper::globalattribs();
 			JHtml::_('behavior.tooltip');
 
+			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
+			$showIcon = 1; //$settings->get('global_show_icons', 1);
+
 			switch ($view)
 			{
 				case 'editevent':
@@ -219,7 +222,7 @@ class JEMOutput {
 						return '<span class="hasTip" title="'.htmlspecialchars($tooltip, ENT_COMPAT, 'UTF-8').'">'.$button.'</span>';
 					}
 
-					if ($settings->get('global_show_icons',1)) {
+					if ($showIcon) {
 						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_EVENT'), NULL, true);
 					} else {
 						$image = JText::_('COM_JEM_EDIT_EVENT');
@@ -239,7 +242,7 @@ class JEMOutput {
 						return '<span class="hasTip" title="'.htmlspecialchars($tooltip, ENT_COMPAT, 'UTF-8').'">'.$button.'</span>';
 					}
 
-					if ($settings->get('global_show_icons',1)) {
+					if ($showIcon) {
 						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_VENUE'), NULL, true);
 					} else {
 						$image = JText::_('COM_JEM_EDIT_VENUE');
@@ -259,7 +262,7 @@ class JEMOutput {
 						return '<span class="hasTip" title="'.htmlspecialchars($tooltip, ENT_COMPAT, 'UTF-8').'">'.$button.'</span>';
 					}
 
-					if ($settings->get('global_show_icons',1)) {
+					if ($showIcon) {
 						$image = JHtml::_('image', 'com_jem/calendar_edit.png', JText::_('COM_JEM_EDIT_VENUE'), NULL, true);
 					} else {
 						$image = JText::_('COM_JEM_EDIT_VENUE');
