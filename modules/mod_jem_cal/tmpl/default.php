@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @subpackage JEM Calendar Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -164,11 +164,16 @@ $today 		= date('j', $time);
 $currmonth 	= date('m', $time);
 $curryear 	= date('Y', $time);
 
+// switch off tooltips if neighter title nor text should be shown
+if (($Show_Tooltips_Title == 0) && ($tooltips_max_events === '0')) {
+	$Show_Tooltips = 0;
+}
+
 for ($counti = 0; $counti < $weekday; $counti++) {
 	$calendar .= '<td class="mod_jemcalq">&nbsp;</td>'; #initial 'empty' days
 }
 
-for($day = 1, $days_in_month = gmdate('t', $uxtime_first_of_month); $day <= $days_in_month; $day++, $weekday++) {
+for ($day = 1, $days_in_month = gmdate('t', $uxtime_first_of_month); $day <= $days_in_month; $day++, $weekday++) {
 	if($weekday == 7) {
 		$weekday = 0; #start a new week
 		$calendar .= "</tr>\n<tr>";
@@ -191,8 +196,6 @@ for($day = 1, $days_in_month = gmdate('t', $uxtime_first_of_month); $day <= $day
 		if ($Show_Tooltips == 1) {
 			$calendar .= '<td class="'.$tdbaseclass.'link">';
 			if ($link) {
-				$tip = '';
-
 				$title = explode('+%+%+', $title);
 				if ($Show_Tooltips_Title == 1) {
 					if (count($title) > 1) {
@@ -204,11 +207,25 @@ for($day = 1, $days_in_month = gmdate('t', $uxtime_first_of_month); $day <= $day
 					$tipTitle = '';
 				}
 
-				foreach ($title as $t) {
-					$tip .= trim($t) . '<br />';
+				// There is a bug in Joomla which will format complete tip text as title
+				//  if $tipTitle is empty (because then no '::' will be added).
+				//  So add it manually and let title param empty.
+				$tip = $tipTitle . '::';
+
+				// if user hadn't explicitely typed in a 0 list limited number or all events
+				if ($tooltips_max_events !== '0') {
+					$count = 0;
+					foreach ($title as $t) {
+						if (($tooltips_max_events > 0) && (++$count > $tooltips_max_events)) {
+							$tip .= '...';
+							break; // foreach
+						}
+						$tip .= trim($t) . '<br />';
+					}
 				}
 
-				$calendar .= JHtml::tooltip($tip, $tipTitle, 'tooltip.png', $space.$day, $link);
+				// title already within $tip to ensure always '::' is pesent
+				$calendar .= JHtml::tooltip($tip, '', 'tooltip.png', $space.$day, $link);
 			}
 
 			$calendar .= '</td>';
