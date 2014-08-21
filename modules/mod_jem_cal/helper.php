@@ -36,10 +36,10 @@ abstract class modjemcalqhelper
 
 		$user		= JFactory::getUser();
 		$levels		= $user->getAuthorisedViewLevels();
-		$settings 	= JEMHelper::globalattribs();
+		$settings 	= JemHelper::globalattribs();
 
-		$catid 				= trim($params->get('catid'));
-		$venid 				= trim($params->get('venid'));
+		$catids 			= JemHelper::getValidIds($params->get('catid'));
+		$venids 			= JemHelper::getValidIds($params->get('venid'));
 		$StraightToDetails	= $params->get('StraightToDetails', '1');
 		$DisplayCat			= $params->get('DisplayCat', '0');
 		$DisplayVenue		= $params->get('DisplayVenue', '0');
@@ -49,20 +49,14 @@ abstract class modjemcalqhelper
 		$defaultItemid	 	= $settings->get('default_Itemid','');
 
 		# filter category's
-		if ($catid) {
-			$ids = explode(',', $catid);
-			$ids = JArrayHelper::toInteger($ids);
-			//$categories = ' AND c.id IN (' . implode(',', $ids) . ')';
-			$model->setState('filter.category_id',$ids);
+		if ($catids) {
+			$model->setState('filter.category_id',$catids);
 			$model->setState('filter.category_id.include',true);
 		}
 
 		# filter venue's
-		if ($venid) {
-			$ids = explode(',', $venid);
-			$ids = JArrayHelper::toInteger($ids);
-			/*$venues = ' AND l.id IN (' . implode(',', $ids) . ')';*/
-			$model->setState('filter.venue_id',$ids);
+		if ($venids) {
+			$model->setState('filter.venue_id',$venids);
 			$model->setState('filter.venue_id.include',true);
 		}
 
@@ -76,13 +70,11 @@ abstract class modjemcalqhelper
 			$model->setState('filter.published',array(1,2));
 		} else {
 			if ($CurrentEvents == 1) {
-				/*$wherestr = ' WHERE a.published = 1';*/
 				$model->setState('filter.published',1);
 			}
 
 			# filter archived
 			if ($ArchivedEvents == 1) {
-			/*$wherestr = ' WHERE a.published = 2';*/
 				$model->setState('filter.published',2);
 			}
 		}

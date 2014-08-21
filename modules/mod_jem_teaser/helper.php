@@ -90,41 +90,36 @@ abstract class modJEMteaserHelper
 		$model->setState('filter.groupby','a.id');
 
 		# clean parameter data
-		$catid = trim($params->get('catid'));
-		$venid = trim($params->get('venid'));
-		$eventid = trim($params->get('eventid'));
+		$catids = JemHelper::getValidIds($params->get('catid'));
+		$venids = JemHelper::getValidIds($params->get('venid'));
+		$eventids = JemHelper::getValidIds($params->get('eventid'));
 		
 		# filter category's
-		if ($catid) {
-			$ids = explode(',', $catid);
-			$model->setState('filter.category_id',$ids);
+		if ($catids) {
+			$model->setState('filter.category_id',$catids);
 			$model->setState('filter.category_id.include',true);
 		}
 
 		# filter venue's
-		if ($venid) {
-			$ids = explode(',', $venid);
-			$model->setState('filter.venue_id',$ids);
+		if ($venids) {
+			$model->setState('filter.venue_id',$venids);
 			$model->setState('filter.venue_id.include',true);
 		}
-		
+
 		# filter event id's
-		if ($eventid) {
-			$ids = explode(',', $eventid);			
-			$model->setState('filter.event_id',$ids);
+		if ($eventids) {
+			$model->setState('filter.event_id',$eventids);
 			$model->setState('filter.event_id.include',true);
 		}
 
 		# count
 		$count = $params->get('count', '2');
+		$model->setState('list.limit',$count);
 
 		if ($params->get('use_modal', 0)) {
-		JHtml::_('behavior.modal', 'a.flyermodal');
+			JHtml::_('behavior.modal', 'a.flyermodal');
 		}
 
-		$model->setState('list.limit',$count);
-		
-		
 		# Retrieve the available Events
 		$events = $model->getItems();
 

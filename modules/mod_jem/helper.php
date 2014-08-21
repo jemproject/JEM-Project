@@ -68,21 +68,22 @@ abstract class modJEMHelper
 		$model->setState('filter.calendar_from',$cal_from);
 		$model->setState('filter.groupby','a.id');
 
-		$catid 	= trim($params->get('catid'));
-		$venid 	= trim($params->get('venid'));
-
-		if ($catid) {
-			$ids = explode(',', $catid);
-			$categories = ' AND (c.id=' . implode(' OR c.id=', $ids) . ')';
+		# filter category's
+		$catids = JemHelper::getValidIds($params->get('catid'));
+		if ($catids) {
+			$model->setState('filter.category_id',$catids);
+			$model->setState('filter.category_id.include',true);
 		}
-		if ($venid) {
-			$ids = explode(',', $venid);
-			$venues = ' AND (l.id=' . implode(' OR l.id=', $ids) . ')';
+
+		# filter venue's
+		$venids = JemHelper::getValidIds($params->get('venid'));
+		if ($venids) {
+			$model->setState('filter.venue_id',$venids);
+			$model->setState('filter.venue_id.include',true);
 		}
 
 		# count
 		$count = $params->get('count', '2');
-
 		$model->setState('list.limit',$count);
 
 		# Retrieve the available Events
