@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -39,6 +39,7 @@ class JemViewDay extends JEMView
 		$db 			= JFactory::getDBO();
 		$uri 			= JFactory::getURI();
 		$task 			= JRequest::getWord('task');
+		$print			= JRequest::getBool('print');
 		$pathway 		= $app->getPathWay();
 		$jinput 		= $app->input;
 
@@ -56,6 +57,11 @@ class JemViewDay extends JEMView
 		JemHelper::loadCss('jem');
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
+
+		if ($print) {
+			JemHelper::loadCss('print');			
+			$document->setMetaData('robots', 'noindex, nofollow');
+		}
 
 		// get variables
 		$itemid 			= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);

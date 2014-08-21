@@ -136,6 +136,7 @@ class JemViewCategory extends JEMView
 			$settings 		= JemHelper::globalattribs();
 			$db  			= JFactory::getDBO();
 			$user			= JFactory::getUser();
+			$print			= JRequest::getBool('print');
 
 			JHtml::_('behavior.tooltip');
 
@@ -150,6 +151,11 @@ class JemViewCategory extends JEMView
 			JemHelper::loadCss('jem');
 			JemHelper::loadCustomCss();
 			JemHelper::loadCustomTag();
+
+			if ($print) {
+				JemHelper::loadCss('print');			
+				$document->setMetaData('robots', 'noindex, nofollow');
+			}
 
 			//get data from model
 			$state		= $this->get('State');
