@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @subpackage JEM Mailer Plugin
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -549,11 +549,11 @@ class plgJEMMailer extends JPlugin {
 			if ($is_new) {
 				$created = JHtml::Date($event->created, JText::_('DATE_FORMAT_LC2'));
 				$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_MAIL', $this->_SiteName, $event->title);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_A', $username, $user->email, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_9', $username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			} else {
 				$modified = JHtml::Date($event->modified, JText::_('DATE_FORMAT_LC2'));
 				$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_MAIL', $this->_SiteName, $event->title);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_A', $username, $user->email, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_9', $username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			}
 
 			$data->receivers = $admin_receivers;
@@ -571,11 +571,11 @@ class plgJEMMailer extends JPlugin {
 			if ($is_new) {
 				$created = JHtml::Date($event->created, JText::_('DATE_FORMAT_LC2'));
 				$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_MAIL', $this->_SiteName, $event->title);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_A', $username, $user->email, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+				$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_EVENT_9', $username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			} else {
 				$modified = JHtml::Date($event->modified, JText::_('DATE_FORMAT_LC2'));
 				$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_MAIL', $this->_SiteName, $event->title);
-				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_A', $username, $user->email, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
+				$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_EVENT_9', $username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
 			}
 
 			$data->receivers = array_unique($group_receivers);
@@ -703,12 +703,12 @@ class plgJEMMailer extends JPlugin {
 					# the venue is new and we send a mail to adminDBList
 					$created = JHtml::Date($venue->created, JText::_('DATE_FORMAT_LC2'));
 					$data->subject = JText::sprintf('PLG_JEM_MAILER_NEW_VENUE_MAIL', $this->_SiteName, $venue->venue);
-					$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_VENUE_B', $username, $user->email, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
+					$data->body = JText::sprintf('PLG_JEM_MAILER_NEW_VENUE_A', $username, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
 				} else {
 					# the venue is edited and we send a mail to adminDBList
 					$modified = JHtml::Date($venue->modified, JText::_('DATE_FORMAT_LC2'));
 					$data->subject = JText::sprintf('PLG_JEM_MAILER_EDIT_VENUE_MAIL', $this->_SiteName, $venue->venue);
-					$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_VENUE_B', $username, $user->email, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
+					$data->body = JText::sprintf('PLG_JEM_MAILER_EDIT_VENUE_A', $username, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
 				}
 				$data->receivers = $admin_receivers;
 
