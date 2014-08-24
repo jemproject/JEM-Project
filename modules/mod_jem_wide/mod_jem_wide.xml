@@ -4,7 +4,7 @@
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>July 2014</creationDate>
+	<creationDate>August 2014</creationDate>
 	<copyright>copyright (C) 2013-2014 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<version>1.9.8</version>
@@ -102,7 +102,7 @@
 					description="MOD_JEM_WIDE_DATE_FORMAT_DESC"
 				/>
 				<field name="formattime" type="text"
-					default="%H.%M"
+					default="%H:%M"
 					label="MOD_JEM_WIDE_TIME_FORMAT"
 					description="MOD_JEM_WIDE_TIME_FORMAT_DESC"
 				/>

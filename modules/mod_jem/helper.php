@@ -27,9 +27,27 @@ abstract class modJEMHelper
 	{
 		mb_internal_encoding('UTF-8');
 
-		$db		= JFactory::getDBO();
-		$user	= JFactory::getUser();
-		$levels = $user->getAuthorisedViewLevels();
+		$db       = JFactory::getDBO();
+		$user     = JFactory::getUser();
+		$levels   = $user->getAuthorisedViewLevels();
+		$settings = JemHelper::config();
+
+		// Use (short) format saved in module settings or in component settings or format in language file otherwise
+		$dateFormat = $params->get('formatdate', '');
+		if (empty($dateFormat)) {
+			// on empty format long format will be used but we need short format
+			if (isset($settings->formatShortDate) && $settings->formatShortDate) {
+				$dateFormat = $settings->formatShortDate;
+			} else {
+				$dateFormat = JText::_('COM_JEM_FORMAT_SHORT_DATE');
+			}
+		}
+		$timeFormat = $params->get('formattime', '');
+		$addSuffix  = false;
+		if (empty($timeFormat)) {
+			// on empty format component's format will be used, so also use component's time suffix
+			$addSuffix = true;
+		}
 
 		# Retrieve Eventslist model for the data
 		$model = JModelLegacy::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
@@ -104,12 +122,12 @@ abstract class modJEMHelper
 			}
 
 			$lists[$i] = new stdClass;
-			$lists[$i]->link		= JRoute::_(JEMHelperRoute::getEventRoute($row->slug));
-			$lists[$i]->dateinfo 	= JEMOutput::formatShortDateTime($row->dates, $row->times,
-						$row->enddates, $row->endtimes);
-			$lists[$i]->text		= $params->get('showtitloc', 0) ? $row->title : htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->city		= htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->venueurl 	= !empty($row->venueslug) ? JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : null;
+			$lists[$i]->link     = JRoute::_(JemHelperRoute::getEventRoute($row->slug));
+			$lists[$i]->dateinfo = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes,
+			                                                 $dateFormat, $timeFormat, $addSuffix);
+			$lists[$i]->text     = $params->get('showtitloc', 0) ? $row->title : htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->city     = htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->venueurl = !empty($row->venueslug) ? JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : null;
 			$i++;
 		}
 

@@ -814,43 +814,46 @@ class JEMOutput {
 	 * @param string $timeStart Start time of event
 	 * @param string $dateEnd End date of event
 	 * @param string $timeEnd End time of event
-	 * @param string $format Date Format
+	 * @param string $dateFormat Date Format
+	 * @param string $timeFormat Time Format
+	 * @param bool   $addSuffix if true add suffix specified in settings
 	 * @return string Formatted date and time string to print
 	 */
-	static function formatDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "", $format = "")
+	static function formatDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "", $dateFormat = "", $timeFormat = "", $addSuffix = true)
 	{
 		$settings = JemHelper::globalattribs();
 		$output = "";
 
-		if(JemHelper::isValidDate($dateStart)) {
-			$output .= self::formatdate($dateStart, $format);
+		if (JemHelper::isValidDate($dateStart)) {
+			$output .= self::formatdate($dateStart, $dateFormat);
 
-			if($settings->get('global_show_timedetails','1') && JemHelper::isValidTime($timeStart)) {
-				$output .= ', '.self::formattime($timeStart);
+			if ($settings->get('global_show_timedetails','1') && JemHelper::isValidTime($timeStart)) {
+				$output .= ', '.self::formattime($timeStart, $timeFormat, $addSuffix);
 			}
 
 			// Display end date only when it differs from start date
 			$displayDateEnd = JemHelper::isValidDate($dateEnd) && $dateEnd != $dateStart;
-			if($displayDateEnd) {
-				$output .= ' - '.self::formatdate($dateEnd, $format);
+			if ($displayDateEnd) {
+				$output .= ' - '.self::formatdate($dateEnd, $dateFormat);
 			}
 
 			// Display end time only when both times are set
-			if($settings->get('global_show_timedetails','1') && JemHelper::isValidTime($timeStart) && JemHelper::isValidTime($timeEnd))
+			if ($settings->get('global_show_timedetails','1') && JemHelper::isValidTime($timeStart) && JemHelper::isValidTime($timeEnd))
 			{
 				$output .= $displayDateEnd ? ', ' : ' - ';
-				$output .= self::formattime($timeEnd);
+				$output .= self::formattime($timeEnd, $timeFormat, $addSuffix);
 			}
 		} else {
 			$output .= JText::_('COM_JEM_OPEN_DATE');
 
-			if($settings->get('global_show_timedetails','1')) {
-				if(JemHelper::isValidTime($timeStart)) {
-					$output .= ', '.self::formattime($timeStart);
-				}
-				// Display end time only when both times are set
-				if(JemHelper::isValidTime($timeStart) && JemHelper::isValidTime($timeEnd)) {
-					$output .= ' - '.self::formattime($timeEnd);
+			if ($settings->get('global_show_timedetails','1')) {
+				if (JemHelper::isValidTime($timeStart)) {
+					$output .= ', '.self::formattime($timeStart, $timeFormat, $addSuffix);
+
+					// Display end time only when both times are set
+					if (JemHelper::isValidTime($timeEnd)) {
+						$output .= ' - '.self::formattime($timeEnd, $timeFormat, $addSuffix);
+					}
 				}
 			}
 		}
