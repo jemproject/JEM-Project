@@ -457,6 +457,10 @@ class JemModelEventslist extends JModelList
 	{
 		$items	= parent::getItems();
 
+		if (empty($items)) {
+			return array();
+		}
+
 		$user	= JFactory::getUser();
 		$userId	= $user->get('id');
 		$guest	= $user->get('guest');
@@ -521,10 +525,9 @@ class JemModelEventslist extends JModelList
 		if ($items) {
 			$items = JemHelper::getAttendeesNumbers($items);
 
-		if ($calendarMultiday) {
-			$items = self::calendarMultiday($items);
-		}
-
+			if ($calendarMultiday) {
+				$items = self::calendarMultiday($items);
+			}
 		}
 
 		return $items;
