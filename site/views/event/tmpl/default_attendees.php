@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -28,12 +28,12 @@ defined('_JEXEC') or die;
 	<?php
 	endif;
 	?>
-	<dt class="register"><?php echo JText::_('COM_JEM_REGISTERED_USERS').':'; ?></dt>
-	<dd class="register">
 <?php
 //only set style info if users already have registered and user is allowed to see it
 if ($this->registers) :
 ?>
+	<dt class="register"><?php echo JText::_('COM_JEM_REGISTERED_USERS').':'; ?></dt>
+	<dd class="register">
 	<ul class="user floattext">
 
 <?php
@@ -92,26 +92,29 @@ endforeach;
 <?php endif; ?>
 
 <?php
-
 if ($this->print == 0) {
-switch ($this->formhandler) {
-
-	case 1:
-		echo JText::_('COM_JEM_TOO_LATE_REGISTER');
-	break;
-
-	case 2:
-		echo JText::_('COM_JEM_LOGIN_FOR_REGISTER');
-	break;
-
-	case 3:
-		echo $this->loadTemplate('unregform');
-	break;
-
-	case 4:
-		echo $this->loadTemplate('regform');
-	break;
-}
+	?>
+	<dl class="floattext">
+		<dd class="register">
+			<?php
+			switch ($this->formhandler) {
+			case 1:
+				echo JText::_('COM_JEM_TOO_LATE_REGISTER');
+				break;
+			case 2:
+				echo JText::_('COM_JEM_LOGIN_FOR_REGISTER');
+				break;
+			case 3:
+				echo $this->loadTemplate('unregform');
+				break;
+			case 4:
+				echo $this->loadTemplate('regform');
+				break;
+			}
+			?>
+		</dd>
+	</dl>
+	<?php
 }
 ?>
 </div>

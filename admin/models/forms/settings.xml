@@ -1034,6 +1034,18 @@
 		<fieldset name="evregistration"
 			label="COM_JEM_REGISTRATION"
 		>
+			<field name="event_show_attendeenames" type="list"
+				label="COM_JEM_REG_SHOW_ATTENDEENAMES_TO"
+				description="COM_JEM_REG_SHOW_ATTENDEENAMES_TO_DESC"
+				class="inputbox"
+				default="2"
+				required="false"
+			>
+				<option value="0">COM_JEM_NOBODY</option>
+				<option value="1">COM_JEM_ONLYADMINS</option>
+				<option value="2">COM_JEM_ALLREGISTERED</option>
+				<option value="3">COM_JEM_EVERYBODY</option>
+			</field>
 			<field name="event_comunsolution" type="list"
 				label="COM_JEM_COM_SOL"
 				description="COM_JEM_COM_SOL_DESC"

@@ -115,6 +115,7 @@ class com_jemInstallerScript
 		$param_array = array(
 				"event_comunoption"=>"0",
 				"event_comunsolution"=>"0",
+				"event_show_attendeenames"=>"2",
 				"event_show_author"=>"1",
 				"event_lg"=>"",
 				"event_link_author"=>"1",
