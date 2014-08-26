@@ -20,34 +20,40 @@ window.addEvent('domready', function() {
 	);
 
 	/* Show all */
-	$('buttonshowall').addEvent( 'click', function() {
-		$$('.jlcalendar .eventcontent').each(
-			function(eventcat) {
-				el = eventcat.getElements('div[class^=cat]');
-				el.setStyle('display', 'block');
-			}
-		);
+	btn = $('buttonshowall');
+	if (btn) {
+		btn.addEvent( 'click', function() {
+			$$('.jlcalendar .eventcontent').each(
+				function(eventcat) {
+					el = eventcat.getElements('div[class^=cat]');
+					el.setStyle('display', 'block');
+				}
+			);
 
-		$$('#jlcalendarlegend .eventCat').each(
-			function(eventcat) {
-				eventcat.removeClass('catoff');
-			}
-		);
-	});
+			$$('#jlcalendarlegend .eventCat').each(
+				function(eventcat) {
+					eventcat.removeClass('catoff');
+				}
+			);
+		});
+	}
 
 	/* Hide all */
-	$('buttonhideall').addEvent( 'click', function() {
-		$$('.jlcalendar .eventcontent').each(
-			function(eventcat) {
-				el = eventcat.getElements('div[class^=cat]');
-				el.setStyle('display', 'none');
-			}
-		);
+	btn = $('buttonhideall');
+	if (btn) {
+		btn.addEvent( 'click', function() {
+			$$('.jlcalendar .eventcontent').each(
+				function(eventcat) {
+					el = eventcat.getElements('div[class^=cat]');
+					el.setStyle('display', 'none');
+				}
+			);
 
-		$$('#jlcalendarlegend .eventCat').each(
-			function(eventcat) {
-				eventcat.addClass('catoff');
-			}
-		);
-	});
+			$$('#jlcalendarlegend .eventCat').each(
+				function(eventcat) {
+					eventcat.addClass('catoff');
+				}
+			);
+		});
+	}
 });
