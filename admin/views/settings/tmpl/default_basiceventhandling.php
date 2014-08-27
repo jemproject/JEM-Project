@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -12,12 +12,7 @@ defined('_JEXEC') or die;
 	<fieldset class="adminform">
 		<legend><?php echo JText::_( 'COM_JEM_EVENT_HANDLING' ); ?></legend>
 		<ul class="adminformlist">
-			<li><?php echo $this->form->getLabel('oldevent'); ?> <?php echo $this->form->getInput('oldevent'); ?>
-				<span class="error hasTip" title="<?php echo JText::_( 'COM_JEM_WARNING' ); ?>::<?php echo JText::_( 'COM_JEM_OLD_EVENTS_WARN' ); ?>">
-					<?php echo $this->WarningIcon(); ?>
-				</span>
-			</li>
-
+			<li><?php echo $this->form->getLabel('oldevent'); ?> <?php echo $this->form->getInput('oldevent'); ?></li>
 			<li id="evhandler1"><?php echo $this->form->getLabel('minus'); ?> <?php echo $this->form->getInput('minus'); ?></li>
 		</ul>
 	</fieldset>

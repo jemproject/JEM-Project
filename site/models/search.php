@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -54,6 +54,8 @@ class JEMModelSearch extends JModelLegacy
 		//get the number of events from database
 		$limit		= $app->getUserStateFromRequest('com_jem.search.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart	= JRequest::getVar('limitstart', 0, '', 'int');
+		// correct start value if required
+		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -297,7 +299,7 @@ class JEMModelSearch extends JModelLegacy
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
-		$query = 'SELECT c.id, c.catname, c.access, c.ordering, c.checked_out AS cchecked_out,'
+		$query = 'SELECT c.id, c.catname, c.access, c.lft, c.checked_out AS cchecked_out,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
 				. ' FROM #__jem_categories AS c'
 				. ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
@@ -377,7 +379,7 @@ class JEMModelSearch extends JModelLegacy
 		$query = 'SELECT c.*'
 			. ' FROM #__jem_categories AS c'
 			. $where
-			. ' ORDER BY c.ordering'
+			. ' ORDER BY c.lft'
 			;
 		$db->setQuery($query);
 		$mitems = $db->loadObjectList();
@@ -391,11 +393,7 @@ class JEMModelSearch extends JModelLegacy
 		if (!$mitems) {
 			$mitems = array();
 			$children = array();
-
-			$parentid = $mitems;
 		} else {
-			$mitems_temp = $mitems;
-
 			$children = array();
 			// First pass - collect children
 			foreach ($mitems as $v)
@@ -405,8 +403,6 @@ class JEMModelSearch extends JModelLegacy
 				array_push($list, $v);
 				$children[$pt] = $list;
 			}
-
-			$parentid = intval($mitems[0]->parent_id);
 		}
 
 		//get list of the items

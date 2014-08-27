@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -476,8 +476,31 @@ class JemModelEvent extends JModelItem
 	 */
 	function getRegisters($event = false)
 	{
+		if (empty($event)) {
+			return false;
+		}
+
 		// avatars should be displayed
 		$settings = JEMHelper::globalattribs();
+		$user     = JFactory::getUser();
+
+		switch ($settings->get('event_show_attendeenames', 2)) {
+			case 0: // show to none
+			default:
+				return false;
+			case 1: // show to admins
+				if (!$user->authorise('core.manage', 'com_jem')) {
+					return false;
+				}
+				break;
+			case 2: // show to registered
+				if ($user->get('guest')) {
+					return false;
+				}
+				break;
+			case 3: // show to all
+				break;
+		}
 
 		$avatar = '';
 		$join = '';
@@ -497,7 +520,7 @@ class JemModelEvent extends JModelItem
 				. ' FROM #__jem_register AS r'
 				. ' LEFT JOIN #__users AS u ON u.id = r.uid'
 				. $join
-				. ' WHERE event = '. $event
+				. ' WHERE event = '. $db->quote($event)
 				. '   AND waiting = 0 ';
 		$db->setQuery($query);
 

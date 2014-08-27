@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -47,11 +47,13 @@ class JemModelVenue extends JemModelEventslist
 		$task           = $jinput->get('task','','cmd');
 
 		// List state information
-		$limitstart = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
-		$this->setState('list.start', $limitstart);
-
-		$limit		= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
+		$limit = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
 		$this->setState('list.limit', $limit);
+
+		$limitstart = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
+		// correct start value if required
+		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+		$this->setState('list.start', $limitstart);
 
 		# Search
 		$search = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_search', 'filter_search', '', 'string');

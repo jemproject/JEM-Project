@@ -15,7 +15,7 @@ function initialize() {
 	var myMapOptions = {
 			 zoom: 16
 			,center: myLatlng
-			,mapTypeId: google.maps.MapTypeId.HYBRID
+			,mapTypeId: google.maps.MapTypeId.ROADMAP
 			,disableDefaultUI: false
 		};
 	

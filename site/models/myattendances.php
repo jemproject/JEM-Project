@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -37,6 +37,8 @@ class JEMModelMyattendances extends JModelLegacy
 		//get the number of events
 		$limit		= $app->getUserStateFromRequest('com_jem.myattendances.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart = $app->getUserStateFromRequest('com_jem.myattendances.limitstart', 'limitstart', 0, 'int');
+		// correct start value if required
+		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -129,12 +131,12 @@ class JEMModelMyattendances extends JModelLegacy
 		// Get the WHERE and ORDER BY clauses for the query
 		$where = $this->_buildAttendingWhere();
 		$orderby = $this->_buildOrderByAttending();
+		$groupby = ' GROUP BY a.id';
 
 		//Get Events from Database
 		$query = 'SELECT DISTINCT a.id AS eventid, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.published, '
 			. ' a.recurrence_type, a.recurrence_first_id,'
 			. ' l.id, l.venue, l.city, l.state, l.url,'
-			. ' c.catname, c.id AS catid,'
 			. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 			. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 			. ' FROM #__jem_events AS a'
@@ -143,6 +145,7 @@ class JEMModelMyattendances extends JModelLegacy
 			. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
 			. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
 			. $where
+			. $groupby
 			. $orderby
 			;
 

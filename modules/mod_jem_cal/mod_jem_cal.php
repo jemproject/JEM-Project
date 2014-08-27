@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @subpackage JEM Calendar Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -41,6 +41,7 @@ $CalTooltipsTitlePl	= $params->get('cal15q_tooltipspl_title', JText::_('MOD_JEM_
 $UseJoomlaLanguage	= $params->get('UseJoomlaLanguage', '1');
 $Default_Stylesheet	= $params->get('Default_Stylesheet', '1');
 $User_stylesheet	= $params->get('User_stylesheet', 'modules/mod_jem_cal/mod_jem_cal.css');
+$tooltips_max_events = $params->get('tooltips_max_events', 0);
 
 if (empty($LocaleOverride)) {
 } else {

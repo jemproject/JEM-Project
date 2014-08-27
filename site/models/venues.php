@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -31,11 +31,13 @@ class JemModelVenues extends JemModelEventslist
 		$task           = $jinput->get('task','','cmd');
 
 		// List state information
-		$limitstart = JRequest::getInt('limitstart');
-		$this->setState('list.start', $limitstart);
-
 		$limit		= JRequest::getInt('limit', $params->get('display_venues_num'));
 		$this->setState('list.limit', $limit);
+
+		$limitstart = JRequest::getInt('limitstart');
+		// correct start value if required
+		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+		$this->setState('list.start', $limitstart);
 
 		# params
 		$this->setState('params', $params);

@@ -892,8 +892,8 @@
 				<option value="1">JSHOW</option>
 			</field>
 			<field name="global_show_detlinkvenue" type="list"
-				label="COM_JEM_DISPLAY_ADDRESS"
-				description="COM_JEM_DISPLAY_ADDRESS_DESC"
+				label="COM_JEM_DISPLAY_LINK_TO_VENUE"
+				description="COM_JEM_DISPLAY_LINK_TO_VENUE_DESC"
 				class="inputbox"
 				default="0"
 				required="false"
@@ -971,8 +971,8 @@
 			label="COM_JEM_VENUES"
 		>
 			<field name="event_show_locdescription" type="radio"
-				label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
-				description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
+				label="COM_JEM_EVENT_DISPLAY_VENUE_DESCRIPT"
+				description="COM_JEM_EVENT_DISPLAY_VENUE_DESCRIPT_DESC"
 				class="inputbox"
 				default="1"
 				required="false"
@@ -981,8 +981,8 @@
 				<option value="1">JSHOW</option>
 			</field>
 			<field name="event_show_detailsadress" type="radio"
-				label="COM_JEM_DISPLAY_ADDRESS"
-				description="COM_JEM_DISPLAY_ADDRESS_DESC"
+				label="COM_JEM_EVENT_DISPLAY_ADDRESS"
+				description="COM_JEM_EVENT_DISPLAY_ADDRESS_DESC"
 				class="inputbox"
 				default="1"
 				required="false"
@@ -991,8 +991,8 @@
 				<option value="1">JSHOW</option>
 			</field>
 			<field name="event_show_detlinkvenue" type="list"
-				label="COM_JEM_DISPLAY_ADDRESS"
-				description="COM_JEM_DISPLAY_ADDRESS_DESC"
+				label="COM_JEM_EVENT_DISPLAY_LINK_TO_VENUE"
+				description="COM_JEM_EVENT_DISPLAY_LINK_TO_VENUE_DESC"
 				class="inputbox"
 				default="0"
 				required="false"
@@ -1002,8 +1002,8 @@
 				<option value="2">COM_JEM_LINK_TO_VENUEVIEW</option>
 			</field>
 			<field name="event_show_mapserv" type="list"
-				label="COM_JEM_DISPLAY_LINK_TO_MAP"
-				description="COM_JEM_DISPLAY_LINK_TO_MAP_DESC"
+				label="COM_JEM_EVENT_DISPLAY_LINK_TO_MAP"
+				description="COM_JEM_EVENT_DISPLAY_LINK_TO_MAP_DESC"
 				class="inputbox"
 				default="0"
 				required="false"
@@ -1034,6 +1034,18 @@
 		<fieldset name="evregistration"
 			label="COM_JEM_REGISTRATION"
 		>
+			<field name="event_show_attendeenames" type="list"
+				label="COM_JEM_REG_SHOW_ATTENDEENAMES_TO"
+				description="COM_JEM_REG_SHOW_ATTENDEENAMES_TO_DESC"
+				class="inputbox"
+				default="2"
+				required="false"
+			>
+				<option value="0">COM_JEM_NOBODY</option>
+				<option value="1">COM_JEM_ONLYADMINS</option>
+				<option value="2">COM_JEM_ALLREGISTERED</option>
+				<option value="3">COM_JEM_EVERYBODY</option>
+			</field>
 			<field name="event_comunsolution" type="list"
 				label="COM_JEM_COM_SOL"
 				description="COM_JEM_COM_SOL_DESC"

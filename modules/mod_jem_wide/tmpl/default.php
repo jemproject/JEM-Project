@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @subpackage JEM Wide Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -27,64 +27,45 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 <?php foreach ($list as $item) : ?>
 	<tr>
 		<td valign="top">
+			<?php if ($item->eventlink) : ?>
 			<span class="event-title">
-				<?php if ($item->eventlink) : ?>
-				<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->title; ?>">
-				<?php endif; ?>
-
-					<?php echo $item->title; ?>
-
-				<?php if ($item->eventlink) : ?>
-				</a>
-				<?php endif; ?>
+				<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->title; ?>"><?php echo $item->title; ?></a>
 			</span>
-
+			<?php else : ?>
+			<span class="event-title">
+				<?php echo $item->title; ?>
+			</span>
+			<?php endif; ?>
 			<br />
-
-			<span class="date">
-				<?php echo $item->date; ?>
-			</span>
+			<span class="date"><?php echo $item->date; ?></span>
 			<?php
-
 			if ($item->time && $params->get('datemethod', 1) == 1) :
 			?>
-			<span class="time">
-				<?php echo $item->time; ?>
-			</span>
+			<span class="time"><?php echo $item->time; ?></span>
 			<?php endif; ?>
 
 		</td>
 		<td>
-			<span class="category">
-					<?php echo $item->catname; ?>
-			</span>
+			<span class="category"><?php echo $item->catname; ?></span>
 		</td>
 		<td>
-			<span class="venue-title">
-				<?php if ($item->venuelink) : ?>
-				<a href="<?php echo $item->venuelink; ?>" title="<?php echo $item->venue; ?>">
-				<?php endif; ?>
-
-					<?php echo $item->venue; ?>
-
-				<?php if ($item->venuelink) : ?>
-				</a>
-				<?php endif; ?>
-			</span>
+			<?php if ($item->venuelink) : ?>
+			<span class="venue-title"><a href="<?php echo $item->venuelink; ?>" title="<?php echo $item->venue; ?>"><?php echo $item->venue; ?></a></span>
+			<?php else : ?>
+			<span class="venue-title"><?php echo $item->venue; ?></span>
+			<?php endif; ?>
 		</td>
 		<td align="center" class="event-image-cell">
 			<?php if ($params->get('use_modal')) : ?>
-
-			<?php if ($item->eventimageorig) {
-				$image = $item->eventimageorig;
-			} else { $image = ''; }
-			 ?>
+				<?php if ($item->eventimageorig) {
+					$image = $item->eventimageorig;
+				} else {
+					$image = '';
+				} ?>
 
 			<a href="<?php echo $image; ?>" class="flyermodal" title="<?php echo $item->title; ?>">
 			<?php endif; ?>
-
 				<img src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" class="image-preview" />
-
 			<?php if ($item->eventlink) : ?>
 			</a>
 			<?php endif; ?>

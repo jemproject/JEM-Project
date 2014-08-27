@@ -26,6 +26,7 @@
 				<option value="0">COM_JEM_HIDE</option>
 				<option value="1">COM_JEM_SHOW</option>
 			</field>
+			<field type="spacer" name="myspacer2" hr="true" />
 			<field name="top_category" type="categories"
 				default="0"
 				label="COM_JEM_SELECT_TOP_CATEGORY"

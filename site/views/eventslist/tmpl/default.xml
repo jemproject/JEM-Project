@@ -24,6 +24,7 @@
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
+			<field type="spacer" name="spacer1" hr="true" />
 			<field name="categoryswitch" type="radio"
 				default="0"
 				label="COM_JEM_CATEGORYSWITCH"
@@ -37,14 +38,23 @@
 				label="COM_JEM_CATEGORYSWITCHCATS"
 				description="COM_JEM_CATEGORYSWITCHCATS_DESC"
 			/>
-			<field type="spacer" name="spacer1" hr="true" />
+			<field name="showopendates" type="radio"
+				default="0"
+				label="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES"
+				description="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC"
+			>
+				<option value="0">JNO</option>
+				<option value="1">COM_JEM_SHOW_OPENDATES_TOO</option>
+				<option value="2">COM_JEM_SHOW_OPENDATES_ONLY</option>
+			</field>
+			<field type="spacer" name="spacer2" hr="true" />
 			<field name="footertext" type="footertext"
 				filter="safehtml"
 				default=""
 				rows="8"
 				cols="30"
 				label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
-				description="COM_JEM_GLOBAL_FIELD_DESC"
+				description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
 			/>
 			<field name="showfootertext" type="radio"
 				default="0"

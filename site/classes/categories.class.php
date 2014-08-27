@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -69,6 +69,7 @@ class JEMCategories
 	public function __construct($cid,$options=false)
 	{
 		$this->id = $cid;
+		$this->_options = $options;
 	}
 
 
@@ -213,18 +214,26 @@ class JEMCategories
 		// @todo: alter
 		if (isset($this->_options['countItems']) && $this->_options['countItems'] == 1)
 		{
-			if ($this->_options['published'] == 1)
+			$published = array();
+			if (isset($this->_options['published']))
 			{
-				$query->leftJoin(
-						$db->quoteName($this->_table) . ' AS i ON i.' . $db->quoteName($this->_field) . ' = c.id AND i.' . $this->_statefield . ' = 1'
-				);
+				$publ = $this->_options['published'];
+				if (is_int($publ)) {
+					$published = array($publ);
+				} elseif (is_array($publ)) {
+					foreach ($publ as $val) {
+						if (is_int($val)) {
+							$published[] = $val;
+						}
+					}
+				}
 			}
-			else
-			{
-				$query->leftJoin($db->quoteName($this->_table) . ' AS i ON i.' . $db->quoteName($this->_field) . ' = c.id');
+			if (empty($published)) {
+				$published = array(1); // default to published events
 			}
 
-			$query->select('COUNT(i.' . $db->quoteName($this->_key) . ') AS numitems');
+			$query->leftJoin('#__jem_events AS i ON rel.itemid = i.id AND i.published IN ('.implode(',', $published).')');
+			$query->select('COUNT(i.id) AS numitems');
 		}
 
 
@@ -232,8 +241,7 @@ class JEMCategories
 		## GROUPBY ##
 		#############
 
-		$query->group('c.id, c.access, c.alias, c.level,
-		 	c.lft, c.parent_id, c.path, c.published, c.rgt, c.catname');
+		$query->group('c.id, c.access, c.alias, c.level, c.lft, c.parent_id, c.path, c.published, c.rgt, c.catname');
 
 
 		// Get the results
@@ -574,7 +582,7 @@ class JEMCategories
 			$where .= ' AND alias NOT LIKE "root"';
 		}
 
-		$query = 'SELECT *, id AS value, catname AS text' . ' FROM #__jem_categories' . $where . ' ORDER BY parent_id, ordering';
+		$query = 'SELECT *, id AS value, catname AS text' . ' FROM #__jem_categories' . $where . ' ORDER BY parent_id, lft';
 		$db->setQuery($query);
 		$mitems = $db->loadObjectList();
 
@@ -626,29 +634,29 @@ class JEMCategories
 	{
 		if (@$children[$id] && $level <= $maxlevel)
 		{
+			if ($type) {
+				$pre	= '<sup>|_</sup>&nbsp;';
+				$spacer = '.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			} else {
+				$pre	= '-&nbsp;';
+				$spacer = '-&nbsp;';
+			}
+
 			foreach ($children[$id] as $v)
 			{
 				$id = $v->id;
 
-				if ($type) {
-						$pre	= '<sup>|_</sup>&nbsp;';
-						$spacer = '.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-				} else {
-						$pre	= '- ';
-						$spacer = '&nbsp;&nbsp;';
-				}
-
-				if ($v->parent_id == 0) {
+				if ($level == 0) {
 						$txt = $v->catname;
 				} else {
 						$txt = $pre . $v->catname;
 				}
 				$pt = $v->parent_id;
 				$list[$id] = $v;
-				$list[$id]->treename = "$indent$txt";
+				$list[$id]->treename = $indent . $txt;
 				$list[$id]->children = count(@$children[$id]);
 
-				$list = JEMCategories::treerecurse($id, $indent . $spacer, $list, $children, $maxlevel, $level+1, $type);
+				$list = JEMCategories::treerecurse($id, ($level ? $indent . $spacer : $indent), $list, $children, $maxlevel, $level+1, $type);
 			}
 		}
 		return $list;

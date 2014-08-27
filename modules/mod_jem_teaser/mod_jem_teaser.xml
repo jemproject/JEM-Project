@@ -4,10 +4,10 @@
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>July 2014</creationDate>
+	<creationDate>August 2014</creationDate>
 	<copyright>copyright (C) 2013-2014 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>1.9.7</version>
+	<version>1.9.8</version>
 	<description>MOD_JEM_TEASER_XML_DESCRIPTION</description>
 
 	<files>
@@ -26,11 +26,17 @@
 					label="MOD_JEM_TEASER_UPCOMING_ARCHIVED_OR_CURRENT"
 					description="MOD_JEM_TEASER_UPCOMING_ARCHIVED_OR_CURRENT_DESC"
 				>
-					<option value="1">MOD_JEM_TEASER_UPCOMING_EVENTS</option>
+					<option value="0">MOD_JEM_TEASER_UPCOMING_EVENTS</option>
+					<option value="1">MOD_JEM_TEASER_UNFINISHED_EVENTS</option>
 					<option value="2">MOD_JEM_TEASER_ARCHIVED_EVENTS</option>
 					<option value="3">MOD_JEM_TEASER_CURRENT_EVENTS</option>
 					<option value="4">MOD_JEM_TEASER_FEATURED_EVENTS</option>
 				</field>
+				<field name="offset_hours" type="text"
+					default=""
+					label="MOD_JEM_TEASER_OFFSET_HOURS"
+					description="MOD_JEM_TEASER_OFFSET_HOURS_DESC"
+				/>
 				<field name="color" type="list"
 					default="1"
 					label="MOD_JEM_TEASER_COLOR"
