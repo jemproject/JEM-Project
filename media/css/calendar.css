@@ -1,5 +1,5 @@
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -9,8 +9,10 @@
 table.month, table.week {
 	background-color:#FFFFFF;
 	border:2px solid #000000;
-	table-layout:fixed;
 	width:100%;
+}
+table.month {
+	table-layout:fixed;
 }
 
 .monthname {
@@ -67,12 +69,22 @@ table.month, table.week {
 	height:88px;
 }
 
-.eventcontent {
+.eventcontent,
+div[id^=catz],
+div[id^='venuez'],
+div[id^='scat'] {
+	border: none;
+	margin: 0;
+	padding: 0;
+}
+
+.eventcontentinner {
 	background-color:yellow;
 	border: 1px solid grey;
 	border-radius: 2px;
 	padding: 5px;
 	margin: 2px;
+	overflow:hidden;
 /* use this onlyif you eally want a break at any position
  -ms-word-break: break-all;
      word-break: break-all;
@@ -87,44 +99,9 @@ table.month, table.week {
 
 }
 
-div[id^=catz] {
-	background-color:yellow;
-	overflow:hidden;
-	word-wrap: break-word;
-	border: none;
-	margin: 0;
-	padding: 0;
-}
-
-div[id^=catz] a {
+div#jem .eventcontentinner a {
 	color: #333;
 	/* text-decoration:none; */
-}
-
-div[id^='venuez'] {
-	background-color:yellow;
-	overflow:hidden;
-	word-wrap: break-word;
-	border: none;
-	margin: 0;
-	padding: 0;
-}
-
-div[id^='venuez'] a {
-	color: #333;
-}
-
-div[id^='scat'] {
-	background-color:yellow;
-	overflow:hidden;
-	word-wrap: break-word;
-	border: none;
-	margin: 0;
-	padding: 0;
-}
-
-div[id^='scat'] {
-	color: #333;
 }
 
 /* *** CALENDAR WEEK ADDITIONS START *** */
@@ -297,14 +274,16 @@ div#jem td {
 	font-weight: bold;
 	color: #ffffff; /* calendarweek: #667171 */
 	border-style: none;
-	border-width:1px
+	border-width:1px;
+	padding: 2px 3px;
 }
 
 .weeknum {
 	text-align: center;
-	font-size: 10px;
-	height:90px;
-	width:90px;
+/*	vertical-align:middle;*/
+	font-size: 12px;
+	font-weight: bold;
+	padding: 2px 3px;
 	color: #CD5C5C;
 	background-color: #FAEBD7;
 }
@@ -316,7 +295,8 @@ div#jem td {
 }
 
 .monthweek {
-	text-align: center;
+	text-align: left;
+	padding: 3px;
 	font-size: 10px;
 	font-weight: bold;
 	color: #667171;
@@ -336,14 +316,8 @@ div#jem td {
 }
 
 .saturday, .sunday {
-	text-align: center;
-	vertical-align: top;
-	font-size: 11px;
-	font-weight: bold;
 	background-color:#D4D4D4;
 	color: #667171;
-	height:90px;
-	width:90px;
 }
 
 .sunday a, .saturday a {
@@ -351,28 +325,16 @@ div#jem td {
 }
 
 .today {
-	text-align: center;
-	vertical-align: top;
-	font-size: 11px;
-	font-weight: bold;
 	border-width: 1px;
 	border-style: solid;
 	background-color: #BBCCFF;
 	color: #000000;
-	height:90px;
-	width:90px;
 }
 
 .selectedday {
-	text-align: center;
-	vertical-align: top;
-	font-size: 11px;
-	font-weight: bold;
 	border-width: 1px;
 	border-style: outset;
 	background-color: #ffffff;
-	height:90px;
-	width:90px;
 }
 /* *** CALENDAR WEEK ADDITIONS END *** */
 

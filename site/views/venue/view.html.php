@@ -60,9 +60,8 @@ class JemViewVenue extends JEMView {
 			$eventandmorecolor = $params->get('eventandmorecolor');
 
 			$style = '
-			div[id^=\'catz\'] a {color:' . $evlinkcolor . ';}
-			div[id^=\'catz\'] {background-color:' . $evbackgroundcolor . ';}
-			.eventcontent {background-color:'.$evbackgroundcolor .';}
+			div#jem .eventcontentinner a, div#jem .eventandmore a {color:' . $evlinkcolor . ';}
+			.eventcontentinner {background-color:'.$evbackgroundcolor .';}
 			.eventandmore {background-color:' . $eventandmorecolor . ';}
 			.today .daynum {background-color:' . $currentdaycolor . ';}';
 			$document->addStyleDeclaration ($style);
@@ -101,13 +100,15 @@ class JemViewVenue extends JEMView {
 
 			$partItemid = ($itemid > 0) ? '&Itemid='.$itemid : '';
 			$partVenid = ($venueID > 0) ? '&id=' . $venueID : '';
+			$partLocid = ($venueID > 0) ? '&locid=' . $venueID : '';
 			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
-			$cal->enableMonthNav('index.php?view=venue&layout=calendar'.$partVenid.$partItemid);
+			$cal->enableMonthNav('index.php?option=com_jem&view=venue&layout=calendar'.$partVenid.$partItemid);
 			$cal->setFirstWeekDay($params->get('firstweekday',1));
-			$cal->enableDayLinks(false);
+			$cal->enableDayLinks('index.php?option=com_jem&view=day'.$partLocid);
 
 			// map variables
 			$this->rows 			= $rows;
+			$this->locid			= $venueID;
 			$this->params 			= $params;
 			$this->jemsettings 		= $jemsettings;
 			$this->cal 				= $cal;

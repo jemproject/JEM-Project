@@ -40,7 +40,7 @@ defined('_JEXEC') or die;
 
 		@$countperday[$year.$month.$day]++;
 		if ($countperday[$year.$month.$day] == $limit+1) {
-			$var1a = JRoute::_( 'index.php?view=day&id='.$year.$month.$day.'&catid='.$this->catid);
+			$var1a = JRoute::_('index.php?option=com_jem&view=day&id='.$year.$month.$day.'&catid='.$this->catid);
 			$var1b = JText::_('COM_JEM_AND_MORE');
 			$var1c = "<a href=\"".$var1a."\">".$var1b."</a>";
 			$id = 'eventandmore';
@@ -197,9 +197,9 @@ defined('_JEXEC') or die;
 		$multidaydate .= '</div>';
 
 		//generate the output
-		//$content .= $colorpic;
+		$content .= '<div class="eventcontentinner">'; // . $colorpic;
 		$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
-		$content .= $contentend;
+		$content .= $contentend . '</div>';
 
 		$this->cal->setEventContent($year, $month, $day, $content);
 	endforeach;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -42,13 +42,11 @@ class JemViewWeekcal extends JViewLegacy
 		$eventandmorecolor = $params->get('eventandmorecolor');
 
 		$style = '
-		div#jem a .eventtitle{
+		div#jem .eventcontentinner a,
+		div#jem .eventandmore a {
 			color: ' . $evlinkcolor . ';
 		}
-		div[id^=\'catz\'] {
-			background-color:'.$evbackgroundcolor .';
-		}
-		.eventcontent {
+		.eventcontentinner {
 			background-color:'.$evbackgroundcolor .';
 		}
 		.eventandmore {

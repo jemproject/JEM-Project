@@ -68,9 +68,8 @@ class JemViewCategory extends JEMView
 			$eventandmorecolor = $params->get('eventandmorecolor');
 
 			$style = '
-			div[id^=\'scat\'] a {color:' . $evlinkcolor . ';}
-			div[id^=\'scat\'] {background-color:'.$evbackgroundcolor .';}
-			.eventcontent {background-color:'.$evbackgroundcolor .';}
+			div#jem .eventcontentinner a, div#jem .eventandmore a {color:' . $evlinkcolor . ';}
+			.eventcontentinner {background-color:'.$evbackgroundcolor .';}
 			.eventandmore {background-color:'.$eventandmorecolor .';}
 			.today .daynum {background-color:'.$currentdaycolor.';}';
 			$document->addStyleDeclaration($style);
@@ -118,7 +117,7 @@ class JemViewCategory extends JEMView
 			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
 			$cal->enableMonthNav('index.php?option=com_jem&view=category&layout=calendar' . $partCatid . $partItemid);
 			$cal->setFirstWeekDay($params->get('firstweekday', 1));
-			$cal->enableDayLinks(false);
+			$cal->enableDayLinks('index.php?option=com_jem&view=day&catid='.$catid);
 
 			$this->rows 			= $rows;
 			$this->catid 			= $catid;
@@ -153,7 +152,7 @@ class JemViewCategory extends JEMView
 			JemHelper::loadCustomTag();
 
 			if ($print) {
-				JemHelper::loadCss('print');			
+				JemHelper::loadCss('print');
 				$document->setMetaData('robots', 'noindex, nofollow');
 			}
 
