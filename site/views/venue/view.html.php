@@ -96,7 +96,7 @@ class JemViewVenue extends JEMView {
 
 			// init calendar
 			$itemid = JRequest::getInt('Itemid');
-			$venueID = $params->get('id');
+			$venueID = $jinput->getInt('id', $params->get('id'));
 
 			$partItemid = ($itemid > 0) ? '&Itemid='.$itemid : '';
 			$partVenid = ($venueID > 0) ? '&id=' . $venueID : '';
