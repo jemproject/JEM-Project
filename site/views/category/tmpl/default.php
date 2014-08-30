@@ -59,7 +59,7 @@ JHtml::_('behavior.modal');
 		foreach ($this->children[$this->category->id] as $id => $child) :
 			// Do we have any non-empty subcategory or should generally show empty subcategories?
 			// Note: We also show empty subcategories if they have at least one non-empty subsubcategory.
-			if ($this->showemptychilds || ($child->getNumItems(true) > 0)) :
+			if ($this->showemptysubcats || ($child->getNumItems(true) > 0)) :
 				++$countsubcats;
 			endif;
 		endforeach;
