@@ -1,9 +1,9 @@
 <?php
 /**
  * @package My Events
- * @version JEM v1.9.1 & CB 1.9
+ * @version JEM v1.9.8 & CB 1.9
  * @author JEM Community
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  *
  * Just a note:
  * Keep the query code inline with my-attending view
@@ -15,19 +15,25 @@ if (! (defined('_VALID_CB') || defined('_JEXEC') || defined('_VALID_MOS')))
 	die();
 }
 
-require_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
-require_once (JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
-require_once (JPATH_SITE.'/components/com_jem/classes/output.class.php');
-require_once (JPATH_SITE.'/components/com_jem/helpers/helper.php');
-require_once (JPATH_SITE.'/components/com_jem/helpers/route.php');
+@include_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
+@include_once (JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
+@include_once (JPATH_SITE.'/components/com_jem/classes/output.class.php');
+@include_once (JPATH_SITE.'/components/com_jem/helpers/helper.php');
+@include_once (JPATH_SITE.'/components/com_jem/helpers/route.php');
 
 
 class jemmyeventsTab extends cbTabHandler {
+
+	protected $jemFound = false;
+
 	/**
 	 * Show My Events
 	 */
 	function __construct()
 	{
+		// Check if JEM is installed.
+		$this->jemFound = class_exists('JemImage') && class_exists('JemOutput') && class_exists('JemHelperRoute');
+
 		$this->cbTabHandler();
 	}
 
@@ -70,13 +76,14 @@ class jemmyeventsTab extends cbTabHandler {
 	 * not begin used
 	 */
 	function deleteRecord() {
+	/* Unsafe !!!
 		global $_CB_database;
 		foreach($_POST as $delete_id) {
 			$query = "DELETE FROM #__jem_events where id=".$delete_id;
 			$_CB_database->setQuery($query);
 		}
+	 */
 	}
-
 
 
 	/**
@@ -86,6 +93,10 @@ class jemmyeventsTab extends cbTabHandler {
 
 		/* loading global variables */
 		global $_CB_database,$_CB_framework;
+
+		if (!$this->jemFound) {
+			return '';
+		}
 
 		/* loading the language function */
 		self::_getLanguageFile();
@@ -107,14 +118,8 @@ class jemmyeventsTab extends cbTabHandler {
 		$event_attending = $params->get('event_attending');
 
 		/* load css */
-		$_CB_framework->addCustomHeadTag("<link href=\"".$_CB_framework->getCfg('live_site')."/components/com_comprofiler/plugin/user/plug_cbjemmyevents/jemmyevents_cb.css\" rel=\"stylesheet\" type=\"text/css\" />");
-
-		/* check for tabdescription */
-		if($tab->description == null) {
-			$tabdescription = _JEMMYEVENTS_NOTABDESCRIPTION;
-		} else {
-			$tabdescription = $tab->description;
-		}
+		//$_CB_framework->addCustomHeadTag("<link href=\"".$_CB_framework->getCfg('live_site')."/components/com_comprofiler/plugin/user/plug_cbjemmyevents/jemmyevents_cb.css\" rel=\"stylesheet\" type=\"text/css\" />");
+		$_CB_framework->document->addHeadStyleSheet($_CB_framework->getCfg('live_site').'/components/com_comprofiler/plugin/user/plug_cbjemmyevents/jemmyevents_cb.css');
 
 		/*
 		 * Tab description
@@ -123,8 +128,10 @@ class jemmyeventsTab extends cbTabHandler {
 		 * can be filled in the backend, section: Tab management
 		 */
 
-		// html content is allowed in descriptions
-		$return .= "\t\t<div class=\"tab_Description\">". $tabdescription. "</div>\n";
+		if (!empty($tab->description)) {
+			// html content is allowed in descriptions
+			$return .= "\t\t<div class=\"tab_Description\">". $tab->description . "</div>\n";
+		}
 
 		// Check if gd is enabled, for thumbnails
 
@@ -144,11 +151,13 @@ class jemmyeventsTab extends cbTabHandler {
 		$query = "SELECT `id` FROM `#__menu` WHERE `link` LIKE '%index.php?option=com_jem&view=eventslist%' AND `type` = 'component' AND `published` = '1' LIMIT 1";
 		$_CB_database->setQuery($query);
 
+		/*
 		$S_Itemid1= $_CB_database->loadResult();
 
 		if(!$S_Itemid1) {
 			$S_Itemid1 = 999999;
 		}
+		*/
 
 		// retrieval user parameters
 		$userid = $user->id;
@@ -216,7 +225,7 @@ class jemmyeventsTab extends cbTabHandler {
 		$return .= "\n\t<form method=\"post\" name=\"jemmyeventsForm\">";
 
 		/* Start of Table */
-		$return .= "\n\t<table  class='jemmyeventsCBTabTable' width=100% >";
+		$return .= "\n\t<table  class='jemmyeventsCBTabTable'>";
 
 		/* start of headerline */
 		$return .= "\n\t\t<tr class='jemmyeventstableheader'>";
@@ -329,7 +338,7 @@ class jemmyeventsTab extends cbTabHandler {
 				/* Startdate field */
 				if($start_date==1) {
 					$startdate2 =	JEMOutput::formatdate($result->dates,$settings[0]->formatShortDate);
-					$return .= "\n\t\t\t<td class='jemmyeventsCBTabTablestart'>";
+					$return .= "\n\t\t\t<td class='jemmyeventsCBTabTableStart'>";
 					$return .= "\n\t\t\t\t{$startdate2}";
 					$return .= "\n\t\t\t</td>";
 				}
@@ -365,7 +374,7 @@ class jemmyeventsTab extends cbTabHandler {
 			// When no data has been found the user will see a message
 
 			// display no listings
-			$return .= _JEMMYEVENTS_NO_LISTING;
+			$return .= '<tr><td class="jemmyattendingCBTabTableTitle" span="9">'._JEMMYEVENTS_NO_LISTING.'</td></tr>';
 		}
 
 		/* closing tag of the table */
@@ -405,6 +414,8 @@ class jemmyeventsTab extends cbTabHandler {
 	 *******************************************************************/
 	function getEditTabDISABLED($tab,$user,$ui)
 	{
+		return ''; /* disabled */
+
 		/* loading global variables */
 		global $_CB_database,$_CB_framework;
 		$adminurl = strstr($_SERVER['REQUEST_URI'], 'index');
@@ -556,7 +567,7 @@ class jemmyeventsTab extends cbTabHandler {
 
 			/* Startdate header */
 			if($start_date==1) {
-				$return .= "\n\t\t\t<th class='jemmyeventsCBTabTablestart'>";
+				$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableStart'>";
 				$return .= "\n\t\t\t\t" . _JEMMYEVENTS_START;
 				$return .= "\n\t\t\t</th>";
 			}
@@ -634,7 +645,7 @@ class jemmyeventsTab extends cbTabHandler {
 					/* Startdate field */
 					if($start_date==1) {
 						$startdate2 =	JEMOutput::formatdate($result->dates, $settings[0]->formatShortDate);
-						$return .= "\n\t\t\t<td class='jemmyeventsCBTabTablestart'>";
+						$return .= "\n\t\t\t<td class='jemmyeventsCBTabTableStart'>";
 						$return .= "\n\t\t\t\t{$startdate2}";
 						$return .= "\n\t\t\t</td>";
 					}

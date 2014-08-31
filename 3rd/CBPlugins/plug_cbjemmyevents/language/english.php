@@ -3,9 +3,9 @@
  * 
  * 
  * @package My Events
- * @version 1.9.1
+ * @version 1.9.8
  * @author JEM Community
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * 
  * 
  * Former info:

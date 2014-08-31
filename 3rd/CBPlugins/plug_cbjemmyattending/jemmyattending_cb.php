@@ -1,9 +1,9 @@
 <?php
 /**
  * @package My Attending
- * @version JEM v1.9.5 & CB 1.9
+ * @version JEM v1.9.8 & CB 1.9
  * @author JEM Community
- * @copyright (C) 2013-2013 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  *
  * Just a note:
  * Keep the query code inline with my-attendances view
@@ -15,18 +15,24 @@ if (! (defined('_VALID_CB') || defined('_JEXEC') || defined('_VALID_MOS')))
 	die();
 }
 
-require_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
-require_once (JPATH_SITE.'/components/com_jem/classes/output.class.php');
-require_once (JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
-require_once (JPATH_SITE.'/components/com_jem/helpers/helper.php');
-require_once (JPATH_SITE.'/components/com_jem/helpers/route.php');
+@include_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
+@include_once (JPATH_SITE.'/components/com_jem/classes/output.class.php');
+@include_once (JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
+@include_once (JPATH_SITE.'/components/com_jem/helpers/helper.php');
+@include_once (JPATH_SITE.'/components/com_jem/helpers/route.php');
 
 
 class jemmyattendingTab extends cbTabHandler {
+
+	protected $jemFound = false;
+
 	/* JEM Attending tab
 	 */
 	function __construct()
 	{
+		// Check if JEM is installed.
+		$this->jemFound = class_exists('JemImage') && class_exists('JemOutput') && class_exists('JemHelperRoute');
+
 		$this->cbTabHandler();
 	}
 
@@ -51,6 +57,10 @@ class jemmyattendingTab extends cbTabHandler {
 		/* loading global variables */
 		global $_CB_database,$_CB_framework;
 
+		if (!$this->jemFound) {
+			return '';
+		}
+
 		/* loading the language function */
 		self::_getLanguageFile();
 
@@ -69,15 +79,8 @@ class jemmyattendingTab extends cbTabHandler {
 		$event_tab_message = $params->get('hwTabMessage', "");
 
 		/* load css */
-		$_CB_framework->addCustomHeadTag("<link href=\"".$_CB_framework->getCfg('live_site')."/components/com_comprofiler/plugin/user/plug_cbjemmyattending/jemmyattending_cb.css\" rel=\"stylesheet\" type=\"text/css\" />");
-
-		/* check for tabdescription */
-		if ($tab->description == null)
-		{
-			$tabdescription = "_JEMMYATTENDING_NO_DESCRIPTION";
-		} else {
-			$tabdescription = $tab->description;
-		}
+		//$_CB_framework->addCustomHeadTag("<link href=\"".$_CB_framework->getCfg('live_site')."/components/com_comprofiler/plugin/user/plug_cbjemmyattending/jemmyattending_cb.css\" rel=\"stylesheet\" type=\"text/css\" />");
+		$_CB_framework->document->addHeadStyleSheet($_CB_framework->getCfg('live_site').'/components/com_comprofiler/plugin/user/plug_cbjemmyattending/jemmyattending_cb.css');
 
 		/*
 		 * Tab description
@@ -86,8 +89,10 @@ class jemmyattendingTab extends cbTabHandler {
 		 * can be filled in the backend, section: Tab management
 		 */
 
-		// html content is allowed in descriptions
-		$return .= "\t\t<div class=\"tab_Description\">". $tabdescription. "</div>\n";
+		if (!empty($tab->description)) {
+			// html content is allowed in descriptions
+			$return .= "\t\t<div class=\"tab_Description\">". $tab->description . "</div>\n";
+		}
 
 		/*
 		 * Check if gd is enabled, for thumbnails
@@ -110,11 +115,13 @@ class jemmyattendingTab extends cbTabHandler {
 		$query = "SELECT `id` FROM `#__menu` WHERE `link` LIKE '%index.php?option=com_jem&view=eventslist%' AND `type` = 'component' AND `published` = '1' LIMIT 1";
 		$_CB_database->setQuery($query);
 
+		/*
 		$S_Itemid= $_CB_database->loadResult();
 
 		if(!$S_Itemid) {
 			$S_Itemid = 999999;
 		}
+		*/
 
 		// retrieval user parameters
 		$userid = $user->id;
@@ -262,7 +269,10 @@ class jemmyattendingTab extends cbTabHandler {
 				if ($event_venue==1) {
 					$location = "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($result->locid))."'>{$result->venue}</a>";
 					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableVenue'>";
-					$return .= "\n\t\t\t\t$location <small style='font-style:italic;'>- {$result->city}</small>";
+					$return .= "\n\t\t\t\t$location";
+					if (!empty($result->city)) {
+						$return .= "<small style='font-style:italic;'> - {$result->city}</small>";
+					}
 					$return .= "\n\t\t\t</td>";
 				}
 
@@ -293,7 +303,7 @@ class jemmyattendingTab extends cbTabHandler {
 			// When no data has been found the user will see a message
 
 			/* display no listings */
-			$return .= _JEMMYATTENDING_NO_LISTING;
+			$return .= '<tr><td class="jemmyattendingCBTabTableTitle" span="9">'._JEMMYATTENDING_NO_LISTING.'</td></tr>';
 		}
 
 		/* closing tag of the table */
