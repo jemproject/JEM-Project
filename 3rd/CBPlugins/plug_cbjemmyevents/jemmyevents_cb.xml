@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<version>1.9.8</version>
+	<version>1.9</version>
 	<description>This plugin will show events submitted by the user in their profile.</description>
 	<files>
 		<filename plugin="jemmyevents_cb">jemmyevents_cb.php</filename>
@@ -36,7 +36,7 @@
 				<option value="0">Hide</option>
 				<option value="1">Show</option>
 			</param>
-			<param name="event_attending" type="radio" default="0" label="Event image" description="Show/Hide attending">
+			<param name="event_attending" type="radio" default="0" label="Registrations" description="Show/Hide number of attendees">
 				<option value="0">Hide</option>
 				<option value="1">Show</option>
 			</param>
