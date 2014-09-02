@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -55,13 +55,13 @@ class JemViewVenues extends JViewLegacy
 		if($menuitem) $pathway->setItemName(1, $menuitem->title);
 
 		if ($task == 'archive') {
-			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=venues&task=archive'));
-			$print_link = JRoute::_('index.php?view=venues&task=archive&print=1&tmpl=component');
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?option=com_jem&view=venues&task=archive'));
+			$print_link = JRoute::_('index.php?option=com_jem&view=venues&task=archive&print=1&tmpl=component');
 			$pagetitle   .= ' - '.JText::_('COM_JEM_ARCHIVE');
 			$pageheading .= ' - '.JText::_('COM_JEM_ARCHIVE');
 			$params->set('page_heading', $pageheading);
 		} else {
-			$print_link = JRoute::_('index.php?view=venues&print=1&tmpl=component');
+			$print_link = JRoute::_('index.php?option=com_jem&view=venues&print=1&tmpl=component');
 		}
 
 		// Add site name to title if param is set

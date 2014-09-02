@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -137,7 +137,7 @@ class ActiveCalendarWeek extends JEMCalendar {
 		$this->resetSelectedToToday();
 		$out = $this->mkMonthRow();
 		for ($week = 0; $week < $numberOfWeeks; $week++) {
-			$out .= "<tr>";
+			$out .= '<tr class="daysRow">';
 			$weeknumber=parent::mkWeekNum($this->actday);
 			$weekday=parent::getWeekday($this->actday);
 			if ($this->startOnSun && ($weekday>4 || $weekday==0)) $weeknumber=parent::mkWeekNum($this->actday+1); // week starts on Monday in date("w")
@@ -170,9 +170,9 @@ class ActiveCalendarWeek extends JEMCalendar {
 	function mkMonthRow($bothMonths=true) {
 		$colspanLeft =  min($this->getDaysThisMonth() - $this->actday + 1, 7);
 		$colspanRight = 7 - $colspanLeft;
-		$out = '<tr>';
-		if ($this->weekNum) $out.="<td></td>";
-		$out .= '<td class="' . $this->cssMonthWeek . '" colspan=\"' . $colspanLeft . '\">';
+		$out = '<tr class="newMonthRow">';
+		if ($this->weekNum) $out.='<td class="'.$this->cssWeekNum.'"></td>';
+		$out .= '<td class="' . $this->cssMonthWeek . '" colspan="' . $colspanLeft . '">';
 		if ($bothMonths) $out .= parent::getMonthName($this->actmonth).$this->monthYearDivider.$this->actyear;
 		$out .= '</td>';
 		if ($colspanRight>0) {
@@ -183,7 +183,7 @@ class ActiveCalendarWeek extends JEMCalendar {
 				$calmonth=$this->actmonth+1;
 				$calyear=$this->actyear;
 			}
-			$out .= '<td class="' . $this->cssMonthWeek . '" colspan=\"' . $colspanRight . '\">'.parent::getMonthName($calmonth).$this->monthYearDivider.$calyear.'</td>';
+			$out .= '<td class="' . $this->cssMonthWeek . '" colspan="' . $colspanRight . '">'.parent::getMonthName($calmonth).$this->monthYearDivider.$calyear.'</td>';
 		}
 		return $out;
 	}

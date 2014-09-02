@@ -166,6 +166,9 @@ class com_jemInstallerScript
 		<h2><?php echo JText::_('COM_JEM_UNINSTALL_STATUS'); ?>:</h2>
 		<p><?php echo JText::_('COM_JEM_UNINSTALL_TEXT'); ?></p>
 		<?php
+
+		// prevent dead links on frontend
+		$this->disableJemMenuItems();
 	}
 
 	/**
@@ -183,6 +186,7 @@ class com_jemInstallerScript
 
 	/**
 	 * method to run before an install/update/uninstall method
+	 * (it seams method is not called on uninstall)
 	 *
 	 * @return void
 	 */
@@ -250,6 +254,7 @@ class com_jemInstallerScript
 
 	/**
 	 * Method to run after an install/update/uninstall method
+	 * (it seams method is not called on uninstall)
 	 *
 	 * @return void
 	 */
@@ -286,6 +291,9 @@ class com_jemInstallerScript
 				// move id from params to link for venuecal menu items
 				$this->updateJemMenuItems198();
 			}
+		}
+		elseif ($type == 'install') {
+			$this->fixJemMenuItems();
 		}
 	}
 
@@ -412,6 +420,50 @@ class com_jemInstallerScript
 
 		$db->setQuery($query);
 		$db->query();
+	}
+
+	/**
+	 * Disable all JEM menu items.
+	 * (usefull on uninstall to prevent dead links)
+	 *
+	 * @return void
+	 */
+	private function disableJemMenuItems()
+	{
+		// unpublish all "com_jem..." frontend entries
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->update('#__menu');
+		$query->set('published = 0');
+		$query->where(array('client_id = 0', 'published > 0', 'link LIKE "index.php?option=com_jem%"'));
+		$db->setQuery($query);
+		$db->query();
+	}
+
+	/**
+	 * Fix all JEM menu items by setting new extension id.
+	 * (usefull on install to let menu items from older installation refer new extension id)
+	 *
+	 * @return void
+	 */
+	private function fixJemMenuItems()
+	{
+		// Get (new) extension ID of JEM
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('extension_id')->from('#__extensions')->where(array("type='component'", "element='com_jem'"));
+		$db->setQuery($query);
+		$newId = $db->loadResult();
+
+		if($newId) {
+			// set compponent id on all "com_jem..." frontend entries
+			$query = $db->getQuery(true);
+			$query->update('#__menu');
+			$query->set('component_id = ' . $db->quote($newId));
+			$query->where(array('client_id = 0', 'link LIKE "index.php?option=com_jem%"'));
+			$db->setQuery($query);
+			$db->query();
+		}
 	}
 
 	/**

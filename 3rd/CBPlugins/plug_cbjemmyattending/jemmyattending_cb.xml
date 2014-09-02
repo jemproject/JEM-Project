@@ -2,8 +2,8 @@
 <cbinstall version="1.9" type="plugin" group="user">
 	<name>CB JEM MyAttending</name>
 	<author>JEM Community</author>
-	<creationDate>04/08/2013</creationDate>
-	<copyright>Copyright (C) 2013-2013 joomlaeventmanager.net</copyright>
+	<creationDate>August 2014</creationDate>
+	<copyright>Copyright (C) 2013-2014 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
@@ -20,11 +20,11 @@
 	<tabs>
 		<tab name="My Attending" description="Attended Events" class="jemmyattendingTab" fields="0" position="cb_tabmain" displaytype="tab">
 		<params>
-			<param name="event_enddate" type="radio" default="0" label="End Date" description="Show/Hide the end date">
+			<param name="event_startdate" type="radio" default="0" label="Start Date" description="Show/Hide the start date">
 				<option value="0">Hide</option>
 				<option value="1">Show</option>
 			</param>
-			<param name="event_startdate" type="radio" default="0" label="Start Date" description="Show/Hide the start date">
+			<param name="event_enddate" type="radio" default="0" label="End Date" description="Show/Hide the end date">
 				<option value="0">Hide</option>
 				<option value="1">Show</option>
 			</param>

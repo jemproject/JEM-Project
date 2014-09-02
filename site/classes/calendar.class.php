@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -180,7 +180,6 @@ class JEMCalendar {
 	*/
 	function enableYearNav($link=false,$arrowBack=false,$arrowForw=false) {
 		if ($link) $this->urlNav=$link;
-		else $this->urlNav=$_SERVER['PHP_SELF'];
 		if ($arrowBack) $this->yearNavBack=$arrowBack;
 		if ($arrowForw) $this->yearNavForw=$arrowForw;
 		$this->yearNav=true;
@@ -192,7 +191,6 @@ class JEMCalendar {
 	*/
 	function enableMonthNav($link=false,$arrowBack=false,$arrowForw=false) {
 		if ($link) $this->urlNav=$link;
-		else $this->urlNav=$_SERVER['PHP_SELF'];
 		if ($arrowBack) $this->monthNavBack=$arrowBack;
 		if ($arrowForw) $this->monthNavForw=$arrowForw;
 		$this->monthNav=true;
@@ -205,7 +203,6 @@ class JEMCalendar {
 	*/
 	function enableDayLinks($link=false,$javaScript=false) {
 		if ($link) $this->url=$link;
-		else $this->url=$_SERVER['PHP_SELF'];
 		if ($javaScript) $this->javaScriptDay=$javaScript;
 		$this->dayLinks=true;
 	}
@@ -216,7 +213,6 @@ class JEMCalendar {
 	*/
 	function enableDatePicker($startYear=false,$endYear=false,$link=false,$button=false) {
 		if ($link) $this->urlPicker=$link;
-		else $this->urlPicker=$_SERVER['PHP_SELF'];
 		if ($startYear && $endYear) {
 			if ($startYear>=$this->startYear && $startYear<$this->endYear) $this->startYear=$startYear;
 			if ($endYear>$this->startYear && $endYear<=$this->endYear) $this->endYear=$endYear;
@@ -504,9 +500,9 @@ class JEMCalendar {
 	********************************************************************************
 	*/
 	function mkDatePicker($yearpicker=false) {
-		if ($yearpicker) $pickerSpan=$this->rowCount;
-		else $pickerSpan=$this->monthSpan;
-		if ($this->datePicker) {
+		if ($this->datePicker && !empty($this->urlPicker)) {
+			if ($yearpicker) $pickerSpan=$this->rowCount;
+			else $pickerSpan=$this->monthSpan;
 			$out="<tr><td class=\"".$this->cssPicker."\" colspan=\"".$pickerSpan."\">\n";
 			$out.="<form name=\"".$this->cssPickerForm."\" class=\"".$this->cssPickerForm."\" action=\"".$this->urlPicker."\" method=\"get\">\n";
 			if (!$yearpicker) {
@@ -609,20 +605,19 @@ class JEMCalendar {
 	*/
 	function mkDay($var) {
 		$eventContent = $this->mkEventContent($var);
-		$linkstr      = $this->mkUrl($this->actyear,$this->actmonth,$var);
 
-		if ($eventContent) {
-			if ($this->javaScriptDay) {
-				$linkstr="<a href=\"javascript:".$this->javaScriptDay."(".$this->actyear.",".$this->actmonth.",".$var.")\">".$var."</a>";
-			} else {
-				$dayurl= JRoute::_('index.php?view=day&id='.sprintf('%04d%02d%02d',$this->actyear,$this->actmonth,$var));
-				$linkstr="<a href=\"".$dayurl."\">".$var."</a>";
+		$linktext = $var;
+		if ($this->dayLinks) {
+			if ($eventContent) {
+				if ($this->javaScriptDay) {
+					$linktext="<a href=\"javascript:".$this->javaScriptDay."(".$this->actyear.",".$this->actmonth.",".$var.")\">".$var."</a>";
+				} elseif (!empty($this->url)) {
+					$dayurl= JRoute::_($this->url.(strpos($this->url,"?") === false ? '?' : '&').'id='.sprintf('%04d%02d%02d',$this->actyear,$this->actmonth,$var));
+					$linktext="<a href=\"".$dayurl."\">".$var."</a>";
+				}
 			}
-		} else {
-			$linkstr= $var;
 		}
 
-		$linktext = $this->dayLinks ? $linkstr : $var;
 		if ($this->isEvent($var)) {
 			if ($this->eventUrl) {
 				$out="<td class=\"".$this->eventID."\"><div class=\"daynum\"><a href=\"".$this->eventUrl."\">".$var."</a></div>".$eventContent."</td>";
@@ -630,17 +625,24 @@ class JEMCalendar {
 			} else {
 				$out="<td class=\"".$this->eventID."\"><div class=\"daynum\">".$linktext.'</div>'.$eventContent."</td>";
 			}
-		} else if ($var==$this->selectedday && $this->actmonth==$this->selectedmonth && $this->actyear==$this->selectedyear) {
-			$out="<td class=\"".$this->cssSelecDay."\"><div class=\"daynum\">".$linktext.'</div>'.$eventContent."</td>";
-		} else if ($var==$this->daytoday && $this->actmonth==$this->monthtoday && $this->actyear==$this->yeartoday) {
-			$out="<td class=\"".$this->cssToday.   "\"><div class=\"daynum\">".$linktext.'</div>'.$eventContent."</td>";
-		} else if ($this->getWeekday($var)==0 && $this->crSunClass) {
-			$out="<td class=\"".$this->cssSunday.  "\"><div class=\"daynum\">".$linktext.'</div>'.$eventContent."</td>";
-		} else if ($this->getWeekday($var)==6 && $this->crSatClass) {
-			$out="<td class=\"".$this->cssSaturday."\"><div class=\"daynum\">".$linktext.'</div>'.$eventContent."</td>";
 		} else {
-			$out="<td class=\"".$this->cssMonthDay."\"><div class=\"daynum\">".$linktext.'</div>'.$eventContent."</td>";
+			/* allow styling of multiple things like "today is Sunday" */
+			$cssClass = array($this->cssMonthDay);
+			if (($var == $this->selectedday) && ($this->actmonth == $this->selectedmonth) && ($this->actyear == $this->selectedyear)) {
+				$cssClass[] = $this->cssSelecDay;
+			}
+			if (($var == $this->daytoday) && ($this->actmonth == $this->monthtoday) && ($this->actyear == $this->yeartoday)) {
+				$cssClass[] = $this->cssToday;
+			}
+			if (($this->getWeekday($var) == 0) && $this->crSunClass) {
+				$cssClass[] = $this->cssSunday;
+			}
+			if (($this->getWeekday($var) == 6) && $this->crSatClass) {
+				$cssClass[] = $this->cssSaturday;
+			}
+			$out = "<td class=\"".implode(' ', $cssClass)."\"><div class=\"daynum\">".$linktext.'</div>'.$eventContent."</td>";
 		}
+
 		return $out;
 	}
 	/*
@@ -667,12 +669,12 @@ class JEMCalendar {
 		} else {
 			$glueNav="&amp;";
 		}
-		$yearNavLink = "<a href=\"".JROUTE::_($this->urlNav.$glueNav.$this->yearID."=".$year)."\" rel=\"noindex, nofollow\">";
-		$monthNavLink = "<a href=\"".JROUTE::_($this->urlNav.$glueNav.$this->yearID."=".$year."&amp;".$this->monthID."=".$month)."\" rel=\"noindex, nofollow\">";
-		$dayLink = "<a href=\"".JROUTE::_($this->url.$glue.$this->yearID."=".$year."&amp;".$this->monthID."=".$month."&amp;".$this->dayID."=".$day)."\">".$day."</a>";
-		if ($year && $month && $day) return $dayLink;
+		$yearNavLink  = empty($this->urlNav) ? '' : "<a href=\"".JROUTE::_($this->urlNav.$glueNav.$this->yearID."=".$year)."\" rel=\"noindex, nofollow\">";
+		$monthNavLink = empty($this->urlNav) ? '' : "<a href=\"".JROUTE::_($this->urlNav.$glueNav.$this->yearID."=".$year."&amp;".$this->monthID."=".$month)."\" rel=\"noindex, nofollow\">";
+		$dayLink      = empty($this->url)  ? $day : "<a href=\"".JROUTE::_($this->url.$glue.$this->yearID."=".$year."&amp;".$this->monthID."=".$month."&amp;".$this->dayID."=".$day)."\">".$day."</a>";
+		if ($year &&  $month &&  $day) return $dayLink;
 		if ($year && !$month && !$day) return $yearNavLink;
-		if ($year && $month && !$day) return $monthNavLink;
+		if ($year &&  $month && !$day) return $monthNavLink;
 	}
 	/*
 	********************************************************************************

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -59,7 +59,7 @@ class JemViewCategories extends JEMView
 		}
 
 		if ($task == 'archive') {
-			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=categories&id='.$id.'&task=archive'));
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?option=com_jem&view=categories&id='.$id.'&task=archive'));
 			$print_link = JRoute::_('index.php?option=com_jem&view=categories&id='.$id.'&task=archive&print=1&tmpl=component');
 			$pagetitle   .= ' - '.JText::_('COM_JEM_ARCHIVE');
 			$pageheading .= ' - '.JText::_('COM_JEM_ARCHIVE');

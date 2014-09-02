@@ -113,13 +113,13 @@ class JemViewDay extends JEMView
 		}
 
 		if ($requestVenueId){
-			$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&locid='.$requestVenueId.'&id='.$requestDate);
+			$print_link = JRoute::_('index.php?option=com_jem&view=day&tmpl=component&print=1&locid='.$requestVenueId.'&id='.$requestDate);
 		}
 		elseif ($requestCategoryId){
-			$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&catid='.$requestCategoryId.'&id='.$requestDate);
+			$print_link = JRoute::_('index.php?option=com_jem&view=day&tmpl=component&print=1&catid='.$requestCategoryId.'&id='.$requestDate);
 		}
 		else /*(!$requestCategoryId && !$requestVenueId)*/ {
-			$print_link = JRoute::_('index.php?view=day&tmpl=component&print=1&id='.$requestDate);
+			$print_link = JRoute::_('index.php?option=com_jem&view=day&tmpl=component&print=1&id='.$requestDate);
 		}
 
 		//Check if the user has access to the form

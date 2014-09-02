@@ -7,7 +7,7 @@ width: 100%;
 }
 
 .jemmyeventsCBTabTable td{
-padding: 0px;
+padding: 3px;
 }
 
 .jemmyeventstableheader{
@@ -34,5 +34,6 @@ text-align:left;
 }
 
 .jemmyeventsCBTabTableReg{
+padding:3px;
 text-align:center;
 }

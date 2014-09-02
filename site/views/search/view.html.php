@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -82,7 +82,7 @@ class JemViewSearch extends JEMView
 		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		if ($task == 'archive') {
-			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?view=search&task=archive'));
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?option=com_jem&view=search&task=archive'));
 			$pagetitle   .= ' - ' . JText::_('COM_JEM_ARCHIVE');
 			$pageheading .= ' - ' . JText::_('COM_JEM_ARCHIVE');
 		}
