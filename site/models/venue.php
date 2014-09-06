@@ -115,7 +115,7 @@ class JemModelVenue extends JemModelEventslist
 		// Create a new query object.
 		$query = parent::getListQuery();
 
-		$query->where('a.locid = '.$this->_id);
+		$query->where('a.locid = '.(int)$this->_id);
 
 		// here we can extend the query of the Eventslist model
 		return $query;
@@ -171,7 +171,7 @@ class JemModelVenue extends JemModelEventslist
 				' created, locdescription, country, map, latitude, longitude, postalCode, checked_out AS vChecked_out, checked_out_time AS vChecked_out_time, '.
 				' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug');
 		$query->from($db->quoteName('#__jem_venues'));
-		$query->where('id = '.$this->_id);
+		$query->where('id = '.(int)$this->_id);
 
 		$db->setQuery($query);
 		$_venue = $db->loadObject();

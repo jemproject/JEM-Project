@@ -227,7 +227,7 @@ class JEMModelAttendees extends JModelLegacy
 
 		$where = array();
 
-		$where[] = 'r.event = '.$this->_id;
+		$where[] = 'r.event = '.$this->_db->Quote($this->_id);
 		if ($filter_waiting) {
 			$where[] = ' (a.waitinglist = 0 OR r.waiting = '.($filter_waiting-1).') ';
 		}
@@ -272,7 +272,7 @@ class JEMModelAttendees extends JModelLegacy
 	function getEvent()
 	{
 
-		$query = 'SELECT id, alias, title, dates, enddates, times, endtimes, maxplaces, waitinglist FROM #__jem_events WHERE id = '.$this->_id;
+		$query = 'SELECT id, alias, title, dates, enddates, times, endtimes, maxplaces, waitinglist FROM #__jem_events WHERE id = '.$this->_db->Quote($this->_id);
 
 		$this->_db->setQuery( $query );
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -90,7 +90,7 @@ class JEMModelAttendee extends JModelLegacy
 			$query = 'SELECT r.*, u.username '
 					. ' FROM #__jem_register AS r '
 					. ' LEFT JOIN #__users AS u ON u.id = r.uid '
-					. ' WHERE r.id = '.$this->_id
+					. ' WHERE r.id = '.$this->_db->quote($this->_id)
 					;
 			$this->_db->setQuery($query);
 			$this->_data = $this->_db->loadObject();

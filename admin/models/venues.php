@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -148,7 +148,7 @@ class JemModelVenues extends JModelList
 			if (stripos($search, 'id:') === 0) {
 				$query->where('a.id = '.(int) substr($search, 3));
 			} else {
-				$search = $db->Quote('%'.$db->escape($search, true).'%');
+				$search = $db->Quote('%'.$db->escape($search, true).'%', false);
 
 				if($search) {
 					switch($filter) {

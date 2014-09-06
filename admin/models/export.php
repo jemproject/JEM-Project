@@ -91,13 +91,14 @@ class JEMModelExport extends JModelList
 		
 		// check if startdate + enddate are set.
 		if (! empty($startdate) && ! empty($enddate)) {
-			$query->where('DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "' . $startdate . '") >= 0');
-			$query->where('DATEDIFF(a.dates, "' . $enddate . '") <= 0');
+			$query->where('DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($startdate) . ') >= 0');
+			$query->where('DATEDIFF(a.dates, ' . $db->quote($enddate) . ') <= 0');
 		}
 
 		// check if specific category's have been selected
 		if (! empty($cats)) {
-			$query->where('  (c.id=' . implode(' OR c.id=', $cats) . ')');
+			JArrayHelper::toInteger($cats);
+			$query->where('  c.id IN (' . implode(',', $cats) . ')');
 		}
 
 		// Group the query
@@ -349,7 +350,7 @@ class JEMModelExport extends JModelList
 		// Select the required fields from the table.
 		$query->select('catid');
 		$query->from('#__jem_cats_event_relations');
-		$query->where('itemid = ' . $id);
+		$query->where('itemid = ' . $db->quote($id));
 
 		$db->setQuery($query);
 		$catidlist = $db->loadObjectList();

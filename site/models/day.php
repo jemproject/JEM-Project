@@ -198,11 +198,11 @@ class JemModelDay extends JemModelEventslist
 		$query = parent::getListQuery();
 
 		if ($requestVenueId){
-			$query->where(' a.locid = '.$requestVenueId);
+			$query->where(' a.locid = '.$this->_db->quote($requestVenueId));
 		}
 
 		// Second is to only select events of the specified day
-		$query->where('(\''.$this->_date.'\' BETWEEN (a.dates) AND (IF (a.enddates >= a.dates, a.enddates, a.dates)) OR \''.$this->_date.'\' = a.dates)');
+		$query->where('('.$this->_db->quote($this->_date).' BETWEEN (a.dates) AND (IF (a.enddates >= a.dates, a.enddates, a.dates)) OR '.$this->_db->quote($this->_date).' = a.dates)');
 
 		return $query;
 	}

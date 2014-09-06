@@ -74,7 +74,7 @@ class JemModelEventslist extends JModelList
 
 		# Search - variables
 		$search = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-		$this->setState('filter.filter_search', $search);
+		$this->setState('filter.filter_search', $search); // must be escaped later
 
 		$filtertype = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_type', 'filter_type', '', 'int');
 		$this->setState('filter.filter_type', $filtertype);
@@ -378,7 +378,7 @@ class JemModelEventslist extends JModelList
 		####################
 		$filter_locid = $this->getState('filter.filter_locid');
 		if ($filter_locid) {
-			$query->where('a.locid = '.$filter_locid);
+			$query->where('a.locid = '.(int)$filter_locid);
 		}
 		
 		
@@ -405,13 +405,13 @@ class JemModelEventslist extends JModelList
 
 		# define variables
 		$filter = $this->getState('filter.filter_type');
-		$search = $this->getState('filter.filter_search');
+		$search = $this->getState('filter.filter_search'); // not escaped
 
 		if (!empty($search)) {
 			if (stripos($search, 'id:') === 0) {
 				$query->where('a.id = '.(int) substr($search, 3));
 			} else {
-				$search = $db->Quote('%'.$db->escape($search, true).'%');
+				$search = $db->Quote('%'.$db->escape($search, true).'%', false); // escape once
 
 				if($search && $settings->get('global_show_filter')) {
 					switch($filter) {
@@ -653,13 +653,13 @@ class JemModelEventslist extends JModelList
 
 		# define variables
 		$filter = $this->getState('filter.filter_type');
-		$search = $this->getState('filter.filter_search');
+		$search = $this->getState('filter.filter_search'); // not escaped
 
 		if (!empty($search)) {
 			if (stripos($search, 'id:') === 0) {
 				$query->where('c.id = '.(int) substr($search, 3));
 			} else {
-				$search = $db->Quote('%'.$db->escape($search, true).'%');
+				$search = $db->Quote('%'.$db->escape($search, true).'%', false); // escape once
 
 				if($search && $settings->get('global_show_filter')) {
 					if ($filter == 4) {

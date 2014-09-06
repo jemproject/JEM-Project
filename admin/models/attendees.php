@@ -171,7 +171,7 @@ class JEMModelAttendees extends JModelLegacy
 		// Filter by search in title
 		$filter = $app->getUserStateFromRequest( 'com_jem.attendees.filter', 'filter', '', 'int' );
 		$search = $app->getUserStateFromRequest( 'com_jem.attendees.filter_search', 'filter_search', '', 'string' );
-		$search = $db->Quote('%'.$db->escape($search, true).'%');
+		$search = $db->Quote('%'.$db->escape($search, true).'%', false);
 		$filter_waiting	= $app->getUserStateFromRequest( 'com_jem.attendees.waiting',	'filter_waiting',	0, 'int' );
 		$filter_order		= $app->getUserStateFromRequest( 'com_jem.attendees.filter_order', 		'filter_order', 	'u.username', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.attendees.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
@@ -188,7 +188,7 @@ class JEMModelAttendees extends JModelLegacy
 		$query->join('LEFT', '#__users AS u ON (u.id = r.uid)');
 
 
-		$query->where('r.event = '.$this->_id);
+		$query->where('r.event = '.$db->Quote($this->_id));
 
 
 		if ($filter_waiting) {

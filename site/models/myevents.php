@@ -263,7 +263,8 @@ class JEMModelMyevents extends JModelLegacy
 
 		if ($excluded_cats != '') {
 			$cats_excluded = explode(',', $excluded_cats);
-			$where [] = '  (c.id!=' . implode(' AND c.id!=', $cats_excluded) . ')';
+			JArrayHelper::toInteger($cats_excluded);
+			$where [] = '  c.id NOT IN (' . implode(',', $cats_excluded) . ')';
 		}
 		// === END Excluded categories add === //
 

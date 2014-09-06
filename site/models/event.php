@@ -141,6 +141,7 @@ class JemModelEvent extends JModelItem
 
 				$archived = $this->getState('filter.archived');
 
+				/** @todo: Is that correct? What's about $archived? Could it wrongly be 0 (=unpublished)? */
 				if (is_numeric($published)) {
 					$query->where('(a.published = ' . (int) $published . ' OR a.published =' . (int) $archived . ')');
 				}
@@ -250,9 +251,7 @@ class JemModelEvent extends JModelItem
 		// Define Booked
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
-		$query->select(array(
-				'COUNT(*)'
-		));
+		$query->select(array('COUNT(*)'));
 		$query->from('#__jem_register');
 		$query->where(array(
 				'event= ' . $db->quote($this->_item[$pk]->did),
@@ -389,7 +388,7 @@ class JemModelEvent extends JModelItem
 		}
 
 		# filter set by day-view
-		$requestCategoryId = $this->getState('filter.req_catid');
+		$requestCategoryId = (int)$this->getState('filter.req_catid');
 
 		if ($requestCategoryId) {
 			$query->where('c.id = '.$requestCategoryId);
@@ -415,13 +414,13 @@ class JemModelEvent extends JModelItem
 
 		# define variables
 		$filter = $this->getState('filter.filter_type');
-		$search = $this->getState('filter.filter_search');
+		$search = $this->getState('filter.filter_search'); // not escaped
 
 		if (!empty($search)) {
 			if (stripos($search, 'id:') === 0) {
 				$query->where('c.id = '.(int) substr($search, 3));
 			} else {
-				$search = $db->Quote('%'.$db->escape($search, true).'%');
+				$search = $db->Quote('%'.$db->escape($search, true).'%', false); // escape once
 
 				if($search && $settings->get('global_show_filter')) {
 					if ($filter == 4) {
@@ -462,7 +461,7 @@ class JemModelEvent extends JModelItem
 				// list
 		' FROM #__jem_register'
 		. ' WHERE uid = ' . $userid
-		. ' AND event = ' . $this->getState('event.id');
+		. ' AND event = ' . $this->_db->quote($this->getState('event.id'));
 		$this->_db->setQuery($query);
 		return $this->_db->loadResult();
 	}
@@ -601,8 +600,8 @@ class JemModelEvent extends JModelItem
 	{
 		$user = JFactory::getUser();
 
-		$event = (int) $this->_registerid;
-		$userid = $user->get('id');
+		$event  = (int)$this->_registerid;
+		$userid = (int)$user->get('id');
 
 		// Must be logged in
 		if ($userid < 1) {

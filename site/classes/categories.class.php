@@ -241,7 +241,7 @@ class JEMCategories
 		## GROUPBY ##
 		#############
 
-		$query->group('c.id, c.access, c.alias, c.level, c.lft, c.parent_id, c.path, c.published, c.rgt, c.catname');
+		$query->group('c.id');
 
 
 		// Get the results
