@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -234,7 +234,7 @@ class JemViewEditevent extends JViewLegacy
 		$app         = JFactory::getApplication();
 		$jinput      = JFactory::getApplication()->input;
 		$jemsettings = JemHelper::config();
-		$db          = JFactory::getDBO();
+	//	$db          = JFactory::getDBO();
 		$document    = JFactory::getDocument();
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
@@ -242,7 +242,6 @@ class JemViewEditevent extends JViewLegacy
 		$filter_type      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', '', 'int');
 		$filter_state     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_state', 'filter_state', '*', 'word');
 		$search           = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
-		$search           = $db->escape(trim(JString::strtolower($search)));
 		$limitstart       = $jinput->get('limitstart', '0', 'int');
 		$limit            = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
 
@@ -286,14 +285,13 @@ class JemViewEditevent extends JViewLegacy
 		$app         = JFactory::getApplication();
 		$jinput      = JFactory::getApplication()->input;
 		$jemsettings = JemHelper::config();
-		$db          = JFactory::getDBO();
+	//	$db          = JFactory::getDBO();
 		$document    = JFactory::getDocument();
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order', 'filter_order', 'con.name', 'cmd');
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order_Dir', 'filter_order_Dir', '', 'word');
 		$filter_type      = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', '', 'int');
 		$search           = $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
-		$search           = $db->escape(trim(JString::strtolower($search)));
 		$limitstart       = $jinput->get('limitstart', '0', 'int');
 		$limit            = $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
 
