@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @subpackage JEM Search Plugin
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -84,16 +84,17 @@ class plgSearchJEM extends JPlugin
 		$query	= $db->getQuery(true);
 
 		if (in_array('jemevents', $areas) && $limit > 0) {
+			$areaName = JText::_($this->onContentSearchAreas()['jemevents']);
 
 			switch ($phrase) {
 				case 'exact':
-					$text 		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
+					$text_q		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
 					$wheres2 	= array();
-					$wheres2[] 	= 'LOWER(a.title) LIKE '.$text;
-					$wheres2[]	= 'LOWER(a.introtext) LIKE '.$text;
-					$wheres2[] 	= 'LOWER(a.fulltext) LIKE '.$text;
-					$wheres2[] 	= 'LOWER(a.meta_keywords) LIKE '.$text;
-					$wheres2[] 	= 'LOWER(a.meta_description) LIKE '.$text;
+					$wheres2[] 	= 'LOWER(a.title) LIKE '.$text_q;
+					$wheres2[]	= 'LOWER(a.introtext) LIKE '.$text_q;
+					$wheres2[] 	= 'LOWER(a.fulltext) LIKE '.$text_q;
+					$wheres2[] 	= 'LOWER(a.meta_keywords) LIKE '.$text_q;
+					$wheres2[] 	= 'LOWER(a.meta_description) LIKE '.$text_q;
 					$where 		= '(' . implode( ') OR (', $wheres2 ) . ')';
 					break;
 
@@ -118,7 +119,7 @@ class plgSearchJEM extends JPlugin
 
 			switch ($ordering) {
 				case 'oldest':
-					$order = 'a.dates, a.times ASC';
+					$order = 'a.dates ASC, a.times ASC';
 					break;
 
 				case 'alpha':
@@ -131,7 +132,7 @@ class plgSearchJEM extends JPlugin
 
 				case 'newest':
 				default:
-					$order = 'a.dates, a.times DESC';
+					$order = 'a.dates DESC, a.times DESC';
 			}
 
 			$query->clear();
@@ -154,7 +155,8 @@ class plgSearchJEM extends JPlugin
 
 			$query->select('a.title AS title, a.meta_description, a.meta_keywords, a.created AS created');
 			$query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
-			$query->select('c.catname AS section, '.$case_when.','.$case_when1.', '.'\'2\' AS browsernav');
+			$query->select($query->concatenate(array($db->quote($areaName), 'c.catname'), ' / ').' AS section');
+			$query->select($case_when.','.$case_when1.', '.'\'2\' AS browsernav');
 			$query->select('rel.catid');
 
 			$query->from('#__jem_events AS a');
@@ -163,7 +165,7 @@ class plgSearchJEM extends JPlugin
 			$query->where('('. $where .')' . ' AND a.published=1 AND c.published = 1 AND a.access IN ('.$groups.') '
 					.'AND c.access IN ('.$groups.') '
 					 );
-			$query->group('a.id, a.title, a.meta_description, a.meta_keywords, a.created, a.introtext, a.fulltext, c.catname, a.alias, c.alias, c.id');
+			$query->group('a.id');
 			$query->order($order);
 
 			$db->setQuery( $query, 0, $limit );
@@ -175,6 +177,9 @@ class plgSearchJEM extends JPlugin
 				foreach($list as $key => $row)
 				{
 					$list[$key]->href = JEMHelperRoute::getEventRoute($row->slug);
+
+					// todo: list ALL accessable categories
+					// todo: show date/time somewhere because this is very useful information
 				}
 			}
 
@@ -182,16 +187,17 @@ class plgSearchJEM extends JPlugin
 		}
 
 		if (in_array('jemvenues', $areas) && $limit > 0) {
+			$areaName = JText::_($this->onContentSearchAreas()['jemvenues']);
 
 			switch ($phrase) {
 				case 'exact':
-					$text 		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
+					$text_q		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
 					$wheres2 	= array();
-					$wheres2[] 	= 'LOWER(venue) LIKE '.$text;
-					$wheres2[] 	= 'LOWER(locdescription) LIKE '.$text;
-					$wheres2[] 	= 'LOWER(city) LIKE '.$text;
-					$wheres2[] 	= 'LOWER(meta_keywords) LIKE '.$text;
-					$wheres2[] 	= 'LOWER(meta_description) LIKE '.$text;
+					$wheres2[] 	= 'LOWER(venue) LIKE '.$text_q;
+					$wheres2[] 	= 'LOWER(locdescription) LIKE '.$text_q;
+					$wheres2[] 	= 'LOWER(city) LIKE '.$text_q;
+					$wheres2[] 	= 'LOWER(meta_keywords) LIKE '.$text_q;
+					$wheres2[] 	= 'LOWER(meta_description) LIKE '.$text_q;
 					$where 		= '(' . implode( ') OR (', $wheres2 ) . ')';
 					break;
 
@@ -235,7 +241,7 @@ class plgSearchJEM extends JPlugin
 			. ' created,'
 			. ' "2" AS browsernav,'
 			. ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug, '
-			. ' CONCAT_WS( " / ", '. $searchJEM .', venue )AS section'
+			. ' '.$db->quote($areaName).' AS section'
 			. ' FROM #__jem_venues'
 			. ' WHERE ( '.$where.')'
 			. ' AND published = 1'
@@ -252,15 +258,16 @@ class plgSearchJEM extends JPlugin
 		}
 
 		if (in_array('jemcategories', $areas) && $limit > 0) {
+			$areaName = JText::_($this->onContentSearchAreas()['jemcategories']);
 
 			switch ($phrase) {
 				case 'exact':
-					$text 		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
+					$text_q		= $db->Quote( '%'.$db->escape( $text, true ).'%', false );
 					$wheres2 	= array();
-					$wheres2[] 	= 'LOWER(catname) LIKE '.$text;
-					$wheres2[] 	= 'LOWER(description) LIKE '.$text;
-					$wheres2[] 	= 'LOWER(meta_keywords) LIKE '.$text;
-					$wheres2[] 	= 'LOWER(meta_description) LIKE '.$text;
+					$wheres2[] 	= 'LOWER(catname) LIKE '.$text_q;
+					$wheres2[] 	= 'LOWER(description) LIKE '.$text_q;
+					$wheres2[] 	= 'LOWER(meta_keywords) LIKE '.$text_q;
+					$wheres2[] 	= 'LOWER(meta_description) LIKE '.$text_q;
 					$where 		= '(' . implode( ') OR (', $wheres2 ) . ')';
 					break;
 
@@ -287,11 +294,11 @@ class plgSearchJEM extends JPlugin
 			. ' "" AS created,'
 			. ' "2" AS browsernav,'
 			. ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug, '
-			. ' CONCAT_WS( " / ", '. $searchJEM .', catname )AS section'
+			. ' '.$db->quote($areaName).' AS section'
 			. ' FROM #__jem_categories'
 			. ' WHERE ( '.$where.' )'
 			. ' AND published = 1'
-			. ' AND access <= '.(int) $user->get('aid')
+			. ' AND access IN ('.$groups.') '
 			. ' ORDER BY catname'
 			;
 			$db->setQuery( $query, 0, $limit );
