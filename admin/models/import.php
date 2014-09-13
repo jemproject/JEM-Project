@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -495,7 +495,7 @@ class JEMModelImport extends JModelLegacy {
 			$query = $db->getQuery('true');
 
 			$query->select("COUNT(*)")
-				->from($this->prefix.$table);
+			      ->from($db->quoteName($this->prefix.$table));
 
 			$db->setQuery($query);
 

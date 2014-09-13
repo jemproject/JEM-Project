@@ -37,7 +37,7 @@ class JemViewEventslist extends JEMView
 		$params 		= $app->getParams();
 		$uri 			= JFactory::getURI();
 		$pathway 		= $app->getPathWay();
-		$db 			= JFactory::getDBO();
+	//	$db 			= JFactory::getDBO();
 		$user			= JFactory::getUser();
 		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
 		$print			= JRequest::getBool('print');
@@ -63,7 +63,6 @@ class JemViewEventslist extends JEMView
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
 		$filter_type		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_type', 'filter_type', '', 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-		$search 			= $db->escape(trim(JString::strtolower($search)));
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;

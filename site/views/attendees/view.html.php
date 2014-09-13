@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -25,7 +25,7 @@ class JemViewAttendees extends JViewLegacy {
 		}
 
 		//initialise variables
-		$db			= JFactory::getDBO();
+	//	$db			= JFactory::getDBO();
 		$document	= JFactory::getDocument();
 		$user		= JFactory::getUser();
 		$params 	= $app->getParams();
@@ -50,7 +50,6 @@ class JemViewAttendees extends JViewLegacy {
 		$filter_waiting		= $app->getUserStateFromRequest('com_jem.attendees.waiting',	'filter_waiting',	0, 'int');
 		$filter 			= $app->getUserStateFromRequest('com_jem.attendees.filter', 'filter', '', 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
-		$search 			= $db->escape(trim(JString::strtolower($search)));
 
 		// Get data from the model
 		$rows      	= $this->get('Data');

@@ -35,8 +35,9 @@ class JemViewDay extends JEMView
 		$menu 			= $app->getMenu();
 		$menuitem 		= $menu->getActive();
 		$user			= JFactory::getUser();
+		$document 		= JFactory::getDocument();
 		$params 		= $app->getParams();
-		$db 			= JFactory::getDBO();
+	//	$db 			= JFactory::getDBO();
 		$uri 			= JFactory::getURI();
 		$task 			= JRequest::getWord('task');
 		$print			= JRequest::getBool('print');
@@ -69,7 +70,6 @@ class JemViewDay extends JEMView
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_order_Dir', 'filter_order_Dir',	'', 'word');
 		$filter_type		= $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_type', 'filter_type', '', 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-		$search 			= $db->escape(trim(JString::strtolower($search)));
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;

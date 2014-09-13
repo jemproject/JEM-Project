@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -36,7 +36,7 @@ class JEMModelEvent extends JModelAdmin
 
 				$query = $db->getQuery(true);
 				$query->delete($db->quoteName('#__jem_cats_event_relations'));
-				$query->where('itemid = '.$record->id);
+				$query->where('itemid = '.$db->quote($record->id));
 
 				$db->setQuery($query);
 				$db->query();
@@ -47,7 +47,7 @@ class JEMModelEvent extends JModelAdmin
 
 				$query = $db->getQuery(true);
 				$query->delete($db->quoteName('#__jem_cats_event_relations'));
-				$query->where('itemid = '.$record->id);
+				$query->where('itemid = '.$db->quote($record->id));
 
 				$db->setQuery($query);
 				$db->query();
@@ -336,7 +336,7 @@ class JEMModelEvent extends JModelAdmin
 			$query 	= $db->getQuery(true);
 
 			$query->delete($db->quoteName('#__jem_cats_event_relations'));
-			$query->where('itemid = ' . $pk);
+			$query->where('itemid = ' . (int)$pk);
 			$db->setQuery($query);
 			$db->query();
 
@@ -348,7 +348,7 @@ class JEMModelEvent extends JModelAdmin
 				$columns = array('catid','itemid');
 
 				// Insert values.
-				$values = array($cat,$pk);
+				$values = array((int)$cat, (int)$pk);
 
 				// Prepare the insert query.
 				$query->insert($db->quoteName('#__jem_cats_event_relations'))

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @subpackage JEM Finder Plugin
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -410,10 +410,11 @@ class plgFinderJEM extends FinderIndexerAdapter {
 		// Item ID
 		$sql->select('a.id');
 		// Item and category published state
-		$sql->select('a.' . $this->state_field . ' AS state, c.published AS cat_state');
+		$sql->select($db->quoteName('a.' . $this->state_field, 'state'));
+		$sql->select('c.published AS cat_state');
 		// Item and category access levels
 		$sql->select('1 AS access, c.access AS cat_access');
-		$sql->from($this->table . ' AS a');
+		$sql->from($db->quoteName($this->table, 'a'));
 		$sql->join('LEFT', '#__jem_cats_event_relations AS cer ON cer.itemid = a.id');
 		$sql->join('LEFT', '#__jem_categories AS c ON cer.catid = c.id');
 

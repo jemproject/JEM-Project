@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -31,7 +31,7 @@ class JemViewMyattendances extends JViewLegacy
 		$uri 			= JFactory::getURI();
 		$user			= JFactory::getUser();
 		$pathway 		= $app->getPathWay();
-		$db  			= JFactory::getDBO();
+	//	$db  			= JFactory::getDBO();
 
 		//redirect if not logged in
 		if (!$user->get('id')) {
@@ -64,7 +64,6 @@ class JemViewMyattendances extends JViewLegacy
 // 		$filter_state 		= $app->getUserStateFromRequest('com_jem.myattendances.filter_state', 'filter_state', 	'*', 'word');
 		$filter 			= $app->getUserStateFromRequest('com_jem.myattendances.filter', 'filter', '', 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.myattendances.filter_search', 'filter_search', '', 'string');
-		$search 			= $db->escape(trim(JString::strtolower($search)));
 
 		$task 				= JRequest::getWord('task');
 

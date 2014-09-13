@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 1.9.7
+ * @version 1.9.8
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -155,7 +155,7 @@ class JEMModelGroup extends JModelAdmin
 		// Updating group references
 		$query = $db->getQuery(true);
 		$query->delete($db->quoteName('#__jem_groupmembers'));
-		$query->where('group_id = '.$table->id);
+		$query->where('group_id = '.(int)$table->id);
 
 		$db->setQuery($query);
 		$db->query();
@@ -166,7 +166,7 @@ class JEMModelGroup extends JModelAdmin
 
 			$query = $db->getQuery(true);
 			$columns = array('group_id', 'member');
-			$values = array($table->id, $member);
+			$values = array((int)$table->id, $member);
 
 			$query
 				->insert($db->quoteName('#__jem_groupmembers'))
@@ -192,7 +192,7 @@ class JEMModelGroup extends JModelAdmin
 
 		$users = array();
 
-		if ($members) {
+		if (!empty($members)) {
 			$query = 'SELECT id AS value, username, name'
 					. ' FROM #__users'
 					. ' WHERE id IN ('.$members.')'
@@ -232,7 +232,7 @@ class JEMModelGroup extends JModelAdmin
 			if ($item->id) {
 				$query = 'SELECT member'
 						. ' FROM #__jem_groupmembers'
-						. ' WHERE group_id = '.$item->id;
+						. ' WHERE group_id = '.(int)$item->id;
 
 				$this->_db->setQuery ($query);
 
