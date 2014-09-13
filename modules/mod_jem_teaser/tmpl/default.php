@@ -77,6 +77,11 @@ if ($params->get('use_modal', 0)) {
 			</tr>
 			<tr>
 				<td>
+					<?php if ($item->date && $params->get('datemethod', 1) == 2) :?>
+						<div class="date">
+							<small><?php echo $item->date; ?></small>
+						</div>
+					<?php endif; ?>
 					<?php if ($item->time && $params->get('datemethod', 1) == 1) :?>
 						<div class="time">
 							<small><?php echo $item->time; ?></small>
