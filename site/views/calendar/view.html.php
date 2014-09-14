@@ -31,6 +31,8 @@ class JemViewCalendar extends JViewLegacy
 		$menuitem	= $menu->getActive();
 		$jemsettings = JemHelper::config();
 		$params 	= $app->getParams();
+		$top_category = $params->get('top_category', 0);
+		$this->param_topcat = $top_category > 0 ? ('&topcat='.$top_category) : '';
 
 		// Load css
 		JemHelper::loadCss('jem');
@@ -93,7 +95,7 @@ class JemViewCalendar extends JViewLegacy
 		$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
 		$cal->enableMonthNav('index.php?option=com_jem&view=calendar');
 		$cal->setFirstWeekDay($params->get('firstweekday', 1));
-		$cal->enableDayLinks('index.php?option=com_jem&view=day');
+		$cal->enableDayLinks('index.php?option=com_jem&view=day' . $this->param_topcat);
 
 		$this->rows        = $rows;
 		$this->params      = $params;

@@ -101,14 +101,49 @@ class JemModelDay extends JemModelEventslist
 		$requestCategoryId	= $jinput->getInt('catid',null);
 
 		$item = JRequest::getInt('Itemid');
+
 		$locid = $app->getUserState('com_jem.venuecal.locid'.$item);
 		if ($locid) {
 			$this->setstate('filter.filter_locid',$locid);
 		}
 
+		// maybe list of venue ids from calendar module
+		$locids = explode(',', $jinput->getString('locids', ''));
+		foreach ($locids as $id) {
+			if ((int)$id > 0) {
+				$venues[] = (int)$id;
+			}
+		}
+		if (!empty($venues)) {
+			$this->setstate('filter.venue_id', $venues);
+			$this->setstate('filter.venue_id.include', true);
+		}
+
 		$cal_category_catid = $app->getUserState('com_jem.categorycal.catid'.$item);
 		if ($cal_category_catid) {
 			$this->setState('filter.req_catid',$cal_category_catid);
+		}
+
+		// maybe list of venue ids from calendar module
+		$catids = explode(',', $jinput->getString('catids', ''));
+		foreach ($catids as $id) {
+			if ((int)$id > 1) { // don't accept 'root'
+				$cats[] = (int)$id;
+			}
+		}
+		if (!empty($cats)) {
+			$this->setstate('filter.category_id', $cats);
+			$this->setstate('filter.category_id.include', true);
+		}
+
+		// maybe top category is given by calendar view
+		$top_category = $jinput->getInt('topcat', 0);
+		if ($top_category > 0) { // accept 'root'
+			$children = JEMCategories::getChilds($top_category);
+			if (count($children)) {
+				$where = 'rel.catid IN ('. implode(',', $children) .')';
+				$this->setState('filter.category_top', $where);
+			}
 		}
 
 		# limit/start
@@ -146,7 +181,19 @@ class JemModelDay extends JemModelEventslist
 		$this->setState('params', $params);
 
 		# published
-		$this->setState('filter.published',1);
+		$pub = explode(',', $jinput->getString('pub', 1));
+		$published = array();
+		// sanitize remote data
+		foreach ($pub as $val) {
+			if (((int)$val >= 1) && ((int)$val <= 2)) {
+				$published[] = (int)$val;
+			}
+		}
+		// default to 'published'
+		if (empty($published)) {
+			$published[] = 1;
+		}
+		$this->setState('filter.published', $published);
 
 		# request venue-id
 		if ($requestVenueId) {
