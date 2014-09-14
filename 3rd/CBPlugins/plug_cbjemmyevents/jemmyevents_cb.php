@@ -1,7 +1,7 @@
 <?php
 /**
  * @package My Events
- * @version JEM v1.9.8 & CB 1.9
+ * @version JEM v2.0.0 & CB 1.9
  * @author JEM Community
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  *
