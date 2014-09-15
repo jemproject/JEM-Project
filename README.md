@@ -1,9 +1,6 @@
 
 
 
-Notice:: This version should be tested/used offline!
-
-
 This version includes:
 - Import/Export view
 - Multicategory support

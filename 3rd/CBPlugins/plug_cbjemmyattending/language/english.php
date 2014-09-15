@@ -1,7 +1,7 @@
 <?php
 /* 
  * @package My Attending
- * @version 1.9.8
+ * @version 2.0.0
  * @author JEM Community
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * 
