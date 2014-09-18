@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.1
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -17,6 +17,7 @@ class JEMControllerEvent extends JControllerForm
 {
 	protected $view_item = 'editevent';
 	protected $view_list = 'eventslist';
+	protected $_id = 0;
 
 	/**
 	 * Method to add a new record.
@@ -230,6 +231,9 @@ class JEMControllerEvent extends JControllerForm
 		$return = JRequest::getVar('return', null, 'default', 'base64');
 
 		if (empty($return) || !JUri::isInternal(urldecode(base64_decode($return)))) {
+			if (!empty($this->_id)) {
+				return JRoute::_(JemHelperRoute::getEventRoute($this->_id));
+			}
 			return JURI::base();
 		}
 		else {
@@ -240,25 +244,22 @@ class JEMControllerEvent extends JControllerForm
 
 	protected function postSaveHook(JModel &$model, $validData = array())
 	{
+		$task = $this->getTask();
+		if ($task == 'save') {
+			// doesn't work on new events - get values from model instead
+			//$isNew 	= ($validData['id']) ? false : true;
+			//$id 	= $validData['id'];
+			$isNew     = $model->getState('editevent.new');
+			$this->_id = $model->getState('editevent.id');
 
-	$task = $this->getTask();
-	if ($task == 'save') {
-		// doesn't work on new events - get values from model instead
-		//$isNew 	= ($validData['id']) ? false : true;
-		//$id 	= $validData['id'];
-		$isNew = $model->getState('editevent.new');
-		$id    = $model->getState('editevent.id');
-
-		
-		if (JPluginHelper::importPlugin('jem','mailer')) {
-			JPluginHelper::importPlugin('jem','mailer');
-			$dispatcher = JDispatcher::getInstance();
-			$dispatcher->trigger('onEventEdited', array($id, $isNew));
-		} else {
-			JError::raiseNotice(100,JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'));
+			if (JPluginHelper::importPlugin('jem','mailer')) {
+				JPluginHelper::importPlugin('jem','mailer');
+				$dispatcher = JDispatcher::getInstance();
+				$dispatcher->trigger('onEventEdited', array($this->_id, $isNew));
+			} else {
+				JError::raiseNotice(100,JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'));
+			}
 		}
-	}
-	
 	}
 
 	/**
