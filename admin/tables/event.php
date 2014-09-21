@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.1
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -200,17 +200,20 @@ class JEMTableEvent extends JTable
 				$removeimage = JRequest::getVar('removeimage', '', 'default', 'int');
 
 				if (!empty($file['name'])) {
-					//check the image
-					$check = JEMImage::check($file, $jemsettings);
+					// only on first event, skip on recurrence events
+					if (empty($this->recurrence_first_id)) {
+						//check the image
+						$check = JEMImage::check($file, $jemsettings);
 
-					if ($check !== false) {
-						//sanitize the image filename
-						$filename = JEMImage::sanitize($image_dir, $file['name']);
-						$filepath = $image_dir . $filename;
+						if ($check !== false) {
+							//sanitize the image filename
+							$filename = JEMImage::sanitize($image_dir, $file['name']);
+							$filepath = $image_dir . $filename;
 
-						if (JFile::upload($file['tmp_name'], $filepath)) {
-							$image_to_delete = $this->datimage; // delete previous image
-							$this->datimage = $filename;
+							if (JFile::upload($file['tmp_name'], $filepath)) {
+								$image_to_delete = $this->datimage; // delete previous image
+								$this->datimage = $filename;
+							}
 						}
 					}
 				} elseif (!empty($removeimage)) {
