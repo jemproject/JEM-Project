@@ -335,7 +335,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	}
 
 	/**
-	 * Method to get the SQL query used to retrieve the list of content items.
+	 * Method to get the SQL query used to retrieve the list of events.
 	 *
 	 * @param   mixed  $sql  A JDatabaseQuery object or null.
 	 *
@@ -355,10 +355,10 @@ class plgFinderJEM extends FinderIndexerAdapter {
 // 		$sql->select('a.publish_up AS publish_start_date, a.publish_down AS publish_end_date');
 // 		$sql->select('c.title AS category, c.published AS cat_state, c.access AS cat_access');
 
-		$sql->select('a.id, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.datimage');
-		$sql->select('a.created AS start_date, a.created_by, a.modified, a.version');
+		$sql->select('a.id, a.access, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.datimage');
+		$sql->select('a.created AS start_date, a.dates AS publish_start_date, a.created_by, a.modified, a.version');
 		$sql->select('a.published AS state');
-		$sql->select('a.fulltext AS body, a.fulltext AS summary');
+		$sql->select('a.fulltext AS body, a.introtext AS summary');
 		$sql->select('l.venue, l.city, l.state as loc_state, l.url, l.street');
 		$sql->select('l.published AS loc_published');
 		$sql->select('ct.name AS countryname');
@@ -439,25 +439,5 @@ class plgFinderJEM extends FinderIndexerAdapter {
 
 		// Store the access level to determine if it changes
 		$this->old_cataccess = $this->db->loadResult();
-	}
-
-	/**
-	 * Method to check the existing access level for items
-	 *
-	 * @param   JTable  $row  A JTable object
-	 *
-	 * @return  void
-	 *
-	 */
-	protected function checkItemAccess($row)
-	{
-		$query = $this->db->getQuery(true);
-		$query->select('1 AS access');
-		$query->from($this->db->quoteName($this->table));
-		$query->where($this->db->quoteName('id') . ' = ' . (int)$row->id);
-		$this->db->setQuery($query);
-
-		// Store the access level to determine if it changes
-		$this->old_access = $this->db->loadResult();
 	}
 }
