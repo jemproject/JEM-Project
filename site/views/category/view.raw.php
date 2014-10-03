@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -36,9 +36,12 @@ class JemViewCategory extends JViewLegacy
 			$vcal = JemHelper::getCalendarTool();
 			$vcal->setConfig("filename", "category" . $catid . ".ics");
 
-			foreach ($rows as $row) {
-				JemHelper::icalAddEvent($vcal, $row);
+			if (!empty($rows)) {
+				foreach ($rows as $row) {
+					JemHelper::icalAddEvent($vcal, $row);
+				}
 			}
+
 			// generate and redirect output to user browser
 			$vcal->returnCalendar();
 		} else {

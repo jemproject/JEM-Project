@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -24,7 +24,11 @@ class JemViewEvent extends JViewLegacy
 		// check iCal global setting
 		if ($settings->get('global_show_ical_icon','0')==1) {
 			// Get data from the model
-			$row 				= $this->get('Item');
+			$row = $this->get('Item');
+			if (empty($row)) {
+				return;
+			}
+
 			$row->categories 	= $this->get('Categories');
 			$row->id 			= $row->did;
 			$row->slug			= $row->alias ? ($row->id.':'.$row->alias) : $row->id;

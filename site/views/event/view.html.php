@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -58,6 +58,12 @@ class JemViewEvent extends JEMView
 
 		$this->registers	= $model->getRegisters($this->state->get('event.id'));
 		$isregistered		= $this->get('UserIsRegistered');
+
+		// check for data error
+		if (empty($this->item)) {
+			$app->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+			return false;
+		}
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {
