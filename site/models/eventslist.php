@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -691,6 +691,7 @@ class JemModelEventslist extends JModelList
 			if (!is_null($item->enddates) && !$startdayonly) {
 				if ($item->enddates != $item->dates) {
 					$day = $item->start_day;
+					$multi = array();
 
 					for ($counter = 0; $counter <= $item->datesdiff-1; $counter++) {
 						$day++;
@@ -698,15 +699,16 @@ class JemModelEventslist extends JModelList
 						# next day:
 						$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
 
+						# it's multiday regardless if other days are on next month
+						$item->multi = 'first';
+						$item->multitimes = $item->times;
+						$item->multiname = $item->title;
+						$item->sort = 'zlast';
+
 						# ensure we only generate days of current month in this loop
 						if (strftime('%m', $this->_date) == strftime('%m', $nextday)) {
 							$multi[$counter] = clone $item;
 							$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
-
-							$item->multi = 'first';
-							$item->multitimes = $item->times;
-							$item->multiname = $item->title;
-							$item->sort = 'zlast';
 
 							if ($multi[$counter]->dates < $item->enddates) {
 								$multi[$counter]->multi = 'middle';
