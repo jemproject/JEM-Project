@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -116,6 +116,12 @@ class JemHelper {
 		$nrdaysupdate = floor($lastupdate / 86400);
 
 		if ($nrdaysnow > $nrdaysupdate || $forced) {
+
+			// trigger an event to let plugins handle whatever cleanup they want to do.
+			if (JPluginHelper::importPlugin('jem')) {
+				$dispatcher = JDispatcher::getInstance();
+				$dispatcher->trigger('onJemBeforeCleanup', array($jemsettings, $forced));
+			}
 
 			$db = JFactory::getDbo();
 			$query = $db->getQuery(true);
@@ -367,32 +373,30 @@ class JemHelper {
 	 * This method deletes an image file if unused.
 	 *
 	 * @param string $type one of 'event', 'venue', 'category', 'events', 'venues', 'categories'
-	 * @param mixed  $filename filename as stored in db, or null
-	 * @todo Empty $filename is not supported yet. In that case all unused files should be deleted.
+	 * @param mixed  $filename filename as stored in db, or null (which deletes all unused files)
 	 * 
 	 * @return bool true on success, false on error
 	 * @access public
 	 */
 	static function delete_unused_image_files($type, $filename = null) {
-		if (empty($filename)) { // not supported yet
-			return false;
-		}
-
 		switch ($type) {
 		case 'event':
 		case 'events':
 			$folder = 'events';
 			$countquery_tmpl = ' SELECT id FROM #__jem_events WHERE datimage = ';
+			$imagequery      = ' SELECT datimage AS image, COUNT(*) AS count FROM #__jem_events GROUP BY datimage';
 			break;
 		case 'venue':
 		case 'venues':
 			$folder = 'venues';
 			$countquery_tmpl = ' SELECT id FROM #__jem_venues WHERE locimage = ';
+			$imagequery      = ' SELECT locimage AS image, COUNT(*) AS count FROM #__jem_venues GROUP BY locimage';
 			break;
 		case 'category':
 		case 'categories':
 			$folder = 'categories';
 			$countquery_tmpl = ' SELECT id FROM #__jem_categories WHERE image = ';
+			$imagequery      = ' SELECT image, COUNT(*) AS count FROM #__jem_categories GROUP BY image';
 			break;
 		default;
 			return false;
@@ -411,6 +415,30 @@ class JemHelper {
 				JFile::delete($fullPath);
 				if (JFile::exists($fullPaththumb)) {
 					JFile::delete($fullPaththumb);
+				}
+
+				return true;
+			}
+		}
+		elseif (empty($filename) && is_dir($fullPath)) {
+			// get image files used
+			$db = JFactory::getDBO();
+			$db->setQuery($imagequery);
+			if (null === ($used = $db->loadAssocList('image', 'count'))) {
+				return false;
+			}
+
+			// get all files and delete if not in $used
+			$fileList = JFolder::files($fullPath);
+			if ($fileList !== false) {
+				foreach ($fileList as $file)
+				{
+					if (is_file($fullPath.$file) && substr($file, 0, 1) != '.' && !isset($used[$file])) {
+						JFile::delete($fullPath.$file);
+						if (JFile::exists($fullPaththumb.$file)) {
+							JFile::delete($fullPaththumb.$file);
+						}
+					}
 				}
 
 				return true;
