@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -101,7 +101,7 @@ class JemViewVenue extends JEMView {
 			$partItemid = ($itemid > 0) ? '&Itemid='.$itemid : '';
 			$partVenid = ($venueID > 0) ? '&id=' . $venueID : '';
 			$partLocid = ($venueID > 0) ? '&locid=' . $venueID : '';
-			$cal = new JEMCalendar($year, $month, 0, $app->getCfg('offset'));
+			$cal = new JEMCalendar($year, $month, 0);
 			$cal->enableMonthNav('index.php?option=com_jem&view=venue&layout=calendar'.$partVenid.$partItemid);
 			$cal->setFirstWeekDay($params->get('firstweekday',1));
 			$cal->enableDayLinks('index.php?option=com_jem&view=day'.$partLocid);
