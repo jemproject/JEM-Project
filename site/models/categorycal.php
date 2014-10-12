@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -160,26 +160,31 @@ class JEMModelCategoryCal extends JModelLegacy
 			foreach($items AS $item) {
 				$item->categories = $this->getCategories($item->id);
 
-				if (!is_null($item->enddates) && !$params->get('show_only_start', 1)) {
-					if ($item->enddates != $item->dates) {
+				//remove events without categories (users have no access to them)
+				if (empty($item->categories)) {
+					unset($item);
+				}
+				elseif (!$params->get('show_only_start', 1)) {
+					if (!is_null($item->enddates) && ($item->enddates != $item->dates)) {
 						$day = $item->start_day;
+						$multi = array();
+
+						$item->multi = 'first';
+						$item->multitimes = $item->times;
+						$item->multiname = $item->title;
+						$item->sort = 'zlast';
 
 						for ($counter = 0; $counter <= $item->datediff-1; $counter++) {
 							//@todo sort out, multi-day events
-							$day++;
 
 							//next day:
+							$day++;
 							$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
 
 							//ensure we only generate days of current month in this loop
 							if (strftime('%m', $this->_date) == strftime('%m', $nextday)) {
 								$multi[$counter] = clone $item;
 								$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
-
-								$item->multi = 'first';
-								$item->multitimes = $item->times;
-								$item->multiname = $item->title;
-								$item->sort = 'zlast';
 
 								if ($multi[$counter]->dates < $item->enddates) {
 									$multi[$counter]->multi = 'middle';
@@ -200,21 +205,16 @@ class JEMModelCategoryCal extends JModelLegacy
 									$multi[$counter]->times = $item->times;
 									$multi[$counter]->endtimes = $item->endtimes;
 								}
+							} // for
 
-								//add generated days to data
-								$items = array_merge($items, $multi);
-							}
+							//add generated days to data
+							$items = array_merge($items, $multi);
 							//unset temp array holding generated days before working on the next multiday event
 							unset($multi);
 						}
 					}
 				}
-
-				//remove events without categories (users have no access to them)
-				if (empty($item->categories)) {
-					unset($item);
-				}
-			}
+			} // foreach
 
 			// Do we have events now? Return if we don't have one.
 			if(empty($items)) {
@@ -373,6 +373,7 @@ class JEMModelCategoryCal extends JModelLegacy
 
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
+		$where[] = ' a.access IN (' . implode(',', $levels) . ')'; // check event's level too
 
 		// only select events within specified dates. (chosen month)
 		$monthstart = mktime(0, 0, 1, strftime('%m', $this->_date), 1, strftime('%Y', $this->_date));

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -36,7 +36,6 @@ abstract class modJEMteaserHelper
 		# Set params for the model
 		# has to go before the getItems function
 		$model->setState('params', $params);
-		$model->setState('filter.access',true);
 
 		# filter published
 		#  0: unpublished
@@ -156,12 +155,11 @@ abstract class modJEMteaserHelper
 			#################
 
 			$settings	= JEMHelper::globalattribs();
-			$access		= !$settings->get('show_noauth','0');
 			$authorised = JAccess::getAuthorisedViewLevels(JFactory::getUser()->get('id'));
 
 			$lists[$i] = new stdClass();
 
-			if ($access || in_array($row->access, $authorised))
+			if (in_array($row->access, $authorised))
 			{
 				# We know that user has the privilege to view the event
 				$lists[$i]->link = JRoute::_(JEMHelperRoute::getEventRoute($row->slug));

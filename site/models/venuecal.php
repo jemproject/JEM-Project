@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -75,9 +75,6 @@ class JemModelVenueCal extends JemModelEventslist
 		# publish state
 		$this->setState('filter.published', 1);
 
-		# access
-		$this->setState('filter.access', true);
-
 
 		###########
 		## DATES ##
@@ -140,9 +137,9 @@ class JemModelVenueCal extends JemModelEventslist
 
 		$query->select('DATEDIFF(a.enddates, a.dates) AS datesdiff,DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month');
 
+		// here we can extend the query of the Eventslist model
 		//$query->where('a.locid = '.$this->_id);
 
-		// here we can extend the query of the Eventslist model
 		return $query;
 	}
 }

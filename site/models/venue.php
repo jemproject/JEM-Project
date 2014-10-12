@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -87,7 +87,6 @@ class JemModelVenue extends JemModelEventslist
 			$this->setState('filter.published',1);
 		}
 
-		$this->setState('filter.access', true);
 		$this->setState('filter.groupby',array('a.id'));
 	}
 
@@ -99,7 +98,11 @@ class JemModelVenue extends JemModelEventslist
 	{
 		$items	= parent::getItems();
 		/* no additional things to do yet - place holder */
-		return $items;
+		if ($items) {
+			return $items;
+		}
+
+		return array();
 	}
 
 
@@ -115,9 +118,9 @@ class JemModelVenue extends JemModelEventslist
 		// Create a new query object.
 		$query = parent::getListQuery();
 
+		// here we can extend the query of the Eventslist model
 		$query->where('a.locid = '.(int)$this->_id);
 
-		// here we can extend the query of the Eventslist model
 		return $query;
 	}
 

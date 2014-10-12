@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -205,9 +205,6 @@ class JemModelDay extends JemModelEventslist
 			$this->setState('filter.req_catid',$requestCategoryId);
 		}
 
-		# access
-		$this->setState('filter.access', true);
-
 		# groupby
 		$this->setState('filter.groupby',array('a.id'));
 	}
@@ -221,13 +218,10 @@ class JemModelDay extends JemModelEventslist
 		$items	= parent::getItems();
 
 		if ($items) {
-			foreach ($items as &$item)
-			{
-
-			}
+			return $items;
 		}
 
-		return $items;
+		return array();
 	}
 
 	/**

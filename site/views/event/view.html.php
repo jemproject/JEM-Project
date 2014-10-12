@@ -123,7 +123,7 @@ class JemViewEvent extends JEMView
 		$offset = $this->state->get('list.offset');
 
 		// Check the view access to the event (the model has already computed the values).
-		if (!$item->params->get('access-view') && !$item->params->get('show_noauth') &&  $user->get('guest')) {
+		if (!$item->params->get('access-view')) { // && !$item->params->get('show_noauth') &&  $user->get('guest')) { - not supported yet
 			JError::raiseWarning(403, JText::_('JERROR_ALERTNOAUTHOR'));
 			return;
 		}

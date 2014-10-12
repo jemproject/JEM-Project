@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @subpackage JEM Calendar Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -30,9 +30,6 @@ abstract class modjemcalqhelper
 		//$app = JFactory::getApplication();
 		//$appParams = $app->getParams('com_jem');
 		$model->setState('params', $params);
-
-		# Access filter
-		$model->setState('filter.access', true);
 
 		$user		= JFactory::getUser();
 		$levels		= $user->getAuthorisedViewLevels();

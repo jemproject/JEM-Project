@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -245,6 +245,7 @@ class JEMModelCategories extends JModelLegacy
 
 		// Second is to only select events assigned to category the user has access to
 		$where .= ' AND c.access IN (' . implode(',', $levels) . ')';
+		$where .= ' AND a.access IN (' . implode(',', $levels) . ')';
 
 		$query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.created, l.venue, l.city, l.state, l.url,'
 			.' a.recurrence_type, a.recurrence_first_id,'
@@ -330,6 +331,7 @@ class JEMModelCategories extends JModelLegacy
 			$where_sub .= ' AND cc.parent_id = '.(int) $parent_id;
 		}
 		$where_sub .= ' AND cc.access IN (' . implode(',', $levels) . ')';
+		$where_sub .= ' AND i.access IN (' . implode(',', $levels) . ')';
 
 		// check archive task and ensure that only categories get selected
 		// if they contain a published/archived event
@@ -397,6 +399,8 @@ class JEMModelCategories extends JModelLegacy
 			;
 
 		if (!$this->_showemptycats) {
+			$query .= ' AND e.access IN (' . implode(',', $levels) . ')';
+
 			$task = JRequest::getWord('task');
 			if($task == 'archive') {
 				$query .= ' AND e.published = 2';

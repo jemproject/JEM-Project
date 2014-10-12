@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -165,8 +165,6 @@ class JemModelCategory extends JemModelEventslist
 		}
 
 		$this->setState('filter.orderby',$orderby);
-
-		$this->setState('filter.access', true);
 	}
 
 	/**
@@ -178,11 +176,6 @@ class JemModelCategory extends JemModelEventslist
 		$items	= parent::getItems();
 
 		if ($items) {
-		 /*	foreach ($items as &$item)
-			{
-
-			}
-		  */
 			return $items;
 		}
 
