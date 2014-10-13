@@ -120,6 +120,14 @@
 			<option value="2">JARCHIVED</option>
 			<option value="-2">JTRASHED</option>
 		</field>
+		<field
+			id="access"
+			name="access"
+			type="list"
+			label="JFIELD_ACCESS_LABEL"
+			description="JFIELD_ACCESS_DESC"
+			class="inputbox"
+			size="1" />
 	</fieldset>
 
 	<fieldset name="request"

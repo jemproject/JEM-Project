@@ -155,7 +155,7 @@ class JemViewEditvenue extends JViewLegacy
 		JHtml::_('behavior.formvalidation');
 		JHtml::_('behavior.tooltip');
 
-		$access2 		= JemHelper::getAccesslevelOptions();
+		$access2 		= JemHelper::getAccesslevelOptions(true);
 		$this->access	= $access2;
 
 		// Load css

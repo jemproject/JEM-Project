@@ -519,13 +519,19 @@ class JemHelper {
 	/**
 	 * Build the select list for access level
 	 */
-	static function getAccesslevelOptions()
+	static function getAccesslevelOptions($ownonly = false)
 	{
 		$db = JFactory::getDBO();
+		$where = '';
+		if ($ownonly) {
+			$levels = JFactory::getUser()->authorisedLevels();
+			$where = ' WHERE id IN ('.implode(',', $levels).')';
+		}
 
 		$query = 'SELECT id AS value, title AS text'
 				. ' FROM #__viewlevels'
-				. ' ORDER BY id'
+				. $where
+				. ' ORDER BY ordering, id'
 				;
 		$db->setQuery($query);
 		$groups = $db->loadObjectList();

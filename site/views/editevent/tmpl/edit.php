@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -113,6 +113,10 @@ $settings	= json_decode($this->item->attribs);
 					<li><?php echo $this->form->getLabel('cats'); ?><?php echo $this->form->getInput('cats'); ?></li>
 					<li><?php echo $this->form->getLabel('featured'); ?><?php echo $this->form->getInput('featured'); ?></li>
 					<li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
+					<li><?php echo $this->form->getLabel('access'); ?><?php
+						      echo JHtml::_('select.genericlist', $this->access, 'access', array('list.attr' => ' class="inputbox" size="1"', 'list.select' => $this->item->access, 'id' => 'access'));
+						 ?>
+					</li>
 				</ul>
 				<div class="clr"></div>
 				<?php echo $this->form->getLabel('articletext'); ?>
