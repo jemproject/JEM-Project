@@ -449,6 +449,56 @@ class JemHelper {
 	}
 
 	/**
+	 * This method deletes attachment files if unused.
+	 *
+	 * @param mixed $type one of 'event', 'venue', 'category', ... or false for all
+	 *
+	 * @return bool true on success, false on error
+	 * @access public
+	 */
+	static function delete_unused_attachment_files($type = false) {
+		$jemsettings = JEMHelper::config();
+		$basepath    = JPATH_SITE.'/'.$jemsettings->attachments_path;
+		$db          = JFactory::getDBO();
+		$res         = true;
+
+		// Get list of all folders matching type (format is "$type$id")
+		$folders = JFolder::folders($basepath, ($type ? '^'.$type : '.'), false, false, array('.', '..'));
+
+		// Get list of all used attachments of given type
+		$fnames = array();
+		foreach ($folders as $f) {
+			$fnames[] = $db->Quote($f);
+		}
+		$query = ' SELECT object, file '
+			   . ' FROM #__jem_attachments ';
+		if (!empty($fnames)) {
+			$query .= ' WHERE object IN ('.implode(',', $fnames).')';
+		}
+		$db->setQuery($query);
+		$files_used = $db->loadObjectList();
+		$files = array();
+		foreach ($files_used as $used) {
+			$files[$used->object.'/'.$used->file] = true;
+		}
+
+		// Delete unused files and folders (ignore 'index.html')
+		foreach ($folders as $folder) {
+			$files = JFolder::files($basepath.'/'.$folder, '.', false, false, array('index.html'), array());
+			if (!empty($files)) {
+				foreach ($files as $file) {
+					if (!array_key_exists($folder.'/'.$file, $files)) {
+						$res &= JFile::delete($basepath.'/'.$folder.'/'.$file);
+					}
+				}
+			}
+			if (empty(JFolder::files($basepath.'/'.$folder, '.', false, true, array('index.html'), array()))) {
+				$res &= JFolder::delete($basepath.'/'.$folder);
+			}
+		}
+	}
+
+	/**
 	}
 	 * this method generate the date string to a date array
 	 *
