@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -91,7 +91,7 @@ class JemViewCategories extends JEMView
 		}
 
 		// Get events if requested
-		if ($params->get('detcat_nr', 0) > 0) {
+		if (!empty($rows) && $params->get('detcat_nr', 0) > 0) {
 			foreach($rows as $row) {
 				$row->events = $model->getEventdata($row->id);
 			}

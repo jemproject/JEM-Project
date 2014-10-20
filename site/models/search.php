@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -204,6 +204,11 @@ class JEMModelSearch extends JModelLegacy
 		} else {
 			$where = ' WHERE a.published = 1';
 		}
+
+		// filter by user's access levels
+		$user = JFactory::getUser();
+		$levels = $user->getAuthorisedViewLevels();
+		$where .= ' AND a.access IN (' . implode(', ', $levels) .')';
 
 		//$filter            = JRequest::getString('filter', '', 'request');
 		$filter            = $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -52,7 +52,6 @@ class JemModelEvent extends JModelItem
 			$this->setState('filter.archived', 2);
 		}
 
-		$this->setState('filter.access', true);
 		$this->setState('filter.language', JLanguageMultilang::isEnabled());
 	}
 
@@ -179,12 +178,13 @@ class JemModelEvent extends JModelItem
 				$data->params = clone $globalregistry;
 				$data->params->merge($registry);
 
-				 $registry = new JRegistry;
-				 $registry->loadString($data->metadata);
-				 $data->metadata = $registry;
+				$registry = new JRegistry;
+				$registry->loadString($data->metadata);
+				$data->metadata = $registry;
 
 				// Compute selected asset permissions.
 				$user = JFactory::getUser();
+				$groups = $user->getAuthorisedViewLevels();
 
 				// Technically guest could edit an event, but lets not check
 				// that to improve performance a little.
@@ -206,24 +206,15 @@ class JemModelEvent extends JModelItem
 				}
 
 				// Compute view access permissions.
-				if ($access = $this->getState('filter.access')) {
-					// If the access filter has been set, we already know this
-					// user can view.
-					$data->params->set('access-view', true);
-				}
-				else {
 
-					# retrieve category's that the user is able to see
-					# if there is no category the event should not be displayed
+				# retrieve category's that the user is able to see
+				# if there is no category the event should not be displayed
 
-					$user = JFactory::getUser();
-					$groups = $user->getAuthorisedViewLevels();
+				$category_viewable = $this->getCategories($pk);
 
-					$category_viewable = $this->getCategories($pk);
-
-					if ($category_viewable) {
-						$data->params->set('access-view', true);
-					}
+				if (!empty($category_viewable)) {
+					// Event's access value must also be checked
+					$data->params->set('access-view', in_array($data->access, $groups));
 				}
 
 				$this->_item[$pk] = $data;
@@ -338,14 +329,6 @@ class JemModelEvent extends JModelItem
 		$query->where('c.published = 1');
 
 
-		###################
-		## FILTER-ACCESS ##
-		###################
-
-		# Filter by access level.
-		$access = $this->getState('filter.access');
-
-
 		###################################
 		## FILTER - MAINTAINER/JEM GROUP ##
 		###################################
@@ -354,26 +337,24 @@ class JemModelEvent extends JModelItem
 		# let's see if the user has access to this category.
 
 
-		$query3	= $db->getQuery(true);
-		$query3 = 'SELECT gr.id'
-				. ' FROM #__jem_groups AS gr'
-				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
-				. ' WHERE g.member = ' . (int) $user->get('id')
-				//. ' AND ' .$db->quoteName('gr.addevent') . ' = 1 '
-				. ' AND g.member NOT LIKE 0';
-		$db->setQuery($query3);
-		$groupnumber = $db->loadColumn();
+	//	$query3	= $db->getQuery(true);
+	//	$query3 = 'SELECT gr.id'
+	//			. ' FROM #__jem_groups AS gr'
+	//			. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
+	//			. ' WHERE g.member = ' . (int) $user->get('id')
+	//			//. ' AND ' .$db->quoteName('gr.addevent') . ' = 1 '
+	//			. ' AND g.member NOT LIKE 0';
+	//	$db->setQuery($query3);
+	//	$groupnumber = $db->loadColumn();
 
-		if ($access){
-			$groups = implode(',', $user->getAuthorisedViewLevels());
-			$jemgroups = implode(',',$groupnumber);
+		$groups = implode(',', $levels);
+	//	$jemgroups = implode(',',$groupnumber);
 
-			if ($jemgroups) {
-				$query->where('(c.access IN ('.$groups.') OR c.groupid IN ('.$jemgroups.'))');
-			} else {
-				$query->where('(c.access IN ('.$groups.'))');
-			}
-		}
+	//	if ($jemgroups) {
+	//		$query->where('(c.access IN ('.$groups.') OR c.groupid IN ('.$jemgroups.'))');
+	//	} else {
+			$query->where('(c.access IN ('.$groups.'))');
+	//	}
 
 
 		#######################

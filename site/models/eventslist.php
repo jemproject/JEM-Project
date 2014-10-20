@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -146,7 +146,6 @@ class JemModelEventslist extends JModelList
 		}
 		}
 
-		$this->setState('filter.access', true);
 		$this->setState('filter.groupby',array('a.id'));
 
 		//parent::populateState('a.dates', 'ASC');
@@ -176,7 +175,6 @@ class JemModelEventslist extends JModelList
 	{
 		// Compile the store id.
 		$id .= ':' . serialize($this->getState('filter.published'));
-		$id .= ':' . $this->getState('filter.access');
 		$id .= ':' . $this->getState('filter.opendates');
 		$id .= ':' . $this->getState('filter.featured');
 		$id .= ':' . serialize($this->getState('filter.event_id'));
@@ -289,14 +287,10 @@ class JemModelEventslist extends JModelList
 		## FILTER-ACCESS ##
 		###################
 
-		# Filter by access level.
-		$access = $this->getState('filter.access');
-
-		if ($access){
-			$user = JFactory::getUser();
-			$groups = implode(',', $user->getAuthorisedViewLevels());
-			$query->where('a.access IN ('.$groups.')');
-		}
+		# Filter by access level - always.
+		$user = JFactory::getUser();
+		$groups = implode(',', $user->getAuthorisedViewLevels());
+		$query->where('a.access IN ('.$groups.')');
 
 		####################
 		## FILTER-PUBLISH ##
@@ -413,8 +407,8 @@ class JemModelEventslist extends JModelList
 			} else {
 				$search = $db->Quote('%'.$db->escape($search, true).'%', false); // escape once
 
-				if($search && $settings->get('global_show_filter')) {
-					switch($filter) {
+				if ($search && $settings->get('global_show_filter')) {
+					switch ($filter) {
 						# case 4 is category, so it is omitted
 						case 1:
 							$query->where('a.title LIKE '.$search);
@@ -428,8 +422,8 @@ class JemModelEventslist extends JModelList
 						case 5:
 							$query->where('l.state LIKE '.$search);
 							break;
-			}
-		}
+					}
+				}
 			}
 		}
 
@@ -481,7 +475,7 @@ class JemModelEventslist extends JModelList
 			$item->params = clone $this->getState('params');
 			$item->params->merge($eventParams);
 
-			# access permissions.
+			# write access permissions.
 			if (!$guest)
 			{
 				$asset = 'com_jem.event.' . $item->id;
@@ -505,16 +499,6 @@ class JemModelEventslist extends JModelList
 
 			# adding categories
 			$item->categories = $this->getCategories($item->id);
-
-			# retrieving filter-access
-			$access = $this->getState('filter.access');
-
-			if ($access)
-			{
-				// If the access filter has been set, we already have only the events this user can view.
-				$item->params->set('access-view', true);
-			}
-
 
 			# check if the item-categories is empty, if so the user has no access to that event at all.
 			if (empty($item->categories)) {
@@ -582,37 +566,34 @@ class JemModelEventslist extends JModelList
 		###################
 
 		# Filter by access level.
-		$access = $this->getState('filter.access');
 
 
 		###################################
 		## FILTER - MAINTAINER/JEM GROUP ##
 		###################################
 
-		# as maintainter someone who is registered can see a category that has special rights
-		# let's see if the user has access to this category.
+		# -as maintainter someone who is registered can see a category that has special rights-
+		# -let's see if the user has access to this category.-
+		# ==> No. On frontend everybody needs proper access levels to see things. No exceptions.
 
+	//	$query3	= $db->getQuery(true);
+	//	$query3 = 'SELECT gr.id'
+	//			. ' FROM #__jem_groups AS gr'
+	//			. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
+	//			. ' WHERE g.member = ' . (int) $user->get('id')
+	//			//. ' AND ' .$db->quoteName('gr.addevent') . ' = 1 '
+	//			. ' AND g.member NOT LIKE 0';
+	//	$db->setQuery($query3);
+	//	$groupnumber = $db->loadColumn();
 
-		$query3	= $db->getQuery(true);
-		$query3 = 'SELECT gr.id'
-				. ' FROM #__jem_groups AS gr'
-				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
-				. ' WHERE g.member = ' . (int) $user->get('id')
-				//. ' AND ' .$db->quoteName('gr.addevent') . ' = 1 '
-				. ' AND g.member NOT LIKE 0';
-		$db->setQuery($query3);
-		$groupnumber = $db->loadColumn();
+	//	$jemgroups = implode(',',$groupnumber);
 
-		if ($access){
-			$groups = implode(',', $user->getAuthorisedViewLevels());
-			$jemgroups = implode(',',$groupnumber);
-
-			if ($jemgroups) {
-				$query->where('(c.access IN ('.$groups.') OR c.groupid IN ('.$jemgroups.'))');
-			} else {
-				$query->where('(c.access IN ('.$groups.'))');
-			}
-		}
+	// JEM groups doesn't overrule view access levels!
+	//	if ($jemgroups) {
+	//		$query->where('(c.access IN ('.$groups.') OR c.groupid IN ('.$jemgroups.'))');
+	//	} else {
+			$query->where('(c.access IN ('.implode(',', $levels).'))');
+	//	}
 
 
 		#######################
@@ -683,30 +664,36 @@ class JemModelEventslist extends JModelList
 
 	function calendarMultiday($items) {
 
+		if (empty($items)) {
+			return array();
+		}
+
 		$app 			= JFactory::getApplication();
 		$params 		= $app->getParams();
 		$startdayonly	= $this->getState('filter.calendar_startdayonly');
 
 		foreach($items AS $item) {
-			if (!is_null($item->enddates) && !$startdayonly) {
-				if ($item->enddates != $item->dates) {
+			if (!$startdayonly) {
+				if (!is_null($item->enddates) && ($item->enddates != $item->dates)) {
 					$day = $item->start_day;
+					$multi = array();
+
+					# it's multiday regardless if other days are on next month
+					$item->multi = 'first';
+					$item->multitimes = $item->times;
+					$item->multiname = $item->title;
+					$item->sort = 'zlast';
 
 					for ($counter = 0; $counter <= $item->datesdiff-1; $counter++) {
-						$day++;
 
 						# next day:
+						$day++;
 						$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
 
 						# ensure we only generate days of current month in this loop
 						if (strftime('%m', $this->_date) == strftime('%m', $nextday)) {
 							$multi[$counter] = clone $item;
 							$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
-
-							$item->multi = 'first';
-							$item->multitimes = $item->times;
-							$item->multiname = $item->title;
-							$item->sort = 'zlast';
 
 							if ($multi[$counter]->dates < $item->enddates) {
 								$multi[$counter]->multi = 'middle';

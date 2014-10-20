@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -49,6 +49,12 @@ class JemViewEditvenue extends JViewLegacy
 
 		$this->form = $this->get('Form');
 		$this->return_page = $this->get('ReturnPage');
+
+		// check for data error
+		if (empty($item)) {
+			$app->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+			return false;
+		}
 
 		// check for guest
 		if (!$user || $user->id == 0) {
@@ -149,7 +155,7 @@ class JemViewEditvenue extends JViewLegacy
 		JHtml::_('behavior.formvalidation');
 		JHtml::_('behavior.tooltip');
 
-		$access2 		= JemHelper::getAccesslevelOptions();
+		$access2 		= JemHelper::getAccesslevelOptions(true);
 		$this->access	= $access2;
 
 		// Load css

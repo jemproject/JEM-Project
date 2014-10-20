@@ -698,13 +698,6 @@
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
 			</field>
-			<field name="event_show_noauth" type="list"
-				label="JGLOBAL_SHOW_UNAUTH_LINKS_LABEL"
-				description="JGLOBAL_SHOW_UNAUTH_LINKS_DESC"
-			>
-				<option value="0">JNO</option>
-				<option value="1">JYES</option>
-			</field>
 			<field name="event_show_readmore" type="radio"
 				label="JGLOBAL_SHOW_READMORE_LABEL"
 				description="JGLOBAL_SHOW_READMORE_DESC"
@@ -819,15 +812,6 @@
 			>
 				<option value="0">COM_JEM_USERNAME</option>
 				<option value="1">COM_JEM_NAME</option>
-			</field>
-			<field
-				name="show_noauth"
-				type="list"
-				default="0"
-				label="JGLOBAL_SHOW_UNAUTH_LINKS_LABEL"
-				description="JGLOBAL_SHOW_UNAUTH_LINKS_DESC">
-				<option value="0">JNO</option>
-				<option value="1">JYES</option>
 			</field>
 			<field
 				name="highlight"

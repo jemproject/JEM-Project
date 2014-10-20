@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @subpackage JEM Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -55,7 +55,6 @@ abstract class modJEMHelper
 		# Set params for the model
 		# has to go before the getItems function
 		$model->setState('params', $params);
-		$model->setState('filter.access',true);
 
 		# filter published
 		#  0: unpublished

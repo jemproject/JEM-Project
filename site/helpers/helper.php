@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -116,6 +116,12 @@ class JemHelper {
 		$nrdaysupdate = floor($lastupdate / 86400);
 
 		if ($nrdaysnow > $nrdaysupdate || $forced) {
+
+			// trigger an event to let plugins handle whatever cleanup they want to do.
+			if (JPluginHelper::importPlugin('jem')) {
+				$dispatcher = JDispatcher::getInstance();
+				$dispatcher->trigger('onJemBeforeCleanup', array($jemsettings, $forced));
+			}
 
 			$db = JFactory::getDbo();
 			$query = $db->getQuery(true);
@@ -367,32 +373,30 @@ class JemHelper {
 	 * This method deletes an image file if unused.
 	 *
 	 * @param string $type one of 'event', 'venue', 'category', 'events', 'venues', 'categories'
-	 * @param mixed  $filename filename as stored in db, or null
-	 * @todo Empty $filename is not supported yet. In that case all unused files should be deleted.
+	 * @param mixed  $filename filename as stored in db, or null (which deletes all unused files)
 	 * 
 	 * @return bool true on success, false on error
 	 * @access public
 	 */
 	static function delete_unused_image_files($type, $filename = null) {
-		if (empty($filename)) { // not supported yet
-			return false;
-		}
-
 		switch ($type) {
 		case 'event':
 		case 'events':
 			$folder = 'events';
 			$countquery_tmpl = ' SELECT id FROM #__jem_events WHERE datimage = ';
+			$imagequery      = ' SELECT datimage AS image, COUNT(*) AS count FROM #__jem_events GROUP BY datimage';
 			break;
 		case 'venue':
 		case 'venues':
 			$folder = 'venues';
 			$countquery_tmpl = ' SELECT id FROM #__jem_venues WHERE locimage = ';
+			$imagequery      = ' SELECT locimage AS image, COUNT(*) AS count FROM #__jem_venues GROUP BY locimage';
 			break;
 		case 'category':
 		case 'categories':
 			$folder = 'categories';
 			$countquery_tmpl = ' SELECT id FROM #__jem_categories WHERE image = ';
+			$imagequery      = ' SELECT image, COUNT(*) AS count FROM #__jem_categories GROUP BY image';
 			break;
 		default;
 			return false;
@@ -416,12 +420,86 @@ class JemHelper {
 				return true;
 			}
 		}
+		elseif (empty($filename) && is_dir($fullPath)) {
+			// get image files used
+			$db = JFactory::getDBO();
+			$db->setQuery($imagequery);
+			if (null === ($used = $db->loadAssocList('image', 'count'))) {
+				return false;
+			}
+
+			// get all files and delete if not in $used
+			$fileList = JFolder::files($fullPath);
+			if ($fileList !== false) {
+				foreach ($fileList as $file)
+				{
+					if (is_file($fullPath.$file) && substr($file, 0, 1) != '.' && !isset($used[$file])) {
+						JFile::delete($fullPath.$file);
+						if (JFile::exists($fullPaththumb.$file)) {
+							JFile::delete($fullPaththumb.$file);
+						}
+					}
+				}
+
+				return true;
+			}
+		}
 
 		return false;
 	}
 
 	/**
+	 * This method deletes attachment files if unused.
+	 *
+	 * @param mixed $type one of 'event', 'venue', 'category', ... or false for all
+	 *
+	 * @return bool true on success, false on error
+	 * @access public
+	 */
+	static function delete_unused_attachment_files($type = false) {
+		$jemsettings = JEMHelper::config();
+		$basepath    = JPATH_SITE.'/'.$jemsettings->attachments_path;
+		$db          = JFactory::getDBO();
+		$res         = true;
+
+		// Get list of all folders matching type (format is "$type$id")
+		$folders = JFolder::folders($basepath, ($type ? '^'.$type : '.'), false, false, array('.', '..'));
+
+		// Get list of all used attachments of given type
+		$fnames = array();
+		foreach ($folders as $f) {
+			$fnames[] = $db->Quote($f);
+		}
+		$query = ' SELECT object, file '
+			   . ' FROM #__jem_attachments ';
+		if (!empty($fnames)) {
+			$query .= ' WHERE object IN ('.implode(',', $fnames).')';
+		}
+		$db->setQuery($query);
+		$files_used = $db->loadObjectList();
+		$files = array();
+		foreach ($files_used as $used) {
+			$files[$used->object.'/'.$used->file] = true;
+		}
+
+		// Delete unused files and folders (ignore 'index.html')
+		foreach ($folders as $folder) {
+			$files = JFolder::files($basepath.'/'.$folder, '.', false, false, array('index.html'), array());
+			if (!empty($files)) {
+				foreach ($files as $file) {
+					if (!array_key_exists($folder.'/'.$file, $files)) {
+						$res &= JFile::delete($basepath.'/'.$folder.'/'.$file);
+					}
+				}
+			}
+			$files = JFolder::files($basepath.'/'.$folder, '.', false, true, array('index.html'), array());
+			if (empty($files)) {
+				$res &= JFolder::delete($basepath.'/'.$folder);
+			}
+		}
 	}
+
+	/**
 	 * this method generate the date string to a date array
 	 *
 	 * @var string the date string
@@ -491,13 +569,19 @@ class JemHelper {
 	/**
 	 * Build the select list for access level
 	 */
-	static function getAccesslevelOptions()
+	static function getAccesslevelOptions($ownonly = false)
 	{
 		$db = JFactory::getDBO();
+		$where = '';
+		if ($ownonly) {
+			$levels = JFactory::getUser()->authorisedLevels();
+			$where = ' WHERE id IN ('.implode(',', $levels).')';
+		}
 
 		$query = 'SELECT id AS value, title AS text'
 				. ' FROM #__viewlevels'
-				. ' ORDER BY id'
+				. $where
+				. ' ORDER BY ordering, id'
 				;
 		$db->setQuery($query);
 		$groups = $db->loadObjectList();

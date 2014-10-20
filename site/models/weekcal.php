@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -46,9 +46,6 @@ class JemModelWeekcal extends JemModelEventslist
 
 		# publish state
 		$this->setState('filter.published', 1);
-
-		# access
-		$this->setState('filter.access', true);
 
 		###########
 		## DATES ##
@@ -129,7 +126,7 @@ class JemModelWeekcal extends JemModelEventslist
 
 		$items	= parent::getItems();
 		if ($items) {
-				$items = self::calendarMultiday($items);
+			$items = self::calendarMultiday($items);
 
 			return $items;
 		}
@@ -159,6 +156,11 @@ class JemModelWeekcal extends JemModelEventslist
 	 * create multi-day events
 	 */
 	function calendarMultiday($items) {
+
+		if (empty($items)) {
+			return array();
+		}
+
 		$app 			= JFactory::getApplication();
 		$params 		= $app->getParams();
 		$startdayonly	= $this->getState('filter.calendar_startdayonly');
@@ -166,25 +168,29 @@ class JemModelWeekcal extends JemModelEventslist
 		foreach($items AS $item) {
 			$item->categories = $this->getCategories($item->id);
 
-			if (!is_null($item->enddates) && !$startdayonly) {
-				if ($item->enddates != $item->dates) {
-					// $day = $item->start_day;
+			//remove events without categories (users have no access to them)
+			if (empty($item->categories)) {
+				unset($item);
+			}
+			elseif (!$startdayonly) {
+				if (!is_null($item->enddates) && ($item->enddates != $item->dates)) {
 					$day = $item->start_day;
+					$multi = array();
+
+					$item->multi = 'first';
+					$item->multitimes = $item->times;
+					$item->multiname = $item->title;
+					$item->sort = 'zlast';
 
 					for ($counter = 0; $counter <= $item->datesdiff-1; $counter++) {
-						$day++;
 
 						//next day:
+						$day++;
 						$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
 
 						//generate days of current multi-day selection
 						$multi[$counter] = clone $item;
 						$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
-
-						$item->multi = 'first';
-						$item->multitimes = $item->times;
-						$item->multiname = $item->title;
-						$item->sort = 'zlast';
 
 						if ($multi[$counter]->dates < $item->enddates) {
 							$multi[$counter]->multi = 'middle';
@@ -214,12 +220,7 @@ class JemModelWeekcal extends JemModelEventslist
 					unset($multi);
 				}
 			}
-
-			//remove events without categories (users have no access to them)
-			if (empty($item->categories)) {
-				unset($item);
-			}
-		} // foreach
+		} // foreach ($items)
 
 		foreach ($items as $index => $item) {
 			$date = $item->dates;
@@ -277,8 +278,8 @@ class JemModelWeekcal extends JemModelEventslist
 		}
 
 		// Do we still have events? Return if not.
-		if(empty($items)) {
-			return $items;
+		if (empty($items)) {
+			return array();
 		}
 
 		foreach ($items as $item) {
@@ -296,7 +297,7 @@ class JemModelWeekcal extends JemModelEventslist
 
 		return $items;
 
-		}
+	}
 
 
 	/**

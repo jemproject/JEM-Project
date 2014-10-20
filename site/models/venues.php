@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -44,7 +44,6 @@ class JemModelVenues extends JemModelEventslist
 
 		$this->setState('filter.published',1);
 
-		$this->setState('filter.access', true);
 		$this->setState('filter.groupby',array('l.id'));
 
 	}
@@ -88,6 +87,7 @@ class JemModelVenues extends JemModelEventslist
 			$where[] = ' l.published = 1';
 		}
 		// TODO: no limit if user can publish or edit foreign venues
+		//       (then l.published should be selected / returned to the view)
 		else {
 			$where[] = ' (l.published = 1 OR l.created_by = ' . $this->_db->Quote($user->id) . ')';
 		}
@@ -151,14 +151,12 @@ class JemModelVenues extends JemModelEventslist
 				}
 
 				//create target link
-				$task 	= JRequest::getVar('task', '', '', 'string');
-
 				$item->linkEventsArchived = JRoute::_(JEMHelperRoute::getVenueRoute($item->venueslug.'&task=archive'));
 				$item->linkEventsPublished = JRoute::_(JEMHelperRoute::getVenueRoute($item->venueslug));
 
 				$item->EventsPublished = $this->AssignedEvents($item->locid,'1');
 				$item->EventsArchived = $this->AssignedEvents($item->locid,'2');
-		}
+			}
 
 			// Add the items to the internal cache.
 			$this->cache[$store] = $items;
@@ -172,6 +170,8 @@ class JemModelVenues extends JemModelEventslist
 
 	function AssignedEvents($id,$state=1)
 	{
+		$user 	= JFactory::getUser();
+		$levels = $user->getAuthorisedViewLevels();
 		$db 	= JFactory::getDBO();
 		$query	= $db->getQuery(true);
 
@@ -193,6 +193,10 @@ class JemModelVenues extends JemModelEventslist
 		$query->where('l.id= '. $db->quote($id));
 		# state
 		$query->where('a.published= '.$db->quote($state));
+		# view access level
+		$query->where('a.access IN ('.implode(',', $levels).')');
+		// Note: categories are filtered in getCategories() called below
+		//       so we don't need to check c.access here
 
 
 		#####################
@@ -267,8 +271,6 @@ class JemModelVenues extends JemModelEventslist
 		###################
 
 		# Filter by access level.
-		$access = $this->getState('filter.access');
-
 
 		###################################
 		## FILTER - MAINTAINER/JEM GROUP ##
@@ -278,26 +280,24 @@ class JemModelVenues extends JemModelEventslist
 		# let's see if the user has access to this category.
 
 
-		$query3	= $db->getQuery(true);
-		$query3 = 'SELECT gr.id'
-				. ' FROM #__jem_groups AS gr'
-				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
-				. ' WHERE g.member = ' . (int) $user->get('id')
-			//	. ' AND ' .$db->quoteName('gr.addevent') . ' = 1 '
-				. ' AND g.member NOT LIKE 0';
-		$db->setQuery($query3);
-		$groupnumber = $db->loadColumn();
+	//	$query3	= $db->getQuery(true);
+	//	$query3 = 'SELECT gr.id'
+	//			. ' FROM #__jem_groups AS gr'
+	//			. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
+	//			. ' WHERE g.member = ' . (int) $user->get('id')
+	//		//	. ' AND ' .$db->quoteName('gr.addevent') . ' = 1 '
+	//			. ' AND g.member NOT LIKE 0';
+	//	$db->setQuery($query3);
+	//	$groupnumber = $db->loadColumn();
 
-		if ($access){
-			$groups = implode(',', $user->getAuthorisedViewLevels());
-			$jemgroups = implode(',',$groupnumber);
+	//	$jemgroups = implode(',',$groupnumber);
 
-			if ($jemgroups) {
-				$query->where('(c.access IN ('.$groups.') OR c.groupid IN ('.$jemgroups.'))');
-			} else {
-				$query->where('(c.access IN ('.$groups.'))');
-			}
-		}
+	// JEM groups doesn't overrule view access levels!
+	//	if ($jemgroups) {
+	//		$query->where('(c.access IN ('.$groups.') OR c.groupid IN ('.$jemgroups.'))');
+	//	} else {
+			$query->where('(c.access IN ('.implode(',', $levels).'))');
+	//	}
 
 
 		#######################

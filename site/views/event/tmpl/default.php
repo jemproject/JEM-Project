@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -20,7 +20,7 @@ $attribs 	= json_decode($this->item->attribs);
 
 JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
-<?php if ($params->get('access-view')){?>
+<?php if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */ ?>
 <div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event<?php echo $this->pageclass_sfx;?>"
 	itemscope="itemscope" itemtype="http://schema.org/Event">
 	<div class="buttons">
@@ -59,7 +59,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 
 	<dl class="event_info floattext">
 		<?php if ($params->get('event_show_detailstitle',1)) : ?>
-			<dt class="title"><?php echo JText::_('COM_JEM_TITLE').':'; ?></dt>
+		<dt class="title"><?php echo JText::_('COM_JEM_TITLE').':'; ?></dt>
 		<dd class="title" itemprop="name"><?php echo $this->escape($this->item->title); ?></dd>
 		<?php
 		endif;
@@ -67,45 +67,42 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		<dt class="when"><?php echo JText::_('COM_JEM_WHEN').':'; ?></dt>
 		<dd class="when">
 			<?php
-				echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
-				echo JemOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
+			echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
+			echo JemOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
 			?>
 		</dd>
 		<?php if ($this->item->locid != 0) : ?>
-			<dt class="where"><?php echo JText::_('COM_JEM_WHERE').':'; ?></dt>
+		<dt class="where"><?php echo JText::_('COM_JEM_WHERE').':'; ?></dt>
 		<dd class="where">
-				<?php if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) : ?>
-					<a target="_blank" href="<?php echo $this->item->url; ?>"><?php echo $this->escape($this->item->venue); ?></a> -
-				<?php elseif ($params->get('event_show_detlinkvenue') == 2) : ?>
-					<a
-				href="<?php echo JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)); ?>"><?php echo $this->item->venue; ?></a> -
-				<?php elseif ($params->get('event_show_detlinkvenue') == 0) :
-					echo $this->escape($this->item->venue).' - ';
-				endif;
+			<?php if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) : ?>
+				<a target="_blank" href="<?php echo $this->item->url; ?>"><?php echo $this->escape($this->item->venue); ?></a> -
+			<?php elseif ($params->get('event_show_detlinkvenue') == 2) : ?>
+				<a href="<?php echo JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)); ?>"><?php echo $this->item->venue; ?></a> -
+			<?php elseif ($params->get('event_show_detlinkvenue') == 0) :
+				echo $this->escape($this->item->venue).' - ';
+			endif;
 
-				echo $this->escape($this->item->city).', '.$this->escape($this->item->state); ?>
-			</dd>
-		<?php endif;
-			$n = count($this->categories);
+			echo $this->escape($this->item->city).', '.$this->escape($this->item->state); ?>
+		</dd>
+		<?php
+		endif;
+		$n = count($this->categories);
 		?>
 
 		<dt class="category"><?php echo $n < 2 ? JText::_('COM_JEM_CATEGORY') : JText::_('COM_JEM_CATEGORIES'); ?>:</dt>
 		<dd class="category">
-			<?php
-			$i = 0;
-			foreach ($this->categories as $category) :
+		<?php
+		$i = 0;
+		foreach ($this->categories as $category) :
 			?>
-				<a
-				href="<?php echo JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)); ?>">
-					<?php echo $this->escape($category->catname); ?>
-				</a>
+			<a href="<?php echo JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)); ?>"><?php echo $this->escape($category->catname); ?></a>
 			<?php
-				$i++;
-				if ($i != $n) :
-					echo ', ';
-				endif;
-			endforeach;
-			?>
+			$i++;
+			if ($i != $n) :
+				echo ', ';
+			endif;
+		endforeach;
+		?>
 		</dd>
 
 		<?php
@@ -115,10 +112,10 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 				$currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
  			}
 			if($currentRow) {
-		?>
+			?>
 				<dt class="custom<?php echo $cr; ?>"><?php echo JText::_('COM_JEM_EVENT_CUSTOM_FIELD'.$cr).':'; ?></dt>
-		<dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
-		<?php
+				<dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
+			<?php
 			}
 		}
 		?>
@@ -133,102 +130,100 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		<?php if ($params->get('event_show_author') && !empty($this->item->author)) : ?>
 		<dt class="createdby"><?php echo JText::_('COM_JEM_EVENT_CREATED_BY_LABEL'); ?></dt>
 		<dd class="createdby">
-		<?php $author = $this->item->created_by_alias ? $this->item->created_by_alias : $this->item->author; ?>
-		<?php if (!empty($this->item->contactid2) && $params->get('event_link_author') == true): ?>
-		<?php
-		$needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->contactid2;
-		$menu = JFactory::getApplication()->getMenu();
-		$item = $menu->getItems('link', $needle, true);
-		$cntlink = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
-		?>
-		<?php echo JText::sprintf('COM_JEM_EVENT_CREATED_BY', JHtml::_('link', JRoute::_($cntlink), $author)); ?>
-		<?php else: ?>
-		<?php echo JText::sprintf('COM_JEM_EVENT_CREATED_BY', $author); ?>
-		<?php endif; ?>
+			<?php $author = $this->item->created_by_alias ? $this->item->created_by_alias : $this->item->author; ?>
+			<?php if (!empty($this->item->contactid2) && $params->get('event_link_author') == true) :
+				$needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->contactid2;
+				$menu = JFactory::getApplication()->getMenu();
+				$item = $menu->getItems('link', $needle, true);
+				$cntlink = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
+				echo JText::sprintf('COM_JEM_EVENT_CREATED_BY', JHtml::_('link', JRoute::_($cntlink), $author));
+			else :
+				echo JText::sprintf('COM_JEM_EVENT_CREATED_BY', $author);
+			endif;
+			?>
 		</dd>
 		<?php endif; ?>
-		</dl>
+	</dl>
+
 	<!-- DESCRIPTION -->
-		<?php if ($params->get('event_show_description','1') && ($this->item->fulltext != '' && $this->item->fulltext != '<br />' || $this->item->introtext != '' && $this->item->introtext != '<br />')) { ?>
-		<h2 class="description"><?php echo JText::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
-		<div class="description event_desc" itemprop="description">
+	<?php if ($params->get('event_show_description','1') && ($this->item->fulltext != '' && $this->item->fulltext != '<br />' || $this->item->introtext != '' && $this->item->introtext != '<br />')) { ?>
+	<h2 class="description"><?php echo JText::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
+	<div class="description event_desc" itemprop="description">
 
-		<?php //optional teaser intro text for guests ?>
-		<?php if ($params->get('event_show_noauth') == true and  $user->get('guest') ) { ?>
-
-		<?php echo $this->item->introtext; ?>
-		<?php //Optional link to let them register to see the whole event. ?>
-		<?php if ($params->get('event_show_readmore') && $this->item->fulltext != null) {
-		$link1 = JRoute::_('index.php?option=com_users&view=login');
-		$link = new JURI($link1);?>
-		<p class="readmore">
-		<a href="<?php echo $link; ?>">
 		<?php
-		if ($params->get('event_alternative_readmore') == false) {
-			echo JText::_('COM_JEM_EVENT_REGISTER_TO_READ_MORE');
-			} elseif ($readmore = $params->get('alternative_readmore')) {
-			echo $readmore;
-			}
-
-		if ($params->get('event_show_readmore_title', 0) != 0) {
-			    echo JHtml::_('string.truncate', ($this->item->title), $params->get('event_readmore_limit'));
-			} elseif ($params->get('event_show_readmore_title', 0) == 0) {
-			} else {
-			echo JHtml::_('string.truncate', ($this->item->title), $params->get('event_readmore_limit'));
-		} ?></a>
-		</p>
-		<?php }
-			} else {
+		if ($params->get('access-view')) {
 			echo $this->item->text;
+		}
+		/* optional teaser intro text for guests - NOT SUPPORTED YET */
+		elseif (0 /*$params->get('event_show_noauth') == true and  $user->get('guest')*/ ) {
+			echo $this->item->introtext;
+			// Optional link to let them register to see the whole event.
+			if ($params->get('event_show_readmore') && $this->item->fulltext != null) {
+				$link1 = JRoute::_('index.php?option=com_users&view=login');
+				$link = new JURI($link1);
+				echo '<p class="readmore">';
+					echo '<a href="'.$link.'">';
+					if ($params->get('event_alternative_readmore') == false) {
+						echo JText::_('COM_JEM_EVENT_REGISTER_TO_READ_MORE');
+					} elseif ($readmore = $params->get('alternative_readmore')) {
+						echo $readmore;
+					}
+
+					if ($params->get('event_show_readmore_title', 0) != 0) {
+					    echo JHtml::_('string.truncate', ($this->item->title), $params->get('event_readmore_limit'));
+					} elseif ($params->get('event_show_readmore_title', 0) == 0) {
+					} else {
+						echo JHtml::_('string.truncate', ($this->item->title), $params->get('event_readmore_limit'));
+					} ?>
+					</a>
+				</p>
+			<?php
 			}
+		} /* access_view / show_noauth */
 		?>
-		</div>
+	</div>
 	<?php } ?>
 
-
 	<!--  Contact -->
-       <?php if ($params->get('event_show_contact') && !empty($this->item->conid )) : ?>
+	<?php if ($params->get('event_show_contact') && !empty($this->item->conid )) : ?>
 
-        <h2 class="contact">
-         			<?php echo JText::_('COM_JEM_CONTACT') ; ?>
-         		</h2>
+	<h2 class="contact"><?php echo JText::_('COM_JEM_CONTACT') ; ?></h2>
 
-        		<dl class="location floattext">
-        		<dt class="con_name"><?php echo JText::_('COM_JEM_NAME').':'; ?></dt>
-        			<dd class="con_name">
-          <?php        $contact = $this->item->conname;
-        if ($params->get('event_link_contact') == true):
-        $needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->conid;
-        $menu = JFactory::getApplication()->getMenu();
-        $item = $menu->getItems('link', $needle, true);
-        $cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
-        ?>
-        			<?php
+	<dl class="location floattext">
+		<dt class="con_name"><?php echo JText::_('COM_JEM_NAME').':'; ?></dt>
+		<dd class="con_name">
+		<?php
+		$contact = $this->item->conname;
+		if ($params->get('event_link_contact') == true) :
+			$needle = 'index.php?option=com_contact&view=contact&id=' . $this->item->conid;
+			$menu = JFactory::getApplication()->getMenu();
+			$item = $menu->getItems('link', $needle, true);
+			$cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
 			echo JText::sprintf('COM_JEM_EVENT_CONTACT', JHtml::_('link', JRoute::_($cntlink2), $contact));
- 			else:
+		else :
 			echo JText::sprintf('COM_JEM_EVENT_CONTACT', $contact);
-			endif;
- 			?>
- 		</dd>
+		endif;
+		?>
+		</dd>
 
- 		<?php if ($this->item->contelephone) : ?>
+		<?php if ($this->item->contelephone) : ?>
 		<dt class="con_telephone"><?php echo JText::_('COM_JEM_TELEPHONE').':'; ?></dt>
- 		<dd class="con_telephone">
-		<?php echo $this->escape($this->item->contelephone); ?>
- 		</dd>
+		<dd class="con_telephone">
+			<?php echo $this->escape($this->item->contelephone); ?>
+		</dd>
 		<?php endif; ?>
-		</dl>
-        <?php endif ?>
+	</dl>
+	<?php endif ?>
 
 	<?php $this->attachments = $this->item->attachments; ?>
 	<?php echo $this->loadTemplate('attachments'); ?>
+
 	<!--  	Venue  -->
 	<?php if ($this->item->locid != 0) : ?>
 	<p></p>
 	<hr>
 
-		<div itemprop="location" itemscope="itemscope"
-		itemtype="http://schema.org/Place">
+	<div itemprop="location" itemscope="itemscope" itemtype="http://schema.org/Place">
 		<h2 class="location">
 			<?php
 			echo JText::_('COM_JEM_VENUE') ;
@@ -241,123 +236,116 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		<dl class="location">
 			<dt class="venue"><?php echo JText::_('COM_JEM_LOCATION').':'; ?></dt>
 			<dd class="venue">
-			<?php echo "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug))."'>".$this->escape($this->item->venue)."</a>"; ?>
-
-			<?php if (!empty($this->item->url)) : ?>
-				&nbsp; - &nbsp;
-				<a target="_blank" href="<?php echo $this->item->url; ?>"> <?php echo JText::_('COM_JEM_WEBSITE'); ?></a>
-			<?php endif; ?>
+				<?php
+				echo "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug))."'>".$this->escape($this->item->venue)."</a>";
+				if (!empty($this->item->url)) :
+					echo '&nbsp;-&nbsp;<a target="_blank" href="'.$this->item->url.'">'.JText::_('COM_JEM_WEBSITE').'</a>';
+				endif;
+				?>
 			</dd>
 		</dl>
 		<?php if ($params->get('event_show_detailsadress','1')) : ?>
-			<dl class="location floattext" itemprop="address" itemscope
-			itemtype="http://schema.org/PostalAddress">
-				<?php if ($this->item->street) : ?>
-				<dt class="venue_street"><?php echo JText::_('COM_JEM_STREET').':'; ?></dt>
+		<dl class="location floattext" itemprop="address" itemscope
+		    itemtype="http://schema.org/PostalAddress">
+			<?php if ($this->item->street) : ?>
+			<dt class="venue_street"><?php echo JText::_('COM_JEM_STREET').':'; ?></dt>
 			<dd class="venue_street" itemprop="streetAddress">
-					<?php echo $this->escape($this->item->street); ?>
-				</dd>
-				<?php endif; ?>
-
-				<?php if ($this->item->postalCode) : ?>
-				<dt class="venue_postalCode"><?php echo JText::_('COM_JEM_ZIP').':'; ?></dt>
-			<dd class="venue_postalCode" itemprop="postalCode">
-					<?php echo $this->escape($this->item->postalCode); ?>
-				</dd>
-				<?php endif; ?>
-
-				<?php if ($this->item->city) : ?>
-				<dt class="venue_city"><?php echo JText::_('COM_JEM_CITY').':'; ?></dt>
-			<dd class="venue_city" itemprop="addressLocality">
-					<?php echo $this->escape($this->item->city);?>
-				</dd>
-				<?php endif; ?>
-
-				<?php if ($this->item->state) : ?>
-				<dt class="venue_state"><?php echo JText::_('COM_JEM_STATE').':'; ?></dt>
-			<dd class="venue_state" itemprop="addressRegion">
-					<?php echo $this->escape($this->item->state); ?>
-				</dd>
-				<?php endif; ?>
-
-				<?php if ($this->item->country) : ?>
-				<dt class="venue_country"><?php echo JText::_('COM_JEM_COUNTRY').':'; ?></dt>
-			<dd class="venue_country">
-					<?php echo $this->item->countryimg ? $this->item->countryimg : $this->item->country; ?>
-					<meta itemprop="addressCountry"
-					content="<?php echo $this->item->country; ?>" />
+				<?php echo $this->escape($this->item->street); ?>
 			</dd>
-				<?php endif; ?>
+			<?php endif; ?>
 
+			<?php if ($this->item->postalCode) : ?>
+			<dt class="venue_postalCode"><?php echo JText::_('COM_JEM_ZIP').':'; ?></dt>
+			<dd class="venue_postalCode" itemprop="postalCode">
+				<?php echo $this->escape($this->item->postalCode); ?>
+			</dd>
+			<?php endif; ?>
 
-				<?php
-		for($cr = 1; $cr <= 10; $cr++) {
-			$currentRow = $this->item->{'venue'.$cr};
-			if(substr($currentRow, 0, 7) == "http://") {
-				$currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
- 			}
-			if($currentRow) {
-		?>
-				<dt class="custom<?php echo $cr; ?>"><?php echo JText::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr).':'; ?></dt>
-			<dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
-		<?php
+			<?php if ($this->item->city) : ?>
+			<dt class="venue_city"><?php echo JText::_('COM_JEM_CITY').':'; ?></dt>
+			<dd class="venue_city" itemprop="addressLocality">
+				<?php echo $this->escape($this->item->city);?>
+			</dd>
+			<?php endif; ?>
+
+			<?php if ($this->item->state) : ?>
+			<dt class="venue_state"><?php echo JText::_('COM_JEM_STATE').':'; ?></dt>
+			<dd class="venue_state" itemprop="addressRegion">
+				<?php echo $this->escape($this->item->state); ?>
+			</dd>
+			<?php endif; ?>
+
+			<?php if ($this->item->country) : ?>
+			<dt class="venue_country"><?php echo JText::_('COM_JEM_COUNTRY').':'; ?></dt>
+			<dd class="venue_country">
+				<?php echo $this->item->countryimg ? $this->item->countryimg : $this->item->country; ?>
+				<meta itemprop="addressCountry" content="<?php echo $this->item->country; ?>" />
+			</dd>
+			<?php endif; ?>
+
+			<?php
+			for($cr = 1; $cr <= 10; $cr++) {
+				$currentRow = $this->item->{'venue'.$cr};
+				if (substr($currentRow, 0, 7) == "http://") {
+					$currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
+				}
+				if($currentRow) {
+					?>
+					<dt class="custom<?php echo $cr; ?>"><?php echo JText::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr).':'; ?></dt>
+					<dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
+					<?php
+				}
 			}
-		}
-		?>
+			?>
 
-				<?php if ($params->get('event_show_mapserv')== 1) : ?>
-					<?php echo JemOutput::mapicon($this->item,'event',$params); ?>
-				<?php endif; ?>
-			</dl>
+			<?php if ($params->get('event_show_mapserv')== 1) : ?>
+				<?php echo JemOutput::mapicon($this->item,'event',$params); ?>
+			<?php endif; ?>
+		</dl>
+
 			<?php if ($params->get('event_show_mapserv')== 2) : ?>
 				<?php echo JemOutput::mapicon($this->item,'event',$params); ?>
 			<?php endif; ?>
 
 			<?php if ($params->get('event_show_mapserv')== 3) : ?>
+				<input type="hidden" id="latitude" value="<?php echo $this->item->latitude;?>">
+				<input type="hidden" id="longitude" value="<?php echo $this->item->longitude;?>">
 
-			<input type="hidden" id="latitude" value="<?php echo $this->item->latitude;?>">
-			<input type="hidden" id="longitude" value="<?php echo $this->item->longitude;?>">
-
-			<input type="hidden" id="venue" value="<?php echo $this->item->venue;?>">
-			<input type="hidden" id="street" value="<?php echo $this->item->street;?>">
-			<input type="hidden" id="city" value="<?php echo $this->item->city;?>">
-			<input type="hidden" id="state" value="<?php echo $this->item->state;?>">
-			<input type="hidden" id="postalCode" value="<?php echo $this->item->postalCode;?>">
-
+				<input type="hidden" id="venue" value="<?php echo $this->item->venue;?>">
+				<input type="hidden" id="street" value="<?php echo $this->item->street;?>">
+				<input type="hidden" id="city" value="<?php echo $this->item->city;?>">
+				<input type="hidden" id="state" value="<?php echo $this->item->state;?>">
+				<input type="hidden" id="postalCode" value="<?php echo $this->item->postalCode;?>">
 
 				<?php echo JemOutput::mapicon($this->item,'event',$params); ?>
-
-
-
 			<?php endif; ?>
-		<?php endif; ?>
+		<?php endif; /* event_show_detailsadress */ ?>
 
 
 		<?php if ($params->get('event_show_locdescription','1') && $this->item->locdescription != ''
-			&& $this->item->locdescription != '<br />') : ?>
-
-			<h2 class="location_desc"><?php echo JText::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
+		       && $this->item->locdescription != '<br />') : ?>
+		<h2 class="location_desc"><?php echo JText::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
 		<div class="description location_desc" itemprop="description">
-				<?php echo $this->item->locdescription; ?>
-			</div>
+			<?php echo $this->item->locdescription; ?>
+		</div>
 		<?php endif; ?>
 
-
 		<?php $this->attachments = $this->item->vattachments; ?>
-	<?php echo $this->loadTemplate('attachments'); ?>
+		<?php echo $this->loadTemplate('attachments'); ?>
 
-
-
-		</div>
+	</div>
 	<?php endif; ?>
 
 	<!-- Registration -->
 	<?php if ($this->item->registra == 1) : ?>
-	<h2 class="register"><?php echo JText::_('COM_JEM_REGISTRATION').':'; ?></h2>
+		<h2 class="register"><?php echo JText::_('COM_JEM_REGISTRATION').':'; ?></h2>
 		<?php echo $this->loadTemplate('attendees'); ?>
 	<?php endif; ?>
 
-	<?php echo $this->item->pluginevent->onEventEnd; ?>
+	<?php if (!empty($this->item->pluginevent->onEventEnd)) : ?>
+		<hr>
+		<?php echo $this->item->pluginevent->onEventEnd; ?>
+	<?php endif; ?>
 
 	<div class="copyright">
 		<?php echo JemOutput::footer(); ?>

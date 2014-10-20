@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -365,7 +365,7 @@ class JEMModelEvent extends JModelAdmin
 
 			$table->load($pk);
 			if ($table->recurrence_number > 0 && !$table->dates == null){
-				JEMHelper::cleanup(1);
+				JEMHelper::cleanup(2); // 2 = force on save, needs special attention
 			}
 
 			return true;
