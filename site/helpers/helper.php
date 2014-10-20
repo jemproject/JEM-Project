@@ -492,7 +492,8 @@ class JemHelper {
 					}
 				}
 			}
-			if (empty(JFolder::files($basepath.'/'.$folder, '.', false, true, array('index.html'), array()))) {
+			$files = JFolder::files($basepath.'/'.$folder, '.', false, true, array('index.html'), array());
+			if (empty($files)) {
 				$res &= JFolder::delete($basepath.'/'.$folder);
 			}
 		}
