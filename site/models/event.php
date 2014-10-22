@@ -546,8 +546,7 @@ class JemModelEvent extends JModelItem
 		if ($event2->maxplaces > 0) 		// there is a max
 		{
 			// check if the user should go on waiting list
-			$attendees = self::getRegisters($event);
-			if (count($attendees) >= $event2->maxplaces) {
+			if ($event2->booked >= $event2->maxplaces) {
 				if (!$event2->waitinglist) {
 					$this->setError(JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'));
 					return false;
