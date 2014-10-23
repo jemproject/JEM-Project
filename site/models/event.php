@@ -164,7 +164,7 @@ class JemModelEvent extends JModelItem
 				}
 
 				if (empty($data)) {
-					return JError::raiseError(404, JText::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
+					throw new Exception(JText::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
 				}
 
 				// Convert parameter fields to objects.
@@ -224,10 +224,12 @@ class JemModelEvent extends JModelItem
 					// Need to go thru the error handler to allow Redirect to
 					// work.
 					JError::raiseError(404, $e->getMessage());
+					return false;
 				}
 				else {
 					$this->setError($e);
 					$this->_item[$pk] = false;
+					return false;
 				}
 			}
 		}
@@ -528,7 +530,7 @@ class JemModelEvent extends JModelItem
 		$user = JFactory::getUser();
 		$jemsettings = JEMHelper::config();
 
-		$event = (int) $this->_registerid;
+		$eventId = (int) $this->_registerid;
 
 		$uid = (int) $user->get('id');
 		$onwaiting = 0;
@@ -539,16 +541,26 @@ class JemModelEvent extends JModelItem
 			return;
 		}
 
-		$this->setId($event);
+		$this->setId($eventId);
 
-		$event2 = $this->getItem($pk = $this->_registerid);
+		try {
+			$event = $this->getItem($eventId);
+		}
+		// some gently error handling
+		catch (Exception $e) {
+			$event = false;
+		}
+		if (empty($event)) {
+			$this->setError(JText::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
+			return false;
+		}
 
-		if ($event2->maxplaces > 0) 		// there is a max
+		if ($event->maxplaces > 0) 		// there is a max
 		{
 			// check if the user should go on waiting list
-			if ($event2->booked >= $event2->maxplaces) {
-				if (!$event2->waitinglist) {
-					$this->setError(JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'));
+			if ($event->booked >= $event->maxplaces) {
+				if (!$event->waitinglist) {
+					$this->setError(JText::_('COM_JEM_EVENT_FULL_NOTICE'));
 					return false;
 				}
 				$onwaiting = 1;
@@ -559,7 +571,7 @@ class JemModelEvent extends JModelItem
 		$uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
 		$obj = new stdClass();
-		$obj->event = (int) $event;
+		$obj->event = (int) $eventId;
 		$obj->waiting = $onwaiting;
 		$obj->uid = (int) $uid;
 		$obj->uregdate = gmdate('Y-m-d H:i:s');
