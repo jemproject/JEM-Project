@@ -114,7 +114,7 @@ $settings	= json_decode($this->item->attribs);
 					<li><?php echo $this->form->getLabel('featured'); ?><?php echo $this->form->getInput('featured'); ?></li>
 					<li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
 					<li><?php echo $this->form->getLabel('access'); ?><?php
-						      echo JHtml::_('select.genericlist', $this->access, 'access', array('list.attr' => ' class="inputbox" size="1"', 'list.select' => $this->item->access, 'id' => 'access'));
+						      echo JHtml::_('select.genericlist', $this->access, 'jform[access]', array('list.attr' => ' class="inputbox" size="1"', 'list.select' => $this->item->access, 'id' => 'access'));
 						 ?>
 					</li>
 				</ul>

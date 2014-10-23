@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.2
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -17,7 +17,7 @@ if ($this->item->registra == 1)
 
 if ($this->print == 0) {
 
-if ($this->item->maxplaces && count($this->registers) >= $this->item->maxplaces && !$this->item->waitinglist):
+if (($this->item->maxplaces > 0) && ($this->item->booked >= $this->item->maxplaces) && !$this->item->waitinglist):
 ?>
 	<p class="el-event-full">
 		<?php echo JText::_( 'COM_JEM_EVENT_FULL_NOTICE' ); ?>
@@ -26,7 +26,7 @@ if ($this->item->maxplaces && count($this->registers) >= $this->item->maxplaces 
 	<form id="JEM" action="<?php echo JRoute::_('index.php?option=com_jem&view=event&id='.(int) $this->item->id); ?>"  name="adminForm" id="adminForm" method="post">
 		<p>
 			<input type="checkbox" name="reg_check" onclick="check(this, document.getElementById('jem_send_attend'))" />
-			<?php if ($this->item->maxplaces && count($this->registers) >= $this->item->maxplaces): // full event ?>
+			<?php if ($this->item->maxplaces && ($this->item->booked >= $this->item->maxplaces)) : // full event ?>
 				<?php echo ' '.JText::_('COM_JEM_EVENT_FULL_REGISTER_TO_WAITING_LIST'); ?>
 			<?php else: ?>
 				<?php echo ' '.JText::_('COM_JEM_I_WILL_GO'); ?>
