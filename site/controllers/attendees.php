@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.3
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -48,14 +48,30 @@ class JEMControllerAttendees extends JControllerLegacy
 		$fid = JRequest::getInt('Itemid');
 		$total = count($cid);
 
-		$model = $this->getModel('attendees');
+		$modelAttendeeList = $this->getModel('attendees');
 
 		if (!is_array($cid) || count($cid) < 1) {
 			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
 		}
 
-		if(!$model->remove($cid)) {
-			echo "<script> alert('".$model->getError()."'); window.history.go(-1); </script>\n";
+		JPluginHelper::importPlugin('jem');
+		$dispatcher = JDispatcher::getInstance();
+
+		$modelAttendeeItem = $this->getModel('attendee');
+
+		// We need information about every entry to delete for mailer.
+		// But we should first delete the entry and than on success send the mails.
+		foreach ($cid as $reg_id) {
+			$modelAttendeeItem->setId($reg_id);
+			$entry = $modelAttendeeItem->getData();
+			if($modelAttendeeList->remove(array($reg_id))) {
+				$res = $dispatcher->trigger('onEventUserUnregistered', array($entry->event, $entry));
+			} else {
+				$error = true;
+			}
+		}
+		if (!empty($error)) {
+			echo "<script> alert('".$modelAttendeeList->getError()."'); window.history.go(-1); </script>\n";
 		}
 
 		$cache = JFactory::getCache('com_jem');
