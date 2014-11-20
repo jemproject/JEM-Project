@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.3
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -290,6 +290,11 @@ class com_jemInstallerScript
 			if (version_compare($this->oldRelease, '1.9.8', 'lt') && version_compare($this->newRelease, '1.9.7', 'gt')) {
 				// move id from params to link for venuecal menu items
 				$this->updateJemMenuItems198();
+			}
+			// Changes between 2.0.2 -> 2.0.3
+			if (version_compare($this->oldRelease, '2.0.3', 'lt') && version_compare($this->newRelease, '2.0.2', 'gt')) {
+				// remove update server enry
+				$this->removeUpdateServerEntry();
 			}
 		}
 		elseif ($type == 'install') {
@@ -958,6 +963,39 @@ class com_jemInstallerScript
 			$query->where(array('id = '.$db->quote($item->id)));
 			$db->setQuery($query);
 			$db->query();
+		}
+	}
+
+	/**
+	 * Delete JEM update server entry from #__update_sites table.
+	 *
+	 * @return void
+	 */
+	private function removeUpdateServerEntry()
+	{
+		// Find entry and get id
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('update_site_id');
+		$query->from('#__update_sites');
+		$query->where(array("location LIKE '%joomlaeventmanager.invalid%'"));
+		$db->setQuery($query);
+		$id = $db->loadResult();
+
+		if (!empty($id)) {
+			// remove entry
+			$query = $db->getQuery(true);
+			$query->delete('#__update_sites');
+			$query->where(array('update_site_id = ' . $db->quote($id)));
+			$db->setQuery($query);
+			$db->execute();
+
+			// but also from this table
+			$query = $db->getQuery(true);
+			$query->delete('#__update_sites_extensions');
+			$query->where(array('update_site_id = ' . $db->quote($id)));
+			$db->setQuery($query);
+			$db->execute();
 		}
 	}
 

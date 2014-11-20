@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="2.5" type="plugin" group="finder" method="upgrade">
 	<name>plg_finder_jem</name>
-	<creationDate>October 2014</creationDate>
+	<creationDate>November 2014</creationDate>
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
@@ -13,7 +13,7 @@
 	<!-- <scriptfile>script.php</scriptfile> -->
 	<files>
 		<file plugin="jem">jem.php</file>
-		<file plugin="jem">index.html</file>
+		<filename>index.html</filename>
 
 		<folder>language</folder>
 	</files>
