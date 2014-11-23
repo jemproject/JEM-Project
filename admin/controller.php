@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -37,7 +37,7 @@ class JEMController extends JControllerLegacy
 		// Load the submenu.
 		// if no view found then refert to main
 
-		JEMHelperBackend::addSubmenu(JRequest::getCmd('view', 'main'));
+		JEMHelperBackend::addSubmenu(JFactory::getApplication()->input->getCmd('view', 'main'));
 
 		parent::display();
 		return $this;
@@ -58,7 +58,7 @@ class JEMController extends JControllerLegacy
 	 */
 	function ajaxattachremove()
 	{
-		$id = JRequest::getVar('id', 0, 'request', 'int');
+		$id = JFactory::getApplication()->input->request->getInt('id', 0);
 
 		$res = JEMAttachment::remove($id);
 		if (!$res) {

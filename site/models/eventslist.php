@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -57,26 +57,25 @@ class JemModelEventslist extends JModelList
 	protected function populateState($ordering = null, $direction = null)
 	{
 
-		$app				= JFactory::getApplication();
-		$jemsettings		= JemHelper::config();
-		$jinput             = JFactory::getApplication()->input;
-		$task               = $jinput->get('task','','cmd');
-		$itemid				= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		$app         = JFactory::getApplication();
+		$jemsettings = JemHelper::config();
+		$jinput      = JFactory::getApplication()->input;
+		$task        = $jinput->get('task','','cmd');
+		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 
 		# limit/start
-		$limit	= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
+		$limit       = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
 		$this->setState('list.limit', $limit);
-
-		$limitstart = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
+		$limitstart  = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
 		// correct start value if required
-		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+		$limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 		$this->setState('list.start', $limitstart);
 
 		# Search - variables
-		$search = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+		$search      = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 		$this->setState('filter.filter_search', $search); // must be escaped later
 
-		$filtertype = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_type', 'filter_type', '', 'int');
+		$filtertype  = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_type', 'filter_type', '', 'int');
 		$this->setState('filter.filter_type', $filtertype);
 
 		# publish state
@@ -94,7 +93,7 @@ class JemModelEventslist extends JModelList
 		###############
 		## opendates ##
 		###############
-		
+
 		$this->setState('filter.opendates', $params->get('showopendates', 0));
 
 		###########
@@ -202,14 +201,14 @@ class JemModelEventslist extends JModelList
 	 */
 	protected function getListQuery()
 	{
-		$app 			= JFactory::getApplication();
-		$jinput 		= JFactory::getApplication()->input;
-		$task 			= $jinput->get('task','','cmd');
-		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		$app       = JFactory::getApplication();
+		$jinput    = JFactory::getApplication()->input;
+		$task      = $jinput->getCmd('task', '');
+		$itemid    = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 
-		$params 		= $app->getParams();
-		$settings 		= JemHelper::globalattribs();
-		$user 			= JFactory::getUser();
+		$params    = $app->getParams();
+		$settings  = JemHelper::globalattribs();
+		$user      = JFactory::getUser();
 
 		# Query
 		$db 	= JFactory::getDBO();
@@ -271,7 +270,7 @@ class JemModelEventslist extends JModelList
 
 		# Filter by a single or group of events.
 		$eventId = $this->getState('filter.event_id');
-		
+
 		if (is_numeric($eventId)) {
 			$type = $this->getState('filter.event_id.include', true) ? '= ' : '<> ';
 			$query->where('a.id '.$type.(int) $eventId);
@@ -307,16 +306,16 @@ class JemModelEventslist extends JModelList
 			$published = implode(',', $published);
 			$query->where('a.published IN ('.$published.')');
 		}
-		
-		
-		
+
+
+
 		####################
 		## FILTER-FEATURED ##
 		####################
-		
+
 		# Filter by published state.
 		$featured = $this->getState('filter.featured');
-		
+
 		if (is_numeric($featured)) {
 			$query->where('a.featured = ' . (int) $featured);
 		}
@@ -325,7 +324,7 @@ class JemModelEventslist extends JModelList
 			$featured = implode(',', $featured);
 			$query->where('a.featured IN ('.$featured.')');
 		}
-		
+
 
 		#############################
 		## FILTER - CALENDAR_DATES ##
@@ -374,8 +373,8 @@ class JemModelEventslist extends JModelList
 		if ($filter_locid) {
 			$query->where('a.locid = '.(int)$filter_locid);
 		}
-		
-		
+
+
 		####################
 		## FILTER - VENUE ##
 		####################
@@ -731,7 +730,7 @@ class JemModelEventslist extends JModelList
 		}
 
 		array_multisort($time, SORT_ASC, $title, SORT_ASC, $items);
-		
+
 		return $items;
 	}
 }

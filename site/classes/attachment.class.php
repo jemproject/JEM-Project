@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -18,7 +18,7 @@ class JEMAttachment extends JObject {
 	/**
 	 * upload files for the specified object
 	 *
-	 * @param array data from JRequest 'files'
+	 * @param array data from JInput 'files'
 	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
 	 */
 	static function postUpload($post_files, $object) {
@@ -43,9 +43,9 @@ class JEMAttachment extends JObject {
 		$maxsizeinput = $jemsettings->attachments_maxsize*1024; //size in kb
 
 
-		
+
 		foreach ($post_files['name'] as $k => $file) {
-					
+
 			if (empty($file)) {
 				continue;
 			}
@@ -70,12 +70,12 @@ class JEMAttachment extends JObject {
 					return false;
 				}
 			}
-			
+
 
 			// TODO: Probably move this to a helper class
-			
+
 			$sanitizedFilename = JEMImage::sanitize($path, $file);
-		
+
 
 			// Make sure that the full file path is safe.
 			$filepath = JPath::clean( $path.'/'.$sanitizedFilename);
@@ -100,7 +100,7 @@ class JEMAttachment extends JObject {
 				JError::raiseWarning(0, JText::_('COM_JEM_ATTACHMENT_ERROR_SAVING_TO_DB').': '.$table->getError());
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -233,7 +233,7 @@ class JEMAttachment extends JObject {
 		$query = ' DELETE FROM #__jem_attachments '
 			   . ' WHERE id = '. $db->Quote($id);
 		$db->setQuery($query);
-		$res = $db->query();
+		$res = $db->execute();
 		if (!$res) {
 			return false;
 		}

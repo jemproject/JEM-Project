@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.3
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -43,16 +43,17 @@ class JEMControllerAttendees extends JControllerLegacy
 	 */
 	function attendeeremove()
 	{
-		$cid = JRequest::getVar('cid', array(0), 'post', 'array');
-		$id  = JRequest::getInt('id');
-		$fid = JRequest::getInt('Itemid');
-		$total = count($cid);
+		$jinput = JFactory::getApplication()->input;
+		$cid    = $jinput->post->get('cid', array(), 'array');
+		$id     = $jinput->getInt('id', 0);
+		$fid    = $jinput->getInt('Itemid', 0);
+		$total  = is_array($cid) ? count($cid) : 0;
 
-		$modelAttendeeList = $this->getModel('attendees');
-
-		if (!is_array($cid) || count($cid) < 1) {
+		if ($total < 1) {
 			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
 		}
+
+		$modelAttendeeList = $this->getModel('attendees');
 
 		JPluginHelper::importPlugin('jem');
 		$dispatcher = JDispatcher::getInstance();
@@ -87,8 +88,9 @@ class JEMControllerAttendees extends JControllerLegacy
 	 */
 	function attendeetoggle()
 	{
-		$id = JRequest::getInt('id');
-		$fid = JRequest::getInt('Itemid');
+		$jinput = JFactory::getApplication()->input;
+		$id     = $jinput->getInt('id', 0);
+		$fid    = $jinput->getInt('Itemid', 0);
 
 		$model = $this->getModel('attendee');
 		$model->setId($id);

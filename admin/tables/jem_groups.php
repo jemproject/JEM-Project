@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -101,7 +101,7 @@ class jem_groups extends JTable
 			$values[] = $this->_db->quote($v);
 		}
 		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
-		if (!$this->_db->query()) {
+		if ($this->_db->execute() === false) {
 			return false;
 		}
 		$id = $this->_db->insertid();

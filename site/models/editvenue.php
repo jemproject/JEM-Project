@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -33,17 +33,17 @@ class JemModelEditvenue extends JemModelVenue
 		$app = JFactory::getApplication();
 
 		// Load state from the request.
-		$pk = JRequest::getInt('a_id');
+		$pk = $app->input->getInt('a_id', 0);
 		$this->setState('venue.id', $pk);
 
-		$return = JRequest::getVar('return', null, 'default', 'base64');
+		$return = $app->input->get('return', '', 'base64');
 		$this->setState('return_page', urldecode(base64_decode($return)));
 
 		// Load the parameters.
 		$params = $app->getParams();
 		$this->setState('params', $params);
 
-		$this->setState('layout', JRequest::getCmd('layout'));
+		$this->setState('layout', $app->input->getCmd('layout', ''));
 	}
 
 	/**
@@ -112,7 +112,7 @@ class JemModelEditvenue extends JemModelVenue
 		}
 
 		$value->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
-		
+
 		$files = JemAttachment::getAttachments('venue' . $itemId);
 		$value->attachments = $files;
 

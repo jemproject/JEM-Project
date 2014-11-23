@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -90,17 +90,16 @@ class JemModelDay extends JemModelEventslist
 	{
 		# parent::populateState($ordering, $direction);
 
-		$app 				= JFactory::getApplication();
-		$jemsettings		= JemHelper::config();
-		$jinput				= JFactory::getApplication()->input;
-		$itemid 			= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		$app               = JFactory::getApplication();
+		$jemsettings       = JemHelper::config();
+		$jinput            = JFactory::getApplication()->input;
+		$itemid            = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 
-		$params 			= $app->getParams();
-		$task           	= $jinput->getCmd('task',null);
-		$requestVenueId		= $jinput->getInt('locid',null);
-		$requestCategoryId	= $jinput->getInt('catid',null);
-
-		$item = JRequest::getInt('Itemid');
+		$params            = $app->getParams();
+		$task              = $jinput->getCmd('task', '');
+		$requestVenueId    = $jinput->getInt('locid', 0);
+		$requestCategoryId = $jinput->getInt('catid', 0);
+		$item              = $jinput->getInt('Itemid', 0);
 
 		$locid = $app->getUserState('com_jem.venuecal.locid'.$item);
 		if ($locid) {

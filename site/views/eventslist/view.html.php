@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -39,8 +39,8 @@ class JemViewEventslist extends JEMView
 		$pathway 		= $app->getPathWay();
 	//	$db 			= JFactory::getDBO();
 		$user			= JFactory::getUser();
-		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
-		$print			= JRequest::getBool('print');
+		$itemid 		= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
+		$print			= $app->input->getBool('print', false);
 
 		// Load css
 		JemHelper::loadCss('jem');
@@ -53,7 +53,7 @@ class JemViewEventslist extends JEMView
 		}
 
 		// get variables
-		$task 				= JRequest::getWord('task', '');
+		$task 				= $app->input->get('task', '');
 		$filter_order		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_DirDefault = 'ASC';
 		// Reverse default order for dates in archive mode

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -26,7 +26,7 @@ class JEMViewImagehandler extends JViewLegacy {
 	 */
 	function display($tpl = null) {
 		$app 		= JFactory::getApplication();
-		$option 	= JRequest::getString('option');
+		$option 	= $app->input->getString('option', 'com_jem');
 
 		if($this->getLayout() == 'uploadimage') {
 			$this->_displayuploadimage($tpl);
@@ -34,7 +34,7 @@ class JEMViewImagehandler extends JViewLegacy {
 		}
 
 		//get vars
-		$task 		= JRequest::getVar('task');
+		$task 		= $app->input->get('task', '');
 		$search 	= $app->getUserStateFromRequest($option.'.filter_search', 'filter_search', '', 'string');
 		$search 	= trim(JString::strtolower($search));
 
@@ -52,7 +52,8 @@ class JEMViewImagehandler extends JViewLegacy {
 			$task 	= 'categoriesimg';
 			$redi	= 'selectcategoriesimg';
 		}
-		JRequest::setVar('folder', $folder);
+
+		$app->input->set('folder', $folder);
 
 		// Do not allow cache
 		JResponse::allowCache(false);
@@ -76,7 +77,7 @@ class JEMViewImagehandler extends JViewLegacy {
 			//no images in the folder, redirect to uploadscreen and raise notice
 			JError::raiseNotice('SOME_ERROR_CODE', JText::_('COM_JEM_NO_IMAGES_AVAILABLE'));
 			$this->setLayout('uploadimage');
-			JRequest::setVar('task', $task);
+			$app->input->set('task', $task);
 			$this->_displayuploadimage($tpl);
 			return;
 		}
@@ -102,7 +103,7 @@ class JEMViewImagehandler extends JViewLegacy {
 		$jemsettings	= JEMAdmin::config();
 
 		//get vars
-		$task 			= JRequest::getVar('task');
+		$task 			= JFactory::getApplication()->input->get('task', '');
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);

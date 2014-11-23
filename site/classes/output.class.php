@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -349,7 +349,7 @@ class JEMOutput {
 			JHtml::_('behavior.tooltip');
 			require_once JPATH_SITE . '/components/com_mailto/helpers/mailto.php';
 
-			$uri = JURI::getInstance();
+			$uri = JUri::getInstance();
 			$base = $uri->toString(array('scheme', 'host', 'port'));
 			$template = JFactory::getApplication()->getTemplate();
 			$link = $base.JRoute::_('index.php?option=com_jem&view='.$view.'&id='.$slug, false);
@@ -728,21 +728,21 @@ class JEMOutput {
 		if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
 			if ($settings->lightbox == 0) {
 				//$url = '#';  // Hoffi, 2014-06-07: '#' doesn't work, it opend "Add event" page - don't use <a, onclick works fine with <img :-)
-				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.JURI::base().'/'.$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
+				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.JUri::base().'/'.$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
 
-				$icon = '<img '.$attributes.' src="'.JURI::base().'/'.$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$icon = '<img '.$attributes.' src="'.JUri::base().'/'.$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 				$output = '<div class="flyerimage">'.$icon.'</div>';
 			} else {
 				JHtml::_('behavior.modal', 'a.flyermodal');
-				$url = JURI::base().'/'.$image['original'];
+				$url = JUri::base().'/'.$image['original'];
 				$attributes = $id_attr.' class="flyermodal flyerimage" title="'.$info.'"';
 
-				$icon = '<img src="'.JURI::base().'/'.$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$icon = '<img src="'.JUri::base().'/'.$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
 			}
 		// Otherwise take the values for the original image specified in the settings
 		} else {
-			$output = '<img '.$id_attr.' class="notmodal" src="'.JURI::base().'/'.$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
+			$output = '<img '.$id_attr.' class="notmodal" src="'.JUri::base().'/'.$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
 		}
 
 		return $output;

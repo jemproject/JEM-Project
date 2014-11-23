@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -53,7 +53,7 @@ class JEMModelSearch extends JModelLegacy
 
 		//get the number of events from database
 		$limit		= $app->getUserStateFromRequest('com_jem.search.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart	= JRequest::getVar('limitstart', 0, '', 'int');
+		$limitstart	= $app->input->getInt('limitstart', 0);
 		// correct start value if required
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
@@ -61,17 +61,16 @@ class JEMModelSearch extends JModelLegacy
 		$this->setState('limitstart', $limitstart);
 
 		// Get the filter request variables
-		$filter_order = JRequest::getCmd('filter_order', 'a.dates');
+		$filter_order = $app->input->getCmd('filter_order', 'a.dates');
 		$this->setState('filter_order', $filter_order);
 
 		$filter_order_DirDefault = 'ASC';
 		// Reverse default order for dates in archive mode
-		$task = JRequest::getWord('task', '');
-		if($task == 'archive' && $filter_order == 'a.dates') {
+		$task = $app->input->get('task', '');
+		if (($task == 'archive') && ($filter_order == 'a.dates')) {
 			$filter_order_DirDefault = 'DESC';
 		}
-
-		$this->setState('filter_order_Dir', JRequest::getCmd('filter_order_Dir', $filter_order_DirDefault));
+		$this->setState('filter_order_Dir', $app->input->getCmd('filter_order_Dir', $filter_order_DirDefault));
 	}
 
 	/**
@@ -82,7 +81,7 @@ class JEMModelSearch extends JModelLegacy
 	 */
 	function &getData()
 	{
-		$pop	= JRequest::getBool('pop');
+		$pop	= JFactory::getApplication()->input->getBool('pop', false);
 
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data)) {
@@ -192,11 +191,9 @@ class JEMModelSearch extends JModelLegacy
 		$app = JFactory::getApplication();
 
 		// Get the paramaters of the active menu item
-		$params 	= $app->getParams();
-
+		$params       = $app->getParams();
 		$top_category = $params->get('top_category', 1);
-
-		$task 		= JRequest::getWord('task');
+		$task         = $app->input->get('task', '');
 
 		// First thing we need to do is to select only needed events
 		if ($task == 'archive') {
@@ -210,9 +207,9 @@ class JEMModelSearch extends JModelLegacy
 		$levels = $user->getAuthorisedViewLevels();
 		$where .= ' AND a.access IN (' . implode(', ', $levels) .')';
 
-		//$filter            = JRequest::getString('filter', '', 'request');
+		//$filter            = $app->input->getString('filter', '');
 		$filter            = $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
-		$filter_type       = JRequest::getWord('filter_type', '', 'request');
+		$filter_type       = $app->input->get('filter_type', '');
 		$filter_continent  = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
 		$filter_country    = $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
 		$filter_city       = $app->getUserStateFromRequest('com_jem.search.filter_city', 'filter_city', '', 'string');
@@ -346,7 +343,7 @@ class JEMModelSearch extends JModelLegacy
 
 	function getCityOptions()
 	{
-		if (!$country = JRequest::getString('filter_country', '', 'request')) {
+		if (!$country = JFactory::getApplication()->input->getString('filter_country', '')) {
 			return array();
 		}
 		$query = ' SELECT DISTINCT l.city as value, l.city as text '

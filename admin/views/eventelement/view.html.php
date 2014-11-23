@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -19,11 +19,11 @@ class JemViewEventelement extends JViewLegacy {
 		$app = JFactory::getApplication();
 
 		//initialise variables
-		$user 		= JFactory::getUser();
-		$db			= JFactory::getDBO();
+		$user        = JFactory::getUser();
+		$db          = JFactory::getDBO();
 		$jemsettings = JEMAdmin::config();
-		$document	= JFactory::getDocument();
-		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		$document    = JFactory::getDocument();
+		$itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
 		JHtml::_('behavior.tooltip');
 		JHtml::_('behavior.modal');
@@ -38,7 +38,7 @@ class JemViewEventelement extends JViewLegacy {
 
 		//prepare the document
 		$document->setTitle(JText::_('COM_JEM_SELECTEVENT'));
-		
+
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 

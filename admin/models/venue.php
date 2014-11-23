@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -8,12 +8,12 @@
  */
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.modeladmin');
+require_once dirname(__FILE__) . '/admin.php';
 
 /**
  * Venue Model
  */
-class JEMModelVenue extends JModelAdmin
+class JEMModelVenue extends JemModelAdmin
 {
 	/**
 	 * Method to test whether a record can be deleted.
@@ -64,7 +64,7 @@ class JEMModelVenue extends JModelAdmin
 	 * @param	array	Configuration array for model. Optional.
 	 * @return	JTable	A database object
 	 */
-	public function getTable($type = 'Venue', $prefix = 'JEMTable', $config = array())
+	public function getTable($type = 'Venue', $prefix = 'JemTable', $config = array())
 	{
 		return JTable::getInstance($type, $prefix, $config);
 	}
@@ -135,7 +135,7 @@ class JEMModelVenue extends JModelAdmin
 	 *
 	 * @param $table JTable-object.
 	 */
-	protected function prepareTable(&$table)
+	protected function _prepareTable($table)
 	{
 		$db = $this->getDbo();
 		$table->venue = htmlspecialchars_decode($table->venue, ENT_QUOTES);

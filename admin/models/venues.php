@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -118,7 +118,7 @@ class JemModelVenues extends JModelList
 		// Join over the users for the checked out user.
 		$query->select('uc.name AS editor');
 		$query->join('LEFT', '#__users AS uc ON uc.id = a.checked_out');
-		
+
 		// Join over the user who modified the event.
 		$query->select('um.name AS modified_by');
 		$query->join('LEFT', '#__users AS um ON um.id = a.modified_by');
@@ -241,7 +241,7 @@ class JemModelVenues extends JModelList
 			$query->where(array('id IN ('.$cids.')'));
 			$db->setQuery($query);
 
-			if(!$db->query()) {
+			if(!$db->execute()) {
 				$this->setError($db->getErrorMsg());
 				return false;
 			}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -42,10 +42,10 @@ class JEMViewVenue extends JViewLegacy {
 		JHtml::_('behavior.formvalidation');
 
 		//initialise variables
-		$document	= JFactory::getDocument();
-		$this->settings	= JEMAdmin::config();
-		$task		= JRequest::getVar('task');
-		$this->task 		= $task;
+		$document       = JFactory::getDocument();
+		$this->settings = JEMAdmin::config();
+		$task           = JFactory::getApplication()->input->get('task', '');
+		$this->task     = $task;
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
@@ -58,9 +58,9 @@ class JEMViewVenue extends JViewLegacy {
 		$language = JFactory::getLanguage();
 		$language = $language->getTag();
 		$language = substr($language, 0,2);
-		
+
 		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places&language='.$language);
-		
+
 		// Noconflict
 		$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
 
@@ -82,7 +82,7 @@ class JEMViewVenue extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
-		JRequest::setVar('hidemainmenu', true);
+		JFactory::getApplication()->input->set('hidemainmenu', true);
 
 		$user		= JFactory::getUser();
 		$isNew		= ($this->item->id == 0);

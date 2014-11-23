@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -77,22 +77,22 @@ class JemModelEventelement extends JModelLegacy
 				}
 			}
 		}
-		
-		
+
+
 		if($this->_data)
-		{	
+		{
 			$count = count($this->_data);
 			for($i = 0; $i < $count; $i++){
 				$item = $this->_data[$i];
 				$item->categories = $this->getCategories($item->id);
-		
+
 				//remove events without categories (users have no access to them)
 				if (empty($item->categories)) {
 					unset($this->_data[$i]);
 				}
 			}
 		}
-		
+
 
 		return $this->_data;
 	}
@@ -190,25 +190,25 @@ class JemModelEventelement extends JModelLegacy
 		$app			= JFactory::getApplication();
 		$user 			= JFactory::getUser();
 		$levels			= $user->getAuthorisedViewLevels();
-		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		$itemid 		= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
 		$published 		= $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_state', 'filter_state', '', 'string');
 		$filter 		= $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
-		
+
 		$where = array();
-			
+
 		// Filter by published state
 		if (is_numeric($published)) {
 			$where[] = 'a.published = '.(int) $published;
 		} elseif ($published === '') {
 			$where[] = '(a.published IN (1))';
 		}
-		
+
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
-		
+
 		switch($filter) {
 			case 1:
 				$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
@@ -223,7 +223,7 @@ class JemModelEventelement extends JModelLegacy
 				$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
 				break;
 		}
-		
+
 		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
 
 		return $where;

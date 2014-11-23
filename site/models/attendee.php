@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -42,7 +42,7 @@ class JEMModelAttendee extends JModelLegacy
 	{
 		parent::__construct();
 
-		$array = JRequest::getVar('cid', 0, '', 'array');
+		$array = JFactory::getApplication()->input->get('cid', array(), 'array');
 		$this->setId((int)$array[0]);
 	}
 

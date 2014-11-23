@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -51,7 +51,7 @@ class JEMModelMyvenues extends JModelLegacy
 	 */
 	function & getVenues()
 	{
-		$pop = JRequest::getBool('pop');
+		$pop = JFactory::getApplication()->input->getBool('pop', false);
 
 		// Lets load the content if it doesn't already exist
 		if ( empty($this->_venues)) {
@@ -170,7 +170,7 @@ class JEMModelMyvenues extends JModelLegacy
 		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();
-		
+
 	//	$where[] = ' l.published = 1';
 
 		// then if the user is creator of the event

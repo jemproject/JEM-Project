@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -49,7 +49,7 @@ class JemViewCategory extends JEMView
 			$params 		= $app->getParams();
 			$uri 			= JFactory::getURI();
 			$pathway 		= $app->getPathWay();
-			$print			= JRequest::getBool('print');
+			$print			= $app->input->getBool('print', false);
 
 			// Load css
 			JemHelper::loadCss('jem');
@@ -78,12 +78,11 @@ class JemViewCategory extends JEMView
 			JHtml::_('script', 'media/com_jem/js/calendar.js');
 
 			// Retrieve date variables
-			$year = (int)JRequest::getVar('yearID', strftime("%Y"));
-			$month = (int)JRequest::getVar('monthID', strftime("%m"));
+			$year = (int)$app->input->getInt('yearID', strftime("%Y"));
+			$month = (int)$app->input->getInt('monthID', strftime("%m"));
 
-			if (JRequest::getVar('id')) {
-				$catid = JRequest::getVar('id');
-			} else {
+			$catid = $app->input->getInt('id', 0);
+			if (empty($catid)) {
 				$catid = $params->get('id');
 			}
 
@@ -111,7 +110,7 @@ class JemViewCategory extends JEMView
 			$document->setMetaData('title', $pagetitle);
 
 			//init calendar
-			$itemid = JRequest::getInt('Itemid');
+			$itemid = $app->input->getInt('Itemid', 0);
 			$partItemid = ($itemid > 0) ? '&Itemid='.$itemid : '';
 			$partCatid = ($catid > 0) ? '&id=' . $catid : '';
 			$cal = new JEMCalendar($year, $month, 0);
@@ -135,7 +134,7 @@ class JemViewCategory extends JEMView
 			$settings 		= JemHelper::globalattribs();
 		//	$db  			= JFactory::getDBO();
 			$user			= JFactory::getUser();
-			$print			= JRequest::getBool('print');
+			$print			= $app->input->getBool('print', false);
 
 			JHtml::_('behavior.tooltip');
 
@@ -184,7 +183,7 @@ class JemViewCategory extends JEMView
 			                                && $menuitem->query['id']     == $category->id);
 
 			// get variables
-			$itemid				= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+			$itemid				= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
 			$this->showsubcats      = (bool)$params->get('usecat', 1);
 			$this->showemptysubcats = (bool)$params->get('showemptychilds', 1);
@@ -193,7 +192,7 @@ class JemViewCategory extends JEMView
 			$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order_Dir', 'filter_order_Dir',	'', 'word');
 			$filter_type		= $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_filtertype', 'filter_type', '', 'int');
 			$search 			= $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-			$task 				= JRequest::getWord('task');
+			$task 				= $app->input->get('task', '');
 
 			// table ordering
 			$lists['order_Dir'] = $filter_order_Dir;

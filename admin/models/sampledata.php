@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -75,7 +75,7 @@ class JemModelSampledata extends JModelLegacy
 			$query = trim($query);
 			if ($query != '' && $query{0} != '#') {
 				$this->_db->setQuery($query);
-				$this->_db->query();
+				$this->_db->execute();
 			}
 		}
 
@@ -272,15 +272,15 @@ class JemModelSampledata extends JModelLegacy
 		$query->set('created_by = '.$db->quote((int)$result));
 		$query->where(array('created_by = 62'));
 		$db->setQuery($query);
-		$db->query();
-		
+		$db->execute();
+
 		$query = $db->getQuery(true);
 		$query->update('#__jem_venues');
 		$query->set('created_by = '.$db->quote((int)$result));
 		$query->where(array('created_by = 62'));
 		$db->setQuery($query);
-		$db->query();
-		
+		$db->execute();
+
 		return true;
 	}
 }

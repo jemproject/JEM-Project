@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -131,7 +131,8 @@ class JEMModelSource extends JModelForm
 				$item->filename = $file;
 				$item->custom	= true;
 			}
-			$item->source = JFile::read($filePath);
+			//$item->source = JFile::read($filePath);
+			$item->source = file_get_contents($filePath);
 		}
 
 		if (empty($item->source)) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -25,10 +25,10 @@ class JemViewCategories extends JEMView
 		$document 		= JFactory::getDocument();
 		$jemsettings 	= JemHelper::config();
 		$user			= JFactory::getUser();
-		$print			= JRequest::getBool('print');
-		$task			= JRequest::getWord('task');
+		$print			= $app->input->getBool('print', false);
+		$task			= $app->input->get('task', '');
+		$id 			= $app->input->getInt('id', 1);
 		$model 			= $this->getModel();
-		$id 			= JRequest::getInt('id', 1);
 
 		$rows 		= $this->get('Data');
 		$pagination = $this->get('Pagination');
@@ -37,9 +37,9 @@ class JemViewCategories extends JEMView
 		JemHelper::loadCss('jem');
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
-		
+
 		if ($print) {
-			JemHelper::loadCss('print');			
+			JemHelper::loadCss('print');
 			$document->setMetaData('robots', 'noindex, nofollow');
 		}
 

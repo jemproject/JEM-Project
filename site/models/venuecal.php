@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -61,13 +61,13 @@ class JemModelVenueCal extends JemModelEventslist
 	protected function populateState($ordering = null, $direction = null)
 	{
 		# parent::populateState($ordering, $direction);
-		$app 			= JFactory::getApplication();
-		$jemsettings	= JemHelper::config();
-		$jinput			= JFactory::getApplication()->input;
-		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
-		$params 		= $app->getParams();
-		$task           = $jinput->get('task','','cmd');
-		$startdayonly 	= $params->get('show_only_start', false);
+		$app          = JFactory::getApplication();
+		$jemsettings  = JemHelper::config();
+		$jinput       = JFactory::getApplication()->input;
+		$itemid       = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
+		$params       = $app->getParams();
+		$task         = $jinput->getCmd('task','');
+		$startdayonly = $params->get('show_only_start', false);
 
 		# params
 		$this->setState('params', $params);
@@ -98,7 +98,7 @@ class JemModelVenueCal extends JemModelEventslist
 		$this->setState('filter.calendar_startdayonly',(bool)$startdayonly);
 		$this->setState('filter.filter_locid',$this->_id);
 
-		$item = JRequest::getInt('Itemid');
+		$item = $jinput->getInt('Itemid', 0);
 		$app->setUserState('com_jem.venuecal.locid'.$item, $this->_id);
 
 		# groupby

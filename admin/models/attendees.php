@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -62,7 +62,8 @@ class JEMModelAttendees extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app =  JFactory::getApplication();;
+		$app    = JFactory::getApplication();;
+		$jinput = $app->input;
 
 		$limit		= $app->getUserStateFromRequest( 'com_jem.attendees.limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest( 'com_jem.attendees.limitstart', 'limitstart', 0, 'int' );
@@ -72,15 +73,12 @@ class JEMModelAttendees extends JModelLegacy
 		$this->setState('limitstart', $limitstart);
 
 		//set unlimited if export or print action | task=export or task=print
-		$this->setState('unlimited', JRequest::getString('task'));
+		$task = $jinput->get('task', '');
+		$this->setState('unlimited', ($task == 'export' || $task == 'print') ? '1' : '');
 
-
-		$jinput = JFactory::getApplication()->input;
-		$id = $jinput->get('id','','int');
+		$id = $jinput->get('id', 0, 'int');
 
 		$this->setId($id);
-
-
 	}
 
 	/**
@@ -261,8 +259,9 @@ class JEMModelAttendees extends JModelLegacy
 
 			$db->setQuery($query);
 
-			if (!$this->_db->query()) {
-				JError::raiseError( 4711, $this->_db->getErrorMsg() );
+			// TODO: use exception handling
+			if ($db->execute() === false) {
+				JError::raiseError( 4711, $db->getErrorMsg() );
 			}
 		}
 		return true;

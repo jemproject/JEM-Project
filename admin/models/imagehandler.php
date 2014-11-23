@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -36,9 +36,9 @@ class JEMModelImagehandler extends JModelLegacy
 		parent::__construct();
 
 		$app 		= JFactory::getApplication();
-		$option		= JRequest::getString('option');
+		$option		= $app->input->getString('option', 'com_jem');
 
-		$task 		= JRequest::getVar('task');
+		$task 		= $app->input->getVar('task', '');
 		$limit		= $app->getUserStateFromRequest($option.'imageselect'.$task.'limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest($option.'imageselect'.$task.'limitstart', 'limitstart', 0, 'int');
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
@@ -50,11 +50,11 @@ class JEMModelImagehandler extends JModelLegacy
 		$this->setState('search', $search);
 	}
 
-	function getState($property=null, $default=null) {
+	function getState($property = null, $default = null) {
 		static $set;
 
 		if (!$set) {
-			$folder = JRequest::getVar('folder');
+			$folder = JFactory::getApplication()->input->get('folder', '');
 			$this->setState('folder', $folder);
 
 			$set = true;

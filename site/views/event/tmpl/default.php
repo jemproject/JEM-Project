@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -160,7 +160,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			// Optional link to let them register to see the whole event.
 			if ($params->get('event_show_readmore') && $this->item->fulltext != null) {
 				$link1 = JRoute::_('index.php?option=com_users&view=login');
-				$link = new JURI($link1);
+				$link = new JUri($link1);
 				echo '<p class="readmore">';
 					echo '<a href="'.$link.'">';
 					if ($params->get('event_alternative_readmore') == false) {

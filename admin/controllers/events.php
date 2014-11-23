@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -47,7 +47,7 @@ class JemControllerEvents extends JControllerAdmin
 
 		// Initialise variables.
 		$user	= JFactory::getUser();
-		$ids	= JRequest::getVar('cid', array(), '', 'array');
+		$ids	= JFactory::getApplication()->input->get('cid', array(), 'array');
 		$values	= array('featured' => 1, 'unfeatured' => 0);
 		$task	= $this->getTask();
 		$value	= JArrayHelper::getValue($values, $task, 0, 'int');

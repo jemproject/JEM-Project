@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -9,13 +9,13 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.modeladmin');
+require_once dirname(__FILE__) . '/admin.php';
 
 /**
  * JEM Component Group Model
  *
  */
-class JEMModelGroup extends JModelAdmin
+class JEMModelGroup extends JemModelAdmin
 {
 	/**
 	 * Method to test whether a record can be deleted.
@@ -69,7 +69,7 @@ class JEMModelGroup extends JModelAdmin
 	 * @return	JTable	A database object
 	 *
 	 */
-	public function getTable($type = 'Group', $prefix = 'JEMTable', $config = array())
+	public function getTable($type = 'Group', $prefix = 'JemTable', $config = array())
 	{
 		return JTable::getInstance($type, $prefix, $config);
 	}
@@ -130,12 +130,13 @@ class JEMModelGroup extends JModelAdmin
 	 * With $table you can call a table name
 	 *
 	 */
-	protected function prepareTable(&$table)
+	protected function _prepareTable($table)
 	{
-		$db = JFactory::getDbo();
+		$db  = JFactory::getDbo();
+		$app = JFactory::getApplication();
 
 		// Bind the form fields to the table
-// 		if (!$table->bind(JRequest::get('post'))) {
+// 		if (!$table->bind($app->input->post->getArray())) {
 // 			return JError::raiseWarning(500, $table->getError());
 // 		}
 
@@ -150,7 +151,7 @@ class JEMModelGroup extends JModelAdmin
 			JError::raiseError(500, $table->getError());
 		}
 
-		$members =JRequest::getVar('maintainers',  '', 'post', 'array');
+		$members = $app->input->get('maintainers', array(), 'array');
 
 		// Updating group references
 		$query = $db->getQuery(true);
@@ -158,7 +159,7 @@ class JEMModelGroup extends JModelAdmin
 		$query->where('group_id = '.(int)$table->id);
 
 		$db->setQuery($query);
-		$db->query();
+		$db->execute();
 
 		foreach($members as $member)
 		{
@@ -174,7 +175,7 @@ class JEMModelGroup extends JModelAdmin
 				->values(implode(',', $values));
 
 			$db->setQuery($query);
-			$db->query();
+			$db->execute();
 		}
 	}
 

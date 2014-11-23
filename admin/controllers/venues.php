@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -46,7 +46,7 @@ class JEMControllerVenues extends JControllerAdmin
 	function remove()
 	{
 		$jinput = JFactory::getApplication()->input;
-		$cid = $jinput->get('cid',  0, 'array');
+		$cid = $jinput->get('cid', array(), 'array');
 		//$cid = JRequest::getVar( 'cid', array(0), 'post', 'array' );
 
 		if (!is_array( $cid ) || count( $cid ) < 1) {

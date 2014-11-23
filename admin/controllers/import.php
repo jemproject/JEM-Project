@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -49,7 +49,7 @@ class JEMControllerImport extends JControllerLegacy {
 	}
 
 	private function CsvImport($type, $dbname) {
-		$replace = JRequest::getVar('replace_'.$type, 0, 'post', 'int');
+		$replace = JFactory::getApplication()->input->post->getInt('replace_'.$type, 0);
 		$object = JTable::getInstance('jem_'.$dbname, '');
 		$object_fields = get_object_vars($object);
 
@@ -59,9 +59,9 @@ class JEMControllerImport extends JControllerLegacy {
 		}
 
 		$msg = '';
-		$file = JRequest::getVar('File'.$type, NULL, 'files', 'array');
+		$file = JFactory::getApplication()->input->files->get('File'.$type, array(), 'array');
 
-		if ($file['name'] == false)
+		if (empty($file['name']))
 		{
 			$msg = JText::_('COM_JEM_IMPORT_SELECT_FILE');
 			$this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
@@ -274,7 +274,7 @@ class JEMControllerImport extends JControllerLegacy {
 		} elseif($step == 3) {
 			// We have to rebuild the hierarchy of the categories due to the plain database insertion
 			JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
-			$categoryTable = JTable::getInstance('Category', 'JEMTable');
+			$categoryTable = JTable::getInstance('Category', 'JemTable');
 			$categoryTable->rebuild();
 			$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_REBUILD');
 			$step++;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -39,10 +39,10 @@ class JemViewDay extends JEMView
 		$params 		= $app->getParams();
 	//	$db 			= JFactory::getDBO();
 		$uri 			= JFactory::getURI();
-		$task 			= JRequest::getWord('task');
-		$print			= JRequest::getBool('print');
-		$pathway 		= $app->getPathWay();
 		$jinput 		= $app->input;
+		$task 			= $jinput->get('task', '');
+		$print			= $jinput->getBool('print', false);
+		$pathway 		= $app->getPathWay();
 
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
@@ -50,9 +50,9 @@ class JemViewDay extends JEMView
 		                                && !isset($menuitem->query['id']));
 
 		// Retrieving data
-		$requestVenueId = $jinput->getInt('locid', null);
-		$requestCategoryId = $jinput->getInt('catid', null);
-		$requestDate = $jinput->getInt('id', null);
+		$requestVenueId = $jinput->getInt('locid', 0);
+		$requestCategoryId = $jinput->getInt('catid', 0);
+		$requestDate = $jinput->getInt('id', 0);
 
 		// Load css
 		JemHelper::loadCss('jem');
@@ -60,12 +60,12 @@ class JemViewDay extends JEMView
 		JemHelper::loadCustomTag();
 
 		if ($print) {
-			JemHelper::loadCss('print');			
+			JemHelper::loadCss('print');
 			$document->setMetaData('robots', 'noindex, nofollow');
 		}
 
 		// get variables
-		$itemid 			= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		$itemid 			= $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 		$filter_order		= $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_order', 'filter_order', 	'a.dates', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_order_Dir', 'filter_order_Dir',	'', 'word');
 		$filter_type		= $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_type', 'filter_type', '', 'int');

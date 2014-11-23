@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.3
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -65,7 +65,7 @@ class JEMModelAttendees extends JModelLegacy
 		$app =  JFactory::getApplication();
 		$jemsettings =  JEMHelper::config();
 
-		$id = JRequest::getInt('id');
+		$id = $app->input->getInt('id', 0);
 		$this->setId((int)$id);
 
 		$limit		= $app->getUserStateFromRequest( 'com_jem.attendees.limit', 'limit', $jemsettings->display_num, 'int');
@@ -77,9 +77,8 @@ class JEMModelAttendees extends JModelLegacy
 		$this->setState('limitstart', $limitstart);
 
 		//set unlimited if export or print action | task=export or task=print
-		$this->setState('unlimited', JRequest::getString('task'));
-
-
+		$task = $app->input->get('task', '');
+		$this->setState('unlimited', ($task == 'export' || $task == 'print') ? '1' : '');
 	}
 
 	/**
@@ -299,7 +298,7 @@ class JEMModelAttendees extends JModelLegacy
 
 			$this->_db->setQuery( $query );
 
-			if (!$this->_db->query()) {
+			if ($this->_db->execute() === false) {
 				JError::raiseError( 1001, $this->_db->getErrorMsg() );
 			}
 		}

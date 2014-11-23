@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @subpackage JEM Calendar Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -63,7 +63,7 @@ if ($Remember == 1) { // Remember which month / year is selected. Don't jump bac
 }
 
 //Requested URL
-$uri = JURI::getInstance();
+$uri = JUri::getInstance();
 $myurl = $uri->toString(array('query'));
 
 //08/09/09 - Added Fix for sh404sef

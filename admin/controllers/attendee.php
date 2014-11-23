@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -54,11 +54,12 @@ class JEMControllerAttendee extends JControllerLegacy
 		// Check for request forgeries.
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$venue = JTable::getInstance('jem_register', '');
-		$venue->bind(JRequest::get('post'));
-		$venue->checkin();
+		$attendee = JTable::getInstance('jem_register', '');
+	//	$attendee->bind(JRequest::get('post'));   changed to:
+		$attendee->bind(JFactory::getApplication()->input->post->getArray(/*get them all*/));
+		$attendee->checkin();
 
-		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.JRequest::getInt('event'));
+		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.JFactory::getApplication()->input->getInt('event', 0));
 	}
 
 

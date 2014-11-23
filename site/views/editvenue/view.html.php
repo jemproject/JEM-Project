@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -32,7 +32,7 @@ class JemViewEditvenue extends JViewLegacy
 		$menu        = $app->getMenu();
 		$menuitem    = $menu->getActive();
 		$pathway     = $app->getPathway();
-		$url         = JURI::root();
+		$url         = JUri::root();
 
 		$language    = JFactory::getLanguage();
 		$language    = $language->getTag();

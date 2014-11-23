@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -41,7 +41,7 @@ class JemViewVenue extends JEMView {
 			$uri 			= JFactory::getURI();
 			$pathway 		= $app->getPathWay();
 			$jinput 		= $app->input;
-			$print			= JRequest::getBool('print');
+			$print			= $jinput->getBool('print', false);
 
 			// Load css
 			JemHelper::loadCss('jem');
@@ -95,10 +95,10 @@ class JemViewVenue extends JEMView {
 			$document->setMetaData('title', $pagetitle);
 
 			// init calendar
-			$itemid = JRequest::getInt('Itemid');
+			$itemid  = $jinput->getInt('Itemid', 0);
 			$venueID = $jinput->getInt('id', $params->get('id'));
 
-			$partItemid = ($itemid > 0) ? '&Itemid='.$itemid : '';
+			$partItemid = ($itemid > 0) ? '&Itemid=' . $itemid : '';
 			$partVenid = ($venueID > 0) ? '&id=' . $venueID : '';
 			$partLocid = ($venueID > 0) ? '&locid=' . $venueID : '';
 			$cal = new JEMCalendar($year, $month, 0);
@@ -127,10 +127,10 @@ class JemViewVenue extends JEMView {
 			$params 		= $app->getParams('com_jem');
 			$pathway 		= $app->getPathWay ();
 			$uri 			= JFactory::getURI();
-			$task 			= JRequest::getWord('task');
-			$print			= JRequest::getBool('print');
+			$task 			= $app->input->get('task', '');
+			$print			= $app->input->getBool('print', false);
 			$user			= JFactory::getUser();
-			$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+			$itemid 		= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
 			// Load css
 			JemHelper::loadCss('jem');
@@ -138,7 +138,7 @@ class JemViewVenue extends JEMView {
 			JemHelper::loadCustomTag();
 
 			if ($print) {
-				JemHelper::loadCss('print');			
+				JemHelper::loadCss('print');
 				$document->setMetaData('robots', 'noindex, nofollow');
 			}
 

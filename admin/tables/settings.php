@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
  * JEM Settings Table
  *
  */
-class JEMTableSettings extends JTable
+class JemTableSettings extends JTable
 {
 	public function __construct(&$db)
 	{
@@ -48,14 +48,14 @@ class JEMTableSettings extends JTable
 			$registry->loadArray($array['globalattribs']);
 			$array['globalattribs'] = (string) $registry;
 		}
-		
+
 		if (isset($array['css']) && is_array($array['css']))
 		{
 			$registrycss = new JRegistry;
 			$registrycss->loadArray($array['css']);
 			$array['css'] = (string) $registrycss;
 		}
-		
+
 
 		//don't override without calling base class
 		return parent::bind($array, $ignore);

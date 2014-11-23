@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @subpackage JEM Wide Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -23,7 +23,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 $list = modJEMwideHelper::getList($params);
 
 $document = JFactory::getDocument();
-$document->addStyleSheet(JURI::base(true).'/modules/mod_jem_wide/tmpl/mod_jem_wide.css');
+$document->addStyleSheet(JUri::base(true).'/modules/mod_jem_wide/tmpl/mod_jem_wide.css');
 
 // check if any results returned
 $items = count($list);

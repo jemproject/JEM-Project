@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -23,13 +23,13 @@ class JEMControllerCssmanager extends JControllerAdmin
 	public function __construct()
 	{
 		parent::__construct();
-	
+
 		// Register Extra task
 		$this->registerTask('setlinenumber', 		'linenumber');
 		$this->registerTask('disablelinenumber', 	'linenumber');
 	}
-	
-	
+
+
 	/**
 	 * Proxy for getModel.
 	 */
@@ -48,28 +48,28 @@ class JEMControllerCssmanager extends JControllerAdmin
 	{
 		$this->setRedirect('index.php?option=com_jem&view=main');
 	}
-	
+
 	/**
 	 *
 	 */
 	public function linenumber()
 	{
-		$task 	= JRequest::getVar('task');
+		$task 	= JFactory::getApplication()->input->get('task', '');
 		$model = $this->getModel();
-		
+
 		switch ($task)
 		{
 			case 'setlinenumber' :
 				$model->setStatusLinenumber(1);
 				break;
-		
+
 			default :
 				$model->setStatusLinenumber(0);
 				break;
 		}
-		
+
 		$this->setRedirect('index.php?option=com_jem&view=cssmanager');
-		
+
 	}
-	
+
 }

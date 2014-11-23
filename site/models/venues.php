@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -23,28 +23,25 @@ class JemModelVenues extends JemModelEventslist
 	{
 		// parent::populateState($ordering, $direction);
 
-		$app 			= JFactory::getApplication();
-		$settings		= JemHelper::globalattribs();
-		$jinput			= JFactory::getApplication()->input;
-		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
-		$params 		= $app->getParams();
-		$task           = $jinput->get('task','','cmd');
+		$app        = JFactory::getApplication();
+		$settings   = JemHelper::globalattribs();
+		$jinput     = JFactory::getApplication()->input;
+		$itemid     = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
+		$params     = $app->getParams();
+		$task       = $jinput->getCmd('task','');
 
 		// List state information
-		$limit		= JRequest::getInt('limit', $params->get('display_venues_num'));
+		$limit      = $jinput->getInt('limit', $params->get('display_venues_num'));
 		$this->setState('list.limit', $limit);
-
-		$limitstart = JRequest::getInt('limitstart');
+		$limitstart = $jinput->getInt('limitstart', 0);
 		// correct start value if required
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 		$this->setState('list.start', $limitstart);
 
 		# params
 		$this->setState('params', $params);
-
-		$this->setState('filter.published',1);
-
-		$this->setState('filter.groupby',array('l.id'));
+		$this->setState('filter.published', 1);
+		$this->setState('filter.groupby', array('l.id'));
 
 	}
 
@@ -59,7 +56,7 @@ class JemModelVenues extends JemModelEventslist
 	{
 		$user 	= JFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
-		$task 	= JRequest::getVar('task', '', '', 'string');
+		$task 	= JFactory::getApplication()->input->get('task', '');
 
 		// Query
 		$db 	= JFactory::getDBO();

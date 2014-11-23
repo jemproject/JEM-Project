@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.1
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -43,7 +43,7 @@ class JEMControllerEvent extends JControllerForm
 	{
 		// Initialise variables.
 		$user		= JFactory::getUser();
-		$categoryId	= JArrayHelper::getValue($data, 'catid', JRequest::getInt('catid'), 'int');
+		$categoryId	= JArrayHelper::getValue($data, 'catid', JFactory::getApplication()->input->getInt('catid', 0), 'int');
 		$allow		= null;
 
 		if ($categoryId) {
@@ -185,9 +185,10 @@ class JEMControllerEvent extends JControllerForm
 	protected function getRedirectToItemAppend($recordId = null, $urlVar = 'a_id')
 	{
 		// Need to override the parent method completely.
-		$tmpl		= JRequest::getCmd('tmpl');
-		$layout		= JRequest::getCmd('layout', 'edit');
-		$append		= '';
+		$jinput = JFactory::getApplication()->input;
+		$tmpl   = $jinput->getCmd('tmpl', '');
+		$layout = $jinput->getCmd('layout', 'edit');
+		$append = '';
 
 		// Setup redirect info.
 		if ($tmpl) {
@@ -200,9 +201,9 @@ class JEMControllerEvent extends JControllerForm
 			$append .= '&'.$urlVar.'='.$recordId;
 		}
 
-		$itemId	= JRequest::getInt('Itemid');
-		$return	= $this->getReturnPage();
-		$catId = JRequest::getInt('catid', null, 'get');
+		$itemId = $jinput->getInt('Itemid', 0);
+		$catId  = $jinput->getInt('catid', 0);
+		$return = $this->getReturnPage();
 
 		if ($itemId) {
 			$append .= '&Itemid='.$itemId;
@@ -228,13 +229,13 @@ class JEMControllerEvent extends JControllerForm
 	 */
 	protected function getReturnPage()
 	{
-		$return = JRequest::getVar('return', null, 'default', 'base64');
+		$return = JFactory::getApplication()->input->get('return', null, 'base64');
 
 		if (empty($return) || !JUri::isInternal(urldecode(base64_decode($return)))) {
 			if (!empty($this->_id)) {
 				return JRoute::_(JemHelperRoute::getEventRoute($this->_id));
 			}
-			return JURI::base();
+			return JUri::base();
 		}
 		else {
 			return urldecode(base64_decode($return));
@@ -242,7 +243,7 @@ class JEMControllerEvent extends JControllerForm
 	}
 
 
-	protected function postSaveHook(JModel &$model, $validData = array())
+	protected function postSaveHook($model, $validData = array())
 	{
 		$task = $this->getTask();
 		if ($task == 'save') {
@@ -292,9 +293,9 @@ class JEMControllerEvent extends JControllerForm
 	{
 
 		// Check for request forgeries
-		JRequest::checkToken() or jexit('Invalid Token');
+		JSession::checkToken() or jexit('Invalid Token');
 
-		$id 	= JRequest::getInt('rdid', 0, 'post');
+		$id = JFactory::getApplication()->input->getInt('rdid', 0);
 
 		// Get the model
 		$model = $this->getModel('Event', 'JEMModel');
@@ -327,9 +328,9 @@ class JEMControllerEvent extends JControllerForm
 	function delreguser()
 	{
 		// Check for request forgeries
-		JRequest::checkToken() or jexit('Invalid Token');
+		JSession::checkToken() or jexit('Invalid Token');
 
-		$id = JRequest::getInt('rdid', 0, 'post');
+		$id = JFactory::getApplication()->input->getInt('rdid', 0);
 
 		// Get/Create the model
 		$model = $this->getModel('Event', 'JEMModel');

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -60,7 +60,7 @@ class JEMViewSettings extends JViewLegacy {
 		}
 
 		// Load Script
-		$document->addScript(JURI::root().'media/com_jem/js/colorpicker.js');
+		$document->addScript(JUri::root().'media/com_jem/js/colorpicker.js');
 
 		JHtml::_('behavior.modal', 'a.modal');
 		JHtml::_('behavior.tooltip');
@@ -111,7 +111,7 @@ class JEMViewSettings extends JViewLegacy {
 
 	function WarningIcon()
 	{
-		$url = JURI::root();
+		$url = JUri::root();
 		$tip = '<img src="'.$url.'media/system/images/tooltip.png" border="0"  alt="" />';
 
 		return $tip;
