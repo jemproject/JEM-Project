@@ -55,8 +55,12 @@ class JEMControllerAttendee extends JControllerLegacy
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		$attendee = JTable::getInstance('jem_register', '');
-	//	$attendee->bind(JRequest::get('post'));   changed to:
-		$attendee->bind(JFactory::getApplication()->input->post->getArray(/*get them all*/));
+		if (version_compare(JVERSION, '3.2', 'lt')) {
+			// before Joomla! 3.2.0 there is no good way to get them all from JInput :(
+			$attendee->bind(JFactory::getApplication()->input->getArray($_POST));
+		} else {
+			$attendee->bind(JFactory::getApplication()->input->post->getArray(/*get them all*/));
+		}
 		$attendee->checkin();
 
 		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.JFactory::getApplication()->input->getInt('event', 0));
@@ -83,7 +87,11 @@ class JEMControllerAttendee extends JControllerLegacy
 // 		$task	= $this->getTask();
 
 		// Retrieving $post
-		$post = $jinput->getArray($_POST);
+		if (version_compare(JVERSION, '3.2', 'lt')) {
+			$post = $jinput->getArray($_POST);
+		} else {
+			$post = $jinput->post->getArray(/*get them all*/);
+		}
 
 		// Retrieving email-setting
 		$sendemail = $jinput->get('sendemail','0','int');
