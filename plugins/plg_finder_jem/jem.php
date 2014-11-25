@@ -171,7 +171,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 			// Reindex the item
 			$this->reindex($row->id);
 		}
-		
+
 		// Check for access changes in the category
 		if ($context == 'com_jem.category')
 		{
@@ -181,7 +181,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 				$this->categoryAccessChange($row);
 			}
 		}
-		
+
 		return true;
 	}
 

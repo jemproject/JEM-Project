@@ -93,11 +93,26 @@ class JEMControllerAttendee extends JControllerLegacy
 
 		$model = $this->getModel('attendee');
 
+		// handle changing the user - must also trigger onEventUserUnregistered
+		$uid = (!empty($post['uid']) ? $post['uid'] : 0);
+		if ($uid) {
+			$model->setId($post['id']);
+			$old_data = $model->getData();
+		}
+		$old_uid = (!empty($old_data->uid) ? $old_data->uid : 0);
+
 		if ($row = $model->store($post)) {
 			if ($sendemail == 1) {
 				JPluginHelper::importPlugin('jem');
 				$dispatcher = JDispatcher::getInstance();
-				$dispatcher->trigger('onEventUserRegistered', array($row->id));
+				// there was a user and it's not the new user -> send unregister mails
+				if ($old_uid && ($old_uid != $uid)) {
+					$dispatcher->trigger('onEventUserUnregistered', array($old_data->event, $old_data));
+				}
+				// there is a new user which wasn't before -> send register mails
+				if ($uid && ($old_uid != $uid)) {
+					$dispatcher->trigger('onEventUserRegistered', array($row->id));
+				}
 			}
 
 			switch ($task)
