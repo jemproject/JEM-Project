@@ -74,17 +74,17 @@ defined('_JEXEC') or die;
 		$filters[] = JHtml::_('select.option', '3', JText::_('COM_JEM_STATE'));
 		$filters[] = JHtml::_('select.option', '4', JText::_('COM_JEM_COUNTRY'));
 		$filters[] = JHtml::_('select.option', '5', JText::_('JALL'));
-		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $this->state->get('filter'));
+		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $this->state->get('filter_type'));
 
 		//assign data to template
 		$this->lists = $lists;
-		$this->user = $user;
+		$this->user  = $user;
 
 		// add toolbar
 		$this->addToolbar();
 
 		parent::display($tpl);
-		}
+	}
 
 
 	/**

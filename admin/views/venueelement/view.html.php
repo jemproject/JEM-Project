@@ -27,11 +27,11 @@ class JemViewVenueelement extends JViewLegacy {
 		JHtml::_('behavior.modal');
 
 		//get vars
-		$filter_order		= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_order', 'filter_order', 'l.ordering', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', '', 'word');
-		$filter_type 		= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_type', 'filter_type', '', 'int');
-		$search 			= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-		$search 			= $db->escape(trim(JString::strtolower($search)));
+		$filter_order     = $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_order', 'filter_order', 'l.ordering', 'cmd');
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		$filter_type      = $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_type', 'filter_type', '', 'int');
+		$filter_search    = $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+		$filter_search    = $db->escape(trim(JString::strtolower($filter_search)));
 
 		//prepare document
 		$document->setTitle(JText::_('COM_JEM_SELECTVENUE'));
@@ -57,7 +57,7 @@ class JemViewVenueelement extends JViewLegacy {
 		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 		// search filter
-		$lists['search']= $search;
+		$lists['search']= $filter_search;
 
 		//assign data to template
 		$this->lists		= $lists;

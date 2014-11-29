@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -20,22 +20,20 @@ class JEMViewAttendees extends JViewLegacy {
 	public function display($tpl = null)
 	{
 		$app = JFactory::getApplication();
+		$db  = JFactory::getDBO();
 
 		if($this->getLayout() == 'print') {
 			$this->_displayprint($tpl);
 			return;
 		}
 
-		//initialise variables
-		$db			= JFactory::getDBO();
-
 		//get vars
-		$filter_order		= $app->getUserStateFromRequest('com_jem.attendees.filter_order', 'filter_order', 'u.username', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.attendees.filter_order_Dir',	'filter_order_Dir',	'', 'word');
-		$filter_waiting		= $app->getUserStateFromRequest('com_jem.attendees.waiting',	'filter_waiting',	0, 'int');
-		$filter 			= $app->getUserStateFromRequest('com_jem.attendees.filter', 'filter', '', 'int');
-		$search 			= $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
-		$search 			= $db->escape(trim(JString::strtolower($search)));
+		$filter_order     = $app->getUserStateFromRequest('com_jem.attendees.filter_order',     'filter_order', 'u.username', 'cmd');
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.attendees.filter_order_Dir', 'filter_order_Dir',	'', 'word');
+		$filter_waiting   = $app->getUserStateFromRequest('com_jem.attendees.waiting',          'filter_waiting',	0, 'int');
+		$filter_type      = $app->getUserStateFromRequest('com_jem.attendees.filter_type',      'filter_type', '', 'int');
+		$filter_search    = $app->getUserStateFromRequest('com_jem.attendees.filter_search',    'filter_search', '', 'string');
+		$filter_search    = $db->escape(trim(JString::strtolower($filter_search)));
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
@@ -55,15 +53,15 @@ class JEMViewAttendees extends JViewLegacy {
 		$filters = array();
 		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME'));
 		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_USERNAME'));
-		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter);
+		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 		// search filter
-		$lists['search'] = $search;
+		$lists['search'] = $filter_search;
 
 		// waiting list status
 		$options = array(JHtml::_('select.option', 0, JText::_('COM_JEM_ATT_FILTER_ALL')),
-		                  JHtml::_('select.option', 1, JText::_('COM_JEM_ATT_FILTER_ATTENDING')),
-		                  JHtml::_('select.option', 2, JText::_('COM_JEM_ATT_FILTER_WAITING'))) ;
+		                 JHtml::_('select.option', 1, JText::_('COM_JEM_ATT_FILTER_ATTENDING')),
+		                 JHtml::_('select.option', 2, JText::_('COM_JEM_ATT_FILTER_WAITING'))) ;
 		$lists['waiting'] = JHtml::_('select.genericlist', $options, 'filter_waiting', array('onChange'=>'this.form.submit();'), 'value', 'text', $filter_waiting);
 
 		// table ordering

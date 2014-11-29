@@ -187,15 +187,15 @@ class JemModelEventelement extends JModelLegacy
 	 */
 	protected function _buildContentWhere()
 	{
-		$app			= JFactory::getApplication();
-		$user 			= JFactory::getUser();
-		$levels			= $user->getAuthorisedViewLevels();
-		$itemid 		= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
+		$app    = JFactory::getApplication();
+		$user   = JFactory::getUser();
+		$levels = $user->getAuthorisedViewLevels();
+		$itemid = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
-		$published 		= $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_state', 'filter_state', '', 'string');
-		$filter 		= $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter', 'filter', '', 'int');
-		$search 		= $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
+		$published     = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_state',  'filter_state',  '', 'string');
+		$filter_type   = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_type',   'filter_type',   '', 'int');
+		$filter_search = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+		$filter_search = $this->_db->escape(trim(JString::strtolower($filter_search)));
 
 		$where = array();
 
@@ -209,22 +209,24 @@ class JemModelEventelement extends JModelLegacy
 		$where[] = ' c.published = 1';
 		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
 
-		switch($filter) {
+		if (!empty($filter_search)) {
+			switch ($filter_type) {
 			case 1:
-				$where[] = ' LOWER(a.title) LIKE \'%'.$search.'%\' ';
+				$where[] = ' LOWER(a.title) LIKE \'%'.$filter_search.'%\' ';
 				break;
 			case 2:
-				$where[] = ' LOWER(loc.venue) LIKE \'%'.$search.'%\' ';
+				$where[] = ' LOWER(loc.venue) LIKE \'%'.$filter_search.'%\' ';
 				break;
 			case 3:
-				$where[] = ' LOWER(loc.city) LIKE \'%'.$search.'%\' ';
+				$where[] = ' LOWER(loc.city) LIKE \'%'.$filter_search.'%\' ';
 				break;
 			case 4:
-				$where[] = ' LOWER(c.catname) LIKE \'%'.$search.'%\' ';
+				$where[] = ' LOWER(c.catname) LIKE \'%'.$filter_search.'%\' ';
 				break;
+			}
 		}
 
-		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+		$where = ( count( $where ) ? ' WHERE (' . implode( ') AND (', $where ) : ')' );
 
 		return $where;
 	}

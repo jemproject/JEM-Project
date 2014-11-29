@@ -47,8 +47,8 @@ class JEMModelGroups extends JModelList
 		$published = $this->getUserStateFromRequest($this->context.'.filter_state', 'filter_state', '', 'string');
 		$this->setState('filter_state', $published);
 
-		$filterfield = $this->getUserStateFromRequest($this->context.'.filter', 'filter', '', 'int');
-		$this->setState('filter', $filterfield);
+	//	$filterfield = $this->getUserStateFromRequest($this->context.'.filter_type', 'filter_type', '', 'int');
+	//	$this->setState('filter_type', $filterfield);
 
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_jem');
@@ -74,7 +74,7 @@ class JEMModelGroups extends JModelList
 		// Compile the store id.
 		$id .= ':' . $this->getState('filter_search');
 		$id .= ':' . $this->getState('filter_published');
-		$id .= ':' . $this->getState('filter');
+	//	$id .= ':' . $this->getState('filter_type');
 
 		return parent::getStoreId($id);
 	}

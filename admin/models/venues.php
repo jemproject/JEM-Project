@@ -60,8 +60,8 @@ class JemModelVenues extends JModelList
 		$published = $this->getUserStateFromRequest($this->context.'.filter_state', 'filter_state', '', 'string');
 		$this->setState('filter_state', $published);
 
-		$filterfield = $this->getUserStateFromRequest($this->context.'.filter', 'filter', '', 'int');
-		$this->setState('filter', $filterfield);
+		$filter_type = $this->getUserStateFromRequest($this->context.'.filter_type', 'filter_type', '', 'int');
+		$this->setState('filter_type', $filter_type);
 
 		$params = JComponentHelper::getParams('com_jem');
 		$this->setState('params', $params);
@@ -85,7 +85,7 @@ class JemModelVenues extends JModelList
 		// Compile the store id.
 		$id.= ':' . $this->getState('filter_search');
 		$id.= ':' . $this->getState('filter_published');
-		$id.= ':' . $this->getState('filter');
+		$id.= ':' . $this->getState('filter_type');
 
 		return parent::getStoreId($id);
 	}
@@ -141,8 +141,8 @@ class JemModelVenues extends JModelList
 		}
 
 		// Filter by search in title
-		$filter = $this->getState('filter');
-		$search = $this->getState('filter_search');
+		$filter_type = $this->getState('filter_type');
+		$search      = $this->getState('filter_search');
 
 		if (!empty($search)) {
 			if (stripos($search, 'id:') === 0) {
@@ -151,7 +151,7 @@ class JemModelVenues extends JModelList
 				$search = $db->Quote('%'.$db->escape($search, true).'%', false);
 
 				if($search) {
-					switch($filter) {
+					switch($filter_type) {
 						case 1:
 							/* search venue or alias */
 							$query->where('(a.venue LIKE '.$search.' OR a.alias LIKE '.$search.')');
