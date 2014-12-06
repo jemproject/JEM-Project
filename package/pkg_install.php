@@ -32,7 +32,7 @@ class Pkg_JemInstallerScript {
 		'Joomla!' => array (
 			'3.0' => '', // Not supported
 			'2.5' => '2.5.6',
-			'0' => '2.5.19' // Preferred version
+			'0' => '2.5.27' // Preferred version
 			)
 		);
 
@@ -40,8 +40,7 @@ class Pkg_JemInstallerScript {
 	 * List of required PHP extensions.
 	 * @var array
 	 */
-	protected $extensions = array ('curl','gd', 'json', 'pcre'
-			, 'iconv' /* import */
+	protected $extensions = array ('gd', 'json', 'pcre'
 			, 'ctype', 'SimpleXML' /* iCalCreator */
 		);
 
