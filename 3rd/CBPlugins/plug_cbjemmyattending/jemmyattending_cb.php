@@ -78,6 +78,38 @@ class jemmyattendingTab extends cbTabHandler {
 		/* message at the bottom of the table */
 		$event_tab_message = $params->get('hwTabMessage', "");
 
+		/* access rights check */
+		// retrieval user parameters
+		$userid = $user->id;
+
+		// $user is profile's owner but we need logged-in user here
+		$juser = JFactory::getUser();
+
+		if ($juser->id != $userid) {
+			// we have to check if foreign announces are allowed to show
+			$permitted = false;
+			$settings = JEMHelper::globalattribs();
+
+			switch ($settings->get('event_show_attendeenames', 2)) {
+				case 0: // show to none
+				default:
+					break;
+				case 1: // show to admins
+					$permitted = $juser->authorise('core.manage', 'com_jem');
+					break;
+				case 2: // show to registered
+					$permitted = !$juser->get('guest');
+					break;
+				case 3: // show to all
+					$permitted = true;
+					break;
+			}
+
+			if (!$permitted) {
+				return ''; // which will completely hide the tab
+			}
+		}
+
 		/* load css */
 		//$_CB_framework->addCustomHeadTag("<link href=\"".$_CB_framework->getCfg('live_site')."/components/com_comprofiler/plugin/user/plug_cbjemmyattending/jemmyattending_cb.css\" rel=\"stylesheet\" type=\"text/css\" />");
 		$_CB_framework->document->addHeadStyleSheet($_CB_framework->getCfg('live_site').'/components/com_comprofiler/plugin/user/plug_cbjemmyattending/jemmyattending_cb.css');
@@ -123,12 +155,7 @@ class jemmyattendingTab extends cbTabHandler {
 		}
 		*/
 
-		// retrieval user parameters
-		$userid = $user->id;
-
-		// Support Joomla access levels instead of single group id
-		// Note: $user is one which profile is requested, not the asking user!
-		$juser = JFactory::getUser();
+		// Support Joomla access levels instead of single group id; $juser is the asking user
 		$levels = $juser->getAuthorisedViewLevels();
 
 		/*
