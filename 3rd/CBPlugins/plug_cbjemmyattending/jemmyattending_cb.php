@@ -1,7 +1,7 @@
 <?php
 /**
  * @package My Attending
- * @version JEM v2.0.0 & CB 1.9
+ * @version JEM v2.0 / v2.1 & CB 1.9
  * @author JEM Community
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  *
@@ -78,6 +78,38 @@ class jemmyattendingTab extends cbTabHandler {
 		/* message at the bottom of the table */
 		$event_tab_message = $params->get('hwTabMessage', "");
 
+		/* access rights check */
+		// retrieval user parameters
+		$userid = $user->id;
+
+		// $user is profile's owner but we need logged-in user here
+		$juser = JFactory::getUser();
+
+		if ($juser->id != $userid) {
+			// we have to check if foreign announces are allowed to show
+			$permitted = false;
+			$settings = JEMHelper::globalattribs();
+
+			switch ($settings->get('event_show_attendeenames', 2)) {
+				case 0: // show to none
+				default:
+					break;
+				case 1: // show to admins
+					$permitted = $juser->authorise('core.manage', 'com_jem');
+					break;
+				case 2: // show to registered
+					$permitted = !$juser->get('guest');
+					break;
+				case 3: // show to all
+					$permitted = true;
+					break;
+			}
+
+			if (!$permitted) {
+				return ''; // which will completely hide the tab
+			}
+		}
+
 		/* load css */
 		//$_CB_framework->addCustomHeadTag("<link href=\"".$_CB_framework->getCfg('live_site')."/components/com_comprofiler/plugin/user/plug_cbjemmyattending/jemmyattending_cb.css\" rel=\"stylesheet\" type=\"text/css\" />");
 		$_CB_framework->document->addHeadStyleSheet($_CB_framework->getCfg('live_site').'/components/com_comprofiler/plugin/user/plug_cbjemmyattending/jemmyattending_cb.css');
@@ -123,11 +155,7 @@ class jemmyattendingTab extends cbTabHandler {
 		}
 		*/
 
-		// retrieval user parameters
-		$userid = $user->id;
-
-		// Support Joomla access levels instead of single group id
-		$juser = JFactory::getUser($userid);
+		// Support Joomla access levels instead of single group id; $juser is the asking user
 		$levels = $juser->getAuthorisedViewLevels();
 
 		/*
@@ -148,7 +176,7 @@ class jemmyattendingTab extends cbTabHandler {
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
 				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
 				. ' WHERE a.published = 1 AND c.published = 1 AND r.uid = '.$userid.' AND c.access IN (' . implode(',', $levels) . ')'
-				. ' AND DATE_SUB(NOW(), INTERVAL 1 DAY) < (IF (a.enddates IS NOT NULL, a.enddates, a.dates))'
+				. ' AND (a.dates IS NULL OR DATE_SUB(NOW(), INTERVAL 1 DAY) < (IF (a.enddates IS NOT NULL, a.enddates, a.dates)))'
 				. ' GROUP BY a.id'
 				. ' ORDER BY a.dates, a.times'
 				;

@@ -1,5 +1,5 @@
 /**
- * @version 2.0.0
+ * @version 2.0.3
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -218,11 +218,28 @@ input#replace_events0.inputbox, input#replace_events1.inputbox, input#replace_ve
 }
 
 table#el-attachments td {
-	padding:0 5px;
+	padding:4px 5px;
+	vertical-align: top;
 }
 
 table#el-attachments img {
 	cursor:pointer;
+}
+
+table#el-attachments div.title {
+	margin-top: 5px;
+	margin-bottom: 3px;
+}
+
+table#el-attachments input {
+	float: none;
+}
+
+table#el-attachments tr {
+	border-top: 1px solid #D5D5D5;
+}
+table#el-attachments tr:first-child {
+	border-top: inherit;
 }
 
 div#jembackend fieldset.adminform label.hasTip

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package My Events
- * @version JEM v2.0.0 & CB 1.9
+ * @version JEM v2.0 / v2.1 & CB 1.9
  * @author JEM Community
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  *
@@ -163,7 +163,8 @@ class jemmyeventsTab extends cbTabHandler {
 		$userid = $user->id;
 
 		// Support Joomla access levels instead of single group id
-		$juser = JFactory::getUser($userid);
+		// Note: $user is one which profile is requested, not the asking user!
+		$juser = JFactory::getUser();
 		$levels = $juser->getAuthorisedViewLevels();
 
 		/*

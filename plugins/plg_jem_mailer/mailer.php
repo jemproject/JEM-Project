@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.3
  * @package JEM
  * @subpackage JEM Mailer Plugin
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -74,6 +74,7 @@ class plgJEMMailer extends JPlugin {
 		}
 
 		$user 	= JFactory::getUser();
+		$userid = $user->get('id');
 		$username = empty($this->_UseLoginName) ? $user->name : $user->username;
 
 		// get data
@@ -88,13 +89,23 @@ class plgJEMMailer extends JPlugin {
 		$case_when .= ' ELSE ';
 		$case_when .= $id.' END as slug';
 
-		$query->select(array('a.id','a.title','r.waiting',$case_when));
+		$query->select(array('a.id','a.title','r.waiting',$case_when,'r.uid'));
 		$query->from($db->quoteName('#__jem_register').' AS r');
 		$query->join('INNER', '#__jem_events AS a ON r.event = a.id');
 		$query->where(array('r.id= '.$db->quote($register_id)));
 
 		$db->setQuery($query);
 		if (is_null($event = $db->loadObject())) return false;
+
+		// check if currrent user hadles in behalf of
+		$attendeeid = $event->uid;
+		if ($attendeeid != $userid) {
+			$attendee = JFactory::getUser($attendeeid);
+			$attendeename = empty($this->_UseLoginName) ? $attendee->name : $attendee->username;
+		} else {
+			$attendee = $user;
+			$attendeename = $username;
+		}
 
 		//create link to event
 		$link = JRoute::_(JURI::base().JEMHelperRoute::getEventRoute($event->slug), false);
@@ -112,8 +123,12 @@ class plgJEMMailer extends JPlugin {
 			if ($this->params->get('reg_mail_user', '1')) {
 				$data 				= new stdClass();
 				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_USER_REG_WAITING_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_REG_WAITING_BODY_4', $username, $event->title, $link, $this->_SiteName);
-				$data->receivers 	= $user->email;
+				if ($attendeeid != $userid) {
+					$data->body		= JText::sprintf('PLG_JEM_MAILER_USER_REG_ONBEHALF_WAITING_BODY_5', $attendeename, $username, $event->title, $link, $this->_SiteName);
+				} else {
+					$data->body		= JText::sprintf('PLG_JEM_MAILER_USER_REG_WAITING_BODY_4', $attendeename, $event->title, $link, $this->_SiteName);
+				}
+				$data->receivers 	= $attendee->email;
 				$this->_mailer($data);
 			}
 
@@ -125,7 +140,11 @@ class plgJEMMailer extends JPlugin {
 				if ($this->_AdminDBList){
 					$data 				= new stdClass();
 					$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_WAITING_SUBJECT', $this->_SiteName);
-					$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_WAITING_BODY_4', $username, $event->title, $link, $this->_SiteName);
+					if ($attendeeid != $userid) {
+						$data->body		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ONBEHALF_WAITING_BODY_5', $attendeename, $username, $event->title, $link, $this->_SiteName);
+					} else {
+						$data->body		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_WAITING_BODY_4', $attendeename, $event->title, $link, $this->_SiteName);
+					}
 					$data->receivers 	= $this->_AdminDBList;
 					$this->_mailer($data);
 				}
@@ -137,8 +156,12 @@ class plgJEMMailer extends JPlugin {
 			if ($this->params->get('reg_mail_user', '1')) {
 				$data 				= new stdClass();
 				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_USER_REG_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_REG_BODY_4', $username, $event->title, $link, $this->_SiteName);
-				$data->receivers 	= $user->email;
+				if ($attendeeid != $userid) {
+					$data->body		= JText::sprintf('PLG_JEM_MAILER_USER_REG_ONBEHALF_BODY_5', $attendeename, $username, $event->title, $link, $this->_SiteName);
+				} else {
+					$data->body		= JText::sprintf('PLG_JEM_MAILER_USER_REG_BODY_4', $attendeename, $event->title, $link, $this->_SiteName);
+				}
+				$data->receivers 	= $attendee->email;
 				$this->_mailer($data);
 			}
 
@@ -151,7 +174,11 @@ class plgJEMMailer extends JPlugin {
 				if ($this->_AdminDBList){
 					$data 				= new stdClass();
 					$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_SUBJECT', $this->_SiteName);
-					$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_BODY_4', $username, $event->title, $link, $this->_SiteName);
+					if ($attendeeid != $userid) {
+						$data->body		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_ONBEHALF_BODY_5', $attendeename, $username, $event->title, $link, $this->_SiteName);
+					} else {
+						$data->body		= JText::sprintf('PLG_JEM_MAILER_ADMIN_REG_BODY_4', $attendeename, $event->title, $link, $this->_SiteName);
+					}
 					$data->receivers 	= $this->_AdminDBList;
 					$this->_mailer($data);
 				}
@@ -255,11 +282,12 @@ class plgJEMMailer extends JPlugin {
 	 * This method handles any mailings triggered by an event unregister action
 	 *
 	 * @access	public
-	 * @param   int 	$event_id 	 Integer Event identifier
+	 * @param   int 	$event_id		Integer Event identifier
+	 * @param   object 	$registration 	Entry from register table deleted now (optional)
 	 * @return	boolean
 	 *
 	 */
-	public function onEventUserUnregistered($event_id)
+	public function onEventUserUnregistered($event_id, $registration = false)
 	{
 		// skip if processing not needed
 		if (!$this->params->get('unreg_mail_user', '1') && !$this->params->get('unreg_mail_admin', '0')) {
@@ -267,6 +295,7 @@ class plgJEMMailer extends JPlugin {
 		}
 
 		$user 	= JFactory::getUser();
+		$userid = $user->get('id');
 		$username = empty($this->_UseLoginName) ? $user->name : $user->username;
 
 		// get data
@@ -288,6 +317,15 @@ class plgJEMMailer extends JPlugin {
 		$db->setQuery($query);
 		if (is_null($event = $db->loadObject())) return false;
 
+		// check if currrent user hadles in behalf of
+		$attendeeid = (!empty($registration->uid) ? $registration->uid : $userid);
+		if ($attendeeid != $userid) {
+			$attendee = JFactory::getUser($attendeeid);
+			$attendeename = empty($this->_UseLoginName) ? $attendee->name : $attendee->username;
+		} else {
+			$attendee = $user;
+			$attendeename = $username;
+		}
 
 		// create link to event
 		$link = JRoute::_(JURI::base().JEMHelperRoute::getEventRoute($event->slug), false);
@@ -298,8 +336,12 @@ class plgJEMMailer extends JPlugin {
 		if ($this->params->get('unreg_mail_user', '1')) {
 			$data 				= new stdClass();
 			$data->subject 		= JText::sprintf('PLG_JEM_MAILER_USER_UNREG_SUBJECT', $this->_SiteName);
-			$data->body			= JText::sprintf('PLG_JEM_MAILER_USER_UNREG_BODY_4', $username, $event->title, $link, $this->_SiteName);
-			$data->receivers 	= $user->email;
+			if ($attendeeid != $userid) {
+				$data->body		= JText::sprintf('PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_5', $attendeename, $username, $event->title, $link, $this->_SiteName);
+			} else {
+				$data->body		= JText::sprintf('PLG_JEM_MAILER_USER_UNREG_BODY_4', $username, $event->title, $link, $this->_SiteName);
+			}
+			$data->receivers 	= $attendee->email;
 
 			$this->_mailer($data);
 		}
@@ -311,7 +353,11 @@ class plgJEMMailer extends JPlugin {
 			if ($this->_AdminDBList){
 				$data 				= new stdClass();
 				$data->subject 		= JText::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_SUBJECT', $this->_SiteName);
-				$data->body			= JText::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_BODY_4', $username, $event->title, $link, $this->_SiteName);
+				if ($attendeeid != $userid) {
+					$data->body		= JText::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_ONBEHALF_BODY_5', $attendeename, $username, $event->title, $link, $this->_SiteName);
+				} else {
+					$data->body		= JText::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_BODY_4', $username, $event->title, $link, $this->_SiteName);
+				}
 				$data->receivers 	= $this->_AdminDBList;
 
 				$this->_mailer($data);

@@ -2,7 +2,7 @@
 <cbinstall version="1.9" type="plugin" group="user">
 	<name>CB JEM MyEvents</name>
 	<author>JEM Community</author>
-	<creationDate>September 2014</creationDate>
+	<creationDate>December 2014</creationDate>
 	<copyright>Copyright (C) 2013-2014 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
@@ -14,6 +14,7 @@
 		<filename>index.html</filename>
 		<filename>jemmyevents_cb.css</filename>
 		<filename>language/english.php</filename>
+		<filename>language/index.html</filename>
 	</files>
 	<params>
 	</params>

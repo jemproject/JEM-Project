@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.3
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -150,6 +150,7 @@ class JEMModelAttendee extends JModelLegacy
 	function store($data)
 	{
 		$eventid = $data['event'];
+		$userid  = $data['uid'];
 
 		$row = $this->getTable('jem_register', '');
 
@@ -161,14 +162,30 @@ class JEMModelAttendee extends JModelLegacy
 
 		// sanitise id field
 		$row->id = (int) $row->id;
+		$db = JFactory::getDbo();
+
+		// Check if user is already registered to this event
+		$query = $db->getQuery(true);
+		$query->select(array('COUNT(id) AS count'));
+		$query->from('#__jem_register');
+		$query->where('event = '.$db->quote($eventid));
+		$query->where('uid = '.$db->quote($userid));
+		if ($row->id) {
+			$query->where('id != '.$db->quote($row->id));
+		}
+		$db->setQuery($query);
+		$cnt = $db->loadResult();
+
+		if ($cnt > 0) {
+			JError::raiseWarning(0, JText::_('COM_JEM_ERROR_USER_ALREADY_REGISTERED'));
+			return false;
+		}
 
 		// Are we saving from an item edit?
 		if ($row->id) {
 
 		} else {
 			$row->uregdate = gmdate('Y-m-d H:i:s');
-
-			$db = JFactory::getDbo();
 
 			// Get event
 			$query = $db->getQuery(true);

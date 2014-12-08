@@ -62,7 +62,7 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&task=attendee.selectuser&
 		</a>
 			</td>
 		</tr>
-		<?php if (!$this->row->id): ?>
+		<?php if (1/*!$this->row->id*/): ?>
 		<tr>
 			<td class="key" width="150">
 				<label for="sendemail">

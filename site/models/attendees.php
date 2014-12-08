@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.0.3
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -285,6 +285,7 @@ class JEMModelAttendees extends JModelLegacy
 	 * Delete registered users
 	 *
 	 * @access public
+	 * @param  array  $cid  array of register IDs
 	 * @return true on success
 	 *
 	 */
