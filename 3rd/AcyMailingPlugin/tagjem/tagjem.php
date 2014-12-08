@@ -1,6 +1,6 @@
 <?php
 /**
- * Version 0.2
+ * Version 0.3
  * @copyright	Copyright (C) 2014 Ghost Art digital media.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  * Based on Eventlist11 tag and JEM spoecific code by Jojo Murer
@@ -39,7 +39,7 @@ class plgAcymailingTagjem extends JPlugin
 	 		return;
 	 	}
 
-		$app =& JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		$pageInfo = new stdClass();
 	 	$pageInfo->filter = new stdClass();
@@ -56,7 +56,7 @@ class plgAcymailingTagjem extends JPlugin
 		$pageInfo->limit->value = $app->getUserStateFromRequest( $paramBase.'.list_limit', 'limit', $app->getCfg('list_limit'), 'int' );
 		$pageInfo->limit->start = $app->getUserStateFromRequest( $paramBase.'.limitstart', 'limitstart', 0, 'int' );
 
-		$db =& JFactory::getDBO();
+		$db = JFactory::getDBO();
 
 		if(!empty($pageInfo->search)){
 			$searchVal = '\'%'.acymailing_getEscaped($pageInfo->search).'%\'';
@@ -108,6 +108,7 @@ class plgAcymailingTagjem extends JPlugin
 					<button class="btn" onclick="this.form.submit();"><?php echo JText::_( 'JOOMEXT_GO' ); ?></button>
 					<button class="btn" onclick="document.getElementById('acymailingsearch').value='';this.form.submit();"><?php echo JText::_( 'JOOMEXT_RESET' ); ?></button>
 				</td>
+
 				<td nowrap="nowrap">
 
 				</td>
@@ -231,6 +232,7 @@ class plgAcymailingTagjem extends JPlugin
 					tag += '{jem:';
 					tag += getSelectedEvents();
 					tag += getResizeOptions(tabname);
+					tag += '|template:event';
 					tag += '}';
 				}
 				else
@@ -250,6 +252,7 @@ class plgAcymailingTagjem extends JPlugin
 					if(document.adminForm.min_article && document.adminForm.min_article.value && document.adminForm.min_article.value!=0){ tag += '|min:'+document.adminForm.min_article.value; }
 					if(document.adminForm.max_article.value && document.adminForm.max_article.value!=0){ tag += '|max:'+document.adminForm.max_article.value; }
 					if(document.adminForm.delayevent.value && document.adminForm.delayevent.value>0){ tag += '|delay:'+document.adminForm.delayevent.value; }
+					tag += '|template:'+document.adminForm.template.value;
 
 					tag += '}';
 				}
@@ -286,8 +289,21 @@ class plgAcymailingTagjem extends JPlugin
 			 </td>
 			 <td>
 			</td>
-		</tr>
 		<?php } ?>
+			<td>
+			<?php 	echo JText::_('TEMPLATE'); ?>
+			 </td>
+			 <td>
+			 <select name="template" size="1" onchange="updateTag();">
+			 	<option value="event">event</option>
+			 	<option value="list">list</option>
+			 	<option value="summary">summary</option>
+			</td>
+			<td>
+			 </td>
+			 <td>
+			</td>
+		</tr>
 	</table>
 	<table class="jem_auto adminlist" cellpadding="1" width="100%">
 	<?php $k=0; foreach($categories as $oneCat){ ?>
@@ -380,13 +396,28 @@ class plgAcymailingTagjem extends JPlugin
 			$tag->id = (int) $oneEvent;
 
 			// Load the informations of the product...
-			$query = 'SELECT d.*, b.*, a.* FROM `#__jem_events` as a ';
-			$query .= 'LEFT JOIN `#__jem_venues` AS b ON b.id = a.locid ';
-			$query .= 'LEFT JOIN `#__jem_cats_event_relations` AS c ON a.`id` = c.itemid ';
-			$query .= 'LEFT JOIN `#__jem_categories` AS d ON c.`catid` = d.id ';
+			//$query = 'SELECT d.*, b.*, a.*, cn.* FROM `#__jem_events` as a ';
+			//$query .= 'LEFT JOIN `#__jem_venues` AS b ON b.id = a.locid ';
+			//$query .= 'LEFT JOIN `#__jem_cats_event_relations` AS c ON a.`id` = c.itemid ';
+			//$query .= 'LEFT JOIN `#__jem_categories` AS d ON c.`catid` = d.id ';
+			//$query .= 'LEFT JOIN #__contact_details AS cn ON cn.id = a.contactid ';
+			$query = ' SELECT a.id, a.alias,a.dates, a.registra, a.featured, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.maxplaces, a.waitinglist, a.fulltext,'
+				. 'a.introtext, a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10, '
+				. ' l.venue, l.city, l.state, l.url, l.street, ct.name AS countryname, l.postalcode, '
+				. ' c.catname, c.id AS catid,'
+				. 'cn.id as conid, cn.name as conname, cn.telephone as contelephone, cn.mobile as conmobile, cn.email_to as conemail_to,'
+				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
+				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug,'
+				. ' CASE WHEN CHAR_LENGTH(cn.alias) THEN CONCAT_WS(\':\', a.contactid, cn.alias) ELSE a.contactid END as contactslug'
+				. ' FROM #__jem_events AS a'
+				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+				. ' LEFT JOIN #__jem_countries AS ct ON ct.iso2 = l.country '
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
+				. ' LEFT JOIN #__contact_details AS cn ON cn.id = a.contactid ';
 			$query .= 'WHERE a.id = '.(int) $tag->id.' LIMIT 1';
 
-			$db =& JFactory::getDBO();
+			$db = JFactory::getDBO();
 			$db->setQuery($query);
 			$event = $db->loadObject();
 
@@ -414,9 +445,14 @@ class plgAcymailingTagjem extends JPlugin
 			$link = acymailing_frontendLink($link);
 
 			//Check if the template exists...
-			if(file_exists(ACYMAILING_MEDIA.'plugins'.DS.'tagjem.php')){
+			$template = '';
+			if (!empty($tag->template) ){
+				$template = '_'.$tag->template;
+			}
+
+			if(file_exists(ACYMAILING_MEDIA.'plugins'.DS.'tagjem'.$template.'.php')){
 				ob_start();
-				require(ACYMAILING_MEDIA.'plugins'.DS.'tagjem.php');
+				require(ACYMAILING_MEDIA.'plugins'.DS.'tagjem'.$template.'.php');
 				$result .= ob_get_clean();
 			}else{
 				$result .= '<div class="acymailing_content">';
@@ -486,7 +522,7 @@ class plgAcymailingTagjem extends JPlugin
 		if(!$found) return $return;
 
 		$this->tags = array();
-		$db =& JFactory::getDBO();
+		$db = JFactory::getDBO();
 
 		foreach($results as $var => $allresults){
 			foreach($allresults[0] as $i => $oneTag){
@@ -505,6 +541,7 @@ class plgAcymailingTagjem extends JPlugin
 						$parameter->$arg0 = true;
 					}
 				}
+
 				//Load the articles based on all arguments...
 				$selectedArea = array();
 				foreach($allcats as $oneCat){
@@ -520,8 +557,9 @@ class plgAcymailingTagjem extends JPlugin
 				}
 
 				$where[] = 'a.`published` = 1';
-				$where[] = 'a.`featured` = 1';
-
+				if($this->params->get('showfeatured','yes') == 'yes'){
+					$where[] = 'a.`featured` = 1';
+				}
 				if(!empty($parameter->enddates)){
 					$where[] = 'a.`enddates` >= '.$db->Quote(date( 'Y-m-d',$time));
 				}else{
@@ -558,6 +596,10 @@ class plgAcymailingTagjem extends JPlugin
 							if (!empty ($parameter->images))
 							{
 								$args[] = 'images:'.$parameter->images;
+							}
+							if (!empty ($parameter->template))
+							{
+								$args[] = 'template:'.$parameter->template;
 							}
 							$stringTag .= '{'.implode('|',$args).'}';
 							$stringTag .= '</td></tr>';
@@ -616,8 +658,8 @@ class plgAcymailingTagjem extends JPlugin
 				<span class="imagesize">:
 					<?php echo JText::_('CAPTCHA_WIDTH') ?>
 					<input type="text" name="<?php echo $tabname ?>_imgwidth" type="text" onchange="updateTag('<?php echo $tabname ?>');" style="width:30px;" value="<?php echo $width ?>" />
-					x <?php echo JText::_('CAPTCHA_HEIGHT') ?>
-					 <input type="text" name="<?php echo $tabname ?>_imgheight" type="text" onchange="updateTag('<?php echo $tabname ?>');" style="width:30px;" value="<?php echo $height ?>" />
+					<?php echo JText::_('CAPTCHA_HEIGHT') ?>
+					<input type="text" name="<?php echo $tabname ?>_imgheight" type="text" onchange="updateTag('<?php echo $tabname ?>');" style="width:30px;" value="<?php echo $height ?>" />
 				</span>
 			</span>
 		</td></tr>
