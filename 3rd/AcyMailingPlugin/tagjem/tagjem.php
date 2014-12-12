@@ -1,0 +1,703 @@
+<?php
+/**
+ * Version 0.3
+ * @copyright	Copyright (C) 2014 Ghost Art digital media.
+ * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * Based on Eventlist11 tag and JEM spoecific code by Jojo Murer
+ */
+defined('_JEXEC') or die;
+
+class plgAcymailingTagjem extends JPlugin
+{
+
+	var $searchFields = array('a.id','a.title','a.alias','a.introtext');
+	var $selectedFields = array('a.*');
+
+	function plgAcymailingTagjem(&$subject, $config){
+		parent::__construct($subject, $config);
+		if(!isset($this->params)){
+			$plugin =& JPluginHelper::getPlugin('acymailing', 'tagjem');
+			$this->params = new JParameter( $plugin->params );
+		}
+	}
+
+	 function acymailing_getPluginType() {
+
+	 	$onePlugin = new stdClass();
+	 	$onePlugin->name = JText::_('JOOMEXT_EVENT'). ' <small>(JEM)</small>';
+	 	$onePlugin->function = 'acymailingtagjem_show';
+	 	$onePlugin->help = 'plugin-tagjem';
+
+	 	return $onePlugin;
+	 }
+
+	 function acymailingtagjem_show(){
+		
+	 	$config = acymailing_config();
+	 	if($config->get('version') < '4.0.0'){
+	 		acymailing_display('Please download and install the latest AcyMailing version otherwise this plugin will NOT work','error');
+	 		return;
+	 	}
+
+		$app = JFactory::getApplication();
+
+		$pageInfo = new stdClass();
+	 	$pageInfo->filter = new stdClass();
+	 	$pageInfo->filter->order = new stdClass();
+	 	$pageInfo->limit = new stdClass();
+	 	$pageInfo->elements = new stdClass();
+
+		$paramBase = ACYMAILING_COMPONENT.'.tagjem';
+		$pageInfo->filter->order->value = $app->getUserStateFromRequest( $paramBase.".filter_order", 'filter_order',	'a.id','cmd' );
+		$pageInfo->filter->order->dir	= $app->getUserStateFromRequest( $paramBase.".filter_order_Dir", 'filter_order_Dir',	'desc',	'word' );
+		$pageInfo->search = $app->getUserStateFromRequest( $paramBase.".search", 'search', '', 'string' );
+		$pageInfo->search = JString::strtolower( $pageInfo->search );
+
+		$pageInfo->limit->value = $app->getUserStateFromRequest( $paramBase.'.list_limit', 'limit', $app->getCfg('list_limit'), 'int' );
+		$pageInfo->limit->start = $app->getUserStateFromRequest( $paramBase.'.limitstart', 'limitstart', 0, 'int' );
+
+		$db = JFactory::getDBO();
+
+		if(!empty($pageInfo->search)){
+			$searchVal = '\'%'.acymailing_getEscaped($pageInfo->search).'%\'';
+			$filters[] = implode(" LIKE $searchVal OR ",$this->searchFields)." LIKE $searchVal";
+		}
+
+		//we hide past events but we remove one day just to make sure we won't hide something we should not!
+		if($this->params->get('hidepastevents','yes') == 'yes'){
+			$filters[] = "a.`dates` >= ".$db->Quote(date('Y-m-d',time() - 86400));
+		}
+
+		$whereQuery = '';
+		if(!empty($filters)){
+			$whereQuery = ' WHERE ('.implode(') AND (',$filters).')';
+		}
+
+		$query = 'SELECT SQL_CALC_FOUND_ROWS '.implode(',',$this->selectedFields).' FROM `#__jem_events` as a';
+		if(!empty($whereQuery)) $query.= $whereQuery;
+		if(!empty($pageInfo->filter->order->value)){
+			$query .= ' ORDER BY '.$pageInfo->filter->order->value.' '.$pageInfo->filter->order->dir;
+		}
+
+		$db->setQuery($query,$pageInfo->limit->start,$pageInfo->limit->value);
+		$rows = $db->loadObjectList();
+
+		if(!empty($pageInfo->search)){
+			$rows = acymailing::search($pageInfo->search,$rows);
+		}
+
+		$db->setQuery('SELECT FOUND_ROWS()');
+		$pageInfo->elements->total = $db->loadResult();
+		$pageInfo->elements->page = count($rows);
+
+		jimport('joomla.html.pagination');
+		$pagination = new JPagination( $pageInfo->elements->total, $pageInfo->limit->start, $pageInfo->limit->value );
+
+		//jimport('joomla.html.pane');
+		$tabs = acymailing_get('helper.acytabs');
+		echo $tabs->startPane( 'jem_tab');
+		echo $tabs->startPanel( JText::_( 'JOOMEXT_EVENT' ), 'jem_event');
+	?>
+		<br style="font-size:1px"/>
+		<table>
+			<?php $this->_showResizeOptionsRow('jem_event', 2) ?>
+			<tr>
+				<td width="100%">
+					<?php echo JText::_( 'JOOMEXT_FILTER' ); ?>:
+					<input type="text" name="search" id="acymailingsearch" value="<?php echo $pageInfo->search;?>" class="text_area" onchange="document.adminForm.submit();" />
+					<button class="btn" onclick="this.form.submit();"><?php echo JText::_( 'JOOMEXT_GO' ); ?></button>
+					<button class="btn" onclick="document.getElementById('acymailingsearch').value='';this.form.submit();"><?php echo JText::_( 'JOOMEXT_RESET' ); ?></button>
+				</td>
+
+				<td nowrap="nowrap">
+
+				</td>
+			</tr>
+		</table>
+
+		<table class="adminlist" cellpadding="1" width="100%">
+			<thead>
+				<tr>
+					<th class="title">
+						<?php echo JHTML::_('grid.sort', JText::_( 'FIELD_TITLE'), 'a.title', $pageInfo->filter->order->dir,$pageInfo->filter->order->value ); ?>
+					</th>
+					<th class="title">
+						<?php echo JHTML::_('grid.sort', JText::_( 'ACY_DESCRIPTION'), 'a.introtext', $pageInfo->filter->order->dir,$pageInfo->filter->order->value ); ?>
+					</th>
+					<th class="title">
+						<?php
+						echo JHTML::_('grid.sort', JText::_('FIELD_DATE'), 'a.dates', $pageInfo->filter->order->dir,$pageInfo->filter->order->value );
+						?>
+					</th>
+					<th class="title titleid">
+						<?php echo JHTML::_('grid.sort',   JText::_( 'ACY_ID' ), 'a.id', $pageInfo->filter->order->dir, $pageInfo->filter->order->value ); ?>
+					</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<td colspan="5">
+						<?php echo $pagination->getListFooter(); ?>
+						<?php echo $pagination->getResultsCounter(); ?>
+					</td>
+				</tr>
+			</tfoot>
+			<tbody>
+				<?php
+					$k = 0;
+					for($i = 0,$a = count($rows);$i<$a;$i++){
+						$row =& $rows[$i];
+				?>
+					<tr id="content<?php echo $row->id?>" class="<?php echo "row$k"; ?>" style="cursor:pointer;"
+							onclick="toggleClass('selectedrow');updateTag('jem_event')" eventid="<?php echo $row->id ?>" >
+						<td>
+						<?php echo $row->title; ?>
+						</td>
+						<td>
+						<?php echo acymailing_absoluteURL($row->introtext); ?>
+						</td>
+						<td align="center">
+							<?php echo JHTML::_('date',strtotime($row->dates),JText::_('DATE_FORMAT_LC')); ?>
+						</td>
+						<td align="center">
+							<?php echo $row->id; ?>
+						</td>
+					</tr>
+				<?php
+						$k = 1-$k;
+					}
+				?>
+			</tbody>
+		</table>
+		<input type="hidden" name="boxchecked" value="0" />
+		<input type="hidden" name="filter_order" value="<?php echo $pageInfo->filter->order->value; ?>" />
+		<input type="hidden" name="filter_order_Dir" value="<?php echo $pageInfo->filter->order->dir; ?>" />
+	<?php
+	echo $tabs->endPanel();
+	echo $tabs->startPanel( JText::_( 'UPCOMING_EVENTS' ), 'jem_auto');
+	$type = JRequest::getString('type');
+
+	$db->setQuery('SELECT a.* FROM `#__jem_categories` as a ORDER BY a.`ordering` ASC');
+	$categories = $db->loadObjectList('id');
+
+	?>
+	<br style="font-size:1px"/>
+	<script language="javascript" type="text/javascript">
+		<!--
+			var selectedCat = new Array();
+			function applyAutoEvent(catid,rowClass){
+				if(selectedCat[catid]){
+					window.document.getElementById('event_cat'+catid).className = rowClass;
+					delete selectedCat[catid];
+				}else{
+					window.document.getElementById('event_cat'+catid).className = 'selectedrow';
+					selectedCat[catid] = 'event';
+				}
+
+				updateTag();
+			}
+
+			function getSelectedEvents()
+			{
+				var rows = document.getElementsByClassName('selectedrow');
+				var events = [];
+				for (var i = 0; i < rows.length; i++)
+				{
+					var eventid = parseInt(rows[i].getAttribute('eventid'));
+					if (eventid != NaN)
+						events.push(eventid);
+				}
+				return events.join('-');
+			}
+
+			function getResizeOptions(tabname)
+			{
+				if (document.adminForm[tabname+'_resizeimages'] && document.adminForm[tabname+'_resizeimages'].checked
+						&& document.adminForm[tabname+'_imgwidth'] && document.adminForm[tabname+'_imgheight'])
+				{
+					var width = parseInt(document.adminForm[tabname+'_imgwidth'].value)
+					var height = parseInt(document.adminForm[tabname+'_imgheight'].value)
+					if (!isNaN(width) && !isNaN(height))
+						return '|images:'+width+'x'+height;
+				}
+				return '';
+			}
+
+			function updateTag(tabname)
+			{
+				var tag = '';
+
+				if (tabname === 'jem_event')
+				{
+					tag += '{jem:';
+					tag += getSelectedEvents();
+					tag += getResizeOptions(tabname);
+					tag += '|template:event';
+					tag += '}';
+				}
+				else
+				{
+					tabname = 'jem_auto';
+
+					tag += '{autojem:';
+
+					for(var icat in selectedCat){
+						if(selectedCat[icat] == 'event'){
+							tag += icat+'-';
+						}
+					}
+
+					tag += getResizeOptions(tabname);
+
+					if(document.adminForm.min_article && document.adminForm.min_article.value && document.adminForm.min_article.value!=0){ tag += '|min:'+document.adminForm.min_article.value; }
+					if(document.adminForm.max_article.value && document.adminForm.max_article.value!=0){ tag += '|max:'+document.adminForm.max_article.value; }
+					if(document.adminForm.delayevent.value && document.adminForm.delayevent.value>0){ tag += '|delay:'+document.adminForm.delayevent.value; }
+					tag += '|template:'+document.adminForm.template.value;
+
+					tag += '}';
+				}
+
+				setTag(tag);
+			}
+		//-->
+	</script>
+	<table width="100%" class="jem_auto adminform">
+		<?php $this->_showResizeOptionsRow('jem_auto', 4) ?>
+		<tr>
+			<td>
+			<?php echo JText::_('MAX_ARTICLE'); ?>
+			 </td>
+			 <td>
+			 	<input type="text" name="max_article" style="width:50px" value="" onchange="updateTag();"/>
+			</td>
+			<td>
+			<?php echo JText::_('MAX_STARTING_DATE'); ?>
+			 </td>
+			 <td>
+			 	<?php $delayType = acymailing_get('type.delay'); $delayType->onChange = "updateTag();"; echo $delayType->display('delayevent',7776000,3); ?>
+			</td>
+		</tr>
+		<?php if($type == 'autonews') { ?>
+		<tr>
+			<td>
+			<?php 	echo JText::_('MIN_ARTICLE'); ?>
+			 </td>
+			 <td>
+			 <input name="min_article" size="10" value="1" onchange="updateTag();"/>
+			</td>
+			<td>
+			 </td>
+			 <td>
+			</td>
+		<?php } ?>
+			<td>
+			<?php 	echo JText::_('TEMPLATE'); ?>
+			 </td>
+			 <td>
+			 <select name="template" size="1" onchange="updateTag();">
+			 	<option value="event">event</option>
+			 	<option value="list">list</option>
+			 	<option value="summary">summary</option>
+			</td>
+			<td>
+			 </td>
+			 <td>
+			</td>
+		</tr>
+	</table>
+	<table class="jem_auto adminlist" cellpadding="1" width="100%">
+	<?php $k=0; foreach($categories as $oneCat){ ?>
+		<tr id="event_cat<?php echo $oneCat->id ?>" class="<?php echo "row$k"; ?>" onclick="applyAutoEvent(<?php echo $oneCat->id ?>,'<?php echo "row$k" ?>');" style="cursor:pointer;">
+			<td>
+			<?php
+				if(!empty($oneCat->parent_id)) echo $categories[$oneCat->parent_id]->catname.' => ';
+				echo $oneCat->catname;
+			?>
+			</td>
+		</tr>
+	<?php $k = 1 - $k; } ?>
+	</table>
+	<?php
+
+	$this->_initResizeOptionsScript();
+
+	echo $tabs->endPanel();
+	echo $tabs->endPane();
+
+	//End of the function
+	 }
+
+	 function acymailing_replacetags(&$email,$send = true){
+	 	$this->_replaceAuto($email);
+	 	$this->_replaceEvents($email);
+	 }
+
+	 function _replaceEvents(&$email){
+		$match = '#{jem:(.*)}#Ui';
+		$variables = array('body','altbody');
+		$found = false;
+		foreach($variables as $var){
+			if(empty($email->$var)) continue;
+			$found = preg_match_all($match,$email->$var,$results[$var]) || $found;
+			//we unset the results so that we won't handle it later... it will save some memory and processing
+			if(empty($results[$var][0])) unset($results[$var]);
+		}
+
+		//If we didn't find anything...
+		if(!$found) return;
+
+		include_once(ACYMAILING_ROOT.'components'.DS.'com_jem'.DS.'helpers'.DS.'helper.php');
+		include_once(ACYMAILING_ROOT.'components'.DS.'com_jem'.DS.'classes'.DS.'image.class.php');
+		include_once(ACYMAILING_ROOT.'components'.DS.'com_jem'.DS.'classes'.DS.'output.class.php');
+		$mailerHelper = acymailing_get('helper.mailer');
+
+		$resultshtml = array();
+		$resultstext = array();
+		foreach($results as $var => $allresults){
+			foreach($allresults[0] as $i => $oneTag){
+				//Don't need to process twice a tag we already have!
+				if(isset($resultshtml[$oneTag])) continue;
+
+				$resultshtml[$oneTag] = $this->_replaceEvent($allresults,$i);
+				$resultstext[$oneTag] = $mailerHelper->textVersion($resultshtml[$oneTag]);
+			}
+		}
+
+		$email->body = str_replace(array_keys($resultshtml),$resultshtml,$email->body);
+		$email->altbody = str_replace(array_keys($resultstext),$resultstext,$email->altbody);
+	 }
+
+ 	function _replaceEvent(&$allresults,$i)
+ 	{
+ 		// Transform the tag properly...
+ 		$arguments = explode('|',$allresults[1][$i]);
+ 		if (strlen($arguments[0]) === 0)
+		{
+			return '';
+		}
+ 		$result = '';
+		$tag = new stdClass();
+		$tag->itemid = intval($this->params->get('itemid'));
+		for($i=1,$a=count($arguments);$i<$a;$i++){
+			$args = explode(':',$arguments[$i]);
+			$arg0 = trim($args[0]);
+			if(isset($args[1])){
+				$tag->$arg0 = $args[1];
+			}else{
+				$tag->$arg0 = true;
+			}
+		}
+
+		// The first argument is a list of events...
+		$allEvents = explode('-',$arguments[0]);
+
+		foreach ($allEvents as $oneEvent)
+		{
+			$tag->id = (int) $oneEvent;
+
+			// Load the informations of the product...
+			//$query = 'SELECT d.*, b.*, a.*, cn.* FROM `#__jem_events` as a ';
+			//$query .= 'LEFT JOIN `#__jem_venues` AS b ON b.id = a.locid ';
+			//$query .= 'LEFT JOIN `#__jem_cats_event_relations` AS c ON a.`id` = c.itemid ';
+			//$query .= 'LEFT JOIN `#__jem_categories` AS d ON c.`catid` = d.id ';
+			//$query .= 'LEFT JOIN #__contact_details AS cn ON cn.id = a.contactid ';
+			$query = ' SELECT a.id, a.alias,a.dates, a.registra, a.featured, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.maxplaces, a.waitinglist, a.fulltext,'
+				. 'a.introtext, a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10, '
+				. ' l.venue, l.city, l.state, l.url, l.street, ct.name AS countryname, l.postalcode, '
+				. ' c.catname, c.id AS catid,'
+				. 'cn.id as conid, cn.name as conname, cn.telephone as contelephone, cn.mobile as conmobile, cn.email_to as conemail_to,'
+				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
+				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug,'
+				. ' CASE WHEN CHAR_LENGTH(cn.alias) THEN CONCAT_WS(\':\', a.contactid, cn.alias) ELSE a.contactid END as contactslug'
+				. ' FROM #__jem_events AS a'
+				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+				. ' LEFT JOIN #__jem_countries AS ct ON ct.iso2 = l.country '
+				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
+				. ' LEFT JOIN #__contact_details AS cn ON cn.id = a.contactid ';
+			$query .= 'WHERE a.id = '.(int) $tag->id.' LIMIT 1';
+
+			$db = JFactory::getDBO();
+			$db->setQuery($query);
+			$event = $db->loadObject();
+
+			if(empty($event)){
+				$app =& JFactory::getApplication();
+				if($app->isAdmin()){
+					$app->enqueueMessage('The event "'.$tag->id.'" could not be loaded','notice');
+				}
+				continue;
+			}
+
+// 			$date = ELOutput::formatdate($event->dates, $event->times);
+// 			if(!empty($event->times)) $date .= ' '.ELOutput::formattime($event->dates, $event->times);
+// 			if ($event->enddates){
+// 				$date .= ' - '.ELOutput::formatdate($event->enddates, $event->endtimes);
+// 				if(!empty($event->endtimes)) $date .= ' '.ELOutput::formattime($event->dates, $event->endtimes);
+// 			}
+
+			$date = JEMOutput::formatShortDateTime($event->dates, $event->times,
+						$event->enddates, $event->endtimes);
+
+			$link = 'index.php?option=com_jem&view=event&id='.$event->id.':'.$event->alias;
+			if(!empty($tag->itemid)) $link .= '&Itemid='.$tag->itemid;
+			if(!empty($tag->autologin)) $link.= (strpos($link,'?') ? '&' : '?') . 'user={usertag:username|urlencode}&passw={usertag:password|urlencode}';
+			$link = acymailing_frontendLink($link);
+
+			//Check if the template exists...
+			$template = '';
+			if (!empty($tag->template) ){
+				$template = '_'.$tag->template;
+			}
+
+			if(file_exists(ACYMAILING_MEDIA.'plugins'.DS.'tagjem'.$template.'.php')){
+				ob_start();
+				require(ACYMAILING_MEDIA.'plugins'.DS.'tagjem'.$template.'.php');
+				$result .= ob_get_clean();
+			}else{
+				$result .= '<div class="acymailing_content">';
+				if(!empty($event->datimage)){
+					$imageFile = file_exists(ACYMAILING_ROOT.'images'.DS.'jem'.DS.'events'.DS.'small'.DS.$event->datimage) ? ACYMAILING_LIVE.'images/jem/events/small/'.$event->datimage : ACYMAILING_LIVE.'images/jem/events/'.$event->datimage;
+					$result .= '<table cellspacing="5" cellpadding="0" border="0"><tr><td valign="top"><a style="text-decoration:none;border:0" target="_blank" href="'.$link.'" ><img src="'.$imageFile.'"/></a></td><td style="padding-left:5px" valign="top">';
+				}
+				$result .= '<a style="text-decoration:none;" name="event-'.$event->id.'" target="_blank" href="'.$link.'"><h2 class="acymailing_title">'.$event->title;
+				if (!empty($event->custom1)) {
+					$result .= '<br/><em>'.$event->custom1.'</em>';
+				}
+				$result .= '</h2></a>';
+				$result .= '<span class="eventdate">'.$date.'</span>';
+				$result .= '<br/>'.$event->venue;
+				if(!empty($event->datimage)){
+
+					$result .= '</td></tr></table>';
+				}
+				$result .= '</div>';
+			}
+ 		}
+
+		// Resize images
+		if (!empty ($tag->images))
+		{
+			$size = explode('x', $tag->images);
+			if (count($size) === 2)
+			{
+				$options = new stdClass();
+				$options->maxWidth = max(intval($size[0]), 1);
+				$options->maxHeight = max(intval($size[1]), 1);
+				$result = $this->_resizeImages($result, $options);
+			}
+		}
+
+		return $result;
+	}
+
+	function _replaceAuto(&$email){
+		$this->acymailing_generateautonews($email);
+
+		if(!empty($this->tags)){
+			$email->body = str_replace(array_keys($this->tags),$this->tags,$email->body);
+			if(!empty($email->altbody)) $email->altbody = str_replace(array_keys($this->tags),$this->tags,$email->altbody);
+		}
+	}
+
+	function acymailing_generateautonews(&$email){
+
+		$return = new stdClass();
+		$return->status = true;
+		$return->message = '';
+
+		$time = time();
+		//Check if we should generate the autoNewsletter or not...
+		$match = '#{autojem:(.*)}#Ui';
+		$variables = array('body','altbody');
+		$found = false;
+		foreach($variables as $var){
+			if(empty($email->$var)) continue;
+			$found = preg_match_all($match,$email->$var,$results[$var]) || $found;
+			//we unset the results so that we won't handle it later... it will save some memory and processing
+			if(empty($results[$var][0])) unset($results[$var]);
+		}
+
+		//If we didn't find anything... so we won't try to stop the generation
+		if(!$found) return $return;
+
+		$this->tags = array();
+		$db = JFactory::getDBO();
+
+		foreach($results as $var => $allresults){
+			foreach($allresults[0] as $i => $oneTag){
+				if(isset($this->tags[$oneTag])) continue;
+
+				$arguments = explode('|',$allresults[1][$i]);
+				//The first argument is a list of sections and cats...
+				$allcats = explode('-',$arguments[0]);
+				$parameter = new stdClass();
+				for($i=1;$i<count($arguments);$i++){
+					$args = explode(':',$arguments[$i]);
+					$arg0 = trim($args[0]);
+					if(isset($args[1])){
+						$parameter->$arg0 = $args[1];
+					}else{
+						$parameter->$arg0 = true;
+					}
+				}
+
+				//Load the articles based on all arguments...
+				$selectedArea = array();
+				foreach($allcats as $oneCat){
+					if(empty($oneCat)) continue;
+					$selectedArea[] = 'b.`catid` = '.(int) $oneCat;
+				}
+
+				$query = 'SELECT DISTINCT a.`id` FROM `#__jem_events` as a ';
+				$query .= 'LEFT JOIN #__jem_cats_event_relations as b on a.id = b.itemid ';
+				$where = array();
+				if(!empty($selectedArea)){
+					$where[] = implode(' OR ',$selectedArea);
+				}
+
+				$where[] = 'a.`published` = 1';
+				if($this->params->get('showfeatured','yes') == 'yes'){
+					$where[] = 'a.`featured` = 1';
+				}
+				if(!empty($parameter->enddates)){
+					$where[] = 'a.`enddates` >= '.$db->Quote(date( 'Y-m-d',$time));
+				}else{
+					$where[] = 'a.`dates` >= '.$db->Quote(date( 'Y-m-d',$time));
+				}
+				if(!empty($parameter->delay)) $where[] = 'a.`dates` <= '.$db->Quote(date( 'Y-m-d',$time + $parameter->delay));
+
+				$query .= ' WHERE ('.implode(') AND (',$where).')';
+				$query .= ' ORDER BY a.`dates` ASC, a.`times` ASC';
+				if(!empty($parameter->max)) $query .= ' LIMIT '.(int) $parameter->max;
+
+				$db->setQuery($query);
+				$allArticles = acymailing_loadResultArray($db);
+
+				if(!empty($parameter->min) AND count($allArticles)< $parameter->min){
+					//We won't generate the Newsletter
+					$return->status = false;
+					$return->message = 'Not enough events for the tag '.$oneTag.' : '.count($allArticles).' / '.$parameter->min;
+				}
+
+				$stringTag = '';
+				if(!empty($allArticles)){
+					if(file_exists(ACYMAILING_MEDIA.'plugins'.DS.'autojem.php')){
+						ob_start();
+						require(ACYMAILING_MEDIA.'plugins'.DS.'autojem.php');
+						$stringTag = ob_get_clean();
+					}else{
+						//we insert the article tag one after the other in a table as they are already sorted
+						$stringTag .= '<table cellspacing="0" cellpadding="0" border="0">';
+						foreach($allArticles as $oneArticleId){
+							$stringTag .= '<tr><td>';
+							$args = array();
+							$args[] = 'jem:'.$oneArticleId;
+							if (!empty ($parameter->images))
+							{
+								$args[] = 'images:'.$parameter->images;
+							}
+							if (!empty ($parameter->template))
+							{
+								$args[] = 'template:'.$parameter->template;
+							}
+							$stringTag .= '{'.implode('|',$args).'}';
+							$stringTag .= '</td></tr>';
+						}
+						$stringTag .= '</table>';
+					}
+				}
+
+				$this->tags[$oneTag] = $stringTag;
+			}
+		}
+
+		return $return;
+	}
+
+	/**
+	 * Resize all images (img tag) contained in a text
+	 * @param $text html content to search images in
+	 * @param $option size beyond which image have to be resized
+	 * ($options->maxWidth, $options->maxHeight)
+	 */
+	function _resizeImages($text, $options)
+	{
+		if (!empty($options->maxHeight) && !empty($options->maxWidth))
+		{
+			$pictureHelper = acymailing_get('helper.acypict');
+			$pictureHelper->maxHeight = $options->maxHeight;
+			$pictureHelper->maxWidth = $options->maxWidth;
+			if ($pictureHelper->available())
+				$text = $pictureHelper->resizePictures($text);
+		}
+
+		return $text;
+	}
+
+	/**
+	 * Show a form row displaying images resizing options
+	 * @param $tabname id of the class to display the row in
+	 * @param $cols number of columns in the table
+	 */
+	function _showResizeOptionsRow($tabname, $cols)
+	{
+		$resize = JRequest::getBool($tabname.'_resizeimages', false);
+		$width = JRequest::getInt($tabname.'_imgwidth', 160);
+		$height = JRequest::getInt($tabname.'_imgheight', 160);
+
+		?>
+		<tr><td colspan="<?php echo $cols ?>">
+			<?php echo JText::_('IMAGES') ?>:
+			<span class="resize-options">
+
+				<input name="<?php echo $tabname ?>_resizeimages" id="<?php echo $tabname ?>_resizeimages" type="checkbox" onclick="updateTag('<?php echo $tabname ?>');"
+					<?php if ($resize) echo 'checked="checked"' ?> />
+				<label for="<?php echo $tabname ?>_resizeimages"><?php echo JText::_('RESIZED') ?></label>
+
+				<span class="imagesize">:
+					<?php echo JText::_('CAPTCHA_WIDTH') ?>
+					<input type="text" name="<?php echo $tabname ?>_imgwidth" type="text" onchange="updateTag('<?php echo $tabname ?>');" style="width:30px;" value="<?php echo $width ?>" />
+					<?php echo JText::_('CAPTCHA_HEIGHT') ?>
+					<input type="text" name="<?php echo $tabname ?>_imgheight" type="text" onchange="updateTag('<?php echo $tabname ?>');" style="width:30px;" value="<?php echo $height ?>" />
+				</span>
+			</span>
+		</td></tr>
+		<?php
+	}
+
+	/**
+	 * Load the script used for toggling images resize options
+	 */
+	function _initResizeOptionsScript()
+	{
+		?>
+		<script>
+		<!--
+			// Toggle image resize options
+			$$('.resize-options').each(function(item)
+			{
+				var widthHeight = item.getChildren()[2];
+
+				if (!item.getChildren('input')[0].getAttribute('checked'))
+				{
+					widthHeight.setStyle('display', 'none');
+				}
+				item.addEvent('change', function()
+				{
+					if (item.getChildren('input')[0].checked)
+					{
+						widthHeight.setStyle('display', 'inline');
+					}
+					else
+					{
+						widthHeight.setStyle('display', 'none');
+					}
+				});
+			});
+		//-->
+		</script>
+		<?php
+	}
+
+}//endclass

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.0.3
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -179,6 +179,7 @@ class JemHelper {
 					$new_event->recurrence_counter = $recurrence_row['counter'] + 1;
 					$new_event->dates = $recurrence_row['dates'];
 					$new_event->enddates = $recurrence_row['enddates'];
+					$new_event->_autocreate = true; // to tell table class this has to be stored AS IS (the underscore is important!)
 
 					if ($new_event->store())
 					{
@@ -374,7 +375,7 @@ class JemHelper {
 	 *
 	 * @param string $type one of 'event', 'venue', 'category', 'events', 'venues', 'categories'
 	 * @param mixed  $filename filename as stored in db, or null (which deletes all unused files)
-	 * 
+	 *
 	 * @return bool true on success, false on error
 	 * @access public
 	 */

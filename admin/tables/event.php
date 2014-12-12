@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.1
+ * @version 2.0.3
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -231,7 +231,8 @@ class JEMTableEvent extends JTable
 			$this->datimage = '';
 		}
 
-		if (!$backend) {
+		// user check on frontend but not if caused by cleanup function (recurrence)
+		if (!$backend && !(isset($this->_autocreate) && ($this->_autocreate === true))) {
 			/*	check if the user has the required rank for autopublish	*/
 			$maintainer = JEMUser::ismaintainer('publish');
 			$autopubev = JEMUser::validate_user($jemsettings->evpubrec, $jemsettings->autopubl);
