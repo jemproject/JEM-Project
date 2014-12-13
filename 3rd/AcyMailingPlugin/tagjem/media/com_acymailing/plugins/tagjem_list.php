@@ -3,21 +3,21 @@
  * Version 0.2
  * @copyright	Copyright (C) 2014 Thamesmog.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- * Based on Eventlist11 tag and JEM spoecific code by Jojo Murer
+ * Based on Eventlist11 tag and JEM specific code by Jojo Murer
  */
 defined('_JEXEC') or die;
 
 include_once(ACYMAILING_ROOT.'components'.DS.'com_jem'.DS.'helpers'.DS.'route.php');
 $result .= '<div class="acymailing_content">';
 $result .= '<br/>';
-$link =  preg_replace('/\/administrator\//', '',JRoute::_(JEMHelperRoute::getEventRoute($event->slug)));
+$link =  preg_replace('/\/administrator\//', '', JRoute::_(JEMHelperRoute::getEventRoute($event->slug)));
 $result .= '<a href="'.acymailing_frontendLink($link).'" itemprop="url">';
 $result .= '<h2><span itemprop="name">'.$event->title.'</span></h2></a>';
 $result .= '<br/><p>';
 $result .= JEMOutput::formatShortDateTime($event->dates, $event->times,
-							$event->enddates, $event->endtimes);
+                                          $event->enddates, $event->endtimes);
 //$result .= JEMOutput::formatSchemaOrgDateTime($event->dates, $event->times,
-//							$event->enddates, $event->endtimes);
+//                                              $event->enddates, $event->endtimes);
 $result .= '</p>';
 //$result .= '<p>';
 //$result .=  '<strong>Art der Veranstaltung:</strong> '.$event->custom1;
@@ -29,21 +29,21 @@ $result .= '</p>';
 //if (!empty($event->introtext)) {
 //	$result .= '<p>';
 //	$result .= '<br/>'.$event->introtext.'</p>';
-//	}
+//}
 
-/* Veranstaltungsort */		
-if ( $event->locid ) {
+/* Veranstaltungsort */
+if ($event->locid) {
 //	$result .= '<div class="venue" style="display:block;float:left;width:200px;">';
 	$result .= '<p>';
 //	$result .= '<br/><strong>Ort:</strong> ';
-	$link = preg_replace('/\/administrator\//', '',JRoute::_(JEMHelperRoute::getVenueRoute($event->venueslug)));
+	$link = preg_replace('/\/administrator\//', '', JRoute::_(JEMHelperRoute::getVenueRoute($event->venueslug)));
 	$result .= $event->locid != 0 ? "<a href='".acymailing_frontendLink($link)."'>".$event->venue."</a>" : '';
 /* Adresse */
-	//	$result .= !empty($event->street) ? '<br/>'.$event->street : '';
+//	$result .= !empty($event->street) ? '<br/>'.$event->street : '';
 //	$result .= !empty($event->city) ? '<br/>'. $event->city : '';
 //	$result .= !empty($event->postalcode) ? '<br/>'. $event->postalcode : '';
 	$result .= '</p>';
-//	$result .= '</div>';	
+//	$result .= '</div>';
 }
 /* Introtext */
 //$result .= '<p>';
@@ -60,13 +60,13 @@ if (!empty($event->conname)) {
 	$cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
 
 	$result .= 'Mail: <a href="'.$cntlink2.'">'.$contact.'</a>';
-	if ( $event->conemail_to ){
+	if ($event->conemail_to) {
 		$result .= '<br/><a href="mailto:'.$event->conemail_to.'">'.$event->conemail_to.'</a>';
 	}
-	//if ($event->contelephone){
+	//if ($event->contelephone) {
 	//	$result .= '<br/>tel:'.$event->contelephone;
 	//}
-	if ($event->conmobile){
+	if ($event->conmobile) {
 		$result .= '<br/>SMS:'.$event->conmobile;
 	}
 	$result .= '</p>';

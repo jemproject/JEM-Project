@@ -3,7 +3,7 @@
  * Version 0.2
  * @copyright	Copyright (C) 2014 Thamesmog.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- * Based on Eventlist11 tag and JEM spoecific code by Jojo Murer
+ * Based on Eventlist11 tag and JEM specific code by Jojo Murer
  */
 defined('_JEXEC') or die;
 
@@ -12,16 +12,16 @@ include_once(ACYMAILING_ROOT.'components'.DS.'com_jem'.DS.'helpers'.DS.'route.ph
 $result .= '<div class="acymailing_content">';
 $result .= '<p>';
 $result .= JEMOutput::formatShortDateTime($event->dates, $event->times,
-							$event->enddates, $event->endtimes);
+                                          $event->enddates, $event->endtimes);
 $result .= JEMOutput::formatSchemaOrgDateTime($event->dates, $event->times,
-							$event->enddates, $event->endtimes);
+                                              $event->enddates, $event->endtimes);
 $result .= '</p>';
 
-$link =  preg_replace('/\/administrator\//', '',JRoute::_(JEMHelperRoute::getEventRoute($event->slug)));
+$link =  preg_replace('/\/administrator\//', '', JRoute::_(JEMHelperRoute::getEventRoute($event->slug)));
 $result .= '<a href="'.acymailing_frontendLink($link).'" itemprop="url">';
 $result .= '<h2><span itemprop="name">'.$event->title.'</span></h2></a>';
-$result .= '<p>';
 
+$result .= '<p>';
 //$link =  preg_replace('/\/administrator\//', '',JRoute::_(JEMHelperRoute::getEventRoute($event->slug)));
 //$result .= '<a href="'.acymailing_frontendLink($link).'" itemprop="url">';
 //$result .= '<span itemprop="name">'.$event->title.'</span></a>';
@@ -32,7 +32,7 @@ $result .= '<p>';
 //$result .= '</p>';
 //$result .= '<p>';
 //
-//$result .= '<br/>'.$event->introtext.'</p>';		
+//$result .= '<br/>'.$event->introtext.'</p>';
 //if ( $event->locid ) {
 //	$result .= '<div class="venue" style="display:block;float:left;width:200px;">';
 //	$result .= '<p>';
@@ -55,13 +55,13 @@ $result .= '<p>';
 //$cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
 //
 //$result .= '<br/><strong>Contact: </strong><a href="'.$cntlink2.'">'.$contact.'</a>';
-//if ( $event->conemail_to ){
+//if ($event->conemail_to) {
 //	$result .= '<br/><a href="mailto:'.$event->conemail_to.'">'.$event->conemail_to.'</a>';
 //}
-//if ($event->contelephone){
+//if ($event->contelephone) {
 //	$result .= '<br/>tel:'.$event->contelephone;
 //}
-//if ($event->conmobile){
+//if ($event->conmobile) {
 //	$result .= '<br/>mob:'.$event->conmobile;
 //}
 //$result .= '</p>';
