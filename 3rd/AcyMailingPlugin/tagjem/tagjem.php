@@ -1,9 +1,10 @@
 <?php
 /**
- * Version 0.3
+ * Version 1.9.0
  * @copyright	Copyright (C) 2014 Ghost Art digital media.
+ * @copyright	Copyright (C) 2013 - 2014 joomlaeventmanager.net. All rights reserved.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- * Based on Eventlist11 tag and JEM spoecific code by Jojo Murer
+ * Based on Eventlist11 tag and JEM specific code by Jojo Murer / JEM Community
  */
 defined('_JEXEC') or die;
 
@@ -20,6 +21,7 @@ class plgAcymailingTagjem extends JPlugin
 			$plugin =& JPluginHelper::getPlugin('acymailing', 'tagjem');
 			$this->params = new JParameter($plugin->params);
 		}
+		$this->loadLanguage();
 	}
 
 	function acymailing_getPluginType()
@@ -122,16 +124,16 @@ class plgAcymailingTagjem extends JPlugin
 			<thead>
 				<tr>
 					<th class="title">
-						<?php echo JHTML::_('grid.sort', JText::_('FIELD_TITLE'), 'a.title', $pageInfo->filter->order->dir,$pageInfo->filter->order->value); ?>
+						<?php echo JHTML::_('grid.sort', JText::_('PLG_TAGJEM_TITLE'), 'a.title', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
 					</th>
 					<th class="title">
-						<?php echo JHTML::_('grid.sort', JText::_('ACY_DESCRIPTION'), 'a.introtext', $pageInfo->filter->order->dir,$pageInfo->filter->order->value); ?>
+						<?php echo JHTML::_('grid.sort', JText::_('PLG_TAGJEM_DESCRIPTION'), 'a.introtext', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
 					</th>
 					<th class="title">
-						<?php echo JHTML::_('grid.sort', JText::_('FIELD_DATE'), 'a.dates', $pageInfo->filter->order->dir,$pageInfo->filter->order->value); ?>
+						<?php echo JHTML::_('grid.sort', JText::_('PLG_TAGJEM_DATE'), 'a.dates', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
 					</th>
 					<th class="title titleid">
-						<?php echo JHTML::_('grid.sort', JText::_('ACY_ID'), 'a.id', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
+						<?php echo JHTML::_('grid.sort', JText::_('PLG_TAGJEM_ID'), 'a.id', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
 					</th>
 				</tr>
 			</thead>
@@ -180,7 +182,7 @@ class plgAcymailingTagjem extends JPlugin
 		echo $tabs->startPanel(JText::_('UPCOMING_EVENTS'), 'jem_auto');
 		$type = JRequest::getString('type');
 
-		$db->setQuery('SELECT a.* FROM `#__jem_categories` as a ORDER BY a.`ordering` ASC');
+		$db->setQuery('SELECT a.* FROM `#__jem_categories` as a WHERE a.alias NOT LIKE "root" ORDER BY a.`ordering` ASC');
 		$categories = $db->loadObjectList('id');
 		?>
 		<br style="font-size:1px"/>
@@ -293,15 +295,19 @@ class plgAcymailingTagjem extends JPlugin
 				</td>
 				<td>
 				</td>
+			</tr>
 			<?php } ?>
+			<tr>
 				<td>
-					<?php 	echo JText::_('TEMPLATE'); ?>
+					<?php 	echo JText::_('PLG_TAGJEM_TEMPLATE'); ?>
 				</td>
 				<td>
+					<?php /* TODO: Collect templates dynamically. */ ?>
 					<select name="template" size="1" onchange="updateTag();">
 						<option value="event">event</option>
 						<option value="list">list</option>
 						<option value="summary">summary</option>
+					</select>
 				</td>
 				<td>
 				</td>
@@ -315,7 +321,7 @@ class plgAcymailingTagjem extends JPlugin
 			<tr id="event_cat<?php echo $oneCat->id ?>" class="<?php echo "row$k"; ?>" onclick="applyAutoEvent(<?php echo $oneCat->id ?>,'<?php echo "row$k" ?>');" style="cursor:pointer;">
 				<td>
 				<?php
-					if (!empty($oneCat->parent_id)) {
+					if (!empty($oneCat->parent_id) && ($oneCat->parent_id > 1) /* exclude 'root' */) {
 						echo $categories[$oneCat->parent_id]->catname.' => ';
 					}
 					echo $oneCat->catname;
@@ -406,6 +412,7 @@ class plgAcymailingTagjem extends JPlugin
 		// The first argument is a list of events...
 		$allEvents = explode('-', $arguments[0]);
 
+		$db = JFactory::getDBO();
 		foreach ($allEvents as $oneEvent) {
 			$tag->id = (int)$oneEvent;
 
@@ -419,7 +426,8 @@ class plgAcymailingTagjem extends JPlugin
 			       . ' a.introtext, a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10, '
 			       . ' l.venue, l.city, l.state, l.url, l.street, ct.name AS countryname, l.postalcode, '
 			       . ' c.catname, c.id AS catid,'
-			       . ' cn.id as conid, cn.name as conname, cn.telephone as contelephone, cn.mobile as conmobile, cn.email_to as conemail_to,'
+			       // TODO: get contact params and ensure not to show private things! Until that only show name and link to contact view.
+			       . ' cn.id as conid, cn.name as conname,' // cn.telephone as contelephone, cn.mobile as conmobile, cn.email_to as conemail_to,'
 			       . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 			       . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug,'
 			       . ' CASE WHEN CHAR_LENGTH(cn.alias) THEN CONCAT_WS(\':\', a.contactid, cn.alias) ELSE a.contactid END as contactslug'
@@ -431,12 +439,11 @@ class plgAcymailingTagjem extends JPlugin
 			       . ' LEFT JOIN #__contact_details AS cn ON cn.id = a.contactid ';
 			$query .= 'WHERE a.id = '.(int)$tag->id.' LIMIT 1';
 
-			$db = JFactory::getDBO();
 			$db->setQuery($query);
 			$event = $db->loadObject();
 
 			if (empty($event)) {
-				$app =& JFactory::getApplication();
+				$app = JFactory::getApplication();
 				if ($app->isAdmin()) {
 					$app->enqueueMessage('The event "'.$tag->id.'" could not be loaded', 'notice');
 				}
@@ -473,19 +480,21 @@ class plgAcymailingTagjem extends JPlugin
 				require(ACYMAILING_MEDIA.'plugins'.DS.'tagjem'.$template.'.php');
 				$result .= ob_get_clean();
 			} else {
-				$result .= '<div class="acymailing_content">';
+				$result .= '<div class="acymailing_content" style="margin-top:12px">';
 				if (!empty($event->datimage)) {
 					$imageFile = file_exists(ACYMAILING_ROOT.'images'.DS.'jem'.DS.'events'.DS.'small'.DS.$event->datimage) ? ACYMAILING_LIVE.'images/jem/events/small/'.$event->datimage : ACYMAILING_LIVE.'images/jem/events/'.$event->datimage;
 					$result .= '<table cellspacing="5" cellpadding="0" border="0"><tr><td valign="top"><a style="text-decoration:none;border:0" target="_blank" href="'.$link.'" ><img src="'.$imageFile.'"/></a></td><td style="padding-left:5px" valign="top">';
 				}
-				$result .= '<a style="text-decoration:none;" name="event-'.$event->id.'" target="_blank" href="'.$link.'"><h2 class="acymailing_title">'.$event->title;
+				$result .= '<a style="text-decoration:none;" name="event-'.$event->id.'" target="_blank" href="'.$link.'"><h2 class="acymailing_title" style="margin-top:0">'.$event->title;
 				if (!empty($event->custom1)) {
 					$result .= '<br/><em>'.$event->custom1.'</em>';
 				}
 				$result .= '</h2></a>';
-				$result .= '<span class="eventdate">'.$date.'</span>';
-				$result .= '<br/>'.$event->venue;
-				if(!empty($event->datimage)){
+				$result .= '<p><span class="eventdate">'.$date.'</span></p>';
+				if (!empty($event->venue)) {
+					$result .= '<p>'.$event->venue.'</p>';
+				}
+				if (!empty($event->datimage)) {
 					$result .= '</td></tr></table>';
 				}
 				$result .= '</div>';
@@ -681,17 +690,17 @@ class plgAcymailingTagjem extends JPlugin
 
 		?>
 		<tr><td colspan="<?php echo $cols ?>">
-			<?php echo JText::_('IMAGES') ?>:
+			<?php echo JText::_('PLG_TAGJEM_IMAGES') ?>:
 			<span class="resize-options">
 
 				<input name="<?php echo $tabname ?>_resizeimages" id="<?php echo $tabname ?>_resizeimages" type="checkbox" onclick="updateTag('<?php echo $tabname ?>');"
 					<?php if ($resize) echo 'checked="checked"' ?> />
-				<label for="<?php echo $tabname ?>_resizeimages"><?php echo JText::_('RESIZED') ?></label>
+				<label for="<?php echo $tabname ?>_resizeimages"><?php echo JText::_('PLG_TAGJEM_RESIZE') ?></label>
 
 				<span class="imagesize">:
-					<?php echo JText::_('CAPTCHA_WIDTH') ?>
+					<?php echo JText::_('PLG_TAGJEM_WIDTH') ?>
 					<input type="text" name="<?php echo $tabname ?>_imgwidth" type="text" onchange="updateTag('<?php echo $tabname ?>');" style="width:30px;" value="<?php echo $width ?>" />
-					<?php echo JText::_('CAPTCHA_HEIGHT') ?>
+					<?php echo JText::_('PLG_TAGJEM_HEIGHT') ?>
 					<input type="text" name="<?php echo $tabname ?>_imgheight" type="text" onchange="updateTag('<?php echo $tabname ?>');" style="width:30px;" value="<?php echo $height ?>" />
 				</span>
 			</span>

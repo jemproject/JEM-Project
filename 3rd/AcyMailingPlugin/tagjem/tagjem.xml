@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE install SYSTEM "http://dev.joomla.org/xml/1.5/plugin-install.dtd">
-<install type="plugin" version="1.5" method="upgrade" group="acymailing">
+<extension version="2.5" type="plugin" group="acymailing" method="upgrade">
 	<name>AcyMailing Tag : insert events from JEM 2.0+</name>
-	<creationDate>October 2010</creationDate>
-	<version>1.7.0</version>
-	<author>Acyba</author>
-	<authorEmail>dev@acyba.com</authorEmail>
-	<authorUrl>http://www.acyba.com</authorUrl>
-	<copyright>Copyright (C) 2009 - 2014 ACYBA SARL - All rights reserved.</copyright>
-	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL</license>
+	<creationDate>December 2014</creationDate>
+	<version>1.9.0</version>
+	<author>Acyba, JEM Community</author>
+	<authorEmail>dev@acyba.com, info@joomlaeventmanager.net</authorEmail>
+	<authorUrl>http://www.acyba.com, http://www.joomlaeventmanager.net</authorUrl>
+	<copyright>Copyright (C) 2009 - 2010 ACYBA SARL - All rights reserved., Copyright (C) 2013-2014 joomlaeventmanager.net</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<description>This plugin enables you to insert events from JEM inside any e-mail sent by AcyMailing</description>
+
 	<files>
 		<filename plugin="tagjem">tagjem.php</filename>
+		<filename>index.html</filename>
+		<folder>language</folder>
 	</files>
-	<params addpath="/components/com_acymailing/params">
-		<param name="help" type="help" label="Help" description="Click on the help button to get some help" default="plugin-tagjem"/>
-		<param name="hidepastevents" type="radio" default="yes" label="Hide Past Events" description="Do you want to hide past events?">
-			<option value="no">No, display all events</option>
-			<option value="yes">Yes</option>
-		</param>
-		<param name="itemid" size="10" type="text" default="" label="Default Itemid" description="ID of the menu attached to JEM" />
-	</params>
+
+	<media folder="media/com_acymailing/plugins" destination="com_acymailing/plugins">
+		<filename>index.html</filename>
+		<filename>tagjem_event.php</filename>
+		<filename>tagjem_list.php</filename>
+		<filename>tagjem_summary.php</filename>
+	</media>
+
 	<config>
 		<fields name="params" addfieldpath="/components/com_acymailing/params">
 			<fieldset name="basic">
@@ -33,8 +35,8 @@
 				<field name="showfeatured" type="radio" default="yes" label="Featured Events">
 					<option value="no">No, display all events</option>
 					<option value="yes">Yes, only featured events</option>
-				</field>	
+				</field>
 			</fieldset>
 		</fields>
 	</config>
-</install>
+</extension>

@@ -1,19 +1,20 @@
 <?php
 /**
- * Version 0.2
+ * Version 1.9.0
  * @copyright	Copyright (C) 2014 Thamesmog.
+ * @copyright	Copyright (C) 2013 - 2014 joomlaeventmanager.net. All rights reserved.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- * Based on Eventlist11 tag and JEM specific code by Jojo Murer
+ * Based on Eventlist11 tag and JEM specific code by Jojo Murer / JEM Community
  */
 defined('_JEXEC') or die;
 
 include_once(ACYMAILING_ROOT.'components'.DS.'com_jem'.DS.'helpers'.DS.'route.php');
 $result .= '<div class="acymailing_content">';
 $result .= '<br/>';
-$link =  preg_replace('/\/administrator\//', '', JRoute::_(JEMHelperRoute::getEventRoute($event->slug)));
+$link =  preg_replace('/\/administrator\//', '', JRoute::_(JEMHelperRoute::getEventRoute($event->slug)));  // ???
 $result .= '<a href="'.acymailing_frontendLink($link).'" itemprop="url">';
 $result .= '<h2><span itemprop="name">'.$event->title.'</span></h2></a>';
-$result .= '<br/><p>';
+$result .= '<p>';
 $result .= JEMOutput::formatShortDateTime($event->dates, $event->times,
                                           $event->enddates, $event->endtimes);
 //$result .= JEMOutput::formatSchemaOrgDateTime($event->dates, $event->times,
@@ -36,7 +37,7 @@ if ($event->locid) {
 //	$result .= '<div class="venue" style="display:block;float:left;width:200px;">';
 	$result .= '<p>';
 //	$result .= '<br/><strong>Ort:</strong> ';
-	$link = preg_replace('/\/administrator\//', '', JRoute::_(JEMHelperRoute::getVenueRoute($event->venueslug)));
+	$link = preg_replace('/\/administrator\//', '', JRoute::_(JEMHelperRoute::getVenueRoute($event->venueslug)));  // ???
 	$result .= $event->locid != 0 ? "<a href='".acymailing_frontendLink($link)."'>".$event->venue."</a>" : '';
 /* Adresse */
 //	$result .= !empty($event->street) ? '<br/>'.$event->street : '';
@@ -59,15 +60,15 @@ if (!empty($event->conname)) {
 	$item = $menu->getItems('link', $needle, true);
 	$cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
 
-	$result .= 'Mail: <a href="'.$cntlink2.'">'.$contact.'</a>';
-	if ($event->conemail_to) {
+	$result .= JText::_('PLG_TAGJEM_CONTACT').': <a href="'.$cntlink2.'">'.$contact.'</a>';
+	if (!empty($event->conemail_to)) {
 		$result .= '<br/><a href="mailto:'.$event->conemail_to.'">'.$event->conemail_to.'</a>';
 	}
-	//if ($event->contelephone) {
-	//	$result .= '<br/>tel:'.$event->contelephone;
+	//if (!empty($event->contelephone)) {
+	//	$result .= '<br/>'.JText::_('PLG_TAGJEM_PHONE').': '.$event->contelephone;
 	//}
-	if ($event->conmobile) {
-		$result .= '<br/>SMS:'.$event->conmobile;
+	if (!empty($event->conmobile)) {
+		$result .= '<br/>'.JText::_('PLG_TAGJEM_CELLPHONE').': '.$event->conmobile;
 	}
 	$result .= '</p>';
 	//$result .= '</div>';
