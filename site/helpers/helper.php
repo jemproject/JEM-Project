@@ -179,6 +179,7 @@ class JemHelper {
 					$new_event->recurrence_counter = $recurrence_row['counter'] + 1;
 					$new_event->dates = $recurrence_row['dates'];
 					$new_event->enddates = $recurrence_row['enddates'];
+					$new_event->_autocreate = true; // to tell table class this has to be stored AS IS (the underscore is important!)
 
 					if ($new_event->store())
 					{
