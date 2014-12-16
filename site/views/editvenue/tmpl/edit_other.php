@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -31,7 +31,7 @@ defined('_JEXEC') or die;
 			<li>
 				<label for="userfile">
 					<?php echo JText::_('COM_JEM_IMAGE'); ?>
-					<small class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_NOTES'); ?>::<?php echo JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->jemsettings->sizelimit.' kb'; ?>">
+					<small <?php echo JEMOutput::tooltip(JText::_('COM_JEM_NOTES'), JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->jemsettings->sizelimit.' kb', 'editlinktip'); ?>>
 						<?php echo $this->infoimage; ?>
 					</small>
 				</label>
@@ -46,4 +46,4 @@ defined('_JEXEC') or die;
 		</ul>
 		<input type="hidden" name="removeimage" id="removeimage" value="0" />
 	</fieldset>
-	
+

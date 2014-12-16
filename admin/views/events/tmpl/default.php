@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -148,7 +148,7 @@ $(document).ready(function() {
 						<?php if ( $row->vchecked_out && ( $row->vchecked_out != $this->user->get('id') ) ) : ?>
 							<?php echo $this->escape($row->venue); ?>
 						<?php else : ?>
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_VENUE' );?>::<?php echo $row->venue; ?>">
+							<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_EDIT_VENUE'), $row->venue, 'editlinktip'); ?>>
 								<a href="<?php echo $venuelink; ?>">
 									<?php echo $this->escape($row->venue); ?>
 								</a>
@@ -184,7 +184,7 @@ $(document).ready(function() {
 						$overlib 	.= JText::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$row->modified_by.'<br />';
 					}
 					?>
-					<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_EVENTS_STATS'); ?>::<?php echo $overlib; ?>">
+					<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_EVENTS_STATS'), $overlib, 'editlinktip'); ?>>
 						<?php echo $image; ?>
 					</span>
 				</td>

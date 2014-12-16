@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -18,15 +18,16 @@ defined('_JEXEC') or die;
 	<?php foreach ($this->attachments as $file): ?>
 		<tr>
 			<td>
-				<span class="file-dl-icon hasTip file-name"
-					title="	
-					<?php 
-					$overlib  = JText::_('COM_JEM_FILE').': '.$this->escape($file->file).'<BR />';
-					$overlib .= JText::_('COM_JEM_FILE_NAME').': '.$this->escape($file->name).'<BR />';
-					$overlib .= JText::_('COM_JEM_FILE_DESCRIPTION').': '.$this->escape($file->description);
-					
-					echo JText::_('COM_JEM_DOWNLOAD').'::'.$overlib;?>">
-					
+				<?php
+				$overlib = JText::_('COM_JEM_FILE').': '.$this->escape($file->file);
+				if (!empty($file->name)) {
+					$overlib .= '<BR />'.JText::_('COM_JEM_FILE_NAME').': '.$this->escape($file->name);
+				}
+				if (!empty($file->description)) {
+					$overlib .= '<BR />'.JText::_('COM_JEM_FILE_DESCRIPTION').': '.$this->escape($file->description);
+				}
+				?>
+				<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_DOWNLOAD'), $overlib, 'file-dl-icon file-name'); ?>>
 					<?php
 						$filename	= $this->escape($file->name ? $file->name : $file->file);
 						$image		= JHtml::_('image','com_jem/download_16.png', JText::_('COM_JEM_DOWNLOAD'),NULL,true)." "."<span class=file-name>".$filename."</span>";

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -144,7 +144,7 @@ $(document).ready(function() {
 					$created 	= JHtml::_('date',$row->created,JText::_('DATE_FORMAT_LC2'));
 					$modified 		= JHtml::_('date',$row->modified,JText::_('DATE_FORMAT_LC2'));
 					$image 			= JHtml::_('image','com_jem/icon-16-info.png', NULL,NULL,true);
-					
+
 					$overlib 		= JText::_('COM_JEM_CREATED_AT').': '.$created.'<br />';
 					if ($row->author_ip != '') {
 						$overlib		.= JText::_('COM_JEM_WITH_IP').': '.$row->author_ip.'<br />';
@@ -154,7 +154,7 @@ $(document).ready(function() {
 						$overlib 	.= JText::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$row->modified_by.'<br />';
 					}
 					?>
-					<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_VENUES_STATS'); ?>::<?php echo $overlib; ?>">
+					<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_VENUES_STATS'), $overlib, 'editlinktip'); ?>>
 						<?php echo $image; ?>
 					</span>
 				</td>

@@ -1027,11 +1027,23 @@ class JemHelper {
 	 * Creates a tooltip
 	 */
 	static function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '', $time = '', $color = '') {
-		$tooltip = (htmlspecialchars($tooltip));
-		$title = (htmlspecialchars($title));
 
-		if ($title) {
-			$title = $title . '::';
+		if (version_compare(JVERSION, '3.3', 'lt')) {
+			$tooltip = htmlspecialchars($tooltip);
+			if ($title) {
+				$title = htmlspecialchars($title);
+				$title = $title . '::';
+			}
+		} else {
+			// on Joomla! 3.3+ we must use the new tooltips
+			JHtml::_('bootstrap.tooltip');
+			if (0) { /* old style using 'hasTip' */
+				$title = JHtml::tooltipText($title, '<div style="font-weight:normal;">'.$tooltip.'</div>', 0);
+			} else { /* new style using 'has Tooltip' */
+				$class = str_replace('hasTip', '', $class) . ' hasTooltip';
+				$title = JHtml::tooltipText($title, $tooltip, 0); // this calls htmlspecialchars()
+			}
+			$tooltip = '';
 		}
 
 		if ($href) {
@@ -1040,6 +1052,7 @@ class JemHelper {
 		} else {
 			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'">'.$text.'</span>';
 		}
+
 		return $tip;
 	}
 

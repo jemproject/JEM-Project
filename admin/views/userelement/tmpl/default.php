@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -50,7 +50,7 @@ JHtml::_('behavior.tooltip');
 		<tr class="<?php echo "row$k"; ?>">
 			<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 			<td>
-				<span class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_SELECT');?>::<?php echo $row->name; ?>">
+				<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_SELECT'), $row->name, 'editlinktip'); ?>>
 				<a style="cursor:pointer" onclick="window.parent.modalSelectUser('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->username ); ?>');">
 					<?php echo $this->escape($row->name); ?>
 				</a></span>

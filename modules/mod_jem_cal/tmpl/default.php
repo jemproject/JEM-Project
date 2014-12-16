@@ -196,6 +196,7 @@ for ($day = 1, $days_in_month = gmdate('t', $uxtime_first_of_month); $day <= $da
 		if ($Show_Tooltips == 1) {
 			$calendar .= '<td class="'.$tdbaseclass.'link">';
 			if ($link) {
+				$tip = '';
 				$title = explode('+%+%+', $title);
 				if ($Show_Tooltips_Title == 1) {
 					if (count($title) > 1) {
@@ -207,10 +208,13 @@ for ($day = 1, $days_in_month = gmdate('t', $uxtime_first_of_month); $day <= $da
 					$tipTitle = '';
 				}
 
-				// There is a bug in Joomla which will format complete tip text as title
-				//  if $tipTitle is empty (because then no '::' will be added).
-				//  So add it manually and let title param empty.
-				$tip = $tipTitle . '::';
+				if (version_compare(JVERSION, '3.3', 'lt')) {
+					// There is a bug in Joomla which will format complete tip text as title
+					//  if $tipTitle is empty (because then no '::' will be added).
+					//  So add it manually and let title param empty.
+					$tip = $tipTitle . '::';
+					$tipTitle = '';
+				}
 
 				// if user hadn't explicitely typed in a 0 list limited number or all events
 				if ($tooltips_max_events !== '0') {
@@ -224,8 +228,10 @@ for ($day = 1, $days_in_month = gmdate('t', $uxtime_first_of_month); $day <= $da
 					}
 				}
 
-				// title already within $tip to ensure always '::' is pesent
-				$calendar .= JHtml::tooltip($tip, '', 'tooltip.png', $space.$day, $link);
+				// J! version < 3.3: title already within $tip to ensure always '::' is pesent
+				// But with J! 3.3+ is a bug in script so we need to use the bad 'hasTooltip'
+				//  which is default of class parameter.
+				$calendar .= JHtml::tooltip($tip, $tipTitle, 'tooltip.png', $space.$day, $link);
 			}
 
 			$calendar .= '</td>';

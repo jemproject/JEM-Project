@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -32,13 +32,13 @@ defined('_JEXEC') or die;
 
 <div id="jem" class="jem_jem">
 <form action="index.php" method="post" name="adminForm" enctype="multipart/form-data" id="adminForm">
-	
+
 	<div class="width-50 fltlft">
 		<fieldset class="adminform">
 			<legend><?php echo JText::_('COM_JEM_EXPORT_EVENTS_LEGEND');?></legend>
-			
+
 		<ul class="adminformlist">
-		<li><label class="editlinktip hasTip" title="<?php echo JText::_('COM_JEM_EXPORT_ADD_CATEGORYCOLUMN'); ?>::<?php echo JText::_('COM_JEM_EXPORT_ADD_CATEGORYCOLUMN'); ?>">
+		<li><label <?php echo JEMOutput::tooltip(JText::_('COM_JEM_EXPORT_ADD_CATEGORYCOLUMN'), JText::_('COM_JEM_EXPORT_ADD_CATEGORYCOLUMN'), 'editlinktip'); ?>>
 		<?php echo JText::_('COM_JEM_EXPORT_ADD_CATEGORYCOLUMN'); ?></label>
 		<?php
 				$categorycolumn = array();
@@ -50,7 +50,7 @@ defined('_JEXEC') or die;
 		<?php echo JHtml::_('calendar', date("Y-m-d"), 'dates', 'dates', '%Y-%m-%d', array('class' => 'inputbox validate-date')); ?></li>
 		<li><label for="enddates"><?php echo JText::_('COM_JEM_ENDDATE').':'; ?></label>
 		<?php echo JHtml::_('calendar', date("Y-m-d"), 'enddates', 'enddates', '%Y-%m-%d', array('class' => 'inputbox validate-date')); ?></li>
-		
+
 		<li><label for="cid"><?php echo JText::_('COM_JEM_CATEGORY').':'; ?></label>
 		<?php echo $this->categories; ?>
 		<input class="button" name="selectall" value="<?php echo JText::_('COM_JEM_EXPORT_SELECT_ALL_CATEGORIES'); ?>" onclick="selectAll();"><br />
@@ -60,10 +60,10 @@ defined('_JEXEC') or die;
 		<input type="submit" id="csvexport" value="<?php echo JText::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.export';return true;"></input></li>
 		</ul>
 		</fieldset>
-		
+
 		<div class="clr"></div>
 	</div>
-	
+
 	<div class="width-50 fltrt">
 		<fieldset class="adminform">
 			<legend><?php echo JText::_('COM_JEM_EXPORT_OTHER_LEGEND');?></legend>
@@ -71,18 +71,18 @@ defined('_JEXEC') or die;
 		<ul class="adminformlist">
 		<li><label><?php echo JText::_('COM_JEM_EXPORT_CATEGORIES'); ?></label>
 		<input type="submit" id="csvexport" value="<?php echo JText::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportcats';return true;"></input></li>
-		
+
 		<li><label><?php echo JText::_('COM_JEM_EXPORT_VENUES'); ?></label>
 		<input type="submit" id="csvexport" value="<?php echo JText::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportvenues';return true;"></input></li>
-		
+
 		<li><label><?php echo JText::_('COM_JEM_EXPORT_CAT_EVENTS'); ?></label>
 		<input type="submit" id="csvexport" value="<?php echo JText::_('COM_JEM_EXPORT_FILE'); ?>" onclick="document.getElementsByName('task')[0].value='export.exportcatevents';return true;"></input></li>
 
-		</ul>	
+		</ul>
 		</fieldset>
 		<div class="clr"></div>
 	</div>
-	
+
 	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="view" value="export" />
 	<input type="hidden" name="controller" value="export" />
