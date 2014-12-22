@@ -209,12 +209,15 @@ div#page-parameters fieldset.adminform .el-spacer {
 /* align radio buttons on import page */
 label#replace_events0-lbl, label#replace_events1-lbl, label#replace_venues0-lbl, label#replace_venues1-lbl, label#replace_categories0-lbl, label#replace_categories1-lbl, label#replace_catevents0-lbl, label#replace_catevents1-lbl {
 	float:none;
-	display:inline;
+	display:inline-block;
+	min-width: 60px;
+	width: auto;
+	text-align: left;
 }
 
 input#replace_events0.inputbox, input#replace_events1.inputbox, input#replace_venues0.inputbox, input#replace_venues1.inputbox, input#replace_categories0.inputbox, input#replace_categories1.inputbox, input#replace_catevents0.inputbox, input#replace_catevents1.inputbox {
 	float:none;
-	display:inline;
+	display:inline-block;
 }
 
 table#el-attachments td {
@@ -786,7 +789,7 @@ fieldset#filter-bar select {
 }
 
 input.text-area-order {
-	width: auto;
+	width: 50%;
 	margin-right: 5px;
 }
 
@@ -900,7 +903,7 @@ fieldset.adminform input#clear {
 
 fieldset.adminform fieldset.radio label,
 fieldset.panelform fieldset.radio label {
-	min-width: 60px;
+	min-width: 85px;
 	width: inherit;
 	padding-left: 0;
 	padding-right: 10px;
