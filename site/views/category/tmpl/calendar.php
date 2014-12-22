@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -27,6 +27,7 @@ defined('_JEXEC') or die;
 	$countcatevents = array ();
 	$countperday = array();
 	$limit = $this->params->get('daylimit', 10);
+	$evbg_usecatcolor = $this->params->get('eventbg_usecatcolor', 0);
 
 	foreach ($this->rows as $row) :
 		if (!JemHelper::isValidDate($row->dates)) {
@@ -92,6 +93,7 @@ defined('_JEXEC') or die;
 		$ix = 0;
 		$content = '';
 		$contentend = '';
+		$catcolor = array();
 
 		//walk through categories assigned to an event
 		foreach($row->categories AS $category) {
@@ -117,6 +119,7 @@ defined('_JEXEC') or die;
 			//attach category color if any in front of the event title in the calendar overview
 			if (isset($category->color) && $category->color) {
 				$colorpic .= '<span class="colorpic" style="background-color: '.$category->color.';"></span>';
+				$catcolor[$category->color] = $category->color; // we need to list all different colors of this event
 			}
 
 			//count occurence of the category
@@ -197,9 +200,16 @@ defined('_JEXEC') or die;
 		$multidaydate .= '</div>';
 
 		//generate the output
-		$content .= '<div class="eventcontentinner">'; // . $colorpic;
-		$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
-		$content .= $contentend . '</div>';
+		// if we have exact one color from categories we can use this as background color of event
+		if (!empty($evbg_usecatcolor) && (count($catcolor) == 1)) {
+			$content .= '<div class="eventcontentinner" style="background-color:'.array_pop($catcolor).'">';
+			$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
+			$content .= $contentend . '</div>';
+		} else {
+			$content .= '<div class="eventcontentinner">'; // . $colorpic;
+			$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
+			$content .= $contentend . '</div>';
+		}
 
 		$this->cal->setEventContent($year, $month, $day, $content);
 	endforeach;
