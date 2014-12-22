@@ -4,7 +4,7 @@
  * @copyright	Copyright (C) 2014 Ghost Art digital media.
  * @copyright	Copyright (C) 2013 - 2014 joomlaeventmanager.net. All rights reserved.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- * Based on Eventlist11 tag and JEM specific code by Jojo Murer / JEM Community
+ * Based on Eventlist11 tag and JEM specific code by JEM Community
  */
 defined('_JEXEC') or die;
 
