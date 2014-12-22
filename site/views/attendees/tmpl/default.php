@@ -69,19 +69,18 @@ $detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this
 				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
 				<button class="buttonfilter" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
 				<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
+				&nbsp;
 			</div>
 			<?php if ($this->event->waitinglist): ?>
-			<div style="text-align:right; white-space:nowrap;">
-				<?php echo JText::_('COM_JEM_STATUS').' '.$this->lists['waiting'];
-				echo '&nbsp;';
-				?>
+			<div class="jem_fleft" style="white-space:nowrap;">
+				<?php echo JText::_('COM_JEM_STATUS').' '.$this->lists['waiting']; ?>
 			</div>
 			<?php endif; ?>
 			<div class="jem_fright">
-			<?php
-			echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
-			echo $this->pagination->getLimitBox();
-			?>
+				<?php
+				echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
+				echo $this->pagination->getLimitBox();
+				?>
 			</div>
 		</div>
 
