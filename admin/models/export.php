@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -72,7 +72,7 @@ class JEMModelExport extends JModelList
 	 */
 	protected function getListQuery()
 	{
-		
+
 		// Retrieve variables
 		$jinput = JFactory::getApplication()->input;
 		$startdate = $jinput->get('dates', '', 'string');
@@ -88,11 +88,15 @@ class JEMModelExport extends JModelList
 		$query->from('`#__jem_events` AS a');
 		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
 		$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
-		
-		// check if startdate + enddate are set.
-		if (! empty($startdate) && ! empty($enddate)) {
-			$query->where('DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($startdate) . ') >= 0');
-			$query->where('DATEDIFF(a.dates, ' . $db->quote($enddate) . ') <= 0');
+
+		// check if startdate and/or enddate are set.
+		if (!empty($startdate)) {
+			// note: open date is always after $startdate
+			$query->where('((a.dates IS NULL) OR (DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($startdate) . ') >= 0))');
+		}
+		if (!empty($enddate)) {
+			// note: open date is before $enddate as long as $enddate is not before today
+			$query->where('(((a.dates IS NULL) AND (DATEDIFF(CURDATE(), ' . $db->quote($enddate) . ') <= 0)) OR (DATEDIFF(a.dates, ' . $db->quote($enddate) . ') <= 0))');
 		}
 
 		// check if specific category's have been selected
@@ -122,7 +126,7 @@ class JEMModelExport extends JModelList
 		$db = $this->getDbo();
 
 		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
-		
+
 		if ($includecategories == 1) {
 			$header = array();
 			$events = array_keys($db->getTableColumns('#__jem_events'));
@@ -135,20 +139,20 @@ class JEMModelExport extends JModelList
 			$query = $this->getListQuery();
 			$items = $this->_getList($query);
 
-			foreach ($items as $item) {			
+			foreach ($items as $item) {
 				$item->categories = $this->getCatEvent($item->id);
 			}
 		} else {
 			$header = array_keys($db->getTableColumns('#__jem_events'));
 			fputcsv($csv, $header, ';');
 			$query = $this->getListQuery();
-			$items = $this->_getList($query);		
+			$items = $this->_getList($query);
 		}
 
-		foreach ($items as $lines) {	
+		foreach ($items as $lines) {
 			fputcsv($csv, (array) $lines, ';', '"');
 		}
-		
+
 		return fclose($csv);
 	}
 
@@ -181,7 +185,7 @@ class JEMModelExport extends JModelList
 
 		$csv = fopen('php://output', 'w');
 		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
-		
+
 		$db = $this->getDbo();
 		$header = array();
 		$header = array_keys($db->getTableColumns('#__jem_categories'));

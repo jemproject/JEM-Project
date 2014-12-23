@@ -46,9 +46,9 @@ defined('_JEXEC') or die;
 				$categorycolumn[] = JHtml::_('select.option', '1', JText::_('JYES'));
 				$categorycolumn = JHtml::_('select.genericlist', $categorycolumn, 'categorycolumn', array('size'=>'1','class'=>'inputbox'), 'value', 'text', '1');
 				echo $categorycolumn;?></li>
-		<li><label for="dates"><?php echo JText::_('COM_JEM_DATE').':'; ?></label>
+		<li><label for="dates"><?php echo JText::_('COM_JEM_EXPORT_FROM_DATE').':'; ?></label>
 		<?php echo JHtml::_('calendar', date("Y-m-d"), 'dates', 'dates', '%Y-%m-%d', array('class' => 'inputbox validate-date')); ?></li>
-		<li><label for="enddates"><?php echo JText::_('COM_JEM_ENDDATE').':'; ?></label>
+		<li><label for="enddates"><?php echo JText::_('COM_JEM_EXPORT_TO_DATE').':'; ?></label>
 		<?php echo JHtml::_('calendar', date("Y-m-d"), 'enddates', 'enddates', '%Y-%m-%d', array('class' => 'inputbox validate-date')); ?></li>
 
 		<li><label for="cid"><?php echo JText::_('COM_JEM_CATEGORY').':'; ?></label>
