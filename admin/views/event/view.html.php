@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -40,10 +40,10 @@ class JemViewEvent extends JViewLegacy {
 		$document		= JFactory::getDocument();
 		$user 			= JFactory::getUser();
 		$this->settings	= JemAdmin::config();
-		$task			= JRequest::getVar('task');
+		$task			= JFactory::getApplication()->input->get('task', '');
 		$this->task 	= $task;
-		$url 			= JURI::root();
-		
+		$url 			= JUri::root();
+
 		$categories 	= JemCategories::getCategoriesTree(1);
 		$selectedcats 	= $this->get('Catsselected');
 
@@ -79,7 +79,7 @@ class JemViewEvent extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
-		JRequest::setVar('hidemainmenu', true);
+		JFactory::getApplication()->input->set('hidemainmenu', true);
 
 		$user		= JFactory::getUser();
 		$isNew		= ($this->item->id == 0);

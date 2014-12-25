@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -97,7 +97,7 @@ class JEMControllerSource extends JControllerLegacy
 		// Initialise variables.
 		$app		= JFactory::getApplication();
 		$model		= $this->getModel();
-		$recordId	= JRequest::getVar('id');
+		$recordId	= $app->input->get('id', '');
 		$context	= 'com_jem.edit.source';
 
 
@@ -148,7 +148,7 @@ class JEMControllerSource extends JControllerLegacy
 
 		// Initialise variables.
 		$app		= JFactory::getApplication();
-		$data		= JRequest::getVar('jform', array(), 'post', 'array');
+		$data		= $app->input->get('jform', array(), 'array');
 		$context	= 'com_jem.edit.source';
 		$task		= $this->getTask();
 		$model		= $this->getModel();

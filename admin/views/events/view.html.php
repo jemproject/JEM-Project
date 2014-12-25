@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -27,7 +27,7 @@ defined('_JEXEC') or die;
 		$settings 	= JEMHelper::globalattribs();
 
 		$jemsettings = JEMAdmin::config();
-		$url 		= JURI::root();
+		$url 		= JUri::root();
 
 		// Initialise variables.
 		$this->items		= $this->get('Items');
@@ -74,7 +74,7 @@ defined('_JEXEC') or die;
 		$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
 		$filters[] = JHtml::_('select.option', '6', JText::_('COM_JEM_COUNTRY'));
 		$filters[] = JHtml::_('select.option', '7', JText::_('JALL'));
-		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $this->state->get('filter'));
+		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $this->state->get('filter_type'));
 
 		//assign data to template
 		$this->lists		= $lists;

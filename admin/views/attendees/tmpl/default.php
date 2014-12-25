@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -78,7 +78,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 				<td><?php echo JHtml::_('date',$row->uregdate,JText::_('DATE_FORMAT_LC2')); ?></td>
 				<td class="center"><?php echo $row->uid; ?></td>
 				<?php if ($this->event->waitinglist): ?>
-				<td class="hasTip" title="<?php echo ($row->waiting ? JText::_('COM_JEM_ON_WAITINGLIST') : JText::_('COM_JEM_ATTENDING')).'::'; ?>">
+				<td <?php echo JEMOutput::tooltip(JText::_($row->waiting ? 'COM_JEM_ON_WAITINGLIST' : 'COM_JEM_ATTENDING'), ''); ?>>
 					<?php if ($row->waiting):?>
 						<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&task=attendees.toggle&id='.$row->id),
 							JHtml::_('image','com_jem/publish_y.png',JText::_('COM_JEM_ON_WAITINGLIST'),NULL,true)); ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -60,8 +60,8 @@ class JemModelVenues extends JModelList
 		$published = $this->getUserStateFromRequest($this->context.'.filter_state', 'filter_state', '', 'string');
 		$this->setState('filter_state', $published);
 
-		$filterfield = $this->getUserStateFromRequest($this->context.'.filter', 'filter', '', 'int');
-		$this->setState('filter', $filterfield);
+		$filter_type = $this->getUserStateFromRequest($this->context.'.filter_type', 'filter_type', '', 'int');
+		$this->setState('filter_type', $filter_type);
 
 		$params = JComponentHelper::getParams('com_jem');
 		$this->setState('params', $params);
@@ -85,7 +85,7 @@ class JemModelVenues extends JModelList
 		// Compile the store id.
 		$id.= ':' . $this->getState('filter_search');
 		$id.= ':' . $this->getState('filter_published');
-		$id.= ':' . $this->getState('filter');
+		$id.= ':' . $this->getState('filter_type');
 
 		return parent::getStoreId($id);
 	}
@@ -118,7 +118,7 @@ class JemModelVenues extends JModelList
 		// Join over the users for the checked out user.
 		$query->select('uc.name AS editor');
 		$query->join('LEFT', '#__users AS uc ON uc.id = a.checked_out');
-		
+
 		// Join over the user who modified the event.
 		$query->select('um.name AS modified_by');
 		$query->join('LEFT', '#__users AS um ON um.id = a.modified_by');
@@ -141,8 +141,8 @@ class JemModelVenues extends JModelList
 		}
 
 		// Filter by search in title
-		$filter = $this->getState('filter');
-		$search = $this->getState('filter_search');
+		$filter_type = $this->getState('filter_type');
+		$search      = $this->getState('filter_search');
 
 		if (!empty($search)) {
 			if (stripos($search, 'id:') === 0) {
@@ -151,7 +151,7 @@ class JemModelVenues extends JModelList
 				$search = $db->Quote('%'.$db->escape($search, true).'%', false);
 
 				if($search) {
-					switch($filter) {
+					switch($filter_type) {
 						case 1:
 							/* search venue or alias */
 							$query->where('(a.venue LIKE '.$search.' OR a.alias LIKE '.$search.')');
@@ -241,7 +241,7 @@ class JemModelVenues extends JModelList
 			$query->where(array('id IN ('.$cids.')'));
 			$db->setQuery($query);
 
-			if(!$db->query()) {
+			if(!$db->execute()) {
 				$this->setError($db->getErrorMsg());
 				return false;
 			}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -44,7 +44,7 @@ class JemViewSearch extends JEMView
 		JemHelper::loadCss('jem');
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
-		
+
 		// Load Script
 		JHtml::_('script', 'com_jem/search.js', false, true);
 
@@ -54,7 +54,7 @@ class JemViewSearch extends JEMView
 		$filter_date_from	= $app->getUserStateFromRequest('com_jem.search.filter_date_from', 'filter_date_from', '', 'string');
 		$filter_date_to		= $app->getUserStateFromRequest('com_jem.search.filter_date_to', 'filter_date_to', '', 'string');
 		$filter_category 	= $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
-		$task			= JRequest::getWord('task');
+		$task				= $app->input->get('task', '');
 
 		//get data from model
 		$rows = $this->get('Data');
@@ -116,10 +116,10 @@ class JemViewSearch extends JEMView
 		$lists	= $this->_buildSortLists();
 
 		if ($lists['filter']) {
-			//$uri->setVar('filter', JRequest::getString('filter'));
+			//$uri->setVar('filter', $app->input->getString('filter', ''));
 			//$filter		= $app->getUserStateFromRequest('com_jem.jem.filter', 'filter', '', 'string');
 			$uri->setVar('filter', $lists['filter']);
-			$uri->setVar('filter_type', JRequest::getString('filter_type'));
+			$uri->setVar('filter_type', $app->input->getString('filter_type', ''));
 		} else {
 			$uri->delVar('filter');
 			$uri->delVar('filter_type');
@@ -201,20 +201,18 @@ class JemViewSearch extends JEMView
 	{
 		$app = JFactory::getApplication();
 //		$db = JFactory::getDBO();
-		$task = JRequest::getWord('task');
+		$task = $app->input->get('task', '');
 
-		$filter_order		= JRequest::getCmd('filter_order', 'a.dates');
+		$filter_order = $app->input->getCmd('filter_order', 'a.dates');
 		$filter_order_DirDefault = 'ASC';
 		// Reverse default order for dates in archive mode
-		if($task == 'archive' && $filter_order == 'a.dates') {
+		if ($task == 'archive' && $filter_order == 'a.dates') {
 			$filter_order_DirDefault = 'DESC';
 		}
-		$filter_order_Dir	= JRequest::getWord('filter_order_Dir', $filter_order_DirDefault);
-
+		$filter_order_Dir	= $app->input->get('filter_order_Dir', $filter_order_DirDefault);
 		$filter 			= $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
-
 		//$filter				= $this->escape(JRequest::getString('filter'));
-		$filter_type		= JRequest::getString('filter_type');
+		$filter_type		= $app->input->getString('filter_type', '');
 
 		$sortselects = array();
 		$sortselects[]	= JHtml::_('select.option', 'title', JText::_('COM_JEM_TABLE_TITLE'));

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -101,12 +101,12 @@ class JEMModelCategoryCal extends JModelLegacy
 	function setId($id)
 	{
 		// Set new category ID and wipe data
-		$this->_id			= $id;
-		$this->_data		= null;
+		$this->_id   = $id;
+		$this->_data = null;
 
-		$app 			= JFactory::getApplication();
-		$item 			= JRequest::getInt('Itemid');
-		$app->setUserState('com_jem.categorycal.catid'.$item, $this->_id);
+		$app    = JFactory::getApplication();
+		$itemId = $app->input->getInt('Itemid', 0);
+		$app->setUserState('com_jem.categorycal.catid'.$itemId, $this->_id);
 	}
 
 	/**
@@ -135,12 +135,12 @@ class JEMModelCategoryCal extends JModelLegacy
 	 */
 	function &getData()
 	{
-		$jinput = JFactory::getApplication()->input;
+		$app    = JFactory::getApplication();
+		$params = $app->getParams();
+		$jinput = $app->input;
 		$layout = $jinput->get('layout', null, 'word');
 
-		//$pop = JRequest::getBool('pop');
-		$app = JFactory::getApplication();
-		$params = $app->getParams();
+		//$pop  = $jinput->getBool('pop', false);
 
 		$items = $this->_data;
 
@@ -335,9 +335,9 @@ class JEMModelCategoryCal extends JModelLegacy
 	 */
 	protected function _buildCategoryWhere()
 	{
-		$app = JFactory::getApplication();
-		$task 		= JRequest::getWord('task');
-		$params 	= $app->getParams();
+		$app         = JFactory::getApplication();
+		$task        = $app->input->get('task', '');
+		$params      = $app->getParams();
 		$jemsettings = JEMHelper::config();
 
 		$user = JFactory::getUser();
@@ -428,14 +428,14 @@ class JEMModelCategoryCal extends JModelLegacy
 		$ordering = 'c.lft ASC';
 
 		//build where clause
-		$where = ' WHERE cc.published = 1';
-		$where .= ' AND cc.parent_id = '.(int)$this->_id;
-		$where .= ' AND cc.access IN (' . implode(',', $levels) . ')';
+		$where  = ' WHERE cc.published = 1';
+		$where .= '   AND cc.parent_id = '.(int)$this->_id;
+		$where .= '   AND cc.access IN (' . implode(',', $levels) . ')';
 
 		//TODO: Make option for categories without events to be invisible in list
 		//check archive task and ensure that only categories get selected if they contain a published/archived event
-		$task 	= JRequest::getWord('task');
-		if($task == 'archive') {
+		$task = JFactory::getApplication()->input->get('task', '');
+		if ($task == 'archive') {
 			$where .= ' AND i.published = 2';
 		} else {
 			$where .= ' AND i.published = 1';

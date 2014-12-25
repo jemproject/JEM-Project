@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
@@ -50,7 +50,7 @@ class JEMView extends JViewLegacy {
 		$app 		= JFactory::getApplication();
 		$menus		= $app->getMenu();
 		$menu 		= $menus->getActive();
-		$print		= JRequest::getBool('print');
+		$print		= $app->input->getBool('print', false);
 
 		if ($print) {
 			JemHelper::loadCss('print');

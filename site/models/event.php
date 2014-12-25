@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -35,10 +35,10 @@ class JemModelEvent extends JModelItem
 		$app = JFactory::getApplication('site');
 
 		// Load state from the request.
-		$pk = JRequest::getInt('id');
+		$pk = $app->input->getInt('id', 0);
 		$this->setState('event.id', $pk);
 
-		$offset = JRequest::getUInt('limitstart');
+		$offset = $app->input->getInt('limitstart', 0);
 		$this->setState('list.offset', $offset);
 
 		// Load the parameters.
@@ -266,7 +266,7 @@ class JemModelEvent extends JModelItem
 	 */
 	public function hit($pk = 0)
 	{
-		$hitcount = JRequest::getInt('hitcount', 1);
+		$hitcount = JFactory::getApplication()->input->getInt('hitcount', 1);
 
 		if ($hitcount) {
 			// Initialise variables.
@@ -275,7 +275,7 @@ class JemModelEvent extends JModelItem
 
 			$db->setQuery('UPDATE #__jem_events' . ' SET hits = hits + 1' . ' WHERE id = ' . (int) $pk);
 
-			if (!$db->query()) {
+			if ($db->execute() === false) {
 				$this->setError($db->getErrorMsg());
 				return false;
 			}
@@ -604,7 +604,7 @@ class JemModelEvent extends JModelItem
 		$query = 'DELETE FROM #__jem_register WHERE event = ' . $event . ' AND uid= ' . $userid;
 		$this->_db->SetQuery($query);
 
-		if (!$this->_db->query()) {
+		if ($this->_db->execute() === false) {
 			JError::raiseError(500, $this->_db->getErrorMsg());
 		}
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -1078,7 +1078,7 @@ class JEMHelperCountries
 			$iso_code = self::convertIso3to2($iso_code);
 		}
 		if ($iso_code) {
-			$path = JURI::root().'media/com_jem/images/flags/'.strtolower($iso_code).'.gif';
+			$path = JUri::root().'media/com_jem/images/flags/'.strtolower($iso_code).'.gif';
 			return $path;
 		}
 		else

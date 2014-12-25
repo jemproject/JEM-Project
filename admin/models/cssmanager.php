@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -160,7 +160,7 @@ class JemModelCssmanager extends JModelLegacy
 		$query->where(array("type = 'plugin'", "element = 'codemirror'"));
 		$db->setQuery($query);
 		$manifest = json_decode($db->loadResult(), true);
-		return $manifest['linenumbers'];
+		return array_key_exists('linenumbers', $manifest) ? $manifest['linenumbers'] : false;
 	}
 
 
@@ -175,8 +175,8 @@ class JemModelCssmanager extends JModelLegacy
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('params')
-		->from('#__extensions')
-		->where(array("type = 'plugin'", "element = 'codemirror'"));
+		      ->from('#__extensions')
+		      ->where(array("type = 'plugin'", "element = 'codemirror'"));
 
 		$db->setQuery($query);
 		$params = json_decode($db->loadResult(), true);
@@ -186,11 +186,11 @@ class JemModelCssmanager extends JModelLegacy
 		$paramsString = json_encode($params);
 		$query = $db->getQuery(true);
 		$query->update('#__extensions')
-		->set('params = '.$db->quote($paramsString))
-		->where(array("type = 'plugin'", "element = 'codemirror'"));
+		      ->set('params = '.$db->quote($paramsString))
+		      ->where(array("type = 'plugin'", "element = 'codemirror'"));
 
 		$db->setQuery($query);
-		$db->query();
+		$db->execute();
 	}
 }
 ?>

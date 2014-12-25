@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,7 +15,7 @@ defined('_JEXEC') or die;
  * @package JEM
  *
  */
-class JEMTableGroup extends JTable
+class JemTableGroup extends JTable
 {
 	public function __construct(&$db)
 	{
@@ -112,9 +112,10 @@ class JEMTableGroup extends JTable
 		$query->set($this->_db->quoteName('published') . ' = ' . (int) $state);
 		$query->where($where);
 		$this->_db->setQuery($query . $checkin);
-		$this->_db->query();
+		$this->_db->exxecute();
 
 		// Check for a database error.
+		// TODO: use exception handling
 		if ($this->_db->getErrorNum()) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;

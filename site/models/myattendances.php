@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.3
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -53,7 +53,7 @@ class JEMModelMyattendances extends JModelLegacy
 	 */
 	function & getAttending()
 	{
-		$pop = JRequest::getBool('pop');
+		$pop = JFactory::getApplication()->input->getBool('pop', false);
 
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_attending)) {
@@ -187,26 +187,22 @@ class JEMModelMyattendances extends JModelLegacy
 	 */
 	protected function _buildAttendingWhere()
 	{
-		$app = JFactory::getApplication();
-
-		$user = JFactory::getUser();
+		$app      = JFactory::getApplication();
 
 		// Get the paramaters of the active menu item
-		$params = $app->getParams();
-		$task = JRequest::getWord('task');
-
+		$params   = $app->getParams();
+		$task     = $app->input->get('task', '');
 		$settings = JEMHelper::globalattribs();
 
-		$user = JFactory::getUser();
+		$user     = JFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
-		$filter 		= $app->getUserStateFromRequest('com_jem.myattendances.filter', 'filter', '', 'int');
-		$search 		= $app->getUserStateFromRequest('com_jem.myattendances.filter_search', 'filter_search', '', 'string');
-		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
+		$filter   = $app->getUserStateFromRequest('com_jem.myattendances.filter', 'filter', '', 'int');
+		$search   = $app->getUserStateFromRequest('com_jem.myattendances.filter_search', 'filter_search', '', 'string');
+		$search   = $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();
-
 		// First thing we need to do is to select only needed events
 		if ($task == 'archive') {
 			$where[] = ' a.published = 2';

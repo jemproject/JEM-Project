@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -47,7 +47,7 @@ class JemViewEvent extends JEMView
 
 		$this->params		= $app->getParams('com_jem');
 		$this->item			= $this->get('Item');
-		$this->print		= JRequest::getBool('print');
+		$this->print		= $app->input->getBool('print', false);
 		$this->state		= $this->get('State');
 		$this->user			= $user;
 		$this->jemsettings	= $jemsettings;

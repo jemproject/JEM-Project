@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     2.0.0
+ * @version     2.1.0
  * @package     JEM
  * @copyright   Copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
@@ -134,7 +134,7 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 					</td>
 					<td class="center">
 						<?php if ($item->catgroup) : ?>
-							<span class="editlinktip hasTip" title="<?php echo JText::_( 'COM_JEM_EDIT_GROUP' );?>::<?php echo $item->catgroup; ?>">
+							<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_GROUP_EDIT'), $item->catgroup, 'editlinktip'); ?>>
 							<a href="<?php echo $grouplink; ?>">
 								<?php echo $this->escape($item->catgroup); ?>
 							</a></span>

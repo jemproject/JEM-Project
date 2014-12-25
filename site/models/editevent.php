@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -29,19 +29,20 @@ class JEMModelEditevent extends JEMModelEvent
 		$app = JFactory::getApplication();
 
 		// Load state from the request.
-		$pk = JRequest::getInt('a_id');
+		$pk = $app->input->getInt('a_id', 0);
 		$this->setState('event.id', $pk);
 
-		$this->setState('event.catid', JRequest::getInt('catid'));
+		$catid = $app->input->getInt('catid', 0);
+		$this->setState('event.catid', $catid);
 
-		$return = JRequest::getVar('return', null, 'default', 'base64');
+		$return = $app->input->get('return', '', 'base64');
 		$this->setState('return_page', urldecode(base64_decode($return)));
 
 		// Load the parameters.
 		$params = $app->getParams();
 		$this->setState('params', $params);
 
-		$this->setState('layout', JRequest::getCmd('layout'));
+		$this->setState('layout', $app->input->getCmd('layout', ''));
 	}
 
 	/**
@@ -147,9 +148,9 @@ class JEMModelEditevent extends JEMModelEvent
 				$value->params->set('access-change', $user->authorise('core.edit.state', 'com_jem'));
 			}
 		}
-		
+
 		$value->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
-		
+
 		$value->articletext = $value->introtext;
 		if (!empty($value->fulltext)) {
 			$value->articletext .= '<hr id="system-readmore" />' . $value->fulltext;
@@ -201,7 +202,7 @@ class JEMModelEditevent extends JEMModelEvent
 	{
 		$app 				= JFactory::getApplication();
 		$params		 		= JemHelper::globalattribs();
-		
+
 		$filter_order 		= $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
 
@@ -235,7 +236,7 @@ class JEMModelEditevent extends JEMModelEvent
 					$where[] = 'LOWER(l.state) LIKE "%' . $search . '%"';
 			}
 		}
-		
+
 		if ($params->get('global_show_ownedvenuesonly')) {
 			$user = JFactory::getUser();
 			$userid = $user->get('id');
@@ -267,7 +268,7 @@ class JEMModelEditevent extends JEMModelEvent
 		$jemsettings = JemHelper::config();
 		$app         = JFactory::getApplication();
 		$limit       = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart  = JRequest::getInt('limitstart');
+		$limitstart  = $app->input->getInt('limitstart', 0);
 		// correct start value if required
 		$limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
@@ -308,7 +309,7 @@ class JEMModelEditevent extends JEMModelEvent
 		$jemsettings = JemHelper::config();
 		$app         = JFactory::getApplication();
 		$limit       = $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart  = JRequest::getInt('limitstart');
+		$limitstart  = $app->input->getInt('limitstart', 0);
 		// correct start value if required
 		$limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
@@ -346,7 +347,7 @@ class JEMModelEditevent extends JEMModelEvent
 		$query = $db->getQuery(true);
 		$query->select(array('con.*'));
 		$query->from('#__contact_details As con');
-		
+
 		// where
 		$where = array();
 		$where[] = 'con.published = 1';
@@ -371,7 +372,7 @@ class JEMModelEditevent extends JEMModelEvent
 		$query->where($where);
 
 		// ordering
-	
+
 		// ensure it's a valid order direction (asc, desc or empty)
 		if (!empty($filter_order_Dir) && strtoupper($filter_order_Dir) !== 'DESC') {
 			$filter_order_Dir = 'ASC';
@@ -386,7 +387,7 @@ class JEMModelEditevent extends JEMModelEvent
 			$orderby = 'con.name';
 		}
 		$query->order($orderby);
-		
+
 		return $query;
 	}
 }

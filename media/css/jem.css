@@ -1,12 +1,12 @@
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
- 
- 
+
+
  div#jem a {
  }
 
@@ -467,9 +467,46 @@ div#jem .jem_fright {
 	float:right;
 }
 
+/* no fixed width on J! 3.x */
+#jem select[id^="filter_"],
+#jem select,
+#jem input[id^="filter_"] {
+	width: auto;
+}
+#jem #jem_filter .input-append {
+	margin-bottom: 0;
+	margin-left: 4px;
+}
+#jem .input-append {
+	display: inline-block;
+}
+#jem #jem_filter tr {
+	vertical-align: baseline;
+}
+#jem #jem_filter label {
+	margin-bottom:0;
+}
+#jem .jem_fright label,
+#jem .jem_fleft label {
+	display: inline-block;
+}
+#jem .nowrap {
+	display: inline-block;
+	white-space: nowrap;
+}
+
 /* -------------------
 	EDIT FORM
 --------------------- */
+
+/* J!3 */
+#jem .edit .current dd.tabs fieldset legend {
+	width: auto;
+}
+#jem .edit .current dd.tabs {
+	border: none;
+}
+
 div.jem_editevent ul.adminformlist label {
 	min-width:160px;
 }
@@ -925,28 +962,57 @@ a.jgrid:hover {
 	text-decoration:none;
 }
 
+/* jgrid styling has changed on J!3 using icomoon
+ * but e.g. beez3 doesn't support this;
+ * so always use our old icons and overrule icomoon styles. */
+#jem .btn-micro {
+	border: none;
+	box-shadow: none;
+	background: none;
+}
+
+#jem button[id$="_img"] {
+	padding: 1px;
+}
+
+#jem button[id$="_img"] i.icon-calendar,
+#jem .btn-micro i[class^="icon-"],
+#jem .btn-micro i[class*=" icon-"],
 .jgrid span.state {
 	display:inline-block;
 	height:16px;
 	width:16px;
 }
 
+#jem .btn-micro i[class^="icon-"]:before,
+#jem .btn-micro i[class*=" icon-"]:before {
+	content:"";
+}
+
+#jem button[id$="_img"] i.icon-calendar {
+	background-image:url(../images/el.png);
+}
+
 .jgrid span.text {
 	display:none;
 }
 
+#jem .btn-micro i.icon-publish,
 .jgrid span.publish {
 	background-image:url(../images/tick.png);
 }
 
+#jem .btn-micro i.icon-unpublish,
 .jgrid span.unpublish {
 	background-image:url(../images/publish_x.png);
 }
 
+#jem .btn-micro i.icon-archive,
 .jgrid span.archive {
 	background-image:url(../images/menu/icon-16-archive.png);
 }
 
+#jem .btn-micro i.icon-trash,
 .jgrid span.trash {
 	background-image:url(../images/icon-16-trash.png);
 }

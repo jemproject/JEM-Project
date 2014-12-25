@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @subpackage JEM Finder Plugin
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -71,6 +71,14 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	protected $state_field = 'published';
 
 	/**
+	 * Indicates Joomla! version (2, 3, or 0).
+	 *
+	 * @var    integer
+	 *
+	 */
+	protected $jVer = 0;
+
+	/**
 	 * Constructor
 	 *
 	 * @param   object  &$subject  The object to observe
@@ -80,7 +88,11 @@ class plgFinderJEM extends FinderIndexerAdapter {
 	public function __construct(&$subject, $config)
 	{
 		parent::__construct($subject, $config);
-		$this->loadLanguage();
+		$this->loadLanguage(); // we don't use $this->autoloadLanguage available since 3.1
+
+		if (empty($this->jVer)) {
+			$this->jVer = (!empty($this->indexer) && method_exists($this->indexer, 'index')) ? 3 : 2;
+		}
 	}
 
 	/**
@@ -129,7 +141,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 		{
 			return true;
 		}
-		// Remove the items.
+		// Remove item from the index.
 		return $this->remove($id);
 	}
 
@@ -159,7 +171,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 			// Reindex the item
 			$this->reindex($row->id);
 		}
-		
+
 		// Check for access changes in the category
 		if ($context == 'com_jem.category')
 		{
@@ -169,7 +181,7 @@ class plgFinderJEM extends FinderIndexerAdapter {
 				$this->categoryAccessChange($row);
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -255,6 +267,10 @@ class plgFinderJEM extends FinderIndexerAdapter {
 			return;
 		}
 
+		if ($this->jVer == 3) {
+			$item->setLanguage();
+		}
+
 		// Initialize the item parameters.
 		$registry = new JRegistry;
 		$registry->loadString($item->params);
@@ -317,7 +333,12 @@ class plgFinderJEM extends FinderIndexerAdapter {
 		FinderIndexerHelper::getContentExtras($item);
 
 		// Index the item.
-		FinderIndexer::index($item);
+		// On J! 3.x we must use indexer member which doesn't exist on J! 2.5
+		if ($this->jVer == 3) {
+			$this->indexer->index($item);
+		} else {
+			FinderIndexer::index($item);
+		}
 	}
 
 	/**

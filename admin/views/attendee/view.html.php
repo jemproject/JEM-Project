@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -28,7 +28,7 @@ class JEMViewAttendee extends JViewLegacy {
 		JHtml::_('behavior.formvalidation');
 
 		//get vars
-		$event_id = JRequest::getInt('id');
+		$event_id = JFactory::getApplication()->input->getInt('id', 0);
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
@@ -38,6 +38,9 @@ class JEMViewAttendee extends JViewLegacy {
 
 		//build selectlists
 		$lists = array();
+		// TODO: On J! 2.5 we need last param 0 because it defaults to 1 activating a useless feature.
+		//       On J! 3.x this param and the useless feature has been removed so we should remove last param.
+		//       Such changes are of sort "grrr".
 		$lists['users'] = JHtml::_('list.users', 'uid', $row->uid, false, NULL, 'name', 0);
 
 		//assign data to template
@@ -58,18 +61,18 @@ class JEMViewAttendee extends JViewLegacy {
 	protected function addToolbar()
 	{
 		//get vars
-		$cid = JRequest::getVar('cid');
+		$cid = JFactory::getApplication()->input->get('cid', array(), 'array');
 
-		if ($cid) {
-			JToolBarHelper::title(JText::_('COM_JEM_EDIT_ATTENDEE'), 'users');
-		} else {
+		if (empty($cid)) {
 			JToolBarHelper::title(JText::_('COM_JEM_ADD_ATTENDEE'), 'users');
+		} else {
+			JToolBarHelper::title(JText::_('COM_JEM_EDIT_ATTENDEE'), 'users');
 		}
 
 		JToolBarHelper::apply('attendee.apply');
 		JToolBarHelper::save('attendee.save');
 
-		if (!$cid) {
+		if (empty($cid)) {
 			JToolBarHelper::cancel('attendee.cancel');
 		} else {
 			JToolBarHelper::cancel('attendee.cancel', 'JTOOLBAR_CLOSE');

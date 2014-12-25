@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -87,9 +87,8 @@ class JEMModelCategories extends JModelLegacy
 		// Get the parameters of the active menu item
 		$params = $app->getParams('com_jem');
 
-		if (JRequest::getInt('id')) {
-			$id = JRequest::getInt('id');
-		} else {
+		$id = $app->input->getInt('id', 0);
+		if (empty($id)) {
 			$id = $params->get('id', 1);
 		}
 
@@ -100,8 +99,8 @@ class JEMModelCategories extends JModelLegacy
 		$this->_showemptysubcats = (bool)$params->get('showemptychilds', 1);
 
 		//get the number of events from database
-		$limit 		= JRequest::getInt('limit', $params->get('cat_num'));
-		$limitstart = JRequest::getInt('limitstart');
+		$limit 		= $app->input->getInt('limit', $params->get('cat_num'));
+		$limitstart = $app->input->getInt('limitstart', 0);
 		// correct start value if required
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
@@ -158,7 +157,7 @@ class JEMModelCategories extends JModelLegacy
 
 				//create target link
 				// TODO: Move to view?
-				$task = JRequest::getWord('task');
+				$task = $app->input->get('task', '');
 				if ($task == 'archive') {
 					$category->linktext   = JText::_('COM_JEM_SHOW_ARCHIVE');
 					$category->linktarget = JRoute::_(JEMHelperRoute::getCategoryRoute($category->slug.'&task=archive'));
@@ -234,7 +233,7 @@ class JEMModelCategories extends JModelLegacy
 
 		$id = (int)$id;
 
-		$task = JRequest::getWord('task');
+		$task = JFactory::getApplication()->input->get('task', '');
 
 		// First thing we need to do is to select only the requested events
 		if ($task == 'archive') {
@@ -335,7 +334,7 @@ class JEMModelCategories extends JModelLegacy
 
 		// check archive task and ensure that only categories get selected
 		// if they contain a published/archived event
-		$task = JRequest::getWord('task');
+		$task = JFactory::getApplication()->input->get('task', '');
 		if($task == 'archive') {
 			$where_sub .= ' AND i.published = 2';
 		} else {
@@ -401,7 +400,7 @@ class JEMModelCategories extends JModelLegacy
 		if (!$this->_showemptycats) {
 			$query .= ' AND e.access IN (' . implode(',', $levels) . ')';
 
-			$task = JRequest::getWord('task');
+			$task = JFactory::getApplication()->input->get('task', '');
 			if($task == 'archive') {
 				$query .= ' AND e.published = 2';
 			} else {

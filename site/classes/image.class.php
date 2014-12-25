@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -50,8 +50,8 @@ class JEMImage {
 
 			//only admins will see these errors
 			if (JFactory::getUser()->authorise('core.manage')) {
-			
-			
+
+
 			// if there was an error, let's see what the error is about
 			switch ($image->error) {
 				case 1:
@@ -76,7 +76,7 @@ class JEMImage {
 					echo 'GD library is not installed!';
 					break;
 			}
-			
+
 			}
 
 			// if no errors
@@ -262,7 +262,8 @@ class JEMImage {
 		}
 
 		//XSS check
-		$xss_check = JFile::read($file['tmp_name'], false, 256);
+		//$xss_check = JFile::read($file['tmp_name'], false, 256);
+		$xss_check = file_get_contents($file['tmp_name'], false, NULL, 0, 256);
 		$html_tags = array('abbr','acronym','address','applet','area','audioscope','base','basefont','bdo','bgsound','big','blackface','blink','blockquote','body','bq','br','button','caption','center','cite','code','col','colgroup','comment','custom','dd','del','dfn','dir','div','dl','dt','em','embed','fieldset','fn','font','form','frame','frameset','h1','h2','h3','h4','h5','h6','head','hr','html','iframe','ilayer','img','input','ins','isindex','keygen','kbd','label','layer','legend','li','limittext','link','listing','map','marquee','menu','meta','multicol','nobr','noembed','noframes','noscript','nosmartquotes','object','ol','optgroup','option','param','plaintext','pre','rt','ruby','s','samp','script','select','server','shadow','sidebar','small','spacer','span','strike','strong','style','sub','sup','table','tbody','td','textarea','tfoot','th','thead','title','tr','tt','ul','var','wbr','xml','xmp','!DOCTYPE', '!--');
 		foreach($html_tags as $tag) {
 			// A tag is '<tagname ', so we need to add < and a space or '<tagname>'
@@ -304,10 +305,10 @@ class JEMImage {
 		//make a unique filename for the image and check it is not already taken
 		//if it is already taken keep trying till success
 		//$now = time();
-		
+
 		$now = rand();
 
-		
+
 		while(JFile::exists($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
 			$now++;
 		}

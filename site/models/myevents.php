@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -71,7 +71,7 @@ class JEMModelMyevents extends JModelLegacy
 	 */
 	function & getEvents()
 	{
-		$pop = JRequest::getBool('pop');
+		$pop = JFactory::getApplication()->input->getBool('pop', false);
 
 		// Lets load the content if it doesn't already exist
 		if ( empty($this->_events)) {
@@ -127,7 +127,7 @@ class JEMModelMyevents extends JModelLegacy
 
 			$this->_db->setQuery($query);
 
-			if (!$this->_db->query()) {
+			if ($this->_db->execute() === false) {
 				$this->setError($this->_db->getErrorMsg());
 				return false;
 			}
@@ -232,20 +232,19 @@ class JEMModelMyevents extends JModelLegacy
 	 */
 	protected function _buildWhere()
 	{
-		$app 		= JFactory::getApplication();
-		$task 		= JRequest::getWord('task');
-		$params 	= $app->getParams();
-		$settings 	= JEMHelper::globalattribs();
-		$user 		= JFactory::getUser();
+		$app      = JFactory::getApplication();
+		$task     = $app->input->get('task', '');
+		$params   = $app->getParams();
+		$settings = JEMHelper::globalattribs();
+		$user     = JFactory::getUser();
 		// Support Joomla access levels instead of single group id
-		$levels = $user->getAuthorisedViewLevels();
+		$levels   = $user->getAuthorisedViewLevels();
 
-		$filter 		= $app->getUserStateFromRequest('com_jem.myevents.filter', 'filter', '', 'int');
-		$search 		= $app->getUserStateFromRequest('com_jem.myevents.filter_search', 'filter_search', '', 'string');
-		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
+		$filter   = $app->getUserStateFromRequest('com_jem.myevents.filter', 'filter', '', 'int');
+		$search   = $app->getUserStateFromRequest('com_jem.myevents.filter_search', 'filter_search', '', 'string');
+		$search   = $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();
-
 		// First thing we need to do is to select only needed events
 		if ($task == 'archive') {
 			$where[] = ' a.published = 2';

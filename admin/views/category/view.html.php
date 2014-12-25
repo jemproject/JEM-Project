@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     2.0.0
+ * @version     2.1.0
  * @package     JEM
  * @copyright   Copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
@@ -41,7 +41,7 @@ class JemViewCategory extends JViewLegacy
 		JHtml::_('stylesheet', 'com_jem/colorpicker.css', array(), true);
 
 		// Load Script
-		$document->addScript(JURI::root().'media/com_jem/js/colorpicker.js');
+		$document->addScript(JUri::root().'media/com_jem/js/colorpicker.js');
 
 		// build grouplist
 		// @todo: make a form-field for this one
@@ -54,9 +54,9 @@ class JemViewCategory extends JViewLegacy
 		$Lists['groups']	= JHtml::_('select.genericlist', $grouplist, 'groupid', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $this->item->groupid);
 		$this->Lists 		= $Lists;
 
-
 		parent::display($tpl);
-		JRequest::setVar('hidemainmenu', true);
+
+		JFactory::getApplication()->input->set('hidemainmenu', true);
 		$this->addToolbar();
 	}
 

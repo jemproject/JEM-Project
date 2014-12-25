@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     2.0.0
+ * @version     2.1.0
  * @package     JEM
  * @copyright   Copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
@@ -42,7 +42,6 @@ class JemControllerCategories extends JControllerAdmin
 	{
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$extension = JRequest::getCmd('com_jem');
 		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=categories', false));
 
 		// Initialise variables.
@@ -69,8 +68,8 @@ class JemControllerCategories extends JControllerAdmin
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		// Get the arrays from the Request
-		$order	= JRequest::getVar('order',	null, 'post', 'array');
-		$originalOrder = explode(',', JRequest::getString('original_order_values'));
+		$order = JFactory::getApplication()->input->post->get('order', array(), 'array');
+		$originalOrder = explode(',', JFactory::getApplication()->input->getString('original_order_values', ''));
 
 		// Make sure something has changed
 		if (!($order === $originalOrder)) {
@@ -91,8 +90,8 @@ class JemControllerCategories extends JControllerAdmin
  		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
  		// Get items to remove from the request.
- 		$cid = JRequest::getVar('cid', array(), '', 'array');
- 		$extension = JRequest::getVar('extension', null);
+ 		$cid = JFactory::getApplication()->input->get('cid', array(), 'array');
+ 		$extension = JFactory::getApplication()->input->get('extension', '');
 
  		if (!is_array($cid) || count($cid) < 1)
  		{
@@ -130,7 +129,7 @@ class JemControllerCategories extends JControllerAdmin
  	 */
  	function remove()
  	{
- 		$cid= JRequest::getVar('cid', array(0), 'post', 'array');
+ 		$cid= JFactory::getApplication()->input->post->get('cid', array(), 'array');
 
  		if (!is_array($cid) || count($cid) < 1) {
  			JError::raiseWarning(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));

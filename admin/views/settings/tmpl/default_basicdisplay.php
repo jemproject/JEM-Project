@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,19 +15,19 @@ defined('_JEXEC') or die;
 			<li><?php echo $this->form->getLabel('showdetails'); ?> <?php echo $this->form->getInput('showdetails'); ?></li>
 
 			<li><?php echo $this->form->getLabel('formatShortDate'); ?> <?php echo $this->form->getInput('formatShortDate'); ?>
-				<span class="error hasTip" title="<?php echo JText::_('COM_JEM_PHP_DATE_MANUAL');?>::<?php echo JText::_('COM_JEM_PHP_DATE_MANUAL_DESC'); ?>">
+				<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_PHP_DATE_MANUAL'), JText::_('COM_JEM_PHP_DATE_MANUAL_DESC'), 'error'); ?>>
 					<a href="http://php.net/manual/en/function.date.php" target="_blank"><?php echo $this->WarningIcon(); ?></a>
 				</span>
 			</li>
 
 			<li><?php echo $this->form->getLabel('formatdate'); ?> <?php echo $this->form->getInput('formatdate'); ?>
-				<span class="error hasTip" title="<?php echo JText::_('COM_JEM_PHP_DATE_MANUAL');?>::<?php echo JText::_('COM_JEM_PHP_DATE_MANUAL_DESC'); ?>">
+				<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_PHP_DATE_MANUAL'), JText::_('COM_JEM_PHP_DATE_MANUAL_DESC'), 'error'); ?>>
 					<a href="http://php.net/manual/en/function.date.php" target="_blank"><?php echo $this->WarningIcon(); ?></a>
 				</span>
 			</li>
 
 			<li><?php echo $this->form->getLabel('formattime'); ?> <?php echo $this->form->getInput('formattime'); ?>
-				<span class="error hasTip" title="<?php echo JText::_('COM_JEM_TIME_STRFTIME');?>::<?php echo JText::_('COM_JEM_TIME_STRFTIME_DESC'); ?>">
+				<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_TIME_STRFTIME'), JText::_('COM_JEM_TIME_STRFTIME_DESC'), 'error'); ?>>
 					<a href="http://www.php.net/strftime" target="_blank"><?php echo $this->WarningIcon(); ?></a>
 				</span>
 			</li>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.3
+ * @version 2.1.0
  * @package JEM
  * @subpackage JEM Mailer Plugin
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -108,7 +108,7 @@ class plgJEMMailer extends JPlugin {
 		}
 
 		//create link to event
-		$link = JRoute::_(JURI::base().JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = JRoute::_(JUri::base().JEMHelperRoute::getEventRoute($event->slug), false);
 
 
 		############################
@@ -228,7 +228,7 @@ class plgJEMMailer extends JPlugin {
 		$username = empty($this->_UseLoginName) ? $user->name : $user->username;
 
 		// create link to event
-		$url = JURI::root();
+		$url = JUri::root();
 		$link =JRoute::_($url. JEMHelperRoute::getEventRoute($details->slug), false);
 
 		if ($details->waiting) // added to the waiting list
@@ -328,7 +328,7 @@ class plgJEMMailer extends JPlugin {
 		}
 
 		// create link to event
-		$link = JRoute::_(JURI::base().JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = JRoute::_(JUri::base().JEMHelperRoute::getEventRoute($event->slug), false);
 
 		#####################
 		## SENDMAIL - USER ##
@@ -421,7 +421,7 @@ class plgJEMMailer extends JPlugin {
 		if (is_null($event = $db->loadObject())) return false;
 
 		// Link for event
-		$link = JRoute::_(JURI::base().JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = JRoute::_(JUri::base().JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description
 		$text_description = JFilterOutput::cleanText($event->text);
@@ -719,7 +719,7 @@ class plgJEMMailer extends JPlugin {
 		# at this point we do have a result
 
 		// Define link for venue
-		$link = JRoute::_(JURI::base().JEMHelperRoute::getVenueRoute($venue->slug), false);
+		$link = JRoute::_(JUri::base().JEMHelperRoute::getVenueRoute($venue->slug), false);
 
 		// Define published-state message
 		$adminstate = $venue->published ? JText::sprintf('PLG_JEM_MAILER_VENUE_PUBLISHED', $link) : JText::_('PLG_JEM_MAILER_VENUE_UNPUBLISHED');
@@ -857,7 +857,7 @@ class plgJEMMailer extends JPlugin {
 
 			$db->setQuery($query);
 
-			if (!$db->query()) {
+			if ($db->execute() === false) {
 				JError::raiseError(500, $db->stderr(true));
 				return;
 			}

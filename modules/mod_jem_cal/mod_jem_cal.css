@@ -1,5 +1,5 @@
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @subpackage JEM Calendar Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -10,9 +10,10 @@
 /* Container div Width set the same as calendar width. Setting both margins to auto centres the calendar*/
 .eventcalq {
 	/*width: 154px;*/
-	max-width:300px;
-	margin-left: auto ;
-	margin-right: auto ;
+	max-width:220px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
 }
 
 /* Overall calendar table properties */
@@ -25,6 +26,11 @@
 	color: #616B76;
 	text-align: center;
 	background-color: #fff;
+}
+.eventcalq table.mod_jemcalq_calendar th ,
+.eventcalq table.mod_jemcalq_calendar td {
+	padding: 0;
+	margin: 0;
 }
 
 /* Blank cell properties */
@@ -43,7 +49,7 @@
 {
 	font: bold 11px/20px "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
 	border-right: 1px solid #A2ADBC;
-	border-bottom: 1px solid #A2ADBC;	
+	border-bottom: 1px solid #A2ADBC;
 	width: 21px;
 	height: 20px;
 	text-align: center;
@@ -92,7 +98,7 @@
 }
 
 /* Event day cell properties */
-.eventcalq td.mod_jemcalq_caldaylink, 
+.eventcalq td.mod_jemcalq_caldaylink,
 .eventcalq td.mod_jemcalq_caltodaylink {
 	font: bold 11px/20px "Trebuchet MS", Arial, Verdana, Helvetica, sans-serif;
 	border-right: 1px solid #A2ADBC;
@@ -173,7 +179,7 @@
 	padding-top: 15px;
 	padding-bottom: 5px;
 	background: url(../templates/system/images/selector-arrow.png) no-repeat;
-	color: #000000;	
+	color: #000000;
 }
 
 .tool-text {

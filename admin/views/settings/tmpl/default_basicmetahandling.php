@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -26,7 +26,7 @@ defined('_JEXEC') or die;
 	<fieldset class="adminform">
 		<legend><?php echo JText::_( 'COM_JEM_META_HANDLING' ); ?></legend>
 		<ul class="adminformlist">
-			<li><label id="jform_meta_keywords-lbl" class="hasTip" title="<?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?>::<?php echo JText::_('COM_JEM_META_KEYWORDS_DESC'); ?>">
+			<li><label id="jform_meta_keywords-lbl" <?php echo JEMOutput::tooltip(JText::_('COM_JEM_META_KEYWORDS'), JText::_('COM_JEM_META_KEYWORDS_DESC')); ?>>
 					<?php echo JText::_( 'COM_JEM_META_KEYWORDS' ); ?>
 				</label>
 				<div style="display: inline-block;">
@@ -66,7 +66,7 @@ defined('_JEXEC') or die;
 					<br/>
 					<input type="button" value="<?php echo JText::_( 'COM_JEM_META_DESCRIPTION_BUTTON' ); ?>" onclick="include_description()" />
 					&nbsp;
-					<span class="error hasTip" title="<?php echo JText::_( 'COM_JEM_WARNING' );?>::<?php echo JText::_( 'COM_JEM_META_DESCRIPTION_WARN' ); ?>">
+					<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_WARNING'), JText::_('COM_JEM_META_DESCRIPTION_WARN'), 'error'); ?>>
 						<?php echo $this->WarningIcon(); ?>
 					</span>
 				</div>

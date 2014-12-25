@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -20,7 +20,7 @@ class JemViewCategoryelement extends JViewLegacy {
 		$document	= JFactory::getDocument();
 		$db			= JFactory::getDBO();
 		$app 		= JFactory::getApplication();
-		$itemid 	= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		$itemid 	= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
 		JHtml::_('behavior.tooltip');
 		JHtml::_('behavior.modal');
@@ -34,7 +34,7 @@ class JemViewCategoryelement extends JViewLegacy {
 
 		//prepare document
 		$document->setTitle(JText::_('COM_JEM_SELECT_CATEGORY'));
-		
+
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 

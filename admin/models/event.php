@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -8,12 +8,12 @@
  */
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.modeladmin');
+require_once dirname(__FILE__) . '/admin.php';
 
 /**
  * Event model.
  */
-class JEMModelEvent extends JModelAdmin
+class JEMModelEvent extends JemModelAdmin
 {
 	/**
 	 * Method to test whether a record can be deleted.
@@ -39,7 +39,7 @@ class JEMModelEvent extends JModelAdmin
 				$query->where('itemid = '.$db->quote($record->id));
 
 				$db->setQuery($query);
-				$db->query();
+				$db->execute();
 
 				return $user->authorise('core.delete', 'com_jem.category.'.(int) $record->catid);
 			} else {
@@ -50,7 +50,7 @@ class JEMModelEvent extends JModelAdmin
 				$query->where('itemid = '.$db->quote($record->id));
 
 				$db->setQuery($query);
-				$db->query();
+				$db->execute();
 
 				return $user->authorise('core.delete', 'com_jem');
 			}
@@ -84,7 +84,7 @@ class JEMModelEvent extends JModelAdmin
 	 * @return	JTable	A database object
 	 *
 	 */
-	public function getTable($type = 'Event', $prefix = 'JEMTable', $config = array())
+	public function getTable($type = 'Event', $prefix = 'JemTable', $config = array())
 	{
 		return JTable::getInstance($type, $prefix, $config);
 	}
@@ -195,22 +195,22 @@ class JEMModelEvent extends JModelAdmin
 	 *
 	 * @param $table JTable-object.
 	 */
-	protected function prepareTable(&$table)
+	protected function _prepareTable($table)
 	{
 		$jinput 		= JFactory::getApplication()->input;
-		
+
 		$db = $this->getDbo();
 		$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
 
 		// Increment version number.
 		$table->version ++;
-		
+
 		//get time-values from time selectlist and combine them accordingly
 		$starthours		= $jinput->get('starthours','','cmd');
 		$startminutes	= $jinput->get('startminutes','','cmd');
 		$endhours		= $jinput->get('endhours','','cmd');
 		$endminutes		= $jinput->get('endminutes','','cmd');
-		
+
 		// StartTime
 		if ($starthours != '' && $startminutes != '') {
 			$table->times = $starthours.':'.$startminutes;
@@ -223,7 +223,7 @@ class JEMModelEvent extends JModelAdmin
 		} else {
 			$table->times = "";
 		}
-		
+
 		// EndTime
 		if ($endhours != '' && $endminutes != '') {
 			$table->endtimes = $endhours.':'.$endminutes;
@@ -235,7 +235,7 @@ class JEMModelEvent extends JModelAdmin
 			$table->endtimes = $endhours.':'.$endminutes;
 		} else {
 			$table->endtimes = "";
-		}	
+		}
 	}
 
 	/**
@@ -267,7 +267,7 @@ class JEMModelEvent extends JModelAdmin
 		$metakeywords 		= $jinput->get('meta_keywords', '', '');
 		$metadescription 	= $jinput->get('meta_description', '', '');
 		$author_ip 			= $jinput->get('author_ip', '', '');
-		
+
 		// event maybe first of recurrence set -> dissolve complete set
 		if (JemHelper::dissolve_recurrence($data['id'])) {
 			$this->cleanCache();
@@ -338,7 +338,7 @@ class JEMModelEvent extends JModelAdmin
 			$query->delete($db->quoteName('#__jem_cats_event_relations'));
 			$query->where('itemid = ' . (int)$pk);
 			$db->setQuery($query);
-			$db->query();
+			$db->execute();
 
 			foreach ($cats as $cat){
 				$db 	= $this->getDbo();
@@ -357,7 +357,7 @@ class JEMModelEvent extends JModelAdmin
 
 				// Reset the query using our newly populated query object.
 				$db->setQuery($query);
-				$db->query();
+				$db->execute();
 			}
 
 			// check for recurrence
@@ -401,7 +401,7 @@ class JEMModelEvent extends JModelAdmin
 					' SET featured = '.(int) $value.
 					' WHERE id IN ('.implode(',', $pks).')'
 			);
-			if (!$db->query()) {
+			if ($db->execute() === false) {
 				throw new Exception($db->getErrorMsg());
 			}
 

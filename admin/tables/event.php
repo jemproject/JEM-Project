@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.3
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 /**
  * JEM Event Table
  */
-class JEMTableEvent extends JTable
+class JemTableEvent extends JTable
 {
 	public function __construct(&$db) {
 		parent::__construct('#__jem_events', 'id', $db);
@@ -196,8 +196,8 @@ class JEMTableEvent extends JTable
 		// get image (frontend) - allow "removal on save" (Hoffi, 2014-06-07)
 		if (!$backend) {
 			if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1)) {
-				$file = JRequest::getVar('userfile', '', 'files', 'array');
-				$removeimage = JRequest::getVar('removeimage', '', 'default', 'int');
+				$file = $jinput->files->get('userfile', array(), 'array');
+				$removeimage = $jinput->getInt('removeimage', 0);
 
 				if (!empty($file['name'])) {
 					// only on first event, skip on recurrence events
@@ -295,7 +295,7 @@ class JEMTableEvent extends JTable
 		}
 
 		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
-		if (!$this->_db->query()) {
+		if ($this->_db->execute() === false) {
 			return false;
 		}
 		$id = $this->_db->insertid();
@@ -355,9 +355,10 @@ class JEMTableEvent extends JTable
 		$query->set($this->_db->quoteName('published') . ' = ' . (int) $state);
 		$query->where($where);
 		$this->_db->setQuery($query . $checkin);
-		$this->_db->query();
+		$this->_db->execute();
 
 		// Check for a database error.
+		// TODO: use exception handling
 		if ($this->_db->getErrorNum()) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;

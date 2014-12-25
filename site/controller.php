@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -32,15 +32,15 @@ class JEMController extends JControllerLegacy
 	 */
 	function display($cachable = false, $urlparams = false)
 	{
-		$document	= JFactory::getDocument();
-		$user = JFactory::getUser();
+		$document   = JFactory::getDocument();
+		$user       = JFactory::getUser();
 
 		// Set the default view name and format from the Request.
-		$id				= JRequest::getInt('a_id');
-		$viewName 		= JRequest::getCmd('view', 'eventslist');
-		$viewFormat 	= $document->getType();
-		$layoutName 	= JRequest::getCmd('layout', 'edit');
-
+		$jinput     = JFactory::getApplication()->input;
+		$id         = $jinput->getInt('a_id', 0);
+		$viewName   = $jinput->getCmd('view', 'eventslist');
+		$viewFormat = $document->getType();
+		$layoutName = $jinput->getCmd('layout', 'edit');
 
 		// Check for edit form.
 		if ($viewName == 'editevent' && !$this->checkEditId('com_jem.edit.event', $id)) {
@@ -48,8 +48,8 @@ class JEMController extends JControllerLegacy
 			return JError::raiseError(403, JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id));
 		}
 
-
-		if ($view = $this->getView($viewName, $viewFormat)) {
+		$view = $this->getView($viewName, $viewFormat);
+		if ($view) {
 			// Do any specific processing by view.
 			switch ($viewName) {
 				case 'attendees':
@@ -108,7 +108,7 @@ class JEMController extends JControllerLegacy
 	 */
 	function getfile()
 	{
-		$id = JRequest::getInt('file');
+		$id = JFactory::getApplication()->input->getInt('file', 0);
 
 		$path = JEMAttachment::getAttachmentPath($id);
 
@@ -140,7 +140,7 @@ class JEMController extends JControllerLegacy
 	 */
 	function ajaxattachremove()
 	{
-		$id	 = JRequest::getVar('id', 0, 'request', 'int');
+		$id	 = JFactory::getApplication()->input->getInt('id', 0);
 
 		$res = JEMAttachment::remove($id);
 		if (!$res) {
@@ -161,11 +161,12 @@ class JEMController extends JControllerLegacy
 	 */
 	function ajaximageremove()
 	{
-		$id = JRequest::getVar('id', null, 'request', 'int');
+		$id = JFactory::getApplication()->input->getInt('id', 0);
 		if (!$id) {
 			jexit();
 		}
-		$folder = JRequest::getVar('type', null, 'request', 'string');
+
+		$folder = JFactory::getApplication()->input->getString('type', '');
 
 		if ($folder == 'events') {
 			$getquery = ' SELECT datimage AS image FROM #__jem_events WHERE id = '.(int)$id;
@@ -188,7 +189,7 @@ class JEMController extends JControllerLegacy
 		$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
 		if (is_file($fullPath)) {
 			$db->setQuery($updatequery);
-			if (!$db->query()) {
+			if ($db->execute() === false) {
 				jexit();
 			}
 

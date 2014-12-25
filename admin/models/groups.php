@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -47,8 +47,8 @@ class JEMModelGroups extends JModelList
 		$published = $this->getUserStateFromRequest($this->context.'.filter_state', 'filter_state', '', 'string');
 		$this->setState('filter_state', $published);
 
-		$filterfield = $this->getUserStateFromRequest($this->context.'.filter', 'filter', '', 'int');
-		$this->setState('filter', $filterfield);
+	//	$filterfield = $this->getUserStateFromRequest($this->context.'.filter_type', 'filter_type', '', 'int');
+	//	$this->setState('filter_type', $filterfield);
 
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_jem');
@@ -74,7 +74,7 @@ class JEMModelGroups extends JModelList
 		// Compile the store id.
 		$id .= ':' . $this->getState('filter_search');
 		$id .= ':' . $this->getState('filter_published');
-		$id .= ':' . $this->getState('filter');
+	//	$id .= ':' . $this->getState('filter_type');
 
 		return parent::getStoreId($id);
 	}
@@ -166,7 +166,7 @@ class JEMModelGroups extends JModelList
 
 			$this->_db->setQuery($query);
 
-			if(!$this->_db->query()) {
+			if($this->_db->execute() === false) {
 				$this->setError($this->_db->getErrorMsg());
 				return false;
 			}
@@ -177,7 +177,7 @@ class JEMModelGroups extends JModelList
 
 			$this->_db->setQuery($query);
 
-			if(!$this->_db->query()) {
+			if($this->_db->execute() === false) {
 				$this->setError($this->_db->getErrorMsg());
 				return false;
 			}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -41,7 +41,7 @@ class JEMControllerVenue extends JControllerForm
 	{
 		// Initialise variables.
 		$user		= JFactory::getUser();
-		//$categoryId	= JArrayHelper::getValue($data, 'catid', JRequest::getInt('catid'), 'int');
+		//$categoryId	= JArrayHelper::getValue($data, 'catid', JFactory::getApplication()->input->getInt('catid', 0), 'int');
 		$allow		= null;
 
 		//if ($categoryId) {
@@ -183,9 +183,10 @@ class JEMControllerVenue extends JControllerForm
 	protected function getRedirectToItemAppend($recordId = null, $urlVar = 'a_id')
 	{
 		// Need to override the parent method completely.
-		$tmpl		= JRequest::getCmd('tmpl');
-		$layout		= JRequest::getCmd('layout', 'edit');
-		$append		= '';
+		$jinput = JFactory::getApplication()->input;
+		$tmpl   = $jinput->getCmd('tmpl', '');
+		$layout = $jinput->getCmd('layout', 'edit');
+		$append = '';
 
 		// Setup redirect info.
 		if ($tmpl) {
@@ -198,9 +199,9 @@ class JEMControllerVenue extends JControllerForm
 			$append .= '&'.$urlVar.'='.$recordId;
 		}
 
-		$itemId	= JRequest::getInt('Itemid');
+		$itemId	= $jinput->getInt('Itemid', 0);
+		//$catId = JFactory::getApplication()->input->getInt('catid', 0);
 		$return	= $this->getReturnPage();
-		//$catId = JRequest::getInt('catid', null, 'get');
 
 		if ($itemId) {
 			$append .= '&Itemid='.$itemId;
@@ -226,10 +227,10 @@ class JEMControllerVenue extends JControllerForm
 	 */
 	protected function getReturnPage()
 	{
-		$return = JRequest::getVar('return', null, 'default', 'base64');
+		$return = JFactory::getApplication()->input->get('return', null, 'base64');
 
 		if (empty($return) || !JUri::isInternal(urldecode(base64_decode($return)))) {
-			return JURI::base();
+			return JUri::base();
 		}
 		else {
 			return urldecode(base64_decode($return));
@@ -237,25 +238,24 @@ class JEMControllerVenue extends JControllerForm
 	}
 
 
-	protected function postSaveHook(JModel &$model, $validData = array())
+	protected function postSaveHook($model, $validData = array())
 	{
+		$task = $this->getTask();
+		if ($task == 'save') {
+			// doesn't work on new venues - get values from model instead
+			//$isNew 	= ($validData['id']) ? false : true;
+			//$id 	= $validData['id'];
+			$isNew = $model->getState('editvenue.new');
+			$id    = $model->getState('editvenue.id');
 
-	$task = $this->getTask();
-	if ($task == 'save') {
-		// doesn't work on new venues - get values from model instead
-		//$isNew 	= ($validData['id']) ? false : true;
-		//$id 	= $validData['id'];
-		$isNew = $model->getState('editvenue.new');
-		$id    = $model->getState('editvenue.id');
-
-		if (JPluginHelper::importPlugin('jem','mailer')) {
-			JPluginHelper::importPlugin('jem');
-			$dispatcher = JDispatcher::getInstance();
-			$dispatcher->trigger('onVenueEdited', array($id, $isNew));
-		} else {
-			JError::raiseNotice(100,JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'));
+			if (JPluginHelper::importPlugin('jem','mailer')) {
+				JPluginHelper::importPlugin('jem');
+				$dispatcher = JDispatcher::getInstance();
+				$dispatcher->trigger('onVenueEdited', array($id, $isNew));
+			} else {
+				JError::raiseNotice(100,JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'));
+			}
 		}
-	}
 	}
 
 	/**

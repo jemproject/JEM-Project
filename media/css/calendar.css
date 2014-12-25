@@ -1,10 +1,16 @@
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
+
+.jem_calendar th,
+.jem_calendar td {
+	padding: 0;
+	margin: 0;
+}
 
 table.month, table.week {
 	background-color:#FFFFFF;
@@ -23,7 +29,8 @@ table.month {
 	text-align:center;
 }
 
-.daynamesRow {
+.daynamesRow,
+.daynamesRow td {
 	background-color:#455678;
 	height:20px;
 	text-align:center;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.3
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -145,7 +145,7 @@ class JemHelper {
 			foreach($recurrence_array as $recurrence_row)
 			{
 				// get the info of reference event for the duplicates
-				$ref_event = JTable::getInstance('Event', 'JEMTable');
+				$ref_event = JTable::getInstance('Event', 'JemTable');
 				$ref_event->load($recurrence_row['id']);
 
 				$db = JFactory::getDbo();
@@ -173,7 +173,7 @@ class JemHelper {
 						|| strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
 						&& strtotime($recurrence_row['dates']) <= time() + 86400*$anticipation)
 				{
-					$new_event = JTable::getInstance('Event', 'JEMTable');
+					$new_event = JTable::getInstance('Event', 'JemTable');
 					$new_event->bind($reference, array('id', 'hits', 'dates', 'enddates','checked_out_time','checked_out'));
 					$new_event->recurrence_first_id = $recurrence_row['first_id'];
 					$new_event->recurrence_counter = $recurrence_row['counter'] + 1;
@@ -190,7 +190,7 @@ class JemHelper {
 								. ' WHERE itemid = ' . $db->Quote($ref_event->id);
 						$db->setQuery($query);
 
-						if (!$db->query()) {
+						if ($db->execute() === false) {
 							// run query always but don't show error message to "normal" users
 							$user = JFactory::getUser();
 							if($user->authorise('core.manage')) {
@@ -208,7 +208,7 @@ class JemHelper {
 				$query = 'DELETE FROM #__jem_events WHERE dates > 0 AND '
 						.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates))';
 				$db->SetQuery($query);
-				$db->Query();
+				$db->execute();
 			}
 
 			//Set state archived of outdated events
@@ -217,13 +217,13 @@ class JemHelper {
 						.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
 						.' AND published = 1';
 				$db->SetQuery($query);
-				$db->Query();
+				$db->execute();
 			}
 
 			//Set timestamp of last cleanup
 			$query = 'UPDATE #__jem_settings SET lastupdate = '.time().' WHERE id = 1';
 			$db->SetQuery($query);
-			$db->Query();
+			$db->execute();
 		}
 	}
 
@@ -362,7 +362,7 @@ class JemHelper {
 			            . '   , recurrence_byday = ' . $db->quote('')
 			            . ' WHERE recurrence_first_id = ' . $first_id
 			             );
-			$db->query();
+			$db->execute();
 		} catch (Exception $e) {
 			return false;
 		}
@@ -575,7 +575,7 @@ class JemHelper {
 		$db = JFactory::getDBO();
 		$where = '';
 		if ($ownonly) {
-			$levels = JFactory::getUser()->authorisedLevels();
+			$levels = JFactory::getUser()->getAuthorisedViewLevels();
 			$where = ' WHERE id IN ('.implode(',', $levels).')';
 		}
 
@@ -736,7 +736,7 @@ class JemHelper {
 			$bumping = array_slice($waiting, 0, $event_places->maxplaces - $registered);
 			$query = ' UPDATE #__jem_register SET waiting = 0 WHERE id IN ('.implode(',', $bumping).')';
 			$db->setQuery($query);
-			if (!$db->query()) {
+			if ($db->execute() === false) {
 				$this->setError(JText::_('COM_JEM_FAILED_BUMPING_USERS_FROM_WAITING_TO_CONFIRMED_LIST'));
 				Jerror::raisewarning(0, JText::_('COM_JEM_FAILED_BUMPING_USERS_FROM_WAITING_TO_CONFIRMED_LIST').': '.$db->getErrorMsg());
 			} else {
@@ -922,7 +922,7 @@ class JemHelper {
 		$description = $event->title.'\\n';
 		$description .= JText::_('COM_JEM_CATEGORY').': '.implode(', ', $categories).'\\n';
 
-		$link = JURI::root().JemHelperRoute::getEventRoute($event->slug);
+		$link = JUri::root().JemHelperRoute::getEventRoute($event->slug);
 		$link = JRoute::_($link);
 		$description .= JText::_('COM_JEM_ICS_LINK').': '.$link.'\\n';
 
@@ -1027,11 +1027,23 @@ class JemHelper {
 	 * Creates a tooltip
 	 */
 	static function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '', $time = '', $color = '') {
-		$tooltip = (htmlspecialchars($tooltip));
-		$title = (htmlspecialchars($title));
 
-		if ($title) {
-			$title = $title . '::';
+		if (version_compare(JVERSION, '3.3', 'lt')) {
+			$tooltip = htmlspecialchars($tooltip);
+			if ($title) {
+				$title = htmlspecialchars($title);
+				$title = $title . '::';
+			}
+		} else {
+			// on Joomla! 3.3+ we must use the new tooltips
+			JHtml::_('bootstrap.tooltip');
+			if (0) { /* old style using 'hasTip' */
+				$title = JHtml::tooltipText($title, '<div style="font-weight:normal;">'.$tooltip.'</div>', 0);
+			} else { /* new style using 'has Tooltip' */
+				$class = str_replace('hasTip', '', $class) . ' hasTooltip';
+				$title = JHtml::tooltipText($title, $tooltip, 0); // this calls htmlspecialchars()
+			}
+			$tooltip = '';
 		}
 
 		if ($href) {
@@ -1040,6 +1052,7 @@ class JemHelper {
 		} else {
 			$tip = '<span class="'.$class.'" title="'.$title.$tooltip.'">'.$text.'</span>';
 		}
+
 		return $tip;
 	}
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -51,13 +51,13 @@ class JemModelVenueelement extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app			= JFactory::getApplication();
-		$jemsettings	= JemHelper::config();
-		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
-		
-		$limit 			= $app->getUserStateFromRequest('com_jem.venueelement.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart 	= JRequest::getInt('limitstart');
-		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+		$app         = JFactory::getApplication();
+		$jemsettings = JemHelper::config();
+		$itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
+
+		$limit       = $app->getUserStateFromRequest('com_jem.venueelement.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart  = $app->input->getInt('limitstart', 0);
+		$limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
@@ -70,41 +70,41 @@ class JemModelVenueelement extends JModelLegacy
 	{
 		$query 		= $this->buildQuery();
 		$pagination = $this->getPagination();
-	
+
 		$rows 		= $this->_getList($query, $pagination->limitstart, $pagination->limit);
-		
+
 		return $rows;
 	}
-	
+
 	/**
 	 * venue-query
 	 */
 	function buildQuery() {
-		
+
 		$app 				= JFactory::getApplication();
 		$jemsettings 		= JemHelper::config();
-		$itemid 			= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
+		$itemid 			= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
 		$filter_order		= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_order', 'filter_order', 'l.ordering', 'cmd' );
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', '', 'word' );
-		
+
 		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
-		
+
 		$filter_type 		= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_type', 'filter_type', '', 'int' );
 		$search 			= $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_search', 'filter_search', '', 'string' );
 		$search 			= $this->_db->escape(trim(JString::strtolower($search)));
-		
+
 		// Query
 		$db 	= JFactory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select(array('l.id','l.state','l.city','l.country','l.published','l.venue','l.ordering'));
 		$query->from('#__jem_venues as l');
-		
+
 		// where
 		$where = array();
 		$where[] = 'l.published = 1';
-		
+
 		/* something to search for? (we like to search for "0" too) */
 		if ($search || ($search === "0")) {
 			switch ($filter_type) {
@@ -118,15 +118,15 @@ class JemModelVenueelement extends JModelLegacy
 					$where[] = 'LOWER(l.state) LIKE "%' . $search . '%"';
 			}
 		}
-		
+
 		$query->where($where);
 
 		$orderby 	= array($filter_order.' '.$filter_order_Dir,'l.ordering ASC');
 		$query->order($orderby);
-		
-		return $query;		
+
+		return $query;
 	}
-	
+
 	/**
 	 * Method to get a pagination object
 	 *
@@ -137,17 +137,17 @@ class JemModelVenueelement extends JModelLegacy
 	{
 		$jemsettings	= JemHelper::config();
 		$app 			= JFactory::getApplication();
-		
+
 		$limit 			= $this->getState('limit');
 		$limitstart 	= $this->getState('limitstart');
-		
+
 		$query 			= $this->buildQuery();
 		$total 			= $this->_getListCount($query);
-		
+
 		// Create the pagination object
 		jimport('joomla.html.pagination');
 		$pagination 	= new JPagination($total, $limitstart, $limit);
-		
+
 		return $pagination;
 	}
 }

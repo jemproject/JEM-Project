@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2014 joomlaeventmanager.net
@@ -73,7 +73,7 @@ abstract class modJEMteaserHelper
 
 			$cal_from = " ((DATEDIFF(a.dates, CURDATE()) <= $offset_days) AND (DATEDIFF(IFNULL(a.enddates,a.dates), CURDATE()) >= $offset_days))";
 		}
-		
+
 		# featured
 		elseif ($type == 4) {
 			$offset_minutes = $offset_hourss * 60;
@@ -84,7 +84,7 @@ abstract class modJEMteaserHelper
 			$cal_from  = "((TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
 			$cal_from .= " OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) ";
 		}
-		
+
 		$model->setState('filter.calendar_from',$cal_from);
 		$model->setState('filter.groupby','a.id');
 
@@ -92,7 +92,7 @@ abstract class modJEMteaserHelper
 		$catids = JemHelper::getValidIds($params->get('catid'));
 		$venids = JemHelper::getValidIds($params->get('venid'));
 		$eventids = JemHelper::getValidIds($params->get('eventid'));
-		
+
 		# filter category's
 		if ($catids) {
 			$model->setState('filter.category_id',$catids);
@@ -188,19 +188,19 @@ abstract class modJEMteaserHelper
 			$lists[$i]->time 			= $row->times ? modJEMteaserHelper::_format_time($row->dates, $row->times, $params) : '' ;
 
 			if ($dimage == null) {
-				$lists[$i]->eventimage		= JURI::base(true).'/media/system/images/blank.png';
-				$lists[$i]->eventimageorig	= JURI::base(true).'/media/system/images/blank.png';
+				$lists[$i]->eventimage		= JUri::base(true).'/media/system/images/blank.png';
+				$lists[$i]->eventimageorig	= JUri::base(true).'/media/system/images/blank.png';
 			} else {
-				$lists[$i]->eventimage		= JURI::base(true).'/'.$dimage['thumb'];
-				$lists[$i]->eventimageorig	= JURI::base(true).'/'.$dimage['original'];
+				$lists[$i]->eventimage		= JUri::base(true).'/'.$dimage['thumb'];
+				$lists[$i]->eventimageorig	= JUri::base(true).'/'.$dimage['original'];
 			}
 
 			if ($limage == null) {
-				$lists[$i]->venueimage		= JURI::base(true).'/media/system/images/blank.png';
-				$lists[$i]->venueimageorig	= JURI::base(true).'/media/system/images/blank.png';
+				$lists[$i]->venueimage		= JUri::base(true).'/media/system/images/blank.png';
+				$lists[$i]->venueimageorig	= JUri::base(true).'/media/system/images/blank.png';
 			} else {
-				$lists[$i]->venueimage		= JURI::base(true).'/'.$limage['thumb'];
-				$lists[$i]->venueimageorig	= JURI::base(true).'/'.$limage['original'];
+				$lists[$i]->venueimage		= JUri::base(true).'/'.$limage['thumb'];
+				$lists[$i]->venueimageorig	= JUri::base(true).'/'.$limage['original'];
 			}
 
 			$length = $params->get('descriptionlength');

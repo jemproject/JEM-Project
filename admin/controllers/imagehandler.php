@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -49,8 +49,8 @@ class JEMControllerImagehandler extends JControllerLegacy
 
 		$jemsettings = JEMAdmin::config();
 
-		$file 		= JRequest::getVar('userfile', '', 'files', 'array');
-		$task 		= JRequest::getVar('task');
+		$file 		= JFactory::getApplication()->input->files->get('userfile', array(), 'array');
+		$task 		= JFactory::getApplication()->input->get('task', '');
 
 		// Set FTP credentials, if given
 		jimport('joomla.client.helper');
@@ -109,8 +109,8 @@ class JEMControllerImagehandler extends JControllerLegacy
 		JClientHelper::setCredentialsFromRequest('ftp');
 
 		// Get some data from the request
-		$images	= JRequest::getVar('rm', array(), '', 'array');
-		$folder = JRequest::getVar('folder');
+		$images	= JFactory::getApplication()->input->get('rm', array(), 'array');
+		$folder = JFactory::getApplication()->input->get('folder', '');
 
 		if (count($images)) {
 			foreach ($images as $image) {

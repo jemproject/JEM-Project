@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -45,7 +45,8 @@ defined('_JEXEC') or die;
 			<?php echo '<label for="date">'.JText::_('COM_JEM_SEARCH_DATE').'</label>&nbsp;'; ?>
 			</td>
 			<td>
-			<?php echo Jtext::_('COM_JEM_SEARCH_FROM'); ?><?php echo $this->lists['date_from'];?> <?php echo Jtext::_('COM_JEM_SEARCH_TO'); ?><?php echo $this->lists['date_to'];?>
+				<div class="nowrap"><?php echo Jtext::_('COM_JEM_SEARCH_FROM'); ?><?php echo $this->lists['date_from'];?></div>
+				<div class="nowrap"><?php echo Jtext::_('COM_JEM_SEARCH_TO'); ?><?php echo $this->lists['date_to'];?></div>
 			</td>
 		</tr>
 		<tr>

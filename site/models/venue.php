@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -39,12 +39,12 @@ class JemModelVenue extends JemModelEventslist
 	{
 		// parent::populateState($ordering, $direction);
 
-		$app 			= JFactory::getApplication();
-		$jemsettings	= JemHelper::config();
-		$jinput			= JFactory::getApplication()->input;
-		$itemid 		= JRequest::getInt('id', 0) . ':' . JRequest::getInt('Itemid', 0);
-		$params 		= $app->getParams();
-		$task           = $jinput->get('task','','cmd');
+		$app         = JFactory::getApplication();
+		$jemsettings = JemHelper::config();
+		$jinput      = JFactory::getApplication()->input;
+		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
+		$params      = $app->getParams();
+		$task        = $jinput->get('task','','cmd');
 
 		// List state information
 		$limit = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');

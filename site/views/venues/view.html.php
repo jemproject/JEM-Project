@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -25,7 +25,7 @@ class JemViewVenues extends JViewLegacy
 		$jemsettings	= JemHelper::config();
 		$settings 		= JemHelper::globalattribs();
 		$user			= JFactory::getUser();
-		$print			= JRequest::getBool('print');
+		$print			= $app->input->getBool('print', false);
 
 		//get menu information
 		$menu		= $app->getMenu();
@@ -36,14 +36,14 @@ class JemViewVenues extends JViewLegacy
 		JemHelper::loadCss('jem');
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
-		
+
 		if ($print) {
 			JemHelper::loadCss('print');
 			$document->setMetaData('robots', 'noindex, nofollow');
 		}
 
 		// Request variables
-		$task 	= JRequest::getWord('task');
+		$task 	= $app->input->get('task', '');
 		$rows 	= $this->get('Items');
 
 		$pagetitle = $params->def('page_title', $menuitem->title);

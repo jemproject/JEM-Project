@@ -30,8 +30,10 @@ class Pkg_JemInstallerScript {
 			'0' => '5.5' // Preferred version
 			),
 		'Joomla!' => array (
+			'3.3' => '3.3.3',
+			'3.2' => '3.2.7',
 			'3.0' => '', // Not supported
-			'2.5' => '2.5.6',
+			'2.5' => '2.5.24',
 			'0' => '2.5.27' // Preferred version
 			)
 		);

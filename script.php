@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.3
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -194,11 +194,13 @@ class com_jemInstallerScript
 	{
 		// Are we installing in J2.5?
 		$jversion = new JVersion();
-		if ($jversion->RELEASE != '2.5' || $jversion->RELEASE == '2.5' && $jversion->DEV_LEVEL < '6') {
+		if (!(($jversion->RELEASE == '3.3' && $jversion->DEV_LEVEL >= '3') ||
+		      ($jversion->RELEASE == '3.2' && $jversion->DEV_LEVEL >= '7') ||
+		      ($jversion->RELEASE == '2.5' && $jversion->DEV_LEVEL >= '24'))) {
 			Jerror::raiseWarning(100, JText::_('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION'));
 			return false;
 		}
-		
+
 		// Minimum required PHP version
 		$minPhpVersion = "5.3.1";
 
@@ -267,7 +269,7 @@ class com_jemInstallerScript
 			// Changes between 1.9.4 -> 1.9.5
 			if (version_compare($this->oldRelease, '1.9.5', 'lt') && version_compare($this->newRelease, '1.9.4', 'gt')) {
 				JTable::addIncludePath(JPATH_ROOT.'/administrator/components/com_jem/tables');
-				$categoryTable = JTable::getInstance('Category', 'JEMTable');
+				$categoryTable = JTable::getInstance('Category', 'JemTable');
 				$categoryTable->rebuild();
 
 				// change category ids in menu items
@@ -341,10 +343,10 @@ class com_jemInstallerScript
 			$paramsString = json_encode($params);
 			$query = $db->getQuery(true);
 			$query->update('#__extensions')
-				->set('params = '.$db->quote($paramsString))
-				->where(array("type = 'component'", "element = 'com_jem'"));
+			      ->set('params = '.$db->quote($paramsString))
+			      ->where(array("type = 'component'", "element = 'com_jem'"));
 			$db->setQuery($query);
-			$db->query();
+			$db->execute();
 		}
 	}
 
@@ -371,9 +373,9 @@ class com_jemInstallerScript
 			$paramsString = json_encode($params);
 			$query = $db->getQuery(true);
 			$query->update('#__jem_settings')
-			->set('globalattribs = '.$db->quote($paramsString));
+			      ->set('globalattribs = '.$db->quote($paramsString));
 			$db->setQuery($query);
-			$db->query();
+			$db->execute();
 		}
 	}
 
@@ -420,11 +422,11 @@ class com_jemInstallerScript
 		// Insert extension ID and old release version number into schemas table
 		$query = $db->getQuery(true);
 		$query->insert('#__schemas')
-			->columns($db->quoteName(array('extension_id', 'version_id')))
-			->values(implode(',', array($extensionId, $db->quote($versionId))));
+		      ->columns($db->quoteName(array('extension_id', 'version_id')))
+		      ->values(implode(',', array($extensionId, $db->quote($versionId))));
 
 		$db->setQuery($query);
-		$db->query();
+		$db->execute();
 	}
 
 	/**
@@ -442,7 +444,7 @@ class com_jemInstallerScript
 		$query->set('published = 0');
 		$query->where(array('client_id = 0', 'published > 0', 'link LIKE "index.php?option=com_jem%"'));
 		$db->setQuery($query);
-		$db->query();
+		$db->execute();
 	}
 
 	/**
@@ -467,7 +469,7 @@ class com_jemInstallerScript
 			$query->set('component_id = ' . $db->quote($newId));
 			$query->where(array('client_id = 0', 'link LIKE "index.php?option=com_jem%"'));
 			$db->setQuery($query);
-			$db->query();
+			$db->execute();
 		}
 	}
 
@@ -698,7 +700,7 @@ class com_jemInstallerScript
 				$query->set('params = '.$db->quote((string)$reg));
 				$query->where(array('id = '.$db->quote($item->id)));
 				$db->setQuery($query);
-				$db->query();
+				$db->execute();
 			}
 		}
 	}
@@ -766,7 +768,7 @@ class com_jemInstallerScript
 				$query->set('params = '.$db->quote((string)$reg));
 				$query->where(array('id = '.$db->quote($item->id)));
 				$db->setQuery($query);
-				$db->query();
+				$db->execute();
 			}
 		}
 	}
@@ -864,7 +866,7 @@ class com_jemInstallerScript
 			$query->set('params = '.$db->quote((string)$reg));
 			$query->where(array('id = '.$db->quote($item->id)));
 			$db->setQuery($query);
-			$db->query();
+			$db->execute();
 		}
 	}
 
@@ -899,7 +901,7 @@ class com_jemInstallerScript
 				$query->set('link = '.$db->quote($link));
 				$query->where(array('id = '.$db->quote($item->id)));
 				$db->setQuery($query);
-				$db->query();
+				$db->execute();
 			}
 		}
 	}
@@ -962,7 +964,7 @@ class com_jemInstallerScript
 			$query->set('params = '.$db->quote((string)$reg));
 			$query->where(array('id = '.$db->quote($item->id)));
 			$db->setQuery($query);
-			$db->query();
+			$db->execute();
 		}
 	}
 

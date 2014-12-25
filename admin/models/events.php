@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -52,8 +52,8 @@ class JemModelEvents extends JModelList
 		$published = $this->getUserStateFromRequest($this->context.'.filter_state', 'filter_state', '', 'string');
 		$this->setState('filter_state', $published);
 
-		$filterfield = $this->getUserStateFromRequest($this->context.'.filter', 'filter', '', 'int');
-		$this->setState('filter', $filterfield);
+		$filterfield = $this->getUserStateFromRequest($this->context.'.filter_type', 'filter_type', '', 'int');
+		$this->setState('filter_type', $filterfield);
 
 		$begin = $this->getUserStateFromRequest($this->context.'.filter_begin', 'filter_begin', '', 'string');
 		$this->setState('filter_begin', $begin);
@@ -85,7 +85,7 @@ class JemModelEvents extends JModelList
 		// Compile the store id.
 		$id.= ':' . $this->getState('filter_search');
 		$id.= ':' . $this->getState('filter_published');
-		$id.= ':' . $this->getState('filter');
+		$id.= ':' . $this->getState('filter_type');
 
 		return parent::getStoreId($id);
 	}
@@ -151,7 +151,7 @@ class JemModelEvents extends JModelList
 		}
 
 		// Filter by search in title
-		$filter = $this->getState('filter');
+		$filter = $this->getState('filter_type');
 		$search = $this->getState('filter_search');
 
 		if (!empty($search)) {
@@ -176,6 +176,10 @@ class JemModelEvents extends JModelList
 							break;
 						case 4:
 							/* search category */
+							/* we need to do that here to get correct counting */
+							$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
+							$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
+							$query->where('c.catname LIKE '.$search);
 							break;
 						case 5:
 							/* search state */
@@ -222,7 +226,7 @@ class JemModelEvents extends JModelList
 		$input	= JFactory::getApplication()->input;
 
 
-		$filter = $this->getState('filter');
+		$filter = $this->getState('filter_type');
 		$search = $this->getState('filter_search');
 
 		foreach ($items as $index => $item) {
@@ -303,20 +307,27 @@ class JemModelEvents extends JModelList
 		###################
 
 		# define variables
-		$filter = $this->getState('filter');
+		$filter = $this->getState('filter_type');
 		$search = $this->getState('filter_search');
 
 		if (!empty($search)) {
 			if (stripos($search, 'id:') === 0) {
 				$query->where('c.id = '.(int) substr($search, 3));
 			} else {
+			/* In case of a search string the db query had already filtered out
+			 *  all events without a matching caterory.
+			 * So we can here return all categories of the event
+			 *  which the user is allowed to see.
+			 */
+			/*
 				$search = $db->Quote('%'.$db->escape($search, true).'%');
 
 				if($search) {
 					if ($filter == 4) {
-							$query->where('c.catname LIKE '.$search);
+						$query->where('c.catname LIKE '.$search);
 					}
 				}
+			 */
 			}
 		}
 

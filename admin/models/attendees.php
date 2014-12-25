@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -62,7 +62,8 @@ class JEMModelAttendees extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app =  JFactory::getApplication();;
+		$app    = JFactory::getApplication();;
+		$jinput = $app->input;
 
 		$limit		= $app->getUserStateFromRequest( 'com_jem.attendees.limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest( 'com_jem.attendees.limitstart', 'limitstart', 0, 'int' );
@@ -72,15 +73,12 @@ class JEMModelAttendees extends JModelLegacy
 		$this->setState('limitstart', $limitstart);
 
 		//set unlimited if export or print action | task=export or task=print
-		$this->setState('unlimited', JRequest::getString('task'));
+		$task = $jinput->get('task', '');
+		$this->setState('unlimited', ($task == 'export' || $task == 'print') ? '1' : '');
 
-
-		$jinput = JFactory::getApplication()->input;
-		$id = $jinput->get('id','','int');
+		$id = $jinput->get('id', 0, 'int');
 
 		$this->setId($id);
-
-
 	}
 
 	/**
@@ -164,57 +162,46 @@ class JEMModelAttendees extends JModelLegacy
 	 */
 	protected function _buildQuery()
 	{
-
-		$app =  JFactory::getApplication();
-		$db = JFactory::getDbo();
+		$app = JFactory::getApplication();
+		$db  = JFactory::getDbo();
 
 		// Filter by search in title
-		$filter = $app->getUserStateFromRequest( 'com_jem.attendees.filter', 'filter', '', 'int' );
-		$search = $app->getUserStateFromRequest( 'com_jem.attendees.filter_search', 'filter_search', '', 'string' );
-		$search = $db->Quote('%'.$db->escape($search, true).'%', false);
-		$filter_waiting	= $app->getUserStateFromRequest( 'com_jem.attendees.waiting',	'filter_waiting',	0, 'int' );
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.attendees.filter_order', 		'filter_order', 	'u.username', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.attendees.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
-		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
-
-
+		$filter_type      = $app->getUserStateFromRequest( 'com_jem.attendees.filter_type',      'filter_type',     '', 'int' );
+		$filter_search    = $app->getUserStateFromRequest( 'com_jem.attendees.filter_search',    'filter_search',   '', 'string' );
+		$filter_search    = $db->Quote('%'.$db->escape($filter_search, true).'%', false);
+		$filter_waiting   = $app->getUserStateFromRequest( 'com_jem.attendees.waiting',          'filter_waiting',   0, 'int' );
+		$filter_order     = $app->getUserStateFromRequest( 'com_jem.attendees.filter_order',     'filter_order',    'u.username', 'cmd' );
+		$filter_order_Dir = $app->getUserStateFromRequest( 'com_jem.attendees.filter_order_Dir', 'filter_order_Dir', '', 'word' );
+		$filter_order     = JFilterInput::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
 		$query = $db->getQuery(true);
-
 		$query->select(array('r.*','u.username','u.name','u.email'));
-		$query->from('#__jem_register AS r');
-		$query->join('LEFT', '#__jem_events AS a ON (r.event = a.id)');
-		$query->join('LEFT', '#__users AS u ON (u.id = r.uid)');
-
+		$query->from(        '#__jem_register AS r');
+		$query->join('LEFT', '#__jem_events   AS a ON (r.event = a.id)');
+		$query->join('LEFT', '#__users        AS u ON (u.id = r.uid)');
 
 		$query->where('r.event = '.$db->Quote($this->_id));
 
-
-		if ($filter_waiting) {
+		if ($filter_waiting > 0) {
 			$query->where('(a.waitinglist = 0 OR r.waiting = '.$db->quote($filter_waiting-1).')');
-
-
 		}
 
-				// search name
-				if ($search && $filter == 1) {
-					$query->where('u.name LIKE '.$search);
-				}
+		// search name
+		if (!empty($filter_search) && $filter_type == 1) {
+			$query->where('u.name LIKE '.$filter_search);
+		}
 
-				// search username
-				if ($search && $filter == 2) {
-					$query->where('u.username LIKE '.$search);
-				}
-
-
+		// search username
+		if (!empty($filter_search) && $filter_type == 2) {
+			$query->where('u.username LIKE '.$filter_search);
+		}
 
 		// Add the list ordering clause.
 		$orderCol	= $filter_order;
 		$orderDirn	= $filter_order_Dir;
 
 		$query->order($db->escape($orderCol.' '.$orderDirn));
-
 
 		return $query;
 	}
@@ -229,7 +216,6 @@ class JEMModelAttendees extends JModelLegacy
 	 */
 	function getEvent()
 	{
-
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select(array('id','title','dates','maxplaces','waitinglist'));
@@ -261,8 +247,9 @@ class JEMModelAttendees extends JModelLegacy
 
 			$db->setQuery($query);
 
-			if (!$this->_db->query()) {
-				JError::raiseError( 4711, $this->_db->getErrorMsg() );
+			// TODO: use exception handling
+			if ($db->execute() === false) {
+				JError::raiseError( 4711, $db->getErrorMsg() );
 			}
 		}
 		return true;

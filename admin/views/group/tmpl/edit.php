@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -22,7 +22,7 @@ $params = $params->toArray();
 <script type="text/javascript">
 	window.addEvent('domready', function(){
 	});
-	
+
 	// moves elements from one select box to another one
 	function moveOptions(from,to) {
 		// Move them over
@@ -86,20 +86,20 @@ $params = $params->toArray();
 			</ul>
 		</fieldset>
 		<fieldset class="adminform">
-			<table class="adminform">
+			<table class="adminform" style="width: 100%">
 				<tr>
 					<td><b><?php echo JText::_('COM_JEM_GROUP_AVAILABLE_USERS').':'; ?></b></td>
 					<td>&nbsp;</td>
 					<td><b><?php echo JText::_('COM_JEM_GROUP_MAINTAINERS').':'; ?></b></td>
 				</tr>
 				<tr>
-					<td width="260px"><?php echo $this->lists['available_users']; ?></td>
-					<td width="110px">
-						<input style="width: 50px" type="button" name="right" value="&gt;" onClick="moveOptions(document.adminForm['available_users'], document.adminForm['maintainers[]'])" />
+					<td width="44%"><?php echo $this->lists['available_users']; ?></td>
+					<td width="10%">
+						<input style="width: 90%" type="button" name="right" value="&gt;" onClick="moveOptions(document.adminForm['available_users'], document.adminForm['maintainers[]'])" />
 						<br /><br />
-						<input style="width: 50px" type="button" name="left" value="&lt;" onClick="moveOptions(document.adminForm['maintainers[]'], document.adminForm['available_users'])" />
+						<input style="width: 90%" type="button" name="left" value="&lt;" onClick="moveOptions(document.adminForm['maintainers[]'], document.adminForm['available_users'])" />
 					</td>
-					<td width="260px"><?php echo $this->lists['maintainers']; ?></td>
+					<td width="44%"><?php echo $this->lists['maintainers']; ?></td>
 				</tr>
 			</table>
 		</fieldset>
@@ -122,17 +122,17 @@ $params = $params->toArray();
 		<!-- RETRIEVING OF FIELDSET PUBLISHING -->
 		<fieldset class="panelform">
 			<ul class="adminformlist">
-				<li><?php echo $this->form->getLabel('addvenue'); ?> 
+				<li><?php echo $this->form->getLabel('addvenue'); ?>
 				<?php echo $this->form->getInput('addvenue'); ?></li>
-				<li><?php echo $this->form->getLabel('publishvenue'); ?> 
+				<li><?php echo $this->form->getLabel('publishvenue'); ?>
 				<?php echo $this->form->getInput('publishvenue'); ?></li>
-				<li><?php echo $this->form->getLabel('editvenue'); ?> 
+				<li><?php echo $this->form->getLabel('editvenue'); ?>
 				<?php echo $this->form->getInput('editvenue'); ?></li>
-				<li><?php echo $this->form->getLabel('addevent'); ?> 
+				<li><?php echo $this->form->getLabel('addevent'); ?>
 				<?php echo $this->form->getInput('addevent'); ?></li>
-				<li><?php echo $this->form->getLabel('publishevent'); ?> 
+				<li><?php echo $this->form->getLabel('publishevent'); ?>
 				<?php echo $this->form->getInput('publishevent'); ?></li>
-				<li><?php echo $this->form->getLabel('editevent'); ?> 
+				<li><?php echo $this->form->getLabel('editevent'); ?>
 				<?php echo $this->form->getInput('editevent'); ?></li>
 			</ul>
 		</fieldset>

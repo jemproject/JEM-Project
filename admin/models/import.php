@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -333,7 +333,7 @@ class JEMModelImport extends JModelLegacy {
 			}
 
 			// force the cleanup to update the imported events status
-			$settings = JTable::getInstance('Settings', 'JEMTable');
+			$settings = JTable::getInstance('Settings', 'JemTable');
 			$settings->load(1);
 			$settings->lastupdate = 0;
 			$settings->store();
@@ -367,7 +367,7 @@ class JEMModelImport extends JModelLegacy {
 				$query->where('NOT catid IN ('.implode(',',array_keys($cats)).')');
 			}
 			$db->setQuery($query);
-			$db->query();
+			$db->execute();
 
 			if (count($cats)) {
 				$values = array();
@@ -392,7 +392,7 @@ class JEMModelImport extends JModelLegacy {
 						$query_upd->set($db->quoteName('ordering') . '=' . $db->quote($order));
 						$query_upd->where($db->quoteName('id') . '=' . $db->quote($id));
 						$db->setQuery($query_upd);
-						if ($db->query()) {
+						if ($db->execute() !== false) {
 							$result['updated']++;
 						}
 					} else {
@@ -408,7 +408,7 @@ class JEMModelImport extends JModelLegacy {
 					$query->columns($db->quoteName($columns));
 					$query->values($values);
 					$db->setQuery($query);
-					if ($db->query()) {
+					if ($db->execute() !== false) {
 						$result['added'] += count($values);
 					}
 				}
@@ -443,7 +443,7 @@ class JEMModelImport extends JModelLegacy {
 
 		$par = $result->manifest_cache;
 		$params = new JRegistry;
-		$params->loadJSON($par);
+		$params->loadString($par, 'JSON');
 
 		return $params->get('version', null);
 	}
