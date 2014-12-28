@@ -59,7 +59,9 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 		</thead>
 		<tfoot>
 			<tr>
-				<td colspan="<?php echo $colspan; ?>"><?php echo $this->pagination->getListFooter(); ?></td>
+				<td colspan="<?php echo $colspan; ?>">
+					<?php echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks() : $this->pagination->getListFooter()); ?>
+				</td>
 			</tr>
 		</tfoot>
 		<tbody>
