@@ -82,7 +82,7 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 		<tfoot>
 			<tr>
 				<td colspan="15">
-					<?php echo $this->pagination->getListFooter(); ?>
+					<?php echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks() : $this->pagination->getListFooter()); ?>
 				</td>
 			</tr>
 		</tfoot>

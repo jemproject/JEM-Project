@@ -862,6 +862,7 @@ ul.adminformlist li {
 	margin: 0;
 	padding: 0;
 	list-style: none;
+	clear: left;
 }
 
 /* Administrator forms, lists */
@@ -888,13 +889,14 @@ div.current span.faux-label {
 	width: 150px;
 	float: left;
 	clear: left;
-	margin-top: 8px;
+/*	margin-top: 8px;*/
+/*	-moz-hyphens: auto;*/
 }
 div.current fieldset.radio input[type="radio"],
 div.current fieldset.checkbox input[type="checkbox"] {
 	float: left;
 	min-width: 15px;
-	margin-top: 8px;
+/*	margin-top: 8px;*/
 }
 
 fieldset.adminform input#clear {
