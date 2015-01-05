@@ -1,11 +1,11 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.0
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
- * 
+ *
  * Plugin based on the Joomla! update notification plugin
  */
 
@@ -24,16 +24,21 @@ class plgQuickiconJEMquickicon extends JPlugin
 
 	public function onGetIcons($context)
 	{
-		if ($context != $this->params->get('context', 'mod_quickicon') || !include_once(rtrim(JPATH_ADMINISTRATOR,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_jem'.DIRECTORY_SEPARATOR.'helpers'.DIRECTORY_SEPARATOR.'helper.php')) {
+		if ($context != $this->params->get('context', 'mod_quickicon') ||
+		    !JFactory::getUser()->authorise('core.manage', 'com_jem')  ||
+		    !file_exists(JPATH_ADMINISTRATOR.'/components/com_jem/helpers/helper.php')) {
 			return;
 		}
 
+		$useIcons = version_compare(JVERSION, '3.0', '>');
+		$icon = 'com_jem/icon-48-home.png'; // which means '/media/com_jem/images/icon-48-home.png'
 		$text = $this->params->get('displayedtext');
-		if(empty($text)) $text = JText::_('JEM-Events');
+		if (empty($text)) $text = JText::_('JEM-Events');
 
 		return array(array(
 			'link' => 'index.php?option=com_jem',
-			'image' => JURI::base().'../media/com_jem/images/icon-48-home.png',
+			'image' => $useIcons ? 'calendar' : $icon, // for J! 2.5 or e.g. Isis on J! 3.x
+			'icon' => $icon,                           // for e.g. Hathor on J! 3.x
 			'text' => $text,
 			'id' => 'plg_quickicon_jemquickicon'
 		));
