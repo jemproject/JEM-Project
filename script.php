@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -149,7 +149,8 @@ class com_jemInstallerScript
 				"global_show_detlinkvenue"=>"1",
 				"global_show_mapserv"=>"0",
 				"global_tld"=>"",
-				"global_lg"=>""
+				"global_lg"=>"",
+				"global_cleanup_db_on_uninstall"=>"0"
 		);
 
 		$this->setGlobalAttribs($param_array);
@@ -167,8 +168,19 @@ class com_jemInstallerScript
 		<p><?php echo JText::_('COM_JEM_UNINSTALL_TEXT'); ?></p>
 		<?php
 
-		// prevent dead links on frontend
-		$this->disableJemMenuItems();
+		$globalParams = $this->getGlobalParams();
+		if (!empty($globalParams->get('global_cleanup_db_on_uninstall', 0))) {
+			// user decided to fully remove JEM - so do it!
+			$this->removeJemMenuItems();
+			$this->removeAllJemTables();
+			$imageDir = JPATH_SITE.'/images/jem';
+			if (JFolder::exists($imageDir)) {
+				JFolder::delete($imageDir);
+			}
+		} else {
+			// prevent dead links on frontend
+			$this->disableJemMenuItems();
+		}
 	}
 
 	/**
@@ -351,6 +363,25 @@ class com_jemInstallerScript
 	}
 
 	/**
+	 * Gets globalattrib values from the settings table
+	 *
+	 * @return JRegistry object
+	 */
+	private function getGlobalParams()
+	{
+		$registry = new JRegistry;
+		try {
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
+			$query->select('globalattribs')->from('#__jem_settings')->where('id=1');
+			$db->setQuery($query);
+			$registry->loadString($db->loadResult());
+		} catch (Exception $ex) {
+		}
+		return $registry;
+	}
+
+	/**
 	 * Sets globalattrib values in the settings table
 	 *
 	 * @param $param_array  An array holding the params to store
@@ -425,6 +456,22 @@ class com_jemInstallerScript
 		      ->columns($db->quoteName(array('extension_id', 'version_id')))
 		      ->values(implode(',', array($extensionId, $db->quote($versionId))));
 
+		$db->setQuery($query);
+		$db->execute();
+	}
+
+	/**
+	 * Remove all JEM menu items.
+	 *
+	 * @return void
+	 */
+	private function removeJemMenuItems()
+	{
+		// remove all "com_jem..." frontend entries
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->delete('#__menu');
+		$query->where(array('client_id = 0', 'published > 0', 'link LIKE "index.php?option=com_jem%"'));
 		$db->setQuery($query);
 		$db->execute();
 	}
@@ -998,6 +1045,33 @@ class com_jemInstallerScript
 			$query->where(array('update_site_id = ' . $db->quote($id)));
 			$db->setQuery($query);
 			$db->execute();
+		}
+	}
+
+	/**
+	 * Deletes all JEM tables on database if option says so.
+	 *
+	 * @return void
+	 */
+	private function removeAllJemTables()
+	{
+		$db = JFactory::getDbo();
+		$tables = array('#__jem_attachments',
+		                '#__jem_categories',
+		                '#__jem_cats_event_relations',
+		                '#__jem_countries',
+		                '#__jem_events',
+		                '#__jem_groupmembers',
+		                '#__jem_groups',
+		                '#__jem_register',
+		                '#__jem_settings',
+		                '#__jem_venues');
+		foreach ($tables AS $table) {
+			try {
+				$db->dropTable($table);
+			} catch (Exception $ex) {
+				// simply continue with next table
+			}
 		}
 	}
 
