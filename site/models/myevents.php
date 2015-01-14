@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -53,6 +53,11 @@ class JEMModelMyevents extends JModelLegacy
 		$jemsettings = JEMHelper::config();
 
 		//get the number of events from database
+
+		/* in J! 3.3.6 limitstart is removed from request - but we need it! */
+		if ($app->input->getInt('limitstart', null) === null) {
+			$app->setUserState('com_jem.myevents.limitstart', 0);
+		}
 
 		$limit		= $app->getUserStateFromRequest('com_jem.myevents.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart = $app->getUserStateFromRequest('com_jem.myevents.limitstart', 'limitstart', 0, 'int');

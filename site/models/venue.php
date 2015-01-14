@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -47,6 +47,12 @@ class JemModelVenue extends JemModelEventslist
 		$task        = $jinput->get('task','','cmd');
 
 		// List state information
+
+		/* in J! 3.3.6 limitstart is removed from request - but we need it! */
+		if ($app->input->getInt('limitstart', null) === null) {
+			$app->setUserState('com_jem.venue.'.$itemid.'.limitstart', 0);
+		}
+
 		$limit = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
 		$this->setState('list.limit', $limit);
 
