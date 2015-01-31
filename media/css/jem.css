@@ -1,7 +1,7 @@
 /**
- * @version 2.1.0
+ * @version 2.1.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -445,9 +445,24 @@ div#jem table.eventtable tr:hover td {
 	background-color:#BACFBA;
 }
 
-div#jem table.eventtable tr.featured td{
+div#jem table.eventtable tr.featured td {
 	background-color: #B6B6B4;
 }
+
+/* activate this rule to show date in event lists bold (when two-line mode is choosen) * /
+div#jem table.eventtable tr td span.jem_date-2 {
+	font-weight: bold;
+}
+/**/
+
+/* activate these two rules to replace the linebreak by a space * /
+div#jem table.eventtable tr td br.jem_break-2 {
+	display: none;
+}
+div#jem table.eventtable tr td span.jem_date-2::after {
+	content: " ";
+}
+/**/
 
 /* -------------------
 	FILTER

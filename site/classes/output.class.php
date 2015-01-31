@@ -830,6 +830,7 @@ class JEMOutput {
 	/**
 	 * Formats the input dates and times to be used as a from-to string for
 	 * events. Takes care of unset dates and or times.
+	 * Values can be styled using css classes jem_date-1 and jem_time-1.
 	 *
 	 * @param string $dateStart Start date of event
 	 * @param string $timeStart Start time of event
@@ -846,39 +847,90 @@ class JEMOutput {
 		$output = "";
 
 		if (JemHelper::isValidDate($dateStart)) {
-			$output .= self::formatdate($dateStart, $dateFormat);
+			$output .= '<span class="jem_date-1">'.self::formatdate($dateStart, $dateFormat).'</span>';
 
 			if ($settings->get('global_show_timedetails','1') && JemHelper::isValidTime($timeStart)) {
-				$output .= ', '.self::formattime($timeStart, $timeFormat, $addSuffix);
+				$output .= ', <span class="jem_time-1">'.self::formattime($timeStart, $timeFormat, $addSuffix).'</span>';
 			}
 
 			// Display end date only when it differs from start date
 			$displayDateEnd = JemHelper::isValidDate($dateEnd) && $dateEnd != $dateStart;
 			if ($displayDateEnd) {
-				$output .= ' - '.self::formatdate($dateEnd, $dateFormat);
+				$output .= ' - <span class="jem_date-1">'.self::formatdate($dateEnd, $dateFormat).'</span>';
 			}
 
 			// Display end time only when both times are set
 			if ($settings->get('global_show_timedetails','1') && JemHelper::isValidTime($timeStart) && JemHelper::isValidTime($timeEnd))
 			{
 				$output .= $displayDateEnd ? ', ' : ' - ';
-				$output .= self::formattime($timeEnd, $timeFormat, $addSuffix);
+				$output .= '<span class="jem_time-1">'.self::formattime($timeEnd, $timeFormat, $addSuffix).'</span>';
 			}
 		} else {
-			$output .= JText::_('COM_JEM_OPEN_DATE');
+			$output .= '<span class="jem_date-1">'.JText::_('COM_JEM_OPEN_DATE').'</span>';
 
 			if ($settings->get('global_show_timedetails','1')) {
 				if (JemHelper::isValidTime($timeStart)) {
-					$output .= ', '.self::formattime($timeStart, $timeFormat, $addSuffix);
+					$output .= ', <span class="jem_time-1">'.self::formattime($timeStart, $timeFormat, $addSuffix).'</span>';
 
 					// Display end time only when both times are set
 					if (JemHelper::isValidTime($timeEnd)) {
-						$output .= ' - '.self::formattime($timeEnd, $timeFormat, $addSuffix);
+						$output .= ' - <span class="jem_time-1">'.self::formattime($timeEnd, $timeFormat, $addSuffix).'</span>';
 					}
 				}
 			}
 		}
 
+		return $output;
+	}
+
+	/**
+	 * Formats the input dates and times to be used as a from-to string for
+	 * events. Takes care of unset dates and or times.
+	 * First line is for (short) date, second line for time values.
+	 * Lines can be styled using css classes jem_date-2 and jem_time-2.
+	 *
+	 * @param string $dateStart Start date of event
+	 * @param string $timeStart Start time of event
+	 * @param string $dateEnd End date of event
+	 * @param string $timeEnd End time of event
+	 * @param string $dateFormat Date Format
+	 * @param string $timeFormat Time Format
+	 * @param bool   $addSuffix if true add suffix specified in settings
+	 * @return string Formatted date and time string to print
+	 */
+	static function formatDateTime2Lines($dateStart, $timeStart, $dateEnd = "", $timeEnd = "", $dateFormat = "", $timeFormat = "", $addSuffix = true)
+	{
+		$settings = JemHelper::globalattribs();
+		$output = "";
+		$jemconfig = JemHelper::config();
+
+		if (empty($dateFormat)) {
+			// Use format saved in settings if specified or format in language file otherwise
+			$dateFormat = empty($jemconfig->formatShortDate) ? JText::_('COM_JEM_FORMAT_SHORT_DATE') : $jemconfig->formatShortDate;
+		}
+
+		if (JemHelper::isValidDate($dateStart)) {
+			$outDate = self::formatdate($dateStart, $dateFormat);
+
+			if (JemHelper::isValidDate($dateEnd) && ($dateEnd != $dateStart)) {
+				$outDate .= ' - ' . self::formatdate($dateEnd, $dateFormat);
+			}
+		} else {
+			$outDate = JText::_('COM_JEM_OPEN_DATE');
+		}
+
+		if ($settings->get('global_show_timedetails','1') && JemHelper::isValidTime($timeStart)) {
+			$outTime = self::formattime($timeStart, $timeFormat, $addSuffix);
+
+			if (JemHelper::isValidTime($timeEnd)) {
+				$outTime .= ' - ' . self::formattime($timeEnd, $timeFormat, $addSuffix);
+			}
+		}
+
+		$output = '<span class="jem_date-2">' . $outDate . '</span>';
+		if (!empty($outTime)) {
+			$output .= '<br class="jem_break-2"><span class="jem_time-2">' . $outTime . '</span>';
+		}
 		return $output;
 	}
 
@@ -917,7 +969,12 @@ class JEMOutput {
 		} else {
 			$format = JText::_('COM_JEM_FORMAT_SHORT_DATE');
 		}
-		return self::formatDateTime($dateStart, $timeStart, $dateEnd, $timeEnd, $format);
+
+		if (isset($settings->datemode) && ($settings->datemode == 2)) {
+			return self::formatDateTime2Lines($dateStart, $timeStart, $dateEnd, $timeEnd, $format);
+		} else {
+			return self::formatDateTime($dateStart, $timeStart, $dateEnd, $timeEnd, $format);
+		}
 	}
 
 	static function formatSchemaOrgDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "") {

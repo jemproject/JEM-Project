@@ -305,6 +305,16 @@
 			maxlength="10"
 			required="false"
 		/>
+		<field name="datemode" type="list"
+			label="COM_JEM_DATE_COLUMN_LAYOUT"
+			description="COM_JEM_DATE_COLUMN_LAYOUT_DESC"
+			class="inputbox"
+			default="1"
+			required="false"
+		>
+			<option value="1">COM_JEM_DATE_COLUMN_LAYOUT_ONE_LINE</option>
+			<option value="2">COM_JEM_DATE_COLUMN_LAYOUT_TWO_LINES</option>
+		</field>
 	</fieldset>
 
 	<fieldset name="layoutcitycolumn"
