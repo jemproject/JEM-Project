@@ -472,7 +472,7 @@ class com_jemInstallerScript
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
 		$query->delete('#__menu');
-		$query->where(array('client_id = 0', 'published > 0', 'link LIKE "index.php?option=com_jem%"'));
+		$query->where(array('client_id = 0', 'link LIKE "index.php?option=com_jem%"'));
 		$db->setQuery($query);
 		$db->execute();
 	}
