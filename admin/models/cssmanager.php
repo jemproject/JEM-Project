@@ -1,20 +1,21 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
 
+jimport('joomla.filesystem.folder');
+jimport('joomla.filesystem.file');
 
 /**
  * Model-CSSManager
  */
 class JemModelCssmanager extends JModelLegacy
 {
-
 
 	/**
 	 * Internal method to get file properties.
@@ -87,7 +88,6 @@ class JemModelCssmanager extends JModelLegacy
 		// Initialise variables.
 		$result	= array();
 
-		jimport('joomla.filesystem.folder');
 		$path	= JPath::clean(JPATH_ROOT.'/media/com_jem/');
 
 		// Check if the template path exists.
@@ -152,7 +152,8 @@ class JemModelCssmanager extends JModelLegacy
 	 * Detect if option linenumbers is enabled
 	 * plugin: codemirror
 	 */
-	function getStatusLinenumber() {
+	function getStatusLinenumber()
+	{
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
 		$query->select('params');
@@ -169,8 +170,8 @@ class JemModelCssmanager extends JModelLegacy
 	 *
 	 * @param $param_array  An array holding the params to store
 	 */
-	function setStatusLinenumber($status) {
-
+	function setStatusLinenumber($status)
+	{
 		// read the existing component value(s)
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);

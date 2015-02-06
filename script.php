@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 $db = JFactory::getDBO();
 jimport('joomla.filesystem.folder');
+jimport('joomla.filesystem.file');
 
 
 /**

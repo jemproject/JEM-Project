@@ -1,29 +1,32 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
 
+jimport('joomla.filesystem.file');
+jimport('joomla.filesystem.folder');
+
 /**
  * Holds the logic for attachments manipulation
  *
  * @package JEM
  */
-class JEMAttachment extends JObject {
+class JEMAttachment extends JObject
+{
 	/**
 	 * upload files for the specified object
 	 *
 	 * @param array data from JInput 'files'
 	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
 	 */
-	static function postUpload($post_files, $object) {
-		jimport('joomla.filesystem.file');
-		jimport('joomla.filesystem.folder');
+	static function postUpload($post_files, $object)
+	{
 		require_once JPATH_SITE.'/components/com_jem/classes/image.class.php';
 
 		$user = JFactory::getUser();
@@ -108,7 +111,8 @@ class JEMAttachment extends JObject {
 	 * update attachment record in db
 	 * @param array (id, name, description, access)
 	 */
-	static function update($attach) {
+	static function update($attach)
+	{
 		if (!is_array($attach) || !isset($attach['id']) || !(intval($attach['id']))) {
 			return false;
 		}
@@ -127,9 +131,8 @@ class JEMAttachment extends JObject {
 	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
 	 * @return array
 	 */
-	static function getAttachments($object) {
-		jimport('joomla.filesystem.file');
-		jimport('joomla.filesystem.folder');
+	static function getAttachments($object)
+	{
 		$jemsettings = JEMHelper::config();
 
 		$user = JFactory::getUser();
@@ -172,7 +175,8 @@ class JEMAttachment extends JObject {
 	 *
 	 * @param int $id
 	 */
-	static function getAttachmentPath($id) {
+	static function getAttachmentPath($id)
+	{
 		$jemsettings = JEMHelper::config();
 
 		$user = JFactory::getUser();
@@ -208,9 +212,8 @@ class JEMAttachment extends JObject {
 	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
 	 * @return boolean
 	 */
-	static function remove($id) {
-		jimport('joomla.filesystem.file');
-		jimport('joomla.filesystem.folder');
+	static function remove($id)
+	{
 		$jemsettings = JEMHelper::config();
 
 		// then get info for files from db
