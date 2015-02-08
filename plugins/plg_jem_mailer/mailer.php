@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.2
  * @package JEM
  * @subpackage JEM Mailer Plugin
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -108,7 +108,7 @@ class plgJEMMailer extends JPlugin {
 		}
 
 		//create link to event
-		$link = JRoute::_(JUri::base().JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = JRoute::_(JUri::root().JEMHelperRoute::getEventRoute($event->slug), false);
 
 
 		############################
@@ -328,7 +328,7 @@ class plgJEMMailer extends JPlugin {
 		}
 
 		// create link to event
-		$link = JRoute::_(JUri::base().JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = JRoute::_(JUri::root().JEMHelperRoute::getEventRoute($event->slug), false);
 
 		#####################
 		## SENDMAIL - USER ##
@@ -421,7 +421,7 @@ class plgJEMMailer extends JPlugin {
 		if (is_null($event = $db->loadObject())) return false;
 
 		// Link for event
-		$link = JRoute::_(JUri::base().JEMHelperRoute::getEventRoute($event->slug), false);
+		$link = JRoute::_(JUri::root().JEMHelperRoute::getEventRoute($event->slug), false);
 
 		// Strip tags/scripts, etc. from description
 		$text_description = JFilterOutput::cleanText($event->text);
@@ -719,7 +719,7 @@ class plgJEMMailer extends JPlugin {
 		# at this point we do have a result
 
 		// Define link for venue
-		$link = JRoute::_(JUri::base().JEMHelperRoute::getVenueRoute($venue->slug), false);
+		$link = JRoute::_(JUri::root().JEMHelperRoute::getVenueRoute($venue->slug), false);
 
 		// Define published-state message
 		$adminstate = $venue->published ? JText::sprintf('PLG_JEM_MAILER_VENUE_PUBLISHED', $link) : JText::_('PLG_JEM_MAILER_VENUE_UNPUBLISHED');
