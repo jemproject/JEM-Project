@@ -1,7 +1,7 @@
 <?php
 /**
- * Version 1.9.0
- * @copyright	Copyright (C) 2014 Ghost Art digital media.
+ * Version 1.9.1
+ * @copyright	Copyright (C) 2015 Ghost Art digital media.
  * @copyright	Copyright (C) 2013 - 2014 joomlaeventmanager.net. All rights reserved.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  * Based on Eventlist11 tag and JEM specific code by JEM Community
@@ -71,6 +71,8 @@ class plgAcymailingTagjem extends JPlugin
 		if ($this->params->get('hidepastevents', 'yes') == 'yes') {
 			$filters[] = "a.`dates` >= ".$db->Quote(date('Y-m-d', time() - 86400));
 		}
+
+		$filters[] = $db->quoteName('published') . ' = 1'; // prevent unpublished and trashed events, but also archived
 
 		$whereQuery = '';
 		if (!empty($filters)) {
