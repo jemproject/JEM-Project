@@ -1,12 +1,16 @@
 <?php
 /**
- * Version 1.9.1
- * @copyright	Copyright (C) 2015 Ghost Art digital media.
- * @copyright	Copyright (C) 2013 - 2014 joomlaeventmanager.net. All rights reserved.
+ * Version 1.9.2
+ * @copyright	Copyright (C) 2014 Ghost Art digital media.
+ * @copyright	Copyright (C) 2013 - 2015 joomlaeventmanager.net. All rights reserved.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  * Based on Eventlist11 tag and JEM specific code by JEM Community
  */
 defined('_JEXEC') or die;
+
+include_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
+include_once(JPATH_SITE.'/components/com_jem/classes/image.class.php');
+include_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 
 class plgAcymailingTagjem extends JPlugin
 {
@@ -22,6 +26,8 @@ class plgAcymailingTagjem extends JPlugin
 			$this->params = new JParameter($plugin->params);
 		}
 		$this->loadLanguage();
+		$this->loadLanguage('com_jem', JPATH_SITE.'/components/com_jem');
+		$this->loadLanguage('com_jem', JPATH_ADMINISTRATOR.'/components/com_jem');
 	}
 
 	function acymailing_getPluginType()
@@ -69,10 +75,10 @@ class plgAcymailingTagjem extends JPlugin
 		// we hide past events but we remove one day just to make sure we won't hide something we should not!
 		// because it's a newsletter we focus onevents starting in the future; already running (multi-day) events are not new
 		if ($this->params->get('hidepastevents', 'yes') == 'yes') {
-			$filters[] = "a.`dates` >= ".$db->Quote(date('Y-m-d', time() - 86400));
+			$filters[] = '(a.dates IS NULL OR a.dates >= '.$db->Quote(date('Y-m-d', time() - 86400)) . ')';
 		}
 
-		$filters[] = $db->quoteName('published') . ' = 1'; // prevent unpublished and trashed events, but also archived
+		$filters[] = 'a.published = 1'; // prevent unpublished and trashed events, but also archived
 
 		$whereQuery = '';
 		if (!empty($filters)) {
@@ -162,7 +168,7 @@ class plgAcymailingTagjem extends JPlugin
 							<?php echo acymailing_absoluteURL($row->introtext); ?>
 						</td>
 						<td align="center">
-							<?php echo JHTML::_('date', strtotime($row->dates), JText::_('DATE_FORMAT_LC')); ?>
+							<?php echo JEMOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes); ?>
 						</td>
 						<td align="center">
 							<?php echo $row->id; ?>
@@ -260,6 +266,7 @@ class plgAcymailingTagjem extends JPlugin
 					if(document.adminForm.max_article.value && document.adminForm.max_article.value!=0){ tag += '|max:'+document.adminForm.max_article.value; }
 					if(document.adminForm.delayevent.value && document.adminForm.delayevent.value>0){ tag += '|delay:'+document.adminForm.delayevent.value; }
 					tag += '|template:'+document.adminForm.template.value;
+					tag += '|opendates:'+document.adminForm.opendates.value;
 
 					tag += '}';
 				}
@@ -312,8 +319,16 @@ class plgAcymailingTagjem extends JPlugin
 					</select>
 				</td>
 				<td>
+					<span title='<?php echo JText::_('COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC'); ?>'>
+						<?php echo JText::_('COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES'); ?>
+					</span>
 				</td>
 				<td>
+					<select name="opendates" size="1" onchange="updateTag();">
+						<option value="no"><?php echo JText::_('JNo');?></option>
+						<option value="also"><?php echo JText::_('COM_JEM_SHOW_OPENDATES_TOO');?></option>
+						<option value="only"><?php echo JText::_('COM_JEM_SHOW_OPENDATES_ONLY');?></option>
+					</select>
 				</td>
 			</tr>
 		</table>
@@ -367,9 +382,6 @@ class plgAcymailingTagjem extends JPlugin
 			return;
 		}
 
-		include_once(ACYMAILING_ROOT.'components'.DS.'com_jem'.DS.'helpers'.DS.'helper.php');
-		include_once(ACYMAILING_ROOT.'components'.DS.'com_jem'.DS.'classes'.DS.'image.class.php');
-		include_once(ACYMAILING_ROOT.'components'.DS.'com_jem'.DS.'classes'.DS.'output.class.php');
 		$mailerHelper = acymailing_get('helper.mailer');
 
 		$resultshtml = array();
@@ -424,8 +436,8 @@ class plgAcymailingTagjem extends JPlugin
 			//$query .= 'LEFT JOIN `#__jem_cats_event_relations` AS c ON a.`id` = c.itemid ';
 			//$query .= 'LEFT JOIN `#__jem_categories` AS d ON c.`catid` = d.id ';
 			//$query .= 'LEFT JOIN #__contact_details AS cn ON cn.id = a.contactid ';
-			$query = ' SELECT a.id, a.alias,a.dates, a.registra, a.featured, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.maxplaces, a.waitinglist, a.fulltext,'
-			       . ' a.introtext, a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10, '
+			$query = ' SELECT a.id, a.alias, a.dates, a.registra, a.featured, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.maxplaces, a.waitinglist, a.fulltext,'
+			       . ' a.introtext, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, '
 			       . ' l.venue, l.city, l.state, l.url, l.street, ct.name AS countryname, l.postalcode, '
 			       . ' c.catname, c.id AS catid,'
 			       // TODO: get contact params and ensure not to show private things! Until that only show name and link to contact view.
@@ -452,15 +464,8 @@ class plgAcymailingTagjem extends JPlugin
 				continue;
 			}
 
-// 			$date = ELOutput::formatdate($event->dates, $event->times);
-// 			if (!empty($event->times)) $date .= ' '.ELOutput::formattime($event->dates, $event->times);
-// 			if ($event->enddates){
-// 				$date .= ' - '.ELOutput::formatdate($event->enddates, $event->endtimes);
-// 				if(!empty($event->endtimes)) $date .= ' '.ELOutput::formattime($event->dates, $event->endtimes);
-// 			}
-
-			$date = JEMOutput::formatShortDateTime($event->dates, $event->times,
-			                                       $event->enddates, $event->endtimes);
+			$date = JEMOutput::formatLongDateTime($event->dates, $event->times,
+			                                      $event->enddates, $event->endtimes);
 
 			$link = 'index.php?option=com_jem&view=event&id='.$event->id.':'.$event->alias;
 			if (!empty($tag->itemid)) {
@@ -477,14 +482,14 @@ class plgAcymailingTagjem extends JPlugin
 				$template = '_'.$tag->template;
 			}
 
-			if (file_exists(ACYMAILING_MEDIA.'plugins'.DS.'tagjem'.$template.'.php')) {
+			if (file_exists(ACYMAILING_MEDIA.'plugins/tagjem'.$template.'.php')) {
 				ob_start();
-				require(ACYMAILING_MEDIA.'plugins'.DS.'tagjem'.$template.'.php');
+				require(ACYMAILING_MEDIA.'plugins/tagjem'.$template.'.php');
 				$result .= ob_get_clean();
 			} else {
 				$result .= '<div class="acymailing_content" style="margin-top:12px">';
 				if (!empty($event->datimage)) {
-					$imageFile = file_exists(ACYMAILING_ROOT.'images'.DS.'jem'.DS.'events'.DS.'small'.DS.$event->datimage) ? ACYMAILING_LIVE.'images/jem/events/small/'.$event->datimage : ACYMAILING_LIVE.'images/jem/events/'.$event->datimage;
+					$imageFile = file_exists(ACYMAILING_ROOT.'images/jem/events/small/'.$event->datimage) ? ACYMAILING_LIVE.'images/jem/events/small/'.$event->datimage : ACYMAILING_LIVE.'images/jem/events/'.$event->datimage;
 					$result .= '<table cellspacing="5" cellpadding="0" border="0"><tr><td valign="top"><a style="text-decoration:none;border:0" target="_blank" href="'.$link.'" ><img src="'.$imageFile.'"/></a></td><td style="padding-left:5px" valign="top">';
 				}
 				$result .= '<a style="text-decoration:none;" name="event-'.$event->id.'" target="_blank" href="'.$link.'"><h2 class="acymailing_title" style="margin-top:0">'.$event->title;
@@ -597,21 +602,43 @@ class plgAcymailingTagjem extends JPlugin
 					$where[] = implode(' OR ',$selectedArea);
 				}
 
-				$where[] = 'a.`published` = 1';
+				$where[] = 'a.published = 1';
 				if ($this->params->get('showfeatured', 'yes') == 'yes') {
-					$where[] = 'a.`featured` = 1';
+					$where[] = 'a.featured = 1';
 				}
-				if (!empty($parameter->enddates)) {
-					$where[] = 'a.`enddates` >= '.$db->Quote(date( 'Y-m-d', $time));
-				} else {
-					$where[] = 'a.`dates` >= '.$db->Quote(date( 'Y-m-d', $time));
-				}
-				if (!empty($parameter->delay)) {
-					$where[] = 'a.`dates` <= '.$db->Quote(date( 'Y-m-d', $time + $parameter->delay));
+
+				// Open dates, date limits
+				$opendates	= !empty($parameter->opendates) ? $parameter->opendates : 'no';
+				switch ($opendates) {
+				case 'no': // don't show events without start date
+				default:
+					$where[] = 'a.dates IS NOT NULL';
+					if (!empty($parameter->enddates)) {
+						$where[] = 'IF (a.enddates IS NOT NULL, a.enddates, a.dates) >= '.$db->Quote(date('Y-m-d', $time));
+					} else {
+						$where[] = 'a.dates >= '.$db->Quote(date('Y-m-d', $time));
+					}
+					if (!empty($parameter->delay)) {
+						$where[] = 'a.dates <= '.$db->Quote(date('Y-m-d', $time + $parameter->delay));
+					}
+					break;
+				case 'also': // show all events, with or without start date
+					if (!empty($parameter->enddates)) {
+						$where[] = '(a.dates IS NULL OR IF (a.enddates IS NOT NULL, a.enddates, a.dates) >= '.$db->Quote(date('Y-m-d', $time)).')';
+					} else {
+						$where[] = '(a.dates IS NULL OR a.dates >= '.$db->Quote(date('Y-m-d', $time)).')';
+					}
+					if (!empty($parameter->delay)) {
+						$where[] = '(a.dates IS NULL OR a.dates <= '.$db->Quote(date('Y-m-d', $time + $parameter->delay)).')';
+					}
+					break;
+				case 'only': // show only events without startdate
+					$where[] = 'a.dates IS NULL';
+					break;
 				}
 
 				$query .= ' WHERE ('.implode(') AND (',$where).')';
-				$query .= ' ORDER BY a.`dates` ASC, a.`times` ASC';
+				$query .= ' ORDER BY a.dates ASC, a.times ASC';
 				if (!empty($parameter->max)) {
 					$query .= ' LIMIT '.(int)$parameter->max;
 				}
@@ -627,9 +654,9 @@ class plgAcymailingTagjem extends JPlugin
 
 				$stringTag = '';
 				if (!empty($allArticles)) {
-					if (file_exists(ACYMAILING_MEDIA.'plugins'.DS.'autojem.php')) {
+					if (file_exists(ACYMAILING_MEDIA.'plugins/autojem.php')) {
 						ob_start();
-						require(ACYMAILING_MEDIA.'plugins'.DS.'autojem.php');
+						require(ACYMAILING_MEDIA.'plugins/autojem.php');
 						$stringTag = ob_get_clean();
 					} else {
 						// we insert the article tag one after the other in a table as they are already sorted
