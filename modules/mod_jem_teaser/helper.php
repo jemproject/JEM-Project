@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.2
  * @package JEM
  * @subpackage JEM Teaser Module
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -26,8 +26,8 @@ abstract class modJEMteaserHelper
 	{
 		mb_internal_encoding('UTF-8');
 
-		$db		= JFactory::getDBO();
-		$user	= JFactory::getUser();
+		$db         = JFactory::getDBO();
+		$user       = JFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 
 		# Retrieve Eventslist model for the data
@@ -46,7 +46,7 @@ abstract class modJEMteaserHelper
 		$type = $params->get('type');
 		$offset_hourss = $params->get('offset_hours', 0);
 
-		# all upcoming events
+		# all upcoming or unfinished events
 		if (($type == 0) || ($type == 1)) {
 			$offset_minutes = $offset_hourss * 60;
 
@@ -64,7 +64,7 @@ abstract class modJEMteaserHelper
 			$cal_from = "";
 		}
 
-		# currently running events only
+		# currently running events only (today + offset is inbetween start and end date of event)
 		elseif ($type == 3) {
 			$offset_days = (int)round($offset_hourss / 24);
 
@@ -124,9 +124,8 @@ abstract class modJEMteaserHelper
 
 
 		# Loop through the result rows and prepare data
-		$i		= 0;
-		$lists	= array();
-
+		$lists = array();
+		$i     = 0;
 
 		foreach ($events as $row)
 		{
@@ -154,18 +153,14 @@ abstract class modJEMteaserHelper
 			## DEFINE LIST ##
 			#################
 
-			$settings	= JEMHelper::globalattribs();
-			$authorised = JAccess::getAuthorisedViewLevels(JFactory::getUser()->get('id'));
-
 			$lists[$i] = new stdClass();
 
-			if (in_array($row->access, $authorised))
-			{
+			# check view access
+			if (in_array($row->access, $levels)) {
 				# We know that user has the privilege to view the event
 				$lists[$i]->link = JRoute::_(JEMHelperRoute::getEventRoute($row->slug));
 				$lists[$i]->linkText = JText::_('MOD_JEM_TEASER_READMORE');
-			}
-			else {
+			} else {
 				$lists[$i]->link = JRoute::_('index.php?option=com_users&view=login');
 				$lists[$i]->linkText = JText::_('MOD_JEM_TEASER_READMORE_REGISTER');
 			}
@@ -179,13 +174,13 @@ abstract class modJEMteaserHelper
 			$lists[$i]->venuelink		= $params->get('linkvenue', 1) ? JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : '';
 
 			# time/date
-			$lists[$i]->date			= modJEMteaserHelper::_format_date($row, $params);
 			$lists[$i]->day 			= modJEMteaserHelper::_format_day($row, $params);
 			$lists[$i]->dayname			= modJEMteaserHelper::_format_dayname($row);
 			$lists[$i]->daynum 			= modJEMteaserHelper::_format_daynum($row);
 			$lists[$i]->month 			= modJEMteaserHelper::_format_month($row);
 			$lists[$i]->year 			= modJEMteaserHelper::_format_year($row);
-			$lists[$i]->time 			= $row->times ? modJEMteaserHelper::_format_time($row->dates, $row->times, $params) : '' ;
+			list($lists[$i]->date,
+			     $lists[$i]->time)		= ModJEMteaserHelper::_format_date_time($row, $params);
 
 			if ($dimage == null) {
 				$lists[$i]->eventimage		= JUri::base(true).'/media/system/images/blank.png';
@@ -213,7 +208,7 @@ abstract class modJEMteaserHelper
 
 			//switch <br /> tags to space character
 			if ($params->get('br') == 0) {
-			 $description = str_replace('<br />',' ',$description);
+				$description = str_replace('<br />',' ',$description);
 			}
 			//
 			if (strlen($description) > $length) {
@@ -221,12 +216,10 @@ abstract class modJEMteaserHelper
 				$description = preg_replace('/\s+?(\S+)?$/', '', substr($description, 0, $length+1));
 				$lists[$i]->eventdescription = substr($description, 0, $length).$etc;
 			} else
-
 			if (strlen($description) < $length2) {
-			$length -= strlen($etc2);
-			$description = preg_replace('/\s+?(\S+)?$/', '', substr($description, 0, $length+1));
-			$lists[$i]->eventdescription = substr($description, 0, $length).$etc2;
-
+				$length -= strlen($etc2);
+				$description = preg_replace('/\s+?(\S+)?$/', '', substr($description, 0, $length+1));
+				$lists[$i]->eventdescription = substr($description, 0, $length).$etc2;
 			} else {
 				$lists[$i]->eventdescription	= $description;
 			}
@@ -235,7 +228,6 @@ abstract class modJEMteaserHelper
 
 			$i++;
 		}
-
 
 		return $lists;
 	}
@@ -274,15 +266,15 @@ abstract class modJEMteaserHelper
 
 				//Upcoming multidayevent (From 16.10.2010 Until 18.10.2010)
 				if($dates_stamp > $tomorrow_stamp && $enddates_stamp) {
-				$startdate = strftime('%A', strtotime( $row->dates ));
-				$result = JText::sprintf('FROM', $startdate);
+					$startdate = strftime('%A', strtotime( $row->dates ));
+					$result = JText::sprintf('FROM', $startdate);
 				}
 
 				//current multidayevent (Until 18.08.2008)
 				if( $row->enddates && $enddates_stamp > $today_stamp && $dates_stamp <= $today_stamp ) {
-				//format date
-				$result = strftime('%A', strtotime( $row->enddates ));
-				$result = JText::sprintf('MOD_JEM_TEASER_UNTIL', $result);
+					//format date
+					$result = strftime('%A', strtotime( $row->enddates ));
+					$result = JText::sprintf('MOD_JEM_TEASER_UNTIL', $result);
 				}
 			} else { // show day difference
 				//the event has an enddate and it's earlier than yesterday
@@ -315,9 +307,9 @@ abstract class modJEMteaserHelper
 	 * Method to format date information
 	 *
 	 * @access public
-	 * @return string
+	 * @return array(string, string) returns date and time strings as array
 	 */
-	protected static function _format_date($row, &$params)
+	protected static function _format_date_time($row, &$params)
 	{
 		//Get needed timestamps and format
 		$yesterday_stamp	= mktime(0, 0, 0, date("m") , date("d")-1, date("Y"));
@@ -330,60 +322,76 @@ abstract class modJEMteaserHelper
 		$dates_stamp		= $row->dates ? strtotime($row->dates) : null;
 		$enddates_stamp		= $row->enddates ? strtotime($row->enddates) : null;
 
+		$date_format = $params->get('formatdate', 'D, j. F Y');
+		$time_format = $params->get('formattime', '%H:%M');
+
 		//if datemethod show day difference
 		if($params->get('datemethod', 1) == 2) {
 			//check if today or tomorrow
 			if($row->dates == $today) {
-				$result = JText::_('MOD_JEM_TEASER_TODAY');
+				$date = JText::_('MOD_JEM_TEASER_TODAY');
+				$time = $row->times ? JEMOutput::formattime($row->times, $time_format, false) : '';
 			} elseif($row->dates == $tomorrow) {
-				$result = JText::_('MOD_JEM_TEASER_TOMORROW');
+				$date = JText::_('MOD_JEM_TEASER_TOMORROW');
+				$time = $row->times ? JEMOutput::formattime($row->times, $time_format, false) : '';
 			} elseif($row->dates == $yesterday) {
-				$result = JText::_('MOD_JEM_TEASER_YESTERDAY');
-
+				$date = JText::_('MOD_JEM_TEASER_YESTERDAY');
+				$time = $row->times ? JEMOutput::formattime($row->times, $time_format, false) : '';
+			}
 			//This one isn't very different from the DAYS AGO output but it seems
 			//adequate to use a different language string here.
 			//
 			//the event has an enddate and it's earlier than yesterday
-			} elseif($row->enddates && $enddates_stamp < $yesterday_stamp) {
+			elseif($row->enddates && $enddates_stamp < $yesterday_stamp) {
 				$days = round(($today_stamp - $enddates_stamp) / 86400);
-				$result = JText::sprintf('MOD_JEM_TEASER_ENDED_DAYS_AGO', $days);
-
+				$date = JText::sprintf('MOD_JEM_TEASER_ENDED_DAYS_AGO', $days);
+				$time = $row->times ? JEMOutput::formattime($row->endtimes, $time_format, false) : '';
+			}
 			//the event has an enddate and it's later than today but the startdate is earlier than today
 			//means a currently running event
-			} elseif($row->dates && $row->enddates && $enddates_stamp > $today_stamp && $dates_stamp < $today_stamp) {
+			elseif($row->dates && $row->enddates && $enddates_stamp > $today_stamp && $dates_stamp < $today_stamp) {
 				$days = round(($today_stamp - $dates_stamp) / 86400);
-				$result = JText::sprintf('MOD_JEM_TEASER_STARTED_DAYS_AGO', $days);
-
+				$date = JText::sprintf('MOD_JEM_TEASER_STARTED_DAYS_AGO', $days);
+				$time = $row->times ? JEMOutput::formattime($row->times, $time_format, false) : '';
+			}
 			//the events date is earlier than yesterday
-			} elseif($row->dates && $dates_stamp < $yesterday_stamp) {
+			elseif($row->dates && $dates_stamp < $yesterday_stamp) {
 				$days = round(($today_stamp - $dates_stamp) / 86400);
-				$result = JText::sprintf('MOD_JEM_TEASER_DAYS_AGO', $days);
-
+				$date = JText::sprintf('MOD_JEM_TEASER_DAYS_AGO', $days);
+				$time = $row->times ? JEMOutput::formattime($row->times, $time_format, false) : '';
+			}
 			//the events date is later than tomorrow
-			} elseif($row->dates && $dates_stamp > $tomorrow_stamp) {
+			elseif($row->dates && $dates_stamp > $tomorrow_stamp) {
 				$days = round(($dates_stamp - $today_stamp) / 86400);
-				$result = JText::sprintf('MOD_JEM_TEASER_DAYS_AHEAD', $days);
+				$date = JText::sprintf('MOD_JEM_TEASER_DAYS_AHEAD', $days);
+				$time = $row->times ? JEMOutput::formattime($row->times, $time_format, false) : '';
 			}
-		} else {
-			//single day event
-			$date = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime($row->dates.' '.$row->times));
-			$result = JText::sprintf('MOD_JEM_TEASER_ON_DATE', $date);
-
+		} else { // datemethod show date - not shown beause there is a calendar image
 			//Upcoming multidayevent (From 16.10.2008 Until 18.08.2008)
-			if($dates_stamp > $tomorrow_stamp && $enddates_stamp) {
-				$startdate = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime($row->dates.' '.$row->times));
-				$enddate = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime($row->enddates.' '.$row->endtimes));
-				$result = JText::sprintf('MOD_JEM_TEASER_FROM_UNTIL', $startdate, $enddate);
+			if($dates_stamp > $today_stamp && $enddates_stamp > $dates_stamp) {
+				$startdate = JEMOutput::formatdate($row->dates, $date_format);
+				$enddate = JEMOutput::formatdate($row->enddates, $date_format);
+				$date = JText::sprintf('MOD_JEM_TEASER_FROM_UNTIL', $startdate, $enddate);
+				$time  = $row->times ? JEMOutput::formattime($row->times, $time_format, false) : '';
+				//// endtime always starts with separator, also if there is no starttime
+				//$time .= $row->endtimes ? (' - ' . JEMOutput::formattime($row->endtimes, $time_format, false)) : '';
 			}
-
 			//current multidayevent (Until 18.08.2008)
-			if($row->enddates && $enddates_stamp > $today_stamp && $dates_stamp < $today_stamp) {
+			elseif($row->enddates && $enddates_stamp > $today_stamp && $dates_stamp < $today_stamp) {
 				//format date
-				$result = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime($row->enddates.' '.$row->endtimes));
-				$result = JText::sprintf('MOD_JEM_TEASER_UNTIL', $result);
+				$enddate = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime($row->enddates.' '.$row->endtimes));
+				$date = JText::sprintf('MOD_JEM_TEASER_UNTIL', $enddate);
+				$time = $row->times ? JEMOutput::formattime($row->endtimes, $time_format, false) : '';
+			}
+			//single day event
+			else {
+				$startdate = JEMOutput::formatdate($row->dates, $date_format);
+				$date = JText::sprintf('MOD_JEM_TEASER_ON_DATE', $startdate);
+				$time = $row->times ? JEMOutput::formattime($row->times, $time_format, false) : '';
 			}
 		}
-		return $result;
+
+		return array($date, $time);
 	}
 
 	/**
@@ -404,18 +412,21 @@ abstract class modJEMteaserHelper
 		$dayname = $jdate->format('l',false,true);
 		return $dayname;
 	}
+
 	protected static function _format_daynum($row)
 	{
 		$jdate	= new JDate($row->dates);
 		$day	= $jdate->format('d',false,true);
 		return $day;
 	}
+
 	protected static function _format_year($row)
 	{
 		$jdate	= new JDate($row->dates);
 		$year	= $jdate->format('Y',false,true);
 		return $year;
 	}
+
 	protected static function _format_month($row)
 	{
 		$jdate	= new JDate($row->dates);
