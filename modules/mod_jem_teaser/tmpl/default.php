@@ -39,10 +39,10 @@ if ($params->get('use_modal', 0)) {
 							<?php echo $item->month; ?>
 						</div>
 						<div class="dayteaser">
-							<?php echo $item->dayname; ?>
+							<?php echo empty($item->dayname) ? '<br/>' : $item->dayname; ?>
 						</div>
 						<div class="daynumteaser">
-							<?php echo $item->daynum; ?>
+							<?php echo empty($item->daynum) ? '?' : $item->daynum; ?>
 						</div>
 					</div>
 				</td>
