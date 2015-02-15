@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -92,7 +92,7 @@ $colspan = ($this->event->waitinglist ? 10 : 9);
 				<?php endif;?>
 				<td class="center">
 				<a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendees.remove')">
-				<?php echo JHtml::_('image','com_jem/publish_x.png',JText::_('COM_JEM_REMOVE'),NULL,true); ?>
+				<?php echo JHtml::_('image','com_jem/publish_r.png',JText::_('COM_JEM_REMOVE'),NULL,true); ?>
 				</a>
 				</td>
 			</tr>
