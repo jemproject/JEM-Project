@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -40,6 +40,8 @@ class jem_settings extends JTable
 	var $tablewidth 		= null;
 	/** @var string */
 	var $datewidth 			= null;
+	/** @var int */
+	var $datemode 			= "1";
 	/** @var string */
 	var $titlewidth 		= null;
 	/** @var string */

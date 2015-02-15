@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modelform');
+jimport('joomla.filesystem.file');
 
 /**
  * Source Model
@@ -30,8 +31,6 @@ class JEMModelSource extends JModelForm
 	 */
 	protected function populateState()
 	{
-		jimport('joomla.filesystem.file');
-
 		$app = JFactory::getApplication('administrator');
 
 		// Load the User state.
@@ -125,7 +124,6 @@ class JEMModelSource extends JModelForm
 		}
 
 		if (file_exists($filePath)) {
-			jimport('joomla.filesystem.file');
 			$item->filename = $this->getState('filename');
 			if ($custom !== false) {
 				$item->filename = $file;
@@ -151,8 +149,6 @@ class JEMModelSource extends JModelForm
 	 */
 	public function save($data)
 	{
-		jimport('joomla.filesystem.file');
-
 		$dispatcher = JDispatcher::getInstance();
 		$fileName	= $this->getState('filename');
 		$custom		= stripos($fileName, 'custom#:');

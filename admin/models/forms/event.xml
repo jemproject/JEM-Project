@@ -48,6 +48,7 @@
 			class="inputbox"
 			size="22"
 			format="%Y-%m-%d"
+			filter="string"
 		/>
 		<field name="enddates" type="calendar"
 			label="COM_JEM_ENDDATE"
@@ -55,6 +56,7 @@
 			class="inputbox"
 			size="22"
 			format="%Y-%m-%d"
+			filter="string"
 		/>
 		<field name="times" type="starttime"
 			class="inputbox"
@@ -308,6 +310,7 @@
 			class="inputbox"
 			size="22"
 			format="%Y-%m-%d"
+			filter="string"
 		/>
 	</fieldset>
 

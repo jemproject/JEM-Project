@@ -1,17 +1,21 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
 
+jimport('joomla.filesystem.file');
+jimport('joomla.filesystem.folder');
+
 /**
  * Holds some usefull functions to keep the code a bit cleaner
  */
-class JemHelper {
+class JemHelper
+{
 
 	/**
 	 * Pulls settings from database and stores in an static object
@@ -379,7 +383,8 @@ class JemHelper {
 	 * @return bool true on success, false on error
 	 * @access public
 	 */
-	static function delete_unused_image_files($type, $filename = null) {
+	static function delete_unused_image_files($type, $filename = null)
+	{
 		switch ($type) {
 		case 'event':
 		case 'events':
@@ -457,7 +462,8 @@ class JemHelper {
 	 * @return bool true on success, false on error
 	 * @access public
 	 */
-	static function delete_unused_attachment_files($type = false) {
+	static function delete_unused_attachment_files($type = false)
+	{
 		$jemsettings = JEMHelper::config();
 		$basepath    = JPATH_SITE.'/'.$jemsettings->attachments_path;
 		$db          = JFactory::getDBO();
@@ -507,7 +513,8 @@ class JemHelper {
 	 * @return array the date informations
 	 * @access public
 	 */
-	static function generate_date($startdate, $enddate) {
+	static function generate_date($startdate, $enddate)
+	{
 		$validEnddate = JemHelper::isValidDate($enddate);
 
 		$startdate = explode("-",$startdate);
@@ -758,7 +765,8 @@ class JemHelper {
 	 * @param $data reference to event rows
 	 * @return false on error, $data on success
 	 */
-	static function getAttendeesNumbers(& $data) {
+	static function getAttendeesNumbers(& $data)
+	{
 		// Make sure this is an array and it is not empty
 		if (!is_array($data) || !count($data)) {
 			return false;
@@ -797,7 +805,8 @@ class JemHelper {
 	/**
 	 * returns timezone name
 	 */
-	public static function getTimeZoneName() {
+	public static function getTimeZoneName()
+	{
 		$userTz = JFactory::getUser()->getParam('timezone');
 		$timeZone = JFactory::getConfig()->get('offset');
 
@@ -1026,8 +1035,8 @@ class JemHelper {
 	/**
 	 * Creates a tooltip
 	 */
-	static function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '', $time = '', $color = '') {
-
+	static function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '', $time = '', $color = '')
+	{
 		if (version_compare(JVERSION, '3.3', 'lt')) {
 			$tooltip = htmlspecialchars($tooltip);
 			if ($title) {
@@ -1060,7 +1069,8 @@ class JemHelper {
 	 * Function to retrieve IP
 	 * @author: https://gist.github.com/cballou/2201933
 	 */
-	static function retrieveIP() {
+	static function retrieveIP()
+	{
 		$ip_keys = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR');
 		foreach ($ip_keys as $key) {
 			if (array_key_exists($key, $_SERVER) === true) {
@@ -1092,10 +1102,8 @@ class JemHelper {
 	}
 
 
-	static function loadCss($css) {
-
-		jimport('joomla.filesystem.file');
-
+	static function loadCss($css)
+	{
 		$settings = self::retrieveCss();
 
 		if($settings->get('css_'.$css.'_usecustom','0')) {
@@ -1136,7 +1144,8 @@ class JemHelper {
 	}
 
 
-	static function defineCenterMap($data = false) {
+	static function defineCenterMap($data = false)
+	{
 		# retrieve venue
 		$venue		= $data->getValue('venue');
 
@@ -1177,8 +1186,8 @@ class JemHelper {
 	 *
 	 * @return boolean
 	 */
-	static function loadCustomCss() {
-
+	static function loadCustomCss()
+	{
 		$settings = self::retrieveCss();
 
 		$style = "";
@@ -1275,8 +1284,8 @@ class JemHelper {
 	 * @return boolean
 	 */
 
-	static function loadCustomTag() {
-
+	static function loadCustomTag()
+	{
 		$document = JFactory::getDocument();
 		$tag = "";
 		$tag .= "<!--[if IE]><style type='text/css'>.floattext{zoom:1;}, * html #jem dd { height: 1%; }</style><![endif]-->";
@@ -1294,8 +1303,8 @@ class JemHelper {
 	 * $type = compononent(1), plugin(2)
 	 * $name = name to search in column name
 	 */
-	static function getParam($column,$setting,$type,$name) {
-
+	static function getParam($column,$setting,$type,$name)
+	{
 		switch ($column) {
 			case 1:
 				$column = 'manifest_cache';

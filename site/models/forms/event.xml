@@ -3,11 +3,11 @@
 	<fieldset name="details"
 		addfieldpath="administrator/components/com_jem/models/fields"
 	>
-		
+
 		<field name="articletext" type="editor" class="inputbox"
 			label="COM_JEM_EDITEVENT_FIELD_DESCRIPTION" description="COM_JEM_EDITEVENT_FIELD_DESCRIPTION_DESC"
 			filter="JComponentHelper::filterText" hide="pagebreak" />
-		
+
 		<field name="featured" class="inputbox" type="list"
 			label="JFEATURED"
 			description="COM_JEM_EDITEVENT_FIELD_FEATURED_DESC"
@@ -16,7 +16,7 @@
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>
-		
+
 		<field name="title" type="text"
 			class="inputbox"
 			size="40"
@@ -37,6 +37,7 @@
 			class="inputbox"
 			size="22"
 			format="%Y-%m-%d"
+			filter="string"
 		/>
 		<field name="enddates" type="calendar"
 			label="COM_JEM_EDITEVENT_FIELD_ENDDATE"
@@ -44,6 +45,7 @@
 			class="inputbox"
 			size="22"
 			format="%Y-%m-%d"
+			filter="string"
 		/>
 		<field name="times" type="starttime"
 			class="inputbox"
@@ -176,7 +178,7 @@
 		<field name="custom3" type="text"
 			size="20"
 			readonly="false"
-			class="inputbox" 
+			class="inputbox"
 			label="COM_JEM_EVENT_CUSTOM_FIELD3"
 			description="COM_JEM_EVENT_CUSTOM_FIELD3_DESC"
 		/>
@@ -297,6 +299,7 @@
 			class="inputbox"
 			size="22"
 			format="%Y-%m-%d"
+			filter="string"
 		/>
 	</fieldset>
 

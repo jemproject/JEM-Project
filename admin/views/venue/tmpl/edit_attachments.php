@@ -1,14 +1,14 @@
 <?php
 /**
- * @version 2.0.3
+ * @version 2.1.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 
-defined ( '_JEXEC' ) or die;
+defined ('_JEXEC') or die;
 ?>
 
 <table class="adminform" id="el-attachments">
@@ -37,7 +37,7 @@ defined ( '_JEXEC' ) or die;
 				</div>
 			</td>
 			<td>
-				<?php echo JHtml::_('image','com_jem/publish_x.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id,'class' => 'attach-remove'),true); ?>
+				<?php echo JHtml::_('image','com_jem/publish_r.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id, 'class' => 'attach-remove', 'title'=>JText::_('COM_JEM_REMOVE_ATTACHEMENT')), true); ?>
 			</td>
 		</tr>
 		<?php endforeach; ?>

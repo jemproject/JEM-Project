@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.2
  * @package JEM
  * @subpackage JEM Finder Plugin
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -377,8 +377,8 @@ class plgFinderJEM extends FinderIndexerAdapter {
 // 		$sql->select('c.title AS category, c.published AS cat_state, c.access AS cat_access');
 
 		$sql->select('a.id, a.access, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.datimage');
-		$sql->select('a.created AS start_date, a.dates AS publish_start_date, a.created_by, a.modified, a.version');
-		$sql->select('a.published AS state');
+		$sql->select('a.created AS publish_start_date, a.dates AS start_date, a.enddates AS end_date');
+		$sql->select('a.created_by, a.modified, a.version, a.published AS state');
 		$sql->select('a.fulltext AS body, a.introtext AS summary');
 		$sql->select('l.venue, l.city, l.state as loc_state, l.url, l.street');
 		$sql->select('l.published AS loc_published');

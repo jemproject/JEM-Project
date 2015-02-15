@@ -4,10 +4,10 @@
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>December 2014</creationDate>
-	<copyright>copyright (C) 2013-2014 joomlaeventmanager.net</copyright>
+	<creationDate>February 2015</creationDate>
+	<copyright>copyright (C) 2013-2015 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>2.1.0</version>
+	<version>2.1.2</version>
 	<description>MOD_JEM_TEASER_XML_DESCRIPTION</description>
 
 	<files>
@@ -131,6 +131,16 @@
 					<option value="1">MOD_JEM_TEASER_SHOW_DATE</option>
 					<option value="2">MOD_JEM_TEASER_SHOW_DAY_DIFFERENCE</option>
 				</field>
+				<field name="formatdate" type="text"
+					default="D, j. F Y"
+					label="MOD_JEM_TEASER_DATE_FORMAT"
+					description="MOD_JEM_TEASER_DATE_FORMAT_DESC"
+				/>
+				<field name="formattime" type="text"
+					default="%H:%M"
+					label="MOD_JEM_TEASER_TIME_FORMAT"
+					description="MOD_JEM_TEASER_TIME_FORMAT_DESC"
+				/>
 				<field name="moduleclass_sfx" type="text"
 					default=""
 					label="MOD_JEM_TEASER_MODULE_CLASS_SUFFIX"

@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.2
  * @package JEM
  * @subpackage JEM Teaser Module
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -23,32 +23,30 @@ if ($params->get('use_modal', 0)) {
 
 	<?php foreach ($list as $item) : ?>
 
-		<?php if ($item->eventlink) : ?>
 		<h2 class="event-title">
-			<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->title; ?>"><?php echo $item->title; ?></a>
+			<?php if ($item->eventlink) : ?>
+				<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->title; ?>"><?php echo $item->title; ?></a>
+			<?php else : ?>
+				<?php echo $item->title; ?>
+			<?php endif; ?>
 		</h2>
-		<?php else : ?>
-		<h2 class="event-title">
-			<?php echo $item->title; ?>
-		</h2>
-		<?php endif; ?>
 
 		<table>
 			<tr>
-				<td>
+				<td class="event-calendar">
 					<div class="calendar">
 						<div class="monthteaser">
 							<?php echo $item->month; ?>
 						</div>
 						<div class="dayteaser">
-							<?php echo $item->dayname; ?>
+							<?php echo empty($item->dayname) ? '<br/>' : $item->dayname; ?>
 						</div>
 						<div class="daynumteaser">
-							<?php echo $item->daynum; ?>
+							<?php echo empty($item->daynum) ? '?' : $item->daynum; ?>
 						</div>
 					</div>
 				</td>
-				<td>
+				<td class="event-info">
 					<div class="teaser-jem">
 						<div>
 							<?php if(($item->eventimage)!=str_replace("jpg","",($item->eventimage)) OR
@@ -76,7 +74,7 @@ if ($params->get('use_modal', 0)) {
 				</td>
 			</tr>
 			<tr>
-				<td>
+				<td class="event-datetime">
 					<?php if ($item->date && $params->get('datemethod', 1) == 2) :?>
 						<div class="date">
 							<small><?php echo $item->date; ?></small>
@@ -84,11 +82,11 @@ if ($params->get('use_modal', 0)) {
 					<?php endif; ?>
 					<?php if ($item->time && $params->get('datemethod', 1) == 1) :?>
 						<div class="time">
-							<small><?php echo $item->time; ?></small>
+							<small><?php echo JEMOutput::formattime($item->time); ?></small>
 						</div>
 					<?php endif; ?>
 				</td>
-				<td>
+				<td class="event-vencat">
 					<div class="venue-title">
 					<?php if ($item->venuelink) : ?>
 						<a href="<?php echo $item->venuelink; ?>" title="<?php echo $item->venue; ?>"><?php echo $item->venue; ?></a>

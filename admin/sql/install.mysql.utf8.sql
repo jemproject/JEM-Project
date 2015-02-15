@@ -181,6 +181,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_settings` (
   `showmapserv` tinyint(4) NOT NULL,
   `tablewidth` varchar(20) NOT NULL,
   `datewidth` varchar(20) NOT NULL,
+  `datemode` tinyint(4) NOT NULL DEFAULT '1',
   `titlewidth` varchar(20) NOT NULL,
   `locationwidth` varchar(20) NOT NULL,
   `citywidth` varchar(20) NOT NULL,
@@ -291,9 +292,9 @@ CREATE TABLE IF NOT EXISTS `#__jem_countries` (
 ) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;
 
 INSERT IGNORE INTO #__jem_settings VALUES
-(1, 2, 1, 1, 1, 1, 1, 1, '100%', '20%', '40%', '20%', '', 
+(1, 2, 1, 1, 1, 1, 1, 1, '100%', '20%', 1, '40%', '20%', '',
 'D, j. F Y', 'd.m.y', '%H:%M', 'h', 1, 1, 1, 1, 1, 1, 1, 1, -2, '1000', -2, -2, -2, 1, '',
-1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1, 
+1, 1, 1, 1, '100', '100', '100', 1, 1, 0, 0, 1, 2, 2, -2, 1, 0, -2, 1, 0, 1,
 '[title], [a_name], [categories], [times]', 'The event titled [title] starts on [dates]!',
 1, 0, '0', 0, 0, '1364604520', '', '', 'COM', 'US', '10%', '10',
 0, 1, 1, 1, 1, 1, 1, 1, 0, '10%', 1, 1, 1, 'media/com_jem/attachments', '1000',

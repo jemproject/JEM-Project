@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -115,12 +115,12 @@ class JemTableEvent extends JTable
 			$this->dates = null;
 		}
 
-		// check startDate
-		if ($this->dates == NULL) {
-			$this->times = NULL;
-			$this->enddates = NULL;
-			$this->endtimes = NULL;
-		}
+		// check startDate - don't delete other fields; it's ok to know a time but not the day
+		//if ($this->dates == NULL) {
+		//	$this->times = NULL;
+		//	$this->enddates = NULL;
+		//	$this->endtimes = NULL;
+		//}
 
 		// Check begin date is before end date
 

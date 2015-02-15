@@ -1,13 +1,15 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
+jimport('joomla.filesystem.file');
 
 /**
  * Holds the logic for image manipulation
@@ -51,9 +53,8 @@ class JEMImage {
 			//only admins will see these errors
 			if (JFactory::getUser()->authorise('core.manage')) {
 
-
-			// if there was an error, let's see what the error is about
-			switch ($image->error) {
+				// if there was an error, let's see what the error is about
+				switch ($image->error) {
 				case 1:
 					echo 'Source file could not be found!';
 					break;
@@ -75,11 +76,10 @@ class JEMImage {
 				case 7:
 					echo 'GD library is not installed!';
 					break;
+				}
 			}
 
-			}
-
-			// if no errors
+		// if no errors
 		} else {
 			echo '';
 		}
@@ -94,7 +94,8 @@ class JEMImage {
 	 *
 	 * @return int
 	 */
-	static function gdVersion($user_ver = 0) {
+	static function gdVersion($user_ver = 0)
+	{
 		if (! extension_loaded('gd')) {
 			return;
 		}
@@ -147,10 +148,9 @@ class JEMImage {
 	 *
 	 * @return imagedata if available
 	 */
-	static function flyercreator($image, $type) {
+	static function flyercreator($image, $type)
+	{
 		$settings = JEMHelper::config();
-
-		jimport('joomla.filesystem.file');
 
 		//define the environment based on the type
 		if ($type == 'event') {
@@ -234,9 +234,8 @@ class JEMImage {
 		return false;
 	}
 
-	static function check($file, $jemsettings) {
-		jimport('joomla.filesystem.file');
-
+	static function check($file, $jemsettings)
+	{
 		$sizelimit = $jemsettings->sizelimit*1024; //size limit in kb
 		$imagesize = $file['size'];
 
@@ -265,9 +264,9 @@ class JEMImage {
 		//$xss_check = JFile::read($file['tmp_name'], false, 256);
 		$xss_check = file_get_contents($file['tmp_name'], false, NULL, 0, 256);
 		$html_tags = array('abbr','acronym','address','applet','area','audioscope','base','basefont','bdo','bgsound','big','blackface','blink','blockquote','body','bq','br','button','caption','center','cite','code','col','colgroup','comment','custom','dd','del','dfn','dir','div','dl','dt','em','embed','fieldset','fn','font','form','frame','frameset','h1','h2','h3','h4','h5','h6','head','hr','html','iframe','ilayer','img','input','ins','isindex','keygen','kbd','label','layer','legend','li','limittext','link','listing','map','marquee','menu','meta','multicol','nobr','noembed','noframes','noscript','nosmartquotes','object','ol','optgroup','option','param','plaintext','pre','rt','ruby','s','samp','script','select','server','shadow','sidebar','small','spacer','span','strike','strong','style','sub','sup','table','tbody','td','textarea','tfoot','th','thead','title','tr','tt','ul','var','wbr','xml','xmp','!DOCTYPE', '!--');
-		foreach($html_tags as $tag) {
+		foreach ($html_tags as $tag) {
 			// A tag is '<tagname ', so we need to add < and a space or '<tagname>'
-			if(stristr($xss_check, '<'.$tag.' ') || stristr($xss_check, '<'.$tag.'>')) {
+			if (stristr($xss_check, '<'.$tag.' ') || stristr($xss_check, '<'.$tag.'>')) {
 				JError::raiseWarning(100, JText::_('COM_JEM_WARN_IE_XSS'));
 				return false;
 			}
@@ -285,9 +284,8 @@ class JEMImage {
 	 *
 	 * @return string $filename the sanitized and unique image file name
 	 */
-	static function sanitize($base_Dir, $filename) {
-		jimport('joomla.filesystem.file');
-
+	static function sanitize($base_Dir, $filename)
+	{
 		//check for any leading/trailing dots and remove them (trailing shouldn't be possible cause of the getEXT check)
 		$filename = preg_replace("/^[.]*/", '', $filename);
 		$filename = preg_replace("/[.]*$/", '', $filename); //shouldn't be necessary, see above
@@ -309,7 +307,7 @@ class JEMImage {
 		$now = rand();
 
 
-		while(JFile::exists($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
+		while (JFile::exists($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
 			$now++;
 		}
 
