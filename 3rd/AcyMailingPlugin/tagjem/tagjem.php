@@ -1,6 +1,6 @@
 <?php
 /**
- * Version 1.9.2
+ * Version 2.1.0
  * @copyright	Copyright (C) 2014 Ghost Art digital media.
  * @copyright	Copyright (C) 2013 - 2015 joomlaeventmanager.net. All rights reserved.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
