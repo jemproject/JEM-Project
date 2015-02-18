@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.3
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -208,7 +208,8 @@ class com_jemInstallerScript
 	{
 		// Are we installing in J2.5?
 		$jversion = new JVersion();
-		if (!(($jversion->RELEASE == '3.3' && $jversion->DEV_LEVEL >= '3') ||
+		if (!(($jversion->RELEASE == '3.4' && $jversion->DEV_LEVEL >= '0') ||
+		      ($jversion->RELEASE == '3.3' && $jversion->DEV_LEVEL >= '3') ||
 		      ($jversion->RELEASE == '3.2' && $jversion->DEV_LEVEL >= '7') ||
 		      ($jversion->RELEASE == '2.5' && $jversion->DEV_LEVEL >= '24'))) {
 			Jerror::raiseWarning(100, JText::_('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION'));
