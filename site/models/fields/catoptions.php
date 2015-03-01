@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.0.0
+ * @version     2.1.3
  * @package     JEM
- * @copyright   Copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -49,10 +49,10 @@ class JFormFieldCatOptions extends JFormField
 
 		// Output
 		$currentid = JFactory::getApplication()->input->getInt('a_id');
-		
+
 		//$categories = JEMCategories::getCategoriesTree();
 		$categories = self::getCategories($currentid);
-		
+
 		$db		= JFactory::getDbo();
 		$query	= $db->getQuery(true);
 		$query = 'SELECT DISTINCT catid FROM #__jem_cats_event_relations WHERE itemid = '. $db->quote($currentid);
@@ -62,8 +62,8 @@ class JFormFieldCatOptions extends JFormField
 
 		return JEMCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, trim($attr));
 	}
-	
-	
+
+
 	/**
 	 * logic to get the categories
 	 *
@@ -72,70 +72,56 @@ class JFormFieldCatOptions extends JFormField
 	 */
 	function getCategories($id)
 	{
-		$user		= JFactory::getUser();
+		$db          = JFactory::getDbo();
 		$jemsettings = JEMHelper::config();
-		$userid		= (int) $user->get('id');
-		$superuser	= JEMUser::superuser();
-	
+		$user        = JFactory::getUser();
+		$userid      = (int) $user->get('id');
+		$glob_author = $user->authorise('core.create', 'com_jem');
+		$jem_author  = JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
-			
+
+		// on frontend access levels have ALWAYS to be resspected, also for superusers
 		$where = ' WHERE c.published = 1 AND c.access IN (' . implode(',', $levels) . ')';
-	
+
+		// administrators, superusers, and global authors have access to all categories, other users maybe limited
+		if (!$glob_author) {
 			//get the ids of the categories the user maintaines
-			$db		= JFactory::getDbo();
-			$query	= $db->getQuery(true);
-			$query = 'SELECT g.group_id'
-					. ' FROM #__jem_groupmembers AS g'
-					. ' WHERE g.member = '.$userid
-					;
-			$db->setQuery($query);
-			$catids = $db->loadColumn();
-			
-			
-			$query = 'SELECT gr.id' 
+			$query = $db->getQuery(true);
+			$query = 'SELECT gr.id'
 					. ' FROM #__jem_groups AS gr'
 					. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
-					. ' WHERE g.member = ' . (int) $user->get('id')
+					. ' WHERE g.member = ' . $userid
 					. ' AND ' .$db->quoteName('gr.addevent') . ' = 1 '
 					. ' AND g.member NOT LIKE 0';
 			$db->setQuery($query);
-			$groupnumber = $db->loadColumn();	
-			$categories = implode(',', $groupnumber);
-	
-			//build ids query
-			if ($categories) {
-				//check if user is allowed to submit events in general, if yes allow to submit into categories
-				//which aren't assigned to a group. Otherwise restrict submission into maintained categories only
-				if (JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes)) {
-					$where .= ' AND c.groupid IN (0,'.$categories.')';
-				} else {
-					$where .= ' AND c.groupid IN ('.$categories.')';
-				}
-			} else {
-					$where .= ' AND c.groupid = 0';
+
+			$groupids = $db->loadColumn();
+
+			// Check if user is allowed to submit events in general (by JEM settings, not ACL!),
+			//  if yes allow to submit into categories which aren't assigned to a group.
+			// Otherwise restrict submission into maintained categories only
+			if ($jem_author) {
+				$groupids[] = 0;
 			}
-	
-		//administrators or superadministrators have access to all categories, also maintained ones
-		if($superuser) {
-			$where = ' WHERE c.published = 1';
+
+			if (count($groupids)) {
+					$where .= ' AND c.groupid IN (' . implode(',', $groupids) . ')';
+			} else {
+					$where .= ' AND 0'; // NO ACCESS!
+			}
 		}
-	
+
 		//get the maintained categories and the categories whithout any group
 		//or just get all if somebody have edit rights
-		$db		= JFactory::getDbo();
-		$query	= $db->getQuery(true);
+		$query = $db->getQuery(true);
 		$query = 'SELECT c.*'
 				. ' FROM #__jem_categories AS c'
 				. $where
-				. ' ORDER BY c.lft'
-				;
+				. ' ORDER BY c.lft';
 		$db->setQuery($query);
-	
-		//	$this->_category = array();
-		//	$this->_category[] = JHTML::_('select.option', '0', JText::_( 'COM_JEM_SELECT_CATEGORY' ) );
-		//	$this->_categories = array_merge( $this->_category, $this->_db->loadObjectList() );
-	
+
 		$mitems = $db->loadObjectList();
 
 		// Check for a database error.
@@ -170,6 +156,15 @@ class JFormFieldCatOptions extends JFormField
 		//get list of the items
 		$list = JEMCategories::treerecurse($parentid, '', array(), $children, 9999, 0, 0);
 
+		// append orphaned categories
+		if (count($mitems) > count($list)) {
+			foreach ($children as $k => $v) {
+				if (($k > 1) && !array_key_exists($k, $list)) {
+					$list = JEMCategories::treerecurse($k, '?&nbsp;', $list, $children, 999, 0, 0);
+				}
+			}
+		}
+
 		return $list;
-	}	
+	}
 }
