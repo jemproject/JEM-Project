@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.3
  * @package JEM
  * @subpackage JEM Calendar Module
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2008 Toni Smillie www.qivva.com
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -21,8 +21,11 @@ require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 
 
-// include mootools tooltip
+// include mootools or bootstrap tooltip
 JHtml::_('behavior.tooltip');
+if (version_compare(JVERSION, '3.3', 'ge')) {
+	JHtml::_('bootstrap.tooltip');
+}
 
 // Parameters
 $app = JFactory::getApplication();
