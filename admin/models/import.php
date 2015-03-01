@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.3
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -15,17 +15,18 @@ jimport('joomla.application.component.model');
  * JEM Component Import Model
  * @package JEM
  */
-class JEMModelImport extends JModelLegacy {
-
-	private $prefix = "#__";
+class JEMModelImport extends JModelLegacy
+{
+	private $prefix = '#__';
 
 	/**
 	 * Constructor
 	 */
-	public function __construct() {
+	public function __construct()
+	{
 		$jinput = JFactory::getApplication()->input;
 		$this->prefix = $jinput->get('prefix', '#__', 'CMD');
-		if($this->prefix == "") {
+		if ($this->prefix == '') {
 			$this->prefix = '#__';
 		}
 
@@ -37,7 +38,8 @@ class JEMModelImport extends JModelLegacy {
 	 *
 	 * @return  array  An array with the fields of the events table
 	 */
-	function getEventFields() {
+	function getEventFields()
+	{
 		return $this->getFields('#__jem_events');
 	}
 
@@ -46,7 +48,8 @@ class JEMModelImport extends JModelLegacy {
 	*
 	* @return  array  An array with the fields of the venues table
 	*/
-	function getVenueFields() {
+	function getVenueFields()
+	{
 		return $this->getFields('#__jem_venues');
 	}
 
@@ -55,7 +58,8 @@ class JEMModelImport extends JModelLegacy {
 	 *
 	 * @return  array  An array with the fields of the categories table
 	 */
-	function getCategoryFields() {
+	function getCategoryFields()
+	{
 		return $this->getFields('#__jem_categories');
 	}
 
@@ -64,7 +68,8 @@ class JEMModelImport extends JModelLegacy {
 	 *
 	 * @return  array  An array with the fields of the cats_event_relations table
 	 */
-	function getCateventsFields() {
+	function getCateventsFields()
+	{
 		return $this->getFields('#__jem_cats_event_relations');
 	}
 
@@ -75,7 +80,8 @@ class JEMModelImport extends JModelLegacy {
 
 	 * @return  array  An array with the fields of the table
 	 */
-	private function getFields($tablename) {
+	private function getFields($tablename)
+	{
 		return array_keys($this->_db->getTableColumns($tablename));
 	}
 
@@ -88,7 +94,8 @@ class JEMModelImport extends JModelLegacy {
 	 *
 	 * @return  array  Number of records inserted and updated
 	 */
-	function eventsimport($fieldsname, & $data, $replace = true) {
+	function eventsimport($fieldsname, & $data, $replace = true)
+	{
 		return $this->import('Event', 'JEMTable', $fieldsname, $data, $replace);
 	}
 
@@ -101,7 +108,8 @@ class JEMModelImport extends JModelLegacy {
 	 *
 	 * @return  array  Number of records inserted and updated
 	 */
-	function categoriesimport($fieldsname, & $data, $replace = true) {
+	function categoriesimport($fieldsname, & $data, $replace = true)
+	{
 		return $this->import('Category', 'JEMTable', $fieldsname, $data, $replace);
 	}
 
@@ -114,7 +122,8 @@ class JEMModelImport extends JModelLegacy {
 	 *
 	 * @return  array  Number of records inserted and updated
 	 */
-	function cateventsimport($fieldsname, & $data, $replace = true) {
+	function cateventsimport($fieldsname, & $data, $replace = true)
+	{
 		return $this->import('jem_cats_event_relations', '', $fieldsname, $data, $replace);
 	}
 
@@ -127,7 +136,8 @@ class JEMModelImport extends JModelLegacy {
 	 *
 	 * @return  array  Number of records inserted and updated
 	 */
-	function venuesimport($fieldsname, & $data, $replace = true) {
+	function venuesimport($fieldsname, & $data, $replace = true)
+	{
 		return $this->import('Venue', 'JEMTable', $fieldsname, $data, $replace);
 	}
 
@@ -144,7 +154,7 @@ class JEMModelImport extends JModelLegacy {
 	private function import($tablename, $prefix, $fieldsname, & $data, $replace = true)
 	{
 		// cats_event_relations table requires different handling
-		if ($tablename == 'jem_cats_event_relations') {
+		if (strcasecmp($tablename, 'jem_cats_event_relations') == 0) {
 			$events = array();
 			$itemidx = $catidx = $orderidx = false;
 
@@ -176,6 +186,7 @@ class JEMModelImport extends JModelLegacy {
 		if (!$replace) {
 			$ignore[] = 'id';
 		}
+
 		$rec = array('added' => 0, 'updated' => 0, 'ignored' => 0);
 		$events = array(); // collects cat event relations
 
@@ -192,7 +203,7 @@ class JEMModelImport extends JModelLegacy {
 			$objectname = get_class($object);
 			$rootkey = $this->_rootkey();
 
-			if ($objectname == "JEMTableCategory") {
+			if (strcasecmp($objectname, 'JEMTableCategory') == 0) {
 
 				// check if column "parent_id" exists
 				if (array_key_exists('parent_id', $values)) {
@@ -236,7 +247,7 @@ class JEMModelImport extends JModelLegacy {
 			$object->bind($values, $ignore);
 
 			// check/store function for the Category Table
-			if ($objectname == "JEMTableCategory") {
+			if (strcasecmp($objectname, 'JEMTableCategory') == 0) {
 				// Make sure the data is valid
 				if (!$object->checkCsvImport()) {
 					$this->setError($object->getError());
@@ -247,7 +258,7 @@ class JEMModelImport extends JModelLegacy {
 				// Store it in the db
 				if ($replace) {
 
-					if ($values['id'] != '1' && $objectname == "JEMTableCategory") {
+					if (($values['id'] != '1') && (strcasecmp($objectname, 'JEMTableCategory') == 0)) {
 						// We want to keep id from database so first we try to insert into database.
 						// if it fails, it means the record already exists, we can use store().
 						if (!$object->insertIgnore()) {
@@ -307,7 +318,7 @@ class JEMModelImport extends JModelLegacy {
 				}
 			}
 
-			if ($objectname == "JEMTableEvent") {
+			if (strcasecmp($objectname, 'JEMTableEvent') == 0) {
 				// we need to update the categories-events table too
 				// store cat relations
 				if (isset($values['categories'])) {
@@ -322,11 +333,11 @@ class JEMModelImport extends JModelLegacy {
 
 		// Specific actions outside the foreach loop
 
-		if ($objectname == "JEMTableCategory") {
+		if (strcasecmp($objectname, 'JEMTableCategory') == 0) {
 			$object->rebuild();
 		}
 
-		if ($objectname == "JEMTableEvent") {
+		if (strcasecmp($objectname, 'JEMTableEvent') == 0) {
 			// store cat event relations
 			if (!empty($events)) {
 				$this->storeCatsEventRelations($events, $replace);
@@ -423,13 +434,14 @@ class JEMModelImport extends JModelLegacy {
 	 *
 	 * @return string  The version string of the detected Eventlist component or false
 	 */
-	public function getEventlistVersion() {
+	public function getEventlistVersion()
+	{
 		jimport( 'joomla.registry.registry' );
 
 		$db = $this->_db;
 		$query = $db->getQuery('true');
-		$query->select("manifest_cache")
-		->from("#__extensions")
+		$query->select('manifest_cache')
+		->from('#__extensions')
 		->where("type='component' AND (name='eventlist' AND element='com_eventlist')");
 
 		$db->setQuery($query);
@@ -453,13 +465,14 @@ class JEMModelImport extends JModelLegacy {
 	 * if the table does not exist
 	 * @return array The list of tables
 	 */
-	public function getEventlistTablesCount() {
-		$tables = array("eventlist_categories" => "",
-			"eventlist_events" => "",
-			"eventlist_groupmembers" => "",
-			"eventlist_groups" => "",
-			"eventlist_register" => "",
-			"eventlist_venues" => "");
+	public function getEventlistTablesCount()
+	{
+		$tables = array('eventlist_categories' => '',
+			'eventlist_events' => '',
+			'eventlist_groupmembers' => '',
+			'eventlist_groups' => '',
+			'eventlist_register' => '',
+			'eventlist_venues' => '');
 
 		return $this->getTablesCount($tables);
 	}
@@ -469,15 +482,16 @@ class JEMModelImport extends JModelLegacy {
 	 * table does not exist
 	 * @return array The list of tables
 	 */
-	public function getJemTablesCount() {
-		$tables = array("jem_attachments" => "",
-				"jem_categories" => "",
-				"jem_cats_event_relations" => "",
-				"jem_events" => "",
-				"jem_groupmembers" => "",
-				"jem_groups" => "",
-				"jem_register" => "",
-				"jem_venues" => "");
+	public function getJemTablesCount()
+	{
+		$tables = array('jem_attachments' => '',
+				'jem_categories' => '',
+				'jem_cats_event_relations' => '',
+				'jem_events' => '',
+				'jem_groupmembers' => '',
+				'jem_groups' => '',
+				'jem_register' => '',
+				'jem_venues' => '');
 
 		return $this->getTablesCount($tables);
 	}
@@ -488,13 +502,14 @@ class JEMModelImport extends JModelLegacy {
 	 * @param $tables  An array of table names without prefix
 	 * @return array The list of tables
 	 */
-	public function getTablesCount($tables) {
+	public function getTablesCount($tables)
+	{
 		$db = $this->_db;
 
 		foreach ($tables as $table => $value) {
 			$query = $db->getQuery('true');
 
-			$query->select("COUNT(*)")
+			$query->select('COUNT(*)')
 			      ->from($db->quoteName($this->prefix.$table));
 
 			$db->setQuery($query);
@@ -506,7 +521,7 @@ class JEMModelImport extends JModelLegacy {
 			try {
 				$tables[$table] = $db->loadResult();
 				// Don't count the root category
-				if($table == "jem_categories") {
+				if (strcasecmp($table, 'jem_categories') == 0) {
 					$tables[$table]--;
 				}
 				JError::$legacy = $legacyValue;
@@ -524,8 +539,9 @@ class JEMModelImport extends JModelLegacy {
 	 * @param $table  The name of the table without prefix
 	 * @return mixed  The number of rows or null
 	 */
-	public function getTableCount($table) {
-		$tables = array($table => "");
+	public function getTableCount($table)
+	{
+		$tables = array($table => '');
 		$tablesCount = $this->getTablesCount($tables);
 		return $tablesCount[$table];
 	}
@@ -538,14 +554,15 @@ class JEMModelImport extends JModelLegacy {
 	 * @param int $limit  The limit of the query
 	 * @return array  The data
 	 */
-	public function getEventlistData($tablename, $limitStart = null, $limit = null) {
+	public function getEventlistData($tablename, $limitStart = null, $limit = null)
+	{
 		$db = $this->_db;
 		$query = $db->getQuery('true');
 
-		$query->select("*")
+		$query->select('*')
 			->from($this->prefix.$tablename);
 
-		if($limitStart !== null && $limit !== null) {
+		if ($limitStart !== null && $limit !== null) {
 			$db->setQuery($query, $limitStart, $limit);
 		} else {
 			$db->setQuery($query);
@@ -562,25 +579,26 @@ class JEMModelImport extends JModelLegacy {
 	 *
 	 * @todo: increment catid when catid=1 exists.
 	 */
-	public function transformEventlistData($tablename, &$data) {
+	public function transformEventlistData($tablename, &$data)
+	{
 		// categories
-		if($tablename == "categories") {
-			foreach($data as $row) {
+		if (strcasecmp($tablename, 'categories') == 0) {
+			foreach ($data as $row) {
 				// JEM now has a root category, so we shift IDs by 1
 				$row->id++;
 				$row->parent_id++;
 
 				// Description field has been renamed
-				if($row->catdescription) {
+				if ($row->catdescription) {
 					$row->description = $row->catdescription;
 				}
 			}
 		}
 
 		// cats_event_relations
-		if($tablename == "cats_event_relations") {
+		if (strcasecmp($tablename, 'cats_event_relations') == 0) {
 			$dataNew = array();
-			foreach($data as $row) {
+			foreach ($data as $row) {
 				// Category-event relations is now stored in seperate table
 				$rowNew = new stdClass();
 				$rowNew->catid = $row->catsid;
@@ -597,27 +615,27 @@ class JEMModelImport extends JModelLegacy {
 		}
 
 		// events
-		if($tablename == "events") {
-			foreach($data as $row) {
+		if (strcasecmp($tablename, 'events') == 0) {
+			foreach ($data as $row) {
 				// No start date is now represented by a NULL value
-				if($row->dates == "0000-00-00") {
+				if ($row->dates == '0000-00-00') {
 					$row->dates = null;
 				}
 				// Recurrence fields have changed meaning
-				if($row->recurrence_counter != "0000-00-00") {
+				if ($row->recurrence_counter != '0000-00-00') {
 					$row->recurrence_limit_date = $row->recurrence_counter;
 				}
 				$row->recurrence_counter = 0;
 				// Published/state vaules have changed meaning
-				if($row->published == -1) {
+				if ($row->published == -1) {
 					$row->published = 2; // archive
 				}
 				// Check if author_ip contains crap
-				if(strpos($row->author_ip, "COM_EVENTLIST") === 0) {
+				if (strpos($row->author_ip, 'COM_EVENTLIST') === 0) {
 					$row->author_ip = "";
 				}
 				// Description field has been renamed
-				if($row->datdescription) {
+				if ($row->datdescription) {
 					$row->introtext = $row->datdescription;
 				}
 			}
@@ -627,27 +645,27 @@ class JEMModelImport extends JModelLegacy {
 		// groups
 
 		// register
-		if($tablename == "register") {
-			foreach($data as $row) {
+		if (strcasecmp($tablename, 'register') == 0) {
+			foreach ($data as $row) {
 				// Check if uip contains crap
-				if(strpos($row->uip, "COM_EVENTLIST") === 0) {
-					$row->uip = "";
+				if (strpos($row->uip, 'COM_EVENTLIST') === 0) {
+					$row->uip = '';
 				}
 			}
 		}
 
 		// venues
-		if($tablename == "venues") {
-			foreach($data as $row) {
+		if (strcasecmp($tablename, 'venues') == 0) {
+			foreach ($data as $row) {
 				// Column name has changed
 				$row->postalCode = $row->plz;
 				// Check if author_ip contains crap
-				if(strpos($row->author_ip, "COM_EVENTLIST") === 0) {
+				if (strpos($row->author_ip, 'COM_EVENTLIST') === 0) {
 					$row->author_ip = "";
 				}
 				// Country changes
-				if($row->country == "AN") {
-					$row->country = "NL"; // Netherlands Antilles to Netherlands
+				if (strcasecmp($row->country, 'AN') == 0) {
+					$row->country = 'NL'; // Netherlands Antilles to Netherlands
 				}
 			}
 		}
@@ -660,9 +678,10 @@ class JEMModelImport extends JModelLegacy {
 	 * @param string $tablename  The name of the table
 	 * @param array $data  The data to save
 	 */
-	public function storeJemData($tablename, &$data) {
+	public function storeJemData($tablename, &$data)
+	{
 		$replace = true;
-		if($tablename == "jem_groupmembers" || $tablename == "jem_cats_event_relations") {
+		if ((strcasecmp($tablename, 'jem_groupmembers') == 0) || (strcasecmp($tablename, 'jem_cats_event_relations') == 0)) {
 			$replace = false;
 		}
 
@@ -672,7 +691,7 @@ class JEMModelImport extends JModelLegacy {
 // 		}
 		$rec = array ('added' => 0, 'updated' => 0, 'error' => 0);
 
-		foreach($data as $row) {
+		foreach ($data as $row) {
 			$object = JTable::getInstance($tablename, '');
 			$object->bind($row, $ignore);
 
@@ -714,11 +733,12 @@ class JEMModelImport extends JModelLegacy {
 	 * Returns true if the tables already contain JEM data
 	 * @return boolean  True if data exists
 	 */
-	public function getExistingJemData() {
+	public function getExistingJemData()
+	{
 		$tablesCount = $this->getJemTablesCount();
 
-		foreach($tablesCount as $tableCount) {
-			if($tableCount !== null && $tableCount > 0) {
+		foreach ($tablesCount as $tableCount) {
+			if ($tableCount !== null && $tableCount > 0) {
 				return true;
 			}
 		}
@@ -729,15 +749,16 @@ class JEMModelImport extends JModelLegacy {
 	/**
 	 * Copies the Eventlist images to JEM folder
 	 */
-	public function copyImages() {
+	public function copyImages()
+	{
 		jimport('joomla.filesystem.file');
 		jimport('joomla.filesystem.folder');
 
-		$folders = array("categories", "events", "venues");
+		$folders = array('categories', 'events', 'venues');
 
 		// Add the thumbnail folders to the folders list
 		foreach ($folders as $folder) {
-			$folders[] = $folder."/small";
+			$folders[] = $folder.'/small';
 		}
 
 		foreach ($folders as $folder) {
@@ -748,7 +769,7 @@ class JEMModelImport extends JModelLegacy {
 				$files = JFolder::files($fromFolder, null, false, false);
 
 				foreach ($files as $file) {
-					if(!JFile::exists($toFolder.$file)) {
+					if (!JFile::exists($toFolder.$file)) {
 						JFile::copy($fromFolder.$file, $toFolder.$file);
 					}
 				}
