@@ -3,7 +3,7 @@
  * JEM Package
  * @package JEM.Package
  *
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
  * @copyright (C) 2008 - 2013 Kunena Team. All rights reserved.
@@ -26,6 +26,7 @@ class Pkg_JemInstallerScript {
 			'0' => '5.4.14' // Preferred version
 			),
 		'MySQL' => array (
+			'5.0' => '5.0.4', // without guarantee, you should update to at least 5.1
 			'5.1' => '5.1',
 			'0' => '5.5' // Preferred version
 			),
