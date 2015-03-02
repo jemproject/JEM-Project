@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.3
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -184,8 +184,8 @@ class JEMModelSource extends JModelForm
 
 		$return = JFile::write($filePath, $data['source']);
 
-		// Try to make the template file unwriteable.
-		if (!$ftp['enabled'] && JPath::isOwner($filePath) && !JPath::setPermissions($filePath, '0444')) {
+		// Try to make the custom template file unwriteable.
+		if (($custom !== false) && !$ftp['enabled'] && JPath::isOwner($filePath) && !JPath::setPermissions($filePath, '0444')) {
 			$this->setError(JText::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_UNWRITABLE'));
 			return false;
 		} elseif (!$return) {
