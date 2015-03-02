@@ -1,8 +1,8 @@
 <?php
 /**
- * Version 1.9.0
+ * Version 2.1.1
  * @copyright	Copyright (C) 2014 Thamesmog.
- * @copyright	Copyright (C) 2013 - 2014 joomlaeventmanager.net. All rights reserved.
+ * @copyright	Copyright (C) 2013 - 2015 joomlaeventmanager.net. All rights reserved.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  * Based on Eventlist11 tag and JEM specific code by JEM Community
  */
@@ -12,7 +12,7 @@ include_once(ACYMAILING_ROOT.'components'.DS.'com_jem'.DS.'helpers'.DS.'route.ph
 
 $result .= '<div class="acymailing_content" style="margin-top:12px">';
 if (!empty($event->datimage)) {
-	$imageFile = file_exists(ACYMAILING_ROOT.'images'.DS.'jem'.DS.'events'.DS.'small'.DS.$event->datimage) ? ACYMAILING_LIVE.'images/jem/events/small/'.$event->datimage : ACYMAILING_LIVE.'images/jem/events/'.$event->datimage;
+	$imageFile = ACYMAILING_LIVE . $event->datimage;
 	$result .= '<table cellspacing="5" cellpadding="0" border="0"><tr><td valign="top"><a style="text-decoration:none;border:0" target="_blank" href="'.$link.'" ><img src="'.$imageFile.'"/></a></td><td style="padding-left:5px" valign="top">';
 } else {
 	$result .= '<table cellspacing="5" cellpadding="0" border="0"><tr><td valign="top"></td><td style="padding-left:5px" valign="top">';

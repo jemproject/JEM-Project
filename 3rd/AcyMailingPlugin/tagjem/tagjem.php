@@ -1,6 +1,6 @@
 <?php
 /**
- * Version 2.1.0
+ * Version 2.1.1
  * @copyright	Copyright (C) 2014 Ghost Art digital media.
  * @copyright	Copyright (C) 2013 - 2015 joomlaeventmanager.net. All rights reserved.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
@@ -476,6 +476,18 @@ class plgAcymailingTagjem extends JPlugin
 			}
 			$link = acymailing_frontendLink($link);
 
+			/* on JEM 2 we have filename only, on JEM it already contains the path */
+			if (!empty($event->datimage)) {
+				$path = (strpos($event->datimage,'images/') === false) ? 'images/jem/events/' : '';
+				if (file_exists(ACYMAILING_ROOT . $path . 'small/' . $event->datimage)) {
+					$event->datimage = $path . 'small/' . $event->datimage;
+				} elseif (file_exists(ACYMAILING_ROOT . $path . $event->datimage)) {
+					$event->datimage = $path . $event->datimage;
+				} else {
+					$event->datimage = '';
+				}
+			}
+
 			// Check if the template exists...
 			$template = '';
 			if (!empty($tag->template) ){
@@ -489,7 +501,7 @@ class plgAcymailingTagjem extends JPlugin
 			} else {
 				$result .= '<div class="acymailing_content" style="margin-top:12px">';
 				if (!empty($event->datimage)) {
-					$imageFile = file_exists(ACYMAILING_ROOT.'images/jem/events/small/'.$event->datimage) ? ACYMAILING_LIVE.'images/jem/events/small/'.$event->datimage : ACYMAILING_LIVE.'images/jem/events/'.$event->datimage;
+					$imageFile = ACYMAILING_LIVE . $event->datimage;
 					$result .= '<table cellspacing="5" cellpadding="0" border="0"><tr><td valign="top"><a style="text-decoration:none;border:0" target="_blank" href="'.$link.'" ><img src="'.$imageFile.'"/></a></td><td style="padding-left:5px" valign="top">';
 				}
 				$result .= '<a style="text-decoration:none;" name="event-'.$event->id.'" target="_blank" href="'.$link.'"><h2 class="acymailing_title" style="margin-top:0">'.$event->title;

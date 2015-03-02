@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-	<fieldset name="details"
-		addfieldpath="/administrator/components/com_jem/models/fields"
-	>
+	<fieldset name="details">
 		<field name="id" type="text"
 			default="0"
 			readonly="true"

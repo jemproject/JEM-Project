@@ -1,8 +1,8 @@
 <?php
 /**
- * Version 1.9.0
+ * Version 2.1.0
  * @copyright	Copyright (C) 2014 Thamesmog.
- * @copyright	Copyright (C) 2013 - 2014 joomlaeventmanager.net. All rights reserved.
+ * @copyright	Copyright (C) 2013 - 2015 joomlaeventmanager.net. All rights reserved.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  * Based on Eventlist11 tag and JEM specific code by JEM Community
  */

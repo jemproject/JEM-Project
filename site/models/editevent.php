@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.3
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -161,7 +161,7 @@ class JEMModelEditevent extends JEMModelEvent
 
 	protected function loadForm($name, $source = null, $options = array(), $clear = false, $xpath = false)
 	{
-		JForm::addFieldPath(JPATH_COMPONENT_ADMINISTRATOR . '/models/fields');
+	//	JForm::addFieldPath(JPATH_COMPONENT_ADMINISTRATOR . '/models/fields');
 
 		return parent::loadForm($name, $source, $options, $clear, $xpath);
 	}

@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-	<fieldset name="details"
-		addfieldpath="administrator/components/com_jem/models/fields"
-	>
-
+	<fieldset name="details">
 		<field name="articletext" type="editor" class="inputbox"
 			label="COM_JEM_EDITEVENT_FIELD_DESCRIPTION" description="COM_JEM_EDITEVENT_FIELD_DESCRIPTION_DESC"
 			filter="JComponentHelper::filterText" hide="pagebreak" />
@@ -132,9 +129,7 @@
 			size="1" />
 	</fieldset>
 
-	<fieldset name="request"
-		addfieldpath="/administrator/components/com_jem/models/fields"
-	>
+	<fieldset name="request">
 		<field name="locid" type="modal_venue"
 			label="COM_JEM_EDITEVENT_FIELD_VENUE"
 			description="COM_JEM_EDITEVENT_FIELD_VENUE_DESC"
