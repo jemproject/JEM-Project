@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.3
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -79,7 +79,7 @@ class JemViewEventslist extends JEMView
 		}
 
 		// params
-		$pagetitle		= $params->def('page_title', $menuitem ? $menuitem->title : COM_JEM_EVENTS);
+		$pagetitle		= $params->def('page_title', $menuitem ? $menuitem->title : JText::_('COM_JEM_EVENTS'));
 		$pageheading 	= $params->def('page_heading', $params->get('page_title'));
 		$pageclass_sfx	= $params->get('pageclass_sfx');
 
