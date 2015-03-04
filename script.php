@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 $db = JFactory::getDBO();
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
+jimport('joomla.filesystem.path');
 
 
 /**
@@ -260,6 +261,9 @@ class com_jemInstallerScript
 
 			// Remove obsolete files and folder
 			$this->deleteObsoleteFiles();
+
+			// Ensure css files are (over)writable
+			$this->makeFilesWritable();
 
 			// Initialize schema table if necessary
 			$this->initializeSchema($this->oldRelease);
@@ -633,6 +637,23 @@ class com_jemInstallerScript
 		foreach ($folders as $folder) {
 			if (JFolder::exists(JPATH_ROOT . $folder) && !JFolder::delete(JPATH_ROOT . $folder)) {
 				echo JText::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $folder).'<br />';
+			}
+		}
+	}
+
+	/**
+	 * Ensure css files are writable.
+	 * (they maybe read-only caused by CSS Manager)
+	 *
+	 * @return void
+	 */
+	private function makeFilesWritable()
+	{
+		$path = JPath::clean(JPATH_ROOT.'/media/com_jem/css');
+		$files = JFolder::files($path, '.*\.css', false, true); // all css files, full path
+		foreach ($files as $fullpath) {
+			if (is_file($fullpath)) {
+				JPath::setPermissions($fullpath);
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
- * Version 2.1.1
+ * Version 2.1.2
  * @copyright	Copyright (C) 2014 Ghost Art digital media.
  * @copyright	Copyright (C) 2013 - 2015 joomlaeventmanager.net. All rights reserved.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
@@ -478,11 +478,15 @@ class plgAcymailingTagjem extends JPlugin
 
 			/* on JEM 2 we have filename only, on JEM it already contains the path */
 			if (!empty($event->datimage)) {
-				$path = (strpos($event->datimage,'images/') === false) ? 'images/jem/events/' : '';
-				if (file_exists(ACYMAILING_ROOT . $path . 'small/' . $event->datimage)) {
-					$event->datimage = $path . 'small/' . $event->datimage;
-				} elseif (file_exists(ACYMAILING_ROOT . $path . $event->datimage)) {
-					$event->datimage = $path . $event->datimage;
+				$filename = basename($event->datimage);
+				$dirname = dirname($event->datimage);
+				if (empty($dirname) or $dirname == '.') { // JEM 2.x, fix path
+					$dirname = 'images/jem/events';
+				}
+				if (file_exists(ACYMAILING_ROOT . $dirname . '/small/' . $filename)) {
+					$event->datimage = $dirname . '/small/' . $filename;
+				} elseif (file_exists(ACYMAILING_ROOT . $dirname . '/' . $filename)) {
+					$event->datimage = $dirname . '/' . $filename;
 				} else {
 					$event->datimage = '';
 				}
