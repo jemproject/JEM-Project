@@ -6,10 +6,7 @@
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU/GPL version 2
  */
-if (! (defined('_VALID_CB') || defined('_JEXEC') || defined('_VALID_MOS')))
-{
-	die();
-}
+if ( ! ( defined( '_VALID_CB' ) || defined( '_JEXEC' ) || defined( '_VALID_MOS' ) ) ) { die( 'Direct Access to this location is not allowed.' ); }
 
 @include_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
 @include_once (JPATH_SITE.'/components/com_jem/classes/output.class.php');
