@@ -4,12 +4,8 @@
  * @version JEM v2.0 / v2.1 & CB 1.9
  * @author JEM Community
  * @copyright (C) 2013-2014 joomlaeventmanager.net
- *
- * Just a note:
- * Keep the query code inline with my-attendances view
- *
+ * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU/GPL version 2
  */
-
 if (! (defined('_VALID_CB') || defined('_JEXEC') || defined('_VALID_MOS')))
 {
 	die();
