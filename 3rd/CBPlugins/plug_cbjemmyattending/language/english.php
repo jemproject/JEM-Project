@@ -1,15 +1,12 @@
 <?php
-/* 
+/** 
  * @package My Attending
- * @version 2.0.0
+ * @version JEM v2.0 / v2.1 & CB 1.9
  * @author JEM Community
  * @copyright (C) 2013-2014 joomlaeventmanager.net
- * 
- * Former info:
- * english.php 2nd November 2007 Himangi Chhatre (Tekdi Eco Services pvt ltd)
- * 
- * */
-
+ * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU/GPL version 2
+ */
+ 
  DEFINE("_JEMMYATTENDING_EDIT_ENTRY","Edit");
  DEFINE("_JEMMYATTENDING_DELETE_ENTRY","Delete");
 
