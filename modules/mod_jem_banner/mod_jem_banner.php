@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.1
+ * @version 2.1.3
  * @package JEM
  * @subpackage JEM Banner Module
  * @copyright (C) 2014-2015 joomlaeventmanager.net

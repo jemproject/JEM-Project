@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.3
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2015 joomlaeventmanager.net
@@ -272,7 +272,7 @@ abstract class modJEMteaserHelper
 				//Upcoming multidayevent (From 16.10.2010 Until 18.10.2010)
 				if ($dates_stamp > $tomorrow_stamp && $enddates_stamp) {
 					$startdate = strftime('%A', strtotime( $row->dates ));
-					$result = JText::sprintf('FROM', $startdate);
+					$result = JText::sprintf('MOD_JEM_TEASER_FROM', $startdate);
 				}
 
 				//current multidayevent (Until 18.08.2008)
@@ -309,9 +309,9 @@ abstract class modJEMteaserHelper
 	}
 
 	/**
-	 * Method to format date information
+	 * Method to format date and time information
 	 *
-	 * @access public
+	 * @access protected
 	 * @return array(string, string) returns date and time strings as array
 	 */
 	protected static function _format_date_time($row, &$params)
@@ -350,7 +350,7 @@ abstract class modJEMteaserHelper
 			elseif ($row->enddates && $enddates_stamp < $yesterday_stamp) {
 				$days = round(($today_stamp - $enddates_stamp) / 86400);
 				$date = JText::sprintf('MOD_JEM_TEASER_ENDED_DAYS_AGO', $days);
-				$time = $row->times ? JEMOutput::formattime($row->endtimes, $time_format, false) : '';
+				$time = $row->endtimes ? JEMOutput::formattime($row->endtimes, $time_format, false) : '';
 			}
 			//the event has an enddate and it's later than today but the startdate is earlier than today
 			//means a currently running event
@@ -388,9 +388,9 @@ abstract class modJEMteaserHelper
 			//current multidayevent (Until 18.08.2008)
 			elseif ($row->enddates && $enddates_stamp > $today_stamp && $dates_stamp < $today_stamp) {
 				//format date
-				$enddate = strftime($params->get('formatdate', '%d.%m.%Y'), strtotime($row->enddates.' '.$row->endtimes));
+				$enddate = JEMOutput::formatdate($row->enddates, $date_format);
 				$date = JText::sprintf('MOD_JEM_TEASER_UNTIL', $enddate);
-				$time = $row->times ? JEMOutput::formattime($row->endtimes, $time_format, false) : '';
+				$time = $row->endtimes ? JEMOutput::formattime($row->endtimes, $time_format, false) : '';
 			}
 			//single day event
 			else {
