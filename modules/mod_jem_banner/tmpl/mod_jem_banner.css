@@ -104,7 +104,7 @@ div#jemmodulebanner div.date {
 div#jemmodulebanner .category {
 	position: relative;
 	padding-left: 20px;
-	background: url(img/category.png) no-repeat;
+	background: url(img/category.png) 0 center no-repeat;
 	font-size: smaller;
 	float: left;
 }
@@ -112,7 +112,7 @@ div#jemmodulebanner .category {
 div#jemmodulebanner .venue-title {
 	position: relative;
 	padding-left: 20px;
-	background: url(img/building.png) no-repeat;
+	background: url(img/building.png) 0 center no-repeat;
 	font-size: smaller;
 	float: left;
 	margin-right: 8px;
@@ -129,7 +129,7 @@ div#jemmodulebanner .image-preview {
 	border: 0px solid #CCCCCC;
 	padding: 3px;
 	background-color: white;
-	margin: 3px;
+	margin: 2px;
 }
 
 div#jemmodulebanner .image-preview2 {
@@ -137,7 +137,7 @@ div#jemmodulebanner .image-preview2 {
 	border: 0px solid #CCCCCC;
 	padding: 3px;
 	background-color: white;
-	margin: 3px;
+	margin: 2px;
 }
 
 div#jemmodulebanner .hr {

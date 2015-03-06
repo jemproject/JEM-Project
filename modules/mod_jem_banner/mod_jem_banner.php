@@ -20,6 +20,8 @@ require_once(JPATH_SITE.'/components/com_jem/classes/image.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 
+JFactory::getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
+
 $paramsdatemethod = $params->get('datemethod', 1);
 $paramsuse_modal = $params->get('use_modal', 0);
 
