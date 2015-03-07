@@ -81,27 +81,27 @@ div#jemmoduleteaser .event-title {
 
 div#jemmoduleteaser .time {
 	padding-left: 20px;
-	background: url(img/time.png) no-repeat;
+	background: url(img/time.png) 0 center no-repeat;
 	padding-top: 2px;
 }
 
 div#jemmoduleteaser div.date {
 	padding-left: 0px;
-//	background: url(img/date.png) no-repeat;
+//	background: url(img/date.png) 0 center no-repeat;
 	padding-top: 2px;
 }
 
 div#jemmoduleteaser .category {
 	position: relative;
 	padding-left: 20px;
-	background: url(img/category.png) no-repeat;
+	background: url(img/category.png) 0 center no-repeat;
 	font-size: smaller;
 }
 
 div#jemmoduleteaser .venue-title {
 	position: relative;
 	padding-left: 20px;
-	background: url(img/building.png) no-repeat;
+	background: url(img/building.png) 0 center no-repeat;
 	font-size: smaller;
 }
 
