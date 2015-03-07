@@ -52,23 +52,22 @@ $datemethod   = (int)$params->get('datemethod', 1);
 			</div>
  			<?php endif; ?>
 
-			<?php if ($showflyer == 1) :?>
+			<?php if (($showflyer == 1) AND
+			          (($item->eventimage)!=str_replace("jpg","",($item->eventimage)) OR
+					   ($item->eventimage)!=str_replace("gif","",($item->eventimage)) OR
+					   ($item->eventimage)!=str_replace("png","",($item->eventimage)))) : ?>
 			<div>
 				<div class="banner-jem">
 					<div>
-					<?php $class = ($showcalendar == 1) ? 'image-preview' : 'image-preview2'; ?>
-					<?php if(($item->eventimage)!=str_replace("jpg","",($item->eventimage)) OR
-					         ($item->eventimage)!=str_replace("gif","",($item->eventimage)) OR
-					         ($item->eventimage)!=str_replace("png","",($item->eventimage))) : ?>
+						<?php $class = ($showcalendar == 1) ? 'image-preview' : 'image-preview2'; ?>
 						<a href="<?php echo $item->eventimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->title; ?> ">
 							<img class="float_right <?php echo $class; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
 						</a>
-					<?php endif; ?>
 					</div>
 				</div>
 			</div>
 			<div class="clr"></div>
-			<?php else /* showflyer == 0 */ : ?>
+			<?php else /* showflyer == 0 or no image */ : ?>
 			<div>
 				<div class="banner-jem">
 				</div>
