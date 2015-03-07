@@ -369,18 +369,19 @@ abstract class modJEMbannerHelper
 					$days = round(($dates_stamp - $today_stamp) / 86400);
 					$date = JText::sprintf('MOD_JEM_BANNER_DAYS_AHEAD', $days);
 				}
-				elseif (empty($row->dates)) {
-					$date = JEMOutput::formatDateTime('', ''); // "Open date"
+				else {
+					$date = JEMOutput::formatDateTime('', ''); // Oops - say "Open date"
 				}
 			} else { // datemethod show date
+			// TODO: check date+time to be more acurate
 				//Upcoming multidayevent (From 16.10.2008 Until 18.08.2008)
-				if (($dates_stamp > $today_stamp) && ($enddates_stamp > $dates_stamp)) {
+				if (($dates_stamp >= $today_stamp) && ($enddates_stamp > $dates_stamp)) {
 					$startdate = JEMOutput::formatdate($row->dates, $dateFormat);
 					$enddate = JEMOutput::formatdate($row->enddates, $dateFormat);
 					$date = JText::sprintf('MOD_JEM_BANNER_FROM_UNTIL', $startdate, $enddate);
 				}
 				//current multidayevent (Until 18.08.2008)
-				elseif ($row->enddates && ($enddates_stamp > $today_stamp) && ($dates_stamp < $today_stamp)) {
+				elseif ($row->enddates && ($enddates_stamp >= $today_stamp) && ($dates_stamp < $today_stamp)) {
 					$enddate = JEMOutput::formatdate($row->enddates, $dateFormat);
 					$date = JText::sprintf('MOD_JEM_BANNER_UNTIL', $enddate);
 					$times = $row->endtimes;

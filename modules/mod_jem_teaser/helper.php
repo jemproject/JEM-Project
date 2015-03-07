@@ -323,74 +323,81 @@ abstract class modJEMteaserHelper
 	 */
 	protected static function _format_date_time($row, $method, $dateFormat = '', $timeFormat = '', $addSuffix = false)
 	{
-		//Get needed timestamps and format
-		$yesterday_stamp = mktime(0, 0, 0, date("m"), date("d")-1, date("Y"));
-		$yesterday       = strftime("%Y-%m-%d", $yesterday_stamp);
-		$today_stamp     = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
-		$today           = date('Y-m-d');
-		$tomorrow_stamp  = mktime(0, 0, 0, date("m"), date("d")+1, date("Y"));
-		$tomorrow        = strftime("%Y-%m-%d", $tomorrow_stamp);
+		if (empty($row->dates)) {
+			// open date
+			$date  = JEMOutput::formatDateTime('', ''); // "Open date"
+			$times = $row->times;
+		} else {
+			//Get needed timestamps and format
+			$yesterday_stamp = mktime(0, 0, 0, date("m"), date("d")-1, date("Y"));
+			$yesterday       = strftime("%Y-%m-%d", $yesterday_stamp);
+			$today_stamp     = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+			$today           = date('Y-m-d');
+			$tomorrow_stamp  = mktime(0, 0, 0, date("m"), date("d")+1, date("Y"));
+			$tomorrow        = strftime("%Y-%m-%d", $tomorrow_stamp);
 
-		$dates_stamp     = $row->dates ? strtotime($row->dates) : null;
-		$enddates_stamp  = $row->enddates ? strtotime($row->enddates) : null;
+			$dates_stamp     = $row->dates ? strtotime($row->dates) : null;
+			$enddates_stamp  = $row->enddates ? strtotime($row->enddates) : null;
 
-		$times = $row->times;
+			$times = $row->times;
 
-		//if datemethod show day difference
-		if ($method == 2) {
-			//check if today or tomorrow
-			if ($row->dates == $today) {
-				$date = JText::_('MOD_JEM_TEASER_TODAY');
-			} elseif ($row->dates == $tomorrow) {
-				$date = JText::_('MOD_JEM_TEASER_TOMORROW');
-			} elseif ($row->dates == $yesterday) {
-				$date = JText::_('MOD_JEM_TEASER_YESTERDAY');
-			}
-			//This one isn't very different from the DAYS AGO output but it seems
-			//adequate to use a different language string here.
-			//
-			//the event has an enddate and it's earlier than yesterday
-			elseif ($row->enddates && ($enddates_stamp < $yesterday_stamp)) {
-				$days = round(($today_stamp - $enddates_stamp) / 86400);
-				$date = JText::sprintf('MOD_JEM_TEASER_ENDED_DAYS_AGO', $days);
-				$times = $row->endtimes;
-			}
-			//the event has an enddate and it's later than today but the startdate is earlier than today
-			//means a currently running event
-			elseif ($row->dates && $row->enddates && ($enddates_stamp > $today_stamp) && ($dates_stamp < $today_stamp)) {
-				$days = round(($today_stamp - $dates_stamp) / 86400);
-				$date = JText::sprintf('MOD_JEM_TEASER_STARTED_DAYS_AGO', $days);
-			}
-			//the events date is earlier than yesterday
-			elseif ($row->dates && ($dates_stamp < $yesterday_stamp)) {
-				$days = round(($today_stamp - $dates_stamp) / 86400);
-				$date = JText::sprintf('MOD_JEM_TEASER_DAYS_AGO', $days);
-			}
-			//the events date is later than tomorrow
-			elseif ($row->dates && ($dates_stamp > $tomorrow_stamp)) {
-				$days = round(($dates_stamp - $today_stamp) / 86400);
-				$date = JText::sprintf('MOD_JEM_TEASER_DAYS_AHEAD', $days);
-			}
-			elseif (empty($row->dates)) {
-				$date = JEMOutput::formatDateTime('', ''); // "Open date"
-			}
-		} else { // datemethod show date - not shown beause there is a calendar image
-			//Upcoming multidayevent (From 16.10.2008 Until 18.08.2008)
-			if (($dates_stamp > $today_stamp) && ($enddates_stamp > $dates_stamp)) {
-				$startdate = JEMOutput::formatdate($row->dates, $dateFormat);
-				$enddate = JEMOutput::formatdate($row->enddates, $dateFormat);
-				$date = JText::sprintf('MOD_JEM_TEASER_FROM_UNTIL', $startdate, $enddate);
-			}
-			//current multidayevent (Until 18.08.2008)
-			elseif ($row->enddates && ($enddates_stamp > $today_stamp) && ($dates_stamp < $today_stamp)) {
-				$enddate = JEMOutput::formatdate($row->enddates, $dateFormat);
-				$date = JText::sprintf('MOD_JEM_TEASER_UNTIL', $enddate);
-				$times = $row->endtimes;
-			}
-			//single day event
-			else {
-				$startdate = JEMOutput::formatdate($row->dates, $dateFormat);
-				$date = JText::sprintf('MOD_JEM_TEASER_ON_DATE', $startdate);
+			//if datemethod show day difference
+			if ($method == 2) {
+				//check if today or tomorrow
+				if ($row->dates == $today) {
+					$date = JText::_('MOD_JEM_TEASER_TODAY');
+				} elseif ($row->dates == $tomorrow) {
+					$date = JText::_('MOD_JEM_TEASER_TOMORROW');
+				} elseif ($row->dates == $yesterday) {
+					$date = JText::_('MOD_JEM_TEASER_YESTERDAY');
+				}
+				//This one isn't very different from the DAYS AGO output but it seems
+				//adequate to use a different language string here.
+				//
+				//the event has an enddate and it's earlier than yesterday
+				elseif ($row->enddates && ($enddates_stamp < $yesterday_stamp)) {
+					$days = round(($today_stamp - $enddates_stamp) / 86400);
+					$date = JText::sprintf('MOD_JEM_TEASER_ENDED_DAYS_AGO', $days);
+					$times = $row->endtimes;
+				}
+				//the event has an enddate and it's later than today but the startdate is earlier than today
+				//means a currently running event
+				elseif ($row->dates && $row->enddates && ($enddates_stamp > $today_stamp) && ($dates_stamp < $today_stamp)) {
+					$days = round(($today_stamp - $dates_stamp) / 86400);
+					$date = JText::sprintf('MOD_JEM_TEASER_STARTED_DAYS_AGO', $days);
+				}
+				//the events date is earlier than yesterday
+				elseif ($row->dates && ($dates_stamp < $yesterday_stamp)) {
+					$days = round(($today_stamp - $dates_stamp) / 86400);
+					$date = JText::sprintf('MOD_JEM_TEASER_DAYS_AGO', $days);
+				}
+				//the events date is later than tomorrow
+				elseif ($row->dates && ($dates_stamp > $tomorrow_stamp)) {
+					$days = round(($dates_stamp - $today_stamp) / 86400);
+					$date = JText::sprintf('MOD_JEM_TEASER_DAYS_AHEAD', $days);
+				}
+				else {
+					$date = JEMOutput::formatDateTime('', ''); // Oops - say "Open date"
+				}
+			} else { // datemethod show date - not shown beause there is a calendar image
+			// TODO: check date+time to be more acurate
+				//Upcoming multidayevent (From 16.10.2008 Until 18.08.2008)
+				if (($dates_stamp >= $today_stamp) && ($enddates_stamp > $dates_stamp)) {
+					$startdate = JEMOutput::formatdate($row->dates, $dateFormat);
+					$enddate = JEMOutput::formatdate($row->enddates, $dateFormat);
+					$date = JText::sprintf('MOD_JEM_TEASER_FROM_UNTIL', $startdate, $enddate);
+				}
+				//current multidayevent (Until 18.08.2008)
+				elseif ($row->enddates && ($enddates_stamp >= $today_stamp) && ($dates_stamp < $today_stamp)) {
+					$enddate = JEMOutput::formatdate($row->enddates, $dateFormat);
+					$date = JText::sprintf('MOD_JEM_TEASER_UNTIL', $enddate);
+					//$times = $row->endtimes; return start time because calendar is shown
+				}
+				//single day event
+				else {
+					$startdate = JEMOutput::formatdate($row->dates, $dateFormat);
+					$date = JText::sprintf('MOD_JEM_TEASER_ON_DATE', $startdate);
+				}
 			}
 		}
 
