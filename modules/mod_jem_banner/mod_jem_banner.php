@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.1
+ * @version 2.1.3
  * @package JEM
  * @subpackage JEM Banner Module
  * @copyright (C) 2014-2015 joomlaeventmanager.net
@@ -19,6 +19,8 @@ require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/image.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
+
+JFactory::getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
 
 $paramsdatemethod = $params->get('datemethod', 1);
 $paramsuse_modal = $params->get('use_modal', 0);

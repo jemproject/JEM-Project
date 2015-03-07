@@ -82,7 +82,7 @@ if ($params->get('use_modal', 0)) {
 					<?php endif; ?>
 					<?php if ($item->time && $params->get('datemethod', 1) == 1) :?>
 						<div class="time">
-							<small><?php echo JEMOutput::formattime($item->time); ?></small>
+							<small><?php echo $item->time; ?></small>
 						</div>
 					<?php endif; ?>
 				</td>
