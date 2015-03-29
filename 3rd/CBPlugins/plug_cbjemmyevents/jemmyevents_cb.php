@@ -3,17 +3,16 @@
  * @package My Events
  * @version JEM v2.0 / v2.1 & CB 1.9
  * @author JEM Community
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
  *
  * Just a note:
- * Keep the query code inline with my-attending view
+ * Keep the query code inline with my-events view
  *
  */
 
-if (! (defined('_VALID_CB') || defined('_JEXEC') || defined('_VALID_MOS')))
-{
-	die();
-}
+defined('_JEXEC') or die;
+
 
 @include_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
 @include_once (JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
