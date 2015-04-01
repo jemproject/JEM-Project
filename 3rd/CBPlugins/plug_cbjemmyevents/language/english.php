@@ -1,11 +1,20 @@
 <?php
-/**
+/*
+ * 
+ * 
  * @package My Events
- * @version JEM v2.0 / v2.1 & CB 1.9
+ * @version 2.0.0
  * @author JEM Community
- * @copyright (C) 2014-2015 joomlaeventmanager.net
- * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU/GPL version 2
- */
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
+ * 
+ * 
+ * Former info:
+ * @copyright Copyright (C) 2006 -2010 Tekdi Web Solutions . All rights reserved.
+ * @license GNU GPLv2 <http://www.gnu.org/licenses/old-licenses/gpl-2.0.html>
+ * @link     http://www.tekdi.net
+ **/
+defined('_JEXEC') or die;
 
 
 DEFINE("_JEMMYEVENTS_EDIT_ENTRY","Edit");
