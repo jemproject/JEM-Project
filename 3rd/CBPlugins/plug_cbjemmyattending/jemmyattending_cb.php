@@ -1,7 +1,7 @@
 <?php
 /**
  * @package My Attending
- * @version JEM v2.0 / v2.1 & CB 1.9
+ * @version JEM v2.0 / v2.1 & CB v1.9 / v2.0
  * @author JEM Community
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
@@ -15,8 +15,8 @@ defined('_JEXEC') or die;
 
 
 @include_once (JPATH_SITE.'/components/com_jem/classes/image.class.php');
-@include_once (JPATH_SITE.'/components/com_jem/classes/output.class.php');
 @include_once (JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
+@include_once (JPATH_SITE.'/components/com_jem/classes/output.class.php');
 @include_once (JPATH_SITE.'/components/com_jem/helpers/helper.php');
 @include_once (JPATH_SITE.'/components/com_jem/helpers/route.php');
 
@@ -40,19 +40,23 @@ class jemmyattendingTab extends cbTabHandler {
 	 * Retrieve the languagefile
 	 * The file is located in the folder language
 	 */
-	function _getLanguageFile() {
+	function _getLanguageFile()
+	{
 		global $_CB_framework;
 		$UElanguagePath=$_CB_framework->getCfg('absolute_path').'/components/com_comprofiler/plugin/user/plug_cbjemmyattending';
 		if (file_exists($UElanguagePath.'/language/'.$_CB_framework->getCfg('lang').'.php')) {
 			include_once($UElanguagePath.'/language/'.$_CB_framework->getCfg('lang').'.php');
-		} else include_once($UElanguagePath.'/language/english.php');
+		} else {
+			include_once($UElanguagePath.'/language/english.php');
+		}
 	}
 
 
 	/**
 	 * Display Tab
 	 */
-	function getDisplayTab($tab,$user,$ui) {
+	function getDisplayTab($tab, $user, $ui)
+	{
 		/* loading global variables */
 		global $_CB_database,$_CB_framework;
 
@@ -66,6 +70,9 @@ class jemmyattendingTab extends cbTabHandler {
 		/*loading params set by the backend*/
 		$params = $this->params;
 
+		/* message at the bottom of the table */
+		$event_tab_message = $params->get('hwTabMessage', "");
+
 		/* other variables */
 		$return = null;
 
@@ -73,9 +80,6 @@ class jemmyattendingTab extends cbTabHandler {
 		$event_enddate = $params->get('event_enddate');
 		$event_startdate = $params->get('event_startdate');
 		$event_venue = $params->get('event_venue');
-
-		/* message at the bottom of the table */
-		$event_tab_message = $params->get('hwTabMessage', "");
 
 		/* access rights check */
 		// retrieval user parameters
@@ -97,7 +101,7 @@ class jemmyattendingTab extends cbTabHandler {
 					$permitted = $juser->authorise('core.manage', 'com_jem');
 					break;
 				case 2: // show to registered
-					$permitted = !$juser->get('guest');
+					$permitted = !$juser->get('guest', 1);
 					break;
 				case 3: // show to all
 					$permitted = true;
@@ -125,35 +129,6 @@ class jemmyattendingTab extends cbTabHandler {
 			$return .= "\t\t<div class=\"tab_Description\">". $tab->description . "</div>\n";
 		}
 
-		/*
-		 * Check if gd is enabled, for thumbnails
-		 *
-		 * Is not used at the moment
-		 */
-
-		//get param for thumbnail
-// 		$query = "SELECT gddisabled FROM #__jem_settings";
-// 		$_CB_database->setQuery($query);
-// 		$thumb= $_CB_database->loadResult();
-
-
-		/*
-		 * Check for an Itemid
-		 * Used for links
-		 */
-
-		// get itemid
-		$query = "SELECT `id` FROM `#__menu` WHERE `link` LIKE '%index.php?option=com_jem&view=eventslist%' AND `type` = 'component' AND `published` = '1' LIMIT 1";
-		$_CB_database->setQuery($query);
-
-		/*
-		$S_Itemid= $_CB_database->loadResult();
-
-		if(!$S_Itemid) {
-			$S_Itemid = 999999;
-		}
-		*/
-
 		// Support Joomla access levels instead of single group id; $juser is the asking user
 		$levels = $juser->getAuthorisedViewLevels();
 
@@ -164,26 +139,25 @@ class jemmyattendingTab extends cbTabHandler {
 		 * Keep it inline with the my-events view
 		 */
 
-		// get events
+		// get announcements
 		$query = 'SELECT DISTINCT a.id AS eventid, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, CONCAT(a.introtext,a.fulltext) AS text, a.published,'
-				. ' l.id, l.venue, l.city, l.state, l.url, '
-				. ' c.catname, c.id AS catid, '
+				. ' l.venue, l.city, l.state, l.url, '
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
 				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug '
 				. ' FROM #__jem_events AS a INNER JOIN #__jem_register AS r ON r.event = a.id '
 				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid '
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
 				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
-				. ' WHERE a.published = 1 AND c.published = 1 AND r.uid = '.$userid.' AND c.access IN (' . implode(',', $levels) . ')'
-				. ' AND (a.dates IS NULL OR DATE_SUB(NOW(), INTERVAL 1 DAY) < (IF (a.enddates IS NOT NULL, a.enddates, a.dates)))'
+				. ' WHERE a.published = 1 AND c.published = 1 AND r.uid = '.$userid
+				. '  AND a.access IN (' . implode(',', $levels) . ') AND c.access IN (' . implode(',', $levels) . ')'
+				. '  AND (a.dates IS NULL OR DATE_SUB(NOW(), INTERVAL 1 DAY) < (IF (a.enddates IS NOT NULL, a.enddates, a.dates)))'
 				. ' GROUP BY a.id'
 				. ' ORDER BY a.dates, a.times'
 				;
 		$_CB_database->setQuery($query);
 		$results = $_CB_database->loadObjectList();
 
-		/*
-		 * Headers
+		/* Headers
 		 *
 		 * The classes are retrieved from:
 		 * components/com_comprofiler/plugin/user/plug_cbjemmyattending/jemmyevents_cb.css
@@ -245,23 +219,13 @@ class jemmyattendingTab extends cbTabHandler {
 		 * Counting data
 		 * If data is available start with the rows
 		 */
-		$entryCount = 0;
-		if(count($results)) {
-			foreach($results as $result) {
-				$entryCount++;
+		if (count($results)) {
+			$config = JemHelper::config();
+			$formatShortDate = $config->formatShortDate;
 
-				/* Variables */
-				$query = "SELECT formatShortDate FROM #__jem_settings";
-				$_CB_database->setQuery($query);
-				$settings= $_CB_database->loadObjectList();
-
-				/*
-				 * adding the class row0/row1 to the rows
-				 *
-				 * this is for the coloring of the rows
-				 * The variable has been added to the tr of the rows
-			 	 */
-				$CSSClass = $entryCount%2 ? "row0" : "row1";
+			$odd = 1;
+			foreach ($results as $result) {
+				$odd = ($odd+1)%2; // toggle {0, 1} for alternating row css classes
 
 				/*
 				 * Start of rowline
@@ -269,24 +233,25 @@ class jemmyattendingTab extends cbTabHandler {
 				 * The variable for the tr class has been defined above
 				 * result stands for the variables of the query
 				 */
-				$return .= "\n\t\t<tr class='{$CSSClass}'>";
+				$return .= "\n\t\t<tr class='row{$odd}'>";
 
 				/* Title field */
 				$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableTitle'>";
-				$return .= "\n\t\t\t\t<a href=\"". JRoute::_(JEMHelperRoute::getEventRoute($result->eventid)) ."\">{$result->title}</a>";
+				$return .= "\n\t\t\t\t<a href=\"". JRoute::_(JEMHelperRoute::getEventRoute($result->slug)) ."\">{$result->title}</a>";
 				$return .= "\n\t\t\t</td>";
-
 
 				/*
 				 * Description field
 				 *
 				 * the max length is specified
-				 * the (...) is being added behind the description, also with small descriptions
 				 */
-				if ($event_description==1) {
-					$description = substr($result->text,0,150);
+				if ($event_description) {
+					$description = strip_tags($result->text);
+					if (strlen($description) > 150) {
+						$description = substr($description, 0, 150) . '...';
+					}
 					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableDesc'>";
-					$return .= "\n\t\t\t\t{$description} (...)";
+					$return .= "\n\t\t\t\t{$description}";
 					$return .= "\n\t\t\t</td>";
 				}
 
@@ -294,8 +259,8 @@ class jemmyattendingTab extends cbTabHandler {
 				 *
 				 * a link to the venueevent is specified so people can visit the venue page
 				 */
-				if ($event_venue==1) {
-					$location = "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($result->locid))."'>{$result->venue}</a>";
+				if ($event_venue) {
+					$location = empty($result->venueslug) ? '' : "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($result->venueslug))."'>{$result->venue}</a>";
 					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableVenue'>";
 					$return .= "\n\t\t\t\t$location";
 					if (!empty($result->city)) {
@@ -305,8 +270,8 @@ class jemmyattendingTab extends cbTabHandler {
 				}
 
 				/* Startdate field */
-				if ($event_startdate==1) {
-					$startdate2 =	JEMOutput::formatdate($result->dates, $settings[0]->formatShortDate);
+				if ($event_startdate) {
+					$startdate2 =	JEMOutput::formatdate($result->dates, $formatShortDate);
 					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTablestart'>";
 					$return .= "\n\t\t\t\t{$startdate2}";
 					$return .= "\n\t\t\t</td>";
@@ -316,8 +281,8 @@ class jemmyattendingTab extends cbTabHandler {
 				 * Enddate
 				 * if no enddate is given nothing will show up
 				 */
-				if ($event_enddate==1) {
-					$enddate2 =	JEMOutput::formatdate($result->enddates, $settings[0]->formatShortDate);
+				if ($event_enddate) {
+					$enddate2 =	JEMOutput::formatdate($result->enddates, $formatShortDate);
 					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableExp'>";
 					$return .= "\n\t\t\t\t{$enddate2}";
 					$return .= "\n\t\t\t</td>";
@@ -325,7 +290,6 @@ class jemmyattendingTab extends cbTabHandler {
 
 				/* Closing the rowline */
 				$return .= "\n\t\t</tr>";
-
 			} // end of displaying rows
 		} else {
 			// When no data has been found the user will see a message
