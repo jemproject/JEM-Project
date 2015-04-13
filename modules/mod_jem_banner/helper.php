@@ -1,6 +1,6 @@
 <?php
 /**
-* @version 2.1.3
+ * @version 2.1.4
 * @package JEM
 * @subpackage JEM Banner Module
 * @copyright (C) 2014-2015 joomlaeventmanager.net
@@ -14,7 +14,7 @@ JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel'
 /**
 * Module-Banner
 */
-abstract class modJEMbannerHelper
+abstract class ModJemBannerHelper
 {
 	/**
 	 * Method to get the events
@@ -50,8 +50,9 @@ abstract class modJEMbannerHelper
 		#  3: running (today)        - enddates,endtimes > today+offset AND dates,times < tomorrow+offset
 		#  4: featured               - ? (same as upcoming yet)
 		$type = (int)$params->get('type');
-		$offset_minutes = 60 * $params->get('offset_hours', 0);
+		$offset_minutes = (int)($params->get('offset_hours', 0)*60);
 		$offset_days    = (int)($params->get('offset_hours', 0)/24); // hours given must be multiple of 24, truncate to full days
+		$max_title_length = (int)$params->get('cuttitle', '25');
 		$published = 1;
 		$orderdir = 'ASC';
 
@@ -140,14 +141,6 @@ abstract class modJEMbannerHelper
 			$dimage = $row->datimage ? JEMImage::flyercreator($row->datimage, 'event') : null;
 			$limage = $row->locimage ? JEMImage::flyercreator($row->locimage, 'venue') : null;
 
-			# cut titel
-			$length = mb_strlen($row->title);
-
-			if ($length > $params->get('cuttitle', '25')) {
-				$row->title = mb_substr($row->title, 0, $params->get('cuttitle', '18'));
-				$row->title = $row->title.'...';
-			}
-
 			#################
 			## DEFINE LIST ##
 			#################
@@ -164,11 +157,20 @@ abstract class modJEMbannerHelper
 				$lists[$i]->linkText = JText::_('MOD_JEM_BANNER_READMORE_REGISTER');
 			}
 
-			$lists[$i]->title       = htmlspecialchars($row->title, ENT_COMPAT, 'UTF-8');
+			# cut titel
+			$fulltitle = htmlspecialchars($row->title, ENT_COMPAT, 'UTF-8');
+			if (mb_strlen($fulltitle) > $max_title_length) {
+				$title = mb_substr($fulltitle, 0, $max_title_length) . '...';
+			} else {
+				$title = $fulltitle;
+			}
+
+			$lists[$i]->title       = $title;
+			$lists[$i]->fulltitle   = $fulltitle;
 			$lists[$i]->venue       = htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->catname     = implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
 			$lists[$i]->state       = htmlspecialchars($row->state, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->city        = htmlspecialchars( $row->city, ENT_COMPAT, 'UTF-8' );
+			$lists[$i]->city        = htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->eventlink   = $params->get('linkevent', 1) ? JRoute::_(JEMHelperRoute::getEventRoute($row->slug)) : '';
 			$lists[$i]->venuelink   = $params->get('linkvenue', 1) ? JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : '';
 
@@ -320,6 +322,7 @@ abstract class modJEMbannerHelper
 			// open date
 			$date  = JEMOutput::formatDateTime('', ''); // "Open date"
 			$times = $row->times;
+			$endtimes = $row->endtimes;
 		} else {
 			//Get needed timestamps and format
 			$yesterday_stamp = mktime(0, 0, 0, date("m"), date("d")-1, date("Y"));
@@ -332,7 +335,7 @@ abstract class modJEMbannerHelper
 			$dates_stamp     = $row->dates ? strtotime($row->dates) : null;
 			$enddates_stamp  = $row->enddates ? strtotime($row->enddates) : null;
 
-			$times = $row->times;
+			$times = $row->times; // show starttime by default
 
 			//if datemethod show day difference
 			if ($method == 2) {
@@ -351,7 +354,9 @@ abstract class modJEMbannerHelper
 				elseif ($row->enddates && ($enddates_stamp < $yesterday_stamp)) {
 					$days = round(($today_stamp - $enddates_stamp) / 86400);
 					$date = JText::sprintf('MOD_JEM_BANNER_ENDED_DAYS_AGO', $days);
-					$times = $row->endtimes;
+					// show endtime instead of starttime
+					$times = false;
+					$endtimes = $row->endtimes;
 				}
 				//the event has an enddate and it's later than today but the startdate is earlier than today
 				//means a currently running event
@@ -379,22 +384,31 @@ abstract class modJEMbannerHelper
 					$startdate = JEMOutput::formatdate($row->dates, $dateFormat);
 					$enddate = JEMOutput::formatdate($row->enddates, $dateFormat);
 					$date = JText::sprintf('MOD_JEM_BANNER_FROM_UNTIL', $startdate, $enddate);
+					// additionally show endtime
+					$endtimes = $row->endtimes;
 				}
 				//current multidayevent (Until 18.08.2008)
 				elseif ($row->enddates && ($enddates_stamp >= $today_stamp) && ($dates_stamp < $today_stamp)) {
 					$enddate = JEMOutput::formatdate($row->enddates, $dateFormat);
 					$date = JText::sprintf('MOD_JEM_BANNER_UNTIL', $enddate);
-					$times = $row->endtimes;
+					// show endtime instead of starttime
+					$times = false;
+					$endtimes = $row->endtimes;
 				}
 				//single day event
 				else {
 					$startdate = JEMOutput::formatdate($row->dates, $dateFormat);
 					$date = JText::sprintf('MOD_JEM_BANNER_ON_DATE', $startdate);
+					// additionally show endtime, but on single day events only to prevent user confusion
+					if (empty($row->enddates)) {
+						$endtimes = $row->endtimes;
+					}
 				}
 			}
 		}
 
-		$time = $times ? JEMOutput::formattime($times, $timeFormat, $addSuffix) : '';
+		$time  = empty($times)    ? '' : JEMOutput::formattime($times, $timeFormat, $addSuffix);
+		$time .= empty($endtimes) ? '' : ('&nbsp;-&nbsp;' . JEMOutput::formattime($row->endtimes, $timeFormat, $addSuffix));
 
 		return array($date, $time);
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.3
+ * @version 2.1.4
  * @package JEM
  * @subpackage JEM Banner Module
  * @copyright (C) 2014-2015 joomlaeventmanager.net
@@ -22,14 +22,10 @@ require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 
 JFactory::getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
 
-$paramsdatemethod = $params->get('datemethod', 1);
-$paramsuse_modal = $params->get('use_modal', 0);
-
-$document = JFactory::getDocument();
-$list = modJEMbannerHelper::getList($params);
+$list = ModJemBannerHelper::getList($params);
 
 // check if any results returned
-if (count($list) == 0) {
+if (empty($list)) {
 	return;
 }
 
@@ -44,7 +40,9 @@ switch($params->get('color')) {
 		$color = "red";
 		break;
 }
-$document->addStyleSheet(JURI::base(true).'/modules/mod_jem_banner/tmpl/mod_jem_banner.css');
-$document->addStyleSheet(JURI::base(true).'/modules/mod_jem_banner/tmpl/'.$color.'.css');
+
+$document = JFactory::getDocument();
+$document->addStyleSheet(JUri::base(true).'/modules/mod_jem_banner/tmpl/mod_jem_banner.css');
+$document->addStyleSheet(JUri::base(true).'/modules/mod_jem_banner/tmpl/'.$color.'.css');
 
 require(JModuleHelper::getLayoutPath('mod_jem_banner'));

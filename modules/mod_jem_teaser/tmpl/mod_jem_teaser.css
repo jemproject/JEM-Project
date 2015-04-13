@@ -14,7 +14,7 @@ div#jemmoduleteaser {
 div#jemmoduleteaser .teaser-jem a,
 div#jemmoduleteaser .venue-title a {
 	background-color: transparent;
-	color:#095197;
+	/*color:#095197;*/
 }
 
 #jemmoduleteaser td.event-calendar {
@@ -74,7 +74,7 @@ div#jemmoduleteaser .eventset {
 }
 
 div#jemmoduleteaser .event-title {
-	padding-left: 21px;
+	padding-left: 8px;
 //	background: url(img/flag_red.png) no-repeat;
 	font-size: medium;
 }

@@ -1,12 +1,12 @@
 /**
- * @version 2.0.0
+ * @version 2.1
  * @package JEM
  * @subpackage JEM Latest Events Wide Module
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
- 
+
 div#jemmodulewide {
 	width: 100%;
 }
@@ -19,9 +19,9 @@ div#jemmodulewide .eventset {
 }
 
 div#jemmodulewide span.event-title {
-	padding-left: 17px;
+	padding-left: 20px;
 	background: url(img/flag_red.png) no-repeat;
-	font-size: smaller;
+	/*font-size: smaller;*/
 }
 
 div#jemmodulewide span.time {
@@ -38,16 +38,16 @@ div#jemmodulewide span.date {
 
 div#jemmodulewide span.category {
 	position: relative;
-	padding-left: 18px;
+	padding-left: 20px;
 	background: url(img/category.png) no-repeat;
-	font-size: smaller;
+	/*font-size: smaller;*/
 }
 
 div#jemmodulewide span.venue-title {
 	position: relative;
-	padding-left: 17px;
+	padding-left: 20px;
 	background: url(img/building.png) no-repeat;
-	font-size: smaller;
+	/*font-size: smaller;*/
 }
 
 div#jemmodulewide .event-image-cell {

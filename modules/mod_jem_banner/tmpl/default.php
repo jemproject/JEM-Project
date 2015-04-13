@@ -1,6 +1,6 @@
 <?php
 /**
-* @version 2.1.3
+ * @version 2.1.4
 * @package JEM
 * @subpackage JEM Banner Module
 * @copyright (C) 2014-2015 joomlaeventmanager.net
@@ -29,7 +29,7 @@ $datemethod   = (int)$params->get('datemethod', 1);
 
 		<h2 class="event-title">
 		<?php if ($item->eventlink) : ?>
-			<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->title; ?>"><?php echo $item->title; ?></a>
+			<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
 		<?php else : ?>
 			<?php echo $item->title; ?>
 		<?php endif; ?>
@@ -38,7 +38,7 @@ $datemethod   = (int)$params->get('datemethod', 1);
 		<div>
 			<?php if ($showcalendar == 1) :?>
 			<div>
-				<div class="calendar">
+				<div class="calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
 					<div class="monthbanner">
 						<?php echo $item->startdate['month']; ?>
 					</div>
@@ -96,17 +96,17 @@ $datemethod   = (int)$params->get('datemethod', 1);
 		<?php /* wenn kein Kalenderblatt angezeigt wird */ ?>
 		<?php if ($showcalendar == 0) : ?>
 			<?php if ($item->date && $datemethod == 2) :?>
-			<div class="date">
+			<div class="date" title="<?php echo strip_tags($item->dateinfo); ?>">
 				<?php echo $item->date; ?>
 			</div>
 			<?php endif; ?>
 
 			<?php if ($item->date && $datemethod == 1) :?>
-			<div class="date">
+			<div class="date" title="<?php echo strip_tags($item->dateinfo); ?>">
 				<?php echo $item->date; ?>
 			</div>
 			<?php if ($item->time && $datemethod == 1) :?>
-			<div class="time">
+			<div class="time" title="<?php echo strip_tags($item->dateinfo); ?>">
 				<?php echo $item->time; ?>
 			</div>
 			<?php endif; ?>
@@ -115,7 +115,7 @@ $datemethod   = (int)$params->get('datemethod', 1);
 		<?php else : ?>
 			<?php /* wenn Zeitdifferenz angezeigt werden soll */ ?>
 			<?php if ($item->date && $datemethod == 2) : ?>
-			<div class="date">
+			<div class="date" title="<?php echo strip_tags($item->dateinfo); ?>">
 				<?php echo $item->date; ?>
 			</div>
 			<?php endif; ?>
@@ -123,7 +123,7 @@ $datemethod   = (int)$params->get('datemethod', 1);
 			<?php /* wenn Datum angezeigt werden soll */ ?>
 			<?php if ($item->time && $datemethod == 1) :?>
 			<?php /* es muss nur noch die Zeit angezeigt werden (da Datum auf Kalenderblatt schon angezeigt) */ ?>
-			<div class="time">
+			<div class="time" title="<?php echo strip_tags($item->dateinfo); ?>">
 				<?php echo $item->time; ?>
 			</div>
 			<?php endif; ?>

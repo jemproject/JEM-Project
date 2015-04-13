@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.4
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2015 joomlaeventmanager.net
@@ -25,7 +25,7 @@ if ($params->get('use_modal', 0)) {
 
 		<h2 class="event-title">
 			<?php if ($item->eventlink) : ?>
-				<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->title; ?>"><?php echo $item->title; ?></a>
+				<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
 			<?php else : ?>
 				<?php echo $item->title; ?>
 			<?php endif; ?>
@@ -34,7 +34,7 @@ if ($params->get('use_modal', 0)) {
 		<table>
 			<tr>
 				<td class="event-calendar">
-					<div class="calendar">
+					<div class="calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
 						<div class="monthteaser">
 							<?php echo $item->month; ?>
 						</div>
@@ -52,7 +52,7 @@ if ($params->get('use_modal', 0)) {
 							<?php if(($item->eventimage)!=str_replace("jpg","",($item->eventimage)) OR
 									 ($item->eventimage)!=str_replace("gif","",($item->eventimage)) OR
 									 ($item->eventimage)!=str_replace("png","",($item->eventimage))) : ?>
-								<a href="<?php echo $item->eventimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->title; ?> ">
+								<a href="<?php echo $item->eventimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
 								<img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" /></a>
 							<?php else : ?>
 							<?php endif; ?>
@@ -76,12 +76,12 @@ if ($params->get('use_modal', 0)) {
 			<tr>
 				<td class="event-datetime">
 					<?php if ($item->date && $params->get('datemethod', 1) == 2) :?>
-						<div class="date">
+						<div class="date" title="<?php echo strip_tags($item->dateinfo); ?>">
 							<small><?php echo $item->date; ?></small>
 						</div>
 					<?php endif; ?>
 					<?php if ($item->time && $params->get('datemethod', 1) == 1) :?>
-						<div class="time">
+						<div class="time" title="<?php echo strip_tags($item->dateinfo); ?>">
 							<small><?php echo $item->time; ?></small>
 						</div>
 					<?php endif; ?>
