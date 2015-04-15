@@ -49,29 +49,52 @@ abstract class ModJemBannerHelper
 		#  2: archived               - no limit, but from now back to the past
 		#  3: running (today)        - enddates,endtimes > today+offset AND dates,times < tomorrow+offset
 		#  4: featured               - ? (same as upcoming yet)
+		#  5: open date              - no limit
 		$type = (int)$params->get('type');
-		$offset_minutes = (int)($params->get('offset_hours', 0)*60);
-		$offset_days    = (int)($params->get('offset_hours', 0)/24); // hours given must be multiple of 24, truncate to full days
+		$offset_days    = (int)($params->get('offset_hours', 0) / 24); // hours given must be multiple of 24, truncate to full days
+		$offset_minutes = (int)($params->get('offset_hours', 0) * 60);
+		$max_days       = (int) $params->get('max_days', 0); // empty = unlimited
+		$max_minutes    = $max_days ? ($max_days * 24 * 60 + $offset_minutes) : false;
 		$max_title_length = (int)$params->get('cuttitle', '25');
 		$published = 1;
 		$orderdir = 'ASC';
+		$opendates = 0;
+		$cal_from = false;
+		$cal_to = false;
+
+		# count
+		$count = min(max($params->get('count', '2'), 1), 100); // range 1..100, default 2
+
+		# shuffle
+		$shuffle = (bool)$params->get('shuffle', 0);
+		if ($shuffle) {
+			$max_count = min(max((int)$params->get('shuffle_count', 20), $count), 100);
+		} else {
+			$max_count = $count;
+		}
+
+		$model->setState('list.limit', $max_count);
 
 		# create type dependent filter rules
 		switch ($type) {
 		case 1: # unfinished events
 			$cal_from  = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
 			$cal_from .= "  OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) ";
+			$cal_to = $max_minutes ? " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes)) " : '';
 			break;
 
 		case 2: # archived events
-			$cal_from = '';
 			$published = 2;
 			$orderdir = 'DESC';
 			break;
 
 		case 3: # running events (one day)
-			$cal_from  = " ((DATEDIFF(a.dates, CURDATE()) < ".($offset_days + 1).") AND";
-			$cal_from .= "  (DATEDIFF(IFNULL(a.enddates, a.dates), CURDATE()) >= $offset_days)) ";
+			$cal_from = " (DATEDIFF(IFNULL(a.enddates, a.dates), CURDATE()) >= $offset_days)) ";
+			$cal_to   = " (DATEDIFF(a.dates, CURDATE()) < ".($offset_days + 1).") ";
+			break;
+
+		case 5: # open date (only)
+			$opendates = 2;
 			break;
 
 		case 4: # featured events
@@ -80,12 +103,18 @@ abstract class ModJemBannerHelper
 		case 0: # upcoming events
 		default:
 			$cal_from = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
+			$cal_to = $max_minutes ? " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes)) " : '';
 			break;
 		}
 
 		$model->setState('filter.published', $published);
 		$model->setState('filter.orderby', array('a.dates '.$orderdir, 'a.times '.$orderdir));
-		$model->setState('filter.calendar_from', $cal_from);
+		if (!empty($cal_from)) {
+			$model->setState('filter.calendar_from', $cal_from);
+		}
+		if (!empty($cal_to)) {
+			$model->setState('filter.calendar_to', $cal_to);
+		}
 		$model->setState('filter.groupby', 'a.id');
 
 		# clean parameter data
@@ -94,7 +123,10 @@ abstract class ModJemBannerHelper
 		$eventids = JemHelper::getValidIds($params->get('eventid'));
 
 		# Open date support
-		$opendates = empty($eventids) ? 0 : 1; // allow open dates if limited to specific events
+		if (!empty($eventids)) {
+			// allow (also) open dates if limited to specific events
+			$opendates = 1;
+		}
 		$model->setState('filter.opendates', $opendates);
 
 		# filter category's
@@ -115,10 +147,6 @@ abstract class ModJemBannerHelper
 			$model->setState('filter.event_id.include', true);
 		}
 
-		# count
-		$count = $params->get('count', '2');
-		$model->setState('list.limit', $count);
-
 		if ($params->get('use_modal', 0)) {
 			JHtml::_('behavior.modal', 'a.flyermodal');
 		}
@@ -128,15 +156,30 @@ abstract class ModJemBannerHelper
 		$timeFormat = $params->get('formattime', '');
 		$addSuffix  = empty($timeFormat); // if we use component's default time format we can also add corresponding suffix
 
+		####
 		# Retrieve the available Events
+		####
 		$events = $model->getItems();
 
 		# Loop through the result rows and prepare data
 		$lists = array();
-		$i     = 0;
+		$i     = -1; // it's easier to increment first
 
-		foreach ($events as $row)
+		// Don't shuffle original array to keep ordering of remaining events intact.
+		$indices = array_keys($events);
+		if (count($events) > $count) {
+			if ($shuffle) {
+				shuffle($indices);
+			}
+			array_splice($indices, $count);
+		}
+
+		foreach ($events as $key => $row)
 		{
+			if (!in_array($key, $indices)) {
+				continue; // skip removed events
+			}
+
 			# create thumbnails if needed and receive imagedata
 			$dimage = $row->datimage ? JEMImage::flyercreator($row->datimage, 'event') : null;
 			$limage = $row->locimage ? JEMImage::flyercreator($row->locimage, 'venue') : null;
@@ -145,7 +188,7 @@ abstract class ModJemBannerHelper
 			## DEFINE LIST ##
 			#################
 
-			$lists[$i] = new stdClass();
+			$lists[++$i] = new stdClass(); // add new object
 
 			# check view access
 			if (in_array($row->access, $levels)) {
@@ -232,8 +275,6 @@ abstract class ModJemBannerHelper
 			}
 
 			$lists[$i]->readmore = strlen(trim($row->fulltext));
-
-			$i++;
 		} // foreach ($events as $row)
 
 		return $lists;
