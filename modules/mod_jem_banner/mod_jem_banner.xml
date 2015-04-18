@@ -104,13 +104,14 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="use_modal" type="radio"
+				<field name="flyer_link_type" type="list"
 					default="0"
-					label="MOD_JEM_BANNER_USE_MODAL"
-					description="MOD_JEM_BANNER_USE_MODAL_DESC"
+					label="MOD_JEM_BANNER_FLYER_LINKS_TO"
+					description="MOD_JEM_BANNER_FLYER_LINKS_TO_DESC"
 				>
-					<option value="0">JNO</option>
-					<option value="1">JYES</option>
+					<option value="0">MOD_JEM_BANNER_FLYER_LINK_IMAGE_PAGE</option>
+					<option value="1">MOD_JEM_BANNER_FLYER_LINK_IMAGE_MODAL</option>
+					<option value="2">MOD_JEM_BANNER_FLYER_LINK_EVENT_DETAILS</option>
 				</field>
 
 				<field name="showdesc" type="radio"

@@ -147,7 +147,7 @@ abstract class ModJemBannerHelper
 			$model->setState('filter.event_id.include', true);
 		}
 
-		if ($params->get('use_modal', 0)) {
+		if ($params->get('flyer_link_type', 0) == 1) {
 			JHtml::_('behavior.modal', 'a.flyermodal');
 		}
 
