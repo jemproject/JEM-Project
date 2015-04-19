@@ -1,51 +1,23 @@
 <?php
 /**
- * @version 2.1.0
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 /**
- * JEM table class
- *
- * @package JEM
- *
+ * Table: Attachments
  */
-class jem_cats_event_relations extends JTable
+class JEMTableAttachments extends JTable
 {
-	/**
-	 * Primary Key
-	 * @var int
-	 */
-	var $id = null;
-	/**
-	 * Category ID
-	 * @var int
-	 */
-	var $catid = null;
-	/**
-	 * Event ID
-	 * @var int
-	 */
-	var $itemid = null;
-	/**
-	 * Ordering
-	 * @var int
-	 * @todo implement
-	 */
-	var $ordering = null;
 
 	public function __construct(& $db) {
-		parent::__construct('#__jem_cats_event_relations', 'id', $db);
+		parent::__construct('#__jem_attachments', 'id', $db);
 	}
 
-	/**
-	 * overloaded check function
-	 */
+	// overloaded check function
 	function check()
 	{
 		return true;
@@ -94,7 +66,7 @@ class jem_cats_event_relations extends JTable
 			$values[] = $this->_db->quote($v);
 		}
 		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
-		if ($this->_db->execute() === false) {
+		if (!$this->_db->execute()) {
 			return false;
 		}
 		$id = $this->_db->insertid();
@@ -104,4 +76,3 @@ class jem_cats_event_relations extends JTable
 		return $this->_db->getAffectedRows();
 	}
 }
-?>

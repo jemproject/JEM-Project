@@ -1,40 +1,55 @@
 <?php
 /**
- * @version 2.1.0
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-/**
- * JEM registration Model class
- *
- * @package JEM
- *
- */
-class jem_register extends JTable
-{
-	/**
-	 * Primary Key
-	 * @var int
-	 */
-	var $id 		= null;
-	/** @var int */
-	var $event 		= null;
-	/** @var int */
-	var $uid 		= null;
-	/** @var date */
-	var $uregdate 	= null;
-	/** @var string */
-	var $uip 		= null;
-	/** @var int */
-	var $waiting 	= 0;
 
-	public function __construct(& $db) {
-		parent::__construct('#__jem_register', 'id', $db);
+/**
+ * Table: Groups
+ */
+class JEMTableGroups extends JTable
+{
+    public function __construct(&$db)
+    {
+		parent::__construct('#__jem_groups', 'id', $db);
+    }
+
+	// overloaded check function
+	public function check()
+	{
+		// Not typed in a category name?
+		if (trim($this->name ) == '') {
+			$this->setError(JText::_('COM_JEM_ADD_GROUP_NAME'));
+			return false;
+		}
+
+		// Set alias
+		//$this->alias = JApplication::stringURLSafe($this->alias);
+		//if (empty($this->alias)) {
+		//	$this->alias = JApplication::stringURLSafe($this->title);
+		//}
+
+		return true;
+	}
+
+	/**
+	 * Store.
+	 */
+	public function store($updateNulls = false)
+	{
+		return parent::store($updateNulls);
+	}
+
+	public function bind($array, $ignore = '')
+	{
+		// in here we are checking for the empty value of the checkbox
+
+		//don't override without calling base class
+		return parent::bind($array, $ignore);
 	}
 
 	/**
@@ -69,6 +84,7 @@ class jem_register extends JTable
 	{
 		$fmtsql = 'INSERT IGNORE INTO '.$this->_db->quoteName($table).' (%s) VALUES (%s) ';
 		$fields = array();
+
 		foreach (get_object_vars($object) as $k => $v) {
 			if (is_array($v) or is_object($v) or $v === NULL) {
 				continue;
@@ -79,15 +95,16 @@ class jem_register extends JTable
 			$fields[] = $this->_db->quoteName($k);
 			$values[] = $this->_db->quote($v);
 		}
+
 		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
-		if ($this->_db->execute() === false) {
+		if (!$this->_db->execute()) {
 			return false;
 		}
 		$id = $this->_db->insertid();
 		if ($keyName && $id) {
 			$object->$keyName = $id;
 		}
+
 		return $this->_db->getAffectedRows();
 	}
 }
-?>

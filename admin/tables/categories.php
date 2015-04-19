@@ -13,7 +13,7 @@ jimport('joomla.database.tablenested');
 /**
  * Category Table
  */
-class JemTableCategory extends JTableNested
+class JemTableCategories extends JTableNested
 {
 
 	public function __construct(&$db)
@@ -208,7 +208,7 @@ class JemTableCategory extends JTableNested
 			$this->created_user_id = $user->get('id');
 		}
 		// Verify that the alias is unique
-		$table = JTable::getInstance('Category', 'JEMTable', array('dbo' => $this->getDbo()));
+		$table = JTable::getInstance('Categories', 'JEMTable', array('dbo' => $this->getDbo()));
 		if ($table->load(array('alias' => $this->alias, 'parent_id' => $this->parent_id))
 		&& ($table->id != $this->id || $this->id == 0)) {
 
