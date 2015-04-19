@@ -1,58 +1,50 @@
 <?php
 /**
- * @version 2.0.0
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-
 /**
- * View class for the JEM import screen
- *
- * @package JEM
- *
+ * View: Import
  */
-class JEMViewImport extends JViewLegacy {
+class JEMViewImport extends JViewLegacy
+{
 
-	public function display($tpl = null) {
-		//Load pane behavior
-		jimport('joomla.html.pane');
+    public function display($tpl = null)
+	{
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
-		// Load script
-		JHtml::_('behavior.framework');
-
 		// Get data from the model
-		$eventfields = $this->get('EventFields');
-		$catfields   = $this->get('CategoryFields');
-		$venuefields = $this->get('VenueFields');
-		$cateventsfields = $this->get('CateventsFields');
+		$eventfields 				= $this->get('EventFields');
+		$catfields   				= $this->get('CategoryFields');
+		$venuefields 				= $this->get('VenueFields');
+		$cateventsfields 			= $this->get('CateventsFields');
+		$model 						= $this->getModel();
 
-		//assign vars to the template
-		$this->eventfields 		= $eventfields;
-		$this->catfields 		= $catfields;
-		$this->venuefields 		= $venuefields;
-		$this->cateventsfields 	= $cateventsfields;
-
-		$this->eventlistVersion = $this->get('EventlistVersion');
-		$this->eventlistTables 	= $this->get('EventlistTablesCount');
-		$this->jemTables 		= $this->get('JemTablesCount');
-		$this->existingJemData 	= $this->get('ExistingJemData');
+		$this->eventfields 			= $eventfields;
+		$this->catfields 			= $catfields;
+		$this->venuefields 			= $venuefields;
+		$this->cateventsfields 		= $cateventsfields;
+		$this->eventlistVersion		= $this->get('EventlistVersion');
+		$this->eventlistTables		= $model->eventlistTables($this->get('EventlistVersion'));
+		$this->jemTables 			= $this->get('JemTablesCount');
+		$this->existingJemData 		= $this->get('ExistingJemData');
 
 		$jinput = JFactory::getApplication()->input;
 		$progress = new stdClass();
-		$progress->step 	= $jinput->get('step', 0, 'INT');
-		$progress->current 	= $jinput->get->get('current', 0, 'INT');
-		$progress->total 	= $jinput->get->get('total', 0, 'INT');
-		$progress->table 	= $jinput->get->get('table', '', 'INT');
-		$progress->prefix 	= $jinput->get('prefix', '', 'CMD');
-		$progress->copyImages = $jinput->get('copyImages', 0, 'INT');
+		$progress->step 				= $jinput->getInt('step', 0);
+		$progress->current 				= $jinput->get->getInt('current', 0);
+		$progress->total 				= $jinput->get->getInt('total', 0);
+		$progress->table 				= $jinput->get->getInt('table', '');
+		$progress->prefix 				= $jinput->getCmd('prefix', '');
+		$progress->copyImages			= $jinput->getInt('copyImages', 0);
+		$progress->copyAttachments		= $jinput->getInt('copyAttachments', 0);
+
 		$this->progress = $progress;
 
 		// Do not show default prefix #__ but its replacement value
@@ -64,10 +56,9 @@ class JEMViewImport extends JViewLegacy {
 
 		// add toolbar
 		$this->addToolbar();
-
+		
 		parent::display($tpl);
 	}
-
 
 	/**
 	 * Add Toolbar
@@ -75,10 +66,15 @@ class JEMViewImport extends JViewLegacy {
 	protected function addToolbar()
 	{
 		JToolBarHelper::title(JText::_('COM_JEM_IMPORT'), 'tableimport');
-
-		JToolBarHelper::back();
+		JToolBarHelper::custom('import.back','back','back',JText::_('JTOOLBAR_BACK'),false);
 		JToolBarHelper::divider();
 		JToolBarHelper::help('import', true);
 	}
+
+	function WarningIcon()
+	{
+		$tip = JHtml::_('image', 'system/tooltip.png', null, null, true);
+
+		return $tip;
+	}
 }
-?>

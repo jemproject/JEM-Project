@@ -1,15 +1,12 @@
 <?php
 /**
- * @version 2.1.0
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controller');
 
 // helper callback function to convert all elements of an array
 function jem_convert_ansi2utf8(&$value, $key) {
@@ -17,51 +14,55 @@ function jem_convert_ansi2utf8(&$value, $key) {
 }
 
 /**
- * JEM Component Import Controller
- *
- * @package JEM
- *
+ * Controller: Import
  */
-class JEMControllerImport extends JControllerLegacy {
+class JemControllerImport extends JControllerLegacy {
+
 	/**
 	 * Constructor
-	 *
-	 *
 	 */
 	public function __construct() {
 		parent::__construct();
 	}
 
 	function csveventimport() {
-		$this->CsvImport('events', 'events');
+		$this->CsvImport('events', 'Events');
 	}
 
 	function csvcategoriesimport() {
-		$this->CsvImport('categories', 'categories');
+		$this->CsvImport('categories', 'Categories');
 	}
 
 	function csvvenuesimport() {
-		$this->CsvImport('venues', 'venues');
+		$this->CsvImport('venues', 'Venues');
 	}
 
 	function csvcateventsimport() {
-		$this->CsvImport('catevents', 'cats_event_relations');
+		$this->CsvImport('catevents', 'Cats_event_relations');
+	}
+	
+	function back() {
+		$this->setRedirect('index.php?option=com_jem&view=main');
 	}
 
 	private function CsvImport($type, $dbname) {
-		$replace = JFactory::getApplication()->input->post->getInt('replace_'.$type, 0);
-		$object = JTable::getInstance('jem_'.$dbname, '');
+
+		$replace = JFactory::getApplication()->input->post->get('replace_'.$type, 0, 'int');
+
+		# in here we're retrieving the $dbname
+		$object = JTable::getInstance($dbname, 'JEMTable');
 		$object_fields = get_object_vars($object);
 
 		if($type == 'events') {
 			// add additional fields
+			// @todo alter
 			$object_fields['categories'] = '';
 		}
 
 		$msg = '';
-		$file = JFactory::getApplication()->input->files->get('File'.$type, array(), 'array');
+		$file = JFactory::getApplication()->input->files->get('File'.$type, NULL, 'array');
 
-		if (empty($file['name']))
+		if ($file['name'] == false)
 		{
 			$msg = JText::_('COM_JEM_IMPORT_SELECT_FILE');
 			$this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
@@ -96,7 +97,7 @@ class JEMControllerImport extends JControllerLegacy {
 				}
 
 				for($c=0; $c < $numfields; $c++) {
-					// here, we make sure that the field match one of the fields of jem_venues table or special fields,
+					// here, we make sure that the field match one of the fields of jem_table or special fields,
 					// otherwise, we don't add it
 					if(array_key_exists($data[$c], $object_fields)) {
 						$fields[$c] = $data[$c];
@@ -182,7 +183,7 @@ class JEMControllerImport extends JControllerLegacy {
 			case 'dates':
 			case 'enddates':
 			case 'recurrence_limit_date':
-				if($value != '' && strtoupper($value) != 'NULL') {
+				if($value != '' && strtoupper($value) != 'NULL' && $value != '0000-00-00') {
 					$date = strtotime($value);
 					$field = strftime('%Y-%m-%d', $date);
 				} else {
@@ -200,52 +201,136 @@ class JEMControllerImport extends JControllerLegacy {
 	 * Imports data from an old Eventlist installation
 	 */
 	public function eventlistImport() {
-		$model = $this->getModel('import');
-		$size = 500;
 
-		// Handling the different names for all classes and db table names (possibly substrings)
+		$model 		= $this->getModel('import');
+		$version	= $model->getEventlistVersion();
+		
+		$link 		= 'index.php?option=com_jem&view=import';
+
+		# define the table names we're going to use/show
 		$tables = new stdClass();
-		$tables->eltables = array("categories", "events", "events", "groupmembers", "groups", "register", "venues");
-		$tables->jemtables = array("categories", "events", "cats_event_relations", "groupmembers", "groups", "register", "venues");
+		$tables->imptables = $model->EventlistTables($version,true);
 
-		$jinput = JFactory::getApplication()->input;
-		$step = $jinput->get('step', 0, 'INT');
-		$current = $jinput->get->get('current', 0, 'INT');
-		$total = $jinput->get->get('total', 0, 'INT');
-		$table = $jinput->get->get('table', 0, 'INT');
-		$prefix = $jinput->get('prefix', '#__', 'CMD');
-		$copyImages = $jinput->get('copyImages', 0, 'INT');
-
-		$link = 'index.php?option=com_jem&view=import';
-		$msg = JText::_('COM_JEM_IMPORT_EL_IMPORT_WORK_IN_PROGRESS')." ";
-
-		if($jinput->get('startToken', 0, 'INT')) {
-			// Are the JEM tables empty at start? If no, stop import
+		# some variables
+		$size 				= 50000;
+		$app				= JFactory::getApplication();
+		$jinput				= $app->input;
+		$step				= $jinput->getInt('step', 0);
+		$current			= $jinput->get->getInt('current', 0);
+		$total 				= $jinput->get->getInt('total', 0);
+		$table 				= $jinput->get->getInt('table', 0);
+		$prefix 			= $jinput->getCmd('prefix', '#__');
+		$copyImages 		= $jinput->getInt('copyImages', 0);
+		$copyAttachments	= $jinput->getInt('copyAttachments', 0);
+		$link 				= 'index.php?option=com_jem&view=import';
+		$msg 				= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORK_IN_PROGRESS')." ";
+		
+		# check for a token
+		if($jinput->getInt('startToken', 0)) {
+			# Are the JEM tables empty at start? If no, stop import
 			if($model->getExistingJemData()) {
 				$this->setRedirect($link);
 				return;
 			}
 		}
-
+		
 		if($step <= 1) {
 			parent::display();
 			return;
 		} elseif($step == 2) {
+			if ($version) {
+				$model->setVersion($version);
+			}
+
+		############
+		## import ##
+		############
+
 			// Get number of rows if it is still 0 or we have moved to the next table
 			if($total == 0 || $current == 0) {
-				$total = $model->getTableCount("eventlist_".$tables->eltables[$table]);
+				$total = $model->getTableCount($tables->imptables[$table]);
 			}
 
 			// If $total is null, the table does not exist, so we skip import for this table.
 			if($total == null) {
-				// This helps to prevent special cases in the following code
-				$total = 0;
+
+				# check if we're dealing with the cat_events table
+				# if so then we're going to something with it.
+
+
+				if ($tables->imptables[$table] == 'eventlist_cats_event_relations') {
+					# check if category table exists
+					$check_cat = $model->getTableCount("eventlist_categories");
+
+					if ($check_cat) {
+						# there are results for the categories, but there is no result in the cat_event table
+						# it can be that the table does not exist or that's empty
+
+						# get data of the Eventlist-table
+						$data = $model->getEventlistData("eventlist_events", $current, $size);
+
+						# transform eventlist-data to jem-data
+						$data = $model->transformEventlistData("eventlist_cats_event_relations", $data,$version);
+
+						# EL-data is transformed, now we'll store it in the jem-table
+						$model->storeTableData($tables->imptables[$table], $data);
+					} else {
+						// This helps to prevent special cases in the following code
+						$total = 0;
+					}
+				}
+
 			} else {
-				// The real work is done here:
-				// Loading from EL tables, changing data, storing in JEM tables
-				$data = $model->getEventlistData("eventlist_".$tables->eltables[$table], $current, $size);
-				$data = $model->transformEventlistData($tables->jemtables[$table], $data);
-				$model->storeJemData("jem_".$tables->jemtables[$table], $data);
+
+				####################
+				## TRANSFORM DATA ##
+				####################
+
+				# The real work is done here:
+				# Loading from EL tables, changing data, storing in JEM tables
+
+
+				# check if we're dealing wit the cat_events table
+				# if so then we're going to something with it.
+
+				if ($tables->imptables[$table] == 'eventlist_categories') {
+
+					# check results for cats_event_relations table
+					$check_cat = $model->getTableCount("eventlist_cats_event_relations");
+
+					if (is_null($check_cat)) {
+						# there are results for the categories, but there is no result in the cat_event table
+						# it can be that the table does not exist or that's empty
+
+						# get data of the Eventlist-table
+						$data = $model->getEventlistData("eventlist_events", $current, $size);
+
+						# transform eventlist-data to jem-data
+						$data = $model->transformEventlistData("eventlist_cats_event_relations", $data,$version);
+
+						# EL-data is transformed, now we'll store it in the jem-table
+						$model->storeTableData("eventlist_cats_event_relations", $data);
+					}
+
+					# get data of the categories-table
+					$data = $model->getEventlistData("eventlist_categories", $current, $size);
+
+					# transform eventlist-data to jem-data
+					$data = $model->transformEventlistData("eventlist_categories", $data,$version);
+
+					# EL-data is transformed, now we'll store it in the jem-table
+					$model->storeTableData("eventlist_categories", $data);
+
+				} else {
+						# get data of the Eventlist-table
+						$data = $model->getEventlistData($tables->imptables[$table], $current, $size);
+
+						# transform eventlist-data to jem-data
+						$data = $model->transformEventlistData($tables->imptables[$table], $data,$version);
+
+						# EL-data is transformed, now we'll store it in the jem-tables
+						$model->storeTableData($tables->imptables[$table], $data);
+					}
 			}
 
 			// Proceed with next bunch of data
@@ -258,42 +343,61 @@ class JEMControllerImport extends JControllerLegacy {
 			}
 
 			// Check if table import is complete
-			if($current <= $total && $table < count($tables->eltables)) {
+			if($current <= $total && $table < count($tables->imptables)) {
 				// Don't add default prefix to link because of special character #
 				if($prefix == "#__") {
 					$prefix = "";
 				}
 
-				$link .= '&step='.$step.'&copyImages='.$copyImages
-						.'&table='.$table.'&prefix='.$prefix.'&current='.$current.'&total='.$total;
+				$link .= '&step='.$step.'&copyImages='.$copyImages.'&copyAttachments='.$copyAttachments.'&table='.$table.'&prefix='.$prefix.'&current='.$current.'&total='.$total;
 			} else {
 				$step++;
-				$link .= '&step='.$step.'&copyImages='.$copyImages;
+				$link .= '&step='.$step.'&copyImages='.$copyImages.'&copyAttachments='.$copyAttachments;
 			}
-			$msg .= JText::sprintf('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_DB', $tables->jemtables[$table-1], $current, $total);
+			$app->enqueueMessage(JText::sprintf('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_DB', $tables->imptables[$table-1], $current, $total));
 		} elseif($step == 3) {
+
+			########################
+			## REBUILD CATEGORIES ##
+			########################
+
 			// We have to rebuild the hierarchy of the categories due to the plain database insertion
 			JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
-			$categoryTable = JTable::getInstance('Category', 'JemTable');
+			$categoryTable = JTable::getInstance('Categories', 'JEMTable');
 			$categoryTable->rebuild();
-			$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_REBUILD');
+			$app->enqueueMessage(JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_REBUILD'));
 			$step++;
-			$link .= '&step='.$step.'&copyImages='.$copyImages;
+			$link .= '&step='.$step.'&copyImages='.$copyImages.'&copyAttachments='.$copyAttachments;
 		} elseif($step == 4) {
-			// Copy EL images to JEM image destination?
+			$version = $model->getVersion();
+			
+			# Copy EL images to JEM image destination?
 			if($copyImages) {
-				$model->copyImages();
-				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_IMAGES');
+				$copyImages = $model->copyImages();
+				if ($copyImages) {
+				} else {
+				}
+				$app->enqueueMessage(JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_IMAGES'));
 			} else {
-				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_IMAGES_SKIPPED');
+				$app->enqueueMessage(JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_IMAGES_SKIPPED'));
 			}
+
+			# Copy Attachments
+			if ($version == '1.1.x') {
+				if($copyAttachments) {
+					$model->copyAttachments();
+					$app->enqueueMessage(JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_ATTACHMENTS'));
+				} else {
+					$app->enqueueMessage(JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_ATTACHMENTS_SKIPPED'));
+				}
+			}
+
 			$step++;
 			$link .= '&step='.$step;
 		} else {
-			$msg = JText::_('COM_JEM_IMPORT_EL_IMPORT_FINISHED');
+			$app->enqueueMessage(JText::_('COM_JEM_IMPORT_EL_IMPORT_FINISHED'));
 		}
 
-		$this->setRedirect($link, $msg);
+		$this->setRedirect($link);
 	}
 }
-?>
