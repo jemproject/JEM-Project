@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.4
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -112,6 +112,10 @@ class JemModelEventslist extends JModelList
 		if($task == 'archive' && $filter_order == 'a.dates') {
 			$filter_order_DirDefault = 'DESC';
 		}
+		$filter_reset = $jinput->getInt('filter_reset', 0);
+		if ($filter_reset && $filter_order == 'a.dates') {
+			$app->setUserState('com_jem.eventslist.'.$itemid.'.filter_order_Dir', $filter_order_DirDefault);
+		}
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
@@ -132,23 +136,22 @@ class JemModelEventslist extends JModelList
 
 		# set included categories
 		if ($catswitch) {
-		$included_cats = trim($params->get('categoryswitchcats', ''));
-		if ($included_cats) {
-			$included_cats = explode(",", $included_cats);
-			$this->setState('filter.category_id', $included_cats);
-			$this->setState('filter.category_id.include', true);
-
-		}
+			$included_cats = trim($params->get('categoryswitchcats', ''));
+			if ($included_cats) {
+				$included_cats = explode(",", $included_cats);
+				$this->setState('filter.category_id', $included_cats);
+				$this->setState('filter.category_id.include', true);
+			}
 		}
 
 		# set excluded categories
 		if (!$catswitch) {
-		$excluded_cats = trim($params->get('categoryswitchcats', ''));
-				if ($excluded_cats) {
+			$excluded_cats = trim($params->get('categoryswitchcats', ''));
+			if ($excluded_cats) {
 				$excluded_cats = explode(",", $excluded_cats);
 				$this->setState('filter.category_id', $excluded_cats);
 				$this->setState('filter.category_id.include', false);
-		}
+			}
 		}
 
 		$this->setState('filter.groupby',array('a.id'));
