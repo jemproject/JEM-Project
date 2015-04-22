@@ -26,22 +26,6 @@
 .icon-48-housekeeping		{ background-image: url(../images/icon-48-housekeeping.png); }
 .icon-48-plugins			{ background-image: url(../images/icon-48-plugins.png); }
 
-
-span.jemnote {
-	display: block;
-    background: none repeat scroll 0% 0% #FFD;
-    padding: 5px;
-    color: #666;
-    width: 300px;
-    border:1px solid black;
-    margin-top: 20px;
-}
-
-.pointer {
-	cursor: pointer;
-}
-
-
 /** linkicons **/
 div.linkicon {
 	text-align:center;
