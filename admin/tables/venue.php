@@ -1,40 +1,41 @@
 <?php
 /**
+ * @version 2.1.0
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
 
 /**
- * Table: Venues
+ * JEM Venue Table
  */
-class JEMTableVenues extends JTable
+class JemTableVenue extends JTable
 {
 
 	public function __construct(&$db) {
 		parent::__construct('#__jem_venues', 'id', $db);
 	}
 
+
 	/**
-	 * Bind
+	 * Overloaded bind method for the Venue table.
 	 */
 	public function bind($array, $ignore = ''){
 		// in here we are checking for the empty value of the checkbox
 
-		if (!isset($array['map'])) {
+		if (!isset($array['map']))
 			$array['map'] = 0 ;
-		}
 
 		//don't override without calling base class
 		return parent::bind($array, $ignore);
 	}
 
 	/**
-	 * Check
+	 * overloaded check function
 	 */
-	public function check() {
+	function check(){
 
 		$jinput = JFactory::getApplication()->input;
 
@@ -58,6 +59,20 @@ class JEMTableVenues extends JTable
 					$this->setError(JText::_('COM_JEM_VENUE_ERROR_MAP_ADDRESS'));
 					return false;
 				}
+			}
+		}
+
+		if (trim($this->url)) {
+			$this->url = strip_tags($this->url);
+
+			if (strlen($this->url) > 199) {
+				$this->setError(JText::_('COM_JEM_VENUE_ERROR_URL_LENGTH'));
+				return false;
+			}
+			if (!preg_match('/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}'
+					.'((:[0-9]{1,5})?\/.*)?$/i' , $this->url)) {
+				$this->setError(JText::_('COM_JEM_VENUE_ERROR_URL_FORMAT'));
+				return false;
 			}
 		}
 
@@ -96,7 +111,7 @@ class JEMTableVenues extends JTable
 	}
 
 	/**
-	 * Store
+	 * Overloaded store method for the Venue table.
 	 */
 	public function store($updateNulls = false)
 	{
@@ -129,16 +144,18 @@ class JEMTableVenues extends JTable
 			}
 		}
 
+
 		// Check if image was selected
 		jimport('joomla.filesystem.file');
 		$image_dir = JPATH_SITE.'/images/jem/venues/';
 		$allowable = array ('gif', 'jpg', 'png');
+		$image_to_delete = false;
 
 		// get image (frontend) - allow "removal on save" (Hoffi, 2014-06-07)
 		if (!$backend) {
 			if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1)) {
-				$file = JFactory::getApplication()->input->files->get('userfile', '', 'array');
-				$removeimage = JFactory::getApplication()->input->get('removeimage', '', 'int');
+				$file = $jinput->files->get('userfile', array(), 'array');
+				$removeimage = $jinput->getInt('removeimage', 0);
 
 				if (!empty($file['name'])) {
 					//check the image
@@ -146,7 +163,7 @@ class JEMTableVenues extends JTable
 
 					if ($check !== false) {
 						//sanitize the image filename
-						$filename = JemHelper::sanitize($image_dir, $file['name']);
+						$filename = JEMImage::sanitize($image_dir, $file['name']);
 						$filepath = $image_dir . $filename;
 
 						if (JFile::upload($file['tmp_name'], $filepath)) {
@@ -169,18 +186,24 @@ class JEMTableVenues extends JTable
 			$this->locimage = '';
 		}
 
-		/*
 		if (!$backend) {
-			#	check if the user has the required rank for autopublish
+			/*	check if the user has the required rank for autopublish	*/
 			$autopublgroups = JEMUser::venuegroups('publish');
 			$autopublloc 	= JEMUser::validate_user($jemsettings->locpubrec, $jemsettings->autopublocate);
 			if (!($autopublloc || $autopublgroups || $user->authorise('core.edit','com_jem'))) {
 				$this->published = 0;
+			} else {
+				$this->published = 1;
 			}
 		}
-		*/
 
-		return parent::store($updateNulls);
+		// item must be stored BEFORE image deletion
+		$ret = parent::store($updateNulls);
+		if ($ret && $image_to_delete) {
+			JemHelper::delete_unused_image_files('venue', $image_to_delete);
+		}
+
+		return $ret;
 	}
 
 
@@ -227,7 +250,7 @@ class JEMTableVenues extends JTable
 			$values[] = $this->_db->quote($v);
 		}
 		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
-		if (!$this->_db->execute()) {
+		if ($this->_db->execute() === false) {
 			return false;
 		}
 		$id = $this->_db->insertid();
@@ -236,4 +259,81 @@ class JEMTableVenues extends JTable
 		}
 		return $this->_db->getAffectedRows();
 	}
+
+	/**
+	 * Method to set the publishing state for a row or list of rows in the database
+	 * table. The method respects checked out rows by other users and will attempt
+	 * to checkin rows that it can after adjustments are made.
+	 *
+	 * @param   mixed    $pks     An array of primary key values to update.  If not
+	 *                            set the instance property value is used. [optional]
+	 * @param   integer  $state   The publishing state. eg. [0 = unpublished, 1 = published] [optional]
+	 * @param   integer  $userId  The user id of the user performing the operation. [optional]
+	 *
+	 * @return  boolean  True on success.
+	 */
+	function publish($pks = null, $state = 1, $userId = 0)
+	{
+		// Initialise variables.
+		$k = $this->_tbl_key;
+
+		// Sanitize input.
+		JArrayHelper::toInteger($pks);
+		$userId = (int) $userId;
+		$state = (int) $state;
+
+		// If there are no primary keys set check to see if the instance key is set.
+		if (empty($pks)) {
+			if ($this->$k) {
+				$pks = array($this->$k);
+			} else {
+				// Nothing to set publishing state on, return false.
+				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+				return false;
+			}
+		}
+
+		// Build the WHERE clause for the primary keys.
+		$where = $k . '=' . implode(' OR ' . $k . '=', $pks);
+
+		// Determine if there is checkin support for the table.
+		if (!property_exists($this, 'checked_out') || !property_exists($this, 'checked_out_time')) {
+			$checkin = '';
+		} else {
+			$checkin = ' AND (checked_out = 0 OR checked_out = ' . (int) $userId . ')';
+		}
+
+		// Update the publishing state for rows with the given primary keys.
+		$query = $this->_db->getQuery(true);
+		$query->update($this->_db->quoteName($this->_tbl));
+		$query->set($this->_db->quoteName('published') . ' = ' . (int) $state);
+		$query->where($where);
+		$this->_db->setQuery($query . $checkin);
+		$this->_db->execute();
+
+		// Check for a database error.
+		// TODO: use exception handling
+		if ($this->_db->getErrorNum()) {
+			$this->setError($this->_db->getErrorMsg());
+			return false;
+		}
+
+		// If checkin is supported and all rows were adjusted, check them in.
+		if ($checkin && (count($pks) == $this->_db->getAffectedRows())) {
+			// Checkin the rows.
+			foreach ($pks as $pk) {
+				$this->checkin($pk);
+			}
+		}
+
+		// If the JTable instance value is in the list of primary keys that were set, set the instance.
+		if (in_array($this->$k, $pks)) {
+			$this->published = $state;
+		}
+
+		$this->setError('');
+
+		return true;
+	}
 }
+?>

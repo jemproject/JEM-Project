@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 /**
  * JEM Event Table
  */
-class JemTableEvents extends JTable
+class JemTableEvent extends JTable
 {
 	public function __construct(&$db) {
 		parent::__construct('#__jem_events', 'id', $db);
@@ -382,3 +382,4 @@ class JemTableEvents extends JTable
 		return true;
 	}
 }
+?>

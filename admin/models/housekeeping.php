@@ -132,9 +132,7 @@ class JemModelHousekeeping extends JModelLegacy
 	 * Truncates JEM tables with exception of settings table
 	 */
 	public function truncateAllData() {
-		$tables = 
-		array(
-			"attachments",
+		$tables = array("attachments",
 			"categories",
 			"cats_event_relations",
 			"events",
@@ -153,7 +151,7 @@ class JemModelHousekeeping extends JModelLegacy
 			}
 		}
 
-		$categoryTable = $this->getTable('Categories', 'JEMTable');
+		$categoryTable = $this->getTable('category', 'JEMTable');
 		$categoryTable->addRoot();
 
 		return true;

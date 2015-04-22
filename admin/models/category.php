@@ -104,7 +104,7 @@ class JEMModelCategory extends JModelAdmin
 	 * @return JTable A JTable object
 	 *
 	 */
-	public function getTable($type = 'Categories', $prefix = 'JemTable', $config = array())
+	public function getTable($type = 'Category', $prefix = 'JemTable', $config = array())
 	{
 		return JTable::getInstance($type, $prefix, $config);
 	}

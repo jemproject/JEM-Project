@@ -288,7 +288,7 @@ class com_jemInstallerScript
 			// Changes between 1.9.4 -> 1.9.5
 			if (version_compare($this->oldRelease, '1.9.5', 'lt') && version_compare($this->newRelease, '1.9.4', 'gt')) {
 				JTable::addIncludePath(JPATH_ROOT.'/administrator/components/com_jem/tables');
-				$categoryTable = JTable::getInstance('Categories', 'JemTable');
+				$categoryTable = JTable::getInstance('Category', 'JemTable');
 				$categoryTable->rebuild();
 
 				// change category ids in menu items
@@ -610,20 +610,6 @@ class com_jemInstallerScript
 			'/media/com_jem/js/jquery.geocomplete.min.js',
 			// obsolete since JEM 1.9.7
 			'/administrator/components/com_jem/classes/Snoopy.class.php',
-			// obsolete since JEM 2.1.4
-			'/administrator/components/com_jem/tables/category.php',
-			'/administrator/components/com_jem/tables/event.php',
-			'/administrator/components/com_jem/tables/group.php',
-			'/administrator/components/com_jem/tables/jem_attachments.php',
-			'/administrator/components/com_jem/tables/jem_categories.php',
-			'/administrator/components/com_jem/tables/jem_cats_event_relations.php',
-			'/administrator/components/com_jem/tables/jem_events.php',
-			'/administrator/components/com_jem/tables/jem_groupmembers.php',
-			'/administrator/components/com_jem/tables/jem_groups.php',
-			'/administrator/components/com_jem/tables/jem_register.php',
-			'/administrator/components/com_jem/tables/jem_settings.php',
-			'/administrator/components/com_jem/tables/jem_venues.php',
-			'/administrator/components/com_jem/tables/venue.php'
 		);
 
 		// TODO There is an issue while deleting folders using the ftp mode

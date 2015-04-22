@@ -84,7 +84,7 @@ class JEMModelEvent extends JemModelAdmin
 	 * @return	JTable	A database object
 	 *
 	 */
-	public function getTable($type = 'Events', $prefix = 'JemTable', $config = array())
+	public function getTable($type = 'Event', $prefix = 'JemTable', $config = array())
 	{
 		return JTable::getInstance($type, $prefix, $config);
 	}

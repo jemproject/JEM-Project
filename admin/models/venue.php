@@ -64,7 +64,7 @@ class JEMModelVenue extends JemModelAdmin
 	 * @param	array	Configuration array for model. Optional.
 	 * @return	JTable	A database object
 	 */
-	public function getTable($type = 'Venues', $prefix = 'JemTable', $config = array())
+	public function getTable($type = 'Venue', $prefix = 'JemTable', $config = array())
 	{
 		return JTable::getInstance($type, $prefix, $config);
 	}
