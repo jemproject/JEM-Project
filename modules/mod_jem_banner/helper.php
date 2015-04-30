@@ -102,7 +102,7 @@ abstract class ModJemBannerHelper
 			# fall through
 		case 0: # upcoming events
 		default:
-			$cal_from = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
+			$cal_from = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes)) ";
 			$cal_to = $max_minutes ? " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes)) " : '';
 			break;
 		}
