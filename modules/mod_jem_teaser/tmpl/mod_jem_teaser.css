@@ -24,10 +24,10 @@ div#jemmoduleteaser .venue-title a {
 #jemmoduleteaser [class|="calendar"] {
 	background-repeat: no-repeat;
 	width: 82px;
-	height: 84px;
+	height: 82px; /* + padding = 87px */
 	font-family: 'Lucida Grande',Geneva,Arial,Verdana,sans-serif;
 	text-align: center;
-	padding: 5px 0 0 0;
+	padding: 5px 1px 0 0;
 	float:left;
 	margin-right:10px;
 }
