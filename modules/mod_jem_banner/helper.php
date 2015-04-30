@@ -161,6 +161,8 @@ abstract class ModJemBannerHelper
 		####
 		$events = $model->getItems();
 
+		$color = $params->get('color');
+
 		# Loop through the result rows and prepare data
 		$lists = array();
 		$i     = -1; // it's easier to increment first
@@ -275,6 +277,8 @@ abstract class ModJemBannerHelper
 			}
 
 			$lists[$i]->readmore = strlen(trim($row->fulltext));
+
+			$lists[$i]->colorclass = $color;
 		} // foreach ($events as $row)
 
 		return $lists;

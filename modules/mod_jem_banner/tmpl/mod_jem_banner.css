@@ -1,5 +1,5 @@
 /**
- * @version 2.1.3
+ * @version 2.1
  * @package JEM
  * @subpackage JEM Banner Module
  * @copyright (C) 2014-2015 joomlaeventmanager.net
@@ -16,7 +16,7 @@ div#jemmodulebanner.banner-jem {
 }
 
 
-#jemmodulebanner .calendar {
+#jemmodulebanner [class|="calendar"] {
 	background-repeat: no-repeat;
 	width: 84px;
 	height: 87px;
@@ -31,13 +31,13 @@ div#jemmodulebanner.banner-jem {
 	margin-left:95px;
 }
 
-#jemmodulebanner .calendar .yearbanner {
+#jemmodulebanner [class|="calendar"] .yearbanner {
 	font-size: 6px;
 	height:5px;
 	color: #e1e1e1;
 }
 
-#jemmodulebanner .calendar .monthbanner {
+#jemmodulebanner [class|="calendar"] .monthbanner {
 	font-size: 8px;
 	color: white;
 	text-transform:uppercase;
@@ -46,7 +46,7 @@ div#jemmodulebanner.banner-jem {
 	height:20px;
 }
 
-#jemmodulebanner .calendar .daybanner {
+#jemmodulebanner [class|="calendar"] .daybanner {
 	font-weight:bold;
 	font-size: 12px;
 	padding-top:3px;
@@ -54,7 +54,7 @@ div#jemmodulebanner.banner-jem {
 	color: #333;
 }
 
-#jemmodulebanner .calendar .daynumbanner {
+#jemmodulebanner [class|="calendar"] .daynumbanner {
 	font-size: 29px;
 	font-weight:bold;
 	color: #FF6400;

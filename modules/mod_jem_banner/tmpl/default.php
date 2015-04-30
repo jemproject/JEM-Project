@@ -41,7 +41,9 @@ if ($flyer_link_type == 1) {
 		<div>
 			<?php if ($showcalendar == 1) :?>
 			<div>
-				<div class="calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
+				<div class="calendar<?php echo '-'.$item->colorclass; ?>"
+				     title="<?php echo strip_tags($item->dateinfo); ?>"
+				>
 					<div class="monthbanner">
 						<?php echo $item->startdate['month']; ?>
 					</div>

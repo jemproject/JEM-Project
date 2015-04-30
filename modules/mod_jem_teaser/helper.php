@@ -138,6 +138,8 @@ abstract class ModJemTeaserHelper
 		# Retrieve the available Events
 		$events = $model->getItems();
 
+		$color = $params->get('color');
+
 		# Loop through the result rows and prepare data
 		$lists = array();
 		$i     = 0;
@@ -239,6 +241,8 @@ abstract class ModJemTeaserHelper
 			}
 
 			$lists[$i]->readmore = strlen(trim($row->fulltext));
+
+			$lists[$i]->colorclass = $color;
 
 			$i++;
 		} // foreach ($events as $row)

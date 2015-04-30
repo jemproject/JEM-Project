@@ -34,7 +34,9 @@ if ($params->get('use_modal', 0)) {
 		<table>
 			<tr>
 				<td class="event-calendar">
-					<div class="calendar" title="<?php echo strip_tags($item->dateinfo); ?>">
+					<div class="calendar<?php echo '-'.$item->colorclass; ?>"
+					     title="<?php echo strip_tags($item->dateinfo); ?>"
+					>
 						<div class="monthteaser">
 							<?php echo $item->month; ?>
 						</div>
