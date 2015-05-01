@@ -73,7 +73,7 @@
 					class="inputbox"
 					default="#EEEEEE"
 					size="8"
-					label="MOD_JEM_TEASER_FALLBACK_COLOR_DESC"
+					label="MOD_JEM_TEASER_FALLBACK_COLOR"
 					description="MOD_JEM_TEASER_FALLBACK_COLOR_DESC"
 				/>
 
