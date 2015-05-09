@@ -162,6 +162,7 @@ abstract class ModJemBannerHelper
 		$events = $model->getItems();
 
 		$color = $params->get('color');
+		$fallback_color = $params->get('fallbackcolor', '#EEEEEE');
 
 		# Loop through the result rows and prepare data
 		$lists = array();
@@ -279,6 +280,15 @@ abstract class ModJemBannerHelper
 			$lists[$i]->readmore = strlen(trim($row->fulltext));
 
 			$lists[$i]->colorclass = $color;
+			if (($color == 'category') && !empty($row->categories)) {
+				$colors = array();
+				foreach ($row->categories as $category) {
+					if (!empty($category->color)) {
+						$colors[$category->color] = $category->color;
+					}
+				}
+				$lists[$i]->color = (count($colors) == 1) ? array_pop($colors) : $fallback_color;
+			}
 		} // foreach ($events as $row)
 
 		return $lists;
