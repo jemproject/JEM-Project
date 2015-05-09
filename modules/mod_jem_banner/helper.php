@@ -121,6 +121,8 @@ abstract class ModJemBannerHelper
 		$catids = JemHelper::getValidIds($params->get('catid'));
 		$venids = JemHelper::getValidIds($params->get('venid'));
 		$eventids = JemHelper::getValidIds($params->get('eventid'));
+		$stateloc      = $params->get('stateloc');
+		$stateloc_mode = $params->get('stateloc_mode', 0);
 
 		# Open date support
 		if (!empty($eventids)) {
@@ -145,6 +147,12 @@ abstract class ModJemBannerHelper
 		if ($eventids) {
 			$model->setState('filter.event_id', $eventids);
 			$model->setState('filter.event_id.include', true);
+		}
+
+		# filter venue's state/province
+		if ($stateloc) {
+			$model->setState('filter.venue_state', $stateloc);
+			$model->setState('filter.venue_state.mode', $stateloc_mode); // 0: exact, 1: partial
 		}
 
 		if ($params->get('flyer_link_type', 0) == 1) {

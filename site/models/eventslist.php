@@ -189,6 +189,10 @@ class JemModelEventslist extends JModelList
 		$id .= ':' . $this->getState('filter.event_id.include');
 		$id .= ':' . serialize($this->getState('filter.category_id'));
 		$id .= ':' . $this->getState('filter.category_id.include');
+		$id .= ':' . serialize($this->getState('filter.venue_id'));
+		$id .= ':' . $this->getState('filter.venue_id.include');
+		$id .= ':' . $this->getState('filter.venue_state');
+		$id .= ':' . $this->getState('filter.venue_state.mode');
 		$id .= ':' . $this->getState('filter.filter_search');
 		$id .= ':' . $this->getState('filter.filter_type');
 		$id .= ':' . $this->getState('list.start');
@@ -322,7 +326,7 @@ class JemModelEventslist extends JModelList
 		## FILTER-FEATURED ##
 		####################
 
-		# Filter by published state.
+		# Filter by featured flag.
 		$featured = $this->getState('filter.featured');
 
 		if (is_numeric($featured)) {
@@ -399,6 +403,29 @@ class JemModelEventslist extends JModelList
 			$venueId = implode(',', $venueId);
 			$type = $this->getState('filter.venue_id.include', true) ? 'IN' : 'NOT IN';
 			$query->where('l.id '.$type.' ('.$venueId.')');
+		}
+
+		##########################
+		## FILTER - VENUE STATE ##
+		##########################
+
+		$venueState = $this->getState('filter.venue_state');
+
+		if (!empty($venueState)) {
+			$venueState = explode(',', $venueState);
+
+			$venueStateMode = $this->getState('filter.venue_state.mode', 0);
+			switch ($venueStateMode) {
+			case 0: # complete match: venue's state must be equal (ignoring upper/lower case) one of the strings given by filter
+			default:
+				array_walk($venueState, create_function('&$v,$k,$db','$v = $db->quote(trim($v));'), $db);
+				$query->where('l.state IN ('.implode(',', $venueState).')');
+				break;
+			case 1: # contain: venue's state must contain one of the strings given by filter
+				array_walk($venueState, create_function('&$v,$k,$db','$v = quotemeta($db->escape(trim($v), true));'), $db);
+				$query->where('l.state REGEXP '.$db->quote(implode('|', $venueState)));
+				break;
+			}
 		}
 
 		###################

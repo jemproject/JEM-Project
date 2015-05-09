@@ -57,6 +57,8 @@ abstract class ModJemTeaserHelper
 		$catids = JemHelper::getValidIds($params->get('catid'));
 		$venids = JemHelper::getValidIds($params->get('venid'));
 		$eventids = JemHelper::getValidIds($params->get('eventid'));
+		$stateloc      = $params->get('stateloc');
+		$stateloc_mode = $params->get('stateloc_mode', 0);
 
 		# Open date support
 		$opendates = empty($eventids) ? 0 : 1; // allow open dates if limited to specific events
@@ -120,6 +122,12 @@ abstract class ModJemTeaserHelper
 		if ($eventids) {
 			$model->setState('filter.event_id', $eventids);
 			$model->setState('filter.event_id.include', true);
+		}
+
+		# filter venue's state/province
+		if ($stateloc) {
+			$model->setState('filter.venue_state', $stateloc);
+			$model->setState('filter.venue_state.mode', $stateloc_mode); // 0: exact, 1: partial
 		}
 
 		# count

@@ -224,6 +224,14 @@
 					label="MOD_JEM_BANNER_STATE"
 					description="MOD_JEM_BANNER_STATE_DESC"
 				/>
+				<field name="stateloc_mode" type="list"
+					default="0"
+					label="MOD_JEM_BANNER_STATE_MODE"
+					description="MOD_JEM_BANNER_SATE_MODE_DESC"
+				>
+					<option value="0">MOD_JEM_BANNER_STATE_MODE_EXACTMATCH</option>
+					<option value="1">MOD_JEM_BANNER_STATE_MODE_CONTAINS</option>
+				</field>
 
 				<field name="moduleclass_sfx" type="text"
 					default=""
