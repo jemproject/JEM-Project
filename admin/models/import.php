@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.3
+ * @version 2.1.4
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -18,6 +18,8 @@ jimport('joomla.application.component.model');
 class JEMModelImport extends JModelLegacy
 {
 	private $prefix = '#__';
+
+	protected static $_view_levels = null;
 
 	/**
 	 * Constructor
@@ -583,6 +585,9 @@ class JEMModelImport extends JModelLegacy
 	{
 		// categories
 		if (strcasecmp($tablename, 'categories') == 0) {
+			$default_view_level = JFactory::getConfig()->get('access', 1);
+			$valid_view_levels  = $this->_getViewLevels();
+
 			foreach ($data as $row) {
 				// JEM now has a root category, so we shift IDs by 1
 				$row->id++;
@@ -592,11 +597,16 @@ class JEMModelImport extends JModelLegacy
 				if ($row->catdescription) {
 					$row->description = $row->catdescription;
 				}
+
+				// Ensure category has a valid view access level
+				if (empty($row->access) || !in_array($row->access, $valid_view_levels)) {
+					$row->access = $default_view_level;
+				}
 			}
 		}
 
 		// cats_event_relations
-		if (strcasecmp($tablename, 'cats_event_relations') == 0) {
+		elseif (strcasecmp($tablename, 'cats_event_relations') == 0) {
 			$dataNew = array();
 			foreach ($data as $row) {
 				// Category-event relations is now stored in seperate table
@@ -615,7 +625,10 @@ class JEMModelImport extends JModelLegacy
 		}
 
 		// events
-		if (strcasecmp($tablename, 'events') == 0) {
+		elseif (strcasecmp($tablename, 'events') == 0) {
+			$default_view_level = JFactory::getConfig()->get('access', 1);
+			$cat_levels = $this->_getCategoryViewLevels();
+
 			foreach ($data as $row) {
 				// No start date is now represented by a NULL value
 				if ($row->dates == '0000-00-00') {
@@ -626,7 +639,7 @@ class JEMModelImport extends JModelLegacy
 					$row->recurrence_limit_date = $row->recurrence_counter;
 				}
 				$row->recurrence_counter = 0;
-				// Published/state vaules have changed meaning
+				// Published/state values have changed meaning
 				if ($row->published == -1) {
 					$row->published = 2; // archive
 				}
@@ -638,6 +651,11 @@ class JEMModelImport extends JModelLegacy
 				if ($row->datdescription) {
 					$row->introtext = $row->datdescription;
 				}
+				// Set view access level to category's view level or default view level
+				if (empty($row->access)) {
+					$row->access = (empty($row->catsid) || !array_key_exists($row->catsid, $cat_levels))
+					               ? $default_view_level : $cat_levels[$row->catsid];
+				}
 			}
 		}
 
@@ -645,7 +663,7 @@ class JEMModelImport extends JModelLegacy
 		// groups
 
 		// register
-		if (strcasecmp($tablename, 'register') == 0) {
+		elseif (strcasecmp($tablename, 'register') == 0) {
 			foreach ($data as $row) {
 				// Check if uip contains crap
 				if (strpos($row->uip, 'COM_EVENTLIST') === 0) {
@@ -655,7 +673,7 @@ class JEMModelImport extends JModelLegacy
 		}
 
 		// venues
-		if (strcasecmp($tablename, 'venues') == 0) {
+		elseif (strcasecmp($tablename, 'venues') == 0) {
 			foreach ($data as $row) {
 				// Column name has changed
 				$row->postalCode = $row->plz;
@@ -775,6 +793,35 @@ class JEMModelImport extends JModelLegacy
 				}
 			}
 		}
+	}
+
+	protected function _getViewLevels()
+	{
+		if (empty(static::$_view_levels))
+		{
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
+			$query->select('a.id')
+			      ->from($db->quoteName('#__viewlevels') . ' AS a')
+			      ->order('a.id');
+
+			$db->setQuery($query);
+			static::$_view_levels = $db->loadColumn();
+		}
+
+		return static::$_view_levels;
+	}
+
+	protected function _getCategoryViewLevels()
+	{
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('a.id, a.access')
+		      ->from($db->quoteName('#__jem_categories') . ' AS a')
+		      ->order('a.id');
+
+		$db->setQuery($query);
+		return $db->loadAssocList('id', 'access');
 	}
 
 	/**
