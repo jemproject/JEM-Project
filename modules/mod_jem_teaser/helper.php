@@ -229,8 +229,11 @@ abstract class ModJemTeaserHelper
 			$etc = '...';
 			$etc2 = JText::_('MOD_JEM_TEASER_NO_DESCRIPTION');
 
+			//append <br /> tags on line breaking tags so they can be stripped below
+			$description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br />", $row->introtext);
+
 			//strip html tags but leave <br /> tags
-			$description = strip_tags($row->introtext, "<br>");
+			$description = strip_tags($description, "<br>");
 
 			//switch <br /> tags to space character
 			if ($params->get('br') == 0) {
