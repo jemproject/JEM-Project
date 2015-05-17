@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.4
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -236,7 +236,7 @@ class JemTableEvent extends JTable
 			/*	check if the user has the required rank for autopublish	*/
 			$maintainer = JEMUser::ismaintainer('publish');
 			$autopubev = JEMUser::validate_user($jemsettings->evpubrec, $jemsettings->autopubl);
-			if (!($autopubev || $maintainer || $user->authorise('core.edit','com_jem'))) {
+			if (!($autopubev || $maintainer || $user->authorise('core.edit.state','com_jem'))) {
 				$this->published = 0 ;
 			}
 		}
