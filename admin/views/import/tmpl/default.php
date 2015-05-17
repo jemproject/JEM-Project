@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.4
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -11,9 +11,8 @@ defined('_JEXEC') or die;
 ?>
 <?php if($this->progress->step > 1) : ?>
 	<meta http-equiv="refresh" content="1; url=index.php?option=com_jem&amp;view=import&amp;task=import.eventlistimport&amp;step=<?php
-		echo $this->progress->step; ?>&amp;table=<?php echo $this->progress->table; ?>&amp;prefix=<?php
-		echo $this->progress->prefix; ?>&amp;current=<?php echo $this->progress->current; ?>&amp;total=<?php
-		echo $this->progress->total; ?>&amp;copyImages=<?php echo $this->progress->copyImages; ?>" />
+		echo $this->progress->step; ?>&amp;table=<?php echo $this->progress->table; ?>&amp;current=<?php
+		echo $this->progress->current; ?>&amp;total=<?php echo $this->progress->total; ?>" />
 <?php endif; ?>
 
 <?php echo JHtml::_('tabs.start', 'det-pane', array('useCookie'=>1)); ?>
@@ -61,23 +60,29 @@ defined('_JEXEC') or die;
 	<p><?php echo JText::_('COM_JEM_IMPORT_EL_MISSING_TABLES'); ?>:</p>
 	<ul>
 		<?php
-			$tableCount = 0;
+			$missedTables = array();
 			foreach($this->eventlistTables as $table => $rows) {
-				if(is_null($rows)) {
-					$tableCount++;
+				if (is_null($rows)) {
+					$missedTables[] = $table;
 					echo "<li>".$this->prefixToShow.$table."</li>";
 				}
 			}
-			if($tableCount == 0) {
+			if (count($missedTables) == 0) {
 				echo "<li><em>".JText::_('COM_JEM_IMPORT_EL_MISSING_TABLES_NONE')."</em></li>";
 			}
 		?>
 	</ul>
+	<?php
+	if ((count($missedTables) == 2) && empty(array_diff($missedTables, array('eventlist_attachments', 'eventlist_cats_event_relations')))) {
+		echo "<p>".JText::_('COM_JEM_IMPORT_EL_MISSING_TABLES_V11')."</p>";
+	}
+	?>
 	<form action="index.php?option=com_jem&amp;view=import" method="post" name="adminForm-el-import-prefix" id="adminForm-el-import-prefix">
 		<div class="width-100">
 			<fieldset class="adminform">
 				<legend><?php echo JText::_('COM_JEM_IMPORT_EL_IMPORT_FROM_EL'); ?></legend>
 				<p><?php echo JText::_('COM_JEM_IMPORT_EL_PREFIX'); ?></p>
+				<p><?php echo JText::_('COM_JEM_IMPORT_EL_PREFIX_ATTENTION'); ?></p>
 				<input type="hidden" name="task" id="el-task0" value="" />
 				<input type="hidden" name="option" value="com_jem" />
 				<input type="hidden" name="view" value="import" />
@@ -111,13 +116,30 @@ defined('_JEXEC') or die;
 					<?php endif; ?>
 					<?php echo JText::_('COM_JEM_IMPORT_EL_COPY_IMAGES'); ?>
 				</p>
+				<?php if (!empty($this->attachmentsPossible)) : ?>
+				<p>
+					<?php if($this->progress->copyAttachments || $this->progress->step == 1) :?>
+						<input type="checkbox" class="inputbox" id="eventlist-copy-attachments" name="copyAttachments" value="1" checked="checked" />
+					<?php else : ?>
+						<input type="checkbox" class="inputbox" id="eventlist-copy-attachments" name="copyAttachments" value="1" />
+					<?php endif; ?>
+					<?php echo JText::_('COM_JEM_IMPORT_EL_COPY_ATTACHMENTS'); ?>
+				</p>
+				<?php endif; ?>
+				<p>
+					<?php if($this->progress->fromJ15) :?>
+						<input type="checkbox" class="inputbox" id="eventlist-from-j15" name="fromJ15" value="1" checked="checked" />
+					<?php else : ?>
+						<input type="checkbox" class="inputbox" id="eventlist-from-j15" name="fromJ15" value="1" />
+					<?php endif; ?>
+					<?php echo JText::_('COM_JEM_IMPORT_EL_IMPORT_FROM_JOOMLA15'); ?>
+				</p>
 				<input type="hidden" name="startToken" value="1" />
 				<input type="hidden" name="step" value="2" />
 				<input type="hidden" name="option" value="com_jem" />
 				<input type="hidden" name="view" value="import" />
 				<input type="hidden" name="controller" value="import" />
 				<input type="hidden" name="task" id="el-task1" value="" />
-				<input type="hidden" name="prefix" id="el-task1" value="<?php echo $this->progress->prefix; ?>" />
 				<input type="submit" id="eventlist-import-submit" value="<?php echo JText::_('COM_JEM_IMPORT_START'); ?>"
 					onclick="document.getElementById('el-task1').value='import.eventlistImport';return true;"/>
 			</fieldset>

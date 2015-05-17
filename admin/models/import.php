@@ -17,20 +17,42 @@ jimport('joomla.application.component.model');
  */
 class JEMModelImport extends JModelLegacy
 {
-	private $prefix = '#__';
+	/**
+	 *  The table prefix of this site.
+	 *  @var string
+	 */
+	private $jemprefix = '#__';
 
+	/**
+	 *  The prefix to use for the eventlist tables data should be imported from.
+	 *  @var string
+	 */
+	private $elprefix = '#__';
+
+	/**
+	 *  Caches ids of all view access levels.
+	 *  @var array
+	 */
 	protected static $_view_levels = null;
+
+	/**
+	 *  Caches ids of all users of this site.
+	 *  @var array
+	 */
+	protected static $_user_ids = null;
 
 	/**
 	 * Constructor
 	 */
 	public function __construct()
 	{
-		$jinput = JFactory::getApplication()->input;
-		$this->prefix = $jinput->get('prefix', '#__', 'CMD');
-		if ($this->prefix == '') {
-			$this->prefix = '#__';
+		$app = JFactory::getApplication();
+		$this->elprefix = $app->getUserStateFromRequest('com_jem.import.elimport.prefix', 'prefix', '#__', 'cmd');
+		if ($this->elprefix == '') {
+			$this->elprefix = '#__';
 		}
+
+		$this->jemprefix = '#__';
 
 		parent::__construct();
 	}
@@ -155,6 +177,8 @@ class JEMModelImport extends JModelLegacy
 	 */
 	private function import($tablename, $prefix, $fieldsname, & $data, $replace = true)
 	{
+		$rec = array('added' => 0, 'updated' => 0, 'ignored' => 0);
+
 		// cats_event_relations table requires different handling
 		if (strcasecmp($tablename, 'jem_cats_event_relations') == 0) {
 			$events = array();
@@ -189,7 +213,11 @@ class JEMModelImport extends JModelLegacy
 			$ignore[] = 'id';
 		}
 
-		$rec = array('added' => 0, 'updated' => 0, 'ignored' => 0);
+		// retrieve the specified table
+		$object = JTable::getInstance($tablename, $prefix);
+		$objectname = get_class($object);
+		$rootkey = $this->_rootkey();
+
 		$events = array(); // collects cat event relations
 
 		// parse each row
@@ -200,16 +228,9 @@ class JEMModelImport extends JModelLegacy
 				$values[$field] = $row[$k];
 			}
 
-			// retrieve the specified table
-			$object = JTable::getInstance($tablename, $prefix);
-			$objectname = get_class($object);
-			$rootkey = $this->_rootkey();
-
 			if (strcasecmp($objectname, 'JEMTableCategory') == 0) {
-
 				// check if column "parent_id" exists
 				if (array_key_exists('parent_id', $values)) {
-
 					// when not in replace mode the parent_id is set to the rootkey
 					if (!$replace){
 						$values['parent_id'] = $rootkey;
@@ -217,17 +238,16 @@ class JEMModelImport extends JModelLegacy
 						// when replacing and value is null or 0 the rootkey is assigned
 						if ($values['parent_id'] == null || $values['parent_id'] == 0) {
 							$values['parent_id'] = $rootkey;
-							$parentid = $values['parent_id'];
+							//$parentid = $values['parent_id'];
 						} else {
 						// in replace mode and value
-							$parentid = $values['parent_id'];
+							//$parentid = $values['parent_id'];
 						}
 					}
-
 				} else {
 					// column parent_id is not detected
 					$values['parent_id'] = $rootkey;
-					$parentid = $values['parent_id'];
+					//$parentid = $values['parent_id'];
 				}
 
 				// check if column "alias" exists
@@ -243,7 +263,7 @@ class JEMModelImport extends JModelLegacy
 						$values['lft'] = '';
 					}
 				}
-			}
+			} // if 'JEMTableCategory'
 
 			// Bind the data
 			$object->bind($values, $ignore);
@@ -259,7 +279,6 @@ class JEMModelImport extends JModelLegacy
 
 				// Store it in the db
 				if ($replace) {
-
 					if (($values['id'] != '1') && (strcasecmp($objectname, 'JEMTableCategory') == 0)) {
 						// We want to keep id from database so first we try to insert into database.
 						// if it fails, it means the record already exists, we can use store().
@@ -286,7 +305,6 @@ class JEMModelImport extends JModelLegacy
 					}
 				}
 			} else {
-
 				// Check/Store of tables other then Category
 
 				// Make sure the data is valid
@@ -469,14 +487,17 @@ class JEMModelImport extends JModelLegacy
 	 */
 	public function getEventlistTablesCount()
 	{
-		$tables = array('eventlist_categories' => '',
+		$tables = array(
+			'eventlist_attachments' => '',
+			'eventlist_categories' => '',
+			'eventlist_cats_event_relations' => '',
 			'eventlist_events' => '',
 			'eventlist_groupmembers' => '',
 			'eventlist_groups' => '',
 			'eventlist_register' => '',
 			'eventlist_venues' => '');
 
-		return $this->getTablesCount($tables);
+		return $this->getTablesCount($tables, $this->elprefix);
 	}
 
 	/**
@@ -486,7 +507,8 @@ class JEMModelImport extends JModelLegacy
 	 */
 	public function getJemTablesCount()
 	{
-		$tables = array('jem_attachments' => '',
+		$tables = array(
+				'jem_attachments' => '',
 				'jem_categories' => '',
 				'jem_cats_event_relations' => '',
 				'jem_events' => '',
@@ -495,16 +517,17 @@ class JEMModelImport extends JModelLegacy
 				'jem_register' => '',
 				'jem_venues' => '');
 
-		return $this->getTablesCount($tables);
+		return $this->getTablesCount($tables, $this->jemprefix);
 	}
 
 	/**
 	 * Returns a list of tables and the number of rows or null if the
 	 * table does not exist
 	 * @param $tables  An array of table names without prefix
+	 * @param $prefix  The table prefix (JEM and EL tables can have a different prefix!)
 	 * @return array The list of tables
 	 */
-	public function getTablesCount($tables)
+	public function getTablesCount($tables, $prefix)
 	{
 		$db = $this->_db;
 
@@ -512,7 +535,7 @@ class JEMModelImport extends JModelLegacy
 			$query = $db->getQuery('true');
 
 			$query->select('COUNT(*)')
-			      ->from($db->quoteName($this->prefix.$table));
+			      ->from($db->quoteName($prefix.$table));
 
 			$db->setQuery($query);
 
@@ -526,25 +549,25 @@ class JEMModelImport extends JModelLegacy
 				if (strcasecmp($table, 'jem_categories') == 0) {
 					$tables[$table]--;
 				}
-				JError::$legacy = $legacyValue;
 			} catch (Exception $e) {
 				$tables[$table] = null;
-				JError::$legacy = $legacyValue;
 			}
+
+			JError::$legacy = $legacyValue;
 		}
 
 		return $tables;
 	}
 
 	/**
-	 * Returns the number of rows of a table or null if the table dies not exist
+	 * Returns the number of rows of an eventlist table or null if the table does not exist
 	 * @param $table  The name of the table without prefix
 	 * @return mixed  The number of rows or null
 	 */
-	public function getTableCount($table)
+	public function getEventlistTableCount($table)
 	{
 		$tables = array($table => '');
-		$tablesCount = $this->getTablesCount($tables);
+		$tablesCount = $this->getTablesCount($tables, $this->elprefix);
 		return $tablesCount[$table];
 	}
 
@@ -562,7 +585,7 @@ class JEMModelImport extends JModelLegacy
 		$query = $db->getQuery('true');
 
 		$query->select('*')
-			->from($this->prefix.$tablename);
+			->from($this->elprefix.$tablename);
 
 		if ($limitStart !== null && $limit !== null) {
 			$db->setQuery($query, $limitStart, $limit);
@@ -575,18 +598,50 @@ class JEMModelImport extends JModelLegacy
 
 	/**
 	 * Changes old Eventlist data to fit the JEM standards
-	 * @param string $tablename  The name of the table
-	 * @param array $data  The data to work with
+	 * @param string $tablename The name of the table
+	 * @param array  $data      The data to work with
+	 * @param int    $j15       Import from Joomla! 1.5
 	 * @return array  The changed data
 	 *
-	 * @todo: increment catid when catid=1 exists.
+	 * @toto: potentially dangerous references to "foreign" objects:
+	 *        user id: creator/editor, attendee (!), group member (!)
+	 *        contact id: contact for events
+	 *        access id: view access level for events, categories
 	 */
-	public function transformEventlistData($tablename, &$data)
+	public function transformEventlistData($tablename, &$data, $j15)
 	{
-		// categories
-		if (strcasecmp($tablename, 'categories') == 0) {
+		// attachments - MUST be transformed after potential objects are stored!
+		if (strcasecmp($tablename, 'attachments') == 0) {
 			$default_view_level = JFactory::getConfig()->get('access', 1);
 			$valid_view_levels  = $this->_getViewLevels();
+			$current_user_id = JFactory::getUser()->get('id');
+			$valid_user_ids  = $this->_getUserIds();
+
+			foreach ($data as $row) {
+				// Set view access level to e.g. event's view level or default view level
+				if (isset($row->access) && $j15) {
+					// on Joomla! 1.5 levels are 0 (public), 1 (registered), 2 (special)
+					// now we have (normally) 1 (public), 2 (registered), 3 (special), ...
+					// (hopefully admin hadn't changed this default levels, but we have no other chance)
+					++$row->access;
+				}
+				if (empty($row->access) || !in_array($row->access, $valid_view_levels)) {
+					$row->access = $this->_getObjectViewLevel($row->object, $default_view_level);
+				}
+
+				// Check user id
+				if (empty($row->added_by) || !in_array($row->added_by, $valid_user_ids)) {
+					$row->added_by = $current_user_id;
+				}
+			}
+		}
+
+		// categories
+		elseif (strcasecmp($tablename, 'categories') == 0) {
+			$default_view_level = JFactory::getConfig()->get('access', 1);
+			$valid_view_levels  = $this->_getViewLevels();
+			$current_user_id = JFactory::getUser()->get('id');
+			$valid_user_ids  = $this->_getUserIds();
 
 			foreach ($data as $row) {
 				// JEM now has a root category, so we shift IDs by 1
@@ -599,8 +654,17 @@ class JEMModelImport extends JModelLegacy
 				}
 
 				// Ensure category has a valid view access level
+				if (isset($row->access) && $j15) {
+					// move from old (0, 1, 2) to (1, 2, 3)
+					++$row->access;
+				}
 				if (empty($row->access) || !in_array($row->access, $valid_view_levels)) {
 					$row->access = $default_view_level;
+				}
+
+				// Check user id
+				if (empty($row->created_user_id) || !in_array($row->created_user_id, $valid_user_ids)) {
+					$row->created_user_id = $current_user_id;
 				}
 			}
 		}
@@ -610,15 +674,18 @@ class JEMModelImport extends JModelLegacy
 			$dataNew = array();
 			foreach ($data as $row) {
 				// Category-event relations is now stored in seperate table
-				$rowNew = new stdClass();
-				$rowNew->catid = $row->catsid;
-				$rowNew->itemid = $row->id;
-				$rowNew->ordering = 0;
-
-				// JEM now has a root category, so we shift IDs by 1
-				$rowNew->catid++;
-
-				$dataNew[] = $rowNew;
+				if (isset($row->catsid)) { // events table of EL 1.0.2
+					$rowNew = new stdClass();
+					$rowNew->catid = $row->catsid;
+					$rowNew->itemid = $row->id;
+					$rowNew->ordering = 0;
+					// JEM now has a root category, so we shift IDs by 1
+					$rowNew->catid++;
+					$dataNew[] = $rowNew;
+				} else { // cats_event_relations table of EL 1.1
+					$row->catid++;
+					$dataNew[] = $row;
+				}
 			}
 
 			return $dataNew;
@@ -627,63 +694,135 @@ class JEMModelImport extends JModelLegacy
 		// events
 		elseif (strcasecmp($tablename, 'events') == 0) {
 			$default_view_level = JFactory::getConfig()->get('access', 1);
-			$cat_levels = $this->_getCategoryViewLevels();
+			$valid_view_levels  = $this->_getViewLevels();
+			$cat_levels         = $this->_getCategoryViewLevels();
+			$current_user_id = JFactory::getUser()->get('id');
+			$valid_user_ids  = $this->_getUserIds();
 
 			foreach ($data as $row) {
 				// No start date is now represented by a NULL value
 				if ($row->dates == '0000-00-00') {
 					$row->dates = null;
 				}
-				// Recurrence fields have changed meaning
-				if ($row->recurrence_counter != '0000-00-00') {
-					$row->recurrence_limit_date = $row->recurrence_counter;
+
+				// Recurrence fields have changed meaning between EL 1.0.2 and EL 1.1
+				// Also on EL 1.0.2 we don't know first event of recurrence set
+				//  so we MUST ignore archived events (there will be only one published event of each set)
+				if (!isset($row->recurrence_limit_date)) {
+					// EL 1.0.x
+					if ($row->published == -1) {
+						// archived: clear recurrence parameters
+						$row->recurrence_number = 0;
+						$row->recurrence_type = 0;
+					}
+					elseif ($row->recurrence_counter != '0000-00-00') {
+						$row->recurrence_limit_date = $row->recurrence_counter;
+					}
+					$row->recurrence_counter = 0;
+				} else {
+					// EL 1.1 - nothings to adapt
 				}
-				$row->recurrence_counter = 0;
+
 				// Published/state values have changed meaning
 				if ($row->published == -1) {
-					$row->published = 2; // archive
+					$row->published = 2; // archived
 				}
+
 				// Check if author_ip contains crap
 				if (strpos($row->author_ip, 'COM_EVENTLIST') === 0) {
 					$row->author_ip = "";
 				}
+
 				// Description field has been renamed
 				if ($row->datdescription) {
 					$row->introtext = $row->datdescription;
 				}
+
 				// Set view access level to category's view level or default view level
-				if (empty($row->access)) {
-					$row->access = (empty($row->catsid) || !array_key_exists($row->catsid, $cat_levels))
-					               ? $default_view_level : $cat_levels[$row->catsid];
+				if (isset($row->access) && $j15) {
+					// move from old (0, 1, 2) to (1, 2, 3)
+					++$row->access;
+				}
+				if (empty($row->access) || !in_array($row->access, $valid_view_levels)) {
+					if (isset($row->catsid)) {
+						$row->access = (empty($row->catsid) || !array_key_exists($row->catsid, $cat_levels))
+						               ? $default_view_level : $cat_levels[$row->catsid];
+					} else {
+						// no catsid field, so we should have cats_event_relations table
+						// try to find unique level
+						$row->access = $this->_getEventViewLevelFromCats($row->id, $default_view_level, $j15);
+						if (!in_array($row->access, $valid_view_levels)) {
+							$row->access = $default_view_level;
+						}
+					}
+				}
+
+				// Check user id
+				if (empty($row->created_by) || !in_array($row->created_by, $valid_user_ids)) {
+					$row->created_by = $current_user_id;
 				}
 			}
 		}
 
 		// groupmembers
+		elseif (strcasecmp($tablename, 'groupmembers') == 0) {
+			$valid_user_ids = $this->_getUserIds();
+
+			foreach ($data as $k => $row) {
+				// Check user id - REMOVE unknown users
+				if (empty($row->member) || !in_array($row->member, $valid_user_ids)) {
+					//$row->member = 0;
+					unset($data[$k]);
+					continue;
+				}
+			}
+		}
+
 		// groups
+		elseif (strcasecmp($tablename, 'groups') == 0) {
+		}
 
 		// register
 		elseif (strcasecmp($tablename, 'register') == 0) {
-			foreach ($data as $row) {
+			$valid_user_ids = $this->_getUserIds();
+
+			foreach ($data as $k => $row) {
 				// Check if uip contains crap
 				if (strpos($row->uip, 'COM_EVENTLIST') === 0) {
 					$row->uip = '';
+				}
+
+				// Check user id - REMOVE unknown users - !!!
+				if (empty($row->uid) || !in_array($row->uid, $valid_user_ids)) {
+					//$row->uid = 0;
+					unset($data[$k]);
+					continue;
 				}
 			}
 		}
 
 		// venues
 		elseif (strcasecmp($tablename, 'venues') == 0) {
+			$current_user_id = JFactory::getUser()->get('id');
+			$valid_user_ids  = $this->_getUserIds();
+
 			foreach ($data as $row) {
 				// Column name has changed
 				$row->postalCode = $row->plz;
+
 				// Check if author_ip contains crap
 				if (strpos($row->author_ip, 'COM_EVENTLIST') === 0) {
 					$row->author_ip = "";
 				}
+
 				// Country changes
 				if (strcasecmp($row->country, 'AN') == 0) {
 					$row->country = 'NL'; // Netherlands Antilles to Netherlands
+				}
+
+				// Check user id
+				if (empty($row->created_by) || !in_array($row->created_by, $valid_user_ids)) {
+					$row->created_by = $current_user_id;
 				}
 			}
 		}
@@ -699,14 +838,16 @@ class JEMModelImport extends JModelLegacy
 	public function storeJemData($tablename, &$data)
 	{
 		$replace = true;
-		if ((strcasecmp($tablename, 'jem_groupmembers') == 0) || (strcasecmp($tablename, 'jem_cats_event_relations') == 0)) {
+		if ((strcasecmp($tablename, 'jem_groupmembers') == 0) ||
+		    (strcasecmp($tablename, 'jem_cats_event_relations') == 0) ||
+		    (strcasecmp($tablename, 'jem_attachments') == 0)) {
 			$replace = false;
 		}
 
 		$ignore = array ();
-//		if (!$replace) {
-//			$ignore[] = 'id';
-// 		}
+		if (!$replace) {
+			$ignore[] = 'id'; // we MUST ignore id field to ensure it's inserted. otherwise it will be silently (not) updated!
+ 		}
 		$rec = array ('added' => 0, 'updated' => 0, 'error' => 0);
 
 		foreach ($data as $row) {
@@ -795,6 +936,77 @@ class JEMModelImport extends JModelLegacy
 		}
 	}
 
+	/**
+	 * Copies the Eventlist (v1.1) attachments to JEM folder
+	 */
+	public function copyAttachments()
+	{
+		jimport('joomla.filesystem.file');
+		jimport('joomla.filesystem.folder');
+
+		$jemsettings = JEMHelper::config();
+
+		$fromFolder = JPATH_SITE.'/media/com_eventlist/attachments/';
+		$toFolder   = JPATH_SITE.'/'.$jemsettings->attachments_path.'/';
+
+		if (!JFolder::exists($toFolder)) {
+			JFolder::create($toFolder);
+		}
+
+		if (JFolder::exists($fromFolder) && JFolder::exists($toFolder)) {
+			$files = JFolder::files($fromFolder, null, false, false);
+			foreach ($files as $file) {
+				if (!JFile::exists($toFolder.$file)) {
+					JFile::copy($fromFolder.$file, $toFolder.$file);
+				}
+			}
+
+			// attachments are stored in folders like "event123"
+			// so we need to walk through all these subfolders
+			$folders = JFolder::folders($fromFolder, null, false, false);
+			foreach ($folders as $folder) {
+				if (!JFolder::exists($toFolder.$folder)) {
+					JFolder::create($toFolder.$folder);
+				}
+
+				$files = JFolder::files($fromFolder.$folder, null, false, false);
+				$folder .= '/';
+				foreach ($files as $file) {
+					if (!JFile::exists($toFolder.$folder.$file)) {
+						JFile::copy($fromFolder.$folder.$file, $toFolder.$folder.$file);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Returns all valid user ids.
+	 *
+	 * @return  array  All known user ids
+	 */
+	protected function _getUserIds()
+	{
+		if (empty(static::$_user_ids))
+		{
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
+			$query->select('a.id')
+			      ->from($db->quoteName('#__users') . ' AS a')
+			      ->order('a.id');
+
+			$db->setQuery($query);
+			static::$_user_ids = $db->loadColumn();
+		}
+
+		return static::$_user_ids;
+	}
+
+	/**
+	 * Returns all view level ids.
+	 *
+	 * @return  array  All known view level ids
+	 */
 	protected function _getViewLevels()
 	{
 		if (empty(static::$_view_levels))
@@ -812,6 +1024,11 @@ class JEMModelImport extends JModelLegacy
 		return static::$_view_levels;
 	}
 
+	/**
+	 * Returns view level of all JEM categories.
+	 *
+	 * @return  array  Assoziative array with category-id => view-level-id
+	 */
 	protected function _getCategoryViewLevels()
 	{
 		$db = JFactory::getDbo();
@@ -822,6 +1039,85 @@ class JEMModelImport extends JModelLegacy
 
 		$db->setQuery($query);
 		return $db->loadAssocList('id', 'access');
+	}
+
+	/**
+	 * Tries to find a unique view level for given event using EL tables.
+	 *
+	 * @param   int      $eventId       ID of the event
+	 * @param   int      $defaultLevel  Level returned if no one found
+	 * @param   boolean  $j15           Do we need to increment found level?
+	 *                                  On Joomla! 1.5 levels have IDs 0, 1, 2 - we need 1, 2, 3, ...
+	 *
+	 * @return  int  The view level found or $defaultLevel.
+	 */
+	protected function _getEventViewLevelFromCats($eventId, $defaultLevel, $j15 = false)
+	{
+		$ret = $defaultLevel;
+
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('c.access')
+		      ->from($db->quoteName($this->elprefix.'eventlist_categories') . ' AS c')
+		      ->from($db->quoteName($this->elprefix.'eventlist_cats_event_relations') . ' AS rel')
+		      ->where(array('rel.itemid = '.(int)$eventId, 'rel.catid = c.id'));
+		$db->setQuery($query);
+		$result = $db->loadColumn();
+
+		if (is_array($result)) {
+			$result = array_unique($result);
+			if (count($result) == 1) {
+				$ret = array_pop($result) + ($j15 ? 1 : 0);
+			}
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * Gets view level of the object an attachment refers to.
+	 *
+	 * @param   string  $object   object in form 'typeid' as taken from atachments table,
+	 *                            type = (event, venue, category), id = a number
+	 * @param   int     $default  view level to return if no one found
+	 *
+	 * @return  int  The view level found or $defaultLevel.
+	 */
+	protected function _getObjectViewLevel($object, $default)
+	{
+		$result = $default;
+
+		$ok = preg_match('/([^0-9]+)([0-9]+)/', $object, $matches);
+		if ($ok && (count($matches) == 3)) {
+			$id = $matches[2];
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
+
+			switch ($matches[1]) {
+			case 'event':
+				$query->select('access')->from($db->quoteName('#__jem_events'))->where('id = ' . $db->quote($id));
+				$db->setQuery($query);
+				$res = $db->loadResult();
+				if (!empty($res)) {
+					$result = $res;
+				}
+				break;
+			case 'category':
+				$query->select('access')->from($db->quoteName('#__jem_categories'))->where('id = ' . $db->quote($id));
+				$db->setQuery($query);
+				$res = $db->loadResult();
+				if (!empty($res)) {
+					$result = $res;
+				}
+				break;
+			case 'venue':
+			default:
+				// return default value
+				break;
+			}
+		}
+
+		return $result;
 	}
 
 	/**
