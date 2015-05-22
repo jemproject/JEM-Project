@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.3
+ * @version 2.1.4
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2015 joomlaeventmanager.net
@@ -22,28 +22,29 @@ require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 
 JFactory::getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
 
-$paramsdatemethod = $params->get('datemethod', 1);
-$paramsuse_modal = $params->get('use_modal', 0);
-
-$document = JFactory::getDocument();
-$list = modJEMteaserHelper::getList($params);
-
-// check if any results returned
-if (count($list) == 0) {
-	return;
-}
-
 switch($params->get('color')) {
 	case 'red':
 	case 'blue':
 	case 'green':
 	case 'orange':
+	case 'category':
 		$color = $params->get('color');
 		break;
 	default:
 		$color = "red";
+		// ensure getList() always gets a valid 'color' setting
+		$params->set('color', $color);
 		break;
 }
+
+$list = ModJemTeaserHelper::getList($params);
+
+// check if any results returned
+if (empty($list)) {
+	return;
+}
+
+$document = JFactory::getDocument();
 $document->addStyleSheet(JUri::base(true).'/modules/mod_jem_teaser/tmpl/mod_jem_teaser.css');
 $document->addStyleSheet(JUri::base(true).'/modules/mod_jem_teaser/tmpl/'.$color.'.css');
 

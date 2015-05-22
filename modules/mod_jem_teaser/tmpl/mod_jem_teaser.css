@@ -14,20 +14,20 @@ div#jemmoduleteaser {
 div#jemmoduleteaser .teaser-jem a,
 div#jemmoduleteaser .venue-title a {
 	background-color: transparent;
-	color:#095197;
+	/*color:#095197;*/
 }
 
 #jemmoduleteaser td.event-calendar {
 	width: 1%; /* keep it as small as possible */
 }
 
-#jemmoduleteaser .calendar {
+#jemmoduleteaser [class|="calendar"] {
 	background-repeat: no-repeat;
 	width: 82px;
-	height: 84px;
+	height: 82px; /* + padding = 87px */
 	font-family: 'Lucida Grande',Geneva,Arial,Verdana,sans-serif;
 	text-align: center;
-	padding: 5px 0 0 0;
+	padding: 5px 1px 0 0;
 	float:left;
 	margin-right:10px;
 }
@@ -36,13 +36,13 @@ div#jemmoduleteaser .venue-title a {
 	margin-left:95px;
 }
 
-#jemmoduleteaser .calendar .yearteaser {
+#jemmoduleteaser [class|="calendar"] .yearteaser {
 	font-size: 6px;
 	height:5px;
 	color: #e1e1e1;
 }
 
-#jemmoduleteaser .calendar .monthteaser {
+#jemmoduleteaser [class|="calendar"] .monthteaser {
 	font-size: 8px;
 	color: white;
 	text-transform:uppercase;
@@ -51,14 +51,14 @@ div#jemmoduleteaser .venue-title a {
 	height:20px;
 }
 
-#jemmoduleteaser .calendar .dayteaser {
+#jemmoduleteaser [class|="calendar"] .dayteaser {
 	font-weight:bold;
 	font-size: 12px;
 	padding-top:3px;
 	color: #333;
 }
 
-#jemmoduleteaser .calendar .daynumteaser {
+#jemmoduleteaser [class|="calendar"] .daynumteaser {
 	font-size: 29px;
 	font-weight:bold;
 	color: #FF6400;
@@ -74,7 +74,7 @@ div#jemmoduleteaser .eventset {
 }
 
 div#jemmoduleteaser .event-title {
-	padding-left: 21px;
+	padding-left: 8px;
 //	background: url(img/flag_red.png) no-repeat;
 	font-size: medium;
 }

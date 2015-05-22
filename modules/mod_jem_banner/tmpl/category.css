@@ -1,0 +1,6 @@
+#jemmodulebanner .calendar-category {background-image: url(img/calendar_alpha.png);}
+
+#jemmodulebanner .calendar-category .monthbanner {
+	color: black;
+	text-shadow: #FFF 1px 1px 1px;
+}

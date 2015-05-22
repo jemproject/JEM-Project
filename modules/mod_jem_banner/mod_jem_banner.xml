@@ -4,10 +4,10 @@
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>March 2015</creationDate>
+	<creationDate>May 2015</creationDate>
 	<copyright>copyright (C) 2014-2015 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>2.1.3</version>
+	<version>2.1.4</version>
 	<description>MOD_JEM_BANNER_XML_DESCRIPTION</description>
 
 	<files>
@@ -32,20 +32,39 @@
 					<option value="2">MOD_JEM_BANNER_ARCHIVED_EVENTS</option>
 					<option value="3">MOD_JEM_BANNER_CURRENT_EVENTS</option>
 					<option value="4">MOD_JEM_BANNER_FEATURED_EVENTS</option>
+					<option value="5">MOD_JEM_BANNER_OPENDATE_EVENTS</option>
 				</field>
 				<field name="count" type="text"
 					default="5"
 					label="MOD_JEM_BANNER_EVENTS_IN_MODULE"
 					description="MOD_JEM_BANNER_EVENTS_IN_MODULE_DESC"
 				/>
+				<field name="max_days" type="text"
+					default=""
+					label="MOD_JEM_BANNER_MAX_DAYS"
+					description="MOD_JEM_BANNER_MAX_DAYS_DESC"
+				/>
 				<field name="offset_hours" type="text"
 					default=""
 					label="MOD_JEM_BANNER_OFFSET_HOURS"
 					description="MOD_JEM_BANNER_OFFSET_HOURS_DESC"
 				/>
+				<field name="shuffle" type="radio"
+					default="0"
+					label="MOD_JEM_BANNER_SHUFFLE"
+					description="MOD_JEM_BANNER_SHUFFLE_DESC"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="shuffle_count" type="text"
+					default=""
+					label="MOD_JEM_BANNER_SHUFFLE_COUNT"
+					description="MOD_JEM_BANNER_SHUFFLE_COUNT_DESC"
+				/>
 
 				<field name="cuttitle" type="text"
-					default="18"
+					default="25"
 					label="MOD_JEM_BANNER_MAX_TITLE_LENGTH"
 					description="MOD_JEM_BANNER_MAX_TITLE_LENGTH_DESC"
 				/>
@@ -75,7 +94,15 @@
 					<option value="blue">MOD_JEM_BANNER_BLUE</option>
 					<option value="green">MOD_JEM_BANNER_GREEN</option>
 					<option value="orange">MOD_JEM_BANNER_ORANGE</option>
+					<option value="category">MOD_JEM_BANNER_CATEGORY</option>
 				</field>
+				<field name="fallbackcolor" type="customcolor"
+					class="inputbox"
+					default="#EEEEEE"
+					size="8"
+					label="MOD_JEM_BANNER_FALLBACK_COLOR"
+					description="MOD_JEM_BANNER_FALLBACK_COLOR_DESC"
+				/>
 
 				<field name="showflyer" type="radio"
 					default="1"
@@ -85,13 +112,14 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="use_modal" type="radio"
+				<field name="flyer_link_type" type="list"
 					default="0"
-					label="MOD_JEM_BANNER_USE_MODAL"
-					description="MOD_JEM_BANNER_USE_MODAL_DESC"
+					label="MOD_JEM_BANNER_FLYER_LINKS_TO"
+					description="MOD_JEM_BANNER_FLYER_LINKS_TO_DESC"
 				>
-					<option value="0">JNO</option>
-					<option value="1">JYES</option>
+					<option value="0">MOD_JEM_BANNER_FLYER_LINK_IMAGE_PAGE</option>
+					<option value="1">MOD_JEM_BANNER_FLYER_LINK_IMAGE_MODAL</option>
+					<option value="2">MOD_JEM_BANNER_FLYER_LINK_EVENT_DETAILS</option>
 				</field>
 
 				<field name="showdesc" type="radio"
@@ -196,6 +224,14 @@
 					label="MOD_JEM_BANNER_STATE"
 					description="MOD_JEM_BANNER_STATE_DESC"
 				/>
+				<field name="stateloc_mode" type="list"
+					default="0"
+					label="MOD_JEM_BANNER_STATE_MODE"
+					description="MOD_JEM_BANNER_SATE_MODE_DESC"
+				>
+					<option value="0">MOD_JEM_BANNER_STATE_MODE_EXACTMATCH</option>
+					<option value="1">MOD_JEM_BANNER_STATE_MODE_CONTAINS</option>
+				</field>
 
 				<field name="moduleclass_sfx" type="text"
 					default=""

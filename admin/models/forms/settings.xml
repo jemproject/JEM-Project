@@ -949,6 +949,44 @@
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
+			<field name="global_editevent_maxnumcustomfields" type="list"
+				label="COM_JEM_SETTINGS_FIELD_EDITEVENT_MAXNUMCUSTOMFIELDS"
+				description="COM_JEM_SETTINGS_FIELD_EDITEVENT_MAXNUMCUSTOMFIELDS_DESC"
+				class="inputbox"
+				default="-1"
+				required="false"
+			>
+				<option value="-1">JALL</option>
+				<option value="0"> JNONE</option>
+				<option value="1"> 1</option>
+				<option value="2"> 2</option>
+				<option value="3"> 3</option>
+				<option value="4"> 4</option>
+				<option value="5"> 5</option>
+				<option value="6"> 6</option>
+				<option value="7"> 7</option>
+				<option value="8"> 8</option>
+				<option value="9"> 9</option>
+			</field>
+			<field name="global_editvenue_maxnumcustomfields" type="list"
+				label="COM_JEM_SETTINGS_FIELD_EDITVENUE_MAXNUMCUSTOMFIELDS"
+				description="COM_JEM_SETTINGS_FIELD_EDITVENUE_MAXNUMCUSTOMFIELDS_DESC"
+				class="inputbox"
+				default="-1"
+				required="false"
+			>
+				<option value="-1">JALL</option>
+				<option value="0"> JNONE</option>
+				<option value="1"> 1</option>
+				<option value="2"> 2</option>
+				<option value="3"> 3</option>
+				<option value="4"> 4</option>
+				<option value="5"> 5</option>
+				<option value="6"> 6</option>
+				<option value="7"> 7</option>
+				<option value="8"> 8</option>
+				<option value="9"> 9</option>
+			</field>
 		</fieldset>
 
 		<fieldset name="evevents"

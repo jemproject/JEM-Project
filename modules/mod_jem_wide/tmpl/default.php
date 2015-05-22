@@ -1,14 +1,15 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.4
  * @package JEM
  * @subpackage JEM Wide Module
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
+
 JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
 
@@ -29,7 +30,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		<td valign="top">
 			<?php if ($item->eventlink) : ?>
 			<span class="event-title">
-				<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->title; ?>"><?php echo $item->title; ?></a>
+				<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
 			</span>
 			<?php else : ?>
 			<span class="event-title">
@@ -37,11 +38,11 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			</span>
 			<?php endif; ?>
 			<br />
-			<span class="date"><?php echo $item->date; ?></span>
+			<span class="date" title="<?php echo strip_tags($item->dateinfo); ?>"><?php echo $item->date; ?></span>
 			<?php
 			if ($item->time && $params->get('datemethod', 1) == 1) :
 			?>
-			<span class="time"><?php echo $item->time; ?></span>
+			<span class="time" title="<?php echo strip_tags($item->dateinfo); ?>"><?php echo $item->time; ?></span>
 			<?php endif; ?>
 
 		</td>
@@ -49,11 +50,13 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			<span class="category"><?php echo $item->catname; ?></span>
 		</td>
 		<td>
+		<?php if ($item->venue) : ?>
 			<?php if ($item->venuelink) : ?>
 			<span class="venue-title"><a href="<?php echo $item->venuelink; ?>" title="<?php echo $item->venue; ?>"><?php echo $item->venue; ?></a></span>
 			<?php else : ?>
 			<span class="venue-title"><?php echo $item->venue; ?></span>
 			<?php endif; ?>
+		<?php endif; ?>
 		</td>
 		<td align="center" class="event-image-cell">
 			<?php if ($params->get('use_modal')) : ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.4
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -11,7 +11,8 @@ defined('_JEXEC') or die;
 /**
  * Holds the logic for all output related things
  */
-class JEMOutput {
+class JEMOutput
+{
 
 	/**
 	 * Writes footer.
@@ -142,9 +143,9 @@ class JEMOutput {
 					$title = JText::_('COM_JEM_SHOW_EVENTS');
 
 					if ($id) {
-						$url = 'index.php?option=com_jem&view='.$view.'&id='.$id;
+						$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&filter_reset=1';
 					} else {
-						$url = 'index.php?option=com_jem&view='.$view;
+						$url = 'index.php?option=com_jem&view='.$view.'&filter_reset=1';
 					}
 				} else {
 					if ($settings->get('global_show_icons',1)) {
@@ -157,9 +158,9 @@ class JEMOutput {
 					$title = JText::_('COM_JEM_SHOW_ARCHIVE');
 
 					if ($id) {
-						$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&task=archive';
+						$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&task=archive'.'&filter_reset=1';
 					} else {
-						$url = 'index.php?option=com_jem&view='.$view.'&task=archive';
+						$url = 'index.php?option=com_jem&view='.$view.'&task=archive'.'&filter_reset=1';
 					}
 				}
 
@@ -820,7 +821,7 @@ class JEMOutput {
 
 		$formattedTime = strftime($format, strtotime($time));
 
-		if($addSuffix) {
+		if ($addSuffix && !empty($settings->timename)) {
 			$formattedTime .= ' '.$settings->timename;
 		}
 
@@ -977,7 +978,8 @@ class JEMOutput {
 		}
 	}
 
-	static function formatSchemaOrgDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "") {
+	static function formatSchemaOrgDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "")
+	{
 		$settings = JemHelper::globalattribs();
 		$output = "";
 		$formatD = "Y-m-d";
@@ -1060,7 +1062,8 @@ class JEMOutput {
 	 * @param boolean $backend Used for backend (true) or frontend (false, default)
 	 * @return string|multitype:
 	 */
-	static function getCategoryList($categories, $doLink, $backend = false) {
+	static function getCategoryList($categories, $doLink, $backend = false)
+	{
 		$output = array_map(
 			function ($category) use ($doLink, $backend) {
 				if ($doLink) {

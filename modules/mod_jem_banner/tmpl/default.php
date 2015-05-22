@@ -1,6 +1,6 @@
 <?php
 /**
-* @version 2.1.3
+ * @version 2.1.4
 * @package JEM
 * @subpackage JEM Banner Module
 * @copyright (C) 2014-2015 joomlaeventmanager.net
@@ -9,16 +9,19 @@
 */
 defined('_JEXEC') or die;
 
-if ($params->get('use_modal', 0)) {
+$datemethod      = (int)$params->get('datemethod', 1);
+$showcalendar    = (int)$params->get('showcalendar', 1);
+$showflyer       = (int)$params->get('showflyer', 1);
+$flyer_link_type = (int)$params->get('flyer_link_type', 0);
+
+if ($flyer_link_type == 1) {
 	JHtml::_('behavior.modal', 'a.flyermodal');
 	$modal = 'flyermodal';
-} else {
+} elseif ($flyer_link_type == 0) {
 	$modal = 'notmodal';
+} else {
+	$modal = '';
 }
-
-$showcalendar = (int)$params->get('showcalendar', 1);
-$showflyer    = (int)$params->get('showflyer', 1);
-$datemethod   = (int)$params->get('datemethod', 1);
 ?>
 
 <div id="jemmodulebanner">
@@ -29,7 +32,7 @@ $datemethod   = (int)$params->get('datemethod', 1);
 
 		<h2 class="event-title">
 		<?php if ($item->eventlink) : ?>
-			<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->title; ?>"><?php echo $item->title; ?></a>
+			<a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
 		<?php else : ?>
 			<?php echo $item->title; ?>
 		<?php endif; ?>
@@ -38,7 +41,12 @@ $datemethod   = (int)$params->get('datemethod', 1);
 		<div>
 			<?php if ($showcalendar == 1) :?>
 			<div>
-				<div class="calendar">
+				<div class="calendar<?php echo '-'.$item->colorclass; ?>"
+				     title="<?php echo strip_tags($item->dateinfo); ?>"
+					<?php if (!empty($item->color)) : ?>
+				     style="background-color: <?php echo $item->color; ?>"
+					<?php endif; ?>
+				>
 					<div class="monthbanner">
 						<?php echo $item->startdate['month']; ?>
 					</div>
@@ -60,7 +68,8 @@ $datemethod   = (int)$params->get('datemethod', 1);
 				<div class="banner-jem">
 					<div>
 						<?php $class = ($showcalendar == 1) ? 'image-preview' : 'image-preview2'; ?>
-						<a href="<?php echo $item->eventimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->title; ?> ">
+						<a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" class="<?php echo $modal;?>"
+						   title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : JText::_('MOD_JEM_BANNER_CLICK_TO_ENLARGE'); ?> ">
 							<img class="float_right <?php echo $class; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
 						</a>
 					</div>
@@ -96,17 +105,17 @@ $datemethod   = (int)$params->get('datemethod', 1);
 		<?php /* wenn kein Kalenderblatt angezeigt wird */ ?>
 		<?php if ($showcalendar == 0) : ?>
 			<?php if ($item->date && $datemethod == 2) :?>
-			<div class="date">
+			<div class="date" title="<?php echo strip_tags($item->dateinfo); ?>">
 				<?php echo $item->date; ?>
 			</div>
 			<?php endif; ?>
 
 			<?php if ($item->date && $datemethod == 1) :?>
-			<div class="date">
+			<div class="date" title="<?php echo strip_tags($item->dateinfo); ?>">
 				<?php echo $item->date; ?>
 			</div>
 			<?php if ($item->time && $datemethod == 1) :?>
-			<div class="time">
+			<div class="time" title="<?php echo strip_tags($item->dateinfo); ?>">
 				<?php echo $item->time; ?>
 			</div>
 			<?php endif; ?>
@@ -115,7 +124,7 @@ $datemethod   = (int)$params->get('datemethod', 1);
 		<?php else : ?>
 			<?php /* wenn Zeitdifferenz angezeigt werden soll */ ?>
 			<?php if ($item->date && $datemethod == 2) : ?>
-			<div class="date">
+			<div class="date" title="<?php echo strip_tags($item->dateinfo); ?>">
 				<?php echo $item->date; ?>
 			</div>
 			<?php endif; ?>
@@ -123,7 +132,7 @@ $datemethod   = (int)$params->get('datemethod', 1);
 			<?php /* wenn Datum angezeigt werden soll */ ?>
 			<?php if ($item->time && $datemethod == 1) :?>
 			<?php /* es muss nur noch die Zeit angezeigt werden (da Datum auf Kalenderblatt schon angezeigt) */ ?>
-			<div class="time">
+			<div class="time" title="<?php echo strip_tags($item->dateinfo); ?>">
 				<?php echo $item->time; ?>
 			</div>
 			<?php endif; ?>

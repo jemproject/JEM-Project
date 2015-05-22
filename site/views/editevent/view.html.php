@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.4
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -35,14 +35,16 @@ class JemViewEditevent extends JViewLegacy
 
 		// Initialise variables.
 		$jemsettings = JemHelper::config();
-		$app = JFactory::getApplication();
-		$user = JFactory::getUser();
-		$document = JFactory::getDocument();
-		$model = $this->getModel();
-		$menu = $app->getMenu();
-		$menuitem = $menu->getActive();
-		$pathway = $app->getPathway();
-		$url = JUri::root();
+		$settings    = JemHelper::globalattribs();
+		$app         = JFactory::getApplication();
+		$user        = JFactory::getUser();
+		$userId      = $user->get('id');
+		$document    = JFactory::getDocument();
+		$model       = $this->getModel();
+		$menu        = $app->getMenu();
+		$menuitem    = $menu->getActive();
+		$pathway     = $app->getPathway();
+		$url         = JUri::root();
 
 		// Get model data.
 		$this->state = $this->get('State');
@@ -63,7 +65,7 @@ class JemViewEditevent extends JViewLegacy
 		}
 
 		// check for guest
-		if (!$user || $user->id == 0) {
+		if ($userId == 0) {
 			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
 			return false;
 		}
@@ -73,24 +75,14 @@ class JemViewEditevent extends JViewLegacy
 			$maintainer = JemUser::ismaintainer('add');
 			$genaccess  = JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
-			if ($maintainer || $genaccess) {
-				$dellink = true;
-			} else {
-				$dellink = false;
-			}
-
+			$dellink = ($maintainer || $genaccess);
 			$authorised = $user->authorise('core.create','com_jem') || (count($user->getAuthorisedCategories('com_jem', 'core.create')) || $dellink);
 		} else {
 			// Check if user can edit
 			$maintainer = JemUser::ismaintainer('edit',$this->item->id);
 			$genaccess  = JemUser::editaccess($jemsettings->eventowner, $this->item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
 
-			if ($maintainer || $genaccess) {
-				$allowedtoeditevent = true;
-			} else {
-				$allowedtoeditevent = false;
-			}
-
+			$allowedtoeditevent = ($maintainer || $genaccess);
 			$authorised = $this->item->params->get('access-edit') || $allowedtoeditevent ;
 		}
 
@@ -184,9 +176,10 @@ class JemViewEditevent extends JViewLegacy
 
 		// Escape strings for HTML output
 		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));
-		$this->dimage = JemImage::flyercreator($this->item->datimage, 'event');
-		$this->jemsettings = $jemsettings;
-		$this->infoimage = JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_('COM_JEM_NOTES'), NULL, true);
+		$this->dimage        = JemImage::flyercreator($this->item->datimage, 'event');
+		$this->jemsettings   = $jemsettings;
+		$this->settings      = $settings;
+		$this->infoimage     = JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_('COM_JEM_NOTES'), NULL, true);
 
 		$this->user = $user;
 

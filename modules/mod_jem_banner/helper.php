@@ -1,6 +1,6 @@
 <?php
 /**
-* @version 2.1.3
+ * @version 2.1.4
 * @package JEM
 * @subpackage JEM Banner Module
 * @copyright (C) 2014-2015 joomlaeventmanager.net
@@ -14,7 +14,7 @@ JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel'
 /**
 * Module-Banner
 */
-abstract class modJEMbannerHelper
+abstract class ModJemBannerHelper
 {
 	/**
 	 * Method to get the events
@@ -49,28 +49,52 @@ abstract class modJEMbannerHelper
 		#  2: archived               - no limit, but from now back to the past
 		#  3: running (today)        - enddates,endtimes > today+offset AND dates,times < tomorrow+offset
 		#  4: featured               - ? (same as upcoming yet)
+		#  5: open date              - no limit
 		$type = (int)$params->get('type');
-		$offset_minutes = 60 * $params->get('offset_hours', 0);
-		$offset_days    = (int)($params->get('offset_hours', 0)/24); // hours given must be multiple of 24, truncate to full days
+		$offset_days    = (int)($params->get('offset_hours', 0) / 24); // hours given must be multiple of 24, truncate to full days
+		$offset_minutes = (int)($params->get('offset_hours', 0) * 60);
+		$max_days       = (int) $params->get('max_days', 0); // empty = unlimited
+		$max_minutes    = $max_days ? ($max_days * 24 * 60 + $offset_minutes) : false;
+		$max_title_length = (int)$params->get('cuttitle', '25');
 		$published = 1;
 		$orderdir = 'ASC';
+		$opendates = 0;
+		$cal_from = false;
+		$cal_to = false;
+
+		# count
+		$count = min(max($params->get('count', '2'), 1), 100); // range 1..100, default 2
+
+		# shuffle
+		$shuffle = (bool)$params->get('shuffle', 0);
+		if ($shuffle) {
+			$max_count = min(max((int)$params->get('shuffle_count', 20), $count), 100);
+		} else {
+			$max_count = $count;
+		}
+
+		$model->setState('list.limit', $max_count);
 
 		# create type dependent filter rules
 		switch ($type) {
 		case 1: # unfinished events
 			$cal_from  = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
 			$cal_from .= "  OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) ";
+			$cal_to = $max_minutes ? " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes)) " : '';
 			break;
 
 		case 2: # archived events
-			$cal_from = '';
 			$published = 2;
 			$orderdir = 'DESC';
 			break;
 
 		case 3: # running events (one day)
-			$cal_from  = " ((DATEDIFF(a.dates, CURDATE()) < ".($offset_days + 1).") AND";
-			$cal_from .= "  (DATEDIFF(IFNULL(a.enddates, a.dates), CURDATE()) >= $offset_days)) ";
+			$cal_from = " (DATEDIFF(IFNULL(a.enddates, a.dates), CURDATE()) >= $offset_days)) ";
+			$cal_to   = " (DATEDIFF(a.dates, CURDATE()) < ".($offset_days + 1).") ";
+			break;
+
+		case 5: # open date (only)
+			$opendates = 2;
 			break;
 
 		case 4: # featured events
@@ -78,22 +102,33 @@ abstract class modJEMbannerHelper
 			# fall through
 		case 0: # upcoming events
 		default:
-			$cal_from = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
+			$cal_from = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes)) ";
+			$cal_to = $max_minutes ? " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes)) " : '';
 			break;
 		}
 
 		$model->setState('filter.published', $published);
 		$model->setState('filter.orderby', array('a.dates '.$orderdir, 'a.times '.$orderdir));
-		$model->setState('filter.calendar_from', $cal_from);
+		if (!empty($cal_from)) {
+			$model->setState('filter.calendar_from', $cal_from);
+		}
+		if (!empty($cal_to)) {
+			$model->setState('filter.calendar_to', $cal_to);
+		}
 		$model->setState('filter.groupby', 'a.id');
 
 		# clean parameter data
 		$catids = JemHelper::getValidIds($params->get('catid'));
 		$venids = JemHelper::getValidIds($params->get('venid'));
 		$eventids = JemHelper::getValidIds($params->get('eventid'));
+		$stateloc      = $params->get('stateloc');
+		$stateloc_mode = $params->get('stateloc_mode', 0);
 
 		# Open date support
-		$opendates = empty($eventids) ? 0 : 1; // allow open dates if limited to specific events
+		if (!empty($eventids)) {
+			// allow (also) open dates if limited to specific events
+			$opendates = 1;
+		}
 		$model->setState('filter.opendates', $opendates);
 
 		# filter category's
@@ -114,11 +149,13 @@ abstract class modJEMbannerHelper
 			$model->setState('filter.event_id.include', true);
 		}
 
-		# count
-		$count = $params->get('count', '2');
-		$model->setState('list.limit', $count);
+		# filter venue's state/province
+		if ($stateloc) {
+			$model->setState('filter.venue_state', $stateloc);
+			$model->setState('filter.venue_state.mode', $stateloc_mode); // 0: exact, 1: partial
+		}
 
-		if ($params->get('use_modal', 0)) {
+		if ($params->get('flyer_link_type', 0) == 1) {
 			JHtml::_('behavior.modal', 'a.flyermodal');
 		}
 
@@ -127,32 +164,42 @@ abstract class modJEMbannerHelper
 		$timeFormat = $params->get('formattime', '');
 		$addSuffix  = empty($timeFormat); // if we use component's default time format we can also add corresponding suffix
 
+		####
 		# Retrieve the available Events
+		####
 		$events = $model->getItems();
+
+		$color = $params->get('color');
+		$fallback_color = $params->get('fallbackcolor', '#EEEEEE');
 
 		# Loop through the result rows and prepare data
 		$lists = array();
-		$i     = 0;
+		$i     = -1; // it's easier to increment first
 
-		foreach ($events as $row)
+		// Don't shuffle original array to keep ordering of remaining events intact.
+		$indices = array_keys($events);
+		if (count($events) > $count) {
+			if ($shuffle) {
+				shuffle($indices);
+			}
+			array_splice($indices, $count);
+		}
+
+		foreach ($events as $key => $row)
 		{
+			if (!in_array($key, $indices)) {
+				continue; // skip removed events
+			}
+
 			# create thumbnails if needed and receive imagedata
 			$dimage = $row->datimage ? JEMImage::flyercreator($row->datimage, 'event') : null;
 			$limage = $row->locimage ? JEMImage::flyercreator($row->locimage, 'venue') : null;
-
-			# cut titel
-			$length = mb_strlen($row->title);
-
-			if ($length > $params->get('cuttitle', '25')) {
-				$row->title = mb_substr($row->title, 0, $params->get('cuttitle', '18'));
-				$row->title = $row->title.'...';
-			}
 
 			#################
 			## DEFINE LIST ##
 			#################
 
-			$lists[$i] = new stdClass();
+			$lists[++$i] = new stdClass(); // add new object
 
 			# check view access
 			if (in_array($row->access, $levels)) {
@@ -164,11 +211,20 @@ abstract class modJEMbannerHelper
 				$lists[$i]->linkText = JText::_('MOD_JEM_BANNER_READMORE_REGISTER');
 			}
 
-			$lists[$i]->title       = htmlspecialchars($row->title, ENT_COMPAT, 'UTF-8');
+			# cut titel
+			$fulltitle = htmlspecialchars($row->title, ENT_COMPAT, 'UTF-8');
+			if (mb_strlen($fulltitle) > $max_title_length) {
+				$title = mb_substr($fulltitle, 0, $max_title_length) . '...';
+			} else {
+				$title = $fulltitle;
+			}
+
+			$lists[$i]->title       = $title;
+			$lists[$i]->fulltitle   = $fulltitle;
 			$lists[$i]->venue       = htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->catname     = implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
 			$lists[$i]->state       = htmlspecialchars($row->state, ENT_COMPAT, 'UTF-8');
-			$lists[$i]->city        = htmlspecialchars( $row->city, ENT_COMPAT, 'UTF-8' );
+			$lists[$i]->city        = htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->eventlink   = $params->get('linkevent', 1) ? JRoute::_(JEMHelperRoute::getEventRoute($row->slug)) : '';
 			$lists[$i]->venuelink   = $params->get('linkvenue', 1) ? JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : '';
 
@@ -209,8 +265,11 @@ abstract class modJEMbannerHelper
 			$etc = '...';
 			$etc2 = JText::_('MOD_JEM_BANNER_NO_DESCRIPTION');
 
+			//append <br /> tags on line breaking tags so they can be stripped below
+			$description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br />", $row->introtext);
+
 			//strip html tags but leave <br /> tags
-			$description = strip_tags($row->introtext, "<br>");
+			$description = strip_tags($description, "<br>");
 
 			//switch <br /> tags to space character
 			if ($params->get('br') == 0) {
@@ -231,7 +290,16 @@ abstract class modJEMbannerHelper
 
 			$lists[$i]->readmore = strlen(trim($row->fulltext));
 
-			$i++;
+			$lists[$i]->colorclass = $color;
+			if (($color == 'category') && !empty($row->categories)) {
+				$colors = array();
+				foreach ($row->categories as $category) {
+					if (!empty($category->color)) {
+						$colors[$category->color] = $category->color;
+					}
+				}
+				$lists[$i]->color = (count($colors) == 1) ? array_pop($colors) : $fallback_color;
+			}
 		} // foreach ($events as $row)
 
 		return $lists;
@@ -320,6 +388,7 @@ abstract class modJEMbannerHelper
 			// open date
 			$date  = JEMOutput::formatDateTime('', ''); // "Open date"
 			$times = $row->times;
+			$endtimes = $row->endtimes;
 		} else {
 			//Get needed timestamps and format
 			$yesterday_stamp = mktime(0, 0, 0, date("m"), date("d")-1, date("Y"));
@@ -332,7 +401,7 @@ abstract class modJEMbannerHelper
 			$dates_stamp     = $row->dates ? strtotime($row->dates) : null;
 			$enddates_stamp  = $row->enddates ? strtotime($row->enddates) : null;
 
-			$times = $row->times;
+			$times = $row->times; // show starttime by default
 
 			//if datemethod show day difference
 			if ($method == 2) {
@@ -351,7 +420,9 @@ abstract class modJEMbannerHelper
 				elseif ($row->enddates && ($enddates_stamp < $yesterday_stamp)) {
 					$days = round(($today_stamp - $enddates_stamp) / 86400);
 					$date = JText::sprintf('MOD_JEM_BANNER_ENDED_DAYS_AGO', $days);
-					$times = $row->endtimes;
+					// show endtime instead of starttime
+					$times = false;
+					$endtimes = $row->endtimes;
 				}
 				//the event has an enddate and it's later than today but the startdate is earlier than today
 				//means a currently running event
@@ -379,22 +450,31 @@ abstract class modJEMbannerHelper
 					$startdate = JEMOutput::formatdate($row->dates, $dateFormat);
 					$enddate = JEMOutput::formatdate($row->enddates, $dateFormat);
 					$date = JText::sprintf('MOD_JEM_BANNER_FROM_UNTIL', $startdate, $enddate);
+					// additionally show endtime
+					$endtimes = $row->endtimes;
 				}
 				//current multidayevent (Until 18.08.2008)
 				elseif ($row->enddates && ($enddates_stamp >= $today_stamp) && ($dates_stamp < $today_stamp)) {
 					$enddate = JEMOutput::formatdate($row->enddates, $dateFormat);
 					$date = JText::sprintf('MOD_JEM_BANNER_UNTIL', $enddate);
-					$times = $row->endtimes;
+					// show endtime instead of starttime
+					$times = false;
+					$endtimes = $row->endtimes;
 				}
 				//single day event
 				else {
 					$startdate = JEMOutput::formatdate($row->dates, $dateFormat);
 					$date = JText::sprintf('MOD_JEM_BANNER_ON_DATE', $startdate);
+					// additionally show endtime, but on single day events only to prevent user confusion
+					if (empty($row->enddates)) {
+						$endtimes = $row->endtimes;
+					}
 				}
 			}
 		}
 
-		$time = $times ? JEMOutput::formattime($times, $timeFormat, $addSuffix) : '';
+		$time  = empty($times)    ? '' : JEMOutput::formattime($times, $timeFormat, $addSuffix);
+		$time .= empty($endtimes) ? '' : ('&nbsp;-&nbsp;' . JEMOutput::formattime($row->endtimes, $timeFormat, $addSuffix));
 
 		return array($date, $time);
 	}

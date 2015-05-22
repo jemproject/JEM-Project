@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.3
+ * @version 2.1.4
  * @package JEM
  * @subpackage JEM Wide Module
  * @copyright (C) 2013-2015 joomlaeventmanager.net
@@ -22,14 +22,14 @@ require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 
 JFactory::getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
 
-$list = modJEMwideHelper::getList($params);
+$list = ModJemWideHelper::getList($params);
+
+// check if any results returned
+if (empty($list)) {
+	return;
+}
 
 $document = JFactory::getDocument();
 $document->addStyleSheet(JUri::base(true).'/modules/mod_jem_wide/tmpl/mod_jem_wide.css');
 
-// check if any results returned
-$items = count($list);
-if (!$items) {
-	return;
-}
 require(JModuleHelper::getLayoutPath('mod_jem_wide'));
