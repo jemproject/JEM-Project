@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.4
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -25,6 +25,7 @@ class JemViewEditvenue extends JViewLegacy
 	{
 		// Initialise variables.
 		$jemsettings = JemHelper::config();
+		$settings    = JemHelper::globalattribs();
 		$app         = JFactory::getApplication();
 		$user        = JFactory::getUser();
 		$document    = JFactory::getDocument();
@@ -176,10 +177,11 @@ class JemViewEditvenue extends JViewLegacy
 		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 		JHtml::_('script', 'com_jem/jquery.geocomplete.js', false, true);
 
-		$this->pageclass_sfx	= htmlspecialchars($item->params->get('pageclass_sfx'));
-		$this->jemsettings		= $jemsettings;
-		$this->limage 			= JemImage::flyercreator($this->item->locimage, 'venue');
-		$this->infoimage		= JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_('COM_JEM_NOTES'), NULL, true);
+		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));
+		$this->jemsettings   = $jemsettings;
+		$this->settings      = $settings;
+		$this->limage        = JemImage::flyercreator($this->item->locimage, 'venue');
+		$this->infoimage     = JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_('COM_JEM_NOTES'), NULL, true);
 
 		$this->user = $user;
 
