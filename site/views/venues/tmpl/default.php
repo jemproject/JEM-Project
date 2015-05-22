@@ -147,6 +147,8 @@ defined('_JEXEC') or die;
 			<div class="description" itemprop="description">
 				<?php echo $row->locdescription; ?>
 			</div>
+		<?php else : ?>
+			<div class="clr"> </div>
 		<?php endif; ?>
 	</div>
 	<?php endforeach; ?>
