@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.4
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -33,6 +33,7 @@ class JemModelEvents extends JModelList
 					'id', 'a.id',
 					'catname', 'c.catname',
 					'featured', 'a.featured',
+					'access', 'a.access', 'access_level',
 			);
 		}
 
@@ -60,6 +61,9 @@ class JemModelEvents extends JModelList
 
 		$end = $this->getUserStateFromRequest($this->context.'.filter_end', 'filter_end', '', 'string');
 		$this->setState('filter_end', $end);
+
+		$access = $this->getUserStateFromRequest($this->context.'.filter.access', 'filter_access', 0, 'int');
+		$this->setState('filter.access', $access);
 
 		// Load the parameters.
 		$params = JComponentHelper::getParams('com_jem');
@@ -111,7 +115,7 @@ class JemModelEvents extends JModelList
 		);
 		$query->from($db->quoteName('#__jem_events').' AS a');
 
-		// Join over the users for the checked out user.
+		// Join over the venue.
 		$query->select('loc.venue, loc.city, loc.state, loc.checked_out AS vchecked_out');
 		$query->join('LEFT', '#__jem_venues AS loc ON loc.id = a.locid');
 
@@ -127,12 +131,21 @@ class JemModelEvents extends JModelList
 		$query->select('u.email, u.name AS author');
 		$query->join('LEFT', '#__users AS u ON u.id = a.created_by');
 
+		// Join over the view access level.
+		$query->select('vl.title AS access_level');
+		$query->join('LEFT', '#__viewlevels AS vl ON vl.id = a.access');
+
 		// Filter by published state
 		$published = $this->getState('filter_state');
 		if (is_numeric($published)) {
 			$query->where('a.published = '.(int) $published);
 		} elseif ($published === '') {
 			$query->where('(a.published IN (0, 1))');
+		}
+
+		// Filter by access level.
+		if ($access = $this->getState('filter.access')) {
+			$query->where('a.access = ' . (int) $access);
 		}
 
 		// Filter by Date

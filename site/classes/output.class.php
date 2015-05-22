@@ -143,9 +143,9 @@ class JEMOutput
 					$title = JText::_('COM_JEM_SHOW_EVENTS');
 
 					if ($id) {
-						$url = 'index.php?option=com_jem&view='.$view.'&id='.$id;
+						$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&filter_reset=1';
 					} else {
-						$url = 'index.php?option=com_jem&view='.$view;
+						$url = 'index.php?option=com_jem&view='.$view.'&filter_reset=1';
 					}
 				} else {
 					if ($settings->get('global_show_icons',1)) {
@@ -158,9 +158,9 @@ class JEMOutput
 					$title = JText::_('COM_JEM_SHOW_ARCHIVE');
 
 					if ($id) {
-						$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&task=archive';
+						$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&task=archive'.'&filter_reset=1';
 					} else {
-						$url = 'index.php?option=com_jem&view='.$view.'&task=archive';
+						$url = 'index.php?option=com_jem&view='.$view.'&task=archive'.'&filter_reset=1';
 					}
 				}
 

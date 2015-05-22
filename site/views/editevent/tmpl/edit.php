@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.4
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -146,7 +146,6 @@ $settings	= json_decode($this->item->attribs);
 						<label for="meta_keywords">
 							<?php echo JText::_('COM_JEM_META_KEYWORDS').':';?>
 						</label>
-						<br />
 						<?php
 						if (! empty ( $this->item->meta_keywords )) {
 							$meta_keywords = $this->item->meta_keywords;
@@ -160,7 +159,6 @@ $settings	= json_decode($this->item->attribs);
 						<label for="meta_description">
 							<?php echo JText::_ ( 'COM_JEM_META_DESCRIPTION' ) . ':';?>
 						</label>
-						<br />
 						<?php
 						if (! empty ( $this->item->meta_description )) {
 							$meta_description = $this->item->meta_description;

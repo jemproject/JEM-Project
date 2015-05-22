@@ -4,7 +4,7 @@
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>April 2015</creationDate>
+	<creationDate>May 2015</creationDate>
 	<copyright>copyright (C) 2014-2015 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<version>2.1.4</version>
@@ -94,7 +94,15 @@
 					<option value="blue">MOD_JEM_BANNER_BLUE</option>
 					<option value="green">MOD_JEM_BANNER_GREEN</option>
 					<option value="orange">MOD_JEM_BANNER_ORANGE</option>
+					<option value="category">MOD_JEM_BANNER_CATEGORY</option>
 				</field>
+				<field name="fallbackcolor" type="customcolor"
+					class="inputbox"
+					default="#EEEEEE"
+					size="8"
+					label="MOD_JEM_BANNER_FALLBACK_COLOR"
+					description="MOD_JEM_BANNER_FALLBACK_COLOR_DESC"
+				/>
 
 				<field name="showflyer" type="radio"
 					default="1"
@@ -216,6 +224,14 @@
 					label="MOD_JEM_BANNER_STATE"
 					description="MOD_JEM_BANNER_STATE_DESC"
 				/>
+				<field name="stateloc_mode" type="list"
+					default="0"
+					label="MOD_JEM_BANNER_STATE_MODE"
+					description="MOD_JEM_BANNER_SATE_MODE_DESC"
+				>
+					<option value="0">MOD_JEM_BANNER_STATE_MODE_EXACTMATCH</option>
+					<option value="1">MOD_JEM_BANNER_STATE_MODE_CONTAINS</option>
+				</field>
 
 				<field name="moduleclass_sfx" type="text"
 					default=""

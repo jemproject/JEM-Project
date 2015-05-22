@@ -102,7 +102,7 @@ abstract class ModJemBannerHelper
 			# fall through
 		case 0: # upcoming events
 		default:
-			$cal_from = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
+			$cal_from = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes)) ";
 			$cal_to = $max_minutes ? " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes)) " : '';
 			break;
 		}
@@ -121,6 +121,8 @@ abstract class ModJemBannerHelper
 		$catids = JemHelper::getValidIds($params->get('catid'));
 		$venids = JemHelper::getValidIds($params->get('venid'));
 		$eventids = JemHelper::getValidIds($params->get('eventid'));
+		$stateloc      = $params->get('stateloc');
+		$stateloc_mode = $params->get('stateloc_mode', 0);
 
 		# Open date support
 		if (!empty($eventids)) {
@@ -147,6 +149,12 @@ abstract class ModJemBannerHelper
 			$model->setState('filter.event_id.include', true);
 		}
 
+		# filter venue's state/province
+		if ($stateloc) {
+			$model->setState('filter.venue_state', $stateloc);
+			$model->setState('filter.venue_state.mode', $stateloc_mode); // 0: exact, 1: partial
+		}
+
 		if ($params->get('flyer_link_type', 0) == 1) {
 			JHtml::_('behavior.modal', 'a.flyermodal');
 		}
@@ -160,6 +168,9 @@ abstract class ModJemBannerHelper
 		# Retrieve the available Events
 		####
 		$events = $model->getItems();
+
+		$color = $params->get('color');
+		$fallback_color = $params->get('fallbackcolor', '#EEEEEE');
 
 		# Loop through the result rows and prepare data
 		$lists = array();
@@ -254,8 +265,11 @@ abstract class ModJemBannerHelper
 			$etc = '...';
 			$etc2 = JText::_('MOD_JEM_BANNER_NO_DESCRIPTION');
 
+			//append <br /> tags on line breaking tags so they can be stripped below
+			$description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br />", $row->introtext);
+
 			//strip html tags but leave <br /> tags
-			$description = strip_tags($row->introtext, "<br>");
+			$description = strip_tags($description, "<br>");
 
 			//switch <br /> tags to space character
 			if ($params->get('br') == 0) {
@@ -275,6 +289,17 @@ abstract class ModJemBannerHelper
 			}
 
 			$lists[$i]->readmore = strlen(trim($row->fulltext));
+
+			$lists[$i]->colorclass = $color;
+			if (($color == 'category') && !empty($row->categories)) {
+				$colors = array();
+				foreach ($row->categories as $category) {
+					if (!empty($category->color)) {
+						$colors[$category->color] = $category->color;
+					}
+				}
+				$lists[$i]->color = (count($colors) == 1) ? array_pop($colors) : $fallback_color;
+			}
 		} // foreach ($events as $row)
 
 		return $lists;

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.4
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -253,11 +253,13 @@ class JEMControllerEvent extends JControllerForm
 			$isNew     = $model->getState('editevent.new');
 			$this->_id = $model->getState('editevent.id');
 
-			if (JPluginHelper::importPlugin('jem','mailer')) {
-				JPluginHelper::importPlugin('jem','mailer');
-				$dispatcher = JDispatcher::getInstance();
-				$dispatcher->trigger('onEventEdited', array($this->_id, $isNew));
-			} else {
+			// trigger all jem plugins
+			JPluginHelper::importPlugin('jem');
+			$dispatcher = JDispatcher::getInstance();
+			$dispatcher->trigger('onEventEdited', array($this->_id, $isNew));
+
+			// but show warning if mailer is disabled
+			if (!JPluginHelper::isEnabled('jem', 'mailer')) {
 				JError::raiseNotice(100,JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'));
 			}
 		}

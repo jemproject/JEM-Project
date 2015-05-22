@@ -1,0 +1,6 @@
+#jemmoduleteaser .calendar-category {background-image: url(img/calendar_alpha.png);}
+
+#jemmoduleteaser .calendar-category .monthteaser {
+	color: black;
+	text-shadow: #FFF 1px 1px 1px;
+}

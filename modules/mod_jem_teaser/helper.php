@@ -57,6 +57,8 @@ abstract class ModJemTeaserHelper
 		$catids = JemHelper::getValidIds($params->get('catid'));
 		$venids = JemHelper::getValidIds($params->get('venid'));
 		$eventids = JemHelper::getValidIds($params->get('eventid'));
+		$stateloc      = $params->get('stateloc');
+		$stateloc_mode = $params->get('stateloc_mode', 0);
 
 		# Open date support
 		$opendates = empty($eventids) ? 0 : 1; // allow open dates if limited to specific events
@@ -122,6 +124,12 @@ abstract class ModJemTeaserHelper
 			$model->setState('filter.event_id.include', true);
 		}
 
+		# filter venue's state/province
+		if ($stateloc) {
+			$model->setState('filter.venue_state', $stateloc);
+			$model->setState('filter.venue_state.mode', $stateloc_mode); // 0: exact, 1: partial
+		}
+
 		# count
 		$count = $params->get('count', '2');
 		$model->setState('list.limit', $count);
@@ -137,6 +145,9 @@ abstract class ModJemTeaserHelper
 
 		# Retrieve the available Events
 		$events = $model->getItems();
+
+		$color = $params->get('color');
+		$fallback_color = $params->get('fallbackcolor', '#EEEEEE');
 
 		# Loop through the result rows and prepare data
 		$lists = array();
@@ -218,8 +229,11 @@ abstract class ModJemTeaserHelper
 			$etc = '...';
 			$etc2 = JText::_('MOD_JEM_TEASER_NO_DESCRIPTION');
 
+			//append <br /> tags on line breaking tags so they can be stripped below
+			$description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br />", $row->introtext);
+
 			//strip html tags but leave <br /> tags
-			$description = strip_tags($row->introtext, "<br>");
+			$description = strip_tags($description, "<br>");
 
 			//switch <br /> tags to space character
 			if ($params->get('br') == 0) {
@@ -239,6 +253,17 @@ abstract class ModJemTeaserHelper
 			}
 
 			$lists[$i]->readmore = strlen(trim($row->fulltext));
+
+			$lists[$i]->colorclass = $color;
+			if (($color == 'category') && !empty($row->categories)) {
+				$colors = array();
+				foreach ($row->categories as $category) {
+					if (!empty($category->color)) {
+						$colors[$category->color] = $category->color;
+					}
+				}
+				$lists[$i]->color = (count($colors) == 1) ? array_pop($colors) : $fallback_color;
+			}
 
 			$i++;
 		} // foreach ($events as $row)

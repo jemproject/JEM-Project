@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.4
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -45,20 +45,23 @@ class JEMViewImport extends JViewLegacy {
 		$this->jemTables 		= $this->get('JemTablesCount');
 		$this->existingJemData 	= $this->get('ExistingJemData');
 
-		$jinput = JFactory::getApplication()->input;
+		$app = JFactory::getApplication();
+		$jinput = $app->input;
 		$progress = new stdClass();
 		$progress->step 	= $jinput->get('step', 0, 'INT');
-		$progress->current 	= $jinput->get->get('current', 0, 'INT');
-		$progress->total 	= $jinput->get->get('total', 0, 'INT');
-		$progress->table 	= $jinput->get->get('table', '', 'INT');
-		$progress->prefix 	= $jinput->get('prefix', '', 'CMD');
-		$progress->copyImages = $jinput->get('copyImages', 0, 'INT');
+		$progress->current 	= $jinput->get('current', 0, 'INT');
+		$progress->total 	= $jinput->get('total', 0, 'INT');
+		$progress->table 	= $jinput->get('table', '', 'INT');
+		$progress->prefix 	= $jinput->get('prefix', null, 'CMD');
+		$progress->copyImages = $jinput->get('copyImages', null, 'INT');
+		$progress->copyAttachments = $jinput->get('copyAttachments', null, 'INT');
+		$progress->fromJ15 = $jinput->get('fromJ15', null, 'INT');
 		$this->progress = $progress;
+		$this->attachmentsPossible = !empty($this->eventlistTables['eventlist_attachments']);
 
 		// Do not show default prefix #__ but its replacement value
 		$this->prefixToShow = $progress->prefix;
-		if($this->prefixToShow == "#__" || $this->prefixToShow == "") {
-			$app = JFactory::getApplication();
+		if (empty($this->prefixToShow) || $this->prefixToShow == "#__") {
 			$this->prefixToShow = $app->getCfg('dbprefix');
 		}
 

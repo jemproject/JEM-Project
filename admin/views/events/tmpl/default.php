@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.4
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -53,6 +53,11 @@ $(document).ready(function() {
 			<option value=""><?php echo JText::_('JOPTION_SELECT_PUBLISHED');?></option>
 			<?php echo JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter_state'), true);?>
 			</select>
+
+			<select name="filter_access" class="inputbox" onchange="this.form.submit()">
+				<option value=""><?php echo JText::_('JOPTION_SELECT_ACCESS');?></option>
+				<?php echo JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'));?>
+			</select>
 		</div>
 	</fieldset>
 	<div class="clr"> </div>
@@ -70,12 +75,11 @@ $(document).ready(function() {
 				<th><?php echo JHtml::_('grid.sort', 'COM_JEM_STATE', 'loc.state', $listDirn, $listOrder ); ?></th>
 				<th><?php echo JText::_('COM_JEM_CATEGORIES'); ?></th>
 				<th width="1%" class="center nowrap"><?php echo JText::_('JSTATUS'); ?></th>
-				<th width="5%">
-					<?php echo JHtml::_('grid.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder, NULL, 'desc'); ?>
-				</th>
+				<th width="1%"><?php echo JHtml::_('grid.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder, NULL, 'desc'); ?></th>
 				<th class="nowrap"><?php echo JText::_('COM_JEM_CREATION'); ?></th>
 				<th class="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $listDirn, $listOrder ); ?></th>
 				<th width="1%" class="center nowrap"><?php echo JText::_('COM_JEM_REGISTERED_USERS'); ?></th>
+				<th width="9%" class="center"><?php echo JHtml::_('grid.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?></th>
 				<th width="1%" class="center nowrap"><?php echo JHtml::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?></th>
 			</tr>
 		</thead>
@@ -209,6 +213,9 @@ $(document).ready(function() {
 					<?php } else { ?>
 						<?php echo JHtml::_('image', 'com_jem/publish_r.png', NULL, NULL, true); ?>
 					<?php } ?>
+				</td>
+				<td class="center">
+					<?php echo $this->escape($row->access_level); ?>
 				</td>
 				<td class="center"><?php echo $row->id; ?></td>
 			</tr>
