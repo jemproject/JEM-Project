@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.3
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -88,15 +88,14 @@ class JEMModelAttendee extends JModelLegacy
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
 		{
-
 			$db = JFactory::getDbo();
 
 			$query = $db->getQuery(true);
-			$query->select(array('r.*','u.username'));
+			$query->select(array('r.*','u.name AS username', 'a.title AS eventtitle'));
 			$query->from('#__jem_register as r');
 			$query->join('LEFT', '#__users AS u ON (u.id = r.uid)');
+			$query->join('LEFT', '#__jem_events AS a ON (a.id = r.event)');
 			$query->where(array('r.id= '.$db->quote($this->_id)));
-
 
 			$this->_db->setQuery($query);
 			$this->_data = $this->_db->loadObject();
@@ -120,6 +119,15 @@ class JEMModelAttendee extends JModelLegacy
 		{
 			$data = JTable::getInstance('jem_register', '');
 			$data->username = null;
+			if (empty($data->eventtitle)) {
+				$jinput = JFactory::getApplication()->input;
+				$eventid = $jinput->getInt('event', 0);
+				$table = $this->getTable('Event', 'JemTable');
+				$table->load($eventid);
+				if (!empty($table->title)) {
+					$data->eventtitle = $table->title;
+				}
+			}
 			$this->_data = $data;
 		}
 		return true;

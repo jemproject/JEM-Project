@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -28,8 +28,10 @@ class JEMControllerAttendee extends JControllerLegacy
 		parent::__construct();
 
 		// Register Extra task
-		$this->registerTask('add', 		'edit');
-		$this->registerTask('apply', 		'save');
+		$this->registerTask('add',       'edit');
+		$this->registerTask('apply',     'save');
+		$this->registerTask('save2new',  'save');
+		$this->registerTask('save2copy', 'save');
 	}
 
 
@@ -38,7 +40,7 @@ class JEMControllerAttendee extends JControllerLegacy
 	 */
 	function back()
 	{
-		$this->setRedirect('index.php?option=com_jem&view=events');
+		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.JFactory::getApplication()->input->getInt('event', 0));
 	}
 
 
@@ -99,12 +101,22 @@ class JEMControllerAttendee extends JControllerLegacy
 		// Retrieving event-id
 		$eventid = $jinput->get('event','','int');
 
+		// the id in case of edit
+		$id = (!empty($post['id']) ? $post['id'] : 0);
+
 		$model = $this->getModel('attendee');
+
+		// Handle task 'save2copy' - reset id to store as new record, then like 'apply'.
+		if ($task == 'save2copy') {
+			$post['id'] = 0;
+			$id = 0;
+			$task = 'apply';
+		}
 
 		// handle changing the user - must also trigger onEventUserUnregistered
 		$uid = (!empty($post['uid']) ? $post['uid'] : 0);
-		if ($uid) {
-			$model->setId($post['id']);
+		if ($uid && $id) {
+			$model->setId($id);
 			$old_data = $model->getData();
 		}
 		$old_uid = (!empty($old_data->uid) ? $old_data->uid : 0);
@@ -113,7 +125,7 @@ class JEMControllerAttendee extends JControllerLegacy
 			if ($sendemail == 1) {
 				JPluginHelper::importPlugin('jem');
 				$dispatcher = JDispatcher::getInstance();
-				// there was a user and it's not the new user -> send unregister mails
+				// there was a user and it's overwritten by a new user -> send unregister mails
 				if ($old_uid && ($old_uid != $uid)) {
 					$dispatcher->trigger('onEventUserUnregistered', array($old_data->event, $old_data));
 				}
@@ -125,13 +137,20 @@ class JEMControllerAttendee extends JControllerLegacy
 
 			switch ($task)
 			{
-				case 'apply':
-					$link = 'index.php?option=com_jem&view=attendee&hidemainmenu=1&cid[]='.$row->id.'&event='.$row->event;
-					break;
+			case 'apply':
+				// Redirect back to the edit screen.
+				$link = 'index.php?option=com_jem&view=attendee&hidemainmenu=1&cid[]='.$row->id.'&event='.$row->event;
+				break;
 
-				default:
-					$link = 'index.php?option=com_jem&view=attendees&id='.$row->event;
-					break;
+			case 'save2new':
+				// Redirect back to the edit screen for new record.
+				$link = 'index.php?option=com_jem&view=attendee&hidemainmenu=1&event='.$row->event;
+				break;
+
+			default:
+				// Redirect to the list screen.
+				$link = 'index.php?option=com_jem&view=attendees&id='.$row->event;
+				break;
 			}
 			$msg = JText::_('COM_JEM_ATTENDEE_SAVED');
 

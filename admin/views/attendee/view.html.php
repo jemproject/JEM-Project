@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -22,13 +22,14 @@ class JEMViewAttendee extends JViewLegacy {
 	public function display($tpl = null)
 	{
 		//initialise variables
-		$document	= JFactory::getDocument();
+		$document = JFactory::getDocument();
+		$jinput   = JFactory::getApplication()->input;
 
 		// Load the form validation behavior
 		JHtml::_('behavior.formvalidation');
 
 		//get vars
-		$event_id = JFactory::getApplication()->input->getInt('id', 0);
+		$event_id = $jinput->getInt('event', 0);
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
@@ -60,19 +61,36 @@ class JEMViewAttendee extends JViewLegacy {
 	 */
 	protected function addToolbar()
 	{
-		//get vars
-		$cid = JFactory::getApplication()->input->get('cid', array(), 'array');
+		JFactory::getApplication()->input->set('hidemainmenu', true);
 
-		if (empty($cid)) {
+		//get vars
+		$cid        = JFactory::getApplication()->input->get('cid', array(), 'array');
+		$user       = JFactory::getUser();
+		$checkedOut = false; // don't know, table hasn't such a field
+		$canDo      = JemHelperBackend::getActions();
+
+		if (empty($cid[0])) {
 			JToolBarHelper::title(JText::_('COM_JEM_ADD_ATTENDEE'), 'users');
 		} else {
 			JToolBarHelper::title(JText::_('COM_JEM_EDIT_ATTENDEE'), 'users');
 		}
 
-		JToolBarHelper::apply('attendee.apply');
-		JToolBarHelper::save('attendee.save');
+		// If not checked out, can save the item.
+		if (!$checkedOut && ($canDo->get('core.edit')||$canDo->get('core.create'))) {
+			JToolBarHelper::apply('attendee.apply');
+			JToolBarHelper::save('attendee.save');
+		}
 
-		if (empty($cid)) {
+		if (!$checkedOut && $canDo->get('core.create')) {
+			JToolBarHelper::save2new('attendee.save2new');
+		}
+
+		// If an existing item, can save to a copy.
+		if (!empty($cid[0]) && $canDo->get('core.create')) {
+			JToolBarHelper::save2copy('attendee.save2copy');
+		}
+
+		if (empty($cid[0])) {
 			JToolBarHelper::cancel('attendee.cancel');
 		} else {
 			JToolBarHelper::cancel('attendee.cancel', 'JTOOLBAR_CLOSE');

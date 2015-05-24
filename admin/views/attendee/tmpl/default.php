@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -53,6 +53,18 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&task=attendee.selectuser&
 		</p>
 		<?php endif; ?>
 		<table  class="admintable">
+			<tr>
+				<td class="key" width="150">
+					<label for="eventtitle">
+						<?php echo JText::_('COM_JEM_EVENT').':'; ?>
+					</label>
+				</td>
+				<td>
+					<input type="text" name="eventtitle" id="eventtitle" readonly="readonly"
+					       value="<?php echo !empty($this->row->eventtitle) ? $this->row->eventtitle : '?'; ?>"
+					/>
+				</td>
+			</tr>
 			<tr>
 				<td class="key" width="150">
 					<label for="uid">
