@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -238,22 +238,31 @@ class JEMControllerVenue extends JControllerForm
 	}
 
 
+	/**
+	 * Function that allows child controller access to model data
+	 * after the data has been saved.
+	 * Here used to trigger the jem plugins, mainly the mailer.
+	 *
+	 * @param   JModel(Legacy)  $model      The data model object.
+	 * @param   array           $validData  The validated data.
+	 *
+	 * @return  void
+	 */
 	protected function postSaveHook($model, $validData = array())
 	{
 		$task = $this->getTask();
 		if ($task == 'save') {
-			// doesn't work on new venues - get values from model instead
-			//$isNew 	= ($validData['id']) ? false : true;
-			//$id 	= $validData['id'];
 			$isNew = $model->getState('editvenue.new');
 			$id    = $model->getState('editvenue.id');
 
-			if (JPluginHelper::importPlugin('jem','mailer')) {
-				JPluginHelper::importPlugin('jem');
-				$dispatcher = JDispatcher::getInstance();
-				$dispatcher->trigger('onVenueEdited', array($id, $isNew));
-			} else {
-				JError::raiseNotice(100,JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'));
+			// trigger all jem plugins
+			JPluginHelper::importPlugin('jem');
+			$dispatcher = JDispatcher::getInstance();
+			$dispatcher->trigger('onVenueEdited', array($id, $isNew));
+
+			// but show warning if mailer is disabled
+			if (!JPluginHelper::isEnabled('jem', 'mailer')) {
+				JError::raiseNotice(100, JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'));
 			}
 		}
 	}
