@@ -133,6 +133,10 @@ class JEMControllerAttendee extends JControllerLegacy
 				if ($uid && ($old_uid != $uid)) {
 					$dispatcher->trigger('onEventUserRegistered', array($row->id));
 				}
+				// but show warning if mailer is disabled
+				if (!JPluginHelper::isEnabled('jem', 'mailer')) {
+					JError::raiseNotice(100, JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'));
+				}
 			}
 
 			switch ($task)
