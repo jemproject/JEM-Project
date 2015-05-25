@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -153,13 +153,14 @@ class JEMModelVenue extends JemModelAdmin
 	public function save($data)
 	{
 		// Variables
-		$date 			= JFactory::getDate();
-		$jinput 		= JFactory::getApplication()->input;
-		$user 			= JFactory::getUser();
-		$jemsettings 	= JEMHelper::config();
-		$app 			= JFactory::getApplication();
-		$fileFilter 	= new JInput($_FILES);
-		$table 			= $this->getTable();
+		$date        = JFactory::getDate();
+		$app         = JFactory::getApplication();
+		$jinput      = $app->input;
+		$user        = JFactory::getUser();
+		$jemsettings = JEMHelper::config();
+		$fileFilter  = new JInput($_FILES);
+		$table       = $this->getTable();
+		$task        = $jinput->get('task', '', 'cmd');
 
 		// Check if we're in the front or back
 		if ($app->isAdmin())
@@ -167,8 +168,20 @@ class JEMModelVenue extends JemModelAdmin
 		else
 			$backend = false;
 
-		$ip = $jinput->get('author_ip', '', 'string');
-		$data['author_ip'] 		= $ip;
+		// Store IP of author only.
+		if (!$data['id']) {
+			$author_ip = $jinput->get('author_ip', '', 'string');
+			$data['author_ip'] = $author_ip;
+		}
+
+		// Store as copy - reset creation date, modification fields, hit counter, version
+		if ($task == 'save2copy') {
+			unset($data['created']);
+			unset($data['modified']);
+			unset($data['modified_by']);
+			unset($data['version']);
+		//	unset($data['hits']);
+		}
 
 		//uppercase needed by mapservices
 		if ($data['country']) {

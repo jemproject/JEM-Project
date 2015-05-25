@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.1.0
+ * @version     2.1.5
  * @package     JEM
- * @copyright   Copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -372,6 +372,10 @@ class JEMModelCategory extends JModelAdmin
 			list ($title, $alias) = $this->generateNewTitle($data['parent_id'], $data['alias'], $data['title']);
 			$data['title'] = $title;
 			$data['alias'] = $alias;
+			// also reset creation date, modification fields, hit counter, version
+			unset($data['created_time']);
+			unset($data['modified_time']);
+			unset($data['modified_user_id']);
 		}
 
 		$groupid = $jinput->get('groupid', '', 'int');

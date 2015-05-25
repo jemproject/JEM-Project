@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -246,13 +246,13 @@ class JEMModelEvent extends JemModelAdmin
 	public function save($data)
 	{
 		// Variables
-		$date 			= JFactory::getDate();
-		$jinput 		= JFactory::getApplication()->input;
-		$user 			= JFactory::getUser();
-		$jemsettings 	= JEMHelper::config();
-		$app 			= JFactory::getApplication();
-		$fileFilter 	= new JInput($_FILES);
-		$table 			= $this->getTable();
+		$date        = JFactory::getDate();
+		$app         = JFactory::getApplication();
+		$jinput      = $app->input;
+		$user        = JFactory::getUser();
+		$jemsettings = JEMHelper::config();
+		$fileFilter  = new JInput($_FILES);
+		$table       = $this->getTable();
 
 		// Check if we're in the front or back
 		if ($app->isAdmin())
@@ -261,12 +261,12 @@ class JEMModelEvent extends JemModelAdmin
 			$backend = false;
 
 		// Variables
-		$cats 				= $jinput->get('cid', array(), 'post', 'array');
-		$recurrencenumber 	= $jinput->get('recurrence_number', '', 'int');
-		$recurrencebyday 	= $jinput->get('recurrence_byday', '', 'string');
-		$metakeywords 		= $jinput->get('meta_keywords', '', '');
-		$metadescription 	= $jinput->get('meta_description', '', '');
-		$author_ip 			= $jinput->get('author_ip', '', '');
+		$cats             = $jinput->get('cid', array(), 'post', 'array');
+		$recurrencenumber = $jinput->get('recurrence_number', '', 'int');
+		$recurrencebyday  = $jinput->get('recurrence_byday', '', 'string');
+		$metakeywords     = $jinput->get('meta_keywords', '', '');
+		$metadescription  = $jinput->get('meta_description', '', '');
+		$task             = $jinput->get('task', '', 'cmd');
 
 		// event maybe first of recurrence set -> dissolve complete set
 		if (JemHelper::dissolve_recurrence($data['id'])) {
@@ -282,7 +282,7 @@ class JEMModelEvent extends JemModelAdmin
 			$data['recurrence_limit']		= '';
 			$data['recurrence_limit_date']	= '';
 			$data['recurrence_first_id']	= '';
-		}else{
+		} else {
 			if ($data['id']) {
 				// edited event maybe part of a recurrence set
 				// -> drop event from set
@@ -296,7 +296,21 @@ class JEMModelEvent extends JemModelAdmin
 
 		$data['meta_keywords'] 		= $metakeywords;
 		$data['meta_description']	= $metadescription;
-		$data['author_ip']			= $author_ip;
+
+		// Store IP of author only.
+		if (!$data['id']) {
+			$author_ip = $jinput->get('author_ip', '', 'string');
+			$data['author_ip'] = $author_ip;
+		}
+
+		// Store as copy - reset creation date, modification fields, hit counter, version
+		if ($task == 'save2copy') {
+			unset($data['created']);
+			unset($data['modified']);
+			unset($data['modified_by']);
+			unset($data['version']);
+			unset($data['hits']);
+		}
 
 		if (parent::save($data)){
 			// At this point we do have an id.
