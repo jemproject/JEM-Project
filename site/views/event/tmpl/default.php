@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.4
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -108,7 +108,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		<?php
 		for($cr = 1; $cr <= 10; $cr++) {
 			$currentRow = $this->item->{'custom'.$cr};
-			if(substr($currentRow, 0, 7) == "http://") {
+			if (preg_match('%^http(s)?://%', $currentRow)) {
 				$currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
  			}
 			if($currentRow) {
@@ -121,14 +121,14 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		?>
 
 		<?php if ($params->get('event_show_hits')) : ?>
-		<dt class="hits"><?php echo JText::_('COM_JEM_EVENT_HITS_LABEL'); ?></dt>
+		<dt class="hits"><?php echo JText::_('COM_JEM_EVENT_HITS_LABEL'); ?>:</dt>
 		<dd class="hits"><?php echo JText::sprintf('COM_JEM_EVENT_HITS', $this->item->hits); ?></dd>
 		<?php endif; ?>
 
 
 	<!-- AUTHOR -->
 		<?php if ($params->get('event_show_author') && !empty($this->item->author)) : ?>
-		<dt class="createdby"><?php echo JText::_('COM_JEM_EVENT_CREATED_BY_LABEL'); ?></dt>
+		<dt class="createdby"><?php echo JText::_('COM_JEM_EVENT_CREATED_BY_LABEL'); ?>:</dt>
 		<dd class="createdby">
 			<?php $author = $this->item->created_by_alias ? $this->item->created_by_alias : $this->item->author; ?>
 			<?php if (!empty($this->item->contactid2) && $params->get('event_link_author') == true) :
@@ -286,7 +286,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			<?php
 			for($cr = 1; $cr <= 10; $cr++) {
 				$currentRow = $this->item->{'venue'.$cr};
-				if (substr($currentRow, 0, 7) == "http://") {
+				if (preg_match('%^http(s)?://%', $currentRow)) {
 					$currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
 				}
 				if($currentRow) {

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.4
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -245,7 +245,7 @@ class JemViewVenue extends JEMView {
 
 			// Check if the user has access to the edit-venueform
 			$maintainer3 = JemUser::venuegroups('edit');
-			$genaccess3 = JemUser::editaccess($jemsettings->venueowner, $venue->created, $jemsettings->venueeditrec, $jemsettings->venueedit);
+			$genaccess3 = JemUser::editaccess($jemsettings->venueowner, $venue->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 			if ($maintainer3 || $genaccess3) {
 				$allowedtoeditvenue = 1;
 			} else {
@@ -268,8 +268,7 @@ class JemViewVenue extends JEMView {
 			}
 
 			// build the url
-			// TODO: What's about "https://"?
-			if (!empty($venue->url) && strtolower (substr($venue->url, 0, 7)) != "http://") {
+			if (!empty($venue->url) && !preg_match('%^http(s)?://%', $venue->url)) {
 				$venue->url = 'http://' . $venue->url;
 			}
 

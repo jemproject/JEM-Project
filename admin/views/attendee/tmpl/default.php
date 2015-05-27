@@ -55,6 +55,18 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&task=attendee.selectuser&
 		<table  class="admintable">
 			<tr>
 				<td class="key" width="150">
+					<label for="eventtitle">
+						<?php echo JText::_('COM_JEM_EVENT').':'; ?>
+					</label>
+				</td>
+				<td>
+					<input type="text" name="eventtitle" id="eventtitle" readonly="readonly"
+					       value="<?php echo !empty($this->row->eventtitle) ? $this->row->eventtitle : '?'; ?>"
+					/>
+				</td>
+			</tr>
+			<tr>
+				<td class="key" width="150">
 					<label for="uid">
 						<?php echo JText::_('COM_JEM_USER').':'; ?>
 					</label>

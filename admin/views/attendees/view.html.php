@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.4
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -42,6 +42,18 @@ class JEMViewAttendees extends JViewLegacy {
 		$rows 		= $this->get('Data');
 		$pagination = $this->get('Pagination');
 		$event 		= $this->get('Event');
+
+		// Check for errors.
+		if (count($errors = $this->get('Errors'))) {
+			JError::raiseError(500, implode("\n", $errors));
+			return false;
+		}
+
+		// check for data error
+		if (empty($event)) {
+			$app->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+			return false;
+		}
 
  		if (JEMHelper::isValidDate($event->dates)) {
 			$event->dates = JEMOutput::formatdate($event->dates);

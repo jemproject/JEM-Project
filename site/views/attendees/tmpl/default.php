@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.4
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -88,7 +88,7 @@ $detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this
 			<thead>
 				<tr>
 					<th width="1%" class="center"><?php echo JText::_('COM_JEM_NUM'); ?></th>
-					<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+					<!--th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th-->
 					<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_USERNAME', 'u.username', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 					<?php if ($this->enableemailaddress == 1) {?>
 					<th class="title"><?php echo JText::_('COM_JEM_EMAIL'); ?></th>
@@ -104,7 +104,7 @@ $detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this
 				<?php foreach ($this->rows as $i => $row) : ?>
 				<tr class="row<?php echo $i % 2; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset($i); ?></td>
-				<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
+				<!--td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td-->
 				<td><?php echo $row->username; ?></td>
 				<?php if ($this->enableemailaddress == 1) {?>
 				<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
@@ -120,7 +120,7 @@ $detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this
 				</td>
 				<?php endif;?>
 				<td class="center"><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendees.attendeeremove')"><?php echo
-						JHtml::_('image','com_jem/publish_r.png',JText::_('COM_JEM_ATTENDEES_DELETE'),NULL,true); ?></a></td>
+						JHtml::_('image','com_jem/publish_r.png', JText::_('COM_JEM_ATTENDEES_DELETE'), array('title' => JText::_('COM_JEM_ATTENDEES_DELETE')), true); ?></a></td>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>

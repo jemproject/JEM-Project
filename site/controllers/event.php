@@ -243,13 +243,20 @@ class JEMControllerEvent extends JControllerForm
 	}
 
 
+	/**
+	 * Function that allows child controller access to model data
+	 * after the data has been saved.
+	 * Here used to trigger the jem plugins, mainly the mailer.
+	 *
+	 * @param   JModel(Legacy)  $model      The data model object.
+	 * @param   array           $validData  The validated data.
+	 *
+	 * @return  void
+	 */
 	protected function postSaveHook($model, $validData = array())
 	{
 		$task = $this->getTask();
 		if ($task == 'save') {
-			// doesn't work on new events - get values from model instead
-			//$isNew 	= ($validData['id']) ? false : true;
-			//$id 	= $validData['id'];
 			$isNew     = $model->getState('editevent.new');
 			$this->_id = $model->getState('editevent.id');
 
@@ -260,7 +267,7 @@ class JEMControllerEvent extends JControllerForm
 
 			// but show warning if mailer is disabled
 			if (!JPluginHelper::isEnabled('jem', 'mailer')) {
-				JError::raiseNotice(100,JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'));
+				JError::raiseNotice(100, JText::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'));
 			}
 		}
 	}

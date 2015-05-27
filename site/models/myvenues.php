@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.4
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -58,6 +58,13 @@ class JEMModelMyvenues extends JModelLegacy
 	function & getVenues()
 	{
 		$pop = JFactory::getApplication()->input->getBool('pop', false);
+		$user = JFactory::getUser();
+		$userId = $user->get('id');
+
+		if (empty($userId)) {
+			$this->_venues = array();
+			return array();
+		}
 
 		// Lets load the content if it doesn't already exist
 		if ( empty($this->_venues)) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.4
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -77,6 +77,10 @@ class JemModelVenue extends JemModelEventslist
 		$listOrder = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
 		$this->setState('filter.filter_direction', $listOrder);
 
+		# show open date events
+		# (there is no menu item option yet so show all events)
+		$this->setState('filter.opendates', 1);
+
 		if ($orderCol == 'a.dates') {
 			$orderby = array('a.dates ' . $listOrder, 'a.times ' . $listOrder);
 		} else {
@@ -117,10 +121,6 @@ class JemModelVenue extends JemModelEventslist
 	 */
 	function getListQuery()
 	{
-		$params  = $this->state->params;
-		$jinput  = JFactory::getApplication()->input;
-		$task    = $jinput->get('task','','cmd');
-
 		// Create a new query object.
 		$query = parent::getListQuery();
 
@@ -177,7 +177,7 @@ class JemModelVenue extends JemModelEventslist
 
 		$query->select('id, venue, published, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
 				' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, '.
-				' created, locdescription, country, map, latitude, longitude, postalCode, checked_out AS vChecked_out, checked_out_time AS vChecked_out_time, '.
+				' created, created_by, locdescription, country, map, latitude, longitude, postalCode, checked_out AS vChecked_out, checked_out_time AS vChecked_out_time, '.
 				' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug');
 		$query->from($db->quoteName('#__jem_venues'));
 		$query->where('id = '.(int)$this->_id);
