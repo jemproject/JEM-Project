@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.4
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -77,9 +77,16 @@ class JEMModelMyevents extends JModelLegacy
 	function & getEvents()
 	{
 		$pop = JFactory::getApplication()->input->getBool('pop', false);
+		$user = JFactory::getUser();
+		$userId = $user->get('id');
+
+		if (empty($userId)) {
+			$this->_events = array();
+			return array();
+		}
 
 		// Lets load the content if it doesn't already exist
-		if ( empty($this->_events)) {
+		if (empty($this->_events)) {
 			$query = $this->_buildQueryEvents();
 			$pagination = $this->getEventsPagination();
 
@@ -121,7 +128,7 @@ class JEMModelMyevents extends JModelLegacy
 		$user 	= JFactory::getUser();
 		$userid = (int) $user->get('id');
 
-		if (count($cid)) {
+		if (is_array($cid) && count($cid)) {
 			$cids = implode(',', $cid);
 
 			$query = 'UPDATE #__jem_events'
@@ -186,8 +193,8 @@ class JEMModelMyevents extends JModelLegacy
 		$orderby = $this->_buildOrderBy();
 
 		//Get Events from Database
-		$query = 'SELECT DISTINCT a.id as eventid, a.id, a.dates, a.enddates, a.published, a.times, a.endtimes, a.title, a.created, a.locid,a.registra, a.maxplaces, a.waitinglist,'
-				. ' a.recurrence_type, a.recurrence_first_id,'
+		$query = 'SELECT DISTINCT a.id as eventid, a.id, a.dates, a.enddates, a.published, a.times, a.endtimes, a.title, a.created, a.created_by, a.locid,a.registra, a.maxplaces, a.waitinglist,'
+				. ' a.recurrence_type, a.recurrence_first_id, a.attribs,'
 				. ' l.venue, l.city, l.state, l.url,'
 				. ' c.catname, c.id AS catid,'
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'

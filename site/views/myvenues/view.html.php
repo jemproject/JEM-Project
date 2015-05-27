@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.4
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -30,11 +30,12 @@ class JemViewMyvenues extends JViewLegacy
 		$params 		= $app->getParams();
 		$uri 			= JFactory::getURI();
 		$user			= JFactory::getUser();
+		$userId			= $user->get('id');
 		$pathway 		= $app->getPathWay();
 //		$db  			= JFactory::getDBO();
 
 		//redirect if not logged in
-		if (!$user->get('id')) {
+		if (!$userId) {
 			$app->enqueueMessage(JText::_('COM_JEM_NEED_LOGGED_IN'), 'error');
 			return false;
 		}
@@ -45,6 +46,7 @@ class JemViewMyvenues extends JViewLegacy
 
 		// Load css
 		JemHelper::loadCss('jem');
+		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 
 		$venues = $this->get('Venues');
@@ -56,6 +58,7 @@ class JemViewMyvenues extends JViewLegacy
 		} else {
 			$novenues = 0;
 		}
+
 		// get variables
 		$filter_order		= $app->getUserStateFromRequest('com_jem.myvenues.filter_order', 'filter_order', 	'l.venue', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myvenues.filter_order_Dir', 'filter_order_Dir',	'', 'word');
@@ -103,6 +106,7 @@ class JemViewMyvenues extends JViewLegacy
 		//Set Page title
 		$pagetitle = JText::_('COM_JEM_MY_VENUES');
 		$pageheading = $pagetitle;
+		$pageclass_sfx = '';
 
 		// Check to see which parameters should take priority
 		if ($useMenuItemParams) {
@@ -110,8 +114,8 @@ class JemViewMyvenues extends JViewLegacy
 			$params->def('page_title', $menuitem->title);
 			$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_VENUES'));
 			$pageheading = $params->get('page_heading', $pagetitle);
+			$pageclass_sfx = $params->get('pageclass_sfx');
 		}
-		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		$params->set('page_heading', $pageheading);
 

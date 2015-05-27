@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.3
+ * @version 2.1.4
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -88,9 +88,7 @@ class JEMModelEditevent extends JEMModelEvent
 		$registry = new JRegistry();
 		$registry->loadString($value->attribs);
 
-		$globalsettings = JEMHelper::globalattribs();
-		$globalregistry = new JRegistry();
-		$globalregistry->loadString($globalsettings);
+		$globalregistry = JEMHelper::globalattribs();
 
 		$value->params = clone $globalregistry;
 		$value->params->merge($registry);
