@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.4
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -86,7 +86,7 @@ defined('_JEXEC') or die;
 			<?php
 			for($cr = 1; $cr <= 10; $cr++) {
 				$currentRow = $this->venue->{'custom'.$cr};
-				if(substr($currentRow, 0, 7) == "http://") {
+				if (preg_match('%^http(s)?://%', $currentRow)) {
 					$currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
 	 			}
 				if($currentRow) {
@@ -110,19 +110,19 @@ defined('_JEXEC') or die;
 		}
 		?>
 	<?php endif; ?>
-	
-	<?php if ($this->settings->get('global_show_mapserv')== 3) : ?>			
+
+	<?php if ($this->settings->get('global_show_mapserv')== 3) : ?>
 			<input type="hidden" id="latitude" value="<?php echo $this->venue->latitude;?>">
 			<input type="hidden" id="longitude" value="<?php echo $this->venue->longitude;?>">
-			
+
 			<input type="hidden" id="venue" value="<?php echo $this->venue->venue;?>">
 			<input type="hidden" id="street" value="<?php echo $this->venue->street;?>">
 			<input type="hidden" id="city" value="<?php echo $this->venue->city;?>">
 			<input type="hidden" id="state" value="<?php echo $this->venue->state;?>">
 			<input type="hidden" id="postalCode" value="<?php echo $this->venue->postalCode;?>">
-		<?php echo JemOutput::mapicon($this->venue,null,$this->settings); ?>			
+		<?php echo JemOutput::mapicon($this->venue,null,$this->settings); ?>
 	<?php endif; ?>
-	
+
 
 	<?php if ($this->settings->get('global_show_locdescription',1) && $this->venuedescription != '' &&
 	          $this->venuedescription != '<br />') : ?>
