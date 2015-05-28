@@ -23,24 +23,18 @@ $selectuser_link = JRoute::_('index.php?option=com_jem&task=attendee.selectuser&
 		window.parent.SqueezeBox.close();
 	}
 
-
-	function submitbutton(pressbutton)
+	Joomla.submitbutton = function(task)
 	{
-		var form = document.getElementById('adminForm');
-		var validator = document.formvalidator;
-
-		if (pressbutton == 'cancel') {
-			submitform(pressbutton);
-			return;
+		if (task == 'attendee.cancel' || document.formvalidator.isValid(document.id('adminForm'))) {
+			if (task == 'attendee.cancel' || document.getElementById('adminForm').uid.value != 0) {
+				Joomla.submitform(task, document.getElementById('adminForm'));
+			} else {
+				alert("<?php echo JText::_('COM_JEM_SELECT_AN_USER', true); ?>");
+				return false;
+			}
+		} else {
+			alert('<?php echo $this->escape(JText::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>');
 		}
-
-		if (validator.validate(form.uid) === false) {
-   			alert("<?php echo JText::_('COM_JEM_SELECT_AN_USER', true); ?>");
-   			return false;
-   		} else {
-			submitform(pressbutton);
-   		}
-
 	}
 </script>
 
