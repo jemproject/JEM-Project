@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -73,7 +73,7 @@ defined('_JEXEC') or die;
 		?>
 	</ul>
 	<?php
-	if ((count($missedTables) == 2) && empty(array_diff($missedTables, array('eventlist_attachments', 'eventlist_cats_event_relations')))) {
+	if ((count($missedTables) == 2) && !count(array_diff($missedTables, array('eventlist_attachments', 'eventlist_cats_event_relations')))) {
 		echo "<p>".JText::_('COM_JEM_IMPORT_EL_MISSING_TABLES_V11')."</p>";
 	}
 	?>
