@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -29,7 +29,7 @@ class JEMAttachment extends JObject
 	{
 		require_once JPATH_SITE.'/components/com_jem/classes/image.class.php';
 
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		$jemsettings = JEMHelper::config();
 
 		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$object;
@@ -135,7 +135,7 @@ class JEMAttachment extends JObject
 	{
 		$jemsettings = JEMHelper::config();
 
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
@@ -179,7 +179,7 @@ class JEMAttachment extends JObject
 	{
 		$jemsettings = JEMHelper::config();
 
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 

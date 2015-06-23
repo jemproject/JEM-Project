@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,7 +15,7 @@ $params		= $this->item->params;
 
 $images 	= json_decode($this->item->datimage);
 $canEdit	= $this->item->params->get('access-edit');
-$user		= JFactory::getUser();
+$user		= JemFactory::getUser();
 $attribs 	= json_decode($this->item->attribs);
 
 JHtml::_('behavior.modal', 'a.flyermodal');

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -45,6 +45,8 @@ class JemModelVenue extends JemModelEventslist
 		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 		$params      = $app->getParams();
 		$task        = $jinput->get('task','','cmd');
+		$user        = JemFactory::getUser();
+		$userId      = $user->get('id');
 
 		// List state information
 
@@ -169,7 +171,7 @@ class JemModelVenue extends JemModelEventslist
 	 */
 	function getVenue()
 	{
-		$user  = JFactory::getUser();
+		$user  = JemFactory::getUser();
 
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);

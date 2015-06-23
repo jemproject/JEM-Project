@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -42,7 +42,7 @@ class JEMControllerEvent extends JControllerForm
 	protected function allowAdd($data = array())
 	{
 		// Initialise variables.
-		$user		= JFactory::getUser();
+		$user		= JemFactory::getUser();
 		$categoryId	= JArrayHelper::getValue($data, 'catid', JFactory::getApplication()->input->getInt('catid', 0), 'int');
 		$allow		= null;
 
@@ -52,8 +52,8 @@ class JEMControllerEvent extends JControllerForm
 		}
 
 		$jemsettings	= JEMHelper::config();
-		$maintainer		= JEMUser::ismaintainer('add');
-		$genaccess		= JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+		$maintainer		= $user->ismaintainer('add');
+		$genaccess		= $user->validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
 		if ($maintainer || $genaccess) {
 			return true;
@@ -66,7 +66,6 @@ class JEMControllerEvent extends JControllerForm
 		else {
 			return $allow;
 		}
-
 	}
 
 	/**
@@ -81,10 +80,10 @@ class JEMControllerEvent extends JControllerForm
 	protected function allowEdit($data = array(), $key = 'id')
 	{
 		// Initialise variables.
-		$recordId	= (int) isset($data[$key]) ? $data[$key] : 0;
-		$user		= JFactory::getUser();
-		$userId		= $user->get('id');
-		$asset		= 'com_jem.event.'.$recordId;
+		$recordId = (int) isset($data[$key]) ? $data[$key] : 0;
+		$user     = JemFactory::getUser();
+		$userId   = $user->get('id');
+		$asset    = 'com_jem.event.'.$recordId;
 
 		// Check general edit permission first.
 		if ($user->authorise('core.edit', $asset)) {
@@ -115,8 +114,8 @@ class JEMControllerEvent extends JControllerForm
 
 		$record			= $this->getModel()->getItem($recordId);
 		$jemsettings 	= JEMHelper::config();
-		$editaccess		= JEMUser::editaccess($jemsettings->eventowner, $record->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
-		$maintainer 	= JEMUser::ismaintainer('edit',$record->id);
+		$editaccess		= $user->editaccess($jemsettings->eventowner, $record->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+		$maintainer 	= $user->ismaintainer('edit',$record->id);
 
 		if ($maintainer || $editaccess)
 		{

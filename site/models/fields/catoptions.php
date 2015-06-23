@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     2.1.3
+ * @version     2.1.5
  * @package     JEM
  * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
@@ -73,61 +73,23 @@ class JFormFieldCatOptions extends JFormField
 	function getCategories($id)
 	{
 		$db          = JFactory::getDbo();
-		$jemsettings = JEMHelper::config();
-		$user        = JFactory::getUser();
+		$user        = JemFactory::getUser();
 		$userid      = (int) $user->get('id');
-		$glob_author = $user->authorise('core.create', 'com_jem');
-		$jem_author  = JEMUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
-		// Support Joomla access levels instead of single group id
-		$levels = $user->getAuthorisedViewLevels();
-
-		// on frontend access levels have ALWAYS to be resspected, also for superusers
-		$where = ' WHERE c.published = 1 AND c.access IN (' . implode(',', $levels) . ')';
-
-		// administrators, superusers, and global authors have access to all categories, other users maybe limited
-		if (!$glob_author) {
-			//get the ids of the categories the user maintaines
+		if (empty($id)) {
+			// for new events only show useable categories
+			$mitems = $user->getJemCategories('add', 'event');
+		} else {
 			$query = $db->getQuery(true);
-			$query = 'SELECT gr.id'
-					. ' FROM #__jem_groups AS gr'
-					. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
-					. ' WHERE g.member = ' . $userid
-					. ' AND ' .$db->quoteName('gr.addevent') . ' = 1 '
-					. ' AND g.member NOT LIKE 0';
+			$query = 'SELECT COUNT(*)'
+				. ' FROM #__jem_events AS e'
+				. ' WHERE e.id = ' . $db->quote($id)
+				. '   AND e.created_by = ' . $db->quote($userid);
 			$db->setQuery($query);
+			$owner = $db->loadResult();
 
-			$groupids = $db->loadColumn();
-
-			// Check if user is allowed to submit events in general (by JEM settings, not ACL!),
-			//  if yes allow to submit into categories which aren't assigned to a group.
-			// Otherwise restrict submission into maintained categories only
-			if ($jem_author) {
-				$groupids[] = 0;
-			}
-
-			if (count($groupids)) {
-					$where .= ' AND c.groupid IN (' . implode(',', $groupids) . ')';
-			} else {
-					$where .= ' AND 0'; // NO ACCESS!
-			}
-		}
-
-		//get the maintained categories and the categories whithout any group
-		//or just get all if somebody have edit rights
-		$query = $db->getQuery(true);
-		$query = 'SELECT c.*'
-				. ' FROM #__jem_categories AS c'
-				. $where
-				. ' ORDER BY c.lft';
-		$db->setQuery($query);
-
-		$mitems = $db->loadObjectList();
-
-		// Check for a database error.
-		if ($db->getErrorNum())
-		{
-			JError::raiseNotice(500, $db->getErrorMsg());
+			// on edit show all categories user is allowed to see, disable non-useable categories
+			$mitems = $user->getJemCategories(array('add', 'edit'), 'event', array('use_disable' => true, 'owner' => $owner));
 		}
 
 		if (!$mitems)

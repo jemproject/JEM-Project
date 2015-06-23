@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.3
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -86,7 +86,7 @@ class JemModelEditvenue extends JemModelVenue
 		//$value->params->merge($registry);
 
 		// Compute selected asset permissions.
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		$userId = $user->get('id');
 		$asset = 'com_jem.venue.' . $value->id;
 

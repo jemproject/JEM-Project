@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -65,7 +65,7 @@ class JEMViewAttendee extends JViewLegacy {
 
 		//get vars
 		$cid        = JFactory::getApplication()->input->get('cid', array(), 'array');
-		$user       = JFactory::getUser();
+		$user       = JemFactory::getUser();
 		$checkedOut = false; // don't know, table hasn't such a field
 		$canDo      = JemHelperBackend::getActions();
 

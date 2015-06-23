@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -27,7 +27,7 @@ class JemViewEditvenue extends JViewLegacy
 		$jemsettings = JemHelper::config();
 		$settings    = JemHelper::globalattribs();
 		$app         = JFactory::getApplication();
-		$user        = JFactory::getUser();
+		$user        = JemFactory::getUser();
 		$document    = JFactory::getDocument();
 		$model       = $this->getModel();
 		$menu        = $app->getMenu();
@@ -63,10 +63,10 @@ class JemViewEditvenue extends JViewLegacy
 			return false;
 		}
 
-		if (empty($this->item->id)) {
+		if (empty($item->id)) {
 			// Check if the user has access to the form
-			$maintainer = JemUser::venuegroups('add');
-			$delloclink = JemUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
+			$maintainer = $user->venuegroups('add');
+			$delloclink = $user->validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
 
 			if ($maintainer || $delloclink) {
 				$dellink = true;
@@ -77,8 +77,8 @@ class JemViewEditvenue extends JViewLegacy
 			$authorised = $user->authorise('core.create','com_jem') || $dellink;
 		} else {
 			// Check if user can edit
-			$maintainer = JemUser::venuegroups('edit');
-			$genaccess  = JemUser::editaccess($jemsettings->venueowner, $this->item->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
+			$maintainer = $user->venuegroups('edit');
+			$genaccess  = $user->editaccess($jemsettings->venueowner, $this->item->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 
 			if ($maintainer || $genaccess) {
 				$edit = true;

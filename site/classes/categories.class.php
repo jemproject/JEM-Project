@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -75,6 +75,8 @@ class JEMCategories
 
 	/**
 	 * Instance
+	 *
+	 * @todo: This implementation is wrong!
 	 */
 	public static function getInstance($cid,$options=false)
 	{
@@ -136,7 +138,7 @@ class JEMCategories
 	{
 		$db = JFactory::getDbo();
 		$app = JFactory::getApplication();
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		$this->_checkedCategories[$id] = true;
 
 		$query = $db->getQuery(true);
@@ -348,7 +350,7 @@ class JEMCategories
 
 		$id = (!empty($id)) ? $id : (int) $this->getState('event.id');
 
-		$user 			= JFactory::getUser();
+		$user 			= JemFactory::getUser();
 		$userid			= (int) $user->get('id');
 		$levels 		= $user->getAuthorisedViewLevels();
 		$app 			= JFactory::getApplication();
@@ -473,12 +475,12 @@ class JEMCategories
 	 */
 	static function buildParentCats($cid)
 	{
-		$db = JFactory::getDBO();
+		$db         = JFactory::getDBO();
 		$parentcats = array();
-		$user 			= JFactory::getUser();
-		$userid			= (int) $user->get('id');
-		$levels 		= $user->getAuthorisedViewLevels();
-		$app 			= JFactory::getApplication();
+		$user       = JemFactory::getUser();
+		$userid     = (int) $user->get('id');
+		$levels     = $user->getAuthorisedViewLevels();
+		$app        = JFactory::getApplication();
 
 		// start with parent
 		$query = 'SELECT parent_id FROM #__jem_categories WHERE id = ' . (int) $cid;
@@ -700,7 +702,7 @@ class JEMCategories
 		$catlist = array();
 
 		foreach ($list as $item) {
-			$catlist[] = JHtml::_('select.option', $item->id, $item->treename);
+			$catlist[] = JHtml::_('select.option', $item->id, $item->treename, isset($item->disable) ? array('disable' => $item->disable) : array());
 		}
 
 		return $catlist;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.1
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -188,7 +188,7 @@ class JemModelEventelement extends JModelLegacy
 	protected function _buildContentWhere()
 	{
 		$app    = JFactory::getApplication();
-		$user   = JFactory::getUser();
+		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 		$itemid = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 

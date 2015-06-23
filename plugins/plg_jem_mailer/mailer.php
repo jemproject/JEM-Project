@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.5
  * @package JEM
  * @subpackage JEM Mailer Plugin
  * @copyright (C) 2013-2015 joomlaeventmanager.net
@@ -24,8 +24,9 @@ jimport('joomla.event.plugin');
 jimport('joomla.utilities.mail');
 
 
-include_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
-include_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
+require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
+require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
+require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
 class plgJEMMailer extends JPlugin {
 
@@ -73,8 +74,8 @@ class plgJEMMailer extends JPlugin {
 			return true;
 		}
 
-		$user 	= JFactory::getUser();
-		$userid = $user->get('id');
+		$user     = JemFactory::getUser();
+		$userid   = $user->get('id');
 		$username = empty($this->_UseLoginName) ? $user->name : $user->username;
 
 		// get data
@@ -100,7 +101,7 @@ class plgJEMMailer extends JPlugin {
 		// check if currrent user hadles in behalf of
 		$attendeeid = $event->uid;
 		if ($attendeeid != $userid) {
-			$attendee = JFactory::getUser($attendeeid);
+			$attendee = JemFactory::getUser($attendeeid);
 			$attendeename = empty($this->_UseLoginName) ? $attendee->name : $attendee->username;
 		} else {
 			$attendee = $user;
@@ -224,7 +225,7 @@ class plgJEMMailer extends JPlugin {
 		if (is_null($details = $db->loadObject())) return false;
 
 
-		$user 	= JFactory::getUser($details->uid);
+		$user     = JemFactory::getUser($details->uid);
 		$username = empty($this->_UseLoginName) ? $user->name : $user->username;
 
 		// create link to event
@@ -294,8 +295,8 @@ class plgJEMMailer extends JPlugin {
 			return true;
 		}
 
-		$user 	= JFactory::getUser();
-		$userid = $user->get('id');
+		$user     = JemFactory::getUser();
+		$userid   = $user->get('id');
 		$username = empty($this->_UseLoginName) ? $user->name : $user->username;
 
 		// get data
@@ -320,7 +321,7 @@ class plgJEMMailer extends JPlugin {
 		// check if currrent user hadles in behalf of
 		$attendeeid = (!empty($registration->uid) ? $registration->uid : $userid);
 		if ($attendeeid != $userid) {
-			$attendee = JFactory::getUser($attendeeid);
+			$attendee = JemFactory::getUser($attendeeid);
 			$attendeename = empty($this->_UseLoginName) ? $attendee->name : $attendee->username;
 		} else {
 			$attendee = $user;
@@ -394,7 +395,7 @@ class plgJEMMailer extends JPlugin {
 		// skip if processing not needed
 		if (!array_filter($send_to)) return true;
 
-		$user 	= JFactory::getUser();
+		$user     = JemFactory::getUser();
 		$username = empty($this->_UseLoginName) ? $user->name : $user->username;
 
 		// get data
@@ -694,7 +695,7 @@ class plgJEMMailer extends JPlugin {
 		if (!array_filter($send_to)) return true;
 
 
-		$user 	= JFactory::getUser();
+		$user     = JemFactory::getUser();
 		$username = empty($this->_UseLoginName) ? $user->name : $user->username;
 
 		// get data

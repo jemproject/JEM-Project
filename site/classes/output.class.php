@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -198,7 +198,7 @@ class JEMOutput
 			}
 
 			// Initialise variables.
-			$user   = JFactory::getUser();
+			$user   = JemFactory::getUser();
 			$app    = JFactory::getApplication();
 			$userId = $user->get('id');
 			$uri    = JFactory::getURI();

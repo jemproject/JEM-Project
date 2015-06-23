@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -37,7 +37,7 @@ class JemViewEditevent extends JViewLegacy
 		$jemsettings = JemHelper::config();
 		$settings    = JemHelper::globalattribs();
 		$app         = JFactory::getApplication();
-		$user        = JFactory::getUser();
+		$user        = JemFactory::getUser();
 		$userId      = $user->get('id');
 		$document    = JFactory::getDocument();
 		$model       = $this->getModel();
@@ -72,15 +72,15 @@ class JemViewEditevent extends JViewLegacy
 
 		if (empty($this->item->id)) {
 			// Check if the user has access to the form
-			$maintainer = JemUser::ismaintainer('add');
-			$genaccess  = JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
+			$maintainer = $user->ismaintainer('add');
+			$genaccess  = $user->validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 			$dellink = ($maintainer || $genaccess);
 			$authorised = $user->authorise('core.create','com_jem') || (count($user->getAuthorisedCategories('com_jem', 'core.create')) || $dellink);
 		} else {
 			// Check if user can edit
-			$maintainer = JemUser::ismaintainer('edit',$this->item->id);
-			$genaccess  = JemUser::editaccess($jemsettings->eventowner, $this->item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+			$maintainer = $user->ismaintainer('edit',$this->item->id);
+			$genaccess  = $user->editaccess($jemsettings->eventowner, $this->item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
 
 			$allowedtoeditevent = ($maintainer || $genaccess);
 			$authorised = $this->item->params->get('access-edit') || $allowedtoeditevent ;

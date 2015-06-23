@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -24,7 +24,7 @@ class JemViewVenues extends JViewLegacy
 		$document		= JFactory::getDocument();
 		$jemsettings	= JemHelper::config();
 		$settings 		= JemHelper::globalattribs();
-		$user			= JFactory::getUser();
+		$user			= JemFactory::getUser();
 		$print			= $app->input->getBool('print', false);
 
 		//get menu information
@@ -78,8 +78,8 @@ class JemViewVenues extends JViewLegacy
 		$document->setMetadata('keywords', $pagetitle);
 
 		// Check if the user has access to the add-eventform
-		$maintainer = JemUser::ismaintainer('add');
-		$genaccess 	= JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+		$maintainer = $user->ismaintainer('add');
+		$genaccess  = $user->validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
 		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
 			$addeventlink = 1;
@@ -88,8 +88,8 @@ class JemViewVenues extends JViewLegacy
 		}
 
 		//Check if the user has access to the add-venueform
-		$maintainer2	= JemUser::venuegroups('add');
-		$genaccess2		= JemUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
+		$maintainer2 = $user->venuegroups('add');
+		$genaccess2  = $user->validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
 		if ($maintainer2 || $genaccess2) {
 			$addvenuelink = 1;
 		} else {

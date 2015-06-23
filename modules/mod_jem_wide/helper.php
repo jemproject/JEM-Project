@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @subpackage JEM Wide Module
  * @copyright (C) 2013-2015 joomlaeventmanager.net
@@ -27,7 +27,7 @@ abstract class ModJemWideHelper
 		mb_internal_encoding('UTF-8');
 
 		$db     = JFactory::getDBO();
-		$user   = JFactory::getUser();
+		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 
 		# Retrieve Eventslist model for the data

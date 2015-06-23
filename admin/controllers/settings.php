@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -35,7 +35,7 @@ class JEMControllerSettings extends JControllerLegacy
 	 */
 	protected function allowEdit()
 	{
-		return JFactory::getUser()->authorise('core.edit', 'com_jem');
+		return JemFactory::getUser()->authorise('core.edit', 'com_jem');
 	}
 
 	/**
@@ -169,7 +169,7 @@ class JEMControllerSettings extends JControllerLegacy
 	public function cancel()
 	{
 		// Check if the user is authorized to do this.
-		if (!JFactory::getUser()->authorise('core.admin', 'com_jem')) {
+		if (!JemFactory::getUser()->authorise('core.admin', 'com_jem')) {
 			JFactory::getApplication()->redirect('index.php', JText::_('JERROR_ALERTNOAUTHOR'));
 			return;
 		}

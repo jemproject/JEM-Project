@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -46,7 +46,7 @@ class JemModelEvent extends JModelItem
 		$this->setState('params', $params);
 
 		// TODO: Tune these values based on other permissions.
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		if ((!$user->authorise('core.edit.state', 'com_jem')) && (!$user->authorise('core.edit', 'com_jem'))) {
 			$this->setState('filter.published', 1);
 			$this->setState('filter.archived', 2);
@@ -65,6 +65,7 @@ class JemModelEvent extends JModelItem
 	{
 		// Initialise variables.
 		$pk = (!empty($pk)) ? $pk : (int) $this->getState('event.id');
+		$user = JemFactory::getUser();
 
 		if ($this->_item === null) {
 			$this->_item = array();
@@ -183,8 +184,7 @@ class JemModelEvent extends JModelItem
 				$data->metadata = $registry;
 
 				// Compute selected asset permissions.
-				$user = JFactory::getUser();
-				$groups = $user->getAuthorisedViewLevels();
+				$viewLevels = $user->getAuthorisedViewLevels();
 
 				// Technically guest could edit an event, but lets not check
 				// that to improve performance a little.
@@ -214,7 +214,7 @@ class JemModelEvent extends JModelItem
 
 				if (!empty($category_viewable)) {
 					// Event's access value must also be checked
-					$data->params->set('access-view', in_array($data->access, $groups));
+					$data->params->set('access-view', in_array($data->access, $viewLevels));
 				}
 
 				$this->_item[$pk] = $data;
@@ -235,7 +235,6 @@ class JemModelEvent extends JModelItem
 		}
 
 		// Define Attachments
-		$user = JFactory::getUser();
 		$this->_item[$pk]->attachments = JEMAttachment::getAttachments('event' . $this->_item[$pk]->did);
 
 		// Define Venue-Attachments
@@ -297,7 +296,7 @@ class JemModelEvent extends JModelItem
 
 		$id = (!empty($id)) ? $id : (int) $this->getState('event.id');
 
-		$user 			= JFactory::getUser();
+		$user 			= JemFactory::getUser();
 		$userid			= (int) $user->get('id');
 		$levels 		= $user->getAuthorisedViewLevels();
 		$app 			= JFactory::getApplication();
@@ -317,7 +316,7 @@ class JemModelEvent extends JModelItem
 		$case_when_c .= ' ELSE ';
 		$case_when_c .= $id_c.' END as catslug';
 
-		$query->select(array('DISTINCT c.id','c.catname','c.access','c.checked_out AS cchecked_out','c.color',$case_when_c));
+		$query->select(array('DISTINCT c.id','c.catname','c.access','c.checked_out AS cchecked_out','c.color',$case_when_c,'c.groupid'));
 		$query->from('#__jem_categories as c');
 		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
 
@@ -436,7 +435,7 @@ class JemModelEvent extends JModelItem
 	function getUserIsRegistered()
 	{
 		// Initialize variables
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		$userid = (int) $user->get('id', 0);
 
 		// usercheck
@@ -464,7 +463,7 @@ class JemModelEvent extends JModelItem
 
 		// avatars should be displayed
 		$settings = JEMHelper::globalattribs();
-		$user     = JFactory::getUser();
+		$user     = JemFactory::getUser();
 
 		switch ($settings->get('event_show_attendeenames', 2)) {
 			case 0: // show to none
@@ -527,7 +526,7 @@ class JemModelEvent extends JModelItem
 	 */
 	function userregister()
 	{
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		$jemsettings = JEMHelper::config();
 
 		$eventId = (int) $this->_registerid;
@@ -537,7 +536,7 @@ class JemModelEvent extends JModelItem
 
 		// Must be logged in
 		if ($uid < 1) {
-			JError::raiseError(403, JText::_('COM_JEM_ALERTNOTAUTH'));
+			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
 			return;
 		}
 
@@ -590,14 +589,14 @@ class JemModelEvent extends JModelItem
 	 */
 	function delreguser()
 	{
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 
 		$event  = (int)$this->_registerid;
 		$userid = (int)$user->get('id');
 
 		// Must be logged in
 		if ($userid < 1) {
-			JError::raiseError(403, JText::_('COM_JEM_ALERTNOTAUTH'));
+			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
 			return;
 		}
 

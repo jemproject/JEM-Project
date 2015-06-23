@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -77,7 +77,7 @@ class JEMModelMyevents extends JModelLegacy
 	function & getEvents()
 	{
 		$pop = JFactory::getApplication()->input->getBool('pop', false);
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		$userId = $user->get('id');
 
 		if (empty($userId)) {
@@ -99,7 +99,6 @@ class JEMModelMyevents extends JModelLegacy
 		}
 
 		if($this->_events) {
-			$this->_events = JEMHelper::getAttendeesNumbers($this->_events);
 
 			$count = count($this->_events);
 			for($i = 0; $i < $count; $i++) {
@@ -111,6 +110,8 @@ class JEMModelMyevents extends JModelLegacy
 					unset($this->_events[$i]);
 				}
 			}
+
+			JEMHelper::getAttendeesNumbers($this->_events); // does directly edit events
 		}
 
 		return $this->_events;
@@ -125,7 +126,7 @@ class JEMModelMyevents extends JModelLegacy
 	 */
 	function publish($cid = array(), $publish = 1)
 	{
-		$user 	= JFactory::getUser();
+		$user 	= JemFactory::getUser();
 		$userid = (int) $user->get('id');
 
 		if (is_array($cid) && count($cid)) {
@@ -248,7 +249,7 @@ class JEMModelMyevents extends JModelLegacy
 		$task     = $app->input->get('task', '');
 		$params   = $app->getParams();
 		$settings = JEMHelper::globalattribs();
-		$user     = JFactory::getUser();
+		$user     = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels   = $user->getAuthorisedViewLevels();
 
@@ -306,11 +307,11 @@ class JEMModelMyevents extends JModelLegacy
 
 	function getCategories($id)
 	{
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
-		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
+		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out, c.groupid,'
 				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
 				. ' FROM #__jem_categories AS c'
 				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'

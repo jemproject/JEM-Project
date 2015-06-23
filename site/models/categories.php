@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.1
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -227,7 +227,7 @@ class JEMModelCategories extends JModelLegacy
 	 */
 	protected function _buildDataQuery($id)
 	{
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
@@ -263,7 +263,7 @@ class JEMModelCategories extends JModelLegacy
 
 	function getCategories($id)
 	{
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
@@ -316,7 +316,7 @@ class JEMModelCategories extends JModelLegacy
 			$parent_id = $this->_id;
 		}
 
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
@@ -380,7 +380,7 @@ class JEMModelCategories extends JModelLegacy
 	 */
 	protected function _buildQueryTotal()
 	{
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 

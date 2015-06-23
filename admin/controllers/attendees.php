@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -197,7 +197,7 @@ class JEMControllerAttendees extends JControllerLegacy
 		/*
 		$model 	= $this->getModel('attendee');
 
-		$user	= JFactory::getUser();
+		$user	= JemFactory::getUser();
 
 		// Error if checkedout by another administrator
 		if ($model->isCheckedOut($user->get('id'))) {

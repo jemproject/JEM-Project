@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -115,11 +115,12 @@ class JemTableVenue extends JTable
 	 */
 	public function store($updateNulls = false)
 	{
-		$date 			= JFactory::getDate();
-		$user 			= JFactory::getUser();
-		$app 			= JFactory::getApplication();
-		$jinput 		= JFactory::getApplication()->input;
-		$jemsettings 	= JEMHelper::config();
+		$date        = JFactory::getDate();
+		$user        = JemFactory::getUser();
+		$userid      = $user->get('id');
+		$app         = JFactory::getApplication();
+		$jinput      = $app->input;
+		$jemsettings = JEMHelper::config();
 
 		// Check if we're in the front or back
 		if ($app->isAdmin())
@@ -131,7 +132,7 @@ class JemTableVenue extends JTable
 		if ($this->id) {
 			// Existing event
 			$this->modified = $date->toSql();
-			$this->modified_by = $user->get('id');
+			$this->modified_by = $userid;
 		}
 		else
 		{
@@ -140,7 +141,7 @@ class JemTableVenue extends JTable
 				$this->created = $date->toSql();
 			}
 			if (empty($this->created_by)){
-				$this->created_by = $user->get('id');
+				$this->created_by = $userid;
 			}
 		}
 
@@ -188,8 +189,8 @@ class JemTableVenue extends JTable
 
 		if (!$backend) {
 			/*	check if the user has the required rank for autopublish	*/
-			$autopublgroups = JEMUser::venuegroups('publish');
-			$autopublloc 	= JEMUser::validate_user($jemsettings->locpubrec, $jemsettings->autopublocate);
+			$autopublgroups = $user->venuegroups('publish');
+			$autopublloc 	= $user->validate_user($jemsettings->locpubrec, $jemsettings->autopublocate);
 			if (!($autopublloc || $autopublgroups || $user->authorise('core.edit','com_jem'))) {
 				$this->published = 0;
 			} else {

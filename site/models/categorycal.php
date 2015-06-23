@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -340,7 +340,7 @@ class JEMModelCategoryCal extends JModelLegacy
 		$params      = $app->getParams();
 		$jemsettings = JEMHelper::config();
 
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
@@ -421,7 +421,7 @@ class JEMModelCategoryCal extends JModelLegacy
 	 */
 	protected function _buildChildsQuery()
 	{
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
@@ -469,7 +469,7 @@ class JEMModelCategoryCal extends JModelLegacy
 	function getCategory()
 	{
 		//initialize some vars
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
@@ -511,7 +511,7 @@ class JEMModelCategoryCal extends JModelLegacy
 	 */
 	function getCategories($id)
 	{
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -73,7 +73,7 @@ abstract class JEMHelperRoute
 	{
 		$settings 		= JEMHelper::globalattribs();
 		$defaultItemid 	= $settings->get('default_Itemid');
-		
+
 		$needles = array(
 			'category' => array((int) $id)
 		);
@@ -96,13 +96,13 @@ abstract class JEMHelperRoute
 		if ($item = self::_findItem($needles)) {
 			$link .= '&Itemid='.$item;
 		}
-		elseif ($item = self::_findItem()) {	
+		elseif ($item = self::_findItem()) {
 			if (isset($defaultItemid))
 				{
 					$link .= '&Itemid='.$defaultItemid;
-				} 
+				}
 		}
-		
+
 		return $link;
 	}
 
@@ -110,7 +110,7 @@ abstract class JEMHelperRoute
 	{
 		$settings 		= JEMHelper::globalattribs();
 		$defaultItemid 	= $settings->get('default_Itemid');
-		
+
 		$needles = array(
 			'event' => array((int) $id)
 		);
@@ -128,11 +128,11 @@ abstract class JEMHelperRoute
 		if ($item = self::_findItem($needles)) {
 			$link .= '&Itemid='.$item;
 		}
-		elseif ($item = self::_findItem()) {	
+		elseif ($item = self::_findItem()) {
 			if (isset($defaultItemid))
 				{
 					$link .= '&Itemid='.$defaultItemid;
-				} 
+				}
 		}
 
 		return $link;
@@ -142,7 +142,7 @@ abstract class JEMHelperRoute
 	{
 		$settings 		= JEMHelper::globalattribs();
 		$defaultItemid 	= $settings->get('default_Itemid');
-		
+
 		$needles = array(
 			'venue' => array((int) $id)
 		);
@@ -156,13 +156,13 @@ abstract class JEMHelperRoute
 		if ($item = self::_findItem($needles)) {
 			$link .= '&Itemid='.$item;
 		}
-		elseif ($item = self::_findItem()) {	
+		elseif ($item = self::_findItem()) {
 			if (isset($defaultItemid))
 				{
 					$link .= '&Itemid='.$defaultItemid;
 				}
 		}
-		
+
 		return $link;
 	}
 
@@ -170,7 +170,7 @@ abstract class JEMHelperRoute
 	{
 		$settings 		= JEMHelper::globalattribs();
 		$defaultItemid 	= $settings->get('default_Itemid');
-		
+
 		$needles = array();
 		$needles[$my] = array(self::ARTIFICALID);
 
@@ -180,7 +180,7 @@ abstract class JEMHelperRoute
 		if ($item = self::_findItem($needles)) {
 			$link .= '&Itemid='.$item;
 		}
-		elseif ($item = self::_findItem()) {	
+		elseif ($item = self::_findItem()) {
 			if (isset($defaultItemid))
 				{
 					$link .= '&Itemid='.$defaultItemid;
@@ -188,7 +188,7 @@ abstract class JEMHelperRoute
 					$link .= '&Itemid='.$item;
 				}
 		}
-		
+
 		return $link;
 	}
 
@@ -280,7 +280,7 @@ abstract class JEMHelperRoute
 
 		return null;
 
-// 		$user = JFactory::getUser();
+// 		$user = JemFactory::getUser();
 
 // 		//false if there exists no menu item at all
 // 		if (!$items) {

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -31,7 +31,7 @@ class JemViewSearch extends JEMView
 		$params 		= $app->getParams();
 		$uri 			= JFactory::getURI();
 		$pathway 		= $app->getPathWay();
-		$user			= JFactory::getUser();
+		$user			= JemFactory::getUser();
 
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
@@ -103,8 +103,8 @@ class JemViewSearch extends JEMView
 		$document->setMetadata('title' , $pagetitle);
 
 		//Check if the user has access to the form
-		$maintainer = JemUser::ismaintainer('add');
-		$genaccess 	= JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+		$maintainer = $user->ismaintainer('add');
+		$genaccess  = $user->validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
 		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
 			$dellink = 1;

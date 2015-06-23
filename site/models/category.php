@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -114,11 +114,11 @@ class JemModelCategory extends JemModelEventslist
 		$mergedParams->merge($params);
 
 		$this->setState('params', $mergedParams);
-		$user		= JFactory::getUser();
+		$user   = JemFactory::getUser();
 		// Create a new query object.
-		$db		= $this->getDbo();
-		$query	= $db->getQuery(true);
-		$groups	= implode(',', $user->getAuthorisedViewLevels());
+		$db     = $this->getDbo();
+		$query  = $db->getQuery(true);
+		$groups = implode(',', $user->getAuthorisedViewLevels());
 
 		# limit/start
 
@@ -217,9 +217,9 @@ class JemModelCategory extends JemModelEventslist
 
 			// Compute selected asset permissions.
 			if (is_object($this->_item)) {
-				$user	= JFactory::getUser();
-				$userId	= $user->get('id');
-				$asset	= 'com_jem.category.'.$this->_item->id;
+				$user   = JemFactory::getUser();
+				$userId = $user->get('id');
+				$asset  = 'com_jem.category.'.$this->_item->id;
 
 				// Check general create permission.
 				if ($user->authorise('core.create', $asset)) {

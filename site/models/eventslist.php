@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -59,9 +59,11 @@ class JemModelEventslist extends JModelList
 
 		$app         = JFactory::getApplication();
 		$jemsettings = JemHelper::config();
-		$jinput      = JFactory::getApplication()->input;
+		$jinput      = $app->input;
 		$task        = $jinput->get('task','','cmd');
 		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
+		$user        = JemFactory::getUser();
+		$userId      = $user->get('id');
 
 		# limit/start
 
@@ -93,8 +95,6 @@ class JemModelEventslist extends JModelList
 
 		$params = $app->getParams();
 		$this->setState('params', $params);
-
-		$user = JFactory::getUser();
 
 		###############
 		## opendates ##
@@ -221,7 +221,7 @@ class JemModelEventslist extends JModelList
 
 		$params    = $app->getParams();
 		$settings  = JemHelper::globalattribs();
-		$user      = JFactory::getUser();
+		$user      = JemFactory::getUser();
 
 		# Query
 		$db 	= JFactory::getDBO();
@@ -300,9 +300,8 @@ class JemModelEventslist extends JModelList
 		###################
 
 		# Filter by access level - always.
-		$user = JFactory::getUser();
-		$groups = implode(',', $user->getAuthorisedViewLevels());
-		$query->where('a.access IN ('.$groups.')');
+		$levels = implode(',', $user->getAuthorisedViewLevels());
+		$query->where('a.access IN ('.$levels.')');
 
 		####################
 		## FILTER-PUBLISH ##
@@ -490,7 +489,7 @@ class JemModelEventslist extends JModelList
 			return array();
 		}
 
-		$user	= JFactory::getUser();
+		$user	= JemFactory::getUser();
 		$userId	= $user->get('id');
 		$guest	= $user->get('guest');
 		$groups = $user->getAuthorisedViewLevels();
@@ -542,7 +541,7 @@ class JemModelEventslist extends JModelList
 		}
 
 		if ($items) {
-			$items = JemHelper::getAttendeesNumbers($items);
+			/*$items =*/ JemHelper::getAttendeesNumbers($items);
 
 			if ($calendarMultiday) {
 				$items = self::calendarMultiday($items);
@@ -562,7 +561,7 @@ class JemModelEventslist extends JModelList
 
 	function getCategories($id)
 	{
-		$user 			= JFactory::getUser();
+		$user 			= JemFactory::getUser();
 		$userid			= (int) $user->get('id');
 		$levels 		= $user->getAuthorisedViewLevels();
 		$app 			= JFactory::getApplication();
@@ -697,8 +696,8 @@ class JemModelEventslist extends JModelList
 		return $cats;
 	}
 
-	function calendarMultiday($items) {
-
+	function calendarMultiday($items)
+	{
 		if (empty($items)) {
 			return array();
 		}

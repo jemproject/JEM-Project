@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -232,7 +232,7 @@ class JemModelEvents extends JModelList
 	{
 		$items = parent::getItems();
 
-		$user	= JFactory::getUser();
+		$user	= JemFactory::getUser();
 		$userId	= $user->get('id');
 		$guest	= $user->get('guest');
 		$groups = $user->getAuthorisedViewLevels();
@@ -257,7 +257,7 @@ class JemModelEvents extends JModelList
 			}
 		}
 
-		$items = JEMHelper::getAttendeesNumbers($items);
+		JEMHelper::getAttendeesNumbers($items); // writes directly into $items
 
 
 		if ($items) {
@@ -277,7 +277,7 @@ class JemModelEvents extends JModelList
 
 	function getCategories($id)
 	{
-		$user 			= JFactory::getUser();
+		$user 			= JemFactory::getUser();
 		$levels 		= $user->getAuthorisedViewLevels();
 		$app 			= JFactory::getApplication();
 		$settings 		= JemHelper::globalattribs();

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -25,7 +25,7 @@ class JemModelVenues extends JemModelEventslist
 
 		$app        = JFactory::getApplication();
 		$settings   = JemHelper::globalattribs();
-		$jinput     = JFactory::getApplication()->input;
+		$jinput     = $app->input;
 		$itemid     = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 		$params     = $app->getParams();
 		$task       = $jinput->getCmd('task','');
@@ -54,7 +54,7 @@ class JemModelVenues extends JemModelEventslist
 	 */
 	protected function getListQuery()
 	{
-		$user 	= JFactory::getUser();
+		$user 	= JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 		$task 	= JFactory::getApplication()->input->get('task', '');
 
@@ -70,7 +70,7 @@ class JemModelVenues extends JemModelEventslist
 		$case_when_l .= ' ELSE ';
 		$case_when_l .= $id_l.' END as venueslug';
 
-		$query->select(array('l.id AS locid','l.locimage','l.locdescription','l.url','l.venue','l.street','l.city','l.country','l.postalCode','l.state','l.map','l.latitude','l.longitude'));
+		$query->select(array('l.id AS locid','l.locimage','l.locdescription','l.url','l.venue','l.street','l.city','l.country','l.postalCode','l.state','l.map','l.latitude','l.longitude','l.published'));
 		$query->select(array($case_when_l));
 		$query->from('#__jem_venues as l');
 		$query->join('LEFT', '#__jem_events AS a ON l.id = a.locid');
@@ -165,9 +165,9 @@ class JemModelVenues extends JemModelEventslist
 	}
 
 
-	function AssignedEvents($id,$state=1)
+	function AssignedEvents($id, $state = 1)
 	{
-		$user 	= JFactory::getUser();
+		$user 	= JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 		$db 	= JFactory::getDBO();
 		$query	= $db->getQuery(true);
@@ -229,7 +229,7 @@ class JemModelVenues extends JemModelEventslist
 
 	function getCategories($id)
 	{
-		$user 			= JFactory::getUser();
+		$user 			= JemFactory::getUser();
 		$userid			= (int) $user->get('id');
 		$levels 		= $user->getAuthorisedViewLevels();
 		$app 			= JFactory::getApplication();

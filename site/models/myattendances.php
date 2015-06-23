@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -200,7 +200,7 @@ class JEMModelMyattendances extends JModelLegacy
 		$task     = $app->input->get('task', '');
 		$settings = JEMHelper::globalattribs();
 
-		$user     = JFactory::getUser();
+		$user     = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
@@ -255,7 +255,7 @@ class JEMModelMyattendances extends JModelLegacy
 
 	function getCategories($id)
 	{
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 

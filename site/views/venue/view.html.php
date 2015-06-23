@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -129,7 +129,7 @@ class JemViewVenue extends JEMView {
 			$uri 			= JFactory::getURI();
 			$task 			= $app->input->get('task', '');
 			$print			= $app->input->getBool('print', false);
-			$user			= JFactory::getUser();
+			$user			= JemFactory::getUser();
 			$itemid 		= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
 			// Load css
@@ -225,8 +225,8 @@ class JemViewVenue extends JEMView {
 			$document->setDescription(strip_tags($venue->meta_description));
 
 			// Check if the user has access to the add-eventform
-			$maintainer = JemUser::ismaintainer('add');
-			$genaccess = JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+			$maintainer = $user->ismaintainer('add');
+			$genaccess  = $user->validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
 			if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
 				$addeventlink = 1;
@@ -235,8 +235,8 @@ class JemViewVenue extends JEMView {
 			}
 
 			// Check if the user has access to the add-venueform
-			$maintainer2 = JemUser::venuegroups('add');
-			$genaccess2 = JemUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
+			$maintainer2 = $user->venuegroups('add');
+			$genaccess2  = $user->validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
 			if ($maintainer2 || $genaccess2) {
 				$addvenuelink = 1;
 			} else {
@@ -244,8 +244,8 @@ class JemViewVenue extends JEMView {
 			}
 
 			// Check if the user has access to the edit-venueform
-			$maintainer3 = JemUser::venuegroups('edit');
-			$genaccess3 = JemUser::editaccess($jemsettings->venueowner, $venue->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
+			$maintainer3 = $user->venuegroups('edit');
+			$genaccess3  = $user->editaccess($jemsettings->venueowner, $venue->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 			if ($maintainer3 || $genaccess3) {
 				$allowedtoeditvenue = 1;
 			} else {

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -40,7 +40,7 @@ class JEMControllerVenue extends JControllerForm
 	protected function allowAdd($data = array())
 	{
 		// Initialise variables.
-		$user		= JFactory::getUser();
+		$user		= JemFactory::getUser();
 		//$categoryId	= JArrayHelper::getValue($data, 'catid', JFactory::getApplication()->input->getInt('catid', 0), 'int');
 		$allow		= null;
 
@@ -50,8 +50,8 @@ class JEMControllerVenue extends JControllerForm
 		//}
 
 		$jemsettings	= JemHelper::config();
-		$maintainer 	= JEMUser::venuegroups('add');
-		$delloclink 	= JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
+		$maintainer 	= $user->venuegroups('add');
+		$delloclink 	= $user->validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
 
 		if ($maintainer || $delloclink) {
 			return true;
@@ -80,7 +80,7 @@ class JEMControllerVenue extends JControllerForm
 	{
 		// Initialise variables.
 		$recordId	= (int) isset($data[$key]) ? $data[$key] : 0;
-		$user		= JFactory::getUser();
+		$user		= JemFactory::getUser();
 		$userId		= $user->get('id');
 		$asset		= 'com_jem.venue.'.$recordId;
 
@@ -114,8 +114,8 @@ class JEMControllerVenue extends JControllerForm
 
 		$record			= $this->getModel()->getItem($recordId);
 		$jemsettings 	= JEMHelper::config();
-		$maintainer 	= JEMUser::venuegroups('edit');
-		$genaccess 		= JEMUser::editaccess($jemsettings->venueowner, $record->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
+		$maintainer 	= $user->venuegroups('edit');
+		$genaccess 		= $user->editaccess($jemsettings->venueowner, $record->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
 		if ($maintainer || $genaccess) {
 			return true;
 		}

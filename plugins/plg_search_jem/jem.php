@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.0.1
+ * @version 2.1.5
  * @package JEM
  * @subpackage JEM Search Plugin
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -35,6 +35,11 @@ class plgSearchJEM extends JPlugin
 	 */
 	function onContentSearchAreas()
 	{
+		include_once(JPATH_SITE.'/components/com_jem/factory.php');
+		if (!class_exists('JemFactory')) {
+			return array(); // we need jem please
+		}
+
 		return self::$_areas;
 	}
 
@@ -51,9 +56,14 @@ class plgSearchJEM extends JPlugin
 	 */
 	function onContentSearch($text, $phrase='', $ordering='', $areas=null)
 	{
+		include_once(JPATH_SITE.'/components/com_jem/factory.php');
+		if (!class_exists('JemFactory')) {
+			return array(); // we need jem please
+		}
+
 		$db     = JFactory::getDBO();
 		$app    = JFactory::getApplication();
-		$user   = JFactory::getUser();
+		$user   = JemFactory::getUser();
 		$groups = implode(',', $user->getAuthorisedViewLevels());
 		$tag    = JFactory::getLanguage()->getTag();
 

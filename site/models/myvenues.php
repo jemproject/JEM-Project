@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -58,7 +58,7 @@ class JEMModelMyvenues extends JModelLegacy
 	function & getVenues()
 	{
 		$pop = JFactory::getApplication()->input->getBool('pop', false);
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		$userId = $user->get('id');
 
 		if (empty($userId)) {
@@ -174,9 +174,8 @@ class JEMModelMyvenues extends JModelLegacy
 	protected function _buildVenuesWhere()
 	{
 		$app 			= JFactory::getApplication();
-		$user 			= JFactory::getUser();
+		$user 			= JemFactory::getUser();
 		$settings 		= JEMHelper::globalattribs();
-		$user 			= JFactory::getUser();
 
 		$filter 		= $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -36,7 +36,7 @@ class JemViewEvent extends JEMView
 		$jemsettings		= JemHelper::config();
 		$settings			= JemHelper::globalattribs();
 		$app				= JFactory::getApplication();
-		$user				= JFactory::getUser();
+		$user				= JemFactory::getUser();
 		$userId				= $user->get('id');
 		$dispatcher			= JDispatcher::getInstance();
 		$document 			= JFactory::getDocument();
@@ -167,8 +167,8 @@ class JemViewEvent extends JEMView
 		$this->limage = JemImage::flyercreator($item->locimage, 'venue');
 
 		// Check if user can edit
-		$maintainer5 = JemUser::ismaintainer('edit',$item->did);
-		$genaccess5  = JemUser::editaccess($jemsettings->eventowner, $item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+		$maintainer5 = $user->ismaintainer('edit',$item->did);
+		$genaccess5  = $user->editaccess($jemsettings->eventowner, $item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
 
 		if ($maintainer5 || $genaccess5 || $user->authorise('core.edit','com_jem')) {
 			$this->allowedtoeditevent = 1;
@@ -177,9 +177,9 @@ class JemViewEvent extends JEMView
 		}
 
 		//Check if the user has access to the edit-venueform
-		$maintainer3 = JemUser::venuegroups('edit');
-		$genaccess3  = JemUser::editaccess($jemsettings->venueowner, $item->venueowner, $jemsettings->venueeditrec, $jemsettings->venueedit);
-		if ($maintainer3 || $genaccess3 ) {
+		$maintainer3 = $user->venuegroups('edit');
+		$genaccess3  = $user->editaccess($jemsettings->venueowner, $item->venueowner, $jemsettings->venueeditrec, $jemsettings->venueedit);
+		if ($maintainer3 || $genaccess3) {
 			$this->allowedtoeditvenue = 1;
 		} else {
 			$this->allowedtoeditvenue = 0;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -94,7 +94,7 @@ class JEMModelEditevent extends JEMModelEvent
 		$value->params->merge($registry);
 
 		// Compute selected asset permissions.
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		$userId = $user->get('id');
 		//$asset = 'com_jem.event.' . $value->id;
 		$asset = 'com_jem';
@@ -236,7 +236,7 @@ class JEMModelEditevent extends JEMModelEvent
 		}
 
 		if ($params->get('global_show_ownedvenuesonly')) {
-			$user = JFactory::getUser();
+			$user = JemFactory::getUser();
 			$userid = $user->get('id');
 			$where[] = ' created_by = ' . (int) $userid;
 		}

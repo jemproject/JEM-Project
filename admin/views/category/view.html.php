@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.1.0
+ * @version     2.1.5
  * @package     JEM
- * @copyright   Copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -66,7 +66,7 @@ class JemViewCategory extends JViewLegacy
 	protected function addToolbar()
 	{
 		// Initialise variables.
-		$user		= JFactory::getUser();
+		$user		= JemFactory::getUser();
 		$userId		= $user->get('id');
 
 		$isNew		= ($this->item->id == 0);

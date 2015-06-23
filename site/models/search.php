@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -203,7 +203,7 @@ class JEMModelSearch extends JModelLegacy
 		}
 
 		// filter by user's access levels
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 		$where .= ' AND a.access IN (' . implode(', ', $levels) .')';
 
@@ -300,7 +300,7 @@ class JEMModelSearch extends JModelLegacy
 
 	function getCategories($id)
 	{
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
@@ -370,10 +370,10 @@ class JEMModelSearch extends JModelLegacy
 		$db = JFactory::getDBO();
 
 		// Get the paramaters of the active menu item
-		$params 	= $app->getParams('com_jem');
-		$top_id = $params->get('top_category', 1);
+		$params = $app->getParams('com_jem');
+		$top_id = max(1, $params->get('top_category', 1)); // not below 'root'
 
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 

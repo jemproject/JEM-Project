@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     2.1.4
+ * @version     2.1.5
  * @package     JEM
  * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
@@ -37,7 +37,7 @@ class JEMModelCategory extends JModelAdmin
 			if ($record->published != -2) {
 				return;
 			}
-			$user = JFactory::getUser();
+			$user = JemFactory::getUser();
 
 			return $user->authorise('core.delete', 'com_jem');
 		}
@@ -54,7 +54,7 @@ class JEMModelCategory extends JModelAdmin
 	 */
 	protected function canEditState($record)
 	{
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 
 		// Check for existing category.
 		if (!empty($record->id)) {
@@ -549,7 +549,7 @@ class JEMModelCategory extends JModelAdmin
 
 		$table = $this->getTable();
 		$db = $this->getDbo();
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		$extension = JFactory::getApplication()->input->get('extension', '', 'word');
 		$i = 0;
 
@@ -719,7 +719,7 @@ class JEMModelCategory extends JModelAdmin
 		$table = $this->getTable();
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		$extension = JFactory::getApplication()->input->get('extension', '', 'word');
 
 		// Check that the parent exists.

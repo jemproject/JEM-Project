@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.3
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -38,7 +38,7 @@ class JemViewEventslist extends JEMView
 		$uri 			= JFactory::getURI();
 		$pathway 		= $app->getPathWay();
 	//	$db 			= JFactory::getDBO();
-		$user			= JFactory::getUser();
+		$user			= JemFactory::getUser();
 		$itemid 		= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 		$print			= $app->input->getBool('print', false);
 
@@ -111,8 +111,8 @@ class JemViewEventslist extends JEMView
 		$document->setMetaData('title' , $pagetitle);
 
 		// Check if the user has access to the form
-		$maintainer = JemUser::ismaintainer('add');
-		$genaccess 	= JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
+		$maintainer = $user->ismaintainer('add');
+		$genaccess  = $user->validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
 
 		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
 			$dellink = 1;

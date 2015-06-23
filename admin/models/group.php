@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -32,7 +32,7 @@ class JEMModelGroup extends JemModelAdmin
 				return ;
 			}
 
-			$user = JFactory::getUser();
+			$user = JemFactory::getUser();
 
 			if (!empty($record->catid)) {
 				return $user->authorise('core.delete', 'com_jem.category.'.(int) $record->catid);
@@ -51,7 +51,7 @@ class JEMModelGroup extends JemModelAdmin
 	 */
 	protected function canEditState($record)
 	{
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 
 		if (!empty($record->catid)) {
 			return $user->authorise('core.edit.state', 'com_jem.category.'.(int) $record->catid);

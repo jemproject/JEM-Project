@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -35,7 +35,7 @@ class JemViewCategory extends JEMView
 	 */
 	function display($tpl=null)
 	{
-		if($this->getLayout() == 'calendar') {
+		if ($this->getLayout() == 'calendar') {
 			$app = JFactory::getApplication();
 
 			// Load tooltips behavior
@@ -44,6 +44,7 @@ class JemViewCategory extends JEMView
 			//initialize variables
 			$document 		= JFactory::getDocument();
 			$jemsettings 	= JemHelper::config();
+			$user			= JemFactory::getUser();
 			$menu 			= $app->getMenu();
 			$menuitem		= $menu->getActive();
 			$params 		= $app->getParams();
@@ -133,7 +134,7 @@ class JemViewCategory extends JEMView
 			$jemsettings 	= JemHelper::config();
 			$settings 		= JemHelper::globalattribs();
 		//	$db  			= JFactory::getDBO();
-			$user			= JFactory::getUser();
+			$user			= JemFactory::getUser();
 			$print			= $app->input->getBool('print', false);
 
 			JHtml::_('behavior.tooltip');
@@ -278,8 +279,8 @@ class JemViewCategory extends JEMView
 			$document->setDescription(strip_tags($category->meta_description));
 
 			//Check if the user has access to the form
-			$maintainer = JemUser::ismaintainer('add');
-			$genaccess 	= JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+			$maintainer = $user->ismaintainer('add');
+			$genaccess 	= $user->validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
 
 			if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
 				$dellink = 1;
