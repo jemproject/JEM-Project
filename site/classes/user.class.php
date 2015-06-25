@@ -9,12 +9,55 @@
 
 defined('_JEXEC') or die;
 
+if (version_compare(JVERSION, '3.4', 'lt')) {
+	// on Joomla prior 3.4.0 getInstance expects only one parameter
+
+	/**
+	 * JEM user class with additional functions.
+	 * Compatible with Joomla prior 3.4.0.
+	 *
+	 * @package JEM
+	 *
+	 * @see JemUserAbstract
+	 */
+	class JemUser extends JemUserAbstract
+	{
+		static function getInstance($id = 0)
+		{
+			return parent::_getInstance($id);
+		}
+	}
+
+} else {
+	// since Joomla 3.4.0 getInstance has a second parameter
+
+	/**
+	 * JEM user class with additional functions.
+	 * Compatible with Joomla since 3.4.0.
+	 *
+	 * @package JEM
+	 *
+	 * @see JemUserAbstract
+	 */
+	class JemUser extends JemUserAbstract
+	{
+		static function getInstance($id = 0, JUserWrapperHelper $userHelper = null)
+		{
+			// we don't need this helper
+			return parent::_getInstance($id);
+		}
+	}
+
+}
+
 /**
- * Holds all authentication logic
+ * JEM user class with additional functions.
+ * Because JUser::getInstance has different paramters on different versions
+ *  we must split out class.
  *
  * @package JEM
  */
-class JemUser extends JUser
+abstract class JemUserAbstract extends JUser
 {
 	/**
 	 * @var    array  JemUser instances container.
@@ -27,12 +70,7 @@ class JemUser extends JUser
 	protected static $jemsettings = array();
 
 
-	function __construct($identifier = 0)
-	{
-		parent::__construct($identifier);
-	}
-
-	static function getInstance($id = 0)
+	static protected function _getInstance($id = 0)
 	{
 		$id = (int)$id;
 
