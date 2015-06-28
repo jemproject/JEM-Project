@@ -383,7 +383,7 @@ abstract class JemUserAbstract extends JUser
 			$jemgroups = empty($fields) ? array() : $this->getJemGroups($fields);
 			// If registered users are generally allowed (by JEM Settings) to edit events/venues
 			// add JEM group 0 and make category check
-			if (($create && in_array('add', $action)) || (($edit || $editown) && in_array('edit', $action))) {
+			if (($create && in_array('add', $action)) || (($edit || $edit_own) && in_array('edit', $action))) {
 				$jemgroups[0] = true;
 			}
 		}
@@ -416,7 +416,7 @@ abstract class JemUserAbstract extends JUser
 	 * Checks if user is allowed to do actions on objects.
 	 * Respects Joomla and JEM group permissions.
 	 *
-	 * @param  $action      mixed  One or array of 'add', 'edit', 'publish'
+	 * @param  $action      mixed  One or array of 'add', 'edit', 'publish', 'delete'
 	 * @param  $type        string One of 'event', 'venue'
 	 * @param  $id          mixed  The event or venue id or false (default)
 	 * @param  $created_by  mixed  User id of creator or false (default)
@@ -505,6 +505,9 @@ abstract class JemUserAbstract extends JUser
 					$authorised |= $autopubl && ($id === 0) &&
 					               !empty($created_by) && ($userId == $created_by);
 					break;
+				case 'delete':
+					$authorised |= $this->authorise('core.delete', $asset);
+					break;
 				}
 			}
 		}
@@ -533,7 +536,7 @@ abstract class JemUserAbstract extends JUser
 					$jemgroups[0] = true;
 				}
 				if (!empty($jemgroups)) {
-					if (empty($categoryIds) && (($type != 'event') || empty($id))) {
+					if (empty($categoryIds) && (($type != 'event') || (empty($id) && (!in_array('publish', $action))))) {
 						$authorised = true; // new events and venues have no limiting categories, so generally authorised
 					} else { // we have a valid event object so check event's categories against jem groups
 						$whereCats = empty($categoryIds) ? '' : ' AND c.id IN ('.implode(',', $categoryIds).')';
@@ -556,7 +559,7 @@ abstract class JemUserAbstract extends JUser
 					}
 
 					if (!empty($cats)) {
-						$unspecific = 0;
+						$unspecific = in_array('publish', $action) ? -1 : 0; // publish requires jemgroup
 						foreach($cats as $cat) {
 							if (empty($cat->groupid)) {
 								if ($unspecific === 0) {
