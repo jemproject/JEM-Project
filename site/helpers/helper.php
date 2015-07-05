@@ -808,7 +808,7 @@ class JemHelper
 	public static function getTimeZoneName()
 	{
 		$user     = JemFactory::getUser();
-		$userTz   = $user()->getParam('timezone');
+		$userTz   = $user->getParam('timezone');
 		$timeZone = JFactory::getConfig()->get('offset');
 
 		/* disabled for now
