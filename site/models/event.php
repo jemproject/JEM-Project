@@ -45,13 +45,6 @@ class JemModelEvent extends JModelItem
 		$params = $app->getParams('com_jem');
 		$this->setState('params', $params);
 
-		// TODO: Tune these values based on other permissions.
-		$user = JemFactory::getUser();
-		if ((!$user->authorise('core.edit.state', 'com_jem')) && (!$user->authorise('core.edit', 'com_jem'))) {
-			$this->setState('filter.published', 1);
-			$this->setState('filter.archived', 2);
-		}
-
 		$this->setState('filter.language', JLanguageMultilang::isEnabled());
 	}
 
@@ -136,15 +129,9 @@ class JemModelEvent extends JModelItem
 				$nowDate = $db->Quote($date->toSql());
 
 
-				// Filter by published state.
-				$published = $this->getState('filter.published');
-
-				$archived = $this->getState('filter.archived');
-
-				/** @todo: Is that correct? What's about $archived? Could it wrongly be 0 (=unpublished)? */
-				if (is_numeric($published)) {
-					$query->where('(a.published = ' . (int) $published . ' OR a.published =' . (int) $archived . ')');
-				}
+				// Filter by published state ==> later.
+				//  It would result in too complicated query.
+				//  It's easier to get data and check then e.g. for event owner etc.
 
 
 				#####################
@@ -172,50 +159,32 @@ class JemModelEvent extends JModelItem
 				$registry = new JRegistry;
 				$registry->loadString($data->attribs);
 
-				$globalattribs = JEMHelper::globalattribs();
-				$globalregistry = new JRegistry;
-				$globalregistry->loadString($globalattribs);
-
-				$data->params = clone $globalregistry;
+				$data->params = JEMHelper::globalattribs(); // returns JRegistry object
 				$data->params->merge($registry);
 
 				$registry = new JRegistry;
 				$registry->loadString($data->metadata);
 				$data->metadata = $registry;
 
+				$data->categories = $this->getCategories($pk);
+
 				// Compute selected asset permissions.
-				$viewLevels = $user->getAuthorisedViewLevels();
+				$viewLevels  = $user->getAuthorisedViewLevels();
 
-				// Technically guest could edit an event, but lets not check
-				// that to improve performance a little.
-				if (!$user->get('guest')) {
-					$userId = $user->get('id');
-					$asset = 'com_jem.event.' . $data->id;
+				$access_edit = $user->can('edit', 'event', $data->id, $data->created_by);
+				$access_view = (($data->published == 1) || ($data->published == 2) ||          // published and archived event
+				                (($data->published == 0) && $access_edit) ||                   // unpublished for editors,
+				                $user->can('publish', 'event', $data->id, $data->created_by)); // all for publishers
 
-					// Check general edit permission first.
-					if ($user->authorise('core.edit', $asset)) {
-						$data->params->set('access-edit', true);
-					}
-					// Now check if edit.own is available.
-					elseif (!empty($userId) && $user->authorise('core.edit.own', $asset)) {
-						// Check for a valid user and that they are the owner.
-						if ($userId == $data->created_by) {
-							$data->params->set('access-edit', true);
-						}
-					}
-				}
+				$data->params->set('access-edit', $access_edit);
 
 				// Compute view access permissions.
 
-				# retrieve category's that the user is able to see
-				# if there is no category the event should not be displayed
-
-				$category_viewable = $this->getCategories($pk);
-
-				if (!empty($category_viewable)) {
-					// Event's access value must also be checked
-					$data->params->set('access-view', in_array($data->access, $viewLevels));
-				}
+				# event can be shown if
+				#  - user has matching view access level and
+				#  - there is at least one category attached user can see and
+				#  - publishing state and user permissions allow that (e.g. unpublished event but user is editor, owner, or publisher)
+				$data->params->set('access-view', $access_view && !empty($data->categories) && in_array($data->access, $viewLevels));
 
 				$this->_item[$pk] = $data;
 			}

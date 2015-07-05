@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -58,7 +58,7 @@ $location = JemHelper::defineCenterMap($this->form);
 		document.getElementById("tmp_form_country").setAttribute("geo-data", "country_short");
 		document.getElementById("tmp_form_latitude").setAttribute("geo-data", "lat");
 		document.getElementById("tmp_form_longitude").setAttribute("geo-data", "lng");
-		document.getElementById("tmp_form_venue").setAttribute("geo-data", "name");	
+		document.getElementById("tmp_form_venue").setAttribute("geo-data", "name");
 	}
 
 	function meta(){
@@ -67,7 +67,7 @@ $location = JemHelper::defineCenterMap($this->form);
 		f.jform_meta_keywords.value += f.jform_venue.value+', ' + f.jform_city.value;
 	}
 
-	function test(){			
+	function test(){
 		var form = document.getElementById('venue-form');
 		var map = $('jform_map');
 		var streetcheck = $(form.jform_street).hasClass('required');
@@ -111,7 +111,7 @@ $location = JemHelper::defineCenterMap($this->form);
 		$(form.jform_city).removeClass('required');
 		$(form.jform_country).removeClass('required');
 	}
-	
+
 	jQuery(function(){
 		jQuery("#geocomplete").geocomplete({
 			map: ".map_canvas",
@@ -131,7 +131,7 @@ $location = JemHelper::defineCenterMap($this->form);
 		jQuery("#geocomplete").bind('geocode:result', function(){
 				var street = jQuery("#tmp_form_street").val();
 				var route  = jQuery("#tmp_form_route").val();
-				
+
 				if (route) {
 					/* something to add */
 				} else {
@@ -167,7 +167,7 @@ $location = JemHelper::defineCenterMap($this->form);
 			document.getElementById("jform_street").value = document.getElementById("tmp_form_street").value;
 			document.getElementById("jform_postalCode").value = document.getElementById("tmp_form_postalCode").value;
 			document.getElementById("jform_city").value = document.getElementById("tmp_form_city").value;
-			document.getElementById("jform_state").value = document.getElementById("tmp_form_state").value;	
+			document.getElementById("jform_state").value = document.getElementById("tmp_form_state").value;
 			document.getElementById("jform_country").value = document.getElementById("tmp_form_country").value;
 		});
 
@@ -182,7 +182,7 @@ $location = JemHelper::defineCenterMap($this->form);
 			jQuery("#cp-address").click();
 			jQuery("#cp-latlong").click();
 			jQuery("#cp-venue").click();
-		});	
+		});
 
 		jQuery('#jform_map').on('keyup keypress blur change', function() {
 		    test();
@@ -239,6 +239,7 @@ $location = JemHelper::defineCenterMap($this->form);
 						<li><?php echo $this->form->getLabel('latitude'); ?><?php echo $this->form->getInput('latitude'); ?></li>
 						<li><?php echo $this->form->getLabel('longitude'); ?><?php echo $this->form->getInput('longitude'); ?></li>
 						<li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
+						<li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
 					</ul>
 					<div class="clr"></div>
 					<?php echo $this->form->getLabel('locdescription'); ?>
@@ -262,7 +263,7 @@ $location = JemHelper::defineCenterMap($this->form);
 				<ul class="adminformlist">
 					<li><label><?php echo JText::_('COM_JEM_STREET'); ?></label>
 						<input type="text" disabled="disabled" class="readonly" id="tmp_form_street" readonly="readonly" />
-					
+
 						<input type="hidden" class="readonly" id="tmp_form_streetnumber" readonly="readonly" />
 						<input type="hidden" class="readonly" id="tmp_form_route" readonly="readonly" />
 						</li>
@@ -275,7 +276,7 @@ $location = JemHelper::defineCenterMap($this->form);
 
 					<li><label><?php echo JText::_('COM_JEM_STATE'); ?></label>
 						<input type="text" disabled="disabled" class="readonly" id="tmp_form_state" readonly="readonly" /></li>
-						
+
 					<li><label><?php echo JText::_('COM_JEM_VENUE'); ?></label>
 						<input type="text" disabled="disabled" class="readonly" id="tmp_form_venue" readonly="readonly" /></li>
 

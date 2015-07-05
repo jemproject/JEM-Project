@@ -205,9 +205,7 @@ class JEMModelCategories extends JModelLegacy
 		$query = $this->_buildDataQuery($id);
 		$this->_data = $this->_getList($query, 0, $params->get('detcat_nr'));
 
-		$count = count($this->_data);
-		for ($i = 0; $i < $count; $i++) {
-			$item = $this->_data[$i];
+		foreach ($this->_data as $i => &$item) {
 			$item->categories = $this->getCategories($item->id);
 
 			//remove events without categories (users have no access to them)
@@ -247,7 +245,7 @@ class JEMModelCategories extends JModelLegacy
 		$where .= ' AND a.access IN (' . implode(',', $levels) . ')';
 
 		$query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.created, l.venue, l.city, l.state, l.url,'
-			.' a.recurrence_type, a.recurrence_first_id,'
+			.' a.recurrence_type, a.recurrence_first_id, a.published,'
 			.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 			.' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 			.' FROM #__jem_events AS a'

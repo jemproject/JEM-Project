@@ -422,6 +422,8 @@ abstract class JemUserAbstract extends JUser
 	 * @param  $created_by  mixed  User id of creator or false (default)
 	 * @param  $categoryIds mixed  List of category IDs to limit for or false (default)
 	 * @return true if allowed, false otherwise
+	 * @note   If nno categoryIds are given this functions checks if there is any potential way
+	 *         to allow requested action. To prevent this check set categoryIds to 1 (root category)
 	 */
 	public function can($action, $type, $id = false, $created_by = false, $categoryIds = false)
 	{
@@ -438,7 +440,7 @@ abstract class JemUserAbstract extends JUser
 			$categoryIds = (array)$categoryIds;
 			$catIds = array();
 			foreach ($categoryIds as $catId) {
-				if ((int)$catId > 1) {  // also exclude 'root' category
+				if ((int)$catId > 0) {  // allow 'root' category with which caller can skip "potentially allowed" check
 					$catIds[] = (int)$catId;
 				}
 			}
@@ -476,8 +478,8 @@ abstract class JemUserAbstract extends JUser
 			break;
 		}
 		$assets[] = $asset;
-		foreach($categoryIds as $id) {
-			$assets[] = 'com_jem.category.'.$id;
+		foreach($categoryIds as $catId) {
+			$assets[] = 'com_jem.category.'.$catId;
 		}
 
 		// Joomla ACL system, JEM global settings

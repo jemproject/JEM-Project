@@ -42,6 +42,7 @@ class JemViewVenue extends JEMView {
 			$pathway 		= $app->getPathWay();
 			$jinput 		= $app->input;
 			$print			= $jinput->getBool('print', false);
+			$user			= JemFactory::getUser();
 
 			// Load css
 			JemHelper::loadCss('jem');
@@ -94,6 +95,10 @@ class JemViewVenue extends JEMView {
 			$document->setTitle($pagetitle);
 			$document->setMetaData('title', $pagetitle);
 
+			//Check if the user has permission to add things - makes no sense here...
+			$canAddEvent = (int)$user->can('add', 'event');
+			$canAddVenue = (int)$user->can('add', 'venue');
+
 			// init calendar
 			$itemid  = $jinput->getInt('Itemid', 0);
 			$venueID = $jinput->getInt('id', $params->get('id'));
@@ -111,6 +116,8 @@ class JemViewVenue extends JEMView {
 			$this->locid			= $venueID;
 			$this->params 			= $params;
 			$this->jemsettings 		= $jemsettings;
+			$this->canAddEvent		= $canAddEvent;
+			$this->canAddVenue		= $canAddVenue;
 			$this->cal 				= $cal;
 			$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
 
@@ -225,32 +232,13 @@ class JemViewVenue extends JEMView {
 			$document->setDescription(strip_tags($venue->meta_description));
 
 			// Check if the user has access to the add-eventform
-			$maintainer = $user->ismaintainer('add');
-			$genaccess  = $user->validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
-
-			if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
-				$addeventlink = 1;
-			} else {
-				$addeventlink = 0;
-			}
+			$addeventlink = (int)$user->can('add', 'event');
 
 			// Check if the user has access to the add-venueform
-			$maintainer2 = $user->venuegroups('add');
-			$genaccess2  = $user->validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
-			if ($maintainer2 || $genaccess2) {
-				$addvenuelink = 1;
-			} else {
-				$addvenuelink = 0;
-			}
+			$addvenuelink = (int)$user->can('add', 'venue');
 
 			// Check if the user has access to the edit-venueform
-			$maintainer3 = $user->venuegroups('edit');
-			$genaccess3  = $user->editaccess($jemsettings->venueowner, $venue->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
-			if ($maintainer3 || $genaccess3) {
-				$allowedtoeditvenue = 1;
-			} else {
-				$allowedtoeditvenue = 0;
-			}
+			$allowedtoeditvenue = (int)$user->can('edit', 'venue', $venue->id, $venue->created_by);
 
 			// Generate Venuedescription
 			if (!$venue->locdescription == '' || !$venue->locdescription == '<br />') {
@@ -290,6 +278,9 @@ class JemViewVenue extends JEMView {
 			// filters
 			$filters = array ();
 
+			// ALL events have the same venue - so hide this from filter and list
+			$jemsettings->showlocate = 0;
+
 			if ($jemsettings->showtitle == 1) {
 				$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_TITLE'));
 			}
@@ -328,6 +319,7 @@ class JemViewVenue extends JEMView {
 			$this->task					= $task;
 			$this->allowedtoeditvenue 	= $allowedtoeditvenue;
 			$this->pageclass_sfx		= htmlspecialchars($pageclass_sfx);
+			$this->show_status			= $user->can(array('edit', 'publish'), 'venue', $venue->id, $venue->created_by);
 		}
 
 		parent::display($tpl);

@@ -78,23 +78,10 @@ class JemViewVenues extends JViewLegacy
 		$document->setMetadata('keywords', $pagetitle);
 
 		// Check if the user has access to the add-eventform
-		$maintainer = $user->ismaintainer('add');
-		$genaccess  = $user->validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
-
-		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
-			$addeventlink = 1;
-		} else {
-			$addeventlink = 0;
-		}
+		$addeventlink = (int)$user->can('add', 'event');
 
 		//Check if the user has access to the add-venueform
-		$maintainer2 = $user->venuegroups('add');
-		$genaccess2  = $user->validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
-		if ($maintainer2 || $genaccess2) {
-			$addvenuelink = 1;
-		} else {
-			$addvenuelink = 0;
-		}
+		$addvenuelink = (int)$user->can('add', 'venue');
 
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
@@ -111,6 +98,7 @@ class JemViewVenues extends JViewLegacy
 		$this->task				= $task;
 		$this->pagetitle		= $pagetitle;
 		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
+		$this->show_status		= $user->can(array('edit', 'publish'), 'venue');
 
 		parent::display($tpl);
 	}

@@ -70,20 +70,10 @@ class JemViewEditevent extends JViewLegacy
 			return false;
 		}
 
-		if (empty($this->item->id)) {
-			// Check if the user has access to the form
-			$maintainer = $user->ismaintainer('add');
-			$genaccess  = $user->validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
-
-			$dellink = ($maintainer || $genaccess);
-			$authorised = $user->authorise('core.create','com_jem') || (count($user->getAuthorisedCategories('com_jem', 'core.create')) || $dellink);
+		if (empty($item->id)) {
+			$authorised = (bool)$user->can('add', 'event');
 		} else {
-			// Check if user can edit
-			$maintainer = $user->ismaintainer('edit',$this->item->id);
-			$genaccess  = $user->editaccess($jemsettings->eventowner, $this->item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
-
-			$allowedtoeditevent = ($maintainer || $genaccess);
-			$authorised = $this->item->params->get('access-edit') || $allowedtoeditevent ;
+			$authorised = (bool)$item->params->get('access-edit');
 		}
 
 		if ($authorised !== true) {
@@ -92,9 +82,9 @@ class JemViewEditevent extends JViewLegacy
 		}
 
 		// Decide which parameters should take priority
-		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
-				&& $menuitem->query['view']   == 'editevent'
-				&& 0 == $item->id); // menu item is always for new event
+		$useMenuItemParams = ($menuitem && ($menuitem->query['option'] == 'com_jem')
+		                                && ($menuitem->query['view']   == 'editevent')
+		                                && (0 == $item->id)); // menu item is always for new event
 
 		$title = ($item->id == 0) ? JText::_('COM_JEM_EDITEVENT_ADD_EVENT')
 		                          : JText::sprintf('COM_JEM_EDITEVENT_EDIT_EVENT', $item->title);
@@ -186,6 +176,12 @@ class JemViewEditevent extends JViewLegacy
 		if ($params->get('enable_category') == 1) {
 			$this->form->setFieldAttribute('catid', 'default', $params->get('catid', 1));
 			$this->form->setFieldAttribute('catid', 'readonly', 'true');
+		}
+
+		// disable for non-publishers
+		if (empty($item->params->get('access-change'))) {
+			$this->form->setFieldAttribute('published', 'default', 0);
+			$this->form->setFieldAttribute('published', 'readonly', 'true');
 		}
 
 		$this->_prepareDocument();

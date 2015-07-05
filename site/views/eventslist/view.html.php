@@ -164,6 +164,8 @@ class JemViewEventslist extends JEMView
 		$this->settings			= $settings;
 		$this->pagetitle		= $pagetitle;
 		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
+		$this->canAddEvent		= $user->can('add', 'event');
+		$this->canAddVenue		= $user->can('add', 'venue');
 
 		$this->_prepareDocument();
 		parent::display($tpl);

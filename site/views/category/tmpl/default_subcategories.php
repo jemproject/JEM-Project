@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -67,6 +67,11 @@ $class = ' class="first"';
 				<?php endif; ?>
 			<?php elseif ($this->params->get('show_cat_num_articles', 1)) : ?>
 				<?php echo ' (' . $child->getNumItems(false) . ')';  /* count direct events only, not recursive */ ?>
+				<?php /* experimental */
+				      $count = $child->getNumItemsState(false);
+				      echo ' (' . $count['published'] . ' + ' . $count['unpublished'] . ' / ' . $count['archived'] . ' - ' . $count['trashed'] . ')';
+				      /**/
+				?>
 			<?php endif; ?>
 
 			<?php if (count($child->getChildren()) > 0 ) :

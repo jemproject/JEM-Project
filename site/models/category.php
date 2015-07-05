@@ -91,16 +91,16 @@ class JemModelCategory extends JemModelEventslist
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// Initiliase variables.
-		$app			= JFactory::getApplication('site');
-		$jemsettings	= JemHelper::config();
-		$jinput         = JFactory::getApplication()->input;
-		$task           = $jinput->get('task','','cmd');
-		$itemid			= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
-		$pk				= $app->input->getInt('id', 0);
+		$app         = JFactory::getApplication('site');
+		$jemsettings = JemHelper::config();
+		$jinput      = $app->input;
+		$task        = $jinput->getCmd('task','');
+		$format      = $jinput->getCmd('format','');
+		$pk          = $jinput->getInt('id', 0);
+		$itemid      = $pk . ':' . $jinput->getInt('Itemid', 0);
 
 		$this->setState('category.id', $pk);
-
-		$this->setState('filter.req_catid',$pk);
+		$this->setState('filter.req_catid', $pk);
 
 		// Load the parameters. Merge Global and Menu Item params into new object
 		$params = $app->getParams();
@@ -143,11 +143,7 @@ class JemModelCategory extends JemModelEventslist
 		$this->setState('filter.filter_type', $filtertype);
 
 		# publish state
-		if ($task == 'archive') {
-			$this->setState('filter.published',2);
-		} else {
-			$this->setState('filter.published',1);
-		}
+		$this->_populatePublishState($task);
 
 		###########
 		## ORDER ##
@@ -198,7 +194,7 @@ class JemModelCategory extends JemModelEventslist
 		if (!is_object($this->_item)) {
 			$options = array();
 
-			if( isset( $this->state->params ) ) {
+			if (isset($this->state->params)) {
 				$params = $this->state->params;
 				$options['countItems'] = ($params->get('show_cat_num_articles', 1) || !$params->get('show_empty_categories_cat', 0)) ? 1 : 0;
 			}
@@ -206,33 +202,31 @@ class JemModelCategory extends JemModelEventslist
 				$options['countItems'] = 0;
 			}
 
-			if (isset($this->state->task) && ($this->state->task == 'archive')) {
-				$options['published'] = 2; // archived
+			$where_pub = $this->_getPublishWhere('i');
+			if (!empty($where_pub)) {
+				$options['published_where'] = '(' . implode(' OR ', $where_pub) . ')';
 			} else {
-				$options['published'] = 1; // published
+				// something wrong - fallback to published events
+				$options['published_where'] = 'i.published = 1';
 			}
 
-			$categories = new JEMCategories($this->getState('category.id', 'root'), $options);
-			$this->_item = $categories->get($this->getState('category.id', 'root'));
+			$catId = $this->getState('category.id', 'root');
+			$categories = new JEMCategories($catId, $options);
+			$this->_item = $categories->get($catId);
 
 			// Compute selected asset permissions.
-			if (is_object($this->_item)) {
+			if (is_object($this->_item)) { // a JEMCategoryNode object
 				$user   = JemFactory::getUser();
 				$userId = $user->get('id');
-				$asset  = 'com_jem.category.'.$this->_item->id;
 
-				// Check general create permission.
-				if ($user->authorise('core.create', $asset)) {
-					$this->_item->getParams()->set('access-create', true);
-				}
-
+				// Check general or category specific create permission.
+				$this->_item->getParams()->set('access-create', $user->can('add', 'event', false, false, $this->_item->id));
 
 				$this->_children = $this->_item->getChildren();
 
-				$this->_parent = false;
-
-				if ($this->_item->getParent()) {
-					$this->_parent = $this->_item->getParent();
+				$this->_parent = $this->_item->getParent();
+				if (empty($this->_parent)) {
+					$this->_parent = false;
 				}
 
 				$this->_rightsibling = $this->_item->getSibling();
@@ -253,9 +247,9 @@ class JemModelCategory extends JemModelEventslist
 	 */
 	function getListQuery()
 	{
-		$params  = $this->state->params;
-		$jinput  = JFactory::getApplication()->input;
-		$task    = $jinput->get('task','','cmd');
+		//$params  = $this->state->params;
+		//$jinput  = JFactory::getApplication()->input;
+		//$task    = $jinput->get('task','','cmd');
 
 		// Create a new query object.
 		$query = parent::getListQuery();

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -99,9 +99,35 @@ defined('_JEXEC') or die;
 				</dd>
 				<?php endif; ?>
 
+				<!-- PUBLISHING STATE -->
+				<?php if (isset($row->published) && !empty($this->show_status)) : ?>
+					<dt class="published"><?php echo JText::_('JSTATUS'); ?>:</dt>
+					<dd class="published">
+						<?php switch ($row->published) {
+						case  1: echo JText::_('JPUBLISHED');   break;
+						case  0: echo JText::_('JUNPUBLISHED'); break;
+						case  2: echo JText::_('JARCHIVED');    break;
+						case -2: echo JText::_('JTRASHED');     break;
+						} ?>
+					</dd>
+				<?php endif; ?>
+
 				<?php if ($this->settings->get('global_show_mapserv') == 1) : ?>
 					<?php echo JemOutput::mapicon($row,null,$this->settings); ?>
 				<?php endif; ?>
+			</dl>
+		<?php elseif (isset($row->published) && !empty($this->show_status)) : ?>
+			<!-- PUBLISHING STATE -->
+			<dl class="floattext">
+				<dt class="published"><?php echo JText::_('JSTATUS'); ?>:</dt>
+				<dd class="published">
+					<?php switch ($row->published) {
+					case  1: echo JText::_('JPUBLISHED');   break;
+					case  0: echo JText::_('JUNPUBLISHED'); break;
+					case  2: echo JText::_('JARCHIVED');    break;
+					case -2: echo JText::_('JTRASHED');     break;
+					} ?>
+				</dd>
 			</dl>
 		<?php endif; ?>
 
