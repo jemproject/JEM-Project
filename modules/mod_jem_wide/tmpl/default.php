@@ -7,13 +7,12 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
 
 JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
 
-<div id="jemmodulewide">
+<div id="<?php echo $params->get('moduleclass_sfx','jemmodulewide'); ?>">
 
 <table class="eventset" summary="mod_jem_wide">
 
