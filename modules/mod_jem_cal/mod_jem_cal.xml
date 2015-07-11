@@ -189,7 +189,7 @@
 					hr="true"
 				/>
 				<field name="moduleclass_sfx" type="text"
-					default=""
+					default="eventcalq"
 					label="MOD_JEM_CAL_MODULECLASSSFX"
 					description="MOD_JEM_CAL_MODULECLASSSFX_DESC"
 				/>

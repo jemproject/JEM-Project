@@ -10,30 +10,27 @@
 
 defined('_JEXEC') or die;
 ?>
-
-<ul class="jemmod<?php echo $params->get('moduleclass_sfx'); ?>">
-<?php if (count($items)): ?>
-
-
-<?php foreach ($list as $item) : ?>
-	<li class="jemmod<?php echo $params->get('moduleclass_sfx'); ?>">
+<div class="<?php echo $params->get('moduleclass_sfx','jemmodbasic'); ?>">
+	<?php if (count($items)): ?>
+	<ul class="">
+	
+	<?php foreach ($list as $item) : ?>
+	<li class="">
 		<?php if ($params->get('linkdet') == 1) : ?>
-		<a href="<?php echo $item->link; ?>" class="jemmod<?php echo $params->get('moduleclass_sfx'); ?>">
+		<a href="<?php echo $item->link; ?>" class="">
 			<?php echo $item->dateinfo; ?>
 		</a>
 		<?php else :
 			echo $item->dateinfo;
 		endif;
 		?>
-
 		<br />
-
 		<?php if ($params->get('showtitloc') == 0 && $params->get('linkloc') == 1) : ?>
-			<a href="<?php echo $item->venueurl; ?>" class="jemmod<?php echo $params->get('moduleclass_sfx'); ?>">
+			<a href="<?php echo $item->venueurl; ?>" class="">
 				<?php echo $item->text; ?>
 			</a>
 		<?php elseif ($params->get('showtitloc') == 1 && $params->get('linkdet') == 2) : ?>
-			<a href="<?php echo $item->link; ?>" class="jemmod<?php echo $params->get('moduleclass_sfx'); ?>">
+			<a href="<?php echo $item->link; ?>" class="">
 				<?php echo $item->text; ?>
 			</a>
 		<?php
@@ -42,6 +39,7 @@ defined('_JEXEC') or die;
 			endif;
 		?>
 	</li>
-<?php endforeach; ?>
-</ul>
-<?php endif; ?>
+	<?php endforeach; ?>
+	</ul>
+	<?php endif; ?>
+</div>

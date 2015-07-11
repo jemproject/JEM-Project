@@ -35,8 +35,7 @@ if ($Default_Stylesheet == 1) {
 }
 
 //Output
-echo "<div class='eventcalq'>";
-
+echo "<div class='".$params->get('moduleclass_sfx','eventcalq')."'>";
 $calendar = '';
 $month_href = NULL;
 $year = $offset_year;
