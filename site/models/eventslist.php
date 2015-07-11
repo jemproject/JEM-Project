@@ -369,9 +369,14 @@ class JemModelEventslist extends JModelList
 		### FILTER - BYCAT ##
 		#####################
 
-		$cats = $this->getCategories('all');
-		if (!empty($cats)) {
-			$query->where('c.id  IN (' . implode(',', $cats) . ')');
+		$filter_catid = $this->getState('filter.filter_catid');
+		if ($filter_catid) { // categorycal
+			$query->where('c.id = '.(int)$filter_catid);
+		} else {
+			$cats = $this->getCategories('all');
+			if (!empty($cats)) {
+				$query->where('c.id  IN (' . implode(',', $cats) . ')');
+			}
 		}
 
 		####################

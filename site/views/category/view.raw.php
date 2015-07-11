@@ -22,7 +22,7 @@ class JemViewCategory extends JViewLegacy
 		$settings	= JemHelper::config();
 		$settings2	= JemHelper::globalattribs();
 		$app 		= JFactory::getApplication();
-		$jinput 	= JFactory::getApplication()->input;
+		$jinput 	= $app->input;
 
 		if ($settings2->get('global_show_ical_icon','0')==1) {
 			// Get data from the model

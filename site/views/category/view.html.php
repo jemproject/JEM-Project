@@ -92,7 +92,7 @@ class JemViewCategory extends JEMView
 			$model->setDate(mktime(0, 0, 1, $month, 1, $year));
 
 			$category	= $this->get('Category', 'CategoryCal');
-			$rows		= $this->get('Data', 'CategoryCal');
+			$rows		= $this->get('Items', 'CategoryCal');
 
 			//Set Page title
 			$pagetitle   = $params->def('page_title', $menuitem->title);
