@@ -9,12 +9,55 @@
 
 defined('_JEXEC') or die;
 
+if (version_compare(JVERSION, '3.4', 'lt')) {
+	// on Joomla prior 3.4.0 getInstance expects only one parameter
+
+	/**
+	 * JEM user class with additional functions.
+	 * Compatible with Joomla prior 3.4.0.
+	 *
+	 * @package JEM
+	 *
+	 * @see JemUserAbstract
+	 */
+	class JemUser extends JemUserAbstract
+	{
+		static function getInstance($id = 0)
+		{
+			return parent::_getInstance($id);
+		}
+	}
+
+} else {
+	// since Joomla 3.4.0 getInstance has a second parameter
+
+	/**
+	 * JEM user class with additional functions.
+	 * Compatible with Joomla since 3.4.0.
+	 *
+	 * @package JEM
+	 *
+	 * @see JemUserAbstract
+	 */
+	class JemUser extends JemUserAbstract
+	{
+		static function getInstance($id = 0, JUserWrapperHelper $userHelper = null)
+		{
+			// we don't need this helper
+			return parent::_getInstance($id);
+		}
+	}
+
+}
+
 /**
- * Holds all authentication logic
+ * JEM user class with additional functions.
+ * Because JUser::getInstance has different paramters on different versions
+ *  we must split out class.
  *
  * @package JEM
  */
-class JemUser extends JUser
+abstract class JemUserAbstract extends JUser
 {
 	/**
 	 * @var    array  JemUser instances container.
@@ -27,12 +70,7 @@ class JemUser extends JUser
 	protected static $jemsettings = array();
 
 
-	function __construct($identifier = 0)
-	{
-		parent::__construct($identifier);
-	}
-
-	static function getInstance($id = 0)
+	static protected function _getInstance($id = 0)
 	{
 		$id = (int)$id;
 
@@ -345,7 +383,7 @@ class JemUser extends JUser
 			$jemgroups = empty($fields) ? array() : $this->getJemGroups($fields);
 			// If registered users are generally allowed (by JEM Settings) to edit events/venues
 			// add JEM group 0 and make category check
-			if (($create && in_array('add', $action)) || (($edit || $editown) && in_array('edit', $action))) {
+			if (($create && in_array('add', $action)) || (($edit || $edit_own) && in_array('edit', $action))) {
 				$jemgroups[0] = true;
 			}
 		}
@@ -378,12 +416,14 @@ class JemUser extends JUser
 	 * Checks if user is allowed to do actions on objects.
 	 * Respects Joomla and JEM group permissions.
 	 *
-	 * @param  $action      mixed  One or array of 'add', 'edit', 'publish'
+	 * @param  $action      mixed  One or array of 'add', 'edit', 'publish', 'delete'
 	 * @param  $type        string One of 'event', 'venue'
 	 * @param  $id          mixed  The event or venue id or false (default)
 	 * @param  $created_by  mixed  User id of creator or false (default)
 	 * @param  $categoryIds mixed  List of category IDs to limit for or false (default)
 	 * @return true if allowed, false otherwise
+	 * @note   If nno categoryIds are given this functions checks if there is any potential way
+	 *         to allow requested action. To prevent this check set categoryIds to 1 (root category)
 	 */
 	public function can($action, $type, $id = false, $created_by = false, $categoryIds = false)
 	{
@@ -400,7 +440,7 @@ class JemUser extends JUser
 			$categoryIds = (array)$categoryIds;
 			$catIds = array();
 			foreach ($categoryIds as $catId) {
-				if ((int)$catId > 1) {  // also exclude 'root' category
+				if ((int)$catId > 0) {  // allow 'root' category with which caller can skip "potentially allowed" check
 					$catIds[] = (int)$catId;
 				}
 			}
@@ -438,8 +478,8 @@ class JemUser extends JUser
 			break;
 		}
 		$assets[] = $asset;
-		foreach($categoryIds as $id) {
-			$assets[] = 'com_jem.category.'.$id;
+		foreach($categoryIds as $catId) {
+			$assets[] = 'com_jem.category.'.$catId;
 		}
 
 		// Joomla ACL system, JEM global settings
@@ -466,6 +506,9 @@ class JemUser extends JUser
 					// user is creator of new item and auto-publish is enabled
 					$authorised |= $autopubl && ($id === 0) &&
 					               !empty($created_by) && ($userId == $created_by);
+					break;
+				case 'delete':
+					$authorised |= $this->authorise('core.delete', $asset);
 					break;
 				}
 			}
@@ -495,7 +538,7 @@ class JemUser extends JUser
 					$jemgroups[0] = true;
 				}
 				if (!empty($jemgroups)) {
-					if (empty($categoryIds) && (($type != 'event') || empty($id))) {
+					if (empty($categoryIds) && (($type != 'event') || (empty($id) && (!in_array('publish', $action))))) {
 						$authorised = true; // new events and venues have no limiting categories, so generally authorised
 					} else { // we have a valid event object so check event's categories against jem groups
 						$whereCats = empty($categoryIds) ? '' : ' AND c.id IN ('.implode(',', $categoryIds).')';
@@ -518,7 +561,7 @@ class JemUser extends JUser
 					}
 
 					if (!empty($cats)) {
-						$unspecific = 0;
+						$unspecific = in_array('publish', $action) ? -1 : 0; // publish requires jemgroup
 						foreach($cats as $cat) {
 							if (empty($cat->groupid)) {
 								if ($unspecific === 0) {

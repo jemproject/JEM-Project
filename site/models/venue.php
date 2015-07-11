@@ -37,14 +37,12 @@ class JemModelVenue extends JemModelEventslist
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		// parent::populateState($ordering, $direction);
-
 		$app         = JFactory::getApplication();
 		$jemsettings = JemHelper::config();
-		$jinput      = JFactory::getApplication()->input;
-		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 		$params      = $app->getParams();
-		$task        = $jinput->get('task','','cmd');
+		$jinput      = $app->input;
+		$task        = $jinput->getCmd('task','');
+		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 		$user        = JemFactory::getUser();
 		$userId      = $user->get('id');
 
@@ -93,11 +91,8 @@ class JemModelVenue extends JemModelEventslist
 		# params
 		$this->setState('params', $params);
 
-		if ($task == 'archive') {
-			$this->setState('filter.published',2);
-		} else {
-			$this->setState('filter.published',1);
-		}
+		# publish state
+		$this->_populatePublishState($task);
 
 		$this->setState('filter.groupby',array('a.id'));
 	}

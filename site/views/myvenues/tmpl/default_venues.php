@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -94,7 +94,17 @@ defined('_JEXEC') or die;
 					<td headers="jem_state" align="left" valign="top"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
 				<?php endif; ?>
 
-				<td class="center"><?php echo JHtml::_('jgrid.published', $row->published, $i,'myvenues.'); ?></td>
+				<td class="center">
+					<?php // Ensure icon is not clickable if user isn't allowed to change state!
+					if (!empty($row->params) && $row->params->get('access-change', false)) {
+						echo JHtml::_('jgrid.published', $row->published, $i,'myvenues.');
+					} else {
+						$img = $row->published ? 'tick.png' : 'publish_x.png';
+						$alt = $row->published ? JText::_('JPUBLISHED') : JText::_('JUNPUBLISHED');
+						echo JHtml::_('image', 'com_jem/' . $img, $alt, array('title' => $alt), true);
+					}
+					?>
+				</td>
 			</tr>
 			<?php
 				$i = 1 - $i;

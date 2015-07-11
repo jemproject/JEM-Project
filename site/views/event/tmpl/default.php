@@ -11,12 +11,11 @@ defined('_JEXEC') or die;
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
 
 // Create shortcuts to some parameters.
-$params		= $this->item->params;
-
-$images 	= json_decode($this->item->datimage);
-$canEdit	= $this->item->params->get('access-edit');
-$user		= JemFactory::getUser();
-$attribs 	= json_decode($this->item->attribs);
+$params  = $this->item->params;
+$canEdit = $params->get('access-edit');
+$images  = json_decode($this->item->datimage);
+$attribs = json_decode($this->item->attribs);
+$user    = JemFactory::getUser();
 
 JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
@@ -141,6 +140,19 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 				echo JText::sprintf('COM_JEM_EVENT_CREATED_BY', $author);
 			endif;
 			?>
+		</dd>
+		<?php endif; ?>
+
+	<!-- PUBLISHING STATE -->
+		<?php if (!empty($this->showeventstate) && isset($this->item->published)) : ?>
+		<dt class="published"><?php echo JText::_('JSTATUS'); ?>:</dt>
+		<dd class="published">
+			<?php switch ($this->item->published) {
+			case  1: echo JText::_('JPUBLISHED');   break;
+			case  0: echo JText::_('JUNPUBLISHED'); break;
+			case  2: echo JText::_('JARCHIVED');    break;
+			case -2: echo JText::_('JTRASHED');     break;
+			} ?>
 		</dd>
 		<?php endif; ?>
 	</dl>

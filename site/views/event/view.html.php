@@ -53,7 +53,7 @@ class JemViewEvent extends JEMView
 		$this->jemsettings	= $jemsettings;
 		$this->settings		= $settings;
 
-		$categories			= $this->get('Categories');
+		$categories			= isset($this->item->categories) ? $this->item->categories : $this->get('Categories');
 		$this->categories	= $categories;
 
 		$this->registers	= $model->getRegisters($this->state->get('event.id'));
@@ -166,24 +166,16 @@ class JemViewEvent extends JEMView
 		$this->dimage = JemImage::flyercreator($item->datimage, 'event');
 		$this->limage = JemImage::flyercreator($item->locimage, 'venue');
 
-		// Check if user can edit
-		$maintainer5 = $user->ismaintainer('edit',$item->did);
-		$genaccess5  = $user->editaccess($jemsettings->eventowner, $item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+		// Check if user can edit the event
+		$this->allowedtoeditevent = $user->can('edit', 'event', $item->id, $item->created_by);
+		$this->allowedtopublishevent = $user->can('publish', 'event', $item->id, $item->created_by);
 
-		if ($maintainer5 || $genaccess5 || $user->authorise('core.edit','com_jem')) {
-			$this->allowedtoeditevent = 1;
-		} else {
-			$this->allowedtoeditevent = 0;
-		}
+		// Check if user can edit the venue
+		$this->allowedtoeditvenue = $user->can('edit', 'venue', $item->locid, $item->venueowner);
+		$this->allowedtopublishvenue = $user->can('publish', 'venue', $item->locid, $item->venueowner);
 
-		//Check if the user has access to the edit-venueform
-		$maintainer3 = $user->venuegroups('edit');
-		$genaccess3  = $user->editaccess($jemsettings->venueowner, $item->venueowner, $jemsettings->venueeditrec, $jemsettings->venueedit);
-		if ($maintainer3 || $genaccess3) {
-			$this->allowedtoeditvenue = 1;
-		} else {
-			$this->allowedtoeditvenue = 0;
-		}
+		$this->showeventstate = $this->allowedtoeditevent || $this->allowedtopublishevent;
+		$this->showvenuestate = $this->allowedtoeditvenue || $this->allowedtopublishvenue;
 
 		//Timecheck for registration
 		$now = strtotime(date("Y-m-d"));

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -53,7 +53,7 @@ defined('_JEXEC') or die;
 
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 	<colgroup>
-			<col width="1%" class="jem_col_num" />
+		<?php /*<col width="1%" class="jem_col_num" />*/ ?>
 			<col width="1%" class="jem_col_checkall" />
 			<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 		<?php if ($this->jemsettings->showtitle == 1) : ?>
@@ -79,8 +79,8 @@ defined('_JEXEC') or die;
 
 	<thead>
 		<tr>
-			<th ><?php echo JText::_('COM_JEM_NUM'); ?></th>
-			<th><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+			<?php /*<th ><?php echo JText::_('COM_JEM_NUM'); ?></th>*/ ?>
+			<th class="sectiontableheader center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 			<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<?php if ($this->jemsettings->showtitle == 1) : ?>
 			<th id="jem_title" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></th>
@@ -110,8 +110,8 @@ defined('_JEXEC') or die;
 		<?php foreach ($this->events as $i => $row) : ?>
 			<tr class="row<?php echo $i % 2; ?>">
 
-				<td><?php echo $this->events_pagination->getRowOffset( $i ); ?></td>
-				<td><?php echo JHtml::_('grid.id', $i, $row->eventid); ?></td>
+				<?php /*<td><?php echo $this->events_pagination->getRowOffset( $i ); ?></td>*/ ?>
+				<td class="center"><?php echo JHtml::_('grid.id', $i, $row->eventid); ?></td>
 
 				<td headers="jem_date" align="left">
 					<?php echo JemOutput::formatShortDateTime($row->dates, $row->times,
@@ -192,7 +192,17 @@ defined('_JEXEC') or die;
 					?>
 				</td>
 				<?php endif; ?>
-				<td class="center"><?php echo JHtml::_('jgrid.published', $row->published, $i,'myevents.'); ?></td>
+				<td class="center">
+					<?php // Ensure icon is not clickable if user isn't allowed to change state!
+					if (!empty($row->params) && $row->params->get('access-change', false)) {
+						echo JHtml::_('jgrid.published', $row->published, $i, 'myevents.');
+					} else {
+						$img = $row->published ? 'tick.png' : 'publish_x.png';
+						$alt = $row->published ? JText::_('JPUBLISHED') : JText::_('JUNPUBLISHED');
+						echo JHtml::_('image', 'com_jem/' . $img, $alt, array('title' => $alt), true);
+					}
+					?>
+				</td>
 			</tr>
 
 		<?php

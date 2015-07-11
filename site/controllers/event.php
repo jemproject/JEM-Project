@@ -42,30 +42,15 @@ class JEMControllerEvent extends JControllerForm
 	protected function allowAdd($data = array())
 	{
 		// Initialise variables.
-		$user		= JemFactory::getUser();
-		$categoryId	= JArrayHelper::getValue($data, 'catid', JFactory::getApplication()->input->getInt('catid', 0), 'int');
-		$allow		= null;
+		$user       = JemFactory::getUser();
+		$categoryId = JArrayHelper::getValue($data, 'catid', JFactory::getApplication()->input->getInt('catid', 0), 'int');
 
-		if ($categoryId) {
-			// If the category has been passed in the data or URL check it.
-			$allow	= $user->authorise('core.create', 'com_jem.category.'.$categoryId);
-		}
-
-		$jemsettings	= JEMHelper::config();
-		$maintainer		= $user->ismaintainer('add');
-		$genaccess		= $user->validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
-
-		if ($maintainer || $genaccess) {
+		if ($user->can('add', 'event', false, $categoryId ? $categoryId : false)) {
 			return true;
 		}
 
-		if ($allow === null) {
-			// In the absense of better information, revert to the component permissions.
-			return parent::allowAdd();
-		}
-		else {
-			return $allow;
-		}
+		// In the absense of better information, revert to the component permissions.
+		return parent::allowAdd();
 	}
 
 	/**
@@ -82,43 +67,15 @@ class JEMControllerEvent extends JControllerForm
 		// Initialise variables.
 		$recordId = (int) isset($data[$key]) ? $data[$key] : 0;
 		$user     = JemFactory::getUser();
-		$userId   = $user->get('id');
-		$asset    = 'com_jem.event.'.$recordId;
 
-		// Check general edit permission first.
-		if ($user->authorise('core.edit', $asset)) {
-			return true;
+		if (isset($data['created_by'])) {
+			$created_by = $data['created_by'];
+		} else {
+			$record = $this->getModel()->getItem($recordId);
+			$created_by = isset($record->created_by) ? $record->created_by : false;
 		}
 
-		// Fallback on edit.own.
-		// First test if the permission is available.
-		if ($user->authorise('core.edit.own', $asset)) {
-			// Now test the owner is the user.
-			$ownerId	= (int) isset($data['created_by']) ? $data['created_by'] : 0;
-			if (empty($ownerId) && $recordId) {
-				// Need to do a lookup from the model.
-				$record		= $this->getModel()->getItem($recordId);
-
-				if (empty($record)) {
-					return false;
-				}
-
-				$ownerId = $record->created_by;
-			}
-
-			// If the owner matches 'me' then do the test.
-			if ($ownerId == $userId) {
-				return true;
-			}
-		}
-
-		$record			= $this->getModel()->getItem($recordId);
-		$jemsettings 	= JEMHelper::config();
-		$editaccess		= $user->editaccess($jemsettings->eventowner, $record->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
-		$maintainer 	= $user->ismaintainer('edit',$record->id);
-
-		if ($maintainer || $editaccess)
-		{
+		if ($user->can('edit', 'event', $recordId, $created_by)) {
 			return true;
 		}
 

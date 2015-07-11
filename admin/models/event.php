@@ -28,13 +28,11 @@ class JEMModelEvent extends JemModelAdmin
 
 		if (!empty($record->id) && ($record->published == -2)) {
 			$user = JemFactory::getUser();
-			if (!empty($record->catid)){
-				$result = $user->authorise('core.delete', 'com_jem.category.'.(int) $record->catid);
-			} else {
-				$result = $user->authorise('core.delete', 'com_jem');
-			}
+
+			$result = $user->can('delete', 'event', $record->id, $record->created_by, !empty($record->catid) ? $record->catid : false);
 
 			// Todo: Not really a good place. Nobody knows if the event will be really deleted.
+			/* --> Moved to JemTableEvent::delete()
 			if (!empty($result)) {
 				$db = JFactory::getDbo();
 
@@ -45,13 +43,14 @@ class JEMModelEvent extends JemModelAdmin
 				$db->setQuery($query);
 				$db->execute();
 			}
+			*/
 		}
 
 		return $result;
 	}
 
 	/**
-	 * Method to test whether a record can be deleted.
+	 * Method to test whether a record can be published/unpublished.
 	 *
 	 * @param	object	A record object.
 	 * @return	boolean	True if allowed to change the state of the record. Defaults to the permission set in the component.
@@ -61,11 +60,11 @@ class JEMModelEvent extends JemModelAdmin
 	{
 		$user = JemFactory::getUser();
 
-		if (!empty($record->catid)){
-			return $user->authorise('core.edit.state', 'com_jem.category.'.(int) $record->catid);
-		} else {
-			return $user->authorise('core.edit.state', 'com_jem');
-		}
+		$id    = isset($record->id) ? $record->id : false; // isset ensures 0 !== false
+		$owner = !empty($record->created_by) ? $record->created_by : false;
+		$cats  = !empty($record->catid) ? array($record->catid) : false;
+
+		return $user->can('publish', 'event', $id, $owner, $cats);
 	}
 
 	/**
@@ -138,30 +137,30 @@ class JEMModelEvent extends JemModelAdmin
 
 			$files = JEMAttachment::getAttachments('event'.$item->id);
 			$item->attachments = $files;
-		}
 
-		if ($item->id){
-			// Store current recurrence values
-			$item->recurr_bak = new stdClass;
-			foreach (get_object_vars($item) as $k => $v) {
-				if (strncmp('recurrence_', $k, 11) === 0) {
-					$item->recurr_bak->$k = $v;
+			if ($item->id){
+				// Store current recurrence values
+				$item->recurr_bak = new stdClass;
+				foreach (get_object_vars($item) as $k => $v) {
+					if (strncmp('recurrence_', $k, 11) === 0) {
+						$item->recurr_bak->$k = $v;
+					}
 				}
+
+				$item->recurrence_type 			= '';
+				$item->recurrence_number 		= '';
+				$item->recurrence_byday 		= '';
+				$item->recurrence_counter 		= '';
+				$item->recurrence_first_id 		= '';
+				$item->recurrence_limit 		= '';
+				$item->recurrence_limit_date	= '';
 			}
 
-			$item->recurrence_type 			= '';
-			$item->recurrence_number 		= '';
-			$item->recurrence_byday 		= '';
-			$item->recurrence_counter 		= '';
-			$item->recurrence_first_id 		= '';
-			$item->recurrence_limit 		= '';
-			$item->recurrence_limit_date	= '';
-		}
+			$item->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
-		$item->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
-
-		if (empty($item->id)){
-			$item->country = $jemsettings->defaultCountry;
+			if (empty($item->id)){
+				$item->country = $jemsettings->defaultCountry;
+			}
 		}
 
 		return $item;

@@ -65,28 +65,10 @@ class JemViewEditvenue extends JViewLegacy
 
 		if (empty($item->id)) {
 			// Check if the user has access to the form
-			$maintainer = $user->venuegroups('add');
-			$delloclink = $user->validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
-
-			if ($maintainer || $delloclink) {
-				$dellink = true;
-			} else {
-				$dellink = false;
-			}
-
-			$authorised = $user->authorise('core.create','com_jem') || $dellink;
+			$authorised = $user->can('add', 'venue');
 		} else {
 			// Check if user can edit
-			$maintainer = $user->venuegroups('edit');
-			$genaccess  = $user->editaccess($jemsettings->venueowner, $this->item->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
-
-			if ($maintainer || $genaccess) {
-				$edit = true;
-			} else {
-				$edit = false;
-			}
-
-			$authorised = $this->item->params->get('access-edit') || $edit;
+			$authorised = $user->can('edit', 'venue', $item->id, $item->created_by);
 		}
 
 		if ($authorised !== true) {
@@ -136,6 +118,8 @@ class JemViewEditvenue extends JViewLegacy
 			$item->params = $temp;
 		}
 
+		$publisher = $user->can('publish', 'venue', $item->id, $item->created_by);
+
 		if (!empty($this->item) && isset($this->item->id)) {
 			// $this->item->images = json_decode($this->item->images);
 			// $this->item->urls = json_decode($this->item->urls);
@@ -184,6 +168,11 @@ class JemViewEditvenue extends JViewLegacy
 		$this->infoimage     = JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_('COM_JEM_NOTES'), NULL, true);
 
 		$this->user = $user;
+
+		if (!$publisher) {
+			$this->form->setFieldAttribute('published', 'default', 0);
+			$this->form->setFieldAttribute('published', 'readonly', 'true');
+		}
 
 		$this->_prepareDocument();
 		parent::display($tpl);
