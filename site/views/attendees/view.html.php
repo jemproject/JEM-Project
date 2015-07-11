@@ -28,6 +28,7 @@ class JemViewAttendees extends JViewLegacy {
 	//	$db			= JFactory::getDBO();
 		$document	= JFactory::getDocument();
 		$user		= JemFactory::getUser();
+		$settings	= JEMHelper::globalattribs();
 		$params 	= $app->getParams();
 		$menu		= $app->getMenu();
 		$menuitem	= $menu->getActive();
@@ -90,8 +91,11 @@ class JemViewAttendees extends JViewLegacy {
 
 		//build filter selectlist
 		$filters = array();
-		/* $filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME')); */
-		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_USERNAME'));
+		if ($settings->get('global_regname', '1')) {
+			$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME'));
+		} else {
+			$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_USERNAME'));
+		}
 		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter);
 
 		// search filter
@@ -121,6 +125,7 @@ class JemViewAttendees extends JViewLegacy {
 		$this->item			= $menuitem;
 		$this->action		= $uri->toString();
 		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+		$this->settings		= $settings;
 
 		parent::display($tpl);
 	}
@@ -135,6 +140,7 @@ class JemViewAttendees extends JViewLegacy {
 		$document	= JFactory::getDocument();
 		$app		= JFactory::getApplication();
 		$params		= $app->getParams();
+		$settings	= JEMHelper::globalattribs();
 
 		// Load css
 		JemHelper::loadCss('backend');
@@ -154,6 +160,7 @@ class JemViewAttendees extends JViewLegacy {
 		$this->rows 		= $rows;
 		$this->event 		= $event;
 		$this->enableemailaddress = $enableemailaddress;
+		$this->settings		= $settings;
 
 		parent::display($tpl);
 	}

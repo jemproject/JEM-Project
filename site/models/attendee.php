@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.3
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -41,6 +41,9 @@ class JEMModelAttendee extends JModelLegacy
 	public function __construct()
 	{
 		parent::__construct();
+
+		$settings = JEMHelper::globalattribs();
+		$this->regname = $settings->get('global_regname','1');
 
 		$array = JFactory::getApplication()->input->get('cid', array(), 'array');
 		$this->setId((int)$array[0]);
@@ -87,7 +90,7 @@ class JEMModelAttendee extends JModelLegacy
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
 		{
-			$query = 'SELECT r.*, u.username '
+			$query = 'SELECT r.*, ' . $this->regname ? 'u.name' : 'u.username' . ' AS username '
 					. ' FROM #__jem_register AS r '
 					. ' LEFT JOIN #__users AS u ON u.id = r.uid '
 					. ' WHERE r.id = '.$this->_db->quote($this->_id)

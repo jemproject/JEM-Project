@@ -128,44 +128,39 @@ class JEMControllerAttendees extends JControllerLegacy
 	 */
 	function export()
 	{
-		$app = JFactory::getApplication();
+		$app      = JFactory::getApplication();
+		$settings = JEMHelper::globalattribs();
+		$params   = $app->getParams();
 
-		$params = $app->getParams();
 		$enableemailadress = $params->get('enableemailaddress', 0);
 
 		$model = $this->getModel('attendees');
-
 		$datas = $model->getData();
+		$event = $model->getEvent();
+		$waitinglist = isset($event->waitinglist) ? $event->waitinglist : false;
 
 		header('Content-Type: text/x-csv');
 		header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 		header('Content-Disposition: attachment; filename=attendees.csv');
 		header('Pragma: no-cache');
 
+		$userfield = $settings->get('global_regname', '1') ? 'name' : 'username';
 		$export = '';
 
-		for ($i=0; $i < count($datas); $i++)
+		foreach ($datas as $data)
 		{
-			$col = array();
-			$data = $datas[$i];
+			$cols = array();
 
-			$col[] = str_replace("\"", "\"\"", $data->username);
-			if ($enableemailadress == 1)
-			{
-				$col[] = str_replace("\"", "\"\"", $data->email);
+			$cols[] = '"' . str_replace("\"", "\"\"", $data->$userfield) . '"';
+			if ($enableemailadress == 1) {
+				$cols[] = '"' . str_replace("\"", "\"\"", $data->email) . '"';
 			}
-			$col[] = str_replace("\"", "\"\"", JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2')));
-
-			for ($j = 0; $j < count($col); $j++)
-			{
-				$export .= "\"" . $col[$j] . "\"";
-
-				if ($j != count($col)-1)
-				{
-					$export .= ";";
-				}
+			$cols[] = '"' . str_replace("\"", "\"\"", JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2'))) . '"';
+			if ($waitinglist) {
+				$cols[] = '"' . JText::_($data->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING') . '"';
 			}
-			$export .= "\r\n";
+
+			$export .= implode(';', $cols) . "\r\n";
 		}
 
 		echo $export;

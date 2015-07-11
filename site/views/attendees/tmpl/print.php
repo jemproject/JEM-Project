@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -38,29 +38,33 @@ defined('_JEXEC') or die; ?>
 		<tr>
 			<th class="title"><?php echo JText::_( 'COM_JEM_USERNAME' ); ?></th>
 			<th class="title"><?php echo JText::_( 'COM_JEM_REGDATE' ); ?></th>
-
 			<?php if ($this->enableemailaddress == 1) : ?>
 			<th class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
+			<?php endif; ?>
+			<?php if ($this->event->waitinglist): ?>
+			<th class="title"><?php echo JText::_('COM_JEM_HEADER_WAITINGLIST_STATUS' ); ?></th>
 			<?php endif; ?>
 		</tr>
 	</thead>
 
 	<tbody>
 		<?php
+		$regname = $this->settings->get('global_regname', '1');
 		$k = 0;
-		for($i=0, $n=count( $this->rows ); $i < $n; $i++) {
-			$row = $this->rows[$i];
+		foreach ($this->rows as $row) :
 		?>
 		<tr class="<?php echo "row$k"; ?>">
-			<td><?php echo $row->username; ?></td>
-			<td><?php echo JHtml::_('date',$row->uregdate, JText::_('DATE_FORMAT_LC2')); ?></td>
-
+			<td><?php echo $regname ? $row->name : $row->username; ?></td>
+			<td><?php echo JHtml::_('date', $row->uregdate, JText::_('DATE_FORMAT_LC2')); ?></td>
 			<?php if ($this->enableemailaddress == 1) : ?>
-				<td><?php echo $row->email; ?></td>
+			<td><?php echo $row->email; ?></td>
+			<?php endif; ?>
+			<?php if ($this->event->waitinglist): ?>
+			<td><?php echo JText::_($row->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING'); ?></td>
 			<?php endif; ?>
 		</tr>
 		<?php $k = 1 - $k;
-		} ?>
+		endforeach; ?>
 	</tbody>
 </table>
 
