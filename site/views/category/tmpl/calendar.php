@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -182,6 +182,22 @@ defined('_JEXEC') or die;
 			$venue = '';
 		}
 
+		// state if unpublished
+		$statusicon = '';
+		if (isset($row->published) && ($row->published != 1)) {
+			$statusicon  = JemOutput::publishstateicon($row);
+			$eventstate  = '<div class="eventstate"><span class="text-label">'.JText::_('JSTATUS').': </span>';
+			switch ($row->published) {
+			case  1: $eventstate .= JText::_('JPUBLISHED');   break;
+			case  0: $eventstate .= JText::_('JUNPUBLISHED'); break;
+			case  2: $eventstate .= JText::_('JARCHIVED');    break;
+			case -2: $eventstate .= JText::_('JTRASHED');     break;
+			}
+			$eventstate .= '</div>';
+		} else {
+			$eventstate  = '';
+		}
+
 		//date in tooltip
 		$multidaydate = '<div class="time"><span class="text-label">'.JText::_('COM_JEM_DATE').': </span>';
 		if ($multi->row == 'first') {
@@ -203,11 +219,11 @@ defined('_JEXEC') or die;
 		// if we have exact one color from categories we can use this as background color of event
 		if (!empty($evbg_usecatcolor) && (count($catcolor) == 1)) {
 			$content .= '<div class="eventcontentinner" style="background-color:'.array_pop($catcolor).'">';
-			$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
+			$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
 			$content .= $contentend . '</div>';
 		} else {
 			$content .= '<div class="eventcontentinner">'; // . $colorpic;
-			$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue, $eventdate, $row->title, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
+			$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
 			$content .= $contentend . '</div>';
 		}
 

@@ -240,6 +240,7 @@ class JEMModelAttendees extends JModelLegacy
 		// First thing we need to do is to select only needed events
 		$where[] = ' a.published = 1';
 		$where[] = ' c.published = 1';
+		$where[] = ' a.access  IN (' . implode(',', $levels) . ')';
 		$where[] = ' c.access  IN (' . implode(',', $levels) . ')';
 
 		// then if the user is the owner of the event

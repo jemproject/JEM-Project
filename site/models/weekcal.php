@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -29,23 +29,20 @@ class JemModelWeekcal extends JemModelEventslist
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		# parent::populateState($ordering, $direction);
-		$app 			= JFactory::getApplication();
-		$jemsettings	= JemHelper::config();
-		$jinput			= JFactory::getApplication()->input;
-		$itemid 		= $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
-		$task           = $jinput->getCmd('task','');
-		$params 		= $app->getParams();
-		$top_category 	= $params->get('top_category', 0);
-		$startdayonly 	= $params->get('show_only_start', false);
-		$numberOfWeeks	= $params->get('nrweeks', '1');
-		$firstweekday	= $params->get('firstweekday', 1);
+		$app           = JFactory::getApplication();
+		$jinput        = $app->input;
+		$task          = $jinput->getCmd('task', '');
+		$params        = $app->getParams();
+		$top_category  = $params->get('top_category', 0);
+		$startdayonly  = $params->get('show_only_start', false);
+		$numberOfWeeks = $params->get('nrweeks', '1');
+		$firstweekday  = $params->get('firstweekday', 1);
 
 		# params
 		$this->setState('params', $params);
 
 		# publish state
-		$this->setState('filter.published', 1);
+		$this->_populatePublishState($task);
 
 		###########
 		## DATES ##
@@ -55,47 +52,22 @@ class JemModelWeekcal extends JemModelEventslist
 
 		$config = JFactory::getConfig();
 		$offset = $config->get('offset');
-		$year = date('Y');
 		date_default_timezone_set($offset);
 		$datetime = new DateTime();
-		$datetime->setISODate($year, $datetime->format("W"), 7);
+		// If week starts Monday we use dayoffset 1, on Sunday we use 0 but 7 if today is Sunday.
+		$dayoffset = ($firstweekday == 1) ? 1 : ((($firstweekday == 0) && ($datetime->format('N') == 7)) ? 7 : 0);
+		$datetime->setISODate($datetime->format('Y'), $datetime->format('W'), $dayoffset);
+		$filter_date_from = $datetime->format('Y-m-d');
+		$datetime->modify('+'.$numberOfWeeks.' weeks'.' -1 day'); // just to be compatible to php < 5.3 ;-)
+		$filter_date_to   = $datetime->format('Y-m-d');
 
-		if ($firstweekday == 1) {
-			if(date('N', time()) == 1) {
-				#it's monday and monday is startdate;
-				$filter_date_from = $datetime->modify('-6 day');
-				$filter_date_from = $datetime->format('Y-m-d') . "\n";
-				$filter_date_to = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
-				$filter_date_to = $datetime->format('Y-m-d') . "\n";
-			} else {
-				# it's not monday but monday is startdate;
-				$filter_date_from = $datetime->modify('-6 day');
-				$filter_date_from = $datetime->format('Y-m-d') . "\n";
-				$filter_date_to = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
-				$filter_date_to = $datetime->format('Y-m-d') . "\n";
-			}
-		}
+		$where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $this->_db->quote($filter_date_from) . ') >= 0';
+		$this->setState('filter.calendar_from', $where);
+		$this->setState('filter.date.from', $filter_date_from);
 
-		if ($firstweekday == 0) {
-			if(date('N', time()) == 7) {
-				#it's sunday and sunday is startdate;
-				$filter_date_from = $datetime->format('Y-m-d') . "\n";
-				$filter_date_to = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
-				$filter_date_to = $datetime->format('Y-m-d') . "\n";
-			} else {
-				#it's not sunday and sunday is startdate;
-				$filter_date_from = $datetime->modify('-7 day');
-				$filter_date_from = $datetime->format('Y-m-d') . "\n";
-				$filter_date_to = $datetime->modify('+'.$numberOfWeeks.' weeks');
-				$filter_date_to = $datetime->format('Y-m-d') . "\n";
-			}
-		}
-
-		$where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), \''. $filter_date_from .'\') >= 0';
-		$this->setState('filter.calendar_from',$where);
-
-		$where = ' DATEDIFF(a.dates, \''. $filter_date_to .'\') <= 0';
-		$this->setState('filter.calendar_to',$where);
+		$where = ' DATEDIFF(a.dates, ' . $this->_db->quote($filter_date_to) . ') <= 0';
+		$this->setState('filter.calendar_to', $where);
+		$this->setState('filter.date.to', $filter_date_to);
 
 
 		##################
@@ -111,8 +83,8 @@ class JemModelWeekcal extends JemModelEventslist
 		}
 
 		# set filter
-		$this->setState('filter.calendar_startdayonly',(bool)$startdayonly);
-		$this->setState('filter.groupby','a.id');
+		$this->setState('filter.calendar_startdayonly', (bool)$startdayonly);
+		$this->setState('filter.groupby', 'a.id');
 	}
 
 
@@ -121,12 +93,10 @@ class JemModelWeekcal extends JemModelEventslist
 	 */
 	public function getItems()
 	{
-		$app 			= JFactory::getApplication();
-		$params 		= $app->getParams();
+		$items = parent::getItems();
 
-		$items	= parent::getItems();
 		if ($items) {
-			$items = self::calendarMultiday($items);
+			$items = $this->calendarMultiday($items);
 
 			return $items;
 		}
@@ -140,14 +110,10 @@ class JemModelWeekcal extends JemModelEventslist
 	 */
 	function getListQuery()
 	{
-		$params  = $this->state->params;
-		$jinput  = JFactory::getApplication()->input;
-		$task    = $jinput->get('task','','cmd');
-
-		// Create a new query object.
+		// Let parent create a new query object.
 		$query = parent::getListQuery();
 
-		$query->select('DATEDIFF(a.enddates, a.dates) AS datesdiff,DAYOFWEEK(a.dates) AS weekday, DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month, WEEK(a.dates) AS weeknumber');
+		$query->select('DATEDIFF(a.enddates, a.dates) AS datesdiff, DAYOFWEEK(a.dates) AS weekday, DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month, WEEK(a.dates) AS weeknumber');
 
 		return $query;
 	}
@@ -155,22 +121,22 @@ class JemModelWeekcal extends JemModelEventslist
 	/**
 	 * create multi-day events
 	 */
-	function calendarMultiday($items) {
-
+	function calendarMultiday($items)
+	{
 		if (empty($items)) {
 			return array();
 		}
 
-		$app 			= JFactory::getApplication();
-		$params 		= $app->getParams();
-		$startdayonly	= $this->getState('filter.calendar_startdayonly');
+		$app          = JFactory::getApplication();
+		$params       = $app->getParams();
+		$startdayonly = $this->getState('filter.calendar_startdayonly');
 
-		foreach($items AS $item) {
+		foreach ($items as $i => $item) {
 			$item->categories = $this->getCategories($item->id);
 
 			//remove events without categories (users have no access to them)
 			if (empty($item->categories)) {
-				unset($item);
+				unset($items[$i]);
 			}
 			elseif (!$startdayonly) {
 				if (!is_null($item->enddates) && ($item->enddates != $item->dates)) {
@@ -222,52 +188,29 @@ class JemModelWeekcal extends JemModelEventslist
 			}
 		} // foreach ($items)
 
-		foreach ($items as $index => $item) {
-			$date = $item->dates;
-			$firstweekday = $params->get('firstweekday',1); // 1 = Monday, 0 = Sunday
-
+		$startdate = $this->getState('filter.date.from');
+		$enddate   = $this->getState('filter.date.to');
+		if (empty($startdate) || empty($enddate)) {
 			$config = JFactory::getConfig();
 			$offset = $config->get('offset');
-			$year = date('Y');
+			$firstweekday  = $params->get('firstweekday', 1); // 1 = Monday, 0 = Sunday
+			$numberOfWeeks = $params->get('nrweeks', '1');
 
 			date_default_timezone_set($offset);
 			$datetime = new DateTime();
-			$datetime->setISODate($year, $datetime->format("W"), 7);
-			$numberOfWeeks = $params->get('nrweeks', '1');
+			// If week starts Monday we use dayoffset 1, on Sunday we use 0 but 7 if today is Sunday.
+			$dayoffset = ($firstweekday == 1) ? 1 : ((($firstweekday == 0) && ($datetime->format('N') == 7)) ? 7 : 0);
+			$datetime->setISODate($datetime->format('Y'), $datetime->format('W'), $dayoffset);
+			$startdate = $datetime->format('Y-m-d');
+			$datetime->modify('+'.$numberOfWeeks.' weeks'.' -1 day'); // just to be compatible to php < 5.3 ;-)
+			$enddate   = $datetime->format('Y-m-d');
+		}
 
-			if ($firstweekday == 1) {
-				if(date('N', time()) == 1) {
-					#it's monday and monday is startdate;
-					$startdate = $datetime->modify('-6 day');
-					$startdate = $datetime->format('Y-m-d') . "\n";
-					$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
-					$enddate = $datetime->format('Y-m-d') . "\n";
-				} else {
-					#it's not monday but monday is startdate;..
-					$startdate = $datetime->modify('-6 day');
-					$startdate = $datetime->format('Y-m-d') . "\n";
-					$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
-					$enddate = $datetime->format('Y-m-d') . "\n";
-				}
-			}
+		$check_startdate = strtotime($startdate);
+		$check_enddate   = strtotime($enddate);
 
-			if ($firstweekday == 0) {
-				if(date('N', time()) == 7) {
-					#it's sunday and sunday is startdate;
-					$startdate = $datetime->format('Y-m-d') . "\n";
-					$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
-					$enddate = $datetime->format('Y-m-d') . "\n";
-				} else {
-					#it's not sunday and sunday is startdate;
-					$startdate = $datetime->modify('-7 day');
-					$startdate = $datetime->format('Y-m-d') . "\n";
-					$enddate = $datetime->modify('+'.$numberOfWeeks.' weeks'.'- 1 day');
-					$enddate = $datetime->format('Y-m-d') . "\n";
-				}
-			}
-
-			$check_startdate = strtotime($startdate);
-			$check_enddate = strtotime($enddate);
+		foreach ($items as $index => $item) {
+			$date = $item->dates;
 			$date_timestamp = strtotime($date);
 
 			if ($date_timestamp > $check_enddate) {
@@ -296,7 +239,6 @@ class JemModelWeekcal extends JemModelEventslist
 		array_multisort($sort, SORT_ASC, $multitime, $multititle, $time, SORT_ASC, $title, $items);
 
 		return $items;
-
 	}
 
 
@@ -308,21 +250,23 @@ class JemModelWeekcal extends JemModelEventslist
 	 */
 	function getCurrentweek()
 	{
-		$app = JFactory::getApplication();
-		$params =  $app->getParams('com_jem');
-		$weekday = $params->get('firstweekday',1); // 1 = Monday, 0 = Sunday
+		if (!isset($this->_currentweek)) {
+			$app = JFactory::getApplication();
+			$params =  $app->getParams('com_jem');
+			$weekday = $params->get('firstweekday', 1); // 1 = Monday, 0 = Sunday
 
-		if ($weekday == 1) {
-			$number = 3; // Monday, with more than 3 days this year
-		} else {
-			$number = 6; // Sunday, with more than 3 days this year
+			if ($weekday == 1) {
+				$number = 3; // Monday, with more than 3 days this year
+			} else {
+				$number = 6; // Sunday, with more than 3 days this year
+			}
+
+			$today =  Date("Y-m-d");
+			$query = 'SELECT WEEK(\''.$today.'\','.$number.')' ;
+
+			$this->_db->setQuery($query);
+			$this->_currentweek = $this->_db->loadResult();
 		}
-
-		$today =  Date("Y-m-d");
-		$query = 'SELECT WEEK(\''.$today.'\','.$number.')' ;
-
-		$this->_db->setQuery($query);
-		$this->_currentweek = $this->_db->loadResult();
 
 		return $this->_currentweek;
 	}

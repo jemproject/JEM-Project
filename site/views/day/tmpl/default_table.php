@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -106,13 +106,13 @@ defined('_JEXEC') or die;
 					<td headers="jem_title" align="left" valign="top">
 						<a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
 							<span itemprop="name"><?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?></span>
-						</a>
+						</a><?php JemOutput::publishstateicon($row); ?>
 					</td>
 				<?php endif; ?>
 
 				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
 					<td headers="jem_title" align="left" valign="top" itemprop="name">
-						<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
+						<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
 					</td>
 				<?php endif; ?>
 

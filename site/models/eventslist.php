@@ -505,36 +505,17 @@ class JemModelEventslist extends JModelList
 			$item->params = clone $this->getState('params');
 			$item->params->merge($eventParams);
 
-			# write access permissions.
-			if (!$guest)
-			{
-				$asset = 'com_jem.event.' . $item->id;
-
-				# Check general edit permission first.
-				if ($user->authorise('core.edit', $asset))
-				{
-					$item->params->set('access-edit', true);
-				}
-
-				# Now check if edit.own is available.
-				elseif (!empty($userId) && $user->authorise('core.edit.own', $asset))
-				{
-					# Check for a valid user and that they are the owner.
-					if ($userId == $item->created_by)
-					{
-						$item->params->set('access-edit', true);
-					}
-				}
-			}
-
 			# adding categories
 			$item->categories = $this->getCategories($item->id);
 
 			# check if the item-categories is empty, if so the user has no access to that event at all.
 			if (empty($item->categories)) {
 				unset ($items[$index]);
+			} else {
+			# write access permissions.
+				$item->params->set('access-edit', $user->can('edit', 'event', $item->id, $item->created_by));
 			}
-		}
+		} // foreach
 
 		if ($items) {
 			/*$items =*/ JemHelper::getAttendeesNumbers($items);

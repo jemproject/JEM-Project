@@ -98,11 +98,8 @@ class JEMModelMyevents extends JModelLegacy
 			}
 		}
 
-		if($this->_events) {
-
-			$count = count($this->_events);
-			for($i = 0; $i < $count; $i++) {
-				$item = $this->_events[$i];
+		if ($this->_events) {
+			foreach ($this->_events as $i => $item) {
 				$item->categories = $this->getCategories($item->eventid);
 
 				//remove events without categories (users have no access to them)
@@ -265,6 +262,7 @@ class JEMModelMyevents extends JModelLegacy
 			$where[] = ' (a.published = 1 OR a.published = 0)';
 		}
 		$where[] = ' c.published = 1';
+		$where[] = ' a.access IN (' . implode(',', $levels) . ')';
 		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
 
 		// then if the user is the owner of the event

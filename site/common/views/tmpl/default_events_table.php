@@ -129,18 +129,17 @@ defined('_JEXEC') or die;
 					?>
 				</td>
 
-				<?php $unpubicon = $row->published ? '' : ' ' . JHtml::_('image', 'com_jem/publish_x.png', JText::_('JUNPUBLISHED'), array('title' => JText::_('JUNPUBLISHED'), 'class' => 'icon-inline'), true); ?>
 				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
 					<td headers="jem_title" align="left" valign="top">
 						<a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
 							<span itemprop="name"><?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?></span>
-						</a><?php echo $unpubicon; ?>
+						</a><?php echo JemOutput::publishstateicon($row); ?>
 					</td>
 				<?php endif; ?>
 
 				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
 					<td headers="jem_title" align="left" valign="top" itemprop="name">
-						<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . $unpubicon; ?>
+						<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
 					</td>
 				<?php endif; ?>
 

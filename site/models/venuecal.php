@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -22,15 +22,14 @@ class JemModelVenueCal extends JemModelEventslist
 	 */
 	public function __construct()
 	{
-		$app = JFactory::getApplication();
+		$app         = JFactory::getApplication();
 		$jemsettings = JEMHelper::config();
-		$jinput = JFactory::getApplication()->input;
-		$params = $app->getParams();
+		$jinput      = $app->input;
+		$params      = $app->getParams();
 
-		if ($jinput->get('id',null,'int')) {
-			$id = $jinput->get('id',null,'int');
-		} else {
-			$id = $params->get('id');
+		$id = $jinput->getInt('id', 0);
+		if (empty($id)) {
+			$id = $params->get('id', 0);
 		}
 
 		$this->setdate(time());
@@ -51,7 +50,7 @@ class JemModelVenueCal extends JemModelEventslist
 	function setId($id)
 	{
 		// Set new venue ID and wipe data
-		$this->_id			= $id;
+		$this->_id = $id;
 	}
 
 
@@ -60,20 +59,19 @@ class JemModelVenueCal extends JemModelEventslist
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		# parent::populateState($ordering, $direction);
 		$app          = JFactory::getApplication();
 		$jemsettings  = JemHelper::config();
-		$jinput       = JFactory::getApplication()->input;
-		$itemid       = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 		$params       = $app->getParams();
-		$task         = $jinput->getCmd('task','');
+		$jinput       = $app->input;
+		$itemid       = $jinput->getInt('Itemid', 0);
+		$task         = $jinput->getCmd('task', '');
 		$startdayonly = $params->get('show_only_start', false);
 
 		# params
 		$this->setState('params', $params);
 
 		# publish state
-		$this->setState('filter.published', 1);
+		$this->_populatePublishState($task);
 
 
 		###########
@@ -81,28 +79,27 @@ class JemModelVenueCal extends JemModelEventslist
 		###########
 
 		#only select events within specified dates. (chosen month)
-		$monthstart	= mktime(0, 0, 1, strftime('%m', $this->_date), 1, strftime('%Y', $this->_date));
+		$monthstart	= mktime(0, 0,  1, strftime('%m', $this->_date),   1, strftime('%Y', $this->_date));
 		$monthend	= mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
 
-		$filter_date_from	= $this->_db->Quote(strftime('%Y-%m-%d', $monthstart));
-		$filter_date_to		= $this->_db->Quote(strftime('%Y-%m-%d', $monthend));
+		$filter_date_from = strftime('%Y-%m-%d', $monthstart);
+		$filter_date_to   = strftime('%Y-%m-%d', $monthend);
 
-		$where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), '. $filter_date_from .') >= 0';
-		$this->setState('filter.calendar_from',$where);
+		$where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), '. $this->_db->Quote($filter_date_from) .') >= 0';
+		$this->setState('filter.calendar_from', $where);
 
-		$where = ' DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
-		$this->setState('filter.calendar_to',$where);
+		$where = ' DATEDIFF(a.dates, '. $this->_db->Quote($filter_date_to) .') <= 0';
+		$this->setState('filter.calendar_to', $where);
 
 		# set filter
-		$this->setState('filter.calendar_multiday',true);
-		$this->setState('filter.calendar_startdayonly',(bool)$startdayonly);
-		$this->setState('filter.filter_locid',$this->_id);
+		$this->setState('filter.calendar_multiday', true);
+		$this->setState('filter.calendar_startdayonly', (bool)$startdayonly);
+		$this->setState('filter.filter_locid', $this->_id);
 
-		$item = $jinput->getInt('Itemid', 0);
-		$app->setUserState('com_jem.venuecal.locid'.$item, $this->_id);
+		$app->setUserState('com_jem.venuecal.locid'.$itemid, $this->_id);
 
 		# groupby
-		$this->setState('filter.groupby',array('a.id'));
+		$this->setState('filter.groupby', array('a.id'));
 	}
 
 	/**
@@ -110,10 +107,7 @@ class JemModelVenueCal extends JemModelEventslist
 	 */
 	public function getItems()
 	{
-		$app 			= JFactory::getApplication();
-		$params 		= $app->getParams();
-
-		$items	= parent::getItems();
+		$items = parent::getItems();
 
 		if ($items) {
 			return $items;
@@ -122,22 +116,16 @@ class JemModelVenueCal extends JemModelEventslist
 		return array();
 	}
 
-
 	/**
 	 * @return	JDatabaseQuery
 	 */
 	function getListQuery()
 	{
-		$params  = $this->state->params;
-		$jinput  = JFactory::getApplication()->input;
-		$task    = $jinput->get('task','','cmd');
-
-		// Create a new query object.
+		// Let parent create a new query object.
 		$query = parent::getListQuery();
 
-		$query->select('DATEDIFF(a.enddates, a.dates) AS datesdiff,DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month');
-
 		// here we can extend the query of the Eventslist model
+		$query->select('DATEDIFF(a.enddates, a.dates) AS datesdiff,DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month');
 		//$query->where('a.locid = '.$this->_id);
 
 		return $query;

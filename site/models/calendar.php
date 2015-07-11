@@ -51,7 +51,7 @@ class JemModelCalendar extends JemModelEventslist
 		$this->setState('params', $params);
 
 		# publish state
-		$this->setState('filter.published', 1);
+		$this->_populatePublishState($task);
 
 		###########
 		## DATES ##
@@ -94,10 +94,7 @@ class JemModelCalendar extends JemModelEventslist
 	 */
 	public function getItems()
 	{
-		$app 			= JFactory::getApplication();
-		$params 		= $app->getParams();
-
-		$items	= parent::getItems();
+		$items = parent::getItems();
 
 		if ($items) {
 			return $items;
@@ -119,9 +116,9 @@ class JemModelCalendar extends JemModelEventslist
 		// Create a new query object.
 		$query = parent::getListQuery();
 
-		$query->select('DATEDIFF(a.enddates, a.dates) AS datesdiff,DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month');
-
 		// here we can extend the query of the Eventslist model
+
+		$query->select('DATEDIFF(a.enddates, a.dates) AS datesdiff, DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month');
 
 		return $query;
 	}

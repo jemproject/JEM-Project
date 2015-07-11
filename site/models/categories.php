@@ -205,7 +205,7 @@ class JEMModelCategories extends JModelLegacy
 		$query = $this->_buildDataQuery($id);
 		$this->_data = $this->_getList($query, 0, $params->get('detcat_nr'));
 
-		foreach ($this->_data as $i => &$item) {
+		foreach ($this->_data as $i => $item) {
 			$item->categories = $this->getCategories($item->id);
 
 			//remove events without categories (users have no access to them)

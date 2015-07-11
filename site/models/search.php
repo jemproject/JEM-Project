@@ -94,9 +94,7 @@ class JEMModelSearch extends JModelLegacy
 				$this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 			}
 
-			$count = count($this->_data);
-			for($i = 0; $i < $count; $i++) {
-				$item = $this->_data[$i];
+			foreach ($this->_data as $i => $item) {
 				$item->categories = $this->getCategories($item->id);
 
 				//remove events without categories (users have no access to them)
@@ -404,7 +402,7 @@ class JEMModelSearch extends JModelLegacy
 			foreach ($mitems as $v)
 			{
 				$pt = $v->parent_id;
-				$list = @$children[$pt] ? $children[$pt] : array();
+				$list = isset($children[$pt]) ? $children[$pt] : array();
 				array_push($list, $v);
 				$children[$pt] = $list;
 			}

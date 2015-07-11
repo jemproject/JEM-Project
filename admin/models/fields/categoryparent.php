@@ -131,7 +131,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 						if ($user->authorise('core.edit.state', $extension . '.category.' . $oldCat) != true)
 						{
 							if ($option->value != $oldCat)
-							{echo 'y';
+							{//echo 'y';
 								unset($options[$i]);
 							}
 						}
@@ -140,7 +140,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 						elseif
 							(($user->authorise('core.create', $extension . '.category.' . $option->value) != true)
 							&& $option->value != $oldCat)
-						{echo 'x';
+						{//echo 'x';
 							unset($options[$i]);
 						}
 					}

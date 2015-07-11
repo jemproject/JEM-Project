@@ -707,6 +707,58 @@ class JEMOutput
 	}
 
 	/**
+	 * Creates the unpublished icon
+	 *
+	 * @param obj   $item         Object with attribute 'published' containing the state (well known -2, 0, 1, 2)
+	 * @param array $ignorestates States to ignore (returning empty string), defaults to trashed (-2) and published (1)
+	 * @param bool  $showinline   Add css class to scale icon to fit text height
+	 * @param bool  $showtitle    Add title (tooltip)
+	 */
+	static function publishstateicon($item, $ignorestates = array(-2, 1), $showinline = true, $showtitle = true)
+	{
+		//$settings = JemHelper::globalattribs();  /// @todo use global setting to influence visibility of publish state icon?
+
+		// early return
+		if (!isset($item->published) || in_array($item->published, $ignorestates)) {
+			return '';
+		}
+
+		switch ($item->published) {
+		case -2: // trashed
+			$image = 'com_jem/trash.png';
+			$alt   = JText::_('JTRASHED');
+			break;
+		case  0: // unpublished
+			$image = 'com_jem/publish_x.png';
+			$alt   = JText::_('JUNPUBLISHED');
+			break;
+		case  1: // published
+			$image = 'com_jem/publish.png';
+			$alt   = JText::_('JPUBLISHED');
+			break;
+		case  2: // archived
+			$image = 'com_jem/archive_front.png';
+			$alt   = JText::_('JARCHIVED');
+			break;
+		default: // unknown state - abort!
+			return '';
+		}
+
+		// additional attributes
+		$attributes = array();
+		if ($showinline) {
+			$attributes['class'] = 'icon-inline';
+		}
+		if ($showtitle) {
+			$attributes['title'] = $alt;
+		}
+
+		$output = JHtml::_('image', $image, $alt, $attributes, true);
+
+		return $output;
+	}
+
+	/**
 	 * Creates the flyer
 	 *
 	 * @param obj $data

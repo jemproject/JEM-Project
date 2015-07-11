@@ -73,9 +73,7 @@ class JEMModelMyattendances extends JModelLegacy
 				$this->_attending = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 			}
 
-			$count = count($this->_attending);
-			for($i = 0; $i < $count; $i++) {
-				$item = $this->_attending[$i];
+			foreach ($this->_attending as $i => $item) {
 				$item->categories = $this->getCategories($item->eventid);
 
 				//remove events without categories (users have no access to them)
@@ -216,6 +214,7 @@ class JEMModelMyattendances extends JModelLegacy
 			$where[] = ' a.published = 1';
 		}
 		$where[] = ' c.published = 1';
+		$where[] = ' a.access IN (' . implode(',', $levels) . ')';
 		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
 
 		//limit output so only future events the user attends will be shown
