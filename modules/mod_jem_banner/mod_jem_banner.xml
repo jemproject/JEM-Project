@@ -234,7 +234,7 @@
 				</field>
 
 				<field name="moduleclass_sfx" type="text"
-					default="jemmodulebanner"
+					default=""
 					label="MOD_JEM_BANNER_MODULE_CLASS_SUFFIX"
 					description="MOD_JEM_BANNER_MODULE_CLASS_SUFFIX_DESC"
 				/>

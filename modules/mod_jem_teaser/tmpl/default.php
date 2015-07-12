@@ -17,7 +17,7 @@ if ($params->get('use_modal', 0)) {
 }
 ?>
 
-<div id="<?php echo $params->get('moduleclass_sfx','jemmoduleteaser'); ?>">
+<div id="jemmoduleteaser">
 <?php ?>
 	<div class="eventset" summary="mod_jem_teaser">
 

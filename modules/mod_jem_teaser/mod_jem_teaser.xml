@@ -166,7 +166,7 @@
 				</field>
 
 				<field name="moduleclass_sfx" type="text"
-					default="jemmoduleteaser"
+					default=""
 					label="MOD_JEM_TEASER_MODULE_CLASS_SUFFIX"
 					description="MOD_JEM_TEASER_MODULE_CLASS_SUFFIX_DESC"
 				/>

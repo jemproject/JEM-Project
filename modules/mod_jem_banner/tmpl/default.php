@@ -24,7 +24,8 @@ if ($flyer_link_type == 1) {
 }
 ?>
 
-<div id="<?php echo $params->get('moduleclass_sfx','jemmodulebanner'); ?>">
+<div id="jemmodulebanner">
+<?php ?>
 	<div class="eventset" summary="mod_jem_banner">
 	<?php $i = count($list); ?>
 	<?php foreach ($list as $item) : ?>

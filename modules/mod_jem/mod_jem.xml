@@ -92,7 +92,7 @@
 					description="MOD_JEM_TIME_FORMAT_DESC"
 				/>
 				<field name="moduleclass_sfx" type="text"
-					default="jemmodbasic"
+					default=""
 					label="MOD_JEM_MODULE_CLASS_SUFFIX"
 					description="MOD_JEM_MODULE_CLASS_SUFFIX_DESC"
 				/>
