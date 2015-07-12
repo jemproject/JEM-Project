@@ -8,12 +8,12 @@
  */
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controllerform');
+require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
 /**
  * Event Controller
  */
-class JEMControllerEvent extends JControllerForm
+class JEMControllerEvent extends JemControllerForm
 {
 	protected $view_item = 'editevent';
 	protected $view_list = 'eventslist';
@@ -209,7 +209,7 @@ class JEMControllerEvent extends JControllerForm
 	 *
 	 * @return  void
 	 */
-	protected function postSaveHook($model, $validData = array())
+	protected function _postSaveHook($model, $validData = array())
 	{
 		$task = $this->getTask();
 		if ($task == 'save') {

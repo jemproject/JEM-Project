@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -10,13 +10,13 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controllerform');
+require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
 /**
  * JEM Component Event Controller
  *
 */
-class JEMControllerEvent extends JControllerForm
+class JEMControllerEvent extends JemControllerForm
 {
 	/**
 	 * @var    string  The prefix to use with controller messages.
@@ -51,7 +51,7 @@ class JEMControllerEvent extends JControllerForm
 	 *          on J! 3.x it's 'JModelLegacy $model'
 	 *          one of the bad things making extension developer's life hard.
 	 */
-	protected function postSaveHook($model, $validData = array())
+	protected function _postSaveHook($model, $validData = array())
 	{
 		$isNew = $model->getState('event.new');
 		$id    = $model->getState('event.id');

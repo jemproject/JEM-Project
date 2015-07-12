@@ -7,12 +7,13 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-jimport('joomla.application.component.controllerform');
+
+require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
 /**
  * Venue Controller
  */
-class JEMControllerVenue extends JControllerForm
+class JEMControllerVenue extends JemControllerForm
 {
 	protected $view_item = 'editvenue';
 	protected $view_list = 'venues';
@@ -206,7 +207,7 @@ class JEMControllerVenue extends JControllerForm
 	 *
 	 * @return  void
 	 */
-	protected function postSaveHook($model, $validData = array())
+	protected function _postSaveHook($model, $validData = array())
 	{
 		$task = $this->getTask();
 		if ($task == 'save') {
