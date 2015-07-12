@@ -93,7 +93,7 @@ function highlightevents() {
 		break;
 	}
 	
-	var newtext = jQuery("#filter_search").val();
+	var newtext = $("#filter_search").val();
 	var newtext2 = "td."+ filter +":contains(" + newtext + ")";
 
 	if (filter && newtext) {
@@ -103,8 +103,8 @@ function highlightevents() {
 }
 
 function alleventfilters() {
-	var searcharea 	= jQuery("#search_in_here");
-	var keyword		= jQuery("#filter_search").val();
+	var searcharea 	= $("#search_in_here");
+	var keyword		= $("#filter_search").val();
 	var title		= 'eventtitle';
 	var venue		= 'venue';
 	var city		= 'city';
@@ -178,8 +178,8 @@ function highlightvenues() {
 }
 
 function allvenuefilters() {
-	var searcharea	= jQuery("#search_in_here");
-	var keyword		= jQuery("#filter_search").val();
+	var searcharea	= $("#search_in_here");
+	var keyword		= $("#filter_search").val();
 	var title		= 'venue';
 	var city		= 'city';
 	var state		= 'state';

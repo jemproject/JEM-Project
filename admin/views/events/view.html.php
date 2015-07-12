@@ -56,7 +56,7 @@ defined('_JEXEC') or die;
 		if ($highlighter) {
 			$document->addScript($url.'media/com_jem/js/highlighter.js');
 			$style = '
-			    .red a:link, .red a:visited, .red a:active {
+			    .red, .red a {
 			    color:red;}
 			    ';
 			$document->addStyleDeclaration($style);
