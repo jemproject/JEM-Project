@@ -299,6 +299,7 @@ class JEMModelAttendees extends JModelLegacy
 	{
 		if (count($cid))
 		{
+			JArrayHelper::toInteger($cid);
 			$query = 'DELETE FROM #__jem_register WHERE id IN ('. implode(',', $cid) .') ';
 
 			$this->_db->setQuery($query);

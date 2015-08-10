@@ -897,6 +897,8 @@ class JEMModelCategory extends JModelAdmin
 	 */
 	function delete(&$cids)
 	{
+		JArrayHelper::toInteger($cids);
+
 		// Add all children to the list
 		foreach ($cids as $id) {
 			$this->_addCategories($id, $cids);

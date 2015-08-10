@@ -330,7 +330,7 @@ class JemTableEvent extends JTable
 		// If there are no primary keys set check to see if the instance key is set.
 		if (empty($pks)) {
 			if ($this->$k) {
-				$pks = array($this->$k);
+				$pks = array((int)$this->$k);
 			} else {
 				// Nothing to set publishing state on, return false.
 				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
@@ -339,7 +339,7 @@ class JemTableEvent extends JTable
 		}
 
 		// Build the WHERE clause for the primary keys.
-		$where = $k . '=' . implode(' OR ' . $k . '=', $pks);
+		$where = $this->_db->quoteName($k) . ' IN (' . implode(',', $pks) . ')';
 
 		// Determine if there is checkin support for the table.
 		if (!property_exists($this, 'checked_out') || !property_exists($this, 'checked_out_time')) {

@@ -127,6 +127,7 @@ class JEMModelMyevents extends JModelLegacy
 		$userid = (int) $user->get('id');
 
 		if (is_array($cid) && count($cid)) {
+			JArrayHelper::toInteger($cid);
 			$cids = implode(',', $cid);
 
 			$query = 'UPDATE #__jem_events'

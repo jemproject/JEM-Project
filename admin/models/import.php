@@ -395,7 +395,7 @@ class JEMModelImport extends JModelLegacy
 			$query->delete($db->quoteName('#__jem_cats_event_relations'));
 			$query->where($db->quoteName('itemid') . '=' . $db->quote($itemid));
 			if ($replace && count($cats)) { // keep records we can update
-				$query->where('NOT catid IN ('.implode(',',array_keys($cats)).')');
+				$query->where('NOT catid IN ('.implode(',', $db->quote(array_keys($cats))).')');
 			}
 			$db->setQuery($query);
 			$db->execute();

@@ -10,6 +10,8 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modellist');
+// ensure JemFactory is loaded (because model is used by modules too)
+require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
 /**
  * Model-Eventslist
@@ -641,7 +643,7 @@ class JemModelEventslist extends JModelList
 		$requestCategoryId = $this->getState('filter.req_catid');
 
 		if ($requestCategoryId) {
-			$query->where('c.id = '.$requestCategoryId);
+			$query->where('c.id = '.(int)$requestCategoryId);
 		}
 
 		###################
