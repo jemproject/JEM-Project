@@ -31,13 +31,13 @@ div#jemmodulejubilee .banner-jem {
 	margin-left:95px;
 }
 
-#jemmodulejubilee [class|="calendar"] .year {
+#jemmodulejubilee [class|="calendar"] .yearjubilee {
 	font-size: 6px;
 	height:5px;
 	color: #e1e1e1;
 }
 
-#jemmodulejubilee [class|="calendar"] .month {
+#jemmodulejubilee [class|="calendar"] .monthjubilee {
 	font-size: 8px;
 	color: white;
 	text-transform:uppercase;
@@ -46,7 +46,7 @@ div#jemmodulejubilee .banner-jem {
 	height:20px;
 }
 
-#jemmodulejubilee [class|="calendar"] .day {
+#jemmodulejubilee [class|="calendar"] .dayjubilee {
 	font-weight:bold;
 	font-size: 12px;
 	padding-top:3px;
@@ -54,7 +54,7 @@ div#jemmodulejubilee .banner-jem {
 	color: #333;
 }
 
-#jemmodulejubilee [class|="calendar"] .daynum {
+#jemmodulejubilee [class|="calendar"] .daynumjubilee {
 	font-size: 29px;
 	font-weight:bold;
 	color: #FF6400;

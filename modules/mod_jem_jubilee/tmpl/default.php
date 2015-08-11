@@ -40,13 +40,13 @@ if ($flyer_link_type == 1) {
 				 style="background-color: <?php echo $user_color; ?>"
 				<?php endif; ?>
 			>
-				<div class="month">
+				<div class="monthjubilee">
 					<?php echo $date['month']; ?>
 				</div>
-				<div class="day">
+				<div class="dayjubilee">
 					<?php /*echo $date['weekday'];*/ ?>
 				</div>
-				<div class="daynum">
+				<div class="daynumjubilee">
 					<?php echo $date['day']; ?>
 				</div>
 			</div>
