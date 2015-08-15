@@ -79,6 +79,17 @@ class JEMModelMyvenues extends JModelLegacy
 			}
 		}
 
+		if ($this->_venues) {
+			foreach ($this->_venues as $item) {
+				if (empty($item->params)) {
+					// Set venue params.
+					$item->params = clone JEMHelper::globalattribs();
+				}
+				# edit state access permissions.
+				$item->params->set('access-change', $user->can('publish', 'venue', $item->id, $item->created_by));
+			}
+		}
+
 		return $this->_venues;
 	}
 
@@ -115,6 +126,45 @@ class JEMModelMyvenues extends JModelLegacy
 		}
 
 		return $this->_pagination_venues;
+	}
+
+	/**
+	 * Method to (un)publish one or more venue(s)
+	 *
+	 * @access	public
+	 * @return	boolean	True on success
+	 *
+	 */
+	function publish($cid = array(), $publish = 1)
+	{
+		$result = false;
+		$user 	= JemFactory::getUser();
+		$userid = (int) $user->get('id');
+
+		if (is_numeric($cid)) {
+			$cid = array($cid);
+		}
+		// simple checks, good enough here
+		if (is_array($cid) && count($cid) && ($publish >= -2) && ($publish <= 2)) {
+			JArrayHelper::toInteger($cid);
+			$cids = implode(',', $cid);
+
+			$query = 'UPDATE #__jem_venues'
+			       . ' SET published = ' . (int)$publish
+			       . ' WHERE id IN (' . $cids . ')'
+			       . ' AND (checked_out = 0 OR (checked_out = ' . $userid . '))'
+			      ;
+
+			$this->_db->setQuery($query);
+			$result = true;
+
+			if ($this->_db->execute() === false) {
+				$this->setError($this->_db->getErrorMsg());
+				$result = false;
+			}
+		}
+
+		return $result;
 	}
 
 	/**

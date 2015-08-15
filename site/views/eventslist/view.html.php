@@ -15,7 +15,8 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 */
 class JemViewEventslist extends JEMView
 {
-	function __construct($config = array()) {
+	function __construct($config = array())
+	{
 		parent::__construct($config);
 
 		// additional path for common templates + corresponding override path
@@ -25,7 +26,7 @@ class JemViewEventslist extends JEMView
 	/**
 	 * Creates the Simple List View
 	 */
-	function display( $tpl = null )
+	function display($tpl = null)
 	{
 		// initialize variables
 		$document 		= JFactory::getDocument();
@@ -53,35 +54,31 @@ class JemViewEventslist extends JEMView
 		}
 
 		// get variables
-		$task 				= $app->input->get('task', '');
-		$filter_order		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$task             = $app->input->get('task', '');
+		$filter_order     = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_DirDefault = 'ASC';
 		// Reverse default order for dates in archive mode
-		if($task == 'archive' && $filter_order == 'a.dates') {
+		if ($task == 'archive' && $filter_order == 'a.dates') {
 			$filter_order_DirDefault = 'DESC';
 		}
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
-		$filter_type		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_type', 'filter_type', '', 'int');
-		$search 			= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
+		$filter_type      = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_type', 'filter_type', '', 'int');
+		$search           = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
-		$lists['order'] = $filter_order;
+		$lists['order']     = $filter_order;
 
 		// get data from model
-		$rows 	= $this->get('Items');
+		$rows = $this->get('Items');
 
 		// are events available?
-		if (!$rows) {
-			$noevents = 1;
-		} else {
-			$noevents = 0;
-		}
+		$noevents = (!$rows) ? 1 : 0;
 
 		// params
-		$pagetitle		= $params->def('page_title', $menuitem ? $menuitem->title : JText::_('COM_JEM_EVENTS'));
-		$pageheading 	= $params->def('page_heading', $params->get('page_title'));
-		$pageclass_sfx	= $params->get('pageclass_sfx');
+		$pagetitle     = $params->def('page_title', $menuitem ? $menuitem->title : JText::_('COM_JEM_EVENTS'));
+		$pageheading   = $params->def('page_heading', $params->get('page_title'));
+		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		// pathway
 		if ($menuitem) {
@@ -110,18 +107,12 @@ class JemViewEventslist extends JEMView
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title' , $pagetitle);
 
-		// Check if the user has access to the form
-		$maintainer = $user->ismaintainer('add');
-		$genaccess  = $user->validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
-
-		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
-			$dellink = 1;
-		} else {
-			$dellink = 0;
-		}
+		// Check if the user has permission to add things
+		$canAddEvent = (int)$user->can('add', 'event');
+		$canAddVenue = (int)$user->can('add', 'venue');
 
 		// add alternate feed link
-		$link	= 'index.php?option=com_jem&view=eventslist&format=feed';
+		$link = 'index.php?option=com_jem&view=eventslist&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
@@ -158,14 +149,14 @@ class JemViewEventslist extends JEMView
 		$this->noevents			= $noevents;
 		$this->print_link		= $print_link;
 		$this->params			= $params;
-		$this->dellink			= $dellink;
+		$this->dellink			= $canAddEvent;
+		$this->canAddEvent		= $canAddEvent;
+		$this->canAddVenue		= $canAddVenue;
 		$this->pagination		= $pagination;
 		$this->jemsettings		= $jemsettings;
 		$this->settings			= $settings;
 		$this->pagetitle		= $pagetitle;
 		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
-		$this->canAddEvent		= $user->can('add', 'event');
-		$this->canAddVenue		= $user->can('add', 'venue');
 
 		$this->_prepareDocument();
 		parent::display($tpl);

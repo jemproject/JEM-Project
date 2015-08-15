@@ -142,6 +142,10 @@ class JemModelCategory extends JemModelEventslist
 		$filtertype = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_type', 'filter_type', '', 'int');
 		$this->setState('filter.filter_type', $filtertype);
 
+		# show open date events
+		# (there is no menu item option yet so show all events)
+		$this->setState('filter.opendates', 1);
+
 		# publish state
 		$this->_populatePublishState($task);
 

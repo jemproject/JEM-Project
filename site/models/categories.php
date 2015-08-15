@@ -314,9 +314,13 @@ class JEMModelCategories extends JModelLegacy
 			$parent_id = $this->_id;
 		}
 
-		$user = JemFactory::getUser();
+		$app    = JFactory::getApplication();
+		$jinput = $app->input;
+		$user   = JemFactory::getUser();
+		$userId = $user->get('id');
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
+		$jemsettings = JemHelper::config();
 
 		$ordering = 'c.lft ASC';
 
@@ -332,11 +336,50 @@ class JEMModelCategories extends JModelLegacy
 
 		// check archive task and ensure that only categories get selected
 		// if they contain a published/archived event
-		$task = JFactory::getApplication()->input->get('task', '');
-		if($task == 'archive') {
+		$task   = $jinput->get('task', '');
+		$format = $jinput->getCmd('format', '');
+
+		# inspired by JemModelEventslist
+
+		if ($task == 'archive') {
 			$where_sub .= ' AND i.published = 2';
-		} else {
+		} elseif (($format == 'raw') || ($format == 'feed')) {
 			$where_sub .= ' AND i.published = 1';
+		} else {
+			$show_unpublished = $user->can(array('edit', 'publish'), 'event', false, false, 1);
+			if ($show_unpublished) {
+				// global editor or publisher permission
+				$where_sub .= ' AND i.published IN (0, 1)';
+			} else {
+				// no global permission but maybe on event level
+				$where_sub_or = array();
+				$where_sub_or[] = '(i.published = 1)';
+
+				$jemgroups = $user->getJemGroups(array('editevent', 'publishevent'));
+				if (($userId !== 0) && ($jemsettings->eventedit == -1)) {
+					$jemgroups[0] = true; // we need key 0 to get unpublished events not attached to any jem group
+				}
+				// user permitted on that jem groups
+				if (is_array($jemgroups) && count($jemgroups)) {
+					$on_groups = array_keys($jemgroups);
+					// to allow only events with categories attached to allowed jemgroups use this line:
+					//$where_sub_or[] = '(i.published = 0 AND c.groupid IN (' . implode(',', $on_groups) . '))';
+					// to allow also events with categories not attached to disallowed jemgroups use this crazy block:
+					$where_sub_or[] = '(i.published = 0 AND '
+					                . ' i.id NOT IN (SELECT rel3.itemid FROM #__jem_categories as c3 '
+					                . '              INNER JOIN #__jem_cats_event_relations as rel3 '
+					                . '              WHERE c3.id = rel3.catid AND c3.groupid NOT IN (0,' . implode(',', $on_groups) . ')'
+					                . '              GROUP BY rel3.itemid)'
+					                . ')';
+					// hint: above it's a not not ;-)
+					//       meaning: Show unpublished events not connected to a category which is not one of the allowed categories.
+				}
+				// user permitted on own events
+				if (($userId !== 0) && ($user->authorise('core.edit.own', 'com_jem') || $jemsettings->eventowner)) {
+					$where_sub_or[] = '(i.published = 0 AND i.created_by = ' . $userId . ')';
+				}
+				$where_sub .= ' AND (' . implode(' OR ', $where_sub_or) . ')';
+			}
 		}
 		$where_sub .= ' AND c.id = cc.id';
 

@@ -105,6 +105,16 @@ class JEMModelMyevents extends JModelLegacy
 				//remove events without categories (users have no access to them)
 				if (empty($item->categories)) {
 					unset($this->_events[$i]);
+				} else {
+					if (empty($item->params)) {
+						// Set event params.
+						$registry = new JRegistry();
+						$registry->loadString($item->attribs);
+						$item->params = clone JEMHelper::globalattribs();
+						$item->params->merge($registry);
+					}
+					# edit state access permissions.
+					$item->params->set('access-change', $user->can('publish', 'event', $item->id, $item->created_by));
 				}
 			}
 
@@ -123,6 +133,7 @@ class JEMModelMyevents extends JModelLegacy
 	 */
 	function publish($cid = array(), $publish = 1)
 	{
+		$result = false;
 		$user 	= JemFactory::getUser();
 		$userid = (int) $user->get('id');
 
@@ -137,12 +148,15 @@ class JEMModelMyevents extends JModelLegacy
 					;
 
 			$this->_db->setQuery($query);
+			$result = true;
 
 			if ($this->_db->execute() === false) {
 				$this->setError($this->_db->getErrorMsg());
-				return false;
+				$result = false;
 			}
 		}
+
+		return $result;
 	}
 
 	/**

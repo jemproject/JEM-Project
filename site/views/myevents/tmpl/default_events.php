@@ -54,7 +54,9 @@ defined('_JEXEC') or die;
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 	<colgroup>
 		<?php /*<col width="1%" class="jem_col_num" />*/ ?>
+		<?php if (!empty($this->canPublishEvent)) : ?>
 			<col width="1%" class="jem_col_checkall" />
+		<?php endif; ?>
 			<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 		<?php if ($this->jemsettings->showtitle == 1) : ?>
 			<col width="<?php echo $this->jemsettings->titlewidth; ?>" class="jem_col_title" />
@@ -80,7 +82,9 @@ defined('_JEXEC') or die;
 	<thead>
 		<tr>
 			<?php /*<th ><?php echo JText::_('COM_JEM_NUM'); ?></th>*/ ?>
+			<?php if (!empty($this->canPublishEvent)) : ?>
 			<th class="sectiontableheader center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+			<?php endif; ?>
 			<th id="jem_date" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<?php if ($this->jemsettings->showtitle == 1) : ?>
 			<th id="jem_title" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></th>
@@ -111,7 +115,14 @@ defined('_JEXEC') or die;
 			<tr class="row<?php echo $i % 2; ?>">
 
 				<?php /*<td><?php echo $this->events_pagination->getRowOffset( $i ); ?></td>*/ ?>
-				<td class="center"><?php echo JHtml::_('grid.id', $i, $row->eventid); ?></td>
+
+				<?php if (!empty($this->canPublishEvent)) : ?>
+				<td class="center">
+					<?php if (!empty($row->params) && $row->params->get('access-change', false)) :
+						echo JHtml::_('grid.id', $i, $row->eventid);
+					endif; ?>
+				</td>
+				<?php endif; ?>
 
 				<td headers="jem_date" align="left">
 					<?php echo JemOutput::formatShortDateTime($row->dates, $row->times,

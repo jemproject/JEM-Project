@@ -43,7 +43,7 @@ class JemViewCategories extends JEMView
 			$document->setMetaData('robots', 'noindex, nofollow');
 		}
 
-		//get menu information
+		// get menu information
 		$menu		= $app->getMenu();
 		$menuitem	= $menu->getActive();
 		$params 	= $app->getParams('com_jem');
@@ -52,9 +52,9 @@ class JemViewCategories extends JEMView
 		$pageheading	= $params->def('page_heading', $params->get('page_title'));
 		$pageclass_sfx	= $params->get('pageclass_sfx');
 
-		//pathway
+		// pathway
 		$pathway = $app->getPathWay();
-		if($menuitem) {
+		if ($menuitem) {
 			$pathway->setItemName(1, $menuitem->title);
 		}
 
@@ -76,19 +76,13 @@ class JemViewCategories extends JEMView
 			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 		}
 
-		//Set Page title
+		// Set Page title
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title' , $pagetitle);
 
-		//Check if the user has access to the form
-		$maintainer = $user->ismaintainer('add');
-		$genaccess  = $user->validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
-
-		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
-			$dellink = 1;
-		} else {
-			$dellink = 0;
-		}
+		// Check if the user has permission to add things
+		$canAddEvent = (int)$user->can('add', 'event');
+		$canAddVenue = (int)$user->can('add', 'venue');
 
 		// Get events if requested
 		if (!empty($rows) && $params->get('detcat_nr', 0) > 0) {
@@ -100,7 +94,7 @@ class JemViewCategories extends JEMView
 		$this->rows				= $rows;
 		$this->task				= $task;
 		$this->params			= $params;
-		$this->dellink			= $dellink;
+		$this->dellink			= $canAddEvent;
 		$this->pagination		= $pagination;
 		$this->item				= $menuitem;
 		$this->jemsettings		= $jemsettings;
@@ -109,6 +103,8 @@ class JemViewCategories extends JEMView
 		$this->model			= $model;
 		$this->id				= $id;
 		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
+		$this->canAddEvent		= $canAddEvent;
+		$this->canAddVenue		= $canAddVenue;
 
 		parent::display($tpl);
 	}

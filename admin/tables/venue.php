@@ -188,13 +188,11 @@ class JemTableVenue extends JTable
 		}
 
 		if (!$backend) {
-			/*	check if the user has the required rank for autopublish	*/
-			$autopublgroups = $user->venuegroups('publish');
-			$autopublloc 	= $user->validate_user($jemsettings->locpubrec, $jemsettings->autopublocate);
-			if (!($autopublloc || $autopublgroups || $user->authorise('core.edit','com_jem'))) {
+			/* check if the user has the required rank for autopublish	*/
+			if (!$user->can('publish', 'venue', $this->id, $this->created_by)) {
 				$this->published = 0;
-			} else {
-				$this->published = 1;
+			} else { // don't touch, let user decide
+			//	$this->published = 1;
 			}
 		}
 

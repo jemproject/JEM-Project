@@ -1,5 +1,4 @@
 /**
- * @version 2.1.2
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -966,9 +965,18 @@ div#jem dl.tabs dt h3 a {
 	background:none;
 }
 
-td.center,th.center,.center {
+div#jem table td.center,
+div#jem table th.center,
+div#jem .center {
 	text-align:center;
 	float:none;
+}
+
+div#jem table td.center input[type="checkbox"],
+div#jem table th.center input[type="checkbox"] {
+	margin: 0 3px;
+	padding: 0;
+	vertical-align: baseline;
 }
 
 /* -- JGRID STYLES ----------------------------- */

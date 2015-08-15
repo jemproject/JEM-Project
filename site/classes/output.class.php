@@ -199,11 +199,10 @@ class JEMOutput
 
 			// Initialise variables.
 			$user   = JemFactory::getUser();
-			$app    = JFactory::getApplication();
 			$userId = $user->get('id');
 			$uri    = JFactory::getURI();
-
 			$settings = JemHelper::globalattribs();
+
 			JHtml::_('behavior.tooltip');
 
 			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
@@ -405,25 +404,24 @@ class JEMOutput
 	 * Creates the publish button
 	 *
 	 * View:
-	 * Myevents
+	 * Myevents, Myvenues
 	 */
-	static function publishbutton()
+	static function publishbutton($prefix)
 	{
 		$app = JFactory::getApplication();
 
-		JHtml::_('behavior.tooltip');
-
-		$image = JHtml::_('image', 'com_jem/publish.png', JText::_('COM_JEM_PUBLISH'), NULL, true);
-
-		if ($app->input->get('print','','int')) {
-			//button in popup
+		if (empty($prefix) || $app->input->get('print','','int')) {
+			// button in popup or wrong call
 			$output = '';
 		} else {
-			//button in view
+			// button in view
+			JHtml::_('behavior.tooltip');
+
+			$image = JHtml::_('image', 'com_jem/publish.png', JText::_('COM_JEM_PUBLISH'), NULL, true);
 			$overlib = JText::_('COM_JEM_PUBLISH_DESC');
 			$text = JText::_('COM_JEM_PUBLISH');
 
-			$print_link = "javascript:void(Joomla.submitbutton('myevents.publish'));";
+			$print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".publish'));";
 			$output	= '<a href="'. JRoute::_($print_link) .'" '.JEMOutput::tooltip($text, $overlib, 'editlinktip', 'bottom').'>'.$image.'</a>';
 		}
 
@@ -434,25 +432,24 @@ class JEMOutput
 	 * Creates the trash button
 	 *
 	 * View:
-	 * Myevents
+	 * Myevents, Myvenues
 	 */
-	static function trashbutton()
+	static function trashbutton($prefix)
 	{
 		$app = JFactory::getApplication();
 
-		JHtml::_('behavior.tooltip');
-
-		$image = JHtml::_('image', 'com_jem/trash.png', JText::_('COM_JEM_TRASH'), NULL, true);
-
-		if ($app->input->get('print','','int')) {
-			//button in popup
+		if (empty($prefix) || $app->input->get('print','','int')) {
+			// button in popup or wrong call
 			$output = '';
 		} else {
-			//button in view
+			// button in view
+			JHtml::_('behavior.tooltip');
+
+			$image = JHtml::_('image', 'com_jem/trash.png', JText::_('COM_JEM_TRASH'), NULL, true);
 			$overlib = JText::_('COM_JEM_TRASH_DESC');
 			$text = JText::_('COM_JEM_TRASH');
 
-			$print_link = "javascript:void(Joomla.submitbutton('myevents.trash'));";
+			$print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".trash'));";
 			$output	= '<a href="'. JRoute::_($print_link) .'" '.JEMOutput::tooltip($text, $overlib, 'editlinktip', 'bottom').'>'.$image.'</a>';
 		}
 
@@ -463,25 +460,24 @@ class JEMOutput
 	 * Creates the unpublish button
 	 *
 	 * View:
-	 * Myevents
+	 * Myevents, Myvenues
 	 */
-	static function unpublishbutton()
+	static function unpublishbutton($prefix)
 	{
 		$app = JFactory::getApplication();
 
-		JHtml::_('behavior.tooltip');
-
-		$image = JHtml::_('image', 'com_jem/unpublish.png', JText::_('COM_JEM_UNPUBLISH'), NULL, true);
-
-		if ($app->input->get('print','','int')) {
-			//button in popup
+		if (empty($prefix) || $app->input->get('print','','int')) {
+			// button in popup or wrong call
 			$output = '';
 		} else {
-			//button in view
+			// button in view
+			JHtml::_('behavior.tooltip');
+
+			$image = JHtml::_('image', 'com_jem/unpublish.png', JText::_('COM_JEM_UNPUBLISH'), NULL, true);
 			$overlib = JText::_('COM_JEM_UNPUBLISH_DESC');
 			$text = JText::_('COM_JEM_UNPUBLISH');
 
-			$print_link = "javascript:void(Joomla.submitbutton('myevents.unpublish'));";
+			$print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".unpublish'));";
 			$output	= '<a href="'. JRoute::_($print_link) .'" '.JEMOutput::tooltip($text, $overlib, 'editlinktip', 'bottom').'>'.$image.'</a>';
 		}
 

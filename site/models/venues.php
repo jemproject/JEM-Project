@@ -40,9 +40,11 @@ class JemModelVenues extends JemModelEventslist
 
 		# params
 		$this->setState('params', $params);
-		$this->setState('filter.published', 1);
+	//	$this->setState('filter.published', 1);
 		$this->setState('filter.groupby', array('l.id'));
 
+		# publish state
+		$this->_populatePublishState($task);
 	}
 
 
@@ -172,14 +174,6 @@ class JemModelVenues extends JemModelEventslist
 		$db 	= JFactory::getDBO();
 		$query	= $db->getQuery(true);
 
-		$case_when_l = ' CASE WHEN ';
-		$case_when_l .= $query->charLength('l.alias');
-		$case_when_l .= ' THEN ';
-		$id_l = $query->castAsChar('l.id');
-		$case_when_l .= $query->concatenate(array($id_l, 'l.alias'), ':');
-		$case_when_l .= ' ELSE ';
-		$case_when_l .= $id_l.' END as venueslug';
-
 		$query->select(array('a.id'));
 		$query->from('#__jem_events as a');
 		$query->join('LEFT', '#__jem_venues AS l ON l.id = a.locid');
@@ -188,13 +182,27 @@ class JemModelVenues extends JemModelEventslist
 
 		# venue-id
 		$query->where('l.id= '. $db->quote($id));
-		# state
-		$query->where('a.published= '.$db->quote($state));
 		# view access level
 		$query->where('a.access IN ('.implode(',', $levels).')');
 		// Note: categories are filtered in getCategories() called below
 		//       so we don't need to check c.access here
 
+		####################
+		## FILTER-PUBLISH ##
+		####################
+
+		# Filter by published state.
+		if ((int)$state === 1) {
+			$where_pub = $this->_getPublishWhere();
+			if (!empty($where_pub)) {
+				$query->where('(' . implode(' OR ', $where_pub) . ')');
+			} else {
+				// something wrong - fallback to published events
+				$query->where('a.published = 1');
+			}
+		} else {
+			$query->where('a.published = '.$db->quote($state));
+		}
 
 		#####################
 		### FILTER - BYCAT ##

@@ -77,11 +77,9 @@ class JemViewVenues extends JViewLegacy
 		$document->setMetadata('title' , $pagetitle);
 		$document->setMetadata('keywords', $pagetitle);
 
-		// Check if the user has access to the add-eventform
-		$addeventlink = (int)$user->can('add', 'event');
-
-		//Check if the user has access to the add-venueform
-		$addvenuelink = (int)$user->can('add', 'venue');
+		//Check if the user has permission to add things
+		$canAddEvent = (int)$user->can('add', 'event');
+		$canAddVenue = (int)$user->can('add', 'venue');
 
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
@@ -89,8 +87,10 @@ class JemViewVenues extends JViewLegacy
 		$this->rows				= $rows;
 		$this->print_link		= $print_link;
 		$this->params			= $params;
-		$this->addvenuelink		= $addvenuelink;
-		$this->addeventlink		= $addeventlink;
+		$this->addvenuelink		= $canAddVenue; // deprecated
+		$this->addeventlink		= $canAddEvent; // deprecated
+		$this->canAddEvent		= $canAddEvent;
+		$this->canAddVenue		= $canAddVenue;
 		$this->pagination		= $pagination;
 		$this->item				= $menuitem;
 		$this->jemsettings		= $jemsettings;

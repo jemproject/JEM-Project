@@ -78,38 +78,19 @@ class JemModelEditvenue extends JemModelVenue
 		//$registry = new JRegistry();
 		//$registry->loadString($value->attribs);
 
-		$globalsettings = JemHelper::globalattribs();
-		$globalregistry = new JRegistry();
-		$globalregistry->loadString($globalsettings);
+		$globalregistry = JemHelper::globalattribs();
 
 		$value->params = clone $globalregistry;
 		//$value->params->merge($registry);
 
 		// Compute selected asset permissions.
 		$user = JemFactory::getUser();
-		$userId = $user->get('id');
-		$asset = 'com_jem.venue.' . $value->id;
 
-		// Check general edit permission first.
-		if ($user->authorise('core.edit', $asset)) {
-			$value->params->set('access-edit', true);
-		}
-		// Now check if edit.own is available.
-		elseif (!empty($userId) && $user->authorise('core.edit.own', $asset)) {
-			// Check for a valid user and that they are the owner.
-			if ($userId == $value->created_by) {
-				$value->params->set('access-edit', true);
-			}
-		}
+		// Check edit permission.
+		$value->params->set('access-edit', $user->can('edit', 'venue', $value->id, $value->created_by));
 
 		// Check edit state permission.
-		if ($itemId) {
-			// Existing item
-			$value->params->set('access-change', $user->authorise('core.edit.state', $asset));
-		}
-		else {
-			$value->params->set('access-change', $user->authorise('core.edit.state', 'com_jem'));
-		}
+		$value->params->set('access-change', $user->can('publish', 'venue', $value->id, $value->created_by));
 
 		$value->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 

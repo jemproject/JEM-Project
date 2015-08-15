@@ -106,11 +106,7 @@ class JemViewDay extends JEMView
 		$this->document->setTitle($pagetitle);
 
 		// Are events available?
-		if (!$rows) {
-			$noevents = 1;
-		} else {
-			$noevents = 0;
-		}
+		$noevents = (!$rows) ? 1 : 0;
 
 		if ($requestVenueId){
 			$print_link = JRoute::_('index.php?option=com_jem&view=day&tmpl=component&print=1&locid='.$requestVenueId.'&id='.$requestDate);
@@ -122,24 +118,18 @@ class JemViewDay extends JEMView
 			$print_link = JRoute::_('index.php?option=com_jem&view=day&tmpl=component&print=1&id='.$requestDate);
 		}
 
-		//Check if the user has access to the form
-		$maintainer = $user->ismaintainer('add');
-		$genaccess 	= $user->validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+		// Check if the user has permission to add things
+		$canAddEvent = (int)$user->can('add', 'event');
+		$canAddVenue = (int)$user->can('add', 'venue');
 
-		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
-			$dellink = 1;
-		} else {
-			$dellink = 0;
-		}
-
-		//add alternate feed link (w/o specific date)
+		// add alternate feed link (w/o specific date)
 		$link    = 'index.php?option=com_jem&view=day&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
 		$this->document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
 		$this->document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
 
-		//search filter
+		// search filter
 		$filters = array();
 
 		if ($jemsettings->showtitle == 1) {
@@ -170,7 +160,9 @@ class JemViewDay extends JEMView
 		$this->noevents			= $noevents;
 		$this->print_link		= $print_link;
 		$this->params			= $params;
-		$this->dellink			= $dellink;
+		$this->dellink			= $canAddEvent; // deprecated
+		$this->canAddEvent		= $canAddEvent;
+		$this->canAddVenue		= $canAddVenue;
 		$this->pagination		= $pagination;
 		$this->action			= $uri->toString();
 		$this->task				= $task;

@@ -505,6 +505,10 @@ abstract class JemUserAbstract extends JUser
 					$authorised |= $this->authorise('core.edit.state', $asset);
 					// user is creator of new item and auto-publish is enabled
 					$authorised |= $autopubl && ($id === 0) &&
+					               (empty($created_by) || ($userId == $created_by));
+					// user is creator, can edit this item and auto-publish is enabled
+					// (that's because we allowed user to not publish new item with auto-puplish enabled)
+					$authorised |= $autopubl && ($edit || $editown) && ($id !== 0) &&
 					               !empty($created_by) && ($userId == $created_by);
 					break;
 				case 'delete':

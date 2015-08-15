@@ -41,8 +41,11 @@ defined('_JEXEC') or die;
 <?php endif; ?>
 
 
-<table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Attending">
+<table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Venues">
 	<colgroup>
+		<?php if ($this->canPublishVenue) : ?>
+			<col width="1%" class="jem_col_checkall" />
+		<?php endif; ?>
 		<?php if ($this->jemsettings->showlocate == 1) :	?>
 			<col width="<?php echo $this->jemsettings->locationwidth; ?>" class="jem_col_venue" />
 		<?php endif; ?>
@@ -57,6 +60,9 @@ defined('_JEXEC') or die;
 
 	<thead>
 		<tr>
+			<?php if ($this->canPublishVenue) : ?>
+			<th class="sectiontableheader center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+			<?php endif; ?>
 			<?php if ($this->jemsettings->showlocate == 1) : ?>
 			<th id="jem_location" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 			<?php endif; ?>
@@ -75,6 +81,14 @@ defined('_JEXEC') or die;
 	<?php else :?>
 		<?php foreach ($this->venues as $i => $row) : ?>
 			<tr class="row<?php echo $i % 2; ?>">
+
+				<?php if ($this->canPublishVenue) : ?>
+					<?php if (!empty($row->params) && $row->params->get('access-change', false)) : ?>
+					<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
+					<?php else : ?>
+					<td class="center"></td>
+					<?php endif; ?>
+				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showlocate == 1) : ?>
 					<td headers="jem_location" align="left" valign="top">
@@ -119,6 +133,7 @@ defined('_JEXEC') or die;
 <input type="hidden" name="boxchecked" value="0" />
 <input type="hidden" name="task" value="" />
 <input type="hidden" name="option" value="com_jem" />
+<?php echo JHtml::_('form.token'); ?>
 </form>
 
 <div class="pagination">

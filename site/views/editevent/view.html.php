@@ -172,6 +172,7 @@ class JemViewEditevent extends JViewLegacy
 		$this->infoimage     = JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_('COM_JEM_NOTES'), NULL, true);
 
 		$this->user = $user;
+		$this->canAddVenue = $user->can('add', 'venue');
 
 		if ($params->get('enable_category') == 1) {
 			$this->form->setFieldAttribute('catid', 'default', $params->get('catid', 1));

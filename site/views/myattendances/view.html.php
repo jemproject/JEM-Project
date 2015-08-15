@@ -21,7 +21,7 @@ class JemViewMyattendances extends JViewLegacy
 	{
 		$app = JFactory::getApplication();
 
-		//initialize variables
+		// initialize variables
 		$document 		= JFactory::getDocument();
 		$jemsettings 	= JemHelper::config();
 		$settings 		= JemHelper::globalattribs();
@@ -33,7 +33,7 @@ class JemViewMyattendances extends JViewLegacy
 		$pathway 		= $app->getPathWay();
 	//	$db  			= JFactory::getDBO();
 
-		//redirect if not logged in
+		// redirect if not logged in
 		if (!$user->get('id')) {
 			$app->enqueueMessage(JText::_('COM_JEM_NEED_LOGGED_IN'), 'error');
 			return false;
@@ -48,15 +48,11 @@ class JemViewMyattendances extends JViewLegacy
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 
-		$attending 	= $this->get('Attending');
-		$attending_pagination 	= $this->get('AttendingPagination');
+		$attending = $this->get('Attending');
+		$attending_pagination = $this->get('AttendingPagination');
 
-		//are attendences available?
-		if (!$attending) {
-			$noattending = 1;
-		} else {
-			$noattending = 0;
-		}
+		// are attendences available?
+		$noattending = (!$attending) ? 1 : 0;
 
 		// get variables
 		$filter_order		= $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', 	'a.dates', 'cmd');
@@ -67,7 +63,7 @@ class JemViewMyattendances extends JViewLegacy
 
 		$task 				= $app->input->get('task', '');
 
-		//search filter
+		// search filter
 		$filters = array();
 
 		if ($jemsettings->showtitle == 1) {
@@ -94,12 +90,12 @@ class JemViewMyattendances extends JViewLegacy
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
 
-		//pathway
+		// pathway
 		if ($menuitem) {
 			$pathway->setItemName(1, $menuitem->title);
 		}
 
-		//Set Page title
+		// Set Page title
 		$pagetitle = JText::_('COM_JEM_MY_ATTENDANCES');
 		$pageheading = $pagetitle;
 

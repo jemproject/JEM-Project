@@ -13,9 +13,11 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 /**
  * Venue-View
  */
-class JemViewVenue extends JEMView {
+class JemViewVenue extends JEMView
+{
 
-	function __construct($config = array()) {
+	function __construct($config = array())
+	{
 		parent::__construct($config);
 
 		// additional path for common templates + corresponding override path
@@ -25,8 +27,12 @@ class JemViewVenue extends JEMView {
 	/**
 	 * Creates the Venue View
 	 */
-	function display($tpl = null) {
-		if ($this->getLayout() == 'calendar') {
+	function display($tpl = null)
+	{
+		if ($this->getLayout() == 'calendar')
+		{
+			### Venue Calendar view ###
+
 			$app = JFactory::getApplication();
 
 			// Load tooltips behavior
@@ -95,7 +101,7 @@ class JemViewVenue extends JEMView {
 			$document->setTitle($pagetitle);
 			$document->setMetaData('title', $pagetitle);
 
-			//Check if the user has permission to add things - makes no sense here...
+			// Check if the user has permission to add things
 			$canAddEvent = (int)$user->can('add', 'event');
 			$canAddVenue = (int)$user->can('add', 'venue');
 
@@ -121,7 +127,9 @@ class JemViewVenue extends JEMView {
 			$this->cal 				= $cal;
 			$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
 
-		} else {
+		} else
+		{
+			### Venue List view ###
 
 			// initialize variables
 			$app 			= JFactory::getApplication();
@@ -154,11 +162,7 @@ class JemViewVenue extends JEMView {
 			$venue	= $this->get('Venue');
 
 			// are events available?
-			if (!$rows) {
-				$noevents = 1;
-			} else {
-				$noevents = 0;
-			}
+			$noevents = (!$rows) ? 1 : 0;
 
 			// Decide which parameters should take priority
 			$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
@@ -167,7 +171,7 @@ class JemViewVenue extends JEMView {
 			                                && $menuitem->query['id']     == $venue->id);
 
 			// get search & user-state variables
-			$filter_order 		= $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
+			$filter_order = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
 			$filter_order_DirDefault = 'ASC';
 			// Reverse default order for dates in archive mode
 			if($task == 'archive' && $filter_order == 'a.dates') {
@@ -178,8 +182,8 @@ class JemViewVenue extends JEMView {
 			$search           = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 
 			// table ordering
-			$lists['order_Dir']	= $filter_order_Dir;
-			$lists['order']		= $filter_order;
+			$lists['order_Dir'] = $filter_order_Dir;
+			$lists['order']     = $filter_order;
 
 			// Get image
 			$limage = JemImage::flyercreator($venue->locimage,'venue');
@@ -231,14 +235,12 @@ class JemViewVenue extends JEMView {
 			$document->setMetadata('keywords', $venue->meta_keywords);
 			$document->setDescription(strip_tags($venue->meta_description));
 
-			// Check if the user has access to the add-eventform
-			$addeventlink = (int)$user->can('add', 'event');
+			// Check if the user has permission to add things
+			$canAddEvent = (int)$user->can('add', 'event');
+			$canAddVenue = (int)$user->can('add', 'venue');
 
-			// Check if the user has access to the add-venueform
-			$addvenuelink = (int)$user->can('add', 'venue');
-
-			// Check if the user has access to the edit-venueform
-			$allowedtoeditvenue = (int)$user->can('edit', 'venue', $venue->id, $venue->created_by);
+			// Check if the user has permission to edit-this venue
+			$canEditVenue = (int)$user->can('edit', 'venue', $venue->id, $venue->created_by);
 
 			// Generate Venuedescription
 			if (!$venue->locdescription == '' || !$venue->locdescription == '<br />') {
@@ -307,8 +309,10 @@ class JemViewVenue extends JEMView {
 			$this->venue 				= $venue;
 			$this->print_link 			= $print_link;
 			$this->params 				= $params;
-			$this->addvenuelink 		= $addvenuelink;
-			$this->addeventlink 		= $addeventlink;
+			$this->addvenuelink 		= $canAddVenue; // deprecated
+			$this->addeventlink 		= $canAddEvent; // deprecated
+			$this->canAddEvent			= $canAddEvent;
+			$this->canAddVenue			= $canAddVenue;
 			$this->limage 				= $limage;
 			$this->venuedescription		= $venuedescription;
 			$this->pagination 			= $pagination;
@@ -317,7 +321,7 @@ class JemViewVenue extends JEMView {
 			$this->item					= $menuitem;
 			$this->pagetitle			= $pagetitle;
 			$this->task					= $task;
-			$this->allowedtoeditvenue 	= $allowedtoeditvenue;
+			$this->allowedtoeditvenue 	= $canEditVenue;
 			$this->pageclass_sfx		= htmlspecialchars($pageclass_sfx);
 			$this->show_status			= $user->can(array('edit', 'publish'), 'venue', $venue->id, $venue->created_by);
 		}

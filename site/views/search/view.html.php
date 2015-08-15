@@ -20,18 +20,17 @@ class JemViewSearch extends JEMView
 	 */
 	function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
-
-		//initialize variables
-		$document		= JFactory::getDocument();
-		$jemsettings		= JemHelper::config();
-		$settings 		= JemHelper::globalattribs();
-		$menu			= $app->getMenu();
-		$menuitem		= $menu->getActive();
-		$params 		= $app->getParams();
-		$uri 			= JFactory::getURI();
-		$pathway 		= $app->getPathWay();
-		$user			= JemFactory::getUser();
+		// initialize variables
+		$app          = JFactory::getApplication();
+		$document     = JFactory::getDocument();
+		$jemsettings  = JemHelper::config();
+		$settings     = JemHelper::globalattribs();
+		$menu         = $app->getMenu();
+		$menuitem     = $menu->getActive();
+		$params       = $app->getParams();
+		$uri          = JFactory::getURI();
+		$pathway      = $app->getPathWay();
+		$user         = JemFactory::getUser();
 
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
@@ -48,23 +47,19 @@ class JemViewSearch extends JEMView
 		// Load Script
 		JHtml::_('script', 'com_jem/search.js', false, true);
 
-		$filter_continent	= $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
-		$filter_country		= $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
-		$filter_city		= $app->getUserStateFromRequest('com_jem.search.filter_city', 'filter_city', '', 'string');
-		$filter_date_from	= $app->getUserStateFromRequest('com_jem.search.filter_date_from', 'filter_date_from', '', 'string');
-		$filter_date_to		= $app->getUserStateFromRequest('com_jem.search.filter_date_to', 'filter_date_to', '', 'string');
-		$filter_category 	= $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
-		$task				= $app->input->get('task', '');
+		$filter_continent = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
+		$filter_country   = $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
+		$filter_city      = $app->getUserStateFromRequest('com_jem.search.filter_city', 'filter_city', '', 'string');
+		$filter_date_from = $app->getUserStateFromRequest('com_jem.search.filter_date_from', 'filter_date_from', '', 'string');
+		$filter_date_to   = $app->getUserStateFromRequest('com_jem.search.filter_date_to', 'filter_date_to', '', 'string');
+		$filter_category  = $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
+		$task             = $app->input->get('task', '');
 
-		//get data from model
+		// get data from model
 		$rows = $this->get('Data');
 
-		//are events available?
-		if (!$rows) {
-			$noevents = 1;
-		} else {
-			$noevents = 0;
-		}
+		// are events available?
+		$noevents = (!$rows) ? 1 : 0;
 
 		// Check to see which parameters should take priority
 		if ($useMenuItemParams) {
@@ -98,21 +93,11 @@ class JemViewSearch extends JEMView
 			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 		}
 
-		//Set Page title
+		// Set Page title
 		$document->setTitle($pagetitle);
 		$document->setMetadata('title' , $pagetitle);
 
-		//Check if the user has access to the form
-		$maintainer = $user->ismaintainer('add');
-		$genaccess  = $user->validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
-
-		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
-			$dellink = 1;
-		} else {
-			$dellink = 0;
-		}
-
-		//create select lists
+		// create select lists
 		$lists	= $this->_buildSortLists();
 
 		if ($lists['filter']) {
@@ -125,14 +110,14 @@ class JemViewSearch extends JEMView
 			$uri->delVar('filter_type');
 		}
 
-		//Cause of group limits we can't use class here to build the categories tree
+		// Cause of group limits we can't use class here to build the categories tree
 		$categories   = $this->get('CategoryTree');
 		$catoptions   = array();
 		$catoptions[] = JHtml::_('select.option', '1', JText::_('COM_JEM_SELECT_CATEGORY'));
 		$catoptions   = array_merge($catoptions, JemCategories::getcatselectoptions($categories));
 		$selectedcats = ($filter_category) ? array($filter_category) : array();
 
-		//build selectlists
+		// build selectlists
 		$lists['categories'] = JHtml::_('select.genericlist', $catoptions, 'filter_category', array('size'=>'1', 'class'=>'inputbox'), 'value', 'text', $selectedcats);
 
 		// Create the pagination object
@@ -171,21 +156,20 @@ class JemViewSearch extends JEMView
 			unset($cities);
 		}
 
-		$this->lists		= $lists;
-		$this->action		= $uri->toString();
-		$this->rows		= $rows;
-		$this->task		= $task;
-		$this->noevents		= $noevents;
-		$this->params		= $params;
-		$this->dellink		= $dellink;
-		$this->pagination	= $pagination;
-		$this->jemsettings	= $jemsettings;
-		$this->settings		= $settings;
-		$this->pagetitle	= $pagetitle;
-		$this->filter_continent	= $filter_continent;
-		$this->filter_country	= $filter_country;
-		$this->document		= $document;
-		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
+		$this->lists            = $lists;
+		$this->action           = $uri->toString();
+		$this->rows             = $rows;
+		$this->task             = $task;
+		$this->noevents         = $noevents;
+		$this->params           = $params;
+		$this->pagination       = $pagination;
+		$this->jemsettings      = $jemsettings;
+		$this->settings         = $settings;
+		$this->pagetitle        = $pagetitle;
+		$this->filter_continent = $filter_continent;
+		$this->filter_country   = $filter_country;
+		$this->document         = $document;
+		$this->pageclass_sfx    = htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);
 	}

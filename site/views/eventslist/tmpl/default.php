@@ -8,7 +8,6 @@
  */
 defined('_JEXEC') or die;
 
-
 ?>
 <div id="jem" class="jem_eventslist<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
@@ -44,8 +43,6 @@ defined('_JEXEC') or die;
 		<input type="hidden" name="view" value="eventslist" />
 	</form>
 
-	
-	
 	<?php if ($this->params->get('showfootertext')) : ?>
 		<div class="description no_space floattext">
 			<?php echo $this->params->get('footertext'); ?>

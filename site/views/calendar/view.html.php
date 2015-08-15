@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -25,13 +25,14 @@ class JemViewCalendar extends JViewLegacy
 		JHtml::_('behavior.tooltip');
 		JHtml::_('behavior.framework');
 
-		//initialize variables
-		$document 	= JFactory::getDocument();
-		$menu 		= $app->getMenu();
-		$menuitem	= $menu->getActive();
-		$jemsettings = JemHelper::config();
-		$params 	= $app->getParams();
-		$top_category = $params->get('top_category', 0);
+		// initialize variables
+		$document     = JFactory::getDocument();
+		$menu         = $app->getMenu();
+		$menuitem     = $menu->getActive();
+		$jemsettings  = JemHelper::config();
+		$user         = JemFactory::getUser();
+		$params       = $app->getParams();
+		$top_category = (int)$params->get('top_category', 0);
 		$this->param_topcat = $top_category > 0 ? ('&topcat='.$top_category) : '';
 
 		// Load css
@@ -66,17 +67,17 @@ class JemViewCalendar extends JViewLegacy
 		// add javascript (using full path - see issue #590)
 		JHtml::_('script', 'media/com_jem/js/calendar.js');
 
-		$year 	= (int)$app->input->getInt('yearID', strftime("%Y"));
-		$month 	= (int)$app->input->getInt('monthID', strftime("%m"));
+		$year  = (int)$app->input->getInt('yearID', strftime("%Y"));
+		$month = (int)$app->input->getInt('monthID', strftime("%m"));
 
-		//get data from model and set the month
+		// get data from model and set the month
 		$model = $this->getModel();
 		$model->setDate(mktime(0, 0, 1, $month, 1, $year));
 
 		$rows = $this->get('Items');
 
-		//Set Page title
-		$pagetitle   = $params->def('page_title', $menuitem->title);
+		// Set Page title
+		$pagetitle = $params->def('page_title', $menuitem->title);
 		$params->def('page_heading', $pagetitle);
 		$pageclass_sfx = $params->get('pageclass_sfx');
 
@@ -91,16 +92,24 @@ class JemViewCalendar extends JViewLegacy
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title', $pagetitle);
 
-		//init calendar
+		// Check if the user has permission to add things
+		$catIds = $model->getCategories('all');
+		$canAddEvent = (int)$user->can('add', 'event', false, false, $catIds);
+		$canAddVenue = (int)$user->can('add', 'venue', false, false, $catIds);
+
+		// init calendar
 		$cal = new JEMCalendar($year, $month, 0);
 		$cal->enableMonthNav('index.php?option=com_jem&view=calendar');
 		$cal->setFirstWeekDay($params->get('firstweekday', 1));
 		$cal->enableDayLinks('index.php?option=com_jem&view=day' . $this->param_topcat);
 
-		$this->rows        = $rows;
-		$this->params      = $params;
-		$this->jemsettings = $jemsettings;
-		$this->cal         = $cal;
+		$this->rows          = $rows;
+		$this->catIds        = $catIds;
+		$this->params        = $params;
+		$this->jemsettings   = $jemsettings;
+		$this->canAddEvent   = $canAddEvent;
+		$this->canAddVenue   = $canAddVenue;
+		$this->cal           = $cal;
 		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);

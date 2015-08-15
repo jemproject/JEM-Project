@@ -157,12 +157,12 @@ class JemViewEvent extends JEMView
 			$model->hit();
 		}
 
-		//Escape strings for HTML output
+		// Escape strings for HTML output
 		$this->pageclass_sfx = htmlspecialchars($this->item->params->get('pageclass_sfx'));
 
 		$this->print_link = JRoute::_(JemHelperRoute::getRoute($item->slug).'&print=1&tmpl=component');
 
-		//Get images
+		// Get images
 		$this->dimage = JemImage::flyercreator($item->datimage, 'event');
 		$this->limage = JemImage::flyercreator($item->locimage, 'venue');
 
@@ -177,20 +177,20 @@ class JemViewEvent extends JEMView
 		$this->showeventstate = $this->allowedtoeditevent || $this->allowedtopublishevent;
 		$this->showvenuestate = $this->allowedtoeditvenue || $this->allowedtopublishvenue;
 
-		//Timecheck for registration
+		// Timecheck for registration
 		$now = strtotime(date("Y-m-d"));
 		$date = strtotime($item->dates);
 		$timecheck = $now - $date;
 
-		//let's build the registration handling
+		// let's build the registration handling
 		$formhandler = 0;
 
-		//is the user allready registered at the event
+		// is the user allready registered at the event
 		if ($isregistered) {
 			$formhandler = 3;
-		} else if ($timecheck > 0 && !is_null($item->dates)) { //check if it is too late to register and overwrite $formhandler
+		} else if ($timecheck > 0 && !is_null($item->dates)) { // check if it is too late to register and overwrite $formhandler
 			$formhandler = 1;
-		} else if (!$user->get('id')) { //is the user registered at joomla and overwrite $formhandler if not
+		} else if (!$userId) { // user doesn't have an ID (mostly guest)
 			$formhandler = 2;
 		} else {
 			$formhandler = 4;
@@ -205,13 +205,14 @@ class JemViewEvent extends JEMView
 				}}";
 			$document->addScriptDeclaration($js);
 		}
-		$this->formhandler			= $formhandler;
+
+		$this->formhandler = $formhandler;
 
 		// generate Metatags
 		$meta_keywords_content = "";
 		if (!empty($this->item->meta_keywords)) {
 			$keywords = explode(",", $this->item->meta_keywords);
-			foreach($keywords as $keyword) {
+			foreach ($keywords as $keyword) {
 				if ($meta_keywords_content != "") {
 					$meta_keywords_content .= ", ";
 				}
@@ -234,7 +235,7 @@ class JemViewEvent extends JEMView
 		if (!empty($this->item->meta_description)) {
 			$description = explode("[",$this->item->meta_description);
 			$description_content = "";
-			foreach($description as $desc) {
+			foreach ($description as $desc) {
 				$keyword = substr($desc, 0, strpos($desc,"]",0));
 				if ($keyword != "") {
 					$description_content .= $this->keyword_switcher($keyword, $this->item, $categories, $jemsettings->formattime, $jemsettings->formatdate);
@@ -259,14 +260,14 @@ class JemViewEvent extends JEMView
 			$item->pluginevent->onEventEnd = trim(implode("\n", $results));
 		}
 
-		//create flag
+		// create flag
 		if ($item->country) {
 			$item->countryimg = JemHelperCountries::getCountryFlag($item->country);
 		}
 
-		$this->isregistered			= $isregistered;
-		$this->dispatcher			= $dispatcher;
-		$this->pageclass_sfx 		= htmlspecialchars($item->params->get('pageclass_sfx'));
+		$this->isregistered  = $isregistered;
+		$this->dispatcher    = $dispatcher;
+		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));
 
 		$this->_prepareDocument();
 
