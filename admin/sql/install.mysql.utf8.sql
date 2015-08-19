@@ -254,7 +254,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_settings` (
   `ical_tz` int(11) NOT NULL,
   `attachments_path` varchar(100) NOT NULL DEFAULT 'media/com_jem/attachments',
   `attachments_maxsize` varchar(15) NOT NULL DEFAULT '1000',
-  `attachments_types` varchar(100) NOT NULL DEFAULT 'txt,csv,htm,html,xml,css,doc,xls,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,zip,tar.gz',
+  `attachments_types` varchar(100) NOT NULL DEFAULT 'txt,doc,jpg,jpeg,png',
   `ownedvenuesonly` int(11) NOT NULL,
   `recurrence_anticipation` varchar(20) NOT NULL DEFAULT '60',
   `ical_max_items` tinyint(4) NOT NULL DEFAULT '100',
@@ -298,7 +298,7 @@ INSERT IGNORE INTO #__jem_settings VALUES
 '[title], [a_name], [categories], [times]', 'The event titled [title] starts on [dates]!',
 1, 0, '0', 0, 0, '1364604520', '', '', 'COM', 'US', '10%', '10',
 0, 1, 1, 1, 1, 1, 1, 1, 0, '10%', 1, 1, 1, 'media/com_jem/attachments', '1000',
-'txt,csv,htm,html,xml,css,doc,xls,zip,rtf,ppt,pdf,swf,flv,avi,wmv,mov,jpg,jpeg,gif,png,tar.gz',
+'txt,doc,jpg,jpeg,png',
 0, '60', 100, 1, '', '','');
 
 INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, `name`) VALUES
