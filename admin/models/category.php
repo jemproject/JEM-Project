@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     2.1.4
+ * @version     2.1.4.2
  * @package     JEM
  * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
@@ -897,6 +897,8 @@ class JEMModelCategory extends JModelAdmin
 	 */
 	function delete(&$cids)
 	{
+		JArrayHelper::toInteger($cids);
+
 		// Add all children to the list
 		foreach ($cids as $id) {
 			$this->_addCategories($id, $cids);

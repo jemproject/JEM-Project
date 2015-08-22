@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.4.2
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -156,7 +156,7 @@ class JemHelper
 				$query = $db->getQuery(true);
 				$query->select('*');
 				$query->from($db->quoteName('#__jem_events').' AS a');
-				$query->where('id = '.$recurrence_row['id']);
+				$query->where('id = '.(int)$recurrence_row['id']);
 				$db->setQuery($query);
 				$reference = $db->loadAssoc();
 
@@ -775,7 +775,7 @@ class JemHelper
 		// Get the ids of events
 		$ids = array();
 		foreach ($data as $event) {
-			$ids[] = $event->id;
+			$ids[] = (int)$event->id;
 		}
 		$ids = implode(",", $ids);
 

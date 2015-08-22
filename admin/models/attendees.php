@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.4.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -220,7 +220,7 @@ class JEMModelAttendees extends JModelLegacy
 		$query = $db->getQuery(true);
 		$query->select(array('id','title','dates','maxplaces','waitinglist'));
 		$query->from('#__jem_events');
-		$query->where('id = '.$this->_id);
+		$query->where('id = '.$db->Quote($this->_id));
 		$db->setQuery( $query );
 		$_event = $db->loadObject();
 
@@ -236,8 +236,9 @@ class JEMModelAttendees extends JModelLegacy
 	 */
 	function remove($cid = array())
 	{
-		if (count( $cid ))
+		if (count($cid))
 		{
+			JArrayHelper::toInteger($cid);
 			$user = implode(',', $cid);
 			$db = JFactory::getDbo();
 

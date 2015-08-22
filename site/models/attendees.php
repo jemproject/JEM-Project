@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.4.2
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -297,9 +297,8 @@ class JEMModelAttendees extends JModelLegacy
 	{
 		if (count( $cid ))
 		{
-			$user = implode(',', $cid);
-
-			$query = 'DELETE FROM #__jem_register WHERE id IN ('. $user .') ';
+			JArrayHelper::toInteger($cid);
+			$query = 'DELETE FROM #__jem_register WHERE id IN ('. implode(',', $cid) .') ';
 
 			$this->_db->setQuery( $query );
 

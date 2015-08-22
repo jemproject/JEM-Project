@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.4.2
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -129,6 +129,7 @@ class JEMModelMyevents extends JModelLegacy
 		$userid = (int) $user->get('id');
 
 		if (is_array($cid) && count($cid)) {
+			JArrayHelper::toInteger($cid);
 			$cids = implode(',', $cid);
 
 			$query = 'UPDATE #__jem_events'
