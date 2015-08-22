@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.4.2
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -21,6 +21,7 @@ defined('_JEXEC') or die;
 				                         ,'mod_jem'           => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM'
 				                         ,'mod_jem_cal'       => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_CAL'
 				                         ,'mod_jem_banner'    => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_BANNER'
+				                         ,'mod_jem_jubilee'   => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_JUBILEE'
 				                         ,'mod_jem_teaser'    => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_TEASER'
 				                         ,'mod_jem_wide'      => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_WIDE'
 				                         ,'plg_content_jem'   => 'COM_JEM_MAIN_CONFIG_VS_PLG_CONTENT'
