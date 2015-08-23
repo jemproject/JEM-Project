@@ -180,7 +180,7 @@ class JemViewEditevent extends JViewLegacy
 		}
 
 		// disable for non-publishers
-		if (empty($item->params->get('access-change'))) {
+		if (empty($item->params) || !$item->params->get('access-change', false)) {
 			$this->form->setFieldAttribute('published', 'default', 0);
 			$this->form->setFieldAttribute('published', 'readonly', 'true');
 		}
