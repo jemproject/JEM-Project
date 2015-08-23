@@ -83,7 +83,7 @@ class JemViewCategory extends JEMView
 			JHtml::_('script', 'media/com_jem/js/calendar.js');
 
 			// Retrieve date variables
-			$year = (int)$app->input->getInt('yearID', strftime("%Y"));
+			$year  = (int)$app->input->getInt('yearID', strftime("%Y"));
 			$month = (int)$app->input->getInt('monthID', strftime("%m"));
 
 			$catid = $app->input->getInt('id', 0);
@@ -115,26 +115,32 @@ class JemViewCategory extends JEMView
 			$document->setMetaData('title', $pagetitle);
 
 			// Check if the user has permission to add things
-			$canAddEvent = (int)$user->can('add', 'event', false, false, $catid);
-			$canAddVenue = (int)$user->can('add', 'venue', false, false, $catid);
+			$permissions = new stdClass();
+			$permissions->canAddEvent = $user->can('add', 'event', false, false, $catid);
+			$permissions->canAddVenue = $user->can('add', 'venue', false, false, $catid);
 
-			// init calendar
 			$itemid = $app->input->getInt('Itemid', 0);
 			$partItemid = ($itemid > 0) ? '&Itemid='.$itemid : '';
 			$partCatid = ($catid > 0) ? '&id=' . $catid : '';
+			$url_base = 'index.php?option=com_jem&view=category&layout=calendar' . $partCatid . $partItemid;
+			$partDate = ($year ? ('&yearID=' . $year) : '') . ($month ? ('&monthID=' . $month) : '');
+
+			$print_link = JRoute::_($url_base . $partDate . '&print=1&tmpl=component');
+
+			// init calendar
 			$cal = new JEMCalendar($year, $month, 0);
-			$cal->enableMonthNav('index.php?option=com_jem&view=category&layout=calendar' . $partCatid . $partItemid);
+			$cal->enableMonthNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
 			$cal->setFirstWeekDay($params->get('firstweekday', 1));
 			$cal->enableDayLinks('index.php?option=com_jem&view=day&catid='.$catid);
 
-			$this->rows 			= $rows;
-			$this->catid 			= $catid;
-			$this->params			= $params;
-			$this->jemsettings		= $jemsettings;
-			$this->canAddEvent		= $canAddEvent;
-			$this->canAddVenue		= $canAddVenue;
-			$this->cal				= $cal;
-			$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
+			$this->rows          = $rows;
+			$this->catid         = $catid;
+			$this->params        = $params;
+			$this->jemsettings   = $jemsettings;
+			$this->permissions   = $permissions;
+			$this->cal           = $cal;
+			$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+			$this->print_link    = $print_link;
 
 		} else
 		{
@@ -145,7 +151,6 @@ class JemViewCategory extends JEMView
 			$document 		= JFactory::getDocument();
 			$jemsettings 	= JemHelper::config();
 			$settings 		= JemHelper::globalattribs();
-		//	$db  			= JFactory::getDBO();
 			$user			= JemFactory::getUser();
 			$print			= $app->input->getBool('print', false);
 
@@ -291,8 +296,9 @@ class JemViewCategory extends JEMView
 			$document->setDescription(strip_tags($category->meta_description));
 
 			// Check if the user has permission to add things
-			$canAddEvent = (int)$user->can('add', 'event', false, false, $category->id);
-			$canAddVenue = (int)$user->can('add', 'venue', false, false, $category->id);
+			$permissions = new stdClass();
+			$permissions->canAddEvent = $user->can('add', 'event', false, false, $category->id);
+			$permissions->canAddVenue = $user->can('add', 'venue', false, false, $category->id);
 
 			// Create the pagination object
 			$pagination = $this->get('Pagination');
@@ -320,9 +326,8 @@ class JemViewCategory extends JEMView
 			$this->noevents			= $noevents;
 			$this->print_link		= $print_link;
 			$this->params			= $params;
-			$this->dellink			= $canAddEvent; // deprecated
-			$this->canAddEvent		= $canAddEvent;
-			$this->canAddVenue		= $canAddVenue;
+			$this->dellink			= $permissions->canAddEvent; // deprecated
+			$this->permissions		= $permissions;
 			$this->task				= $task;
 			$this->description		= $description;
 			$this->pagination		= $pagination;

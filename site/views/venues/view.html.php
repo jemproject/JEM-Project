@@ -21,11 +21,13 @@ class JemViewVenues extends JViewLegacy
 	{
 		$app = JFactory::getApplication();
 
-		$document		= JFactory::getDocument();
-		$jemsettings	= JemHelper::config();
-		$settings 		= JemHelper::globalattribs();
-		$user			= JemFactory::getUser();
-		$print			= $app->input->getBool('print', false);
+		$document    = JFactory::getDocument();
+		$jemsettings = JemHelper::config();
+		$settings    = JemHelper::globalattribs();
+		$user        = JemFactory::getUser();
+		$jinput      = $app->input;
+		$print       = $jinput->getBool('print', false);
+		$task        = $jinput->getCmd('task', '');
 
 		//get menu information
 		$menu		= $app->getMenu();
@@ -43,7 +45,6 @@ class JemViewVenues extends JViewLegacy
 		}
 
 		// Request variables
-		$task 	= $app->input->get('task', '');
 		$rows 	= $this->get('Items');
 
 		$pagetitle = $params->def('page_title', $menuitem->title);
@@ -78,8 +79,10 @@ class JemViewVenues extends JViewLegacy
 		$document->setMetadata('keywords', $pagetitle);
 
 		//Check if the user has permission to add things
-		$canAddEvent = (int)$user->can('add', 'event');
-		$canAddVenue = (int)$user->can('add', 'venue');
+		$permissions = new stdClass();
+		$permissions->canAddEvent = $user->can('add', 'event');
+		$permissions->canAddVenue = $user->can('add', 'venue');
+		$permissions->canEditPublishVenue = $user->can(array('edit', 'publish'), 'venue');
 
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
@@ -87,18 +90,15 @@ class JemViewVenues extends JViewLegacy
 		$this->rows				= $rows;
 		$this->print_link		= $print_link;
 		$this->params			= $params;
-		$this->addvenuelink		= $canAddVenue; // deprecated
-		$this->addeventlink		= $canAddEvent; // deprecated
-		$this->canAddEvent		= $canAddEvent;
-		$this->canAddVenue		= $canAddVenue;
 		$this->pagination		= $pagination;
 		$this->item				= $menuitem;
 		$this->jemsettings		= $jemsettings;
 		$this->settings			= $settings;
+		$this->permissions		= $permissions;
+		$this->show_status		= $permissions->canEditPublishVenue;
 		$this->task				= $task;
 		$this->pagetitle		= $pagetitle;
 		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
-		$this->show_status		= $user->can(array('edit', 'publish'), 'venue');
 
 		parent::display($tpl);
 	}

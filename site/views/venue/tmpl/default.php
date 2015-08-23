@@ -12,11 +12,8 @@ defined('_JEXEC') or die;
 <div id="jem" class="jem_venue<?php echo $this->pageclass_sfx;?>" itemscope="itemscope" itemtype="http://schema.org/Place">
 	<div class="buttons">
 		<?php
-			echo JemOutput::addvenuebutton($this->addvenuelink, $this->params, $this->jemsettings);
-			echo JemOutput::submitbutton($this->addeventlink, $this->params);
-			echo JemOutput::archivebutton($this->params, $this->task, $this->venue->slug);
-			echo JemOutput::mailbutton($this->venue->slug, 'venue', $this->params);
-			echo JemOutput::printbutton($this->print_link, $this->params);
+		$btn_params = array('id' => $this->venue->slug, 'slug' => $this->venue->slug, 'task' => $this->task, 'print_link' => $this->print_link);
+		echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
 		?>
 	</div>
 
@@ -31,7 +28,7 @@ defined('_JEXEC') or die;
 	<!--Venue-->
 	<h2 class="jem">
 			<?php echo JText::_('COM_JEM_VENUE'); ?>
-			<?php echo JemOutput::editbutton($this->venue, $this->params, NULL, $this->allowedtoeditvenue, 'venue'); ?>
+			<?php echo JemOutput::editbutton($this->venue, $this->params, NULL, $this->permissions->canEditVenue, 'venue'); ?>
 	</h2>
 	<?php echo JemOutput::flyer($this->venue, $this->limage, 'venue'); ?>
 

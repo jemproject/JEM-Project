@@ -8,15 +8,12 @@
  */
 defined('_JEXEC') or die;
 
-
 ?>
 <div id="jem" class="jem_venues<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
-		echo JemOutput::addvenuebutton($this->addvenuelink, $this->params, $this->jemsettings);
-		/*echo JemOutput::archivebutton($this->params, $this->task);*/
-		echo JemOutput::submitbutton($this->addeventlink, $this->params);
-		echo JemOutput::printbutton($this->print_link, $this->params);
+		$btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
+		echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
 		?>
 	</div>
 

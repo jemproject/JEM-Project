@@ -16,9 +16,9 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 class JemViewCategories extends JEMView
 {
 	/**
-	 * Categories-View
+	 * Creates the Categories-View
 	 */
-	function display($tpl=null)
+	function display($tpl = null)
 	{
 		$app = JFactory::getApplication();
 
@@ -26,7 +26,7 @@ class JemViewCategories extends JEMView
 		$jemsettings 	= JemHelper::config();
 		$user			= JemFactory::getUser();
 		$print			= $app->input->getBool('print', false);
-		$task			= $app->input->get('task', '');
+		$task			= $app->input->getCmd('task', '');
 		$id 			= $app->input->getInt('id', 1);
 		$model 			= $this->getModel();
 
@@ -61,8 +61,8 @@ class JemViewCategories extends JEMView
 		if ($task == 'archive') {
 			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?option=com_jem&view=categories&id='.$id.'&task=archive'));
 			$print_link = JRoute::_('index.php?option=com_jem&view=categories&id='.$id.'&task=archive&print=1&tmpl=component');
-			$pagetitle   .= ' - '.JText::_('COM_JEM_ARCHIVE');
-			$pageheading .= ' - '.JText::_('COM_JEM_ARCHIVE');
+			$pagetitle   .= ' - ' . JText::_('COM_JEM_ARCHIVE');
+			$pageheading .= ' - ' . JText::_('COM_JEM_ARCHIVE');
 			$params->set('page_heading', $pageheading);
 		} else {
 			$print_link = JRoute::_('index.php?option=com_jem&view=categories&id='.$id.'&print=1&tmpl=component');
@@ -81,8 +81,9 @@ class JemViewCategories extends JEMView
 		$document->setMetaData('title' , $pagetitle);
 
 		// Check if the user has permission to add things
-		$canAddEvent = (int)$user->can('add', 'event');
-		$canAddVenue = (int)$user->can('add', 'venue');
+		$permissions = new stdClass();
+		$permissions->canAddEvent = $user->can('add', 'event');
+		$permissions->canAddVenue = $user->can('add', 'venue');
 
 		// Get events if requested
 		if (!empty($rows) && $params->get('detcat_nr', 0) > 0) {
@@ -94,7 +95,7 @@ class JemViewCategories extends JEMView
 		$this->rows				= $rows;
 		$this->task				= $task;
 		$this->params			= $params;
-		$this->dellink			= $canAddEvent;
+		$this->dellink			= $permissions->canAddEvent; // deprecated
 		$this->pagination		= $pagination;
 		$this->item				= $menuitem;
 		$this->jemsettings		= $jemsettings;
@@ -103,8 +104,7 @@ class JemViewCategories extends JEMView
 		$this->model			= $model;
 		$this->id				= $id;
 		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
-		$this->canAddEvent		= $canAddEvent;
-		$this->canAddVenue		= $canAddVenue;
+		$this->permissions		= $permissions;
 
 		parent::display($tpl);
 	}

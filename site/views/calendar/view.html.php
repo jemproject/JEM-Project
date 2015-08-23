@@ -33,6 +33,8 @@ class JemViewCalendar extends JViewLegacy
 		$user         = JemFactory::getUser();
 		$params       = $app->getParams();
 		$top_category = (int)$params->get('top_category', 0);
+		$jinput       = $app->input;
+		$print        = $jinput->getBool('print', false);
 		$this->param_topcat = $top_category > 0 ? ('&topcat='.$top_category) : '';
 
 		// Load css
@@ -40,6 +42,11 @@ class JemViewCalendar extends JViewLegacy
 		JemHelper::loadCss('calendar');
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
+
+		if ($print) {
+			JemHelper::loadCss('print');
+			$document->setMetaData('robots', 'noindex, nofollow');
+		}
 
 		$evlinkcolor = $params->get('eventlinkcolor');
 		$evbackgroundcolor = $params->get('eventbackgroundcolor');
@@ -67,8 +74,8 @@ class JemViewCalendar extends JViewLegacy
 		// add javascript (using full path - see issue #590)
 		JHtml::_('script', 'media/com_jem/js/calendar.js');
 
-		$year  = (int)$app->input->getInt('yearID', strftime("%Y"));
-		$month = (int)$app->input->getInt('monthID', strftime("%m"));
+		$year  = (int)$jinput->getInt('yearID', strftime("%Y"));
+		$month = (int)$jinput->getInt('monthID', strftime("%m"));
 
 		// get data from model and set the month
 		$model = $this->getModel();
@@ -93,13 +100,22 @@ class JemViewCalendar extends JViewLegacy
 		$document->setMetaData('title', $pagetitle);
 
 		// Check if the user has permission to add things
+		$permissions = new stdClass();
 		$catIds = $model->getCategories('all');
-		$canAddEvent = (int)$user->can('add', 'event', false, false, $catIds);
-		$canAddVenue = (int)$user->can('add', 'venue', false, false, $catIds);
+		$permissions->canAddEvent = $user->can('add', 'event', false, false, $catIds);
+		$permissions->canAddVenue = $user->can('add', 'venue', false, false, $catIds);
+
+		$itemid  = $jinput->getInt('Itemid', 0);
+
+		$partItemid = ($itemid > 0) ? '&Itemid=' . $itemid : '';
+		$partDate = ($year ? ('&yearID=' . $year) : '') . ($month ? ('&monthID=' . $month) : '');
+		$url_base = 'index.php?option=com_jem&view=calendar' . $partItemid;
+
+		$print_link = JRoute::_($url_base . $partDate . '&print=1&tmpl=component');
 
 		// init calendar
 		$cal = new JEMCalendar($year, $month, 0);
-		$cal->enableMonthNav('index.php?option=com_jem&view=calendar');
+		$cal->enableMonthNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
 		$cal->setFirstWeekDay($params->get('firstweekday', 1));
 		$cal->enableDayLinks('index.php?option=com_jem&view=day' . $this->param_topcat);
 
@@ -107,10 +123,10 @@ class JemViewCalendar extends JViewLegacy
 		$this->catIds        = $catIds;
 		$this->params        = $params;
 		$this->jemsettings   = $jemsettings;
-		$this->canAddEvent   = $canAddEvent;
-		$this->canAddVenue   = $canAddVenue;
+		$this->permissions   = $permissions;
 		$this->cal           = $cal;
 		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+		$this->print_link    = $print_link;
 
 		parent::display($tpl);
 	}

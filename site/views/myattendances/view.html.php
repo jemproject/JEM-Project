@@ -31,7 +31,8 @@ class JemViewMyattendances extends JViewLegacy
 		$uri 			= JFactory::getURI();
 		$user			= JemFactory::getUser();
 		$pathway 		= $app->getPathWay();
-	//	$db  			= JFactory::getDBO();
+		$print			= $app->input->getBool('print', false);
+		$task			= $app->input->getCmd('task', '');
 
 		// redirect if not logged in
 		if (!$user->get('id')) {
@@ -48,6 +49,11 @@ class JemViewMyattendances extends JViewLegacy
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 
+		if ($print) {
+			JemHelper::loadCss('print');
+			$document->setMetaData('robots', 'noindex, nofollow');
+		}
+
 		$attending = $this->get('Attending');
 		$attending_pagination = $this->get('AttendingPagination');
 
@@ -60,8 +66,6 @@ class JemViewMyattendances extends JViewLegacy
 // 		$filter_state 		= $app->getUserStateFromRequest('com_jem.myattendances.filter_state', 'filter_state', 	'*', 'word');
 		$filter 			= $app->getUserStateFromRequest('com_jem.myattendances.filter', 'filter', '', 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.myattendances.filter_search', 'filter_search', '', 'string');
-
-		$task 				= $app->input->get('task', '');
 
 		// search filter
 		$filters = array();
@@ -108,6 +112,16 @@ class JemViewMyattendances extends JViewLegacy
 			$pageclass_sfx = $params->get('pageclass_sfx');
 		}
 
+		if ($task == 'archive') {
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_(JemHelperRoute::getMyAttendancesRoute().'&task=archive'));
+			$print_link = JRoute::_(JemHelperRoute::getMyAttendancesRoute().'&task=archive&print=1&tmpl=component');
+			$pagetitle   .= ' - '.JText::_('COM_JEM_ARCHIVE');
+			$pageheading .= ' - '.JText::_('COM_JEM_ARCHIVE');
+			$params->set('page_heading', $pageheading);
+		} else {
+			$print_link = JRoute::_(JemHelperRoute::getMyAttendancesRoute().'&print=1&tmpl=component');
+		}
+
 		$params->set('page_heading', $pageheading);
 
 		// Add site name to title if param is set
@@ -121,6 +135,9 @@ class JemViewMyattendances extends JViewLegacy
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title', $pagetitle);
 
+		// Don't add things from this view, no good starting point
+		$permissions = new stdClass();
+
 		$this->action					= $uri->toString();
 		$this->attending				= $attending;
 		$this->task						= $task;
@@ -128,7 +145,9 @@ class JemViewMyattendances extends JViewLegacy
 		$this->attending_pagination 	= $attending_pagination;
 		$this->jemsettings				= $jemsettings;
 		$this->settings					= $settings;
+		$this->permissions				= $permissions;
 		$this->pagetitle				= $pagetitle;
+		$this->print_link				= $print_link;
 		$this->lists 					= $lists;
 		$this->noattending				= $noattending;
 		$this->pageclass_sfx			= htmlspecialchars($pageclass_sfx);

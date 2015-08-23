@@ -25,7 +25,6 @@ class JemViewAttendees extends JViewLegacy {
 		}
 
 		//initialise variables
-	//	$db			= JFactory::getDBO();
 		$document	= JFactory::getDocument();
 		$user		= JemFactory::getUser();
 		$settings	= JEMHelper::globalattribs();
@@ -86,7 +85,6 @@ class JemViewAttendees extends JViewLegacy {
 
 		$print_link = 'index.php?option=com_jem&view=attendees&layout=print&task=print&tmpl=component&id='.$event->id;
 		$backlink = 'attendees';
-		$view = 'attendees';
 
 
 		//build filter selectlist
@@ -120,7 +118,6 @@ class JemViewAttendees extends JViewLegacy {
 		$this->event 		= $event;
 		$this->pagetitle	= $pagetitle;
 		$this->backlink		= $backlink;
-		$this->view			= $view;
 		$this->print_link	= $print_link;
 		$this->item			= $menuitem;
 		$this->action		= $uri->toString();

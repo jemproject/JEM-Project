@@ -58,7 +58,7 @@ $class = ' class="first"';
 				<?php if ( $this->params->get('show_cat_num_articles', 1)) : ?>
 				<dl>
 					<dt>
-						<?php echo JText::_('COM_CONTENT_NUM_ITEMS') ; ?>
+						<?php echo JText::_('COM_JEM_EVENTS') . ':' ; ?>
 					</dt>
 					<dd>
 						<?php echo $child->getNumItems(false); /* count direct events only, not recursive */ ?>
@@ -67,7 +67,7 @@ $class = ' class="first"';
 				<?php endif; ?>
 			<?php elseif ($this->params->get('show_cat_num_articles', 1)) : ?>
 				<?php echo ' (' . $child->getNumItems(false) . ')';  /* count direct events only, not recursive */ ?>
-				<?php /* experimental */
+				<?php /* experimental * /
 				      $count = $child->getNumItemsByState(false);
 				      echo ' (' . $count['published'] . ' + ' . $count['unpublished'] . ' / ' . $count['archived'] . ' - ' . $count['trashed'] . ')';
 				      /**/

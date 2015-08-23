@@ -161,13 +161,16 @@ class JemViewEditvenue extends JViewLegacy
 		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 		JHtml::_('script', 'com_jem/jquery.geocomplete.js', false, true);
 
+		// No permissions required/useful on this view
+		$permissions = new stdClass();
+
 		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));
 		$this->jemsettings   = $jemsettings;
 		$this->settings      = $settings;
+		$this->permissions   = $permissions;
 		$this->limage        = JemImage::flyercreator($this->item->locimage, 'venue');
 		$this->infoimage     = JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_('COM_JEM_NOTES'), NULL, true);
-
-		$this->user = $user;
+		$this->user          = $user;
 
 		if (!$publisher) {
 			$this->form->setFieldAttribute('published', 'default', 0);

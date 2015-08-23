@@ -102,50 +102,56 @@ class JemViewVenue extends JEMView
 			$document->setMetaData('title', $pagetitle);
 
 			// Check if the user has permission to add things
-			$canAddEvent = (int)$user->can('add', 'event');
-			$canAddVenue = (int)$user->can('add', 'venue');
+			$permissions = new stdClass();
+			$permissions->canAddEvent = $user->can('add', 'event');
+			$permissions->canAddVenue = $user->can('add', 'venue');
 
-			// init calendar
 			$itemid  = $jinput->getInt('Itemid', 0);
 			$venueID = $jinput->getInt('id', $params->get('id'));
 
 			$partItemid = ($itemid > 0) ? '&Itemid=' . $itemid : '';
 			$partVenid = ($venueID > 0) ? '&id=' . $venueID : '';
 			$partLocid = ($venueID > 0) ? '&locid=' . $venueID : '';
+			$partDate = ($year ? ('&yearID=' . $year) : '') . ($month ? ('&monthID=' . $month) : '');
+			$url_base = 'index.php?option=com_jem&view=venue&layout=calendar' . $partVenid . $partItemid;
+
+			$print_link = JRoute::_($url_base . $partDate . '&print=1&tmpl=component');
+
+			// init calendar
 			$cal = new JEMCalendar($year, $month, 0);
-			$cal->enableMonthNav('index.php?option=com_jem&view=venue&layout=calendar'.$partVenid.$partItemid);
+			$cal->enableMonthNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
 			$cal->setFirstWeekDay($params->get('firstweekday',1));
 			$cal->enableDayLinks('index.php?option=com_jem&view=day'.$partLocid);
 
 			// map variables
-			$this->rows 			= $rows;
-			$this->locid			= $venueID;
-			$this->params 			= $params;
-			$this->jemsettings 		= $jemsettings;
-			$this->canAddEvent		= $canAddEvent;
-			$this->canAddVenue		= $canAddVenue;
-			$this->cal 				= $cal;
-			$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
+			$this->rows          = $rows;
+			$this->locid         = $venueID;
+			$this->params        = $params;
+			$this->jemsettings   = $jemsettings;
+			$this->permissions   = $permissions;
+			$this->cal           = $cal;
+			$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+			$this->print_link    = $print_link;
 
 		} else
 		{
 			### Venue List view ###
 
 			// initialize variables
-			$app 			= JFactory::getApplication();
-			$document 		= JFactory::getDocument();
-			$menu 			= $app->getMenu();
-			$menuitem		= $menu->getActive();
-			$jemsettings 	= JemHelper::config();
-			$settings 		= JemHelper::globalattribs();
-	//		$db 			= JFactory::getDBO();
-			$params 		= $app->getParams('com_jem');
-			$pathway 		= $app->getPathWay ();
-			$uri 			= JFactory::getURI();
-			$task 			= $app->input->get('task', '');
-			$print			= $app->input->getBool('print', false);
-			$user			= JemFactory::getUser();
-			$itemid 		= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
+			$app         = JFactory::getApplication();
+			$document    = JFactory::getDocument();
+			$menu        = $app->getMenu();
+			$menuitem    = $menu->getActive();
+			$jemsettings = JemHelper::config();
+			$settings    = JemHelper::globalattribs();
+			$params      = $app->getParams('com_jem');
+			$pathway     = $app->getPathWay ();
+			$uri         = JFactory::getURI();
+			$jinput      = $app->input;
+			$task        = $jinput->getCmd('task', '');
+			$print       = $jinput->getBool('print', false);
+			$user        = JemFactory::getUser();
+			$itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
 			// Load css
 			JemHelper::loadCss('jem');
@@ -236,11 +242,13 @@ class JemViewVenue extends JEMView
 			$document->setDescription(strip_tags($venue->meta_description));
 
 			// Check if the user has permission to add things
-			$canAddEvent = (int)$user->can('add', 'event');
-			$canAddVenue = (int)$user->can('add', 'venue');
+			$permissions = new stdClass();
+			$permissions->canAddEvent = $user->can('add', 'event');
+			$permissions->canAddVenue = $user->can('add', 'venue');
 
 			// Check if the user has permission to edit-this venue
-			$canEditVenue = (int)$user->can('edit', 'venue', $venue->id, $venue->created_by);
+			$permissions->canEditVenue = $user->can('edit', 'venue', $venue->id, $venue->created_by);
+			$permissions->canEditPublishVenue = $user->can(array('edit', 'publish'), 'venue', $venue->id, $venue->created_by);
 
 			// Generate Venuedescription
 			if (!$venue->locdescription == '' || !$venue->locdescription == '<br />') {
@@ -302,28 +310,24 @@ class JemViewVenue extends JEMView
 			$lists['search'] = $search;
 
 			// mapping variables
-			$this->lists 				= $lists;
-			$this->action 				= $uri->toString ();
-			$this->rows 				= $rows;
-			$this->noevents 			= $noevents;
-			$this->venue 				= $venue;
-			$this->print_link 			= $print_link;
-			$this->params 				= $params;
-			$this->addvenuelink 		= $canAddVenue; // deprecated
-			$this->addeventlink 		= $canAddEvent; // deprecated
-			$this->canAddEvent			= $canAddEvent;
-			$this->canAddVenue			= $canAddVenue;
-			$this->limage 				= $limage;
-			$this->venuedescription		= $venuedescription;
-			$this->pagination 			= $pagination;
-			$this->jemsettings 			= $jemsettings;
-			$this->settings				= $settings;
-			$this->item					= $menuitem;
-			$this->pagetitle			= $pagetitle;
-			$this->task					= $task;
-			$this->allowedtoeditvenue 	= $canEditVenue;
-			$this->pageclass_sfx		= htmlspecialchars($pageclass_sfx);
-			$this->show_status			= $user->can(array('edit', 'publish'), 'venue', $venue->id, $venue->created_by);
+			$this->lists            = $lists;
+			$this->action           = $uri->toString();
+			$this->rows             = $rows;
+			$this->noevents         = $noevents;
+			$this->venue            = $venue;
+			$this->print_link       = $print_link;
+			$this->params           = $params;
+			$this->limage           = $limage;
+			$this->venuedescription = $venuedescription;
+			$this->pagination       = $pagination;
+			$this->jemsettings      = $jemsettings;
+			$this->settings         = $settings;
+			$this->permissions      = $permissions;
+			$this->show_status      = $permissions->canEditPublishVenue;
+			$this->item             = $menuitem;
+			$this->pagetitle        = $pagetitle;
+			$this->task             = $task;
+			$this->pageclass_sfx    = htmlspecialchars($pageclass_sfx);
 		}
 
 		parent::display($tpl);

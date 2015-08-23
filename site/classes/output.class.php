@@ -27,6 +27,110 @@ class JEMOutput
 			echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
 		}
 	}
+	/**
+	 * Creates the button bar shown on frontend view's top right corner.
+	 *
+	 * @param  string $view        Name of the view
+	 *                             ('attendees', 'calendar', 'categories', 'category', 'category-cal', 'day',
+	 *                              'editevent', 'editvenue', 'event', 'eventslist', 'myattendances', 'myevents', 'myvenues',
+	 *                              'search', 'venue', 'venue-cal', 'venues', 'weekcal')
+	 * @param  object $permissions Object holding relevant permissions
+	 *                             (canAddEvent, canAddVenue, canPublishEvent, canPublishVenue)
+	 * @param  object $params      Object containing other relevant parameters
+	 *                             (id: for '&id=', for Archive and Export button,
+	 *                              slug: for '&id=', for Mail and iCal button,
+	 *                              task: e.g. 'archive', for Archive button,
+	 *                              print_link: for Print button
+	 *                              show, hide: to override button visibility; array of one or more of
+	 *                              'addEvent', 'addVenue',
+	 *                              'archive' 'mail', 'print', 'ical', ('export', 'back',)
+	 *                              'publish', 'unpublish', 'trash' - note: some buttons may not work or need additional changes)
+	 *
+	 * @return string              Resulting HTML code.
+	 */
+	static function createButtonBar($view, $permissions, $params)
+	{
+		foreach (array('canAddEvent', 'canAddVenue', 'canPublishEvent', 'canPublishVenue') as $key) {
+			${$key} = isset($permissions->$key) ? $permissions->$key: null;
+		}
+		if (is_object($params)) {
+			foreach (array('id', 'slug', 'task', 'print_link', 'show', 'hide') as $key) {
+				${$key} = isset($params->$key) ? $params->$key : null;
+			}
+		} elseif (is_array($params)) {
+			foreach (array('id', 'slug', 'task', 'print_link', 'show', 'hide') as $key) {
+				${$key} = key_exists($key, $params) ? $params[$key] : null;
+			}
+		} else {
+			foreach (array('id', 'slug', 'task', 'print_link') as $key) {
+				${$key} = null;
+			}
+		}
+
+		$btns_show = isset($show) ? (array)$show : array();
+		$btns_hide = isset($hide) ? (array)$hide : array();
+		$archive = !empty($task) && ($task == 'archive');
+		$buttons = array();
+		$idx = 0;
+
+		# Left block ------------------
+
+		if (!$archive) {
+			if (in_array('addEvent', $btns_show) || (!in_array('addEvent', $btns_hide) && in_array($view, array('categories', 'category', 'day', 'event', 'eventslist', 'myevents', 'myvenues', 'venue', 'venues')))) {
+				$buttons[$idx][] = JemOutput::submitbutton(!empty($canAddEvent), null);
+			}
+			if (in_array('addVenue', $btns_show) || (!in_array('addVenue', $btns_hide) && in_array($view, array('categories', 'category', 'day', 'event', 'eventslist', 'myevents', 'myvenues', 'venue', 'venues')))) {
+				$buttons[$idx][] = JemOutput::addvenuebutton(!empty($canAddVenue), null, null);
+			}
+		}
+
+		++$idx;
+
+		# Middle block ----------------
+
+		if (in_array('archive', $btns_show) || (!in_array('archive', $btns_hide) && in_array($view, array('categories', 'category', 'eventslist', 'myattendances', 'myevents', 'venue')))) {
+			$buttons[$idx][] = JemOutput::archivebutton(null, $task, $id); // task: archive, id: for '&id='
+		}
+		if (in_array('mail', $btns_show) || (!in_array('mail', $btns_hide) && in_array($view, array('category', 'event', 'venue')))) {
+			$buttons[$idx][] = JemOutput::mailbutton($slug, $view, null); // slug: for '&id='
+		}
+		if (in_array('print', $btns_show) || (!in_array('print', $btns_hide) && in_array($view, array('attendees', 'calendar', 'categories', 'category', 'category-cal', 'day', 'event', 'eventslist', 'myattendances', 'myevents', 'myvenues', 'venue', 'venue-cal', 'venues', 'weekcal')))) {
+			$buttons[$idx][] = JemOutput::printbutton($print_link, null);
+		}
+		if (in_array('ical', $btns_show) || (!in_array('ical', $btns_hide) && in_array($view, array('event')))) {
+			$buttons[$idx][] = JemOutput::icalbutton($slug, $view); // slug: for '&id='
+		}
+		if (in_array('export', $btns_show) || (!in_array('export', $btns_hide) && in_array($view, array('attendees')))) {
+			$buttons[$idx][] = JemOutput::exportbutton($id); // id: for '&id='
+		}
+		if (in_array('back', $btns_show) || (!in_array('back', $btns_hide) && in_array($view, array('attendees')))) {
+			$buttons[$idx][] = JemOutput::backbutton(null, $view);
+		}
+
+		++$idx;
+
+		# Right block -----------------
+
+		if (!empty($canPublishEvent) || !empty($canPublishVenue)) {
+			if (in_array('publish', $btns_show) || (!in_array('publish', $btns_hide) && in_array($view, array('myevents', 'myvenues')))) {
+				$buttons[$idx][] = JemOutput::publishbutton($view);
+			}
+			if (in_array('unpublish', $btns_show) || (!in_array('unpublish', $btns_hide) && in_array($view, array('myevents', 'myvenues')))) {
+				$buttons[$idx][] = JemOutput::unpublishbutton($view);
+			}
+			if (in_array('trash', $btns_show) || (!in_array('trash', $btns_hide) && in_array($view, array('myevents')))) {
+				$buttons[$idx][] = JemOutput::trashbutton($view);
+			}
+		}
+
+		# -----------------------------
+
+		foreach ($buttons as $i => $btns) {
+			$buttons[$i] = implode('', array_filter($btns));
+		}
+		$result = implode('<span class="gap">&nbsp;</span>', array_filter($buttons));
+		return $result;
+	}
 
 	/**
 	 * Writes Event submission button
@@ -284,7 +388,7 @@ class JEMOutput
 	 * @param string $print_link
 	 * @param array $params
 	 */
-	static function printbutton($print_link, &$params)
+	static function printbutton($print_link, $params)
 	{
 		$app 		= JFactory::getApplication();
 		$settings	= JemHelper::globalattribs();
@@ -539,7 +643,7 @@ class JEMOutput
 			$overlib = JText::_('COM_JEM_BACK');
 			$text = JText::_('COM_JEM_BACK');
 
-			$link = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&Itemid='.$fid.'&task=attendees.back';
+			$link = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&Itemid='.$fid.'&task='.$view.'.back';
 			$output	= '<a href="'. JRoute::_($link) .'" '.JEMOutput::tooltip($text, $overlib, 'editlinktip', 'bottom').'>'.$image.'</a>';
 		}
 

@@ -31,7 +31,9 @@ class JemViewMyvenues extends JViewLegacy
 		$user         = JemFactory::getUser();
 		$userId       = $user->get('id');
 		$pathway      = $app->getPathWay();
-//		$db           = JFactory::getDBO();
+		$jinput       = $app->input;
+		$print        = $jinput->getBool('print', false);
+		$task         = $jinput->getCmd('task', '');
 
 		// redirect if not logged in
 		if (!$userId) {
@@ -48,18 +50,16 @@ class JemViewMyvenues extends JViewLegacy
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 
+		if ($print) {
+			JemHelper::loadCss('print');
+			$document->setMetaData('robots', 'noindex, nofollow');
+		}
+
 		$venues = $this->get('Venues');
 		$venues_pagination = $this->get('VenuesPagination');
 
 		// are no venues available?
 		$novenues = (!$venues) ? 1 : 0;
-
-		// Should we show publish buttons?
-		$canPublishVenue = false;
-		foreach ($venues as $venue) {
-			$canPublishVenue |= $venue->params->get('access-change');
-			if ($canPublishVenue) break;
-		}
 
 		// get variables
 		$filter_order     = $app->getUserStateFromRequest('com_jem.myvenues.filter_order', 'filter_order', 	'l.venue', 'cmd');
@@ -67,8 +67,6 @@ class JemViewMyvenues extends JViewLegacy
 // 		$filter_state     = $app->getUserStateFromRequest('com_jem.myvenues.filter_state', 'filter_state', 	'*', 'word');
 		$filter           = $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', '', 'int');
 		$search           = $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');
-
-		$task = $app->input->get('task', '');
 
 		// search filter
 		$filters = array();
@@ -119,6 +117,9 @@ class JemViewMyvenues extends JViewLegacy
 			$pageclass_sfx = $params->get('pageclass_sfx');
 		}
 
+		// ($task == 'archive') useless
+		$print_link = JRoute::_(JemHelperRoute::getMyVenuesRoute() .'&print=1&tmpl=component');
+
 		$params->set('page_heading', $pageheading);
 
 		// Add site name to title if param is set
@@ -132,20 +133,33 @@ class JemViewMyvenues extends JViewLegacy
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title', $pagetitle);
 
+		// Should we show publish buttons?
+		$canPublishVenue = false;
+		foreach ($venues as $venue) {
+			$canPublishVenue |= $venue->params->get('access-change');
+			if ($canPublishVenue) break;
+		}
+
+		// Set the user permissions
+		$permissions = new stdClass();
+		$permissions->canAddEvent     = $user->can('add', 'event');
+		$permissions->canAddVenue     = $user->can('add', 'venue');
+		$permissions->canPublishVenue = $canPublishVenue;
+
 		$this->action             = $uri->toString();
 		$this->venues             = $venues;
 		$this->task               = $task;
+		$this->print              = $print;
 		$this->params             = $params;
 		$this->venues_pagination  = $venues_pagination;
 		$this->jemsettings        = $jemsettings;
 		$this->settings           = $settings;
+		$this->permissions        = $permissions;
 		$this->pagetitle          = $pagetitle;
 		$this->lists              = $lists;
 		$this->novenues           = $novenues;
+		$this->print_link         = $print_link;
 		$this->pageclass_sfx      = htmlspecialchars($pageclass_sfx);
-		$this->canAddEvent        = $user->can('add', 'event');
-		$this->canAddVenue        = $user->can('add', 'venue');
-		$this->canPublishVenue    = $canPublishVenue;
 
 		parent::display($tpl);
 	}

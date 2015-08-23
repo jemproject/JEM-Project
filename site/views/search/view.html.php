@@ -97,6 +97,9 @@ class JemViewSearch extends JEMView
 		$document->setTitle($pagetitle);
 		$document->setMetadata('title' , $pagetitle);
 
+		// No permissions required/useful on this view
+		$permissions = new stdClass();
+
 		// create select lists
 		$lists	= $this->_buildSortLists();
 
@@ -165,6 +168,7 @@ class JemViewSearch extends JEMView
 		$this->pagination       = $pagination;
 		$this->jemsettings      = $jemsettings;
 		$this->settings         = $settings;
+		$this->permissions      = $permissions;
 		$this->pagetitle        = $pagetitle;
 		$this->filter_continent = $filter_continent;
 		$this->filter_country   = $filter_country;

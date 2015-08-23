@@ -43,7 +43,7 @@ defined('_JEXEC') or die;
 
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="Venues">
 	<colgroup>
-		<?php if ($this->canPublishVenue) : ?>
+		<?php if (empty($this->print) && $this->permissions->canPublishVenue) : ?>
 			<col width="1%" class="jem_col_checkall" />
 		<?php endif; ?>
 		<?php if ($this->jemsettings->showlocate == 1) :	?>
@@ -60,7 +60,7 @@ defined('_JEXEC') or die;
 
 	<thead>
 		<tr>
-			<?php if ($this->canPublishVenue) : ?>
+			<?php if (empty($this->print) && $this->permissions->canPublishVenue) : ?>
 			<th class="sectiontableheader center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 			<?php endif; ?>
 			<?php if ($this->jemsettings->showlocate == 1) : ?>
@@ -82,7 +82,7 @@ defined('_JEXEC') or die;
 		<?php foreach ($this->venues as $i => $row) : ?>
 			<tr class="row<?php echo $i % 2; ?>">
 
-				<?php if ($this->canPublishVenue) : ?>
+				<?php if (empty($this->print) && $this->permissions->canPublishVenue) : ?>
 					<?php if (!empty($row->params) && $row->params->get('access-change', false)) : ?>
 					<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 					<?php else : ?>
@@ -110,7 +110,7 @@ defined('_JEXEC') or die;
 
 				<td class="center">
 					<?php // Ensure icon is not clickable if user isn't allowed to change state!
-					if (!empty($row->params) && $row->params->get('access-change', false)) {
+					if (empty($this->print) && !empty($row->params) && $row->params->get('access-change', false)) {
 						echo JHtml::_('jgrid.published', $row->published, $i,'myvenues.');
 					} else {
 						$img = $row->published ? 'tick.png' : 'publish_x.png';

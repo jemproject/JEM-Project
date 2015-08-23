@@ -29,9 +29,9 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 <div id="jem" class="jem_attendees<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
-		echo JemOutput::printbutton($this->print_link, $this->params);
-		echo JemOutput::exportbutton($this->event->id);
-		echo JemOutput::backbutton($this->backlink, $this->view);
+		$permissions = new stdClass();
+		$btn_params = array('print_link' => $this->print_link, 'id' => $this->event->id);
+		echo JemOutput::createButtonBar($this->getName(), $permissions, $btn_params);
 		?>
 	</div>
 

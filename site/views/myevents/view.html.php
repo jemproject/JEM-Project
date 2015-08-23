@@ -31,7 +31,8 @@ class JemViewMyevents extends JViewLegacy
 		$user         = JemFactory::getUser();
 		$userId       = $user->get('id');
 		$pathway      = $app->getPathWay();
-//		$db           = JFactory::getDBO();
+		$print        = $app->input->getBool('print', false);
+		$task         = $app->input->getCmd('task', '');
 
 		// redirect if not logged in
 		if (!$userId) {
@@ -48,18 +49,16 @@ class JemViewMyevents extends JViewLegacy
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 
+		if ($print) {
+			JemHelper::loadCss('print');
+			$document->setMetaData('robots', 'noindex, nofollow');
+		}
+
 		$events            = $this->get('Events');
 		$events_pagination = $this->get('EventsPagination');
 
 		// are no events available?
 		$noevents = (!$events) ? 1 : 0;
-
-		// Should we show publish buttons?
-		$canPublishEvent = false;
-		foreach ($events as $event) {
-			$canPublishEvent |= $event->params->get('access-change');
-			if ($canPublishEvent) break;
-		}
 
 		// get variables
 		$filter_order     = $app->getUserStateFromRequest('com_jem.myevents.filter_order', 'filter_order', 	'a.dates', 'cmd');
@@ -67,8 +66,6 @@ class JemViewMyevents extends JViewLegacy
 // 		$filter_state     = $app->getUserStateFromRequest('com_jem.myevents.filter_state', 'filter_state', 	'*', 'word');
 		$filter           = $app->getUserStateFromRequest('com_jem.myevents.filter', 'filter', '', 'int');
 		$search           = $app->getUserStateFromRequest('com_jem.myevents.filter_search', 'filter_search', '', 'string');
-
-		$task = $app->input->get('task', '');
 
 		// search filter
 		$filters = array();
@@ -116,6 +113,15 @@ class JemViewMyevents extends JViewLegacy
 			$pageclass_sfx = $params->get('pageclass_sfx');
 		}
 
+		if ($task == 'archive') {
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_(JemHelperRoute::getMyEventsRoute().'&task=archive'));
+			$print_link = JRoute::_(JemHelperRoute::getMyEventsRoute() .'&task=archive&print=1&tmpl=component');
+			$pagetitle   .= ' - '.JText::_('COM_JEM_ARCHIVE');
+			$pageheading .= ' - '.JText::_('COM_JEM_ARCHIVE');
+		} else {
+			$print_link = JRoute::_(JemHelperRoute::getMyEventsRoute() .'&print=1&tmpl=component');
+		}
+
 		$params->set('page_heading', $pageheading);
 
 		// Add site name to title if param is set
@@ -129,6 +135,19 @@ class JemViewMyevents extends JViewLegacy
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title', $pagetitle);
 
+		// Should we show publish buttons?
+		$canPublishEvent = false;
+		foreach ($events as $event) {
+			$canPublishEvent |= $event->params->get('access-change');
+			if ($canPublishEvent) break;
+		}
+
+		// Set the user permissions
+		$permissions = new stdClass();
+		$permissions->canAddEvent     = $user->can('add', 'event');
+		$permissions->canAddVenue     = $user->can('add', 'venue');
+		$permissions->canPublishEvent = $canPublishEvent;
+
 		//
 		if ($params->get('enableemailaddress','0') == 1) {
 			$enableemailaddress = 1;
@@ -140,17 +159,18 @@ class JemViewMyevents extends JViewLegacy
 		$this->action              = $uri->toString();
 		$this->events              = $events;
 		$this->task                = $task;
+		$this->print               = $print;
 		$this->params              = $params;
 		$this->events_pagination   = $events_pagination;
 		$this->jemsettings         = $jemsettings;
 		$this->settings            = $settings;
+		$this->permissions         = $permissions;
 		$this->pagetitle           = $pagetitle;
 		$this->lists               = $lists;
 		$this->noevents            = $noevents;
+		$this->print_link          = $print_link;
 		$this->pageclass_sfx       = htmlspecialchars($pageclass_sfx);
-		$this->canAddEvent         = $user->can('add', 'event');
-		$this->canAddVenue         = $user->can('add', 'venue');
-		$this->canPublishEvent     = $canPublishEvent;
+		$this->itemid              = $menuitem->id;
 
 		parent::display($tpl);
 	}

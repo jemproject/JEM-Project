@@ -11,11 +11,10 @@ defined('_JEXEC') or die;
 ?>
 <div id="jem" class="jem_myevents<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
-		<?php if (!empty($this->canPublishEvent)) :
-			echo JemOutput::publishbutton('myevents');
-			echo JemOutput::unpublishbutton('myevents');
-			echo JemOutput::trashbutton('myevents');
-		endif; ?>
+		<?php
+		$btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
+		echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
+		?>
 	</div>
 
 	<?php if ($this->params->get('show_page_heading', 1)) : ?>
