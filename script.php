@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.3
+ * @version 2.1.4.2
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -316,6 +316,11 @@ class com_jemInstallerScript
 			if (version_compare($this->oldRelease, '2.0.3', 'lt') && version_compare($this->newRelease, '2.0.2', 'gt')) {
 				// remove update server enry
 				$this->removeUpdateServerEntry();
+			}
+			// Changes between 2.1.4 -> 2.1.4.2
+			if (version_compare($this->oldRelease, '2.1.4.2', 'lt') && version_compare($this->newRelease, '2.1.4', 'gt')) {
+				// remove 'htm' and 'html' from default attahment types
+				$this->updateJemSettings2142();
 			}
 		}
 		elseif ($type == 'install') {
@@ -1067,6 +1072,42 @@ class com_jemInstallerScript
 			$query = $db->getQuery(true);
 			$query->delete('#__update_sites_extensions');
 			$query->where(array('update_site_id = ' . $db->quote($id)));
+			$db->setQuery($query);
+			$db->execute();
+		}
+	}
+
+	/**
+	 * Remove 'htm' and 'html' from allowed attachment types.
+	 * (required when updating from 2.1.4 or below to 2.1.4.2 or newer)
+	 *
+	 * @return void
+	 */
+	private function updateJemSettings2142()
+	{
+		// get all "mod_jem..." entries
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('attachments_types')
+		      ->from('#__jem_settings')
+		      ->where('id = 1');
+		$db->setQuery($query);
+		try {
+			$ext = $db->loadResult();
+		} catch(Exception $e) {
+			$ext = '';
+		}
+
+		if (!empty($ext)) {
+			$ext_to_del = array('csv', 'htm', 'html', 'xml', 'css', 'doc', 'xls', 'rtf', 'ppt', 'swf', 'flv', 'avi', 'wmv', 'mov');
+			$a_ext = explode(',', $ext);
+			$new_ext = array_diff($a_ext, $ext_to_del);
+			$ext = implode(',', $new_ext);
+
+			$query = $db->getQuery(true);
+			$query->update('#__jem_settings')
+			      ->set('attachments_types = '.$db->quote($ext))
+			      ->where('id = 1');
 			$db->setQuery($query);
 			$db->execute();
 		}

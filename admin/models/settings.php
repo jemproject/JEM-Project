@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.4.2
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -197,9 +197,9 @@ class JEMModelSettings extends JModelForm
 		$db->setQuery($query);
 		$extensions = $db->loadObjectList('name');
 
-		$known_extensions = array('pkg_jem', 'com_jem',
-		                          'mod_jem', 'mod_jem_cal', 'mod_jem_banner', 'mod_jem_teaser', 'mod_jem_wide',
-		                          'plg_content_jem', 'plg_finder_jem', 'plg_serch_jem',
+		$known_extensions = array('pkg_jem', 'com_jem', 'mod_jem', 'mod_jem_cal',
+		                          'mod_jem_banner', 'mod_jem_teaser', 'mod_jem_wide', 'mod_jem_jubilee',
+		                          'plg_content_jem', 'plg_finder_jem', 'plg_search_jem',
 		                          'plg_jem_comments', 'plg_jem_mailer', 'plg_jem_demo');
 
 		foreach ($extensions as $name => $extension) {
