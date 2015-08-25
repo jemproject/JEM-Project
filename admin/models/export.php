@@ -77,7 +77,7 @@ class JEMModelExport extends JModelList
 		$jinput = JFactory::getApplication()->input;
 		$startdate = $jinput->get('dates', '', 'string');
 		$enddate = $jinput->get('enddates', '', 'string');
-		$cats = $jinput->get('cid', array(), 'post', 'array');
+		$cats = $jinput->get('cid', array(), 'array');
 
 		// Create a new query object.
 		$db = $this->getDbo();

@@ -76,18 +76,16 @@ class JEMControllerMyvenues extends JControllerLegacy
 		$app = JFactory::getApplication();
 		$input = $app->input;
 
-		$cid = $input->get('cid', array(0), 'post', 'array');
+		$cid = $input->get('cid', array(), 'array');
 
-		$false = array_search('0', $cid);
-
-		if ($false === 0) {
+		if (empty($cid)) {
 			JError::raiseNotice(100, JText::_('COM_JEM_SELECT_ITEM_TO_PUBLISH'));
 			$this->setRedirect(JEMHelperRoute::getMyVenuesRoute());
 			return;
 		}
 
 		$model = $this->getModel('myvenues');
-		if(!$model->publish($cid, $status)) {
+		if (!$model->publish($cid, $status)) {
 			echo "<script> alert('" . $model->getError() . "'); window.history.go(-1); </script>\n";
 		}
 
