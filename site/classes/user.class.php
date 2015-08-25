@@ -474,7 +474,7 @@ abstract class JemUserAbstract extends JUser
 			}
 			break;
 		default:
-			$create = $edit = $edit_own = $publ_own = false;
+			$create = $edit = $edit_own = $autopubl = false;
 			break;
 		}
 		$assets[] = $asset;
@@ -508,7 +508,7 @@ abstract class JemUserAbstract extends JUser
 					               (empty($created_by) || ($userId == $created_by));
 					// user is creator, can edit this item and auto-publish is enabled
 					// (that's because we allowed user to not publish new item with auto-puplish enabled)
-					$authorised |= $autopubl && ($edit || $editown) && ($id !== 0) &&
+					$authorised |= $autopubl && ($edit || $edit_own) && ($id !== 0) &&
 					               !empty($created_by) && ($userId == $created_by);
 					break;
 				case 'delete':
