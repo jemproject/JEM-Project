@@ -266,6 +266,7 @@ class JEMModelImport extends JModelLegacy
 			} // if 'JEMTableCategory'
 
 			// Bind the data
+			$object->reset(); // clear old data first
 			$object->bind($values, $ignore);
 
 			// check/store function for the Category Table
