@@ -45,14 +45,17 @@ class JemViewCategory extends JViewLegacy
 
 		// build grouplist
 		// @todo: make a form-field for this one
-		$groups 	= $this->get('Groups');
+		$groups = $this->get('Groups');
 
-		$grouplist		= array();
-		$grouplist[] 	= JHtml::_('select.option', '0', JText::_('COM_JEM_CATEGORY_NO_GROUP'));
-		$grouplist 		= array_merge($grouplist, $groups);
+		$grouplist = array();
+		if (!empty($this->item->groupid) && !array_key_exists($this->item->groupid, $groups)) {
+			$grouplist[] = JHtml::_('select.option', $this->item->groupid, JText::sprintf('COM_JEM_CATEGORY_UNKNOWN_GROUP', $this->item->groupid));
+		}
+		$grouplist[] = JHtml::_('select.option', '0', JText::_('COM_JEM_CATEGORY_NO_GROUP'));
+		$grouplist   = array_merge($grouplist, $groups);
 
-		$Lists['groups']	= JHtml::_('select.genericlist', $grouplist, 'groupid', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $this->item->groupid);
-		$this->Lists 		= $Lists;
+		$Lists['groups'] = JHtml::_('select.genericlist', $grouplist, 'groupid', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $this->item->groupid);
+		$this->Lists     = $Lists;
 
 		parent::display($tpl);
 

@@ -138,6 +138,8 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 							<a href="<?php echo $grouplink; ?>">
 								<?php echo $this->escape($item->catgroup); ?>
 							</a></span>
+						<?php elseif ($item->groupid) : ?>
+							<?php echo JText::sprintf('COM_JEM_CATEGORY_UNKNOWN_GROUP', $item->groupid); ?>
 						<?php else : ?>
 							<?php echo '-'; ?>
 						<?php endif; ?>

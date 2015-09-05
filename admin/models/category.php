@@ -881,7 +881,7 @@ class JEMModelCategory extends JModelAdmin
 		       . ' ORDER BY name';
 		$db->setQuery($query);
 
-		$groups = $db->loadObjectList();
+		$groups = $db->loadObjectList('value');
 
 		return $groups;
 	}
