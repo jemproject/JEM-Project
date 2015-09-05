@@ -94,6 +94,11 @@ div#jem .buttons a {
 	border:1px solid #808080;
 }
 
+div#jem .buttons span.gap {
+	float: left;
+	margin: 0 0 0 7px;
+}
+
 /* Edit-event view */
 div#jem .button1 {
 	-webkit-box-shadow:rgba(0, 0, 0, 0.0 .1) 0 1px 0 0;
