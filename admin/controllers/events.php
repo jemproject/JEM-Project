@@ -52,10 +52,12 @@ class JemControllerEvents extends JControllerAdmin
 		$task	= $this->getTask();
 		$value	= JArrayHelper::getValue($values, $task, 0, 'int');
 
+		$glob_auth = $user->can('publish', 'event'); // general permission for all events
+
 		// Access checks.
 		foreach ($ids as $i => $id)
 		{
-			if (!$user->authorise('core.edit.state', 'com_jem.event.'.(int) $id)) {
+			if (!$glob_auth && !$user->can('publish', 'event', (int)$id)) {
 				// Prune items that you can't change.
 				unset($ids[$i]);
 				JError::raiseNotice(403, JText::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'));

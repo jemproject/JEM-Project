@@ -35,7 +35,7 @@ class JEMControllerSettings extends JControllerLegacy
 	 */
 	protected function allowEdit()
 	{
-		return JemFactory::getUser()->authorise('core.edit', 'com_jem');
+		return JemFactory::getUser()->authorise('core.manage', 'com_jem');
 	}
 
 	/**
