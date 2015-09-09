@@ -195,24 +195,19 @@ defined('_JEXEC') or die;
 					?>
 				</td>
 				<?php endif; ?>
+
 				<td class="center">
 					<?php // Ensure icon is not clickable if user isn't allowed to change state!
-					if (empty($this->print) && !empty($row->params) && $row->params->get('access-change', false)) {
-						echo JHtml::_('jgrid.published', $row->published, $i, 'myevents.');
-					} else {
-						$img = $row->published ? 'tick.png' : 'publish_x.png';
-						$alt = $row->published ? JText::_('JPUBLISHED') : JText::_('JUNPUBLISHED');
-						echo JHtml::_('image', 'com_jem/' . $img, $alt, array('title' => $alt), true);
-					}
+					$enabled = empty($this->print) && !empty($row->params) && $row->params->get('access-change', false);
+					echo JHtml::_('jgrid.published', $row->published, $i, 'myevents.', $enabled);
 					?>
 				</td>
 			</tr>
-
-		<?php
-			$i = 1 - $i;
-		?>
-		<?php endforeach;?>
-	<?php endif;?>
+			<?php
+				$i = 1 - $i;
+			?>
+		<?php endforeach; ?>
+	<?php endif; ?>
 	</tbody>
 </table>
 

@@ -1095,6 +1095,22 @@ a.jgrid:hover {
 	background-image:url(../images/admin/icon-16-protected.png);
 }
 
+#jem .btn-micro span.icon-publish:before {
+	content: url(../images/tick.png);
+}
+
+#jem .btn-micro span.icon-unpublish:before {
+	content: url(../images/publish_x.png);
+}
+
+#jem .btn-micro span.icon-archive:before {
+	content: url(../images/menu/icon-16-archive.png);
+}
+
+#jem .btn-micro span.icon-trash:before {
+	content: url(../images/icon-16-trash.png);
+}
+
 
 div#jem a.file-name:link,
 div#jem a.file-name:active,
