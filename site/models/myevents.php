@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.4.2
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -118,48 +118,33 @@ class JEMModelMyevents extends JModelLegacy
 
 	/**
 	 * Method to (un)publish a event
-	 * Base: JModeladmin function Publish (joomla 3)
 	 *
 	 * @access	public
 	 * @return	boolean	True on success
 	 *
 	 */
-	function publish($cid = array(), $value = 1)
+	function publish($cid = array(), $publish = 1)
 	{
 		$user 	= JFactory::getUser();
 		$userid = (int) $user->get('id');
-		$table = JTable::getInstance('Event','JemTable');
 
-		// Access checks.
-		foreach ($cid as $i => $pk) {
-			$table->reset();
+		if (is_array($cid) && count($cid)) {
+			JArrayHelper::toInteger($cid);
+			$cids = implode(',', $cid);
 
-			if ($table->load($pk)) {
-				// check specific access
+			$query = 'UPDATE #__jem_events'
+					. ' SET published = '. (int) $publish
+					. ' WHERE id IN ('. $cids .')'
+					. ' AND (checked_out = 0 OR (checked_out = ' .$userid. '))'
+					;
+
+			$this->_db->setQuery($query);
+
+			if ($this->_db->execute() === false) {
+				$this->setError($this->_db->getErrorMsg());
+				return false;
 			}
 		}
-
-		// Attempt to change the state of the records.
-		if (!$table->publish($cid,$value,$user->get('id'))) {
-			$this->setError($table->getError());
-
-			return false;
-		}
-
-		$context = 'com_jem.myevents';
-
-		// Trigger the change state event.
-		$result = array($context,$cid,$value);
-
-		if (in_array(false,$result,true)) {
-			$this->setError($table->getError());
-
-			return false;
-		}
-
-		$this->cleanCache();
-
-		return true;
 	}
 
 	/**

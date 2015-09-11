@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.4.2
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -660,7 +660,7 @@ class JemModelEventslist extends JModelList
 		$requestCategoryId = $this->getState('filter.req_catid');
 
 		if ($requestCategoryId) {
-			$query->where('c.id = '.$requestCategoryId);
+			$query->where('c.id = '.(int)$requestCategoryId);
 		}
 
 		###################

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.4.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -77,7 +77,7 @@ class JEMModelExport extends JModelList
 		$jinput = JFactory::getApplication()->input;
 		$startdate = $jinput->get('dates', '', 'string');
 		$enddate = $jinput->get('enddates', '', 'string');
-		$cats = $jinput->get('cid', array(), 'post', 'array');
+		$cats = $jinput->get('cid', array(), 'array');
 
 		// Create a new query object.
 		$db = $this->getDbo();

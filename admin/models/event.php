@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.4.2
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -261,7 +261,7 @@ class JEMModelEvent extends JemModelAdmin
 			$backend = false;
 
 		// Variables
-		$cats             = $jinput->get('cid', array(), 'post', 'array');
+		$cats             = $jinput->get('cid', array(), 'array');
 		$recurrencenumber = $jinput->get('recurrence_number', '', 'int');
 		$recurrencebyday  = $jinput->get('recurrence_byday', '', 'string');
 		$metakeywords     = $jinput->get('meta_keywords', '', '');
