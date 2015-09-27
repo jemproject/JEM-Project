@@ -72,7 +72,9 @@ class JemModelVenues extends JemModelEventslist
 		$case_when_l .= ' ELSE ';
 		$case_when_l .= $id_l.' END as venueslug';
 
-		$query->select(array('l.id AS locid','l.locimage','l.locdescription','l.url','l.venue','l.street','l.city','l.country','l.postalCode','l.state','l.map','l.latitude','l.longitude','l.published'));
+		$query->select(array('l.id AS locid', 'l.locimage', 'l.locdescription', 'l.url', 'l.venue',
+		                     'l.street', 'l.city', 'l.country', 'l.postalCode', 'l.state',
+		                     'l.map', 'l.latitude', 'l.longitude', 'l.published'));
 		$query->select(array($case_when_l));
 		$query->from('#__jem_venues as l');
 		$query->join('LEFT', '#__jem_events AS a ON l.id = a.locid');
@@ -81,14 +83,17 @@ class JemModelVenues extends JemModelEventslist
 
 		// where
 		$where = array();
-		// if published or the user is creator of the event
+		// all together: if published or the user is creator of the venue or allowed to edit or publish venues
 		if (empty($user->id)) {
 			$where[] = ' l.published = 1';
 		}
-		// TODO: no limit if user can publish or edit foreign venues
-		//       (then l.published should be selected / returned to the view)
+		// no limit if user can publish or edit foreign venues
+		elseif ($user->can(array('edit', 'publish'), 'venue')) {
+			$where[] = ' l.published IN (0,1)';
+		}
+		// user maybe creator
 		else {
-			$where[] = ' (l.published = 1 OR l.created_by = ' . $this->_db->Quote($user->id) . ')';
+			$where[] = ' (l.published = 1 OR (l.published = 0 AND l.created_by = ' . $this->_db->Quote($user->id) . '))';
 		}
 
 		$query->where($where);

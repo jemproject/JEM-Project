@@ -18,17 +18,17 @@ defined('_JEXEC') or die;
 	</div>
 
 	<?php if ($this->params->get('show_page_heading', 1)) : ?>
-		<h1 class='componentheading'>
-			<span itemprop="name"><?php echo $this->escape($this->params->get('page_heading')); ?></span>
-		</h1>
+	<h1 class='componentheading'>
+		<span itemprop="name"><?php echo $this->escape($this->params->get('page_heading')); ?></span>
+	</h1>
 	<?php endif; ?>
 
 	<div class="clr"> </div>
 
 	<!--Venue-->
 	<h2 class="jem">
-			<?php echo JText::_('COM_JEM_VENUE'); ?>
-			<?php echo JemOutput::editbutton($this->venue, $this->params, NULL, $this->permissions->canEditVenue, 'venue'); ?>
+		<?php echo JText::_('COM_JEM_VENUE'); ?>
+		<?php echo JemOutput::editbutton($this->venue, $this->params, NULL, $this->permissions->canEditVenue, 'venue'); ?>
 	</h2>
 	<?php echo JemOutput::flyer($this->venue, $this->limage, 'venue'); ?>
 
@@ -94,12 +94,12 @@ defined('_JEXEC') or die;
 
 
 			<?php
-			for($cr = 1; $cr <= 10; $cr++) {
+			for ($cr = 1; $cr <= 10; $cr++) {
 				$currentRow = $this->venue->{'custom'.$cr};
 				if (preg_match('%^http(s)?://%', $currentRow)) {
 					$currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
 	 			}
-				if($currentRow) {
+				if ($currentRow) {
 				?>
 				<dt class="custom<?php echo $cr; ?>"><?php echo JText::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr).':'; ?></dt>
 				<dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
@@ -135,14 +135,14 @@ defined('_JEXEC') or die;
 	<?php endif; ?>
 
 	<?php if ($this->settings->get('global_show_mapserv')== 3) : ?>
-			<input type="hidden" id="latitude" value="<?php echo $this->venue->latitude;?>">
-			<input type="hidden" id="longitude" value="<?php echo $this->venue->longitude;?>">
+		<input type="hidden" id="latitude" value="<?php echo $this->venue->latitude;?>">
+		<input type="hidden" id="longitude" value="<?php echo $this->venue->longitude;?>">
 
-			<input type="hidden" id="venue" value="<?php echo $this->venue->venue;?>">
-			<input type="hidden" id="street" value="<?php echo $this->venue->street;?>">
-			<input type="hidden" id="city" value="<?php echo $this->venue->city;?>">
-			<input type="hidden" id="state" value="<?php echo $this->venue->state;?>">
-			<input type="hidden" id="postalCode" value="<?php echo $this->venue->postalCode;?>">
+		<input type="hidden" id="venue" value="<?php echo $this->venue->venue;?>">
+		<input type="hidden" id="street" value="<?php echo $this->venue->street;?>">
+		<input type="hidden" id="city" value="<?php echo $this->venue->city;?>">
+		<input type="hidden" id="state" value="<?php echo $this->venue->state;?>">
+		<input type="hidden" id="postalCode" value="<?php echo $this->venue->postalCode;?>">
 		<?php echo JemOutput::mapicon($this->venue,null,$this->settings); ?>
 	<?php endif; ?>
 

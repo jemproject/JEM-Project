@@ -19,7 +19,7 @@ defined('_JEXEC') or die;
 
 	<?php if ($this->params->get('show_page_heading', 1)) : ?>
 	<h1 class="componentheading">
-	<?php echo $this->escape($this->params->get('page_heading')); ?>
+		<?php echo $this->escape($this->params->get('page_heading')); ?>
 	</h1>
 	<?php endif; ?>
 
@@ -27,7 +27,7 @@ defined('_JEXEC') or die;
 
 	<?php if (isset($this->showdaydate)) : ?>
 	<h2 class="jem">
-	<?php echo $this->daydate; ?>
+		<?php echo $this->daydate; ?>
 	</h2>
 	<?php endif; ?>
 
@@ -44,10 +44,10 @@ defined('_JEXEC') or die;
 
 	<!--footer-->
 	<div class="pagination">
-	<?php echo $this->pagination->getPagesLinks(); ?>
+		<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
 
 	<div class="copyright">
-	<?php echo JemOutput::footer( ); ?>
+		<?php echo JemOutput::footer( ); ?>
 	</div>
 </div>

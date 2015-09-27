@@ -54,7 +54,7 @@ defined('_JEXEC') or die;
 		<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
 	<div id="iCal" class="iCal">
-	<?php echo JemOutput::icalbutton('', 'eventslist'); ?>
+		<?php echo JemOutput::icalbutton('', 'eventslist'); ?>
 	</div>
 	<div class="copyright">
 		<?php echo JemOutput::footer( ); ?>

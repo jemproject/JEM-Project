@@ -27,6 +27,7 @@ class JEMOutput
 			echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
 		}
 	}
+
 	/**
 	 * Creates the button bar shown on frontend view's top right corner.
 	 *
@@ -810,11 +811,11 @@ class JEMOutput
 	 * Creates the unpublished icon
 	 *
 	 * @param obj   $item         Object with attribute 'published' containing the state (well known -2, 0, 1, 2)
-	 * @param array $ignorestates States to ignore (returning empty string), defaults to trashed (-2) and published (1)
+	 * @param array $ignorestates States to ignore (returning empty string), defaults to trashed (-2), published (1) and archived (2)
 	 * @param bool  $showinline   Add css class to scale icon to fit text height
 	 * @param bool  $showtitle    Add title (tooltip)
 	 */
-	static function publishstateicon($item, $ignorestates = array(-2, 1), $showinline = true, $showtitle = true)
+	static function publishstateicon($item, $ignorestates = array(-2, 1, 2), $showinline = true, $showtitle = true)
 	{
 		//$settings = JemHelper::globalattribs();  /// @todo use global setting to influence visibility of publish state icon?
 
