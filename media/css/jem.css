@@ -1004,6 +1004,7 @@ a.jgrid:hover {
 }
 
 #jem button[id$="_img"] i.icon-calendar,
+#jem button[id$="_img"] span.icon-calendar,
 #jem .btn-micro i[class^="icon-"],
 #jem .btn-micro i[class*=" icon-"],
 .jgrid span.state {
@@ -1017,7 +1018,8 @@ a.jgrid:hover {
 	content:"";
 }
 
-#jem button[id$="_img"] i.icon-calendar {
+#jem button[id$="_img"] i.icon-calendar,
+#jem button[id$="_img"] span.icon-calendar {
 	background-image:url(../images/el.png);
 }
 
