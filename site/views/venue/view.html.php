@@ -167,6 +167,12 @@ class JemViewVenue extends JEMView
 			$rows	= $this->get('Items');
 			$venue	= $this->get('Venue');
 
+			// check for data error
+			if (empty($venue)) {
+				$app->enqueueMessage(JText::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
+				return false;
+			}
+
 			// are events available?
 			$noevents = (!$rows) ? 1 : 0;
 

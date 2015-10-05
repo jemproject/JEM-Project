@@ -179,11 +179,26 @@ class JemModelVenue extends JemModelEventslist
 		$query->from($db->quoteName('#__jem_venues'));
 		$query->where('id = '.(int)$this->_id);
 
+		// all together: if published or the user is creator of the venue or allowed to edit or publish venues
+		if (empty($user->id)) {
+			$query->where('published = 1');
+		}
+		// no limit if user can publish or edit foreign venues
+		elseif ($user->can(array('edit', 'publish'), 'venue')) {
+			$query->where('published IN (0,1)');
+		}
+		// user maybe creator
+		else {
+			$query->where('(published = 1 OR (published = 0 AND created_by = ' . $this->_db->Quote($user->id) . '))');
+		}
+
 		$db->setQuery($query);
 		$_venue = $db->loadObject();
 
 		if (empty($_venue)) {
-			return JError::raiseError(404, JText::_('COM_JEM_VENUE_NOTFOUND'));
+			//return JError::raiseError(404, JText::_('COM_JEM_VENUE_NOTFOUND'));
+			$this->setError(JText::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'));
+			return false;
 		}
 
 		$_venue->attachments = JEMAttachment::getAttachments('venue'.$_venue->id);
