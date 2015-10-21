@@ -77,8 +77,9 @@ class JFormFieldCatOptions extends JFormField
 		$userid      = (int) $user->get('id');
 
 		if (empty($id)) {
-			// for new events only show useable categories
-			$mitems = $user->getJemCategories('add', 'event');
+			// for new events also show all categories user is allowed to see, disable non-useable categories
+			// (to show same list in both cases, and allow "unusable" parents for structuring)
+			$mitems = $user->getJemCategories('add', 'event', array('use_disable' => true));
 		} else {
 			$query = $db->getQuery(true);
 			$query = 'SELECT COUNT(*)'
