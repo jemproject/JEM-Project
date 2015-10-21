@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4.2
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -266,6 +266,7 @@ class JEMModelImport extends JModelLegacy
 			} // if 'JEMTableCategory'
 
 			// Bind the data
+			$object->reset(); // clear old data first
 			$object->bind($values, $ignore);
 
 			// check/store function for the Category Table
@@ -614,8 +615,8 @@ class JEMModelImport extends JModelLegacy
 		if (strcasecmp($tablename, 'attachments') == 0) {
 			$default_view_level = JFactory::getConfig()->get('access', 1);
 			$valid_view_levels  = $this->_getViewLevels();
-			$current_user_id = JFactory::getUser()->get('id');
-			$valid_user_ids  = $this->_getUserIds();
+			$current_user_id    = JemFactory::getUser()->get('id');
+			$valid_user_ids     = $this->_getUserIds();
 
 			foreach ($data as $row) {
 				// Set view access level to e.g. event's view level or default view level
@@ -640,8 +641,8 @@ class JEMModelImport extends JModelLegacy
 		elseif (strcasecmp($tablename, 'categories') == 0) {
 			$default_view_level = JFactory::getConfig()->get('access', 1);
 			$valid_view_levels  = $this->_getViewLevels();
-			$current_user_id = JFactory::getUser()->get('id');
-			$valid_user_ids  = $this->_getUserIds();
+			$current_user_id    = JemFactory::getUser()->get('id');
+			$valid_user_ids     = $this->_getUserIds();
 
 			foreach ($data as $row) {
 				// JEM now has a root category, so we shift IDs by 1
@@ -696,8 +697,8 @@ class JEMModelImport extends JModelLegacy
 			$default_view_level = JFactory::getConfig()->get('access', 1);
 			$valid_view_levels  = $this->_getViewLevels();
 			$cat_levels         = $this->_getCategoryViewLevels();
-			$current_user_id = JFactory::getUser()->get('id');
-			$valid_user_ids  = $this->_getUserIds();
+			$current_user_id    = JemFactory::getUser()->get('id');
+			$valid_user_ids     = $this->_getUserIds();
 
 			foreach ($data as $row) {
 				// No start date is now represented by a NULL value
@@ -803,7 +804,7 @@ class JEMModelImport extends JModelLegacy
 
 		// venues
 		elseif (strcasecmp($tablename, 'venues') == 0) {
-			$current_user_id = JFactory::getUser()->get('id');
+			$current_user_id = JemFactory::getUser()->get('id');
 			$valid_user_ids  = $this->_getUserIds();
 
 			foreach ($data as $row) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -25,7 +25,7 @@ class JemModelVenues extends JemModelEventslist
 
 		$app        = JFactory::getApplication();
 		$settings   = JemHelper::globalattribs();
-		$jinput     = JFactory::getApplication()->input;
+		$jinput     = $app->input;
 		$itemid     = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 		$params     = $app->getParams();
 		$task       = $jinput->getCmd('task','');
@@ -40,9 +40,11 @@ class JemModelVenues extends JemModelEventslist
 
 		# params
 		$this->setState('params', $params);
-		$this->setState('filter.published', 1);
+	//	$this->setState('filter.published', 1);
 		$this->setState('filter.groupby', array('l.id'));
 
+		# publish state
+		$this->_populatePublishState($task);
 	}
 
 
@@ -54,7 +56,7 @@ class JemModelVenues extends JemModelEventslist
 	 */
 	protected function getListQuery()
 	{
-		$user 	= JFactory::getUser();
+		$user 	= JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 		$task 	= JFactory::getApplication()->input->get('task', '');
 
@@ -70,7 +72,9 @@ class JemModelVenues extends JemModelEventslist
 		$case_when_l .= ' ELSE ';
 		$case_when_l .= $id_l.' END as venueslug';
 
-		$query->select(array('l.id AS locid','l.locimage','l.locdescription','l.url','l.venue','l.street','l.city','l.country','l.postalCode','l.state','l.map','l.latitude','l.longitude'));
+		$query->select(array('l.id AS locid', 'l.locimage', 'l.locdescription', 'l.url', 'l.venue',
+		                     'l.street', 'l.city', 'l.country', 'l.postalCode', 'l.state',
+		                     'l.map', 'l.latitude', 'l.longitude', 'l.published'));
 		$query->select(array($case_when_l));
 		$query->from('#__jem_venues as l');
 		$query->join('LEFT', '#__jem_events AS a ON l.id = a.locid');
@@ -79,14 +83,17 @@ class JemModelVenues extends JemModelEventslist
 
 		// where
 		$where = array();
-		// if published or the user is creator of the event
+		// all together: if published or the user is creator of the venue or allowed to edit or publish venues
 		if (empty($user->id)) {
 			$where[] = ' l.published = 1';
 		}
-		// TODO: no limit if user can publish or edit foreign venues
-		//       (then l.published should be selected / returned to the view)
+		// no limit if user can publish or edit foreign venues
+		elseif ($user->can(array('edit', 'publish'), 'venue')) {
+			$where[] = ' l.published IN (0,1)';
+		}
+		// user maybe creator
 		else {
-			$where[] = ' (l.published = 1 OR l.created_by = ' . $this->_db->Quote($user->id) . ')';
+			$where[] = ' (l.published = 1 OR (l.published = 0 AND l.created_by = ' . $this->_db->Quote($user->id) . '))';
 		}
 
 		$query->where($where);
@@ -165,20 +172,12 @@ class JemModelVenues extends JemModelEventslist
 	}
 
 
-	function AssignedEvents($id,$state=1)
+	function AssignedEvents($id, $state = 1)
 	{
-		$user 	= JFactory::getUser();
+		$user 	= JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 		$db 	= JFactory::getDBO();
 		$query	= $db->getQuery(true);
-
-		$case_when_l = ' CASE WHEN ';
-		$case_when_l .= $query->charLength('l.alias');
-		$case_when_l .= ' THEN ';
-		$id_l = $query->castAsChar('l.id');
-		$case_when_l .= $query->concatenate(array($id_l, 'l.alias'), ':');
-		$case_when_l .= ' ELSE ';
-		$case_when_l .= $id_l.' END as venueslug';
 
 		$query->select(array('a.id'));
 		$query->from('#__jem_events as a');
@@ -188,13 +187,27 @@ class JemModelVenues extends JemModelEventslist
 
 		# venue-id
 		$query->where('l.id= '. $db->quote($id));
-		# state
-		$query->where('a.published= '.$db->quote($state));
 		# view access level
 		$query->where('a.access IN ('.implode(',', $levels).')');
 		// Note: categories are filtered in getCategories() called below
 		//       so we don't need to check c.access here
 
+		####################
+		## FILTER-PUBLISH ##
+		####################
+
+		# Filter by published state.
+		if ((int)$state === 1) {
+			$where_pub = $this->_getPublishWhere();
+			if (!empty($where_pub)) {
+				$query->where('(' . implode(' OR ', $where_pub) . ')');
+			} else {
+				// something wrong - fallback to published events
+				$query->where('a.published = 1');
+			}
+		} else {
+			$query->where('a.published = '.$db->quote($state));
+		}
 
 		#####################
 		### FILTER - BYCAT ##
@@ -229,7 +242,7 @@ class JemModelVenues extends JemModelEventslist
 
 	function getCategories($id)
 	{
-		$user 			= JFactory::getUser();
+		$user 			= JemFactory::getUser();
 		$userid			= (int) $user->get('id');
 		$levels 		= $user->getAuthorisedViewLevels();
 		$app 			= JFactory::getApplication();

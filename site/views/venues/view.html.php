@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -21,11 +21,13 @@ class JemViewVenues extends JViewLegacy
 	{
 		$app = JFactory::getApplication();
 
-		$document		= JFactory::getDocument();
-		$jemsettings	= JemHelper::config();
-		$settings 		= JemHelper::globalattribs();
-		$user			= JFactory::getUser();
-		$print			= $app->input->getBool('print', false);
+		$document    = JFactory::getDocument();
+		$jemsettings = JemHelper::config();
+		$settings    = JemHelper::globalattribs();
+		$user        = JemFactory::getUser();
+		$jinput      = $app->input;
+		$print       = $jinput->getBool('print', false);
+		$task        = $jinput->getCmd('task', '');
 
 		//get menu information
 		$menu		= $app->getMenu();
@@ -43,7 +45,6 @@ class JemViewVenues extends JViewLegacy
 		}
 
 		// Request variables
-		$task 	= $app->input->get('task', '');
 		$rows 	= $this->get('Items');
 
 		$pagetitle = $params->def('page_title', $menuitem->title);
@@ -77,24 +78,11 @@ class JemViewVenues extends JViewLegacy
 		$document->setMetadata('title' , $pagetitle);
 		$document->setMetadata('keywords', $pagetitle);
 
-		// Check if the user has access to the add-eventform
-		$maintainer = JemUser::ismaintainer('add');
-		$genaccess 	= JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
-
-		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
-			$addeventlink = 1;
-		} else {
-			$addeventlink = 0;
-		}
-
-		//Check if the user has access to the add-venueform
-		$maintainer2	= JemUser::venuegroups('add');
-		$genaccess2		= JemUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
-		if ($maintainer2 || $genaccess2) {
-			$addvenuelink = 1;
-		} else {
-			$addvenuelink = 0;
-		}
+		//Check if the user has permission to add things
+		$permissions = new stdClass();
+		$permissions->canAddEvent = $user->can('add', 'event');
+		$permissions->canAddVenue = $user->can('add', 'venue');
+		$permissions->canEditPublishVenue = $user->can(array('edit', 'publish'), 'venue');
 
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
@@ -102,12 +90,12 @@ class JemViewVenues extends JViewLegacy
 		$this->rows				= $rows;
 		$this->print_link		= $print_link;
 		$this->params			= $params;
-		$this->addvenuelink		= $addvenuelink;
-		$this->addeventlink		= $addeventlink;
 		$this->pagination		= $pagination;
 		$this->item				= $menuitem;
 		$this->jemsettings		= $jemsettings;
 		$this->settings			= $settings;
+		$this->permissions		= $permissions;
+		$this->show_status		= $permissions->canEditPublishVenue;
 		$this->task				= $task;
 		$this->pagetitle		= $pagetitle;
 		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);

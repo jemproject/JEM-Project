@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -29,7 +29,7 @@ class JEMModelVenue extends JemModelAdmin
 				return ;
 			}
 
-			$user = JFactory::getUser();
+			$user = JemFactory::getUser();
 
 			if (!empty($record->catid)) {
 				return $user->authorise('core.delete', 'com_jem.category.'.(int) $record->catid);
@@ -47,7 +47,7 @@ class JEMModelVenue extends JemModelAdmin
 	 */
 	protected function canEditState($record)
 	{
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 
 		if (!empty($record->catid)) {
 			return $user->authorise('core.edit.state', 'com_jem.category.'.(int) $record->catid);
@@ -156,7 +156,7 @@ class JEMModelVenue extends JemModelAdmin
 		$date        = JFactory::getDate();
 		$app         = JFactory::getApplication();
 		$jinput      = $app->input;
-		$user        = JFactory::getUser();
+		$user        = JemFactory::getUser();
 		$jemsettings = JEMHelper::config();
 		$fileFilter  = new JInput($_FILES);
 		$table       = $this->getTable();

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -186,7 +186,8 @@ class JemModelDay extends JemModelEventslist
 		$this->setState('params', $params);
 
 		# published
-		$pub = explode(',', $jinput->getString('pub', 1));
+		/// @todo bring given pub together with eventslist's unpub calculation (_populatePublishState())
+		$pub = explode(',', $jinput->getString('pub', ''));
 		$published = array();
 		// sanitize remote data
 		foreach ($pub as $val) {
@@ -196,9 +197,11 @@ class JemModelDay extends JemModelEventslist
 		}
 		// default to 'published'
 		if (empty($published)) {
-			$published[] = 1;
+			//$published[] = 1;
+			$this->_populatePublishState($task);
+		} else {
+			$this->setState('filter.published', $published);
 		}
-		$this->setState('filter.published', $published);
 
 		# request venue-id
 		if ($requestVenueId) {
@@ -219,7 +222,6 @@ class JemModelDay extends JemModelEventslist
 	 */
 	public function getItems()
 	{
-		$params = clone $this->getState('params');
 		$items	= parent::getItems();
 
 		if ($items) {

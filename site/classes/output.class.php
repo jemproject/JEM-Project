@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -26,6 +26,111 @@ class JEMOutput
 		} else {
 			echo '<font color="grey">Powered by <a href="http://www.joomlaeventmanager.net" target="_blank">JEM</a></font>';
 		}
+	}
+
+	/**
+	 * Creates the button bar shown on frontend view's top right corner.
+	 *
+	 * @param  string $view        Name of the view
+	 *                             ('attendees', 'calendar', 'categories', 'category', 'category-cal', 'day',
+	 *                              'editevent', 'editvenue', 'event', 'eventslist', 'myattendances', 'myevents', 'myvenues',
+	 *                              'search', 'venue', 'venue-cal', 'venues', 'weekcal')
+	 * @param  object $permissions Object holding relevant permissions
+	 *                             (canAddEvent, canAddVenue, canPublishEvent, canPublishVenue)
+	 * @param  object $params      Object containing other relevant parameters
+	 *                             (id: for '&id=', for Archive and Export button,
+	 *                              slug: for '&id=', for Mail and iCal button,
+	 *                              task: e.g. 'archive', for Archive button,
+	 *                              print_link: for Print button
+	 *                              show, hide: to override button visibility; array of one or more of
+	 *                              'addEvent', 'addVenue',
+	 *                              'archive' 'mail', 'print', 'ical', ('export', 'back',)
+	 *                              'publish', 'unpublish', 'trash' - note: some buttons may not work or need additional changes)
+	 *
+	 * @return string              Resulting HTML code.
+	 */
+	static function createButtonBar($view, $permissions, $params)
+	{
+		foreach (array('canAddEvent', 'canAddVenue', 'canPublishEvent', 'canPublishVenue') as $key) {
+			${$key} = isset($permissions->$key) ? $permissions->$key: null;
+		}
+		if (is_object($params)) {
+			foreach (array('id', 'slug', 'task', 'print_link', 'show', 'hide') as $key) {
+				${$key} = isset($params->$key) ? $params->$key : null;
+			}
+		} elseif (is_array($params)) {
+			foreach (array('id', 'slug', 'task', 'print_link', 'show', 'hide') as $key) {
+				${$key} = key_exists($key, $params) ? $params[$key] : null;
+			}
+		} else {
+			foreach (array('id', 'slug', 'task', 'print_link') as $key) {
+				${$key} = null;
+			}
+		}
+
+		$btns_show = isset($show) ? (array)$show : array();
+		$btns_hide = isset($hide) ? (array)$hide : array();
+		$archive = !empty($task) && ($task == 'archive');
+		$buttons = array();
+		$idx = 0;
+
+		# Left block ------------------
+
+		if (!$archive) {
+			if (in_array('addEvent', $btns_show) || (!in_array('addEvent', $btns_hide) && in_array($view, array('categories', 'category', 'day', 'event', 'eventslist', 'myevents', 'myvenues', 'venue', 'venues')))) {
+				$buttons[$idx][] = JemOutput::submitbutton(!empty($canAddEvent), null);
+			}
+			if (in_array('addVenue', $btns_show) || (!in_array('addVenue', $btns_hide) && in_array($view, array('categories', 'category', 'day', 'event', 'eventslist', 'myevents', 'myvenues', 'venue', 'venues')))) {
+				$buttons[$idx][] = JemOutput::addvenuebutton(!empty($canAddVenue), null, null);
+			}
+		}
+
+		++$idx;
+
+		# Middle block ----------------
+
+		if (in_array('archive', $btns_show) || (!in_array('archive', $btns_hide) && in_array($view, array('categories', 'category', 'eventslist', 'myattendances', 'myevents', 'venue')))) {
+			$buttons[$idx][] = JemOutput::archivebutton(null, $task, $id); // task: archive, id: for '&id='
+		}
+		if (in_array('mail', $btns_show) || (!in_array('mail', $btns_hide) && in_array($view, array('category', 'event', 'venue')))) {
+			$buttons[$idx][] = JemOutput::mailbutton($slug, $view, null); // slug: for '&id='
+		}
+		if (in_array('print', $btns_show) || (!in_array('print', $btns_hide) && in_array($view, array('attendees', 'calendar', 'categories', 'category', 'category-cal', 'day', 'event', 'eventslist', 'myattendances', 'myevents', 'myvenues', 'venue', 'venue-cal', 'venues', 'weekcal')))) {
+			$buttons[$idx][] = JemOutput::printbutton($print_link, null);
+		}
+		if (in_array('ical', $btns_show) || (!in_array('ical', $btns_hide) && in_array($view, array('event')))) {
+			$buttons[$idx][] = JemOutput::icalbutton($slug, $view); // slug: for '&id='
+		}
+		if (in_array('export', $btns_show) || (!in_array('export', $btns_hide) && in_array($view, array('attendees')))) {
+			$buttons[$idx][] = JemOutput::exportbutton($id); // id: for '&id='
+		}
+		if (in_array('back', $btns_show) || (!in_array('back', $btns_hide) && in_array($view, array('attendees')))) {
+			$buttons[$idx][] = JemOutput::backbutton(null, $view);
+		}
+
+		++$idx;
+
+		# Right block -----------------
+
+		if (!empty($canPublishEvent) || !empty($canPublishVenue)) {
+			if (in_array('publish', $btns_show) || (!in_array('publish', $btns_hide) && in_array($view, array('myevents', 'myvenues')))) {
+				$buttons[$idx][] = JemOutput::publishbutton($view);
+			}
+			if (in_array('unpublish', $btns_show) || (!in_array('unpublish', $btns_hide) && in_array($view, array('myevents', 'myvenues')))) {
+				$buttons[$idx][] = JemOutput::unpublishbutton($view);
+			}
+			if (in_array('trash', $btns_show) || (!in_array('trash', $btns_hide) && in_array($view, array('myevents')))) {
+				$buttons[$idx][] = JemOutput::trashbutton($view);
+			}
+		}
+
+		# -----------------------------
+
+		foreach ($buttons as $i => $btns) {
+			$buttons[$i] = implode('', array_filter($btns));
+		}
+		$result = implode('<span class="gap">&nbsp;</span>', array_filter($buttons));
+		return $result;
 	}
 
 	/**
@@ -198,12 +303,11 @@ class JEMOutput
 			}
 
 			// Initialise variables.
-			$user   = JFactory::getUser();
-			$app    = JFactory::getApplication();
+			$user   = JemFactory::getUser();
 			$userId = $user->get('id');
 			$uri    = JFactory::getURI();
-
 			$settings = JemHelper::globalattribs();
+
 			JHtml::_('behavior.tooltip');
 
 			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
@@ -285,7 +389,7 @@ class JEMOutput
 	 * @param string $print_link
 	 * @param array $params
 	 */
-	static function printbutton($print_link, &$params)
+	static function printbutton($print_link, $params)
 	{
 		$app 		= JFactory::getApplication();
 		$settings	= JemHelper::globalattribs();
@@ -405,25 +509,24 @@ class JEMOutput
 	 * Creates the publish button
 	 *
 	 * View:
-	 * Myevents
+	 * Myevents, Myvenues
 	 */
-	static function publishbutton()
+	static function publishbutton($prefix)
 	{
 		$app = JFactory::getApplication();
 
-		JHtml::_('behavior.tooltip');
-
-		$image = JHtml::_('image', 'com_jem/publish.png', JText::_('COM_JEM_PUBLISH'), NULL, true);
-
-		if ($app->input->get('print','','int')) {
-			//button in popup
+		if (empty($prefix) || $app->input->get('print','','int')) {
+			// button in popup or wrong call
 			$output = '';
 		} else {
-			//button in view
+			// button in view
+			JHtml::_('behavior.tooltip');
+
+			$image = JHtml::_('image', 'com_jem/publish.png', JText::_('COM_JEM_PUBLISH'), NULL, true);
 			$overlib = JText::_('COM_JEM_PUBLISH_DESC');
 			$text = JText::_('COM_JEM_PUBLISH');
 
-			$print_link = "javascript:void(Joomla.submitbutton('myevents.publish'));";
+			$print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".publish'));";
 			$output	= '<a href="'. JRoute::_($print_link) .'" '.JEMOutput::tooltip($text, $overlib, 'editlinktip', 'bottom').'>'.$image.'</a>';
 		}
 
@@ -434,25 +537,24 @@ class JEMOutput
 	 * Creates the trash button
 	 *
 	 * View:
-	 * Myevents
+	 * Myevents, Myvenues
 	 */
-	static function trashbutton()
+	static function trashbutton($prefix)
 	{
 		$app = JFactory::getApplication();
 
-		JHtml::_('behavior.tooltip');
-
-		$image = JHtml::_('image', 'com_jem/trash.png', JText::_('COM_JEM_TRASH'), NULL, true);
-
-		if ($app->input->get('print','','int')) {
-			//button in popup
+		if (empty($prefix) || $app->input->get('print','','int')) {
+			// button in popup or wrong call
 			$output = '';
 		} else {
-			//button in view
+			// button in view
+			JHtml::_('behavior.tooltip');
+
+			$image = JHtml::_('image', 'com_jem/trash.png', JText::_('COM_JEM_TRASH'), NULL, true);
 			$overlib = JText::_('COM_JEM_TRASH_DESC');
 			$text = JText::_('COM_JEM_TRASH');
 
-			$print_link = "javascript:void(Joomla.submitbutton('myevents.trash'));";
+			$print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".trash'));";
 			$output	= '<a href="'. JRoute::_($print_link) .'" '.JEMOutput::tooltip($text, $overlib, 'editlinktip', 'bottom').'>'.$image.'</a>';
 		}
 
@@ -463,25 +565,24 @@ class JEMOutput
 	 * Creates the unpublish button
 	 *
 	 * View:
-	 * Myevents
+	 * Myevents, Myvenues
 	 */
-	static function unpublishbutton()
+	static function unpublishbutton($prefix)
 	{
 		$app = JFactory::getApplication();
 
-		JHtml::_('behavior.tooltip');
-
-		$image = JHtml::_('image', 'com_jem/unpublish.png', JText::_('COM_JEM_UNPUBLISH'), NULL, true);
-
-		if ($app->input->get('print','','int')) {
-			//button in popup
+		if (empty($prefix) || $app->input->get('print','','int')) {
+			// button in popup or wrong call
 			$output = '';
 		} else {
-			//button in view
+			// button in view
+			JHtml::_('behavior.tooltip');
+
+			$image = JHtml::_('image', 'com_jem/unpublish.png', JText::_('COM_JEM_UNPUBLISH'), NULL, true);
 			$overlib = JText::_('COM_JEM_UNPUBLISH_DESC');
 			$text = JText::_('COM_JEM_UNPUBLISH');
 
-			$print_link = "javascript:void(Joomla.submitbutton('myevents.unpublish'));";
+			$print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".unpublish'));";
 			$output	= '<a href="'. JRoute::_($print_link) .'" '.JEMOutput::tooltip($text, $overlib, 'editlinktip', 'bottom').'>'.$image.'</a>';
 		}
 
@@ -543,7 +644,7 @@ class JEMOutput
 			$overlib = JText::_('COM_JEM_BACK');
 			$text = JText::_('COM_JEM_BACK');
 
-			$link = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&Itemid='.$fid.'&task=attendees.back';
+			$link = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&Itemid='.$fid.'&task='.$view.'.back';
 			$output	= '<a href="'. JRoute::_($link) .'" '.JEMOutput::tooltip($text, $overlib, 'editlinktip', 'bottom').'>'.$image.'</a>';
 		}
 
@@ -554,7 +655,7 @@ class JEMOutput
 	 * Creates attributes for a tooltip depending on Joomla version
 	 *
 	 * @param  string  $title   translated title of the tooltip
-	 * @param  string  §text    translated text of the tooltip
+	 * @param  string  $text    translated text of the tooltip
 	 * @param  string  $classes additional css classes (optional)
 	 *
 	 * @return string  attributes in form 'class="..." title="..."'
@@ -707,6 +808,58 @@ class JEMOutput
 	}
 
 	/**
+	 * Creates the unpublished icon
+	 *
+	 * @param obj   $item         Object with attribute 'published' containing the state (well known -2, 0, 1, 2)
+	 * @param array $ignorestates States to ignore (returning empty string), defaults to trashed (-2), published (1) and archived (2)
+	 * @param bool  $showinline   Add css class to scale icon to fit text height
+	 * @param bool  $showtitle    Add title (tooltip)
+	 */
+	static function publishstateicon($item, $ignorestates = array(-2, 1, 2), $showinline = true, $showtitle = true)
+	{
+		//$settings = JemHelper::globalattribs();  /// @todo use global setting to influence visibility of publish state icon?
+
+		// early return
+		if (!isset($item->published) || in_array($item->published, $ignorestates)) {
+			return '';
+		}
+
+		switch ($item->published) {
+		case -2: // trashed
+			$image = 'com_jem/trash.png';
+			$alt   = JText::_('JTRASHED');
+			break;
+		case  0: // unpublished
+			$image = 'com_jem/publish_x.png';
+			$alt   = JText::_('JUNPUBLISHED');
+			break;
+		case  1: // published
+			$image = 'com_jem/publish.png';
+			$alt   = JText::_('JPUBLISHED');
+			break;
+		case  2: // archived
+			$image = 'com_jem/archive_front.png';
+			$alt   = JText::_('JARCHIVED');
+			break;
+		default: // unknown state - abort!
+			return '';
+		}
+
+		// additional attributes
+		$attributes = array();
+		if ($showinline) {
+			$attributes['class'] = 'icon-inline';
+		}
+		if ($showtitle) {
+			$attributes['title'] = $alt;
+		}
+
+		$output = JHtml::_('image', $image, $alt, $attributes, true);
+
+		return $output;
+	}
+
+	/**
 	 * Creates the flyer
 	 *
 	 * @param obj $data
@@ -750,21 +903,21 @@ class JEMOutput
 		if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
 			if ($settings->lightbox == 0) {
 				//$url = '#';  // Hoffi, 2014-06-07: '#' doesn't work, it opend "Add event" page - don't use <a, onclick works fine with <img :-)
-				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.JUri::base().'/'.$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
+				$attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.JUri::base().$image['original'].'\',\'Popup\',\'width='.$image['width'].',height='.$image['height'].',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
 
-				$icon = '<img '.$attributes.' src="'.JUri::base().'/'.$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$icon = '<img '.$attributes.' src="'.JUri::base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 				$output = '<div class="flyerimage">'.$icon.'</div>';
 			} else {
 				JHtml::_('behavior.modal', 'a.flyermodal');
-				$url = JUri::base().'/'.$image['original'];
+				$url = JUri::base().$image['original'];
 				$attributes = $id_attr.' class="flyermodal flyerimage" title="'.$info.'"';
 
-				$icon = '<img src="'.JUri::base().'/'.$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+				$icon = '<img src="'.JUri::base().$image['thumb'].'" width="'.$image['thumbwidth'].'" height="'.$image['thumbheight'].'" alt="'.$info.'" title="'.JText::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
 				$output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
 			}
 		// Otherwise take the values for the original image specified in the settings
 		} else {
-			$output = '<img '.$id_attr.' class="notmodal" src="'.JUri::base().'/'.$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
+			$output = '<img '.$id_attr.' class="notmodal" src="'.JUri::base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
 		}
 
 		return $output;

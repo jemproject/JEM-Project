@@ -61,36 +61,38 @@ $.fn.removeHighlight = function() {
 
 function highlightevents() {
 	var searcharea = $("#search_in_here");
-	var g 		   = $("#filter option:selected"); // selected option
-	var indexnr	   = g.index(); // shows nr of filter
-	var indextext  = g.text(); // reads text of filter
-	var lowerCase  = g.text().toLowerCase();
-
-	switch(indexnr)
+	var filterOptionValue = $('select[name=filter_type]').val(); // value of selected option
+	var filterOptionText  = $("#filter_type option:selected").text(); // text of selected option
+	var lowerCase  = filterOptionText.toLowerCase();
+	
+	switch(parseInt(filterOptionValue))
 	{
-	case 0:
+	case 1:
 		var filter = 'eventtitle';
 		break;
-	case 1:
+	case 2:
 		var filter = 'venue';
 		break;
-	case 2:
+	case 3:
 		var filter = 'city';
 		break;
-	case 3:
+	case 4:
 		var filter = 'category';
 		break;
-	case 4:
+	case 5:
 		var filter = 'state';
 		break;
-	case 5:
+	case 6:
 		var filter = 'country';
 		break;
-	case 6:
+	case 7:
+		alleventfilters();
+		break;
+	default:
 		alleventfilters();
 		break;
 	}
-
+	
 	var newtext = $("#filter_search").val();
 	var newtext2 = "td."+ filter +":contains(" + newtext + ")";
 
@@ -139,27 +141,29 @@ function alleventfilters() {
 
 
 function highlightvenues() {
-	var searcharea	= $("#search_in_here");
-	var g 			= $("#filter option:selected"); // selected option
-	var indexnr	   = g.index(); // shows nr of filter
-	var indextext  = g.text(); // reads text of filter
-	var lowerCase  = g.text().toLowerCase();
-
-	switch(indexnr)
+	var searcharea = $("#search_in_here");
+	var filterOptionValue = $('select[name=filter_type]').val(); // value of selected option
+	var filterOptionText  = $("#filter_type option:selected").text(); // text of selected option
+	var lowerCase  = filterOptionText.toLowerCase();
+	
+	switch(parseInt(filterOptionValue))
 	{
-	case 0:
+	case 1:
 		var filter = 'venue';
 		break;
-	case 1:
+	case 2:
 		var filter = 'city';
 		break;
-	case 2:
+	case 3:
 		var filter = 'state';
 		break;
-	case 3:
+	case 4:
 		var filter = 'country';
 		break;
-	case 4:
+	case 5:
+		allvenuefilters();
+		break;
+	default:
 		allvenuefilters();
 		break;
 	}

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -20,46 +20,47 @@ defined('_JEXEC') or die;
 </script>
 
 <?php if ($this->settings->get('global_show_filter') || $this->settings->get('global_display')) : ?>
-	<div id="jem_filter" class="floattext">
-		<?php if ($this->settings->get('global_show_filter')) : ?>
-			<div class="jem_fleft">
-				<?php
-					echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
-					echo $this->lists['filter'].'&nbsp;';
-				?>
-				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
-				<button class="buttonfilter" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-				<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
-			</div>
-		<?php endif; ?>
-		<?php if ($this->settings->get('global_display')) : ?>
-			<div class="jem_fright">
-				<?php
-					echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
-					echo $this->pagination->getLimitBox();
-				?>
-			</div>
-		<?php endif; ?>
+<div id="jem_filter" class="floattext">
+	<?php if ($this->settings->get('global_show_filter')) : ?>
+	<div class="jem_fleft">
+		<?php
+			echo '<label for="filter">'.JText::_('COM_JEM_FILTER').'</label>&nbsp;';
+			echo $this->lists['filter'].'&nbsp;';
+		?>
+		<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search'];?>" class="inputbox" onchange="document.adminForm.submit();" />
+		<button class="buttonfilter" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+		<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 	</div>
+	<?php endif; ?>
+
+	<?php if ($this->settings->get('global_display')) : ?>
+	<div class="jem_fright">
+		<?php
+			echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
+			echo $this->pagination->getLimitBox();
+		?>
+	</div>
+	<?php endif; ?>
+</div>
 <?php endif; ?>
 
 <table class="eventtable" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
 	<colgroup>
-			<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
+		<col width="<?php echo $this->jemsettings->datewidth; ?>" class="jem_col_date" />
 		<?php if ($this->jemsettings->showtitle == 1) : ?>
-			<col width="<?php echo $this->jemsettings->titlewidth; ?>" class="jem_col_title" />
+		<col width="<?php echo $this->jemsettings->titlewidth; ?>" class="jem_col_title" />
 		<?php endif; ?>
 		<?php if ($this->jemsettings->showlocate == 1) :	?>
-			<col width="<?php echo $this->jemsettings->locationwidth; ?>" class="jem_col_venue" />
+		<col width="<?php echo $this->jemsettings->locationwidth; ?>" class="jem_col_venue" />
 		<?php endif; ?>
 		<?php if ($this->jemsettings->showcity == 1) :	?>
-			<col width="<?php echo $this->jemsettings->citywidth; ?>" class="jem_col_city" />
+		<col width="<?php echo $this->jemsettings->citywidth; ?>" class="jem_col_city" />
 		<?php endif; ?>
 		<?php if ($this->jemsettings->showstate == 1) :	?>
-			<col width="<?php echo $this->jemsettings->statewidth; ?>" class="jem_col_state" />
+		<col width="<?php echo $this->jemsettings->statewidth; ?>" class="jem_col_state" />
 		<?php endif; ?>
 		<?php if ($this->jemsettings->showcat == 1) :	?>
-			<col width="<?php echo $this->jemsettings->catfrowidth; ?>" class="jem_col_category" />
+		<col width="<?php echo $this->jemsettings->catfrowidth; ?>" class="jem_col_category" />
 		<?php endif; ?>
 	</colgroup>
 
@@ -103,42 +104,45 @@ defined('_JEXEC') or die;
 				</td>
 
 				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
-					<td headers="jem_title" align="left" valign="top">
-						<a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
-							<span itemprop="name"><?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?></span>
-						</a>
-					</td>
+				<td headers="jem_title" align="left" valign="top">
+					<a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
+						<span itemprop="name"><?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?></span>
+					</a><?php JemOutput::publishstateicon($row); ?>
+				</td>
 				<?php endif; ?>
 
 				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
-					<td headers="jem_title" align="left" valign="top" itemprop="name">
-						<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
-					</td>
+				<td headers="jem_title" align="left" valign="top" itemprop="name">
+					<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+				</td>
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showlocate == 1) : ?>
-					<td headers="jem_location" align="left" valign="top">
-						<?php if ($this->jemsettings->showlinkvenue == 1) : ?>
-							<?php echo $row->locid != 0 ? "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-'; ?>
-						<?php else : ?>
-							<?php echo $row->locid ? $this->escape($row->venue) : '-'; ?>
-						<?php endif; ?>
-					</td>
+				<td headers="jem_location" align="left" valign="top">
+					<?php if ($this->jemsettings->showlinkvenue == 1) : ?>
+						<?php echo $row->locid != 0 ? "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-'; ?>
+					<?php else : ?>
+						<?php echo $row->locid ? $this->escape($row->venue) : '-'; ?>
+					<?php endif; ?>
+				</td>
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showcity == 1) : ?>
-					<td headers="jem_city" align="left" valign="top"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
+				<td headers="jem_city" align="left" valign="top">
+					<?php echo $row->city ? $this->escape($row->city) : '-'; ?>
+				</td>
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showstate == 1) : ?>
-					<td headers="jem_state" align="left" valign="top"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
+				<td headers="jem_state" align="left" valign="top">
+					<?php echo $row->state ? $this->escape($row->state) : '-'; ?>
+				</td>
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showcat == 1) : ?>
-					<td headers="jem_category" align="left" valign="top">
-					<?php echo implode(", ",
-							JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
-					</td>
+				<td headers="jem_category" align="left" valign="top">
+					<?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
+				</td>
 				<?php endif; ?>
 			</tr>
 		<?php endforeach; ?>

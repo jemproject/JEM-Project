@@ -1,18 +1,19 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-jimport('joomla.application.component.controllerform');
+
+require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
 /**
  * Venue Controller
  */
-class JEMControllerVenue extends JControllerForm
+class JEMControllerVenue extends JemControllerForm
 {
 	protected $view_item = 'editvenue';
 	protected $view_list = 'venues';
@@ -40,31 +41,16 @@ class JEMControllerVenue extends JControllerForm
 	protected function allowAdd($data = array())
 	{
 		// Initialise variables.
-		$user		= JFactory::getUser();
-		//$categoryId	= JArrayHelper::getValue($data, 'catid', JFactory::getApplication()->input->getInt('catid', 0), 'int');
-		$allow		= null;
+		$user       = JemFactory::getUser();
+		// venues don't have a category yet
+		//$categoryId = JArrayHelper::getValue($data, 'catid', JFactory::getApplication()->input->getInt('catid', 0), 'int');
 
-		//if ($categoryId) {
-		//	// If the category has been passed in the data or URL check it.
-		//	$allow	= $user->authorise('core.create', 'com_jem.category.'.$categoryId);
-		//}
-
-		$jemsettings	= JemHelper::config();
-		$maintainer 	= JEMUser::venuegroups('add');
-		$delloclink 	= JEMUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
-
-		if ($maintainer || $delloclink) {
+		if ($user->can('add', 'venue')) {
 			return true;
 		}
 
-		if ($allow === null) {
-			// In the absense of better information, revert to the component permissions.
-			return parent::allowAdd();
-		}
-		else {
-			return $allow;
-		}
-
+		// In the absense of better information, revert to the component permissions.
+		return parent::allowAdd();
 	}
 
 	/**
@@ -79,44 +65,17 @@ class JEMControllerVenue extends JControllerForm
 	protected function allowEdit($data = array(), $key = 'id')
 	{
 		// Initialise variables.
-		$recordId	= (int) isset($data[$key]) ? $data[$key] : 0;
-		$user		= JFactory::getUser();
-		$userId		= $user->get('id');
-		$asset		= 'com_jem.venue.'.$recordId;
+		$recordId = (int) isset($data[$key]) ? $data[$key] : 0;
+		$user     = JemFactory::getUser();
 
-		// Check general edit permission first.
-		if ($user->authorise('core.edit', $asset)) {
-			return true;
+		if (isset($data['created_by'])) {
+			$created_by = $data['created_by'];
+		} else {
+			$record = $this->getModel()->getItem($recordId);
+			$created_by = isset($record->created_by) ? $record->created_by : false;
 		}
 
-		// Fallback on edit.own.
-		// First test if the permission is available.
-		if ($user->authorise('core.edit.own', $asset)) {
-
-			// Now test the owner is the user.
-			$ownerId	= (int) isset($data['created_by']) ? $data['created_by'] : 0;
-			if (empty($ownerId) && $recordId) {
-				// Need to do a lookup from the model.
-				$record		= $this->getModel()->getItem($recordId);
-
-				if (empty($record)) {
-					return false;
-				}
-
-				$ownerId = $record->created_by;
-			}
-
-			// If the owner matches 'me' then do the test.
-			if ($ownerId == $userId) {
-				return true;
-			}
-		}
-
-		$record			= $this->getModel()->getItem($recordId);
-		$jemsettings 	= JEMHelper::config();
-		$maintainer 	= JEMUser::venuegroups('edit');
-		$genaccess 		= JEMUser::editaccess($jemsettings->venueowner, $record->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
-		if ($maintainer || $genaccess) {
+		if ($user->can('edit', 'venue', $recordId, $created_by)) {
 			return true;
 		}
 
@@ -248,7 +207,7 @@ class JEMControllerVenue extends JControllerForm
 	 *
 	 * @return  void
 	 */
-	protected function postSaveHook($model, $validData = array())
+	protected function _postSaveHook($model, $validData = array())
 	{
 		$task = $this->getTask();
 		if ($task == 'save') {

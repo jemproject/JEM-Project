@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -25,13 +25,12 @@ class JemViewAttendees extends JViewLegacy {
 		}
 
 		//initialise variables
-	//	$db			= JFactory::getDBO();
 		$document	= JFactory::getDocument();
-		$user		= JFactory::getUser();
+		$user		= JemFactory::getUser();
+		$settings	= JEMHelper::globalattribs();
 		$params 	= $app->getParams();
 		$menu		= $app->getMenu();
 		$menuitem	= $menu->getActive();
-		$user		= JFactory::getUser();
 		$uri 		= JFactory::getURI();
 
 		//redirect if not logged in
@@ -86,13 +85,15 @@ class JemViewAttendees extends JViewLegacy {
 
 		$print_link = 'index.php?option=com_jem&view=attendees&layout=print&task=print&tmpl=component&id='.$event->id;
 		$backlink = 'attendees';
-		$view = 'attendees';
 
 
 		//build filter selectlist
 		$filters = array();
-		/* $filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME')); */
-		$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_USERNAME'));
+		if ($settings->get('global_regname', '1')) {
+			$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME'));
+		} else {
+			$filters[] = JHtml::_('select.option', '2', JText::_('COM_JEM_USERNAME'));
+		}
 		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter);
 
 		// search filter
@@ -117,11 +118,11 @@ class JemViewAttendees extends JViewLegacy {
 		$this->event 		= $event;
 		$this->pagetitle	= $pagetitle;
 		$this->backlink		= $backlink;
-		$this->view			= $view;
 		$this->print_link	= $print_link;
 		$this->item			= $menuitem;
 		$this->action		= $uri->toString();
 		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+		$this->settings		= $settings;
 
 		parent::display($tpl);
 	}
@@ -136,13 +137,14 @@ class JemViewAttendees extends JViewLegacy {
 		$document	= JFactory::getDocument();
 		$app		= JFactory::getApplication();
 		$params		= $app->getParams();
+		$settings	= JEMHelper::globalattribs();
 
 		// Load css
 		JemHelper::loadCss('backend');
 		JemHelper::loadCss('jem');
 		JemHelper::loadCss('print');
 		JemHelper::loadCustomTag();
-		
+
 		$document->setMetaData('robots', 'noindex, nofollow');
 
 		// Emailaddress
@@ -155,6 +157,7 @@ class JemViewAttendees extends JViewLegacy {
 		$this->rows 		= $rows;
 		$this->event 		= $event;
 		$this->enableemailaddress = $enableemailaddress;
+		$this->settings		= $settings;
 
 		parent::display($tpl);
 	}

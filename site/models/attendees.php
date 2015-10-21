@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4.2
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -54,6 +54,8 @@ class JEMModelAttendees extends JModelLegacy
 	 */
 	var $_id = null;
 
+	protected $_reguser = 1;
+
 	/**
 	 * Constructor
 	 *
@@ -62,11 +64,14 @@ class JEMModelAttendees extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app =  JFactory::getApplication();
-		$jemsettings =  JEMHelper::config();
+		$app         = JFactory::getApplication();
+		$jemsettings = JEMHelper::config();
+		$settings    = JEMHelper::globalattribs();
 
 		$id = $app->input->getInt('id', 0);
 		$this->setId((int)$id);
+
+		$this->_reguser = $settings->get('global_regname', '1');
 
 		/* in J! 3.3.6 limitstart is removed from request - but we need it! */
 		if ($app->input->getInt('limitstart', null) === null) {
@@ -198,14 +203,17 @@ class JEMModelAttendees extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.attendees.filter_order', 		'filter_order', 	'u.username', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.attendees.filter_order_Dir',	'filter_order_Dir',	'', 'word' );
+		$filter_order     = $app->getUserStateFromRequest('com_jem.attendees.filter_order',     'filter_order',     'r.waiting', 'cmd' );
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.attendees.filter_order_Dir', 'filter_order_Dir', 'ASC',       'word' );
 
+		if ($this->_reguser && ($filter_order == 'u.username')) {
+			$filter_order = 'u.name';
+		}
 
-		$filter_order		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+		$filter_order     = JFilterInput::getinstance()->clean($filter_order,     'cmd');
+		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
-		$orderby 	= ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', u.name';
+		$orderby = ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', u.name';
 
 		return $orderby;
 	}
@@ -220,14 +228,14 @@ class JEMModelAttendees extends JModelLegacy
 	protected function _buildContentWhere()
 	{
 		$app =  JFactory::getApplication();
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
-		$filter 			= $app->getUserStateFromRequest( 'com_jem.attendees.filter', 'filter', '', 'int' );
-		$search 			= $app->getUserStateFromRequest( 'com_jem.attendees.filter_search', 'filter_search', '', 'string' );
-		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
-		$filter_waiting	= $app->getUserStateFromRequest( 'com_jem.attendees.waiting',	'filter_waiting',	0, 'int' );
+		$filter         = $app->getUserStateFromRequest('com_jem.attendees.filter',        'filter',        '', 'int');
+		$filter_waiting = $app->getUserStateFromRequest('com_jem.attendees.waiting',       'filter_waiting', 0, 'int');
+		$search         = $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
+		$search         = $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();
 
@@ -236,32 +244,26 @@ class JEMModelAttendees extends JModelLegacy
 			$where[] = ' (a.waitinglist = 0 OR r.waiting = '.($filter_waiting-1).') ';
 		}
 
-
 		// First thing we need to do is to select only needed events
 		$where[] = ' a.published = 1';
 		$where[] = ' c.published = 1';
+		$where[] = ' a.access  IN (' . implode(',', $levels) . ')';
 		$where[] = ' c.access  IN (' . implode(',', $levels) . ')';
 
 		// then if the user is the owner of the event
 		$where[] = ' a.created_by = '.$this->_db->Quote($user->id);
 
 		/*
-		* Search name
+		* Search name or username (depends on global setting "reguser"
 		*/
-		/*
 		if ($search && $filter == 1) {
 			$where[] = ' LOWER(u.name) LIKE \'%'.$search.'%\' ';
 		}
-		*/
-
-		/*
-		* Search username
-		*/
 		if ($search && $filter == 2) {
 			$where[] = ' LOWER(u.username) LIKE \'%'.$search.'%\' ';
 		}
 
-		$where 		= ( count( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
 
 		return $where;
 	}
@@ -295,15 +297,15 @@ class JEMModelAttendees extends JModelLegacy
 	 */
 	function remove($cid = array())
 	{
-		if (count( $cid ))
+		if (count($cid))
 		{
 			JArrayHelper::toInteger($cid);
 			$query = 'DELETE FROM #__jem_register WHERE id IN ('. implode(',', $cid) .') ';
 
-			$this->_db->setQuery( $query );
+			$this->_db->setQuery($query);
 
 			if ($this->_db->execute() === false) {
-				JError::raiseError( 1001, $this->_db->getErrorMsg() );
+				JError::raiseError(1001, $this->_db->getErrorMsg());
 			}
 		}
 		return true;

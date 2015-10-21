@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -54,25 +54,24 @@ class JemHelperBackend
 		);
 
 		JSubMenuHelper::addEntry(
-		JText::_('COM_JEM_GROUPS'),
-		'index.php?option=com_jem&view=groups',
-		$vName == 'groups'
-				);
+			JText::_('COM_JEM_GROUPS'),
+			'index.php?option=com_jem&view=groups',
+			$vName == 'groups'
+		);
 
 		JSubMenuHelper::addEntry(
-		JText::_('COM_JEM_HELP'),
-		'index.php?option=com_jem&view=help',
-		$vName == 'help'
-				);
+			JText::_('COM_JEM_HELP'),
+			'index.php?option=com_jem&view=help',
+			$vName == 'help'
+		);
 
-		if (JFactory::getUser()->authorise('core.manage')) {
+		if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
 			JSubMenuHelper::addEntry(
-			JText::_('COM_JEM_SETTINGS_TITLE'),
-			'index.php?option=com_jem&view=settings',
-			$vName == 'settings'
-					);
+				JText::_('COM_JEM_SETTINGS_TITLE'),
+				'index.php?option=com_jem&view=settings',
+				$vName == 'settings'
+			);
 		}
-
 	}
 
 	/**
@@ -86,8 +85,7 @@ class JemHelperBackend
 	 */
 	public static function getActions($categoryId = 0)
 	{
-
-		$user	= JFactory::getUser();
+		$user	= JemFactory::getUser();
 		$result	= new JObject;
 
 		if (empty($categoryId)) {
@@ -107,11 +105,8 @@ class JemHelperBackend
 		return $result;
 	}
 
-
-
 	public static function getCountryOptions()
 	{
-
 		$options = array();
 		$options = array_merge(JEMHelperCountries::getCountryOptions(),$options);
 

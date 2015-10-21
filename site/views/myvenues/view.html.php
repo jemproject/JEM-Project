@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -19,22 +19,23 @@ class JemViewMyvenues extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
+		// initialize variables
+		$app          = JFactory::getApplication();
+		$document     = JFactory::getDocument();
+		$jemsettings  = JemHelper::config();
+		$settings     = JemHelper::globalattribs();
+		$menu         = $app->getMenu();
+		$menuitem     = $menu->getActive();
+		$params       = $app->getParams();
+		$uri          = JFactory::getURI();
+		$user         = JemFactory::getUser();
+		$userId       = $user->get('id');
+		$pathway      = $app->getPathWay();
+		$jinput       = $app->input;
+		$print        = $jinput->getBool('print', false);
+		$task         = $jinput->getCmd('task', '');
 
-		//initialize variables
-		$document 		= JFactory::getDocument();
-		$jemsettings 	= JemHelper::config();
-		$settings	 	= JemHelper::globalattribs();
-		$menu 			= $app->getMenu();
-		$menuitem 		= $menu->getActive();
-		$params 		= $app->getParams();
-		$uri 			= JFactory::getURI();
-		$user			= JFactory::getUser();
-		$userId			= $user->get('id');
-		$pathway 		= $app->getPathWay();
-//		$db  			= JFactory::getDBO();
-
-		//redirect if not logged in
+		// redirect if not logged in
 		if (!$userId) {
 			$app->enqueueMessage(JText::_('COM_JEM_NEED_LOGGED_IN'), 'error');
 			return false;
@@ -49,26 +50,25 @@ class JemViewMyvenues extends JViewLegacy
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 
+		if ($print) {
+			JemHelper::loadCss('print');
+			$document->setMetaData('robots', 'noindex, nofollow');
+		}
+
 		$venues = $this->get('Venues');
 		$venues_pagination = $this->get('VenuesPagination');
 
-		//are venues available?
-		if (!$venues) {
-			$novenues = 1;
-		} else {
-			$novenues = 0;
-		}
+		// are no venues available?
+		$novenues = (!$venues) ? 1 : 0;
 
 		// get variables
-		$filter_order		= $app->getUserStateFromRequest('com_jem.myvenues.filter_order', 'filter_order', 	'l.venue', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myvenues.filter_order_Dir', 'filter_order_Dir',	'', 'word');
-// 		$filter_state 		= $app->getUserStateFromRequest('com_jem.myvenues.filter_state', 'filter_state', 	'*', 'word');
-		$filter 			= $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', '', 'int');
-		$search 			= $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');
+		$filter_order     = $app->getUserStateFromRequest('com_jem.myvenues.filter_order', 'filter_order', 	'l.venue', 'cmd');
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.myvenues.filter_order_Dir', 'filter_order_Dir',	'', 'word');
+// 		$filter_state     = $app->getUserStateFromRequest('com_jem.myvenues.filter_state', 'filter_state', 	'*', 'word');
+		$filter           = $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', '', 'int');
+		$search           = $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');
 
-		$task 		= $app->input->get('task', '');
-
-		//search filter
+		// search filter
 		$filters = array();
 
 		// Workaround issue #557: Show venue name always.
@@ -92,18 +92,18 @@ class JemViewMyvenues extends JViewLegacy
 		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter);
 
 		// search filter
-		$lists['search']= $search;
+		$lists['search'] = $search;
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
 
-		//pathway
-		if($menuitem) {
+		// pathway
+		if ($menuitem) {
 			$pathway->setItemName(1, $menuitem->title);
 		}
 
-		//Set Page title
+		// Set Page title
 		$pagetitle = JText::_('COM_JEM_MY_VENUES');
 		$pageheading = $pagetitle;
 		$pageclass_sfx = '';
@@ -116,6 +116,9 @@ class JemViewMyvenues extends JViewLegacy
 			$pageheading = $params->get('page_heading', $pagetitle);
 			$pageclass_sfx = $params->get('pageclass_sfx');
 		}
+
+		// ($task == 'archive') useless
+		$print_link = JRoute::_(JemHelperRoute::getMyVenuesRoute() .'&print=1&tmpl=component');
 
 		$params->set('page_heading', $pageheading);
 
@@ -130,17 +133,33 @@ class JemViewMyvenues extends JViewLegacy
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title', $pagetitle);
 
-		$this->action				= $uri->toString();
-		$this->venues				= $venues;
-		$this->task					= $task;
-		$this->params				= $params;
-		$this->venues_pagination 	= $venues_pagination;
-		$this->jemsettings			= $jemsettings;
-		$this->settings				= $settings;
-		$this->pagetitle			= $pagetitle;
-		$this->lists 				= $lists;
-		$this->novenues				= $novenues;
-		$this->pageclass_sfx		= htmlspecialchars($pageclass_sfx);
+		// Should we show publish buttons?
+		$canPublishVenue = false;
+		foreach ($venues as $venue) {
+			$canPublishVenue |= $venue->params->get('access-change');
+			if ($canPublishVenue) break;
+		}
+
+		// Set the user permissions
+		$permissions = new stdClass();
+		$permissions->canAddEvent     = $user->can('add', 'event');
+		$permissions->canAddVenue     = $user->can('add', 'venue');
+		$permissions->canPublishVenue = $canPublishVenue;
+
+		$this->action             = $uri->toString();
+		$this->venues             = $venues;
+		$this->task               = $task;
+		$this->print              = $print;
+		$this->params             = $params;
+		$this->venues_pagination  = $venues_pagination;
+		$this->jemsettings        = $jemsettings;
+		$this->settings           = $settings;
+		$this->permissions        = $permissions;
+		$this->pagetitle          = $pagetitle;
+		$this->lists              = $lists;
+		$this->novenues           = $novenues;
+		$this->print_link         = $print_link;
+		$this->pageclass_sfx      = htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);
 	}

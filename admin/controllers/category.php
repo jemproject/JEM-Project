@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.0.0
+ * @version     2.1.5
  * @package     JEM
- * @copyright   Copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -44,7 +44,7 @@ class JemControllerCategory extends JControllerForm
 	 */
 	protected function allowAddDisabled($data = array())
 	{
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		return ($user->authorise('core.create', $this->extension) || count($user->getAuthorisedCategories($this->extension, 'core.create')));
 	}
 
@@ -61,7 +61,7 @@ class JemControllerCategory extends JControllerForm
 	{
 		// Initialise variables.
 		$recordId = (int) isset($data[$key]) ? $data[$key] : 0;
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		$userId = $user->get('id');
 
 		// Check general edit permission first.

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -58,7 +58,7 @@ class JEMModelMyvenues extends JModelLegacy
 	function & getVenues()
 	{
 		$pop = JFactory::getApplication()->input->getBool('pop', false);
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		$userId = $user->get('id');
 
 		if (empty($userId)) {
@@ -76,6 +76,17 @@ class JEMModelMyvenues extends JModelLegacy
 			} else {
 				$pagination = $this->getVenuesPagination();
 				$this->_venues = $this->_getList($query, $pagination->limitstart, $pagination->limit);
+			}
+		}
+
+		if ($this->_venues) {
+			foreach ($this->_venues as $item) {
+				if (empty($item->params)) {
+					// Set venue params.
+					$item->params = clone JEMHelper::globalattribs();
+				}
+				# edit state access permissions.
+				$item->params->set('access-change', $user->can('publish', 'venue', $item->id, $item->created_by));
 			}
 		}
 
@@ -115,6 +126,45 @@ class JEMModelMyvenues extends JModelLegacy
 		}
 
 		return $this->_pagination_venues;
+	}
+
+	/**
+	 * Method to (un)publish one or more venue(s)
+	 *
+	 * @access	public
+	 * @return	boolean	True on success
+	 *
+	 */
+	function publish($cid = array(), $publish = 1)
+	{
+		$result = false;
+		$user 	= JemFactory::getUser();
+		$userid = (int) $user->get('id');
+
+		if (is_numeric($cid)) {
+			$cid = array($cid);
+		}
+		// simple checks, good enough here
+		if (is_array($cid) && count($cid) && ($publish >= -2) && ($publish <= 2)) {
+			JArrayHelper::toInteger($cid);
+			$cids = implode(',', $cid);
+
+			$query = 'UPDATE #__jem_venues'
+			       . ' SET published = ' . (int)$publish
+			       . ' WHERE id IN (' . $cids . ')'
+			       . ' AND (checked_out = 0 OR (checked_out = ' . $userid . '))'
+			      ;
+
+			$this->_db->setQuery($query);
+			$result = true;
+
+			if ($this->_db->execute() === false) {
+				$this->setError($this->_db->getErrorMsg());
+				$result = false;
+			}
+		}
+
+		return $result;
 	}
 
 	/**
@@ -174,9 +224,8 @@ class JEMModelMyvenues extends JModelLegacy
 	protected function _buildVenuesWhere()
 	{
 		$app 			= JFactory::getApplication();
-		$user 			= JFactory::getUser();
+		$user 			= JemFactory::getUser();
 		$settings 		= JEMHelper::globalattribs();
-		$user 			= JFactory::getUser();
 
 		$filter 		= $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', '', 'int');
 		$search 		= $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');

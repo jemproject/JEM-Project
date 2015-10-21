@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.5
  * @package JEM
  * @subpackage JEM Calendar Module
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2008 Toni Smillie www.qivva.com
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -31,7 +31,7 @@ abstract class modjemcalqhelper
 		//$appParams = $app->getParams('com_jem');
 		$model->setState('params', $params);
 
-		$user		= JFactory::getUser();
+		$user		= JemFactory::getUser();
 		$levels		= $user->getAuthorisedViewLevels();
 		$settings 	= JemHelper::globalattribs();
 

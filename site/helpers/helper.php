@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4.2
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -196,7 +196,7 @@ class JemHelper
 
 						if ($db->execute() === false) {
 							// run query always but don't show error message to "normal" users
-							$user = JFactory::getUser();
+							$user = JemFactory::getUser();
 							if($user->authorise('core.manage')) {
 								echo JText::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
 							}
@@ -789,15 +789,15 @@ class JemHelper
 		$db->setQuery($query);
 		$res = $db->loadObjectList('event');
 
-		foreach ($data as $k => $event) {
+		foreach ($data as $k => &$event) { // by reference for direct edit
 			if (isset($res[$event->id])) {
-				$data[$k]->waiting  = $res[$event->id]->waitinglist;
-				$data[$k]->regCount = $res[$event->id]->total - $res[$event->id]->waitinglist;
+				$event->waiting  = $res[$event->id]->waitinglist;
+				$event->regCount = $res[$event->id]->total - $res[$event->id]->waitinglist;
 			} else {
-				$data[$k]->waiting  = 0;
-				$data[$k]->regCount = 0;
+				$event->waiting  = 0;
+				$event->regCount = 0;
 			}
-			$data[$k]->available = $data[$k]->maxplaces - $data[$k]->regCount;
+			$event->available = $event->maxplaces - $event->regCount;
 		}
 		return $data;
 	}
@@ -807,7 +807,8 @@ class JemHelper
 	 */
 	public static function getTimeZoneName()
 	{
-		$userTz = JFactory::getUser()->getParam('timezone');
+		$user     = JemFactory::getUser();
+		$userTz   = $user->getParam('timezone');
 		$timeZone = JFactory::getConfig()->get('offset');
 
 		/* disabled for now

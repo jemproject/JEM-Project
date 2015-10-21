@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -37,7 +37,7 @@ class JemViewEditevent extends JViewLegacy
 		$jemsettings = JemHelper::config();
 		$settings    = JemHelper::globalattribs();
 		$app         = JFactory::getApplication();
-		$user        = JFactory::getUser();
+		$user        = JemFactory::getUser();
 		$userId      = $user->get('id');
 		$document    = JFactory::getDocument();
 		$model       = $this->getModel();
@@ -70,20 +70,10 @@ class JemViewEditevent extends JViewLegacy
 			return false;
 		}
 
-		if (empty($this->item->id)) {
-			// Check if the user has access to the form
-			$maintainer = JemUser::ismaintainer('add');
-			$genaccess  = JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes );
-
-			$dellink = ($maintainer || $genaccess);
-			$authorised = $user->authorise('core.create','com_jem') || (count($user->getAuthorisedCategories('com_jem', 'core.create')) || $dellink);
+		if (empty($item->id)) {
+			$authorised = (bool)$user->can('add', 'event');
 		} else {
-			// Check if user can edit
-			$maintainer = JemUser::ismaintainer('edit',$this->item->id);
-			$genaccess  = JemUser::editaccess($jemsettings->eventowner, $this->item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
-
-			$allowedtoeditevent = ($maintainer || $genaccess);
-			$authorised = $this->item->params->get('access-edit') || $allowedtoeditevent ;
+			$authorised = (bool)$item->params->get('access-edit');
 		}
 
 		if ($authorised !== true) {
@@ -92,9 +82,9 @@ class JemViewEditevent extends JViewLegacy
 		}
 
 		// Decide which parameters should take priority
-		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
-				&& $menuitem->query['view']   == 'editevent'
-				&& 0 == $item->id); // menu item is always for new event
+		$useMenuItemParams = ($menuitem && ($menuitem->query['option'] == 'com_jem')
+		                                && ($menuitem->query['view']   == 'editevent')
+		                                && (0 == $item->id)); // menu item is always for new event
 
 		$title = ($item->id == 0) ? JText::_('COM_JEM_EDITEVENT_ADD_EVENT')
 		                          : JText::sprintf('COM_JEM_EDITEVENT_EDIT_EVENT', $item->title);
@@ -182,10 +172,19 @@ class JemViewEditevent extends JViewLegacy
 		$this->infoimage     = JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_('COM_JEM_NOTES'), NULL, true);
 
 		$this->user = $user;
+		$permissions = new stdClass();
+		$permissions->canAddVenue = $user->can('add', 'venue');
+		$this->permissions = $permissions;
 
 		if ($params->get('enable_category') == 1) {
 			$this->form->setFieldAttribute('catid', 'default', $params->get('catid', 1));
 			$this->form->setFieldAttribute('catid', 'readonly', 'true');
+		}
+
+		// disable for non-publishers
+		if (empty($item->params) || !$item->params->get('access-change', false)) {
+			$this->form->setFieldAttribute('published', 'default', 0);
+			$this->form->setFieldAttribute('published', 'readonly', 'true');
 		}
 
 		$this->_prepareDocument();

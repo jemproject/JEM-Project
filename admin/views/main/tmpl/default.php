@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -60,8 +60,8 @@ $options = array(
 						$link = 'index.php?option=com_jem&amp;task=plugins.plugins';
 						$this->quickiconButton($link, 'icon-48-plugins.png', JText::_('COM_JEM_MANAGE_PLUGINS'));
 
-						//only admins should be able to see this items
-						if (JFactory::getUser()->authorise('core.manage')) {
+						//only admins should be able to see these items
+						if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
 							$link = 'index.php?option=com_jem&amp;view=settings';
 							$this->quickiconButton($link, 'icon-48-settings.png', JText::_('COM_JEM_SETTINGS_TITLE'));
 

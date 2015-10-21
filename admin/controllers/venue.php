@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -10,13 +10,13 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controllerform');
+require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
 /**
  * JEM Component Venue Controller
  *
 */
-class JEMControllerVenue extends JControllerForm
+class JEMControllerVenue extends JemControllerForm
 {
 	/**
 	 * @var    string  The prefix to use with controller messages.
@@ -47,7 +47,7 @@ class JEMControllerVenue extends JControllerForm
 	 *
 	 * @return  void
 	 */
-	protected function postSaveHook($model, $validData = array())
+	protected function _postSaveHook($model, $validData = array())
 	{
 		$isNew = $model->getState('venue.new');
 		$id    = $model->getState('venue.id');

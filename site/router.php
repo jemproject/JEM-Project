@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -101,6 +101,10 @@ function jemParseRoute($segments)
 
 		case 'categories':
 			{
+				if ($count == 2) {
+					$id = explode(':', $segments[1]);
+					$vars['id'] = $id[0];
+				}
 				$vars['view'] = 'categories';
 			}
 			break;

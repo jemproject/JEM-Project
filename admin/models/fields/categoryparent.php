@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.0.0
+ * @version     2.1.5
  * @package     JEM
- * @copyright   Copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -103,7 +103,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 		// Initialise variables.
 
 				// Get the current user object.
-				$user = JFactory::getUser();
+				$user = JemFactory::getUser();
 
 				// For new items we want a list of categories you are allowed to create in.
 				if ($oldCat == 0)
@@ -131,7 +131,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 						if ($user->authorise('core.edit.state', $extension . '.category.' . $oldCat) != true)
 						{
 							if ($option->value != $oldCat)
-							{echo 'y';
+							{//echo 'y';
 								unset($options[$i]);
 							}
 						}
@@ -140,7 +140,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 						elseif
 							(($user->authorise('core.create', $extension . '.category.' . $option->value) != true)
 							&& $option->value != $oldCat)
-						{echo 'x';
+						{//echo 'x';
 							unset($options[$i]);
 						}
 					}

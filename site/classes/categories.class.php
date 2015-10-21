@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -75,6 +75,8 @@ class JEMCategories
 
 	/**
 	 * Instance
+	 *
+	 * @todo: This implementation is wrong!
 	 */
 	public static function getInstance($cid,$options=false)
 	{
@@ -136,7 +138,9 @@ class JEMCategories
 	{
 		$db = JFactory::getDbo();
 		$app = JFactory::getApplication();
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
+		$levels = $user->getAuthorisedViewLevels();
+
 		$this->_checkedCategories[$id] = true;
 
 		$query = $db->getQuery(true);
@@ -162,7 +166,8 @@ class JEMCategories
 		# as maintainter someone who is registered can see a category that has special rights
 		# let's see if the user has access to this category.
 
-
+		# NO. Access permission takes always priority!
+		/*
 		$query3	= $db->getQuery(true);
 		$query3 = 'SELECT gr.id'
 				. ' FROM #__jem_groups AS gr'
@@ -181,6 +186,9 @@ class JEMCategories
 		} else {
 			$query->where('(c.access IN ('.$groups.'))');
 		}
+		*/
+		$query->where('(c.access IN ('.implode(',', $levels).'))');
+
 
 		#####################
 		### FILTER - BYCAT ##
@@ -214,26 +222,36 @@ class JEMCategories
 		// @todo: alter
 		if (isset($this->_options['countItems']) && $this->_options['countItems'] == 1)
 		{
-			$published = array();
-			if (isset($this->_options['published']))
-			{
-				$publ = $this->_options['published'];
-				if (is_int($publ)) {
-					$published = array($publ);
-				} elseif (is_array($publ)) {
-					foreach ($publ as $val) {
-						if (is_int($val)) {
-							$published[] = $val;
+			$where = '';
+			if (!empty($this->_options['published_where'])) {
+				$where = $this->_options['published_where'];
+			} else {
+				$published = array();
+				if (isset($this->_options['published']))
+				{
+					$publ = $this->_options['published'];
+					if (is_int($publ)) {
+						$published = array($publ);
+					} elseif (is_array($publ)) {
+						foreach ($publ as $val) {
+							if (is_int($val)) {
+								$published[] = $val;
+							}
 						}
 					}
 				}
-			}
-			if (empty($published)) {
-				$published = array(1); // default to published events
+				if (empty($published)) {
+					$published = array(1); // default to published events
+				}
+				$where = 'i.published IN (' . implode(',', $published).')';
 			}
 
-			$query->leftJoin('#__jem_events AS i ON rel.itemid = i.id AND i.published IN ('.implode(',', $published).')');
-			$query->select('COUNT(i.id) AS numitems');
+			$query->leftJoin('#__jem_events AS i ON rel.itemid = i.id'.' AND ' . $where . ' AND i.access IN ('.implode(',', $levels).')');
+			$query->select('COUNT(IF(' . $where . ', TRUE, NULL)) AS numitems');
+			$query->select('COUNT(IF(i.published =  0, TRUE, NULL)) AS num_unpublished');
+			$query->select('COUNT(IF(i.published =  1, TRUE, NULL)) AS num_published');
+			$query->select('COUNT(IF(i.published =  2, TRUE, NULL)) AS num_archived');
+			$query->select('COUNT(IF(i.published = -2, TRUE, NULL)) AS num_trashed'); // not supported yet
 		}
 
 
@@ -348,7 +366,7 @@ class JEMCategories
 
 		$id = (!empty($id)) ? $id : (int) $this->getState('event.id');
 
-		$user 			= JFactory::getUser();
+		$user 			= JemFactory::getUser();
 		$userid			= (int) $user->get('id');
 		$levels 		= $user->getAuthorisedViewLevels();
 		$app 			= JFactory::getApplication();
@@ -389,7 +407,8 @@ class JEMCategories
 		# as maintainter someone who is registered can see a category that has special rights
 		# let's see if the user has access to this category.
 
-
+		# NO. Access permission takes always priority!
+		/*
 		$query3	= $db->getQuery(true);
 		$query3 = 'SELECT gr.id'
 				. ' FROM #__jem_groups AS gr'
@@ -400,7 +419,6 @@ class JEMCategories
 		$db->setQuery($query3);
 		$groupnumber = $db->loadColumn();
 
-
 		$groups = implode(',', $user->getAuthorisedViewLevels());
 		$jemgroups = implode(',',$groupnumber);
 
@@ -409,26 +427,28 @@ class JEMCategories
 		} else {
 			$query->where('(c.access IN ('.$groups.'))');
 		}
+		*/
+		$query->where('(c.access IN ('.implode(',', $levels).'))');
 
 		$db->setQuery($query);
 
 		if ($id == 'all'){
-		$cats = $db->loadColumn(0);
+			$cats = $db->loadColumn(0);
 			$cats = array_unique($cats);
-			return ($cats);
 		} else {
 			$cats = $db->loadObjectList();
-			}
-			return $cats;
-			}
+		}
 
-
+		return $cats;
+	}
 
 	function getPath()
 	{
 		$db = JFactory::getDBO();
 		$parentcats = array();
 		$cid = $this->id;
+		$user = JemFactory::getUser();
+		$levels = $user->getAuthorisedViewLevels();
 
 		do {
 			$sql = $db->getQuery(true);
@@ -448,11 +468,12 @@ class JEMCategories
 			$sql->from('#__jem_categories');
 			$sql->where('id = ' . (int) $cid);
 			$sql->where('published = 1');
+			$sql->where('access IN ('.implode(',', $levels).')');
 
 			$db->setQuery($sql);
 			$row = $db->loadObject();
 
-			if($row) {
+			if ($row) {
 				$parentcats[] = $row->slug;
 				$parent_id = $row->parent_id;
 			} else {
@@ -460,7 +481,7 @@ class JEMCategories
 			}
 
 			$cid = $parent_id;
-		} while($parent_id > 0);
+		} while ($parent_id > 0);
 
 		$parentcats = array_reverse($parentcats);
 		return $parentcats;
@@ -473,12 +494,12 @@ class JEMCategories
 	 */
 	static function buildParentCats($cid)
 	{
-		$db = JFactory::getDBO();
+		$db         = JFactory::getDBO();
 		$parentcats = array();
-		$user 			= JFactory::getUser();
-		$userid			= (int) $user->get('id');
-		$levels 		= $user->getAuthorisedViewLevels();
-		$app 			= JFactory::getApplication();
+		$user       = JemFactory::getUser();
+		$userid     = (int) $user->get('id');
+		$levels     = $user->getAuthorisedViewLevels();
+		$app        = JFactory::getApplication();
 
 		// start with parent
 		$query = 'SELECT parent_id FROM #__jem_categories WHERE id = ' . (int) $cid;
@@ -509,7 +530,7 @@ class JEMCategories
 			## special right ##
 			###################
 
-
+			/* NO special rights!
 			$query3	= $db->getQuery(true);
 			$query3 = 'SELECT gr.id'
 					. ' FROM #__jem_groups AS gr'
@@ -528,12 +549,13 @@ class JEMCategories
 			} else {
 				$query->where('(c.access IN ('.$groups.'))');
 			}
-
+			*/
+			$query->where('(c.access IN ('.implode(',', $levels).'))');
 
 			$db->setQuery($query);
 			$row = $db->loadObject();
 
-			if($row && $row->id > 1) {
+			if (isset($row->id) && $row->id > 1) {
 				$parentcats[] = $row;
 				$cid = $row->parent_id;
 			} else {
@@ -570,17 +592,21 @@ class JEMCategories
 	 *
 	 * @return array
 	 */
-	static function getCategoriesTree($published=false)
+	static function getCategoriesTree($published = false)
 	{
 		$db = JFactory::getDBO();
+		$user = JemFactory::getUser();
+		$levels = $user->getAuthorisedViewLevels();
 		$state = array(0,1);
 
-		if ($published) {
-			$where = ' WHERE published = '.$published;
+		if ((int)$published) {
+			$where = ' WHERE published = ' . (int)$published;
 		} else {
 			$where = ' WHERE published IN (' . implode(',', $state) . ')';
 			$where .= ' AND alias NOT LIKE "root"';
 		}
+
+		$where .= ' AND access IN ('.implode(',', $levels).')';
 
 		$query = 'SELECT *, id AS value, catname AS text' . ' FROM #__jem_categories' . $where . ' ORDER BY parent_id, lft';
 		$db->setQuery($query);
@@ -630,7 +656,7 @@ class JEMCategories
 	 * @access public
 	 * @return array
 	 */
-	static function treerecurse($id, $indent, $list, &$children, $maxlevel=9999, $level=0, $type=1)
+	static function treerecurse($id, $indent, $list, &$children, $maxlevel = 9999, $level = 0, $type = 1)
 	{
 		if (@$children[$id] && $level <= $maxlevel)
 		{
@@ -647,9 +673,9 @@ class JEMCategories
 				$id = $v->id;
 
 				if ($level == 0) {
-						$txt = $v->catname;
+					$txt = $v->catname;
 				} else {
-						$txt = $pre . $v->catname;
+					$txt = $pre . $v->catname;
 				}
 				$pt = $v->parent_id;
 				$list[$id] = $v;
@@ -672,7 +698,7 @@ class JEMCategories
 	 * @param string $class
 	 * @return void
 	 */
-	static function buildcatselect($list, $name, $selected, $top, $class = array('class'=>'inputbox'))
+	static function buildcatselect($list, $name, $selected, $top, $class = array('class' => 'inputbox'))
 	{
 		$catlist = array();
 
@@ -700,7 +726,7 @@ class JEMCategories
 		$catlist = array();
 
 		foreach ($list as $item) {
-			$catlist[] = JHtml::_('select.option', $item->id, $item->treename);
+			$catlist[] = JHtml::_('select.option', $item->id, $item->treename, isset($item->disable) ? array('disable' => $item->disable) : array());
 		}
 
 		return $catlist;
@@ -715,7 +741,9 @@ class JEMCategories
 	static function getChilds($id)
 	{
 		$db = JFactory::getDBO();
-		$query = ' SELECT id, parent_id ' . ' FROM #__jem_categories ' . ' WHERE published = 1 ';
+		$user = JemFactory::getUser();
+		$levels = $user->getAuthorisedViewLevels();
+		$query = ' SELECT id, parent_id ' . ' FROM #__jem_categories ' . ' WHERE published = 1 AND access IN ('.implode(',', $levels).')';
 		$db->setQuery($query);
 		$rows = $db->loadObjectList();
 
@@ -739,14 +767,14 @@ class JEMCategories
 	 */
 	protected static function _getChildsRecurse($id, $childs)
 	{
-		$result = array(
-			$id
-		);
-		if (@$childs[$id]) {
+		$result = array($id);
+
+		if (!empty($childs[$id])) {
 			foreach ($childs[$id] AS $c) {
 				$result = array_merge($result, JEMCategories::_getChildsRecurse($c->id, $childs));
 			}
 		}
+
 		return $result;
 	}
 }
@@ -1226,6 +1254,38 @@ class JEMCategoryNode extends JObject
 		}
 
 		return $this->numitems;
+	}
+
+	/**
+	 * Returns the number of items regarding their publishung state.
+	 *
+	 * @param   boolean  $recursive  If false number of children, if true number of descendants
+	 *
+	 * @return  array    Associative array of (state => count) where state is
+	 *                   one of ('numitems', 'unpublished', 'published', 'archived', 'trashed')
+	 *
+	 * @note Trashed items are generally not shown in frontend so they maybe also not requested from db.
+	 */
+	public function getNumItemsByState($recursive = false)
+	{
+		$count['numitems']    = $this->numitems;
+		$count['unpublished'] = $this->num_unpublished;
+		$count['published']   = $this->num_published;
+		$count['archived']    = $this->num_archived;
+		$count['trashed']     = $this->num_trashed;
+
+		if ($recursive)
+		{
+			foreach ($this->getChildren() as $child)
+			{
+				$countChild = $child->getNumItemsByState(true);
+				foreach ($count as $k => &$v) {
+					$v += $countChild[$k];
+				}
+			}
+		}
+
+		return $count;
 	}
 }
 ?>

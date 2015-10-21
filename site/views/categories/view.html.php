@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -16,17 +16,17 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 class JemViewCategories extends JEMView
 {
 	/**
-	 * Categories-View
+	 * Creates the Categories-View
 	 */
-	function display($tpl=null)
+	function display($tpl = null)
 	{
 		$app = JFactory::getApplication();
 
 		$document 		= JFactory::getDocument();
 		$jemsettings 	= JemHelper::config();
-		$user			= JFactory::getUser();
+		$user			= JemFactory::getUser();
 		$print			= $app->input->getBool('print', false);
-		$task			= $app->input->get('task', '');
+		$task			= $app->input->getCmd('task', '');
 		$id 			= $app->input->getInt('id', 1);
 		$model 			= $this->getModel();
 
@@ -43,7 +43,7 @@ class JemViewCategories extends JEMView
 			$document->setMetaData('robots', 'noindex, nofollow');
 		}
 
-		//get menu information
+		// get menu information
 		$menu		= $app->getMenu();
 		$menuitem	= $menu->getActive();
 		$params 	= $app->getParams('com_jem');
@@ -52,17 +52,17 @@ class JemViewCategories extends JEMView
 		$pageheading	= $params->def('page_heading', $params->get('page_title'));
 		$pageclass_sfx	= $params->get('pageclass_sfx');
 
-		//pathway
+		// pathway
 		$pathway = $app->getPathWay();
-		if($menuitem) {
+		if ($menuitem) {
 			$pathway->setItemName(1, $menuitem->title);
 		}
 
 		if ($task == 'archive') {
 			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_('index.php?option=com_jem&view=categories&id='.$id.'&task=archive'));
 			$print_link = JRoute::_('index.php?option=com_jem&view=categories&id='.$id.'&task=archive&print=1&tmpl=component');
-			$pagetitle   .= ' - '.JText::_('COM_JEM_ARCHIVE');
-			$pageheading .= ' - '.JText::_('COM_JEM_ARCHIVE');
+			$pagetitle   .= ' - ' . JText::_('COM_JEM_ARCHIVE');
+			$pageheading .= ' - ' . JText::_('COM_JEM_ARCHIVE');
 			$params->set('page_heading', $pageheading);
 		} else {
 			$print_link = JRoute::_('index.php?option=com_jem&view=categories&id='.$id.'&print=1&tmpl=component');
@@ -76,19 +76,14 @@ class JemViewCategories extends JEMView
 			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 		}
 
-		//Set Page title
+		// Set Page title
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title' , $pagetitle);
 
-		//Check if the user has access to the form
-		$maintainer = JemUser::ismaintainer('add');
-		$genaccess 	= JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
-
-		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
-			$dellink = 1;
-		} else {
-			$dellink = 0;
-		}
+		// Check if the user has permission to add things
+		$permissions = new stdClass();
+		$permissions->canAddEvent = $user->can('add', 'event');
+		$permissions->canAddVenue = $user->can('add', 'venue');
 
 		// Get events if requested
 		if (!empty($rows) && $params->get('detcat_nr', 0) > 0) {
@@ -100,7 +95,7 @@ class JemViewCategories extends JEMView
 		$this->rows				= $rows;
 		$this->task				= $task;
 		$this->params			= $params;
-		$this->dellink			= $dellink;
+		$this->dellink			= $permissions->canAddEvent; // deprecated
 		$this->pagination		= $pagination;
 		$this->item				= $menuitem;
 		$this->jemsettings		= $jemsettings;
@@ -109,6 +104,7 @@ class JemViewCategories extends JEMView
 		$this->model			= $model;
 		$this->id				= $id;
 		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
+		$this->permissions		= $permissions;
 
 		parent::display($tpl);
 	}

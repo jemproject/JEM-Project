@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -37,14 +37,14 @@ class JemModelVenue extends JemModelEventslist
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		// parent::populateState($ordering, $direction);
-
 		$app         = JFactory::getApplication();
 		$jemsettings = JemHelper::config();
-		$jinput      = JFactory::getApplication()->input;
-		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 		$params      = $app->getParams();
-		$task        = $jinput->get('task','','cmd');
+		$jinput      = $app->input;
+		$task        = $jinput->getCmd('task','');
+		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
+		$user        = JemFactory::getUser();
+		$userId      = $user->get('id');
 
 		// List state information
 
@@ -91,11 +91,8 @@ class JemModelVenue extends JemModelEventslist
 		# params
 		$this->setState('params', $params);
 
-		if ($task == 'archive') {
-			$this->setState('filter.published',2);
-		} else {
-			$this->setState('filter.published',1);
-		}
+		# publish state
+		$this->_populatePublishState($task);
 
 		$this->setState('filter.groupby',array('a.id'));
 	}
@@ -169,7 +166,7 @@ class JemModelVenue extends JemModelEventslist
 	 */
 	function getVenue()
 	{
-		$user  = JFactory::getUser();
+		$user  = JemFactory::getUser();
 
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
@@ -182,11 +179,26 @@ class JemModelVenue extends JemModelEventslist
 		$query->from($db->quoteName('#__jem_venues'));
 		$query->where('id = '.(int)$this->_id);
 
+		// all together: if published or the user is creator of the venue or allowed to edit or publish venues
+		if (empty($user->id)) {
+			$query->where('published = 1');
+		}
+		// no limit if user can publish or edit foreign venues
+		elseif ($user->can(array('edit', 'publish'), 'venue')) {
+			$query->where('published IN (0,1)');
+		}
+		// user maybe creator
+		else {
+			$query->where('(published = 1 OR (published = 0 AND created_by = ' . $this->_db->Quote($user->id) . '))');
+		}
+
 		$db->setQuery($query);
 		$_venue = $db->loadObject();
 
 		if (empty($_venue)) {
-			return JError::raiseError(404, JText::_('COM_JEM_VENUE_NOTFOUND'));
+			//return JError::raiseError(404, JText::_('COM_JEM_VENUE_NOTFOUND'));
+			$this->setError(JText::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'));
+			return false;
 		}
 
 		$_venue->attachments = JEMAttachment::getAttachments('venue'.$_venue->id);

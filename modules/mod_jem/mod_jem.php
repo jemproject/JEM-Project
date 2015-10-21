@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.3
+ * @version 2.1.5
  * @package JEM
  * @subpackage JEM Module
  * @copyright (C) 2013-2015 joomlaeventmanager.net
@@ -15,6 +15,7 @@ require_once(dirname(__FILE__).'/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
+require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
 JFactory::getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
 

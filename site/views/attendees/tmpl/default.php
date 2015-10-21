@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -12,6 +12,8 @@ JHtml::_('behavior.tooltip');
 $colspan = ($this->event->waitinglist ? 10 : 9);
 
 $detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this->event->alias));
+
+$namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 ?>
 <script type="text/javascript">
 	function tableOrdering(order, dir, view)
@@ -27,9 +29,9 @@ $detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this
 <div id="jem" class="jem_attendees<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
-		echo JemOutput::printbutton($this->print_link, $this->params);
-		echo JemOutput::exportbutton($this->event->id);
-		echo JemOutput::backbutton($this->backlink, $this->view);
+		$permissions = new stdClass();
+		$btn_params = array('print_link' => $this->print_link, 'id' => $this->event->id);
+		echo JemOutput::createButtonBar($this->getName(), $permissions, $btn_params);
 		?>
 	</div>
 
@@ -89,7 +91,7 @@ $detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this
 				<tr>
 					<th width="1%" class="center"><?php echo JText::_('COM_JEM_NUM'); ?></th>
 					<!--th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th-->
-					<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_USERNAME', 'u.username', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
+					<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_USERNAME', 'u.'.$namefield, $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 					<?php if ($this->enableemailaddress == 1) {?>
 					<th class="title"><?php echo JText::_('COM_JEM_EMAIL'); ?></th>
 					<?php } ?>
@@ -105,7 +107,7 @@ $detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this
 				<tr class="row<?php echo $i % 2; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset($i); ?></td>
 				<!--td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td-->
-				<td><?php echo $row->username; ?></td>
+				<td><?php echo $row->$namefield; ?></td>
 				<?php if ($this->enableemailaddress == 1) {?>
 				<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
 				<?php } ?>

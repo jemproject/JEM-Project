@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4.2
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -158,11 +158,12 @@ class JemTableEvent extends JTable
 	 */
 	public function store($updateNulls = true)
 	{
-		$date 			= JFactory::getDate();
-		$user 			= JFactory::getUser();
-		$jinput 		= JFactory::getApplication()->input;
-		$app 			= JFactory::getApplication();
-		$jemsettings 	= JEMHelper::config();
+		$date        = JFactory::getDate();
+		$user        = JemFactory::getUser();
+		$userid      = $user->get('id');
+		$app         = JFactory::getApplication();
+		$jinput      = $app->input;
+		$jemsettings = JEMHelper::config();
 
 
 		// Check if we're in the front or back
@@ -174,7 +175,7 @@ class JemTableEvent extends JTable
 		if ($this->id) {
 			// Existing event
 			$this->modified = $date->toSql();
-			$this->modified_by = $user->get('id');
+			$this->modified_by = $userid;
 		}
 		else
 		{
@@ -183,7 +184,7 @@ class JemTableEvent extends JTable
 				$this->created = $date->toSql();
 			}
 			if (empty($this->created_by)){
-				$this->created_by = $user->get('id');
+				$this->created_by = $userid;
 			}
 		}
 
@@ -233,10 +234,8 @@ class JemTableEvent extends JTable
 
 		// user check on frontend but not if caused by cleanup function (recurrence)
 		if (!$backend && !(isset($this->_autocreate) && ($this->_autocreate === true))) {
-			/*	check if the user has the required rank for autopublish	*/
-			$maintainer = JEMUser::ismaintainer('publish');
-			$autopubev = JEMUser::validate_user($jemsettings->evpubrec, $jemsettings->autopubl);
-			if (!($autopubev || $maintainer || $user->authorise('core.edit.state','com_jem'))) {
+			/*	check if the user has the required rank for autopublish on new events */
+			if (!$this->id && !$user->can('publish', 'event', $this->id, $this->created_by)) {
 				$this->published = 0 ;
 			}
 		}
@@ -380,6 +379,35 @@ class JemTableEvent extends JTable
 		$this->setError('');
 
 		return true;
+	}
+
+	/**
+	 * Method to delete a row from the database table by primary key value.
+	 * After deletion all category relations are deleted from jem_cats_event_relations table.
+	 *
+	 * @param   mixed  $pk  An optional primary key value to delete.  If not set the instance property value is used.
+	 *
+	 * @return  boolean  True on success.
+	 *
+	 * @note With Joomla 3.1+ we should use an observer instead but J! 2.5 doesn't provide this.
+	 *       Also on J! 2.5 $pk is a single key while on J! 3.x it's a list of keys.
+	 *       We know the key is 'id', so keep it simple.
+	 */
+	public function delete($pk = null)
+	{
+		$id = $this->id;
+
+		if (parent::delete($pk)) {
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
+			$query->delete($db->quoteName('#__jem_cats_event_relations'));
+			$query->where('itemid = '.$db->quote($id));
+			$db->setQuery($query);
+			$db->execute();
+			return true;
+		}
+
+		return false;
 	}
 }
 ?>

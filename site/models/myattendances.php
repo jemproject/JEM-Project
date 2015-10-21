@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -73,9 +73,7 @@ class JEMModelMyattendances extends JModelLegacy
 				$this->_attending = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 			}
 
-			$count = count($this->_attending);
-			for($i = 0; $i < $count; $i++) {
-				$item = $this->_attending[$i];
+			foreach ($this->_attending as $i => $item) {
 				$item->categories = $this->getCategories($item->eventid);
 
 				//remove events without categories (users have no access to them)
@@ -200,7 +198,7 @@ class JEMModelMyattendances extends JModelLegacy
 		$task     = $app->input->get('task', '');
 		$settings = JEMHelper::globalattribs();
 
-		$user     = JFactory::getUser();
+		$user     = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
@@ -216,6 +214,7 @@ class JEMModelMyattendances extends JModelLegacy
 			$where[] = ' a.published = 1';
 		}
 		$where[] = ' c.published = 1';
+		$where[] = ' a.access IN (' . implode(',', $levels) . ')';
 		$where[] = ' c.access IN (' . implode(',', $levels) . ')';
 
 		//limit output so only future events the user attends will be shown
@@ -255,7 +254,7 @@ class JEMModelMyattendances extends JModelLegacy
 
 	function getCategories($id)
 	{
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 

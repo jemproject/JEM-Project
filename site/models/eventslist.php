@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4.2
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -10,6 +10,8 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.modellist');
+// ensure JemFactory is loaded (because model is used by modules too)
+require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
 /**
  * Model-Eventslist
@@ -59,14 +61,17 @@ class JemModelEventslist extends JModelList
 
 		$app         = JFactory::getApplication();
 		$jemsettings = JemHelper::config();
-		$jinput      = JFactory::getApplication()->input;
-		$task        = $jinput->get('task','','cmd');
+		$jinput      = $app->input;
+		$task        = $jinput->getCmd('task','');
+		$format      = $jinput->getCmd('format','');
 		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
+		$user        = JemFactory::getUser();
+		$userId      = $user->get('id');
 
 		# limit/start
 
 		/* in J! 3.3.6 limitstart is removed from request - but we need it! */
-		if ($app->input->get('limitstart', null, 'int') === null) {
+		if ($jinput->get('limitstart', null, 'int') === null) {
 			$app->setUserState('com_jem.eventslist.'.$itemid.'.limitstart', 0);
 		}
 
@@ -85,16 +90,10 @@ class JemModelEventslist extends JModelList
 		$this->setState('filter.filter_type', $filtertype);
 
 		# publish state
-		if ($task == 'archive') {
-			$this->setState('filter.published',2);
-		} else {
-			$this->setState('filter.published',1);
-		}
+		$this->_populatePublishState($task);
 
 		$params = $app->getParams();
 		$this->setState('params', $params);
-
-		$user = JFactory::getUser();
 
 		###############
 		## opendates ##
@@ -204,6 +203,10 @@ class JemModelEventslist extends JModelList
 		$id .= ':' . $this->getState('filter.calendar_startdayonly');
 		$id .= ':' . $this->getState('filter.req_venid');
 		$id .= ':' . $this->getState('filter.req_catid');
+		$id .= ':' . $this->getState('filter.unpublished');
+		$id .= ':' . serialize($this->getState('filter.unpublished.events.on_groups'));
+		$id .= ':' . $this->getState('filter.unpublished.venues');
+		$id .= ':' . $this->getState('filter.unpublished.on_user');
 
 		return parent::getStoreId($id);
 	}
@@ -221,7 +224,7 @@ class JemModelEventslist extends JModelList
 
 		$params    = $app->getParams();
 		$settings  = JemHelper::globalattribs();
-		$user      = JFactory::getUser();
+		$user      = JemFactory::getUser();
 
 		# Query
 		$db 	= JFactory::getDBO();
@@ -300,27 +303,21 @@ class JemModelEventslist extends JModelList
 		###################
 
 		# Filter by access level - always.
-		$user = JFactory::getUser();
-		$groups = implode(',', $user->getAuthorisedViewLevels());
-		$query->where('a.access IN ('.$groups.')');
+		$levels = implode(',', $user->getAuthorisedViewLevels());
+		$query->where('a.access IN ('.$levels.')');
 
 		####################
 		## FILTER-PUBLISH ##
 		####################
 
 		# Filter by published state.
-		$published = $this->getState('filter.published');
-
-		if (is_numeric($published)) {
-			$query->where('a.published = ' . (int) $published);
+		$where_pub = $this->_getPublishWhere();
+		if (!empty($where_pub)) {
+			$query->where('(' . implode(' OR ', $where_pub) . ')');
+		} else {
+			// something wrong - fallback to published events
+			$query->where('a.published = 1');
 		}
-		elseif (is_array($published) && !empty($published)) {
-			JArrayHelper::toInteger($published);
-			$published = implode(',', $published);
-			$query->where('a.published IN ('.$published.')');
-		}
-
-
 
 		####################
 		## FILTER-FEATURED ##
@@ -374,9 +371,14 @@ class JemModelEventslist extends JModelList
 		### FILTER - BYCAT ##
 		#####################
 
-		$cats = $this->getCategories('all');
-		if (!empty($cats)) {
-			$query->where('c.id  IN (' . implode(',', $cats) . ')');
+		$filter_catid = $this->getState('filter.filter_catid');
+		if ($filter_catid) { // categorycal
+			$query->where('c.id = '.(int)$filter_catid);
+		} else {
+			$cats = $this->getCategories('all');
+			if (!empty($cats)) {
+				$query->where('c.id  IN (' . implode(',', $cats) . ')');
+			}
 		}
 
 		####################
@@ -490,7 +492,7 @@ class JemModelEventslist extends JModelList
 			return array();
 		}
 
-		$user	= JFactory::getUser();
+		$user	= JemFactory::getUser();
 		$userId	= $user->get('id');
 		$guest	= $user->get('guest');
 		$groups = $user->getAuthorisedViewLevels();
@@ -510,39 +512,20 @@ class JemModelEventslist extends JModelList
 			$item->params = clone $this->getState('params');
 			$item->params->merge($eventParams);
 
-			# write access permissions.
-			if (!$guest)
-			{
-				$asset = 'com_jem.event.' . $item->id;
-
-				# Check general edit permission first.
-				if ($user->authorise('core.edit', $asset))
-				{
-					$item->params->set('access-edit', true);
-				}
-
-				# Now check if edit.own is available.
-				elseif (!empty($userId) && $user->authorise('core.edit.own', $asset))
-				{
-					# Check for a valid user and that they are the owner.
-					if ($userId == $item->created_by)
-					{
-						$item->params->set('access-edit', true);
-					}
-				}
-			}
-
 			# adding categories
 			$item->categories = $this->getCategories($item->id);
 
 			# check if the item-categories is empty, if so the user has no access to that event at all.
 			if (empty($item->categories)) {
 				unset ($items[$index]);
+			} else {
+			# write access permissions.
+				$item->params->set('access-edit', $user->can('edit', 'event', $item->id, $item->created_by));
 			}
-		}
+		} // foreach
 
 		if ($items) {
-			$items = JemHelper::getAttendeesNumbers($items);
+			/*$items =*/ JemHelper::getAttendeesNumbers($items);
 
 			if ($calendarMultiday) {
 				$items = self::calendarMultiday($items);
@@ -562,7 +545,7 @@ class JemModelEventslist extends JModelList
 
 	function getCategories($id)
 	{
-		$user 			= JFactory::getUser();
+		$user 			= JemFactory::getUser();
 		$userid			= (int) $user->get('id');
 		$levels 		= $user->getAuthorisedViewLevels();
 		$app 			= JFactory::getApplication();
@@ -697,8 +680,8 @@ class JemModelEventslist extends JModelList
 		return $cats;
 	}
 
-	function calendarMultiday($items) {
-
+	function calendarMultiday($items)
+	{
 		if (empty($items)) {
 			return array();
 		}
@@ -768,6 +751,108 @@ class JemModelEventslist extends JModelList
 		array_multisort($time, SORT_ASC, $title, SORT_ASC, $items);
 
 		return $items;
+	}
+
+
+	/**
+	 * Helper method to auto-populate publishing related model state.
+	 * Can be called in populateState()
+	 */
+	protected function _populatePublishState($task)
+	{
+		$app         = JFactory::getApplication();
+		$jinput      = $app->input;
+		$jemsettings = JemHelper::config();
+		$user        = JemFactory::getUser();
+		$userId      = $user->get('id');
+
+		# publish state
+		$format = $jinput->getCmd('format', '');
+
+		if ($task == 'archive') {
+			$this->setState('filter.published', 2);
+		} elseif (($format == 'raw') || ($format == 'feed')) {
+			$this->setState('filter.published', 1);
+		} else {
+			$show_unpublished = $user->can(array('edit', 'publish'), 'event', false, false, 1);
+			if ($show_unpublished) {
+				// global editor or publisher permission
+				$this->setState('filter.published', array(0, 1));
+			} else {
+				// no global permission but maybe on event level
+				$this->setState('filter.published', 1);
+				$this->setState('filter.unpublished', 0);
+
+				$jemgroups = $user->getJemGroups(array('editevent', 'publishevent'));
+				if (($userId !== 0) && ($jemsettings->eventedit == -1)) {
+					$jemgroups[0] = true; // we need key 0 to get unpublished events not attached to any jem group
+				}
+				// user permitted on that jem groups
+				if (is_array($jemgroups) && count($jemgroups)) {
+					$this->setState('filter.unpublished.events.on_groups', array_keys($jemgroups));
+				}
+				// user permitted on own events
+				if (($userId !== 0) && ($user->authorise('core.edit.own', 'com_jem') || $jemsettings->eventowner)) {
+					$this->setState('filter.unpublished.on_user', $userId);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Helper method to create publishing related where clauses.
+	 * Can be called in getListQuery()
+	 *
+	 * @param  $tbl   table alias to use
+	 *
+	 * @return array  where clauses related to publishing state and user permissons
+	 *                to combine with OR
+	 */
+	protected function _getPublishWhere($tbl = 'a')
+	{
+		$tbl = empty($tbl) ? '' : $this->_db->quoteName($tbl) . '.';
+		$where_pub = array();
+
+		# Filter by published state.
+		$published = $this->getState('filter.published');
+
+		if (is_numeric($published)) {
+			$where_pub[] = '(' . $tbl . 'published = ' . (int)$published . ')';
+		}
+		elseif (is_array($published) && !empty($published)) {
+			JArrayHelper::toInteger($published);
+			$published = implode(',', $published);
+			$where_pub[] = '(' . $tbl . 'published IN (' . $published . '))';
+		}
+
+		# Filter by specific conditions
+		$unpublished = $this->getState('filter.unpublished');
+		if (is_numeric($unpublished)) {
+
+			// Is user member of jem groups allowing to see unpublished events?
+			$unpublished_on_groups = $this->getState('filter.unpublished.events.on_groups');
+			if (is_array($unpublished_on_groups) && !empty($unpublished_on_groups)) {
+				// to allow only events with categories attached to allowed jemgroups use this line:
+				//$where_pub[] = '(' . $tbl . '.published = ' . $unpublished . ' AND c.groupid IN (' . implode(',', $unpublished_on_groups) . '))';
+				// to allow also events with categories not attached to disallowed jemgroups use this crazy block:
+				$where_pub[] = '(' . $tbl . 'published = ' . $unpublished . ' AND '
+				             . $tbl . 'id NOT IN (SELECT rel3.itemid FROM #__jem_categories as c3 '
+				             . '                   INNER JOIN #__jem_cats_event_relations as rel3 '
+				             . '                   WHERE c3.id = rel3.catid AND c3.groupid NOT IN (0,' . implode(',', $unpublished_on_groups) . ')'
+				             . '                   GROUP BY rel3.itemid)'
+				             . ')';
+				// hint: above it's a not not ;-)
+				//       meaning: Show unpublished events not connected to a category which is not one of the allowed categories.
+			}
+
+			// Is user allowed to see own unpublished events?
+			$unpublished_on_user = (int)$this->getState('filter.unpublished.on_user');
+			if ($unpublished_on_user > 0) {
+				$where_pub[] = '(' . $tbl . 'published = ' . $unpublished . ' AND ' . $tbl . 'created_by = ' . $unpublished_on_user . ')';
+			}
+		}
+
+		return $where_pub;
 	}
 }
 ?>

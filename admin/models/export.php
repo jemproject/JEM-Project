@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4.2
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -297,14 +297,9 @@ class JEMModelExport extends JModelList
 	public function getCategories()
 	{
 		// @todo alter function
-		$user = JFactory::getUser();
-		$jemsettings = JEMHelper::config();
-		$userid = (int) $user->get('id');
-		$superuser = JEMUser::superuser();
-		$db = JFactory::getDBO();
 
+		$db    = JFactory::getDBO();
 		$where = ' WHERE c.published = 1';
-
 		$query = 'SELECT c.* FROM #__jem_categories AS c' . $where . ' ORDER BY parent_id, c.lft';
 		$db->setQuery($query);
 
@@ -316,9 +311,8 @@ class JEMModelExport extends JModelList
 		}
 
 		if (!$mitems) {
-			$mitems = array();
 			$children = array();
-
+			$mitems = array();
 			$parentid = 0;
 		} else {
 			$children = array();

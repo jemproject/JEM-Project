@@ -1,13 +1,12 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
-
 
 require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 
@@ -16,7 +15,8 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
  */
 class JemViewDay extends JEMView
 {
-	function __construct($config = array()) {
+	function __construct($config = array())
+	{
 		parent::__construct($config);
 
 		// additional path for common templates + corresponding override path
@@ -34,15 +34,15 @@ class JemViewDay extends JEMView
 		$settings 		= JemHelper::globalattribs();
 		$menu 			= $app->getMenu();
 		$menuitem 		= $menu->getActive();
-		$user			= JFactory::getUser();
 		$document 		= JFactory::getDocument();
 		$params 		= $app->getParams();
-	//	$db 			= JFactory::getDBO();
 		$uri 			= JFactory::getURI();
 		$jinput 		= $app->input;
-		$task 			= $jinput->get('task', '');
+		$task 			= $jinput->getCmd('task', '');
 		$print			= $jinput->getBool('print', false);
 		$pathway 		= $app->getPathWay();
+		$user			= JemFactory::getUser();
+		$itemid 		= $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
@@ -65,22 +65,24 @@ class JemViewDay extends JEMView
 		}
 
 		// get variables
-		$itemid 			= $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
-		$filter_order		= $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_order', 'filter_order', 	'a.dates', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_order_Dir', 'filter_order_Dir',	'', 'word');
-		$filter_type		= $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_type', 'filter_type', '', 'int');
-		$search 			= $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+		$filter_order     = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		$filter_type      = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_type', 'filter_type', '', 'int');
+		$search           = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;
-		$lists['order'] = $filter_order;
+		$lists['order']     = $filter_order;
 
 		// Get data from model
-		$rows 		= $this->get('Items');
-		$day		= $this->get('Day');
+		$rows = $this->get('Items');
+		$day  = $this->get('Day');
 
-		$daydate 	= JemOutput::formatdate($day);
+		$daydate     = JemOutput::formatdate($day);
 		$showdaydate = true; // show by default
+
+		// Are events available?
+		$noevents = (!$rows) ? 1 : 0;
 
 		// Show page heading specified on menu item or TODAY as heading - idea taken from com_content.
 		if ($useMenuItemParams) {
@@ -103,14 +105,8 @@ class JemViewDay extends JEMView
 			$pagetitle = JText::sprintf('JPAGETITLE', $pagetitle, $app->getCfg('sitename'));
 		}
 
-		$this->document->setTitle($pagetitle);
-
-		// Are events available?
-		if (!$rows) {
-			$noevents = 1;
-		} else {
-			$noevents = 0;
-		}
+		// Set Page title
+		$document->setTitle($pagetitle);
 
 		if ($requestVenueId){
 			$print_link = JRoute::_('index.php?option=com_jem&view=day&tmpl=component&print=1&locid='.$requestVenueId.'&id='.$requestDate);
@@ -122,24 +118,19 @@ class JemViewDay extends JEMView
 			$print_link = JRoute::_('index.php?option=com_jem&view=day&tmpl=component&print=1&id='.$requestDate);
 		}
 
-		//Check if the user has access to the form
-		$maintainer = JemUser::ismaintainer('add');
-		$genaccess 	= JemUser::validate_user($jemsettings->evdelrec, $jemsettings->delivereventsyes);
+		// Check if the user has permission to add things
+		$permissions = new stdClass();
+		$permissions->canAddEvent = $user->can('add', 'event');
+		$permissions->canAddVenue = $user->can('add', 'venue');
 
-		if ($maintainer || $genaccess || $user->authorise('core.create','com_jem')) {
-			$dellink = 1;
-		} else {
-			$dellink = 0;
-		}
-
-		//add alternate feed link (w/o specific date)
+		// add alternate feed link (w/o specific date)
 		$link    = 'index.php?option=com_jem&view=day&format=feed';
 		$attribs = array('type' => 'application/rss+xml', 'title' => 'RSS 2.0');
-		$this->document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
+		$document->addHeadLink(JRoute::_($link.'&type=rss'), 'alternate', 'rel', $attribs);
 		$attribs = array('type' => 'application/atom+xml', 'title' => 'Atom 1.0');
-		$this->document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
+		$document->addHeadLink(JRoute::_($link.'&type=atom'), 'alternate', 'rel', $attribs);
 
-		//search filter
+		// search filter
 		$filters = array();
 
 		if ($jemsettings->showtitle == 1) {
@@ -158,9 +149,7 @@ class JemViewDay extends JEMView
 			$filters[] = JHtml::_('select.option', '5', JText::_('COM_JEM_STATE'));
 		}
 		$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
-
-		// search filter
-		$lists['search']= $search;
+		$lists['search'] = $search;
 
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
@@ -170,13 +159,13 @@ class JemViewDay extends JEMView
 		$this->noevents			= $noevents;
 		$this->print_link		= $print_link;
 		$this->params			= $params;
-		$this->dellink			= $dellink;
+		$this->dellink			= $permissions->canAddEvent; // deprecated
 		$this->pagination		= $pagination;
 		$this->action			= $uri->toString();
 		$this->task				= $task;
 		$this->jemsettings		= $jemsettings;
 		$this->settings			= $settings;
-		$this->lists			= $lists;
+		$this->permissions		= $permissions;
 		$this->daydate			= $daydate;
 		$this->showdaydate		= $showdaydate; // if true daydate will be shown as h2 sub heading
 		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);

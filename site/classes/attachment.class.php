@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -29,7 +29,7 @@ class JEMAttachment extends JObject
 	{
 		require_once JPATH_SITE.'/components/com_jem/classes/image.class.php';
 
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		$jemsettings = JEMHelper::config();
 
 		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$object;
@@ -45,10 +45,8 @@ class JEMAttachment extends JObject
 
 		$maxsizeinput = $jemsettings->attachments_maxsize*1024; //size in kb
 
-
-
-		foreach ($post_files['name'] as $k => $file) {
-
+		foreach ($post_files['name'] as $k => $file)
+		{
 			if (empty($file)) {
 				continue;
 			}
@@ -74,11 +72,9 @@ class JEMAttachment extends JObject
 				}
 			}
 
-
 			// TODO: Probably move this to a helper class
 
 			$sanitizedFilename = JEMImage::sanitize($path, $file);
-
 
 			// Make sure that the full file path is safe.
 			$filepath = JPath::clean( $path.'/'.$sanitizedFilename);
@@ -116,13 +112,16 @@ class JEMAttachment extends JObject
 		if (!is_array($attach) || !isset($attach['id']) || !(intval($attach['id']))) {
 			return false;
 		}
+
 		$table = JTable::getInstance('jem_attachments', '');
 		$table->load($attach['id']);
 		$table->bind($attach);
+
 		if (!($table->check() && $table->store())) {
 			JError::raiseWarning(0, JText::_('COM_JEM_ATTACHMENT_ERROR_UPDATING_RECORD').': '.$table->getError());
 			return false;
 		}
+
 		return true;
 	}
 
@@ -135,7 +134,7 @@ class JEMAttachment extends JObject
 	{
 		$jemsettings = JEMHelper::config();
 
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
@@ -144,6 +143,7 @@ class JEMAttachment extends JObject
 		if (!file_exists($path)) {
 			return array();
 		}
+
 		// first list files in the folder
 		$files = JFolder::files($path, null, false, false);
 
@@ -153,6 +153,7 @@ class JEMAttachment extends JObject
 		foreach ($files as $f) {
 			$fnames[] = $db->Quote($f);
 		}
+
 		if (!count($fnames)) {
 			return array();
 		}
@@ -179,7 +180,7 @@ class JEMAttachment extends JObject
 	{
 		$jemsettings = JEMHelper::config();
 
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 

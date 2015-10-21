@@ -7,15 +7,14 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
-
 defined('_JEXEC') or die;
+
 ?>
 
-<ul class="jemmod<?php echo $params->get('moduleclass_sfx'); ?>">
+
 <?php if (count($items)): ?>
-
-
-<?php foreach ($list as $item) : ?>
+<ul class="jemmod<?php echo $params->get('moduleclass_sfx'); ?>">
+	<?php foreach ($list as $item) : ?>
 	<li class="jemmod<?php echo $params->get('moduleclass_sfx'); ?>">
 		<?php if ($params->get('linkdet') == 1) : ?>
 		<a href="<?php echo $item->link; ?>" class="jemmod<?php echo $params->get('moduleclass_sfx'); ?>">
@@ -25,7 +24,6 @@ defined('_JEXEC') or die;
 			echo $item->dateinfo;
 		endif;
 		?>
-
 		<br />
 
 		<?php if ($params->get('showtitloc') == 0 && $params->get('linkloc') == 1) : ?>
@@ -42,6 +40,6 @@ defined('_JEXEC') or die;
 			endif;
 		?>
 	</li>
-<?php endforeach; ?>
+	<?php endforeach; ?>
 </ul>
 <?php endif; ?>

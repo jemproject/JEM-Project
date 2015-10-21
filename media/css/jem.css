@@ -1,5 +1,4 @@
 /**
- * @version 2.1.2
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -93,6 +92,11 @@ div#jem .buttons {
 
 div#jem .buttons a {
 	border:1px solid #808080;
+}
+
+div#jem .buttons span.gap {
+	float: left;
+	margin: 0 0 0 7px;
 }
 
 /* Edit-event view */
@@ -966,9 +970,18 @@ div#jem dl.tabs dt h3 a {
 	background:none;
 }
 
-td.center,th.center,.center {
+div#jem table td.center,
+div#jem table th.center,
+div#jem .center {
 	text-align:center;
 	float:none;
+}
+
+div#jem table td.center input[type="checkbox"],
+div#jem table th.center input[type="checkbox"] {
+	margin: 0 3px;
+	padding: 0;
+	vertical-align: baseline;
 }
 
 /* -- JGRID STYLES ----------------------------- */
@@ -991,6 +1004,7 @@ a.jgrid:hover {
 }
 
 #jem button[id$="_img"] i.icon-calendar,
+#jem button[id$="_img"] span.icon-calendar,
 #jem .btn-micro i[class^="icon-"],
 #jem .btn-micro i[class*=" icon-"],
 .jgrid span.state {
@@ -1004,7 +1018,8 @@ a.jgrid:hover {
 	content:"";
 }
 
-#jem button[id$="_img"] i.icon-calendar {
+#jem button[id$="_img"] i.icon-calendar,
+#jem button[id$="_img"] span.icon-calendar {
 	background-image:url(../images/el.png);
 }
 
@@ -1080,6 +1095,22 @@ a.jgrid:hover {
 
 .jgrid span.protected {
 	background-image:url(../images/admin/icon-16-protected.png);
+}
+
+#jem .btn-micro span.icon-publish:before {
+	content: url(../images/tick.png);
+}
+
+#jem .btn-micro span.icon-unpublish:before {
+	content: url(../images/publish_x.png);
+}
+
+#jem .btn-micro span.icon-archive:before {
+	content: url(../images/menu/icon-16-archive.png);
+}
+
+#jem .btn-micro span.icon-trash:before {
+	content: url(../images/icon-16-trash.png);
 }
 
 

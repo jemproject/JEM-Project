@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -13,10 +13,8 @@ JHtml::_('behavior.modal');
 <div id="jem" class="jem_category<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
-		echo JemOutput::submitbutton($this->dellink, $this->params);
-		echo JemOutput::archivebutton($this->params, $this->task, $this->category->slug);
-		echo JemOutput::mailbutton($this->category->slug, 'category', $this->params);
-		echo JemOutput::printbutton($this->print_link, $this->params);
+		$btn_params = array('id' => $this->category->slug, 'slug' => $this->category->slug, 'task' => $this->task, 'print_link' => $this->print_link);
+		echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
 		?>
 	</div>
 

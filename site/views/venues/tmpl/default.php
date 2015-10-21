@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -8,15 +8,12 @@
  */
 defined('_JEXEC') or die;
 
-
 ?>
 <div id="jem" class="jem_venues<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
-		echo JemOutput::addvenuebutton($this->addvenuelink, $this->params, $this->jemsettings);
-		/*echo JemOutput::archivebutton($this->params, $this->task);*/
-		echo JemOutput::submitbutton($this->addeventlink, $this->params);
-		echo JemOutput::printbutton($this->print_link, $this->params);
+		$btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
+		echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
 		?>
 	</div>
 
@@ -31,27 +28,27 @@ defined('_JEXEC') or die;
 	<!--Venue-->
 
 	<?php foreach($this->rows as $row) : ?>
-	<div itemscope itemtype="http://schema.org/Place">
-		<h2 class="jem">
-			<a href="<?php echo $row->linkEventsPublished; ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->venue); ?></span></a>
-		</h2>
+		<div itemscope itemtype="http://schema.org/Place">
+			<h2 class="jem">
+				<a href="<?php echo $row->linkEventsPublished; ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->venue); ?></span></a>
+			</h2>
 
-		<!-- FLYER -->
-		<?php echo JemOutput::flyer( $row, $row->limage, 'venue' ); ?>
+			<!-- FLYER -->
+			<?php echo JemOutput::flyer( $row, $row->limage, 'venue' ); ?>
 
-		<!--  -->
-		<dl class="location">
-			<?php if (($this->settings->get('global_show_detlinkvenue',1)) && (!empty($row->url))) : ?>
-			<dt class="venue_website">
-				<?php echo JText::_('COM_JEM_WEBSITE').':'; ?>
-			</dt>
-			<dd class="venue_website">
-				<a href="<?php echo $row->url; ?>" target="_blank"> <?php echo $row->urlclean; ?></a>
-			</dd>
-			<?php endif; ?>
-		</dl>
+			<!--  -->
+			<dl class="location">
+				<?php if (($this->settings->get('global_show_detlinkvenue',1)) && (!empty($row->url))) : ?>
+				<dt class="venue_website">
+					<?php echo JText::_('COM_JEM_WEBSITE').':'; ?>
+				</dt>
+				<dd class="venue_website">
+					<a href="<?php echo $row->url; ?>" target="_blank"> <?php echo $row->urlclean; ?></a>
+				</dd>
+				<?php endif; ?>
+			</dl>
 
-		<?php if ( $this->settings->get('global_show_detailsadress',1)) : ?>
+			<?php if ( $this->settings->get('global_show_detailsadress',1)) : ?>
 			<dl class="location floattext" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
 				<?php if ($row->street) : ?>
 				<dt class="venue_street">
@@ -99,11 +96,37 @@ defined('_JEXEC') or die;
 				</dd>
 				<?php endif; ?>
 
+				<!-- PUBLISHING STATE -->
+				<?php if (isset($row->published) && (!empty($this->show_status) || $row->published == 0)) : ?>
+				<dt class="published"><?php echo JText::_('JSTATUS'); ?>:</dt>
+				<dd class="published">
+					<?php switch ($row->published) {
+					case  1: echo JText::_('JPUBLISHED');   break;
+					case  0: echo JText::_('JUNPUBLISHED'); break;
+					case  2: echo JText::_('JARCHIVED');    break;
+					case -2: echo JText::_('JTRASHED');     break;
+					} ?>
+				</dd>
+				<?php endif; ?>
+
 				<?php if ($this->settings->get('global_show_mapserv') == 1) : ?>
 					<?php echo JemOutput::mapicon($row,null,$this->settings); ?>
 				<?php endif; ?>
 			</dl>
-		<?php endif; ?>
+			<?php elseif (isset($row->published) && (!empty($this->show_status) || $row->published == 0)) : ?>
+			<!-- PUBLISHING STATE -->
+			<dl class="floattext">
+				<dt class="published"><?php echo JText::_('JSTATUS'); ?>:</dt>
+				<dd class="published">
+					<?php switch ($row->published) {
+					case  1: echo JText::_('JPUBLISHED');   break;
+					case  0: echo JText::_('JUNPUBLISHED'); break;
+					case  2: echo JText::_('JARCHIVED');    break;
+					case -2: echo JText::_('JTRASHED');     break;
+					} ?>
+				</dd>
+			</dl>
+			<?php endif; ?>
 
 			<dl class="floattext">
 				<dt class="venue_eventspublished">
@@ -113,6 +136,7 @@ defined('_JEXEC') or die;
 					<a href="<?php echo $row->linkEventsPublished; ?>"><?php echo $row->EventsPublished; ?></a>
 				</dd>
 			</dl>
+
 			<dl class="floattext">
 				<dt class="venue_archivedevents">
 					<?php echo JText::_('COM_JEM_VENUES_EVENTS_ARCHIVED').':'; ?>
@@ -122,35 +146,35 @@ defined('_JEXEC') or die;
 				</dd>
 			</dl>
 
-		<?php if ( $this->settings->get('global_show_detailsadress',1)) : ?>
-			<?php if ($this->settings->get('global_show_mapserv') == 2) : ?>
-				<?php echo JemOutput::mapicon($row,null,$this->settings); ?>
+			<?php if ( $this->settings->get('global_show_detailsadress',1)) : ?>
+				<?php if ($this->settings->get('global_show_mapserv') == 2) : ?>
+					<?php echo JemOutput::mapicon($row,null,$this->settings); ?>
+				<?php endif; ?>
 			<?php endif; ?>
-		<?php endif; ?>
 
-		<?php if ($this->settings->get('global_show_mapserv')== 3) : ?>
-			<input type="hidden" id="latitude" value="<?php echo $row->latitude;?>">
-			<input type="hidden" id="longitude" value="<?php echo $row->longitude;?>">
+			<?php if ($this->settings->get('global_show_mapserv')== 3) : ?>
+				<input type="hidden" id="latitude" value="<?php echo $row->latitude;?>">
+				<input type="hidden" id="longitude" value="<?php echo $row->longitude;?>">
 
-			<input type="hidden" id="venue" value="<?php echo $row->venue;?>">
-			<input type="hidden" id="street" value="<?php echo $row->street;?>">
-			<input type="hidden" id="city" value="<?php echo $row->city;?>">
-			<input type="hidden" id="state" value="<?php echo $row->state;?>">
-			<input type="hidden" id="postalCode" value="<?php echo $row->postalCode;?>">
-			<?php echo JemOutput::mapicon($row,'venues',$this->settings); ?>
-		<?php endif; ?>
+				<input type="hidden" id="venue" value="<?php echo $row->venue;?>">
+				<input type="hidden" id="street" value="<?php echo $row->street;?>">
+				<input type="hidden" id="city" value="<?php echo $row->city;?>">
+				<input type="hidden" id="state" value="<?php echo $row->state;?>">
+				<input type="hidden" id="postalCode" value="<?php echo $row->postalCode;?>">
+				<?php echo JemOutput::mapicon($row,'venues',$this->settings); ?>
+			<?php endif; ?>
 
-		<?php if ($this->settings->get('global_show_locdescription',1) && $row->locdescription != '' && $row->locdescription != '<br />') : ?>
+			<?php if ($this->settings->get('global_show_locdescription',1) && $row->locdescription != '' && $row->locdescription != '<br />') : ?>
 			<h2 class="description">
 				<?php echo JText::_('COM_JEM_VENUE_DESCRIPTION').':'; ?>
 			</h2>
 			<div class="description" itemprop="description">
 				<?php echo $row->locdescription; ?>
 			</div>
-		<?php else : ?>
+			<?php else : ?>
 			<div class="clr"> </div>
-		<?php endif; ?>
-	</div>
+			<?php endif; ?>
+		</div>
 	<?php endforeach; ?>
 
 	<!--pagination-->

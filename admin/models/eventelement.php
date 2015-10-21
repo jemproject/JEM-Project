@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.1
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -67,32 +67,18 @@ class JemModelEventelement extends JModelLegacy
 		{
 			$query = $this->_buildQuery();
 			$this->_data = $this->_getList($query, $this->getState('limitstart'), $this->getState('limit'));
-			if ($this->_data)
-			{
-				$count = count($this->_data);
-				for($i = 0; $i < $count; $i++)
-				{
-					$item = $this->_data[$i];
+
+			if (is_array($this->_data)) {
+				foreach ($this->_data as $item) {
 					$item->categories = $this->getCategories($item->id);
+
+					//remove events without categories (users have no access to them)
+					if (empty($item->categories)) {
+						unset($this->_data[$i]);
+					}
 				}
 			}
 		}
-
-
-		if($this->_data)
-		{
-			$count = count($this->_data);
-			for($i = 0; $i < $count; $i++){
-				$item = $this->_data[$i];
-				$item->categories = $this->getCategories($item->id);
-
-				//remove events without categories (users have no access to them)
-				if (empty($item->categories)) {
-					unset($this->_data[$i]);
-				}
-			}
-		}
-
 
 		return $this->_data;
 	}
@@ -188,7 +174,7 @@ class JemModelEventelement extends JModelLegacy
 	protected function _buildContentWhere()
 	{
 		$app    = JFactory::getApplication();
-		$user   = JFactory::getUser();
+		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 		$itemid = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -25,7 +25,8 @@ class JEMControllerImagehandler extends JControllerLegacy
 	 *
 	 *
 	 */
-	public function __construct() {
+	public function __construct()
+	{
 		parent::__construct();
 
 		// Register Extra task
@@ -41,8 +42,9 @@ class JEMControllerImagehandler extends JControllerLegacy
 	 * @return void
 	 *
 	 */
-	function uploadimage() {
-		global $app;
+	function uploadimage()
+	{
+		$app = JFactory::getApplication();
 
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid token');
@@ -101,8 +103,9 @@ class JEMControllerImagehandler extends JControllerLegacy
 	 * @return void
 	 *
 	 */
-	function delete() {
-		global $app;
+	function delete()
+	{
+		$app = JFactory::getApplication();
 
 		// Set FTP credentials, if given
 		jimport('joomla.client.helper');

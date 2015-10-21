@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -94,10 +94,10 @@ class JEMModelEditevent extends JEMModelEvent
 		$value->params->merge($registry);
 
 		// Compute selected asset permissions.
-		$user = JFactory::getUser();
-		$userId = $user->get('id');
+		$user = JemFactory::getUser();
+		//$userId = $user->get('id');
 		//$asset = 'com_jem.event.' . $value->id;
-		$asset = 'com_jem';
+		//$asset = 'com_jem';
 
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
@@ -117,35 +117,18 @@ class JEMModelEditevent extends JEMModelEvent
 		$files = JEMAttachment::getAttachments('event' . $itemId);
 		$value->attachments = $files;
 
-		// Check general edit permission first.
-		if ($user->authorise('core.edit', $asset)) {
-			$value->params->set('access-edit', true);
-		}
-		// Now check if edit.own is available.
-		elseif (!empty($userId) && $user->authorise('core.edit.own', $asset)) {
-			// Check for a valid user and that they are the owner.
-			if ($userId == $value->created_by) {
-				$value->params->set('access-edit', true);
-			}
-		}
+		// Check edit permission.
+		$value->params->set('access-edit', $user->can('edit', 'event', $value->id, $value->created_by));
 
 		// Check edit state permission.
-		if ($itemId) {
-			// Existing item
-			$value->params->set('access-change', $user->authorise('core.edit.state', $asset));
-		}
-		else {
+		if (!$itemId && ($catId = (int) $this->getState('event.catid'))) {
 			// New item.
-			$catId = (int) $this->getState('event.catid');
-
-			if ($catId) {
-				$value->params->set('access-change', $user->authorise('core.edit.state', 'com_jem.category.' . $catId));
-				$value->catid = $catId;
-			}
-			else {
-				$value->params->set('access-change', $user->authorise('core.edit.state', 'com_jem'));
-			}
+			$cats = array($catId);
+		} else {
+			// Existing item (or no category)
+			$cats = false;
 		}
+		$value->params->set('access-change', $user->can('publish', 'event', $value->id, $value->created_by, $cats));
 
 		$value->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
@@ -236,7 +219,7 @@ class JEMModelEditevent extends JEMModelEvent
 		}
 
 		if ($params->get('global_show_ownedvenuesonly')) {
-			$user = JFactory::getUser();
+			$user = JemFactory::getUser();
 			$userid = $user->get('id');
 			$where[] = ' created_by = ' . (int) $userid;
 		}

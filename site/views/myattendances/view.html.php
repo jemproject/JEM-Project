@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -21,7 +21,7 @@ class JemViewMyattendances extends JViewLegacy
 	{
 		$app = JFactory::getApplication();
 
-		//initialize variables
+		// initialize variables
 		$document 		= JFactory::getDocument();
 		$jemsettings 	= JemHelper::config();
 		$settings 		= JemHelper::globalattribs();
@@ -29,11 +29,12 @@ class JemViewMyattendances extends JViewLegacy
 		$menuitem		= $menu->getActive();
 		$params 		= $app->getParams();
 		$uri 			= JFactory::getURI();
-		$user			= JFactory::getUser();
+		$user			= JemFactory::getUser();
 		$pathway 		= $app->getPathWay();
-	//	$db  			= JFactory::getDBO();
+		$print			= $app->input->getBool('print', false);
+		$task			= $app->input->getCmd('task', '');
 
-		//redirect if not logged in
+		// redirect if not logged in
 		if (!$user->get('id')) {
 			$app->enqueueMessage(JText::_('COM_JEM_NEED_LOGGED_IN'), 'error');
 			return false;
@@ -48,15 +49,16 @@ class JemViewMyattendances extends JViewLegacy
 		JemHelper::loadCustomCss();
 		JemHelper::loadCustomTag();
 
-		$attending 	= $this->get('Attending');
-		$attending_pagination 	= $this->get('AttendingPagination');
-
-		//are attendences available?
-		if (!$attending) {
-			$noattending = 1;
-		} else {
-			$noattending = 0;
+		if ($print) {
+			JemHelper::loadCss('print');
+			$document->setMetaData('robots', 'noindex, nofollow');
 		}
+
+		$attending = $this->get('Attending');
+		$attending_pagination = $this->get('AttendingPagination');
+
+		// are attendences available?
+		$noattending = (!$attending) ? 1 : 0;
 
 		// get variables
 		$filter_order		= $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', 	'a.dates', 'cmd');
@@ -65,9 +67,7 @@ class JemViewMyattendances extends JViewLegacy
 		$filter 			= $app->getUserStateFromRequest('com_jem.myattendances.filter', 'filter', '', 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.myattendances.filter_search', 'filter_search', '', 'string');
 
-		$task 				= $app->input->get('task', '');
-
-		//search filter
+		// search filter
 		$filters = array();
 
 		if ($jemsettings->showtitle == 1) {
@@ -94,12 +94,12 @@ class JemViewMyattendances extends JViewLegacy
 		$lists['order_Dir'] = $filter_order_Dir;
 		$lists['order'] = $filter_order;
 
-		//pathway
+		// pathway
 		if ($menuitem) {
 			$pathway->setItemName(1, $menuitem->title);
 		}
 
-		//Set Page title
+		// Set Page title
 		$pagetitle = JText::_('COM_JEM_MY_ATTENDANCES');
 		$pageheading = $pagetitle;
 
@@ -110,6 +110,16 @@ class JemViewMyattendances extends JViewLegacy
 			$pagetitle = $params->get('page_title', JText::_('COM_JEM_MY_ATTENDANCES'));
 			$pageheading = $params->get('page_heading', $pagetitle);
 			$pageclass_sfx = $params->get('pageclass_sfx');
+		}
+
+		if ($task == 'archive') {
+			$pathway->addItem(JText::_('COM_JEM_ARCHIVE'), JRoute::_(JemHelperRoute::getMyAttendancesRoute().'&task=archive'));
+			$print_link = JRoute::_(JemHelperRoute::getMyAttendancesRoute().'&task=archive&print=1&tmpl=component');
+			$pagetitle   .= ' - '.JText::_('COM_JEM_ARCHIVE');
+			$pageheading .= ' - '.JText::_('COM_JEM_ARCHIVE');
+			$params->set('page_heading', $pageheading);
+		} else {
+			$print_link = JRoute::_(JemHelperRoute::getMyAttendancesRoute().'&print=1&tmpl=component');
 		}
 
 		$params->set('page_heading', $pageheading);
@@ -125,6 +135,9 @@ class JemViewMyattendances extends JViewLegacy
 		$document->setTitle($pagetitle);
 		$document->setMetaData('title', $pagetitle);
 
+		// Don't add things from this view, no good starting point
+		$permissions = new stdClass();
+
 		$this->action					= $uri->toString();
 		$this->attending				= $attending;
 		$this->task						= $task;
@@ -132,7 +145,9 @@ class JemViewMyattendances extends JViewLegacy
 		$this->attending_pagination 	= $attending_pagination;
 		$this->jemsettings				= $jemsettings;
 		$this->settings					= $settings;
+		$this->permissions				= $permissions;
 		$this->pagetitle				= $pagetitle;
+		$this->print_link				= $print_link;
 		$this->lists 					= $lists;
 		$this->noattending				= $noattending;
 		$this->pageclass_sfx			= htmlspecialchars($pageclass_sfx);

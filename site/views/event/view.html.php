@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.5
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -21,7 +21,8 @@ class JemViewEvent extends JEMView
 	protected $state;
 	protected $user;
 
-	function __construct($config = array()) {
+	function __construct($config = array())
+	{
 		parent::__construct($config);
 
 		// additional path for common templates + corresponding override path
@@ -36,7 +37,7 @@ class JemViewEvent extends JEMView
 		$jemsettings		= JemHelper::config();
 		$settings			= JemHelper::globalattribs();
 		$app				= JFactory::getApplication();
-		$user				= JFactory::getUser();
+		$user				= JemFactory::getUser();
 		$userId				= $user->get('id');
 		$dispatcher			= JDispatcher::getInstance();
 		$document 			= JFactory::getDocument();
@@ -53,7 +54,7 @@ class JemViewEvent extends JEMView
 		$this->jemsettings	= $jemsettings;
 		$this->settings		= $settings;
 
-		$categories			= $this->get('Categories');
+		$categories			= isset($this->item->categories) ? $this->item->categories : $this->get('Categories');
 		$this->categories	= $categories;
 
 		$this->registers	= $model->getRegisters($this->state->get('event.id'));
@@ -128,7 +129,7 @@ class JemViewEvent extends JEMView
 			return;
 		}
 
-		if ($item->params->get('show_intro', '1')=='1') {
+		if ($item->params->get('show_intro', '1') == '1') {
 			$item->text = $item->introtext.' '.$item->fulltext;
 		}
 		elseif ($item->fulltext) {
@@ -157,48 +158,48 @@ class JemViewEvent extends JEMView
 			$model->hit();
 		}
 
-		//Escape strings for HTML output
+		// Escape strings for HTML output
 		$this->pageclass_sfx = htmlspecialchars($this->item->params->get('pageclass_sfx'));
 
 		$this->print_link = JRoute::_(JemHelperRoute::getRoute($item->slug).'&print=1&tmpl=component');
 
-		//Get images
+		// Get images
 		$this->dimage = JemImage::flyercreator($item->datimage, 'event');
 		$this->limage = JemImage::flyercreator($item->locimage, 'venue');
 
-		// Check if user can edit
-		$maintainer5 = JemUser::ismaintainer('edit',$item->did);
-		$genaccess5  = JemUser::editaccess($jemsettings->eventowner, $item->created_by, $jemsettings->eventeditrec, $jemsettings->eventedit);
+		// Check if the user has permission to add things
+		$permissions = new stdClass();
+		$permissions->canAddEvent = $user->can('add', 'event');
+		$permissions->canAddVenue = $user->can('add', 'venue');
 
-		if ($maintainer5 || $genaccess5 || $user->authorise('core.edit','com_jem')) {
-			$this->allowedtoeditevent = 1;
-		} else {
-			$this->allowedtoeditevent = 0;
-		}
+		// Check if user can edit the event
+		$permissions->canEditEvent = $user->can('edit', 'event', $item->id, $item->created_by);
+		$permissions->canPublishEvent = $user->can('publish', 'event', $item->id, $item->created_by);
 
-		//Check if the user has access to the edit-venueform
-		$maintainer3 = JemUser::venuegroups('edit');
-		$genaccess3  = JemUser::editaccess($jemsettings->venueowner, $item->venueowner, $jemsettings->venueeditrec, $jemsettings->venueedit);
-		if ($maintainer3 || $genaccess3 ) {
-			$this->allowedtoeditvenue = 1;
-		} else {
-			$this->allowedtoeditvenue = 0;
-		}
+		// Check if user can edit the venue
+		$permissions->canEditVenue = $user->can('edit', 'venue', $item->locid, $item->venueowner);
+		$permissions->canPublishVenue = $user->can('publish', 'venue', $item->locid, $item->venueowner);
 
-		//Timecheck for registration
+		$this->permissions = $permissions;
+		$this->showeventstate = $permissions->canEditEvent || $permissions->canPublishEvent;
+		$this->showvenuestate = $permissions->canEditVenue || $permissions->canPublishVenue;
+
+		// Timecheck for registration
 		$now = strtotime(date("Y-m-d"));
-		$date = strtotime($item->dates);
-		$timecheck = $now - $date;
+		$date = empty($item->dates) ? $now : strtotime($item->dates);
+		$enddate = empty($item->enddates) ? $date : strtotime($item->enddates);
+		$timecheck = $now - $date; // on open date $timecheck is 0
 
-		//let's build the registration handling
-		$formhandler = 0;
+		// let's build the registration handling
+		$formhandler = 0; // too late to unregister
 
-		//is the user allready registered at the event
-		if ($isregistered) {
-			$formhandler = 3;
-		} else if ($timecheck > 0 && !is_null($item->dates)) { //check if it is too late to register and overwrite $formhandler
+		if ($isregistered) { // is the user allready registered at the event
+			if ($now <= $enddate) { // allows unregister on open date
+				$formhandler = 3;
+			}
+		} elseif ($timecheck > 0) { // check if it is too late to register and overwrite $formhandler
 			$formhandler = 1;
-		} else if (!$user->get('id')) { //is the user registered at joomla and overwrite $formhandler if not
+		} elseif (!$userId) { // user doesn't have an ID (mostly guest)
 			$formhandler = 2;
 		} else {
 			$formhandler = 4;
@@ -213,40 +214,36 @@ class JemViewEvent extends JEMView
 				}}";
 			$document->addScriptDeclaration($js);
 		}
-		$this->formhandler			= $formhandler;
+
+		$this->formhandler = $formhandler;
 
 		// generate Metatags
-		$meta_keywords_content = "";
+		$meta_keywords = array();
 		if (!empty($this->item->meta_keywords)) {
 			$keywords = explode(",", $this->item->meta_keywords);
-			foreach($keywords as $keyword) {
-				if ($meta_keywords_content != "") {
-					$meta_keywords_content .= ", ";
-				}
-				if (preg_match("/[\/[\/]/",$keyword)) {
+			foreach ($keywords as $keyword) {
+				if (preg_match("/[\/[\/]/", $keyword)) {
 					$keyword = trim(str_replace("[", "", str_replace("]", "", $keyword)));
 					$buffer = $this->keyword_switcher($keyword, $this->item, $categories, $jemsettings->formattime, $jemsettings->formatdate);
-					if ($buffer != "") {
-						$meta_keywords_content .= $buffer;
-					} else {
-						$meta_keywords_content = substr($meta_keywords_content, 0, strlen($meta_keywords_content) - 2);	// remove the comma and the white space
+					if (!empty($buffer)) {
+						$meta_keywords[] = $buffer;
 					}
 				} else {
-					$meta_keywords_content .= $keyword;
+					$meta_keywords[] = $keyword;
 				}
 			}
 
-			$document->setMetadata('keywords', $meta_keywords_content);
+			$document->setMetadata('keywords', implode(', ', $meta_keywords));
 		}
 
 		if (!empty($this->item->meta_description)) {
-			$description = explode("[",$this->item->meta_description);
+			$description = explode("[", $this->item->meta_description);
 			$description_content = "";
-			foreach($description as $desc) {
-				$keyword = substr($desc, 0, strpos($desc,"]",0));
+			foreach ($description as $desc) {
+				$keyword = substr($desc, 0, strpos($desc, "]", 0));
 				if ($keyword != "") {
 					$description_content .= $this->keyword_switcher($keyword, $this->item, $categories, $jemsettings->formattime, $jemsettings->formatdate);
-					$description_content .= substr($desc, strpos($desc,"]",0)+1);
+					$description_content .= substr($desc, strpos($desc, "]", 0) + 1);
 				} else {
 					$description_content .= $desc;
 				}
@@ -262,19 +259,19 @@ class JemViewEvent extends JEMView
 		if ($this->print) {
 			$item->pluginevent->onEventEnd = false;
 		} else {
-			JPluginHelper::importPlugin('jem','comments');
-			$results = $dispatcher->trigger('onEventEnd', array ($item->did, $this->escape($item->title)));
+			JPluginHelper::importPlugin('jem', 'comments');
+			$results = $dispatcher->trigger('onEventEnd', array($item->did, $this->escape($item->title)));
 			$item->pluginevent->onEventEnd = trim(implode("\n", $results));
 		}
 
-		//create flag
+		// create flag
 		if ($item->country) {
 			$item->countryimg = JemHelperCountries::getCountryFlag($item->country);
 		}
 
-		$this->isregistered			= $isregistered;
-		$this->dispatcher			= $dispatcher;
-		$this->pageclass_sfx 		= htmlspecialchars($item->params->get('pageclass_sfx'));
+		$this->isregistered  = $isregistered;
+		$this->dispatcher    = $dispatcher;
+		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));
 
 		$this->_prepareDocument();
 
@@ -284,46 +281,46 @@ class JemViewEvent extends JEMView
 	/**
 	 * structures the keywords
 	 */
-	function keyword_switcher($keyword, $row, $categories, $formattime, $formatdate) {
-		switch ($keyword) {
-			case "categories":
-				$i = 0;
-				$content = '';
-				$n = count($categories);
-				foreach ($categories as $category) {
-					$content .= $this->escape($category->catname);
-					$i++;
-					if ($i != $n) {
-						$content .= ', ';
-					}
-				}
-				break;
-			case "a_name":
-				$content = $row->venue;
-				break;
-			case "times":
-			case "endtimes":
-				$content = '';
-				if ($row->$keyword) {
-					$content = JemOutput::formattime($row->$keyword);
-				}
-				break;
-			case "dates":
-				$content = JemOutput::formatdate($row->dates);
-				break;
-			case "enddates":
-				$content = JemOutput::formatdate($row->enddates);
-				break;
-			case "title":
-				$content = $row->title;
-				break;
-			default:
-				$content = "";
-				if(isset($row->$keyword)) {
-					$content = $row->$keyword;
-				}
-				break;
+	function keyword_switcher($keyword, $row, $categories, $formattime, $formatdate)
+	{
+		$content = '';
+
+		switch ($keyword)
+		{
+		case 'categories':
+			$catnames = array();
+			foreach ($categories as $category) {
+				$catnames[] = $this->escape($category->catname);
+			}
+			$content = implode(', ', array_filter($catnames));
+			break;
+
+		case 'a_name':
+			$content = $row->venue;
+			break;
+
+		case 'times':
+		case 'endtimes':
+			if (isset($row->$keyword)) {
+				$content = JemOutput::formattime($row->$keyword);
+			}
+			break;
+
+		case 'dates':
+		case 'enddates':
+			if (isset($row->$keyword)) {
+				$content = JemOutput::formatdate($row->$keyword);
+			}
+			break;
+
+		case 'title':
+		default:
+			if (isset($row->$keyword)) {
+				$content = $row->$keyword;
+			}
+			break;
 		}
+
 		return $content;
 	}
 

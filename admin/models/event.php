@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4.2
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -24,14 +24,16 @@ class JEMModelEvent extends JemModelAdmin
 	 */
 	protected function canDelete($record)
 	{
-		if (!empty($record->id)) {
-			if ($record->published != -2){
-				return ;
-			}
+		$result = false;
 
-			$user = JFactory::getUser();
+		if (!empty($record->id) && ($record->published == -2)) {
+			$user = JemFactory::getUser();
 
-			if (!empty($record->catid)){
+			$result = $user->can('delete', 'event', $record->id, $record->created_by, !empty($record->catid) ? $record->catid : false);
+
+			// Todo: Not really a good place. Nobody knows if the event will be really deleted.
+			/* --> Moved to JemTableEvent::delete()
+			if (!empty($result)) {
 				$db = JFactory::getDbo();
 
 				$query = $db->getQuery(true);
@@ -40,25 +42,15 @@ class JEMModelEvent extends JemModelAdmin
 
 				$db->setQuery($query);
 				$db->execute();
-
-				return $user->authorise('core.delete', 'com_jem.category.'.(int) $record->catid);
-			} else {
-				$db = JFactory::getDbo();
-
-				$query = $db->getQuery(true);
-				$query->delete($db->quoteName('#__jem_cats_event_relations'));
-				$query->where('itemid = '.$db->quote($record->id));
-
-				$db->setQuery($query);
-				$db->execute();
-
-				return $user->authorise('core.delete', 'com_jem');
 			}
+			*/
 		}
+
+		return $result;
 	}
 
 	/**
-	 * Method to test whether a record can be deleted.
+	 * Method to test whether a record can be published/unpublished.
 	 *
 	 * @param	object	A record object.
 	 * @return	boolean	True if allowed to change the state of the record. Defaults to the permission set in the component.
@@ -66,13 +58,13 @@ class JEMModelEvent extends JemModelAdmin
 	 */
 	protected function canEditState($record)
 	{
-		$user = JFactory::getUser();
+		$user = JemFactory::getUser();
 
-		if (!empty($record->catid)){
-			return $user->authorise('core.edit.state', 'com_jem.category.'.(int) $record->catid);
-		} else {
-			return $user->authorise('core.edit.state', 'com_jem');
-		}
+		$id    = isset($record->id) ? $record->id : false; // isset ensures 0 !== false
+		$owner = !empty($record->created_by) ? $record->created_by : false;
+		$cats  = !empty($record->catid) ? array($record->catid) : false;
+
+		return $user->can('publish', 'event', $id, $owner, $cats);
 	}
 
 	/**
@@ -145,30 +137,30 @@ class JEMModelEvent extends JemModelAdmin
 
 			$files = JEMAttachment::getAttachments('event'.$item->id);
 			$item->attachments = $files;
-		}
 
-		if ($item->id){
-			// Store current recurrence values
-			$item->recurr_bak = new stdClass;
-			foreach (get_object_vars($item) as $k => $v) {
-				if (strncmp('recurrence_', $k, 11) === 0) {
-					$item->recurr_bak->$k = $v;
+			if ($item->id){
+				// Store current recurrence values
+				$item->recurr_bak = new stdClass;
+				foreach (get_object_vars($item) as $k => $v) {
+					if (strncmp('recurrence_', $k, 11) === 0) {
+						$item->recurr_bak->$k = $v;
+					}
 				}
+
+				$item->recurrence_type 			= '';
+				$item->recurrence_number 		= '';
+				$item->recurrence_byday 		= '';
+				$item->recurrence_counter 		= '';
+				$item->recurrence_first_id 		= '';
+				$item->recurrence_limit 		= '';
+				$item->recurrence_limit_date	= '';
 			}
 
-			$item->recurrence_type 			= '';
-			$item->recurrence_number 		= '';
-			$item->recurrence_byday 		= '';
-			$item->recurrence_counter 		= '';
-			$item->recurrence_first_id 		= '';
-			$item->recurrence_limit 		= '';
-			$item->recurrence_limit_date	= '';
-		}
+			$item->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
-		$item->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
-
-		if (empty($item->id)){
-			$item->country = $jemsettings->defaultCountry;
+			if (empty($item->id)){
+				$item->country = $jemsettings->defaultCountry;
+			}
 		}
 
 		return $item;
@@ -249,16 +241,13 @@ class JEMModelEvent extends JemModelAdmin
 		$date        = JFactory::getDate();
 		$app         = JFactory::getApplication();
 		$jinput      = $app->input;
-		$user        = JFactory::getUser();
 		$jemsettings = JEMHelper::config();
 		$fileFilter  = new JInput($_FILES);
 		$table       = $this->getTable();
 
 		// Check if we're in the front or back
-		if ($app->isAdmin())
-			$backend = true;
-		else
-			$backend = false;
+		$backend = (bool)$app->isAdmin();
+		$new     = (bool)empty($data['id']);
 
 		// Variables
 		$cats             = $jinput->get('cid', array(), 'array');
@@ -283,7 +272,7 @@ class JEMModelEvent extends JemModelAdmin
 			$data['recurrence_limit_date']	= '';
 			$data['recurrence_first_id']	= '';
 		} else {
-			if ($data['id']) {
+			if (!$new) {
 				// edited event maybe part of a recurrence set
 				// -> drop event from set
 				$data['recurrence_first_id']	= '';
@@ -298,7 +287,7 @@ class JEMModelEvent extends JemModelAdmin
 		$data['meta_description']	= $metadescription;
 
 		// Store IP of author only.
-		if (!$data['id']) {
+		if ($new) {
 			$author_ip = $jinput->get('author_ip', '', 'string');
 			$data['author_ip'] = $author_ip;
 		}
@@ -312,11 +301,14 @@ class JEMModelEvent extends JemModelAdmin
 			unset($data['hits']);
 		}
 
-		if (parent::save($data)){
+		// Save the event
+		$saved = parent::save($data);
+
+		if ($saved) {
 			// At this point we do have an id.
 			$pk = $this->getState($this->getName() . '.id');
 
-			if (isset($data['featured'])){
+			if (isset($data['featured'])) {
 				$this->featured($pk, $data['featured']);
 			}
 
@@ -335,7 +327,7 @@ class JEMModelEvent extends JemModelAdmin
 			$old['description'] = $jinput->post->get('attached-desc', array(), 'array');
 			$old['access'] 		= $jinput->post->get('attached-access', array(), 'array');
 
-			foreach ($old['id'] as $k => $id){
+			foreach ($old['id'] as $k => $id) {
 				$attach 				= array();
 				$attach['id'] 			= $id;
 				$attach['name'] 		= $old['name'][$k];
@@ -345,47 +337,92 @@ class JEMModelEvent extends JemModelAdmin
 			}
 
 			// Store cats
-			$cats	= $jinput->get('cid', array(), 'post', 'array');
-			$db 	= $this->getDbo();
-			$query 	= $db->getQuery(true);
-
-			$query->delete($db->quoteName('#__jem_cats_event_relations'));
-			$query->where('itemid = ' . (int)$pk);
-			$db->setQuery($query);
-			$db->execute();
-
-			foreach ($cats as $cat){
-				$db 	= $this->getDbo();
-				$query	= $db->getQuery(true);
-
-				// Insert columns.
-				$columns = array('catid','itemid');
-
-				// Insert values.
-				$values = array((int)$cat, (int)$pk);
-
-				// Prepare the insert query.
-				$query->insert($db->quoteName('#__jem_cats_event_relations'))
-				->columns($db->quoteName($columns))
-				->values(implode(',', $values));
-
-				// Reset the query using our newly populated query object.
-				$db->setQuery($query);
-				$db->execute();
-			}
+			$saved |= $this->_storeCategoriesSelected($pk, $cats, !$backend, $new);
 
 			// check for recurrence
 			// when filled it will perform the cleanup function
-
 			$table->load($pk);
-			if ($table->recurrence_number > 0 && !$table->dates == null){
+			if (($table->recurrence_number > 0) && ($table->dates != null)) {
 				JEMHelper::cleanup(2); // 2 = force on save, needs special attention
 			}
-
-			return true;
 		}
 
-		return false;
+		return $saved;
+	}
+
+	/**
+	 * Method to update cats_event_selections table.
+	 * Records of previously selected categories will be removed
+	 * and newly selected categories will be stored.
+	 * Because user may not have permissions for all categories on frontend
+	 * records with non-permitted categories will be untouched.
+	 *
+	 * @param	int		The event id.
+	 * @param	array	The categories user has selected.
+	 * @param   bool    Flag to indicate if we are on frontend
+	 * @param   bool    Flag to indicate new event
+	 *
+	 * @return	boolean	True on success.
+	 */
+	protected function _storeCategoriesSelected($eventId, $categories, $frontend, $new)
+	{
+		$user = JemFactory::getUser();
+		$db   = $this->getDbo();
+
+		$eventId = (int)$eventId;
+		if (empty($eventId) || !is_array($categories)) {
+			return false;
+		}
+
+		// get previous entries
+		$query = $db->getQuery(true);
+		$query->select('catid')
+		      ->from('#__jem_cats_event_relations')
+		      ->where('itemid = ' . $eventId)
+		      ->order('catid');
+		$db->setQuery($query);
+		$cur_cats = $db->loadColumn();
+
+		if (!is_array($cur_cats)) {
+			return false;
+		}
+
+		$ret = true;
+		$del_cats = array_diff($cur_cats, $categories);
+		$add_cats = array_diff($categories, $cur_cats);
+
+		/* Attention!
+		 *  On frontend user maybe not permitted to see all categories attached.
+		 *  But these categories must not removed from this event!
+		 */
+		if ($frontend) {
+			// Note: JFormFieldCatOptions calls the same function to know which categories user is allowed (un)select.
+			$limit_cats = array_keys($user->getJemCategories($new ? array('add') : array('add', 'edit'), 'event'));
+			$del_cats = array_intersect($del_cats, $limit_cats);
+			$add_cats = array_intersect($add_cats, $limit_cats);
+		}
+
+		if (!empty($del_cats)) {
+			$query = $db->getQuery(true);
+			$query->delete($db->quoteName('#__jem_cats_event_relations'));
+			$query->where('itemid = ' . $eventId);
+			$query->where('catid IN (' . implode(',', $del_cats) . ')');
+			$db->setQuery($query);
+			$ret &= ($db->execute() === false);
+		}
+
+		if (!empty($add_cats)) {
+			$query = $db->getQuery(true);
+			$query->insert($db->quoteName('#__jem_cats_event_relations'))
+			      ->columns($db->quoteName(array('catid', 'itemid')));
+			foreach ($add_cats as $catid) {
+				$query->values((int)$catid . ',' . $eventId);
+			}
+			$db->setQuery($query);
+			$ret &= ($db->execute() === false);
+		}
+
+		return $ret;
 	}
 
 	/**

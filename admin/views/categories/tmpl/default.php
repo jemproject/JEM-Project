@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.1.0
+ * @version     2.1.5
  * @package     JEM
- * @copyright   Copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -13,7 +13,7 @@ JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 JHtml::_('behavior.tooltip');
 JHtml::_('behavior.multiselect');
 
-$user		= JFactory::getUser();
+$user		= JemFactory::getUser();
 $userId		= $user->get('id');
 $listOrder	= $this->escape($this->state->get('list.ordering'));
 $listDirn	= $this->escape($this->state->get('list.direction'));
@@ -138,6 +138,8 @@ $saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
 							<a href="<?php echo $grouplink; ?>">
 								<?php echo $this->escape($item->catgroup); ?>
 							</a></span>
+						<?php elseif ($item->groupid) : ?>
+							<?php echo JText::sprintf('COM_JEM_CATEGORY_UNKNOWN_GROUP', $item->groupid); ?>
 						<?php else : ?>
 							<?php echo '-'; ?>
 						<?php endif; ?>

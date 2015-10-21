@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -27,7 +27,7 @@ class JemViewEditvenue extends JViewLegacy
 		$jemsettings = JemHelper::config();
 		$settings    = JemHelper::globalattribs();
 		$app         = JFactory::getApplication();
-		$user        = JFactory::getUser();
+		$user        = JemFactory::getUser();
 		$document    = JFactory::getDocument();
 		$model       = $this->getModel();
 		$menu        = $app->getMenu();
@@ -63,30 +63,12 @@ class JemViewEditvenue extends JViewLegacy
 			return false;
 		}
 
-		if (empty($this->item->id)) {
+		if (empty($item->id)) {
 			// Check if the user has access to the form
-			$maintainer = JemUser::venuegroups('add');
-			$delloclink = JemUser::validate_user($jemsettings->locdelrec, $jemsettings->deliverlocsyes);
-
-			if ($maintainer || $delloclink) {
-				$dellink = true;
-			} else {
-				$dellink = false;
-			}
-
-			$authorised = $user->authorise('core.create','com_jem') || $dellink;
+			$authorised = $user->can('add', 'venue');
 		} else {
 			// Check if user can edit
-			$maintainer = JemUser::venuegroups('edit');
-			$genaccess  = JemUser::editaccess($jemsettings->venueowner, $this->item->created_by, $jemsettings->venueeditrec, $jemsettings->venueedit);
-
-			if ($maintainer || $genaccess) {
-				$edit = true;
-			} else {
-				$edit = false;
-			}
-
-			$authorised = $this->item->params->get('access-edit') || $edit;
+			$authorised = $user->can('edit', 'venue', $item->id, $item->created_by);
 		}
 
 		if ($authorised !== true) {
@@ -136,6 +118,8 @@ class JemViewEditvenue extends JViewLegacy
 			$item->params = $temp;
 		}
 
+		$publisher = $user->can('publish', 'venue', $item->id, $item->created_by);
+
 		if (!empty($this->item) && isset($this->item->id)) {
 			// $this->item->images = json_decode($this->item->images);
 			// $this->item->urls = json_decode($this->item->urls);
@@ -177,13 +161,21 @@ class JemViewEditvenue extends JViewLegacy
 		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 		JHtml::_('script', 'com_jem/jquery.geocomplete.js', false, true);
 
+		// No permissions required/useful on this view
+		$permissions = new stdClass();
+
 		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));
 		$this->jemsettings   = $jemsettings;
 		$this->settings      = $settings;
+		$this->permissions   = $permissions;
 		$this->limage        = JemImage::flyercreator($this->item->locimage, 'venue');
 		$this->infoimage     = JHtml::_('image', 'com_jem/icon-16-hint.png', JText::_('COM_JEM_NOTES'), NULL, true);
+		$this->user          = $user;
 
-		$this->user = $user;
+		if (!$publisher) {
+			$this->form->setFieldAttribute('published', 'default', 0);
+			$this->form->setFieldAttribute('published', 'readonly', 'true');
+		}
 
 		$this->_prepareDocument();
 		parent::display($tpl);
