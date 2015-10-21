@@ -95,22 +95,26 @@ defined('_JEXEC') or die;
 	<dl class="floattext">
 		<dd class="register">
 			<?php
-			switch ($this->formhandler) {
-			case 0:
-				echo JText::_('COM_JEM_TOO_LATE_UNREGISTER');
-				break;
-			case 1:
-				echo JText::_('COM_JEM_TOO_LATE_REGISTER');
-				break;
-			case 2:
-				echo JText::_('COM_JEM_LOGIN_FOR_REGISTER');
-				break;
-			case 3:
-				echo $this->loadTemplate('unregform');
-				break;
-			case 4:
-				echo $this->loadTemplate('regform');
-				break;
+			if ($this->item->published != 1) {
+				echo JText::_('COM_JEM_WRONG_STATE_FOR_REGISTER');
+			} else {
+				switch ($this->formhandler) {
+				case 0:
+					echo JText::_('COM_JEM_TOO_LATE_UNREGISTER');
+					break;
+				case 1:
+					echo JText::_('COM_JEM_TOO_LATE_REGISTER');
+					break;
+				case 2:
+					echo JText::_('COM_JEM_LOGIN_FOR_REGISTER');
+					break;
+				case 3:
+					echo $this->loadTemplate('unregform');
+					break;
+				case 4:
+					echo $this->loadTemplate('regform');
+					break;
+				}
 			}
 			?>
 		</dd>
