@@ -188,11 +188,9 @@ class JemTableVenue extends JTable
 		}
 
 		if (!$backend) {
-			/* check if the user has the required rank for autopublish	*/
-			if (!$user->can('publish', 'venue', $this->id, $this->created_by)) {
+			/* check if the user has the required rank for autopublish new venues */
+			if (!$this->id && !$user->can('publish', 'venue', $this->id, $this->created_by)) {
 				$this->published = 0;
-			} else { // don't touch, let user decide
-			//	$this->published = 1;
 			}
 		}
 
