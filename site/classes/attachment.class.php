@@ -12,6 +12,9 @@ defined('_JEXEC') or die;
 jimport('joomla.filesystem.file');
 jimport('joomla.filesystem.folder');
 
+// ensure JemFactory is loaded (because this class is used by modules or plugins too)
+require_once(JPATH_SITE.'/components/com_jem/factory.php');
+
 /**
  * Holds the logic for attachments manipulation
  *
