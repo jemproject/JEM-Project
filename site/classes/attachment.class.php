@@ -81,7 +81,15 @@ class JEMAttachment extends JObject
 
 			// Make sure that the full file path is safe.
 			$filepath = JPath::clean( $path.'/'.$sanitizedFilename);
-			JFile::upload($post_files['tmp_name'][$k], $filepath);
+			// Since Joomla! 3.4.0 JFile::upload has some more params to control new security parsing
+			// Unfortunately this parsing is partially stupid so it may reject archives for non-understandable reason.
+			if (version_compare(JVERSION, '3.4', 'lt')) {
+				JFile::upload($post_files['tmp_name'][$k], $filepath);
+			} else {
+				// switch off parsing archives for byte sequences looking like a script file extension
+				// but keep all other checks running
+				JFile::upload($post_files['tmp_name'][$k], $filepath, false, false, array('fobidden_ext_in_content' => false));
+			}
 
 			$table = JTable::getInstance('jem_attachments', '');
 			$table->file = $sanitizedFilename;
