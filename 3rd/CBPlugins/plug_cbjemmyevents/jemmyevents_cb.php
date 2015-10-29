@@ -1,7 +1,7 @@
 <?php
 /**
  * @package My Events
- * @version JEM v2.0 / v2.1 & CB v1.9 / v2.0
+ * @version 2.1.4 for JEM v2.0 / v2.1 & CB v1.9 / v2.0
  * @author JEM Community
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
@@ -138,6 +138,13 @@ class jemmyeventsTab extends cbTabHandler {
 		$juser = JFactory::getUser();
 		$levels = $juser->getAuthorisedViewLevels();
 
+		$myprofile = !$juser->guest && ($juser->get('id') == $userid); // true if both users are equal
+
+		$where_pub = 'a.published = 1';
+		// maybe user would like to see published, unpublished, and archived own events
+		//$where_pub = 'a.published ' . ($myprofile ? 'IN (0,1,2)' : '= 1');
+		// TODO: Then we should show icon indicating unpublished or archived events
+
 		/*
 		 * Query
 		 *
@@ -152,7 +159,7 @@ class jemmyeventsTab extends cbTabHandler {
 		//	. ' LEFT JOIN `#__jem_venues` AS l ON l.id = a.locid '
 			. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
 			. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
-			. ' WHERE a.published = 1 AND c.published = 1 AND a.created_by = '.$userid
+			. ' WHERE ' . $where_pub . ' AND c.published = 1 AND a.created_by = ' . $userid
 			. '  AND a.access IN (' . implode(',', $levels) . ') AND c.access IN (' . implode(',', $levels) . ')'
 			. ' GROUP BY a.id'
 			. ' ORDER BY a.dates, a.times'
@@ -235,7 +242,7 @@ class jemmyeventsTab extends cbTabHandler {
 
 			$odd = 1;
 			foreach ($results as $result) {
-				$odd = ($odd+1)%2; // toggle {0, 1} for alternating row css classes
+				$odd = 1 - $odd; // toggle {0, 1} for alternating row css classes
 
 				/*
 				 * Start of rowline
@@ -299,18 +306,20 @@ class jemmyeventsTab extends cbTabHandler {
 				if ($event_attending) {
 					$regs = '-';
 					if ($result->registra) {
-						$qry = "SELECT count(uid) AS regs FROM #__jem_register where `event`=$result->eventid AND waiting=0";
-					$_CB_database->setQuery($qry);
-						$regs = (int)$_CB_database->loadObjectList()[0]->regs;
-						$qry = "SELECT count(uid) AS regs FROM #__jem_register where `event`=$result->eventid AND waiting>0";
+						$qry = "SELECT COUNT(IF(waiting <= 0, 1, null)) AS registered, COUNT(IF(waiting > 0, 1, null)) AS waiting FROM #__jem_register WHERE event = $result->eventid";
 						$_CB_database->setQuery($qry);
-						$waits = (int)$_CB_database->loadObjectList()[0]->regs;
-						if ($result->maxplaces) {
-							$regs .= ' / '.(int)$result->maxplaces;
-							if ($result->waitinglist && $waits) {
-								$regs .= ' + '.$waits;
+						$objList = $_CB_database->loadObjectList();
+						if (is_array($objList)) {
+							$regs = (int)$objList[0]->registered;
+							if ($result->maxplaces) {
+								$regs .= ' / '.(int)$result->maxplaces;
+								$waits = (int)$objList[0]->waiting;
+								if ($result->waitinglist && $waits) {
+									$regs .= ' + '.$waits;
+								}
 							}
 						}
+						unset($objList);
 					}
 
 					$return .= "\n\t\t\t<td class='jemmyeventsCBTabTableReg'>";
