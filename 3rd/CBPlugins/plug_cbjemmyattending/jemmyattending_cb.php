@@ -146,8 +146,7 @@ class jemmyattendingTab extends cbTabHandler {
 		$total = 0;
 		$juser = JFactory::getUser();
 
-		if ($this->jemFound && $this->_checkPermission($user, $juser) &&
-		    isset($tab->position) && (strpos($tab->position, 'canvas_') === 0) && ($tab->displaytype == 'menu')) {
+		if ($this->jemFound && $this->_checkPermission($user, $juser)) {
 			$query = $this->_getQuery($user, true);
 			$_CB_database->setQuery($query);
 			$result = $_CB_database->loadResultArray();

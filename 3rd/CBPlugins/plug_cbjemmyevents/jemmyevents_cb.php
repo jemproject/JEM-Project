@@ -148,8 +148,7 @@ class jemmyeventsTab extends cbTabHandler {
 
 		$total = 0;
 
-		if ($this->jemFound &&
-		    isset($tab->position) && (strpos($tab->position, 'canvas_') === 0) && ($tab->displaytype == 'menu')) {
+		if ($this->jemFound) {
 			$query = $this->_getQuery($user, true);
 			$_CB_database->setQuery($query);
 			$result = $_CB_database->loadResultArray();
