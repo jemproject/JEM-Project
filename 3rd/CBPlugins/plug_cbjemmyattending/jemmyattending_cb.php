@@ -1,7 +1,7 @@
 <?php
 /**
  * @package My Attending
- * @version JEM v2.0 / v2.1 & CB v1.9 / v2.0
+ * @version 2.1.4 for JEM v2.0 / v2.1 & CB v1.9 / v2.0
  * @author JEM Community
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
@@ -43,6 +43,10 @@ class jemmyattendingTab extends cbTabHandler {
 	function _getLanguageFile()
 	{
 		global $_CB_framework;
+
+		$lang = JFactory::getLanguage();
+		$lang->load('com_jem', JPATH_BASE.'/components/com_jem');
+
 		$UElanguagePath=$_CB_framework->getCfg('absolute_path').'/components/com_comprofiler/plugin/user/plug_cbjemmyattending';
 		if (file_exists($UElanguagePath.'/language/'.$_CB_framework->getCfg('lang').'.php')) {
 			include_once($UElanguagePath.'/language/'.$_CB_framework->getCfg('lang').'.php');
@@ -51,6 +55,107 @@ class jemmyattendingTab extends cbTabHandler {
 		}
 	}
 
+	/**
+	 * Check (asking) user's permissions.
+	 */
+	protected function _checkPermission($user, $juser)
+	{
+		// $user is profile's owner whilst $juser is asking user
+
+		if ($juser->id != $user->id) {
+			// we have to check if foreign announces are allowed to show
+			$permitted = false;
+			$settings = JEMHelper::globalattribs();
+
+			switch ($settings->get('event_show_attendeenames', 2)) {
+				case 0: // show to none
+				default:
+					break;
+				case 1: // show to admins
+					$permitted = $juser->authorise('core.manage', 'com_jem');
+					break;
+				case 2: // show to registered
+					$permitted = !$juser->get('guest', 1);
+					break;
+				case 3: // show to all
+					$permitted = true;
+					break;
+			}
+		} else {
+			$permitted = true;
+		}
+
+		return $permitted;
+	}
+
+	/**
+	 * Creates and returns the sql query.
+	 */
+	protected function _getQuery($user, $fast = false)
+	{
+		$userid = $user->id;
+
+		// Support Joomla access levels instead of single group id
+		// Note: $user is one which profile is requested, not the asking user!
+		//       $juser is the asking user which view access levels must be used.
+		$juser  = JFactory::getUser();
+		$levels = $juser->getAuthorisedViewLevels();
+
+		$query      = 'SELECT DISTINCT a.id';
+		if (!$fast) {
+			$query .= '  AS eventid, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid,'
+			        . ' CONCAT(a.introtext,a.fulltext) AS text, a.published,'
+			        . ' l.venue, l.city, l.state, l.url, '
+			        . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
+			        . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug, '
+			        . ' r.waiting'
+			        ;
+		}
+		$query     .= ' FROM #__jem_events AS a INNER JOIN #__jem_register AS r ON r.event = a.id '
+		            . ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid '
+			        . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
+			        . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
+		            . ' WHERE a.published = 1 AND r.uid = '.$userid
+			        . '  AND a.access IN (' . implode(',', $levels) . ')'
+			        . '  AND (a.dates IS NULL OR DATE_SUB(NOW(), INTERVAL 1 DAY) < (IF (a.enddates IS NOT NULL, a.enddates, a.dates)))'
+		            . '  AND c.published = 1 AND c.access IN (' . implode(',', $levels) . ')'
+			        . ' GROUP BY a.id'
+			        . ' ORDER BY a.dates, a.times'
+			        ;
+
+		return $query;
+	}
+
+
+	/**
+	 * Append number of events to the title.
+	 *
+	 * since CB 2.0, on CB 1.9 it's simply not called
+	 */
+	public function getTabTitle($tab, $user, $ui, $postdata)
+	{
+		/* loading global variables */
+		global $_CB_database, $ueConfig;
+
+		// On CB 1.9 this function isn't part of API so it will be never called by CB.
+		// Ensure not to call non-existent function on parent class just in case wrongly called.
+		if (version_compare($ueConfig['version'], '2.0', 'lt')) {
+			return false;
+		}
+
+		$total = 0;
+		$juser = JFactory::getUser();
+
+		if ($this->jemFound && $this->_checkPermission($user, $juser)) {
+			$query = $this->_getQuery($user, true);
+			$_CB_database->setQuery($query);
+			$result = $_CB_database->loadResultArray();
+			$total = !empty($result) ? count($result) : 0;
+			return parent::getTabTitle($tab, $user, $ui, $postdata) . ' <span class="badge badge-default">' . (int)$total . '</span>';
+		}
+
+		return parent::getTabTitle($tab, $user, $ui, $postdata);
+	}
 
 	/**
 	 * Display Tab
@@ -79,38 +184,15 @@ class jemmyattendingTab extends cbTabHandler {
 		$event_description = $params->get('event_description');
 		$event_enddate = $params->get('event_enddate');
 		$event_startdate = $params->get('event_startdate');
+		$event_datecombi = $params->get('event_datecombi');
 		$event_venue = $params->get('event_venue');
 
 		/* access rights check */
-		// retrieval user parameters
-		$userid = $user->id;
-
 		// $user is profile's owner but we need logged-in user here
 		$juser = JFactory::getUser();
 
-		if ($juser->id != $userid) {
-			// we have to check if foreign announces are allowed to show
-			$permitted = false;
-			$settings = JEMHelper::globalattribs();
-
-			switch ($settings->get('event_show_attendeenames', 2)) {
-				case 0: // show to none
-				default:
-					break;
-				case 1: // show to admins
-					$permitted = $juser->authorise('core.manage', 'com_jem');
-					break;
-				case 2: // show to registered
-					$permitted = !$juser->get('guest', 1);
-					break;
-				case 3: // show to all
-					$permitted = true;
-					break;
-			}
-
-			if (!$permitted) {
-				return ''; // which will completely hide the tab
-			}
+		if (!$this->_checkPermission($user, $juser)) {
+			return ''; // which will completely hide the tab
 		}
 
 		/* load css */
@@ -140,20 +222,7 @@ class jemmyattendingTab extends cbTabHandler {
 		 */
 
 		// get announcements
-		$query = 'SELECT DISTINCT a.id AS eventid, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, CONCAT(a.introtext,a.fulltext) AS text, a.published,'
-				. ' l.venue, l.city, l.state, l.url, '
-				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
-				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug '
-				. ' FROM #__jem_events AS a INNER JOIN #__jem_register AS r ON r.event = a.id '
-				. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid '
-				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
-				. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
-				. ' WHERE a.published = 1 AND c.published = 1 AND r.uid = '.$userid
-				. '  AND a.access IN (' . implode(',', $levels) . ') AND c.access IN (' . implode(',', $levels) . ')'
-				. '  AND (a.dates IS NULL OR DATE_SUB(NOW(), INTERVAL 1 DAY) < (IF (a.enddates IS NOT NULL, a.enddates, a.dates)))'
-				. ' GROUP BY a.id'
-				. ' ORDER BY a.dates, a.times'
-				;
+		$query = $this->_getQuery($user);
 		$_CB_database->setQuery($query);
 		$results = $_CB_database->loadObjectList();
 
@@ -185,32 +254,44 @@ class jemmyattendingTab extends cbTabHandler {
 		$return .= "\n\t\t\t</th>";
 
 		/* Description header */
-		if ($event_description==1) {
+		if ($event_description) {
 			$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableDesc'>";
 			$return .= "\n\t\t\t\t" . _JEMMYATTENDING_DESC;
 			$return .= "\n\t\t\t</th>";
 		}
 
 		/* City header */
-		if ($event_venue==1) {
+		if ($event_venue) {
 			$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableVenue'>";
 			$return .= "\n\t\t\t\t" . _JEMMYATTENDING_CITY;
 			$return .= "\n\t\t\t</th>";
 		}
 
-		/* Startdate header */
-		if ($event_startdate==1) {
-			$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableStart'>";
-			$return .= "\n\t\t\t\t" . _JEMMYATTENDING_START;
+		/* Startdate and enddate in a single column */
+		if ($event_datecombi) {
+			$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableStartEnd'>";
+			$return .= "\n\t\t\t\t" . _JEMMYATTENDING_START_END;
 			$return .= "\n\t\t\t</th>";
+		} else {
+			/* Startdate header */
+			if ($event_startdate) {
+				$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableStart'>";
+				$return .= "\n\t\t\t\t" . _JEMMYATTENDING_START;
+				$return .= "\n\t\t\t</th>";
+			}
+
+			/* Enddate header */
+			if ($event_enddate) {
+				$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableExp'>";
+				$return .= "\n\t\t\t\t" . _JEMMYATTENDING_EXPIRE;
+				$return .= "\n\t\t\t</th>";
+			}
 		}
 
-		/* Enddate header */
-		if ($event_enddate==1) {
-			$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableExp'>";
-			$return .= "\n\t\t\t\t" . _JEMMYATTENDING_EXPIRE;
-			$return .= "\n\t\t\t</th>";
-		}
+		/* Status header */
+		$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableStatus'>";
+		$return .= "\n\t\t\t\t" . _JEMMYATTENDING_STATUS;
+		$return .= "\n\t\t\t</th>";
 
 		/* End of headerline */
 		$return .= "\n\t\t</tr>";
@@ -225,7 +306,7 @@ class jemmyattendingTab extends cbTabHandler {
 
 			$odd = 1;
 			foreach ($results as $result) {
-				$odd = ($odd+1)%2; // toggle {0, 1} for alternating row css classes
+				$odd = 1 - $odd; // toggle {0, 1} for alternating row css classes
 
 				/*
 				 * Start of rowline
@@ -269,24 +350,47 @@ class jemmyattendingTab extends cbTabHandler {
 					$return .= "\n\t\t\t</td>";
 				}
 
-				/* Startdate field */
-				if ($event_startdate) {
-					$startdate2 =	JEMOutput::formatdate($result->dates, $formatShortDate);
-					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTablestart'>";
-					$return .= "\n\t\t\t\t{$startdate2}";
+				if ($event_datecombi) {
+					/*
+					 * Startdate and enddate in a single column
+					 */
+					$datecombi2 = JEMOutput::formatDateTime($result->dates, $result->times, $result->enddates, $result->endtimes, $formatShortDate);
+					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableStartEnd'>";
+					$return .= "\n\t\t\t\t{$datecombi2}";
 					$return .= "\n\t\t\t</td>";
+				} else {
+					/*
+					 * Startdate field
+					 */
+					if ($event_startdate) {
+						$startdate2 = JEMOutput::formatDateTime($result->dates, $result->times, '', '', $formatShortDate);
+						$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableStart'>";
+						$return .= "\n\t\t\t\t{$startdate2}";
+						$return .= "\n\t\t\t</td>";
+					}
+
+					/*
+					 * Enddate
+					 * if no enddate is given nothing will show up
+					 */
+					if ($event_enddate) {
+						$enddate2 = $result->enddates ? JEMOutput::formatDateTime($result->enddates, $result->endtimes, '', '', $formatShortDate)
+							                          : JEMOutput::formattime($result->endtimes);
+						$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableExp'>";
+						$return .= "\n\t\t\t\t{$enddate2}";
+						$return .= "\n\t\t\t</td>";
+					}
 				}
 
 				/*
-				 * Enddate
-				 * if no enddate is given nothing will show up
+				 * Status
+				 * show icon to indicate if registered or on waiting list
 				 */
-				if ($event_enddate) {
-					$enddate2 =	JEMOutput::formatdate($result->enddates, $formatShortDate);
-					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableExp'>";
-					$return .= "\n\t\t\t\t{$enddate2}";
-					$return .= "\n\t\t\t</td>";
-				}
+				$img = JRoute::_($_CB_framework->getCfg('live_site') . ($result->waiting ? '/media/com_jem/images/publish_y.png' : '/media/com_jem/images/tick.png'));
+				$tip = $result->waiting ? _JEMMYATTENDING_STATUS_WAITINGLIST : _JEMMYATTENDING_STATUS_REGISTERED;
+				$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableStatus'>";
+				$return .= "\n\t\t\t\t<img src='$img' alt='$tip' title='$tip'>";
+				$return .= "\n\t\t\t</td>";
 
 				/* Closing the rowline */
 				$return .= "\n\t\t</tr>";

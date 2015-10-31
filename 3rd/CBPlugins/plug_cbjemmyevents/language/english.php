@@ -1,19 +1,16 @@
 <?php
-/*
- * 
- * 
+/**
  * @package My Events
- * @version 2.0.0
+ * @version 2.1.4
  * @author JEM Community
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
- * 
- * 
+ *
  * Former info:
  * @copyright Copyright (C) 2006 -2010 Tekdi Web Solutions . All rights reserved.
  * @license GNU GPLv2 <http://www.gnu.org/licenses/old-licenses/gpl-2.0.html>
  * @link     http://www.tekdi.net
- **/
+ */
 defined('_JEXEC') or die;
 
 
@@ -25,8 +22,9 @@ DEFINE("_JEMMYEVENTS_NO_LISTING","No Entries");
 DEFINE("_JEMMYEVENTS_CATEGORY","Categories");
 DEFINE("_JEMMYEVENTS_TITLE","Event Title");
 DEFINE("_JEMMYEVENTS_IMAGE","Event Image");
-DEFINE("_JEMMYEVENTS_START","Start Date");
-DEFINE("_JEMMYEVENTS_EXPIRE","End Date");
+DEFINE("_JEMMYEVENTS_START","Start Date/Time");
+DEFINE("_JEMMYEVENTS_EXPIRE","End Date/Time");
+DEFINE("_JEMMYEVENTS_START_END","Start/End Date/Time");
 DEFINE("_JEMMYEVENTS_ADDNEW","Add New");
 DEFINE("_JEMMYEVENTS_PUB"," Event(s) is/are not published");
 
