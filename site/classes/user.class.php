@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -430,7 +430,7 @@ abstract class JemUserAbstract extends JUser
 		$userId = (int)$this->id;
 
 		// guests are not allowed to do anything except looking
-		if (empty($userId) || $this->get('guest', 1)) {
+		if (empty($userId) || $this->get('guest', 0)) {
 			return false;
 		}
 
