@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cbinstall version="1.9" type="plugin" group="user">
-	<name>CB JEM MyEvents</name>
+	<name>JEM MyEvents</name>
 	<author>JEM Community</author>
-	<creationDate>October 2015</creationDate>
+	<creationDate>November 2015</creationDate>
 	<copyright>Copyright (C) 2013-2015 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<version>1.9</version>
-	<release>2.1.4</release>
+	<version>2.0</version>
+	<release>2.1.5</release>
 	<description>This plugin will show events submitted by the user in their profile.</description>
 	<files>
 		<filename plugin="jemmyevents_cb">jemmyevents_cb.php</filename>
@@ -16,7 +16,9 @@
 		<filename>jemmyevents_cb.css</filename>
 		<filename>language/english.php</filename>
 		<filename>language/index.html</filename>
+		<filename>install.php</filename>
 	</files>
+	<installfile>install.php</installfile>
 	<params>
 	</params>
 	<tabs>

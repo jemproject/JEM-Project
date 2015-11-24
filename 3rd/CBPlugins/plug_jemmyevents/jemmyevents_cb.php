@@ -1,7 +1,7 @@
 <?php
 /**
  * @package My Events
- * @version 2.1.4 for JEM v2.0 / v2.1 & CB v1.9 / v2.0
+ * @version 2.1.5 for JEM v2.1 & CB v2.0
  * @author JEM Community
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
@@ -23,7 +23,7 @@ defined('_JEXEC') or die;
 
 class jemmyeventsTab extends cbTabHandler {
 
-	protected $jemFound = false;
+	protected $_jemFound = false;
 
 	/**
 	 * Show My Events
@@ -31,7 +31,7 @@ class jemmyeventsTab extends cbTabHandler {
 	function __construct()
 	{
 		// Check if JEM is installed.
-		$this->jemFound = class_exists('JemImage') && class_exists('JemOutput') && class_exists('JemHelperRoute');
+		$this->_jemFound = class_exists('JemImage') && class_exists('JemOutput') && class_exists('JemHelperRoute');
 
 		$this->cbTabHandler();
 	}
@@ -49,14 +49,13 @@ class jemmyeventsTab extends cbTabHandler {
 		$lang = JFactory::getLanguage();
 		$lang->load('com_jem', JPATH_BASE.'/components/com_jem');
 
-		$UElanguagePath=$_CB_framework->getCfg('absolute_path').'/components/com_comprofiler/plugin/user/plug_cbjemmyevents';
+		$UElanguagePath = dirname(__FILE__);
 		if (file_exists($UElanguagePath.'/language/'.$_CB_framework->getCfg('lang').'.php')) {
 			include_once($UElanguagePath.'/language/'.$_CB_framework->getCfg('lang').'.php');
 		} else {
 			include_once($UElanguagePath.'/language/english.php');
 		}
 	}
-
 
 	/**
 	 * Returns a list of categories corresponding to given event id.
@@ -138,17 +137,11 @@ class jemmyeventsTab extends cbTabHandler {
 	public function getTabTitle($tab, $user, $ui, $postdata)
 	{
 		/* loading global variables */
-		global $_CB_database, $ueConfig;
-
-		// On CB 1.9 this function isn't part of API so it will be never called by CB.
-		// Ensure not to call non-existent function on parent class just in case wrongly called.
-		if (version_compare($ueConfig['version'], '2.0', 'lt')) {
-			return false;
-		}
+		global $_CB_database;
 
 		$total = 0;
 
-		if ($this->jemFound) {
+		if ($this->_jemFound) {
 			$query = $this->_getQuery($user, true);
 			$_CB_database->setQuery($query);
 			$result = $_CB_database->loadResultArray();
@@ -165,9 +158,9 @@ class jemmyeventsTab extends cbTabHandler {
 	function getDisplayTab($tab, $user, $ui)
 	{
 		/* loading global variables */
-		global $_CB_database,$_CB_framework;
+		global $_CB_database, $_CB_framework;
 
-		if (!$this->jemFound) {
+		if (!$this->_jemFound) {
 			return '';
 		}
 
@@ -180,7 +173,7 @@ class jemmyeventsTab extends cbTabHandler {
 		/* message at the bottom of the table */
 		$event_tab_message = $params->get('hwTabMessage', "");
 
-		/* variables */
+		/* other variables */
 		$return = null;
 
 		$event_image = $params->get('event_image');
@@ -191,8 +184,7 @@ class jemmyeventsTab extends cbTabHandler {
 		$event_attending = $params->get('event_attending');
 
 		/* load css */
-		//$_CB_framework->addCustomHeadTag("<link href=\"".$_CB_framework->getCfg('live_site')."/components/com_comprofiler/plugin/user/plug_cbjemmyevents/jemmyevents_cb.css\" rel=\"stylesheet\" type=\"text/css\" />");
-		$_CB_framework->document->addHeadStyleSheet($_CB_framework->getCfg('live_site').'/components/com_comprofiler/plugin/user/plug_cbjemmyevents/jemmyevents_cb.css');
+		$_CB_framework->document->addHeadStyleSheet(dirname(__FILE__).'/jemmyevents_cb.css');
 
 		/*
 		 * Tab description
@@ -243,24 +235,28 @@ class jemmyeventsTab extends cbTabHandler {
 
 		/* start of headerline */
 		$return .= "\n\t\t<tr class='jemmyeventstableheader'>";
+		$span = 0;
 
 		/* start of imagefield */
 		if ($event_image) {
 			$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableTitle'>";
 			$return .= "\n\t\t\t\t" . _JEMMYEVENTS_IMAGE;
 			$return .= "\n\t\t\t</th>";
+			++$span;
 		}
 
 		/* Title header */
 		$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableTitle'>";
 		$return .= "\n\t\t\t\t" . _JEMMYEVENTS_TITLE;
 		$return .= "\n\t\t\t</th>";
+		++$span;
 
 		/* Category header */
 		if ($event_categories) {
 			$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableCat'>";
 			$return .= "\n\t\t\t\t" . _JEMMYEVENTS_CATEGORY;
 			$return .= "\n\t\t\t</th>";
+			++$span;
 		}
 
 		/* Startdate and Enddate combined column header */
@@ -268,6 +264,7 @@ class jemmyeventsTab extends cbTabHandler {
 			$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableStartEnd'>";
 			$return .= "\n\t\t\t\t" . _JEMMYEVENTS_START_END;
 			$return .= "\n\t\t\t</th>";
+			++$span;
 		}
 		else {
 			/* Startdate header */
@@ -275,6 +272,7 @@ class jemmyeventsTab extends cbTabHandler {
 				$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableStart'>";
 				$return .= "\n\t\t\t\t" . _JEMMYEVENTS_START;
 				$return .= "\n\t\t\t</th>";
+				++$span;
 			}
 
 			/* Enddate header */
@@ -282,6 +280,7 @@ class jemmyeventsTab extends cbTabHandler {
 				$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableExp'>";
 				$return .= "\n\t\t\t\t" . _JEMMYEVENTS_EXPIRE;
 				$return .= "\n\t\t\t</th>";
+				++$span;
 			}
 		}
 
@@ -290,6 +289,7 @@ class jemmyeventsTab extends cbTabHandler {
 			$return .= "\n\t\t\t<th class='jemmyeventsCBTabTableReg'>";
 			$return .= "\n\t\t\t\t" . _JEMMYEVENTS_REGISTER;
 			$return .= "\n\t\t\t</th>";
+			++$span;
 		}
 
 		/* End of headerline */
@@ -407,7 +407,7 @@ class jemmyeventsTab extends cbTabHandler {
 			// When no data has been found the user will see a message
 
 			/* display no listings */
-			$return .= '<tr><td class="jemmyattendingCBTabTableTitle" span="9">'._JEMMYEVENTS_NO_LISTING.'</td></tr>';
+			$return .= '<tr><td class="jemmyeventsCBTabTableTitle" colspan="'.$span.'">'._JEMMYEVENTS_NO_LISTING.'</td></tr>';
 		}
 
 		/* closing tag of the table */

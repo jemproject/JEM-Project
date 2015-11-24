@@ -1,12 +1,15 @@
 <?php
 /**
- * @version     2.1.5
+ * @version     2.1.6
  * @package     JEM
  * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('JPATH_BASE') or die;
+
+// ensure JemFactory is loaded (because field maybe used by modules too)
+require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
 JFormHelper::loadFieldClass('list');
 

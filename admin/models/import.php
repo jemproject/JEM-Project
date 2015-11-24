@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -208,10 +208,8 @@ class JEMModelImport extends JModelLegacy
 
 		$db = JFactory::getDbo();
 
-		$ignore = array();
-		if (!$replace) {
-			$ignore[] = 'id';
-		}
+		// we MUST reset key 'id' ourself
+		$pk = $replace ? false : 'id';
 
 		// retrieve the specified table
 		$object = JTable::getInstance($tablename, $prefix);
@@ -225,7 +223,7 @@ class JEMModelImport extends JModelLegacy
 			$values = array();
 			// parse each specified field and retrieve corresponding value for the record
 			foreach ($fieldsname as $k => $field) {
-				$values[$field] = $row[$k];
+				$values[$field] = ($field !== $pk) ? $row[$k] : 0; // set key to given value or 0 depending on $replace
 			}
 
 			if (strcasecmp($objectname, 'JEMTableCategory') == 0) {
@@ -266,8 +264,8 @@ class JEMModelImport extends JModelLegacy
 			} // if 'JEMTableCategory'
 
 			// Bind the data
-			$object->reset(); // clear old data first
-			$object->bind($values, $ignore);
+			$object->reset(); // clear old data first - which does NOT reset 'id' !
+			$object->bind($values);
 
 			// check/store function for the Category Table
 			if (strcasecmp($objectname, 'JEMTableCategory') == 0) {
@@ -852,7 +850,7 @@ class JEMModelImport extends JModelLegacy
 		$rec = array ('added' => 0, 'updated' => 0, 'error' => 0);
 
 		foreach ($data as $row) {
-			$object = JTable::getInstance($tablename, '');
+			$object = JTable::getInstance($tablename, ''); // don't optimise this, you get trouble with 'id'...
 			$object->bind($row, $ignore);
 
 			// Make sure the data is valid
