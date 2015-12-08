@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -129,6 +129,26 @@ defined('_JEXEC') or die;
 		$color .= $colorpic;
 		$color .= '</div>';
 
+		// multiday
+		$multi_mode = 0; // single day
+		$multi_icon = '';
+		if (isset($row->multi)) {
+			switch ($row->multi) {
+			case 'first': // first day
+				$multi_mode = 1;
+				$multi_icon = JHtml::_("image","com_jem/arrow-left.png",'', NULL, true);
+				break;
+			case 'middle': // middle day
+				$multi_mode = 2;
+				$multi_icon = JHtml::_("image","com_jem/arrow-middle.png",'', NULL, true);
+				break;
+			case 'zlast': // last day
+				$multi_mode = 3;
+				$multi_icon = JHtml::_("image","com_jem/arrow-right.png",'', NULL, true);
+				break;
+			}
+		}
+
 		//for time in calendar
 		$timetp = '';
 
@@ -136,28 +156,29 @@ defined('_JEXEC') or die;
 			$start = JemOutput::formattime($row->times,'',false);
 			$end   = JemOutput::formattime($row->endtimes,'',false);
 
-			$multi = new stdClass();
-			$multi->row = (isset($row->multi) ? $row->multi : 'na');
-
-			if ($multi->row) {
-				if ($multi->row == 'first') {
-					$timetp .= $image = JHtml::_("image","com_jem/arrow-left.png",'', NULL, true).' '.$start;
-					$timetp .= '<br />';
-				} elseif ($multi->row == 'middle') {
-					$timetp .= JHtml::_("image","com_jem/arrow-middle.png",'', NULL, true);
-					$timetp .= '<br />';
-				} elseif ($multi->row == 'zlast') {
-					$timetp .= JHtml::_("image","com_jem/arrow-right.png",'', NULL, true).' '.$end;
-					$timetp .= '<br />';
-				} elseif ($multi->row == 'na') {
-					if ($start != '') {
-						$timetp .= $start;
-						if ($end != '') {
-							$timetp .= ' - '.$end;
-						}
-						$timetp .= '<br />';
+			switch ($multi_mode) {
+			case 1:
+				$timetp .= $multi_icon . ' ' . $start . '<br />';
+				break;
+			case 2:
+				$timetp .= $multi_icon . '<br />';
+				break;
+			case 3:
+				$timetp .= $multi_icon . ' ' . $end . '<br />';
+				break;
+			default:
+				if ($start != '') {
+					$timetp .= $start;
+					if ($end != '') {
+						$timetp .= ' - '.$end;
 					}
+					$timetp .= '<br />';
 				}
+				break;
+			}
+		} else {
+			if (!empty($multi_icon)) {
+				$timetp .= $multi_icon . ' ';
 			}
 		}
 
@@ -197,18 +218,23 @@ defined('_JEXEC') or die;
 
 		//date in tooltip
 		$multidaydate = '<div class="time"><span class="text-label">'.JText::_('COM_JEM_DATE').': </span>';
-		if ($multi->row == 'first') {
+		switch ($multi_mode) {
+		case 1:  // first day
 			$multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
 			$multidaydate .= JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
-		} elseif ($multi->row == 'middle') {
+			break;
+		case 2:  // middle day
 			$multidaydate .= JemOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
 			$multidaydate .= JemOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
-		} elseif ($multi->row == 'zlast') {
+			break;
+		case 3:  // last day
 			$multidaydate .= JemOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
 			$multidaydate .= JemOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
-		} else {
+			break;
+		default: // single day
 			$multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
 			$multidaydate .= JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+			break;
 		}
 		$multidaydate .= '</div>';
 
@@ -255,8 +281,7 @@ defined('_JEXEC') or die;
 				## FOR EACH ##
 				##############
 
-				$counter	= array();
-				$cats		= array();
+				$counter = array();
 
 				# walk through events
 				foreach ($this->rows as $row) {
