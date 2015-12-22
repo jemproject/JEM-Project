@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -13,6 +13,13 @@ defined('_JEXEC') or die;
 	<meta http-equiv="refresh" content="1; url=index.php?option=com_jem&amp;view=import&amp;task=import.eventlistimport&amp;step=<?php
 		echo $this->progress->step; ?>&amp;table=<?php echo $this->progress->table; ?>&amp;current=<?php
 		echo $this->progress->current; ?>&amp;total=<?php echo $this->progress->total; ?>" />
+<?php endif; ?>
+
+<?php if (isset($this->sidebar)) : ?>
+<div id="j-sidebar-container" class="span2">
+	<?php echo $this->sidebar; ?>
+</div>
+<div id="j-main-container" class="span10">
 <?php endif; ?>
 
 <?php echo JHtml::_('tabs.start', 'det-pane', array('useCookie'=>1)); ?>
@@ -255,3 +262,7 @@ defined('_JEXEC') or die;
 	<input type="hidden" name="task" id="task1" value="" />
 </form>
 <?php echo JHtml::_('tabs.end'); ?>
+
+<?php if (isset($this->sidebar)) : ?>
+</div>
+<?php endif; ?>

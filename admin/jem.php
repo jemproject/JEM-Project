@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -24,6 +24,7 @@ require_once (JPATH_COMPONENT_SITE.'/classes/user.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/attachment.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/categories.class.php');
 require_once (JPATH_COMPONENT_ADMINISTRATOR.'/classes/admin.class.php');
+require_once (JPATH_COMPONENT_ADMINISTRATOR.'/classes/admin.view.class.php');
 require_once (JPATH_COMPONENT_ADMINISTRATOR.'/helpers/helper.php');
 
 // Set the table directory
