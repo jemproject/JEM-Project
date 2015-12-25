@@ -15,8 +15,7 @@ jimport('joomla.application.component.model');
  * JEM Component attendee Model
  *
  * @package JEM
- *
-*/
+ */
 class JEMModelAttendee extends JModelLegacy
 {
 	/**
@@ -61,11 +60,10 @@ class JEMModelAttendee extends JModelLegacy
 	}
 
 	/**
-	 * Method to get content category data
+	 * Method to get data
 	 *
 	 * @access	public
 	 * @return	array
-	 *
 	 */
 	function &getData()
 	{
@@ -77,11 +75,10 @@ class JEMModelAttendee extends JModelLegacy
 	}
 
 	/**
-	 * Method to load content event data
+	 * Method to load data
 	 *
 	 * @access	private
 	 * @return	boolean	True on success
-	 *
 	 */
 	protected function _loadData()
 	{
@@ -106,11 +103,10 @@ class JEMModelAttendee extends JModelLegacy
 	}
 
 	/**
-	 * Method to initialise the category data
+	 * Method to initialise the data
 	 *
 	 * @access	private
 	 * @return	boolean	True on success
-	 *
 	 */
 	protected function _initData()
 	{
