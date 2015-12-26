@@ -34,8 +34,7 @@ $params = $params->toArray();
 ?>
 
 <script type="text/javascript">
-	window.addEvent('domready', function(){
-	seteventcats();
+window.addEvent('domready', function(){
 	checkmaxplaces();
 
 
@@ -62,15 +61,8 @@ $params = $params->toArray();
 		commoff();
 	}
 
-	});
+});
 
-
-	function seteventcats()
-	{
-		$('cid').addEvent('blur',function(){
-		        testcid();
-		});
-	}
 
 	function checkmaxplaces()
 	{
@@ -91,20 +83,6 @@ $params = $params->toArray();
 			});
 	}
 
-	function testcid()
-	{
-		var x=document.getElementById("cid").selectedIndex;
-		var z2=document.getElementById("jform_cats-lbl");
-
-
-		if (x == -1)
-		{
-			z2.addClass("invalid");
-		} else
-		{
-			z2.removeClass('invalid');
-		}
-	}
 
 	function testcomm()
 	{
@@ -153,11 +131,8 @@ $params = $params->toArray();
 	}
 </script>
 <script type="text/javascript">
-	Joomla.submitbutton = function(task)
-	{
-		if (task != 'event.cancel') {
-			testcid();
-		}
+Joomla.submitbutton = function(task)
+{
 		if (task == 'event.cancel' || document.formvalidator.isValid(document.id('event-form'))) {
 			Joomla.submitform(task, document.getElementById('event-form'));
 
@@ -166,7 +141,7 @@ $params = $params->toArray();
 			$("meta_keywords").value = $keywords;
 			$("meta_description").value = $description;
 		}
-	}
+}
 </script>
 
 <form

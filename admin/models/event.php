@@ -250,7 +250,7 @@ class JEMModelEvent extends JemModelAdmin
 		$new     = (bool)empty($data['id']);
 
 		// Variables
-		$cats             = $jinput->get('cid', array(), 'array');
+		$cats			  = $data['cats'];
 		$recurrencenumber = $jinput->get('recurrence_number', '', 'int');
 		$recurrencebyday  = $jinput->get('recurrence_byday', '', 'string');
 		$metakeywords     = $jinput->get('meta_keywords', '', '');

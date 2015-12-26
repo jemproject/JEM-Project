@@ -74,12 +74,12 @@
 		/>
 		<field name="cats" type="catoptions"
 			multiple="true"
-			class="inputbox required"
+			class="inputbox"
 			size="10"
 			label="COM_JEM_FIELD_CATEGORIES"
 			labelclass=""
 			description="COM_JEM_FIELD_CATEGORIES"
-			required="false"
+			required="true"
 		/>
 		<field name="hits" type="hits"
 			default="0"

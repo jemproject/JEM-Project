@@ -19,9 +19,9 @@ $settings	= json_decode($this->item->attribs);
 ?>
 
 <script type="text/javascript">
-	window.addEvent('domready', function(){
+window.addEvent('domready', function(){
 	checkmaxplaces();
-	});
+});
 
 	function checkmaxplaces(){
 		var maxplaces = $('jform_maxplaces');
