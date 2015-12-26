@@ -35,7 +35,6 @@ $params = $params->toArray();
 
 <script type="text/javascript">
 	window.addEvent('domready', function(){
-	setbgcats();
 	seteventcats();
 	checkmaxplaces();
 
@@ -65,14 +64,6 @@ $params = $params->toArray();
 
 	});
 
-	function setbgcats()
-	{
-		var z=document.getElementById("cid");
-
-		z.morph({
-		    backgroundColor: '#D5EEFF'
-		});
-	}
 
 	function seteventcats()
 	{
@@ -164,7 +155,9 @@ $params = $params->toArray();
 <script type="text/javascript">
 	Joomla.submitbutton = function(task)
 	{
-		testcid();
+		if (task != 'event.cancel') {
+			testcid();
+		}
 		if (task == 'event.cancel' || document.formvalidator.isValid(document.id('event-form'))) {
 			Joomla.submitform(task, document.getElementById('event-form'));
 
