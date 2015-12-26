@@ -1,15 +1,15 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
 
 /**
- * Eventslist-Raw
+ * Raw: Eventlist
  */
 class JemViewEventslist extends JViewLegacy
 {
@@ -22,10 +22,11 @@ class JemViewEventslist extends JViewLegacy
 		$settings2	= JemHelper::globalattribs();
 
 		if ($settings2->get('global_show_ical_icon','0')==1) {
+			
 			// Get data from the model
-			$model = $this->getModel();
-			$model->setLimit($settings->ical_max_items);
-			$model->setLimitstart(0);
+			$model = JModelLegacy::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
+			$model->setState('list.limit',$settings->ical_max_items);
+			$model->setState('list.start',0);
 			$rows = $model->getItems();
 
 			// initiate new CALENDAR
