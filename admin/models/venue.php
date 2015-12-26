@@ -1,6 +1,5 @@
 <?php
 /**
- * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -11,9 +10,9 @@ defined('_JEXEC') or die;
 require_once dirname(__FILE__) . '/admin.php';
 
 /**
- * Venue Model
+ * Model: Venue
  */
-class JEMModelVenue extends JemModelAdmin
+class JemModelVenue extends JemModelAdmin
 {
 	/**
 	 * Method to test whether a record can be deleted.
@@ -25,20 +24,83 @@ class JEMModelVenue extends JemModelAdmin
 	{
 		if (!empty($record->id))
 		{
-			if ($record->published != -2) {
-				return ;
-			}
-
 			$user = JemFactory::getUser();
 
-			if (!empty($record->catid)) {
-				return $user->authorise('core.delete', 'com_jem.category.'.(int) $record->catid);
-			} else {
-				return $user->authorise('core.delete', 'com_jem');
-			}
+			return $user->authorise('core.delete', 'com_jem');
 		}
 	}
+	
+	/**
+	 * Method to delete a venue
+	 */
+	public function delete(&$pks = array()) 
+	{
+		$return = array();
+		if($pks)
+		{
+			$pksTodelete = array();
+			$errorNotice = array();
+			$db = JFactory::getDbo();
+			foreach($pks as $pk)
+			{
+				$result = array();
+				
+				$query = $db->getQuery(true);
+				$query->select(array('COUNT(e.locid) as AssignedEvents'));
+				$query->from($db->quoteName('#__jem_venues').' AS v');
+				$query->join('LEFT', '#__jem_events AS e ON e.locid = v.id');
+				$query->where(array('v.id = '.$pk));
+				$query->group('v.id');
+				$db->setQuery($query);
+				$assignedEvents = $db->loadResult();
+				
+				if($assignedEvents > 0)
+				{
+					$result[] = JText::_('COM_JEM_VENUE_ASSIGNED_EVENT');
+				}
 
+				if($result)
+				{
+					$pkInfo = array("id:".$pk);
+					$result = array_merge($pkInfo,$result);
+					$errorNotice[] = $result;
+				}
+				else
+				{
+					$pksTodelete[] = $pk;
+				}
+			}
+
+			if($pksTodelete)
+			{
+				$return['removed'] = parent::delete($pksTodelete);
+				$return['removedCount'] = count($pksTodelete);
+			}
+			else
+			{
+				$return['removed'] = false;
+				$return['removedCount'] = false;
+			}
+
+			if($errorNotice)
+			{
+				$return['error'] = $errorNotice;
+			}
+			else
+			{
+				$return['error'] = false;
+			}
+
+			return $return;
+		}
+
+		$return['removed'] = false;
+		$return['error'] = false;
+		$return['removedCount'] = false;
+
+		return $return;
+	}
+	
 	/**
 	 * Method to test whether a record can be deleted.
 	 *

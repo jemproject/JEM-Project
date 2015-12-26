@@ -1,6 +1,5 @@
 <?php
 /**
- * @version 2.1.6
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -11,11 +10,7 @@ defined('_JEXEC') or die;
 
 
 /**
- * View class Venue
- *
- * @package Joomla
- * @subpackage JEM
- *
+ * View class: Venue
  */
 class JemViewVenue extends JemAdminView
 {
@@ -78,7 +73,6 @@ class JemViewVenue extends JemAdminView
 
 	/**
 	 * Add the page title and toolbar.
-	 *
 	 */
 	protected function addToolbar()
 	{
@@ -114,4 +108,3 @@ class JemViewVenue extends JemAdminView
 		JToolBarHelper::help('editvenues', true);
 	}
 }
-?>

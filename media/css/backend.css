@@ -943,3 +943,130 @@ fieldset.adminform .inputbox {
 	margin-top: 10px;
 	padding: 2px 0 0 0;
 }
+
+
+/* --- LABEL CODE ---- */
+/* Taken from Joomla! template "isis" */
+
+.label {
+	display: inline-block;
+	padding: 2px 4px;
+	font-size: 10.998px;
+	font-weight: bold;
+	line-height: 14px;
+	color: #fff;
+	vertical-align: baseline;
+	white-space: nowrap;
+	text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+	background-color: #999;
+}
+.label {
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.label:empty{
+	display: none;
+}
+a.label:hover,
+a.label:focus {
+	color: #fff;
+	text-decoration: none;
+	cursor: pointer;
+}
+.label-important {
+	background-color: #a94442;
+}
+.label-important[href]{
+	background-color: #843534;
+}
+.label-warning {
+	background-color: #f89406;
+}
+.label-warning[href] {
+	background-color: #c67605;
+}
+.label-success {
+	background-color: #3c763d;
+}
+.label-success[href]{
+	background-color: #2b542c;
+}
+.label-info {
+	background-color: #31708f;
+}
+.label-info[href] {
+	background-color: #245269;
+}
+.label-inverse {
+	background-color: #333;
+}
+.label-inverse[href] {
+	background-color: #1a1a1a;
+}
+
+/* --- ALERT CODE ---- */
+/* Taken from Joomla! template "isis" */
+
+.alert {
+	padding: 8px 35px 8px 14px;
+	margin-bottom: 18px;
+	text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+	background-color: #fcf8e3;
+	border: 1px solid #faebcc;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+.alert,
+.alert h4 {
+	color: #8a6d3b;
+}
+.alert h4 {
+	margin: 0;
+}
+.alert .close {
+	position: relative;
+	top: -2px;
+	right: -21px;
+	line-height: 18px;
+}
+.alert-success {
+	background-color: #dff0d8;
+	border-color: #d6e9c6;
+	color: #3c763d;
+}
+.alert-success h4 {
+	color: #3c763d;
+}
+.alert-danger,
+.alert-error {
+	background-color: #f2dede;
+	border-color: #ebccd1;
+	color: #a94442;
+}
+.alert-danger h4,
+.alert-error h4 {
+	color: #a94442;
+}
+.alert-info {
+	background-color: #d9edf7;
+	border-color: #bce8f1;
+	color: #31708f;
+}
+.alert-info h4 {
+	color: #31708f;
+}
+.alert-block {
+	padding-top: 14px;
+	padding-bottom: 14px;
+}
+.alert-block > p,
+.alert-block > ul {
+	margin-bottom: 0;
+}
+.alert-block p + p {
+	margin-top: 5px;
+}
+
