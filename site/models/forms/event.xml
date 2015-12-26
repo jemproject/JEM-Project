@@ -288,7 +288,7 @@
 			<option value="4">COM_JEM_WEEKDAY</option>
 		</field>
 		<field name="recurrence_limit_date" type="calendar"
-			default="0000-00-00"
+			default="now"
 			label="COM_JEM_EDITEVENT_FIELD_RECURRENCE_COUNTER"
 			description="COM_JEM_EDITEVENT_FIELD_RECURRENCE_COUNTER"
 			class="inputbox"

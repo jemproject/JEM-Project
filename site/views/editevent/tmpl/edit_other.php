@@ -82,7 +82,17 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 		<ul class="adminformlist">
 			<li><?php echo $this->form->getLabel('recurrence_type'); ?> <?php echo $this->form->getInput('recurrence_type'); ?></li>
 			<li id="recurrence_output"><label></label></li>
-			<li id="counter_row" style="display: none;"><?php echo $this->form->getLabel('recurrence_limit_date'); ?> <?php echo $this->form->getInput('recurrence_limit_date'); ?></li>
+			<li id="counter_row" style="display: none;">
+				<?php echo $this->form->getLabel('recurrence_limit_date'); ?> 
+				<?php echo $this->form->getInput('recurrence_limit_date'); ?>
+				<br><div><small>
+				<?php 
+				$anticipation	= $this->jemsettings->recurrence_anticipation;
+				$limitdate = new JDate('now +'.$anticipation.'days');
+				$limitdate = $limitdate->format('d-m-Y');
+				echo JText::sprintf(JText::_('COM_JEM_EDITEVENT_NOTICE_GENSHIELD'),$limitdate);
+				?></small></div>
+			</li>
 		</ul>
 		<input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $this->item->recurrence_number;?>" />
 		<input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->item->recurrence_byday;?>" />

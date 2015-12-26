@@ -337,6 +337,13 @@ Joomla.submitbutton = function(task)
 				</li>
 				<li id="counter_row" style="display: none;">
 					<?php echo $this->form->getLabel('recurrence_limit_date'); ?> <?php echo $this->form->getInput('recurrence_limit_date'); ?>
+					<br><div><small>
+					<?php 
+					$anticipation	= $this->jemsettings->recurrence_anticipation;
+					$limitdate = new JDate('now +'.$anticipation.'days');
+					$limitdate = $limitdate->format('d-m-Y');
+					echo JText::sprintf(JText::_('COM_JEM_EVENT_NOTICE_GENSHIELD'),$limitdate);
+					?></small></div>
 				</li>
 			</ul>
 
