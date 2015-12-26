@@ -163,7 +163,7 @@ class JemModelEventslist extends JModelList
 	 */
 	function setLimit($value)
 	{
-		$this->setState('limit', (int) $value);
+		$this->setState('list.limit', (int) $value);
 	}
 
 	/**
@@ -171,7 +171,7 @@ class JemModelEventslist extends JModelList
 	 */
 	function setLimitStart($value)
 	{
-		$this->setState('limitstart', (int) $value);
+		$this->setState('list.start', (int) $value);
 	}
 
 
@@ -509,9 +509,15 @@ class JemModelEventslist extends JModelList
 			$eventParams = new JRegistry;
 			$eventParams->loadString($item->attribs);
 
-			$item->params = clone $this->getState('params');
-			$item->params->merge($eventParams);
-
+			$stateParams = $this->getState('params');
+			if (empty($stateParams)) {
+				$item->params = new JRegistry;
+				$item->params->merge($eventParams);
+			} else {
+				$item->params = clone $stateParams;
+				$item->params->merge($eventParams);
+			}
+			
 			# adding categories
 			$item->categories = $this->getCategories($item->id);
 
