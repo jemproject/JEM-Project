@@ -1,6 +1,5 @@
 <?php
 /**
- * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -38,12 +37,26 @@ defined('_JEXEC') or die;
 
 			<!--  -->
 			<dl class="location">
-				<?php if (($this->settings->get('global_show_detlinkvenue',1)) && (!empty($row->url))) : ?>
+				<?php 
+				if (($this->settings->get('global_show_detlinkvenue',1)) && (!empty($row->url))) : 
+					$url = $this->escape($row->url);
+					if (!preg_match('%^http(s)?://%', $url)) {
+						$url = 'http://'.$url;
+					}
+				?>
 				<dt class="venue_website">
 					<?php echo JText::_('COM_JEM_WEBSITE').':'; ?>
 				</dt>
 				<dd class="venue_website">
-					<a href="<?php echo $row->url; ?>" target="_blank"> <?php echo $row->urlclean; ?></a>
+					<a href="<?php echo $this->escape($url); ?>" target="_blank">
+					<?php 
+					if (strlen($url) > 35) {
+						$row->urlclean = htmlspecialchars(substr($url, 0 , 35)).'...';
+					} else {
+						$row->urlclean = htmlspecialchars($url);
+					}
+					echo $row->urlclean; 
+					?></a>
 				</dd>
 				<?php endif; ?>
 			</dl>
@@ -91,7 +104,10 @@ defined('_JEXEC') or die;
 					<?php echo JText::_('COM_JEM_COUNTRY').':'; ?>
 				</dt>
 				<dd class="venue_country">
-					<?php echo $row->countryimg ? $row->countryimg : $row->country; ?>
+					<?php 
+					$countryimg = JemHelperCountries::getCountryFlag($row->country);
+					echo $countryimg ? $countryimg : $row->country; 
+					?>
 					<meta itemprop="addressCountry" content="<?php echo $row->country; ?>" />
 				</dd>
 				<?php endif; ?>

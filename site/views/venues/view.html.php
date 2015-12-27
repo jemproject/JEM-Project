@@ -52,7 +52,7 @@ class JemViewVenues extends JViewLegacy
 			// Create image information
 			$item->limage = JEMImage::flyercreator($item->locimage, 'venue');
 			
-			//Generate Venuedescription
+			// Generate Venuedescription
 			if (!$item->locdescription == '' || !$item->locdescription == '<br />') {
 				//execute plugins
 				$item->text	= $item->locdescription;
@@ -60,25 +60,6 @@ class JemViewVenues extends JViewLegacy
 				JPluginHelper::importPlugin('content');
 				$app->triggerEvent('onContentPrepare', array('com_jem.venue', &$item, &$params, 0));
 				$item->locdescription = $item->text;
-			}
-			
-			//build the url
-			if (!empty($item->url) && !preg_match('%^http(s)?://%', $item->url)) {
-				$item->url = 'http://'.$item->url;
-			}
-			
-			
-			//prepare the url for output
-			// TODO: Should be part of view! Then use $this->escape()
-			if (strlen($item->url) > 35) {
-				$item->urlclean = htmlspecialchars(substr($item->url, 0 , 35)).'...';
-			} else {
-				$item->urlclean = htmlspecialchars($item->url);
-			}
-			
-			//create flag
-			if ($item->country) {
-				$item->countryimg = JemHelperCountries::getCountryFlag($item->country);
 			}
 			
 			//create target link
