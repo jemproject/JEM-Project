@@ -76,7 +76,12 @@ class JemControllerVenues extends JControllerAdmin
 					$app->enqueueMessage(implode("\n",$html),'warning');
 				}
 			}
-			$this->postDeleteHook($model,$cid);
+			
+			if (version_compare(JVERSION, '3.0', 'lt')) {
+				# postDeleteHook doesn't exists in Joomla 2.x
+			} else {
+				$this->postDeleteHook($model,$cid);
+			}
 		}
 
 		$cache = JFactory::getCache('com_jem');
