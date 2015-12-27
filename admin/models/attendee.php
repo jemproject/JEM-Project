@@ -1,6 +1,5 @@
 <?php
 /**
- * @version 2.1.4
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -12,11 +11,9 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.model');
 
 /**
- * JEM Component attendee Model
- *
- * @package JEM
+ * Model: Attendee
  */
-class JEMModelAttendee extends JModelLegacy
+class JemModelAttendee extends JModelLegacy
 {
 	/**
 	 * attendee id
@@ -143,6 +140,7 @@ class JEMModelAttendee extends JModelLegacy
 		$row->waiting = $attendee->waiting ? 0 : 1;
 		return $row->store();
 	}
+	
 
 	/**
 	 * Method to store the attendee
@@ -248,5 +246,41 @@ class JEMModelAttendee extends JModelLegacy
 
 		return $row;
 	}
+	
+	
+	/**
+	 * Method to set status of registered
+	 *
+	 * @return	boolean	True on success.
+	 */
+	public function setStatus($pks, $value = 0)
+	{
+		// Sanitize the ids.
+		$pks = (array) $pks;
+		JArrayHelper::toInteger($pks);
+	
+		if (empty($pks)) {
+			$this->setError(JText::_('JERROR_NO_ITEMS_SELECTED'));
+			return false;
+		}
+	
+		try {
+			$db = $this->getDbo();
+	
+			$db->setQuery(
+					'UPDATE #__jem_register' .
+					' SET waiting = '.(int) $value.
+					' WHERE id IN ('.implode(',', $pks).')'
+					);
+			if ($db->execute() === false) {
+				throw new Exception($db->getErrorMsg());
+			}
+	
+		} catch (Exception $e) {
+			$this->setError($e->getMessage());
+			return false;
+		}
+	
+		return true;
+	}
 }
-?>

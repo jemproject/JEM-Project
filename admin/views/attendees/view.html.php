@@ -1,6 +1,5 @@
 <?php
 /**
- * @version 2.1.6
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -11,10 +10,7 @@ defined('_JEXEC') or die;
 
 
 /**
- * View class for the JEM attendees screen
- *
- * @package JEM
- *
+ * View class: Attendees
  */
 class JemViewAttendees extends JemAdminView
 {
@@ -28,9 +24,6 @@ class JemViewAttendees extends JemAdminView
 			return;
 		}
 
-		//get vars
-		$filter_order     = $app->getUserStateFromRequest('com_jem.attendees.filter_order',     'filter_order', 'u.username', 'cmd');
-		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.attendees.filter_order_Dir', 'filter_order_Dir',	'', 'word');
 		$filter_waiting   = $app->getUserStateFromRequest('com_jem.attendees.waiting',          'filter_waiting',	0, 'int');
 		$filter_type      = $app->getUserStateFromRequest('com_jem.attendees.filter_type',      'filter_type', '', 'int');
 		$filter_search    = $app->getUserStateFromRequest('com_jem.attendees.filter_search',    'filter_search', '', 'string');
@@ -40,9 +33,11 @@ class JemViewAttendees extends JemAdminView
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		// Get data from the model
-		$rows 		= $this->get('Data');
-		$pagination = $this->get('Pagination');
 		$event 		= $this->get('Event');
+		
+		$this->items		= $this->get('Items');
+		$this->pagination	= $this->get('Pagination');
+		$this->state		= $this->get('State');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {
@@ -77,14 +72,8 @@ class JemViewAttendees extends JemAdminView
 		                 JHtml::_('select.option', 2, JText::_('COM_JEM_ATT_FILTER_WAITING'))) ;
 		$lists['waiting'] = JHtml::_('select.genericlist', $options, 'filter_waiting', array('onChange'=>'this.form.submit();'), 'value', 'text', $filter_waiting);
 
-		// table ordering
-		$lists['order_Dir'] = $filter_order_Dir;
-		$lists['order']		= $filter_order;
-
 		//assign to template
 		$this->lists 		= $lists;
-		$this->rows 		= $rows;
-		$this->pagination 	= $pagination;
 		$this->event 		= $event;
 
 		// add toolbar
@@ -105,7 +94,7 @@ class JemViewAttendees extends JemAdminView
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
-		$rows = $this->get('Data');
+		$rows = $this->get('Items');
 		$event = $this->get('Event');
 
 		if (JEMHelper::isValidDate($event->dates)) {
@@ -131,7 +120,19 @@ class JemViewAttendees extends JemAdminView
 
 		JToolBarHelper::addNew('attendees.add');
 		JToolBarHelper::editList('attendees.edit');
+		if ($this->event->waitinglist) {
+			JToolBarHelper::custom('attendees.setWaitinglist', 'loop', 'loop', JText::_('COM_JEM_ATTENDEES_SETWAITINGLIST'), true);
+			JToolBarHelper::custom('attendees.setAttending', 'loop', 'loop', JText::_('COM_JEM_ATTENDEES_SETATTENDING'), true);
+		}
 		JToolBarHelper::spacer();
+		JToolBarHelper::custom('attendees.export', 'download', 'download', JText::_('COM_JEM_EXPORT'), false);
+		
+		$eventid 	= $this->event->id;
+		$link_print = 'index.php?option=com_jem&amp;view=attendees&amp;layout=print&amp;tmpl=component&amp;id='.$eventid;
+		
+		$bar = JToolBar::getInstance('toolbar');
+		$bar->appendButton('Popup', 'print', 'COM_JEM_PRINT', $link_print, 600, 300);
+		
 		JToolBarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'attendees.remove', 'COM_JEM_ATTENDEES_DELETE');
 		JToolBarHelper::spacer();
 		JToolBarHelper::custom('attendees.back', 'back', 'back', JText::_('COM_JEM_ATT_BACK'), false);

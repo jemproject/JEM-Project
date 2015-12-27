@@ -1,6 +1,5 @@
 <?php
 /**
- * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -10,14 +9,10 @@
 defined('_JEXEC') or die;
 
 
-
 /**
- * View class for the JEM attendee screen
- *
- * @package JEM
- *
+ * View class: Attendee
  */
-class JEMViewAttendee extends JViewLegacy {
+class JemViewAttendee extends JViewLegacy {
 
 	public function display($tpl = null)
 	{
@@ -100,4 +95,3 @@ class JEMViewAttendee extends JViewLegacy {
 		JToolBarHelper::help('editattendee', true);
 	}
 }
-?>

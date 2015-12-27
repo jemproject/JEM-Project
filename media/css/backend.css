@@ -1,5 +1,4 @@
 /**
- * @version 2.1.0
  * @package JEM
  * @copyright (C) 2013-2014 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -25,6 +24,9 @@
 .icon-48-venuesedit			{ background-image: url(../images/icon-48-venuesedit.png); }
 .icon-48-housekeeping		{ background-image: url(../images/icon-48-housekeeping.png); }
 .icon-48-plugins			{ background-image: url(../images/icon-48-plugins.png); }
+
+/*-- needed for Joomla 2.x --*/
+.icon-32-download			{ background-image: url(../images/icon-32-tableexport.png); }
 
 /** linkicons **/
 div.linkicon {

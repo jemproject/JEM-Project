@@ -1,6 +1,5 @@
 <?php
 /**
- * @version 2.1.4
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -12,16 +11,12 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.controller');
 
 /**
- * JEM Component Attendee Controller
- *
- * @package JEM
- *
+ * Controller: Attendee
  */
-class JEMControllerAttendee extends JControllerLegacy
+class JemControllerAttendee extends JControllerLegacy
 {
 	/**
 	 * Constructor
-	 *
 	 */
 	public function __construct()
 	{
@@ -49,7 +44,6 @@ class JEMControllerAttendee extends JControllerLegacy
 	 *
 	 * @access public
 	 * @return void
-	 *
 	 */
 	function cancel()
 	{
@@ -74,7 +68,6 @@ class JEMControllerAttendee extends JControllerLegacy
 	 *
 	 * @access public
 	 * @return void
-	 *
 	 */
 	function save()
 	{
@@ -85,8 +78,7 @@ class JEMControllerAttendee extends JControllerLegacy
 		$jinput = JFactory::getApplication()->input;
 
 		// retrieving task "apply"
-		$task = $jinput->get('task','','cmd');
-// 		$task	= $this->getTask();
+		$task = $jinput->getCmd('task');
 
 		// Retrieving $post
 		if (version_compare(JVERSION, '3.2', 'lt')) {
@@ -96,10 +88,10 @@ class JEMControllerAttendee extends JControllerLegacy
 		}
 
 		// Retrieving email-setting
-		$sendemail = $jinput->get('sendemail','0','int');
+		$sendemail = $jinput->getInt('sendemail','0');
 
 		// Retrieving event-id
-		$eventid = $jinput->get('event','','int');
+		$eventid = $jinput->getInt('event');
 
 		// the id in case of edit
 		$id = (!empty($post['id']) ? $post['id'] : 0);
@@ -174,4 +166,3 @@ class JEMControllerAttendee extends JControllerLegacy
 		parent::display();
 	}
 }
-?>
