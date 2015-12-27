@@ -236,9 +236,6 @@ class JEMControllerVenue extends JemControllerForm
 	 */
 	public function save($key = null, $urlVar = 'a_id')
 	{
-		// Load the backend helper for filtering.
-		require_once JPATH_ADMINISTRATOR.'/components/com_jem/helpers/helper.php';
-
 		$result = parent::save($key, $urlVar);
 
 		// If ok, redirect to the return page.

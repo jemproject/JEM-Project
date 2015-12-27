@@ -1345,5 +1345,15 @@ class JemHelper
 		}
 		return $result;
 	}
+	
+	
+	public static function getCountryOptions()
+	{
+		$options = array();
+		$options = array_merge(JEMHelperCountries::getCountryOptions(),$options);
+	
+		array_unshift($options, JHtml::_('select.option', '0', JText::_('COM_JEM_SELECT_COUNTRY')));
+	
+		return $options;
+	}
 }
-?>

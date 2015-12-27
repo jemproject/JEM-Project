@@ -16,7 +16,7 @@ if (version_compare(JVERSION, '3.2', 'lt')) {
 	{
 		public static function render()
 		{
-			/* Do nothings */
+			/* Do nothing */
 		}
 
 		public static function getEntries()
@@ -31,10 +31,7 @@ if (version_compare(JVERSION, '3.2', 'lt')) {
 }
 
 /**
- *  component helper.
- *
- * @subpackage	com_jem
- *
+ * Helper: Backend
  */
 class JemHelperBackend
 {
@@ -132,8 +129,6 @@ class JemHelperBackend
 	 * @param	int		The category ID.
 	 *
 	 * @return	JObject
-	 *
-	 *
 	 */
 	public static function getActions($categoryId = 0)
 	{
