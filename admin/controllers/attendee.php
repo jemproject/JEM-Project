@@ -35,7 +35,7 @@ class JemControllerAttendee extends JControllerLegacy
 	 */
 	function back()
 	{
-		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.JFactory::getApplication()->input->getInt('event', 0));
+		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.JFactory::getApplication()->input->getInt('event', 0));
 	}
 
 
@@ -59,7 +59,7 @@ class JemControllerAttendee extends JControllerLegacy
 		}
 		$attendee->checkin();
 
-		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.JFactory::getApplication()->input->getInt('event', 0));
+		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.JFactory::getApplication()->input->getInt('event', 0));
 	}
 
 
@@ -145,7 +145,7 @@ class JemControllerAttendee extends JControllerLegacy
 
 			default:
 				// Redirect to the list screen.
-				$link = 'index.php?option=com_jem&view=attendees&id='.$row->event;
+				$link = 'index.php?option=com_jem&view=attendees&eventid='.$row->event;
 				break;
 			}
 			$msg = JText::_('COM_JEM_ATTENDEE_SAVED');
@@ -154,7 +154,7 @@ class JemControllerAttendee extends JControllerLegacy
 			$cache->clean();
 		} else {
 			$msg 	= '';
-			$link 	= 'index.php?option=com_jem&view=attendees&id='.$eventid;
+			$link 	= 'index.php?option=com_jem&view=attendees&eventid='.$eventid;
 		}
 		$this->setRedirect($link, $msg);
 	}

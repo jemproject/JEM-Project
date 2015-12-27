@@ -84,16 +84,12 @@ class JemViewAttendees extends JemAdminView
 
 	/**
 	 * Prepares the print screen
-	 *
-	 * @param $tpl
-	 *
-	 *
 	 */
 	protected function _displayprint($tpl = null)
 	{
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-
+		
 		$rows = $this->get('Items');
 		$event = $this->get('Event');
 
@@ -128,7 +124,7 @@ class JemViewAttendees extends JemAdminView
 		JToolBarHelper::custom('attendees.export', 'download', 'download', JText::_('COM_JEM_EXPORT'), false);
 		
 		$eventid 	= $this->event->id;
-		$link_print = 'index.php?option=com_jem&amp;view=attendees&amp;layout=print&amp;tmpl=component&amp;id='.$eventid;
+		$link_print = 'index.php?option=com_jem&amp;view=attendees&amp;layout=print&amp;tmpl=component&amp;eventid='.$eventid;
 		
 		$bar = JToolBar::getInstance('toolbar');
 		$bar->appendButton('Popup', 'print', 'COM_JEM_PRINT', $link_print, 600, 300);
@@ -140,4 +136,3 @@ class JemViewAttendees extends JemAdminView
 		JToolBarHelper::help('registereduser', true);
 	}
 }
-?>

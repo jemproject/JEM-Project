@@ -46,7 +46,7 @@ class JemControllerAttendees extends JControllerLegacy
 
 		$jinput = JFactory::getApplication()->input;
 		$cid = $jinput->get('cid',  0, 'array');
-		$id = $jinput->get('id','','int');
+		$eventid = $jinput->getInt('eventid');
 
 		$total 	= count($cid);
 
@@ -81,7 +81,7 @@ class JemControllerAttendees extends JControllerLegacy
 
 		$msg = $total.' '.JText::_('COM_JEM_REGISTERED_USERS_DELETED');
 
-		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$id, $msg);
+		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.$eventid, $msg);
 	}
 
 	
@@ -204,7 +204,7 @@ class JemControllerAttendees extends JControllerLegacy
 			$app->enqueueMessage($msg,$type);
 		}
 		
-		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$attendee->event);
+		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.$attendee->event);
 		$this->redirect();
 	}
 
@@ -224,7 +224,7 @@ class JemControllerAttendees extends JControllerLegacy
 		$jinput = JFactory::getApplication()->input;
 		$jinput->set('view', 'attendee');
 		// 'attendee' expects event id as 'event' not 'id'
-		$jinput->set('event', $jinput->getInt('id'));
+		$jinput->set('event', $jinput->getInt('eventid'));
 		$jinput->set('id', null);
 		$jinput->set('hidemainmenu', '1');
 
@@ -275,7 +275,7 @@ class JemControllerAttendees extends JControllerLegacy
 	
 		$app = JFactory::getApplication();
 		$jinput = $app->input;
-		$eventid = $jinput->getInt('id');
+		$eventid = $jinput->getInt('eventid');
 		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&id='.$eventid, false), $message);
 	}
 		

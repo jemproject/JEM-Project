@@ -35,8 +35,8 @@ class JemModelAttendees extends JModelList
 		
 		$app = JFactory::getApplication();
 		$jinput = $app->input;
-		$id = $jinput->getInt('id', 0);
-		$this->setId($id);
+		$eventid = $jinput->getInt('eventid', 0);
+		$this->setId($eventid);
 	}
 	
 	public function setId($eventid) {
@@ -174,7 +174,6 @@ class JemModelAttendees extends JModelList
 	 *
 	 * @access public
 	 * @return object
-	 *
 	 */
 	function getEvent()
 	{

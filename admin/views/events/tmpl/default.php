@@ -1,6 +1,5 @@
 <?php
 /**
- * @version 2.1.6
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -203,7 +202,7 @@ $(document).ready(function() {
 					<td class="center">
 						<?php
 						if ($row->registra == 1) {
-							$linkreg 	= 'index.php?option=com_jem&amp;view=attendees&amp;id='.$row->id;
+							$linkreg 	= 'index.php?option=com_jem&amp;view=attendees&amp;eventid='.$row->id;
 							$count = $row->regCount;
 							if ($row->maxplaces)
 							{

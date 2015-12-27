@@ -27,7 +27,7 @@ JFactory::getDocument()->addScriptDeclaration('
 	};
 ');
 ?>
-<form action="<?php echo JRoute::_('index.php?option=com_jem&view=attendees&id='.$this->event->id); ?>"  method="post" name="adminForm" id="adminForm">
+<form action="<?php echo JRoute::_('index.php?option=com_jem&view=attendees&eventid='.$this->event->id); ?>"  method="post" name="adminForm" id="adminForm">
 	<?php if (isset($this->sidebar)) : ?>
 	<div id="j-sidebar-container" class="span2">
 		<?php echo $this->sidebar; ?>
@@ -121,7 +121,7 @@ JFactory::getDocument()->addScriptDeclaration('
 	<?php echo JHtml::_( 'form.token' ); ?>
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="task" value="" />
-	<input type="hidden" name="id" value="<?php echo $this->event->id; ?>" />
+	<input type="hidden" name="eventid" value="<?php echo $this->event->id; ?>" />
 	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
 </form>
