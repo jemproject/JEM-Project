@@ -1,6 +1,5 @@
 <?php
 /**
- * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -11,7 +10,7 @@ defined('_JEXEC') or die;
 require_once dirname(__FILE__) . '/eventslist.php';
 
 /**
- * Model-Category
+ * Model: Category
  */
 class JemModelCategory extends JemModelEventslist
 {
@@ -72,7 +71,7 @@ class JemModelCategory extends JemModelEventslist
 	 */
 	function setLimit($value)
 	{
-		$this->setState('limit', (int) $value);
+		$this->setState('list.limit', (int) $value);
 	}
 
 	/**
@@ -81,7 +80,7 @@ class JemModelCategory extends JemModelEventslist
 	 */
 	function setLimitStart($value)
 	{
-		$this->setState('limitstart', (int) $value);
+		$this->setState('list.start', (int) $value);
 	}
 
 
@@ -95,7 +94,7 @@ class JemModelCategory extends JemModelEventslist
 		$jemsettings = JemHelper::config();
 		$jinput      = $app->input;
 		$task        = $jinput->getCmd('task','');
-		$format      = $jinput->getCmd('format','');
+		$format      = $jinput->getCmd('format',false);
 		$pk          = $jinput->getInt('id', 0);
 		$itemid      = $pk . ':' . $jinput->getInt('Itemid', 0);
 
@@ -127,14 +126,16 @@ class JemModelCategory extends JemModelEventslist
 			$app->setUserState('com_jem.category.'.$itemid.'.limitstart', 0);
 		}
 
-		$limit = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
-		$this->setState('list.limit', $limit);
-
-		$limitstart = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
-		// correct start value if required
-		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
-		$this->setState('list.start', $limitstart);
-
+		if (empty($format)) {
+			$limit = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
+			$this->setState('list.limit', $limit);
+			
+			$limitstart = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
+			// correct start value if required
+			$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+			$this->setState('list.start', $limitstart);
+		}
+		
 		# Search - variables
 		$search = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 		$this->setState('filter.filter_search', $search);
@@ -171,6 +172,20 @@ class JemModelCategory extends JemModelEventslist
 
 		$this->setState('filter.orderby',$orderby);
 	}
+	
+	
+	/**
+	 * Method to get a store id based on model configuration state.
+	 */
+	protected function getStoreId($id = '')
+	{
+		// Compile the store id.
+		$id .= ':' . $this->getState('list.start');
+		$id .= ':' . $this->getState('list.limit');
+		
+		return parent::getStoreId($id);
+	}
+	
 
 	/**
 	 * Get the events in the category

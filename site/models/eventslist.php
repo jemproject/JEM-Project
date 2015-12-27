@@ -63,25 +63,27 @@ class JemModelEventslist extends JModelList
 		$jemsettings = JemHelper::config();
 		$jinput      = $app->input;
 		$task        = $jinput->getCmd('task','');
-		$format      = $jinput->getCmd('format','');
+		$format      = $jinput->getCmd('format',false);
 		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 		$user        = JemFactory::getUser();
 		$userId      = $user->get('id');
 
 		# limit/start
 
-		/* in J! 3.3.6 limitstart is removed from request - but we need it! */
-		if ($jinput->get('limitstart', null, 'int') === null) {
-			$app->setUserState('com_jem.eventslist.'.$itemid.'.limitstart', 0);
+		if (empty($format)) {
+			/* in J! 3.3.6 limitstart is removed from request - but we need it! */
+			if ($jinput->get('limitstart', null, 'int') === null) {
+				$app->setUserState('com_jem.eventslist.'.$itemid.'.limitstart', 0);
+			}
+			
+			$limit       = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
+			$this->setState('list.limit', $limit);
+			$limitstart  = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
+			// correct start value if required
+			$limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+			$this->setState('list.start', $limitstart);
 		}
-
-		$limit       = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
-		$this->setState('list.limit', $limit);
-		$limitstart  = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
-		// correct start value if required
-		$limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
-		$this->setState('list.start', $limitstart);
-
+		
 		# Search - variables
 		$search      = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 		$this->setState('filter.filter_search', $search); // must be escaped later

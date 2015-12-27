@@ -1,6 +1,5 @@
 <?php
 /**
- * @version 2.1.6
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -22,13 +21,12 @@ class JemViewEventslist extends JViewLegacy
 		$settings2	= JemHelper::globalattribs();
 
 		if ($settings2->get('global_show_ical_icon','0')==1) {
-			
 			// Get data from the model
-			$model = JModelLegacy::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
-			$model->setState('list.limit',$settings->ical_max_items);
+			$model = $this->getModel();
 			$model->setState('list.start',0);
+			$model->setState('list.limit',$settings->ical_max_items);
 			$rows = $model->getItems();
-
+			
 			// initiate new CALENDAR
 			$vcal = JemHelper::getCalendarTool();
 			$vcal->setConfig("filename", "events.ics");
@@ -46,4 +44,3 @@ class JemViewEventslist extends JViewLegacy
 		}
 	}
 }
-?>
