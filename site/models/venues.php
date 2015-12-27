@@ -1,17 +1,17 @@
 <?php
 /**
- * @version 2.1.5
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
-
 require_once dirname(__FILE__) . '/eventslist.php';
+
 /**
- * Model-Venues
+ * Model: Venues
  */
 class JemModelVenues extends JemModelEventslist
 {
@@ -105,70 +105,38 @@ class JemModelVenues extends JemModelEventslist
 
 
 	/**
-	 * Method to get a list of events.
+	 * Method to get a list of venues
+	 * We are defining it as we don't want to fire up the getItems function of the eventslist-model
 	 */
 	public function getItems()
 	{
 		// Get a storage key.
 		$store = $this->getStoreId();
-		$query = $this->_getListQuery();
-		$items = $this->_getList($query, $this->getStart(), $this->getState('list.limit'));
-
-		$app = JFactory::getApplication();
-		$params = clone $this->getState('params');
-
-		// Lets load the content if it doesn't already exist
-		if ($items) {
-
-			foreach ($items as $item) {
-
-				// Create image information
-				$item->limage = JEMImage::flyercreator($item->locimage, 'venue');
-
-				//Generate Venuedescription
-				if (!$item->locdescription == '' || !$item->locdescription == '<br />') {
-					//execute plugins
-					$item->text	= $item->locdescription;
-					$item->title 	= $item->venue;
-					JPluginHelper::importPlugin('content');
-					$app->triggerEvent('onContentPrepare', array('com_jem.venue', &$item, &$params, 0));
-					$item->locdescription = $item->text;
-				}
-
-				//build the url
-				if (!empty($item->url) && !preg_match('%^http(s)?://%', $item->url)) {
-					$item->url = 'http://'.$item->url;
-				}
-
-
-				//prepare the url for output
-				// TODO: Should be part of view! Then use $this->escape()
-				if (strlen($item->url) > 35) {
-					$item->urlclean = htmlspecialchars(substr($item->url, 0 , 35)).'...';
-				} else {
-					$item->urlclean = htmlspecialchars($item->url);
-				}
-
-				//create flag
-				if ($item->country) {
-					$item->countryimg = JemHelperCountries::getCountryFlag($item->country);
-				}
-
-				//create target link
-				$item->linkEventsArchived = JRoute::_(JEMHelperRoute::getVenueRoute($item->venueslug.'&task=archive'));
-				$item->linkEventsPublished = JRoute::_(JEMHelperRoute::getVenueRoute($item->venueslug));
-
-				$item->EventsPublished = $this->AssignedEvents($item->locid,'1');
-				$item->EventsArchived = $this->AssignedEvents($item->locid,'2');
-			}
-
-			// Add the items to the internal cache.
-			$this->cache[$store] = $items;
+		
+		// Try to load the data from internal storage.
+		if (isset($this->cache[$store]))
+		{
 			return $this->cache[$store];
 		}
-
-		return array();
-
+		
+		// Load the list items.
+		$query = $this->_getListQuery();
+		
+		try
+		{
+			$items = $this->_getList($query, $this->getStart(), $this->getState('list.limit'));
+		}
+		catch (RuntimeException $e)
+		{
+			$this->setError($e->getMessage());
+		
+			return false;
+		}
+		
+		// Add the items to the internal cache.
+		$this->cache[$store] = $items;
+		
+		return $this->cache[$store];
 	}
 
 
@@ -227,7 +195,7 @@ class JemModelVenues extends JemModelEventslist
 		if (empty($nr)) {
 			$nr = 0;
 		}
-
+		
 		return ($nr);
 	}
 

@@ -33,6 +33,7 @@ class JemViewVenues extends JViewLegacy
 		$menu		= $app->getMenu();
 		$menuitem	= $menu->getActive();
 		$params 	= $app->getParams();
+		$model		= $this->getModel();
 
 		// Load css
 		JemHelper::loadCss('jem');
@@ -45,8 +46,49 @@ class JemViewVenues extends JViewLegacy
 		}
 
 		// Request variables
-		$rows 	= $this->get('Items');
-
+		$items 	= $this->get('Items');
+		
+		foreach ($items AS $item) {
+			// Create image information
+			$item->limage = JEMImage::flyercreator($item->locimage, 'venue');
+			
+			//Generate Venuedescription
+			if (!$item->locdescription == '' || !$item->locdescription == '<br />') {
+				//execute plugins
+				$item->text	= $item->locdescription;
+				$item->title 	= $item->venue;
+				JPluginHelper::importPlugin('content');
+				$app->triggerEvent('onContentPrepare', array('com_jem.venue', &$item, &$params, 0));
+				$item->locdescription = $item->text;
+			}
+			
+			//build the url
+			if (!empty($item->url) && !preg_match('%^http(s)?://%', $item->url)) {
+				$item->url = 'http://'.$item->url;
+			}
+			
+			
+			//prepare the url for output
+			// TODO: Should be part of view! Then use $this->escape()
+			if (strlen($item->url) > 35) {
+				$item->urlclean = htmlspecialchars(substr($item->url, 0 , 35)).'...';
+			} else {
+				$item->urlclean = htmlspecialchars($item->url);
+			}
+			
+			//create flag
+			if ($item->country) {
+				$item->countryimg = JemHelperCountries::getCountryFlag($item->country);
+			}
+			
+			//create target link
+			$item->linkEventsArchived = JRoute::_(JEMHelperRoute::getVenueRoute($item->venueslug.'&task=archive'));
+			$item->linkEventsPublished = JRoute::_(JEMHelperRoute::getVenueRoute($item->venueslug));
+			
+			$item->EventsPublished = $model->AssignedEvents($item->locid,"1");
+			$item->EventsArchived = $model->AssignedEvents($item->locid,"2");
+		}
+		
 		$pagetitle = $params->def('page_title', $menuitem->title);
 		$pageheading = $params->def('page_heading', $params->get('page_title'));
 		$pageclass_sfx = $params->get('pageclass_sfx');
@@ -87,7 +129,7 @@ class JemViewVenues extends JViewLegacy
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
 
-		$this->rows				= $rows;
+		$this->rows				= $items;
 		$this->print_link		= $print_link;
 		$this->params			= $params;
 		$this->pagination		= $pagination;
@@ -103,4 +145,3 @@ class JemViewVenues extends JViewLegacy
 		parent::display($tpl);
 	}
 }
-?>
