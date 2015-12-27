@@ -28,21 +28,39 @@ class JFormFieldCatOptions extends JFormFieldList
 	public function getInput()
 	{
 		$attr = '';
-
+		
 		// Initialize field attributes.
-		$attr .= !empty($this->class) ? ' class="' . $this->class . '"' : '';
-		$attr .= !empty($this->size) ? ' size="' . $this->size . '"' : '';
-		$attr .= $this->multiple ? ' multiple' : '';
-		$attr .= $this->required ? ' required aria-required="true"' : '';
-
-		// To avoid user's confusion, readonly="true" should imply disabled="true".
-		if ((string) $this->readonly == '1' || (string) $this->readonly == 'true' || (string) $this->disabled == '1'|| (string) $this->disabled == 'true')
-		{
-			$attr .= ' disabled="disabled"';
+		if (version_compare(JVERSION, '3.0', 'lt')) {
+			# within Joomla 2.5 we are having a "element"
+			$attr .= $this->element['class'] ? ' class="' . (string) $this->element['class'] . '"' : '';
+			
+			// To avoid user's confusion, readonly="true" should imply disabled="true".
+			if ((string) $this->element['readonly'] == 'true' || (string) $this->element['disabled'] == 'true')
+			{
+				$attr .= ' disabled="disabled"';
+			}
+			
+			$attr .= $this->element['size'] ? ' size="' . (int) $this->element['size'] . '"' : '';
+			$attr .= $this->multiple ? ' multiple="multiple"' : '';
+			
+			// Initialize JavaScript field attributes.
+			$attr .= $this->element['onchange'] ? ' onchange="' . (string) $this->element['onchange'] . '"' : '';
+		} else {
+			# but within Joomla 3 the element part was removed
+			$attr .= !empty($this->class) ? ' class="' . $this->class . '"' : '';
+			$attr .= !empty($this->size) ? ' size="' . $this->size . '"' : '';
+			$attr .= $this->multiple ? ' multiple' : '';
+			$attr .= $this->required ? ' required aria-required="true"' : '';
+			
+			// To avoid user's confusion, readonly="true" should imply disabled="true".
+			if ((string) $this->readonly == '1' || (string) $this->readonly == 'true' || (string) $this->disabled == '1'|| (string) $this->disabled == 'true')
+			{
+				$attr .= ' disabled="disabled"';
+			}
+			
+			// Initialize JavaScript field attributes.
+			$attr .= $this->onchange ? ' onchange="' . $this->onchange . '"' : '';
 		}
-
-		// Initialize JavaScript field attributes.
-		$attr .= $this->onchange ? ' onchange="' . $this->onchange . '"' : '';
 		
 		// Get the field options.
 		$options = (array) $this->getOptions();

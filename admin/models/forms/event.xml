@@ -75,7 +75,7 @@
 		<field name="cats" type="catoptions"
 			multiple="true"
 			class="inputbox"
-			size="10"
+			size="4"
 			label="COM_JEM_FIELD_CATEGORIES"
 			labelclass=""
 			description="COM_JEM_FIELD_CATEGORIES"
