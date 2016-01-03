@@ -276,7 +276,7 @@ class JemControllerAttendees extends JControllerLegacy
 		$app = JFactory::getApplication();
 		$jinput = $app->input;
 		$eventid = $jinput->getInt('eventid');
-		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&id='.$eventid, false), $message);
+		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&eventid='.$eventid, false), $message);
 	}
 		
 }
