@@ -15,7 +15,7 @@ defined('_JEXEC') or die;
 		</tr>
 	</table>
 	<br />
-	<table class="adminlist">
+	<table class="adminlist" style="width:100%">
 		<tr>
 			<td align="left">
 				<b><?php echo JText::_('COM_JEM_DATE').':'; ?></b>&nbsp;<?php echo $this->event->dates; ?><br />
@@ -24,31 +24,33 @@ defined('_JEXEC') or die;
 		</tr>
 	</table>
 	<br />
-	<table class="table table-striped" id="articleList">
+	<table class="table table-striped" id="attendeesList">
 		<thead>
 			<tr>
 				<th class="title"><?php echo JText::_('COM_JEM_NAME'); ?></th>
 				<th class="title"><?php echo JText::_('COM_JEM_USERNAME'); ?></th>
 				<th class="title"><?php echo JText::_('COM_JEM_EMAIL'); ?></th>
-				<th class="title"><?php echo JText::_('COM_JEM_IP_ADDRESS'); ?></th>
 				<th class="title"><?php echo JText::_('COM_JEM_REGDATE'); ?></th>
+				<?php if ($this->event->waitinglist): ?>
+				<th class="title"><?php echo JText::_('COM_JEM_HEADER_WAITINGLIST_STATUS' ); ?></th>
+				<?php endif; ?>
 				<th class="title center"><?php echo JText::_('COM_JEM_USER_ID'); ?></th>
 			</tr>
 		</thead>
 		<tbody>
 			<?php
-			$k = 0;
-			for($i=0, $n=count( $this->rows ); $i < $n; $i++) {
-				$row = $this->rows[$i];
+			foreach ($this->rows as $i => $row) :
 			?>
-			<tr class="<?php echo "row$k"; ?>">
+			<tr class="row<?php echo $i % 2; ?>">
 				<td><?php echo $row->name; ?></td>
 				<td><?php echo $row->username; ?></td>
 				<td><?php echo $row->email; ?></td>
-				<td><?php echo $row->uip; ?></td>
 				<td><?php echo JHtml::_('date',$row->uregdate,JText::_('DATE_FORMAT_LC2')); ?></td>
+				<?php if ($this->event->waitinglist): ?>
+				<td><?php echo JText::_($row->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING'); ?></td>
+				<?php endif; ?>
 				<td class="center"><?php echo $row->uid; ?></td>
 			</tr>
-			<?php $k = 1 - $k; } ?>
+			<?php endforeach; ?>
 		</tbody>
 	</table>

@@ -215,4 +215,61 @@ class JemModelAttendees extends JModelList
 		}
 		return true;
 	}
+	
+	
+	/**
+	 * Returns a CSV file with Attendee data
+	 * @return boolean
+	 */
+	public function getCsv()
+	{
+		$app = JFactory::getApplication();
+		
+		$event = $this->getEvent();
+		$items = $this->getItems();
+		
+		$waitinglist = isset($event->waitinglist) ? $event->waitinglist : false;
+		
+		$export = '';
+		$col = array();
+		
+		$db = JFactory::getDbo();
+		$header = array(
+				JText::_('COM_JEM_NAME'),
+				JText::_('COM_JEM_USERNAME'),
+				JText::_('COM_JEM_EMAIL'),
+				JText::_('COM_JEM_REGDATE'),
+				JText::_('COM_JEM_HEADER_WAITINGLIST_STATUS'),
+				JText::_('COM_JEM_ATTENDEES_REGID')
+		);
+		if (!$waitinglist) {
+			# no need to display the status column
+			unset($header[4]);
+		}
+		
+		
+		$csv = fopen('php://output', 'w');
+		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+		fputcsv($csv, $header, ';');
+		
+		foreach ($items as $item) {
+				
+			$data = array(
+					$item->name,
+					$item->username,
+					$item->email,
+					JHtml::_('date',$item->uregdate, JText::_('DATE_FORMAT_LC2')),
+					JText::_($item->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING'),
+					$item->uid
+			);
+			if (!$waitinglist) {
+				# no need to display the status column
+				unset($data[4]);
+			}
+				
+			fputcsv($csv, (array) $data, ';', '"');
+		}
+		
+		return fclose($csv);
+	}
 }

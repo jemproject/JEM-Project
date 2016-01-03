@@ -69,7 +69,7 @@ JFactory::getDocument()->addScriptDeclaration('
 					<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $listDirn, $listOrder); ?></th>
 					<th class="title center"><?php echo JHtml::_('grid.sort', 'COM_JEM_USER_ID', 'r.uid', $listDirn, $listOrder); ?></th>
 					<?php if ($this->event->waitinglist): ?>
-					<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting',$listDirn, $listOrder); ?></th>
+					<th class="title center"><?php echo JHtml::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting',$listDirn, $listOrder); ?></th>
 					<?php endif;?>
 					<th class="title center"><?php echo JText::_('COM_JEM_REMOVE_USER'); ?></th>
 					<th width="1%" class="center nowrap"><?php echo JHtml::_('grid.sort', 'COM_JEM_ATTENDEES_REGID', 'r.id', $listDirn, $listOrder ); ?></th>
@@ -98,10 +98,13 @@ JFactory::getDocument()->addScriptDeclaration('
 					<td><?php echo $row->uip == 'DISABLED' ? JText::_('COM_JEM_DISABLED') : $row->uip; ?></td>
 					<td><?php echo JHtml::_('date',$row->uregdate,JText::_('DATE_FORMAT_LC2')); ?></td>
 					<td class="center">
-					<a href="<?php echo JRoute::_('index.php?option=com_users&task=user.edit&id='.$row->uid); ?>"><?php echo $row->uid; ?></a></td>
+					<a href="<?php echo JRoute::_('index.php?option=com_users&task=user.edit&id='.$row->uid); ?>"><?php echo $row->uid; ?></a>
+					</td>
+					<?php if ($this->event->waitinglist): ?>
 					<td class="center">
 						<?php echo JHtml::_('jemhtml.toggleStatus', $row->waiting, $i, $canChange); ?>
 					</td>
+					<?php endif; ?>
 					<td class="center">
 						<a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendees.remove')">
 							<?php echo JHtml::_('image','com_jem/publish_r.png',JText::_('COM_JEM_REMOVE'),NULL,true); ?>

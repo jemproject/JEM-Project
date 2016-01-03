@@ -8,19 +8,19 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controller');
+jimport('joomla.application.component.controlleradmin');
 
 /**
  * Controller: Attendees
  */
-class JemControllerAttendees extends JControllerLegacy
+class JemControllerAttendees extends JControllerAdmin
 {
 	/**
 	 * Constructor
 	 */
-	public function __construct()
+	public function __construct($config = array())
 	{
-		parent::__construct();
+		parent::__construct($config);
 
 		// Register Extra task
 		$this->registerTask('add', 		'edit');
@@ -88,48 +88,15 @@ class JemControllerAttendees extends JControllerLegacy
 	/**
 	 * Function to export
 	 */
-	function export()
+	public function export()
 	{
-		$app = JFactory::getApplication();
-
-		$model = $this->getModel('attendees');
-
-		$datas = $model->getItems();
-
 		header('Content-Type: text/x-csv');
 		header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 		header('Content-Disposition: attachment; filename=attendees.csv');
 		header('Pragma: no-cache');
-
-		$export = '';
-		$col = array();
-
-		for($i=0; $i < count($datas); $i++)
-		{
-			$data = $datas[$i];
-
-			$col[] = str_replace("\"", "\"\"", $data->name);
-			$col[] = str_replace("\"", "\"\"", $data->username);
-			$col[] = str_replace("\"", "\"\"", $data->email);
-			$col[] = str_replace("\"", "\"\"", JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2')));
-			$col[] = str_replace("\"", "\"\"", $data->uid);
-
-			for($j = 0; $j < count($col); $j++)
-			{
-				$export .= "\"" . $col[$j] . "\"";
-
-				if($j != count($col)-1)
-				{
-					$export .= ";";
-				}
-			}
-			$export .= "\r\n";
-			$col = '';
-		}
-
-		echo $export;
-
-		$app->close();
+		$model = $this->getModel('attendees');
+		$model->getCsv();
+		jexit();
 	}
 
 	/**
@@ -278,5 +245,4 @@ class JemControllerAttendees extends JControllerLegacy
 		$eventid = $jinput->getInt('eventid');
 		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&eventid='.$eventid, false), $message);
 	}
-		
 }
