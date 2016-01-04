@@ -62,6 +62,7 @@ JFactory::getDocument()->addScriptDeclaration('
 		<table class="table table-striped" id="attendeeList">
 			<thead>
 				<tr>
+					<th width="1%" class="center"><?php echo JText::_('COM_JEM_NUM'); ?></th>
 					<th width="1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
 					<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_NAME', 'u.name', $listDirn, $listOrder); ?></th>
 					<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_USERNAME', 'u.username', $listDirn, $listOrder); ?></th>
@@ -90,6 +91,7 @@ JFactory::getDocument()->addScriptDeclaration('
 				$canChange	= $user->authorise('core.edit.state');
 				?>
 				<tr class="row<?php echo $i % 2; ?>">
+					<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 					<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 					<td><a href="<?php echo JRoute::_('index.php?option=com_jem&task=attendees.edit&cid[]='.$row->id); ?>"><?php echo $row->name; ?></a></td>
 					<td>
