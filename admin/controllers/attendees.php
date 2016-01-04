@@ -9,12 +9,12 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controlleradmin');
+jimport('joomla.application.component.controller');
 
 /**
  * Controller: Attendees
  */
-class JemControllerAttendees extends JControllerAdmin
+class JemControllerAttendees extends JControllerLegacy
 {
 	/**
 	 * Constructor
