@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
  * @subpackage JEM Mailer Plugin
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -964,7 +964,7 @@ class plgJEMMailer extends JPlugin {
 			$CategoryDBList = array_unique($CategoryDBList);
 			$CategoryDBList = array_filter($CategoryDBList);
 		} else {
-			$CategoryDBList = '';
+			$CategoryDBList = array();
 		}
 
 		return $CategoryDBList;
