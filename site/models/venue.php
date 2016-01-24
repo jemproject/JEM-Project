@@ -54,16 +54,15 @@ class JemModelVenue extends JemModelEventslist
 			if ($app->input->getInt('limitstart', null) === null) {
 				$app->setUserState('com_jem.venue.'.$itemid.'.limitstart', 0);
 			}
-			
+
 			$limit = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
 			$this->setState('list.limit', $limit);
-			
+
 			$limitstart = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
 			// correct start value if required
 			$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 			$this->setState('list.start', $limitstart);
 		}
-		
 
 		# Search
 		$search = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_search', 'filter_search', '', 'string');
