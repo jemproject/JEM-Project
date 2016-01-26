@@ -2,7 +2,7 @@
 /**
  * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -141,7 +141,7 @@ class JemModelAttendee extends JModelLegacy
 		$row->waiting = $attendee->waiting ? 0 : 1;
 		return $row->store();
 	}
-	
+
 
 	/**
 	 * Method to store the attendee
@@ -247,8 +247,8 @@ class JemModelAttendee extends JModelLegacy
 
 		return $row;
 	}
-	
-	
+
+
 	/**
 	 * Method to set status of registered
 	 *
@@ -259,15 +259,15 @@ class JemModelAttendee extends JModelLegacy
 		// Sanitize the ids.
 		$pks = (array) $pks;
 		JArrayHelper::toInteger($pks);
-	
+
 		if (empty($pks)) {
 			$this->setError(JText::_('JERROR_NO_ITEMS_SELECTED'));
 			return false;
 		}
-	
+
 		try {
 			$db = $this->getDbo();
-	
+
 			$db->setQuery(
 					'UPDATE #__jem_register' .
 					' SET waiting = '.(int) $value.
@@ -276,12 +276,12 @@ class JemModelAttendee extends JModelLegacy
 			if ($db->execute() === false) {
 				throw new Exception($db->getErrorMsg());
 			}
-	
+
 		} catch (Exception $e) {
 			$this->setError($e->getMessage());
 			return false;
 		}
-	
+
 		return true;
 	}
 }

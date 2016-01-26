@@ -2,7 +2,7 @@
 /**
  * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -83,14 +83,14 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 			<li><?php echo $this->form->getLabel('recurrence_type'); ?> <?php echo $this->form->getInput('recurrence_type'); ?></li>
 			<li id="recurrence_output"><label></label></li>
 			<li id="counter_row" style="display: none;">
-				<?php echo $this->form->getLabel('recurrence_limit_date'); ?> 
+				<?php echo $this->form->getLabel('recurrence_limit_date'); ?>
 				<?php echo $this->form->getInput('recurrence_limit_date'); ?>
-				<br><div><small>
-				<?php 
-				$anticipation	= $this->jemsettings->recurrence_anticipation;
-				$limitdate = new JDate('now +'.$anticipation.'days');
-				$limitdate = $limitdate->format('d-m-Y');
-				echo JText::sprintf(JText::_('COM_JEM_EDITEVENT_NOTICE_GENSHIELD'),$limitdate);
+				<br><div class="recurrence_notice"><small>
+				<?php
+				$anticipation = $this->jemsettings->recurrence_anticipation;
+				$limitdate = new JDate('now +' . $anticipation . 'days');
+				$limitdate = JemOutput::formatLongDateTime($limitdate->format('Y-m-d'), '');
+				echo JText::sprintf(JText::_('COM_JEM_EDITEVENT_NOTICE_GENSHIELD'), $limitdate);
 				?></small></div>
 			</li>
 		</ul>

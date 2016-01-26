@@ -2,7 +2,7 @@
 /**
  * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -107,7 +107,7 @@ class JemControllerAttendees extends JControllerLegacy
 	{
 		$this->setRedirect('index.php?option=com_jem&view=events');
 	}
-	
+
 	/**
 	 * Function to change status
 	 */
@@ -115,32 +115,31 @@ class JemControllerAttendees extends JControllerLegacy
 	{
 		// Check for request forgeries
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
-	
+
 		$jinput = JFactory::getApplication()->input;	
 		$pks    = $this->input->get('cid', array(), 'array');
 		$task   = $this->getTask();
-		
+
 		if (empty($pks))
 		{
 			JError::raiseWarning(500, JText::_('JERROR_NO_ITEMS_SELECTED'));
 		} else {
-			
 			JArrayHelper::toInteger($pks);
 			$model = $this->getModel('attendee');
 			$app = JFactory::getApplication();
-			
+
 			foreach ($pks AS $pk) {
 				$model->setId($pk);
-					
+
 				$attendee = $model->getData();
 				$res = $model->toggle();
-					
+
 				if ($res)
 				{
 					JPluginHelper::importPlugin('jem');
 					$dispatcher = JDispatcher::getInstance();
 					$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($pk));
-						
+
 					if ($attendee->waiting)
 					{
 						$msg = JText::_('COM_JEM_ADDED_TO_ATTENDING');
@@ -156,22 +155,20 @@ class JemControllerAttendees extends JControllerLegacy
 					$msg = JText::_('COM_JEM_WAITINGLIST_TOGGLE_ERROR').': '.$model->getError();
 					$type = 'error';
 				}
-				
-				
+
 				if (!($task = 'toggleStatus')) {
 					$app->enqueueMessage($msg,$type);
 				}
-				
 			}
 		}
-		
+
 		if ($task = 'toggleStatus') {
 			# here we are selecting more rows so a general message would be better
 			$msg = JText::_('COM_JEM_ATTENDEES_CHANGEDSTATUS');
 			$type = "message";
 			$app->enqueueMessage($msg,$type);
 		}
-		
+
 		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.$attendee->event);
 		$this->redirect();
 	}
@@ -198,8 +195,8 @@ class JemControllerAttendees extends JControllerLegacy
 
 		parent::display();
 	}
-	
-	
+
+
 	/**
 	 * Method to change status of selected rows.
 	 *
@@ -209,13 +206,13 @@ class JemControllerAttendees extends JControllerLegacy
 	{
 		// Check for request forgeries
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
-	
+
 		$user   = JFactory::getUser();
 		$ids    = $this->input->get('cid', array(), 'array');
 		$values = array('setWaitinglist' => 1, 'setAttending' => 0);
 		$task   = $this->getTask();
 		$value  = JArrayHelper::getValue($values, $task, 0, 'int');
-	
+
 		if (empty($ids))
 		{
 			JError::raiseWarning(500, JText::_('JERROR_NO_ITEMS_SELECTED'));
@@ -224,13 +221,13 @@ class JemControllerAttendees extends JControllerLegacy
 		{
 			// Get the model.
 			$model = $this->getModel('attendee');
-	
+
 			// Publish the items.
 			if (!$model->setStatus($ids, $value))
 			{
 				JError::raiseWarning(500, $model->getError());
 			}
-	
+
 			if ($value == 1)
 			{
 				$message = JText::plural('COM_JEM_ATTENDEES_N_ITEMS_WAITINGLIST', count($ids));
@@ -240,7 +237,7 @@ class JemControllerAttendees extends JControllerLegacy
 				$message = JText::plural('COM_JEM_ATTENDEES_N_ITEMS_ATTENDING', count($ids));
 			}
 		}
-	
+
 		$app = JFactory::getApplication();
 		$jinput = $app->input;
 		$eventid = $jinput->getInt('eventid');

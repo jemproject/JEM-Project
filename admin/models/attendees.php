@@ -2,7 +2,7 @@
 /**
  * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -17,13 +17,12 @@ jimport('joomla.application.component.modellist');
 class JemModelAttendees extends JModelList
 {
 	protected $eventid = 0;
-	
+
 	/**
 	 * Constructor
 	 */
 	public function __construct($config = array())
 	{
-		
 		if (empty($config['filter_fields'])) {
 			$config['filter_fields'] = array(
 					'u.name', 'u.username',
@@ -31,20 +30,20 @@ class JemModelAttendees extends JModelList
 					'r.uregdate','r.id'
 			);
 		}
-		
+
 		parent::__construct($config);
-		
+
 		$app = JFactory::getApplication();
 		$jinput = $app->input;
 		$eventid = $jinput->getInt('eventid', 0);
 		$this->setId($eventid);
 	}
-	
+
 	public function setId($eventid) {
 		$this->eventid = $eventid;
 	}
 
-	
+
 	/**
 	 * Method to auto-populate the model state.
 	 *
@@ -53,32 +52,32 @@ class JemModelAttendees extends JModelList
 	protected function populateState($ordering = null, $direction = null)
 	{
 		$app = JFactory::getApplication();
-		
+
 		$app    = JFactory::getApplication();;
 		$jinput = $app->input;
-		
+
 		$limit		= $app->getUserStateFromRequest( 'com_jem.attendees.limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest( 'com_jem.attendees.limitstart', 'limitstart', 0, 'int' );
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
-		
+
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
-		
+
 		//set unlimited if export or print action | task=export or task=print
 		$task = $jinput->getCmd('task');
 		$this->setState('unlimited', ($task == 'export' || $task == 'print') ? '1' : '');
-				
+
 		$filter_type      = $app->getUserStateFromRequest( 'com_jem.attendees.filter_type',      'filter_type',     '', 'int' );
 		$this->setState('filter_type', $filter_type);
 		$filter_search    = $app->getUserStateFromRequest( 'com_jem.attendees.filter_search',    'filter_search',   '', 'string' );
 		$this->setState('filter_search', $filter_search);
-		$filter_waiting   = $app->getUserStateFromRequest( 'com_jem.attendees.waiting',          'filter_waiting',   0, 'int' );		
+		$filter_waiting   = $app->getUserStateFromRequest( 'com_jem.attendees.waiting',          'filter_waiting',   0, 'int' );
 		$this->setState('filter_waiting', $filter_waiting);
-		
+
 		parent::populateState('u.username', 'asc');
 	}
-	
-	
+
+
 	/**
 	 * Method to get a store id based on model configuration state.
 	 *
@@ -96,11 +95,10 @@ class JemModelAttendees extends JModelList
 		$id.= ':' . $this->getState('filter_search');
 		$id.= ':' . $this->getState('filter_waitinglist');
 		$id.= ':' . $this->getState('filter_type');
-	
+
 		return parent::getStoreId($id);
 	}
-	
-	
+
 
 	/**
 	 * Build an SQL query to load the list data.
@@ -112,12 +110,11 @@ class JemModelAttendees extends JModelList
 		$app = JFactory::getApplication();
 		$jinput = $app->input;
 		$eventid = $this->eventid;
-		
-		
+
 		// Create a new query object.
 		$db		= $this->getDbo();
 		$query	= $db->getQuery(true);
-		
+
 		// Select the required fields from the table.
 		$query->select(
 				$this->getState(
@@ -126,49 +123,47 @@ class JemModelAttendees extends JModelList
 						)
 				);
 		$query->from($db->quoteName('#__jem_register').' AS r');
-		
+
 		// Join event data
 		$query->select('a.waitinglist AS waitinglist');
 		$query->join('LEFT', '#__jem_events   AS a ON (r.event = a.id)');
-		
+
 		// Join user info
 		$query->select(array('u.username','u.name','u.email'));
 		$query->join('LEFT', '#__users        AS u ON (u.id = r.uid)');
-		
+
 		// load only data from current event
 		$query->where('r.event = '.$db->Quote($eventid));
-		
+
 		$filter_waiting = $this->getState('filter_waiting');
 		if ($filter_waiting > 0) {
 			$query->where('(a.waitinglist = 0 OR r.waiting = '.$db->quote($filter_waiting-1).')');
 		}
-		
+
 		// search name
 		$filter_type = $this->getState('filter_type');
 		$filter_search = $this->getState('filter_search');
-		
-		
+
 		if (!empty($filter_search) && $filter_type == 1) {
 			$filter_search = $db->Quote('%'.$db->escape($filter_search, true).'%');
 			$query->where('u.name LIKE '.$filter_search);
 		}
-		
+
 		// search username
 		if (!empty($filter_search) && $filter_type == 2) {
 			$filter_search = $db->Quote('%'.$db->escape($filter_search, true).'%');
 			$query->where('u.username LIKE '.$filter_search);
 		}
-		
+
 		// Add the list ordering clause.
 		$orderCol	= $this->state->get('list.ordering');
 		$orderDirn	= $this->state->get('list.direction');
 
 		$query->order($db->escape($orderCol.' '.$orderDirn));
-		
+
 		return $query;
-		
 	}
-	
+
 
 	/**
 	 * Get event data
@@ -216,8 +211,8 @@ class JemModelAttendees extends JModelList
 		}
 		return true;
 	}
-	
-	
+
+
 	/**
 	 * Returns a CSV file with Attendee data
 	 * @return boolean
@@ -225,15 +220,15 @@ class JemModelAttendees extends JModelList
 	public function getCsv()
 	{
 		$app = JFactory::getApplication();
-		
+
 		$event = $this->getEvent();
 		$items = $this->getItems();
-		
+
 		$waitinglist = isset($event->waitinglist) ? $event->waitinglist : false;
-		
+
 		$export = '';
 		$col = array();
-		
+
 		$db = JFactory::getDbo();
 		$header = array(
 				JText::_('COM_JEM_NAME'),
@@ -247,14 +242,12 @@ class JemModelAttendees extends JModelList
 			# no need to display the status column
 			unset($header[4]);
 		}
-		
-		
+
 		$csv = fopen('php://output', 'w');
 		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		fputcsv($csv, $header, ';');
-		
+
 		foreach ($items as $item) {
-				
 			$data = array(
 					$item->name,
 					$item->username,
@@ -267,10 +260,10 @@ class JemModelAttendees extends JModelList
 				# no need to display the status column
 				unset($data[4]);
 			}
-				
+
 			fputcsv($csv, (array) $data, ';', '"');
 		}
-		
+
 		return fclose($csv);
 	}
 }

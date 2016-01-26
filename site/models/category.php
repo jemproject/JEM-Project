@@ -2,7 +2,7 @@
 /**
  * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -127,16 +127,16 @@ class JemModelCategory extends JemModelEventslist
 			$app->setUserState('com_jem.category.'.$itemid.'.limitstart', 0);
 		}
 
-		if (empty($format)) {
+		if (empty($format) || ($format == 'html')) {
 			$limit = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
 			$this->setState('list.limit', $limit);
-			
+
 			$limitstart = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
 			// correct start value if required
 			$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 			$this->setState('list.start', $limitstart);
 		}
-		
+
 		# Search - variables
 		$search = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 		$this->setState('filter.filter_search', $search);
@@ -173,20 +173,7 @@ class JemModelCategory extends JemModelEventslist
 
 		$this->setState('filter.orderby',$orderby);
 	}
-	
-	
-	/**
-	 * Method to get a store id based on model configuration state.
-	 */
-	protected function getStoreId($id = '')
-	{
-		// Compile the store id.
-		$id .= ':' . $this->getState('list.start');
-		$id .= ':' . $this->getState('list.limit');
-		
-		return parent::getStoreId($id);
-	}
-	
+
 
 	/**
 	 * Get the events in the category

@@ -2,7 +2,7 @@
 /**
  * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -35,7 +35,7 @@ class JemViewAttendees extends JemAdminView
 
 		// Get data from the model
 		$event 		= $this->get('Event');
-		
+
 		$this->items		= $this->get('Items');
 		$this->pagination	= $this->get('Pagination');
 		$this->state		= $this->get('State');
@@ -90,7 +90,7 @@ class JemViewAttendees extends JemAdminView
 	{
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-		
+
 		$rows = $this->get('Items');
 		$event = $this->get('Event');
 
@@ -123,13 +123,13 @@ class JemViewAttendees extends JemAdminView
 		}
 		JToolBarHelper::spacer();
 		JToolBarHelper::custom('attendees.export', 'download', 'download', JText::_('COM_JEM_EXPORT'), false);
-		
+
 		$eventid 	= $this->event->id;
 		$link_print = 'index.php?option=com_jem&amp;view=attendees&amp;layout=print&amp;tmpl=component&amp;eventid='.$eventid;
-		
+
 		$bar = JToolBar::getInstance('toolbar');
 		$bar->appendButton('Popup', 'print', 'COM_JEM_PRINT', $link_print, 600, 300);
-		
+
 		JToolBarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'attendees.remove', 'COM_JEM_ATTENDEES_DELETE');
 		JToolBarHelper::spacer();
 		JToolBarHelper::custom('attendees.back', 'back', 'back', JText::_('COM_JEM_ATT_BACK'), false);

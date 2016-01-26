@@ -2,7 +2,7 @@
 /**
  * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -113,30 +113,28 @@ class JemModelVenues extends JemModelEventslist
 	{
 		// Get a storage key.
 		$store = $this->getStoreId();
-		
+
 		// Try to load the data from internal storage.
-		if (isset($this->cache[$store]))
+		if (!isset($this->cache[$store]))
 		{
-			return $this->cache[$store];
+			// Load the list items.
+			$query = $this->_getListQuery();
+
+			try
+			{
+				$items = $this->_getList($query, $this->getStart(), $this->getState('list.limit'));
+			}
+			catch (RuntimeException $e)
+			{
+				$this->setError($e->getMessage());
+
+				return false;
+			}
+
+			// Add the items to the internal cache.
+			$this->cache[$store] = $items;
 		}
-		
-		// Load the list items.
-		$query = $this->_getListQuery();
-		
-		try
-		{
-			$items = $this->_getList($query, $this->getStart(), $this->getState('list.limit'));
-		}
-		catch (RuntimeException $e)
-		{
-			$this->setError($e->getMessage());
-		
-			return false;
-		}
-		
-		// Add the items to the internal cache.
-		$this->cache[$store] = $items;
-		
+
 		return $this->cache[$store];
 	}
 
@@ -196,7 +194,7 @@ class JemModelVenues extends JemModelEventslist
 		if (empty($nr)) {
 			$nr = 0;
 		}
-		
+
 		return ($nr);
 	}
 

@@ -68,7 +68,7 @@ class JemModelEventslist extends JModelList
 		$userId      = $user->get('id');
 
 		# limit/start
-		if (empty($format)) {
+		if (empty($format) || ($format == 'html')) {
 			/* in J! 3.3.6 limitstart is removed from request - but we need it! */
 			if ($jinput->get('limitstart', null, 'int') === null) {
 				$app->setUserState('com_jem.eventslist.'.$itemid.'.limitstart', 0);
@@ -522,7 +522,7 @@ class JemModelEventslist extends JModelList
 				$item->params = clone $stateParams;
 				$item->params->merge($eventParams);
 			}
-			
+
 			# adding categories
 			$item->categories = $this->getCategories($item->id);
 

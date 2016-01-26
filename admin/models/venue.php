@@ -2,7 +2,7 @@
 /**
  * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -30,11 +30,11 @@ class JemModelVenue extends JemModelAdmin
 			return $user->authorise('core.delete', 'com_jem');
 		}
 	}
-	
+
 	/**
 	 * Method to delete a venue
 	 */
-	public function delete(&$pks = array()) 
+	public function delete(&$pks = array())
 	{
 		$return = array();
 		if($pks)
@@ -45,7 +45,7 @@ class JemModelVenue extends JemModelAdmin
 			foreach($pks as $pk)
 			{
 				$result = array();
-				
+
 				$query = $db->getQuery(true);
 				$query->select(array('COUNT(e.locid) as AssignedEvents'));
 				$query->from($db->quoteName('#__jem_venues').' AS v');
@@ -54,7 +54,7 @@ class JemModelVenue extends JemModelAdmin
 				$query->group('v.id');
 				$db->setQuery($query);
 				$assignedEvents = $db->loadResult();
-				
+
 				if($assignedEvents > 0)
 				{
 					$result[] = JText::_('COM_JEM_VENUE_ASSIGNED_EVENT');
@@ -101,7 +101,7 @@ class JemModelVenue extends JemModelAdmin
 
 		return $return;
 	}
-	
+
 	/**
 	 * Method to test whether a record can be deleted.
 	 *
