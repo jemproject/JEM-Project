@@ -2,53 +2,12 @@
 /**
  * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
-
-if (version_compare(JVERSION, '3.4', 'lt')) {
-	// on Joomla prior 3.4.0 getInstance expects only one parameter
-
-	/**
-	 * JEM user class with additional functions.
-	 * Compatible with Joomla prior 3.4.0.
-	 *
-	 * @package JEM
-	 *
-	 * @see JemUserAbstract
-	 */
-	class JemUser extends JemUserAbstract
-	{
-		static function getInstance($id = 0)
-		{
-			return parent::_getInstance($id);
-		}
-	}
-
-} else {
-	// since Joomla 3.4.0 getInstance has a second parameter
-
-	/**
-	 * JEM user class with additional functions.
-	 * Compatible with Joomla since 3.4.0.
-	 *
-	 * @package JEM
-	 *
-	 * @see JemUserAbstract
-	 */
-	class JemUser extends JemUserAbstract
-	{
-		static function getInstance($id = 0, JUserWrapperHelper $userHelper = null)
-		{
-			// we don't need this helper
-			return parent::_getInstance($id);
-		}
-	}
-
-}
 
 /**
  * JEM user class with additional functions.
@@ -590,6 +549,47 @@ abstract class JemUserAbstract extends JUser
 		}
 
 		return (bool)$authorised;
+	}
+
+}
+
+if (version_compare(JVERSION, '3.4', 'lt')) {
+	// on Joomla prior 3.4.0 getInstance expects only one parameter
+
+	/**
+	 * JEM user class with additional functions.
+	 * Compatible with Joomla prior 3.4.0.
+	 *
+	 * @package JEM
+	 *
+	 * @see JemUserAbstract
+	 */
+	class JemUser extends JemUserAbstract
+	{
+		static function getInstance($id = 0)
+		{
+			return parent::_getInstance($id);
+		}
+	}
+
+} else {
+	// since Joomla 3.4.0 getInstance has a second parameter
+
+	/**
+	 * JEM user class with additional functions.
+	 * Compatible with Joomla since 3.4.0.
+	 *
+	 * @package JEM
+	 *
+	 * @see JemUserAbstract
+	 */
+	class JemUser extends JemUserAbstract
+	{
+		static function getInstance($id = 0, JUserWrapperHelper $userHelper = null)
+		{
+			// we don't need this helper
+			return parent::_getInstance($id);
+		}
 	}
 
 }
