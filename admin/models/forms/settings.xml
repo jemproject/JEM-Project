@@ -287,16 +287,6 @@
 	<fieldset name="layoutgenerallayoutsetting"
 		label="COM_JEM_GENERAL_LAYOUT_SETTINGS"
 	>
-		<field name="showtime" type="radio"
-			label="COM_JEM_SETTINGS_FIELD_SHOW_TIME"
-			description="COM_JEM_SETTINGS_FIELD_SHOW_TIME_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JHIDE</option>
-			<option value="1">JSHOW</option>
-		</field>
 		<field name="tablewidth" type="text"
 			label="COM_JEM_FRONT_TABLE_WIDTH"
 			description="COM_JEM_FRONT_TABLE_WIDTH_DESC"
@@ -313,6 +303,16 @@
 			maxlength="10"
 			required="false"
 		/>
+		<field name="showtime" type="radio"
+			label="COM_JEM_SETTINGS_FIELD_SHOW_TIME_IN_LISTS"
+			description="COM_JEM_SETTINGS_FIELD_SHOW_TIME_IN_LISTS_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="0">JHIDE</option>
+			<option value="1">JSHOW</option>
+		</field>
 		<field name="datemode" type="list"
 			label="COM_JEM_DATE_COLUMN_LAYOUT"
 			description="COM_JEM_DATE_COLUMN_LAYOUT_DESC"

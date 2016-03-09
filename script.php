@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.4.2
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -21,6 +21,7 @@ class com_jemInstallerScript
 {
 	private $oldRelease = "";
 	private $newRelease = "";
+	private $useJemConfig = false; // set to true if we moved values from settings to config table
 
 	/**
 	 * Method to install the component
@@ -33,6 +34,9 @@ class com_jemInstallerScript
 				'summary' => 0,
 				'folders' => 0
 		);
+
+		$this->updateJemSettings216(true);
+		$this->useJemConfig = true;
 
 		$this->getHeader();
 		?>
@@ -83,11 +87,11 @@ class com_jemInstallerScript
 
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
-		$query->select('id')->from('#__jem_settings');
+		$query->select('*')->from('#__jem_config');
 		$db->setQuery($query);
-		$db->loadResult();
+		$conf = $db->loadAssocList();
 
-		if($db->loadResult()) {
+		if (count($conf)) {
 			echo "<p><span style='color:green;'>".JText::_('COM_JEM_INSTALL_SUCCESS').":</span> ".
 				JText::_('COM_JEM_INSTALL_FOUND_SETTINGS')."</p>";
 		}
@@ -322,6 +326,12 @@ class com_jemInstallerScript
 				// remove 'htm' and 'html' from default attahment types
 				$this->updateJemSettings2142();
 			}
+			// Changes between 2.1.5 -> 2.1.6
+			if (version_compare($this->oldRelease, '2.1.6', 'lt') && version_compare($this->newRelease, '2.1.5', 'gt')) {
+				// move all settings from table #__jem_settings to table #__jem_config storing every setting in it's own record
+				$this->updateJemSettings216();
+			}
+			// !!! Now we have #__jem_config and good old #__jem_seetings is gone !!!
 		}
 		elseif ($type == 'install') {
 			$this->fixJemMenuItems();
@@ -385,7 +395,12 @@ class com_jemInstallerScript
 		try {
 			$db = JFactory::getDbo();
 			$query = $db->getQuery(true);
-			$query->select('globalattribs')->from('#__jem_settings')->where('id=1');
+			if ($this->useJemConfig) {
+				$query->select('value')->from('#__jem_config')
+				      ->where($db->quoteName('keyname') . ' = ' . $db->quote('globalattribs'));
+			} else {
+				$query->select('globalattribs')->from('#__jem_settings')->where('id=1');
+			}
 			$db->setQuery($query);
 			$registry->loadString($db->loadResult());
 		} catch (Exception $ex) {
@@ -403,7 +418,12 @@ class com_jemInstallerScript
 			// read the existing component value(s)
 			$db = JFactory::getDbo();
 			$query = $db->getQuery(true);
-			$query->select('globalattribs')->from('#__jem_settings');
+			if ($this->useJemConfig) {
+				$query->select('value')->from('#__jem_config')
+				      ->where($db->quoteName('keyname') . ' = ' . $db->quote('globalattribs'));
+			} else {
+				$query->select('globalattribs')->from('#__jem_settings');
+			}
 			$db->setQuery($query);
 			$params = json_decode($db->loadResult(), true);
 
@@ -415,8 +435,14 @@ class com_jemInstallerScript
 			// store the combined new and existing values back as a JSON string
 			$paramsString = json_encode($params);
 			$query = $db->getQuery(true);
-			$query->update('#__jem_settings')
-			      ->set('globalattribs = '.$db->quote($paramsString));
+			if ($this->useJemConfig) {
+				$query->update('#__jem_config')
+				      ->where($db->quoteName('keyname') . ' = ' . $db->quote('globalattribs'))
+				      ->set($db->quoteName('value') . ' = '. $db->quote($paramsString));
+			} else {
+				$query->update('#__jem_settings')
+				      ->set('globalattribs = '.$db->quote($paramsString));
+			}
 			$db->setQuery($query);
 			$db->execute();
 		}
@@ -1114,6 +1140,104 @@ class com_jemInstallerScript
 	}
 
 	/**
+	 * Move all settings from table #__jem_settings to table #__jem_config
+	 * storing every setting in it's own record.
+	 * (required when updating from 2.1.5 or below to 2.1.6 or newer)
+	 *
+	 * @return void
+	 */
+	private function updateJemSettings216($onInstall = false)
+	{
+		$db = JFactory::getDbo();
+
+		// load data from old #__jem_settings
+		try {
+			$query = $db->getQuery(true);
+			$query->select('*')->from('#__jem_settings')->where('id=1');
+			$db->setQuery($query);
+			$old_data = $db->loadObject();
+		} catch (Exception $ex) {
+		}
+
+		if ($onInstall && empty($old_data)) {
+			return;
+		}
+
+		// Special: swap showtime <-> globalattribs.global_show_timedetails
+		if (!empty($old_data->globalattribs) && isset($old_data->showtime)) {
+			$registry = new JRegistry;
+			$registry->loadString($old_data->globalattribs);
+			$showtime = $old_data->showtime;
+			$old_data->showtime = $registry->get('global_show_timedetails', $showtime);
+			$registry->set('global_show_timedetails', $showtime);
+			$old_data->globalattribs = $registry->toString();
+		}
+
+		if (empty($old_data)) {
+			echo "<li><span style='color:red;'>".JText::_('COM_JEM_INSTALL_ERROR').":</span> ".
+			          JText::_('COM_JEM_INSTALL_SETINGS_NOT_FOUND')."</li>";
+		} else {
+			// save to new #__jem_config table ignoring obsolete fields
+			$old_data = get_object_vars($old_data);
+			$ignore = array('id', 'showmapserv', 'showtimedetails', 'showevdescription', 'showdetailstitle',
+			                'showdetailsadress', 'showlocdescription', 'showdetlinkvenue', 'communsolution',
+			                'communoption', 'regname', 'checked_out', 'checked_out_time', 'tld', 'lg', 'cat_num',
+			                'filter', 'display', 'icons', 'show_print_icon', 'show_email_icon', 'events_ical',
+			                'show_archive_icon', 'ownedvenuesonly', 'empty_cat'
+			               );
+			$oops = 0;
+
+			try {
+				$query = $db->getQuery(true);
+				$query->select(array($db->quoteName('keyname'), $db->quoteName('value')));
+				$query->from('#__jem_config');
+				$db->setQuery($query);
+				$list = $db->loadAssocList('keyname', 'value');
+			} catch (Exception $ex) {
+				$list = array();
+			}
+			$keys = array_keys($list);
+
+			foreach ($old_data as $k => $v) {
+				$query = $db->getQuery(true);
+				if (in_array($k, $ignore)) {
+					continue; // skip if obsolete
+				}
+				if (in_array($k, $keys)) {
+					if ($v == $list[$k]) {
+						continue; // skip if unchanged
+					}
+					// we do overwrite values already in #__jem_config by those from #__jem_settings - shouldn't we?
+					$query->update('#__jem_config');
+					$query->where(array($db->quoteName('keyname') . ' = ' . $db->quote($k)));
+				} else {
+					$query->insert('#__jem_config');
+					$query->set(array($db->quoteName('keyname') . ' = ' . $db->quote($k)));
+				}
+				$query->set(array($db->quoteName('value') . ' = ' . $db->quote($v)));
+				$db->setQuery($query);
+				try {
+					$db->execute();
+				} catch (Exception $e) {
+					$oops++;
+				}
+			}
+
+			if ($oops) {
+				echo "<li><span style='color:red;'>".JText::_('COM_JEM_INSTALL_ERROR').":</span> ".
+				          JText::_('COM_JEM_INSTALL_CONFIG_NOT_STORED')."</li>";
+			} else {
+				// remove old #__jem_settings table
+				try {
+					$db->dropTable('#__jem_settings');
+					$this->useJemConfig = true;
+				} catch (Exception $ex) {
+				}
+			}
+		}
+	}
+
+	/**
 	 * Deletes all JEM tables on database if option says so.
 	 *
 	 * @return void
@@ -1130,6 +1254,7 @@ class com_jemInstallerScript
 		                '#__jem_groups',
 		                '#__jem_register',
 		                '#__jem_settings',
+		                '#__jem_config',
 		                '#__jem_venues');
 		foreach ($tables AS $table) {
 			try {

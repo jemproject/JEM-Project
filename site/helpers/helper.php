@@ -2,7 +2,7 @@
 /**
  * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -31,15 +31,8 @@ class JemHelper
 		static $config;
 
 		if (!is_object($config)) {
-			$db = JFactory::getDBO();
-			$query = $db->getQuery(true);
-
-			$query->select('*');
-			$query->from('#__jem_settings');
-			$query->where('id = 1');
-
-			$db->setQuery($query);
-			$config = $db->loadObject();
+			$jemConfig = JemConfig::getInstance();
+			$config = clone $jemConfig->toObject(); // We need a copy to ensure not to store 'params' we add below!
 
 			$config->params = JComponentHelper::getParams('com_jem');
 		}
@@ -56,22 +49,10 @@ class JemHelper
 	 */
 	static function globalattribs()
 	{
-		static $globalattribs;
-
-		if (!is_object($globalattribs)) {
-			$db = JFactory::getDBO();
-			$query = $db->getQuery(true);
-
-			$query->select('globalattribs');
-			$query->from('#__jem_settings');
-			$query->where('id = 1');
-
-			$db->setQuery($query);
-			$globalattribs = $db->loadResult();
+		static $globalregistry;
+		if (!is_object($globalregistry)) {
+			$globalregistry = new JRegistry(self::config()->globalattribs);
 		}
-
-		$globalregistry = new JRegistry;
-		$globalregistry->loadString($globalattribs);
 
 		return $globalregistry;
 	}
@@ -82,22 +63,10 @@ class JemHelper
 	 */
 	static function retrieveCss()
 	{
-		static $css;
-
-		if (!is_object($css)) {
-			$db = JFactory::getDBO();
-			$query = $db->getQuery(true);
-
-			$query->select('css');
-			$query->from('#__jem_settings');
-			$query->where('id = 1');
-
-			$db->setQuery($query);
-			$css = $db->loadResult();
+		static $registryCSS;
+		if (!is_object($registryCSS)) {
+			$registryCSS = new JRegistry(self::config()->css);
 		}
-
-		$registryCSS = new JRegistry;
-		$registryCSS->loadString($css);
 
 		return $registryCSS;
 	}
@@ -228,9 +197,7 @@ class JemHelper
 			}
 
 			//Set timestamp of last cleanup
-			$query = 'UPDATE #__jem_settings SET lastupdate = '.time().' WHERE id = 1';
-			$db->SetQuery($query);
-			$db->execute();
+			JemConfig::getInstance()->set('lastupdate', $now);
 		}
 	}
 
@@ -1345,15 +1312,15 @@ class JemHelper
 		}
 		return $result;
 	}
-	
-	
+
+
 	public static function getCountryOptions()
 	{
 		$options = array();
 		$options = array_merge(JEMHelperCountries::getCountryOptions(),$options);
-	
+
 		array_unshift($options, JHtml::_('select.option', '0', JText::_('COM_JEM_SELECT_COUNTRY')));
-	
+
 		return $options;
 	}
 }

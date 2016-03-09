@@ -2,7 +2,7 @@
 /**
  * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -37,6 +37,7 @@ defined('_JEXEC') or die;
 	$evbg_usecatcolor = $this->params->get('eventbg_usecatcolor', 0);
 	$currentWeek = $this->currentweek;
 	$firstDate = strftime("%Y-%m-%d", $this->cal->getFirstDayTimeOfWeek($currentWeek));
+	$showtime = $this->settings->get('global_show_timedetails', 1);
 
 	foreach ($this->rows as $row) :
 		if (!JemHelper::isValidDate($row->dates)) {
@@ -64,7 +65,7 @@ defined('_JEXEC') or die;
 		//for time in tooltip
 		$timehtml = '';
 
-		if ($this->jemsettings->showtime == 1) {
+		if ($showtime) {
 			$start = JemOutput::formattime($row->times);
 			$end = JemOutput::formattime($row->endtimes);
 
@@ -154,7 +155,7 @@ defined('_JEXEC') or die;
 		//for time in calendar
 		$timetp = '';
 
-		if ($this->jemsettings->showtime == 1) {
+		if ($showtime) {
 			$start = JemOutput::formattime($row->times,'',false);
 			$end   = JemOutput::formattime($row->endtimes,'',false);
 
@@ -222,19 +223,19 @@ defined('_JEXEC') or die;
 		$multidaydate = '<div class="time"><span class="text-label">'.JText::_('COM_JEM_DATE').': </span>';
 		switch ($multi_mode) {
 		case 1:  // first day
-			$multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+			$multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showtime);
 			$multidaydate .= JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
 			break;
 		case 2:  // middle day
-			$multidaydate .= JemOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
+			$multidaydate .= JemOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes, $showtime);
 			$multidaydate .= JemOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
 			break;
 		case 3:  // last day
-			$multidaydate .= JemOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
+			$multidaydate .= JemOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes, $showtime);
 			$multidaydate .= JemOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
 			break;
 		default: // single day
-			$multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+			$multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showtime);
 			$multidaydate .= JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
 			break;
 		}

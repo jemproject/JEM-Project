@@ -23,11 +23,6 @@ abstract class JemUserAbstract extends JUser
 	 */
 	protected static $instances_jemuser = array();
 
-	/**
-	 * @var    array  JEM Settings.
-	 */
-	protected static $jemsettings = array();
-
 
 	static protected function _getInstance($id = 0)
 	{
@@ -41,18 +36,6 @@ abstract class JemUserAbstract extends JUser
 		}
 
 		return self::$instances_jemuser[$id];
-	}
-
-	protected function getJemSettings()
-	{
-		if (empty(self::$jemsettings)) {
-			self::$jemsettings = JemHelper::config();
-			$globalregistry = new JRegistry;
-			$globalregistry->loadString(self::$jemsettings->globalattribs);
-			self::$jemsettings->globalregistry = $globalregistry;
-		}
-
-		return self::$jemsettings;
 	}
 
 	/**
@@ -280,7 +263,7 @@ abstract class JemUserAbstract extends JUser
 		$use_disable   = array_key_exists('use_disable',   $options) ? (bool)$options['use_disable']   : false;
 		$owner         = array_key_exists('owner',         $options) ? (bool)$options['owner']         : false;
 
-		$jemsettings = $this->getJemSettings();
+		$jemsettings = JemHelper::config();
 		$asset = 'com_jem';
 
 		$all = (bool)$this->authorise('core.manage', $asset);
@@ -411,7 +394,7 @@ abstract class JemUserAbstract extends JUser
 		$created_by  = (int)$created_by;
 		$id          = ($id === false) ? $id : (int)$id;
 		$asset       = 'com_jem';
-		$jemsettings = $this->getJemSettings();
+		$jemsettings = JemHelper::config();
 
 		switch ($type) {
 		case 'event':

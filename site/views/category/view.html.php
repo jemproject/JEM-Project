@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -48,6 +48,7 @@ class JemViewCategory extends JEMView
 			//initialize variables
 			$document 		= JFactory::getDocument();
 			$jemsettings 	= JemHelper::config();
+			$settings 		= JemHelper::globalattribs();
 			$user			= JemFactory::getUser();
 			$menu 			= $app->getMenu();
 			$menuitem		= $menu->getActive();
@@ -137,6 +138,7 @@ class JemViewCategory extends JEMView
 			$this->catid         = $catid;
 			$this->params        = $params;
 			$this->jemsettings   = $jemsettings;
+			$this->settings      = $settings;
 			$this->permissions   = $permissions;
 			$this->cal           = $cal;
 			$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);

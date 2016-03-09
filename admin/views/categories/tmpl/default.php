@@ -2,7 +2,7 @@
 /**
  * @version     2.1.6
  * @package     JEM
- * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -18,7 +18,7 @@ $userId		= $user->get('id');
 $listOrder	= $this->escape($this->state->get('list.ordering'));
 $listDirn	= $this->escape($this->state->get('list.direction'));
 $ordering 	= ($listOrder == 'a.lft');
-$saveOrder 	= ($listOrder == 'a.lft' && $listDirn == 'asc');
+$saveOrder 	= ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_jem&view=categories');?>" method="post" name="adminForm" id="adminForm">
 	<?php if (isset($this->sidebar)) : ?>

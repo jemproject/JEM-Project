@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 // Can't use JPATH_COMPONENT_SITE because factory maybe used in module or plugin!
 require_once (JPATH_SITE.'/components/com_jem/classes/user.class.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/config.class.php');
 
 
 /**
@@ -41,5 +42,22 @@ abstract class JemFactory extends JFactory
 		}
 
 		return JemUser::getInstance($id);
+	}
+
+	/**
+	 * Get the JEM configuration object.
+	 *
+	 * Returns the global {@link JemConfig} object, only creating it if it doesn't already exist.
+	 *
+	 * @return  JemConfig object
+	 *
+	 * @note    Because parent's getConfig() is limited to php files we don't override this function.
+	 *
+	 * @see     JemConfig
+	 * @since   2.1.6
+	 */
+	public static function getJemConfig()
+	{
+		return JemConfig::getInstance();
 	}
 }
