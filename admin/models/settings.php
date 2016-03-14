@@ -104,7 +104,8 @@ class JemModelSettings extends JModelForm
 		try {
 			$settings = JTable::getInstance('Settings', 'JemTable');
 
-			if (!empty($settings->getFields())) {
+			$fields = $settings->getFields();
+			if (!empty($fields)) {
 				// Bind the form fields to the table
 				if (!$settings->bind($data,'')) {
 					$this->setError($this->_db->getErrorMsg());
