@@ -1,6 +1,6 @@
 /**
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -27,6 +27,7 @@
 
 /*-- needed for Joomla 2.x --*/
 .icon-32-download			{ background-image: url(../images/icon-32-tableexport.png); }
+.icon-32-loop				{ background-image: url(../images/toolbar/icon-32-move.png); }
 
 /** linkicons **/
 div.linkicon {
