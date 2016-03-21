@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -140,9 +140,14 @@ class JEMController extends JControllerLegacy
 	 */
 	function ajaxattachremove()
 	{
-		$id	 = JFactory::getApplication()->input->getInt('id', 0);
+		$jemsettings = JemHelper::config();
+		$res = 0;
 
-		$res = JEMAttachment::remove($id);
+		if ($jemsettings->attachmentenabled > 0) {
+			$id	 = JFactory::getApplication()->input->getInt('id', 0);
+			$res = JEMAttachment::remove($id);
+		} // else don't delete anything
+
 		if (!$res) {
 			echo 0; // The caller expects an answer!
 			jexit();

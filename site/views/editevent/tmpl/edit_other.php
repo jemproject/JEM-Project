@@ -49,6 +49,7 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 	</fieldset>
 
 	<!-- IMAGE -->
+	<?php if ($this->item->datimage || $this->jemsettings->imageenabled != 0) : ?>
 	<fieldset class="jem_fldst_image">
 	<legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
 		<?php
@@ -56,15 +57,10 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 			echo JEMOutput::flyer($this->item, $this->dimage, 'event', 'datimage');
 		endif;
 		?>
+		<?php if ($this->jemsettings->imageenabled != 0) : ?>
 		<ul class="adminformlist">
 			<li>
-				<label for="userfile">
-					<?php echo JText::_('COM_JEM_IMAGE'); ?>
-					<small <?php echo JEMOutput::tooltip(JText::_('COM_JEM_NOTES'), JText::_('COM_JEM_MAX_IMAGE_FILE_SIZE').' '.$this->jemsettings->sizelimit.' kb', 'editlinktip'); ?>>
-						<?php echo $this->infoimage; ?>
-					</small>
-				</label>
-				<input class="inputbox <?php echo $this->jemsettings->imageenabled == 2 ? 'required' : ''; ?>" name="userfile" id="userfile" type="file" />
+				<?php echo $this->form->getLabel('userfile'); ?> <?php echo $this->form->getInput('userfile'); ?>
 				<button type="button" class="button3" onclick="document.getElementById('userfile').value = ''"><?php echo JText::_('JSEARCH_FILTER_CLEAR') ?></button>
 				<?php
 				if ($this->item->datimage) :
@@ -74,7 +70,9 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 			</li>
 		</ul>
 		<input type="hidden" name="removeimage" id="removeimage" value="0" />
+		<?php endif; ?>
 	</fieldset>
+	<?php endif; ?>
 
 	<!-- Recurrence -->
 	<fieldset class="panelform">

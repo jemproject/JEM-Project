@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -97,6 +97,8 @@ window.addEvent('domready', function(){
 			<p>&nbsp;</p>
 
 			<?php echo JHtml::_('tabs.start', 'det-pane'); ?>
+
+			<!-- DETAILS TAB -->
 			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EDITEVENT_INFO_TAB'), 'editevent-infotab' ); ?>
 
 			<fieldset>
@@ -169,7 +171,7 @@ window.addEvent('domready', function(){
 						<textarea class="inputbox" name="meta_description" id="meta_description" rows="5" cols="40" maxlength="200"	onfocus="get_inputbox('meta_description')" onblur="change_metatags()"><?php echo $meta_description;?></textarea>
 					</div>
 					<!-- include the metatags end-->
-				
+
 					<script type="text/javascript">
 					<!--
 						starter("<?php
@@ -180,15 +182,18 @@ window.addEvent('domready', function(){
 			</fieldset>
 			<!--  END META FIELDSET -->
 
+			<!-- ATTACHMENTS TAB -->
+			<?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
 			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event-attachments' ); ?>
 			<?php echo $this->loadTemplate('attachments'); ?>
-		
+			<?php endif; ?>
+
+			<!-- OTHER TAB -->
 			<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_OTHER_TAB'), 'event-other' ); ?>
 			<?php echo $this->loadTemplate('other'); ?>
-		
+
 			<?php echo JHtml::_('tabs.end'); ?>
 
-					
 			<input type="hidden" name="task" value="" />
 			<input type="hidden" name="return" value="<?php echo $this->return_page;?>" />
 			<input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />

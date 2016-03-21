@@ -153,6 +153,12 @@
 			label="COM_JEM_EDITEVENT_FIELD_IMAGESELECT"
 			description="COM_JEM_EDITEVENT_FIELD_IMAGESELECT_DESC"
 		/>
+		<field name="userfile" type="file"
+			class="inputbox"
+			size="40"
+			label="COM_JEM_IMAGE"
+			description="COM_JEM_UPLOAD_IMAGE"
+		/>
 	</fieldset>
 
 	<fieldset name="custom">

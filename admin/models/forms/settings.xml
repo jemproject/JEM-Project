@@ -168,6 +168,16 @@
 			<option value="1">COM_JEM_OPTIONAL</option>
 			<option value="2">COM_JEM_REQUIRED</option>
 		</field>
+		<field name="attachmentenabled" type="list"
+			label="COM_JEM_ATTACHMENT_UPLOAD_OPTIONS"
+			description="COM_JEM_ATTACHMENT_UPLOAD_OPTIONS_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="0">COM_JEM_DISABLED</option>
+			<option value="1">COM_JEM_ENABLED</option>
+		</field>
 	</fieldset>
 
 	<fieldset name="usercontrolregistration"
