@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -120,7 +120,7 @@ class JemTableVenue extends JTable
 		$userid      = $user->get('id');
 		$app         = JFactory::getApplication();
 		$jinput      = $app->input;
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 
 		// Check if we're in the front or back
 		if ($app->isAdmin())
@@ -157,6 +157,13 @@ class JemTableVenue extends JTable
 			if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1)) {
 				$file = $jinput->files->get('userfile', array(), 'array');
 				$removeimage = $jinput->getInt('removeimage', 0);
+
+				if (empty($file)) {
+					$file2 = $jinput->files->get('jform', array(), 'array');
+					if (!empty($file2['userfile'])) {
+						$file = $file2['userfile'];
+					}
+				}
 
 				if (!empty($file['name'])) {
 					//check the image

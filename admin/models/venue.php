@@ -220,7 +220,7 @@ class JemModelVenue extends JemModelAdmin
 		$app         = JFactory::getApplication();
 		$jinput      = $app->input;
 		$user        = JemFactory::getUser();
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 		$fileFilter  = new JInput($_FILES);
 		$table       = $this->getTable();
 		$task        = $jinput->get('task', '', 'cmd');
@@ -255,13 +255,19 @@ class JemModelVenue extends JemModelAdmin
 			// At this point we do have an id.
 			$pk = $this->getState($this->getName() . '.id');
 
-			// attachments, new ones first
-			$attachments 				= array();
-			$attachments 				= $fileFilter->get('attach', array(), 'array');
-			$attachments['customname']	= $jinput->post->get('attach-name', array(), 'array');
-			$attachments['description'] = $jinput->post->get('attach-desc', array(), 'array');
-			$attachments['access'] 		= $jinput->post->get('attach-access', array(), 'array');
-			JEMAttachment::postUpload($attachments, 'venue' . $pk);
+			// on frontend attachment uploads maybe forbidden
+			// so allow changing name or description only
+			$allowed = $backend || ($jemsettings->attachmentenabled > 0);
+
+			if ($allowed) {
+				// attachments, new ones first
+				$attachments 				= array();
+				$attachments 				= $fileFilter->get('attach', array(), 'array');
+				$attachments['customname']	= $jinput->post->get('attach-name', array(), 'array');
+				$attachments['description'] = $jinput->post->get('attach-desc', array(), 'array');
+				$attachments['access'] 		= $jinput->post->get('attach-access', array(), 'array');
+				JEMAttachment::postUpload($attachments, 'venue' . $pk);
+			}
 
 			// and update old ones
 			$old				= array();
@@ -275,7 +281,9 @@ class JemModelVenue extends JemModelAdmin
 				$attach['id'] 			= $id;
 				$attach['name'] 		= $old['name'][$k];
 				$attach['description'] 	= $old['description'][$k];
-				$attach['access'] 		= $old['access'][$k];
+				if ($allowed) {
+					$attach['access'] 	= $old['access'][$k];
+				} // else don't touch this field
 				JEMAttachment::update($attach);
 			}
 

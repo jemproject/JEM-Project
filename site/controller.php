@@ -166,6 +166,9 @@ class JEMController extends JControllerLegacy
 	 */
 	function ajaximageremove()
 	{
+		// prevent unwanted usage
+		jexit();
+
 		$id = JFactory::getApplication()->input->getInt('id', 0);
 		if (!$id) {
 			jexit();
