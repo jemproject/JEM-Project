@@ -1,7 +1,7 @@
 <?php
 /**
- * Version 2.1.2
- * @copyright	Copyright (C) 2014 Ghost Art digital media.
+ * Version 2.1.3
+ * @copyright	Copyright (C) 2016 Ghost Art digital media.
  * @copyright	Copyright (C) 2013 - 2015 joomlaeventmanager.net. All rights reserved.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  * Based on Eventlist11 tag and JEM specific code by JEM Community
@@ -18,7 +18,7 @@ class plgAcymailingTagjem extends JPlugin
 	var $searchFields = array('a.id','a.title','a.alias','a.introtext');
 	var $selectedFields = array('a.*');
 
-	function plgAcymailingTagjem(&$subject, $config)
+	function __construct(&$subject, $config)
 	{
 		parent::__construct($subject, $config);
 		if (!isset($this->params)) {

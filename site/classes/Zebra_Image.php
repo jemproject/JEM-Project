@@ -194,7 +194,7 @@ class Zebra_Image
      *
      *  @return void
      */
-    function Zebra_Image()
+    function __construct()
     {
 
         // set default values for properties
