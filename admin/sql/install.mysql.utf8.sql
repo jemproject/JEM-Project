@@ -162,6 +162,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_register` (
   `status` tinyint(3) NOT NULL default '1',
   `comment` varchar(255) DEFAULT '',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_user_event` (`uid`,`event`),
   KEY `idx_event` (`event`),
   KEY `idx_event_status` (`event`,`status`),
   KEY `idx_user` (`uid`)

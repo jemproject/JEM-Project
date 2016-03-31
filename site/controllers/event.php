@@ -2,7 +2,7 @@
 /**
  * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -253,7 +253,6 @@ class JEMControllerEvent extends JemControllerForm
 	 */
 	function userregister()
 	{
-
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid Token');
 
@@ -261,6 +260,14 @@ class JEMControllerEvent extends JemControllerForm
 
 		// Get the model
 		$model = $this->getModel('Event', 'JEMModel');
+
+		if ($model->getUserIsRegistered($id)) {
+			$msg = JText::_('COM_JEM_ALLREADY_REGISTERED');
+			$this->setRedirect(JRoute::_(JEMHelperRoute::getEventRoute($id), false), $msg, 'error');
+			$this->redirect();
+			return;
+		}
+
 		$model->setId($id);
 		$register_id = $model->userregister();
 
