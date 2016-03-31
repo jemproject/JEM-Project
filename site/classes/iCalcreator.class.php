@@ -8862,10 +8862,10 @@ class iCalUtilityFunctions {
     while( FALSE !== substr( $line, $cix, 1 )) {
       if(  ! $WithinQuotes  &&   (  ':' == $line[$cix] )                         &&
                                  ( substr( $line,$cix,     3 )  != '://' )       &&
-         ( ! in_array( strtolower( substr( $line,$cix - 6, 4 )), iCalUtilityFunctions::$parValPrefix['MStz'] ))   &&
-         ( ! in_array( strtolower( substr( $line,$cix - 3, 4 )), iCalUtilityFunctions::$parValPrefix['Proto3'] )) &&
-         ( ! in_array( strtolower( substr( $line,$cix - 4, 5 )), iCalUtilityFunctions::$parValPrefix['Proto4'] )) &&
-         ( ! in_array( strtolower( substr( $line,$cix - 6, 7 )), iCalUtilityFunctions::$parValPrefix['Proto6'] ))) {
+         ( ! in_array( strtolower( substr( $line,$cix - 6, 4 )), self::$parValPrefix['MStz'] ))   &&
+         ( ! in_array( strtolower( substr( $line,$cix - 3, 4 )), self::$parValPrefix['Proto3'] )) &&
+         ( ! in_array( strtolower( substr( $line,$cix - 4, 5 )), self::$parValPrefix['Proto4'] )) &&
+         ( ! in_array( strtolower( substr( $line,$cix - 6, 7 )), self::$parValPrefix['Proto6'] ))) {
         $attrEnd = TRUE;
         if(( $cix < ( $clen - 4 )) &&
              ctype_digit( substr( $line, $cix+1, 4 ))) { // an URI with a (4pos) portnr??
