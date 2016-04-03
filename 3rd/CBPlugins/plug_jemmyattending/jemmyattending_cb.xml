@@ -2,13 +2,13 @@
 <cbinstall version="1.9" type="plugin" group="user">
 	<name>JEM MyAttending</name>
 	<author>JEM Community</author>
-	<creationDate>November 2015</creationDate>
-	<copyright>Copyright (C) 2013-2015 joomlaeventmanager.net</copyright>
+	<creationDate>April 2016</creationDate>
+	<copyright>Copyright (C) 2013-2016 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
 	<version>2.0</version>
-	<release>2.1.5</release>
+	<release>2.1.6</release>
 	<description>This plugin will show events where the user is attending.</description>
 	<files>
 		<filename plugin="jemmyattending_cb">jemmyattending_cb.php</filename>
@@ -41,6 +41,10 @@
 				<option value="1">Show</option>
 			</param>
 			<param name="event_venue" type="radio" default="0" label="Event venue" description="Show/Hide venue">
+				<option value="0">Hide</option>
+				<option value="1">Show</option>
+			</param>
+			<param name="reg_comment" type="radio" default="0" label="Registration comment" description="Show/Hide comments">
 				<option value="0">Hide</option>
 				<option value="1">Show</option>
 			</param>

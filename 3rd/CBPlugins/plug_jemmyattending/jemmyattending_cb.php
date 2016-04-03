@@ -1,9 +1,9 @@
 <?php
 /**
  * @package JEM My Attending for CB
- * @version 2.1.5 for JEM v2.1 & CB v2.0
+ * @version 2.1.6 for JEM v2.1 & CB v2.0
  * @author JEM Community
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
  *
  * Just a note:
@@ -25,14 +25,22 @@ class jemmyattendingTab extends cbTabHandler {
 
 	protected $_jemFound = false;
 
+	// does #__jem_register table has a column 'state'
+	protected $_found_state_field = false;
+
 	/* JEM Attending tab
 	 */
 	function __construct()
 	{
+		global $_CB_database;
+
 		// Check if JEM is installed.
 		$this->_jemFound = class_exists('JemImage') && class_exists('JemOutput') && class_exists('JemHelperRoute');
 
-		$this->cbTabHandler();
+		parent::__construct();
+
+		$reg_fields = $_CB_database->getTableFields('#__jem_register');
+		$this->_found_state_field = array_key_exists('status', $reg_fields['#__jem_register']);
 	}
 
 
@@ -108,7 +116,8 @@ class jemmyattendingTab extends cbTabHandler {
 			        . ' l.venue, l.city, l.state, l.url, '
 			        . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
 			        . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug, '
-			        . ' r.waiting'
+			        . ' r.waiting, ' . ($this->_found_state_field ? 'r.status' : '1') . ' AS reg_state '
+			        . ($this->_found_state_field ? ', r.comment AS reg_comment' : '')
 			        ;
 		}
 		$query     .= ' FROM #__jem_events AS a INNER JOIN #__jem_register AS r ON r.event = a.id '
@@ -180,6 +189,7 @@ class jemmyattendingTab extends cbTabHandler {
 		$event_startdate = $params->get('event_startdate');
 		$event_datecombi = $params->get('event_datecombi');
 		$event_venue = $params->get('event_venue');
+		$reg_comment = $params->get('reg_comment') && $this->_found_state_field;
 
 		/* access rights check */
 		// $user is profile's owner but we need logged-in user here
@@ -293,6 +303,14 @@ class jemmyattendingTab extends cbTabHandler {
 		$return .= "\n\t\t\t</th>";
 		++$span;
 
+		/* Comment header */
+		if ($reg_comment) {
+			$return .= "\n\t\t\t<th class='jemmyattendingCBTabTableComment'>";
+			$return .= "\n\t\t\t\t" . _JEMMYATTENDING_COMMENT;
+			$return .= "\n\t\t\t</th>";
+			++$span;
+		}
+
 		/* End of headerline */
 		$return .= "\n\t\t</tr>";
 
@@ -386,11 +404,38 @@ class jemmyattendingTab extends cbTabHandler {
 				 * Status
 				 * show icon to indicate if registered or on waiting list
 				 */
-				$img = JRoute::_($_CB_framework->getCfg('live_site') . ($result->waiting ? '/media/com_jem/images/publish_y.png' : '/media/com_jem/images/tick.png'));
-				$tip = $result->waiting ? _JEMMYATTENDING_STATUS_WAITINGLIST : _JEMMYATTENDING_STATUS_REGISTERED;
+				switch ($result->reg_state) {
+				case -1: // explicitely unregistered
+					$img = JRoute::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/publish_r.png');
+					$tip = _JEMMYATTENDING_STATUS_UNREGISTERED;
+					break;
+				case  0: // invited, not answered yet
+					$img = JRoute::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/invited.png');
+					$tip = _JEMMYATTENDING_STATUS_INVITED;
+					break;
+				case  1: // registered
+					$img = JRoute::_($_CB_framework->getCfg('live_site') . ($result->waiting ? '/media/com_jem/images/publish_y.png' : '/media/com_jem/images/tick.png'));
+					$tip = $result->waiting ? _JEMMYATTENDING_STATUS_WAITINGLIST : _JEMMYATTENDING_STATUS_REGISTERED;
+					break;
+				default: // ? - shouldn't happen...
+					$img = JRoute::_($_CB_framework->getCfg('live_site') . '/media/com_jem/images/disabled.png');
+					$tip = _JEMMYATTENDING_STATUS_UNKNOWN;
+					break;
+				}
 				$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableStatus'>";
 				$return .= "\n\t\t\t\t<img src='$img' alt='$tip' title='$tip'>";
 				$return .= "\n\t\t\t</td>";
+
+				/* Comment field */
+				if ($reg_comment) {
+					$comment = strip_tags($result->reg_comment);
+					if (strlen($comment) > 150) {
+						$comment = substr($comment, 0, 150) . '...';
+					}
+					$return .= "\n\t\t\t<td class='jemmyattendingCBTabTableComment'>";
+					$return .= "\n\t\t\t\t{$comment}";
+					$return .= "\n\t\t\t</td>";
+				}
 
 				/* Closing the rowline */
 				$return .= "\n\t\t</tr>";

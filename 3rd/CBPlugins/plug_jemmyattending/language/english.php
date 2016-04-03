@@ -1,9 +1,9 @@
 <?php
 /**
  * @package My Attending
- * @version 2.1.5
+ * @version 2.1.6
  * @author JEM Community
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
  *
  * Former info:
@@ -27,6 +27,10 @@ defined('_JEXEC') or die;
  DEFINE("_JEMMYATTENDING_STATUS","Reg. Status");
  DEFINE("_JEMMYATTENDING_STATUS_REGISTERED","registered");
  DEFINE("_JEMMYATTENDING_STATUS_WAITINGLIST","on waitinglist");
+ DEFINE("_JEMMYATTENDING_STATUS_UNREGISTERED","unregistered");
+ DEFINE("_JEMMYATTENDING_STATUS_INVITED","invited");
+ DEFINE("_JEMMYATTENDING_STATUS_UNKNOWN","unknown");
+ DEFINE("_JEMMYATTENDING_COMMENT","Reg. Comment");
  DEFINE("_JEMMYATTENDING_ADDNEW","Add New Event");
  DEFINE("_JEMMYATTENDING_PUB"," Event(s) is/are not published");
 
