@@ -402,27 +402,30 @@ abstract class JemUserAbstract extends JUser
 			$edit     = ($jemsettings->eventedit == -1);
 			$edit_own = ($jemsettings->eventowner == 1);
 			$autopubl = ($jemsettings->autopubl == -1); // auto-publish new events
-			if (!empty($id)) {
-				$asset .= '.event.' . $id;
-			}
+			// not supported yet
+			//if (!empty($id)) {
+			//	$asset .= '.event.' . $id;
+			//}
 			break;
 		case 'venue':
 			$create   = ($jemsettings->deliverlocsyes == -1);
 			$edit     = ($jemsettings->venueedit == -1);
 			$edit_own = ($jemsettings->venueowner == 1);
 			$autopubl = ($jemsettings->autopublocate == -1); // auto-publish new venues
-			if (!empty($id)) {
-				$asset .= '.venue.' . $id;
-			}
+			// not supported yet
+			//if (!empty($id)) {
+			//	$asset .= '.venue.' . $id;
+			//}
 			break;
 		default:
 			$create = $edit = $edit_own = $autopubl = false;
 			break;
 		}
 		$assets[] = $asset;
-		foreach($categoryIds as $catId) {
-			$assets[] = 'com_jem.category.'.$catId;
-		}
+		// not supported yet
+		//foreach($categoryIds as $catId) {
+		//	$assets[] = 'com_jem.category.'.$catId;
+		//}
 
 		// Joomla ACL system, JEM global settings
 
