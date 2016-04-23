@@ -4,10 +4,10 @@
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>October 2015</creationDate>
-	<copyright>copyright (C) 2014-2015 joomlaeventmanager.net</copyright>
+	<creationDate>April 2016</creationDate>
+	<copyright>copyright (C) 2014-2016 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>2.1.5</version>
+	<version>2.1.6</version>
 	<description>MOD_JEM_BANNER_XML_DESCRIPTION</description>
 
 	<files>
@@ -31,7 +31,6 @@
 					<option value="1">MOD_JEM_BANNER_UNFINISHED_EVENTS</option>
 					<option value="2">MOD_JEM_BANNER_ARCHIVED_EVENTS</option>
 					<option value="3">MOD_JEM_BANNER_CURRENT_EVENTS</option>
-					<option value="4">MOD_JEM_BANNER_FEATURED_EVENTS</option>
 					<option value="5">MOD_JEM_BANNER_OPENDATE_EVENTS</option>
 				</field>
 				<field name="count" type="text"
@@ -204,6 +203,14 @@
 					<option value="1">JYES</option>
 				</field>
 
+				<field name="featured_only" type="radio"
+					default="0"
+					label="MOD_JEM_BANNER_FEATURED_ONLY"
+					description="MOD_JEM_BANNER_FEATURED_ONLY_DESC"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
 				<field name="catid" type="text"
 					default=""
 					label="MOD_JEM_BANNER_CATEGORY_ID"
