@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -19,8 +19,8 @@ defined('_JEXEC') or die;
  *
  */
 
- class JEMViewGroups extends JViewLegacy {
-
+class JemViewGroups extends JemAdminView
+{
 	protected $items;
 	protected $pagination;
 	protected $state;

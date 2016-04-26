@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -12,25 +12,26 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.controller');
 
 /**
- * JEM Component Attendees Controller
- *
- * @package JEM
- *
+ * Controller: Attendees
  */
-class JEMControllerAttendees extends JControllerLegacy
+class JemControllerAttendees extends JControllerLegacy
 {
 	/**
 	 * Constructor
-	 *
-	 *
 	 */
-	public function __construct()
+	public function __construct($config = array())
 	{
-		parent::__construct();
+		parent::__construct($config);
 
 		// Register Extra task
 		$this->registerTask('add', 		'edit');
 		$this->registerTask('apply', 		'save');
+		
+		$this->registerTask('onWaitinglist','toggleStatus');
+		$this->registerTask('offWaitinglist','toggleStatus');
+		
+		$this->registerTask('setWaitinglist','setStatus');
+		$this->registerTask('setAttending','setStatus');
 	}
 
 	/**
@@ -38,7 +39,6 @@ class JEMControllerAttendees extends JControllerLegacy
 	 *
 	 * @return true on sucess
 	 * @access private
-	 *
 	 */
 	function remove()
 	{
@@ -47,7 +47,7 @@ class JEMControllerAttendees extends JControllerLegacy
 
 		$jinput = JFactory::getApplication()->input;
 		$cid = $jinput->get('cid',  0, 'array');
-		$id = $jinput->get('id','','int');
+		$eventid = $jinput->getInt('eventid');
 
 		$total 	= count($cid);
 
@@ -82,51 +82,22 @@ class JEMControllerAttendees extends JControllerLegacy
 
 		$msg = $total.' '.JText::_('COM_JEM_REGISTERED_USERS_DELETED');
 
-		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$id, $msg);
+		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.$eventid, $msg);
 	}
 
-	function export()
+	
+	/**
+	 * Function to export
+	 */
+	public function export()
 	{
-		$app = JFactory::getApplication();
-
-		$model = $this->getModel('attendees');
-
-		$datas = $model->getData();
-
 		header('Content-Type: text/x-csv');
 		header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 		header('Content-Disposition: attachment; filename=attendees.csv');
 		header('Pragma: no-cache');
-
-		$export = '';
-		$col = array();
-
-		for($i=0; $i < count($datas); $i++)
-		{
-			$data = $datas[$i];
-
-			$col[] = str_replace("\"", "\"\"", $data->name);
-			$col[] = str_replace("\"", "\"\"", $data->username);
-			$col[] = str_replace("\"", "\"\"", $data->email);
-			$col[] = str_replace("\"", "\"\"", JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2')));
-			$col[] = str_replace("\"", "\"\"", $data->uid);
-
-			for($j = 0; $j < count($col); $j++)
-			{
-				$export .= "\"" . $col[$j] . "\"";
-
-				if($j != count($col)-1)
-				{
-					$export .= ";";
-				}
-			}
-			$export .= "\r\n";
-			$col = '';
-		}
-
-		echo $export;
-
-		$app->close();
+		$model = $this->getModel('attendees');
+		$model->getCsv();
+		jexit();
 	}
 
 	/**
@@ -137,40 +108,68 @@ class JEMControllerAttendees extends JControllerLegacy
 		$this->setRedirect('index.php?option=com_jem&view=events');
 	}
 
-	function toggle()
+	/**
+	 * Function to change status
+	 */
+	function toggleStatus()
 	{
-		$jinput = JFactory::getApplication()->input;
-		$id = $jinput->get('id','','int');
+		// Check for request forgeries
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$model = $this->getModel('attendee');
-		$model->setId($id);
+		$jinput = JFactory::getApplication()->input;	
+		$pks    = $this->input->get('cid', array(), 'array');
+		$task   = $this->getTask();
 
-		$attendee = $model->getData();
-		$res = $model->toggle();
-
-		$type = 'message';
-
-		if ($res)
+		if (empty($pks))
 		{
-			JPluginHelper::importPlugin('jem');
-		$dispatcher = JDispatcher::getInstance();
-		$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($id));
+			JError::raiseWarning(500, JText::_('JERROR_NO_ITEMS_SELECTED'));
+		} else {
+			JArrayHelper::toInteger($pks);
+			$model = $this->getModel('attendee');
+			$app = JFactory::getApplication();
 
-			if ($attendee->waiting)
-			{
-				$msg = JText::_('COM_JEM_ADDED_TO_ATTENDING');
-			}
-			else
-			{
-				$msg = JText::_('COM_JEM_ADDED_TO_WAITING');
+			foreach ($pks AS $pk) {
+				$model->setId($pk);
+
+				$attendee = $model->getData();
+				$res = $model->toggle();
+
+				if ($res)
+				{
+					JPluginHelper::importPlugin('jem');
+					$dispatcher = JDispatcher::getInstance();
+					$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($pk));
+
+					if ($attendee->waiting)
+					{
+						$msg = JText::_('COM_JEM_ADDED_TO_ATTENDING');
+					}
+					else
+					{
+						$msg = JText::_('COM_JEM_ADDED_TO_WAITING');
+					}
+					$type = 'message';
+				}
+				else
+				{
+					$msg = JText::_('COM_JEM_WAITINGLIST_TOGGLE_ERROR').': '.$model->getError();
+					$type = 'error';
+				}
+
+				if (!($task = 'toggleStatus')) {
+					$app->enqueueMessage($msg,$type);
+				}
 			}
 		}
-		else
-		{
-			$msg = JText::_('COM_JEM_WAITINGLIST_TOGGLE_ERROR').': '.$model->getError();
-			$type = 'error';
+
+		if ($task = 'toggleStatus') {
+			# here we are selecting more rows so a general message would be better
+			$msg = JText::_('COM_JEM_ATTENDEES_CHANGEDSTATUS');
+			$type = "message";
+			$app->enqueueMessage($msg,$type);
 		}
-		$this->setRedirect('index.php?option=com_jem&view=attendees&id='.$attendee->event, $msg, $type);
+
+		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.$attendee->event);
 		$this->redirect();
 	}
 
@@ -190,23 +189,58 @@ class JEMControllerAttendees extends JControllerLegacy
 		$jinput = JFactory::getApplication()->input;
 		$jinput->set('view', 'attendee');
 		// 'attendee' expects event id as 'event' not 'id'
-		$jinput->set('event', $jinput->getInt('id'));
+		$jinput->set('event', $jinput->getInt('eventid'));
 		$jinput->set('id', null);
 		$jinput->set('hidemainmenu', '1');
 
-		/*
-		$model 	= $this->getModel('attendee');
-
-		$user	= JemFactory::getUser();
-
-		// Error if checkedout by another administrator
-		if ($model->isCheckedOut($user->get('id'))) {
-			$this->setRedirect('index.php?option=com_jem&view=attendees', JText::_('COM_JEM_EDITED_BY_ANOTHER_ADMIN'));
-		}
-		$model->checkout();
-		*/
-
 		parent::display();
 	}
+
+
+	/**
+	 * Method to change status of selected rows.
+	 *
+	 * @return  void
+	 */
+	public function setStatus()
+	{
+		// Check for request forgeries
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+
+		$user   = JFactory::getUser();
+		$ids    = $this->input->get('cid', array(), 'array');
+		$values = array('setWaitinglist' => 1, 'setAttending' => 0);
+		$task   = $this->getTask();
+		$value  = JArrayHelper::getValue($values, $task, 0, 'int');
+
+		if (empty($ids))
+		{
+			JError::raiseWarning(500, JText::_('JERROR_NO_ITEMS_SELECTED'));
+		}
+		else
+		{
+			// Get the model.
+			$model = $this->getModel('attendee');
+
+			// Publish the items.
+			if (!$model->setStatus($ids, $value))
+			{
+				JError::raiseWarning(500, $model->getError());
+			}
+
+			if ($value == 1)
+			{
+				$message = JText::plural('COM_JEM_ATTENDEES_N_ITEMS_WAITINGLIST', count($ids));
+			}
+			else
+			{
+				$message = JText::plural('COM_JEM_ATTENDEES_N_ITEMS_ATTENDING', count($ids));
+			}
+		}
+
+		$app = JFactory::getApplication();
+		$jinput = $app->input;
+		$eventid = $jinput->getInt('eventid');
+		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&eventid='.$eventid, false), $message);
+	}
 }
-?>

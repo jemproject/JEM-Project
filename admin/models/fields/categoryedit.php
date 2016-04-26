@@ -2,7 +2,7 @@
 /**
  * @version     2.1.6
  * @package     JEM
- * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -97,42 +97,63 @@ class JFormFieldCategoryEdit extends JFormFieldList
 			$query->where('a.published IN (' . implode(',', $published) . ')');
 		}
 
+		if ($this->element['removeroot'] == true) {
+			$query->where('a.catname NOT LIKE "root"');
+		}
+
 		$query->group('a.id, a.catname, a.level, a.lft, a.rgt, a.parent_id, a.published');
 		$query->order('a.lft ASC');
 
 		// Get the options.
 		$db->setQuery($query);
 
-		$options = $db->loadObjectList();
+		try
+		{
+			$options = $db->loadObjectList();
 
-
-		// Check for a database error.
-		if ($db->getErrorNum()) {
-			JError::raiseWarning(500, $db->getErrorMsg());
+			// Check for a database error.
+			if ($db->getErrorNum()) {
+				JError::raiseWarning(500, $db->getErrorMsg());
+			}
+		}
+		catch (RuntimeException $e)
+		{
+			JError::raiseWarning(500, $e->getMessage);
 		}
 
-			// Pad the option text with spaces using depth level as a multiplier.
-			for ($i = 0, $n = count($options); $i < $n; $i++)
+		// Pad the option text with spaces using depth level as a multiplier.
+		for ($i = 0, $n = count($options); $i < $n; $i++)
+		{
+			// remove root
+			if ($this->element['removeroot'] == true)
 			{
-				// Translate ROOT
-				if ($this->element['parent'] == true)
+				if ($options[$i]->level == 0)
 				{
+					unset($options[$i]);
+					continue;
+				}
 
-						if ($options[$i]->level == 0)
-						{
-							$options[$i]->text = JText::_('JGLOBAL_ROOT_PARENT');
-						}
-				}
-				if ($options[$i]->published == 1)
-				{
-					$options[$i]->text = str_repeat('- ', $options[$i]->level). $options[$i]->text ;
-				}
-				else
-				{
-					$options[$i]->text = str_repeat('- ', $options[$i]->level). '[' .$options[$i]->text . ']';
-				}
+				$options[$i]->level = $options[$i]->level-1;
 			}
 
+			// Translate ROOT
+			if ($this->element['parent'] == true)
+			{
+					if ($options[$i]->level == 0)
+					{
+						$options[$i]->text = JText::_('JGLOBAL_ROOT_PARENT');
+					}
+			}
+
+			if ($options[$i]->published == 1)
+			{
+				$options[$i]->text = str_repeat('- ', $options[$i]->level). $options[$i]->text ;
+			}
+			else
+			{
+				$options[$i]->text = str_repeat('- ', $options[$i]->level). '[' .$options[$i]->text . ']';
+			}
+		}
 
 		// Get the current user object.
 		$user = JemFactory::getUser();
@@ -159,21 +180,21 @@ class JFormFieldCategoryEdit extends JFormFieldList
 			// but you should be able to save in that category.
 			foreach ($options as $i => $option)
 			{
-			if ($user->authorise('core.edit.state', 'com_jem' . '.category.' . $oldCat) != true && !isset($oldParent))
-			{
-				if ($option->value != $oldCat  )
+				if ($user->authorise('core.edit.state', 'com_jem' . '.category.' . $oldCat) != true && !isset($oldParent))
 				{
-					unset($options[$i]);
+					if ($option->value != $oldCat  )
+					{
+						unset($options[$i]);
+					}
 				}
-			}
-			if ($user->authorise('core.edit.state', 'com_jem' . '.category.' . $oldCat) != true
-				&& (isset($oldParent)) && $option->value != $oldParent)
-			{
-					unset($options[$i]);
-			}
+				if ($user->authorise('core.edit.state', 'com_jem' . '.category.' . $oldCat) != true
+					&& (isset($oldParent)) && $option->value != $oldParent)
+				{
+						unset($options[$i]);
+				}
 
-			// However, if you can edit.state you can also move this to another category for which you have
-			// create permission and you should also still be able to save in the current category.
+				// However, if you can edit.state you can also move this to another category for which you have
+				// create permission and you should also still be able to save in the current category.
 				if (($user->authorise('core.create', 'com_jem' . '.category.' . $option->value) != true)
 					&& ($option->value != $oldCat && !isset($oldParent)))
 				{
@@ -190,18 +211,17 @@ class JFormFieldCategoryEdit extends JFormFieldList
 				}
 			}
 		}
+
 		if (($this->element['parent'] == true)
 			&& (isset($row) && !isset($options[0])) && isset($this->element['show_root']))
-			{
-				if ($row->parent_id == '1') {
-					$parent = new stdClass();
-					$parent->text = JText::_('JGLOBAL_ROOT_PARENT');
-					array_unshift($options, $parent);
-				}
-				array_unshift($options, JHtml::_('select.option', '0', JText::_('JGLOBAL_ROOT')));
+		{
+			if ($row->parent_id == '1') {
+				$parent = new stdClass();
+				$parent->text = JText::_('JGLOBAL_ROOT_PARENT');
+				array_unshift($options, $parent);
 			}
-
-
+			array_unshift($options, JHtml::_('select.option', '0', JText::_('JGLOBAL_ROOT')));
+		}
 
 		// Merge any additional options in the XML definition.
 		$options = array_merge(parent::getOptions(), $options);

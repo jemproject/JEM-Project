@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -21,6 +21,7 @@ class JemViewEventslist extends JViewLegacy
 	{
 		$app = JFactory::getApplication();
 		$doc = JFactory::getDocument();
+		$jemsettings = JemHelper::config();
 
 		// Get some data from the model
 		$app->input->set('limit', $app->getCfg('feed_limit'));
@@ -47,7 +48,7 @@ class JemViewEventslist extends JViewLegacy
 				}
 
 				//Format date and time
-				$displaydate = JemOutput::formatLongDateTime($row->dates, $row->times,$row->enddates, $row->endtimes);
+				$displaydate = JemOutput::formatLongDateTime($row->dates, $row->times,$row->enddates, $row->endtimes, $jemsettings->showtime);
 
 				// url link to event
 				$link = JRoute::_(JemHelperRoute::getEventRoute($row->id));

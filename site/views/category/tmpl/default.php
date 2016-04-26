@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -66,7 +66,7 @@ JHtml::_('behavior.modal');
 		<div class="cat-children">
 			<?php if ($this->params->get('show_category_heading_title_text', 1) == 1) : ?>
 			<h3>
-				<?php echo JTEXT::_('JGLOBAL_SUBCATEGORIES'); ?>
+				<?php echo JTEXT::_('COM_JEM_SUBCATEGORIES'); ?>
 			</h3>
 			<?php endif; ?>
 			<?php echo $this->loadTemplate('subcategories'); ?>

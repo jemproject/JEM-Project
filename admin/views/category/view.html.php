@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     2.1.5
+ * @version     2.1.6
  * @package     JEM
  * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 /**
  * Category View
  */
-class JemViewCategory extends JViewLegacy
+class JemViewCategory extends JemAdminView
 {
 	protected $form;
 	protected $item;

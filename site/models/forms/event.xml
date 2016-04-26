@@ -61,11 +61,11 @@
 		<field name="cats" type="catoptions"
 			multiple="true"
 			class="inputbox required"
-			size="10"
+			size="4"
 			label="COM_JEM_EDITEVENT_FIELD_CATEGORIES"
 			labelclass=""
 			description="COM_JEM_EDITEVENT_FIELD_CATEGORIES_DESC"
-			required="false"
+			required="true"
 		/>
 	</fieldset>
 
@@ -152,6 +152,12 @@
 			size="40"
 			label="COM_JEM_EDITEVENT_FIELD_IMAGESELECT"
 			description="COM_JEM_EDITEVENT_FIELD_IMAGESELECT_DESC"
+		/>
+		<field name="userfile" type="file"
+			class="inputbox"
+			size="40"
+			label="COM_JEM_IMAGE"
+			description="COM_JEM_UPLOAD_IMAGE"
 		/>
 	</fieldset>
 
@@ -288,7 +294,7 @@
 			<option value="4">COM_JEM_WEEKDAY</option>
 		</field>
 		<field name="recurrence_limit_date" type="calendar"
-			default="0000-00-00"
+			default="now"
 			label="COM_JEM_EDITEVENT_FIELD_RECURRENCE_COUNTER"
 			description="COM_JEM_EDITEVENT_FIELD_RECURRENCE_COUNTER"
 			class="inputbox"

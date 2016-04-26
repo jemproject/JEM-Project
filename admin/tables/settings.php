@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 /**
  * JEM Settings Table
  *
+ * @deprecated since version 2.1.6
  */
 class JemTableSettings extends JTable
 {
@@ -21,8 +22,9 @@ class JemTableSettings extends JTable
 	}
 
 
-	/*
+	/**
 	 * Validators
+	 * @deprecated since version 2.1.6
 	 */
 	function check()
 	{
@@ -32,6 +34,7 @@ class JemTableSettings extends JTable
 
 	/**
 	 * Overloaded the store method
+	 * @deprecated since version 2.1.6
 	 */
 	public function store($updateNulls = false)
 	{
@@ -39,6 +42,9 @@ class JemTableSettings extends JTable
 	}
 
 
+	/**
+	 * @deprecated since version 2.1.6
+	 */
 	public function bind($array, $ignore = '')
 	{
 

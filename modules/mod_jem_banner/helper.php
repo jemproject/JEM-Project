@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
 * @package JEM
 * @subpackage JEM Banner Module
-* @copyright (C) 2014-2015 joomlaeventmanager.net
+* @copyright (C) 2014-2016 joomlaeventmanager.net
 * @copyright (C) 2005-2009 Christoph Lukes
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 */
@@ -89,7 +89,7 @@ abstract class ModJemBannerHelper
 			break;
 
 		case 3: # running events (one day)
-			$cal_from = " (DATEDIFF(IFNULL(a.enddates, a.dates), CURDATE()) >= $offset_days)) ";
+			$cal_from = " (DATEDIFF(IFNULL(a.enddates, a.dates), CURDATE()) >= $offset_days) ";
 			$cal_to   = " (DATEDIFF(a.dates, CURDATE()) < ".($offset_days + 1).") ";
 			break;
 
@@ -97,9 +97,9 @@ abstract class ModJemBannerHelper
 			$opendates = 2;
 			break;
 
-		case 4: # featured events
-			$model->setState('filter.featured', 1);
-			# fall through
+	//	case 4: # featured events
+	//		$model->setState('filter.featured', 1);
+	//		# fall through
 		case 0: # upcoming events
 		default:
 			$cal_from = " (a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes)) ";
@@ -130,6 +130,12 @@ abstract class ModJemBannerHelper
 			$opendates = 1;
 		}
 		$model->setState('filter.opendates', $opendates);
+
+		# featured
+		$featured = (bool)$params->get('featured_only', 0);
+		if ($featured) {
+			$model->setState('filter.featured', 1);
+		}
 
 		# filter category's
 		if ($catids) {

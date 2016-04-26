@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.6
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -16,7 +16,8 @@ defined('_JEXEC') or die;
  * @package JEM
  *
  */
-class JEMViewImport extends JViewLegacy {
+class JemViewImport extends JemAdminView
+{
 
 	public function display($tpl = null) {
 		//Load pane behavior

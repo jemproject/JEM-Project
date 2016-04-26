@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -58,8 +58,9 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 					<b><?php echo JText::_('COM_JEM_TITLE').':'; ?></b>&nbsp;
 					<a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a>
 					<br />
-					<b><?php echo JText::_('COM_JEM_DATE').':'; ?></b>&nbsp;
-					<?php echo JemOutput::formatLongDateTime($this->event->dates, $this->event->times,$this->event->enddates, $this->event->endtimes); ?>
+					<b><?php echo JText::_('COM_JEM_DATE').':'; ?></b>&nbsp;<?php 
+						echo JemOutput::formatLongDateTime($this->event->dates, $this->event->times, $this->event->enddates, $this->event->endtimes,
+						                                   $this->settings->get('global_show_timedetails', 1)); ?>
 				</td>
 			</tr>
 		</table>

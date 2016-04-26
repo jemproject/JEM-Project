@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -11,9 +11,9 @@ defined('_JEXEC') or die;
 require_once dirname(__FILE__) . '/admin.php';
 
 /**
- * Venue Model
+ * Model: Venue
  */
-class JEMModelVenue extends JemModelAdmin
+class JemModelVenue extends JemModelAdmin
 {
 	/**
 	 * Method to test whether a record can be deleted.
@@ -25,18 +25,81 @@ class JEMModelVenue extends JemModelAdmin
 	{
 		if (!empty($record->id))
 		{
-			if ($record->published != -2) {
-				return ;
-			}
-
 			$user = JemFactory::getUser();
 
-			if (!empty($record->catid)) {
-				return $user->authorise('core.delete', 'com_jem.category.'.(int) $record->catid);
-			} else {
-				return $user->authorise('core.delete', 'com_jem');
-			}
+			return $user->authorise('core.delete', 'com_jem');
 		}
+	}
+
+	/**
+	 * Method to delete a venue
+	 */
+	public function delete(&$pks = array())
+	{
+		$return = array();
+		if($pks)
+		{
+			$pksTodelete = array();
+			$errorNotice = array();
+			$db = JFactory::getDbo();
+			foreach($pks as $pk)
+			{
+				$result = array();
+
+				$query = $db->getQuery(true);
+				$query->select(array('COUNT(e.locid) as AssignedEvents'));
+				$query->from($db->quoteName('#__jem_venues').' AS v');
+				$query->join('LEFT', '#__jem_events AS e ON e.locid = v.id');
+				$query->where(array('v.id = '.$pk));
+				$query->group('v.id');
+				$db->setQuery($query);
+				$assignedEvents = $db->loadResult();
+
+				if($assignedEvents > 0)
+				{
+					$result[] = JText::_('COM_JEM_VENUE_ASSIGNED_EVENT');
+				}
+
+				if($result)
+				{
+					$pkInfo = array("id:".$pk);
+					$result = array_merge($pkInfo,$result);
+					$errorNotice[] = $result;
+				}
+				else
+				{
+					$pksTodelete[] = $pk;
+				}
+			}
+
+			if($pksTodelete)
+			{
+				$return['removed'] = parent::delete($pksTodelete);
+				$return['removedCount'] = count($pksTodelete);
+			}
+			else
+			{
+				$return['removed'] = false;
+				$return['removedCount'] = false;
+			}
+
+			if($errorNotice)
+			{
+				$return['error'] = $errorNotice;
+			}
+			else
+			{
+				$return['error'] = false;
+			}
+
+			return $return;
+		}
+
+		$return['removed'] = false;
+		$return['error'] = false;
+		$return['removedCount'] = false;
+
+		return $return;
 	}
 
 	/**
@@ -157,7 +220,7 @@ class JEMModelVenue extends JemModelAdmin
 		$app         = JFactory::getApplication();
 		$jinput      = $app->input;
 		$user        = JemFactory::getUser();
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 		$fileFilter  = new JInput($_FILES);
 		$table       = $this->getTable();
 		$task        = $jinput->get('task', '', 'cmd');
@@ -192,13 +255,19 @@ class JEMModelVenue extends JemModelAdmin
 			// At this point we do have an id.
 			$pk = $this->getState($this->getName() . '.id');
 
-			// attachments, new ones first
-			$attachments 				= array();
-			$attachments 				= $fileFilter->get('attach', array(), 'array');
-			$attachments['customname']	= $jinput->post->get('attach-name', array(), 'array');
-			$attachments['description'] = $jinput->post->get('attach-desc', array(), 'array');
-			$attachments['access'] 		= $jinput->post->get('attach-access', array(), 'array');
-			JEMAttachment::postUpload($attachments, 'venue' . $pk);
+			// on frontend attachment uploads maybe forbidden
+			// so allow changing name or description only
+			$allowed = $backend || ($jemsettings->attachmentenabled > 0);
+
+			if ($allowed) {
+				// attachments, new ones first
+				$attachments 				= array();
+				$attachments 				= $fileFilter->get('attach', array(), 'array');
+				$attachments['customname']	= $jinput->post->get('attach-name', array(), 'array');
+				$attachments['description'] = $jinput->post->get('attach-desc', array(), 'array');
+				$attachments['access'] 		= $jinput->post->get('attach-access', array(), 'array');
+				JEMAttachment::postUpload($attachments, 'venue' . $pk);
+			}
 
 			// and update old ones
 			$old				= array();
@@ -212,7 +281,9 @@ class JEMModelVenue extends JemModelAdmin
 				$attach['id'] 			= $id;
 				$attach['name'] 		= $old['name'][$k];
 				$attach['description'] 	= $old['description'][$k];
-				$attach['access'] 		= $old['access'][$k];
+				if ($allowed) {
+					$attach['access'] 	= $old['access'][$k];
+				} // else don't touch this field
 				JEMAttachment::update($attach);
 			}
 

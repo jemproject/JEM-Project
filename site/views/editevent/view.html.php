@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -185,6 +185,16 @@ class JemViewEditevent extends JViewLegacy
 		if (empty($item->params) || !$item->params->get('access-change', false)) {
 			$this->form->setFieldAttribute('published', 'default', 0);
 			$this->form->setFieldAttribute('published', 'readonly', 'true');
+		}
+
+		// configure image field: show max. file size, and possibly mark field as required
+		$tip = JText::_('COM_JEM_UPLOAD_IMAGE');
+		if ((int)$jemsettings->sizelimit > 0) {
+			$tip .= ' <br/>' . JText::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
+		}
+		$this->form->setFieldAttribute('userfile', 'description', $tip);
+		if ($jemsettings->imageenabled == 2) {
+			$this->form->setFieldAttribute('userfile', 'required', 'true');
 		}
 
 		$this->_prepareDocument();

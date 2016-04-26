@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -43,6 +43,7 @@ class JemViewVenue extends JEMView
 			$menu 			= $app->getMenu();
 			$menuitem		= $menu->getActive();
 			$jemsettings	= JEMHelper::config();
+			$settings 		= JemHelper::globalattribs();
 			$params 		= $app->getParams();
 			$uri 			= JFactory::getURI();
 			$pathway 		= $app->getPathWay();
@@ -128,6 +129,7 @@ class JemViewVenue extends JEMView
 			$this->locid         = $venueID;
 			$this->params        = $params;
 			$this->jemsettings   = $jemsettings;
+			$this->settings      = $settings;
 			$this->permissions   = $permissions;
 			$this->cal           = $cal;
 			$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);

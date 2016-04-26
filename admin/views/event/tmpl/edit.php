@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -34,9 +34,7 @@ $params = $params->toArray();
 ?>
 
 <script type="text/javascript">
-	window.addEvent('domready', function(){
-	setbgcats();
-	seteventcats();
+window.addEvent('domready', function(){
 	checkmaxplaces();
 
 
@@ -63,23 +61,8 @@ $params = $params->toArray();
 		commoff();
 	}
 
-	});
+});
 
-	function setbgcats()
-	{
-		var z=document.getElementById("cid");
-
-		z.morph({
-		    backgroundColor: '#D5EEFF'
-		});
-	}
-
-	function seteventcats()
-	{
-		$('cid').addEvent('blur',function(){
-		        testcid();
-		});
-	}
 
 	function checkmaxplaces()
 	{
@@ -100,20 +83,6 @@ $params = $params->toArray();
 			});
 	}
 
-	function testcid()
-	{
-		var x=document.getElementById("cid").selectedIndex;
-		var z2=document.getElementById("jform_cats-lbl");
-
-
-		if (x == -1)
-		{
-			z2.addClass("invalid");
-		} else
-		{
-			z2.removeClass('invalid');
-		}
-	}
 
 	function testcomm()
 	{
@@ -162,9 +131,8 @@ $params = $params->toArray();
 	}
 </script>
 <script type="text/javascript">
-	Joomla.submitbutton = function(task)
-	{
-		testcid();
+Joomla.submitbutton = function(task)
+{
 		if (task == 'event.cancel' || document.formvalidator.isValid(document.id('event-form'))) {
 			Joomla.submitform(task, document.getElementById('event-form'));
 
@@ -173,7 +141,7 @@ $params = $params->toArray();
 			$("meta_keywords").value = $keywords;
 			$("meta_description").value = $description;
 		}
-	}
+}
 </script>
 
 <form
@@ -369,6 +337,13 @@ $params = $params->toArray();
 				</li>
 				<li id="counter_row" style="display: none;">
 					<?php echo $this->form->getLabel('recurrence_limit_date'); ?> <?php echo $this->form->getInput('recurrence_limit_date'); ?>
+					<br><div><small>
+					<?php 
+					$anticipation	= $this->jemsettings->recurrence_anticipation;
+					$limitdate = new JDate('now +'.$anticipation.'days');
+					$limitdate = $limitdate->format('d-m-Y');
+					echo JText::sprintf(JText::_('COM_JEM_EVENT_NOTICE_GENSHIELD'),$limitdate);
+					?></small></div>
 				</li>
 			</ul>
 

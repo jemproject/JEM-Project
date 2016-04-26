@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.6
 * @package JEM
 * @subpackage JEM Jubilee Module
-* @copyright (C) 2014-2015 joomlaeventmanager.net
+* @copyright (C) 2014-2016 joomlaeventmanager.net
 * @copyright (C) 2005-2009 Christoph Lukes
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 */
@@ -54,6 +54,7 @@ abstract class ModJemJubileeHelper
 		# date/time
 		$dateFormat = $params->get('formatdate', '');
 		$timeFormat = $params->get('formattime', '');
+		$showtime   = $params->get('showtime', 0);
 		$addSuffix  = empty($timeFormat); // if we use component's default time format we can also add corresponding suffix
 
 		$now = JDate::getInstance();
@@ -231,7 +232,7 @@ abstract class ModJemJubileeHelper
 			$lists[$i]->enddate     = empty($row->enddates) ? $defaults : self::_format_date_fields($row->enddates, $formats);
 			list($lists[$i]->date,
 			     $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
-			$lists[$i]->dateinfo    = JEMOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
+			$lists[$i]->dateinfo    = JEMOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix, $showtime);
 
 			if ($dimage == null) {
 				$lists[$i]->eventimage     = '';

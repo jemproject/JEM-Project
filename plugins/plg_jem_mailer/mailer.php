@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
  * @subpackage JEM Mailer Plugin
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -631,7 +631,7 @@ class plgJEMMailer extends JPlugin {
 
 		# in here we selected the option to send an email to the logged-in user
 
-		if ($send_to['user']) {
+		if (!empty($send_to['user'])) {
 			$user = JemFactory::getUser($userid);
 			$recipients['user'] = array($user->email);
 		} else {
@@ -644,7 +644,7 @@ class plgJEMMailer extends JPlugin {
 
 		# in here we selected the option to send an email to the event's creator if different from editor.
 
-		if ($send_to['creator']) {
+		if (!empty($send_to['creator'])) {
 			// get data
 			$query = $db->getQuery(true);
 			$query->select(array('u.email'));
@@ -667,7 +667,7 @@ class plgJEMMailer extends JPlugin {
 
 		# in here we selected the option to send an email to the creator of all events attached to changed venue.
 
-		if ($send_to['ev-creator']) {
+		if (!empty($send_to['ev-creator'])) {
 			// get data
 			$query = $db->getQuery(true);
 			$query->select(array('u.email'));
@@ -695,7 +695,7 @@ class plgJEMMailer extends JPlugin {
 		# in here we selected the option to send to admin.
 		# we selected admin so we can use the adminDBList.
 
-		if ($send_to['admin']) {
+		if (!empty($send_to['admin'])) {
 			$recipients['admin'] = array_unique($this->_AdminDBList);
 		} else {
 			$recipients['admin'] = false;
@@ -708,7 +708,7 @@ class plgJEMMailer extends JPlugin {
 		# in here we selected the option to send an email to all people registered to the event.
 		# there is no check for the waitinglist
 
-		if ($send_to['registered']) {
+		if (!empty($send_to['registered'])) {
 			# get data
 			$query = $db->getQuery(true);
 			$query->select(array('u.email'));
@@ -745,7 +745,7 @@ class plgJEMMailer extends JPlugin {
 		# the data within categoryDBList needs to be validated.
 		# if the categoryDBList is empty we shoudln't send an email
 
-		if ($send_to['category']) {
+		if (!empty($send_to['category'])) {
 			// get data
 			$query = $db->getQuery(true);
 			$query->select(array('c.email'));
@@ -777,7 +777,7 @@ class plgJEMMailer extends JPlugin {
 		# of the users within the maintainer-group of the category where
 		# the event is assigned too.
 
-		if ($send_to['group']) {
+		if (!empty($send_to['group'])) {
 			// get data
 			$query = $db->getQuery(true);
 			$query->select(array('u.email'));
@@ -804,7 +804,7 @@ class plgJEMMailer extends JPlugin {
 		}
 
 		foreach ($recipients as $k => $v) {
-			if (array_search($k, $skip) !== false) continue;
+			if (empty($v) || array_search($k, $skip) !== false) continue;
 			foreach ($v as $email) {
 				$recipients['all'][$email][] = $k;
 			}
@@ -964,7 +964,7 @@ class plgJEMMailer extends JPlugin {
 			$CategoryDBList = array_unique($CategoryDBList);
 			$CategoryDBList = array_filter($CategoryDBList);
 		} else {
-			$CategoryDBList = '';
+			$CategoryDBList = array();
 		}
 
 		return $CategoryDBList;

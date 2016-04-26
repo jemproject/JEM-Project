@@ -1,9 +1,9 @@
 <?php
 /**
  * @package My Events
- * @version 2.1.5 for JEM v2.1 & CB v2.0
+ * @version 2.1.6 for JEM v2.1 & CB v2.0
  * @author JEM Community
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
  *
  * Just a note:
@@ -25,15 +25,23 @@ class jemmyeventsTab extends cbTabHandler {
 
 	protected $_jemFound = false;
 
+	// does #__jem_register table has a column 'state'
+	protected $_found_state_field = false;
+
 	/**
 	 * Show My Events
 	 */
 	function __construct()
 	{
+		global $_CB_database;
+
 		// Check if JEM is installed.
 		$this->_jemFound = class_exists('JemImage') && class_exists('JemOutput') && class_exists('JemHelperRoute');
 
-		$this->cbTabHandler();
+		parent::__construct();
+
+		$reg_fields = $_CB_database->getTableFields('#__jem_register');
+		$this->_found_state_field = array_key_exists('status', $reg_fields['#__jem_register']);
 	}
 
 
@@ -379,7 +387,13 @@ class jemmyeventsTab extends cbTabHandler {
 				if ($event_attending) {
 					$regs = '-';
 					if ($result->registra) {
-						$qry = "SELECT COUNT(IF(waiting <= 0, 1, null)) AS registered, COUNT(IF(waiting > 0, 1, null)) AS waiting FROM #__jem_register WHERE event = $result->eventid";
+						if ($this->_found_state_field) {
+							// state 1: user registered, state -1: user exlicitely unregistered, state 0: user is invited but hadn't answered yet
+							$qry = "SELECT COUNT(IF(waiting <= 0 AND status = 1, 1, null)) AS registered, COUNT(IF(waiting > 0 AND status = 1, 1, null)) AS waiting,"
+							     . " COUNT(IF(status = -1, 1, null)) AS unregistered, COUNT(IF(status = 0, 1, null)) AS invited FROM #__jem_register WHERE event = $result->eventid";
+						} else {
+							$qry = "SELECT COUNT(IF(waiting <= 0, 1, null)) AS registered, COUNT(IF(waiting > 0, 1, null)) AS waiting FROM #__jem_register WHERE event = $result->eventid";
+						}
 						$_CB_database->setQuery($qry);
 						$objList = $_CB_database->loadObjectList();
 						if (is_array($objList)) {
@@ -390,6 +404,12 @@ class jemmyeventsTab extends cbTabHandler {
 								if ($result->waitinglist && $waits) {
 									$regs .= ' + '.$waits;
 								}
+							}
+							if (!empty($objList[0]->unregistered)) {
+								$regs .= ' - '.(int)$objList[0]->unregistered;
+							}
+							if (!empty($objList[0]->invited)) {
+								$regs .= ', '.(int)$objList[0]->invited .' ?';
 							}
 						}
 						unset($objList);

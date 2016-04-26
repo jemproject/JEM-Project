@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.4.2
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -15,7 +15,7 @@ jimport('joomla.application.component.modelform');
  * JEM Component Settings Model
  *
  */
-class JEMModelSettings extends JModelForm
+class JemModelSettings extends JModelForm
 {
 	/**
 	 * Method to get the record form.
@@ -42,27 +42,8 @@ class JEMModelSettings extends JModelForm
 	 */
 	public function getData()
 	{
-
-		$db = JFactory::getDbo();
-
-		$query = $db->getQuery(true);
-		$query->select(array('*'));
-		$query->from('#__jem_settings');
-		$query->where(array('id = 1 '));
-
-		$db->setQuery($query);
-		$data = $db->loadObject();
-
-
-		// Convert the params field to an array.
-		$registry = new JRegistry;
-		$registry->loadString($data->globalattribs);
-		$data->globalattribs = $registry->toArray();
-
-		// Convert Css settings to an array
-		$registryCss = new JRegistry;
-		$registryCss->loadString($data->css);
-		$data->css = $registryCss->toArray();
+		$config = JemConfig::getInstance();
+		$data = $config->toObject();
 
 		return $data;
 	}
@@ -91,36 +72,73 @@ class JEMModelSettings extends JModelForm
 	 */
 	function store($data)
 	{
-		$settings 	= JTable::getInstance('Settings', 'JemTable');
+		// If the source value is an object, get its accessible properties.
+		if (is_object($data)) {
+			$data = get_object_vars($data);
+		}
+
+		// additional data:
 		$jinput = JFactory::getApplication()->input;
+		$varmetakey = $jinput->get('meta_keywords','','');
+		$data['meta_keywords'] = implode(', ', array_filter($varmetakey));
+		$data['lastupdate'] = $jinput->get('lastupdate','',''); // 'lastupdate' indicates last cleanup etc., not when config as stored.
+
+		//
+		// Store into new table
+		//
+		$config = JemConfig::getInstance();
 
 		// Bind the form fields to the table
-		if (!$settings->bind($data,'')) {
-			$this->setError($this->_db->getErrorMsg());
+		if (!$config->bind($data)) {
+			$this->setError(JText::_('?'));
+			return false;
+		}
+		if (!$config->store()) {
+			$this->setError(JText::_('?'));
 			return false;
 		}
 
-		$varmetakey = $jinput->get('meta_keywords','','');
-		$settings->meta_keywords = $varmetakey;
+		//
+		// Old table - deprecated, maybe already removed
+		//
+		try {
+			$settings = JTable::getInstance('Settings', 'JemTable');
 
-		$meta_key="";
-		foreach ($settings->meta_keywords as $meta_keyword) {
-			if ($meta_key != "") {
-				$meta_key .= ", ";
+			$fields = $settings->getFields();
+			if (!empty($fields)) {
+				// Bind the form fields to the table
+				if (!$settings->bind($data,'')) {
+					$this->setError($this->_db->getErrorMsg());
+					return false;
+				}
+
+				$varmetakey = $jinput->get('meta_keywords','','');
+				$settings->meta_keywords = $varmetakey;
+
+				$meta_key="";
+				foreach ($settings->meta_keywords as $meta_keyword) {
+					if ($meta_key != "") {
+						$meta_key .= ", ";
+					}
+					$meta_key .= $meta_keyword;
+				}
+
+				// binding the input fields (outside the jform)
+				$varlastupdate = $jinput->get('lastupdate','','');
+				$settings->lastupdate = $varlastupdate;
+
+				$settings->meta_keywords = $meta_key;
+				$settings->id = 1;
+
+				if (!$settings->store()) {
+					$this->setError($this->_db->getErrorMsg());
+					return false;
+				}
 			}
-			$meta_key .= $meta_keyword;
+			// else: ok, old table removed - simply ignore
 		}
-
-		// binding the input fields (outside the jform)
-		$varlastupdate = $jinput->get('lastupdate','','');
-		$settings->lastupdate = $varlastupdate;
-
-		$settings->meta_keywords = $meta_key;
-		$settings->id = 1;
-
-		if (!$settings->store()) {
-			$this->setError($this->_db->getErrorMsg());
-			return false;
+		catch(Exception $e) {
+			// ok, old table removed - simply ignore
 		}
 
 		return true;

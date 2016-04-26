@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -42,7 +42,39 @@ abstract class JHtmlJemHtml
 		if ($canChange) {
 			$html = '<a href="#" onclick="return listItemTask(\'cb' . $i . '\',\'' . $state[1] . '\')" title="' . JText::_($state[3]) . '">' . $html . '</a>';
 		}
-		
+
+		return $html;
+	}
+
+
+	/**
+	 *
+	 * @param int $value state value
+	 * @param int $i
+	 */
+	static function toggleStatus($value = 0, $i, $canChange = true)
+	{
+		// Array of image, task, title, action
+		$states = array(
+				0 => array(
+						'tick.png',
+						'attendees.OnWaitinglist',
+						'COM_JEM_ATTENDING',
+						'COM_JEM_ATTENDING'
+				),
+				1 => array(
+						'publish_y.png',
+						'attendees.OffWaitinglist',
+						'COM_JEM_ON_WAITINGLIST',
+						'COM_JEM_ON_WAITINGLIST'
+				)
+		);
+		$state = JArrayHelper::getValue($states, (int) $value, $states[1]);
+		$html = JHtml::_('image', 'com_jem/' . $state[0], JText::_($state[2]), NULL, true);
+		if ($canChange) {
+			$html = '<a href="#" onclick="return listItemTask(\'cb' . $i . '\',\'' . $state[1] . '\')" title="' . JText::_($state[3]) . '">' . $html . '</a>';
+		}
+
 		return $html;
 	}
 }

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -13,7 +13,8 @@ defined('_JEXEC') or die;
  * Holds helpfull administration related stuff
  *
  */
-class JEMAdmin {
+class JemAdmin
+{
 
 	/**
 	 * Writes footer.
@@ -24,23 +25,16 @@ class JEMAdmin {
 
 	}
 
-	
+
 	/**
 	 * Retrieves settings.
 	 *
 	 */
 	static function config()
 	{
-		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
-		$query->select(array('*'));
-		$query->from('#__jem_settings');
-		$query->where(array('id= '.$db->quote('1')));
+		$jemConfig = JemConfig::getInstance();
 
-		$db->setQuery($query);
-		$config = $db->loadObject();
-
-		return $config;
+		return $jemConfig->toObject();
 	}
 
 	static function buildtimeselect($max, $name, $selected, $class = array('class'=>'inputbox'))

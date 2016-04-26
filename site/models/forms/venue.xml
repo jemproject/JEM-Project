@@ -172,6 +172,21 @@
 		/>
 	</fieldset>
 
+	<fieldset name="image" label="COM_JEM_IMAGE">
+		<field name="locimage" type="imageselectevent"
+			class="inputbox"
+			size="40"
+			label="COM_JEM_EDITVENUE_FIELD_IMAGESELECT"
+			description="COM_JEM_EDITVENUE_FIELD_IMAGESELECT_DESC"
+		/>
+		<field name="userfile" type="file"
+			class="inputbox"
+			size="40"
+			label="COM_JEM_IMAGE"
+			description="COM_JEM_UPLOAD_IMAGE"
+		/>
+	</fieldset>
+
 	<fieldset name="publish"
 		label="COM_JEM_FIELDSET_PUBLISHING"
 	>

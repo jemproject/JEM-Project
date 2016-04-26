@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -58,29 +58,29 @@ class JemModelEventslist extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-
 		$app         = JFactory::getApplication();
 		$jemsettings = JemHelper::config();
 		$jinput      = $app->input;
 		$task        = $jinput->getCmd('task','');
-		$format      = $jinput->getCmd('format','');
+		$format      = $jinput->getCmd('format',false);
 		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 		$user        = JemFactory::getUser();
 		$userId      = $user->get('id');
 
 		# limit/start
+		if (empty($format) || ($format == 'html')) {
+			/* in J! 3.3.6 limitstart is removed from request - but we need it! */
+			if ($jinput->get('limitstart', null, 'int') === null) {
+				$app->setUserState('com_jem.eventslist.'.$itemid.'.limitstart', 0);
+			}
 
-		/* in J! 3.3.6 limitstart is removed from request - but we need it! */
-		if ($jinput->get('limitstart', null, 'int') === null) {
-			$app->setUserState('com_jem.eventslist.'.$itemid.'.limitstart', 0);
+			$limit       = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
+			$this->setState('list.limit', $limit);
+			$limitstart  = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
+			// correct start value if required
+			$limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+			$this->setState('list.start', $limitstart);
 		}
-
-		$limit       = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
-		$this->setState('list.limit', $limit);
-		$limitstart  = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
-		// correct start value if required
-		$limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
-		$this->setState('list.start', $limitstart);
 
 		# Search - variables
 		$search      = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
@@ -163,7 +163,7 @@ class JemModelEventslist extends JModelList
 	 */
 	function setLimit($value)
 	{
-		$this->setState('limit', (int) $value);
+		$this->setState('list.limit', (int) $value);
 	}
 
 	/**
@@ -171,7 +171,7 @@ class JemModelEventslist extends JModelList
 	 */
 	function setLimitStart($value)
 	{
-		$this->setState('limitstart', (int) $value);
+		$this->setState('list.start', (int) $value);
 	}
 
 
@@ -250,15 +250,20 @@ class JemModelEventslist extends JModelList
 		$query->select(
 				$this->getState(
 				'list.select',
-				'a.access,a.alias,a.attribs,a.author_ip,a.checked_out,a.checked_out_time,a.contactid,a.created,a.created_by,a.created_by_alias,a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10,a.dates,a.datimage,a.enddates,a.endtimes,a.featured,' .
+				'a.access,a.alias,a.attribs,a.checked_out,a.checked_out_time,a.contactid,a.created,a.created_by,a.created_by_alias,a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10,a.dates,a.datimage,a.enddates,a.endtimes,a.featured,' .
 				'a.fulltext,a.hits,a.id,a.introtext,a.language,a.locid,a.maxplaces,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.unregistra,a.waitinglist,DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
 				'a.recurrence_byday,a.recurrence_counter,a.recurrence_first_id,a.recurrence_limit,a.recurrence_limit_date,a.recurrence_number, a.recurrence_type,a.version'
 			)
 		);
 		$query->from('#__jem_events as a');
 
+		# author
+		$name = $settings->get('global_regname','1') ? 'u.name' : 'u.username';
+		$query->select($name.' AS author');
+		$query->join('LEFT', '#__users AS u on u.id = a.created_by');
+
 		# venue
-		$query->select(array('l.alias AS l_alias','l.author_ip AS l_authorip','l.checked_out AS l_checked_out','l.checked_out_time AS l_checked_out_time','l.city','l.country','l.created AS l_created','l.created_by AS l_createdby'));
+		$query->select(array('l.alias AS l_alias','l.checked_out AS l_checked_out','l.checked_out_time AS l_checked_out_time','l.city','l.country','l.created AS l_created','l.created_by AS l_createdby'));
 		$query->select(array('l.custom1 AS l_custom1','l.custom2 AS l_custom2','l.custom3 AS l_custom3','l.custom4 AS l_custom4','l.custom5 AS l_custom5','l.custom6 AS l_custom6','l.custom7 AS l_custom7','l.custom8 AS l_custom8','l.custom9 AS l_custom9','l.custom10 AS l_custom10'));
 		$query->select(array('l.id AS l_id','l.latitude','l.locdescription','l.locimage','l.longitude','l.map','l.meta_description','l.meta_keywords','l.modified AS l_modified','l.modified_by AS l_modified_by','l.ordering','l.postalCode','l.publish_up','l.publish_down','l.published AS l_published','l.state','l.street','l.url','l.venue','l.version AS l_version'));
 		$query->join('LEFT', '#__jem_venues AS l ON l.id = a.locid');
@@ -509,8 +514,14 @@ class JemModelEventslist extends JModelList
 			$eventParams = new JRegistry;
 			$eventParams->loadString($item->attribs);
 
-			$item->params = clone $this->getState('params');
-			$item->params->merge($eventParams);
+			$stateParams = $this->getState('params');
+			if (empty($stateParams)) {
+				$item->params = new JRegistry;
+				$item->params->merge($eventParams);
+			} else {
+				$item->params = clone $stateParams;
+				$item->params->merge($eventParams);
+			}
 
 			# adding categories
 			$item->categories = $this->getCategories($item->id);

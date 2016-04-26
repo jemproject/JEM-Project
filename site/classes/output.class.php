@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -230,52 +230,50 @@ class JEMOutput
 				return;
 			}
 
-			if ($settings2->oldevent == 2) {
-				JHtml::_('behavior.tooltip');
+			JHtml::_('behavior.tooltip');
 
-				$view = $app->input->getWord('view');
+			$view = $app->input->getWord('view');
 
-				if (empty($view)) {
-					return; // there must be a view - just to be sure...
-				}
-
-				if ($task == 'archive') {
-					if ($settings->get('global_show_icons',1)) {
-						$image = JHtml::_('image', 'com_jem/el.png', JText::_('COM_JEM_SHOW_EVENTS'), NULL, true);
-					} else {
-						$image = JText::_('COM_JEM_SHOW_EVENTS');
-					}
-
-					// TODO: Title and overlib just fit to events view
-					$overlib = JText::_('COM_JEM_SHOW_EVENTS_DESC');
-					$title = JText::_('COM_JEM_SHOW_EVENTS');
-
-					if ($id) {
-						$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&filter_reset=1';
-					} else {
-						$url = 'index.php?option=com_jem&view='.$view.'&filter_reset=1';
-					}
-				} else {
-					if ($settings->get('global_show_icons',1)) {
-						$image = JHtml::_('image', 'com_jem/archive_front.png', JText::_('COM_JEM_SHOW_ARCHIVE'), NULL, true);
-					} else {
-						$image = JText::_('COM_JEM_SHOW_ARCHIVE');
-					}
-
-					$overlib = JText::_('COM_JEM_SHOW_ARCHIVE_DESC');
-					$title = JText::_('COM_JEM_SHOW_ARCHIVE');
-
-					if ($id) {
-						$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&task=archive'.'&filter_reset=1';
-					} else {
-						$url = 'index.php?option=com_jem&view='.$view.'&task=archive'.'&filter_reset=1';
-					}
-				}
-
-				$output = JHtml::_('link', JRoute::_($url), $image, JEMOutput::tooltip($title, $overlib, '', 'bottom'));
-
-				return $output;
+			if (empty($view)) {
+				return; // there must be a view - just to be sure...
 			}
+
+			if ($task == 'archive') {
+				if ($settings->get('global_show_icons',1)) {
+					$image = JHtml::_('image', 'com_jem/el.png', JText::_('COM_JEM_SHOW_EVENTS'), NULL, true);
+				} else {
+					$image = JText::_('COM_JEM_SHOW_EVENTS');
+				}
+
+				// TODO: Title and overlib just fit to events view
+				$overlib = JText::_('COM_JEM_SHOW_EVENTS_DESC');
+				$title = JText::_('COM_JEM_SHOW_EVENTS');
+
+				if ($id) {
+					$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&filter_reset=1';
+				} else {
+					$url = 'index.php?option=com_jem&view='.$view.'&filter_reset=1';
+				}
+			} else {
+				if ($settings->get('global_show_icons',1)) {
+					$image = JHtml::_('image', 'com_jem/archive_front.png', JText::_('COM_JEM_SHOW_ARCHIVE'), NULL, true);
+				} else {
+					$image = JText::_('COM_JEM_SHOW_ARCHIVE');
+				}
+
+				$overlib = JText::_('COM_JEM_SHOW_ARCHIVE_DESC');
+				$title = JText::_('COM_JEM_SHOW_ARCHIVE');
+
+				if ($id) {
+					$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&task=archive'.'&filter_reset=1';
+				} else {
+					$url = 'index.php?option=com_jem&view='.$view.'&task=archive'.'&filter_reset=1';
+				}
+			}
+
+			$output = JHtml::_('link', JRoute::_($url), $image, JEMOutput::tooltip($title, $overlib, '', 'bottom'));
+
+			return $output;
 		}
 	}
 
@@ -688,7 +686,7 @@ class JEMOutput
 	 */
 	static function mapicon($data, $view = false, $params)
 	{
-		$global = JemHelper::globalattribs();
+		$settings = JemHelper::globalattribs();
 
 		//stop if disabled
 		if (!$data->map) {
@@ -989,24 +987,35 @@ class JEMOutput
 	 * events. Takes care of unset dates and or times.
 	 * Values can be styled using css classes jem_date-1 and jem_time-1.
 	 *
-	 * @param string $dateStart Start date of event
-	 * @param string $timeStart Start time of event
-	 * @param string $dateEnd End date of event
-	 * @param string $timeEnd End time of event
-	 * @param string $dateFormat Date Format
-	 * @param string $timeFormat Time Format
-	 * @param bool   $addSuffix if true add suffix specified in settings
+	 * @param  mixed  $dateStart Start date of event or an associative array with keys contained in
+	 *                           {'dateStart','timeStart','dateEnd','timeEnd','dateFormat','timeFormat','addSuffix','showTime'}
+	 *                           and values corresponding to parameters of the same name.
+	 * @param  string $timeStart Start time of event
+	 * @param  string $dateEnd End date of event
+	 * @param  string $timeEnd End time of event
+	 * @param  string $dateFormat Date Format
+	 * @param  string $timeFormat Time Format
+	 * @param  bool   $addSuffix if true add suffix specified in settings
+	 * @param  bool   $showTime global setting to respect
 	 * @return string Formatted date and time string to print
 	 */
-	static function formatDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "", $dateFormat = "", $timeFormat = "", $addSuffix = true)
+	static function formatDateTime($dateStart, $timeStart ='', $dateEnd = '', $timeEnd = '', $dateFormat = '', $timeFormat = '', $addSuffix = true, $showTime = true)
 	{
-		$settings = JemHelper::globalattribs();
-		$output = "";
+		if (is_array($dateStart)) {
+			foreach (array('timeStart','dateEnd','timeEnd','dateFormat','timeFormat','addSuffix','showTime') as $param) {
+				if (isset($dateStart[$param])) {
+					$$param = $dateStart[$param];
+				}
+			}
+			$dateStart = isset($dateStart['dateStart']) ? $dateStart['dateStart'] : '';
+		}
+
+		$output = '';
 
 		if (JemHelper::isValidDate($dateStart)) {
 			$output .= '<span class="jem_date-1">'.self::formatdate($dateStart, $dateFormat).'</span>';
 
-			if ($settings->get('global_show_timedetails','1') && JemHelper::isValidTime($timeStart)) {
+			if ($showTime && JemHelper::isValidTime($timeStart)) {
 				$output .= ', <span class="jem_time-1">'.self::formattime($timeStart, $timeFormat, $addSuffix).'</span>';
 			}
 
@@ -1017,7 +1026,7 @@ class JEMOutput
 			}
 
 			// Display end time only when both times are set
-			if ($settings->get('global_show_timedetails','1') && JemHelper::isValidTime($timeStart) && JemHelper::isValidTime($timeEnd))
+			if ($showTime && JemHelper::isValidTime($timeStart) && JemHelper::isValidTime($timeEnd))
 			{
 				$output .= $displayDateEnd ? ', ' : ' - ';
 				$output .= '<span class="jem_time-1">'.self::formattime($timeEnd, $timeFormat, $addSuffix).'</span>';
@@ -1025,7 +1034,7 @@ class JEMOutput
 		} else {
 			$output .= '<span class="jem_date-1">'.JText::_('COM_JEM_OPEN_DATE').'</span>';
 
-			if ($settings->get('global_show_timedetails','1')) {
+			if ($showTime) {
 				if (JemHelper::isValidTime($timeStart)) {
 					$output .= ', <span class="jem_time-1">'.self::formattime($timeStart, $timeFormat, $addSuffix).'</span>';
 
@@ -1046,19 +1055,30 @@ class JEMOutput
 	 * First line is for (short) date, second line for time values.
 	 * Lines can be styled using css classes jem_date-2 and jem_time-2.
 	 *
-	 * @param string $dateStart Start date of event
-	 * @param string $timeStart Start time of event
-	 * @param string $dateEnd End date of event
-	 * @param string $timeEnd End time of event
-	 * @param string $dateFormat Date Format
-	 * @param string $timeFormat Time Format
-	 * @param bool   $addSuffix if true add suffix specified in settings
+	 * @param  mixed  $dateStart Start date of event or an associative array with keys contained in
+	 *                           {'dateStart','timeStart','dateEnd','timeEnd','dateFormat','timeFormat','addSuffix','showTime'}
+	 *                           and values corresponding to parameters of the same name.
+	 * @param  string $timeStart Start time of event
+	 * @param  string $dateEnd End date of event
+	 * @param  string $timeEnd End time of event
+	 * @param  string $dateFormat Date Format
+	 * @param  string $timeFormat Time Format
+	 * @param  bool   $addSuffix if true add suffix specified in settings
+	 * @param  bool   $showTime global setting to respect
 	 * @return string Formatted date and time string to print
 	 */
-	static function formatDateTime2Lines($dateStart, $timeStart, $dateEnd = "", $timeEnd = "", $dateFormat = "", $timeFormat = "", $addSuffix = true)
+	static function formatDateTime2Lines($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $dateFormat = '', $timeFormat = '', $addSuffix = true, $showTime = true)
 	{
-		$settings = JemHelper::globalattribs();
-		$output = "";
+		if (is_array($dateStart)) {
+			foreach (array('timeStart','dateEnd','timeEnd','dateFormat','timeFormat','addSuffix','showTime') as $param) {
+				if (isset($dateStart[$param])) {
+					$$param = $dateStart[$param];
+				}
+			}
+			$dateStart = isset($dateStart['dateStart']) ? $dateStart['dateStart'] : '';
+		}
+
+		$output = '';
 		$jemconfig = JemHelper::config();
 
 		if (empty($dateFormat)) {
@@ -1076,7 +1096,7 @@ class JEMOutput
 			$outDate = JText::_('COM_JEM_OPEN_DATE');
 		}
 
-		if ($settings->get('global_show_timedetails','1') && JemHelper::isValidTime($timeStart)) {
+		if ($showTime && JemHelper::isValidTime($timeStart)) {
 			$outTime = self::formattime($timeStart, $timeFormat, $addSuffix);
 
 			if (JemHelper::isValidTime($timeEnd)) {
@@ -1095,64 +1115,76 @@ class JEMOutput
 	 * Formats the input dates and times to be used as a long from-to string for
 	 * events. Takes care of unset dates and or times.
 	 *
-	 * @param string $dateStart Start date of event
-	 * @param string $timeStart Start time of event
-	 * @param string $dateEnd End date of event
-	 * @param string $timeEnd End time of event
+	 * @param  string $dateStart Start date of event or an associative array with keys contained in
+	 *                           {'dateStart','timeStart','dateEnd','timeEnd','showTime'}
+	 *                           and values corresponding to parameters of the same name.
+	 * @param  mixed  $timeStart Start time of event
+	 * @param  string $dateEnd End date of event
+	 * @param  string $timeEnd End time of event
+	 * @param  bool   $showTime global setting to respect
 	 * @return string Formatted date and time string to print
 	 */
-	static function formatLongDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "")
+	static function formatLongDateTime($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $showTime = true)
 	{
-		return self::formatDateTime($dateStart, $timeStart, $dateEnd, $timeEnd);
+		return self::formatDateTime(is_array($dateStart) ? $dateStart : array('dateStart' => $dateStart, 'timeStart' => $timeStart, 'dateEnd' => $dateEnd, 'timeEnd' => $timeEnd, 'addSuffix' => true, 'showTime' => $showTime));
 	}
 
 	/**
 	 * Formats the input dates and times to be used as a short from-to string for
 	 * events. Takes care of unset dates and or times.
 	 *
-	 * @param string $dateStart Start date of event
-	 * @param string $timeStart Start time of event
-	 * @param string $dateEnd End date of event
-	 * @param string $timeEnd End time of event
+	 * @param  string $dateStart Start date of event or an associative array with keys contained in
+	 *                           {'dateStart','timeStart','dateEnd','timeEnd','showTime'}
+	 *                           and values corresponding to parameters of the same name.
+	 * @param  mixed  $timeStart Start time of event
+	 * @param  string $dateEnd End date of event
+	 * @param  string $timeEnd End time of event
+	 * @param  bool   $showTime global setting to respect
 	 * @return string Formatted date and time string to print
 	 */
-	static function formatShortDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "")
+	static function formatShortDateTime($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $showTime = true)
 	{
 		$settings = JemHelper::config();
 
+		$params = is_array($dateStart) ? $dateStart : array('dateStart' => $dateStart, 'timeStart' => $timeStart, 'dateEnd' => $dateEnd, 'timeEnd' => $timeEnd, 'showTime' => $showTime);
+		$params['addSuffix'] = true;
 		// Use format saved in settings if specified or format in language file otherwise
-		if(isset($settings->formatShortDate) && $settings->formatShortDate) {
-			$format = $settings->formatShortDate;
-		} else {
-			$format = JText::_('COM_JEM_FORMAT_SHORT_DATE');
-		}
+		$params['dateFormat'] = (isset($settings->formatShortDate) && $settings->formatShortDate) ? $settings->formatShortDate : JText::_('COM_JEM_FORMAT_SHORT_DATE');
 
 		if (isset($settings->datemode) && ($settings->datemode == 2)) {
-			return self::formatDateTime2Lines($dateStart, $timeStart, $dateEnd, $timeEnd, $format);
+			return self::formatDateTime2Lines($params);
 		} else {
-			return self::formatDateTime($dateStart, $timeStart, $dateEnd, $timeEnd, $format);
+			return self::formatDateTime($params);
 		}
 	}
 
-	static function formatSchemaOrgDateTime($dateStart, $timeStart, $dateEnd = "", $timeEnd = "")
+	static function formatSchemaOrgDateTime($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $showTime = true)
 	{
-		$settings = JemHelper::globalattribs();
-		$output = "";
-		$formatD = "Y-m-d";
-		$formatT = "%H:%M";
+		if (is_array($dateStart)) {
+			foreach (array('timeStart','dateEnd','timeEnd','showTime') as $param) {
+				if (isset($dateStart[$param])) {
+					$$param = $dateStart[$param];
+				}
+			}
+			$dateStart = isset($dateStart['dateStart']) ? $dateStart['dateStart'] : '';
+		}
 
-		if(JemHelper::isValidDate($dateStart)) {
+		$output  = '';
+		$formatD = 'Y-m-d';
+		$formatT = '%H:%M';
+
+		if (JemHelper::isValidDate($dateStart)) {
 			$content = self::formatdate($dateStart, $formatD);
 
-			if($settings->get('global_show_timedetails','1') && $timeStart) {
+			if ($showTime && $timeStart) {
 				$content .= 'T'.self::formattime($timeStart, $formatT, false);
 			}
 			$output .= '<meta itemprop="startDate" content="'.$content.'" />';
 
-			if(JemHelper::isValidDate($dateEnd)) {
+			if (JemHelper::isValidDate($dateEnd)) {
 				$content = self::formatdate($dateEnd, $formatD);
 
-				if($settings->get('global_show_timedetails','1') && $timeEnd) {
+				if ($showTime && $timeEnd) {
 					$content .= 'T'.self::formattime($timeEnd, $formatT, false);
 				}
 				$output .= '<meta itemprop="endDate" content="'.$content.'" />';
@@ -1160,13 +1192,13 @@ class JEMOutput
 		} else {
 			// Open date
 
-			if($settings->get('global_show_timedetails','1')) {
-				if($timeStart) {
+			if ($showTime) {
+				if ($timeStart) {
 					$content = self::formattime($timeStart, $formatT, false);
 					$output .= '<meta itemprop="startDate" content="'.$content.'" />';
 				}
 				// Display end time only when both times are set
-				if($timeStart && $timeEnd) {
+				if ($timeStart && $timeEnd) {
 					$content .= self::formattime($timeEnd, $formatT, false);
 					$output .= '<meta itemprop="endDate" content="'.$content.'" />';
 				}

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -401,18 +401,22 @@ class JemModelEvent extends JModelItem
 	 *         list
 	 *
 	 */
-	function getUserIsRegistered()
+	function getUserIsRegistered($eventId = null)
 	{
 		// Initialize variables
 		$user = JemFactory::getUser();
 		$userid = (int) $user->get('id', 0);
+
+		if (empty($eventId)) {
+			$eventId = $this->getState('event.id');
+		}
 
 		// usercheck
 		$query = 'SELECT waiting+1' . 		// 1 if user is registered, 2 if on waiting
 				// list
 		' FROM #__jem_register'
 		. ' WHERE uid = ' . $userid
-		. ' AND event = ' . $this->_db->quote($this->getState('event.id'));
+		. ' AND event = ' . $this->_db->quote($eventId);
 		$this->_db->setQuery($query);
 		return $this->_db->loadResult();
 	}
@@ -544,7 +548,16 @@ class JemModelEvent extends JModelItem
 		$obj->uid = (int) $uid;
 		$obj->uregdate = gmdate('Y-m-d H:i:s');
 		$obj->uip = $uip;
-		$this->_db->insertObject('#__jem_register', $obj);
+
+		try {
+			$this->_db->insertObject('#__jem_register', $obj);
+		}
+		catch (Exception $e) {
+			// we have a unique user-event key so registering twice will fail
+			$this->setError(JText::_(($e->getCode() == 1062) ? 'COM_JEM_ALLREADY_REGISTERED'
+				                                             : 'COM_JEM_ERROR_REGISTRATION'));
+			return false;
+		}
 
 		return $this->_db->insertid();
 	}

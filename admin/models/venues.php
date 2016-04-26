@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -12,7 +12,7 @@ jimport('joomla.application.component.modellist');
 
 
 /**
- * Venues-Model
+ * Model: Venues
  **/
 class JemModelVenues extends JModelList
 {
@@ -21,7 +21,6 @@ class JemModelVenues extends JModelList
 	 *
 	 * @param	array	An optional associative array of configuration settings.
 	 * @see		JController
-	 *
 	 */
 	public function __construct($config = array())
 	{
@@ -49,8 +48,6 @@ class JemModelVenues extends JModelList
 	 * Method to auto-populate the model state.
 	 *
 	 * Note. Calling getState in this method will result in recursion.
-	 *
-	 *
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
@@ -78,7 +75,6 @@ class JemModelVenues extends JModelList
 	 *
 	 * @param	string		$id	A prefix for the store id.
 	 * @return	string		A store id.
-	 *
 	 */
 	protected function getStoreId($id = '')
 	{
@@ -94,7 +90,6 @@ class JemModelVenues extends JModelList
 	 * Build an SQL query to load the list data.
 	 *
 	 * @return	JDatabaseQuery
-	 *
 	 */
 	protected function getListQuery()
 	{
@@ -184,89 +179,5 @@ class JemModelVenues extends JModelList
 		$query->order($db->escape($orderCol.' '.$orderDirn));
 
 		return $query;
-	}
-
-
-	/**
-	 * Method to remove a venue
-	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 *
-	 */
-	function remove($cid)
-	{
-		JArrayHelper::toInteger($cid);
-		$cids	= implode(',', $cid);
-
-		if (strlen($cids) == 0) {
-			JError::raiseError(500, $db->stderr());
-			return false;
-		}
-
-		$db		= $this->getDbo();
-		$query	= $db->getQuery(true);
-
-		$query->select(array('v.id','v.venue'));
-		$query->select(array('COUNT(e.locid) as AssignedEvents'));
-		$query->from($db->quoteName('#__jem_venues').' AS v');
-		$query->join('LEFT', '#__jem_events AS e ON e.locid = v.id');
-		$query->where(array('v.id IN ('.$cids.')'));
-		$query->group('v.id');
-		$db->setQuery($query);
-
-		if (!($rows = $db->loadObjectList())) {
-			JError::raiseError(500, $db->stderr());
-			return false;
-		}
-
-
-		$err = array();
-		$cid = array();
-		foreach ($rows as $row) {
-			if ($row->AssignedEvents == 0) {
-				$cid[] = $row->id;
-			} else {
-				$err[] = $row->venue;
-			}
-		}
-
-		// Assigned-events
-		if (count($cid))
-		{
-			$cids	= implode(',', $cid);
-			$db 	= JFactory::getDbo();
-			$query	= $db->getQuery(true);
-
-			$query->delete($db->quoteName('#__jem_venues'));
-			$query->where(array('id IN ('.$cids.')'));
-			$db->setQuery($query);
-
-			if(!$db->execute()) {
-				$this->setError($db->getErrorMsg());
-				return false;
-			}
-		}
-
-		// Errors occurred
-		if (count($err)) {
-			$cids 	= implode(', ', $err);
-			$msg 	= JText::sprintf('COM_JEM_VENUE_ASSIGNED_EVENT', $cids);
-			return $msg;
-		} else {
-			$total 	= count($cid);
-			$msg 	= $total.' '.JText::_('COM_JEM_VENUES_DELETED');
-			return $msg;
-		}
-	}
-
-	/**
-	 * Returns venue items
-	 * @return object  Venues
-	 */
-	public function getItems()
-	{
-		$items = parent::getItems();
-		return $items;
 	}
 }

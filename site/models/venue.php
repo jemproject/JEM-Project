@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -11,8 +11,8 @@ defined('_JEXEC') or die;
 require_once dirname(__FILE__) . '/eventslist.php';
 
 /**
- * Venue-Model
-*/
+ * Model: venue
+ */
 class JemModelVenue extends JemModelEventslist
 {
 	public function __construct()
@@ -45,21 +45,24 @@ class JemModelVenue extends JemModelEventslist
 		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 		$user        = JemFactory::getUser();
 		$userId      = $user->get('id');
+		$format      = $jinput->getCmd('format',false);
 
 		// List state information
 
-		/* in J! 3.3.6 limitstart is removed from request - but we need it! */
-		if ($app->input->getInt('limitstart', null) === null) {
-			$app->setUserState('com_jem.venue.'.$itemid.'.limitstart', 0);
+		if (empty($format) || ($format == 'html')) {
+			/* in J! 3.3.6 limitstart is removed from request - but we need it! */
+			if ($app->input->getInt('limitstart', null) === null) {
+				$app->setUserState('com_jem.venue.'.$itemid.'.limitstart', 0);
+			}
+
+			$limit = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
+			$this->setState('list.limit', $limit);
+
+			$limitstart = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
+			// correct start value if required
+			$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+			$this->setState('list.start', $limitstart);
 		}
-
-		$limit = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
-		$this->setState('list.limit', $limit);
-
-		$limitstart = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
-		// correct start value if required
-		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
-		$this->setState('list.start', $limitstart);
 
 		# Search
 		$search = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_search', 'filter_search', '', 'string');

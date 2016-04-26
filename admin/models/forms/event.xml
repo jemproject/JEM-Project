@@ -74,12 +74,12 @@
 		/>
 		<field name="cats" type="catoptions"
 			multiple="true"
-			class="inputbox required"
-			size="10"
+			class="inputbox"
+			size="4"
 			label="COM_JEM_FIELD_CATEGORIES"
 			labelclass=""
 			description="COM_JEM_FIELD_CATEGORIES"
-			required="false"
+			required="true"
 		/>
 		<field name="hits" type="hits"
 			default="0"
@@ -304,7 +304,7 @@
 			<option value="4">COM_JEM_WEEKDAY</option>
 		</field>
 		<field name="recurrence_limit_date" type="calendar"
-			default="0000-00-00"
+			default="now"
 			label="COM_JEM_RECURRENCE_COUNTER"
 			description="COM_JEM_RECURRENCE_COUNTER"
 			class="inputbox"

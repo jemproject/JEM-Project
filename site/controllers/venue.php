@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -236,9 +236,6 @@ class JEMControllerVenue extends JemControllerForm
 	 */
 	public function save($key = null, $urlVar = 'a_id')
 	{
-		// Load the backend helper for filtering.
-		require_once JPATH_ADMINISTRATOR.'/components/com_jem/helpers/helper.php';
-
 		$result = parent::save($key, $urlVar);
 
 		// If ok, redirect to the return page.

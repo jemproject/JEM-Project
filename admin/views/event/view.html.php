@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -12,8 +12,8 @@ defined('_JEXEC') or die;
 /**
  * Event View
  */
-class JemViewEvent extends JViewLegacy {
-
+class JemViewEvent extends JemAdminView
+{
 	protected $form;
 	protected $item;
 	protected $state;
@@ -52,6 +52,13 @@ class JemViewEvent extends JViewLegacy {
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
+		
+		if (version_compare(JVERSION, '3.0', 'lt')) {
+			$style = 'select.required {'
+					. 'background-color: #D5EEFF;'
+					. '}';
+			$document->addStyleDeclaration($style);
+		}
 
 		// Load scripts
 		JHtml::_('script', 'com_jem/attachments.js', false, true);

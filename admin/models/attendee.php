@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -12,12 +12,9 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.model');
 
 /**
- * JEM Component attendee Model
- *
- * @package JEM
- *
-*/
-class JEMModelAttendee extends JModelLegacy
+ * Model: Attendee
+ */
+class JemModelAttendee extends JModelLegacy
 {
 	/**
 	 * attendee id
@@ -61,11 +58,10 @@ class JEMModelAttendee extends JModelLegacy
 	}
 
 	/**
-	 * Method to get content category data
+	 * Method to get data
 	 *
 	 * @access	public
 	 * @return	array
-	 *
 	 */
 	function &getData()
 	{
@@ -77,11 +73,10 @@ class JEMModelAttendee extends JModelLegacy
 	}
 
 	/**
-	 * Method to load content event data
+	 * Method to load data
 	 *
 	 * @access	private
 	 * @return	boolean	True on success
-	 *
 	 */
 	protected function _loadData()
 	{
@@ -106,11 +101,10 @@ class JEMModelAttendee extends JModelLegacy
 	}
 
 	/**
-	 * Method to initialise the category data
+	 * Method to initialise the data
 	 *
 	 * @access	private
 	 * @return	boolean	True on success
-	 *
 	 */
 	protected function _initData()
 	{
@@ -147,6 +141,7 @@ class JEMModelAttendee extends JModelLegacy
 		$row->waiting = $attendee->waiting ? 0 : 1;
 		return $row->store();
 	}
+
 
 	/**
 	 * Method to store the attendee
@@ -252,5 +247,41 @@ class JEMModelAttendee extends JModelLegacy
 
 		return $row;
 	}
+
+
+	/**
+	 * Method to set status of registered
+	 *
+	 * @return	boolean	True on success.
+	 */
+	public function setStatus($pks, $value = 0)
+	{
+		// Sanitize the ids.
+		$pks = (array) $pks;
+		JArrayHelper::toInteger($pks);
+
+		if (empty($pks)) {
+			$this->setError(JText::_('JERROR_NO_ITEMS_SELECTED'));
+			return false;
+		}
+
+		try {
+			$db = $this->getDbo();
+
+			$db->setQuery(
+					'UPDATE #__jem_register' .
+					' SET waiting = '.(int) $value.
+					' WHERE id IN ('.implode(',', $pks).')'
+					);
+			if ($db->execute() === false) {
+				throw new Exception($db->getErrorMsg());
+			}
+
+		} catch (Exception $e) {
+			$this->setError($e->getMessage());
+			return false;
+		}
+
+		return true;
+	}
 }
-?>

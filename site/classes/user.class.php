@@ -2,53 +2,12 @@
 /**
  * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 defined('_JEXEC') or die;
-
-if (version_compare(JVERSION, '3.4', 'lt')) {
-	// on Joomla prior 3.4.0 getInstance expects only one parameter
-
-	/**
-	 * JEM user class with additional functions.
-	 * Compatible with Joomla prior 3.4.0.
-	 *
-	 * @package JEM
-	 *
-	 * @see JemUserAbstract
-	 */
-	class JemUser extends JemUserAbstract
-	{
-		static function getInstance($id = 0)
-		{
-			return parent::_getInstance($id);
-		}
-	}
-
-} else {
-	// since Joomla 3.4.0 getInstance has a second parameter
-
-	/**
-	 * JEM user class with additional functions.
-	 * Compatible with Joomla since 3.4.0.
-	 *
-	 * @package JEM
-	 *
-	 * @see JemUserAbstract
-	 */
-	class JemUser extends JemUserAbstract
-	{
-		static function getInstance($id = 0, JUserWrapperHelper $userHelper = null)
-		{
-			// we don't need this helper
-			return parent::_getInstance($id);
-		}
-	}
-
-}
 
 /**
  * JEM user class with additional functions.
@@ -64,11 +23,6 @@ abstract class JemUserAbstract extends JUser
 	 */
 	protected static $instances_jemuser = array();
 
-	/**
-	 * @var    array  JEM Settings.
-	 */
-	protected static $jemsettings = array();
-
 
 	static protected function _getInstance($id = 0)
 	{
@@ -82,18 +36,6 @@ abstract class JemUserAbstract extends JUser
 		}
 
 		return self::$instances_jemuser[$id];
-	}
-
-	protected function getJemSettings()
-	{
-		if (empty(self::$jemsettings)) {
-			self::$jemsettings = JemHelper::config();
-			$globalregistry = new JRegistry;
-			$globalregistry->loadString(self::$jemsettings->globalattribs);
-			self::$jemsettings->globalregistry = $globalregistry;
-		}
-
-		return self::$jemsettings;
 	}
 
 	/**
@@ -321,7 +263,7 @@ abstract class JemUserAbstract extends JUser
 		$use_disable   = array_key_exists('use_disable',   $options) ? (bool)$options['use_disable']   : false;
 		$owner         = array_key_exists('owner',         $options) ? (bool)$options['owner']         : false;
 
-		$jemsettings = $this->getJemSettings();
+		$jemsettings = JemHelper::config();
 		$asset = 'com_jem';
 
 		$all = (bool)$this->authorise('core.manage', $asset);
@@ -452,7 +394,7 @@ abstract class JemUserAbstract extends JUser
 		$created_by  = (int)$created_by;
 		$id          = ($id === false) ? $id : (int)$id;
 		$asset       = 'com_jem';
-		$jemsettings = $this->getJemSettings();
+		$jemsettings = JemHelper::config();
 
 		switch ($type) {
 		case 'event':
@@ -460,27 +402,30 @@ abstract class JemUserAbstract extends JUser
 			$edit     = ($jemsettings->eventedit == -1);
 			$edit_own = ($jemsettings->eventowner == 1);
 			$autopubl = ($jemsettings->autopubl == -1); // auto-publish new events
-			if (!empty($id)) {
-				$asset .= '.event.' . $id;
-			}
+			// not supported yet
+			//if (!empty($id)) {
+			//	$asset .= '.event.' . $id;
+			//}
 			break;
 		case 'venue':
 			$create   = ($jemsettings->deliverlocsyes == -1);
 			$edit     = ($jemsettings->venueedit == -1);
 			$edit_own = ($jemsettings->venueowner == 1);
 			$autopubl = ($jemsettings->autopublocate == -1); // auto-publish new venues
-			if (!empty($id)) {
-				$asset .= '.venue.' . $id;
-			}
+			// not supported yet
+			//if (!empty($id)) {
+			//	$asset .= '.venue.' . $id;
+			//}
 			break;
 		default:
 			$create = $edit = $edit_own = $autopubl = false;
 			break;
 		}
 		$assets[] = $asset;
-		foreach($categoryIds as $catId) {
-			$assets[] = 'com_jem.category.'.$catId;
-		}
+		// not supported yet
+		//foreach($categoryIds as $catId) {
+		//	$assets[] = 'com_jem.category.'.$catId;
+		//}
 
 		// Joomla ACL system, JEM global settings
 
@@ -590,6 +535,47 @@ abstract class JemUserAbstract extends JUser
 		}
 
 		return (bool)$authorised;
+	}
+
+}
+
+if (version_compare(JVERSION, '3.4', 'lt')) {
+	// on Joomla prior 3.4.0 getInstance expects only one parameter
+
+	/**
+	 * JEM user class with additional functions.
+	 * Compatible with Joomla prior 3.4.0.
+	 *
+	 * @package JEM
+	 *
+	 * @see JemUserAbstract
+	 */
+	class JemUser extends JemUserAbstract
+	{
+		static function getInstance($id = 0)
+		{
+			return parent::_getInstance($id);
+		}
+	}
+
+} else {
+	// since Joomla 3.4.0 getInstance has a second parameter
+
+	/**
+	 * JEM user class with additional functions.
+	 * Compatible with Joomla since 3.4.0.
+	 *
+	 * @package JEM
+	 *
+	 * @see JemUserAbstract
+	 */
+	class JemUser extends JemUserAbstract
+	{
+		static function getInstance($id = 0, JUserWrapperHelper $userHelper = null)
+		{
+			// we don't need this helper
+			return parent::_getInstance($id);
+		}
 	}
 
 }

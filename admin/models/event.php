@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -241,7 +241,7 @@ class JEMModelEvent extends JemModelAdmin
 		$date        = JFactory::getDate();
 		$app         = JFactory::getApplication();
 		$jinput      = $app->input;
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 		$fileFilter  = new JInput($_FILES);
 		$table       = $this->getTable();
 
@@ -250,7 +250,7 @@ class JEMModelEvent extends JemModelAdmin
 		$new     = (bool)empty($data['id']);
 
 		// Variables
-		$cats             = $jinput->get('cid', array(), 'array');
+		$cats             = $data['cats'];
 		$recurrencenumber = $jinput->get('recurrence_number', '', 'int');
 		$recurrencebyday  = $jinput->get('recurrence_byday', '', 'string');
 		$metakeywords     = $jinput->get('meta_keywords', '', '');
@@ -312,13 +312,19 @@ class JEMModelEvent extends JemModelAdmin
 				$this->featured($pk, $data['featured']);
 			}
 
-			// attachments, new ones first
-			$attachments 				= array();
-			$attachments 				= $fileFilter->get('attach', array(), 'array');
-			$attachments['customname']	= $jinput->post->get('attach-name', array(), 'array');
-			$attachments['description'] = $jinput->post->get('attach-desc', array(), 'array');
-			$attachments['access'] 		= $jinput->post->get('attach-access', array(), 'array');
-			JEMAttachment::postUpload($attachments, 'event' . $pk);
+			// on frontend attachment uploads maybe forbidden
+			// so allow changing name or description only
+			$allowed = $backend || ($jemsettings->attachmentenabled > 0);
+
+			if ($allowed) {
+				// attachments, new ones first
+				$attachments 				= array();
+				$attachments 				= $fileFilter->get('attach', array(), 'array');
+				$attachments['customname']	= $jinput->post->get('attach-name', array(), 'array');
+				$attachments['description'] = $jinput->post->get('attach-desc', array(), 'array');
+				$attachments['access'] 		= $jinput->post->get('attach-access', array(), 'array');
+				JEMAttachment::postUpload($attachments, 'event' . $pk);
+			}
 
 			// and update old ones
 			$old				= array();
@@ -332,7 +338,9 @@ class JEMModelEvent extends JemModelAdmin
 				$attach['id'] 			= $id;
 				$attach['name'] 		= $old['name'][$k];
 				$attach['description'] 	= $old['description'][$k];
-				$attach['access'] 		= $old['access'][$k];
+				if ($allowed) {
+					$attach['access'] 	= $old['access'][$k];
+				} // else don't touch this field
 				JEMAttachment::update($attach);
 			}
 
