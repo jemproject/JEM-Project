@@ -281,8 +281,9 @@
 			required="false"
 		>
 			<option value="0">COM_JEM_DO_NOTHING</option>
-			<option value="1">COM_JEM_DELETE_OLD_EVENTS</option>
 			<option value="2">COM_JEM_ARCHIVE_OLD_EVENTS</option>
+			<option value="3">COM_JEM_TRASH_OLD_EVENTS</option>
+			<option value="1">COM_JEM_DELETE_OLD_EVENTS</option>
 		</field>
 		<field name="minus" type="text"
 			label="COM_JEM_NUMBER_DELETE_DAYS"

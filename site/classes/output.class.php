@@ -230,52 +230,50 @@ class JEMOutput
 				return;
 			}
 
-			if ($settings2->oldevent == 2) {
-				JHtml::_('behavior.tooltip');
+			JHtml::_('behavior.tooltip');
 
-				$view = $app->input->getWord('view');
+			$view = $app->input->getWord('view');
 
-				if (empty($view)) {
-					return; // there must be a view - just to be sure...
-				}
-
-				if ($task == 'archive') {
-					if ($settings->get('global_show_icons',1)) {
-						$image = JHtml::_('image', 'com_jem/el.png', JText::_('COM_JEM_SHOW_EVENTS'), NULL, true);
-					} else {
-						$image = JText::_('COM_JEM_SHOW_EVENTS');
-					}
-
-					// TODO: Title and overlib just fit to events view
-					$overlib = JText::_('COM_JEM_SHOW_EVENTS_DESC');
-					$title = JText::_('COM_JEM_SHOW_EVENTS');
-
-					if ($id) {
-						$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&filter_reset=1';
-					} else {
-						$url = 'index.php?option=com_jem&view='.$view.'&filter_reset=1';
-					}
-				} else {
-					if ($settings->get('global_show_icons',1)) {
-						$image = JHtml::_('image', 'com_jem/archive_front.png', JText::_('COM_JEM_SHOW_ARCHIVE'), NULL, true);
-					} else {
-						$image = JText::_('COM_JEM_SHOW_ARCHIVE');
-					}
-
-					$overlib = JText::_('COM_JEM_SHOW_ARCHIVE_DESC');
-					$title = JText::_('COM_JEM_SHOW_ARCHIVE');
-
-					if ($id) {
-						$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&task=archive'.'&filter_reset=1';
-					} else {
-						$url = 'index.php?option=com_jem&view='.$view.'&task=archive'.'&filter_reset=1';
-					}
-				}
-
-				$output = JHtml::_('link', JRoute::_($url), $image, JEMOutput::tooltip($title, $overlib, '', 'bottom'));
-
-				return $output;
+			if (empty($view)) {
+				return; // there must be a view - just to be sure...
 			}
+
+			if ($task == 'archive') {
+				if ($settings->get('global_show_icons',1)) {
+					$image = JHtml::_('image', 'com_jem/el.png', JText::_('COM_JEM_SHOW_EVENTS'), NULL, true);
+				} else {
+					$image = JText::_('COM_JEM_SHOW_EVENTS');
+				}
+
+				// TODO: Title and overlib just fit to events view
+				$overlib = JText::_('COM_JEM_SHOW_EVENTS_DESC');
+				$title = JText::_('COM_JEM_SHOW_EVENTS');
+
+				if ($id) {
+					$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&filter_reset=1';
+				} else {
+					$url = 'index.php?option=com_jem&view='.$view.'&filter_reset=1';
+				}
+			} else {
+				if ($settings->get('global_show_icons',1)) {
+					$image = JHtml::_('image', 'com_jem/archive_front.png', JText::_('COM_JEM_SHOW_ARCHIVE'), NULL, true);
+				} else {
+					$image = JText::_('COM_JEM_SHOW_ARCHIVE');
+				}
+
+				$overlib = JText::_('COM_JEM_SHOW_ARCHIVE_DESC');
+				$title = JText::_('COM_JEM_SHOW_ARCHIVE');
+
+				if ($id) {
+					$url = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&task=archive'.'&filter_reset=1';
+				} else {
+					$url = 'index.php?option=com_jem&view='.$view.'&task=archive'.'&filter_reset=1';
+				}
+			}
+
+			$output = JHtml::_('link', JRoute::_($url), $image, JEMOutput::tooltip($title, $overlib, '', 'bottom'));
+
+			return $output;
 		}
 	}
 

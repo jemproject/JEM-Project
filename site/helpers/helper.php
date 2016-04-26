@@ -196,6 +196,15 @@ class JemHelper
 				$db->execute();
 			}
 
+			//Set state trashed of outdated events
+			if ($jemsettings->oldevent == 3) {
+				$query = 'UPDATE #__jem_events SET published = -2 WHERE dates > 0 AND '
+						.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
+						.' AND published = 1';
+				$db->SetQuery($query);
+				$db->execute();
+			}
+
 			//Set timestamp of last cleanup
 			JemConfig::getInstance()->set('lastupdate', $now);
 		}
