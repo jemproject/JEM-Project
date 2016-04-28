@@ -174,6 +174,7 @@ class com_jemInstallerScript
 		<p><?php echo JText::_('COM_JEM_UNINSTALL_TEXT'); ?></p>
 		<?php
 
+		$this->useJemConfig = true; // since 2.1.6
 		$globalParams = $this->getGlobalParams();
 		$cleanup = $globalParams->get('global_cleanup_db_on_uninstall', 0);
 		if (!empty($cleanup)) {
