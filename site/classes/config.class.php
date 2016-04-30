@@ -127,14 +127,14 @@ class JemConfig
 		if (!empty($data->globalattribs)) {
 			$registry = new JRegistry;
 			$registry->loadString($data->globalattribs);
-			$data->globalattribs = $registry->toArray();
+			$data->globalattribs = $registry->toObject();
 		}
 
 		// Convert Css settings to an array
 		if (!empty($data->css)) {
 			$registryCss = new JRegistry;
 			$registryCss->loadString($data->css);
-			$data->css = $registryCss->toArray();
+			$data->css = $registryCss->toObject();
 		}
 
 		return $data;
