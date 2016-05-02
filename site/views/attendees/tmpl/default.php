@@ -58,7 +58,7 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 					<b><?php echo JText::_('COM_JEM_TITLE').':'; ?></b>&nbsp;
 					<a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a>
 					<br />
-					<b><?php echo JText::_('COM_JEM_DATE').':'; ?></b>&nbsp;<?php 
+					<b><?php echo JText::_('COM_JEM_DATE').':'; ?></b>&nbsp;<?php
 						echo JemOutput::formatLongDateTime($this->event->dates, $this->event->times, $this->event->enddates, $this->event->endtimes,
 						                                   $this->settings->get('global_show_timedetails', 1)); ?>
 				</td>
@@ -100,6 +100,9 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 					<?php if ($this->event->waitinglist): ?>
 					<th class="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 					<?php endif;?>
+					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+					<th class="title"><?php echo JText::_('COM_JEM_COMMENT'); ?></th>
+					<?php endif;?>
 					<th class="center"><?php echo JText::_('COM_JEM_REMOVE_USER'); ?></th>
 				</tr>
 			</thead>
@@ -122,8 +125,13 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 					<?php endif;?>
 				</td>
 				<?php endif;?>
-				<td class="center"><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendees.attendeeremove')"><?php echo
-						JHtml::_('image','com_jem/publish_r.png', JText::_('COM_JEM_ATTENDEES_DELETE'), array('title' => JText::_('COM_JEM_ATTENDEES_DELETE')), true); ?></a></td>
+					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+					<?php $cmnt = (strlen($row->comment) > 16) ? (substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
+					<td><?php echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); ?></td>
+					<?php endif;?>
+					<td class="center"><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendees.attendeeremove')"><?php echo
+						JHtml::_('image','com_jem/publish_r.png', JText::_('COM_JEM_ATTENDEES_DELETE'), array('title' => JText::_('COM_JEM_ATTENDEES_DELETE')), true); ?></a>
+					</td>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>

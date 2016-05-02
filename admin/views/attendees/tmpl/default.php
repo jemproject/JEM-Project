@@ -2,7 +2,7 @@
 /**
  * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -73,6 +73,9 @@ JFactory::getDocument()->addScriptDeclaration('
 					<?php if ($this->event->waitinglist): ?>
 					<th class="title center"><?php echo JHtml::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting',$listDirn, $listOrder); ?></th>
 					<?php endif;?>
+					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+					<th class="title"><?php echo JText::_('COM_JEM_COMMENT'); ?></th>
+					<?php endif;?>
 					<th class="title center"><?php echo JText::_('COM_JEM_REMOVE_USER'); ?></th>
 					<th width="1%" class="center nowrap"><?php echo JHtml::_('grid.sort', 'COM_JEM_ATTENDEES_REGID', 'r.id', $listDirn, $listOrder ); ?></th>
 				</tr>
@@ -94,9 +97,7 @@ JFactory::getDocument()->addScriptDeclaration('
 					<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 					<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 					<td><a href="<?php echo JRoute::_('index.php?option=com_jem&task=attendees.edit&cid[]='.$row->id); ?>"><?php echo $row->name; ?></a></td>
-					<td>
-						<?php echo $row->username; ?>
-					</td>
+					<td><?php echo $row->username; ?></td>
 					<td class="email"><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
 					<td><?php echo $row->uip == 'DISABLED' ? JText::_('COM_JEM_DISABLED') : $row->uip; ?></td>
 					<td><?php echo JHtml::_('date',$row->uregdate,JText::_('DATE_FORMAT_LC2')); ?></td>
@@ -107,6 +108,10 @@ JFactory::getDocument()->addScriptDeclaration('
 					<td class="center">
 						<?php echo JHtml::_('jemhtml.toggleStatus', $row->waiting, $i, $canChange); ?>
 					</td>
+					<?php endif; ?>
+					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+					<?php $cmnt = (strlen($row->comment) > 16) ? (rtrim(substr($row->comment, 0, 14)).'&hellip;') : $row->comment; ?>
+					<td><?php echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); ?></td>
 					<?php endif; ?>
 					<td class="center">
 						<a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendees.remove')">

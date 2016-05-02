@@ -135,9 +135,21 @@ class JemModelAttendees extends JModelList
 		// load only data from current event
 		$query->where('r.event = '.$db->Quote($eventid));
 
-		$filter_waiting = $this->getState('filter_waiting');
-		if ($filter_waiting > 0) {
-			$query->where('(a.waitinglist = 0 OR r.waiting = '.$db->quote($filter_waiting-1).')');
+	// TODO: filter status
+		$filter_status = $this->getState('filter_status', -2);
+		if ($filter_status > -2) {
+			if ($filter_status >= 1) {
+				$waiting = $filter_status == 1 ? 0 : 1;
+				$filter_status = 1;
+				$query->where('(a.waitinglist = 0 OR r.waiting = '.$db->quote($filter_waiting-1).')');
+			}
+			$query->where('r.status = '.$db->quote($filter_status));
+		} else { // the old way, but only for status 1
+			$query->where('r.status = 1');
+			$filter_waiting = $this->getState('filter_waiting');
+			if ($filter_waiting > 0) {
+				$query->where('(a.waitinglist = 0 OR r.waiting = '.$db->quote($filter_waiting-1).')');
+			}
 		}
 
 		// search name
@@ -225,41 +237,47 @@ class JemModelAttendees extends JModelList
 		$items = $this->getItems();
 
 		$waitinglist = isset($event->waitinglist) ? $event->waitinglist : false;
+		$comments = !empty(JemHelper::config()->regallowcomments);
 
 		$export = '';
 		$col = array();
 
-		$db = JFactory::getDbo();
 		$header = array(
 				JText::_('COM_JEM_NAME'),
 				JText::_('COM_JEM_USERNAME'),
 				JText::_('COM_JEM_EMAIL'),
 				JText::_('COM_JEM_REGDATE'),
-				JText::_('COM_JEM_HEADER_WAITINGLIST_STATUS'),
-				JText::_('COM_JEM_ATTENDEES_REGID')
-		);
-		if (!$waitinglist) {
-			# no need to display the status column
-			unset($header[4]);
+				JText::_('COM_JEM_HEADER_WAITINGLIST_STATUS')
+			);
+		if ($comments) {
+			$header[] = JText::_('COM_JEM_COMMENT');
 		}
+		$header[] = JText::_('COM_JEM_ATTENDEES_REGID');
 
 		$csv = fopen('php://output', 'w');
-		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+		//fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		fputcsv($csv, $header, ';');
 
 		foreach ($items as $item) {
+			$status = isset($item->status) ? $item->status : 1;
+			if ($status < 0) {
+				$txt_stat = 'COM_JEM_ATTENDEES_NOT_ATTENDING';
+			} elseif ($status > 0) {
+				$txt_stat = $item->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING';
+			} else {
+				$txt_stat = 'COM_JEM_ATTENDEES_INVITED';
+			}
 			$data = array(
 					$item->name,
 					$item->username,
 					$item->email,
 					JHtml::_('date',$item->uregdate, JText::_('DATE_FORMAT_LC2')),
-					JText::_($item->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING'),
-					$item->uid
-			);
-			if (!$waitinglist) {
-				# no need to display the status column
-				unset($data[4]);
+					JText::_($txt_stat)
+				);
+			if ($comments) {
+				$data[] = (strlen($item->comment) > 256) ? (substr($item->comment, 0, 254).'&hellip;') : $item->comment;
 			}
+			$data[] = $item->uid;
 
 			fputcsv($csv, (array) $data, ';', '"');
 		}

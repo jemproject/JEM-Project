@@ -44,6 +44,9 @@ defined('_JEXEC') or die; ?>
 			<?php if ($this->event->waitinglist): ?>
 			<th class="title"><?php echo JText::_('COM_JEM_HEADER_WAITINGLIST_STATUS' ); ?></th>
 			<?php endif; ?>
+			<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+			<th class="title"><?php echo JText::_('COM_JEM_COMMENT'); ?></th>
+			<?php endif; ?>
 		</tr>
 	</thead>
 
@@ -61,6 +64,9 @@ defined('_JEXEC') or die; ?>
 			<?php endif; ?>
 			<?php if ($this->event->waitinglist): ?>
 			<td><?php echo JText::_($row->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING'); ?></td>
+			<?php endif; ?>
+			<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+			<td><?php echo (strlen($row->comment) > 256) ? (substr($row->comment, 0, 254).'&hellip;') : $row->comment; ?></td>
 			<?php endif; ?>
 		</tr>
 		<?php $k = 1 - $k;

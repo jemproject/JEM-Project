@@ -216,10 +216,16 @@ class JemModelEvent extends JModelItem
 		$query->from('#__jem_register');
 		$query->where(array(
 				'event= ' . $db->quote($this->_item[$pk]->did),
-				'waiting= 0'
-		));
+				'waiting= 0',
+				'status = 1'
+			));
 		$db->setQuery($query);
-		$res = $db->loadResult();
+		try {
+			$res = $db->loadResult();
+		}
+		catch (Exception $e) {
+			$res = 0;
+		}
 		$this->_item[$pk]->booked = $res;
 
 
@@ -243,8 +249,14 @@ class JemModelEvent extends JModelItem
 
 			$db->setQuery('UPDATE #__jem_events' . ' SET hits = hits + 1' . ' WHERE id = ' . (int) $pk);
 
-			if ($db->execute() === false) {
-				$this->setError($db->getErrorMsg());
+			try {
+				if ($db->execute() === false) {
+					$this->setError($db->getErrorMsg());
+					return false;
+				}
+			}
+			catch (Exception $e) {
+				$this->setError($e);
 				return false;
 			}
 		}
@@ -383,22 +395,27 @@ class JemModelEvent extends JModelItem
 
 		$db->setQuery($query);
 
-		if ($id == 'all'){
-			$cats = $db->loadColumn(0);
-			$cats = array_unique($cats);
-		} else {
-			$cats = $db->loadObjectList();
+		try {
+			if ($id == 'all'){
+				$cats = $db->loadColumn(0);
+				$cats = array_unique($cats);
+			} else {
+				$cats = $db->loadObjectList();
+			}
 		}
+		catch (Exception $e) {
+			$cats = false;
+		}
+
 		return $cats;
 	}
 
 	/**
 	 * Method to check if the user is already registered
-	 * return false if not registered, 1 for registerd, 2 for waiting list
 	 *
 	 * @access public
-	 * @return mixed false if not registered, 1 for registerd, 2 for waiting
-	 *         list
+	 * @return mixed false if not registered, -1 if not attending,
+	 *               0 if invited, 1 for registerd, 2 for waiting list
 	 *
 	 */
 	function getUserIsRegistered($eventId = null)
@@ -412,13 +429,21 @@ class JemModelEvent extends JModelItem
 		}
 
 		// usercheck
-		$query = 'SELECT waiting+1' . 		// 1 if user is registered, 2 if on waiting
-				// list
-		' FROM #__jem_register'
-		. ' WHERE uid = ' . $userid
-		. ' AND event = ' . $this->_db->quote($eventId);
+		// -1 if user will not attend, 0 if invened/unknown, 1 if registeredm 2 if on waiting list
+		$query = 'SELECT IF (status > 0, waiting + 1, status) AS status'
+		       . ' FROM #__jem_register'
+		       . ' WHERE uid = ' . $userid
+		       . ' AND event = ' . $this->_db->quote($eventId);
 		$this->_db->setQuery($query);
-		return $this->_db->loadResult();
+
+		try {
+			$result = $this->_db->loadResult();
+		}
+		catch (Exception $e) {
+			$result = false;
+		}
+
+		return $result;
 	}
 
 	/**
@@ -475,10 +500,16 @@ class JemModelEvent extends JModelItem
 				. ' LEFT JOIN #__users AS u ON u.id = r.uid'
 				. $join
 				. ' WHERE event = '. $db->quote($event)
-				. '   AND waiting = 0 ';
+				. '   AND waiting = 0 '
+		        . '   AND status = 1 ';
 		$db->setQuery($query);
 
-		$registered = $db->loadObjectList();
+		try {
+			$registered = $db->loadObjectList();
+		}
+		catch (Exception $e) {
+			$registered = false;
+		}
 
 		return $registered;
 	}
@@ -499,8 +530,13 @@ class JemModelEvent extends JModelItem
 	 */
 	function userregister()
 	{
+		$app = JFactory::getApplication('site');
 		$user = JemFactory::getUser();
 		$jemsettings = JEMHelper::config();
+
+		$noreg   = 0;//$app->input->getString('noreg_check', 'off');
+		$comment = $app->input->getString('reg_comment', '');
+		$comment = JFilterOutput::cleanText($comment);
 
 		$eventId = (int) $this->_registerid;
 
@@ -527,15 +563,21 @@ class JemModelEvent extends JModelItem
 			return false;
 		}
 
-		if ($event->maxplaces > 0) 		// there is a max
-		{
-			// check if the user should go on waiting list
-			if ($event->booked >= $event->maxplaces) {
-				if (!$event->waitinglist) {
-					$this->setError(JText::_('COM_JEM_EVENT_FULL_NOTICE'));
-					return false;
+		if ($noreg == 'on') {
+			$status = -1;
+		}
+		else {
+			$status = 1;
+
+			if ($event->maxplaces > 0) {	// there is a max
+				// check if the user should go on waiting list
+				if ($event->booked >= $event->maxplaces) {
+					if (!$event->waitinglist) {
+						$this->setError(JText::_('COM_JEM_EVENT_FULL_NOTICE'));
+						return false;
+					}
+					$onwaiting = 1;
 				}
-				$onwaiting = 1;
 			}
 		}
 
@@ -544,10 +586,12 @@ class JemModelEvent extends JModelItem
 
 		$obj = new stdClass();
 		$obj->event = (int) $eventId;
+		$obj->status = (int)$status;
 		$obj->waiting = $onwaiting;
 		$obj->uid = (int) $uid;
 		$obj->uregdate = gmdate('Y-m-d H:i:s');
 		$obj->uip = $uip;
+		$obj->comment = $comment;
 
 		try {
 			$this->_db->insertObject('#__jem_register', $obj);

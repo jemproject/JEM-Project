@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -18,7 +18,7 @@ jimport('joomla.html.pagination');
  * @package JEM
  *
  */
-class JEMModelMyattendances extends JModelLegacy
+class JemModelMyattendances extends JModelLegacy
 {
 	var $_attending = null;
 	var $_total_attending = null;
@@ -32,7 +32,7 @@ class JEMModelMyattendances extends JModelLegacy
 		parent::__construct();
 
 		$app = JFactory::getApplication();
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 
 		//get the number of events
 
@@ -141,6 +141,7 @@ class JEMModelMyattendances extends JModelLegacy
 		$query = 'SELECT DISTINCT a.id AS eventid, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.published, '
 			. ' a.recurrence_type, a.recurrence_first_id,'
 			. ' l.id, l.venue, l.city, l.state, l.url,'
+			. ' a.waitinglist, r.status, r.waiting, r.comment,'
 			. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 			. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 			. ' FROM #__jem_events AS a'

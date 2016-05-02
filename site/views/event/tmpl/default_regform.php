@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -30,6 +30,12 @@ if (($this->item->registra == 1) && ($this->print == 0)) :
 				<?php echo ' '.JText::_('COM_JEM_I_WILL_GO'); ?>
 			<?php endif; ?>
 		</p>
+		<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+		<p><?php echo JText::_('COM_JEM_OPTIONAL_COMMENT') . ':'; ?></p>
+		<p>
+			<textarea class="inputbox" name="reg_comment" id="reg_comment" rows="3" cols="30" maxlength="255"></textarea>
+		</p>
+		<?php endif; ?>
 		<p>
 			<input class="button1" type="submit" id="jem_send_attend" name="jem_send_attend" value="<?php echo JText::_('COM_JEM_REGISTER'); ?>" disabled="disabled" />
 		</p>

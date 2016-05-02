@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -17,7 +17,7 @@ jimport('joomla.application.component.controller');
  * @package JEM
  *
  */
-class JEMControllerAttendees extends JControllerLegacy
+class JemControllerAttendees extends JControllerLegacy
 {
 	/**
 	 * Constructor
@@ -83,6 +83,8 @@ class JEMControllerAttendees extends JControllerLegacy
 		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&id='.$id.'&Itemid='.$fid, false), $msg);
 	}
 
+	///@todo Add function to change registration status.
+
 	/**
 	 * toggletask
 	 */
@@ -129,7 +131,7 @@ class JEMControllerAttendees extends JControllerLegacy
 	function export()
 	{
 		$app      = JFactory::getApplication();
-		$settings = JEMHelper::globalattribs();
+		$settings = JemHelper::globalattribs();
 		$params   = $app->getParams();
 
 		$enableemailadress = $params->get('enableemailaddress', 0);
@@ -138,6 +140,7 @@ class JEMControllerAttendees extends JControllerLegacy
 		$datas = $model->getData();
 		$event = $model->getEvent();
 		$waitinglist = isset($event->waitinglist) ? $event->waitinglist : false;
+		$comments = !empty(JemHelper::config()->regallowcomments);
 
 		header('Content-Type: text/x-csv');
 		header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');
@@ -145,25 +148,46 @@ class JEMControllerAttendees extends JControllerLegacy
 		header('Pragma: no-cache');
 
 		$userfield = $settings->get('global_regname', '1') ? 'name' : 'username';
-		$export = '';
+
+		$cols = array(
+			JText::_('COM_JEM_USERNAME'),
+			JText::_('COM_JEM_REGDATE'),
+			JText::_('COM_JEM_HEADER_WAITINGLIST_STATUS')
+		);
+		if ($comments) {
+			$cols[] = JText::_('COM_JEM_COMMENT');
+		}
+
+		$export = fopen('php://output', 'w');
+		fputcsv($export, $cols, ';', '"');
 
 		foreach ($datas as $data)
 		{
 			$cols = array();
 
-			$cols[] = '"' . str_replace("\"", "\"\"", $data->$userfield) . '"';
+			$cols[] = $data->$userfield;
 			if ($enableemailadress == 1) {
-				$cols[] = '"' . str_replace("\"", "\"\"", $data->email) . '"';
+				$cols[] = $data->email;
 			}
-			$cols[] = '"' . str_replace("\"", "\"\"", JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2'))) . '"';
-			if ($waitinglist) {
-				$cols[] = '"' . JText::_($data->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING') . '"';
+			$cols[] = JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2'));
+
+			$status = isset($data->status) ? $data->status : 1;
+			if ($status < 0) {
+				$txt_stat = 'COM_JEM_ATTENDEES_NOT_ATTENDING';
+			} elseif ($status > 0) {
+				$txt_stat = $data->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING';
+			} else {
+				$txt_stat = 'COM_JEM_ATTENDEES_INVITED';
+			}
+			$cols[] = JText::_($txt_stat);
+			if ($comments) {
+				$cols[] = $data->comment;
 			}
 
-			$export .= implode(';', $cols) . "\r\n";
+			fputcsv($export, $cols, ';', '"');
 		}
 
-		echo $export;
+		fclose($export);
 		$app->close();
 	}
 }

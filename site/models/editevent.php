@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -107,7 +107,8 @@ class JEMModelEditevent extends JEMModelEvent
 		$query->from('#__jem_register');
 		$query->where(array(
 				'event= ' . $db->quote($itemId),
-				'waiting= 0'
+				'waiting= 0',
+				'status = 1'
 		));
 
 		$db->setQuery($query);

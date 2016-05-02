@@ -76,6 +76,12 @@ defined('_JEXEC') or die;
 				<?php if ($this->jemsettings->showcat == 1) : ?>
 				<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 				<?php endif; ?>
+				<?php /*if ($this->event->waitinglist):*/ ?>
+				<th id="jem_status" class="sectiontableheader center" align="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+				<?php /*endif;*/?>
+				<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+				<th id="jem_comment" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_COMMENT'); ?></th>
+				<?php endif; ?>
 			</tr>
 		</thead>
 
@@ -132,6 +138,23 @@ defined('_JEXEC') or die;
 					<td headers="jem_category" align="left" valign="top">
 						<?php echo implode(", ", JEMOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
 					</td>
+					<?php endif; ?>
+
+					<?php if ($row->waitinglist): ?>
+					<td <?php echo JEMOutput::tooltip(JText::_($row->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING'), '', 'center'); ?>
+						<?php if ($row->waiting):?>
+							<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$row->id),JHtml::_('image','com_jem/publish_y.png',JText::_('COM_JEM_ON_WAITINGLIST'),NULL,true)); ?>
+						<?php else: ?>
+							<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$row->id),JHtml::_('image','com_jem/tick.png', JText::_('COM_JEM_ATTENDEES_ATTENDING'),NULL,true)); ?>
+						<?php endif;?>
+					</td>
+					<?php else : ?>
+					<td> </td>
+					<?php endif; ?>
+
+					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+					<?php $cmnt = (strlen($row->comment) > 16) ? (substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
+					<td><?php echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); ?></td>
 					<?php endif; ?>
 				</tr>
 
