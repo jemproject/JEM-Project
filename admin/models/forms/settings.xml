@@ -30,7 +30,7 @@
 		<field name="discatheader" type="radio"
 			label="COM_JEM_SETTINGS_SHOW_CATEGORY_IMAGES"
 			description="COM_JEM_SETTINGS_SHOW_CATEGORY_IMAGES_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -138,7 +138,7 @@
 		<field name="storeip" type="radio"
 			label="COM_JEM_STORE_IP"
 			description="COM_JEM_STORE_IP_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -208,7 +208,7 @@
 		<field name="regallowcomments" type="radio"
 			label="COM_JEM_ALLOW_REGISTER_COMMENTS"
 			description="COM_JEM_ALLOW_REGISTER_COMMENTS_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -248,7 +248,7 @@
 		<field name="gddisabled" type="radio"
 			label="COM_JEM_GD_LIBRARY"
 			description="COM_JEM_GD_LIBRARY_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -265,7 +265,7 @@
 		<field name="lightbox" type="radio"
 			label="COM_JEM_IMAGE_LIGHTBOX"
 			description="COM_JEM_IMAGE_LIGHTBOX_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -327,7 +327,7 @@
 		<field name="showtime" type="radio"
 			label="COM_JEM_SETTINGS_FIELD_SHOW_TIME_IN_LISTS"
 			description="COM_JEM_SETTINGS_FIELD_SHOW_TIME_IN_LISTS_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -352,7 +352,7 @@
 		<field name="showcity" type="radio"
 			label="COM_JEM_DISPLAY_CITY_FRONT"
 			description="COM_JEM_DISPLAY_CITY_FRONT_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -375,7 +375,7 @@
 		<field name="showatte" type="radio"
 			label="COM_JEM_DISPLAY_ATTENDEE_FRONT"
 			description="COM_JEM_DISPLAY_ATTENDEE_FRONT_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -398,7 +398,7 @@
 		<field name="showtitle" type="radio"
 			label="COM_JEM_DISPLAY_TITLE_FRONT"
 			description="COM_JEM_DISPLAY_TITLE_FRONT_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -421,7 +421,7 @@
 		<field name="showlocate" type="radio"
 			label="COM_JEM_DISPLAY_VENUE_FRONT"
 			description="COM_JEM_DISPLAY_VENUE_FRONT_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -439,7 +439,7 @@
 		<field name="showlinkvenue" type="radio"
 			label="COM_JEM_DISPLAY_LINK_TO_VENUE_VIEW"
 			description="COM_JEM_DISPLAY_LINK_TO_VENUE_VIEW_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -454,7 +454,7 @@
 		<field name="showstate" type="radio"
 			label="COM_JEM_DISPLAY_STATE_FRONT"
 			description="COM_JEM_DISPLAY_STATE_FRONT_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -477,7 +477,7 @@
 		<field name="showcat" type="radio"
 			label="COM_JEM_DISPLAY_CATEGORY_FRONT"
 			description="COM_JEM_DISPLAY_CATEGORY_FRONT_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -495,7 +495,7 @@
 		<field name="catlinklist" type="radio"
 			label="COM_JEM_DISPLAY_LINK_TO_CATEGORY_VIEW"
 			description="COM_JEM_DISPLAY_LINK_TO_CATEGORY_VIEW_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -510,7 +510,7 @@
 		<field name="showeventimage" type="radio"
 			label="COM_JEM_LAYOUT_DISPLAY_EVENTIMAGE"
 			description="COM_JEM_LAYOUT_DISPLAY_EVENTIMAGE_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -563,7 +563,7 @@
 		<field name="eventowner" type="radio"
 			label="COM_JEM_EDIT_EVENT_FRONTEND_USER"
 			description="COM_JEM_EDIT_EVENT_FRONTEND_USER_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -577,7 +577,7 @@
 	>
 		<field name="deliverlocsyes" type="list"
 			label="COM_JEM_AC_VENUE_SUBMIT"
-			description="COM_JEM_AC_VENUE_SUBMIT"
+			description="COM_JEM_AC_VENUE_SUBMIT_DESC"
 			class="inputbox"
 			default="0"
 			required="false"
@@ -608,7 +608,7 @@
 		<field name="venueowner" type="radio"
 			label="COM_JEM_EDIT_VENUE_FRONTEND_USER"
 			description="COM_JEM_EDIT_VENUE_FRONTEND_USER_DESC"
-			class="inputbox"
+			class="inputbox btn-group btn-group-yesno"
 			default="0"
 			required="false"
 		>
@@ -621,58 +621,74 @@
 		<fieldset name="basic"
 			label="COM_JEM_EVENT_ATTRIBS_FIELDSET_LABEL"
 		>
-			<field name="event_show_author" type="list"
+			<field name="event_show_author" type="radio"
 				label="COM_JEM_EVENT_FIELD_SHOW_AUTHOR_LABEL"
 				description="COM_JEM_EVENT_FIELD_SHOW_AUTHOR_DESC"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
 			>
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
 			</field>
-			<field name="event_link_author" type="list"
+			<field name="event_link_author" type="radio"
 				label="COM_JEM_EVENT_FIELD_LINK_AUTHOR_LABEL"
 				description="COM_JEM_EVENT_FIELD_LINK_AUTHOR_DESC"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
 			>
 				<option	value="0">JNO</option>
 				<option	value="1">JYES</option>
 			</field>
-			<field name="event_show_contact" type="list"
+			<field name="event_show_contact" type="radio"
 				label="COM_JEM_EVENT_FIELD_SHOW_CONTACT_LABEL"
 				description="COM_JEM_EVENT_FIELD_SHOW_CONTACT_DESC"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
 			>
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
 			</field>
-			<field name="event_link_contact" type="list"
+			<field name="event_link_contact" type="radio"
 				label="COM_JEM_EVENT_FIELD_LINK_CONTACT_LABEL"
 				description="COM_JEM_EVENT_FIELD_LINK_CONTACT_DESC"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
 			>
 				<option	value="0">JNO</option>
 				<option	value="1">JYES</option>
 			</field>
-			<field name="event_show_hits" type="list"
+			<field name="event_show_hits" type="radio"
 				label="COM_JEM_EVENT_FIELD_SHOW_HITS_LABEL"
 				description="COM_JEM_EVENT_FIELD_SHOW_HITS_DESC"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
 			>
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
 			</field>
-			<field name="event_show_print_icon" type="list"
+			<field name="event_show_print_icon" type="radio"
 				label="JGLOBAL_SHOW_PRINT_ICON_LABEL"
 				description="JGLOBAL_SHOW_PRINT_ICON_DESC"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
 			>
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
 			</field>
-			<field name="event_show_email_icon" type="list"
+			<field name="event_show_email_icon" type="radio"
 				label="JGLOBAL_SHOW_EMAIL_ICON_LABEL"
 				description="JGLOBAL_SHOW_EMAIL_ICON_DESC"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
 			>
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
 			</field>
-			<field name="event_show_ical_icon" type="list"
+			<field name="event_show_ical_icon" type="radio"
 				label="COM_JEM_SETTINGS_EVENT_FIELD_SHOW_ICAL_ICON"
 				description="COM_JEM_SETTINGS_EVENT_FIELD_SHOW_ICAL_ICON_DESC"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
 			>
 				<option	value="0">JHIDE</option>
 				<option	value="1">JSHOW</option>
@@ -680,14 +696,17 @@
 			<field name="event_show_readmore" type="radio"
 				label="JGLOBAL_SHOW_READMORE_LABEL"
 				description="JGLOBAL_SHOW_READMORE_DESC"
+				class="inputbox btn-group btn-group-yesno"
 				default="1"
 			>
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
-			<field name="event_show_intro" type="list"
+			<field name="event_show_intro" type="radio"
 				description="COM_JEM_EVENT_FIELD_SHOW_INTRO_DESC"
 				label="COM_JEM_EVENT_FIELD_SHOW_INTRO_LABEL"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
 			>
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
@@ -700,7 +719,7 @@
 			<field name="global_show_filter" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_SHOW_FILTER"
 				description="COM_JEM_SETTINGS_FIELD_SHOW_FILTER_DESC"
-				class="inputbox"
+				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
 			>
@@ -710,7 +729,7 @@
 			<field name="global_display" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_SHOW_LIMITBOX"
 				description="COM_JEM_SETTINGS_FIELD_SHOW_LIMITBOX_DESC"
-				class="inputbox"
+				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
 			>
@@ -720,7 +739,7 @@
 			<field name="global_show_icons" type="radio"
 				label="COM_JEM_SHOW_ICONS"
 				description="COM_JEM_SHOW_ICONS_DESC"
-				class="inputbox"
+				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
 			>
@@ -730,7 +749,7 @@
 			<field name="global_show_print_icon" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_SHOW_PRINT_ICON"
 				description="COM_JEM_SETTINGS_FIELD_SHOW_PRINT_ICON_DESC"
-				class="inputbox"
+				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
 			>
@@ -740,7 +759,7 @@
 			<field name="global_show_archive_icon" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_SHOW_ARCHIVE_ICON"
 				description="COM_JEM_SETTINGS_FIELD_SHOW_ARCHIVE_ICON_DESC"
-				class="inputbox"
+				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
 			>
@@ -750,7 +769,7 @@
 			<field name="global_show_email_icon" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_SHOW_EMAIL_ICON"
 				description="COM_JEM_SETTINGS_FIELD_SHOW_EMAIL_ICON_DESC"
-				class="inputbox"
+				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
 			>
@@ -760,7 +779,7 @@
 			<field name="global_show_ical_icon" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_SHOW_ICAL_ICON"
 				description="COM_JEM_SETTINGS_FIELD_SHOW_ICAL_ICON_DESC"
-				class="inputbox"
+				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
 			>
@@ -770,7 +789,7 @@
 			<field name="global_show_timedetails" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_SHOW_TIME"
 				description="COM_JEM_SETTINGS_FIELD_SHOW_TIME_DESC"
-				class="inputbox"
+				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
 			>
@@ -790,9 +809,10 @@
 				<option value="0">COM_JEM_USERNAME</option>
 				<option value="1">COM_JEM_NAME</option>
 			</field>
-			<field name="highlight" type="list"
+			<field name="highlight" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_ENABLE_HIGHLIGHT"
 				description="COM_JEM_SETTINGS_FIELD_ENABLE_HIGHLIGHT_DESC"
+				class="inputbox btn-group btn-group-yesno"
 				default="0"
 			>
 				<option value="0">JNO</option>
@@ -826,7 +846,7 @@
 			<field name="global_cleanup_db_on_uninstall" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_CLEANUP_DB_ON_UNINSTALL"
 				description="COM_JEM_SETTINGS_FIELD_CLEANUP_DB_ON_UNINSTALL_DESC"
-				class="inputbox"
+				class="inputbox btn-group btn-group-yesno"
 				default="0"
 				required="false"
 			>
@@ -841,7 +861,7 @@
 			<field name="global_show_locdescription" type="radio"
 				label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
 				description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
-				class="inputbox"
+				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
 			>
@@ -851,7 +871,7 @@
 			<field name="global_show_detailsadress" type="radio"
 				label="COM_JEM_DISPLAY_ADDRESS"
 				description="COM_JEM_DISPLAY_ADDRESS_DESC"
-				class="inputbox"
+				class="inputbox btn-group btn-group-yesno"
 				default="0"
 				required="false"
 			>
@@ -897,10 +917,10 @@
 				maxlength="10"
 				required="false"
 			/>
-			<field name="global_show_ownedvenuesonly" type="list"
+			<field name="global_show_ownedvenuesonly" type="radio"
 				label="COM_JEM_SETTINGS_FIELD_SHOW_OWNEDVENUESONLY"
 				description="COM_JEM_SETTINGS_FIELD_SHOW_OWNEDVENUESONLY_DESC"
-				class="inputbox"
+				class="inputbox btn-group btn-group-yesno"
 				default="0"
 				required="false"
 			>
@@ -953,7 +973,7 @@
 			<field name="event_show_description" type="radio"
 				label="COM_JEM_DISPLAY_EVENT_DESCRIPT"
 				description="COM_JEM_DISPLAY_EVENT_DESCRIPT_DESC"
-				class="inputbox"
+				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
 			>
@@ -963,7 +983,7 @@
 			<field name="event_show_detailstitle" type="radio"
 				label="COM_JEM_DISPLAY_EVENT_TITLE"
 				description="COM_JEM_DISPLAY_EVENT_TITLE_DESC"
-				class="inputbox"
+				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
 			>
@@ -978,7 +998,7 @@
 			<field name="event_show_locdescription" type="radio"
 				label="COM_JEM_EVENT_DISPLAY_VENUE_DESCRIPT"
 				description="COM_JEM_EVENT_DISPLAY_VENUE_DESCRIPT_DESC"
-				class="inputbox"
+				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
 			>
@@ -988,7 +1008,7 @@
 			<field name="event_show_detailsadress" type="radio"
 				label="COM_JEM_EVENT_DISPLAY_ADDRESS"
 				description="COM_JEM_EVENT_DISPLAY_ADDRESS_DESC"
-				class="inputbox"
+				class="inputbox btn-group btn-group-yesno"
 				default="1"
 				required="false"
 			>
@@ -1086,9 +1106,11 @@
 
 	<fields name="css">
 		<fieldset name="stylesheet" label="Stylesheet">
-			<field name="css_backend_usecustom" type="list"
+			<field name="css_backend_usecustom" type="radio"
 				description="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_USECUSTOM"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
 			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
@@ -1101,9 +1123,11 @@
 				required="false"
 			/>
 			<field type="spacer" name="spacer1" hr="true" />
-			<field name="css_calendar_usecustom" type="list"
+			<field name="css_calendar_usecustom" type="radio"
 				description="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_USECUSTOM"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
 			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
@@ -1116,9 +1140,11 @@
 				required="false"
 			/>
 			<field type="spacer" name="spacer2" hr="true" />
-			<field name="css_colorpicker_usecustom" type="list"
+			<field name="css_colorpicker_usecustom" type="radio"
 				description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_USECUSTOM"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
 			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
@@ -1131,9 +1157,11 @@
 				required="false"
 			/>
 			<field type="spacer" name="spacer3" hr="true" />
-			<field name="css_geostyle_usecustom" type="list"
+			<field name="css_geostyle_usecustom" type="radio"
 				description="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_USECUSTOM"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
 			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
@@ -1146,9 +1174,11 @@
 				required="false"
 			/>
 			<field type="spacer" name="spacer4" hr="true" />
-			<field name="css_googlemap_usecustom" type="list"
+			<field name="css_googlemap_usecustom" type="radio"
 				description="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_USECUSTOM"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
 			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
@@ -1161,9 +1191,11 @@
 				required="false"
 			/>
 			<field type="spacer" name="spacer5" hr="true" />
-			<field name="css_jem_usecustom" type="list"
+			<field name="css_jem_usecustom" type="radio"
 				description="COM_JEM_SETTINGS_FIELD_CSS_JEM_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_JEM_USECUSTOM"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
 			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
@@ -1176,9 +1208,11 @@
 				required="false"
 			/>
 			<field type="spacer" name="spacer6" hr="true" />
-			<field name="css_print_usecustom" type="list"
+			<field name="css_print_usecustom" type="radio"
 				description="COM_JEM_SETTINGS_FIELD_CSS_PRINT_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_PRINT_USECUSTOM"
+				class="inputbox btn-group btn-group-yesno"
+				default="0"
 			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
