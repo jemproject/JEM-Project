@@ -205,6 +205,16 @@
 			<option value="1">JYES</option>
 			<option value="2">COM_JEM_OPTIONAL</option>
 		</field>
+		<field name="regallowcomments" type="radio"
+			label="COM_JEM_ALLOW_REGISTER_COMMENTS"
+			description="COM_JEM_ALLOW_REGISTER_COMMENTS_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
 	</fieldset>
 
 	<fieldset name="evimagehandling"
@@ -530,16 +540,6 @@
 			<option value="-2">COM_JEM_ONLYADMINS</option>
 			<option value="-1">COM_JEM_ALLREGISTERED</option>
 		</field>
-		<field name="evdelrec" type="radio"
-			label="COM_JEM_RECURSIVE"
-			description="COM_JEM_RECURSIVE_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JNO</option>
-			<option value="1">JYES</option>
-		</field>
 		<field name="autopubl" type="list"
 			label="COM_JEM_AUTOPUBLISH"
 			description="COM_JEM_AUTOPUBLISH_DESC"
@@ -550,16 +550,6 @@
 			<option value="-2">COM_JEM_ONLYADMINS</option>
 			<option value="-1">COM_JEM_ALLREGISTERED</option>
 		</field>
-		<field name="evpubrec" type="radio"
-			label="COM_JEM_RECURSIVE"
-			description="COM_JEM_RECURSIVE_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JNO</option>
-			<option value="1">JYES</option>
-		</field>
 		<field name="eventedit" type="list"
 			label="COM_JEM_AC_EVENT_EDIT"
 			description="COM_JEM_AC_EVENT_EDIT_DESC"
@@ -569,16 +559,6 @@
 		>
 			<option value="-2">COM_JEM_ONLYADMINS</option>
 			<option value="-1">COM_JEM_ALLREGISTERED</option>
-		</field>
-		<field name="eventeditrec" type="radio"
-			label="COM_JEM_RECURSIVE"
-			description="COM_JEM_RECURSIVE_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JNO</option>
-			<option value="1">JYES</option>
 		</field>
 		<field name="eventowner" type="radio"
 			label="COM_JEM_EDIT_EVENT_FRONTEND_USER"
@@ -605,35 +585,15 @@
 			<option value="-2">COM_JEM_ONLYADMINS</option>
 			<option value="-1">COM_JEM_ALLREGISTERED</option>
 		</field>
-		<field name="locdelrec" type="radio"
-			label="COM_JEM_RECURSIVE"
-			description="COM_JEM_RECURSIVE_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JNO</option>
-			<option value="1">JYES</option>
-		</field>
 		<field name="autopublocate" type="list"
-			label="COM_JEM_AUTOPUBLISH"
-			description="COM_JEM_AUTOPUBLISH_DESC"
+			label="COM_JEM_AUTOPUBLISH_VENUE"
+			description="COM_JEM_AUTOPUBLISH_VENUE_DESC"
 			class="inputbox"
 			default="0"
 			required="false"
 		>
 			<option value="-2">COM_JEM_ONLYADMINS</option>
 			<option value="-1">COM_JEM_ALLREGISTERED</option>
-		</field>
-		<field name="locpubrec" type="radio"
-			label="COM_JEM_RECURSIVE"
-			description="COM_JEM_RECURSIVE_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JNO</option>
-			<option value="1">JYES</option>
 		</field>
 		<field name="venueedit" type="list"
 			label="COM_JEM_AC_VENUE_EDIT"
@@ -644,16 +604,6 @@
 		>
 			<option value="-2">COM_JEM_ONLYADMINS</option>
 			<option value="-1">COM_JEM_ALLREGISTERED</option>
-		</field>
-		<field name="venueeditrec" type="radio"
-			label="COM_JEM_RECURSIVE"
-			description="COM_JEM_RECURSIVE_DESC"
-			class="inputbox"
-			default="0"
-			required="false"
-		>
-			<option value="0">JNO</option>
-			<option value="1">JYES</option>
 		</field>
 		<field name="venueowner" type="radio"
 			label="COM_JEM_EDIT_VENUE_FRONTEND_USER"
@@ -827,9 +777,7 @@
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
-			<field
-				name="spacer1"
-				type="spacer"
+			<field name="spacer1" type="spacer"
 				hr="true"
 			/>
 			<field name="global_regname" type="list"
@@ -842,18 +790,15 @@
 				<option value="0">COM_JEM_USERNAME</option>
 				<option value="1">COM_JEM_NAME</option>
 			</field>
-			<field
-				name="highlight"
-				type="list"
-				default="0"
+			<field name="highlight" type="list"
 				label="COM_JEM_SETTINGS_FIELD_ENABLE_HIGHLIGHT"
-				description="COM_JEM_SETTINGS_FIELD_ENABLE_HIGHLIGHT_DESC">
+				description="COM_JEM_SETTINGS_FIELD_ENABLE_HIGHLIGHT_DESC"
+				default="0"
+			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
-			<field
-				name="default_Itemid"
-				type="text"
+			<field name="default_Itemid" type="text"
 				label="COM_JEM_SETTINGS_FIELD_DEFAULTITEMID"
 				description="COM_JEM_SETTINGS_FIELD_DEFAULTITEMID_DESC"
 				class="inputbox"
@@ -861,27 +806,21 @@
 				maxlength="10"
 				required="false"
 			/>
-			<field
-				name="global_googleapi"
-				type="text"
+			<field name="global_googleapi" type="text"
 				label="COM_JEM_SETTINGS_FIELD_GOOGLEAPIKEY"
 				description="COM_JEM_SETTINGS_FIELD_GOOGLEAPIKEY_DESC"
 				class="inputbox"
 				size="50"
 				required="false"
 			/>
-			<field
-				name="global_googleclientid"
-				type="text"
+			<field name="global_googleclientid" type="text"
 				label="COM_JEM_SETTINGS_FIELD_GOOGLECLIENTID"
 				description="COM_JEM_SETTINGS_FIELD_GOOGLECLIENTID_DESC"
 				class="inputbox"
 				size="50"
 				required="false"
 			/>
-			<field
-				name="spacer2"
-				type="spacer"
+			<field name="spacer2" type="spacer"
 				hr="true"
 			/>
 			<field name="global_cleanup_db_on_uninstall" type="radio"
@@ -1150,7 +1089,7 @@
 			<field name="css_backend_usecustom" type="list"
 				description="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_USECUSTOM"
-				>
+			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
@@ -1165,7 +1104,7 @@
 			<field name="css_calendar_usecustom" type="list"
 				description="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_USECUSTOM"
-				>
+			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
@@ -1180,7 +1119,7 @@
 			<field name="css_colorpicker_usecustom" type="list"
 				description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_USECUSTOM"
-				>
+			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
@@ -1195,7 +1134,7 @@
 			<field name="css_geostyle_usecustom" type="list"
 				description="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_USECUSTOM"
-				>
+			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
@@ -1210,7 +1149,7 @@
 			<field name="css_googlemap_usecustom" type="list"
 				description="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_USECUSTOM"
-				>
+			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
@@ -1225,7 +1164,7 @@
 			<field name="css_jem_usecustom" type="list"
 				description="COM_JEM_SETTINGS_FIELD_CSS_JEM_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_JEM_USECUSTOM"
-				>
+			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
@@ -1240,7 +1179,7 @@
 			<field name="css_print_usecustom" type="list"
 				description="COM_JEM_SETTINGS_FIELD_CSS_PRINT_USECUSTOM_DESC"
 				label="COM_JEM_SETTINGS_FIELD_CSS_PRINT_USECUSTOM"
-				>
+			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>
