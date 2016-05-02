@@ -2,7 +2,7 @@
 /**
  * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -298,11 +298,11 @@ Joomla.submitbutton = function(task)
 				<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?>
 				</li>
 
-				<li><label><?php echo JText::_ ('COM_JEM_BOOKED_PLACES') . ':';?></label><input id="event-booked" class="readonly" type="text"  value="<?php echo $this->item->booked; ?>" />
+				<li><label><?php echo JText::_ ('COM_JEM_BOOKED_PLACES') . ':';?></label><input id="event-booked" class="readonly inputbox" type="text" readonly="true" value="<?php echo $this->item->booked; ?>" />
 				</li>
 
 				<?php if ($this->item->maxplaces): ?>
-				<li><label><?php echo JText::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label><input id="event-available" class="readonly" type="text"  value="<?php echo ($this->item->maxplaces-$this->item->booked); ?>" />
+				<li><label><?php echo JText::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label><input id="event-available" class="readonly inputbox" type="text" readonly="true" value="<?php echo ($this->item->maxplaces-$this->item->booked); ?>" />
 				</li>
 				<?php
 				endif;
@@ -338,7 +338,7 @@ Joomla.submitbutton = function(task)
 				<li id="counter_row" style="display: none;">
 					<?php echo $this->form->getLabel('recurrence_limit_date'); ?> <?php echo $this->form->getInput('recurrence_limit_date'); ?>
 					<br><div><small>
-					<?php 
+					<?php
 					$anticipation	= $this->jemsettings->recurrence_anticipation;
 					$limitdate = new JDate('now +'.$anticipation.'days');
 					$limitdate = $limitdate->format('d-m-Y');
@@ -394,7 +394,7 @@ Joomla.submitbutton = function(task)
 			                                  $this->item->recurr_bak->recurrence_limit_date);
 
 			switch ($this->item->recurr_bak->recurrence_type) {
-			case 1: 
+			case 1:
 				$recurr_type = JText::_('COM_JEM_DAYLY');
 				$recurr_info = str_ireplace('[placeholder]',
 				                            $this->item->recurr_bak->recurrence_number,
