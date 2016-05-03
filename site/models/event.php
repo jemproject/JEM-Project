@@ -534,7 +534,7 @@ class JemModelEvent extends JModelItem
 		$user = JemFactory::getUser();
 		$jemsettings = JEMHelper::config();
 
-		$noreg   = 0;//$app->input->getString('noreg_check', 'off');
+		$noreg   = 'off';//$app->input->getString('noreg_check', 'off');
 		$comment = $app->input->getString('reg_comment', '');
 		$comment = JFilterOutput::cleanText($comment);
 
