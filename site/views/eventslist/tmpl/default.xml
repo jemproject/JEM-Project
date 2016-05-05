@@ -20,25 +20,27 @@
 				default="0"
 				label="COM_JEM_DISPLAY_INTROTEXT"
 				description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+				class="btn-group btn-group-yesno"
 			>
-				<option value="0">JNO</option>
 				<option value="1">JYES</option>
+				<option value="0">JNO</option>
 			</field>
 			<field type="spacer" name="spacer1" hr="true" />
 			<field name="categoryswitch" type="radio"
 				default="0"
 				label="COM_JEM_CATEGORYSWITCH"
 				description="COM_JEM_CATEGORYSWITCH_DESC"
+				class="btn-group btn-group-yesno"
 			>
-				<option value="0">COM_JEM_EXCLUDE</option>
 				<option value="1">COM_JEM_INCLUDE</option>
+				<option value="0">COM_JEM_EXCLUDE</option>
 			</field>
 			<field name="categoryswitchcats" type="text"
 				default=""
 				label="COM_JEM_CATEGORYSWITCHCATS"
 				description="COM_JEM_CATEGORYSWITCHCATS_DESC"
 			/>
-			<field name="showopendates" type="radio"
+			<field name="showopendates" type="list"
 				default="0"
 				label="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES"
 				description="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC"
@@ -60,9 +62,10 @@
 				default="0"
 				label="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT"
 				description="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT_DESC"
+				class="btn-group btn-group-yesno"
 			>
-				<option value="0">JNO</option>
 				<option value="1">JYES</option>
+				<option value="0">JNO</option>
 			</field>
 		</fieldset>
 	</fields>

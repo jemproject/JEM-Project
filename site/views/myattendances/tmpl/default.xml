@@ -12,9 +12,10 @@
 				default="1"
 				label="COM_JEM_FILTER_MYREGISTRATIONS"
 				description="COM_JEM_FILTER_MYREGISTRATIONS_DESC"
+				class="btn-group btn-group-yesno"
 			>
-				<option value="0">JNO</option>
 				<option value="1">JYES</option>
+				<option value="0">JNO</option>
 			</field>
 			<field name="myregspast" type="text"
 				size="4"

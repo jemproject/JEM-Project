@@ -22,59 +22,59 @@ JHtml::_('behavior.tooltip');
 <script>
 window.addEvent('domready', function(){
 
-	$('jform_showcity0').addEvent('click', cityoff);
-	$('jform_showcity1').addEvent('click', cityon);
+	$('jform_showcity0').addEvent('click', cityon);
+	$('jform_showcity1').addEvent('click', cityoff);
 
-	if($('jform_showcity1').checked) {
+	if($('jform_showcity0').checked) {
 		cityon();
 	}
 
-	$('jform_showatte0').addEvent('click', atteoff);
-	$('jform_showatte1').addEvent('click', atteon);
+	$('jform_showatte0').addEvent('click', atteon);
+	$('jform_showatte1').addEvent('click', atteoff);
 
-	if($('jform_showatte1').checked) {
+	if($('jform_showatte0').checked) {
 		atteon();
 	}
 
-	$('jform_showtitle0').addEvent('click', titleoff);
-	$('jform_showtitle1').addEvent('click', titleon);
+	$('jform_showtitle0').addEvent('click', titleon);
+	$('jform_showtitle1').addEvent('click', titleoff);
 
-	if($('jform_showtitle1').checked) {
+	if($('jform_showtitle0').checked) {
 		titleon();
 	}
 
-	$('jform_showlocate0').addEvent('click', locoff);
-	$('jform_showlocate1').addEvent('click', locon);
+	$('jform_showlocate0').addEvent('click', locon);
+	$('jform_showlocate1').addEvent('click', locoff);
 
-	if($('jform_showlocate1').checked) {
+	if($('jform_showlocate0').checked) {
 		locon();
 	}
 
-	$('jform_showstate0').addEvent('click', stateoff);
-	$('jform_showstate1').addEvent('click', stateon);
+	$('jform_showstate0').addEvent('click', stateon);
+	$('jform_showstate1').addEvent('click', stateoff);
 
-	if($('jform_showstate1').checked) {
+	if($('jform_showstate0').checked) {
 		stateon();
 	}
 
-	$('jform_showcat0').addEvent('click', catoff);
-	$('jform_showcat1').addEvent('click', caton);
+	$('jform_showcat0').addEvent('click', caton);
+	$('jform_showcat1').addEvent('click', catoff);
 
-	if($('jform_showcat1').checked) {
+	if($('jform_showcat0').checked) {
 		caton();
 	}
 
-	$('jform_showeventimage0').addEvent('click', evimageoff);
-	$('jform_showeventimage1').addEvent('click', evimageon);
+	$('jform_showeventimage0').addEvent('click', evimageon);
+	$('jform_showeventimage1').addEvent('click', evimageoff);
 
-	if($('jform_showeventimage1').checked) {
+	if($('jform_showeventimage0').checked) {
 		evimageon();
 	}
 
-	$('jform_gddisabled0').addEvent('click', lboff);
-	$('jform_gddisabled1').addEvent('click', lbon);
+	$('jform_gddisabled0').addEvent('click', lbon);
+	$('jform_gddisabled1').addEvent('click', lboff);
 
-	if($('jform_gddisabled1').checked) {
+	if($('jform_gddisabled0').checked) {
 		lbon();
 	}
 

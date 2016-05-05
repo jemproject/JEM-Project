@@ -90,8 +90,7 @@ JFactory::getDocument()->addScriptDeclaration('
 			<tbody>
 				<?php
 			foreach ($this->items as $i => $row) :
-			
-				$canChange	= $user->authorise('core.edit.state');
+				$canChange = $user->authorise('core.edit.state');
 				?>
 				<tr class="row<?php echo $i % 2; ?>">
 					<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>

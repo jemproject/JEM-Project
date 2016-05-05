@@ -883,7 +883,7 @@ fieldset.adminform.long span.faux-label {
 fieldset.adminform label,
 fieldset.adminform span.faux-label {
 	min-width: 135px;
-	padding: 0 5px 0 0;
+	padding-right: 5px;
 }
 
 div.current label,

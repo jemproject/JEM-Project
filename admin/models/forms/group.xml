@@ -32,8 +32,8 @@
 			   default="0"
 			   required="false"
 		>
-			<option value="0">JNO</option>
 			<option value="1">JYES</option>
+			<option value="0">JNO</option>
 		</field>
 		<field name="publishvenue" type="radio"
 			   class="inputbox btn-group btn-group-yesno"
@@ -42,8 +42,8 @@
 			   default="0"
 			   required="false"
 		>
-			<option value="0">JNO</option>
 			<option value="1">JYES</option>
+			<option value="0">JNO</option>
 		</field>
 		<field name="editvenue" type="radio"
 			   class="inputbox btn-group btn-group-yesno"
@@ -52,8 +52,8 @@
 			   default="0"
 			   required="false"
 		>
-			<option value="0">JNO</option>
 			<option value="1">JYES</option>
+			<option value="0">JNO</option>
 		</field>
 		<field type="spacer" name="spacer" hr="true" />
 		<field name="addevent" type="radio"
@@ -63,8 +63,8 @@
 			   default="0"
 			   required="false"
 		>
-			<option value="0">JNO</option>
 			<option value="1">JYES</option>
+			<option value="0">JNO</option>
 		</field>
 
 		<field name="publishevent" type="radio"
@@ -74,8 +74,8 @@
 			   default="0"
 			   required="false"
 		>
-			<option value="0">JNO</option>
 			<option value="1">JYES</option>
+			<option value="0">JNO</option>
 		</field>
 
 		<field name="editevent" type="radio"
@@ -85,8 +85,8 @@
 			   default="0"
 			   required="false"
 		>
-			<option value="0">JNO</option>
 			<option value="1">JYES</option>
+			<option value="0">JNO</option>
 		</field>
 	</fieldset>
 </form>

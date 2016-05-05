@@ -4,10 +4,10 @@
 	<author>Toni Smillie, JEM Community</author>
 	<authorEmail>toni@qivva.com, info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.qivva.com, http://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>June 2015</creationDate>
-	<copyright></copyright>
+	<creationDate>May 2016</creationDate>
+	<copyright>copyright (C) 2013-2016 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>2.1.5</version>
+	<version>2.1.6-rc3</version>
 	<description>MOD_JEM_CAL_XML_DESCRIPTION</description>
 
 	<files>
@@ -24,12 +24,13 @@
 		<fields name="params">
 			<fieldset name="basic">
 				<field name="Default_Stylesheet" type="radio"
+					class="btn-group btn-group-yesno"
 					default="1"
 					label="MOD_JEM_CAL_DEFAULTSTYLESHEET"
 					description="MOD_JEM_CAL_DEFAULTSTYLESHEET_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="User_stylesheet" type="text"
 					default=""
@@ -42,28 +43,30 @@
 					hr="true"
 				/>
 				<field name="Show_Tooltips" type="radio"
+					class="btn-group btn-group-yesno"
 					default="1"
 					label="MOD_JEM_CAL_SHOWTOOLTIPS"
 					description="MOD_JEM_CAL_SHOWTOOLTIPS_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="Show_Tooltips_Title" type="radio"
+					class="btn-group btn-group-yesno"
 					default="1"
 					label="MOD_JEM_CAL_SHOWTOOLTIPSTITLE"
 					description="MOD_JEM_CAL_SHOWTOOLTIPSTITLE_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="cal15q_tooltips_title" type="text"
-					default=""
+					default="MOD_JEM_CAL_EVENT"
 					label="MOD_JEM_CAL_TOOLTIPSTITLE"
 					description="MOD_JEM_CAL_TOOLTIPSTITLE_DESC"
 				/>
 				<field name="cal15q_tooltipspl_title" type="text"
-					default=""
+					default="MOD_JEM_CAL_EVENTS"
 					label="MOD_JEM_CAL_TOOLTIPSTITLEPL"
 					description="MOD_JEM_CAL_TOOLTIPSTITLEPL_DESC"
 				/>
@@ -73,20 +76,22 @@
 					description="MOD_JEM_CAL_TOOLTIPSMAXEVENTS_DESC"
 				/>
 				<field name="DisplayCat" type="radio"
+					class="btn-group btn-group-yesno"
 					default="0"
 					label="MOD_JEM_CAL_DISPLAYCAT"
 					description="MOD_JEM_CAL_DISPLAYCAT_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYes</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="DisplayVenue" type="radio"
+					class="btn-group btn-group-yesno"
 					default="0"
 					label="MOD_JEM_CAL_DISPLAYVENUE"
 					description="MOD_JEM_CAL_DISPLAYVENUE_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="spacer2" type="spacer"
 					label=""
@@ -94,12 +99,13 @@
 					hr="true"
 				/>
 				<field name="UseJoomlaLanguage" type="radio"
+					class="btn-group btn-group-yesno"
 					default="1"
 					label="MOD_JEM_CAL_USEJOOMLALANGUAGE"
 					description="MOD_JEM_CAL_USEJOOMLALANGUAGE_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="day_name_length" type="list"
 					default="2"
@@ -117,10 +123,10 @@
 					label="MOD_JEM_CAL_FIRSTDAY"
 					description="MOD_JEM_CAL_FIRSTDAY_DESC"
 				>
-					<option value="0">Sunday</option>
-					<option value="1">Monday</option>
+					<option value="0">MOD_JEM_CAL_SUNDAY</option>
+					<option value="1">MOD_JEM_CAL_MONDAY</option>
 				</field>
-				<field name="Year_length" type="radio"
+				<field name="Year_length" type="list"
 					default="1"
 					label="MOD_JEM_CAL_YEARLENGTH"
 					description="MOD_JEM_CAL_YEARLENGTH_DESC"
@@ -129,12 +135,13 @@
 					<option value="1">MOD_JEM_CAL_FOUR</option>
 				</field>
 				<field name="Month_length" type="radio"
+					class="btn-group btn-group-yesno"
 					default="0"
 					label="MOD_JEM_CAL_MONTHLENGTH"
 					description="MOD_JEM_CAL_MONTHLENGTH_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="Month_offset" type="text"
 					default="0"
@@ -152,36 +159,40 @@
 					hr="true"
 				/>
 				<field name="Remember" type="radio"
+					class="btn-group btn-group-yesno"
 					default="1"
 					label="MOD_JEM_CAL_REMEMBER"
 					description="MOD_JEM_CAL_REMEMBER_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="CurrentEvents" type="radio"
+					class="btn-group btn-group-yesno"
 					default="1"
 					label="MOD_JEM_CAL_CURRENTEVENTS"
 					description="MOD_JEM_CAL_CURRENTEVENTS_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="ArchivedEvents" type="radio"
+					class="btn-group btn-group-yesno"
 					default="0"
 					label="MOD_JEM_CAL_ARCHIVEDEVENTS"
 					description="MOD_JEM_CAL_ARCHIVEDEVENTS_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="StraightToDetails" type="radio"
+					class="btn-group btn-group-yesno"
 					default="1"
 					label="MOD_JEM_CAL_STRAIGHTTODETAILS"
 					description="MOD_JEM_CAL_STRAIGHTTODETAILS_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="spacer4" type="spacer"
 					label=""
@@ -209,6 +220,7 @@
 					description="MOD_JEM_CAL_VENID_DESC"
 				/>
 				<field name="FixItemID" type="text"
+					default=""
 					label="MOD_JEM_CAL_FIXEDITEMID"
 					description="MOD_JEM_CAL_FIXEDITEMID_DESC"
 				/>

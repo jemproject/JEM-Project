@@ -4,7 +4,7 @@
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>April 2016</creationDate>
+	<creationDate>May 2016</creationDate>
 	<copyright>copyright (C) 2014-2016 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<version>2.1.6</version>
@@ -52,9 +52,10 @@
 					default="0"
 					label="MOD_JEM_BANNER_SHUFFLE"
 					description="MOD_JEM_BANNER_SHUFFLE_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="shuffle_count" type="text"
 					default=""
@@ -71,18 +72,20 @@
 					default="1"
 					label="MOD_JEM_BANNER_LINK_TO_DETAILS"
 					description="MOD_JEM_BANNER_LINK_TO_DETAILS_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 
 				<field name="showcalendar" type="radio"
 					default="1"
 					label="MOD_JEM_BANNER_SHOWCALENDAR"
 					description="MOD_JEM_BANNER_SHOWCALENDAR_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="color" type="list"
 					default="1"
@@ -107,9 +110,10 @@
 					default="1"
 					label="MOD_JEM_BANNER_SHOWFLYER"
 					description="MOD_JEM_BANNER_SHOWFLYER_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="flyer_link_type" type="list"
 					default="0"
@@ -125,9 +129,10 @@
 					default="1"
 					label="MOD_JEM_BANNER_SHOWDESC"
 					description="MOD_JEM_BANNER_SHOWDESC_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="descriptionlength" type="text"
 					default="300"
@@ -138,17 +143,19 @@
 					default="0"
 					label="MOD_JEM_BANNER_ALLOW_LINEBREAK"
 					description="MOD_JEM_BANNER_ALLOW_LINEBREAK_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="readmore" type="radio"
 					default="0"
 					label="MOD_JEM_BANNER_FIELD_READMORE_LABEL"
 					description="MOD_JEM_BANNER_FIELD_READMORE_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 
 				<field name="datemethod" type="list"
@@ -174,42 +181,47 @@
 					default="0"
 					label="MOD_JEM_BANNER_SHOWCATEGORY"
 					description="MOD_JEM_BANNER_SHOWCATEGORY_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="linkcategory" type="radio"
 					default="1"
 					label="MOD_JEM_BANNER_LINK_TO_CATEGORY"
 					description="MOD_JEM_BANNER_LINK_TO_CATEGORY_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="showvenue" type="radio"
 					default="0"
 					label="MOD_JEM_BANNER_SHOWVENUE"
 					description="MOD_JEM_BANNER_SHOWVENUE_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="linkvenue" type="radio"
 					default="1"
 					label="MOD_JEM_BANNER_LINK_TO_VENUE"
 					description="MOD_JEM_BANNER_LINK_TO_VENUE_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 
 				<field name="featured_only" type="radio"
 					default="0"
 					label="MOD_JEM_BANNER_FEATURED_ONLY"
 					description="MOD_JEM_BANNER_FEATURED_ONLY_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="catid" type="text"
 					default=""

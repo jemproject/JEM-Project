@@ -16,8 +16,8 @@
 			   description="COM_JEM_EVENT_FIELD_FEATURED_DESC"
 			   default="0"
 		>
-			<option value="0">JNO</option>
 			<option value="1">JYES</option>
+			<option value="0">JNO</option>
 		</field>
 		<field name="access" type="accesslevel"
 			   label="JFIELD_ACCESS_LABEL"
@@ -259,8 +259,8 @@
 			   description="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION_DESC"
 			   default="0"
 		>
-			<option value="0">JNO</option>
 			<option value="1">JYES</option>
+			<option value="0">JNO</option>
 		</field>
 		<field name="unregistra" type="radio"
 			   class="inputbox btn-group btn-group-yesno"
@@ -268,8 +268,8 @@
 			   description="COM_JEM_EVENT_FIELD_ENABLE_UNREGISTRATION_DESC"
 			   default="0"
 		>
-			<option value="0">JNO</option>
 			<option value="1">JYES</option>
+			<option value="0">JNO</option>
 		</field>
 		<field name="maxplaces" type="text"
 			   size="4"
@@ -297,8 +297,8 @@
 			   description="COM_JEM_ENABLE_WAITINGLIST_DESC"
 			   default="0"
 		>
-			<option value="0">JNO</option>
 			<option value="1">JYES</option>
+			<option value="0">JNO</option>
 		</field>
 	</fieldset>
 
@@ -353,6 +353,7 @@
 			<field name="event_show_author" type="list"
 				   label="COM_JEM_EVENT_FIELD_SHOW_AUTHOR_LABEL"
 				   description="COM_JEM_EVENT_FIELD_SHOW_AUTHOR_DESC"
+				   default=""
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
 				<option	value="0">JHIDE</option>
@@ -361,6 +362,7 @@
 			<field name="event_link_author" type="list"
 				   label="COM_JEM_EVENT_FIELD_LINK_AUTHOR_LABEL"
 				   description="COM_JEM_EVENT_FIELD_LINK_AUTHOR_DESC"
+				   default=""
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
 				<option	value="0">JNO</option>
@@ -369,6 +371,7 @@
 			<field name="event_show_contact" type="list"
 				   label="COM_JEM_EVENT_FIELD_SHOW_CONTACT_LABEL"
 				   description="COM_JEM_EVENT_FIELD_SHOW_CONTACT_DESC"
+				   default=""
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
 				<option	value="0">JHIDE</option>
@@ -377,6 +380,7 @@
 			<field name="event_link_contact" type="list"
 				   label="COM_JEM_EVENT_FIELD_LINK_CONTACT_LABEL"
 				   description="COM_JEM_EVENT_FIELD_LINK_CONTACT_DESC"
+				   default=""
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
 				<option	value="0">JNO</option>
@@ -385,6 +389,7 @@
 			<field name="event_show_hits" type="list"
 				   label="COM_JEM_EVENT_FIELD_SHOW_HITS_LABEL"
 				   description="COM_JEM_EVENT_FIELD_SHOW_HITS_DESC"
+				   default=""
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
 				<option	value="0">JHIDE</option>
@@ -393,6 +398,7 @@
 			<field name="event_show_print_icon" type="list"
 				   label="JGLOBAL_SHOW_PRINT_ICON_LABEL"
 				   description="JGLOBAL_SHOW_PRINT_ICON_DESC"
+				   default=""
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
 				<option	value="0">JHIDE</option>
@@ -401,6 +407,7 @@
 			<field name="event_show_email_icon" type="list"
 				   label="JGLOBAL_SHOW_EMAIL_ICON_LABEL"
 				   description="JGLOBAL_SHOW_EMAIL_ICON_DESC"
+				   default=""
 			>
 				<option	value="">JGLOBAL_USE_GLOBAL</option>
 				<option	value="0">JHIDE</option>
@@ -409,6 +416,7 @@
 			<field name="event_show_ical_icon" type="list"
 				   label="COM_JEM_EVENT_FIELD_SHOW_ICAL_ICON"
 				   description="COM_JEM_EVENT_FIELD_SHOW_ICAL_ICON_DESC"
+				   default=""
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
 				<option	value="0">JHIDE</option>
@@ -418,6 +426,7 @@
 				   label="COM_JEM_DISPLAY_EVENT_TITLE"
 				   description="COM_JEM_DISPLAY_EVENT_TITLE_DESC"
 				   class="inputbox"
+				   default=""
 				   required="false"
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
@@ -433,6 +442,7 @@
 				   label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
 				   description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"
 				   class="inputbox"
+				   default=""
 				   required="false"
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
@@ -443,6 +453,7 @@
 				   label="COM_JEM_DISPLAY_ADDRESS"
 				   description="COM_JEM_DISPLAY_ADDRESS_DESC"
 				   class="inputbox"
+				   default=""
 				   required="false"
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
@@ -453,6 +464,7 @@
 				   label="COM_JEM_DISPLAY_ADDRESS"
 				   description="COM_JEM_DISPLAY_ADDRESS_DESC"
 				   class="inputbox"
+				   default=""
 				   required="false"
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
@@ -464,6 +476,7 @@
 				   label="COM_JEM_DISPLAY_LINK_TO_MAP"
 				   description="COM_JEM_DISPLAY_LINK_TO_MAP_DESC"
 				   class="inputbox"
+				   default=""
 				   required="false"
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
@@ -496,6 +509,7 @@
 				   label="COM_JEM_COM_SOL"
 				   description="COM_JEM_COM_SOL_DESC"
 				   class="inputbox"
+				   default=""
 				   required="false"
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
@@ -506,6 +520,7 @@
 				   label="COM_JEM_TYPE_COM_INTEGRATION"
 				   description="COM_JEM_TYPE_COM_INTEGRATION_DESC"
 				   class="inputbox"
+				   default=""
 				   required="false"
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
@@ -520,6 +535,7 @@
 				   label="COM_JEM_DISPLAY_EVENT_DESCRIPT"
 				   description="COM_JEM_DISPLAY_EVENT_DESCRIPT_DESC"
 				   class="inputbox"
+				   default=""
 				   required="false"
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
@@ -529,10 +545,10 @@
 		</fieldset>
 	</fields>
 	<fields name="metadata">
-			<field name="robots"
-				   type="list"
+			<field name="robots" type="list"
 				   label="JFIELD_METADATA_ROBOTS_LABEL"
 				   description="JFIELD_METADATA_ROBOTS_DESC"
+				   default=""
 			>
 				<option value="">JGLOBAL_USE_GLOBAL</option>
 				<option value="index, follow">JGLOBAL_INDEX_FOLLOW</option>

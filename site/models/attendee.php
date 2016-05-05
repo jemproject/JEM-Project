@@ -136,7 +136,7 @@ class JemModelAttendee extends JModelLegacy
 		return $row->store();
 	}
 
-/**
+	/**
 	 * Method to store the attendee
 	 *
 	 * @access	public

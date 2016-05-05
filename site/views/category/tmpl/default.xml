@@ -25,17 +25,19 @@
 				default="1"
 				label="COM_JEM_DISPLAYCHILDS"
 				description="COM_JEM_DISPLAYCHILDSDESC"
+				class="btn-group btn-group-yesno"
 			>
-				<option value="0">JNO</option>
 				<option value="1">JYES</option>
+				<option value="0">JNO</option>
 			</field>
 			<field name="showemptychilds" type="radio"
 				default="1"
 				label="COM_JEM_SHOWEMPTYCHILD"
 				description="COM_JEM_SHOWEMPTYCHILDDESC"
+				class="btn-group btn-group-yesno"
 			>
-				<option value="0">JNO</option>
 				<option value="1">JYES</option>
+				<option value="0">JNO</option>
 			</field>
 		</fieldset>
 	</fields>

@@ -22,9 +22,10 @@
 				default="0"
 				label="COM_JEM_DISPLAY_INTROTEXT"
 				description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+				class="btn-group btn-group-yesno"
 			>
-				<option value="0">COM_JEM_HIDE</option>
 				<option value="1">COM_JEM_SHOW</option>
+				<option value="0">COM_JEM_HIDE</option>
 			</field>
 			<field type="spacer" name="myspacer2" hr="true" />
 			<field name="top_category" type="categories"
@@ -32,7 +33,7 @@
 				label="COM_JEM_SELECT_TOP_CATEGORY"
 				description="COM_JEM_SELECT_TOP_CATEGORY_DESC"
 			/>
-			<field name="date_filter_type" type="radio"
+			<field name="date_filter_type" type="list"
 				default="0"
 				label="COM_JEM_DATE_FILTER_TYPE"
 				description="COM_JEM_DATE_FILTER_TYPE_DESC"
