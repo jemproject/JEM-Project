@@ -2,7 +2,7 @@
 /**
  * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -35,6 +35,9 @@ defined('_JEXEC') or die;
 				<?php if ($this->event->waitinglist): ?>
 				<th class="title"><?php echo JText::_('COM_JEM_HEADER_WAITINGLIST_STATUS' ); ?></th>
 				<?php endif; ?>
+				<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+				<th class="title"><?php echo JText::_('COM_JEM_COMMENT'); ?></th>
+				<?php endif; ?>
 				<th class="title center"><?php echo JText::_('COM_JEM_USER_ID'); ?></th>
 			</tr>
 		</thead>
@@ -49,6 +52,9 @@ defined('_JEXEC') or die;
 				<td><?php echo JHtml::_('date',$row->uregdate,JText::_('DATE_FORMAT_LC2')); ?></td>
 				<?php if ($this->event->waitinglist): ?>
 				<td><?php echo JText::_($row->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING'); ?></td>
+				<?php endif; ?>
+				<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+				<td><?php echo (strlen($row->comment) > 256) ? (substr($row->comment, 0, 254).'&hellip;') : $row->comment; ?></td>
 				<?php endif; ?>
 				<td class="center"><?php echo $row->uid; ?></td>
 			</tr>

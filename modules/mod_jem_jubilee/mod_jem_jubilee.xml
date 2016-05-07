@@ -4,15 +4,18 @@
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>March 2016</creationDate>
+	<creationDate>May 2016</creationDate>
 	<copyright>copyright (C) 2015-2016 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>2.1.6 dev1</version>
+	<version>2.1.6-rc3</version>
 	<description>MOD_JEM_JUBILEE_XML_DESCRIPTION</description>
+
+	<scriptfile>script.php</scriptfile>
 
 	<files>
 		<filename module="mod_jem_jubilee">mod_jem_jubilee.php</filename>
 		<filename>helper.php</filename>
+		<filename>script.php</filename>
 		<filename>index.html</filename>
 
 		<folder>tmpl</folder>
@@ -21,7 +24,7 @@
 
 	<config>
 		<fields name="params">
-			<fieldset name="basic">
+			<fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
 				<field name="introtext" type="textarea"
 					filter="safehtml"
 					default=""
@@ -53,16 +56,17 @@
 					default="0"
 					label="MOD_JEM_JUBILEE_SHUFFLE"
 					description="MOD_JEM_JUBILEE_SHUFFLE_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="shuffle_count" type="text"
 					default=""
 					label="MOD_JEM_JUBILEE_SHUFFLE_COUNT"
 					description="MOD_JEM_JUBILEE_SHUFFLE_COUNT_DESC"
 				/>
-				<field name="order" type="radio"
+				<field name="order" type="list"
 					default="0"
 					label="MOD_JEM_JUBILEE_ORDER"
 					description="MOD_JEM_JUBILEE_ORDER_DESC"
@@ -80,18 +84,20 @@
 					default="1"
 					label="MOD_JEM_JUBILEE_LINK_TO_DETAILS"
 					description="MOD_JEM_JUBILEE_LINK_TO_DETAILS_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 
 				<field name="showcalendar" type="radio"
 					default="1"
 					label="MOD_JEM_JUBILEE_SHOWCALENDAR"
 					description="MOD_JEM_JUBILEE_SHOWCALENDAR_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="color" type="list"
 					default="1"
@@ -104,7 +110,7 @@
 					<option value="orange">MOD_JEM_JUBILEE_ORANGE</option>
 					<option value="alpha">MOD_JEM_JUBILEE_USER</option>
 				</field>
-				<field name="usercolor" type="customcolor"
+				<field name="usercolor" type="text"
 					class="inputbox"
 					default="#EEEEEE"
 					size="8"
@@ -116,9 +122,10 @@
 					default="1"
 					label="MOD_JEM_JUBILEE_SHOWFLYER"
 					description="MOD_JEM_JUBILEE_SHOWFLYER_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="flyer_link_type" type="list"
 					default="0"
@@ -134,9 +141,10 @@
 					default="1"
 					label="MOD_JEM_JUBILEE_SHOWDESC"
 					description="MOD_JEM_JUBILEE_SHOWDESC_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="descriptionlength" type="text"
 					default="300"
@@ -147,17 +155,19 @@
 					default="0"
 					label="MOD_JEM_JUBILEE_ALLOW_LINEBREAK"
 					description="MOD_JEM_JUBILEE_ALLOW_LINEBREAK_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="readmore" type="radio"
 					default="0"
 					label="MOD_JEM_JUBILEE_FIELD_READMORE_LABEL"
 					description="MOD_JEM_JUBILEE_FIELD_READMORE_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 
 				<field name="datemethod" type="list"
@@ -178,9 +188,10 @@
 					default="0"
 					label="MOD_JEM_JUBILEE_SHOWTIME"
 					description="MOD_JEM_JUBILEE_SHOWTIME_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="formattime" type="text"
 					default=""
@@ -192,42 +203,49 @@
 					default="0"
 					label="MOD_JEM_JUBILEE_SHOWCATEGORY"
 					description="MOD_JEM_JUBILEE_SHOWCATEGORY_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="linkcategory" type="radio"
 					default="1"
 					label="MOD_JEM_JUBILEE_LINK_TO_CATEGORY"
 					description="MOD_JEM_JUBILEE_LINK_TO_CATEGORY_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="showvenue" type="radio"
 					default="0"
 					label="MOD_JEM_JUBILEE_SHOWVENUE"
 					description="MOD_JEM_JUBILEE_SHOWVENUE_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="linkvenue" type="radio"
 					default="1"
 					label="MOD_JEM_JUBILEE_LINK_TO_VENUE"
 					description="MOD_JEM_JUBILEE_LINK_TO_VENUE_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 
-				<field name="catid" type="text"
+				<field name="catid" type="categoryedit"
 					default=""
+					multiple="true"
+					removeroot="true"
 					label="MOD_JEM_JUBILEE_CATEGORY_ID"
 					description="MOD_JEM_JUBILEE_CATEGORY_ID_DESC"
 				/>
-				<field name="venid" type="text"
+				<field name="venid" type="venueoptions"
 					default=""
+					multiple="true"
 					label="MOD_JEM_JUBILEE_VENUE_ID"
 					description="MOD_JEM_JUBILEE_VENUE_ID_DESC"
 				/>

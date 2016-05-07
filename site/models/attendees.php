@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -240,6 +240,7 @@ class JEMModelAttendees extends JModelLegacy
 		$where = array();
 
 		$where[] = 'r.event = '.$this->_db->Quote($this->_id);
+		$where[] = 'r.status = 1';
 		if ($filter_waiting) {
 			$where[] = ' (a.waitinglist = 0 OR r.waiting = '.($filter_waiting-1).') ';
 		}

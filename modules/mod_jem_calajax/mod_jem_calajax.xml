@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="module" version="2.5" client="site" method="upgrade">
 	<name>mod_jem_calajax</name>
-	<creationDate>April 2016</creationDate>
+	<creationDate>May 2016</creationDate>
 	<author>JEM Community</author>
 	<copyright>Copyright (C) 2015-2016 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
@@ -30,8 +30,8 @@
 					label="MOD_JEM_CALAJAX_DEFAULT_CSS"
 					description="MOD_JEM_CALAJAX_DEFAULT_CSS_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="User_stylesheet" type="text"
 					default=""
@@ -39,7 +39,6 @@
 					description="MOD_JEM_CALAJAX_USER_CSS_DESC"
 				/>
 				<field name="spacer1" type="spacer"
-					default=""
 					label=""
 					description=""
 					hr="true"
@@ -50,8 +49,8 @@
 					label="MOD_JEM_CALAJAX_SHOW_TOOLTIPS"
 					description="MOD_JEM_CALAJAX_SHOW_TOOLTIPS_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="Show_Tooltips_Title" type="radio"
 					class="btn-group btn-group-yesno"
@@ -59,8 +58,8 @@
 					label="MOD_JEM_CALAJAX_SHOW_TOOLTIPS_TITLE"
 					description="MOD_JEM_CALAJAX_SHOW_TOOLTIPS_TITLE_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="cal15q_tooltips_title" type="text"
 					default="MOD_JEM_CALAJAX_EVENT"
@@ -83,8 +82,8 @@
 					label="MOD_JEM_CALAJAX_SHOW_TOOLTIP_CATEGORY"
 					description="MOD_JEM_CALAJAX_SHOW_TOOLTIP_CATEGORY_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="DisplayVenue" type="radio"
 					class="btn-group btn-group-yesno"
@@ -92,11 +91,10 @@
 					label="MOD_JEM_CALAJAX_SHOW_TOOLTIP_VENUE"
 					description="MOD_JEM_CALAJAX_SHOW_TOOLTIP_VENUE_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="spacer2" type="spacer"
-					default=""
 					label=""
 					description=""
 					hr="true"
@@ -107,8 +105,8 @@
 					label="MOD_JEM_CALAJAX_LANGUAGE_JOOMLA"
 					description="MOD_JEM_CALAJAX_LANGUAGE_JOOMLA_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="day_name_length" type="list"
 					default="2"
@@ -130,7 +128,6 @@
 					<option value="1">MOD_JEM_CALAJAX_MONDAY</option>
 				</field>
 				<field name="Year_length" type="list"
-					class="inputbox"
 					default="1"
 					label="MOD_JEM_CALAJAX_YEAR_LENGTH"
 					description="MOD_JEM_CALAJAX_YEAR_LENGTH_DESC"
@@ -144,8 +141,8 @@
 					label="MOD_JEM_CALAJAX_MONTH_LENGTH"
 					description="MOD_JEM_CALAJAX_MONTH_LENGTH"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="Month_offset" type="text"
 					default="0"
@@ -158,7 +155,6 @@
 					description="MOD_JEM_CALAJAX_TIME_OFFSET_DESC"
 				/>
 				<field name="spacer3" type="spacer"
-					default=""
 					label=""
 					description=""
 					hr="true"
@@ -169,8 +165,8 @@
 					label="MOD_JEM_CALAJAX_REMEMBER"
 					description="MOD_JEM_CALAJAX_REMEMBER_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="CurrentEvents" type="radio"
 					class="btn-group btn-group-yesno"
@@ -178,8 +174,8 @@
 					label="MOD_JEM_CALAJAX_EVENTS_CURRENT"
 					description="MOD_JEM_CALAJAX_EVENTS_CURRENT_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="ArchivedEvents" type="radio"
 					class="btn-group btn-group-yesno"
@@ -187,8 +183,8 @@
 					label="MOD_JEM_CALAJAX_EVENTS_ARCHIVED"
 					description="MOD_JEM_CALAJAX_EVENTS_ARCHIVED_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="StraightToDetails" type="radio"
 					class="btn-group btn-group-yesno"
@@ -196,11 +192,10 @@
 					label="MOD_JEM_CALAJAX_STRAIGHTTODETAILS"
 					description="MOD_JEM_CALAJAX_STRAIGHTTODETAILS_DESC"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="spacer4" type="spacer"
-					default=""
 					label=""
 					description=""
 					hr="true"

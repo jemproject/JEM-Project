@@ -20,6 +20,8 @@ class JemViewAttendees extends JemAdminView
 		$app = JFactory::getApplication();
 		$db  = JFactory::getDBO();
 
+		$this->jemsettings = JemHelper::config();
+
 		if($this->getLayout() == 'print') {
 			$this->_displayprint($tpl);
 			return;

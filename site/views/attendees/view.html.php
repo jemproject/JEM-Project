@@ -19,8 +19,10 @@ class JemViewAttendees extends JViewLegacy {
 	{
 		$app = JFactory::getApplication();
 
+		$this->settings    = JemHelper::globalattribs();
+		$this->jemsettings = JemHelper::config();
+
 		if($this->getLayout() == 'print') {
-			$this->settings = JEMHelper::globalattribs();
 			$this->_displayprint($tpl);
 			return;
 		}
@@ -28,7 +30,7 @@ class JemViewAttendees extends JViewLegacy {
 		//initialise variables
 		$document	= JFactory::getDocument();
 		$user		= JemFactory::getUser();
-		$settings	= JEMHelper::globalattribs();
+		$settings	= $this->settings;
 		$params 	= $app->getParams();
 		$menu		= $app->getMenu();
 		$menuitem	= $menu->getActive();
@@ -123,7 +125,6 @@ class JemViewAttendees extends JViewLegacy {
 		$this->item			= $menuitem;
 		$this->action		= $uri->toString();
 		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
-		$this->settings		= $settings;
 
 		parent::display($tpl);
 	}

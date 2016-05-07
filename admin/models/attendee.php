@@ -203,7 +203,7 @@ class JemModelAttendee extends JModelLegacy
 			$query = $db->getQuery(true);
 			$query->select(array('COUNT(id) AS registered', 'COALESCE(SUM(waiting), 0) AS waiting'));
 			$query->from('#__jem_register');
-			$query->where('event = '.$db->quote($eventid));
+			$query->where('status = 1 AND event = '.$db->quote($eventid));
 
 			$db->setQuery($query);
 			$register = $db->loadObject();

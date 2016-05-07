@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -17,7 +17,7 @@ jimport('joomla.application.component.model');
  * @package JEM
  *
  */
-class JEMModelAttendee extends JModelLegacy
+class JemModelAttendee extends JModelLegacy
 {
 	/**
 	 * attendee id
@@ -136,7 +136,7 @@ class JEMModelAttendee extends JModelLegacy
 		return $row->store();
 	}
 
-/**
+	/**
 	 * Method to store the attendee
 	 *
 	 * @access	public
@@ -166,7 +166,7 @@ class JEMModelAttendee extends JModelLegacy
 			       . ' FROM #__jem_events AS e '
 			       . ' INNER JOIN #__jem_register AS r ON r.event = e.id '
 			       . ' WHERE e.id = ' . $this->_db->Quote($eventid)
-			       . '   AND r.waiting = 0 '
+			       . '   AND r.status = 1 AND r.waiting = 0 '
 			       . ' GROUP BY e.id ';
 			$this->_db->setQuery($query);
 			$details = $this->_db->loadObject();

@@ -13,7 +13,7 @@ require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 /**
  * Event Controller
  */
-class JEMControllerEvent extends JemControllerForm
+class JemControllerEvent extends JemControllerForm
 {
 	protected $view_item = 'editevent';
 	protected $view_list = 'eventslist';
@@ -259,7 +259,7 @@ class JEMControllerEvent extends JemControllerForm
 		$id = JFactory::getApplication()->input->getInt('rdid', 0);
 
 		// Get the model
-		$model = $this->getModel('Event', 'JEMModel');
+		$model = $this->getModel('Event', 'JemModel');
 
 		if ($model->getUserIsRegistered($id)) {
 			$msg = JText::_('COM_JEM_ALLREADY_REGISTERED');

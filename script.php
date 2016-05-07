@@ -174,6 +174,7 @@ class com_jemInstallerScript
 		<p><?php echo JText::_('COM_JEM_UNINSTALL_TEXT'); ?></p>
 		<?php
 
+		$this->useJemConfig = true; // since 2.1.6
 		$globalParams = $this->getGlobalParams();
 		$cleanup = $globalParams->get('global_cleanup_db_on_uninstall', 0);
 		if (!empty($cleanup)) {
@@ -251,7 +252,7 @@ class com_jemInstallerScript
 		}
 
 		// abort if the release being installed is not newer than the currently installed version
-		if ($type == 'update') {
+		if (strtolower($type) == 'update') {
 			// Installed component version
 			$this->oldRelease = $this->getParam('version');
 
@@ -274,7 +275,7 @@ class com_jemInstallerScript
 		}
 
 		// $type is the type of change (install, update or discover_install)
-		echo '<p>' . JText::_('COM_JEM_PREFLIGHT_' . $type . '_TEXT') . '</p>';
+		echo '<p>' . JText::_('COM_JEM_PREFLIGHT_' . strtoupper($type) . '_TEXT') . '</p>';
 	}
 
 	/**
@@ -286,9 +287,9 @@ class com_jemInstallerScript
 	function postflight($type, $parent)
 	{
 		// $type is the type of change (install, update or discover_install)
-		echo '<p>' . JText::_('COM_JEM_POSTFLIGHT_' . $type . '_TEXT') . '</p>';
+		echo '<p>' . JText::_('COM_JEM_POSTFLIGHT_' . strtoupper($type) . '_TEXT') . '</p>';
 
-		if ($type == 'update') {
+		if (strtolower($type) == 'update') {
 			// Changes between 1.9.4 -> 1.9.5
 			if (version_compare($this->oldRelease, '1.9.5', 'lt') && version_compare($this->newRelease, '1.9.4', 'gt')) {
 				JTable::addIncludePath(JPATH_ROOT.'/administrator/components/com_jem/tables');
@@ -327,13 +328,13 @@ class com_jemInstallerScript
 				$this->updateJemSettings2142();
 			}
 			// Changes between 2.1.5 -> 2.1.6
-			if (version_compare($this->oldRelease, '2.1.6', 'lt') && version_compare($this->newRelease, '2.1.5', 'gt')) {
+			if (version_compare($this->oldRelease, '2.1.6-dev3', 'lt') && version_compare($this->newRelease, '2.1.6-dev3', 'ge')) {
 				// move all settings from table #__jem_settings to table #__jem_config storing every setting in it's own record
 				$this->updateJemSettings216();
 			}
 			// !!! Now we have #__jem_config and good old #__jem_seetings is gone !!!
 		}
-		elseif ($type == 'install') {
+		elseif (strtolower($type) == 'install') {
 			$this->fixJemMenuItems();
 		}
 	}
@@ -1175,7 +1176,7 @@ class com_jemInstallerScript
 
 		if (empty($old_data)) {
 			echo "<li><span style='color:red;'>".JText::_('COM_JEM_INSTALL_ERROR').":</span> ".
-			          JText::_('COM_JEM_INSTALL_SETINGS_NOT_FOUND')."</li>";
+			          JText::_('COM_JEM_INSTALL_SETTINGS_NOT_FOUND')."</li>";
 		} else {
 			// save to new #__jem_config table ignoring obsolete fields
 			$old_data = get_object_vars($old_data);

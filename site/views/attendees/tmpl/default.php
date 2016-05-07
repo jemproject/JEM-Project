@@ -58,7 +58,7 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 					<b><?php echo JText::_('COM_JEM_TITLE').':'; ?></b>&nbsp;
 					<a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a>
 					<br />
-					<b><?php echo JText::_('COM_JEM_DATE').':'; ?></b>&nbsp;<?php 
+					<b><?php echo JText::_('COM_JEM_DATE').':'; ?></b>&nbsp;<?php
 						echo JemOutput::formatLongDateTime($this->event->dates, $this->event->times, $this->event->enddates, $this->event->endtimes,
 						                                   $this->settings->get('global_show_timedetails', 1)); ?>
 				</td>
@@ -100,32 +100,40 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 					<?php if ($this->event->waitinglist): ?>
 					<th class="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 					<?php endif;?>
+					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+					<th class="title"><?php echo JText::_('COM_JEM_COMMENT'); ?></th>
+					<?php endif;?>
 					<th class="center"><?php echo JText::_('COM_JEM_REMOVE_USER'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
-				<?php foreach ($this->rows as $i => $row) : ?>
+			<?php foreach ($this->rows as $i => $row) : ?>
 				<tr class="row<?php echo $i % 2; ?>">
-				<td class="center"><?php echo $this->pagination->getRowOffset($i); ?></td>
-				<!--td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td-->
-				<td><?php echo $row->$namefield; ?></td>
-				<?php if ($this->enableemailaddress == 1) {?>
-				<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
-				<?php } ?>
-				<td><?php echo JHtml::_('date',$row->uregdate,JText::_('DATE_FORMAT_LC2')); ?></td>
-				<?php if ($this->event->waitinglist): ?>
-				<td <?php echo JEMOutput::tooltip(JText::_($row->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING'), '', 'center'); ?>
-					<?php if ($row->waiting):?>
-						<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$row->id),JHtml::_('image','com_jem/publish_y.png',JText::_('COM_JEM_ON_WAITINGLIST'),NULL,true)); ?>
-					<?php else: ?>
-						<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$row->id),JHtml::_('image','com_jem/tick.png', JText::_('COM_JEM_ATTENDEES_ATTENDING'),NULL,true)); ?>
+					<td class="center"><?php echo $this->pagination->getRowOffset($i); ?></td>
+					<!--td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td-->
+					<td><?php echo $row->$namefield; ?></td>
+					<?php if ($this->enableemailaddress == 1) {?>
+					<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
+					<?php } ?>
+					<td><?php echo JHtml::_('date',$row->uregdate,JText::_('DATE_FORMAT_LC2')); ?></td>
+					<?php if ($this->event->waitinglist): ?>
+					<td <?php echo JEMOutput::tooltip(JText::_($row->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING'), '', 'center'); ?>
+						<?php if ($row->waiting):?>
+							<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$row->id),JHtml::_('image','com_jem/publish_y.png',JText::_('COM_JEM_ON_WAITINGLIST'),NULL,true)); ?>
+						<?php else: ?>
+							<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$row->id),JHtml::_('image','com_jem/tick.png', JText::_('COM_JEM_ATTENDEES_ATTENDING'),NULL,true)); ?>
+						<?php endif;?>
+					</td>
 					<?php endif;?>
-				</td>
-				<?php endif;?>
-				<td class="center"><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendees.attendeeremove')"><?php echo
-						JHtml::_('image','com_jem/publish_r.png', JText::_('COM_JEM_ATTENDEES_DELETE'), array('title' => JText::_('COM_JEM_ATTENDEES_DELETE')), true); ?></a></td>
+					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+					<?php $cmnt = (strlen($row->comment) > 16) ? (substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
+					<td><?php echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); ?></td>
+					<?php endif;?>
+					<td class="center"><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendees.attendeeremove')"><?php echo
+						JHtml::_('image','com_jem/publish_r.png', JText::_('COM_JEM_ATTENDEES_DELETE'), array('title' => JText::_('COM_JEM_ATTENDEES_DELETE')), true); ?></a>
+					</td>
 				</tr>
-				<?php endforeach; ?>
+			<?php endforeach; ?>
 			</tbody>
 		</table>
 

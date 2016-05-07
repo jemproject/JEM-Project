@@ -4,15 +4,18 @@
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>June 2015</creationDate>
-	<copyright>copyright (C) 2013-2015 joomlaeventmanager.net</copyright>
+	<creationDate>May 2016</creationDate>
+	<copyright>copyright (C) 2013-2016 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>2.1.5</version>
+	<version>2.1.6-rc3</version>
 	<description>MOD_JEM_WIDE_XML_DESCRIPTION</description>
+
+	<scriptfile>script.php</scriptfile>
 
 	<files>
 		<filename module="mod_jem_wide">mod_jem_wide.php</filename>
 		<filename>helper.php</filename>
+		<filename>script.php</filename>
 		<filename>index.html</filename>
 
 		<folder>tmpl</folder>
@@ -21,7 +24,7 @@
 
 	<config>
 		<fields name="params">
-			<fieldset name="basic">
+			<fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
 				<field name="type" type="list"
 					default="1"
 					label="MOD_JEM_WIDE_UPCOMING_ARCHIVED_OR_CURRENT"
@@ -52,18 +55,20 @@
 					default="1"
 					label="MOD_JEM_WIDE_LINK_TO_EVENT"
 					description="MOD_JEM_WIDE_LINK_TO_EVENT_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 
 				<field name="use_modal" type="radio"
 					default="0"
 					label="MOD_JEM_WIDE_USE_MODAL"
 					description="MOD_JEM_WIDE_USE_MODAL_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 
 				<field name="datemethod" type="list"
@@ -89,26 +94,31 @@
 					default="1"
 					label="MOD_JEM_WIDE_LINK_TO_CATEGORY"
 					description="MOD_JEM_WIDE_LINK_TO_CATEGORY_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="linkvenue" type="radio"
 					default="1"
 					label="MOD_JEM_WIDE_LINK_TO_VENUE"
 					description="MOD_JEM_WIDE_LINK_TO_VENUE_DESC"
+					class="btn-group btn-group-yesno"
 				>
-					<option value="0">JNO</option>
 					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 
-				<field name="catid" type="text"
+				<field name="catid" type="categoryedit"
 					default=""
+					multiple="true"
+					removeroot="true"
 					label="MOD_JEM_WIDE_CATEGORY_ID"
 					description="MOD_JEM_WIDE_CATEGORY_ID_DESC"
 				/>
-				<field name="venid" type="text"
+				<field name="venid" type="venueoptions"
 					default=""
+					multiple="true"
 					label="MOD_JEM_WIDE_VENUE_ID"
 					description="MOD_JEM_WIDE_VENUE_ID_DESC"
 				/>

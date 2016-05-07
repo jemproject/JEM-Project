@@ -699,7 +699,7 @@ class JemHelper
 		// get attendees after deletion, and their status
 		$query = 'SELECT r.id, r.waiting '
 				. ' FROM #__jem_register AS r'
-				. ' WHERE r.event = '.$db->Quote($event)
+				. ' WHERE r.status = 1 AND r.event = '.$db->Quote($event)
 				. ' ORDER BY r.uregdate ASC '
 				;
 		$db->SetQuery($query);
@@ -763,6 +763,7 @@ class JemHelper
 		$query = ' SELECT COUNT(id) as total, SUM(waiting) as waitinglist, event '
 				. ' FROM #__jem_register '
 				. ' WHERE event IN (' . $ids .')'
+				. '   AND status = 1'                     /// TODO
 				. ' GROUP BY event ';
 
 		$db->setQuery($query);
@@ -996,20 +997,20 @@ class JemHelper
 	/**
 	 * Returns array of positive numbers
 	 *
-	 * @param string comma separated list of ids
+	 * @param mixed array or string with comma separated list of ids
 	 * @return mixed array of numbers greater zero or false
 	 */
-	static function getValidIds($idstring)
+	static function getValidIds($ids_in)
 	{
-		$ids = array();
-		$tmp = explode(',', $idstring);
+		$ids_out = array();
+		$tmp = is_array($ids_in) ? $ids_in : explode(',', $ids_in);
 		foreach ($tmp as $id) {
 			if ((int)$id > 0) {
-				$ids[] = (int)$id;
+				$ids_out[] = (int)$id;
 			}
 		}
 
-		return (empty($ids) ? false : $ids);
+		return (empty($ids_out) ? false : $ids_out);
 	}
 
 	/**
