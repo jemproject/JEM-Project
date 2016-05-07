@@ -128,8 +128,8 @@ window.addEvent('domready', function(){
 
 			<fieldset class="adminform">
 				<ul class="adminformlist">
-					<li><?php echo $this->form->getLabel('locid'); ?> <?php echo $this->form->getInput('locid'); ?></li>
 					<li><?php echo $this->form->getLabel('contactid'); ?> <?php echo $this->form->getInput('contactid'); ?></li>
+					<li><?php echo $this->form->getLabel('locid'); ?> <?php echo $this->form->getInput('locid'); ?></li>
 				</ul>
 			</fieldset>
 
