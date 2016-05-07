@@ -252,7 +252,7 @@ class com_jemInstallerScript
 		}
 
 		// abort if the release being installed is not newer than the currently installed version
-		if ($type == 'update') {
+		if (strtolower($type) == 'update') {
 			// Installed component version
 			$this->oldRelease = $this->getParam('version');
 
@@ -275,7 +275,7 @@ class com_jemInstallerScript
 		}
 
 		// $type is the type of change (install, update or discover_install)
-		echo '<p>' . JText::_('COM_JEM_PREFLIGHT_' . $type . '_TEXT') . '</p>';
+		echo '<p>' . JText::_('COM_JEM_PREFLIGHT_' . strtoupper($type) . '_TEXT') . '</p>';
 	}
 
 	/**
@@ -287,9 +287,9 @@ class com_jemInstallerScript
 	function postflight($type, $parent)
 	{
 		// $type is the type of change (install, update or discover_install)
-		echo '<p>' . JText::_('COM_JEM_POSTFLIGHT_' . $type . '_TEXT') . '</p>';
+		echo '<p>' . JText::_('COM_JEM_POSTFLIGHT_' . strtoupper($type) . '_TEXT') . '</p>';
 
-		if ($type == 'update') {
+		if (strtolower($type) == 'update') {
 			// Changes between 1.9.4 -> 1.9.5
 			if (version_compare($this->oldRelease, '1.9.5', 'lt') && version_compare($this->newRelease, '1.9.4', 'gt')) {
 				JTable::addIncludePath(JPATH_ROOT.'/administrator/components/com_jem/tables');
@@ -334,7 +334,7 @@ class com_jemInstallerScript
 			}
 			// !!! Now we have #__jem_config and good old #__jem_seetings is gone !!!
 		}
-		elseif ($type == 'install') {
+		elseif (strtolower($type) == 'install') {
 			$this->fixJemMenuItems();
 		}
 	}

@@ -10,9 +10,12 @@
 	<version>2.1.6</version>
 	<description>MOD_JEM_BANNER_XML_DESCRIPTION</description>
 
+	<scriptfile>script.php</scriptfile>
+
 	<files>
 		<filename module="mod_jem_banner">mod_jem_banner.php</filename>
 		<filename>helper.php</filename>
+		<filename>script.php</filename>
 		<filename>index.html</filename>
 
 		<folder>tmpl</folder>
@@ -21,7 +24,7 @@
 
 	<config>
 		<fields name="params">
-			<fieldset name="basic">
+			<fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
 				<field name="type" type="list"
 					default="1"
 					label="MOD_JEM_BANNER_UPCOMING_ARCHIVED_OR_CURRENT"
@@ -98,7 +101,7 @@
 					<option value="orange">MOD_JEM_BANNER_ORANGE</option>
 					<option value="category">MOD_JEM_BANNER_CATEGORY</option>
 				</field>
-				<field name="fallbackcolor" type="customcolor"
+				<field name="fallbackcolor" type="text"
 					class="inputbox"
 					default="#EEEEEE"
 					size="8"
@@ -223,13 +226,16 @@
 					<option value="1">JYES</option>
 					<option value="0">JNO</option>
 				</field>
-				<field name="catid" type="text"
+				<field name="catid" type="categoryedit"
 					default=""
+					multiple="true"
+					removeroot="true"
 					label="MOD_JEM_BANNER_CATEGORY_ID"
 					description="MOD_JEM_BANNER_CATEGORY_ID_DESC"
 				/>
-				<field name="venid" type="text"
+				<field name="venid" type="venueoptions"
 					default=""
+					multiple="true"
 					label="MOD_JEM_BANNER_VENUE_ID"
 					description="MOD_JEM_BANNER_VENUE_ID_DESC"
 				/>

@@ -10,10 +10,13 @@
 	<version>2.1.6-rc3</version>
 	<description>MOD_JEM_CAL_XML_DESCRIPTION</description>
 
+	<scriptfile>script.php</scriptfile>
+
 	<files>
 		<filename module="mod_jem_cal">mod_jem_cal.php</filename>
 		<filename>mod_jem_cal.css</filename>
 		<filename>helper.php</filename>
+		<filename>script.php</filename>
 		<filename>index.html</filename>
 
 		<folder>tmpl</folder>
@@ -22,7 +25,7 @@
 
 	<config>
 		<fields name="params">
-			<fieldset name="basic">
+			<fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
 				<field name="Default_Stylesheet" type="radio"
 					class="btn-group btn-group-yesno"
 					default="1"
@@ -209,13 +212,16 @@
 					label="MOD_JEM_CAL_LOCALEOVERRIDE"
 					description="MOD_JEM_CAL_LOCALEOVERRIDE_DESC"
 				/>
-				<field name="catid" type="text"
+				<field name="catid" type="categoryedit"
 					default=""
+					multiple="true"
+					removeroot="true"
 					label="MOD_JEM_CAL_CATID"
 					description="MOD_JEM_CAL_CATID_DESC"
 				/>
-				<field name="venid" type="text"
+				<field name="venid" type="venueoptions"
 					default=""
+					multiple="true"
 					label="MOD_JEM_CAL_VENID"
 					description="MOD_JEM_CAL_VENID_DESC"
 				/>

@@ -10,9 +10,12 @@
 	<version>2.1.6-rc3</version>
 	<description>MOD_JEM_JUBILEE_XML_DESCRIPTION</description>
 
+	<scriptfile>script.php</scriptfile>
+
 	<files>
 		<filename module="mod_jem_jubilee">mod_jem_jubilee.php</filename>
 		<filename>helper.php</filename>
+		<filename>script.php</filename>
 		<filename>index.html</filename>
 
 		<folder>tmpl</folder>
@@ -21,7 +24,7 @@
 
 	<config>
 		<fields name="params">
-			<fieldset name="basic">
+			<fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
 				<field name="introtext" type="textarea"
 					filter="safehtml"
 					default=""
@@ -107,7 +110,7 @@
 					<option value="orange">MOD_JEM_JUBILEE_ORANGE</option>
 					<option value="alpha">MOD_JEM_JUBILEE_USER</option>
 				</field>
-				<field name="usercolor" type="customcolor"
+				<field name="usercolor" type="text"
 					class="inputbox"
 					default="#EEEEEE"
 					size="8"
@@ -233,13 +236,16 @@
 					<option value="0">JNO</option>
 				</field>
 
-				<field name="catid" type="text"
+				<field name="catid" type="categoryedit"
 					default=""
+					multiple="true"
+					removeroot="true"
 					label="MOD_JEM_JUBILEE_CATEGORY_ID"
 					description="MOD_JEM_JUBILEE_CATEGORY_ID_DESC"
 				/>
-				<field name="venid" type="text"
+				<field name="venid" type="venueoptions"
 					default=""
+					multiple="true"
 					label="MOD_JEM_JUBILEE_VENUE_ID"
 					description="MOD_JEM_JUBILEE_VENUE_ID_DESC"
 				/>
