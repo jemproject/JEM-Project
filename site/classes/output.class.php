@@ -14,7 +14,7 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
 /**
  * Holds the logic for all output related things
  */
-class JEMOutput
+class JemOutput
 {
 
 	/**
@@ -894,7 +894,7 @@ class JEMOutput
 		}
 
 		// Do we have an image?
-		if (empty($imagefile)) {
+		if (empty($imagefile) || empty($image)) {
 			return;
 		}
 
