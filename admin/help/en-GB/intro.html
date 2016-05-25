@@ -34,8 +34,8 @@
 	<li>Wide Module, (upcoming events Wide module)</li>
 	<li>Calendar Module, for date navigation</li>
 	<li>Teaser Module, to display upcoming events</li>
-	<li>Banner Module, aanother module to display upcoming events</li>
-	<li>Jubilee Module, to display past events on current day/month</li>
+	<li>Banner Module, another module to display upcoming events</li>
+	<li>Jubilee Module, to display past events past that happened on today's date, so that are now in a jubilee. (like "One year ago on April 20...:") </li>
 	<li>Search Plugin</li>
 	<li>Finder Plugin (smart search)</li>
 	<li>Mailer Plugin, to make the settings on which modifications JEM should send emails</li>
@@ -46,10 +46,11 @@
 <p>As separate install files you could additionally download and install:</p>
 
 <ul>
-	<li>JEM Quickicon Plugin (backend)</li>
-	<li>Calendar (AJAX) Module, using Ajax for navigation (requires Joomla 3.x)</li>
-	<li>tagjem Plugin for AcyMailing</li>
-	<li>two plugins for Community Builder (which must be installed using CB's installer)</li>
+	<li>JEM Quickicon Plugin (to launch JEM in one click from the backend dashboard)</li>
+	<li>JEM Calendar (AJAX) Module, using Ajax for navigation in the calendar (requires Joomla 3.x)</li>
+	<li>AcyMailing Plugin to tag JEM events in an Acymailing newsletter</li>
+	<li>CB_Myattending plugin - Shows events where the user is attending in a Community Builder profile. Needs to be installed with special CB plugin manager inside of Community Builder (must be installed using CB's installer)</li>
+    <li>CB_Myevents plugin - Shows events that were created by the user in a Community builder profile. Needs to be installed with special CB plugin manager inside of Community Builder (must be installed using CB's installer)</li>
 	<li>...and a lot of languages - with many thanks to all the translators around the world!</li>
 </ul>
 
@@ -149,13 +150,13 @@
 
 	Further restricted access is organised via JEM Groups. Here you can specify an unlimited number of groups that contain users.
 	If a group is assigned to a Category also the specified users in the group have write access to that category.
-	With this you could allow registered users not havong general author permission to create events ini a specific category.
+	With this you could allow registered users not havong general author permission to create events in a specific category.
 </p>
 
 <p>	In Events there are 2 ACL settings: The first one is an indirect one. Via the category (or categories) to which an event belongs,
 	edit access can be restricted to the users in the JEM group that is linked to the Category. Also the read access level of cateories is respected.
 	The second ACL setting is the read access. This is derived from the category/ies access level but can also be set using Access field of the event.
-	Please note that user needs view access level of event AND one of the categories event is assigned to to see and edit event. Edit permission is not enough.
+	Please note that a user needs view access level of event AND one of the categories event is assigned to to see and edit event. Edit permission is not enough.
 </p>
 
 <p>	Please note that general permissions for Joomla default groups like Author, Editor, Publisher will automatically
