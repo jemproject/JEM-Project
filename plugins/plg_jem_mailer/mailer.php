@@ -796,7 +796,7 @@ class plgJEMMailer extends JPlugin {
 			#  because it maybe usefull for "non-attendees" too to get information about changes, maybe they will attend now...
 
 			# inform attendees only if event had not finished since one or more hours
-			$query->where('(a.dates IS NULL) OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates, a.dates), " ", IFNULL(a.endtimes, "23:59:59"))) > -60)');
+			$query->where('((a.dates IS NULL) OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates, a.dates), " ", IFNULL(a.endtimes, "23:59:59"))) > -60))');
 
 			$db->setQuery($query);
 			if (is_null($recipients['registered'] = $db->loadColumn(0))) {

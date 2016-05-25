@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.6
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -16,7 +16,7 @@ jimport('joomla.filesystem.file');
  *
  * @package JEM
  */
-class JEMImage {
+class JemImage {
 
 	static function thumb($name,$filename,$new_w,$new_h)
 	{
@@ -56,32 +56,28 @@ class JEMImage {
 				// if there was an error, let's see what the error is about
 				switch ($image->error) {
 				case 1:
-					echo 'Source file could not be found!';
+					JFactory::getApplication()->enqueueMessage("Source file $name could not be found!", 'warning');
 					break;
 				case 2:
-					echo 'Source file is not readable!';
+					JFactory::getApplication()->enqueueMessage("Source file $name is not readable!", 'warning');
 					break;
 				case 3:
-					echo 'Could not write target file!';
+					JFactory::getApplication()->enqueueMessage("Could not write target file $filename !", 'warning');
 					break;
 				case 4:
-					echo 'Unsupported source file format!';
+					JFactory::getApplication()->enqueueMessage('Unsupported source file format!', 'warning');
 					break;
 				case 5:
-					echo 'Unsupported target file format!';
+					JFactory::getApplication()->enqueueMessage('Unsupported target file format!', 'warning');
 					break;
 				case 6:
-					echo 'GD library version does not support target file format!';
+					JFactory::getApplication()->enqueueMessage('GD library version does not support target file format!', 'warning');
 					break;
 				case 7:
-					echo 'GD library is not installed!';
+					JFactory::getApplication()->enqueueMessage('GD library is not installed!', 'warning');
 					break;
 				}
 			}
-
-		// if no errors
-		} else {
-			echo '';
 		}
 	}
 
@@ -159,33 +155,33 @@ class JEMImage {
 			$folder = 'categories';
 		} else if ($type == 'venue') {
 			$folder = 'venues';
+		} else {
+			return false;
 		}
 
 		if ($image) {
+			$img_orig  = 'images/jem/'.$folder.'/'.$image;
+			$img_thumb = 'images/jem/'.$folder.'/small/'.$image;
+
+			$filepath 	= JPATH_SITE.'/'.$img_orig;
+			$save 		= JPATH_SITE.'/'.$img_thumb;
+
+			// At least original image must exist
+			if (!file_exists($filepath)) {
+				return false;
+			}
+
 			//Create thumbnail if enabled and it does not exist already
-			if ($settings->gddisabled == 1 && !file_exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image)) {
-
-				$filepath 	= JPATH_SITE.'/images/jem/'.$folder.'/'.$image;
-				$save 		= JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image;
-
+			if ($settings->gddisabled == 1 && !file_exists($save)) {
 				JEMImage::thumb($filepath, $save, $settings->imagewidth, $settings->imagehight);
 			}
 
 			//set paths
-			$dimage['original'] = 'images/jem/'.$folder.'/'.$image;
-			$dimage['thumb'] 	= 'images/jem/'.$folder.'/small/'.$image;
-
-			//TODO: What is "limage" and "cimage" for?
-			//set paths
-			$limage['original'] = 'images/jem/'.$folder.'/'.$image;
-			$limage['thumb'] 	= 'images/jem/'.$folder.'/small/'.$image;
-
-			//set paths
-			$cimage['original'] = 'images/jem/'.$folder.'/'.$image;
-			$cimage['thumb'] 	= 'images/jem/'.$folder.'/small/'.$image;
+			$dimage['original'] = $img_orig;
+			$dimage['thumb'] 	= $img_thumb;
 
 			//get imagesize of the original
-			$iminfo = @getimagesize('images/jem/'.$folder.'/'.$image);
+			$iminfo = @getimagesize($img_orig);
 
 			//if the width or height is too large this formula will resize them accordingly
 			if (($iminfo[0] > $settings->imagewidth) || ($iminfo[1] > $settings->imagehight)) {
@@ -196,41 +192,25 @@ class JEMImage {
 				if ($iRatioW < $iRatioH) {
 					$dimage['width'] 	= round($iminfo[0] * $iRatioW);
 					$dimage['height'] 	= round($iminfo[1] * $iRatioW);
-					$limage['width'] 	= round($iminfo[0] * $iRatioW);
-					$limage['height'] 	= round($iminfo[1] * $iRatioW);
-					$cimage['width'] 	= round($iminfo[0] * $iRatioW);
-					$cimage['height'] 	= round($iminfo[1] * $iRatioW);
 				} else {
 					$dimage['width'] 	= round($iminfo[0] * $iRatioH);
 					$dimage['height'] 	= round($iminfo[1] * $iRatioH);
-					$limage['width'] 	= round($iminfo[0] * $iRatioH);
-					$limage['height'] 	= round($iminfo[1] * $iRatioH);
-					$cimage['width'] 	= round($iminfo[0] * $iRatioH);
-					$cimage['height'] 	= round($iminfo[1] * $iRatioH);
 				}
 			} else {
 				$dimage['width'] 	= $iminfo[0];
 				$dimage['height'] 	= $iminfo[1];
-				$limage['width'] 	= $iminfo[0];
-				$limage['height'] 	= $iminfo[1];
-				$cimage['width'] 	= $iminfo[0];
-				$cimage['height'] 	= $iminfo[1];
 			}
 
-			if (JFile::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image)) {
+			if (JFile::exists(JPATH_SITE.'/'.$img_thumb)) {
 				//get imagesize of the thumbnail
-				$thumbiminfo = @getimagesize('images/jem/'.$folder.'/small/'.$image);
+				$thumbiminfo = @getimagesize($img_thumb);
 				$dimage['thumbwidth'] 	= $thumbiminfo[0];
 				$dimage['thumbheight'] 	= $thumbiminfo[1];
-				$limage['thumbwidth'] 	= $thumbiminfo[0];
-				$limage['thumbheight'] 	= $thumbiminfo[1];
-				$cimage['thumbwidth'] 	= $thumbiminfo[0];
-				$cimage['thumbheight'] 	= $thumbiminfo[1];
 			}
+
 			return $dimage;
-			return $limage;
-			return $cimage;
 		}
+
 		return false;
 	}
 
