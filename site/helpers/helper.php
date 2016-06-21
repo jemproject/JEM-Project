@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.6.1
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -71,6 +71,32 @@ class JemHelper
 		return $registryCSS;
 	}
 
+	/**
+	 * Setup a file logger for JEM.
+	 */
+	public static function addFileLogger()
+	{
+		jimport('joomla.log.log');
+
+		/// @TODO Add option to let admin choose the log level.
+
+		JLog::addLogger(array('text_file' => 'jem.log.php', 'text_entry_format' => '{DATE} {TIME} {PRIORITY} {CATEGORY} {WHERE} : {MESSAGE}'), JLog::ALL, array('JEM'));
+	}
+
+	/**
+	 * Add en entry to JEM's log file.
+	 *
+	 * @param $message The message to print
+	 * @param $where   The location the message was generated, default: null
+	 * @param $type    The log level, default: DEBUG
+	 */
+	public static function addLogEntry($message, $where = null, $type = JLog::DEBUG)
+	{
+		$logEntry = new JLogEntry($message, $type, 'JEM');
+		$logEntry->where = empty($where) ? '' : ($where . '()');
+
+		JLog::add($logEntry);
+	}
 
 	/**
 	 * Performs daily scheduled cleanups
@@ -84,129 +110,146 @@ class JemHelper
 		$weekstart 		= $jemsettings->weekdaystart;
 		$anticipation	= $jemsettings->recurrence_anticipation;
 
-		$now = time();
+		$now = time(); // UTC
+		$offset = idate('Z'); // timezone offset for "new day" test
 		$lastupdate = $jemsettings->lastupdate;
+		$runningupdate = isset($jemsettings->runningupdate) ? $jemsettings->runningupdate : 0;
+		$maxexectime = get_cfg_var('max_execution_time');
+		$delay = min(86400, max(300, $maxexectime * 2));
 
-		// New day since last update?
-		$nrdaysnow = floor($now / 86400);
-		$nrdaysupdate = floor($lastupdate / 86400);
+		// New (local) day since last update?
+		$nrdaysnow = floor(($now + $offset) / 86400);
+		$nrdaysupdate = floor(($lastupdate + $offset) / 86400);
 
-		if ($nrdaysnow > $nrdaysupdate || $forced) {
+		if (($nrdaysnow > $nrdaysupdate) || $forced) {
+			JemHelper::addLogEntry('forced: ' . $forced . ', now: '. $now . ', last update: ' . $lastupdate .
+		                           ', running update: ' . $runningupdate . ', delay: ' . $delay . ', tz-offset: ' . $offset, __METHOD__);
 
-			// trigger an event to let plugins handle whatever cleanup they want to do.
-			if (JPluginHelper::importPlugin('jem')) {
-				$dispatcher = JDispatcher::getInstance();
-				$dispatcher->trigger('onJemBeforeCleanup', array($jemsettings, $forced));
-			}
+			if (($runningupdate + $delay) < $now) {
+				// Set timestamp of running cleanup
+				JemConfig::getInstance()->set('runningupdate', $now);
 
-			$db = JFactory::getDbo();
-			$query = $db->getQuery(true);
+				JemHelper::addLogEntry('  do cleanup...', __METHOD__);
 
-			// Get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
-			// Ignore published field to prevent duplicate events.
-			$nulldate = '0000-00-00';
-			$query = ' SELECT id, CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id, '
-					. ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, '
-					. ' MAX(dates) as dates, MAX(enddates) as enddates, MAX(recurrence_counter) as counter '
-					. ' FROM #__jem_events '
-					. ' WHERE recurrence_type <> "0" '
-					. ' AND CASE recurrence_limit_date WHEN '.$nulldate.' THEN 1 ELSE NOW() < recurrence_limit_date END '
-					. ' AND recurrence_number <> "0" '
-					. ' GROUP BY first_id'
-					. ' ORDER BY dates DESC';
-			$db->SetQuery($query);
-			$recurrence_array = $db->loadAssocList();
-
-			// If there are results we will be doing something with it
-			foreach($recurrence_array as $recurrence_row)
-			{
-				// get the info of reference event for the duplicates
-				$ref_event = JTable::getInstance('Event', 'JemTable');
-				$ref_event->load($recurrence_row['id']);
+				// trigger an event to let plugins handle whatever cleanup they want to do.
+				if (JPluginHelper::importPlugin('jem')) {
+					$dispatcher = JDispatcher::getInstance();
+					$dispatcher->trigger('onJemBeforeCleanup', array($jemsettings, $forced));
+				}
 
 				$db = JFactory::getDbo();
 				$query = $db->getQuery(true);
-				$query->select('*');
-				$query->from($db->quoteName('#__jem_events').' AS a');
-				$query->where('id = '.(int)$recurrence_row['id']);
-				$db->setQuery($query);
-				$reference = $db->loadAssoc();
 
-				// if reference event is "unpublished"(0) new event is "unpublished" too
-				// but on "archived"(2) and "trashed"(-2) reference events create "published"(1) event
-				if ($reference['published'] != 0) {
-					$reference['published'] = 1;
-				}
+				// Get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
+				// Ignore published field to prevent duplicate events.
+				$nulldate = '0000-00-00';
+				$query = ' SELECT id, CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id, '
+						. ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, '
+						. ' MAX(dates) as dates, MAX(enddates) as enddates, MAX(recurrence_counter) as counter '
+						. ' FROM #__jem_events '
+						. ' WHERE recurrence_type <> "0" '
+						. ' AND CASE recurrence_limit_date WHEN '.$nulldate.' THEN 1 ELSE NOW() < recurrence_limit_date END '
+						. ' AND recurrence_number <> "0" '
+						. ' GROUP BY first_id'
+						. ' ORDER BY dates DESC';
+				$db->SetQuery($query);
+				$recurrence_array = $db->loadAssocList();
 
-				// the first day of the week is used for certain rules
-				$recurrence_row['weekstart'] = $weekstart;
-
-				// calculate next occurence date
-				$recurrence_row = JemHelper::calculate_recurrence($recurrence_row);
-
-				// add events as long as we are under the interval and under the limit, if specified.
-				while (($recurrence_row['recurrence_limit_date'] == $nulldate
-						|| strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
-						&& strtotime($recurrence_row['dates']) <= time() + 86400*$anticipation)
+				// If there are results we will be doing something with it
+				foreach ($recurrence_array as $recurrence_row)
 				{
-					$new_event = JTable::getInstance('Event', 'JemTable');
-					$new_event->bind($reference, array('id', 'hits', 'dates', 'enddates','checked_out_time','checked_out'));
-					$new_event->recurrence_first_id = $recurrence_row['first_id'];
-					$new_event->recurrence_counter = $recurrence_row['counter'] + 1;
-					$new_event->dates = $recurrence_row['dates'];
-					$new_event->enddates = $recurrence_row['enddates'];
-					$new_event->_autocreate = true; // to tell table class this has to be stored AS IS (the underscore is important!)
+					// get the info of reference event for the duplicates
+					$ref_event = JTable::getInstance('Event', 'JemTable');
+					$ref_event->load($recurrence_row['id']);
 
-					if ($new_event->store())
-					{
-						$recurrence_row['counter']++;
-						//duplicate categories event relationships
-						$query = ' INSERT INTO #__jem_cats_event_relations (itemid, catid) '
-								. ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__jem_cats_event_relations '
-								. ' WHERE itemid = ' . $db->Quote($ref_event->id);
-						$db->setQuery($query);
+					$db = JFactory::getDbo();
+					$query = $db->getQuery(true);
+					$query->select('*');
+					$query->from($db->quoteName('#__jem_events').' AS a');
+					$query->where('id = '.(int)$recurrence_row['id']);
+					$db->setQuery($query);
+					$reference = $db->loadAssoc();
 
-						if ($db->execute() === false) {
-							// run query always but don't show error message to "normal" users
-							$user = JemFactory::getUser();
-							if($user->authorise('core.manage')) {
-								echo JText::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
-							}
-						}
+					// if reference event is "unpublished"(0) new event is "unpublished" too
+					// but on "archived"(2) and "trashed"(-2) reference events create "published"(1) event
+					if ($reference['published'] != 0) {
+						$reference['published'] = 1;
 					}
 
+					// the first day of the week is used for certain rules
+					$recurrence_row['weekstart'] = $weekstart;
+
+					// calculate next occurence date
 					$recurrence_row = JemHelper::calculate_recurrence($recurrence_row);
+
+					// add events as long as we are under the interval and under the limit, if specified.
+					while (($recurrence_row['recurrence_limit_date'] == $nulldate
+							|| strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
+							&& strtotime($recurrence_row['dates']) <= time() + 86400*$anticipation)
+					{
+						$new_event = JTable::getInstance('Event', 'JemTable');
+						$new_event->bind($reference, array('id', 'hits', 'dates', 'enddates','checked_out_time','checked_out'));
+						$new_event->recurrence_first_id = $recurrence_row['first_id'];
+						$new_event->recurrence_counter = $recurrence_row['counter'] + 1;
+						$new_event->dates = $recurrence_row['dates'];
+						$new_event->enddates = $recurrence_row['enddates'];
+						$new_event->_autocreate = true; // to tell table class this has to be stored AS IS (the underscore is important!)
+
+						if ($new_event->store())
+						{
+							$recurrence_row['counter']++;
+							//duplicate categories event relationships
+							$query = ' INSERT INTO #__jem_cats_event_relations (itemid, catid) '
+									. ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__jem_cats_event_relations '
+									. ' WHERE itemid = ' . $db->Quote($ref_event->id);
+							$db->setQuery($query);
+
+							if ($db->execute() === false) {
+								// run query always but don't show error message to "normal" users
+								$user = JemFactory::getUser();
+								if($user->authorise('core.manage')) {
+									echo JText::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
+								}
+							}
+						}
+
+						$recurrence_row = JemHelper::calculate_recurrence($recurrence_row);
+					}
 				}
+
+				//delete outdated events
+				if ($jemsettings->oldevent == 1) {
+					$query = 'DELETE FROM #__jem_events WHERE dates > 0 AND '
+							.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates))';
+					$db->SetQuery($query);
+					$db->execute();
+				}
+
+				//Set state archived of outdated events
+				if ($jemsettings->oldevent == 2) {
+					$query = 'UPDATE #__jem_events SET published = 2 WHERE dates > 0 AND '
+							.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
+							.' AND published = 1';
+					$db->SetQuery($query);
+					$db->execute();
+				}
+
+				//Set state trashed of outdated events
+				if ($jemsettings->oldevent == 3) {
+					$query = 'UPDATE #__jem_events SET published = -2 WHERE dates > 0 AND '
+							.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
+							.' AND published = 1';
+					$db->SetQuery($query);
+					$db->execute();
+				}
+
+				// Set timestamp of last cleanup
+				JemConfig::getInstance()->set('lastupdate', $now);
+				// Clear timestamp of running cleanup
+				JemConfig::getInstance()->set('runningupdate', 0);
 			}
 
-			//delete outdated events
-			if ($jemsettings->oldevent == 1) {
-				$query = 'DELETE FROM #__jem_events WHERE dates > 0 AND '
-						.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates))';
-				$db->SetQuery($query);
-				$db->execute();
-			}
-
-			//Set state archived of outdated events
-			if ($jemsettings->oldevent == 2) {
-				$query = 'UPDATE #__jem_events SET published = 2 WHERE dates > 0 AND '
-						.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
-						.' AND published = 1';
-				$db->SetQuery($query);
-				$db->execute();
-			}
-
-			//Set state trashed of outdated events
-			if ($jemsettings->oldevent == 3) {
-				$query = 'UPDATE #__jem_events SET published = -2 WHERE dates > 0 AND '
-						.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
-						.' AND published = 1';
-				$db->SetQuery($query);
-				$db->execute();
-			}
-
-			//Set timestamp of last cleanup
-			JemConfig::getInstance()->set('lastupdate', $now);
+			JemHelper::addLogEntry('finished.', __METHOD__);
 		}
 	}
 
