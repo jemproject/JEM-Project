@@ -127,6 +127,13 @@
 			size="20"
 			required="false"
 		/>
+		<field name="formathour" type="text"
+			label="COM_JEM_HOUR_STRFTIME"
+			description="COM_JEM_HOUR_STRFTIME_DESC"
+			class="inputbox"
+			size="20"
+			required="false"
+		/>
 		<field name="timename" type="text"
 			label="COM_JEM_TIME_NAME"
 			description="COM_JEM_TIME_NAME_DESC"

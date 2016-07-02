@@ -651,13 +651,22 @@ class JemHelper
 		$timelist = array();
 		$timelist[0] = JHtml::_('select.option', '', '');
 
-		foreach(range(0, $max) as $value) {
-			if($value >= 10) {
-				$timelist[] = JHtml::_('select.option', $value, $value);
-			} else {
-				$timelist[] = JHtml::_('select.option', '0'.$value, '0'.$value);
-			}
+		if ($max == 23) {
+			// does user prefer 12 or 24 hours format?
+			$jemreg = JemConfig::getInstance()->toRegistry();
+			$format = $jemreg->get('formathour', false);
+		} else {
+			$format = false;
 		}
+
+		foreach (range(0, $max) as $value) {
+			if ($value < 10) {
+				$value = '0'.$value;
+			}
+
+			$timelist[] = JHtml::_('select.option', $value, ($format ? strftime($format, strtotime("$value:00:00")) : $value));
+		}
+
 		return JHtml::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
 	}
 
