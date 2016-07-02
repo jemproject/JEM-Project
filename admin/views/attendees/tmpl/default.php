@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -89,8 +89,9 @@ JFactory::getDocument()->addScriptDeclaration('
 			</tfoot>
 			<tbody>
 				<?php
-			foreach ($this->items as $i => $row) :
 				$canChange = $user->authorise('core.edit.state');
+
+				foreach ($this->items as $i => $row) :
 				?>
 				<tr class="row<?php echo $i % 2; ?>">
 					<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
@@ -110,7 +111,7 @@ JFactory::getDocument()->addScriptDeclaration('
 					<?php endif; ?>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 					<?php $cmnt = (strlen($row->comment) > 16) ? (rtrim(substr($row->comment, 0, 14)).'&hellip;') : $row->comment; ?>
-					<td><?php echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); ?></td>
+					<td><?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
 					<?php endif; ?>
 					<td class="center">
 						<a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendees.remove')">
