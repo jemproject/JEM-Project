@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -231,16 +231,17 @@ class JemModelAttendees extends JModelList
 	 */
 	public function getCsv()
 	{
-		$app = JFactory::getApplication();
+		$jemconfig = JemConfig::getInstance()->toRegistry();
+		$sep       = $jemconfig->get('csv_separator', ';');
+		$comments  = $jemconfig->get('regallowcomments', 0);
 
 		$event = $this->getEvent();
 		$items = $this->getItems();
 
 		$waitinglist = isset($event->waitinglist) ? $event->waitinglist : false;
-		$comments = !empty(JemHelper::config()->regallowcomments);
 
-		$export = '';
-		$col = array();
+		$csv = fopen('php://output', 'w');
+		fputcsv($csv, array('sep='.$sep), $sep, '"');
 
 		$header = array(
 				JText::_('COM_JEM_NAME'),
@@ -254,11 +255,10 @@ class JemModelAttendees extends JModelList
 		}
 		$header[] = JText::_('COM_JEM_ATTENDEES_REGID');
 
-		$csv = fopen('php://output', 'w');
-		//fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
-		fputcsv($csv, $header, ';');
+		fputcsv($csv, $header, $sep, '"');
 
-		foreach ($items as $item) {
+		foreach ($items as $item)
+		{
 			$status = isset($item->status) ? $item->status : 1;
 			if ($status < 0) {
 				$txt_stat = 'COM_JEM_ATTENDEES_NOT_ATTENDING';
@@ -279,7 +279,7 @@ class JemModelAttendees extends JModelList
 			}
 			$data[] = $item->uid;
 
-			fputcsv($csv, (array) $data, ';', '"');
+			fputcsv($csv, $data, $sep, '"');
 		}
 
 		return fclose($csv);

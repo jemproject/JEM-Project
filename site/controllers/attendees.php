@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -130,24 +130,27 @@ class JemControllerAttendees extends JControllerLegacy
 	 */
 	function export()
 	{
-		$app      = JFactory::getApplication();
-		$settings = JemHelper::globalattribs();
-		$params   = $app->getParams();
+		$app       = JFactory::getApplication();
+		$params    = $app->getParams();
+		$jemconfig = JemConfig::getInstance()->toRegistry();
 
 		$enableemailadress = $params->get('enableemailaddress', 0);
+		$sep               = $jemconfig->get('csv_separator', ';');
+		$userfield         = $jemconfig->get('globalattribs.global_regname', 1) ? 'name' : 'username';
+		$comments          = $jemconfig->get('regallowcomments', 0);
 
 		$model = $this->getModel('attendees');
 		$datas = $model->getData();
 		$event = $model->getEvent();
 		$waitinglist = isset($event->waitinglist) ? $event->waitinglist : false;
-		$comments = !empty(JemHelper::config()->regallowcomments);
 
 		header('Content-Type: text/x-csv');
 		header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 		header('Content-Disposition: attachment; filename=attendees.csv');
 		header('Pragma: no-cache');
 
-		$userfield = $settings->get('global_regname', '1') ? 'name' : 'username';
+		$export = fopen('php://output', 'w');
+		fputcsv($export, array('sep='.$sep), $sep, '"');
 
 		$cols = array();
 		$cols[] = JText::_('COM_JEM_USERNAME');
@@ -155,13 +158,12 @@ class JemControllerAttendees extends JControllerLegacy
 			$cols[] = JText::_('COM_JEM_EMAIL');
 		}
 		$cols[] = JText::_('COM_JEM_REGDATE');
-		$cols[] = JText::_('COM_JEM_HEADER_WAITINGLIST_STATUS');
+		$cols[] = JText::_('COM_JEM_STATUS');
 		if ($comments) {
 			$cols[] = JText::_('COM_JEM_COMMENT');
 		}
 
-		$export = fopen('php://output', 'w');
-		fputcsv($export, $cols, ';', '"');
+		fputcsv($export, $cols, $sep, '"');
 
 		foreach ($datas as $data)
 		{
@@ -186,7 +188,7 @@ class JemControllerAttendees extends JControllerLegacy
 				$cols[] = $data->comment;
 			}
 
-			fputcsv($export, $cols, ';', '"');
+			fputcsv($export, $cols, $sep, '"');
 		}
 
 		fclose($export);

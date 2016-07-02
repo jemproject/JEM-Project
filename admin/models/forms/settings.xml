@@ -90,6 +90,16 @@
 			label="COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY"
 			description="COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY_DESC"
 		/>
+		<field name="csv_separator" type="list"
+			label="COM_JEM_SETTINGS_CSV_SEPARATOR"
+			description="COM_JEM_SETTINGS_CSV_SEPARATOR_DESC"
+			class="inputbox"
+			default=";"
+			required="false"
+		>
+			<option value=",">COM_JEM_SETTINGS_CSV_SEPARATOR_COMMA</option>
+			<option value=";">COM_JEM_SETTINGS_CSV_SEPARATOR_SEMICOLON</option>
+		</field>
 	</fieldset>
 
 	<fieldset name="display"
