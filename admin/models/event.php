@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -260,6 +260,16 @@ class JEMModelEvent extends JemModelAdmin
 		// event maybe first of recurrence set -> dissolve complete set
 		if (JemHelper::dissolve_recurrence($data['id'])) {
 			$this->cleanCache();
+		}
+
+		// convert international date formats...
+		if (!empty($data['dates'])) {
+			$d = JFactory::getDate($data['dates'], 'UTC');
+			$data['dates'] = $d->format('Y-m-d', true, false);
+		}
+		if (!empty($data['enddates'])) {
+			$d = JFactory::getDate($data['enddates'], 'UTC');
+			$data['enddates'] = $d->format('Y-m-d', true, false);
 		}
 
 		if ($data['dates'] == null || $data['recurrence_type'] == '0')
