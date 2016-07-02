@@ -149,11 +149,13 @@ class JemControllerAttendees extends JControllerLegacy
 
 		$userfield = $settings->get('global_regname', '1') ? 'name' : 'username';
 
-		$cols = array(
-			JText::_('COM_JEM_USERNAME'),
-			JText::_('COM_JEM_REGDATE'),
-			JText::_('COM_JEM_HEADER_WAITINGLIST_STATUS')
-		);
+		$cols = array();
+		$cols[] = JText::_('COM_JEM_USERNAME');
+		if ($enableemailadress == 1) {
+			$cols[] = JText::_('COM_JEM_EMAIL');
+		}
+		$cols[] = JText::_('COM_JEM_REGDATE');
+		$cols[] = JText::_('COM_JEM_HEADER_WAITINGLIST_STATUS');
 		if ($comments) {
 			$cols[] = JText::_('COM_JEM_COMMENT');
 		}
