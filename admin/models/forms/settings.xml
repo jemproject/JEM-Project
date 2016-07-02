@@ -826,6 +826,20 @@
 				maxlength="10"
 				required="false"
 			/>
+			<field name="loglevel" type="list"
+				label="COM_JEM_SETTINGS_FIELD_LOGLEVEL"
+				description="COM_JEM_SETTINGS_FIELD_LOGLEVEL_DESC"
+				class="inputbox"
+				default="0"
+				required="false"
+			>
+				<option value="0">COM_JEM_LOGLEVEL_OFF</option>
+				<option value="1">COM_JEM_LOGLEVEL_ERROR</option>
+				<option value="2">COM_JEM_LOGLEVEL_WARNING</option>
+				<option value="3">COM_JEM_LOGLEVEL_INFO</option>
+				<option value="4">COM_JEM_LOGLEVEL_DEBUG</option>
+				<option value="5">COM_JEM_LOGLEVEL_ALL</option>
+			</field>
 			<field name="global_googleapi" type="text"
 				label="COM_JEM_SETTINGS_FIELD_GOOGLEAPIKEY"
 				description="COM_JEM_SETTINGS_FIELD_GOOGLEAPIKEY_DESC"

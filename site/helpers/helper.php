@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6.1
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -78,9 +78,35 @@ class JemHelper
 	{
 		jimport('joomla.log.log');
 
-		/// @TODO Add option to let admin choose the log level.
+		// Let admin choose the log level.
+		$jemconfig = JemConfig::getInstance()->toRegistry();
+		$lvl = (int)$jemconfig->get('globalattribs.loglevel', 0);
 
-		JLog::addLogger(array('text_file' => 'jem.log.php', 'text_entry_format' => '{DATE} {TIME} {PRIORITY} {CATEGORY} {WHERE} : {MESSAGE}'), JLog::ALL, array('JEM'));
+		switch ($lvl) {
+		case 1: // ERROR or higher
+			$loglevel = JLog::ERROR   * 2 - 1;
+			break;
+		case 2: // WARNING or higher
+			$loglevel = JLog::WARNING * 2 - 1;
+			break;
+		case 3: // INFO or higher
+			$loglevel = JLog::INFO    * 2 - 1;
+			break;
+		case 4: // DEBUG or higher
+			$loglevel = JLog::DEBUG   * 2 - 1;
+			break;
+		case 5: // ALL
+			$loglevel = JLog::ALL;
+			break;
+		case 0: // OFF
+		default:
+			$loglevel = 0;
+			break;
+		}
+
+		if ($loglevel > 0) {
+			JLog::addLogger(array('text_file' => 'jem.log.php', 'text_entry_format' => '{DATE} {TIME} {PRIORITY} {CATEGORY} {WHERE} : {MESSAGE}'), $loglevel, array('JEM'));
+		}
 	}
 
 	/**
