@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -208,6 +208,11 @@ class JEMModelImport extends JModelLegacy
 
 		$db = JFactory::getDbo();
 
+		// in case imported data has no key field explicitely add it with value 0 and don't try to replace
+		$presetkey = in_array('id', $fieldsname) ? false : 'id';
+		if (!empty($presetkey)) {
+			$replace = false; // useless without imported key values
+		}
 		// we MUST reset key 'id' ourself
 		$pk = $replace ? false : 'id';
 
@@ -221,6 +226,9 @@ class JEMModelImport extends JModelLegacy
 		// parse each row
 		foreach ($data as $row) {
 			$values = array();
+			if ($presetkey) {
+				$values[$presetkey] = 0;
+			}
 			// parse each specified field and retrieve corresponding value for the record
 			foreach ($fieldsname as $k => $field) {
 				$values[$field] = ($field !== $pk) ? $row[$k] : 0; // set key to given value or 0 depending on $replace
