@@ -275,7 +275,8 @@ class JemModelAttendees extends JModelList
 					JText::_($txt_stat)
 				);
 			if ($comments) {
-				$data[] = (strlen($item->comment) > 256) ? (substr($item->comment, 0, 254).'&hellip;') : $item->comment;
+				$comment = strip_tags($item->comment);
+				$data[] = (strlen($comment) > 254) ? (substr($comment, 0, 251).'...') : $comment;
 			}
 			$data[] = $item->uid;
 

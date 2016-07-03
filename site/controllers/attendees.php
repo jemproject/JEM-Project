@@ -185,7 +185,8 @@ class JemControllerAttendees extends JControllerLegacy
 			}
 			$cols[] = JText::_($txt_stat);
 			if ($comments) {
-				$cols[] = $data->comment;
+				$comment = strip_tags($data->comment);
+				$cols[] = (strlen($comment) > 254) ? (substr($comment, 0, 251).'...') : $comment;
 			}
 
 			fputcsv($export, $cols, $sep, '"');
