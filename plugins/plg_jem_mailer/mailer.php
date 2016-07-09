@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @subpackage JEM Mailer Plugin
  * @copyright (C) 2013-2016 joomlaeventmanager.net
@@ -130,7 +130,7 @@ class plgJEMMailer extends JPlugin {
 		$text_description = JFilterOutput::cleanText($event->text);
 		$comment = empty($event->comment) ? false : JFilterOutput::cleanText($event->comment);
 
-		$recipients = $this->_getRecipients($send_to, array('user'), $event->id, $event->created_by, $userid);
+		$recipients = $this->_getRecipients($send_to, array('user'), $event->id, $event->created_by, $attendeeid);
 
 		$waiting = $event->waiting ? '_WAITING' : '';
 
@@ -402,7 +402,7 @@ class plgJEMMailer extends JPlugin {
 		// Strip tags/scripts, etc. from description
 		$text_description = JFilterOutput::cleanText($event->text);
 
-		$recipients = $this->_getRecipients($send_to, array('user'), $event->id, $event->created_by, $userid);
+		$recipients = $this->_getRecipients($send_to, array('user'), $event->id, $event->created_by, $attendeeid);
 
 		#####################
 		## SENDMAIL - USER ##
@@ -895,38 +895,34 @@ class plgJEMMailer extends JPlugin {
 	 */
 	private function _mailer($data)
 	{
+		$app  = JFactory::getApplication();
+		$user = JemFactory::getUser();
+		$sent = array('ok' => 0, 'failed' => 0);
+
 		# $data->receivers contains single or array of email addresses
 		if (isset($data->receivers)) {
 			$receivers = is_array($data->receivers) ? $data->receivers : array($data->receivers);
 
-			# validate the $receivers-array
-			$receivers	= filter_var_array($receivers,FILTER_VALIDATE_EMAIL);
+			# remove empty fields and duplicates
 			$receivers	= array_filter($receivers);
 			$receivers	= array_unique($receivers);
 
 			if ($receivers) {
-				foreach ($receivers as $receiver) {
-					$mail = JFactory::getMailer();
-					$mail->setSender(array($this->_MailFrom, $this->_FromName));
-					$mail->setSubject($data->subject);
+				foreach ($receivers as $receiver)
+				{
+					$ret = $this->_send($receiver, $data->subject, $data->body);
+					++$sent[$ret ? 'ok' : 'failed'];
+				}
 
-					# check if we did select the option to output html mail
-					if ($this->params->get('send_html','0')== 1) {
-						$mail->isHTML(true);
-						$mail->Encoding = 'base64';
-						$body_html = nl2br ($data->body);
-						$mail->setBody($body_html);
-					} else {
-						$mail->setBody($data->body);
-					}
-					$mail->addRecipient($receiver);
-					$mail->send();
+				# show a message if something failed and user is at least event editor
+				if (!empty($sent['failed']) && $user->can('edit', 'event')) {
+					$app->enqueueMessage(JText::sprintf('PLG_JEM_MAILER_MAILS_NOT_SENT_1', $sent['failed']), 'notice');
 				}
 			}
 
 			return true;
 		}
-		# $data->receipients contains email addresses as array keys with cause(s) as value
+		# $data->recipients contains email addresses as array keys with cause(s) as value
 		elseif (isset($data->recipients) && is_array($data->recipients)) {
 			$txt_because = array(
 				'admin'      => JText::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_ADMIN'),
@@ -940,9 +936,8 @@ class plgJEMMailer extends JPlugin {
 			# for all recipients...
 			#  key is the email address
 			#  value is an array of roles which cause this user to get this email
-			foreach ($data->recipients as $receiver => $causes) {
-				$receiver = filter_var($receiver);
-
+			foreach ($data->recipients as $receiver => $causes)
+			{
 				# collect why tis user gets this email
 				$why = array();
 				foreach ($causes as $cause) {
@@ -956,21 +951,13 @@ class plgJEMMailer extends JPlugin {
 					$body .= JText::sprintf('PLG_JEM_MAILER_RECIPIENT_BECAUSE_1', implode(', ', $why));
 				}
 
-				$mail = JFactory::getMailer();
-				$mail->setSender(array($this->_MailFrom, $this->_FromName));
-				$mail->setSubject($data->subject);
+				$ret = $this->_send($receiver, $data->subject, $body);
+				++$sent[$ret ? 'ok' : 'failed'];
+			}
 
-				# check if we did select the option to output html mail
-				if ($this->params->get('send_html','0') == 1) {
-					$mail->isHTML(true);
-					$mail->Encoding = 'base64';
-					$body_html = nl2br($body);
-					$mail->setBody($body_html);
-				} else {
-					$mail->setBody($body);
-				}
-				$mail->addRecipient($receiver);
-				$mail->send();
+			# show a message if something failed and user is at least event editor
+			if (!empty($sent['failed']) && $user->can('edit', 'event')) {
+				$app->enqueueMessage(JText::sprintf('PLG_JEM_MAILER_MAILS_NOT_SENT_1', $sent['failed']), 'notice');
 			}
 
 			return true;
@@ -978,6 +965,55 @@ class plgJEMMailer extends JPlugin {
 		else {
 			return false;
 		}
+	}
+
+	/**
+	 * This method sends the mail
+	 * info: http://docs.joomla.org/Sending_email_from_extensions
+	 *
+	 * @access	private
+	 * @param   string 	$recipient 	 mail recipient
+	 * @param   string  $subject     mail subject
+	 * @param   string  $body        mail body
+	 * @return	boolean              true on success, false on error
+	 */
+	private function _send($recipient, $subject, $body)
+	{
+		$result = false;
+
+		try {
+			$mail = JFactory::getMailer();
+		//	$mail->set('exceptions', false);
+			$mail->setSender(array($this->_MailFrom, $this->_FromName));
+			$mail->setSubject($subject);
+
+			# check if we did select the option to output html mail
+			if ($this->params->get('send_html','0')== 1) {
+				$mail->isHTML(true);
+				$mail->Encoding = 'base64';
+				$body_html = nl2br ($body);
+				$mail->setBody($body_html);
+			} else {
+				$mail->setBody($body);
+			}
+			$mail->addRecipient($recipient);
+			$ret = $mail->send();
+			// Check for an error
+			if ($ret instanceof Exception) {
+				JemHelper::addLogEntry(JText::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient) . ' : ' . $ret->getMessage(), __METHOD__ . '#' . __LINE__, JLog::WARNING);
+			}
+			elseif (empty($ret)) {
+				JemHelper::addLogEntry(JText::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient), __METHOD__ . '#' . __LINE__, JLog::WARNING);
+			}
+			else {
+				$result = true;
+			}
+		}
+		catch (Exception $e) {
+			JemHelper::addLogEntry(JText::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient) . ' : ' . $e->getMessage(), __METHOD__ . '#' . __LINE__, JLog::WARNING);
+		}
+
+		return $result;
 	}
 
 	/**
