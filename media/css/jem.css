@@ -1128,6 +1128,16 @@ div#jem .file td{
 }
 
 
+div#jem .inline-button-right {
+	float: right;
+	margin: 0;
+	padding: 0;
+	height: 1.5em;
+	background: transparent;
+	cursor:pointer;
+}
+
+
 
 @media print {
 
@@ -1145,9 +1155,10 @@ div#jem h2 {
 	background:none repeat scroll 0% 0% rgb(212, 214, 178);
 	border:none;
 }
+
 div#jem .buttons {
 	float:right;
 	display:none;
 }
 
-}
+} /* END media print */

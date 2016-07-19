@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -16,7 +16,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/event.php';
 /**
  * Editevent Model
  */
-class JEMModelEditevent extends JEMModelEvent
+class JemModelEditevent extends JemModelEvent
 {
 
 	/**
@@ -34,6 +34,12 @@ class JEMModelEditevent extends JEMModelEvent
 
 		$catid = $app->input->getInt('catid', 0);
 		$this->setState('event.catid', $catid);
+
+		$locid = $app->input->getInt('locid', 0);
+		$this->setState('event.locid', $locid);
+
+		$date = $app->input->getCmd('date', '');
+		$this->setState('event.date', $date);
 
 		$return = $app->input->get('return', '', 'base64');
 		$this->setState('return_page', urldecode(base64_decode($return)));
@@ -88,7 +94,7 @@ class JEMModelEditevent extends JEMModelEvent
 		$registry = new JRegistry();
 		$registry->loadString($value->attribs);
 
-		$globalregistry = JEMHelper::globalattribs();
+		$globalregistry = JemHelper::globalattribs();
 
 		$value->params = clone $globalregistry;
 		$value->params->merge($registry);
@@ -113,10 +119,33 @@ class JEMModelEditevent extends JEMModelEvent
 
 		$db->setQuery($query);
 		$res = $db->loadResult();
-		$value->booked = $res;
+		$value->booked = (int)$res;
+		if (!empty($value->maxplaces)) {
+			$value->avplaces = $value->maxplaces - $value->booked;
+		}
 
-		$files = JEMAttachment::getAttachments('event' . $itemId);
+		$files = JemAttachment::getAttachments('event' . $itemId);
 		$value->attachments = $files;
+
+		// Preset values on new events
+		if (!$itemId) {
+			$catid = (int) $this->getState('event.catid');
+			$locid = (int) $this->getState('event.locid');
+			$date  = $this->getState('event.date');
+
+			// ???
+			if (empty($value->catid) && !empty($catid)) {
+				$value->catid = $catid;
+			}
+
+			if (empty($value->locid) && !empty($locid)) {
+				$value->locid = $locid;
+			}
+
+			if (empty($value->dates) && JemHelper::isValidDate($date)) {
+				$value->dates = $date;
+			}
+		}
 
 		// Check edit permission.
 		$value->params->set('access-edit', $user->can('edit', 'event', $value->id, $value->created_by));
@@ -196,7 +225,7 @@ class JEMModelEditevent extends JEMModelEvent
 		$search      		= $this->_db->escape(trim(JString::strtolower($search)));
 
 		// Query
-		$db 	= JFactory::getDBO();
+		$db    = JFactory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select(array('l.id','l.state','l.city','l.country','l.published','l.venue','l.ordering'));
 		$query->from('#__jem_venues as l');
@@ -286,8 +315,8 @@ class JEMModelEditevent extends JEMModelEvent
 	/**
 	 * contacts-Pagination
 	 **/
-	function getContactsPagination() {
-
+	function getContactsPagination()
+	{
 		$jemsettings = JemHelper::config();
 		$app         = JFactory::getApplication();
 		$limit       = $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
@@ -325,7 +354,7 @@ class JEMModelEditevent extends JEMModelEvent
 		$search       		= $this->_db->escape(trim(JString::strtolower($search)));
 
 		// Query
-		$db 	= JFactory::getDBO();
+		$db    = JFactory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select(array('con.*'));
 		$query->from('#__contact_details As con');

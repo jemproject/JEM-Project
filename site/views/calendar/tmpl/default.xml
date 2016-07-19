@@ -64,6 +64,24 @@
 				label="COM_JEM_MAX_EVENTS_PER_DAY"
 				description="COM_JEM_MAX_EVENTS_PER_DAY_DESC"
 			/>
+			<field name="show_addevent_icon" type="radio"
+				default="0"
+				label="COM_JEM_SHOWADDEVENTICON"
+				description="COM_JEM_SHOWADDEVENTICON_DESC"
+				class="btn-group btn-group-yesno"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
+			<field name="show_editevent_icon" type="radio"
+				default="0"
+				label="COM_JEM_SHOWEDITEVENTICON"
+				description="COM_JEM_SHOWEDITEVENTICON_DESC"
+				class="btn-group btn-group-yesno"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
 			<field type="spacer" name="myspacer3" hr="true" />
 			<field name="eventlinkcolor" type="color"
 				default="#000000"

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -210,6 +210,29 @@ class JemOutput
 	}
 
 	/**
+	 * Prepares addeventbutton for calendar days.
+	 *
+	 * @param string $urlparams additional url oarams, e.g. 'locid=123'
+	 *
+	 * Active in views:
+	 * all calendar views
+	 **/
+	static function prepareAddEventButton($urlparams = '')
+	{
+		$uri = JFactory::getURI();
+		$image = JHtml::_('image', 'com_jem/icon-16-new.png', JText::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
+		$url   = 'index.php?option=com_jem&task=event.add&a_id=0&date={date}&return='.base64_encode(urlencode($uri));
+		if (!empty($urlparams) && preg_match('/^[a-z]+=\w+$/i', $urlparams)) {
+			$url .= '&'.$urlparams;
+		}
+		$html  = '<div class="inline-button-right">';
+		$html .= JHtml::_('link', JRoute::_($url), $image, JemOutput::tooltip(JText::_('COM_JEM_DELIVER_NEW_EVENT'), JText::_('COM_JEM_SUBMIT_EVENT_DESC'), '', 'bottom'));
+		$html .= '</div>';
+
+		return $html;
+	}
+
+	/**
 	 * Writes Archivebutton
 	 *
 	 * @param array $params needed params
@@ -329,7 +352,7 @@ class JemOutput
 					} else {
 						$image = JText::_('COM_JEM_EDIT_EVENT');
 					}
-					$id = $item->did;
+					$id = isset($item->did) ? $item->did : $item->id;
 					$overlib = JText::_('COM_JEM_EDIT_EVENT_DESC');
 					$text = JText::_('COM_JEM_EDIT_EVENT');
 					$url = 'index.php?option=com_jem&task=event.edit&a_id='.$id.'&return='.base64_encode(urlencode($uri));

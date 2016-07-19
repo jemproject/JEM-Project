@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -239,20 +239,37 @@ defined('_JEXEC') or die;
 		}
 		$multidaydate .= '</div>';
 
+		//create little Edit icon on top right corner of event if user is allowed to edit
+		if (!$this->print && $this->params->get('show_editevent_icon', 0) && $row->params->get('access-edit', false)) {
+			$editicon  = '<div class="inline-button-right">';
+			$editicon .= JemOutput::editbutton($row, null, null, true, 'editevent');
+			$editicon .= '</div>';
+		} else {
+			$editicon = '';
+		}
+
 		//generate the output
 		// if we have exact one color from categories we can use this as background color of event
 		if (!empty($evbg_usecatcolor) && (count($catcolor) == 1)) {
 			$content .= '<div class="eventcontentinner" style="background-color:'.array_pop($catcolor).'">';
+			$content .= $editicon;
 			$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
 			$content .= $contentend . '</div>';
 		} else {
 			$content .= '<div class="eventcontentinner">' . $colorpic;
+			$content .= $editicon;
 			$content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
 			$content .= $contentend . '</div>';
 		}
 
 		$this->cal->setEventContent($year, $month, $day, $content);
 	endforeach;
+
+	// enable little icon right beside day number to allow event creation
+	if (!$this->print && $this->params->get('show_addevent_icon', 0) && !empty($this->permissions->canAddEvent)) {
+		$html = JemOutput::prepareAddEventButton('locid='.$this->locid);
+		$this->cal->enableNewEventLinks($html);
+	}
 
 	// print the calendar
 	echo $this->cal->showMonth();

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -159,6 +159,8 @@ class JemControllerEvent extends JemControllerForm
 
 		$itemId = $jinput->getInt('Itemid', 0);
 		$catId  = $jinput->getInt('catid', 0);
+		$locId  = $jinput->getInt('locid', 0);
+		$date   = $jinput->getCmd('date', '');
 		$return = $this->getReturnPage();
 
 		if ($itemId) {
@@ -167,6 +169,14 @@ class JemControllerEvent extends JemControllerForm
 
 		if($catId) {
 			$append .= '&catid='.$catId;
+		}
+
+		if($locId) {
+			$append .= '&locid='.$locId;
+		}
+
+		if($date) {
+			$append .= '&date='.$date;
 		}
 
 		if ($return) {
