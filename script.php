@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -642,6 +642,8 @@ class com_jemInstallerScript
 			'/media/com_jem/js/jquery.geocomplete.min.js',
 			// obsolete since JEM 1.9.7
 			'/administrator/components/com_jem/classes/Snoopy.class.php',
+			// obsolete since JEM 2.1.7
+			'/components/com_jem/views/event/tmpl/default_unregform.php',
 		);
 
 		// TODO There is an issue while deleting folders using the ftp mode

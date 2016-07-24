@@ -6,9 +6,13 @@
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
 JHtml::_('behavior.tooltip');
+
+JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
+
 $colspan = ($this->event->waitinglist ? 10 : 9);
 
 $detaillink = JRoute::_(JemHelperRoute::getEventRoute($this->event->id.':'.$this->event->alias));
@@ -74,11 +78,9 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 				<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 				&nbsp;
 			</div>
-			<?php if ($this->event->waitinglist): ?>
 			<div class="jem_fleft" style="white-space:nowrap;">
-				<?php echo JText::_('COM_JEM_STATUS').' '.$this->lists['waiting']; ?>
+				<?php echo JText::_('COM_JEM_STATUS').' '.$this->lists['status']; ?>
 			</div>
-			<?php endif; ?>
 			<div class="jem_fright">
 				<?php
 				echo '<label for="limit">'.JText::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
@@ -97,9 +99,7 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 					<th class="title"><?php echo JText::_('COM_JEM_EMAIL'); ?></th>
 					<?php } ?>
 					<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-					<?php if ($this->event->waitinglist): ?>
-					<th class="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-					<?php endif;?>
+					<th class="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 					<th class="title"><?php echo JText::_('COM_JEM_COMMENT'); ?></th>
 					<?php endif;?>
@@ -115,16 +115,14 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 					<?php if ($this->enableemailaddress == 1) {?>
 					<td><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
 					<?php } ?>
-					<td><?php echo JHtml::_('date',$row->uregdate,JText::_('DATE_FORMAT_LC2')); ?></td>
-					<?php if ($this->event->waitinglist): ?>
-					<td <?php echo JEMOutput::tooltip(JText::_($row->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING'), '', 'center'); ?>>
-						<?php if ($row->waiting):?>
-							<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$row->id),JHtml::_('image','com_jem/publish_y.png',JText::_('COM_JEM_ON_WAITINGLIST'),NULL,true)); ?>
-						<?php else: ?>
-							<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$row->id),JHtml::_('image','com_jem/tick.png', JText::_('COM_JEM_ATTENDEES_ATTENDING'),NULL,true)); ?>
-						<?php endif;?>
+					<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, JText::_('DATE_FORMAT_LC2')); } ?></td>
+					<td class="center">
+						<?php
+						$status = (int)$row->status;
+						if ($status === 1 && $row->waiting == 1) { $status = 2; }
+						echo JHtml::_('jemhtml.toggleAttendanceStatus', $status, $row->id, true);
+						?>
 					</td>
-					<?php endif;?>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 					<?php $cmnt = (strlen($row->comment) > 16) ? (substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
 					<td><?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>

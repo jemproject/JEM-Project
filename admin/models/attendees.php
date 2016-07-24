@@ -71,8 +71,8 @@ class JemModelAttendees extends JModelList
 		$this->setState('filter_type', $filter_type);
 		$filter_search    = $app->getUserStateFromRequest( 'com_jem.attendees.filter_search',    'filter_search',   '', 'string' );
 		$this->setState('filter_search', $filter_search);
-		$filter_waiting   = $app->getUserStateFromRequest( 'com_jem.attendees.waiting',          'filter_waiting',   0, 'int' );
-		$this->setState('filter_waiting', $filter_waiting);
+		$filter_status    = $app->getUserStateFromRequest( 'com_jem.attendees.filter_status',    'filter_status',   -2, 'int' );
+		$this->setState('filter_status', $filter_status);
 
 		parent::populateState('u.username', 'asc');
 	}
@@ -93,7 +93,7 @@ class JemModelAttendees extends JModelList
 	{
 		// Compile the store id.
 		$id.= ':' . $this->getState('filter_search');
-		$id.= ':' . $this->getState('filter_waitinglist');
+		$id.= ':' . $this->getState('filter_status');
 		$id.= ':' . $this->getState('filter_type');
 
 		return parent::getStoreId($id);
@@ -139,17 +139,11 @@ class JemModelAttendees extends JModelList
 		$filter_status = $this->getState('filter_status', -2);
 		if ($filter_status > -2) {
 			if ($filter_status >= 1) {
-				$waiting = $filter_status == 1 ? 0 : 1;
+				$waiting = $filter_status == 2 ? 1 : 0;
 				$filter_status = 1;
-				$query->where('(a.waitinglist = 0 OR r.waiting = '.$db->quote($filter_waiting-1).')');
+				$query->where('(a.waitinglist = 0 OR r.waiting = '.$db->quote($waiting).')');
 			}
 			$query->where('r.status = '.$db->quote($filter_status));
-		} else { // the old way, but only for status 1
-			$query->where('r.status = 1');
-			$filter_waiting = $this->getState('filter_waiting');
-			if ($filter_waiting > 0) {
-				$query->where('(a.waitinglist = 0 OR r.waiting = '.$db->quote($filter_waiting-1).')');
-			}
 		}
 
 		// search name
@@ -271,7 +265,7 @@ class JemModelAttendees extends JModelList
 					$item->name,
 					$item->username,
 					$item->email,
-					JHtml::_('date',$item->uregdate, JText::_('DATE_FORMAT_LC2')),
+					empty($item->uregdate) ? '' : JHtml::_('date', $item->uregdate, JText::_('DATE_FORMAT_LC2')),
 					JText::_($txt_stat)
 				);
 			if ($comments) {

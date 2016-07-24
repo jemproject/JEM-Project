@@ -211,7 +211,7 @@
 			<option value="1">JYES</option>
 			<option value="2">COM_JEM_OPTIONAL</option>
 		</field>
-		<field name="showfrounregistra" type="list"
+		<!--field name="showfrounregistra" type="list"
 			label="COM_JEM_SUBMIT_UNREGISTER"
 			description="COM_JEM_SUBMIT_UNREGISTER_DESC"
 			class="inputbox"
@@ -221,6 +221,16 @@
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 			<option value="2">COM_JEM_OPTIONAL</option>
+		</field-->
+		<field name="regallowinvitation" type="radio"
+			label="COM_JEM_ALLOW_INVITATION"
+			description="COM_JEM_ALLOW_INVITATION_DESC"
+			class="inputbox btn-group btn-group-yesno"
+			default="0"
+			required="false"
+		>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
 		</field>
 		<field name="regallowcomments" type="radio"
 			label="COM_JEM_ALLOW_REGISTER_COMMENTS"

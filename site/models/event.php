@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -411,14 +411,14 @@ class JemModelEvent extends JModelItem
 	}
 
 	/**
-	 * Method to check if the user is already registered
+	 * Method to get user registration data if available.
 	 *
 	 * @access public
-	 * @return mixed false if not registered, -1 if not attending,
-	 *               0 if invited, 1 for registerd, 2 for waiting list
-	 *
+	 * @return mixed false if not registered, object with id, status, comment else
+	 *               status -1 if not attending, 0 if invited,
+	 *               1 if attending, 2 if on waiting list
 	 */
-	function getUserIsRegistered($eventId = null)
+	function getUserRegistration($eventId = null)
 	{
 		// Initialize variables
 		$user = JemFactory::getUser();
@@ -430,20 +430,38 @@ class JemModelEvent extends JModelItem
 
 		// usercheck
 		// -1 if user will not attend, 0 if invened/unknown, 1 if registeredm 2 if on waiting list
-		$query = 'SELECT IF (status > 0, waiting + 1, status) AS status'
+		$query = 'SELECT IF (status > 0, waiting + 1, status) AS status, id, comment'
 		       . ' FROM #__jem_register'
 		       . ' WHERE uid = ' . $userid
 		       . ' AND event = ' . $this->_db->quote($eventId);
 		$this->_db->setQuery($query);
 
 		try {
-			$result = $this->_db->loadResult();
+			$result = $this->_db->loadObject();
 		}
 		catch (Exception $e) {
 			$result = false;
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Method to check if the user is already registered
+	 *
+	 * @access public
+	 * @return mixed false if not registered, -1 if not attending,
+	 *               0 if invited, 1 if attending, 2 if on waiting list
+	 *
+	 */
+	function getUserIsRegistered($eventId = null)
+	{
+		$obj = $this->getUserRegistration($eventId);
+		if (is_object($obj) && isset($obj->status)) {
+			return $obj->status;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -532,13 +550,15 @@ class JemModelEvent extends JModelItem
 	{
 		$app = JFactory::getApplication('site');
 		$user = JemFactory::getUser();
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 
-		$noreg   = 'off';//$app->input->getString('noreg_check', 'off');
+		$status  = $app->input->getInt('reg_check', 0);
 		$comment = $app->input->getString('reg_comment', '');
 		$comment = JFilterOutput::cleanText($comment);
+		$regid   = $app->input->getInt('regid', 0);
 
 		$eventId = (int) $this->_registerid;
+		$registration = $this->getUserRegistration($eventId);
 
 		$uid = (int) $user->get('id');
 		$onwaiting = 0;
@@ -558,17 +578,14 @@ class JemModelEvent extends JModelItem
 		catch (Exception $e) {
 			$event = false;
 		}
+
 		if (empty($event)) {
 			$this->setError(JText::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
 			return false;
 		}
 
-		if ($noreg == 'on') {
-			$status = -1;
-		}
-		else {
-			$status = 1;
-
+		$oldstat = is_object($registration) ? $registration->status : 0;
+		if ($status == 1 && $status != $oldstat) {
 			if ($event->maxplaces > 0) {	// there is a max
 				// check if the user should go on waiting list
 				if ($event->booked >= $event->maxplaces) {
@@ -593,8 +610,16 @@ class JemModelEvent extends JModelItem
 		$obj->uip = $uip;
 		$obj->comment = $comment;
 
+		$result = false;
 		try {
-			$this->_db->insertObject('#__jem_register', $obj);
+			if ($regid) {
+				$obj->id = $regid;
+				$this->_db->updateObject('#__jem_register', $obj, 'id');
+				$result = $regid;
+			} else {
+				$this->_db->insertObject('#__jem_register', $obj);
+				$result = $this->_db->insertid();
+			}
 		}
 		catch (Exception $e) {
 			// we have a unique user-event key so registering twice will fail
@@ -603,7 +628,7 @@ class JemModelEvent extends JModelItem
 			return false;
 		}
 
-		return $this->_db->insertid();
+		return $result;
 	}
 
 	/**

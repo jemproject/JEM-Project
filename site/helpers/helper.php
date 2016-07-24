@@ -838,25 +838,37 @@ class JemHelper
 
 		$db = Jfactory::getDBO();
 
-		$query = ' SELECT COUNT(id) as total, SUM(waiting) as waitinglist, event '
-				. ' FROM #__jem_register '
-				. ' WHERE event IN (' . $ids .')'
-				. '   AND status = 1'                     /// TODO
-				. ' GROUP BY event ';
+		// status 1: user registered (attendee or waiting list), status -1: user exlicitely unregistered, status 0: user is invited but hadn't answered yet
+		$query = ' SELECT COUNT(id) as total,'
+		       . '        COUNT(IF(status =  1 AND waiting <= 0, 1, null)) AS registered,'
+		       . '        COUNT(IF(status =  1 AND waiting >  0, 1, null)) AS waiting,'
+		       . '        COUNT(IF(status = -1,                  1, null)) AS unregistered,'
+		       . '        COUNT(IF(status =  0,                  1, null)) AS invited,'
+		       . '        event '
+		       . ' FROM #__jem_register '
+		       . ' WHERE event IN (' . $ids .')'
+		       . ' GROUP BY event ';
 
 		$db->setQuery($query);
 		$res = $db->loadObjectList('event');
 
 		foreach ($data as $k => &$event) { // by reference for direct edit
 			if (isset($res[$event->id])) {
-				$event->waiting  = $res[$event->id]->waitinglist;
-				$event->regCount = $res[$event->id]->total - $res[$event->id]->waitinglist;
+				$event->regTotal   = $res[$event->id]->total;
+				$event->regCount   = $res[$event->id]->registered;
+				$event->waiting    = $res[$event->id]->waiting;
+				$event->unregCount = $res[$event->id]->unregistered;
+				$event->invited    = $res[$event->id]->invited;
 			} else {
-				$event->waiting  = 0;
-				$event->regCount = 0;
+				$event->regTotal   = 0;
+				$event->regCount   = 0;
+				$event->waiting    = 0;
+				$event->unregCount = 0;
+				$event->invited    = 0;
 			}
-			$event->available = $event->maxplaces - $event->regCount;
+			$event->available = max(0, $event->maxplaces - $event->regCount);
 		}
+
 		return $data;
 	}
 

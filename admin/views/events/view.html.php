@@ -86,7 +86,7 @@ class JemViewEvents extends JemAdminView
 		$this->addToolbar();
 
 		parent::display($tpl);
-		}
+	}
 
 
 	/**

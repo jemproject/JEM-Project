@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -179,23 +179,29 @@ defined('_JEXEC') or die;
 					<?php if ($this->params->get('displayattendeecolumn') == 1) : ?>
 					<td headers="jem_atte" align="center" valign="top">
 						<?php
-						if ($row->registra == 1) {
+						if ($row->registra >= 1) {
 							$linkreg  = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$row->id.'&Itemid='.$this->itemid;
 							$count = $row->regCount;
 							if ($row->maxplaces)
 							{
 								$count .= '/'.$row->maxplaces;
 								if ($row->waitinglist && $row->waiting) {
-									$count .= ' +'.$row->waiting;
+									$count .= ' + '.$row->waiting;
 								}
 							}
+							if (!empty($row->unregCount)) {
+								$count .= ' - '.(int)$row->unregCount;
+							}
+							if (!empty($row->invited)) {
+								$count .= ', '.(int)$row->invited .' ?';
+							}
 
-							if ($count > 0 && $row->published == 1) {
-								?>
-								<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>">
-									<?php echo $count; ?>
-								</a>
-								<?php
+							if (!empty($row->regTotal) || empty($row->finished)) {
+							?>
+							<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>">
+								<?php echo $count; ?>
+							</a>
+							<?php
 							} else {
 								echo $count;
 							}

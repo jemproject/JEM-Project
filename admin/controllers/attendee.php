@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -112,7 +112,8 @@ class JemControllerAttendee extends JControllerLegacy
 			$model->setId($id);
 			$old_data = $model->getData();
 		}
-		$old_uid = (!empty($old_data->uid) ? $old_data->uid : 0);
+		$old_uid    = (!empty($old_data->uid)    ? $old_data->uid    : 0);
+		$old_status = (!empty($old_data->status) ? $old_data->status : 0);
 
 		if ($row = $model->store($post)) {
 			if ($sendemail == 1) {
@@ -123,7 +124,7 @@ class JemControllerAttendee extends JControllerLegacy
 					$dispatcher->trigger('onEventUserUnregistered', array($old_data->event, $old_data));
 				}
 				// there is a new user which wasn't before -> send register mails
-				if ($uid && ($old_uid != $uid)) {
+				if ($uid && (($old_uid != $uid) || ($row->status != $old_status))) {
 					$dispatcher->trigger('onEventUserRegistered', array($row->id));
 				}
 				// but show warning if mailer is disabled

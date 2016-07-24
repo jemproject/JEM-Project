@@ -7,6 +7,8 @@
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
+
+JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 ?>
 
 <h2><?php echo JText::_('COM_JEM_REGISTERED_TO'); ?></h2>
@@ -140,21 +142,24 @@ defined('_JEXEC') or die;
 					</td>
 					<?php endif; ?>
 
-					<?php if ($row->waitinglist): ?>
-					<td <?php echo JEMOutput::tooltip(JText::_($row->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING'), '', 'center'); ?>
-						<?php if ($row->waiting):?>
-							<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$row->id),JHtml::_('image','com_jem/publish_y.png',JText::_('COM_JEM_ON_WAITINGLIST'),NULL,true)); ?>
-						<?php else: ?>
-							<?php echo JHtml::_('link',JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$row->id),JHtml::_('image','com_jem/tick.png', JText::_('COM_JEM_ATTENDEES_ATTENDING'),NULL,true)); ?>
-						<?php endif;?>
+					<td class="center">
+						<?php
+						$status = (int)$row->status;
+						if ($status === 1 && $row->waiting == 1) { $status = 2; }
+						echo JHtml::_('jemhtml.toggleAttendanceStatus', $status, $row->id, false, $this->print);
+						?>
 					</td>
-					<?php else : ?>
-					<td> </td>
-					<?php endif; ?>
 
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-					<?php $cmnt = (strlen($row->comment) > 16) ? (substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
-					<td><?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
+					<td>
+						<?php
+						$len  = ($this->print) ? 256 : 16;
+						$cmnt = (strlen($row->comment) > $len) ? (substr($row->comment, 0, $len - 2).'&hellip;') : $row->comment;
+						if (!empty($cmnt)) :
+							echo ($this->print) ? $cmnt : JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null);
+						endif;
+						?>
+					</td>
 					<?php endif; ?>
 				</tr>
 

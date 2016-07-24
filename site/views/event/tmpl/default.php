@@ -338,7 +338,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 	<?php endif; ?>
 
 	<!-- Registration -->
-	<?php if ($this->item->registra == 1) : ?>
+	<?php if ($this->showAttendees) : ?>
 		<h2 class="register"><?php echo JText::_('COM_JEM_REGISTRATION'); ?>:</h2>
 		<?php echo $this->loadTemplate('attendees'); ?>
 	<?php endif; ?>

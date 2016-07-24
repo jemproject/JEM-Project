@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -41,9 +41,7 @@ defined('_JEXEC') or die; ?>
 			<?php if ($this->enableemailaddress == 1) : ?>
 			<th class="title"><?php echo JText::_( 'COM_JEM_EMAIL' ); ?></th>
 			<?php endif; ?>
-			<?php if ($this->event->waitinglist): ?>
-			<th class="title"><?php echo JText::_('COM_JEM_HEADER_WAITINGLIST_STATUS' ); ?></th>
-			<?php endif; ?>
+			<th class="title"><?php echo JText::_('COM_JEM_STATUS' ); ?></th>
 			<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 			<th class="title"><?php echo JText::_('COM_JEM_COMMENT'); ?></th>
 			<?php endif; ?>
@@ -58,13 +56,26 @@ defined('_JEXEC') or die; ?>
 		?>
 		<tr class="<?php echo "row$k"; ?>">
 			<td><?php echo $regname ? $row->name : $row->username; ?></td>
-			<td><?php echo JHtml::_('date', $row->uregdate, JText::_('DATE_FORMAT_LC2')); ?></td>
+			<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, JText::_('DATE_FORMAT_LC2')); } ?></td>
 			<?php if ($this->enableemailaddress == 1) : ?>
 			<td><?php echo $row->email; ?></td>
 			<?php endif; ?>
-			<?php if ($this->event->waitinglist): ?>
-			<td><?php echo JText::_($row->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING'); ?></td>
-			<?php endif; ?>
+			<?php
+			switch ($row->status) :
+			case -1: // explicitely unregistered
+				$text = 'COM_JEM_ATTENDEES_NOT_ATTENDING';
+				break;
+			case  0: // invited, not answered yet
+				$text = 'COM_JEM_ATTENDEES_INVITED';
+				break;
+			case  1: // registered
+				$text = $row->waiting ? 'COM_JEM_ATTENDEES_ON_WAITINGLIST' : 'COM_JEM_ATTENDEES_ATTENDING';
+				break;
+			default: // oops...
+				$text = 'COM_JEM_ATTENDEES_STATUS_UNKNOWN';
+				break;
+			endswitch; ?>
+			<td><?php echo JText::_($text); ?></td>
 			<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 			<td><?php echo (strlen($row->comment) > 256) ? (substr($row->comment, 0, 254).'&hellip;') : $row->comment; ?></td>
 			<?php endif; ?>
@@ -75,5 +86,5 @@ defined('_JEXEC') or die; ?>
 </table>
 
 <div class="copyright">
-	<?php echo JEMOutput::footer( ); ?>
+	<?php echo JemOutput::footer(); ?>
 </div>

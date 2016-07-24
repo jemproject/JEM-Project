@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -22,17 +22,17 @@ class JemViewMyattendances extends JViewLegacy
 		$app = JFactory::getApplication();
 
 		// initialize variables
-		$document 		= JFactory::getDocument();
-		$jemsettings 	= JemHelper::config();
-		$settings 		= JemHelper::globalattribs();
-		$menu 			= $app->getMenu();
-		$menuitem		= $menu->getActive();
-		$params 		= $app->getParams();
-		$uri 			= JFactory::getURI();
-		$user			= JemFactory::getUser();
-		$pathway 		= $app->getPathWay();
-		$print			= $app->input->getBool('print', false);
-		$task			= $app->input->getCmd('task', '');
+		$document    = JFactory::getDocument();
+		$jemsettings = JemHelper::config();
+		$settings    = JemHelper::globalattribs();
+		$menu        = $app->getMenu();
+		$menuitem    = $menu->getActive();
+		$params      = $app->getParams();
+		$uri         = JFactory::getURI();
+		$user        = JemFactory::getUser();
+		$pathway     = $app->getPathWay();
+		$print       = $app->input->getBool('print', false);
+		$task        = $app->input->getCmd('task', '');
 
 		// redirect if not logged in
 		if (!$user->get('id')) {
@@ -61,11 +61,11 @@ class JemViewMyattendances extends JViewLegacy
 		$noattending = (!$attending) ? 1 : 0;
 
 		// get variables
-		$filter_order		= $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', 	'a.dates', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myattendances.filter_order_Dir', 'filter_order_Dir',	'', 'word');
-// 		$filter_state 		= $app->getUserStateFromRequest('com_jem.myattendances.filter_state', 'filter_state', 	'*', 'word');
-		$filter 			= $app->getUserStateFromRequest('com_jem.myattendances.filter', 'filter', '', 'int');
-		$search 			= $app->getUserStateFromRequest('com_jem.myattendances.filter_search', 'filter_search', '', 'string');
+		$filter_order     = $app->getUserStateFromRequest('com_jem.myattendances.filter_order',     'filter_order',     'a.dates', 'cmd');
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.myattendances.filter_order_Dir', 'filter_order_Dir', '',       'word');
+// 		$filter_state     = $app->getUserStateFromRequest('com_jem.myattendances.filter_state',     'filter_state',     '*',      'word');
+		$filter           = $app->getUserStateFromRequest('com_jem.myattendances.filter',           'filter',           '',        'int');
+		$search           = $app->getUserStateFromRequest('com_jem.myattendances.filter_search',    'filter_search',    '',     'string');
 
 		// search filter
 		$filters = array();
@@ -138,19 +138,20 @@ class JemViewMyattendances extends JViewLegacy
 		// Don't add things from this view, no good starting point
 		$permissions = new stdClass();
 
-		$this->action					= $uri->toString();
-		$this->attending				= $attending;
-		$this->task						= $task;
-		$this->params					= $params;
-		$this->attending_pagination 	= $attending_pagination;
-		$this->jemsettings				= $jemsettings;
-		$this->settings					= $settings;
-		$this->permissions				= $permissions;
-		$this->pagetitle				= $pagetitle;
-		$this->print_link				= $print_link;
-		$this->lists 					= $lists;
-		$this->noattending				= $noattending;
-		$this->pageclass_sfx			= htmlspecialchars($pageclass_sfx);
+		$this->action               = $uri->toString();
+		$this->attending            = $attending;
+		$this->task                 = $task;
+		$this->params               = $params;
+		$this->attending_pagination = $attending_pagination;
+		$this->jemsettings          = $jemsettings;
+		$this->settings             = $settings;
+		$this->permissions          = $permissions;
+		$this->pagetitle            = $pagetitle;
+		$this->print_link           = $print_link;
+		$this->print                = $print;
+		$this->lists                = $lists;
+		$this->noattending          = $noattending;
+		$this->pageclass_sfx        = htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);
 	}

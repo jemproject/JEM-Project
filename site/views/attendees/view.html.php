@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -48,8 +48,8 @@ class JemViewAttendees extends JViewLegacy {
 
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest('com_jem.attendees.filter_order', 'filter_order', 'u.username', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.attendees.filter_order_Dir',	'filter_order_Dir',	'', 'word');
-		$filter_waiting		= $app->getUserStateFromRequest('com_jem.attendees.waiting',	'filter_waiting',	0, 'int');
+		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.attendees.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		$filter_status		= $app->getUserStateFromRequest('com_jem.attendees.filter_status', 'filter_status', -2, 'int');
 		$filter 			= $app->getUserStateFromRequest('com_jem.attendees.filter', 'filter', '', 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
 
@@ -102,11 +102,13 @@ class JemViewAttendees extends JViewLegacy {
 		// search filter
 		$lists['search'] = $search;
 
-		// waiting list status
-		$options = array(JHtml::_('select.option', 0, JText::_('COM_JEM_ATT_FILTER_ALL')),
-		                 JHtml::_('select.option', 1, JText::_('COM_JEM_ATT_FILTER_ATTENDING')),
-		                 JHtml::_('select.option', 2, JText::_('COM_JEM_ATT_FILTER_WAITING'))) ;
-		$lists['waiting'] = JHtml::_('select.genericlist', $options, 'filter_waiting', array('class'=>'inputbox','onChange'=>'this.form.submit();'), 'value', 'text', $filter_waiting);
+		// attendee status
+		$options = array(JHtml::_('select.option', -2, JText::_('COM_JEM_ATT_FILTER_ALL')),
+		                 JHtml::_('select.option',  0, JText::_('COM_JEM_ATT_FILTER_INVITED')),
+		                 JHtml::_('select.option', -1, JText::_('COM_JEM_ATT_FILTER_NOT_ATTENDING')),
+		                 JHtml::_('select.option',  1, JText::_('COM_JEM_ATT_FILTER_ATTENDING')),
+		                 JHtml::_('select.option',  2, JText::_('COM_JEM_ATT_FILTER_WAITING'))) ;
+		$lists['status'] = JHtml::_('select.genericlist', $options, 'filter_status', array('class'=>'inputbox','onChange'=>'this.form.submit();'), 'value', 'text', $filter_status);
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;

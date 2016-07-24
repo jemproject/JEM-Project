@@ -251,6 +251,7 @@ class JEMModelEvent extends JemModelAdmin
 
 		// Variables
 		$cats             = $data['cats'];
+		$invitedusers     = $data['invited'];
 		$recurrencenumber = $jinput->get('recurrence_number', '', 'int');
 		$recurrencebyday  = $jinput->get('recurrence_byday', '', 'string');
 		$metakeywords     = $jinput->get('meta_keywords', '', '');
@@ -260,6 +261,13 @@ class JEMModelEvent extends JemModelAdmin
 		// event maybe first of recurrence set -> dissolve complete set
 		if (JemHelper::dissolve_recurrence($data['id'])) {
 			$this->cleanCache();
+		}
+
+		// on frontend we have dedicated field for 'reginvitedonly' -> set 'registra' to 2 then
+		if ($jemsettings->regallowinvitation == 1) {
+			if (array_key_exists('reginvitedonly', $data) && ($data['reginvitedonly'] == 1) && !empty($data['registra'])) {
+				$data['registra'] = 2;
+			}
 		}
 
 		// convert international date formats...
@@ -351,17 +359,22 @@ class JEMModelEvent extends JemModelAdmin
 				if ($allowed) {
 					$attach['access'] 	= $old['access'][$k];
 				} // else don't touch this field
-				JEMAttachment::update($attach);
+				JemAttachment::update($attach);
 			}
 
 			// Store cats
 			$saved |= $this->_storeCategoriesSelected($pk, $cats, !$backend, $new);
 
+			// Store invited users
+			if ($jemsettings->regallowinvitation == 1) {
+				$saved |= $this->_storeUsersInvited($pk, $invitedusers, !$backend, $new);
+			}
+
 			// check for recurrence
 			// when filled it will perform the cleanup function
 			$table->load($pk);
 			if (($table->recurrence_number > 0) && ($table->dates != null)) {
-				JEMHelper::cleanup(2); // 2 = force on save, needs special attention
+				JemHelper::cleanup(2); // 2 = force on save, needs special attention
 			}
 		}
 
@@ -441,6 +454,96 @@ class JEMModelEvent extends JemModelAdmin
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * Method to update cats_event_selections table.
+	 * Records of previously selected categories will be removed
+	 * and newly selected categories will be stored.
+	 * Because user may not have permissions for all categories on frontend
+	 * records with non-permitted categories will be untouched.
+	 *
+	 * @param	int		The event id.
+	 * @param	mixed	The user ids as array or comma separated string.
+	 * @param   bool    Flag to indicate if we are on frontend
+	 * @param   bool    Flag to indicate new event
+	 *
+	 * @return	boolean	True on success.
+	 */
+	protected function _storeUsersInvited($eventId, $users, $frontend, $new)
+	{
+		$eventId = (int)$eventId;
+		if (!is_array($users)) {
+			$users = explode(',', $users);
+		}
+		$users = array_unique($users);
+		$users = array_filter($users);
+
+		if (empty($eventId)) {
+			return false;
+		}
+
+		$db   = $this->getDbo();
+
+		# Get current registrations
+		$query = $db->getQuery(true);
+		$query->select(array('reg.id, reg.uid, reg.status, reg.waiting'));
+		$query->from('#__jem_register As reg');
+		$query->where('reg.event = ' . $eventId);
+		$db->setQuery($query);
+		$regs = $db->loadObjectList('uid');
+
+		JPluginHelper::importPlugin('jem');
+		$dispatcher = JDispatcher::getInstance();
+
+		# Add new records, ignore users already registered
+		foreach ($users AS $user)
+		{
+			if (!array_key_exists($user, $regs)) {
+				$query = $db->getQuery(true);
+				$query->insert('#__jem_register');
+				$query->columns(array('event', 'uid', 'status'));
+				$query->values($eventId.','.$user.',0');
+				$db->setQuery($query);
+				try {
+					$ret = $db->execute();
+				} catch (Exception $e) {
+					JemHelper::addLogEntry('Exception: '. $e->getMessage(), __METHOD__, JLog::ERROR);
+					$ret = false;
+				}
+
+				if ($ret !== false) {
+					$id = $db->insertid();
+					$dispatcher->trigger('onEventUserRegistered', array($id));
+				}
+			}
+		}
+
+		# Remove obsolete invitations
+		foreach ($regs as $reg)
+		{
+			if (($reg->status == 0) && (array_search($reg->uid, $users) === false)) {
+				$query = $db->getQuery(true);
+				$query->delete('#__jem_register');
+				$query->where('id = '.$reg->id);
+				$db->setQuery($query);
+				try {
+					$ret = $db->execute();
+				} catch (Exception $e) {
+					JemHelper::addLogEntry('Exception: '. $e->getMessage(), __METHOD__, JLog::ERROR);
+					$ret = false;
+				}
+
+				if ($ret !== false) {
+					$dispatcher->trigger('onEventUserUnregistered', array($eventId, $reg));
+				}
+			}
+		}
+
+		$cache = JFactory::getCache('com_jem');
+		$cache->clean();
+
+		return true;
 	}
 
 	/**

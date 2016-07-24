@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2015 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -18,7 +18,7 @@ jimport('joomla.html.pagination');
  * @package JEM
  *
 */
-class JEMModelMyevents extends JModelLegacy
+class JemModelMyevents extends JModelLegacy
 {
 	/**
 	 * Events data array
@@ -99,6 +99,7 @@ class JEMModelMyevents extends JModelLegacy
 		}
 
 		if ($this->_events) {
+			$now = time();
 			foreach ($this->_events as $i => $item) {
 				$item->categories = $this->getCategories($item->eventid);
 
@@ -110,15 +111,21 @@ class JEMModelMyevents extends JModelLegacy
 						// Set event params.
 						$registry = new JRegistry();
 						$registry->loadString($item->attribs);
-						$item->params = clone JEMHelper::globalattribs();
+						$item->params = clone JemHelper::globalattribs();
 						$item->params->merge($registry);
 					}
 					# edit state access permissions.
 					$item->params->set('access-change', $user->can('publish', 'event', $item->id, $item->created_by));
+
+					# calculate if event has finished (which e.g. makes adding attendees useless)
+					$date = $item->enddates ? $item->enddates : $item->dates;
+					$time = $item->endtimes ? $item->endtimes : $item->times;
+					$ts = strtotime($date . ' ' . $time);
+					$item->finished = $ts && ($ts < $now); // we have a timestamp and it's in the past
 				}
 			}
 
-			JEMHelper::getAttendeesNumbers($this->_events); // does directly edit events
+			JemHelper::getAttendeesNumbers($this->_events); // does directly edit events
 		}
 
 		return $this->_events;
@@ -258,9 +265,9 @@ class JEMModelMyevents extends JModelLegacy
 	protected function _buildWhere()
 	{
 		$app      = JFactory::getApplication();
-		$task     = $app->input->get('task', '');
+		$task     = $app->input->getCmd('task', '');
 		$params   = $app->getParams();
-		$settings = JEMHelper::globalattribs();
+		$settings = JemHelper::globalattribs();
 		$user     = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels   = $user->getAuthorisedViewLevels();

@@ -266,12 +266,14 @@ class JemControllerEvent extends JemControllerForm
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid Token');
 
-		$id = JFactory::getApplication()->input->getInt('rdid', 0);
+		$id  = JFactory::getApplication()->input->getInt('rdid', 0);
+		$rid = JFactory::getApplication()->input->getInt('regid', 0);
 
 		// Get the model
 		$model = $this->getModel('Event', 'JemModel');
 
-		if ($model->getUserIsRegistered($id)) {
+		$reg = $model->getUserRegistration($id);
+		if ($reg !== false && $reg->id != $rid) {
 			$msg = JText::_('COM_JEM_ALLREADY_REGISTERED');
 			$this->setRedirect(JRoute::_(JEMHelperRoute::getEventRoute($id), false), $msg, 'error');
 			$this->redirect();
@@ -288,6 +290,8 @@ class JemControllerEvent extends JemControllerForm
 			$this->redirect();
 			return;
 		}
+
+		JemHelper::updateWaitingList($id);
 
 		JPluginHelper::importPlugin('jem');
 		$dispatcher = JDispatcher::getInstance();

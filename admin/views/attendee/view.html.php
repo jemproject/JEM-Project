@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -21,6 +21,8 @@ class JemViewAttendee extends JViewLegacy {
 		$document = JFactory::getDocument();
 		$jinput   = JFactory::getApplication()->input;
 
+		$this->jemsettings = JemHelper::config();
+
 		// Load the form validation behavior
 		JHtml::_('behavior.formvalidation');
 
@@ -31,7 +33,7 @@ class JemViewAttendee extends JViewLegacy {
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		//Get data from the model
-		$row		= $this->get('Data');
+		$row = $this->get('Data');
 
 		//build selectlists
 		$lists = array();

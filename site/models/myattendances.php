@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -166,13 +166,20 @@ class JemModelMyattendances extends JModelLegacy
 	 */
 	protected function _buildOrderByAttending()
 	{
-		$app = JFactory::getApplication();
+		$app  = JFactory::getApplication();
+		$task = $app->input->getCmd('task', '');
 
-		$filter_order		= $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', 'a.dates', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myattendances.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+		$filter_order = $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$filter_order = JFilterInput::getInstance()->clean($filter_order, 'cmd');
 
-		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		// Reverse default order for dates in archive mode
+		$filter_order_DirDefault = 'ASC';
+		if (($task == 'archive') && ($filter_order == 'a.dates')) {
+			$filter_order_DirDefault = 'DESC';
+		}
+
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.myattendances.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
+		$filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
 		if ($filter_order == 'a.dates') {
 			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir;

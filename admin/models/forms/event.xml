@@ -253,7 +253,18 @@
 	</fieldset>
 
 	<fieldset name="registration">
-		<field name="registra" type="radio"
+		<field name="registra" type="list"
+			label="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION"
+			description="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION_DESC"
+			class="inputbox"
+			default="0"
+			required="false"
+		>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+			<option value="2">COM_JEM_INVITED_USERS_ONLY</option>
+		</field>
+		<!--field name="registra" type="radio"
 			   class="inputbox btn-group btn-group-yesno"
 			   label="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION"
 			   description="COM_JEM_EVENT_FIELD_ENABLE_REGISTRATION_DESC"
@@ -261,8 +272,8 @@
 		>
 			<option value="1">JYES</option>
 			<option value="0">JNO</option>
-		</field>
-		<field name="unregistra" type="radio"
+		</field-->
+		<!--field name="unregistra" type="radio"
 			   class="inputbox btn-group btn-group-yesno"
 			   label="COM_JEM_EVENT_FIELD_ENABLE_UNREGISTRATION"
 			   description="COM_JEM_EVENT_FIELD_ENABLE_UNREGISTRATION_DESC"
@@ -270,7 +281,7 @@
 		>
 			<option value="1">JYES</option>
 			<option value="0">JNO</option>
-		</field>
+		</field-->
 		<field name="maxplaces" type="text"
 			   size="4"
 			   class="inputbox"

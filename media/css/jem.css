@@ -121,6 +121,10 @@ div#jem .button1 {
 	-moz-border-radius:5px;
 	-webkit-border-radius:5px
 }
+div#jem .button1:disabled,
+div#jem .button1:disabled:hover {
+	color: #999;
+}
 
 div#jem .button3 {
 	cursor:pointer;
@@ -297,6 +301,12 @@ div#jem .googlemap {
 div#jem .icon-inline {
 	height: 1em;
 	margin-left: 0.3em;
+}
+
+div#jem .icon-inline-left {
+	height: 1em;
+	margin-left: 0;
+	margin-right: 0.3em;
 }
 
 /**

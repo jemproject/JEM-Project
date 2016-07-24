@@ -33,6 +33,11 @@ class JemViewEditevent extends JViewLegacy
 			return;
 		}
 
+		if ($this->getLayout() == 'chooseusers') {
+			$this->_displaychooseusers($tpl);
+			return;
+		}
+
 		// Initialise variables.
 		$jemsettings = JemHelper::config();
 		$settings    = JemHelper::globalattribs();
@@ -57,6 +62,7 @@ class JemViewEditevent extends JViewLegacy
 
 		$this->form = $this->get('Form');
 		$this->return_page = $this->get('ReturnPage');
+		$this->invited = (array)$this->get('InvitedUsers');
 
 		// check for data error
 		if (empty($item)) {
@@ -208,6 +214,12 @@ class JemViewEditevent extends JViewLegacy
 			$this->form->setFieldAttribute('userfile', 'required', 'true');
 		}
 
+		// configure invited field
+		if ($jemsettings->regallowinvitation == 1) {
+			$this->form->setValue('invited', null, implode(',', $this->invited));
+			$this->form->setFieldAttribute('invited', 'eventid', (int)$this->item->id);
+		}
+
 		$this->_prepareDocument();
 		parent::display($tpl);
 	}
@@ -349,5 +361,62 @@ class JemViewEditevent extends JViewLegacy
 
 		parent::display($tpl);
 	}
+
+
+	/**
+	 * Creates the output for the users select listing
+	 */
+	protected function _displaychooseusers($tpl)
+	{
+		$app         = JFactory::getApplication();
+		$jinput      = $app->input;
+		$jemsettings = JemHelper::config();
+	//	$db          = JFactory::getDBO();
+		$document    = JFactory::getDocument();
+		$model       = $this->getModel();
+
+		// no filters, hard-coded
+		$filter_order     = 'usr.name';
+		$filter_order_Dir = '';
+		$filter_type      = '';
+		$search           = '';
+		$limitstart       = 0;
+		$limit            = 0;
+		$eventId          = $jinput->getInt('a_id', 0);
+
+		JHtml::_('behavior.tooltip');
+		JHtml::_('behavior.modal', 'a.flyermodal');
+
+		// Load css
+		JemHelper::loadCss('jem');
+
+		$document->setTitle(JText::_('COM_JEM_SELECT_USERS'));
+
+		// Get/Create the model
+		$model->setState('event.id', $eventId);
+		$rows       = $this->get('Users');
+		$pagination = $this->get('UsersPagination');
+
+		// table ordering
+		$lists['order_Dir'] = $filter_order_Dir;
+		$lists['order']     = $filter_order;
+
+		//Build search filter - unused
+		$filters = array();
+		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME'));
+		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+
+		// search filter - unused
+		$lists['search']= $search;
+
+		//assign data to template
+		$this->searchfilter = $searchfilter;
+		$this->lists        = $lists;
+		$this->rows         = $rows;
+		$this->pagination   = $pagination;
+
+		parent::display($tpl);
+	}
+
 }
 ?>

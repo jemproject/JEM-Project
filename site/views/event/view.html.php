@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -58,7 +58,7 @@ class JemViewEvent extends JEMView
 		$this->categories	= $categories;
 
 		$this->registers	= $model->getRegisters($this->state->get('event.id'));
-		$isregistered		= $this->get('UserIsRegistered');
+		$registration		= $this->get('UserRegistration');
 
 		// check for data error
 		if (empty($this->item)) {
@@ -180,9 +180,16 @@ class JemViewEvent extends JEMView
 		$permissions->canEditVenue = $user->can('edit', 'venue', $item->locid, $item->venueowner);
 		$permissions->canPublishVenue = $user->can('publish', 'venue', $item->locid, $item->venueowner);
 
+		// Check if user can edit attendees
+		$isAuthor = $userId && ($userId == $item->created_by);
+		$permissions->canEditAttendees = $isAuthor;
+
 		$this->permissions = $permissions;
 		$this->showeventstate = $permissions->canEditEvent || $permissions->canPublishEvent;
 		$this->showvenuestate = $permissions->canEditVenue || $permissions->canPublishVenue;
+
+		$this->showAttendees = ($this->item->registra == 1) || (($this->item->registra == 2) && ($isAuthor || is_object($registration)));
+		$this->showRegForm   = ($this->item->registra == 1) || (($this->item->registra == 2) && (is_object($registration)));
 
 		// Timecheck for registration
 		$now = strtotime(date("Y-m-d"));
@@ -193,21 +200,23 @@ class JemViewEvent extends JEMView
 		// let's build the registration handling
 		$formhandler = 0; // too late to unregister
 
-		if ($isregistered > 0) { // is the user allready registered at the event
-			if ($now <= $enddate) { // allows unregister on open date
-				$formhandler = 3;
+		if (is_object($registration) && $registration->status != 0) { // is the user allready registered at the event
+			if ($now <= $enddate) { // allows registration changes on unfinished events
+				$formhandler = 4;
 			}
+			// else $formahandler = 0, see above
 		} elseif ($timecheck > 0) { // check if it is too late to register and overwrite $formhandler
 			$formhandler = 1;
 		} elseif (!$userId) { // user doesn't have an ID (mostly guest)
 			$formhandler = 2;
 		} else {
-			$formhandler = 4;
+			$formhandler = 4; // allow registration (changes)
 		}
 
 		if ($formhandler >= 3) {
-			$js = "function check(checkbox, send) {
-				if(checkbox.checked==true){
+			// user must click one of the radio buttons to enable Send button
+			$js = "function check(box, send) {
+				if(box.checked==true){
 					send.disabled = false;
 				} else {
 					send.disabled = true;
@@ -269,9 +278,16 @@ class JemViewEvent extends JEMView
 			$item->countryimg = JemHelperCountries::getCountryFlag($item->country);
 		}
 
-		$this->isregistered  = $isregistered;
+		/* a bit backwaard compaibility... */
+		if (is_object($registration)) {
+			$this->isregistered = $registration->status;
+		} else {
+			$this->isregistered = false;
+		}
+		$this->registration  = $registration;
 		$this->dispatcher    = $dispatcher;
 		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));
+		$this->itemid        = $menuitem->id;
 
 		$this->_prepareDocument();
 
