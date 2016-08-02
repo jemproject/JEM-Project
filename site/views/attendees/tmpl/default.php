@@ -55,7 +55,7 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 
 	<h2><?php echo $this->escape($this->event->title); ?></h2>
 
-	<form action="<?php echo $this->action; ?>"  method="post" name="adminForm" id="adminForm">
+	<form action="<?php echo htmlspecialchars($this->action); ?>"  method="post" name="adminForm" id="adminForm">
 		<table class="adminlist">
 			<tr>
 				<td width="80%">

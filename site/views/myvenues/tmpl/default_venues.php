@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
 <h2><?php echo JText::_('COM_JEM_MY_VENUES'); ?></h2>
 <?php endif; ?>
 
-<form action="<?php echo $this->action; ?>" method="post" id="adminForm" name="adminForm">
+<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm" name="adminForm">
 
 	<?php if ($this->settings->get('global_show_filter',1) || $this->settings->get('global_display',1)) : ?>
 	<div id="jem_filter" class="floattext">

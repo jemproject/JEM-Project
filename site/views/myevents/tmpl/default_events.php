@@ -25,7 +25,7 @@ defined('_JEXEC') or die;
 	}
 </script>
 
-<form action="<?php echo $this->action; ?>" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">
 	<?php if ($this->settings->get('global_show_filter',1) || $this->settings->get('global_display',1)) : ?>
 	<div id="jem_filter" class="floattext">
 		<?php if ($this->settings->get('global_show_filter',1)) : ?>

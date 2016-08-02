@@ -136,8 +136,16 @@ abstract class JHtmlJemHtml
 
 		$backend = (bool)JFactory::getApplication()->isAdmin();
 		$state   = JArrayHelper::getValue($states, (int) $value, $states[-99]);
-		$class   = (version_compare(JVERSION, '3.3', 'lt')) ? 'hasTip' : 'hasTooltip';
-		$attr    = 'class="' . $class . '" title="' . JText::_($state[$canChange ? 3 : 2]) . '"';
+
+		if (version_compare(JVERSION, '3.3', 'lt')) {
+			// on Joomla! 2.5/3.2 we use good old tooltips
+			JHtml::_('behavior.tooltip');
+			$attr = 'class="hasTip" title="'.JText::_('COM_JEM_STATUS').'::'.JText::_($state[$canChange ? 3 : 2]).'"';
+		} else {
+			// on Joomla! 3.3+ we must use the new tooltips
+			JHtml::_('bootstrap.tooltip');
+			$attr = 'class="hasTooltip" title="'.JHtml::tooltipText(JText::_('COM_JEM_STATUS'), JText::_($state[$canChange ? 3 : 2]), 0).'"';
+		}
 
 		if ($print) {
 			$html  = JHtml::_('image', 'com_jem/' . $state[0], '', 'class="icon-inline-left"', true);

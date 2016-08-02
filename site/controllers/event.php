@@ -180,7 +180,7 @@ class JemControllerEvent extends JemControllerForm
 		}
 
 		if ($return) {
-			$append .= '&return='.base64_encode(urlencode($return));
+			$append .= '&return='.base64_encode($return);
 		}
 
 		return $append;
@@ -197,14 +197,14 @@ class JemControllerEvent extends JemControllerForm
 	{
 		$return = JFactory::getApplication()->input->get('return', null, 'base64');
 
-		if (empty($return) || !JUri::isInternal(urldecode(base64_decode($return)))) {
+		if (empty($return) || !JUri::isInternal(base64_decode($return))) {
 			if (!empty($this->_id)) {
 				return JRoute::_(JemHelperRoute::getEventRoute($this->_id));
 			}
 			return JUri::base();
 		}
 		else {
-			return urldecode(base64_decode($return));
+			return base64_decode($return);
 		}
 	}
 

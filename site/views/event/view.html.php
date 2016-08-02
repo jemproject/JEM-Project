@@ -287,7 +287,7 @@ class JemViewEvent extends JEMView
 		$this->registration  = $registration;
 		$this->dispatcher    = $dispatcher;
 		$this->pageclass_sfx = htmlspecialchars($item->params->get('pageclass_sfx'));
-		$this->itemid        = $menuitem->id;
+		$this->itemid        = $menuitem ? $menuitem->id : false;
 
 		$this->_prepareDocument();
 

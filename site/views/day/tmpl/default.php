@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -32,7 +32,7 @@ defined('_JEXEC') or die;
 	<?php endif; ?>
 
 	<!--table-->
-	<form action="<?php echo $this->action; ?>" method="post" name="adminForm" id="adminForm">
+	<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">
 		<?php echo $this->loadTemplate('table'); ?>
 		<p>
 		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />

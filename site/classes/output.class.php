@@ -164,7 +164,7 @@ class JemOutput
 				$image = JText::_('COM_JEM_DELIVER_NEW_EVENT');
 			}
 
-			$url = 'index.php?option=com_jem&task=event.add&return='.base64_encode(urlencode($uri)).'&a_id=0';
+			$url = 'index.php?option=com_jem&task=event.add&return='.base64_encode($uri).'&a_id=0';
 			$overlib = JText::_('COM_JEM_SUBMIT_EVENT_DESC');
 			$output = JHtml::_('link', JRoute::_($url), $image, JEMOutput::tooltip(JText::_('COM_JEM_DELIVER_NEW_EVENT'), $overlib, '', 'bottom'));
 
@@ -201,7 +201,7 @@ class JemOutput
 				$image = JText::_('COM_JEM_DELIVER_NEW_VENUE');
 			}
 
-			$url = 'index.php?option=com_jem&task=venue.add&return='.base64_encode(urlencode($uri)).'&a_id=0';
+			$url = 'index.php?option=com_jem&task=venue.add&return='.base64_encode($uri).'&a_id=0';
 			$overlib = JText::_('COM_JEM_DELIVER_NEW_VENUE_DESC');
 			$output = JHtml::_('link', JRoute::_($url), $image, JEMOutput::tooltip(JText::_('COM_JEM_DELIVER_NEW_VENUE'), $overlib, '', 'bottom'));
 
@@ -221,7 +221,7 @@ class JemOutput
 	{
 		$uri = JFactory::getURI();
 		$image = JHtml::_('image', 'com_jem/icon-16-new.png', JText::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
-		$url   = 'index.php?option=com_jem&task=event.add&a_id=0&date={date}&return='.base64_encode(urlencode($uri));
+		$url   = 'index.php?option=com_jem&task=event.add&a_id=0&date={date}&return='.base64_encode($uri);
 		if (!empty($urlparams) && preg_match('/^[a-z]+=\w+$/i', $urlparams)) {
 			$url .= '&'.$urlparams;
 		}
@@ -355,7 +355,7 @@ class JemOutput
 					$id = isset($item->did) ? $item->did : $item->id;
 					$overlib = JText::_('COM_JEM_EDIT_EVENT_DESC');
 					$text = JText::_('COM_JEM_EDIT_EVENT');
-					$url = 'index.php?option=com_jem&task=event.edit&a_id='.$id.'&return='.base64_encode(urlencode($uri));
+					$url = 'index.php?option=com_jem&task=event.edit&a_id='.$id.'&return='.base64_encode($uri);
 					break;
 
 				case 'editvenue':
@@ -374,7 +374,7 @@ class JemOutput
 					$id = $item->locid;
 					$overlib = JText::_('COM_JEM_EDIT_VENUE_DESC');
 					$text = JText::_('COM_JEM_EDIT_VENUE');
-					$url = 'index.php?option=com_jem&task=venue.edit&a_id='.$id.'&return='.base64_encode(urlencode($uri));
+					$url = 'index.php?option=com_jem&task=venue.edit&a_id='.$id.'&return='.base64_encode($uri);
 					break;
 
 				case 'venue':
@@ -393,7 +393,7 @@ class JemOutput
 					$id = $item->id;
 					$overlib = JText::_('COM_JEM_EDIT_VENUE_DESC');
 					$text = JText::_('COM_JEM_EDIT_VENUE');
-					$url = 'index.php?option=com_jem&task=venue.edit&a_id='.$id.'&return='.base64_encode(urlencode($uri));
+					$url = 'index.php?option=com_jem&task=venue.edit&a_id='.$id.'&return='.base64_encode($uri);
 					break;
 			}
 

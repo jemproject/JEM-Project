@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -25,7 +25,7 @@ defined('_JEXEC') or die;
 	<?php endif; ?>
 
 	<!--table-->
-	<form action="<?php echo $this->action; ?>" method="post" name="adminForm" id="adminForm">
+	<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">
 		<?php
 		if ($this->params->get('template_suffix')) {
 			echo $this->loadTemplate('table_'. $this->params->get('template_suffix'));

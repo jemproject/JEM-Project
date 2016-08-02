@@ -11,7 +11,7 @@
 
 defined('_JEXEC') or die;
 
-$linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id.'&Itemid='.$this->itemid;
+$linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id.($this->itemid ? '&Itemid='.$this->itemid : '');
 ?>
 
 <div class="register">

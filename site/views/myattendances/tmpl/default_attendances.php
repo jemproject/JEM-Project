@@ -13,7 +13,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
 <h2><?php echo JText::_('COM_JEM_REGISTERED_TO'); ?></h2>
 
-<form action="<?php echo $this->action; ?>" method="post" id="adminForm" name="adminForm">
+<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm" name="adminForm">
 
 	<?php if ($this->settings->get('global_show_filter',1) || $this->settings->get('global_display',1)) : ?>
 	<div id="jem_filter" class="floattext">
