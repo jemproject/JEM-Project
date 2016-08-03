@@ -300,7 +300,7 @@ class JemControllerEvent extends JemControllerForm
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
-		$msg = JText::_('COM_JEM_REGISTERED_SUCCESSFULL');
+		$msg = JText::_('COM_JEM_REGISTRATION_THANKS_FOR_RESPONSE');
 
 		$this->setRedirect(JRoute::_(JEMHelperRoute::getEventRoute($id), false), $msg);
 	}
