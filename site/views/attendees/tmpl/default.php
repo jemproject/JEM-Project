@@ -107,6 +107,7 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 				</tr>
 			</thead>
 			<tbody>
+			<?php $del_link = 'index.php?option=com_jem&view=attendees&task=attendees.attendeeremove&id='.$this->event->id.(!empty($this->item->id)?'&Itemid='.$this->item->id:''); ?>
 			<?php foreach ($this->rows as $i => $row) : ?>
 				<tr class="row<?php echo $i % 2; ?>">
 					<td class="center"><?php echo $this->pagination->getRowOffset($i); ?></td>
@@ -127,7 +128,7 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 					<?php $cmnt = (strlen($row->comment) > 16) ? (substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
 					<td><?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
 					<?php endif;?>
-					<td class="center"><a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendees.attendeeremove')"><?php echo
+					<td class="center"><a href="<?php echo JRoute::_($del_link.'&cid[]='.$row->id); ?>"><?php echo
 						JHtml::_('image','com_jem/publish_r.png', JText::_('COM_JEM_ATTENDEES_DELETE'), array('title' => JText::_('COM_JEM_ATTENDEES_DELETE'), 'class' => (version_compare(JVERSION, '3.3', 'lt')) ? 'hasTip' : 'hasTooltip'), true); ?></a>
 					</td>
 				</tr>

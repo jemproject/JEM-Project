@@ -44,7 +44,7 @@ class JemControllerAttendees extends JControllerLegacy
 	function attendeeremove()
 	{
 		$jinput = JFactory::getApplication()->input;
-		$cid    = $jinput->post->get('cid', array(), 'array');
+		$cid    = $jinput->get('cid', array(), 'array');
 		$id     = $jinput->getInt('id', 0);
 		$fid    = $jinput->getInt('Itemid', 0);
 		$total  = is_array($cid) ? count($cid) : 0;
