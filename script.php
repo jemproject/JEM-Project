@@ -333,6 +333,11 @@ class com_jemInstallerScript
 				$this->updateJemSettings216();
 			}
 			// !!! Now we have #__jem_config and good old #__jem_seetings is gone !!!
+			// Changes between 2.1.6 -> 2.1.7
+			if (version_compare($this->oldRelease, '2.1.7-dev4', 'lt') && version_compare($this->newRelease, '2.1.7-dev4', 'ge')) {
+				// change registra on table #__jem_events from 2 to 3
+				$this->updateJemEvents217();
+			}
 		}
 		elseif (strtolower($type) == 'install') {
 			$this->fixJemMenuItems();
@@ -1237,6 +1242,25 @@ class com_jemInstallerScript
 				} catch (Exception $ex) {
 				}
 			}
+		}
+	}
+
+	/**
+	 * Change registra on table #__jem_events from 2 to 3.
+	 * (required when updating from 2.1.7-dev3 or below to 2.1.7-dev4 or newer)
+	 *
+	 * @return void
+	 */
+	private function updateJemEvents217()
+	{
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->update('#__jem_events')
+		      ->set('registra = 3')
+		      ->where('registra = 2');
+		try {
+			$db->setQuery($query)->execute();
+		} catch(Exception $e) {
 		}
 	}
 

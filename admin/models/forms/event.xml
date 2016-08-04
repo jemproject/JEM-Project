@@ -262,7 +262,7 @@
 		>
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
-			<option value="2">COM_JEM_INVITED_USERS_ONLY</option>
+			<option value="3">COM_JEM_INVITED_USERS_ONLY</option>
 		</field>
 		<!--field name="registra" type="radio"
 			   class="inputbox btn-group btn-group-yesno"

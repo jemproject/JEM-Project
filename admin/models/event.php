@@ -263,11 +263,11 @@ class JEMModelEvent extends JemModelAdmin
 			$this->cleanCache();
 		}
 
-		// on frontend we have dedicated field for 'reginvitedonly' -> set 'registra' to 2 then
-		if ($jemsettings->regallowinvitation == 1) {
-			if (array_key_exists('reginvitedonly', $data) && ($data['reginvitedonly'] == 1) && !empty($data['registra'])) {
-				$data['registra'] = 2;
-			}
+		// on frontend we have dedicated field for 'reginvitedonly' -> set 'registra' to +2 then
+		if (array_key_exists('reginvitedonly', $data) && ($data['reginvitedonly'] == 1)) {
+			$data['registra'] = ($data['registra'] == 1) ? 3 : 2;
+		} elseif ($data['registra'] > 1) {
+			$data['registra'] = ($data['registra'] == 3) ? 1 : 0;
 		}
 
 		// convert international date formats...

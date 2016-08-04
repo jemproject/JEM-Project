@@ -179,7 +179,7 @@ defined('_JEXEC') or die;
 					<?php if ($this->params->get('displayattendeecolumn') == 1) : ?>
 					<td headers="jem_atte" align="center" valign="top">
 						<?php
-						if ($row->registra >= 1) {
+						if ($this->jemsettings->showfroregistra || ($row->registra & 1)) {
 							$linkreg  = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$row->id.'&Itemid='.$this->itemid;
 							$count = $row->regCount;
 							if ($row->maxplaces)

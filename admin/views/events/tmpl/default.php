@@ -202,7 +202,7 @@ $(document).ready(function() {
 
 					<td class="center">
 						<?php
-						if ($row->registra >= 1) {
+						if ($this->jemsettings->showfroregistra || ($row->registra & 1)) {
 							$linkreg 	= 'index.php?option=com_jem&amp;view=attendees&amp;eventid='.$row->id;
 							$count = $row->regCount;
 							if ($row->maxplaces)

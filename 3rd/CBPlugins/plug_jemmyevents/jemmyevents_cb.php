@@ -1,7 +1,7 @@
 <?php
 /**
  * @package My Events
- * @version 2.1.6 for JEM v2.1 & CB v2.0
+ * @version 2.1.7 for JEM v2.1 & CB v2.0
  * @author JEM Community
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2
@@ -175,6 +175,13 @@ class jemmyeventsTab extends cbTabHandler {
 		/* loading the language function */
 		self::_getLanguageFile();
 
+		// Support Joomla access levels instead of single group id
+		// Note: $user is one which profile is requested, not the asking user!
+		//       $juser is the asking user which view access levels must be used.
+		$juser     = JFactory::getUser();
+		$levels    = $juser->getAuthorisedViewLevels();
+		$myprofile = !empty($user->id) && ($juser->get('id') == $user->id); // true if both users are equal
+
 		/*loading params set by the backend*/
 		$params = $this->params;
 
@@ -189,7 +196,8 @@ class jemmyeventsTab extends cbTabHandler {
 		$start_date = $params->get('start_date');
 		$date_combi = $params->get('date_combi');
 		$event_categories = $params->get('event_categories');
-		$event_attending = $params->get('event_attending');
+		// Show attendee "statistic" to event owner only.
+		$event_attending = $myprofile && $params->get('event_attending');
 
 		/* load css */
 		$_CB_framework->document->addHeadStyleSheet(dirname(__FILE__).'/jemmyevents_cb.css');
@@ -205,12 +213,6 @@ class jemmyeventsTab extends cbTabHandler {
 			// html content is allowed in descriptions
 			$return .= "\t\t<div class=\"tab_Description\">". $tab->description . "</div>\n";
 		}
-
-		// Support Joomla access levels instead of single group id
-		// Note: $user is one which profile is requested, not the asking user!
-		//       $juser is the asking user which view access levels must be used.
-		$juser  = JFactory::getUser();
-		$levels = $juser->getAuthorisedViewLevels();
 
 		/*
 		 * Query
@@ -386,7 +388,7 @@ class jemmyeventsTab extends cbTabHandler {
 				/* Attendees field */
 				if ($event_attending) {
 					$regs = '-';
-					if ($result->registra) {
+					if ($config->showfroregistra || ($result->registra & 1)) {
 						if ($this->_found_state_field) {
 							// state 1: user registered, state -1: user exlicitely unregistered, state 0: user is invited but hadn't answered yet
 							$qry = "SELECT COUNT(IF(waiting <= 0 AND status = 1, 1, null)) AS registered, COUNT(IF(waiting > 0 AND status = 1, 1, null)) AS waiting,"

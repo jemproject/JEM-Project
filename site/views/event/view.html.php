@@ -188,8 +188,15 @@ class JemViewEvent extends JEMView
 		$this->showeventstate = $permissions->canEditEvent || $permissions->canPublishEvent;
 		$this->showvenuestate = $permissions->canEditVenue || $permissions->canPublishVenue;
 
-		$this->showAttendees = ($this->item->registra == 1) || (($this->item->registra == 2) && ($isAuthor || is_object($registration)));
-		$this->showRegForm   = ($this->item->registra == 1) || (($this->item->registra == 2) && (is_object($registration)));
+		/** show attendees and registration form if registration globally allowed or optional and on event allowed
+		 *  but if on event limited to invited users and limitation globally allowed user must be invited
+		 *  (or event owner to see attendees)
+		 */
+		$g_reg = $this->jemsettings->showfroregistra;
+		$g_inv = $this->jemsettings->regallowinvitation;
+		$e_reg = $this->item->registra;
+		$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor));
+		$this->showRegForm   = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration)));
 
 		// Timecheck for registration
 		$now = strtotime(date("Y-m-d"));

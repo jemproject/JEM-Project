@@ -124,7 +124,7 @@ class JemModelEditevent extends JemModelEvent
 			$value->avplaces = $value->maxplaces - $value->booked;
 		}
 
-		$value->reginvitedonly = !empty($value->registra) && ($value->registra == 2);
+		$value->reginvitedonly = !empty($value->registra) && ($value->registra & 2);
 
 		$files = JemAttachment::getAttachments('event' . $itemId);
 		$value->attachments = $files;
