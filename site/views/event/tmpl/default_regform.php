@@ -48,10 +48,15 @@ if ($this->showRegForm && empty($this->print)) :
 			<?php endif; ?>
 		</p>
 		<p>
+		<?php if ($this->allowAnnulation || ($this->isregistered != 1)) : ?>
 			<input type="radio" name="reg_check" value="-1" onclick="check(this, document.getElementById('jem_send_attend'))"
 				<?php if ($this->isregistered == -1) { echo 'checked="checked"'; } ?>
 			/>
 			<?php echo ' '.JText::_('COM_JEM_I_WILL_NOT_GO'); ?>
+		<?php else : ?>
+			<input type="radio" name="reg_dummy" value="" disabled="disabled" />
+			<?php echo ' '.JText::_('COM_JEM_NOT_ALLOWED_TO_ANNULATE'); ?>
+		<?php endif; ?>
 		</p>
 		<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 		<p><?php echo JText::_('COM_JEM_OPTIONAL_COMMENT') . ':'; ?></p>

@@ -198,6 +198,8 @@ class JemViewEvent extends JEMView
 		$this->showAttendees = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration) || $isAuthor));
 		$this->showRegForm   = (($g_reg == 1) || (($g_reg == 2) && ($e_reg & 1))) && ((!(($e_reg & 2) && ($g_inv > 0))) || (is_object($registration)));
 
+		$this->allowAnnulation = !empty($this->item->unregistra);
+
 		// Timecheck for registration
 		$now = strtotime(date("Y-m-d"));
 		$date = empty($item->dates) ? $now : strtotime($item->dates);

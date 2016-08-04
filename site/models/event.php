@@ -597,6 +597,10 @@ class JemModelEvent extends JModelItem
 				}
 			}
 		}
+		elseif (($oldstat == 1) && ($stat == -1) && !$event->unregistra) {
+			$this->setError(JText::_('COM_JEM_ERROR_ANNULATION_NOT_ALLOWED'));
+			return false;
+		}
 
 		// IP
 		$uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;

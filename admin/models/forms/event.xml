@@ -273,15 +273,16 @@
 			<option value="1">JYES</option>
 			<option value="0">JNO</option>
 		</field-->
-		<!--field name="unregistra" type="radio"
-			   class="inputbox btn-group btn-group-yesno"
-			   label="COM_JEM_EVENT_FIELD_ENABLE_UNREGISTRATION"
-			   description="COM_JEM_EVENT_FIELD_ENABLE_UNREGISTRATION_DESC"
+		<field name="unregistra" type="list"
+			   label="COM_JEM_EVENT_FIELD_ENABLE_ANNULATION"
+			   description="COM_JEM_EVENT_FIELD_ENABLE_ANNULATION_DESC"
+			   class="inputbox"
 			   default="0"
+		       required="false"
 		>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
-		</field-->
+			<option value="1">JYES</option>
+		</field>
 		<field name="maxplaces" type="text"
 			   size="4"
 			   class="inputbox"
