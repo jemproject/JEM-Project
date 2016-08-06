@@ -144,7 +144,10 @@ class JemModelAttendee extends JModelLegacy
 
 		$row = JTable::getInstance('jem_register', '');
 		$row->bind($attendee);
-		$row->waiting = $attendee->waiting ? 0 : 1;
+		$row->waiting = ($attendee->waiting || ($attending->status == 2)) ? 0 : 1;
+		if ($row->status == 2) {
+			$row->status = 1;
+		}
 		return $row->store();
 	}
 
