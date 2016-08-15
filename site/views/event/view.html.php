@@ -39,7 +39,7 @@ class JemViewEvent extends JEMView
 		$app				= JFactory::getApplication();
 		$user				= JemFactory::getUser();
 		$userId				= $user->get('id');
-		$dispatcher			= JDispatcher::getInstance();
+		$dispatcher			= JemFactory::getDispatcher();
 		$document 			= JFactory::getDocument();
 		$model 				= $this->getModel();
 		$menu 				= $app->getMenu();

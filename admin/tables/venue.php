@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -45,9 +45,9 @@ class JemTableVenue extends JTable
 		}
 
 		// Set alias
-		$this->alias = JApplication::stringURLSafe($this->alias);
+		$this->alias = JemHelper::stringURLSafe($this->alias);
 		if (empty($this->alias)) {
-			$this->alias = JApplication::stringURLSafe($this->venue);
+			$this->alias = JemHelper::stringURLSafe($this->venue);
 			if (trim(str_replace('-', '', $this->alias)) == ''){
 				$this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
 			}

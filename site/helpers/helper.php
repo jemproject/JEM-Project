@@ -159,7 +159,7 @@ class JemHelper
 
 				// trigger an event to let plugins handle whatever cleanup they want to do.
 				if (JPluginHelper::importPlugin('jem')) {
-					$dispatcher = JDispatcher::getInstance();
+					$dispatcher = JemFactory::getDispatcher();
 					$dispatcher->trigger('onJemBeforeCleanup', array($jemsettings, $forced));
 				}
 
@@ -807,7 +807,7 @@ class JemHelper
 				foreach ($bumping AS $register_id)
 				{
 					JPluginHelper::importPlugin('jem');
-					$dispatcher = JDispatcher::getInstance();
+					$dispatcher = JemFactory::getDispatcher();
 					$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($register_id));
 				}
 			}
@@ -1422,5 +1422,26 @@ class JemHelper
 		array_unshift($options, JHtml::_('select.option', '0', JText::_('COM_JEM_SELECT_COUNTRY')));
 
 		return $options;
+	}
+
+	/**
+	 * This method transliterates a string into a URL
+	 * safe string or returns a URL safe UTF-8 string
+	 * based on the global configuration
+	 *
+	 * @param   string  $string  String to process
+	 *
+	 * @return  string  Processed string
+	 *
+	 * @see     JApplication, JApplicationHelper
+	 * @since   2.1.7
+	 */
+	public static function stringURLSafe($string)
+	{
+		if (version_compare(JVERSION, '3.2', 'ge')) {
+			return JApplicationHelper::stringURLSafe($string);
+		} else {
+			return JApplication::stringURLSafe($string);
+		}
 	}
 }

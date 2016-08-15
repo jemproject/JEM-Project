@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.1.5
+ * @version     2.1.7
  * @package     JEM
- * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -345,7 +345,7 @@ class JEMModelCategory extends JModelAdmin
 	public function save($data)
 	{
 		// Initialise variables;
-		$dispatcher = JDispatcher::getInstance();
+		$dispatcher = JemFactory::getDispatcher();
 		$table = $this->getTable();
 		$jinput = JFactory::getApplication()->input;
 
@@ -463,7 +463,7 @@ class JEMModelCategory extends JModelAdmin
 	{
 		if (parent::publish($pks, $value)) {
 			// Initialise variables.
-			$dispatcher = JDispatcher::getInstance();
+			$dispatcher = JemFactory::getDispatcher();
 			$extension = JFactory::getApplication()->input->getCmd('extension', '');
 
 			// Include the content plugins for the change of category state

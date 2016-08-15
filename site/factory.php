@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
@@ -59,5 +59,24 @@ abstract class JemFactory extends JFactory
 	public static function getJemConfig()
 	{
 		return JemConfig::getInstance();
+	}
+
+	/**
+	 * Get the dispatcher.
+	 *
+	 * Returns the static {@link JDispatcher} or {@link JEventDispatcher} object, depending on Joomla version.
+	 *
+	 * @return  JDispatcher or JEventDispatcher object
+	 *
+	 * @see     JDispatcher, JEventDispatcher
+	 * @since   2.1.7
+	 */
+	public static function getDispatcher()
+	{
+		if (version_compare(JVERSION, '3.0', 'ge')) {
+			return JEventDispatcher::getInstance();
+		} else {
+			return JDispatcher::getInstance();
+		}
 	}
 }

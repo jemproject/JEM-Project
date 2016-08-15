@@ -228,7 +228,7 @@ class JemControllerEvent extends JemControllerForm
 
 			// trigger all jem plugins
 			JPluginHelper::importPlugin('jem');
-			$dispatcher = JDispatcher::getInstance();
+			$dispatcher = JemFactory::getDispatcher();
 			$dispatcher->trigger('onEventEdited', array($this->_id, $isNew));
 
 			// but show warning if mailer is disabled
@@ -294,7 +294,7 @@ class JemControllerEvent extends JemControllerForm
 		JemHelper::updateWaitingList($id);
 
 		JPluginHelper::importPlugin('jem');
-		$dispatcher = JDispatcher::getInstance();
+		$dispatcher = JemFactory::getDispatcher();
 		$dispatcher->trigger('onEventUserRegistered', array($register_id));
 
 		$cache = JFactory::getCache('com_jem');
@@ -324,7 +324,7 @@ class JemControllerEvent extends JemControllerForm
 		JEMHelper::updateWaitingList($id);
 
 		JPluginHelper::importPlugin('jem');
-		$dispatcher = JDispatcher::getInstance();
+		$dispatcher = JemFactory::getDispatcher();
 		$dispatcher->trigger('onEventUserUnregistered', array($id));
 
 		$cache = JFactory::getCache('com_jem');

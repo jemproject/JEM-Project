@@ -494,7 +494,7 @@ class JEMModelEvent extends JemModelAdmin
 		$regs = $db->loadObjectList('uid');
 
 		JPluginHelper::importPlugin('jem');
-		$dispatcher = JDispatcher::getInstance();
+		$dispatcher = JemFactory::getDispatcher();
 
 		# Add new records, ignore users already registered
 		foreach ($users AS $user)

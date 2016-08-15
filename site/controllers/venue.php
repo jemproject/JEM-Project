@@ -216,7 +216,7 @@ class JEMControllerVenue extends JemControllerForm
 
 			// trigger all jem plugins
 			JPluginHelper::importPlugin('jem');
-			$dispatcher = JDispatcher::getInstance();
+			$dispatcher = JemFactory::getDispatcher();
 			$dispatcher->trigger('onVenueEdited', array($id, $isNew));
 
 			// but show warning if mailer is disabled

@@ -118,7 +118,7 @@ class JemControllerAttendee extends JControllerLegacy
 		if ($row = $model->store($post)) {
 			if ($sendemail == 1) {
 				JPluginHelper::importPlugin('jem');
-				$dispatcher = JDispatcher::getInstance();
+				$dispatcher = JemFactory::getDispatcher();
 				// there was a user and it's overwritten by a new user -> send unregister mails
 				if ($old_uid && ($old_uid != $uid)) {
 					$dispatcher->trigger('onEventUserUnregistered', array($old_data->event, $old_data));

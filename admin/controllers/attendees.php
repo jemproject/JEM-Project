@@ -59,7 +59,7 @@ class JemControllerAttendees extends JControllerLegacy
 		}
 
 		JPluginHelper::importPlugin('jem');
-		$dispatcher = JDispatcher::getInstance();
+		$dispatcher = JemFactory::getDispatcher();
 
 		$modelAttendeeItem = $this->getModel('attendee');
 
@@ -138,7 +138,7 @@ class JemControllerAttendees extends JControllerLegacy
 				if ($res)
 				{
 					JPluginHelper::importPlugin('jem');
-					$dispatcher = JDispatcher::getInstance();
+					$dispatcher = JemFactory::getDispatcher();
 					$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($pk));
 
 					if ($attendee->waiting)
