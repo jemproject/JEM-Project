@@ -1073,3 +1073,10 @@ a.label:focus {
 	margin-top: 5px;
 }
 
+#jform_unregistra_until_span {
+	display: inline-block;
+}
+#jform_unregistra_until_span input {
+	width: 40px;
+	text-align: right;
+}

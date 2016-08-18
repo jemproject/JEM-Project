@@ -705,6 +705,11 @@ div.jem_editevent form div.jem_register {
 	margin:0 1em 0 0;
 }
 
+#jem input[id$="unregistra_until"] {
+	width: 40px;
+	text-align: right;
+}
+
 div.jem_box_left,
 div.jem_box_right {
 	width:45%;

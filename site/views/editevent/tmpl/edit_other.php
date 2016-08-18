@@ -46,7 +46,10 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 			<?php if ($this->jemsettings->regallowinvitation == 1) : ?>
 			<li><?php echo $this->form->getLabel('reginvitedonly'); ?> <?php echo $this->form->getInput('reginvitedonly'); ?></li>
 			<?php endif; ?>
-			<li><?php echo $this->form->getLabel('unregistra'); ?> <?php echo $this->form->getInput('unregistra'); ?></li>
+			<li><?php echo $this->form->getLabel('unregistra'); ?> <?php echo $this->form->getInput('unregistra'); ?>
+				<?php echo $this->form->getInput('unregistra_until'); ?>
+				<span id="jform_unregistra_until2"><?php echo JText::_('COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span>
+			</li>
 			<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?></li>
 			<li><?php echo $this->form->getLabel('waitinglist'); ?> <?php echo $this->form->getInput('waitinglist'); ?></li>
 			<?php if ($this->jemsettings->regallowinvitation == 1) : ?>

@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
   `checked_out_time` datetime NOT NULL default '0000-00-00 00:00:00',
   `registra` tinyint(1) NOT NULL default '0',
   `unregistra` tinyint(1) NOT NULL default '0',
+  `unregistra_until` int(11) NOT NULL default '0',
   `maxplaces` int(11) NOT NULL default '0',
   `waitinglist` tinyint(1) NOT NULL default '0',
   `hits` int(11) unsigned NOT NULL default '0',

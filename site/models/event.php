@@ -75,7 +75,7 @@ class JemModelEvent extends JModelItem
 				$query->select(
 						$this->getState('item.select',
 								'a.id, a.access, a.attribs, a.metadata, a.registra, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.times, a.endtimes, a.dates, a.enddates, a.id AS did, a.title, a.alias, ' .
-										'a.created, a.unregistra, a.published, a.created_by, ' .
+										'a.created, a.unregistra, a.unregistra_until, a.published, a.created_by, ' .
 										'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, ' . 'a.modified_by, a.checked_out, a.checked_out_time, ' . 'a.datimage,  a.version, ' .
 										'a.meta_keywords, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.waitinglist, a.meta_description, a.hits, a.language, ' .
 										'a.recurrence_type, a.recurrence_first_id'));

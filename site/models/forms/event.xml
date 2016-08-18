@@ -262,13 +262,25 @@
 			value="1"
 			default="0"
 		/>
-		<field name="unregistra" type="checkbox"
-			size="20"
-			class="inputbox"
+		<field name="unregistra" type="list"
 			label="COM_JEM_EDITEVENT_FIELD_ENABLE_ANNULATION"
 			description="COM_JEM_EDITEVENT_FIELD_ENABLE_ANNULATION_DESC"
-			value="1"
+			class="inputbox"
 			default="0"
+			required="false"
+		>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+			<option value="2">COM_JEM_UNTIL</option>
+		</field>
+		<field name="unregistra_until" type="number"
+			size="4"
+			class="inputbox"
+			label="COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL"
+			description="COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL_DESC"
+			filter="integer"
+			min="0"
+			max="999"
 		/>
 		<field name="maxplaces" type="text"
 			size="4"

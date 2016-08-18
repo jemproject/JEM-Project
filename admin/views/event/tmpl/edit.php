@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -37,7 +37,6 @@ $params = $params->toArray();
 window.addEvent('domready', function(){
 	checkmaxplaces();
 
-
 	$("jform_attribs_event_show_mapserv").addEvent('change', testmap);
 
 	var mapserv = $("jform_attribs_event_show_mapserv");
@@ -49,7 +48,6 @@ window.addEvent('domready', function(){
 		eventmapoff();
 	}
 
-
 	$('jform_attribs_event_comunsolution').addEvent('change', testcomm);
 
 	var commhandler = $("jform_attribs_event_comunsolution");
@@ -60,9 +58,7 @@ window.addEvent('domready', function(){
 	} else {
 		commoff();
 	}
-
 });
-
 
 	function checkmaxplaces()
 	{
@@ -82,7 +78,6 @@ window.addEvent('domready', function(){
 			}
 			});
 	}
-
 
 	function testcomm()
 	{
@@ -143,6 +138,25 @@ Joomla.submitbutton = function(task)
 		}
 }
 </script>
+<script type="text/javascript">
+window.addEvent('domready', function(){
+	$("jform_unregistra").addEvent('change', showUnregistraUntil);
+
+	showUnregistraUntil();
+});
+
+function showUnregistraUntil()
+{
+	var unregistra = $("jform_unregistra");
+	var unregistramode = unregistra.options[unregistra.selectedIndex].value;
+
+	if (unregistramode == 2) {
+		document.getElementById('jform_unregistra_until_span').style.display = '';
+	} else {
+		document.getElementById('jform_unregistra_until_span').style.display = 'none';
+	}
+}
+</script>
 
 <form
 	action="<?php echo JRoute::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>"
@@ -172,7 +186,7 @@ Joomla.submitbutton = function(task)
 	<!-- START OF LEFT DIV -->
 	<div class="width-55 fltlft">
 
-<?php echo JHtml::_('tabs.start', 'det-pane'); ?>
+		<?php echo JHtml::_('tabs.start', 'det-pane'); ?>
 		<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_INFO_TAB'), 'info' ); ?>
 
 		<!-- START OF LEFT FIELDSET -->
@@ -184,22 +198,16 @@ Joomla.submitbutton = function(task)
 			<ul class="adminformlist">
 				<li><?php echo $this->form->getLabel('title');?> <?php echo $this->form->getInput('title'); ?>
 				</li>
-
 				<li><?php echo $this->form->getLabel('alias'); ?> <?php echo $this->form->getInput('alias'); ?>
 				</li>
-
 				<li><?php echo $this->form->getLabel('dates'); ?> <?php echo $this->form->getInput('dates'); ?>
 				</li>
-
 				<li><?php echo $this->form->getLabel('enddates'); ?> <?php echo $this->form->getInput('enddates'); ?>
 				</li>
-
 				<li><?php echo $this->form->getLabel('times'); ?> <?php echo $this->form->getInput('times'); ?>
 				</li>
-
 				<li><?php echo $this->form->getLabel('endtimes'); ?> <?php echo $this->form->getInput('endtimes'); ?>
 				</li>
-
 				<li><?php echo $this->form->getLabel('cats'); ?> <?php echo $this->form->getInput('cats'); ?>
 				</li>
 			</ul>
@@ -220,27 +228,23 @@ Joomla.submitbutton = function(task)
 			</ul>
 		</fieldset>
 
-
-			<fieldset class="adminform">
-
+		<fieldset class="adminform">
 			<div class="clr"></div>
 			<?php echo $this->form->getLabel('articletext'); ?>
 			<div class="clr"></div>
 			<?php echo $this->form->getInput('articletext'); ?>
-
 			<!-- END OF FIELDSET -->
 		</fieldset>
 
-<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
-				<?php echo $this->loadTemplate('attachments'); ?>
+		<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
+		<?php echo $this->loadTemplate('attachments'); ?>
 
-				<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_SETTINGS_TAB'), 'event-settings' ); ?>
+		<?php echo JHtml::_('tabs.panel',JText::_('COM_JEM_EVENT_SETTINGS_TAB'), 'event-settings' ); ?>
 		<?php echo $this->loadTemplate('settings'); ?>
 
-				<?php echo JHtml::_('tabs.end'); ?>
+		<?php echo JHtml::_('tabs.end'); ?>
 		<!-- END OF LEFT DIV -->
 	</div>
-
 
 	<!--  START RIGHT DIV -->
 	<div class="width-40 fltrt">
@@ -248,33 +252,24 @@ Joomla.submitbutton = function(task)
 		<!-- START OF SLIDERS -->
 		<?php echo JHtml::_('sliders.start', 'event-sliders-'.$this->item->id, $options); ?>
 
-
 		<!-- START OF PANEL PUBLISHING -->
 		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_FIELDSET_PUBLISHING'), 'publishing-details'); ?>
-
 
 		<!-- RETRIEVING OF FIELDSET PUBLISHING -->
 		<fieldset class="panelform">
 			<ul class="adminformlist">
-
 				<li><?php echo $this->form->getLabel('id'); ?> <?php echo $this->form->getInput('id'); ?>
 				</li>
-
 				<li><?php echo $this->form->getLabel('created_by'); ?> <?php echo $this->form->getInput('created_by'); ?>
 				</li>
-
 				<li><?php echo $this->form->getLabel('hits'); ?> <?php echo $this->form->getInput('hits'); ?>
 				</li>
-
 				<li><?php echo $this->form->getLabel('created'); ?> <?php echo $this->form->getInput('created'); ?>
 				</li>
-
 				<li><?php echo $this->form->getLabel('modified'); ?> <?php echo $this->form->getInput('modified'); ?>
 				</li>
-
 				<li><?php echo $this->form->getLabel('version'); ?> <?php echo $this->form->getInput('version'); ?>
 				</li>
-
 			</ul>
 		</fieldset>
 
@@ -294,30 +289,24 @@ Joomla.submitbutton = function(task)
 				<li><?php echo $this->form->getLabel('registra'); ?> <?php echo $this->form->getInput('registra'); ?>
 				</li>
 				<li><?php echo $this->form->getLabel('unregistra'); ?> <?php echo $this->form->getInput('unregistra'); ?>
+				<!--/li>
+				<li--><span id="jform_unregistra_until_span"><?php echo $this->form->getInput('unregistra_until'); ?><?php echo JText::_('COM_JEM_EVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span>
 				</li>
 				<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?>
 				</li>
-
 				<li><label><?php echo JText::_ ('COM_JEM_BOOKED_PLACES') . ':';?></label><input id="event-booked" class="readonly inputbox" type="text" readonly="true" value="<?php echo $this->item->booked; ?>" />
 				</li>
-
 				<?php if ($this->item->maxplaces): ?>
 				<li><label><?php echo JText::_ ('COM_JEM_AVAILABLE_PLACES') . ':';?></label><input id="event-available" class="readonly inputbox" type="text" readonly="true" value="<?php echo ($this->item->maxplaces-$this->item->booked); ?>" />
 				</li>
-				<?php
-				endif;
-				?>
-
+				<?php endif; ?>
 				<li><?php echo $this->form->getLabel('waitinglist'); ?> <?php echo $this->form->getInput('waitinglist'); ?>
 				</li>
 			</ul>
 		</fieldset>
 
-
-
 		<!-- START OF PANEL IMAGE -->
 		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_IMAGE'), 'image-event'); ?>
-
 
 		<fieldset class="panelform">
 			<ul class="adminformlist">
@@ -325,7 +314,6 @@ Joomla.submitbutton = function(task)
 				</li>
 			</ul>
 		</fieldset>
-
 
 		<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_RECURRING_EVENTS'), 'recurrence'); ?>
 		<fieldset class="panelform">
@@ -347,25 +335,17 @@ Joomla.submitbutton = function(task)
 				</li>
 			</ul>
 
-				<input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $this->item->recurrence_number;?>" />
-				<input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->item->recurrence_byday;?>" />
+			<input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $this->item->recurrence_number;?>" />
+			<input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->item->recurrence_byday;?>" />
 
 			<script
 			type="text/javascript">
 			<!--
 				var $select_output = new Array();
-				$select_output[1] = "<?php
-				echo JText::_ ('COM_JEM_OUTPUT_DAY');
-				?>";
-				$select_output[2] = "<?php
-				echo JText::_ ('COM_JEM_OUTPUT_WEEK');
-				?>";
-				$select_output[3] = "<?php
-				echo JText::_ ('COM_JEM_OUTPUT_MONTH');
-				?>";
-				$select_output[4] = "<?php
-				echo JText::_ ('COM_JEM_OUTPUT_WEEKDAY');
-				?>";
+				$select_output[1] = "<?php echo JText::_ ('COM_JEM_OUTPUT_DAY'); ?>";
+				$select_output[2] = "<?php echo JText::_ ('COM_JEM_OUTPUT_WEEK'); ?>";
+				$select_output[3] = "<?php echo JText::_ ('COM_JEM_OUTPUT_MONTH'); ?>";
+				$select_output[4] = "<?php echo JText::_ ('COM_JEM_OUTPUT_WEEKDAY'); ?>";
 
 				var $weekday = new Array();
 				$weekday[0] = new Array("MO", "<?php echo JText::_ ('COM_JEM_MONDAY'); ?>");
@@ -376,12 +356,8 @@ Joomla.submitbutton = function(task)
 				$weekday[5] = new Array("SA", "<?php echo JText::_ ('COM_JEM_SATURDAY'); ?>");
 				$weekday[6] = new Array("SU", "<?php echo JText::_ ('COM_JEM_SUNDAY'); ?>");
 
-				var $before_last = "<?php
-				echo JText::_ ('COM_JEM_BEFORE_LAST');
-				?>";
-				var $last = "<?php
-				echo JText::_ ('COM_JEM_LAST');
-				?>";
+				var $before_last = "<?php echo JText::_ ('COM_JEM_BEFORE_LAST'); ?>";
+				var $last = "<?php echo JText::_ ('COM_JEM_LAST'); ?>";
 				start_recurrencescript("jform_recurrence_type");
 			-->
 			</script>
@@ -462,58 +438,56 @@ Joomla.submitbutton = function(task)
 
 		<!-- RETRIEVING OF FIELDSET META -->
 		<fieldset class="panelform">
-					<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_ ( 'COM_JEM_EVENT_TITLE' );	?>" />
-					<input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php	echo JText::_ ( 'COM_JEM_VENUE' );?>" />
-					<input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php	echo JText::_ ( 'COM_JEM_CATEGORIES' );?>" />
-					<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_ ( 'COM_JEM_DATE' );?>" />
+			<input class="inputbox" type="button" onclick="insert_keyword('[title]')" value="<?php echo JText::_ ( 'COM_JEM_EVENT_TITLE' );	?>" />
+			<input class="inputbox" type="button" onclick="insert_keyword('[a_name]')" value="<?php	echo JText::_ ( 'COM_JEM_VENUE' );?>" />
+			<input class="inputbox" type="button" onclick="insert_keyword('[categories]')" value="<?php	echo JText::_ ( 'COM_JEM_CATEGORIES' );?>" />
+			<input class="inputbox" type="button" onclick="insert_keyword('[dates]')" value="<?php echo JText::_ ( 'COM_JEM_DATE' );?>" />
 
-					<p>
-						<input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo JText::_ ( 'COM_JEM_EVENT_TIME' );?>" />
-						<input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo JText::_ ( 'COM_JEM_ENDDATE' );?>" />
-						<input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo JText::_ ( 'COM_JEM_END_TIME' );?>" />
-					</p>
-					<br />
+			<p>
+				<input class="inputbox" type="button" onclick="insert_keyword('[times]')" value="<?php echo JText::_ ( 'COM_JEM_EVENT_TIME' );?>" />
+				<input class="inputbox" type="button" onclick="insert_keyword('[enddates]')" value="<?php echo JText::_ ( 'COM_JEM_ENDDATE' );?>" />
+				<input class="inputbox" type="button" onclick="insert_keyword('[endtimes]')" value="<?php echo JText::_ ( 'COM_JEM_END_TIME' );?>" />
+			</p>
+			<br />
 
 			<br />
-						<label for="meta_keywords">
-						<?php echo JText::_ ('COM_JEM_META_KEYWORDS') . ':';?>
-					</label>
-					<br />
-						<?php
-						if (! empty ( $this->item->meta_keywords )) {
-							$meta_keywords = $this->item->meta_keywords;
-						} else {
-							$meta_keywords = $this->jemsettings->meta_keywords;
-						}
-						?>
-					<textarea class="inputbox" name="meta_keywords" id="meta_keywords" rows="5" cols="40" maxlength="150" onfocus="get_inputbox('meta_keywords')" onblur="change_metatags()"><?php echo $meta_keywords; ?></textarea>
-			<label for="meta_description">
-						<?php echo JText::_ ('COM_JEM_META_DESCRIPTION') . ':';?>
-					</label>
-					<br />
-					<?php
-					if (! empty ( $this->item->meta_description )) {
-						$meta_description = $this->item->meta_description;
-					} else {
-						$meta_description = $this->jemsettings->meta_description;
-					}
-					?>
-					<textarea class="inputbox" name="meta_description" id="meta_description" rows="5" cols="40" maxlength="200"	onfocus="get_inputbox('meta_description')" onblur="change_metatags()"><?php echo $meta_description;?></textarea>
+			<label for="meta_keywords"><?php echo JText::_ ('COM_JEM_META_KEYWORDS') . ':';?></label>
+			<br />
+
+			<?php
+			if (! empty ( $this->item->meta_keywords )) {
+				$meta_keywords = $this->item->meta_keywords;
+			} else {
+				$meta_keywords = $this->jemsettings->meta_keywords;
+			}
+			?>
+			<textarea class="inputbox" name="meta_keywords" id="meta_keywords" rows="5" cols="40" maxlength="150" onfocus="get_inputbox('meta_keywords')" onblur="change_metatags()"><?php echo $meta_keywords; ?></textarea>
+
+			<label for="meta_description"><?php echo JText::_ ('COM_JEM_META_DESCRIPTION') . ':';?></label>
+			<br />
+
+			<?php
+			if (! empty ( $this->item->meta_description )) {
+				$meta_description = $this->item->meta_description;
+			} else {
+				$meta_description = $this->jemsettings->meta_description;
+			}
+			?>
+			<textarea class="inputbox" name="meta_description" id="meta_description" rows="5" cols="40" maxlength="200"	onfocus="get_inputbox('meta_description')" onblur="change_metatags()"><?php echo $meta_description;?></textarea>
 		</fieldset>
 
 		<fieldset class="panelform">
-		<ul class="adminformlist">
-		<?php foreach($this->form->getGroup('metadata') as $field): ?>
-	<li>
-		<?php if (!$field->hidden): ?>
-			<?php echo $field->label; ?>
-		<?php endif; ?>
-		<?php echo $field->input; ?>
-	</li>
-<?php endforeach; ?>
-</ul>
-</fieldset>
-
+			<ul class="adminformlist">
+			<?php foreach($this->form->getGroup('metadata') as $field): ?>
+				<li>
+				<?php if (!$field->hidden): ?>
+					<?php echo $field->label; ?>
+				<?php endif; ?>
+				<?php echo $field->input; ?>
+				</li>
+			<?php endforeach; ?>
+			</ul>
+		</fieldset>
 
 		<script type="text/javascript">
 		<!--
@@ -522,11 +496,13 @@ Joomla.submitbutton = function(task)
 			?>");	// window.onload is already in use, call the function manualy instead
 		-->
 		</script>
-	<?php echo JHtml::_('sliders.end'); ?>
-	<input type="hidden" name="task" value="" />
-	<input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
-				<!--  END RIGHT DIV -->
-				<?php echo JHtml::_('form.token'); ?>
-				</div>
-		<div class="clr"></div>
+
+		<?php echo JHtml::_('sliders.end'); ?>
+
+		<input type="hidden" name="task" value="" />
+		<input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
+		<?php echo JHtml::_('form.token'); ?>
+		<!--  END RIGHT DIV -->
+	</div>
+	<div class="clr"></div>
 </form>
