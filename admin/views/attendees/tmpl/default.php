@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -52,11 +52,9 @@ JFactory::getDocument()->addScriptDeclaration('
 					<button class="buttonfilter" type="submit"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
 					<button class="buttonfilter" type="button" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
 				</td>
-				<?php if ($this->event->waitinglist): ?>
 				<td style="text-align:right; white-space:nowrap;">
-					<?php echo JText::_('COM_JEM_STATUS').' '.$this->lists['waiting']; ?>
+					<?php echo JText::_('COM_JEM_STATUS').' '.$this->lists['status']; ?>
 				</td>
-				<?php endif; ?>
 			</tr>
 		</table>
 		<table class="table table-striped" id="attendeeList">
@@ -70,9 +68,7 @@ JFactory::getDocument()->addScriptDeclaration('
 					<th class="title"><?php echo JText::_('COM_JEM_IP_ADDRESS'); ?></th>
 					<th class="title"><?php echo JHtml::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $listDirn, $listOrder); ?></th>
 					<th class="title center"><?php echo JHtml::_('grid.sort', 'COM_JEM_USER_ID', 'r.uid', $listDirn, $listOrder); ?></th>
-					<?php if ($this->event->waitinglist): ?>
 					<th class="title center"><?php echo JHtml::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting',$listDirn, $listOrder); ?></th>
-					<?php endif;?>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 					<th class="title"><?php echo JText::_('COM_JEM_COMMENT'); ?></th>
 					<?php endif;?>
@@ -89,8 +85,9 @@ JFactory::getDocument()->addScriptDeclaration('
 			</tfoot>
 			<tbody>
 				<?php
-			foreach ($this->items as $i => $row) :
 				$canChange = $user->authorise('core.edit.state');
+
+				foreach ($this->items as $i => $row) :
 				?>
 				<tr class="row<?php echo $i % 2; ?>">
 					<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
@@ -99,18 +96,20 @@ JFactory::getDocument()->addScriptDeclaration('
 					<td><?php echo $row->username; ?></td>
 					<td class="email"><a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a></td>
 					<td><?php echo $row->uip == 'DISABLED' ? JText::_('COM_JEM_DISABLED') : $row->uip; ?></td>
-					<td><?php echo JHtml::_('date',$row->uregdate,JText::_('DATE_FORMAT_LC2')); ?></td>
+					<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, JText::_('DATE_FORMAT_LC2')); } ?></td>
 					<td class="center">
 					<a href="<?php echo JRoute::_('index.php?option=com_users&task=user.edit&id='.$row->uid); ?>"><?php echo $row->uid; ?></a>
 					</td>
-					<?php if ($this->event->waitinglist): ?>
 					<td class="center">
-						<?php echo JHtml::_('jemhtml.toggleStatus', $row->waiting, $i, $canChange); ?>
+						<?php
+						$status = (int)$row->status;
+						if ($status === 1 && $row->waiting == 1) { $status = 2; }
+						echo JHtml::_('jemhtml.toggleAttendanceStatus', $status, $i, $canChange);
+						?>
 					</td>
-					<?php endif; ?>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 					<?php $cmnt = (strlen($row->comment) > 16) ? (rtrim(substr($row->comment, 0, 14)).'&hellip;') : $row->comment; ?>
-					<td><?php echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); ?></td>
+					<td><?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
 					<?php endif; ?>
 					<td class="center">
 						<a href="javascript: void(0);" onclick="return listItemTask('cb<?php echo $i;?>','attendees.remove')">

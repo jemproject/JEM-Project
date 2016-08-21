@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -31,7 +31,7 @@ class JemModelCssmanager extends JModelLegacy
 
 		$temp->name = $name;
 		$temp->exists = file_exists($path.$name);
-		$temp->id = urlencode(base64_encode($name));
+		$temp->id = base64_encode($name);
 
 		if ($temp->exists) {
 			$ext =  JFile::getExt($path.$name);
@@ -62,7 +62,7 @@ class JemModelCssmanager extends JModelLegacy
 		$temp->exists = file_exists($path.$name);
 
 		$filename = 'custom#:'.$name;
-		$temp->id = urlencode(base64_encode($filename));
+		$temp->id = base64_encode($filename);
 
 		if ($temp->exists) {
 			$ext =  JFile::getExt($path.$name);

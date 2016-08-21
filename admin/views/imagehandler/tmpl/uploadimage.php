@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 ?>
 
-<form method="post" action="<?php echo $this->request_url; ?>" enctype="multipart/form-data" name="adminForm" id="adminForm">
+<form method="post" action="<?php echo htmlspecialchars($this->request_url); ?>" enctype="multipart/form-data" name="adminForm" id="adminForm">
 
 <table class="noshow">
 	<tr>

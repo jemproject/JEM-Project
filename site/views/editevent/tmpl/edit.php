@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -54,6 +54,27 @@ window.addEvent('domready', function(){
 			alert('<?php echo $this->escape(JText::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>');
 		}
 	}
+</script>
+<script type="text/javascript">
+window.addEvent('domready', function(){
+	$("jform_unregistra").addEvent('change', showUnregistraUntil);
+
+	showUnregistraUntil();
+});
+
+function showUnregistraUntil()
+{
+	var unregistra = $("jform_unregistra");
+	var unregistramode = unregistra.options[unregistra.selectedIndex].value;
+
+	if (unregistramode == 2) {
+		document.getElementById('jform_unregistra_until').style.display = '';
+		document.getElementById('jform_unregistra_until2').style.display = '';
+	} else {
+		document.getElementById('jform_unregistra_until').style.display = 'none';
+		document.getElementById('jform_unregistra_until2').style.display = 'none';
+	}
+}
 </script>
 
 <div id="jem" class="jem_editevent<?php echo $this->pageclass_sfx; ?>">

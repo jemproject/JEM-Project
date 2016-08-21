@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -37,7 +37,7 @@ class JemModelEditvenue extends JemModelVenue
 		$this->setState('venue.id', $pk);
 
 		$return = $app->input->get('return', '', 'base64');
-		$this->setState('return_page', urldecode(base64_decode($return)));
+		$this->setState('return_page', base64_decode($return));
 
 		// Load the parameters.
 		$params = $app->getParams();
@@ -117,7 +117,7 @@ class JemModelEditvenue extends JemModelVenue
 	 */
 	public function getReturnPage()
 	{
-		return base64_encode(urlencode($this->getState('return_page')));
+		return base64_encode($this->getState('return_page'));
 	}
 
 }

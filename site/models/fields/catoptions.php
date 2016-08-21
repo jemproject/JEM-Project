@@ -1,6 +1,6 @@
 <?php
 /**
- * @version     2.1.6
+ * @version     2.1.7
  * @package     JEM
  * @copyright   Copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
@@ -78,6 +78,11 @@ class JFormFieldCatOptions extends JFormFieldList
 		$query->where('itemid = '. $db->quote($currentid));
 		$db->setQuery($query);
 		$selectedcats = $db->loadColumn();
+
+		// On new event we may have a category preferred to select.
+		if (empty($selectedcats) && !empty($this->element['prefer'])) {
+			$selectedcats = (array)$this->element['prefer'];
+		}
 
 		// Create a read-only list (no name) with a hidden input to store the value.
 		if ((string) $this->readonly == '1' || (string) $this->readonly == 'true')

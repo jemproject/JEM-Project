@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -26,12 +26,13 @@ class JemControllerAttendees extends JControllerLegacy
 		// Register Extra task
 		$this->registerTask('add', 		'edit');
 		$this->registerTask('apply', 		'save');
-		
+
 		$this->registerTask('onWaitinglist','toggleStatus');
 		$this->registerTask('offWaitinglist','toggleStatus');
-		
-		$this->registerTask('setWaitinglist','setStatus');
+
+		$this->registerTask('setNotAttending','setStatus');
 		$this->registerTask('setAttending','setStatus');
+		$this->registerTask('setWaitinglist','setStatus');
 	}
 
 	/**
@@ -58,7 +59,7 @@ class JemControllerAttendees extends JControllerLegacy
 		}
 
 		JPluginHelper::importPlugin('jem');
-		$dispatcher = JDispatcher::getInstance();
+		$dispatcher = JemFactory::getDispatcher();
 
 		$modelAttendeeItem = $this->getModel('attendee');
 
@@ -85,7 +86,7 @@ class JemControllerAttendees extends JControllerLegacy
 		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.$eventid, $msg);
 	}
 
-	
+
 	/**
 	 * Function to export
 	 */
@@ -116,7 +117,7 @@ class JemControllerAttendees extends JControllerLegacy
 		// Check for request forgeries
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$jinput = JFactory::getApplication()->input;	
+		$jinput = JFactory::getApplication()->input;
 		$pks    = $this->input->get('cid', array(), 'array');
 		$task   = $this->getTask();
 
@@ -137,7 +138,7 @@ class JemControllerAttendees extends JControllerLegacy
 				if ($res)
 				{
 					JPluginHelper::importPlugin('jem');
-					$dispatcher = JDispatcher::getInstance();
+					$dispatcher = JemFactory::getDispatcher();
 					$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($pk));
 
 					if ($attendee->waiting)
@@ -209,7 +210,7 @@ class JemControllerAttendees extends JControllerLegacy
 
 		$user   = JFactory::getUser();
 		$ids    = $this->input->get('cid', array(), 'array');
-		$values = array('setWaitinglist' => 1, 'setAttending' => 0);
+		$values = array('setWaitinglist' => 2, 'setAttending' => 1, 'setInvited' => 0, 'setNotAttending' => -1);
 		$task   = $this->getTask();
 		$value  = JArrayHelper::getValue($values, $task, 0, 'int');
 
@@ -225,17 +226,26 @@ class JemControllerAttendees extends JControllerLegacy
 			// Publish the items.
 			if (!$model->setStatus($ids, $value))
 			{
+				JemHelper::addLogEntry($model->getError(), __METHOD__, JLog::ERROR);
 				JError::raiseWarning(500, $model->getError());
 			}
 
-			if ($value == 1)
-			{
-				$message = JText::plural('COM_JEM_ATTENDEES_N_ITEMS_WAITINGLIST', count($ids));
-			}
-			else
-			{
+			switch ($value) {
+			case -1:
+				$message = JText::plural('COM_JEM_ATTENDEES_N_ITEMS_NOTATTENDING', count($ids));
+				break;
+			case 0:
+				$message = JText::plural('COM_JEM_ATTENDEES_N_ITEMS_INVITED', count($ids));
+				break;
+			case 1:
 				$message = JText::plural('COM_JEM_ATTENDEES_N_ITEMS_ATTENDING', count($ids));
+				break;
+			case 2:
+				$message = JText::plural('COM_JEM_ATTENDEES_N_ITEMS_WAITINGLIST', count($ids));
+				break;
 			}
+
+			JemHelper::addLogEntry($message, __METHOD__, JLog::DEBUG);
 		}
 
 		$app = JFactory::getApplication();

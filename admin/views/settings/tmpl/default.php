@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -134,6 +134,17 @@ window.addEvent('domready', function(){
 			Obj.style.color = color;
 		}
 	}
+
+	$("jform_showfroregistra").addEvent('change', testregistra);
+
+	var registra = $("jform_showfroregistra");
+	var nrregistra = registra.options[registra.selectedIndex].value;
+
+	if (nrregistra >= 1) {
+		registraon();
+	} else {
+		registraoff();
+	}
 });
 
 
@@ -194,6 +205,18 @@ function testevhandler()
 		evhandleron();
 	} else {
 		evhandleroff();
+	}
+}
+
+function testregistra()
+{
+	var registra = $("jform_showfroregistra");
+	var nrregistra = registra.options[registra.selectedIndex].value;
+
+	if (nrregistra >= 1) {
+		registraon();
+	} else {
+		registraoff();
 	}
 }
 
@@ -342,6 +365,18 @@ function common()
 function commoff()
 {
 	document.getElementById('comm1').style.display = 'none';
+}
+
+function registraon()
+{
+	document.getElementById('froreg1').style.display = '';
+	document.getElementById('froreg2').style.display = '';
+}
+
+function registraoff()
+{
+	document.getElementById('froreg1').style.display = 'none';
+	document.getElementById('froreg2').style.display = 'none';
 }
 </script>
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.6.1
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -30,6 +30,9 @@ require_once (JPATH_COMPONENT_ADMINISTRATOR.'/helpers/helper.php');
 
 // Set the table directory
 JTable::addIncludePath(JPATH_COMPONENT.'/tables');
+
+// create JEM's file logger
+JemHelper::addFileLogger();
 
 // import joomla controller library
 jimport('joomla.application.component.controller');

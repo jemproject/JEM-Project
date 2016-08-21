@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -44,7 +44,7 @@ class JemControllerAttendees extends JControllerLegacy
 	function attendeeremove()
 	{
 		$jinput = JFactory::getApplication()->input;
-		$cid    = $jinput->post->get('cid', array(), 'array');
+		$cid    = $jinput->get('cid', array(), 'array');
 		$id     = $jinput->getInt('id', 0);
 		$fid    = $jinput->getInt('Itemid', 0);
 		$total  = is_array($cid) ? count($cid) : 0;
@@ -56,7 +56,7 @@ class JemControllerAttendees extends JControllerLegacy
 		$modelAttendeeList = $this->getModel('attendees');
 
 		JPluginHelper::importPlugin('jem');
-		$dispatcher = JDispatcher::getInstance();
+		$dispatcher = JemFactory::getDispatcher();
 
 		$modelAttendeeItem = $this->getModel('attendee');
 
@@ -105,7 +105,7 @@ class JemControllerAttendees extends JControllerLegacy
 		if ($res)
 		{
 			JPluginHelper::importPlugin('jem');
-			$dispatcher = JDispatcher::getInstance();
+			$dispatcher = JemFactory::getDispatcher();
 			$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($id));
 
 			if ($attendee->waiting) {
@@ -130,36 +130,40 @@ class JemControllerAttendees extends JControllerLegacy
 	 */
 	function export()
 	{
-		$app      = JFactory::getApplication();
-		$settings = JemHelper::globalattribs();
-		$params   = $app->getParams();
+		$app       = JFactory::getApplication();
+		$params    = $app->getParams();
+		$jemconfig = JemConfig::getInstance()->toRegistry();
 
 		$enableemailadress = $params->get('enableemailaddress', 0);
+		$sep               = $jemconfig->get('csv_separator', ';');
+		$userfield         = $jemconfig->get('globalattribs.global_regname', 1) ? 'name' : 'username';
+		$comments          = $jemconfig->get('regallowcomments', 0);
 
 		$model = $this->getModel('attendees');
 		$datas = $model->getData();
 		$event = $model->getEvent();
 		$waitinglist = isset($event->waitinglist) ? $event->waitinglist : false;
-		$comments = !empty(JemHelper::config()->regallowcomments);
 
 		header('Content-Type: text/x-csv');
 		header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 		header('Content-Disposition: attachment; filename=attendees.csv');
 		header('Pragma: no-cache');
 
-		$userfield = $settings->get('global_regname', '1') ? 'name' : 'username';
+		$export = fopen('php://output', 'w');
+		fputcsv($export, array('sep='.$sep), $sep, '"');
 
-		$cols = array(
-			JText::_('COM_JEM_USERNAME'),
-			JText::_('COM_JEM_REGDATE'),
-			JText::_('COM_JEM_HEADER_WAITINGLIST_STATUS')
-		);
+		$cols = array();
+		$cols[] = JText::_('COM_JEM_USERNAME');
+		if ($enableemailadress == 1) {
+			$cols[] = JText::_('COM_JEM_EMAIL');
+		}
+		$cols[] = JText::_('COM_JEM_REGDATE');
+		$cols[] = JText::_('COM_JEM_STATUS');
 		if ($comments) {
 			$cols[] = JText::_('COM_JEM_COMMENT');
 		}
 
-		$export = fopen('php://output', 'w');
-		fputcsv($export, $cols, ';', '"');
+		fputcsv($export, $cols, $sep, '"');
 
 		foreach ($datas as $data)
 		{
@@ -169,7 +173,7 @@ class JemControllerAttendees extends JControllerLegacy
 			if ($enableemailadress == 1) {
 				$cols[] = $data->email;
 			}
-			$cols[] = JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2'));
+			$cols[] = empty($row->uregdate) ? '' : JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2'));
 
 			$status = isset($data->status) ? $data->status : 1;
 			if ($status < 0) {
@@ -181,10 +185,11 @@ class JemControllerAttendees extends JControllerLegacy
 			}
 			$cols[] = JText::_($txt_stat);
 			if ($comments) {
-				$cols[] = $data->comment;
+				$comment = strip_tags($data->comment);
+				$cols[] = (strlen($comment) > 254) ? (substr($comment, 0, 251).'...') : $comment;
 			}
 
-			fputcsv($export, $cols, ';', '"');
+			fputcsv($export, $cols, $sep, '"');
 		}
 
 		fclose($export);

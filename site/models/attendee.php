@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -90,7 +90,7 @@ class JemModelAttendee extends JModelLegacy
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
 		{
-			$query = 'SELECT r.*, ' . $this->regname ? 'u.name' : 'u.username' . ' AS username '
+			$query = 'SELECT r.*, ' . ($this->regname ? 'u.name' : 'u.username') . ' AS username '
 					. ' FROM #__jem_register AS r '
 					. ' LEFT JOIN #__users AS u ON u.id = r.uid '
 					. ' WHERE r.id = '.$this->_db->quote($this->_id)

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -22,7 +22,8 @@
  */
 defined('_JEXEC') or die;
 
-class JEMCalendar {
+class JemCalendar
+{
 	/*
 	----------------------
 	@START CONFIGURATION
@@ -208,6 +209,22 @@ class JEMCalendar {
 	}
 	/*
 	********************************************************************************
+	PUBLIC enableNewEventLinks() -> enables links on each day to create new events
+	param link: full html template with token "{date}" to get day's date
+	********************************************************************************
+	*/
+	function enableNewEventLinks($link) {
+		if ($link && (stripos($link, '{date}') !== false)) {
+			$this->htmlNewEventLink = $link;
+			$this->dayNewEventLinks = true;
+		} else {
+			$this->dayNewEventLinks = false;
+		}
+
+		return $this->dayNewEventLinks;
+	}
+	/*
+	********************************************************************************
 	PUBLIC enableDatePicker() -> enables the day picker control
 	********************************************************************************
 	*/
@@ -372,10 +389,12 @@ class JEMCalendar {
 	var $yearNav=false;
 	var $monthNav=false;
 	var $dayLinks=false;
+	var $dayNewEventLinks=false;
 	var $datePicker=false;
 	var $url=false;
 	var $urlNav=false;
 	var $urlPicker=false;
+	var $htmlNewEventLink=false;
 	var $calEvents=false;
 	var $calEventsUrl=false;
 	var $eventUrl=false;
@@ -618,12 +637,17 @@ class JEMCalendar {
 			}
 		}
 
+		$htmlNewEventLink = '';
+		if ($this->dayNewEventLinks) {
+			$htmlNewEventLink = preg_replace('/{date}/', sprintf('%04d-%02d-%02d', $this->actyear, $this->actmonth, $var), $this->htmlNewEventLink);
+		}
+
 		if ($this->isEvent($var)) {
 			if ($this->eventUrl) {
-				$out="<td class=\"".$this->eventID."\"><div class=\"daynum\"><a href=\"".$this->eventUrl."\">".$var."</a></div>".$eventContent."</td>";
+				$out="<td class=\"".$this->eventID."\"><div class=\"daynum\">".$htmlNewEventLink."<a href=\"".$this->eventUrl."\">".$var."</a></div>".$eventContent."</td>";
 				$this->eventUrl=false;
 			} else {
-				$out="<td class=\"".$this->eventID."\"><div class=\"daynum\">".$linktext.'</div>'.$eventContent."</td>";
+				$out="<td class=\"".$this->eventID."\"><div class=\"daynum\">".$htmlNewEventLink.$linktext.'</div>'.$eventContent."</td>";
 			}
 		} else {
 			/* allow styling of multiple things like "today is Sunday" */
@@ -640,7 +664,7 @@ class JEMCalendar {
 			if (($this->getWeekday($var) == 6) && $this->crSatClass) {
 				$cssClass[] = $this->cssSaturday;
 			}
-			$out = "<td class=\"".implode(' ', $cssClass)."\"><div class=\"daynum\">".$linktext.'</div>'.$eventContent."</td>";
+			$out = "<td class=\"".implode(' ', $cssClass)."\"><div class=\"daynum\">".$htmlNewEventLink.$linktext.'</div>'.$eventContent."</td>";
 		}
 
 		return $out;

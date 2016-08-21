@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @subpackage JEM - Module-Calendar(AJAX)
  * @copyright (C) 2015-2016 joomlaeventmanager.net
@@ -121,7 +121,7 @@ abstract class modjemcalajaxhelper
 
 			// walk through categories assigned to an event
 			foreach($event->categories AS $category) {
-				$catname .= htmlspecialchars($category->catname);
+				$catname .= htmlspecialchars($category->catname, ENT_COMPAT, 'UTF-8');
 
 				$ix++;
 				if ($ix != $nr) {
@@ -173,25 +173,25 @@ abstract class modjemcalajaxhelper
 // 					if (strlen($tt) == 0)
 
 					if (empty($days[$count][1])) {
-						$title = htmlspecialchars($event->title);
+						$title = htmlspecialchars($event->title, ENT_COMPAT, 'UTF-8');
 						if ($DisplayCat == 1) {
 							$title = $title . '&nbsp;(' . $catname . ')';
 						}
 						if ($DisplayVenue == 1) {
 							if (isset($event->venue)) {
-								$title = $title . '&nbsp;@' . htmlspecialchars($event->venue);
+								$title = $title . '&nbsp;@' . htmlspecialchars($event->venue, ENT_COMPAT, 'UTF-8');
 							}
 						}
 						$stod = 1;
 					} else {
 						$tt = $days[$count][1];
-						$title = $tt . '+%+%+' . htmlspecialchars($event->title);
+						$title = $tt . '+%+%+' . htmlspecialchars($event->title, ENT_COMPAT, 'UTF-8');
 						if ($DisplayCat == 1) {
 							$title = $title . '&nbsp;(' . $catname . ')';
 						}
 						if ($DisplayVenue == 1) {
 							if (isset($event->venue)) {
-								$title = $title . '&nbsp;@' . htmlspecialchars($event->venue);
+								$title = $title . '&nbsp;@' . htmlspecialchars($event->venue, ENT_COMPAT, 'UTF-8');
 							}
 						}
 						$stod = 0;

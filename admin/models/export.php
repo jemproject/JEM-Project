@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -15,7 +15,7 @@ jimport('joomla.application.component.modellist');
 /**
  * JEM Component Export Model
  */
-class JEMModelExport extends JModelList
+class JemModelExport extends JModelList
 {
 	/**
 	 * Constructor.
@@ -43,17 +43,14 @@ class JEMModelExport extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		// Initialise variables.
-		$app = JApplication::getInstance('administrator');
-
 		// Load the filter state.
-		$filter_form_type = $app->getUserStateFromRequest($this->context . '.filter.form_type', 'filter_form_type');
+		$filter_form_type = $this->getUserStateFromRequest($this->context . '.filter.form_type', 'filter_form_type');
 		$this->setState('filter.form_type', $filter_form_type);
 
-		$filter_start_date = $app->getUserStateFromRequest($this->context . '.filter.start_date', 'filter_start_date');
+		$filter_start_date = $this->getUserStateFromRequest($this->context . '.filter.start_date', 'filter_start_date');
 		$this->setState('filter.start_date', $filter_start_date);
 
-		$filter_end_date = $app->getUserStateFromRequest($this->context . '.filter.end_date', 'filter_end_date');
+		$filter_end_date = $this->getUserStateFromRequest($this->context . '.filter.end_date', 'filter_end_date');
 		$this->setState('filter.end_date', $filter_end_date);
 
 		// Load the parameters.

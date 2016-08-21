@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -35,16 +35,32 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 	<fieldset class="panelform">
 	<legend><?php echo JText::_('COM_JEM_EVENT_REGISTRATION_LEGEND') ?></legend>
 		<ul class="adminformlist">
+		<?php if ($this->jemsettings->showfroregistra == 0) : ?>
+			<li><?php echo $this->form->getLabel('registra'); ?> <?php echo JText::_('JNO'); ?></li>
+		<?php else : ?>
+			<?php if ($this->jemsettings->showfroregistra == 1) : ?>
+			<li><?php echo $this->form->getLabel('registra'); ?> <?php echo JText::_('JYES'); ?></li>
+			<?php else : ?>
 			<li><?php echo $this->form->getLabel('registra'); ?> <?php echo $this->form->getInput('registra'); ?></li>
-			<li><?php echo $this->form->getLabel('unregistra'); ?> <?php echo $this->form->getInput('unregistra'); ?></li>
-			<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?></li>
-			<li><label><?php echo JText::_('COM_JEM_BOOKED_PLACES').':';?></label><input id="event-booked" type="text"  disabled="disabled" readonly="readonly" value="<?php echo $this->item->booked; ?>"  /></li>
-
-			<?php if ($this->item->maxplaces): ?>
-			<li><label><?php echo JText::_('COM_JEM_AVAILABLE_PLACES').':';?></label><input id="event-available" type="text"  disabled="disabled" readonly="readonly" value="<?php echo ($this->item->maxplaces-$this->item->booked); ?>" /></li>
 			<?php endif; ?>
-
+			<?php if ($this->jemsettings->regallowinvitation == 1) : ?>
+			<li><?php echo $this->form->getLabel('reginvitedonly'); ?> <?php echo $this->form->getInput('reginvitedonly'); ?></li>
+			<?php endif; ?>
+			<li><?php echo $this->form->getLabel('unregistra'); ?> <?php echo $this->form->getInput('unregistra'); ?>
+				<?php echo $this->form->getInput('unregistra_until'); ?>
+				<span id="jform_unregistra_until2"><?php echo JText::_('COM_JEM_EDITEVENT_FIELD_ANNULATION_UNTIL_POSTFIX'); ?></span>
+			</li>
+			<li><?php echo $this->form->getLabel('maxplaces'); ?> <?php echo $this->form->getInput('maxplaces'); ?></li>
 			<li><?php echo $this->form->getLabel('waitinglist'); ?> <?php echo $this->form->getInput('waitinglist'); ?></li>
+			<?php if ($this->jemsettings->regallowinvitation == 1) : ?>
+			<li><?php echo $this->form->getLabel('invited'); ?> <?php echo $this->form->getInput('invited'); ?></li>
+			<?php endif; ?>
+			<hr>
+			<li><?php echo $this->form->getLabel('booked'); ?> <?php echo $this->form->getInput('booked'); ?></li>
+			<?php if ($this->item->maxplaces): ?>
+			<li><?php echo $this->form->getLabel('avplaces'); ?> <?php echo $this->form->getInput('avplaces'); ?></li>
+			<?php endif; ?>
+		<?php endif; ?>
 		</ul>
 	</fieldset>
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -86,7 +86,7 @@ class JemModelAttendee extends JModelLegacy
 			$db = JFactory::getDbo();
 
 			$query = $db->getQuery(true);
-			$query->select(array('r.*','u.name AS username', 'a.title AS eventtitle'));
+			$query->select(array('r.*','u.name AS username', 'a.title AS eventtitle', 'a.waitinglist'));
 			$query->from('#__jem_register as r');
 			$query->join('LEFT', '#__users AS u ON (u.id = r.uid)');
 			$query->join('LEFT', '#__jem_events AS a ON (a.id = r.event)');
@@ -94,6 +94,11 @@ class JemModelAttendee extends JModelLegacy
 
 			$this->_db->setQuery($query);
 			$this->_data = $this->_db->loadObject();
+
+			// Merge status and waiting
+			if (!empty($this->_data) && !empty($this->_data->waiting) && ($this->_data->status == 1)) {
+				$this->_data->status = 2;
+			}
 
 			return (boolean) $this->_data;
 		}
@@ -121,6 +126,7 @@ class JemModelAttendee extends JModelLegacy
 				if (!empty($table->title)) {
 					$data->eventtitle = $table->title;
 				}
+				$data->waitinglist = isset($table->waitinglist) ? $table->waitinglist : 0;
 			}
 			$this->_data = $data;
 		}
@@ -138,7 +144,10 @@ class JemModelAttendee extends JModelLegacy
 
 		$row = JTable::getInstance('jem_register', '');
 		$row->bind($attendee);
-		$row->waiting = $attendee->waiting ? 0 : 1;
+		$row->waiting = ($attendee->waiting || ($attending->status == 2)) ? 0 : 1;
+		if ($row->status == 2) {
+			$row->status = 1;
+		}
 		return $row->store();
 	}
 
@@ -154,8 +163,25 @@ class JemModelAttendee extends JModelLegacy
 	{
 		$eventid = $data['event'];
 		$userid  = $data['uid'];
+		$id      = !empty($data['id']) ? (int)$data['id'] : 0;
+		$status  = isset($data['status']) ? $data['status'] : false;
+
+		// Split status and waiting
+		if ($status !== false) {
+			if ($status == 2) {
+				$data['status'] = 1;
+				$data['waiting'] = 1;
+			} elseif ($status == 1) {
+				$data['waiting'] = 0;
+			}
+		}
 
 		$row = $this->getTable('jem_register', '');
+
+		if ($id > 0) {
+			$row->load($id);
+			$old_data = clone $row;
+		}
 
 		// bind it to the table
 		if (!$row->bind($data)) {
@@ -188,7 +214,11 @@ class JemModelAttendee extends JModelLegacy
 		if ($row->id) {
 
 		} else {
-			$row->uregdate = gmdate('Y-m-d H:i:s');
+			if ($row->status === 0) {
+				// todo: add "invited" field to store such timestamps?
+			} else { // except status "invited"
+				$row->uregdate = gmdate('Y-m-d H:i:s');
+			}
 
 			// Get event
 			$query = $db->getQuery(true);
@@ -209,8 +239,8 @@ class JemModelAttendee extends JModelLegacy
 			$register = $db->loadObject();
 
 			// If no one is registered yet, $register is null!
-			if(is_null($register)) {
-				$register = new stdclass;
+			if (is_null($register)) {
+				$register = new stdClass;
 				$register->registered = 0;
 				$register->waiting = 0;
 				$register->booked = 0;
@@ -219,7 +249,7 @@ class JemModelAttendee extends JModelLegacy
 			}
 
 			// put on waiting list ?
-			if ($event->maxplaces > 0) // there is a max
+			if (($event->maxplaces > 0) && ($status == 1)) // there is a max and user will attend
 			{
 				// check if the user should go on waiting list
 				if ($register->booked >= $event->maxplaces)
@@ -227,8 +257,9 @@ class JemModelAttendee extends JModelLegacy
 					if (!$event->waitinglist) {
 						JError::raiseWarning(0, JText::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'));
 						return false;
+					} else {
+						$row->waiting = 1;
 					}
-					$row->waiting = 1;
 				}
 			}
 		}
@@ -252,9 +283,11 @@ class JemModelAttendee extends JModelLegacy
 	/**
 	 * Method to set status of registered
 	 *
-	 * @return	boolean	True on success.
+	 * @param  int $pks   ID of the attendee record
+	 * @param  int $value Status value: -1 - "not attending", 0 - "invited", 1 - "attending", 2 - "on waiting list"
+	 * @return boolean	True on success.
 	 */
-	public function setStatus($pks, $value = 0)
+	public function setStatus($pks, $value = 1)
 	{
 		// Sanitize the ids.
 		$pks = (array) $pks;
@@ -265,12 +298,21 @@ class JemModelAttendee extends JModelLegacy
 			return false;
 		}
 
+		// Split status and waiting
+		if ($value == 2) {
+			$status = 1;
+			$waiting = 1;
+		} else {
+			$status = (int)$value;
+			$waiting = 0;
+		}
+
 		try {
 			$db = $this->getDbo();
 
 			$db->setQuery(
 					'UPDATE #__jem_register' .
-					' SET waiting = '.(int) $value.
+					' SET status = '.$status.', waiting = '.$waiting.
 					' WHERE id IN ('.implode(',', $pks).')'
 					);
 			if ($db->execute() === false) {
@@ -278,10 +320,12 @@ class JemModelAttendee extends JModelLegacy
 			}
 
 		} catch (Exception $e) {
+			JemHelper::addLogEntry($e->getMessage(), __METHOD__, JLog::ERROR);
 			$this->setError($e->getMessage());
 			return false;
 		}
 
+	//	JemHelper::addLogEntry("Registration status of record(s) ".implode(', ', $pks)." set to $value", __METHOD__, JLog::DEBUG);
 		return true;
 	}
 }

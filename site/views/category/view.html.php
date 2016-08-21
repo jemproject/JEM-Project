@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -143,6 +143,7 @@ class JemViewCategory extends JEMView
 			$this->cal           = $cal;
 			$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
 			$this->print_link    = $print_link;
+			$this->print         = $print;
 
 		} else
 		{
@@ -321,26 +322,27 @@ class JemViewCategory extends JEMView
 
 			$children = array($category->id => $children);
 
-			$this->lists			= $lists;
-			$this->action			= $uri->toString();
-			$this->cimage			= $cimage;
-			$this->rows				= $items;
-			$this->noevents			= $noevents;
-			$this->print_link		= $print_link;
-			$this->params			= $params;
-			$this->dellink			= $permissions->canAddEvent; // deprecated
-			$this->permissions		= $permissions;
-			$this->task				= $task;
-			$this->description		= $description;
-			$this->pagination		= $pagination;
-			$this->jemsettings		= $jemsettings;
-			$this->settings			= $settings;
-			$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
-			$this->maxLevel			= $params->get('maxLevel', -1);
-			$this->category			= $category;
-			$this->children			= $children;
-			$this->parent			= $parent;
-			$this->user				= $user;
+			$this->lists         = $lists;
+			$this->action        = $uri->toString();
+			$this->cimage        = $cimage;
+			$this->rows          = $items;
+			$this->noevents      = $noevents;
+			$this->print_link    = $print_link;
+			$this->print         = $print;
+			$this->params        = $params;
+			$this->dellink       = $permissions->canAddEvent; // deprecated
+			$this->permissions   = $permissions;
+			$this->task          = $task;
+			$this->description   = $description;
+			$this->pagination    = $pagination;
+			$this->jemsettings   = $jemsettings;
+			$this->settings      = $settings;
+			$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+			$this->maxLevel      = $params->get('maxLevel', -1);
+			$this->category      = $category;
+			$this->children      = $children;
+			$this->parent        = $parent;
+			$this->user          = $user;
 		}
 
 		parent::display($tpl);

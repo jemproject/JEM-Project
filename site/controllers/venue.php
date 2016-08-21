@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -171,7 +171,7 @@ class JEMControllerVenue extends JemControllerForm
 		//}
 
 		if ($return) {
-			$append .= '&return='.base64_encode(urlencode($return));
+			$append .= '&return='.base64_encode($return);
 		}
 
 		return $append;
@@ -188,11 +188,11 @@ class JEMControllerVenue extends JemControllerForm
 	{
 		$return = JFactory::getApplication()->input->get('return', null, 'base64');
 
-		if (empty($return) || !JUri::isInternal(urldecode(base64_decode($return)))) {
+		if (empty($return) || !JUri::isInternal(base64_decode($return))) {
 			return JUri::base();
 		}
 		else {
-			return urldecode(base64_decode($return));
+			return base64_decode($return);
 		}
 	}
 
@@ -216,7 +216,7 @@ class JEMControllerVenue extends JemControllerForm
 
 			// trigger all jem plugins
 			JPluginHelper::importPlugin('jem');
-			$dispatcher = JDispatcher::getInstance();
+			$dispatcher = JemFactory::getDispatcher();
 			$dispatcher->trigger('onVenueEdited', array($id, $isNew));
 
 			// but show warning if mailer is disabled

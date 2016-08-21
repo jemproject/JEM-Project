@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -36,8 +36,8 @@ defined('_JEXEC') or die;
 		<legend><?php echo JText::_('COM_JEM_REGISTRATION'); ?></legend>
 		<ul class="adminformlist">
 			<li><?php echo $this->form->getLabel('showfroregistra'); ?> <?php echo $this->form->getInput('showfroregistra'); ?> </li>
-			<li id="froreg1"><?php echo $this->form->getLabel('showfrounregistra'); ?> <?php echo $this->form->getInput('showfrounregistra'); ?> </li>
-			<li><?php echo $this->form->getLabel('regallowcomments'); ?> <?php echo $this->form->getInput('regallowcomments'); ?> </li>
+			<li id="froreg1"><?php echo $this->form->getLabel('regallowinvitation'); ?> <?php echo $this->form->getInput('regallowinvitation'); ?> </li>
+			<li id="froreg2"><?php echo $this->form->getLabel('regallowcomments'); ?> <?php echo $this->form->getInput('regallowcomments'); ?> </li>
 		</ul>
 	</fieldset>
 </div>

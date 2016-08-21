@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -202,15 +202,21 @@ $(document).ready(function() {
 
 					<td class="center">
 						<?php
-						if ($row->registra == 1) {
+						if ($this->jemsettings->showfroregistra || ($row->registra & 1)) {
 							$linkreg 	= 'index.php?option=com_jem&amp;view=attendees&amp;eventid='.$row->id;
 							$count = $row->regCount;
 							if ($row->maxplaces)
 							{
 								$count .= '/'.$row->maxplaces;
 								if ($row->waitinglist && $row->waiting) {
-									$count .= ' +'.$row->waiting;
+									$count .= ' + '.$row->waiting;
 								}
+							}
+							if (!empty($row->unregCount)) {
+								$count .= ' - '.(int)$row->unregCount;
+							}
+							if (!empty($row->invited)) {
+								$count .= ', '.(int)$row->invited .' ?';
 							}
 							?>
 							<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_EVENTS_MANAGEATTENDEES'); ?>">

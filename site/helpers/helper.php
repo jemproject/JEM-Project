@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -71,6 +71,58 @@ class JemHelper
 		return $registryCSS;
 	}
 
+	/**
+	 * Setup a file logger for JEM.
+	 */
+	public static function addFileLogger()
+	{
+		jimport('joomla.log.log');
+
+		// Let admin choose the log level.
+		$jemconfig = JemConfig::getInstance()->toRegistry();
+		$lvl = (int)$jemconfig->get('globalattribs.loglevel', 0);
+
+		switch ($lvl) {
+		case 1: // ERROR or higher
+			$loglevel = JLog::ERROR   * 2 - 1;
+			break;
+		case 2: // WARNING or higher
+			$loglevel = JLog::WARNING * 2 - 1;
+			break;
+		case 3: // INFO or higher
+			$loglevel = JLog::INFO    * 2 - 1;
+			break;
+		case 4: // DEBUG or higher
+			$loglevel = JLog::DEBUG   * 2 - 1;
+			break;
+		case 5: // ALL
+			$loglevel = JLog::ALL;
+			break;
+		case 0: // OFF
+		default:
+			$loglevel = 0;
+			break;
+		}
+
+		if ($loglevel > 0) {
+			JLog::addLogger(array('text_file' => 'jem.log.php', 'text_entry_format' => '{DATE} {TIME} {PRIORITY} {CATEGORY} {WHERE} : {MESSAGE}'), $loglevel, array('JEM'));
+		}
+	}
+
+	/**
+	 * Add en entry to JEM's log file.
+	 *
+	 * @param $message The message to print
+	 * @param $where   The location the message was generated, default: null
+	 * @param $type    The log level, default: DEBUG
+	 */
+	public static function addLogEntry($message, $where = null, $type = JLog::DEBUG)
+	{
+		$logEntry = new JLogEntry($message, $type, 'JEM');
+		$logEntry->where = empty($where) ? '' : ($where . '()');
+
+		JLog::add($logEntry);
+	}
 
 	/**
 	 * Performs daily scheduled cleanups
@@ -84,129 +136,146 @@ class JemHelper
 		$weekstart 		= $jemsettings->weekdaystart;
 		$anticipation	= $jemsettings->recurrence_anticipation;
 
-		$now = time();
+		$now = time(); // UTC
+		$offset = idate('Z'); // timezone offset for "new day" test
 		$lastupdate = $jemsettings->lastupdate;
+		$runningupdate = isset($jemsettings->runningupdate) ? $jemsettings->runningupdate : 0;
+		$maxexectime = get_cfg_var('max_execution_time');
+		$delay = min(86400, max(300, $maxexectime * 2));
 
-		// New day since last update?
-		$nrdaysnow = floor($now / 86400);
-		$nrdaysupdate = floor($lastupdate / 86400);
+		// New (local) day since last update?
+		$nrdaysnow = floor(($now + $offset) / 86400);
+		$nrdaysupdate = floor(($lastupdate + $offset) / 86400);
 
-		if ($nrdaysnow > $nrdaysupdate || $forced) {
+		if (($nrdaysnow > $nrdaysupdate) || $forced) {
+			JemHelper::addLogEntry('forced: ' . $forced . ', now: '. $now . ', last update: ' . $lastupdate .
+		                           ', running update: ' . $runningupdate . ', delay: ' . $delay . ', tz-offset: ' . $offset, __METHOD__);
 
-			// trigger an event to let plugins handle whatever cleanup they want to do.
-			if (JPluginHelper::importPlugin('jem')) {
-				$dispatcher = JDispatcher::getInstance();
-				$dispatcher->trigger('onJemBeforeCleanup', array($jemsettings, $forced));
-			}
+			if (($runningupdate + $delay) < $now) {
+				// Set timestamp of running cleanup
+				JemConfig::getInstance()->set('runningupdate', $now);
 
-			$db = JFactory::getDbo();
-			$query = $db->getQuery(true);
+				JemHelper::addLogEntry('  do cleanup...', __METHOD__);
 
-			// Get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
-			// Ignore published field to prevent duplicate events.
-			$nulldate = '0000-00-00';
-			$query = ' SELECT id, CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id, '
-					. ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, '
-					. ' MAX(dates) as dates, MAX(enddates) as enddates, MAX(recurrence_counter) as counter '
-					. ' FROM #__jem_events '
-					. ' WHERE recurrence_type <> "0" '
-					. ' AND CASE recurrence_limit_date WHEN '.$nulldate.' THEN 1 ELSE NOW() < recurrence_limit_date END '
-					. ' AND recurrence_number <> "0" '
-					. ' GROUP BY first_id'
-					. ' ORDER BY dates DESC';
-			$db->SetQuery($query);
-			$recurrence_array = $db->loadAssocList();
-
-			// If there are results we will be doing something with it
-			foreach($recurrence_array as $recurrence_row)
-			{
-				// get the info of reference event for the duplicates
-				$ref_event = JTable::getInstance('Event', 'JemTable');
-				$ref_event->load($recurrence_row['id']);
+				// trigger an event to let plugins handle whatever cleanup they want to do.
+				if (JPluginHelper::importPlugin('jem')) {
+					$dispatcher = JemFactory::getDispatcher();
+					$dispatcher->trigger('onJemBeforeCleanup', array($jemsettings, $forced));
+				}
 
 				$db = JFactory::getDbo();
 				$query = $db->getQuery(true);
-				$query->select('*');
-				$query->from($db->quoteName('#__jem_events').' AS a');
-				$query->where('id = '.(int)$recurrence_row['id']);
-				$db->setQuery($query);
-				$reference = $db->loadAssoc();
 
-				// if reference event is "unpublished"(0) new event is "unpublished" too
-				// but on "archived"(2) and "trashed"(-2) reference events create "published"(1) event
-				if ($reference['published'] != 0) {
-					$reference['published'] = 1;
-				}
+				// Get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
+				// Ignore published field to prevent duplicate events.
+				$nulldate = '0000-00-00';
+				$query = ' SELECT id, CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id, '
+						. ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, '
+						. ' MAX(dates) as dates, MAX(enddates) as enddates, MAX(recurrence_counter) as counter '
+						. ' FROM #__jem_events '
+						. ' WHERE recurrence_type <> "0" '
+						. ' AND CASE recurrence_limit_date WHEN '.$nulldate.' THEN 1 ELSE NOW() < recurrence_limit_date END '
+						. ' AND recurrence_number <> "0" '
+						. ' GROUP BY first_id'
+						. ' ORDER BY dates DESC';
+				$db->SetQuery($query);
+				$recurrence_array = $db->loadAssocList();
 
-				// the first day of the week is used for certain rules
-				$recurrence_row['weekstart'] = $weekstart;
-
-				// calculate next occurence date
-				$recurrence_row = JemHelper::calculate_recurrence($recurrence_row);
-
-				// add events as long as we are under the interval and under the limit, if specified.
-				while (($recurrence_row['recurrence_limit_date'] == $nulldate
-						|| strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
-						&& strtotime($recurrence_row['dates']) <= time() + 86400*$anticipation)
+				// If there are results we will be doing something with it
+				foreach ($recurrence_array as $recurrence_row)
 				{
-					$new_event = JTable::getInstance('Event', 'JemTable');
-					$new_event->bind($reference, array('id', 'hits', 'dates', 'enddates','checked_out_time','checked_out'));
-					$new_event->recurrence_first_id = $recurrence_row['first_id'];
-					$new_event->recurrence_counter = $recurrence_row['counter'] + 1;
-					$new_event->dates = $recurrence_row['dates'];
-					$new_event->enddates = $recurrence_row['enddates'];
-					$new_event->_autocreate = true; // to tell table class this has to be stored AS IS (the underscore is important!)
+					// get the info of reference event for the duplicates
+					$ref_event = JTable::getInstance('Event', 'JemTable');
+					$ref_event->load($recurrence_row['id']);
 
-					if ($new_event->store())
-					{
-						$recurrence_row['counter']++;
-						//duplicate categories event relationships
-						$query = ' INSERT INTO #__jem_cats_event_relations (itemid, catid) '
-								. ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__jem_cats_event_relations '
-								. ' WHERE itemid = ' . $db->Quote($ref_event->id);
-						$db->setQuery($query);
+					$db = JFactory::getDbo();
+					$query = $db->getQuery(true);
+					$query->select('*');
+					$query->from($db->quoteName('#__jem_events').' AS a');
+					$query->where('id = '.(int)$recurrence_row['id']);
+					$db->setQuery($query);
+					$reference = $db->loadAssoc();
 
-						if ($db->execute() === false) {
-							// run query always but don't show error message to "normal" users
-							$user = JemFactory::getUser();
-							if($user->authorise('core.manage')) {
-								echo JText::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
-							}
-						}
+					// if reference event is "unpublished"(0) new event is "unpublished" too
+					// but on "archived"(2) and "trashed"(-2) reference events create "published"(1) event
+					if ($reference['published'] != 0) {
+						$reference['published'] = 1;
 					}
 
+					// the first day of the week is used for certain rules
+					$recurrence_row['weekstart'] = $weekstart;
+
+					// calculate next occurence date
 					$recurrence_row = JemHelper::calculate_recurrence($recurrence_row);
+
+					// add events as long as we are under the interval and under the limit, if specified.
+					while (($recurrence_row['recurrence_limit_date'] == $nulldate
+							|| strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
+							&& strtotime($recurrence_row['dates']) <= time() + 86400*$anticipation)
+					{
+						$new_event = JTable::getInstance('Event', 'JemTable');
+						$new_event->bind($reference, array('id', 'hits', 'dates', 'enddates','checked_out_time','checked_out'));
+						$new_event->recurrence_first_id = $recurrence_row['first_id'];
+						$new_event->recurrence_counter = $recurrence_row['counter'] + 1;
+						$new_event->dates = $recurrence_row['dates'];
+						$new_event->enddates = $recurrence_row['enddates'];
+						$new_event->_autocreate = true; // to tell table class this has to be stored AS IS (the underscore is important!)
+
+						if ($new_event->store())
+						{
+							$recurrence_row['counter']++;
+							//duplicate categories event relationships
+							$query = ' INSERT INTO #__jem_cats_event_relations (itemid, catid) '
+									. ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__jem_cats_event_relations '
+									. ' WHERE itemid = ' . $db->Quote($ref_event->id);
+							$db->setQuery($query);
+
+							if ($db->execute() === false) {
+								// run query always but don't show error message to "normal" users
+								$user = JemFactory::getUser();
+								if($user->authorise('core.manage')) {
+									echo JText::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
+								}
+							}
+						}
+
+						$recurrence_row = JemHelper::calculate_recurrence($recurrence_row);
+					}
 				}
+
+				//delete outdated events
+				if ($jemsettings->oldevent == 1) {
+					$query = 'DELETE FROM #__jem_events WHERE dates > 0 AND '
+							.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates))';
+					$db->SetQuery($query);
+					$db->execute();
+				}
+
+				//Set state archived of outdated events
+				if ($jemsettings->oldevent == 2) {
+					$query = 'UPDATE #__jem_events SET published = 2 WHERE dates > 0 AND '
+							.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
+							.' AND published = 1';
+					$db->SetQuery($query);
+					$db->execute();
+				}
+
+				//Set state trashed of outdated events
+				if ($jemsettings->oldevent == 3) {
+					$query = 'UPDATE #__jem_events SET published = -2 WHERE dates > 0 AND '
+							.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
+							.' AND published = 1';
+					$db->SetQuery($query);
+					$db->execute();
+				}
+
+				// Set timestamp of last cleanup
+				JemConfig::getInstance()->set('lastupdate', $now);
+				// Clear timestamp of running cleanup
+				JemConfig::getInstance()->set('runningupdate', 0);
 			}
 
-			//delete outdated events
-			if ($jemsettings->oldevent == 1) {
-				$query = 'DELETE FROM #__jem_events WHERE dates > 0 AND '
-						.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates))';
-				$db->SetQuery($query);
-				$db->execute();
-			}
-
-			//Set state archived of outdated events
-			if ($jemsettings->oldevent == 2) {
-				$query = 'UPDATE #__jem_events SET published = 2 WHERE dates > 0 AND '
-						.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
-						.' AND published = 1';
-				$db->SetQuery($query);
-				$db->execute();
-			}
-
-			//Set state trashed of outdated events
-			if ($jemsettings->oldevent == 3) {
-				$query = 'UPDATE #__jem_events SET published = -2 WHERE dates > 0 AND '
-						.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
-						.' AND published = 1';
-				$db->SetQuery($query);
-				$db->execute();
-			}
-
-			//Set timestamp of last cleanup
-			JemConfig::getInstance()->set('lastupdate', $now);
+			JemHelper::addLogEntry('finished.', __METHOD__);
 		}
 	}
 
@@ -582,13 +651,22 @@ class JemHelper
 		$timelist = array();
 		$timelist[0] = JHtml::_('select.option', '', '');
 
-		foreach(range(0, $max) as $value) {
-			if($value >= 10) {
-				$timelist[] = JHtml::_('select.option', $value, $value);
-			} else {
-				$timelist[] = JHtml::_('select.option', '0'.$value, '0'.$value);
-			}
+		if ($max == 23) {
+			// does user prefer 12 or 24 hours format?
+			$jemreg = JemConfig::getInstance()->toRegistry();
+			$format = $jemreg->get('formathour', false);
+		} else {
+			$format = false;
 		}
+
+		foreach (range(0, $max) as $value) {
+			if ($value < 10) {
+				$value = '0'.$value;
+			}
+
+			$timelist[] = JHtml::_('select.option', $value, ($format ? strftime($format, strtotime("$value:00:00")) : $value));
+		}
+
 		return JHtml::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
 	}
 
@@ -729,7 +807,7 @@ class JemHelper
 				foreach ($bumping AS $register_id)
 				{
 					JPluginHelper::importPlugin('jem');
-					$dispatcher = JDispatcher::getInstance();
+					$dispatcher = JemFactory::getDispatcher();
 					$res = $dispatcher->trigger('onUserOnOffWaitinglist', array($register_id));
 				}
 			}
@@ -760,25 +838,37 @@ class JemHelper
 
 		$db = Jfactory::getDBO();
 
-		$query = ' SELECT COUNT(id) as total, SUM(waiting) as waitinglist, event '
-				. ' FROM #__jem_register '
-				. ' WHERE event IN (' . $ids .')'
-				. '   AND status = 1'                     /// TODO
-				. ' GROUP BY event ';
+		// status 1: user registered (attendee or waiting list), status -1: user exlicitely unregistered, status 0: user is invited but hadn't answered yet
+		$query = ' SELECT COUNT(id) as total,'
+		       . '        COUNT(IF(status =  1 AND waiting <= 0, 1, null)) AS registered,'
+		       . '        COUNT(IF(status =  1 AND waiting >  0, 1, null)) AS waiting,'
+		       . '        COUNT(IF(status = -1,                  1, null)) AS unregistered,'
+		       . '        COUNT(IF(status =  0,                  1, null)) AS invited,'
+		       . '        event '
+		       . ' FROM #__jem_register '
+		       . ' WHERE event IN (' . $ids .')'
+		       . ' GROUP BY event ';
 
 		$db->setQuery($query);
 		$res = $db->loadObjectList('event');
 
 		foreach ($data as $k => &$event) { // by reference for direct edit
 			if (isset($res[$event->id])) {
-				$event->waiting  = $res[$event->id]->waitinglist;
-				$event->regCount = $res[$event->id]->total - $res[$event->id]->waitinglist;
+				$event->regTotal   = $res[$event->id]->total;
+				$event->regCount   = $res[$event->id]->registered;
+				$event->waiting    = $res[$event->id]->waiting;
+				$event->unregCount = $res[$event->id]->unregistered;
+				$event->invited    = $res[$event->id]->invited;
 			} else {
-				$event->waiting  = 0;
-				$event->regCount = 0;
+				$event->regTotal   = 0;
+				$event->regCount   = 0;
+				$event->waiting    = 0;
+				$event->unregCount = 0;
+				$event->invited    = 0;
 			}
-			$event->available = $event->maxplaces - $event->regCount;
+			$event->available = max(0, $event->maxplaces - $event->regCount);
 		}
+
 		return $data;
 	}
 
@@ -1332,5 +1422,26 @@ class JemHelper
 		array_unshift($options, JHtml::_('select.option', '0', JText::_('COM_JEM_SELECT_COUNTRY')));
 
 		return $options;
+	}
+
+	/**
+	 * This method transliterates a string into a URL
+	 * safe string or returns a URL safe UTF-8 string
+	 * based on the global configuration
+	 *
+	 * @param   string  $string  String to process
+	 *
+	 * @return  string  Processed string
+	 *
+	 * @see     JApplication, JApplicationHelper
+	 * @since   2.1.7
+	 */
+	public static function stringURLSafe($string)
+	{
+		if (version_compare(JVERSION, '3.2', 'ge')) {
+			return JApplicationHelper::stringURLSafe($string);
+		} else {
+			return JApplication::stringURLSafe($string);
+		}
 	}
 }

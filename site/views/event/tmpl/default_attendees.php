@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -10,19 +10,31 @@
  */
 
 defined('_JEXEC') or die;
+
+$linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id.($this->itemid ? '&Itemid='.$this->itemid : '');
 ?>
 
 <div class="register">
 	<dl class="floattext">
-	<?php if ($this->item->maxplaces > 0) : ?>
+	<?php $maxplaces = (int)$this->item->maxplaces; ?>
+	<?php $booked    = (int)$this->item->booked; ?>
+	<?php if ($maxplaces > 0) : ?>
 		<dt class="register"><?php echo JText::_('COM_JEM_MAX_PLACES'); ?>:</dt>
-		<dd class="register"><?php echo $this->item->maxplaces; ?></dd>
-		<dt class="register"><?php echo JText::_('COM_JEM_BOOKED_PLACES'); ?>:</dt>
-		<dd class="register"><?php echo $this->item->booked; ?></dd>
+		<dd class="register"><?php echo $maxplaces; ?></dd>
 	<?php endif; ?>
-	<?php if ($this->item->maxplaces > 0) : ?>
+	<?php if (($maxplaces > 0) || ($booked > 0)) : ?>
+		<dt class="register"><?php echo JText::_('COM_JEM_BOOKED_PLACES'); ?>:</dt>
+		<dd class="register">
+		<?php if (empty($this->permissions->canEditAttendees)) : ?>
+			<?php echo $booked; ?>
+		<?php else : ?>
+			<a href="<?php echo $linkreg; ?>" title="<?php echo JText::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>"><?php echo $this->item->booked; ?></a>
+		<?php endif; ?>
+		</dd>
+	<?php endif; ?>
+	<?php if ($maxplaces > 0) : ?>
 		<dt class="register"><?php echo JText::_('COM_JEM_AVAILABLE_PLACES'); ?>:</dt>
-		<dd><?php echo ($this->item->maxplaces - $this->item->booked); ?></dd>
+		<dd><?php echo ($maxplaces - $booked); ?></dd>
 	<?php endif; ?>
 	<?php
 		// only set style info if users already have registered and user is allowed to see it
@@ -93,10 +105,13 @@ defined('_JEXEC') or die;
 
 	<?php if ($this->print == 0) : ?>
 	<dl class="floattext">
+		<dt class="register"><?php echo JText::_('COM_JEM_YOUR_REGISTRATION'); ?>:</dt>
 		<dd class="register">
 			<?php
 			if ($this->item->published != 1) {
 				echo JText::_('COM_JEM_WRONG_STATE_FOR_REGISTER');
+			} elseif (!$this->showRegForm) {
+				echo JText::_('COM_JEM_NOT_ALLOWED_TO_REGISTER');
 			} else {
 				switch ($this->formhandler) {
 				case 0:
@@ -109,8 +124,6 @@ defined('_JEXEC') or die;
 					echo JText::_('COM_JEM_LOGIN_FOR_REGISTER');
 					break;
 				case 3:
-					echo $this->loadTemplate('unregform');
-					break;
 				case 4:
 					echo $this->loadTemplate('regform');
 					break;

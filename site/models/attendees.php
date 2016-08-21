@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -17,43 +17,54 @@ jimport('joomla.application.component.model');
  * @package JEM
  *
  */
-class JEMModelAttendees extends JModelLegacy
+class JemModelAttendees extends JModelLegacy
 {
 	/**
-	 * Events data array
+	 * Attendees data array
 	 *
+	 * @access protected
 	 * @var array
 	 */
-	var $_data = null;
+	protected $_data = null;
 
 	/**
-	 * Events total
+	 * Attendees total
 	 *
+	 * @access protected
 	 * @var integer
 	 */
-	var $_total = null;
+	protected $_total = null;
 
 	/**
-	 * Events total
+	 * Event data
 	 *
-	 * @var integer
+	 * @access protected
+	 * @var object
 	 */
-	var $_event = null;
+	protected $_event = null;
 
 	/**
 	 * Pagination object
 	 *
+	 * @access protected
 	 * @var object
 	 */
-	var $_pagination = null;
+	protected $_pagination = null;
 
 	/**
-	 * Events id
+	 * Event id
 	 *
+	 * @access protected
 	 * @var int
 	 */
-	var $_id = null;
+	protected $_id = null;
 
+	/**
+	 * Cached setting if name or username should be shown.
+	 *
+	 * @access protected
+	 * @var    int
+	 */
 	protected $_reguser = 1;
 
 	/**
@@ -92,10 +103,10 @@ class JEMModelAttendees extends JModelLegacy
 	}
 
 	/**
-	 * Method to set the category identifier
+	 * Method to set the event identifier
 	 *
 	 * @access	public
-	 * @param	int Category identifier
+	 * @param	int Event identifier
 	 */
 	function setId($id)
 	{
@@ -105,7 +116,7 @@ class JEMModelAttendees extends JModelLegacy
 	}
 
 	/**
-	 * Method to get categories item data
+	 * Method to get data of the attendees.
 	 *
 	 * @access public
 	 * @return array
@@ -129,7 +140,7 @@ class JEMModelAttendees extends JModelLegacy
 	}
 
 	/**
-	 * Method to get the total nr of the attendees
+	 * Method to get the total number of attendees
 	 *
 	 * @access public
 	 * @return integer
@@ -147,7 +158,7 @@ class JEMModelAttendees extends JModelLegacy
 	}
 
 	/**
-	 * Method to get a pagination object for the events
+	 * Method to get a pagination object for the attendees
 	 *
 	 * @access public
 	 * @return integer
@@ -167,8 +178,8 @@ class JEMModelAttendees extends JModelLegacy
 	/**
 	 * Method to build the query for the attendees
 	 *
-	 * @access private
-	 * @return integer
+	 * @access protected
+	 * @return string
 	 *
 	 */
 	protected function _buildQuery()
@@ -195,8 +206,8 @@ class JEMModelAttendees extends JModelLegacy
 	/**
 	 * Method to build the orderby clause of the query for the attendees
 	 *
-	 * @access private
-	 * @return integer
+	 * @access protected
+	 * @return string
 	 *
 	 */
 	protected function _buildContentOrderBy()
@@ -221,7 +232,7 @@ class JEMModelAttendees extends JModelLegacy
 	/**
 	 * Method to build the where clause of the query for the attendees
 	 *
-	 * @access private
+	 * @access protected
 	 * @return string
 	 *
 	 */
@@ -231,22 +242,29 @@ class JEMModelAttendees extends JModelLegacy
 		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
+		$canEdit = $user->can('edit', 'event', $this->_id, $user->id); // where cluase ensures user is the event owner
 
 		$filter         = $app->getUserStateFromRequest('com_jem.attendees.filter',        'filter',        '', 'int');
-		$filter_waiting = $app->getUserStateFromRequest('com_jem.attendees.waiting',       'filter_waiting', 0, 'int');
+		$filter_status  = $app->getUserStateFromRequest('com_jem.attendees.filter_status', 'filter_status', -2, 'int');
 		$search         = $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
 		$search         = $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();
 
 		$where[] = 'r.event = '.$this->_db->Quote($this->_id);
-		$where[] = 'r.status = 1';
-		if ($filter_waiting) {
-			$where[] = ' (a.waitinglist = 0 OR r.waiting = '.($filter_waiting-1).') ';
+		if ($filter_status > -2) {
+			if ($filter_status >= 1) {
+				$waiting = $filter_status == 2 ? 1 : 0;
+				$filter_status = 1;
+				$where[] = '(a.waitinglist = 0 OR r.waiting = '.$waiting.')';
+			}
+			$where[] = 'r.status = '.$filter_status;
 		}
 
 		// First thing we need to do is to select only needed events
-		$where[] = ' a.published = 1';
+		if (!$canEdit) {
+			$where[] = ' a.published = 1';
+		}
 		$where[] = ' c.published = 1';
 		$where[] = ' a.access  IN (' . implode(',', $levels) . ')';
 		$where[] = ' c.access  IN (' . implode(',', $levels) . ')';
@@ -292,7 +310,7 @@ class JEMModelAttendees extends JModelLegacy
 	 * Delete registered users
 	 *
 	 * @access public
-	 * @param  array  $cid  array of register IDs
+	 * @param  array  $cid  array of attendee IDs
 	 * @return true on success
 	 *
 	 */

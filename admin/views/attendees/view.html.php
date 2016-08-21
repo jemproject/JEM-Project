@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -27,20 +27,20 @@ class JemViewAttendees extends JemAdminView
 			return;
 		}
 
-		$filter_waiting   = $app->getUserStateFromRequest('com_jem.attendees.waiting',          'filter_waiting',	0, 'int');
-		$filter_type      = $app->getUserStateFromRequest('com_jem.attendees.filter_type',      'filter_type', '', 'int');
-		$filter_search    = $app->getUserStateFromRequest('com_jem.attendees.filter_search',    'filter_search', '', 'string');
+		$filter_status    = $app->getUserStateFromRequest('com_jem.attendees.filter_status', 'filter_status', -2, 'int');
+		$filter_type      = $app->getUserStateFromRequest('com_jem.attendees.filter_type',   'filter_type',   '', 'int');
+		$filter_search    = $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
 		$filter_search    = $db->escape(trim(JString::strtolower($filter_search)));
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		// Get data from the model
-		$event 		= $this->get('Event');
+		$event = $this->get('Event');
 
-		$this->items		= $this->get('Items');
-		$this->pagination	= $this->get('Pagination');
-		$this->state		= $this->get('State');
+		$this->items      = $this->get('Items');
+		$this->pagination = $this->get('Pagination');
+		$this->state      = $this->get('State');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {
@@ -69,11 +69,13 @@ class JemViewAttendees extends JemAdminView
 		// search filter
 		$lists['search'] = $filter_search;
 
-		// waiting list status
-		$options = array(JHtml::_('select.option', 0, JText::_('COM_JEM_ATT_FILTER_ALL')),
-		                 JHtml::_('select.option', 1, JText::_('COM_JEM_ATT_FILTER_ATTENDING')),
-		                 JHtml::_('select.option', 2, JText::_('COM_JEM_ATT_FILTER_WAITING'))) ;
-		$lists['waiting'] = JHtml::_('select.genericlist', $options, 'filter_waiting', array('onChange'=>'this.form.submit();'), 'value', 'text', $filter_waiting);
+		// registration status
+		$options = array(JHtml::_('select.option', -2, JText::_('COM_JEM_ATT_FILTER_ALL')),
+		                 JHtml::_('select.option',  0, JText::_('COM_JEM_ATT_FILTER_INVITED')),
+		                 JHtml::_('select.option', -1, JText::_('COM_JEM_ATT_FILTER_NOT_ATTENDING')),
+		                 JHtml::_('select.option',  1, JText::_('COM_JEM_ATT_FILTER_ATTENDING')),
+		                 JHtml::_('select.option',  2, JText::_('COM_JEM_ATT_FILTER_WAITING')));
+		$lists['status'] = JHtml::_('select.genericlist', $options, 'filter_status', array('onChange'=>'this.form.submit();'), 'value', 'text', $filter_status);
 
 		//assign to template
 		$this->lists 		= $lists;
@@ -119,9 +121,10 @@ class JemViewAttendees extends JemAdminView
 
 		JToolBarHelper::addNew('attendees.add');
 		JToolBarHelper::editList('attendees.edit');
+		JToolBarHelper::custom('attendees.setNotAttending', 'loop', 'loop', JText::_('COM_JEM_ATTENDEES_SETNOTATTENDING'), true);
+		JToolBarHelper::custom('attendees.setAttending', 'loop', 'loop', JText::_('COM_JEM_ATTENDEES_SETATTENDING'), true);
 		if ($this->event->waitinglist) {
 			JToolBarHelper::custom('attendees.setWaitinglist', 'loop', 'loop', JText::_('COM_JEM_ATTENDEES_SETWAITINGLIST'), true);
-			JToolBarHelper::custom('attendees.setAttending', 'loop', 'loop', JText::_('COM_JEM_ATTENDEES_SETATTENDING'), true);
 		}
 		JToolBarHelper::spacer();
 		JToolBarHelper::custom('attendees.export', 'download', 'download', JText::_('COM_JEM_EXPORT'), false);

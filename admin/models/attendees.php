@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -71,8 +71,8 @@ class JemModelAttendees extends JModelList
 		$this->setState('filter_type', $filter_type);
 		$filter_search    = $app->getUserStateFromRequest( 'com_jem.attendees.filter_search',    'filter_search',   '', 'string' );
 		$this->setState('filter_search', $filter_search);
-		$filter_waiting   = $app->getUserStateFromRequest( 'com_jem.attendees.waiting',          'filter_waiting',   0, 'int' );
-		$this->setState('filter_waiting', $filter_waiting);
+		$filter_status    = $app->getUserStateFromRequest( 'com_jem.attendees.filter_status',    'filter_status',   -2, 'int' );
+		$this->setState('filter_status', $filter_status);
 
 		parent::populateState('u.username', 'asc');
 	}
@@ -93,7 +93,7 @@ class JemModelAttendees extends JModelList
 	{
 		// Compile the store id.
 		$id.= ':' . $this->getState('filter_search');
-		$id.= ':' . $this->getState('filter_waitinglist');
+		$id.= ':' . $this->getState('filter_status');
 		$id.= ':' . $this->getState('filter_type');
 
 		return parent::getStoreId($id);
@@ -139,17 +139,11 @@ class JemModelAttendees extends JModelList
 		$filter_status = $this->getState('filter_status', -2);
 		if ($filter_status > -2) {
 			if ($filter_status >= 1) {
-				$waiting = $filter_status == 1 ? 0 : 1;
+				$waiting = $filter_status == 2 ? 1 : 0;
 				$filter_status = 1;
-				$query->where('(a.waitinglist = 0 OR r.waiting = '.$db->quote($filter_waiting-1).')');
+				$query->where('(a.waitinglist = 0 OR r.waiting = '.$db->quote($waiting).')');
 			}
 			$query->where('r.status = '.$db->quote($filter_status));
-		} else { // the old way, but only for status 1
-			$query->where('r.status = 1');
-			$filter_waiting = $this->getState('filter_waiting');
-			if ($filter_waiting > 0) {
-				$query->where('(a.waitinglist = 0 OR r.waiting = '.$db->quote($filter_waiting-1).')');
-			}
 		}
 
 		// search name
@@ -231,16 +225,17 @@ class JemModelAttendees extends JModelList
 	 */
 	public function getCsv()
 	{
-		$app = JFactory::getApplication();
+		$jemconfig = JemConfig::getInstance()->toRegistry();
+		$sep       = $jemconfig->get('csv_separator', ';');
+		$comments  = $jemconfig->get('regallowcomments', 0);
 
 		$event = $this->getEvent();
 		$items = $this->getItems();
 
 		$waitinglist = isset($event->waitinglist) ? $event->waitinglist : false;
-		$comments = !empty(JemHelper::config()->regallowcomments);
 
-		$export = '';
-		$col = array();
+		$csv = fopen('php://output', 'w');
+		fputcsv($csv, array('sep='.$sep), $sep, '"');
 
 		$header = array(
 				JText::_('COM_JEM_NAME'),
@@ -254,11 +249,10 @@ class JemModelAttendees extends JModelList
 		}
 		$header[] = JText::_('COM_JEM_ATTENDEES_REGID');
 
-		$csv = fopen('php://output', 'w');
-		//fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
-		fputcsv($csv, $header, ';');
+		fputcsv($csv, $header, $sep, '"');
 
-		foreach ($items as $item) {
+		foreach ($items as $item)
+		{
 			$status = isset($item->status) ? $item->status : 1;
 			if ($status < 0) {
 				$txt_stat = 'COM_JEM_ATTENDEES_NOT_ATTENDING';
@@ -271,15 +265,16 @@ class JemModelAttendees extends JModelList
 					$item->name,
 					$item->username,
 					$item->email,
-					JHtml::_('date',$item->uregdate, JText::_('DATE_FORMAT_LC2')),
+					empty($item->uregdate) ? '' : JHtml::_('date', $item->uregdate, JText::_('DATE_FORMAT_LC2')),
 					JText::_($txt_stat)
 				);
 			if ($comments) {
-				$data[] = (strlen($item->comment) > 256) ? (substr($item->comment, 0, 254).'&hellip;') : $item->comment;
+				$comment = strip_tags($item->comment);
+				$data[] = (strlen($comment) > 254) ? (substr($comment, 0, 251).'...') : $comment;
 			}
 			$data[] = $item->uid;
 
-			fputcsv($csv, (array) $data, ';', '"');
+			fputcsv($csv, $data, $sep, '"');
 		}
 
 		return fclose($csv);

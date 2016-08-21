@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -159,6 +159,8 @@ class JemControllerEvent extends JemControllerForm
 
 		$itemId = $jinput->getInt('Itemid', 0);
 		$catId  = $jinput->getInt('catid', 0);
+		$locId  = $jinput->getInt('locid', 0);
+		$date   = $jinput->getCmd('date', '');
 		$return = $this->getReturnPage();
 
 		if ($itemId) {
@@ -169,8 +171,16 @@ class JemControllerEvent extends JemControllerForm
 			$append .= '&catid='.$catId;
 		}
 
+		if($locId) {
+			$append .= '&locid='.$locId;
+		}
+
+		if($date) {
+			$append .= '&date='.$date;
+		}
+
 		if ($return) {
-			$append .= '&return='.base64_encode(urlencode($return));
+			$append .= '&return='.base64_encode($return);
 		}
 
 		return $append;
@@ -187,14 +197,14 @@ class JemControllerEvent extends JemControllerForm
 	{
 		$return = JFactory::getApplication()->input->get('return', null, 'base64');
 
-		if (empty($return) || !JUri::isInternal(urldecode(base64_decode($return)))) {
+		if (empty($return) || !JUri::isInternal(base64_decode($return))) {
 			if (!empty($this->_id)) {
 				return JRoute::_(JemHelperRoute::getEventRoute($this->_id));
 			}
 			return JUri::base();
 		}
 		else {
-			return urldecode(base64_decode($return));
+			return base64_decode($return);
 		}
 	}
 
@@ -218,7 +228,7 @@ class JemControllerEvent extends JemControllerForm
 
 			// trigger all jem plugins
 			JPluginHelper::importPlugin('jem');
-			$dispatcher = JDispatcher::getInstance();
+			$dispatcher = JemFactory::getDispatcher();
 			$dispatcher->trigger('onEventEdited', array($this->_id, $isNew));
 
 			// but show warning if mailer is disabled
@@ -256,12 +266,14 @@ class JemControllerEvent extends JemControllerForm
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid Token');
 
-		$id = JFactory::getApplication()->input->getInt('rdid', 0);
+		$id  = JFactory::getApplication()->input->getInt('rdid', 0);
+		$rid = JFactory::getApplication()->input->getInt('regid', 0);
 
 		// Get the model
 		$model = $this->getModel('Event', 'JemModel');
 
-		if ($model->getUserIsRegistered($id)) {
+		$reg = $model->getUserRegistration($id);
+		if ($reg !== false && $reg->id != $rid) {
 			$msg = JText::_('COM_JEM_ALLREADY_REGISTERED');
 			$this->setRedirect(JRoute::_(JEMHelperRoute::getEventRoute($id), false), $msg, 'error');
 			$this->redirect();
@@ -279,14 +291,16 @@ class JemControllerEvent extends JemControllerForm
 			return;
 		}
 
+		JemHelper::updateWaitingList($id);
+
 		JPluginHelper::importPlugin('jem');
-		$dispatcher = JDispatcher::getInstance();
+		$dispatcher = JemFactory::getDispatcher();
 		$dispatcher->trigger('onEventUserRegistered', array($register_id));
 
 		$cache = JFactory::getCache('com_jem');
 		$cache->clean();
 
-		$msg = JText::_('COM_JEM_REGISTERED_SUCCESSFULL');
+		$msg = JText::_('COM_JEM_REGISTRATION_THANKS_FOR_RESPONSE');
 
 		$this->setRedirect(JRoute::_(JEMHelperRoute::getEventRoute($id), false), $msg);
 	}
@@ -310,7 +324,7 @@ class JemControllerEvent extends JemControllerForm
 		JEMHelper::updateWaitingList($id);
 
 		JPluginHelper::importPlugin('jem');
-		$dispatcher = JDispatcher::getInstance();
+		$dispatcher = JemFactory::getDispatcher();
 		$dispatcher->trigger('onEventUserUnregistered', array($id));
 
 		$cache = JFactory::getCache('com_jem');
