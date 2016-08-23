@@ -273,11 +273,9 @@ defined('_JEXEC') or die;
 		$this->cal->enableNewEventLinks($html);
 	}
 
-	# output of calendar
-	$nrweeks = $this->params->get('nrweeks', 1);
-	echo $this->cal->showWeeksByID($currentWeek, $nrweeks);
-	?>
-
+	$displayLegend = (int)$this->params->get('displayLegend', 1);
+	if ($displayLegend == 2) : ?>
+	<!-- Calendar legend above -->
 	<div id="jlcalendarlegend">
 
 	<!-- Calendar buttons -->
@@ -333,6 +331,72 @@ defined('_JEXEC') or die;
 			?>
 		</div>
 	</div>
+	<?php endif; ?>
+
+	<?php
+	# output of calendar
+	$nrweeks = $this->params->get('nrweeks', 1);
+	echo $this->cal->showWeeksByID($currentWeek, $nrweeks);
+	?>
+
+	<?php if (($displayLegend == 1) || ($displayLegend == 0)) : ?>
+	<!-- Calendar legend below -->
+	<div id="jlcalendarlegend">
+
+	<!-- Calendar buttons -->
+		<div class="calendarButtons">
+			<div class="calendarButtonsToggle">
+				<div id="buttonshowall" class="calendarButton">
+					<?php echo JText::_('COM_JEM_SHOWALL'); ?>
+				</div>
+				<div id="buttonhideall" class="calendarButton">
+					<?php echo JText::_('COM_JEM_HIDEALL'); ?>
+				</div>
+			</div>
+		</div>
+		<div class="clr"></div>
+
+	<!-- Calendar Legend -->
+		<div class="calendarLegends">
+			<?php
+			if ($displayLegend == 1) {
+
+				##############
+				## FOR EACH ##
+				##############
+
+				$counter = array();
+
+				# walk through events
+				foreach ($this->rows as $row) {
+					foreach ($row->categories as $cat) {
+
+						# sort out dupes for the counter (catid-legend)
+						if (!in_array($cat->id, $counter)) {
+							# add cat id to cat counter
+							$counter[] = $cat->id;
+
+							# build legend
+							if (array_key_exists($cat->id, $countcatevents)) {
+							?>
+								<div class="eventCat" id="cat<?php echo $cat->id; ?>">
+									<?php
+									if (isset($cat->color) && $cat->color) {
+										echo '<span class="colorpic" style="background-color: '.$cat->color.';"></span>';
+									}
+									echo $cat->catname.' ('.$countcatevents[$cat->id].')';
+									?>
+								</div>
+							<?php
+							}
+						}
+					}
+				}
+			}
+			?>
+		</div>
+	</div>
+	<?php endif; ?>
 
 	<div class="clr"></div>
 

@@ -33,14 +33,14 @@
 				label="COM_JEM_SELECT_TOP_CATEGORY"
 				description="COM_JEM_SELECT_TOP_CATEGORY_DESC"
 			/>
-			<field name="displayLegend" type="radio"
+			<field name="displayLegend" type="list"
 				default="1"
 				label="COM_JEM_DISPLAY_LEGEND"
 				description="COM_JEM_DISPLAY_LEGEND_DESC"
-				class="btn-group btn-group-yesno"
 			>
-				<option value="1">JYES</option>
 				<option value="0">JNO</option>
+				<option value="2">COM_JEM_ABOVE</option>
+				<option value="1">COM_JEM_BELOW</option>
 			</field>
 			<field name="show_only_start" type="radio"
 				default="0"
