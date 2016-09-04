@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -11,7 +11,7 @@ defined ('_JEXEC') or die;
 
 <fieldset>
 	<legend><?php echo JText::_('COM_JEM_ATTACHMENTS_LEGEND'); ?></legend>
-		
+
 	<table class="adminform" id="el-attachments">
 		<tbody>
 			<?php foreach ($this->item->attachments as $file): ?>
@@ -49,7 +49,7 @@ defined ('_JEXEC') or die;
 				</td>
 				<td>
 					<?php if ($this->jemsettings->attachmentenabled != 0) : ?>
-					<?php echo JHtml::_('image','com_jem/publish_r.png', JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id,'class' => 'attach-remove','title'=>JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT')),true); ?>
+					<?php echo JHtml::_('image','com_jem/publish_r.png', JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.JSession::getFormToken(),'class' => 'attach-remove','title'=>JText::_('COM_JEM_GLOBAL_REMOVE_ATTACHEMENT')),true); ?>
 					<?php endif; ?>
 				</td>
 			</tr>

@@ -79,7 +79,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 				<th id="jem_category" class="sectiontableheader" align="left"><?php echo JHtml::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 				<?php endif; ?>
 				<?php /*if ($this->event->waitinglist):*/ ?>
-				<th id="jem_status" class="sectiontableheader center" align="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+				<th id="jem_status" class="sectiontableheader center" align="center"><?php echo JHtml::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order']); ?></th>
 				<?php /*endif;*/?>
 				<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
 				<th id="jem_comment" class="sectiontableheader" align="left"><?php echo JText::_('COM_JEM_COMMENT'); ?></th>

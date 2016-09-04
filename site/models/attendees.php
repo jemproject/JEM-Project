@@ -214,8 +214,8 @@ class JemModelAttendees extends JModelLegacy
 	{
 		$app =  JFactory::getApplication();
 
-		$filter_order     = $app->getUserStateFromRequest('com_jem.attendees.filter_order',     'filter_order',     'r.waiting', 'cmd' );
-		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.attendees.filter_order_Dir', 'filter_order_Dir', 'ASC',       'word' );
+		$filter_order     = $app->getUserStateFromRequest('com_jem.attendees.filter_order',     'filter_order',     'r.uregdate', 'cmd' );
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.attendees.filter_order_Dir', 'filter_order_Dir', 'ASC',        'word' );
 
 		if ($this->_reguser && ($filter_order == 'u.username')) {
 			$filter_order = 'u.name';
@@ -224,7 +224,12 @@ class JemModelAttendees extends JModelLegacy
 		$filter_order     = JFilterInput::getinstance()->clean($filter_order,     'cmd');
 		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
-		$orderby = ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', u.name';
+		if ($filter_order == 'r.status') {
+			$orderby = ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', r.waiting '.$filter_order_Dir.', u.name';
+		//	$orderby = ' ORDER BY CASE WHEN r.status < 0 THEN r.status * (-3) WHEN r.status = 1 AND r.waiting > 0 THEN r.status + 1 ELSE r.status END '.$filter_order_Dir.', u.name';
+		} else {
+			$orderby = ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', u.name';
+		}
 
 		return $orderby;
 	}
@@ -329,5 +334,148 @@ class JemModelAttendees extends JModelLegacy
 		}
 		return true;
 	}
+
+	###########
+	## USERS ##
+	###########
+
+	/**
+	 * Get users data
+	 */
+	function getUsers()
+	{
+		$query      = $this->buildQueryUsers();
+		$pagination = $this->getUsersPagination();
+
+		$rows       = $this->_getList($query, $pagination->limitstart, $pagination->limit);
+
+		// Add registration status if available
+		$eventId    = $this->_id;
+		$db         = JFactory::getDBO();
+		$qry        = $db->getQuery(true);
+		// #__jem_register (id, event, uid, waiting, status, comment)
+		$qry->select(array('reg.uid, reg.status, reg.waiting'));
+		$qry->from('#__jem_register As reg');
+		$qry->where('reg.event = ' . $eventId);
+		$db->setQuery($qry);
+		$regs = $db->loadObjectList('uid');
+
+	//	JemHelper::addLogEntry((string)$qry . "\n" . print_r($regs, true), __METHOD__);
+
+		foreach ($rows AS &$row) {
+			if (array_key_exists($row->id, $regs)) {
+				$row->status = $regs[$row->id]->status;
+				if ($row->status == 1 && $regs[$row->id]->waiting) {
+					++$row->status;
+				}
+			} else {
+				$row->status = -99;
+			}
+		}
+
+		return $rows;
+	}
+
+	/**
+	 * Get users registered on given event
+	 */
+	static function getRegisteredUsers($eventId)
+	{
+		if (empty($eventId)) {
+			return array();
+		}
+
+		$db  = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		// #__jem_register (id, event, uid, waiting, status, comment)
+		$query->select(array('reg.uid, reg.status, reg.waiting'));
+		$query->from('#__jem_register As reg');
+		$query->where('reg.event = ' . $eventId);
+		$db->setQuery($query);
+		$regs = $db->loadObjectList('uid');
+
+	//	JemHelper::addLogEntry((string)$qry . "\n" . print_r($regs, true), __METHOD__);
+
+		return $regs;
+	}
+
+	/**
+	 * users-Pagination
+	 **/
+	function getUsersPagination()
+	{
+		$jemsettings = JemHelper::config();
+		$app         = JFactory::getApplication();
+		$limit       = $app->getUserStateFromRequest('com_jem.addusers.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart  = $app->input->getInt('limitstart', 0);
+		// correct start value if required
+		$limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+
+		$query = $this->buildQueryUsers();
+		$total = $this->_getListCount($query);
+
+		// Create the pagination object
+		jimport('joomla.html.pagination');
+		$pagination = new JPagination($total, $limitstart, $limit);
+
+		return $pagination;
+	}
+
+
+	/**
+	 * users-query
+	 */
+	function buildQueryUsers()
+	{
+		$app              = JFactory::getApplication();
+		$jemsettings      = JemHelper::config();
+
+		// no filters, hard-coded
+		$filter_order     = 'usr.name';
+		$filter_order_Dir = '';
+		$filter_type      = '';
+		$search           = '';
+
+		// Query
+		$db    = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select(array('usr.id, usr.name'));
+		$query->from('#__users As usr');
+
+		// where
+		$where = array();
+		$where[] = 'usr.block = 0';
+		$where[] = 'NOT usr.activation > 0';
+
+		/* something to search for? (we like to search for "0" too) */
+		if ($search || ($search === "0")) {
+			switch ($filter_type) {
+				case 1: /* Search name */
+					$where[] = ' LOWER(usr.name) LIKE \'%' . $search . '%\' ';
+					break;
+			}
+		}
+		$query->where($where);
+
+		// ordering
+
+		// ensure it's a valid order direction (asc, desc or empty)
+		if (!empty($filter_order_Dir) && strtoupper($filter_order_Dir) !== 'DESC') {
+			$filter_order_Dir = 'ASC';
+		}
+
+		if ($filter_order != '') {
+			$orderby = $filter_order . ' ' . $filter_order_Dir;
+			if ($filter_order != 'usr.name') {
+				$orderby = array($orderby, 'usr.name'); // in case of (???) we should have a useful second ordering
+			}
+		} else {
+			$orderby = 'usr.name ' . $filter_order_Dir;
+		}
+		$query->order($orderby);
+
+		return $query;
+	}
+
 }
 ?>

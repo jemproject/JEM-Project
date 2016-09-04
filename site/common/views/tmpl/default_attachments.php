@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -32,7 +32,7 @@ defined('_JEXEC') or die;
 						$filename	= $this->escape($file->name ? $file->name : $file->file);
 						$image		= JHtml::_('image','com_jem/download_16.png', JText::_('COM_JEM_DOWNLOAD'),NULL,true)." "."<span class=file-name>".$filename."</span>";
 						$attribs	= array('class'=>'file-name');
-						echo JHtml::_('link','index.php?option=com_jem&task=getfile&format=raw&file='.$file->id,$image,$attribs);
+						echo JHtml::_('link','index.php?option=com_jem&task=getfile&format=raw&file='.$file->id.'&'.JSession::getFormToken().'=1',$image,$attribs);
 					?>
 				</span>
 			</td>

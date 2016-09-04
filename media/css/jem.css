@@ -539,7 +539,8 @@ div#jem .jem_fright {
 div.jem_editevent ul.adminformlist label {
 	min-width:160px;
 }
-div.jem_editvenue label {
+div.jem_editvenue label,
+div.jem_select_users label {
 	min-width:150px;
 }
 
@@ -550,7 +551,8 @@ div.jem_editvenue form fieldset {
 }
 
 div.jem_editevent form legend,
-div.jem_editvenue form legend {
+div.jem_editvenue form legend,
+div.jem_select_users form legend {
 	padding:0.3em;
 	font-weight:bold;
 	background-color:#FFA500;
@@ -560,7 +562,8 @@ div.jem_editvenue form legend {
 }
 
 div.jem_editevent form label,
-div.jem_editvenue form label {
+div.jem_editvenue form label,
+div.jem_select_users form label {
 	width:9em;
 	margin:0;
 	padding:0;
@@ -577,7 +580,9 @@ div.jem_editevent form textarea:hover,
 div.jem_editvenue form input:hover, /* venue */
 /*div.jem_editvenue form button:hover,*/
 div.jem_editvenue form select:hover,
-div.jem_editvenue form textarea:hover {
+div.jem_editvenue form textarea:hover,
+div.jem_select_users form select:hover,
+div.jem_select_users form input:hover {
 	margin:0 0 0.5em 0;
 	padding:0.2em;
 	border:1px solid #808080;
@@ -593,7 +598,9 @@ div.jem_editevent form textarea:active,
 div.jem_editvenue form input:active, /* venue */
 /*div.jem_editvenue form button:active,*/
 div.jem_editvenue form select:active,
-div.jem_editvenue form textarea:active {
+div.jem_editvenue form textarea:active,
+div.jem_select_users form select:active,
+div.jem_select_users form input:active {
 	margin:0 0 0.5em 0;
 	padding:0.2em;
 	border:1px solid #808080;
@@ -608,7 +615,9 @@ div.jem_editevent form textarea:visited,
 div.jem_editvenue form input:visited, /* venue */
 /*div.jem_editvenue form button:visited,*/
 div.jem_editvenue form select:visited,
-div.jem_editvenue form textarea:visited {
+div.jem_editvenue form textarea:visited,
+div.jem_select_users form select:visited,
+div.jem_select_users form input:visited{
 	margin:0 0 0.5em 0;
 	padding:0.2em;
 	border:1px solid #808080;
@@ -623,7 +632,9 @@ div.jem_editevent form textarea:active,
 div.jem_editvenue form input:active, /* venue */
 /*div.jem_editvenue form button:active,*/
 div.jem_editvenue form select:active,
-div.jem_editvenue form textarea:active {
+div.jem_editvenue form textarea:active,
+div.jem_select_users form select:active,
+div.jem_select_users form input:active {
 	margin:0 0 0.5em 0;
 	padding:0.2em;
 	border:1px solid #808080;
@@ -638,7 +649,9 @@ div.jem_editevent form textarea,
 div.jem_editvenue form input, /* venue */
 /*div.jem_editvenue form button,*/
 div.jem_editvenue form select,
-div.jem_editvenue form textarea {
+div.jem_editvenue form textarea,
+div.jem_select_users form select,
+div.jem_select_users form input {
 	margin:0 0 0.5em 0;
 	padding:0.2em;
 	border:1px solid #808080;

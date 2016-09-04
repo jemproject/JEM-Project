@@ -181,7 +181,10 @@ class JemModelMyattendances extends JModelLegacy
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.myattendances.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
 		$filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
-		if ($filter_order == 'a.dates') {
+		if ($filter_order == 'r.status') {
+			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir . ', r.waiting ' . $filter_order_Dir . ', a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir;
+		//	$orderby = ' ORDER BY CASE WHEN r.status < 0 THEN r.status * (-3) WHEN r.status = 1 AND r.waiting > 0 THEN r.status + 1 ELSE r.status END '.$filter_order_Dir.', a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir;
+		} elseif ($filter_order == 'a.dates') {
 			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir;
 		} else {
 			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;

@@ -62,7 +62,7 @@ class plgJEMMailer extends JPlugin {
 	 * This method handles any mailings triggered by an event registration action
 	 *
 	 * @access	public
-	 * @param   int 	$event_id 	 Integer Event identifier
+	 * @param   int 	$register_id 	 Integer Registration record identifier
 	 * @return	boolean
 	 *
 	 */

@@ -418,12 +418,16 @@ class JemModelEvent extends JModelItem
 	 *               status -1 if not attending, 0 if invited,
 	 *               1 if attending, 2 if on waiting list
 	 */
-	function getUserRegistration($eventId = null)
+	function getUserRegistration($eventId = null, $userid = 0)
 	{
 		// Initialize variables
-		$user = JemFactory::getUser();
-		$userid = (int) $user->get('id', 0);
+		$userid = (int)$userid;
+		if (empty($userid)) {
+			$user = JemFactory::getUser();
+			$userid = (int) $user->get('id', 0);
+		}
 
+		$eventId = (int)$eventId;
 		if (empty($eventId)) {
 			$eventId = $this->getState('event.id');
 		}
@@ -432,7 +436,7 @@ class JemModelEvent extends JModelItem
 		// -1 if user will not attend, 0 if invened/unknown, 1 if registeredm 2 if on waiting list
 		$query = 'SELECT IF (status > 0, waiting + 1, status) AS status, id, comment'
 		       . ' FROM #__jem_register'
-		       . ' WHERE uid = ' . $userid
+		       . ' WHERE uid = ' . $this->_db->quote($userid)
 		       . ' AND event = ' . $this->_db->quote($eventId);
 		$this->_db->setQuery($query);
 
@@ -540,36 +544,29 @@ class JemModelEvent extends JModelItem
 	}
 
 	/**
-	 * Saves the registration to the database
+	 * Internal helper to store registration on database
 	 *
-	 * @access public
+	 * @param  int     $eventId  id of event
+	 * @param  int     $uid      id of user to register
+	 * @param  mixed   $uip      ip address or false
+	 * @param  int     $status   registration status
+	 * @param  string  $comment  optional comment
+	 * @param  string &$errMsg   gets a message in error cases
+	 * @param  int     $regid    id of registration record to change or 0 if new (default)
+	 * @param  bool    $respectPlaces  if true adapt status/waiting depending on event's free places,
+	 *                           may return error if no free places and no waiting list
+	 *
+	 * @access protected
 	 * @return int register id on success, else false
 	 *
 	 */
-	function userregister()
+	protected function _doRegister($eventId, $uid, $uip, $status, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
 	{
-		$app = JFactory::getApplication('site');
-		$user = JemFactory::getUser();
-		$jemsettings = JemHelper::config();
-
-		$status  = $app->input->getInt('reg_check', 0);
-		$comment = $app->input->getString('reg_comment', '');
-		$comment = JFilterOutput::cleanText($comment);
-		$regid   = $app->input->getInt('regid', 0);
-
-		$eventId = (int) $this->_registerid;
-		$registration = $this->getUserRegistration($eventId);
-
-		$uid = (int) $user->get('id');
+	//	$app = JFactory::getApplication('site');
+	//	$user = JemFactory::getUser();
+	//	$jemsettings = JemHelper::config();
+		$registration = (empty($uid) || empty($eventId)) ? false : $this->getUserRegistration($eventId, $uid);
 		$onwaiting = 0;
-
-		// Must be logged in
-		if ($uid < 1) {
-			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
-			return;
-		}
-
-		$this->setId($eventId);
 
 		try {
 			$event = $this->getItem($eventId);
@@ -580,13 +577,13 @@ class JemModelEvent extends JModelItem
 		}
 
 		if (empty($event)) {
-			$this->setError(JText::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
+			$errMsg = JText::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND');
 			return false;
 		}
 
 		$oldstat = is_object($registration) ? $registration->status : 0;
 		if ($status == 1 && $status != $oldstat) {
-			if ($event->maxplaces > 0) {	// there is a max
+			if ($respectPlaces && ($event->maxplaces > 0)) {	// there is a max
 				// check if the user should go on waiting list
 				if ($event->booked >= $event->maxplaces) {
 					if (!$event->waitinglist) {
@@ -597,19 +594,24 @@ class JemModelEvent extends JModelItem
 				}
 			}
 		}
-		elseif (($oldstat == 1) && ($stat == -1) && !$event->unregistra) {
-			$this->setError(JText::_('COM_JEM_ERROR_ANNULATION_NOT_ALLOWED'));
+		elseif ($status == 2) {
+			if ($respectPlaces && !$event->waitinglist) {
+				$errMsg = JText::_('COM_JEM_EVENT_FULL_NOTICE');
+				return false;
+			}
+			$onwaiting = 1;
+			$status = 1;
+		}
+		elseif ($respectPlaces && ($oldstat == 1) && ($status == -1) && !$event->unregistra) {
+			$errMsg = JText::_('COM_JEM_ERROR_ANNULATION_NOT_ALLOWED');
 			return false;
 		}
 
-		// IP
-		$uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
-
 		$obj = new stdClass();
-		$obj->event = (int) $eventId;
+		$obj->event = (int)$eventId;
 		$obj->status = (int)$status;
 		$obj->waiting = $onwaiting;
-		$obj->uid = (int) $uid;
+		$obj->uid = (int)$uid;
 		$obj->uregdate = gmdate('Y-m-d H:i:s');
 		$obj->uip = $uip;
 		$obj->comment = $comment;
@@ -627,10 +629,88 @@ class JemModelEvent extends JModelItem
 		}
 		catch (Exception $e) {
 			// we have a unique user-event key so registering twice will fail
-			$this->setError(JText::_(($e->getCode() == 1062) ? 'COM_JEM_ALLREADY_REGISTERED'
-				                                             : 'COM_JEM_ERROR_REGISTRATION'));
+			$errMsg = JText::_(($e->getCode() == 1062) ? 'COM_JEM_ALLREADY_REGISTERED'
+				                                       : 'COM_JEM_ERROR_REGISTRATION');
 			return false;
 		}
+
+		return $result;
+	}
+
+	/**
+	 * Saves the registration to the database
+	 *
+	 * @access public
+	 * @return int register id on success, else false
+	 *
+	 */
+	function userregister()
+	{
+		$app = JFactory::getApplication('site');
+		$user = JemFactory::getUser();
+		$jemsettings = JemHelper::config();
+
+		$status  = $app->input->getInt('reg_check', 0);
+	//	$noreg   = ($status == -1) ? 'on' : 'off';//$app->input->getString('noreg_check', 'off');
+		$comment = $app->input->getString('reg_comment', '');
+		$comment = JFilterOutput::cleanText($comment);
+		$regid   = $app->input->getInt('regid', 0);
+
+		$eventId = (int) $this->_registerid;
+
+		$uid = (int) $user->get('id');
+
+		// Must be logged in
+		if ($uid < 1) {
+			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
+			return;
+		}
+
+		// IP
+		$uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
+
+		$errMsg = '';
+		$result = $this->_doRegister($eventId, $uid, $uip, $status, $comment, $errMsg, $regid);
+
+		if (!$result && !empty($errMsg)) {
+			$this->setError($errMsg);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Saves the registration to the database
+	 *
+	 * @param  int     $eventId  id of event
+	 * @param  int     $uid      id of user to register
+	 * @param  int     $status   registration status
+	 * @param  string  $comment  optional comment
+	 * @param  string &$errMsg   gets a message in error cases
+	 * @param  int     $regid    id of registration record to change or 0 if new (default)
+	 * @param  bool    $respectPlaces  if true adapt status/waiting depending on event's free places,
+	 *                           may return error if no free places and no waiting list
+	 *
+	 * @access public
+	 * @return int register id on success, else false
+	 *
+	 */
+	function adduser($eventId, $uid, $status, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
+	{
+	//	$app = JFactory::getApplication('site');
+		$user = JemFactory::getUser();
+		$jemsettings = JemHelper::config();
+
+		// Acting user must be logged in
+		if ($user->get('id') < 1) {
+			JError::raiseError(403, JText::_('JERROR_ALERTNOAUTHOR'));
+			return false;
+		}
+
+		// IP
+		$uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
+
+		$result = $this->_doRegister($eventId, $uid, $uip, $status, $comment, $errMsg, $regid, $respectPlaces);
 
 		return $result;
 	}

@@ -390,7 +390,7 @@ class JemViewEditevent extends JViewLegacy
 		// Load css
 		JemHelper::loadCss('jem');
 
-		$document->setTitle(JText::_('COM_JEM_SELECT_USERS'));
+		$document->setTitle(JText::_('COM_JEM_SELECT_USERS_TO_INVITE'));
 
 		// Get/Create the model
 		$model->setState('event.id', $eventId);

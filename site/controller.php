@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -108,6 +108,9 @@ class JEMController extends JControllerLegacy
 	 */
 	function getfile()
 	{
+		// Check for request forgeries
+		JSession::checkToken('request') or jexit('Invalid Token');
+
 		$id = JFactory::getApplication()->input->getInt('file', 0);
 
 		$path = JEMAttachment::getAttachmentPath($id);
@@ -140,6 +143,9 @@ class JEMController extends JControllerLegacy
 	 */
 	function ajaxattachremove()
 	{
+		// Check for request forgeries
+		JSession::checkToken('request') or jexit('Invalid Token');
+
 		$jemsettings = JemHelper::config();
 		$res = 0;
 

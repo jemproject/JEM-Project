@@ -29,11 +29,18 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 		form.submit(view);
 	}
 </script>
+<script type="text/javascript">
+	function jSelectUsers_newusers(ids, count, status, eventid, token) {
+		document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&uids='+ids+'&'+token+'=1';
+		SqueezeBox.close();
+	}
+</script>
 
 <div id="jem" class="jem_attendees<?php echo $this->pageclass_sfx;?>">
 	<div class="buttons">
 		<?php
 		$permissions = new stdClass();
+		$permissions->canAddUsers = true;
 		$btn_params = array('print_link' => $this->print_link, 'id' => $this->event->id);
 		echo JemOutput::createButtonBar($this->getName(), $permissions, $btn_params);
 		?>
@@ -107,7 +114,7 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 				</tr>
 			</thead>
 			<tbody>
-			<?php $del_link = 'index.php?option=com_jem&view=attendees&task=attendees.attendeeremove&id='.$this->event->id.(!empty($this->item->id)?'&Itemid='.$this->item->id:''); ?>
+			<?php $del_link = 'index.php?option=com_jem&view=attendees&task=attendees.attendeeremove&id='.$this->event->id.(!empty($this->item->id)?'&Itemid='.$this->item->id:'').'&'.JSession::getFormToken().'=1'; ?>
 			<?php foreach ($this->rows as $i => $row) : ?>
 				<tr class="row<?php echo $i % 2; ?>">
 					<td class="center"><?php echo $this->pagination->getRowOffset($i); ?></td>

@@ -45,7 +45,7 @@ class JemModelAttendee extends JModelLegacy
 		$settings = JEMHelper::globalattribs();
 		$this->regname = $settings->get('global_regname','1');
 
-		$array = JFactory::getApplication()->input->get('cid', array(), 'array');
+		$array = JFactory::getApplication()->input->get('cid', array(0), 'array');
 		$this->setId((int)$array[0]);
 	}
 

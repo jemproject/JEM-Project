@@ -17,30 +17,38 @@ class JemViewAttendees extends JViewLegacy {
 
 	public function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
+		$app  = JFactory::getApplication();
+		$user = JemFactory::getUser();
+		//redirect if not logged in
+		if (!$user->get('id')) {
+			$app->enqueueMessage(JText::_('COM_JEM_NEED_LOGGED_IN'), 'error');
+			return false;
+		}
 
-		$this->settings    = JemHelper::globalattribs();
-		$this->jemsettings = JemHelper::config();
-
-		if($this->getLayout() == 'print') {
+		if ($this->getLayout() == 'print') {
 			$this->_displayprint($tpl);
 			return;
 		}
 
+		if ($this->getLayout() == 'addusers') {
+			$this->returnto = base64_decode($app->input->get('return', '', 'base64'));
+			$this->_displayaddusers($tpl);
+			return;
+		}
+
 		//initialise variables
+		$this->settings    = JemHelper::globalattribs();
+		$this->jemsettings = JemHelper::config();
+
 		$document	= JFactory::getDocument();
-		$user		= JemFactory::getUser();
 		$settings	= $this->settings;
 		$params 	= $app->getParams();
 		$menu		= $app->getMenu();
 		$menuitem	= $menu->getActive();
 		$uri 		= JFactory::getURI();
 
-		//redirect if not logged in
-		if (!$user->get('id')) {
-			$app->enqueueMessage(JText::_('COM_JEM_NEED_LOGGED_IN'), 'error');
-			return false;
-		}
+		JHtml::_('behavior.tooltip');
+		JHtml::_('behavior.modal', 'a.flyermodal');
 
 		// Load css
 		JemHelper::loadCss('jem');
@@ -162,6 +170,63 @@ class JemViewAttendees extends JViewLegacy {
 		$this->event 		= $event;
 		$this->enableemailaddress = $enableemailaddress;
 		$this->settings		= $settings;
+
+		parent::display($tpl);
+	}
+
+	/**
+	 * Creates the output for the users select listing
+	 */
+	protected function _displayaddusers($tpl)
+	{
+		$app         = JFactory::getApplication();
+		$jinput      = $app->input;
+		$jemsettings = JemHelper::config();
+	//	$db          = JFactory::getDBO();
+		$document    = JFactory::getDocument();
+		$model       = $this->getModel();
+		$event       = $this->get('Event');
+
+		// no filters, hard-coded
+		$filter_order     = 'usr.name';
+		$filter_order_Dir = '';
+		$filter_type      = '';
+		$search           = $app->getUserStateFromRequest('com_jem.selectusers.filter_search', 'filter_search', '', 'string');
+	//	$limitstart       = $jinput->get('limitstart', '0', 'int');
+	//	$limit            = $app->getUserStateFromRequest('com_jem.selectusers.limit', 'limit', $jemsettings->display_num, 'int');
+	//	$eventId          = !empty($event->id) ? $event->id : 0;
+
+		JHtml::_('behavior.tooltip');
+		JHtml::_('behavior.modal', 'a.flyermodal');
+
+		// Load css
+		JemHelper::loadCss('jem');
+
+		$document->setTitle(JText::_('COM_JEM_SELECT_USERS_AND_STATUS'));
+
+		// Get/Create the model
+	//	$model->setState('event.id', $eventId);
+		$rows       = $this->get('Users');
+		$pagination = $this->get('UsersPagination');
+
+		// table ordering
+		$lists['order_Dir'] = $filter_order_Dir;
+		$lists['order']     = $filter_order;
+
+		//Build search filter - unused
+		$filters = array();
+		$filters[] = JHtml::_('select.option', '1', JText::_('COM_JEM_NAME'));
+		$searchfilter = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+
+		// search filter - unused
+		$lists['search'] = $search;
+
+		//assign data to template
+		$this->searchfilter = $searchfilter;
+		$this->lists        = $lists;
+		$this->rows         = $rows;
+		$this->pagination   = $pagination;
+		$this->event        = $event;
 
 		parent::display($tpl);
 	}

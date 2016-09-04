@@ -46,7 +46,7 @@ class JemOutput
 	 *                              task: e.g. 'archive', for Archive button,
 	 *                              print_link: for Print button
 	 *                              show, hide: to override button visibility; array of one or more of
-	 *                              'addEvent', 'addVenue',
+	 *                              'addEvent', 'addVenue', 'addUsers'
 	 *                              'archive' 'mail', 'print', 'ical', ('export', 'back',)
 	 *                              'publish', 'unpublish', 'trash' - note: some buttons may not work or need additional changes)
 	 *
@@ -54,7 +54,7 @@ class JemOutput
 	 */
 	static function createButtonBar($view, $permissions, $params)
 	{
-		foreach (array('canAddEvent', 'canAddVenue', 'canPublishEvent', 'canPublishVenue') as $key) {
+		foreach (array('canAddEvent', 'canAddVenue', 'canAddUsers', 'canPublishEvent', 'canPublishVenue') as $key) {
 			${$key} = isset($permissions->$key) ? $permissions->$key: null;
 		}
 		if (is_object($params)) {
@@ -85,6 +85,9 @@ class JemOutput
 			}
 			if (in_array('addVenue', $btns_show) || (!in_array('addVenue', $btns_hide) && in_array($view, array('categories', 'category', 'day', 'event', 'eventslist', 'myevents', 'myvenues', 'venue', 'venues')))) {
 				$buttons[$idx][] = JemOutput::addvenuebutton(!empty($canAddVenue), null, null);
+			}
+			if (in_array('addUsers', $btns_show) || (!in_array('addUsers', $btns_hide) && in_array($view, array('attendees')))) {
+				$buttons[$idx][] = JemOutput::addusersbutton(!empty($canAddUsers), $id);
 			}
 		}
 
@@ -204,6 +207,44 @@ class JemOutput
 			$url = 'index.php?option=com_jem&task=venue.add&return='.base64_encode($uri).'&a_id=0';
 			$overlib = JText::_('COM_JEM_DELIVER_NEW_VENUE_DESC');
 			$output = JHtml::_('link', JRoute::_($url), $image, JEMOutput::tooltip(JText::_('COM_JEM_DELIVER_NEW_VENUE'), $overlib, '', 'bottom'));
+
+			return $output;
+		}
+	}
+
+	/**
+	 * Writes addvenuebutton
+	 *
+	 * @param int $addvenuelink Access of user
+	 * @param int $eventid id of corresponding event
+	 * @param array $params needed params
+	 * @param $settings, retrieved from settings-table
+	 *
+	 * Active in views:
+	 * venue, venues
+	 **/
+	static function addusersbutton($adduserslink, $eventid)
+	{
+		if ($adduserslink) {
+			$app 		= JFactory::getApplication();
+			$settings 	= JemHelper::globalattribs();
+			$uri 		= JFactory::getURI();
+
+			if ($app->input->get('print','','int')) {
+				return;
+			}
+
+			JHtml::_('behavior.tooltip');
+
+			if ($settings->get('global_show_icons',1)) {
+				$image = JHtml::_('image', 'com_jem/icon-16-new.png', JText::_('COM_JEM_ADD_USER_REGISTRATIONS'), NULL, true);
+			} else {
+				$image = JText::_('COM_JEM_ADD_USER_REGISSTRATIONS');
+			}
+
+			$url = 'index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&return='.base64_encode($uri).'&id='.$eventid.'&'.JSession::getFormToken().'=1';
+			$overlib = JText::_('COM_JEM_ADD_USER_REGISTRATIONS_DESC');
+			$output = JHtml::_('link', JRoute::_($url), $image, JemOutput::tooltip(JText::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom').' rel="{handler: \'iframe\', size: {x:800, y:450}}"');
 
 			return $output;
 		}

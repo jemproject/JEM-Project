@@ -156,7 +156,7 @@ abstract class JHtmlJemHtml
 				$attr .= ' onclick="return listItemTask(\'cb' . $i . '\',\'' . $state[1] . '\')"';
 				$url = '#';
 			} else {
-				$url = JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$i);
+				$url = JRoute::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$i.'&'.JSession::getFormToken().'=1');
 			}
 			$html = JHtml::_('link', $url, $html, $attr);
 		} else {

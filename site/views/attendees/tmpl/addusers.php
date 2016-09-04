@@ -12,6 +12,14 @@ $function = JFactory::getApplication()->input->getCmd('function', 'jSelectUsers'
 $checked = 0;
 
 JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
+
+// Get the form.
+JForm::addFormPath(JPATH_COMPONENT . '/models/forms');
+$form = JForm::getInstance('com_jem.addusers', 'addusers');
+
+if (empty($form)) {
+	return false;
+}
 ?>
 
 <script type="text/javascript">
@@ -43,17 +51,23 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
 <div id="jem" class="jem_select_users">
 	<h1 class='componentheading'>
-		<?php echo JText::_('COM_JEM_SELECT_USERS_TO_INVITE'); ?>
+		<?php echo JText::_('COM_JEM_SELECT_USERS_AND_STATUS'); ?>
 	</h1>
 
 	<div class="jem_fright">
-		<button type="button" class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>(checkList(document.adminForm), document.adminForm.boxchecked.value);"><?php echo JText::_('COM_JEM_SAVE'); ?></button>
+		<button type="button" class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>_newusers(checkList(document.adminForm), document.adminForm.boxchecked.value, document.adminForm.status.value, <?php echo $this->event->id; ?>, '<?php echo JSession::getFormToken(); ?>');">
+			<?php echo JText::_('COM_JEM_SAVE'); ?>
+		</button>
 	</div>
 
 	<div class="clr"></div>
 
-	<form action="<?php echo JRoute::_('index.php?option=com_jem&view=editevent&layout=chooseusers&tmpl=component&function='.$this->escape($function).'&'.JSession::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
-		<?php if(0) : ?>
+	<form action="<?php echo JRoute::_('index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&function='.$this->escape($function).'&id='.$this->event->id.'&'.JSession::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
+		<ul class="adminformlist">
+			<li><?php echo $form->getLabel('status'); ?><?php echo $form->getInput('status'); ?></li>
+		</ul>
+
+		<?php if(1) : ?>
 		<div id="jem_filter" class="floattext">
 			<div class="jem_fleft">
 				<?php
@@ -63,7 +77,6 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 				<input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="inputbox" onChange="document.adminForm.submit();" />
 				<button type="submit" class="pointer"><?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?></button>
 				<button type="button" class="pointer" onclick="document.id('filter_search').value='';this.form.submit();"><?php echo JText::_('JSEARCH_FILTER_CLEAR'); ?></button>
-				<?php /*<button type="button" class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '0');"><?php echo JText::_('COM_JEM_NOUSERS')?></button>*/ ?>
 			</div>
 			<div class="jem_fright">
 				<?php
@@ -90,17 +103,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 					<?php foreach ($this->rows as $i => $row) : ?>
 					<tr class="row<?php echo $i % 2; ?>">
 						<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-						<td class="center"><?php
-							//echo JHtml::_('grid.id', $i, $row->id);
-							$cb = JHtml::_('grid.id', $i, $row->id);
-							if ($row->status == 0) {
-							//	JemHelper::addLogEntry('before: '.$cb, __METHOD__);
-								$cb = preg_replace('/(onclick=)/', 'checked $1', $cb);
-								++$checked;
-							//	JemHelper::addLogEntry('after:  '.$cb, __METHOD__);
-							}
-							echo $cb;
-						?></td>
+						<td class="center"><?php echo JHtml::_('grid.id', $i, $row->id); ?></td>
 						<td align="left"><?php echo $this->escape($row->name); ?></td>
 						<td class="center"><?php echo JHtml::_('jemhtml.toggleAttendanceStatus', $row->status, 0, false); ?></td>
 					</tr>

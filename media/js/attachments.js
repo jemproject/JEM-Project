@@ -1,7 +1,7 @@
 /**
- * @version 2.0.0
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -19,8 +19,16 @@ window.addEvent('domready', function() {
 
 		$(event.target).style.cursor = 'wait'; /* indicate server request */
 
-		var id = event.target.id.substr(13);
-		var url = 'index.php?option=com_jem&task=ajaxattachremove&format=raw&id='+id;
+		var url = '';
+		var pos = event.target.id.indexOf(':');
+		if (pos >= 0) {
+			var id = event.target.id.substring(13, pos);
+			var token = event.target.id.substr(pos+1);
+			url = 'index.php?option=com_jem&task=ajaxattachremove&format=raw&id='+id+'&'+token+'=1';
+		} else {
+			var id = event.target.id.substr(13);
+			url = 'index.php?option=com_jem&task=ajaxattachremove&format=raw&id='+id;
+		}
 		var theAjax = new Request( {
 			url : url,
 			method: 'post',
