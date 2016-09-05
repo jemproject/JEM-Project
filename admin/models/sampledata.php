@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -257,8 +257,8 @@ class JemModelSampledata extends JModelLegacy
 	private function assignAdminId()
 	{
 		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
 
+		$query = $db->getQuery(true);
 		$query->select("id");
 		$query->from('#__users');
 		$query->where('name LIKE "Super User"');
@@ -266,7 +266,14 @@ class JemModelSampledata extends JModelLegacy
 		$result = $db->loadResult();
 
 		if ($result == null) {
-			return false;
+			// use current user as fallback if user is allowed to manage JEM
+			$user = JemFactory::getUser();
+			if ($user->authorise('core.manage', 'com_jem')) {
+				$result = $user->get('id');
+			}
+			if (empty($result)) {
+				return false;
+			}
 		}
 
 		$query = $db->getQuery(true);
