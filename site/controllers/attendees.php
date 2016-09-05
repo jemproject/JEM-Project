@@ -68,8 +68,9 @@ class JemControllerAttendees extends JControllerLegacy
 
 		// We have to check all users first if there are already records for given event.
 		// If not we have to add the records and than on success send the e-mails.
-		$regs = JemModelAttendees::getRegisteredUsers($eventid);
 		$modelEventItem = $this->getModel('event');
+		$modelAttendees = $this->getModel('attendees'); // required to ensure JemModelAttendees is loaded
+		$regs = JemModelAttendees::getRegisteredUsers($eventid);
 		$errMsgs = array();
 		$errMsg  = '';
 		$skip    = 0;
