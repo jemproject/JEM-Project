@@ -19,7 +19,6 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
  */
 class JemHelper
 {
-
 	/**
 	 * Pulls settings from database and stores in an static object
 	 *
@@ -801,7 +800,6 @@ class JemHelper
 			$query = ' UPDATE #__jem_register SET waiting = 0 WHERE id IN ('.implode(',', $bumping).')';
 			$db->setQuery($query);
 			if ($db->execute() === false) {
-				$this->setError(JText::_('COM_JEM_FAILED_BUMPING_USERS_FROM_WAITING_TO_CONFIRMED_LIST'));
 				Jerror::raisewarning(0, JText::_('COM_JEM_FAILED_BUMPING_USERS_FROM_WAITING_TO_CONFIRMED_LIST').': '.$db->getErrorMsg());
 			} else {
 				foreach ($bumping AS $register_id)
