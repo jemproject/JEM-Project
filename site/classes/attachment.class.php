@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.1.7
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -20,7 +20,7 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
  *
  * @package JEM
  */
-class JEMAttachment extends JObject
+class JemAttachment extends JObject
 {
 	/**
 	 * upload files for the specified object
@@ -33,7 +33,7 @@ class JEMAttachment extends JObject
 		require_once JPATH_SITE.'/components/com_jem/classes/image.class.php';
 
 		$user = JemFactory::getUser();
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 
 		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$object;
 
@@ -77,7 +77,7 @@ class JEMAttachment extends JObject
 
 			// TODO: Probably move this to a helper class
 
-			$sanitizedFilename = JEMImage::sanitize($path, $file);
+			$sanitizedFilename = JemImage::sanitize($path, $file);
 
 			// Make sure that the full file path is safe.
 			$filepath = JPath::clean( $path.'/'.$sanitizedFilename);
@@ -143,7 +143,7 @@ class JEMAttachment extends JObject
 	 */
 	static function getAttachments($object)
 	{
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 
 		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
@@ -189,7 +189,7 @@ class JEMAttachment extends JObject
 	 */
 	static function getAttachmentPath($id)
 	{
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 
 		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
@@ -226,20 +226,51 @@ class JEMAttachment extends JObject
 	 */
 	static function remove($id)
 	{
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
+
+		$user = JemFactory::getUser();
+		// Support Joomla access levels instead of single group id
+		$levels = $user->getAuthorisedViewLevels();
+		$userid = $user->get('id');
 
 		// then get info for files from db
 		$db = JFactory::getDBO();
 
-		$query = ' SELECT file, object '
+		$query = ' SELECT file, object, added_by '
 			   . ' FROM #__jem_attachments '
-			   . ' WHERE id = ' . $db->Quote($id);
+			   . ' WHERE id = ' . $db->Quote($id) . ' AND access IN (0,' . implode(',', $levels) . ')';
 		$db->setQuery($query);
 		$res = $db->loadObject();
+
 		if (!$res) {
 			return false;
 		}
 
+		// check permission
+		if (empty($userid) || ($userid != $res->added_by)) {
+			if (strncasecmp($res->object, 'event', 5) == 0) {
+				$type = 'event';
+				$itemid = (int)substr($res->object, 5);
+				$table = '#__jem_events';
+			} elseif (strncasecmp($res->object, 'venue', 5) == 0) {
+				$type = 'venue';
+				$itemid = (int)substr($res->object, 5);
+				$table = '#__jem_venues';
+			} else {
+				return false;
+			}
+			// get item owner
+			$query = ' SELECT created_by FROM ' . $table . ' WHERE id = ' . $db->Quote($itemid);
+			$db->setQuery($query);
+			$created_by = $db->loadResult();
+
+			if (!$user->can('edit', $type, $itemid, $created_by)) {
+				JemHelper::addLogEntry("User ${userid} is not permritted to remove attachment " . $res->object, __METHOD__);
+				return false;
+			}
+		}
+
+		JemHelper::addLogEntry("User ${userid} removes attachment " . $res->object.'/'.$res->file, __METHOD__);
 		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$res->object.'/'.$res->file;
 		if (file_exists($path)) {
 			JFile::delete($path);
