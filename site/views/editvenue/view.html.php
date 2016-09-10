@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.1.7
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
