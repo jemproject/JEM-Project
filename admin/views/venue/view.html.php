@@ -55,7 +55,8 @@ class JemViewVenue extends JemAdminView
 		$language = $language->getTag();
 		$language = substr($language, 0,2);
 
-		$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places&language='.$language);
+        $key = trim($this->settings->globalattribs->global_googleapi);
+        $document->addScript('http://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&amp;libraries=places&language='.$language);
 
 		// Noconflict
 		$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
