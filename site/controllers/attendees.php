@@ -56,50 +56,52 @@ class JemControllerAttendees extends JControllerLegacy
 		$uids    = array_filter($uids);
 		$uids    = array_unique($uids);
 		$total   = is_array($uids) ? count($uids) : 0;
+		$msg     = '';
 
 		JemHelper::addLogEntry("Got attendeeadd - event: ${eventid}, status: ${status}, users: " . implode(',', $uids), __METHOD__, JLog::DEBUG);
 
 		if ($total < 1) {
-			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_ADD'));
-		}
+			$msg = '0 ' . JText::_('COM_JEM_REGISTERED_USERS_ADDED');
+		} else {
+			JPluginHelper::importPlugin('jem');
+			$dispatcher = JemFactory::getDispatcher();
 
-		JPluginHelper::importPlugin('jem');
-		$dispatcher = JemFactory::getDispatcher();
+			// We have to check all users first if there are already records for given event.
+			// If not we have to add the records and than on success send the e-mails.
+			$modelEventItem = $this->getModel('event');
+			$modelAttendees = $this->getModel('attendees'); // required to ensure JemModelAttendees is loaded
+			$regs = JemModelAttendees::getRegisteredUsers($eventid);
+			$errMsgs = array();
+			$errMsg  = '';
+			$skip    = 0;
+			$error   = 0;
 
-		// We have to check all users first if there are already records for given event.
-		// If not we have to add the records and than on success send the e-mails.
-		$modelEventItem = $this->getModel('event');
-		$modelAttendees = $this->getModel('attendees'); // required to ensure JemModelAttendees is loaded
-		$regs = JemModelAttendees::getRegisteredUsers($eventid);
-		$errMsgs = array();
-		$errMsg  = '';
-		$skip    = 0;
-		$error   = 0;
-
-		foreach ($uids as $uid) {
-			if (array_key_exists($uid, $regs)) {
-				JemHelper::addLogEntry("Skip user ${uid} already registered for event ${eventid}.", __METHOD__, JLog::DEBUG);
-				++$skip;
-			} else {
-				$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $comment, $errMsg);
-				if ($reg_id) {
-					$res = $dispatcher->trigger('onEventUserRegistered', array($reg_id));
+			foreach ($uids as $uid) {
+				if (array_key_exists($uid, $regs)) {
+					JemHelper::addLogEntry("Skip user ${uid} already registered for event ${eventid}.", __METHOD__, JLog::DEBUG);
+					++$skip;
 				} else {
-					JemHelper::addLogEntry(implode(' - ', array("Model returned error while adding user ${uid}", $errMsg)), __METHOD__, JLog::DEBUG);
-					if (!empty($errMsg)) {
-						$errMsgs[] = 'Error on ' . $uid . ' : ' . $errMsg;
+					$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $comment, $errMsg);
+					if ($reg_id) {
+						$res = $dispatcher->trigger('onEventUserRegistered', array($reg_id));
+					} else {
+						JemHelper::addLogEntry(implode(' - ', array("Model returned error while adding user ${uid}", $errMsg)), __METHOD__, JLog::DEBUG);
+						if (!empty($errMsg)) {
+							$errMsgs[] = $errMsg;
+						}
+						++$error;
 					}
-					++$error;
 				}
 			}
-		}
 
-		$cache = JFactory::getCache('com_jem');
-		$cache->clean();
+			$cache = JFactory::getCache('com_jem');
+			$cache->clean();
 
-		$msg = ($total - $skip - $error) . ' ' . JText::_('COM_JEM_REGISTERED_USERS_ADDED');
-		if (count($errMsgs)) {
-			$msg += '<br />' . implode('<br />', $errMsgs);
+			$msg = ($total - $skip - $error) . ' ' . JText::_('COM_JEM_REGISTERED_USERS_ADDED');
+			$errMsgs = array_unique($errMsgs);
+			if (count($errMsgs)) {
+				$msg .= '<br />' . implode('<br />', $errMsgs);
+			}
 		}
 
 		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=attendees&id='.$eventid.'&Itemid='.$fid, false), $msg);

@@ -596,7 +596,7 @@ class JemModelEvent extends JModelItem
 		}
 		elseif ($status == 2) {
 			if ($respectPlaces && !$event->waitinglist) {
-				$errMsg = JText::_('COM_JEM_EVENT_FULL_NOTICE');
+				$errMsg = JText::_('COM_JEM_NO_WAITINGLIST');
 				return false;
 			}
 			$onwaiting = 1;
