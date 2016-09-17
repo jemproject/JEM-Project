@@ -107,6 +107,12 @@
 	Fill in "h" or "Uhr" for example. This will be displayed behind the
 	time on the frontend. Leave blank if you don't need it.</p>
 
+<p><strong>Format Hour:</strong><br />
+	Use the php strftime syntax to format the hour, used in Event Edit views. For example
+	the following code '%H' shows '16'. More Information <a href=
+	"http://www.php.net/strftime" target="_blank">php strftime manual</a>.</p>
+	
+	
 <p><strong>Store IP:</strong><br />
 	In some countries it isn't permitted to store the IP address of your visitors. You can disable it here.</p>
 
@@ -454,6 +460,8 @@ If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in h
 	You can set a default country for venues in this field.
 	When entering a new venue the country is then set to the default chosen here, to save handling.</p>
 
+<p><strong>CSV Separator:</strong><br />
+	Choose if comma or semicolon should be used as separator on CSV Exports (e.g. attendee lists).</p>
 
 <h3>Venues:</h3>
 
@@ -536,9 +544,9 @@ Select if Attachment uploads for frontend submissions are enabled or forbidden.<
 	Select here to always allow registration, always forbid registration,
 	or allow event creator to decide if (s)he needs registration for the specific event.</p>
 
-<p><strong>Allow Event Registration Cancellation:</strong><br />
-	Select here to always allow un-registration, always forbid un-registration,
-	or allow event creator to decide if un-registration for the specific event is allowed.</p>
+<p><strong>Allow Invitation:</strong><br />
+	If set to 'Yes' event creators are allowed to invite users and also to limit permission to register to them. <br />
+	<strong>Attention: This will provide a list of all site users available to all potential event creators!</strong></p>
 
 <p><strong>Allow Comments:</strong><br />
 	Select if Frontend users are allowed to write an additional comment when they register for an event.</p>
