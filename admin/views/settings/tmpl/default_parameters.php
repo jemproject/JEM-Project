@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.2.0
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -35,7 +35,7 @@ defined('_JEXEC') or die;
 <div class="width-50 fltrt">
 	<div class="width-100">
 		<fieldset class="adminform">
-			<legend><?php echo JText::_('COM_JEM_GLOBAL_PARAMETERS'); ?></legend>
+			<legend><?php echo JText::_('COM_JEM_GLOBAL_PARAMETERS_ADVANCED'); ?></legend>
 			<ul class="adminformlist">
 				<?php foreach ($this->form->getFieldset('globalparam2') as $field): ?>
 					<li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
