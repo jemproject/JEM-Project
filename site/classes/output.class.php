@@ -239,7 +239,7 @@ class JemOutput
 			if ($settings->get('global_show_icons',1)) {
 				$image = JHtml::_('image', 'com_jem/icon-16-new.png', JText::_('COM_JEM_ADD_USER_REGISTRATIONS'), NULL, true);
 			} else {
-				$image = JText::_('COM_JEM_ADD_USER_REGISSTRATIONS');
+				$image = JText::_('COM_JEM_ADD_USER_REGISTRATIONS');
 			}
 
 			$url = 'index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&return='.base64_encode($uri).'&id='.$eventid.'&'.JSession::getFormToken().'=1';

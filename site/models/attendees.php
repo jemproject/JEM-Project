@@ -344,7 +344,7 @@ class JemModelAttendees extends JModelLegacy
 	 */
 	function getUsers()
 	{
-		$query      = $this->buildQueryUsers();
+		$query      = $this->_buildQueryUsers();
 		$pagination = $this->getUsersPagination();
 
 		$rows       = $this->_getList($query, $pagination->limitstart, $pagination->limit);
@@ -411,7 +411,7 @@ class JemModelAttendees extends JModelLegacy
 		// correct start value if required
 		$limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
-		$query = $this->buildQueryUsers();
+		$query = $this->_buildQueryUsers();
 		$total = $this->_getListCount($query);
 
 		// Create the pagination object
@@ -425,7 +425,7 @@ class JemModelAttendees extends JModelLegacy
 	/**
 	 * users-query
 	 */
-	function buildQueryUsers()
+	protected function _buildQueryUsers()
 	{
 		$app              = JFactory::getApplication();
 		$jemsettings      = JemHelper::config();
@@ -433,8 +433,9 @@ class JemModelAttendees extends JModelLegacy
 		// no filters, hard-coded
 		$filter_order     = 'usr.name';
 		$filter_order_Dir = '';
-		$filter_type      = '';
-		$search           = '';
+		$filter_type      = '1';
+		$search           = $app->getUserStateFromRequest('com_jem.selectusers.filter_search', 'filter_search', '', 'string');
+		$search           = $this->_db->escape(trim(JString::strtolower($search)));
 
 		// Query
 		$db    = JFactory::getDBO();
