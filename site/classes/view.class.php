@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
  *
  * @package JEM
  */
-class JEMView extends JViewLegacy {
+class JemView extends JViewLegacy {
 	/**
 	 * Adds a row to data indicating even/odd row number
 	 *
@@ -76,6 +76,6 @@ class JEMView extends JViewLegacy {
 		$this->document->setTitle($title);
 
 		// TODO: Metadata
-		$this->document->setMetadata('keywords', $this->params->get('page_title'));
+		$this->document->setMetaData('keywords', $this->params->get('page_title'));
 	}
 }

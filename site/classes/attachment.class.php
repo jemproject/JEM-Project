@@ -33,7 +33,7 @@ class JemAttachment extends JObject
 	 */
 	public static function postUpload($post_files, $object)
 	{
-		require_once JPATH_SITE . '/components/com_jem/classes/image.class.php';
+		require_once JPATH_SITE . '/com_jem/classes/image.class.php'; // TODO: JPATH_COMPONENT
 
 		$user = JemFactory::getUser();
 		$jemsettings = JemHelper::config();
@@ -60,7 +60,7 @@ class JemAttachment extends JObject
 			// check if the filetype is valid
 			$fileext = strtolower(JFile::getExt($file));
 			if (!in_array($fileext, $allowed)) {
-				JError::raiseWarning(0, JText::_('COM_JEM_ERROR_ATTACHEMENT_EXTENSION_NOT_ALLOWED').': '.$file);
+				JError::raiseWarning(0, JText::_('COM_JEM_ERROR_ATTACHEMENT_EXTENSION_NOT_ALLOWED') . ': ' . $file);
 				continue;
 			}
 			// check size
@@ -73,7 +73,7 @@ class JemAttachment extends JObject
 				// try to create it
 				$res = JFolder::create($path);
 				if (!$res) {
-					JError::raiseWarning(0, JText::_('COM_JEM_ERROR_COULD_NOT_CREATE_FOLDER').': '.$path);
+					JError::raiseWarning(0, JText::_('COM_JEM_ERROR_COULD_NOT_CREATE_FOLDER') . ': ' . $path);
 					return false;
 				}
 			}
@@ -136,7 +136,7 @@ class JemAttachment extends JObject
 		$table->bind($attach);
 
 		if (!($table->check() && $table->store())) {
-			JError::raiseWarning(0, JText::_('COM_JEM_ATTACHMENT_ERROR_UPDATING_RECORD').': '.$table->getError());
+			JError::raiseWarning(0, JText::_('COM_JEM_ATTACHMENT_ERROR_UPDATING_RECORD') . ': ' . $table->getError());
 			return false;
 		}
 
@@ -168,10 +168,10 @@ class JemAttachment extends JObject
 		$files = JFolder::files($path, null, false, false);
 
 		// then get info for files from db
-		$db = JFactory::getDBO();
+		$db = JFactory::getDbo();
 		$fnames = array();
 		foreach ($files as $f) {
-			$fnames[] = $db->Quote($f);
+			$fnames[] = $db->quote($f);
 		}
 
 		if (!count($fnames)) {
@@ -181,7 +181,7 @@ class JemAttachment extends JObject
 		$query = ' SELECT * '
 			   . ' FROM #__jem_attachments '
 			   . ' WHERE file IN ('. implode(',', $fnames) .')'
-			   . '   AND object = '. $db->Quote($object);
+			   . '   AND object = '. $db->quote($object);
 		$query .= ' AND access IN (' . implode(',', $levels) . ')';
 		$query .= ' ORDER BY ordering ASC ';
 
@@ -206,10 +206,10 @@ class JemAttachment extends JObject
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
-		$db = JFactory::getDBO();
+		$db = JFactory::getDbo();
 		$query = ' SELECT * '
 			   . ' FROM #__jem_attachments '
-			   . ' WHERE id = '. $db->Quote(intval($id));
+			   . ' WHERE id = '. $db->quote(intval($id));
 		$db->setQuery($query);
 		$res = $db->loadObject();
 		if (!$res) {
@@ -231,8 +231,9 @@ class JemAttachment extends JObject
 	/**
 	 * remove attachment for objects
 	 *
-	 * @param $id from db
+	 * @param int $id from db
 	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
+     * @since 1.1
 	 * @return boolean
 	 */
 	public static function remove($id)
@@ -245,11 +246,11 @@ class JemAttachment extends JObject
 		$userid = $user->get('id');
 
 		// then get info for files from db
-		$db = JFactory::getDBO();
+		$db = JFactory::getDbo();
 
 		$query = ' SELECT file, object, added_by '
 			   . ' FROM #__jem_attachments '
-			   . ' WHERE id = ' . $db->Quote($id) . ' AND access IN (0,' . implode(',', $levels) . ')';
+			   . ' WHERE id = ' . $db->quote($id) . ' AND access IN (0,' . implode(',', $levels) . ')';
 		$db->setQuery($query);
 		$res = $db->loadObject();
 
@@ -271,7 +272,7 @@ class JemAttachment extends JObject
 				return false;
 			}
 			// get item owner
-			$query = ' SELECT created_by FROM ' . $table . ' WHERE id = ' . $db->Quote($itemid);
+			$query = ' SELECT created_by FROM ' . $table . ' WHERE id = ' . $db->quote($itemid);
 			$db->setQuery($query);
 			$created_by = $db->loadResult();
 
@@ -288,7 +289,7 @@ class JemAttachment extends JObject
 		}
 
 		$query = ' DELETE FROM #__jem_attachments '
-			   . ' WHERE id = '. $db->Quote($id);
+			   . ' WHERE id = '. $db->quote($id);
 		$db->setQuery($query);
 		$res = $db->execute();
 		if (!$res) {

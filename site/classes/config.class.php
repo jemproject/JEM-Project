@@ -8,6 +8,7 @@
 
 defined('_JEXEC') or die;
 
+jimport( 'joomla.registry.registry' );
 /**
  * JemConfig class to handle JEM configuration
  *
@@ -65,7 +66,6 @@ class JemConfig
 		$this->_data = new JRegistry($this->loadData());
 
 		// Load data from database
-		;
 	}
 
 	/**
@@ -175,6 +175,7 @@ class JemConfig
 	/**
 	 * Store data
 	 *
+     * @return boolean
 	 */
 	public function store()
 	{

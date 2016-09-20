@@ -86,5 +86,3 @@ if (version_compare(JVERSION, '3.0', 'lt')) {
 		}
 	}
 }
-
-?>

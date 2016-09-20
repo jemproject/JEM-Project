@@ -10,9 +10,9 @@
 defined('_JEXEC') or die;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
-require_once(JPATH_SITE.'/components/com_jem/factory.php');
+require_once(JPATH_SITE . '/components/com_jem/factory.php');
 
-class JEMCategories
+class JemCategories
 {
 
 	/**
@@ -22,7 +22,6 @@ class JEMCategories
 	 * @since  11.1
 	 */
 	public static $instances = array();
-
 
 	/**
 	 * Array of category nodes
@@ -40,33 +39,32 @@ class JEMCategories
 	 */
 	protected $_checkedCategories;
 
-
-
 	/**
 	 * id
 	 *
 	 * @var int
 	 */
-	var $id = null;
+	public $id = null;
 
 	/**
 	 * Parent Categories (name, slug), with top category first
 	 *
 	 * @var array
 	 */
-	var $parentcats = array();
+	public $parentcats = array();
 
 	/**
 	 * Category data
 	 *
 	 * @var array
 	 */
-	var $category = array();
+	public $category = array();
 
 	/**
 	 * Constructor
 	 *
-	 * @param int category id
+	 * @param int $cid category-id
+     * @param array $options
 	 */
 	public function __construct($cid,$options=false)
 	{
@@ -79,14 +77,16 @@ class JEMCategories
 	 * Instance
 	 *
 	 * @todo: This implementation is wrong!
+     *
+     * @param int $cid
+     * param array $options
 	 */
 	public static function getInstance($cid,$options=false)
 	{
 
-		self::$instances = new JEMCategories($cid,$options);
+		self::$instances = new JemCategories($cid,$options);
 
 		return self::$instances;
-
 	}
 
 	/**
@@ -134,7 +134,7 @@ class JEMCategories
 	/**
 	 * Load method
 	 *
-	 * @param   integer  $id  Id of category to load
+	 * @param int $id  Id of category to load
 	 */
 	protected function _load($id)
 	{
@@ -189,7 +189,7 @@ class JEMCategories
 			$query->where('(c.access IN ('.$groups.'))');
 		}
 		*/
-		$query->where('(c.access IN ('.implode(',', $levels).'))');
+		$query->where('(c.access IN (' . implode(',', $levels) . '))');
 
 
 		#####################
@@ -245,10 +245,10 @@ class JEMCategories
 				if (empty($published)) {
 					$published = array(1); // default to published events
 				}
-				$where = 'i.published IN (' . implode(',', $published).')';
+				$where = 'i.published IN (' . implode(',', $published) . ')';
 			}
 
-			$query->leftJoin('#__jem_events AS i ON rel.itemid = i.id'.' AND ' . $where . ' AND i.access IN ('.implode(',', $levels).')');
+			$query->leftJoin('#__jem_events AS i ON rel.itemid = i.id' . ' AND ' . $where . ' AND i.access IN ('.implode(',', $levels) . ')');
 			$query->select('COUNT(IF(' . $where . ', TRUE, NULL)) AS numitems');
 			$query->select('COUNT(IF(i.published =  0, TRUE, NULL)) AS num_unpublished');
 			$query->select('COUNT(IF(i.published =  1, TRUE, NULL)) AS num_published');
@@ -359,11 +359,10 @@ class JEMCategories
 	/**
 	 * Retrieve Categories
 	 *
-	 * Due to multi-cat this function is needed
-	 * filter-index (4) is pointing to the cats
+	 * Due to multi-cat this function is needed filter-index (4) is pointing to the cats
 	 */
 
-	function getCategories($id = 0)
+	public function getCategories($id = 0)
 	{
 
 		$id = (!empty($id)) ? $id : (int) $this->getState('event.id');
@@ -377,7 +376,7 @@ class JEMCategories
 		$settings 		= JemHelper::globalattribs();
 
 		// Query
-		$db 	= JFactory::getDBO();
+		$db 	= JFactory::getDbo();
 		$query = $db->getQuery(true);
 
 		$case_when_c = ' CASE WHEN ';
@@ -386,7 +385,7 @@ class JEMCategories
 		$id_c = $query->castAsChar('c.id');
 		$case_when_c .= $query->concatenate(array($id_c, 'c.alias'), ':');
 		$case_when_c .= ' ELSE ';
-		$case_when_c .= $id_c.' END as catslug';
+		$case_when_c .= $id_c . ' END as catslug';
 
 		$query->select(array('DISTINCT c.id','c.catname','c.access','c.checked_out AS cchecked_out','c.color',$case_when_c));
 		$query->from('#__jem_categories as c');
@@ -396,7 +395,7 @@ class JEMCategories
 		$query->join('LEFT','#__jem_events AS a ON a.id = rel.itemid');
 
 		if ($id != 'all'){
-			$query->where('rel.itemid ='.(int)$id);
+			$query->where('rel.itemid =' . (int)$id);
 		}
 
 		$query->where('c.published = 1');
@@ -430,7 +429,7 @@ class JEMCategories
 			$query->where('(c.access IN ('.$groups.'))');
 		}
 		*/
-		$query->where('(c.access IN ('.implode(',', $levels).'))');
+		$query->where('(c.access IN (' . implode(',', $levels) . '))');
 
 		$db->setQuery($query);
 
@@ -444,9 +443,9 @@ class JEMCategories
 		return $cats;
 	}
 
-	function getPath()
+	public function getPath()
 	{
-		$db = JFactory::getDBO();
+		$db = JFactory::getDbo();
 		$parentcats = array();
 		$cid = $this->id;
 		$user = JemFactory::getUser();
@@ -464,13 +463,13 @@ class JEMCategories
 			$cat_id = $sql->castAsChar('id');
 			$case_when_cat_alias .= $sql->concatenate(array($cat_id, 'alias'), ':');
 			$case_when_cat_alias .= ' ELSE ';
-			$case_when_cat_alias .= $cat_id.' END as slug';
+			$case_when_cat_alias .= $cat_id . ' END as slug';
 			$sql->select($case_when_cat_alias);
 
 			$sql->from('#__jem_categories');
 			$sql->where('id = ' . (int) $cid);
 			$sql->where('published = 1');
-			$sql->where('access IN ('.implode(',', $levels).')');
+			$sql->where('access IN (' . implode(',', $levels) . ')');
 
 			$db->setQuery($sql);
 			$row = $db->loadObject();
@@ -492,11 +491,11 @@ class JEMCategories
 	/**
 	 * set the array (parentcats) of ascending parents categories, with initial category first.
 	 *
-	 * @param int category ids
+	 * @param int $cid category-ids
 	 */
-	static function buildParentCats($cid)
+	public static function buildParentCats($cid)
 	{
-		$db         = JFactory::getDBO();
+		$db         = JFactory::getDbo();
 		$parentcats = array();
 		$user       = JemFactory::getUser();
 		$userid     = (int) $user->get('id');
@@ -520,7 +519,7 @@ class JEMCategories
 			$cat_id = $query->castAsChar('c.id');
 			$case_when_cat_alias .= $query->concatenate(array($cat_id, 'c.alias'), ':');
 			$case_when_cat_alias .= ' ELSE ';
-			$case_when_cat_alias .= $cat_id.' END AS slug';
+			$case_when_cat_alias .= $cat_id . ' END AS slug';
 			$query->select($case_when_cat_alias);
 
 			$query->from('#__jem_categories as c');
@@ -552,7 +551,7 @@ class JEMCategories
 				$query->where('(c.access IN ('.$groups.'))');
 			}
 			*/
-			$query->where('(c.access IN ('.implode(',', $levels).'))');
+			$query->where('(c.access IN (' . implode(',', $levels) . '))');
 
 			$db->setQuery($query);
 			$row = $db->loadObject();
@@ -574,7 +573,7 @@ class JEMCategories
 	 *
 	 * @return array
 	 */
-	function getParentlist()
+	public function getParentlist()
 	{
 		$categories = array();
 
@@ -594,9 +593,9 @@ class JEMCategories
 	 *
 	 * @return array
 	 */
-	static function getCategoriesTree($published = false)
+	public static function getCategoriesTree($published = false)
 	{
-		$db = JFactory::getDBO();
+		$db = JFactory::getDbo();
 		$user = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
 		$state = array(0,1);
@@ -645,7 +644,7 @@ class JEMCategories
 		}
 
 		//get list of the items
-		$list = JEMCategories::treerecurse($parentid, '', array(), $children, 9999, 0, 0);
+		$list = JemCategories::treerecurse($parentid, '', array(), $children, 9999, 0, 0);
 
 		return $list;
 	}
@@ -658,7 +657,7 @@ class JEMCategories
 	 * @access public
 	 * @return array
 	 */
-	static function treerecurse($id, $indent, $list, &$children, $maxlevel = 9999, $level = 0, $type = 1)
+	public static function treerecurse($id, $indent, $list, &$children, $maxlevel = 9999, $level = 0, $type = 1)
 	{
 		if (@$children[$id] && $level <= $maxlevel)
 		{
@@ -684,7 +683,7 @@ class JEMCategories
 				$list[$id]->treename = $indent . $txt;
 				$list[$id]->children = count(@$children[$id]);
 
-				$list = JEMCategories::treerecurse($id, ($level ? $indent . $spacer : $indent), $list, $children, $maxlevel, $level+1, $type);
+				$list = JemCategories::treerecurse($id, ($level ? $indent . $spacer : $indent), $list, $children, $maxlevel, $level+1, $type);
 			}
 		}
 		return $list;
@@ -697,10 +696,10 @@ class JEMCategories
 	 * @param string $name
 	 * @param array $selected
 	 * @param bool $top
-	 * @param string $class
-	 * @return void
+	 * @param array $class
+	 * @return mixed
 	 */
-	static function buildcatselect($list, $name, $selected, $top, $class = array('class' => 'inputbox'))
+	public static function buildcatselect($list, $name, $selected, $top, $class = array('class' => 'inputbox'))
 	{
 		$catlist = array();
 
@@ -708,7 +707,7 @@ class JEMCategories
 			$catlist[] = JHtml::_('select.option', '0', JText::_('COM_JEM_TOPLEVEL'));
 		}
 
-		$catlist = array_merge($catlist, JEMCategories::getcatselectoptions($list));
+		$catlist = array_merge($catlist, JemCategories::getcatselectoptions($list));
 
 		return JHtml::_('select.genericlist', $catlist, $name, $class, 'value', 'text', $selected);
 	}
@@ -717,13 +716,9 @@ class JEMCategories
 	 * Build Categories select list
 	 *
 	 * @param array $list
-	 * @param string $name
-	 * @param array $selected
-	 * @param bool $top
-	 * @param string $class
-	 * @return void
+	 * @return array $catlist
 	 */
-	static function getcatselectoptions($list)
+	public static function getcatselectoptions($list)
 	{
 		$catlist = array();
 
@@ -737,15 +732,15 @@ class JEMCategories
 	/**
 	 * returns all descendants of a category
 	 *
-	 * @param int category id
+	 * @param int $id category-id
 	 * @return array int categories id
 	 */
-	static function getChilds($id)
+	public static function getChilds($id)
 	{
-		$db = JFactory::getDBO();
+		$db = JFactory::getDbo();
 		$user = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
-		$query = ' SELECT id, parent_id ' . ' FROM #__jem_categories ' . ' WHERE published = 1 AND access IN ('.implode(',', $levels).')';
+		$query = ' SELECT id, parent_id ' . ' FROM #__jem_categories ' . ' WHERE published = 1 AND access IN (' . implode(',', $levels) . ')';
 		$db->setQuery($query);
 		$rows = $db->loadObjectList();
 
@@ -757,14 +752,14 @@ class JEMCategories
 			array_push($list, $child);
 			$children[$parent] = $list;
 		}
-		return JEMCategories::_getChildsRecurse($id, $children);
+		return JemCategories::_getChildsRecurse($id, $children);
 	}
 
 	/**
 	 * recursive function to build the familly tree
 	 *
-	 * @param int category id
-	 * @param array children indexed by parent id
+	 * @param int $id category-id
+	 * @param array $childs children indexed by parent id
 	 * @return array of category descendants
 	 */
 	protected static function _getChildsRecurse($id, $childs)
@@ -773,7 +768,7 @@ class JEMCategories
 
 		if (!empty($childs[$id])) {
 			foreach ($childs[$id] AS $c) {
-				$result = array_merge($result, JEMCategories::_getChildsRecurse($c->id, $childs));
+				$result = array_merge($result, JemCategories::_getChildsRecurse($c->id, $childs));
 			}
 		}
 
@@ -784,7 +779,7 @@ class JEMCategories
 /**
  * Helper class to load Categorytree
  */
-class JEMCategoryNode extends JObject
+class JemCategoryNode extends JObject
 {
 
 	/**
@@ -927,7 +922,7 @@ class JEMCategoryNode extends JObject
 	protected $_parent = null;
 
 	/**
-	 * @var Array of Children
+	 * @var array of Children
 	 */
 	protected $_children = array();
 
@@ -1290,4 +1285,3 @@ class JEMCategoryNode extends JObject
 		return $count;
 	}
 }
-?>

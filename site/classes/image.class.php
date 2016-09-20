@@ -146,7 +146,7 @@ class JemImage {
 	 */
 	static function flyercreator($image, $type)
 	{
-		$settings = JEMHelper::config();
+		$settings = JemHelper::config();
 
 		//define the environment based on the type
 		if ($type == 'event') {
@@ -173,7 +173,7 @@ class JemImage {
 
 			//Create thumbnail if enabled and it does not exist already
 			if ($settings->gddisabled == 1 && !file_exists($save)) {
-				JEMImage::thumb($filepath, $save, $settings->imagewidth, $settings->imagehight);
+				JemImage::thumb($filepath, $save, $settings->imagewidth, $settings->imagehight);
 			}
 
 			//set paths
@@ -297,4 +297,3 @@ class JemImage {
 		return $filename;
 	}
 }
-?>
