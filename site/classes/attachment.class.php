@@ -13,7 +13,7 @@ jimport('joomla.filesystem.file');
 jimport('joomla.filesystem.folder');
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
-require_once(JPATH_SITE.'/components/com_jem/factory.php');
+require_once(JPATH_SITE . '/components/com_jem/factory.php');
 
 /**
  * Holds the logic for attachments manipulation
@@ -25,17 +25,20 @@ class JemAttachment extends JObject
 	/**
 	 * upload files for the specified object
 	 *
-	 * @param array data from JInput 'files'
-	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
+	 * @param array  $post_files from JInput 'files'
+	 * @param string $object     identification (should be event<eventid>, category<categoryid>, etc...)
+	 *
+	 * @since 1.1
+	 * @return bool
 	 */
-	static function postUpload($post_files, $object)
+	public static function postUpload($post_files, $object)
 	{
-		require_once JPATH_SITE.'/components/com_jem/classes/image.class.php';
+		require_once JPATH_SITE . '/components/com_jem/classes/image.class.php';
 
 		$user = JemFactory::getUser();
 		$jemsettings = JemHelper::config();
 
-		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$object;
+		$path = JPATH_SITE . '/' . $jemsettings->attachments_path . '/' . $object;
 
 		if (!(is_array($post_files) && count($post_files))) {
 			return false;
@@ -80,7 +83,7 @@ class JemAttachment extends JObject
 			$sanitizedFilename = JemImage::sanitize($path, $file);
 
 			// Make sure that the full file path is safe.
-			$filepath = JPath::clean( $path.'/'.$sanitizedFilename);
+			$filepath = JPath::clean($path . '/' . $sanitizedFilename);
 			// Since Joomla! 3.4.0 JFile::upload has some more params to control new security parsing
 			// Unfortunately this parsing is partially stupid so it may reject archives for non-understandable reason.
 			if (version_compare(JVERSION, '3.4', 'lt')) {
@@ -107,7 +110,7 @@ class JemAttachment extends JObject
 			$table->added_by = $user->get('id');
 
 			if (!($table->check() && $table->store())) {
-				JError::raiseWarning(0, JText::_('COM_JEM_ATTACHMENT_ERROR_SAVING_TO_DB').': '.$table->getError());
+				JError::raiseWarning(0, JText::_('COM_JEM_ATTACHMENT_ERROR_SAVING_TO_DB') . ': ' . $table->getError());
 			}
 		}
 
@@ -116,9 +119,13 @@ class JemAttachment extends JObject
 
 	/**
 	 * update attachment record in db
-	 * @param array (id, name, description, access)
+	 *
+	 * @param array $attach (id, name, description, access)
+	 *
+	 * @since 1.1
+	 * @return bool
 	 */
-	static function update($attach)
+	public static function update($attach)
 	{
 		if (!is_array($attach) || !isset($attach['id']) || !(intval($attach['id']))) {
 			return false;
@@ -138,10 +145,12 @@ class JemAttachment extends JObject
 
 	/**
 	 * return attachments for objects
-	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
+	 * @param string $object identification (should be event<eventid>, category<categoryid>, etc...)
+	 *
+	 * @since 1.1
 	 * @return array
 	 */
-	static function getAttachments($object)
+	public static function getAttachments($object)
 	{
 		$jemsettings = JemHelper::config();
 
@@ -149,7 +158,7 @@ class JemAttachment extends JObject
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
-		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$object;
+		$path = JPATH_SITE . '/' . $jemsettings->attachments_path . '/' . $object;
 
 		if (!file_exists($path)) {
 			return array();
@@ -186,8 +195,10 @@ class JemAttachment extends JObject
 	 * get the file
 	 *
 	 * @param int $id
+	 * @since 1.1
+	 * @return string
 	 */
-	static function getAttachmentPath($id)
+	public static function getAttachmentPath($id)
 	{
 		$jemsettings = JemHelper::config();
 
@@ -209,7 +220,7 @@ class JemAttachment extends JObject
 			JError::raiseError(403, JText::_('COM_JEM_YOU_DONT_HAVE_ACCESS_TO_THIS_FILE'));
 		}
 
-		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$res->object.'/'.$res->file;
+		$path = JPATH_SITE . '/' . $jemsettings->attachments_path . '/' . $res->object . '/' . $res->file;
 		if (!file_exists($path)) {
 			JError::raiseError(404, JText::_('COM_JEM_FILE_NOT_FOUND'));
 		}
@@ -220,11 +231,11 @@ class JemAttachment extends JObject
 	/**
 	 * remove attachment for objects
 	 *
-	 * @param id from db
+	 * @param $id from db
 	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
 	 * @return boolean
 	 */
-	static function remove($id)
+	public static function remove($id)
 	{
 		$jemsettings = JemHelper::config();
 
@@ -265,13 +276,13 @@ class JemAttachment extends JObject
 			$created_by = $db->loadResult();
 
 			if (!$user->can('edit', $type, $itemid, $created_by)) {
-				JemHelper::addLogEntry("User ${userid} is not permritted to remove attachment " . $res->object, __METHOD__);
+				JemHelper::addLogEntry("User ${userid} is not permitted to remove attachment " . $res->object, __METHOD__);
 				return false;
 			}
 		}
 
-		JemHelper::addLogEntry("User ${userid} removes attachment " . $res->object.'/'.$res->file, __METHOD__);
-		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$res->object.'/'.$res->file;
+		JemHelper::addLogEntry("User ${userid} removes attachment " . $res->object . '/' . $res->file, __METHOD__);
+		$path = JPATH_SITE . '/' . $jemsettings->attachments_path . '/' . $res->object . '/' . $res->file;
 		if (file_exists($path)) {
 			JFile::delete($path);
 		}

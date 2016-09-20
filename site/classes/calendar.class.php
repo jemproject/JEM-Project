@@ -35,36 +35,36 @@ class JemCalendar
 	This is just the default configuration. You may set the month and day names by calling setMonthNames() and setDayNames()
 	********************************************************************************
 	*/
-	var $jan="January";
-	var $feb="February";
-	var $mar="March";
-	var $apr="April";
-	var $may="May";
-	var $jun="June";
-	var $jul="July";
-	var $aug="August";
-	var $sep="September";
-	var $oct="October";
-	var $nov="November";
-	var $dec="December";
-	var $sun="Sun";
-	var $mon="Mon";
-	var $tue="Tue";
-	var $wed="Wed";
-	var $thu="Thu";
-	var $fri="Fri";
-	var $sat="Sat";
+	public $jan="January";
+	public $feb="February";
+	public $mar="March";
+	public $apr="April";
+	public $may="May";
+	public $jun="June";
+	public $jul="July";
+	public $aug="August";
+	public $sep="September";
+	public $oct="October";
+	public $nov="November";
+	public $dec="December";
+	public $sun="Sun";
+	public $mon="Mon";
+	public $tue="Tue";
+	public $wed="Wed";
+	public $thu="Thu";
+	public $fri="Fri";
+	public $sat="Sat";
 	/*
 	********************************************************************************
 	You can change below the default year's and month's view navigation controls
 	********************************************************************************
 	*/
-	var $yearNavBack=" &lt;&lt; "; // Previous year, this could be an image link
-	var $yearNavForw=" &gt;&gt; "; // Next year, this could be an image link
-	var $monthNavBack=" &lt;&lt; "; // Previous month, this could be an image link
-	var $monthNavForw=" &gt;&gt; "; // Next month, this could be an image link
-	var $selBtn="Go"; // value of the date picker button (if enabled)
-	var $monthYearDivider=" "; // the divider between month and year in the month`s title
+	public $yearNavBack=" &lt;&lt; "; // Previous year, this could be an image link
+	public $yearNavForw=" &gt;&gt; "; // Next year, this could be an image link
+	public $monthNavBack=" &lt;&lt; "; // Previous month, this could be an image link
+	public $monthNavForw=" &gt;&gt; "; // Next month, this could be an image link
+	public $selBtn="Go"; // value of the date picker button (if enabled)
+	public $monthYearDivider=" "; // the divider between month and year in the month`s title
 	/*
 	********************************************************************************
 	$startOnSun = false: first day of week is Monday
@@ -72,61 +72,61 @@ class JemCalendar
 	You may use the method setFirstWeekDay() instead
 	********************************************************************************
 	*/
-	var $startOnSun=false;
+	public $startOnSun=false;
 	/*
 	********************************************************************************
 	$rowCount : defines the number of months in a row in yearview (can be also set by the method showYear())
 	********************************************************************************
 	*/
-	var $rowCount=4;
+	public $rowCount=4;
 	/*
 	********************************************************************************
 	Names of the generated html classes. You may change them to avoid any conflicts with your existing CSS
 	********************************************************************************
 	*/
-	var $cssYearTable="year"; // table tag: calendar year
-	var $cssYearTitle="yearname"; // td tag: calendar year title
-	var $cssYearNav="yearnavigation"; // td tag: calendar year navigation
-	var $cssMonthTable="month"; // table tag: calendar month
-	var $cssMonthTitle="monthname"; // td tag: calendar month title
-	var $cssMonthNav="monthnavigation"; // td tag: calendar month navigation
-	var $cssWeekDay="dayname"; // td tag: calendar weekdays
-	var $cssWeekNumTitle="weeknumtitle"; // td tag: title of the week numbers
-	var $cssWeekNum="weeknum"; // td tag: week numbers
-	var $cssPicker="datepicker"; // td tag: date picker
-	var $cssPickerForm="datepickerform"; // form tag: date picker form
-	var $cssPickerMonth="monthpicker"; // select tag: month picker
-	var $cssPickerYear="yearpicker"; // select tag: year picker
-	var $cssPickerButton="pickerbutton"; // input (submit) tag: date picker button
-	var $cssMonthDay="monthday"; // td tag: days, that belong to the current month
-	var $cssNoMonthDay="nomonthday"; // td tag: days, that do not belong to the current month
-	var $cssToday="today"; // td tag: the current day
-	var $cssSelecDay="selectedday"; // td tag: the selected day
-	var $cssSunday="sunday"; // td tag: all Sundays (can be disabled, see below)
-	var $cssSaturday="saturday"; // td tag: all Saturdays (can be disabled, see below)
-	var $cssEvent="event"; // td tag: event day set by setEvent(). Multiple class names can be generated
-	var $cssPrefixSelecEvent="selected"; // prefix for the event class name if the event is selected
-	var $cssPrefixTodayEvent="today"; // prefix for the event class name if the event is the current day
-	var $cssEventContent="eventcontent"; // table tag: calendar event content. Multiple class names can be generated
-	var $crSunClass=true; // true: creates a td class on every Sunday (set above)
-	var $crSatClass=true; // true: creates a td class on every Saturday (set above)
+	public $cssYearTable="year"; // table tag: calendar year
+	public $cssYearTitle="yearname"; // td tag: calendar year title
+	public $cssYearNav="yearnavigation"; // td tag: calendar year navigation
+	public $cssMonthTable="month"; // table tag: calendar month
+	public $cssMonthTitle="monthname"; // td tag: calendar month title
+	public $cssMonthNav="monthnavigation"; // td tag: calendar month navigation
+	public $cssWeekDay="dayname"; // td tag: calendar weekdays
+	public $cssWeekNumTitle="weeknumtitle"; // td tag: title of the week numbers
+	public $cssWeekNum="weeknum"; // td tag: week numbers
+	public $cssPicker="datepicker"; // td tag: date picker
+	public $cssPickerForm="datepickerform"; // form tag: date picker form
+	public $cssPickerMonth="monthpicker"; // select tag: month picker
+	public $cssPickerYear="yearpicker"; // select tag: year picker
+	public $cssPickerButton="pickerbutton"; // input (submit) tag: date picker button
+	public $cssMonthDay="monthday"; // td tag: days, that belong to the current month
+	public $cssNoMonthDay="nomonthday"; // td tag: days, that do not belong to the current month
+	public $cssToday="today"; // td tag: the current day
+	public $cssSelecDay="selectedday"; // td tag: the selected day
+	public $cssSunday="sunday"; // td tag: all Sundays (can be disabled, see below)
+	public $cssSaturday="saturday"; // td tag: all Saturdays (can be disabled, see below)
+	public $cssEvent="event"; // td tag: event day set by setEvent(). Multiple class names can be generated
+	public $cssPrefixSelecEvent="selected"; // prefix for the event class name if the event is selected
+	public $cssPrefixTodayEvent="today"; // prefix for the event class name if the event is the current day
+	public $cssEventContent="eventcontent"; // table tag: calendar event content. Multiple class names can be generated
+	public $crSunClass=true; // true: creates a td class on every Sunday (set above)
+	public $crSatClass=true; // true: creates a td class on every Saturday (set above)
 	/*
 	********************************************************************************
 	You can change below the GET VARS NAMES [url parameter names] (navigation + day links)
 	You should modify the private method mkUrl() or mkWeekNum(), if you want to change the structure of the generated links
 	********************************************************************************
 	*/
-	var $yearID="yearID";
-	var $monthID="monthID";
-	var $dayID="dayID";
-	var $weekID="weekID";
+	public $yearID="yearID";
+	public $monthID="monthID";
+	public $dayID="dayID";
+	public $weekID="weekID";
 	/*
 	********************************************************************************
 	Default start and end year for the date picker (can be changed, if using the ADOdb Date Library)
 	********************************************************************************
 	*/
-	var $startYear=1971;
-	var $endYear=2037;
+	public $startYear=1971;
+	public $endYear=2037;
 	/*
 	----------------------
 	@START PUBLIC METHODS
@@ -143,9 +143,15 @@ class JemCalendar
 		$this->selectedday=-2;
 		$this->selectedyear=$year;
 		$this->selectedmonth=$month;
-		if (!$month) $month=1;
-		if (!$day) $day=1;
-		else $this->selectedday=$day;
+		if (!$month) {
+			$month=1;
+		}
+		if (!$day) {
+			$day=1;
+		}
+		else {
+			$this->selectedday=$day;
+		}
 		$h=$this->mkActiveGMDate("H");
 		$m=$this->mkActiveGMDate("i");
 		$s=$this->mkActiveGMDate("s");
@@ -153,24 +159,48 @@ class JemCalendar
 		$mo=$this->mkActiveGMDate("n");
 		$y=$this->mkActiveGMDate("Y");
 		$is_dst=$this->mkActiveDate("I");
-		if ($GMTDiff!="none") $this->timetoday=$this->mkActiveTime($h,$m,$s,$mo,$d,$y)+(3600*($GMTDiff+$is_dst));
+		if ($GMTDiff!="none") {
+			$this->timetoday=$this->mkActiveTime($h,$m,$s,$mo,$d,$y)+(3600*($GMTDiff+$is_dst));
+		}
 		$this->unixtime=$this->mkActiveTime($h,$m,$s,$month,$day,$year);
-		if ($this->unixtime==-1 || !$year) $this->unixtime=$this->timetoday;
+		if ($this->unixtime==-1 || !$year) {
+			$this->unixtime=$this->timetoday;
+		}
 		$this->daytoday=$this->mkActiveDate("j");
 		$this->monthtoday=$this->mkActiveDate("n");
 		$this->yeartoday=$this->mkActiveDate("Y");
-		if (!$day) $this->actday=$this->daytoday;
-		else $this->actday=$this->mkActiveDate("j",$this->unixtime);
-		if (!$month) $this->actmonth=$this->monthtoday;
-		else $this->actmonth=$this->mkActiveDate("n",$this->unixtime);
-		if (!$year) $this->actyear=$this->yeartoday;
-		else $this->actyear=$this->mkActiveDate("Y",$this->unixtime);
+		if (!$day) {
+			$this->actday=$this->daytoday;
+		}
+		else {
+			$this->actday=$this->mkActiveDate("j",$this->unixtime);
+		}
+		if (!$month) {
+			$this->actmonth=$this->monthtoday;
+		}
+		else {
+			$this->actmonth=$this->mkActiveDate("n",$this->unixtime);
+		}
+		if (!$year) {
+			$this->actyear=$this->yeartoday;
+		}
+		else {
+			$this->actyear=$this->mkActiveDate("Y",$this->unixtime);
+		}
 		$this->has31days=checkdate($this->actmonth,31,$this->actyear);
 		$this->isSchalt=checkdate(2,29,$this->actyear);
-		if ($this->isSchalt==1 && $this->actmonth==2) $this->maxdays=29;
-		elseif ($this->isSchalt!=1 && $this->actmonth==2) $this->maxdays=28;
-		elseif ($this->has31days==1) $this->maxdays=31;
-		else $this->maxdays=30;
+		if ($this->isSchalt==1 && $this->actmonth==2) {
+			$this->maxdays=29;
+		}
+		elseif ($this->isSchalt!=1 && $this->actmonth==2) {
+			$this->maxdays=28;
+		}
+		elseif ($this->has31days==1) {
+			$this->maxdays=31;
+		}
+		else {
+			$this->maxdays=30;
+		}
 		$this->firstday=$this->mkActiveDate("w", $this->mkActiveTime(0,0,1,$this->actmonth,1,$this->actyear));
 		$this->GMTDiff=$GMTDiff;
 	}
@@ -179,10 +209,16 @@ class JemCalendar
 	PUBLIC enableYearNav() -> enables the year's navigation controls
 	********************************************************************************
 	*/
-	function enableYearNav($link=false,$arrowBack=false,$arrowForw=false) {
-		if ($link) $this->urlNav=$link;
-		if ($arrowBack) $this->yearNavBack=$arrowBack;
-		if ($arrowForw) $this->yearNavForw=$arrowForw;
+	public function enableYearNav($link=false,$arrowBack=false,$arrowForw=false) {
+		if ($link) {
+			$this->urlNav=$link;
+		}
+		if ($arrowBack) {
+			$this->yearNavBack=$arrowBack;
+		}
+		if ($arrowForw) {
+			$this->yearNavForw=$arrowForw;
+		}
 		$this->yearNav=true;
 	}
 	/*
@@ -190,10 +226,16 @@ class JemCalendar
 	PUBLIC enableMonthNav() -> enables the month's navigation controls
 	********************************************************************************
 	*/
-	function enableMonthNav($link=false,$arrowBack=false,$arrowForw=false) {
-		if ($link) $this->urlNav=$link;
-		if ($arrowBack) $this->monthNavBack=$arrowBack;
-		if ($arrowForw) $this->monthNavForw=$arrowForw;
+	public function enableMonthNav($link=false,$arrowBack=false,$arrowForw=false) {
+		if ($link) {
+			$this->urlNav=$link;
+		}
+		if ($arrowBack) {
+			$this->monthNavBack=$arrowBack;
+		}
+		if ($arrowForw) {
+			$this->monthNavForw=$arrowForw;
+		}
 		$this->monthNav=true;
 	}
 	/*
@@ -202,9 +244,13 @@ class JemCalendar
 	param javaScript: sets a Javascript function on each day link
 	********************************************************************************
 	*/
-	function enableDayLinks($link=false,$javaScript=false) {
-		if ($link) $this->url=$link;
-		if ($javaScript) $this->javaScriptDay=$javaScript;
+	public function enableDayLinks($link=false,$javaScript=false) {
+		if ($link) {
+			$this->url=$link;
+		}
+		if ($javaScript) {
+			$this->javaScriptDay=$javaScript;
+		}
 		$this->dayLinks=true;
 	}
 	/*
@@ -213,7 +259,7 @@ class JemCalendar
 	param link: full html template with token "{date}" to get day's date
 	********************************************************************************
 	*/
-	function enableNewEventLinks($link) {
+	public function enableNewEventLinks($link) {
 		if ($link && (stripos($link, '{date}') !== false)) {
 			$this->htmlNewEventLink = $link;
 			$this->dayNewEventLinks = true;
@@ -228,8 +274,10 @@ class JemCalendar
 	PUBLIC enableDatePicker() -> enables the day picker control
 	********************************************************************************
 	*/
-	function enableDatePicker($startYear=false,$endYear=false,$link=false,$button=false) {
-		if ($link) $this->urlPicker=$link;
+	public function enableDatePicker($startYear=false,$endYear=false,$link=false,$button=false) {
+		if ($link) {
+			$this->urlPicker=$link;
+		}
 		if ($startYear && $endYear) {
 			if ($startYear>=$this->startYear && $startYear<$this->endYear) $this->startYear=$startYear;
 			if ($endYear>$this->startYear && $endYear<=$this->endYear) $this->endYear=$endYear;
@@ -242,7 +290,7 @@ class JemCalendar
 	PUBLIC enableWeekNum() -> enables a week number column
 	********************************************************************************
 	*/
-	function enableWeekNum($title="",$link=false,$javaScript=false) {
+	public function enableWeekNum($title="",$link=false,$javaScript=false) {
 		// checking before enabling, as week number calulation works only if php version > 4.1.0 [php function: date ("W")]
 		if (is_integer($this->getWeekNum($this->actday))) {
 			$this->weekNum=true;
@@ -267,9 +315,11 @@ class JemCalendar
 	PUBLIC setEvent() -> sets a calendar event, $id: the HTML class (css layout)
 	********************************************************************************
 	*/
-	function setEvent($year,$month,$day,$id=false,$url=false) {
+	public function setEvent($year,$month,$day,$id=false,$url=false) {
 		$eventTime=$this->mkActiveTime(0,0,1,$month,$day,$year);
-		if (!$id) $id=$this->cssEvent;
+		if (!$id) {
+			$id=$this->cssEvent;
+		}
 		$this->calEvents[$eventTime]=$id;
 		$this->calEventsUrl[$eventTime]=$url;
 	}
@@ -299,11 +349,15 @@ class JemCalendar
 		$this->calEventContent[] = $eventContent;
 
 		// add specific id
-		if (!$id) $id = $this->cssEventContent;
+		if (!$id) {
+			$id = $this->cssEventContent;
+		}
 		$this->calEventContentId[] = $id;
 
 		// add url
-		if ($url) $this->calEventContentUrl[] = $url;
+		if ($url) {
+			$this->calEventContentUrl[] = $url;
+		}
 		else $this->calEventContentUrl[] = $this->calInit++;
 	}
 	/*
@@ -312,8 +366,12 @@ class JemCalendar
 	********************************************************************************
 	*/
 	function setMonthNames($namesArray) {
-		if (!is_array($namesArray) || count($namesArray)!=12) return false;
-		else $this->monthNames=$namesArray;
+		if (!is_array($namesArray) || count($namesArray)!=12) {
+			return false;
+		}
+		else {
+			$this->monthNames=$namesArray;
+		}
 	}
 	/*
 	********************************************************************************
@@ -321,8 +379,12 @@ class JemCalendar
 	********************************************************************************
 	*/
 	function setDayNames($namesArray) {
-		if (!is_array($namesArray) || count($namesArray)!=7) return false;
-		else $this->dayNames=$namesArray;
+		if (!is_array($namesArray) || count($namesArray)!=7) {
+			return false;
+		}
+		else {
+			$this->dayNames=$namesArray;
+		}
 	}
 	/*
 	********************************************************************************
@@ -330,8 +392,12 @@ class JemCalendar
 	********************************************************************************
 	*/
 	function setFirstWeekDay($daynum) {
-		if ($daynum==0) $this->startOnSun=true;
-		else $this->startOnSun=false;
+		if ($daynum==0) {
+			$this->startOnSun=true;
+		}
+		else {
+			$this->startOnSun=false;
+		}
 	}
 	/*
 	********************************************************************************
@@ -341,7 +407,9 @@ class JemCalendar
 	********************************************************************************
 	*/
 	function showYear($rowCount=false,$startMonth=false) {
-		if ($rowCount) $this->rowCount=$rowCount;
+		if ($rowCount) {
+			$this->rowCount=$rowCount;
+		}
 		$this->monthNav=false; // disables month navigation in yearview
 		$out=$this->mkYearHead(); // this should remain first: opens table tag
 		$out.=$this->mkYearTitle(); // tr tag: year title and navigation
@@ -367,8 +435,12 @@ class JemCalendar
 		$out.=$this->mkMonthTitle(); // tr tag: month title and navigation
 		$out.=$this->mkDatePicker(); // tr tag: month date picker (month and year selection)
 		$out.=$this->mkWeekDays(); // tr tag: the weekday names
-		if ($this->showNoMonthDays==false) $out.=$this->mkMonthBody(); // tr tags: the days of the month
-		else $out.=$this->mkMonthBody(1); // tr tags: the days of the month
+		if ($this->showNoMonthDays==false) {// tr tags: the days of the month
+			$out.=$this->mkMonthBody();
+		}
+		else {// tr tags: the days of the month
+			$out.=$this->mkMonthBody(1);
+		}
 		$out.=$this->mkMonthFoot(); // this should remain last: closes table tag
 		return $out;
 	}
@@ -382,32 +454,32 @@ class JemCalendar
 	THE FOLLOWING METHODS AND VARIABLES ARE PRIVATE. PLEASE DO NOT CALL OR MODIFY THEM
 	********************************************************************************
 	*/
-	var $version="1.2.0";
-	var $releaseDate="23 Feb 2006";
-	var $monthSpan=7;
-	var $timezone=false;
-	var $yearNav=false;
-	var $monthNav=false;
-	var $dayLinks=false;
-	var $dayNewEventLinks=false;
-	var $datePicker=false;
-	var $url=false;
-	var $urlNav=false;
-	var $urlPicker=false;
-	var $htmlNewEventLink=false;
-	var $calEvents=false;
-	var $calEventsUrl=false;
-	var $eventUrl=false;
-	var $javaScriptDay=false;
-	var $monthNames=false;
-	var $dayNames=false;
-	var $calEventContent=false;
-	var $calEventContentUrl=false;
-	var $calEventContentId=false;
-	var $calInit=0;
-	var $weekNum=false;
-	var $WeekUrl=false;
-	var $javaScriptWeek=false;
+	public $version="1.2.0";
+	public $releaseDate="23 Feb 2006";
+	public $monthSpan=7;
+	public $timezone=false;
+	public $yearNav=false;
+	public $monthNav=false;
+	public $dayLinks=false;
+	public $dayNewEventLinks=false;
+	public $datePicker=false;
+	public $url=false;
+	public $urlNav=false;
+	public $urlPicker=false;
+	public $htmlNewEventLink=false;
+	public $calEvents=false;
+	public $calEventsUrl=false;
+	public $eventUrl=false;
+	public $javaScriptDay=false;
+	public $monthNames=false;
+	public $dayNames=false;
+	public $calEventContent=false;
+	public $calEventContentUrl=false;
+	public $calEventContentId=false;
+	public $calInit=0;
+	public $weekNum=false;
+	public $WeekUrl=false;
+	public $javaScriptWeek=false;
 
 	/*
 	********************************************************************************
@@ -423,7 +495,9 @@ class JemCalendar
 	********************************************************************************
 	*/
 	function mkYearTitle() {
-		if ($this->rowCount<1 || $this->rowCount>12) $this->rowCount=4;
+		if ($this->rowCount<1 || $this->rowCount>12) {
+			$this->rowCount=4;
+		}
 		if (!$this->yearNav) {
 			$out="<tr><td colspan=\"".$this->rowCount."\" class=\"".$this->cssYearTitle."\">";
 			$out.=$this->actyear;
@@ -446,7 +520,9 @@ class JemCalendar
 	********************************************************************************
 	*/
 	function mkYearBody($stmonth=false) {
-		if (!$stmonth || $stmonth>12) $stmonth=1;
+		if (!$stmonth || $stmonth>12) {
+			$stmonth=1;
+		}
 		$TrMaker = $this->rowCount;
 		$curyear = $this->actyear;
 		$out="<tr>\n";
@@ -948,4 +1024,3 @@ class JemCalendar
 		else return mktime($hr,$min,$sec,$month,$day,$year);
 	}
 }
-?>
