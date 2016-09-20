@@ -13,6 +13,7 @@ jimport( 'joomla.registry.registry' );
  * JemConfig class to handle JEM configuration
  *
  * @package JEM
+ * @since 2.1.6
  */
 class JemConfig
 {
