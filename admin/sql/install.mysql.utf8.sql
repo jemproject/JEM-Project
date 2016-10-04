@@ -290,7 +290,9 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('defaultCountry', ''),
 ('csv_separator', ';'),
 ('globalattribs', ''),
-('css', '');
+('css', ''),
+('regallowcomments', '0'),
+('regallowinvitation', '0');
 
 INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, `name`) VALUES
 (1, 'AS', 'AF', 'AFG', 4, 'Afghanistan, Islamic Republic of'),
