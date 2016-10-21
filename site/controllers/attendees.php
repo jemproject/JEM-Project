@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -248,7 +248,7 @@ class JemControllerAttendees extends JControllerLegacy
 			if ($enableemailadress == 1) {
 				$cols[] = $data->email;
 			}
-			$cols[] = empty($row->uregdate) ? '' : JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2'));
+			$cols[] = empty($data->uregdate) ? '' : JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2'));
 
 			$status = isset($data->status) ? $data->status : 1;
 			if ($status < 0) {
