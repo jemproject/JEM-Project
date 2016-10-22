@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -270,7 +270,8 @@ class JemModelAttendees extends JModelList
 				);
 			if ($comments) {
 				$comment = strip_tags($item->comment);
-				$data[] = (strlen($comment) > 254) ? (substr($comment, 0, 251).'...') : $comment;
+				// comments are limited to 255 characters in db so we don't need to truncate them on export
+				$data[] = $comment;
 			}
 			$data[] = $item->uid;
 

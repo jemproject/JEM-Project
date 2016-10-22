@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -154,7 +154,7 @@ JHtml::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 					<td>
 						<?php
 						$len  = ($this->print) ? 256 : 16;
-						$cmnt = (strlen($row->comment) > $len) ? (substr($row->comment, 0, $len - 2).'&hellip;') : $row->comment;
+						$cmnt = (JString::strlen($row->comment) > $len) ? (JString::substr($row->comment, 0, $len - 2).'&hellip;') : $row->comment;
 						if (!empty($cmnt)) :
 							echo ($this->print) ? $cmnt : JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null);
 						endif;

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.2
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -24,6 +24,6 @@ defined('_JEXEC') or die;
 		</a>
 	</div>
 	<div class="imageinfo">
-		<?php echo $this->escape(substr($this->_tmp_img->name, 0, 10) . (strlen($this->_tmp_img->name) > 10 ? '...' : '')); ?>
+		<?php echo $this->escape(JString::substr($this->_tmp_img->name, 0, 10) . (JString::strlen($this->_tmp_img->name) > 10 ? '...' : '')); ?>
 	</div>
 </div>

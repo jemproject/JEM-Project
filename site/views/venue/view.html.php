@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -280,8 +280,8 @@ class JemViewVenue extends JEMView
 			}
 
 			// prepare the url for output
-			if (strlen($venue->url) > 35) {
-				$venue->urlclean = $this->escape(substr($venue->url, 0, 35 )) . '...';
+			if (JString::strlen($venue->url) > 35) {
+				$venue->urlclean = $this->escape(JString::substr($venue->url, 0, 35)) . '...';
 			} else {
 				$venue->urlclean = $this->escape($venue->url);
 			}

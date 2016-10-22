@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.1
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -44,13 +44,13 @@ defined('_JEXEC') or die;
 				</dt>
 				<dd class="venue_website">
 					<a href="<?php echo $this->escape($row->url); ?>" target="_blank">
-					<?php 
-						if (strlen($row->url) > 35) {
-							$urlclean = htmlspecialchars(substr($row->url, 0 , 35)).'...';
+					<?php
+						if (JString::strlen($row->url) > 35) {
+							$urlclean = htmlspecialchars(JString::substr($row->url, 0 , 35)) . '...';
 						} else {
 							$urlclean = htmlspecialchars($row->url);
 						}
-						echo $urlclean; 
+						echo $urlclean;
 					?>
 					</a>
 				</dd>
@@ -102,7 +102,7 @@ defined('_JEXEC') or die;
 				<dd class="venue_country">
 					<?php if ($row->country) :
 						$countryimg = JemHelperCountries::getCountryFlag($row->country);
-						echo $countryimg ? $countryimg : $row->country; 
+						echo $countryimg ? $countryimg : $row->country;
 					endif; ?>
 					<meta itemprop="addressCountry" content="<?php echo $row->country; ?>" />
 				</dd>

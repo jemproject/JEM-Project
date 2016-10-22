@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -77,7 +77,7 @@ defined('_JEXEC') or die; ?>
 			endswitch; ?>
 			<td><?php echo JText::_($text); ?></td>
 			<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-			<td><?php echo (strlen($row->comment) > 256) ? (substr($row->comment, 0, 254).'&hellip;') : $row->comment; ?></td>
+			<td><?php echo $row->comment; ?></td>
 			<?php endif; ?>
 		</tr>
 		<?php $k = 1 - $k;

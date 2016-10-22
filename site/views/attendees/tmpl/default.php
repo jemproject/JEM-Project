@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -132,7 +132,7 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 						?>
 					</td>
 					<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-					<?php $cmnt = (strlen($row->comment) > 16) ? (substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
+					<?php $cmnt = (JString::strlen($row->comment) > 16) ? (JString::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
 					<td><?php if (!empty($cmnt)) { echo JHtml::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?></td>
 					<?php endif;?>
 					<td class="center"><a href="<?php echo JRoute::_($del_link.'&cid[]='.$row->id); ?>"><?php echo

@@ -67,7 +67,7 @@ defined('_JEXEC') or die;
 				} ?>
 				<td><?php echo JText::_($text); ?></td>
 				<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-				<td><?php echo (strlen($row->comment) > 256) ? (substr($row->comment, 0, 254).'&hellip;') : $row->comment; ?></td>
+				<td><?php echo $row->comment; ?></td>
 				<?php endif; ?>
 				<td class="center"><?php echo $row->uid; ?></td>
 			</tr>
