@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
   `waitinglist` tinyint(1) NOT NULL default '0',
   `hits` int(11) unsigned NOT NULL default '0',
   `published` tinyint(1) NOT NULL default '0',
-  `contactid` tinyint(4) NOT NULL default '0',
+  `contactid` int(10) NOT NULL default '0',
   `custom1` varchar(200) NOT NULL DEFAULT '',
   `custom2` varchar(200) NOT NULL DEFAULT '',
   `custom3` varchar(100) NOT NULL DEFAULT '',
