@@ -128,7 +128,7 @@ abstract class JemUserAbstract extends JUser
 	public function ismaintainer($action, $eventid = false)
 	{
 		// lets look if the user is a maintainer
-		$db = JFactory::getDBO();
+		$db = JFactory::getDbo();
 
 		$query = 'SELECT gr.id' . ' FROM #__jem_groups AS gr'
 				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
@@ -189,11 +189,11 @@ abstract class JemUserAbstract extends JUser
 		 *
 		 * views: venues, venue, editvenue
 		 */
-		$db = JFactory::getDBO();
+		$db = JFactory::getDbo();
 		$query = 'SELECT gr.id'
 				. ' FROM #__jem_groups AS gr'
 				. ' LEFT JOIN #__jem_groupmembers AS g ON g.group_id = gr.id'
-				. ' AND '.$db->quoteName('gr.'.$action.'venue').' = 1 '
+				. ' AND '.$db->quoteName('gr.' . $action . 'venue') . ' = 1 '
 				. ' WHERE g.member = ' . (int)$this->id
 				. ' AND g.member NOT LIKE 0';
 				;
@@ -223,7 +223,7 @@ abstract class JemUserAbstract extends JUser
 			return false;
 		}
 
-		$db	= JFactory::getDBO();
+		$db	= JFactory::getDbo();
 
 		if (is_array($asset) && !empty($asset)) {
 			array_walk($asset, create_function('&$v, $k, $db', '$v = $db->quoteName($v);'), $db);
@@ -342,7 +342,7 @@ abstract class JemUserAbstract extends JUser
 		}
 
 		// We have to check ALL categories, also those not seen by user.
-		$db = JFactory::getDBO();
+		$db = JFactory::getDbo();
 		$query  = 'SELECT DISTINCT c.*' . $disable
 		        . ' FROM #__jem_categories AS c'
 		        . ' WHERE c.published = 1'
@@ -494,7 +494,7 @@ abstract class JemUserAbstract extends JUser
 
 						$levels = $this->getAuthorisedViewLevels();
 						// We have to check ALL categories, also those not seen by user.
-						$db = JFactory::getDBO();
+						$db = JFactory::getDbo();
 						$query  = 'SELECT DISTINCT c.id, c.groupid, c.access'
 						        . ' FROM #__jem_categories AS c';
 						if (!empty($id)) {
@@ -579,3 +579,4 @@ if (version_compare(JVERSION, '3.4', 'lt')) {
 	}
 
 }
+

@@ -87,8 +87,7 @@
 		</files>
 	</administration>
 
-	<!--updateservers-->
-		<!--  TODO: Fix URL when feature is ready to use -->
-		<!--server type="extension" priority="1" name="JEM Update Site">http://www.joomlaeventmanager.invalid/update/jem-update.xml</server-->
-	<!--/updateservers-->
+	<updateservers>
+		<server type="extension" priority="1" name="JEM Update Site">https://raw.githubusercontent.com/jemproject/JEM-Project/master/update_server.xml</server>
+	</updateservers>
 </extension>

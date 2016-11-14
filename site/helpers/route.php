@@ -22,7 +22,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/categories.class.php');
  * @package		JEM
  *
  */
-abstract class JEMHelperRoute
+abstract class JemHelperRoute
 {
 	protected static $lookup;
 	const ARTIFICALID = 0;
@@ -71,7 +71,7 @@ abstract class JEMHelperRoute
 
 	public static function getCategoryRoute($id, $task = '')
 	{
-		$settings 		= JEMHelper::globalattribs();
+		$settings 		= JemHelper::globalattribs();
 		$defaultItemid 	= $settings->get('default_Itemid');
 
 		$needles = array(
@@ -84,7 +84,7 @@ abstract class JEMHelperRoute
 		// If no category view works try categories
 		$needles['categories'] = array(self::ARTIFICALID);
 
-		$category = new JEMCategories($id);
+		$category = new JemCategories($id);
 		if($category) {
 			$needles['categories'] = array_reverse($category->getPath());
 		}
@@ -108,7 +108,7 @@ abstract class JEMHelperRoute
 
 	public static function getEventRoute($id, $catid = null)
 	{
-		$settings 		= JEMHelper::globalattribs();
+		$settings 		= JemHelper::globalattribs();
 		$defaultItemid 	= $settings->get('default_Itemid');
 
 		$needles = array(
@@ -140,7 +140,7 @@ abstract class JEMHelperRoute
 
 	public static function getVenueRoute($id)
 	{
-		$settings 		= JEMHelper::globalattribs();
+		$settings 		= JemHelper::globalattribs();
 		$defaultItemid 	= $settings->get('default_Itemid');
 
 		$needles = array(
@@ -168,7 +168,7 @@ abstract class JEMHelperRoute
 
 	protected static function getRouteWithoutId($my)
 	{
-		$settings 		= JEMHelper::globalattribs();
+		$settings 		= JemHelper::globalattribs();
 		$defaultItemid 	= $settings->get('default_Itemid');
 
 		$needles = array();
@@ -311,4 +311,3 @@ abstract class JEMHelperRoute
 // 		return false;
 	}
 }
-?>
