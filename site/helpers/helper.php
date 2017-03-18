@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -137,7 +137,7 @@ class JemHelper
 
 		$now = time(); // UTC
 		$offset = idate('Z'); // timezone offset for "new day" test
-		$lastupdate = $jemsettings->lastupdate;
+		$lastupdate = (int)$jemsettings->lastupdate;
 		$runningupdate = isset($jemsettings->runningupdate) ? $jemsettings->runningupdate : 0;
 		$maxexectime = get_cfg_var('max_execution_time');
 		$delay = min(86400, max(300, $maxexectime * 2));

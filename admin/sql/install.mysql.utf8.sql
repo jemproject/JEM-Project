@@ -274,7 +274,7 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('showeventimage', '0'),
 ('statewidth', '0'),
 ('storeip', '0'),
-('lastupdate', ''),
+('lastupdate', '0'),
 ('tableeventimagewidth', '10%'),
 ('display_num', '10'),
 ('discatheader', '1'),
