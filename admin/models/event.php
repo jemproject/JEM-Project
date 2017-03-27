@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -129,7 +129,7 @@ class JEMModelEvent extends JemModelAdmin
 			$query = $db->getQuery(true);
 			$query->select(array('count(id)'));
 			$query->from('#__jem_register');
-			$query->where(array('event= '.$db->quote($item->id), 'waiting= 0'));
+			$query->where(array('event= '.$db->quote($item->id), 'status=1', 'waiting=0'));
 
 			$db->setQuery($query);
 			$res = $db->loadResult();
@@ -266,8 +266,6 @@ class JEMModelEvent extends JemModelAdmin
 		// on frontend we have dedicated field for 'reginvitedonly' -> set 'registra' to +2 then
 		if (array_key_exists('reginvitedonly', $data) && ($data['reginvitedonly'] == 1)) {
 			$data['registra'] = ($data['registra'] == 1) ? 3 : 2;
-		} elseif ($data['registra'] > 1) {
-			$data['registra'] = ($data['registra'] == 3) ? 1 : 0;
 		}
 
 		// convert international date formats...
@@ -363,11 +361,11 @@ class JEMModelEvent extends JemModelAdmin
 			}
 
 			// Store cats
-			$saved |= $this->_storeCategoriesSelected($pk, $cats, !$backend, $new);
+			$saved &= $this->_storeCategoriesSelected($pk, $cats, !$backend, $new);
 
-			// Store invited users
-			if ($jemsettings->regallowinvitation == 1) {
-				$saved |= $this->_storeUsersInvited($pk, $invitedusers, !$backend, $new);
+			// Store invited users (frontend only, on backend no attendees on editevent view)
+			if (!$backend && ($jemsettings->regallowinvitation == 1)) {
+				$saved &= $this->_storeUsersInvited($pk, $invitedusers, !$backend, $new);
 			}
 
 			// check for recurrence
