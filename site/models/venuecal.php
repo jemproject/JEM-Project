@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -23,7 +23,7 @@ class JemModelVenueCal extends JemModelEventslist
 	public function __construct()
 	{
 		$app         = JFactory::getApplication();
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 		$jinput      = $app->input;
 		$params      = $app->getParams();
 
@@ -60,11 +60,9 @@ class JemModelVenueCal extends JemModelEventslist
 	protected function populateState($ordering = null, $direction = null)
 	{
 		$app          = JFactory::getApplication();
-		$jemsettings  = JemHelper::config();
 		$params       = $app->getParams();
-		$jinput       = $app->input;
-		$itemid       = $jinput->getInt('Itemid', 0);
-		$task         = $jinput->getCmd('task', '');
+		$itemid       = $app->input->getInt('Itemid', 0);
+		$task         = $app->input->getCmd('task', '');
 		$startdayonly = $params->get('show_only_start', false);
 
 		# params

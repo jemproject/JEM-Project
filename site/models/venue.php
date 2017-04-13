@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -44,7 +44,6 @@ class JemModelVenue extends JemModelEventslist
 		$task        = $jinput->getCmd('task','');
 		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 		$user        = JemFactory::getUser();
-		$userId      = $user->get('id');
 		$format      = $jinput->getCmd('format',false);
 
 		// List state information
@@ -84,10 +83,12 @@ class JemModelVenue extends JemModelEventslist
 		# (there is no menu item option yet so show all events)
 		$this->setState('filter.opendates', 1);
 
+		$defaultOrder = ($task == 'archive') ? 'DESC' : 'ASC';
 		if ($orderCol == 'a.dates') {
-			$orderby = array('a.dates ' . $listOrder, 'a.times ' . $listOrder);
+			$orderby = array('a.dates ' . $listOrder, 'a.times ' . $listOrder, 'a.created ' . $listOrder);
 		} else {
-			$orderby = $orderCol . ' ' . $listOrder;
+			$orderby = array($orderCol . ' ' . $listOrder,
+			                 'a.dates ' . $defaultOrder, 'a.times ' . $defaultOrder, 'a.created ' . $defaultOrder);
 		}
 		$this->setState('filter.orderby', $orderby);
 
@@ -169,11 +170,10 @@ class JemModelVenue extends JemModelEventslist
 	 */
 	function getVenue()
 	{
-		$user  = JemFactory::getUser();
+		$user   = JemFactory::getUser();
 
-		$db    = JFactory::getDbo();
-		$query = $db->getQuery(true);
-		$_venue = array();
+		$db     = JFactory::getDbo();
+		$query  = $db->getQuery(true);
 
 		$query->select('id, venue, published, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
 				' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, '.
@@ -204,7 +204,7 @@ class JemModelVenue extends JemModelEventslist
 			return false;
 		}
 
-		$_venue->attachments = JEMAttachment::getAttachments('venue'.$_venue->id);
+		$_venue->attachments = JemAttachment::getAttachments('venue'.$_venue->id);
 
 		return $_venue;
 	}

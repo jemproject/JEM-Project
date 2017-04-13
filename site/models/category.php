@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -31,12 +31,9 @@ class JemModelCategory extends JemModelEventslist
 	 */
 	public function __construct()
 	{
-		$app			= JFactory::getApplication();
-		$jemsettings	= JEMHelper::config();
-		$itemid			= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
-
+		$app    = JFactory::getApplication();
 		// Get the parameters of the active menu item
-		$params 	= $app->getParams();
+		$params = $app->getParams();
 
 		$id = $app->input->getInt('id', 0);
 		if (empty($id)) {
@@ -93,11 +90,10 @@ class JemModelCategory extends JemModelEventslist
 		// Initiliase variables.
 		$app         = JFactory::getApplication('site');
 		$jemsettings = JemHelper::config();
-		$jinput      = $app->input;
-		$task        = $jinput->getCmd('task','');
-		$format      = $jinput->getCmd('format',false);
-		$pk          = $jinput->getInt('id', 0);
-		$itemid      = $pk . ':' . $jinput->getInt('Itemid', 0);
+		$task        = $app->input->getCmd('task','');
+		$format      = $app->input->getCmd('format',false);
+		$pk          = $app->input->getInt('id', 0);
+		$itemid      = $pk . ':' . $app->input->getInt('Itemid', 0);
 
 		$this->setState('category.id', $pk);
 		$this->setState('filter.req_catid', $pk);
@@ -114,11 +110,6 @@ class JemModelCategory extends JemModelEventslist
 		$mergedParams->merge($params);
 
 		$this->setState('params', $mergedParams);
-		$user   = JemFactory::getUser();
-		// Create a new query object.
-		$db     = $this->getDbo();
-		$query  = $db->getQuery(true);
-		$groups = implode(',', $user->getAuthorisedViewLevels());
 
 		# limit/start
 
@@ -165,10 +156,12 @@ class JemModelCategory extends JemModelEventslist
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
+		$default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
 		if ($filter_order == 'a.dates') {
-			$orderby = array('a.dates '.$filter_order_Dir,'a.times '.$filter_order_Dir);
+			$orderby = array('a.dates ' . $filter_order_Dir, 'a.times ' . $filter_order_Dir, 'a.created ' . $filter_order_Dir);
 		} else {
-			$orderby = $filter_order . ' ' . $filter_order_Dir;
+			$orderby = array($filter_order . ' ' . $filter_order_Dir,
+			                 'a.dates ' . $default_order_Dir, 'a.times ' . $default_order_Dir, 'a.created ' . $default_order_Dir);
 		}
 
 		$this->setState('filter.orderby',$orderby);
@@ -218,13 +211,12 @@ class JemModelCategory extends JemModelEventslist
 			}
 
 			$catId = $this->getState('category.id', 'root');
-			$categories = new JEMCategories($catId, $options);
+			$categories = new JemCategories($catId, $options);
 			$this->_item = $categories->get($catId);
 
 			// Compute selected asset permissions.
-			if (is_object($this->_item)) { // a JEMCategoryNode object
-				$user   = JemFactory::getUser();
-				$userId = $user->get('id');
+			if (is_object($this->_item)) { // a JemCategoryNode object
+				$user = JemFactory::getUser();
 
 				// Check general or category specific create permission.
 				$this->_item->getParams()->set('access-create', $user->can('add', 'event', false, false, $this->_item->id));

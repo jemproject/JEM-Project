@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -181,13 +181,18 @@ class JemModelMyattendances extends JModelLegacy
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.myattendances.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
 		$filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
+		$default_order_Dir	= ($task == 'archive') ? 'DESC' : 'ASC';
+
 		if ($filter_order == 'r.status') {
 			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir . ', r.waiting ' . $filter_order_Dir . ', a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir;
 		//	$orderby = ' ORDER BY CASE WHEN r.status < 0 THEN r.status * (-3) WHEN r.status = 1 AND r.waiting > 0 THEN r.status + 1 ELSE r.status END '.$filter_order_Dir.', a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir;
 		} elseif ($filter_order == 'a.dates') {
-			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir;
+			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir
+			         . ', a.created ' . $filter_order_Dir;
 		} else {
-			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
+			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir
+			         . ', a.dates ' . $default_order_Dir . ', a.times ' . $default_order_Dir
+			         . ', a.created ' . $default_order_Dir;
 		}
 
 		return $orderby;
@@ -207,8 +212,7 @@ class JemModelMyattendances extends JModelLegacy
 		// Get the paramaters of the active menu item
 		$params   = $app->getParams();
 		$task     = $app->input->get('task', '');
-		$settings = JEMHelper::globalattribs();
-
+		$settings = JemHelper::globalattribs();
 		$user     = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
@@ -231,11 +235,11 @@ class JemModelMyattendances extends JModelLegacy
 		//limit output so only future events the user attends will be shown
 		// but also allow events without start date because they will be normally in the future too
 		if ($params->get('filtermyregs')) {
-			$where [] = ' (a.dates IS NULL OR DATE_SUB(NOW(), INTERVAL '.(int)$params->get('myregspast').' DAY) < (IF (a.enddates IS NOT NULL, a.enddates, a.dates)))';
+			$where[] = ' (a.dates IS NULL OR DATE_SUB(NOW(), INTERVAL '.(int)$params->get('myregspast').' DAY) < (IF (a.enddates IS NOT NULL, a.enddates, a.dates)))';
 		}
 
 		// then if the user is attending the event
-		$where [] = ' r.uid = '.$this->_db->Quote($user->id);
+		$where[] = ' r.uid = '.$this->_db->Quote($user->id);
 
 		if ($settings->get('global_show_filter') && $search) {
 			switch($filter) {
@@ -257,9 +261,8 @@ class JemModelMyattendances extends JModelLegacy
 			}
 		}
 
-		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
-
-		return $where;
+		$where2 = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
+		return $where2;
 	}
 
 

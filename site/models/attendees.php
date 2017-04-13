@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -76,8 +76,8 @@ class JemModelAttendees extends JModelLegacy
 		parent::__construct();
 
 		$app         = JFactory::getApplication();
-		$jemsettings = JEMHelper::config();
-		$settings    = JEMHelper::globalattribs();
+		$jemsettings = JemHelper::config();
+		$settings    = JemHelper::globalattribs();
 
 		$id = $app->input->getInt('id', 0);
 		$this->setId((int)$id);
@@ -287,9 +287,8 @@ class JemModelAttendees extends JModelLegacy
 			$where[] = ' LOWER(u.username) LIKE \'%'.$search.'%\' ';
 		}
 
-		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
-
-		return $where;
+		$where2 = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
+		return $where2;
 	}
 
 	/**
@@ -301,10 +300,9 @@ class JemModelAttendees extends JModelLegacy
 	 */
 	function getEvent()
 	{
-
 		$query = 'SELECT id, alias, title, dates, enddates, times, endtimes, maxplaces, waitinglist FROM #__jem_events WHERE id = '.$this->_db->Quote($this->_id);
 
-		$this->_db->setQuery( $query );
+		$this->_db->setQuery($query);
 
 		$_event = $this->_db->loadObject();
 
@@ -428,7 +426,6 @@ class JemModelAttendees extends JModelLegacy
 	protected function _buildQueryUsers()
 	{
 		$app              = JFactory::getApplication();
-		$jemsettings      = JemHelper::config();
 
 		// no filters, hard-coded
 		$filter_order     = 'usr.name';

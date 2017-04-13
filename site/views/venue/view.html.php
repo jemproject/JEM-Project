@@ -62,6 +62,13 @@ class JemViewVenue extends JEMView
 				$document->setMetaData('robots', 'noindex, nofollow');
 			}
 
+			$venue = $this->get('Venue');
+			// check for data error
+			if (empty($venue)) {
+				$app->enqueueMessage(JText::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
+				return false;
+			}
+
 			$evlinkcolor = $params->get('eventlinkcolor');
 			$evbackgroundcolor = $params->get('eventbackgroundcolor');
 			$currentdaycolor = $params->get('currentdaycolor');
