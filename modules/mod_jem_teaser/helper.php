@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.1
  * @package JEM
  * @subpackage JEM Teaser Module
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -69,7 +69,7 @@ abstract class ModJemTeaserHelper
 			$offset_minutes = $offset_hours * 60;
 
 			$model->setState('filter.published',1);
-			$model->setState('filter.orderby',array('a.dates ASC','a.times ASC'));
+			$model->setState('filter.orderby',array('a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
 			$cal_from = "(a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
 			$cal_from .= ($type == 1) ? " OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) " : ") ";
@@ -78,7 +78,7 @@ abstract class ModJemTeaserHelper
 		# archived events only
 		elseif ($type == 2) {
 			$model->setState('filter.published',2);
-			$model->setState('filter.orderby',array('a.dates DESC','a.times DESC'));
+			$model->setState('filter.orderby',array('a.dates DESC', 'a.times DESC', 'a.created DESC'));
 			$cal_from = "";
 		}
 
@@ -87,7 +87,7 @@ abstract class ModJemTeaserHelper
 			$offset_days = (int)round($offset_hours / 24);
 
 			$model->setState('filter.published',1);
-			$model->setState('filter.orderby',array('a.dates ASC','a.times ASC'));
+			$model->setState('filter.orderby',array('a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
 			$cal_from = " ((DATEDIFF(a.dates, CURDATE()) <= $offset_days) AND (DATEDIFF(IFNULL(a.enddates,a.dates), CURDATE()) >= $offset_days))";
 		}
@@ -97,7 +97,7 @@ abstract class ModJemTeaserHelper
 			$offset_minutes = $offset_hours * 60;
 
 			$model->setState('filter.featured',1);
-			$model->setState('filter.orderby',array('a.dates ASC','a.times ASC'));
+			$model->setState('filter.orderby',array('a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
 			$cal_from  = "((TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
 			$cal_from .= " OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) ";

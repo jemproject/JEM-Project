@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.1
 * @package JEM
 * @subpackage JEM Banner Module
-* @copyright (C) 2014-2016 joomlaeventmanager.net
+* @copyright (C) 2014-2017 joomlaeventmanager.net
 * @copyright (C) 2005-2009 Christoph Lukes
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 */
@@ -108,7 +108,7 @@ abstract class ModJemBannerHelper
 		}
 
 		$model->setState('filter.published', $published);
-		$model->setState('filter.orderby', array('a.dates '.$orderdir, 'a.times '.$orderdir));
+		$model->setState('filter.orderby', array('a.dates '.$orderdir, 'a.times '.$orderdir, 'a.created '.$orderdir));
 		if (!empty($cal_from)) {
 			$model->setState('filter.calendar_from', $cal_from);
 		}
