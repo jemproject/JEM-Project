@@ -222,7 +222,8 @@ class JemModelSearch extends JModelLegacy
 		$filter_date_from  = $app->getUserStateFromRequest('com_jem.search.filter_date_from', 'filter_date_from', '', 'string');
 		$filter_date_to    = $app->getUserStateFromRequest('com_jem.search.filter_date_to', 'filter_date_to', '', 'string');
 		$filter_category   = $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
-		$filter_category   = ($filter_category ? $filter_category : $top_category);
+		// "Please select..." entry has number 1 which must be interpreted as "not set" and replaced by top category (which maybe 1 ;-)
+		$filter_category   = (($filter_category > 1) ? $filter_category : $top_category);
 
 		// no result if no filter:
 		if (!($filter || $filter_continent || $filter_country || $filter_city || $filter_date_from || $filter_date_to || $filter_category != $top_category)) {
