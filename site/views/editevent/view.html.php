@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -81,6 +81,9 @@ class JemViewEditevent extends JViewLegacy
 		} else {
 			$authorised = (bool)$item->params->get('access-edit');
 		}
+
+		$access = isset($item->access) ? $item->access : 0;
+		$authorised = $authorised && in_array($access, $user->getAuthorisedViewLevels());
 
 		if ($authorised !== true) {
 			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');

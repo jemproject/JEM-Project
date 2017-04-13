@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -67,6 +67,17 @@ class JemControllerEvent extends JemControllerForm
 		// Initialise variables.
 		$recordId = (int) isset($data[$key]) ? $data[$key] : 0;
 		$user     = JemFactory::getUser();
+
+		if (isset($data['access'])) {
+			$access = $data['access'];
+		} else {
+			$record = $this->getModel()->getItem($recordId);
+			$access = isset($record->access) ? $record->access : 0;
+		}
+
+		if (!in_array($access, $user->getAuthorisedViewLevels())) {
+			return false;
+		}
 
 		if (isset($data['created_by'])) {
 			$created_by = $data['created_by'];

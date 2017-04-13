@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -477,11 +477,16 @@ class JEMModelImport extends JModelLegacy
 			return false;
 		}
 
-		$par = $result->manifest_cache;
-		$params = new JRegistry;
-		$params->loadString($par, 'JSON');
-
-		return $params->get('version', null);
+		try {
+			$par = $result->manifest_cache;
+			$params = new JRegistry;
+			$params->loadString($par, 'JSON');
+			return $params->get('version', false);
+		}
+		catch(Exception $e) {
+			JemHelper::addLogEntry($e->getMessage(), __METHOD__, JLog::ERROR);
+			return false;
+		}
 	}
 
 	/**

@@ -13,7 +13,7 @@ require_once dirname(__FILE__) . '/admin.php';
 /**
  * Event model.
  */
-class JEMModelEvent extends JemModelAdmin
+class JemModelEvent extends JemModelAdmin
 {
 	/**
 	 * Method to test whether a record can be deleted.
@@ -109,10 +109,11 @@ class JEMModelEvent extends JemModelAdmin
 	 */
 	public function getItem($pk = null)
 	{
-		$jemsettings = JEMAdmin::config();
+		$jemsettings = JemAdmin::config();
 
 		if ($item = parent::getItem($pk)){
 			// Convert the params field to an array.
+			// (this may throw an exception - but there is nothings we can do)
 			$registry = new JRegistry;
 			$registry->loadString($item->attribs);
 			$item->attribs = $registry->toArray();
@@ -135,7 +136,7 @@ class JEMModelEvent extends JemModelAdmin
 			$res = $db->loadResult();
 			$item->booked = $res;
 
-			$files = JEMAttachment::getAttachments('event'.$item->id);
+			$files = JemAttachment::getAttachments('event'.$item->id);
 			$item->attachments = $files;
 
 			if ($item->id){
@@ -339,7 +340,7 @@ class JEMModelEvent extends JemModelAdmin
 				$attachments['customname']	= $jinput->post->get('attach-name', array(), 'array');
 				$attachments['description'] = $jinput->post->get('attach-desc', array(), 'array');
 				$attachments['access'] 		= $jinput->post->get('attach-access', array(), 'array');
-				JEMAttachment::postUpload($attachments, 'event' . $pk);
+				JemAttachment::postUpload($attachments, 'event' . $pk);
 			}
 
 			// and update old ones
@@ -361,11 +362,19 @@ class JEMModelEvent extends JemModelAdmin
 			}
 
 			// Store cats
-			$saved &= $this->_storeCategoriesSelected($pk, $cats, !$backend, $new);
+			if (!$this->_storeCategoriesSelected($pk, $cats, !$backend, $new)) {
+			//	JemHelper::addLogEntry('Error storing categories for event ' . $pk, __METHOD__, JLog::ERROR);
+				$this->setError(JText::_('COM_JEM_EVENT_ERROR_STORE_CATEGORIES'));
+				$saved = false;
+			}
 
 			// Store invited users (frontend only, on backend no attendees on editevent view)
 			if (!$backend && ($jemsettings->regallowinvitation == 1)) {
-				$saved &= $this->_storeUsersInvited($pk, $invitedusers, !$backend, $new);
+				if (!$this->_storeUsersInvited($pk, $invitedusers, !$backend, $new)) {
+				//	JemHelper::addLogEntry('Error storing users invited for event ' . $pk, __METHOD__, JLog::ERROR);
+					$this->setError(JText::_('COM_JEM_EVENT_ERROR_STORE_INVITED_USERS'));
+					$saved = false;
+				}
 			}
 
 			// check for recurrence
@@ -437,7 +446,7 @@ class JEMModelEvent extends JemModelAdmin
 			$query->where('itemid = ' . $eventId);
 			$query->where('catid IN (' . implode(',', $del_cats) . ')');
 			$db->setQuery($query);
-			$ret &= ($db->execute() === false);
+			$ret &= ($db->execute() !== false);
 		}
 
 		if (!empty($add_cats)) {
@@ -448,7 +457,7 @@ class JEMModelEvent extends JemModelAdmin
 				$query->values((int)$catid . ',' . $eventId);
 			}
 			$db->setQuery($query);
-			$ret &= ($db->execute() === false);
+			$ret &= ($db->execute() !== false);
 		}
 
 		return $ret;
