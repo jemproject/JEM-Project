@@ -7,7 +7,7 @@
 	<creationDate>April 2017</creationDate>
 	<copyright>copyright (C) 2015-2017 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>2.2.1-dev1</version>
+	<version>2.2.1-dev2</version>
 	<description>MOD_JEM_JUBILEE_XML_DESCRIPTION</description>
 
 	<scriptfile>script.php</scriptfile>
@@ -52,6 +52,16 @@
 					label="MOD_JEM_JUBILEE_OFFSET_DAYS"
 					description="MOD_JEM_JUBILEE_OFFSET_DAYS_DESC"
 				/>
+				<field name="date_match_mode" type="list"
+					default="0"
+					label="MOD_JEM_JUBILEE_DATE_MATCH_MODE"
+					description="MOD_JEM_JUBILEE_DATE_MATCH_MODE_DESC"
+				>
+					<option value="0">MOD_JEM_JUBILEE_DATE_MATCH_FROM_START_TO_END</option>
+					<option value="1">MOD_JEM_JUBILEE_DATE_MATCH_ON_START</option>
+					<option value="2">MOD_JEM_JUBILEE_DATE_MATCH_ON_END</option>
+					<option value="3">MOD_JEM_JUBILEE_DATE_MATCH_ON_START_OR_END</option>
+				</field>
 				<field name="shuffle" type="radio"
 					default="0"
 					label="MOD_JEM_JUBILEE_SHUFFLE"
