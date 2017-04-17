@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.2.1
 * @package JEM
 * @subpackage JEM Banner Module
-* @copyright (C) 2014-2015 joomlaeventmanager.net
+* @copyright (C) 2014-2017 joomlaeventmanager.net
 * @copyright (C) 2005-2009 Christoph Lukes
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 */
@@ -47,7 +47,11 @@ if ($flyer_link_type == 1) {
 				     style="background-color: <?php echo $item->color; ?>"
 					<?php endif; ?>
 				>
+					<?php if (isset($item->color_is_dark)) : ?>
+					<div class="monthbanner monthbanner-<?php echo (!empty($item->color_is_dark) ? 'light' : 'dark'); ?>">
+					<?php else : ?>
 					<div class="monthbanner">
+					<?php endif; ?>
 						<?php echo $item->startdate['month']; ?>
 					</div>
 					<div class="daybanner">
