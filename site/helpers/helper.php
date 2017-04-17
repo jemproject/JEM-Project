@@ -624,22 +624,40 @@ class JemHelper
 	/**
 	 * Build the select list for access level
 	 */
-	static function getAccesslevelOptions($ownonly = false)
+	static function getAccesslevelOptions($ownonly = false, $disabledLevels = false)
 	{
 		$db = JFactory::getDBO();
 		$where = '';
 		if ($ownonly) {
 			$levels = JFactory::getUser()->getAuthorisedViewLevels();
-			$where = ' WHERE id IN ('.implode(',', $levels).')';
+			$allLevels = $levels;
+			$selDisabled = '';
+			if (!empty($disabledLevels)) {
+				if (!is_array($disabledLevels)) {
+					$disabledLevels = array($disabledLevels);
+				}
+				foreach ($disabledLevels as $level) {
+					if (((int)$level > 0) && (!in_array((int)$level, $levels))) {
+						$allLevels[] = $level;
+					}
+				}
+				$selDisabled = ', IF (id IN ('.implode(',', $levels).'), \'\', \'disabled\') AS disabled';
+			}
+			$where = ' WHERE id IN ('.implode(',', $allLevels).')';
 		}
 
-		$query = 'SELECT id AS value, title AS text'
+		$query = 'SELECT id AS value, title AS text' . $selDisabled
 				. ' FROM #__viewlevels'
 				. $where
 				. ' ORDER BY ordering, id'
 				;
+
+		//JemHelper::addLogEntry('AccessLevel query: ' . $query, __METHOD__);
+
 		$db->setQuery($query);
 		$groups = $db->loadObjectList();
+
+		//JemHelper::addLogEntry('result: ' . print_r($groups, true), __METHOD__);
 
 		return $groups;
 	}

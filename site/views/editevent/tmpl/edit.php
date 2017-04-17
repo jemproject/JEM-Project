@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -137,7 +137,8 @@ function showUnregistraUntil()
 					<li><?php echo $this->form->getLabel('featured'); ?><?php echo $this->form->getInput('featured'); ?></li>
 					<li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
 					<li><?php echo $this->form->getLabel('access'); ?><?php
-						      echo JHtml::_('select.genericlist', $this->access, 'jform[access]', array('list.attr' => ' class="inputbox" size="1"', 'list.select' => $this->item->access, 'id' => 'access'));
+					          echo JHtml::_('select.genericlist', $this->access, 'jform[access]',
+					                        array('list.attr' => ' class="inputbox" size="1"', 'list.select' => $this->item->access, 'option.attr' => 'disabled', 'id' => 'access'));
 						 ?>
 					</li>
 				</ul>

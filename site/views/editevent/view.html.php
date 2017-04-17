@@ -166,7 +166,7 @@ class JemViewEditevent extends JViewLegacy
 			return false;
 		}
 
-		$access2      = JEMHelper::getAccesslevelOptions(true);
+		$access2      = JEMHelper::getAccesslevelOptions(true, $access);
 		$this->access = $access2;
 
 		JHtml::_('behavior.formvalidation');
