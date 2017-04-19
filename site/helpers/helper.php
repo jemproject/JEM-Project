@@ -628,10 +628,10 @@ class JemHelper
 	{
 		$db = JFactory::getDBO();
 		$where = '';
+		$selDisabled = '';
 		if ($ownonly) {
 			$levels = JFactory::getUser()->getAuthorisedViewLevels();
 			$allLevels = $levels;
-			$selDisabled = '';
 			if (!empty($disabledLevels)) {
 				if (!is_array($disabledLevels)) {
 					$disabledLevels = array($disabledLevels);
