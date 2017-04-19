@@ -83,7 +83,7 @@ class JemModelEventslist extends JModelList
 		$search      = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 		$this->setState('filter.filter_search', $search); // must be escaped later
 
-		$filtertype  = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_type', 'filter_type', '', 'int');
+		$filtertype  = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
 		$this->setState('filter.filter_type', $filtertype);
 
 		# publish state

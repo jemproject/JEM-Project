@@ -249,7 +249,7 @@ class JemModelAttendees extends JModelLegacy
 		$levels = $user->getAuthorisedViewLevels();
 		$canEdit = $user->can('edit', 'event', $this->_id, $user->id); // where cluase ensures user is the event owner
 
-		$filter         = $app->getUserStateFromRequest('com_jem.attendees.filter',        'filter',        '', 'int');
+		$filter         = $app->getUserStateFromRequest('com_jem.attendees.filter',        'filter',         0, 'int');
 		$filter_status  = $app->getUserStateFromRequest('com_jem.attendees.filter_status', 'filter_status', -2, 'int');
 		$search         = $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
 		$search         = $this->_db->escape(trim(JString::strtolower($search)));

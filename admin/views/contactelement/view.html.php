@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -32,13 +32,13 @@ class JEMViewContactelement extends JViewLegacy {
 		//get vars
 		$filter_order		= $app->getUserStateFromRequest('com_jem.contactelement.filter_order', 'filter_order', 'con.name', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.contactelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
-		$filter_type 		= $app->getUserStateFromRequest('com_jem.contactelement.filter_type', 'filter_type', '', 'int');
+		$filter_type 		= $app->getUserStateFromRequest('com_jem.contactelement.filter_type', 'filter_type', 0, 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.contactelement.filter_search', 'filter_search', '', 'string');
 		$search 			= $db->escape(trim(JString::strtolower($search)));
 
 		//prepare document
 		$document->setTitle(JText::_('COM_JEM_SELECTVENUE'));
-		
+
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 

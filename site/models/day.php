@@ -158,7 +158,7 @@ class JemModelDay extends JemModelEventslist
 		$this->setState('filter.filter_search', $search);
 
 		# FilterType
-		$filtertype = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_type', 'filter_type', '', 'int');
+		$filtertype = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
 		$this->setState('filter.filter_type', $filtertype);
 
 		# filter_order

@@ -277,7 +277,7 @@ class JemModelMyevents extends JModelLegacy
 		// Support Joomla access levels instead of single group id
 		$levels   = $user->getAuthorisedViewLevels();
 
-		$filter   = $app->getUserStateFromRequest('com_jem.myevents.filter', 'filter', '', 'int');
+		$filter   = $app->getUserStateFromRequest('com_jem.myevents.filter', 'filter', 0, 'int');
 		$search   = $app->getUserStateFromRequest('com_jem.myevents.filter_search', 'filter_search', '', 'string');
 		$search   = $this->_db->escape(trim(JString::strtolower($search)));
 

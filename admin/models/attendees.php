@@ -2,7 +2,7 @@
 /**
  * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -67,7 +67,7 @@ class JemModelAttendees extends JModelList
 		$task = $jinput->getCmd('task');
 		$this->setState('unlimited', ($task == 'export' || $task == 'print') ? '1' : '');
 
-		$filter_type      = $app->getUserStateFromRequest( 'com_jem.attendees.filter_type',      'filter_type',     '', 'int' );
+		$filter_type      = $app->getUserStateFromRequest( 'com_jem.attendees.filter_type',      'filter_type',      0, 'int' );
 		$this->setState('filter_type', $filter_type);
 		$filter_search    = $app->getUserStateFromRequest( 'com_jem.attendees.filter_search',    'filter_search',   '', 'string' );
 		$this->setState('filter_search', $filter_search);

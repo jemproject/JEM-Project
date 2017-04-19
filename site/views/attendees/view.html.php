@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -58,7 +58,7 @@ class JemViewAttendees extends JViewLegacy {
 		$filter_order		= $app->getUserStateFromRequest('com_jem.attendees.filter_order', 'filter_order', 'u.username', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.attendees.filter_order_Dir', 'filter_order_Dir', '', 'word');
 		$filter_status		= $app->getUserStateFromRequest('com_jem.attendees.filter_status', 'filter_status', -2, 'int');
-		$filter 			= $app->getUserStateFromRequest('com_jem.attendees.filter', 'filter', '', 'int');
+		$filter 			= $app->getUserStateFromRequest('com_jem.attendees.filter', 'filter', 0, 'int');
 		$search 			= $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
 
 		// Get data from the model

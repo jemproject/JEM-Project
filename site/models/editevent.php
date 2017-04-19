@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -107,15 +107,9 @@ class JemModelEditevent extends JemModelEvent
 
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select(array(
-				'count(id)'
-		));
+		$query->select(array('count(id)'));
 		$query->from('#__jem_register');
-		$query->where(array(
-				'event= ' . $db->quote($itemId),
-				'waiting= 0',
-				'status = 1'
-		));
+		$query->where(array('event = ' . $db->quote($itemId), 'waiting = 0', 'status = 1'));
 
 		$db->setQuery($query);
 		$res = $db->loadResult();
@@ -222,7 +216,7 @@ class JemModelEditevent extends JemModelEvent
 		$filter_order 		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir 	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
-		$filter_type 		= $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', '', 'int');
+		$filter_type 		= $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', 0, 'int');
 		$search      		= $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
 		$search      		= $this->_db->escape(trim(JString::strtolower($search)));
 
@@ -351,7 +345,7 @@ class JemModelEditevent extends JemModelEvent
 		$filter_order 		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
-		$filter_type   		= $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', '', 'int');
+		$filter_type   		= $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
 		$search       		= $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
 		$search       		= $this->_db->escape(trim(JString::strtolower($search)));
 

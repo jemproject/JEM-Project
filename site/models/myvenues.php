@@ -228,7 +228,7 @@ class JemModelMyvenues extends JModelLegacy
 		$user     = JemFactory::getUser();
 		$settings = JemHelper::globalattribs();
 
-		$filter   = $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', '', 'int');
+		$filter   = $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', 0, 'int');
 		$search   = $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');
 		$search   = $this->_db->escape(trim(JString::strtolower($search)));
 
