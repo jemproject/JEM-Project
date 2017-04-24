@@ -2,7 +2,7 @@
 /**
  * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -75,11 +75,29 @@ class JemControllerAttendees extends JControllerLegacy
 			$errMsg  = '';
 			$skip    = 0;
 			$error   = 0;
+			$changed = 0;
 
 			foreach ($uids as $uid) {
 				if (array_key_exists($uid, $regs)) {
-					JemHelper::addLogEntry("Skip user ${uid} already registered for event ${eventid}.", __METHOD__, JLog::DEBUG);
-					++$skip;
+					$reg = $regs[$uid];
+					$old_status = ($reg->status == 1 && $reg->waiting == 1) ? 2 : $reg->status;
+					if (!empty($reg->id) && ($old_status != $status)) {
+						JemHelper::addLogEntry("Change user ${uid} already registered for event ${eventid}.", __METHOD__, JLog::DEBUG);
+						$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $comment, $errMsg, $reg->id);
+						if ($reg_id) {
+							$res = $dispatcher->trigger('onEventUserRegistered', array($reg_id));
+							++$changed;
+						} else {
+							JemHelper::addLogEntry(implode(' - ', array("Model returned error while changing registration of user ${uid}", $errMsg)), __METHOD__, JLog::DEBUG);
+							if (!empty($errMsg)) {
+								$errMsgs[] = $errMsg;
+							}
+							++$error;
+						}
+					} else {
+						JemHelper::addLogEntry("Skip user ${uid} already registered for event ${eventid}.", __METHOD__, JLog::DEBUG);
+						++$skip;
+					}
 				} else {
 					$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $comment, $errMsg);
 					if ($reg_id) {
@@ -97,7 +115,10 @@ class JemControllerAttendees extends JControllerLegacy
 			$cache = JFactory::getCache('com_jem');
 			$cache->clean();
 
-			$msg = ($total - $skip - $error) . ' ' . JText::_('COM_JEM_REGISTERED_USERS_ADDED');
+			$msg = ($total - $skip - $error - $changed) . ' ' . JText::_('COM_JEM_REGISTERED_USERS_ADDED');
+			if ($changed > 0) {
+				$msg .= ', ' . $changed . ' ' . JText::_('COM_JEM_REGISTERED_USERS_CHANGED');
+			}
 			$errMsgs = array_unique($errMsgs);
 			if (count($errMsgs)) {
 				$msg .= '<br />' . implode('<br />', $errMsgs);

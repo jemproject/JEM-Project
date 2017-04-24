@@ -386,7 +386,7 @@ class JemModelAttendees extends JModelLegacy
 		$db  = JFactory::getDBO();
 		$query = $db->getQuery(true);
 		// #__jem_register (id, event, uid, waiting, status, comment)
-		$query->select(array('reg.uid, reg.status, reg.waiting'));
+		$query->select(array('reg.uid, reg.status, reg.waiting, reg.id'));
 		$query->from('#__jem_register As reg');
 		$query->where('reg.event = ' . $eventId);
 		$db->setQuery($query);
