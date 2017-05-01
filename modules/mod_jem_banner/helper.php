@@ -62,6 +62,7 @@ abstract class ModJemBannerHelper
 		$max_days       = (int) $params->get('max_days', 0); // empty = unlimited
 		$max_minutes    = $max_days ? ($max_days * 24 * 60 + $offset_minutes) : false;
 		$max_title_length = (int)$params->get('cuttitle', '25');
+		$max_desc_length  = (int)$params->get('descriptionlength', 300);
 		$published = 1;
 		$orderdir = 'ASC';
 		$opendates = 0;
@@ -227,7 +228,7 @@ abstract class ModJemBannerHelper
 			# cut title
 			$fulltitle = htmlspecialchars($row->title, ENT_COMPAT, 'UTF-8');
 			if (mb_strlen($fulltitle) > $max_title_length) {
-				$title = mb_substr($fulltitle, 0, $max_title_length) . '...';
+				$title = mb_substr($fulltitle, 0, $max_title_length) . '&hellip;';
 			} else {
 				$title = $fulltitle;
 			}
@@ -270,11 +271,6 @@ abstract class ModJemBannerHelper
 				$lists[$i]->venueimageorig = JUri::base(true).'/'.$limage['original'];
 			}
 
-			$length = $params->get('descriptionlength');
-			$length2 = 1;
-			$etc = '...';
-			$etc2 = JText::_('MOD_JEM_BANNER_NO_DESCRIPTION');
-
 			# append <br /> tags on line breaking tags so they can be stripped below
 			$description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br />", $row->introtext);
 
@@ -283,23 +279,18 @@ abstract class ModJemBannerHelper
 
 			# switch <br /> tags to space character
 			if ($params->get('br') == 0) {
-				$description = str_replace('<br />',' ', $description);
+				$description = mb_ereg_replace('<br[ /]*>',' ', $description);
 			}
 
-			///@todo Rewrite, also respect multibyte
-			if (strlen($description) > $length) {
-				$length -= strlen($etc);
-				$description = preg_replace('/\s+?(\S+)?$/', '', substr($description, 0, $length+1));
-				$lists[$i]->eventdescription = substr($description, 0, $length).$etc;
-			} elseif (strlen($description) < $length2) {
-				$length -= strlen($etc2);
-				$description = preg_replace('/\s+?(\S+)?$/', '', substr($description, 0, $length+1));
-				$lists[$i]->eventdescription = substr($description, 0, $length).$etc2;
+			if (empty($description)) {
+				$lists[$i]->eventdescription = JText::_('MOD_JEM_BANNER_NO_DESCRIPTION');
+			} elseif (mb_strlen($description) > $max_desc_length) {
+				$lists[$i]->eventdescription = mb_substr($description, 0, $max_desc_length) . '&hellip;';
 			} else {
 				$lists[$i]->eventdescription = $description;
 			}
 
-			$lists[$i]->readmore = strlen(trim($row->fulltext));
+			$lists[$i]->readmore = mb_strlen(trim($row->fulltext));
 
 			$lists[$i]->colorclass = $color;
 			if (($color == 'alpha') || (($color == 'category') && empty($row->categories))) {
@@ -530,7 +521,7 @@ abstract class ModJemBannerHelper
 					$times = false;
 					$endtimes = $row->endtimes;
 				}
-				# Singleday event
+				# Single day event
 				else {
 					$startdate = JEMOutput::formatdate($row->dates, $dateFormat);
 					$date = JText::sprintf('MOD_JEM_BANNER_ON_DATE', $startdate);
