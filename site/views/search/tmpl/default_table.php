@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -155,7 +155,7 @@ defined('_JEXEC') or die;
 				<td headers="jem_title" align="left" valign="top">
 					<a href="<?php echo JRoute::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
 						<span itemprop="name"><?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?></span>
-					</a>
+					</a><?php echo JemOutput::publishstateicon($row); ?>
 				</td>
 				<?php endif; ?>
 
@@ -168,10 +168,14 @@ defined('_JEXEC') or die;
 				<?php if ($this->jemsettings->showlocate == 1) : ?>
 				<td headers="jem_location" align="left" valign="top">
 					<?php
-					if ($this->jemsettings->showlinkvenue == 1) :
-						echo $row->locid != 0 ? "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
+					if (!empty($row->venue)) :
+						if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) :
+							echo "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>";
+						else :
+							echo $this->escape($row->venue);
+						endif;
 					else :
-						echo $row->locid ? $this->escape($row->venue) : '-';
+						echo '-';
 					endif;
 					?>
 				</td>
@@ -179,13 +183,13 @@ defined('_JEXEC') or die;
 
 				<?php if ($this->jemsettings->showcity == 1) : ?>
 				<td headers="jem_city" align="left" valign="top">
-					<?php echo $row->city ? $this->escape($row->city) : '-'; ?>
+					<?php echo !empty($row->city) ? $this->escape($row->city) : '-'; ?>
 				</td>
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showstate == 1) : ?>
 				<td headers="jem_state" align="left" valign="top">
-					<?php echo $row->state ? $this->escape($row->state) : '-'; ?>
+					<?php echo !empty($row->state) ? $this->escape($row->state) : '-'; ?>
 				</td>
 				<?php endif; ?>
 

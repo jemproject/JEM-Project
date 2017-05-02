@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -195,7 +195,7 @@ defined('_JEXEC') or die;
 		//venue
 		if ($this->jemsettings->showlocate == 1) {
 			$venue  = '<div class="location"><span class="text-label">'.JText::_('COM_JEM_VENUE_SHORT').': </span>';
-			$venue .=     $row->locid ? $this->escape($row->venue) : '-';
+			$venue .=     !empty($row->venue) ? $this->escape($row->venue) : '-';
 			$venue .= '</div>';
 		} else {
 			$venue = '';

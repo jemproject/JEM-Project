@@ -221,7 +221,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 	<?php echo $this->loadTemplate('attachments'); ?>
 
 	<!--  	Venue  -->
-	<?php if ($this->item->locid != 0) : ?>
+	<?php if (($this->item->locid != 0) && !empty($this->item->venue)) : ?>
 	<p></p>
 	<hr>
 
@@ -239,7 +239,11 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			<dt class="venue"><?php echo JText::_('COM_JEM_LOCATION'); ?>:</dt>
 			<dd class="venue">
 				<?php
-				echo '<a href="' . JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
+				if (!empty($this->item->venueslug)) :
+					echo '<a href="' . JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
+				else :
+					echo $this->escape($this->item->venue);
+				endif;
 				if (!empty($this->item->url)) :
 					echo '&nbsp;-&nbsp;<a target="_blank" href="' . $this->item->url . '">' . JText::_('COM_JEM_WEBSITE') . '</a>';
 				endif;
@@ -282,6 +286,19 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			<dd class="venue_country">
 				<?php echo $this->item->countryimg ? $this->item->countryimg : $this->item->country; ?>
 				<meta itemprop="addressCountry" content="<?php echo $this->item->country; ?>" />
+			</dd>
+			<?php endif; ?>
+
+			<!-- PUBLISHING STATE -->
+			<?php if (!empty($this->showvenuestate) && isset($this->item->locpublished)) : ?>
+			<dt class="venue_published"><?php echo JText::_('JSTATUS'); ?>:</dt>
+			<dd class="venue_published">
+				<?php switch ($this->item->locpublished) {
+				case  1: echo JText::_('JPUBLISHED');   break;
+				case  0: echo JText::_('JUNPUBLISHED'); break;
+				case  2: echo JText::_('JARCHIVED');    break;
+				case -2: echo JText::_('JTRASHED');     break;
+				} ?>
 			</dd>
 			<?php endif; ?>
 
