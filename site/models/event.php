@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -58,62 +58,70 @@ class JemModelEvent extends JModelItem
 	{
 		// Initialise variables.
 		$pk = (!empty($pk)) ? $pk : (int) $this->getState('event.id');
-		$user = JemFactory::getUser();
 
 		if ($this->_item === null) {
 			$this->_item = array();
 		}
 
-		if (!isset($this->_item[$pk])) {
+		if (!isset($this->_item[$pk]))
+		{
+			try
+			{
+				$settings = JemHelper::globalattribs();
+				$user     = JemFactory::getUser();
+				$levels   = $user->getAuthorisedViewLevels();
 
-			try {
-				$settings = JEMHelper::globalattribs();
-
-				$db = $this->getDbo();
+				$db    = $this->getDbo();
 				$query = $db->getQuery(true);
 
+				# Event
 				$query->select(
 						$this->getState('item.select',
-								'a.id, a.access, a.attribs, a.metadata, a.registra, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.times, a.endtimes, a.dates, a.enddates, a.id AS did, a.title, a.alias, ' .
-										'a.created, a.unregistra, a.unregistra_until, a.published, a.created_by, ' .
-										'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, ' . 'a.modified_by, a.checked_out, a.checked_out_time, ' . 'a.datimage,  a.version, ' .
-										'a.meta_keywords, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.waitinglist, a.meta_description, a.hits, a.language, ' .
-										'a.recurrence_type, a.recurrence_first_id'));
+						                'a.id, a.id AS did, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.access, a.attribs, a.metadata, ' .
+						                'a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, ' .
+						                'a.created, a.created_by, a.published, a.registra, a.unregistra, a.unregistra_until, ' .
+						                'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
+						                'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
+						                'a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.waitinglist, ' .
+						                'a.hits, a.language, a.recurrence_type, a.recurrence_first_id'));
 				$query->from('#__jem_events AS a');
 
-				// Join on user table.
+				# Author
 				$name = $settings->get('global_regname','1') ? 'u.name' : 'u.username';
 				$query->select($name.' AS author');
 				$query->join('LEFT', '#__users AS u on u.id = a.created_by');
 
-				// Join on contact-user table.
+				# Contact
 				$query->select('con.id AS conid, con.name AS conname, con.telephone AS contelephone, con.email_to AS conemail');
 				$query->join('LEFT', '#__contact_details AS con ON con.id = a.contactid');
 
-				// Join on venue table.
-				$query->select('l.custom1 AS venue1, l.custom2 AS venue2, l.custom3 AS venue3, l.custom4 AS venue4, l.custom5 AS venue5, l.custom6 AS venue6, l.custom7 AS venue7, l.custom8 AS venue8, l.custom9 AS venue9, l.custom10 AS venue10, ' .
-				               'l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, l.city, l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude, l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time');
+				# Venue
+				$query->select('l.custom1 AS venue1, l.custom2 AS venue2, l.custom3 AS venue3, l.custom4 AS venue4, l.custom5 AS venue5, ' .
+				               'l.custom6 AS venue6, l.custom7 AS venue7, l.custom8 AS venue8, l.custom9 AS venue9, l.custom10 AS venue10, ' .
+				               'l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, ' .
+				               'l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude, ' .
+				               'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished');
 				$query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
 
-				# join over the category-tables
+				# Join over the category tables
 				$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
 				$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
 
-				// Get contact id
+				# Get contact id
 				$subQuery = $db->getQuery(true);
 				$subQuery->select('MAX(contact.id) AS id');
 				$subQuery->from('#__contact_details AS contact');
 				$subQuery->where('contact.published = 1');
 				$subQuery->where('contact.user_id = a.created_by');
 
-				// Filter by language
+				# Filter contact by language
 				if ($this->getState('filter.language')) {
 					$subQuery->where('(contact.language in (' . $db->quote(JFactory::getLanguage()->getTag()) . ',' . $db->quote('*') . ') OR contact.language IS NULL)');
 				}
 
 				$query->select('(' . $subQuery . ') as contactid2');
 
-				// Filter by language
+				# Filter event by language
 				/* commented out yet because it's incomplete
 				if ($this->getState('filter.language')) {
 					$query->where('a.language in (' . $db->quote(JFactory::getLanguage()->getTag()) . ',' . $db->quote('*') . ')');
@@ -122,27 +130,17 @@ class JemModelEvent extends JModelItem
 
 				$query->where('a.id = ' . (int) $pk);
 
-				// Filter by start and end dates.
-				$nullDate = $db->Quote($db->getNullDate());
-				$date = JFactory::getDate();
-
-				$nowDate = $db->Quote($date->toSql());
-
-
-				// Filter by published state ==> later.
+				# Filter by published state ==> later.
 				//  It would result in too complicated query.
 				//  It's easier to get data and check then e.g. for event owner etc.
 
-
-				#####################
-				### FILTER - BYCAT ##
-				#####################
-
+				# Filter by categories
 				$cats = $this->getCategories('all');
 				if (!empty($cats)) {
 					$query->where('c.id  IN (' . implode(',', $cats) . ')');
 				}
 
+				# Get the item
 				//$query->group('a.id');
 				$db->setQuery($query);
 				$data = $db->loadObject();
@@ -155,11 +153,10 @@ class JemModelEvent extends JModelItem
 					throw new Exception(JText::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
 				}
 
-				// Convert parameter fields to objects.
+				# Convert parameter fields to objects.
 				$registry = new JRegistry;
 				$registry->loadString($data->attribs);
-
-				$data->params = JEMHelper::globalattribs(); // returns JRegistry object
+				$data->params = JemHelper::globalattribs(); // returns JRegistry object
 				$data->params->merge($registry);
 
 				$registry = new JRegistry;
@@ -168,9 +165,7 @@ class JemModelEvent extends JModelItem
 
 				$data->categories = $this->getCategories($pk);
 
-				// Compute selected asset permissions.
-				$viewLevels  = $user->getAuthorisedViewLevels();
-
+				# Compute selected asset permissions.
 				$access_edit = $user->can('edit', 'event', $data->id, $data->created_by);
 				$access_view = (($data->published == 1) || ($data->published == 2) ||          // published and archived event
 				                (($data->published == 0) && $access_edit) ||                   // unpublished for editors,
@@ -178,17 +173,18 @@ class JemModelEvent extends JModelItem
 
 				$data->params->set('access-edit', $access_edit);
 
-				// Compute view access permissions.
+				# Compute view access permissions.
 
 				# event can be shown if
 				#  - user has matching view access level and
 				#  - there is at least one category attached user can see and
 				#  - publishing state and user permissions allow that (e.g. unpublished event but user is editor, owner, or publisher)
-				$data->params->set('access-view', $access_view && !empty($data->categories) && in_array($data->access, $viewLevels));
+				$data->params->set('access-view', $access_view && !empty($data->categories) && in_array($data->access, $levels));
 
 				$this->_item[$pk] = $data;
 			}
-			catch (JException $e) {
+			catch (JException $e)
+			{
 				if ($e->getCode() == 404) {
 					// Need to go thru the error handler to allow Redirect to
 					// work.
@@ -203,22 +199,18 @@ class JemModelEvent extends JModelItem
 			}
 		}
 
-		// Define Attachments
-		$this->_item[$pk]->attachments = JEMAttachment::getAttachments('event' . $this->_item[$pk]->did);
+		# Get event attachments
+		$this->_item[$pk]->attachments = JemAttachment::getAttachments('event' . $this->_item[$pk]->did);
 
-		// Define Venue-Attachments
-		$this->_item[$pk]->vattachments = JEMAttachment::getAttachments('venue' . $this->_item[$pk]->locid);
+		# Get venue attachments
+		$this->_item[$pk]->vattachments = JemAttachment::getAttachments('venue' . $this->_item[$pk]->locid);
 
 		// Define Booked
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
 		$query->select(array('COUNT(*)'));
 		$query->from('#__jem_register');
-		$query->where(array(
-				'event= ' . $db->quote($this->_item[$pk]->did),
-				'waiting= 0',
-				'status = 1'
-			));
+		$query->where(array('event = ' . $db->quote($this->_item[$pk]->did), 'waiting = 0', 'status = 1'));
 		$db->setQuery($query);
 		try {
 			$res = $db->loadResult();
@@ -227,7 +219,6 @@ class JemModelEvent extends JModelItem
 			$res = 0;
 		}
 		$this->_item[$pk]->booked = $res;
-
 
 		return $this->_item[$pk];
 	}
@@ -278,11 +269,11 @@ class JemModelEvent extends JModelItem
 		$id = (!empty($id)) ? $id : (int) $this->getState('event.id');
 
 		$user 			= JemFactory::getUser();
-		$userid			= (int) $user->get('id');
+	//	$userid			= (int) $user->get('id');
 		$levels 		= $user->getAuthorisedViewLevels();
-		$app 			= JFactory::getApplication();
-		$params 		= $app->getParams();
-		$catswitch 		= $params->get('categoryswitch', '0');
+	//	$app 			= JFactory::getApplication();
+	//	$params 		= $app->getParams();
+	//	$catswitch 		= $params->get('categoryswitch', '0');
 		$settings 		= JemHelper::globalattribs();
 
 		// Query
@@ -482,7 +473,7 @@ class JemModelEvent extends JModelItem
 		}
 
 		// avatars should be displayed
-		$settings = JEMHelper::globalattribs();
+		$settings = JemHelper::globalattribs();
 		$user     = JemFactory::getUser();
 
 		switch ($settings->get('event_show_attendeenames', 2)) {

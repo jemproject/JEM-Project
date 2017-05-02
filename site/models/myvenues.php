@@ -181,9 +181,11 @@ class JemModelMyvenues extends JModelLegacy
 		$orderby = $this->_buildOrderByVenues();
 
 		# Get Venues from Database
-		$query = 'SELECT l.id, l.venue, l.city, l.state, l.url, l.created_by, l.published,'
-		 .' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug'
-		 .' FROM #__jem_venues AS l '
+		$query = 'SELECT l.id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.created, l.created_by, l.published,'
+		       . ' l.custom1, l.custom2, l.custom3, l.custom4, l.custom5, l.custom6, l.custom7, l.custom8, l.custom9, l.custom10,'
+		       . ' l.locdescription, l.locimage, l.latitude, l.longitude, l.map, l.meta_keywords, l.meta_description, l.checked_out, l.checked_out_time,'
+		       .' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug'
+		       .' FROM #__jem_venues AS l '
 		.$where
 		.$orderby
 		;

@@ -229,26 +229,9 @@ class JemModelEventslist extends JModelList
 		$db    = JFactory::getDBO();
 		$query = $db->getQuery(true);
 
-		$case_when_e = ' CASE WHEN ';
-		$case_when_e .= $query->charLength('a.alias','!=', '0');
-		$case_when_e .= ' THEN ';
-		$id_e = $query->castAsChar('a.id');
-		$case_when_e .= $query->concatenate(array($id_e, 'a.alias'), ':');
-		$case_when_e .= ' ELSE ';
-		$case_when_e .= $id_e.' END as slug';
-
-		$case_when_l = ' CASE WHEN ';
-		$case_when_l .= $query->charLength('l.alias','!=', '0');
-		$case_when_l .= ' THEN ';
-		$id_l = $query->castAsChar('a.locid');
-		$case_when_l .= $query->concatenate(array($id_l, 'l.alias'), ':');
-		$case_when_l .= ' ELSE ';
-		$case_when_l .= $id_l.' END as venueslug';
-
-		# event
+		# Event
 		$query->select(
-				$this->getState(
-				'list.select',
+				$this->getState('list.select',
 				'a.access,a.alias,a.attribs,a.checked_out,a.checked_out_time,a.contactid,a.created,a.created_by,a.created_by_alias,a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10,a.dates,a.datimage,a.enddates,a.endtimes,a.featured,' .
 				'a.fulltext,a.hits,a.id,a.introtext,a.language,a.locid,a.maxplaces,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.unregistra,a.waitinglist,DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
 				'a.recurrence_byday,a.recurrence_counter,a.recurrence_first_id,a.recurrence_limit,a.recurrence_limit_date,a.recurrence_number, a.recurrence_type,a.version'
@@ -256,22 +239,39 @@ class JemModelEventslist extends JModelList
 		);
 		$query->from('#__jem_events as a');
 
-		# author
+		# Author
 		$name = $settings->get('global_regname','1') ? 'u.name' : 'u.username';
 		$query->select($name.' AS author');
 		$query->join('LEFT', '#__users AS u on u.id = a.created_by');
 
-		# venue
+		# Venue
 		$query->select(array('l.alias AS l_alias','l.checked_out AS l_checked_out','l.checked_out_time AS l_checked_out_time','l.city','l.country','l.created AS l_created','l.created_by AS l_createdby'));
 		$query->select(array('l.custom1 AS l_custom1','l.custom2 AS l_custom2','l.custom3 AS l_custom3','l.custom4 AS l_custom4','l.custom5 AS l_custom5','l.custom6 AS l_custom6','l.custom7 AS l_custom7','l.custom8 AS l_custom8','l.custom9 AS l_custom9','l.custom10 AS l_custom10'));
-		$query->select(array('l.id AS l_id','l.latitude','l.locdescription','l.locimage','l.longitude','l.map','l.meta_description','l.meta_keywords','l.modified AS l_modified','l.modified_by AS l_modified_by','l.ordering','l.postalCode','l.publish_up','l.publish_down','l.published AS l_published','l.state','l.street','l.url','l.venue','l.version AS l_version'));
+		$query->select(array('l.id AS l_id','l.latitude','l.locdescription','l.locimage','l.longitude','l.map','l.meta_description AS l_meta_description','l.meta_keywords AS l_meta_keywords','l.modified AS l_modified','l.modified_by AS l_modified_by','l.postalCode'));
+		$query->select(array('l.publish_up AS l_publish_up','l.publish_down AS l_publish_down','l.published AS l_published','l.state','l.street','l.url','l.venue','l.version AS l_version'));
 		$query->join('LEFT', '#__jem_venues AS l ON l.id = a.locid');
 
-		# country
+		# Country
 		$query->select(array('ct.name AS countryname'));
 		$query->join('LEFT', '#__jem_countries AS ct ON ct.iso2 = l.country');
 
 		# the rest
+		$case_when_e  = ' CASE WHEN ';
+		$case_when_e .= $query->charLength('a.alias','!=', '0');
+		$case_when_e .= ' THEN ';
+		$id_e = $query->castAsChar('a.id');
+		$case_when_e .= $query->concatenate(array($id_e, 'a.alias'), ':');
+		$case_when_e .= ' ELSE ';
+		$case_when_e .= $id_e.' END as slug';
+
+		$case_when_l  = ' CASE WHEN ';
+		$case_when_l .= $query->charLength('l.alias', '!=', '0');
+		$case_when_l .= ' THEN ';
+		$id_l = $query->castAsChar('a.locid');
+		$case_when_l .= $query->concatenate(array($id_l, 'l.alias'), ':');
+		$case_when_l .= ' ELSE ';
+		$case_when_l .= $id_l.' END as venueslug';
+
 		$query->select(array($case_when_e, $case_when_l));
 
 
