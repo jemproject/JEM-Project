@@ -60,6 +60,15 @@ class JemViewEvent extends JEMView
 		$this->registers	= $model->getRegisters($this->state->get('event.id'));
 		$registration		= $this->get('UserRegistration');
 
+		$this->regs['not_attending'] = $model->getRegisters($this->state->get('event.id'), -1);
+		$this->regs['invited']       = $model->getRegisters($this->state->get('event.id'),  0);
+		$this->regs['attending']     = $model->getRegisters($this->state->get('event.id'),  1);
+		$this->regs['waiting']       = $model->getRegisters($this->state->get('event.id'),  2);
+		$this->regs['all']           = $model->getRegisters($this->state->get('event.id'), 'all');
+
+		//JemHelper::addLogEntry("Attendees:\n" . print_r($this->registers, true), __METHOD__);
+		//JemHelper::addLogEntry("Attendees:\n" . print_r($this->regs, true), __METHOD__);
+
 		// check for data error
 		if (empty($this->item)) {
 			$app->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');

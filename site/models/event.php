@@ -466,7 +466,7 @@ class JemModelEvent extends JModelItem
 	 * @return object
 	 *
 	 */
-	function getRegisters($event = false)
+	function getRegisters($event = false, $status = 1)
 	{
 		if (empty($event)) {
 			return false;
@@ -475,6 +475,7 @@ class JemModelEvent extends JModelItem
 		// avatars should be displayed
 		$settings = JemHelper::globalattribs();
 		$user     = JemFactory::getUser();
+		$db       = $this->getDbo();
 
 		switch ($settings->get('event_show_attendeenames', 2)) {
 			case 0: // show to none
@@ -504,17 +505,28 @@ class JemModelEvent extends JModelItem
 
 		$name = $settings->get('global_regname','1') ? 'u.name' : 'u.username';
 
+		$where[] = 'event = '. $db->quote($event);
+		if (is_numeric($status)) {
+			if ($status == 2) {
+				$where[] = 'waiting = 1';
+				$where[] = 'status = 1';
+			} else {
+				$where[] = 'waiting = 0';
+				$where[] = 'status = ' . (int)$status;
+			}
+		} elseif ($status !== 'all') {
+			$where[] = 'waiting = 0';
+			$where[] = 'status = 1';
+		}
+
 		// Get registered users
-		$db = $this->getDbo();
 		$query = $db->getQuery(true);
-		$query = 'SELECT '
+		$query = 'SELECT IF(r.status = 1 AND r.waiting = 1, 2, r.status) as status, '
 				. $name . ' AS name, r.uid' . $avatar
 				. ' FROM #__jem_register AS r'
 				. ' LEFT JOIN #__users AS u ON u.id = r.uid'
 				. $join
-				. ' WHERE event = '. $db->quote($event)
-				. '   AND waiting = 0 '
-		        . '   AND status = 1 ';
+				. ' WHERE ' . implode(' AND ', $where);
 		$db->setQuery($query);
 
 		try {
