@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -65,7 +65,7 @@ class JemViewMyvenues extends JViewLegacy
 		$filter_order     = $app->getUserStateFromRequest('com_jem.myvenues.filter_order', 'filter_order', 	'l.venue', 'cmd');
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.myvenues.filter_order_Dir', 'filter_order_Dir',	'', 'word');
 // 		$filter_state     = $app->getUserStateFromRequest('com_jem.myvenues.filter_state', 'filter_state', 	'*', 'word');
-		$filter           = $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', '', 'int');
+		$filter           = $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', 0, 'int');
 		$search           = $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');
 
 		// search filter

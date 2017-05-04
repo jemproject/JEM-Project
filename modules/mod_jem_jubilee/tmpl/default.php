@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.2.1
 * @package JEM
 * @subpackage JEM Jubilee Module
-* @copyright (C) 2014-2015 joomlaeventmanager.net
+* @copyright (C) 2014-2017 joomlaeventmanager.net
 * @copyright (C) 2005-2009 Christoph Lukes
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 */
@@ -18,6 +18,7 @@ $flyer_link_type = (int)$params->get('flyer_link_type', 0);
 
 $colorclass      = $params->get('color');
 $user_color      = $params->get('usercolor', '#EEEEEE');
+$user_color_is_dark = $params->get('usercolor_is_dark', false);
 $date            = (array)$params->get('date');
 
 if ($flyer_link_type == 1) {
@@ -40,7 +41,7 @@ if ($flyer_link_type == 1) {
 				 style="background-color: <?php echo $user_color; ?>"
 				<?php endif; ?>
 			>
-				<div class="monthjubilee">
+				<div class="monthjubilee monthjubilee-<?php echo ($user_color_is_dark ? 'light' : 'dark'); ?>">
 					<?php echo $date['month']; ?>
 				</div>
 				<div class="dayjubilee">

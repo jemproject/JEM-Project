@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -76,8 +76,8 @@ class JemModelAttendees extends JModelLegacy
 		parent::__construct();
 
 		$app         = JFactory::getApplication();
-		$jemsettings = JEMHelper::config();
-		$settings    = JEMHelper::globalattribs();
+		$jemsettings = JemHelper::config();
+		$settings    = JemHelper::globalattribs();
 
 		$id = $app->input->getInt('id', 0);
 		$this->setId((int)$id);
@@ -249,7 +249,7 @@ class JemModelAttendees extends JModelLegacy
 		$levels = $user->getAuthorisedViewLevels();
 		$canEdit = $user->can('edit', 'event', $this->_id, $user->id); // where cluase ensures user is the event owner
 
-		$filter         = $app->getUserStateFromRequest('com_jem.attendees.filter',        'filter',        '', 'int');
+		$filter         = $app->getUserStateFromRequest('com_jem.attendees.filter',        'filter',         0, 'int');
 		$filter_status  = $app->getUserStateFromRequest('com_jem.attendees.filter_status', 'filter_status', -2, 'int');
 		$search         = $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
 		$search         = $this->_db->escape(trim(JString::strtolower($search)));
@@ -287,9 +287,8 @@ class JemModelAttendees extends JModelLegacy
 			$where[] = ' LOWER(u.username) LIKE \'%'.$search.'%\' ';
 		}
 
-		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
-
-		return $where;
+		$where2 = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
+		return $where2;
 	}
 
 	/**
@@ -301,10 +300,15 @@ class JemModelAttendees extends JModelLegacy
 	 */
 	function getEvent()
 	{
+		$query = 'SELECT a.id, a.alias, a.title, a.dates, a.enddates, a.times, a.endtimes, a.maxplaces, a.waitinglist,'
+		       . ' a.published, a.created, a.created_by, a.created_by_alias, a.locid, a.registra, a.unregistra,'
+		       . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
+		       . ' a.access, a.attribs, a.checked_out, a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.version,'
+		       . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
+		       . ' a.introtext, a.fulltext, a.language, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by'
+		       . ' FROM #__jem_events AS a WHERE a.id = '.$this->_db->Quote($this->_id);
 
-		$query = 'SELECT id, alias, title, dates, enddates, times, endtimes, maxplaces, waitinglist FROM #__jem_events WHERE id = '.$this->_db->Quote($this->_id);
-
-		$this->_db->setQuery( $query );
+		$this->_db->setQuery($query);
 
 		$_event = $this->_db->loadObject();
 
@@ -388,7 +392,7 @@ class JemModelAttendees extends JModelLegacy
 		$db  = JFactory::getDBO();
 		$query = $db->getQuery(true);
 		// #__jem_register (id, event, uid, waiting, status, comment)
-		$query->select(array('reg.uid, reg.status, reg.waiting'));
+		$query->select(array('reg.uid, reg.status, reg.waiting, reg.id'));
 		$query->from('#__jem_register As reg');
 		$query->where('reg.event = ' . $eventId);
 		$db->setQuery($query);
@@ -428,7 +432,6 @@ class JemModelAttendees extends JModelLegacy
 	protected function _buildQueryUsers()
 	{
 		$app              = JFactory::getApplication();
-		$jemsettings      = JemHelper::config();
 
 		// no filters, hard-coded
 		$filter_order     = 'usr.name';

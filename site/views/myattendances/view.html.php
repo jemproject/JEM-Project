@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -64,7 +64,7 @@ class JemViewMyattendances extends JViewLegacy
 		$filter_order     = $app->getUserStateFromRequest('com_jem.myattendances.filter_order',     'filter_order',     'a.dates', 'cmd');
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.myattendances.filter_order_Dir', 'filter_order_Dir', '',       'word');
 // 		$filter_state     = $app->getUserStateFromRequest('com_jem.myattendances.filter_state',     'filter_state',     '*',      'word');
-		$filter           = $app->getUserStateFromRequest('com_jem.myattendances.filter',           'filter',           '',        'int');
+		$filter           = $app->getUserStateFromRequest('com_jem.myattendances.filter',           'filter',            0,        'int');
 		$search           = $app->getUserStateFromRequest('com_jem.myattendances.filter_search',    'filter_search',    '',     'string');
 
 		// search filter

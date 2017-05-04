@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -71,7 +71,7 @@ $function = JFactory::getApplication()->input->getCmd('function', 'jSelectVenue'
 						</td>
 						<td align="left"><?php echo $this->escape($row->city); ?></td>
 						<td align="left"><?php echo $this->escape($row->state); ?></td>
-						<td align="left"><?php echo $this->escape($row->country); ?></td>
+						<td align="left"><?php echo !empty($row->country) ? $this->escape($row->country) : ''; ?></td>
 					</tr>
 					<?php endforeach; ?>
 				<?php endif; ?>

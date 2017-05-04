@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -119,11 +119,17 @@ defined('_JEXEC') or die;
 
 				<?php if ($this->jemsettings->showlocate == 1) : ?>
 				<td headers="jem_location" align="left" valign="top">
-					<?php if ($this->jemsettings->showlinkvenue == 1) : ?>
-						<?php echo $row->locid != 0 ? "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-'; ?>
-					<?php else : ?>
-						<?php echo $row->locid ? $this->escape($row->venue) : '-'; ?>
-					<?php endif; ?>
+					<?php
+					if (!empty($row->venue)) :
+						if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) :
+							echo "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>";
+						else :
+							echo $this->escape($row->venue);
+						endif;
+					else :
+						echo '-';
+					endif;
+					?>
 				</td>
 				<?php endif; ?>
 

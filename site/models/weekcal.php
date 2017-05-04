@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -30,8 +30,7 @@ class JemModelWeekcal extends JemModelEventslist
 	protected function populateState($ordering = null, $direction = null)
 	{
 		$app           = JFactory::getApplication();
-		$jinput        = $app->input;
-		$task          = $jinput->getCmd('task', '');
+		$task          = $app->input->getCmd('task', '');
 		$params        = $app->getParams();
 		$top_category  = $params->get('top_category', 0);
 		$startdayonly  = $params->get('show_only_start', false);
@@ -75,7 +74,7 @@ class JemModelWeekcal extends JemModelEventslist
 		##################
 
 		if ($top_category) {
-			$children = JEMCategories::getChilds($top_category);
+			$children = JemCategories::getChilds($top_category);
 			if (count($children)) {
 				$where = 'rel.catid IN ('. implode(',', $children) .')';
 				$this->setState('filter.category_top', $where);
@@ -228,8 +227,8 @@ class JemModelWeekcal extends JemModelEventslist
 		foreach ($items as $item) {
 			$time[] = $item->times;
 			$title[] = $item->title;
-			$id[] = $item->id;
-			$dates[] = $item->dates;
+		//	$id[] = $item->id;
+		//	$dates[] = $item->dates;
 			$multi[] = (isset($item->multi) ? $item->multi : false);
 			$multitime[] = (isset($item->multitime) ? $item->multitime : false);
 			$multititle[] = (isset($item->multititle) ? $item->multititle : false);

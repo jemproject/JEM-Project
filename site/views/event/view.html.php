@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -59,6 +59,15 @@ class JemViewEvent extends JEMView
 
 		$this->registers	= $model->getRegisters($this->state->get('event.id'));
 		$registration		= $this->get('UserRegistration');
+
+		$this->regs['not_attending'] = $model->getRegisters($this->state->get('event.id'), -1);
+		$this->regs['invited']       = $model->getRegisters($this->state->get('event.id'),  0);
+		$this->regs['attending']     = $model->getRegisters($this->state->get('event.id'),  1);
+		$this->regs['waiting']       = $model->getRegisters($this->state->get('event.id'),  2);
+		$this->regs['all']           = $model->getRegisters($this->state->get('event.id'), 'all');
+
+		//JemHelper::addLogEntry("Attendees:\n" . print_r($this->registers, true), __METHOD__);
+		//JemHelper::addLogEntry("Attendees:\n" . print_r($this->regs, true), __METHOD__);
 
 		// check for data error
 		if (empty($this->item)) {
@@ -263,10 +272,11 @@ class JemViewEvent extends JEMView
 			$description = explode("[", $this->item->meta_description);
 			$description_content = "";
 			foreach ($description as $desc) {
-				$keyword = substr($desc, 0, strpos($desc, "]", 0));
-				if ($keyword != "") {
+				$endpos = JString::strpos($desc, "]", 0);
+				if ($endpos > 0) {
+					$keyword = JString::substr($desc, 0, $endpos);
 					$description_content .= $this->keyword_switcher($keyword, $this->item, $categories, $jemsettings->formattime, $jemsettings->formatdate);
-					$description_content .= substr($desc, strpos($desc, "]", 0) + 1);
+					$description_content .= JString::substr($desc, $endpos + 1);
 				} else {
 					$description_content .= $desc;
 				}

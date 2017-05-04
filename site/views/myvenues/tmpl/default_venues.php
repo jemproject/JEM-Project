@@ -96,10 +96,14 @@ defined('_JEXEC') or die;
 					<?php if ($this->jemsettings->showlocate == 1) : ?>
 					<td headers="jem_location" align="left" valign="top">
 						<?php
-						if ($this->jemsettings->showlinkvenue == 1) :
-							echo $row->id != 0 ? "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-';
+						if (!empty($row->venue)) :
+							if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) :
+								echo "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>";
+							else :
+								echo $this->escape($row->venue);
+							endif;
 						else :
-							echo $row->id ? $this->escape($row->venue) : '-';
+							echo '-';
 						endif;
 						?>
 					</td>

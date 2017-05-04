@@ -1,6 +1,6 @@
 /**
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -81,6 +81,13 @@ div#jem {
 	border:1px solid #000000;
 	border-radius:5px;
 	padding:10px;
+}
+/* On J! 3.7 the calendar popup will show below the field
+   which results in half hidden calendar on recurrence.
+   Following rule will allow calendar to be shown complete.
+ */
+div#jem.jem_editevent {
+	overflow: inherit;
 }
 
 /**

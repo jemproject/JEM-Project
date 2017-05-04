@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -18,7 +18,7 @@ jimport('joomla.html.pagination');
  * @package JEM
  *
  */
-class JEMModelMyvenues extends JModelLegacy
+class JemModelMyvenues extends JModelLegacy
 {
 	var $_venues = null;
 	var $_total_venues = null;
@@ -31,7 +31,7 @@ class JEMModelMyvenues extends JModelLegacy
 		parent::__construct();
 
 		$app = JFactory::getApplication();
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 
 		//get the number of events
 
@@ -83,8 +83,9 @@ class JEMModelMyvenues extends JModelLegacy
 			foreach ($this->_venues as $item) {
 				if (empty($item->params)) {
 					// Set venue params.
-					$item->params = clone JEMHelper::globalattribs();
+					$item->params = clone JemHelper::globalattribs();
 				}
+
 				# edit state access permissions.
 				$item->params->set('access-change', $user->can('publish', 'venue', $item->id, $item->created_by));
 			}
@@ -175,14 +176,16 @@ class JEMModelMyvenues extends JModelLegacy
 	 */
 	protected function _buildQueryVenues()
 	{
-		// Get the WHERE and ORDER BY clauses for the query
-		$where = $this->_buildVenuesWhere();
+		# Get the WHERE and ORDER BY clauses for the query
+		$where   = $this->_buildVenuesWhere();
 		$orderby = $this->_buildOrderByVenues();
 
-		//Get Events from Database
-		$query = 'SELECT l.id, l.venue, l.city, l.state, l.url, l.created_by, l.published,'
-		 .' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug'
-		 .' FROM #__jem_venues AS l '
+		# Get Venues from Database
+		$query = 'SELECT l.id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.created, l.created_by, l.published,'
+		       . ' l.custom1, l.custom2, l.custom3, l.custom4, l.custom5, l.custom6, l.custom7, l.custom8, l.custom9, l.custom10,'
+		       . ' l.locdescription, l.locimage, l.latitude, l.longitude, l.map, l.meta_keywords, l.meta_description, l.checked_out, l.checked_out_time,'
+		       .' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug'
+		       .' FROM #__jem_venues AS l '
 		.$where
 		.$orderby
 		;
@@ -207,9 +210,9 @@ class JEMModelMyvenues extends JModelLegacy
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
 		if ($filter_order != '') {
-			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
+			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir . ', l.venue ASC';
 		} else {
-			$orderby = ' ORDER BY l.venue ';
+			$orderby = ' ORDER BY l.venue ASC';
 		}
 
 		return $orderby;
@@ -223,13 +226,13 @@ class JEMModelMyvenues extends JModelLegacy
 	 */
 	protected function _buildVenuesWhere()
 	{
-		$app 			= JFactory::getApplication();
-		$user 			= JemFactory::getUser();
-		$settings 		= JEMHelper::globalattribs();
+		$app      = JFactory::getApplication();
+		$user     = JemFactory::getUser();
+		$settings = JemHelper::globalattribs();
 
-		$filter 		= $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', '', 'int');
-		$search 		= $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');
-		$search 		= $this->_db->escape(trim(JString::strtolower($search)));
+		$filter   = $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', 0, 'int');
+		$search   = $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');
+		$search   = $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();
 
@@ -258,9 +261,8 @@ class JEMModelMyvenues extends JModelLegacy
 			}
 		}
 
-		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
-
-		return $where;
+		$where2 = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
+		return $where2;
 	}
 }
 ?>

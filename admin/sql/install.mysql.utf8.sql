@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
   `waitinglist` tinyint(1) NOT NULL default '0',
   `hits` int(11) unsigned NOT NULL default '0',
   `published` tinyint(1) NOT NULL default '0',
-  `contactid` tinyint(4) NOT NULL default '0',
+  `contactid` int(10) NOT NULL default '0',
   `custom1` varchar(200) NOT NULL DEFAULT '',
   `custom2` varchar(200) NOT NULL DEFAULT '',
   `custom3` varchar(100) NOT NULL DEFAULT '',
@@ -274,7 +274,7 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('showeventimage', '0'),
 ('statewidth', '0'),
 ('storeip', '0'),
-('lastupdate', ''),
+('lastupdate', '0'),
 ('tableeventimagewidth', '10%'),
 ('display_num', '10'),
 ('discatheader', '1'),
@@ -290,7 +290,9 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('defaultCountry', ''),
 ('csv_separator', ';'),
 ('globalattribs', ''),
-('css', '');
+('css', ''),
+('regallowcomments', '0'),
+('regallowinvitation', '0');
 
 INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, `name`) VALUES
 (1, 'AS', 'AF', 'AFG', 4, 'Afghanistan, Islamic Republic of'),

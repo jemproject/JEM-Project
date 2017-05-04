@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -81,6 +81,9 @@ class JemViewEditevent extends JViewLegacy
 		} else {
 			$authorised = (bool)$item->params->get('access-edit');
 		}
+
+		$access = isset($item->access) ? $item->access : 0;
+		$authorised = $authorised && in_array($access, $user->getAuthorisedViewLevels());
 
 		if ($authorised !== true) {
 			$app->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
@@ -163,7 +166,7 @@ class JemViewEditevent extends JViewLegacy
 			return false;
 		}
 
-		$access2      = JEMHelper::getAccesslevelOptions(true);
+		$access2      = JEMHelper::getAccesslevelOptions(true, $access);
 		$this->access = $access2;
 
 		JHtml::_('behavior.formvalidation');
@@ -270,7 +273,7 @@ class JemViewEditevent extends JViewLegacy
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
-		$filter_type      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', '', 'int');
+		$filter_type      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', 0, 'int');
 		$filter_state     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_state', 'filter_state', '*', 'word');
 		$search           = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
 		$limitstart       = $jinput->get('limitstart', '0', 'int');
@@ -321,7 +324,7 @@ class JemViewEditevent extends JViewLegacy
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order', 'filter_order', 'con.name', 'cmd');
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order_Dir', 'filter_order_Dir', '', 'word');
-		$filter_type      = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', '', 'int');
+		$filter_type      = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
 		$search           = $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
 		$limitstart       = $jinput->get('limitstart', '0', 'int');
 		$limit            = $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');

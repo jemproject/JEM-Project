@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -208,14 +208,21 @@ class JemModelMyevents extends JModelLegacy
 	 */
 	protected function _buildQueryEvents()
 	{
-		// Get the WHERE and ORDER BY clauses for the query
+		# Get the WHERE and ORDER BY clauses for the query
 		$where = $this->_buildWhere();
 		$orderby = $this->_buildOrderBy();
 
-		//Get Events from Database
-		$query = 'SELECT DISTINCT a.id as eventid, a.id, a.dates, a.enddates, a.published, a.times, a.endtimes, a.title, a.created, a.created_by, a.locid,a.registra, a.maxplaces, a.waitinglist,'
-				. ' a.recurrence_type, a.recurrence_first_id, a.attribs,'
-				. ' l.venue, l.city, l.state, l.url,'
+		# Get Events from Database
+		$query = 'SELECT DISTINCT a.id as eventid, a.id, a.dates, a.enddates, a.published, a.times, a.endtimes, a.title, a.created, a.created_by, a.locid, a.registra, a.unregistra, a.maxplaces, a.waitinglist,'
+				. ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.attribs,'
+				. ' a.access, a.checked_out, a.checked_out_time, a.contactid, a.created_by_alias, a.datimage, a.featured,'
+				. ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
+				. ' a.fulltext, a.hits, a.introtext, a.language, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.version,'
+				. ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'
+				. ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
+				. ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
+				. ' l.latitude, l.locdescription, l.locimage, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
+				. ' l.publish_up AS l_publish_up, l.publish_down AS l_publish_down, l.version AS l_version,'
 				. ' c.catname, c.id AS catid,'
 				. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 				. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
@@ -239,18 +246,23 @@ class JemModelMyevents extends JModelLegacy
 	 */
 	protected function _buildOrderBy()
 	{
-		$app = JFactory::getApplication();
+		$app  = JFactory::getApplication();
+		$task = $app->input->getCmd('task', '');
 
 		$filter_order		= $app->getUserStateFromRequest('com_jem.myevents.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myevents.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+		$default_order_Dir	= ($task == 'archive') ? 'DESC' : 'ASC';
 
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
 		if ($filter_order == 'a.dates') {
-			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir;
+			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir
+			         . ', a.created ' . $filter_order_Dir;
 		} else {
-			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir;
+			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir
+			         . ', a.dates ' . $default_order_Dir . ', a.times ' . $default_order_Dir
+			         . ', a.created ' . $default_order_Dir;
 		}
 
 		return $orderby;
@@ -272,7 +284,7 @@ class JemModelMyevents extends JModelLegacy
 		// Support Joomla access levels instead of single group id
 		$levels   = $user->getAuthorisedViewLevels();
 
-		$filter   = $app->getUserStateFromRequest('com_jem.myevents.filter', 'filter', '', 'int');
+		$filter   = $app->getUserStateFromRequest('com_jem.myevents.filter', 'filter', 0, 'int');
 		$search   = $app->getUserStateFromRequest('com_jem.myevents.filter_search', 'filter_search', '', 'string');
 		$search   = $this->_db->escape(trim(JString::strtolower($search)));
 
@@ -296,7 +308,7 @@ class JemModelMyevents extends JModelLegacy
 		if ($excluded_cats != '') {
 			$cats_excluded = explode(',', $excluded_cats);
 			JArrayHelper::toInteger($cats_excluded);
-			$where [] = '  c.id NOT IN (' . implode(',', $cats_excluded) . ')';
+			$where[] = '  c.id NOT IN (' . implode(',', $cats_excluded) . ')';
 		}
 		// === END Excluded categories add === //
 
@@ -320,9 +332,8 @@ class JemModelMyevents extends JModelLegacy
 			}
 		}
 
-		$where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
-
-		return $where;
+		$where2 = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
+		return $where2;
 	}
 
 	function getCategories($id)

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -64,50 +64,59 @@ if (empty($this->catrow->events)) { return; }
 
 				<td headers="jem_date_cat<?php echo $this->catrow->id; ?>" align="left">
 					<?php
-						echo JEMOutput::formatShortDateTime($row->dates, $row->times,
+						echo JemOutput::formatShortDateTime($row->dates, $row->times,
 							$row->enddates, $row->endtimes, $this->jemsettings->showtime);
-						echo JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times,
+						echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
 							$row->enddates, $row->endtimes);
 					?>
 				</td>
 
 				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
-					<td headers="jem_title_cat<?php echo $this->catrow->id; ?>" align="left" valign="top">
-						<a href="<?php echo JRoute::_( JEMHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
-							<span itemprop="name"><?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?></span>
-						</a><?php JemOutput::publishstateicon($row); ?>
-					</td>
+				<td headers="jem_title_cat<?php echo $this->catrow->id; ?>" align="left" valign="top">
+					<a href="<?php echo JRoute::_( JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
+						<span itemprop="name"><?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?></span>
+					</a><?php JemOutput::publishstateicon($row); ?>
+				</td>
 				<?php endif; ?>
 
 				<?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
-					<td headers="jem_title_cat<?php echo $this->catrow->id; ?>" align="left" valign="top" itemprop="name">
-						<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
-					</td>
+				<td headers="jem_title_cat<?php echo $this->catrow->id; ?>" align="left" valign="top" itemprop="name">
+					<?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+				</td>
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showlocate == 1) : ?>
-					<td headers="jem_location_cat<?php echo $this->catrow->id; ?>" align="left" valign="top">
-						<?php if ($this->jemsettings->showlinkvenue == 1 ) : ?>
-							<?php echo $row->locid != 0 ? "<a href='".JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>" : '-'; ?>
-						<?php else : ?>
-							<?php echo $row->locid ? $this->escape($row->venue) : '-'; ?>
-						<?php endif; ?>
-					</td>
+				<td headers="jem_location_cat<?php echo $this->catrow->id; ?>" align="left" valign="top">
+					<?php
+					if (!empty($row->venue)) :
+						if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) :
+							echo "<a href='".JRoute::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>";
+						else :
+							echo $this->escape($row->venue);
+						endif;
+					else :
+						echo '-';
+					endif;
+					?>
+				</td>
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showcity == 1) : ?>
-					<td headers="jem_city_cat<?php echo $this->catrow->id; ?>" align="left" valign="top"><?php echo $row->city ? $this->escape($row->city) : '-'; ?></td>
+				<td headers="jem_city_cat<?php echo $this->catrow->id; ?>" align="left" valign="top">
+					<?php echo !empty($row->city) ? $this->escape($row->city) : '-'; ?>
+				</td>
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showstate == 1) : ?>
-					<td headers="jem_state_cat<?php echo $this->catrow->id; ?>" align="left" valign="top"><?php echo $row->state ? $this->escape($row->state) : '-'; ?></td>
+				<td headers="jem_state_cat<?php echo $this->catrow->id; ?>" align="left" valign="top">
+					<?php echo !empty($row->state) ? $this->escape($row->state) : '-'; ?>
+				</td>
 				<?php endif; ?>
 
 				<?php if ($this->jemsettings->showcat == 1) : ?>
-					<td headers="jem_category_cat<?php echo $this->catrow->id; ?>" align="left" valign="top">
-					<?php echo implode(", ",
-							JEMOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
-					</td>
+				<td headers="jem_category_cat<?php echo $this->catrow->id; ?>" align="left" valign="top">
+					<?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
+				</td>
 				<?php endif; ?>
 			</tr>
 			<?php $odd = 1 - $odd; ?>

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -17,7 +17,7 @@ jimport('joomla.application.component.model');
  * @package JEM
  *
  */
-class JEMModelSearch extends JModelLegacy
+class JemModelSearch extends JModelLegacy
 {
 	/**
 	 * Events data array
@@ -49,7 +49,7 @@ class JEMModelSearch extends JModelLegacy
 		parent::__construct();
 
 		$app = JFactory::getApplication();
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 
 		//get the number of events from database
 		$limit		= $app->getUserStateFromRequest('com_jem.search.limit', 'limit', $jemsettings->display_num, 'int');
@@ -133,14 +133,21 @@ class JEMModelSearch extends JModelLegacy
 	protected function _buildQuery()
 	{
 		if (empty($this->_query)) {
-			// Get the WHERE and ORDER BY clauses for the query
+			# Get the WHERE and ORDER BY clauses for the query
 			$where		= $this->_buildWhere();
 			$orderby	= $this->_buildOrderBy();
 
-			//Get Events from Database
-			$this->_query = 'SELECT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid,'
-					. ' a.recurrence_type, a.recurrence_first_id,'
-					. ' l.venue, l.city, l.state, l.url,'
+			# Get Events from Database
+			$this->_query = 'SELECT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.created_by, a.created_by_alias, a.locid, a.published, a.access,'
+					. ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
+					. ' a.alias, a.attribs, a.checked_out ,a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.language, a.version,'
+					. ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
+					. ' a.introtext, a.fulltext, a.registra, a.unregistra, a.maxplaces, a.waitinglist, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by,'
+					. ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'
+					. ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
+					. ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
+					. ' l.locdescription, l.locimage, l.latitude, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
+					. ' l.publish_up AS l_publish_up, l.publish_down AS l_publish_down, l.version AS l_version,'
 					. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
 					. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
 					. ' FROM #__jem_events AS a'
@@ -152,6 +159,7 @@ class JEMModelSearch extends JModelLegacy
 					. $orderby
 					;
 		}
+
 		return $this->_query;
 	}
 
@@ -163,16 +171,23 @@ class JEMModelSearch extends JModelLegacy
 	 */
 	protected function _buildOrderBy()
 	{
+		$app  = JFactory::getApplication();
+		$task = $app->input->getCmd('task', '');
+
 		$filter_order		= $this->getState('filter_order');
 		$filter_order_Dir	= $this->getState('filter_order_Dir');
+		$default_order_Dir	= ($task == 'archive') ? 'DESC' : 'ASC';
 
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
 		if ($filter_order == 'a.dates') {
-			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir;
+			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir
+			         . ', a.created ' . $filter_order_Dir;
 		} else {
-			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir .', a.dates DESC, a.times DESC';
+			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir
+			         . ', a.dates ' . $default_order_Dir . ', a.times ' . $default_order_Dir
+			         . ', a.created ' . $default_order_Dir;
 		}
 
 		return $orderby;
@@ -190,8 +205,10 @@ class JEMModelSearch extends JModelLegacy
 
 		// Get the paramaters of the active menu item
 		$params       = $app->getParams();
-		$top_category = $params->get('top_category', 1);
 		$task         = $app->input->get('task', '');
+		$user         = JemFactory::getUser();
+		$levels       = $user->getAuthorisedViewLevels();
+		$top_category = $params->get('top_category', 1);
 
 		// First thing we need to do is to select only needed events
 		if ($task == 'archive') {
@@ -201,8 +218,6 @@ class JEMModelSearch extends JModelLegacy
 		}
 
 		// filter by user's access levels
-		$user = JemFactory::getUser();
-		$levels = $user->getAuthorisedViewLevels();
 		$where .= ' AND a.access IN (' . implode(', ', $levels) .')';
 
 		//$filter            = $app->input->getString('filter', '');
@@ -214,7 +229,8 @@ class JEMModelSearch extends JModelLegacy
 		$filter_date_from  = $app->getUserStateFromRequest('com_jem.search.filter_date_from', 'filter_date_from', '', 'string');
 		$filter_date_to    = $app->getUserStateFromRequest('com_jem.search.filter_date_to', 'filter_date_to', '', 'string');
 		$filter_category   = $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
-		$filter_category = ($filter_category ? $filter_category : $top_category);
+		// "Please select..." entry has number 1 which must be interpreted as "not set" and replaced by top category (which maybe 1 ;-)
+		$filter_category   = (($filter_category > 1) ? $filter_category : $top_category);
 
 		// no result if no filter:
 		if (!($filter || $filter_continent || $filter_country || $filter_city || $filter_date_from || $filter_date_to || $filter_category != $top_category)) {
@@ -264,7 +280,7 @@ class JEMModelSearch extends JModelLegacy
 				$where .= ' AND DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
 			}
 		}
-		// filter country
+		// filter continent
 		if ($filter_continent) {
 			$where .= ' AND c.continent = ' . $this->_db->Quote($filter_continent);
 		}
@@ -278,7 +294,7 @@ class JEMModelSearch extends JModelLegacy
 		}
 		// filter category
 		if ($filter_category) {
-			$cats = JEMCategories::getChilds((int) $filter_category);
+			$cats = JemCategories::getChilds((int) $filter_category);
 			$where .= ' AND rel.catid IN (' . implode(', ', $cats) .')';
 		}
 
@@ -409,7 +425,7 @@ class JEMModelSearch extends JModelLegacy
 		}
 
 		//get list of the items
-		$list = JEMCategories::treerecurse($top_id, '', array(), $children, 9999, 0, 0);
+		$list = JemCategories::treerecurse($top_id, '', array(), $children, 9999, 0, 0);
 
 		return $list;
 	}

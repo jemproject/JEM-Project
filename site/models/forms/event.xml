@@ -35,6 +35,7 @@
 			size="22"
 			format="%Y-%m-%d"
 			filter="string"
+			showtime="false"
 		/>
 		<field name="enddates" type="calendar"
 			label="COM_JEM_EDITEVENT_FIELD_ENDDATE"
@@ -43,6 +44,7 @@
 			size="22"
 			format="%Y-%m-%d"
 			filter="string"
+			showtime="false"
 		/>
 		<field name="times" type="starttime"
 			class="inputbox"
@@ -342,6 +344,7 @@
 			size="22"
 			format="%Y-%m-%d"
 			filter="string"
+			showtime="false"
 		/>
 	</fieldset>
 

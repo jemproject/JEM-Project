@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -137,7 +137,7 @@ class JemHelper
 
 		$now = time(); // UTC
 		$offset = idate('Z'); // timezone offset for "new day" test
-		$lastupdate = $jemsettings->lastupdate;
+		$lastupdate = (int)$jemsettings->lastupdate;
 		$runningupdate = isset($jemsettings->runningupdate) ? $jemsettings->runningupdate : 0;
 		$maxexectime = get_cfg_var('max_execution_time');
 		$delay = min(86400, max(300, $maxexectime * 2));
@@ -624,22 +624,40 @@ class JemHelper
 	/**
 	 * Build the select list for access level
 	 */
-	static function getAccesslevelOptions($ownonly = false)
+	static function getAccesslevelOptions($ownonly = false, $disabledLevels = false)
 	{
 		$db = JFactory::getDBO();
 		$where = '';
+		$selDisabled = '';
 		if ($ownonly) {
 			$levels = JFactory::getUser()->getAuthorisedViewLevels();
-			$where = ' WHERE id IN ('.implode(',', $levels).')';
+			$allLevels = $levels;
+			if (!empty($disabledLevels)) {
+				if (!is_array($disabledLevels)) {
+					$disabledLevels = array($disabledLevels);
+				}
+				foreach ($disabledLevels as $level) {
+					if (((int)$level > 0) && (!in_array((int)$level, $levels))) {
+						$allLevels[] = $level;
+					}
+				}
+				$selDisabled = ', IF (id IN ('.implode(',', $levels).'), \'\', \'disabled\') AS disabled';
+			}
+			$where = ' WHERE id IN ('.implode(',', $allLevels).')';
 		}
 
-		$query = 'SELECT id AS value, title AS text'
+		$query = 'SELECT id AS value, title AS text' . $selDisabled
 				. ' FROM #__viewlevels'
 				. $where
 				. ' ORDER BY ordering, id'
 				;
+
+		//JemHelper::addLogEntry('AccessLevel query: ' . $query, __METHOD__);
+
 		$db->setQuery($query);
 		$groups = $db->loadObjectList();
+
+		//JemHelper::addLogEntry('result: ' . print_r($groups, true), __METHOD__);
 
 		return $groups;
 	}

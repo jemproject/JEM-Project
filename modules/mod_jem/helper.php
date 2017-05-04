@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.1
  * @package JEM
  * @subpackage JEM Module
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -67,14 +67,14 @@ abstract class modJEMHelper
 		# archived events
 		if ($type == 2) {
 			$model->setState('filter.published',2);
-			$model->setState('filter.orderby',array('a.dates DESC','a.times DESC'));
+			$model->setState('filter.orderby',array('a.dates DESC', 'a.times DESC', 'a.created DESC'));
 			$cal_from = "";
 		}
 
 		# upcoming or running events, on mistake default to upcoming events
 		else {
 			$model->setState('filter.published',1);
-			$model->setState('filter.orderby',array('a.dates ASC','a.times ASC'));
+			$model->setState('filter.orderby',array('a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
 			$offset_minutes = 60 * $params->get('offset_hours', 0);
 

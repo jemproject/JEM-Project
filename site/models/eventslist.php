@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -60,17 +60,14 @@ class JemModelEventslist extends JModelList
 	{
 		$app         = JFactory::getApplication();
 		$jemsettings = JemHelper::config();
-		$jinput      = $app->input;
-		$task        = $jinput->getCmd('task','');
-		$format      = $jinput->getCmd('format',false);
-		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
-		$user        = JemFactory::getUser();
-		$userId      = $user->get('id');
+		$task        = $app->input->getCmd('task','');
+		$format      = $app->input->getCmd('format',false);
+		$itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
 		# limit/start
 		if (empty($format) || ($format == 'html')) {
 			/* in J! 3.3.6 limitstart is removed from request - but we need it! */
-			if ($jinput->get('limitstart', null, 'int') === null) {
+			if ($app->input->get('limitstart', null, 'int') === null) {
 				$app->setUserState('com_jem.eventslist.'.$itemid.'.limitstart', 0);
 			}
 
@@ -86,7 +83,7 @@ class JemModelEventslist extends JModelList
 		$search      = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 		$this->setState('filter.filter_search', $search); // must be escaped later
 
-		$filtertype  = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_type', 'filter_type', '', 'int');
+		$filtertype  = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
 		$this->setState('filter.filter_type', $filtertype);
 
 		# publish state
@@ -108,10 +105,10 @@ class JemModelEventslist extends JModelList
 		$filter_order		= $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_DirDefault = 'ASC';
 		// Reverse default order for dates in archive mode
-		if($task == 'archive' && $filter_order == 'a.dates') {
+		if ($task == 'archive' && $filter_order == 'a.dates') {
 			$filter_order_DirDefault = 'DESC';
 		}
-		$filter_reset = $jinput->getInt('filter_reset', 0);
+		$filter_reset = $app->input->getInt('filter_reset', 0);
 		if ($filter_reset && $filter_order == 'a.dates') {
 			$app->setUserState('com_jem.eventslist.'.$itemid.'.filter_order_Dir', $filter_order_DirDefault);
 		}
@@ -119,10 +116,12 @@ class JemModelEventslist extends JModelList
 		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
 		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
+		$default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
 		if ($filter_order == 'a.dates') {
-			$orderby = array('a.dates '.$filter_order_Dir,'a.times '.$filter_order_Dir);
+			$orderby = array('a.dates ' . $filter_order_Dir, 'a.times ' . $filter_order_Dir, 'a.created ' . $filter_order_Dir);
 		} else {
-			$orderby = $filter_order . ' ' . $filter_order_Dir;
+			$orderby = array($filter_order . ' ' . $filter_order_Dir,
+			                 'a.dates ' . $default_order_Dir, 'a.times ' . $default_order_Dir, 'a.created ' . $default_order_Dir);
 		}
 
 		$this->setState('filter.orderby',$orderby);
@@ -218,38 +217,21 @@ class JemModelEventslist extends JModelList
 	protected function getListQuery()
 	{
 		$app       = JFactory::getApplication();
-		$jinput    = JFactory::getApplication()->input;
-		$task      = $jinput->getCmd('task', '');
-		$itemid    = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
+		$task      = $app->input->getCmd('task', '');
+		$itemid    = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
 		$params    = $app->getParams();
 		$settings  = JemHelper::globalattribs();
 		$user      = JemFactory::getUser();
+		$levels    = $user->getAuthorisedViewLevels();
 
 		# Query
-		$db 	= JFactory::getDBO();
+		$db    = JFactory::getDBO();
 		$query = $db->getQuery(true);
 
-		$case_when_e = ' CASE WHEN ';
-		$case_when_e .= $query->charLength('a.alias','!=', '0');
-		$case_when_e .= ' THEN ';
-		$id_e = $query->castAsChar('a.id');
-		$case_when_e .= $query->concatenate(array($id_e, 'a.alias'), ':');
-		$case_when_e .= ' ELSE ';
-		$case_when_e .= $id_e.' END as slug';
-
-		$case_when_l = ' CASE WHEN ';
-		$case_when_l .= $query->charLength('l.alias','!=', '0');
-		$case_when_l .= ' THEN ';
-		$id_l = $query->castAsChar('a.locid');
-		$case_when_l .= $query->concatenate(array($id_l, 'l.alias'), ':');
-		$case_when_l .= ' ELSE ';
-		$case_when_l .= $id_l.' END as venueslug';
-
-		# event
+		# Event
 		$query->select(
-				$this->getState(
-				'list.select',
+				$this->getState('list.select',
 				'a.access,a.alias,a.attribs,a.checked_out,a.checked_out_time,a.contactid,a.created,a.created_by,a.created_by_alias,a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10,a.dates,a.datimage,a.enddates,a.endtimes,a.featured,' .
 				'a.fulltext,a.hits,a.id,a.introtext,a.language,a.locid,a.maxplaces,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.unregistra,a.waitinglist,DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
 				'a.recurrence_byday,a.recurrence_counter,a.recurrence_first_id,a.recurrence_limit,a.recurrence_limit_date,a.recurrence_number, a.recurrence_type,a.version'
@@ -257,22 +239,39 @@ class JemModelEventslist extends JModelList
 		);
 		$query->from('#__jem_events as a');
 
-		# author
+		# Author
 		$name = $settings->get('global_regname','1') ? 'u.name' : 'u.username';
 		$query->select($name.' AS author');
 		$query->join('LEFT', '#__users AS u on u.id = a.created_by');
 
-		# venue
+		# Venue
 		$query->select(array('l.alias AS l_alias','l.checked_out AS l_checked_out','l.checked_out_time AS l_checked_out_time','l.city','l.country','l.created AS l_created','l.created_by AS l_createdby'));
 		$query->select(array('l.custom1 AS l_custom1','l.custom2 AS l_custom2','l.custom3 AS l_custom3','l.custom4 AS l_custom4','l.custom5 AS l_custom5','l.custom6 AS l_custom6','l.custom7 AS l_custom7','l.custom8 AS l_custom8','l.custom9 AS l_custom9','l.custom10 AS l_custom10'));
-		$query->select(array('l.id AS l_id','l.latitude','l.locdescription','l.locimage','l.longitude','l.map','l.meta_description','l.meta_keywords','l.modified AS l_modified','l.modified_by AS l_modified_by','l.ordering','l.postalCode','l.publish_up','l.publish_down','l.published AS l_published','l.state','l.street','l.url','l.venue','l.version AS l_version'));
+		$query->select(array('l.id AS l_id','l.latitude','l.locdescription','l.locimage','l.longitude','l.map','l.meta_description AS l_meta_description','l.meta_keywords AS l_meta_keywords','l.modified AS l_modified','l.modified_by AS l_modified_by','l.postalCode'));
+		$query->select(array('l.publish_up AS l_publish_up','l.publish_down AS l_publish_down','l.published AS l_published','l.state','l.street','l.url','l.venue','l.version AS l_version'));
 		$query->join('LEFT', '#__jem_venues AS l ON l.id = a.locid');
 
-		# country
+		# Country
 		$query->select(array('ct.name AS countryname'));
 		$query->join('LEFT', '#__jem_countries AS ct ON ct.iso2 = l.country');
 
 		# the rest
+		$case_when_e  = ' CASE WHEN ';
+		$case_when_e .= $query->charLength('a.alias','!=', '0');
+		$case_when_e .= ' THEN ';
+		$id_e = $query->castAsChar('a.id');
+		$case_when_e .= $query->concatenate(array($id_e, 'a.alias'), ':');
+		$case_when_e .= ' ELSE ';
+		$case_when_e .= $id_e.' END as slug';
+
+		$case_when_l  = ' CASE WHEN ';
+		$case_when_l .= $query->charLength('l.alias', '!=', '0');
+		$case_when_l .= ' THEN ';
+		$id_l = $query->castAsChar('a.locid');
+		$case_when_l .= $query->concatenate(array($id_l, 'l.alias'), ':');
+		$case_when_l .= ' ELSE ';
+		$case_when_l .= $id_l.' END as venueslug';
+
 		$query->select(array($case_when_e, $case_when_l));
 
 
@@ -308,8 +307,7 @@ class JemModelEventslist extends JModelList
 		###################
 
 		# Filter by access level - always.
-		$levels = implode(',', $user->getAuthorisedViewLevels());
-		$query->where('a.access IN ('.$levels.')');
+		$query->where('a.access IN ('.implode(',', $levels).')');
 
 		####################
 		## FILTER-PUBLISH ##
@@ -324,9 +322,9 @@ class JemModelEventslist extends JModelList
 			$query->where('a.published = 1');
 		}
 
-		####################
+		#####################
 		## FILTER-FEATURED ##
-		####################
+		#####################
 
 		# Filter by featured flag.
 		$featured = $this->getState('filter.featured');
@@ -477,7 +475,6 @@ class JemModelEventslist extends JModelList
 
 		# ordering
 		$orderby = $this->getState('filter.orderby');
-
 		if ($orderby) {
 			$query->order($orderby);
 		}
@@ -491,22 +488,15 @@ class JemModelEventslist extends JModelList
 	 */
 	public function getItems()
 	{
-		$items	= parent::getItems();
+		$items = parent::getItems();
 
 		if (empty($items)) {
 			return array();
 		}
 
-		$user	= JemFactory::getUser();
-		$userId	= $user->get('id');
-		$guest	= $user->get('guest');
-		$groups = $user->getAuthorisedViewLevels();
-		$input	= JFactory::getApplication()->input;
-
+		$user = JemFactory::getUser();
 		$calendarMultiday = $this->getState('filter.calendar_multiday');
-
-		# Get the global params
-		$globalParams = JComponentHelper::getParams('com_jem', true);
+		$stateParams = $this->getState('params');
 
 		# Convert the parameter fields into objects.
 		foreach ($items as $index => $item)
@@ -514,7 +504,6 @@ class JemModelEventslist extends JModelList
 			$eventParams = new JRegistry;
 			$eventParams->loadString($item->attribs);
 
-			$stateParams = $this->getState('params');
 			if (empty($stateParams)) {
 				$item->params = new JRegistry;
 				$item->params->merge($eventParams);
@@ -529,6 +518,7 @@ class JemModelEventslist extends JModelList
 			# check if the item-categories is empty, if so the user has no access to that event at all.
 			if (empty($item->categories)) {
 				unset ($items[$index]);
+				continue;
 			} else {
 			# write access permissions.
 				$item->params->set('access-edit', $user->can('edit', 'event', $item->id, $item->created_by));
@@ -553,19 +543,14 @@ class JemModelEventslist extends JModelList
 	 * Due to multi-cat this function is needed
 	 * filter-index (4) is pointing to the cats
 	 */
-
 	function getCategories($id)
 	{
-		$user 			= JemFactory::getUser();
-		$userid			= (int) $user->get('id');
-		$levels 		= $user->getAuthorisedViewLevels();
-		$app 			= JFactory::getApplication();
-		$params 		= $app->getParams();
-		$catswitch 		= $params->get('categoryswitch', '0');
-		$settings 		= JemHelper::globalattribs();
+		$user     = JemFactory::getUser();
+		$levels   = $user->getAuthorisedViewLevels();
+		$settings = JemHelper::globalattribs();
 
 		// Query
-		$db 	= JFactory::getDBO();
+		$db    = JFactory::getDBO();
 		$query = $db->getQuery(true);
 
 		$case_when_c = ' CASE WHEN ';
@@ -671,7 +656,7 @@ class JemModelEventslist extends JModelList
 			} else {
 				$search = $db->Quote('%'.$db->escape($search, true).'%', false); // escape once
 
-				if($search && $settings->get('global_show_filter')) {
+				if ($search && $settings->get('global_show_filter')) {
 					if ($filter == 4) {
 							$query->where('c.catname LIKE '.$search);
 					}
@@ -681,7 +666,7 @@ class JemModelEventslist extends JModelList
 
 		$db->setQuery($query);
 
-		if ($id == 'all'){
+		if ($id == 'all') {
 			$cats = $db->loadColumn(0);
 			$cats = array_unique($cats);
 			return ($cats);
@@ -697,12 +682,11 @@ class JemModelEventslist extends JModelList
 			return array();
 		}
 
-		$app 			= JFactory::getApplication();
-		$params 		= $app->getParams();
-		$startdayonly	= $this->getState('filter.calendar_startdayonly');
+		$startdayonly = $this->getState('filter.calendar_startdayonly');
 
-		foreach($items AS $item) {
-			if (!$startdayonly) {
+		if (!$startdayonly) {
+			foreach($items AS $item)
+			{
 				if (!is_null($item->enddates) && ($item->enddates != $item->dates)) {
 					$day = $item->start_day;
 					$multi = array();
@@ -713,8 +697,8 @@ class JemModelEventslist extends JModelList
 					$item->multiname = $item->title;
 					$item->sort = 'zlast';
 
-					for ($counter = 0; $counter <= $item->datesdiff-1; $counter++) {
-
+					for ($counter = 0; $counter <= $item->datesdiff-1; $counter++)
+					{
 						# next day:
 						$day++;
 						$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
@@ -751,8 +735,8 @@ class JemModelEventslist extends JModelList
 					# unset temp array holding generated days before working on the next multiday event
 					unset($multi);
 				}
-			}
-		} // foreach
+			} // foreach
+		}
 
 		foreach ($items as $item) {
 			$time[] = $item->times;
@@ -772,13 +756,12 @@ class JemModelEventslist extends JModelList
 	protected function _populatePublishState($task)
 	{
 		$app         = JFactory::getApplication();
-		$jinput      = $app->input;
 		$jemsettings = JemHelper::config();
 		$user        = JemFactory::getUser();
 		$userId      = $user->get('id');
 
 		# publish state
-		$format = $jinput->getCmd('format', '');
+		$format = $app->input->getCmd('format', '');
 
 		if ($task == 'archive') {
 			$this->setState('filter.published', 2);

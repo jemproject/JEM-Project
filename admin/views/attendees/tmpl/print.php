@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -50,6 +50,7 @@ defined('_JEXEC') or die;
 				<td><?php echo $row->username; ?></td>
 				<td><?php echo $row->email; ?></td>
 				<td><?php if (!empty($row->uregdate)) { echo JHtml::_('date', $row->uregdate, JText::_('DATE_FORMAT_LC2')); } ?></td>
+				<?php
 				switch ($row->status) {
 				case -1: // explicitely unregistered
 					$text = 'COM_JEM_ATTENDEES_NOT_ATTENDING';
@@ -66,7 +67,7 @@ defined('_JEXEC') or die;
 				} ?>
 				<td><?php echo JText::_($text); ?></td>
 				<?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-				<td><?php echo (strlen($row->comment) > 256) ? (substr($row->comment, 0, 254).'&hellip;') : $row->comment; ?></td>
+				<td><?php echo $row->comment; ?></td>
 				<?php endif; ?>
 				<td class="center"><?php echo $row->uid; ?></td>
 			</tr>

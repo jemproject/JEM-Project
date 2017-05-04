@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -13,7 +13,7 @@ require_once dirname(__FILE__) . '/admin.php';
 /**
  * Event model.
  */
-class JEMModelEvent extends JemModelAdmin
+class JemModelEvent extends JemModelAdmin
 {
 	/**
 	 * Method to test whether a record can be deleted.
@@ -109,10 +109,11 @@ class JEMModelEvent extends JemModelAdmin
 	 */
 	public function getItem($pk = null)
 	{
-		$jemsettings = JEMAdmin::config();
+		$jemsettings = JemAdmin::config();
 
 		if ($item = parent::getItem($pk)){
 			// Convert the params field to an array.
+			// (this may throw an exception - but there is nothings we can do)
 			$registry = new JRegistry;
 			$registry->loadString($item->attribs);
 			$item->attribs = $registry->toArray();
@@ -129,13 +130,13 @@ class JEMModelEvent extends JemModelAdmin
 			$query = $db->getQuery(true);
 			$query->select(array('count(id)'));
 			$query->from('#__jem_register');
-			$query->where(array('event= '.$db->quote($item->id), 'waiting= 0'));
+			$query->where(array('event= '.$db->quote($item->id), 'status=1', 'waiting=0'));
 
 			$db->setQuery($query);
 			$res = $db->loadResult();
 			$item->booked = $res;
 
-			$files = JEMAttachment::getAttachments('event'.$item->id);
+			$files = JemAttachment::getAttachments('event'.$item->id);
 			$item->attachments = $files;
 
 			if ($item->id){
@@ -266,8 +267,6 @@ class JEMModelEvent extends JemModelAdmin
 		// on frontend we have dedicated field for 'reginvitedonly' -> set 'registra' to +2 then
 		if (array_key_exists('reginvitedonly', $data) && ($data['reginvitedonly'] == 1)) {
 			$data['registra'] = ($data['registra'] == 1) ? 3 : 2;
-		} elseif ($data['registra'] > 1) {
-			$data['registra'] = ($data['registra'] == 3) ? 1 : 0;
 		}
 
 		// convert international date formats...
@@ -341,7 +340,7 @@ class JEMModelEvent extends JemModelAdmin
 				$attachments['customname']	= $jinput->post->get('attach-name', array(), 'array');
 				$attachments['description'] = $jinput->post->get('attach-desc', array(), 'array');
 				$attachments['access'] 		= $jinput->post->get('attach-access', array(), 'array');
-				JEMAttachment::postUpload($attachments, 'event' . $pk);
+				JemAttachment::postUpload($attachments, 'event' . $pk);
 			}
 
 			// and update old ones
@@ -363,11 +362,19 @@ class JEMModelEvent extends JemModelAdmin
 			}
 
 			// Store cats
-			$saved |= $this->_storeCategoriesSelected($pk, $cats, !$backend, $new);
+			if (!$this->_storeCategoriesSelected($pk, $cats, !$backend, $new)) {
+			//	JemHelper::addLogEntry('Error storing categories for event ' . $pk, __METHOD__, JLog::ERROR);
+				$this->setError(JText::_('COM_JEM_EVENT_ERROR_STORE_CATEGORIES'));
+				$saved = false;
+			}
 
-			// Store invited users
-			if ($jemsettings->regallowinvitation == 1) {
-				$saved |= $this->_storeUsersInvited($pk, $invitedusers, !$backend, $new);
+			// Store invited users (frontend only, on backend no attendees on editevent view)
+			if (!$backend && ($jemsettings->regallowinvitation == 1)) {
+				if (!$this->_storeUsersInvited($pk, $invitedusers, !$backend, $new)) {
+				//	JemHelper::addLogEntry('Error storing users invited for event ' . $pk, __METHOD__, JLog::ERROR);
+					$this->setError(JText::_('COM_JEM_EVENT_ERROR_STORE_INVITED_USERS'));
+					$saved = false;
+				}
 			}
 
 			// check for recurrence
@@ -439,7 +446,7 @@ class JEMModelEvent extends JemModelAdmin
 			$query->where('itemid = ' . $eventId);
 			$query->where('catid IN (' . implode(',', $del_cats) . ')');
 			$db->setQuery($query);
-			$ret &= ($db->execute() === false);
+			$ret &= ($db->execute() !== false);
 		}
 
 		if (!empty($add_cats)) {
@@ -450,7 +457,7 @@ class JEMModelEvent extends JemModelAdmin
 				$query->values((int)$catid . ',' . $eventId);
 			}
 			$db->setQuery($query);
-			$ret &= ($db->execute() === false);
+			$ret &= ($db->execute() !== false);
 		}
 
 		return $ret;

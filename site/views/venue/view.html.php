@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -60,6 +60,13 @@ class JemViewVenue extends JEMView
 			if ($print) {
 				JemHelper::loadCss('print');
 				$document->setMetaData('robots', 'noindex, nofollow');
+			}
+
+			$venue = $this->get('Venue');
+			// check for data error
+			if (empty($venue)) {
+				$app->enqueueMessage(JText::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
+				return false;
 			}
 
 			$evlinkcolor = $params->get('eventlinkcolor');
@@ -193,7 +200,7 @@ class JemViewVenue extends JEMView
 				$filter_order_DirDefault = 'DESC';
 			}
 			$filter_order_Dir = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
-			$filter_type      = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_type', 'filter_type', '', 'int');
+			$filter_type      = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
 			$search           = $app->getUserStateFromRequest('com_jem.venue.'.$itemid.'.filter_search', 'filter_search', '', 'string');
 
 			// table ordering
@@ -280,8 +287,8 @@ class JemViewVenue extends JEMView
 			}
 
 			// prepare the url for output
-			if (strlen($venue->url) > 35) {
-				$venue->urlclean = $this->escape(substr($venue->url, 0, 35 )) . '...';
+			if (JString::strlen($venue->url) > 35) {
+				$venue->urlclean = $this->escape(JString::substr($venue->url, 0, 35)) . '...';
 			} else {
 				$venue->urlclean = $this->escape($venue->url);
 			}

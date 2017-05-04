@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -67,9 +67,9 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		<dd class="where">
 			<?php if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) : ?>
 				<a target="_blank" href="<?php echo $this->item->url; ?>"><?php echo $this->escape($this->item->venue); ?></a> -
-			<?php elseif ($params->get('event_show_detlinkvenue') == 2) : ?>
+			<?php elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) : ?>
 				<a href="<?php echo JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)); ?>"><?php echo $this->item->venue; ?></a> -
-			<?php elseif ($params->get('event_show_detlinkvenue') == 0) :
+			<?php else/*if ($params->get('event_show_detlinkvenue') == 0)*/ :
 				echo $this->escape($this->item->venue).' - ';
 			endif;
 
@@ -221,7 +221,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 	<?php echo $this->loadTemplate('attachments'); ?>
 
 	<!--  	Venue  -->
-	<?php if ($this->item->locid != 0) : ?>
+	<?php if (($this->item->locid != 0) && !empty($this->item->venue)) : ?>
 	<p></p>
 	<hr>
 
@@ -239,7 +239,11 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			<dt class="venue"><?php echo JText::_('COM_JEM_LOCATION'); ?>:</dt>
 			<dd class="venue">
 				<?php
-				echo '<a href="' . JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
+				if (!empty($this->item->venueslug)) :
+					echo '<a href="' . JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
+				else :
+					echo $this->escape($this->item->venue);
+				endif;
 				if (!empty($this->item->url)) :
 					echo '&nbsp;-&nbsp;<a target="_blank" href="' . $this->item->url . '">' . JText::_('COM_JEM_WEBSITE') . '</a>';
 				endif;
@@ -282,6 +286,19 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			<dd class="venue_country">
 				<?php echo $this->item->countryimg ? $this->item->countryimg : $this->item->country; ?>
 				<meta itemprop="addressCountry" content="<?php echo $this->item->country; ?>" />
+			</dd>
+			<?php endif; ?>
+
+			<!-- PUBLISHING STATE -->
+			<?php if (!empty($this->showvenuestate) && isset($this->item->locpublished)) : ?>
+			<dt class="venue_published"><?php echo JText::_('JSTATUS'); ?>:</dt>
+			<dd class="venue_published">
+				<?php switch ($this->item->locpublished) {
+				case  1: echo JText::_('JPUBLISHED');   break;
+				case  0: echo JText::_('JUNPUBLISHED'); break;
+				case  2: echo JText::_('JARCHIVED');    break;
+				case -2: echo JText::_('JTRASHED');     break;
+				} ?>
 			</dd>
 			<?php endif; ?>
 
@@ -339,11 +356,14 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 
 	<!-- Registration -->
 	<?php if ($this->showAttendees) : ?>
+		<p></p>
+		<hr>
 		<h2 class="register"><?php echo JText::_('COM_JEM_REGISTRATION'); ?>:</h2>
 		<?php echo $this->loadTemplate('attendees'); ?>
 	<?php endif; ?>
 
 	<?php if (!empty($this->item->pluginevent->onEventEnd)) : ?>
+		<p></p>
 		<hr>
 		<?php echo $this->item->pluginevent->onEventEnd; ?>
 	<?php endif; ?>

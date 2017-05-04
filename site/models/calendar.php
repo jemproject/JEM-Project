@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -22,9 +22,9 @@ class JemModelCalendar extends JemModelEventslist
 	 */
 	public function __construct()
 	{
-		$this->setdate(time());
-
 		parent::__construct();
+
+		$this->setdate(time());
 	}
 
 	function setdate($date)
@@ -38,14 +38,11 @@ class JemModelCalendar extends JemModelEventslist
 	protected function populateState($ordering = null, $direction = null)
 	{
 		# parent::populateState($ordering, $direction);
-		$app 			= JFactory::getApplication();
-		$jemsettings	= JemHelper::config();
-		$jinput			= JFactory::getApplication()->input;
-		$itemid 		= $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
-		$params 		= $app->getParams();
-		$task           = $jinput->get('task','','cmd');
-		$top_category 	= $params->get('top_category', 0);
-		$startdayonly 	= $params->get('show_only_start', false);
+		$app          = JFactory::getApplication();
+		$params       = $app->getParams();
+		$task         = $app->input->get('task','','cmd');
+		$top_category = $params->get('top_category', 0);
+		$startdayonly = $params->get('show_only_start', false);
 
 		# params
 		$this->setState('params', $params);
@@ -75,7 +72,7 @@ class JemModelCalendar extends JemModelEventslist
 		##################
 
 		if ($top_category) {
-			$children = JEMCategories::getChilds($top_category);
+			$children = JemCategories::getChilds($top_category);
 			if (count($children)) {
 				$where = 'rel.catid IN ('. implode(',', $children) .')';
 				$this->setState('filter.category_top', $where);
@@ -109,15 +106,10 @@ class JemModelCalendar extends JemModelEventslist
 	 */
 	function getListQuery()
 	{
-		$params  = $this->state->params;
-		$jinput  = JFactory::getApplication()->input;
-		$task    = $jinput->get('task','','cmd');
-
 		// Create a new query object.
 		$query = parent::getListQuery();
 
 		// here we can extend the query of the Eventslist model
-
 		$query->select('DATEDIFF(a.enddates, a.dates) AS datesdiff, DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month');
 
 		return $query;

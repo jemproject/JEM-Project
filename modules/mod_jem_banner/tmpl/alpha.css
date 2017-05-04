@@ -1,0 +1,11 @@
+#jemmodulebanner .calendar-alpha {background-image: url(img/calendar_alpha.png);}
+
+#jemmodulebanner .calendar-alpha .monthbanner-dark {
+	color: black;
+	text-shadow: #FFF 1px 1px 1px;
+}
+
+#jemmodulebanner .calendar-alpha .monthbanner-light {
+	color: #FFF;
+	text-shadow: #000 1px 1px 1px;
+}

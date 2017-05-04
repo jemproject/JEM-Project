@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -24,11 +24,7 @@ class JemModelDay extends JemModelEventslist
 	{
 		parent::__construct();
 
-		$app = JFactory::getApplication();
-		$jemsettings = JemHelper::config();
-		$jinput = JFactory::getApplication()->input;
-
-		$rawday = $jinput->getInt('id', null);
+		$rawday = JFactory::getApplication()->input->getInt('id', null);
 		$this->setDate($rawday);
 	}
 
@@ -55,11 +51,11 @@ class JemModelDay extends JemModelEventslist
 		} elseif (strlen($date) == 8) {
 			$year 	= substr($date, 0, -4);
 			$month	= substr($date, 4, -2);
-			$tag	= substr($date, 6);
+			$day	= substr($date, 6);
 
 			//check if date is valid
-			if (checkdate($month, $tag, $year)) {
-				$date = $year.'-'.$month.'-'.$tag;
+			if (checkdate($month, $day, $year)) {
+				$date = $year.'-'.$month.'-'.$day;
 			} else {
 				//date isn't valid raise notice and use current date
 				$date = date('Ymd');
@@ -92,53 +88,51 @@ class JemModelDay extends JemModelEventslist
 
 		$app               = JFactory::getApplication();
 		$jemsettings       = JemHelper::config();
-		$jinput            = JFactory::getApplication()->input;
-		$itemid            = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
-
+		$itemid            = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 		$params            = $app->getParams();
-		$task              = $jinput->getCmd('task', '');
-		$requestVenueId    = $jinput->getInt('locid', 0);
-		$requestCategoryId = $jinput->getInt('catid', 0);
-		$item              = $jinput->getInt('Itemid', 0);
+		$task              = $app->input->getCmd('task', '');
+		$requestVenueId    = $app->input->getInt('locid', 0);
+		$requestCategoryId = $app->input->getInt('catid', 0);
+		$item              = $app->input->getInt('Itemid', 0);
 
 		$locid = $app->getUserState('com_jem.venuecal.locid'.$item);
 		if ($locid) {
-			$this->setstate('filter.filter_locid',$locid);
+			$this->setState('filter.filter_locid', $locid);
 		}
 
 		// maybe list of venue ids from calendar module
-		$locids = explode(',', $jinput->getString('locids', ''));
+		$locids = explode(',', $app->input->getString('locids', ''));
 		foreach ($locids as $id) {
 			if ((int)$id > 0) {
 				$venues[] = (int)$id;
 			}
 		}
 		if (!empty($venues)) {
-			$this->setstate('filter.venue_id', $venues);
-			$this->setstate('filter.venue_id.include', true);
+			$this->setState('filter.venue_id', $venues);
+			$this->setState('filter.venue_id.include', true);
 		}
 
 		$cal_category_catid = $app->getUserState('com_jem.categorycal.catid'.$item);
 		if ($cal_category_catid) {
-			$this->setState('filter.req_catid',$cal_category_catid);
+			$this->setState('filter.req_catid', $cal_category_catid);
 		}
 
 		// maybe list of venue ids from calendar module
-		$catids = explode(',', $jinput->getString('catids', ''));
+		$catids = explode(',', $app->input->getString('catids', ''));
 		foreach ($catids as $id) {
 			if ((int)$id > 1) { // don't accept 'root'
 				$cats[] = (int)$id;
 			}
 		}
 		if (!empty($cats)) {
-			$this->setstate('filter.category_id', $cats);
-			$this->setstate('filter.category_id.include', true);
+			$this->setState('filter.category_id', $cats);
+			$this->setState('filter.category_id.include', true);
 		}
 
 		// maybe top category is given by calendar view
-		$top_category = $jinput->getInt('topcat', 0);
+		$top_category = $app->input->getInt('topcat', 0);
 		if ($top_category > 0) { // accept 'root'
-			$children = JEMCategories::getChilds($top_category);
+			$children = JemCategories::getChilds($top_category);
 			if (count($children)) {
 				$where = 'rel.catid IN ('. implode(',', $children) .')';
 				$this->setState('filter.category_top', $where);
@@ -164,7 +158,7 @@ class JemModelDay extends JemModelEventslist
 		$this->setState('filter.filter_search', $search);
 
 		# FilterType
-		$filtertype = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_type', 'filter_type', '', 'int');
+		$filtertype = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_type', 'filter_type', 0, 'int');
 		$this->setState('filter.filter_type', $filtertype);
 
 		# filter_order
@@ -175,10 +169,12 @@ class JemModelDay extends JemModelEventslist
 		$listOrder = $app->getUserStateFromRequest('com_jem.day.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
 		$this->setState('filter.filter_direction', $listOrder);
 
+		$defaultOrder = ($task == 'archive') ? 'DESC' : 'ASC';
 		if ($orderCol == 'a.dates') {
-			$orderby = array('a.dates ' . $listOrder, 'a.times ' . $listOrder);
+			$orderby = array('a.dates ' . $listOrder, 'a.times ' . $listOrder, 'a.created ' . $listOrder);
 		} else {
-			$orderby = $orderCol . ' ' . $listOrder;
+			$orderby = array($orderCol . ' ' . $listOrder,
+			                 'a.dates ' . $defaultOrder, 'a.times ' . $defaultOrder, 'a.created ' . $defaultOrder);
 		}
 		$this->setState('filter.orderby', $orderby);
 
@@ -187,7 +183,7 @@ class JemModelDay extends JemModelEventslist
 
 		# published
 		/// @todo bring given pub together with eventslist's unpub calculation (_populatePublishState())
-		$pub = explode(',', $jinput->getString('pub', ''));
+		$pub = explode(',', $app->input->getString('pub', ''));
 		$published = array();
 		// sanitize remote data
 		foreach ($pub as $val) {
@@ -205,16 +201,16 @@ class JemModelDay extends JemModelEventslist
 
 		# request venue-id
 		if ($requestVenueId) {
-			$this->setState('filter.req_venid',$requestVenueId);
+			$this->setState('filter.req_venid', $requestVenueId);
 		}
 
 		# request cat-id
 		if ($requestCategoryId) {
-			$this->setState('filter.req_catid',$requestCategoryId);
+			$this->setState('filter.req_catid', $requestCategoryId);
 		}
 
 		# groupby
-		$this->setState('filter.groupby',array('a.id'));
+		$this->setState('filter.groupby', array('a.id'));
 	}
 
 	/**
@@ -236,15 +232,10 @@ class JemModelDay extends JemModelEventslist
 	 */
 	function getListQuery()
 	{
-		$params  = $this->state->params;
-		$jinput  = JFactory::getApplication()->input;
-		$task    = $jinput->get('task','','cmd');
-
-		$requestVenueId 	= $this->getState('filter.req_venid');
-
 		// Create a new query object.
 		$query = parent::getListQuery();
 
+		$requestVenueId = $this->getState('filter.req_venid');
 		if ($requestVenueId){
 			$query->where(' a.locid = '.$this->_db->quote($requestVenueId));
 		}

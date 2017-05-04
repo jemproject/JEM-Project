@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -24,17 +24,14 @@ class JemModelVenues extends JemModelEventslist
 	{
 		// parent::populateState($ordering, $direction);
 
-		$app        = JFactory::getApplication();
-		$settings   = JemHelper::globalattribs();
-		$jinput     = $app->input;
-		$itemid     = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
-		$params     = $app->getParams();
-		$task       = $jinput->getCmd('task','');
+		$app    = JFactory::getApplication();
+		$params = $app->getParams();
+		$task   = $app->input->getCmd('task','');
 
 		// List state information
-		$limit      = $jinput->getInt('limit', $params->get('display_venues_num'));
+		$limit  = $app->input->getInt('limit', $params->get('display_venues_num'));
 		$this->setState('list.limit', $limit);
-		$limitstart = $jinput->getInt('limitstart', 0);
+		$limitstart = $app->input->getInt('limitstart', 0);
 		// correct start value if required
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 		$this->setState('list.start', $limitstart);
@@ -57,9 +54,8 @@ class JemModelVenues extends JemModelEventslist
 	 */
 	protected function getListQuery()
 	{
-		$user 	= JemFactory::getUser();
+		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
-		$task 	= JFactory::getApplication()->input->get('task', '');
 
 		// Query
 		$db 	= JFactory::getDBO();
@@ -73,9 +69,11 @@ class JemModelVenues extends JemModelEventslist
 		$case_when_l .= ' ELSE ';
 		$case_when_l .= $id_l.' END as venueslug';
 
-		$query->select(array('l.id AS locid', 'l.locimage', 'l.locdescription', 'l.url', 'l.venue',
-		                     'l.street', 'l.city', 'l.country', 'l.postalCode', 'l.state',
-		                     'l.map', 'l.latitude', 'l.longitude', 'l.published'));
+		$query->select(array('l.id AS locid', 'l.locimage', 'l.locdescription', 'l.url', 'l.venue', 'l.created', 'l.created_by',
+		                     'l.street', 'l.postalCode', 'l.city', 'l.state', 'l.country',
+		                     'l.map', 'l.latitude', 'l.longitude', 'l.published',
+		                     'l.custom1', 'l.custom2', 'l.custom3', 'l.custom4', 'l.custom5', 'l.custom6', 'l.custom7', 'l.custom8', 'l.custom9', 'l.custom10',
+		                     'l.meta_keywords', 'l.meta_description', 'l.checked_out', 'l.checked_out_time'));
 		$query->select(array($case_when_l));
 		$query->from('#__jem_venues as l');
 		$query->join('LEFT', '#__jem_events AS a ON l.id = a.locid');
@@ -199,29 +197,23 @@ class JemModelVenues extends JemModelEventslist
 	}
 
 
-
 	/**
 	 * Retrieve Categories
 	 *
 	 * Due to multi-cat this function is needed
 	 * filter-index (4) is pointing to the cats
 	 */
-
 	function getCategories($id)
 	{
-		$user 			= JemFactory::getUser();
-		$userid			= (int) $user->get('id');
-		$levels 		= $user->getAuthorisedViewLevels();
-		$app 			= JFactory::getApplication();
-		$params 		= $app->getParams();
-		$catswitch 		= $params->get('categoryswitch', '0');
-		$settings 		= JemHelper::globalattribs();
+		$user     = JemFactory::getUser();
+		$levels   = $user->getAuthorisedViewLevels();
+		$settings = JemHelper::globalattribs();
 
 		// Query
-		$db 	= JFactory::getDBO();
+		$db    = JFactory::getDBO();
 		$query = $db->getQuery(true);
 
-		$case_when_c = ' CASE WHEN ';
+		$case_when_c  = ' CASE WHEN ';
 		$case_when_c .= $query->charLength('c.alias');
 		$case_when_c .= ' THEN ';
 		$id_c = $query->castAsChar('c.id');

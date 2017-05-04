@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.1
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -75,11 +75,29 @@ class JemControllerAttendees extends JControllerLegacy
 			$errMsg  = '';
 			$skip    = 0;
 			$error   = 0;
+			$changed = 0;
 
 			foreach ($uids as $uid) {
 				if (array_key_exists($uid, $regs)) {
-					JemHelper::addLogEntry("Skip user ${uid} already registered for event ${eventid}.", __METHOD__, JLog::DEBUG);
-					++$skip;
+					$reg = $regs[$uid];
+					$old_status = ($reg->status == 1 && $reg->waiting == 1) ? 2 : $reg->status;
+					if (!empty($reg->id) && ($old_status != $status)) {
+						JemHelper::addLogEntry("Change user ${uid} already registered for event ${eventid}.", __METHOD__, JLog::DEBUG);
+						$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $comment, $errMsg, $reg->id);
+						if ($reg_id) {
+							$res = $dispatcher->trigger('onEventUserRegistered', array($reg_id));
+							++$changed;
+						} else {
+							JemHelper::addLogEntry(implode(' - ', array("Model returned error while changing registration of user ${uid}", $errMsg)), __METHOD__, JLog::DEBUG);
+							if (!empty($errMsg)) {
+								$errMsgs[] = $errMsg;
+							}
+							++$error;
+						}
+					} else {
+						JemHelper::addLogEntry("Skip user ${uid} already registered for event ${eventid}.", __METHOD__, JLog::DEBUG);
+						++$skip;
+					}
 				} else {
 					$reg_id = $modelEventItem->adduser($eventid, $uid, $status, $comment, $errMsg);
 					if ($reg_id) {
@@ -97,7 +115,10 @@ class JemControllerAttendees extends JControllerLegacy
 			$cache = JFactory::getCache('com_jem');
 			$cache->clean();
 
-			$msg = ($total - $skip - $error) . ' ' . JText::_('COM_JEM_REGISTERED_USERS_ADDED');
+			$msg = ($total - $skip - $error - $changed) . ' ' . JText::_('COM_JEM_REGISTERED_USERS_ADDED');
+			if ($changed > 0) {
+				$msg .= ', ' . $changed . ' ' . JText::_('COM_JEM_REGISTERED_USERS_CHANGED');
+			}
 			$errMsgs = array_unique($errMsgs);
 			if (count($errMsgs)) {
 				$msg .= '<br />' . implode('<br />', $errMsgs);
@@ -248,7 +269,7 @@ class JemControllerAttendees extends JControllerLegacy
 			if ($enableemailadress == 1) {
 				$cols[] = $data->email;
 			}
-			$cols[] = empty($row->uregdate) ? '' : JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2'));
+			$cols[] = empty($data->uregdate) ? '' : JHtml::_('date',$data->uregdate, JText::_('DATE_FORMAT_LC2'));
 
 			$status = isset($data->status) ? $data->status : 1;
 			if ($status < 0) {
@@ -261,7 +282,8 @@ class JemControllerAttendees extends JControllerLegacy
 			$cols[] = JText::_($txt_stat);
 			if ($comments) {
 				$comment = strip_tags($data->comment);
-				$cols[] = (strlen($comment) > 254) ? (substr($comment, 0, 251).'...') : $comment;
+				// comments are limited to 255 characters in db so we don't need to truncate them on export
+				$cols[] = $comment;
 			}
 
 			fputcsv($export, $cols, $sep, '"');
