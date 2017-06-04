@@ -1034,12 +1034,14 @@ a.jgrid:hover {
 	background: none;
 }
 
-#jem button[id$="_img"] {
+#jem button[id$="_img"],
+#jem button[id$="_btn"] {
 	padding: 1px;
 }
 
 #jem button[id$="_img"] i.icon-calendar,
 #jem button[id$="_img"] span.icon-calendar,
+#jem button[id$="_btn"] span.icon-calendar,
 #jem .btn-micro i[class^="icon-"],
 #jem .btn-micro i[class*=" icon-"],
 .jgrid span.state {
@@ -1054,7 +1056,8 @@ a.jgrid:hover {
 }
 
 #jem button[id$="_img"] i.icon-calendar,
-#jem button[id$="_img"] span.icon-calendar {
+#jem button[id$="_img"] span.icon-calendar,
+#jem button[id$="_btn"] span.icon-calendar {
 	background-image:url(../images/el.png);
 }
 
