@@ -188,7 +188,6 @@ class JemViewSearch extends JEMView
 	protected function _buildSortLists()
 	{
 		$app = JFactory::getApplication();
-//		$db = JFactory::getDBO();
 		$task = $app->input->get('task', '');
 
 		$filter_order = $app->input->getCmd('filter_order', 'a.dates');
@@ -199,7 +198,6 @@ class JemViewSearch extends JEMView
 		}
 		$filter_order_Dir	= $app->input->get('filter_order_Dir', $filter_order_DirDefault);
 		$filter 			= $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
-		//$filter				= $this->escape(JRequest::getString('filter'));
 		$filter_type		= $app->input->getString('filter_type', '');
 
 		$sortselects = array();

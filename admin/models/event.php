@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -243,7 +243,6 @@ class JemModelEvent extends JemModelAdmin
 		$app         = JFactory::getApplication();
 		$jinput      = $app->input;
 		$jemsettings = JemHelper::config();
-		$fileFilter  = new JInput($_FILES);
 		$table       = $this->getTable();
 
 		// Check if we're in the front or back
@@ -335,11 +334,16 @@ class JemModelEvent extends JemModelAdmin
 
 			if ($allowed) {
 				// attachments, new ones first
-				$attachments 				= array();
-				$attachments 				= $fileFilter->get('attach', array(), 'array');
-				$attachments['customname']	= $jinput->post->get('attach-name', array(), 'array');
-				$attachments['description'] = $jinput->post->get('attach-desc', array(), 'array');
-				$attachments['access'] 		= $jinput->post->get('attach-access', array(), 'array');
+				$attachments   = array();
+				$attachments   = $jinput->files->get('attach', array(), 'array');
+				$attach_name   = $jinput->post->get('attach-name', array(), 'array');
+				$attach_descr  = $jinput->post->get('attach-desc', array(), 'array');
+				$attach_access = $jinput->post->get('attach-access', array(), 'array');
+				foreach($attachments as $n => &$a) {
+					$a['customname']  = array_key_exists($n, $attach_access) ? $attach_name[$n]   : '';
+					$a['description'] = array_key_exists($n, $attach_access) ? $attach_descr[$n]  : '';
+					$a['access']      = array_key_exists($n, $attach_access) ? $attach_access[$n] : '';
+				}
 				JemAttachment::postUpload($attachments, 'event' . $pk);
 			}
 

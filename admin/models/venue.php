@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -160,10 +160,10 @@ class JemModelVenue extends JemModelAdmin
 	 */
 	public function getItem($pk = null)
 	{
-		$jemsettings = JEMAdmin::config();
+		$jemsettings = JemAdmin::config();
 
 		if ($item = parent::getItem($pk)) {
-			$files = JEMAttachment::getAttachments('venue'.$item->id);
+			$files = JemAttachment::getAttachments('venue'.$item->id);
 			$item->attachments = $files;
 		}
 
@@ -221,7 +221,6 @@ class JemModelVenue extends JemModelAdmin
 		$jinput      = $app->input;
 		$user        = JemFactory::getUser();
 		$jemsettings = JemHelper::config();
-		$fileFilter  = new JInput($_FILES);
 		$table       = $this->getTable();
 		$task        = $jinput->get('task', '', 'cmd');
 
@@ -261,12 +260,17 @@ class JemModelVenue extends JemModelAdmin
 
 			if ($allowed) {
 				// attachments, new ones first
-				$attachments 				= array();
-				$attachments 				= $fileFilter->get('attach', array(), 'array');
-				$attachments['customname']	= $jinput->post->get('attach-name', array(), 'array');
-				$attachments['description'] = $jinput->post->get('attach-desc', array(), 'array');
-				$attachments['access'] 		= $jinput->post->get('attach-access', array(), 'array');
-				JEMAttachment::postUpload($attachments, 'venue' . $pk);
+				$attachments   = array();
+				$attachments   = $jinput->files->get('attach', array(), 'array');
+				$attach_name   = $jinput->post->get('attach-name', array(), 'array');
+				$attach_descr  = $jinput->post->get('attach-desc', array(), 'array');
+				$attach_access = $jinput->post->get('attach-access', array(), 'array');
+				foreach($attachments as $n => &$a) {
+					$a['customname']  = array_key_exists($attach_access, $n) ? $attach_name[$n]   : '';
+					$a['description'] = array_key_exists($attach_access, $n) ? $attach_descr[$n]  : '';
+					$a['access']      = array_key_exists($attach_access, $n) ? $attach_access[$n] : '';
+				}
+				JemAttachment::postUpload($attachments, 'venue' . $pk);
 			}
 
 			// and update old ones
@@ -284,7 +288,7 @@ class JemModelVenue extends JemModelAdmin
 				if ($allowed) {
 					$attach['access'] 	= $old['access'][$k];
 				} // else don't touch this field
-				JEMAttachment::update($attach);
+				JemAttachment::update($attach);
 			}
 
 			return true;

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -25,7 +25,7 @@ class JemAttachment extends JObject
 	/**
 	 * upload files for the specified object
 	 *
-	 * @param array data from JInput 'files'
+	 * @param array  data from JInputFiles (as array of n arrays of params, [n][params])
 	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
 	 */
 	static function postUpload($post_files, $object)
@@ -48,8 +48,9 @@ class JemAttachment extends JObject
 
 		$maxsizeinput = $jemsettings->attachments_maxsize*1024; //size in kb
 
-		foreach ($post_files['name'] as $k => $file)
+		foreach ($post_files as $k => $rec)
 		{
+			$file = array_key_exists('name', $rec) ? $rec['name'] : '';
 			if (empty($file)) {
 				continue;
 			}
@@ -61,8 +62,8 @@ class JemAttachment extends JObject
 				continue;
 			}
 			// check size
-			if ($post_files['size'][$k] > $maxsizeinput) {
-				JError::raiseWarning(0, JText::sprintf('COM_JEM_ERROR_ATTACHEMENT_FILE_TOO_BIG', $file, $post_files['size'][$k], $maxsizeinput));
+			if ($rec['size'] > $maxsizeinput) {
+				JError::raiseWarning(0, JText::sprintf('COM_JEM_ERROR_ATTACHEMENT_FILE_TOO_BIG', $file, $rec['size'], $maxsizeinput));
 				continue;
 			}
 
@@ -84,24 +85,24 @@ class JemAttachment extends JObject
 			// Since Joomla! 3.4.0 JFile::upload has some more params to control new security parsing
 			// Unfortunately this parsing is partially stupid so it may reject archives for non-understandable reason.
 			if (version_compare(JVERSION, '3.4', 'lt')) {
-				JFile::upload($post_files['tmp_name'][$k], $filepath);
+				JFile::upload($rec['tmp_name'], $filepath);
 			} else {
 				// switch off parsing archives for byte sequences looking like a script file extension
 				// but keep all other checks running
-				JFile::upload($post_files['tmp_name'][$k], $filepath, false, false, array('fobidden_ext_in_content' => false));
+				JFile::upload($rec['tmp_name'], $filepath, false, false, array('fobidden_ext_in_content' => false));
 			}
 
 			$table = JTable::getInstance('jem_attachments', '');
 			$table->file = $sanitizedFilename;
 			$table->object = $object;
-			if (isset($post_files['customname'][$k]) && !empty($post_files['customname'][$k])) {
-				$table->name = $post_files['customname'][$k];
+			if (isset($rec['customname']) && !empty($rec['customname'])) {
+				$table->name = $rec['customname'];
 			}
-			if (isset($post_files['description'][$k]) && !empty($post_files['description'][$k])) {
-				$table->description = $post_files['description'][$k];
+			if (isset($rec['description']) && !empty($rec['description'])) {
+				$table->description = $rec['description'];
 			}
-			if (isset($post_files['access'][$k])) {
-				$table->access = intval($post_files['access'][$k]);
+			if (isset($rec['access'])) {
+				$table->access = intval($rec['access']);
 			}
 			$table->added = strftime('%F %T');
 			$table->added_by = $user->get('id');
@@ -109,7 +110,7 @@ class JemAttachment extends JObject
 			if (!($table->check() && $table->store())) {
 				JError::raiseWarning(0, JText::_('COM_JEM_ATTACHMENT_ERROR_SAVING_TO_DB').': '.$table->getError());
 			}
-		}
+		} // foreach
 
 		return true;
 	}

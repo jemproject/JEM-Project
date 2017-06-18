@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -82,7 +82,7 @@ class JemModelExport extends JModelList
 
 		// Select the required fields from the table.
 		$query->select('a.*');
-		$query->from('`#__jem_events` AS a');
+		$query->from('#__jem_events AS a');
 		$query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
 		$query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
 

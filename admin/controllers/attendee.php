@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -53,8 +53,7 @@ class JemControllerAttendee extends JControllerLegacy
 
 		$attendee = JTable::getInstance('jem_register', '');
 		if (version_compare(JVERSION, '3.2', 'lt')) {
-			// before Joomla! 3.2.0 there is no good way to get them all from JInput :(
-			$attendee->bind(JFactory::getApplication()->input->getArray($_POST));
+			$attendee->bind(JRequest::get('post')); // before Joomla! 3.2.0 there is no good way to get them all from JInput :(
 		} else {
 			$attendee->bind(JFactory::getApplication()->input->post->getArray(/*get them all*/));
 		}
@@ -83,7 +82,7 @@ class JemControllerAttendee extends JControllerLegacy
 
 		// Retrieving $post
 		if (version_compare(JVERSION, '3.2', 'lt')) {
-			$post = $jinput->getArray($_POST);
+			$post = JRequest::get('post'); // before Joomla! 3.2.0 we must and can use JRequest
 		} else {
 			$post = $jinput->post->getArray(/*get them all*/);
 		}
