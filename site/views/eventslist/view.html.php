@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -13,9 +13,9 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 /**
  * Eventslist-View
 */
-class JemViewEventslist extends JEMView
+class JemViewEventslist extends JemView
 {
-	function __construct($config = array())
+	public function __construct($config = array())
 	{
 		parent::__construct($config);
 
@@ -26,7 +26,7 @@ class JemViewEventslist extends JEMView
 	/**
 	 * Creates the Simple List View
 	 */
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		// Initialize variables
 		$app         = JFactory::getApplication();
@@ -55,7 +55,7 @@ class JemViewEventslist extends JEMView
 		}
 
 		// get variables
-		$filter_order     = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$filter_order = $app->getUserStateFromRequest('com_jem.eventslist.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_DirDefault = 'ASC';
 		// Reverse default order for dates in archive mode
 		if ($task == 'archive' && $filter_order == 'a.dates') {
@@ -143,20 +143,20 @@ class JemViewEventslist extends JEMView
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
 
-		$this->lists			= $lists;
-		$this->rows				= $rows;
-		$this->noevents			= $noevents;
-		$this->print_link		= $print_link;
-		$this->params			= $params;
-		$this->dellink			= $permissions->canAddEvent; // deprecated
-		$this->pagination		= $pagination;
-		$this->action			= $uri->toString();
-		$this->task				= $task;
-		$this->jemsettings		= $jemsettings;
-		$this->settings			= $settings;
-		$this->permissions		= $permissions;
-		$this->pagetitle		= $pagetitle;
-		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
+		$this->lists         = $lists;
+		$this->rows          = $rows;
+		$this->noevents      = $noevents;
+		$this->print_link    = $print_link;
+		$this->params        = $params;
+		$this->dellink       = $permissions->canAddEvent; // deprecated
+		$this->pagination    = $pagination;
+		$this->action        = $uri->toString();
+		$this->task          = $task;
+		$this->jemsettings   = $jemsettings;
+		$this->settings      = $settings;
+		$this->permissions   = $permissions;
+		$this->pagetitle     = $pagetitle;
+		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
 
 		$this->_prepareDocument();
 		parent::display($tpl);
@@ -169,9 +169,8 @@ class JemViewEventslist extends JEMView
 	{
 		// TODO: Refactor with parent _prepareDocument() function
 
-		$app	= JFactory::getApplication();
-		$menus	= $app->getMenu();
-		$title	= null;
+	//	$app   = JFactory::getApplication();
+	//	$menus = $app->getMenu();
 
 		if ($this->params->get('menu-meta_description'))
 		{

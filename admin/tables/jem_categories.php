@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -23,42 +23,44 @@ class jem_categories extends JTableNested
 	 * Primary Key
 	 * @var int
 	 */
-	var $id 				= null;
+	public $id = null;
 	/** @var int */
-	var $parent_id			= 0;
+	public $parent_id = 0;
 	/** @var string */
-	var $catname 			= '';
+	public $catname = '';
 	/** @var string */
-	var $alias	 			= '';
+	public $alias = '';
 	/** @var string */
-	var $description 		= null;
+	public $description = null;
 	/** @var string */
-	var $meta_description 	= '';
+	public $meta_description = '';
 	/** @var string */
-	var $meta_keywords		= '';
+	public $meta_keywords = '';
 	/** @var string */
-	var $image 				= '';
+	public $image = '';
 	/** @var string */
-	var $color 				= '';
+	public $color = '';
 	/** @var int */
-	var $published			= null;
+	public $published = null;
 	/** @var int */
-	var $checked_out 		= 0;
+	public $checked_out = 0;
 	/** @var date */
-	var $checked_out_time	= 0;
+	public $checked_out_time = 0;
 	/** @var int */
-	var $access 			= 0;
+	public $access = 0;
 	/** @var int */
-	var $groupid 			= 0;
+	public $groupid = 0;
 	/** @var string */
-	var $maintainers		= null;
+	public $maintainers = null;
 	/** @var int */
-	var $ordering 			= null;
+	public $ordering = null;
+
 
 	/**
-	* @param database A database connector object
-	*/
-	public function __construct(& $db) {
+	 * @param  database A database connector object
+	 */
+	public function __construct(& $db)
+	{
 		parent::__construct('#__jem_categories', 'id', $db);
 	}
 
@@ -69,7 +71,7 @@ class jem_categories extends JTableNested
 	 * @return boolean
 	 *
 	 */
-	function check()
+	public function check()
 	{
 		// Not typed in a category name?
 		if (trim($this->catname) == '') {
@@ -80,7 +82,7 @@ class jem_categories extends JTableNested
 
 		$alias = JFilterOutput::stringURLSafe($this->catname);
 
-		if(empty($this->alias) || $this->alias === $alias) {
+		if (empty($this->alias) || $this->alias === $alias) {
 			$this->alias = $alias;
 		}
 
@@ -105,13 +107,13 @@ class jem_categories extends JTableNested
 	 * Can be overloaded/supplemented by the child class
 	 *
 	 * @access public
-	 * @param boolean If false, null object variables are not updated
+	 * @param  boolean If false, null object variables are not updated
 	 * @return null|string null if successful otherwise returns and error message
 	 */
-	function insertIgnore($updateNulls=false)
+	function insertIgnore($updateNulls = false)
 	{
 		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if(!$ret) {
+		if (!$ret) {
 			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
 			return false;
 		}
@@ -122,9 +124,9 @@ class jem_categories extends JTableNested
 	 * Inserts a row into a table based on an objects properties, ignore if already exists
 	 *
 	 * @access protected
-	 * @param string  The name of the table
-	 * @param object  An object whose properties match table fields
-	 * @param string  The name of the primary key. If provided the object property is updated.
+	 * @param  string  The name of the table
+	 * @param  object  An object whose properties match table fields
+	 * @param  string  The name of the primary key. If provided the object property is updated.
 	 * @return int number of affected row
 	 */
 	protected function _insertIgnoreObject($table, &$object, $keyName = NULL)

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -20,7 +20,7 @@ abstract class JHtmlJemHtml
 	 * @param int $value state value
 	 * @param int $i
 	 */
-	static function featured($value = 0, $i, $canChange = true)
+	static public function featured($value = 0, $i, $canChange = true)
 	{
 		// Array of image, task, title, action
 		$states = array(
@@ -46,14 +46,13 @@ abstract class JHtmlJemHtml
 		return $html;
 	}
 
-
 	/**
 	 *
 	 * @param int $value state value
 	 * @param int $i
 	 * @deprecated since version 2.1.7
 	 */
-	static function toggleStatus($value = 0, $i, $canChange = true)
+	static public function toggleStatus($value = 0, $i, $canChange = true)
 	{
 		if (class_exists('JemHelper')) {
 			JemHelper::addLogEntry('Use of this function is deprecated. Use JemHekper::toggleAttendanceStatus() instead.', __METHOD__, JLog::WARNING);
@@ -83,7 +82,6 @@ abstract class JHtmlJemHtml
 		return $html;
 	}
 
-
 	/**
 	 * Creates html code to show attendance status, maybe incl. link to toggle this status.
 	 *
@@ -93,7 +91,7 @@ abstract class JHtmlJemHtml
 	 * @param bool $print if true show icon AND text for printing
 	 * @return string The html snippet.
 	 */
-	static function toggleAttendanceStatus($value = 0, $i, $canChange = true, $print = false)
+	static public function toggleAttendanceStatus($value = 0, $i, $canChange = true, $print = false)
 	{
 		// Array of image, task, alt-text, tooltip
 		$states = array(

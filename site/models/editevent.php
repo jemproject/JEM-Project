@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -18,7 +18,6 @@ require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/event.php';
  */
 class JemModelEditevent extends JemModelEvent
 {
-
 	/**
 	 * Method to auto-populate the model state.
 	 *
@@ -54,7 +53,7 @@ class JemModelEditevent extends JemModelEvent
 	/**
 	 * Method to get event data.
 	 *
-	 * @param integer	The id of the event.
+	 * @param  integer The id of the event.
 	 *
 	 * @return mixed item data object on success, false on failure.
 	 */
@@ -177,7 +176,6 @@ class JemModelEditevent extends JemModelEvent
 	 * Get the return URL.
 	 *
 	 * @return string return URL.
-	 *
 	 */
 	public function getReturnPage()
 	{
@@ -191,34 +189,33 @@ class JemModelEditevent extends JemModelEvent
 	/**
 	 * Get venues-data
 	 */
-	function getVenues()
+	public function getVenues()
 	{
-		$query 		= $this->buildQueryVenues();
+		$query      = $this->buildQueryVenues();
 		$pagination = $this->getVenuesPagination();
 
-		$rows 		= $this->_getList($query, $pagination->limitstart, $pagination->limit);
+		$rows = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 
 		return $rows;
 	}
 
-
 	/**
 	 * venues-query
 	 */
-	function buildQueryVenues()
+	protected function buildQueryVenues()
 	{
-		$app 				= JFactory::getApplication();
-		$params		 		= JemHelper::globalattribs();
+		$app              = JFactory::getApplication();
+		$params           = JemHelper::globalattribs();
 
-		$filter_order 		= $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+		$filter_order     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
 
-		$filter_order 		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir 	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+		$filter_order     = JFilterInput::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
-		$filter_type 		= $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', 0, 'int');
-		$search      		= $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
-		$search      		= $this->_db->escape(trim(JString::strtolower($search)));
+		$filter_type      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', 0, 'int');
+		$search           = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
+		$search           = $this->_db->escape(trim(JString::strtolower($search)));
 
 		// Query
 		$db    = JFactory::getDBO();
@@ -270,8 +267,8 @@ class JemModelEditevent extends JemModelEvent
     /**
      * venues-Pagination
      **/
-	function getVenuesPagination() {
-
+	public function getVenuesPagination()
+	{
 		$jemsettings = JemHelper::config();
 		$app         = JFactory::getApplication();
 		$limit       = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
@@ -289,7 +286,6 @@ class JemModelEditevent extends JemModelEvent
 		return $pagination;
 	}
 
-
 	##############
 	## CONTACTS ##
 	##############
@@ -297,21 +293,20 @@ class JemModelEditevent extends JemModelEvent
 	/**
 	 * Get contacts-data
 	 */
-	function getContacts()
+	public function getContacts()
 	{
-		$query 		= $this->buildQueryContacts();
+		$query      = $this->buildQueryContacts();
 		$pagination = $this->getContactsPagination();
 
-		$rows 		= $this->_getList($query, $pagination->limitstart, $pagination->limit);
+		$rows = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 
 		return $rows;
 	}
 
-
 	/**
 	 * contacts-Pagination
 	 **/
-	function getContactsPagination()
+	public function getContactsPagination()
 	{
 		$jemsettings = JemHelper::config();
 		$app         = JFactory::getApplication();
@@ -330,24 +325,23 @@ class JemModelEditevent extends JemModelEvent
 		return $pagination;
 	}
 
-
 	/**
 	 * contacts-query
 	 */
-	function buildQueryContacts()
+	protected function buildQueryContacts()
 	{
-		$app		  		= JFactory::getApplication();
-		$jemsettings  		= JemHelper::config();
+		$app              = JFactory::getApplication();
+		$jemsettings      = JemHelper::config();
 
-		$filter_order 		= $app->getUserStateFromRequest('com_jem.selectcontact.filter_order', 'filter_order', 'con.ordering', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.selectcontact.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		$filter_order     = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order', 'filter_order', 'con.ordering', 'cmd');
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order_Dir', 'filter_order_Dir', '', 'word');
 
-		$filter_order 		= JFilterInput::getinstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
+		$filter_order     = JFilterInput::getinstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = JFilterInput::getinstance()->clean($filter_order_Dir, 'word');
 
-		$filter_type   		= $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
-		$search       		= $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
-		$search       		= $this->_db->escape(trim(JString::strtolower($search)));
+		$filter_type      = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
+		$search           = $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
+		$search           = $this->_db->escape(trim(JString::strtolower($search)));
 
 		// Query
 		$db    = JFactory::getDBO();
@@ -398,7 +392,6 @@ class JemModelEditevent extends JemModelEvent
 		return $query;
 	}
 
-
 	###########
 	## USERS ##
 	###########
@@ -406,7 +399,7 @@ class JemModelEditevent extends JemModelEvent
 	/**
 	 * Get users data
 	 */
-	function getUsers()
+	public function getUsers()
 	{
 		$query      = $this->buildQueryUsers();
 		$pagination = $this->getUsersPagination();
@@ -440,11 +433,10 @@ class JemModelEditevent extends JemModelEvent
 		return $rows;
 	}
 
-
 	/**
 	 * users-Pagination
 	 **/
-	function getUsersPagination()
+	public function getUsersPagination()
 	{
 		$jemsettings = JemHelper::config();
 		$app         = JFactory::getApplication();
@@ -463,11 +455,10 @@ class JemModelEditevent extends JemModelEvent
 		return $pagination;
 	}
 
-
 	/**
 	 * users-query
 	 */
-	function buildQueryUsers()
+	protected function buildQueryUsers()
 	{
 		$app              = JFactory::getApplication();
 		$jemsettings      = JemHelper::config();
@@ -519,11 +510,10 @@ class JemModelEditevent extends JemModelEvent
 		return $query;
 	}
 
-
 	/**
 	 * Get list of invited users.
 	 */
-	function getInvitedUsers()
+	public function getInvitedUsers()
 	{
 		$itemId = (int)$this->getState('event.id');
 		$db     = JFactory::getDBO();

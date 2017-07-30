@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -20,12 +20,12 @@ jimport('joomla.html.pagination');
  */
 class JemModelMyattendances extends JModelLegacy
 {
-	var $_attending = null;
-	var $_total_attending = null;
+	protected $_attending = null;
+	protected $_total_attending = null;
+	protected $_pagination_attending = null;
 
 	/**
 	 * Constructor
-	 *
 	 */
 	public function __construct()
 	{
@@ -41,7 +41,7 @@ class JemModelMyattendances extends JModelLegacy
 			$app->setUserState('com_jem.myattendances.limitstart', 0);
 		}
 
-		$limit		= $app->getUserStateFromRequest('com_jem.myattendances.limit', 'limit', $jemsettings->display_num, 'int');
+		$limit      = $app->getUserStateFromRequest('com_jem.myattendances.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart = $app->getUserStateFromRequest('com_jem.myattendances.limitstart', 'limitstart', 0, 'int');
 		// correct start value if required
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
@@ -50,14 +50,13 @@ class JemModelMyattendances extends JModelLegacy
 		$this->setState('limitstart', $limitstart);
 	}
 
-
 	/**
 	 * Method to get the Events user is attending
 	 *
 	 * @access public
 	 * @return array
 	 */
-	function & getAttending()
+	public function getAttending()
 	{
 		$pop = JFactory::getApplication()->input->getBool('pop', false);
 
@@ -86,14 +85,13 @@ class JemModelMyattendances extends JModelLegacy
 		return $this->_attending;
 	}
 
-
 	/**
 	 * Total nr of events
 	 *
 	 * @access public
 	 * @return integer
 	 */
-	function getTotalAttending()
+	public function getTotalAttending()
 	{
 		// Lets load the total nr if it doesn't already exist
 		if (empty($this->_total_attending))
@@ -105,14 +103,13 @@ class JemModelMyattendances extends JModelLegacy
 		return $this->_total_attending;
 	}
 
-
 	/**
 	 * Method to get a pagination object for the attending events
 	 *
 	 * @access public
 	 * @return integer
 	 */
-	function getAttendingPagination()
+	public function getAttendingPagination()
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_pagination_attending)) {
@@ -123,7 +120,6 @@ class JemModelMyattendances extends JModelLegacy
 		return $this->_pagination_attending;
 	}
 
-
 	/**
 	 * Build the query
 	 *
@@ -133,37 +129,36 @@ class JemModelMyattendances extends JModelLegacy
 	protected function _buildQueryAttending()
 	{
 		# Get the WHERE and ORDER BY clauses for the query
-		$where = $this->_buildAttendingWhere();
+		$where   = $this->_buildAttendingWhere();
 		$orderby = $this->_buildOrderByAttending();
 		$groupby = ' GROUP BY a.id';
 
 		# Get Events from Database
 		$query = 'SELECT DISTINCT a.id AS eventid, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.published, '
-			. ' a.recurrence_type, a.recurrence_first_id,'
-			. ' a.access, a.checked_out, a.checked_out_time, a.contactid, a.created, a.created_by, a.created_by_alias, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.datimage, a.featured,'
-			. ' a.fulltext, a.hits, a.introtext, a.language, a.maxplaces, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.registra, a.unregistra,'
-			. ' a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.version,'
-			. ' a.waitinglist, r.status, r.waiting, r.comment,'
-			. ' l.id, l.venue, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'
-			. ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
-			. ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
-			. ' l.id AS l_id, l.latitude, l.locdescription, l.locimage, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
-			. ' l.publish_up AS l_publish_up, l.publish_down AS l_publish_down, l.street, l.version AS l_version,'
-			. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
-			. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-			. ' FROM #__jem_events AS a'
-			. ' LEFT JOIN #__jem_register AS r ON r.event = a.id'
-			. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-			. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-			. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
-			. $where
-			. $groupby
-			. $orderby
-			;
+		       . ' a.recurrence_type, a.recurrence_first_id,'
+		       . ' a.access, a.checked_out, a.checked_out_time, a.contactid, a.created, a.created_by, a.created_by_alias, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.datimage, a.featured,'
+		       . ' a.fulltext, a.hits, a.introtext, a.language, a.maxplaces, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.registra, a.unregistra,'
+		       . ' a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.version,'
+		       . ' a.waitinglist, r.status, r.waiting, r.comment,'
+		       . ' l.id, l.venue, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'
+		       . ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
+		       . ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
+		       . ' l.id AS l_id, l.latitude, l.locdescription, l.locimage, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
+		       . ' l.publish_up AS l_publish_up, l.publish_down AS l_publish_down, l.street, l.version AS l_version,'
+		       . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
+		       . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
+		       . ' FROM #__jem_events AS a'
+		       . ' LEFT JOIN #__jem_register AS r ON r.event = a.id'
+		       . ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+		       . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+		       . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
+		       . $where
+		       . $groupby
+		       . $orderby
+		       ;
 
 		return $query;
 	}
-
 
 	/**
 	 * Build the order clause
@@ -205,7 +200,6 @@ class JemModelMyattendances extends JModelLegacy
 		return $orderby;
 	}
 
-
 	/**
 	 * Build the where clause
 	 *
@@ -222,7 +216,7 @@ class JemModelMyattendances extends JModelLegacy
 		$settings = JemHelper::globalattribs();
 		$user     = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
-		$levels = $user->getAuthorisedViewLevels();
+		$levels   = $user->getAuthorisedViewLevels();
 
 		$filter   = $app->getUserStateFromRequest('com_jem.myattendances.filter', 'filter', 0, 'int');
 		$search   = $app->getUserStateFromRequest('com_jem.myattendances.filter_search', 'filter_search', '', 'string');
@@ -272,21 +266,20 @@ class JemModelMyattendances extends JModelLegacy
 		return $where2;
 	}
 
-
-	function getCategories($id)
+	public function getCategories($id)
 	{
 		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
-				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-				. ' FROM #__jem_categories AS c'
-				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-				. ' WHERE rel.itemid = '.(int)$id
-				. ' AND c.published = 1'
-				. ' AND c.access IN (' . implode(',', $levels) . ')'
-				;
+		       . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
+		       . ' FROM #__jem_categories AS c'
+		       . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
+		       . ' WHERE rel.itemid = '.(int)$id
+		       . ' AND c.published = 1'
+		       . ' AND c.access IN (' . implode(',', $levels) . ')'
+		       ;
 
 		$this->_db->setQuery($query);
 

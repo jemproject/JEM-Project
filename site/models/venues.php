@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -16,7 +16,6 @@ require_once dirname(__FILE__) . '/eventslist.php';
  */
 class JemModelVenues extends JemModelEventslist
 {
-
 	/**
 	 * Method to auto-populate the model state.
 	 */
@@ -45,7 +44,6 @@ class JemModelVenues extends JemModelEventslist
 		$this->_populatePublishState($task);
 	}
 
-
 	/**
 	 * Build the query
 	 *
@@ -58,10 +56,10 @@ class JemModelVenues extends JemModelEventslist
 		$levels = $user->getAuthorisedViewLevels();
 
 		// Query
-		$db 	= JFactory::getDBO();
-		$query	= $db->getQuery(true);
+		$db     = JFactory::getDBO();
+		$query  = $db->getQuery(true);
 
-		$case_when_l = ' CASE WHEN ';
+		$case_when_l  = ' CASE WHEN ';
 		$case_when_l .= $query->charLength('l.alias');
 		$case_when_l .= ' THEN ';
 		$id_l = $query->castAsChar('l.id');
@@ -102,7 +100,6 @@ class JemModelVenues extends JemModelEventslist
 		return $query;
 	}
 
-
 	/**
 	 * Method to get a list of venues
 	 * We are defining it as we don't want to fire up the getItems function of the eventslist-model
@@ -136,13 +133,12 @@ class JemModelVenues extends JemModelEventslist
 		return $this->cache[$store];
 	}
 
-
-	function AssignedEvents($id, $state = 1)
+	public function AssignedEvents($id, $state = 1)
 	{
-		$user 	= JemFactory::getUser();
+		$user   = JemFactory::getUser();
 		$levels = $user->getAuthorisedViewLevels();
-		$db 	= JFactory::getDBO();
-		$query	= $db->getQuery(true);
+		$db     = JFactory::getDBO();
+		$query  = $db->getQuery(true);
 
 		$query->select(array('a.id'));
 		$query->from('#__jem_events as a');
@@ -153,7 +149,7 @@ class JemModelVenues extends JemModelEventslist
 		# venue-id
 		$query->where('l.id= '. $db->quote($id));
 		# view access level
-		$query->where('a.access IN ('.implode(',', $levels).')');
+		$query->where('a.access IN (' . implode(',', $levels) . ')');
 		// Note: categories are filtered in getCategories() called below
 		//       so we don't need to check c.access here
 
@@ -183,7 +179,6 @@ class JemModelVenues extends JemModelEventslist
 			$query->where('c.id  IN (' . implode(',', $cats) . ')');
 		}
 
-
 		$db->setQuery($query);
 		$ids = $db->loadColumn(0);
 		$ids = array_unique($ids);
@@ -196,14 +191,13 @@ class JemModelVenues extends JemModelEventslist
 		return ($nr);
 	}
 
-
 	/**
 	 * Retrieve Categories
 	 *
 	 * Due to multi-cat this function is needed
 	 * filter-index (4) is pointing to the cats
 	 */
-	function getCategories($id)
+	public function getCategories($id)
 	{
 		$user     = JemFactory::getUser();
 		$levels   = $user->getAuthorisedViewLevels();
@@ -234,7 +228,6 @@ class JemModelVenues extends JemModelEventslist
 
 		$query->where('c.published = 1');
 
-
 		###################
 		## FILTER-ACCESS ##
 		###################
@@ -247,7 +240,6 @@ class JemModelVenues extends JemModelEventslist
 
 		# as maintainter someone who is registered can see a category that has special rights
 		# let's see if the user has access to this category.
-
 
 	//	$query3	= $db->getQuery(true);
 	//	$query3 = 'SELECT gr.id'
@@ -267,7 +259,6 @@ class JemModelVenues extends JemModelEventslist
 	//	} else {
 			$query->where('(c.access IN ('.implode(',', $levels).'))');
 	//	}
-
 
 		#######################
 		## FILTER - CATEGORY ##

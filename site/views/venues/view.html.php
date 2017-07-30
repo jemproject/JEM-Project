@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -17,10 +17,9 @@ class JemViewVenues extends JViewLegacy
 	/**
 	 * Creates the Venuesview
 	 */
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
-
+		$app         = JFactory::getApplication();
 		$document    = JFactory::getDocument();
 		$jemsettings = JemHelper::config();
 		$settings    = JemHelper::globalattribs();
@@ -30,10 +29,10 @@ class JemViewVenues extends JViewLegacy
 		$task        = $jinput->getCmd('task', '');
 
 		//get menu information
-		$menu		= $app->getMenu();
-		$menuitem	= $menu->getActive();
-		$params 	= $app->getParams();
-		$model		= $this->getModel();
+		$menu     = $app->getMenu();
+		$menuitem = $menu->getActive();
+		$params   = $app->getParams();
+		$model    = $this->getModel();
 
 		// Load css
 		JemHelper::loadCss('jem');
@@ -46,7 +45,7 @@ class JemViewVenues extends JViewLegacy
 		}
 
 		// Request variables
-		$items 	= $this->get('Items');
+		$items = $this->get('Items');
 
 		foreach ($items AS $item) {
 			// Create image information
@@ -55,8 +54,8 @@ class JemViewVenues extends JViewLegacy
 			// Generate Venuedescription
 			if (!$item->locdescription == '' || !$item->locdescription == '<br />') {
 				//execute plugins
-				$item->text	= $item->locdescription;
-				$item->title 	= $item->venue;
+				$item->text = $item->locdescription;
+				$item->title = $item->venue;
 				JPluginHelper::importPlugin('content');
 				$app->triggerEvent('onContentPrepare', array('com_jem.venue', &$item, &$params, 0));
 				$item->locdescription = $item->text;
@@ -80,7 +79,7 @@ class JemViewVenues extends JViewLegacy
 		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		//pathway
-		$pathway 	= $app->getPathWay();
+		$pathway = $app->getPathWay();
 		if($menuitem) $pathway->setItemName(1, $menuitem->title);
 
 		if ($task == 'archive') {
@@ -103,7 +102,7 @@ class JemViewVenues extends JViewLegacy
 
 		//Set Page title
 		$document->setTitle($pagetitle);
-		$document->setMetadata('title' , $pagetitle);
+		$document->setMetadata('title', $pagetitle);
 		$document->setMetadata('keywords', $pagetitle);
 
 		//Check if the user has permission to add things
@@ -115,18 +114,18 @@ class JemViewVenues extends JViewLegacy
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
 
-		$this->rows				= $items;
-		$this->print_link		= $print_link;
-		$this->params			= $params;
-		$this->pagination		= $pagination;
-		$this->item				= $menuitem;
-		$this->jemsettings		= $jemsettings;
-		$this->settings			= $settings;
-		$this->permissions		= $permissions;
-		$this->show_status		= $permissions->canEditPublishVenue;
-		$this->task				= $task;
-		$this->pagetitle		= $pagetitle;
-		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
+		$this->rows          = $items;
+		$this->print_link    = $print_link;
+		$this->params        = $params;
+		$this->pagination    = $pagination;
+		$this->item          = $menuitem;
+		$this->jemsettings   = $jemsettings;
+		$this->settings      = $settings;
+		$this->permissions   = $permissions;
+		$this->show_status   = $permissions->canEditPublishVenue;
+		$this->task          = $task;
+		$this->pagetitle     = $pagetitle;
+		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
 
 		parent::display($tpl);
 	}

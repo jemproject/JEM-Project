@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -32,6 +32,7 @@ defined('_JEXEC') or die;
 		<?php echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks() : $this->pagination->getListFooter()); ?>
 	</div>
 
+	<?php echo JHtml::_('form.token'); ?>
 	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="view" value="imagehandler" />
 	<input type="hidden" name="tmpl" value="component" />

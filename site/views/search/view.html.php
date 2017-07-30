@@ -13,12 +13,12 @@ require JPATH_COMPONENT_SITE . '/classes/view.class.php';
 /**
  * Search-View
  */
-class JemViewSearch extends JEMView
+class JemViewSearch extends JemView
 {
 	/**
 	 * Creates the Simple List View
 	 */
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		// initialize variables
 		$app          = JFactory::getApplication();
@@ -30,7 +30,7 @@ class JemViewSearch extends JEMView
 		$params       = $app->getParams();
 		$uri          = JFactory::getURI();
 		$pathway      = $app->getPathWay();
-		$user         = JemFactory::getUser();
+	//	$user         = JemFactory::getUser();
 
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
@@ -132,7 +132,7 @@ class JemViewSearch extends JEMView
 
 		// country filter
 		$continents = array();
-		$continents[] = JHtml::_('select.option', '', JText::_('COM_JEM_SELECT_CONTINENT'));
+		$continents[] = JHtml::_('select.option', '',   JText::_('COM_JEM_SELECT_CONTINENT'));
 		$continents[] = JHtml::_('select.option', 'AF', JText::_('COM_JEM_AFRICA'));
 		$continents[] = JHtml::_('select.option', 'AS', JText::_('COM_JEM_ASIA'));
 		$continents[] = JHtml::_('select.option', 'EU', JText::_('COM_JEM_EUROPE'));
@@ -196,19 +196,19 @@ class JemViewSearch extends JEMView
 		if ($task == 'archive' && $filter_order == 'a.dates') {
 			$filter_order_DirDefault = 'DESC';
 		}
-		$filter_order_Dir	= $app->input->get('filter_order_Dir', $filter_order_DirDefault);
-		$filter 			= $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
-		$filter_type		= $app->input->getString('filter_type', '');
+		$filter_order_Dir = $app->input->get('filter_order_Dir', $filter_order_DirDefault);
+		$filter           = $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
+		$filter_type      = $app->input->getString('filter_type', '');
 
 		$sortselects = array();
-		$sortselects[]	= JHtml::_('select.option', 'title', JText::_('COM_JEM_TABLE_TITLE'));
-		$sortselects[] 	= JHtml::_('select.option', 'venue', JText::_('COM_JEM_TABLE_LOCATION'));
-		$sortselect 	= JHtml::_('select.genericlist', $sortselects, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+		$sortselects[] = JHtml::_('select.option', 'title', JText::_('COM_JEM_TABLE_TITLE'));
+		$sortselects[] = JHtml::_('select.option', 'venue', JText::_('COM_JEM_TABLE_LOCATION'));
+		$sortselect    = JHtml::_('select.genericlist', $sortselects, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
-		$lists['order_Dir'] 	= $filter_order_Dir;
-		$lists['order'] 	= $filter_order;
-		$lists['filter'] 	= $filter;
-		$lists['filter_types'] 	= $sortselect;
+		$lists['order_Dir']    = $filter_order_Dir;
+		$lists['order']        = $filter_order;
+		$lists['filter']       = $filter;
+		$lists['filter_types'] = $sortselect;
 
 		return $lists;
 	}

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -13,14 +13,16 @@ defined('_JEXEC') or die;
  */
 class JemTableEvent extends JTable
 {
-	public function __construct(&$db) {
+	public function __construct(&$db)
+	{
 		parent::__construct('#__jem_events', 'id', $db);
 	}
 
 	/**
 	 * Overloaded bind method for the Event table.
 	 */
-	public function bind($array, $ignore = ''){
+	public function bind($array, $ignore = '')
+	{
 		// in here we are checking for the empty value of the checkbox
 
 		if (!isset($array['registra'])) {
@@ -71,27 +73,26 @@ class JemTableEvent extends JTable
 		return parent::bind($array, $ignore);
 	}
 
-
 	/**
 	 * overloaded check function
 	 */
-	function check()
+	public function check()
 	{
 		$jinput = JFactory::getApplication()->input;
 
-		if (trim($this->title) == ''){
+		if (trim($this->title) == '') {
 			$this->setError(JText::_('COM_JEM_EVENT_ERROR_NAME'));
 			return false;
 		}
 
-		if (trim($this->alias) == ''){
+		if (trim($this->alias) == '') {
 			$this->alias = $this->title;
 		}
 
 		$this->alias = JemHelper::stringURLSafe($this->alias);
 		if (empty($this->alias)) {
 			$this->alias = JemHelper::stringURLSafe($this->title);
-			if (trim(str_replace('-', '', $this->alias)) == ''){
+			if (trim(str_replace('-', '', $this->alias)) == '') {
 				$this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
 			}
 		}
@@ -125,9 +126,9 @@ class JemTableEvent extends JTable
 		// Check begin date is before end date
 
 		// Check if end date is set
-		if($this->enddates == null) {
+		if ($this->enddates == null) {
 			// Check if end time is set
-			if($this->endtimes == null) {
+			if ($this->endtimes == null) {
 				$date1 = new DateTime('00:00');
 				$date2 = new DateTime('00:00');
 			} else {
@@ -136,7 +137,7 @@ class JemTableEvent extends JTable
 			}
 		} else {
 			// Check if end time is set
-			if($this->endtimes == null) {
+			if ($this->endtimes == null) {
 				$date1 = new DateTime($this->dates);
 				$date2 = new DateTime($this->enddates);
 			} else {
@@ -145,7 +146,7 @@ class JemTableEvent extends JTable
 			}
 		}
 
-		if($date1 > $date2) {
+		if ($date1 > $date2) {
 			$this->setError(JText::_('COM_JEM_EVENT_ERROR_END_BEFORE_START'));
 			return false;
 		}
@@ -167,23 +168,22 @@ class JemTableEvent extends JTable
 
 
 		// Check if we're in the front or back
-		if ($app->isAdmin())
+		if ($app->isAdmin()) {
 			$backend = true;
-		else
+		} else {
 			$backend = false;
+		}
 
 		if ($this->id) {
 			// Existing event
 			$this->modified = $date->toSql();
 			$this->modified_by = $userid;
-		}
-		else
-		{
+		} else {
 			// New event
-			if (!intval($this->created)){
+			if (!intval($this->created)) {
 				$this->created = $date->toSql();
 			}
-			if (empty($this->created_by)){
+			if (empty($this->created_by)) {
 				$this->created_by = $userid;
 			}
 		}
@@ -262,13 +262,13 @@ class JemTableEvent extends JTable
 	 * Can be overloaded/supplemented by the child class
 	 *
 	 * @access public
-	 * @param boolean If false, null object variables are not updated
+	 * @param  boolean If false, null object variables are not updated
 	 * @return null|string null if successful otherwise returns and error message
 	 */
-	function insertIgnore($updateNulls=false)
+	public function insertIgnore($updateNulls=false)
 	{
 		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if(!$ret) {
+		if (!$ret) {
 			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
 			return false;
 		}
@@ -279,9 +279,9 @@ class JemTableEvent extends JTable
 	 * Inserts a row into a table based on an objects properties, ignore if already exists
 	 *
 	 * @access protected
-	 * @param string  The name of the table
-	 * @param object  An object whose properties match table fields
-	 * @param string  The name of the primary key. If provided the object property is updated.
+	 * @param  string  The name of the table
+	 * @param  object  An object whose properties match table fields
+	 * @param  string  The name of the primary key. If provided the object property is updated.
 	 * @return int number of affected row
 	 */
 	protected function _insertIgnoreObject($table, &$object, $keyName = NULL)
@@ -317,14 +317,14 @@ class JemTableEvent extends JTable
 	 * table. The method respects checked out rows by other users and will attempt
 	 * to checkin rows that it can after adjustments are made.
 	 *
-	 * @param   mixed    $pks     An array of primary key values to update.  If not
-	 *                            set the instance property value is used. [optional]
-	 * @param   integer  $state   The publishing state. eg. [0 = unpublished, 1 = published] [optional]
-	 * @param   integer  $userId  The user id of the user performing the operation. [optional]
+	 * @param  mixed    $pks     An array of primary key values to update.  If not
+	 *                           set the instance property value is used. [optional]
+	 * @param  integer  $state   The publishing state. eg. [0 = unpublished, 1 = published] [optional]
+	 * @param  integer  $userId  The user id of the user performing the operation. [optional]
 	 *
-	 * @return  boolean  True on success.
+	 * @return boolean  True on success.
 	 */
-	function publish($pks = null, $state = 1, $userId = 0)
+	public function publish($pks = null, $state = 1, $userId = 0)
 	{
 		// Initialise variables.
 		$k = $this->_tbl_key;
@@ -392,13 +392,13 @@ class JemTableEvent extends JTable
 	 * Method to delete a row from the database table by primary key value.
 	 * After deletion all category relations are deleted from jem_cats_event_relations table.
 	 *
-	 * @param   mixed  $pk  An optional primary key value to delete.  If not set the instance property value is used.
+	 * @param  mixed  $pk  An optional primary key value to delete.  If not set the instance property value is used.
 	 *
-	 * @return  boolean  True on success.
+	 * @return boolean  True on success.
 	 *
-	 * @note With Joomla 3.1+ we should use an observer instead but J! 2.5 doesn't provide this.
-	 *       Also on J! 2.5 $pk is a single key while on J! 3.x it's a list of keys.
-	 *       We know the key is 'id', so keep it simple.
+	 * @note   With Joomla 3.1+ we should use an observer instead but J! 2.5 doesn't provide this.
+	 *         Also on J! 2.5 $pk is a single key while on J! 3.x it's a list of keys.
+	 *         We know the key is 'id', so keep it simple.
 	 */
 	public function delete($pk = null)
 	{

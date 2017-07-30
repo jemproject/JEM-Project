@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -24,49 +24,49 @@ class JemModelCategories extends JModelLegacy
 	 *
 	 * @var int
 	 */
-	var $_id = 0;
+	protected $_id = 0;
 
 	/**
 	 * Event data array
 	 *
 	 * @var array
 	 */
-	var $_data = null;
+	protected $_data = null;
 
 	/**
 	 * Categories total
 	 *
 	 * @var integer
 	 */
-	var $_total = null;
+	protected $_total = null;
 
 	/**
 	 * Categories data array
 	 *
 	 * @var array
 	 */
-	var $_categories = null;
+	protected $_categories = null;
 
 	/**
 	 * Pagination object
 	 *
 	 * @var object
 	 */
-	var $_pagination = null;
+	protected $_pagination = null;
 
 	/**
 	 * Show empty categories in list
 	 *
 	 * @var bool
 	 */
-	protected $_showemptycats    = false;
+	protected $_showemptycats = false;
 
 	/**
 	 * Show subcategories
 	 *
 	 * @var bool
 	 */
-	protected $_showsubcats      = false;
+	protected $_showsubcats = false;
 
 	/**
 	 * Show empty subcategories
@@ -99,7 +99,7 @@ class JemModelCategories extends JModelLegacy
 		$this->_showemptysubcats = (bool)$params->get('showemptychilds', 1);
 
 		//get the number of events from database
-		$limit 		= $app->input->getInt('limit', $params->get('cat_num'));
+		$limit      = $app->input->getInt('limit', $params->get('cat_num'));
 		$limitstart = $app->input->getInt('limitstart', 0);
 		// correct start value if required
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
@@ -114,7 +114,7 @@ class JemModelCategories extends JModelLegacy
 	 * @access public
 	 * @return array
 	 */
-	function &getData()
+	public function getData()
 	{
 		$app = JFactory::getApplication();
 		$params = $app->getParams();
@@ -148,8 +148,8 @@ class JemModelCategories extends JModelLegacy
 					$category->description = JText::_('COM_JEM_NO_DESCRIPTION');
 				} else {
 					//execute plugins
-					$category->text 	= $category->description;
-					$category->title 	= $category->catname;
+					$category->text = $category->description;
+					$category->title = $category->catname;
 					JPluginHelper::importPlugin('content');
 					$app->triggerEvent('onContentPrepare', array('com_jem.categories', &$category, &$params, 0));
 					$category->description = $category->text;
@@ -177,7 +177,7 @@ class JemModelCategories extends JModelLegacy
 	 * @access public
 	 * @return integer
 	 */
-	function getTotal()
+	public function getTotal()
 	{
 		// Lets load the total nr if it doesn't already exist
 		if (empty($this->_total))
@@ -195,26 +195,27 @@ class JemModelCategories extends JModelLegacy
 	 * @access public
 	 * @return array
 	 */
-	function & getEventdata($id)
+	public function getEventdata($id)
 	{
 		$app = JFactory::getApplication();
-
 		$params = $app->getParams('com_jem');
 
-		// Lets load the content
-		$query = $this->_buildDataQuery($id);
-		$this->_data = $this->_getList($query, 0, $params->get('detcat_nr'));
+		if (empty($this->_data[$id])) {
+			// Lets load the content
+			$query = $this->_buildDataQuery($id);
+			$this->_data[$id] = $this->_getList($query, 0, $params->get('detcat_nr'));
 
-		foreach ($this->_data as $i => $item) {
-			$item->categories = $this->getCategories($item->id);
+			foreach ($this->_data[$id] as $i => &$item) {
+				$item->categories = $this->getCategories($item->id);
 
-			//remove events without categories (users have no access to them)
-			if (empty($item->categories)) {
-				unset ($this->_data[$i]);
+				//remove events without categories (users have no access to them)
+				if (empty($item->categories)) {
+					unset ($this->_data[$id][$i]);
+				}
 			}
 		}
 
-		return $this->_data;
+		return $this->_data[$id];
 	}
 
 	/**
@@ -243,74 +244,74 @@ class JemModelCategories extends JModelLegacy
 		$where .= ' AND a.access IN (' . implode(',', $levels) . ')';
 
 		$query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.created, a.published,'
-			.' a.recurrence_type, a.recurrence_first_id,'
-			.' a.access, a.checked_out, a.checked_out_time, a.contactid, a.created, a.created_by, a.created_by_alias, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.datimage, a.featured,'
-			.' a.fulltext, a.hits, a.introtext, a.language, a.maxplaces, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.registra, a.unregistra, a.waitinglist,'
-			.' a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.version,'
-			.' l.venue, l.street, l.postalCode, l.city, l.state, l.url, l.country, l.published AS l_published,'
-			.' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
-			.' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
-			.' l.id AS l_id, l.latitude, l.locdescription, l.locimage, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
-			.' l.publish_up AS l_publish_up, l.publish_down AS l_publish_down, l.version AS l_version,'
-			.' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
-			.' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-			.' FROM #__jem_events AS a'
-			.' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-			.' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-			.' LEFT JOIN #__jem_categories AS c ON c.id = '.$id
-			.$where
-			.' ORDER BY a.dates, a.times, a.created DESC'
-		;
+		       . ' a.recurrence_type, a.recurrence_first_id,'
+		       . ' a.access, a.checked_out, a.checked_out_time, a.contactid, a.created, a.created_by, a.created_by_alias, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.datimage, a.featured,'
+		       . ' a.fulltext, a.hits, a.introtext, a.language, a.maxplaces, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.registra, a.unregistra, a.waitinglist,'
+		       . ' a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.version,'
+		       . ' l.venue, l.street, l.postalCode, l.city, l.state, l.url, l.country, l.published AS l_published,'
+		       . ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
+		       . ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
+		       . ' l.id AS l_id, l.latitude, l.locdescription, l.locimage, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
+		       . ' l.publish_up AS l_publish_up, l.publish_down AS l_publish_down, l.version AS l_version,'
+		       . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
+		       . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
+		       . ' FROM #__jem_events AS a'
+		       . ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+		       . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+		       . ' LEFT JOIN #__jem_categories AS c ON c.id = '.$id
+		       . $where
+		       . ' ORDER BY a.dates, a.times, a.created DESC'
+		       ;
 
 		return $query;
 	}
 
-	function getCategories($id)
+	public function getCategories($id)
 	{
 		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
 		$query = 'SELECT DISTINCT c.id, c.catname, c.access, c.checked_out AS cchecked_out,'
-			.' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-			.' FROM #__jem_categories AS c'
-			.' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-			.' WHERE rel.itemid = '.(int)$id
-			.' AND c.published = 1'
-			.' AND c.access IN (' . implode(',', $levels) . ')'
-		;
+		       . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
+		       . ' FROM #__jem_categories AS c'
+		       . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
+		       . ' WHERE rel.itemid = '.(int)$id
+		       . ' AND c.published = 1'
+		       . ' AND c.access IN (' . implode(',', $levels) . ')'
+		       ;
 
 		$this->_db->setQuery($query);
-
-		$this->_cats = $this->_db->loadObjectList();
-		return $this->_cats;
+		return $this->_db->loadObjectList();
 	}
 
 	/**
 	 * Method to get the subcategories query
-	 * @param bool   $emptycat include empty categories
-	 * @param string $parent_id Parent ID of the subcategories
+	 * @param  bool   $emptycat include empty categories
+	 * @param  string $parent_id Parent ID of the subcategories
 	 * @return string The query string
 	 */
-	protected function _buildQuerySubCategories($emptycat, $parent_id = null) {
+	protected function _buildQuerySubCategories($emptycat, $parent_id = null)
+	{
 		return $this->_buildQuery($emptycat, $parent_id);
 	}
 
 	/**
 	 * Method to get the parent category query
-	 * @param bool   $emptycat include empty categories
-	 * @param string $parent_id ID of the parent category
+	 * @param  bool   $emptycat include empty categories
+	 * @param  string $parent_id ID of the parent category
 	 * @return string The query string
 	 */
-	protected function _buildQueryParentCategory($emptycat, $parent_id = null) {
+	protected function _buildQueryParentCategory($emptycat, $parent_id = null)
+	{
 		return $this->_buildQuery($emptycat, $parent_id, true);
 	}
 
 	/**
 	 * Method to get the categories query
-	 * @param bool   $emptycat include empty categories
-	 * @param string $parent_id
-	 * @param bool   $parentCategory
+	 * @param  bool   $emptycat include empty categories
+	 * @param  string $parent_id
+	 * @param  bool   $parentCategory
 	 * @return string The query string
 	 */
 	protected function _buildQuery($emptycat, $parent_id = null, $parentCategory = false)
@@ -395,27 +396,25 @@ class JemModelCategories extends JModelLegacy
 		$parentCategoryQuery = $parentCategory ? 'c.id='.(int)$parent_id : 'c.parent_id='.(int)$parent_id;
 
 		$query = 'SELECT c.*,'
-				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END AS slug,'
-					. ' ('
-					. ' SELECT COUNT(DISTINCT i.id)'
-					. ' FROM #__jem_events AS i'
-					. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = i.id'
-					. ' LEFT JOIN #__jem_categories AS cc ON cc.id = rel.catid'
-					. $where_sub
-					. ' GROUP BY cc.id'
-					. ')'
-					. ' AS assignedevents'
-				. ' FROM #__jem_categories AS c'
-				. ' WHERE c.published = 1'
-				. ' AND '.$parentCategoryQuery
-				. ' AND c.access IN (' . implode(',', $levels) . ')'
-				. ' GROUP BY c.id '.$empty
-				. ' ORDER BY '.$ordering
-				;
+		       . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END AS slug,'
+		       . ' ('
+		       . '  SELECT COUNT(DISTINCT i.id)'
+		       . '  FROM #__jem_events AS i'
+		       . '  LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = i.id'
+		       . '  LEFT JOIN #__jem_categories AS cc ON cc.id = rel.catid'
+		       . $where_sub
+		       . '  GROUP BY cc.id'
+		       . ' ) AS assignedevents'
+		       . ' FROM #__jem_categories AS c'
+		       . ' WHERE c.published = 1'
+		       . ' AND '.$parentCategoryQuery
+		       . ' AND c.access IN (' . implode(',', $levels) . ')'
+		       . ' GROUP BY c.id '.$empty
+		       . ' ORDER BY '.$ordering
+		       ;
 
 		return $query;
 	}
-
 
 	/**
 	 * Method to build the Categories query without subselect
@@ -431,17 +430,17 @@ class JemModelCategories extends JModelLegacy
 		$levels = $user->getAuthorisedViewLevels();
 
 		$query = 'SELECT DISTINCT c.id'
-			. ' FROM #__jem_categories AS c';
+		       . ' FROM #__jem_categories AS c';
 
 		if (!$this->_showemptycats) {
 			$query .= ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id '
-					. ' INNER JOIN #__jem_events AS e ON e.id = rel.itemid ';
+			        . ' INNER JOIN #__jem_events AS e ON e.id = rel.itemid ';
 		}
 
 		$query .= ' WHERE c.published = 1'
-			. ' AND c.parent_id = ' . (int) $this->_id
-			. ' AND c.access IN (' . implode(',', $levels) . ')'
-			;
+		        . ' AND c.parent_id = ' . (int) $this->_id
+		        . ' AND c.access IN (' . implode(',', $levels) . ')'
+		        ;
 
 		if (!$this->_showemptycats) {
 			$query .= ' AND e.access IN (' . implode(',', $levels) . ')';
@@ -463,7 +462,7 @@ class JemModelCategories extends JModelLegacy
 	 * @access public
 	 * @return integer
 	 */
-	function getPagination()
+	public function getPagination()
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_pagination)) {

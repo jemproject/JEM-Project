@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -14,7 +14,6 @@ defined('_JEXEC') or die;
  * View class for the JEM Settings screen
  *
  * @package JEM
- *
  */
 class JemViewSettings extends JemAdminView
 {
@@ -22,15 +21,15 @@ class JemViewSettings extends JemAdminView
 	protected $data;
 	protected $state;
 
-
-	public function display($tpl = null) {
-		$form	= $this->get('Form');
-		$data	= $this->get('Data');
-		$state	= $this->get('State');
-		$config = $this->get('ConfigInfo');
-
+	public function display($tpl = null)
+	{
+		$app         = JFactory::getApplication();
+		$document    = JFactory::getDocument();
+		$form        = $this->get('Form');
+		$data        = $this->get('Data');
+		$state       = $this->get('State');
+		$config      = $this->get('ConfigInfo');
 		$jemsettings = $this->get('Data');
-		$document 	= JFactory::getDocument();
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
@@ -67,10 +66,6 @@ class JemViewSettings extends JemAdminView
 		JHtml::_('behavior.formvalidation');
 		JHtml::_('behavior.framework');
 
-
-
-		$app = JFactory::getApplication();
-
 		// only admins have access to this view
 		if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
 			JError::raiseWarning('SOME_ERROR_CODE', JText::_('JERROR_ALERTNOAUTHOR'));
@@ -78,12 +73,11 @@ class JemViewSettings extends JemAdminView
 		}
 
 		// mapping variables
-
-		$this->form = $form;
-		$this->data = $data;
-		$this->state = $state;
+		$this->form        = $form;
+		$this->data        = $data;
+		$this->state       = $state;
 		$this->jemsettings = $jemsettings;
-		$this->config		= $config;
+		$this->config      = $config;
 
 		// add toolbar
 		$this->addToolbar();
@@ -91,11 +85,10 @@ class JemViewSettings extends JemAdminView
 		parent::display($tpl);
 	}
 
-
 	/**
 	 * Add the page title and toolbar.
 	 *
-	 * @since	1.6
+	 * @since  1.6
 	 */
 	protected function addToolbar()
 	{
@@ -108,8 +101,7 @@ class JemViewSettings extends JemAdminView
 		JToolBarHelper::help('settings', true);
 	}
 
-
-	function WarningIcon()
+	protected function WarningIcon()
 	{
 		$url = JUri::root();
 		$tip = '<img src="'.$url.'media/system/images/tooltip.png" border="0"  alt="" />';

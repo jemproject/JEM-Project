@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -15,23 +15,18 @@ require_once dirname(__FILE__) . '/admin.php';
  * JEM Component Group Model
  *
  */
-class JEMModelGroup extends JemModelAdmin
+class JemModelGroup extends JemModelAdmin
 {
 	/**
 	 * Method to test whether a record can be deleted.
 	 *
-	 * @param	object	A record object.
-	 * @return	boolean	True if allowed to delete the record. Defaults to the permission set in the component.
-	 *
+	 * @param  object  A record object.
+	 * @return boolean True if allowed to delete the record. Defaults to the permission set in the component.
 	 */
 	protected function canDelete($record)
 	{
-		if (!empty($record->id))
+		if (!empty($record->id) && ($record->published == -2))
 		{
-			if ($record->published != -2) {
-				return ;
-			}
-
 			$user = JemFactory::getUser();
 
 			if (!empty($record->catid)) {
@@ -40,13 +35,15 @@ class JEMModelGroup extends JemModelAdmin
 				return $user->authorise('core.delete', 'com_jem');
 			}
 		}
+
+		return false;
 	}
 
 	/**
 	 * Method to test whether a record can be deleted.
 	 *
-	 * @param	object	A record object.
-	 * @return	boolean	True if allowed to change the state of the record. Defaults to the permission set in the component.
+	 * @param  object  A record object.
+	 * @return boolean True if allowed to change the state of the record. Defaults to the permission set in the component.
 	 *
 	 */
 	protected function canEditState($record)
@@ -63,11 +60,10 @@ class JEMModelGroup extends JemModelAdmin
 	/**
 	 * Returns a reference to the a Table object, always creating it.
 	 *
-	 * @param	type	The table type to instantiate
-	 * @param	string	A prefix for the table class name. Optional.
-	 * @param	array	Configuration array for model. Optional.
-	 * @return	JTable	A database object
-	 *
+	 * @param  type   The table type to instantiate. Optional.
+	 * @param  string A prefix for the table class name. Optional.
+	 * @param  array  Configuration data for model. Optional.
+	 * @return JTable A database object
 	 */
 	public function getTable($type = 'Group', $prefix = 'JemTable', $config = array())
 	{
@@ -77,15 +73,15 @@ class JEMModelGroup extends JemModelAdmin
 	/**
 	 * Method to get the record form.
 	 *
-	 * @param	array	$data		Data for the form.
-	 * @param	boolean	$loadData	True if the form is to load its own data (default case), false if not.
-	 * @return	mixed	A JForm object on success, false on failure
-	 *
+	 * @param  array   $data     Data for the form. Optional.
+	 * @param  boolean $loadData True if the form is to load its own data (default case), false if not. Optional.
+	 * @return mixed   A JForm object on success, false on failure
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Get the form.
 		$form = $this->loadForm('com_jem.group', 'group', array('control' => 'jform', 'load_data' => $loadData));
+
 		if (empty($form)) {
 			return false;
 		}
@@ -96,9 +92,9 @@ class JEMModelGroup extends JemModelAdmin
 	/**
 	 * Method to get a single record.
 	 *
-	 * @param	integer	The id of the primary key.
+	 * @param  integer The id of the primary key.
 	 *
-	 * @return	mixed	Object on success, false on failure.
+	 * @return mixed   Object on success, false on failure.
 	 */
 	public function getItem($pk = null)
 	{
@@ -109,11 +105,9 @@ class JEMModelGroup extends JemModelAdmin
 
 	/**
 	 * Method to get the data that should be injected in the form.
-	 *
 	 */
 	protected function loadFormData()
 	{
-
 		// Check the session for previously entered form data.
 		$data = JFactory::getApplication()->getUserState('com_jem.edit.group.data', array());
 
@@ -127,7 +121,7 @@ class JEMModelGroup extends JemModelAdmin
 	/**
 	 * Prepare and sanitise the table data prior to saving.
 	 *
-	 * With $table you can call a table name
+	 * @param JTable The table object to prepare.
 	 *
 	 */
 	protected function _prepareTable($table)
@@ -138,7 +132,7 @@ class JEMModelGroup extends JemModelAdmin
 		// Make sure the data is valid
 		if (!$table->check()) {
 			$this->setError($table->getError());
-			return false;
+			return;
 		}
 
 		// Store data
@@ -164,25 +158,23 @@ class JEMModelGroup extends JemModelAdmin
 			$columns = array('group_id', 'member');
 			$values = array((int)$table->id, $member);
 
-			$query
-				->insert($db->quoteName('#__jem_groupmembers'))
-				->columns($db->quoteName($columns))
-				->values(implode(',', $values));
+			$query->insert($db->quoteName('#__jem_groupmembers'))
+			      ->columns($db->quoteName($columns))
+			      ->values(implode(',', $values));
 
 			$db->setQuery($query);
 			$db->execute();
 		}
 	}
 
-
 	/**
 	 * Method to get the members data
 	 *
-	 * @access	public
-	 * @return	boolean	True on success
+	 * @access public
+	 * @return array List of members
 	 *
 	 */
-	function &getMembers()
+	public function getMembers()
 	{
 		$members = $this->_members();
 
@@ -190,73 +182,65 @@ class JEMModelGroup extends JemModelAdmin
 
 		if (!empty($members)) {
 			$query = 'SELECT id AS value, username, name'
-					. ' FROM #__users'
-					. ' WHERE id IN ('.$members.')'
-					. ' ORDER BY name ASC'
-					;
+			       . ' FROM #__users'
+			       . ' WHERE id IN ('.$members.')'
+			       . ' ORDER BY name ASC'
+			       ;
 
 			$this->_db->setQuery($query);
-
 			$users = $this->_db->loadObjectList();
 
-			for($i=0; $i < count($users); $i++) {
-			$item = $users[$i];
-
-			$item->text = $item->name.' ('.$item->username.')';
+			foreach ($users as &$user) {
+				$user->text = $user->name . ' (' . $user->username . ')';
 			}
-
 		}
+
 		return $users;
 	}
 
-
 	/**
-	 * Method to get the selected members
+	 * Method to get the selected members.
 	 *
-	 * @access	public
-	 * @return	string
+	 * @access protected
+	 * @return string
 	 *
 	 */
 	protected function _members()
 	{
 		$item = parent::getItem();
 
+		$members = null;
+
 		//get selected members
-		if ($item->id == null) {
-			$this->_members = null;
-		} else {
-			if ($item->id) {
-				$query = 'SELECT member'
-						. ' FROM #__jem_groupmembers'
-						. ' WHERE group_id = '.(int)$item->id;
+		if ($item->id) {
+			$query = 'SELECT member'
+			       . ' FROM #__jem_groupmembers'
+			       . ' WHERE group_id = '.(int)$item->id;
 
-				$this->_db->setQuery ($query);
+			$this->_db->setQuery ($query);
+			$member_ids = $this->_db->loadColumn();
 
-				$member_ids = $this->_db->loadColumn();
-
-				if (is_array($member_ids)) {
-					$this->_members = implode(',', $member_ids);
-				}
+			if (is_array($member_ids)) {
+				$members = implode(',', $member_ids);
 			}
 		}
 
-		return $this->_members;
+		return $members;
 	}
 
-
 	/**
-	 * Method to get the available users
+	 * Method to get the available users.
 	 *
-	 * @access	public
-	 * @return	mixed
+	 * @access public
+	 * @return mixed
 	 *
 	 */
-	function &getAvailable()
+	public function getAvailable()
 	{
 		$members = $this->_members();
 
 		// get non selected members
-		$query = 'SELECT id AS value, username, name FROM #__users';
+		$query  = 'SELECT id AS value, username, name FROM #__users';
 		$query .= ' WHERE block = 0' ;
 
 		if ($members) {
@@ -266,15 +250,12 @@ class JEMModelGroup extends JemModelAdmin
 		$query .= ' ORDER BY name ASC';
 
 		$this->_db->setQuery($query);
+		$available = $this->_db->loadObjectList();
 
-		$this->_available = $this->_db->loadObjectList();
-
-		for($i=0, $n=count($this->_available); $i < $n; $i++) {
-			$item = $this->_available[$i];
-
-			$item->text = $item->name.' ('.$item->username.')';
+		foreach ($available as &$item) {
+			$item->text = $item->name . ' (' . $item->username . ')';
 		}
 
-		return $this->_available;
+		return $available;
 	}
 }

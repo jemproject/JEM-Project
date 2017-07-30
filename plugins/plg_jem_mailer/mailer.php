@@ -39,7 +39,7 @@ class plgJemMailer extends JPlugin
 	/**
 	 * Constructor
 	 *
-	 * @param   object  &$subject  The object to observe
+	 * @param   object &$subject  The object to observe
 	 * @param   array   $config    An array that holds the plugin configuration
 	 *
 	 */
@@ -61,9 +61,9 @@ class plgJemMailer extends JPlugin
 	/**
 	 * This method handles any mailings triggered by an event registration action
 	 *
-	 * @access	public
-	 * @param   int 	$register_id 	 Integer Registration record identifier
-	 * @return	boolean
+	 * @access  public
+	 * @param   int  $register_id  Integer Registration record identifier
+	 * @return  boolean
 	 *
 	 */
 	public function onEventUserRegistered($register_id)
@@ -244,9 +244,9 @@ class plgJemMailer extends JPlugin
 	/**
 	 * This method handles any mailings triggered by an attendees being bumped on/off waiting list
 	 *
-	 * @access	public
-	 * @param   int 	$register_id 	 Integer Registration record identifier
-	 * @return	boolean
+	 * @access public
+	 * @param  int  $register_id  Integer Registration record identifier
+	 * @return boolean
 	 *
 	 */
 	public function onUserOnOffWaitinglist($register_id)
@@ -339,11 +339,11 @@ class plgJemMailer extends JPlugin
 	/**
 	 * This method handles any mailings triggered by an event unregister action
 	 *
-	 * @access	public
-	 * @param   int 	$event_id		Integer Event identifier
-	 * @param   object 	$registration 	Entry from register table deleted now (optional)
-	 * @param   int 	$register_id 	Integer Registration record identifier (optional)
-	 * @return	boolean
+	 * @access public
+	 * @param  int     $event_id      Integer Event identifier
+	 * @param  object  $registration  Entry from register table deleted now (optional)
+	 * @param  int     $register_id   Integer Registration record identifier (optional)
+	 * @return boolean
 	 *
 	 */
 	public function onEventUserUnregistered($event_id, $registration = false, $register_id = 0)
@@ -506,9 +506,9 @@ class plgJemMailer extends JPlugin
 	/**
 	* This method handles any mailings triggered by an event store action
 	*
-	* @access public
-	* @param int $event_id Event identifier
-	* @param int $is_new Event new or edited
+	* @access  public
+	* @param   int  $event_id  Event identifier
+	* @param   int  $is_new    Event new or edited
 	* @return  boolean
 	*
 	*/
@@ -642,8 +642,8 @@ class plgJemMailer extends JPlugin
 	 * This method handles any mailings triggered by an venue store action
 	 *
 	 * @access  public
-	 * @param   int 	$venue_id 	 Integer Venue identifier
-	 * @param   int 	$is_new  	 Integer Venue new or edited
+	 * @param   int  $venue_id  Integer Venue identifier
+	 * @param   int  $is_new    Integer Venue new or edited
 	 * @return  boolean
 	 *
 	 */
@@ -965,9 +965,9 @@ class plgJemMailer extends JPlugin
 	 * This method executes and send the mail
 	 * info: http://docs.joomla.org/Sending_email_from_extensions
 	 *
-	 * @access	private
-	 * @param   object 	$data 	 mail data object
-	 * @return	boolean
+	 * @access  private
+	 * @param   object  $data  mail data object
+	 * @return  boolean
 	 */
 	private function _mailer($data)
 	{
@@ -1047,11 +1047,11 @@ class plgJemMailer extends JPlugin
 	 * This method sends the mail
 	 * info: http://docs.joomla.org/Sending_email_from_extensions
 	 *
-	 * @access	private
-	 * @param   string 	$recipient 	 mail recipient
-	 * @param   string  $subject     mail subject
-	 * @param   string  $body        mail body
-	 * @return	boolean              true on success, false on error
+	 * @access  private
+	 * @param   string  $recipient  mail recipient
+	 * @param   string  $subject    mail subject
+	 * @param   string  $body       mail body
+	 * @return  boolean true on success, false on error
 	 */
 	private function _send($recipient, $subject, $body)
 	{

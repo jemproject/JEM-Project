@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -22,153 +22,153 @@ class jem_settings extends JTable
 	 * Unique Key
 	 * @var int
 	 */
-	var $id					= "1";
+	public $id = '1';
 	/** @var int */
-	var $oldevent 			= "2";
+	public $oldevent = '2';
 	/** @var int */
-	var $minus 				= "1";
+	public $minus = '1';
 	/** @var int */
-	var $showtime 			= "0";
+	public $showtime = '0';
 	/** @var int */
-	var $showtitle 			= "1";
+	public $showtitle = '1';
 	/** @var int */
-	var $showlocate 		= "1";
+	public $showlocate = '1';
 	/** @var int */
-	var $showcity 			= "1";
+	public $showcity = '1';
 	/** @var int */
-	var $showmapserv 		= "0";
+	public $showmapserv = '0';
 	/** @var string */
-	var $tablewidth 		= null;
+	public $tablewidth = null;
 	/** @var string */
-	var $datewidth 			= null;
+	public $datewidth = null;
 	/** @var int */
-	var $datemode 			= "1";
+	public $datemode = '1';
 	/** @var string */
-	var $titlewidth 		= null;
+	public $titlewidth = null;
 	/** @var string */
-	var $infobuttonwidth 	= null;
+	public $infobuttonwidth = null;
 	/** @var string */
-	var $locationwidth 		= null;
+	public $locationwidth = null;
 	/** @var string */
-	var $citywidth 			= null;
+	public $citywidth = null;
 	/** @var string */
-	var $formatdate 		= null;
+	public $formatdate = null;
 	/** @var string */
-	var $formatShortDate	= null;
+	public $formatShortDate = null;
 	/** @var string */
-	var $formattime 		= null;
+	public $formattime = null;
 	/** @var string */
-	var $timename 			= null;
+	public $timename = null;
 	/** @var int */
-	var $showdetails 		= "1";
+	public $showdetails = '1';
 	/** @var int */
-	var $showtimedetails 	= "1";
+	public $showtimedetails = '1';
 	/** @var int */
-	var $showevdescription 	= "1";
+	public $showevdescription = '1';
 	/** @var int */
-	var $showdetailstitle 	= "1";
+	public $showdetailstitle = '1';
 	/** @var int */
-	var $showdetailsadress 	= "1";
+	public $showdetailsadress = '1';
 	/** @var int */
-	var $showlocdescription = "1";
+	public $showlocdescription = '1';
 	/** @var int */
-	var $showlinkvenue 		= "1";
+	public $showlinkvenue = '1';
 	/** @var int */
-	var $showdetlinkvenue 	= "1";
+	public $showdetlinkvenue = '1';
 	/** @var int */
-	var $delivereventsyes 	= "-2";
+	public $delivereventsyes = '-2';
 	/** @var int */
-	var $datdesclimit 		= "1000";
+	public $datdesclimit = '1000';
 	/** @var int */
-	var $autopubl 			= "-2";
+	public $autopubl = '-2';
 	/** @var int */
-	var $deliverlocsyes 	= "-2";
+	public $deliverlocsyes = '-2';
 	/** @var int */
-	var $autopublocate 		= "-2";
+	public $autopublocate = '-2';
 	/** @var int */
-	var $showcat 			= "0";
+	public $showcat = '0';
 	/** @var int */
-	var $catfrowidth 		= "";
+	public $catfrowidth = '';
 	/** @var int */
-	var $evdelrec 			= "1";
+	public $evdelrec = '1';
 	/** @var int */
-	var $evpubrec 			= "1";
+	public $evpubrec = '1';
 	/** @var int */
-	var $locdelrec 			= "1";
+	public $locdelrec = '1';
 	/** @var int */
-	var $locpubrec 			= "1";
+	public $locpubrec = '1';
 	/** @var int */
-	var $sizelimit 			= "100";
+	public $sizelimit = '100';
 	/** @var int */
-	var $imagehight 		= "100";
+	public $imagehight = '100';
 	/** @var int */
-	var $imagewidth 		= "100";
+	public $imagewidth = '100';
 	/** @var int */
-	var $gddisabled 		= "0";
+	public $gddisabled = '0';
 	/** @var int */
-	var $imageenabled 		= "1";
+	public $imageenabled = '1';
 	/** @var int */
-	var $comunsolution 		= "0";
+	public $comunsolution = '0';
 	/** @var int */
-	var $comunoption 		= "0";
+	public $comunoption = '0';
 	/** @var int */
-	var $catlinklist 		= "0";
+	public $catlinklist = '0';
 	/** @var int */
-	var $showfroregistra 	= "0";
+	public $showfroregistra = '0';
 	/** @var int */
-	var $showfrounregistra 	= "0";
+	public $showfrounregistra = '0';
 	/** @var int */
-	var $eventedit 			= "-2";
+	public $eventedit = '-2';
 	/** @var int */
-	var $eventeditrec 		= "1";
+	public $eventeditrec = '1';
 	/** @var int */
-	var $eventowner 		= "0";
+	public $eventowner = '0';
 	/** @var int */
-	var $venueedit 			= "-2";
+	public $venueedit = '-2';
 	/** @var int */
-	var $venueeditrec 		= "1";
+	public $venueeditrec = '1';
 	/** @var int */
-	var $venueowner 		= "0";
+	public $venueowner = '0';
 	/** @var int */
-	var $lightbox 			= "0";
+	public $lightbox = '0';
 	/** @var string */
-	var $meta_keywords 		= null;
+	public $meta_keywords = null;
 	/** @var string */
-	var $meta_description 	= null;
+	public $meta_description = null;
 	/** @var int */
-	var $showstate 			= "0";
+	public $showstate = '0';
 	/** @var string */
-	var $statewidth 		= null;
+	public $statewidth = null;
 	/** @var int */
-	var $regname			= null;
+	public $regname = null;
 	/** @var int */
-	var $storeip			= null;
+	public $storeip = null;
 	/** @var string */
-	var $lastupdate 		= null;
+	public $lastupdate = null;
 	/** @var int */
-	var $checked_out 		= 0;
+	public $checked_out = 0;
 	/** @var date */
-	var $checked_out_time 	= 0;
+	public $checked_out_time = 0;
 	/** @var string */
-	var $tld 	= 0;
+	public $tld = 0;
 	/** @var int */
-	var $display_num		= 0;
-	var $cat_num			= 0;
-	var $filter				= 0;
-	var $display			= 0;
-	var $icons				= 0;
-	var $show_print_icon	= 0;
-	var $show_email_icon	= 0;
-	var $events_ical		= 0;
-
+	public $display_num = 0;
+	public $cat_num = 0;
+	public $filter = 0;
+	public $display = 0;
+	public $icons = 0;
+	public $show_print_icon = 0;
+	public $show_email_icon = 0;
+	public $events_ical = 0;
 	/** @var string */
-	var $defaultCountry		= null;
+	public $defaultCountry = null;
 
 
 	/**
 	 * @deprecated since version 2.1.6
 	 */
-	public function __construct(& $db) {
+	public function __construct(& $db)
+	{
 		parent::__construct('#__jem_settings', 'id', $db);
 	}
 }

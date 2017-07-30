@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -20,33 +20,32 @@ class JemModelEventelement extends JModelLegacy
 	 *
 	 * @var array
 	 */
-	var $_data = null;
+	protected $_data = null;
 
 	/**
 	 * Events total
 	 *
 	 * @var integer
 	 */
-	var $_total = null;
+	protected $_total = null;
 
 	/**
 	 * Pagination object
 	 *
 	 * @var object
 	 */
-	var $_pagination = null;
+	protected $_pagination = null;
 
 	/**
 	 * Constructor
-	 *
 	 */
 	public function __construct()
 	{
 		parent::__construct();
 
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
-		$limit		= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limit      = $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
@@ -60,7 +59,7 @@ class JemModelEventelement extends JModelLegacy
 	 * @access public
 	 * @return array
 	 */
-	function getData()
+	public function getData()
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
@@ -89,7 +88,7 @@ class JemModelEventelement extends JModelLegacy
 	 * @access public
 	 * @return integer
 	 */
-	function getTotal()
+	public function getTotal()
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_total))
@@ -107,7 +106,7 @@ class JemModelEventelement extends JModelLegacy
 	 * @access public
 	 * @return integer
 	 */
-	function getPagination()
+	public function getPagination()
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_pagination))
@@ -122,24 +121,24 @@ class JemModelEventelement extends JModelLegacy
 	/**
 	 * Build the query
 	 *
-	 * @access private
+	 * @access protected
 	 * @return string
 	 */
 	protected function _buildQuery()
 	{
 		// Get the WHERE and ORDER BY clauses for the query
-		$where		= $this->_buildContentWhere();
-		$orderby	= $this->_buildContentOrderBy();
+		$where   = $this->_buildContentWhere();
+		$orderby = $this->_buildContentOrderBy();
 
 		$query = 'SELECT a.*, loc.venue, loc.city,c.catname'
-					. ' FROM #__jem_events AS a'
-					. ' LEFT JOIN #__jem_venues AS loc ON loc.id = a.locid'
-					. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-					. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
-					. $where
-					. ' GROUP BY a.id'
-					. $orderby
-					;
+		       . ' FROM #__jem_events AS a'
+		       . ' LEFT JOIN #__jem_venues AS loc ON loc.id = a.locid'
+		       . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+		       . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
+		       . $where
+		       . ' GROUP BY a.id'
+		       . $orderby
+		       ;
 
 		return $query;
 	}
@@ -147,20 +146,20 @@ class JemModelEventelement extends JModelLegacy
 	/**
 	 * Build the order clause
 	 *
-	 * @access private
+	 * @access protected
 	 * @return string
 	 */
 	protected function _buildContentOrderBy()
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_order', 'filter_order', 'a.dates', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.eventelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
+		$filter_order     = $app->getUserStateFromRequest( 'com_jem.eventelement.filter_order', 'filter_order', 'a.dates', 'cmd' );
+		$filter_order_Dir = $app->getUserStateFromRequest( 'com_jem.eventelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 
-		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		$filter_order     = JFilterInput::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
-		$orderby 	= ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', a.dates';
+		$orderby = ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', a.dates';
 
 		return $orderby;
 	}
@@ -168,7 +167,7 @@ class JemModelEventelement extends JModelLegacy
 	/**
 	 * Build the where clause
 	 *
-	 * @access private
+	 * @access protected
 	 * @return string
 	 */
 	protected function _buildContentWhere()
@@ -217,28 +216,23 @@ class JemModelEventelement extends JModelLegacy
 		return $where;
 	}
 
-
-	function getCategories($id)
+	public function getCategories($id)
 	{
 		$query = 'SELECT DISTINCT c.id, c.catname, c.checked_out AS cchecked_out'
-				. ' FROM #__jem_categories AS c'
-				. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-				. ' WHERE rel.itemid = '.(int)$id
-				;
+		       . ' FROM #__jem_categories AS c'
+		       . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
+		       . ' WHERE rel.itemid = '.(int)$id
+		       ;
 
 		$this->_db->setQuery( $query );
+		$cats = $this->_db->loadObjectList();
 
-		$this->_cats = $this->_db->loadObjectList();
-
-		$count = count($this->_cats);
-		for($i = 0; $i < $count; $i++)
-		{
-			$item = $this->_cats[$i];
-			$cats = new JEMCategories($item->id);
-			$item->parentcats = $cats->getParentlist();
+		foreach ($cats as &$cat) {
+			$jc = new JemCategories($cat->id);
+			$cat->parentcats = $jc->getParentlist();
 		}
 
-		return $this->_cats;
+		return $cats;
 	}
 }
 ?>

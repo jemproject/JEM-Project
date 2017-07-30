@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -13,9 +13,9 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 /**
  * Day-View
  */
-class JemViewDay extends JEMView
+class JemViewDay extends JemView
 {
-	function __construct($config = array())
+	public function __construct($config = array())
 	{
 		parent::__construct($config);
 
@@ -26,23 +26,23 @@ class JemViewDay extends JEMView
 	/**
 	 * Creates the Day View
 	 */
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		// Initialize variables
-		$app 			= JFactory::getApplication();
-		$jemsettings 	= JemHelper::config();
-		$settings 		= JemHelper::globalattribs();
-		$menu 			= $app->getMenu();
-		$menuitem 		= $menu->getActive();
-		$document 		= JFactory::getDocument();
-		$params 		= $app->getParams();
-		$uri 			= JFactory::getURI();
-		$jinput 		= $app->input;
-		$task 			= $jinput->getCmd('task', '');
-		$print			= $jinput->getBool('print', false);
-		$pathway 		= $app->getPathWay();
-		$user			= JemFactory::getUser();
-		$itemid 		= $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
+		$app         = JFactory::getApplication();
+		$jemsettings = JemHelper::config();
+		$settings    = JemHelper::globalattribs();
+		$menu        = $app->getMenu();
+		$menuitem    = $menu->getActive();
+		$document    = JFactory::getDocument();
+		$params      = $app->getParams();
+		$uri         = JFactory::getURI();
+		$jinput      = $app->input;
+		$task        = $jinput->getCmd('task', '');
+		$print       = $jinput->getBool('print', false);
+		$pathway     = $app->getPathWay();
+		$user        = JemFactory::getUser();
+		$itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
@@ -154,21 +154,21 @@ class JemViewDay extends JEMView
 		// Create the pagination object
 		$pagination = $this->get('Pagination');
 
-		$this->lists			= $lists;
-		$this->rows				= $rows;
-		$this->noevents			= $noevents;
-		$this->print_link		= $print_link;
-		$this->params			= $params;
-		$this->dellink			= $permissions->canAddEvent; // deprecated
-		$this->pagination		= $pagination;
-		$this->action			= $uri->toString();
-		$this->task				= $task;
-		$this->jemsettings		= $jemsettings;
-		$this->settings			= $settings;
-		$this->permissions		= $permissions;
-		$this->daydate			= $daydate;
-		$this->showdaydate		= $showdaydate; // if true daydate will be shown as h2 sub heading
-		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
+		$this->lists         = $lists;
+		$this->rows          = $rows;
+		$this->noevents      = $noevents;
+		$this->print_link    = $print_link;
+		$this->params        = $params;
+		$this->dellink       = $permissions->canAddEvent; // deprecated
+		$this->pagination    = $pagination;
+		$this->action        = $uri->toString();
+		$this->task          = $task;
+		$this->jemsettings   = $jemsettings;
+		$this->settings      = $settings;
+		$this->permissions   = $permissions;
+		$this->daydate       = $daydate;
+		$this->showdaydate   = $showdaydate; // if true daydate will be shown as h2 sub heading
+		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
 
 		// Doesn't really help - each view has less or more specific needs.
 		//$this->prepareDocument();

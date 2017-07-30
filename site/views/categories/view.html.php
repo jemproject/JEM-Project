@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -13,25 +13,25 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 /**
  * Categories-View
  */
-class JemViewCategories extends JEMView
+class JemViewCategories extends JemView
 {
 	/**
 	 * Creates the Categories-View
 	 */
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		$app = JFactory::getApplication();
 
-		$document 		= JFactory::getDocument();
-		$jemsettings 	= JemHelper::config();
-		$user			= JemFactory::getUser();
-		$print			= $app->input->getBool('print', false);
-		$task			= $app->input->getCmd('task', '');
-		$id 			= $app->input->getInt('id', 1);
-		$model 			= $this->getModel();
+		$document    = JFactory::getDocument();
+		$jemsettings = JemHelper::config();
+		$user        = JemFactory::getUser();
+		$print       = $app->input->getBool('print', false);
+		$task        = $app->input->getCmd('task', '');
+		$id          = $app->input->getInt('id', 1);
+		$model       = $this->getModel();
 
-		$rows 		= $this->get('Data');
-		$pagination = $this->get('Pagination');
+		$rows        = $this->get('Data');
+		$pagination  = $this->get('Pagination');
 
 		// Load css
 		JemHelper::loadCss('jem');
@@ -44,13 +44,13 @@ class JemViewCategories extends JEMView
 		}
 
 		// get menu information
-		$menu		= $app->getMenu();
-		$menuitem	= $menu->getActive();
-		$params 	= $app->getParams('com_jem');
+		$menu          = $app->getMenu();
+		$menuitem      = $menu->getActive();
+		$params        = $app->getParams('com_jem');
 
-		$pagetitle		= $params->def('page_title', $menuitem->title);
-		$pageheading	= $params->def('page_heading', $params->get('page_title'));
-		$pageclass_sfx	= $params->get('pageclass_sfx');
+		$pagetitle     = $params->def('page_title', $menuitem->title);
+		$pageheading   = $params->def('page_heading', $params->get('page_title'));
+		$pageclass_sfx = $params->get('pageclass_sfx');
 
 		// pathway
 		$pathway = $app->getPathWay();
@@ -92,19 +92,19 @@ class JemViewCategories extends JEMView
 			}
 		}
 
-		$this->rows				= $rows;
-		$this->task				= $task;
-		$this->params			= $params;
-		$this->dellink			= $permissions->canAddEvent; // deprecated
-		$this->pagination		= $pagination;
-		$this->item				= $menuitem;
-		$this->jemsettings		= $jemsettings;
-		$this->pagetitle		= $pagetitle;
-		$this->print_link		= $print_link;
-		$this->model			= $model;
-		$this->id				= $id;
-		$this->pageclass_sfx	= htmlspecialchars($pageclass_sfx);
-		$this->permissions		= $permissions;
+		$this->rows          = $rows;
+		$this->task          = $task;
+		$this->params        = $params;
+		$this->dellink       = $permissions->canAddEvent; // deprecated
+		$this->pagination    = $pagination;
+		$this->item          = $menuitem;
+		$this->jemsettings   = $jemsettings;
+		$this->pagetitle     = $pagetitle;
+		$this->print_link    = $print_link;
+		$this->model         = $model;
+		$this->id            = $id;
+		$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
+		$this->permissions   = $permissions;
 
 		parent::display($tpl);
 	}

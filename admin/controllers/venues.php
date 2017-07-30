@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -17,7 +17,7 @@ jimport('joomla.application.component.controlleradmin');
 class JemControllerVenues extends JControllerAdmin
 {
 	/**
-	 * @var		string	The prefix to use with controller messages.
+	 * @var    string  The prefix to use with controller messages.
 	 */
 	protected $text_prefix = 'COM_JEM_VENUES';
 
@@ -25,20 +25,18 @@ class JemControllerVenues extends JControllerAdmin
 	/**
 	 * Proxy for getModel.
 	 */
-	public function getModel($name = 'Venue', $prefix = 'JEMModel', $config = array('ignore_request' => true))
+	public function getModel($name = 'Venue', $prefix = 'JemModel', $config = array('ignore_request' => true))
 	{
 		$model = parent::getModel($name, $prefix, $config);
 		return $model;
 	}
 
-
 	/**
 	 * logic for remove venues
 	 *
 	 * @access public
-	 * @return void
 	 */
-	function remove()
+	public function remove()
 	{
 		// Check for token
 		JSession::checkToken() or jexit(JText::_('COM_JEM_GLOBAL_INVALID_TOKEN'));

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -16,7 +16,7 @@ require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
  * JEM Component Event Controller
  *
 */
-class JEMControllerEvent extends JemControllerForm
+class JemControllerEvent extends JemControllerForm
 {
 	/**
 	 * @var    string  The prefix to use with controller messages.
@@ -28,8 +28,8 @@ class JEMControllerEvent extends JemControllerForm
 	/**
 	 * Constructor.
 	 *
-	 * @param	array An optional associative array of configuration settings.
-	 * @see		JController
+	 * @param  array $config  An optional associative array of configuration settings.
+	 * @see    JController
 	 *
 	 */
 	public function __construct($config = array())

@@ -21,8 +21,7 @@ class JemModelExport extends JModelList
 	 * Constructor.
 	 *
 	 * @param array An optional associative array of configuration settings.
-	 * @see JController
-	 *
+	 * @see   JController
 	 */
 	public function __construct($config = array())
 	{
@@ -39,7 +38,7 @@ class JemModelExport extends JModelList
 	/**
 	 * Method to auto-populate the model state.
 	 *
-	 * Note. Calling getState in this method will result in recursion.
+	 * @Note Calling getState in this method will result in recursion.
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
@@ -61,7 +60,6 @@ class JemModelExport extends JModelList
 		parent::populateState('a.first_name', 'asc');
 	}
 
-
 	/**
 	 * Build an SQL query to load the Events data.
 	 *
@@ -69,15 +67,14 @@ class JemModelExport extends JModelList
 	 */
 	protected function getListQuery()
 	{
-
 		// Retrieve variables
-		$jinput = JFactory::getApplication()->input;
+		$jinput    = JFactory::getApplication()->input;
 		$startdate = $jinput->get('dates', '', 'string');
-		$enddate = $jinput->get('enddates', '', 'string');
-		$cats = $jinput->get('cid', array(), 'array');
+		$enddate   = $jinput->get('enddates', '', 'string');
+		$cats      = $jinput->get('cid', array(), 'array');
 
 		// Create a new query object.
-		$db = $this->getDbo();
+		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -110,6 +107,7 @@ class JemModelExport extends JModelList
 
 	/**
 	 * Returns a CSV file with Events data
+	 *
 	 * @return boolean
 	 */
 	public function getCsv()
@@ -120,12 +118,11 @@ class JemModelExport extends JModelList
 		$includecategories = $jinput->get('categorycolumn', 0, 'int');
 
 		$csv = fopen('php://output', 'w');
-		$db = $this->getDbo();
+		$db  = $this->getDbo();
 
 		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 
 		if ($includecategories == 1) {
-			$header = array();
 			$events = array_keys($db->getTableColumns('#__jem_events'));
 			$categories = array();
 			$categories[] = "categories";
@@ -153,7 +150,6 @@ class JemModelExport extends JModelList
 		return fclose($csv);
 	}
 
-
 	/**
 	 * Build an SQL query to load the Categories data.
 	 *
@@ -162,7 +158,7 @@ class JemModelExport extends JModelList
 	protected function getListQuerycats()
 	{
 		// Create a new query object.
-		$db = $this->getDbo();
+		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -174,6 +170,7 @@ class JemModelExport extends JModelList
 
 	/**
 	 * Returns a CSV file with Categories data
+	 *
 	 * @return boolean
 	 */
 	public function getCsvcats()
@@ -184,12 +181,11 @@ class JemModelExport extends JModelList
 		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 
 		$db = $this->getDbo();
-		$header = array();
 		$header = array_keys($db->getTableColumns('#__jem_categories'));
 		fputcsv($csv, $header, ';');
 
-		$items = $db->setQuery($this->getListQuerycats())
-			->loadObjectList();
+		$db->setQuery($this->getListQuerycats());
+		$items = $db->loadObjectList();
 
 		foreach ($items as $lines) {
 			fputcsv($csv, (array) $lines, ';', '"');
@@ -197,7 +193,6 @@ class JemModelExport extends JModelList
 
 		return fclose($csv);
 	}
-
 
 	/**
 	 * Build an SQL query to load the Venues data.
@@ -207,7 +202,7 @@ class JemModelExport extends JModelList
 	protected function getListQueryvenues()
 	{
 		// Create a new query object.
-		$db = $this->getDbo();
+		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -228,12 +223,11 @@ class JemModelExport extends JModelList
 		$csv = fopen('php://output', 'w');
 		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		$db = $this->getDbo();
-		$header = array();
 		$header = array_keys($db->getTableColumns('#__jem_venues'));
 		fputcsv($csv, $header, ';');
 
-		$items = $db->setQuery($this->getListQueryvenues())
-			->loadObjectList();
+		$db->setQuery($this->getListQueryvenues());
+		$items = $db->loadObjectList();
 
 		foreach ($items as $lines) {
 			fputcsv($csv, (array) $lines, ';', '"');
@@ -241,7 +235,6 @@ class JemModelExport extends JModelList
 
 		return fclose($csv);
 	}
-
 
 	/**
 	 * Build an SQL query to load the Cats/Events data.
@@ -251,7 +244,7 @@ class JemModelExport extends JModelList
 	protected function getListQuerycatsevents()
 	{
 		// Create a new query object.
-		$db = $this->getDbo();
+		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -272,12 +265,11 @@ class JemModelExport extends JModelList
 		$csv = fopen('php://output', 'w');
 		fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
 		$db = $this->getDbo();
-		$header = array();
 		$header = array_keys($db->getTableColumns('#__jem_cats_event_relations'));
 		fputcsv($csv, $header, ';');
 
-		$items = $db->setQuery($this->getListQuerycatsevents())
-			->loadObjectList();
+		$db->setQuery($this->getListQuerycatsevents());
+		$items = $db->loadObjectList();
 
 		foreach ($items as $lines) {
 			fputcsv($csv, (array) $lines, ';', '"');
@@ -288,8 +280,6 @@ class JemModelExport extends JModelList
 
 	/**
 	 * logic to get the categories
-	 *
-	 * @return void
 	 */
 	public function getCategories()
 	{
@@ -309,37 +299,38 @@ class JemModelExport extends JModelList
 
 		if (!$mitems) {
 			$children = array();
-			$mitems = array();
+			$mitems   = array();
 			$parentid = 0;
 		} else {
 			$children = array();
 			// First pass - collect children
 			foreach ($mitems as $v) {
 				$pt = $v->parent_id;
-				$list = @$children[$pt] ? $children[$pt] : array();
+				$list = isset($children[$pt]) ? $children[$pt] : array();
 				array_push($list, $v);
 				$children[$pt] = $list;
 			}
 
 			// list childs of "root" which has no parent and normally id 1
-			$parentid = intval(@isset($children[0][0]->id) ? $children[0][0]->id : 1);
+			$parentid = intval(isset($children[0][0]->id) ? $children[0][0]->id : 1);
 		}
 
 		//get list of the items
-		$list = JEMCategories::treerecurse($parentid, '', array(), $children, 9999, 0, 0);
+		$list = JemCategories::treerecurse($parentid, '', array(), $children, 9999, 0, 0);
 
 		return $list;
 	}
 
 	/**
-	 * Get Cat ID for a specific event
-	 * @param unknown $id event id
-	 * @return Ambigous <boolean, string>
+	 * Get Category IDs for a specific event.
+	 *
+	 * @param  int $id event id
+	 * @return string|boolean Comma separated list of ids on success or false otherwise.
 	 */
-	function getCatEvent($id)
+	public function getCatEvent($id)
 	{
 		// Create a new query object.
-		$db = $this->getDbo();
+		$db    = $this->getDbo();
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
@@ -351,7 +342,7 @@ class JemModelExport extends JModelList
 		$catidlist = $db->loadObjectList();
 
 		if (count($catidlist)) {
-			$catidarray;
+			$catidarray = array();
 			foreach ($catidlist as $obj) {
 				$catidarray[] = $obj->catid;
 			}

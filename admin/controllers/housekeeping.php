@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -35,8 +35,11 @@ class JemControllerHousekeeping extends JControllerLegacy
 	 * @return void
 	 *
 	 */
-	function delete()
+	public function delete()
 	{
+		// Check for request forgeries
+		JSession::checkToken('get') or jexit('Invalid Token');
+
 		$task = JFactory::getApplication()->input->get('task', '');
 		$model = $this->getModel('housekeeping');
 
@@ -54,7 +57,6 @@ class JemControllerHousekeeping extends JControllerLegacy
 		$this->setRedirect($link, $msg);
 	}
 
-
 	/**
 	 * logic to truncate table cats_relations
 	 *
@@ -62,8 +64,11 @@ class JemControllerHousekeeping extends JControllerLegacy
 	 * @return void
 	 *
 	 */
-	function cleanupCatsEventRelations()
+	public function cleanupCatsEventRelations()
 	{
+		// Check for request forgeries
+		JSession::checkToken('get') or jexit('Invalid Token');
+
 		$model = $this->getModel('housekeeping');
 		$model->cleanupCatsEventRelations();
 
@@ -73,11 +78,14 @@ class JemControllerHousekeeping extends JControllerLegacy
 		$this->setRedirect($link, $msg);
 	}
 
-
 	/**
 	 * Truncates JEM tables with exception of settings table
 	 */
-	public function truncateAllData() {
+	public function truncateAllData()
+	{
+		// Check for request forgeries
+		JSession::checkToken('get') or jexit('Invalid Token');
+
 		$model = $this->getModel('housekeeping');
 		$model->truncateAllData();
 
@@ -87,7 +95,6 @@ class JemControllerHousekeeping extends JControllerLegacy
 		$this->setRedirect($link, $msg);
 	}
 
-
 	/**
 	 * Triggerarchive + Recurrences
 	 *
@@ -95,9 +102,12 @@ class JemControllerHousekeeping extends JControllerLegacy
 	 * @return void
 	 *
 	 */
-	function triggerarchive()
+	public function triggerarchive()
 	{
-		JEMHelper::cleanup(1);
+		// Check for request forgeries
+		JSession::checkToken('get') or jexit('Invalid Token');
+
+		JemHelper::cleanup(1);
 
 		$link = 'index.php?option=com_jem&view=housekeeping';
 		$msg = JText::_('COM_JEM_HOUSEKEEPING_AUTOARCHIVE_DONE');

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -89,7 +89,7 @@ class JemModelAttendees extends JModelLegacy
 			$app->setUserState('com_jem.attendees.limitstart', 0);
 		}
 
-		$limit		= $app->getUserStateFromRequest( 'com_jem.attendees.limit', 'limit', $jemsettings->display_num, 'int');
+		$limit      = $app->getUserStateFromRequest( 'com_jem.attendees.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart = $app->getUserStateFromRequest( 'com_jem.attendees.limitstart', 'limitstart', 0, 'int' );
 		// correct start value if required
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
@@ -105,14 +105,15 @@ class JemModelAttendees extends JModelLegacy
 	/**
 	 * Method to set the event identifier
 	 *
-	 * @access	public
-	 * @param	int Event identifier
+	 * @access public
+	 * @param  int Event identifier
 	 */
-	function setId($id)
+	public function setId($id)
 	{
 		// Set id and wipe data
-		$this->_id	    = $id;
-		$this->_data 	= null;
+		$this->_id    = $id;
+		$this->_event = null;
+		$this->_data  = null;
 	}
 
 	/**
@@ -121,7 +122,7 @@ class JemModelAttendees extends JModelLegacy
 	 * @access public
 	 * @return array
 	 */
-	function getData()
+	public function getData()
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data))
@@ -145,7 +146,7 @@ class JemModelAttendees extends JModelLegacy
 	 * @access public
 	 * @return integer
 	 */
-	function getTotal()
+	public function getTotal()
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_total))
@@ -163,7 +164,7 @@ class JemModelAttendees extends JModelLegacy
 	 * @access public
 	 * @return integer
 	 */
-	function getPagination()
+	public function getPagination()
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_pagination))
@@ -180,25 +181,24 @@ class JemModelAttendees extends JModelLegacy
 	 *
 	 * @access protected
 	 * @return string
-	 *
 	 */
 	protected function _buildQuery()
 	{
 		// Get the ORDER BY clause for the query
-		$orderby	= $this->_buildContentOrderBy();
-		$where		= $this->_buildContentWhere();
+		$orderby = $this->_buildContentOrderBy();
+		$where   = $this->_buildContentWhere();
 
 		$query = 'SELECT r.*, u.username, u.name, u.email, a.created_by, a.published,'
-				. ' c.catname, c.id AS catid'
-		. ' FROM #__jem_register AS r'
-		. ' LEFT JOIN #__jem_events AS a ON r.event = a.id'
-		. ' LEFT JOIN #__users AS u ON u.id = r.uid'
-		. ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-		. ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
-		. $where
-		. ' GROUP BY r.id'
-		. $orderby
-		;
+		       . ' c.catname, c.id AS catid'
+		       . ' FROM #__jem_register AS r'
+		       . ' LEFT JOIN #__jem_events AS a ON r.event = a.id'
+		       . ' LEFT JOIN #__users AS u ON u.id = r.uid'
+		       . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
+		       . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
+		       . $where
+		       . ' GROUP BY r.id'
+		       . $orderby
+		       ;
 
 		return $query;
 	}
@@ -208,11 +208,10 @@ class JemModelAttendees extends JModelLegacy
 	 *
 	 * @access protected
 	 * @return string
-	 *
 	 */
 	protected function _buildContentOrderBy()
 	{
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
 		$filter_order     = $app->getUserStateFromRequest('com_jem.attendees.filter_order',     'filter_order',     'r.uregdate', 'cmd' );
 		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.attendees.filter_order_Dir', 'filter_order_Dir', 'ASC',        'word' );
@@ -239,11 +238,10 @@ class JemModelAttendees extends JModelLegacy
 	 *
 	 * @access protected
 	 * @return string
-	 *
 	 */
 	protected function _buildContentWhere()
 	{
-		$app =  JFactory::getApplication();
+		$app  = JFactory::getApplication();
 		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
@@ -255,7 +253,6 @@ class JemModelAttendees extends JModelLegacy
 		$search         = $this->_db->escape(trim(JString::strtolower($search)));
 
 		$where = array();
-
 		$where[] = 'r.event = '.$this->_db->Quote($this->_id);
 		if ($filter_status > -2) {
 			if ($filter_status >= 1) {
@@ -296,23 +293,23 @@ class JemModelAttendees extends JModelLegacy
 	 *
 	 * @access public
 	 * @return object
-	 *
 	 */
-	function getEvent()
+	public function getEvent()
 	{
-		$query = 'SELECT a.id, a.alias, a.title, a.dates, a.enddates, a.times, a.endtimes, a.maxplaces, a.waitinglist,'
-		       . ' a.published, a.created, a.created_by, a.created_by_alias, a.locid, a.registra, a.unregistra,'
-		       . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
-		       . ' a.access, a.attribs, a.checked_out, a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.version,'
-		       . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
-		       . ' a.introtext, a.fulltext, a.language, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by'
-		       . ' FROM #__jem_events AS a WHERE a.id = '.$this->_db->Quote($this->_id);
+		if (empty($this->_event)) {
+			$query = 'SELECT a.id, a.alias, a.title, a.dates, a.enddates, a.times, a.endtimes, a.maxplaces, a.waitinglist,'
+			       . ' a.published, a.created, a.created_by, a.created_by_alias, a.locid, a.registra, a.unregistra,'
+			       . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
+			       . ' a.access, a.attribs, a.checked_out, a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.version,'
+			       . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
+			       . ' a.introtext, a.fulltext, a.language, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by'
+			       . ' FROM #__jem_events AS a WHERE a.id = '.$this->_db->Quote($this->_id);
+			$this->_db->setQuery($query);
 
-		$this->_db->setQuery($query);
+			$this->_event = $this->_db->loadObject();
+		}
 
-		$_event = $this->_db->loadObject();
-
-		return $_event;
+		return $this->_event;
 	}
 
 	/**
@@ -321,9 +318,8 @@ class JemModelAttendees extends JModelLegacy
 	 * @access public
 	 * @param  array  $cid  array of attendee IDs
 	 * @return true on success
-	 *
 	 */
-	function remove($cid = array())
+	public function remove($cid = array())
 	{
 		if (count($cid))
 		{
@@ -335,7 +331,11 @@ class JemModelAttendees extends JModelLegacy
 			if ($this->_db->execute() === false) {
 				JError::raiseError(1001, $this->_db->getErrorMsg());
 			}
+
+			// clear attendees cache
+			$this->_data = null;
 		}
+
 		return true;
 	}
 
@@ -344,13 +344,12 @@ class JemModelAttendees extends JModelLegacy
 	###########
 
 	/**
-	 * Get users data
+	 * Get list of ALL active, non-blocked users incl. registrytion status if attendee.
 	 */
-	function getUsers()
+	public function getUsers()
 	{
 		$query      = $this->_buildQueryUsers();
 		$pagination = $this->getUsersPagination();
-
 		$rows       = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 
 		// Add registration status if available
@@ -383,7 +382,7 @@ class JemModelAttendees extends JModelLegacy
 	/**
 	 * Get users registered on given event
 	 */
-	static function getRegisteredUsers($eventId)
+	static public function getRegisteredUsers($eventId)
 	{
 		if (empty($eventId)) {
 			return array();
@@ -406,7 +405,7 @@ class JemModelAttendees extends JModelLegacy
 	/**
 	 * users-Pagination
 	 **/
-	function getUsersPagination()
+	public function getUsersPagination()
 	{
 		$jemsettings = JemHelper::config();
 		$app         = JFactory::getApplication();
@@ -424,7 +423,6 @@ class JemModelAttendees extends JModelLegacy
 
 		return $pagination;
 	}
-
 
 	/**
 	 * users-query

@@ -104,6 +104,7 @@ defined('_JEXEC') or die;
 		</div>
 		<?php endif; ?>
 
+		<?php echo JHtml::_( 'form.token' ); ?>
 		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="view" value="export" />
 		<input type="hidden" name="controller" value="export" />

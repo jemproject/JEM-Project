@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -90,6 +90,7 @@ defined('_JEXEC') or die;
 				<legend><?php echo JText::_('COM_JEM_IMPORT_EL_IMPORT_FROM_EL'); ?></legend>
 				<p><?php echo JText::_('COM_JEM_IMPORT_EL_PREFIX'); ?></p>
 				<p><?php echo JText::_('COM_JEM_IMPORT_EL_PREFIX_ATTENTION'); ?></p>
+				<?php echo JHtml::_('form.token'); ?>
 				<input type="hidden" name="task" id="el-task0" value="" />
 				<input type="hidden" name="option" value="com_jem" />
 				<input type="hidden" name="view" value="import" />
@@ -141,6 +142,7 @@ defined('_JEXEC') or die;
 					<?php endif; ?>
 					<?php echo JText::_('COM_JEM_IMPORT_EL_IMPORT_FROM_JOOMLA15'); ?>
 				</p>
+				<?php echo JHtml::_('form.token'); ?>
 				<input type="hidden" name="startToken" value="1" />
 				<input type="hidden" name="step" value="2" />
 				<input type="hidden" name="option" value="com_jem" />
@@ -256,6 +258,7 @@ defined('_JEXEC') or die;
 	</tr>
 	</table>
 
+	<?php echo JHtml::_('form.token'); ?>
 	<input type="hidden" name="option" value="com_jem" />
 	<input type="hidden" name="view" value="import" />
 	<input type="hidden" name="controller" value="import" />

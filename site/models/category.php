@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -12,17 +12,19 @@ require_once dirname(__FILE__) . '/eventslist.php';
 
 /**
  * Model: Category
+ *
+ * \todo Remove all the collected stuff copied from somewhere but unused/useless.
  */
 class JemModelCategory extends JemModelEventslist
 {
 	protected $_id			= null;
-	protected $_data		= null;
-	protected $_childs		= null;
-	protected $_category	= null;
-	//protected $_pagination	= null;
+	//protected $_data		= null;
+	//protected $_childs	= null;
+	//protected $_category	= null;
+	//protected $_pagination= null;
 	protected $_item		= null;
-	protected $_articles	= null;
-	protected $_siblings	= null;
+	//protected $_articles	= null;
+	//protected $_siblings	= null;
 	protected $_children	= null;
 	protected $_parent	= null;
 
@@ -48,7 +50,7 @@ class JemModelCategory extends JemModelEventslist
 	/**
 	 * Set Date
 	 */
-	function setdate($date)
+	public function setdate($date)
 	{
 		$this->_date = $date;
 	}
@@ -56,18 +58,19 @@ class JemModelCategory extends JemModelEventslist
 	/**
 	 * Method to set the category id
 	 */
-	function setId($id)
+	public function setId($id)
 	{
 		// Set new category ID and wipe data
-		$this->_id			= $id;
-		$this->_data		= null;
+		$this->_id   = $id;
+		$this->_item = null;
+		//$this->_data = null;
 	}
 
 	/**
 	 * set limit
 	 * @param int value
 	 */
-	function setLimit($value)
+	public function setLimit($value)
 	{
 		$this->setState('list.limit', (int) $value);
 	}
@@ -76,11 +79,10 @@ class JemModelCategory extends JemModelEventslist
 	 * set limitstart
 	 * @param int value
 	 */
-	function setLimitStart($value)
+	public function setLimitStart($value)
 	{
 		$this->setState('list.start', (int) $value);
 	}
-
 
 	/**
 	 * Method to auto-populate the model state.
@@ -146,15 +148,15 @@ class JemModelCategory extends JemModelEventslist
 		## ORDER ##
 		###########
 
-		$filter_order		= $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
+		$filter_order = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order', 'filter_order', 'a.dates', 'cmd');
 		$filter_order_DirDefault = 'ASC';
 		// Reverse default order for dates in archive mode
 		if($task == 'archive' && $filter_order == 'a.dates') {
 			$filter_order_DirDefault = 'DESC';
 		}
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
-		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
+		$filter_order     = JFilterInput::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
 		$default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
 		if ($filter_order == 'a.dates') {
@@ -167,14 +169,13 @@ class JemModelCategory extends JemModelEventslist
 		$this->setState('filter.orderby',$orderby);
 	}
 
-
 	/**
 	 * Get the events in the category
 	 */
-	function getItems()
+	public function getItems()
 	{
 		//$params = clone $this->getState('params');
-		$items	= parent::getItems();
+		$items = parent::getItems();
 
 		if ($items) {
 			return $items;
@@ -183,11 +184,8 @@ class JemModelCategory extends JemModelEventslist
 		return array();
 	}
 
-
 	/**
 	 * Method to get category data for the current category
-	 *
-	 * @param	int		An optional ID
 	 */
 	public function getCategory()
 	{
@@ -240,11 +238,10 @@ class JemModelCategory extends JemModelEventslist
 		return $this->_item;
 	}
 
-
 	/**
-	 * @return	JDatabaseQuery
+	 * @return JDatabaseQuery
 	 */
-	function getListQuery()
+	protected function getListQuery()
 	{
 		//$params  = $this->state->params;
 		//$jinput  = JFactory::getApplication()->input;
@@ -272,7 +269,7 @@ class JemModelCategory extends JemModelEventslist
 	/**
 	 * Get the left sibling (adjacent) categories.
 	 */
-	function &getLeftSibling()
+	public function &getLeftSibling()
 	{
 		if (!is_object($this->_item)) {
 			$this->getCategory();
@@ -284,7 +281,7 @@ class JemModelCategory extends JemModelEventslist
 	/**
 	 * Get the right sibling (adjacent) categories.
 	 */
-	function &getRightSibling()
+	public function &getRightSibling()
 	{
 		if (!is_object($this->_item)) {
 			$this->getCategory();
@@ -296,7 +293,7 @@ class JemModelCategory extends JemModelEventslist
 	/**
 	 * Get the child categories.
 	 */
-	function &getChildren()
+	public function &getChildren()
 	{
 		if (!is_object($this->_item)) {
 			$this->getCategory();

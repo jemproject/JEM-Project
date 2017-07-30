@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -21,100 +21,105 @@ class jem_events extends JTable
 	 * Primary Key
 	 * @var int
 	 */
-	var $id 				= null;
+	public $id = null;
 	/** @var int */
-	var $locid 				= null;
+	public $locid = null;
 	/** @var date */
-	var $dates 				= null;
+	public $dates = null;
 	/** @var date */
-	var $enddates 			= null;
+	public $enddates = null;
 	/** @var date */
-	var $times 				= null;
+	public $times = null;
 	/** @var date */
-	var $endtimes 			= null;
+	public $endtimes = null;
 	/** @var string */
-	var $title 				= '';
+	public $title = '';
 	/** @var string */
-	var $alias	 			= '';
+	public $alias = '';
 	/** @var date */
-	var $created	 		= null;
+	public $created = null;
 	/** @var int */
-	var $created_by			= null;
+	public $created_by = null;
 	/** @var int */
-	var $modified 			= 0;
+	public $modified = 0;
 	/** @var int */
-	var $modified_by 		= null;
+	public $modified_by = null;
 	/** @var int */
-	var $version	 		= 0;
+	public $version = 0;
 	/** @var string */
-	var $meta_description 	= '';
+	public $meta_description = '';
 	/** @var string */
-	var $meta_keywords		= '';
+	public $meta_keywords = '';
 	/**
 	 * repetition intervall
 	 *
 	 * @var int
 	 */
-	var $recurrence_number	= 0;
+	public $recurrence_number = 0;
 	/**
 	 * type of recurrence (daily, weekly, monthly)
 	 *
 	 * @var int
 	 */
-	var $recurrence_type	= 0;
+	public $recurrence_type = 0;
 	/**
 	 * occurence counter
 	 *
 	 * @var int
 	 */
-	var $recurrence_counter = 0;
+	public $recurrence_counter = 0;
 	/**
 	* limit counter for repetition
 	*
 	* @var string
 	*/
-	var $recurrence_limit = 0;
+	public $recurrence_limit = 0;
 	/**
 	* limit date for repetition
 	*
 	* @var string
 	*/
-	var $recurrence_limit_date = null;
+	public $recurrence_limit_date = null;
 	/**
 	* list of day the event occurs on (2 letters, separated by comma)
 	*
 	* @var string
 	*/
-	var $recurrence_byday 	= '';
+	public $recurrence_byday = '';
 	/** @var int id of first event for recurrence events*/
-	var $recurrence_first_id = 0;
+	public $recurrence_first_id = 0;
 	/** @var string */
-	var $datimage 			= '';
+	public $datimage = '';
 	/** @var string */
-	var $author_ip 			= null;
+	public $author_ip = null;
 	/** @var int */
-	var $published 			= null;
+	public $published = null;
 	/** @var int */
-	var $registra 			= null;
+	public $registra = null;
 	/** @var int */
-	var $unregistra 		= null;
+	public $unregistra = null;
 	/** @var int */
-	var $maxplaces 			= 0;
+	public $maxplaces = 0;
 	/** @var int */
-	var $waitinglist 		= 0;
+	public $waitinglist = 0;
 	/** @var int */
-	var $hits				= 0;
+	public $hits = 0;
 	/** @var int */
-	var $checked_out 		= 0;
+	public $checked_out = 0;
 	/** @var date */
-	var $checked_out_time 	= 0;
+	public $checked_out_time = 0;
 
-	public function __construct(& $db) {
+
+	public function __construct(& $db)
+	{
 		parent::__construct('#__jem_events', 'id', $db);
 	}
 
-	// overloaded check function
-	function check($jemsettings=null)
+	/** overloaded check function
+	 *
+	 * @return boolean
+	 */
+	public function check($jemsettings = null)
 	{
 		// Check fields
 		if (empty($this->enddates)) {
@@ -135,7 +140,8 @@ class jem_events extends JTable
 			return false;
 		}
 		if (empty($this->endtimes) || empty($this->times) || preg_match("/^:[0-5][0-9](:[0-5][0-9])?$/", $this->endtimes)
-			 || preg_match("/^:[0-5][0-9](:[0-5][0-9])?$/", $this->times)) {
+		    || preg_match("/^:[0-5][0-9](:[0-5][0-9])?$/", $this->times))
+		{
 			$this->endtimes = NULL;
 		}
 
@@ -156,7 +162,7 @@ class jem_events extends JTable
 
 		$alias = JFilterOutput::stringURLSafe($this->title);
 
-		if(empty($this->alias) || $this->alias === $alias) {
+		if (empty($this->alias) || $this->alias === $alias) {
 			$this->alias = $alias;
 		}
 
@@ -200,7 +206,7 @@ class jem_events extends JTable
 		}
 
 		//No venue or category choosen?
-		//if($this->locid == '') {
+		//if ($this->locid == '') {
 		//	$this->_error = JText::_('COM_JEM_VENUE_EMPTY');
 		//	JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
 		//	return false;
@@ -215,13 +221,13 @@ class jem_events extends JTable
 	 * Can be overloaded/supplemented by the child class
 	 *
 	 * @access public
-	 * @param boolean If false, null object variables are not updated
+	 * @param  boolean If false, null object variables are not updated
 	 * @return null|string null if successful otherwise returns and error message
 	 */
-	function insertIgnore($updateNulls=false)
+	public function insertIgnore($updateNulls = false)
 	{
 		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if(!$ret) {
+		if (!$ret) {
 			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
 			return false;
 		}
@@ -232,9 +238,9 @@ class jem_events extends JTable
 	 * Inserts a row into a table based on an objects properties, ignore if already exists
 	 *
 	 * @access protected
-	 * @param string  The name of the table
-	 * @param object  An object whose properties match table fields
-	 * @param string  The name of the primary key. If provided the object property is updated.
+	 * @param  string  The name of the table
+	 * @param  object  An object whose properties match table fields
+	 * @param  string  The name of the primary key. If provided the object property is updated.
 	 * @return int number of affected row
 	 */
 	protected function _insertIgnoreObject($table, &$object, $keyName = NULL)

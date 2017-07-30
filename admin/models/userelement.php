@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -22,21 +22,21 @@ class JemModelUserelement extends JModelLegacy
 	 *
 	 * @var array
 	 */
-	var $_data = null;
+	protected $_data = null;
 
 	/**
 	 * total
 	 *
 	 * @var integer
 	 */
-	var $_total = null;
+	protected $_total = null;
 
 	/**
 	 * Pagination object
 	 *
 	 * @var object
 	 */
-	var $_pagination = null;
+	protected $_pagination = null;
 
 	/**
 	 * Constructor
@@ -46,9 +46,9 @@ class JemModelUserelement extends JModelLegacy
 	{
 		parent::__construct();
 
-		$app =  JFactory::getApplication();
+		$app = JFactory::getApplication();
 
-		$limit		= $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limit      = $app->getUserStateFromRequest( 'com_jem.limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$limitstart = $app->getUserStateFromRequest( 'com_jem.limitstart', 'limitstart', 0, 'int' );
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
@@ -62,12 +62,12 @@ class JemModelUserelement extends JModelLegacy
 	 * @access public
 	 * @return array
 	 */
-	function getData()
+	public function getData()
 	{
-		$query 		= $this->buildQuery();
+		$query      = $this->buildQuery();
 		$pagination = $this->getPagination();
 
-		$rows 		= $this->_getList($query, $pagination->limitstart, $pagination->limit);
+		$rows       = $this->_getList($query, $pagination->limitstart, $pagination->limit);
 
 		return $rows;
 	}
@@ -75,25 +75,24 @@ class JemModelUserelement extends JModelLegacy
 	/**
 	 * Query
 	 */
+	protected function buildQuery()
+	{
+		$app              = JFactory::getApplication();
+		$jemsettings      = JemHelper::config();
 
-	function buildQuery() {
+		$filter_order     = $app->getUserStateFromRequest( 'com_jem.userelement.filter_order', 'filter_order', 'u.name', 'cmd' );
+		$filter_order_Dir = $app->getUserStateFromRequest( 'com_jem.userelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
 
-		$app 				= JFactory::getApplication();
-		$jemsettings 		= JemHelper::config();
+		$filter_order     = JFilterInput::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
-		$filter_order		= $app->getUserStateFromRequest( 'com_jem.userelement.filter_order', 'filter_order', 'u.name', 'cmd' );
-		$filter_order_Dir	= $app->getUserStateFromRequest( 'com_jem.userelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
-
-		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
-
-		$search 			= $app->getUserStateFromRequest('com_jem.userelement.filter_search', 'filter_search', '', 'string' );
-		$search 			= $this->_db->escape( trim(JString::strtolower( $search ) ) );
+		$search           = $app->getUserStateFromRequest('com_jem.userelement.filter_search', 'filter_search', '', 'string' );
+		$search           = $this->_db->escape( trim(JString::strtolower( $search ) ) );
 
 		// start query
-		$db 	= JFactory::getDBO();
+		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
-		$query->select(array('u.id','u.name','u.username','u.email'));
+		$query->select(array('u.id', 'u.name', 'u.username', 'u.email'));
 		$query->from('#__users as u');
 
 		// where
@@ -102,7 +101,7 @@ class JemModelUserelement extends JModelLegacy
 
 		/*
 		 * Search name
-		**/
+		 */
 		if ($search) {
 			$where[] = ' LOWER(u.name) LIKE \'%'.$search.'%\' ';
 		}
@@ -110,15 +109,13 @@ class JemModelUserelement extends JModelLegacy
 		$query->where($where);
 
 		// ordering
-		$orderby 	= '';
-		$orderby 	= $filter_order.' '.$filter_order_Dir;
+		$orderby = '';
+		$orderby = $filter_order.' '.$filter_order_Dir;
 
 		$query->order($orderby);
 
 		return $query;
-
 	}
-
 
 	/**
 	 * Method to get a pagination object
@@ -126,7 +123,7 @@ class JemModelUserelement extends JModelLegacy
 	 * @access public
 	 * @return integer
 	 */
-	function getPagination()
+	public function getPagination()
 	{
 		$app         = JFactory::getApplication();
 		$jemsettings = JemHelper::config();

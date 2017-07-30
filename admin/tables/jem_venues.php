@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -21,68 +21,72 @@ class jem_venues extends JTable
 	 * Primary Key
 	 * @var int
 	 */
-	var $id 				= null;
+	public $id = null;
 	/** @var string */
-	var $venue 				= '';
+	public $venue = '';
 	/** @var string */
-	var $alias	 			= '';
+	public $alias = '';
 	/** @var string */
-	var $url 				= '';
+	public $url = '';
 	/** @var string */
-	var $street 			= '';
+	public $street = '';
 	/** @var string */
-	var $postalCode			= '';
+	public $postalCode = '';
 	/** @var string */
-	var $city 				= '';
+	public $city = '';
 	/** @var string */
-	var $state				= '';
+	public $state = '';
 	/** @var string */
-	var $country			= '';
+	public $country = '';
 	/** @var float */
-	var $latitude			= null;
+	public $latitude = null;
 	/** @var float */
-	var $longitude			= null;
+	public $longitude = null;
 	/** @var string */
-	var $locdescription 	= null;
+	public $locdescription = null;
 	/** @var string */
-	var $meta_description 	= '';
+	public $meta_description = '';
 	/** @var string */
-	var $meta_keywords		= '';
+	public $meta_keywords = '';
 	/** @var string */
-	var $locimage 			= '';
+	public $locimage = '';
 	/** @var int */
-	var $map		 		= null;
+	public $map = null;
 	/** @var int */
-	var $created_by			= null;
+	public $created_by = null;
 	/** @var string */
-	var $author_ip	 		= null;
+	public $author_ip = null;
 	/** @var date */
-	var $created		 	= null;
+	public $created = null;
 	/** @var date */
-	var $modified 			= 0;
+	public $modified = 0;
 	/** @var int */
-	var $modified_by 		= null;
+	public $modified_by = null;
 	/** @var int */
-	var $version	 		= null;
+	public $version = null;
 	/** @var int */
-	var $published	 		= null;
+	public $published = null;
 	/** @var int */
-	var $checked_out 		= 0;
+	public $checked_out = 0;
 	/** @var date */
-	var $checked_out_time 	= 0;
+	public $checked_out_time = 0;
 	/** @var int */
-	var $ordering 			= null;
+	public $ordering = null;
 
-	public function __construct(& $db) {
+
+	public function __construct(& $db)
+	{
 		parent::__construct('#__jem_venues', 'id', $db);
 	}
 
-	// overloaded check function
-	//function check($jemsettings)
-	function check()
+	/** overloaded check function
+	 *
+	 * @return boolean
+	 */
+	public function check()
 	{
 		// not typed in a venue name
-		if(!trim($this->venue)) {
+		if (!trim($this->venue)) {
 			$this->_error = JText::_('COM_JEM_ADD_VENUE');
 			JError::raiseWarning('SOME_ERROR_CODE', $this->_error);
 			return false;
@@ -90,7 +94,7 @@ class jem_venues extends JTable
 
 		$alias = JFilterOutput::stringURLSafe($this->venue);
 
-		if(empty($this->alias) || $this->alias === $alias) {
+		if (empty($this->alias) || $this->alias === $alias) {
 			$this->alias = $alias;
 		}
 
@@ -182,13 +186,13 @@ class jem_venues extends JTable
 	 * Can be overloaded/supplemented by the child class
 	 *
 	 * @access public
-	 * @param boolean If false, null object variables are not updated
+	 * @param  boolean If false, null object variables are not updated
 	 * @return null|string null if successful otherwise returns and error message
 	 */
-	function insertIgnore($updateNulls=false)
+	public function insertIgnore($updateNulls = false)
 	{
 		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if(!$ret) {
+		if (!$ret) {
 			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
 			return false;
 		}
@@ -199,9 +203,9 @@ class jem_venues extends JTable
 	 * Inserts a row into a table based on an objects properties, ignore if already exists
 	 *
 	 * @access protected
-	 * @param string  The name of the table
-	 * @param object  An object whose properties match table fields
-	 * @param string  The name of the primary key. If provided the object property is updated.
+	 * @param  string  The name of the table
+	 * @param  object  An object whose properties match table fields
+	 * @param  string  The name of the primary key. If provided the object property is updated.
 	 * @return int number of affected row
 	 */
 	protected function _insertIgnoreObject($table, &$object, $keyName = NULL)

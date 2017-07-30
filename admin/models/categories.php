@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.1.5
+ * @version     2.2.2
  * @package     JEM
- * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -19,8 +19,8 @@ class JemModelCategories extends JModelList
 	/**
 	 * Constructor.
 	 *
-	 * @param	array	An optional associative array of configuration settings.
-	 * @see		JController
+	 * @param  array  An optional associative array of configuration settings.
+	 * @see    JController
 	 */
 	public function __construct($config = array())
 	{
@@ -51,16 +51,16 @@ class JemModelCategories extends JModelList
 	 *
 	 * Note. Calling getState in this method will result in recursion.
 	 *
-	 * @param	string	An optional ordering field.
-	 * @param	string	An optional direction (asc|desc).
+	 * @param  string  An optional ordering field.
+	 * @param  string  An optional direction (asc|desc).
 	 *
 	 * @return	void
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// Initialise variables.
-		$app		= JFactory::getApplication();
-		$context	= $this->context;
+		$app = JFactory::getApplication();
+		$context = $this->context;
 
 		$extension = $app->getUserStateFromRequest('com_jem.categories.filter.extension', 'extension', 'com_jem', 'cmd');
 
@@ -99,30 +99,30 @@ class JemModelCategories extends JModelList
 	 * different modules that might need different sets of data or different
 	 * ordering requirements.
 	 *
-	 * @param	string		$id	A prefix for the store id.
+	 * @param  string  $id  A prefix for the store id.
 	 *
-	 * @return	string		A store id.
+	 * @return string  A store id.
 	 */
 	protected function getStoreId($id = '')
 	{
 		// Compile the store id.
-		$id	.= ':'.$this->getState('filter.search');
-		$id	.= ':'.$this->getState('filter.extension');
-		$id	.= ':'.$this->getState('filter.published');
-		$id	.= ':'.$this->getState('filter.language');
+		$id .= ':'.$this->getState('filter.search');
+		$id .= ':'.$this->getState('filter.extension');
+		$id .= ':'.$this->getState('filter.published');
+		$id .= ':'.$this->getState('filter.language');
 
 		return parent::getStoreId($id);
 	}
 
 	/**
-	 * @return	string
+	 * @return string
 	 */
-	function getListQuery()
+	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db		= $this->getDbo();
-		$query	= $db->getQuery(true);
-		$user	= JemFactory::getUser();
+		$db    = $this->getDbo();
+		$query = $db->getQuery(true);
+		$user  = JemFactory::getUser();
 
 		// Select the required fields from the table.
 		$query->select(
@@ -169,7 +169,7 @@ class JemModelCategories extends JModelList
 		// Implement View Level Access
 		if (!$user->authorise('core.admin'))
 		{
-		    $groups	= implode(',', $user->getAuthorisedViewLevels());
+		    $groups = implode(',', $user->getAuthorisedViewLevels());
 			$query->where('a.access IN ('.$groups.')');
 		}
 
@@ -181,7 +181,6 @@ class JemModelCategories extends JModelList
 		elseif ($published === '') {
 			$query->where('(a.published IN (0, 1))');
 		}
-
 
 		$query->where('(a.alias NOT LIKE "root")');
 
@@ -219,14 +218,13 @@ class JemModelCategories extends JModelList
 		return $query;
 	}
 
-
 	/**
 	 *
 	 */
 	public function getItems()
 	{
-		$items	= parent::getItems();
-		$app	= JFactory::getApplication();
+		$items = parent::getItems();
+		$app   = JFactory::getApplication();
 
 		foreach ($items as $item) {
 			$item->assignedevents = $this->countCatEvents($item->id);
@@ -235,11 +233,10 @@ class JemModelCategories extends JModelList
 		return $items;
 	}
 
-
 	private function countCatEvents($id)
 	{
-		$db		= $this->getDbo();
-		$query	= $db->getQuery(true);
+		$db = $this->getDbo();
+		$query = $db->getQuery(true);
 
 		$query = 'SELECT COUNT(catid) as num'
 				.' FROM #__jem_cats_event_relations'
@@ -252,6 +249,5 @@ class JemModelCategories extends JModelList
 
 		return $result;
 	}
-
 
 }

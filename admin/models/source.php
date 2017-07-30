@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -15,7 +15,7 @@ jimport('joomla.filesystem.file');
 /**
  * Source Model
  */
-class JEMModelSource extends JModelForm
+class JemModelSource extends JModelForm
 {
 	/**
 	 * Cache for the template information.
@@ -27,7 +27,7 @@ class JEMModelSource extends JModelForm
 	/**
 	 * Method to auto-populate the model state.
 	 *
-	 * Note. Calling getState in this method will result in recursion.
+	 * @Note Calling getState in this method will result in recursion.
 	 */
 	protected function populateState()
 	{
@@ -39,8 +39,6 @@ class JEMModelSource extends JModelForm
 		// Parse the template id out of the compound reference.
 		$temp = (base64_decode($id));
 		$fileName = $temp;
-
-
 
 		$this->setState('filename', $fileName);
 
@@ -55,9 +53,9 @@ class JEMModelSource extends JModelForm
 	/**
 	 * Method to get the record form.
 	 *
-	 * @param	array	$data		Data for the form.
-	 * @param	boolean	$loadData	True if the form is to load its own data (default case), false if not.
-	 * @return	JForm	A JForm object on success, false on failure
+	 * @param  array   $data     Data for the form.
+	 * @param  boolean $loadData True if the form is to load its own data (default case), false if not.
+	 * @return JForm   A JForm object on success, false on failure
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
@@ -88,7 +86,7 @@ class JEMModelSource extends JModelForm
 	/**
 	 * Method to get the data that should be injected in the form.
 	 *
-	 * @return	mixed	The data for the form.
+	 * @return mixed The data for the form.
 	 */
 	protected function loadFormData()
 	{
@@ -105,32 +103,31 @@ class JEMModelSource extends JModelForm
 	/**
 	 * Method to get a single record.
 	 *
-	 * @return	mixed	Object on success, false on failure.
+	 * @return mixed Object on success, false on failure.
 	 */
-	public function &getSource()
+	public function getSource()
 	{
-		$item = new stdClass;
-		$item->custom = false;
-
-		$fileName	= $this->getState('filename');
-		$custom		= stripos($fileName, 'custom#:');
-
-		$filePath	= JPath::clean(JPATH_ROOT.'/media/com_jem/css/'.$fileName);
+		$fileName = $this->getState('filename');
+		$custom   = stripos($fileName, 'custom#:');
 
 		# custom file?
 		if ($custom !== false) {
 			$file = str_replace('custom#:', '', $fileName);
-			$filePath	= JPath::clean(JPATH_SITE.'/'.$file);
+			$filePath = JPath::clean(JPATH_SITE . '/' . $file);
+		} else {
+			$file = $fileName;
+			$filePath = JPath::clean(JPATH_ROOT . '/media/com_jem/css/' . $file);
 		}
 
+		$item = new stdClass;
 		if (file_exists($filePath)) {
-			$item->filename = $this->getState('filename');
-			if ($custom !== false) {
-				$item->filename = $file;
-				$item->custom	= true;
-			}
-			//$item->source = JFile::read($filePath);
-			$item->source = file_get_contents($filePath);
+			$item->custom   = $custom !== false;
+			$item->filename = $file;
+			$item->source   = file_get_contents($filePath);
+		} else {
+			$item->custom   = false;
+			$item->filename = false;
+			$item->source   = false;
 		}
 
 		if (empty($item->source)) {
@@ -143,24 +140,24 @@ class JEMModelSource extends JModelForm
 	/**
 	 * Method to store the source file contents.
 	 *
-	 * @param	array	The souce data to save.
+	 * @param  array   The souce data to save.
 	 *
-	 * @return	boolean	True on success, false otherwise and internal error set.
+	 * @return boolean True on success, false otherwise and internal error set.
 	 */
 	public function save($data)
 	{
 		$dispatcher = JemFactory::getDispatcher();
-		$fileName	= $this->getState('filename');
-		$custom		= stripos($fileName, 'custom#:');
-
-		$filePath	= JPath::clean(JPATH_ROOT.'/media/com_jem/css/'.$fileName);
+		$fileName   = $this->getState('filename');
+		$custom     = stripos($fileName, 'custom#:');
 
 		# custom file?
 		if ($custom !== false) {
 			$file = str_replace('custom#:', '', $fileName);
-			$filePath	= JPath::clean(JPATH_SITE.'/'.$file);
+			$filePath = JPath::clean(JPATH_SITE . '/' . $file);
+		} else {
+			$file = $fileName;
+			$filePath = JPath::clean(JPATH_ROOT . '/media/com_jem/css/' . $file);
 		}
-
 
 		// Include the extension plugins for the save events.
 		JPluginHelper::importPlugin('extension');
@@ -169,32 +166,34 @@ class JEMModelSource extends JModelForm
 		JClientHelper::setCredentialsFromRequest('ftp');
 		$ftp = JClientHelper::getCredentials('ftp');
 
+		// Trigger the onExtensionBeforeSave event.
+		$result = $dispatcher->trigger('onExtensionBeforeSave', array('com_jem.source', $data, false));
+		if (in_array(false, $result, true)) {
+			$this->setError(JText::sprintf('COM_JEM_CSSMANAGER_ERROR_FAILED_TO_SAVE_FILENAME', $file));
+			return false;
+		}
+
 		// Try to make the template file writeable.
 		if (!$ftp['enabled'] && JPath::isOwner($filePath) && !JPath::setPermissions($filePath, '0644')) {
 			$this->setError(JText::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_WRITABLE'));
 			return false;
 		}
 
-		// Trigger the onExtensionBeforeSave event.
-		$result = $dispatcher->trigger('onExtensionBeforeSave', array('com_jem.source', &$data, false));
-		if (in_array(false, $result, true)) {
-			$this->setError($table->getError());
-			return false;
-		}
-
 		$return = JFile::write($filePath, $data['source']);
 
-		// Try to make the custom template file unwriteable.
-		if (($custom !== false) && !$ftp['enabled'] && JPath::isOwner($filePath) && !JPath::setPermissions($filePath, '0444')) {
-			$this->setError(JText::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_UNWRITABLE'));
+		// Try to make the custom template file read-only again.
+		$retPerm = (($custom !== false) && !$ftp['enabled'] && JPath::isOwner($filePath) && !JPath::setPermissions($filePath, '0444'));
+		// but report save error with higher priority
+		if (!$return) {
+			$this->setError(JText::sprintf('COM_JEM_CSSMANAGER_ERROR_FAILED_TO_SAVE_FILENAME', $file));
 			return false;
-		} elseif (!$return) {
-			$this->setError(JText::sprintf('COM_JEM_CSSMANAGER_ERROR_FAILED_TO_SAVE_FILENAME', $fileName));
+		} elseif (!$retPerm) {
+			$this->setError(JText::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_UNWRITABLE'));
 			return false;
 		}
 
 		// Trigger the onExtensionAfterSave event.
-		$dispatcher->trigger('onExtensionAfterSave', array('com_jem.source', &$table, false));
+		$dispatcher->trigger('onExtensionAfterSave', array('com_jem.source', $data, false));
 
 		return true;
 	}

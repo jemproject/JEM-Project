@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -18,41 +18,42 @@ defined('_JEXEC') or die;
  * @package JEM
  *
  */
-class JEMViewImagehandler extends JViewLegacy {
+class JemViewImagehandler extends JViewLegacy
+{
 
 	/**
 	 * Image selection List
-	 *
 	 */
-	function display($tpl = null) {
-		$app 		= JFactory::getApplication();
-		$option 	= $app->input->getString('option', 'com_jem');
+	public function display($tpl = null)
+	{
+		$app    = JFactory::getApplication();
+		$option = $app->input->getString('option', 'com_jem');
 
 		JHtml::_('behavior.framework');
 
-		if($this->getLayout() == 'uploadimage') {
+		if ($this->getLayout() == 'uploadimage') {
 			$this->_displayuploadimage($tpl);
 			return;
 		}
 
 		//get vars
-		$task 		= $app->input->get('task', '');
-		$search 	= $app->getUserStateFromRequest($option.'.filter_search', 'filter_search', '', 'string');
-		$search 	= trim(JString::strtolower($search));
+		$task   = $app->input->get('task', '');
+		$search = $app->getUserStateFromRequest($option.'.filter_search', 'filter_search', '', 'string');
+		$search = trim(JString::strtolower($search));
 
 		//set variables
 		if ($task == 'selecteventimg') {
 			$folder = 'events';
-			$task 	= 'eventimg';
-			$redi	= 'selecteventimg';
-		} else if ($task == 'selectvenueimg') {
+			$task   = 'eventimg';
+			$redi   = 'selecteventimg';
+		} elseif ($task == 'selectvenueimg') {
 			$folder = 'venues';
 			$task   = 'venueimg';
 			$redi   = 'selectvenueimg';
-		} else if ($task == 'selectcategoriesimg') {
+		} elseif ($task == 'selectcategoriesimg') {
 			$folder = 'categories';
-			$task 	= 'categoriesimg';
-			$redi	= 'selectcategoriesimg';
+			$task   = 'categoriesimg';
+			$redi   = 'selectcategoriesimg';
 		}
 
 		$app->input->set('folder', $folder);
@@ -72,12 +73,12 @@ class JEMViewImagehandler extends JViewLegacy {
 		$pagination = $this->get('Pagination');
 
 		if (count($images) > 0 || $search) {
-			$this->images 		= $images;
-			$this->folder 		= $folder;
-			$this->task 		= $redi;
-			$this->search 		= $search;
-			$this->state		= $this->get('state');
-			$this->pagination 	= $pagination;
+			$this->images     = $images;
+			$this->folder     = $folder;
+			$this->task       = $redi;
+			$this->search     = $search;
+			$this->state      = $this->get('state');
+			$this->pagination = $pagination;
 			parent::display($tpl);
 		} else {
 			//no images in the folder, redirect to uploadscreen and raise notice
@@ -89,7 +90,8 @@ class JEMViewImagehandler extends JViewLegacy {
 		}
 	}
 
-	function setImage($index = 0) {
+	public function setImage($index = 0)
+	{
 		if (isset($this->images[$index])) {
 			$this->_tmp_img = $this->images[$index];
 		} else {
@@ -100,16 +102,17 @@ class JEMViewImagehandler extends JViewLegacy {
 	/**
 	 * Prepares the upload image screen
 	 *
-	 * @param $tpl
+	 * @param  $tpl
 	 *
 	 */
-	protected function _displayuploadimage($tpl = null) {
+	protected function _displayuploadimage($tpl = null)
+	{
 		//initialise variables
-		$uri 			= JFactory::getURI()->toString();
-		$jemsettings	= JEMAdmin::config();
+		$uri         = JFactory::getURI()->toString();
+		$jemsettings = JemAdmin::config();
 
 		//get vars
-		$task 			= JFactory::getApplication()->input->get('task', '');
+		$task = JFactory::getApplication()->input->get('task', '');
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
@@ -118,10 +121,10 @@ class JEMViewImagehandler extends JViewLegacy {
 		$ftp = JClientHelper::setCredentialsFromRequest('ftp');
 
 		//assign data to template
-		$this->task 		= $task;
-		$this->jemsettings 	= $jemsettings;
-		$this->request_url 	= $uri;
-		$this->ftp 			= $ftp;
+		$this->task        = $task;
+		$this->jemsettings = $jemsettings;
+		$this->request_url = $uri;
+		$this->ftp         = $ftp;
 
 		parent::display($tpl);
 	}

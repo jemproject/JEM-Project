@@ -25,10 +25,10 @@ class JemAttachment extends JObject
 	/**
 	 * upload files for the specified object
 	 *
-	 * @param array  data from JInputFiles (as array of n arrays of params, [n][params])
-	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
+	 * @param  array  data from JInputFiles (as array of n arrays of params, [n][params])
+	 * @param  string object identification (should be event<eventid>, category<categoryid>, etc...)
 	 */
-	static function postUpload($post_files, $object)
+	static public function postUpload($post_files, $object)
 	{
 		require_once JPATH_SITE.'/components/com_jem/classes/image.class.php';
 
@@ -117,9 +117,9 @@ class JemAttachment extends JObject
 
 	/**
 	 * update attachment record in db
-	 * @param array (id, name, description, access)
+	 * @param  array (id, name, description, access)
 	 */
-	static function update($attach)
+	static public function update($attach)
 	{
 		if (!is_array($attach) || !isset($attach['id']) || !(intval($attach['id']))) {
 			return false;
@@ -139,10 +139,10 @@ class JemAttachment extends JObject
 
 	/**
 	 * return attachments for objects
-	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
+	 * @param  string object identification (should be event<eventid>, category<categoryid>, etc...)
 	 * @return array
 	 */
-	static function getAttachments($object)
+	static public function getAttachments($object)
 	{
 		$jemsettings = JemHelper::config();
 
@@ -170,12 +170,12 @@ class JemAttachment extends JObject
 			return array();
 		}
 
-		$query = ' SELECT * '
-			   . ' FROM #__jem_attachments '
-			   . ' WHERE file IN ('. implode(',', $fnames) .')'
-			   . '   AND object = '. $db->Quote($object);
-		$query .= ' AND access IN (' . implode(',', $levels) . ')';
-		$query .= ' ORDER BY ordering ASC ';
+		$query = 'SELECT * '
+		       . ' FROM #__jem_attachments '
+		       . ' WHERE file IN ('. implode(',', $fnames) .')'
+		       . '   AND object = '. $db->Quote($object)
+		       . '   AND access IN (' . implode(',', $levels) . ')'
+		       . ' ORDER BY ordering ASC ';
 
 		$db->setQuery($query);
 		$res = $db->loadObjectList();
@@ -186,9 +186,9 @@ class JemAttachment extends JObject
 	/**
 	 * get the file
 	 *
-	 * @param int $id
+	 * @param  int $id
 	 */
-	static function getAttachmentPath($id)
+	static public function getAttachmentPath($id)
 	{
 		$jemsettings = JemHelper::config();
 
@@ -197,11 +197,13 @@ class JemAttachment extends JObject
 		$levels = $user->getAuthorisedViewLevels();
 
 		$db = JFactory::getDBO();
-		$query = ' SELECT * '
-			   . ' FROM #__jem_attachments '
-			   . ' WHERE id = '. $db->Quote(intval($id));
+		$query = 'SELECT * '
+		       . ' FROM #__jem_attachments '
+		       . ' WHERE id = '. $db->Quote(intval($id));
+
 		$db->setQuery($query);
 		$res = $db->loadObject();
+
 		if (!$res) {
 			JError::raiseError(404, JText::_('COM_JEM_FILE_UNKNOWN'));
 		}
@@ -221,11 +223,11 @@ class JemAttachment extends JObject
 	/**
 	 * remove attachment for objects
 	 *
-	 * @param id from db
-	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
+	 * @param  id from db
+	 * @param  string object identification (should be event<eventid>, category<categoryid>, etc...)
 	 * @return boolean
 	 */
-	static function remove($id)
+	static public function remove($id)
 	{
 		$jemsettings = JemHelper::config();
 
@@ -237,9 +239,10 @@ class JemAttachment extends JObject
 		// then get info for files from db
 		$db = JFactory::getDBO();
 
-		$query = ' SELECT file, object, added_by '
-			   . ' FROM #__jem_attachments '
-			   . ' WHERE id = ' . $db->Quote($id) . ' AND access IN (0,' . implode(',', $levels) . ')';
+		$query = 'SELECT file, object, added_by '
+		       . ' FROM #__jem_attachments '
+		       . ' WHERE id = ' . $db->Quote($id) . ' AND access IN (0,' . implode(',', $levels) . ')';
+
 		$db->setQuery($query);
 		$res = $db->loadObject();
 
@@ -260,8 +263,9 @@ class JemAttachment extends JObject
 			} else {
 				return false;
 			}
+
 			// get item owner
-			$query = ' SELECT created_by FROM ' . $table . ' WHERE id = ' . $db->Quote($itemid);
+			$query = 'SELECT created_by FROM ' . $table . ' WHERE id = ' . $db->Quote($itemid);
 			$db->setQuery($query);
 			$created_by = $db->loadResult();
 
@@ -277,10 +281,12 @@ class JemAttachment extends JObject
 			JFile::delete($path);
 		}
 
-		$query = ' DELETE FROM #__jem_attachments '
-			   . ' WHERE id = '. $db->Quote($id);
+		$query = 'DELETE FROM #__jem_attachments '
+		       . ' WHERE id = '. $db->Quote($id);
+
 		$db->setQuery($query);
 		$res = $db->execute();
+
 		if (!$res) {
 			return false;
 		}

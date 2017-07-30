@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -16,7 +16,7 @@ jimport('joomla.application.component.controllerform');
  * JEM Component Group Controller
  *
 */
-class JEMControllerGroup extends JControllerForm
+class JemControllerGroup extends JControllerForm
 {
 	/**
 	 * @var    string  The prefix to use with controller messages.
@@ -28,8 +28,8 @@ class JEMControllerGroup extends JControllerForm
 	/**
 	 * Constructor.
 	 *
-	 * @param	array An optional associative array of configuration settings.
-	 * @see		JController
+	 * @param  array  An optional associative array of configuration settings.
+	 * @see    JController
 	 *
 	 */
 	public function __construct($config = array())

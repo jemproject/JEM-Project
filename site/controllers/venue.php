@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -13,7 +13,7 @@ require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 /**
  * Venue Controller
  */
-class JEMControllerVenue extends JemControllerForm
+class JemControllerVenue extends JemControllerForm
 {
 	protected $view_item = 'editvenue';
 	protected $view_list = 'venues';
@@ -21,7 +21,7 @@ class JEMControllerVenue extends JemControllerForm
 	/**
 	 * Method to add a new record.
 	 *
-	 * @return	boolean	True if the event can be added, false if not.
+	 * @return boolean True if the event can be added, false if not.
 	 */
 	public function add()
 	{
@@ -34,14 +34,14 @@ class JEMControllerVenue extends JemControllerForm
 	/**
 	 * Method override to check if you can add a new record.
 	 *
-	 * @param	array	An array of input data.
+	 * @param  array An array of input data.
 	 *
-	 * @return	boolean
+	 * @return boolean
 	 */
 	protected function allowAdd($data = array())
 	{
 		// Initialise variables.
-		$user       = JemFactory::getUser();
+		$user = JemFactory::getUser();
 		// venues don't have a category yet
 		//$categoryId = JArrayHelper::getValue($data, 'catid', JFactory::getApplication()->input->getInt('catid', 0), 'int');
 
@@ -57,10 +57,10 @@ class JEMControllerVenue extends JemControllerForm
 	 * Method override to check if you can edit an existing record.
 	 * @todo: check if the user is allowed to edit/save
 	 *
-	 * @param	array	$data	An array of input data.
-	 * @param	string	$key	The name of the key for the primary key.
+	 * @param  array  $data An array of input data.
+	 * @param  string $key  The name of the key for the primary key.
 	 *
-	 * @return	boolean
+	 * @return boolean
 	 */
 	protected function allowEdit($data = array(), $key = 'id')
 	{
@@ -86,12 +86,15 @@ class JEMControllerVenue extends JemControllerForm
 	/**
 	 * Method to cancel an edit.
 	 *
-	 * @param	string	$key	The name of the primary key of the URL variable.
+	 * @param  string $key The name of the primary key of the URL variable.
 	 *
-	 * @return	Boolean	True if access level checks pass, false otherwise.
+	 * @return Boolean True if access level checks pass, false otherwise.
 	 */
 	public function cancel($key = 'a_id')
 	{
+		// Check for request forgeries
+		JSession::checkToken() or jexit('Invalid Token');
+
 		parent::cancel($key);
 
 		// Redirect to the return page.
@@ -101,14 +104,13 @@ class JEMControllerVenue extends JemControllerForm
 	/**
 	 * Method to edit an existing record.
 	 *
-	 * @param	string	$key	The name of the primary key of the URL variable.
-	 * @param	string	$urlVar	The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
+	 * @param  string $key    The name of the primary key of the URL variable.
+	 * @param  string $urlVar The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
 	 *
-	 * @return	Boolean	True if access level check and checkout passes, false otherwise.
+	 * @return boolean True if access level check and checkout passes, false otherwise.
 	 */
 	public function edit($key = null, $urlVar = 'a_id')
 	{
-
 		$result = parent::edit($key, $urlVar);
 
 		return $result;
@@ -117,12 +119,11 @@ class JEMControllerVenue extends JemControllerForm
 	/**
 	 * Method to get a model object, loading it if required.
 	 *
-	 * @param	string	$name	The model name. Optional.
-	 * @param	string	$prefix	The class prefix. Optional.
-	 * @param	array	$config	Configuration array for model. Optional.
+	 * @param  string $name   The model name. Optional.
+	 * @param  string $prefix The class prefix. Optional.
+	 * @param  array  $config Configuration array for model. Optional.
 	 *
-	 * @return	object	The model.
-	 *
+	 * @return object The model.
 	 */
 	public function getModel($name = 'editvenue', $prefix = '', $config = array('ignore_request' => true))
 	{
@@ -134,10 +135,10 @@ class JEMControllerVenue extends JemControllerForm
 	/**
 	 * Gets the URL arguments to append to an item redirect.
 	 *
-	 * @param	int		$recordId	The primary key id for the item.
-	 * @param	string	$urlVar		The name of the URL variable for the id.
+	 * @param  int    $recordId The primary key id for the item.
+	 * @param  string $urlVar   The name of the URL variable for the id.
 	 *
-	 * @return	string	The arguments to append to the redirect URL.
+	 * @return string The arguments to append to the redirect URL.
 	 */
 	protected function getRedirectToItemAppend($recordId = null, $urlVar = 'a_id')
 	{
@@ -182,7 +183,7 @@ class JEMControllerVenue extends JemControllerForm
 	 *
 	 * If a "return" variable has been passed in the request
 	 *
-	 * @return	string	The return URL.
+	 * @return string The return URL.
 	 */
 	protected function getReturnPage()
 	{
@@ -196,16 +197,15 @@ class JEMControllerVenue extends JemControllerForm
 		}
 	}
 
-
 	/**
 	 * Function that allows child controller access to model data
 	 * after the data has been saved.
 	 * Here used to trigger the jem plugins, mainly the mailer.
 	 *
-	 * @param   JModel(Legacy)  $model      The data model object.
-	 * @param   array           $validData  The validated data.
+	 * @param  JModel(Legacy)  $model      The data model object.
+	 * @param  array           $validData  The validated data.
 	 *
-	 * @return  void
+	 * @return void
 	 */
 	protected function _postSaveHook($model, $validData = array())
 	{
@@ -229,13 +229,16 @@ class JEMControllerVenue extends JemControllerForm
 	/**
 	 * Method to save a record.
 	 *
-	 * @param	string	$key	The name of the primary key of the URL variable.
-	 * @param	string	$urlVar	The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
+	 * @param  string $key    The name of the primary key of the URL variable.
+	 * @param  string $urlVar The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
 	 *
-	 * @return	Boolean	True if successful, false otherwise.
+	 * @return boolean True if successful, false otherwise.
 	 */
 	public function save($key = null, $urlVar = 'a_id')
 	{
+		// Check for request forgeries
+		JSession::checkToken() or jexit('Invalid Token');
+
 		$result = parent::save($key, $urlVar);
 
 		// If ok, redirect to the return page.

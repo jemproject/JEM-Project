@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -16,7 +16,6 @@ require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/venue.php';
  */
 class JemModelEditvenue extends JemModelVenue
 {
-
 	/**
 	 * Model typeAlias string. Used for version history.
 	 * @var        string
@@ -49,12 +48,13 @@ class JemModelEditvenue extends JemModelVenue
 	/**
 	 * Method to get venue data.
 	 *
-	 * @param integer	The id of the venue.
+	 * @param  integer The id of the venue.
 	 * @return mixed item data object on success, false on failure.
 	 */
 	public function getItem($itemId = null)
 	{
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
+		$user = JemFactory::getUser();
 
 		// Initialise variables.
 		$itemId = (int) (!empty($itemId)) ? $itemId : $this->getState('venue.id');
@@ -84,12 +84,9 @@ class JemModelEditvenue extends JemModelVenue
 		//$value->params->merge($registry);
 
 		// Compute selected asset permissions.
-		$user = JemFactory::getUser();
-
-		// Check edit permission.
+		//  Check edit permission.
 		$value->params->set('access-edit', $user->can('edit', 'venue', $value->id, $value->created_by));
-
-		// Check edit state permission.
+		//  Check edit state permission.
 		$value->params->set('access-change', $user->can('publish', 'venue', $value->id, $value->created_by));
 
 		$value->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;

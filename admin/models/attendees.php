@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -34,15 +34,14 @@ class JemModelAttendees extends JModelList
 		parent::__construct($config);
 
 		$app = JFactory::getApplication();
-		$jinput = $app->input;
-		$eventid = $jinput->getInt('eventid', 0);
+		$eventid = $app->input->getInt('eventid', 0);
 		$this->setId($eventid);
 	}
 
-	public function setId($eventid) {
+	public function setId($eventid)
+	{
 		$this->eventid = $eventid;
 	}
-
 
 	/**
 	 * Method to auto-populate the model state.
@@ -53,18 +52,15 @@ class JemModelAttendees extends JModelList
 	{
 		$app = JFactory::getApplication();
 
-		$app    = JFactory::getApplication();;
-		$jinput = $app->input;
-
-		$limit		= $app->getUserStateFromRequest( 'com_jem.attendees.limit', 'limit', $app->getCfg('list_limit'), 'int');
-		$limitstart = $app->getUserStateFromRequest( 'com_jem.attendees.limitstart', 'limitstart', 0, 'int' );
+		$limit      = $app->getUserStateFromRequest('com_jem.attendees.limit', 'limit', $app->getCfg('list_limit'), 'int');
+		$limitstart = $app->getUserStateFromRequest('com_jem.attendees.limitstart', 'limitstart', 0, 'int');
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
 		$this->setState('limit', $limit);
 		$this->setState('limitstart', $limitstart);
 
 		//set unlimited if export or print action | task=export or task=print
-		$task = $jinput->getCmd('task');
+		$task = $app->input->getCmd('task');
 		$this->setState('unlimited', ($task == 'export' || $task == 'print') ? '1' : '');
 
 		$filter_type      = $app->getUserStateFromRequest( 'com_jem.attendees.filter_type',      'filter_type',      0, 'int' );
@@ -77,7 +73,6 @@ class JemModelAttendees extends JModelList
 		parent::populateState('u.username', 'asc');
 	}
 
-
 	/**
 	 * Method to get a store id based on model configuration state.
 	 *
@@ -85,8 +80,8 @@ class JemModelAttendees extends JModelList
 	 * different modules that might need different sets of data or different
 	 * ordering requirements.
 	 *
-	 * @param	string		$id	A prefix for the store id.
-	 * @return	string		A store id.
+	 * @param  string  $id  A prefix for the store id.
+	 * @return string  A store id.
 	 *
 	 */
 	protected function getStoreId($id = '')
@@ -99,29 +94,19 @@ class JemModelAttendees extends JModelList
 		return parent::getStoreId($id);
 	}
 
-
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @return	JDatabaseQuery
+	 * @return JDatabaseQuery
 	 */
 	protected function getListQuery()
 	{
-		$app = JFactory::getApplication();
-		$jinput = $app->input;
-		$eventid = $this->eventid;
-
 		// Create a new query object.
-		$db		= $this->getDbo();
-		$query	= $db->getQuery(true);
+		$db = $this->getDbo();
+		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
-		$query->select(
-				$this->getState(
-						'list.select',
-						'r.*'
-						)
-				);
+		$query->select($this->getState('list.select', 'r.*'));
 		$query->from($db->quoteName('#__jem_register').' AS r');
 
 		// Join event data
@@ -133,7 +118,7 @@ class JemModelAttendees extends JModelList
 		$query->join('LEFT', '#__users        AS u ON (u.id = r.uid)');
 
 		// load only data from current event
-		$query->where('r.event = '.$db->Quote($eventid));
+		$query->where('r.event = '.$db->Quote($this->eventid));
 
 	// TODO: filter status
 		$filter_status = $this->getState('filter_status', -2);
@@ -147,7 +132,7 @@ class JemModelAttendees extends JModelList
 		}
 
 		// search name
-		$filter_type = $this->getState('filter_type');
+		$filter_type   = $this->getState('filter_type');
 		$filter_search = $this->getState('filter_search');
 
 		if (!empty($filter_search) && $filter_type == 1) {
@@ -162,14 +147,13 @@ class JemModelAttendees extends JModelList
 		}
 
 		// Add the list ordering clause.
-		$orderCol	= $this->state->get('list.ordering');
-		$orderDirn	= $this->state->get('list.direction');
+		$orderCol  = $this->state->get('list.ordering');
+		$orderDirn = $this->state->get('list.direction');
 
 		$query->order($db->escape($orderCol.' '.$orderDirn));
 
 		return $query;
 	}
-
 
 	/**
 	 * Get event data
@@ -177,7 +161,7 @@ class JemModelAttendees extends JModelList
 	 * @access public
 	 * @return object
 	 */
-	function getEvent()
+	public function getEvent()
 	{
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
@@ -185,9 +169,9 @@ class JemModelAttendees extends JModelList
 		$query->from('#__jem_events');
 		$query->where('id = '.$db->Quote($this->eventid));
 		$db->setQuery( $query );
-		$_event = $db->loadObject();
+		$event = $db->loadObject();
 
-		return $_event;
+		return $event;
 	}
 
 	/**
@@ -196,7 +180,7 @@ class JemModelAttendees extends JModelList
 	 * @access public
 	 * @return true on success
 	 */
-	function remove($cid = array())
+	public function remove($cid = array())
 	{
 		if (count($cid))
 		{
@@ -212,12 +196,11 @@ class JemModelAttendees extends JModelList
 
 			// TODO: use exception handling
 			if ($db->execute() === false) {
-				JError::raiseError( 4711, $db->getErrorMsg() );
+				JError::raiseError(500, $db->getErrorMsg());
 			}
 		}
 		return true;
 	}
-
 
 	/**
 	 * Returns a CSV file with Attendee data

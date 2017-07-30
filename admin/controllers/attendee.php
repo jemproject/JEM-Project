@@ -30,15 +30,13 @@ class JemControllerAttendee extends JControllerLegacy
 		$this->registerTask('save2copy', 'save');
 	}
 
-
 	/**
 	 * redirect to events page
 	 */
-	function back()
+	public function back()
 	{
 		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.JFactory::getApplication()->input->getInt('event', 0));
 	}
-
 
 	/**
 	 * logic for cancel an action
@@ -46,7 +44,7 @@ class JemControllerAttendee extends JControllerLegacy
 	 * @access public
 	 * @return void
 	 */
-	function cancel()
+	public function cancel()
 	{
 		// Check for request forgeries.
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
@@ -62,14 +60,13 @@ class JemControllerAttendee extends JControllerLegacy
 		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.JFactory::getApplication()->input->getInt('event', 0));
 	}
 
-
 	/**
 	 * saves the attendee in the database
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function save()
+	public function save()
 	{
 		// Check for request forgeries.
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
@@ -160,7 +157,7 @@ class JemControllerAttendee extends JControllerLegacy
 		$this->setRedirect($link, $msg);
 	}
 
-	function selectUser()
+	public function selectUser()
 	{
 		$jinput = JFactory::getApplication()->input;
 		$jinput->set('view', 'userelement');

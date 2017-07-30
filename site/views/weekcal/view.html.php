@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -17,14 +17,13 @@ class JemViewWeekcal extends JViewLegacy
 	/**
 	 * Creates the Calendar View
 	 */
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
-
 		// Load tooltips behavior
 		JHtml::_('behavior.tooltip');
 
 		// initialize variables
+		$app          = JFactory::getApplication();
 		$document     = JFactory::getDocument();
 		$menu         = $app->getMenu();
 		$menuitem     = $menu->getActive();
@@ -35,6 +34,7 @@ class JemViewWeekcal extends JViewLegacy
 		$top_category = (int)$params->get('top_category', 0);
 		$jinput       = $app->input;
 		$print        = $jinput->getBool('print', false);
+
 		$this->param_topcat = $top_category > 0 ? ('&topcat='.$top_category) : '';
 
 		// Load css
@@ -76,7 +76,7 @@ class JemViewWeekcal extends JViewLegacy
 		$model = $this->getModel();
 		$rows = $this->get('Items');
 		$currentweek = $this->get('Currentweek');
-		$currentyear =  Date("Y");
+		$currentyear = Date("Y");
 
 		// Set Page title
 		$pagetitle = $params->def('page_title', $menuitem->title);
@@ -100,7 +100,7 @@ class JemViewWeekcal extends JViewLegacy
 		$permissions->canAddEvent = $user->can('add', 'event', false, false, $catIds);
 		$permissions->canAddVenue = $user->can('add', 'venue', false, false, $catIds);
 
-		$itemid  = $jinput->getInt('Itemid', 0);
+		$itemid = $jinput->getInt('Itemid', 0);
 		$partItemid = ($itemid > 0) ? '&Itemid=' . $itemid : '';
 		$print_link = JRoute::_('index.php?option=com_jem&view=weekcal' . $partItemid . '&print=1&tmpl=component');
 

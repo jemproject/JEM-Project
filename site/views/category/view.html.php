@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -13,9 +13,8 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 /**
  * Category-View
  */
-class JemViewCategory extends JEMView
+class JemViewCategory extends JemView
 {
-
 	protected $state;
 	protected $items;
 	protected $category;
@@ -23,7 +22,7 @@ class JemViewCategory extends JEMView
 	protected $pagination;
 
 
-	function __construct($config = array())
+	public function __construct($config = array())
 	{
 		parent::__construct($config);
 
@@ -34,7 +33,7 @@ class JemViewCategory extends JEMView
 	/**
 	 * Creates the Category View
 	 */
-	function display($tpl=null)
+	public function display($tpl=null)
 	{
 		if ($this->getLayout() == 'calendar')
 		{
@@ -46,16 +45,16 @@ class JemViewCategory extends JEMView
 			JHtml::_('behavior.tooltip');
 
 			//initialize variables
-			$document 		= JFactory::getDocument();
-			$jemsettings 	= JemHelper::config();
-			$settings 		= JemHelper::globalattribs();
-			$user			= JemFactory::getUser();
-			$menu 			= $app->getMenu();
-			$menuitem		= $menu->getActive();
-			$params 		= $app->getParams();
-			$uri 			= JFactory::getURI();
-			$pathway 		= $app->getPathWay();
-			$print			= $app->input->getBool('print', false);
+			$document    = JFactory::getDocument();
+			$jemsettings = JemHelper::config();
+			$settings    = JemHelper::globalattribs();
+			$user        = JemFactory::getUser();
+			$menu        = $app->getMenu();
+			$menuitem    = $menu->getActive();
+			$params      = $app->getParams();
+			$uri         = JFactory::getURI();
+			$pathway     = $app->getPathWay();
+			$print       = $app->input->getBool('print', false);
 
 			// Load css
 			JemHelper::loadCss('jem');
@@ -68,9 +67,9 @@ class JemViewCategory extends JEMView
 				$document->setMetaData('robots', 'noindex, nofollow');
 			}
 
-			$evlinkcolor = $params->get('eventlinkcolor');
+			$evlinkcolor       = $params->get('eventlinkcolor');
 			$evbackgroundcolor = $params->get('eventbackgroundcolor');
-			$currentdaycolor = $params->get('currentdaycolor');
+			$currentdaycolor   = $params->get('currentdaycolor');
 			$eventandmorecolor = $params->get('eventandmorecolor');
 
 			$style = '
@@ -96,11 +95,11 @@ class JemViewCategory extends JEMView
 			$model = $this->getModel('CategoryCal');
 			$model->setDate(mktime(0, 0, 1, $month, 1, $year));
 
-			$category	= $this->get('Category', 'CategoryCal');
-			$rows		= $this->get('Items', 'CategoryCal');
+			$category = $this->get('Category', 'CategoryCal');
+			$rows     = $this->get('Items', 'CategoryCal');
 
 			// Set Page title
-			$pagetitle   = $params->def('page_title', $menuitem->title);
+			$pagetitle = $params->def('page_title', $menuitem->title);
 			$params->def('page_heading', $params->get('page_title'));
 			$pageclass_sfx = $params->get('pageclass_sfx');
 
@@ -129,7 +128,7 @@ class JemViewCategory extends JEMView
 			$print_link = JRoute::_($url_base . $partDate . '&print=1&tmpl=component');
 
 			// init calendar
-			$cal = new JEMCalendar($year, $month, 0);
+			$cal = new JemCalendar($year, $month, 0);
 			$cal->enableMonthNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
 			$cal->setFirstWeekDay($params->get('firstweekday', 1));
 			$cal->enableDayLinks('index.php?option=com_jem&view=day&catid='.$catid);
@@ -145,26 +144,26 @@ class JemViewCategory extends JEMView
 			$this->print_link    = $print_link;
 			$this->print         = $print;
 
-		} else
+		}
+		else
 		{
 			### Category List view ###
 
 			//initialize variables
-			$app 			= JFactory::getApplication();
-			$document 		= JFactory::getDocument();
-			$jemsettings 	= JemHelper::config();
-			$settings 		= JemHelper::globalattribs();
-			$user			= JemFactory::getUser();
-			$print			= $app->input->getBool('print', false);
+			$app         = JFactory::getApplication();
+			$document    = JFactory::getDocument();
+			$jemsettings = JemHelper::config();
+			$settings    = JemHelper::globalattribs();
+			$user        = JemFactory::getUser();
+			$print       = $app->input->getBool('print', false);
 
 			JHtml::_('behavior.tooltip');
 
 			// get menu information
-			$params 		= $app->getParams();
-			$uri 			= JFactory::getURI();
-			$pathway 		= $app->getPathWay();
-			$menu			= $app->getMenu();
-			$menuitem		= $menu->getActive();
+			$uri      = JFactory::getURI();
+			$pathway  = $app->getPathWay();
+			$menu     = $app->getMenu();
+			$menuitem = $menu->getActive();
 
 			// Load css
 			JemHelper::loadCss('jem');
@@ -177,13 +176,12 @@ class JemViewCategory extends JEMView
 			}
 
 			// get data from model
-			$state		= $this->get('State');
-			$params		= $state->params;
-			$items		= $this->get('Items');
-			$category	= $this->get('Category');
-			$children	= $this->get('Children');
-			$parent		= $this->get('Parent');
-			$pagination = $this->get('Pagination');
+			$state    = $this->get('State');
+			$params   = $state->params;
+			$items    = $this->get('Items');
+			$category = $this->get('Category');
+			$children = $this->get('Children');
+			$parent   = $this->get('Parent');
 
 			if ($category == false)
 			{
@@ -204,20 +202,20 @@ class JemViewCategory extends JEMView
 			                                && $menuitem->query['id']     == $category->id);
 
 			// get variables
-			$itemid				= $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
+			$itemid = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
 
 			$this->showsubcats      = (bool)$params->get('usecat', 1);
 			$this->showemptysubcats = (bool)$params->get('showemptychilds', 1);
 
-			$filter_order		= $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order', 'filter_order', 	'a.dates', 'cmd');
-			$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order_Dir', 'filter_order_Dir',	'', 'word');
-			$filter_type		= $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_filtertype', 'filter_type', 0, 'int');
-			$search 			= $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-			$task 				= $app->input->get('task', '');
+			$filter_order     = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order', 'filter_order', 	'a.dates', 'cmd');
+			$filter_order_Dir = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order_Dir', 'filter_order_Dir',	'', 'word');
+			$filter_type      = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_filtertype', 'filter_type', 0, 'int');
+			$search           = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_search', 'filter_search', '', 'string');
+			$task             = $app->input->get('task', '');
 
 			// table ordering
 			$lists['order_Dir'] = $filter_order_Dir;
-			$lists['order'] 	= $filter_order;
+			$lists['order']     = $filter_order;
 
 			// search filter
 			$filters = array();
@@ -240,7 +238,7 @@ class JemViewCategory extends JEMView
 			$lists['filter'] = JHtml::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
 			// search filter
-			$lists['search']= $search;
+			$lists['search'] = $search;
 
 			// Add feed links
 			$link = '&format=feed&id='.$category->id.'&limitstart=';
@@ -250,10 +248,10 @@ class JemViewCategory extends JEMView
 			$this->document->addHeadLink(JRoute::_($link . '&type=atom'), 'alternate', 'rel', $attribs);
 
 			// create the pathway
-			$cats		= new JEMCategories($category->id);
-			$parents	= $cats->getParentlist();
+			$cats    = new JEMCategories($category->id);
+			$parents = $cats->getParentlist();
 
-			foreach($parents as $parent) {
+			foreach ($parents as $parent) {
 				$pathway->addItem($this->escape($parent->catname), JRoute::_(JemHelperRoute::getCategoryRoute($parent->slug)) );
 			}
 
@@ -320,8 +318,6 @@ class JemViewCategory extends JEMView
 
 			$cimage = JemImage::flyercreator($category->image,'category');
 
-			$children = array($category->id => $children);
-
 			$this->lists         = $lists;
 			$this->action        = $uri->toString();
 			$this->cimage        = $cimage;
@@ -340,7 +336,7 @@ class JemViewCategory extends JEMView
 			$this->pageclass_sfx = htmlspecialchars($pageclass_sfx);
 			$this->maxLevel      = $params->get('maxLevel', -1);
 			$this->category      = $category;
-			$this->children      = $children;
+			$this->children      = array($category->id => $children);
 			$this->parent        = $parent;
 			$this->user          = $user;
 		}

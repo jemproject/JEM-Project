@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -12,7 +12,8 @@ defined('_JEXEC') or die;
 jimport('joomla.application.component.controller');
 
 // helper callback function to convert all elements of an array
-function jem_convert_ansi2utf8(&$value, $key) {
+function jem_convert_ansi2utf8(&$value, $key)
+{
 	$value = iconv('windows-1252', 'utf-8', $value);
 }
 
@@ -22,38 +23,46 @@ function jem_convert_ansi2utf8(&$value, $key) {
  * @package JEM
  *
  */
-class JEMControllerImport extends JControllerLegacy {
+class JemControllerImport extends JControllerLegacy
+{
 	/**
 	 * Constructor
-	 *
-	 *
 	 */
-	public function __construct() {
+	public function __construct()
+	{
 		parent::__construct();
 	}
 
-	function csveventimport() {
+	public function csveventimport()
+	{
 		$this->CsvImport('events', 'events');
 	}
 
-	function csvcategoriesimport() {
+	public function csvcategoriesimport()
+	{
 		$this->CsvImport('categories', 'categories');
 	}
 
-	function csvvenuesimport() {
+	public function csvvenuesimport()
+	{
 		$this->CsvImport('venues', 'venues');
 	}
 
-	function csvcateventsimport() {
+	public function csvcateventsimport()
+	{
 		$this->CsvImport('catevents', 'cats_event_relations');
 	}
 
-	private function CsvImport($type, $dbname) {
+	private function CsvImport($type, $dbname)
+	{
+		// Check for request forgeries
+		JSession::checkToken() or jexit('Invalid Token');
+
 		$replace = JFactory::getApplication()->input->post->getInt('replace_'.$type, 0);
 		$object = JTable::getInstance('jem_'.$dbname, '');
 		$object_fields = get_object_vars($object);
 
-		if($type == 'events') {
+		if ($type === 'events') {
 			// add additional fields
 			$object_fields['categories'] = '';
 		}
@@ -70,7 +79,7 @@ class JEMControllerImport extends JControllerLegacy {
 
 		if ($file['name']) {
 			$handle = fopen($file['tmp_name'], 'r');
-			if(!$handle) {
+			if (!$handle) {
 				$msg = JText::_('COM_JEM_IMPORT_OPEN_FILE_ERROR');
 				$this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
 				return;
@@ -87,7 +96,7 @@ class JEMControllerImport extends JControllerLegacy {
 
 			// get fields, on first row of the file
 			$fields = array();
-			if(($data = fgetcsv($handle, 1000, ';')) !== false) {
+			if (($data = fgetcsv($handle, 1000, ';')) !== false) {
 				$numfields = count($data);
 
 				// convert from ansi to utf-8 if required
@@ -95,17 +104,17 @@ class JEMControllerImport extends JControllerLegacy {
 					array_walk($data, 'jem_convert_ansi2utf8');
 				}
 
-				for($c=0; $c < $numfields; $c++) {
+				for ($c = 0; $c < $numfields; $c++) {
 					// here, we make sure that the field match one of the fields of jem_venues table or special fields,
 					// otherwise, we don't add it
-					if(array_key_exists($data[$c], $object_fields)) {
+					if (array_key_exists($data[$c], $object_fields)) {
 						$fields[$c] = $data[$c];
 					}
 				}
 			}
 
 			// If there is no validated fields, there is a problem...
-			if(!count($fields)) {
+			if (!count($fields)) {
 				$msg .= "<p>".JText::_('COM_JEM_IMPORT_PARSE_ERROR')."</p>\n";
 				$msg .= "<p>".JText::_('COM_JEM_IMPORT_PARSE_ERROR_INFOTEXT')."</p>\n";
 
@@ -120,13 +129,12 @@ class JEMControllerImport extends JControllerLegacy {
 			$records = array();
 			$row = 1;
 
-			while(($data = fgetcsv($handle, 10000, ';')) !== FALSE) {
+			while (($data = fgetcsv($handle, 10000, ';')) !== FALSE) {
 				$num = count($data);
 
-				if($numfields != $num) {
+				if ($numfields != $num) {
 					$msg .= "<p>".JText::sprintf('COM_JEM_IMPORT_NUMBER_OF_FIELDS_COUNT_ERROR', $num, $row)."</p>\n";
 				} else {
-
 					// convert from ansi to utf-8 if required
 					if ($convert) {
 						array_walk($data, 'jem_convert_ansi2utf8');
@@ -134,7 +142,7 @@ class JEMControllerImport extends JControllerLegacy {
 
 					$r = array();
 					// only extract columns with validated header, from previous step.
-					foreach($fields as $k => $v) {
+					foreach ($fields as $k => $v) {
 						$r[$k] = $this->_formatcsvfield($v, $data[$k]);
 					}
 					$records[] = $r;
@@ -146,7 +154,7 @@ class JEMControllerImport extends JControllerLegacy {
 			$msg .= "<p>".JText::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_FOUND', count($records))."</p>\n";
 
 			// database update
-			if(count($records)) {
+			if (count($records)) {
 				$model = $this->getModel('import');
 				$result = $model->{$type.'import'}($fields, $records, $replace);
 				$msg .= "<p>".JText::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_ADDED', $result['added'])."</p>\n";
@@ -168,21 +176,22 @@ class JEMControllerImport extends JControllerLegacy {
 	 * @param string $value
 	 * @return string
 	 */
-	protected function _formatcsvfield($type, $value) {
+	protected function _formatcsvfield($type, $value)
+	{
 		switch($type) {
 			case 'times':
 			case 'endtimes':
-				if($value != '' && strtoupper($value) != 'NULL') {
+				if ($value !== '' && strtoupper($value) !== 'NULL') {
 					$time = strtotime($value);
 					$field = strftime('%H:%M', $time);
 				} else {
 					$field = null;
 				}
-			break;
+				break;
 			case 'dates':
 			case 'enddates':
 			case 'recurrence_limit_date':
-				if($value != '' && strtoupper($value) != 'NULL') {
+				if ($value !== '' && strtoupper($value) !== 'NULL') {
 					$date = strtotime($value);
 					$field = strftime('%Y-%m-%d', $date);
 				} else {
@@ -201,6 +210,9 @@ class JEMControllerImport extends JControllerLegacy {
 	 */
 	public function eventlistImport()
 	{
+		// Check for request forgeries
+		JSession::checkToken() or jexit('Invalid Token');
+
 		$model = $this->getModel('import');
 		$size = 5000;
 
@@ -228,7 +240,7 @@ class JEMControllerImport extends JControllerLegacy {
 		$link = 'index.php?option=com_jem&view=import';
 		$msg = JText::_('COM_JEM_IMPORT_EL_IMPORT_WORK_IN_PROGRESS')." ";
 
-		if ($jinput->get('startToken', 0, 'INT') || ($step == 1)) {
+		if ($jinput->get('startToken', 0, 'INT') || ($step === 1)) {
 			// Are the JEM tables empty at start? If no, stop import
 			if ($model->getExistingJemData()) {
 				$this->setRedirect($link);
@@ -241,14 +253,14 @@ class JEMControllerImport extends JControllerLegacy {
 			$app->setUserState('com_jem.import.elimport.copyAttachments', '0');
 			$app->setUserState('com_jem.import.elimport.fromJ15', '0');
 
-			if ($step == 1) {
+			if ($step === 1) {
 				$attachments = $model->getEventlistTableCount("eventlist_attachments") !== null;
 				$app->setUserState('com_jem.import.elimport.attachmentsPossible', $attachments);
 			}
 
 			parent::display();
 			return;
-		} elseif ($step == 2) {
+		} elseif ($step === 2) {
 			// Special handling of cats_event_relations table which only exists on EL 1.1
 			if (($tables->eltables[$table] == 'cats_event_relations')) {
 				$tot = $model->getEventlistTableCount("eventlist_".$tables->eltables[$table]);
@@ -265,7 +277,7 @@ class JEMControllerImport extends JControllerLegacy {
 			}
 
 			// If $total is null, the table does not exist, so we skip import for this table.
-			if ($total == null) {
+			if ($total === null) {
 				// This helps to prevent special cases in the following code
 				$total = 0;
 			} else {
@@ -300,7 +312,7 @@ class JEMControllerImport extends JControllerLegacy {
 				$link .= '&step='.$step;
 				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_REBUILD');
 			}
-		} elseif ($step == 3) {
+		} elseif ($step === 3) {
 			// We have to rebuild the hierarchy of the categories due to the plain database insertion
 			JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
 			$categoryTable = JTable::getInstance('Category', 'JemTable');
@@ -312,7 +324,7 @@ class JEMControllerImport extends JControllerLegacy {
 			} else {
 				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_IMAGES_SKIPPED');
 			}
-		} elseif ($step == 4) {
+		} elseif ($step === 4) {
 			// Copy EL images to JEM image destination?
 			if ($copyImages) {
 				$model->copyImages();
@@ -321,10 +333,10 @@ class JEMControllerImport extends JControllerLegacy {
 			$link .= '&step='.$step;
 			if ($copyAttachments) {
 				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_ATTACHMENTS');
-		} else {
+			} else {
 				$msg .= JText::_('COM_JEM_IMPORT_EL_IMPORT_WORKING_STEP_COPY_ATTACHMENTS_SKIPPED');
 			}
-		} elseif ($step == 5) {
+		} elseif ($step === 5) {
 			// Copy EL images to JEM image destination?
 			if ($copyAttachments) {
 				$model->copyAttachments();
@@ -341,7 +353,7 @@ class JEMControllerImport extends JControllerLegacy {
 			$app->setUserState('com_jem.import.elimport.attachmentsPossible', null);
 
 			// perform forced cleanup (archive, delete, recurrence)
-			JEMHelper::cleanup(true);
+			JemHelper::cleanup(true);
 
 			$msg = JText::_('COM_JEM_IMPORT_EL_IMPORT_FINISHED');
 		}

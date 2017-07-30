@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -18,21 +18,23 @@ class jem_register extends JTable
 	 * Primary Key
 	 * @var int
 	 */
-	var $id 		= null;
+	public $id = null;
 	/** @var int */
-	var $event 		= null;
+	public $event = null;
 	/** @var int */
-	var $uid 		= null;
+	public $uid = null;
 	/** @var date */
-	var $uregdate 	= null;
+	public $uregdate = null;
 	/** @var string */
-	var $uip 		= null;
+	public $uip = null;
 	/** @var int */
-	var $waiting 	= 0;
+	public $waiting = 0;
 	/** @var int */
-	var $status 	= 0;
+	public $status = 0;
 
-	public function __construct(& $db) {
+
+	public function __construct(& $db)
+	{
 		parent::__construct('#__jem_register', 'id', $db);
 	}
 
@@ -43,12 +45,12 @@ class jem_register extends JTable
 	 * a new row will be inserted into the database with the properties from the
 	 * JTable instance.
 	 *
-	 * @param   boolean  $updateNulls  True to update fields even if they are null.
+	 * @param  boolean  $updateNulls  True to update fields even if they are null.
 	 *
-	 * @return  boolean  True on success.
+	 * @return boolean  True on success.
 	 *
-	 * @link    https://docs.joomla.org/JTable/store
-	 * @since   11.1
+	 * @link   https://docs.joomla.org/JTable/store
+	 * @since  11.1
 	 */
 	public function store($updateNulls = false)
 	{
@@ -68,13 +70,13 @@ class jem_register extends JTable
 	 * Can be overloaded/supplemented by the child class
 	 *
 	 * @access public
-	 * @param boolean If false, null object variables are not updated
+	 * @param  boolean If false, null object variables are not updated
 	 * @return null|string null if successful otherwise returns and error message
 	 */
-	function insertIgnore($updateNulls=false)
+	public function insertIgnore($updateNulls = false)
 	{
 		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if(!$ret) {
+		if (!$ret) {
 			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
 			return false;
 		}
@@ -85,9 +87,9 @@ class jem_register extends JTable
 	 * Inserts a row into a table based on an objects properties, ignore if already exists
 	 *
 	 * @access protected
-	 * @param string  The name of the table
-	 * @param object  An object whose properties match table fields
-	 * @param string  The name of the primary key. If provided the object property is updated.
+	 * @param  string  The name of the table
+	 * @param  object  An object whose properties match table fields
+	 * @param  string  The name of the primary key. If provided the object property is updated.
 	 * @return int number of affected row
 	 */
 	protected function _insertIgnoreObject($table, &$object, $keyName = NULL)

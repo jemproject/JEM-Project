@@ -16,11 +16,28 @@ require_once dirname(__FILE__) . '/admin.php';
 class JemModelEvent extends JemModelAdmin
 {
 	/**
+	 * Method to change the published state of one or more records.
+	 *
+	 * @param  array   &$pks  A list of the primary keys to change.
+	 * @param  integer $value The value of the published state.
+	 *
+	 * @return boolean True on success.
+	 *
+	 * @since  2.2.2
+	 */
+	public function publish(&$pks, $value = 1)
+	{
+		// Additionally include the JEM plugins for the onContentChangeState event.
+		JPluginHelper::importPlugin('jem');
+
+		return parent::publish($pks, $value);
+	}
+
+	/**
 	 * Method to test whether a record can be deleted.
 	 *
-	 * @param	object	A record object.
-	 * @return	boolean	True if allowed to delete the record. Defaults to the permission set in the component.
-	 *
+	 * @param  object  A record object.
+	 * @return boolean True if allowed to delete the record. Defaults to the permission set in the component.
 	 */
 	protected function canDelete($record)
 	{
@@ -30,20 +47,6 @@ class JemModelEvent extends JemModelAdmin
 			$user = JemFactory::getUser();
 
 			$result = $user->can('delete', 'event', $record->id, $record->created_by, !empty($record->catid) ? $record->catid : false);
-
-			// Todo: Not really a good place. Nobody knows if the event will be really deleted.
-			/* --> Moved to JemTableEvent::delete()
-			if (!empty($result)) {
-				$db = JFactory::getDbo();
-
-				$query = $db->getQuery(true);
-				$query->delete($db->quoteName('#__jem_cats_event_relations'));
-				$query->where('itemid = '.$db->quote($record->id));
-
-				$db->setQuery($query);
-				$db->execute();
-			}
-			*/
 		}
 
 		return $result;
@@ -52,9 +55,8 @@ class JemModelEvent extends JemModelAdmin
 	/**
 	 * Method to test whether a record can be published/unpublished.
 	 *
-	 * @param	object	A record object.
-	 * @return	boolean	True if allowed to change the state of the record. Defaults to the permission set in the component.
-	 *
+	 * @param  object  A record object.
+	 * @return boolean True if allowed to change the state of the record. Defaults to the permission set in the component.
 	 */
 	protected function canEditState($record)
 	{
@@ -70,11 +72,10 @@ class JemModelEvent extends JemModelAdmin
 	/**
 	 * Returns a reference to the a Table object, always creating it.
 	 *
-	 * @param	type	The table type to instantiate
-	 * @param	string	A prefix for the table class name. Optional.
-	 * @param	array	Configuration array for model. Optional.
-	 * @return	JTable	A database object
-	 *
+	 * @param  type   The table type to instantiate
+	 * @param  string A prefix for the table class name. Optional.
+	 * @param  array  Configuration array for model. Optional.
+	 * @return JTable A database object
 	 */
 	public function getTable($type = 'Event', $prefix = 'JemTable', $config = array())
 	{
@@ -84,10 +85,9 @@ class JemModelEvent extends JemModelAdmin
 	/**
 	 * Method to get the record form.
 	 *
-	 * @param	array	$data		Data for the form.
-	 * @param	boolean	$loadData	True if the form is to load its own data (default case), false if not.
-	 * @return	mixed	A JForm object on success, false on failure
-	 *
+	 * @param  array   $data     Data for the form.
+	 * @param  boolean $loadData True if the form is to load its own data (default case), false if not.
+	 * @return mixed   A JForm object on success, false on failure
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
@@ -103,9 +103,9 @@ class JemModelEvent extends JemModelAdmin
 	/**
 	 * Method to get a single record.
 	 *
-	 * @param	integer	The id of the primary key.
+	 * @param  integer The id of the primary key.
 	 *
-	 * @return	mixed	Object on success, false on failure.
+	 * @return mixed   Object on success, false on failure.
 	 */
 	public function getItem($pk = null)
 	{
@@ -148,13 +148,13 @@ class JemModelEvent extends JemModelAdmin
 					}
 				}
 
-				$item->recurrence_type 			= '';
-				$item->recurrence_number 		= '';
-				$item->recurrence_byday 		= '';
-				$item->recurrence_counter 		= '';
-				$item->recurrence_first_id 		= '';
-				$item->recurrence_limit 		= '';
-				$item->recurrence_limit_date	= '';
+				$item->recurrence_type       = '';
+				$item->recurrence_number     = '';
+				$item->recurrence_byday      = '';
+				$item->recurrence_counter    = '';
+				$item->recurrence_first_id   = '';
+				$item->recurrence_limit      = '';
+				$item->recurrence_limit_date = '';
 			}
 
 			$item->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
@@ -169,7 +169,6 @@ class JemModelEvent extends JemModelAdmin
 
 	/**
 	 * Method to get the data that should be injected in the form.
-	 *
 	 */
 	protected function loadFormData()
 	{
@@ -186,11 +185,11 @@ class JemModelEvent extends JemModelAdmin
 	/**
 	 * Prepare and sanitise the table data prior to saving.
 	 *
-	 * @param $table JTable-object.
+	 * @param  $table JTable-object.
 	 */
 	protected function _prepareTable($table)
 	{
-		$jinput 		= JFactory::getApplication()->input;
+		$jinput = JFactory::getApplication()->input;
 
 		$db = $this->getDbo();
 		$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
@@ -199,10 +198,10 @@ class JemModelEvent extends JemModelAdmin
 		$table->version ++;
 
 		//get time-values from time selectlist and combine them accordingly
-		$starthours		= $jinput->get('starthours','','cmd');
-		$startminutes	= $jinput->get('startminutes','','cmd');
-		$endhours		= $jinput->get('endhours','','cmd');
-		$endminutes		= $jinput->get('endminutes','','cmd');
+		$starthours   = $jinput->get('starthours','','cmd');
+		$startminutes = $jinput->get('startminutes','','cmd');
+		$endhours     = $jinput->get('endhours','','cmd');
+		$endminutes   = $jinput->get('endminutes','','cmd');
 
 		// StartTime
 		if ($starthours != '' && $startminutes != '') {
@@ -234,7 +233,7 @@ class JemModelEvent extends JemModelAdmin
 	/**
 	 * Method to save the form data.
 	 *
-	 * @param $data array
+	 * @param  $data array
 	 */
 	public function save($data)
 	{
@@ -280,27 +279,27 @@ class JemModelEvent extends JemModelAdmin
 
 		if ($data['dates'] == null || $data['recurrence_type'] == '0')
 		{
-			$data['recurrence_number']		= '';
-			$data['recurrence_byday']		= '';
-			$data['recurrence_counter'] 	= '';
-			$data['recurrence_type']		= '';
-			$data['recurrence_limit']		= '';
-			$data['recurrence_limit_date']	= '';
-			$data['recurrence_first_id']	= '';
+			$data['recurrence_number']     = '';
+			$data['recurrence_byday']      = '';
+			$data['recurrence_counter']    = '';
+			$data['recurrence_type']       = '';
+			$data['recurrence_limit']      = '';
+			$data['recurrence_limit_date'] = '';
+			$data['recurrence_first_id']   = '';
 		} else {
 			if (!$new) {
 				// edited event maybe part of a recurrence set
 				// -> drop event from set
-				$data['recurrence_first_id']	= '';
-				$data['recurrence_counter'] 	= '';
+				$data['recurrence_first_id'] = '';
+				$data['recurrence_counter']  = '';
 			}
 
-			$data['recurrence_number']		= $recurrencenumber;
-			$data['recurrence_byday']		= $recurrencebyday;
+			$data['recurrence_number'] = $recurrencenumber;
+			$data['recurrence_byday']  = $recurrencebyday;
 		}
 
-		$data['meta_keywords'] 		= $metakeywords;
-		$data['meta_description']	= $metadescription;
+		$data['meta_keywords']    = $metakeywords;
+		$data['meta_description'] = $metadescription;
 
 		// Store IP of author only.
 		if ($new) {
@@ -348,19 +347,19 @@ class JemModelEvent extends JemModelAdmin
 			}
 
 			// and update old ones
-			$old				= array();
-			$old['id'] 			= $jinput->post->get('attached-id', array(), 'array');
-			$old['name'] 		= $jinput->post->get('attached-name', array(), 'array');
+			$old = array();
+			$old['id']          = $jinput->post->get('attached-id', array(), 'array');
+			$old['name']        = $jinput->post->get('attached-name', array(), 'array');
 			$old['description'] = $jinput->post->get('attached-desc', array(), 'array');
-			$old['access'] 		= $jinput->post->get('attached-access', array(), 'array');
+			$old['access']      = $jinput->post->get('attached-access', array(), 'array');
 
 			foreach ($old['id'] as $k => $id) {
-				$attach 				= array();
-				$attach['id'] 			= $id;
-				$attach['name'] 		= $old['name'][$k];
-				$attach['description'] 	= $old['description'][$k];
+				$attach = array();
+				$attach['id']          = $id;
+				$attach['name']        = $old['name'][$k];
+				$attach['description'] = $old['description'][$k];
 				if ($allowed) {
-					$attach['access'] 	= $old['access'][$k];
+					$attach['access']  = $old['access'][$k];
 				} // else don't touch this field
 				JemAttachment::update($attach);
 			}
@@ -399,12 +398,12 @@ class JemModelEvent extends JemModelAdmin
 	 * Because user may not have permissions for all categories on frontend
 	 * records with non-permitted categories will be untouched.
 	 *
-	 * @param	int		The event id.
-	 * @param	array	The categories user has selected.
-	 * @param   bool    Flag to indicate if we are on frontend
-	 * @param   bool    Flag to indicate new event
+	 * @param  int     The event id.
+	 * @param  array   The categories user has selected.
+	 * @param  bool    Flag to indicate if we are on frontend
+	 * @param  bool    Flag to indicate new event
 	 *
-	 * @return	boolean	True on success.
+	 * @return boolean True on success.
 	 */
 	protected function _storeCategoriesSelected($eventId, $categories, $frontend, $new)
 	{
@@ -474,12 +473,12 @@ class JemModelEvent extends JemModelAdmin
 	 * Because user may not have permissions for all categories on frontend
 	 * records with non-permitted categories will be untouched.
 	 *
-	 * @param	int		The event id.
-	 * @param	mixed	The user ids as array or comma separated string.
-	 * @param   bool    Flag to indicate if we are on frontend
-	 * @param   bool    Flag to indicate new event
+	 * @param  int     The event id.
+	 * @param  mixed   The user ids as array or comma separated string.
+	 * @param  bool    Flag to indicate if we are on frontend
+	 * @param  bool    Flag to indicate new event
 	 *
-	 * @return	boolean	True on success.
+	 * @return boolean True on success.
 	 */
 	protected function _storeUsersInvited($eventId, $users, $frontend, $new)
 	{
@@ -560,15 +559,15 @@ class JemModelEvent extends JemModelAdmin
 	/**
 	 * Method to toggle the featured setting of articles.
 	 *
-	 * @param	array	The ids of the items to toggle.
-	 * @param	int		The value to toggle to.
+	 * @param  array   The ids of the items to toggle.
+	 * @param  int     The value to toggle to.
 	 *
-	 * @return	boolean	True on success.
+	 * @return boolean True on success.
 	 */
 	public function featured($pks, $value = 0)
 	{
 		// Sanitize the ids.
-		$pks = (array) $pks;
+		$pks = (array)$pks;
 		JArrayHelper::toInteger($pks);
 
 		if (empty($pks)) {

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -16,9 +16,9 @@ jimport('joomla.filesystem.file');
  *
  * @package JEM
  */
-class JemImage {
-
-	static function thumb($name,$filename,$new_w,$new_h)
+class JemImage
+{
+	static public function thumb($name,$filename,$new_w,$new_h)
 	{
 		// load the image manipulation class
 		//require 'path/to/Zebra_Image.php';
@@ -85,12 +85,11 @@ class JemImage {
 	 * Determine the GD version
 	 * Code from php.net
 	 *
-	 *
-	 * @param int
+	 * @param  int
 	 *
 	 * @return int
 	 */
-	static function gdVersion($user_ver = 0)
+	static public function gdVersion($user_ver = 0)
 	{
 		if (! extension_loaded('gd')) {
 			return;
@@ -138,15 +137,15 @@ class JemImage {
 	/**
 	 * Creates image information of an image
 	 *
-	 * @param string $image The image name
-	 * @param array $settings
-	 * @param string $type event or venue
+	 * @param  string $image The image name
+	 * @param  array $settings
+	 * @param  string $type event or venue
 	 *
 	 * @return imagedata if available
 	 */
-	static function flyercreator($image, $type)
+	static public function flyercreator($image, $type)
 	{
-		$settings = JEMHelper::config();
+		$settings = JemHelper::config();
 
 		//define the environment based on the type
 		if ($type == 'event') {
@@ -173,7 +172,7 @@ class JemImage {
 
 			//Create thumbnail if enabled and it does not exist already
 			if ($settings->gddisabled == 1 && !file_exists($save)) {
-				JEMImage::thumb($filepath, $save, $settings->imagewidth, $settings->imagehight);
+				JemImage::thumb($filepath, $save, $settings->imagewidth, $settings->imagehight);
 			}
 
 			//set paths
@@ -185,7 +184,6 @@ class JemImage {
 
 			//if the width or height is too large this formula will resize them accordingly
 			if (($iminfo[0] > $settings->imagewidth) || ($iminfo[1] > $settings->imagehight)) {
-
 				$iRatioW = $settings->imagewidth / $iminfo[0];
 				$iRatioH = $settings->imagehight / $iminfo[1];
 
@@ -214,7 +212,7 @@ class JemImage {
 		return false;
 	}
 
-	static function check($file, $jemsettings)
+	static public function check($file, $jemsettings)
 	{
 		$sizelimit = $jemsettings->sizelimit*1024; //size limit in kb
 		$imagesize = $file['size'];
@@ -259,12 +257,12 @@ class JemImage {
 	 * Sanitize the image file name and return an unique string
 	 *
 	 *
-	 * @param string $base_Dir the target directory
-	 * @param string $filename the unsanitized imagefile name
+	 * @param  string $base_Dir the target directory
+	 * @param  string $filename the unsanitized imagefile name
 	 *
 	 * @return string $filename the sanitized and unique image file name
 	 */
-	static function sanitize($base_Dir, $filename)
+	static public function sanitize($base_Dir, $filename)
 	{
 		//check for any leading/trailing dots and remove them (trailing shouldn't be possible cause of the getEXT check)
 		$filename = preg_replace("/^[.]*/", '', $filename);
@@ -285,7 +283,6 @@ class JemImage {
 		//$now = time();
 
 		$now = rand();
-
 
 		while (JFile::exists($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
 			$now++;

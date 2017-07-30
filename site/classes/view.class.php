@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
@@ -13,7 +13,8 @@ defined('_JEXEC') or die;
  *
  * @package JEM
  */
-class JEMView extends JViewLegacy {
+class JemView extends JViewLegacy
+{
 	/**
 	 * Adds a row to data indicating even/odd row number
 	 *
@@ -37,7 +38,8 @@ class JEMView extends JViewLegacy {
 	/**
 	 * Add path for common templates.
 	 */
-	protected function addCommonTemplatePath() {
+	protected function addCommonTemplatePath()
+	{
 		// additional path for list part + corresponding override path
 		$this->addTemplatePath(JPATH_COMPONENT.'/common/views/tmpl');
 		$this->addTemplatePath(JPATH_THEMES . '/' . JFactory::getApplication()->getTemplate() . '/html/com_jem/common');
@@ -46,11 +48,12 @@ class JEMView extends JViewLegacy {
 	/**
 	 * Prepares the document.
 	 */
-	protected function prepareDocument() {
-		$app 		= JFactory::getApplication();
-		$menus		= $app->getMenu();
-		$menu 		= $menus->getActive();
-		$print		= $app->input->getBool('print', false);
+	protected function prepareDocument()
+	{
+		$app   = JFactory::getApplication();
+		$menus = $app->getMenu();
+		$menu  = $menus->getActive();
+		$print = $app->input->getBool('print', false);
 
 		if ($print) {
 			JemHelper::loadCss('print');

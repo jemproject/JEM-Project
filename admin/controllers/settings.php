@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -12,7 +12,7 @@ defined('_JEXEC') or die();
 /**
  * JEM Component Settings Controller
  */
-class JEMControllerSettings extends JControllerLegacy
+class JemControllerSettings extends JControllerLegacy
 {
 
 	public function __construct($config = array())
@@ -26,11 +26,6 @@ class JEMControllerSettings extends JControllerLegacy
 	/**
 	 * Method to check if you can add a new record.
 	 *
-	 * Extended classes can override this if necessary.
-	 *
-	 * @param array	An array of input data.
-	 * @param string	The name of the key for the primary key.
-	 *
 	 * @return boolean
 	 */
 	protected function allowEdit()
@@ -40,11 +35,6 @@ class JEMControllerSettings extends JControllerLegacy
 
 	/**
 	 * Method to check if you can save a new or existing record.
-	 *
-	 * Extended classes can override this if necessary.
-	 *
-	 * @param array	An array of input data.
-	 * @param string	The name of the key for the primary key.
 	 *
 	 * @return boolean
 	 */
@@ -56,14 +46,13 @@ class JEMControllerSettings extends JControllerLegacy
 	/**
 	 * Method to get a model object, loading it if required.
 	 *
-	 * @param string	The model name. Optional.
-	 * @param string	The class prefix. Optional.
-	 * @param array	Configuration array for model. Optional (note, the empty
-	 *        array is atypical compared to other models).
+	 * @param  string  The model name. Optional.
+	 * @param  string  The class prefix. Optional.
+	 * @param  array   Configuration data for model. Optional.
 	 *
-	 * @return object model.
+	 * @return object  The model.
 	 */
-	public function getModel($name = 'Settings', $prefix = 'JEMModel', $config = array())
+	public function getModel($name = 'Settings', $prefix = 'JemModel', $config = array())
 	{
 		$model = parent::getModel($name, $prefix, $config);
 		return $model;
@@ -72,8 +61,8 @@ class JEMControllerSettings extends JControllerLegacy
 	/**
 	 * Method to save the configuration data.
 	 *
-	 * @param array	An array containing all global config data.
-	 * @return bool on success, false on failure.
+	 * @param  array  An array containing all global config data.
+	 * @return bool   True on success, false on failure.
 	 * @since 1.6
 	 */
 	public function save()
@@ -168,6 +157,9 @@ class JEMControllerSettings extends JControllerLegacy
 	 */
 	public function cancel()
 	{
+		// Check for request forgeries.
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+
 		// Check if the user is authorized to do this.
 		if (!JemFactory::getUser()->authorise('core.admin', 'com_jem')) {
 			JFactory::getApplication()->redirect('index.php', JText::_('JERROR_ALERTNOAUTHOR'));

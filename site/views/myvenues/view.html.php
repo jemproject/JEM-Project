@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -17,7 +17,7 @@ class JemViewMyvenues extends JViewLegacy
 	/**
 	 * Creates the Myvenues View
 	 */
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		// initialize variables
 		$app          = JFactory::getApplication();

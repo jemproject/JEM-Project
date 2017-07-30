@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -17,7 +17,7 @@ class JemViewVenue extends JViewLegacy
 	/**
 	 * Creates the Event Feed of the Venue
 	 */
-	function display()
+	public function display()
 	{
 		$app = JFactory::getApplication();
 		$doc = JFactory::getDocument();
@@ -71,11 +71,11 @@ class JemViewVenue extends JViewLegacy
 
 				// load individual item creator class
 				$item = new JFeedItem();
-				$item->title 		= $title;
-				$item->link 		= $link;
-				$item->description 	= $description;
-				$item->date			= $created;
-				$item->category   	= $category;
+				$item->title       = $title;
+				$item->link        = $link;
+				$item->description = $description;
+				$item->date        = $created;
+				$item->category    = $category;
 
 				// loads item info into rss array
 				$doc->addItem($item);

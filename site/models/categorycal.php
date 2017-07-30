@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -14,7 +14,6 @@ require_once dirname(__FILE__) . '/eventslist.php';
  * Model Categorycal
  *
  * @package JEM
- *
  */
 class JemModelCategoryCal extends JemModelEventslist
 {
@@ -26,12 +25,19 @@ class JemModelCategoryCal extends JemModelEventslist
 	protected $_id = null;
 
 	/**
+	 * Date as timestamp useable for strftime()
+	 *
+	 * @var int
+	 */
+	protected $_date = null;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct()
 	{
-		$app         = JFactory::getApplication();
-		$params      = $app->getParams();
+		$app    = JFactory::getApplication();
+		$params = $app->getParams();
 
 		$id = $app->input->getInt('id', 0);
 		if (empty($id)) {
@@ -44,8 +50,7 @@ class JemModelCategoryCal extends JemModelEventslist
 		parent::__construct();
 	}
 
-
-	function setdate($date)
+	public function setdate($date)
 	{
 		$this->_date = $date;
 	}
@@ -53,16 +58,15 @@ class JemModelCategoryCal extends JemModelEventslist
 	/**
 	 * Method to set the category id
 	 *
-	 * @access	public
-	 * @param	int	category ID number
+	 * @access public
+	 * @param  int  category ID
 	 */
-	function setId($id)
+	public function setId($id)
 	{
 		// Set new category ID and wipe data
 		$this->_id   = $id;
-		$this->_data = null;
+		//$this->_data = null;
 	}
-
 
 	/**
 	 * Method to auto-populate the model state.
@@ -82,14 +86,13 @@ class JemModelCategoryCal extends JemModelEventslist
 		//$this->setState('filter.published', 1);
 		$this->_populatePublishState($task);
 
-
 		###########
 		## DATES ##
 		###########
 
 		#only select events within specified dates. (chosen month)
-		$monthstart	= mktime(0, 0,  1, strftime('%m', $this->_date),   1, strftime('%Y', $this->_date));
-		$monthend	= mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
+		$monthstart = mktime(0, 0,  1, strftime('%m', $this->_date),   1, strftime('%Y', $this->_date));
+		$monthend   = mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
 
 		$filter_date_from = strftime('%Y-%m-%d', $monthstart);
 		$filter_date_to   = strftime('%Y-%m-%d', $monthend);
@@ -131,7 +134,7 @@ class JemModelCategoryCal extends JemModelEventslist
 	/**
 	 * @return JDatabaseQuery
 	 */
-	function getListQuery()
+	protected function getListQuery()
 	{
 		// Let parent create a new query object.
 		$query = parent::getListQuery();

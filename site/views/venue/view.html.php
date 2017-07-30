@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -16,7 +16,7 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 class JemViewVenue extends JEMView
 {
 
-	function __construct($config = array())
+	public function __construct($config = array())
 	{
 		parent::__construct($config);
 
@@ -27,29 +27,28 @@ class JemViewVenue extends JEMView
 	/**
 	 * Creates the Venue View
 	 */
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		if ($this->getLayout() == 'calendar')
 		{
 			### Venue Calendar view ###
 
-			$app = JFactory::getApplication();
-
 			// Load tooltips behavior
 			JHtml::_('behavior.tooltip');
 
 			// initialize variables
-			$document 		= JFactory::getDocument();
-			$menu 			= $app->getMenu();
-			$menuitem		= $menu->getActive();
-			$jemsettings	= JEMHelper::config();
-			$settings 		= JemHelper::globalattribs();
-			$params 		= $app->getParams();
-			$uri 			= JFactory::getURI();
-			$pathway 		= $app->getPathWay();
-			$jinput 		= $app->input;
-			$print			= $jinput->getBool('print', false);
-			$user			= JemFactory::getUser();
+			$app         = JFactory::getApplication();
+			$document    = JFactory::getDocument();
+			$menu        = $app->getMenu();
+			$menuitem    = $menu->getActive();
+			$jemsettings = JemHelper::config();
+			$settings    = JemHelper::globalattribs();
+			$params      = $app->getParams();
+			$uri         = JFactory::getURI();
+			$pathway     = $app->getPathWay();
+			$jinput      = $app->input;
+			$print       = $jinput->getBool('print', false);
+			$user        = JemFactory::getUser();
 
 			// Load css
 			JemHelper::loadCss('jem');
@@ -143,7 +142,8 @@ class JemViewVenue extends JEMView
 			$this->print_link    = $print_link;
 			$this->print         = $print;
 
-		} else
+		}
+		else
 		{
 			### Venue List view ###
 
@@ -174,8 +174,8 @@ class JemViewVenue extends JEMView
 			}
 
 			// get data from model
-			$rows	= $this->get('Items');
-			$venue	= $this->get('Venue');
+			$rows  = $this->get('Items');
+			$venue = $this->get('Venue');
 
 			// check for data error
 			if (empty($venue)) {
@@ -272,12 +272,7 @@ class JemViewVenue extends JEMView
 				$venue->text = $venue->locdescription;
 				$venue->title = $venue->venue;
 				JPluginHelper::importPlugin ('content');
-				$app->triggerEvent ('onContentPrepare', array (
-						'com_jem.venue',
-						&$venue,
-						&$params,
-						0
-				));
+				$app->triggerEvent ('onContentPrepare', array ('com_jem.venue', &$venue, &$params, 0));
 				$venuedescription = $venue->text;
 			}
 

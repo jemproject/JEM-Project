@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -27,7 +27,7 @@ class JemModelCalendar extends JemModelEventslist
 		$this->setdate(time());
 	}
 
-	function setdate($date)
+	public function setdate($date)
 	{
 		$this->_date = $date;
 	}
@@ -55,11 +55,11 @@ class JemModelCalendar extends JemModelEventslist
 		###########
 
 		#only select events within specified dates. (chosen month)
-		$monthstart	= mktime(0, 0, 1, strftime('%m', $this->_date), 1, strftime('%Y', $this->_date));
-		$monthend	= mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
+		$monthstart = mktime(0, 0, 1, strftime('%m', $this->_date), 1, strftime('%Y', $this->_date));
+		$monthend   = mktime(0, 0, -1, strftime('%m', $this->_date)+1, 1, strftime('%Y', $this->_date));
 
-		$filter_date_from	= $this->_db->Quote(strftime('%Y-%m-%d', $monthstart));
-		$filter_date_to		= $this->_db->Quote(strftime('%Y-%m-%d', $monthend));
+		$filter_date_from = $this->_db->Quote(strftime('%Y-%m-%d', $monthstart));
+		$filter_date_to   = $this->_db->Quote(strftime('%Y-%m-%d', $monthend));
 
 		$where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), '. $filter_date_from .') >= 0';
 		$this->setState('filter.calendar_from',$where);
@@ -85,7 +85,6 @@ class JemModelCalendar extends JemModelEventslist
 		$this->setState('filter.groupby',array('a.id'));
 	}
 
-
 	/**
 	 * Method to get a list of events.
 	 */
@@ -100,11 +99,10 @@ class JemModelCalendar extends JemModelEventslist
 		return array();
 	}
 
-
 	/**
-	 * @return	JDatabaseQuery
+	 * @return JDatabaseQuery
 	 */
-	function getListQuery()
+	protected function getListQuery()
 	{
 		// Create a new query object.
 		$query = parent::getListQuery();

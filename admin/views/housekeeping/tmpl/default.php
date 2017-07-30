@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -22,7 +22,7 @@ defined('_JEXEC') or die;
 				<!-- CLEAN EVENT IMG -->
 				<td width="10%">
 					<div class="linkicon">
-						<a href="index.php?option=com_jem&amp;task=housekeeping.cleaneventimg">
+						<a href="index.php?option=com_jem&amp;task=housekeeping.cleaneventimg&amp;<?php echo JSession::getFormToken(); ?>=1">
 							<?php echo JHtml::_('image', 'com_jem/icon-48-cleaneventimg.png', JText::_('COM_JEM_HOUSEKEEPING_EVENT_IMG'), NULL, true); ?>
 							<span><?php echo JText::_('COM_JEM_HOUSEKEEPING_EVENT_IMG'); ?></span>
 						</a>
@@ -35,7 +35,7 @@ defined('_JEXEC') or die;
 				<!-- CLEAN VENUE IMG -->
 				<td width="10%">
 					<div class="linkicon">
-						<a href="index.php?option=com_jem&amp;task=housekeeping.cleanvenueimg">
+						<a href="index.php?option=com_jem&amp;task=housekeeping.cleanvenueimg&amp;<?php echo JSession::getFormToken(); ?>=1">
 							<?php echo JHtml::_('image', 'com_jem/icon-48-cleanvenueimg.png', JText::_('COM_JEM_HOUSEKEEPING_VENUE_IMG'), NULL, true); ?>
 							<span><?php echo JText::_('COM_JEM_HOUSEKEEPING_VENUE_IMG'); ?></span>
 						</a>
@@ -50,7 +50,7 @@ defined('_JEXEC') or die;
 				<!-- CLEAN CATEGORY IMG -->
 				<td width="10%">
 					<div class="linkicon">
-						<a href="index.php?option=com_jem&amp;task=housekeeping.cleancategoryimg">
+						<a href="index.php?option=com_jem&amp;task=housekeeping.cleancategoryimg&amp;<?php echo JSession::getFormToken(); ?>=1">
 							<?php echo JHtml::_('image', 'com_jem/icon-48-cleancategoryimg.png', JText::_('COM_JEM_HOUSEKEEPING_CATEGORY_IMG'), NULL, true); ?>
 							<span><?php echo JText::_('COM_JEM_HOUSEKEEPING_CATEGORY_IMG'); ?></span>
 						</a>
@@ -63,7 +63,7 @@ defined('_JEXEC') or die;
 				<!-- CLEAN TRIGGER ARCHIVE -->
 				<td width="10%">
 					<div class="linkicon">
-						<a href="index.php?option=com_jem&amp;task=housekeeping.triggerarchive">
+						<a href="index.php?option=com_jem&amp;task=housekeeping.triggerarchive&amp;<?php echo JSession::getFormToken(); ?>=1">
 							<?php echo JHtml::_('image', 'com_jem/icon-48-archive.png', JText::_('COM_JEM_HOUSEKEEPING_TRIGGER_AUTOARCHIVE'), NULL, true); ?>
 							<span><?php echo JText::_('COM_JEM_HOUSEKEEPING_TRIGGER_AUTOARCHIVE'); ?></span>
 						</a>
@@ -78,7 +78,7 @@ defined('_JEXEC') or die;
 				<!-- TRUNCATE CATEGORY/EVENT REFERENCES -->
 				<td width="10%">
 					<div class="linkicon">
-						<a href="index.php?option=com_jem&amp;task=housekeeping.cleanupCatsEventRelations">
+						<a href="index.php?option=com_jem&amp;task=housekeeping.cleanupCatsEventRelations&amp;<?php echo JSession::getFormToken(); ?>=1">
 							<?php echo JHtml::_('image', 'com_jem/icon-48-cleancategoryimg.png', JText::_('COM_JEM_HOUSEKEEPING_CATSEVENT_RELS'), NULL, true); ?>
 							<span><?php echo JText::_('COM_JEM_HOUSEKEEPING_CLEANUP_CATSEVENT_RELS'); ?></span>
 						</a>
@@ -92,7 +92,7 @@ defined('_JEXEC') or die;
 				<!-- TRUNCATE ALL DATA -->
 				<td width="10%">
 					<div class="linkicon">
-						<a href="index.php?option=com_jem&amp;task=housekeeping.truncateAllData" onclick="javascript:return confirm('<?php echo JText::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_CONFIRM'); ?>');">
+						<a href="index.php?option=com_jem&amp;task=housekeeping.truncateAllData&amp;<?php echo JSession::getFormToken(); ?>=1" onclick="javascript:return confirm('<?php echo JText::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_CONFIRM'); ?>');">
 							<?php echo JHtml::_('image', 'com_jem/icon-48-truncatealldata.png', JText::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA'), NULL, true); ?>
 							<span><?php echo JText::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA'); ?></span>
 						</a>
