@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
  * @subpackage JEM Calendar Module
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2008 Toni Smillie www.qivva.com
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -52,21 +52,21 @@ if (!empty($LocaleOverride)) {
 }
 
 // get switch trigger
-$req_month 	= (int)JRequest::getVar('el_mcal_month', '', 'request');
-$req_year 	= (int)JRequest::getVar('el_mcal_year', '', 'request');
+$req_month = $app->input->request->getInt('el_mcal_month');
+$req_year  = $app->input->request->getInt('el_mcal_year');
 
-if ($Remember == 1) { // Remember which month / year is selected. Don't jump back to tday on page change
+if ($Remember == 1) { // Remember which month / year is selected. Don't jump back to today on page change
 	if ($req_month == 0) {
 		$req_month = $app->getUserState("jemcalqmonth");
 		$req_year  = $app->getUserState("jemcalqyear");
 	} else {
-		$app->setUserState("jemcalqmonth",$req_month);
-		$app->setUserState("jemcalqyear",$req_year);
+		$app->setUserState("jemcalqmonth", $req_month);
+		$app->setUserState("jemcalqyear",  $req_year);
 	}
 }
 
 //Requested URL
-$uri = JUri::getInstance();
+$uri   = JUri::getInstance();
 $myurl = $uri->toString(array('query'));
 
 //08/09/09 - Added Fix for sh404sef
@@ -74,26 +74,27 @@ if (empty($myurl)) {
 	$request_link = $uri->toString(array('path')).'?';
 } else {
 	$request_link = $uri->toString(array('path')).$myurl;
-	$request_link = str_replace("&el_mcal_month=".$req_month,"",$request_link);
-	$request_link = str_replace("&el_mcal_year=".$req_year,"",$request_link);
+	$request_link = str_replace("&el_mcal_month=".$req_month, "", $request_link);
+	$request_link = str_replace("&el_mcal_year=" .$req_year,  "", $request_link);
 }
 
 //set now
 $config      = JFactory::getConfig();
 $tzoffset    = $config->get('config.offset');
-$time        = time() + (($tzoffset + $Time_offset)*60*60);
+$time        = time() + (($tzoffset + $Time_offset) * 60 * 60);
 $today_month = date('m', $time);
 $today_year  = date('Y', $time);
 $today       = date('j', $time);
 
-if ($req_month == 0) $req_month = $today_month;
+if ($req_month == 0) { $req_month = $today_month; }
+if ($req_year  == 0) { $req_year  = $today_year;  }
+
 $offset_month = $req_month + $Month_offset;
-if ($req_year == 0) $req_year = $today_year;
-$offset_year = $req_year;
+$offset_year  = $req_year;
 
 if ($offset_month > 12) {
-	$offset_month = $offset_month -12; // Roll over year end
-	$offset_year = $req_year + 1;
+	$offset_month -= 12; // Roll over year end
+	++$offset_year;
 }
 
 // Setting the previous and next month numbers
@@ -103,13 +104,13 @@ $next_month_year = $req_year;
 $prev_month = $req_month - 1;
 if ($prev_month < 1) {
 	$prev_month = 12;
-	$prev_month_year = $prev_month_year - 1;
+	--$prev_month_year;
 }
 
 $next_month = $req_month + 1;
 if ($next_month > 12) {
 	$next_month = 1;
-	$next_month_year = $next_month_year + 1;
+	++$next_month_year;
 }
 
 // Create Links
