@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="2.5" type="plugin" group="acymailing" method="upgrade">
 	<name>AcyMailing Tag : insert events from JEM 2.1+</name>
-	<creationDate>March 2016</creationDate>
-	<version>2.1.3</version>
+	<creationDate>August 2017</creationDate>
+	<version>2.1.4</version>
 	<author>Acyba, JEM Community</author>
 	<authorEmail>dev@acyba.com, info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.acyba.com, http://www.joomlaeventmanager.net</authorUrl>
@@ -39,4 +39,8 @@
 			</fieldset>
 		</fields>
 	</config>
+
+	<updateservers>
+		<server type="extension" name="JEM Update Site">http://www.joomlaeventmanager.net/updatecheck/update_plg_acymailing_tagjem.xml</server>
+	</updateservers>
 </extension>

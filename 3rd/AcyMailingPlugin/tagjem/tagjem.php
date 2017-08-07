@@ -1,9 +1,9 @@
 <?php
 /**
- * Version 2.1.3
- * @copyright	Copyright (C) 2016 Ghost Art digital media.
- * @copyright	Copyright (C) 2013 - 2015 joomlaeventmanager.net. All rights reserved.
- * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * Version 2.1.4
+ * @copyright Copyright (C) 2014 Ghost Art digital media.
+ * @copyright Copyright (C) 2013 - 2017 joomlaeventmanager.net. All rights reserved.
+ * @license   http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  * Based on Eventlist11 tag and JEM specific code by JEM Community
  */
 defined('_JEXEC') or die;
@@ -15,10 +15,10 @@ include_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 class plgAcymailingTagjem extends JPlugin
 {
 
-	var $searchFields = array('a.id','a.title','a.alias','a.introtext');
-	var $selectedFields = array('a.*');
+	protected $searchFields = array('a.id','a.title','a.alias','a.introtext');
+	protected $selectedFields = array('a.*');
 
-	function __construct(&$subject, $config)
+	public function __construct(&$subject, $config)
 	{
 		parent::__construct($subject, $config);
 		if (!isset($this->params)) {
@@ -26,11 +26,10 @@ class plgAcymailingTagjem extends JPlugin
 			$this->params = new JParameter($plugin->params);
 		}
 		$this->loadLanguage();
-		$this->loadLanguage('com_jem', JPATH_SITE.'/components/com_jem');
 		$this->loadLanguage('com_jem', JPATH_ADMINISTRATOR.'/components/com_jem');
 	}
 
-	function acymailing_getPluginType()
+	public function acymailing_getPluginType()
 	{
 		$onePlugin = new stdClass();
 		$onePlugin->name = JText::_('JOOMEXT_EVENT'). ' <small>(JEM)</small>';
@@ -40,7 +39,7 @@ class plgAcymailingTagjem extends JPlugin
 		return $onePlugin;
 	}
 
-	function acymailingtagjem_show()
+	public function acymailingtagjem_show()
 	{
 		$config = acymailing_config();
 		if ($config->get('version') < '4.0.0') {
@@ -58,7 +57,7 @@ class plgAcymailingTagjem extends JPlugin
 
 		$paramBase = ACYMAILING_COMPONENT.'.tagjem';
 		$pageInfo->filter->order->value = $app->getUserStateFromRequest($paramBase.".filter_order", 'filter_order',	'a.id', 'cmd');
-		$pageInfo->filter->order->dir	= $app->getUserStateFromRequest($paramBase.".filter_order_Dir", 'filter_order_Dir',	'desc',	'word');
+		$pageInfo->filter->order->dir   = $app->getUserStateFromRequest($paramBase.".filter_order_Dir", 'filter_order_Dir',	'desc',	'word');
 		$pageInfo->search = $app->getUserStateFromRequest($paramBase.".search", 'search', '', 'string');
 		$pageInfo->search = JString::strtolower($pageInfo->search);
 
@@ -74,7 +73,7 @@ class plgAcymailingTagjem extends JPlugin
 
 		// we hide past events but we remove one day just to make sure we won't hide something we should not!
 		// because it's a newsletter we focus onevents starting in the future; already running (multi-day) events are not new
-		if ($this->params->get('hidepastevents', 'yes') == 'yes') {
+		if ($this->params->get('hidepastevents', 'yes') === 'yes') {
 			$filters[] = '(a.dates IS NULL OR a.dates >= '.$db->Quote(date('Y-m-d', time() - 86400)) . ')';
 		}
 
@@ -168,7 +167,7 @@ class plgAcymailingTagjem extends JPlugin
 							<?php echo acymailing_absoluteURL($row->introtext); ?>
 						</td>
 						<td align="center">
-							<?php echo JEMOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes); ?>
+							<?php echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes); ?>
 						</td>
 						<td align="center">
 							<?php echo $row->id; ?>
@@ -188,7 +187,7 @@ class plgAcymailingTagjem extends JPlugin
 		echo $tabs->endPanel();
 
 		echo $tabs->startPanel(JText::_('UPCOMING_EVENTS'), 'jem_auto');
-		$type = JRequest::getString('type');
+		$type = $app->input->request->getString('type');
 
 		$db->setQuery('SELECT a.* FROM `#__jem_categories` as a WHERE a.alias NOT LIKE "root" ORDER BY a.`ordering` ASC');
 		$categories = $db->loadObjectList('id');
@@ -292,10 +291,10 @@ class plgAcymailingTagjem extends JPlugin
 					<?php $delayType = acymailing_get('type.delay'); $delayType->onChange = "updateTag();"; echo $delayType->display('delayevent', 7776000, 3); ?>
 				</td>
 			</tr>
-			<?php if($type == 'autonews') { ?>
+			<?php if($type === 'autonews') { ?>
 			<tr>
 				<td>
-					<?php 	echo JText::_('MIN_ARTICLE'); ?>
+					<?php echo JText::_('MIN_ARTICLE'); ?>
 				</td>
 				<td>
 					<input name="min_article" size="10" value="1" onchange="updateTag();"/>
@@ -308,7 +307,7 @@ class plgAcymailingTagjem extends JPlugin
 			<?php } ?>
 			<tr>
 				<td>
-					<?php 	echo JText::_('PLG_TAGJEM_TEMPLATE'); ?>
+					<?php echo JText::_('PLG_TAGJEM_TEMPLATE'); ?>
 				</td>
 				<td>
 					<?php /* TODO: Collect templates dynamically. */ ?>
@@ -355,13 +354,13 @@ class plgAcymailingTagjem extends JPlugin
 		echo $tabs->endPane();
 	} //End of the function
 
-	function acymailing_replacetags(&$email, $send = true)
+	public function acymailing_replacetags(&$email, $send = true)
 	{
 		$this->_replaceAuto($email);
 		$this->_replaceEvents($email);
 	}
 
-	function _replaceEvents(&$email)
+	protected function _replaceEvents(&$email)
 	{
 		$match = '#{jem:(.*)}#Ui';
 		$variables = array('body','altbody');
@@ -402,7 +401,7 @@ class plgAcymailingTagjem extends JPlugin
 		$email->altbody = str_replace(array_keys($resultstext), $resultstext, $email->altbody);
 	}
 
-	function _replaceEvent(&$allresults, $i)
+	protected function _replaceEvent(&$allresults, $i)
 	{
 		// Transform the tag properly...
 		$arguments = explode('|', $allresults[1][$i]);
@@ -413,7 +412,7 @@ class plgAcymailingTagjem extends JPlugin
 		$result = '';
 		$tag = new stdClass();
 		$tag->itemid = intval($this->params->get('itemid'));
-		for ($i=1, $a = count($arguments); $i < $a; $i++) {
+		for ($i = 1, $a = count($arguments); $i < $a; $i++) {
 			$args = explode(':', $arguments[$i]);
 			$arg0 = trim($args[0]);
 			if (isset($args[1])) {
@@ -464,7 +463,7 @@ class plgAcymailingTagjem extends JPlugin
 				continue;
 			}
 
-			$date = JEMOutput::formatLongDateTime($event->dates, $event->times,
+			$date = JemOutput::formatLongDateTime($event->dates, $event->times,
 			                                      $event->enddates, $event->endtimes);
 
 			$link = 'index.php?option=com_jem&view=event&id='.$event->id.':'.$event->alias;
@@ -472,7 +471,7 @@ class plgAcymailingTagjem extends JPlugin
 				$link .= '&Itemid='.$tag->itemid;
 			}
 			if (!empty($tag->autologin)) {
-				$link.= (strpos($link,'?') ? '&' : '?') . 'user={usertag:username|urlencode}&passw={usertag:password|urlencode}';
+				$link .= (strpos($link,'?') ? '&' : '?') . 'user={usertag:username|urlencode}&passw={usertag:password|urlencode}';
 			}
 			$link = acymailing_frontendLink($link);
 
@@ -480,7 +479,7 @@ class plgAcymailingTagjem extends JPlugin
 			if (!empty($event->datimage)) {
 				$filename = basename($event->datimage);
 				$dirname = dirname($event->datimage);
-				if (empty($dirname) or $dirname == '.') { // JEM 2.x, fix path
+				if (empty($dirname) or $dirname === '.') { // JEM 2.x, fix path
 					$dirname = 'images/jem/events';
 				}
 				if (file_exists(ACYMAILING_ROOT . $dirname . '/small/' . $filename)) {
@@ -494,7 +493,7 @@ class plgAcymailingTagjem extends JPlugin
 
 			// Check if the template exists...
 			$template = '';
-			if (!empty($tag->template) ){
+			if (!empty($tag->template)) {
 				$template = '_'.$tag->template;
 			}
 
@@ -540,7 +539,7 @@ class plgAcymailingTagjem extends JPlugin
 		return $result;
 	}
 
-	function _replaceAuto(&$email)
+	protected function _replaceAuto(&$email)
 	{
 		$this->acymailing_generateautonews($email);
 
@@ -552,7 +551,7 @@ class plgAcymailingTagjem extends JPlugin
 		}
 	}
 
-	function acymailing_generateautonews(&$email)
+	public function acymailing_generateautonews(&$email)
 	{
 		$return = new stdClass();
 		$return->status = true;
@@ -624,7 +623,7 @@ class plgAcymailingTagjem extends JPlugin
 				}
 
 				// Open dates, date limits
-				$opendates	= !empty($parameter->opendates) ? $parameter->opendates : 'no';
+				$opendates = !empty($parameter->opendates) ? $parameter->opendates : 'no';
 				switch ($opendates) {
 				case 'no': // don't show events without start date
 				default:
@@ -707,7 +706,7 @@ class plgAcymailingTagjem extends JPlugin
 	 * @param $option size beyond which image have to be resized
 	 * ($options->maxWidth, $options->maxHeight)
 	 */
-	function _resizeImages($text, $options)
+	protected function _resizeImages($text, $options)
 	{
 		if (!empty($options->maxHeight) && !empty($options->maxWidth))
 		{
@@ -727,11 +726,12 @@ class plgAcymailingTagjem extends JPlugin
 	 * @param $tabname id of the class to display the row in
 	 * @param $cols number of columns in the table
 	 */
-	function _showResizeOptionsRow($tabname, $cols)
+	protected function _showResizeOptionsRow($tabname, $cols)
 	{
-		$resize = JRequest::getBool($tabname.'_resizeimages', false);
-		$width  = JRequest::getInt($tabname.'_imgwidth', 160);
-		$height = JRequest::getInt($tabname.'_imgheight', 160);
+		$app    = JFactory::getApplication();
+		$resize = $app->input->request->getBool($tabname.'_resizeimages', false);
+		$width  = $app->input->request->getInt($tabname.'_imgwidth', 160);
+		$height = $app->input->request->getInt($tabname.'_imgheight', 160);
 
 		?>
 		<tr><td colspan="<?php echo $cols ?>">
@@ -756,7 +756,7 @@ class plgAcymailingTagjem extends JPlugin
 	/**
 	 * Load the script used for toggling images resize options
 	 */
-	function _initResizeOptionsScript()
+	protected function _initResizeOptionsScript()
 	{
 		?>
 		<script>
