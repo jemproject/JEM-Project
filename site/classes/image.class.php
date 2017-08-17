@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.filesystem.file');
+require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
 
 /**
  * Holds the logic for image manipulation
@@ -44,6 +45,7 @@ class JemImage
 		$image->preserve_aspect_ratio = true;
 		$image->enlarge_smaller_images = false;
 		$image->preserve_time = true;
+		$image->auto_handle_exif_orientation = true;
 
 		// resize the image to at best 100x100 pixels by using the "not boxed" method
 		// (read more in the overview section or in the documentation)
@@ -75,6 +77,12 @@ class JemImage
 					break;
 				case 7:
 					JFactory::getApplication()->enqueueMessage('GD library is not installed!', 'warning');
+					break;
+				case 8:
+					JFactory::getApplication()->enqueueMessage('"chmod" command is disabled via configuration', 'warning');
+					break;
+				case 9:
+					JFactory::getApplication()->enqueueMessage('"exif_read_data" function is not available', 'warning');
 					break;
 				}
 			}

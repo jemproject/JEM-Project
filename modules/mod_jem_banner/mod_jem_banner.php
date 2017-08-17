@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @subpackage JEM Banner Module
  * @copyright (C) 2014-2017 joomlaeventmanager.net
@@ -17,7 +17,6 @@ require_once(dirname(__FILE__).'/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/image.class.php');
-require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
