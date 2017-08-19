@@ -1341,7 +1341,8 @@ class Zebra_Image
         $this->source_identifier = $identifier;
 
         // if we need to handle exif orientation automatically
-        if ($this->auto_handle_exif_orientation) {
+        // Hoffi: exif_read_data() supports JPEG and TIFF only, prevent PHP Warning
+        if ($this->auto_handle_exif_orientation && ($this->source_type === IMAGETYPE_JPEG)) {
 
             // if "exif_read_data" function is not available, return false
             if (!function_exists('exif_read_data')) {
