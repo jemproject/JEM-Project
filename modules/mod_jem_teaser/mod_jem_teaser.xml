@@ -7,7 +7,7 @@
 	<creationDate>August 2017</creationDate>
 	<copyright>copyright (C) 2013-2017 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>2.2.2-dev1</version>
+	<version>2.2.2-dev2</version>
 	<description>MOD_JEM_TEASER_XML_DESCRIPTION</description>
 
 	<scriptfile>script.php</scriptfile>
@@ -41,6 +41,15 @@
 					label="MOD_JEM_TEASER_EVENTS_IN_MODULE"
 					description="MOD_JEM_TEASER_EVENTS_IN_MODULE_DESC"
 				/>
+				<field name="show_no_events" type="radio"
+					default="1"
+					label="MOD_JEM_TEASER_SHOW_NO_EVENTS"
+					description="MOD_JEM_TEASER_SHOW_NO_EVENTS_DESC"
+					class="btn-group btn-group-yesno"
+				>
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
 				<field name="offset_hours" type="text"
 					default=""
 					label="MOD_JEM_TEASER_OFFSET_HOURS"

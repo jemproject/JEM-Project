@@ -25,7 +25,7 @@ JFactory::getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
 $list = ModJemWideHelper::getList($params);
 
 // check if any results returned
-if (empty($list)) {
+if (empty($list) && !$params->get('show_no_events')) {
 	return;
 }
 

@@ -120,7 +120,7 @@ $nlink = $request_link.'&el_mcal_month='.$next_month.'&el_mcal_year='.$next_mont
 $prev_link = JRoute::_($plink, false);
 $next_link = JRoute::_($nlink, false);
 
-$days = modjemcalqHelper::getdays($offset_year, $offset_month, $params);
+$days = ModJemCalqHelper::getdays($offset_year, $offset_month, $params);
 
 require(JModuleHelper::getLayoutPath('mod_jem_cal'));
 ?>

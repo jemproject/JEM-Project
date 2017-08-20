@@ -94,6 +94,11 @@ class Pkg_JemInstallerScript {
 	//	$this->enablePlugin('search', 'jem');
 	//	$this->enablePlugin('jem', 'mailer');
 
+		# ajax calendar module doesn't fully work on Joomla! 2.5
+		if (version_compare(JVERSION, '3', '<')) {
+			$this->disableModule('mod_jem_calajax');
+		}
+
 		return true;
 	}
 
@@ -104,6 +109,15 @@ class Pkg_JemInstallerScript {
 		}
 		$plugin->enabled = 1;
 		return $plugin->store();
+	}
+
+	function disableModule($element) {
+		$module = JTable::getInstance('extension');
+		if (!$module->load(array('type'=>'module', 'element'=>$element))) {
+			return false;
+		}
+		$module->enabled = 0;
+		return $module->store();
 	}
 
 	public function checkRequirements($version) {

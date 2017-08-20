@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
  * @subpackage JEM - Module-Calendar(AJAX)
- * @copyright (C) 2015-2016 joomlaeventmanager.net
+ * @copyright (C) 2015-2017 joomlaeventmanager.net
  * @copyright (C) 2008-2010 Toni Smillie www.qivva.com
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 */
@@ -41,7 +41,7 @@ if ($Default_Stylesheet == 1) {
 
 //Output
 if (!defined('_IN_AJAXCALL')) {
-    echo '<div class="eventcalq" align="center" id="eventcalq' . $module->id . '">';
+    echo '<div class="eventcalq'.$params->get('moduleclass_sfx').'" align="center" id="eventcalq' . $module->id . '">';
 }
 
 	$calendar = '';
@@ -79,7 +79,7 @@ if (!defined('_IN_AJAXCALL')) {
 			$day_names_short = array(JText::_('SUN'),JText::_('MON'),JText::_('TUE'),JText::_('WED'),JText::_('THU'),JText::_('FRI'),JText::_('SAT'));
 		}
 	} else {
-		for($n = 0, $t = (3 + $first_day) *24 *60 *60; $n < 7; ++$n, $t += 24 *60 *60) { #January 4, 1970 was a Sunday
+		for ($n = 0, $t = (3 + $first_day) *24 *60 *60; $n < 7; ++$n, $t += 24 *60 *60) { #January 4, 1970 was a Sunday
 			if (!function_exists('mb_convert_case')) {
 			   $day_names_long[$n] = ucfirst(gmstrftime('%A',$t)); #%A means full textual day name
 			   $day_names_short[$n] = ucfirst(gmstrftime('%A',$t)); #%a means short day name
@@ -95,57 +95,6 @@ if (!defined('_IN_AJAXCALL')) {
 		$month_names = array('', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER');
 		$month_name_short = JText::_($month_names[(int)$month] . '_SHORT');
 		$month_name_long  = JText::_($month_names[(int)$month]);
-		/*
-		switch ($month) {
-			case 1:
-				$month_name_short= JText::_('JANUARY_SHORT');
-				$month_name_long = JText::_('JANUARY');
-				break;
-			case 2:
-				$month_name_short= JText::_('FEBRUARY_SHORT');
-				$month_name_long = JText::_('FEBRUARY');
-				break;
-			case 3:
-				$month_name_short= JText::_('MARCH_SHORT');
-				$month_name_long = JText::_('MARCH');
-				break;
-			case 4:
-				$month_name_short= JText::_('APRIL_SHORT');
-				$month_name_long = JText::_('APRIL');
-				break;
-			case 5:
-				$month_name_short= JText::_('MAY_SHORT');
-				$month_name_long = JText::_('MAY');
-				break;
-			case 6:
-				$month_name_short= JText::_('JUNE_SHORT');
-				$month_name_long = JText::_('JUNE');
-				break;
-			case 7:
-				$month_name_short= JText::_('JULY_SHORT');
-				$month_name_long = JText::_('JULY');
-				break;
-			case 8:
-				$month_name_short= JText::_('AUGUST_SHORT');
-				$month_name_long = JText::_('AUGUST');
-				break;
-			case 9:
-				$month_name_short= JText::_('SEPTEMBER_SHORT');
-				$month_name_long = JText::_('SEPTEMBER');
-				break;
-			case 10:
-				$month_name_short= JText::_('OCTOBER_SHORT');
-				$month_name_long = JText::_('OCTOBER');
-				break;
-			case 11:
-				$month_name_short= JText::_('NOVEMBER_SHORT');
-				$month_name_long = JText::_('NOVEMBER');
-				break;
-			case 12:
-				$month_name_short= JText::_('DECEMBER_SHORT');
-				$month_name_long = JText::_('DECEMBER');
-				break;
-		}*/
 	}
     $weekday = ($weekday + 7 - $first_day) % 7; #adjust for $first_day
 	$year_length = $Year_length ? $year : substr($year, 2, 3);

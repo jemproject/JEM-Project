@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @subpackage JEM Module
  * @copyright (C) 2013-2017 joomlaeventmanager.net
@@ -14,7 +14,7 @@ JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel'
 /**
  * Module-Basic
  */
-abstract class modJEMHelper
+abstract class ModJemHelper
 {
 
 	/**

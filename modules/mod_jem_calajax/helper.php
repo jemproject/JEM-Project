@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
  * @subpackage JEM - Module-Calendar(AJAX)
- * @copyright (C) 2015-2016 joomlaeventmanager.net
+ * @copyright (C) 2015-2017 joomlaeventmanager.net
  * @copyright (C) 2008-2010 Toni Smillie www.qivva.com
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 
@@ -22,9 +22,9 @@ JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel'
 require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
 
 // perform cleanup if it wasn't done today (archive, trash)
-//JEMHelper::cleanup();
+//JemHelper::cleanup();
 
-abstract class modjemcalajaxhelper
+abstract class ModJemCalajaxHelper
 {
 
 	public static function getdays ($greq_year, $greq_month, &$params)
@@ -198,10 +198,10 @@ abstract class modjemcalajaxhelper
 					}
 					if (($StraightToDetails == 1) and ($stod == 1)) {
 						if ($FixItemID == 0) {
-							$link = JRoute::_(JEMHelperRoute::getEventRoute($event->slug));
+							$link = JRoute::_(JemHelperRoute::getEventRoute($event->slug));
 						} else {
 							//Create the link - copied from Jroute
-							$evlink = JEMHelperRoute::getEventRoute($event->slug).'&Itemid='.$FixItemID;
+							$evlink = JemHelperRoute::getEventRoute($event->slug).'&Itemid='.$FixItemID;
 							$link = JRoute::_($evlink);
 						}
 					} else {
@@ -214,7 +214,7 @@ abstract class modjemcalajaxhelper
 								$evlink = 'index.php?option=com_jem&view=day&id='. $tdate;
 							}
 							$link = JRoute::_($evlink);
-							//$link = JEMHelperRoute::getRoute($tdate, 'day');
+							//$link = JemHelperRoute::getRoute($tdate, 'day');
 						} else {
 							//Create the link - copied from Jroute
 							$evlink = 'index.php?option=com_jem&view=day&id='. $tdate.'&Itemid='.$FixItemID;

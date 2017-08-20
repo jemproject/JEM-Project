@@ -40,7 +40,7 @@ switch($params->get('color')) {
 $list = ModJemTeaserHelper::getList($params);
 
 // check if any results returned
-if (empty($list)) {
+if (empty($list) && !$params->get('show_no_events')) {
 	return;
 }
 

@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.2.2
  * @package JEM
  * @subpackage JEM Calendar Module
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2008 Toni Smillie www.qivva.com
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -35,7 +35,7 @@ if ($Default_Stylesheet == 1) {
 }
 
 //Output
-echo "<div class='eventcalq'>";
+echo '<div class="eventcalq'.$params->get('moduleclass_sfx').'">';
 
 $calendar = '';
 $month_href = NULL;
