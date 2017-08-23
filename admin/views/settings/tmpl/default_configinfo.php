@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.4.2
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -26,6 +26,7 @@ defined('_JEXEC') or die;
 				                         ,'mod_jem_teaser'    => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_TEASER'
 				                         ,'mod_jem_wide'      => 'COM_JEM_MAIN_CONFIG_VS_MOD_JEM_WIDE'
 				                         ,'plg_content_jem'   => 'COM_JEM_MAIN_CONFIG_VS_PLG_CONTENT'
+				                         ,'plg_content_jemlistevents' => 'COM_JEM_MAIN_CONFIG_VS_PLG_CONTENT_LISTEVENTS'
 				                         ,'plg_finder_jem'    => 'COM_JEM_MAIN_CONFIG_VS_PLG_FINDER'
 				                         ,'plg_search_jem'    => 'COM_JEM_MAIN_CONFIG_VS_PLG_SEARCH'
 				                         ,'plg_jem_comments'  => 'COM_JEM_MAIN_CONFIG_VS_PLG_COMMENTS'
@@ -33,6 +34,8 @@ defined('_JEXEC') or die;
 				                         ,'plg_jem_demo'      => 'COM_JEM_MAIN_CONFIG_VS_PLG_DEMO'
 				                         ,'plg_quickicon_jem' => 'COM_JEM_MAIN_CONFIG_VS_PLG_QUICKICON'
 				                         ,'Quick Icon - JEM'  => 'COM_JEM_MAIN_CONFIG_VS_PLG_QUICKICON'
+				                         ,'AcyMailing Tag : insert events from JEM 2.1+'
+				                                              => 'COM_JEM_MAIN_CONFIG_VS_PLG_ACYMAILING_TAGJEM'
 				                         );
 				foreach ($known_extensions as $name => $label) {
 					if (!empty($this->config->$name)) { ?>
