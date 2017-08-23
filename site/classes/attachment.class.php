@@ -108,7 +108,7 @@ class JemAttachment extends JObject
 			$table->added_by = $user->get('id');
 
 			if (!($table->check() && $table->store())) {
-				JError::raiseWarning(0, JText::_('COM_JEM_ATTACHMENT_ERROR_SAVING_TO_DB').': '.$table->getError());
+				JError::raiseWarning(0, JText::_('COM_JEM_ERROR_ATTACHMENT_SAVING_TO_DB').': '.$table->getError());
 			}
 		} // foreach
 
@@ -130,7 +130,7 @@ class JemAttachment extends JObject
 		$table->bind($attach);
 
 		if (!($table->check() && $table->store())) {
-			JError::raiseWarning(0, JText::_('COM_JEM_ATTACHMENT_ERROR_UPDATING_RECORD').': '.$table->getError());
+			JError::raiseWarning(0, JText::_('COM_JEM_ERROR_ATTACHMENT_UPDATING_RECORD').': '.$table->getError());
 			return false;
 		}
 
@@ -205,11 +205,11 @@ class JemAttachment extends JObject
 		$res = $db->loadObject();
 
 		if (!$res) {
-			JError::raiseError(404, JText::_('COM_JEM_FILE_UNKNOWN'));
+			JError::raiseError(404, JText::_('COM_JEM_FILE_NOT_FOUND'));
 		}
 
 		if (!in_array($res->access, $levels)) {
-			JError::raiseError(403, JText::_('COM_JEM_YOU_DONT_HAVE_ACCESS_TO_THIS_FILE'));
+			JError::raiseError(403, JText::_('COM_JEM_NO_ACCESS'));
 		}
 
 		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$res->object.'/'.$res->file;
