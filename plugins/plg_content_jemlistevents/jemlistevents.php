@@ -138,19 +138,15 @@ class PlgContentJemlistevents extends JPlugin
 
 		// plugin only processes if there are any instances of the plugin in the text
 		if ($matches) {
-			// Get plugin parameters
-		//	$style = $this->params->def('style', -2);
-			$this->_process($row, $matches, $regex, $style);
+			$this->_process($row, $matches, $regex);
 		}
 
 		return true;
 	} // onContentPrepare()
 
 	// The proccessing function
-	protected function _process(&$content, &$matches, $regex, $style)
+	protected function _process(&$content, &$matches, $regex)
 	{
-		///\TODO Redesign!
-
 		// Get plugin parameters
 		$defaults = array();
 		foreach (self::$optionDefaults as $k => $v) {
@@ -292,14 +288,14 @@ class PlgContentJemlistevents extends JPlugin
 	// The function who takes care for the 'completing' of the plugins' actions : display the events.
 	protected function _display($rows, $parameters, $listevents_id)
 	{
-		if ($rows === false) {
-			return $parameters["no_event_msg"];
-		}
-
 		include_once JPATH_BASE."/components/com_jem/helpers/route.php";
 
 		$html_list  = '<div class="jemlistevents" id="jemlistevents-'.$listevents_id.'">';
 		$html_list .= '<table class="table table-hover table-striped">';
+
+		if ($rows === false) {
+			$rows = array(); // to skip foreach w/o warning
+		}
 
 		$n_event = 0;
 		foreach ($rows as $event)
@@ -310,9 +306,9 @@ class PlgContentJemlistevents extends JPlugin
 
 			$html_list .= '<tr class="listevent event'.($n_event + 1).'">';
 
-			if ($parameters["title"] !== 'off') {
+			if ($parameters['title'] !== 'off') {
 				$html_list .= '<td class="eventtitle">';
-				$html_list .= (($parameters["title"] === 'link') ? ('<a href="'.$linkdetails.'">') : '');
+				$html_list .= (($parameters['title'] === 'link') ? ('<a href="'.$linkdetails.'">') : '');
 				$fulltitle  = htmlspecialchars($event->title, ENT_COMPAT, 'UTF-8');
 				if (mb_strlen($fulltitle) > $parameters['cut_title']) {
 					$title = mb_substr($fulltitle, 0, $parameters['cut_title']).'&nbsp;…';
@@ -320,22 +316,22 @@ class PlgContentJemlistevents extends JPlugin
 					$title = $fulltitle;
 				}
 				$html_list .= $title;
-				$html_list .= (($parameters["title"] === 'link') ? '</a>' : '');
+				$html_list .= (($parameters['title'] === 'link') ? '</a>' : '');
 				$html_list .= '</td>';
 			}
 
-			if ($parameters["show_date"] !== 'off') {
+			if ($parameters['show_date'] !== 'off') {
 				// Display startdate.
 				$html_list .= '<td class="eventdate">';
 				if ($event->dates) {
-					$html_list .= (($parameters["show_date"] === 'link') ? ('<a href="'.$linkdate.'">') : '');
+					$html_list .= (($parameters['show_date'] === 'link') ? ('<a href="'.$linkdate.'">') : '');
 					$html_list .= JemOutput::formatdate($event->dates, $parameters['date_format']);
-					$html_list .= (($parameters["show_date"] === 'link') ? '</a>' : '');
+					$html_list .= (($parameters['show_date'] === 'link') ? '</a>' : '');
 				}
 				$html_list .= '</td>';
 			}
 
-			if ($parameters["show_time"] !== 'off') {
+			if ($parameters['show_time'] !== 'off') {
 				// Display starttime.
 				$html_list .= ' '.'<td class="eventtime">';
 				if ($event->times) {
@@ -344,18 +340,18 @@ class PlgContentJemlistevents extends JPlugin
 				$html_list .= '</td>';
 			}
 
-			if ($parameters["show_venue"] !== 'off') {
+			if ($parameters['show_venue'] !== 'off') {
 				$html_list .= '<td class="eventvenue">';
 				if ($event->venue) {
-					$html_list .= (($parameters["show_venue"] === 'link') ? ('<a href="'.$linkvenue.'">') : '');
+					$html_list .= (($parameters['show_venue'] === 'link') ? ('<a href="'.$linkvenue.'">') : '');
 					$html_list .= $event->venue;
-					$html_list .= (($parameters["show_venue"] === 'link') ? '</a>' : '');
+					$html_list .= (($parameters['show_venue'] === 'link') ? '</a>' : '');
 				}
 				$html_list .= '</td>';
 			}
 
-			if ($parameters["show_category"] !== 'off') {
-				if ($parameters["show_category"] === 'link') {
+			if ($parameters['show_category'] !== 'off') {
+				if ($parameters['show_category'] === 'link') {
 					$catlink = 1;
 				} else {
 					$catlink = false;
@@ -371,13 +367,13 @@ class PlgContentJemlistevents extends JPlugin
 			$html_list .= '</tr>';
 
 			$n_event++;
-			if ((int)$parameters["max_events"] && ($n_event >= (int)$parameters["max_events"])) {
+			if ((int)$parameters['max_events'] && ($n_event >= (int)$parameters['max_events'])) {
 				break;
 			}
 		} // foreach rows
 
 		if ($n_event === 0) {
-			$html_list .= $parameters["no_event_msg"];
+			$html_list .= $parameters['no_events_msg'];
 		}
 
 		$html_list .= '</table>';
