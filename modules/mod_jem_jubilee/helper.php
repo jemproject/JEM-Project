@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
 * @package JEM
 * @subpackage JEM Jubilee Module
 * @copyright (C) 2014-2017 joomlaeventmanager.net
@@ -187,10 +187,6 @@ abstract class ModJemJubileeHelper
 		$user_color_is_dark = self::_is_dark($user_color);
 		$params->set('usercolor_is_dark', $user_color_is_dark);
 
-		# Loop through the result rows and prepare data
-		$lists = array();
-		$i     = -1; // it's easier to increment first
-
 		// Don't shuffle original array to keep ordering of remaining events intact.
 		$indices = array_keys($events);
 		if (count($events) > $count) {
@@ -199,6 +195,10 @@ abstract class ModJemJubileeHelper
 			}
 			array_splice($indices, $count);
 		}
+
+		# Loop through the result rows and prepare data
+		$lists = array();
+		$i     = -1; // it's easier to increment first
 
 		foreach ($events as $key => $row)
 		{
@@ -297,6 +297,12 @@ abstract class ModJemJubileeHelper
 			if ($color == 'alpha') {
 				$lists[$i]->color = $user_color;
 				$lists[$i]->color_is_dark = $user_color_is_dark;
+			}
+
+			# provide custom fields
+			for ($n = 1; $n <= 10; ++$n) {
+				$var = 'custom'.$n;
+				$lists[$i]->$var = htmlspecialchars($row->$var, ENT_COMPAT, 'UTF-8');
 			}
 		} // foreach ($events as $row)
 

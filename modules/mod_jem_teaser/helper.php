@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2017 joomlaeventmanager.net
@@ -255,6 +255,12 @@ abstract class ModJemTeaserHelper
 					}
 				}
 				$lists[$i]->color = (count($colors) == 1) ? array_pop($colors) : $fallback_color;
+			}
+
+			# provide custom fields
+			for ($n = 1; $n <= 10; ++$n) {
+				$var = 'custom'.$n;
+				$lists[$i]->$var = htmlspecialchars($row->$var, ENT_COMPAT, 'UTF-8');
 			}
 		} // foreach ($events as $row)
 

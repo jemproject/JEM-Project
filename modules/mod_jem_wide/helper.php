@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @subpackage JEM Wide Module
  * @copyright (C) 2013-2017 joomlaeventmanager.net
@@ -112,7 +112,7 @@ abstract class ModJemWideHelper
 
 		# Loop through the result rows and prepare data
 		$lists = array();
-		$i     = 0;
+		$i     = -1;
 
 		foreach ($events as $row)
 		{
@@ -124,7 +124,7 @@ abstract class ModJemWideHelper
 			## DEFINE LIST ##
 			#################
 
-			$lists[$i] = new stdClass();
+			$lists[++$i] = new stdClass();
 
 			# cut titel
 			$fulltitle = htmlspecialchars($row->title, ENT_COMPAT, 'UTF-8');
@@ -166,7 +166,12 @@ abstract class ModJemWideHelper
 
 			$lists[$i]->eventdescription   = strip_tags($row->fulltext);
 			$lists[$i]->venuedescription   = strip_tags($row->locdescription);
-			$i++;
+
+			# provide custom fields
+			for ($n = 1; $n <= 10; ++$n) {
+				$var = 'custom'.$n;
+				$lists[$i]->$var = htmlspecialchars($row->$var, ENT_COMPAT, 'UTF-8');
+			}
 		} // foreach ($events as $row)
 
 		return $lists;
