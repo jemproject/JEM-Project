@@ -165,9 +165,12 @@ class PlgContentJemlistevents extends JPlugin
 			foreach ($options as $option)
 			{
 				$option = str_replace(array('[', ']'), '', $option);
-				list($k, $v) = explode("=", $option, 2);
-				$token = strtolower(trim($k));
-				if (preg_match('/[ \'"]*(.*)[ \'"]*/', $v, $m)) {
+				$pair = explode("=", $option, 2);
+				if (empty($pair[0]) || empty($pair[1])) {
+					continue;
+				}
+				$token = strtolower(trim($pair[0]));
+				if (preg_match('/[ \'"]*(.*)[ \'"]*/', $pair[1], $m)) {
 					$value = $m[1];
 					// is this a known option?
 					if (array_key_exists($token, self::$optionTokens)) {
