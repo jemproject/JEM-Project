@@ -125,7 +125,7 @@ class PlgContentJemlistevents extends JPlugin
 		}
 
 		// expression to search for
-		$regex = '/{jemlistevents\s(.*?)}/i';
+		$regex = '/{jemlistevents\s*(.*?)}/i';
 
 		// check whether the plugin has been unpublished
 		if (!$this->params->get('enabled', 1)) {
