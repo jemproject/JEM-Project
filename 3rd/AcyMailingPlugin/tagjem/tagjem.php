@@ -49,6 +49,9 @@ class plgAcymailingTagjem extends JPlugin
 
 		$app = JFactory::getApplication();
 
+		// Hotfix to keep plugin working on AcyMailing 5.8+
+		JHTML::_('behavior.framework');
+
 		$pageInfo = new stdClass();
 		$pageInfo->filter = new stdClass();
 		$pageInfo->filter->order = new stdClass();

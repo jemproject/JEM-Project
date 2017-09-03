@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="2.5" type="plugin" group="acymailing" method="upgrade">
 	<name>AcyMailing Tag : insert events from JEM 2.1+</name>
-	<creationDate>August 2017</creationDate>
-	<version>2.1.4</version>
+	<creationDate>Septembre 2017</creationDate>
+	<version>2.1.5</version>
 	<author>Acyba, JEM Community</author>
 	<authorEmail>dev@acyba.com, info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.acyba.com, http://www.joomlaeventmanager.net</authorUrl>
-	<copyright>Copyright (C) 2009 - 2010 ACYBA SARL - All rights reserved., Copyright (C) 2013-2016 joomlaeventmanager.net</copyright>
+	<copyright>Copyright (C) 2009 - 2010 ACYBA SARL - All rights reserved., Copyright (C) 2013-2017 joomlaeventmanager.net</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<description>This plugin enables you to insert events from JEM inside any e-mail sent by AcyMailing</description>
 
