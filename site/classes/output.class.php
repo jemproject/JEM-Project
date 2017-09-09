@@ -698,7 +698,7 @@ class JemOutput
 
 		$image = JHtml::_('image', 'com_jem/icon-16-back.png', JText::_('COM_JEM_BACK'), NULL, true);
 
-		if ($jinput->get('print','','int')) {
+		if ($app->input->get('print','','int')) {
 			//button in popup
 			$output = '';
 		} else {
