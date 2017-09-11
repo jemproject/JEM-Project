@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -105,9 +105,9 @@ defined('_JEXEC') or die;
 		<?php $this->rows = $this->getRows(); ?>
 		<?php foreach ($this->rows as $row) : ?>
 			<?php if (!empty($row->featured)) :   ?>
-			<tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemprop="event" itemscope="itemscope" itemtype="http://schema.org/Event" >
+			<tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>" itemprop="event" itemscope="itemscope" itemtype="https://schema.org/Event" >
 			<?php else : ?>
-			<tr class="sectiontableentry<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemprop="event" itemscope="itemscope" itemtype="http://schema.org/Event" >
+			<tr class="sectiontableentry<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemprop="event" itemscope="itemscope" itemtype="https://schema.org/Event" >
 			<?php endif; ?>
 
 				<?php if ($this->jemsettings->showeventimage == 1) : ?>

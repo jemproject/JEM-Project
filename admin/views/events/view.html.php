@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -51,7 +51,7 @@ class JemViewEvents extends JemAdminView
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		// Load Scripts
-		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+		$document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 
 		if ($highlighter) {
 			$document->addScript($url.'media/com_jem/js/highlighter.js');

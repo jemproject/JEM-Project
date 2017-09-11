@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -49,20 +49,20 @@ class JemViewVenue extends JemAdminView
 
 		// Load Scripts
 		JHtml::_('script', 'com_jem/attachments.js', false, true);
-		//$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
+		//$document->addScript('https://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
 
 		$language = JFactory::getLanguage();
 		$language = $language->getTag();
 		$language = substr($language, 0,2);
 
 		$key = trim($this->settings->globalattribs->global_googleapi);
-		$document->addScript('http://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&amp;libraries=places&language='.$language);
+		$document->addScript('https://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&amp;libraries=places&language='.$language);
 
 		// Noconflict
 		$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
 
 		// JQuery scripts
-		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+		$document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 		JHtml::_('script', 'com_jem/jquery.geocomplete.js', false, true);
 
 		$access2 = JEMHelper::getAccesslevelOptions();

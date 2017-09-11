@@ -1,15 +1,15 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 defined('_JEXEC') or die;
 
 ?>
-<div id="jem" class="jem_venue<?php echo $this->pageclass_sfx;?>" itemscope="itemscope" itemtype="http://schema.org/Place">
+<div id="jem" class="jem_venue<?php echo $this->pageclass_sfx;?>" itemscope="itemscope" itemtype="https://schema.org/Place">
 	<div class="buttons">
 		<?php
 		$btn_params = array('id' => $this->venue->slug, 'slug' => $this->venue->slug, 'task' => $this->task, 'print_link' => $this->print_link);
@@ -42,7 +42,7 @@ defined('_JEXEC') or die;
 	<?php endif; ?>
 
 	<?php if ($this->settings->get('global_show_detailsadress',1)) : ?>
-		<dl class="location floattext" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+		<dl class="location floattext" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
 			<?php if ($this->venue->street) : ?>
 			<dt class="venue_street"><?php echo JText::_('COM_JEM_STREET').':'; ?></dt>
 			<dd class="venue_street" itemprop="streetAddress">

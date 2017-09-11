@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -20,7 +20,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
 <?php if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */ ?>
 <div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event<?php echo $this->pageclass_sfx;?>"
-	itemscope="itemscope" itemtype="http://schema.org/Event">
+	itemscope="itemscope" itemtype="https://schema.org/Event">
 	<div class="buttons">
 		<?php
 		$btn_params = array('slug' => $this->item->slug, 'print_link' => $this->print_link);
@@ -225,7 +225,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 	<p></p>
 	<hr>
 
-	<div itemprop="location" itemscope="itemscope" itemtype="http://schema.org/Place">
+	<div itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
 		<h2 class="location">
 			<?php
 			echo JText::_('COM_JEM_VENUE') ;
@@ -252,7 +252,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		</dl>
 		<?php if ($params->get('event_show_detailsadress', '1')) : ?>
 		<dl class="location floattext" itemprop="address" itemscope
-		    itemtype="http://schema.org/PostalAddress">
+		    itemtype="https://schema.org/PostalAddress">
 			<?php if ($this->item->street) : ?>
 			<dt class="venue_street"><?php echo JText::_('COM_JEM_STREET'); ?>:</dt>
 			<dd class="venue_street" itemprop="streetAddress">

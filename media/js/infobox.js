@@ -9,7 +9,7 @@
  *  additional properties for advanced styling. An InfoBox can also be used as a map label.
  *  <p>
  *  An InfoBox also fires the same events as a <tt>google.maps.InfoWindow</tt>.
- *  
+ *
  *  @source link: http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/examples/infobox-basic.html
  */
 
@@ -96,7 +96,7 @@ function InfoBox(opt_opts) {
   this.boxClass_ = opt_opts.boxClass || "infoBox";
   this.boxStyle_ = opt_opts.boxStyle || {};
   this.closeBoxMargin_ = opt_opts.closeBoxMargin || "2px";
-  this.closeBoxURL_ = opt_opts.closeBoxURL || "http://www.google.com/intl/en_us/mapfiles/close.gif";
+  this.closeBoxURL_ = opt_opts.closeBoxURL || "https://www.google.com/intl/en_us/mapfiles/close.gif";
   if (opt_opts.closeBoxURL === "") {
     this.closeBoxURL_ = "";
   }
@@ -220,7 +220,7 @@ InfoBox.prototype.createInfoBoxDiv_ = function () {
 
         this.eventListeners_.push(google.maps.event.addDomListener(this.div_, events[i], cancelHandler));
       }
-      
+
       // Workaround for Google bug that causes the cursor to change to a pointer
       // when the mouse moves over a marker underneath InfoBox.
       this.eventListeners_.push(google.maps.event.addDomListener(this.div_, "mouseover", function (e) {
@@ -486,7 +486,7 @@ InfoBox.prototype.draw = function () {
   var pixPosition = this.getProjection().fromLatLngToDivPixel(this.position_);
 
   this.div_.style.left = (pixPosition.x + this.pixelOffset_.width) + "px";
-  
+
   if (this.alignBottom_) {
     this.div_.style.bottom = -(pixPosition.y + this.pixelOffset_.height) + "px";
   } else {
@@ -795,7 +795,7 @@ InfoBox.prototype.close = function () {
   }
 
   if (this.eventListeners_) {
-    
+
     for (i = 0; i < this.eventListeners_.length; i++) {
 
       google.maps.event.removeListener(this.eventListeners_[i]);

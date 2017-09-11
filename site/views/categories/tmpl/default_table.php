@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -60,7 +60,7 @@ if (empty($this->catrow->events)) { return; }
 		<?php $odd = 0; ?>
 		<?php foreach ($this->catrow->events as $row) : ?>
 			<tr class="sectiontableentry<?php echo ($odd + 1) . $this->params->get( 'pageclass_sfx' ); ?>"
-				itemscope="itemscope" itemtype="http://schema.org/Event">
+				itemscope="itemscope" itemtype="https://schema.org/Event">
 
 				<td headers="jem_date_cat<?php echo $this->catrow->id; ?>" align="left">
 					<?php

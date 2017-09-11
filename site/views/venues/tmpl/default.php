@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -28,7 +28,7 @@ defined('_JEXEC') or die;
 	<!--Venue-->
 
 	<?php foreach($this->rows as $row) : ?>
-		<div itemscope itemtype="http://schema.org/Place">
+		<div itemscope itemtype="https://schema.org/Place">
 			<h2 class="jem">
 				<a href="<?php echo $row->linkEventsPublished; ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->venue); ?></span></a>
 			</h2>
@@ -58,7 +58,7 @@ defined('_JEXEC') or die;
 			</dl>
 
 			<?php if ( $this->settings->get('global_show_detailsadress',1)) : ?>
-			<dl class="location floattext" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+			<dl class="location floattext" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
 				<?php if ($row->street) : ?>
 				<dt class="venue_street">
 					<?php echo JText::_('COM_JEM_STREET').':'; ?>
