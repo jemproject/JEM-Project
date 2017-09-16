@@ -1,14 +1,14 @@
 <?php
 /**
- * Version 2.1.0
+ * Version 2.2.0
  * @copyright	Copyright (C) 2014 Thamesmog.
- * @copyright	Copyright (C) 2013 - 2015 joomlaeventmanager.net. All rights reserved.
+ * @copyright	Copyright (C) 2013 - 2017 joomlaeventmanager.net. All rights reserved.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  * Based on Eventlist11 tag and JEM specific code by JEM Community
  */
 defined('_JEXEC') or die;
 
-include_once(ACYMAILING_ROOT.'components'.DS.'com_jem'.DS.'helpers'.DS.'route.php');
+include_once(ACYMAILING_ROOT.'components/com_jem/helpers/route.php');
 
 $result .= '<div class="acymailing_content">';
 $result .= '<p>';
