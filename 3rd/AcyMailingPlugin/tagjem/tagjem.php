@@ -23,7 +23,7 @@ class plgAcymailingTagjem extends JPlugin
 		parent::__construct($subject, $config);
 		if (!isset($this->params)) {
 			$plugin = JPluginHelper::getPlugin('acymailing', 'tagjem');
-			$this->params = new JParameter($plugin->params);
+			$this->params = new JRegistry($plugin->params);
 		}
 		$this->loadLanguage();
 		$this->loadLanguage('com_jem', JPATH_ADMINISTRATOR.'/components/com_jem');
