@@ -223,13 +223,13 @@ class plgJemMailer extends JPlugin
 			$data->subject = JText::sprintf($txt_subject, $this->_SiteName);
 			if ($attendeeid != $userid) {
 				if ($comment) {
-					$data->body = JText::sprintf($txt_body, $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body = JText::sprintf($txt_body, $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
 				} else {
 					$data->body = JText::sprintf($txt_body, $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
 				}
 			} else {
 				if ($comment) {
-					$data->body = JText::sprintf($txt_body, $attendeename, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $link, $this->_SiteName);
+					$data->body = JText::sprintf($txt_body, $attendeename, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
 				} else {
 					$data->body = JText::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, $link, $this->_SiteName);
 				}
