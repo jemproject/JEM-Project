@@ -6,8 +6,8 @@
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>www.joomlaeventmanager.net</authorUrl>
 	<copyright>copyright (C) 2013-2017 joomlaeventmanager.net</copyright>
-	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>2.2.2-rc1</version>
+	<license>https://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<version>2.2.2</version>
 	<description>PLG_CONTENT_JEMLISTEVENTS_XML_DESCRIPTION</description>
 
 	<files>
