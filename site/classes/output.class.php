@@ -784,7 +784,7 @@ class JemOutput
 			$data->longitude = null;
 		}
 
-		$url = 'http://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'com').'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
+		$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'com').'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
 
 		// google map link or include
 		switch ($mapserv)
@@ -792,7 +792,7 @@ class JemOutput
 			case 1:
 				// link
 				if($data->latitude && $data->longitude) {
-					$url = 'http://maps.google.'.$params->get($tld).'/maps?hl='.$params->get($lg).'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
+					$url = 'https://maps.google.'.$params->get($tld).'/maps?hl='.$params->get($lg).'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
 				}
 
 				$message = JText::_('COM_JEM_MAP').':';
@@ -819,7 +819,7 @@ class JemOutput
 
 				# do we have a client-ID?
 				if ($clientid) {
-					$document->addScript('http://maps.googleapis.com/maps/api/js?client='.$clientid.'&sensor=false&v=3.15');
+					$document->addScript('https://maps.googleapis.com/maps/api/js?client='.$clientid.'&sensor=false&v=3.15');
 				} else {
 					# do we have an api-key?
 					if ($api) {
