@@ -190,6 +190,7 @@ abstract class ModJemTeaserHelper
 			$lists[$i]->title       = $title;
 			$lists[$i]->fulltitle   = $fulltitle;
 			$lists[$i]->venue       = htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
+			$lists[$i]->country     = htmlspecialchars($row->country, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->catname     = implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
 			$lists[$i]->state       = htmlspecialchars($row->state, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->city        = htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
