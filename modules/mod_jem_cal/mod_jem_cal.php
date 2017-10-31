@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @subpackage JEM Calendar Module
  * @copyright (C) 2013-2017 joomlaeventmanager.net
@@ -21,14 +21,16 @@ require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
+# Create JEM's file logger (for debug)
+JemHelper::addFileLogger();
 
-// include mootools or bootstrap tooltip
+# Include mootools or bootstrap tooltip
 JHtml::_('behavior.tooltip');
 if (version_compare(JVERSION, '3.3', 'ge')) {
 	JHtml::_('bootstrap.tooltip');
 }
 
-// Parameters
+# Parameters
 $app                 = JFactory::getApplication();
 $day_name_length     = $params->get('day_name_length', '2');
 $first_day           = $params->get('first_day', '1');
@@ -39,46 +41,43 @@ $Time_offset         = $params->get('Time_offset', '0');
 $Show_Tooltips       = $params->get('Show_Tooltips', '1');
 $Show_Tooltips_Title = $params->get('Show_Tooltips_Title', '1');
 $Remember            = $params->get('Remember', '1');
-$LocaleOverride      = $params->get('locale_override', '');
+$use_ajax            = $params->get('use_ajax', '1');
 $CalTooltipsTitle    = $params->get('cal15q_tooltips_title', JText::_('MOD_JEM_CAL_EVENT'));
 $CalTooltipsTitlePl  = $params->get('cal15q_tooltipspl_title', JText::_('MOD_JEM_CAL_EVENTS'));
-$UseJoomlaLanguage   = $params->get('UseJoomlaLanguage', '1');
 $Default_Stylesheet  = $params->get('Default_Stylesheet', '1');
 $User_stylesheet     = $params->get('User_stylesheet', 'modules/mod_jem_cal/mod_jem_cal.css');
 $tooltips_max_events = $params->get('tooltips_max_events', 0);
+$Itemid              = $app->input->request->getInt('Itemid', 0);
 
-if (!empty($LocaleOverride)) {
-	setlocale(LC_ALL, $LocaleOverride);
+# AJAX requires at least J! 3.2.7 (because we use com_ajax)
+$use_ajax &= version_compare(JVERSION, '3.2.7', 'ge');
+
+# NEVER use setlocale() - see php manual why
+//if (!empty($LocaleOverride)) {
+//	setlocale(LC_ALL, $LocaleOverride);
+//}
+
+# Get switch trigger
+$req_modid = $app->input->getInt('modjemcal_id');
+if ((int)$module->id === $req_modid) {
+	$req_month = $app->input->request->getInt('modjemcal_month');
+	$req_year  = $app->input->request->getInt('modjemcal_year');
+} else {
+	$req_month = $req_year = 0;
 }
 
-// get switch trigger
-$req_month = $app->input->request->getInt('el_mcal_month');
-$req_year  = $app->input->request->getInt('el_mcal_year');
-
-if ($Remember == 1) { // Remember which month / year is selected. Don't jump back to today on page change
+# Remember which month / year is selected. Don't jump back to today on page change
+if ($Remember == 1) {
 	if ($req_month == 0) {
-		$req_month = $app->getUserState("jemcalqmonth");
-		$req_year  = $app->getUserState("jemcalqyear");
+		$req_month = $app->getUserState("modjemcal.month.".$module->id);
+		$req_year  = $app->getUserState("modjemcal.year.".$module->id);
 	} else {
-		$app->setUserState("jemcalqmonth", $req_month);
-		$app->setUserState("jemcalqyear",  $req_year);
+		$app->setUserState("modjemcal.month.".$module->id, $req_month);
+		$app->setUserState("modjemcal.year.".$module->id, $req_year);
 	}
 }
 
-//Requested URL
-$uri   = JUri::getInstance();
-$myurl = $uri->toString(array('query'));
-
-//08/09/09 - Added Fix for sh404sef
-if (empty($myurl)) {
-	$request_link = $uri->toString(array('path')).'?';
-} else {
-	$request_link = $uri->toString(array('path')).$myurl;
-	$request_link = str_replace("&el_mcal_month=".$req_month, "", $request_link);
-	$request_link = str_replace("&el_mcal_year=" .$req_year,  "", $request_link);
-}
-
-//set now
+# Set today
 $config      = JFactory::getConfig();
 $tzoffset    = $config->get('config.offset');
 $time        = time() + (($tzoffset + $Time_offset) * 60 * 60);
@@ -92,12 +91,17 @@ if ($req_year  == 0) { $req_year  = $today_year;  }
 $offset_month = $req_month + $Month_offset;
 $offset_year  = $req_year;
 
+if ($offset_month < 1) {
+	$offset_month += 12; // Roll over year start
+	--$offset_year;
+}
+
 if ($offset_month > 12) {
 	$offset_month -= 12; // Roll over year end
 	++$offset_year;
 }
 
-// Setting the previous and next month numbers
+# Setting the previous and next month numbers
 $prev_month_year = $req_year;
 $next_month_year = $req_year;
 
@@ -113,14 +117,35 @@ if ($next_month > 12) {
 	++$next_month_year;
 }
 
-// Create Links
-$plink = $request_link.'&el_mcal_month='.$prev_month.'&el_mcal_year='.$prev_month_year;
-$nlink = $request_link.'&el_mcal_month='.$next_month.'&el_mcal_year='.$next_month_year;
+# Requested URL
+$uri   = JUri::getInstance();
+$myurl = $uri->toString(array('query'));
 
-$prev_link = JRoute::_($plink, false);
-$next_link = JRoute::_($nlink, false);
+//08/09/09 - Added Fix for sh404sef
+if (empty($myurl)) {
+	$request_link = $uri->toString(array('path')).'?';
+} else {
+	# Remove modjemcal params from url
+	$request_link = $uri->toString(array('path')).$myurl;
+	$request_link = preg_replace('/&modjemcal_(month|year|id)=\d+/i', '', $request_link);
+}
 
-$days = ModJemCalqHelper::getdays($offset_year, $offset_month, $params);
+$ajax_link = JUri::base().'?option=com_ajax&module=jem_cal&format=raw'.'&Itemid='.$Itemid;
 
+# By default use links working on browsers with JavaScript disabled.
+# Then let a JavaScript change this to ajax links.
+$url_base_nojs = JRoute::_($request_link, false) . '&modjemcal_id='.$module->id;
+$url_base_ajax = JRoute::_($ajax_link, false) . '&modjemcal_id='.$module->id;
+
+# Create link params - template must concatenate one of the url_bases above and one of the props below.
+$props_prev = '&modjemcal_month='.$prev_month.'&modjemcal_year='.$prev_month_year;
+$props_next = '&modjemcal_month='.$next_month.'&modjemcal_year='.$next_month_year;
+$props_home = '&modjemcal_month='.$today_month.'&modjemcal_year='.$today_year;
+
+# Get data
+$params->module_id = $module->id; // used for debug log
+$days = ModJemCalHelper::getDays($offset_year, $offset_month, $params);
+
+# Render
 require(JModuleHelper::getLayoutPath('mod_jem_cal'));
 ?>
