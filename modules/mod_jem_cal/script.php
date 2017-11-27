@@ -170,7 +170,7 @@ class mod_jem_calInstallerScript
 			foreach ($fix_params as $f) {
 				$str = $reg->get($f, '');
 				$str2 = mb_ereg_replace('MOD_JEM_CALAJAX_', 'MOD_JEM_CAL_', $str);
-				if (str !== str2) {
+				if ($str !== $str2) {
 					$reg->set($f, $str2);
 					$mod_params = true;
 				}
