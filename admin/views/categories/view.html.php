@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.1.6
+ * @version     2.2.3
  * @package     JEM
- * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -27,7 +27,8 @@ class JemViewCategories extends JemAdminView
 		$this->pagination	= $this->get('Pagination');
 
 		// Check for errors.
-		if (count($errors = $this->get('Errors'))) {
+		$errors = $this->get('Errors');
+		if (is_array($errors) && count($errors)) {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
@@ -70,7 +71,7 @@ class JemViewCategories extends JemAdminView
 		$user		= JemFactory::getUser();
 
 		// Get the results for each action.
-		$canDo = JEMHelperBackend::getActions(0);
+		$canDo = JemHelperBackend::getActions(0);
 
 		JToolBarHelper::title(JText::_('COM_JEM_CATEGORIES'), 'elcategories');
 

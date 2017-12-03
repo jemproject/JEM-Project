@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.1.6
+ * @version     2.2.3
  * @package     JEM
- * @copyright   Copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -122,7 +122,7 @@ class JFormFieldCategoryEdit extends JFormFieldList
 		}
 
 		// Pad the option text with spaces using depth level as a multiplier.
-		for ($i = 0, $n = count($options); $i < $n; $i++)
+		for ($i = 0, $n = (is_array($options) ? count($options) : 0); $i < $n; $i++)
 		{
 			// remove root
 			if ($this->element['removeroot'] == true)

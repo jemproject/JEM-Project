@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -50,11 +50,11 @@ class JemControllerGroups extends JControllerAdmin
 		$jinput = JFactory::getApplication()->input;
 		$cid = $jinput->get('cid',  0, 'array');
 
-		$total = count($cid);
-
 		if (!is_array($cid) || count($cid) < 1) {
 			JError::raiseError(500, JText::_('COM_JEM_SELECT_ITEM_TO_DELETE'));
 		}
+
+		$total = count($cid);
 
 		$model = $this->getModel('groups');
 

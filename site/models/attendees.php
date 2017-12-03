@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -321,7 +321,7 @@ class JemModelAttendees extends JModelLegacy
 	 */
 	public function remove($cid = array())
 	{
-		if (count($cid))
+		if (is_array($cid) && count($cid))
 		{
 			JArrayHelper::toInteger($cid);
 			$query = 'DELETE FROM #__jem_register WHERE id IN ('. implode(',', $cid) .') ';

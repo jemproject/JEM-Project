@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -235,7 +235,7 @@ class JemModelImport extends JModelLegacy
 				$values[$field] = ($field !== $pk) ? $row[$k] : 0; // set key to given value or 0 depending on $replace
 			}
 
-			if (strcasecmp($objectname, 'JEMTableCategory') == 0) {
+			if (strcasecmp($objectname, 'JemTableCategory') == 0) {
 				// check if column "parent_id" exists
 				if (array_key_exists('parent_id', $values)) {
 					// when not in replace mode the parent_id is set to the rootkey
@@ -270,7 +270,7 @@ class JemModelImport extends JModelLegacy
 						$values['lft'] = '';
 					}
 				}
-			} // if 'JEMTableCategory'
+			} // if 'JemTableCategory'
 
 			// Bind the data
 			$object->reset(); // clear old data first - which does NOT reset 'id' !
@@ -399,13 +399,13 @@ class JemModelImport extends JModelLegacy
 			$query = $db->getQuery(true);
 			$query->delete($db->quoteName('#__jem_cats_event_relations'));
 			$query->where($db->quoteName('itemid') . '=' . $db->quote($itemid));
-			if ($replace && count($cats)) { // keep records we can update
+			if ($replace && is_array($cats) && count($cats)) { // keep records we can update
 				$query->where('NOT catid IN ('.implode(',', $db->quote(array_keys($cats))).')');
 			}
 			$db->setQuery($query);
 			$db->execute();
 
-			if (count($cats)) {
+			if (is_array($cats) && count($cats)) {
 				$values = array();
 				foreach($cats as $catid => $order)
 				{

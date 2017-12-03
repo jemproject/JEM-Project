@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -808,7 +808,7 @@ class JemHelper
 			}
 		}
 
-		if ($registered < $event_places->maxplaces && count($waiting))
+		if (($registered < $event_places->maxplaces) && count($waiting))
 		{
 			// need to bump users to attending status
 			$bumping = array_slice($waiting, 0, $event_places->maxplaces - $registered);

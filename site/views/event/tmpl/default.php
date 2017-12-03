@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -77,14 +77,14 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		</dd>
 		<?php
 		endif;
-		$n = count($this->categories);
+		$n = is_array($this->categories) ? count($this->categories) : 0;
 		?>
 
 		<dt class="category"><?php echo $n < 2 ? JText::_('COM_JEM_CATEGORY') : JText::_('COM_JEM_CATEGORIES'); ?>:</dt>
 		<dd class="category">
 		<?php
 		$i = 0;
-		foreach ($this->categories as $category) :
+		foreach ((array)$this->categories as $category) :
 			?><a href="<?php echo JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)); ?>"><?php echo $this->escape($category->catname); ?></a><?php
 			$i++;
 			if ($i != $n) :

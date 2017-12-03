@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -22,16 +22,16 @@ defined('_JEXEC') or die;
 
 	public function display($tpl = null)
 	{
-		$user 		= JemFactory::getUser();
-		$document	= JFactory::getDocument();
-		$url 		= JUri::root();
-		$settings 	= JEMHelper::globalattribs();
+		$user     = JemFactory::getUser();
+		$document = JFactory::getDocument();
+		$url      = JUri::root();
+		$settings = JemHelper::globalattribs();
 
 		// Initialise variables.
-		$this->items		= $this->get('Items');
-		$this->pagination	= $this->get('Pagination');
-		$this->state		= $this->get('State');
-		$this->settings		= $settings;
+		$this->items      = $this->get('Items');
+		$this->pagination = $this->get('Pagination');
+		$this->state      = $this->get('State');
+		$this->settings   = $settings;
 
 		$params = $this->state->get('params');
 
@@ -39,7 +39,8 @@ defined('_JEXEC') or die;
 		$highlighter = $settings->get('highlight','0');
 
 		// Check for errors.
-		if (count($errors = $this->get('Errors'))) {
+		$errors = $this->get('Errors');
+		if (is_array($errors) && count($errors)) {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
@@ -52,10 +53,7 @@ defined('_JEXEC') or die;
 
 		if ($highlighter) {
 			$document->addScript($url.'media/com_jem/js/highlighter.js');
-			$style = '
-			    .red, .red a {
-			        color:red;}
-			    ';
+			$style = '.red, .red a { color:red; }';
 			$document->addStyleDeclaration($style);
 		}
 
@@ -89,7 +87,7 @@ defined('_JEXEC') or die;
 	{
 		JToolBarHelper::title(JText::_('COM_JEM_VENUES'), 'venues');
 
-		$canDo = JEMHelperBackend::getActions(0);
+		$canDo = JemHelperBackend::getActions(0);
 
 		/* create */
 		if (($canDo->get('core.create'))) {

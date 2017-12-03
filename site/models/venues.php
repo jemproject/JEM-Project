@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -182,7 +182,7 @@ class JemModelVenues extends JemModelEventslist
 		$db->setQuery($query);
 		$ids = $db->loadColumn(0);
 		$ids = array_unique($ids);
-		$nr = count($ids);
+		$nr  = is_array($ids) ? count($ids) : 0;
 
 		if (empty($nr)) {
 			$nr = 0;

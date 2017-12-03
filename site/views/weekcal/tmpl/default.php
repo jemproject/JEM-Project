@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -85,14 +85,14 @@ defined('_JEXEC') or die;
 		//initialize variables
 		$multicatname = '';
 		$colorpic = '';
-		$nr = count($row->categories);
+		$nr = is_array($row->categories) ? count($row->categories) : 0;
 		$ix = 0;
 		$content = '';
 		$contentend = '';
 		$catcolor = array();
 
 		//walk through categories assigned to an event
-		foreach($row->categories AS $category) {
+		foreach((array)$row->categories AS $category) {
 			//Currently only one id possible...so simply just pick one up...
 			$detaillink = JRoute::_(JemHelperRoute::getEventRoute($row->slug));
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -43,7 +43,8 @@ class JemViewAttendees extends JemAdminView
 		$this->state      = $this->get('State');
 
 		// Check for errors.
-		if (count($errors = $this->get('Errors'))) {
+		$errors = $this->get('Errors');
+		if (is_array($errors) && count($errors)) {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
@@ -54,8 +55,8 @@ class JemViewAttendees extends JemAdminView
 			return false;
 		}
 
- 		if (JEMHelper::isValidDate($event->dates)) {
-			$event->dates = JEMOutput::formatdate($event->dates);
+ 		if (JemHelper::isValidDate($event->dates)) {
+			$event->dates = JemOutput::formatdate($event->dates);
 		} else {
 			$event->dates = JText::_('COM_JEM_OPEN_DATE');
 		}
@@ -98,8 +99,8 @@ class JemViewAttendees extends JemAdminView
 		$rows = $this->get('Items');
 		$event = $this->get('Event');
 
-		if (JEMHelper::isValidDate($event->dates)) {
-			$event->dates = JEMOutput::formatdate($event->dates);
+		if (JemHelper::isValidDate($event->dates)) {
+			$event->dates = JemOutput::formatdate($event->dates);
 		} else {
 			$event->dates = JText::_('COM_JEM_OPEN_DATE');
 		}

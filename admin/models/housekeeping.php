@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -145,7 +145,7 @@ class JemModelHousekeeping extends JModelLegacy
 
 		$total = $db->loadObjectList();
 
-		return count($total);
+		return is_array($total) ? count($total) : 0;
 	}
 
 	/**

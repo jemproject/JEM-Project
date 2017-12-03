@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -260,7 +260,7 @@ class JemCategories
 
 		$childrenLoaded = false;
 
-		if (count($results))
+		if (is_array($results) && count($results))
 		{
 			// Foreach categories
 			foreach ($results as $result)
@@ -659,7 +659,7 @@ class JemCategories
 				$pt = $v->parent_id;
 				$list[$id] = $v;
 				$list[$id]->treename = $indent . $txt;
-				$list[$id]->children = count(@$children[$id]);
+				$list[$id]->children = (isset($children[$id]) && is_array($children[$id])) ? count($children[$id]) : 0;
 
 				$list = self::treerecurse($id, ($level ? $indent . $spacer : $indent), $list, $children, $maxlevel, $level+1, $type);
 			}
@@ -989,7 +989,7 @@ class JemCategoryNode extends JObject
 				$this->_path[] = $this->id . ':' . $this->alias;
 			}
 
-			if (count($parent->_children) > 1)
+			if (!is_null($parent) && (count($parent->_children) > 1))
 			{
 				end($parent->_children);
 				$this->_leftSibling = prev($parent->_children);

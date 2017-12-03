@@ -15,7 +15,8 @@ defined ( '_JEXEC' ) or die ();
 /**
  * JEM package installer script.
  */
-class Pkg_JemInstallerScript {
+class Pkg_JemInstallerScript
+{
 	/**
 	 * List of supported versions. Newest version first!
 	 * @var array
@@ -31,6 +32,7 @@ class Pkg_JemInstallerScript {
 			'0' => '5.5' // Preferred version
 			),
 		'Joomla!' => array (
+			'4.0' => '', // Not supported
 			'3.3' => '3.3.3',
 			'3.2' => '3.2.7',
 			'3.0' => '', // Not supported

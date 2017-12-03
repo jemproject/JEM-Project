@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -341,7 +341,7 @@ class JemModelExport extends JModelList
 		$db->setQuery($query);
 		$catidlist = $db->loadObjectList();
 
-		if (count($catidlist)) {
+		if (is_array($catidlist) && count($catidlist)) {
 			$catidarray = array();
 			foreach ($catidlist as $obj) {
 				$catidarray[] = $obj->catid;

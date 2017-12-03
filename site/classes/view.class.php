@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
@@ -22,7 +22,7 @@ class JemView extends JViewLegacy
 	 */
 	public function getRows($rowname = "rows")
 	{
-		if (!isset($this->$rowname) || !count($this->$rowname)) {
+		if (!isset($this->$rowname) || !is_array($this->$rowname) || !count($this->$rowname)) {
 			return;
 		}
 

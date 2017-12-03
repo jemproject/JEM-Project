@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -27,7 +27,8 @@ class JemViewVenue extends JemAdminView
 		$this->state = $this->get('State');
 
 		// Check for errors.
-		if (count($errors = $this->get('Errors'))) {
+		$errors = $this->get('Errors');
+		if (is_array($errors) && count($errors)) {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
@@ -39,7 +40,7 @@ class JemViewVenue extends JemAdminView
 
 		//initialise variables
 		$document       = JFactory::getDocument();
-		$this->settings = JEMAdmin::config();
+		$this->settings = JemAdmin::config();
 		$task           = JFactory::getApplication()->input->get('task', '');
 		$this->task     = $task;
 
@@ -65,8 +66,8 @@ class JemViewVenue extends JemAdminView
 		$document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 		JHtml::_('script', 'com_jem/jquery.geocomplete.js', false, true);
 
-		$access2 = JEMHelper::getAccesslevelOptions();
-		$this->access		= $access2;
+		$access2 = JemHelper::getAccesslevelOptions();
+		$this->access = $access2;
 
 		$this->addToolbar();
 		parent::display($tpl);
@@ -80,10 +81,10 @@ class JemViewVenue extends JemAdminView
 	{
 		JFactory::getApplication()->input->set('hidemainmenu', true);
 
-		$user		= JemFactory::getUser();
-		$isNew		= ($this->item->id == 0);
-		$checkedOut	= !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
-		$canDo		= JEMHelperBackend::getActions();
+		$user       = JemFactory::getUser();
+		$isNew      = ($this->item->id == 0);
+		$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+		$canDo      = JemHelperBackend::getActions();
 
 		JToolBarHelper::title($isNew ? JText::_('COM_JEM_ADD_VENUE') : JText::_('COM_JEM_EDIT_VENUE'), 'venuesedit');
 

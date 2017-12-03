@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -131,7 +131,8 @@ class JemViewEditvenue extends JViewLegacy
 		}
 
 		// Check for errors.
-		if (count($errors = $this->get('Errors'))) {
+		$errors = $this->get('Errors');
+		if (is_array($errors) && count($errors)) {
 			JError::raiseWarning(500, implode("\n", $errors));
 			return false;
 		}
@@ -140,8 +141,8 @@ class JemViewEditvenue extends JViewLegacy
 		JHtml::_('behavior.formvalidation');
 		JHtml::_('behavior.tooltip');
 
-		$access2 		= JemHelper::getAccesslevelOptions(true);
-		$this->access	= $access2;
+		$access2      = JemHelper::getAccesslevelOptions(true);
+		$this->access = $access2;
 
 		// Load css
 		JemHelper::loadCss('geostyle');

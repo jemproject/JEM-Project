@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -19,7 +19,8 @@ defined('_JEXEC') or die;
 
 	<div class="imglist">
 		<?php
-		for ($i = 0; $i < count($this->images); $i++) :
+		$n = is_array($this->images) ? count($this->images) : 0;
+		for ($i = 0; $i < $n; $i++) :
 			$this->setImage($i);
 			echo $this->loadTemplate('image');
 		endfor;

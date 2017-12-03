@@ -158,7 +158,7 @@ abstract class ModJemCalHelper extends JModuleHelper
 
 		foreach ($events as $index => $event) {
 			# Adding categories
-			$nr      = count($event->categories);
+			$nr      = is_array($event->categories) ? count($event->categories) : 0;
 			$catname = '';
 			$ix      = 0;
 

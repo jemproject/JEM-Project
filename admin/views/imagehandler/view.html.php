@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -72,7 +72,7 @@ class JemViewImagehandler extends JViewLegacy
 		$images = $this->get('images');
 		$pagination = $this->get('Pagination');
 
-		if (count($images) > 0 || $search) {
+		if ($search || (is_array($images) && (count($images) > 0))) {
 			$this->images     = $images;
 			$this->folder     = $folder;
 			$this->task       = $redi;
