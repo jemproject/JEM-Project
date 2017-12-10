@@ -89,17 +89,17 @@ $calendar .= '<table class="mod_jemcalq_calendar" cellspacing="0" cellpadding="0
 # Month navigation links
 # use $url_base_nojs or $url_base_ajax followed by $props_prev, $props_home, or $props_next
 $navi_nojs  = '<caption class="mod_jemcalq_calendar-month" id="mod_jem_cal_' . $module->id . '_navi_nojs" style="display:' . (!$use_ajax || empty($module->in_ajax_call) ? 'table-caption' : 'none') . '">';
-$navi_nojs .= $props_prev ? ('<a href="' . htmlspecialchars($url_base_nojs . $props_prev) . '" title="' . $the_month_prev . '">&lt;&lt;</a>&nbsp;') : '&lt;&lt;&nbsp;';
+$navi_nojs .= $props_prev ? ('<a href="' . htmlspecialchars($url_base_nojs . $props_prev) . '" title="' . $the_month_prev . ' ' . $prev_month_year . '">&lt;&lt;</a>&nbsp;') : '&lt;&lt;&nbsp;';
 $navi_nojs .= $props_home ? ('<span class="evtq_home"><a href="' . htmlspecialchars($url_base_nojs . $props_home) . '" title="' . $the_month_today . ' ' . $today_year . '">' . $title . '</a></span>') : $title;
-$navi_nojs .= $props_next ? ('&nbsp;<a href="' . htmlspecialchars($url_base_nojs . $props_next) . '" title="' . $the_month_next . '">&gt;&gt;</a>') : '&nbsp;&gt;&gt;';
+$navi_nojs .= $props_next ? ('&nbsp;<a href="' . htmlspecialchars($url_base_nojs . $props_next) . '" title="' . $the_month_next . ' ' . $next_month_year . '">&gt;&gt;</a>') : '&nbsp;&gt;&gt;';
 $navi_nojs .= '</caption>';
 $calendar  .= $navi_nojs;
 
 if ($use_ajax) {
 	$navi_ajax  = '<caption class="mod_jemcalq_calendar-month" id="mod_jem_cal_' . $module->id . '_navi_ajax" style="display:' . (empty($module->in_ajax_call) ? 'none' : 'table-caption') . '">';
-	$navi_ajax .= $props_prev ? ('<a href="#" title="' . $the_month_prev . '" onClick="mod_jem_cal_click_' . $module->id . '(\'' . htmlspecialchars($url_base_ajax . $props_prev) . '\'); return false;">&lt;&lt;</a>&nbsp;') : '&lt;&lt;&nbsp;';
+	$navi_ajax .= $props_prev ? ('<a href="#" title="' . $the_month_prev . ' ' . $prev_month_year . '" onClick="mod_jem_cal_click_' . $module->id . '(\'' . htmlspecialchars($url_base_ajax . $props_prev) . '\'); return false;">&lt;&lt;</a>&nbsp;') : '&lt;&lt;&nbsp;';
 	$navi_ajax .= $props_home ? ('<span class="evtq_home"><a href="#" title="' . $the_month_today . ' ' . $today_year . '" onClick="mod_jem_cal_click_' . $module->id . '(\'' . htmlspecialchars($url_base_ajax . $props_home) . '\'); return false;">' . $title . '</a></span>') : $title;
-	$navi_ajax .= $props_next ? ('&nbsp;<a href="#" title="' . $the_month_next . '" onClick="mod_jem_cal_click_' . $module->id . '(\'' . htmlspecialchars($url_base_ajax . $props_next) . '\'); return false;">&gt;&gt;</a>') : '&nbsp;&gt;&gt;';
+	$navi_ajax .= $props_next ? ('&nbsp;<a href="#" title="' . $the_month_next . ' ' . $next_month_year . '" onClick="mod_jem_cal_click_' . $module->id . '(\'' . htmlspecialchars($url_base_ajax . $props_next) . '\'); return false;">&gt;&gt;</a>') : '&nbsp;&gt;&gt;';
 	$navi_ajax .= '</caption>';
 	$calendar  .= $navi_ajax;
 }
