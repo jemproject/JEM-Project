@@ -117,6 +117,9 @@ if ($next_month > 12) {
 	++$next_month_year;
 }
 
+$prev_year = $req_year - 1;
+$next_year = $req_year + 1;
+
 # Requested URL
 $uri   = JUri::getInstance();
 $myurl = $uri->toString(array('query'));
@@ -141,6 +144,8 @@ $url_base_ajax = JRoute::_($ajax_link, false) . '&modjemcal_id='.$module->id;
 $props_prev = '&modjemcal_month='.$prev_month.'&modjemcal_year='.$prev_month_year;
 $props_next = '&modjemcal_month='.$next_month.'&modjemcal_year='.$next_month_year;
 $props_home = '&modjemcal_month='.$today_month.'&modjemcal_year='.$today_year;
+$props_prev_year = '&modjemcal_month='.$req_month.'&modjemcal_year='.$prev_year;
+$props_next_year = '&modjemcal_month='.$req_month.'&modjemcal_year='.$next_year;
 
 # Get data
 $params->module_id = $module->id; // used for debug log
