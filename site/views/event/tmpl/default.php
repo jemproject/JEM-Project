@@ -64,16 +64,21 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		</dd>
 		<?php if ($this->item->locid != 0) : ?>
 		<dt class="where"><?php echo JText::_('COM_JEM_WHERE'); ?>:</dt>
-		<dd class="where">
-			<?php if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) : ?>
-				<a target="_blank" href="<?php echo $this->item->url; ?>"><?php echo $this->escape($this->item->venue); ?></a> -
-			<?php elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) : ?>
-				<a href="<?php echo JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)); ?>"><?php echo $this->item->venue; ?></a> -
-			<?php else/*if ($params->get('event_show_detlinkvenue') == 0)*/ :
-				echo $this->escape($this->item->venue).' - ';
+		<dd class="where"><?php
+			if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :
+				?><a target="_blank" href="<?php echo $this->item->url; ?>"><?php echo $this->escape($this->item->venue); ?></a><?php
+			elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) :
+				?><a href="<?php echo JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)); ?>"><?php echo $this->item->venue; ?></a><?php
+			else/*if ($params->get('event_show_detlinkvenue') == 0)*/ :
+				echo $this->escape($this->item->venue);
 			endif;
 
-			echo $this->escape($this->item->city).', '.$this->escape($this->item->state); ?>
+			# will show "venue" or "venue - city" or "venue - city, state" or "venue, state"
+			$city  = $this->escape($this->item->city);
+			$state = $this->escape($this->item->state);
+			if ($city)  { echo ' - ' . $city; }
+			if ($state) { echo ', ' . $state; }
+			?>
 		</dd>
 		<?php
 		endif;

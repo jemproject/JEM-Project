@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -62,7 +62,7 @@ class JemViewVenue extends JViewLegacy
 
 				// feed item description text
 				$description  = JText::_('COM_JEM_TITLE').': '.$title.'<br />';
-				$description .= JText::_('COM_JEM_VENUE').': '.$row->venue.' / '.$row->city.'<br />';
+				$description .= JText::_('COM_JEM_VENUE').': '.$row->venue.($row->city ? (' / '.$row->city) : '').'<br />';
 				$description .= JText::_('COM_JEM_CATEGORY').': '.$category.'<br />';
 				$description .= JText::_('COM_JEM_DATE').': '.$displaydate.'<br />';
 				$description .= JText::_('COM_JEM_DESCRIPTION').': '.$row->fulltext;
