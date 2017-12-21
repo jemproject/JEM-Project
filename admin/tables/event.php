@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -191,7 +191,9 @@ class JemTableEvent extends JTable
 		// Check if image was selected
 		jimport('joomla.filesystem.file');
 		$image_dir = JPATH_SITE.'/images/jem/events/';
-		$allowable = array ('gif', 'jpg', 'png');
+		$filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png';
+		$allowable = explode(',', strtolower($filetypes));
+		array_walk($allowable, function(&$v){$v = trim($v);});
 		$image_to_delete = false;
 
 		// get image (frontend) - allow "removal on save" (Hoffi, 2014-06-07)
@@ -211,11 +213,11 @@ class JemTableEvent extends JTable
 					// only on first event, skip on recurrence events
 					if (empty($this->recurrence_first_id)) {
 						//check the image
-						$check = JEMImage::check($file, $jemsettings);
+						$check = JemImage::check($file, $jemsettings);
 
 						if ($check !== false) {
 							//sanitize the image filename
-							$filename = JEMImage::sanitize($image_dir, $file['name']);
+							$filename = JemImage::sanitize($image_dir, $file['name']);
 							$filepath = $image_dir . $filename;
 
 							if (JFile::upload($file['tmp_name'], $filepath)) {

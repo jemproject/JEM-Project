@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @subpackage JEM Teaser Module
  * @copyright (C) 2013-2017 joomlaeventmanager.net
@@ -54,18 +54,14 @@ if ($params->get('use_modal', 0)) {
 					<td class="event-info">
 						<div class="teaser-jem">
 							<div>
-								<?php if(($item->eventimage)!=str_replace("jpg","",($item->eventimage)) OR
-										 ($item->eventimage)!=str_replace("gif","",($item->eventimage)) OR
-										 ($item->eventimage)!=str_replace("png","",($item->eventimage))) : ?>
+								<?php if(!empty($item->eventimage)) : ?>
 									<a href="<?php echo $item->eventimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->fulltitle; ?> ">
 									<img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" /></a>
 								<?php else : ?>
 								<?php endif; ?>
-								<?php if(($item->venueimage)!=str_replace("jpg","",($item->venueimage)) OR
-										 ($item->venueimage)!=str_replace("gif","",($item->venueimage)) OR
-										 ($item->venueimage)!=str_replace("png","",($item->venueimage))) : ?>
+								<?php if(!empty($item->venueimage)) : ?>
 									<a href="<?php echo $item->venueimageorig; ?>" class="<?php echo $modal;?>" title="<?php echo $item->venue; ?> ">
-									<img src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" class="float_right image-preview" /></a>
+									<img class="float_right image-preview" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" /></a>
 								<?php endif; ?>
 							</div>
 							<div>

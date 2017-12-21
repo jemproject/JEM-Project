@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -224,6 +224,7 @@ class JemImage
 	{
 		$sizelimit = $jemsettings->sizelimit*1024; //size limit in kb
 		$imagesize = $file['size'];
+		$filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png';
 
 		//check if the upload is an image...getimagesize will return false if not
 		if (!getimagesize($file['tmp_name'])) {
@@ -234,7 +235,8 @@ class JemImage
 		//check if the imagefiletype is valid
 		$fileext = strtolower(JFile::getExt($file['name']));
 
-		$allowable = array ('gif', 'jpg', 'png');
+		$allowable = explode(',', strtolower($filetypes));
+		array_walk($allowable, function(&$v){$v = trim($v);});
 		if (!in_array($fileext, $allowable)) {
 			JError::raiseWarning(100, JText::_('COM_JEM_WRONG_IMAGE_FILE_TYPE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'));
 			return false;

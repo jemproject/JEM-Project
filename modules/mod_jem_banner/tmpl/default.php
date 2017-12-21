@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
 * @package JEM
 * @subpackage JEM Banner Module
 * @copyright (C) 2014-2017 joomlaeventmanager.net
@@ -65,10 +65,7 @@ if ($flyer_link_type == 1) {
 				</div>
 				<?php endif; ?>
 
-				<?php if (($showflyer == 1) AND
-				          (($item->eventimage)!=str_replace("jpg","",($item->eventimage)) OR
-				           ($item->eventimage)!=str_replace("gif","",($item->eventimage)) OR
-				           ($item->eventimage)!=str_replace("png","",($item->eventimage)))) : ?>
+				<?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>
 				<div>
 					<div class="banner-jem">
 						<div>

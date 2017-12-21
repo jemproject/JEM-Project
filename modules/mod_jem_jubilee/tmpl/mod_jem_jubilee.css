@@ -1,8 +1,8 @@
 /**
- * @version 2.1
+ * @version 2.2
  * @package JEM
  * @subpackage JEM Jubilee Module
- * @copyright (C) 2014-2015 joomlaeventmanager.net
+ * @copyright (C) 2014-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -72,7 +72,6 @@ div#jemmodulejubilee .eventset {
 
 div#jemmodulejubilee .event-title {
 	padding-left: 0px;
-//	background: url(img/flag_red.png) no-repeat;
 	font-size: x-large;
 	margin: 0 0 5px;
 }
@@ -126,7 +125,7 @@ div#jemmodulejubilee .venue-image-cell {
 }
 
 div#jemmodulejubilee .image-preview {
-	width: 110px;
+	max-width: 110px;
 	border: 0px solid #CCCCCC;
 	padding: 3px;
 	background-color: white;
@@ -134,7 +133,7 @@ div#jemmodulejubilee .image-preview {
 }
 
 div#jemmodulejubilee .image-preview2 {
-	width: 200px;
+	max-width: 200px;
 	border: 0px solid #CCCCCC;
 	padding: 3px;
 	background-color: white;
