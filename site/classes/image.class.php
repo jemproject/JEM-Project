@@ -155,6 +155,10 @@ class JemImage
 	{
 		$settings = JemHelper::config();
 
+		if (($settings->imagewidth < 1) || ($settings->imagehight < 1)) {
+			return false;
+		}
+
 		//define the environment based on the type
 		if ($type == 'event') {
 			$folder = 'events';
@@ -170,8 +174,8 @@ class JemImage
 			$img_orig  = 'images/jem/'.$folder.'/'.$image;
 			$img_thumb = 'images/jem/'.$folder.'/small/'.$image;
 
-			$filepath 	= JPATH_SITE.'/'.$img_orig;
-			$save 		= JPATH_SITE.'/'.$img_thumb;
+			$filepath  = JPATH_SITE.'/'.$img_orig;
+			$save      = JPATH_SITE.'/'.$img_thumb;
 
 			// At least original image must exist
 			if (!file_exists($filepath)) {
@@ -185,10 +189,15 @@ class JemImage
 
 			//set paths
 			$dimage['original'] = $img_orig;
-			$dimage['thumb'] 	= $img_thumb;
+			$dimage['thumb']    = $img_thumb;
 
 			//get imagesize of the original
 			$iminfo = @getimagesize($img_orig);
+
+			// and it should be an image
+			if (!is_array($iminfo) || count($iminfo) < 2) {
+				return false;
+			}
 
 			//if the width or height is too large this formula will resize them accordingly
 			if (($iminfo[0] > $settings->imagewidth) || ($iminfo[1] > $settings->imagehight)) {
@@ -196,22 +205,22 @@ class JemImage
 				$iRatioH = $settings->imagehight / $iminfo[1];
 
 				if ($iRatioW < $iRatioH) {
-					$dimage['width'] 	= round($iminfo[0] * $iRatioW);
-					$dimage['height'] 	= round($iminfo[1] * $iRatioW);
+					$dimage['width']  = round($iminfo[0] * $iRatioW);
+					$dimage['height'] = round($iminfo[1] * $iRatioW);
 				} else {
-					$dimage['width'] 	= round($iminfo[0] * $iRatioH);
-					$dimage['height'] 	= round($iminfo[1] * $iRatioH);
+					$dimage['width']  = round($iminfo[0] * $iRatioH);
+					$dimage['height'] = round($iminfo[1] * $iRatioH);
 				}
 			} else {
-				$dimage['width'] 	= $iminfo[0];
-				$dimage['height'] 	= $iminfo[1];
+				$dimage['width']  = $iminfo[0];
+				$dimage['height'] = $iminfo[1];
 			}
 
 			if (JFile::exists(JPATH_SITE.'/'.$img_thumb)) {
 				//get imagesize of the thumbnail
 				$thumbiminfo = @getimagesize($img_thumb);
-				$dimage['thumbwidth'] 	= $thumbiminfo[0];
-				$dimage['thumbheight'] 	= $thumbiminfo[1];
+				$dimage['thumbwidth']  = $thumbiminfo[0];
+				$dimage['thumbheight'] = $thumbiminfo[1];
 			}
 
 			return $dimage;

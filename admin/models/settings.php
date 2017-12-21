@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -77,6 +77,14 @@ class JemModelSettings extends JModelForm
 		$varmetakey = $jinput->get('meta_keywords','','');
 		$data['meta_keywords'] = implode(', ', array_filter($varmetakey));
 		$data['lastupdate'] = $jinput->get('lastupdate','',''); // 'lastupdate' indicates last cleanup etc., not when config as stored.
+
+		// sanitize
+		if (empty($data['imagewidth'])) {
+			$data['imagewidth'] = 100;
+		}
+		if (empty($data['imagehight'])) {
+			$data['imagehight'] = 100;
+		}
 
 		//
 		// Store into new table
