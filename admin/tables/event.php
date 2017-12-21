@@ -108,11 +108,13 @@ class JemTableEvent extends JTable
 
 
 		// Dates
-		if (empty($this->enddates)) {
+		$nullDate = JFactory::getDbo()->getNullDate();
+
+		if (empty($this->enddates) || ($this->enddates == $nullDate)) {
 			$this->enddates = null;
 		}
 
-		if (empty($this->dates)) {
+		if (empty($this->dates) || ($this->dates == $nullDate)) {
 			$this->dates = null;
 		}
 

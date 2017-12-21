@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -268,11 +268,12 @@ class JemModelEvent extends JemModelAdmin
 		}
 
 		// convert international date formats...
-		if (!empty($data['dates'])) {
+		$nullDate = JFactory::getDbo()->getNullDate();
+		if (!empty($data['dates']) && ($data['dates'] != $nullDate)) {
 			$d = JFactory::getDate($data['dates'], 'UTC');
 			$data['dates'] = $d->format('Y-m-d', true, false);
 		}
-		if (!empty($data['enddates'])) {
+		if (!empty($data['enddates']) && ($data['enddates'] != $nullDate)) {
 			$d = JFactory::getDate($data['enddates'], 'UTC');
 			$data['enddates'] = $d->format('Y-m-d', true, false);
 		}
