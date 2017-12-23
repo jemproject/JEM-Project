@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -1061,12 +1061,13 @@ class JemOutput
 	 * @param  string $timeFormat Time Format
 	 * @param  bool   $addSuffix if true add suffix specified in settings
 	 * @param  bool   $showTime global setting to respect
+	 * @param  bool   $showDayLink if true date will be shown as link to day view
 	 * @return string Formatted date and time string to print
 	 */
-	static public function formatDateTime($dateStart, $timeStart ='', $dateEnd = '', $timeEnd = '', $dateFormat = '', $timeFormat = '', $addSuffix = true, $showTime = true)
+	static public function formatDateTime($dateStart, $timeStart ='', $dateEnd = '', $timeEnd = '', $dateFormat = '', $timeFormat = '', $addSuffix = true, $showTime = true, $showDayLink = false)
 	{
 		if (is_array($dateStart)) {
-			foreach (array('timeStart','dateEnd','timeEnd','dateFormat','timeFormat','addSuffix','showTime') as $param) {
+			foreach (array('timeStart','dateEnd','timeEnd','dateFormat','timeFormat','addSuffix','showTime', 'showDayLink') as $param) {
 				if (isset($dateStart[$param])) {
 					$$param = $dateStart[$param];
 				}
@@ -1077,7 +1078,15 @@ class JemOutput
 		$output = '';
 
 		if (JemHelper::isValidDate($dateStart)) {
-			$output .= '<span class="jem_date-1">'.self::formatdate($dateStart, $dateFormat).'</span>';
+			$output .= '<span class="jem_date-1">';
+			if ($showDayLink) {
+				$output .= '<a href="'.JRoute::_(JemHelperRoute::getRoute(str_replace('-', '', $dateStart), 'day')).'">';
+			}
+			$output .= self::formatdate($dateStart, $dateFormat);
+			if ($showDayLink) {
+				$output .= '</a>';
+			}
+			$output .= '</span>';
 
 			if ($showTime && JemHelper::isValidTime($timeStart)) {
 				$output .= ', <span class="jem_time-1">'.self::formattime($timeStart, $timeFormat, $addSuffix).'</span>';
@@ -1086,7 +1095,15 @@ class JemOutput
 			// Display end date only when it differs from start date
 			$displayDateEnd = JemHelper::isValidDate($dateEnd) && $dateEnd != $dateStart;
 			if ($displayDateEnd) {
-				$output .= ' - <span class="jem_date-1">'.self::formatdate($dateEnd, $dateFormat).'</span>';
+				$output .= ' - <span class="jem_date-1">';
+				if ($showDayLink) {
+					$output .= '<a href="'.JRoute::_(JemHelperRoute::getRoute(str_replace('-', '', $dateEnd), 'day')).'">';
+				}
+				$output .= self::formatdate($dateEnd, $dateFormat);
+				if ($showDayLink) {
+					$output .= '</a>';
+				}
+				$output .= '</span>';
 			}
 
 			// Display end time only when both times are set

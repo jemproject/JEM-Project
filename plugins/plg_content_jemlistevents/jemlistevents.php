@@ -3,7 +3,7 @@
  * JemListEvent is a Plugin to display events in articles.
  * For more information visit joomlaeventmanager.net
  *
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @subpackage JEM_Listevents_Plugin
  * @author JEM Team <info@joomlaeventmanager.net>, Michael Anderau <michael@sternrenaugen.net>, Luis Raposo
@@ -37,44 +37,46 @@ class PlgContentJemlistevents extends JPlugin
 	/** all options with their default values
 	 */
 	protected static $optionDefaults = array(
-			'type'          => 'unfinished',
-		    'show_featured' => 'off',
-			'title'         => 'on',
-			'cut_title'     => 40,
-			'show_date'     => 'on',
-			'date_format'   => '',
-			'show_time'     => 'on',
-			'time_format'   => '',
-			'catids'        => '',
-			'show_category' => 'off',
-			'venueids'      => '',
-			'show_venue'    => 'off',
-			'max_events'    => '5',
-			'no_events_msg' => '',
+			'type'             => 'unfinished',
+		    'show_featured'    => 'off',
+			'title'            => 'on',
+			'cut_title'        => 40,
+			'show_date'        => 'on',
+			'date_format'      => '',
+			'show_time'        => 'on',
+			'time_format'      => '',
+			'show_enddatetime' => 'off', // for backward compatibility
+			'catids'           => '',
+			'show_category'    => 'off',
+			'venueids'         => '',
+			'show_venue'       => 'off',
+			'max_events'       => '5',
+			'no_events_msg'    => '',
 			);
 
 	/** options we have to convert from numbers to 'on'/'off'
 	 */
-	protected static $optionConvert = array('show_featured', 'show_time');
+	protected static $optionConvert = array('show_featured', 'show_time', 'show_enddatetime');
 
 	/** all text tokens with their corresponding option
 	 */
-	protected static $optionTokens = array(   // {jemlistevents
-			'type'        => 'type',          //  [type=today|unfinished|upcoming|archived|newest];
-		    'featured'    => 'show_featured', //  [featured=on|off];
-			'title'       => 'title',         //  [title=on|link|off];
-			'cuttitle'    => 'cut_title',     //  [cuttitle=n];
-			'date'        => 'show_date',     //  [date=on|link|off];
-		//	'dateformat'  => 'date_format',   //
-			'time'        => 'show_time',     //  [time=on|off];
-		//	'timeformat'  => 'time_format',   //
-			'catids'      => 'catids',        //  [catids=n];
-			'category'    => 'show_category', //  [category=on|link|off];
-			'venueids'    => 'venueids',      //  [venueids=n];
-			'venue'       => 'show_venue',    //  [venue=on|link|off];
-			'max'         => 'max_events',    //  [max=n];
-			'noeventsmsg' => 'no_events_msg', //  [noeventsmsg=msg]
-			);                                // }
+	protected static $optionTokens = array(      // {jemlistevents
+			'type'        => 'type',             //  [type=today|unfinished|upcoming|archived|newest];
+		    'featured'    => 'show_featured',    //  [featured=on|off];
+			'title'       => 'title',            //  [title=on|link|off];
+			'cuttitle'    => 'cut_title',        //  [cuttitle=n];
+			'date'        => 'show_date',        //  [date=on|link|off];
+		//	'dateformat'  => 'date_format',      //
+			'time'        => 'show_time',        //  [time=on|off];
+		//	'timeformat'  => 'time_format',      //
+			'enddatetime' => 'show_enddatetime', //  [enddatetime=on|off];
+			'catids'      => 'catids',           //  [catids=n];
+			'category'    => 'show_category',    //  [category=on|link|off];
+			'venueids'    => 'venueids',         //  [venueids=n];
+			'venue'       => 'show_venue',       //  [venue=on|link|off];
+			'max'         => 'max_events',       //  [max=n];
+			'noeventsmsg' => 'no_events_msg',    //  [noeventsmsg=msg]
+			);                                   // }
 
 	/** all text tokens with their corresponding option
 	 */
@@ -84,6 +86,7 @@ class PlgContentJemlistevents extends JPlugin
 			'title'       => array('on', 'link', 'off'),
 			'date'        => array('on', 'link', 'off'),
 			'time'        => array('on', 'off'),
+			'enddatetime' => array('on', 'off'),
 			'category'    => array('on', 'link', 'off'),
 			'venue'       => array('on', 'link', 'off'),
 			);
@@ -151,7 +154,7 @@ class PlgContentJemlistevents extends JPlugin
 		$defaults = array();
 		foreach (self::$optionDefaults as $k => $v) {
 			$defaults[$k] = $this->params->def($k, $v);
-			if (in_array($k, self::$optionConvert)) {
+			if (in_array($k, self::$optionConvert) && is_numeric($defaults[$k])) {
 				$defaults[$k] = ($defaults[$k] == '0') ? 'off' : 'on';
 			}
 		}
@@ -304,7 +307,7 @@ class PlgContentJemlistevents extends JPlugin
 		foreach ($rows as $event)
 		{
 			$linkdetails = JRoute::_(JemHelperRoute::getEventRoute($event->slug));
-			$linkdate    = JRoute::_(JemHelperRoute::getRoute(str_replace('-','',$event->dates),'day'));
+			$linkdate    = JRoute::_(JemHelperRoute::getRoute(str_replace('-', '', $event->dates), 'day'));
 			$linkvenue   = JRoute::_(JemHelperRoute::getVenueRoute($event->venueslug));
 
 			$html_list .= '<tr class="listevent event'.($n_event + 1).'">';
@@ -323,23 +326,45 @@ class PlgContentJemlistevents extends JPlugin
 				$html_list .= '</td>';
 			}
 
-			if ($parameters['show_date'] !== 'off') {
-				// Display startdate.
-				$html_list .= '<td class="eventdate">';
-				if ($event->dates) {
-					$html_list .= (($parameters['show_date'] === 'link') ? ('<a href="'.$linkdate.'">') : '');
-					$html_list .= JemOutput::formatdate($event->dates, $parameters['date_format']);
-					$html_list .= (($parameters['show_date'] === 'link') ? '</a>' : '');
+			if (($parameters['show_enddatetime'] === 'off') || ($parameters['show_date'] === 'off')) {
+				if ($parameters['show_date'] !== 'off') {
+					// Display startdate.
+					$html_list .= '<td class="eventdate">';
+					if ($event->dates) {
+						$html_list .= (($parameters['show_date'] === 'link') ? ('<a href="'.$linkdate.'">') : '');
+						$html_list .= JemOutput::formatdate($event->dates, $parameters['date_format']);
+						$html_list .= (($parameters['show_date'] === 'link') ? '</a>' : '');
+					}
+					$html_list .= '</td>';
 				}
-				$html_list .= '</td>';
-			}
 
-			if ($parameters['show_time'] !== 'off') {
-				// Display starttime.
-				$html_list .= ' '.'<td class="eventtime">';
-				if ($event->times) {
-					$html_list .= JemOutput::formattime($event->times, $parameters['time_format']);
+				if ($parameters['show_time'] !== 'off') {
+					// Display starttime.
+					$html_list .= ' '.'<td class="eventtime">';
+					if ($event->times) {
+						$html_list .= JemOutput::formattime($event->times, $parameters['time_format']);
+					}
+					// Display endtime if requested.
+					if ($event->endtimes && ($parameters['show_enddatetime'] !== 'off')) {
+						$html_list .= ' - ' . JemOutput::formattime($event->endtimes, $parameters['time_format']);
+					}
+					$html_list .= '</td>';
 				}
+			} else { // single column with all start/end date/time values
+				$params = array(
+					'dateStart' => $event->dates,
+					'timeStart' => $event->times,
+					'dateEnd' => $event->enddates,
+					'timeEnd' => $event->endtimes,
+					'dateFormat' => $parameters['date_format'],
+					'timeFormat' => $parameters['time_format'],
+					'showTime' => $parameters['show_time'] !== 'off',
+					'showDayLink' => $parameters['show_date'] === 'link',
+					);
+
+				// Display start/end date/time.
+				$html_list .= ' '.'<td class="eventdatetime">';
+				$html_list .= JemOutput::formatDateTime($params);
 				$html_list .= '</td>';
 			}
 
