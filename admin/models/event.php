@@ -238,7 +238,6 @@ class JemModelEvent extends JemModelAdmin
 	public function save($data)
 	{
 		// Variables
-		$date        = JFactory::getDate();
 		$app         = JFactory::getApplication();
 		$jinput      = $app->input;
 		$jemsettings = JemHelper::config();
@@ -334,7 +333,6 @@ class JemModelEvent extends JemModelAdmin
 
 			if ($allowed) {
 				// attachments, new ones first
-				$attachments   = array();
 				$attachments   = $jinput->files->get('attach', array(), 'array');
 				$attach_name   = $jinput->post->get('attach-name', array(), 'array');
 				$attach_descr  = $jinput->post->get('attach-desc', array(), 'array');

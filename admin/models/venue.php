@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -232,22 +232,17 @@ class JemModelVenue extends JemModelAdmin
 	public function save($data)
 	{
 		// Variables
-		$date        = JFactory::getDate();
 		$app         = JFactory::getApplication();
 		$jinput      = $app->input;
-		$user        = JemFactory::getUser();
 		$jemsettings = JemHelper::config();
-		$table       = $this->getTable();
 		$task        = $jinput->get('task', '', 'cmd');
 
 		// Check if we're in the front or back
-		if ($app->isAdmin())
-			$backend = true;
-		else
-			$backend = false;
+		$backend = (bool)$app->isAdmin();
+		$new     = (bool)empty($data['id']);
 
 		// Store IP of author only.
-		if (!$data['id']) {
+		if ($new) {
 			$author_ip = $jinput->get('author_ip', '', 'string');
 			$data['author_ip'] = $author_ip;
 		}
@@ -266,7 +261,10 @@ class JemModelVenue extends JemModelAdmin
 			$data['country'] = JString::strtoupper($data['country']);
 		}
 
-		if (parent::save($data)){
+		// Save the venue
+		$saved = parent::save($data);
+
+		if ($saved) {
 			// At this point we do have an id.
 			$pk = $this->getState($this->getName() . '.id');
 
@@ -281,9 +279,9 @@ class JemModelVenue extends JemModelAdmin
 				$attach_descr  = $jinput->post->get('attach-desc', array(), 'array');
 				$attach_access = $jinput->post->get('attach-access', array(), 'array');
 				foreach($attachments as $n => &$a) {
-					$a['customname']  = array_key_exists($attach_access, $n) ? $attach_name[$n]   : '';
-					$a['description'] = array_key_exists($attach_access, $n) ? $attach_descr[$n]  : '';
-					$a['access']      = array_key_exists($attach_access, $n) ? $attach_access[$n] : '';
+					$a['customname']  = array_key_exists($n, $attach_access) ? $attach_name[$n]   : '';
+					$a['description'] = array_key_exists($n, $attach_access) ? $attach_descr[$n]  : '';
+					$a['access']      = array_key_exists($n, $attach_access) ? $attach_access[$n] : '';
 				}
 				JemAttachment::postUpload($attachments, 'venue' . $pk);
 			}
@@ -305,10 +303,8 @@ class JemModelVenue extends JemModelAdmin
 				} // else don't touch this field
 				JemAttachment::update($attach);
 			}
-
-			return true;
 		}
 
-		return false;
+		return $saved;
 	}
 }
