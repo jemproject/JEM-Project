@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -146,10 +146,6 @@ class JemAttachment extends JObject
 	{
 		$jemsettings = JemHelper::config();
 
-		$user = JemFactory::getUser();
-		// Support Joomla access levels instead of single group id
-		$levels = $user->getAuthorisedViewLevels();
-
 		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$object;
 
 		if (!file_exists($path)) {
@@ -170,11 +166,20 @@ class JemAttachment extends JObject
 			return array();
 		}
 
+		// Check access level if not a Super User on Backend.
+		$user = JemFactory::getUser();
+		if (JFactory::getApplication()->isAdmin() && $user->authorise('core.manage')) {
+			$qAccess = '';
+		} else {
+			$levels = $user->getAuthorisedViewLevels();
+			$qAccess = '   AND access IN (' . implode(',', $levels) . ')';
+		}
+
 		$query = 'SELECT * '
 		       . ' FROM #__jem_attachments '
 		       . ' WHERE file IN ('. implode(',', $fnames) .')'
 		       . '   AND object = '. $db->Quote($object)
-		       . '   AND access IN (' . implode(',', $levels) . ')'
+		       . $qAccess
 		       . ' ORDER BY ordering ASC ';
 
 		$db->setQuery($query);
