@@ -1,17 +1,17 @@
 /**
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 
- div#jem a {
- }
+div#jem a {
+}
 
 div#jem h1.componentheading {
- margin-bottom:6px;
- margin-top: 6px;
+	margin-bottom:6px;
+	margin-top: 6px;
 }
 
 div#jem .formelm-buttons {
@@ -25,10 +25,6 @@ ul.adminformlist li {
 	margin: 0;
 	padding: 0;
 	list-style: none;
-}
-
-div#jem_editevent dt {
-	width: none;
 }
 
 div#jem .inputbox:focus {
@@ -82,6 +78,7 @@ div#jem {
 	border-radius:5px;
 	padding:10px;
 }
+
 /* On J! 3.7 the calendar popup will show below the field
    which results in half hidden calendar on recurrence.
    Following rule will allow calendar to be shown complete.
@@ -91,8 +88,8 @@ div#jem.jem_editevent {
 }
 
 /**
-* @section button
-*/
+ * @section button
+ */
 div#jem .buttons {
 	float:right;
 }
@@ -108,9 +105,9 @@ div#jem .buttons span.gap {
 
 /* Edit-event view */
 div#jem .button1 {
-	-webkit-box-shadow:rgba(0, 0, 0, 0.0 .1) 0 1px 0 0;
+	-webkit-box-shadow:rgb(0, 0, 0) 0 1px 0 0;
 	-moz-box-shadow:rgba(0, 0, 0, 0.0 .1) 0 1px 0 0;
-	box-shadow:rgba(0, 0, 0, 0.0 .1) 0 1px 0 0;
+	box-shadow:rgb(0, 0, 0) 0 1px 0 0;
 	background-color:#EBE8E9;
 	border:1px solid #29447E;
 	font-family:"Lucida Grande", Tahoma, Verdana, Arial, sans-serif;
@@ -128,6 +125,7 @@ div#jem .button1 {
 	-moz-border-radius:5px;
 	-webkit-border-radius:5px
 }
+
 div#jem .button1:disabled,
 div#jem .button1:disabled:hover {
 	color: #999;
@@ -146,9 +144,9 @@ div#jem .button1:hover {
 
 /* Filter button */
 div#jem .buttonfilter {
-	-webkit-box-shadow:rgba(0, 0, 0, 0.0 .1) 0 1px 0 0;
+	-webkit-box-shadow:rgb(0, 0, 0) 0 1px 0 0;
 	-moz-box-shadow:rgba(0, 0, 0, 0.0 .1) 0 1px 0 0;
-	box-shadow:rgba(0, 0, 0, 0.0 .1) 0 1px 0 0;
+	box-shadow:rgb(0, 0, 0) 0 1px 0 0;
 	background-color:#EBE8E9;
 	border:1px solid #29447E;
 	font-family:"Lucida Grande", Tahoma, Verdana, Arial, sans-serif;
@@ -207,12 +205,10 @@ div#jem .pointer {
  * @section headers
  */
 div#jem h2 {
-	font-size:normal !important;
 	font-weight:normal !important;
 	margin-top:1em;
 	margin-bottom:1em;
 	padding:0.3em 0.3em;
-	margin:normal;
 	background:none repeat scroll 0% 0% #D4D6B2;
 	border:1px solid #808080;
 }
@@ -371,7 +367,7 @@ div#jem span.username a {
 
 
 /* -------------------
-	General Pagination
+   General Pagination
 --------------------- */
 div.pagination {
 	clear:both;
@@ -415,7 +411,7 @@ div#jem .cat-children ul li {
 }
 
 /* -------------------
-	TABLE
+   TABLE
 --------------------- */
 div#jem table.eventtable {
 	background:#DEDEDE;
@@ -453,7 +449,7 @@ div#jem table.eventtable td {
 	vertical-align:top;
 }
 
-div#jem table.eventtable td a{
+div#jem table.eventtable td a {
 	background-color:transparent;
  /*	color:#095197; */
 }
@@ -519,26 +515,30 @@ div#jem .jem_fright {
 #jem #jem_filter tr {
 	vertical-align: baseline;
 }
+
 #jem #jem_filter label {
 	margin-bottom:0;
 }
+
 #jem .jem_fright label,
 #jem .jem_fleft label {
 	display: inline-block;
 }
+
 #jem .nowrap {
 	display: inline-block;
 	white-space: nowrap;
 }
 
 /* -------------------
-	EDIT FORM
+   EDIT FORM
 --------------------- */
 
 /* J!3 */
 #jem .edit .current dd.tabs fieldset legend {
 	width: auto;
 }
+
 #jem .edit .current dd.tabs {
 	border: none;
 }
@@ -546,6 +546,7 @@ div#jem .jem_fright {
 div.jem_editevent ul.adminformlist label {
 	min-width:160px;
 }
+
 div.jem_editvenue label,
 div.jem_select_users ul.adminformlist label {
 	min-width:150px;
@@ -624,7 +625,7 @@ div.jem_editvenue form input:visited, /* venue */
 div.jem_editvenue form select:visited,
 div.jem_editvenue form textarea:visited,
 div.jem_select_users ul.adminformlist select:visited,
-div.jem_select_users ul.adminformlist input:visited{
+div.jem_select_users ul.adminformlist input:visited {
 	margin:0 0 0.5em 0;
 	padding:0.2em;
 	border:1px solid #808080;
@@ -977,7 +978,6 @@ div#jem div.current fieldset.checkboxes label {
 }
 
 
-
 div#jem p.tab-description {
 	font-size:1.091em;
 	margin-left:0;
@@ -1154,14 +1154,13 @@ a.jgrid:hover {
 
 div#jem a.file-name:link,
 div#jem a.file-name:active,
-div#jem a.file-name:visited
- {
+div#jem a.file-name:visited {
 	text-decoration:none;
 	color: #000000;
 	background-color:transparent;
 }
 
-div#jem .file td{
+div#jem .file td {
 	padding:3px;
 }
 
