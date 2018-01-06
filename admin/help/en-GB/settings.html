@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en_GB" xml:lang="en_GB">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB" xml:lang="en-GB">
 <head>
 	<title>Settings</title>
 	<link href="../css/help.css" rel="stylesheet" type="text/css" />
@@ -13,7 +13,7 @@
 <div>
 	<p><img src="../../../../../media/com_jem/images/icon-48-settings.png" alt="" class="left" />
 		This is the heart of the JEM component. Here you have to decide which features you want to offer and how JEM
-		should behave. The Settings are separated in 4 different types. Select one of them to go directly to the
+		should behave. The Settings are separated in 6 different types. Select one of them to go directly to the
 		regarding explanation.</p>
 	<div class="clear"></div>
 </div>
@@ -22,11 +22,10 @@
 <h3>Navigation</h3>
 
 <p>To access this screen use:
-	<strong>Components</strong> &rarr; <strong>JEM</strong> &rarr; <strong>Settings</strong></p>
+	<strong>Components</strong> &rarr; <strong>JEM</strong> &rarr; <strong>Settings</strong>
+</p>
 
 <h3>Toolbar Icons</h3>
-
-<p><img src="toolbars/asch.png" alt="toolbar" /></p>
 
 <p>
 	<div class="toolbar-list">
@@ -37,7 +36,7 @@
 			</li>
 			<li>
 				<span class="icon-32-save"> </span>
-				Save & Close
+				Save &amp; Close
 			</li>
 			<li>
 				<span class="icon-32-cancel"> </span>
@@ -52,17 +51,14 @@
 	<div class="clear"> </div>
 </p>
 
-
-
-
-<p><strong>Apply:</strong>
-	Click the 'Apply' icon to save your changes and return to this screen.</p>
 <p><strong>Save:</strong>
-	Click the 'Save' icon to save your changes and leave the screen.</p>
-<p><strong>Cancel:</strong>
-	Click the 'Cancel' icon to leave the screen without saving any changes.</p>
+	Saves your changes and remains in the current view.</p>
+<p><strong>Save &amp; Close:</strong>
+	Saves your changes and returns to JEM Control Panel.</p>
+<p><strong>Close:</strong>
+	Cancels this operation and returns to JEM Control Panel.</p>
 <p><strong>Help:</strong>
-	Click the Help icon to access a relevant Help Screen.</p>
+	Opens this help screen.</p>
 
 
 <h2><strong>Settings:</strong></h2>
@@ -91,13 +87,13 @@
 	For example the following code 'd.m.Y' shows '25.05.2016'. More Information
 	<a href="http://www.php.net/date" target="_blank">php date manual</a>.
 	Keep in mind, that not all parameters might be available on your server.</p>
-	
+
 <p><strong>Format Date:</strong><br />
 	Use the php date syntax to format the date. This is the format used for event detail views.
 	For example the following code 'D, d.m.Y' shows 'Wed, 25.05.2016'. More Information
 	<a href="http://www.php.net/date" target="_blank">php date manual</a>.
 	Keep in mind, that not all parameters might be available on your server.</p>
-	
+
 <p><strong>Format Time:</strong><br />
 	Use the php strftime syntax to format the time. For example
 	the following code '%H.%M' shows '16.00'. More Information <a href=
@@ -111,8 +107,8 @@
 	Use the php strftime syntax to format the hour, used in Event Edit views. For example
 	the following code '%H' shows '16'. More Information <a href=
 	"http://www.php.net/strftime" target="_blank">php strftime manual</a>.</p>
-	
-	
+
+
 <p><strong>Store IP:</strong><br />
 	In some countries it isn't permitted to store the IP address of your visitors. You can disable it here.</p>
 
@@ -132,6 +128,10 @@
 
 
 <h3>Image Handling:</h3>
+
+<p><strong>Allowed Image Files:</strong><br />
+	File extensions which will be accepted on image uploads. By default jpg, png, and gif are accepted.
+	Other extensions may work generally but may cause unexpected effects e.g. if using Lightbox.</p>
 
 <p><strong>Max. Image Filesize:</strong><br />
 	Enter the maximum size in kb for the image file.</p>
@@ -187,37 +187,37 @@
 
 <p><strong>Show Author:</strong><br />
 	Choose if you want to show the name of the author on the event details page</p>
-	
+
 <p><strong>Link Author:</strong><br />
 	If set you Yes, the name of the event's author will be linked to it's contact page.
-	You must create a contact linked to the author's user record for this setting to work.
-	
+	You must create a contact linked to the author's user record for this setting to work.</p>
+
 <p><strong>Show Contact:</strong><br />
 	Choose if you want to show the contact information on the detailspage</p>
-	
+
 <p><strong>Link Contact:</strong><br />
 	If set you Yes, the name of the contact person will be linked to it's contact page.
-	You must create a contact user record for this setting to work.
-	
+	You must create a contact user record for this setting to work.</p>
+
 <p><strong>Show Hits:</strong><br />
 	Choose if you want to show the number of page-hits on the event details page</p>
-	
+
 <p><strong>Show Print Icon:</strong><br />
 	If set to Yes, there will be a Print Icon on the event details page</p>
-		
+
 <p><strong>Show Email Icon:</strong><br />
 	If set to Yes, there will be an Email Icon on the event details page</p>
-	
+
 <p><strong>Show iCal:</strong><br />
 	If set to Yes, there will be an iCal Icon on the event details page</p>
-	
+
 <p><strong>Show "Read More":</strong><br />
 	If set to Show, the Read More link will be shown </p>
 
 <p><strong>Show Introtext:</strong><br />
 	If set to Show, the event Introtext will be shown.
 	If set to Hide, only the part of the event description after the "Read More" break will show.</p>
-	
+
 
 <h3>Venues</h3>
 
@@ -238,7 +238,7 @@
 
 <p><strong>Choose Map Service:</strong><br />
 	Choose between the following options:</p>
-	
+
 <ul>
 	<li>No map service - displays no map</li>
 	<li>Display link to Google Maps - will display a Google Map as a popup (after click)</li>
@@ -247,7 +247,9 @@
 	Additionally, when entering new venues, JEM is able to find the geo-location based on the given address (Geo-tagging).
 	You need a Google API key for this to work. A key can be obtained for free at Google.</li>
 </ul>
-	
+
+<p>Depending on choosen option additional settings may be shown.</p>
+
 <h3>Registration</h3>
 
 <p><strong>Show Attendee Names to:</strong><br />
@@ -256,6 +258,7 @@
 <p><strong>Select Community Solution:</strong><br />
 	Currently only Community Builder is supported. Further settings should be made in the plugin.</p>
 
+<p>Depending on choosen option additional settings may be shown.</p>
 
 <h2>Layout:<a name="layout" id="layout"></a></h2>
 
@@ -267,7 +270,7 @@
 
 <p><strong>Date Column Width in %:</strong><br />
 	Type in the width of teh date column.</p>
-		
+
 <p><strong>Time in Date Column:</strong><br />
 	Show the time on the Frontend view or not.</p>
 
@@ -276,8 +279,8 @@
 	Choose <strong>Two lines</strong> for "startdate - enddate" in first line and "starttime - endtime" in second line.<br />
 	If "Show time in date column" is set to No/Hide the only difference is the second, empty line on Two lines layout.
 	So you should show time values for best results.</p>
-	
-	
+
+
 <h3>Columns</h3>
 
 <p><strong>City Column:</strong><br />
@@ -304,22 +307,22 @@
 <p><strong>State Column:</strong><br />
 	Choose if you want to show the State column. If yes, type in the
 	width of the column. The column title will be displayed
-	at the head of the column.<br />
+	at the head of the column.</p>
 
 <p><strong>Category Column:</strong><br />
 	Choose if you want to show the Category column. If yes, type in the
 	width of the column. The column title will be displayed
 	at the head of the column.<br />
 	Additionally, you can choose if the name of the Caregory should be a link to the Category view.</p>
-	
+
 <p><strong>Event Image Column:</strong><br />
 	Choose if you want to show the Event image in the list view in the Frontend.
 	If yes, type in the	width of the column. The column title will be displayed
-	at the head of the column.<</p>
+	at the head of the column.</p>
 
-	
+
 <h3>Custom Stylesheets</h3>
-	
+
 <p>Choose if you want to use custom stylesheets for various parts of JEM. You can set if you are using a custom stylesheet for:</p>
 		<ul>
 			<li>Backend	</li>
@@ -330,22 +333,23 @@
 			<li>JEM	</li>
 			<li>Print</li>
 		</ul>
-		
-<p>For each part of JEM enter the location of the css as full path without hostname.<br><b>Example:</b>
+
+<p>For each part of JEM enter the location of the css as full path without hostname.<br />
+<b>Example:</b>
 If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in here "/media/my/css/mystyle.css".</p>
 
 <h3>Background Color</h3>
-	
+
 <p>	Choose a custom Background Color for various parts of JEM.</p>
-	
+
 <h3>Border Color</h3>
 
 <p>	Choose a custom Border Color for various parts of JEM.</p>
-	
+
 <h3>Font Color</h3>
 
 <p>	Choose a custom Font Color for various parts of JEM.</p>
-	
+
 
 <h2>Global Parameters:<a name="params" id="params"></a></h2>
 
@@ -378,23 +382,26 @@ If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in h
 
 <p><strong>Show Time:</strong><br />
 	Choose if you want to show time with events.</p>
-	
-	
+
+
 <p><strong>Display User Name:</strong><br />
 	Choose if the name or the username should be displayed for the event creator and the attendees.</p>
-	
+
 <p><strong>Enable Highlighter:</strong><br />
 	When enabled the search results will be highlighted (backend only) with the original search phrase.</p>
 
 <p><strong>Default Menu Itemid:</strong><br />
 	Specify the ID of the menu item (mostly to a Simplelist view) JEM should use for links to e.g. events
 	in case no menu item can be found automatically.</p>
-						
+
+<p><strong>Write Logfile</strong><br />
+	This allows our developers to look a bit deeper into JEM.</p>
+
 <p><strong>Google API-Key:</strong><br />
 	When you want to display a Google Maps based on the Google API3 key, enter your API key here.
 	Please note that for just displaying an event map, an API key is not mandatory, but if you want to use the
 	geotagging function in the venue edit screen, a Google APUI key is required</p>
-	
+
 <p><strong>Google ClientID:</strong><br />
 	If you have a Google Client ID you can fill it in here. (Optional, only for businesses)</p>
 
@@ -403,17 +410,17 @@ If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in h
 	should be removed from database if you uninstall JEM.
 	Be warned: If set to Yes and you uninstall JEM all data like events, venues, or atteendances get lost!</p>
 
-	
+
 <h3>Editevent:</h3>
 
 <p><strong>Owned Venues:</strong><br />
 	Choose if Frontend editors can only choose from the venues they own in the select list.</p>
-	
+
 <p><strong>Max. # Custom Fields:</strong><br />
 	Choose the maximum number of Custom Fields that are allowed when entering / editing an Event.
 	Please note this only takes effect in the Frontend.</p>
-	
-	
+
+
 <h3>Advanced Parameters:</h3>
 
 <p><strong>Max ICS Events:</strong><br />
@@ -452,7 +459,7 @@ If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in h
 
 <p><strong>Allowed Files:</strong><br />
 	You can specify the attachment file extensions that are allowed to be uploaded.</p>
-	
+
 <p><strong>Max Filesize:</strong><br />
 	Specify the maximum size of Attachments and Event Images in kb. (1 mb is 1000 kb)</p>
 
@@ -483,7 +490,7 @@ If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in h
 
 <p><strong>Choose Map Service:</strong><br />
 	Choose between the following options:</p>
-	
+
 <ul>
 	<li>No map service - displays no map</li>
 	<li>Display link to Google Maps - will display a Google Map as a popup (after click)</li>
@@ -492,17 +499,19 @@ If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in h
 	Additionally, when entering new venues, JEM is able to find the geo-location based on the given address (Geo-tagging).
 	You need a Google API key for this to work. A key can be obtained for free at Google.</li>
 </ul>
-		
+
+<p>Depending on choosen option additional settings may be shown.</p>
+
 
 <h3>Editvenue:</h3>
 
 <p><strong>Max. # Custom Fields:</strong><br />
 	Choose the maximum number of Custom Fields that are allowed when entering / editing a Venue.
 	Please note this only takes effect in the Frontend.</p>
-	
-	
 
-<h2><a name="access" id="access">User Control :</a></h2>
+
+
+<h2>User Control:<a name="access" id="access"></a></h2>
 
 <h3>User Control</h3>
 
@@ -517,7 +526,6 @@ Select if Image uploads for frontend submissions are optional, required or forbi
 
 <p><strong>Attachement Uploads:</strong><br />
 Select if Attachment uploads for frontend submissions are enabled or forbidden.</p>
-
 
 
 <h3>AC - Events</h3>
@@ -550,7 +558,7 @@ Select if Attachment uploads for frontend submissions are enabled or forbidden.<
 
 <p><strong>Allow Comments:</strong><br />
 	Select if Frontend users are allowed to write an additional comment when they register for an event.</p>
-	
+
 
 <h3>AC - Venues</h3>
 
@@ -565,18 +573,18 @@ Select if Attachment uploads for frontend submissions are enabled or forbidden.<
 <p><strong>Edit ALL Venues:</strong><br />
 	Allow users to edit **ANY** venue from the Frontend, even if (s)he does not have the write permissions
 	required for editing venues.</p>
- 
+
 <p><strong>Edit Own Venues:</strong><br />
 	Allow user to edit his submitted venues even if even if (s)he does not have the write permissions
 	required for editing venues.</p>
 
-	
-<h2><a name="configinfo" id="configinfo">Configinfo :</a></h2>
+
+<h2>Configinfo:<a name="configinfo" id="configinfo"></a></h2>
 
 <h3>Configinfo</h3>
 
-<p>The Configinfo schreen displays a summary of all JEM and JEM-related configuaration information.</p>
-	
+<p>The Configinfo schreen displays a summary of all JEM and JEM-related configuration and version information.</p>
+
 
 <div class="close">
 	<a href="#" onclick="javascript:window.close();">Close window</a>

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en_GB" xml:lang="en_GB">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB" xml:lang="en-GB">
 <head>
 	<title>Introduction</title>
 	<link href="../css/help.css" rel="stylesheet" type="text/css" />
@@ -10,7 +10,7 @@
 
 <h2><strong>Welcome</strong></h2>
 
-<p>Welcome to the stable version of JEM 2.1 for Joomla 2.5 and 3.5.</p>
+<p>Welcome to the stable version of JEM 2.2 for Joomla 2.5 and 3.8.</p>
 
 <p>
 	This software is a fork of Eventlist, one of the most popular non-commercial Event Management components for Joomla. <br/>
@@ -19,12 +19,16 @@
 </p>
 
 <p>
-	With JEM 2.1 you get a version supporting both Joomla 2.5 (2.5.24 or newer) and Joomla 3.5 (3.3.3 or newer).
+	With JEM 2.2 you get a version supporting both Joomla 2.5 (2.5.24 or newer) and Joomla 3.8 (3.3.3 or newer).
 	Also Joomla 3.2.7 or newer is supported for sites where Joomla 3.3+ can't be used caused by an old PHP version.
-	The main difference between JEM 2.0 and 2.1 series is additional support for Joomla 3.
-	So you can simply update from JEM 2.0.x to 2.1.x. We suggest to do so before upgrading to Joomla 3.x.
-<br/>Please note that since JEM 2.1.6 we also will support PHP 7. If you plan to run PHP 7 you need Joomla 3.5 but also you
-	should check ALL extensions installed for compatibility.
+	But please note that we can't intensively test each JEM release with all the old Joomla versions. We focuse on
+	latest Joomla 3.7/3.8 as well as common tests on Joomla 3.2.7 and Joomla 2.5.28.
+<br/>The main difference between JEM 2.0 and 2.1 series is additional support for Joomla 3.
+	So you can simply update from JEM 2.0.x or 2.1.x. We suggest to do so before upgrading to Joomla 3.x.
+	With JEM 2.2 series advanced event registration and a lot of little improvements are provided.
+	And, of course, you can simply update from any previous to current JEM version - manually or using Joomla's Extension Update Manager.
+<br/>Please note that since JEM 2.1.6 we also will support PHP 7 and since JEM 2.2.3 PHP 7.2. If you plan to run PHP 7 you need Joomla 3.5+
+	(maybe Joomla 3.8+ for PHP 7.2) but also you should check ALL extensions installed for compatibility.
 </p>
 
 <p>Together with the JEM component, the following modules and plugins have been installed by the JEM package:</p>
@@ -32,7 +36,7 @@
 <ul>
 	<li>JEM Module, (upcoming events basic module)</li>
 	<li>Wide Module, (upcoming events Wide module)</li>
-	<li>Calendar Module, for date navigation</li>
+	<li>Calendar Module, for date navigation, using Ajax if possible</li>
 	<li>Teaser Module, to display upcoming events</li>
 	<li>Banner Module, another module to display upcoming events</li>
 	<li>Jubilee Module, to display past events past that happened on today's date, so that are now in a jubilee. (like "One year ago on April 20...:") </li>
@@ -40,6 +44,7 @@
 	<li>Finder Plugin (smart search)</li>
 	<li>Mailer Plugin, to make the settings on which modifications JEM should send emails</li>
 	<li>Comments Plugin, integration with JComments</li>
+	<li>Content Plugin, to display (lists of) events within articles or other content</li>
 	<li>JEM Quickicon Plugin (backend)</li>
 </ul>
 
@@ -47,7 +52,6 @@
 
 <ul>
 	<li>JEM Quickicon Plugin (to launch JEM in one click from the backend dashboard)</li>
-	<li>JEM Calendar (AJAX) Module, using Ajax for navigation in the calendar (requires Joomla 3.x)</li>
 	<li>AcyMailing Plugin to tag JEM events in an Acymailing newsletter</li>
 	<li>CB_Myattending plugin - Shows events where the user is attending in a Community Builder profile. Needs to be installed with special CB plugin manager inside of Community Builder (must be installed using CB's installer)</li>
     <li>CB_Myevents plugin - Shows events that were created by the user in a Community builder profile. Needs to be installed with special CB plugin manager inside of Community Builder (must be installed using CB's installer)</li>
@@ -58,10 +62,16 @@
 	If you want to use any of these modules and plugins,
 	please do not forget to publish them in the module manager and the plugin manager.
 </p>
+<p>
+	Please note that with JEM 2.2.3 the integrated JEM Calendar Module obsoletes the JEM Calendar (AJAX) Module.
+	You can simply update JEM to 2.2.3+ to let JEM do (nearly) all the work. After update check configuration of
+	the Calendar modules (which are now of type "JEM - Module-Calendar") and
+	<u>finally</u> uninstall "JEM - Module-Calendar (AJAX)".
+</p>
 
-<p>We hope you like this new version of JEM for Joomla 2.5 and 3.5!</p>
+<p>We hope you like this new version of JEM for Joomla 2.5 and 3.8!</p>
 
-<p>The JEM Development Team, May 2016</p>
+<p>The JEM Development Team, January 2018</p>
 
 <div class="box">
 	<p class="attentionheader">Attention</p>
@@ -111,6 +121,7 @@
 	<li>A Venue Submission Form</li>
 	<li>A Single Event View</li>
 	<li>A Simple List of Events</li>
+	<li>A List of Event Registrations</li>
 	<li>My Attendances</li>
 	<li>My Events</li>
 	<li>My Venues</li>
