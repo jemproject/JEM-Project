@@ -1,14 +1,13 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
-// No direct access
-defined('_JEXEC') or die();
+defined('_JEXEC') or die;
 
 // Base this model on the backend version.
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/event.php';
@@ -30,6 +29,9 @@ class JemModelEditevent extends JemModelEvent
 		// Load state from the request.
 		$pk = $app->input->getInt('a_id', 0);
 		$this->setState('event.id', $pk);
+
+		$fromId = $app->input->getInt('from_id', 0);
+		$this->setState('event.from_id', $fromId);
 
 		$catid = $app->input->getInt('catid', 0);
 		$this->setState('event.catid', $catid);
@@ -64,6 +66,12 @@ class JemModelEditevent extends JemModelEvent
 		// Initialise variables.
 		$itemId = (int) (!empty($itemId)) ? $itemId : $this->getState('event.id');
 
+		$doCopy = false;
+		if (!$itemId && $this->getState('event.from_id')) {
+			$itemId = $this->getState('event.from_id');
+			$doCopy = true;
+		}
+
 		// Get a row instance.
 		$table = $this->getTable();
 
@@ -79,8 +87,23 @@ class JemModelEditevent extends JemModelEvent
 		$properties = $table->getProperties(1);
 		$value = JArrayHelper::toObject($properties, 'JObject');
 
+		if ($doCopy) {
+			$value->id = 0;
+			$value->author_ip = '';
+			$value->created = '';
+			$value->created_by = '';
+			$value->created_by_alias = '';
+			$value->modified = '';
+			$value->modified_by = '';
+			$value->version = '';
+			$value->hits = '';
+			$value->recurrence_type = 0;
+			$value->recurrence_first_id = 0;
+			$value->recurrence_counter = 0;
+		}
+
 		// Backup current recurrence values
-		if ($value->id){
+		if ($value->id) {
 			$value->recurr_bak = new stdClass;
 			foreach (get_object_vars($value) as $k => $v) {
 				if (strncmp('recurrence_', $k, 11) === 0) {
@@ -108,7 +131,7 @@ class JemModelEditevent extends JemModelEvent
 		$query = $db->getQuery(true);
 		$query->select(array('count(id)'));
 		$query->from('#__jem_register');
-		$query->where(array('event = ' . $db->quote($itemId), 'waiting = 0', 'status = 1'));
+		$query->where(array('event = ' . $db->quote($value->id), 'waiting = 0', 'status = 1'));
 
 		$db->setQuery($query);
 		$res = $db->loadResult();
@@ -119,7 +142,8 @@ class JemModelEditevent extends JemModelEvent
 
 		$value->reginvitedonly = !empty($value->registra) && ($value->registra & 2);
 
-		$files = JemAttachment::getAttachments('event' . $itemId);
+		// Get attachments - but not on copied events
+		$files = JemAttachment::getAttachments('event' . $value->id);
 		$value->attachments = $files;
 
 		// Preset values on new events

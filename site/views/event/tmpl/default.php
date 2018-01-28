@@ -2,7 +2,7 @@
 /**
  * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -40,9 +40,10 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 
 	<!-- Event -->
 	<h2 class="jem">
-	<?php
+		<?php
 		echo JText::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item);
 		echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent');
+		echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
 		?>
 	</h2>
 
@@ -236,6 +237,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			echo JText::_('COM_JEM_VENUE') ;
 			$itemid = $this->item ? $this->item->id : 0 ;
 			echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue');
+			echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue');
 			?>
 		</h2>
 		<?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
@@ -275,7 +277,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			<?php if ($this->item->city) : ?>
 			<dt class="venue_city"><?php echo JText::_('COM_JEM_CITY'); ?>:</dt>
 			<dd class="venue_city" itemprop="addressLocality">
-				<?php echo $this->escape($this->item->city);?>
+				<?php echo $this->escape($this->item->city); ?>
 			</dd>
 			<?php endif; ?>
 

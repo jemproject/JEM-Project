@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -38,7 +38,8 @@ $max_custom_fields = $this->settings->get('global_editvenue_maxnumcustomfields',
 		<legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
 		<?php
 		if ($this->item->locimage) :
-			echo JEMOutput::flyer($this->item, $this->limage, 'venue', 'locimage');
+			echo JemOutput::flyer($this->item, $this->limage, 'venue', 'locimage');
+			?><input type="hidden" name="locimage" id="locimage" value="<?php echo $this->item->locimage; ?>" /><?php
 		endif;
 		?>
 		<?php if ($this->jemsettings->imageenabled != 0) : ?>

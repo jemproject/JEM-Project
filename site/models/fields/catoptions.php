@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.2.2
+ * @version     2.2.3
  * @package     JEM
- * @copyright   Copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -67,6 +67,9 @@ class JFormFieldCatOptions extends JFormFieldList
 
 		// Output
 		$currentid = JFactory::getApplication()->input->getInt('a_id');
+		if (!$currentid) { // special case: new event as copy of another one
+			$currentid = JFactory::getApplication()->input->getInt('from_id');
+		}
 
 		// Get the field options.
 		$options = (array) $this->getOptions();

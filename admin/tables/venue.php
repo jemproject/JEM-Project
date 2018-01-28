@@ -2,7 +2,7 @@
 /**
  * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -132,11 +132,11 @@ class JemTableVenue extends JTable
 		}
 
 		if ($this->id) {
-			// Existing event
+			// Existing venue
 			$this->modified = $date->toSql();
 			$this->modified_by = $userid;
 		} else {
-			// New event
+			// New venue
 			if (!intval($this->created)) {
 				$this->created = $date->toSql();
 			}
@@ -158,6 +158,7 @@ class JemTableVenue extends JTable
 			if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1)) {
 				$file = $jinput->files->get('userfile', array(), 'array');
 				$removeimage = $jinput->getInt('removeimage', 0);
+				$locimage = $jinput->getCmd('locimage', '');
 
 				if (empty($file)) {
 					$file2 = $jinput->files->get('jform', array(), 'array');
@@ -185,6 +186,12 @@ class JemTableVenue extends JTable
 					// (file will be deleted later (e.g. housekeeping) if unused)
 					$image_to_delete = $this->locimage;
 					$this->locimage = '';
+				} elseif (!$this->id && is_null($this->locimage) && !empty($locimage)) {
+					// venue is a copy so copy locimage too
+					if (JFile::exists($image_dir . $locimage)) {
+						// if it's already within image folder it's safe
+						$this->locimage = $locimage;
+					}
 				}
 			} // end image if
 		} // if (!backend)
@@ -196,7 +203,7 @@ class JemTableVenue extends JTable
 		}
 
 		if (!$backend) {
-			/* check if the user has the required rank for autopublish new venues */
+			// check if the user has the required rank to publish this venue
 			if (!$this->id && !$user->can('publish', 'venue', $this->id, $this->created_by)) {
 				$this->published = 0;
 			}
@@ -243,6 +250,7 @@ class JemTableVenue extends JTable
 	{
 		$fmtsql = 'INSERT IGNORE INTO '.$this->_db->quoteName($table).' (%s) VALUES (%s) ';
 		$fields = array();
+
 		foreach (get_object_vars($object) as $k => $v) {
 			if (is_array($v) or is_object($v) or $v === NULL) {
 				continue;
@@ -253,6 +261,7 @@ class JemTableVenue extends JTable
 			$fields[] = $this->_db->quoteName($k);
 			$values[] = $this->_db->quote($v);
 		}
+
 		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
 		if ($this->_db->execute() === false) {
 			return false;
@@ -261,6 +270,7 @@ class JemTableVenue extends JTable
 		if ($keyName && $id) {
 			$object->$keyName = $id;
 		}
+
 		return $this->_db->getAffectedRows();
 	}
 
@@ -269,8 +279,8 @@ class JemTableVenue extends JTable
 	 * table. The method respects checked out rows by other users and will attempt
 	 * to checkin rows that it can after adjustments are made.
 	 *
-	 * @param  mixed    $pks     An array of primary key values to update.  If not
-	 *                            set the instance property value is used. [optional]
+	 * @param  mixed    $pks     An array of primary key values to update. If not set
+	 *                           the instance property value is used. [optional]
 	 * @param  integer  $state   The publishing state. eg. [0 = unpublished, 1 = published] [optional]
 	 * @param  integer  $userId  The user id of the user performing the operation. [optional]
 	 *

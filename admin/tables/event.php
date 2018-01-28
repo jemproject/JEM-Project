@@ -2,7 +2,7 @@
 /**
  * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -168,7 +168,6 @@ class JemTableEvent extends JTable
 		$jinput      = $app->input;
 		$jemsettings = JemHelper::config();
 
-
 		// Check if we're in the front or back
 		if ($app->isAdmin()) {
 			$backend = true;
@@ -203,6 +202,7 @@ class JemTableEvent extends JTable
 			if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1)) {
 				$file = $jinput->files->get('userfile', array(), 'array');
 				$removeimage = $jinput->getInt('removeimage', 0);
+				$datimage = $jinput->getCmd('datimage', '');
 
 				if (empty($file)) {
 					$file2 = $jinput->files->get('jform', array(), 'array');
@@ -233,6 +233,12 @@ class JemTableEvent extends JTable
 					// (file will be deleted later (e.g. housekeeping) if unused)
 					$image_to_delete = $this->datimage;
 					$this->datimage = '';
+				} elseif (!$this->id && is_null($this->datimage) && !empty($datimage)) {
+					// event is a copy so copy datimage too
+					if (JFile::exists($image_dir . $datimage)) {
+						// if it's already within image folder it's safe
+						$this->datimage = $datimage;
+					}
 				}
 			} // end image if
 		} // if (!backend)
@@ -245,9 +251,9 @@ class JemTableEvent extends JTable
 
 		// user check on frontend but not if caused by cleanup function (recurrence)
 		if (!$backend && !(isset($this->_autocreate) && ($this->_autocreate === true))) {
-			/*	check if the user has the required rank for autopublish on new events */
+			// check if the user has the required rank to publish this event
 			if (!$this->id && !$user->can('publish', 'event', $this->id, $this->created_by)) {
-				$this->published = 0 ;
+				$this->published = 0;
 			}
 		}
 
@@ -269,7 +275,7 @@ class JemTableEvent extends JTable
 	 * @param  boolean If false, null object variables are not updated
 	 * @return null|string null if successful otherwise returns and error message
 	 */
-	public function insertIgnore($updateNulls=false)
+	public function insertIgnore($updateNulls = false)
 	{
 		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
 		if (!$ret) {
@@ -321,8 +327,8 @@ class JemTableEvent extends JTable
 	 * table. The method respects checked out rows by other users and will attempt
 	 * to checkin rows that it can after adjustments are made.
 	 *
-	 * @param  mixed    $pks     An array of primary key values to update.  If not
-	 *                           set the instance property value is used. [optional]
+	 * @param  mixed    $pks     An array of primary key values to update. If not set
+	 *                           the instance property value is used. [optional]
 	 * @param  integer  $state   The publishing state. eg. [0 = unpublished, 1 = published] [optional]
 	 * @param  integer  $userId  The user id of the user performing the operation. [optional]
 	 *

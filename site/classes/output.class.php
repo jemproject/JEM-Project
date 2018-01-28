@@ -2,7 +2,7 @@
 /**
  * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -434,6 +434,86 @@ class JemOutput
 					$overlib = JText::_('COM_JEM_EDIT_VENUE_DESC');
 					$text = JText::_('COM_JEM_EDIT_VENUE');
 					$url = 'index.php?option=com_jem&task=venue.edit&a_id='.$id.'&return='.base64_encode($uri);
+					break;
+			}
+
+			if (!$url) {
+				return; // we need at least url to generate useful output
+			}
+
+			$output = JHtml::_('link', JRoute::_($url), $image, self::tooltip($text, $overlib));
+
+			return $output;
+		}
+	}
+
+	/**
+	 * Creates a copy button
+	 *
+	 * @param object $item
+	 * @param array $params
+	 * @param int $allowedtoadd
+	 * @param string $view
+	 *
+	 * Views:
+	 * Event, Venue
+	 */
+	static public function copybutton($item, $params, $attribs, $allowedtoadd, $view)
+	{
+		if ($allowedtoadd) {
+			$app = JFactory::getApplication();
+
+			if ($app->input->get('print','','int')) {
+				return;
+			}
+
+			// Initialise variables.
+			$user   = JemFactory::getUser();
+			$userId = $user->get('id');
+			$uri    = JFactory::getURI();
+			$settings = JemHelper::globalattribs();
+
+			JHtml::_('behavior.tooltip');
+
+			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
+			$showIcon = 1; //$settings->get('global_show_icons', 1);
+
+			switch ($view)
+			{
+				case 'editevent':
+					if ($showIcon) {
+						$image = JHtml::_('image', 'com_jem/calendar_copy.png', JText::_('COM_JEM_COPY_EVENT'), NULL, true);
+					} else {
+						$image = JText::_('COM_JEM_COPY_EVENT');
+					}
+					$id = isset($item->did) ? $item->did : $item->id;
+					$overlib = JText::_('COM_JEM_COPY_EVENT_DESC');
+					$text = JText::_('COM_JEM_COPY_EVENT');
+					$url = 'index.php?option=com_jem&task=event.copy&a_id='.$id.'&return='.base64_encode($uri);
+					break;
+
+				case 'editvenue':
+					if ($showIcon) {
+						$image = JHtml::_('image', 'com_jem/calendar_copy.png', JText::_('COM_JEM_COPY_VENUE'), NULL, true);
+					} else {
+						$image = JText::_('COM_JEM_COPY_VENUE');
+					}
+					$id = $item->locid;
+					$overlib = JText::_('COM_JEM_COPY_VENUE_DESC');
+					$text = JText::_('COM_JEM_COPY_VENUE');
+					$url = 'index.php?option=com_jem&task=venue.copy&a_id='.$id.'&return='.base64_encode($uri);
+					break;
+
+				case 'venue':
+					if ($showIcon) {
+						$image = JHtml::_('image', 'com_jem/calendar_copy.png', JText::_('COM_JEM_COPY_VENUE'), NULL, true);
+					} else {
+						$image = JText::_('COM_JEM_COPY_VENUE');
+					}
+					$id = $item->id;
+					$overlib = JText::_('COM_JEM_COPY_VENUE_DESC');
+					$text = JText::_('COM_JEM_COPY_VENUE');
+					$url = 'index.php?option=com_jem&task=venue.copy&a_id='.$id.'&return='.base64_encode($uri);
 					break;
 			}
 

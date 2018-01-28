@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.2.2
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -127,6 +127,19 @@ class JemControllerEvent extends JemControllerForm
 	}
 
 	/**
+	 * Method to add a new record based on existing record.
+	 *
+	 * @return boolean True if the event can be added, false if not.
+	 */
+	public function copy()
+	{
+		if (!parent::add()) {
+			// Redirect to the return page.
+			$this->setRedirect($this->getReturnPage());
+		}
+	}
+
+	/**
 	 * Method to get a model object, loading it if required.
 	 *
 	 * @param  string $name   The model name. Optional.
@@ -156,6 +169,7 @@ class JemControllerEvent extends JemControllerForm
 		$jinput = JFactory::getApplication()->input;
 		$tmpl   = $jinput->getCmd('tmpl', '');
 		$layout = $jinput->getCmd('layout', 'edit');
+		$task   = $jinput->getCmd('task', '');
 		$append = '';
 
 		// Setup redirect info.
@@ -168,6 +182,9 @@ class JemControllerEvent extends JemControllerForm
 		if ($recordId) {
 			$append .= '&'.$urlVar.'='.$recordId;
 		}
+		elseif (($task === 'copy') && ($fromId = $jinput->getInt('a_id', 0))) {
+			$append .= '&from_id='.$fromId;
+		}
 
 		$itemId = $jinput->getInt('Itemid', 0);
 		$catId  = $jinput->getInt('catid', 0);
@@ -179,15 +196,15 @@ class JemControllerEvent extends JemControllerForm
 			$append .= '&Itemid='.$itemId;
 		}
 
-		if($catId) {
+		if ($catId) {
 			$append .= '&catid='.$catId;
 		}
 
-		if($locId) {
+		if ($locId) {
 			$append .= '&locid='.$locId;
 		}
 
-		if($date) {
+		if ($date) {
 			$append .= '&date='.$date;
 		}
 
