@@ -2,7 +2,7 @@
 /**
  * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -111,21 +111,24 @@ class JemModelHousekeeping extends JModelLegacy
 	 */
 	public function truncateAllData()
 	{
-		$tables = array("attachments", "categories", "cats_event_relations", "events", "groupmembers", "groups", "register", "venues");
+		$result = true;
+		$tables = array('attachments', 'categories', 'cats_event_relations', 'events', 'groupmembers', 'groups', 'register', 'venues');
 		$db = JFactory::getDbo();
 
 		foreach ($tables as $table) {
-			$db->setQuery("TRUNCATE #__jem_".$table);
+			$db->setQuery('TRUNCATE #__jem_'.$table);
 
 			if ($db->execute() === false) {
-				return false;
+				// report but continue
+				JemHelper::addLogEntry('Error truncating #__jem_'.$table, __METHOD__, JLog::ERROR);
+				$result = false;
 			}
 		}
 
 		$categoryTable = $this->getTable('category', 'JemTable');
 		$categoryTable->addRoot();
 
-		return true;
+		return $result;
 	}
 
 	/**

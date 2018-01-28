@@ -2,7 +2,7 @@
 /**
  * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -264,6 +264,11 @@ class JemHelper
 					$db->SetQuery($query);
 					$db->execute();
 				}
+
+				// Cleanup registrations
+				$query = 'DELETE FROM #__jem_register WHERE event NOT IN (SELECT id FROM #__jem_events)';
+				$db->SetQuery($query);
+				$db->execute();
 
 				// Set timestamp of last cleanup
 				JemConfig::getInstance()->set('lastupdate', $now);
@@ -1433,7 +1438,7 @@ class JemHelper
 	static public function getCountryOptions()
 	{
 		$options = array();
-		$options = array_merge(JEMHelperCountries::getCountryOptions(),$options);
+		$options = array_merge(JemHelperCountries::getCountryOptions(),$options);
 
 		array_unshift($options, JHtml::_('select.option', '0', JText::_('COM_JEM_SELECT_COUNTRY')));
 

@@ -421,6 +421,13 @@ class JemTableEvent extends JTable
 			$query->where('itemid = '.$db->quote($id));
 			$db->setQuery($query);
 			$db->execute();
+
+			$query = $db->getQuery(true);
+			$query->delete($db->quoteName('#__jem_register'));
+			$query->where('event = '.$db->quote($id));
+			$db->setQuery($query);
+			$db->execute();
+
 			return true;
 		}
 
