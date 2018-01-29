@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -162,13 +162,15 @@ $options = array(
 						</tr>
 					</table>
 					<?php echo JHtml::_('sliders.end'); ?>
-					<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_MAIN_DONATE')); ?>
-					<?php echo JText::_('COM_JEM_MAIN_DONATE_TEXT'); ?> </br></br>
+					<h3 class="title"><?php echo JText::_('COM_JEM_MAIN_DONATE'); ?></h3>
+					<div class="content">
+						<?php echo JText::_('COM_JEM_MAIN_DONATE_TEXT'); ?> </br></br>
 						<div class="center">				
 							<a href="https://www.joomlaeventmanager.net/project/donate" target="_blank">
-							<?php echo JHtml::_('image', 'com_jem/PayPal_DonateButton.png', NULL, NULL, true); ?>
+								<?php echo JHtml::_('image', 'com_jem/PayPal_DonateButton.png', JText::_('COM_JEM_MAIN_DONATE'), NULL, true); ?>
 							</a>
 						</div>	
+					</div>	
 				</td>
 			</tr>
 		</table>
