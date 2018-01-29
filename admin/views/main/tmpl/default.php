@@ -161,7 +161,14 @@ $options = array(
 							<td><b><?php echo $this->category->total; ?> </b></td>
 						</tr>
 					</table>
-					<?php echo JHtml::_('tabs.end'); ?>
+					<?php echo JHtml::_('sliders.end'); ?>
+					<?php echo JHtml::_('sliders.panel', JText::_('COM_JEM_MAIN_DONATE')); ?>
+					<?php echo JText::_('COM_JEM_MAIN_DONATE_TEXT'); ?> </br></br>
+						<div class="center">				
+							<a href="https://www.joomlaeventmanager.net/project/donate" target="_blank">
+							<?php echo JHtml::_('image', 'com_jem/PayPal_DonateButton.png', NULL, NULL, true); ?>
+							</a>
+						</div>	
 				</td>
 			</tr>
 		</table>
