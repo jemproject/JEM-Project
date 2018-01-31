@@ -2,7 +2,7 @@
 /**
  * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -41,6 +41,7 @@ class JemViewVenue extends JemAdminView
 		//initialise variables
 		$document       = JFactory::getDocument();
 		$this->settings = JemAdmin::config();
+		$globalregistry = JemHelper::globalattribs();
 		$task           = JFactory::getApplication()->input->get('task', '');
 		$this->task     = $task;
 
@@ -56,7 +57,7 @@ class JemViewVenue extends JemAdminView
 		$language = $language->getTag();
 		$language = substr($language, 0,2);
 
-		$key = trim($this->settings->globalattribs->global_googleapi);
+		$key = trim($globalregistry->get('global_googleapi', ''));
 		$document->addScript('https://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&amp;libraries=places&language='.$language);
 
 		// Noconflict
