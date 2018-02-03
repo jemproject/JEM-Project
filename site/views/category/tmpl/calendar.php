@@ -2,7 +2,7 @@
 /**
  * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -249,13 +249,21 @@ defined('_JEXEC') or die;
 		}
 		$multidaydate .= '</div>';
 
-		//create little Edit icon on top right corner of event if user is allowed to edit
-		if (!$this->print && $this->params->get('show_editevent_icon', 0) && $row->params->get('access-edit', false)) {
-			$editicon  = '<div class="inline-button-right">';
-			$editicon .= JemOutput::editbutton($row, null, null, true, 'editevent');
-			$editicon .= '</div>';
-		} else {
-			$editicon = '';
+		//create little Edit and/or Copy icon on top right corner of event if user is allowed to edit and/or create
+		$editicon = '';
+		if (!$this->print) {
+			$btns = array();
+			if ($this->params->get('show_editevent_icon', 0) && $row->params->get('access-edit', false)) {
+				$btns[] = JemOutput::editbutton($row, null, null, true, 'editevent');
+			}
+			if ($this->params->get('show_copyevent_icon', 0) && $this->permissions->canAddEvent) {
+				$btns[] = JemOutput::copybutton($row, null, null, true, 'editevent');
+			}
+			if (!empty($btns)) {
+				$editicon .= '<div class="inline-button-right">';
+				$editicon .= join(' ', $btns);
+				$editicon .= '</div>';
+			}
 		}
 
 		//generate the output

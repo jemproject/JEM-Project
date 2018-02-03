@@ -82,6 +82,15 @@
 				<option value="1">JYES</option>
 				<option value="0">JNO</option>
 			</field>
+			<field name="show_copyevent_icon" type="radio"
+				default="0"
+				label="COM_JEM_SHOWCOPYEVENTICON"
+				description="COM_JEM_SHOWCOPYEVENTICON_DESC"
+				class="btn-group btn-group-yesno"
+			>
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
 			<field type="spacer" name="myspacer3" hr="true" />
 			<field name="eventlinkcolor" type="color"
 				default="#000000"
