@@ -258,7 +258,6 @@ INSERT IGNORE INTO #__jem_config (`keyname`, `value`) VALUES
 ('sizelimit', '100'),
 ('imagehight', '100'),
 ('imagewidth', '100'),
-('image_filetypes', 'jpg,gif,png'),
 ('gddisabled', '1'),
 ('imageenabled', '1'),
 ('attachmentenabled', '0'),
