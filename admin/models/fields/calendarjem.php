@@ -62,8 +62,9 @@ if (version_compare(JVERSION, '3.7', 'ge')) {
 		 * The form field type.
 		 *
 		 * @var    string
+		 * @note   MUST be public.
 		 */
-		protected $type = 'CalendarJem';
+		public $type = 'CalendarJem';
 
 		/**
 		 * Method to get the field input markup.
