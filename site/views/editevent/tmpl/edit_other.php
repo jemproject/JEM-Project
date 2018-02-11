@@ -152,8 +152,13 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 		<?php /* show "old" recurrence settings for information */
 		if (!empty($this->item->recurr_bak->recurrence_type)) {
 			$recurr_type = '';
-			$recurr_limit_date = str_ireplace('0000-00-00', JText::_('COM_JEM_UNLIMITED'),
-			                                  $this->item->recurr_bak->recurrence_limit_date);
+			$nullDate = JFactory::getDbo()->getNullDate();
+			$rlDate = $this->item->recurr_bak->recurrence_limit_date;
+			if (!empty($rlDate) && (strpos($nullDate, $rlDate) !== 0)) {
+				$recurr_limit_date = JemOutput::formatdate($rlDate);
+			} else {
+				$recurr_limit_date = JText::_('COM_JEM_UNLIMITED');
+			}
 
 			switch ($this->item->recurr_bak->recurrence_type) {
 			case 1:

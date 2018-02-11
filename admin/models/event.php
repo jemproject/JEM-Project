@@ -2,7 +2,7 @@
 /**
  * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -296,6 +296,11 @@ class JemModelEvent extends JemModelAdmin
 
 			$data['recurrence_number'] = $recurrencenumber;
 			$data['recurrence_byday']  = $recurrencebyday;
+
+			if (!empty($data['recurrence_limit_date']) && ($data['recurrence_limit_date'] != $nullDate)) {
+				$d = JFactory::getDate($data['recurrence_limit_date'], 'UTC');
+				$data['recurrence_limit_date'] = $d->format('Y-m-d', true, false);
+			}
 		}
 
 		$data['meta_keywords']    = $metakeywords;
