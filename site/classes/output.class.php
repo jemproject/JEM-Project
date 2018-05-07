@@ -848,6 +848,10 @@ class JemOutput
 			$mapserv = $params->get('global_show_mapserv');
 		}
 
+		//Language of map
+		$lang = JFactory::getLanguage();
+		$hl = $params->get($lg,mb_strtolower($lang->getTag()));
+
 		//Link to map
 		$mapimage = JHtml::_('image', 'com_jem/map_icon.png', JText::_('COM_JEM_MAP'), NULL, true);
 
@@ -864,7 +868,7 @@ class JemOutput
 			$data->longitude = null;
 		}
 
-		$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'com').'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
+		$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$hl.'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
 
 		// google map link or include
 		switch ($mapserv)
@@ -872,7 +876,7 @@ class JemOutput
 			case 1:
 				// link
 				if($data->latitude && $data->longitude) {
-					$url = 'https://maps.google.'.$params->get($tld).'/maps?hl='.$params->get($lg).'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
+					$url = 'https://maps.google.'.$params->get($tld).'/maps?hl='.$hl.'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
 				}
 
 				$message = JText::_('COM_JEM_MAP').':';
@@ -883,7 +887,7 @@ class JemOutput
 			case 2:
 				// include iframe
 				if($data->latitude && $data->longitude) {
-					$url = 'https://maps.google.com/maps?q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
+					$url = 'https://maps.google.com/maps?hl='.$hl.'&amp;q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
 				}
 
 				$output = '<div style="border: 1px solid #000;width:500px;"><iframe width="500" height="250" src="'.$url.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
@@ -892,6 +896,7 @@ class JemOutput
 			case 3:
 				// include - Google API3
 				# https://developers.google.com/maps/documentation/javascript/tutorial
+				# https://developers.google.com/maps/documentation/javascript/localization?hl=en
 				$api		= trim($params->get('global_googleapi'));
 				$clientid	= trim($params->get('global_googleclientid'));
 
@@ -899,13 +904,13 @@ class JemOutput
 
 				# do we have a client-ID?
 				if ($clientid) {
-					$document->addScript('https://maps.googleapis.com/maps/api/js?client='.$clientid.'&sensor=false&v=3.15');
+					$document->addScript('https://maps.googleapis.com/maps/api/js?client='.$clientid.'&language='.$hl.'&sensor=false&v=3.15');
 				} else {
 					# do we have an api-key?
 					if ($api) {
-						$document->addScript('https://maps.googleapis.com/maps/api/js?key='.$api.'&sensor=false');
+						$document->addScript('https://maps.googleapis.com/maps/api/js?key='.$api.'&language='.$hl.'&sensor=false');
 					} else {
-						$document->addScript('https://maps.googleapis.com/maps/api/js?sensor=false');
+						$document->addScript('https://maps.googleapis.com/maps/api/js?sensor=false'.'&language='.$hl);
 					}
 				}
 
