@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.3-dev1
  * @package JEM
  * @copyright (C) 2013-2016 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -32,16 +32,26 @@ defined('_JEXEC') or die;
 	<?php endif; ?>
 
 	<!--table-->
+  <hr class="jem-hr" style="display: none;"/>
 
 	<form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">
-		<?php echo $this->loadTemplate('events_table'); ?>
-
+		<?php if ($this->jemsettings->layoutstyle == 1) {
+      echo $this->loadTemplate('events_table_responsive');
+    } else {
+      echo $this->loadTemplate('events_table');      
+    }?>
 		<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 		<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 		<input type="hidden" name="task" value="<?php echo $this->task; ?>" />
 		<input type="hidden" name="view" value="eventslist" />
 	</form>
 
+	<div class="pagination">
+		<?php echo $this->pagination->getPagesLinks(); ?>
+	</div>
+
+  <hr class="jem-hr" style="display: none;"/>
+  
 	<?php if ($this->params->get('showfootertext')) : ?>
 		<div class="description no_space floattext">
 			<?php echo $this->params->get('footertext'); ?>
@@ -49,10 +59,6 @@ defined('_JEXEC') or die;
 	<?php endif; ?>
 
 	<!--footer-->
-
-	<div class="pagination">
-		<?php echo $this->pagination->getPagesLinks(); ?>
-	</div>
 	<div id="iCal" class="iCal">
 		<?php echo JemOutput::icalbutton('', 'eventslist'); ?>
 	</div>

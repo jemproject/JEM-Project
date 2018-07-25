@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.3-dev1
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -1192,6 +1192,7 @@ class JemHelper
 	static function loadCss($css)
 	{
 		$settings = self::retrieveCss();
+    $jemsettings	= JemHelper::config();
 
 		if($settings->get('css_'.$css.'_usecustom','0')) {
 
@@ -1220,11 +1221,19 @@ class JemHelper
 				$css = JHtml::_('stylesheet', $file, array(), false);
 			} else {
 				# unfortunately we don't have a valid file so we're looking at the default
-				$css = JHtml::_('stylesheet', 'com_jem/'.$css.'.css', array(), true);
+        if($jemsettings->layoutstyle == 1) {
+          $css = JHtml::_('stylesheet', 'com_jem/'.$css.'-responsive.css', array(), true);
+        } else {
+          $css = JHtml::_('stylesheet', 'com_jem/'.$css.'.css', array(), true);
+        }
 			}
 		} else {
 			# here we want to use the normal css
-			$css = JHtml::_('stylesheet', 'com_jem/'.$css.'.css', array(), true);
+			if($jemsettings->layoutstyle == 1) {
+        $css = JHtml::_('stylesheet', 'com_jem/'.$css.'-responsive.css', array(), true);
+      } else {
+        $css = JHtml::_('stylesheet', 'com_jem/'.$css.'.css', array(), true);
+      }
 		}
 
 		return $css;
