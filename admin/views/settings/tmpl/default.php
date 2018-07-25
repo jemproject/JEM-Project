@@ -401,6 +401,7 @@ function registraoff()
 
 		<div class="width-50 fltlft">
 			<?php echo $this->loadTemplate('basicdisplay'); ?>
+			<?php echo $this->loadTemplate('basiclayout'); ?>
 			<?php echo $this->loadTemplate('basiceventhandling'); ?>
 		</div>
 		<div class="width-50 fltrt">
