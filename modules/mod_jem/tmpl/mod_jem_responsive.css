@@ -1,0 +1,47 @@
+/**
+ * @version 2.1
+ * @package JEM
+ * @subpackage JEM Latest Events Basic Module
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ */
+
+/*
+#jemmodulebasic ul {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 1.2em;
+  text-indent: -1.2em;  
+}
+
+#jemmodulebasic li:before {
+  font-family: FontAwesome;
+  content: "\f073";
+  display: block;
+  float: left;
+  width: 1.2em;
+}*/
+
+#jemmodulebasic {
+  padding: 10px;
+}
+
+#jemmodulebasic ul {
+  margin-left: 0.7em;
+  padding-left: 0;
+  list-style-type: none;
+}
+
+#jemmodulebasic ul li {
+  position: relative;
+  margin-left: 1em;
+  margin-bottom: 10px;
+}
+
+#jemmodulebasic ul li:before {
+  position: absolute;
+  left: -1.5em;
+  font-family: FontAwesome;
+  content: "\f073";
+}

@@ -27,4 +27,10 @@ if (!$items) {
 	//return;
 }
 
-require(JModuleHelper::getLayoutPath('mod_jem'));
+$jemsettings = JemHelper::config();
+
+if ($jemsettings->layoutstyle == 1) {
+  require(JModuleHelper::getLayoutPath('mod_jem', 'default_responsive'));
+} else {
+  require(JModuleHelper::getLayoutPath('mod_jem', 'default_legacy'));    
+}
