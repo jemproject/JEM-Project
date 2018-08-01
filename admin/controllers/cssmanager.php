@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -14,7 +14,7 @@ jimport('joomla.application.component.controlleradmin');
 /**
  * JEM Component Cssmanager Controller
  */
-class JEMControllerCssmanager extends JControllerAdmin
+class JemControllerCssmanager extends JControllerAdmin
 {
 
 	/**
@@ -33,11 +33,9 @@ class JEMControllerCssmanager extends JControllerAdmin
 	/**
 	 * Proxy for getModel.
 	 */
-	public function getModel($name = 'Cssmanager', $prefix = 'JEMModel', $config = array())
+	public function getModel($name = 'Cssmanager', $prefix = 'JemModel', $config = array())
 	{
-		$model = parent::getModel($name, $prefix, array(
-				'ignore_request' => true
-		));
+		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
 		return $model;
 	}
 
@@ -54,7 +52,7 @@ class JEMControllerCssmanager extends JControllerAdmin
 	 */
 	public function linenumber()
 	{
-		$task 	= JFactory::getApplication()->input->get('task', '');
+		$task  = JFactory::getApplication()->input->get('task', '');
 		$model = $this->getModel();
 
 		switch ($task)
@@ -69,7 +67,6 @@ class JEMControllerCssmanager extends JControllerAdmin
 		}
 
 		$this->setRedirect('index.php?option=com_jem&view=cssmanager');
-
 	}
 
 }

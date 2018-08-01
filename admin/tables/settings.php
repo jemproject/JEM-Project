@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -21,16 +21,14 @@ class JemTableSettings extends JTable
 		parent::__construct('#__jem_settings', 'id', $db);
 	}
 
-
 	/**
 	 * Validators
 	 * @deprecated since version 2.1.6
 	 */
-	function check()
+	public function check()
 	{
 		return true;
 	}
-
 
 	/**
 	 * Overloaded the store method
@@ -41,13 +39,11 @@ class JemTableSettings extends JTable
 		return parent::store($updateNulls);
 	}
 
-
 	/**
 	 * @deprecated since version 2.1.6
 	 */
 	public function bind($array, $ignore = '')
 	{
-
 		if (isset($array['globalattribs']) && is_array($array['globalattribs']))
 		{
 			$registry = new JRegistry;
@@ -61,7 +57,6 @@ class JemTableSettings extends JTable
 			$registrycss->loadArray($array['css']);
 			$array['css'] = (string) $registrycss;
 		}
-
 
 		//don't override without calling base class
 		return parent::bind($array, $ignore);

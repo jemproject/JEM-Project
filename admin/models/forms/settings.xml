@@ -261,6 +261,14 @@
 	<fieldset name="evimagehandling"
 		label="COM_JEM_IMAGE_HANDLING"
 	>
+		<field name="image_filetypes" type="text"
+			label="COM_JEM_IMAGE_FILETYPES"
+			description="COM_JEM_IMAGE_FILETYPES_DESC"
+			class="inputbox"
+			size="40"
+			default="jpg,gif,png"
+			required="false"
+		/>
 		<field name="sizelimit" type="text"
 			label="COM_JEM_IMAGE_FILESIZE"
 			description="COM_JEM_IMAGE_FILESIZE_DESC"

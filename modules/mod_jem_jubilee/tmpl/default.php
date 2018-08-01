@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.3
 * @package JEM
 * @subpackage JEM Jubilee Module
 * @copyright (C) 2014-2017 joomlaeventmanager.net
@@ -31,7 +31,7 @@ if ($flyer_link_type == 1) {
 }
 ?>
 
-<div id="jemmodulejubilee">
+<div class="jemmodulejubilee<?php echo $params->get('moduleclass_sfx'); ?>" id="jemmodulejubilee">
 <?php ?>
 	<div class="eventset" summary="mod_jem_jubilee">
 		<?php if ($showcalendar == 1) :?>
@@ -80,10 +80,7 @@ if ($flyer_link_type == 1) {
 			</h2>
 
 			<div>
-				<?php if (($showflyer == 1) AND
-						  (($item->eventimage)!=str_replace("jpg","",($item->eventimage)) OR
-						   ($item->eventimage)!=str_replace("gif","",($item->eventimage)) OR
-						   ($item->eventimage)!=str_replace("png","",($item->eventimage)))) : ?>
+				<?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>
 				<div>
 					<div class="banner-jem">
 						<div>

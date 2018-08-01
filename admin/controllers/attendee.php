@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -30,15 +30,13 @@ class JemControllerAttendee extends JControllerLegacy
 		$this->registerTask('save2copy', 'save');
 	}
 
-
 	/**
 	 * redirect to events page
 	 */
-	function back()
+	public function back()
 	{
 		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.JFactory::getApplication()->input->getInt('event', 0));
 	}
-
 
 	/**
 	 * logic for cancel an action
@@ -46,15 +44,14 @@ class JemControllerAttendee extends JControllerLegacy
 	 * @access public
 	 * @return void
 	 */
-	function cancel()
+	public function cancel()
 	{
 		// Check for request forgeries.
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		$attendee = JTable::getInstance('jem_register', '');
 		if (version_compare(JVERSION, '3.2', 'lt')) {
-			// before Joomla! 3.2.0 there is no good way to get them all from JInput :(
-			$attendee->bind(JFactory::getApplication()->input->getArray($_POST));
+			$attendee->bind(JRequest::get('post')); // before Joomla! 3.2.0 there is no good way to get them all from JInput :(
 		} else {
 			$attendee->bind(JFactory::getApplication()->input->post->getArray(/*get them all*/));
 		}
@@ -63,14 +60,13 @@ class JemControllerAttendee extends JControllerLegacy
 		$this->setRedirect('index.php?option=com_jem&view=attendees&eventid='.JFactory::getApplication()->input->getInt('event', 0));
 	}
 
-
 	/**
 	 * saves the attendee in the database
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function save()
+	public function save()
 	{
 		// Check for request forgeries.
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
@@ -83,7 +79,7 @@ class JemControllerAttendee extends JControllerLegacy
 
 		// Retrieving $post
 		if (version_compare(JVERSION, '3.2', 'lt')) {
-			$post = $jinput->getArray($_POST);
+			$post = JRequest::get('post'); // before Joomla! 3.2.0 we must and can use JRequest
 		} else {
 			$post = $jinput->post->getArray(/*get them all*/);
 		}
@@ -161,7 +157,7 @@ class JemControllerAttendee extends JControllerLegacy
 		$this->setRedirect($link, $msg);
 	}
 
-	function selectUser()
+	public function selectUser()
 	{
 		$jinput = JFactory::getApplication()->input;
 		$jinput->set('view', 'userelement');

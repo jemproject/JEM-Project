@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -17,7 +17,7 @@ class JemViewCalendar extends JViewLegacy
 	/**
 	 * Calendar-View
 	 */
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		$app = JFactory::getApplication();
 
@@ -115,7 +115,7 @@ class JemViewCalendar extends JViewLegacy
 		$print_link = JRoute::_($url_base . $partDate . '&print=1&tmpl=component');
 
 		// init calendar
-		$cal = new JEMCalendar($year, $month, 0);
+		$cal = new JemCalendar($year, $month, 0);
 		$cal->enableMonthNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
 		$cal->setFirstWeekDay($params->get('firstweekday', 1));
 		$cal->enableDayLinks('index.php?option=com_jem&view=day' . $this->param_topcat);

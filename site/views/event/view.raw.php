@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.2
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -17,7 +17,7 @@ class JemViewEvent extends JViewLegacy
 	/**
 	 * Creates the output for the event view
 	 */
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		$settings = JemHelper::globalattribs();
 
@@ -25,14 +25,15 @@ class JemViewEvent extends JViewLegacy
 		if ($settings->get('global_show_ical_icon','0')==1) {
 			// Get data from the model
 			$row = $this->get('Item');
+
 			if (empty($row)) {
 				return;
 			}
 
-			$row->categories 	= $this->get('Categories');
-			$row->id 			= $row->did;
-			$row->slug			= $row->alias ? ($row->id.':'.$row->alias) : $row->id;
-			$params				= $row->params;
+			$row->categories = $this->get('Categories');
+			$row->id         = $row->did;
+			$row->slug       = $row->alias ? ($row->id.':'.$row->alias) : $row->id;
+			$params          = $row->params;
 
 			// check individual iCal Event setting
 			if ($params->get('event_show_ical_icon',1)) {

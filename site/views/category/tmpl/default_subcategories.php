@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -18,7 +18,7 @@ $class = ' class="first"';
 </div>
  */ ?>
 
-<?php if (count($this->children[$this->category->id]) > 0) : ?>
+<?php if (array_key_exists($this->category->id, $this->children) && (count($this->children[$this->category->id]) > 0)) : ?>
 	<?php
 	$lastid = 0;
 	foreach ($this->children[$this->category->id] as $id => $child) :
@@ -45,7 +45,7 @@ $class = ' class="first"';
 		<li<?php echo $class; ?>>
 			<?php $class = ''; ?>
 			<span class="item-title">
-				<a href="<?php echo JRoute::_(JEMHelperRoute::getCategoryRoute($child->id, $this->task)); ?>">
+				<a href="<?php echo JRoute::_(JemHelperRoute::getCategoryRoute($child->id, $this->task)); ?>">
 					<?php echo $this->escape($child->catname); ?>
 				</a>
 			</span>

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -27,14 +27,15 @@ class JemViewSource extends JemAdminView
 	public function display($tpl = null)
 	{
 		// Initialise variables.
-		$this->form		= $this->get('Form');
-		$this->ftp		= JClientHelper::setCredentialsFromRequest('ftp');
-		$this->source	= $this->get('Source');
-		$this->state	= $this->get('State');
-		$this->template	= $this->get('Template');
+		$this->form     = $this->get('Form');
+		$this->ftp      = JClientHelper::setCredentialsFromRequest('ftp');
+		$this->source   = $this->get('Source');
+		$this->state    = $this->get('State');
+		$this->template = $this->get('Template');
 
 		// Check for errors.
-		if (count($errors = $this->get('Errors'))) {
+		$errors = $this->get('Errors');
+		if (is_array($errors) && count($errors)) {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
@@ -51,8 +52,8 @@ class JemViewSource extends JemAdminView
 	{
 		JFactory::getApplication()->input->set('hidemainmenu', true);
 
-		$user		= JemFactory::getUser();
-		$canDo		= JEMHelperBackend::getActions(0);
+		$user  = JemFactory::getUser();
+		$canDo = JemHelperBackend::getActions(0);
 
 		JToolBarHelper::title(JText::_('COM_JEM_CSSMANAGER_EDIT_FILE'), 'thememanager');
 

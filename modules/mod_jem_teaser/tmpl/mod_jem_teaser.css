@@ -1,8 +1,8 @@
 /**
- * @version 2.1
+ * @version 2.2
  * @package JEM
  * @subpackage JEM Teaser Module
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -76,7 +76,6 @@ div#jemmoduleteaser .eventset {
 
 div#jemmoduleteaser .event-title {
 	padding-left: 8px;
-//	background: url(img/flag_red.png) no-repeat;
 	font-size: medium;
 }
 
@@ -88,7 +87,6 @@ div#jemmoduleteaser .time {
 
 div#jemmoduleteaser div.date {
 	padding-left: 0px;
-//	background: url(img/date.png) 0 center no-repeat;
 	padding-top: 2px;
 }
 

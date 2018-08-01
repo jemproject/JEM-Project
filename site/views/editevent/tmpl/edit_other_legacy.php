@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -10,10 +10,11 @@ defined('_JEXEC') or die;
 
 $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields', -1); // default to All
 ?>
+
 	<!-- CUSTOM FIELDS -->
 	<?php if ($max_custom_fields != 0) : ?>
 	<fieldset class="panelform">
-	<legend><?php echo JText::_('COM_JEM_EVENT_CUSTOMFIELDS_LEGEND') ?></legend>
+		<legend><?php echo JText::_('COM_JEM_EVENT_CUSTOMFIELDS_LEGEND'); ?></legend>
 		<ul class="adminformlist">
 			<?php
 				$fields = $this->form->getFieldset('custom');
@@ -33,7 +34,7 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 
 	<!-- REGISTRATION -->
 	<fieldset class="panelform">
-	<legend><?php echo JText::_('COM_JEM_EVENT_REGISTRATION_LEGEND') ?></legend>
+		<legend><?php echo JText::_('COM_JEM_EVENT_REGISTRATION_LEGEND'); ?></legend>
 		<ul class="adminformlist">
 		<?php if ($this->jemsettings->showfroregistra == 0) : ?>
 			<li><?php echo $this->form->getLabel('registra'); ?> <?php echo JText::_('JNO'); ?></li>
@@ -67,10 +68,11 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 	<!-- IMAGE -->
 	<?php if ($this->item->datimage || $this->jemsettings->imageenabled != 0) : ?>
 	<fieldset class="jem_fldst_image">
-	<legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
+		<legend><?php echo JText::_('COM_JEM_IMAGE'); ?></legend>
 		<?php
 		if ($this->item->datimage) :
-			echo JEMOutput::flyer($this->item, $this->dimage, 'event', 'datimage');
+			echo JemOutput::flyer($this->item, $this->dimage, 'event', 'datimage');
+			?><input type="hidden" name="datimage" id="datimage" value="<?php echo $this->item->datimage; ?>" /><?php
 		endif;
 		?>
 		<?php if ($this->jemsettings->imageenabled != 0) : ?>
@@ -93,7 +95,7 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 
 	<!-- Recurrence -->
 	<fieldset class="panelform">
-	<legend><?php echo JText::_('COM_JEM_RECURRENCE'); ?></legend>
+		<legend><?php echo JText::_('COM_JEM_RECURRENCE'); ?></legend>
 		<ul class="adminformlist">
 			<li><?php echo $this->form->getLabel('recurrence_type'); ?> <?php echo $this->form->getInput('recurrence_type'); ?></li>
 			<li id="recurrence_output"><label></label></li>
@@ -150,8 +152,13 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 		<?php /* show "old" recurrence settings for information */
 		if (!empty($this->item->recurr_bak->recurrence_type)) {
 			$recurr_type = '';
-			$recurr_limit_date = str_ireplace('0000-00-00', JText::_('COM_JEM_UNLIMITED'),
-			                                  $this->item->recurr_bak->recurrence_limit_date);
+			$nullDate = JFactory::getDbo()->getNullDate();
+			$rlDate = $this->item->recurr_bak->recurrence_limit_date;
+			if (!empty($rlDate) && (strpos($nullDate, $rlDate) !== 0)) {
+				$recurr_limit_date = JemOutput::formatdate($rlDate);
+			} else {
+				$recurr_limit_date = JText::_('COM_JEM_UNLIMITED');
+			}
 
 			switch ($this->item->recurr_bak->recurrence_type) {
 			case 1:

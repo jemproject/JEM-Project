@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -16,7 +16,7 @@ jimport('joomla.application.component.controlleradmin');
 class JemControllerEvents extends JControllerAdmin
 {
 	/**
-	 * @var		string	The prefix to use with controller messages.
+	 * @var    string  The prefix to use with controller messages.
 	 *
 	 */
 	protected $text_prefix = 'COM_JEM_EVENTS';
@@ -24,33 +24,33 @@ class JemControllerEvents extends JControllerAdmin
 	/**
 	 * Constructor.
 	 *
-	 * @param	array	$config	An optional associative array of configuration settings.
-	 * @see		JController
+	 * @param  array  $config  An optional associative array of configuration settings.
+	 * @see    JController
 	 */
 	public function __construct($config = array())
 	{
 		parent::__construct($config);
 
-		$this->registerTask('unfeatured',	'featured');
+		$this->registerTask('unfeatured', 'featured');
 	}
 
 	/**
 	 * Method to toggle the featured setting of a list of events.
 	 *
-	 * @return	void
-	 * @since	1.6
+	 * @return void
+	 * @since  1.6
 	 */
-	function featured()
+	public function featured()
 	{
 		// Check for request forgeries
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		// Initialise variables.
-		$user	= JemFactory::getUser();
-		$ids	= JFactory::getApplication()->input->get('cid', array(), 'array');
-		$values	= array('featured' => 1, 'unfeatured' => 0);
-		$task	= $this->getTask();
-		$value	= JArrayHelper::getValue($values, $task, 0, 'int');
+		$user   = JemFactory::getUser();
+		$ids    = JFactory::getApplication()->input->get('cid', array(), 'array');
+		$values = array('featured' => 1, 'unfeatured' => 0);
+		$task   = $this->getTask();
+		$value  = JArrayHelper::getValue($values, $task, 0, 'int');
 
 		$glob_auth = $user->can('publish', 'event'); // general permission for all events
 
@@ -84,12 +84,11 @@ class JemControllerEvents extends JControllerAdmin
 	 * Proxy for getModel.
 	 *
 	 */
-	public function getModel($name = 'Event', $prefix = 'JEMModel', $config = array('ignore_request' => true))
+	public function getModel($name = 'Event', $prefix = 'JemModel', $config = array('ignore_request' => true))
 	{
 		$model = parent::getModel($name, $prefix, $config);
 		return $model;
 	}
-
 
 }
 ?>

@@ -1,33 +1,33 @@
 /**
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
 
 /** header icons **/
-.icon-48-archive			{ background-image: url(../images/icon-48-archive.png); }
-.icon-48-elcategories 		{ background-image: url(../images/icon-48-categories.png); }
-.icon-48-categoriesedit 	{ background-image: url(../images/icon-48-categoriesedit.png); }
-.icon-48-eventedit 			{ background-image: url(../images/icon-48-eventedit.png); }
-.icon-48-events 			{ background-image: url(../images/icon-48-events.png); }
-.icon-48-groups				{ background-image: url(../images/icon-48-groups.png); }
-.icon-48-groupedit			{ background-image: url(../images/icon-48-groupedit.png); }
-.icon-48-help 				{ background-image: url(../images/icon-48-help.png); }
-.icon-48-home 				{ background-image: url(../images/icon-48-home.png); }
-.icon-48-settings 			{ background-image: url(../images/icon-48-settings.png); }
-.icon-48-tableexport 		{ background-image: url(../images/icon-48-tableexport.png); }
-.icon-48-tableimport 		{ background-image: url(../images/icon-48-tableimport.png); }
-.icon-48-update 			{ background-image: url(../images/icon-48-update.png); }
-.icon-48-users 				{ background-image: url(../images/icon-48-users.png); }
-.icon-48-venues 			{ background-image: url(../images/icon-48-venues.png); }
-.icon-48-venuesedit			{ background-image: url(../images/icon-48-venuesedit.png); }
-.icon-48-housekeeping		{ background-image: url(../images/icon-48-housekeeping.png); }
-.icon-48-plugins			{ background-image: url(../images/icon-48-plugins.png); }
+.icon-48-archive         { background-image: url(../images/icon-48-archive.png); }
+.icon-48-elcategories    { background-image: url(../images/icon-48-categories.png); }
+.icon-48-categoriesedit  { background-image: url(../images/icon-48-categoriesedit.png); }
+.icon-48-eventedit       { background-image: url(../images/icon-48-eventedit.png); }
+.icon-48-events          { background-image: url(../images/icon-48-events.png); }
+.icon-48-groups          { background-image: url(../images/icon-48-groups.png); }
+.icon-48-groupedit       { background-image: url(../images/icon-48-groupedit.png); }
+.icon-48-help            { background-image: url(../images/icon-48-help.png); }
+.icon-48-home            { background-image: url(../images/icon-48-home.png); }
+.icon-48-settings        { background-image: url(../images/icon-48-settings.png); }
+.icon-48-tableexport     { background-image: url(../images/icon-48-tableexport.png); }
+.icon-48-tableimport     { background-image: url(../images/icon-48-tableimport.png); }
+.icon-48-update          { background-image: url(../images/icon-48-update.png); }
+.icon-48-users           { background-image: url(../images/icon-48-users.png); }
+.icon-48-venues          { background-image: url(../images/icon-48-venues.png); }
+.icon-48-venuesedit      { background-image: url(../images/icon-48-venuesedit.png); }
+.icon-48-housekeeping    { background-image: url(../images/icon-48-housekeeping.png); }
+.icon-48-plugins         { background-image: url(../images/icon-48-plugins.png); }
 
 /*-- needed for Joomla 2.x --*/
-.icon-32-download			{ background-image: url(../images/icon-32-tableexport.png); }
-.icon-32-loop				{ background-image: url(../images/toolbar/icon-32-move.png); }
+.icon-32-download        { background-image: url(../images/icon-32-tableexport.png); }
+.icon-32-loop            { background-image: url(../images/toolbar/icon-32-move.png); }
 
 /** linkicons **/
 div.linkicon {
@@ -49,17 +49,17 @@ input.button:focus {
 
 
 input#clear {
-    background: url('../images/clear.png') no-repeat scroll left center #CCC;
-    border: 1px solid #808080;
-    cursor: pointer;
-    padding-right:10px;
+	background: url('../images/clear.png') no-repeat scroll left center #CCC;
+	border: 1px solid #808080;
+	cursor: pointer;
+	padding-right:10px;
 }
 
 input#clear:focus {
-    cursor: pointer;
+	cursor: pointer;
 }
 
-.colorpicker{
+.colorpicker {
 	border:1px solid grey;
 }
 
@@ -252,6 +252,7 @@ table#el-attachments {
 table#el-attachments tr {
 	border-top: 1px solid #D5D5D5;
 }
+
 table#el-attachments tr:first-child {
 	border-top: inherit;
 }
@@ -266,9 +267,13 @@ div#jembackend fieldset.adminform label.hasTip
 --------------------- */
 div.pagination {
 	clear:inherit;
-	float:both;
 	text-align:center !important;
 	margin:15px 0 0 0 !important;
+}
+
+/* J! 3.8+ */
+div.pagination nav {
+	display: inline-block;
 }
 
 div.pagination p.counter {
@@ -377,7 +382,7 @@ img#imagelib {
 table {
 	max-width:100%;
 	background-color:transparent;
-	border-collapse:seperate;
+	border-collapse:separate;
 	border-spacing:0;
 }
 
@@ -703,17 +708,17 @@ table.table .pagination {
 }
 
 .table td.order {
-    text-align: center;
-    white-space: nowrap;
-    width: 200px;
+	text-align: center;
+	white-space: nowrap;
+	width: 200px;
 }
 
 .table td.order span {
-    float: left;
-    width: 20px;
-    text-align: center;
-    background-repeat: no-repeat;
-    height: 13px;
+	float: left;
+	width: 20px;
+	text-align: center;
+	background-repeat: no-repeat;
+	height: 13px;
 }
 
 
@@ -737,12 +742,12 @@ table.adminlist
 	border:1px solid #999999;
 }
 
-input#csvexport{
-    background:#CCCCCC url('../images/export_excel.png') no-repeat left;
-    padding-left:20px;
-    border:1px solid #808080;
-    height:20px;
-    cursor:pointer;
+input#csvexport {
+	background:#CCCCCC url('../images/export_excel.png') no-repeat left;
+	padding-left:20px;
+	border:1px solid #808080;
+	height:20px;
+	cursor:pointer;
 }
 
 .select_country
@@ -797,18 +802,18 @@ input.text-area-order {
 }
 
 /* Standards for commonly used elements */
-div.width-20	{width: 20%;}
-div.width-30	{width: 30%;}
-div.width-35	{width: 35%;}
-div.width-40	{width: 40%;}
-div.width-45	{width: 45%;}
-div.width-50	{width: 50%;}
-div.width-55	{width: 55%;}
-div.width-60	{width: 60%;}
-div.width-65	{width: 65%;}
-div.width-70	{width: 70%;}
-div.width-80	{width: 80%;}
-div.width-100	{width: 100%;}
+div.width-20   {width: 20%;}
+div.width-30   {width: 30%;}
+div.width-35   {width: 35%;}
+div.width-40   {width: 40%;}
+div.width-45   {width: 45%;}
+div.width-50   {width: 50%;}
+div.width-55   {width: 55%;}
+div.width-60   {width: 60%;}
+div.width-65   {width: 65%;}
+div.width-70   {width: 70%;}
+div.width-80   {width: 80%;}
+div.width-100  {width: 100%;}
 
 /* -- TAB STYLES --------------------- */
 dl.tabs {
@@ -895,6 +900,7 @@ div.current span.faux-label {
 /*	margin-top: 8px;*/
 /*	-moz-hyphens: auto;*/
 }
+
 div.current fieldset.radio input[type="radio"],
 div.current fieldset.checkbox input[type="checkbox"] {
 	float: left;
@@ -916,6 +922,7 @@ fieldset.panelform fieldset.radio label {
 	clear: none;
 	display:inline;
 }
+
 fieldset.adminform .inputbox {
 	margin-left: inherit;
 }
@@ -963,6 +970,7 @@ fieldset.adminform .inputbox {
 	text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
 	background-color: #999;
 }
+
 .label {
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
@@ -972,42 +980,24 @@ fieldset.adminform .inputbox {
 .label:empty{
 	display: none;
 }
+
 a.label:hover,
 a.label:focus {
 	color: #fff;
 	text-decoration: none;
 	cursor: pointer;
 }
-.label-important {
-	background-color: #a94442;
-}
-.label-important[href]{
-	background-color: #843534;
-}
-.label-warning {
-	background-color: #f89406;
-}
-.label-warning[href] {
-	background-color: #c67605;
-}
-.label-success {
-	background-color: #3c763d;
-}
-.label-success[href]{
-	background-color: #2b542c;
-}
-.label-info {
-	background-color: #31708f;
-}
-.label-info[href] {
-	background-color: #245269;
-}
-.label-inverse {
-	background-color: #333;
-}
-.label-inverse[href] {
-	background-color: #1a1a1a;
-}
+
+.label-important       { background-color: #a94442; }
+.label-important[href] { background-color: #843534; }
+.label-warning         { background-color: #f89406; }
+.label-warning[href]   { background-color: #c67605; }
+.label-success         { background-color: #3c763d; }
+.label-success[href]   { background-color: #2b542c; }
+.label-info            { background-color: #31708f; }
+.label-info[href]      { background-color: #245269; }
+.label-inverse         { background-color: #333;    }
+.label-inverse[href]   { background-color: #1a1a1a; }
 
 /* --- ALERT CODE ---- */
 /* Taken from Joomla! template "isis" */
@@ -1022,53 +1012,65 @@ a.label:focus {
 	-moz-border-radius: 4px;
 	border-radius: 4px;
 }
+
 .alert,
 .alert h4 {
 	color: #8a6d3b;
 }
+
 .alert h4 {
 	margin: 0;
 }
+
 .alert .close {
 	position: relative;
 	top: -2px;
 	right: -21px;
 	line-height: 18px;
 }
+
 .alert-success {
 	background-color: #dff0d8;
 	border-color: #d6e9c6;
 	color: #3c763d;
 }
+
 .alert-success h4 {
 	color: #3c763d;
 }
+
 .alert-danger,
 .alert-error {
 	background-color: #f2dede;
 	border-color: #ebccd1;
 	color: #a94442;
 }
+
 .alert-danger h4,
 .alert-error h4 {
 	color: #a94442;
 }
+
 .alert-info {
 	background-color: #d9edf7;
 	border-color: #bce8f1;
 	color: #31708f;
 }
+
 .alert-info h4 {
 	color: #31708f;
 }
+
 .alert-block {
 	padding-top: 14px;
 	padding-bottom: 14px;
 }
+
 .alert-block > p,
 .alert-block > ul {
 	margin-bottom: 0;
 }
+
 .alert-block p + p {
 	margin-top: 5px;
 }
@@ -1076,6 +1078,7 @@ a.label:focus {
 #jform_unregistra_until_span {
 	display: inline-block;
 }
+
 #jform_unregistra_until_span input {
 	width: 40px;
 	text-align: right;

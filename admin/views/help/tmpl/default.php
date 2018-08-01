@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -50,7 +50,7 @@ $options = array(
 								|
 								<a href="<?php echo 'components/com_jem/help/'.$this->langTag.'/helpsite/credits.html'; ?>" target='helpFrame'><?php echo JText::_('COM_JEM_CREDITS'); ?></a>
 								|
-								<?php echo JHtml::_('link', 'http://www.gnu.org/licenses/gpl-2.0.html', JText::_('COM_JEM_LICENSE'), array('target' => 'helpFrame')) ?>
+								<?php echo JHtml::_('link', 'https://www.gnu.org/licenses/gpl-2.0.html', JText::_('COM_JEM_LICENSE'), array('target' => 'helpFrame')) ?>
 							</td>
 						</tr>
 					</table>

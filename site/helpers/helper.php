@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.2.3-dev1
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2017 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -23,9 +23,8 @@ class JemHelper
 	 * Pulls settings from database and stores in an static object
 	 *
 	 * @return object
-	 *
 	 */
-	static function config()
+	static public function config()
 	{
 		static $config;
 
@@ -39,14 +38,12 @@ class JemHelper
 		return $config;
 	}
 
-
 	/**
 	 * Pulls settings from database and stores in an static object
 	 *
 	 * @return object
-	 *
 	 */
-	static function globalattribs()
+	static public function globalattribs()
 	{
 		static $globalregistry;
 		if (!is_object($globalregistry)) {
@@ -56,11 +53,10 @@ class JemHelper
 		return $globalregistry;
 	}
 
-
 	/**
 	 * Retrieves the CSS-settings from database and stores in an static object
 	 */
-	static function retrieveCss()
+	static public function retrieveCss()
 	{
 		static $registryCSS;
 		if (!is_object($registryCSS)) {
@@ -73,7 +69,7 @@ class JemHelper
 	/**
 	 * Setup a file logger for JEM.
 	 */
-	public static function addFileLogger()
+	static public function addFileLogger()
 	{
 		jimport('joomla.log.log');
 
@@ -111,11 +107,11 @@ class JemHelper
 	/**
 	 * Add en entry to JEM's log file.
 	 *
-	 * @param $message The message to print
-	 * @param $where   The location the message was generated, default: null
-	 * @param $type    The log level, default: DEBUG
+	 * @param  $message The message to print
+	 * @param  $where   The location the message was generated, default: null
+	 * @param  $type    The log level, default: DEBUG
 	 */
-	public static function addLogEntry($message, $where = null, $type = JLog::DEBUG)
+	static public function addLogEntry($message, $where = null, $type = JLog::DEBUG)
 	{
 		$logEntry = new JLogEntry($message, $type, 'JEM');
 		$logEntry->where = empty($where) ? '' : ($where . '()');
@@ -129,11 +125,11 @@ class JemHelper
 	 * Currently it archives and removes outdated events
 	 * and takes care of the recurrence of events
 	 */
-	static function cleanup($forced = 0)
+	static public function cleanup($forced = 0)
 	{
-		$jemsettings	= JemHelper::config();
-		$weekstart 		= $jemsettings->weekdaystart;
-		$anticipation	= $jemsettings->recurrence_anticipation;
+		$jemsettings  = JemHelper::config();
+		$weekstart    = $jemsettings->weekdaystart;
+		$anticipation = $jemsettings->recurrence_anticipation;
 
 		$now = time(); // UTC
 		$offset = idate('Z'); // timezone offset for "new day" test
@@ -169,14 +165,15 @@ class JemHelper
 				// Ignore published field to prevent duplicate events.
 				$nulldate = '0000-00-00';
 				$query = ' SELECT id, CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id, '
-						. ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, '
-						. ' MAX(dates) as dates, MAX(enddates) as enddates, MAX(recurrence_counter) as counter '
-						. ' FROM #__jem_events '
-						. ' WHERE recurrence_type <> "0" '
-						. ' AND CASE recurrence_limit_date WHEN '.$nulldate.' THEN 1 ELSE NOW() < recurrence_limit_date END '
-						. ' AND recurrence_number <> "0" '
-						. ' GROUP BY first_id'
-						. ' ORDER BY dates DESC';
+				       . ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, '
+				       . ' MAX(dates) as dates, MAX(enddates) as enddates, MAX(recurrence_counter) as counter '
+				       . ' FROM #__jem_events '
+				       . ' WHERE recurrence_type <> "0" '
+				       . ' AND CASE recurrence_limit_date WHEN '.$nulldate.' THEN 1 ELSE NOW() < recurrence_limit_date END '
+				       . ' AND recurrence_number <> "0" '
+				       . ' GROUP BY first_id'
+				       . ' ORDER BY dates DESC';
+
 				$db->SetQuery($query);
 				$recurrence_array = $db->loadAssocList();
 
@@ -210,7 +207,7 @@ class JemHelper
 					// add events as long as we are under the interval and under the limit, if specified.
 					while (($recurrence_row['recurrence_limit_date'] == $nulldate
 							|| strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
-							&& strtotime($recurrence_row['dates']) <= time() + 86400*$anticipation)
+							&& strtotime($recurrence_row['dates']) <= time() + 86400 * $anticipation)
 					{
 						$new_event = JTable::getInstance('Event', 'JemTable');
 						$new_event->bind($reference, array('id', 'hits', 'dates', 'enddates','checked_out_time','checked_out'));
@@ -225,8 +222,8 @@ class JemHelper
 							$recurrence_row['counter']++;
 							//duplicate categories event relationships
 							$query = ' INSERT INTO #__jem_cats_event_relations (itemid, catid) '
-									. ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__jem_cats_event_relations '
-									. ' WHERE itemid = ' . $db->Quote($ref_event->id);
+							       . ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__jem_cats_event_relations '
+							       . ' WHERE itemid = ' . $db->Quote($ref_event->id);
 							$db->setQuery($query);
 
 							if ($db->execute() === false) {
@@ -245,7 +242,7 @@ class JemHelper
 				//delete outdated events
 				if ($jemsettings->oldevent == 1) {
 					$query = 'DELETE FROM #__jem_events WHERE dates > 0 AND '
-							.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates))';
+					       .' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates))';
 					$db->SetQuery($query);
 					$db->execute();
 				}
@@ -253,8 +250,8 @@ class JemHelper
 				//Set state archived of outdated events
 				if ($jemsettings->oldevent == 2) {
 					$query = 'UPDATE #__jem_events SET published = 2 WHERE dates > 0 AND '
-							.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
-							.' AND published = 1';
+					       .' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
+					       .' AND published = 1';
 					$db->SetQuery($query);
 					$db->execute();
 				}
@@ -262,11 +259,16 @@ class JemHelper
 				//Set state trashed of outdated events
 				if ($jemsettings->oldevent == 3) {
 					$query = 'UPDATE #__jem_events SET published = -2 WHERE dates > 0 AND '
-							.' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
-							.' AND published = 1';
+					       .' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
+					       .' AND published = 1';
 					$db->SetQuery($query);
 					$db->execute();
 				}
+
+				// Cleanup registrations
+				$query = 'DELETE FROM #__jem_register WHERE event NOT IN (SELECT id FROM #__jem_events)';
+				$db->SetQuery($query);
+				$db->execute();
 
 				// Set timestamp of last cleanup
 				JemConfig::getInstance()->set('lastupdate', $now);
@@ -281,7 +283,7 @@ class JemHelper
 	/**
 	 * this methode calculate the next date
 	 */
-	static function calculate_recurrence($recurrence_row)
+	static public function calculate_recurrence($recurrence_row)
 	{
 		// get the recurrence information
 		$recurrence_number = $recurrence_row['recurrence_number'];
@@ -335,15 +337,15 @@ class JemHelper
 					switch ($recurrence_number) {
 						case 6: // before last 'x' of the month
 							$next      = strtotime("previous ".$days_names[$s].' - 1 week ',
-											mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
+							                mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
 							$nextmonth = strtotime("previous ".$days_names[$s].' - 1 week ',
-											mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
+							                mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
 							break;
 						case 5: // last 'x' of the month
 							$next      = strtotime("previous ".$days_names[$s],
-											mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
+							                mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
 							$nextmonth = strtotime("previous ".$days_names[$s],
-											mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
+							                mktime(1,0,0,$date_array["month"]+2 ,1,$date_array["year"]));
 							break;
 						case 4: // xth 'x' of the month
 						case 3:
@@ -351,9 +353,9 @@ class JemHelper
 						case 1:
 						default:
 							$next      = strtotime($litterals[$recurrence_number-1]." ".$days_names[$s].' of this month',
-											mktime(1,0,0,$date_array["month"]   ,1,$date_array["year"]));
+							                mktime(1,0,0,$date_array["month"]   ,1,$date_array["year"]));
 							$nextmonth = strtotime($litterals[$recurrence_number-1]." ".$days_names[$s].' of this month',
-											mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
+							                mktime(1,0,0,$date_array["month"]+1 ,1,$date_array["year"]));
 							break;
 					}
 
@@ -390,11 +392,11 @@ class JemHelper
 	/**
 	 * Method to dissolve recurrence of given id.
 	 *
-	 * @param	int		The id to clear as recurrence first id.
+	 * @param  int     The id to clear as recurrence first id.
 	 *
-	 * @return	boolean	True on success.
+	 * @return boolean True on success.
 	 */
-	static function dissolve_recurrence($first_id)
+	static public function dissolve_recurrence($first_id)
 	{
 		// Sanitize the id.
 		$first_id = (int)$first_id;
@@ -424,13 +426,13 @@ class JemHelper
 	/**
 	 * This method deletes an image file if unused.
 	 *
-	 * @param string $type one of 'event', 'venue', 'category', 'events', 'venues', 'categories'
-	 * @param mixed  $filename filename as stored in db, or null (which deletes all unused files)
+	 * @param  string $type     one of 'event', 'venue', 'category', 'events', 'venues', 'categories'
+	 * @param  mixed  $filename filename as stored in db, or null (which deletes all unused files)
 	 *
 	 * @return bool true on success, false on error
 	 * @access public
 	 */
-	static function delete_unused_image_files($type, $filename = null)
+	static public function delete_unused_image_files($type, $filename = null)
 	{
 		switch ($type) {
 		case 'event':
@@ -504,14 +506,14 @@ class JemHelper
 	/**
 	 * This method deletes attachment files if unused.
 	 *
-	 * @param mixed $type one of 'event', 'venue', 'category', ... or false for all
+	 * @param  mixed $type one of 'event', 'venue', 'category', ... or false for all
 	 *
 	 * @return bool true on success, false on error
 	 * @access public
 	 */
-	static function delete_unused_attachment_files($type = false)
+	static public function delete_unused_attachment_files($type = false)
 	{
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 		$basepath    = JPATH_SITE.'/'.$jemsettings->attachments_path;
 		$db          = JFactory::getDBO();
 		$res         = true;
@@ -525,7 +527,7 @@ class JemHelper
 			$fnames[] = $db->Quote($f);
 		}
 		$query = ' SELECT object, file '
-			   . ' FROM #__jem_attachments ';
+		       . ' FROM #__jem_attachments ';
 		if (!empty($fnames)) {
 			$query .= ' WHERE object IN ('.implode(',', $fnames).')';
 		}
@@ -556,11 +558,11 @@ class JemHelper
 	/**
 	 * this method generate the date string to a date array
 	 *
-	 * @var string the date string
-	 * @return array the date informations
+	 * @param  string the date string
+	 * @return array  the date informations
 	 * @access public
 	 */
-	static function generate_date($startdate, $enddate)
+	static public function generate_date($startdate, $enddate)
 	{
 		$validEnddate = JemHelper::isValidDate($enddate);
 
@@ -570,18 +572,20 @@ class JemHelper
 							"day" => $startdate[2],
 							"weekday" => date("w",mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0])),
 							"unixtime" => mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0]));
+
 		if ($validEnddate) {
 			$enddate = explode("-", $enddate);
 			$day_diff = (mktime(1,0,0,$enddate[1],$enddate[2],$enddate[0]) - mktime(1,0,0,$startdate[1],$startdate[2],$startdate[0]));
 			$date_array["day_diff"] = $day_diff;
 		}
+
 		return $date_array;
 	}
 
 	/**
 	 * return day number of the week starting with 0 for first weekday
 	 *
-	 * @param array of 2 letters day
+	 * @param  array of 2 letters day
 	 * @return array of int
 	 */
 	static function convert2CharsDaysToInt($days, $firstday = 0)
@@ -624,7 +628,7 @@ class JemHelper
 	/**
 	 * Build the select list for access level
 	 */
-	static function getAccesslevelOptions($ownonly = false, $disabledLevels = false)
+	static public function getAccesslevelOptions($ownonly = false, $disabledLevels = false)
 	{
 		$db = JFactory::getDBO();
 		$where = '';
@@ -647,10 +651,10 @@ class JemHelper
 		}
 
 		$query = 'SELECT id AS value, title AS text' . $selDisabled
-				. ' FROM #__viewlevels'
-				. $where
-				. ' ORDER BY ordering, id'
-				;
+		       . ' FROM #__viewlevels'
+		       . $where
+		       . ' ORDER BY ordering, id'
+		       ;
 
 		//JemHelper::addLogEntry('AccessLevel query: ' . $query, __METHOD__);
 
@@ -662,8 +666,7 @@ class JemHelper
 		return $groups;
 	}
 
-
-	static function buildtimeselect($max, $name, $selected, $class = array('class'=>'inputbox'))
+	static public function buildtimeselect($max, $name, $selected, $class = array('class'=>'inputbox'))
 	{
 		$timelist = array();
 		$timelist[0] = JHtml::_('select.option', '', '');
@@ -687,14 +690,13 @@ class JemHelper
 		return JHtml::_('select.genericlist', $timelist, $name, $class, 'value', 'text', $selected);
 	}
 
-
 	/**
 	 * returns mime type of a file
 	 *
-	 * @param string file path
+	 * @param  string file path
 	 * @return string mime type
 	 */
-	static function getMimeType($filename)
+	static public function getMimeType($filename)
 	{
 		if (function_exists('finfo_open')) {
 			$finfo = finfo_open(FILEINFO_MIME);
@@ -778,11 +780,11 @@ class JemHelper
 	/**
 	 * updates waiting list of specified event
 	 *
-	 * @param int event id
-	 * @param boolean bump users off/to waiting list
+	 * @param  int     event id
+	 * @param  boolean bump users off/to waiting list
 	 * @return bool
 	 */
-	static function updateWaitingList($event)
+	static public function updateWaitingList($event)
 	{
 		$db = Jfactory::getDBO();
 
@@ -793,10 +795,10 @@ class JemHelper
 
 		// get attendees after deletion, and their status
 		$query = 'SELECT r.id, r.waiting '
-				. ' FROM #__jem_register AS r'
-				. ' WHERE r.status = 1 AND r.event = '.$db->Quote($event)
-				. ' ORDER BY r.uregdate ASC '
-				;
+		       . ' FROM #__jem_register AS r'
+		       . ' WHERE r.status = 1 AND r.event = '.$db->Quote($event)
+		       . ' ORDER BY r.uregdate ASC '
+		       ;
 		$db->SetQuery($query);
 		$res = $db->loadObjectList();
 
@@ -811,7 +813,7 @@ class JemHelper
 			}
 		}
 
-		if ($registered < $event_places->maxplaces && count($waiting))
+		if (($registered < $event_places->maxplaces) && count($waiting))
 		{
 			// need to bump users to attending status
 			$bumping = array_slice($waiting, 0, $event_places->maxplaces - $registered);
@@ -835,10 +837,10 @@ class JemHelper
 	/**
 	 * Adds attendees numbers to rows
 	 *
-	 * @param $data reference to event rows
+	 * @param  $data reference to event rows
 	 * @return false on error, $data on success
 	 */
-	static function getAttendeesNumbers(& $data)
+	static public function getAttendeesNumbers(& $data)
 	{
 		// Make sure this is an array and it is not empty
 		if (!is_array($data) || !count($data)) {
@@ -891,7 +893,7 @@ class JemHelper
 	/**
 	 * returns timezone name
 	 */
-	public static function getTimeZoneName()
+	static public function getTimeZoneName()
 	{
 		$user     = JemFactory::getUser();
 		$userTz   = $user->getParam('timezone');
@@ -910,7 +912,7 @@ class JemHelper
 	 *
 	 * @return object
 	 */
-	static function getCalendarTool()
+	static public function getCalendarTool()
 	{
 		require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
 		$timezone_name = JemHelper::getTimeZoneName();
@@ -929,13 +931,13 @@ class JemHelper
 		return $vcal;
 	}
 
-	static function icalAddEvent(&$calendartool, $event)
+	static public function icalAddEvent(&$calendartool, $event)
 	{
 		require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
-		$jemsettings	= JemHelper::config();
-		$timezone_name	= JemHelper::getTimeZoneName();
-		$config			= JFactory::getConfig();
-		$sitename		= $config->get('sitename');
+		$jemsettings   = JemHelper::config();
+		$timezone_name = JemHelper::getTimeZoneName();
+		$config        = JFactory::getConfig();
+		$sitename      = $config->get('sitename');
 
 		// get categories names
 		$categories = array();
@@ -949,15 +951,17 @@ class JemHelper
 		if (!$event->dates || !$validdate) {
 			return false;
 		}
+
 		// make end date same as start date if not set
 		if (!$event->enddates) {
 			$event->enddates = $event->dates;
 		}
 
 		// start
-		if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/',$event->dates, $start_date)) {
+		if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/', $event->dates, $start_date)) {
 			JError::raiseError(0, JText::_('COM_JEM_ICAL_EXPORT_WRONG_STARTDATE_FORMAT'));
 		}
+
 		$date = array('year' => (int) $start_date[1], 'month' => (int) $start_date[2], 'day' => (int) $start_date[3]);
 
 		// all day event if start time is not set
@@ -968,17 +972,19 @@ class JemHelper
 			// for ical all day events, dtend must be send to the next day
 			$event->enddates = strftime('%Y-%m-%d', strtotime($event->enddates.' +1 day'));
 
-			if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/',$event->enddates, $end_date)) {
+			if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/', $event->enddates, $end_date)) {
 				JError::raiseError(0, JText::_('COM_JEM_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'));
 			}
+
 			$date_end = array('year' => $end_date[1], 'month' => $end_date[2], 'day' => $end_date[3]);
 			$dateendparam = array('VALUE' => 'DATE');
 		}
 		else // not all day events, there is a start time
 		{
-			if (!preg_match('/([0-9]{2}):([0-9]{2}):([0-9]{2})/',$event->times, $start_time)) {
+			if (!preg_match('/([0-9]{2}):([0-9]{2}):([0-9]{2})/', $event->times, $start_time)) {
 				JError::raiseError(0, JText::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'));
 			}
+
 			$date['hour'] = $start_time[1];
 			$date['min']  = $start_time[2];
 			$date['sec']  = $start_time[3];
@@ -992,19 +998,22 @@ class JemHelper
 			}
 
 			// if same day but end time < start time, change end date to +1 day
-			if ($event->enddates == $event->dates
-					&& strtotime($event->dates.' '.$event->endtimes) < strtotime($event->dates.' '.$event->times)) {
+			if ($event->enddates == $event->dates &&
+			    strtotime($event->dates.' '.$event->endtimes) < strtotime($event->dates.' '.$event->times))
+			{
 				$event->enddates = strftime('%Y-%m-%d', strtotime($event->enddates.' +1 day'));
 			}
 
-			if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/',$event->enddates, $end_date)) {
+			if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/', $event->enddates, $end_date)) {
 				JError::raiseError(0, JText::_('COM_JEM_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'));
 			}
+
 			$date_end = array('year' => $end_date[1], 'month' => $end_date[2], 'day' => $end_date[3]);
 
-			if (!preg_match('/([0-9]{2}):([0-9]{2}):([0-9]{2})/',$event->endtimes, $end_time)) {
+			if (!preg_match('/([0-9]{2}):([0-9]{2}):([0-9]{2})/', $event->endtimes, $end_time)) {
 				JError::raiseError(0, JText::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'));
 			}
+
 			$date_end['hour'] = $end_time[1];
 			$date_end['min']  = $end_time[2];
 			$date_end['sec']  = $end_time[3];
@@ -1043,6 +1052,7 @@ class JemHelper
 			$exp = explode(",",$event->countryname);
 			$location[] = $exp[0];
 		}
+
 		$location = implode(",", $location);
 
 		$e = new vevent();
@@ -1065,10 +1075,10 @@ class JemHelper
 	/**
 	 * return true is a date is valid (not null, or 0000-00...)
 	 *
-	 * @param string $date
+	 * @param  string $date
 	 * @return boolean
 	 */
-	static function isValidDate($date)
+	static public function isValidDate($date)
 	{
 		if (is_null($date)) {
 			return false;
@@ -1085,10 +1095,10 @@ class JemHelper
 	/**
 	 * return true is a time is valid (not null, or 00:00:00...)
 	 *
-	 * @param string $time
+	 * @param  string $time
 	 * @return boolean
 	 */
-	static function isValidTime($time)
+	static public function isValidTime($time)
 	{
 		if (is_null($time)) {
 			return false;
@@ -1103,10 +1113,10 @@ class JemHelper
 	/**
 	 * Returns array of positive numbers
 	 *
-	 * @param mixed array or string with comma separated list of ids
+	 * @param  mixed array or string with comma separated list of ids
 	 * @return mixed array of numbers greater zero or false
 	 */
-	static function getValidIds($ids_in)
+	static public function getValidIds($ids_in)
 	{
 		$ids_out = array();
 		$tmp = is_array($ids_in) ? $ids_in : explode(',', $ids_in);
@@ -1122,7 +1132,7 @@ class JemHelper
 	/**
 	 * Creates a tooltip
 	 */
-	static function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '', $time = '', $color = '')
+	static public function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '', $time = '', $color = '')
 	{
 		if (version_compare(JVERSION, '3.3', 'lt')) {
 			$tooltip = htmlspecialchars($tooltip);
@@ -1156,7 +1166,7 @@ class JemHelper
 	 * Function to retrieve IP
 	 * @author: https://gist.github.com/cballou/2201933
 	 */
-	static function retrieveIP()
+	static public function retrieveIP()
 	{
 		$ip_keys = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR');
 		foreach ($ip_keys as $key) {
@@ -1180,7 +1190,7 @@ class JemHelper
 	 *
 	 * @author: https://gist.github.com/cballou/2201933
 	 */
-	static function validate_ip($ip)
+	static public function validate_ip($ip)
 	{
 		if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
 			return false;
@@ -1188,18 +1198,16 @@ class JemHelper
 		return true;
 	}
 
-
-	static function loadCss($css)
+	static public function loadCss($css)
 	{
 		$settings = self::retrieveCss();
     $jemsettings	= JemHelper::config();
 
-		if($settings->get('css_'.$css.'_usecustom','0')) {
+		if ($settings->get('css_'.$css.'_usecustom','0')) {
 
 			# we want to use custom so now check if we've a file
 			$file = $settings->get('css_'.$css.'_customfile');
 			$is_file = false;
-
 
 			# something was filled, now check if we've a valid file
 			if ($file) {
@@ -1239,16 +1247,15 @@ class JemHelper
 		return $css;
 	}
 
-
-	static function defineCenterMap($data = false)
+	static public function defineCenterMap($data = false)
 	{
 		# retrieve venue
-		$venue		= $data->getValue('venue');
+		$venue = $data->getValue('venue');
 
 		if ($venue) {
 			# latitude/longitude
-			$lat 	= $data->getValue('latitude');
-			$long	= $data->getValue('longitude');
+			$lat  = $data->getValue('latitude');
+			$long = $data->getValue('longitude');
 
 			if ($lat == 0.000000) {
 				$lat = null;
@@ -1263,11 +1270,10 @@ class JemHelper
 			} else {
 				# retrieve address-info
 				$postalCode = $data->getValue('postalCode');
-				$city		= $data->getValue('city');
-				$street		= $data->getValue('street');
+				$city       = $data->getValue('city');
+				$street     = $data->getValue('street');
 
-				$address = '"'.$street.' '.$postalCode.' '.$city.'"';
-				$location = $address;
+				$location = '"'.$street.' '.$postalCode.' '.$city.'"';
 			}
 			$location = 'location:'.$location.',';
 		} else {
@@ -1282,7 +1288,7 @@ class JemHelper
 	 *
 	 * @return boolean
 	 */
-	static function loadCustomCss()
+	static public function loadCustomCss()
 	{
 		$settings = self::retrieveCss();
 
@@ -1331,10 +1337,10 @@ class JemHelper
 		}
 
 		# border-colors
-		$border_filter		= $settings->get('css_color_border_filter');
-		$border_h2			= $settings->get('css_color_border_h2');
-		$border_table_th	= $settings->get('css_color_border_table_th');
-		$border_table_td	= $settings->get('css_color_border_table_td');
+		$border_filter   = $settings->get('css_color_border_filter');
+		$border_h2       = $settings->get('css_color_border_h2');
+		$border_table_th = $settings->get('css_color_border_table_th');
+		$border_table_td = $settings->get('css_color_border_table_td');
 
 		if ($border_filter) {
 			$style .= "div#jem #jem_filter {border-color:" . $border_filter . ";}";
@@ -1352,9 +1358,9 @@ class JemHelper
 		}
 
 		# font-color
-		$font_table_h2		= $settings->get('css_color_font_h2');
-		$font_table_td		= $settings->get('css_color_font_table_td');
-		$font_table_td_a	= $settings->get('css_color_font_table_td_a');
+		$font_table_h2   = $settings->get('css_color_font_h2');
+		$font_table_td   = $settings->get('css_color_font_table_td');
+		$font_table_td_a = $settings->get('css_color_font_table_td_a');
 
 		if ($font_table_h2) {
 			$style .= "div#jem h2 {color:" . $font_table_h2 . ";}";
@@ -1368,7 +1374,7 @@ class JemHelper
 			$style .= "div#jem table.eventtable td a {color:" . $font_table_td_a . ";}";
 		}
 
-		$document 	= JFactory::getDocument();
+		$document = JFactory::getDocument();
 		$document->addStyleDeclaration($style);
 
 		return true;
@@ -1379,8 +1385,7 @@ class JemHelper
 	 *
 	 * @return boolean
 	 */
-
-	static function loadCustomTag()
+	static public function loadCustomTag()
 	{
 		$document = JFactory::getDocument();
 		$tag = "";
@@ -1392,14 +1397,14 @@ class JemHelper
 	}
 
 	/**
-	 * get a variable from the manifest file (actually, from the manifest cache).
+	 * Get a variable from the manifest file (actually, from the manifest cache).
 	 *
-	 * $column = manifest_cache(1),params(2)
-	 * $setting = name of setting to retrieve
-	 * $type = compononent(1), plugin(2)
-	 * $name = name to search in column name
+	 * @param  $column  manifest_cache(1),params(2)
+	 * @param  $setting name of setting to retrieve
+	 * @param  $type    compononent(1), plugin(2)
+	 * @param  $name    name to search in column name
 	 */
-	static function getParam($column,$setting,$type,$name)
+	static public function getParam($column, $setting, $type, $name)
 	{
 		switch ($column) {
 			case 1:
@@ -1435,14 +1440,14 @@ class JemHelper
 		if (empty($result)) {
 			$result = 'N/A';
 		}
+
 		return $result;
 	}
 
-
-	public static function getCountryOptions()
+	static public function getCountryOptions()
 	{
 		$options = array();
-		$options = array_merge(JEMHelperCountries::getCountryOptions(),$options);
+		$options = array_merge(JemHelperCountries::getCountryOptions(),$options);
 
 		array_unshift($options, JHtml::_('select.option', '0', JText::_('COM_JEM_SELECT_COUNTRY')));
 
@@ -1454,14 +1459,14 @@ class JemHelper
 	 * safe string or returns a URL safe UTF-8 string
 	 * based on the global configuration
 	 *
-	 * @param   string  $string  String to process
+	 * @param  string  $string  String to process
 	 *
-	 * @return  string  Processed string
+	 * @return string  Processed string
 	 *
-	 * @see     JApplication, JApplicationHelper
-	 * @since   2.1.7
+	 * @see    JApplication, JApplicationHelper
+	 * @since  2.1.7
 	 */
-	public static function stringURLSafe($string)
+	static public function stringURLSafe($string)
 	{
 		if (version_compare(JVERSION, '3.2', 'ge')) {
 			return JApplicationHelper::stringURLSafe($string);

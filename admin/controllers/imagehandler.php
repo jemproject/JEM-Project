@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -18,12 +18,10 @@ jimport('joomla.filesystem.file');
  * @package JEM
  *
  */
-class JEMControllerImagehandler extends JControllerLegacy
+class JemControllerImagehandler extends JControllerLegacy
 {
 	/**
 	 * Constructor
-	 *
-	 *
 	 */
 	public function __construct()
 	{
@@ -40,19 +38,17 @@ class JEMControllerImagehandler extends JControllerLegacy
 	 *
 	 * @access public
 	 * @return void
-	 *
 	 */
-	function uploadimage()
+	public function uploadimage()
 	{
-		$app = JFactory::getApplication();
-
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid token');
 
-		$jemsettings = JEMAdmin::config();
+		$app = JFactory::getApplication();
+		$jemsettings = JemAdmin::config();
 
-		$file 		= JFactory::getApplication()->input->files->get('userfile', array(), 'array');
-		$task 		= JFactory::getApplication()->input->get('task', '');
+		$file = JFactory::getApplication()->input->files->get('userfile', array(), 'array');
+		$task = JFactory::getApplication()->input->get('task', '');
 
 		// Set FTP credentials, if given
 		jimport('joomla.client.helper');
@@ -75,14 +71,14 @@ class JEMControllerImagehandler extends JControllerLegacy
 		}
 
 		//check the image
-		$check = JEMImage::check($file, $jemsettings);
+		$check = JemImage::check($file, $jemsettings);
 
 		if ($check === false) {
 			$app->redirect($_SERVER['HTTP_REFERER']);
 		}
 
 		//sanitize the image filename
-		$filename = JEMImage::sanitize($base_Dir, $file['name']);
+		$filename = JemImage::sanitize($base_Dir, $file['name']);
 		$filepath = $base_Dir . $filename;
 
 		//upload the image
@@ -93,7 +89,6 @@ class JEMControllerImagehandler extends JControllerLegacy
 			echo "<script> alert('".JText::_('COM_JEM_UPLOAD_COMPLETE')."'); window.history.go(-1); window.parent.SelectImage('$filename', '$filename'); </script>\n";
 			$app->close();
 		}
-
 	}
 
 	/**
@@ -101,10 +96,12 @@ class JEMControllerImagehandler extends JControllerLegacy
 	 *
 	 * @access public
 	 * @return void
-	 *
 	 */
-	function delete()
+	public function delete()
 	{
+		// Check for request forgeries
+		JSession::checkToken('get') or jexit('Invalid Token');
+
 		$app = JFactory::getApplication();
 
 		// Set FTP credentials, if given
@@ -112,7 +109,7 @@ class JEMControllerImagehandler extends JControllerLegacy
 		JClientHelper::setCredentialsFromRequest('ftp');
 
 		// Get some data from the request
-		$images	= JFactory::getApplication()->input->get('rm', array(), 'array');
+		$images = JFactory::getApplication()->input->get('rm', array(), 'array');
 		$folder = JFactory::getApplication()->input->get('folder', '');
 
 		if (count($images)) {

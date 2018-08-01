@@ -1,9 +1,9 @@
 <?php
 /**
- * Version 2.1.3
- * @copyright	Copyright (C) 2016 Ghost Art digital media.
- * @copyright	Copyright (C) 2013 - 2015 joomlaeventmanager.net. All rights reserved.
- * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ * Version 2.2.0
+ * @copyright Copyright (C) 2014 Ghost Art digital media.
+ * @copyright Copyright (C) 2013 - 2017 joomlaeventmanager.net. All rights reserved.
+ * @license   http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  * Based on Eventlist11 tag and JEM specific code by JEM Community
  */
 defined('_JEXEC') or die;
@@ -15,22 +15,21 @@ include_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 class plgAcymailingTagjem extends JPlugin
 {
 
-	var $searchFields = array('a.id','a.title','a.alias','a.introtext');
-	var $selectedFields = array('a.*');
+	protected $searchFields = array('a.id', 'a.title', 'a.alias', 'a.introtext', 'l.venue');
+	protected $selectedFields = array('a.*', 'l.venue');
 
-	function __construct(&$subject, $config)
+	public function __construct(&$subject, $config)
 	{
 		parent::__construct($subject, $config);
 		if (!isset($this->params)) {
-			$plugin =& JPluginHelper::getPlugin('acymailing', 'tagjem');
-			$this->params = new JParameter($plugin->params);
+			$plugin = JPluginHelper::getPlugin('acymailing', 'tagjem');
+			$this->params = new JRegistry($plugin->params);
 		}
 		$this->loadLanguage();
-		$this->loadLanguage('com_jem', JPATH_SITE.'/components/com_jem');
 		$this->loadLanguage('com_jem', JPATH_ADMINISTRATOR.'/components/com_jem');
 	}
 
-	function acymailing_getPluginType()
+	public function acymailing_getPluginType()
 	{
 		$onePlugin = new stdClass();
 		$onePlugin->name = JText::_('JOOMEXT_EVENT'). ' <small>(JEM)</small>';
@@ -40,7 +39,7 @@ class plgAcymailingTagjem extends JPlugin
 		return $onePlugin;
 	}
 
-	function acymailingtagjem_show()
+	public function acymailingtagjem_show()
 	{
 		$config = acymailing_config();
 		if ($config->get('version') < '4.0.0') {
@@ -57,28 +56,55 @@ class plgAcymailingTagjem extends JPlugin
 		$pageInfo->elements = new stdClass();
 
 		$paramBase = ACYMAILING_COMPONENT.'.tagjem';
-		$pageInfo->filter->order->value = $app->getUserStateFromRequest($paramBase.".filter_order", 'filter_order',	'a.id', 'cmd');
-		$pageInfo->filter->order->dir	= $app->getUserStateFromRequest($paramBase.".filter_order_Dir", 'filter_order_Dir',	'desc',	'word');
+		$pageInfo->filter->order->value = $app->getUserStateFromRequest($paramBase.".filter_order", 'filter_order', 'a.id', 'cmd');
+		$pageInfo->filter->order->dir   = $app->getUserStateFromRequest($paramBase.".filter_order_Dir", 'filter_order_Dir', 'desc', 'word');
+		if(strtolower($pageInfo->filter->order->dir) !== 'desc') $pageInfo->filter->order->dir = 'asc';
 		$pageInfo->search = $app->getUserStateFromRequest($paramBase.".search", 'search', '', 'string');
 		$pageInfo->search = JString::strtolower($pageInfo->search);
+		$pageInfo->filter_cat = $app->getUserStateFromRequest($paramBase.".filter_cat", 'filter_cat', '', 'int');
+		$pageInfo->featured = $app->getUserStateFromRequest($paramBase.".featured", 'featured', $this->params->get('show_featured', 0), 'int');
+		$pageInfo->opendates = '0';
+		$pageInfo->pict = $app->getUserStateFromRequest($paramBase.".pict", 'pict', $this->params->get('show_images', 1), 'string');
+		$pageInfo->pictwidth = $app->getUserStateFromRequest($paramBase.".pictwidth", 'pictwidth', $this->params->get('img_width', 160), 'string');
+		$pageInfo->pictheight = $app->getUserStateFromRequest($paramBase.".pictheight", 'pictheight', $this->params->get('img_height', 160), 'string');
 
 		$pageInfo->limit->value = $app->getUserStateFromRequest($paramBase.'.list_limit', 'limit', $app->getCfg('list_limit'), 'int');
 		$pageInfo->limit->start = $app->getUserStateFromRequest($paramBase.'.limitstart', 'limitstart', 0, 'int');
 
+		$picts = array();
+		$picts[] = JHtml::_('select.option', '1', JText::_('JOOMEXT_YES'));
+		$picts[] = JHtml::_('select.option', 'resized', JText::_('PLG_TAGJEM_RESIZE'));
+		$picts[] = JHtml::_('select.option', '0', JText::_('JOOMEXT_NO'));
+
+		$yesno = array();
+		$yesno[] = JHtml::_('select.option', '1', JText::_('JOOMEXT_YES'));
+		$yesno[] = JHtml::_('select.option', '0', JText::_('JOOMEXT_NO'));
+
+		$opendates = array();
+		$opendates[] = JHtml::_('select.option', 'also', JText::_('COM_JEM_SHOW_OPENDATES_TOO'));
+		$opendates[] = JHtml::_('select.option', 'only', JText::_('COM_JEM_SHOW_OPENDATES_ONLY'));
+		$opendates[] = JHtml::_('select.option', '0', JText::_('JOOMEXT_NO'));
+
 		$db = JFactory::getDBO();
 
 		if (!empty($pageInfo->search)) {
-			$searchVal = '\'%'.acymailing_getEscaped($pageInfo->search).'%\'';
+			$searchVal = '\'%'.acymailing_getEscaped($pageInfo->search, true).'%\'';
 			$filters[] = implode(" LIKE $searchVal OR ", $this->searchFields)." LIKE $searchVal";
 		}
 
+		if(!empty($pageInfo->filter_cat)){
+			$filters[] = "c.id = ".$pageInfo->filter_cat;
+		}
+
 		// we hide past events but we remove one day just to make sure we won't hide something we should not!
-		// because it's a newsletter we focus onevents starting in the future; already running (multi-day) events are not new
-		if ($this->params->get('hidepastevents', 'yes') == 'yes') {
-			$filters[] = '(a.dates IS NULL OR a.dates >= '.$db->Quote(date('Y-m-d', time() - 86400)) . ')';
+		// because it's a newsletter we focus on events starting in the future; already running (multi-day) events are not new
+		// but if someone really needs to explicitely select a running event provide them on the list.
+		if ($this->params->get('hide_past_events', '1') === '1') {
+			$filters[] = '(IFNULL(a.enddates, a.dates) IS NULL OR IFNULL(a.enddates, a.dates) >= '.$db->Quote(date('Y-m-d', time() - 86400)) . ')';
 		}
 
 		$filters[] = 'a.published = 1'; // prevent unpublished and trashed events, but also archived
+		$filters[] = 'c.published = 1'; // also limit to published categories
 
 		$whereQuery = '';
 		if (!empty($filters)) {
@@ -86,100 +112,211 @@ class plgAcymailingTagjem extends JPlugin
 		}
 
 		$query = 'SELECT SQL_CALC_FOUND_ROWS '.implode(',', $this->selectedFields).' FROM `#__jem_events` as a';
+		$query .= ' LEFT JOIN `#__jem_venues` AS l ON l.id = a.locid';
+		$query .= ' LEFT JOIN `#__jem_cats_event_relations` AS rel ON rel.itemid = a.id';
+		$query .= ' LEFT JOIN `#__jem_categories` AS c ON c.id = rel.catid';
 		if (!empty($whereQuery)) {
 			$query .= $whereQuery;
 		}
+
+		$query .= ' GROUP BY a.id';
+
 		if (!empty($pageInfo->filter->order->value)) {
 			$query .= ' ORDER BY '.$pageInfo->filter->order->value.' '.$pageInfo->filter->order->dir;
+			if ($pageInfo->filter->order->value === 'a.dates') {
+				$query .= ', a.times '.$pageInfo->filter->order->dir;
+			}
 		}
 
 		$db->setQuery($query, $pageInfo->limit->start, $pageInfo->limit->value);
 		$rows = $db->loadObjectList();
 
 		if (!empty($pageInfo->search)) {
-			$rows = acymailing::search($pageInfo->search, $rows);
+			$rows = acymailing_search($pageInfo->search, $rows);
 		}
 
 		$db->setQuery('SELECT FOUND_ROWS()');
 		$pageInfo->elements->total = $db->loadResult();
 		$pageInfo->elements->page = count($rows);
 
+		$db->setQuery('SELECT c.* FROM `#__jem_categories` as c WHERE c.published IN (0, 1) AND c.alias NOT LIKE "root" ORDER BY c.lft ASC');
+		$categories = $db->loadObjectList('id');
+		$categoriesValues = array();
+		$categoriesValues[] = JHtml::_('select.option', '', JText::_('ACY_ALL'));
+		foreach ($categories as $oneCat) {
+			$categoriesValues[] = JHtml::_('select.option', $oneCat->id, str_repeat('-&nbsp;', $oneCat->level) . $oneCat->catname, ($oneCat->published != 1) ? array('disable' => true) : array());
+		}
+
+		// Before AcyMailing 5.0 we have to use Joomla's css classes.
+		if ($config->get('version') < '5.0.0') {
+			$class_options = 'adminform';
+			$class_list    = 'adminlist';
+		} else {
+			$class_options = 'acymailing_table';
+			$class_list    = 'acymailing_table';
+		}
+
 		jimport('joomla.html.pagination');
 		$pagination = new JPagination($pageInfo->elements->total, $pageInfo->limit->start, $pageInfo->limit->value);
 
-		//jimport('joomla.html.pane');
 		$tabs = acymailing_get('helper.acytabs');
 		echo $tabs->startPane('jem_tab');
 		echo $tabs->startPanel(JText::_('JOOMEXT_EVENT'), 'jem_event');
 	?>
-		<br style="font-size:1px"/>
-		<table>
-			<?php $this->_showResizeOptionsRow('jem_event', 2) ?>
-			<tr>
-				<td width="100%">
-					<?php echo JText::_( 'JOOMEXT_FILTER' ); ?>:
-					<input type="text" name="search" id="acymailingsearch" value="<?php echo $pageInfo->search;?>" class="text_area" onchange="document.adminForm.submit();" />
-					<button class="btn" onclick="this.form.submit();"><?php echo JText::_( 'JOOMEXT_GO' ); ?></button>
-					<button class="btn" onclick="document.getElementById('acymailingsearch').value='';this.form.submit();"><?php echo JText::_( 'JOOMEXT_RESET' ); ?></button>
-				</td>
+		<script language="javascript" type="text/javascript">
+			<!--
+			var selectedContents = new Array();
+			function applyContent(contentid, rowClass){
+				var tmp = selectedContents.indexOf(contentid)
+				if(tmp != -1){
+					window.document.getElementById('content' + contentid).className = rowClass;
+					delete selectedContents[tmp];
+				}else{
+					window.document.getElementById('content' + contentid).className = 'selectedrow';
+					selectedContents.push(contentid);
+				}
+				updateTag();
+			}
 
-				<td nowrap="nowrap">
-				</td>
-			</tr>
-		</table>
+			function updateTag()
+			{
+				var tag = '';
+				var resizeinfo = '';
 
-		<table class="adminlist" cellpadding="1" width="100%">
-			<thead>
-				<tr>
-					<th class="title">
-						<?php echo JHTML::_('grid.sort', JText::_('PLG_TAGJEM_TITLE'), 'a.title', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
-					</th>
-					<th class="title">
-						<?php echo JHTML::_('grid.sort', JText::_('PLG_TAGJEM_DESCRIPTION'), 'a.introtext', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
-					</th>
-					<th class="title">
-						<?php echo JHTML::_('grid.sort', JText::_('PLG_TAGJEM_DATE'), 'a.dates', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
-					</th>
-					<th class="title titleid">
-						<?php echo JHTML::_('grid.sort', JText::_('PLG_TAGJEM_ID'), 'a.id', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
-					</th>
-				</tr>
-			</thead>
-			<tfoot>
-				<tr>
-					<td colspan="5">
-						<?php echo $pagination->getListFooter(); ?>
-						<?php echo $pagination->getResultsCounter(); ?>
+				for(var i = 0; i < document.adminForm.pict.length; i++){
+					if(document.adminForm.pict[i].checked){
+						resizeinfo += '| images: ' + document.adminForm.pict[i].value;
+						if(document.adminForm.pict[i].value == 'resized'){
+							document.getElementById('pictsize').style.display = '';
+						//	resizeinfo += '|images: ' + document.adminForm.pictwidth.value + 'x' + document.adminForm.pictheight.value;
+							if(document.adminForm.pictwidth.value) resizeinfo += '| imgwidth:' + document.adminForm.pictwidth.value;
+							if(document.adminForm.pictheight.value) resizeinfo += '| imgheight:' + document.adminForm.pictheight.value;
+						}else{
+							document.getElementById('pictsize').style.display = 'none';
+						}
+					}
+				}
+
+				var events = [];
+				for(var i in selectedContents){
+					if(selectedContents[i] && !isNaN(i)){
+						events.push(selectedContents[i]);
+					}
+				}
+
+				if (events.length > 0) {
+					tag = '{jem: ' + events.join('-') + resizeinfo;
+					tag += '| template: ' + document.adminForm.templ.value;
+					tag += '}';
+				}
+
+				setTag(tag);
+			}
+			//-->
+		</script>
+		<div class="onelineblockoptions">
+			<table width="100%" class="<?php echo $class_options;?>">
+				<tr id="format" class="acyplugformat">
+					<td valign="baseline" width="25%"><?php echo JText::_('PLG_TAGJEM_SHOW_IMAGES'); ?></td>
+					<td valign="baseline" width="25%"><?php echo JHtml::_('acyselect.radiolist', $picts, 'pict', 'size="1" onclick="updateTag();"', 'value', 'text', $pageInfo->pict); ?>
+					</td>
+					<td valign="baseline" width="50%" colspan="2">
+						<span id="pictsize" <?php if($pageInfo->pict != 'resized') echo 'style="display:none;"'; ?>><!--br/--><?php echo JText::_('PLG_TAGJEM_IMAGE_WIDTH') ?>
+							<input name="pictwidth" type="text" onchange="updateTag();" value="<?php echo $pageInfo->pictwidth; ?>" style="width:30px;"/>
+							x <?php echo JText::_('PLG_TAGJEM_IMAGE_HEIGHT') ?>
+							<input name="pictheight" type="text" onchange="updateTag();" value="<?php echo $pageInfo->pictheight; ?>" style="width:30px;"/>
+						</span>
 					</td>
 				</tr>
-			</tfoot>
-			<tbody>
-				<?php
-					$k = 0;
-					for ($i = 0, $a = count($rows); $i < $a; $i++) {
-						$row =& $rows[$i];
-				?>
-					<tr id="content<?php echo $row->id?>" class="<?php echo "row$k"; ?>" style="cursor:pointer;"
-							onclick="toggleClass('selectedrow');updateTag('jem_event')" eventid="<?php echo $row->id ?>" >
-						<td>
-							<?php echo $row->title; ?>
-						</td>
-						<td>
-							<?php echo acymailing_absoluteURL($row->introtext); ?>
-						</td>
-						<td align="center">
-							<?php echo JEMOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes); ?>
-						</td>
-						<td align="center">
-							<?php echo $row->id; ?>
+				<tr>
+					<td valign="baseline" width="25%"><?php echo JText::_('PLG_TAGJEM_TEMPLATE'); ?></td>
+					<td valign="baseline" width="25%">
+						<?php /* TODO: Collect templates dynamically. */ ?>
+						<select name="templ" size="1" onchange="updateTag();">
+							<option value="event">Event</option>
+							<option value="list">List</option>
+							<option value="summary">Summary</option>
+						</select>
+					</td>
+					<td valign="baseline" width="25%"></td>
+					<td valign="baseline" width="25%"></td>
+				</tr>
+			</table>
+		</div>
+		<div class="onelineblockoptions">
+			<table class="acymailing_table_options">
+				<tr>
+					<td width="100%">
+						<?php acymailing_listingsearch($pageInfo->search); ?>
+					</td>
+					<td nowrap="nowrap">
+						<?php echo JHtml::_('select.genericlist', $categoriesValues, 'filter_cat', 'class="inputbox" size="1" onchange="document.adminForm.submit( );"', 'value', 'text', (int)$pageInfo->filter_cat); ?>
+					</td>
+				</tr>
+			</table>
+
+			<table class="<?php echo $class_list; ?>" cellpadding="1" width="100%">
+				<thead>
+					<tr>
+						<th class="title">
+						</th>
+						<th class="title">
+							<?php echo JHTML::_('grid.sort', JText::_('PLG_TAGJEM_TITLE'), 'a.title', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
+						</th>
+						<th class="title">
+							<?php echo JHTML::_('grid.sort', JText::_('PLG_TAGJEM_DESCRIPTION'), 'a.introtext', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
+						</th>
+						<th class="title">
+							<?php echo JHTML::_('grid.sort', JText::_('PLG_TAGJEM_DATE'), 'a.dates', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
+						</th>
+						<th class="title">
+							<?php echo JHTML::_('grid.sort', JText::_('PLG_TAGJEM_VENUE'), 'l.venue', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
+						</th>
+						<th class="title titleid">
+							<?php echo JHTML::_('grid.sort', JText::_('PLG_TAGJEM_ID'), 'a.id', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
+						</th>
+					</tr>
+				</thead>
+				<tfoot>
+					<tr>
+						<td colspan="6">
+							<?php echo $pagination->getListFooter(); ?>
+							<?php echo $pagination->getResultsCounter(); ?>
 						</td>
 					</tr>
-				<?php
-						$k = 1 - $k;
-					}
-				?>
-			</tbody>
-		</table>
+				</tfoot>
+				<tbody>
+					<?php
+						$k = 0;
+						for ($i = 0, $a = count($rows); $i < $a; $i++) {
+							$row =& $rows[$i];
+					?>
+						<tr id="content<?php echo $row->id?>" class="<?php echo "row$k"; ?>" style="cursor:pointer;"
+								onclick="applyContent(<?php echo $row->id.",'row$k'" ?>);" eventid="<?php echo $row->id ?>" >
+							<td class="acytdcheckbox"></td>
+							<td>
+								<?php echo $row->title; ?>
+							</td>
+							<td>
+								<?php echo strip_tags($row->introtext); ?>
+							</td>
+							<td align="center">
+								<?php echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes); ?>
+							</td>
+							<td>
+								<?php echo $row->venue; ?>
+							</td>
+							<td align="center">
+								<?php echo $row->id; ?>
+							</td>
+						</tr>
+					<?php
+							$k = 1 - $k;
+						}
+					?>
+				</tbody>
+			</table>
+		</div>
 
 		<input type="hidden" name="boxchecked" value="0" />
 		<input type="hidden" name="filter_order" value="<?php echo $pageInfo->filter->order->value; ?>" />
@@ -188,13 +325,8 @@ class plgAcymailingTagjem extends JPlugin
 		echo $tabs->endPanel();
 
 		echo $tabs->startPanel(JText::_('UPCOMING_EVENTS'), 'jem_auto');
-		$type = JRequest::getString('type');
-
-		$db->setQuery('SELECT a.* FROM `#__jem_categories` as a WHERE a.alias NOT LIKE "root" ORDER BY a.`ordering` ASC');
-		$categories = $db->loadObjectList('id');
+		$type = $app->input->request->getString('type');
 		?>
-		<br style="font-size:1px"/>
-
 		<script language="javascript" type="text/javascript">
 		<!--
 			var selectedCat = new Array();
@@ -207,67 +339,50 @@ class plgAcymailingTagjem extends JPlugin
 					selectedCat[catid] = 'event';
 				}
 
-				updateTag();
+				updateAutoTag();
 			}
 
-			function getSelectedEvents()
-			{
-				var rows = document.getElementsByClassName('selectedrow');
-				var events = [];
-				for (var i = 0; i < rows.length; i++)
-				{
-					var eventid = parseInt(rows[i].getAttribute('eventid'));
-					if (eventid != NaN)
-						events.push(eventid);
-				}
-				return events.join('-');
-			}
-
-			function getResizeOptions(tabname)
-			{
-				if (document.adminForm[tabname+'_resizeimages'] && document.adminForm[tabname+'_resizeimages'].checked
-						&& document.adminForm[tabname+'_imgwidth'] && document.adminForm[tabname+'_imgheight'])
-				{
-					var width = parseInt(document.adminForm[tabname+'_imgwidth'].value)
-					var height = parseInt(document.adminForm[tabname+'_imgheight'].value)
-					if (!isNaN(width) && !isNaN(height))
-						return '|images:'+width+'x'+height;
-				}
-				return '';
-			}
-
-			function updateTag(tabname)
+			function updateAutoTag()
 			{
 				var tag = '';
+				var resizeinfo = '';
 
-				if (tabname === 'jem_event')
-				{
-					tag += '{jem:';
-					tag += getSelectedEvents();
-					tag += getResizeOptions(tabname);
-					tag += '|template:event';
-					tag += '}';
+				var cats = [];
+				for(var icat in selectedCat){
+					if(selectedCat[icat] == 'event'){
+						cats.push(icat);
+					}
 				}
-				else
-				{
-					tabname = 'jem_auto';
 
-					tag += '{autojem:';
-
-					for(var icat in selectedCat){
-						if(selectedCat[icat] == 'event'){
-							tag += icat+'-';
+				for(var i = 0; i < document.adminForm.pictauto.length; i++){
+					if(document.adminForm.pictauto[i].checked){
+						resizeinfo += '| images: ' + document.adminForm.pictauto[i].value;
+						if(document.adminForm.pictauto[i].value == 'resized'){
+							document.getElementById('pictsizeauto').style.display = '';
+							if(document.adminForm.pictwidthauto.value) resizeinfo += '| imgwidth:' + document.adminForm.pictwidthauto.value;
+							if(document.adminForm.pictheightauto.value) resizeinfo += '| imgheight:' + document.adminForm.pictheightauto.value;
+						}else{
+							document.getElementById('pictsizeauto').style.display = 'none';
 						}
 					}
+				}
 
-					tag += getResizeOptions(tabname);
-
-					if(document.adminForm.min_article && document.adminForm.min_article.value && document.adminForm.min_article.value!=0){ tag += '|min:'+document.adminForm.min_article.value; }
-					if(document.adminForm.max_article.value && document.adminForm.max_article.value!=0){ tag += '|max:'+document.adminForm.max_article.value; }
-					if(document.adminForm.delayevent.value && document.adminForm.delayevent.value>0){ tag += '|delay:'+document.adminForm.delayevent.value; }
-					tag += '|template:'+document.adminForm.template.value;
-					tag += '|opendates:'+document.adminForm.opendates.value;
-
+				if (cats.length > 0) {
+					tag += '{autojem:' + cats.join('-') + resizeinfo;
+					if(document.adminForm.min_article && document.adminForm.min_article.value != 0) {
+						tag += '| min: ' + document.adminForm.min_article.value;
+					}
+					if(document.adminForm.max_article && document.adminForm.max_article.value != 0) {
+						tag += '| max: ' + document.adminForm.max_article.value;
+					}
+					if(document.adminForm.delayevent && document.adminForm.delayevent.value > 0) {
+						tag += '| delay: ' + document.adminForm.delayevent.value;
+					}
+					if(document.adminForm.featured) {
+						tag += '| featured: ' + document.adminForm.featured.value;
+					}
+					tag += '| template: ' + document.adminForm.template.value;
+					tag += '| opendates: ' + document.adminForm.opendates.value;
 					tag += '}';
 				}
 
@@ -275,93 +390,108 @@ class plgAcymailingTagjem extends JPlugin
 			}
 		//-->
 		</script>
+		<div class="onelineblockoptions">
+			<table width="100%" class="jem_auto <?php echo $class_options; ?>">
+				<tr id="format" class="acyplugformat">
+					<td valign="baseline" width="25%"><?php echo JText::_('PLG_TAGJEM_SHOW_IMAGES'); ?></td>
+					<td valign="baseline" width="25%"><?php echo JHtml::_('acyselect.radiolist', $picts, 'pictauto', 'size="1" onclick="updateAutoTag();"', 'value', 'text', $pageInfo->pict); ?>
+					</td>
+					<td valign="baseline" width="50%" colspan="2">
+						<span id="pictsizeauto" <?php if($pageInfo->pict != 'resized') echo 'style="display:none;"'; ?>><?php echo JText::_('PLG_TAGJEM_IMAGE_WIDTH') ?>
+							<input name="pictwidthauto" type="text" onchange="updateAutoTag();" value="<?php echo $pageInfo->pictwidth; ?>" style="width:30px;"/>
+							x <?php echo JText::_('PLG_TAGJEM_IMAGE_HEIGHT') ?>
+							<input name="pictheightauto" type="text" onchange="updateAutoTag();" value="<?php echo $pageInfo->pictheight; ?>" style="width:30px;"/>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td valign="baseline" width="25%">
+						<span title='<?php echo JText::_('COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC'); ?>'>
+							<?php echo JText::_('COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES'); ?>
+						</span>
+					</td>
+					<td valign="baseline" width="25%">
+						<?php echo JHtml::_('acyselect.radiolist', $opendates, 'opendates', 'size="1" onclick="updateAutoTag();"', 'value', 'text', $pageInfo->opendates); ?>
+						<!--select name="opendates" size="1" onchange="updateAutoTag();">
+							<option value="no"><?php echo JText::_('JNo');?></option>
+							<option value="also"><?php echo JText::_('COM_JEM_SHOW_OPENDATES_TOO');?></option>
+							<option value="only"><?php echo JText::_('COM_JEM_SHOW_OPENDATES_ONLY');?></option>
+						</select-->
+					</td>
+					<td valign="baseline" width="25%"><?php echo JText::_('PLG_TAGJEM_FEATURED_EVENTS'); ?></td>
+					<td valign="baseline" width="25%">
+						<?php echo JHtml::_('acyselect.radiolist', $yesno, 'featured', 'size="1" onclick="updateAutoTag();"', 'value', 'text', $pageInfo->featured); ?>
+						<!--select name="featured" size="1" onchange="updateAutoTag();">
+							<option value="0"><?php echo JText::_('JNo');?></option>
+							<option value="1"><?php echo JText::_('JYes');?></option>
+						</select-->
+					</td>
+				</tr>
+				<tr>
+					<td valign="baseline" width="25%"><?php echo JText::_('MAX_ARTICLE'); ?></td>
+					<td valign="baseline" width="25%">
+						<input type="text" name="max_article" style="width:50px" value="" onchange="updateAutoTag();"/>
+					</td>
+					<td valign="baseline" width="25%"><?php echo JText::_('MAX_STARTING_DATE'); ?></td>
+					<td valign="baseline" width="25%">
+						<?php $delayType = acymailing_get('type.delay'); $delayType->onChange = "updateAutoTag();"; echo $delayType->display('delayevent', 7776000, 3); ?>
+					</td>
+				</tr>
+				<tr>
+					<td valign="baseline" width="25%"><?php echo JText::_('PLG_TAGJEM_TEMPLATE'); ?></td>
+					<td valign="baseline" width="25%">
+						<?php /* TODO: Collect templates dynamically. */ ?>
+						<select name="template" size="1" onchange="updateAutoTag();">
+							<option value="event">Event</option>
+							<option value="list">List</option>
+							<option value="summary">Summary</option>
+						</select>
+					</td>
+					<?php if($type === 'autonews') { ?>
+					<td valign="baseline" width="25%"><?php echo JText::_('MIN_ARTICLE'); ?></td>
+					<td valign="baseline" width="25%">
+						<input name="min_article" size="10" value="1" onchange="updateAutoTag();"/>
+					</td>
+					<?php } ?>
+				</tr>
+			</table>
+		</div>
 
-		<table width="100%" class="jem_auto adminform">
-			<?php $this->_showResizeOptionsRow('jem_auto', 4) ?>
-			<tr>
-				<td>
-					<?php echo JText::_('MAX_ARTICLE'); ?>
-				 </td>
-				 <td>
-				 	<input type="text" name="max_article" style="width:50px" value="" onchange="updateTag();"/>
-				</td>
-				<td>
-					<?php echo JText::_('MAX_STARTING_DATE'); ?>
-				 </td>
-				 <td>
-					<?php $delayType = acymailing_get('type.delay'); $delayType->onChange = "updateTag();"; echo $delayType->display('delayevent', 7776000, 3); ?>
-				</td>
-			</tr>
-			<?php if($type == 'autonews') { ?>
-			<tr>
-				<td>
-					<?php 	echo JText::_('MIN_ARTICLE'); ?>
-				</td>
-				<td>
-					<input name="min_article" size="10" value="1" onchange="updateTag();"/>
-				</td>
-				<td>
-				</td>
-				<td>
-				</td>
-			</tr>
-			<?php } ?>
-			<tr>
-				<td>
-					<?php 	echo JText::_('PLG_TAGJEM_TEMPLATE'); ?>
-				</td>
-				<td>
-					<?php /* TODO: Collect templates dynamically. */ ?>
-					<select name="template" size="1" onchange="updateTag();">
-						<option value="event">event</option>
-						<option value="list">list</option>
-						<option value="summary">summary</option>
-					</select>
-				</td>
-				<td>
-					<span title='<?php echo JText::_('COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC'); ?>'>
-						<?php echo JText::_('COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES'); ?>
-					</span>
-				</td>
-				<td>
-					<select name="opendates" size="1" onchange="updateTag();">
-						<option value="no"><?php echo JText::_('JNo');?></option>
-						<option value="also"><?php echo JText::_('COM_JEM_SHOW_OPENDATES_TOO');?></option>
-						<option value="only"><?php echo JText::_('COM_JEM_SHOW_OPENDATES_ONLY');?></option>
-					</select>
-				</td>
-			</tr>
-		</table>
-
-		<table class="jem_auto adminlist" cellpadding="1" width="100%">
-		<?php $k = 0; foreach ($categories as $oneCat) { ?>
-			<tr id="event_cat<?php echo $oneCat->id ?>" class="<?php echo "row$k"; ?>" onclick="applyAutoEvent(<?php echo $oneCat->id ?>,'<?php echo "row$k" ?>');" style="cursor:pointer;">
-				<td>
-				<?php
-					if (!empty($oneCat->parent_id) && ($oneCat->parent_id > 1) /* exclude 'root' */) {
-						echo $categories[$oneCat->parent_id]->catname.' => ';
-					}
-					echo $oneCat->catname;
-				?>
-				</td>
-			</tr>
-		<?php $k = 1 - $k; } ?>
-		</table>
-
+		<div class="onelineblockoptions">
+			<table class="jem_auto <?php echo $class_list; ?>" cellpadding="1" width="100%">
+				<thead>
+					<tr>
+						<th class="title"></th>
+						<th class="title">
+							<?php echo JText::_('TAG_CATEGORIES'); ?>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+				<?php $k = 0; foreach ($categories as $oneCat) { ?>
+					<tr id="event_cat<?php echo $oneCat->id ?>" class="<?php echo "row$k"; ?>" onclick="applyAutoEvent(<?php echo $oneCat->id ?>,'<?php echo "row$k" ?>');" style="cursor:pointer;">
+						<td class="acytdcheckbox"></td>
+						<td>
+							<?php echo str_repeat('- - ', $oneCat->level) . $oneCat->catname; ?>
+						</td>
+					</tr>
+				<?php $k = 1 - $k; } ?>
+				</tbody>
+			</table>
+		</div>
 		<?php
-		$this->_initResizeOptionsScript();
 
 		echo $tabs->endPanel();
 		echo $tabs->endPane();
 	} //End of the function
 
-	function acymailing_replacetags(&$email, $send = true)
+	public function acymailing_replacetags(&$email, $send = true)
 	{
 		$this->_replaceAuto($email);
 		$this->_replaceEvents($email);
 	}
 
-	function _replaceEvents(&$email)
+	protected function _replaceEvents(&$email)
 	{
 		$match = '#{jem:(.*)}#Ui';
 		$variables = array('body','altbody');
@@ -402,7 +532,7 @@ class plgAcymailingTagjem extends JPlugin
 		$email->altbody = str_replace(array_keys($resultstext), $resultstext, $email->altbody);
 	}
 
-	function _replaceEvent(&$allresults, $i)
+	protected function _replaceEvent(&$allresults, $i)
 	{
 		// Transform the tag properly...
 		$arguments = explode('|', $allresults[1][$i]);
@@ -413,15 +543,20 @@ class plgAcymailingTagjem extends JPlugin
 		$result = '';
 		$tag = new stdClass();
 		$tag->itemid = intval($this->params->get('itemid'));
-		for ($i=1, $a = count($arguments); $i < $a; $i++) {
+		for ($i = 1, $a = count($arguments); $i < $a; $i++) {
 			$args = explode(':', $arguments[$i]);
 			$arg0 = trim($args[0]);
 			if (isset($args[1])) {
-				$tag->$arg0 = $args[1];
+				$tag->$arg0 = trim($args[1]);
 			} else {
 				$tag->$arg0 = true;
 			}
 		}
+
+		// old style: "images: w x h" == resize, "" == show full
+		// new style: "images: 0" == hide, "images: 1" == show full,
+		//            "images: resized| imgwidth: w| imgheight: h" == resize
+		$showimages = !isset($tag->images) || ($tag->images !== '0');
 
 		// The first argument is a list of events...
 		$allEvents = explode('-', $arguments[0]);
@@ -431,11 +566,6 @@ class plgAcymailingTagjem extends JPlugin
 			$tag->id = (int)$oneEvent;
 
 			// Load the informations of the product...
-			//$query = 'SELECT d.*, b.*, a.*, cn.* FROM `#__jem_events` as a ';
-			//$query .= 'LEFT JOIN `#__jem_venues` AS b ON b.id = a.locid ';
-			//$query .= 'LEFT JOIN `#__jem_cats_event_relations` AS c ON a.`id` = c.itemid ';
-			//$query .= 'LEFT JOIN `#__jem_categories` AS d ON c.`catid` = d.id ';
-			//$query .= 'LEFT JOIN #__contact_details AS cn ON cn.id = a.contactid ';
 			$query = ' SELECT a.id, a.alias, a.dates, a.registra, a.featured, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.maxplaces, a.waitinglist, a.fulltext,'
 			       . ' a.introtext, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, '
 			       . ' l.venue, l.city, l.state, l.url, l.street, ct.name AS countryname, l.postalcode, '
@@ -464,7 +594,7 @@ class plgAcymailingTagjem extends JPlugin
 				continue;
 			}
 
-			$date = JEMOutput::formatLongDateTime($event->dates, $event->times,
+			$date = JemOutput::formatLongDateTime($event->dates, $event->times,
 			                                      $event->enddates, $event->endtimes);
 
 			$link = 'index.php?option=com_jem&view=event&id='.$event->id.':'.$event->alias;
@@ -472,15 +602,18 @@ class plgAcymailingTagjem extends JPlugin
 				$link .= '&Itemid='.$tag->itemid;
 			}
 			if (!empty($tag->autologin)) {
-				$link.= (strpos($link,'?') ? '&' : '?') . 'user={usertag:username|urlencode}&passw={usertag:password|urlencode}';
+				$link .= (strpos($link,'?') ? '&' : '?') . 'user={usertag:username|urlencode}&passw={usertag:password|urlencode}';
 			}
 			$link = acymailing_frontendLink($link);
 
+			if (!$showimages) {
+				$event->datimage = ''; // otherwise we have to adapt ALL templates, incl. user-made
+			}
 			/* on JEM 2 we have filename only, on JEM it already contains the path */
 			if (!empty($event->datimage)) {
 				$filename = basename($event->datimage);
 				$dirname = dirname($event->datimage);
-				if (empty($dirname) or $dirname == '.') { // JEM 2.x, fix path
+				if (empty($dirname) or $dirname === '.') { // JEM 2.x, fix path
 					$dirname = 'images/jem/events';
 				}
 				if (file_exists(ACYMAILING_ROOT . $dirname . '/small/' . $filename)) {
@@ -494,7 +627,7 @@ class plgAcymailingTagjem extends JPlugin
 
 			// Check if the template exists...
 			$template = '';
-			if (!empty($tag->template) ){
+			if (!empty($tag->template)) {
 				$template = '_'.$tag->template;
 			}
 
@@ -522,7 +655,7 @@ class plgAcymailingTagjem extends JPlugin
 				}
 				$result .= '</div>';
 			}
- 		}
+ 		} // foreach
 
 		// Resize images
 		if (!empty ($tag->images))
@@ -535,12 +668,19 @@ class plgAcymailingTagjem extends JPlugin
 				$options->maxHeight = max(intval($size[1]), 1);
 				$result = $this->_resizeImages($result, $options);
 			}
+			else if ($tag->images === 'resized')
+			{
+				$options = new stdClass();
+				$options->maxWidth = max((int)(isset($tag->imgwidth) ? $tag->imgwidth : $this->params->get('img_width', 160)), 1);
+				$options->maxHeight = max((int)(isset($tag->imgheight) ? $tag->imgheight : $this->params->get('img_height', 160)), 1);
+				$result = $this->_resizeImages($result, $options);
+			}
 		}
 
 		return $result;
 	}
 
-	function _replaceAuto(&$email)
+	protected function _replaceAuto(&$email)
 	{
 		$this->acymailing_generateautonews($email);
 
@@ -552,7 +692,7 @@ class plgAcymailingTagjem extends JPlugin
 		}
 	}
 
-	function acymailing_generateautonews(&$email)
+	public function acymailing_generateautonews(&$email)
 	{
 		$return = new stdClass();
 		$return->status = true;
@@ -619,12 +759,13 @@ class plgAcymailingTagjem extends JPlugin
 				}
 
 				$where[] = 'a.published = 1';
-				if ($this->params->get('showfeatured', 'yes') == 'yes') {
+				$features = !empty($parameter->features) ? $parameter->features : '0';
+				if ($features == '1') {
 					$where[] = 'a.featured = 1';
 				}
 
 				// Open dates, date limits
-				$opendates	= !empty($parameter->opendates) ? $parameter->opendates : 'no';
+				$opendates = !empty($parameter->opendates) ? $parameter->opendates : 'no';
 				switch ($opendates) {
 				case 'no': // don't show events without start date
 				default:
@@ -684,6 +825,12 @@ class plgAcymailingTagjem extends JPlugin
 							if (!empty($parameter->images)) {
 								$args[] = 'images:'.$parameter->images;
 							}
+							if (!empty($parameter->imgwidth)) {
+								$args[] = 'imgwidth:'.$parameter->imgwidth;
+							}
+							if (!empty($parameter->imgheight)) {
+								$args[] = 'imgheight:'.$parameter->imgheight;
+							}
 							if (!empty($parameter->template)) {
 								$args[] = 'template:'.$parameter->template;
 							}
@@ -707,7 +854,7 @@ class plgAcymailingTagjem extends JPlugin
 	 * @param $option size beyond which image have to be resized
 	 * ($options->maxWidth, $options->maxHeight)
 	 */
-	function _resizeImages($text, $options)
+	protected function _resizeImages($text, $options)
 	{
 		if (!empty($options->maxHeight) && !empty($options->maxWidth))
 		{
@@ -720,71 +867,6 @@ class plgAcymailingTagjem extends JPlugin
 		}
 
 		return $text;
-	}
-
-	/**
-	 * Show a form row displaying images resizing options
-	 * @param $tabname id of the class to display the row in
-	 * @param $cols number of columns in the table
-	 */
-	function _showResizeOptionsRow($tabname, $cols)
-	{
-		$resize = JRequest::getBool($tabname.'_resizeimages', false);
-		$width  = JRequest::getInt($tabname.'_imgwidth', 160);
-		$height = JRequest::getInt($tabname.'_imgheight', 160);
-
-		?>
-		<tr><td colspan="<?php echo $cols ?>">
-			<?php echo JText::_('PLG_TAGJEM_IMAGES') ?>:
-			<span class="resize-options">
-
-				<input name="<?php echo $tabname ?>_resizeimages" id="<?php echo $tabname ?>_resizeimages" type="checkbox" onclick="updateTag('<?php echo $tabname ?>');"
-					<?php if ($resize) echo 'checked="checked"' ?> />
-				<label for="<?php echo $tabname ?>_resizeimages"><?php echo JText::_('PLG_TAGJEM_RESIZE') ?></label>
-
-				<span class="imagesize">:
-					<?php echo JText::_('PLG_TAGJEM_WIDTH') ?>
-					<input type="text" name="<?php echo $tabname ?>_imgwidth" type="text" onchange="updateTag('<?php echo $tabname ?>');" style="width:30px;" value="<?php echo $width ?>" />
-					<?php echo JText::_('PLG_TAGJEM_HEIGHT') ?>
-					<input type="text" name="<?php echo $tabname ?>_imgheight" type="text" onchange="updateTag('<?php echo $tabname ?>');" style="width:30px;" value="<?php echo $height ?>" />
-				</span>
-			</span>
-		</td></tr>
-		<?php
-	}
-
-	/**
-	 * Load the script used for toggling images resize options
-	 */
-	function _initResizeOptionsScript()
-	{
-		?>
-		<script>
-		<!--
-			// Toggle image resize options
-			$$('.resize-options').each(function(item)
-			{
-				var widthHeight = item.getChildren()[2];
-
-				if (!item.getChildren('input')[0].getAttribute('checked'))
-				{
-					widthHeight.setStyle('display', 'none');
-				}
-				item.addEvent('change', function()
-				{
-					if (item.getChildren('input')[0].checked)
-					{
-						widthHeight.setStyle('display', 'inline');
-					}
-					else
-					{
-						widthHeight.setStyle('display', 'none');
-					}
-				});
-			});
-		//-->
-		</script>
-		<?php
 	}
 
 }//endclass

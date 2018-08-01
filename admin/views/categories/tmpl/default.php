@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.1.6
+ * @version     2.2.3
  * @package     JEM
- * @copyright   Copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -87,7 +87,7 @@ $saveOrder 	= ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 			<tfoot>
 				<tr>
 					<td colspan="15">
-						<?php echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks() : $this->pagination->getListFooter()); ?>
+						<?php echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null, array('showLimitBox' => true)) : $this->pagination->getListFooter()); ?>
 					</td>
 				</tr>
 			</tfoot>

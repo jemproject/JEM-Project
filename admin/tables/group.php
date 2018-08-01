@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -22,9 +22,11 @@ class JemTableGroup extends JTable
 		parent::__construct('#__jem_groups', 'id', $db);
 	}
 
-
-	// overloaded check function
-	function check()
+	/** overloaded check function
+	 *
+	 * @return boolean
+	 */
+	public function check()
 	{
 		// Not typed in a category name?
 		if (trim($this->name ) == '') {
@@ -41,7 +43,6 @@ class JemTableGroup extends JTable
 		return true;
 	}
 
-
 	/**
 	 * Overload the store method for the Venue table.
 	 *
@@ -51,7 +52,6 @@ class JemTableGroup extends JTable
 		return parent::store($updateNulls);
 	}
 
-
 	public function bind($array, $ignore = '')
 	{
 		// in here we are checking for the empty value of the checkbox
@@ -60,20 +60,17 @@ class JemTableGroup extends JTable
 		return parent::bind($array, $ignore);
 	}
 
-
 	/**
 	 * Method to set the publishing state for a row or list of rows in the database
 	 * table. The method respects checked out rows by other users and will attempt
 	 * to checkin rows that it can after adjustments are made.
 	 *
-	 * @param   mixed    $pks     An array of primary key values to update.  If not
-	 *                            set the instance property value is used. [optional]
-	 * @param   integer  $state   The publishing state. eg. [0 = unpublished, 1 = published] [optional]
-	 * @param   integer  $userId  The user id of the user performing the operation. [optional]
+	 * @param  mixed    $pks     An array of primary key values to update.  If not
+	 *                           set the instance property value is used. [optional]
+	 * @param  integer  $state   The publishing state. eg. [0 = unpublished, 1 = published] [optional]
+	 * @param  integer  $userId  The user id of the user performing the operation. [optional]
 	 *
-	 * @return  boolean  True on success.
-	 *
-	 *
+	 * @return boolean  True on success.
 	 */
 	function publish($pks = null, $state = 1, $userId = 0)
 	{

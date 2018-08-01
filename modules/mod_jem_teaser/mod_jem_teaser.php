@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.2
  * @package JEM
  * @subpackage JEM Teaser Module
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -17,7 +17,6 @@ require_once(dirname(__FILE__).'/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/image.class.php');
-require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
@@ -41,7 +40,7 @@ switch($params->get('color')) {
 $list = ModJemTeaserHelper::getList($params);
 
 // check if any results returned
-if (empty($list)) {
+if (empty($list) && !$params->get('show_no_events')) {
 	return;
 }
 

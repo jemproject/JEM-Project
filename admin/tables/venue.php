@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -13,20 +13,21 @@ defined('_JEXEC') or die;
  */
 class JemTableVenue extends JTable
 {
-
-	public function __construct(&$db) {
+	public function __construct(&$db)
+	{
 		parent::__construct('#__jem_venues', 'id', $db);
 	}
-
 
 	/**
 	 * Overloaded bind method for the Venue table.
 	 */
-	public function bind($array, $ignore = ''){
+	public function bind($array, $ignore = '')
+	{
 		// in here we are checking for the empty value of the checkbox
 
-		if (!isset($array['map']))
+		if (!isset($array['map'])) {
 			$array['map'] = 0 ;
+		}
 
 		//don't override without calling base class
 		return parent::bind($array, $ignore);
@@ -35,11 +36,11 @@ class JemTableVenue extends JTable
 	/**
 	 * overloaded check function
 	 */
-	function check(){
-
+	public function check()
+	{
 		$jinput = JFactory::getApplication()->input;
 
-		if (trim($this->venue) == ''){
+		if (trim($this->venue) == '') {
 			$this->setError(JText::_('COM_JEM_VENUE_ERROR_NAME'));
 			return false;
 		}
@@ -48,7 +49,7 @@ class JemTableVenue extends JTable
 		$this->alias = JemHelper::stringURLSafe($this->alias);
 		if (empty($this->alias)) {
 			$this->alias = JemHelper::stringURLSafe($this->venue);
-			if (trim(str_replace('-', '', $this->alias)) == ''){
+			if (trim(str_replace('-', '', $this->alias)) == '') {
 				$this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
 			}
 		}
@@ -70,7 +71,8 @@ class JemTableVenue extends JTable
 				return false;
 			}
 			if (!preg_match('/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}'
-					.'((:[0-9]{1,5})?\/.*)?$/i' , $this->url)) {
+			               .'((:[0-9]{1,5})?\/.*)?$/i' , $this->url))
+			{
 				$this->setError(JText::_('COM_JEM_VENUE_ERROR_URL_FORMAT'));
 				return false;
 			}
@@ -123,33 +125,32 @@ class JemTableVenue extends JTable
 		$jemsettings = JemHelper::config();
 
 		// Check if we're in the front or back
-		if ($app->isAdmin())
+		if ($app->isAdmin()) {
 			$backend = true;
-		else
+		} else {
 			$backend = false;
-
+		}
 
 		if ($this->id) {
-			// Existing event
+			// Existing venue
 			$this->modified = $date->toSql();
 			$this->modified_by = $userid;
-		}
-		else
-		{
-			// New event
-			if (!intval($this->created)){
+		} else {
+			// New venue
+			if (!intval($this->created)) {
 				$this->created = $date->toSql();
 			}
-			if (empty($this->created_by)){
+			if (empty($this->created_by)) {
 				$this->created_by = $userid;
 			}
 		}
 
-
 		// Check if image was selected
 		jimport('joomla.filesystem.file');
 		$image_dir = JPATH_SITE.'/images/jem/venues/';
-		$allowable = array ('gif', 'jpg', 'png');
+		$filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png';
+		$allowable = explode(',', strtolower($filetypes));
+		array_walk($allowable, function(&$v){$v = trim($v);});
 		$image_to_delete = false;
 
 		// get image (frontend) - allow "removal on save" (Hoffi, 2014-06-07)
@@ -157,6 +158,7 @@ class JemTableVenue extends JTable
 			if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1)) {
 				$file = $jinput->files->get('userfile', array(), 'array');
 				$removeimage = $jinput->getInt('removeimage', 0);
+				$locimage = $jinput->getCmd('locimage', '');
 
 				if (empty($file)) {
 					$file2 = $jinput->files->get('jform', array(), 'array');
@@ -167,11 +169,11 @@ class JemTableVenue extends JTable
 
 				if (!empty($file['name'])) {
 					//check the image
-					$check = JEMImage::check($file, $jemsettings);
+					$check = JemImage::check($file, $jemsettings);
 
 					if ($check !== false) {
 						//sanitize the image filename
-						$filename = JEMImage::sanitize($image_dir, $file['name']);
+						$filename = JemImage::sanitize($image_dir, $file['name']);
 						$filepath = $image_dir . $filename;
 
 						if (JFile::upload($file['tmp_name'], $filepath)) {
@@ -184,6 +186,12 @@ class JemTableVenue extends JTable
 					// (file will be deleted later (e.g. housekeeping) if unused)
 					$image_to_delete = $this->locimage;
 					$this->locimage = '';
+				} elseif (!$this->id && is_null($this->locimage) && !empty($locimage)) {
+					// venue is a copy so copy locimage too
+					if (JFile::exists($image_dir . $locimage)) {
+						// if it's already within image folder it's safe
+						$this->locimage = $locimage;
+					}
 				}
 			} // end image if
 		} // if (!backend)
@@ -195,7 +203,7 @@ class JemTableVenue extends JTable
 		}
 
 		if (!$backend) {
-			/* check if the user has the required rank for autopublish new venues */
+			// check if the user has the required rank to publish this venue
 			if (!$this->id && !$user->can('publish', 'venue', $this->id, $this->created_by)) {
 				$this->published = 0;
 			}
@@ -210,20 +218,19 @@ class JemTableVenue extends JTable
 		return $ret;
 	}
 
-
 	/**
 	 * try to insert first, update if fails
 	 *
 	 * Can be overloaded/supplemented by the child class
 	 *
 	 * @access public
-	 * @param boolean If false, null object variables are not updated
+	 * @param  boolean If false, null object variables are not updated
 	 * @return null|string null if successful otherwise returns and error message
 	 */
-	function insertIgnore($updateNulls=false)
+	public function insertIgnore($updateNulls = false)
 	{
 		$ret = $this->_insertIgnoreObject($this->_tbl, $this, $this->_tbl_key);
-		if(!$ret) {
+		if (!$ret) {
 			$this->setError(get_class($this).'::store failed - '.$this->_db->getErrorMsg());
 			return false;
 		}
@@ -234,15 +241,16 @@ class JemTableVenue extends JTable
 	 * Inserts a row into a table based on an objects properties, ignore if already exists
 	 *
 	 * @access protected
-	 * @param string  The name of the table
-	 * @param object  An object whose properties match table fields
-	 * @param string  The name of the primary key. If provided the object property is updated.
+	 * @param  string  The name of the table
+	 * @param  object  An object whose properties match table fields
+	 * @param  string  The name of the primary key. If provided the object property is updated.
 	 * @return int number of affected row
 	 */
 	protected function _insertIgnoreObject($table, &$object, $keyName = NULL)
 	{
 		$fmtsql = 'INSERT IGNORE INTO '.$this->_db->quoteName($table).' (%s) VALUES (%s) ';
 		$fields = array();
+
 		foreach (get_object_vars($object) as $k => $v) {
 			if (is_array($v) or is_object($v) or $v === NULL) {
 				continue;
@@ -253,6 +261,7 @@ class JemTableVenue extends JTable
 			$fields[] = $this->_db->quoteName($k);
 			$values[] = $this->_db->quote($v);
 		}
+
 		$this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
 		if ($this->_db->execute() === false) {
 			return false;
@@ -261,6 +270,7 @@ class JemTableVenue extends JTable
 		if ($keyName && $id) {
 			$object->$keyName = $id;
 		}
+
 		return $this->_db->getAffectedRows();
 	}
 
@@ -269,14 +279,14 @@ class JemTableVenue extends JTable
 	 * table. The method respects checked out rows by other users and will attempt
 	 * to checkin rows that it can after adjustments are made.
 	 *
-	 * @param   mixed    $pks     An array of primary key values to update.  If not
-	 *                            set the instance property value is used. [optional]
-	 * @param   integer  $state   The publishing state. eg. [0 = unpublished, 1 = published] [optional]
-	 * @param   integer  $userId  The user id of the user performing the operation. [optional]
+	 * @param  mixed    $pks     An array of primary key values to update. If not set
+	 *                           the instance property value is used. [optional]
+	 * @param  integer  $state   The publishing state. eg. [0 = unpublished, 1 = published] [optional]
+	 * @param  integer  $userId  The user id of the user performing the operation. [optional]
 	 *
-	 * @return  boolean  True on success.
+	 * @return boolean  True on success.
 	 */
-	function publish($pks = null, $state = 1, $userId = 0)
+	public function publish($pks = null, $state = 1, $userId = 0)
 	{
 		// Initialise variables.
 		$k = $this->_tbl_key;

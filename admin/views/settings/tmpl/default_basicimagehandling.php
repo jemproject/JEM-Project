@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -16,6 +16,8 @@ $gdv = JEMImage::gdVersion();
 	<fieldset class="adminform">
 		<legend><?php echo JText::_( 'COM_JEM_IMAGE_HANDLING' ); ?></legend>
 		<ul class="adminformlist">
+			<li><?php echo $this->form->getLabel('image_filetypes'); ?> <?php echo $this->form->getInput('image_filetypes'); ?></li>
+
 			<li><?php echo $this->form->getLabel('sizelimit'); ?> <?php echo $this->form->getInput('sizelimit'); ?></li>
 
 			<li><?php echo $this->form->getLabel('imagehight'); ?> <?php echo $this->form->getInput('imagehight'); ?></li>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -24,21 +24,28 @@ class JemModelSearch extends JModelLegacy
 	 *
 	 * @var array
 	 */
-	var $_data = null;
+	protected $_data = null;
 
-	var $_total = null;
+	/**
+	 * Events total count
+	 *
+	 * @var integer
+	 */
+	protected $_total = null;
 
 	/**
 	 * Pagination object
 	 *
 	 * @var object
 	 */
-	var $_pagination = null;
+	protected $_pagination = null;
 
 	/**
 	 * the query
+	 *
+	 * @var string
 	 */
-	var $_query = null;
+	protected $_query = null;
 
 	/**
 	 * Constructor
@@ -52,8 +59,8 @@ class JemModelSearch extends JModelLegacy
 		$jemsettings = JemHelper::config();
 
 		//get the number of events from database
-		$limit		= $app->getUserStateFromRequest('com_jem.search.limit', 'limit', $jemsettings->display_num, 'int');
-		$limitstart	= $app->input->getInt('limitstart', 0);
+		$limit      = $app->getUserStateFromRequest('com_jem.search.limit', 'limit', $jemsettings->display_num, 'int');
+		$limitstart = $app->input->getInt('limitstart', 0);
 		// correct start value if required
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
 
@@ -79,9 +86,9 @@ class JemModelSearch extends JModelLegacy
 	 * @access public
 	 * @return array
 	 */
-	function &getData()
+	public function getData()
 	{
-		$pop	= JFactory::getApplication()->input->getBool('pop', false);
+		$pop = JFactory::getApplication()->input->getBool('pop', false);
 
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_data)) {
@@ -113,7 +120,7 @@ class JemModelSearch extends JModelLegacy
 	 * @access public
 	 * @return integer
 	 */
-	function getPagination()
+	public function getPagination()
 	{
 		// Lets load the content if it doesn't already exist
 		if (empty($this->_pagination)) {
@@ -134,30 +141,30 @@ class JemModelSearch extends JModelLegacy
 	{
 		if (empty($this->_query)) {
 			# Get the WHERE and ORDER BY clauses for the query
-			$where		= $this->_buildWhere();
-			$orderby	= $this->_buildOrderBy();
+			$where   = $this->_buildWhere();
+			$orderby = $this->_buildOrderBy();
 
 			# Get Events from Database
 			$this->_query = 'SELECT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.created_by, a.created_by_alias, a.locid, a.published, a.access,'
-					. ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
-					. ' a.alias, a.attribs, a.checked_out ,a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.language, a.version,'
-					. ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
-					. ' a.introtext, a.fulltext, a.registra, a.unregistra, a.maxplaces, a.waitinglist, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by,'
-					. ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'
-					. ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
-					. ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
-					. ' l.locdescription, l.locimage, l.latitude, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
-					. ' l.publish_up AS l_publish_up, l.publish_down AS l_publish_down, l.version AS l_version,'
-					. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
-					. ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
-					. ' FROM #__jem_events AS a'
-					. ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
-					. ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
-					. ' LEFT JOIN #__jem_countries AS c ON c.iso2 = l.country'
-					. $where
-					. ' GROUP BY a.id '
-					. $orderby
-					;
+			              . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
+			              . ' a.alias, a.attribs, a.checked_out ,a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.language, a.version,'
+			              . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
+			              . ' a.introtext, a.fulltext, a.registra, a.unregistra, a.maxplaces, a.waitinglist, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by,'
+			              . ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'
+			              . ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
+			              . ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
+			              . ' l.locdescription, l.locimage, l.latitude, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
+			              . ' l.publish_up AS l_publish_up, l.publish_down AS l_publish_down, l.version AS l_version,'
+			              . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
+			              . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
+			              . ' FROM #__jem_events AS a'
+			              . ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
+			              . ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+			              . ' LEFT JOIN #__jem_countries AS c ON c.iso2 = l.country'
+			              . $where
+			              . ' GROUP BY a.id '
+			              . $orderby
+			              ;
 		}
 
 		return $this->_query;
@@ -174,12 +181,12 @@ class JemModelSearch extends JModelLegacy
 		$app  = JFactory::getApplication();
 		$task = $app->input->getCmd('task', '');
 
-		$filter_order		= $this->getState('filter_order');
-		$filter_order_Dir	= $this->getState('filter_order_Dir');
-		$default_order_Dir	= ($task == 'archive') ? 'DESC' : 'ASC';
+		$filter_order      = $this->getState('filter_order');
+		$filter_order_Dir  = $this->getState('filter_order_Dir');
+		$default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
 
-		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		$filter_order      = JFilterInput::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir  = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
 		if ($filter_order == 'a.dates') {
 			$orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir
@@ -239,9 +246,9 @@ class JemModelSearch extends JModelLegacy
 
 		if ($filter) {
 			// clean filter variables
-			$filter 		= JString::strtolower($filter);
-			$filter			= $this->_db->Quote('%'.$this->_db->escape($filter, true).'%', false);
-			$filter_type 	= JString::strtolower($filter_type);
+			$filter      = JString::strtolower($filter);
+			$filter      = $this->_db->Quote('%'.$this->_db->escape($filter, true).'%', false);
+			$filter_type = JString::strtolower($filter_type);
 
 			switch ($filter_type) {
 				case 'title' :
@@ -301,7 +308,7 @@ class JemModelSearch extends JModelLegacy
 		return $where;
 	}
 
-	function getTotal()
+	public function getTotal()
 	{
 		// Lets load the total nr if it doesn't already exist
 		if (empty($this->_total))
@@ -312,38 +319,37 @@ class JemModelSearch extends JModelLegacy
 		return $this->_total;
 	}
 
-	function getCategories($id)
+	public function getCategories($id)
 	{
 		$user = JemFactory::getUser();
 		// Support Joomla access levels instead of single group id
 		$levels = $user->getAuthorisedViewLevels();
 
 		$query = 'SELECT c.id, c.catname, c.access, c.lft, c.checked_out AS cchecked_out,'
-				. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
-				. ' FROM #__jem_categories AS c'
-				. ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-				. ' WHERE rel.itemid = '.(int)$id
-				. ' AND c.published = 1'
-				. ' AND c.access IN (' . implode(',', $levels) . ')'
-				;
+		       . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END as catslug'
+		       . ' FROM #__jem_categories AS c'
+		       . ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
+		       . ' WHERE rel.itemid = '.(int)$id
+		       . ' AND c.published = 1'
+		       . ' AND c.access IN (' . implode(',', $levels) . ')'
+		       ;
 
 		$this->_db->setQuery($query);
-		$this->_cats = $this->_db->loadObjectList();
 
-		return $this->_cats;
+		return $this->_db->loadObjectList();
 	}
 
-	function getCountryOptions()
+	public function getCountryOptions()
 	{
 		$app = JFactory::getApplication();
 
 		$filter_continent = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
 
 		$query = ' SELECT c.iso2 as value, c.name as text '
-			  . ' FROM #__jem_events AS a'
-			  . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
-			  . ' INNER JOIN #__jem_countries as c ON c.iso2 = l.country '
-			;
+		       . ' FROM #__jem_events AS a'
+		       . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
+		       . ' INNER JOIN #__jem_countries as c ON c.iso2 = l.country '
+		       ;
 
 		if ($filter_continent) {
 			$query .= ' WHERE c.continent = ' . $this->_db->Quote($filter_continent);
@@ -355,22 +361,21 @@ class JemModelSearch extends JModelLegacy
 		return $this->_db->loadObjectList();
 	}
 
-	function getCityOptions()
+	public function getCityOptions()
 	{
 		if (!$country = JFactory::getApplication()->input->getString('filter_country', '')) {
 			return array();
 		}
 		$query = ' SELECT DISTINCT l.city as value, l.city as text '
-			   . ' FROM #__jem_events AS a'
-			   . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
-			   . ' INNER JOIN #__jem_countries as c ON c.iso2 = l.country '
-			   . ' WHERE l.country = ' . $this->_db->Quote($country)
-			   . ' ORDER BY l.city ';
+		       . ' FROM #__jem_events AS a'
+		       . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
+		       . ' INNER JOIN #__jem_countries as c ON c.iso2 = l.country '
+		       . ' WHERE l.country = ' . $this->_db->Quote($country)
+		       . ' ORDER BY l.city ';
 
 		$this->_db->setQuery($query);
 		return $this->_db->loadObjectList();
 	}
-
 
 	/**
 	 * logic to get the categories
@@ -378,7 +383,7 @@ class JemModelSearch extends JModelLegacy
 	 * @access public
 	 * @return void
 	 */
-	function getCategoryTree()
+	public function getCategoryTree()
 	{
 		$app = JFactory::getApplication();
 		$db = JFactory::getDBO();
@@ -396,10 +401,10 @@ class JemModelSearch extends JModelLegacy
 		//get the maintained categories and the categories whithout any group
 		//or just get all if somebody have edit rights
 		$query = 'SELECT c.*'
-			. ' FROM #__jem_categories AS c'
-			. $where
-			. ' ORDER BY c.lft'
-			;
+		       . ' FROM #__jem_categories AS c'
+		       . $where
+		       . ' ORDER BY c.lft'
+		       ;
 		$db->setQuery($query);
 		$mitems = $db->loadObjectList();
 

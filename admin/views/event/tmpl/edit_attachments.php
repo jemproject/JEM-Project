@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -36,8 +36,11 @@ defined ('_JEXEC') or die;
 					<?php echo JHtml::_('select.genericlist', $this->access, 'attached-access[]', array('class'=>'inputbox','size'=>'7'), 'value', 'text', $file->access); ?>
 				</div>
 			</td>
-			<td>
-				<?php echo JHtml::_('image','com_jem/publish_r.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.JSession::getFormToken(), 'class' => 'attach-remove', 'title'=>JText::_('COM_JEM_REMOVE_ATTACHEMENT')), true); ?>
+			<td class="center">
+				<div>
+					<div class="title"><?php echo JText::_('COM_JEM_ATTACHMENT_REMOVE'); ?></div>
+					<?php echo JHtml::_('image','com_jem/publish_r.png', JText::_('COM_JEM_REMOVE_ATTACHEMENT'), array('id' => 'attach-remove'.$file->id.':'.JSession::getFormToken(), 'class' => 'attach-remove', 'title'=>JText::_('COM_JEM_REMOVE_ATTACHEMENT')), true); ?>
+				</div>
 			</td>
 		</tr>
 		<?php endforeach; ?>

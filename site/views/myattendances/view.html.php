@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -17,11 +17,10 @@ class JemViewMyattendances extends JViewLegacy
 	/**
 	 * Creates the Myattendances View
 	 */
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
-
 		// initialize variables
+		$app         = JFactory::getApplication();
 		$document    = JFactory::getDocument();
 		$jemsettings = JemHelper::config();
 		$settings    = JemHelper::globalattribs();

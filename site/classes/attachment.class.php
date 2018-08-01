@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -25,10 +25,10 @@ class JemAttachment extends JObject
 	/**
 	 * upload files for the specified object
 	 *
-	 * @param array data from JInput 'files'
-	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
+	 * @param  array  data from JInputFiles (as array of n arrays of params, [n][params])
+	 * @param  string object identification (should be event<eventid>, category<categoryid>, etc...)
 	 */
-	static function postUpload($post_files, $object)
+	static public function postUpload($post_files, $object)
 	{
 		require_once JPATH_SITE.'/components/com_jem/classes/image.class.php';
 
@@ -48,8 +48,9 @@ class JemAttachment extends JObject
 
 		$maxsizeinput = $jemsettings->attachments_maxsize*1024; //size in kb
 
-		foreach ($post_files['name'] as $k => $file)
+		foreach ($post_files as $k => $rec)
 		{
+			$file = array_key_exists('name', $rec) ? $rec['name'] : '';
 			if (empty($file)) {
 				continue;
 			}
@@ -61,8 +62,8 @@ class JemAttachment extends JObject
 				continue;
 			}
 			// check size
-			if ($post_files['size'][$k] > $maxsizeinput) {
-				JError::raiseWarning(0, JText::sprintf('COM_JEM_ERROR_ATTACHEMENT_FILE_TOO_BIG', $file, $post_files['size'][$k], $maxsizeinput));
+			if ($rec['size'] > $maxsizeinput) {
+				JError::raiseWarning(0, JText::sprintf('COM_JEM_ERROR_ATTACHEMENT_FILE_TOO_BIG', $file, $rec['size'], $maxsizeinput));
 				continue;
 			}
 
@@ -84,41 +85,41 @@ class JemAttachment extends JObject
 			// Since Joomla! 3.4.0 JFile::upload has some more params to control new security parsing
 			// Unfortunately this parsing is partially stupid so it may reject archives for non-understandable reason.
 			if (version_compare(JVERSION, '3.4', 'lt')) {
-				JFile::upload($post_files['tmp_name'][$k], $filepath);
+				JFile::upload($rec['tmp_name'], $filepath);
 			} else {
 				// switch off parsing archives for byte sequences looking like a script file extension
 				// but keep all other checks running
-				JFile::upload($post_files['tmp_name'][$k], $filepath, false, false, array('fobidden_ext_in_content' => false));
+				JFile::upload($rec['tmp_name'], $filepath, false, false, array('fobidden_ext_in_content' => false));
 			}
 
 			$table = JTable::getInstance('jem_attachments', '');
 			$table->file = $sanitizedFilename;
 			$table->object = $object;
-			if (isset($post_files['customname'][$k]) && !empty($post_files['customname'][$k])) {
-				$table->name = $post_files['customname'][$k];
+			if (isset($rec['customname']) && !empty($rec['customname'])) {
+				$table->name = $rec['customname'];
 			}
-			if (isset($post_files['description'][$k]) && !empty($post_files['description'][$k])) {
-				$table->description = $post_files['description'][$k];
+			if (isset($rec['description']) && !empty($rec['description'])) {
+				$table->description = $rec['description'];
 			}
-			if (isset($post_files['access'][$k])) {
-				$table->access = intval($post_files['access'][$k]);
+			if (isset($rec['access'])) {
+				$table->access = intval($rec['access']);
 			}
 			$table->added = strftime('%F %T');
 			$table->added_by = $user->get('id');
 
 			if (!($table->check() && $table->store())) {
-				JError::raiseWarning(0, JText::_('COM_JEM_ATTACHMENT_ERROR_SAVING_TO_DB').': '.$table->getError());
+				JError::raiseWarning(0, JText::_('COM_JEM_ERROR_ATTACHMENT_SAVING_TO_DB').': '.$table->getError());
 			}
-		}
+		} // foreach
 
 		return true;
 	}
 
 	/**
 	 * update attachment record in db
-	 * @param array (id, name, description, access)
+	 * @param  array (id, name, description, access)
 	 */
-	static function update($attach)
+	static public function update($attach)
 	{
 		if (!is_array($attach) || !isset($attach['id']) || !(intval($attach['id']))) {
 			return false;
@@ -129,7 +130,7 @@ class JemAttachment extends JObject
 		$table->bind($attach);
 
 		if (!($table->check() && $table->store())) {
-			JError::raiseWarning(0, JText::_('COM_JEM_ATTACHMENT_ERROR_UPDATING_RECORD').': '.$table->getError());
+			JError::raiseWarning(0, JText::_('COM_JEM_ERROR_ATTACHMENT_UPDATING_RECORD').': '.$table->getError());
 			return false;
 		}
 
@@ -138,16 +139,12 @@ class JemAttachment extends JObject
 
 	/**
 	 * return attachments for objects
-	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
+	 * @param  string object identification (should be event<eventid>, category<categoryid>, etc...)
 	 * @return array
 	 */
-	static function getAttachments($object)
+	static public function getAttachments($object)
 	{
 		$jemsettings = JemHelper::config();
-
-		$user = JemFactory::getUser();
-		// Support Joomla access levels instead of single group id
-		$levels = $user->getAuthorisedViewLevels();
 
 		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$object;
 
@@ -169,12 +166,21 @@ class JemAttachment extends JObject
 			return array();
 		}
 
-		$query = ' SELECT * '
-			   . ' FROM #__jem_attachments '
-			   . ' WHERE file IN ('. implode(',', $fnames) .')'
-			   . '   AND object = '. $db->Quote($object);
-		$query .= ' AND access IN (' . implode(',', $levels) . ')';
-		$query .= ' ORDER BY ordering ASC ';
+		// Check access level if not a Super User on Backend.
+		$user = JemFactory::getUser();
+		if (JFactory::getApplication()->isAdmin() && $user->authorise('core.manage')) {
+			$qAccess = '';
+		} else {
+			$levels = $user->getAuthorisedViewLevels();
+			$qAccess = '   AND access IN (' . implode(',', $levels) . ')';
+		}
+
+		$query = 'SELECT * '
+		       . ' FROM #__jem_attachments '
+		       . ' WHERE file IN ('. implode(',', $fnames) .')'
+		       . '   AND object = '. $db->Quote($object)
+		       . $qAccess
+		       . ' ORDER BY ordering ASC ';
 
 		$db->setQuery($query);
 		$res = $db->loadObjectList();
@@ -185,9 +191,9 @@ class JemAttachment extends JObject
 	/**
 	 * get the file
 	 *
-	 * @param int $id
+	 * @param  int $id
 	 */
-	static function getAttachmentPath($id)
+	static public function getAttachmentPath($id)
 	{
 		$jemsettings = JemHelper::config();
 
@@ -196,17 +202,19 @@ class JemAttachment extends JObject
 		$levels = $user->getAuthorisedViewLevels();
 
 		$db = JFactory::getDBO();
-		$query = ' SELECT * '
-			   . ' FROM #__jem_attachments '
-			   . ' WHERE id = '. $db->Quote(intval($id));
+		$query = 'SELECT * '
+		       . ' FROM #__jem_attachments '
+		       . ' WHERE id = '. $db->Quote(intval($id));
+
 		$db->setQuery($query);
 		$res = $db->loadObject();
+
 		if (!$res) {
-			JError::raiseError(404, JText::_('COM_JEM_FILE_UNKNOWN'));
+			JError::raiseError(404, JText::_('COM_JEM_FILE_NOT_FOUND'));
 		}
 
 		if (!in_array($res->access, $levels)) {
-			JError::raiseError(403, JText::_('COM_JEM_YOU_DONT_HAVE_ACCESS_TO_THIS_FILE'));
+			JError::raiseError(403, JText::_('COM_JEM_NO_ACCESS'));
 		}
 
 		$path = JPATH_SITE.'/'.$jemsettings->attachments_path.'/'.$res->object.'/'.$res->file;
@@ -220,11 +228,11 @@ class JemAttachment extends JObject
 	/**
 	 * remove attachment for objects
 	 *
-	 * @param id from db
-	 * @param string object identification (should be event<eventid>, category<categoryid>, etc...)
+	 * @param  id from db
+	 * @param  string object identification (should be event<eventid>, category<categoryid>, etc...)
 	 * @return boolean
 	 */
-	static function remove($id)
+	static public function remove($id)
 	{
 		$jemsettings = JemHelper::config();
 
@@ -236,9 +244,10 @@ class JemAttachment extends JObject
 		// then get info for files from db
 		$db = JFactory::getDBO();
 
-		$query = ' SELECT file, object, added_by '
-			   . ' FROM #__jem_attachments '
-			   . ' WHERE id = ' . $db->Quote($id) . ' AND access IN (0,' . implode(',', $levels) . ')';
+		$query = 'SELECT file, object, added_by '
+		       . ' FROM #__jem_attachments '
+		       . ' WHERE id = ' . $db->Quote($id) . ' AND access IN (0,' . implode(',', $levels) . ')';
+
 		$db->setQuery($query);
 		$res = $db->loadObject();
 
@@ -259,8 +268,9 @@ class JemAttachment extends JObject
 			} else {
 				return false;
 			}
+
 			// get item owner
-			$query = ' SELECT created_by FROM ' . $table . ' WHERE id = ' . $db->Quote($itemid);
+			$query = 'SELECT created_by FROM ' . $table . ' WHERE id = ' . $db->Quote($itemid);
 			$db->setQuery($query);
 			$created_by = $db->loadResult();
 
@@ -276,10 +286,12 @@ class JemAttachment extends JObject
 			JFile::delete($path);
 		}
 
-		$query = ' DELETE FROM #__jem_attachments '
-			   . ' WHERE id = '. $db->Quote($id);
+		$query = 'DELETE FROM #__jem_attachments '
+		       . ' WHERE id = '. $db->Quote($id);
+
 		$db->setQuery($query);
 		$res = $db->execute();
+
 		if (!$res) {
 			return false;
 		}

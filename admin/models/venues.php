@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -19,8 +19,8 @@ class JemModelVenues extends JModelList
 	/**
 	 * Constructor.
 	 *
-	 * @param	array	An optional associative array of configuration settings.
-	 * @see		JController
+	 * @param  array An optional associative array of configuration settings.
+	 * @see    JController
 	 */
 	public function __construct($config = array())
 	{
@@ -47,7 +47,7 @@ class JemModelVenues extends JModelList
 	/**
 	 * Method to auto-populate the model state.
 	 *
-	 * Note. Calling getState in this method will result in recursion.
+	 * @Note Calling getState in this method will result in recursion.
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
@@ -73,15 +73,15 @@ class JemModelVenues extends JModelList
 	 * different modules that might need different sets of data or different
 	 * ordering requirements.
 	 *
-	 * @param	string		$id	A prefix for the store id.
-	 * @return	string		A store id.
+	 * @param  string $id A prefix for the store id.
+	 * @return string A store id.
 	 */
 	protected function getStoreId($id = '')
 	{
 		// Compile the store id.
-		$id.= ':' . $this->getState('filter_search');
-		$id.= ':' . $this->getState('filter_published');
-		$id.= ':' . $this->getState('filter_type');
+		$id .= ':' . $this->getState('filter_search');
+		$id .= ':' . $this->getState('filter_published');
+		$id .= ':' . $this->getState('filter_type');
 
 		return parent::getStoreId($id);
 	}
@@ -89,13 +89,13 @@ class JemModelVenues extends JModelList
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @return	JDatabaseQuery
+	 * @return JDatabaseQuery
 	 */
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db		= $this->getDbo();
-		$query	= $db->getQuery(true);
+		$db    = $this->getDbo();
+		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
 		$query->select(

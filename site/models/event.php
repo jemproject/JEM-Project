@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,7 +15,6 @@ jimport('joomla.application.component.modelitem');
  */
 class JemModelEvent extends JModelItem
 {
-
 	/**
 	 * Model context string.
 	 *
@@ -23,7 +22,7 @@ class JemModelEvent extends JModelItem
 	 */
 	protected $_context = 'com_jem.event';
 
-	var $_registers = null;
+	protected $_registers = null;
 
 	/**
 	 * Method to auto-populate the model state.
@@ -51,10 +50,10 @@ class JemModelEvent extends JModelItem
 	/**
 	 * Method to get event data.
 	 *
-	 * @param integer	The id of the event.
-	 * @return mixed item data object on success, false on failure.
+	 * @param  int  The id of the event.
+	 * @return mixed  item data object on success, false on failure.
 	 */
-	public function &getItem($pk = null)
+	public function getItem($pk = null)
 	{
 		// Initialise variables.
 		$pk = (!empty($pk)) ? $pk : (int) $this->getState('event.id');
@@ -226,8 +225,8 @@ class JemModelEvent extends JModelItem
 	/**
 	 * Increment the hit counter for the event.
 	 *
-	 * @param int		Optional primary key of the event to increment.
-	 * @return boolean if successful; false otherwise and internal error set.
+	 * @param  int  Optional primary key of the event to increment.
+	 * @return boolean  if successful; false otherwise and internal error set.
 	 */
 	public function hit($pk = 0)
 	{
@@ -255,32 +254,29 @@ class JemModelEvent extends JModelItem
 		return true;
 	}
 
-
 	/**
 	 * Retrieve Categories
 	 *
 	 * Due to multi-cat this function is needed
 	 * filter-index (4) is pointing to the cats
 	 */
-
-	function getCategories($id = 0)
+	public function getCategories($id = 0)
 	{
-
 		$id = (!empty($id)) ? $id : (int) $this->getState('event.id');
 
-		$user 			= JemFactory::getUser();
-	//	$userid			= (int) $user->get('id');
-		$levels 		= $user->getAuthorisedViewLevels();
-	//	$app 			= JFactory::getApplication();
-	//	$params 		= $app->getParams();
-	//	$catswitch 		= $params->get('categoryswitch', '0');
-		$settings 		= JemHelper::globalattribs();
+		$user      = JemFactory::getUser();
+	//	$userid    = (int)$user->get('id');
+		$levels    = $user->getAuthorisedViewLevels();
+	//	$app       = JFactory::getApplication();
+	//	$params    = $app->getParams();
+	//	$catswitch = $params->get('categoryswitch', '0');
+		$settings  = JemHelper::globalattribs();
 
 		// Query
-		$db 	= JFactory::getDBO();
+		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
 
-		$case_when_c = ' CASE WHEN ';
+		$case_when_c  = ' CASE WHEN ';
 		$case_when_c .= $query->charLength('c.alias');
 		$case_when_c .= ' THEN ';
 		$id_c = $query->castAsChar('c.id');
@@ -301,14 +297,12 @@ class JemModelEvent extends JModelItem
 
 		$query->where('c.published = 1');
 
-
 		###################################
 		## FILTER - MAINTAINER/JEM GROUP ##
 		###################################
 
 		# as maintainter someone who is registered can see a category that has special rights
 		# let's see if the user has access to this category.
-
 
 	//	$query3	= $db->getQuery(true);
 	//	$query3 = 'SELECT gr.id'
@@ -328,7 +322,6 @@ class JemModelEvent extends JModelItem
 	//	} else {
 			$query->where('(c.access IN ('.$groups.'))');
 	//	}
-
 
 		#######################
 		## FILTER - CATEGORY ##
@@ -409,7 +402,7 @@ class JemModelEvent extends JModelItem
 	 *               status -1 if not attending, 0 if invited,
 	 *               1 if attending, 2 if on waiting list
 	 */
-	function getUserRegistration($eventId = null, $userid = 0)
+	public function getUserRegistration($eventId = null, $userid = 0)
 	{
 		// Initialize variables
 		$userid = (int)$userid;
@@ -447,9 +440,8 @@ class JemModelEvent extends JModelItem
 	 * @access public
 	 * @return mixed false if not registered, -1 if not attending,
 	 *               0 if invited, 1 if attending, 2 if on waiting list
-	 *
 	 */
-	function getUserIsRegistered($eventId = null)
+	public function getUserIsRegistered($eventId = null)
 	{
 		$obj = $this->getUserRegistration($eventId);
 		if (is_object($obj) && isset($obj->status)) {
@@ -464,9 +456,8 @@ class JemModelEvent extends JModelItem
 	 *
 	 * @access public
 	 * @return object
-	 *
 	 */
-	function getRegisters($event = false, $status = 1)
+	public function getRegisters($event = false, $status = 1)
 	{
 		if (empty($event)) {
 			return false;
@@ -522,11 +513,11 @@ class JemModelEvent extends JModelItem
 		// Get registered users
 		$query = $db->getQuery(true);
 		$query = 'SELECT IF(r.status = 1 AND r.waiting = 1, 2, r.status) as status, '
-				. $name . ' AS name, r.uid' . $avatar
-				. ' FROM #__jem_register AS r'
-				. ' LEFT JOIN #__users AS u ON u.id = r.uid'
-				. $join
-				. ' WHERE ' . implode(' AND ', $where);
+		       . $name . ' AS name, r.uid' . $avatar
+		       . ' FROM #__jem_register AS r'
+		       . ' LEFT JOIN #__users AS u ON u.id = r.uid'
+		       . $join
+		       . ' WHERE ' . implode(' AND ', $where);
 		$db->setQuery($query);
 
 		try {
@@ -539,8 +530,7 @@ class JemModelEvent extends JModelItem
 		return $registered;
 	}
 
-
-	function setId($id)
+	public function setId($id)
 	{
 		// Set new event ID and wipe data
 		$this->_registerid = $id;
@@ -561,7 +551,6 @@ class JemModelEvent extends JModelItem
 	 *
 	 * @access protected
 	 * @return int register id on success, else false
-	 *
 	 */
 	protected function _doRegister($eventId, $uid, $uip, $status, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
 	{
@@ -645,9 +634,8 @@ class JemModelEvent extends JModelItem
 	 *
 	 * @access public
 	 * @return int register id on success, else false
-	 *
 	 */
-	function userregister()
+	public function userregister()
 	{
 		$app = JFactory::getApplication('site');
 		$user = JemFactory::getUser();
@@ -696,9 +684,8 @@ class JemModelEvent extends JModelItem
 	 *
 	 * @access public
 	 * @return int register id on success, else false
-	 *
 	 */
-	function adduser($eventId, $uid, $status, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
+	public function adduser($eventId, $uid, $status, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
 	{
 	//	$app = JFactory::getApplication('site');
 		$user = JemFactory::getUser();
@@ -723,14 +710,12 @@ class JemModelEvent extends JModelItem
 	 *
 	 * @access public
 	 * @return true on success
-	 *
 	 */
-	function delreguser()
+	public function delreguser()
 	{
-		$user = JemFactory::getUser();
-
-		$event  = (int)$this->_registerid;
+		$user   = JemFactory::getUser();
 		$userid = (int)$user->get('id');
+		$event  = (int)$this->_registerid;
 
 		// Must be logged in
 		if ($userid < 1) {

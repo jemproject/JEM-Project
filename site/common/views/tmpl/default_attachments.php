@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -10,12 +10,12 @@
 defined('_JEXEC') or die;
 ?>
 
-<?php if ($this->attachments && count($this->attachments)):?>
+<?php if (isset($this->attachments) && is_array($this->attachments) && (count($this->attachments) > 0)) : ?>
 <div class="files">
 <h2 class="description"><?php echo JText::_('COM_JEM_FILES'); ?></h2>
 <table class="file">
 	<tbody>
-	<?php foreach ($this->attachments as $file): ?>
+	<?php foreach ($this->attachments as $file) : ?>
 		<tr>
 			<td>
 				<?php

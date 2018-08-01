@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -16,10 +16,10 @@ class JemViewEventslist extends JViewLegacy
 	/**
 	 * Creates the output for the Eventslist view
 	 */
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
-		$settings 	= JemHelper::config();
-		$settings2	= JemHelper::globalattribs();
+		$settings  = JemHelper::config();
+		$settings2 = JemHelper::globalattribs();
 
 		if ($settings2->get('global_show_ical_icon','0')==1) {
 			// Get data from the model

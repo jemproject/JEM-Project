@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
  * @subpackage JEM - Module-Calendar(AJAX)
- * @copyright (C) 2015-2016 joomlaeventmanager.net
+ * @copyright (C) 2015-2017 joomlaeventmanager.net
  * @copyright (C) 2008-2010 Toni Smillie www.qivva.com
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -109,6 +109,6 @@ if (version_compare(JVERSION, '3.3', 'ge')) {
 	$home_link = $base.'&el_mcal_month='.$today_month.'&el_mcal_year='.$today_year;
 
 
-	$days = modjemcalajaxhelper::getdays($offset_year, $offset_month, $params);
+	$days = ModJemCalajaxHelper::getdays($offset_year, $offset_month, $params);
 
 	require JModuleHelper::getLayoutPath('mod_jem_calajax');

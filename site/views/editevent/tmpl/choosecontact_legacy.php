@@ -74,7 +74,7 @@ $function = JFactory::getApplication()->input->getCmd('function', 'jSelectContac
 						<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 						<td align="left">
 							<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_SELECT'), $row->name, 'editlinktip'); ?>>
-								<a class="pointer;" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');"><?php echo $this->escape($row->name); ?></a>
+								<a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');"><?php echo $this->escape($row->name); ?></a>
 							</span>
 						</td>
 						<?php if (0) : /* removed because it maybe forbidden to show */ ?>

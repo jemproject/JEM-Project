@@ -4,10 +4,10 @@
 	<author>JEM Community</author>
 	<authorEmail>info@joomlaeventmanager.net</authorEmail>
 	<authorUrl>http://www.joomlaeventmanager.net</authorUrl>
-	<creationDate>April 2017</creationDate>
-	<copyright>copyright (C) 2013-2017 joomlaeventmanager.net</copyright>
-	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>2.2.1</version>
+	<creationDate>August 2017</creationDate>
+	<copyright>copyright (C) 2013-2018 joomlaeventmanager.net</copyright>
+	<license>https://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<version>2.2.3</version>
 	<description>MOD_JEM_XML_DESCRIPTION</description>
 
 	<scriptfile>script.php</scriptfile>
@@ -25,11 +25,6 @@
 	<config>
 		<fields name="params">
 			<fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
-				<field name="count" type="text"
-					default="5"
-					label="MOD_JEM_EVENTS_IN_MODULE"
-					description="MOD_JEM_EVENTS_IN_MODULE_DESC"
-				/>
 				<field name="type" type="list"
 					default="0"
 					label="MOD_JEM_UPCOMING_OR_ARCHIVED"
@@ -38,6 +33,20 @@
 					<option value="0">MOD_JEM_UPCOMING_EVENTS</option>
 					<option value="1">MOD_JEM_UNFINISHED_EVENTS</option>
 					<option value="2">MOD_JEM_ARCHIVED_EVENTS</option>
+				</field>
+				<field name="count" type="text"
+					default="5"
+					label="MOD_JEM_EVENTS_IN_MODULE"
+					description="MOD_JEM_EVENTS_IN_MODULE_DESC"
+				/>
+				<field name="show_no_events" type="radio"
+					default="1"
+					label="MOD_JEM_SHOW_NO_EVENTS"
+					description="MOD_JEM_SHOW_NO_EVENTS_DESC"
+					class="btn-group btn-group-yesno"
+				>
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
 				</field>
 				<field name="offset_hours" type="text"
 					default=""

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.0.0
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -16,7 +16,7 @@ jimport('joomla.application.component.model');
  *
  * @package JEM
  */
-class JEMModelMain extends JModelLegacy
+class JemModelMain extends JModelLegacy
 {
 	/**
 	 * Constructor
@@ -28,8 +28,9 @@ class JEMModelMain extends JModelLegacy
 
 	/**
 	 * Get number of items for given states of a table
-	 * @param string $tablename  Name of the table
-	 * @param array $map  Maps state name to state number
+	 *
+	 * @param  string $tablename Name of the table
+	 * @param  array  $map       Maps state name to state number
 	 * @return stdClass
 	 */
 	protected function getStateData($tablename, &$map = null)
@@ -75,6 +76,7 @@ class JEMModelMain extends JModelLegacy
 
 	/**
 	 * Returns number of events for all possible states
+	 *
 	 * @return stdClass
 	 */
 	public function getEventsData()
@@ -84,6 +86,7 @@ class JEMModelMain extends JModelLegacy
 
 	/**
 	 * Returns number of venues for all possible states
+	 *
 	 * @return stdClass
 	 */
 	public function getVenuesData()
@@ -93,12 +96,12 @@ class JEMModelMain extends JModelLegacy
 
 	/**
 	 * Returns number of categories for all possible states
+	 *
 	 * @return stdClass
 	 */
 	public function getCategoriesData()
 	{
 		return $this->getStateData('#__jem_categories');
 	}
-
 }
 ?>

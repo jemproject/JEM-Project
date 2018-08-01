@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -20,29 +20,28 @@ jimport('joomla.application.component.model');
 class JemModelAttendee extends JModelLegacy
 {
 	/**
-	 * attendee id
+	 * Attendee id
 	 *
 	 * @var int
 	 */
-	var $_id = null;
+	protected $_id = null;
 
 	/**
-	 * Category data array
+	 * Attendee data array
 	 *
 	 * @var array
 	 */
-	var $_data = null;
+	protected $_data = null;
 
 	/**
 	 * Constructor
-	 *
 	 *
 	 */
 	public function __construct()
 	{
 		parent::__construct();
 
-		$settings = JEMHelper::globalattribs();
+		$settings = JemHelper::globalattribs();
 		$this->regname = $settings->get('global_regname','1');
 
 		$array = JFactory::getApplication()->input->get('cid', array(0), 'array');
@@ -52,10 +51,10 @@ class JemModelAttendee extends JModelLegacy
 	/**
 	 * Method to set the identifier
 	 *
-	 * @access	public
-	 * @param	int category identifier
+	 * @access public
+	 * @param  int attendee/registration identifier
 	 */
-	function setId($id)
+	public function setId($id)
 	{
 		// Set category id and wipe data
 		$this->_id = $id;
@@ -63,13 +62,12 @@ class JemModelAttendee extends JModelLegacy
 	}
 
 	/**
-	 * Method to get content category data
+	 * Method to get attendee data
 	 *
-	 * @access	public
-	 * @return	array
-	 *
+	 * @access public
+	 * @return array
 	 */
-	function &getData()
+	public function getData()
 	{
 		if (!$this->_loadData()) {
 			$this->_initData();
@@ -79,11 +77,10 @@ class JemModelAttendee extends JModelLegacy
 	}
 
 	/**
-	 * Method to load content event data
+	 * Method to load attendee data
 	 *
-	 * @access	private
-	 * @return	boolean	True on success
-	 *
+	 * @access protected
+	 * @return boolean  True on success
 	 */
 	protected function _loadData()
 	{
@@ -91,24 +88,24 @@ class JemModelAttendee extends JModelLegacy
 		if (empty($this->_data))
 		{
 			$query = 'SELECT r.*, ' . ($this->regname ? 'u.name' : 'u.username') . ' AS username '
-					. ' FROM #__jem_register AS r '
-					. ' LEFT JOIN #__users AS u ON u.id = r.uid '
-					. ' WHERE r.id = '.$this->_db->quote($this->_id)
-					;
+			       . ' FROM #__jem_register AS r '
+			       . ' LEFT JOIN #__users AS u ON u.id = r.uid '
+			       . ' WHERE r.id = '.$this->_db->quote($this->_id)
+			       ;
 			$this->_db->setQuery($query);
 			$this->_data = $this->_db->loadObject();
 
 			return (boolean) $this->_data;
 		}
+
 		return true;
 	}
 
 	/**
-	 * Method to initialise the category data
+	 * Method to initialise attendee data
 	 *
-	 * @access	private
-	 * @return	boolean	True on success
-	 *
+	 * @access protected
+	 * @return boolean  True on success
 	 */
 	protected function _initData()
 	{
@@ -118,10 +115,11 @@ class JemModelAttendee extends JModelLegacy
 			$data->username = null;
 			$this->_data = $data;
 		}
+
 		return true;
 	}
 
-	function toggle()
+	public function toggle()
 	{
 		$attendee = $this->getData();
 
@@ -133,21 +131,21 @@ class JemModelAttendee extends JModelLegacy
 		$row = JTable::getInstance('jem_register', '');
 		$row->bind($attendee);
 		$row->waiting = $attendee->waiting ? 0 : 1;
+
 		return $row->store();
 	}
 
 	/**
 	 * Method to store the attendee
 	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 *
+	 * @access public
+	 * @return boolean  True on success
 	 */
-	function store($data)
+	public function store($data)
 	{
 		$eventid = $data['event'];
 
-		$row  = $this->getTable('jem_register', '');
+		$row = $this->getTable('jem_register', '');
 
 		// bind it to the table
 		if (!$row->bind($data)) {
@@ -160,7 +158,7 @@ class JemModelAttendee extends JModelLegacy
 
 		// Are we saving from an item edit?
 		if (!$row->id) {
-			$row->uregdate 		= gmdate('Y-m-d H:i:s');
+			$row->uregdate = gmdate('Y-m-d H:i:s');
 
 			$query = ' SELECT e.maxplaces, e.waitinglist, COUNT(r.id) as booked '
 			       . ' FROM #__jem_events AS e '

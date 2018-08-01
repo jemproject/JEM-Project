@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @subpackage JEM Module
  * @copyright (C) 2013-2017 joomlaeventmanager.net
@@ -14,7 +14,7 @@ JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel'
 /**
  * Module-Basic
  */
-abstract class modJEMHelper
+abstract class ModJemHelper
 {
 
 	/**
@@ -107,12 +107,12 @@ abstract class modJEMHelper
 		$events = $model->getItems();
 
 		# Loop through the result rows and prepare data
-		$i		= 0;
-		$lists	= array();
+		$i     = -1;
+		$lists = array();
 
 		foreach ($events as $row)
 		{
-			//cut titel
+			# cut titel
 			$length = mb_strlen($row->title);
 
 			if ($length > $params->get('cuttitle', '18')) {
@@ -120,14 +120,20 @@ abstract class modJEMHelper
 				$row->title = $row->title.'...';
 			}
 
-			$lists[$i] = new stdClass;
+			$lists[++$i] = new stdClass;
+
 			$lists[$i]->link     = JRoute::_(JemHelperRoute::getEventRoute($row->slug));
 			$lists[$i]->dateinfo = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes,
 			                                                 $dateFormat, $timeFormat, $addSuffix);
 			$lists[$i]->text     = $params->get('showtitloc', 0) ? $row->title : htmlspecialchars($row->venue, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->city     = htmlspecialchars($row->city, ENT_COMPAT, 'UTF-8');
 			$lists[$i]->venueurl = !empty($row->venueslug) ? JRoute::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : null;
-			$i++;
+
+			# provide custom fields
+			for ($n = 1; $n <= 10; ++$n) {
+				$var = 'custom'.$n;
+				$lists[$i]->$var = htmlspecialchars($row->$var, ENT_COMPAT, 'UTF-8');
+			}
 		}
 
 		return $lists;

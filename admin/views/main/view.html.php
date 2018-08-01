@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -14,7 +14,8 @@ defined('_JEXEC') or die;
  *
  * @package JEM
  */
-class JEMViewMain extends JemAdminView {
+class JemViewMain extends JemAdminView
+{
 
 	public function display($tpl = null)
 	{
@@ -22,24 +23,22 @@ class JEMViewMain extends JemAdminView {
 		jimport('joomla.html.pane');
 
 		//initialise variables
-		$document	= JFactory::getDocument();
-		$user 		= JemFactory::getUser();
+		$document = JFactory::getDocument();
+		$user     = JemFactory::getUser();
 
 		// Get data from the model
-		$events 	= $this->get('EventsData');
-		$venue 		= $this->get('VenuesData');
-		$category 	= $this->get('CategoriesData');
-
+		$events   = $this->get('EventsData');
+		$venue    = $this->get('VenuesData');
+		$category = $this->get('CategoriesData');
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
 
 		//assign vars to the template
-		$this->events		= $events;
-		$this->venue		= $venue;
-		$this->category		= $category;
-		$this->user			= $user;
-
+		$this->events   = $events;
+		$this->venue    = $venue;
+		$this->category = $category;
+		$this->user     = $user;
 
 		// add toolbar
 		$this->addToolbar();
@@ -49,7 +48,7 @@ class JEMViewMain extends JemAdminView {
 
 	/**
 	 * Add Toolbar
-	*/
+	 */
 	protected function addToolbar()
 	{
 		JToolBarHelper::title(JText::_('COM_JEM_MAIN_TITLE'), 'home');
@@ -65,17 +64,16 @@ class JEMViewMain extends JemAdminView {
 	/**
 	 * Creates the buttons view
 	 *
-	 * @param string $link targeturl
-	 * @param string $image path to image
-	 * @param string $text image description
-	 * @param boolean $modal 1 for loading in modal
+	 * @param  string  $link  targeturl
+	 * @param  string  $image path to image
+	 * @param  string  $text  image description
+	 * @param  boolean $modal 1 for loading in modal
 	 */
-	function quickiconButton($link, $image, $text, $modal = 0)
+	protected function quickiconButton($link, $image, $text, $modal = 0)
 	{
 		// Initialise variables
 		$lang = JFactory::getLanguage();
 		?>
-
 		<div style="float:<?php echo ($lang->isRTL()) ? 'right' : 'left'; ?>;">
 			<div class="icon">
 				<?php if ($modal == 1) : ?>
@@ -93,7 +91,6 @@ class JEMViewMain extends JemAdminView {
 				<?php endif; ?>
 			</div>
 		</div>
-
 		<?php
 	}
 }

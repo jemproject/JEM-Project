@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.1.7
+ * @version     2.2.3
  * @package     JEM
- * @copyright   Copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -67,12 +67,15 @@ class JFormFieldCatOptions extends JFormFieldList
 
 		// Output
 		$currentid = JFactory::getApplication()->input->getInt('a_id');
+		if (!$currentid) { // special case: new event as copy of another one
+			$currentid = JFactory::getApplication()->input->getInt('from_id');
+		}
 
 		// Get the field options.
 		$options = (array) $this->getOptions();
 
-		$db		= JFactory::getDbo();
-		$query	= $db->getQuery(true);
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
 		$query->select('DISTINCT catid');
 		$query->from('#__jem_cats_event_relations');
 		$query->where('itemid = '. $db->quote($currentid));
@@ -95,9 +98,9 @@ class JFormFieldCatOptions extends JFormFieldList
 		{
 			$html[] = JHtml::_('select.genericlist', $options, $this->name, trim($attr), 'value', 'text', $selectedcats,$this->id);
 		}
+
 		return implode($html);
 	}
-
 
 	/**
 	 * Retrieve Options
@@ -135,18 +138,17 @@ class JFormFieldCatOptions extends JFormFieldList
 		return $options;
 	}
 
-
 	/**
 	 * logic to get the categories
 	 *
 	 * @access public
 	 * @return void
 	 */
-	function getCategories($id)
+	public function getCategories($id)
 	{
-		$db          = JFactory::getDbo();
-		$user        = JemFactory::getUser();
-		$userid      = (int) $user->get('id');
+		$db     = JFactory::getDbo();
+		$user   = JemFactory::getUser();
+		$userid = (int) $user->get('id');
 
 		if (empty($id)) {
 			// for new events also show all categories user is allowed to see, disable non-useable categories
@@ -155,9 +157,9 @@ class JFormFieldCatOptions extends JFormFieldList
 		} else {
 			$query = $db->getQuery(true);
 			$query = 'SELECT COUNT(*)'
-				. ' FROM #__jem_events AS e'
-				. ' WHERE e.id = ' . $db->quote($id)
-				. '   AND e.created_by = ' . $db->quote($userid);
+			       . ' FROM #__jem_events AS e'
+			       . ' WHERE e.id = ' . $db->quote($id)
+			       . '   AND e.created_by = ' . $db->quote($userid);
 			$db->setQuery($query);
 			$owner = $db->loadResult();
 
@@ -191,13 +193,13 @@ class JFormFieldCatOptions extends JFormFieldList
 		}
 
 		//get list of the items
-		$list = JEMCategories::treerecurse($parentid, '', array(), $children, 9999, 0, 0);
+		$list = JemCategories::treerecurse($parentid, '', array(), $children, 9999, 0, 0);
 
 		// append orphaned categories
 		if (count($mitems) > count($list)) {
 			foreach ($children as $k => $v) {
 				if (($k > 1) && !array_key_exists($k, $list)) {
-					$list = JEMCategories::treerecurse($k, '?&nbsp;', $list, $children, 999, 0, 0);
+					$list = JemCategories::treerecurse($k, '?&nbsp;', $list, $children, 999, 0, 0);
 				}
 			}
 		}

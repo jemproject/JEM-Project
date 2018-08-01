@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -13,7 +13,7 @@ require JPATH_COMPONENT_SITE.'/classes/view.class.php';
 /**
  * Event-View
  */
-class JemViewEvent extends JEMView
+class JemViewEvent extends JemView
 {
 	protected $item;
 	protected $params;
@@ -21,7 +21,7 @@ class JemViewEvent extends JEMView
 	protected $state;
 	protected $user;
 
-	function __construct($config = array())
+	public function __construct($config = array())
 	{
 		parent::__construct($config);
 
@@ -32,33 +32,33 @@ class JemViewEvent extends JEMView
 	/**
 	 * Creates the output for the Event view
 	 */
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
-		$jemsettings		= JemHelper::config();
-		$settings			= JemHelper::globalattribs();
-		$app				= JFactory::getApplication();
-		$user				= JemFactory::getUser();
-		$userId				= $user->get('id');
-		$dispatcher			= JemFactory::getDispatcher();
-		$document 			= JFactory::getDocument();
-		$model 				= $this->getModel();
-		$menu 				= $app->getMenu();
-		$menuitem			= $menu->getActive();
-		$pathway 			= $app->getPathway();
+		$jemsettings       = JemHelper::config();
+		$settings          = JemHelper::globalattribs();
+		$app               = JFactory::getApplication();
+		$user              = JemFactory::getUser();
+		$userId            = $user->get('id');
+		$dispatcher        = JemFactory::getDispatcher();
+		$document          = JFactory::getDocument();
+		$model             = $this->getModel();
+		$menu              = $app->getMenu();
+		$menuitem          = $menu->getActive();
+		$pathway           = $app->getPathway();
 
-		$this->params		= $app->getParams('com_jem');
-		$this->item			= $this->get('Item');
-		$this->print		= $app->input->getBool('print', false);
-		$this->state		= $this->get('State');
-		$this->user			= $user;
-		$this->jemsettings	= $jemsettings;
-		$this->settings		= $settings;
+		$this->params      = $app->getParams('com_jem');
+		$this->item        = $this->get('Item');
+		$this->print       = $app->input->getBool('print', false);
+		$this->state       = $this->get('State');
+		$this->user        = $user;
+		$this->jemsettings = $jemsettings;
+		$this->settings    = $settings;
 
-		$categories			= isset($this->item->categories) ? $this->item->categories : $this->get('Categories');
-		$this->categories	= $categories;
+		$categories        = isset($this->item->categories) ? $this->item->categories : $this->get('Categories');
+		$this->categories  = $categories;
 
-		$this->registers	= $model->getRegisters($this->state->get('event.id'));
-		$registration		= $this->get('UserRegistration');
+		$this->registers   = $model->getRegisters($this->state->get('event.id'));
+		$registration      = $this->get('UserRegistration');
 
 		$this->regs['not_attending'] = $model->getRegisters($this->state->get('event.id'), -1);
 		$this->regs['invited']       = $model->getRegisters($this->state->get('event.id'),  0);
@@ -76,7 +76,8 @@ class JemViewEvent extends JEMView
 		}
 
 		// Check for errors.
-		if (count($errors = $this->get('Errors'))) {
+		$errors = $this->get('Errors');
+		if (is_array($errors) && count($errors)) {
 			JError::raiseWarning(500, implode("\n", $errors));
 			return false;
 		}
@@ -91,8 +92,8 @@ class JemViewEvent extends JEMView
 		                                && $menuitem->query['id']     == $item->id);
 
 		// Add router helpers.
-		$item->slug			= $item->alias ? ($item->id.':'.$item->alias) : $item->id;
-		$item->venueslug	= $item->localias ? ($item->locid.':'.$item->localias) : $item->locid;
+		$item->slug = $item->alias ? ($item->id.':'.$item->alias) : $item->id;
+		$item->venueslug = $item->localias ? ($item->locid.':'.$item->localias) : $item->locid;
 
 		// Check to see which parameters should take priority
 		if ($useMenuItemParams) {
@@ -321,7 +322,7 @@ class JemViewEvent extends JEMView
 	/**
 	 * structures the keywords
 	 */
-	function keyword_switcher($keyword, $row, $categories, $formattime, $formatdate)
+	protected function keyword_switcher($keyword, $row, $categories, $formattime, $formatdate)
 	{
 		$content = '';
 
@@ -364,16 +365,14 @@ class JemViewEvent extends JEMView
 		return $content;
 	}
 
-
 	/**
 	 * Prepares the document
 	 */
 	protected function _prepareDocument()
 	{
-		$app	= JFactory::getApplication();
-		$menus	= $app->getMenu();
-		$pathway = $app->getPathway();
-		$title = null;
+		$app     = JFactory::getApplication();
+	//	$menus   = $app->getMenu();
+	//	$pathway = $app->getPathway();
 
 		// add css file
 		JemHelper::loadCss('jem');
@@ -410,7 +409,7 @@ class JemViewEvent extends JEMView
 			$category = JCategories::getInstance('JEM2')->get($this->item->catid);
 			while ($category && ($menu->query['option'] != 'com_jem' || $menu->query['view'] == 'event'
 					|| $id != $category->id) && $category->id > 1) {
-				$path[] = array('title' => $category->catname, 'link' => JEMHelperRoute::getCategoryRoute($category->id));
+				$path[] = array('title' => $category->catname, 'link' => JemHelperRoute::getCategoryRoute($category->id));
 				$category = $category->getParent();
 			}
 			$path = array_reverse($path);

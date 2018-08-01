@@ -15,7 +15,8 @@ defined ( '_JEXEC' ) or die ();
 /**
  * JEM package installer script.
  */
-class Pkg_JemInstallerScript {
+class Pkg_JemInstallerScript
+{
 	/**
 	 * List of supported versions. Newest version first!
 	 * @var array
@@ -31,6 +32,7 @@ class Pkg_JemInstallerScript {
 			'0' => '5.5' // Preferred version
 			),
 		'Joomla!' => array (
+			'4.0' => '', // Not supported
 			'3.3' => '3.3.3',
 			'3.2' => '3.2.7',
 			'3.0' => '', // Not supported
@@ -94,6 +96,11 @@ class Pkg_JemInstallerScript {
 	//	$this->enablePlugin('search', 'jem');
 	//	$this->enablePlugin('jem', 'mailer');
 
+		# ajax calendar module doesn't fully work on Joomla! 2.5
+		if (version_compare(JVERSION, '3', '<')) {
+			$this->disableModule('mod_jem_calajax');
+		}
+
 		return true;
 	}
 
@@ -104,6 +111,15 @@ class Pkg_JemInstallerScript {
 		}
 		$plugin->enabled = 1;
 		return $plugin->store();
+	}
+
+	function disableModule($element) {
+		$module = JTable::getInstance('extension');
+		if (!$module->load(array('type'=>'module', 'element'=>$element))) {
+			return false;
+		}
+		$module->enabled = 0;
+		return $module->store();
 	}
 
 	public function checkRequirements($version) {

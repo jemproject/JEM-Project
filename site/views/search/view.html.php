@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -13,12 +13,12 @@ require JPATH_COMPONENT_SITE . '/classes/view.class.php';
 /**
  * Search-View
  */
-class JemViewSearch extends JEMView
+class JemViewSearch extends JemView
 {
 	/**
 	 * Creates the Simple List View
 	 */
-	function display($tpl = null)
+	public function display($tpl = null)
 	{
 		// initialize variables
 		$app          = JFactory::getApplication();
@@ -30,7 +30,7 @@ class JemViewSearch extends JEMView
 		$params       = $app->getParams();
 		$uri          = JFactory::getURI();
 		$pathway      = $app->getPathWay();
-		$user         = JemFactory::getUser();
+	//	$user         = JemFactory::getUser();
 
 		// Decide which parameters should take priority
 		$useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
@@ -127,12 +127,12 @@ class JemViewSearch extends JEMView
 		$pagination = $this->get('Pagination');
 
 		// date filter
-		$lists['date_from'] = JHtml::_('calendar', $filter_date_from, 'filter_date_from', 'filter_date_from', '%Y-%m-%d', array('class'=>"inputbox"));
-		$lists['date_to']   = JHtml::_('calendar', $filter_date_to, 'filter_date_to', 'filter_date_to', '%Y-%m-%d', array('class'=>"inputbox"));
+		$lists['date_from'] = JHtml::_('calendar', $filter_date_from, 'filter_date_from', 'filter_date_from', '%Y-%m-%d', array('class'=>"inputbox", 'showTime' => false));
+		$lists['date_to']   = JHtml::_('calendar', $filter_date_to, 'filter_date_to', 'filter_date_to', '%Y-%m-%d', array('class'=>"inputbox", 'showTime' => false));
 
 		// country filter
 		$continents = array();
-		$continents[] = JHtml::_('select.option', '', JText::_('COM_JEM_SELECT_CONTINENT'));
+		$continents[] = JHtml::_('select.option', '',   JText::_('COM_JEM_SELECT_CONTINENT'));
 		$continents[] = JHtml::_('select.option', 'AF', JText::_('COM_JEM_AFRICA'));
 		$continents[] = JHtml::_('select.option', 'AS', JText::_('COM_JEM_ASIA'));
 		$continents[] = JHtml::_('select.option', 'EU', JText::_('COM_JEM_EUROPE'));
@@ -188,7 +188,6 @@ class JemViewSearch extends JEMView
 	protected function _buildSortLists()
 	{
 		$app = JFactory::getApplication();
-//		$db = JFactory::getDBO();
 		$task = $app->input->get('task', '');
 
 		$filter_order = $app->input->getCmd('filter_order', 'a.dates');
@@ -197,20 +196,19 @@ class JemViewSearch extends JEMView
 		if ($task == 'archive' && $filter_order == 'a.dates') {
 			$filter_order_DirDefault = 'DESC';
 		}
-		$filter_order_Dir	= $app->input->get('filter_order_Dir', $filter_order_DirDefault);
-		$filter 			= $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
-		//$filter				= $this->escape(JRequest::getString('filter'));
-		$filter_type		= $app->input->getString('filter_type', '');
+		$filter_order_Dir = $app->input->get('filter_order_Dir', $filter_order_DirDefault);
+		$filter           = $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');
+		$filter_type      = $app->input->getString('filter_type', '');
 
 		$sortselects = array();
-		$sortselects[]	= JHtml::_('select.option', 'title', JText::_('COM_JEM_TABLE_TITLE'));
-		$sortselects[] 	= JHtml::_('select.option', 'venue', JText::_('COM_JEM_TABLE_LOCATION'));
-		$sortselect 	= JHtml::_('select.genericlist', $sortselects, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+		$sortselects[] = JHtml::_('select.option', 'title', JText::_('COM_JEM_TABLE_TITLE'));
+		$sortselects[] = JHtml::_('select.option', 'venue', JText::_('COM_JEM_TABLE_LOCATION'));
+		$sortselect    = JHtml::_('select.genericlist', $sortselects, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
-		$lists['order_Dir'] 	= $filter_order_Dir;
-		$lists['order'] 	= $filter_order;
-		$lists['filter'] 	= $filter;
-		$lists['filter_types'] 	= $sortselect;
+		$lists['order_Dir']    = $filter_order_Dir;
+		$lists['order']        = $filter_order;
+		$lists['filter']       = $filter;
+		$lists['filter_types'] = $sortselect;
 
 		return $lists;
 	}

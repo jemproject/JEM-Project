@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.1.6
+ * @version     2.2.3
  * @package     JEM
- * @copyright   Copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -25,13 +25,14 @@ class JemViewCategory extends JemAdminView
 		$this->form		= $this->get('Form');
 		$this->item		= $this->get('Item');
 		$this->state	= $this->get('State');
-		$this->canDo	= JEMHelperBackend::getActions($this->state->get('category.component'));
+		$this->canDo	= JemHelperBackend::getActions($this->state->get('category.component'));
 
 
 		$document	= JFactory::getDocument();
 
 		// Check for errors.
-		if (count($errors = $this->get('Errors'))) {
+		$errors = $this->get('Errors');
+		if (is_array($errors) && count($errors)) {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
@@ -76,7 +77,7 @@ class JemViewCategory extends JemAdminView
 		$checkedOut	= !($this->item->checked_out == 0 || $this->item->checked_out == $userId);
 
 		// Get the results for each action.
-		$canDo = JEMHelperBackend::getActions();
+		$canDo = JemHelperBackend::getActions();
 
 		$title = JText::_('COM_JEM_CATEGORY_BASE_'.($isNew?'ADD':'EDIT').'_TITLE');
 		// Prepare the toolbar.

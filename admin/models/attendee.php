@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -21,18 +21,18 @@ class JemModelAttendee extends JModelLegacy
 	 *
 	 * @var int
 	 */
-	var $_id = null;
+	protected $_id = null;
 
 	/**
 	 * Category data array
 	 *
 	 * @var array
 	 */
-	var $_data = null;
+	protected $_data = null;
+
 
 	/**
 	 * Constructor
-	 *
 	 */
 	public function __construct()
 	{
@@ -47,10 +47,10 @@ class JemModelAttendee extends JModelLegacy
 	/**
 	 * Method to set the identifier
 	 *
-	 * @access	public
-	 * @param	int category identifier
+	 * @access public
+	 * @param  int  category identifier
 	 */
-	function setId($id)
+	public function setId($id)
 	{
 		// Set category id and wipe data
 		$this->_id = $id;
@@ -60,10 +60,10 @@ class JemModelAttendee extends JModelLegacy
 	/**
 	 * Method to get data
 	 *
-	 * @access	public
-	 * @return	array
+	 * @access public
+	 * @return array
 	 */
-	function &getData()
+	public function getData()
 	{
 		if (!$this->_loadData()) {
 			$this->_initData();
@@ -75,8 +75,8 @@ class JemModelAttendee extends JModelLegacy
 	/**
 	 * Method to load data
 	 *
-	 * @access	private
-	 * @return	boolean	True on success
+	 * @access protected
+	 * @return boolean  True on success
 	 */
 	protected function _loadData()
 	{
@@ -108,8 +108,8 @@ class JemModelAttendee extends JModelLegacy
 	/**
 	 * Method to initialise the data
 	 *
-	 * @access	private
-	 * @return	boolean	True on success
+	 * @access protected
+	 * @return boolean  True on success
 	 */
 	protected function _initData()
 	{
@@ -133,7 +133,7 @@ class JemModelAttendee extends JModelLegacy
 		return true;
 	}
 
-	function toggle()
+	public function toggle()
 	{
 		$attendee = $this->getData();
 
@@ -144,22 +144,21 @@ class JemModelAttendee extends JModelLegacy
 
 		$row = JTable::getInstance('jem_register', '');
 		$row->bind($attendee);
-		$row->waiting = ($attendee->waiting || ($attending->status == 2)) ? 0 : 1;
+		$row->waiting = ($attendee->waiting || ($attendee->status == 2)) ? 0 : 1;
 		if ($row->status == 2) {
 			$row->status = 1;
 		}
 		return $row->store();
 	}
 
-
 	/**
 	 * Method to store the attendee
 	 *
-	 * @access	public
-	 * @return	boolean	True on success
+	 * @access public
+	 * @return boolean  True on success
 	 *
 	 */
-	function store($data)
+	public function store($data)
 	{
 		$eventid = $data['event'];
 		$userid  = $data['uid'];
@@ -190,7 +189,7 @@ class JemModelAttendee extends JModelLegacy
 		}
 
 		// sanitise id field
-		$row->id = (int) $row->id;
+		$row->id = (int)$row->id;
 		$db = JFactory::getDbo();
 
 		// Check if user is already registered to this event
@@ -279,18 +278,17 @@ class JemModelAttendee extends JModelLegacy
 		return $row;
 	}
 
-
 	/**
 	 * Method to set status of registered
 	 *
-	 * @param  int $pks   ID of the attendee record
-	 * @param  int $value Status value: -1 - "not attending", 0 - "invited", 1 - "attending", 2 - "on waiting list"
-	 * @return boolean	True on success.
+	 * @param  array $pks   IDs of the attendee records
+	 * @param  int   $value Status value: -1 - "not attending", 0 - "invited", 1 - "attending", 2 - "on waiting list"
+	 * @return boolean      True on success.
 	 */
 	public function setStatus($pks, $value = 1)
 	{
 		// Sanitize the ids.
-		$pks = (array) $pks;
+		$pks = (array)$pks;
 		JArrayHelper::toInteger($pks);
 
 		if (empty($pks)) {

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -17,7 +17,7 @@ jimport('joomla.application.component.controller');
  * @package JEM
  *
  */
-class JEMController extends JControllerLegacy
+class JemController extends JControllerLegacy
 {
 	/**
 	 * Constructor
@@ -30,7 +30,7 @@ class JEMController extends JControllerLegacy
 	/**
 	 * Display the view
 	 */
-	function display($cachable = false, $urlparams = false)
+	public function display($cachable = false, $urlparams = false)
 	{
 		$document   = JFactory::getDocument();
 		$user       = JemFactory::getUser();
@@ -104,18 +104,17 @@ class JEMController extends JControllerLegacy
 
 	/**
 	 * for attachment downloads
-	 *
 	 */
-	function getfile()
+	public function getfile()
 	{
 		// Check for request forgeries
 		JSession::checkToken('request') or jexit('Invalid Token');
 
 		$id = JFactory::getApplication()->input->getInt('file', 0);
 
-		$path = JEMAttachment::getAttachmentPath($id);
+		$path = JemAttachment::getAttachmentPath($id);
 
-		$mime = JEMHelper::getMimeType($path);
+		$mime = JemHelper::getMimeType($path);
 
 		$doc = JFactory::getDocument();
 		$doc->setMimeEncoding($mime);
@@ -138,10 +137,9 @@ class JEMController extends JControllerLegacy
 	 * Delete attachment
 	 *
 	 * @return true on sucess
-	 * @access private
-	 *
+	 * @access public
 	 */
-	function ajaxattachremove()
+	public function ajaxattachremove()
 	{
 		// Check for request forgeries
 		JSession::checkToken('request') or jexit('Invalid Token');
@@ -151,7 +149,7 @@ class JEMController extends JControllerLegacy
 
 		if ($jemsettings->attachmentenabled > 0) {
 			$id	 = JFactory::getApplication()->input->getInt('id', 0);
-			$res = JEMAttachment::remove($id);
+			$res = JemAttachment::remove($id);
 		} // else don't delete anything
 
 		if (!$res) {
@@ -170,46 +168,9 @@ class JEMController extends JControllerLegacy
 	 * Remove image
 	 * @deprecated since version 1.9.7
 	 */
-	function ajaximageremove()
+	public function ajaximageremove()
 	{
 		// prevent unwanted usage
-		jexit();
-
-		$id = JFactory::getApplication()->input->getInt('id', 0);
-		if (!$id) {
-			jexit();
-		}
-
-		$folder = JFactory::getApplication()->input->getString('type', '');
-
-		if ($folder == 'events') {
-			$getquery = ' SELECT datimage AS image FROM #__jem_events WHERE id = '.(int)$id;
-			$updatequery = ' UPDATE #__jem_events SET datimage=\'\' WHERE id = '.(int)$id;
-		} else if ($folder == 'venues') {
-			$getquery = ' SELECT locimage AS image FROM #__jem_venues WHERE id = '.(int)$id;
-			$updatequery = ' UPDATE #__jem_venues SET locimage=\'\' WHERE id = '.(int)$id;
-		} else {
-			jexit();
-		}
-
-		$db = JFactory::getDBO();
-		$db->setQuery($getquery);
-		if (!$image_obj = $db->loadObject()) {
-			jexit();
-		}
-
-		$image = $image_obj->image;
-
-		$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
-		if (is_file($fullPath)) {
-			$db->setQuery($updatequery);
-			if ($db->execute() === false) {
-				jexit();
-			}
-
-			JemHelper::delete_unused_image_files($folder, $image);
-		}
-
 		jexit();
 	}
 }

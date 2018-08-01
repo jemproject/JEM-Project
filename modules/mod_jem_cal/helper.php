@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.3
  * @package JEM
  * @subpackage JEM Calendar Module
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2008 Toni Smillie www.qivva.com
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -17,48 +17,116 @@ defined('_JEXEC') or die;
 
 JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
 
-abstract class modjemcalqhelper
+abstract class ModJemCalHelper extends JModuleHelper
 {
-	public static function getdays ($greq_year, $greq_month, &$params)
+	/**
+	 * Get module by id
+	 *
+	 * Same as JModuleHelper::getModule() but checking id instead of name.
+	 * This is required because multiple instances with different settings
+	 * can be shown on same position. The only unique thing is the id.
+	 *
+	 * @param   int  $id  The id of the module
+	 *
+	 * @return  stdClass  The Module object or null
+	 *
+	 * @since   2.2.3
+	 */
+	public static function &getModuleById($id)
+	{
+		$result = null;
+		$modules =& static::load();
+		$total = count($modules);
+
+		for ($i = 0; $id && $i < $total; $i++)
+		{
+			# Match the id of the module
+			if ($modules[$i]->id == $id)
+			{
+				# Found it
+				$result = &$modules[$i];
+				break;
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Get rendered content.
+	 *
+	 * This function is called by com_ajax if user navigates through
+	 * calendar module's months. Url query must contain id, month, and year.
+	 *
+	 * @return  string  The rendered content.
+	 *
+	 * @since   2.2.3
+	 */
+	public static function getAjax()
+	{
+		$app     = JFactory::getApplication();
+		$modid   = $app->input->getInt('modjemcal_id');
+		# JModuleHelper doesn't provide module by id - but we
+		$module = self::getModuleById($modid);
+		if (!empty($module->id) && ((int)$module->id === $modid)) {
+			# Indicate ajax mode where some parts will be suppressed or rendered different.
+			$module->in_ajax_call = true;
+			return self::renderModule($module);
+		}
+	}
+
+	public static function getDays($greq_year, $greq_month, &$params)
 	{
 		# Retrieve Eventslist model for the data
 		$model = JModelLegacy::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
 
 		# Set params for the model
-		//$app = JFactory::getApplication();
-		//$appParams = $app->getParams('com_jem');
 		$model->setState('params', $params);
 
-		$user		= JemFactory::getUser();
-		$levels		= $user->getAuthorisedViewLevels();
-		$settings 	= JemHelper::globalattribs();
+		$db       = JFactory::getDbo();
+		$user     = JemFactory::getUser();
+		$levels   = $user->getAuthorisedViewLevels();
+		$settings = JemHelper::globalattribs();
 
-		$catids 			= JemHelper::getValidIds($params->get('catid'));
-		$venids 			= JemHelper::getValidIds($params->get('venid'));
-		$StraightToDetails	= $params->get('StraightToDetails', '1');
-		$DisplayCat			= $params->get('DisplayCat', '0');
-		$DisplayVenue		= $params->get('DisplayVenue', '0');
-		$ArchivedEvents		= $params->get('ArchivedEvents', '0');
-		$CurrentEvents		= $params->get('CurrentEvents', '1');
-		$FixItemID			= $params->get('FixItemID', '0');
-		$defaultItemid	 	= $settings->get('default_Itemid','');
-		$daylinkparams		= ''; // collects additional params for link to day view
+		$StraightToDetails = $params->get('StraightToDetails', '1');
+		$DisplayCat        = $params->get('DisplayCat', '0');
+		$DisplayVenue      = $params->get('DisplayVenue', '0');
+		$ArchivedEvents    = $params->get('ArchivedEvents', '0');
+		$CurrentEvents     = $params->get('CurrentEvents', '1');
+		$FixItemID         = $params->get('FixItemID', '0');
+		$defaultItemid     = $settings->get('default_Itemid', '');
+		$daylinkparams     = ''; // collects additional params for link to day view
+		$max_title_len     = (int)$params->get('event_cut_title', '25');
 
-		# filter category's
+		# Only select events within specified date range. (choosen month)
+		$monthstart = mktime(0, 0,  1, $greq_month,     1, $greq_year);
+		$monthend   = mktime(0, 0, -1, $greq_month + 1, 1, $greq_year);
+		$filter_date_from = $db->Quote(strftime('%Y-%m-%d', $monthstart));
+		$filter_date_to   = $db->Quote(strftime('%Y-%m-%d', $monthend));
+		$where_from = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $filter_date_from . ') >= 0';
+		$model->setState('filter.calendar_from', $where_from);
+		$where_to = ' DATEDIFF(a.dates, ' . $filter_date_to . ') <= 0';
+		$model->setState('filter.calendar_to', $where_to);
+
+		# Clean parameter data
+		$catids   = JemHelper::getValidIds($params->get('catid'));
+		$venids   = JemHelper::getValidIds($params->get('venid'));
+
+		# Filter categories
 		if ($catids) {
-			$model->setState('filter.category_id',$catids);
-			$model->setState('filter.category_id.include',true);
+			$model->setState('filter.category_id', $catids);
+			$model->setState('filter.category_id.include', true);
 			$daylinkparams .= '&catids=' . implode(',', $catids);
 		}
 
-		# filter venue's
+		# Filter venues
 		if ($venids) {
-			$model->setState('filter.venue_id',$venids);
-			$model->setState('filter.venue_id.include',true);
+			$model->setState('filter.venue_id', $venids);
+			$model->setState('filter.venue_id.include', true);
 			$daylinkparams .= '&locids=' . implode(',', $venids);
 		}
 
-		# filter published
+		# Filter published
 		#  0: unpublished
 		#  1: published
 		#  2: archived
@@ -73,7 +141,7 @@ abstract class modjemcalqhelper
 				$daylinkparams .= '&pub=1';
 			}
 
-			# filter archived
+			# Filter archived
 			if ($ArchivedEvents == 1) {
 				$model->setState('filter.published',2);
 				$daylinkparams .= '&pub=2';
@@ -85,16 +153,16 @@ abstract class modjemcalqhelper
 		# Retrieve the available Items
 		$events = $model->getItems();
 
-		# create an array to catch days
+		# Create an array to catch days
 		$days = array();
 
 		foreach ($events as $index => $event) {
-			# adding categories
-			$nr 		= count($event->categories);
-			$catname 	= '';
-			$ix 		= 0;
+			# Adding categories
+			$nr      = is_array($event->categories) ? count($event->categories) : 0;
+			$catname = '';
+			$ix      = 0;
 
-			# walk through categories assigned to an event
+			# Walk through categories assigned to an event
 			foreach($event->categories AS $category) {
 				$catname .= htmlspecialchars($category->catname, ENT_COMPAT, 'UTF-8');
 
@@ -104,15 +172,15 @@ abstract class modjemcalqhelper
 				}
 			}
 
-			// Cope with no end date set i.e. set it to same as start date
+			# Cope with no end date set i.e. set it to same as start date
 			if (is_null($event->enddates)) {
-				$eyear = $event->created_year;
+				$eyear = $event->created_year;    # Note: "created_*" refers to start date
 				$emonth = $event->created_month;
 				$eday = $event->created_day;
 			} else {
 				list($eyear, $emonth, $eday) = explode('-', $event->enddates);
 			}
-			// The two cases for roll over the year end with an event that goes across the year boundary.
+			# The two cases for roll over the year end with an event that goes across the year boundary.
 			if ($greq_year < $eyear) {
 				$emonth = $emonth + 12;
 			}
@@ -121,18 +189,19 @@ abstract class modjemcalqhelper
 				$event->created_month = $event->created_month - 12;
 			}
 
-			if (($greq_year >= $event->created_year) && ($greq_year <= $eyear)
-					&& ($greq_month >= $event->created_month) && ($greq_month <= $emonth)) {
-				// Set end day for current month
+			if (($greq_year >= $event->created_year) && ($greq_year <= $eyear) &&
+			    ($greq_month >= $event->created_month) && ($greq_month <= $emonth))
+			{
+				//JemHelper::addLogEntry("mod_jem_cal[$params->module_id] : Show event $event->title on $event->dates - $event->enddates");
 
+				# Set end day for current month
 				if ($emonth > $greq_month) {
 					$emonth = $greq_month;
 
-					// $eday = cal_days_in_month(CAL_GREGORIAN, $greq_month,$greq_year);
 					$eday = date('t', mktime(0, 0, 0, $greq_month, 1, $greq_year));
 				}
 
-				// Set start day for current month
+				# Set start day for current month
 				if ($event->created_month < $greq_month) {
 					$event->created_month = $greq_month;
 					$event->created_day = 1;
@@ -143,71 +212,72 @@ abstract class modjemcalqhelper
 
 					$uxdate = mktime(0, 0, 0, $greq_month, $count, $greq_year);
 					$tdate = strftime('%Y%m%d',$uxdate);// Toni change Joomla 1.5
-// 					$created_day = $count;
-// 					$tt = $days[$count][1];
-// 					if (strlen($tt) == 0)
 
 					if (empty($days[$count][1])) {
-						$title = htmlspecialchars($event->title, ENT_COMPAT, 'UTF-8');
+						$cut = ($max_title_len > 0) && (($l = mb_strlen($event->title)) > $max_title_len);
+						$title = htmlspecialchars($cut ? mb_substr($event->title,  0, $max_title_len) . '...' : $event->title, ENT_COMPAT, 'UTF-8');
 						if ($DisplayCat == 1) {
-							$title = $title . '&nbsp;(' . $catname . ')';
+							$title = $title . ' (' . $catname . ')';
 						}
 						if ($DisplayVenue == 1) {
 							if (isset($event->venue)) {
-								$title = $title . '&nbsp;@' . htmlspecialchars($event->venue, ENT_COMPAT, 'UTF-8');
+								$title = $title . ' @' . htmlspecialchars($event->venue, ENT_COMPAT, 'UTF-8');
 							}
 						}
 						$stod = 1;
 					} else {
 						$tt = $days[$count][1];
-						$title = $tt . '+%+%+' . htmlspecialchars($event->title, ENT_COMPAT, 'UTF-8');
+						$cut = ($max_title_len > 0) && (($l = mb_strlen($event->title)) > $max_title_len);
+						$title = $tt . '+%+%+' . htmlspecialchars($cut ? mb_substr($event->title,  0, $max_title_len) . '...' : $event->title, ENT_COMPAT, 'UTF-8');
 						if ($DisplayCat == 1) {
-							$title = $title . '&nbsp;(' . $catname . ')';
+							$title = $title . ' (' . $catname . ')';
 						}
 						if ($DisplayVenue == 1) {
 							if (isset($event->venue)) {
-								$title = $title . '&nbsp;@' . htmlspecialchars($event->venue, ENT_COMPAT, 'UTF-8');
+								$title = $title . ' @' . htmlspecialchars($event->venue, ENT_COMPAT, 'UTF-8');
 							}
 						}
 						$stod = 0;
 					}
 					if (($StraightToDetails == 1) and ($stod == 1)) {
 						if ($FixItemID == 0) {
-							$link = JRoute::_(JEMHelperRoute::getEventRoute($event->slug));
+							$link = JRoute::_(JemHelperRoute::getEventRoute($event->slug));
 						} else {
-							//Create the link - copied from Jroute
-							$evlink = JEMHelperRoute::getEventRoute($event->slug).'&Itemid='.$FixItemID;
+							# Create the link - copied from Jroute
+							$evlink = JemHelperRoute::getEventRoute($event->slug).'&Itemid='.$FixItemID;
 							$link = JRoute::_($evlink);
 						}
 					} else {
-						// @todo fix the getroute link
+						/// @todo fix the getroute link
 						if ($FixItemID == 0) {
 							if ($defaultItemid)
 							{
-								$evlink = 'index.php?option=com_jem&view=day&id='. $tdate . $daylinkparams . '&Itemid='.$defaultItemid;
+								$evlink = 'index.php?option=com_jem&view=day&id=' . $tdate . $daylinkparams . '&Itemid=' . $defaultItemid;
 							} else {
-								$evlink = 'index.php?option=com_jem&view=day&id='. $tdate . $daylinkparams;
+								$evlink = 'index.php?option=com_jem&view=day&id=' . $tdate . $daylinkparams;
 							}
 							$link = JRoute::_($evlink);
-							//$link = JEMHelperRoute::getRoute($tdate, 'day');
+							//$link = JemHelperRoute::getRoute($tdate, 'day');
 						} else {
-							//Create the link - copied from Jroute
-							$evlink = 'index.php?option=com_jem&view=day&id='. $tdate . $daylinkparams .'&Itemid='.$FixItemID;
+							# Create the link - copied from Jroute
+							$evlink = 'index.php?option=com_jem&view=day&id=' . $tdate . $daylinkparams . '&Itemid=' . $FixItemID;
 							$link = JRoute::_($evlink);
 						}
 					}
-				$days[$count] = array($link,$title);
+					$days[$count] = array($link,$title);
 				}
 			}
-		// End of Toni modification
+			// End of Toni modification
+			else {
+				JemHelper::addLogEntry("mod_jem_cal[$params->module_id] : Skip event $event->title on $event->dates - $event->enddates");
+			}
 
-
-			# check if the item-categories is empty, if so the user has no access to that event at all.
+			# Check if the item-categories is empty, if so the user has no access to that event at all.
 			if (empty($event->categories)) {
 				unset ($events[$index]);
 			}
 		} // end foreach
+
 		return $days;
 	}
 }
-?>

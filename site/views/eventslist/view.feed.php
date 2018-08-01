@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -17,7 +17,7 @@ class JemViewEventslist extends JViewLegacy
 	/**
 	 * Creates the Event Feed
 	 */
-	function display($cachable = false, $urlparams = false)
+	public function display($cachable = false, $urlparams = false)
 	{
 		$app = JFactory::getApplication();
 		$doc = JFactory::getDocument();
@@ -55,7 +55,7 @@ class JemViewEventslist extends JViewLegacy
 
 				// feed item description text
 				$description  = JText::_('COM_JEM_TITLE').': '.$title.'<br />';
-				$description .= JText::_('COM_JEM_VENUE').': '.$row->venue.' / '.$row->city.'<br />';
+				$description .= JText::_('COM_JEM_VENUE').': '.$row->venue.($row->city ? (' / '.$row->city) : '').'<br />';
 				$description .= JText::_('COM_JEM_CATEGORY').': '.$category.'<br />';
 				$description .= JText::_('COM_JEM_DATE').': '.$displaydate.'<br />';
 				$description .= JText::_('COM_JEM_DESCRIPTION').': '.$row->fulltext;
@@ -64,11 +64,11 @@ class JemViewEventslist extends JViewLegacy
 
 				// load individual item creator class
 				$item = new JFeedItem();
-				$item->title 		= $title;
-				$item->link 		= $link;
-				$item->description 	= $description;
-				$item->date 		= $created;
-				$item->category 	= $category;
+				$item->title       = $title;
+				$item->link        = $link;
+				$item->description = $description;
+				$item->date        = $created;
+				$item->category    = $category;
 
 				// loads item info into rss array
 				$doc->addItem($item);

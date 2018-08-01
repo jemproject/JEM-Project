@@ -85,14 +85,14 @@ defined('_JEXEC') or die;
 		//initialize variables
 		$multicatname = '';
 		$colorpic = '';
-		$nr = count($row->categories);
+		$nr = is_array($row->categories) ? count($row->categories) : 0;
 		$ix = 0;
 		$content = '';
 		$contentend = '';
 		$catcolor = array();
 
 		//walk through categories assigned to an event
-		foreach($row->categories AS $category) {
+		foreach((array)$row->categories AS $category) {
 			//Currently only one id possible...so simply just pick one up...
 			$detaillink = JRoute::_(JemHelperRoute::getEventRoute($row->slug));
 
@@ -241,13 +241,21 @@ defined('_JEXEC') or die;
 		}
 		$multidaydate .= '</div>';
 
-		//create little Edit icon on top right corner of event if user is allowed to edit
-		if (!$this->print && $this->params->get('show_editevent_icon', 0) && $row->params->get('access-edit', false)) {
-			$editicon  = '<div class="inline-button-right">';
-			$editicon .= JemOutput::editbutton($row, null, null, true, 'editevent');
-			$editicon .= '</div>';
-		} else {
-			$editicon = '';
+		//create little Edit and/or Copy icon on top right corner of event if user is allowed to edit and/or create
+		$editicon = '';
+		if (!$this->print) {
+			$btns = array();
+			if ($this->params->get('show_editevent_icon', 0) && $row->params->get('access-edit', false)) {
+				$btns[] = JemOutput::editbutton($row, null, null, true, 'editevent');
+			}
+			if ($this->params->get('show_copyevent_icon', 0) && $this->permissions->canAddEvent) {
+				$btns[] = JemOutput::copybutton($row, null, null, true, 'editevent');
+			}
+			if (!empty($btns)) {
+				$editicon .= '<div class="inline-button-right">';
+				$editicon .= join(' ', $btns);
+				$editicon .= '</div>';
+			}
 		}
 
 		//generate the output

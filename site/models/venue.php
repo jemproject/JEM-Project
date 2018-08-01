@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,11 +15,19 @@ require_once dirname(__FILE__) . '/eventslist.php';
  */
 class JemModelVenue extends JemModelEventslist
 {
+	/**
+	 * Venue id
+	 *
+	 * @var int
+	 */
+	protected $_id = null;
+
+
 	public function __construct()
 	{
-		$app 			= JFactory::getApplication();
-		$jinput			= $app->input;
-		$params			= $app->getParams();
+		$app    = JFactory::getApplication();
+		$jinput = $app->input;
+		$params = $app->getParams();
 
 		# determing the id to load
 		if ($jinput->get('id',null,'int')) {
@@ -101,13 +109,12 @@ class JemModelVenue extends JemModelEventslist
 		$this->setState('filter.groupby',array('a.id'));
 	}
 
-
 	/**
 	 * Method to get a list of events.
 	 */
 	public function getItems()
 	{
-		$items	= parent::getItems();
+		$items = parent::getItems();
 		/* no additional things to do yet - place holder */
 		if ($items) {
 			return $items;
@@ -116,11 +123,10 @@ class JemModelVenue extends JemModelEventslist
 		return array();
 	}
 
-
 	/**
 	 * @return	JDatabaseQuery
 	 */
-	function getListQuery()
+	protected function getListQuery()
 	{
 		// Create a new query object.
 		$query = parent::getListQuery();
@@ -131,24 +137,23 @@ class JemModelVenue extends JemModelEventslist
 		return $query;
 	}
 
-
 	/**
 	 * Method to set the venue id
 	 *
 	 * The venue-id can be set by a menu-parameter
 	 */
-	function setId($id)
+	public function setId($id)
 	{
 		// Set new venue ID and wipe data
-		$this->_id			= $id;
-		$this->_data		= null;
+		$this->_id   = $id;
+		//$this->_data = null;
 	}
 
 	/**
 	 * set limit
 	 * @param int value
 	 */
-	function setLimit($value)
+	public function setLimit($value)
 	{
 		$this->setState('limit', (int) $value);
 	}
@@ -157,7 +162,7 @@ class JemModelVenue extends JemModelEventslist
 	 * set limitstart
 	 * @param int value
 	 */
-	function setLimitStart($value)
+	public function setLimitStart($value)
 	{
 		$this->setState('limitstart', (int) $value);
 	}
@@ -168,7 +173,7 @@ class JemModelVenue extends JemModelEventslist
 	 * @access public
 	 * @return array
 	 */
-	function getVenue()
+	public function getVenue()
 	{
 		$user   = JemFactory::getUser();
 
@@ -176,9 +181,9 @@ class JemModelVenue extends JemModelEventslist
 		$query  = $db->getQuery(true);
 
 		$query->select('id, venue, published, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
-				' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, '.
-				' created, created_by, locdescription, country, map, latitude, longitude, postalCode, checked_out AS vChecked_out, checked_out_time AS vChecked_out_time, '.
-				' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug');
+		               ' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, '.
+		               ' created, created_by, locdescription, country, map, latitude, longitude, postalCode, checked_out AS vChecked_out, checked_out_time AS vChecked_out_time, '.
+		               ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug');
 		$query->from($db->quoteName('#__jem_venues'));
 		$query->where('id = '.(int)$this->_id);
 

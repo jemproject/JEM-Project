@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -43,7 +43,7 @@ class JemModelEvents extends JModelList
 	/**
 	 * Method to auto-populate the model state.
 	 *
-	 * Note. Calling getState in this method will result in recursion.
+	 * @Note  Calling getState in this method will result in recursion.
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
@@ -80,16 +80,15 @@ class JemModelEvents extends JModelList
 	 * different modules that might need different sets of data or different
 	 * ordering requirements.
 	 *
-	 * @param	string		$id	A prefix for the store id.
-	 * @return	string		A store id.
-	 *
+	 * @param  string $id A prefix for the store id.
+	 * @return string A store id.
 	 */
 	protected function getStoreId($id = '')
 	{
 		// Compile the store id.
-		$id.= ':' . $this->getState('filter_search');
-		$id.= ':' . $this->getState('filter_published');
-		$id.= ':' . $this->getState('filter_type');
+		$id .= ':' . $this->getState('filter_search');
+		$id .= ':' . $this->getState('filter_published');
+		$id .= ':' . $this->getState('filter_type');
 
 		return parent::getStoreId($id);
 	}
@@ -97,22 +96,17 @@ class JemModelEvents extends JModelList
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @return	JDatabaseQuery
-	 *
+	 * @return JDatabaseQuery
 	 */
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db		= $this->getDbo();
-		$query	= $db->getQuery(true);
+		$db    = $this->getDbo();
+		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
-		$query->select(
-				$this->getState(
-						'list.select',
-						'a.*'
-				)
-		);
+		$query->select($this->getState('list.select', 'a.*'));
+
 		$query->from($db->quoteName('#__jem_events').' AS a');
 
 		// Join over the venue.
@@ -149,8 +143,8 @@ class JemModelEvents extends JModelList
 		}
 
 		// Filter by Date
-		$startDate	= $this->getState('filter_begin');
-		$endDate 	= $this->getState('filter_end');
+		$startDate = $this->getState('filter_begin');
+		$endDate   = $this->getState('filter_end');
 		if (!empty($startDate) && !empty($endDate)) {
 			$query->where('(a.dates >= '.$db->Quote($startDate).')');
 			$query->where('(a.enddates <= '.$db->Quote($endDate).')');
@@ -173,8 +167,8 @@ class JemModelEvents extends JModelList
 			} else {
 				$search = $db->Quote('%'.$db->escape($search, true).'%');
 
-				if($search) {
-					switch($filter) {
+				if ($search) {
+					switch ($filter) {
 						case 1:
 							/* search event-title or alias */
 							$query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.')');
@@ -215,29 +209,22 @@ class JemModelEvents extends JModelList
 		$query->group('a.id');
 
 		// Add the list ordering clause.
-		$orderCol	= $this->state->get('list.ordering');
-		$orderDirn	= $this->state->get('list.direction');
+		$orderCol  = $this->state->get('list.ordering');
+		$orderDirn = $this->state->get('list.direction');
 
 		$query->order($db->escape($orderCol.' '.$orderDirn));
 
 		return $query;
 	}
 
-
 	/**
 	 * Method to get the userinformation of edited/submitted events
+	 *
 	 * @return object
 	 */
 	public function getItems()
 	{
-		$items = parent::getItems();
-
-		$user	= JemFactory::getUser();
-		$userId	= $user->get('id');
-		$guest	= $user->get('guest');
-		$groups = $user->getAuthorisedViewLevels();
-		$input	= JFactory::getApplication()->input;
-
+		$items  = parent::getItems();
 
 		$filter = $this->getState('filter_type');
 		$search = $this->getState('filter_search');
@@ -248,7 +235,7 @@ class JemModelEvents extends JModelList
 			# check if the item-categories is empty
 			# in case of filtering we will unset the items without the reqeusted category
 
-			if($search) {
+			if ($search) {
 				if ($filter == 4) {
 					if (empty($item->categories)) {
 						unset ($items[$index]);
@@ -257,15 +244,13 @@ class JemModelEvents extends JModelList
 			}
 		}
 
-		JEMHelper::getAttendeesNumbers($items); // writes directly into $items
-
+		JemHelper::getAttendeesNumbers($items); // writes directly into $items
 
 		if ($items) {
 			return $items;
 		}
 
 		return array();
-
 	}
 
 	/**
@@ -274,19 +259,16 @@ class JemModelEvents extends JModelList
 	 * Due to multi-cat this function is needed
 	 * filter-index (4) is pointing to the cats
 	 */
-
-	function getCategories($id)
+	public function getCategories($id)
 	{
-		$user 			= JemFactory::getUser();
-		$levels 		= $user->getAuthorisedViewLevels();
-		$app 			= JFactory::getApplication();
-		$settings 		= JemHelper::globalattribs();
+		$user   = JemFactory::getUser();
+		$levels = $user->getAuthorisedViewLevels();
 
 		# Query
-		$db 	= JFactory::getDBO();
-		$query = $db->getQuery(true);
+		$db     = JFactory::getDBO();
+		$query  = $db->getQuery(true);
 
-		$case_when_c = ' CASE WHEN ';
+		$case_when_c  = ' CASE WHEN ';
 		$case_when_c .= $query->charLength('c.alias');
 		$case_when_c .= ' THEN ';
 		$id_c = $query->castAsChar('c.id');
@@ -311,7 +293,7 @@ class JemModelEvents extends JModelList
 		$access = $this->getState('filter.access');
 
 		if ($access){
-			$groups = implode(',', $user->getAuthorisedViewLevels());
+			$groups = implode(',', $levels);
 			$query->where('c.access IN ('.$groups.')');
 		}
 
@@ -325,7 +307,7 @@ class JemModelEvents extends JModelList
 
 		if (!empty($search)) {
 			if (stripos($search, 'id:') === 0) {
-				$query->where('c.id = '.(int) substr($search, 3));
+				$query->where('c.id = ' . (int)substr($search, 3));
 			} else {
 			/* In case of a search string the db query had already filtered out
 			 *  all events without a matching caterory.

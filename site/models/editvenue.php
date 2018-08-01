@@ -1,11 +1,12 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
+
 defined('_JEXEC') or die;
 
 // Base this model on the backend version.
@@ -16,7 +17,6 @@ require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/venue.php';
  */
 class JemModelEditvenue extends JemModelVenue
 {
-
 	/**
 	 * Model typeAlias string. Used for version history.
 	 * @var        string
@@ -26,6 +26,7 @@ class JemModelEditvenue extends JemModelVenue
 
 	/**
 	 * Method to auto-populate the model state.
+	 *
 	 * Note. Calling getState in this method will result in recursion.
 	 */
 	protected function populateState()
@@ -35,6 +36,9 @@ class JemModelEditvenue extends JemModelVenue
 		// Load state from the request.
 		$pk = $app->input->getInt('a_id', 0);
 		$this->setState('venue.id', $pk);
+
+		$fromId = $app->input->getInt('from_id', 0);
+		$this->setState('venue.from_id', $fromId);
 
 		$return = $app->input->get('return', '', 'base64');
 		$this->setState('return_page', base64_decode($return));
@@ -49,15 +53,22 @@ class JemModelEditvenue extends JemModelVenue
 	/**
 	 * Method to get venue data.
 	 *
-	 * @param integer	The id of the venue.
+	 * @param  integer The id of the venue.
 	 * @return mixed item data object on success, false on failure.
 	 */
 	public function getItem($itemId = null)
 	{
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
+		$user = JemFactory::getUser();
 
 		// Initialise variables.
 		$itemId = (int) (!empty($itemId)) ? $itemId : $this->getState('venue.id');
+
+		$doCopy = false;
+		if (!$itemId && $this->getState('venue.from_id')) {
+			$itemId = $this->getState('venue.from_id');
+			$doCopy = true;
+		}
 
 		// Get a row instance.
 		$table = $this->getTable();
@@ -74,6 +85,16 @@ class JemModelEditvenue extends JemModelVenue
 		$properties = $table->getProperties(1);
 		$value = JArrayHelper::toObject($properties, 'JObject');
 
+		if ($doCopy) {
+			$value->id = 0;
+			$value->author_ip = '';
+			$value->created = '';
+			$value->created_by = '';
+			$value->modified = '';
+			$value->modified_by = '';
+			$value->version = '';
+		}
+
 		// Convert attrib field to Registry.
 		//$registry = new JRegistry();
 		//$registry->loadString($value->attribs);
@@ -84,19 +105,18 @@ class JemModelEditvenue extends JemModelVenue
 		//$value->params->merge($registry);
 
 		// Compute selected asset permissions.
-		$user = JemFactory::getUser();
-
-		// Check edit permission.
+		//  Check edit permission.
 		$value->params->set('access-edit', $user->can('edit', 'venue', $value->id, $value->created_by));
-
-		// Check edit state permission.
+		//  Check edit state permission.
 		$value->params->set('access-change', $user->can('publish', 'venue', $value->id, $value->created_by));
 
 		$value->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
 
-		$files = JemAttachment::getAttachments('venue' . $itemId);
+		// Get attachments - but not on copied venues
+		$files = JemAttachment::getAttachments('venue' . $value->id);
 		$value->attachments = $files;
 
+		// Preset values on new venues
 		if (empty($itemId)) {
 			$value->country = $jemsettings->defaultCountry;
 		}
@@ -113,6 +133,7 @@ class JemModelEditvenue extends JemModelVenue
 
 	/**
 	 * Get the return URL.
+	 *
 	 * @return string return URL.
 	 */
 	public function getReturnPage()

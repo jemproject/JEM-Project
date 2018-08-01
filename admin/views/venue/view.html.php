@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -27,7 +27,8 @@ class JemViewVenue extends JemAdminView
 		$this->state = $this->get('State');
 
 		// Check for errors.
-		if (count($errors = $this->get('Errors'))) {
+		$errors = $this->get('Errors');
+		if (is_array($errors) && count($errors)) {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
@@ -39,7 +40,8 @@ class JemViewVenue extends JemAdminView
 
 		//initialise variables
 		$document       = JFactory::getDocument();
-		$this->settings = JEMAdmin::config();
+		$this->settings = JemAdmin::config();
+		$globalregistry = JemHelper::globalattribs();
 		$task           = JFactory::getApplication()->input->get('task', '');
 		$this->task     = $task;
 
@@ -49,24 +51,24 @@ class JemViewVenue extends JemAdminView
 
 		// Load Scripts
 		JHtml::_('script', 'com_jem/attachments.js', false, true);
-		//$document->addScript('http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
+		//$document->addScript('https://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places');
 
 		$language = JFactory::getLanguage();
 		$language = $language->getTag();
 		$language = substr($language, 0,2);
 
-		$key = trim($this->settings->globalattribs->global_googleapi);
-		$document->addScript('http://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&amp;libraries=places&language='.$language);
+		$key = trim($globalregistry->get('global_googleapi', ''));
+		$document->addScript('https://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&amp;libraries=places&language='.$language);
 
 		// Noconflict
 		$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
 
 		// JQuery scripts
-		$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+		$document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
 		JHtml::_('script', 'com_jem/jquery.geocomplete.js', false, true);
 
-		$access2 = JEMHelper::getAccesslevelOptions();
-		$this->access		= $access2;
+		$access2 = JemHelper::getAccesslevelOptions();
+		$this->access = $access2;
 
 		$this->addToolbar();
 		parent::display($tpl);
@@ -80,10 +82,10 @@ class JemViewVenue extends JemAdminView
 	{
 		JFactory::getApplication()->input->set('hidemainmenu', true);
 
-		$user		= JemFactory::getUser();
-		$isNew		= ($this->item->id == 0);
-		$checkedOut	= !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
-		$canDo		= JEMHelperBackend::getActions();
+		$user       = JemFactory::getUser();
+		$isNew      = ($this->item->id == 0);
+		$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+		$canDo      = JemHelperBackend::getActions();
 
 		JToolBarHelper::title($isNew ? JText::_('COM_JEM_ADD_VENUE') : JText::_('COM_JEM_EDIT_VENUE'), 'venuesedit');
 

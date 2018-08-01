@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="2.5" type="plugin" group="content" method="upgrade">
+	<name>plg_content_jemlistevents</name>
+	<creationDate>December 2017</creationDate>
+	<author>JEM Community</author>
+	<authorEmail>info@joomlaeventmanager.net</authorEmail>
+	<authorUrl>www.joomlaeventmanager.net</authorUrl>
+	<copyright>copyright (C) 2013-2018 joomlaeventmanager.net</copyright>
+	<license>https://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<version>2.2.3</version>
+	<description>PLG_CONTENT_JEMLISTEVENTS_XML_DESCRIPTION</description>
+
+	<files>
+		<filename plugin="jemlistevents">jemlistevents.php</filename>
+		<filename>index.html</filename>
+		<folder>language</folder>
+	</files>
+
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field name="type" type="list"
+					size="1"
+					default="unfinished"
+				    label="PLG_CONTENT_JEMLISTEVENTS_TYPE_LABEL"
+					description="PLG_CONTENT_JEMLISTEVENTS_TYPE_DESCRIPTION"
+				>
+					<option value="today"     >PLG_CONTENT_JEMLISTEVENTS_TODAYS_EVENTS</option>
+					<option value="unfinished">PLG_CONTENT_JEMLISTEVENTS_UNFINISHED_EVENTS</option>
+					<option value="upcoming"  >PLG_CONTENT_JEMLISTEVENTS_UPCOMING_EVENTS</option>
+					<option value="archived"  >PLG_CONTENT_JEMLISTEVENTS_ARCHIVED_EVENTS</option>
+					<option value="newest"    >PLG_CONTENT_JEMLISTEVENTS_NEWEST_EVENTS</option>
+				</field>
+				<field name="show_featured" type="radio"
+					class="btn-group btn-group-yesno"
+					default="0"
+				    label="PLG_CONTENT_JEMLISTEVENTS_FEATURED_LABEL"
+					description="PLG_CONTENT_JEMLISTEVENTS_FEATURED_DESCRIPTION"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="title" type="list"
+					size="1"
+					default="on"
+				    label="PLG_CONTENT_JEMLISTEVENTS_TITLE_LABEL"
+					description="PLG_CONTENT_JEMLISTEVENTS_TITLE_DESCRIPTION"
+				>
+					<option value="on"  >PLG_CONTENT_JEMLISTEVENTS_ON</option>
+					<option value="link">PLG_CONTENT_JEMLISTEVENTS_LINK</option>
+					<option value="off" >PLG_CONTENT_JEMLISTEVENTS_OFF</option>
+				</field>
+				<field name="cut_title" type="text"
+					default="40"
+					label="PLG_CONTENT_JEMLISTEVENTS_MAX_TITLE_LENGTH"
+					description="PLG_CONTENT_JEMLISTEVENTS_MAX_TITLE_LENGTH_DESC"
+					showon="title:on[OR]title:link"
+				/>
+				<field name="show_date" type="list"
+					size="1"
+					default="on"
+					label="PLG_CONTENT_JEMLISTEVENTS_DATE_LABEL"
+					description="PLG_CONTENT_JEMLISTEVENTS_DATE_DESCRIPTION"
+				>
+					<option value="on"  >PLG_CONTENT_JEMLISTEVENTS_ON</option>
+					<option value="link">PLG_CONTENT_JEMLISTEVENTS_LINK</option>
+					<option value="off" >PLG_CONTENT_JEMLISTEVENTS_OFF</option>
+				</field>
+				<field name="date_format" type="text"
+					default=""
+					label="PLG_CONTENT_JEMLISTEVENTS_DATE_FORMAT"
+					description="PLG_CONTENT_JEMLISTEVENTS_DATE_FORMAT_DESC"
+					showon="show_date:on[OR]show_date:link"
+				/>
+				<field name="show_time" type="radio"
+					class="btn-group btn-group-yesno"
+					default="1"
+					label="PLG_CONTENT_JEMLISTEVENTS_TIME_LABEL"
+					description="PLG_CONTENT_JEMLISTEVENTS_TIME_DESCRIPTION"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="time_format" type="text"
+					default=""
+					label="PLG_CONTENT_JEMLISTEVENTS_TIME_FORMAT"
+					description="PLG_CONTENT_JEMLISTEVENTS_TIME_FORMAT_DESC"
+					showon="show_time:1"
+				/>
+				<field name="show_enddatetime" type="radio"
+					class="btn-group btn-group-yesno"
+					default="0"
+					label="PLG_CONTENT_JEMLISTEVENTS_ENDDATETIME_LABEL"
+					description="PLG_CONTENT_JEMLISTEVENTS_ENDDATETIME_DESCRIPTION"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="catids" type="text"
+					size="10"
+					default=""
+					label="PLG_CONTENT_JEMLISTEVENTS_CATEGORIES_LABEL"
+					description="PLG_CONTENT_JEMLISTEVENTS_CATEGORIES_DESCRIPTION"
+				/>
+				<field name="show_category" type="list"
+					size="1"
+					default="off"
+					label="PLG_CONTENT_JEMLISTEVENTS_CATEGORY_LABEL"
+					description="PLG_CONTENT_JEMLISTEVENTS_CATEGORY_DESCRIPTION"
+				>
+					<option value="on"  >PLG_CONTENT_JEMLISTEVENTS_ON</option>
+					<option value="link">PLG_CONTENT_JEMLISTEVENTS_LINK</option>
+					<option value="off" >PLG_CONTENT_JEMLISTEVENTS_OFF</option>
+				</field>
+				<field name="venueids" type="text"
+					size="10"
+					default=""
+					label="PLG_CONTENT_JEMLISTEVENTS_VENUES_LABEL"
+					description="PLG_CONTENT_JEMLISTEVENTS_VENUES_DESCRIPTION"
+				/>
+				<field name="show_venue" type="list"
+					size="1"
+					default="off"
+					label="PLG_CONTENT_JEMLISTEVENTS_VENUE_LABEL"
+					description="PLG_CONTENT_JEMLISTEVENTS_VENUE_DESCRIPTION"
+				>
+					<option value="on"  >PLG_CONTENT_JEMLISTEVENTS_ON</option>
+					<option value="link">PLG_CONTENT_JEMLISTEVENTS_LINK</option>
+					<option value="off" >PLG_CONTENT_JEMLISTEVENTS_OFF</option>
+				</field>
+				<field name="max_events" type="text"
+					size="10"
+					default="5"
+					label="PLG_CONTENT_JEMLISTEVENTS_MAXIMUM_LABEL"
+					description="PLG_CONTENT_JEMLISTEVENTS_MAXIMUM_DESCRIPTION"
+				/>
+				<field name="no_events_msg" type="text"
+					size="70"
+					default=""
+					label="PLG_CONTENT_JEMLISTEVENTS_NO_EVENTS_MESSAGE_LABEL"
+					description="PLG_CONTENT_JEMLISTEVENTS_NO_EVENTS_MESSAGE_DESCRIPTION"
+				/>
+			</fieldset>
+		</fields>
+	</config>
+</extension>

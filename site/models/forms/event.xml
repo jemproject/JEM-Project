@@ -28,21 +28,23 @@
 			description="COM_JEM_EDITEVENT_FIELD_ALIAS"
 			required="false"
 		/>
-		<field name="dates" type="calendar"
+		<field name="dates" type="calendarjem"
 			label="COM_JEM_EDITEVENT_FIELD_DATE"
 			description="COM_JEM_EDITEVENT_FIELD_DATE_DESC"
 			class="inputbox"
 			size="22"
 			format="%Y-%m-%d"
+			translateformat="true"
 			filter="string"
 			showtime="false"
 		/>
-		<field name="enddates" type="calendar"
+		<field name="enddates" type="calendarjem"
 			label="COM_JEM_EDITEVENT_FIELD_ENDDATE"
 			description="COM_JEM_EDITEVENT_FIELD_ENDDATE_DESC"
 			class="inputbox"
 			size="22"
 			format="%Y-%m-%d"
+			translateformat="true"
 			filter="string"
 			showtime="false"
 		/>
@@ -87,6 +89,7 @@
 			default="now"
 			readonly="true"
 			format="%Y-%m-%d %H:%M:%S"
+			translateformat="true"
 			filter="user_utc"
 		/>
 		<field name="modified" type="calendar"
@@ -96,6 +99,7 @@
 			size="22"
 			readonly="true"
 			format="%Y-%m-%d %H:%M:%S"
+			translateformat="true"
 			filter="user_utc"
 		/>
 		<field name="version" type="text"
@@ -336,13 +340,14 @@
 			<option value="3">COM_JEM_MONTHLY</option>
 			<option value="4">COM_JEM_WEEKDAY</option>
 		</field>
-		<field name="recurrence_limit_date" type="calendar"
+		<field name="recurrence_limit_date" type="calendarjem"
 			default="now"
 			label="COM_JEM_EDITEVENT_FIELD_RECURRENCE_COUNTER"
 			description="COM_JEM_EDITEVENT_FIELD_RECURRENCE_COUNTER"
 			class="inputbox"
 			size="22"
 			format="%Y-%m-%d"
+			translateformat="true"
 			filter="string"
 			showtime="false"
 		/>

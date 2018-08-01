@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -20,8 +20,19 @@ jimport('joomla.html.pagination');
  */
 class JemModelMyvenues extends JModelLegacy
 {
-	var $_venues = null;
-	var $_total_venues = null;
+	/**
+	 * Venues data array
+	 *
+	 * @var array
+	 */
+	protected $_venues = null;
+
+	/**
+	 * Venues total count
+	 *
+	 * @var integer
+	 */
+	protected $_total_venues = null;
 
 	/**
 	 * Constructor
@@ -40,7 +51,7 @@ class JemModelMyvenues extends JModelLegacy
 			$app->setUserState('com_jem.myvenues.limitstart', 0);
 		}
 
-		$limit		= $app->getUserStateFromRequest('com_jem.myvenues.limit', 'limit', $jemsettings->display_num, 'int');
+		$limit      = $app->getUserStateFromRequest('com_jem.myvenues.limit', 'limit', $jemsettings->display_num, 'int');
 		$limitstart = $app->getUserStateFromRequest('com_jem.myvenues.limitstart', 'limitstart', 0, 'int');
 		// correct start value if required
 		$limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
@@ -55,7 +66,7 @@ class JemModelMyvenues extends JModelLegacy
 	 * @access public
 	 * @return array
 	 */
-	function & getVenues()
+	public function getVenues()
 	{
 		$pop = JFactory::getApplication()->input->getBool('pop', false);
 		$user = JemFactory::getUser();
@@ -100,7 +111,7 @@ class JemModelMyvenues extends JModelLegacy
 	 * @access public
 	 * @return integer
 	 */
-	function getTotalVenues()
+	public function getTotalVenues()
 	{
 		// Lets load the total nr if it doesn't already exist
 		if ( empty($this->_total_venues)) {
@@ -117,7 +128,7 @@ class JemModelMyvenues extends JModelLegacy
 	 * @access public
 	 * @return integer
 	 */
-	function getVenuesPagination()
+	public function getVenuesPagination()
 	{
 		// Lets load the content if it doesn't already exist
 		if ( empty($this->_pagination_venues))
@@ -132,14 +143,13 @@ class JemModelMyvenues extends JModelLegacy
 	/**
 	 * Method to (un)publish one or more venue(s)
 	 *
-	 * @access	public
-	 * @return	boolean	True on success
-	 *
+	 * @access public
+	 * @return boolean True on success
 	 */
-	function publish($cid = array(), $publish = 1)
+	public function publish($cid = array(), $publish = 1)
 	{
 		$result = false;
-		$user 	= JemFactory::getUser();
+		$user   = JemFactory::getUser();
 		$userid = (int) $user->get('id');
 
 		if (is_numeric($cid)) {
@@ -184,11 +194,11 @@ class JemModelMyvenues extends JModelLegacy
 		$query = 'SELECT l.id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.created, l.created_by, l.published,'
 		       . ' l.custom1, l.custom2, l.custom3, l.custom4, l.custom5, l.custom6, l.custom7, l.custom8, l.custom9, l.custom10,'
 		       . ' l.locdescription, l.locimage, l.latitude, l.longitude, l.map, l.meta_keywords, l.meta_description, l.checked_out, l.checked_out_time,'
-		       .' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug'
-		       .' FROM #__jem_venues AS l '
-		.$where
-		.$orderby
-		;
+		       . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', l.id, l.alias) ELSE l.id END as venueslug'
+		       . ' FROM #__jem_venues AS l '
+		       . $where
+		       . $orderby
+		       ;
 
 		return $query;
 	}
@@ -203,11 +213,11 @@ class JemModelMyvenues extends JModelLegacy
 	{
 		$app = JFactory::getApplication();
 
-		$filter_order		= $app->getUserStateFromRequest('com_jem.myvenues.filter_order', 'filter_order', 'l.venue', 'cmd');
-		$filter_order_Dir	= $app->getUserStateFromRequest('com_jem.myvenues.filter_order_Dir', 'filter_order_Dir', '', 'word');
+		$filter_order     = $app->getUserStateFromRequest('com_jem.myvenues.filter_order', 'filter_order', 'l.venue', 'cmd');
+		$filter_order_Dir = $app->getUserStateFromRequest('com_jem.myvenues.filter_order_Dir', 'filter_order_Dir', '', 'word');
 
-		$filter_order		= JFilterInput::getInstance()->clean($filter_order, 'cmd');
-		$filter_order_Dir	= JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
+		$filter_order     = JFilterInput::getInstance()->clean($filter_order, 'cmd');
+		$filter_order_Dir = JFilterInput::getInstance()->clean($filter_order_Dir, 'word');
 
 		if ($filter_order != '') {
 			$orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir . ', l.venue ASC';

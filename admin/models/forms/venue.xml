@@ -196,6 +196,7 @@
 			default="now"
 			readonly="true"
 			format="%Y-%m-%d %H:%M:%S"
+			translateformat="true"
 			filter="user_utc"
 		/>
 		<field name="version" type="text" class="readonly"
@@ -211,6 +212,7 @@
 			size="22"
 			readonly="true"
 			format="%Y-%m-%d %H:%M:%S"
+			translateformat="true"
 			filter="user_utc"
 		/>
 		<field name="modified_by" type="user"

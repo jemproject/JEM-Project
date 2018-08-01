@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -14,21 +14,21 @@ defined('_JEXEC') or die;
  * View class for the JEM Help screen
  *
  * @package JEM
- *
  */
 class JemViewHelp extends JemAdminView
 {
 
-	public function display($tpl = null) {
+	public function display($tpl = null)
+	{
 		//Load filesystem folder and pane behavior
 		jimport('joomla.html.pane');
 		jimport('joomla.filesystem.folder');
 
 		//initialise variables
-		$lang 			= JFactory::getLanguage();
+		$lang = JFactory::getLanguage();
 
 		//get vars
-		$helpsearch 	= JFactory::getApplication()->input->getString('filter_search', '');
+		$helpsearch = JFactory::getApplication()->input->getString('filter_search', '');
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
@@ -41,12 +41,12 @@ class JemViewHelp extends JemAdminView
 		}
 
 		//search the keyword in the files
-		$toc 		= JEMViewHelp::getHelpToc($helpsearch);
+		$toc = JemViewHelp::getHelpToc($helpsearch);
 
 		//assign data to template
-		$this->langTag 		= $langTag;
-		$this->helpsearch 	= $helpsearch;
-		$this->toc 			= $toc;
+		$this->langTag    = $langTag;
+		$this->helpsearch = $helpsearch;
+		$this->toc        = $toc;
 
 		// add toolbar
 		$this->addToolbar();
@@ -58,9 +58,9 @@ class JemViewHelp extends JemAdminView
 	 * Compiles the help table of contents
 	 * Based on the Joomla admin component
 	 *
-	 * @param string A specific keyword on which to filter the resulting list
+	 * @param  string A specific keyword on which to filter the resulting list
 	 */
-	function getHelpTOC($helpsearch)
+	public function getHelpTOC($helpsearch)
 	{
 		$lang = JFactory::getLanguage();
 		jimport('joomla.filesystem.folder');
@@ -68,7 +68,7 @@ class JemViewHelp extends JemAdminView
 		// Check for files in the actual language
 		$langTag = $lang->getTag();
 
-		if(!JFolder::exists(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
+		if (!JFolder::exists(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
 			$langTag = 'en-GB';		// use english as fallback
 		}
 		$files = JFolder::files(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag, '\.xml$|\.html$');
@@ -92,7 +92,6 @@ class JemViewHelp extends JemAdminView
 		asort($toc);
 		return $toc;
 	}
-
 
 	/**
 	 * Add Toolbar

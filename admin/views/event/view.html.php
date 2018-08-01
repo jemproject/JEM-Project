@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -26,7 +26,8 @@ class JemViewEvent extends JemAdminView
 		$this->state = $this->get('State');
 
 		// Check for errors.
-		if (count($errors = $this->get('Errors'))) {
+		$errors = $this->get('Errors');
+		if (is_array($errors) && count($errors)) {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
@@ -52,7 +53,7 @@ class JemViewEvent extends JemAdminView
 
 		// Load css
 		JHtml::_('stylesheet', 'com_jem/backend.css', array(), true);
-		
+
 		if (version_compare(JVERSION, '3.0', 'lt')) {
 			$style = 'select.required {'
 					. 'background-color: #D5EEFF;'
@@ -68,8 +69,8 @@ class JemViewEvent extends JemAdminView
 
 		// JQuery noConflict
 		//$document->addCustomTag('<script type="text/javascript">jQuery.noConflict();</script>');
-		//$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
-		//$document->addScript('http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js');
+		//$document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+		//$document->addScript('https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js');
 
 		$access2 			= JemHelper::getAccesslevelOptions();
 		$this->access		= $access2;

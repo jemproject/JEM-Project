@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -44,13 +44,13 @@ JHtml::_('behavior.tooltip');
 		<tbody>
 		<?php
 		$k = 0;
-		for ($i=0, $n=count( $this->rows ); $i < $n; $i++) {
+		for ($i = 0, $n = is_array($this->rows) ? count($this->rows) : 0; $i < $n; $i++) {
 			$row = $this->rows[$i];
 		?>
 			<tr class="<?php echo "row$k"; ?>">
 				<td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
 				<td>
-					<span <?php echo JEMOutput::tooltip(JText::_('COM_JEM_SELECT'), $row->name, 'editlinktip'); ?>>
+					<span <?php echo JemOutput::tooltip(JText::_('COM_JEM_SELECT'), $row->name, 'editlinktip'); ?>>
 					<a style="cursor:pointer" onclick="window.parent.modalSelectUser('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->name ); ?>');">
 						<?php echo $this->escape($row->name); ?>
 					</a></span>

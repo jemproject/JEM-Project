@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.1.0
+ * @version     2.2.2
  * @package     JEM
- * @copyright   Copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -27,7 +27,7 @@ class JemControllerCategories extends JControllerAdmin
 	 *
 	 * @return	object	The model.
 	 */
-	function getModel($name = 'Category', $prefix = 'JEMModel', $config = array('ignore_request' => true))
+	public function getModel($name = 'Category', $prefix = 'JemModel', $config = array('ignore_request' => true))
 	{
 		$model = parent::getModel($name, $prefix, $config);
 		return $model;
@@ -72,7 +72,7 @@ class JemControllerCategories extends JControllerAdmin
 		$originalOrder = explode(',', JFactory::getApplication()->input->getString('original_order_values', ''));
 
 		// Make sure something has changed
-		if (!($order === $originalOrder)) {
+		if ($order !== $originalOrder) {
 			parent::saveorder();
 		} else {
 			// Nothing to reorder
@@ -127,8 +127,11 @@ class JemControllerCategories extends JControllerAdmin
  	 * @return void
  	 *
  	 */
- 	function remove()
+ 	public function remove()
  	{
+		// Check for request forgeries
+		JSession::checkToken() or jexit('Invalid Token');
+
  		$cid= JFactory::getApplication()->input->post->get('cid', array(), 'array');
 
  		if (!is_array($cid) || count($cid) < 1) {

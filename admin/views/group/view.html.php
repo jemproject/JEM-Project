@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -31,7 +31,8 @@ class JemViewGroup extends JemAdminView
 		$this->state = $this->get('State');
 
 		// Check for errors.
-		if (count($errors = $this->get('Errors'))) {
+		$errors = $this->get('Errors');
+		if (is_array($errors) && count($errors)) {
 			JError::raiseError(500, implode("\n", $errors));
 			return false;
 		}
@@ -41,9 +42,9 @@ class JemViewGroup extends JemAdminView
 		JHtml::_('behavior.formvalidation');
 
 		//initialise variables
-		$jemsettings = JEMHelper::config();
+		$jemsettings = JemHelper::config();
 		$document	= JFactory::getDocument();
-		$this->settings	= JEMAdmin::config();
+		$this->settings	= JemAdmin::config();
 		$task		= JFactory::getApplication()->input->get('task', '');
 		$this->task = $task;
 		$url 		= JUri::root();
@@ -81,7 +82,7 @@ class JemViewGroup extends JemAdminView
 		$user		= JemFactory::getUser();
 		$isNew		= ($this->item->id == 0);
 		$checkedOut	= !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
-		$canDo		= JEMHelperBackend::getActions();
+		$canDo		= JemHelperBackend::getActions();
 
 		JToolBarHelper::title($isNew ? JText::_('COM_JEM_GROUP_ADD') : JText::_('COM_JEM_GROUP_EDIT'), 'groupedit');
 

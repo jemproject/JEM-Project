@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.3
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,19 +15,19 @@ jimport('joomla.application.component.modellist');
  * JEM Component Groups Model
  *
  **/
-class JEMModelGroups extends JModelList
+class JemModelGroups extends JModelList
 {
 	/**
 	 * Constructor.
 	 *
-	 * @param	array	An optional associative array of configuration settings.
-	 * @see		JController
+	 * @param  array An optional associative array of configuration settings.
+	 * @see    JController
 	 */
 	public function __construct($config = array())
 	{
 		if (empty($config['filter_fields'])) {
 			$config['filter_fields'] = array(
-					'name', 'a.name',
+				'name', 'a.name',
 			);
 		}
 
@@ -37,7 +37,7 @@ class JEMModelGroups extends JModelList
 	/**
 	 * Method to auto-populate the model state.
 	 *
-	 * Note. Calling getState in this method will result in recursion.
+	 * @Note Calling getState in this method will result in recursion.
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
@@ -65,8 +65,8 @@ class JEMModelGroups extends JModelList
 	 * different modules that might need different sets of data or different
 	 * ordering requirements.
 	 *
-	 * @param	string		$id	A prefix for the store id.
-	 * @return	string		A store id.
+	 * @param  string $id A prefix for the store id.
+	 * @return string A store id.
 	 *
 	 */
 	protected function getStoreId($id = '')
@@ -82,22 +82,17 @@ class JEMModelGroups extends JModelList
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @return	JDatabaseQuery
+	 * @return JDatabaseQuery
 	 *
 	 */
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db		= $this->getDbo();
-		$query	= $db->getQuery(true);
+		$db    = $this->getDbo();
+		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
-		$query->select(
-				$this->getState(
-						'list.select',
-						'a.*'
-				)
-		);
+		$query->select($this->getState('list.select', 'a.*'));
 		$query->from($db->quoteName('#__jem_groups').' AS a');
 
 		// Join over the users for the checked out user.
@@ -121,8 +116,8 @@ class JEMModelGroups extends JModelList
 		// $query->group('a.id');
 
 		// Add the list ordering clause.
-		$orderCol	= $this->state->get('list.ordering');
-		$orderDirn	= $this->state->get('list.direction');
+		$orderCol  = $this->state->get('list.ordering');
+		$orderDirn = $this->state->get('list.direction');
 		//if ($orderCol == 'a.ordering' || $orderCol == 'category_title') {
 		//	$orderCol = 'c.title '.$orderDirn.', a.ordering';
 		//}
@@ -130,7 +125,6 @@ class JEMModelGroups extends JModelList
 		//echo nl2br(str_replace('#__','jos_',$query));
 		return $query;
 	}
-
 
 	/**
 	 * Method to get the userinformation of edited/submitted venues
@@ -146,39 +140,38 @@ class JEMModelGroups extends JModelList
 		return $items;
 	}
 
-
 	/**
 	 * Method to remove a group
 	 *
-	 * @access	public
-	 * @return	boolean	True on success
+	 * @access public
+	 * @return boolean True on success
 	 *
 	 */
-	function delete($cid = array())
+	public function delete($cid = array())
 	{
-		if (count($cid))
+		if (is_array($cid) && count($cid))
 		{
 			JArrayHelper::toInteger($cid);
 			$cids = implode(',', $cid);
 
 			$query = 'DELETE FROM #__jem_groups'
-					. ' WHERE id IN ('. $cids .')'
-					;
+			       . ' WHERE id IN ('. $cids .')'
+			       ;
 
 			$this->_db->setQuery($query);
 
-			if($this->_db->execute() === false) {
+			if ($this->_db->execute() === false) {
 				$this->setError($this->_db->getErrorMsg());
 				return false;
 			}
 
 			$query = 'DELETE FROM #__jem_groupmembers'
-					. ' WHERE group_id IN ('. $cids .')'
-					;
+			       . ' WHERE group_id IN ('. $cids .')'
+			       ;
 
 			$this->_db->setQuery($query);
 
-			if($this->_db->execute() === false) {
+			if ($this->_db->execute() === false) {
 				$this->setError($this->_db->getErrorMsg());
 				return false;
 			}

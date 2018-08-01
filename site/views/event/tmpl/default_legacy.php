@@ -20,7 +20,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 ?>
 <?php if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */ ?>
 <div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event<?php echo $this->pageclass_sfx;?>"
-	itemscope="itemscope" itemtype="http://schema.org/Event">
+	itemscope="itemscope" itemtype="https://schema.org/Event">
 	<div class="buttons">
 		<?php
 		$btn_params = array('slug' => $this->item->slug, 'print_link' => $this->print_link);
@@ -40,9 +40,10 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 
 	<!-- Event -->
 	<h2 class="jem">
-	<?php
+		<?php
 		echo JText::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item);
 		echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent');
+		echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
 		?>
 	</h2>
 
@@ -64,27 +65,32 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		</dd>
 		<?php if ($this->item->locid != 0) : ?>
 		<dt class="where"><?php echo JText::_('COM_JEM_WHERE'); ?>:</dt>
-		<dd class="where">
-			<?php if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) : ?>
-				<a target="_blank" href="<?php echo $this->item->url; ?>"><?php echo $this->escape($this->item->venue); ?></a> -
-			<?php elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) : ?>
-				<a href="<?php echo JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)); ?>"><?php echo $this->item->venue; ?></a> -
-			<?php else/*if ($params->get('event_show_detlinkvenue') == 0)*/ :
-				echo $this->escape($this->item->venue).' - ';
+		<dd class="where"><?php
+			if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :
+				?><a target="_blank" href="<?php echo $this->item->url; ?>"><?php echo $this->escape($this->item->venue); ?></a><?php
+			elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) :
+				?><a href="<?php echo JRoute::_(JemHelperRoute::getVenueRoute($this->item->venueslug)); ?>"><?php echo $this->item->venue; ?></a><?php
+			else/*if ($params->get('event_show_detlinkvenue') == 0)*/ :
+				echo $this->escape($this->item->venue);
 			endif;
 
-			echo $this->escape($this->item->city).', '.$this->escape($this->item->state); ?>
+			# will show "venue" or "venue - city" or "venue - city, state" or "venue, state"
+			$city  = $this->escape($this->item->city);
+			$state = $this->escape($this->item->state);
+			if ($city)  { echo ' - ' . $city; }
+			if ($state) { echo ', ' . $state; }
+			?>
 		</dd>
 		<?php
 		endif;
-		$n = count($this->categories);
+		$n = is_array($this->categories) ? count($this->categories) : 0;
 		?>
 
 		<dt class="category"><?php echo $n < 2 ? JText::_('COM_JEM_CATEGORY') : JText::_('COM_JEM_CATEGORIES'); ?>:</dt>
 		<dd class="category">
 		<?php
 		$i = 0;
-		foreach ($this->categories as $category) :
+		foreach ((array)$this->categories as $category) :
 			?><a href="<?php echo JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)); ?>"><?php echo $this->escape($category->catname); ?></a><?php
 			$i++;
 			if ($i != $n) :
@@ -225,12 +231,13 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 	<p></p>
 	<hr>
 
-	<div itemprop="location" itemscope="itemscope" itemtype="http://schema.org/Place">
+	<div itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
 		<h2 class="location">
 			<?php
 			echo JText::_('COM_JEM_VENUE') ;
 			$itemid = $this->item ? $this->item->id : 0 ;
 			echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue');
+			echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue');
 			?>
 		</h2>
 		<?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
@@ -252,7 +259,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 		</dl>
 		<?php if ($params->get('event_show_detailsadress', '1')) : ?>
 		<dl class="location floattext" itemprop="address" itemscope
-		    itemtype="http://schema.org/PostalAddress">
+		    itemtype="https://schema.org/PostalAddress">
 			<?php if ($this->item->street) : ?>
 			<dt class="venue_street"><?php echo JText::_('COM_JEM_STREET'); ?>:</dt>
 			<dd class="venue_street" itemprop="streetAddress">
@@ -270,7 +277,7 @@ JHtml::_('behavior.modal', 'a.flyermodal');
 			<?php if ($this->item->city) : ?>
 			<dt class="venue_city"><?php echo JText::_('COM_JEM_CITY'); ?>:</dt>
 			<dd class="venue_city" itemprop="addressLocality">
-				<?php echo $this->escape($this->item->city);?>
+				<?php echo $this->escape($this->item->city); ?>
 			</dd>
 			<?php endif; ?>
 

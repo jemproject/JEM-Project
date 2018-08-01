@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -12,31 +12,26 @@ defined('_JEXEC') or die;
 /**
  * Source controller class
  */
-class JEMControllerSource extends JControllerLegacy
+class JemControllerSource extends JControllerLegacy
 {
 	/**
 	 * Constructor.
 	 *
-	 * @param	array An optional associative array of configuration settings.
-	 * @see		JController
+	 * @param  array  An optional associative array of configuration settings.
+	 * @see    JController
 	 */
 	public function __construct($config = array())
 	{
 		parent::__construct($config);
 
 		// Apply, Save & New, and Save As copy should be standard on forms.
-		$this->registerTask('apply',		'save');
+		$this->registerTask('apply', 'save');
 	}
 
 	/**
 	 * Method to check if you can add a new record.
 	 *
-	 * Extended classes can override this if necessary.
-	 *
-	 * @param	array	An array of input data.
-	 * @param	string	The name of the key for the primary key.
-	 *
-	 * @return	boolean
+	 * @return boolean
 	 */
 	protected function allowEdit()
 	{
@@ -46,12 +41,7 @@ class JEMControllerSource extends JControllerLegacy
 	/**
 	 * Method to check if you can save a new or existing record.
 	 *
-	 * Extended classes can override this if necessary.
-	 *
-	 * @param	array	An array of input data.
-	 * @param	string	The name of the key for the primary key.
-	 *
-	 * @return	boolean
+	 * @return boolean
 	 */
 	protected function allowSave()
 	{
@@ -61,13 +51,13 @@ class JEMControllerSource extends JControllerLegacy
 	/**
 	 * Method to get a model object, loading it if required.
 	 *
-	 * @param	string	The model name. Optional.
-	 * @param	string	The class prefix. Optional.
-	 * @param	array	Configuration array for model. Optional (note, the empty array is atypical compared to other models).
+	 * @param  string  The model name. Optional.
+	 * @param  string  The class prefix. Optional.
+	 * @param  array   Configuration array for model. Optional.
 	 *
-	 * @return	object	The model.
+	 * @return object  The model.
 	 */
-	public function getModel($name = 'Source', $prefix = 'JEMModel', $config = array())
+	public function getModel($name = 'Source', $prefix = 'JemModel', $config = array())
 	{
 		$model = parent::getModel($name, $prefix, $config);
 		return $model;
@@ -76,30 +66,29 @@ class JEMControllerSource extends JControllerLegacy
 	/**
 	 * This controller does not have a display method. Redirect back to the list view of the component.
 	 *
-	 * @param	boolean			If true, the view output will be cached
-	 * @param	array			An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
+	 * @param  boolean  If true, the view output will be cached
+	 * @param  array    An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
 	 *
-	 * @return	JController		This object to support chaining.
+	 * @return JController  This object to support chaining.
 	 *
 	 */
-	public function display($cachable = false, $urlparams = false)
+	public function display($cachable = false, $urlparams = array())
 	{
-		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=ccsmanager', false));
+		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=cssmanager', false));
 	}
 
 	/**
 	 * Method to edit an existing record.
 	 *
-	 * @return	void
+	 * @return boolean  True on success.
 	 */
 	public function edit()
 	{
 		// Initialise variables.
-		$app		= JFactory::getApplication();
-		$model		= $this->getModel();
-		$recordId	= $app->input->get('id', '');
-		$context	= 'com_jem.edit.source';
-
+		$app      = JFactory::getApplication();
+		$model    = $this->getModel();
+		$recordId = $app->input->get('id', '');
+		$context  = 'com_jem.edit.source';
 
 		if (preg_match('#\.\.#', base64_decode($recordId))) {
 			return JError::raiseError(500, JText::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
@@ -111,7 +100,7 @@ class JEMControllerSource extends JControllerLegacy
 		}
 
 		// Check-out succeeded, push the new record id into the session.
-		$app->setUserState($context.'.id',	$recordId);
+		$app->setUserState($context.'.id', $recordId);
 		$app->setUserState($context.'.data', null);
 		$this->setRedirect('index.php?option=com_jem&view=source&layout=edit');
 		return true;
@@ -119,8 +108,6 @@ class JEMControllerSource extends JControllerLegacy
 
 	/**
 	 * Method to cancel an edit
-	 *
-	 * @return	void
 	 */
 	public function cancel()
 	{
@@ -128,18 +115,20 @@ class JEMControllerSource extends JControllerLegacy
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		// Initialise variables.
-		$app		= JFactory::getApplication();
-		$model		= $this->getModel();
-		$context	= 'com_jem.edit.source';
+		$app     = JFactory::getApplication();
+		$model   = $this->getModel();
+		$context = 'com_jem.edit.source';
 
 		// Clean the session data and redirect.
-		$app->setUserState($context.'.id',		null);
-		$app->setUserState($context.'.data',	null);
+		$app->setUserState($context.'.id', null);
+		$app->setUserState($context.'.data', null);
 		$this->setRedirect(JRoute::_('index.php?option=com_jem&view=cssmanager', false));
 	}
 
 	/**
 	 * Saves a template source file.
+	 *
+	 * @return boolean  True on success.
 	 */
 	public function save()
 	{
@@ -147,14 +136,14 @@ class JEMControllerSource extends JControllerLegacy
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		// Initialise variables.
-		$app		= JFactory::getApplication();
-		$data		= $app->input->get('jform', array(), 'array');
-		$context	= 'com_jem.edit.source';
-		$task		= $this->getTask();
-		$model		= $this->getModel();
+		$app     = JFactory::getApplication();
+		$data    = $app->input->get('jform', array(), 'array');
+		$context = 'com_jem.edit.source';
+		$task    = $this->getTask();
+		$model   = $this->getModel();
 
-		$file 		= $model->getState('filename');
-		$custom		= stripos($file, 'custom#:');
+		$file    = $model->getState('filename');
+		$custom  = stripos($file, 'custom#:');
 
 		# custom file?
 		if ($custom !== false) {
@@ -167,28 +156,25 @@ class JEMControllerSource extends JControllerLegacy
 		}
 
 		// Match the stored id's with the submitted.
-		if (empty($data['filename'])) {
-			return JError::raiseError(500, JText::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_ID_FILENAME_MISMATCH'));
-		}
-
-		elseif ($data['filename'] != $file) {
+		if (empty($data['filename']) || ($data['filename'] != $file)) {
 			return JError::raiseError(500, JText::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_ID_FILENAME_MISMATCH'));
 		}
 
 		// Validate the posted data.
-		$form	= $model->getForm();
+		$form = $model->getForm();
 		if (!$form)
 		{
 			JError::raiseError(500, $model->getError());
 			return false;
 		}
+
 		$data = $model->validate($form, $data);
 
 		// Check for validation errors.
 		if ($data === false)
 		{
 			// Get the validation messages.
-			$errors	= $model->getErrors();
+			$errors = $model->getErrors();
 
 			// Push up to three validation messages out to the user.
 			for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++)

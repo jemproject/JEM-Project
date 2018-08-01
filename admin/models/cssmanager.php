@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -16,14 +16,12 @@ jimport('joomla.filesystem.file');
  */
 class JemModelCssmanager extends JModelLegacy
 {
-
 	/**
 	 * Internal method to get file properties.
 	 *
-	 * @param	string The base path.
-	 * @param	string The file name.
-	 * @return	object
-	 *
+	 * @param  string The base path.
+	 * @param  string The file name.
+	 * @return object
 	 */
 	protected function getFile($path, $name)
 	{
@@ -46,14 +44,12 @@ class JemModelCssmanager extends JModelLegacy
 		return $temp;
 	}
 
-
 	/**
 	 * Internal method to get file properties.
 	 *
-	 * @param	string The base path.
-	 * @param	string The file name.
-	 * @return	object
-	 *
+	 * @param  string The base path.
+	 * @param  string The file name.
+	 * @return object
 	 */
 	protected function getCustomFile($path, $name)
 	{
@@ -80,19 +76,17 @@ class JemModelCssmanager extends JModelLegacy
 	/**
 	 * Method to get a list of all the files to edit in a template.
 	 *
-	 * @return	array	A nested array of relevant files.
-	 *
+	 * @return array A nested array of relevant files.
 	 */
 	public function getFiles()
 	{
 		// Initialise variables.
-		$result	= array();
+		$result = array();
 
-		$path	= JPath::clean(JPATH_ROOT.'/media/com_jem/');
+		$path = JPath::clean(JPATH_ROOT.'/media/com_jem/');
 
 		// Check if the template path exists.
 		if (is_dir($path)) {
-
 			// Handle the CSS files.
 			$files = JFolder::files($path.'/css', '\.css$', false, false);
 
@@ -103,7 +97,6 @@ class JemModelCssmanager extends JModelLegacy
 			$this->setError(JText::_('COM_JEM_CSSMANAGER_ERROR_CSS_FOLDER_NOT_FOUND'));
 			return false;
 		}
-
 
 		# define array with custom css files
 		$settings = JemHelper::retrieveCss();
@@ -117,8 +110,8 @@ class JemModelCssmanager extends JModelLegacy
 		$custom[] = $settings->get('css_jem_customfile');
 		$custom[] = $settings->get('css_print_customfile');
 
-		foreach ($custom as $cfile) {
-
+		foreach ($custom as $cfile)
+		{
 			if ($cfile) {
 				$rf = $this->getCustomFile(JPATH_SITE.'/',$cfile);
 				if ($rf->exists && $rf->ext) {
@@ -131,28 +124,25 @@ class JemModelCssmanager extends JModelLegacy
 		return $result;
 	}
 
-
 	/**
 	 * Method to auto-populate the model state.
 	 *
-	 * Note. Calling getState in this method will result in recursion.
-	 *
+	 * @Note  Calling getState in this method will result in recursion.
 	 */
 	protected function populateState()
 	{
 		$app = JFactory::getApplication('administrator');
 
 		// Load the parameters.
-		$params	= JComponentHelper::getParams('com_jem');
+		$params = JComponentHelper::getParams('com_jem');
 		$this->setState('params', $params);
 	}
-
 
 	/**
 	 * Detect if option linenumbers is enabled
 	 * plugin: codemirror
 	 */
-	function getStatusLinenumber()
+	public function getStatusLinenumber()
 	{
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
@@ -164,13 +154,12 @@ class JemModelCssmanager extends JModelLegacy
 		return array_key_exists('linenumbers', $manifest) ? $manifest['linenumbers'] : false;
 	}
 
-
 	/**
 	 * Sets parameter values in the component's row of the extension table
 	 *
-	 * @param $param_array  An array holding the params to store
+	 * @param $param_array An array holding the params to store
 	 */
-	function setStatusLinenumber($status)
+	public function setStatusLinenumber($status)
 	{
 		// read the existing component value(s)
 		$db = JFactory::getDbo();

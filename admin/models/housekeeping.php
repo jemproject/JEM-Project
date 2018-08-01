@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -23,24 +23,6 @@ class JemModelHousekeeping extends JModelLegacy
 	const CATEGORIES = 3;
 
 	/**
-	 * images to delete
-	 * @var array
-	 */
-	private $_images = null;
-
-	/**
-	 * assigned images
-	 * @var array
-	 */
-	private $_assigned = null;
-
-	/**
-	 * unassigned images
-	 * @var array
-	 */
-	private $_unassigned = null;
-
-	/**
 	 * Map logical name to folder and db names
 	 * @var stdClass
 	 */
@@ -48,7 +30,6 @@ class JemModelHousekeeping extends JModelLegacy
 
 	/**
 	 * Constructor
-	 *
 	 */
 	public function __construct()
 	{
@@ -61,14 +42,14 @@ class JemModelHousekeeping extends JModelLegacy
 		$this->map = $map;
 	}
 
-
 	/**
 	 * Method to delete the images
 	 *
-	 * @access	public
+	 * @access public
 	 * @return int
 	 */
-	public function delete($type) {
+	public function delete($type)
+	{
 		// Set FTP credentials, if given
 		jimport('joomla.client.helper');
 		JClientHelper::setCredentialsFromRequest('ftp');
@@ -80,23 +61,21 @@ class JemModelHousekeeping extends JModelLegacy
 		$count = count($images);
 		$fail = 0;
 
-		if ($count) {
-			foreach ($images as $image)
-			{
-				if ($image !== JFilterInput::getInstance()->clean($image, 'path')) {
-					JError::raiseWarning(100, JText::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'));
-					$fail++;
-					continue;
-				}
+		foreach ($images as $image)
+		{
+			if ($image !== JFilterInput::getInstance()->clean($image, 'path')) {
+				JError::raiseWarning(100, JText::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'));
+				$fail++;
+				continue;
+			}
 
-				$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
-				$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
+			$fullPath = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
+			$fullPaththumb = JPath::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
 
-				if (is_file($fullPath)) {
-					JFile::delete($fullPath);
-					if (JFile::exists($fullPaththumb)) {
-						JFile::delete($fullPaththumb);
-					}
+			if (is_file($fullPath)) {
+				JFile::delete($fullPath);
+				if (JFile::exists($fullPaththumb)) {
+					JFile::delete($fullPaththumb);
 				}
 			}
 		}
@@ -106,12 +85,11 @@ class JemModelHousekeeping extends JModelLegacy
 		return $deleted;
 	}
 
-
 	/**
 	 * Deletes zombie cats_event_relations with no existing event or category
 	 * @return boolean
 	 */
-	function cleanupCatsEventRelations()
+	public function cleanupCatsEventRelations()
 	{
 		$db = JFactory::getDbo();
 
@@ -131,36 +109,32 @@ class JemModelHousekeeping extends JModelLegacy
 	/**
 	 * Truncates JEM tables with exception of settings table
 	 */
-	public function truncateAllData() {
-		$tables = array("attachments",
-			"categories",
-			"cats_event_relations",
-			"events",
-			"groupmembers",
-			"groups",
-			"register",
-			"venues");
-
+	public function truncateAllData()
+	{
+		$result = true;
+		$tables = array('attachments', 'categories', 'cats_event_relations', 'events', 'groupmembers', 'groups', 'register', 'venues');
 		$db = JFactory::getDbo();
 
 		foreach ($tables as $table) {
-			$db->setQuery("TRUNCATE #__jem_".$table);
+			$db->setQuery('TRUNCATE #__jem_'.$table);
 
-			if($db->execute() === false) {
-				return false;
+			if ($db->execute() === false) {
+				// report but continue
+				JemHelper::addLogEntry('Error truncating #__jem_'.$table, __METHOD__, JLog::ERROR);
+				$result = false;
 			}
 		}
 
-		$categoryTable = $this->getTable('category', 'JEMTable');
+		$categoryTable = $this->getTable('category', 'JemTable');
 		$categoryTable->addRoot();
 
-		return true;
+		return $result;
 	}
 
 	/**
 	 * Method to count the cat_relations table
 	 *
-	 * @access	public
+	 * @access public
 	 * @return int
 	 */
 	public function getCountcats()
@@ -174,44 +148,46 @@ class JemModelHousekeeping extends JModelLegacy
 
 		$total = $db->loadObjectList();
 
-		return count($total);
+		return is_array($total) ? count($total) : 0;
 	}
-
 
 	/**
 	 * Method to determine the images to delete
 	 *
-	 * @access	private
+	 * @access private
 	 * @return array
 	 */
-	private function getImages($type) {
-		$this->_images = array_diff($this->getAvailable($type), $this->getAssigned($type));
+	private function getImages($type)
+	{
+		$images = array_diff($this->getAvailable($type), $this->getAssigned($type));
 
-		return $this->_images;
+		return $images;
 	}
 
 	/**
 	 * Method to determine the assigned images
 	 *
-	 * @access	private
+	 * @access private
 	 * @return array
 	 */
-	private function getAssigned($type) {
+	private function getAssigned($type)
+	{
 		$query = 'SELECT '.$this->map[$type]['field'].' FROM #__jem_'.$this->map[$type]['table'];
 
 		$this->_db->setQuery($query);
-		$this->_assigned = $this->_db->loadColumn();
+		$assigned = $this->_db->loadColumn();
 
-		return $this->_assigned;
+		return $assigned;
 	}
 
 	/**
 	 * Method to determine the unassigned images
 	 *
-	 * @access	private
+	 * @access private
 	 * @return array
 	 */
-	private function getAvailable($type) {
+	private function getAvailable($type)
+	{
 		// Initialize variables
 		$basePath = JPATH_SITE.'/images/jem/'.$this->map[$type]['folder'];
 
@@ -230,9 +206,7 @@ class JemModelHousekeeping extends JModelLegacy
 			}
 		}
 
-		$this->_unassigned = $images;
-
-		return $this->_unassigned;
+		return $images;
 	}
 }
 ?>

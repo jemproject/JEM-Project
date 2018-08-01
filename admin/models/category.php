@@ -1,8 +1,8 @@
 <?php
 /**
- * @version     2.1.7
+ * @version     2.2.2
  * @package     JEM
- * @copyright   Copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright   Copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright   Copyright (C) 2005-2009 Christoph Lukes
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -13,23 +13,22 @@ jimport('joomla.application.component.modeladmin');
 /**
  * Category Model
  */
-class JEMModelCategory extends JModelAdmin
+class JemModelCategory extends JModelAdmin
 {
-
 	/**
-	 *
-	 * @var string The prefix to use with controller messages.
+	 * The prefix to use with controller messages.
+	 * @var string
 	 */
 	protected $text_prefix = 'COM_JEM_CATEGORIES';
+
 
 	/**
 	 * Method to test whether a record can be deleted.
 	 *
-	 * @param object $record A record object.
+	 * @param  object $record A record object.
 	 *
 	 * @return boolean True if allowed to delete the record. Defaults to the
 	 *         permission set in the component.
-	 *
 	 */
 	protected function canDelete($record)
 	{
@@ -46,11 +45,10 @@ class JEMModelCategory extends JModelAdmin
 	/**
 	 * Method to test whether a record can have its state changed.
 	 *
-	 * @param object $record A record object.
+	 * @param  object $record A record object.
 	 *
 	 * @return boolean True if allowed to change the state of the record.
 	 *         Defaults to the permission set in the component.
-	 *
 	 */
 	protected function canEditState($record)
 	{
@@ -73,10 +71,7 @@ class JEMModelCategory extends JModelAdmin
 	/**
 	 * Auto-populate the model state.
 	 *
-	 * Note. Calling getState in this method will result in recursion.
-	 *
-	 * @return void
-	 *
+	 * @Note Calling getState in this method will result in recursion.
 	 */
 	protected function populateState()
 	{
@@ -97,12 +92,11 @@ class JEMModelCategory extends JModelAdmin
 	/**
 	 * Method to get a table object, load it if necessary.
 	 *
-	 * @param string $type The table name. Optional.
-	 * @param string $prefix The class prefix. Optional.
-	 * @param array $config Configuration array for model. Optional.
+	 * @param  string $type   The table name. Optional.
+	 * @param  string $prefix The class prefix. Optional.
+	 * @param  array  $config Configuration array for model. Optional.
 	 *
 	 * @return JTable A JTable object
-	 *
 	 */
 	public function getTable($type = 'Category', $prefix = 'JemTable', $config = array())
 	{
@@ -110,51 +104,17 @@ class JEMModelCategory extends JModelAdmin
 	}
 
 	/**
-	 * Auto-populate the model state.
-	 *
-	 * Note. Calling getState in this method will result in recursion.
-	 *
-	 * @return void
-	 */
-	protected function populateStateDISABLED()
-	{
-		$app = JFactory::getApplication('administrator');
-
-		$parentId = $app->input->getInt('parent_id', 0);
-		$this->setState('category.parent_id', $parentId);
-
-		// Load the User state.
-		$pk = (int) $app->input->getInt('id', 0);
-		$this->setState($this->getName() . '.id', $pk);
-
-		$extension = $app->input->getCmd('extension', 'com_jem');
-		$this->setState('category.extension', $extension);
-		$parts = explode('.', $extension);
-
-		// Extract the component name
-		$this->setState('category.component', $parts[0]);
-
-		// Extract the optional section name
-		$this->setState('category.section', (count($parts) > 1) ? $parts[1] : null);
-
-		// Load the parameters.
-		$params = JComponentHelper::getParams('com_jem');
-		$this->setState('params', $params);
-	}
-
-	/**
 	 * Method to get a category.
 	 *
-	 * @param integer $pk An optional id of the object to get, otherwise the id
-	 *        	from the model state is used.
+	 * @param  integer $pk An optional id of the object to get, otherwise the id
+	 *                     from the model state is used.
 	 *
 	 * @return mixed Category data object on success, false on failure.
-	 *
 	 */
 	public function getItem($pk = null)
 	{
-		if ($result = parent::getItem($pk)) {
-
+		if ($result = parent::getItem($pk))
+		{
 			// Prime required properties.
 			if (empty($result->id)) {
 				$result->parent_id = $this->getState('category.parent_id');
@@ -195,21 +155,17 @@ class JEMModelCategory extends JModelAdmin
 	/**
 	 * Method to get the row form.
 	 *
-	 * @param array $data Data for the form.
-	 * @param boolean $loadData True if the form is to load its own data
-	 *        	(default case), false if not.
+	 * @param  array   $data     Data for the form.
+	 * @param  boolean $loadData True if the form is to load its own data
+	 *                           (default case), false if not.
 	 *
 	 * @return mixed A JForm object on success, false on failure
-	 *
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-
 		// Get the form.
-		$form = $this->loadForm('com_jem.category', 'category', array(
-				'control' => 'jform',
-				'load_data' => $loadData
-		));
+		$form = $this->loadForm('com_jem.category', 'category',
+		                        array('control' => 'jform', 'load_data' => $loadData));
 
 		if (empty($form)) {
 			return false;
@@ -223,10 +179,9 @@ class JEMModelCategory extends JModelAdmin
 	 * This ensures that the row will be moved relative to a row with the same
 	 * extension
 	 *
-	 * @param JCategoryTable $table Current table instance
+	 * @param  JCategoryTable $table Current table instance
 	 *
 	 * @return array An array of conditions to add to add to ordering queries.
-	 *
 	 */
 	protected function getReorderConditionsDISABLED($table)
 	{
@@ -237,7 +192,6 @@ class JEMModelCategory extends JModelAdmin
 	 * Method to get the data that should be injected in the form.
 	 *
 	 * @return mixed The data for the form.
-	 *
 	 */
 	protected function loadFormData()
 	{
@@ -252,91 +206,9 @@ class JEMModelCategory extends JModelAdmin
 	}
 
 	/**
-	 * Method to preprocess the form.
-	 *
-	 * @param JForm $form A JForm object.
-	 * @param mixed $data The data expected for the form.
-	 * @param string $groups The name of the plugin group to import.
-	 *
-	 * @return void
-	 *
-	 * @see JFormField
-	 * @throws Exception if there is an error in the form event.
-	 */
-	protected function preprocessFormDISABLED(JForm $form, $data, $group = 'content')
-	{
-		jimport('joomla.filesystem.path');
-
-		// Initialise variables.
-		$lang = JFactory::getLanguage();
-		$extension = $this->getState('category.extension');
-		$component = $this->getState('category.component');
-		$section = $this->getState('category.section');
-
-		// Get the component form if it exists
-		jimport('joomla.filesystem.path');
-		$name = 'category' . ($section ? ('.' . $section) : '');
-
-		// Looking first in the component models/forms folder
-		$path = JPath::clean(JPATH_ADMINISTRATOR . "/components/$component/models/forms/$name.xml");
-
-		// Old way: looking in the component folder
-		if (!file_exists($path)) {
-			$path = JPath::clean(JPATH_ADMINISTRATOR . "/components/$component/$name.xml");
-		}
-
-		if (file_exists($path)) {
-			$lang->load($component, JPATH_BASE, null, false, false);
-			$lang->load($component, JPATH_BASE, $lang->getDefault(), false, false);
-			$lang->load($component, JPATH_BASE . '/components/' . $component, null, false, false);
-			$lang->load($component, JPATH_BASE . '/components/' . $component, $lang->getDefault(), false, false);
-
-			if (!$form->loadFile($path, false)) {
-				throw new Exception(JText::_('JERROR_LOADFILE_FAILED'));
-			}
-		}
-
-		// Try to find the component helper.
-		$eName = str_replace('com_', '', $component);
-		$path = JPath::clean(JPATH_ADMINISTRATOR . "/components/$component/helpers/category.php");
-
-		if (file_exists($path)) {
-			require_once $path;
-			$cName = ucfirst($eName) . ucfirst($section) . 'HelperCategory';
-
-			if (class_exists($cName) && is_callable(array(
-					$cName,
-					'onPrepareForm'
-			))) {
-				$lang->load($component, JPATH_BASE, null, false, false) || $lang->load($component, JPATH_BASE . '/components/' . $component, null, false, false) ||
-						 $lang->load($component, JPATH_BASE, $lang->getDefault(), false, false) || $lang->load($component, JPATH_BASE . '/components/' . $component, $lang->getDefault(), false, false);
-				call_user_func_array(array(
-						$cName,
-						'onPrepareForm'
-				), array(
-						&$form
-				));
-
-				// Check for an error.
-				if ($form instanceof Exception) {
-					$this->setError($form->getMessage());
-					return false;
-				}
-			}
-		}
-
-		// Set the access control rules field component value.
-		$form->setFieldAttribute('rules', 'component', $component);
-		$form->setFieldAttribute('rules', 'section', $name);
-
-		// Trigger the default form events.
-		parent::preprocessForm($form, $data, $group);
-	}
-
-	/**
 	 * Method to save the form data.
 	 *
-	 * @param array $data The form data.
+	 * @param  array $data The form data.
 	 *
 	 * @return boolean True on success.
 	 *
@@ -407,11 +279,7 @@ class JEMModelCategory extends JModelAdmin
 		}
 
 		// Trigger the onContentBeforeSave event.
-		$result = $dispatcher->trigger($this->event_before_save, array(
-				$this->option . '.' . $this->name,
-				&$table,
-				$isNew
-		));
+		$result = $dispatcher->trigger($this->event_before_save, array($this->option . '.' . $this->name, &$table, $isNew));
 		if (in_array(false, $result, true)) {
 			$this->setError($table->getError());
 			return false;
@@ -424,11 +292,7 @@ class JEMModelCategory extends JModelAdmin
 		}
 
 		// Trigger the onContentAfterSave event.
-		$dispatcher->trigger($this->event_after_save, array(
-				$this->option . '.' . $this->name,
-				&$table,
-				$isNew
-		));
+		$dispatcher->trigger($this->event_after_save, array($this->option . '.' . $this->name, &$table, $isNew));
 
 		// Rebuild the path for the category:
 		if (!$table->rebuildPath($table->id)) {
@@ -453,13 +317,12 @@ class JEMModelCategory extends JModelAdmin
 	/**
 	 * Method to change the published state of one or more records.
 	 *
-	 * @param array $pks A list of the primary keys to change.
-	 * @param integer $value The value of the published state.
+	 * @param  array   &$pks  A list of the primary keys to change.
+	 * @param  integer $value The value of the published state.
 	 *
 	 * @return boolean True on success.
-	 *
 	 */
-	function publish(&$pks, $value = 1)
+	public function publish(&$pks, $value = 1)
 	{
 		if (parent::publish($pks, $value)) {
 			// Initialise variables.
@@ -471,11 +334,7 @@ class JEMModelCategory extends JModelAdmin
 			JPluginHelper::importPlugin('content');
 
 			// Trigger the onCategoryChangeState event.
-			$dispatcher->trigger('onCategoryChangeState', array(
-					$extension,
-					$pks,
-					$value
-			));
+			$dispatcher->trigger('onCategoryChangeState', array($extension, $pks, $value));
 
 			return true;
 		}
@@ -485,11 +344,9 @@ class JEMModelCategory extends JModelAdmin
 	 * Method rebuild the entire nested set tree.
 	 *
 	 * @return boolean False on failure or error, true otherwise.
-	 *
 	 */
 	public function rebuild()
 	{
-
 		// Get an instance of the table object.
 		$table = $this->getTable();
 
@@ -509,11 +366,10 @@ class JEMModelCategory extends JModelAdmin
 	 * First we save the new order values in the lft values of the changed ids.
 	 * Then we invoke the table rebuild to implement the new ordering.
 	 *
-	 * @param array $idArray An array of primary key ids.
-	 * @param integer $lft_array The lft value
+	 * @param  array   $idArray   An array of primary key ids.
+	 * @param  integer $lft_array The lft value
 	 *
 	 * @return boolean False on failure or error, True otherwise
-	 *
 	 */
 	public function saveorder($idArray = null, $lft_array = null)
 	{
@@ -534,12 +390,11 @@ class JEMModelCategory extends JModelAdmin
 	/**
 	 * Batch copy categories to a new category.
 	 *
-	 * @param integer $value The new category.
-	 * @param array $pks An array of row IDs.
-	 * @param array $contexts An array of item contexts.
+	 * @param  integer $value    The new category.
+	 * @param  array   $pks      An array of row IDs.
+	 * @param  array   $contexts An array of item contexts.
 	 *
 	 * @return mixed An array of new IDs on success, boolean false on failure.
-	 *
 	 */
 	protected function batchCopy($value, $pks, $contexts)
 	{
@@ -606,7 +461,8 @@ class JEMModelCategory extends JModelAdmin
 		}
 
 		// Parent exists so we let's proceed
-		while (!empty($pks) && $count > 0) {
+		while (!empty($pks) && $count > 0)
+		{
 			// Pop the first id off the stack
 			$pk = array_shift($pks);
 
@@ -705,12 +561,11 @@ class JEMModelCategory extends JModelAdmin
 	/**
 	 * Batch move categories to a new category.
 	 *
-	 * @param integer $value The new category ID.
-	 * @param array $pks An array of row IDs.
-	 * @param array $contexts An array of item contexts.
+	 * @param  integer $value    The new category ID.
+	 * @param  array   $pks      An array of row IDs.
+	 * @param  array   $contexts An array of item contexts.
 	 *
 	 * @return boolean True on success.
-	 *
 	 */
 	protected function batchMove($value, $pks, $contexts)
 	{
@@ -762,7 +617,8 @@ class JEMModelCategory extends JModelAdmin
 		$children = array();
 
 		// Parent exists so we let's proceed
-		foreach ($pks as $pk) {
+		foreach ($pks as $pk)
+		{
 			// Check that the row actually exists
 			if (!$table->load($pk)) {
 				if ($error = $table->getError()) {
@@ -848,12 +704,11 @@ class JEMModelCategory extends JModelAdmin
 	/**
 	 * Method to change the title & alias.
 	 *
-	 * @param integer $parent_id The id of the parent.
-	 * @param string $alias The alias.
-	 * @param string $title The title.
+	 * @param  integer $parent_id The id of the parent.
+	 * @param  string  $alias     The alias.
+	 * @param  string  $title     The title.
 	 *
 	 * @return array Contains the modified title and alias.
-	 *
 	 */
 	protected function generateNewTitle($parent_id, $alias, $title)
 	{
@@ -873,7 +728,7 @@ class JEMModelCategory extends JModelAdmin
 	 * @access public
 	 * @return boolean on success
 	 */
-	function getGroups()
+	public function getGroups()
 	{
 		$db = $this->getDbo();
 		$query = 'SELECT id AS value, name AS text'
@@ -895,7 +750,7 @@ class JEMModelCategory extends JModelAdmin
 	 * @access public
 	 * @return string $msg
 	 */
-	function delete(&$cids)
+	public function delete(&$cids)
 	{
 		JArrayHelper::toInteger($cids);
 
@@ -965,9 +820,9 @@ class JEMModelCategory extends JModelAdmin
 	/**
 	 * Method to add children/parents to a specific category
 	 *
-	 * @param int $id
-	 * @param array $list
-	 * @param string $type
+	 * @param  int    $id
+	 * @param  array  $list
+	 * @param  string $type
 	 * @return object
 	 */
 	protected function _addCategories($id, &$list, $type = 'children')
@@ -984,9 +839,9 @@ class JEMModelCategory extends JModelAdmin
 		}
 
 		// Get all rows with parent of $id
-		$query = 'SELECT '.$get.
-		' FROM #__jem_categories' .
-		' WHERE '.$source.' = '.(int) $id;
+		$query = 'SELECT ' . $get
+		       . ' FROM #__jem_categories'
+		       . ' WHERE ' . $source . ' = ' . (int)$id;
 		$this->_db->setQuery( $query );
 		$rows = $this->_db->loadObjectList();
 

@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -16,10 +16,28 @@ require_once dirname(__FILE__) . '/admin.php';
 class JemModelVenue extends JemModelAdmin
 {
 	/**
+	 * Method to change the published state of one or more records.
+	 *
+	 * @param  array   &$pks  A list of the primary keys to change.
+	 * @param  integer $value The value of the published state.
+	 *
+	 * @return boolean True on success.
+	 *
+	 * @since  2.2.2
+	 */
+	public function publish(&$pks, $value = 1)
+	{
+		// Additionally include the JEM plugins for the onContentChangeState event.
+		JPluginHelper::importPlugin('jem');
+
+		return parent::publish($pks, $value);
+	}
+
+	/**
 	 * Method to test whether a record can be deleted.
 	 *
-	 * @param	object	A record object.
-	 * @return	boolean	True if allowed to delete the record. Defaults to the permission set in the component.
+	 * @param  object  A record object.
+	 * @return boolean True if allowed to delete the record. Defaults to the permission set in the component.
 	 */
 	protected function canDelete($record)
 	{
@@ -37,12 +55,13 @@ class JemModelVenue extends JemModelAdmin
 	public function delete(&$pks = array())
 	{
 		$return = array();
-		if($pks)
+
+		if ($pks)
 		{
 			$pksTodelete = array();
 			$errorNotice = array();
 			$db = JFactory::getDbo();
-			foreach($pks as $pk)
+			foreach ($pks as $pk)
 			{
 				$result = array();
 
@@ -55,12 +74,12 @@ class JemModelVenue extends JemModelAdmin
 				$db->setQuery($query);
 				$assignedEvents = $db->loadResult();
 
-				if($assignedEvents > 0)
+				if ($assignedEvents > 0)
 				{
 					$result[] = JText::_('COM_JEM_VENUE_ASSIGNED_EVENT');
 				}
 
-				if($result)
+				if ($result)
 				{
 					$pkInfo = array("id:".$pk);
 					$result = array_merge($pkInfo,$result);
@@ -72,7 +91,7 @@ class JemModelVenue extends JemModelAdmin
 				}
 			}
 
-			if($pksTodelete)
+			if ($pksTodelete)
 			{
 				$return['removed'] = parent::delete($pksTodelete);
 				$return['removedCount'] = count($pksTodelete);
@@ -83,7 +102,7 @@ class JemModelVenue extends JemModelAdmin
 				$return['removedCount'] = false;
 			}
 
-			if($errorNotice)
+			if ($errorNotice)
 			{
 				$return['error'] = $errorNotice;
 			}
@@ -105,8 +124,8 @@ class JemModelVenue extends JemModelAdmin
 	/**
 	 * Method to test whether a record can be deleted.
 	 *
-	 * @param	object	A record object.
-	 * @return	boolean	True if allowed to change the state of the record. Defaults to the permission set in the component.
+	 * @param  object  A record object.
+	 * @return boolean True if allowed to change the state of the record. Defaults to the permission set in the component.
 	 */
 	protected function canEditState($record)
 	{
@@ -122,10 +141,10 @@ class JemModelVenue extends JemModelAdmin
 	/**
 	 * Returns a reference to the a Table object, always creating it.
 	 *
-	 * @param	type	The table type to instantiate
-	 * @param	string	A prefix for the table class name. Optional.
-	 * @param	array	Configuration array for model. Optional.
-	 * @return	JTable	A database object
+	 * @param  string The table to instantiate
+	 * @param  string A prefix for the table class name. Optional.
+	 * @param  array  Configuration array for model. Optional.
+	 * @return JTable A database object
 	 */
 	public function getTable($type = 'Venue', $prefix = 'JemTable', $config = array())
 	{
@@ -135,14 +154,15 @@ class JemModelVenue extends JemModelAdmin
 	/**
 	 * Method to get the record form.
 	 *
-	 * @param	array	$data		Data for the form.
-	 * @param	boolean	$loadData	True if the form is to load its own data (default case), false if not.
-	 * @return	mixed	A JForm object on success, false on failure
+	 * @param  array   $data     Data for the form.
+	 * @param  boolean $loadData True if the form is to load its own data (default case), false if not.
+	 * @return mixed   A JForm object on success, false on failure
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
 		// Get the form.
 		$form = $this->loadForm('com_jem.venue', 'venue', array('control' => 'jform', 'load_data' => $loadData));
+
 		if (empty($form)) {
 			return false;
 		}
@@ -150,20 +170,19 @@ class JemModelVenue extends JemModelAdmin
 		return $form;
 	}
 
-
 	/**
 	 * Method to get a single record.
 	 *
-	 * @param	integer	The id of the primary key.
+	 * @param  integer The id of the primary key.
 	 *
-	 * @return	mixed	Object on success, false on failure.
+	 * @return mixed   Object on success, false on failure.
 	 */
 	public function getItem($pk = null)
 	{
-		$jemsettings = JEMAdmin::config();
+		$jemsettings = JemAdmin::config();
 
 		if ($item = parent::getItem($pk)) {
-			$files = JEMAttachment::getAttachments('venue'.$item->id);
+			$files = JemAttachment::getAttachments('venue'.$item->id);
 			$item->attachments = $files;
 		}
 
@@ -175,7 +194,6 @@ class JemModelVenue extends JemModelAdmin
 
 		return $item;
 	}
-
 
 	/**
 	 * Method to get the data that should be injected in the form.
@@ -192,7 +210,6 @@ class JemModelVenue extends JemModelAdmin
 		return $data;
 	}
 
-
 	/**
 	 * Prepare and sanitise the table data prior to saving.
 	 *
@@ -207,7 +224,6 @@ class JemModelVenue extends JemModelAdmin
 		$table->version ++;
 	}
 
-
 	/**
 	 * Method to save the form data.
 	 *
@@ -216,23 +232,17 @@ class JemModelVenue extends JemModelAdmin
 	public function save($data)
 	{
 		// Variables
-		$date        = JFactory::getDate();
 		$app         = JFactory::getApplication();
 		$jinput      = $app->input;
-		$user        = JemFactory::getUser();
 		$jemsettings = JemHelper::config();
-		$fileFilter  = new JInput($_FILES);
-		$table       = $this->getTable();
 		$task        = $jinput->get('task', '', 'cmd');
 
 		// Check if we're in the front or back
-		if ($app->isAdmin())
-			$backend = true;
-		else
-			$backend = false;
+		$backend = (bool)$app->isAdmin();
+		$new     = (bool)empty($data['id']);
 
 		// Store IP of author only.
-		if (!$data['id']) {
+		if ($new) {
 			$author_ip = $jinput->get('author_ip', '', 'string');
 			$data['author_ip'] = $author_ip;
 		}
@@ -251,7 +261,10 @@ class JemModelVenue extends JemModelAdmin
 			$data['country'] = JString::strtoupper($data['country']);
 		}
 
-		if (parent::save($data)){
+		// Save the venue
+		$saved = parent::save($data);
+
+		if ($saved) {
 			// At this point we do have an id.
 			$pk = $this->getState($this->getName() . '.id');
 
@@ -261,35 +274,37 @@ class JemModelVenue extends JemModelAdmin
 
 			if ($allowed) {
 				// attachments, new ones first
-				$attachments 				= array();
-				$attachments 				= $fileFilter->get('attach', array(), 'array');
-				$attachments['customname']	= $jinput->post->get('attach-name', array(), 'array');
-				$attachments['description'] = $jinput->post->get('attach-desc', array(), 'array');
-				$attachments['access'] 		= $jinput->post->get('attach-access', array(), 'array');
-				JEMAttachment::postUpload($attachments, 'venue' . $pk);
+				$attachments   = $jinput->files->get('attach', array(), 'array');
+				$attach_name   = $jinput->post->get('attach-name', array(), 'array');
+				$attach_descr  = $jinput->post->get('attach-desc', array(), 'array');
+				$attach_access = $jinput->post->get('attach-access', array(), 'array');
+				foreach($attachments as $n => &$a) {
+					$a['customname']  = array_key_exists($n, $attach_access) ? $attach_name[$n]   : '';
+					$a['description'] = array_key_exists($n, $attach_access) ? $attach_descr[$n]  : '';
+					$a['access']      = array_key_exists($n, $attach_access) ? $attach_access[$n] : '';
+				}
+				JemAttachment::postUpload($attachments, 'venue' . $pk);
 			}
 
 			// and update old ones
-			$old				= array();
-			$old['id'] 			= $jinput->post->get('attached-id', array(), 'array');
-			$old['name'] 		= $jinput->post->get('attached-name', array(), 'array');
+			$old = array();
+			$old['id']          = $jinput->post->get('attached-id', array(), 'array');
+			$old['name']        = $jinput->post->get('attached-name', array(), 'array');
 			$old['description'] = $jinput->post->get('attached-desc', array(), 'array');
-			$old['access'] 		= $jinput->post->get('attached-access', array(), 'array');
+			$old['access']      = $jinput->post->get('attached-access', array(), 'array');
 
 			foreach ($old['id'] as $k => $id){
-				$attach 				= array();
-				$attach['id'] 			= $id;
-				$attach['name'] 		= $old['name'][$k];
-				$attach['description'] 	= $old['description'][$k];
+				$attach = array();
+				$attach['id']          = $id;
+				$attach['name']        = $old['name'][$k];
+				$attach['description'] = $old['description'][$k];
 				if ($allowed) {
-					$attach['access'] 	= $old['access'][$k];
+					$attach['access']  = $old['access'][$k];
 				} // else don't touch this field
-				JEMAttachment::update($attach);
+				JemAttachment::update($attach);
 			}
-
-			return true;
 		}
 
-		return false;
+		return $saved;
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -15,7 +15,7 @@ require_once dirname(__FILE__) . '/eventslist.php';
  */
 class JemModelDay extends JemModelEventslist
 {
-	var $_date = null;
+	protected $_date = null;
 
 	/**
 	 * Constructor
@@ -31,10 +31,10 @@ class JemModelDay extends JemModelEventslist
 	/**
 	 * Method to set the date
 	 *
-	 * @access	public
-	 * @param	string
+	 * @access public
+	 * @param  string
 	 */
-	function setDate($date)
+	public function setDate($date)
 	{
 		$app = JFactory::getApplication();
 
@@ -43,15 +43,15 @@ class JemModelDay extends JemModelEventslist
 
 		# 0 means we have a direct request from a menuitem and without any params (eg: calendar module)
 		if ($date == 0) {
-			$dayoffset	= $params->get('days');
-			$timestamp	= mktime(0, 0, 0, date("m"), date("d") + $dayoffset, date("Y"));
-			$date		= strftime('%Y-%m-%d', $timestamp);
+			$dayoffset = $params->get('days');
+			$timestamp = mktime(0, 0, 0, date("m"), date("d") + $dayoffset, date("Y"));
+			$date      = strftime('%Y-%m-%d', $timestamp);
 
 		# a valid date has 8 characters (ymd)
 		} elseif (strlen($date) == 8) {
-			$year 	= substr($date, 0, -4);
-			$month	= substr($date, 4, -2);
-			$day	= substr($date, 6);
+			$year  = substr($date, 0, -4);
+			$month = substr($date, 4, -2);
+			$day   = substr($date, 6);
 
 			//check if date is valid
 			if (checkdate($month, $day, $year)) {
@@ -73,11 +73,10 @@ class JemModelDay extends JemModelEventslist
 	/**
 	 * Return date
 	 */
-	function getDay()
+	public function getDay()
 	{
 		return $this->_date;
 	}
-
 
 	/**
 	 * Method to auto-populate the model state.
@@ -218,7 +217,7 @@ class JemModelDay extends JemModelEventslist
 	 */
 	public function getItems()
 	{
-		$items	= parent::getItems();
+		$items = parent::getItems();
 
 		if ($items) {
 			return $items;
@@ -228,9 +227,9 @@ class JemModelDay extends JemModelEventslist
 	}
 
 	/**
-	 * @return	JDatabaseQuery
+	 * @return JDatabaseQuery
 	 */
-	function getListQuery()
+	protected function getListQuery()
 	{
 		// Create a new query object.
 		$query = parent::getListQuery();

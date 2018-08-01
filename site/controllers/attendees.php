@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -21,27 +21,25 @@ class JemControllerAttendees extends JControllerLegacy
 {
 	/**
 	 * Constructor
-	 *
 	 */
 	public function __construct()
 	{
 		parent::__construct();
 	}
 
-
 	/**
 	 * redirect to events page
 	 */
-	function back()
+	public function back()
 	{
-		$this->setRedirect(JRoute::_(JEMHelperRoute::getMyEventsRoute(), false));
+		$this->setRedirect(JRoute::_(JemHelperRoute::getMyEventsRoute(), false));
 		$this->redirect();
 	}
 
 	/**
 	 * addtask
 	 */
-	function attendeeadd()
+	public function attendeeadd()
 	{
 		// Check for request forgeries
 		JSession::checkToken('request') or jexit('Invalid Token');
@@ -131,7 +129,7 @@ class JemControllerAttendees extends JControllerLegacy
 	/**
 	 * removetask
 	 */
-	function attendeeremove()
+	public function attendeeremove()
 	{
 		// Check for request forgeries
 		JSession::checkToken('request') or jexit('Invalid Token');
@@ -181,7 +179,7 @@ class JemControllerAttendees extends JControllerLegacy
 	/**
 	 * toggletask
 	 */
-	function attendeetoggle()
+	public function attendeetoggle()
 	{
 		// Check for request forgeries
 		JSession::checkToken('request') or jexit('Invalid Token');
@@ -224,8 +222,11 @@ class JemControllerAttendees extends JControllerLegacy
 	 * Exporttask
 	 * view: attendees
 	 */
-	function export()
+	public function export()
 	{
+		// Check for request forgeries
+		JSession::checkToken('request') or jexit('Invalid Token');
+
 		$app       = JFactory::getApplication();
 		$params    = $app->getParams();
 		$jemconfig = JemConfig::getInstance()->toRegistry();

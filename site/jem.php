@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6.1
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -20,7 +20,6 @@ require_once (JPATH_COMPONENT_SITE.'/classes/image.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/output.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/attachment.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/categories.class.php');
-require_once (JPATH_COMPONENT_SITE.'/classes/Zebra_Image.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/calendar.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/activecalendarweek.php');
 require_once (JPATH_COMPONENT_SITE.'/helpers/category.php');

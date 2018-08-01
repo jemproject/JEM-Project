@@ -1,29 +1,29 @@
 <?php
 /**
- * Version 2.1.0
+ * Version 2.2.0
  * @copyright	Copyright (C) 2014 Thamesmog.
- * @copyright	Copyright (C) 2013 - 2015 joomlaeventmanager.net. All rights reserved.
+ * @copyright	Copyright (C) 2013 - 2017 joomlaeventmanager.net. All rights reserved.
  * @license		http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  * Based on Eventlist11 tag and JEM specific code by JEM Community
  */
 defined('_JEXEC') or die;
 
-include_once(ACYMAILING_ROOT.'components'.DS.'com_jem'.DS.'helpers'.DS.'route.php');
+include_once(ACYMAILING_ROOT.'components/com_jem/helpers/route.php');
 
 $result .= '<div class="acymailing_content">';
 $result .= '<p>';
-$result .= JEMOutput::formatShortDateTime($event->dates, $event->times,
+$result .= JemOutput::formatShortDateTime($event->dates, $event->times,
                                           $event->enddates, $event->endtimes);
-$result .= JEMOutput::formatSchemaOrgDateTime($event->dates, $event->times,
+$result .= JemOutput::formatSchemaOrgDateTime($event->dates, $event->times,
                                               $event->enddates, $event->endtimes);
 $result .= '</p>';
 
-$link =  preg_replace('/\/administrator\//', '', JRoute::_(JEMHelperRoute::getEventRoute($event->slug)));  // ???
+$link = JemHelperRoute::getEventRoute($event->slug);
 $result .= '<a href="'.acymailing_frontendLink($link).'" itemprop="url">';
 $result .= '<h2><span itemprop="name">'.$event->title.'</span></h2></a>';
 
 //$result .= '<p>';
-//$link =  preg_replace('/\/administrator\//', '',JRoute::_(JEMHelperRoute::getEventRoute($event->slug)));
+//$link = JemHelperRoute::getEventRoute($event->slug);
 //$result .= '<a href="'.acymailing_frontendLink($link).'" itemprop="url">';
 //$result .= '<span itemprop="name">'.$event->title.'</span></a>';
 //$result .= '<p>';
@@ -39,7 +39,7 @@ $result .= '<h2><span itemprop="name">'.$event->title.'</span></h2></a>';
 //	$result .= '<p>';
 //	$result .= '<br/><strong>Venue:</strong> ';
 //	$result .='&nbsp;';
-//	$link = preg_replace('/\/administrator\//', '',JRoute::_(JEMHelperRoute::getVenueRoute($event->venueslug)));
+//	$link = JemHelperRoute::getVenueRoute($event->venueslug);
 //	$result .= $event->locid != 0 ? "<a href='".acymailing_frontendLink($link)."'>".$event->venue."</a>" : '';
 //	$result .= !empty($event->street) ? '<br/>'.$event->street : '';
 //	$result .= !empty($event->city) ? '<br/>'. $event->city : '';

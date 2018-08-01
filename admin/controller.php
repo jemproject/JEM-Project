@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.4
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -13,11 +13,10 @@ defined('_JEXEC') or die;
 /**
  * JEM Component Controller
  */
-class JEMController extends JControllerLegacy
+class JemController extends JControllerLegacy
 {
 	/**
-	 * @var		string	The default view.
-	 *
+	 * @var    string The default view.
 	 */
 	protected $default_view = 'main';
 
@@ -27,10 +26,8 @@ class JEMController extends JControllerLegacy
 		parent::__construct();
 	}
 
-
 	/**
 	 * Display the view
-	 *
 	 */
 	public function display($cachable = false, $urlparams = false)
 	{
@@ -45,31 +42,30 @@ class JEMController extends JControllerLegacy
 		static $views_without_submenu = array('attendee', 'category', 'event', 'group', 'source', 'venue');
 
 		if (!in_array($view, $views_without_submenu)) {
-			JEMHelperBackend::addSubmenu($view);
+			JemHelperBackend::addSubmenu($view);
 		}
 
 		parent::display();
 		return $this;
 	}
 
-
 	/**
 	 * Delete attachment
 	 *
-	 * @return true on sucess
-	 * @access private
-	 *
-	 * Views:
-	 * event, venue
-	 *
+	 * Views: event, venue
 	 * Reference to the task is located in the attachments.js
 	 *
+	 * @return true on sucess
+	 * @access public
 	 */
-	function ajaxattachremove()
+	public function ajaxattachremove()
 	{
+		// Check for request forgeries
+		JSession::checkToken('request') or jexit('Invalid Token');
+
 		$id = JFactory::getApplication()->input->request->getInt('id', 0);
 
-		$res = JEMAttachment::remove($id);
+		$res = JemAttachment::remove($id);
 		if (!$res) {
 			echo 0;
 			jexit();

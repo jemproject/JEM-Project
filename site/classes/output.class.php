@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -16,11 +16,10 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
  */
 class JemOutput
 {
-
 	/**
 	 * Writes footer.
 	 */
-	static function footer()
+	static public function footer()
 	{
 		$app = JFactory::getApplication();
 
@@ -52,7 +51,7 @@ class JemOutput
 	 *
 	 * @return string              Resulting HTML code.
 	 */
-	static function createButtonBar($view, $permissions, $params)
+	static public function createButtonBar($view, $permissions, $params)
 	{
 		foreach (array('canAddEvent', 'canAddVenue', 'canAddUsers', 'canPublishEvent', 'canPublishVenue') as $key) {
 			${$key} = isset($permissions->$key) ? $permissions->$key: null;
@@ -145,12 +144,12 @@ class JemOutput
 	 * @param int $dellink Access of user
 	 * @param array $params needed params
 	 **/
-	static function submitbutton($dellink, $params)
+	static public function submitbutton($dellink, $params)
 	{
 		if ($dellink)
 		{
-			$settings 	= JemHelper::globalattribs();
-			$settings2	= JemHelper::config();
+			$settings  = JemHelper::globalattribs();
+			$settings2 = JemHelper::config();
 
 			$uri = JFactory::getURI();
 			$app = JFactory::getApplication();
@@ -169,7 +168,7 @@ class JemOutput
 
 			$url = 'index.php?option=com_jem&task=event.add&return='.base64_encode($uri).'&a_id=0';
 			$overlib = JText::_('COM_JEM_SUBMIT_EVENT_DESC');
-			$output = JHtml::_('link', JRoute::_($url), $image, JEMOutput::tooltip(JText::_('COM_JEM_DELIVER_NEW_EVENT'), $overlib, '', 'bottom'));
+			$output = JHtml::_('link', JRoute::_($url), $image, self::tooltip(JText::_('COM_JEM_DELIVER_NEW_EVENT'), $overlib, '', 'bottom'));
 
 			return $output;
 		}
@@ -185,12 +184,12 @@ class JemOutput
 	 * Active in views:
 	 * venue, venues
 	 **/
-	static function addvenuebutton($addvenuelink, $params, $settings2)
+	static public function addvenuebutton($addvenuelink, $params, $settings2)
 	{
 		if ($addvenuelink) {
-			$app 		= JFactory::getApplication();
-			$settings 	= JemHelper::globalattribs();
-			$uri 		= JFactory::getURI();
+			$app      = JFactory::getApplication();
+			$settings = JemHelper::globalattribs();
+			$uri      = JFactory::getURI();
 
 			if ($app->input->get('print','','int')) {
 				return;
@@ -206,7 +205,7 @@ class JemOutput
 
 			$url = 'index.php?option=com_jem&task=venue.add&return='.base64_encode($uri).'&a_id=0';
 			$overlib = JText::_('COM_JEM_DELIVER_NEW_VENUE_DESC');
-			$output = JHtml::_('link', JRoute::_($url), $image, JEMOutput::tooltip(JText::_('COM_JEM_DELIVER_NEW_VENUE'), $overlib, '', 'bottom'));
+			$output = JHtml::_('link', JRoute::_($url), $image, self::tooltip(JText::_('COM_JEM_DELIVER_NEW_VENUE'), $overlib, '', 'bottom'));
 
 			return $output;
 		}
@@ -223,12 +222,12 @@ class JemOutput
 	 * Active in views:
 	 * venue, venues
 	 **/
-	static function addusersbutton($adduserslink, $eventid)
+	static public function addusersbutton($adduserslink, $eventid)
 	{
 		if ($adduserslink) {
-			$app 		= JFactory::getApplication();
-			$settings 	= JemHelper::globalattribs();
-			$uri 		= JFactory::getURI();
+			$app      = JFactory::getApplication();
+			$settings = JemHelper::globalattribs();
+			$uri      = JFactory::getURI();
 
 			if ($app->input->get('print','','int')) {
 				return;
@@ -244,7 +243,7 @@ class JemOutput
 
 			$url = 'index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&return='.base64_encode($uri).'&id='.$eventid.'&'.JSession::getFormToken().'=1';
 			$overlib = JText::_('COM_JEM_ADD_USER_REGISTRATIONS_DESC');
-			$output = JHtml::_('link', JRoute::_($url), $image, JemOutput::tooltip(JText::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom').' rel="{handler: \'iframe\', size: {x:800, y:450}}"');
+			$output = JHtml::_('link', JRoute::_($url), $image, self::tooltip(JText::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom').' rel="{handler: \'iframe\', size: {x:800, y:450}}"');
 
 			return $output;
 		}
@@ -258,7 +257,7 @@ class JemOutput
 	 * Active in views:
 	 * all calendar views
 	 **/
-	static function prepareAddEventButton($urlparams = '')
+	static public function prepareAddEventButton($urlparams = '')
 	{
 		$uri = JFactory::getURI();
 		$image = JHtml::_('image', 'com_jem/icon-16-new.png', JText::_('COM_JEM_DELIVER_NEW_EVENT'), NULL, true);
@@ -267,7 +266,7 @@ class JemOutput
 			$url .= '&'.$urlparams;
 		}
 		$html  = '<div class="inline-button-right">';
-		$html .= JHtml::_('link', JRoute::_($url), $image, JemOutput::tooltip(JText::_('COM_JEM_DELIVER_NEW_EVENT'), JText::_('COM_JEM_SUBMIT_EVENT_DESC'), '', 'bottom'));
+		$html .= JHtml::_('link', JRoute::_($url), $image, self::tooltip(JText::_('COM_JEM_DELIVER_NEW_EVENT'), JText::_('COM_JEM_SUBMIT_EVENT_DESC'), '', 'bottom'));
 		$html .= '</div>';
 
 		return $html;
@@ -283,11 +282,11 @@ class JemOutput
 	 * Views:
 	 * Categories, Categoriesdetailed, Category, Eventslist, Search, Venue, Venues
 	 */
-	static function archivebutton($params, $task = NULL, $id = NULL)
+	static public function archivebutton($params, $task = NULL, $id = NULL)
 	{
-		$settings	= JemHelper::globalattribs();
-		$settings2	= JemHelper::config();
-		$app		= JFactory::getApplication();
+		$settings  = JemHelper::globalattribs();
+		$settings2 = JemHelper::config();
+		$app       = JFactory::getApplication();
 
 		if ($settings->get('global_show_archive_icon',1)) {
 			if ($app->input->get('print','','int')) {
@@ -335,7 +334,7 @@ class JemOutput
 				}
 			}
 
-			$output = JHtml::_('link', JRoute::_($url), $image, JEMOutput::tooltip($title, $overlib, '', 'bottom'));
+			$output = JHtml::_('link', JRoute::_($url), $image, self::tooltip($title, $overlib, '', 'bottom'));
 
 			return $output;
 		}
@@ -353,7 +352,7 @@ class JemOutput
 	 * Views:
 	 * Event, Venue
 	 */
-	static function editbutton($item, $params, $attribs, $allowedtoedit, $view)
+	static public function editbutton($item, $params, $attribs, $allowedtoedit, $view)
 	{
 		if ($allowedtoedit) {
 			$app = JFactory::getApplication();
@@ -385,7 +384,7 @@ class JemOutput
 						$checkoutUser = JFactory::getUser($item->checked_out);
 						$button = JHtml::_('image', 'system/checked_out.png', NULL, NULL, true);
 						$date = JHtml::_('date', $item->checked_out_time);
-						return '<span '.JEMOutput::tooltip(JText::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(JText::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name).' <br /> '.$date, ENT_COMPAT, 'UTF-8')).'>'.$button.'</span>';
+						return '<span ' . self::tooltip(JText::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(JText::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
 					}
 
 					if ($showIcon) {
@@ -404,7 +403,7 @@ class JemOutput
 						$checkoutUser = JFactory::getUser($item->vChecked_out);
 						$button = JHtml::_('image', 'system/checked_out.png', NULL, NULL, true);
 						$date = JHtml::_('date', $item->vChecked_out_time);
-						return '<span '.JEMOutput::tooltip(JText::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(JText::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name).' <br /> '.$date, ENT_COMPAT, 'UTF-8')).'>'.$button.'</span>';
+						return '<span ' . self::tooltip(JText::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(JText::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
 					}
 
 					if ($showIcon) {
@@ -423,7 +422,7 @@ class JemOutput
 						$checkoutUser = JFactory::getUser($item->vChecked_out);
 						$button = JHtml::_('image', 'system/checked_out.png', NULL, NULL, true);
 						$date = JHtml::_('date', $item->vChecked_out_time);
-						return '<span '.JEMOutput::tooltip(JText::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(JText::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name).' <br /> '.$date, ENT_COMPAT, 'UTF-8')).'>'.$button.'</span>';
+						return '<span ' . self::tooltip(JText::_('JLIB_HTML_CHECKED_OUT'), htmlspecialchars(JText::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br /> ' . $date, ENT_COMPAT, 'UTF-8')) . '>' . $button . '</span>';
 					}
 
 					if ($showIcon) {
@@ -442,7 +441,87 @@ class JemOutput
 				return; // we need at least url to generate useful output
 			}
 
-			$output = JHtml::_('link', JRoute::_($url), $image, JEMOutput::tooltip($text, $overlib));
+			$output = JHtml::_('link', JRoute::_($url), $image, self::tooltip($text, $overlib));
+
+			return $output;
+		}
+	}
+
+	/**
+	 * Creates a copy button
+	 *
+	 * @param object $item
+	 * @param array $params
+	 * @param int $allowedtoadd
+	 * @param string $view
+	 *
+	 * Views:
+	 * Event, Venue
+	 */
+	static public function copybutton($item, $params, $attribs, $allowedtoadd, $view)
+	{
+		if ($allowedtoadd) {
+			$app = JFactory::getApplication();
+
+			if ($app->input->get('print','','int')) {
+				return;
+			}
+
+			// Initialise variables.
+			$user   = JemFactory::getUser();
+			$userId = $user->get('id');
+			$uri    = JFactory::getURI();
+			$settings = JemHelper::globalattribs();
+
+			JHtml::_('behavior.tooltip');
+
+			// On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
+			$showIcon = 1; //$settings->get('global_show_icons', 1);
+
+			switch ($view)
+			{
+				case 'editevent':
+					if ($showIcon) {
+						$image = JHtml::_('image', 'com_jem/calendar_copy.png', JText::_('COM_JEM_COPY_EVENT'), NULL, true);
+					} else {
+						$image = JText::_('COM_JEM_COPY_EVENT');
+					}
+					$id = isset($item->did) ? $item->did : $item->id;
+					$overlib = JText::_('COM_JEM_COPY_EVENT_DESC');
+					$text = JText::_('COM_JEM_COPY_EVENT');
+					$url = 'index.php?option=com_jem&task=event.copy&a_id='.$id.'&return='.base64_encode($uri);
+					break;
+
+				case 'editvenue':
+					if ($showIcon) {
+						$image = JHtml::_('image', 'com_jem/calendar_copy.png', JText::_('COM_JEM_COPY_VENUE'), NULL, true);
+					} else {
+						$image = JText::_('COM_JEM_COPY_VENUE');
+					}
+					$id = $item->locid;
+					$overlib = JText::_('COM_JEM_COPY_VENUE_DESC');
+					$text = JText::_('COM_JEM_COPY_VENUE');
+					$url = 'index.php?option=com_jem&task=venue.copy&a_id='.$id.'&return='.base64_encode($uri);
+					break;
+
+				case 'venue':
+					if ($showIcon) {
+						$image = JHtml::_('image', 'com_jem/calendar_copy.png', JText::_('COM_JEM_COPY_VENUE'), NULL, true);
+					} else {
+						$image = JText::_('COM_JEM_COPY_VENUE');
+					}
+					$id = $item->id;
+					$overlib = JText::_('COM_JEM_COPY_VENUE_DESC');
+					$text = JText::_('COM_JEM_COPY_VENUE');
+					$url = 'index.php?option=com_jem&task=venue.copy&a_id='.$id.'&return='.base64_encode($uri);
+					break;
+			}
+
+			if (!$url) {
+				return; // we need at least url to generate useful output
+			}
+
+			$output = JHtml::_('link', JRoute::_($url), $image, self::tooltip($text, $overlib));
 
 			return $output;
 		}
@@ -454,10 +533,10 @@ class JemOutput
 	 * @param string $print_link
 	 * @param array $params
 	 */
-	static function printbutton($print_link, $params)
+	static public function printbutton($print_link, $params)
 	{
-		$app 		= JFactory::getApplication();
-		$settings	= JemHelper::globalattribs();
+		$app      = JFactory::getApplication();
+		$settings = JemHelper::globalattribs();
 
 		if ($settings->get('global_show_print_icon',0)) {
 			JHtml::_('behavior.tooltip');
@@ -481,8 +560,8 @@ class JemOutput
 				//button in view
 				$overlib = JText::_('COM_JEM_PRINT_DESC');
 				$text = JText::_('COM_JEM_PRINT');
-				$output	= '<a href="'. JRoute::_($print_link) .'" '.JEMOutput::tooltip($text, $overlib, 'editlinktip', 'bottom')
-				        . ' onclick="window.open(this.href,\'win2\',\''.$status.'\'); return false;">'.$image.'</a>';
+				$output = '<a href="' . JRoute::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom')
+				        . ' onclick="window.open(this.href,\'win2\',\'' . $status . '\'); return false;">' . $image . '</a>';
 			}
 
 			return $output;
@@ -500,7 +579,7 @@ class JemOutput
 	 * Views:
 	 * Category, Event, Venue
 	 */
-	static function mailbutton($slug, $view, $params)
+	static public function mailbutton($slug, $view, $params)
 	{
 		$app 		= JFactory::getApplication();
 		$settings	= JemHelper::globalattribs();
@@ -529,8 +608,8 @@ class JemOutput
 
 			$overlib = JText::_('COM_JEM_EMAIL_DESC');
 			$text = JText::_('COM_JEM_EMAIL');
-			$output = '<a href="'. JRoute::_($url) .'" '.JEMOutput::tooltip($text, $overlib, '', 'bottom')
-			        . ' onclick="window.open(this.href,\'win2\',\''.$status.'\'); return false;">'.$image.'</a>';
+			$output = '<a href="' . JRoute::_($url) . '" ' . self::tooltip($text, $overlib, '', 'bottom')
+			        . ' onclick="window.open(this.href,\'win2\',\'' . $status . '\'); return false;">' . $image . '</a>';
 
 			return $output;
 		}
@@ -542,7 +621,7 @@ class JemOutput
 	 * @param object $slug
 	 * @param array $params
 	 */
-	static function icalbutton($slug, $view)
+	static public function icalbutton($slug, $view)
 	{
 		$app = JFactory::getApplication();
 		$settings = JemHelper::globalattribs();
@@ -564,7 +643,7 @@ class JemOutput
 			$text = JText::_('COM_JEM_ICAL');
 
 			$url = 'index.php?option=com_jem&view='.$view.'&id='.$slug.'&format=raw&layout=ics';
-			$output = JHtml::_('link', JRoute::_($url), $image, JEMOutput::tooltip($text, $overlib, '', 'bottom'));
+			$output = JHtml::_('link', JRoute::_($url), $image, self::tooltip($text, $overlib, '', 'bottom'));
 
 			return $output;
 		}
@@ -576,7 +655,7 @@ class JemOutput
 	 * View:
 	 * Myevents, Myvenues
 	 */
-	static function publishbutton($prefix)
+	static public function publishbutton($prefix)
 	{
 		$app = JFactory::getApplication();
 
@@ -592,7 +671,7 @@ class JemOutput
 			$text = JText::_('COM_JEM_PUBLISH');
 
 			$print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".publish'));";
-			$output	= '<a href="'. JRoute::_($print_link) .'" '.JEMOutput::tooltip($text, $overlib, 'editlinktip', 'bottom').'>'.$image.'</a>';
+			$output = '<a href="' . JRoute::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
 		}
 
 		return $output;
@@ -604,7 +683,7 @@ class JemOutput
 	 * View:
 	 * Myevents, Myvenues
 	 */
-	static function trashbutton($prefix)
+	static public function trashbutton($prefix)
 	{
 		$app = JFactory::getApplication();
 
@@ -620,7 +699,7 @@ class JemOutput
 			$text = JText::_('COM_JEM_TRASH');
 
 			$print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".trash'));";
-			$output	= '<a href="'. JRoute::_($print_link) .'" '.JEMOutput::tooltip($text, $overlib, 'editlinktip', 'bottom').'>'.$image.'</a>';
+			$output = '<a href="' . JRoute::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
 		}
 
 		return $output;
@@ -632,7 +711,7 @@ class JemOutput
 	 * View:
 	 * Myevents, Myvenues
 	 */
-	static function unpublishbutton($prefix)
+	static public function unpublishbutton($prefix)
 	{
 		$app = JFactory::getApplication();
 
@@ -648,7 +727,7 @@ class JemOutput
 			$text = JText::_('COM_JEM_UNPUBLISH');
 
 			$print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".unpublish'));";
-			$output	= '<a href="'. JRoute::_($print_link) .'" '.JEMOutput::tooltip($text, $overlib, 'editlinktip', 'bottom').'>'.$image.'</a>';
+			$output = '<a href="' . JRoute::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
 		}
 
 		return $output;
@@ -660,7 +739,7 @@ class JemOutput
 	 * view:
 	 * attendees
 	 */
-	static function exportbutton($eventid)
+	static public function exportbutton($eventid)
 	{
 		$app = JFactory::getApplication();
 
@@ -676,8 +755,8 @@ class JemOutput
 			$overlib = JText::_('COM_JEM_EXPORT_DESC');
 			$text = JText::_('COM_JEM_EXPORT');
 
-			$print_link = 'index.php?option=com_jem&view=attendees&task=attendees.export&tmpl=raw&id='.$eventid;
-			$output	= '<a href="'. JRoute::_($print_link) .'" '.JEMOutput::tooltip($text, $overlib, 'editlinktip', 'bottom').'>'.$image.'</a>';
+			$print_link = 'index.php?option=com_jem&view=attendees&task=attendees.export&tmpl=raw&id=' . $eventid . '&' . JSession::getFormToken() . '=1';
+			$output = '<a href="' . JRoute::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
 		}
 
 		return $output;
@@ -689,19 +768,17 @@ class JemOutput
 	 * view:
 	 * attendees
 	 */
-	static function backbutton($backlink, $view)
+	static public function backbutton($backlink, $view)
 	{
-		$app 	= JFactory::getApplication();
-		$jinput = $app->input;
-
-		$id 	= $jinput->getInt('id');
-		$fid 	= $jinput->getInt('Itemid');
+		$app = JFactory::getApplication();
+		$id  = $app->input->getInt('id');
+		$fid = $app->input->getInt('Itemid');
 
 		JHtml::_('behavior.tooltip');
 
 		$image = JHtml::_('image', 'com_jem/icon-16-back.png', JText::_('COM_JEM_BACK'), NULL, true);
 
-		if ($jinput->get('print','','int')) {
+		if ($app->input->get('print','','int')) {
 			//button in popup
 			$output = '';
 		} else {
@@ -710,7 +787,7 @@ class JemOutput
 			$text = JText::_('COM_JEM_BACK');
 
 			$link = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&Itemid='.$fid.'&task='.$view.'.back';
-			$output	= '<a href="'. JRoute::_($link) .'" '.JEMOutput::tooltip($text, $overlib, 'editlinktip', 'bottom').'>'.$image.'</a>';
+			$output = '<a href="' . JRoute::_($link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
 		}
 
 		return $output;
@@ -725,7 +802,7 @@ class JemOutput
 	 *
 	 * @return string  attributes in form 'class="..." title="..."'
 	 */
-	static function tooltip($title, $text, $classes = '', $position = '')
+	static public function tooltip($title, $text, $classes = '', $position = '')
 	{
 		$result = array();
 		if (version_compare(JVERSION, '3.3', 'lt')) {
@@ -748,7 +825,7 @@ class JemOutput
 	 *
 	 * @param obj $data
 	 */
-	static function mapicon($data, $view = false, $params)
+	static public function mapicon($data, $view = false, $params)
 	{
 		$settings = JemHelper::globalattribs();
 
@@ -758,20 +835,17 @@ class JemOutput
 		}
 
 		if ($view == 'event') {
-			$tld		= 'event_tld';
-			$lg			= 'event_lg';
-			$mapserv	= $params->get('event_show_mapserv');
+			$tld     = 'event_tld';
+			$lg      = 'event_lg';
+			$mapserv = $params->get('event_show_mapserv');
 		} else if ($view == 'venues') {
-			$tld		= 'global_tld';
-			$lg			= 'global_lg';
-			$mapserv	= $params->get('global_show_mapserv');
-			if ($mapserv == 3) {
-				$mapserv = 0;
-			}
+			$tld     = 'global_tld';
+			$lg      = 'global_lg';
+			$mapserv = ($mapserv == 3) ? 0 : $params->get('global_show_mapserv');
 		} else {
-			$tld		= 'global_tld';
-			$lg			= 'global_lg';
-			$mapserv	= $params->get('global_show_mapserv');
+			$tld     = 'global_tld';
+			$lg      = 'global_lg';
+			$mapserv = $params->get('global_show_mapserv');
 		}
 
 		//Link to map
@@ -790,7 +864,7 @@ class JemOutput
 			$data->longitude = null;
 		}
 
-		$url = 'http://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'com').'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
+		$url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'com').'&q='.urlencode($data->street.', '.$data->postalCode.' '.$data->city.', '.$data->country.'+ ('.$data->venue.')').'&ie=UTF8&z=15&iwloc=B&output=embed" ';
 
 		// google map link or include
 		switch ($mapserv)
@@ -798,7 +872,7 @@ class JemOutput
 			case 1:
 				// link
 				if($data->latitude && $data->longitude) {
-					$url = 'http://maps.google.'.$params->get($tld).'/maps?hl='.$params->get($lg).'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
+					$url = 'https://maps.google.'.$params->get($tld).'/maps?hl='.$params->get($lg).'&q=loc:'.$data->latitude.',+'.$data->longitude.'&ie=UTF8&z=15&iwloc=B&output=embed';
 				}
 
 				$message = JText::_('COM_JEM_MAP').':';
@@ -825,7 +899,7 @@ class JemOutput
 
 				# do we have a client-ID?
 				if ($clientid) {
-					$document->addScript('http://maps.googleapis.com/maps/api/js?client='.$clientid.'&sensor=false&v=3.15');
+					$document->addScript('https://maps.googleapis.com/maps/api/js?client='.$clientid.'&sensor=false&v=3.15');
 				} else {
 					# do we have an api-key?
 					if ($api) {
@@ -853,7 +927,7 @@ class JemOutput
 	 * @param bool $showinline Add css class to scale icon to fit text height
 	 * @param bool $showtitle  Add title (tooltip)
 	 */
-	static function recurrenceicon($event, $showinline = true, $showtitle = true)
+	static public function recurrenceicon($event, $showinline = true, $showtitle = true)
 	{
 		$settings = JemHelper::globalattribs();
 		$item = empty($event->recurr_bak) ? $event : $event->recurr_bak;
@@ -875,21 +949,28 @@ class JemOutput
 	/**
 	 * Creates the unpublished icon
 	 *
-	 * @param obj   $item         Object with attribute 'published' containing the state (well known -2, 0, 1, 2)
+	 * @param mixed $item         mixed Object with attribute 'published' or plain value containing the state (well known -2, 0, 1, 2)
 	 * @param array $ignorestates States to ignore (returning empty string), defaults to trashed (-2), published (1) and archived (2)
 	 * @param bool  $showinline   Add css class to scale icon to fit text height
 	 * @param bool  $showtitle    Add title (tooltip)
 	 */
-	static function publishstateicon($item, $ignorestates = array(-2, 1, 2), $showinline = true, $showtitle = true)
+	static public function publishstateicon($item, $ignorestates = array(-2, 1, 2), $showinline = true, $showtitle = true)
 	{
 		//$settings = JemHelper::globalattribs();  /// @todo use global setting to influence visibility of publish state icon?
 
 		// early return
-		if (!isset($item->published) || in_array($item->published, $ignorestates)) {
-			return '';
+		if (is_object($item)) {
+			if (!isset($item->published) || in_array($item->published, $ignorestates)) {
+				return '';
+			}
+		} else {
+			if (in_array($item, $ignorestates)) {
+				return '';
+			}
 		}
 
-		switch ($item->published) {
+		$published = is_object($item) ? $item->published : $item;
+		switch ($published) {
 		case -2: // trashed
 			$image = 'com_jem/trash.png';
 			$alt   = JText::_('JTRASHED');
@@ -931,7 +1012,7 @@ class JemOutput
 	 * @param array $image
 	 * @param string $type
 	 */
-	static function flyer($data, $image, $type, $id = null)
+	static public function flyer($data, $image, $type, $id = null)
 	{
 		$id_attr = $id ? 'id="'.$id.'"' : '';
 
@@ -988,7 +1069,6 @@ class JemOutput
 		return $output;
 	}
 
-
 	/**
 	 * Formats date
 	 *
@@ -996,15 +1076,15 @@ class JemOutput
 	 * @param string $format
 	 * @return string $formatdate
 	 */
-	static function formatdate($date, $format = "")
+	static public function formatdate($date, $format = "")
 	{
-		$settings 	= JemHelper::config();
-		$check 		= JemHelper::isValidDate($date);
-		//$timezone	= JemHelper::getTimeZoneName();
-		$timezone	= null;
+		$settings = JemHelper::config();
+		$check    = JemHelper::isValidDate($date);
+		//$timezone = JemHelper::getTimeZoneName();
+		$timezone = null;
 
-		if ($check == true) {
-			$jdate = new JDate($date,$timezone);
+		if ($check) {
+			$jdate = new JDate($date, $timezone);
 			if (!$format) {
 				// If no format set, use long format as standard
 				$format = $settings->formatdate;
@@ -1022,10 +1102,10 @@ class JemOutput
 	 * @param string $time
 	 * @return string $formattime
 	 */
-	static function formattime($time, $format = "", $addSuffix = true)
+	static public function formattime($time, $format = "", $addSuffix = true)
 	{
-		$settings	= JemHelper::config();
-		$check 		= JemHelper::isValidTime($time);
+		$settings = JemHelper::config();
+		$check    = JemHelper::isValidTime($time);
 
 		if (!$check)
 		{
@@ -1061,12 +1141,13 @@ class JemOutput
 	 * @param  string $timeFormat Time Format
 	 * @param  bool   $addSuffix if true add suffix specified in settings
 	 * @param  bool   $showTime global setting to respect
+	 * @param  bool   $showDayLink if true date will be shown as link to day view
 	 * @return string Formatted date and time string to print
 	 */
-	static function formatDateTime($dateStart, $timeStart ='', $dateEnd = '', $timeEnd = '', $dateFormat = '', $timeFormat = '', $addSuffix = true, $showTime = true)
+	static public function formatDateTime($dateStart, $timeStart ='', $dateEnd = '', $timeEnd = '', $dateFormat = '', $timeFormat = '', $addSuffix = true, $showTime = true, $showDayLink = false)
 	{
 		if (is_array($dateStart)) {
-			foreach (array('timeStart','dateEnd','timeEnd','dateFormat','timeFormat','addSuffix','showTime') as $param) {
+			foreach (array('timeStart','dateEnd','timeEnd','dateFormat','timeFormat','addSuffix','showTime', 'showDayLink') as $param) {
 				if (isset($dateStart[$param])) {
 					$$param = $dateStart[$param];
 				}
@@ -1077,7 +1158,15 @@ class JemOutput
 		$output = '';
 
 		if (JemHelper::isValidDate($dateStart)) {
-			$output .= '<span class="jem_date-1">'.self::formatdate($dateStart, $dateFormat).'</span>';
+			$output .= '<span class="jem_date-1">';
+			if ($showDayLink) {
+				$output .= '<a href="'.JRoute::_(JemHelperRoute::getRoute(str_replace('-', '', $dateStart), 'day')).'">';
+			}
+			$output .= self::formatdate($dateStart, $dateFormat);
+			if ($showDayLink) {
+				$output .= '</a>';
+			}
+			$output .= '</span>';
 
 			if ($showTime && JemHelper::isValidTime($timeStart)) {
 				$output .= ', <span class="jem_time-1">'.self::formattime($timeStart, $timeFormat, $addSuffix).'</span>';
@@ -1086,7 +1175,15 @@ class JemOutput
 			// Display end date only when it differs from start date
 			$displayDateEnd = JemHelper::isValidDate($dateEnd) && $dateEnd != $dateStart;
 			if ($displayDateEnd) {
-				$output .= ' - <span class="jem_date-1">'.self::formatdate($dateEnd, $dateFormat).'</span>';
+				$output .= ' - <span class="jem_date-1">';
+				if ($showDayLink) {
+					$output .= '<a href="'.JRoute::_(JemHelperRoute::getRoute(str_replace('-', '', $dateEnd), 'day')).'">';
+				}
+				$output .= self::formatdate($dateEnd, $dateFormat);
+				if ($showDayLink) {
+					$output .= '</a>';
+				}
+				$output .= '</span>';
 			}
 
 			// Display end time only when both times are set
@@ -1131,7 +1228,7 @@ class JemOutput
 	 * @param  bool   $showTime global setting to respect
 	 * @return string Formatted date and time string to print
 	 */
-	static function formatDateTime2Lines($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $dateFormat = '', $timeFormat = '', $addSuffix = true, $showTime = true)
+	static public function formatDateTime2Lines($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $dateFormat = '', $timeFormat = '', $addSuffix = true, $showTime = true)
 	{
 		if (is_array($dateStart)) {
 			foreach (array('timeStart','dateEnd','timeEnd','dateFormat','timeFormat','addSuffix','showTime') as $param) {
@@ -1188,7 +1285,7 @@ class JemOutput
 	 * @param  bool   $showTime global setting to respect
 	 * @return string Formatted date and time string to print
 	 */
-	static function formatLongDateTime($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $showTime = true)
+	static public function formatLongDateTime($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $showTime = true)
 	{
 		return self::formatDateTime(is_array($dateStart) ? $dateStart : array('dateStart' => $dateStart, 'timeStart' => $timeStart, 'dateEnd' => $dateEnd, 'timeEnd' => $timeEnd, 'addSuffix' => true, 'showTime' => $showTime));
 	}
@@ -1206,7 +1303,7 @@ class JemOutput
 	 * @param  bool   $showTime global setting to respect
 	 * @return string Formatted date and time string to print
 	 */
-	static function formatShortDateTime($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $showTime = true)
+	static public function formatShortDateTime($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $showTime = true)
 	{
 		$settings = JemHelper::config();
 
@@ -1222,7 +1319,7 @@ class JemOutput
 		}
 	}
 
-	static function formatSchemaOrgDateTime($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $showTime = true)
+	static public function formatSchemaOrgDateTime($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $showTime = true)
 	{
 		if (is_array($dateStart)) {
 			foreach (array('timeStart','dateEnd','timeEnd','showTime') as $param) {
@@ -1279,7 +1376,7 @@ class JemOutput
 	 * @param string time
 	 * @return array
 	 */
-	static function getIcalDateArray($date, $time = null)
+	static public function getIcalDateArray($date, $time = null)
 	{
 		if ($time) {
 			$sec = strtotime($date. ' ' .$time);
@@ -1293,16 +1390,16 @@ class JemOutput
 		//Format date
 		$parsed = strftime('%Y-%m-%d %H:%M:%S', $sec);
 
-		$date = array('year' => (int) substr($parsed, 0, 4),
-				'month' => (int) substr($parsed, 5, 2),
-				'day' => (int) substr($parsed, 8, 2));
+		$date = array('year'  => (int) substr($parsed, 0, 4),
+		              'month' => (int) substr($parsed, 5, 2),
+		              'day'   => (int) substr($parsed, 8, 2));
 
 		//Format time
 		if (substr($parsed, 11, 8) != '00:00:00')
 		{
 			$date['hour'] = substr($parsed, 11, 2);
-			$date['min'] = substr($parsed, 14, 2);
-			$date['sec'] = substr($parsed, 17, 2);
+			$date['min']  = substr($parsed, 14, 2);
+			$date['sec']  = substr($parsed, 17, 2);
 		}
 		return $date;
 	}
@@ -1314,7 +1411,7 @@ class JemOutput
 	 * @param boolean $backend Used for backend (true) or frontend (false, default)
 	 * @return string|multitype:
 	 */
-	static function getCategoryList($categories, $doLink, $backend = false)
+	static public function getCategoryList($categories, $doLink, $backend = false)
 	{
 		$output = array_map(
 			function ($category) use ($doLink, $backend) {
@@ -1322,13 +1419,13 @@ class JemOutput
 					if ($backend) {
 						$path = $category->path;
 						$path = str_replace('/', ' &#187; ', $path);
-						$value  = '<span '.JEMOutput::tooltip(JText::_('COM_JEM_EDIT_CATEGORY'), $path, 'editlinktip').'>';
-						$value .= '<a href="index.php?option=com_jem&amp;task=category.edit&amp;id='. $category->id.'">'.
-						              $category->catname.'</a>';
+						$value  = '<span ' . self::tooltip(JText::_('COM_JEM_EDIT_CATEGORY'), $path, 'editlinktip') . '>';
+						$value .= '<a href="index.php?option=com_jem&amp;task=category.edit&amp;id=' . $category->id . '">' .
+						              $category->catname . '</a>';
 						$value .= '</span>';
 					} else {
-						$value  = '<a href="'.JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)).'">'.
-						              $category->catname.'</a>';
+						$value  = '<a href="' . JRoute::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' .
+						              $category->catname . '</a>';
 					}
 				} else {
 					$value = $category->catname;

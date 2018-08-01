@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -68,7 +68,6 @@ class JemModelWeekcal extends JemModelEventslist
 		$this->setState('filter.calendar_to', $where);
 		$this->setState('filter.date.to', $filter_date_to);
 
-
 		##################
 		## TOP-CATEGORY ##
 		##################
@@ -86,7 +85,6 @@ class JemModelWeekcal extends JemModelEventslist
 		$this->setState('filter.groupby', 'a.id');
 	}
 
-
 	/**
 	 * Method to get a list of events.
 	 */
@@ -103,11 +101,10 @@ class JemModelWeekcal extends JemModelEventslist
 		return array();
 	}
 
-
 	/**
 	 * @return	JDatabaseQuery
 	 */
-	function getListQuery()
+	protected function getListQuery()
 	{
 		// Let parent create a new query object.
 		$query = parent::getListQuery();
@@ -120,7 +117,7 @@ class JemModelWeekcal extends JemModelEventslist
 	/**
 	 * create multi-day events
 	 */
-	function calendarMultiday($items)
+	protected function calendarMultiday($items)
 	{
 		if (empty($items)) {
 			return array();
@@ -130,14 +127,9 @@ class JemModelWeekcal extends JemModelEventslist
 		$params       = $app->getParams();
 		$startdayonly = $this->getState('filter.calendar_startdayonly');
 
-		foreach ($items as $i => $item) {
-			$item->categories = $this->getCategories($item->id);
-
-			//remove events without categories (users have no access to them)
-			if (empty($item->categories)) {
-				unset($items[$i]);
-			}
-			elseif (!$startdayonly) {
+		if (!$startdayonly) {
+			foreach ($items as $i => $item)
+			{
 				if (!is_null($item->enddates) && ($item->enddates != $item->dates)) {
 					$day = $item->start_day;
 					$multi = array();
@@ -147,13 +139,13 @@ class JemModelWeekcal extends JemModelEventslist
 					$item->multiname = $item->title;
 					$item->sort = 'zlast';
 
-					for ($counter = 0; $counter <= $item->datesdiff-1; $counter++) {
-
-						//next day:
+					for ($counter = 0; $counter <= $item->datesdiff-1; $counter++)
+					{
+						# next day:
 						$day++;
 						$nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
 
-						//generate days of current multi-day selection
+						# generate days of current multi-day selection
 						$multi[$counter] = clone $item;
 						$multi[$counter]->dates = strftime('%Y-%m-%d', $nextday);
 
@@ -178,15 +170,15 @@ class JemModelWeekcal extends JemModelEventslist
 						}
 					} // for
 
-					//add generated days to data
+					# add generated days to data
 					$items = array_merge($items, $multi);
-
-					//unset temp array holding generated days before working on the next multiday event
+					# unset temp array holding generated days before working on the next multiday event
 					unset($multi);
 				}
-			}
-		} // foreach ($items)
+			} // foreach
+		}
 
+		# Remove items out of date range
 		$startdate = $this->getState('filter.date.from');
 		$enddate   = $this->getState('filter.date.to');
 		if (empty($startdate) || empty($enddate)) {
@@ -197,7 +189,7 @@ class JemModelWeekcal extends JemModelEventslist
 
 			date_default_timezone_set($offset);
 			$datetime = new DateTime();
-			// If week starts Monday we use dayoffset 1, on Sunday we use 0 but 7 if today is Sunday.
+			# If week starts Monday we use dayoffset 1, on Sunday we use 0 but 7 if today is Sunday.
 			$dayoffset = ($firstweekday == 1) ? 1 : ((($firstweekday == 0) && ($datetime->format('N') == 7)) ? 7 : 0);
 			$datetime->setISODate($datetime->format('Y'), $datetime->format('W'), $dayoffset);
 			$startdate = $datetime->format('Y-m-d');
@@ -219,11 +211,12 @@ class JemModelWeekcal extends JemModelEventslist
 			}
 		}
 
-		// Do we still have events? Return if not.
+		# Do we still have events? Return if not.
 		if (empty($items)) {
 			return array();
 		}
 
+		# Sort the items
 		foreach ($items as $item) {
 			$time[] = $item->times;
 			$title[] = $item->title;
@@ -240,18 +233,17 @@ class JemModelWeekcal extends JemModelEventslist
 		return $items;
 	}
 
-
 	/**
 	 * Method to get the Currentweek
 	 *
 	 * Info MYSQL WEEK
 	 * @link http://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_week
 	 */
-	function getCurrentweek()
+	public function getCurrentweek()
 	{
 		if (!isset($this->_currentweek)) {
 			$app = JFactory::getApplication();
-			$params =  $app->getParams('com_jem');
+			$params  = $app->getParams('com_jem');
 			$weekday = $params->get('firstweekday', 1); // 1 = Monday, 0 = Sunday
 
 			if ($weekday == 1) {

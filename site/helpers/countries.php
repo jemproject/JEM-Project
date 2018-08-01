@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.0
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2014 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  *
@@ -17,14 +17,14 @@
 
 defined('_JEXEC') or die;
 
-class JEMHelperCountries
+class JemHelperCountries
 {
 	/**
 	 * return countries array indexed by iso3 code
 	 *
 	 * @return array
 	 */
-	static function getCountries()
+	static public function getCountries()
 	{
 		$country["AFG"] = array("iso2" => "AF", "name" => "Afghanistan, Islamic Republic of");
 		$country["ALA"] = array("iso2" => "AX", "name" => "Aland Islands");
@@ -280,7 +280,7 @@ class JEMHelperCountries
 		return $country;
 	}
 
-	function getCountrycoordarray()
+	public function getCountrycoordarray()
 	{
 		$countrycoord = array();
 		$countrycoord['AD'] = array(42.5, 1.5);
@@ -530,7 +530,7 @@ class JEMHelperCountries
 		return $countrycoord;
 	}
 
-	static function getCountryOptions($value_tag = 'value', $text_tag = 'text')
+	static public function getCountryOptions($value_tag = 'value', $text_tag = 'text')
 	{
 		$countries = self::getCountries();
 		$options = array();
@@ -541,7 +541,7 @@ class JEMHelperCountries
 		return $options;
 	}
 
-	static function convertIso2to3($iso_code_2)
+	static public function convertIso2to3($iso_code_2)
 	{
 		$convert2to3["AF"] = "AFG";
 		$convert2to3["AX"] = "ALA";
@@ -795,6 +795,7 @@ class JEMHelperCountries
 		$convert2to3['SX'] = "SXM";
 		$convert2to3['SS'] = "SSD";
 		$convert2to3['XK'] = "XKX";
+
 		if (isset($convert2to3[$iso_code_2])) {
 			return $convert2to3[$iso_code_2];
 		} else {
@@ -802,7 +803,7 @@ class JEMHelperCountries
 		}
 	}
 
-	static function convertIso3to2($iso_code_3)
+	static public function convertIso3to2($iso_code_3)
 	{
 		$convert3to2["AFG"] = "AF";
 		$convert3to2["ALA"] = "AX";
@@ -1057,6 +1058,7 @@ class JEMHelperCountries
 		$convert3to2['SXM'] = "SX";
 		$convert3to2['SSD'] = "SS";
 		$convert3to2['XKX'] = "XK";
+
 		if (isset($convert3to2[$iso_code_3]))
 		{
 			return $convert3to2[$iso_code_3];
@@ -1070,9 +1072,9 @@ class JEMHelperCountries
 	/**
 	 * return flag url from iso code
 	 *
-	 * @param $iso_code
+	 * @param  $iso_code
 	 */
-	static function getIsoFlag($iso_code)
+	static public function getIsoFlag($iso_code)
 	{
 		if (strlen($iso_code) == 3) {
 			$iso_code = self::convertIso3to2($iso_code);
@@ -1090,26 +1092,27 @@ class JEMHelperCountries
 	/**
 	 * example: echo self::getCountryFlag($country);
 	 *
-	 * @param string: an iso3 country code, e.g AUT
-	 * @param string: additional html attributes for the img tag
-	 * @return string: html code for the flag image
+	 * @param  string an iso3 country code, e.g AUT
+	 * @param  string additional html attributes for the img tag
+	 * @return string html code for the flag image
 	 */
-	static function getCountryFlag($countrycode, $attributes = '')
+	static public function getCountryFlag($countrycode, $attributes = '')
 	{
 		$src = self::getIsoFlag($countrycode);
 		if (!$src) {
 			return '';
 		}
+
 		$html = '<img src="' . $src . '" alt="' . self::getCountryName($countrycode) . '" ';
 		$html .= 'title="' . self::getCountryName($countrycode) . '" ' . $attributes . ' />';
 		return $html;
 	}
 
 	/**
-	 * @param string: an iso country code, e.g AUT
-	 * @return string: a country name
+	 * @param  string an iso country code, e.g AUT
+	 * @return string a country name
 	 */
-	static function getCountryName($iso)
+	static public function getCountryName($iso)
 	{
 		if (strlen($iso) == 2) {
 			$iso = self::convertIso2to3($iso);
@@ -1123,10 +1126,10 @@ class JEMHelperCountries
 	}
 
 	/**
-	 * @param string: an iso3 country code, e.g AUT
-	 * @return string: a country full name
+	 * @param  string an iso3 country code, e.g AUT
+	 * @return string a country full name
 	 */
-	static function getCountryFullName($iso)
+	static public function getCountryFullName($iso)
 	{
 		if (strlen($iso) == 2) {
 			$iso = self::convertIso2to3($iso);
@@ -1137,10 +1140,10 @@ class JEMHelperCountries
 	}
 
 	/**
-	 * @param string: an iso3 country code, e.g AUT
-	 * @return string: a country name, short form
+	 * @param  string an iso3 country code, e.g AUT
+	 * @return string a country name, short form
 	 */
-	static function getShortCountryName($iso)
+	static public function getShortCountryName($iso)
 	{
 		if (strlen($iso) == 2) {
 			$iso = self::convertIso2to3($iso);

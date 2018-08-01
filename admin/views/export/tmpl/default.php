@@ -1,6 +1,6 @@
 <?php
 /**
- * @version 2.2.1
+ * @version 2.2.2
  * @package JEM
  * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
@@ -56,11 +56,11 @@ defined('_JEXEC') or die;
 						</li>
 						<li>
 							<label for="dates"><?php echo JText::_('COM_JEM_EXPORT_FROM_DATE').':'; ?></label>
-							<?php echo JHtml::_('calendar', date("Y-m-d"), 'dates', 'dates', '%Y-%m-%d', array('class' => 'inputbox validate-date', 'showTime' => 'false')); ?>
+							<?php echo JHtml::_('calendar', date("Y-m-d"), 'dates', 'dates', '%Y-%m-%d', array('class' => 'inputbox validate-date', 'showTime' => false)); ?>
 						</li>
 						<li>
 							<label for="enddates"><?php echo JText::_('COM_JEM_EXPORT_TO_DATE').':'; ?></label>
-							<?php echo JHtml::_('calendar', date("Y-m-d"), 'enddates', 'enddates', '%Y-%m-%d', array('class' => 'inputbox validate-date', 'showTime' => 'false')); ?>
+							<?php echo JHtml::_('calendar', date("Y-m-d"), 'enddates', 'enddates', '%Y-%m-%d', array('class' => 'inputbox validate-date', 'showTime' => false)); ?>
 						</li>
 						<li>
 							<label for="cid"><?php echo JText::_('COM_JEM_CATEGORY').':'; ?></label>
@@ -104,6 +104,7 @@ defined('_JEXEC') or die;
 		</div>
 		<?php endif; ?>
 
+		<?php echo JHtml::_( 'form.token' ); ?>
 		<input type="hidden" name="option" value="com_jem" />
 		<input type="hidden" name="view" value="export" />
 		<input type="hidden" name="controller" value="export" />

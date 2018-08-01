@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.6
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -15,29 +15,27 @@ defined('_JEXEC') or die;
  */
 class JemAdmin
 {
-
 	/**
 	 * Writes footer.
 	 *
 	 */
-	static function footer()
+	static public function footer()
 	{
 
 	}
-
 
 	/**
 	 * Retrieves settings.
 	 *
 	 */
-	static function config()
+	static public function config()
 	{
 		$jemConfig = JemConfig::getInstance();
 
 		return $jemConfig->toObject();
 	}
 
-	static function buildtimeselect($max, $name, $selected, $class = array('class'=>'inputbox'))
+	static public function buildtimeselect($max, $name, $selected, $class = array('class'=>'inputbox'))
 	{
 		$timelist = array();
 		$timelist[0] = JHtml::_('select.option', '', '');

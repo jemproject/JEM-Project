@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.7
+ * @version 2.2.3
  * @package JEM
- * @copyright (C) 2013-2016 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -214,7 +214,8 @@ class com_jemInstallerScript
 	{
 		// Are we installing in J2.5?
 		$jversion = new JVersion();
-		if (!(($jversion->RELEASE >= '3.4' && $jversion->DEV_LEVEL >= '0') ||
+		if (version_compare(JVERSION, '4.0', 'ge')                         ||  // J! 4.x NOT supported!
+			!(($jversion->RELEASE >= '3.4' && $jversion->DEV_LEVEL >= '0') ||
 		      ($jversion->RELEASE == '3.3' && $jversion->DEV_LEVEL >= '3') ||
 		      ($jversion->RELEASE == '3.2' && $jversion->DEV_LEVEL >= '7') ||
 		      ($jversion->RELEASE == '2.5' && $jversion->DEV_LEVEL >= '24'))) {
@@ -351,7 +352,8 @@ class com_jemInstallerScript
 	 *
 	 * @return The parameter
 	 */
-	private function getParam($name) {
+	private function getParam($name)
+	{
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('manifest_cache')->from('#__extensions')->where(array("type = 'component'", "element = 'com_jem'"));
@@ -365,8 +367,9 @@ class com_jemInstallerScript
 	 *
 	 * @param $param_array  An array holding the params to store
 	 */
-	private function setParams($param_array) {
-		if (count($param_array) > 0) {
+	private function setParams($param_array)
+	{
+		if (is_array($param_array) && (count($param_array) > 0)) {
 			// read the existing component value(s)
 			$db = JFactory::getDbo();
 			$query = $db->getQuery(true);
@@ -419,8 +422,9 @@ class com_jemInstallerScript
 	 *
 	 * @param $param_array  An array holding the params to store
 	 */
-	private function setGlobalAttribs($param_array) {
-		if (count($param_array) > 0) {
+	private function setGlobalAttribs($param_array)
+	{
+		if (is_array($param_array) && (count($param_array) > 0)) {
 			// read the existing component value(s)
 			$db = JFactory::getDbo();
 			$query = $db->getQuery(true);
@@ -457,7 +461,8 @@ class com_jemInstallerScript
 	/**
 	 * Helper method that outputs a short JEM header with logo and text
 	 */
-	private function getHeader() {
+	private function getHeader()
+	{
 		?>
 		<img src="../media/com_jem/images/jemlogo.png" alt="" style="float:left; padding-right:20px;" />
 		<h1><?php echo JText::_('COM_JEM'); ?></h1>
@@ -470,7 +475,8 @@ class com_jemInstallerScript
 	 * neccessary
 	 * @param string $versionId The JEM version to add to the schema table
 	 */
-	private function initializeSchema($versionId) {
+	private function initializeSchema($versionId)
+	{
 		$db = JFactory::getDbo();
 
 		// Get extension ID of JEM
@@ -479,7 +485,7 @@ class com_jemInstallerScript
 		$db->setQuery($query);
 		$extensionId = $db->loadResult();
 
-		if(!$extensionId) {
+		if (!$extensionId) {
 			// This is a fresh installation, return
 			return;
 		}
@@ -489,7 +495,7 @@ class com_jemInstallerScript
 		$query->select('version_id')->from('#__schemas')->where('extension_id = '.$extensionId);
 		$db->setQuery($query);
 
-		if($db->loadResult()) {
+		if ($db->loadResult()) {
 			// Entry exists, return
 			return;
 		}
@@ -553,7 +559,7 @@ class com_jemInstallerScript
 		$db->setQuery($query);
 		$newId = $db->loadResult();
 
-		if($newId) {
+		if ($newId) {
 			// set compponent id on all "com_jem..." frontend entries
 			$query = $db->getQuery(true);
 			$query->update('#__menu');

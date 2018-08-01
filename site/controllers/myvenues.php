@@ -1,8 +1,8 @@
 <?php
 /**
- * @version 2.1.5
+ * @version 2.2.2
  * @package JEM
- * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2013-2017 joomlaeventmanager.net
  * @copyright (C) 2005-2009 Christoph Lukes
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
  */
@@ -17,11 +17,10 @@ jimport('joomla.application.component.controller');
  * @package JEM
  *
  */
-class JEMControllerMyvenues extends JControllerLegacy
+class JemControllerMyvenues extends JControllerLegacy
 {
 	/**
 	 * Constructor
-	 *
 	 */
 	public function __construct()
 	{
@@ -33,9 +32,8 @@ class JEMControllerMyvenues extends JControllerLegacy
 	 *
 	 * @access public
 	 * @return void
-	 *
 	 */
-	function publish()
+	public function publish()
 	{
 		$this->setStatus(1, 'COM_JEM_VENUE_PUBLISHED');
 	}
@@ -43,7 +41,7 @@ class JEMControllerMyvenues extends JControllerLegacy
 	/**
 	 * Logic unpublish venues
 	 */
-	function unpublish()
+	public function unpublish()
 	{
 		$this->setStatus(0, 'COM_JEM_VENUE_UNPUBLISHED');
 	}
@@ -55,7 +53,7 @@ class JEMControllerMyvenues extends JControllerLegacy
 	 * @return void
 	 */
 	/*
-	function trash()
+	public function trash()
 	{
 		$this->setStatus(-2, 'COM_JEM_VENUE_TRASHED');
 	}
@@ -66,7 +64,6 @@ class JEMControllerMyvenues extends JControllerLegacy
 	 *
 	 * @access protected
 	 * @return void
-	 *
 	 */
 	protected function setStatus($status, $message)
 	{
@@ -80,7 +77,7 @@ class JEMControllerMyvenues extends JControllerLegacy
 
 		if (empty($cid)) {
 			JError::raiseNotice(100, JText::_('COM_JEM_SELECT_ITEM_TO_PUBLISH'));
-			$this->setRedirect(JEMHelperRoute::getMyVenuesRoute());
+			$this->setRedirect(JemHelperRoute::getMyVenuesRoute());
 			return;
 		}
 
@@ -92,7 +89,7 @@ class JEMControllerMyvenues extends JControllerLegacy
 		$total = count($cid);
 		$msg   = $total . ' ' . JText::_($message);
 
-		$this->setRedirect(JEMHelperRoute::getMyVenuesRoute(), $msg);
+		$this->setRedirect(JemHelperRoute::getMyVenuesRoute(), $msg);
 	}
 }
 ?>
