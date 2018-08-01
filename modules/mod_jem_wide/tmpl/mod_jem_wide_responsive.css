@@ -1,0 +1,226 @@
+/**
+ * @version 2.1
+ * @package JEM
+ * @subpackage JEM Latest Events Wide Module
+ * @copyright (C) 2013-2015 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ */
+
+#jemmodulewide .jem-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+#jemmodulewide .jem-wrap-reverse {
+  flex-wrap: wrap-reverse;
+}
+
+#jemmodulewide .jem-nowrap {
+  flex-wrap: nowrap;
+}
+
+#jemmodulewide .jem-justify-start {
+  justify-content: flex-start;
+}
+
+#jemmodulewide .jem-dl:after {
+	clear: both;
+}
+
+#jemmodulewide .jem-dl {
+  margin: 0;
+}
+
+#jemmodulewide .jem-dl dt {
+	float: left;
+	width: 160px;
+	overflow: hidden;
+	clear: left;
+	text-align: left;
+  font-weight: bold;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+#jemmodulewide .jem-dl dd {
+	margin-left: 170px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+#jemmodulewide .jem-img {
+  text-align: center;
+}
+
+#jemmodulewide .jem-img img {
+  max-width: 100%;
+}
+
+#jemmodulewide .jem-catimg {
+  float: right;
+}
+
+#jemmodulewide .jem-readmore {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+#jemmodulewide .jem-date .input-append {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+}
+
+#jemmodulewide .jem-limit-smallist{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  padding: 10px;
+}
+
+#jemmodulewide img.icon-inline {
+  display: none;
+}
+
+#jemmodulewide .jem-event {
+  cursor:pointer;
+  border-bottom: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+} 
+
+#jemmodulewide .jem-event:first-child {
+  border-top: 1px solid #ddd;
+}
+
+#jemmodulewide .jem-list-img {
+  flex-shrink: 1;
+  margin-left: 10px;
+}
+
+#jemmodulewide .jem-event-details {
+  flex: 1;
+}
+
+#jemmodulewide .jem-event-details h3 {
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+#jemmodulewide .jem-list-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;  
+}
+
+#jemmodulewide .jem-small-list {
+  padding: 10px;
+}
+
+
+#jemmodulewide .jem-small-list div {
+  flex: 1;
+}
+
+#jemmodulewide .jem-event-info {
+  margin-right: 15px;
+}
+
+#jemmodulewide .jem-event-info:last-child {
+  margin-right: 0;
+}
+
+#jemmodulewide .jem-event-info-small {
+  padding-right: 10px;
+  word-break: keep-all;
+}
+
+#jemmodulewide .jem-event-info-small:last-child {
+  margin-right: 0;
+}
+
+#jemmodulewide .eventlist {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+#jemmodulewide .eventlist li {
+  padding: 10px;
+}
+
+#jemmodulewide .eventlist li:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+#jemmodulewide .eventlist li:last-child {
+  margin-bottom: 0;
+}
+
+#jemmodulewide .eventlist li:hover {
+  background-color: #e0e0e0;
+}
+
+
+@media only all and (max-width: 59.938rem) and (min-width: 48rem) {
+  #jemmodulewide .jem-event-info-small {
+    flex-basis: 45% !important;
+  }
+}
+
+@media only all and (max-width: 47.938rem) {  
+  #jemmodulewide .jem-dl dt {
+    float: none;
+    width: auto;
+    clear: none;
+    text-align: left;
+    margin-top: 5px;
+    padding-top: 0px;
+    padding-bottom: 0px;    
+  }
+  
+  #jemmodulewide .jem-dl dt:first-child {
+    margin-top: 0;
+  }
+  
+  #jemmodulewide .jem-dl dd {
+	  margin-left: 0;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 5px;
+  }
+  
+  #jemmodulewide .jem_limit {
+    flex-wrap: wrap;
+  }
+    
+  #jemmodulewide .jem-list-img {
+    margin-right: 0;
+    margin-top: 10px;
+  }
+  
+  #jemmodulewide .jem-catimg {
+    float: none;
+    clear: both;
+  }
+  
+  #jemmodulewide .jem-sort-small .jem-small-list div{
+    flex-basis: 30%;
+  }
+  
+  #jemmodulewide .jem-event-info-small {
+    flex-basis: 100% !important;
+  }
+}
+
+@media only all and (max-width: 30rem) {
+  
+}

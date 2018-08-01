@@ -31,6 +31,13 @@ if (empty($list)) {
 }
 
 $document = JFactory::getDocument();
-$document->addStyleSheet(JUri::base(true).'/modules/mod_jem_wide/tmpl/mod_jem_wide.css');
 
-require(JModuleHelper::getLayoutPath('mod_jem_wide'));
+$jemsettings = JemHelper::config();
+
+if ($jemsettings->layoutstyle == 1) {
+  require(JModuleHelper::getLayoutPath('mod_jem_wide', 'default_responsive'));
+  $document->addStyleSheet(JUri::base(true).'/modules/mod_jem_wide/tmpl/mod_jem_wide_responsive.css');
+} else {
+  $document->addStyleSheet(JUri::base(true).'/modules/mod_jem_wide/tmpl/mod_jem_wide.css');
+  require(JModuleHelper::getLayoutPath('mod_jem_wide', 'default_legacy'));   
+}
