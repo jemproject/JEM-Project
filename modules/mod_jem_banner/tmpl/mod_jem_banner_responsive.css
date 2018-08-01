@@ -1,0 +1,89 @@
+/**
+ * @version 2.2.2
+ * @package JEM
+ * @subpackage JEM Banner Module
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ */
+
+.jem-row-banner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.jem-horizontal-banner {
+  flex-direction: row;
+}
+
+.jem-vertical-banner {
+  flex-direction: column;
+}
+
+.jem-event-details-banner {
+  flex: 1;
+}
+
+.jem-banner-datecat {
+  margin-bottom: 8px;
+}
+
+.jem-banner-datecat > div {
+  margin-right: 10px;
+}
+
+.jem-banner-datecat > div:last-child {
+  margin-right: 0;
+}
+
+.jem-eventimg-banner {
+  margin-bottom: 10px;
+}
+
+#jemmodulebanner .time, #jemmodulebanner .date {
+  font-weight: bold;
+}
+ 
+#jemmodulebanner [class|="calendar"] {
+	background-repeat: no-repeat;
+	width: 82px;
+	height: 82px;
+	text-align: center;
+	padding: 5px 1px 0 0;
+	margin-right:10px;
+  margin-bottom: 10px;
+	line-height: 24px;
+}
+
+#jemmodulebanner [class|="calendar"] .yearbanner {
+	font-size: 80%;
+	height:5px;
+}
+
+#jemmodulebanner [class|="calendar"] .monthbanner {
+	font-size: 85%;
+	font-weight:bold;
+	height:20px;
+  color: #ffffff;
+  text-shadow: none;
+}
+
+#jemmodulebanner [class|="calendar"] .daybanner {
+  font-size: 90%;
+	font-weight:bold;
+	padding-top:3px;
+}
+
+#jemmodulebanner [class|="calendar"] .daynumbanner {
+	font-size: 150%;
+	font-weight:bold;
+}
+ 
+ 
+@media only all and (max-width: 47.938rem) {
+  
+}
+
+
+
