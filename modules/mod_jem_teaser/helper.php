@@ -225,24 +225,33 @@ abstract class ModJemTeaserHelper
 				$lists[$i]->venueimageorig = JUri::base(true).'/'.$limage['original'];
 			}
 
-			# append <br /> tags on line breaking tags so they can be stripped below
-			$description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br />", $row->introtext);
+      if ($max_desc_length != 1208) {
+        # append <br /> tags on line breaking tags so they can be stripped below
+        $description = preg_replace("'<(hr[^/>]*?/|/(div|h[1-6]|li|p|tr))>'si", "$0<br />", $row->introtext);
 
-			# strip html tags but leave <br /> tags
-			$description = strip_tags($description, "<br>");
+        # strip html tags but leave <br /> tags
+        $description = strip_tags($description, "<br>");
 
-			# switch <br /> tags to space character
-			if ($params->get('br') == 0) {
-				$description = mb_ereg_replace('<br[ /]*>',' ', $description);
-			}
+        # switch <br /> tags to space character
+        if ($params->get('br') == 0) {
+          $description = mb_ereg_replace('<br[ /]*>',' ', $description);
+        }
 
-			if (empty($description)) {
-				$lists[$i]->eventdescription = JText::_('MOD_JEM_TEASER_NO_DESCRIPTION');
-			} elseif (mb_strlen($description) > $max_desc_length) {
-				$lists[$i]->eventdescription = mb_substr($description, 0, $max_desc_length) . '&hellip;';
-			} else {
-				$lists[$i]->eventdescription = $description;
-			}
+        if (empty($description)) {
+          $lists[$i]->eventdescription = JText::_('MOD_JEM_TEASER_NO_DESCRIPTION');
+        } elseif (mb_strlen($description) > $max_desc_length) {
+          $lists[$i]->eventdescription = mb_substr($description, 0, $max_desc_length) . '&hellip;';
+        } else {
+          $lists[$i]->eventdescription = $description;
+        }
+      } else {
+        $description = $row->introtext;
+        if (empty($description)) {
+          $lists[$i]->eventdescription = JText::_('MOD_JEM_TEASER_NO_DESCRIPTION');
+        } else {
+          $lists[$i]->eventdescription = $description;          
+        }
+      }
 
 			$lists[$i]->readmore = mb_strlen(trim($row->fulltext));
 
@@ -255,6 +264,12 @@ abstract class ModJemTeaserHelper
 					}
 				}
 				$lists[$i]->color = (count($colors) == 1) ? array_pop($colors) : $fallback_color;
+			}
+
+			# provide custom fields
+			for ($n = 1; $n <= 10; ++$n) {
+				$var = 'custom'.$n;
+				$lists[$i]->$var = htmlspecialchars($row->$var, ENT_COMPAT, 'UTF-8');
 			}
 		} // foreach ($events as $row)
 

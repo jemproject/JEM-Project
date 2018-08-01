@@ -1,0 +1,102 @@
+/**
+ * @version 2.2.2
+ * @package JEM
+ * @subpackage JEM Teaser Module
+ * @copyright (C) 2013-2018 joomlaeventmanager.net
+ * @copyright (C) 2005-2009 Christoph Lukes
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+ */
+
+.jem-row-teaser {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.jem-event-details-teaser {
+  flex: 1;
+}
+
+.jem-event-details-teaser .jem-row-teaser {
+  margin-bottom: 10px;
+}
+
+.jem-event-details-teaser .jem-row-teaser > div {
+  margin-right: 10px;
+}
+
+.jem-event-details-teaser .jem-row-teaser > div:last-child {
+  margin-right: 0;
+}
+
+.jem-eventimg-teaser {
+  float: right;
+  margin-left: 5px;
+  margin-bottom: 5px;
+}
+
+ 
+#jemmoduleteaser [class|="calendar"] {
+	background-repeat: no-repeat;
+	width: 82px;
+	height: 82px;
+	text-align: center;
+	padding: 5px 1px 0 0;
+	margin-right:10px;
+	line-height: 24px;
+}
+
+#jemmoduleteaser [class|="calendar"] .yearteaser {
+	font-size: 80%;
+	height:5px;
+}
+
+#jemmoduleteaser [class|="calendar"] .monthteaser {
+	font-size: 85%;
+	font-weight:bold;
+	height:20px;
+  color: #ffffff;
+  text-shadow: none;
+}
+
+#jemmoduleteaser [class|="calendar"] .dayteaser {
+  font-size: 90%;
+	font-weight:bold;
+	padding-top:3px;
+}
+
+#jemmoduleteaser [class|="calendar"] .daynumteaser {
+	font-size: 150%;
+	font-weight:bold;
+}
+
+#jemmoduleteaser .time, #jemmoduleteaser .date {
+  font-weight: bold;
+}
+ 
+@media only all and (max-width: 47.938rem) {
+  .jem-teaser-event {
+    display: block !important;
+    margin-bottom: 10px;
+  }
+  
+  #jemmoduleteaser [class|="calendar"] {
+    margin-bottom: 10px;
+  }
+  
+  .jem-eventimg-teaser {
+    display: block;
+    float: none;
+    margin-left: 0;
+    margin-bottom: 10px;
+  }
+  
+  #jemmoduleteaser img {
+    display: block;
+    float: none !important;
+  }
+}
+
+
+

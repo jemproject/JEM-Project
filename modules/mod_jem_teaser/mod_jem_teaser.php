@@ -46,7 +46,14 @@ if (empty($list)) {
 }
 
 $document = JFactory::getDocument();
-$document->addStyleSheet(JUri::base(true).'/modules/mod_jem_teaser/tmpl/mod_jem_teaser.css');
 $document->addStyleSheet(JUri::base(true).'/modules/mod_jem_teaser/tmpl/'.$color.'.css');
 
-require(JModuleHelper::getLayoutPath('mod_jem_teaser'));
+$jemsettings = JemHelper::config();
+
+if ($jemsettings->layoutstyle == 1) {
+  $document->addStyleSheet(JUri::base(true).'/modules/mod_jem_teaser/tmpl/mod_jem_teaser_responsive.css');
+  require(JModuleHelper::getLayoutPath('mod_jem_teaser', 'default_responsive'));
+} else {
+  $document->addStyleSheet(JUri::base(true).'/modules/mod_jem_teaser/tmpl/mod_jem_teaser.css');
+  require(JModuleHelper::getLayoutPath('mod_jem_teaser', 'default_legacy'));   
+}
