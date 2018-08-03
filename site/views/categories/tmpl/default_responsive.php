@@ -8,19 +8,6 @@
  */
 defined('_JEXEC') or die;
 
-$document = JFactory::getDocument();
-$styleSheets = $document->_styleSheets;
-$faFound = false;
-foreach ($styleSheets as $key => $value) {
-  if (strpos($key,'font-awesome.min.css') !== false) {
-    $faFound = true;
-    break;
-  }
-}
-if (!$faFound) {
-  $document->addStylesheet(JUri::base(true).'/media/com_jem/FontAwesome/font-awesome.min.css');
-}
-
 function jem_categories_string_contains($masterstring, $string) {
   if (strpos($masterstring, $string) !== false) {
     return true;
@@ -81,7 +68,11 @@ function jem_categories_string_contains($masterstring, $string) {
 			if ($this->params->get('detcat_nr', 0) > 0) {
 				$this->catrow = $row;
         echo '<h3>'.JTEXT::_('COM_JEM_EVENTS').'</h3>';
-				echo $this->loadTemplate('table');
+				if (empty($this->jemsettings->tablewidth)) :
+          echo $this->loadTemplate('jem_eventslist'); // The new layout
+        else :
+          echo $this->loadTemplate('jem_eventslist_small'); // Similar to the old table-layout
+        endif;
 			}
 		?>
     <div class="jem-readmore">
